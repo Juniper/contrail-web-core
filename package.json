@@ -1,0 +1,25 @@
+{
+  "name": "contrail-ui",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app",
+    "test": "make test"
+  },
+  "dependencies": {
+    "express": "3.0.3",
+    "winston": "0.6.2",
+    "underscore": "1.4.3",
+    "cluster": "0.7.7",
+    "async": "0.1.22",
+    "mocha": "1.7.4",
+    "chai": "1.4.2",
+    "mime": "1.2.9",
+    "debug": "0.7.0",
+    "kue": "0.5.0",
+    "axon": "0.5.0",
+    "redis": "0.8.2",
+    "request": "2.12.0",
+    "xml2js": "0.2.3"
+  }
+}

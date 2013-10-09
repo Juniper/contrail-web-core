@@ -1,0 +1,364 @@
+<!--
+ Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<page rows="2" col="1">
+    <urls>
+        <url>/api/tenants/config/domains</url>
+        <url>/api/tenants/config/projects</url>
+    </urls>
+    <table row="1" id="analyzerinstances"
+           get-url="/api/tenants/config/policy/{{networkpolicyuuid}}"
+           datasource-url="/api/tenants/config/service-instances/{{getSelectedProjectUUID()}}?template=analyzer-template">
+        <server-paging>false</server-paging>
+        <filterable at="client"/>
+        <sortable at="client"/>
+        <selectable multiple="false"/>
+        <paging>false</paging>
+        <columns>
+            <column width="35%" title="Analyzer Name" field="siname"
+                    path="getEmptyStringIfNull($.service_instances[*].service-instance.fq_name[2])"/>
+            <column width="35%" title="Virtual Network" field="leftvn"
+                    path="getEmptyStringIfNull({{$.service_instances[*].service-instance.service_instance_properties.left_virtual_network}})"/>
+            <column field="siuuid"
+                    path="$.service_instances[*].service-instance.uuid"
+                    visible="false"/>
+            <column field="networkpolicyuuid"
+                    path="getEmptyStringIfNull($.service_instances[*].service-instance.policyuuid)"
+                    visible="false"/>
+            <column field="vmuuid"
+                    path="$.service_instances[*].service-instance.virtual_machine_back_refs[0].uuid"
+                    visible="false"/>
+            <column width="30%" type="action" title="Actions">
+                <values action="handleInstanceAction">
+                    <value>Actions</value>
+                    <!--value>Launch VNC Popup</value-->
+                    <value>Launch VNC</value>
+                </values>
+            </column>
+        </columns>
+        <target>
+            <table>analyzerpolicyrules</table>
+            <table>associatednetworks</table>
+        </target>
+        <actions>
+            <action type="add" title="Add Analyzer"
+                    submit-url="/api/tenants/config/service-instances">
+                <template>
+                    {
+                    "service-instance": {
+                    "parent_type": "project",
+                    "fq_name": [
+                    "{{$.domains[0].fq_name[0]}}",
+                    "{{$.project.fq_name[1]}}",
+                    "{{siname}}"
+                    ],
+                    "service_instance_properties": {
+                    "management_virtual_network":"",
+                    "left_virtual_network":"getFormatVNName({{leftvn}})",
+                    "right_virtual_network":"",
+                    "scale_out": {"max_instances":1, "auto_scale": false}
+                    },
+                    "service_template_refs": [{
+                    "to": [
+                    "{{$.domains[0].fq_name[0]}}",
+                    "{{tmplname}}"
+                    ]
+                    }]
+                    }
+                    }
+                </template>
+                <forms>
+                    <form title="">
+                        <elements>
+                            <row>
+                                <col>
+                                    <element width="350" labelwidth="150"
+                                             mandatory="true"
+                                             label="Analyzer Name"
+                                             type="textbox" field="siname"/>
+                                </col>
+                            </row>
+                            <row>
+                                <col>
+                                    <element id="leftvn" width="350"
+                                             labelwidth="150"
+                                             label="Virtual Network"
+                                             helptext="" type="dropdown"
+                                             field="leftvn"
+                                             datasource-url="/api/tenants/config/virtual-networks?tenant_id=default-domain:{{getSelectedProjectName()}}"
+                                             datasource-url-cb="populateVNs"
+                                             path="$.virtual-networks[*].fq_name[2]">
+                                        <values>
+                                            <value>Automatic</value>
+                                        </values>
+                                    </element>
+                                </col>
+                            </row>
+                            <row>
+                                <col>
+                                    <element id="template-type" type="hidden"
+                                             field="templateType"
+                                             value="analyzer"/>
+                                </col>
+                            </row>
+                            <row>
+                                <col>
+                                    <element type="hidden"
+                                             field="tmplname"
+                                             value="analyzer-template"/>
+                                </col>
+                            </row>
+                        </elements>
+                    </form>
+                </forms>
+            </action>
+            <action type="delete"
+                    submit-url="/api/tenants/config/service-instance/{{siuuid}}?policyId={{networkpolicyuuid}}"/>
+        </actions>
+    </table>
+    <tab row="2" title="Analyzer Rules">
+        <table id="analyzerpolicyrules">
+            <server-paging>false</server-paging>
+            <filterable at="client"/>
+            <sortable at="client"/>
+            <selectable multiple="false"/>
+            <paging>false</paging>
+            <columns>
+                <column width="15%" title="Sequence"
+                        path="{{$.network-policy.network_policy_entries.policy_rule[*].rule_sequence.major}}.{{$.network-policy.network_policy_entries.policy_rule[*].rule_sequence.minor}}"
+                        field="sequence" visible="false"/>
+                <column width="85%" title="Rule Details"
+                        format="formatPolicyRule({{$.network-policy.network_policy_entries.policy_rule[*]}})"
+                        field="ruledetails"/>
+                <column path="$.network-policy.network_policy_entries.policy_rule[*].uuid"
+                        field="policyuuid" visible="false"/>
+                <column primary="true"
+                        path="$.network-policy.network_policy_entries.policy_rule[*].rule_sequence.major"
+                        field="major" visible="false"/>
+                <column primary="true"
+                        path="$.network-policy.network_policy_entries.policy_rule[*].rule_sequence.minor"
+                        field="minor" visible="false"/>
+            </columns>
+            <actions>
+                <action type="add" text="Add Rule" title="Add Rule"
+                        submit-url="/api/tenants/config/policy/{{networkpolicyuuid}}/network-policy-entries"
+                        validate="policyValidator">
+                    <template>
+                        {
+                        "network-policy": {
+                        "network_policy_entries": {
+                        "policy_rule": [
+                        {
+                        "ui_rule_id" : {"last":null},
+                        "action_list": {
+                        "service_chain_type" : null,
+                        "simple_action" : null,
+                        "gateway_name" : null,
+                        "apply_service" : null,
+                        "mirror_to" : "getSelectedMirrorTo({{mirrorto}})"
+                        },
+                        "application": [
+                        ],
+                        "direction": "getDirection({{direction}})",
+                        "dst_addresses": [
+                        {
+                        "security_group": null,
+                        "subnet": {
+                        "ip_prefix" : "",
+                        "ip_prefix_len" : ""
+                        },
+                        "virtual_network":
+                        "checkValidDestinationNetwork({{destnetwork}})"
+                        }
+                        ],
+                        "dst_ports": [
+                        {
+                        "end_port": "getEndPort({{destport}})",
+                        "start_port": "getStartPort({{destport}})"
+                        }
+                        ],
+                        "protocol": "getProtocol({{protocol}})",
+                        "rule_sequence": {
+                        "major": -1,
+                        "minor": -1
+                        },
+                        "src_addresses": [
+                        {
+                        "security_group": null,
+                        "subnet": {
+                        "ip_prefix" : "",
+                        "ip_prefix_len" : ""
+                        },
+                        "virtual_network":
+                        "checkValidSourceNetwork({{srcnetwork}})"
+                        }
+                        ],
+                        "src_ports": [
+                        {
+                        "end_port": "getEndPort({{srcport}})",
+                        "start_port": "getStartPort({{srcport}})"
+                        }
+                        ]
+                        }
+                        ]
+                        }
+                        }
+                        }
+                    </template>
+                    <forms>
+                        <form title="Policy Rule">
+                            <elements>
+                                <row>
+                                    <col>
+                                        <element width="135"
+                                                 highlightfirst="false"
+                                                 helptext="IP Protocol (any)"
+                                                 type="combobox"
+                                                 field="protocol">
+                                            <values>
+                                                <value>ANY</value>
+                                                <value>TCP</value>
+                                                <value>UDP</value>
+                                                <value>ICMP</value>
+                                            </values>
+                                        </element>
+                                    </col>
+                                    <col>
+                                        <element width="165"
+                                                 highlightfirst="false"
+                                                 path="getFQNofVN($.virtual-networks[*].fq_name[2])"
+                                                 datasource-url="/api/tenants/config/virtual-networks?tenant_id=default-domain:{{getSelectedProjectName()}}"
+                                                 helptext="Source Network (any)"
+                                                 type="combobox"
+                                                 field="srcnetwork">
+                                            <values>
+                                                <value>any</value>
+                                                <value>local</value>
+                                            </values>
+                                        </element>
+                                    </col>
+                                    <col>
+                                        <element width="125"
+                                                 setpath="$.network-policy.network_policy_entries.policy_rule[*].src_ports[*].start_port/$.network-policy.network_policy_entries.policy_rule[*].src_ports[*]/start_port/network-policy.network_policy_entries.policy_rule[0].src_ports+$.network-policy.network_policy_entries.policy_rule[*].src_ports[*].end_port/$.network-policy.network_policy_entries.policy_rule[*].src_ports[*]/end_port/network-policy.network_policy_entries.policy_rule[0].src_ports"
+                                                 helptext="Source Ports (any)"
+                                                 type="textbox" value=""
+                                                 field="srcport"/>
+                                    </col>
+                                    <col>
+                                        <element width="180"
+                                                 highlightfirst="false"
+                                                 helptext="Direction (Bidirectional)"
+                                                 type="combobox"
+                                                 field="direction">
+                                            <values>
+                                                <value>Bidirectional</value>
+                                                <value>Unidirectional
+                                                </value>
+                                            </values>
+                                        </element>
+                                    </col>
+                                    <col>
+                                        <element width="190"
+                                                 highlightfirst="false"
+                                                 path="getFQNofVN($.virtual-networks[*].fq_name[2])"
+                                                 datasource-url="/api/tenants/config/virtual-networks?tenant_id=default-domain:{{getSelectedProjectName()}}"
+                                                 helptext="Destination Network (any)"
+                                                 type="combobox"
+                                                 field="destnetwork">
+                                            <values>
+                                                <value>any</value>
+                                                <value>local</value>
+                                            </values>
+                                        </element>
+                                    </col>
+                                    <col>
+                                        <element width="155"
+                                                 setpath="$.network-policy.network_policy_entries.policy_rule[*].dst_ports[*].start_port/$.network-policy.network_policy_entries.policy_rule[*].dst_ports[*]/start_port/network-policy.network_policy_entries.policy_rule[0].dst_ports+$.network-policy.network_policy_entries.policy_rule[*].dst_ports[*].end_port/$.network-policy.network_policy_entries.policy_rule[*].dst_ports[*]/end_port/network-policy.network_policy_entries.policy_rule[0].dst_ports"
+                                                 helptext="Destination Ports (any)"
+                                                 type="textbox" value=""
+                                                 field="destport"/>
+                                    </col>
+                                </row>
+                                <row>
+                                    <col>
+                                        <element id="mirror-to" field="mirrorto"
+                                                 value=""/>
+                                    </col>
+                                </row>
+                            </elements>
+                        </form>
+                    </forms>
+                </action>
+                <action type="delete"
+                        submit-url="/api/tenants/config/policy/{{networkpolicyuuid}}/network-policy-entries/{{sequence}}"/>
+            </actions>
+        </table>
+    </tab>
+    <tab row="2" title="Associated Networks">
+        <table id="associatednetworks">
+            <server-paging>false</server-paging>
+            <filterable at="client"/>
+            <sortable at="client"/>
+            <selectable multiple="false"/>
+            <paging>false</paging>
+            <columns>
+                <column title="Associated Networks"
+                        path="$.network-policy.virtual_network_back_refs[*].to"
+                        field="associatednetworks"/>
+                <column path="$.network-policy.virtual_network_back_refs[*].uuid"
+                        field="associatednetworkuuid" visible="false"/>
+                <column path="$.network-policy.virtual_network_back_refs[*].attr.sequence.major"
+                        field="associatednetworkmajor" visible="false"/>
+                <column path="$.network-policy.virtual_network_back_refs[*].attr.sequence.minor"
+                        field="associatednetworkminor" visible="false"/>
+            </columns>
+            <actions>
+                <action type="edit" process="table"
+                        title="Networks Associated with Network Policy"
+                        submit-url="/api/tenants/config/policy/{{networkpolicyuuid}}/associated-networks">
+                    <template>
+                        {
+                        "network-policy": {
+                        "virtual_network_back_refs": [
+                        {
+                        "attr": {
+                        "timer": {"start_time": ""},
+                        "sequence": null
+                        },
+                        "uuid": "getNetworkUUID({{associatednetworks}})",
+                        "to": [
+                        "{{$.projects[0].fq_name[0]}}",
+                        "{{$.project.fq_name[1]}}",
+                        "{{associatednetworks}}"
+                        ]
+                        }
+                        ]
+                        }
+                        }
+                    </template>
+                    <forms>
+                        <form title="">
+                            <elements>
+                                <row>
+                                    <col>
+                                        <element rhspath="getNameFromFQN()"
+                                                 setpath="$.network-policy.virtual_network_back_refs[*].to[2]/$.network-policy.virtual_network_back_refs[*]/to.2/network-policy.virtual_network_back_refs+$.network-policy.virtual_network_back_refs[*].uuid/$.network-policy.virtual_network_back_refs[*]/uuid/network-policy.virtual_network_back_refs"
+                                                 datasource-url="/api/tenants/config/virtual-networks?tenant_id=default-domain:{{getSelectedProjectName()}}"
+                                                 lhspath="$.virtual-networks[*].fq_name[2]"
+                                                 lhslabel="Available Networks"
+                                                 rhslabel="Associated Networks"
+                                                 type="multiselect"
+                                                 lhsfield="availablenetworks"
+                                                 rhsfield="associatednetworks"
+                                                 field="associatednetworks"/>
+                                    </col>
+                                </row>
+                            </elements>
+                        </form>
+                    </forms>
+                </action>
+            </actions>
+        </table>
+    </tab>
+</page>

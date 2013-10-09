@@ -1,0 +1,199 @@
+<!--
+ Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+-->
+
+<?xml version="1.0"?>
+<page>
+    <tab rows="2" title="BGP0">
+        <table id="landing0" row="1" title="BGP Configuration Summary" datasource-url="/api/admin/nodes/bgp">
+            <server-paging>false</server-paging>
+            <filterable at="client" />
+            <sortable at="client" />
+            <selectable multiple="true" />
+            <target>
+                <table>detail01</table>
+                <table>detail02</table>
+            </target>
+            <columns>
+                <column title="IP Address" field="address" />
+                <column title="Port" field="port" />
+                <column title="Name" field="name" />
+                <column field="uuid" visible="false" />
+            </columns>
+            <actions>
+                <action type="add" title="BGP Configuration" ok-action="abcd" submit-url="/network-ipams">
+                    <forms>
+                        <form title="Tab1">
+                            <elements>
+                                <row>
+                                    <col>
+                                        <element label="Name" type="textbox" field="name" />
+                                    </col>
+                                    <col>
+                                        <element label="Autonomous System" type="textbox" field="autonomous_system" />
+                                    </col>
+                                </row>
+                                <row>
+                                    <col>
+                                        <element label="Router ID" type="textbox" field="identifier" />
+                                    </col>
+                                    <col>
+                                        <element label="Address" type="textbox" field="address" />
+                                    </col>
+                                </row>
+                                <row>
+                                    <col>                            
+                                        <element label="BGP Port" type="textbox" field="port" />
+                                    </col>
+                                    <col>                                    
+                                        <element label="Vendor ID" type="textbox" field="vendor" />
+                                    </col>
+                                </row>
+                                <row>
+                                    <col>
+                                        <element lhslabel="Available Nodes" rhslabel="Configured Nodes" type="multiselect" lhsfield="address" rhsfield="address" />
+                                    </col>
+                                </row>
+                            </elements>
+                       </form>
+                    </forms>
+                </action>
+                <action type="delete" />
+            </actions>
+        </table>
+        <tab row="2" title = "Summary01">
+           <table id="detail01" type="detail" title="Details of BGP">
+                <columns>
+                    <column title="Name" field="name">
+                        <rowvalue>Vendor ID</rowvalue>
+                        <rowvalue>BGP ASN</rowvalue>
+                        <rowvalue>Router ID</rowvalue>
+                        <rowvalue>BGP Port</rowvalue>
+                        <rowvalue>Address</rowvalue>
+                    </column>
+                    <column title="Value" field="value">
+                        <rowfield>vendor</rowfield>
+                        <rowfield>autonomous_system</rowfield>
+                        <rowfield>identifier</rowfield>
+                        <rowfield>port</rowfield>
+                        <rowfield>address</rowfield>
+                    </column>
+               </columns>
+            </table>
+        </tab>
+        <tab row="2" title = "Summary02">
+           <table id="detail02" type="detail" title="Details of BGP">
+                <columns>
+                    <column title="Name" field="name">
+                        <rowvalue>Vendor ID</rowvalue>
+                        <rowvalue>BGP ASN</rowvalue>
+                        <rowvalue>Router ID</rowvalue>
+                        <rowvalue>BGP Port</rowvalue>
+                        <rowvalue>Address</rowvalue>
+                    </column>
+                    <column title="Value" field="value">
+                        <rowfield>vendor</rowfield>
+                        <rowfield>autonomous_system</rowfield>
+                        <rowfield>identifier</rowfield>
+                        <rowfield>port</rowfield>
+                        <rowfield>address</rowfield>
+                    </column>
+               </columns>
+            </table>
+        </tab>
+        
+    </tab>
+    <tab rows="2" title="BGP1">
+        <table id="landing1" row="1" title="BGP Configuration Summary" datasource-url="/api/admin/nodes/bgp">
+            <server-paging>false</server-paging>
+            <filterable at="client" />
+            <sortable at="client" />
+            <selectable multiple="true" />
+            <target>
+                <table>detail10</table>
+                <table>detail20</table>
+            </target>
+            <columns>
+                <column title="IP Address" field="address" />
+                <column title="Port" field="port" />
+                <column title="Name" field="name" />
+                <column field="uuid" visible="false" />
+            </columns>
+            <actions>
+                <action type="add" title="BGP Configuration" ok-action="abcd" submit-url="/network-ipams">
+                    <forms>
+                        <form title="Tab1">
+                            <elements>
+                                <row>
+                                    <col>
+                                        <element label="Name" type="textbox" field="name" />
+                                    </col>
+                                    <col>
+                                        <element label="Autonomous System" type="textbox" field="autonomous_system" />
+                                    </col>
+                                </row>
+                                <row>
+                                    <col>
+                                        <element label="Router ID" type="textbox" field="identifier" />
+                                    </col>
+                                    <col>
+                                        <element label="Address" type="textbox" field="address" />
+                                    </col>
+                                </row>
+                                <row>
+                                    <col>                            
+                                        <element label="BGP Port" type="textbox" field="port" />
+                                    </col>
+                                    <col>                                    
+                                        <element label="Vendor ID" type="textbox" field="vendor" />
+                                    </col>
+                                </row>
+                            </elements>
+                       </form>
+                    </forms>
+                </action>
+                <action type="delete" />
+            </actions>
+        </table>
+        <tab row="2" title = "Summary10">
+           <table id="detail10" type="detail" title="Details of BGP">
+                <columns>
+                    <column title="Name" field="name">
+                        <rowvalue>Vendor ID</rowvalue>
+                        <rowvalue>BGP ASN</rowvalue>
+                        <rowvalue>Router ID</rowvalue>
+                        <rowvalue>BGP Port</rowvalue>
+                        <rowvalue>Address</rowvalue>
+                    </column>
+                    <column title="Value" field="value">
+                        <rowfield>vendor</rowfield>
+                        <rowfield>autonomous_system</rowfield>
+                        <rowfield>identifier</rowfield>
+                        <rowfield>port</rowfield>
+                        <rowfield>address</rowfield>
+                    </column>
+               </columns>
+            </table>
+        </tab>
+        <tab row="2" title = "Summary20">
+           <table id="detail20" type="detail" title="Details of BGP">
+                <columns>
+                    <column title="Name" field="name">
+                        <rowvalue>Vendor ID</rowvalue>
+                        <rowvalue>BGP ASN</rowvalue>
+                        <rowvalue>Router ID</rowvalue>
+                        <rowvalue>BGP Port</rowvalue>
+                        <rowvalue>Address</rowvalue>
+                    </column>
+                    <column title="Value" field="value">
+                        <rowfield>vendor</rowfield>
+                        <rowfield>autonomous_system</rowfield>
+                        <rowfield>identifier</rowfield>
+                        <rowfield>port</rowfield>
+                        <rowfield>address</rowfield>
+                    </column>
+               </columns>
+            </table>
+        </tab>        
+    </tab>        
+</page>
