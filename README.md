@@ -1,4 +1,1 @@
-contrail-distro-web-core
-========================
-
-Contrail web ui backend code
+../contrail-web-ui/README.md

@@ -19,16 +19,21 @@ $(WEBUICLIENT):
 $(WEBUITHIRDPARTY):
 	if [ ! -d ../$(WEBUITHIRDPARTY) ]; then git clone https://github.com/Juniper/contrail-web-third-party.git ../$(WEBUITHIRDPARTY); else cd ../$(WEBUITHIRDPARTY) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
-package: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY)
+dev-env:
 	ln -sf ../$(WEBUICLIENT)/* .
 	ln -sf ../$(WEBUITHIRDPARTY)/node_modules node_modules
 	make -f Makefile.all
+
+package: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY)
+	make dev-env
 
 all:	
 	make package
 
 dev-install:
 	make package
+
+repos: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY)
 
 clean:
 
