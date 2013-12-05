@@ -21,8 +21,8 @@ $(WEBUITHIRDPARTY):
 
 #package: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY)
 package: 
-	ln -sf ../$(WEBUICLIENT)/* .
-	ln -sf ../$(WEBUITHIRDPARTY)/node_modules node_modules
+	cp -ar ../$(WEBUICLIENT)/* .
+	cp -ar ../$(WEBUITHIRDPARTY)/node_modules node_modules
 	make -f Makefile.all
 
 all:	
