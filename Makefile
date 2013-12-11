@@ -21,14 +21,14 @@ repos: $(WEBUICLIENT) $(WEBUITHIRDPARTY)
 package: 
 	cp -a ../$(WEBUICLIENT)/* .
 	cp -a ../$(WEBUITHIRDPARTY)/node_modules node_modules
-	./dev-install.sh
 	./generate-files.sh
+	./dev-install.sh
 
 all:	
 	ln -sf ../$(WEBUICLIENT)/* .
 	ln -sf ../$(WEBUITHIRDPARTY)/node_modules node_modules
-	./dev-install.sh
 	./generate-files.sh
+	./dev-install.sh
 
 dev-env:
 	make all

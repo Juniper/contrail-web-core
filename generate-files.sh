@@ -4,6 +4,19 @@
 
 #!/bin/bash
 
+if command -v node >/dev/null 2; then {
+    echo "Node already installed"
+} else {
+    echo "Installing NodeJS ..."
+    cd ../contrail-web-third-party/node-v*
+    ./configure
+    make
+    sudo make install
+    echo "Installed NodeJS"
+    cd -
+}
+fi
+
 if command -v nodejs > /dev/null; then
   node_exec=nodejs;
 elif command -v node > /dev/null; then

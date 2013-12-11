@@ -68,20 +68,20 @@ rm -rf webroot/assets/fonts-opensans
 mkdir webroot/assets/fonts-opensans
 cp -r ../contrail-web-third-party/fonts-opensans webroot/assets/
 
-rm -rf webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
+rm -f webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
 cp -r  ../contrail-web-third-party/fonts-opensans/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff  webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
 
-rm -rf webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+rm -f webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
 cp -r  ../contrail-web-third-party/fonts-opensans/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff  webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
 
 #End - Copy Font-Awesome from contrail-web-third-party
 
 #Start - Merging All JS files
-rm -rf webroot/js/contrail-all-1.js
-rm -rf webroot/js/contrail-all-2.js
-rm -rf webroot/js/contrail-all-3.js
-rm -rf webroot/js/contrail-all-4.js
-rm -rf webroot/js/contrail-all-5.js
+rm -f webroot/js/contrail-all-1.js
+rm -f webroot/js/contrail-all-2.js
+rm -f webroot/js/contrail-all-3.js
+rm -f webroot/js/contrail-all-4.js
+rm -f webroot/js/contrail-all-5.js
 
 
 MAINFILE[0]=webroot/assets/jquery/js/jquery-1.8.3.min.js
@@ -148,7 +148,7 @@ cat ${MAINFILE[26]} >> webroot/js/contrail-all-5.js
 # End - Merging All JS files
 
 #Start - Merging All CSS files 
-rm -rf webroot/css/contrail-all.css
+rm -f webroot/css/contrail-all.css
 
 MAINCSS[1]=webroot/assets/font-awesome/css/font-awesome.min.css
 MAINCSS[2]=webroot/assets/fonts-opensans/openSans.css
@@ -165,16 +165,4 @@ cat ${MAINCSS[5]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[6]} >> webroot/css/contrail-all.css
 
 #End - Merging ALL CSS files
-
-if command -v node >/dev/null 2; then {
-    echo "Node already installed"
-} else {
-    echo "Installing NodeJS ..."
-    cd ../contrail-web-third-party/node-v*
-    ./configure
-    make
-    sudo make install
-    echo "Installed NodeJS"
-}
-fi
 
