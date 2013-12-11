@@ -13,6 +13,7 @@ var redis = require('redis')
   , messages = require('../../common/messages')
   , longPolling = require('./longPolling.api')
   , commonUtils = require('../../utils/common.utils')
+  , discClient = require('../../common/discoveryclient.api')
   ;
 
 if (!module.parent) {
@@ -20,12 +21,16 @@ if (!module.parent) {
                                   module.filename));
   process.exit(1);
 }
-
-commonUtils.createRedisClient(function(client) {
-    redisSub.redisSubClient = client;
-    redisSub.addRedisSubMsgListener(redisSub.redisSubClient);
-    redisSub.subsToRedis(global.MSG_REDIRECT_TO_LOGOUT);
-});
+function createRedisClientAndSubscribeMsg (callback)
+{
+    commonUtils.createRedisClient(function(client) {
+        redisSub.redisSubClient = client;
+        addRedisSubMsgListener(redisSub.redisSubClient);
+        subsToRedis(global.MSG_REDIRECT_TO_LOGOUT);
+        subsToRedis(global.DISC_SERVER_SUB_CLINET);
+        callback();
+    });
+}
 
 commonUtils.createRedisClient(0, function(client) {
     redisSub.redisPerClient = client;
@@ -34,7 +39,8 @@ commonUtils.createRedisClient(0, function(client) {
 /* Function: subsToRedis
     This function is used to subscribe to a apecific channel to redis
  */
-redisSub.subsToRedis = function(channel) {
+function subsToRedis (channel)
+{
   logutils.logger.info("Redis subs done for channel:" + channel);
   redisSub.redisSubClient.subscribe(channel);
 }
@@ -42,7 +48,8 @@ redisSub.subsToRedis = function(channel) {
 /* Function: unsubsToRedis
     This function is used to unsubscribe a channel from redis
  */
-redisSub.unsubsToRedis = function(channel) {
+function unsubsToRedis (channel)
+{
   redisSub.redisSubClient.unsubscribe(channel);
 }
 
@@ -51,7 +58,8 @@ redisSub.unsubsToRedis = function(channel) {
     Whenever a client wants to subscribe to a channel, this API needs to be
     used, using unique hash, hash may be any string 
  */
-redisSub.createChannelByHashURL = function(hash, url) {
+function createChannelByHashURL (hash, url)
+{
   var channel = 'q:' + hash + global.ZWQ_MSG_SEPERATOR + url;
   return channel;
 }
@@ -61,7 +69,8 @@ redisSub.createChannelByHashURL = function(hash, url) {
     This channel is used for subscribing to redis for a specific client.
     reqData must be taken by using cacheApi.createReqData() API
  */
-redisSub.createChannelByReqData = function(reqData, hash) {
+function createChannelByReqData (reqData, hash)
+{
   var reqJSON = JSON.parse(reqData);
   var channel = reqJSON.data.jobCreateReqTime + global.ZWQ_MSG_SEPERATOR
     + hash + global.ZWQ_MSG_SEPERATOR + reqJSON.data.url;
@@ -89,6 +98,10 @@ function processRedisSubMessage (channel, msg)
         longPolling.redirectToLogoutByChannel(msg);
         break;
 
+    case global.DISC_SERVER_SUB_CLINET:
+        discClient.processDiscoveryServiceResponseMsg(msg);
+        break;
+
     default:
         cacheApi.sendResponseByChannel(channel, msg);
         redisSub.unsubsToRedis(channel);
@@ -100,10 +113,16 @@ function processRedisSubMessage (channel, msg)
     This function is used to add listener for messages published by redis to
     this client
  */
-redisSub.addRedisSubMsgListener = function(redisClient) {
+function addRedisSubMsgListener (redisClient)
+{
   redisClient.on('message', function(channel, msg) {
-    logutils.logger.debug("We got the channel:" + channel + "by process:" +
-                          process.pid);
+    if (global.DISC_SERVER_SUB_CLINET != channel) {
+        /* As in system there will be a lot of disc-server-sub message, we are
+         * not logging it
+         */
+        logutils.logger.debug("We got the channel:" + channel + " by process:" +
+                              process.pid);
+    }
     /* Based on the channel, now search the request/response context from 
        redis and send response and check if we got timed out or not
      */
@@ -113,3 +132,10 @@ redisSub.addRedisSubMsgListener = function(redisClient) {
 }
 
 exports.createPubChannelKey = createPubChannelKey;
+exports.subsToRedis = subsToRedis;
+exports.unsubsToRedis = unsubsToRedis;
+exports.createChannelByHashURL = createChannelByHashURL;
+exports.createChannelByReqData = createChannelByReqData;
+exports.createPubChannelKey = createPubChannelKey;
+exports.createRedisClientAndSubscribeMsg = createRedisClientAndSubscribeMsg;
+

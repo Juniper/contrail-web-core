@@ -20,6 +20,7 @@ var rest = require('../../common/rest.api'),
     jsonPath = require('JSONPath').eval,
     configApiServer = require('../../common/configServer.api'),
     plugins = require('../../orchestration/plugins/plugins.api'),
+    nwMonUtils = require('../../common/nwMon.utils'),
 	opServer;
 
 var parser = null;
@@ -37,7 +38,8 @@ if (!module.parent) {
     This API is used to fill the control-node host name list in resultJSON 
     from the response object jsonData
  */
-parseControlNodeHostsList = function(resultJSON, jsonData) {
+function parseControlNodeHostsList (resultJSON, jsonData)
+{
     try {
         var bgpRtr = jsonData['bgp-routers'];
         var nodeCount = bgpRtr.length;
@@ -60,7 +62,8 @@ parseControlNodeHostsList = function(resultJSON, jsonData) {
     This API is used to fill the vRouter host name list in resultJSON from the response
     object jsonData
  */
-parsevRouterHostsList = function(resultJSON, jsonData) {
+function parsevRouterHostsList (resultJSON, jsonData)
+{
     try {
         var vRtr = jsonData['virtual-routers'];
         var vRtrCount = vRtr.length;
@@ -184,7 +187,7 @@ adminapi.getBGPRouters = function (req, res, appData) {
 					for (i = 0; i < bgpCount; i += 1) {
 						uuid = bgpJSON["bgp-routers"][i].uuid;
 						url = '/bgp-router/' + uuid;
-                        commonUtils.createReqObj(dataObjArr, i, [url],
+                        commonUtils.createReqObj(dataObjArr, [url],
                                                  global.HTTP_REQUEST_GET, null,
                                                  null, null, appData);
 						logutils.logger.debug("getBGPRouters: " + url);
@@ -234,22 +237,6 @@ adminapi.getVirtualRouters = function (req, res, appData) {
                                          null, appData);
 };
 
-function getBGPRefNames(routerRefs) {
-    var peers = [],
-        i, peerList;
-    if (routerRefs) {
-        for (i = 0; i < routerRefs.length; i += 1) {
-            peerList = routerRefs[i].to;
-            if (peerList.length > 0) {
-                peers[i] = peerList[peerList.length - 1];
-            } else {
-                peers[i] = '';
-            }
-        }
-    }
-    return peers;
-}
-
 function parseConfigControlNodeData (configControlNodeData)
 {
     var resultJSON = [];
@@ -261,7 +248,7 @@ function parseConfigControlNodeData (configControlNodeData)
             resultJSON[i]["type"] = "bgp-router";
             try {
                 resultJSON[i]["bgp_refs"] =
-                    getBGPRefNames(bgpJSON["bgp-router"]["bgp_router_refs"]);
+                    adminApiHelper.getBGPRefNames(bgpJSON["bgp-router"]["bgp_router_refs"]);
             } catch(e) {
                 resultJSON[i]["bgp_refs"] = [];
             }   
@@ -348,7 +335,7 @@ function getControlNodeDetailsFromConfig (req, res, appData)
             var cnt = bgpList.length;
             for (var i = 0; i < cnt; i++) {
                 reqUrl = '/bgp-router/' + bgpList[i]['uuid'];
-                commonUtils.createReqObj(dataObjArr, i, reqUrl, null, null, 
+                commonUtils.createReqObj(dataObjArr, reqUrl, null, null, 
                                          null, null, appData);
             }
             async.map(dataObjArr,
@@ -479,7 +466,7 @@ adminapi.getControlNodeRoutes = function(req, res) {
     var resultJSON = [];
     var bgpRtrRestAPI =
         commonUtils.getRestAPIServer(ip, global.SANDESH_CONTROL_NODE_PORT);
-    commonUtils.createReqObj(dataObjArr, 0, url);
+    commonUtils.createReqObj(dataObjArr, url);
     async.map(dataObjArr,
               commonUtils.getServerRespByRestApi(bgpRtrRestAPI, true),
               function(err, data) {
@@ -498,7 +485,7 @@ adminapi.getComputeNodeVN = function(req, res) {
 
     var vRouterRestAPI = 
         commonUtils.getRestAPIServer(ip, global.SANDESH_COMPUTE_NODE_PORT);
-    commonUtils.createReqObj(dataObjArr, 0, '/Snh_VnListReq?name=');
+    commonUtils.createReqObj(dataObjArr, '/Snh_VnListReq?name=');
 
     async.map(dataObjArr,
               commonUtils.getServerRespByRestApi(vRouterRestAPI, false),
@@ -1030,7 +1017,7 @@ adminapi.getAllVNs = function (req, res, appData) {
 					fq_name = projectsJSON.projects[i].fq_name;
 					url = '/virtual-networks?parent_type=project&parent_fq_name_str=' + fq_name.join(':');
 					logutils.logger.debug('getNetworks4Domain: ', url);
-                    commonUtils.createReqObj(dataObjArr, i, url,
+                    commonUtils.createReqObj(dataObjArr, url,
                                              global.HTTP_REQUEST_GET, null,
                                              null, null, appData);
 				}
@@ -1087,9 +1074,10 @@ function updateGlobalASNPutBgpNodes (error, bgpNodes, globalASN, response,
             bgpNodes[i]['bgp-router']['bgp_router_parameters']
                       ['autonomous_system'] = parseInt(globalASN);
             url = '/bgp-router/' + bgpNodeRef['uuid'];
-            commonUtils.createReqObj(dataObjArr, j++, url,
+            commonUtils.createReqObj(dataObjArr, url,
                                      global.HTTP_REQUEST_PUT, bgpNodes[i], null, null,
                                      appData);
+            j++;
         }
     }
 
@@ -1136,7 +1124,7 @@ function updateGlobalASNGetBgpNodes(error, bgpNodeList, globalASN, response,
     for (i = 0; i < bgpNodeCount; i++) {
         bgpNodeRef = bgpNodeList['bgp-routers'][i];
         url = '/bgp-router/' + bgpNodeRef['uuid'];
-        commonUtils.createReqObj(dataObjArr, i, url, global.HTTP_REQUEST_GET,
+        commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_GET,
                                  null, null, null, appData);
     }
 
@@ -1353,7 +1341,7 @@ function deleteBgpVRoutersUpdate (error, vRouterNodeList,
             if (vRouterRef['bgp_router_refs'][j]['uuid'] == bgpId) {
                 vRouterRef['bgp_router_refs'].splice(j, 1);
                 url = '/virtual-router/' + vRouterRef['uuid'];
-                commonUtils.createReqObj(dataObjArr, k++, url,
+                commonUtils.createReqObj(dataObjArr, url,
                                          global.HTTP_REQUEST_PUT,
                                          vRouterNodeList[i], null,
                                          null, appData);
@@ -1396,7 +1384,7 @@ function deleteBgpVRoutersRead (error, bgpConfig, bgpId, response, appData)
 
     for (i = 0; i < vRoutersRefLen; i++) {
         url = '/virtual-router/' + vRoutersRef[i]['uuid'];
-        commonUtils.createReqObj(dataObjArr, i, url, global.HTTP_REQUEST_GET, 
+        commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_GET, 
                                  null, null, null, appData);
 
     }
@@ -1448,7 +1436,7 @@ function deleteBgpPeersUpdate (error, bgpNodeList, bgpConfig, bgpId, response,
                 bgpArray.push({reqUrl: '/bgp-router/' + bgpRef['uuid'],
                                data: bgpNodeList[i]});
                 url = '/bgp-router/' + bgpRef['uuid'];
-                commonUtils.createReqObj(dataObjArr, k++, url,
+                commonUtils.createReqObj(dataObjArr, url,
                                          global.HTTP_REQUEST_PUT, bgpNodeList[i], 
                                          null, null, appData);
                 break;
@@ -1490,7 +1478,7 @@ function deleteBgpPeersRead (error, bgpConfig, bgpId, response, appData)
 
     for (i = 0; i < peerRefLen; i++) {
         url = '/bgp-router/' + peerRef[i]['uuid'];
-        commonUtils.createReqObj(dataObjArr, i, url,
+        commonUtils.createReqObj(dataObjArr, url,
                                  global.HTTP_REQUEST_GET, null, null, null,
                                  appData);
     }
@@ -1523,7 +1511,8 @@ function deleteBGPRouter (request, response, appData)
                          });
 };
 
-function getuCastmCastIndexList (ip, callback) {
+function getVrfIndexList (ip, callback)
+{
     var dataObjArr = [];
     var urlLists = [];
     var lastIndex = 0;
@@ -1560,20 +1549,20 @@ function getvRouterUCastRoutes (req, res) {
                                                       global.SANDESH_COMPUTE_NODE_PORT);
 
     if (null != ucIndex) {
-        commonUtils.createReqObj(dataObjArr, 0, '/Snh_Inet4UcRouteReq?vrf_index=' +
+        commonUtils.createReqObj(dataObjArr, '/Snh_Inet4UcRouteReq?vrf_index=' +
                                  ucIndex);
         sendvRouterRoutes(req, res, dataObjArr, vRouterRestAPI);
         return;
     }
     /* First get the ucindex from VRF */
-    getuCastmCastIndexList(ip, function(results) {
+    getVrfIndexList(ip, function(results) {
         if (null == results) {
             commonUtils.handleJSONResponse(null, res, []);
             return;
         }
         var vrfListLen = results.length;
         for (var i = 0; i < vrfListLen; i++) {
-            commonUtils.createReqObj(dataObjArr, index++, 
+            commonUtils.createReqObj(dataObjArr,
                                      '/Snh_Inet4UcRouteReq?vrf_index=' +
                                      results[i]['ucindex']);
         }
@@ -1585,6 +1574,46 @@ function getvRouterUCastRoutes (req, res) {
                 commonUtils.handleJSONResponse(null, res, data);
             } else {
                 commonUtils.handleJSONResponse(null, res, []); 
+            }
+        });
+    });
+}
+
+function getvRouterL2Routes (req, res)
+{
+    var ip = req.param('ip');
+    var vrfIndex = req.param('vrfindex');
+    var index = 0;
+    var dataObjArr = [];
+    var vRouterRestAPI = 
+        commonUtils.getRestAPIServer(ip, global.SANDESH_COMPUTE_NODE_PORT);
+
+    if (null != vrfIndex) {
+        commonUtils.createReqObj(dataObjArr, '/Snh_Layer2RouteReq?x=' +
+                                 vrfIndex);
+        sendvRouterRoutes(req, res, dataObjArr, vRouterRestAPI);
+        return;
+    }
+    /* First get the l2index from VRF List */
+    getVrfIndexList(ip, function(results) {
+        if (null == results) {
+            commonUtils.handleJSONResponse(null, res, []);
+            return;
+        }
+        var vrfListLen = results.length;
+        for (var i = 0; i < vrfListLen; i++) {
+            commonUtils.createReqObj(dataObjArr,
+                                     '/Snh_Layer2RouteReq?x=' +
+                                     results[i]['l2index']);
+        }
+        async.map(dataObjArr,
+                  commonUtils.getServerRespByRestApi(vRouterRestAPI,
+                                                     true),
+                  function(err, data) {
+            if (data) {
+                commonUtils.handleJSONResponse(null, res, data);
+            } else {
+                commonUtils.handleJSONResponse(null, res, []);
             }
         });
     });
@@ -1613,20 +1642,20 @@ function getvRouterMCastRoutes (req, res) {
     var vRouterRestAPI = commonUtils.getRestAPIServer(ip,
                                                       global.SANDESH_COMPUTE_NODE_PORT);
     if (null != vrfIndex) {
-        commonUtils.createReqObj(dataObjArr, 0, '/Snh_Inet4McRouteReq?vrf_index=' +
+        commonUtils.createReqObj(dataObjArr, '/Snh_Inet4McRouteReq?vrf_index=' +
                                  vrfIndex);
         sendvRouterRoutes(req, res, dataObjArr, vRouterRestAPI);
         return;
     }
     /* First get the mcindex from VRF */
-    getuCastmCastIndexList(ip, function(results) { 
+    getVrfIndexList(ip, function(results) { 
         if (null == results) {
             commonUtils.handleJSONResponse(null, res, []);
             return;
         }
         var vrfListLen = results.length;
         for (var i = 0; i < vrfListLen; i++) {
-            commonUtils.createReqObj(dataObjArr, index++,
+            commonUtils.createReqObj(dataObjArr,
                                      '/Snh_Inet4McRouteReq?vrf_index=' +
                                      results[i]['mcindex']);
         }
@@ -1688,6 +1717,152 @@ function getOrchestrationPluginModel (req, res, appData)
     commonUtils.handleJSONResponse(null, res, modelObj);
 }
 
+function getWebConfigValueByName (req, res, appData)
+{
+    var type = req.param('type'),
+        variable = req.param('variable'),
+        configObj = {}, value;
+    if(type != null && variable != null) {
+        value = ((config[type]) && (config[type][variable])) ? config[type][variable] : null;
+        configObj[variable] = value;
+    }
+    commonUtils.handleJSONResponse(null, res, configObj);
+}
+
+function getMatchStrByType (type)
+{
+    switch (type) {
+    case 'network-policy':
+        return 'network_policys';
+    case 'virtual-network':
+        return 'virtual_networks';
+    case 'network-ipam':
+        return 'network-ipams';
+    case 'floating-ip-pool':
+        return 'floating_ip_pool_refs';
+    case 'security-group':
+        return 'security_groups';
+    default:
+        return null;
+    }
+}
+
+function getParentByReqType (type)
+{
+    switch (type) {
+    case 'virtual-DNS-record':
+        return 'virtual-DNS';
+    default:
+        return 'project';
+    }
+}
+
+function isParentProject (type) {
+    switch (type) {
+    case 'virtual-DNS-record':
+        return false;
+    default:
+        return true;
+    }
+}
+function getApiServerDataByPage (req, res, appData)
+{
+    var count = req.query['count'];
+    var lastKey = req.query['lastKey'];
+    var type = req.query['type'];
+    var fqnUUID = req.query['fqnUUID'];
+    var resultJSON = [];
+    var retLastKey = null;
+    var found = false;
+    var dataObjArr = [];
+
+    var matchStr = type + 's';
+    var url = '/' + matchStr;
+    var keyStr = 'uuid';
+
+    if (null == count) {
+        count = -1;
+    } else {
+        count = parseInt(count);
+    }
+    if (null != fqnUUID) {
+        switch (type) {
+        case 'virtual-DNS-record':
+            url = '/' + matchStr + '?parent_type=' + getParentByReqType(type) +
+                '&parent_fq_name_str=' + fqnUUID;
+            break;
+        default:
+            url = '/project/' + fqnUUID;
+            break;
+        }
+    }
+    configApiServer.apiGet(url, appData, function(err, configList) {
+        if (err || (null == configList)) {
+            commonUtils.handleJSONResponse(err, res, resultJSON);
+            return;
+        }
+        if ((null != fqnUUID) && (isParentProject(type))) {
+            configList = configList['project'];
+            matchStr = getMatchStrByType(type);
+            if (null == matchStr) {
+                err = new appErrors.RESTServerError('type not supported');
+                commonUtils.handleJSONResponse(err, res, null);
+                return;
+            }
+        }
+        var configListData = configList[matchStr];
+        if (null == configListData) {
+            commonUtils.handleJSONResponse(err, res, resultJSON);
+            return;
+        }
+        var index = nwMonUtils.getnThIndexByLastKey(lastKey, configListData, keyStr);
+        if (index == -2) {
+            commonUtils.handleJSONResponse(err, res, resultJSON);
+            return;
+        }
+        var cnt = configListData.length;
+        if (cnt == index) {
+            /* We are already at end */
+            commonUtils.handleJSONResponse(err, res, resultJSON);
+            return;
+        }
+        if (-1 == count) {
+            /* Show all the entries */
+            totCnt = cnt;
+        } else {
+            var totCnt = index + 1 + count;
+        }
+        if (totCnt < cnt) {
+            retLastKey = configListData[totCnt - 1][keyStr];
+        }
+        for (var i = index + 1, j = 0; i < totCnt; i++) {
+            if (configListData[i]) {
+                url = '/' + type + '/' + configListData[i][keyStr]
+                commonUtils.createReqObj(dataObjArr, url, null, null, null,
+                                         null, appData);
+                found = true;
+            }
+        }
+        if (false == found) {
+            commonUtils.handleJSONResponse(err, res, resultJSON);
+            return;
+        }
+        async.map(dataObjArr,
+                  commonUtils.getServerResponseByRestApi(configApiServer, true),
+                  function(err, data) {
+            var result = {};
+            result['data'] = data;
+            result['lastKey'] = retLastKey;
+            if (null == retLastKey) {
+                result['more'] = false;
+            } else {
+                result['more'] = true;
+            }
+            commonUtils.handleJSONResponse(err, res, result);
+        });
+    });
+}
+
 exports.updateGlobalASN = updateGlobalASN;
 exports.getGlobalASN    = getGlobalASN;
 exports.deleteBGPRouter = deleteBGPRouter;
@@ -1698,4 +1873,8 @@ exports.getOrchestrationPluginModel = getOrchestrationPluginModel;
 exports.getControlNodeRoutingInstanceList = getControlNodeRoutingInstanceList;
 exports.getBgpPeerList = getBgpPeerList;
 exports.getControlNodeDetailsFromConfig = getControlNodeDetailsFromConfig;
+exports.getApiServerDataByPage = getApiServerDataByPage;
+exports.getvRouterL2Routes = getvRouterL2Routes;
+exports.getWebConfigValueByName = getWebConfigValueByName;
+
 

@@ -32,12 +32,14 @@ redisClient.select(global.QE_DFLT_REDIS_DB, function(error) {
 
 opServer = rest.getAPIServer({apiName:global.label.OPS_API_SERVER, server:config.analytics.server_ip, port:config.analytics.server_port });
 
-if (!module.parent) {
+if (!module.parent) 
+{
     logutils.logger.warn(util.format(messages.warn.invalid_mod_call, module.filename));
     process.exit(1);
 }
 
-function executeQuery(res, options) {
+function executeQuery(res, options) 
+{
     var queryJSON = options.queryJSON,
         async = options.async, asyncHeader = {"Expect":"202-accepted"};
     opServer.authorize(function () {
@@ -60,7 +62,8 @@ function executeQuery(res, options) {
     });
 };
 
-function initPollingConfig(options, fromTime, toTime) {
+function initPollingConfig(options, fromTime, toTime) 
+{
     var timeRange = (toTime - fromTime) / 60000000;
     if (timeRange <= 720) {
         options.pollingInterval = 5000;
@@ -77,7 +80,8 @@ function initPollingConfig(options, fromTime, toTime) {
     }
 };
 
-function fetchQueryResults(res, jsonData, options) {
+function fetchQueryResults(res, jsonData, options) 
+{
     var queryId = options['queryId'], pageSize = options['pageSize'],
         queryJSON = options['queryJSON'], progress;
     opServer.authorize(function () {
@@ -120,19 +124,21 @@ function fetchQueryResults(res, jsonData, options) {
     });
 };
 
-function stopFetchQueryResult(options) {
+function stopFetchQueryResult(options) 
+{
     clearInterval(options['intervalId']);
     options['status'] = 'timeout';
     updateQueryStatus(options);
 };
 
-function updateQueryStatus(options) {
+function updateQueryStatus(options) 
+{
     var queryStatus = {
         startTime:options.startTime, queryId:options.queryId,
         url:options.url, queryJSON:options.queryJSON, progress:options.progress, status:options.status,
         tableName:options.queryJSON['table'], count:options.count, timeTaken:-1, errorMessage:options.errorMessage
     };
-    if (queryStatus.tableName == 'FlowSeriesTable') {
+    if (queryStatus.tableName == 'FlowSeriesTable' || queryStatus.tableName.indexOf('StatTable.') != -1) {
         queryStatus.tg = options.tg;
         queryStatus.tgUnit = options.tgUnit;
     }
@@ -142,13 +148,15 @@ function updateQueryStatus(options) {
     redisClient.hmset(options.queryQueue, options.queryId, JSON.stringify(queryStatus));
 };
 
-function parseQueryTime(queryId) {
+function parseQueryTime(queryId) 
+{
     var splitQueryIds = splitString2Array(queryId, '-'),
         timeStr = splitQueryIds[splitQueryIds.length - 1];
     return parseInt(timeStr);
 };
 
-function processQueryResults(res, queryResults, options) {
+function processQueryResults(res, queryResults, options) 
+{
     var startDate = new Date(), startTime = startDate.getTime(),
         queryId = options.queryId, pageSize = options.pageSize,
         queryJSON = options.queryJSON, endDate = new Date(), table = queryJSON.table,
@@ -173,7 +181,8 @@ function processQueryResults(res, queryResults, options) {
     }
 };
 
-function saveQueryResult2Redis(resultData, total, queryId, pageSize, sort) {
+function saveQueryResult2Redis(resultData, total, queryId, pageSize, sort) 
+{
     var endRow;
     if (sort != null) {
         redisClient.set(queryId + ":sortStatus", JSON.stringify(sort));
@@ -195,7 +204,8 @@ function saveQueryResult2Redis(resultData, total, queryId, pageSize, sort) {
     }
 };
 
-function getPlotFields(selectFields) {
+function getPlotFields(selectFields) 
+{
     var plotFields = [],
         statFields = [
             {field:'sum(bytes)', label:'sum_bytes'},
@@ -211,7 +221,8 @@ function getPlotFields(selectFields) {
     return plotFields;
 };
 
-function saveData4Chart2Redis(queryId, dataJSON, plotFields) {
+function saveData4Chart2Redis(queryId, dataJSON, plotFields) 
+{
     var resultData = {},
         result, i, j, k, flowClassId, flowClassRecord, uniqueFlowClassArray = [], secTime,
         flowClassArray = [];
@@ -240,7 +251,8 @@ function saveData4Chart2Redis(queryId, dataJSON, plotFields) {
     redisClient.set(queryId + ':chartdata', JSON.stringify(resultData));
 };
 
-function getFlowClassRecord(row) {
+function getFlowClassRecord(row) 
+{
     var flowClassFields = global.FLOW_CLASS_FIELDS,
         fieldValue, flowClass = {flow_class_id:row['flow_class_id']};
 
@@ -253,9 +265,10 @@ function getFlowClassRecord(row) {
     return flowClass;
 };
 
-function formatQueryResultJSON(tableName, jsonData) {
+function formatQueryResultJSON(tableName, jsonData) 
+{
     var columnLabels, fieldName, fieldValue, label, resultJSON = [], xml;
-    if (tableName == 'FlowSeriesTable' || tableName == 'FlowRecordTable') {
+    if (tableName == 'FlowSeriesTable') {
         columnLabels = global.FORMAT_TABLE_COLUMNS[tableName];
         jsonData.forEach(function (record) {
             for (fieldName in columnLabels) {
@@ -270,10 +283,11 @@ function formatQueryResultJSON(tableName, jsonData) {
     return jsonData;
 };
 
-function parseSLQuery(reqQuery) {
+function parseSLQuery(reqQuery) 
+{
     var msgQuery, fromTimeUTC, toTimeUTC, where, filters, table, level, category, moduleId, source, messageType, limit;
     table = reqQuery['table'];
-    msgQuery = commonUtils.cloneObj(global.QUERY_JSON[table]);
+    msgQuery = getQueryJSON4Table(table);
     fromTimeUTC = reqQuery['fromTimeUTC'];
     toTimeUTC = reqQuery['toTimeUTC'];
     limit = parseInt(reqQuery['limit']);
@@ -302,12 +316,14 @@ function parseSLQuery(reqQuery) {
     return msgQuery;
 };
 
-function setMicroTimeRange(query, fromTime, toTime) {
+function setMicroTimeRange(query, fromTime, toTime) 
+{
     query.start_time = fromTime * 1000;
     query.end_time = toTime * 1000;
 };
 
-function createSLWhere(msgQuery, moduleId, messageType, source, category) {
+function createSLWhere(msgQuery, moduleId, messageType, source, category) 
+{
     var whereClauseArray = [];
     if (moduleId != null && moduleId != "") {
         whereClauseArray.push(createClause('ModuleId', moduleId, 1));
@@ -324,13 +340,15 @@ function createSLWhere(msgQuery, moduleId, messageType, source, category) {
     msgQuery.where = [whereClauseArray];
 };
 
-function createSLFilter(msgQuery, level) {
+function createSLFilter(msgQuery, level) 
+{
     var filterClauseArray = [];
     filterClauseArray.push(createClause('Level', level, 5));
     msgQuery.filter = msgQuery.filter.concat(filterClauseArray);
 };
 
-function createClause(fieldName, fieldValue, operator) {
+function createClause(fieldName, fieldValue, operator) 
+{
     var whereClause = {};
     if (fieldValue != null) {
         whereClause = {};
@@ -341,7 +359,8 @@ function createClause(fieldName, fieldValue, operator) {
     return whereClause;
 };
 
-function parseOTQuery(reqQuery) {
+function parseOTQuery(reqQuery) 
+{
     var objTraceQuery, fromTimeUTC, toTimeUTC, where, filters, objectType, select, objectId, limit;
     select = reqQuery['select'];
     objectType = reqQuery['objectType'];
@@ -368,18 +387,20 @@ function parseOTQuery(reqQuery) {
     return objTraceQuery;
 };
 
-function createOTQueryJSON(objectType) {
-    var queryJSON = global.QUERY_JSON[objectType];
+function createOTQueryJSON(objectType) 
+{
+    var queryJSON = getQueryJSON4Table(objectType);
     if(queryJSON != null) {
-        return commonUtils.cloneObj(global.QUERY_JSON[objectType]);
+        return getQueryJSON4Table(objectType);
     } else {
-        queryJSON = commonUtils.cloneObj(global.QUERY_JSON["ObjectTableQueryTemplate"]);
+        queryJSON = getQueryJSON4Table('ObjectTableQueryTemplate');
     }
     queryJSON['table'] = objectType;
     return queryJSON;
 }
 
-function parseOTSelect(objTraceQuery, select) {
+function parseOTSelect(objTraceQuery, select) 
+{
     var selectArray = select.split(','),
         selectLength = selectArray.length;
     for (var i = 0; i < selectLength; i++) {
@@ -388,7 +409,8 @@ function parseOTSelect(objTraceQuery, select) {
     objTraceQuery['select_fields'] = objTraceQuery['select_fields'].concat(selectArray);
 };
 
-function parseOTWhere(otQuery, where, objectId) {
+function parseOTWhere(otQuery, where, objectId) 
+{
     parseWhere(otQuery, where);
     var whereClauseArray, whereClauseLength, i;
     if (otQuery.where != null) {
@@ -409,10 +431,11 @@ function parseOTWhere(otQuery, where, objectId) {
     }
 };
 
-function parseFSQuery(reqQuery) {
+function parseFSQuery(reqQuery) 
+{
     var select, where, filters, fromTimeUTC, toTimeUTC, fsQuery, table, tg, tgUnit, direction;
     table = reqQuery['table'];
-    fsQuery = commonUtils.cloneObj(global.QUERY_JSON[table]);
+    fsQuery = getQueryJSON4Table(table);
     fromTimeUTC = reqQuery['fromTimeUTC'];
     toTimeUTC = reqQuery['toTimeUTC'];
     select = reqQuery['select'];
@@ -433,10 +456,31 @@ function parseFSQuery(reqQuery) {
     return fsQuery;
 };
 
-function parseFRQuery(reqQuery) {
+function parseStatsQuery(reqQuery)
+{
+    var select, where, fromTimeUTC, toTimeUTC, statQuery, table, tg, tgUnit;
+    table = reqQuery['table'];
+    statQuery = getQueryJSON4Table(table);
+    fromTimeUTC = reqQuery['fromTimeUTC'];
+    toTimeUTC = reqQuery['toTimeUTC'];
+    select = reqQuery['select'];
+    where = reqQuery['where'];
+    //filters = reqQuery['filters'];
+    tg = reqQuery['tgValue'];
+    tgUnit = reqQuery['tgUnits'];
+    setMicroTimeRange(statQuery, fromTimeUTC, toTimeUTC);
+    if (select != "") {
+        parseSelect(statQuery, select, tg, tgUnit);
+    }
+    parseWhere(statQuery, where);
+    return statQuery;
+};
+
+function parseFRQuery(reqQuery) 
+{
     var select, where, fromTimeUTC, toTimeUTC, frQuery, table, direction;
     table = reqQuery['table'];
-    frQuery = commonUtils.cloneObj(global.QUERY_JSON[table]);
+    frQuery = getQueryJSON4Table(table);
     fromTimeUTC = reqQuery['fromTimeUTC'];
     toTimeUTC = reqQuery['toTimeUTC'];
     select = reqQuery['select'];
@@ -453,16 +497,21 @@ function parseFRQuery(reqQuery) {
     return frQuery;
 };
 
-function parseSelect(query, select, tg, tgUnit) {
+function parseSelect(query, select, tg, tgUnit) 
+{
     var selectArray = splitString2Array(select, ','),
         tgIndex = selectArray.indexOf('time-granularity');
     if (tgIndex > -1) {
+        selectArray[tgIndex] = 'T=' + getTGSecs(tg, tgUnit);
+    } else if(selectArray.indexOf('T=') != -1) {
+        tgIndex = selectArray.indexOf('T=');
         selectArray[tgIndex] = 'T=' + getTGSecs(tg, tgUnit);
     }
     query['select_fields'] = query['select_fields'].concat(selectArray);
 };
 
-function splitString2Array(strValue, delimiter) {
+function splitString2Array(strValue, delimiter) 
+{
     var strArray = strValue.split(delimiter),
         count = strArray.length;
     for (var i = 0; i < count; i++) {
@@ -471,7 +520,8 @@ function splitString2Array(strValue, delimiter) {
     return strArray;
 };
 
-function getTGSecs(tg, tgUnit) {
+function getTGSecs(tg, tgUnit) 
+{
     if (tgUnit == 'secs') {
         return tg;
     } else if (tgUnit == 'mins') {
@@ -483,7 +533,8 @@ function getTGSecs(tg, tgUnit) {
     }
 };
 
-function parseWhere(query, where) {
+function parseWhere(query, where) 
+{
     if (where != null && where.trim() != '') {
         var whereORArray = where.split(' OR '),
             whereORLength = whereORArray.length,
@@ -496,7 +547,8 @@ function parseWhere(query, where) {
     }
 };
 
-function parseLogsFilter(query, filters) {
+function parseLogsFilter(query, filters) 
+{
     var filtersArray, filtersLength, filterClause = [], i, filterObj;
     if (filters != null && filters.trim() != '') {
         filtersArray = filters.split(' AND ');
@@ -510,7 +562,8 @@ function parseLogsFilter(query, filters) {
     }
 };
 
-function getFilterObj(filter) {
+function getFilterObj(filter) 
+{
     var filterObj;
     if (filter.indexOf('!=') != -1) {
         filterObj = parseFilterObj(filter, '!=');
@@ -522,7 +575,8 @@ function getFilterObj(filter) {
     return filterObj;
 };
 
-function parseFilterObj(filter, operator) {
+function parseFilterObj(filter, operator) 
+{
     var filterObj, filterArray;
     filterArray = splitString2Array(filter, operator);
     if (filterArray.length > 1 && filterArray[1] != '') {
@@ -534,7 +588,8 @@ function parseFilterObj(filter, operator) {
     return filterObj
 };
 
-function parseFilter(query, filters) {
+function parseFilter(query, filters) 
+{
     var arrayStart, arrayEnd, sortFieldsStr, sortFieldsArray,
         limitSortOrderStr, limitSortOrderArray, count, sortOrder, limitArray, limit;
     if (filters != null && filters.trim() != '') {
@@ -583,7 +638,8 @@ function parseFilter(query, filters) {
     }
 };
 
-function parseWhereANDClause(whereANDClause) {
+function parseWhereANDClause(whereANDClause) 
+{
     var whereANDArray = whereANDClause.replace('(', '').replace(')', '').split(' AND '),
         whereANDLength = whereANDArray.length, i, whereANDClause, whereANDClauseArray;
     for (i = 0; i < whereANDLength; i += 1) {
@@ -597,7 +653,8 @@ function parseWhereANDClause(whereANDClause) {
     return whereANDArray;
 };
 
-function populateWhereANDClause(whereANDClause, fieldName, fieldValue, operator) {
+function populateWhereANDClause(whereANDClause, fieldName, fieldValue, operator) 
+{
     var validLikeOPRFields = global.VALID_LIKE_OPR_FIELDS,
         validRangeOPRFields = global.VALID_RANGE_OPR_FIELDS,
         splitFieldValues;
@@ -616,7 +673,8 @@ function populateWhereANDClause(whereANDClause, fieldName, fieldValue, operator)
     }
 };
 
-function getOperatorCode(operator) {
+function getOperatorCode(operator) 
+{
     if (operator == '=') {
         return 1;
     } else if (operator == '!=') {
@@ -628,13 +686,36 @@ function getOperatorCode(operator) {
     }
 };
 
-function getJSONClone(json) {
+function getQueryJSON4Table(tableName)
+{
+    var queryJSON;
+    if(tableName == 'MessageTable') {
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Type", "Source", "ModuleId", "Messagetype", "Xmlmessage", "Level", "Category"], "filter": [{"name": "Type", "value": "1", "op": 1}], "sort_fields": ['MessageTS'], "sort": 2};
+    } else if(tableName == 'ObjectTableQueryTemplate') {
+        queryJSON = {"table": '', "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": []};
+    } else if(tableName == 'FlowSeriesTable') {
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ['flow_class_id', 'direction_ing']};
+    } else if(tableName == 'FlowRecordTable') {
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ['vrouter', 'sourcevn', 'sourceip', 'sport', 'destvn', 'destip', 'dport', 'protocol', 'direction_ing']};
+    } else if(tableName.indexOf('Object') != -1) {
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": []};
+    } else if(tableName.indexOf('StatTable.') != -1) {
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": []};
+    } else {
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": []};
+    }
+    return queryJSON;
+};
+
+function getJSONClone(json) 
+{
     var newJSONStr = JSON.stringify(json);
     return JSON.parse(newJSONStr);
 };
 
 // Handle request to run query.
-qeapi.runQuery = function (req, res) {
+function runQuery (req, res) 
+{
     var reqQuery = req.query, queryId = reqQuery['queryId'],
         page = reqQuery['page'], sort = reqQuery['sort'],
         pageSize = parseInt(reqQuery['pageSize']), options;
@@ -656,7 +737,8 @@ qeapi.runQuery = function (req, res) {
     }
 };
 
-function returnCachedQueryResult(res, options, callback) {
+function returnCachedQueryResult(res, options, callback) 
+{
     var queryId = options.queryId, sort = options.sort,
         statusJSON;
     if (sort != null) {
@@ -678,7 +760,8 @@ function returnCachedQueryResult(res, options, callback) {
     }
 };
 
-function handleQueryResponse(res, options) {
+function handleQueryResponse(res, options) 
+{
     var toSort = options.toSort, queryId = options.queryId,
         page = options.page, pageSize = options.pageSize,
         sort = options.sort;
@@ -704,9 +787,11 @@ function handleQueryResponse(res, options) {
     });
 };
 
-function sortJSON(resultArray, sort, callback) {
+function sortJSON(resultArray, sort, callback) 
+{
     var sortField = sort[0]['field'],
         sortDir = sort[0]['dir'] == 'desc' ? 0 : 1;
+    sortField = sortField.replace(/([\"\[\]])/g, '');
     resultArray.sort(function (a, b) {
         var a1st = -1;
         var b1st = 1;
@@ -722,7 +807,8 @@ function sortJSON(resultArray, sort, callback) {
     callback();
 };
 
-function runNewQuery(req, res, queryId) {
+function runNewQuery(req, res, queryId) 
+{
     var reqQuery = req.query, tableName = reqQuery['table'],
         queryId = reqQuery['queryId'], pageSize = parseInt(reqQuery['pageSize']),
         async = (reqQuery['async'] != null && reqQuery['async'] == "true") ? true : false,
@@ -742,30 +828,39 @@ function runNewQuery(req, res, queryId) {
     } else if (tableName == 'FlowRecordTable') {
         queryJSON = parseFRQuery(reqQuery);
         options.queryQueue = 'fqq';
+    } else if (tableName.indexOf('StatTable.') != -1) {
+        queryJSON = parseStatsQuery(reqQuery);
+        options.tg = reqQuery['tgValue'];
+        options.tgUnit = reqQuery['tgUnits'];
+        options.queryQueue = 'sqq';
     }
     options.queryJSON = queryJSON;
     executeQuery(res, options);
 };
 
 // Handle request to get list of all tables.
-qeapi.getTables = function (req, res) {
+function getTables (req, res) 
+{
     var opsUrl = global.GET_TABLES_URL;
     sendCachedJSON4Url(opsUrl, res, 3600);
 };
 
 // Handle request to get valid values of a table column.
-qeapi.getColumnValues = function (req, res) {
+function getColumnValues (req, res) 
+{
     var opsUrl = global.GET_TABLE_INFO_URL + '/' + req.param('tableName') + '/column-values/' + req.param('column');
     sendCachedJSON4Url(opsUrl, res, 3600);
 };
 
 // Handle request to get table schema.
-qeapi.getTableSchema = function (req, res) {
+function getTableSchema (req, res) 
+{
     var opsUrl = global.GET_TABLE_INFO_URL + '/' + req.param('tableName') + '/schema';
     sendCachedJSON4Url(opsUrl, res, 3600);
 };
 
-function sendCachedJSON4Url(opsUrl, res, expireTime) {
+function sendCachedJSON4Url(opsUrl, res, expireTime) 
+{
     redisClient.get(opsUrl, function(error, cachedJSONStr) {
         if (error || cachedJSONStr == null) {
             opServer.authorize(function () {
@@ -784,7 +879,8 @@ function sendCachedJSON4Url(opsUrl, res, expireTime) {
 };
 
 // Handle request to get object ids.
-qeapi.getObjectIds = function (req, res, appData) {
+function getObjectIds (req, res, appData) 
+{
     var objectTable = req.param('objectType'),
         objectQuery, startTime, endTime, queryOptions;
 
@@ -798,7 +894,8 @@ qeapi.getObjectIds = function (req, res, appData) {
 };
 
 // Handle request to get query queue.
-qeapi.getQueryQueue = function (req, res) {
+function getQueryQueue (req, res) 
+{
     var queryQueue = req.param('queryQueue');
     redisClient.hvals(queryQueue, function (error, results) {
         if (error) {
@@ -814,7 +911,8 @@ qeapi.getQueryQueue = function (req, res) {
 };
 
 // Handle request to get unique flow classes for a flow-series query.
-qeapi.getFlowClasses = function (req, res) {
+function getFlowClasses (req, res) 
+{
     var queryId = req.param('queryId');
     redisClient.get(queryId + ':flowclasses', function (error, results) {
         if (error) {
@@ -827,7 +925,8 @@ qeapi.getFlowClasses = function (req, res) {
 };
 
 // Handle request to get chart data for a flow-series query.
-qeapi.getChartData = function (req, res) {
+function getChartData (req, res) 
+{
     var queryId = req.param('queryId');
     redisClient.get(queryId + ':chartdata', function (error, results) {
         if (error) {
@@ -840,11 +939,11 @@ qeapi.getChartData = function (req, res) {
 };
 
 // Handle request to delete redis cache for given query ids.
-qeapi.deleteQueryCache4Ids = function (req, res) {
+function deleteQueryCache4Ids (req, res) 
+{
     var queryIds = req.body.queryIds;
     var queryQueue = req.body.queryQueue;
     for(var i = 0; i < queryIds.length; i++) {
-        console.log(" ## queryIds[i]:: " + queryIds[i]);
         redisClient.hdel(queryQueue, queryIds[i]);
         redisClient.keys(queryIds[i] + "*", function (error, keysArray) {
             if(!error && keysArray.length > 0) {
@@ -862,7 +961,8 @@ qeapi.deleteQueryCache4Ids = function (req, res) {
 };
 
 // Handle request to delete redis cache for QE.
-qeapi.deleteQueryCache4Queue = function (req, res) {
+function deleteQueryCache4Queue (req, res) 
+{
     var queryQueue = req.body.queryQueue;
     redisClient.hkeys(queryQueue, function (error, results) {
         if(!error) {
@@ -882,7 +982,8 @@ qeapi.deleteQueryCache4Queue = function (req, res) {
 };
 
 // Handle request to delete redis cache for QE.
-qeapi.flushQueryCache = function (req, res) {
+function flushQueryCache (req, res) 
+{
     redisClient.flushdb(function (error) {
         if (error) {
             logutils.logger.error("Redis QE FlushDB Error: " + error);
@@ -894,10 +995,24 @@ qeapi.flushQueryCache = function (req, res) {
     });
 };
 
-function isEmptyObject(obj) {
+function isEmptyObject(obj) 
+{
     for (var prop in obj) {
         if (obj.hasOwnProperty(prop))
             return false;
     }
     return true;
 };
+
+exports.runQuery = runQuery;
+exports.getTables = getTables;
+exports.getColumnValues = getColumnValues;
+exports.getTableSchema = getTableSchema;
+exports.getObjectIds = getObjectIds;
+exports.getQueryQueue = getQueryQueue;
+exports.getFlowClasses = getFlowClasses;
+exports.getChartData = getChartData;
+exports.deleteQueryCache4Ids = deleteQueryCache4Ids;
+exports.deleteQueryCache4Queue = deleteQueryCache4Queue;
+exports.flushQueryCache = flushQueryCache;
+

@@ -18,7 +18,8 @@ var quantumServerPort = ((config.networkManager) && (config.networkManager.port)
 quantumAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
                                       server:quantumServerIP,
                                       port:quantumServerPort});
-getTenantIdByReqCookie = function(req) {
+function getTenantIdByReqCookie (req)
+{
     if (req.cookies && req.cookies.project) {
         return req.cookies.project;
     } else {
@@ -35,8 +36,9 @@ getTenantIdByReqCookie = function(req) {
 
 /* Function: doQuantumOpCb
  */
-doQuantumOpCb = function(reqUrl, tenantId, req, quantumCallback, stopRetry,
-                       callback) {
+function doQuantumOpCb (reqUrl, tenantId, req, quantumCallback, stopRetry,
+                        callback)
+{
     var forceAuth = stopRetry;
 
     authApi.getTokenObj(req, tenantId, forceAuth, function(err, tokenObj) {

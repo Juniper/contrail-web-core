@@ -21,165 +21,8 @@ var rest = require('./rest.api'),
 
 adminApiHelper = module.exports;
 
-adminApiHelper.parseBGPNeighborResponse = function (bgpNeighborResp) {
-    var results = [];
-    try {
-        bgpNeighborResp = bgpNeighborResp['BgpNeighborListResp'];
-        var nbrRsp = bgpNeighborResp['neighbors'][0]['list'][0]['BgpNeighborResp'];
-        var count = nbrRsp.length;
-        for (var i = 0; i < count; i++) {
-            results[i] = {};
-            try {
-                results[i]['active_holdtime'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['active_holdtime'][0]['_']);
-            } catch(e) {
-                results[i]['active_holdtime'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['encoding'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['encoding'][0]['_']);
-            } catch(e) {
-                results[i]['encoding'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['flap_count'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['flap_count'][0]['_']);
-            } catch(e) {
-                results[i]['flap_count'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['hold_time'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['hold_time'][0]['_']);
-            } catch(e) {
-                results[i]['hold_time'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['last_error'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['last_error'][0]['_']);
-            } catch(e) {
-                results[i]['last_error'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['last_event'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['last_event'][0]['_']);
-            } catch(e) {
-                results[i]['last_event'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['last_state'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['last_state'][0]['_']);
-            } catch(e) {
-                results[i]['last_state'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['local_address'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['local_address'][0]['_']);
-            } catch(e) {
-                results[i]['local_address'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['local_asn'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['local_asn'][0]['_']);
-            } catch(e) {
-                results[i]['local_asn'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['local_id'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['local_id'][0]['_']);
-            } catch(e) {
-                results[i]['local_id'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['peer'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['peer'][0]['_']);
-            } catch(e) {
-                results[i]['peer'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['peer_address'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['peer_address'][0]['_']);
-            } catch(e) {
-                results[i]['peer_address'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['peer_asn'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['peer_asn'][0]['_']);
-            } catch(e) {
-                results[i]['peer_asn'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['peer_id'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['peer_id'][0]['_']);
-            } catch(e) {
-                results[i]['peer_id'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['peer_type'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['peer_type'][0]['_']);
-            } catch(e) {
-                results[i]['peer_type'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['preference'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['preference'][0]['_']);
-            } catch(e) {
-                results[i]['preference'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['send_state'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['send_state'][0]['_']);
-            } catch(e) {
-                results[i]['send_state'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['state'] =
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['state'][0]['_']);
-            } catch(e) {
-                results[i]['state'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                var raw_peer_state =
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['state'][0]['_'])
-                    + ', ' +
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['send_state'][0]['_']);
-
-                if (!((commonUtils.getSafeDataToJSONify(nbrRsp[i]['state'][0]['_']) == 
-                    'Established') && 
-                    (results[i]['send_state'] == 'in sync'))) {
-                    raw_peer_state += ', Last Error:' +
-                        commonUtils.getSafeDataToJSONify(nbrRsp[i]['last_error'][0]['_']);
-                }
-                results[i]['introspect_state'] = raw_peer_state; 
-            } catch(e) {
-                results[i]['introspect_state'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                rxProtoStats = nbrRsp[i]['rx_proto_stats'][0]['BgpPeerProtoStats'][0];
-                results[i]['messsages_in'] = 
-                    commonUtils.getSafeDataToJSONify(rxProtoStats['total'][0]['_']);
-            } catch(e) {
-                results[i]['messsages_in'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                txProtoStats = nbrRsp[i]['tx_proto_stats'][0]['BgpPeerProtoStats'][0];
-                results[i]['messsages_out'] = txProtoStats['total'][0]['_'];
-            } catch(e) {
-                results[i]['messsages_out'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                results[i]['last_flap'] = 
-                    commonUtils.getSafeDataToJSONify(nbrRsp[i]['flap_time'][0]['_'])
-            } catch(e) {
-                results[i]['last_flap'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-        }
-        return results;
-    } catch (e) {
-        return [];
-    }
-}
-
-adminApiHelper.parseBGPRoutingInstanceResponse = function(bgpRoutInstRes) {
+function parseBGPRoutingInstanceResponse (bgpRoutInstRes)
+{
     var results = [];
 
     try {
@@ -275,16 +118,6 @@ adminApiHelper.parseBGPRoutingInstanceResponse = function(bgpRoutInstRes) {
     return results;
 }
 
-adminApiHelper.parseBGPRoutingTableResponse = function(bgpRouteTable) {
-    try {
-        var routeTable =
-            bgpRouteTable['ShowRouteResp']['tables'][0]['list'][0]['ShowRouteTable'];
-        return routeTable;
-    } catch (e) {
-        return [];
-    }
-}
-
 function processControlNodeRoutingInstanceList (resultJSON, resultArr)
 {
     var len = 0, idx = 0;
@@ -294,7 +127,7 @@ function processControlNodeRoutingInstanceList (resultJSON, resultArr)
     var peerSrcCount = 0;
     var srcObj = {};
 
-    var routInst = adminApiHelper.parseBGPRoutingInstanceResponse(resultArr[0]);
+    var routInst = parseBGPRoutingInstanceResponse(resultArr[0]);
     if (routInst && routInst.length) {
         len = routInst.length;
         for (i = 0; i < len; i++) {
@@ -303,290 +136,8 @@ function processControlNodeRoutingInstanceList (resultJSON, resultArr)
     }
 }
 
-parseBGPRouteList = function(resultJSON, routeList, i) {
-    try {
-        resultJSON[i]['active_route_count'] = 
-            commonUtils.getSafeDataToJSONify(routeList['active_route_count'][0]['_']);
-    } catch(e) {
-        resultJSON[i]['active_route_count'] = global.RESP_DATA_NOT_AVAILABLE;
-    }
-    try {
-        resultJSON[i]['destination_count'] = 
-            commonUtils.getSafeDataToJSONify(routeList['destination_count'][0]['_']);
-    } catch (e) {
-        resultJSON[i]['destination_count'] = global.RESP_DATA_NOT_AVAILABLE;
-    }
-    try {
-        resultJSON[i]['hidden_route_count'] = 
-            commonUtils.getSafeDataToJSONify(routeList['hidden_route_count'][0]['_']);
-    } catch(e) {
-        resultJSON[i]['hidden_route_count'] = global.RESP_DATA_NOT_AVAILABLE;
-    }
-    try {
-        resultJSON[i]['holddown_route_count'] = 
-            commonUtils.getSafeDataToJSONify(routeList['holddown_route_count'][0]['_']);
-    } catch(e) {
-        resultJSON[i]['holddown_route_count'] = global.RESP_DATA_NOT_AVAILABLE;
-    }
-    try {
-        resultJSON[i]['routes_count'] = 
-            commonUtils.getSafeDataToJSONify(routeList['routes_count'][0]['_']);
-    } catch (e) {
-        resultJSON[i]['routes_count'] = global.RESP_DATA_NOT_AVAILABLE;
-    }
-    try {
-        resultJSON[i]['routing_instance'] = 
-            commonUtils.getSafeDataToJSONify(routeList['routing_instance'][0]['_']);
-    } catch (e) {
-        resultJSON[i]['routing_instance'] = global.RESP_DATA_NOT_AVAILABLE;
-    }
-    try {
-        resultJSON[i]['routing_table_name'] = 
-            commonUtils.getSafeDataToJSONify(routeList['routing_table_name'][0]['_']);
-    } catch (e) {
-        resultJSON[i]['routing_table_name'] = global.RESP_DATA_NOT_AVAILABLE;
-    }
-    
-    resultJSON[i]['routes'] = [];
-    try {
-        var routes = routeList['routes'][0]['list'][0]['ShowRoute'];
-        var routesLen = routes.length;
-    } catch(e) {
-        resultJSON[i]['routes'] = [];
-        return;
-    } 
-    for (var j = 0; j < routesLen; j++) {
-        try {
-            resultJSON[i]['routes'][j] = {};
-                resultJSON[i]['routes'][j]['prefix'] = 
-                    commonUtils.getSafeDataToJSONify(routes[j]['prefix'][0]['_']);
-        } catch (e) {
-            resultJSON[i]['routes'][j]['prefix'] = global.RESP_DATA_NOT_AVAILABLE;
-        }
-        
-        resultJSON[i]['routes'][j]['paths'] = [];
-        var paths = routes[j]['paths'][0]['list'][0]['ShowRoutePath'];
-        var pathsLen = paths.length;
-        for (var k = 0; k < pathsLen; k++) {
-            resultJSON[i]['routes'][j]['paths'][k] = {};
-            try {
-                resultJSON[i]['routes'][j]['paths'][k]['origin_vn'] =
-                    commonUtils.getSafeDataToJSONify(paths[k]['origin_vn'][0]['_']);
-            } catch(e) {
-                resultJSON[i]['routes'][j]['paths'][k]['origin_vn'] =
-                    global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                var sgElem = jsonPath(paths[k]['communities'], "$..element");
-                if (sgElem.length > 0) {
-                    resultJSON[i]['routes'][j]['paths'][k]['sg'] = 
-                        commonUtils.getSafeDataToJSONify(sgElem[0]);
-                } else {
-                    resultJSON[i]['routes'][j]['paths'][k]['sg'] = 
-                        global.RESP_DATA_NOT_AVAILABLE;
-                }
-            } catch(e) {
-                resultJSON[i]['routes'][j]['paths'][k]['sg'] =
-                    global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try {
-                var tunnEnc = jsonPath(paths[k]['tunnel_encap'], "$..element");
-                if (tunnEnc.length > 0) {
-                    resultJSON[i]['routes'][j]['paths'][k]['tunnel_encap'] =
-                        commonUtils.getSafeDataToJSONify(tunnEnc[0]);
-                } else {
-                    resultJSON[i]['routes'][j]['paths'][k]['tunnel_encap'] =
-                        global.RESP_DATA_NOT_AVAILABLE;
-                }
-            } catch(e) {
-                resultJSON[i]['routes'][j]['paths'][k]['tunnel_encap'] =
-                    global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try { 
-                resultJSON[i]['routes'][j]['paths'][k]['as_path'] = 
-                   commonUtils.getSafeDataToJSONify(paths[k]['as_path'][0]['_']);
-            } catch(e) {
-                resultJSON[i]['routes'][j]['paths'][k]['as_path'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-            try { 
-                resultJSON[i]['routes'][j]['paths'][k]['known_since'] = 
-                    commonUtils.getSafeDataToJSONify(paths[k]['known_since'][0]['_']);
-            } catch(e) {
-                resultJSON[i]['routes'][j]['paths'][k]['known_since'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-    
-            try { 
-                resultJSON[i]['routes'][j]['paths'][k]['label'] = 
-                    commonUtils.getSafeDataToJSONify(paths[k]['label'][0]['_']);
-            } catch(e) {
-                resultJSON[i]['routes'][j]['paths'][k]['label'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-    
-            try { 
-                resultJSON[i]['routes'][j]['paths'][k]['local_asn'] = 
-                    commonUtils.getSafeDataToJSONify(paths[k]['local_as'][0]['_']);
-            } catch(e) {
-                resultJSON[i]['routes'][j]['paths'][k]['local_asn'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-    
-            try { 
-                 resultJSON[i]['routes'][j]['paths'][k]['local_preference'] = 
-                     commonUtils.getSafeDataToJSONify(paths[k]['local_preference'][0]['_']);
-            } catch(e) {
-                 resultJSON[i]['routes'][j]['paths'][k]['local_preference'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-    
-            try { 
-                 resultJSON[i]['routes'][j]['paths'][k]['metric'] = 
-                     commonUtils.getSafeDataToJSONify(paths[k]['metric'][0]['_']);
-            } catch(e) {
-                 resultJSON[i]['routes'][j]['paths'][k]['metric'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-    
-             try { 
-                 resultJSON[i]['routes'][j]['paths'][k]['next_hop'] = 
-                     commonUtils.getSafeDataToJSONify(paths[k]['next_hop'][0]['_']);
-             } catch(e) {
-                 resultJSON[i]['routes'][j]['paths'][k]['next_hop'] = global.RESP_DATA_NOT_AVAILABLE;
-             }
-    
-            try { 
-                 resultJSON[i]['routes'][j]['paths'][k]['peer_asn'] = 
-                     commonUtils.getSafeDataToJSONify(paths[k]['peer_as'][0]['_']);
-            } catch(e) {
-                 resultJSON[i]['routes'][j]['paths'][k]['peer_asn'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-    
-            try { 
-                 resultJSON[i]['routes'][j]['paths'][k]['peer_router_id'] = 
-                     commonUtils.getSafeDataToJSONify(paths[k]['peer_router_id'][0]['_']);
-            } catch(e) {
-                 resultJSON[i]['routes'][j]['paths'][k]['peer_router_id'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-    
-            try { 
-                 resultJSON[i]['routes'][j]['paths'][k]['preference'] = 
-                     commonUtils.getSafeDataToJSONify(paths[k]['preference'][0]['_']);
-            } catch(e) {
-                 resultJSON[i]['routes'][j]['paths'][k]['preference'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-    
-            try { 
-                 resultJSON[i]['routes'][j]['paths'][k]['protocol'] = 
-                     commonUtils.getSafeDataToJSONify(paths[k]['protocol'][0]['_']);
-            } catch(e) {
-                 resultJSON[i]['routes'][j]['paths'][k]['protocol'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-    
-            try { 
-                 resultJSON[i]['routes'][j]['paths'][k]['source'] = 
-                     commonUtils.getSafeDataToJSONify(paths[k]['source'][0]['_']);
-            } catch(e) {
-                 resultJSON[i]['routes'][j]['paths'][k]['source'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-        }
-    }
-}
-
-adminApiHelper.processControlNodesRoutes = function(resultJSON, results) {
-    try {
-        var routeList = results['ShowRouteResp']['tables'][0]['list'][0]['ShowRouteTable'];
-        if (null == routeList) {
-            resultJSON = [];
-            return;
-        }
-    } catch (e) {
-        resultJSON = [];
-        return;
-    }
-    var routeListLen = routeList.length;
-    
-    for (var i = 0; i < routeListLen; i++) {
-        resultJSON[i] = {};
-        try {
-            parseBGPRouteList(resultJSON, routeList[i], i);        
-        } catch(e) {
-            console.log("In adminApiHelper.processControlNodesRoutes(), error:", e);
-            resultJSON = [];
-        }
-    }   
-}
-
-adminApiHelper.isfqFromProjectNotVisibleToUI = function(fqName) {
-    var fqArr = fqName.split(':');
-    if ((fqArr) && (fqArr[1]) && ((fqArr[1] == 'default-project') || 
-        (fqArr[1] == 'service') || (fqArr[1] == 'invisible_to_admin'))) {        
-        return true;
-    }
-    return false;
-}
-
-adminApiHelper.processControlNodeVN = function(resultJSON, resultArr) {
-    resultArr = jsonPath(resultArr[0], "$..VnSandeshData");
-    var lastIndex = 0;
-    try {
-        var vnListCnt = resultArr.length;
-        for (var i = 0; i < vnListCnt; i++) {
-            lastIndex = parsevRouterVnLists(resultArr[i], resultJSON, lastIndex);
-        }
-    } catch(e) {
-        logutils.logger.debug("In processControlNodeVN(): JSON Parse error: " + e);
-    }
-}
-
-parsevRouterVnLists = function(vnList, resultJSON, lastIndex) {
-    var vnName = null;
-    var j = 0;
-    try {
-	    var vnListLen = vnList.length;
-	    for (var i = 0; i < vnListLen; i++) {
-            j = i + lastIndex;
-	        try {
-               resultJSON[j] = {};
-               resultJSON[j]['name'] = 
-                   commonUtils.getSafeDataToJSONify(vnList[i]['name'][0]['_']);
-
-	        } catch(e) {
-	           resultJSON[j]['name'] = global.RESP_DATA_NOT_AVAILABLE;
-	        }
-            try {
-               resultJSON[j]['uuid'] = 
-                   commonUtils.getSafeDataToJSONify(vnList[i]['uuid'][0]['_']);
-            } catch(e) {
-               resultJSON[j]['uuid'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-	        try {
-	           resultJSON[j]['acl_uuid'] = 
-	               commonUtils.getSafeDataToJSONify(vnList[i]['acl_uuid'][0]['_']);
-	        } catch(e) {
-	            resultJSON[j]['acl_uuid'] = global.RESP_DATA_NOT_AVAILABLE;
-	        }
-            try {
-               resultJSON[j]['mirror_acl_uuid'] = 
-                   commonUtils.getSafeDataToJSONify(vnList[i]['mirror_acl_uuid'][0]['_']);
-            } catch(e) {
-                resultJSON[j]['mirror_acl_uuid'] = global.RESP_DATA_NOT_AVAILABLE;
-            }
-	        try {
-	           resultJSON[j]['vrf'] = 
-	               commonUtils.getSafeDataToJSONify(vnList[i]['vrf_name'][0]['_']);
-	        } catch(e) {
-	           resultJSON[j]['vrf'] = global.RESP_DATA_NOT_AVAILABLE;
-	        }
-	        var pos = (resultJSON[j]['vrf']).lastIndexOf(':');
-	        if (pos != -1) {
-	           resultJSON[j]['vrf'] = (resultJSON[j]['vrf']).substr(0, pos);
-	        }
-	        j++;
-	    }
-    } catch(e) {
-        logutils.logger.debug("In processControlNodeVN(): JSON Parse error:" + e);
-        resultJSON = [];
-    }
-    return j;
-}
-
-processvRouterList = function(resultJSON, resultArr) {
+function processvRouterList (resultJSON, resultArr)
+{
     var ip;
     var len = resultArr.length;
     for (var i = 0; i < len; i++) {
@@ -616,7 +167,8 @@ processvRouterList = function(resultJSON, resultArr) {
  * @param {Object} JSON containing BGP Router references
  * @return {Array} Names of BGP Router references
  */
-adminApiHelper.getBGPRefNames = function(routerRefs) {
+function getBGPRefNames (routerRefs)
+{
     var peers = [],
         i, peerList;
     if (routerRefs) {
@@ -637,7 +189,8 @@ adminApiHelper.getBGPRefNames = function(routerRefs) {
  * @param {Object} JSON to contain an array of Virtual routers
  * @param {Array} Array of JSONs of Virtual Routers
  */
-adminApiHelper.processVRJSON = function(vRouterJSON, vrJSONArray) {
+function processVRJSON (vRouterJSON, vrJSONArray)
+{
     var i, vrJSON = {}, ip;
     var vmRefs = [];
     for (i = 0; i < vrJSONArray.length; i += 1) {
@@ -652,7 +205,7 @@ adminApiHelper.processVRJSON = function(vRouterJSON, vrJSONArray) {
             } 
             try {           
                 vRouterJSON["virtual-routers"][i]["bgp_refs"] = 
-                    adminApiHelper.getBGPRefNames(vrJSON["virtual-router"]["bgp_router_refs"]);
+                    getBGPRefNames(vrJSON["virtual-router"]["bgp_router_refs"]);
             } catch(e) {
                 vRouterJSON["virtual-routers"][i]["bgp_refs"] = [];
             }
@@ -668,7 +221,8 @@ adminApiHelper.processVRJSON = function(vRouterJSON, vrJSONArray) {
     }
 }
 
-getvRouterVNCount = function(vRouterJSON, ipIndexMap, results) {
+function getvRouterVNCount (vRouterJSON, ipIndexMap, results)
+{
     var vnData = [];
     var vnCount = 0;
     var skipCount = 0;
@@ -692,7 +246,8 @@ getvRouterVNCount = function(vRouterJSON, ipIndexMap, results) {
     }
 }
 
-getvRouterItfCount = function(vRouterJSON, ipIndexMap, results) {
+function getvRouterItfCount (vRouterJSON, ipIndexMap, results)
+{
     var itfData = [];
     var itfCount = 0;
     var ifDataCount = 0;
@@ -719,7 +274,8 @@ getvRouterItfCount = function(vRouterJSON, ipIndexMap, results) {
     }
 }
 
-getvRouterVMCount = function(vRouterJSON, ipIndexMap, results) {
+function getvRouterVMCount (vRouterJSON, ipIndexMap, results)
+{
     var vmData = [];
     var vmCount = 0;
     try {
@@ -745,7 +301,8 @@ getvRouterVMCount = function(vRouterJSON, ipIndexMap, results) {
     }
 }
 
-updatevRoutersCpuMemoryDataAndSendResp = function(res, vRouterJSON, cpuMemData) {
+function updatevRoutersCpuMemoryDataAndSendResp (res, vRouterJSON, cpuMemData)
+{
     try {
 	    var cnt = vRouterJSON.length;
 	    for (var i = 0; i < cnt; i++) {
@@ -768,15 +325,17 @@ updatevRoutersCpuMemoryDataAndSendResp = function(res, vRouterJSON, cpuMemData) 
     commonUtils.handleJSONResponse(null, res, vRouterJSON);
 }
 
-getvRoutersCpuMemoryStats = function(vRouterJSON, ipList, res) {
+function getvRoutersCpuMemoryStats (vRouterJSON, ipList, res)
+{
     var resultJSON = [];
-    async.map(ipList, adminApiHelper.getComputeNodeCpuMemJSON, function(err, cpuMemData) {
+    async.map(ipList, getComputeNodeCpuMemJSON, function(err, cpuMemData) {
         updatevRoutersCpuMemoryDataAndSendResp(res, vRouterJSON, cpuMemData);
     });
 }
 
-getvRouterVnItfList = function(res, vnUrlLists, itfUrlLists, vmUrlLists,
-                               ipIndexMap, vRouterJSON, ipList) {
+function getvRouterVnItfList (res, vnUrlLists, itfUrlLists, vmUrlLists,
+                              ipIndexMap, vRouterJSON, ipList)
+{
     async.map(vnUrlLists, 
               commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, false), 
               function(err, results) {
@@ -795,8 +354,8 @@ getvRouterVnItfList = function(res, vnUrlLists, itfUrlLists, vmUrlLists,
     });         
 }
 
-adminApiHelper.processAndSendVRSummaryResponse = function(vRouterJSON, 
-                                                          res) {
+function processAndSendVRSummaryResponse (vRouterJSON, res)
+{
     /* Now for all the vRouters IP, query sandesh to get the count 
        of interfaces and VN 
      */
@@ -840,10 +399,11 @@ adminApiHelper.processAndSendVRSummaryResponse = function(vRouterJSON,
                         vRouterJSON, ipList);
 }
 
-sendvRouterResponse = function(res, type, resultJSON, resultArr, dataObj) {
+function sendvRouterResponse (res, type, resultJSON, resultArr, dataObj)
+{
     if (type === global.GET_VIRTUAL_ROUTERS) {
-        adminApiHelper.processVRJSON(resultJSON, resultArr);
-        adminApiHelper.processAndSendVRSummaryResponse(resultJSON, res);
+        processVRJSON(resultJSON, resultArr);
+        processAndSendVRSummaryResponse(resultJSON, res);
     } else if (type == global.GET_VROUTERS_LIST) {
         resultJSON = [];
         processvRouterList(resultJSON, resultArr);
@@ -855,7 +415,8 @@ sendvRouterResponse = function(res, type, resultJSON, resultArr, dataObj) {
     }
 }
 
-sendvRouterErrorResponse = function(res, err, type, dataObj) {
+function sendvRouterErrorResponse (res, err, type, dataObj)
+{
     if (type === global.GET_VIRTUAL_ROUTERS) {
         commonUtils.handleJSONResponse(err, res, null);
     } else if (type == global.GET_VROUTERS_LIST) {
@@ -867,7 +428,8 @@ sendvRouterErrorResponse = function(res, err, type, dataObj) {
     }
 }
 
-adminApiHelper.processVirtualRouters = function(req, res, type, dataObj, appData) {
+function processVirtualRouters (req, res, type, dataObj, appData)
+{
     var url = '/virtual-routers';
     var resultJSON = [];
 
@@ -887,7 +449,7 @@ adminApiHelper.processVirtualRouters = function(req, res, type, dataObj, appData
                         url = '/virtual-router/' + uuid;
                         logutils.logger.debug("getVirtualRouters: " + url);
                         vrURLs[i] = [url];
-                        commonUtils.createReqObj(dataObjArr, i, [url],
+                        commonUtils.createReqObj(dataObjArr, [url],
                                                  global.HTTP_REQUEST_GET, null,
                                                  null, null, appData);
                         delete vrJSON["virtual-routers"][i]["fq_name"];
@@ -912,7 +474,8 @@ adminApiHelper.processVirtualRouters = function(req, res, type, dataObj, appData
     });
 };
 
-adminApiHelper.parseControlNodeCPUMemInfo = function(sandeshResp) {
+function parseControlNodeCPUMemInfo (sandeshResp)
+{
     var resultJSON = {};
     resultJSON['cpuLoadInfo'] = {};
     resultJSON['cpuLoadInfo']['cpuLoad'] = {};
@@ -968,7 +531,8 @@ adminApiHelper.parseControlNodeCPUMemInfo = function(sandeshResp) {
     return resultJSON;
 }
 
-adminApiHelper.processSandeshCollectorInfo = function(sandeshResponse) {
+function processSandeshCollectorInfo (sandeshResponse)
+{
     var resultJSON = {};
     try {
         var collectorInfo = sandeshResponse['CollectorInfoResponse'];
@@ -995,85 +559,6 @@ adminApiHelper.processSandeshCollectorInfo = function(sandeshResponse) {
         resultJSON['status'] = global.RESP_DATA_NOT_AVAILABLE;
     }
     return resultJSON;
-}
-
-adminApiHelper.processSandeshConfigInfo = function(results) {
-    var resultJSON = {};
-    resultJSON['configMessagesIn'] = 0;
-    resultJSON['configMessagesOut'] = 0;
-    try {
-        var ifMapStat = results['IFMapStatsResp']['stats_info'][0]['IFMapStatsInfo'][0];
-        resultJSON['configMessagesIn'] = ifMapStat['rx_msgs'][0]['_'];
-        resultJSON['configMessagesOut'] = ifMapStat['tx_msgs'][0]['_'];
-        var url = ifMapStat['server_info'][0]['IFMapServerInfo'][0]['url'][0]['_'];
-        var pos = url.indexOf(':8443');
-        var tempUrl = url.substr(0, pos);
-        pos = tempUrl.indexOf('https://');
-        resultJSON['configNode'] = tempUrl.slice(pos + 8);
-    } catch(e) {
-        console.log("In processSandeshConfigInfo(): JSON Parse error " + e);
-        resultJSON['configNode'] = global.RESP_DATA_NOT_AVAILABLE;
-        
-    }
-    return resultJSON;
-}
-
-adminApiHelper.processControlNodeDetailJson = function(resultJSON, results, controlNodeObj) {
-    var detailData = adminApiHelper.parseBGPNeighborResponse(results[0]);
-    var cpuData = adminApiHelper.parseControlNodeCPUMemInfo(results[1]);
-    var collectorData = adminApiHelper.processSandeshCollectorInfo(results[2]);
-    var configData = adminApiHelper.processSandeshConfigInfo(results[3]);
-    var sandeshData = adminApiHelper.parseSandeshGenStatsResp(results[4]);
-    var peerLen = detailData.length;
-    resultJSON['ip'] = controlNodeObj['ip'];
-    resultJSON['name'] = controlNodeObj['name'];
-    resultJSON['totalPeerCount'] = peerLen;
-    resultJSON['activevRouterCount'] = 0;
-    resultJSON['establishedPeerCount'] = 0;
-    for (var i = 0; i < peerLen; i++) {
-        if (detailData[i]['state'] == 'Active') {
-            resultJSON['establishedPeerCount']++;
-        }
-        if ((detailData[i]['encoding'] == 'XMPP') && 
-            (detailData[i]['state'] == 'Active')) {
-            resultJSON['activevRouterCount']++;
-        }
-    }
-    resultJSON['cpuLoadInfo'] = cpuData['cpuLoadInfo'];
-    resultJSON['sysMemInfo'] = cpuData['sysMemInfo'];
-    try {
-        resultJSON['analyticsNode'] = collectorData['ip'];
-    } catch(e) {
-        resultJSON['analyticsNode'] = global.RESP_DATA_NOT_AVAILABLE;
-    } 
-    try {       
-        if (null != resultJSON['sysMemInfo']['total']) {
-            resultJSON['status'] = 'Up';
-        } else {
-            resultJSON['status'] = global.STR_HOST_NOT_REACHABLE;
-        }
-    } catch(e) {
-        resultJSON['status'] = global.STR_HOST_NOT_REACHABLE;
-    }
-    try {
-        resultJSON['configNode'] = configData['configNode'];
-	    resultJSON['configMessagesIn'] = configData['configMessagesIn'];
-	    resultJSON['configMessagesOut'] = configData['configMessagesOut'];
-
-    } catch(e) {
-        resultJSON['configNode'] = global.RESP_DATA_NOT_AVAILABLE;
-        resultJSON['configMessagesIn'] = global.RESP_DATA_NOT_AVAILABLE;
-        resultJSON['configMessagesOut'] = global.RESP_DATA_NOT_AVAILABLE;
-    }
-    try {
-         resultJSON['analyticsMessagesOut'] = 
-             commonUtils.getSafeDataToJSONify(sandeshData['total_sandesh_sent']);
-         resultJSON['analyticsMessagesIn'] =
-             commonUtils.getSafeDataToJSONify(sandeshData['total_sandesh_received']);
-    } catch(e) {
-         resultJSON['analyticsMessagesOut'] = global.RESP_DATA_NOT_AVAILABLE;
-         resultJSON['analyticsMessagesIn'] = global.RESP_DATA_NOT_AVAILABLE;
-    }
 }
 
 function getAclSgUUID (flowData)
@@ -1105,7 +590,8 @@ function getAclSgUUID (flowData)
     return uuidObj;
 }
 
-adminApiHelper.processAclFlowsSandeshData = function(uuidLists, aclFlowResponse) {
+function processAclFlowsSandeshData (uuidLists, aclFlowResponse)
+{
     var resultJSON = [];  
     var flowData = []; 
     var flowDataLen = 0; 
@@ -1258,8 +744,8 @@ adminApiHelper.processAclFlowsSandeshData = function(uuidLists, aclFlowResponse)
     return resultJSON;  
 }
 
-adminApiHelper.parseControlNodeRoutesByPeerSource = 
-    function(resultJSON, peerSource, addrFamily, protocol)
+function parseControlNodeRoutesByPeerSource (resultJSON, peerSource, addrFamily,
+                                             protocol)
 {
     var srcMatched;
     var protoMatched;
@@ -1307,73 +793,18 @@ adminApiHelper.parseControlNodeRoutesByPeerSource =
                        so remove from the array 
                      */
                     (resultJSON[i]['routes'][j]['paths']).splice(k, 1);
-                    return adminApiHelper.parseControlNodeRoutesByPeerSource(resultJSON,
-                                                                             peerSource,
-                                                                             addrFamily,
-                                                                             protocol);
+                    return parseControlNodeRoutesByPeerSource(resultJSON,
+                                                              peerSource,
+                                                              addrFamily,
+                                                              protocol);
                 }
             }
         }
     }
 }
 
-/* Function: getvRouterObjByvRouterUUID
-    This API is used to get the entry of vRouter from the vRouter List
- */
-adminApiHelper.getvRouterObjByvRouterUUID = function(vRouterListData, uuid) {
-    var vRouterObj = {};
-    var vRouterCount = vRouterListData.length;
-    for (var i = 0; i < vRouterCount; i++) {
-        if (uuid === vRouterListData[i]['uuid']) {
-            break;
-        }
-    }
-    if (i == vRouterCount) {
-        return null;
-    }
-    vRouterObj['name'] = vRouterListData[i]['name'];
-    vRouterObj['ip'] = vRouterListData[i]['ip']
-    vRouterObj['uuid'] = vRouterListData[i]['uuid'];
-    return vRouterObj;
-}
-
-adminApiHelper.parseComputeNodeDetail = function(resultJSON, results, vRouterObj) {
-    try {
-        resultJSON['ip'] = 
-            commonUtils.getSafeDataToJSONify(vRouterObj['ip']);
-    } catch(e) {
-        resultJSON['ip'] = global.RESP_DATA_NOT_AVAILABLE;
-    }
-    try {
-        resultJSON['name'] = 
-            commonUtils.getSafeDataToJSONify(vRouterObj['name']);
-    } catch(e) {
-        resultJSON['name'] = global.RESP_DATA_NOT_AVAILABLE;
-    }
-    /* As no information is available as of now, so adding dummy information */
-    resultJSON['status'] = global.RESP_DATA_NOT_AVAILABLE;
-    try {
-        if (null != results['sysMemInfo']['total']) {
-            resultJSON['status'] = 'Up';
-        } else {
-            resultJSON['status'] = global.STR_HOST_NOT_REACHABLE;
-        }
-    } catch(e) {
-        resultJSON['status'] = global.STR_HOST_NOT_REACHABLE;
-    }
-    resultJSON['cpu'] = results['cpu'];
-    resultJSON['memory'] = results['memory'];
-    resultJSON['analyticsMessagesIn'] = results['analyticsMessagesIn'];
-    resultJSON['analyticsMessagesOut'] = results['analyticsMessagesOut'];
-    resultJSON['trafficPktsIn'] = global.RESP_DATA_NOT_AVAILABLE;
-    resultJSON['trafficPktsOut'] = global.RESP_DATA_NOT_AVAILABLE;
-    resultJSON['xmppMessagesIn'] = results['xmppMessagesIn'];
-    resultJSON['xmppMessagesOut'] = results['xmppMessagesOut'];
-    resultJSON['analyticsNode'] = results['analyticsNode'];
-    resultJSON['controlNodes'] = results['controlNodes'];
-}
-
-adminApiHelper.parseSandeshGenStatsResp = function(sandeshGenStatsResp) {
+function parseSandeshGenStatsResp (sandeshGenStatsResp)
+{
     var resultJSON = {};
     try {
 	    var sandeshGenStats = 
@@ -1415,7 +846,8 @@ function isContrailControlNode (bgpRtr)
     return false;
 }
 
-adminApiHelper.parseBgpJSON = function(resultJSON, bgpJSON) {
+function parseBgpJSON (resultJSON, bgpJSON)
+{
     var bgpNodeCnt = 0;
     var j = 0;
     var pos = -1;
@@ -1448,7 +880,8 @@ adminApiHelper.parseBgpJSON = function(resultJSON, bgpJSON) {
     }
 }
 
-adminApiHelper.parseXMPPConnStateResp = function(sandeshResp) {
+function parseXMPPConnStateResp (sandeshResp)
+{
     var xmppMsgsIn = 0;
     var xmppMsgsOut = 0;
     var resultJSON = {};
@@ -1482,7 +915,8 @@ adminApiHelper.parseXMPPConnStateResp = function(sandeshResp) {
     return resultJSON;
 }
 
-adminApiHelper.parseIPCStatsResp = function(sandeshResp) {
+function parseIPCStatsResp (sandeshResp)
+{
     var resultJSON = {};
     try {
 	    var xmppData = sandeshResp['__IpcStatsResp_list']['XmppStatsResp'][0];
@@ -1496,7 +930,8 @@ adminApiHelper.parseIPCStatsResp = function(sandeshResp) {
     return resultJSON;
 }
 
-adminApiHelper.getComputeNodeCpuMemJSON = function(ip, callback) {
+function getComputeNodeCpuMemJSON (ip, callback)
+{
     var url = null;
     var urlLists = [];
     var resultJSON = {};
@@ -1520,12 +955,12 @@ adminApiHelper.getComputeNodeCpuMemJSON = function(ip, callback) {
         function(err, results) {
         if (results) {
             var cpuLoad = 
-                adminApiHelper.parseControlNodeCPUMemInfo(results[0]);
+                parseControlNodeCPUMemInfo(results[0]);
             resultJSON['cpuLoadInfo'] = cpuLoad['cpuLoadInfo'];
             resultJSON['sysMemInfo'] = cpuLoad['sysMemInfo'];
             var collectorData = 
                 commonUtils.getSafeDataToJSONify(
-                    adminApiHelper.processSandeshCollectorInfo(results[1]));
+                    processSandeshCollectorInfo(results[1]));
             try {
                 resultJSON['analyticsNode'] = 
                     commonUtils.getSafeDataToJSONify(collectorData['ip']);
@@ -1533,7 +968,7 @@ adminApiHelper.getComputeNodeCpuMemJSON = function(ip, callback) {
                 resultJSON['analyticsNode'] = global.RESP_DATA_NOT_AVAILABLE;
             }
             try {
-                var statData = adminApiHelper.parseSandeshGenStatsResp(results[2]);
+                var statData = parseSandeshGenStatsResp(results[2]);
                 resultJSON['analyticsMessagesOut'] = 
                     commonUtils.getSafeDataToJSONify(statData['total_sandesh_sent']);
                 resultJSON['analyticsMessagesIn'] =
@@ -1546,13 +981,13 @@ adminApiHelper.getComputeNodeCpuMemJSON = function(ip, callback) {
             }
             try {
                 var controlNodeData = 
-                    adminApiHelper.parseXMPPConnStateResp(results[3]);
+                    parseXMPPConnStateResp(results[3]);
                 resultJSON['controlNodes'] = controlNodeData['controlNodes'];
             } catch(e) {
                 resultJSON['controlNodes'] = global.RESP_DATA_NOT_AVAILABLE;
             }
             try {
-                var xmppConnStatData = adminApiHelper.parseIPCStatsResp(results[4]);
+                var xmppConnStatData = parseIPCStatsResp(results[4]);
                 resultJSON['xmppMessagesIn'] = xmppConnStatData['xmppMessagesIn'];
                 resultJSON['xmppMessagesOut'] = xmppConnStatData['xmppMessagesOut'];
             } catch(e) {
@@ -1564,54 +999,8 @@ adminApiHelper.getComputeNodeCpuMemJSON = function(ip, callback) {
     });
 }
 
-function getVirtualRouterList (appData, callback) {
-    var url = '/virtual-routers';
-    var resultJSON = [];
-
-    configApiServer.apiGet(url, appData, function (error, jsonData) {
-        if (error) {
-            callback(error, null);
-        } else {
-            try {
-                var vrJSON = jsonData,
-                    vrURLs = [],
-                    vrCount = vrJSON["virtual-routers"].length,
-                    i, uuid, url, 
-                    dataObjArr = []; 
-                if (!vrCount) {
-                    /* No Virtual-Router */
-                    callback(null, resultJSON);
-                    return;
-                }    
-                for (i = 0; i < vrCount; i += 1) { 
-                    uuid = vrJSON["virtual-routers"][i].uuid;
-                    url = '/virtual-router/' + uuid;
-                    logutils.logger.debug("getVirtualRouters: " + url);
-                    vrURLs[i] = [url];
-                    commonUtils.createReqObj(dataObjArr, i, [url],
-                                             global.HTTP_REQUEST_GET, null,
-                                             null, null, appData);
-                    delete vrJSON["virtual-routers"][i]["fq_name"];
-                }
-                async.map(dataObjArr,
-                          commonUtils.getAPIServerResponse(configApiServer.apiGet,
-                                                           true),
-                          function (err, results) {
-                    if (!err) {
-                        processvRouterList(resultJSON, results);
-                        callback(null, resultJSON);
-                    } else {
-                        callback(err, null);
-                    }
-                });
-            } catch (e) {
-                callback(null, resultJSON);
-            }
-        }
-    });
-};
-
-function getControlNodeList (appData, callback) {
+function getControlNodeList (appData, callback)
+{
     var resultJSON = [];
     var bgpURLs = [];
     var dataObjArr = [];
@@ -1627,7 +1016,7 @@ function getControlNodeList (appData, callback) {
                 for (i = 0; i < bgpCount; i += 1) {
                     uuid = bgpJSON["bgp-routers"][i].uuid;
                     bgpURLs[i] = '/bgp-router/' + uuid;
-                    commonUtils.createReqObj(dataObjArr, i, bgpURLs[i],
+                    commonUtils.createReqObj(dataObjArr, bgpURLs[i],
                                              global.HTTP_REQUEST_GET, null,
                                              null, null, appData);
                     delete bgpJSON["bgp-routers"][i]["fq_name"];
@@ -1637,23 +1026,26 @@ function getControlNodeList (appData, callback) {
                                                            true),
                           function (err, results) {
                     if (results) {
-                        adminApiHelper.parseBgpJSON(resultJSON, results);
+                        parseBgpJSON(resultJSON, results);
                         callback(null, resultJSON);
                     } else {
                         callback(err, resultJSON);
                     }
                 });
             } catch(e) {
-                console.log("In adminApiHelper.getBgpNodeList(): JSON parse error:" + e);
+                console.log("In getBgpNodeList(): JSON parse error:" + e);
                 callback(e, resultJSON);
             }
         }
     });
 }
 
-exports.getVirtualRouterList = getVirtualRouterList;
 exports.getControlNodeList = getControlNodeList;
 exports.isContrailControlNode = isContrailControlNode;
 exports.processControlNodeRoutingInstanceList =
     processControlNodeRoutingInstanceList;
+exports.getBGPRefNames = getBGPRefNames;
+exports.processVRJSON = processVRJSON;
+exports.processVirtualRouters = processVirtualRouters;
+exports.processAclFlowsSandeshData = processAclFlowsSandeshData;
 

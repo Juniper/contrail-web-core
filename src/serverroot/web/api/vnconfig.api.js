@@ -24,7 +24,8 @@ var configApiServer = require('../../common/configServer.api');
 /**
  * Bail out if called directly as "nodejs vnconfig.api.js"
  */
-if (!module.parent) {
+if (!module.parent) 
+{
     logutils.logger.warn(util.format(messages.warn.invalid_mod_call,
                                      module.filename));
     process.exit(1);
@@ -37,7 +38,8 @@ if (!module.parent) {
  * 2. Reads the response of per tenant vn list from config api server
  *    and sends it back to the client.
  */
-function listVirtualNetworksCb (error, vnListData, response) {
+function listVirtualNetworksCb (error, vnListData, response) 
+{
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
        return;
@@ -54,7 +56,8 @@ function listVirtualNetworksCb (error, vnListData, response) {
  * 4. Calls listVirtualNetworksCb that process data from config
  *    api server and sends back the http response.
  */
-function listVirtualNetworks (request, response, appData) {
+function listVirtualNetworks (request, response, appData) 
+{
     var tenantId      = null;
     var requestParams = url.parse(request.url,true);
     var vnListURL     = '/virtual-networks';
@@ -75,7 +78,8 @@ function listVirtualNetworks (request, response, appData) {
  * private function
  * 1. Called from the last callback of vn config processig
  */ 
-function sendVnGetResponse (error, response, vnConfig) {
+function sendVnGetResponse (error, response, vnConfig) 
+{
 
     delete vnConfig['virtual-network']['access_control_lists'];
     delete vnConfig['virtual-network']['href'];
@@ -89,7 +93,8 @@ function sendVnGetResponse (error, response, vnConfig) {
  * private function
  * 1. Parses the quantum subnets and adds it to ipam refs of the VN config
  */
-function parseVNSubnets (error, response, vnConfig) {
+function parseVNSubnets (error, response, vnConfig) 
+{
     var ipamRef       = null;
     var ipamSubnetLen = 0, i = 0;
 
@@ -111,6 +116,7 @@ function parseVNSubnets (error, response, vnConfig) {
         for (var i = 0; i < nwIpamRefsLen; i++) {
             var ipamSubnets = nwIpamRefs[i]['attr']['ipam_subnets'];
             var ipamSubnetsLen = ipamSubnets.length;
+        	var m = 0;
             for (var j = 0; j < ipamSubnetsLen; j++) {
                 nwIpamRefsClone[k] = {};
                 nwIpamRefsClone[k]['subnet'] = {};
@@ -123,8 +129,15 @@ function parseVNSubnets (error, response, vnConfig) {
                 else
                 	nwIpamRefsClone[k]['subnet']['default_gateway'] =
                 	ipamSubnets[j]['default_gateway'];
-                	
-                nwIpamRefsClone[k]['subnet']['ipam'] = nwIpamRefs[i]['to']
+
+                if(null !== nwIpamRefs[i]['attr']['host_routes'] &&
+                	typeof nwIpamRefs[i]['attr']['host_routes'] !== "undefined" && !m) {
+                	nwIpamRefsClone[k]["host_routes"] = {};
+                	nwIpamRefsClone[k]["host_routes"] = nwIpamRefs[i]['attr']['host_routes'];
+                	m++;
+                }
+
+                nwIpamRefsClone[k]['subnet']['ipam'] = nwIpamRefs[i]['to'];
                 k++;
             }
         }
@@ -179,7 +192,8 @@ function VNFloatingIpPoolAggCb (error, results, response, vnConfig, appData)
  * 1. Gets the Floating ip pool list and then does an individual get on
  *    the floating ip pool for a given virtual network
  */
-function parseVNFloatingIpPools (error, response, vnConfig, appData) {
+function parseVNFloatingIpPools (error, response, vnConfig, appData) 
+{
     var fipPoolRef     = null;
     var dataObjArr     = [];
     var fipObj         = null;
@@ -193,8 +207,8 @@ function parseVNFloatingIpPools (error, response, vnConfig, appData) {
 
     for (i = 0; i < fipPoolRefsLen; i++) {
         fipObj = fipPoolRef[i];
-        reqUrl = fipObj['href'].split('8082')[1];
-        commonUtils.createReqObj(dataObjArr, i, reqUrl,
+        reqUrl = '/floating-ip-pool/' + fipObj['uuid'];
+        commonUtils.createReqObj(dataObjArr, reqUrl,
                                  global.HTTP_REQUEST_GET, null, null, null,
                                  appData);
     }
@@ -222,7 +236,8 @@ function parseVNFloatingIpPools (error, response, vnConfig, appData) {
  *    - Gets each Floating IP pool
  *    - ACL Reference is already part of the virtual-network get
  */
-function getVirtualNetworkCb (error, vnGetData, response, appData) {
+function getVirtualNetworkCb (error, vnGetData, response, appData) 
+{
 
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
@@ -237,7 +252,8 @@ function getVirtualNetworkCb (error, vnGetData, response, appData) {
  * private function
  * 1. Needs network uuid in string format
  */
-function readVirtualNetwork (response, netIdStr, appData) {
+function readVirtualNetwork (response, netIdStr, appData) 
+{
     var vnGetURL         = '/virtual-network/';
 
     if (netIdStr.length) {
@@ -263,7 +279,8 @@ function readVirtualNetwork (response, netIdStr, appData) {
  * 4. Calls getVirtualNetworkCb that process data from config
  *    api server and sends back the http response.
  */
-function getVirtualNetwork (request, response, appData) {
+function getVirtualNetwork (request, response, appData) 
+{
     var virtualNetworkId = null;
     var requestParams    = url.parse(request.url, true);
 
@@ -282,7 +299,8 @@ function getVirtualNetwork (request, response, appData) {
  * 2. Again reads the response of the created network and updates
  *    the route target.
  */
-function createVirtualNetworkCb (error, vnConfig, vnPostData, response, appData) {
+function createVirtualNetworkCb (error, vnConfig, vnPostData, response, appData) 
+{
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
         return;
@@ -299,7 +317,8 @@ function createVirtualNetworkCb (error, vnConfig, vnPostData, response, appData)
  * 1. Callback for CreateVirtualNetwork
  */
 function createVNSubnetAdd (error, vnConfig, vnPostData,
-                            request, response, appData) {
+                            request, response, appData) 
+{
     var subnetPostData   = {};
     var netIpamRef       = null;
     var subnet_prefix    = null;
@@ -338,7 +357,8 @@ function createVNSubnetAdd (error, vnConfig, vnPostData,
  * private function
  * 1. Iterates through policy refs and sets the sequence numbers,
  */
-function setVNPolicySequence (vnPostData) {
+function setVNPolicySequence (vnPostData) 
+{
     var netPolRefLen = 0, i = 0;
 
     if ('network_policy_refs' in vnPostData['virtual-network']) {
@@ -352,12 +372,17 @@ function setVNPolicySequence (vnPostData) {
             vnPostData['virtual-network']['network_policy_refs'] = [];
             return vnPostData
         }
-        vnPostData['virtual-network']['network_policy_refs']
-                  [i]['attr'] = {};
-
+        var timer = null;
+        if(null !== vnPostData['virtual-network']['network_policy_refs'][i]['attr'] &&
+        	typeof vnPostData['virtual-network']['network_policy_refs'][i]['attr'] !== "undefined" &&
+        	null !== vnPostData['virtual-network']['network_policy_refs'][i]['attr']['timer'] &&
+        	typeof vnPostData['virtual-network']['network_policy_refs'][i]['attr']['timer'] !== "undefined") {
+        	timer = vnPostData['virtual-network']['network_policy_refs'][i]['attr']['timer'];
+        }
+        vnPostData['virtual-network']['network_policy_refs'][i]['attr'] = {};
         vnPostData['virtual-network']['network_policy_refs']
                   [i]['attr'] = {
-                      'timer': null,
+                      'timer': timer,
                       'sequence': {
                           major: i,
                           minor: 0
@@ -576,6 +601,23 @@ function updateVNPolicyRefs (vnConfig, response, appData)
     var vnId = response.req.param('id');
     var vnPutURL = '/virtual-network/' + vnId;
 
+    if(null === vnConfig['virtual-network']['virtual_network_properties'] ||
+    	typeof vnConfig['virtual-network']['virtual_network_properties'] === "undefined") {
+        if ('virtual_network_properties' in vnPutData['virtual-network']) {
+        	vnConfig['virtual-network']['virtual_network_properties'] = {};
+        }
+    }
+	if(null !== vnPutData['virtual-network']['virtual_network_properties']['forwarding_mode'] &&
+		typeof vnPutData['virtual-network']['virtual_network_properties']['forwarding_mode'] !== "undefined") {
+		vnConfig['virtual-network']['virtual_network_properties']['forwarding_mode'] =
+		vnPutData['virtual-network']['virtual_network_properties']['forwarding_mode'];
+	}
+	if(null !== vnPutData['virtual-network']['virtual_network_properties']['vxlan_network_identifier'] &&
+    	typeof vnPutData['virtual-network']['virtual_network_properties']['vxlan_network_identifier'] !== "undefined") {
+    	vnConfig['virtual-network']['virtual_network_properties']['vxlan_network_identifier'] =
+    	vnPutData['virtual-network']['virtual_network_properties']['vxlan_network_identifier'];
+    }
+
     vnConfig['virtual-network']['route_target_list'] = {};
     if ('route_target_list' in vnPutData['virtual-network']) {
         vnConfig['virtual-network']['route_target_list'] = 
@@ -614,7 +656,8 @@ function updateVNPolicyRefs (vnConfig, response, appData)
     }); 
 }
 
-function updateVirtualNetwork (request, response, appData) {
+function updateVirtualNetwork (request, response, appData) 
+{
     var vnId = request.param('id');
     var vnPutData = request.body;
 
@@ -637,7 +680,8 @@ function updateVirtualNetwork (request, response, appData) {
  * 1. URL /api/tenants/config/virtual-networks - Post
  * 2. Gets list of virtual networks from config api server
  */
-function createVirtualNetwork (request, response, appData) {
+function createVirtualNetwork (request, response, appData) 
+{
     var vnCreateURL    = '/virtual-networks';
     var vnPostData     = request.body;
     var vnSeqPostData  = {};
@@ -674,8 +718,8 @@ function createVirtualNetwork (request, response, appData) {
  * private function
  * 1. Return back the response of net delete.
  */
-function deleteVirtualNetworkCb (error, vnDelResp, response) {
-
+function deleteVirtualNetworkCb (error, vnDelResp, response) 
+{
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
         return;
@@ -690,7 +734,8 @@ function deleteVirtualNetworkCb (error, vnDelResp, response) {
  * 1. URL /api/tenants/config/virtual-network/:id
  * 2. Deletes the virtual network from config api server
  */
-function deleteVirtualNetwork (request, response, appData) {
+function deleteVirtualNetwork (request, response, appData) 
+{
     var vnDelURL         = '/virtual-network/';
     var virtualNetworkId = null;
     var requestParams    = url.parse(request.url, true);
@@ -769,7 +814,8 @@ function updateVNSubnetByConfigData (request, response, vnConfigData, appData,
  *    delete the subnet
  * 3. Reads updated config and sends it back to client
  */
-function updateVNSubnetDelete (request, response, appData) {
+function updateVNSubnetDelete (request, response, appData) 
+{
     var vnURL            = '/virtual-network/';
     var virtualNetworkId = null;
     var vnSubnetId       = null;
@@ -872,7 +918,8 @@ function updateVNSubnetAdd (vnId, vnPostData, vnConfigData, appData, callback)
  * private function
  */ 
 function createFipPoolUpdateSendResponse (error, results, response,
-                                          fipPool, fipPostData, appData) {
+                                          fipPool, fipPostData, appData) 
+{
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
        return;
@@ -934,7 +981,8 @@ function getFipPoolToEntry (fipPoolRef, fipPool, projName, fipPostData)
  */ 
 function createFipPoolUpdateProjects (error, results,
                                       fipPool, fipPostData, appData,
-                                      callback) {
+                                      callback) 
+{
     var projRef     = null;
     var fipPoolRef  = [];
     var dataObjArr  = [];
@@ -963,7 +1011,7 @@ function createFipPoolUpdateProjects (error, results,
         getFipPoolToEntry(fipPoolRef, fipPool,
                           results[i]['project']['fq_name'].join(':'),
                           fipPostData);
-        commonUtils.createReqObj(dataObjArr, i, projURL, global.HTTP_REQUEST_PUT,
+        commonUtils.createReqObj(dataObjArr, projURL, global.HTTP_REQUEST_PUT,
                                  results[i], null, null, appData);
     }
     async.map(dataObjArr,
@@ -979,7 +1027,8 @@ function createFipPoolUpdateProjects (error, results,
  * private function
  */ 
 function createFipPoolProjectsGet (error, fipPool, fipPostData,
-                                   appData, callback) {
+                                   appData, callback) 
+{
     var reqUrl         = null;
     var fipPoolRef     = 0;
     var dataObjArr     = [];
@@ -1013,7 +1062,7 @@ function createFipPoolProjectsGet (error, fipPool, fipPostData,
         }
         for (var j = 0; j < fipProjRefsLen; j++) {
             reqUrl = '/project/' + fipPoolRef[i]['projects'][j]['uuid'];
-            commonUtils.createReqObj(dataObjArr, k++, reqUrl,
+            commonUtils.createReqObj(dataObjArr, reqUrl,
                                      global.HTTP_REQUEST_GET, null, null, null,
                                      appData);
         }
@@ -1065,7 +1114,7 @@ function updateVNFipPoolAddCb (fipPostData, appData, callback)
                     "parent_type": "virtual-network"
                 }
             };
-            commonUtils.createReqObj(fipCreateDataArr, i, fipPostURL,
+            commonUtils.createReqObj(fipCreateDataArr, fipPostURL,
                                      global.HTTP_REQUEST_POST,
                                      commonUtils.cloneObj(fipCreateData), null, null,
                                      appData);
@@ -1090,7 +1139,8 @@ function updateVNFipPoolAddCb (fipPostData, appData, callback)
  */ 
 function deleteFipPoolUpdateSendResponse (error, results,
                                           fipPool, virtualNetworkId, appData,
-                                          callback) {
+                                          callback) 
+{
     var fipPoolURL = '/floating-ip-pool/';
 
     if (error) {
@@ -1111,7 +1161,8 @@ function deleteFipPoolUpdateSendResponse (error, results,
  */
 function deleteFipPoolUpdateProjects (error, results,
                                       fipPool, virtualNetworkId, appData,
-                                      callback) {
+                                      callback) 
+{
     var projRef       = null;
     var fipPoolRef    = [];
     var dataObjArr    = [];
@@ -1139,7 +1190,7 @@ function deleteFipPoolUpdateProjects (error, results,
                break; 
             }
         }
-        commonUtils.createReqObj(dataObjArr, i, projURL,
+        commonUtils.createReqObj(dataObjArr, projURL,
                                  global.HTTP_REQUEST_PUT, results[i], null, null,
                                  appData);
     }
@@ -1158,7 +1209,8 @@ function deleteFipPoolUpdateProjects (error, results,
  * private function
  */ 
 function updateVNFipPoolReadDel (error, fipPool, virtualNetworkId, 
-                                 appData, callback) {
+                                 appData, callback) 
+{
     var reqUrl         = null;
     var fipProjRef     = [];
     var dataObjArr     = [];
@@ -1197,7 +1249,7 @@ function updateVNFipPoolReadDel (error, fipPool, virtualNetworkId,
 
     for (i = 0; i < fipProjRefsLen; i++) {
         reqUrl = '/project/' + fipProjRef[i]['uuid']; 
-        commonUtils.createReqObj(dataObjArr, i, reqUrl, global.HTTP_REQUEST_GET,
+        commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
                                  null, null, null, appData);
     }
 
@@ -1221,7 +1273,8 @@ function updateVNFipPoolReadDel (error, fipPool, virtualNetworkId,
  *    the floating-ip-pool.
  * 3. Reads updated config and sends it back to client
  */
-function updateVNFipPoolDelete (request, response, appData) {
+function updateVNFipPoolDelete (request, response, appData) 
+{
     var fipPoolURL       = '/floating-ip-pool/';
     var virtualNetworkId = null;
     var fipPoolId        = null;
@@ -1337,7 +1390,7 @@ function updateFipPoolUpdateProjects (error, results,
                 }
             }
         }
-        commonUtils.createReqObj(dataObjArr, i, projURL, global.HTTP_REQUEST_PUT,
+        commonUtils.createReqObj(dataObjArr, projURL, global.HTTP_REQUEST_PUT,
                                  results[i], null, null, appData);
     }
 
@@ -1356,7 +1409,8 @@ function updateFipPoolUpdateProjects (error, results,
  */ 
 function updateVNFipPoolReadUpdate (error, fipPool,
                                     vnPostData, virtualNetworkId,
-                                    appData, callback) {
+                                    appData, callback) 
+{
     var j               = 0;
     var reqUrl          = null;
     var fipProjObjArr   = [];
@@ -1405,7 +1459,7 @@ function updateVNFipPoolReadUpdate (error, fipPool,
                  'oper': 'add'
                 };
             reqUrl = '/project/' + fipProjUIRef[i]['uuid'];
-            commonUtils.createReqObj(fipProjObjArr, j++, reqUrl,
+            commonUtils.createReqObj(fipProjObjArr, reqUrl,
                                      global.HTTP_REQUEST_GET, null, null, null,
                                      appData);
 
@@ -1431,7 +1485,7 @@ function updateVNFipPoolReadUpdate (error, fipPool,
             if (fipPool['floating-ip-pool']
                        ['project_uuid'][uuid] == null) {
                 reqUrl = '/project/' + uuid;
-                commonUtils.createReqObj(fipProjObjArr, j++, reqUrl,
+                commonUtils.createReqObj(fipProjObjArr, reqUrl,
                                          global.HTTP_REQUEST_GET, null, null,
                                          null, appData);
             }
@@ -1463,7 +1517,7 @@ function updateVNFipPoolReadUpdate (error, fipPool,
         if (fipPool['floating-ip-pool']
                    ['project_uuid'][uuid] == null) {
             reqUrl = '/project/' + uuid;
-            commonUtils.createReqObj(fipProjObjArr, j++, reqUrl,
+            commonUtils.createReqObj(fipProjObjArr, reqUrl,
                                      global.HTTP_REQUEST_GET, null, null, null,
                                      appData);
         }
@@ -1494,7 +1548,8 @@ function updateVNFipPoolReadUpdate (error, fipPool,
  * 3. Resets the floating-ip-pool references from / to projects.
  * 4. Reads updated config and sends it back to client
  */
-function updateVNFipPoolUpdate (request, response, appData) {
+function updateVNFipPoolUpdate (request, response, appData) 
+{
     var fipPoolURL       = '/floating-ip-pool/';
     var virtualNetworkId = null;
     var fipPoolId        = null;
@@ -1537,7 +1592,8 @@ function updateVNFipPoolUpdate (request, response, appData) {
  * private function
  */ 
 function updateVNNetPoliciesSendResponse(error, results,
-                                         response, virtualNetworkId, appData) {
+                                         response, virtualNetworkId, appData) 
+{
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
        return;
@@ -1554,7 +1610,8 @@ function updateVNNetPoliciesSendResponse(error, results,
  */ 
 function updateVNNetPoliciesRead (error, vnConfig,
                                   vnPostData, virtualNetworkId, response,
-                                  appData) {
+                                  appData) 
+{
     var vnSeqConfig = {};
 
     var vnPostURL = '/virtual-network/' + virtualNetworkId;
@@ -1586,7 +1643,8 @@ function updateVNNetPoliciesRead (error, vnConfig,
  * 2. Gets VN config and updates Network policy references for it.
  * 3. Reads updated config and sends it back to client
  */
-function updateVNNetPolicies (request, response, appData) {
+function updateVNNetPolicies (request, response, appData) 
+{
     var vnGetURL         = '/virtual-network/';
     var virtualNetworkId = null;
     var vnPostData       = request.body;
@@ -1613,7 +1671,8 @@ function updateVNNetPolicies (request, response, appData) {
  * private function
  * 1. Aggregates vm interfaces across all VN's
  */
-function listVMInterfacesAggCb (error, vnListData, response, appData) {
+function listVMInterfacesAggCb (error, vnListData, response, appData) 
+{
     var vnListLen = 0, i = 0;
     var vnRef     = [];
     var vmListRef = [];
@@ -1636,8 +1695,8 @@ function listVMInterfacesAggCb (error, vnListData, response, appData) {
 
     var vmIfRefLen = vmList.length;
     for(i=0; i<vmIfRefLen; i++) {
-    	var reqUrl = vmList[i]['href'].split('8082')[1];
-        commonUtils.createReqObj(dataObjArr, i, reqUrl,
+        var reqUrl = '/virtual-machine-interface/' + vmList[i]['uuid'];
+        commonUtils.createReqObj(dataObjArr, reqUrl,
                 global.HTTP_REQUEST_GET, null, null, null,
                 appData);    	
     }
@@ -1648,7 +1707,8 @@ function listVMInterfacesAggCb (error, vnListData, response, appData) {
     		});
 }
 
-function vmIfAggCb(error, vmIfList, response, vmList, appData) {
+function vmIfAggCb(error, vmIfList, response, vmList, appData) 
+{
 	var dataObjArr = [];
 	if (error) {
         commonUtils.handleJSONResponse(error, response, null);
@@ -1657,16 +1717,19 @@ function vmIfAggCb(error, vmIfList, response, vmList, appData) {
 	if(vmIfList.length <= 0) {
 		commonUtils.handleJSONResponse(error, response,
 			{'virtual_machine_interface_back_refs': vmList});		
+        return;
 	}
 
     for(var i=0; i<vmIfList.length; i++) {
     	if('instance_ip_back_refs' in vmIfList[i]["virtual-machine-interface"]) {
-    		var inst_ip_ref = vmIfList[i]["virtual-machine-interface"]["instance_ip_back_refs"][0]["href"];
-        	var reqUrl = inst_ip_ref.split('8082')[1];
+    		var inst_ip_ref = vmIfList[i]["virtual-machine-interface"]["instance_ip_back_refs"][0];
+            if (inst_ip_ref) {
+                var reqUrl = '/instance-ip/' + inst_ip_ref['uuid'];
         	
-            commonUtils.createReqObj(dataObjArr, i, reqUrl,
-                    global.HTTP_REQUEST_GET, null, null, null,
-                    appData);
+                commonUtils.createReqObj(dataObjArr, reqUrl,
+                                         global.HTTP_REQUEST_GET, 
+                                         null, null, null, appData);
+            }
     	}
     }
     async.map(dataObjArr,
@@ -1676,7 +1739,8 @@ function vmIfAggCb(error, vmIfList, response, vmList, appData) {
     		});
 }
 
-function instanceIPRefAggCb(error, instanceIPList, response, vmList, appData) {
+function instanceIPRefAggCb(error, instanceIPList, response, vmList, appData) 
+{
 	if (error) {
         commonUtils.handleJSONResponse(error, response, null);
         return;
@@ -1684,6 +1748,7 @@ function instanceIPRefAggCb(error, instanceIPList, response, vmList, appData) {
 	if(instanceIPList.length <= 0) {
 		commonUtils.handleJSONResponse(error, response,
 			{"virtual_machine_interface_back_refs" : vmList});
+        return;
 	}
 	for(var i=0; i<instanceIPList.length; i++) {
 		vmList[i]["instance_ip_address"] = instanceIPList[i]["instance-ip"]["instance_ip_address"]; 
@@ -1698,7 +1763,8 @@ function instanceIPRefAggCb(error, instanceIPList, response, vmList, appData) {
  * 1. Callback for listVirtualMachineInterfaces
  * 2. Does a VN Get of all VN's for a tenant / project
  */
-function listVMInterfacesVNRead (error, vnListData, response, appData) {
+function listVMInterfacesVNRead (error, vnListData, response, appData) 
+{
     var vnListLen = 0, i = 0;
     var vnRef     = [];
     var dataObjArr = [];
@@ -1713,7 +1779,7 @@ function listVMInterfacesVNRead (error, vnListData, response, appData) {
     vnListLen = vnRef.length;
     for (i = 0; i < vnListLen; i++) {
        reqUrl = '/virtual-network/' + vnRef[i]['uuid'];
-       commonUtils.createReqObj(dataObjArr, i, reqUrl, global.HTTP_REQUEST_GET,
+       commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
                                 null, null, null, appData);
     }
         
@@ -1732,7 +1798,8 @@ function listVMInterfacesVNRead (error, vnListData, response, appData) {
  * 3. Needs tenant id
  * 4. Fetches each VN and extracts VM interfaces and sends it to client.
  */
-function listVirtualMachineInterfaces (request, response, appData) {
+function listVirtualMachineInterfaces (request, response, appData) 
+{
     var tenantId      = null;
     var requestParams = url.parse(request.url,true);
     var vnListURL     = '/virtual-networks';
@@ -1753,7 +1820,8 @@ function listVirtualMachineInterfaces (request, response, appData) {
  * private function
  */ 
 function updateVNRouteTargetUpdate (error, vnConfig, vnPostData,
-                                    virtualNetworkId, response, appData) {
+                                    virtualNetworkId, response, appData) 
+{
     var vnPostURL = '/virtual-network/' + virtualNetworkId;
 
     if (error) {
@@ -1784,7 +1852,8 @@ function updateVNRouteTargetUpdate (error, vnConfig, vnPostData,
  * 2. Gets VN config and updates the route-target list.
  * 3. Reads updated config and sends it back to client
  */
-function updateVNRouteTargets (request, response, appData) {
+function updateVNRouteTargets (request, response, appData) 
+{
     var vnGetURL         = '/virtual-network/';
     var virtualNetworkId = null;
     var vnPostData       = request.body;

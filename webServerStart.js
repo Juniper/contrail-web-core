@@ -23,6 +23,8 @@ var express = require('express')
     , authApi = require('./src/serverroot/common/auth.api')
     , async = require('async')
     , os = require('os')
+    , commonUtils = require('./src/serverroot/utils/common.utils')
+    , discClient = require('./src/serverroot/common/discoveryclient.api')
 	, featureList = require('./src/serverroot/web/core/feature.list.js');
 
 var server_port = (config.redis_server_port) ?
@@ -35,6 +37,7 @@ var redisClient = redis.createClient(server_port,
 var RedisStore = require('./lib/connect-redis')(express);
 
 var store;
+var myIdentity = global.service.MAINSEREVR;
 
 var sessEvent = new eventEmitter();
 
@@ -43,9 +46,12 @@ var options = {
 	cert:fs.readFileSync('./keys/cs-cert.pem')
 };
 
-//module.exports.app = app;
+var insecureAccessFlag = false;
+if (config.insecure_access && (config.insecure_access == true)) {
+    insecureAccessFlag = true;
+}
 
-var app = express(),
+var httpsApp = express(),
 	httpApp = express(),
 	httpPort = config.http_port,
 	httpsPort = config.https_port,
@@ -54,31 +60,43 @@ var app = express(),
 redisIP = (config.redis_server_ip) ?
 	config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
 
-app.configure(function () {
-	app.set('port', process.env.PORT || httpsPort);
-	app.use(express.cookieParser());
-	store = new RedisStore({host:redisIP, port:redisPort,
-		prefix:global.STR_REDIS_STORE_SESSION_ID_PREFIX,
-		eventEmitter:sessEvent});
+function initializeAppConfig (appObj)
+{
+    var app = appObj.app;
+    var port = appObj.port;
+    app.set('port', process.env.PORT || port);
+    app.use(express.cookieParser());
+    store = new RedisStore({host:redisIP, port:redisPort,
+        prefix:global.STR_REDIS_STORE_SESSION_ID_PREFIX,
+        eventEmitter:sessEvent});
 
-	app.use(express.session({ store:store,
-		secret:'enterasupbK3xg8qescJK.dUbdgfVq0D70UaLTMGTzO4yx5vVJral2zIhVersecretkey',
-		cookie:{
-			maxAge:global.MAX_AGE_SESSION_ID
-		}}));
+    app.use(express.session({ store:store,
+        secret:'enterasupbK3xg8qescJK.dUbdgfVq0D70UaLTMGTzO4yx5vVJral2zIhVersecretkey',
+        cookie:{
+            maxAge:global.MAX_AGE_SESSION_ID
+        }}));
         app.use(express.compress());
         app.use(express.methodOverride());
         app.use(express.bodyParser());
         app.use(app.router);
-        app.use(express.static(path.join(__dirname, 'webroot')));
+        app.use(express.static(path.join(__dirname, 'webroot'), {maxAge: 3600*24*3*1000}));
 
-	// Catch-all error handler
-	app.use(function (err, req, res, next) {
-		logutils.logger.error(err.stack);
-		res.send(500, 'An unexpected error occurred!');
-	});
+    // Catch-all error handler
+    app.use(function (err, req, res, next) {
+        logutils.logger.error(err.stack);
+        res.send(500, 'An unexpected error occurred!');
+    });
+}
 
-});
+if (false == insecureAccessFlag) {
+    httpsApp.configure(function () {
+        initializeAppConfig({app:httpsApp, port:httpsPort});
+    });
+} else {
+    httpApp.configure(function () {
+        initializeAppConfig({app:httpApp, port:httpPort});
+    });
+}
 
 getSessionIdByRedisSessionStore = function(redisStoreSessId) {
     var sessIdPrefix = global.STR_REDIS_STORE_SESSION_ID_PREFIX;
@@ -104,8 +122,12 @@ store.eventEmitter.on('sessionDeleted', function (sid) {
 });
 
 registerReqToApp = function () {
-	urlRoutes.registerURLsToApp(app);
-	handler.addAppReqToAllowedList(app.routes);
+    var myApp = httpsApp;
+    if (true == insecureAccessFlag) {
+        myApp = httpApp;
+    }
+	urlRoutes.registerURLsToApp(myApp);
+	handler.addAppReqToAllowedList(myApp.routes);
 }
 
 bindProducerSocket = function () {
@@ -123,8 +145,8 @@ bindProducerSocket = function () {
 
 sendRequestToJobServer = function (msg) {
 	var timer = setInterval(function () {
-		producerSock.send(msg.reqStr);
 		console.log("SENDING to jobServer:", msg);
+		producerSock.send(msg.reqData);
 		clearTimeout(timer);
 	}, 1000);
 }
@@ -200,19 +222,50 @@ if (cluster.isMaster) {// && (process.env.NODE_CLUSTERED == 1)) {
 			});
 		});
 	}
+    doPreStartServer(false);
 } else {
 	registerReqToApp();
 	/* Set maxListener to unlimited */
 	process.setMaxListeners(0);
 	featureList.registerFeature();
+    redisSub.createRedisClientAndSubscribeMsg(function() {
+        discClient.sendWebServerReadyMessage();
+    });
 
     /* All the config should be set before this line */
     startServer();
 }
 
+function doPreStartServer (isRetry)
+{
+    var rootPath = path.join(__dirname, 'webroot');
+    var defLogoFile = '/img/juniper-networks-logo.png';
+    var srcLogoFile = rootPath + defLogoFile;
+
+    if ((null != config.logo_file) && (false == isRetry)) {
+        srcLogoFile = config.logo_file;
+    }
+    var destLogoFile = rootPath + '/img/sdn-logo.png';
+    var cmd = 'cp -f ' + srcLogoFile + " " + destLogoFile;
+    
+    commonUtils.executeShellCommand(cmd, function(error, stdout, stderr) {
+        if (error) {
+            logutils.logger.error("Error occurred while copying logo file:" +
+                                  srcLogoFile + ' to ' + destLogoFile +
+                                  ' ['+ error + ']');
+            if (false == isRetry) {
+                logutils.logger.error("Retrying Copying default logo");
+                doPreStartServer(true);
+            } else {
+                /* Default logo is also missing !!! */
+            }
+        }
+    });
+}
+
 function startWebUIService (webUIIP, callback)
 {
-    httpsServer = https.createServer(options, app);
+    httpsServer = https.createServer(options, httpsApp);
     httpsServer.listen(httpsPort, webUIIP, function () {
         logutils.logger.info("Contrail UI HTTPS server listening on host:" + 
                              webUIIP + " Port:" + httpsPort);
@@ -232,10 +285,14 @@ function startWebUIService (webUIIP, callback)
         logutils.logger.error("httpsServer Exception: on clientError:", 
                               exception, socket);
     });
-    httpApp.get("*", function (req, res) {
-        var redirectURL = 'https://' + req.headers.host.replace(httpPort, httpsPort) + req.url;
-        res.redirect(redirectURL);
-    });
+    
+    if (false == insecureAccessFlag) {
+        httpApp.get("*", function (req, res) {
+            var redirectURL = 'https://' + 
+                req.headers.host.replace(httpPort, httpsPort) + req.url;
+            res.redirect(redirectURL);
+        });
+    }
     callback(null, null);
 }
 
@@ -301,4 +358,6 @@ function startServer ()
         logutils.logger.debug("**** Contrail-WebUI Server ****");
     });
 }
+
+exports.myIdentity = myIdentity;
 

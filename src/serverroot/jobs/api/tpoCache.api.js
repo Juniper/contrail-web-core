@@ -33,7 +33,8 @@ opServer = rest.getAPIServer({apiName:global.label.OPS_API_SERVER,
 
 tpoCache = module.exports;
 
-getInstLinks = function (linksData) {
+function getInstLinks (linksData)
+{
 	var links = [];
 	try {
 		for (var i = 0; i < linksData.length; i++) {
@@ -49,7 +50,8 @@ getInstLinks = function (linksData) {
 	return links;
 }
 
-getInstancesAndLinksforVN = function (vnDetailJSON) {
+function getInstancesAndLinksforVN (vnDetailJSON)
+{
 	var instances = [],
 		links = [],
 		instanceData, currInst, fq_name, i;
@@ -78,14 +80,16 @@ getInstancesAndLinksforVN = function (vnDetailJSON) {
 	];
 }
 
-populateName = function (arr) {
+function populateName (arr)
+{
 	for (var j = 0; j < arr.length; j++) {
 		var currData = arr[j];
 		currData['name'] = currData['fq_name'][currData['fq_name'].length - 1];
 	}
 }
 
-getProjectVNs = function (dataObj, callback) {
+function getProjectVNs (dataObj, callback)
+{
     var url = dataObj['url'];
     var jobData = dataObj['jobData'];
 	configApiServer.apiGet(url, jobData, function (error, jsonData) {
@@ -124,7 +128,8 @@ getProjectVNs = function (dataObj, callback) {
 	});
 }
 
-sortProjectsByName = function (a, b) {
+function sortProjectsByName (a, b)
+{
 	if (a['fq_name'][1] > b['fq_name'][1])
 		return 1;
 	else if (a['fq_name'][1] < b['fq_name'][1])
@@ -133,7 +138,8 @@ sortProjectsByName = function (a, b) {
 		return 0;
 }
 
-getProjectsTreeByDomain = function(dataObj, callback) {
+function getProjectsTreeByDomain (dataObj, callback)
+{
     var cacheExpTime = config.cacheExpire.topo_tree_time;
     var url = '/projects?domain=' + dataObj['domain'];
     var jobData = dataObj['jobData'];
@@ -205,7 +211,8 @@ getProjectsTreeByDomain = function(dataObj, callback) {
     });
 }
 
-getProjectsTreeWithDomain = function(resultJSON, domainList, projectTreeData) {
+function getProjectsTreeWithDomain (resultJSON, domainList, projectTreeData)
+{
     var len = domainList.length;
     var domain;
     for (var i = 0; i < len; i++) {
@@ -217,8 +224,9 @@ getProjectsTreeWithDomain = function(resultJSON, domainList, projectTreeData) {
     
 }
 
-tpoCache.processTreeTopoCache = function (pubChannel, saveChannelKey, 
-                                           jobData, done) {
+function processTreeTopoCache (pubChannel, saveChannelKey, 
+                               jobData, done)
+{
     var reqUrl = url = jobData.taskData.url;
     var appData = jobData.taskData.appData;
     var emptyResultArr = [];
@@ -270,4 +278,6 @@ tpoCache.processTreeTopoCache = function (pubChannel, saveChannelKey,
         });
     });
 }
+
+exports.processTreeTopoCache = processTreeTopoCache;
 

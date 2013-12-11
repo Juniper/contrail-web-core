@@ -11,6 +11,7 @@ var rest = require('../../common/rest.api'),
     appErrors = require('../../errors/app.errors.js'),
     adminApiHelper = require('../../common/adminapi.helper'),
     url = require('url'),
+    nwMonUtils = require('../../common/nwMon.utils'),
     opApiServer = require('../../common/opServer.api'),
     configApiServer = require('../../common/configServer.api');
 
@@ -122,33 +123,185 @@ function processvRouterUVEData (resultJSON, uveData)
     processvRouterData(resultJSON);
 }
 
-function getvRouterDetailConfigUVEData (configData, addGen, appData, callback)
+function getvRouterDetailConfigUVEData (configData, uuidList, nodeList, addGen,
+                                        appData, callback)
 {
     var dataObjArr = [];
-    var len = configData['virtual-routers'].length;
+    if (null != uuidList) {
+        len = uuidList.length;
+    } else if (null != configData) {
+        try {
+            len = configData['virtual-routers'].length;
+        } catch(e) {
+            len = 0;
+        }
+    } else {
+        len = 0;
+    }
     for (var i = 0; i < len; i++) {
-        var reqUrl = '/virtual-router/' + configData['virtual-routers'][i]['uuid'];
-        commonUtils.createReqObj(dataObjArr, i, reqUrl,
+        var uuid = (null != configData) ?
+            configData['virtual-routers'][i]['uuid'] : uuidList[i];
+        var reqUrl = '/virtual-router/' + uuid;
+        commonUtils.createReqObj(dataObjArr, reqUrl,
                                  global.HTTP_REQUEST_GET, null, configApiServer, null, 
                                  appData);
     }
-    reqUrl = '/analytics/vrouter/*?cfilt=VrouterStatsAgent:cpu_info,' +
-        'VrouterAgent:virtual_machine_list,VrouterAgent:interface_list,' +
-        'VrouterAgent:error_intf_list,VrouterAgent:connected_networks,' +
-        'VrouterAgent:control_ip,VrouterAgent:build_info,' +
-        'VrouterStatsAgent:cpu_share,VrouterStatsAgent:process_state_list';
-    commonUtils.createReqObj(dataObjArr, i, reqUrl, global.HTTP_REQUEST_GET,
-                             null, opApiServer, null, appData);
+    reqUrl = '/analytics/uves/vrouter';
+    var postData = {};
+    if (null != nodeList) {
+        postData['kfilt'] = nodeList;
+    }
+    postData['cfilt'] = ['VrouterStatsAgent:cpu_info',
+        'VrouterAgent:virtual_machine_list',
+        'VrouterAgent:self_ip_list',
+        'VrouterAgent:total_interface_count',
+        'VrouterAgent:down_interface_count', 'VrouterAgent:connected_networks',
+        'VrouterAgent:control_ip', 'VrouterAgent:build_info',
+        'VrouterStatsAgent:cpu_share', 'VrouterStatsAgent:process_state_list'];
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
+                             postData, opApiServer, null, appData);
     if (null != addGen) {
-        reqUrl = '/analytics/generator/*:VRouterAgent?cfilt=' +
-            'ModuleClientState:client_info,ModuleServerState:generator_info';
-        commonUtils.createReqObj(dataObjArr, i + 1, reqUrl, global.HTTP_REQUEST_GET,
-                                 null, opApiServer, null, appData);
+        reqUrl = '/analytics/uves/generator';
+        var postData = {};
+
+        postData['kfilt'] = [];
+        if (null != nodeList) {
+            var nodeCnt = nodeList.length;
+            var kfilt = ['VRouterAgent', 'Contrail-Vrouter-Nodemgr'];
+            var kLen = kfilt.length;
+            for (var i = 0; i < nodeCnt; i++) {
+                for (var j = 0; j < kLen; j++) {
+                    postData['kfilt'].push(nodeList[i] + ':' + kfilt[j]);
+                }
+            }
+        } else {
+            postData['kfilt'] = ['*:VRouterAgent',
+                '*:Contrail-Vrouter-Nodemgr'];
+        }
+        postData['cfilt'] = ['ModuleClientState:client_info',
+                             'ModuleServerState:generator_info'];
+
+        commonUtils.createReqObj(dataObjArr, reqUrl,
+                                 global.HTTP_REQUEST_POST,
+                                 postData, opApiServer, null, appData);
     }
     async.map(dataObjArr, 
-              commonUtils.getServerResponseByRestApi(configApiServer, false),
+              commonUtils.getServerResponseByRestApi(configApiServer, true),
               function(err, results) {
         callback(err, results, len);
+    });
+}
+
+function getNodeListByLastKey (list, count, lastKey, matchStr, uuidList)
+{
+    var resultJSON = {};
+    var retLastUUID = null;
+    resultJSON['lastKey'] = null;
+    resultJSON['more'] = false;
+    resultJSON['nodeList'] = [];
+    resultJSON['uuidList'] = [];
+
+    var list = nwMonUtils.makeUVEList(list);
+    var index = nwMonUtils.getnThIndexByLastKey (lastKey, list, matchStr);
+    if (index == -2) {
+        return resultJSON;
+    }
+    try {
+        var cnt = list.length;
+    } catch(e) {
+        return resultJSON;
+    }
+    if (cnt == index) {
+        /* We are already at end */
+        return resultJSON;
+    }
+    if (-1 == count) {
+        totCnt = cnt;
+    } else {
+        totCnt = index + 1 + count;
+    }
+    if (totCnt < cnt) {
+        retLastUUID = list[totCnt - 1][matchStr];
+    }
+    for (var i = index + 1; i < totCnt; i++) {
+        if (list[i]) {
+            resultJSON['nodeList'].push(list[i][matchStr]);
+        }
+        if (null != uuidList[i]) {
+            resultJSON['uuidList'].push(uuidList[i]);
+        }
+    }
+    if (null != retLastUUID) {
+        resultJSON['more'] = true;
+    }
+    resultJSON['lastKey'] = retLastUUID;
+    return resultJSON;
+}
+
+function dovRouterListPostProcess (configData, uuidList, nodeList, addGen, 
+                                   appData, callback)
+{
+    var uveData = [];
+    var confData = [];
+    getvRouterDetailConfigUVEData(configData, uuidList, nodeList, addGen, appData,
+                                  function(err, configUVEData,
+                                           vRouterCnt) {
+        if (null != err) {
+            callback(null, []);
+            return;
+        }
+        for (var i = 0; i < vRouterCnt; i++) {
+            confData[i] = configUVEData[i];
+        }
+        var cnt = configUVEData.length;
+        for (i = vRouterCnt; i < cnt; i++) {
+            uveData[i - vRouterCnt] = configUVEData[i];
+        }
+        resultJSON =
+            checkAndGetSummaryJSON(confData, uveData,
+                                   ['VRouterAgent','Contrail-Vrouter-Nodemgr']);
+        callback(null, resultJSON);
+    });
+}
+
+function getvRouterPagedSummary (req, res, appData)
+{
+    var addGen = req.param('addGen');
+    var count = req.param('count');
+    var lastKey = req.param('lastKey');
+    var found = false;
+    var retLastUUID = null;
+    var resultJSON = {};
+    var matchStr = 'name';
+
+    resultJSON['data'] = [];
+    resultJSON['lastKey'] = null;
+    resultJSON['more'] = false;
+
+    if (null != count) {
+        count = parseInt(count);
+    } else {
+        count = -1;
+    }
+    getvRouterList(appData, function(err, data, uuidList) {
+        if (err) {
+            commonUtils.handleJSONResponse(err, res, resultJSON);
+            return;
+        }
+        var result = getNodeListByLastKey(data, count, lastKey, matchStr,
+                                          uuidList);
+        if (null == result) {
+            commonUtils.handleJSONResponse(null, res, resultJSON);
+            return;
+        }
+        dovRouterListPostProcess(null, result['uuidList'], result['nodeList'],
+                                 addGen, appData,
+                                 function(err, data) {
+            resultJSON['lastKey'] = result['lastKey'];
+            resultJSON['data'] = data;
+            resultJSON['more'] = result['more'];
+            commonUtils.handleJSONResponse(err, res, resultJSON);
+        });
     });
 }
 
@@ -160,28 +313,20 @@ function getvRoutersSummary (req, res, appData)
     var resultJSON = [];
     var configData = [], uveData = [];
     var addGen = req.param('addGen');
+    var count = req.param('count');
+    var lastKey = req.param('lastKey');
+    if ((null != count) || (null != lastKey)) {
+        getvRouterPagedSummary(req, res, appData);
+        return;
+    }
 
-    configApiServer.apiGet(url, appData, function(err, data) {
-        if (err || (null == data)) {
+    configApiServer.apiGet(url, appData, 
+                           commonUtils.doEnsureExecution(function(err, data) {
+        dovRouterListPostProcess(data, null, null, addGen, appData, 
+                                 function(err, resultJSON) {
             commonUtils.handleJSONResponse(err, res, resultJSON);
-        } else {
-            getvRouterDetailConfigUVEData(data, addGen, appData, 
-                                          function(err, configUVEData,
-                                                   vRouterCnt) {
-                for (var i = 0; i < vRouterCnt; i++) {
-                    configData[i] = configUVEData[i];
-                }
-                var cnt = configUVEData.length;
-                for (i = vRouterCnt; i < cnt; i++) {
-                    uveData[i - vRouterCnt] = configUVEData[i];
-                }
-                resultJSON = 
-                    checkAndGetSummaryJSON(configData, uveData, 
-                                           'VRouterAgent');
-                commonUtils.handleJSONResponse(err, res, resultJSON);
-            });
-        }
-    });
+        });
+    }, global.DEFAULT_CB_TIMEOUT));
 }
 
 function copyObject(dest, src)
@@ -192,16 +337,32 @@ function copyObject(dest, src)
     return dest;
 }
 
-function addGeneratorInfoToUVE (url, uve, host, callback)
+function addGeneratorInfoToUVE (postData, uve, host, modules, callback)
 {
-    opServer.api.get(url, function(err, data) {
-        if (err || (null == data)) {
+    var resultJSON = {};
+    var url = '/analytics/uves/generator';
+
+    opServer.api.post(url, postData, 
+                      commonUtils.doEnsureExecution(function(err, data) {
+        if ((null != err) || (null == data) || (null == data['value'])) {
             callback(null, uve);
             return;
         }
-        uve = copyObject(uve, data);
-        callback(null, uve);
-    });
+        data = data['value'];
+        len = data.length;
+        var modCnt = modules.length;
+        for (var i = 0; i < modCnt; i++) {
+            name = host + ':' + modules[i];
+            for (var j = 0; j < len; j++) {
+                if (name == data[j]['name']) {
+                    resultJSON[modules[i]] = data[j]['value'];
+                    break;
+                }
+            }
+        }
+        resultJSON = copyObject(resultJSON, uve);
+        callback(null, resultJSON);
+    }, global.DEFAULT_CB_TIMEOUT));
 }
 
 function getvRouterDetails (req, res, appData)
@@ -211,23 +372,28 @@ function getvRouterDetails (req, res, appData)
     var url         = '/analytics/vrouter/' + host + '?flat';
     var resultJSON = {};
     
-    opServer.api.get(url, function(err, data) {
-        if (err || (null == data)) {
+    opServer.api.get(url, 
+                     commonUtils.doEnsureExecution(function(err, data) {
+        if ((null != err) || (null == data)) {
             data = {};
             getDataFromConfigNode('bgp-routers', hostName, appData,
                                   data, function(err, resultJSON) {
                 commonUtils.handleJSONResponse(err, res, resultJSON);
             });
         } else {
-            url = '/analytics/generator/' + host + ':VRouterAgent?flat';
-            addGeneratorInfoToUVE(url, data, host, function(err, data) {
+            var postData = {};
+            postData['kfilt'] = [host + ':VRouterAgent',
+                                 host + ':Contrail-Vrouter-Nodemgr'];
+            addGeneratorInfoToUVE(postData, data, host,
+                                  ['VRouterAgent','Contrail-Vrouter-Nodemgr'],
+                                  function(err, data) {
                 getDataFromConfigNode('virtual-routers', host, appData, 
                                       data, function(err, data) {
                     commonUtils.handleJSONResponse(null, res, data);
                 });
             });
         }
-    });
+    }, global.DEFAULT_CB_TIMEOUT));
 }
 
 function processAnalyticsNodeUVEData (resultJSON, uveData)
@@ -497,8 +663,18 @@ function processAnalyticsNodeDetailJSON (hostName, genUVEData, callback)
             callback(genUVEData);
             return;
         }
-        addGenCollData(genUVEData, collUVEData, resultJSON, lastIndex);
-        callback(resultJSON[0]);
+        var collData = {};
+        collData['value'] = [];
+        collData['value'][0] = {};
+        collData['value'][0]['name'] = hostName;
+        collData['value'][0]['value'] = collUVEData;
+        var resultJSON = 
+            postProcessAnalyticsNodeSummaryJSON(collData, genUVEData);
+        result = resultJSON[0];
+        if (result) {
+            result = resultJSON[0]['value'];
+        }
+        callback(result);
     });
 }
 
@@ -517,6 +693,9 @@ function addGenCollData (genData, collData, resultJSON, lastIndex)
 
 function postProcessAnalyticsNodeSummaryJSON (collUVEData, genUVEData) 
 {
+    var moduleNames = ['QueryEngine', 'Contrail-Analytics-Nodemgr',
+                       'OpServer', 'Collector'];
+    var modCnt = moduleNames.length;
     var modHost = null;
     var resultJSON = [];
     var result = [];
@@ -540,20 +719,25 @@ function postProcessAnalyticsNodeSummaryJSON (collUVEData, genUVEData)
             }
             return resultJSON;
         }
-        for (var i = 0; i < collDataLen; i++) {
-            modHost = collData[i]['name'] + ':Collector';
+        for (var i = 0, l = 0; i < collDataLen; i++) {
+            resultJSON[lastIndex] = {};
+            resultJSON[lastIndex]['name'] = collData[i]['name'];
+            resultJSON[lastIndex]['value'] = {};
+            resultJSON[lastIndex]['value'] =
+                copyObject(resultJSON[lastIndex]['value'],
+                           collData[i]['value']);
             for (var j = 0; j < genDataLen; j++) {
-                resultJSON[lastIndex] = {};
-                resultJSON[lastIndex]['name'] = collData[i]['name'];
-                if (modHost == genData[j]['name']) {
-                    lastIndex = addGenCollData(genData[j]['value'], 
-                                               collData[i]['value'],
-                                               result, lastIndex);
-                    resultJSON[lastIndex - 1]['value'] = 
-                        commonUtils.cloneObj(result[lastIndex - 1]);
-                    break;
+                for (var k = 0; k < modCnt; k++) {
+                    modHost = collData[i]['name'] + ':' + moduleNames[k];
+                    if (modHost == genData[j]['name']) {
+                        resultJSON[lastIndex]['value'][moduleNames[k]] = {};
+                        resultJSON[lastIndex]['value'][moduleNames[k]] =
+                            copyObject(resultJSON[lastIndex]['value'][moduleNames[k]],
+                                       genData[j]['value']);
+                    }
                 }
             }
+            lastIndex++;
         }
     } catch(e) {
     }
@@ -583,19 +767,25 @@ function getAnalyticsNodeSummary (req, res, appData)
     var resultJSON = [];
     var dataObjArr = [];
 
-    reqUrl = '/analytics/collector/*?cfilt=ModuleCpuState,CollectorState';
-    commonUtils.createReqObj(dataObjArr, 0, reqUrl, global.HTTP_REQUEST_GET,
-                             null, opApiServer, null, appData);
+    reqUrl = '/analytics/uves/collector';
+    var collPostData = {};
+    collPostData['cfilt'] = ['ModuleCpuState', 'CollectorState'];
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
+                             collPostData, opApiServer, null, appData);
 
     if (null != addGen) {
-        var reqUrl = '/analytics/generator/*:Collector?cfilt=' +
-            'ModuleClientState:client_info,ModuleServerState:generator_info';
-        commonUtils.createReqObj(dataObjArr, 1, reqUrl, global.HTTP_REQUEST_GET,
-                                 null, opApiServer, null, appData);
+        reqUrl = '/analytics/uves/generator';
+        var postData = {};
+        postData['kfilt'] = ['*:Collector', '*:Contrail-Analytics-Nodemgr',
+                             '*:OpServer', '*:QueryEngine'];
+        postData['cfilt'] = ['ModuleClientState:client_info', 
+                             'ModuleServerState:generator_info'];
+        commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
+                                 postData, opApiServer, null, appData);
     }
     
     async.map(dataObjArr,
-              commonUtils.getServerResponseByRestApi(opApiServer, false),
+              commonUtils.getServerResponseByRestApi(opApiServer, true),
               function(err, results) {
         var resultJSON =
             postProcessAnalyticsNodeSummaryJSON(results[0], results[1]);
@@ -610,9 +800,14 @@ function getAnalyticsNodeDetails (req, res, appData)
 {
     var hostName = req.param('hostname');
     var resultJSON = {};
-    var url = '/analytics/generator/' + hostName + ':Collector?flat';
+    var url = '/analytics/uves/generator';
 
-    opServer.api.get(url, function(err, genData) {
+    var postData = {};
+    postData['kfilt'] = [hostName + ':Collector', 
+                         hostName + ':Contrail-Analytics-Nodemgr',
+                         hostName + ':OpServer',
+                         hostName + ':QueryEngine'];
+    opServer.api.post(url, postData, function(err, genData) {
         if (err || (null == genData)) {
             commonUtils.handleJSONResponse(err, res, resultJSON);
         } else {
@@ -715,7 +910,7 @@ function updateGeneratorInfo (resultJSON, genInfo, name)
         var genCnt = genInfo.length;
         for (var i = 0; i < genCnt; i++) {
             if (name == genInfo[i]['name']) {
-                copyObject(resultJSON, genInfo[i]['value']);
+                resultJSON = copyObject(resultJSON, genInfo[i]['value']);
             }
         }
     } catch(e) {
@@ -755,7 +950,7 @@ function getNodeStatusByUVE (moduleName, uveData)
     return 'Down';
 }
 
-function checkAndGetSummaryJSON (configData, uves, moduleName)
+function checkAndGetSummaryJSON (configData, uves, moduleNames)
 {
     var resultJSON = [];
     var k = 0;
@@ -764,27 +959,27 @@ function checkAndGetSummaryJSON (configData, uves, moduleName)
         var cnt = uveData.length;
         try {
             var genInfo = uves[1]['value'];
+            var genCnt = genInfo.length;
         } catch(e) {
             genInfo = null;
         }
         var j = 0;
-
+        var modCnt = moduleNames.length;
         for (var i = 0; i < cnt; i++) {
             try {
-                name = uveData[i]['name'] + ':' + moduleName;
+                name = uveData[i]['name'] + ':' + moduleNames[0];
                 resultJSON[j] = {};
                 resultJSON[j]['name'] = uveData[i]['name'];
                 resultJSON[j]['value'] = uveData[i]['value'];
-                updateGeneratorInfo(resultJSON[j]['value'], genInfo, name);
                 uveData[i]['visited'] = true;
-                configIndex = doNodeExist(configData, moduleName,
+                configIndex = doNodeExist(configData, moduleNames[0],
                                           uveData[i]['name']);
                 if (-1 != configIndex) {
                     resultJSON[j]['value']['ConfigData'] = configData[configIndex];
                 } else {
                     resultJSON[j]['value']['ConfigData'] = {};
                 }
-                resultJSON[j]['nodeStatus'] = getNodeStatusByUVE(moduleName,
+                resultJSON[j]['nodeStatus'] = getNodeStatusByUVE(moduleNames[0],
                                                                  uveData[i]);
                 j++;
             } catch(e) {
@@ -798,13 +993,13 @@ function checkAndGetSummaryJSON (configData, uves, moduleName)
     var nodeFound = false;
     for (i = 0; i < cnt; i++) {
         try {
-            if (moduleName == 'ControlNode') {
+            if (moduleNames[0] == 'ControlNode') {
                 fqName = configData[i]['bgp-router']['fq_name'];
             } else {
                 fqName = configData[i]['virtual-router']['fq_name'];
             }
             if (null == configData[i]['visited']) {
-                if (moduleName == 'ControlNode') {
+                if (moduleNames[0] == 'ControlNode') {
                     if (adminApiHelper.isContrailControlNode(configData[i]['bgp-router'])) {
                         nodeFound = true;
                     }
@@ -835,6 +1030,17 @@ function checkAndGetSummaryJSON (configData, uves, moduleName)
         } catch(e) {
         }
     }
+    for (var p = 0; p < j; p++) {
+        for (var k = 0; k < modCnt; k++) {
+            try {
+                name = resultJSON[p]['name'] + ':' + moduleNames[k];
+                moduleName = moduleNames[k];
+                resultJSON[p]['value'][moduleName] = {};
+                updateGeneratorInfo(resultJSON[p]['value'][moduleName], genInfo, name);
+            } catch(e) {
+            }
+        }
+    }
     return resultJSON;
 }
 
@@ -847,26 +1053,36 @@ function processvRouterSummaryJSON(configData, uveData, callback)
 
 function getControlNodeDetailConfigUVEData (configData, addGen, appData, callback)
 {
+    var len = 0;
     var dataObjArr = [];
 
-    var len = configData['bgp-routers'].length;
+    try {
+        len = configData['bgp-routers'].length;
+    } catch(e) {
+        len = 0;
+    }
     for (var i = 0; i < len; i++) {
         var reqUrl = '/bgp-router/' + configData['bgp-routers'][i]['uuid'];
-        commonUtils.createReqObj(dataObjArr, i, reqUrl,
+        commonUtils.createReqObj(dataObjArr, reqUrl,
                                  global.HTTP_REQUEST_GET, null, configApiServer, null, 
                                  appData);
     }
-    reqUrl = '/analytics/bgp-router/*?cfilt=BgpRouterState';
-    commonUtils.createReqObj(dataObjArr, i, reqUrl, global.HTTP_REQUEST_GET,
-                             null, opApiServer, null, appData);
+    reqUrl = '/analytics/uves/bgp-router';
+    var postData = {};
+    postData['cfilt'] = ['BgpRouterState'];
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
+                             postData, opApiServer, null, appData);
     if (null != addGen) {
-        reqUrl = '/analytics/generator/*:ControlNode?cfilt=' +
-            'ModuleClientState:client_info,ModuleServerState:generator_info';
-        commonUtils.createReqObj(dataObjArr, i + 1, reqUrl, global.HTTP_REQUEST_GET,
-                                 null, opApiServer, null, appData);
+        var genPostData = {};
+        genPostData['kfilt'] = ['*:ControlNode', '*:Contrail-Control-Nodemgr'];
+        genPostData['cfilt'] = ['ModuleClientState:client_info',
+                                'ModuleServerState:generator_info'];
+        reqUrl = '/analytics/uves/generator';
+        commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
+                                 genPostData, opApiServer, null, appData);
     }
     async.map(dataObjArr, 
-              commonUtils.getServerResponseByRestApi(configApiServer, false),
+              commonUtils.getServerResponseByRestApi(configApiServer, true),
               function(err, results) {
         callback(err, results, len);
     });
@@ -879,34 +1095,37 @@ function getControlNodesSummary (req, res, appData)
     var configData = [], uveData = [];
     var addGen = req.param('addGen');
 
-    configApiServer.apiGet(url, appData, function(err, data) {
-        if (err || (null == data)) {
+    configApiServer.apiGet(url, appData, 
+                           commonUtils.doEnsureExecution(function(err, data) {
+        getControlNodeDetailConfigUVEData(data, addGen, appData,
+                                          function(err, configUVEData,
+                                          bgpRtrCnt) {
+            if (null != err) {
+                callback(null, []);
+                return;
+            }
+            for (var i = 0; i < bgpRtrCnt; i++) {
+                configData[i] = configUVEData[i];
+            }
+            var cnt = configUVEData.length;
+            for (i = bgpRtrCnt; i < cnt; i++) {
+                uveData[i - bgpRtrCnt] = configUVEData[i];
+            }
+            resultJSON =
+                checkAndGetSummaryJSON(configData, uveData, 
+                    ['ControlNode', 'Contrail-Control-Nodemgr']);
             commonUtils.handleJSONResponse(err, res, resultJSON);
-        } else {
-            getControlNodeDetailConfigUVEData(data, addGen, appData,
-                                              function(err, configUVEData,
-                                              bgpRtrCnt) {
-                for (var i = 0; i < bgpRtrCnt; i++) {
-                    configData[i] = configUVEData[i];
-                }
-                var cnt = configUVEData.length;
-                for (i = bgpRtrCnt; i < cnt; i++) {
-                    uveData[i - bgpRtrCnt] = configUVEData[i];
-                }
-                resultJSON =
-                    checkAndGetSummaryJSON(configData, uveData, 'ControlNode');
-                commonUtils.handleJSONResponse(err, res, resultJSON);
-            });
-        }
-    });
+        });
+    }, global.DEFAULT_CB_TIMEOUT));
 }
 
 function getDataFromConfigNode(str, hostName, appData, data, callback)
 {
     var url = '/' + str;
     data['nodeStatus'] = 'Down';
-    configApiServer.apiGet(url, appData, function(err, configData) {
-        if (err || (null == configData)) {
+    configApiServer.apiGet(url, appData, 
+                           commonUtils.doEnsureExecution(function(err, configData) {
+        if ((null != err) || (null == configData)) {
             callback(null, data);
             return;
         }
@@ -936,13 +1155,14 @@ function getDataFromConfigNode(str, hostName, appData, data, callback)
             callback(null, data);
             return;
         }
-        configApiServer.apiGet(url, appData, function(err, configData) {
+        configApiServer.apiGet(url, appData, 
+                               commonUtils.doEnsureExecution(function(err, configData) {
             data['ConfigData'] = {};
             data['ConfigData'] = configData;
             data['nodeStatus'] = 'Up';
             callback(null, data);
-        });
-    });
+        }, global.DEFAULT_CB_TIMEOUT));
+    }, global.DEFAULT_CB_TIMEOUT));
 }
 
 function getControlNodeDetails (req, res, appData)
@@ -951,23 +1171,28 @@ function getControlNodeDetails (req, res, appData)
     var url = '/analytics/bgp-router/' + hostName + '?flat';
     var resultJSON = {};
 
-    opServer.api.get(url, function(err, data) {
-        if (err || (null == data)) {
+    opServer.api.get(url, 
+                     commonUtils.doEnsureExecution(function(err, data) {
+        if ((null != err) || (null == data)) {
             data = {};
             getDataFromConfigNode('bgp-routers', hostName, appData,
                                   data, function(err, resultJSON) {
                 commonUtils.handleJSONResponse(err, res, resultJSON);
             });
         } else {
-            url = '/analytics/generator/' + hostName + ':ControlNode?flat';
-            addGeneratorInfoToUVE(url, data, hostName, function(err, data) {
+            var postData = {};
+            postData['kfilt'] = [hostName + ':ControlNode',
+                                 hostName + ':Contrail-Control-Nodemgr'];
+            addGeneratorInfoToUVE(postData, data, hostName, 
+                                  ['ControlNode', 'Contrail-Control-Nodemgr'],
+                                  function(err, data) {
                 getDataFromConfigNode('bgp-routers', hostName, appData, 
                                       data, function(err, data) {
                     commonUtils.handleJSONResponse(err, res, data);
                 });
             });
         }
-    });
+    }, global.DEFAULT_CB_TIMEOUT));
 }
 
 function getUVByUrlEAndSendData (url, errResponse, res, appData)
@@ -991,7 +1216,8 @@ function getConfigNodesList (req, res, appData)
 
 function parseConfigNodeProcessUVEs (resultJSON, configProcessUVEs, host)
 {
-    var cfgProc = ['ServiceMonitor', 'Schema', 'ApiServer0'];
+    var cfgProc = ['ServiceMonitor', 'Schema', 'ApiServer',
+        'Contrail-Config-Nodemgr'];
     var cfgProcLen = cfgProc.length;
     try {
         var cfgProcUVEData = configProcessUVEs['value'];
@@ -999,16 +1225,21 @@ function parseConfigNodeProcessUVEs (resultJSON, configProcessUVEs, host)
     } catch(e) {
         return resultJSON;
     }
-    for (var i = 0; i < cfgProcLen; i++) {
-        cfgProcName = cfgProc[i];
-        name = host + ':' + cfgProcName;
-        for (j = 0; j < cfgProcUVEDataLen; j++) {
-            if (name == cfgProcUVEData[j]['name']) {
-                resultJSON[cfgProcName] = {};
-                resultJSON[cfgProcName] = 
-                    copyObject(resultJSON[cfgProcName],
-                               cfgProcUVEData[j]['value']);
-                break;
+    for (var i = 0; i < cfgProcUVEDataLen; i++) {
+        for (j = 0; j < cfgProcLen; j++) {
+            cfgProcName = cfgProc[j];
+            name = host + ':' + cfgProcName;
+            var procName = cfgProcUVEData[i]['name'];
+            var pos = procName.indexOf(name);
+            if (pos != -1) {
+                var cfgArr = procName.split(':');
+                if (cfgArr.length > 1) {
+                    procName = cfgArr[1];
+                }
+                resultJSON[procName] = {};
+                resultJSON[procName] = 
+                    copyObject(resultJSON[procName],
+                               cfgProcUVEData[i]['value']);
             }
         }
     }
@@ -1050,13 +1281,20 @@ function getConfigNodeDetails (req, res, appData)
     var errResponse = {};
     var urlLists = [];
     var resultJSON = {}; 
+    var dataObjArr = [];
 
-    urlLists[0] = '/analytics/config-node/' + hostName + '?flat';
-    urlLists[1] = '/analytics/generator/*';
-
-    async.map(urlLists,
-              commonUtils.getJsonViaInternalApi(opServer.api, true),
-                                                function(err, results) {
+    var genPostData = {};
+    reqUrl = '/analytics/config-node/' + hostName + '?flat';
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
+                             null, opApiServer, null, appData);
+    genPostData['kfilt'] = ['*:ApiServer*', '*:Schema', '*:ServiceMonitor',
+                            '*:Contrail-Config-Nodemgr'];
+    reqUrl = '/analytics/uves/generator';
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
+                             genPostData, opApiServer, null, appData);
+    async.map(dataObjArr, 
+              commonUtils.getServerResponseByRestApi(configApiServer, false),
+              function(err, results) {
         if (err || (results[0]['ModuleCpuState'] == null)) {
             commonUtils.handleJSONResponse(err, res, resultJSON);
             return;
@@ -1068,19 +1306,29 @@ function getConfigNodeDetails (req, res, appData)
 
 function getConfigNodesSummary (req, res, appData)
 {
-    var urlLists = [];
     var addGen = req.param('addGen');
+    var dataObjArr = [];
 
-    urlLists[0] = '/analytics/config-node/*?cfilt=ModuleCpuState';
+    var reqUrl = '/analytics/uves/config-node';
+    var postData = {};
+    postData['cfilt'] = ['ModuleCpuState'];
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
+                             postData, opApiServer, null, appData);
     if (null != addGen) {
-        urlLists[1] = '/analytics/generator/*?cfilt=' +
-            'ModuleClientState:client_info,ModuleServerState:generator_info';
+        reqUrl = '/analytics/uves/generator';
+        var genPostData = {};
+        genPostData['kfilt'] = ['*:ApiServer*', '*:Schema', '*:ServiceMonitor',
+                              '*:Contrail-Config-Nodemgr'];
+        genPostData['cfilt'] = ['ModuleClientState:client_info',
+                                'ModuleServerState:generator_info'];
+        commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
+                                 genPostData, opApiServer, null, appData);
     }
 
     var resultJSON = [];
 
-    async.map(urlLists,
-              commonUtils.getJsonViaInternalApi(opServer.api, false),
+    async.map(dataObjArr,
+              commonUtils.getServerResponseByRestApi(opApiServer, true),
               function(err, results) {
         if (err || (results[0] == null) || 
             (results[0]['value'].length == 0)) {
@@ -1129,15 +1377,15 @@ function processAnalyticsQueryStats (collUVE, appData, details, callback)
     var url = '/analytics/queries';
 
     if (ipList.length == 0) {
-        callback(null, resultJSON);
+        callback(null, collUVE);
     } else {
         cnt = ipList.length;
         for (var i = 0; i < cnt; i++) {
             opServerAPI =
-                rest.getAPIServer({apiName:global.label.OPS_API_SERVER,
+                rest.getAPIServer({apiName:'Op-Server',
                                    server:ipList[i][0],
                                    port:config.analytics.server_port });
-            commonUtils.createReqObj(dataObjArr, i, url, null, null,
+            commonUtils.createReqObj(dataObjArr, url, null, null,
                                      opServerAPI, null, appData);
         }
         async.map(dataObjArr,
@@ -1421,7 +1669,7 @@ function getvRouterFlowsDetail (req, res, appData)
     var vRouterRestApi = 
         commonUtils.getRestAPIServer(ip, global.SANDESH_COMPUTE_NODE_PORT);
 
-    commonUtils.createReqObj(dataObjArr, 0, reqUrl);
+    commonUtils.createReqObj(dataObjArr, reqUrl);
     sendSandeshRequest(req, res, dataObjArr, vRouterRestApi);
 }
 
@@ -1472,7 +1720,7 @@ function getControlNodeSandeshRequest (req, res, appData)
     var controlNodeRestApi = 
         commonUtils.getRestAPIServer(ip, global.SANDESH_CONTROL_NODE_PORT);
 
-    commonUtils.createReqObj(dataObjArr, 0, url);
+    commonUtils.createReqObj(dataObjArr, url);
     sendSandeshRequest(req, res, dataObjArr, controlNodeRestApi);
 }
 
@@ -1543,7 +1791,7 @@ function buildBulkUVEUrls (filtData, appData)
         if (null == reqUrl) {
             return null;
         }
-        commonUtils.createReqObj(dataObjArr, i, reqUrl, null,
+        commonUtils.createReqObj(dataObjArr, reqUrl, null,
                                  null, opApiServer, null, appData);
     }
     return dataObjArr;
@@ -1564,6 +1812,67 @@ function getServerResponseByModType (req, res, appData)
               commonUtils.getServerResponseByRestApi(opApiServer, false),
               function(err, resultJSON) {
         commonUtils.handleJSONResponse(err, res, resultJSON);
+    });
+}
+
+function getvRouterList (appData, callback)
+{
+    var resultJSON = [];
+    var uuidList = [];
+    var dataObjArr = [];
+    var tmpInsertedList = {};
+    var url = '/virtual-routers';
+    commonUtils.createReqObj(dataObjArr, url, null, null, configApiServer, null,
+                             appData);
+    url = '/analytics/uves/vrouters';
+    commonUtils.createReqObj(dataObjArr, url, null, null, opApiServer, null,
+                             appData);
+    async.map(dataObjArr,
+              commonUtils.getServerResponseByRestApi(configApiServer, false),
+              function(err, results) {
+        if (err || (null == results)) {
+            callback(err, results);
+            return;
+        }
+        try {
+            var vrConf = results[0]['virtual-routers'];
+            var vrCnt = vrConf.length;
+        } catch(e) {
+            logutils.logger.info("In getvRouterList(), vRouter Config not " +
+                                  "found");
+        }
+        for (var i = 0; i < vrCnt; i++) {
+            try {
+                len = vrConf[i]['fq_name'].length;
+                vrouterName = vrConf[i]['fq_name'][len - 1];
+                resultJSON.push(vrouterName);
+                uuidList.push(vrConf[i]['uuid']);
+                tmpInsertedList[vrouterName] = vrouterName;
+            } catch(e) {
+                logutils.logger.error("In getvRouterList(), vRouter Config Parse " +
+                                      "Error: " + e);
+            }
+        }
+        try {
+            var vrUVE = results[1];
+            vrCnt = vrUVE.length;
+        } catch(e) {
+            logutils.logger.info("In getvRouterList(), vRouter UVE not " +
+                                 "found");
+        }
+        for (i = 0; i < vrCnt; i++) {
+            try {
+                vrouterName = vrUVE[i]['name'];
+                if (null == tmpInsertedList[vrouterName]) {
+                    resultJSON.push(vrouterName);
+                    tmpInsertedList[vrouterName] = vrouterName;
+                }
+            } catch(e) {
+                logutils.logger.error("In getvRouterList(), vRouter UVE Parse " +
+                                      "Error: " + e);
+            }
+        }
+        callback(null, resultJSON, uuidList);
     });
 }
 

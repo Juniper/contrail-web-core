@@ -7,6 +7,10 @@
          file
      -->
      <require>
+        <define>longPoll</define>
+        <path>../core/longPolling.api</path>
+     </require>
+     <require>
         <define>cacheApi</define>
         <path>../core/cache.api</path>
     </require>
@@ -33,6 +37,10 @@
     <require>
         <define>commonUtils</define>
         <path>../../utils/common.utils</path>
+    </require>
+    <require>
+        <define>globalvrouterconfigapi</define>
+        <path>../api/globalvrouterconfig.api</path>
     </require>
     <require>
         <define>vnconfigapi</define>
@@ -86,6 +94,10 @@
     <require>
         <define>sshapi</define>
         <path>../api/sshcommand.api</path>
+    </require>
+    <require>
+        <define>proxyApi</define>
+        <path>../api/proxy.api</path>
     </require>
     <require>
         <define>timeout</define>
@@ -245,8 +257,14 @@
         <feature>monitoring</feature>
         <callback>tenantapi.getFlowStat</callback>
     </item>
+	<item>
+        <url>/log-directory</url>
+        <method>post</method>
+        <feature>monitoring</feature>
+        <callback>commonUtils.directory</callback>
+    </item>
     <item>
-        <url>/download/:filename</url>
+        <url>/download</url>
         <method>get</method>
         <feature>monitoring</feature>
         <callback>commonUtils.download</callback>
@@ -520,6 +538,13 @@
         <callback>adminapi.getvRouterMCastRoutes</callback>
     </item>
     <item>
+        <!-- Lists all the Layer2 Route entries of vRouter -->
+        <url>/api/admin/monitor/infrastructure/vrouter/l2-routes</url>
+        <method>get</method>
+        <feature>compute-node</feature>
+        <callback>adminapi.getvRouterL2Routes</callback>
+    </item>
+    <item>
         <url>/api/admin/monitor/infrastructure/analyticsnodes</url>
         <method>get</method>
         <feature>analytics-node</feature>
@@ -572,6 +597,46 @@
         <method>post</method>
         <feature>monitoring</feature>
         <callback>infra.getServerResponseByModType</callback>
+    </item>
+
+    <!-- API / Feature definition for Global vRouter configuration -->
+    <!-- 1. Get Global vRouter configuration -
+            /api/tenants/config/global-vrouter-config,
+                                                 getGlobalvRouterConfig
+         2. Create Global vRouter configuration -
+            /api/tenants/config/global-vrouter-configs,
+                                                 createGlobalvRouterConfig
+         3. Update Forwarding Options of Global vRouter configuration -
+            /api/tenants/config/global-vrouter-config/:id/forwarding-options,
+                                                 updateForwardingOptions
+
+         4. Update Link Local Services of Global vRouter configuration -
+            /api/tenants/config/global-vrouter-config/:id/link-local-services,
+                                                 updateLinkLocalService
+    -->
+    <item>
+        <url>/api/tenants/config/global-vrouter-config</url>
+        <method>get</method>
+        <feature>globalvrouterconfig</feature>
+        <callback>globalvrouterconfigapi.getGlobalvRouterConfig</callback>
+    </item>
+    <item>
+        <url>/api/tenants/config/global-vrouter-configs</url>
+        <method>post</method>
+        <feature>globalvrouterconfig</feature>
+        <callback>globalvrouterconfigapi.createGlobalvRouterConfig</callback>
+    </item>
+    <item>
+        <url>/api/tenants/config/global-vrouter-config/:id/forwarding-options</url>
+        <method>put</method>
+        <feature>globalvrouterconfig</feature>
+        <callback>globalvrouterconfigapi.updateForwardingOptions</callback>
+    </item>
+    <item>
+        <url>/api/tenants/config/global-vrouter-config/:id/link-local-services</url>
+        <method>put</method>
+        <feature>globalvrouterconfig</feature>
+        <callback>globalvrouterconfigapi.updateLinkLocalService</callback>
     </item>
 
     <!-- API / Feature definition for Virtual Network configuration -->
@@ -847,6 +912,13 @@
         <feature>stconfig</feature>
         <callback>stconfigapi.listServiceTemplateImages</callback>
     </item>
+    <item>
+        <url>/api/tenants/config/system-flavors</url>
+        <method>get</method>
+        <feature>stconfig</feature>
+        <callback>stconfigapi.getSystemFlavors</callback>
+    </item>
+
 
     <!-- API / Feature definition for Service Instance configuration -->
     <!-- 1. List  - /api/tenants/config/service-instances/:id,
@@ -877,6 +949,12 @@
         <method>post</method>
         <feature>siconfig</feature>
         <callback>siconfigapi.createServiceInstance</callback>
+    </item>
+    <item>
+        <url>/api/tenants/config/service-instances/:uuid</url>
+        <method>put</method>
+        <feature>siconfig</feature>
+        <callback>siconfigapi.updateServiceInstance</callback>
     </item>
     <item>
         <url>/api/tenants/config/service-instance/:id</url>
@@ -1156,12 +1234,14 @@
     <item>
         <url>/api/tenant/networking/flow-series/vn</url>
         <method>get</method>
+        <timeout>300000</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getFlowSeriesByVN</callback>
     </item>
     <item>
         <url>/api/tenant/networking/network/traffic-stat</url>
         <method>get</method>
+        <timeout>300000</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getTrafficStatBtnVns</callback>
     </item>
@@ -1206,6 +1286,7 @@
     <item>
         <url>/api/tenant/networking/flow-series/vm</url>
         <method>get</method>
+        <timeout>300000</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getFlowSeriesByVM</callback>
     </item>
@@ -1247,6 +1328,7 @@
     <item>
         <url>/api/tenant/networking/network/flow-series/port</url>
         <method>get</method>
+        <timeout>300000</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getPortLevelFlowSeries</callback>
     </item>
@@ -1259,6 +1341,7 @@
     <item>
         <url>/api/tenant/networking/flow-series/cpu</url>
         <method>get</method>
+        <timeout>300000</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getFlowSeriesByCPU</callback>
     </item>
@@ -1273,6 +1356,12 @@
         <method>post</method>
         <feature>monitoring</feature>
         <callback>nwMonApi.getInstanceDetails</callback>
+    </item> 
+    <item>
+        <url>/api/tenant/networking/virtual-networks/details</url>
+        <method>post</method>
+        <feature>monitoring</feature>
+        <callback>nwMonApi.getVirtualNetworksDetails</callback>
     </item> 
     <item>
         <url>/api/tenant/networking/virtual-machines/details</url>
@@ -1291,6 +1380,18 @@
         <method>get</method>
         <feature>orchestration</feature>
         <callback>adminapi.getOrchestrationPluginModel</callback>
+    </item>
+    <item>
+        <url>/api/admin/config/get-data</url>
+        <method>get</method>
+        <feature>orchestration</feature>
+        <callback>adminapi.getApiServerDataByPage</callback>
+    </item>
+    <item>
+        <url>/api/admin/webconfig/:type/:variable</url>
+        <method>get</method>
+        <feature>setting</feature>
+        <callback>adminapi.getWebConfigValueByName</callback>
     </item>
     <item>
         <url>/api/query/cassandra/keys/:table</url>
@@ -1321,5 +1422,14 @@
         <method>post</method>
         <feature>monitoring</feature>
         <callback>sshapi.getServiceStatus</callback>
+    </item>
+    <item>
+        <url>/proxy</url>
+        <!-- Proxy URL format:
+            /proxy?proxyURL=<URL>&<argument-list>
+        -->
+        <method>get</method>
+        <feature>proxy</feature>
+        <callback>proxyApi.forwardProxyRequest</callback>
     </item>
 </urlLists>

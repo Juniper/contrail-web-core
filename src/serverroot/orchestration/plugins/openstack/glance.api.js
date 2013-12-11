@@ -18,7 +18,8 @@ var imgMgrPort = ((config.imageManager) && (config.imageManager.port)) ?
 
 glanceAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
                                       server:imgMgrIp, port:imgMgrPort});
-getTenantIdByReqCookie = function(req) {
+function getTenantIdByReqCookie (req)
+{
     if (req.cookies && req.cookies.project) {
         return req.cookies.project;
     } else {
@@ -35,8 +36,9 @@ getTenantIdByReqCookie = function(req) {
 
 /* Function: doGlanceOpCb
  */
-doGlanceOpCb = function(reqUrl, tenantId, req, glanceCallback, stopRetry,
-                       callback) {
+function doGlanceOpCb (reqUrl, tenantId, req, glanceCallback, stopRetry,
+                       callback)
+{
     var forceAuth = stopRetry;
 
     authApi.getTokenObj(req, tenantId, forceAuth, function(err, tokenObj) {

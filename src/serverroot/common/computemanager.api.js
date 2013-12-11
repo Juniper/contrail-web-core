@@ -50,9 +50,16 @@ function getVMStatsByProject (projUUID, req, callback)
     });
 }
 
+function getFlavors(req, callback)
+{
+    computeApi.getFlavors(req, function(err,data){
+        callback(err,data);
+    });
+}
+
 exports.apiGet = apiGet;
 exports.apiPost = apiPost;
 exports.launchVNC = launchVNC;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
-
+exports.getFlavors = getFlavors;

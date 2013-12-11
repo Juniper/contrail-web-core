@@ -22,7 +22,8 @@ commonUtils.createRedisClient(function(client) {
     redisPub.redisPubClient = client;
 });
 
-doSetToRedis = function (key, data) {
+function doSetToRedis (key, data)
+{
 	redisPub.redisPubClient.set(channel, data, function (err) {
 		if (err) {
 			logutils.logger.error("Redis SET error [key#]" + key + ", [value#]" + data);
@@ -31,7 +32,9 @@ doSetToRedis = function (key, data) {
 	});
 }
 
-redisPub.publishDataToRedis = function (pubChannel, saveChannelKey, errCode, pubData, saveData, doSave, expiryTime, done) {
+function publishDataToRedis (pubChannel, saveChannelKey, errCode, pubData, 
+                             saveData, doSave, expiryTime, done)
+{
 	var pubDataObj = {
 		errCode:errCode,
 		data:(pubData)
@@ -65,7 +68,8 @@ redisPub.publishDataToRedis = function (pubChannel, saveChannelKey, errCode, pub
 	}
 }
 
-redisPub.createChannelByHashURL = function (hash, url) {
+function createChannelByHashURL (hash, url)
+{
 	var channel = 'q:' + hash + global.ZWQ_MSG_SEPERATOR + url;
 	return channel;
 }
@@ -77,4 +81,7 @@ function sendRedirectRequestToMainServer (jobData)
 }
 
 exports.sendRedirectRequestToMainServer = sendRedirectRequestToMainServer;
+exports.publishDataToRedis = publishDataToRedis;
+exports.createChannelByHashURL = createChannelByHashURL;
+
 

@@ -27,7 +27,8 @@ var jsonPath    = require('JSONPath').eval;
 /**
  * Bail out if called directly as "nodejs virtualdnsconfig.api.js"
  */
-if (!module.parent) {
+if (!module.parent) 
+{
     logutils.logger.warn(util.format(messages.warn.invalid_mod_call,
                                      module.filename));
     process.exit(1);
@@ -42,7 +43,8 @@ if (!module.parent) {
  * 4. Calls listVirtualDNSsCb that process data from config
  *    api server and sends back the http response.
  */
-function listVirtualDNSs (request, response, appData) {
+function listVirtualDNSs (request, response, appData) 
+{
 
     var domainId      = null;
     var requestParams = url.parse(request.url,true);
@@ -69,7 +71,8 @@ function listVirtualDNSs (request, response, appData) {
  * 2. Reads the response of per domain Virtual DNS list from config api server
  *    and sends it back to the client.
  */
-function listVirtualDNSsCb (error, vdnsListData, response, appData) {
+function listVirtualDNSsCb (error, vdnsListData, response, appData) 
+{
     var vdnsURL           = null;
     var dataObjArr        = [];
     var i = 0, vdnsLength  = 0;
@@ -95,8 +98,8 @@ function listVirtualDNSsCb (error, vdnsListData, response, appData) {
 
     for (i = 0; i < vdnsLength; i++) {
        var vdnsRef = vdnss['virtual_DNSs'][i];
-       vdnsURL = vdnsRef['href'].split(':8082')[1];
-       commonUtils.createReqObj(dataObjArr, i, vdnsURL,
+       vdnsURL = '/virtual-DNS/' + vdnsRef['uuid'];
+       commonUtils.createReqObj(dataObjArr, vdnsURL,
                global.HTTP_REQUEST_GET, null, null, null,
                appData);
        
@@ -114,7 +117,8 @@ function listVirtualDNSsCb (error, vdnsListData, response, appData) {
  * private function
  * 1. Callback for the listVirtualDNSsCb gets, sends all virtual DNSs to client.
  */
-function virtualDNSsListAggCb (error, results, response) {
+function virtualDNSsListAggCb (error, results, response) 
+{
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
        return;
@@ -131,7 +135,8 @@ function virtualDNSsListAggCb (error, results, response) {
  *    to update the DNS ref in IPAM objects.
  */
 function createDnsSetIpam(error, vdnsConfig, vdnsPostData,
-                          response, appData) {
+                          response, appData) 
+{
     var dnsId = null; 
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
@@ -153,7 +158,8 @@ function createDnsSetIpam(error, vdnsConfig, vdnsPostData,
  * 1. URL /api/tenants/config/virtual-DNSs - Post
  * 2. Sets Post Data and sends back the virtual dns config to client
  */
-function createVirtualDNS(request, response, appData) {
+function createVirtualDNS(request, response, appData) 
+{
     var vdnsCreateURL = '/virtual-DNSs';
     var vdnsPostData  = request.body;
     var vdnsIpamRefs  = null;
@@ -218,6 +224,10 @@ function updateVirtualDNS (request, response, appData)
 		    updateVirtualDnsAssocIpamRead(err, configData, vdnsPutData,
 		      		                      vdnsId, appData, 
                                           function(err, data) {
+                if (err) {
+                    commonUtils.handleJSONResponse(err, response, null);
+                    return;
+                }
                 readVirtualDNS(response, vdnsId, appData);
             });
         });
@@ -229,7 +239,8 @@ function updateVirtualDNS (request, response, appData)
  * private function
  * 1. Return back the response of virtual dns delete.
  */
-function deleteVirtualDNSCb (error, vdnsDelResp, response) {
+function deleteVirtualDNSCb (error, vdnsDelResp, response) 
+{
 
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
@@ -245,7 +256,8 @@ function deleteVirtualDNSCb (error, vdnsDelResp, response) {
  * 1. URL /api/tenants/config/virtual-DNS/:id
  * 2. Deletes the virtual DNS from config api server
  */
-function deleteVirtualDNS (request, response, appData) {
+function deleteVirtualDNS (request, response, appData) 
+{
     var vdnsDelURL     = '/virtual-DNS/';
     var vdnsId         = null;
     var requestParams = url.parse(request.url, true);
@@ -284,7 +296,8 @@ function deleteVirtualDNS (request, response, appData) {
  * 2. Reads the response of Virtual DNS get from config api server
  *    and sends it back to the client.
  */
-function setVirtualDNSRead(error, vdnsConfig, response, appData) {
+function setVirtualDNSRead(error, vdnsConfig, response, appData) 
+{
     var vdnsGetURL = '/virtual-DNS/';
 
     if (error) {
@@ -305,7 +318,8 @@ function setVirtualDNSRead(error, vdnsConfig, response, appData) {
  * private function
  * 1. Sends back the response of virtual dns read to clients after set operations.
  */
-function virtualDNSSendResponse(error, vdnsConfig, response) {
+function virtualDNSSendResponse(error, vdnsConfig, response) 
+{
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
     } else {
@@ -323,7 +337,8 @@ function virtualDNSSendResponse(error, vdnsConfig, response) {
  * 4. Calls getVirtualDNSCb that process data from config
  *    api server and sends back the http response.
  */
-function getVirtualDNS (request, response, appData) {
+function getVirtualDNS (request, response, appData) 
+{
     var virtualDNSId = null;
     var requestParams    = url.parse(request.url, true);
 
@@ -343,7 +358,8 @@ function getVirtualDNS (request, response, appData) {
  *    api server
  *    - Gets each DNSRecord
  */
-function getVirtualDNSCb (error, vdnsGetData, response, appData) {
+function getVirtualDNSCb (error, vdnsGetData, response, appData) 
+{
 
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
@@ -358,7 +374,8 @@ function getVirtualDNSCb (error, vdnsGetData, response, appData) {
  * private function
  * 1. Needs VDNS uuid in string format
  */
-function readVirtualDNS (response, dnsIdStr, appData) {
+function readVirtualDNS (response, dnsIdStr, appData) 
+{
     var vdnsGetURL         = '/virtual-DNS/';
 
     if (dnsIdStr.length) {
@@ -380,7 +397,8 @@ function readVirtualDNS (response, dnsIdStr, appData) {
  * 1. Gets the Virtual DNS record list and then does an individual get on
  *    the record for a given virtual DNS
  */
-function parseVDNSRecords(error, response, vdnsConfig, appData) {
+function parseVDNSRecords(error, response, vdnsConfig, appData) 
+{
 	var vdnsRecordRef     = null;
 	var vdnsRecordUrl     = null;
 	var dataObjArr        = [];
@@ -395,8 +413,8 @@ function parseVDNSRecords(error, response, vdnsConfig, appData) {
     for (i = 0; i < vdnsRecordRefsLen; i++) {
     	if(vdnsRecordRef) {
     		vdnsObj = vdnsRecordRef[i];
-    		vdnsRecordUrl = vdnsObj['href'].split('8082')[1];
-            commonUtils.createReqObj(dataObjArr, i, vdnsRecordUrl,
+            vdnsRecordUrl = '/virtual-DNS-record/' + vdnsObj['uuid'];
+            commonUtils.createReqObj(dataObjArr, vdnsRecordUrl,
                     global.HTTP_REQUEST_GET, response[i], null, null,
                     appData);
     		
@@ -416,7 +434,8 @@ function parseVDNSRecords(error, response, vdnsConfig, appData) {
  * private function
  * 1. Callback for the Virtual DNS Record get for a give Virtual DNS.
  */
-function VDNSRecordAggCb (error, results, response, vdnsConfig, appData) {
+function VDNSRecordAggCb (error, results, response, vdnsConfig, appData) 
+{
     var i = 0, vdnsRecordsLen = 0;
 
     if (error) {
@@ -441,7 +460,8 @@ function VDNSRecordAggCb (error, results, response, vdnsConfig, appData) {
  * 3. Reads back the updated virtual DNS config and send it
  *    back to the client
  */
-function updateVDNSRecordAdd (request, response, appData) {
+function updateVDNSRecordAdd (request, response, appData) 
+{
     var vdnsRecordPostURL    = '/virtual-DNS-records';
     var vdnsRecordPostData   = request.body;
     var vdnsRecordCreateData = {};
@@ -546,7 +566,8 @@ function updateVDNSRecordUpdate (request, response, appData)
  * 2. Deletes the record from Virtual DNS
  * 3. Reads updated config and sends it back to client
  */
-function updateVDNSRecordDelete (request, response, appData) {
+function updateVDNSRecordDelete (request, response, appData) 
+{
     var vdnsRecordURL = '/virtual-DNS-record';
     var virtualDNSId = null;
     var vdnsRecordId       = null;
@@ -583,7 +604,8 @@ function updateVDNSRecordDelete (request, response, appData) {
  * 2. Gets VDNS config and updates network ipam references for it.
  * 3. Reads updated config and sends it back to client
  */
-function updateVDNSIpams (request, response, appData) {
+function updateVDNSIpams (request, response, appData) 
+{
 	var vdnsURL = '/virtual-DNS/';
 	var vdnsId = null;
 	var vdnsPostData = request.body;
@@ -659,7 +681,7 @@ function updateVirtualDnsAssocIpamRead(error, vdnsConfig, vdnsPostData,
                 'oper':'add'
             };
             url = '/network-ipam/' + uuid;
-            commonUtils.createReqObj(dataObjArr, i, url,
+            commonUtils.createReqObj(dataObjArr, url,
                 global.HTTP_REQUEST_GET, null, null, null,
                 appData);
         }
@@ -673,7 +695,6 @@ function updateVirtualDnsAssocIpamRead(error, vdnsConfig, vdnsPostData,
         return;
     }
 
-    var j = 0;
     if (['network_ipam_back_refs'] in vdnsConfig['virtual-DNS'] &&
     		vdnsConfig['virtual-DNS']['network_ipam_back_refs'].length) {
     	ipamRef = vdnsConfig['virtual-DNS']['network_ipam_back_refs'];
@@ -682,7 +703,7 @@ function updateVirtualDnsAssocIpamRead(error, vdnsConfig, vdnsPostData,
             uuid = ipamRef[i]['uuid'];
             if (vdnsConfig['virtual-DNS']['ipam_uuid'][uuid] == null) {
                 url = '/network-ipam/' + uuid;
-                commonUtils.createReqObj(dataObjArr, j++, url,
+                commonUtils.createReqObj(dataObjArr, url,
                     global.HTTP_REQUEST_GET, null, null,
                     null, appData);
             }
@@ -705,14 +726,13 @@ function updateVirtualDnsAssocIpamRead(error, vdnsConfig, vdnsPostData,
         }
     }
 
-    j = 0;
     ipamUIRef = vdnsPostData['virtual-DNS']['network_ipam_back_refs'];
     ipamUIRefLen = ipamUIRef.length;
     for (i = 0; i < ipamUIRefLen; i++) {
         uuid = ipamUIRef[i]['uuid'];
         if (vdnsConfig['virtual-DNS']['ipam_uuid'][uuid] == null) {
             url = '/network-ipam/' + uuid;
-            commonUtils.createReqObj(dataObjArr, j++, url,
+            commonUtils.createReqObj(dataObjArr, url,
                 global.HTTP_REQUEST_GET, null, null, null,
                 appData);
         }
@@ -738,7 +758,8 @@ function updateVirtualDnsAssocIpamRead(error, vdnsConfig, vdnsPostData,
  * Updates Virtual DNSs references from Ipams
  */
 function updateVirtualDnsUpdateIpams(error, results, vdnsConfig,
-                                     vdnsId, appData, callback) {
+                                     vdnsId, appData, callback) 
+{
     var ipamRef = null;
     var vdnsIpamRef = {};
     var ipamVdnsRef = [];
@@ -801,7 +822,7 @@ function updateVirtualDnsUpdateIpams(error, results, vdnsConfig,
             }
         }
         results[i]['network-ipam']['network_ipam_mgmt'] = ipamNwIpamMgmtRefObj;
-        commonUtils.createReqObj(dataObjArr, i, ipamURL, global.HTTP_REQUEST_PUT,
+        commonUtils.createReqObj(dataObjArr, ipamURL, global.HTTP_REQUEST_PUT,
             results[i], null, null, appData);
     }
 
@@ -858,7 +879,7 @@ function getVirtualDNSSandeshRecordsSendCb (ip, req, res)
     var dataObjArr = [];
     var reqUrl = '/Snh_ShowVirtualDnsRecords?virtual_dns=' + dnsName;
 
-    commonUtils.createReqObj(dataObjArr, 0, reqUrl);
+    commonUtils.createReqObj(dataObjArr, reqUrl);
     var dnsAgentRestApi =
         commonUtils.getRestAPIServer(ip, global.SANDESH_DNS_AGENT_PORT);
 
@@ -877,10 +898,10 @@ function getVirtualDNSSandeshRecords (req, res, appData)
 {
     var dataObjArr = [];
     var url = '/analytics/uves/dns-node/*';
-    commonUtils.createReqObj(dataObjArr, 0, url, global.HTTP_REQUEST_GET, null,
+    commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_GET, null,
                              opApiServer, null, appData);
     url = '/analytics/uves/generator/*:DnsAgent?flat';
-    commonUtils.createReqObj(dataObjArr, 1, url, global.HTTP_REQUEST_GET, null,
+    commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_GET, null,
                              opApiServer, null, appData);
     async.map(dataObjArr,
               commonUtils.getServerResponseByRestApi(opApiServer, false),

@@ -16,8 +16,12 @@ var commonUtils = module.exports,
     redis = require('redis'),
     eventEmitter = require('events').EventEmitter,
     jsonPath = require('JSONPath').eval,
-    mime = require('mime');
-
+    exec = require('child_process').exec,
+    mime = require('mime'),
+    os = require('os'),
+    appErrors = require('../errors/app.errors.js'),
+    downloadPath = '/var/log',
+    contrailPath = '/contrail';
 if (!module.parent) {
     logutils.logger.warn(util.format(
                          messages.warn.invalid_mod_call, module.filename));
@@ -26,8 +30,9 @@ if (!module.parent) {
 
 var redisClientCreateEvent = new eventEmitter();
 
-commonUtils.putJsonViaInternalApi = function (api, ignoreError,
-                                              dataObj, callback) {
+function putJsonViaInternalApi (api, ignoreError,
+                                dataObj, callback)
+{
     var oldDataObj = dataObj, oldCallback = callback;
     if (typeof dataObj === 'undefined' ||
         typeof oldCallback === 'undefined') {
@@ -83,7 +88,8 @@ commonUtils.putJsonViaInternalApi = function (api, ignoreError,
  * @param {String} Url to be fetched from API server
  * @param {Function} Callback Function
  */
-commonUtils.getJsonViaInternalApi = function (api, ignoreError, url, callback) {
+function getJsonViaInternalApi (api, ignoreError, url, callback)
+{
     var oldUrl = url, oldCallback = callback;
     if (typeof oldUrl === 'undefined' ||
         typeof oldCallback === 'undefined') {
@@ -131,7 +137,8 @@ commonUtils.getJsonViaInternalApi = function (api, ignoreError, url, callback) {
     }
 };
 
-commonUtils.retrieveSandeshIpUrl = function(url, apiServer) {
+function retrieveSandeshIpUrl (url, apiServer)
+{
     try {
         var serverObj = {};
         var url = url.toString();
@@ -150,7 +157,8 @@ commonUtils.retrieveSandeshIpUrl = function(url, apiServer) {
     }
 }
 
-doEnsureExecution = function(func, timeout, args, thisObj) {
+function doEnsureExecution (func, timeout, args, thisObj)
+{
     var timer, run, called = false;
     run = function() {
         if(!called) {
@@ -163,7 +171,9 @@ doEnsureExecution = function(func, timeout, args, thisObj) {
     return run;
 }
 
-commonUtils.getDataFromSandeshByIPUrl = function(apiServer, ignoreError, reqTimeout, url, callback) {
+function getDataFromSandeshByIPUrl (apiServer, ignoreError, reqTimeout, url,
+                                    callback)
+{
     var oldUrl = url, oldCallback = callback;
     if (typeof oldUrl === 'undefined' || typeof oldCallback === 'undefined') {
         if (null == reqTimeout) {
@@ -171,7 +181,7 @@ commonUtils.getDataFromSandeshByIPUrl = function(apiServer, ignoreError, reqTime
         }
         if (ignoreError) {
             return function (newUrl, newCallback) {
-                var serverObj = commonUtils.retrieveSandeshIpUrl(newUrl, apiServer);
+                var serverObj = retrieveSandeshIpUrl(newUrl, apiServer);
                 if (serverObj == null) {
                     newCallback(null, null);
                 } else {
@@ -189,7 +199,7 @@ commonUtils.getDataFromSandeshByIPUrl = function(apiServer, ignoreError, reqTime
             }
         } else {
             return function (newUrl, newCallback) {
-                var serverObj = commonUtils.retrieveSandeshIpUrl(newUrl, apiServer);
+                var serverObj = retrieveSandeshIpUrl(newUrl, apiServer);
                 if (null == serverObj) {
                     var error = new
                         appErrors.RESTServerError(util.format(messages.error.invalid_url,
@@ -207,7 +217,7 @@ commonUtils.getDataFromSandeshByIPUrl = function(apiServer, ignoreError, reqTime
             };
         }
     } else {
-        var serverObj = commonUtils.retrieveSandeshIpUrl(url, apiServer);
+        var serverObj = retrieveSandeshIpUrl(url, apiServer);
         if (null == serverobj) {
             var error = new
                     appErrors.RESTServerError(util.format(messages.error.invalid_url,
@@ -241,7 +251,8 @@ commonUtils.getDataFromSandeshByIPUrl = function(apiServer, ignoreError, reqTime
  * @param {Object} HTTP Response
  * @param {Object} Result JSON
  */
-commonUtils.handleJSONResponse = function (error, res, json) {
+function handleJSONResponse (error, res, json)
+{
     if ((res.req) && (true == res.req.invalidated)) {
         /* Req timed out, we already sent the response */
         return;
@@ -264,7 +275,8 @@ commonUtils.handleJSONResponse = function (error, res, json) {
  * @param {Object} HTTP Response
  * @param {Object} Data to be sent
  */
-commonUtils.handleResponse = function (error, res, data) {
+function handleResponse (error, res, data)
+{
     if ((res.req) && (true == res.req.invalidated)) {
         /* Req timed out, we already sent the response */
         return;
@@ -286,37 +298,356 @@ commonUtils.handleResponse = function (error, res, data) {
 
 /** Returns current time in milliseconds from 1 Jan 1970, 00:00
  */
-commonUtils.getCurrentTimestamp = function () {
+function getCurrentTimestamp ()
+{
 	return new Date().getTime();
 }
 
-commonUtils.download = function (req, res) {
-	var fileName = req.param('filename');
-	var dir = ((config.files) && (config.files.download_path)) ?
-		config.files.download_path : global.DFLT_UPLOAD_PATH;
-	var file = dir + '/' + fileName;
-
-	fs.stat(file, function (err, stats) {
-		if (err) {
-			res.send(err.message);
-		} else {
-			var filename = path.basename(file);
-			var mimetype = mime.lookup(file);
-
-			res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-			res.setHeader('Content-type', mimetype);
-
-			var stream = fs.createReadStream(file);
-			stream.on('error', function (err) {
-				res.statusCode = 500;
-				res.end(String(err));
-			});
-			stream.pipe(res);
-		}
-	});
+/** Returns network IP Address List
+*/
+function getIPAddressList() 
+{
+    var addressList = [];
+    var interfaces = os.networkInterfaces();
+    for (var devName in interfaces) {
+        var iface = interfaces[devName];
+        var ln = iface.length;
+        for (var i = 0; i < ln; i++) { 
+            addressList.push(iface[i].address);
+        }
+    }
+    return addressList;
 }
 
-commonUtils.upload = function (req, res, data) {
+/**validating requested host for downloading logs is local or not
+*/
+function isLocalAddress(ad)
+{
+    var addressList = getIPAddressList();
+    if(addressList.length > 0) {
+        for(var ip in addressList) {
+            if(addressList[ip] == ad) {
+                return true;
+            } 		
+        }
+    } 
+    return false;
+}
+
+function createSSH2Connection (input, res, ready) {
+    var conn = require('ssh2');
+    var c = new conn();
+    c.on('ready', function() {
+        ready(c);         	
+    });
+    c.on('error', function(err) {
+        if(err) {
+            handleError('createSSH2Connection', res, err);
+            return; 			
+        }
+    });
+    c.connect({
+        host : input.hostIP,
+        port : 22,
+        username : input.userName,
+        password : input.passWord
+    });   	
+}
+/**
+This API is used to get the file from remote server
+*/
+function getRemoteFile(input, remotePath, localPath, res, callback)
+{
+    //Creating empty file in the given directory.It is required for 'sftp.fastGet' api
+    var cmd='touch ' + localPath;
+    executeShellCommand(cmd, function(err, stdout, stderr) {
+        if(err) {
+            handleError('getRemoteFile', res, err);
+            return;
+        }
+        createSSH2Connection(input, res, function(c) {
+            c.sftp(function(err, sftp) {
+                if(err) {
+                    handleError('getRemoteFile', res, err);
+                    return;
+                }
+                sftp.fastGet(remotePath, localPath, function(err) {
+                    c.end();
+                    if(err) {
+                        handleError('getRemoteFile', res, err);
+                        return;
+                    }
+                    callback(localPath);
+                });
+            });           		
+        }); 		
+    });
+}
+
+/**It sends requested file to the web client
+*/
+function sendFile(file,res)
+{
+    fs.stat(file, function (err, stats) {
+        if(err) {
+            handleError('sendFile', res, err);
+            return;
+        }
+        else {
+            var filename = path.basename(file);
+            var mimetype = mime.lookup(file);
+            res.setHeader('Content-type', mimetype);
+            res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+            var stream = fs.createReadStream(file);
+            stream.on('error', function (err) {
+                res.statusCode = global.HTTP_STATUS_INTERNAL_ERROR;
+                res.end(String(err));
+            });
+            stream.pipe(res);
+            stream.on('end', function() {
+                var cmd = 'rm -f ' + file;
+                executeShellCommand(cmd,function(err, stdout, stderr) {
+                    if(err) {
+                        handleError('sendFile', res, err);
+                        return;
+                    }
+                });
+            });
+        }
+    });
+}
+
+function localDirectoryListing(dir, res, callback)
+{
+    executeShellCommand('ls -hms ' + dir, function(err, stdout, stderr) {
+        var list = [];
+        if(!err) {
+            var index = stdout.indexOf('\n');
+            stdout = stdout.substring(index + 1, stdout.length - 1);
+            stdout = stdout.replace(/\n/g,'');
+            var files = stdout.split(',');
+            for(var i in files) {
+                var fileAttr = files[i].trim().split(' ');
+                if(fileAttr[1] != undefined && fileAttr[0] != undefined && fileAttr[0] != "0") {
+                    list.push({name:fileAttr[1],size:fileAttr[0]});
+                }
+            }
+        }
+        callback(err, list);
+    });
+}
+
+function handleError(method, res, e) 
+{
+    var err = new appErrors.RESTServerError(method + ' failed : ' + e.message); 
+    logutils.logger.debug('IN ' + method + '() ' + 'error: ' + e);
+    handleJSONResponse(err, res, null);
+}
+
+function formatFileSize(n) {
+    var o;
+    if(n > 1073741824) {
+        o = Math.round (n / 1073741824) + 'G';
+    }else if(n > 1048576) {
+        o = Math.round (n / 1048576) + 'M' ;
+    }else if(n > 1024 ) {
+        o = Math.round (n / 1024) + 'K' ;
+    }else {
+        o = n;
+    }
+    return o;
+}
+
+function getBytes(n){
+    var o;
+    if(n.indexOf('G') != -1) {
+        n = n.split('G');
+        o = n[0] * 1073741824;		
+    }else if(n.indexOf('M') != -1) {
+        n = n.split('M');
+        o = n[0] * 1048576; 
+    }else if(n.indexOf('K') != -1) {
+        n = n.split('K');
+        o = n[0] * 1024;
+    }else {
+        o = n;
+    }
+    return o;
+}
+
+function remoteDirectoryListing(dir, input, res, callback)
+{
+    createSSH2Connection(input, res, function(c) {
+        c.sftp(function(err, sftp) {
+            if(err) {
+                handleError('remoteDirectoryListing', res, err);
+                return;
+            } 
+            var actList = [];
+            sftp.opendir(dir, function readdir(err, handle) {
+                if(err) {
+                    handleError('remoteDirectoryListing', res, err);
+                    return;
+                }
+                sftp.readdir(handle, function(err, list) {
+                    if(err) {
+                        handleError('remoteDirectoryListing', res, err);
+                        return;
+                    }
+                    for(var i in list) {
+                        var fileName = list[i].filename;
+                        if(fileName != '.' && fileName != '..') {
+                            var fullPath = dir + '/' + fileName;
+                            var fileSize = formatFileSize(list[i].attrs.size);
+                            actList.push({"name":fullPath,"size":fileSize});
+                        }			   
+                    }
+                    c.end();
+                    callback(err, actList);					
+                });
+            });
+        });                 	
+    });
+}
+
+function getIndex(r, name) {
+   var len = r.length;
+   for(var i = 0; i < len; i++) {
+       if(r[i].name === name) {
+           return i;
+       }
+   }
+   return 0;
+}
+
+function excludeDirectories (r)
+{
+    var k = [];
+    k = cloneObj(r);
+    for(var i in k) {
+        var name = k[i].name;
+        if(name.indexOf('.') == -1) {
+            i = getIndex(r, name);
+            r.splice(i,1);
+        } 
+    }
+}
+
+function directory (req, res, appData)
+{
+    try {
+        //read the inputs
+        var reqData = req.body;
+        var userName = reqData['userName'];
+        var passWord = reqData['passWord'];
+        var hostIPAddress = reqData["hostIPAddress"];
+        //read the log directory from the config 
+        var remoteDir = downloadPath;
+        if(isLocalAddress(hostIPAddress)) {
+            localDirectoryListing(remoteDir, res, function(err, list) {
+                if(err) {
+                    handleError("localDirectoryListing", res, err);
+                    return;
+                }
+                if(list.length > 0 ) {
+                    excludeDirectories(list);
+                    //get contrail logs
+                    remoteDir = remoteDir + contrailPath;
+                    localDirectoryListing(remoteDir, res, function(childErr, childList){
+                        var finalList = list;
+                        if(childList.length > 0) {
+                            finalList = list.concat(childList);
+                        }
+                        handleJSONResponse(childErr, res, finalList); 
+                    });
+                }
+            });
+             
+        }else {
+            var input = {'hostIP' : hostIPAddress, 'userName' : userName, 'passWord' : passWord};
+            remoteDirectoryListing(remoteDir, input, res, function(err,list) {
+                if(err) {
+                    handleError("remoteDirectoryListing", res, err);
+                    return;
+                }
+                if(list.length > 0) {
+                    excludeDirectories(list);
+                    //get contrail logs
+                    remoteDir = remoteDir + contrailPath; 
+                    remoteDirectoryListing(remoteDir, input, res ,function(err,childList) {
+                        var finalList = list;
+                        if(childList.length > 0) { 
+                            finalList = list.concat(childList);
+                        }
+                        handleJSONResponse(err, res, finalList);
+                    });
+                }
+            });
+        }
+    }catch(e) {
+        var err = new appErrors.RESTServerError("directoryListing failed : " + e.message); 
+        logutils.logger.debug('IN directory() ' + 'error: ' + e);		
+        handleJSONResponse(err, res, null);
+    }  
+}
+
+/**Download API for the log file downloading feature
+*/
+function download (req, res, appData)
+{
+    try {
+        //read the inputs
+        var fileName = req.param('file'); 
+        var userName = req.param('userName');
+        var passWord = req.param('passWord');
+        var hostIPAddress = req.param("hostIPAddress");
+        var fileSize = req.param('size');
+  
+        //read the log directory from the config 
+        var localDir = ((config.files) && (config.files.download_path)) ?
+            config.files.download_path : global.DFLT_UPLOAD_PATH;
+        //var remoteDir = downloadPath;
+        var file;
+        if(isLocalAddress(hostIPAddress)) {
+            file = fileName;
+            sendFile(file, res);    				
+        }else {
+            //check whether enough space is there in /tmp or not
+            executeShellCommand('df -h ' + localDir, function(err, stdout, stderr) {
+                if(err) {
+                    handleError('download', res, err);
+                    return;
+                }
+                var arry = stdout.split(' ');
+                var fileSizeInBytes = getBytes(fileSize);
+                var dirAvalSpaceInBytes = getBytes(arry[35]);
+                if(dirAvalSpaceInBytes < fileSizeInBytes) {
+                    var err = {};
+                    err.message = 'There is no enough space in /tmp directory.';
+                    handleError('download', res, err);
+                    return;
+                }else {
+                    var fileNameArr = fileName.split('/');
+                    var actFileName = fileNameArr[fileNameArr.length -1];
+                    file = localDir + '/' + actFileName;
+                    remoteDir =  fileName;
+                    var input = {'hostIP' : hostIPAddress, 'userName' : userName, 'passWord' : passWord};
+                    getRemoteFile(input, remoteDir, file, res, function(r){
+                       if(r) sendFile(r, res);
+                    })				
+                }
+            });
+        }
+    }
+    catch(e) {
+        var err = new appErrors.RESTServerError("Download failed : " + e.message); 
+        logutils.logger.debug('IN download() ' + 'error: ' + e);		
+        handleJSONResponse(err, res, null);
+    }
+}
+
+function upload (req, res, data)
+{
 	var fileName = req.param('filename');
 	var dir = ((config.files) && (config.files.download_path)) ?
 		config.files.download_path : global.DFLT_UPLOAD_PATH;
@@ -329,7 +660,8 @@ commonUtils.upload = function (req, res, data) {
 	});
 }
 
-commonUtils.getUTCTime = function(dateTime) {
+function getUTCTime (dateTime)
+{
     var dateTime = new Date(dateTime),
     utcDateTime, utcDateString;
     utcDateString = dateTime.toUTCString();
@@ -339,11 +671,12 @@ commonUtils.getUTCTime = function(dateTime) {
 
 function getCurrentUTCTime ()
 {
-    return commonUtils.getUTCTime(new Date().getTime());
+    return getUTCTime(new Date().getTime());
 }
 
 //Adjust the date object by adding/subtracting the given interval(min/day/month/year)
-commonUtils.adjustDate = function(dt,obj) {
+function adjustDate (dt,obj)
+{
     if(obj['min'] != null) {
        dt.setUTCMinutes(dt.getUTCMinutes()+obj['min'])
     }
@@ -365,7 +698,8 @@ commonUtils.adjustDate = function(dt,obj) {
   
     @param {data} response data object
  */  
-commonUtils.getSafeDataToJSONify = function(data) {
+function getSafeDataToJSONify (data)
+{
     if (null == data) {
         return global.RESP_DATA_NOT_AVAILABLE;
     } else {
@@ -373,33 +707,36 @@ commonUtils.getSafeDataToJSONify = function(data) {
     }
 }
 
-commonUtils.cloneObj = function(obj) {
+function cloneObj (obj)
+{
 	return JSON.parse(JSON.stringify(obj));
 };
 
 /**
  * Create Request Object used to send to Server to retrieve data.
  * @param {dataObjArr} Array of Objects to be filled with the requested parameters.
- * @param {arrIndex} Index of the array of which this dataObj needs to be filled up
  * @param {reqUrl} URL to send the request to.
  * @param {method} Requested HTTP Method, default is GET
  * @param {data} POST/PUT Data
  * @param {serverObj} Server Object got from rest.getAPIServer()
  * @param {headers} headers if any
  */
-commonUtils.createReqObj = function(dataObjArr, arrIndex, reqUrl, method,
-                                    data, serverObj, headers, appData) {
+function createReqObj (dataObjArr, reqUrl, method,
+                       data, serverObj, headers, appData)
+{
+    var tempData = {};
     /* Create the Object */
-    dataObjArr[arrIndex] = {};
-    dataObjArr[arrIndex]['reqUrl'] = reqUrl;
-    dataObjArr[arrIndex]['method'] = method || global.HTTP_REQUEST_GET;
-    dataObjArr[arrIndex]['data'] = data;
-    dataObjArr[arrIndex]['headers'] = headers;
-    dataObjArr[arrIndex]['serverObj'] = serverObj;
-    dataObjArr[arrIndex]['appData'] = appData;
+    tempData['reqUrl'] = reqUrl;
+    tempData['method'] = method || global.HTTP_REQUEST_GET;
+    tempData['data'] = data;
+    tempData['headers'] = headers;
+    tempData['serverObj'] = serverObj;
+    tempData['appData'] = appData;
+    dataObjArr.push(tempData);
 }
 
-doPostJsonCb = function(url, error, ignoreError, jsonData, callback) {
+function doPostJsonCb (url, error, ignoreError, jsonData, callback)
+{
     if (error) {
         if (ignoreError) {
             logutils.logger.error(util.format(messages.error.broken_link, url));
@@ -413,7 +750,8 @@ doPostJsonCb = function(url, error, ignoreError, jsonData, callback) {
     }
 }
 
-callRestApiByParam = function(serverObj, dataObj, ignoreError, callback) {
+function callRestApiByParam (serverObj, dataObj, ignoreError, callback)
+{
     var method  = dataObj['method'];
     var reqUrl  = dataObj['reqUrl'];
     var headers = dataObj['headers'];
@@ -497,7 +835,8 @@ function callRestAPI (serverObj, dataObj, ignoreError, callback)
     }
  * @param {callback} Callback Function
  */
-commonUtils.getServerRespByRestApi = function (serverObj, ignoreError, dataObj, callback) {
+function getServerRespByRestApi (serverObj, ignoreError, dataObj, callback)
+{
     if (typeof dataObj === 'undefined' || typeof callback === 'undefined') {
         return function (newDataObj, newCallback) {
             callRestApiByParam((newDataObj['serverObj']) ? newDataObj['serverObj'] : serverObj,
@@ -557,8 +896,9 @@ function callAPIServerByParam (apiCallback, dataObj, ignoreError, callback)
     }
 }
 
-commonUtils.getAPIServerResponse = function(apiCallback, ignoreError, dataObj,
-                                            callback) {
+function getAPIServerResponse (apiCallback, ignoreError, dataObj,
+                               callback)
+{
     if (typeof dataObj === 'undefined' || typeof callback === 'undefined') {
         return function (newDataObj, newCallback) {
             callAPIServerByParam(apiCallback, newDataObj, ignoreError,
@@ -572,7 +912,8 @@ commonUtils.getAPIServerResponse = function(apiCallback, ignoreError, dataObj,
 /* Function: ip2long
     This function is used to convert IP (string) to integer format
  */
-commonUtils.ip2long = function(ipStr) {
+function ip2long (ipStr)
+{
     var ipl = 0;
     ipStr.split('.').forEach(function( octet ) {
         ipl<<=8;
@@ -584,7 +925,8 @@ commonUtils.ip2long = function(ipStr) {
 /* Function: long2ip
     This function is used to convert IP (integer) to string format
  */
-commonUtils.long2ip = function(ipl) {
+function long2ip (ipl)
+{
     return ( (ipl>>>24) +'.' +
         (ipl>>16 & 255) +'.' +
         (ipl>>8 & 255) +'.' +
@@ -602,7 +944,7 @@ function createJSONBySandeshResponse (resultObj, responseObj)
     for (var key in responseObj) {
         try {
             resultObj[key] = 
-                commonUtils.getSafeDataToJSONify(responseObj[key][0]['_']);
+                getSafeDataToJSONify(responseObj[key][0]['_']);
         } catch(e) {
             resultObj[key] = responseObj[key];
         }    
@@ -827,7 +1169,8 @@ function getApiPostData (url, postData)
     }
 }
 
-function redirectToLogout (req, res) {
+function redirectToLogout (req, res)
+{
     var ajaxCall = req.headers['x-requested-with'];
     if (ajaxCall == 'XMLHttpRequest') {
        res.setHeader('X-Redirect-Url', '/logout');
@@ -841,6 +1184,13 @@ function redirectToLogoutByAppData (appData)
 {
     return redirectToLogout(appData['authObj']['req'],
                             appData['authObj']['req'].res);
+}
+
+function executeShellCommand (cmd, callback)
+{
+    exec(cmd, function(error, stdout, stderr) {
+         callback(error, stdout, stderr);
+    });
 }
 
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
@@ -859,4 +1209,25 @@ exports.getApiPostData = getApiPostData;
 exports.redirectToLogout = redirectToLogout;
 exports.redirectToLogoutByAppData = redirectToLogoutByAppData;
 exports.getServerResponseByRestApi = getServerResponseByRestApi;
+exports.executeShellCommand = executeShellCommand;
+exports.putJsonViaInternalApi = putJsonViaInternalApi;
+exports.getJsonViaInternalApi = getJsonViaInternalApi;
+exports.retrieveSandeshIpUrl = retrieveSandeshIpUrl;
+exports.handleJSONResponse = handleJSONResponse;
+exports.handleResponse = handleResponse;
+exports.getCurrentTimestamp = getCurrentTimestamp;
+exports.download = download;
+exports.upload = upload;
+exports.adjustDate = adjustDate;
+exports.getUTCTime = getUTCTime;
+exports.getSafeDataToJSONify = getSafeDataToJSONify;
+exports.cloneObj = cloneObj;
+exports.createReqObj = createReqObj;
+exports.getServerRespByRestApi = getServerRespByRestApi;
+exports.getAPIServerResponse = getAPIServerResponse;
+exports.ip2long = ip2long;
+exports.long2ip = long2ip;
+exports.getDataFromSandeshByIPUrl = getDataFromSandeshByIPUrl;
+exports.doEnsureExecution = doEnsureExecution;
+exports.directory = directory;
 

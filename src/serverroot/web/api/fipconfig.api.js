@@ -38,7 +38,8 @@ if (!module.parent) {
  * 2. Reads the response of per project floating ips from config api server
  *    and sends it back to the client.
  */
-function listFloatingIpsCb (error, fipListData, response) {
+function listFloatingIpsCb (error, fipListData, response) 
+{
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
        return;
@@ -51,7 +52,8 @@ function listFloatingIpsCb (error, fipListData, response) {
  * private function
  * 1. Callback for the fip gets, sends all fips to client.
  */
-function fipListAggCb (error, results, response) {
+function fipListAggCb (error, results, response) 
+{
     var fipConfigBackRefs = {};
 
     if (error) {
@@ -71,7 +73,8 @@ function fipListAggCb (error, results, response) {
  * 2. Gets the list of Fip backrefs and does an individual
  *    get for each one of them.
  */
-function getFipsForProjectCb (error, fipListData, response, appData) {
+function getFipsForProjectCb (error, fipListData, response, appData) 
+{
     var url               = null;
     var dataObjArr        = [];
     var i = 0, fipLength  = 0;
@@ -98,8 +101,8 @@ function getFipsForProjectCb (error, fipListData, response, appData) {
 
     for (i = 0; i < fipLength; i++) {
        fipRef = fipConfigBackRefs['floating_ip_back_refs'][i];
-       url = fipRef['href'].split(':8082')[1];
-       commonUtils.createReqObj(dataObjArr, i, url, global.HTTP_REQUEST_GET,
+       url = '/floating-ip/' + fipRef['uuid'];
+       commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_GET,
                                 null, null, null, appData);
     }
 
@@ -119,7 +122,8 @@ function getFipsForProjectCb (error, fipListData, response, appData) {
  * 4. Calls listFloatingIpsCb that process data from config
  *    api server and sends back the http response.
  */
-function listFloatingIps (request, response, appData) {
+function listFloatingIps (request, response, appData) 
+{
     var tenantId      = null;
     var requestParams = url.parse(request.url,true);
     var projectURL   = '/project';
@@ -142,7 +146,8 @@ function listFloatingIps (request, response, appData) {
  * private function
  * 1. Callback for getFipPoolsForProject
  */
-function getFipPoolsForProjectCb (error, projectData, response) {
+function getFipPoolsForProjectCb (error, projectData, response) 
+{
     var fipPool = {};
 
     if (error) {
@@ -168,7 +173,8 @@ function getFipPoolsForProjectCb (error, projectData, response) {
  *    pool  refs
  * 3. Needs tenant / project id as the id
  */
-function listFloatingIpPools (request, response, appData) {
+function listFloatingIpPools (request, response, appData) 
+{
     var tenantId      = null;
     var requestParams = url.parse(request.url,true);
     var projectURL    = '/project';
@@ -191,7 +197,8 @@ function listFloatingIpPools (request, response, appData) {
  * private function
  * 1. Sends back the response of fip read to clients after set operations.
  */
-function fipSendResponse(error, fipConfig, response) {
+function fipSendResponse(error, fipConfig, response) 
+{
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
     } else {
@@ -207,7 +214,8 @@ function fipSendResponse(error, fipConfig, response) {
  * 2. Reads the response of Fip get from config api server
  *    and sends it back to the client.
  */
-function setFipRead(error, fipConfig, response, appData) {
+function setFipRead(error, fipConfig, response, appData) 
+{
     var fipGetURL = '/floating-ip/';
 
     if (error) {
@@ -228,7 +236,8 @@ function setFipRead(error, fipConfig, response, appData) {
  * 1. URL /api/tenants/config/floating-ips - Post
  * 2. Sets Post Data and sends back the floating-ip config to client
  */
-function createFloatingIp (request, response, appData) {
+function createFloatingIp (request, response, appData) 
+{
     var fipCreateURL = '/floating-ips';
     var fipPostData  = request.body;
 
@@ -267,7 +276,8 @@ function createFloatingIp (request, response, appData) {
  * private function
  * 1. Return back the response of fip delete.
  */
-function deleteFloatingIpCb (error, fipDelResp, response) {
+function deleteFloatingIpCb (error, fipDelResp, response) 
+{
 
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
@@ -283,7 +293,8 @@ function deleteFloatingIpCb (error, fipDelResp, response) {
  * 1. URL /api/tenants/config/floating-ip/:id
  * 2. Deletes the floating-ip from config api server
  */
-function deleteFloatingIp (request, response, appData) {
+function deleteFloatingIp (request, response, appData) 
+{
     var fipDelURL     = '/floating-ip/';
     var fipId         = null;
     var requestParams = url.parse(request.url, true);
@@ -308,7 +319,8 @@ function deleteFloatingIp (request, response, appData) {
  * 2. Updates the vm interface backrefs
  */
 function setFipVMInterface(error, fipConfig, fipPostData, fipId, response,
-                           appData) {
+                           appData) 
+{
     var fipPostURL = '/floating-ip/' + fipId;
 
     if (error) {
@@ -336,7 +348,8 @@ function setFipVMInterface(error, fipConfig, fipPostData, fipId, response,
  * 1. URL /api/tenants/config/floating-ip/:id - Put
  * 2. Sets Post Data and sends back the policy to client
  */
-function updateFloatingIp (request, response, appData) {
+function updateFloatingIp (request, response, appData) 
+{
     var fipId       = null;
     var vmRef       = {};
     var fipGetURL   = '/floating-ip/';
@@ -378,6 +391,8 @@ function updateFloatingIp (request, response, appData) {
                                           fipId, response, appData);
                         });
 }
+
+/* List all public function here */
 exports.listFloatingIps     = listFloatingIps;
 exports.listFloatingIpPools = listFloatingIpPools;
 exports.createFloatingIp    = createFloatingIp

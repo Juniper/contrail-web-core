@@ -33,6 +33,11 @@
         <feature>compute-node</feature>
     </item>
     <item>
+        <feature>globalvrouterconfig</feature>
+        <read-access>user,admin</read-access>
+        <write-access>user,admin</write-access>
+    </item>
+    <item>
         <feature>vnconfig</feature>
         <read-access>user,admin</read-access>
         <write-access>user,admin</write-access>
@@ -79,5 +84,8 @@
         <feature>setting</feature>
         <read-access>admin</read-access>
         <write-access>admin</write-access>
+    </item>
+    <item>
+        <feature>proxy</feature>
     </item>
 </featureLists>

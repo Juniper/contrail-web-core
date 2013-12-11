@@ -14,18 +14,19 @@ var axon = require('axon')
     , kue = require('kue')
     , commonUtils = require('./src/serverroot/utils/common.utils')
     , logutils = require('./src/serverroot/utils/log.utils')
+    , discServ = require('./src/serverroot/jobs/core/discoveryservice.api')
 	, config = require('./config/config.global.js');
 
 var hostName = config.jobServer.server_ip
 	, port = config.jobServer.server_port;
 
 var workerSock = axon.socket('pull');
+var myIdentity = global.service.MIDDLEWARE;
 
 /* Function: processMsg
  Handler for message processing for messages coming from main Server
  */
 processMsg = function (msg) {
-	var msgJSON = JSON.parse(msg);
 	jobsApi.createJobByMsgObj(msg);
 }
 
@@ -52,6 +53,8 @@ function startServers ()
     jobsCb.addjobListenerEvent();
     jobsCb.jobsProcess();
     jobsApi.doCheckJobsProcess();
+    discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MIDDLEWARE);
+    discServ.startWatchDiscServiceRetryList();
 }
 
 function jobServerPurgeAndStart (redisClient)
@@ -82,4 +85,6 @@ jobsApi.jobListenerReadyQEvent.on('kueReady', function() {
     /* Now start real server processing */
     startServers();
 });
+
+exports.myIdentity = myIdentity;
 

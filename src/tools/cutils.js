@@ -72,33 +72,6 @@ function pad(num, size) {
     return s.substr(s.length - size);
 }
 
-function checkAndSetStrTrim() {
-    if (!String.prototype.trim) {
-        String.prototype.trim = function () {
-            return
-            this.replace(/(?:(?:^|\n)s+|s+(?:$|\n))/g, "").replace(/s+/g, " ");
-        };
-    }
-    if (!Array.prototype.move) {
-        Array.prototype.move = function (old_index, new_index) {
-            while (old_index < 0) {
-                old_index += this.length;
-            }
-            while (new_index < 0) {
-                new_index += this.length;
-            }
-            if (new_index >= this.length) {
-                var k = new_index - this.length;
-                while ((k--) + 1) {
-                    this.push(undefined);
-                }
-            }
-            this.splice(new_index, 0, this.splice(old_index, 1)[0]);
-            return this;
-        };
-    }
-}
-
 function clone(obj) {
     // Handle the 3 simple types, and null or undefined
     if (null == obj || "object" != typeof obj) return obj;
@@ -131,7 +104,7 @@ function clone(obj) {
     throw new Error("Unable to copy obj! Its type isnt supported.");
 }
 
-function doAjaxCall(targetUrl, methodType, postData, successHandler, failureHandler, cacheEnabled, callbackParams, timeOut, hideErrMsg) {
+function doAjaxCall(targetUrl, methodType, postData, successHandler, failureHandler, cacheEnabled, callbackParams, timeOut, hideErrMsg,abortCall) {
     var url = targetUrl, type = methodType, cache = cacheEnabled,
         success = successHandler, failure = failureHandler, data = postData,
         cbParams = callbackParams, headers = {}, timeout = timeOut, hideErrorMsg = hideErrMsg;
@@ -174,9 +147,9 @@ function doAjaxCall(targetUrl, methodType, postData, successHandler, failureHand
             cache:cache,
             url:url,
             data:data,
-            headers:headers
+            headers:headers,
+            abortOnNavigate:abortCall
         };
-
         if (isSet(contentType))
             config.contentType = contentType;
         if (isSet(dataType))
@@ -1863,12 +1836,12 @@ function getSelectedProject() {
     return firstProjectName;
 }
 
-function fetchDomains(successCB) {
-    doAjaxCall("/api/tenants/config/domains", "GET", null, successCB, "errorInFetchingDomains", null, null);
+function fetchDomains(successCB, failureCB) {
+    doAjaxCall("/api/tenants/config/domains", "GET", null, successCB, (failureCB) ? failureCB : "errorInFetchingDomains", null, null);
 };
 
-function fetchProjects(successCB) {
-    doAjaxCall("/api/tenants/config/projects", "GET", null, successCB, "errorInFetchingProjects", null, null);
+function fetchProjects(successCB, failureCB) {
+    doAjaxCall("/api/tenants/config/projects", "GET", null, successCB, (failureCB) ? failureCB : "errorInFetchingProjects", null, null);
 };
 
 function errorInFetchingProjects(error) {
@@ -1886,12 +1859,12 @@ function gridSelectAllRows(args, buttonId) {
     	if($("tr", "#" + tableId).find("td").length > 0) {
             var colspan = $("td", "#" + tableId).attr('colspan');
             if(typeof colspan === "undefined") {
-                $("tr", "#" + tableId).addClass('k-state-selected');
+                $("tr.k-master-row", "#" + tableId).addClass('k-state-selected');
                 $("#" + buttonId).removeAttr("disabled");
             }
         }
     } else {
-        $("tr", "#" + tableId).removeClass('k-state-selected');
+        $("tr.k-master-row", "#" + tableId).removeClass('k-state-selected');
         $("#" + buttonId).attr("disabled", "disabled");
     }
     var tableRows = $("#" + tableId).data("kendoGrid").dataSource.data();
@@ -1915,10 +1888,10 @@ function gridSelectRow(args, buttonId) {
     	$("#cb_"+tableId).attr("checked", false);
     }
     if (checked === true) {
-        $($("tr", "#" + tableId)[tableRowId]).addClass('k-state-selected');
+        $(args).parents('.k-master-row').addClass('k-state-selected');
         $("#" + buttonId).removeAttr("disabled");
     } else {
-        $($("tr", "#" + tableId)[tableRowId]).removeClass('k-state-selected');
+    	$(args).parents('.k-master-row').removeClass('k-state-selected');
         var tableRows = $("#" + tableId).data("kendoGrid").dataSource.data();
         if (tableRows && tableRows.length > 0) {
             checkedRowFound = false;
@@ -2189,7 +2162,6 @@ function checkSystemProject(project) {
 
 cutils.getCookie = getCookie;
 cutils.setCookie = setCookie;
-cutils.checkAndSetStrTrim = checkAndSetStrTrim;
 cutils.isSet = isSet;
 cutils.isObject = isObject;
 cutils.isNumber = isNumber;

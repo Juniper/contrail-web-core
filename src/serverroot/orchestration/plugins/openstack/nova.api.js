@@ -21,7 +21,8 @@ var novaPort = ((config.computeManager) && (config.computeManager.port)) ?
 
 novaAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
                                       server:novaIP, port:novaPort});
-getTenantIdByReqCookie = function(req) {
+function getTenantIdByReqCookie (req)
+{
     if (req.cookies && req.cookies.project) {
         return req.cookies.project;
     } else {
@@ -38,8 +39,9 @@ getTenantIdByReqCookie = function(req) {
 
 /* Function: doNovaOpCb
  */
-doNovaOpCb = function(reqUrl, tenantId, req, novaCallback, stopRetry,
-                       callback) {
+function doNovaOpCb (reqUrl, tenantId, req, novaCallback, stopRetry,
+                     callback)
+{
     var forceAuth = stopRetry;
 
     authApi.getTokenObj(req, tenantId, forceAuth, function(err, tokenObj) {
@@ -131,7 +133,7 @@ novaApi.post = function(reqUrl, reqData, req, callback, stopRetry) {
     });
 }
 
-function getVMStatus (novaCallObj, callback)
+function getNovaData (novaCallObj, callback)
 {
     var req = novaCallObj['req'];
     var reqUrl = novaCallObj['reqUrl'];
@@ -145,7 +147,7 @@ function getVMStatsByProject (projUUID, req, callback)
 {
     var tenantStr = getTenantIdByReqCookie(req);
     var novaCallObjArr = [];
-    var url = null;
+    var reqUrl = null;
 
     authApi.getTokenObj(req, tenantStr, true, function(err, data) {
         if (err) {
@@ -155,8 +157,8 @@ function getVMStatsByProject (projUUID, req, callback)
             return;
         }
         var tenantId = data['tenant']['id'];
-        var url = '/v1.1/' + tenantId + '/servers/detail';
-        novaApi.get(url, req, function(err, data) {
+        var reqUrl = '/v1.1/' + tenantId + '/servers/detail';
+        novaApi.get(reqUrl, req, function(err, data) {
             callback(err, data);
         });
     });
@@ -167,7 +169,7 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
 {
     var tenantStr = getTenantIdByReqCookie(req);
     var novaCallObjArr = [];
-    var url = null;
+    var reqUrl = null;
 
     authApi.getTokenObj(req, tenantStr, true, function(err, data) {
         if (err) {
@@ -179,12 +181,12 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
         var tenantId = data['tenant']['id'];
         var vmRefsCnt = vmRefs.length;
         for (var i = 0; i < vmRefsCnt; i++) {
-            url = '/v1.1/' + tenantId + '/servers/' + vmRefs[i]['uuid'];
+            reqUrl = '/v1.1/' + tenantId + '/servers/' + vmRefs[i]['uuid'];
             novaCallObjArr[i] = {};
             novaCallObjArr[i]['req'] = req;
-            novaCallObjArr[i]['reqUrl'] = url;
+            novaCallObjArr[i]['reqUrl'] = reqUrl;
         }
-        async.map(novaCallObjArr, getVMStatus, function(err, data) {
+        async.map(novaCallObjArr, getNovaData, function(err, data) {
             callback(err, data);
         });
     });
@@ -240,7 +242,31 @@ function launchVNC (request, callback)
     });
 }
 
+
+function getFlavors (req, callback)
+{   
+    var tenantStr = getTenantIdByReqCookie(req);
+    if (null == tenantStr) {
+        /* Just return as we will be redirected to login page */
+        return;
+    }
+    authApi.getTokenObj(req, tenantStr, true, function(err, data) {
+        if (err) {
+            logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
+            callback(err, null);
+            return;
+        }
+        var tenantId = data['tenant']['id'];
+        var reqUrl = '/v1.1/' + tenantId + '/flavors/detail';
+        novaApi.get(reqUrl, req, function(err, data) {
+            callback(err, data);
+        });
+    });
+}
+
+
 exports.launchVNC = launchVNC;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
+exports.getFlavors = getFlavors;
 

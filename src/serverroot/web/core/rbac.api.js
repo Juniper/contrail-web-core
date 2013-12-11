@@ -13,8 +13,6 @@ if (!module.parent) {
   process.exit(1);
 }
 
-rbac = module.exports;
-
 var userRole = {
   admin: global.USER_ROLE_ADMIN,
   user: global.USER_ROLE_USER,
@@ -37,7 +35,8 @@ String.prototype.trim=function() {
     roleStr - Role in string format in comma seperated
     ex: user,admin
  */
-getRoleValueByString = function(roleStr) {
+function getRoleValueByString (roleStr)
+{
   if (null == roleStr) {
     return null;
   }
@@ -65,7 +64,8 @@ getRoleValueByString = function(roleStr) {
     role:  role specified in string format, 
             ex: admin,user
  */
-rbac.setFeatureByURL = function(url, method, routes, featureStr) {
+function setFeatureByURL (url, method, routes, featureStr)
+{
   var routesObj = [];
   if (method == 'get') {
     routesObj = routes['get'];
@@ -95,7 +95,8 @@ rbac.setFeatureByURL = function(url, method, routes, featureStr) {
     This function is used to derive the role from urlRegexp.
     urlRegexp is the req.route.regexp
  */
-getRoleByURLRegexp = function(urlRegexp) {
+function getRoleByURLRegexp (urlRegexp)
+{
   return userRoleMap[urlRegexp];
 }
 
@@ -103,7 +104,8 @@ getRoleByURLRegexp = function(urlRegexp) {
     This function is used to get the feature object by req object coming from
     the web client.
  */
-getFeatureByReq = function(req) {
+function getFeatureByReq (req)
+{
   var key = req.route.method + ':' + req.route.regexp;
   return userFeatureMap[key];
 }
@@ -112,7 +114,8 @@ getFeatureByReq = function(req) {
     This function is used to check the access privileges based on the req.url
     and req.method
  */
-rbac.getUserAccess = function(req, userRoleStr) {
+function getUserAccess (req, userRoleStr)
+{
   /* First check from the req.url, which feature is and then check 
      req.method does it have access
    */
@@ -149,7 +152,8 @@ rbac.getUserAccess = function(req, userRoleStr) {
 /* Function: addFeatureAccess
     This function is used to add read/write access to specific feature
  */
-rbac.addFeatureAccess = function(feature, readAccess, writeAccess) {
+function addFeatureAccess (feature, readAccess, writeAccess)
+{
   var readAccessVal = getRoleValueByString(readAccess);
   var writeAccessVal = getRoleValueByString(writeAccess);
 
@@ -163,17 +167,23 @@ rbac.addFeatureAccess = function(feature, readAccess, writeAccess) {
     This function is used to map roles derived from Identity Server to Role
     derived by Web Server
  */
-mapUserRoleToInternalRole = function(userRole) {
+function mapUserRoleToInternalRole (userRole)
+{
   return userRole;
 }
 
 /* Function: checkUserAccess
     This function is used to check the access privileges
  */
-rbac.checkUserAccess = function(req, res) {
+function checkUserAccess (req, res)
+{
   var userRoleStr = req.session.userRole;
   var roleStr = mapUserRoleToInternalRole(userRoleStr);
-  var userAccess = rbac.getUserAccess(req, roleStr);
+  var userAccess = getUserAccess(req, roleStr);
   return userAccess;
 }
+
+exports.setFeatureByURL = setFeatureByURL;
+exports.addFeatureAccess = addFeatureAccess;
+exports.checkUserAccess = checkUserAccess;
 

@@ -31,7 +31,8 @@ anC = rest.getAPIServer({apiName:global.label.OPS_API_SERVER,
 
 topoCache = module.exports;
 
-getInstLinks = function (linksData) {
+function getInstLinks (linksData)
+{
 	var links = [];
 	try {
 		for (var i = 0; i < linksData.length; i++) {
@@ -47,7 +48,8 @@ getInstLinks = function (linksData) {
 	return links;
 }
 
-getInstancesAndLinksforVN = function (vnDetailJSON) {
+function getInstancesAndLinksforVN (vnDetailJSON)
+{
 	var instances = [],
 		links = [],
 		instanceData, currInst, fq_name, i;
@@ -76,14 +78,16 @@ getInstancesAndLinksforVN = function (vnDetailJSON) {
 	];
 }
 
-populateName = function (arr) {
+function populateName (arr)
+{
 	for (var j = 0; j < arr.length; j++) {
 		var currData = arr[j];
 		currData['name'] = currData['fq_name'][currData['fq_name'].length - 1];
 	}
 }
 
-getProjectVNs = function (url, callback) {
+function getProjectVNs (url, callback)
+{
 	vnc.api.get(url, function (error, jsonData) {
 		if (!error) {
 			var vnsJSON = jsonData,
@@ -117,7 +121,8 @@ getProjectVNs = function (url, callback) {
 	});
 }
 
-sortProjectsByName = function (a, b) {
+function sortProjectsByName (a, b)
+{
 	if (a['fq_name'][1] > b['fq_name'][1])
 		return 1;
 	else if (a['fq_name'][1] < b['fq_name'][1])
@@ -126,7 +131,8 @@ sortProjectsByName = function (a, b) {
 		return 0;
 }
 
-getProjectsTreeByDomain = function(domain, callback) {
+function getProjectsTreeByDomain (domain, callback)
+{
     var cacheExpTime = config.cacheExpire.topo_tree_time;
     var url = '/projects?domain=' + domain;
     vnc.api.get(url, function (error, jsonData) {
@@ -184,7 +190,8 @@ getProjectsTreeByDomain = function(domain, callback) {
     });
 }
 
-getProjectsTreeWithDomain = function(resultJSON, domainList, projectTreeData) {
+function getProjectsTreeWithDomain (resultJSON, domainList, projectTreeData)
+{
     var len = domainList.length;
     var domain;
     for (var i = 0; i < len; i++) {
@@ -196,8 +203,9 @@ getProjectsTreeWithDomain = function(resultJSON, domainList, projectTreeData) {
     
 }
 
-topoCache.processTreeTopoCache = function (pubChannel, saveChannelKey, 
-                                           jobData, done) {
+function processTreeTopoCache (pubChannel, saveChannelKey, 
+                               jobData, done)
+{
     var reqUrl = url = jobData.taskData.url;
     var appData = jobData.taskData.appData;
     var emptyResultArr = [];
@@ -232,3 +240,6 @@ topoCache.processTreeTopoCache = function (pubChannel, saveChannelKey,
                                     0, done);
     });
 }
+
+exports.processTreeTopoCache = processTreeTopoCache;
+

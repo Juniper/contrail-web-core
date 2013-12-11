@@ -20,7 +20,8 @@ var rest = require('../../common/rest.api'),
 
 computeNode = module.exports;
 
-getVNByVRF = function(vrfName, vnList) {
+function getVNByVRF (vrfName, vnList)
+{
     var vrf = null;
     var pos = -1;
     try {
@@ -44,7 +45,8 @@ getVNByVRF = function(vrfName, vnList) {
     }
 }
 
-parseComputeNodeInterface = function(intfDetails) {
+function parseComputeNodeInterface (intfDetails)
+{
     var lastIndex = 0;
     var results = [];
     try {
@@ -59,7 +61,8 @@ parseComputeNodeInterface = function(intfDetails) {
     return results;
 }
 
-fillFipLists = function(fipList, results, index) {
+function fillFipLists (fipList, results, index)
+{
     var lastIndex = 0;
     var fipListCnt = fipList.length;
 
@@ -68,7 +71,8 @@ fillFipLists = function(fipList, results, index) {
     }
 }
 
-fillFipListPerInterface = function(fipListEntry, results, lastIndex) {
+function fillFipListPerInterface (fipListEntry, results, lastIndex)
+{
     var j = 0;
     var fipCount = fipListEntry.length;
 
@@ -91,7 +95,8 @@ fillFipListPerInterface = function(fipListEntry, results, lastIndex) {
     return (j + 1);
 }
 
-parseComputeNodeInterfaceDetails = function(data, results, lastIndex) {
+function parseComputeNodeInterfaceDetails (data, results, lastIndex)
+{
     var i = 0, j = 0;
     var name = null;
     var index = 0;
@@ -158,7 +163,8 @@ parseComputeNodeInterfaceDetails = function(data, results, lastIndex) {
     return j;   
 }
 
-parseComputeNodeAcl = function(results) {
+function parseComputeNodeAcl (results)
+{
     var aclData = [];
     var aceList = [];
     var lastIndex = 0;
@@ -173,7 +179,8 @@ parseComputeNodeAcl = function(results) {
     return aclData;
 }
 
-parsevRouterAclEntries = function(data, aclData, lastIndex) {
+function parsevRouterAclEntries (data, aclData, lastIndex)
+{
     var i = 0, idx = 0;
     var aceListCount = 0;
 
@@ -298,14 +305,15 @@ parsevRouterAclEntries = function(data, aclData, lastIndex) {
     return (idx + 1);
 }
 
-computeNode.getComputeNodeInterface = function(pubChannel, saveChannelKey, 
-                                               ip, jobData, done) {
+function getComputeNodeInterface (pubChannel, saveChannelKey, 
+                                  ip, jobData, done)
+{
     var dataObjArr = [];
 
     var vRouterRestAPI = 
         commonUtils.getRestAPIServer(ip,
                                      global.SANDESH_COMPUTE_NODE_PORT);
-    commonUtils.createReqObj(dataObjArr, 0, '/Snh_ItfReq?name=');
+    commonUtils.createReqObj(dataObjArr, '/Snh_ItfReq?name=');
     
     async.map(dataObjArr,
               commonUtils.getServerRespByRestApi(vRouterRestAPI, true),
@@ -325,8 +333,9 @@ computeNode.getComputeNodeInterface = function(pubChannel, saveChannelKey,
     });
 }
 
-getFlowCountAndSendvRouterAclResponse = function(ip, results, pubChannel, 
-                                                 saveChannelKey, done) {
+function getFlowCountAndSendvRouterAclResponse (ip, results, pubChannel,
+                                                saveChannelKey, done)
+{
     var urlLists = [];
     urlLists[0] = [url];
     var aclCount = results.length;
@@ -365,9 +374,9 @@ getFlowCountAndSendvRouterAclResponse = function(ip, results, pubChannel,
     });
 }
 
-            
-computeNode.getComputeNodeAcl = function(pubChannel, saveChannelKey, data,
-                                         sData, jobData, done) {
+function getComputeNodeAcl (pubChannel, saveChannelKey, data,
+                            sData, jobData, done)
+{
     var results = [];
     /* Now retrieve compute node name */
     if (null == sData) {
@@ -410,8 +419,9 @@ computeNode.getComputeNodeAcl = function(pubChannel, saveChannelKey, data,
     });
 }
 
-computeNode.processComputeNodeInterface = function(pubChannel, saveChannelKey, 
-                                                   jobData, done) {
+function processComputeNodeInterface (pubChannel, saveChannelKey, 
+                                      jobData, done)
+{
     /* We get the interface details from Sandesh */
     var url = jobData.taskData.url;
     var allDetails = false;
@@ -432,7 +442,7 @@ computeNode.processComputeNodeInterface = function(pubChannel, saveChannelKey,
                                     global.STR_CACHE_RETRIEVE_ERROR, 0,
                                     0, done);
     } else {
-        computeNode.getComputeNodeInterface(pubChannel, saveChannelKey,
+        getComputeNodeInterface(pubChannel, saveChannelKey,
                                             nodeIp, jobData, done);
     }
 }
@@ -474,8 +484,9 @@ function getAclFlowByACLSandeshResponse (ip, aclSandeshResp, callback)
     });
 }
 
-computeNode.processComputeNodeAcl = function(pubChannel, saveChannelKey, 
-                                                   jobData, done) {
+function processComputeNodeAcl (pubChannel, saveChannelKey, 
+                                jobData, done)
+{
     /* We get the interface details from Sandesh */
     var url = jobData.taskData.url;
     var allDetails = false;
@@ -502,7 +513,7 @@ computeNode.processComputeNodeAcl = function(pubChannel, saveChannelKey,
     }
     var vRouterRestAPI =
         commonUtils.getRestAPIServer(nodeIp, global.SANDESH_COMPUTE_NODE_PORT);
-    commonUtils.createReqObj(dataObjArr, 0, '/Snh_AclReq?uuid=');
+    commonUtils.createReqObj(dataObjArr, '/Snh_AclReq?uuid=');
     async.map(dataObjArr,
               commonUtils.getServerRespByRestApi(vRouterRestAPI, false),
               function(err, data) {
@@ -516,7 +527,8 @@ computeNode.processComputeNodeAcl = function(pubChannel, saveChannelKey,
     });
 }
 
-computeNode.getvRouterList = function(pubChannel, saveChannelKey, jobData, done) {
+function getvRouterList (pubChannel, saveChannelKey, jobData, done)
+{
     var obj = {
         'pubChannel': pubChannel, 
         'saveChannelKey': saveChannelKey, 
@@ -526,8 +538,10 @@ computeNode.getvRouterList = function(pubChannel, saveChannelKey, jobData, done)
     adminApiHelper.processVirtualRouters(null, null, global.GET_VROUTERS_LIST,
                                          obj, jobData);
 }
-                                            
-processAclSandeshData = function(pubChannel, saveChannelKey, nodeIp, done, aclResponse) {
+
+function processAclSandeshData (pubChannel, saveChannelKey, nodeIp, done, 
+                                aclResponse)
+{
     var idx = 0;
     var resultJSON = [];
     var urlLists = [];
@@ -572,7 +586,8 @@ processAclSandeshData = function(pubChannel, saveChannelKey, nodeIp, done, aclRe
     }
 }
 
-computeNode.getComputeNodeAclFlows = function(pubChannel, saveChannelKey, nodeIp, done) {
+function getComputeNodeAclFlows (pubChannel, saveChannelKey, nodeIp, done)
+{
     var urlLists = [];
     urlLists[0] = nodeIp + '@' + global.SANDESH_COMPUTE_NODE_PORT + '@' + '/Snh_AclReq?uuid=';
     async.map(urlLists, commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, true), 
@@ -589,7 +604,8 @@ computeNode.getComputeNodeAclFlows = function(pubChannel, saveChannelKey, nodeIp
     });
 }
 
-computeNode.getvRouterAclFlows = function(pubChannel, saveChannelKey, jobData, done) {
+function getvRouterAclFlows (pubChannel, saveChannelKey, jobData, done)
+{
     var url = jobData.taskData.url;
     var allDetails = false;
     var sData = {};
@@ -609,7 +625,15 @@ computeNode.getvRouterAclFlows = function(pubChannel, saveChannelKey, jobData, d
                                     global.STR_CACHE_RETRIEVE_ERROR, 0,
                                     0, done);
     } else {
-        computeNode.getComputeNodeAclFlows(pubChannel, saveChannelKey, nodeIp, done);   
+        getComputeNodeAclFlows(pubChannel, saveChannelKey, nodeIp, done);   
     }
 }
-                                  
+
+exports.getvRouterAclFlows = getvRouterAclFlows;
+exports.getComputeNodeAcl = getComputeNodeAcl;
+exports.getComputeNodeAclFlows = getComputeNodeAclFlows;
+exports.getvRouterList = getvRouterList;
+exports.processComputeNodeInterface = processComputeNodeInterface;
+exports.getComputeNodeInterface = getComputeNodeInterface;
+exports.processComputeNodeAcl = processComputeNodeAcl;
+

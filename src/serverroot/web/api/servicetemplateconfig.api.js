@@ -20,11 +20,13 @@ var util = require('util');
 var url = require('url');
 var imageApi = require('../../common/imagemanager.api');
 var configApiServer = require('../../common/configServer.api');
+var computeApi = require('../../common/computemanager.api');
 
 /**
  * Bail out if called directly as "nodejs servicetemplateconfig.api.js"
  */
-if (!module.parent) {
+if (!module.parent) 
+{
     logutils.logger.warn(util.format(messages.warn.invalid_mod_call,
         module.filename));
     process.exit(1);
@@ -39,7 +41,8 @@ if (!module.parent) {
  * 4. Calls listServiceTemplatesCb that process data from config
  *    api server and sends back the http response.
  */
-function listServiceTemplates(request, response, appData) {
+function listServiceTemplates(request, response, appData) 
+{
     var domainId = null;
     var requestParams = url.parse(request.url, true);
     var domainURL = '/domain';
@@ -64,7 +67,8 @@ function listServiceTemplates(request, response, appData) {
  * 2. Reads the response of per domain ST list from config api server
  *    and sends it back to the client.
  */
-function listServiceTemplatesCb(error, stListData, response, appData) {
+function listServiceTemplatesCb(error, stListData, response, appData) 
+{
     var url = null;
     var dataObjArr = [];
     var i = 0, stLength = 0;
@@ -91,8 +95,8 @@ function listServiceTemplatesCb(error, stListData, response, appData) {
 
     for (i = 0; i < stLength; i++) {
         var stRef = serviceTemplates['service_templates'][i];
-        url = stRef['href'].split(':8082')[1];
-        commonUtils.createReqObj(dataObjArr, i, url,
+        url = '/service-template/' + stRef['uuid'];
+        commonUtils.createReqObj(dataObjArr, url,
             global.HTTP_REQUEST_GET, null, null, null,
             appData);
     }
@@ -109,7 +113,8 @@ function listServiceTemplatesCb(error, stListData, response, appData) {
  * private function
  * 1. Callback for the ST gets, sends all STs to client.
  */
-function stListAggCb(error, results, response) {
+function stListAggCb(error, results, response) 
+{
     var serviceTemplates = {}, finalResults;
 
     if (error) {
@@ -127,7 +132,8 @@ function stListAggCb(error, results, response) {
  * 1. Filter Default Analyzer Template
  * 2. Required SI Template JSON
  */
-function filterDefaultAnalyzerTemplate(serviceTemplates) {
+function filterDefaultAnalyzerTemplate(serviceTemplates) 
+{
     var name, filteredTemplates = [], j = 0;
     for (var i = 0; i < serviceTemplates.length; i++) {
         name = serviceTemplates[i]['service-template']['name'];
@@ -144,7 +150,8 @@ function filterDefaultAnalyzerTemplate(serviceTemplates) {
  * 1. URL /api/tenants/config/service-templates - Post
  * 2. Sets Post Data and sends back the service template config to client
  */
-function createServiceTemplate(request, response, appData) {
+function createServiceTemplate(request, response, appData) 
+{
     var stCreateURL = '/service-templates';
     var stPostData = request.body;
 
@@ -174,7 +181,8 @@ function createServiceTemplate(request, response, appData) {
  * private function
  * 1. Return back the response of service template delete.
  */
-function deleteServiceTemplateCb(error, stDelResp, response) {
+function deleteServiceTemplateCb(error, stDelResp, response) 
+{
 
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
@@ -190,16 +198,15 @@ function deleteServiceTemplateCb(error, stDelResp, response) {
  * 1. URL /api/tenants/config/service-template/:id
  * 2. Deletes the service template from config api server
  */
-function deleteServiceTemplate(request, response, appData) {
+function deleteServiceTemplate(request, response, appData) 
+{
     var stDelURL = '/service-template/';
     var stId = null;
     var requestParams = url.parse(request.url, true);
 
     if (stId = request.param('id').toString()) {
-        console.log("inside id: " + stId);
         stDelURL += stId;
     } else {
-        console.log("inside error: " + stId);
         error = new appErrors.RESTServerError('Service Template ID is required.');
         commonUtils.handleJSONResponse(error, response, null);
         return;
@@ -217,7 +224,8 @@ function deleteServiceTemplate(request, response, appData) {
  * 2. Reads the response of ST get from config api server
  *    and sends it back to the client.
  */
-function setSTRead(error, stConfig, response, appData) {
+function setSTRead(error, stConfig, response, appData) 
+{
     var stGetURL = '/service-template/';
 
     if (error) {
@@ -238,7 +246,8 @@ function setSTRead(error, stConfig, response, appData) {
  * private function
  * 1. Sends back the response of service template read to clients after set operations.
  */
-function stSendResponse(error, stConfig, response) {
+function stSendResponse(error, stConfig, response) 
+{
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
     } else {
@@ -253,7 +262,8 @@ function stSendResponse(error, stConfig, response) {
  * URL: /api/tenants/config/service-template-images/ - GET
  * 1. Gets the list of available images registed with Glance and sends back response to client.
  */
-function listServiceTemplateImages(request, response, appData) {
+function listServiceTemplateImages(request, response, appData) 
+{
     imageApi.getImageList(request, function (error, data) {
         if (error) {
             commonUtils.handleJSONResponse(error, response, null);
@@ -263,8 +273,22 @@ function listServiceTemplateImages(request, response, appData) {
     });
 }
 
+/**
+ * @getSystemFlavors
+ * private function
+ * 1.gets the list of system flavors with details and sends back response to client.
+ */
+function getSystemFlavors(request, response, appdata)
+{
+    console.log("SERVER HIT!!!");
+    computeApi.getFlavors(request, function(err, data) {
+        console.log("OUTPUT:"+JSON.stringify(data));                  
+        commonUtils.handleJSONResponse(err, response, data);
+    });
+}
+
 exports.listServiceTemplates = listServiceTemplates;
 exports.listServiceTemplateImages = listServiceTemplateImages;
 exports.createServiceTemplate = createServiceTemplate;
 exports.deleteServiceTemplate = deleteServiceTemplate;
-
+exports.getSystemFlavors = getSystemFlavors;

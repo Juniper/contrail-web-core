@@ -13,7 +13,8 @@ var commonUtils = require('../utils/common.utils'),
     async = require('async');
 
 
-getTimeGranByTimeSlice = function(timeObj, sampleCnt) {
+function getTimeGranByTimeSlice (timeObj, sampleCnt)
+{
     var startTime = timeObj['start_time'];
     var endTime = timeObj['end_time'];
     var timeGran = (endTime - startTime) / (sampleCnt * 
@@ -54,12 +55,13 @@ function createTimeObj (appData)
     return timeObj;
 }
 
-getStatDataByQueryJSON = function(srcQueryJSON, destQueryJSON, callback) {
+function getStatDataByQueryJSON (srcQueryJSON, destQueryJSON, callback)
+{
     var dataObjArr = [];
-    commonUtils.createReqObj(dataObjArr, 0, global.RUN_QUERY_URL,
+    commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
                              global.HTTP_REQUEST_POST,
                              commonUtils.cloneObj(srcQueryJSON));
-    commonUtils.createReqObj(dataObjArr, 1, global.RUN_QUERY_URL,
+    commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
                              global.HTTP_REQUEST_POST,
                              commonUtils.cloneObj(destQueryJSON));
     logutils.logger.debug("Query1 executing: " + JSON.stringify(dataObjArr[0]['data']));
@@ -101,7 +103,39 @@ function createTimeObjByAppData (appData)
     return timeObj;
 }
 
+function getnThIndexByLastKey (lastKey, entries, matchStr)
+{
+    if (null == lastKey) {
+        return -1;
+    }
+    try {
+        var cnt = entries.length;
+    } catch(e) {
+        return -1;
+    }
+    for (var i = 0; i < cnt; i++) {
+        if (lastKey == entries[i][matchStr]) {
+            return i;
+        }
+    }
+    return -2;
+}
+
+function makeUVEList (keys)
+{
+    var result = [];
+    var len = keys.length;
+    for (var i = 0; i < len; i++) {
+        result[i] = {};
+        result[i]['name'] = keys[i];
+    }
+    return result;
+}
+
 exports.getTimeGranByTimeSlice = getTimeGranByTimeSlice;
 exports.getStatDataByQueryJSON = getStatDataByQueryJSON;
 exports.createTimeQueryObjByStartEndTime = createTimeQueryObjByStartEndTime;
 exports.createTimeObjByAppData = createTimeObjByAppData;
+exports.getnThIndexByLastKey = getnThIndexByLastKey;
+exports.makeUVEList = makeUVEList;
+

@@ -24,7 +24,8 @@ var configApiServer = require('../../common/configServer.api');
 /**
  * Bail out if called directly as "nodejs policyconfig.api.js"
  */
-if (!module.parent) {
+if (!module.parent) 
+{
     logutils.logger.warn(util.format(messages.warn.invalid_mod_call,
         module.filename));
     process.exit(1);
@@ -37,7 +38,8 @@ if (!module.parent) {
  * 2. Reads the response of per project policies from config api server
  *    and sends it back to the client.
  */
-function listPolicysCb(error, polListData, response) {
+function listPolicysCb(error, polListData, response) 
+{
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
         return;
@@ -54,7 +56,8 @@ function listPolicysCb(error, polListData, response) {
  * 4. Calls listPolicysCb that process data from config
  *    api server and sends back the http response.
  */
-function listPolicys(request, response, appData) {
+function listPolicys(request, response, appData) 
+{
     var tenantId = null;
     var requestParams = url.parse(request.url, true);
     var polListURL = '/network-policys';
@@ -75,7 +78,8 @@ function listPolicys(request, response, appData) {
  * private function
  * 1. Run through all rules and set fake sequence id.
  */
-function setPolicyRulesSequence(polConfig) {
+function setPolicyRulesSequence(polConfig) 
+{
     var ruleLen = 0, i = 0;
     var ruleRef = [];
 
@@ -106,7 +110,8 @@ function setPolicyRulesSequence(polConfig) {
  * 2. Reads the response of policy get from config api server
  *    and sends it back to the client.
  */
-function getPolicyCb(error, polConfig, response) {
+function getPolicyCb(error, polConfig, response) 
+{
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
         return;
@@ -115,6 +120,7 @@ function getPolicyCb(error, polConfig, response) {
     delete polConfig['network-policy']['href'];
     delete polConfig['network-policy']['_type'];
 
+    polConfig = setPolicyRulesSequence(polConfig);
     commonUtils.handleJSONResponse(error, response, polConfig);
 }
 
@@ -127,7 +133,8 @@ function getPolicyCb(error, polConfig, response) {
  * 4. Calls getPolicyCb that process data from config
  *    api server and sends back the http response.
  */
-function getPolicy(request, response, appData) {
+function getPolicy(request, response, appData) 
+{
     var policyId = null;
     var requestParams = url.parse(request.url, true);
     var polGetURL = '/network-policy';
@@ -151,7 +158,8 @@ function getPolicy(request, response, appData) {
  * private function
  * 1. Sends back the response of Policy read to clients.
  */
-function policySendResponse(error, polConfig, response) {
+function policySendResponse(error, polConfig, response) 
+{
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
     } else {
@@ -167,7 +175,8 @@ function policySendResponse(error, polConfig, response) {
  * 2. Reads the response of policy get from config api server
  *    and sends it back to the client.
  */
-function setPolicyRead(error, polConfig, response, appData) {
+function setPolicyRead(error, polConfig, response, appData) 
+{
     var polGetURL = '/network-policy/';
 
     if (error) {
@@ -189,7 +198,8 @@ function setPolicyRead(error, polConfig, response, appData) {
  * 2. Reads the response of policy get from config api server by policy id
  *    and sends it back to the client.
  */
-function policyReadSendResponse(error, polId, response, appData) {
+function policyReadSendResponse(error, polId, response, appData) 
+{
     var polGetURL = '/network-policy/' + polId;
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
@@ -206,7 +216,8 @@ function policyReadSendResponse(error, polId, response, appData) {
  * 1. URL /api/tenants/config/policys- Post
  * 2. Sets Post Data and sends back the policy to client
  */
-function createPolicy(request, response, appData) {
+function createPolicy(request, response, appData) 
+{
     var polCreateURL = '/network-policys';
     var polPostData = request.body;
 
@@ -243,7 +254,8 @@ function createPolicy(request, response, appData) {
         });
 }
 
-function updatePolicy(request, response, appData) {
+function updatePolicy(request, response, appData) 
+{
     var policyId = request.param('id');
     var polPutData = request.body;
     var polPutURL = '/network-policy/' + policyId;
@@ -256,8 +268,17 @@ function updatePolicy(request, response, appData) {
         return;
     }
 
+    var uiAnalyzerFlag = polPutData['ui_analyzer_flag'];;
     setPolicyEntries(polPutData, policyId, appData, function(err, data) {
-    	policyReadSendResponse(err, policyId, response, appData);
+        if (err || (null == uiAnalyzerFlag) || (false == uiAnalyzerFlag)) {
+            policyReadSendResponse(err, policyId, response, appData);
+            return;
+        }
+        delete polPutData['ui_analyzer_flag'];
+        updatePolicyWithVNs(polPutData, policyId, appData, 
+                            function (err, data) {
+            policyReadSendResponse(err, policyId, response, appData);
+        });
     });
 }
 
@@ -267,7 +288,8 @@ function updatePolicy(request, response, appData) {
  * 1. Callback for updatePolicyEntries
  * 2. Updates the Policy Rules.
  */
-function setPolicyEntries(polPostData, policyId, appData, callback) {
+function setPolicyEntries(polPostData, policyId, appData, callback) 
+{
     var entryLen = 0, i = 0;
     var ruleLen = 0;
     var ruleOffset = 0;
@@ -323,7 +345,8 @@ function setPolicyEntries(polPostData, policyId, appData, callback) {
  * 1. URL /api/tenants/config/policy/:id/network-policy-entries - Post
  * 2. Sets Post Data and sends back the policy to client
  */
-function addPolicyEntry(request, response, appData) {
+function addPolicyEntry(request, response, appData) 
+{
     var policyId = null;
     var polGetURL = '/network-policy/';
     var polPostData = request.body;
@@ -368,7 +391,8 @@ function addPolicyEntry(request, response, appData) {
  * private function
  * 1. Removes a given rule at an offset, later on will be uuid based.
  */
-function deletePolicyRule(error, polConfig, ruleId, policyId, response, appData) {
+function deletePolicyRule(error, polConfig, ruleId, policyId, response, appData) 
+{
     var polPutURL = '/network-policy/' + policyId;
     var ruleLen = 0, i = 0;
     var ruleRef = [];
@@ -414,7 +438,8 @@ function deletePolicyRule(error, polConfig, ruleId, policyId, response, appData)
  *  /api/tenants/config/policy/:id/network-policy-entries/ruleid
  * 2. Sets Post Data and sends back the policy to client
  */
-function deletePolicyEntry(request, response, appData) {
+function deletePolicyEntry(request, response, appData) 
+{
     var policyId = null;
     var ruleId = null;
     var polGetURL = '/network-policy/';
@@ -445,7 +470,8 @@ function deletePolicyEntry(request, response, appData) {
  * private function
  * 1. Return back the response of policy delete.
  */
-function deletePolicyCb(error, policyDelResp, response) {
+function deletePolicyCb(error, policyDelResp, response) 
+{
 
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
@@ -461,7 +487,8 @@ function deletePolicyCb(error, policyDelResp, response) {
  * 1. URL /api/tenants/config/policy/:id
  * 2. Deletes the policy from config api server
  */
-function deletePolicy(request, response, appData) {
+function deletePolicy(request, response, appData) 
+{
     var polDelURL = '/network-policy/';
     var policyId = null;
     var requestParams = url.parse(request.url, true);
@@ -497,7 +524,8 @@ function deletePolicy(request, response, appData) {
  * private function
  * Updates Network Policy references from VNs
  */
-function updatePolicyUpdateNets(error, results, polConfig, policyId, appData, callback) {
+function updatePolicyUpdateNets(error, results, polConfig, policyId, appData, callback) 
+{
     var vnRef = null;
     var polVNRef = {};
     var vnPolRef = [];
@@ -525,7 +553,7 @@ function updatePolicyUpdateNets(error, results, polConfig, policyId, appData, ca
 
         vnPolRef = results[i]['virtual-network']['network_policy_refs'];
         if (polVNRef['oper'] == 'add') {
-            polVNRef['attr']['sequence'] = { 'major':vnPolRef.length - 1, 'minor':0};
+            polVNRef['attr']['sequence'] = { 'major':vnPolRef.length, 'minor':0};
             polVNRefObj =
             {
                 to:polConfig['network-policy']['fq_name'],
@@ -543,7 +571,7 @@ function updatePolicyUpdateNets(error, results, polConfig, policyId, appData, ca
                 }
             }
         }
-        commonUtils.createReqObj(dataObjArr, i, vnURL, global.HTTP_REQUEST_PUT,
+        commonUtils.createReqObj(dataObjArr, vnURL, global.HTTP_REQUEST_PUT,
             results[i], null, null, appData);
     }
 
@@ -560,7 +588,8 @@ function updatePolicyUpdateNets(error, results, polConfig, policyId, appData, ca
  * @updatePolicyAssocNetRead
  * private function
  */
-function updatePolicyAssocNetRead(error, polConfig, polPostData, policyId, appData, callback) {
+function updatePolicyAssocNetRead(error, polConfig, polPostData, policyId, appData, callback) 
+{
     var url = null;
     var vnRef = [];
     var vnURL = [];
@@ -605,7 +634,7 @@ function updatePolicyAssocNetRead(error, polConfig, polPostData, policyId, appDa
                 'oper':'add'
             };
             url = '/virtual-network/' + uuid;
-            commonUtils.createReqObj(dataObjArr, i, url,
+            commonUtils.createReqObj(dataObjArr, url,
                 global.HTTP_REQUEST_GET, null, null, null,
                 appData);
         }
@@ -619,7 +648,6 @@ function updatePolicyAssocNetRead(error, polConfig, polPostData, policyId, appDa
         return;
     }
 
-    var j = 0;
     if (['virtual_network_back_refs'] in polConfig['network-policy'] &&
         polConfig['network-policy']['virtual_network_back_refs'].length) {
         vnRef = polConfig['network-policy']['virtual_network_back_refs'];
@@ -628,7 +656,7 @@ function updatePolicyAssocNetRead(error, polConfig, polPostData, policyId, appDa
             uuid = vnRef[i]['uuid'];
             if (polConfig['network-policy']['net_uuid'][uuid] == null) {
                 url = '/virtual-network/' + uuid;
-                commonUtils.createReqObj(dataObjArr, j++, url,
+                commonUtils.createReqObj(dataObjArr, url,
                     global.HTTP_REQUEST_GET, null, null,
                     null, appData);
             }
@@ -651,14 +679,13 @@ function updatePolicyAssocNetRead(error, polConfig, polPostData, policyId, appDa
         }
     }
 
-    j = 0;
     vnUIRef = polPostData['network-policy']['virtual_network_back_refs'];
     vnUIRefLen = vnUIRef.length;
     for (i = 0; i < vnUIRefLen; i++) {
         uuid = vnUIRef[i]['uuid'];
         if (polConfig['network-policy']['net_uuid'][uuid] == null) {
             url = '/virtual-network/' + uuid;
-            commonUtils.createReqObj(dataObjArr, j++, url,
+            commonUtils.createReqObj(dataObjArr, url,
                 global.HTTP_REQUEST_GET, null, null, null,
                 appData);
         }
@@ -686,7 +713,8 @@ function updatePolicyAssocNetRead(error, polConfig, polPostData, policyId, appDa
  * 3. Resets the policy references from / to virtual-networks.
  * 4. Reads updated policy config and sends it back to client
  */
-function updatePolicyAssociatedNets(request, response, appData) {
+function updatePolicyAssociatedNets(request, response, appData) 
+{
     var policyId = null;
     var polPostData = request.body;
 
@@ -704,7 +732,8 @@ function updatePolicyAssociatedNets(request, response, appData) {
     });
 }
 
-function updatePolicyWithVNs(polPostData, policyId, appData, callback) {
+function updatePolicyWithVNs(polPostData, policyId, appData, callback) 
+{
     var policyURL = '/network-policy/' + policyId;
     configApiServer.apiGet(policyURL, appData, function (error, data) {
         updatePolicyAssocNetRead(error, data, polPostData, policyId, appData,
@@ -719,7 +748,8 @@ function updatePolicyWithVNs(polPostData, policyId, appData, callback) {
  * private function
  * 1. Create a dynamic policy for a new service instance using default analyzer-template
  */
-function createDynamicPolicy(siPostData, appData) {
+function createDynamicPolicy(siPostData, appData) 
+{
     var analyzerName = siPostData['service-instance']['fq_name'][2],
         polCreateURL = '/network-policys',
         defaultAnalyzerPolicy;
@@ -748,7 +778,8 @@ function createDynamicPolicy(siPostData, appData) {
  * private function
  * 1. Delete a dynamic policy when a service instance of default analyzer-template is deleted
  */
-function deleteAnalyzerPolicy(policyId, appData, deleteAnalyzerCB) {
+function deleteAnalyzerPolicy(policyId, appData, deleteAnalyzerCB) 
+{
     var polDelURL = '/network-policy/' + policyId;
     configApiServer.apiGet(polDelURL, appData, function (err, configData) {
         if ('virtual_network_back_refs' in configData['network-policy']) {

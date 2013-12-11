@@ -26,7 +26,8 @@ opServer = rest.getAPIServer({apiName:global.label.OPS_API_SERVER,
 var parseString = require('xml2js').parseString;
 nwMonJobsApi = module.exports;
 
-executeQueryString = function (queryJSON, callback) {
+function executeQueryString (queryJSON, callback)
+{
     var resultData, startTime = (new Date()).getTime(), endTime;
     opServer.authorize(function () {
         opServer.api.post(global.RUN_QUERY_URL, queryJSON, function (error, jsonData) {
@@ -38,7 +39,8 @@ executeQueryString = function (queryJSON, callback) {
     });
 };
 
-formatAndClause = function (objArr) {
+function formatAndClause (objArr)
+{
     var result = [];
     var len = objArr.length;
     result[0] = [];
@@ -58,7 +60,8 @@ formatAndClause = function (objArr) {
  * Output: (key1 AND key2) OR (key3 AND key4)
  */
 
-function formatAndOrClause(objArrList) {
+function formatAndOrClause(objArrList)
+{
     var objList = [], clause;
     var count = objArrList.length;
     for (var i = 0; i < count; i++) {
@@ -68,7 +71,9 @@ function formatAndOrClause(objArrList) {
     return objList;
 }
 
-formatQueryString = function (table, whereClauseObjArr, selectFieldObjArr, timeObj, noSortReqd, limit, dir, AndClause) {
+function formatQueryString (table, whereClauseObjArr, selectFieldObjArr, 
+                            timeObj, noSortReqd, limit, dir, AndClause)
+{
     var queryJSON = {};
     var whereClauseLen = 0;
     queryJSON = global.QUERY_JSON[table];
@@ -119,7 +124,9 @@ formatQueryString = function (table, whereClauseObjArr, selectFieldObjArr, timeO
     return commonUtils.cloneObj(queryJSON);
 }
 
-formatQueryStringWithWhereClause = function (table, whereClause, selectFieldObjArr, timeObj, noSortReqd, limit, dir) {
+function formatQueryStringWithWhereClause (table, whereClause, selectFieldObjArr,
+                                           timeObj, noSortReqd, limit, dir)
+{
     var queryJSON = {};
     var whereClauseLen = 0;
     queryJSON = global.QUERY_JSON[table];
@@ -160,7 +167,8 @@ formatQueryStringWithWhereClause = function (table, whereClause, selectFieldObjA
  [[{"name":"ccc","op":1,"value":20},{"name":"aaa","op":1,"value":12}, {"name":"bbb","op":1,"value":15}],
  [{"name":"ddd","op":1,"value":40}, {"name":"aaa","op":1,"value":12},{"name":"bbb","op":1,"value":15}]]
  */
-formatAndClauseGroup = function (AndObjArr, OrObjArr) {
+function formatAndClauseGroup (AndObjArr, OrObjArr)
+{
     var AndClause = [];
     var orObjArrLen = OrObjArr.length;
     var andObjArrLen = AndObjArr.length;
@@ -200,7 +208,7 @@ function formatQueryWithPortRange (startPort, endPort, prots, vnFqName,
         vnField = 'sourcevn';
     } else {
         portField = 'dport';
-        vnField = 'destvn';
+        vnField = 'sourcevn';
     }
 
     var protosCnt = prots.length;
@@ -208,8 +216,10 @@ function formatQueryWithPortRange (startPort, endPort, prots, vnFqName,
         index = 0;
         result = [];
         result[index++] = {'name':'protocol', 'op':1, 'value':prots[i]};
-        result[index++] = 
-            {'name':portField, "value":startPort, "op":3, "value2":endPort};
+        if ((startPort != null) && (endPort != null)) {
+            result[index++] = 
+                {'name':portField, "value":startPort, "op":3, "value2":endPort};
+        }
         result[index++]=
             {'name': vnField, "value": vnFqName, "op":vnOp};
         finalResult.push(result);
@@ -217,7 +227,8 @@ function formatQueryWithPortRange (startPort, endPort, prots, vnFqName,
     return finalResult;
 }
 
-formatFlowSeriesQuery = function (queryString) {
+function formatFlowSeriesQuery (queryString)
+{
     if (null != queryString['limit']) {
         delete queryString['limit'];
     }
@@ -229,25 +240,29 @@ formatFlowSeriesQuery = function (queryString) {
     }
 }
 
-sortEntries = function (statA, statB, sortKey) {
+function sortEntries (statA, statB, sortKey)
+{
     return statB[sortKey] - statA[sortKey];
 }
 
-sortEntriesByObj = function (resultJSON, sortKey) {
+function sortEntriesByObj (resultJSON, sortKey)
+{
     resultJSON.sort(function (statA, statB) {
         return sortEntries(statA, statB, sortKey);
     });
     return resultJSON;
 }
 
-getTopEntriesByCount = function (entryList, limit) {
+function getTopEntriesByCount (entryList, limit)
+{
     if ((limit != null) && (limit != -1)) {
         return (entryList.slice(0, limit));
     }
     return entryList;
 }
 
-getTopNCountEntry = function (resultJSON, limit, sortKey) {
+function getTopNCountEntry (resultJSON, limit, sortKey)
+{
     if ((resultJSON == null) || (resultJSON.length < 2)) {
         return resultJSON;
     }
@@ -260,7 +275,8 @@ getTopNCountEntry = function (resultJSON, limit, sortKey) {
     return resultJSON;
 }
 
-createVNListObjArr = function (networkList, isSrcVn) {
+function createVNListObjArr (networkList, isSrcVn)
+{
     var vnListObjArr = [];
     var len = networkList.length;
     for (var i = 0; i < len; i++) {
@@ -274,7 +290,8 @@ createVNListObjArr = function (networkList, isSrcVn) {
     return vnListObjArr;
 }
 
-createTimeQueryJsonObj = function (minsSince) {
+function createTimeQueryJsonObj (minsSince)
+{
     var endTime = commonUtils.getUTCTime(new Date().getTime());
     var startTime = 0;
 
@@ -289,7 +306,8 @@ createTimeQueryJsonObj = function (minsSince) {
     return timeObj;
 }
 
-getNetworkListsByProject = function (projObj, callback) {
+function getNetworkListsByProject (projObj, callback)
+{
     var fqdn = null;
     var fqdnList = [];
     var vnCount = 0;
@@ -314,7 +332,8 @@ getNetworkListsByProject = function (projObj, callback) {
     });
 }
 
-getNwUrlListsByDomain = function (url, jobData, callback) {
+function getNwUrlListsByDomain (url, jobData, callback)
+{
     var urlLists = [], projectLists = [], j = 0;
     configApiServer.apiGet(url, jobData, function (error, jsonData) {
         if (error) {
@@ -342,7 +361,8 @@ getNwUrlListsByDomain = function (url, jobData, callback) {
     });
 }
 
-getNetworkListsByDomain = function (domain, jobData, callback) {
+function getNetworkListsByDomain (domain, jobData, callback)
+{
     var urlLists = [], j = 0;
     var projectLists = [];
     var nwLists = [];
@@ -368,7 +388,8 @@ getNetworkListsByDomain = function (domain, jobData, callback) {
     });
 }
 
-aggAndPutDataInResultJSON = function (matchName, statEntry, resultJSON) {
+function aggAndPutDataInResultJSON (matchName, statEntry, resultJSON)
+{
     var resultCnt = 0;
     var i = 0;
     resultCnt = resultJSON.length;
@@ -415,7 +436,8 @@ aggAndPutDataInResultJSON = function (matchName, statEntry, resultJSON) {
             parseInt(statEntry['outFlowCount']);
 }
 
-getAggDataByDomainOrProject = function (jsonResponse, type, callback) {
+function getAggDataByDomainOrProject (jsonResponse, type, callback)
+{
     var fqnArr = [];
     var resultJSON = [];
     var len = 0;
@@ -437,7 +459,8 @@ getAggDataByDomainOrProject = function (jsonResponse, type, callback) {
     callback(null, resultJSON);
 }
 
-getNetworkOutIndex = function (resultJSON, statEntry, srcSelectArr, destSelectArr) {
+function getNetworkOutIndex (resultJSON, statEntry, srcSelectArr, destSelectArr)
+{
     var key;
     var found = false;
     var len = resultJSON.length;
@@ -468,7 +491,8 @@ getNetworkOutIndex = function (resultJSON, statEntry, srcSelectArr, destSelectAr
     return (i - 1);
 }
 
-fillResultJSONByIndex = function (resultJSON, index, statEntry, selectArr, isSrc) {
+function fillResultJSONByIndex (resultJSON, index, statEntry, selectArr, isSrc)
+{
     var selectArrlen = selectArr.length;
     var key;
     resultJSON[index]['name'] = (statEntry['sourcevn']) ?
@@ -503,7 +527,8 @@ fillResultJSONByIndex = function (resultJSON, index, statEntry, selectArr, isSrc
         resultJSON[index]['outBytes'];
 }
 
-parseNetStatDataByDomainOrProject = function (resultJSON, data, srcSelectArr, destSelectArr) {
+function parseNetStatDataByDomainOrProject (resultJSON, data, srcSelectArr, destSelectArr)
+{
     if ((null == data) || (0 == data.length)) {
         return;
     }
@@ -550,7 +575,9 @@ parseNetStatDataByDomainOrProject = function (resultJSON, data, srcSelectArr, de
     }
 }
 
-parseNetStatDataProjectOrNetwork = function (resultJSON, data, srcSelectArr, destSelectArr) {
+function parseNetStatDataProjectOrNetwork (resultJSON, data, srcSelectArr, 
+                                           destSelectArr)
+{
     if ((null == data) || (0 == data.length)) {
         return;
     }
@@ -584,7 +611,8 @@ parseNetStatDataProjectOrNetwork = function (resultJSON, data, srcSelectArr, des
     }
 }
 
-getNwListByNwArray = function (networkListsArr) {
+function getNwListByNwArray (networkListsArr)
+{
     var nwLists = [];
     for (var i = 0; networkListsArr && (i < networkListsArr.length); i++) {
         nwLists = nwLists.concat(networkListsArr[i]);
@@ -592,7 +620,8 @@ getNwListByNwArray = function (networkListsArr) {
     return nwLists;
 }
 
-nwMonJobsApi.processTopNwDetailsByDomain = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopNwDetailsByDomain (pubChannel, saveChannelKey, jobData, done)
+{
     var url = jobData.taskData.url;
     var urlLists = [];
     var i, j = 0;
@@ -615,7 +644,7 @@ nwMonJobsApi.processTopNwDetailsByDomain = function (pubChannel, saveChannelKey,
         var srcQueryJSON = formatQueryString('FlowSeriesTable', srcVNObjArr,
             srcSelectArr, timeObj, null,
             global.TRAFFIC_STAT_TOP_COUNT);
-        commonUtils.createReqObj(dataObjArr, 0, global.RUN_QUERY_URL,
+        commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
             global.HTTP_REQUEST_POST,
             commonUtils.cloneObj(srcQueryJSON));
 
@@ -623,7 +652,7 @@ nwMonJobsApi.processTopNwDetailsByDomain = function (pubChannel, saveChannelKey,
         var destQueryJSON = formatQueryString('FlowSeriesTable', destVNObjArr,
             destSelectArr, timeObj, null,
             global.TRAFFIC_STAT_TOP_COUNT);
-        commonUtils.createReqObj(dataObjArr, 1, global.RUN_QUERY_URL,
+        commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
             global.HTTP_REQUEST_POST,
             commonUtils.cloneObj(destQueryJSON));
         logutils.logger.debug(messages.qe.qe_execution + 'Top N/W by domain:' + domain +
@@ -642,7 +671,8 @@ nwMonJobsApi.processTopNwDetailsByDomain = function (pubChannel, saveChannelKey,
     });
 }
 
-getVnCountByProject = function (projName, projects, nws) {
+function getVnCountByProject (projName, projects, nws)
+{
     try {
         var len = projects.length;
         for (var j = 0; j < len; j++) {
@@ -658,7 +688,8 @@ getVnCountByProject = function (projName, projects, nws) {
     }
 }
 
-addNwCountByProject = function (resultJSON, projects, nws) {
+function addNwCountByProject (resultJSON, projects, nws)
+{
     var projName = null;
     try {
         var projectLen = projects.length;
@@ -673,7 +704,8 @@ addNwCountByProject = function (resultJSON, projects, nws) {
     }
 }
 
-nwMonJobsApi.processTopProjectDetailsByDomain = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopProjectDetailsByDomain (pubChannel, saveChannelKey, jobData, done)
+{
     var url = jobData.taskData.url;
     var urlLists = [];
     var i, j = 0;
@@ -694,14 +726,14 @@ nwMonJobsApi.processTopProjectDetailsByDomain = function (pubChannel, saveChanne
         srcVNObjArr = createVNListObjArr(nwLists, true);
         var srcQueryJSON = formatQueryString('FlowSeriesTable', srcVNObjArr,
             srcSelectArr, timeObj);
-        commonUtils.createReqObj(dataObjArr, 0, global.RUN_QUERY_URL,
+        commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
             global.HTTP_REQUEST_POST,
             commonUtils.cloneObj(srcQueryJSON));
 
         destVNObjArr = createVNListObjArr(nwLists, false);
         var destQueryJSON = formatQueryString('FlowSeriesTable', destVNObjArr,
             destSelectArr, timeObj);
-        commonUtils.createReqObj(dataObjArr, 1, global.RUN_QUERY_URL,
+        commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
             global.HTTP_REQUEST_POST,
             commonUtils.cloneObj(destQueryJSON));
         logutils.logger.debug(messages.qe.qe_execution + 'Top project by domain:' + domain +
@@ -724,7 +756,8 @@ nwMonJobsApi.processTopProjectDetailsByDomain = function (pubChannel, saveChanne
     });
 }
 
-nwMonJobsApi.processTopPortByDomain = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopPortByDomain (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -744,7 +777,7 @@ nwMonJobsApi.processTopPortByDomain = function (pubChannel, saveChannelKey, jobD
         var srcQueryJSON = formatQueryString('FlowSeriesTable', srcVNObjArr,
             srcSelectArr, timeObj, null,
             global.TRAFFIC_STAT_TOP_COUNT);
-        commonUtils.createReqObj(dataObjArr, 0, global.RUN_QUERY_URL,
+        commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
             global.HTTP_REQUEST_POST,
             commonUtils.cloneObj(srcQueryJSON));
 
@@ -752,7 +785,7 @@ nwMonJobsApi.processTopPortByDomain = function (pubChannel, saveChannelKey, jobD
         var destQueryJSON = formatQueryString('FlowSeriesTable', destVNObjArr,
             destSelectArr, timeObj, null,
             global.TRAFFIC_STAT_TOP_COUNT);
-        commonUtils.createReqObj(dataObjArr, 1, global.RUN_QUERY_URL,
+        commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
             global.HTTP_REQUEST_POST,
             commonUtils.cloneObj(destQueryJSON));
         logutils.logger.debug(messages.qe.qe_execution + 'Top port by domain:' + domain +
@@ -784,7 +817,8 @@ function createTimeQueryJsonObjByAppData (appData)
     return timeObj;
 }
 
-nwMonJobsApi.processTopPortByProject = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopPortByProject (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -805,7 +839,7 @@ nwMonJobsApi.processTopPortByProject = function (pubChannel, saveChannelKey, job
             var srcQueryJSON = formatQueryString('FlowSeriesTable', srcVNObjArr,
                 srcSelectArr, timeObj, null,
                 global.TRAFFIC_STAT_TOP_COUNT);
-            commonUtils.createReqObj(dataObjArr, 0, global.RUN_QUERY_URL,
+            commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
                 global.HTTP_REQUEST_POST,
                 commonUtils.cloneObj(srcQueryJSON));
 
@@ -813,7 +847,7 @@ nwMonJobsApi.processTopPortByProject = function (pubChannel, saveChannelKey, job
             var destQueryJSON = formatQueryString('FlowSeriesTable', destVNObjArr,
                 destSelectArr, timeObj, null,
                 global.TRAFFIC_STAT_TOP_COUNT);
-            commonUtils.createReqObj(dataObjArr, 1, global.RUN_QUERY_URL,
+            commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
                 global.HTTP_REQUEST_POST,
                 commonUtils.cloneObj(destQueryJSON));
             logutils.logger.debug(messages.qe.qe_execution + 'Top port by project:' + project +
@@ -831,7 +865,8 @@ nwMonJobsApi.processTopPortByProject = function (pubChannel, saveChannelKey, job
         });
 }
 
-nwMonJobsApi.parseFlowData = function (data) {
+function parseFlowData (data)
+{
     var len = 0;
     var flowData;
     var pktsCount = 0;
@@ -860,7 +895,8 @@ nwMonJobsApi.parseFlowData = function (data) {
     return resultJSON;
 }
 
-nwMonJobsApi.processTopFlowsByProject = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopFlowsByProject (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -883,7 +919,7 @@ nwMonJobsApi.processTopFlowsByProject = function (pubChannel, saveChannelKey, jo
                 global.TRAFFIC_STAT_TOP_COUNT);
             executeQueryString(srcQueryJSON, function (err, data) {
                 var resultJSON = [];
-                resultJSON = nwMonJobsApi.parseFlowData(data);
+                resultJSON = parseFlowData(data);
                 resultJSON = getTopNCountEntry(resultJSON, limit, 'bytes');
                 redisPub.publishDataToRedis(pubChannel, saveChannelKey,
                     global.HTTP_STATUS_RESP_OK,
@@ -894,7 +930,8 @@ nwMonJobsApi.processTopFlowsByProject = function (pubChannel, saveChannelKey, jo
         });
 }
 
-nwMonJobsApi.processTopFlowsByDomain = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopFlowsByDomain (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -920,7 +957,7 @@ nwMonJobsApi.processTopFlowsByDomain = function (pubChannel, saveChannelKey, job
             domain);
         executeQueryString(srcQueryJSON, function (err, data) {
             var resultJSON = [];
-            resultJSON = nwMonJobsApi.parseFlowData(data);
+            resultJSON = parseFlowData(data);
             resultJSON = getTopNCountEntry(resultJSON, limit, 'bytes');
             redisPub.publishDataToRedis(pubChannel, saveChannelKey,
                 global.HTTP_STATUS_RESP_OK,
@@ -931,7 +968,8 @@ nwMonJobsApi.processTopFlowsByDomain = function (pubChannel, saveChannelKey, job
     });
 }
 
-doConcatArr = function (data) {
+function doConcatArr (data)
+{
     var result = [];
     if ((data == null) || (data['value'] == null)) {
         return result;
@@ -944,7 +982,8 @@ doConcatArr = function (data) {
     return result;
 }
 
-nwMonJobsApi.processVNFlowSeriesData = function (pubChannel, saveChannelKey, jobData, done) {
+function processVNFlowSeriesData (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
     var srcVNObjArr = [];
     var destVNObjArr = [];
@@ -994,7 +1033,8 @@ nwMonJobsApi.processVNFlowSeriesData = function (pubChannel, saveChannelKey, job
         });
 }
 
-nwMonJobsApi.processVNsFlowSeriesData = function (pubChannel, saveChannelKey, jobData, done) {
+function processVNsFlowSeriesData (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
     var srcVNObjArr = [];
     var destVNObjArr = [];
@@ -1048,7 +1088,8 @@ nwMonJobsApi.processVNsFlowSeriesData = function (pubChannel, saveChannelKey, jo
         });
 }
 
-nwMonJobsApi.processTopNwDetailsByProject = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopNwDetailsByProject (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
     var project = appData['project'];
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -1082,7 +1123,8 @@ nwMonJobsApi.processTopNwDetailsByProject = function (pubChannel, saveChannelKey
         });
 }
 
-nwMonJobsApi.processTopPeerByDomain = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopPeerByDomain (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
     var domain = appData['domain'];
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -1117,7 +1159,8 @@ nwMonJobsApi.processTopPeerByDomain = function (pubChannel, saveChannelKey, jobD
     });
 }
 
-nwMonJobsApi.processTopPeerByProject = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopPeerByProject (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
     var project = appData['project'];
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -1152,7 +1195,8 @@ nwMonJobsApi.processTopPeerByProject = function (pubChannel, saveChannelKey, job
         });
 }
 
-nwMonJobsApi.processTopPortByNetwork = function (pubChannel, saveChannelKey, jobData, done, type) {
+function processTopPortByNetwork (pubChannel, saveChannelKey, jobData, done, type)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -1202,10 +1246,10 @@ nwMonJobsApi.processTopPortByNetwork = function (pubChannel, saveChannelKey, job
             destSelectArr, timeObj, null,
             global.TRAFFIC_STAT_TOP_COUNT);
     }
-    commonUtils.createReqObj(dataObjArr, 0, global.RUN_QUERY_URL,
+    commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
         global.HTTP_REQUEST_POST,
         commonUtils.cloneObj(srcQueryJSON));
-    commonUtils.createReqObj(dataObjArr, 1, global.RUN_QUERY_URL,
+    commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
         global.HTTP_REQUEST_POST,
         commonUtils.cloneObj(destQueryJSON));
     nwMonUtils.getStatDataByQueryJSON(srcQueryJSON, destQueryJSON, function (err, data) {
@@ -1218,7 +1262,8 @@ nwMonJobsApi.processTopPortByNetwork = function (pubChannel, saveChannelKey, job
     });
 }
 
-nwMonJobsApi.processTopPeerByNetwork = function (pubChannel, saveChannelKey, jobData, done, type) {
+function processTopPeerByNetwork (pubChannel, saveChannelKey, jobData, done, type)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -1277,7 +1322,8 @@ nwMonJobsApi.processTopPeerByNetwork = function (pubChannel, saveChannelKey, job
     });
 }
 
-getFlowQueryJSONByAppData = function (appData, VNObjArr, selectArr, timeObj) {
+function getFlowQueryJSONByAppData (appData, VNObjArr, selectArr, timeObj)
+{
     var whereClause =
         [
             {'sourcevn':appData.srcVN},
@@ -1297,7 +1343,8 @@ getFlowQueryJSONByAppData = function (appData, VNObjArr, selectArr, timeObj) {
     return queryJSON;
 }
 
-nwMonJobsApi.processTopFlowsByNetwork = function (pubChannel, saveChannelKey, jobData, done, type) {
+function processTopFlowsByNetwork (pubChannel, saveChannelKey, jobData, done, type)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -1334,7 +1381,7 @@ nwMonJobsApi.processTopFlowsByNetwork = function (pubChannel, saveChannelKey, jo
     }
     executeQueryString(srcQueryJSON, function (err, data) {
         var resultJSON = [];
-        resultJSON = nwMonJobsApi.parseFlowData(data);
+        resultJSON = parseFlowData(data);
         resultJSON = getTopNCountEntry(resultJSON, limit, 'bytes');
         redisPub.publishDataToRedis(pubChannel, saveChannelKey,
             global.HTTP_STATUS_RESP_OK,
@@ -1344,7 +1391,8 @@ nwMonJobsApi.processTopFlowsByNetwork = function (pubChannel, saveChannelKey, jo
     });
 }
 
-nwMonJobsApi.processTopPeerByVM = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopPeerByVM (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -1385,7 +1433,8 @@ nwMonJobsApi.processTopPeerByVM = function (pubChannel, saveChannelKey, jobData,
     });
 }
 
-nwMonJobsApi.processTopPortByVM = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopPortByVM (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -1411,14 +1460,14 @@ nwMonJobsApi.processTopPortByVM = function (pubChannel, saveChannelKey, jobData,
         srcSelectArr, timeObj, null,
         global.TRAFFIC_STAT_TOP_COUNT,
         global.TRAFFIC_DIR_INGRESS, true);
-    commonUtils.createReqObj(dataObjArr, 0, global.RUN_QUERY_URL,
+    commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
         global.HTTP_REQUEST_POST,
         commonUtils.cloneObj(srcQueryJSON));
     var destQueryJSON = formatQueryString('FlowSeriesTable', destWhereClause,
         destSelectArr, timeObj, null,
         global.TRAFFIC_STAT_TOP_COUNT,
         global.TRAFFIC_DIR_INGRESS, true);
-    commonUtils.createReqObj(dataObjArr, 1, global.RUN_QUERY_URL,
+    commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
         global.HTTP_REQUEST_POST,
         commonUtils.cloneObj(destQueryJSON));
 
@@ -1433,7 +1482,8 @@ nwMonJobsApi.processTopPortByVM = function (pubChannel, saveChannelKey, jobData,
     });
 }
 
-nwMonJobsApi.processTopFlowsByVM = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopFlowsByVM (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -1465,7 +1515,7 @@ nwMonJobsApi.processTopFlowsByVM = function (pubChannel, saveChannelKey, jobData
             global.TRAFFIC_DIR_INGRESS, true);
     executeQueryString(srcQueryJSON, function (err, data) {
         var resultJSON = [];
-        resultJSON = nwMonJobsApi.parseFlowData(data);
+        resultJSON = parseFlowData(data);
         resultJSON = getTopNCountEntry(resultJSON, limit, 'bytes');
         redisPub.publishDataToRedis(pubChannel, saveChannelKey,
             global.HTTP_STATUS_RESP_OK,
@@ -1475,7 +1525,8 @@ nwMonJobsApi.processTopFlowsByVM = function (pubChannel, saveChannelKey, jobData
     });
 }
 
-nwMonJobsApi.processVMFlowSeriesData = function (pubChannel, saveChannelKey, jobData, done) {
+function processVMFlowSeriesData (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
     var srcVNObjArr = [];
     var destVNObjArr = [];
@@ -1531,7 +1582,8 @@ nwMonJobsApi.processVMFlowSeriesData = function (pubChannel, saveChannelKey, job
         });
 }
 
-parseVMStats = function (resultJSON, data) {
+function parseVMStats (resultJSON, data)
+{
     if (data && data.length) {
         resultJSON['fromNW'] = {};
         resultJSON['toNW'] = {};
@@ -1578,7 +1630,8 @@ parseVMStats = function (resultJSON, data) {
     }
 }
 
-processStatSummary = function (pubChannel, saveChannelKey, jobData, done, type) {
+function processStatSummary (pubChannel, saveChannelKey, jobData, done, type)
+{
     var appData = jobData.taskData.appData;
     var vnName = appData['vnName'];
     var dataObjArr = [];
@@ -1641,7 +1694,7 @@ processStatSummary = function (pubChannel, saveChannelKey, jobData, done, type) 
         JSON.stringify(queryJSON[2]) + '\n' +
         JSON.stringify(queryJSON[3]));
     for (var i = 0; i < 4; i++) {
-        commonUtils.createReqObj(dataObjArr, i, global.RUN_QUERY_URL,
+        commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
             global.HTTP_REQUEST_POST,
             commonUtils.cloneObj(queryJSON[i]));
     }
@@ -1657,7 +1710,8 @@ processStatSummary = function (pubChannel, saveChannelKey, jobData, done, type) 
         });
 }
 
-nwMonJobsApi.processVMStatSummary = function (pubChannel, saveChannelKey, jobData, done) {
+function processVMStatSummary (pubChannel, saveChannelKey, jobData, done)
+{
     setTimeout(function () {
         /* For processing the VM Stats, QE takes much time, as QE currently does
          * not do parallel processing, so when the instance page
@@ -1669,13 +1723,15 @@ nwMonJobsApi.processVMStatSummary = function (pubChannel, saveChannelKey, jobDat
     }, 2000);
 }
 
-nwMonJobsApi.processConnNetStatsSummary =
-    function (pubChannel, saveChannelKey, jobData, done) {
-        processStatSummary(pubChannel, saveChannelKey, jobData, done,
-            global.GET_STAT_SUMMARY_BY_CONN_NWS);
-    }
+function processConnNetStatsSummary (pubChannel, saveChannelKey, jobData, done)
+{
+    processStatSummary(pubChannel, saveChannelKey, jobData, done,
+                       global.GET_STAT_SUMMARY_BY_CONN_NWS);
+}
 
-processTopPeerDetailsByDomainAndPort = function (pubChannel, saveChannelKey, jobData, done, fqName, sport) {
+function processTopPeerDetailsByDomainAndPort (pubChannel, saveChannelKey, 
+                                               jobData, done, fqName, sport)
+{
     var appData = jobData.taskData.appData;
     var srcVNObjArr = [];
     var destVNObjArr = [];
@@ -1722,7 +1778,9 @@ processTopPeerDetailsByDomainAndPort = function (pubChannel, saveChannelKey, job
     });
 }
 
-processTopPeerDetailsByProjectAndPort = function (pubChannel, saveChannelKey, jobData, done, fqName, sport) {
+function processTopPeerDetailsByProjectAndPort (pubChannel, saveChannelKey, 
+                                                jobData, done, fqName, sport)
+{
     var appData = jobData.taskData.appData;
     var resultJSON = [];
     var limit = appData['limit'];
@@ -1768,7 +1826,9 @@ processTopPeerDetailsByProjectAndPort = function (pubChannel, saveChannelKey, jo
         });
 }
 
-processTopPeerDetailsByNetworkAndPort = function (pubChannel, saveChannelKey, jobData, done, fqName, sport) {
+function processTopPeerDetailsByNetworkAndPort (pubChannel, saveChannelKey, 
+                                                jobData, done, fqName, sport)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -1813,7 +1873,9 @@ processTopPeerDetailsByNetworkAndPort = function (pubChannel, saveChannelKey, jo
     });
 }
 
-processTopPeerDetailsByVNsAndPort = function (pubChannel, saveChannelKey, jobData, done, srcVN, destVN, port) {
+function processTopPeerDetailsByVNsAndPort (pubChannel, saveChannelKey, jobData,
+                                            done, srcVN, destVN, port)
+{
     var appData = jobData.taskData.appData;
 
     var limit = (appData['limit']) ? parseInt(appData['limit']) : (-1);
@@ -1861,7 +1923,8 @@ processTopPeerDetailsByVNsAndPort = function (pubChannel, saveChannelKey, jobDat
     });
 }
 
-nwMonJobsApi.processTopPeerDetails = function (pubChannel, saveChannelKey, jobData, done) {
+function processTopPeerDetails (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
     var reqType = appData.reqType;
     var fqName = appData.fqName;
@@ -1900,7 +1963,9 @@ nwMonJobsApi.processTopPeerDetails = function (pubChannel, saveChannelKey, jobDa
     }
 }
 
-processPortLevelFlowSeriesByDomain = function (pubChannel, saveChannelKey, jobData, done) {
+function processPortLevelFlowSeriesByDomain (pubChannel, saveChannelKey,
+                                             jobData, done)
+{
     var appData = jobData.taskData.appData;
     var domain = appData['fqName'];
     var srcVNObjArr = [];
@@ -1969,7 +2034,9 @@ processPortLevelFlowSeriesByDomain = function (pubChannel, saveChannelKey, jobDa
     });
 }
 
-processPortLevelFlowSeriesByProject = function (pubChannel, saveChannelKey, jobData, done) {
+function processPortLevelFlowSeriesByProject (pubChannel, saveChannelKey,
+                                              jobData, done)
+{
     var appData = jobData.taskData.appData;
     var project = appData['fqName'];
     var srcVNObjArr = [];
@@ -2039,7 +2106,9 @@ processPortLevelFlowSeriesByProject = function (pubChannel, saveChannelKey, jobD
         });
 }
 
-processPortLevelFlowSeriesByNetwork = function (pubChannel, saveChannelKey, jobData, done) {
+function processPortLevelFlowSeriesByNetwork (pubChannel, saveChannelKey, 
+                                              jobData, done)
+{
     var appData = jobData.taskData.appData;
     var fqName = appData['fqName'];
     var srcVNObjArr = [];
@@ -2119,7 +2188,8 @@ processPortLevelFlowSeriesByNetwork = function (pubChannel, saveChannelKey, jobD
         });
 }
 
-nwMonJobsApi.getPortLevelFlowSeries = function (pubChannel, saveChannelKey, jobData, done) {
+function getPortLevelFlowSeries (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
     var fqName = appData.fqName;
     var fqNameArr = [];
@@ -2148,7 +2218,8 @@ nwMonJobsApi.getPortLevelFlowSeries = function (pubChannel, saveChannelKey, jobD
     }
 }
 
-parseCPULoadXMLToJSON = function (cpuLoadXmlData) {
+function parseCPULoadXMLToJSON (cpuLoadXmlData)
+{
     var cpuData = {};
     var memData = {};
     memData['memInfo'] = {};
@@ -2197,14 +2268,16 @@ parseCPULoadXMLToJSON = function (cpuLoadXmlData) {
     return {'cpuData':cpuData, 'memData':memData};
 }
 
-parseCPULoadXMLData = function (cpuLoadXmlMsg, callback) {
+function parseCPULoadXMLData (cpuLoadXmlMsg, callback)
+{
     parseString(cpuLoadXmlMsg, function (err, result) {
         result = parseCPULoadXMLToJSON(result);
         callback(err, result);
     });
 }
 
-formatCPULoadXMLData = function (resultJSON, callback) {
+function formatCPULoadXMLData (resultJSON, callback)
+{
     var cpuLoad = {};
     var results = [];
     var cnt = 0;
@@ -2237,7 +2310,8 @@ formatCPULoadXMLData = function (resultJSON, callback) {
     }
 }
 
-function getCollectorCPUUve(uveData) {
+function getCollectorCPUUve(uveData)
+{
     var data = jsonPath(uveData, "$..module_cpu_info");
     if (data.length == 0) {
         return null;
@@ -2253,7 +2327,8 @@ function getCollectorCPUUve(uveData) {
     return data[i];
 }
 
-function getNodeCPUUveByModuleId(uveData, moduleId) {
+function getNodeCPUUveByModuleId(uveData, moduleId)
+{
     var data = jsonPath(uveData, "$..module_cpu_info");
     if (data.length == 0) {
         return null;
@@ -2269,7 +2344,8 @@ function getNodeCPUUveByModuleId(uveData, moduleId) {
     return null;
 }
 
-function getCurrentMemCpuLoad(resultJSON, uveData, moduleId) {
+function getCurrentMemCpuLoad(resultJSON, uveData, moduleId)
+{
 
     var data;
     resultJSON['cpuData'] = {};
@@ -2319,7 +2395,8 @@ function getCurrentMemCpuLoad(resultJSON, uveData, moduleId) {
     }
 }
 
-function formatFlowSeriesForCPUMemory(cpuMemFlowSeriesData, timeObj, timeGran, num_cpu) {
+function formatFlowSeriesForCPUMemory(cpuMemFlowSeriesData, timeObj, timeGran, num_cpu)
+{
     var len = 0;
     var resultJSON = {};
     resultJSON['summary'] = {};
@@ -2342,7 +2419,8 @@ function formatFlowSeriesForCPUMemory(cpuMemFlowSeriesData, timeObj, timeGran, n
     return resultJSON;
 }
 
-function getCurrentCpuMemDataJson(timeObj, moduleId, cpuMemData, timeGran) {
+function getCurrentCpuMemDataJson(timeObj, moduleId, cpuMemData, timeGran)
+{
     var resultJSON = [];
     try {
         var cpuData = cpuMemData['cpuData'];
@@ -2364,7 +2442,8 @@ function getCurrentCpuMemDataJson(timeObj, moduleId, cpuMemData, timeGran) {
     }
 }
 
-function getCpuMemoryFlowSeriesByUVE(appData, callback) {
+function getCpuMemoryFlowSeriesByUVE(appData, callback)
+{
     var source = appData.source;
     var moduleId = appData.moduleId;
 
@@ -2396,7 +2475,8 @@ function getCpuMemoryFlowSeriesByUVE(appData, callback) {
     });
 }
 
-nwMonJobsApi.processCPULoadFlowSeries = function (pubChannel, saveChannelKey, jobData, done) {
+function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, done)
+{
     var appData = jobData.taskData.appData;
 
     var source = appData.source;
@@ -2509,6 +2589,9 @@ nwMonJobsApi.processCPULoadFlowSeries = function (pubChannel, saveChannelKey, jo
 
 function getStartEndPort (portRange)
 {
+    if (null == portRange) {
+        return null;
+    }
     var pos = portRange.indexOf('-');
     startPort = portRange.substr(0, pos);
     endPort = portRange.slice(pos + 1);
@@ -2517,6 +2600,8 @@ function getStartEndPort (portRange)
 
 function getWhereClauseByPortRange (portRange, protocol, fqName, timeObj, isSrc)
 {
+    var startPort = null;
+    var endPort = null;
     var whereClause = [];
     var protos = [1, 6, 17]; /* ICMP, TCP & UDP */
 
@@ -2524,13 +2609,18 @@ function getWhereClauseByPortRange (portRange, protocol, fqName, timeObj, isSrc)
         protos = [protocol];
     }
     var portObj = getStartEndPort(portRange); 
+    if (null != portObj) {
+        startPort = portObj.startPort;
+        endPort = portObj.endPort;
+    }
+        
     if (true == isSrc) {
         var whereClause = 
-            formatQueryWithPortRange(portObj.startPort, portObj.endPort, protos,
+            formatQueryWithPortRange(startPort, endPort, protos,
                                      fqName, true);
     } else {
         var whereClause = 
-            formatQueryWithPortRange(portObj.startPort, portObj.endPort, protos,
+            formatQueryWithPortRange(startPort, endPort, protos,
                                      fqName, false);
     }
     return whereClause;
@@ -2546,7 +2636,7 @@ function getTrafficStatsByPort (pubChannel, saveChannelKey, jobData, done)
     var dataObjArr = [];
     var resultJSON = {};
 
-    var timeObj = createTimeQueryJsonObj(appData.minsSince);
+    var timeObj = createTimeQueryJsonObjByAppData(appData);
 
     var srcWhereClause = getWhereClauseByPortRange(appData['portRange'],
                                                    appData['protocol'],
@@ -2564,10 +2654,10 @@ function getTrafficStatsByPort (pubChannel, saveChannelKey, jobData, done)
         formatQueryStringWithWhereClause('FlowSeriesTable', destWhereClause,
                                          destSelectArr, timeObj, null, null);
 
-    commonUtils.createReqObj(dataObjArr, 0, global.RUN_QUERY_URL,
+    commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
                              global.HTTP_REQUEST_POST,
                              commonUtils.cloneObj(srcQueryJSON));
-    commonUtils.createReqObj(dataObjArr, 1, global.RUN_QUERY_URL,
+    commonUtils.createReqObj(dataObjArr, global.RUN_QUERY_URL,
                              global.HTTP_REQUEST_POST,
                              commonUtils.cloneObj(destQueryJSON));
     logutils.logger.debug(messages.qe.qe_execution + 'Port Distribution:' +
@@ -2589,4 +2679,28 @@ function getTrafficStatsByPort (pubChannel, saveChannelKey, jobData, done)
 }
 
 exports.getTrafficStatsByPort = getTrafficStatsByPort;
+exports.processTopNwDetailsByDomain = processTopNwDetailsByDomain;
+exports.processTopProjectDetailsByDomain = processTopProjectDetailsByDomain;
+exports.processTopPortByDomain = processTopPortByDomain;
+exports.processTopPortByProject = processTopPortByProject;
+exports.parseFlowData = parseFlowData;
+exports.processTopFlowsByProject = processTopFlowsByProject;
+exports.processTopFlowsByDomain = processTopFlowsByDomain;
+exports.processVNFlowSeriesData = processVNFlowSeriesData;
+exports.processVNsFlowSeriesData = processVNsFlowSeriesData;
+exports.processTopNwDetailsByProject = processTopNwDetailsByProject;
+exports.processTopPeerByDomain = processTopPeerByDomain;
+exports.processTopPeerByProject = processTopPeerByProject;
+exports.processTopPortByNetwork = processTopPortByNetwork;
+exports.processTopPeerByNetwork = processTopPeerByNetwork;
+exports.processTopFlowsByNetwork = processTopFlowsByNetwork;
+exports.processTopPeerByVM = processTopPeerByVM;
+exports.processTopPortByVM = processTopPortByVM;
+exports.processTopFlowsByVM = processTopFlowsByVM;
+exports.getPortLevelFlowSeries = getPortLevelFlowSeries;
+exports.processCPULoadFlowSeries = processCPULoadFlowSeries;
+exports.processConnNetStatsSummary = processConnNetStatsSummary;
+exports.processVMStatSummary = processVMStatSummary;
+exports.processVMFlowSeriesData = processVMFlowSeriesData;
+exports.processTopPeerDetails = processTopPeerDetails;
 

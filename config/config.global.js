@@ -37,6 +37,11 @@ config.analytics = {};
 config.analytics.server_ip = '127.0.0.1';
 config.analytics.server_port = '8081';
 
+/* Discovery Service */
+config.discoveryService = {};
+config.discoveryService.server_ip = '127.0.0.1';
+config.discoveryService.server_port = '5998';
+
 /* Job Server */
 config.jobServer = {};
 config.jobServer.server_ip = '127.0.0.1';
@@ -64,6 +69,13 @@ config.kue.ui_port = '3002'
 /* IP List to listen on */
 config.webui_addresses = ['0.0.0.0'];
 
+/* Is insecure access to WebUI? 
+ * If set as false, then all http request will be redirected
+ * to https, if set true, then no https request will be processed, but only http
+ * request
+ */
+config.insecure_access = false;
+
 // HTTP port for NodeJS Server.
 config.http_port = '8080';
 
@@ -90,5 +102,13 @@ config.redis_server_ip = '127.0.0.1';
 config.cacheExpire = {};
 config.cacheExpire.flow_stat_time = 600; /* Seconds */
 config.cacheExpire.topo_tree_time = 600; /* Seconds */
+
+/* Logo File: Use complete path of logo file location */
+config.logo_file = '/usr/src/contrail/contrail-webui/webroot/img/juniper-networks-logo.png';
+
+/* Enable/disable Stat Query Links in Sidebar*/
+config.qe = {};
+config.qe.enable_stat_queries = false;
+
 // Export this as a module.
 module.exports = config;

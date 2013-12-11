@@ -29,7 +29,8 @@ var jsonPath = require('JSONPath').eval;
 /**
  * Bail out if called directly as "nodejs serviceinstanceconfig.api.js"
  */
-if (!module.parent) {
+if (!module.parent) 
+{
     logutils.logger.warn(util.format(messages.warn.invalid_mod_call,
         module.filename));
     process.exit(1);
@@ -44,7 +45,8 @@ if (!module.parent) {
  * 4. Calls listServiceInstancesCb that process data from config
  *    api server and sends back the http response.
  */
-function listServiceInstances(request, response, appData) {
+function listServiceInstances(request, response, appData) 
+{
     var projectId, projectURL = '/project', template;
 
     if ((projectId = request.param('id'))) {
@@ -64,7 +66,8 @@ function listServiceInstances(request, response, appData) {
  * public function
  * 1. Get list of all service instances
  */
-function listAllServiceInstances(response, appData) {
+function listAllServiceInstances(response, appData) 
+{
     var url = "/service-instances";
     configApiServer.apiGet(url, appData, function (error, jsonData) {
         if (error) {
@@ -83,7 +86,8 @@ function listAllServiceInstances(response, appData) {
  * 2. Reads the response of per project SI list from config api server
  *    and sends it back to the client.
  */
-function listServiceInstancesCb(error, siListData, response, appData, template) {
+function listServiceInstancesCb(error, siListData, response, appData, template) 
+{
     var url = null;
     var dataObjArr = [];
     var i = 0, siLength = 0;
@@ -110,8 +114,8 @@ function listServiceInstancesCb(error, siListData, response, appData, template) 
 
     for (i = 0; i < siLength; i++) {
         var siRef = serviceInstances['service_instances'][i];
-        url = siRef['href'].split(':8082')[1];
-        commonUtils.createReqObj(dataObjArr, i, url, global.HTTP_REQUEST_GET,
+        url = '/service-instance/' + siRef['uuid'];
+        commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_GET,
             null, null, null, appData);
     }
 
@@ -127,7 +131,8 @@ function listServiceInstancesCb(error, siListData, response, appData, template) 
  * private function
  * 1. Callback for the SI gets, sends all SIs to client.
  */
-function siListAggCb(error, results, response, appData, template) {
+function siListAggCb(error, results, response, appData, template) 
+{
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
         return;
@@ -146,7 +151,8 @@ function siListAggCb(error, results, response, appData, template) {
  * 1. Filter and return Service Instances (SIs) of default 'analyzer-template' from list of all SIs
  * 2. Required a list of Service Template of 'analyzer' type to identify SIs of this type
  */
-function filterInAnalyzerInstances(results, response, appData) {
+function filterInAnalyzerInstances(results, response, appData) 
+{
     var filteredResults = [], templateRefs, j, i, k = 0,
         dynamicPolicyNames = [], siName;
     for (i = 0; i < results.length; i++) {
@@ -230,7 +236,7 @@ function getNetworkPolicyDetailsByProjList(projList, appData, callback) {
             try {
                 var url =
                     '/network-policy/' + policys[j]['uuid'];
-                commonUtils.createReqObj(dataObjArr, k++, url,
+                commonUtils.createReqObj(dataObjArr, url,
                     global.HTTP_REQUEST_GET, null, null,
                     null, appData);
             } catch (e) {
@@ -305,7 +311,7 @@ function getVNDetailsByServiceInstances(serviceInstances, appData, callback) {
         var projUUID = serInst['parent_uuid'];
         if (null == insertedProjList[projUUID]) {
             url = '/project/' + projUUID;
-            commonUtils.createReqObj(dataObjArr, j++, url,
+            commonUtils.createReqObj(dataObjArr, url,
                 global.HTTP_REQUEST_GET,
                 null, null, null, appData);
             insertedProjList[projUUID] = projUUID;
@@ -411,10 +417,11 @@ function filterOutAnalyzerInstances(results, response, appData) {
  * 1. Get policy id for given list of SIs of 'analyzer' type
  * 2. Required a list of dynamic policy name for given list of SIs of 'analyzer' type
  */
-function siFetchPolicyCb(response, appData, filteredResults, dynamicPolicyNames) {
+function siFetchPolicyCb(response, appData, filteredResults, dynamicPolicyNames) 
+{
     var serviceInstances = {}, policyUrl = '/network-policys';
     if (filteredResults.length > 0) {
-        policyUrl += '?parent_fq_name_str=' + filteredResults[0]['ConfigData']['service-instance']['fq_name'][0] + ":" + filteredResults[0]['ConfigData']['service-instance']['fq_name'][1];
+        policyUrl += '?parent_type=project&parent_fq_name_str=' + filteredResults[0]['ConfigData']['service-instance']['fq_name'][0] + ":" + filteredResults[0]['ConfigData']['service-instance']['fq_name'][1];
         configApiServer.apiGet(policyUrl, appData,
             function (error, data) {
                 var policys, policyName, index, results = [];
@@ -444,7 +451,8 @@ function siFetchPolicyCb(response, appData, filteredResults, dynamicPolicyNames)
  * 1. URL /api/tenants/config/service-instances - Post
  * 2. Sets Post Data and sends back the service instance config to client
  */
-function createServiceInstance(request, response, appData) {
+function createServiceInstance(request, response, appData) 
+{
     var siCreateURL = '/service-instances',
         siPostData = request.body, error;
 
@@ -468,11 +476,53 @@ function createServiceInstance(request, response, appData) {
 }
 
 /**
+ * @updateServiceInstance
+ * public function
+ * 1. URL /api/tenants/config/service-instances - Put
+ * 2. Sets Put Data and sends back the service instance config to client
+ */
+function updateServiceInstance(request, response, appData) 
+{
+    var siId       = null;
+    var siPutURL   = '/service-instance/';
+    var siPostData = request.body;
+    var error;
+
+    console.log("Getting in UPDATE");
+    if (typeof(siPostData) != 'object') {
+        error = new appErrors.RESTServerError('Invalid Post Data');
+        commonUtils.handleJSONResponse(error, response, null);
+        return;
+    }
+
+    if (siId = request.param('uuid').toString()) {
+        siPutURL += siId;
+    } else {
+        error = new appErrors.RESTServerError('Add Service Instence ID');
+        commonUtils.handleJSONResponse(error, response, null);
+        return;
+    }
+
+    if ((!('service-instance' in siPostData)) ||
+        (!('fq_name' in siPostData['service-instance'])) ||
+        (!(siPostData['service-instance']['fq_name'][2].length))) {
+        error = new appErrors.RESTServerError('Invalid Service instance');
+        commonUtils.handleJSONResponse(error, response, null);
+        return;
+    }
+    configApiServer.apiPut(siPutURL, siPostData, appData,
+        function (error, data) {
+            setSIRead(error, data, response, appData);
+        });
+}
+
+/**
  * @deleteServiceInstanceCb
  * private function
  * 1. Return back the response of service instance delete.
  */
-function deleteServiceInstanceCb(error, siDelResp, response) {
+function deleteServiceInstanceCb(error, siDelResp, response) 
+{
 
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
@@ -488,7 +538,8 @@ function deleteServiceInstanceCb(error, siDelResp, response) {
  * 1. URL /api/tenants/config/service-instance/:id
  * 2. Deletes the service instance from config api server
  */
-function deleteServiceInstance(request, response, appData) {
+function deleteServiceInstance(request, response, appData) 
+{
     var siDelURL = '/service-instance/',
         siId, analyzerPolicyId;
 
@@ -525,7 +576,8 @@ function deleteServiceInstance(request, response, appData) {
  * 2. Reads the response of SI get from config api server
  *    and sends it back to the client.
  */
-function setSIRead(error, siConfig, response, appData) {
+function setSIRead(error, siConfig, response, appData) 
+{
     var siGetURL = '/service-instance/';
 
     if (error) {
@@ -545,7 +597,8 @@ function setSIRead(error, siConfig, response, appData) {
  * private function
  * 1. Sends back the response of service instance read to clients after set operations.
  */
-function siSendResponse(error, siConfig, response) {
+function siSendResponse(error, siConfig, response) 
+{
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
     } else {
@@ -558,7 +611,8 @@ function siSendResponse(error, siConfig, response) {
  * @listServiceInstanceTemplates
  * 1. Sends back the response of service templates list to clients.
  */
-function listServiceInstanceTemplates(request, response, appData) {
+function listServiceInstanceTemplates(request, response, appData) 
+{
     serviceTemplate.listServiceTemplates(request, response, appData);
 }
 
@@ -572,8 +626,8 @@ function listServiceInstanceTemplates(request, response, appData) {
  * 4. Send POST request to "/v1.1/<project_uuid>/servers/<vmuuid>/actions" with data {"os-getVNCConsole": {"type": "novnc"}}
  * 5. Send back response
  */
-function getVNCUrl(request, response, appData) {
-
+function getVNCUrl(request, response, appData) 
+{
     computeApi.launchVNC(request, function (err, data) {
         if (err) {
             commonUtils.handleJSONResponse(err, response, null);
@@ -754,7 +808,7 @@ function configurePacketCapture4Interface(request, response, appData) {
  * private function
  */
 function check4DefaultAnalyzer(response, appData, options, callback) {
-    var siURL = '/service-instances?parent_fq_name_str=' + options.projectFQN;
+    var siURL = '/service-instances?parent_type=project&parent_fq_name_str=' + options.projectFQN;
     configApiServer.apiGet(siURL, appData, function (error, jsonData) {
         var serviceInstances, isAnalyzerPresent = false;
         if (error) {
@@ -879,10 +933,10 @@ function getPCAPAnalyzerVMId(response, appData, responseJSON, callback) {
 };
 
 /**
- * @configurePCAPAnalyzer4Flow
+ * @configurePacketCapture4Flow
  * public function
  */
-function configurePCAPAnalyzer4Flow(request, response, appData) {
+function configurePacketCapture4Flow(request, response, appData) {
     var postData = request.body, vnFQN = postData['vnFQN'],
         vnFQNArray, projectFQN;
 
@@ -914,7 +968,7 @@ function configurePCAPAnalyzer4Flow(request, response, appData) {
 };
 
 /**
- * @configurePacketCapture4Flow
+ * @getInterfaceMirrorProperty
  * private function
  */
 function getInterfaceMirrorProperty(analyzerName, direction) {
@@ -970,7 +1024,7 @@ function getDefaultPCAPAnalyzer(analyzerParams) {
  * private function
  */
 function fetchDefaultAnalyzerPolicyCB(response, appData, responseJSON) {
-    var policyUrl = '/network-policys?parent_fq_name_str=' + responseJSON.projectFQN;
+    var policyUrl = '/network-policys?parent_type=project&parent_fq_name_str=' + responseJSON.projectFQN;
     configApiServer.apiGet(policyUrl, appData, function (error, data) {
         var policys, policyName;
         if (!error) {
@@ -1008,5 +1062,5 @@ exports.deleteServiceInstance = deleteServiceInstance;
 exports.getVNCUrl = getVNCUrl;
 exports.getServiceInstance = getServiceInstance;
 exports.configurePacketCapture4Interface = configurePacketCapture4Interface;
-exports.configurePCAPAnalyzer4Flow = configurePCAPAnalyzer4Flow;
-
+exports.configurePacketCapture4Flow = configurePacketCapture4Flow;
+exports.updateServiceInstance = updateServiceInstance;

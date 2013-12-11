@@ -24,7 +24,8 @@ if (!module.parent) {
 	process.exit(1);
 }
 
-function getVNCounterList(vnJSON) {
+function getVNCounterList(vnJSON) 
+{
 	var str_list = {},
 		agt_data = vnJSON.UveVirtualNetworkAgent;
 	str_list.in_bytes = agt_data.in_bytes['#text'];
@@ -34,7 +35,8 @@ function getVNCounterList(vnJSON) {
 	return (str_list);
 }
 
-function getVNInStats(vnJSON) {
+function getVNInStats(vnJSON) 
+{
 	var in_stats = {},
 		agt_data = vnJSON.UveVirtualNetworkAgent.in_stats.list.UveInterVnStats,
 		i;
@@ -49,7 +51,8 @@ function getVNInStats(vnJSON) {
 	return in_stats;
 }
 
-function getVNOutStats(vnJSON) {
+function getVNOutStats(vnJSON) 
+{
 	var out_stats = {},
 		agt_data = vnJSON.UveVirtualNetworkAgent.out_stats.list.UveInterVnStats,
 		i;
@@ -64,7 +67,8 @@ function getVNOutStats(vnJSON) {
 	return out_stats;
 }
 
-tenantapi.getVNState = function (req, res) {
+function getVNState (req, res) 
+{
 	var vn_name = req.param('vn'),
 		url = '/analytics/virtual-network/' + vn_name;
 	opServer.authorize(function () {
@@ -94,7 +98,8 @@ tenantapi.getVNState = function (req, res) {
 /*
  * parse the VN JSON from /analytics/virutal-network/<vnName>  
  */
-function parseVNDetails(data,vnName) {
+function parseVNDetails(data,vnName) 
+{
 	var interVNInStats = [];
 	var interVNOutStats = [];
     if(data['UveVirtualNetworkAgent'] != null) { 
@@ -155,7 +160,8 @@ function parseVNDetails(data,vnName) {
 	//logutils.logger.debug({'interVNTrafficIn':interVNInBytes,'interVNTrafficOut':interVNOutBytes,'interVNData':interVNDataSource});
 }
 
-tenantapi.getVNDetails = function (req, res) {
+function getVNDetails (req, res) 
+{
 	var vn_name = req.param('vn'),
 		url = '/analytics/virtual-network/' + vn_name;
 	logutils.logger.debug('VN connected networks URL', url);
@@ -176,7 +182,8 @@ tenantapi.getVNDetails = function (req, res) {
 	});
 };
 
-tenantapi.getFlowStat = function (req, res) {
+function getFlowStat (req, res) 
+{
   var st = req.param('st');
   var et = req.param('et');
   var svn = req.param('svn');
@@ -192,7 +199,8 @@ tenantapi.getFlowStat = function (req, res) {
                                            1, 0, -1, true);
 }
 
-function mergeSrcDstData(srcData,dstData) {
+function mergeSrcDstData(srcData,dstData) 
+{
     var mergedData = {};
     //Entity can be present only in source data but not destination data
     for(var currKey in srcData) {
@@ -211,7 +219,8 @@ function mergeSrcDstData(srcData,dstData) {
     return mergedData;
 }
 
-function parseFlowData(data) {
+function parseFlowData(data) 
+{
 	var retObj = {};
 	var tsData = data['VN to VN Flow Timeseries'] || {};
 	var srcPortData = data['VN to VN Flow Protocol Source Ports'];
@@ -224,28 +233,9 @@ function parseFlowData(data) {
     peerData = mergeSrcDstData(srcPeerData,dstPeerData);
 	return {'appData':appData,'peerData':peerData, 'tsData':tsData};
 }
-/*
- tenantapi.getFlowData = function(req,res,dir) {
- var st = req.param('st');
- var et = req.param('et');
- var svn = req.param('svn');
- var dvn = req.param('dvn');
- var dir = dir;
- var ts  = req.param('ts');
 
- var url = '/flow-statistics?start_time=' + st + '&end_time=' + et +
- '&source_virtual_network=' + svn + '&destination_virtual_network=' + dvn +
- '&direction=' + dir + '&time_slice=' + ts;
- logutils.logger.debug("Flow URL:", url);
- anC.authorize(function() {
- anC.api.get(url, function(error, jsonData) {
- handleJSONResult(error, res, jsonData);
- });
- });
- }
- */
-
-tenantapi.getVMState = function (req, res) {
+function getVMState (req, res) 
+{
 	var vm_name = req.param('vm');
 	var url = '/analytics/virtual-machine/' + vm_name;
 	opServer.authorize(function () {
@@ -255,7 +245,8 @@ tenantapi.getVMState = function (req, res) {
 	});
 }
 
-tenantapi.populateVNVMData = function(resultJSON, vmInsJSON, vnvm) {
+function populateVNVMData (resultJSON, vmInsJSON, vnvm) 
+{
 	var count = 0;
 	var vmInsJSONStr = JSON.stringify(vmInsJSON);
 	var vmInsJSONParse = JSON.parse(vmInsJSONStr);
@@ -351,14 +342,15 @@ tenantapi.populateVNVMData = function(resultJSON, vmInsJSON, vnvm) {
     }
 }
 
-tenantapi.getVNVM = function (req, res) {
+function getVNVM (req, res) 
+{
 	var url, vnm = req.param('vnvm');
 	url = '/analytics/virtual-machine/' + vnm;
 	opServer.authorize(function () {
 		opServer.api.get(url, function (error, vmInsJSON) {
 			var resultJSON = {};
 			if(!error) {
-				tenantapi.populateVNVMData(resultJSON, vmInsJSON, vnm);
+				populateVNVMData(resultJSON, vmInsJSON, vnm);
 			}
 			commonUtils.handleJSONResponse(error, res, resultJSON);
 		});
@@ -366,7 +358,8 @@ tenantapi.getVNVM = function (req, res) {
 }
 
 // Handle request to get a JSON of projects for a given domain.
-tenantapi.getProjects = function (req, res, appData) {
+function getProjects (req, res, appData) 
+{
 	var url, domain = req.param('domain');
 	url = "/projects?domain=" + domain;
 	configApiServer.apiGet(url, appData, function (error, projectsJSON) {
@@ -375,7 +368,8 @@ tenantapi.getProjects = function (req, res, appData) {
 }
 
 // Handle request to get a JSON of project details for a given project name.
-tenantapi.getProject = function (req, res, appData) {
+function getProject (req, res, appData) 
+{
 	var url, project = req.param('project');
 	url = "/project/" + project;
 	configApiServer.apiGet(url, appData, function (error, projectJSON) {
@@ -384,7 +378,8 @@ tenantapi.getProject = function (req, res, appData) {
 }
 
 // Handle request to get a JSON of virtual networks under a given project name.
-tenantapi.getVNetworks = function (req, res, appData) {
+function getVNetworks (req, res, appData) 
+{
 	var url, fqName = req.param('fqname');
 	url = "/virtual-networks?parent_type=project&parent_fq_name_str=" + fqName;
 	configApiServer.apiGet(url, appData, function (error, vnsJSON) {
@@ -393,7 +388,8 @@ tenantapi.getVNetworks = function (req, res, appData) {
 }
 
 // Handle request to get a JSON of virtual network for a given id.
-tenantapi.getVNetwork = function (req, res, appData) {
+function getVNetwork (req, res, appData) 
+{
 	var url, vn = req.param('vn');
 	url = "/virtual-network/" + vn;
 	configApiServer.apiGet(url, appData, function (error, vnJSON) {
@@ -457,66 +453,8 @@ function getProjectVNs(url, callback) {
 	});
 }
 
-// Handle request to get project tree with virtual networks, instances, and connected networks for a domain.
-/*
-tenantapi.getProjectsTree = function (req, res) {
-	var url, domain = req.param('domain');
-	url = "/projects?domain=" + domain;
-	configServer.api.get(url, function (error, jsonData) {
-		if (error) {
-			commonUtils.handleJSONResponse(error, res, null);
-		} else {
-			try {
-				var projectsJSON = jsonData,
-					vnUrls = [],
-					projJSON = {'projects':[]},
-					i, fq_name, uuid, url;
-				populateName(projectsJSON.projects);
-				for (i = 0; i < projectsJSON.projects.length; i += 1) {
-					fq_name = projectsJSON.projects[i].fq_name;
-					//Exclude "default-project" & "service"
-					if ((fq_name[1] == 'default-project') || (fq_name[1] == 'service') || (fq_name[1] == 'invisible_to_admin')) {
-					} else {
-						projJSON['projects'].push(projectsJSON.projects[i]);
-					}
-				}
-				projectsJSON = projJSON;
-				projectsJSON.projects.sort(sortProjectsByName);
-				for (i = 0; i < projectsJSON.projects.length; i += 1) {
-					uuid = projectsJSON.projects[i].uuid;
-					fq_name = projectsJSON.projects[i].fq_name;
-					//var url = '/virtual-networks' + "?" + "project=" + uuid;
-					url = '/virtual-networks?parent_type=project&parent_fq_name_str=' + fq_name.join(':');
-					logutils.logger.debug('getProjectsTree: ', url);
-					vnUrls[i] = url;
-				}
-				async.map(vnUrls, getProjectVNs, function (err, results) {
-					var i, vnsJSON;
-					if (!err) {
-						for (i = 0; i < projectsJSON.projects.length; i += 1) {
-							vnsJSON = results[i];
-							try {
-								//populate the name property
-								populateName(vnsJSON['virtual-networks']);
-								projectsJSON.projects[i]['items'] = vnsJSON['virtual-networks'];
-							} catch (e) {
-								commonUtils.handleJSONResponse(e, res, null);
-							}
-						}
-						commonUtils.handleJSONResponse(null, res, projectsJSON['projects']);
-					} else {
-						commonUtils.handleJSONResponse(err, res);
-					}
-				});
-			} catch (error) {
-				commonUtils.handleJSONResponse(error, res, null);
-			}
-		}
-	});
-}
-*/
-
-tenantapi.getProjectsTree = function (req, res) {
+function getProjectsTree (req, res) 
+{
   var url, domain = req.param('domain');
   url = "/projects?domain=" + domain;
   var includeDomain = req.param('includeDomain');
@@ -536,7 +474,8 @@ tenantapi.getProjectsTree = function (req, res) {
                                            0, 0, 0, 1 * 60 * 1000, false, appData);
 }
 
-function getInstLinks(linksData) {
+function getInstLinks(linksData) 
+{
 	var links = [];
 	try {
 		for (var i = 0; i < linksData.length; i++) {
@@ -556,7 +495,8 @@ function getInstLinks(linksData) {
  * Populate JSON containing all connected network and instances of a virtual network.
  * @param {Object} JSON to contain connected network and instances
  */
-function getInstancesAndLinksforVN(vnDetailJSON) {
+function getInstancesAndLinksforVN(vnDetailJSON) 
+{
 	var instances = [],
 		links = [],
 		instanceData, currInst, fq_name, i;
@@ -581,10 +521,12 @@ function getInstancesAndLinksforVN(vnDetailJSON) {
 	return [{name:'Connected Networks', items:links}, {name:'Instances', items:instances}];
 }
 
-function populateSumInOutTraffic(vnJSON) {
+function populateSumInOutTraffic(vnJSON) 
+{
 }
 
-tenantapi.populateInOutTraffic = function(vnJSON, trafficJSON, counter) {
+function populateInOutTraffic (vnJSON, trafficJSON, counter) 
+{
 	var trafficDetails = {};
 	try {
 		//logutils.logger.debug('Traffic JSON:',trafficJSON);
@@ -645,7 +587,8 @@ tenantapi.populateInOutTraffic = function(vnJSON, trafficJSON, counter) {
 	}
 }
 
-tenantapi.getProjectData = function(configObj, callback) {
+function getProjectData (configObj, callback) 
+{
     var url = configObj.url;
     var appData = configObj.appData;
     configApiServer.apiGet(url, appData, function (error, jsonData) {
@@ -672,7 +615,7 @@ tenantapi.getProjectData = function(configObj, callback) {
                         if(!err) {
                             for (i = 0; i < vnCount; i += 1) {
                                 trafficJSON = results[i];
-                                tenantapi.populateInOutTraffic(vnJSON, trafficJSON, i);
+                                populateInOutTraffic(vnJSON, trafficJSON, i);
                             }
                             callback(null, vnJSON);
                         } else {
@@ -690,7 +633,8 @@ tenantapi.getProjectData = function(configObj, callback) {
 }
 
 // Handle request to get JSON of project details for a given project name.
-tenantapi.getProjectDetails = function (req, res, appData) {
+function getProjectDetails (req, res, appData) 
+{
     var urlLists = [];
 	var project = req.param('project');
     url = "/virtual-networks?parent_type=project&parent_fq_name_str=" + project;
@@ -698,7 +642,7 @@ tenantapi.getProjectDetails = function (req, res, appData) {
         url: url,
         appData: appData
     };
-    tenantapi.getProjectData(configObj, function(err, results) {
+    getProjectData(configObj, function(err, results) {
         if (err) {
             commonUtils.handleJSONResponse(err, res, null);
         } else {
@@ -707,7 +651,8 @@ tenantapi.getProjectDetails = function (req, res, appData) {
     });
 }
 
-parseDomainSummary = function(resultJSON, results) {
+function parseDomainSummary (resultJSON, results) 
+{
     resultJSON = {};
     resultJSON['interVNInBytes'] = 0;
     resultJSON['interVNInPkts'] = 0;
@@ -785,7 +730,8 @@ parseDomainSummary = function(resultJSON, results) {
     return resultJSON;
 }
 
-tenantapi.getNetworkDomainSummary = function(req, res, appData) {
+function getNetworkDomainSummary (req, res, appData) 
+{
     var configObjArr = [];
     var domain = req.param('fq-name');
     var results = {};
@@ -815,7 +761,7 @@ tenantapi.getNetworkDomainSummary = function(req, res, appData) {
                 configObjArr[j]['appData'] = appData;
                 j++;
             }
-            async.map(configObjArr, tenantapi.getProjectData, function (err, results) {
+            async.map(configObjArr, getProjectData, function (err, results) {
                 resultJSON = parseDomainSummary(resultJSON, results);
                 commonUtils.handleJSONResponse(null, res, resultJSON);
             });
@@ -827,7 +773,8 @@ tenantapi.getNetworkDomainSummary = function(req, res, appData) {
     });
 }
 
-parseAclRuleData = function(resultJSON, results) {
+function parseAclRuleData (resultJSON, results) 
+{
     var aclRuleLists = [];
     var aclRuleCnt = 0;
     try {
@@ -874,7 +821,8 @@ function parseVNUveData (resultJSON, vnUve)
     }
 }
 
-parseNetworkDetails = function(resultJSON, appData, jsonData, callback) {
+function parseNetworkDetails (resultJSON, appData, jsonData, callback) 
+{
     var vmRefs = [];
     var vmRefsCount = 0;
     var urlLists = [];
@@ -911,7 +859,8 @@ parseNetworkDetails = function(resultJSON, appData, jsonData, callback) {
     }
 }
 
-tenantapi.getNetworkDetails = function(req, res, appData) {
+function getNetworkDetails (req, res, appData) 
+{
     var resultJSON = {};
     var uuid = req.param('uuid');
     var url = '/virtual-network/' + uuid;
@@ -957,7 +906,8 @@ function parsePingResponses (pingResps)
  * public function
  * 1. This function is used to handle a ping request coming from Web UI
  */
-function doPing (req, res) {
+function doPing (req, res) 
+{
     var strArr = [];
     var index  = 0;
     var resultJSON = {};
@@ -1050,5 +1000,21 @@ function doPing (req, res) {
     });
 }
 
+exports.getVMState = getVMState;
+exports.getVNState = getVNState;
+exports.getProjectData = getProjectData;
+exports.getVNVM = getVNVM;
+exports.getProjects = getProjects;
+exports.getProject = getProject;
+exports.getFlowStat = getFlowStat;
+exports.getVNDetails = getVNDetails;
+exports.getVNetworks = getVNetworks;
+exports.getVNetwork = getVNetwork;
+exports.getProjectsTree = getProjectsTree;
+exports.getProjectDetails = getProjectDetails;
+exports.getNetworkDomainSummary = getNetworkDomainSummary;
+exports.getNetworkDetails = getNetworkDetails;
+exports.populateInOutTraffic = populateInOutTraffic;
+exports.populateVNVMData = populateVNVMData;
 exports.doPing = doPing;
 

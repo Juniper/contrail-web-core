@@ -9,7 +9,8 @@ var http = require('http'),
 	appErrors = require('../errors/app.errors'),
 	util = require('util'),
     commonUtils = require('../utils/common.utils'),
-    restler = require('restler');
+    restler = require('restler'),
+    discClient = require('./discoveryclient.api');
 
 if (!module.parent) {
 	logutils.logger.warn(util.format(messages.warn.invalid_mod_call, module.filename));
@@ -20,7 +21,8 @@ if (!module.parent) {
  * Constructor to API server access.
  * @param {Object} Parameters required to define a new API server
  */
-function APIServer(params) {
+function APIServer(params)
+{
 	var self = this;
 	self.hostname = params.server;
 	self.port = params.port;
@@ -32,7 +34,8 @@ function APIServer(params) {
  * Authenticate and call the callback function on successful authentication.
  * @param {Function} Callback function
  */
-APIServer.prototype.authorize = function (callback) {
+APIServer.prototype.authorize = function (callback)
+{
 	var self = this;
 	// TODO: Implement Authentication.
 	self.cb(callback);
@@ -43,7 +46,9 @@ APIServer.prototype.authorize = function (callback) {
  * @param {Object} API server object
  * @param {String} Name of the API
  */
-APIServer.prototype.API = function (self, apiName) {
+APIServer.prototype.API = function (self, apiName)
+{
+    self.name = apiName;
 	return {
 		hostname:self.hostname,
 		port:self.port,
@@ -52,27 +57,27 @@ APIServer.prototype.API = function (self, apiName) {
 			var s = this,
 				obj = { url:s.hostname, path:url, method:'GET', port:s.port, 
 				        headers:headers, xml2jsSettings:self.xml2jsSettings };
-			self.makeCall(restler.get, obj, callback);
+			self.makeCall(restler.get, obj, callback, false);
 		},
 		post:function (url, data, callback, headers) {
 			var s = this,
 				obj = { url:s.hostname, path:url, method:'POST', port:s.port, 
 				        data:data, headers:headers,
                         xml2jsSettings:self.xml2jsSettings};
-			self.makeCall(restler.post, obj, callback);
+			self.makeCall(restler.post, obj, callback, false);
 		},
 		put:function (url, data, callback, headers) {
 			var s = this,
 				obj = { url:s.hostname, path:url, method:'PUT', port:s.port, 
 				        data:data, headers:headers,
                         xml2jsSettings:self.xml2jsSettings };
-			self.makeCall(restler.put, obj, callback);
+			self.makeCall(restler.put, obj, callback, false);
 		},
 		delete:function (url, callback, headers) {
 			var s = this,
 				obj = { url:s.hostname, path:url, method:'DELETE', port:s.port,
 				        headers:headers , xml2jsSettings:self.xml2jsSettings};
-			self.makeCall(restler.del, obj, callback);
+			self.makeCall(restler.del, obj, callback, false);
 		}
 	};
 };
@@ -81,11 +86,34 @@ APIServer.prototype.API = function (self, apiName) {
  * Check if given callback is a function and call it.
  * @param {Function} Callback function
  */
-APIServer.prototype.cb = function (cb) {
+APIServer.prototype.cb = function (cb)
+{
 	if (typeof cb == 'function') {
 		cb();
 	}
 };
+
+APIServer.prototype.updateDiscoveryServiceParams = function (params)
+{
+    var opS = require('./opServer.api');
+    var configS = require('./configServer.api');
+    var server = null;
+    var self = this;
+    var apiServerType = self.name;
+    var discService = null;
+
+    discService = discClient.getDiscServiceByApiServerType(apiServerType);
+    if (discService) {
+        /* We are sending only the first IP */
+        if (discService['ip-address'] != null) {
+            params.url = discService['ip-address'];
+        }
+        if (discService['port'] != null) {
+            params.port = discService['port'];
+        }
+    }
+    return params;
+}
 
 /**
  * Make a call to API server.
@@ -94,7 +122,8 @@ APIServer.prototype.cb = function (cb) {
  * @param {callback} {function} Callback function once response comes 
           from API Server
  */
-APIServer.prototype.makeCall = function (restApi, params, callback) {
+APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
+{
     var self = this;
     var options = {};
     var data = commonUtils.getApiPostData(params['path'], params['data']);
@@ -114,6 +143,7 @@ APIServer.prototype.makeCall = function (restApi, params, callback) {
          */
         options['headers']['Content-Type'] = 'application/json';
     }
+    params = self.updateDiscoveryServiceParams(params);
     options['parser'] = restler.parsers.auto;
     var reqUrl = global.HTTP_URL + params.url + ':' + params.port + params.path;
     restApi(reqUrl, options).on('complete', function(data, response) {
@@ -122,6 +152,21 @@ APIServer.prototype.makeCall = function (restApi, params, callback) {
             logutils.logger.error('URL [' + reqUrl + ']' + 
                                   ' returned error [' + data + ']');
             /* Invalid data, throw error */
+            /* Check if the error code is ECONNREFUSED or ETIMEOUT, if yes then
+             * issue once again discovery subscribe request, the remote server
+             * may be down, so discovery server should send the Up Servers now
+             */
+            if (('ECONNREFUSED' == data.code) || ('ETIMEOUT' == data.code)) {
+                if (false == isRetry) {
+                    /* Only one time send a retry */
+                    discClient.sendDiscSubMessageOnDemand(self.name);
+                }
+                var reqParams = null;
+                reqParams = discClient.resetServicesByParams(params, self.name);
+                if (null != reqParams) {
+                    return self.makeCall(restApi, reqParams, callback, true);
+                }
+            }
             error = new
 //            appErrors.RESTServerError(util.format(messages.error.invalid_json_xml,
   //                                                params.url, data));
@@ -155,6 +200,8 @@ APIServer.prototype.makeCall = function (restApi, params, callback) {
 }
 
 // Export this as a module.
-module.exports.getAPIServer = function (params) {
+module.exports.getAPIServer = function (params)
+{
 	return new APIServer(params);
 };
+

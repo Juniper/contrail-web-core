@@ -93,24 +93,16 @@ jobsProcess.processTopPortByProjectRequestByJob = function(pubChannel,
                                                           saveChannelKey, 
                                                           jobData, done) {
     var appData = jobData.taskData.appData;
-    if (appData['portRange']) {
-        nwMonJobsApi.getTrafficStatsByPort(pubChannel, saveChannelKey, jobData,
-                                           done);
-    } else {
-        nwMonJobsApi.processTopPortByProject(pubChannel, saveChannelKey, jobData, done);
-    }
+    nwMonJobsApi.getTrafficStatsByPort(pubChannel, saveChannelKey, jobData,
+                                       done);
 }
 
 jobsProcess.processTopPortByNetworkRequestByJob = function(pubChannel, 
                                                           saveChannelKey, 
                                                           jobData, done) {
     var appData = jobData.taskData.appData;
-    if (appData['portRange']) {
-        nwMonJobsApi.getTrafficStatsByPort(pubChannel, saveChannelKey, jobData,
-                                           done);
-    } else {
-        nwMonJobsApi.processTopPortByNetwork(pubChannel, saveChannelKey, jobData, done);
-    }
+    nwMonJobsApi.getTrafficStatsByPort(pubChannel, saveChannelKey, jobData,
+                                       done);
 }
 
 jobsProcess.processTopPortByConnNetRequestByJob = function(pubChannel,

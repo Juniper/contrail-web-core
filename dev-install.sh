@@ -57,6 +57,9 @@ mkdir webroot/assets/font-awesome
 cp -r ../contrail-web-third-party/font-awesome-v3.2.1/font webroot/assets/font-awesome/font
 cp -r ../contrail-web-third-party/font-awesome-v3.2.1/css webroot/assets/font-awesome/css
 
+rm -rf webroot/font
+cp -r ../contrail-web-third-party/font-awesome-v3.2.1/font webroot/font
+
 #End - Copy Font-Awesome from contrail-web-third-party
 
 #Start - Copy Font-Opensans from contrail-web-third-party
@@ -65,7 +68,103 @@ rm -rf webroot/assets/fonts-opensans
 mkdir webroot/assets/fonts-opensans
 cp -r ../contrail-web-third-party/fonts-opensans webroot/assets/
 
+rm -rf webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
+cp -r  ../contrail-web-third-party/fonts-opensans/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff  webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
+
+rm -rf webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+cp -r  ../contrail-web-third-party/fonts-opensans/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff  webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+
 #End - Copy Font-Awesome from contrail-web-third-party
+
+#Start - Merging All JS files
+rm -rf webroot/js/contrail-all-1.js
+rm -rf webroot/js/contrail-all-2.js
+rm -rf webroot/js/contrail-all-3.js
+rm -rf webroot/js/contrail-all-4.js
+rm -rf webroot/js/contrail-all-5.js
+
+
+MAINFILE[0]=webroot/assets/jquery/js/jquery-1.8.3.min.js
+MAINFILE[1]=webroot/assets/jquery/js/jquery.xml2json.js
+MAINFILE[2]=webroot/assets/jquery/js/jquery.ba-bbq.min.js
+MAINFILE[3]=webroot/assets/jquery/js/jquery.timer.js
+MAINFILE[4]=webroot/assets/jquery/js/jquery-ui-1.10.3.custom.min.js
+MAINFILE[5]=webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
+MAINFILE[6]=webroot/assets/bootstrap/js/bootstrap.min.js
+MAINFILE[7]=webroot/assets/kendoui/js/kendo.web.min.js
+MAINFILE[8]=webroot/js/multiselect.js
+MAINFILE[9]=webroot/assets/d3/js/d3.js
+MAINFILE[10]=webroot/assets/nvd3/js/nv.d3.js
+MAINFILE[11]=webroot/assets/crossfilter/js/crossfilter.min.js
+MAINFILE[12]=webroot/js/jsonpath-0.8.0.js
+MAINFILE[13]=webroot/js/xdate.js
+MAINFILE[14]=webroot/js/kendo-utils.js
+MAINFILE[15]=webroot/js/bootstrap-utils.js
+MAINFILE[16]=webroot/js/topology_api.js
+MAINFILE[17]=webroot/js/web-utils.js
+MAINFILE[18]=webroot/js/contrail-layout.js
+MAINFILE[19]=webroot/js/config_global.js
+MAINFILE[20]=webroot/js/protocol.js
+MAINFILE[21]=webroot/js/qe-utils.js
+MAINFILE[22]=webroot/js/nvd3-plugin.js
+MAINFILE[23]=webroot/js/d3-utils.js
+MAINFILE[24]=webroot/js/analyzer-utils.js
+MAINFILE[25]=webroot/js/qtip.js
+MAINFILE[26]=webroot/js/cytoscape.min.js
+
+cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
+cat ${MAINFILE[1]} >> webroot/js/contrail-all-1.js
+cat ${MAINFILE[2]} >> webroot/js/contrail-all-1.js 
+cat ${MAINFILE[3]} >> webroot/js/contrail-all-1.js 
+cat ${MAINFILE[4]} >> webroot/js/contrail-all-1.js 
+cat ${MAINFILE[5]} >> webroot/js/contrail-all-1.js 
+cat ${MAINFILE[6]} >> webroot/js/contrail-all-1.js
+
+cat ${MAINFILE[7]} > webroot/js/contrail-all-2.js
+cat ${MAINFILE[8]} >> webroot/js/contrail-all-2.js
+
+cat ${MAINFILE[9]} > webroot/js/contrail-all-3.js
+
+cat ${MAINFILE[10]} > webroot/js/contrail-all-4.js 
+cat ${MAINFILE[11]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[12]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[13]} >> webroot/js/contrail-all-4.js
+
+cat ${MAINFILE[14]} > webroot/js/contrail-all-5.js
+cat ${MAINFILE[15]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[16]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[17]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[18]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[19]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[20]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[21]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[22]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[23]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[24]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[25]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[26]} >> webroot/js/contrail-all-5.js
+
+
+# End - Merging All JS files
+
+#Start - Merging All CSS files 
+rm -rf webroot/css/contrail-all.css
+
+MAINCSS[1]=webroot/assets/font-awesome/css/font-awesome.min.css
+MAINCSS[2]=webroot/assets/fonts-opensans/openSans.css
+MAINCSS[3]=webroot/assets/kendoui/styles/kendo.common.min.css
+MAINCSS[4]=webroot/css/kendo.contrail.css
+MAINCSS[5]=webroot/css/nv.d3.contrail.css
+MAINCSS[6]=webroot/css/vncon-web.css
+
+cat ${MAINCSS[1]} > webroot/css/contrail-all.css 
+cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[3]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[4]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[5]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[6]} >> webroot/css/contrail-all.css
+
+#End - Merging ALL CSS files
 
 if command -v node >/dev/null 2; then {
     echo "Node already installed"

@@ -12,6 +12,7 @@ var assert = require("assert")
     , util = require('util')
     , authApi = require('../../common/auth.api')
     , messages = require('../../common/messages')
+    , rbac = require('./rbac.api')
     ;
 
 if (!module.parent) {
@@ -20,18 +21,15 @@ if (!module.parent) {
     process.exit(1);
 }
 
-longPoll = module.exports;
-
 /* Global Pending Request Queue per Worker */ 
 var pendingReqQObj = {};
 
 var readyQ = [];
-longPoll.readyQ = readyQ;
 
 var readyQEvent = new eventEmitter();
 
 readyQEvent.on('add', function(data) {
-  longPoll.triggerResponse();
+  triggerResponse();
 });
 
 
@@ -44,13 +42,13 @@ var maxAge = 60;
  * Global counter for unique ids
  */
 var lastRequestId = 0;
-longPoll.lastRequestId = lastRequestId;
 
 /*
  *Ccompacts an array by removing all null values
  *
  */
-longPoll.doCompact = function(arr) {
+function doCompact (arr)
+{
   if (!arr) return null;
   var i, data = [];
   
@@ -65,7 +63,8 @@ longPoll.doCompact = function(arr) {
 /*
  * Returns current time in milliseconds from 1 Jan 1970, 00:00
  */
-longPoll.getCurrentTimestamp = function() {
+function getCurrentTimestamp ()
+{
   return new Date().getTime();
 }
 
@@ -73,22 +72,23 @@ longPoll.getCurrentTimestamp = function() {
  * Checks for all pending requests and then triggers process of that pending 
  * request 
  */
-longPoll.triggerResponse = function() {
-  if (!longPoll.readyQ.length) {
+function triggerResponse ()
+{
+  if (!readyQ.length) {
     /* We got an event for add, but it seems no data, why? */
     assert(0);
   }
   var resCtx, event;
-  curTS = longPoll.getCurrentTimestamp();
+  curTS = getCurrentTimestamp();
 
   /* Check if any response got timed out
    */
-  for(var i = 0; i < longPoll.readyQ.length; i++) {
-    resCtx = longPoll.readyQ[i];
+  for(var i = 0; i < readyQ.length; i++) {
+    resCtx = readyQ[i];
     /* Timed out responses */
     if ((curTS - resCtx.timestamp) > maxAge * 1000) {
       logutils.logger.error("Response timed out");
-      longPoll.readyQ[i]= null;
+      readyQ[i]= null;
       continue;
     }
     var data = resCtx.data;
@@ -97,9 +97,9 @@ longPoll.triggerResponse = function() {
     } else {
       resCtx.res.send(resCtx.statusCode, data);
     }
-    longPoll.readyQ[i] = null;
+    readyQ[i] = null;
   }
-  longPoll.readyQ = longPoll.doCompact(longPoll.readyQ);
+  readyQ = doCompact(readyQ);
 }
 
 /* Function: processPendingReq()
@@ -107,7 +107,8 @@ longPoll.triggerResponse = function() {
     This function is invoked after processing the request, so here just delete
     the reqCtx
  */
-longPoll.processPendingReq = function(ctx, next, callback) {
+function processPendingReq (ctx, next, callback)
+{
   var token = null;
   var defProjectObj = {};
 
@@ -127,14 +128,16 @@ var restrictedURL = {};
 /* Function: restrictedURL
     This function is used to pass the authentication check,
  */
-insertUrlToRestrictedList = function(url) {
+function insertUrlToRestrictedList (url)
+{
   restrictedURL[url] = url;
 }
 
 /* Function: registerRestrictedURL
     This function is used to register restricted URL List
  */
-registerRestrictedURL = function() {
+function registerRestrictedURL ()
+{
   insertUrlToRestrictedList('/login');
   insertUrlToRestrictedList('/authenticate');
 }
@@ -142,7 +145,8 @@ registerRestrictedURL = function() {
 /* Function: checkLoginReq
     This function is used to check if the url is /login 
  */
-checkLoginReq = function(req) {
+function checkLoginReq (req)
+{
   return ((req.url == '/login') || (req.url == '/authenticate') ||
           (req.url == '/logout'));
 }
@@ -152,7 +156,8 @@ checkLoginReq = function(req) {
     If the req.url is in the Allowed List, then req/res context gets stored
     in pending queue and triggers pending queue processing
  */
-longPoll.routeAll = function(req, res, next) {
+function routeAll (req, res, next)
+{
   /* nodejs sets the timeout 2 minute, override this timeout here */
   req.socket.setTimeout(global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME);
   var u = url.parse(req.url, true);
@@ -163,11 +168,11 @@ longPoll.routeAll = function(req, res, next) {
   }
 
   var sessId    = req.sessionID,
-    timestamp   = longPoll.getCurrentTimestamp(),
+    timestamp   = getCurrentTimestamp(),
     requestId;
 
-  longPoll.lastRequestId = parseInt(longPoll.lastRequestId) + 1;
-  requestId = longPoll.lastRequestId;
+  lastRequestId = parseInt(lastRequestId) + 1;
+  requestId = lastRequestId;
 
   var ctx = {
     'id' : requestId,
@@ -189,8 +194,8 @@ longPoll.routeAll = function(req, res, next) {
     var checkAccess = rbac.checkUserAccess(req, res);
     if (false == checkAccess) {
       /* We are yet to get authorized */
-      longPoll.insertResToReadyQ(res, global.HTTP_STATUS_FORBIDDEN_STR,
-                                 global.HTTP_STATUS_FORBIDDEN, 0);
+      insertResToReadyQ(res, global.HTTP_STATUS_FORBIDDEN_STR,
+                        global.HTTP_STATUS_FORBIDDEN, 0);
       return null;
     }
   }
@@ -203,16 +208,17 @@ longPoll.routeAll = function(req, res, next) {
     it is stored in readyQ, and one event is generated as 'add'
     which triggers to handler to take care upon this response.
  */
-longPoll.insertResToReadyQ = function(res, data, statusCode, isJson) {
+function insertResToReadyQ (res, data, statusCode, isJson)
+{
   var resCtx = {
-    timeStamp : longPoll.getCurrentTimestamp(),
+    timeStamp : getCurrentTimestamp(),
     res : res,
     data: data,
     statusCode : statusCode,
     isJson : isJson
   };
   
-  longPoll.readyQ.push(resCtx);
+  readyQ.push(resCtx);
   readyQEvent.emit('add', resCtx);
 }
 
@@ -226,4 +232,8 @@ function redirectToLogoutByChannel (channel)
 }
 
 exports.redirectToLogoutByChannel = redirectToLogoutByChannel;
+exports.lastRequestId = lastRequestId;
+exports.insertResToReadyQ = insertResToReadyQ;
+exports.routeAll = routeAll;
+exports.processPendingReq = processPendingReq;
 

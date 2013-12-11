@@ -28,7 +28,8 @@ opServer = rest.getAPIServer({apiName:global.label.OPS_API_SERVER, server:config
  * @param {Array} Array of JSONs of BGP Routers
  * @param {Object} Contains name and type of Virtual Router
  */
-function processBGPRandVRJSON(resultJSON, bgpJSONArray, vrMap) {
+function processBGPRandVRJSON(resultJSON, bgpJSONArray, vrMap)
+{
 	var i, bgpJSON, bgpType, bgpName;
 	for (i = 0; i < bgpJSONArray.length; i += 1) {
 		bgpJSON = bgpJSONArray[i];
@@ -49,7 +50,7 @@ function processBGPRandVRJSON(resultJSON, bgpJSONArray, vrMap) {
 			resultJSON["bgp-routers"][i]["type"] = bgpType;
 			try {
 			     resultJSON["bgp-routers"][i]["bgp_refs"] = 
-			         getBGPRefNames(bgpJSON["bgp-router"]["bgp_router_refs"]);
+			         adminApiHelper.getBGPRefNames(bgpJSON["bgp-router"]["bgp_router_refs"]);
 			} catch(e) {
 			     resultJSON["bgp-routers"][i]["bgp_refs"] = [];
 			}
@@ -106,30 +107,11 @@ function processBGPRandVRJSON(resultJSON, bgpJSONArray, vrMap) {
 	}
 }
 
-/**
- * @param {Object} JSON containing BGP Router references
- * @return {Array} Names of BGP Router references
- */
-function getBGPRefNames(routerRefs) {
-	var peers = [],
-		i, peerList;
-	if (routerRefs) {
-		for (i = 0; i < routerRefs.length; i += 1) {
-			peerList = routerRefs[i].to;
-			if (peerList.length > 0) {
-				peers[i] = peerList[peerList.length - 1];
-			} else {
-				peers[i] = '';
-			}
-		}
-	}
-	return peers;
-}
-
 /* Function: processControlNodeTree
     List the control name and compute node
  */
-processControlNodeTree = function (data) {
+function processControlNodeTree (data)
+{
     var pos = -1;
     try {
         data = JSON.parse(data);
@@ -156,8 +138,8 @@ processControlNodeTree = function (data) {
  This function is used to publish the Control Node response to Redis based on
  the req type
  */
-sendNodeResByReq = function (pubChannel, saveChannelKey, errCode, pubData, 
-                             saveData, reqType, done) {
+function sendNodeResByReq (pubChannel, saveChannelKey, errCode, pubData, 
+                           saveData, reqType, done) {
 	var doSave = 0;
 	var expireTime = 6000000;
 	if (errCode == global.HTTP_STATUS_RESP_OK) {
@@ -189,7 +171,8 @@ sendNodeResByReq = function (pubChannel, saveChannelKey, errCode, pubData,
  * @param {Object} JSON of all Virtual Routers
  */
 function getUnionBGPandVR(pubChannel, saveChannelKey, vrJSON, reqType, done,
-                          jobData) {
+                          jobData)
+{
     var dataObjArr = [];
 	var vrMap = {},
 		vrCount = vrJSON["virtual-routers"].length,
@@ -218,7 +201,7 @@ function getUnionBGPandVR(pubChannel, saveChannelKey, vrJSON, reqType, done,
 						url = '/bgp-router/' + uuid;
 						logutils.logger.debug("getUnionBGPandVR: " + url);
 						bgpURLs[i] = [url];
-                        commonUtils.createReqObj(dataObjArr, i, bgpURLs[i],
+                        commonUtils.createReqObj(dataObjArr, bgpURLs[i],
                                                  global.HTTP_REQUEST_GET, null,
                                                  null, null, jobData);
 						delete bgpJSON["bgp-routers"][i]["fq_name"];
@@ -261,7 +244,8 @@ function getUnionBGPandVR(pubChannel, saveChannelKey, vrJSON, reqType, done,
  the control node API request coming from Web Client
  */
 
-bgpNode.processNodes = function (pubChannel, saveChannelKey, jobData, done) {
+function processNodes (pubChannel, saveChannelKey, jobData, done)
+{
     var dataObjArr = [];
 	var url = jobData.taskData.url;
 	var reqType = jobData.title;
@@ -283,7 +267,7 @@ bgpNode.processNodes = function (pubChannel, saveChannelKey, jobData, done) {
 						url = '/virtual-router/' + uuid;
 						logutils.logger.debug("getNodes: " + url);
 						vnURLs[i] = [url];
-                        commonUtils.createReqObj(dataObjArr, i, vnURLs[i],
+                        commonUtils.createReqObj(dataObjArr, vnURLs[i],
                                                  global.HTTP_REQUEST_GET, null,
                                                  null, null, jobData);
 						delete resultJSON["virtual-routers"][i]["fq_name"];
@@ -313,14 +297,15 @@ bgpNode.processNodes = function (pubChannel, saveChannelKey, jobData, done) {
 	});
 }
 
-bgpNode.sendPublishReqToGetNodes = function(lookupHash, myHash, url, pubChannel, 
-                                    saveChannelKey, done, data, jobData) {
+function sendPublishReqToGetNodes (lookupHash, myHash, url, pubChannel, 
+                                   saveChannelKey, done, data, jobData) {
     jobsApi.createJobListener(lookupHash, myHash, url, pubChannel, saveChannelKey, 
-                              bgpNode.processNodes, null, false, 0,
+                              processNodes, null, false, 0,
                               5 * 60 * 1000, data, done, jobData);
 }
 
-bgpNode.getControlNodeLists = function(pubChannel, saveChannelKey, jobData, done) {
+function getControlNodeLists (pubChannel, saveChannelKey, jobData, done)
+{
     var doSave = 1;
     adminApiHelper.getControlNodeList(jobData, function(err, jsonData) {
         if (err || (null == jsonData)) {
@@ -338,3 +323,8 @@ bgpNode.getControlNodeLists = function(pubChannel, saveChannelKey, jobData, done
         }
     });
 }
+
+exports.processNodes = processNodes;
+exports.getControlNodeLists = getControlNodeLists;
+
+

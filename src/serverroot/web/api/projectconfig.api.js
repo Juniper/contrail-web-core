@@ -24,7 +24,8 @@ var configApiServer = require('../../common/configServer.api');
 /**
  * Bail out if called directly as "nodejs projectconfig.api.js"
  */
-if (!module.parent) {
+if (!module.parent) 
+{
     logutils.logger.warn(util.format(messages.warn.invalid_mod_call,
                                      module.filename));
     process.exit(1);

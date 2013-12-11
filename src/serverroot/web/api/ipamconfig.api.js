@@ -24,7 +24,8 @@ var configApiServer = require('../../common/configServer.api');
 /**
  * Bail out if called directly as "nodejs ipamconfig.api.js"
  */
-if (!module.parent) {
+if (!module.parent) 
+{
     logutils.logger.warn(util.format(messages.warn.invalid_mod_call,
                                      module.filename));
     process.exit(1);
@@ -37,7 +38,8 @@ if (!module.parent) {
  * 2. Reads the response of per project ipams from config api server
  *    and sends it back to the client.
  */
-function listIpamsCb (error, ipamListData, response) {
+function listIpamsCb (error, ipamListData, response) 
+{
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
        return;
@@ -54,7 +56,8 @@ function listIpamsCb (error, ipamListData, response) {
  * 4. Calls listIpamsCb that process data from config
  *    api server and sends back the http response.
  */
-function listIpams (request, response, appData) {
+function listIpams (request, response, appData) 
+{
     var tenantId      = null;
     var requestParams = url.parse(request.url,true);
     var ipamListURL   = '/network-ipams';
@@ -77,7 +80,8 @@ function listIpams (request, response, appData) {
  * 2. Reads the response of ipam get from config api server
  *    and sends it back to the client.
  */
-function getIpamCb (error, ipamConfig, response) {
+function getIpamCb (error, ipamConfig, response) 
+{
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
        return;
@@ -97,7 +101,8 @@ function getIpamCb (error, ipamConfig, response) {
  * 4. Calls getIapmCb that process data from config
  *    api server and sends back the http response.
  */
-function getIpam (request, response, appData) {
+function getIpam (request, response, appData) 
+{
     var iapmId        = null;
     var requestParams = url.parse(request.url,true);
     var ipamGetURL    = '/network-ipam';
@@ -121,7 +126,8 @@ function getIpam (request, response, appData) {
  * private function
  * 1. Sends back the response of ipam read to clients after set operations.
  */
-function ipamSendResponse(error, ipamConfig, response) {
+function ipamSendResponse(error, ipamConfig, response) 
+{
     if (error) {
        commonUtils.handleJSONResponse(error, response, null);
     } else {
@@ -137,8 +143,8 @@ function ipamSendResponse(error, ipamConfig, response) {
  * 2. Reads the response of ipam get from config api server
  *    and sends it back to the client.
  */
-function setIpamInVN(error, vnConfig, ipamConfig, ipamPostData, response, appData) {
-
+function setIpamInVN(error, vnConfig, ipamConfig, ipamPostData, response, appData) 
+{
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
         return;
@@ -206,7 +212,7 @@ function setIpamInVN(error, vnConfig, ipamConfig, ipamPostData, response, appDat
         						"virtual-network" : vn	
         				};
         				var vnPutUrl = '/virtual-network/' + vn['uuid'].toString();
-        				commonUtils.createReqObj(dataObjArr, dataObjArr.length, vnPutUrl,
+        				commonUtils.createReqObj(dataObjArr, vnPutUrl,
         					global.HTTP_REQUEST_PUT, vnPutData, null, null, appData);
         			} else {
         				//userIpamFoundInVN is TRUE. Set IPAM reference with new values in current VN.
@@ -220,7 +226,7 @@ function setIpamInVN(error, vnConfig, ipamConfig, ipamPostData, response, appDat
         						"virtual-network" : vn
         				};
         				var vnPutUrl = '/virtual-network/' + vn['uuid'].toString();
-        				commonUtils.createReqObj(dataObjArr, dataObjArr.length, vnPutUrl,
+        				commonUtils.createReqObj(dataObjArr, vnPutUrl,
         					global.HTTP_REQUEST_PUT, vnPutData, null, null, appData);
         			}
         		}
@@ -233,7 +239,7 @@ function setIpamInVN(error, vnConfig, ipamConfig, ipamPostData, response, appDat
     					"virtual-network" : vn
     				};
     				var vnPutUrl = '/virtual-network/' + vn['uuid'].toString();
-    				commonUtils.createReqObj(dataObjArr, dataObjArr.length, vnPutUrl,
+    				commonUtils.createReqObj(dataObjArr, vnPutUrl,
     					global.HTTP_REQUEST_PUT, vnPutData, null, null, appData);
         		}
         	}
@@ -244,7 +250,7 @@ function setIpamInVN(error, vnConfig, ipamConfig, ipamPostData, response, appDat
 					"virtual-network" : vn
 				};
 				var vnPutUrl = '/virtual-network/' + vn['uuid'].toString();
-				commonUtils.createReqObj(dataObjArr, dataObjArr.length, vnPutUrl,
+				commonUtils.createReqObj(dataObjArr, vnPutUrl,
 					global.HTTP_REQUEST_PUT, vnPutData, null, null, appData);
         	}
         }
@@ -261,7 +267,8 @@ function setIpamInVN(error, vnConfig, ipamConfig, ipamPostData, response, appDat
     }
 }
 
-function readVNForIpams(error, ipamConfig, ipamPostData, response, appData) {
+function readVNForIpams(error, ipamConfig, ipamPostData, response, appData) 
+{
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
         return;
@@ -275,7 +282,7 @@ function readVNForIpams(error, ipamConfig, ipamPostData, response, appData) {
 			var vn = ipamPostData['network-ipam']['virtual_network_refs'][i];
 			var vnPostUrl = '/virtual-network/' + vn['uuid'].toString();
         
-			commonUtils.createReqObj(dataObjArr, i, vnPostUrl,
+			commonUtils.createReqObj(dataObjArr, vnPostUrl,
                 global.HTTP_REQUEST_GET, null, null, null,
                 appData);
 		}
@@ -294,7 +301,7 @@ function readVNForIpams(error, ipamConfig, ipamPostData, response, appData) {
 	            for(var i=0; null != data["virtual-networks"][i]; i++) {
 				    var vn = data["virtual-networks"][i];
 				    var vnGetURL = '/virtual-network/' + vn['uuid'].toString();
-			        commonUtils.createReqObj(dataObjArr, i, vnGetURL,
+			        commonUtils.createReqObj(dataObjArr, vnGetURL,
                         global.HTTP_REQUEST_GET, null, null, null, appData);
                 }
 	            if(dataObjArr.length > 0) {
@@ -318,7 +325,8 @@ function readVNForIpams(error, ipamConfig, ipamPostData, response, appData) {
  * 2. Reads the response of ipam get from config api server
  *    and sends it back to the client.
  */
-function setIpamRead(error, ipamConfig, response, appData) {
+function setIpamRead(error, ipamConfig, response, appData) 
+{
     var ipamGetURL = '/network-ipam/';
 
     if (error) {
@@ -339,7 +347,8 @@ function setIpamRead(error, ipamConfig, response, appData) {
  * 1. URL /api/tenants/config/ipams - Post
  * 2. Sets Post Data and sends back the ipam config to client
  */
-function createIpam (request, response, appData) {
+function createIpam (request, response, appData) 
+{
     var ipamCreateURL = '/network-ipams';
     var ipamPostData  = request.body;
 
@@ -375,7 +384,8 @@ function createIpam (request, response, appData) {
  * 2. Updates the Ipam Mgmt Object, right now only dhcp options
  */
 function setIpamOptions(error, ipamConfig, ipamPostData, ipamId, response,
-                        appData) {
+                        appData) 
+{
     var ipamPostURL = '/network-ipam/' + ipamId;
 
     if (error) {
@@ -424,7 +434,8 @@ function setIpamOptions(error, ipamConfig, ipamPostData, ipamId, response,
  * 1. URL /api/tenants/config/ipam/:id - Put
  * 2. Sets Post Data and sends back the policy to client
  */
-function updateIpam (request, response, appData) {
+function updateIpam (request, response, appData) 
+{
     var ipamId         = null;
     var ipamGetURL     = '/network-ipam/';
     var ipamOptionsRef = [];
@@ -510,7 +521,8 @@ function updateIpam (request, response, appData) {
  * private function
  * 1. Return back the response of Ipam delete.
  */
-function deleteIpamCb (error, ipamDelResp, response) {
+function deleteIpamCb (error, ipamDelResp, response) 
+{
 
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
@@ -526,7 +538,8 @@ function deleteIpamCb (error, ipamDelResp, response) {
  * 1. URL /api/tenants/config/ipam/:id
  * 2. Deletes the Ipam from config api server
  */
-function deleteIpam (request, response, appData) {
+function deleteIpam (request, response, appData) 
+{
     var ipamDelURL     = '/network-ipam/';
     var ipamId         = null;
     var requestParams = url.parse(request.url, true);
@@ -544,7 +557,8 @@ function deleteIpam (request, response, appData) {
                             });
 }
 
-function updateIpamDns (request, response, appData) {
+function updateIpamDns (request, response, appData) 
+{
     var ipamId         = null;
     var ipamGetURL     = '/network-ipam/';
     var ipamOptionsRef = [];
@@ -579,7 +593,8 @@ function updateIpamDns (request, response, appData) {
  * 2. Updates the Ipam Mgmt Object
  */
 function setIpamDnsOptions(error, ipamConfig, ipamPostData, ipamId, response,
-                        appData) {
+                        appData) 
+{
     var ipamPostURL = '/network-ipam/' + ipamId;
 
     if (error) {
@@ -619,15 +634,15 @@ function setIpamDnsOptions(error, ipamConfig, ipamPostData, ipamId, response,
                          });
 }
 
-function updateIpamInVDNS(error, ipamConfig, response, ipamId, vdnsRef, appData) {
+function updateIpamInVDNS(error, ipamConfig, response, ipamId, vdnsRef, appData) 
+{
 	if (error) {
     	commonUtils.handleJSONResponse(error, response, null);
         return;
     }
 
-	if(null !== vdnsRef && typeof vdnsRef !== "undefined" && 
-		null != vdnsRef.href && vdnsRef.href.indexOf("http") != -1) {
-		var vdnsURL = vdnsRef.href.split(':8082')[1];
+	if (null !== vdnsRef && typeof vdnsRef !== "undefined") {
+        var vdnsURL = '/virtual-DNS/' + vdnsRef['uuid'];
 	    configApiServer.apiGet(vdnsURL, appData,
                 function(error, data) {
 	    			updateIpamInVDNSCb(error, data, ipamConfig, response, ipamId, appData);
@@ -637,7 +652,8 @@ function updateIpamInVDNS(error, ipamConfig, response, ipamId, vdnsRef, appData)
 	}
 }
 
-function updateIpamInVDNSCb(error, result, ipamConfig, response, ipamId, appData) {
+function updateIpamInVDNSCb(error, result, ipamConfig, response, ipamId, appData) 
+{
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
         return;
@@ -646,7 +662,7 @@ function updateIpamInVDNSCb(error, result, ipamConfig, response, ipamId, appData
     	setIpamRead(error, ipamConfig, response, appData);
     	return;
     }
-    var vdnsURL = result['virtual-DNS'].href.split(':8082')[1];
+    var vdnsURL = '/virtual-DNS/' + result['virtual-DNS']['uuid'];
     for(var i=0; result['virtual-DNS']['network_ipam_back_refs'].length; i++) {
     	if(result['virtual-DNS']['network_ipam_back_refs'][i].uuid === ipamId) {
     		result['virtual-DNS']['network_ipam_back_refs'].splice(i,1);

@@ -12,7 +12,8 @@ var redisSub = require('./redisSub')
 	, util = require('util')
 	, messages = require('../../common/messages');
 
-if (!module.parent) {
+if (!module.parent) 
+{
 	logutils.logger.warn(util.format(messages.warn.invalid_mod_call,
 		module.filename));
 	process.exit(1);
@@ -25,24 +26,19 @@ commonUtils.createRedisClient(function(client) {
 });
 
 var cachePendingQueue = [];
-cacheApi.cachePendingQueue = cachePendingQueue;
-
-cacheApi.createChannelByHashURL = function (hash, URL) {
-	var channel = 'q:' + hash + global.ZWQ_MSG_SEPERATOR + URL;
-	return channel;
-}
 
 /* Function: insertReqCtxToCachePendingQueue
  This function is used to insert req context to cache pending queue
  */
-cacheApi.insertReqCtxToCachePendingQueue = function (req, res, channel) {
+function insertReqCtxToCachePendingQueue (req, res, channel)
+{
 	var obj = {
 		'req':req,
 		'res':res,
 		'channel':channel
 	};
 
-	cacheApi.cachePendingQueue.push(obj);
+	cachePendingQueue.push(obj);
 }
 
 /* Function: checkCachePendingQueue
@@ -50,26 +46,28 @@ cacheApi.insertReqCtxToCachePendingQueue = function (req, res, channel) {
  cachePendingQ. This API will be invoked when we got data on redis channel.
  This API checks the context of this data
  */
-cacheApi.checkCachePendingQueue = function (channel) {
-	if (!cacheApi.cachePendingQueue.length) {
+function checkCachePendingQueue (channel)
+{
+    var qLen = cachePendingQueue.length;
+	if (!qLen) {
         return null;
 	}
 	/* Now check if we have any channel matching with any channel in
 	 pending queue */
 	/* TODO: if we can optimize the searching, may be by HASH */
-	for (var i = 0; i < cacheApi.cachePendingQueue.length; i++) {
-		var qEntry = cacheApi.cachePendingQueue[i];
+	for (var i = 0; i < qLen; i++) {
+		var qEntry = cachePendingQueue[i];
 		if ((qEntry) && (qEntry['channel'] == channel)) {
 			logutils.logger.debug("We got the channel as:" + channel);
 			break;
 		}
 	}
-	if (i == cacheApi.cachePendingQueue.length) {
+	if (i == qLen) {
 		logutils.logger.info("Got PUB msg with channel [" + channel +
 		                     "], but no entry in pendingQ");
 		return null;
 	}
-	return cacheApi.cachePendingQueue[i];
+	return cachePendingQueue[i];
 }
 
 /* Function: deleteCachePendingQueueEntry
@@ -77,11 +75,11 @@ cacheApi.checkCachePendingQueue = function (channel) {
  */
 function deleteCachePendingQueueEntry (channel)
 {
-    var qLen = cacheApi.cachePendingQueue.length;
+    var qLen = cachePendingQueue.length;
     for (var i = 0; i < qLen; i++) {
-        var qEntry = cacheApi.cachePendingQueue[i];
+        var qEntry = cachePendingQueue[i];
         if ((qEntry) && (qEntry['channel'] == channel)) {
-            cacheApi.cachePendingQueue.splice(i, 1);
+            cachePendingQueue.splice(i, 1);
             return;
         }
     }
@@ -91,12 +89,13 @@ function deleteCachePendingQueueEntry (channel)
 /* Function: createDataAndSendToJobServer
  This function is used to create reqData ready to send to Job Server
  */
-cacheApi.createDataAndSendToJobServer = function (jobType, hash, reqData, req, res) {
+function createDataAndSendToJobServer (jobType, hash, reqData, req, res)
+{
 	var reqJSON = JSON.parse(reqData);
 	var reqUrl = reqJSON.data.url;
 	var obj = {
 		cmd:global.STR_SEND_TO_JOB_SERVER,
-		reqStr:reqData
+		reqData:reqData
 	};
 	/* Now create a subscriber channel on that such that when the redis gets
 	 updated with this data, we get a notification
@@ -109,7 +108,7 @@ cacheApi.createDataAndSendToJobServer = function (jobType, hash, reqData, req, r
 	 accordingly based on this conext
 	 */
 	logutils.logger.debug("We got the channel as:" + channel);
-	cacheApi.insertReqCtxToCachePendingQueue(req, res, channel);
+	insertReqCtxToCachePendingQueue(req, res, channel);
 	/* Send the request to master */
 	process.send(obj);
 }
@@ -119,11 +118,12 @@ cacheApi.createDataAndSendToJobServer = function (jobType, hash, reqData, req, r
  then get the cached data, else send a request to job Server to update cache
  and publish the response on redis channel
  */
-cacheApi.queueDataFromCacheOrSendRequest = function (req, res, jobType, jobName, 
-                                                     reqUrl, defCallback, jobRunCount, 
-                                                     firstRunDelay, nextRunDelay,
-                                                     sendToJobServerAlways, appData) {
-	var reqData = cacheApi.createReqData(req, jobType, jobName, reqUrl, jobRunCount,
+function queueDataFromCacheOrSendRequest (req, res, jobType, jobName, 
+                                          reqUrl, defCallback, jobRunCount, 
+                                          firstRunDelay, nextRunDelay,
+                                          sendToJobServerAlways, appData)
+{
+	var reqData = createReqData(req, jobType, jobName, reqUrl, jobRunCount,
 		defCallback, firstRunDelay, nextRunDelay, appData);
 	var reqJSON = JSON.parse(reqData);
 	var reqUrl = reqJSON.data.url;
@@ -179,8 +179,9 @@ cacheApi.queueDataFromCacheOrSendRequest = function (req, res, jobType, jobName,
  if to get data only one server call is required in backend, then set it to 1.
  if defCallback: 0, define the callback in job process section
  */
-cacheApi.createReqData = function (req, type, jobName, reqUrl, runCount, defCallback, 
-                                   firstRunDelay, nextRunDelay, appData) {
+function createReqData (req, type, jobName, reqUrl, runCount, defCallback, 
+                        firstRunDelay, nextRunDelay, appData)
+{
     var authObj = {
         /* authObj contains all the auth related parameters, which may be needed
          * for backend authentication, ex: Config Server or Op Server
@@ -219,8 +220,9 @@ cacheApi.createReqData = function (req, type, jobName, reqUrl, runCount, defCall
  This function is used to insert the response published on redis channel on
  ready Q
  */
-cacheApi.sendResponseByChannel = function (channel, msg) {
-	var obj = cacheApi.checkCachePendingQueue(channel);
+function sendResponseByChannel (channel, msg)
+{
+	var obj = checkCachePendingQueue(channel);
     if (null == obj) {
         return;
     }
@@ -233,7 +235,8 @@ cacheApi.sendResponseByChannel = function (channel, msg) {
 	longPoll.insertResToReadyQ(obj.res, msgParse.data, msgParse.errCode, isJson);
 }
 
-function handleJSONResponse(error, req, res, jsonStr) {
+function handleJSONResponse(error, req, res, jsonStr)
+{
 	if (!error) {
 		longPoll.insertResToReadyQ(res, jsonStr, global.HTTP_STATUS_RESP_OK, 1);
 	} else {
@@ -243,4 +246,10 @@ function handleJSONResponse(error, req, res, jsonStr) {
 }
 
 exports.deleteCachePendingQueueEntry = deleteCachePendingQueueEntry;
+exports.insertReqCtxToCachePendingQueue = insertReqCtxToCachePendingQueue;
+exports.checkCachePendingQueue = checkCachePendingQueue;
+exports.createDataAndSendToJobServer = createDataAndSendToJobServer;
+exports.queueDataFromCacheOrSendRequest = queueDataFromCacheOrSendRequest;
+exports.createReqData = createReqData;
+exports.sendResponseByChannel = sendResponseByChannel;
 

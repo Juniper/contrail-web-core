@@ -30,7 +30,8 @@ authAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
  *  1. This function is used to get the user role by keystone roleList response
  *  @private function
  */
-function getUserRoleByAuthResponse (resRoleList) {
+function getUserRoleByAuthResponse (resRoleList)
+{
     if ((null == resRoleList) || (!resRoleList.length)) {
         /* Ideally if Role is not associated, then we should not allow user to
          * login, but we are assigning role as 'Member' to the user to not to
@@ -53,7 +54,8 @@ function getUserRoleByAuthResponse (resRoleList) {
  *     req.session key as project name
  *  @private function
  */
-function createProjectListInReqObj (req, tenantList) {
+function createProjectListInReqObj (req, tenantList)
+{
     var tenantCount = tenantList.length;
     var dataObj = {};
     var projectName = null;
@@ -73,7 +75,8 @@ function createProjectListInReqObj (req, tenantList) {
  *  1. This API is used to get the list of the projects for current User using token
  *  @public function
  */
-function getTenantListByToken (token, callback) {
+function getTenantListByToken (token, callback)
+{
   var url = '/v2.0/tenants';
   var headers = {};
 
@@ -97,7 +100,8 @@ function getTenantListByToken (token, callback) {
 /* Function: getTenantList
     This API is used to get the list of projects for the logged in user
  */
-function getTenantList (req, callback) {
+function getTenantList (req, callback)
+{
     var token = req.session.last_token_used;
     getTenantListByToken(token, function(err, data) {
         if ((err) &&
@@ -276,7 +280,8 @@ function getToken (req, tenantId, forceAuth, callback)
     });
 }
 
-function authenticate (req, res, callback) {
+function authenticate (req, res, callback)
+{
     var self = this,
         post = req.body,
         username = post.username,

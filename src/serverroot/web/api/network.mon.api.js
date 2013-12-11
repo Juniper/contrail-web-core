@@ -14,6 +14,8 @@ var cacheApi = require('../core/cache.api'),
     opApiServer = require('../../common/opServer.api'),
     configApiServer = require('../../common/configServer.api'),
     infra = require('./infraoverview.api'),
+    logutils = require('../../utils/log.utils'),
+    nwMonUtils = require('../../common/nwMon.utils'),
     appErrors = require('../../errors/app.errors');
 
 nwMonApi = module.exports;
@@ -21,7 +23,8 @@ opServer = rest.getAPIServer({apiName: global.label.OPS_API_SERVER,
                               server: config.analytics.server_ip, 
                               port: config.analytics.server_port });
 
-nwMonApi.getTopNetworkDetailsByDomain = function(req, res) {
+function getTopNetworkDetailsByDomain (req, res)
+{
     /* First get all the network details in this domain */
     var urlLists = [], j = 0;
     var domain = req.param('fqName');
@@ -61,7 +64,8 @@ nwMonApi.getTopNetworkDetailsByDomain = function(req, res) {
                                              0, 1, 0, -1, true, appData);
 }
 
-nwMonApi.getTopNetworkDetailsByProject = function(req, res) {
+function getTopNetworkDetailsByProject (req, res) 
+{
     var project         = req.param('fqName');
     var minsSince       = req.query['minsSince'];
     var limit           = req.query['limit'] || global.NW_MON_TOP_DISPLAY_COUNT_DFLT_VAL;
@@ -103,7 +107,8 @@ nwMonApi.getTopNetworkDetailsByProject = function(req, res) {
                                              0, 1, 0, -1, true, appData);
 }
 
-nwMonApi.getFlowSeriesByVN = function(req, res) {
+function getFlowSeriesByVN (req, res) 
+{
     var minsSince       = req.query['minsSince'];
     var vnName          = req.query['srcVN'];
     var sampleCnt       = req.query['sampleCnt'];
@@ -146,7 +151,8 @@ nwMonApi.getFlowSeriesByVN = function(req, res) {
                                              0, 1, 0, -1, true, appData);
 }
 
-nwMonApi.getFlowSeriesByInstance = function(req, res) {
+function getFlowSeriesByInstance (req, res) 
+{
     var vmUUID      = req.query['vmUUID'];
     var srcVN       = req.query['srcVN'];
     var minsSince   = req.query['minsSince'];
@@ -178,7 +184,8 @@ nwMonApi.getFlowSeriesByInstance = function(req, res) {
                                              0, 1, 0, -1, true, appData);
 }
 
-nwMonApi.getProjectSummary = function(req, res, appData) {
+function getProjectSummary (req, res, appData) 
+{
     var urlLists = [];
     var project = req.param('fqName');
     url = "/virtual-networks?parent_type=project&parent_fq_name_str=" + project;
@@ -191,7 +198,8 @@ nwMonApi.getProjectSummary = function(req, res, appData) {
     });
 }
 
-nwMonApi.getNetworkTopology = function (req, res) {
+function getNetworkTopology (req, res) 
+{
   var url, domain = req.param('domain');
   url = "/projects?domain=" + domain;
   var includeDomain = req.param('includeDomain');
@@ -217,7 +225,8 @@ nwMonApi.getNetworkTopology = function (req, res) {
                                            0, 0, 0, 1 * 60 * 1000, forceRefresh, appData);
 }
 
-nwMonApi.getNetworStats = function(req, res) {
+function getNetworStats (req, res) 
+{
     var fqName          = req.query['fqName'];
     var type            = req.query['type'];
     var limit           = req.query['limit'];
@@ -300,7 +309,8 @@ function getVNVMData (vmJSON, vmName)
     return resultJSON;
 }
 
-nwMonApi.getVMFloatingIPList = function(req, res) {
+function getVMFloatingIPList (req, res) 
+{
     var vmName = req.param('vmName');
     var url = '/analytics/virtual-machine/' + vmName;
     opServer.authorize(function () {
@@ -315,7 +325,8 @@ nwMonApi.getVMFloatingIPList = function(req, res) {
     });                                
 }
 
-nwMonApi.getVNStatsSummary = function(req, res) {
+function getVNStatsSummary (req, res) 
+{
     var vnName = req.param('fqName');
     var url = '/analytics/virtual-network/' + vnName;
     var json = {};
@@ -342,7 +353,8 @@ nwMonApi.getVNStatsSummary = function(req, res) {
     });                                
 }
 
-nwMonApi.getTopNwDetailsByVM = function(req, res) {
+function getTopNwDetailsByVM (req, res) 
+{
     var fqName          = req.query['fqName'];
     var type            = req.query['type'];
     var limit           = req.query['limit'];
@@ -376,7 +388,8 @@ nwMonApi.getTopNwDetailsByVM = function(req, res) {
                                              0, 1, 0, -1, true, appData);
 }
 
-nwMonApi.getFlowSeriesByVM = function(req, res) {
+function getFlowSeriesByVM (req, res) 
+{
     var vnName          = req.query['fqName'];
     var sampleCnt       = req.query['sampleCnt'];
     var minsSince       = req.query['minsSince'];
@@ -444,7 +457,8 @@ function initVmStatResultData (resultJSON, vmName)
     resultJSON['out_bytes'] = 0;
 }
 
-nwMonApi.getVMStatsSummary = function(req, res) {
+function getVMStatsSummary (req, res) 
+{
     var url;
     var vmVnName        = req.query['vmVnName'];
     var resultJSON      = {};
@@ -472,7 +486,8 @@ nwMonApi.getVMStatsSummary = function(req, res) {
     });
 }
 
-nwMonApi.getConnectedNWsStatsSummary = function(req, res) {
+function getConnectedNWsStatsSummary (req, res) 
+{
     var srcVN   = req.query['srcVN'];
     var destVN  = req.query['destVN'];
 
@@ -489,7 +504,8 @@ nwMonApi.getConnectedNWsStatsSummary = function(req, res) {
                                              appData);
 }
 
-nwMonApi.getConnectedNWsStatsByType = function (req, res) {
+function getConnectedNWsStatsByType (req, res) 
+{
     var srcVN       = req.query['srcVN'];
     var destVN      = req.query['destVN'];
     var type        = req.query['type'];
@@ -528,7 +544,8 @@ nwMonApi.getConnectedNWsStatsByType = function (req, res) {
                                              appData);
 }
 
-nwMonApi.getFlowEntriesByFlowTuple = function(req, res) {
+function getFlowEntriesByFlowTuple (req, res) 
+{
     var srcVN = req.query['sourcevn'];
     var destVN = req.query['destvn'];
     var srcIP = req.query['sourceip'];
@@ -562,7 +579,8 @@ nwMonApi.getFlowEntriesByFlowTuple = function(req, res) {
 }
 
 
-nwMonApi.getNetworkTopStatsDetails = function(req, res) {
+function getNetworkTopStatsDetails (req, res) 
+{
     var type        = req.query['type'];
     var limit       = req.query['limit'];
     var port        = req.query['port'];
@@ -601,7 +619,8 @@ nwMonApi.getNetworkTopStatsDetails = function(req, res) {
                                              appData);
 }
 
-getTrafficInEgrStat = function(resultJSON, srcVN, destVN) {
+function getTrafficInEgrStat (resultJSON, srcVN, destVN) 
+{
     var inStat = resultJSON['in_stats'];
     var outStat = resultJSON['out_stats'];
     var inStatLen = inStat.length;
@@ -630,7 +649,8 @@ getTrafficInEgrStat = function(resultJSON, srcVN, destVN) {
     return results;
 }
 
-nwMonApi.getVNStatsJSONSummary = function(resultJSON, results) {
+function getVNStatsJSONSummary (resultJSON, results) 
+{
     var len = results.length;
     var VNAgentData;
     var inStat;
@@ -676,7 +696,8 @@ nwMonApi.getVNStatsJSONSummary = function(resultJSON, results) {
     }
 }
 
-getNetworkInGressEgressTrafficStat = function(srcVN, destVN, callback) {
+function getNetworkInGressEgressTrafficStat (srcVN, destVN, callback) 
+{
     var urlLists = []; 
     var resultJSON = []; 
 
@@ -688,7 +709,7 @@ getNetworkInGressEgressTrafficStat = function(srcVN, destVN, callback) {
     async.map(urlLists, commonUtils.getJsonViaInternalApi(opServer.api, true),
               function(err, results) {
         if ((null == err) && results) {
-            nwMonApi.getVNStatsJSONSummary(resultJSON, results);
+            getVNStatsJSONSummary(resultJSON, results);
             /* Now get the data */
             var jsonData = []; 
             jsonData[0] = getTrafficInEgrStat(resultJSON[0], srcVN, destVN);
@@ -700,7 +721,8 @@ getNetworkInGressEgressTrafficStat = function(srcVN, destVN, callback) {
     });            
 }
 
-formatNetworkStatsSummary = function(data) {
+function formatNetworkStatsSummary (data) 
+{
     var results = {};
     results['fromNW'] = {};
     try {
@@ -747,7 +769,8 @@ formatNetworkStatsSummary = function(data) {
     return results;
 }
 
-swapInEgressData = function(statData) {
+function swapInEgressData (statData) 
+{
     var resultJSON = {};
     resultJSON['fromNW'] = {};
     resultJSON['toNW'] = {};
@@ -759,7 +782,8 @@ swapInEgressData = function(statData) {
     return resultJSON;
 }
 
-nwMonApi.getNetworkStatsSummary = function(req, res) {
+function getNetworkStatsSummary (req, res) 
+{
     var srcVN = req.query['srcVN'];
     var destVN = req.query['destVN'];
     var urlLists = [];
@@ -777,7 +801,8 @@ nwMonApi.getNetworkStatsSummary = function(req, res) {
     });
 }
 
-getVNAllStatsJSONSummary = function(srcVN, inputJSON, callback) {
+function getVNAllStatsJSONSummary (srcVN, inputJSON, callback) 
+{
     var index = 0;
     var urlLists = [];
     var otherVNList = [];
@@ -811,7 +836,8 @@ getVNAllStatsJSONSummary = function(srcVN, inputJSON, callback) {
     });
 }
 
-parseVNAllStatSummary = function(resultJSON, srcVN, otherVNList, data) {
+function parseVNAllStatSummary (resultJSON, srcVN, otherVNList, data) 
+{
     var index       = 0;
     var resultJSON  = [];
     var len = data.length;
@@ -821,8 +847,8 @@ parseVNAllStatSummary = function(resultJSON, srcVN, otherVNList, data) {
         tempResults[0] = data[i];
         tempResults[1] = data[i + 1];
         resultJSON[index] =[];
-        nwMonApi.getVNStatsJSONSummary(resultJSON[index],
-                                       commonUtils.cloneObj(tempResults));
+        getVNStatsJSONSummary(resultJSON[index],
+                              commonUtils.cloneObj(tempResults));
         resultJSON[index][0] = getTrafficInEgrStat(resultJSON[index][0], srcVN,
                                                    otherVNList[i/2]); 
         resultJSON[index][1] = getTrafficInEgrStat(resultJSON[index][1],
@@ -833,7 +859,8 @@ parseVNAllStatSummary = function(resultJSON, srcVN, otherVNList, data) {
     return resultJSON;
 }
 
-nwMonApi.getAllConnNetStatDetails = function(req, res) {
+function getAllConnNetStatDetails (req, res) 
+{
     var fqName = req.query['fqName'];
     var url = '/analytics/virtual-network/' + fqName;
     var resultJSON = [];
@@ -844,7 +871,7 @@ nwMonApi.getAllConnNetStatDetails = function(req, res) {
             return;
         }
         results = [data];
-        nwMonApi.getVNStatsJSONSummary(resultJSON, results);
+        getVNStatsJSONSummary(resultJSON, results);
         getVNAllStatsJSONSummary(fqName, resultJSON[0],
                                  function(err, otherVNList, data) {
             resultJSON = parseVNAllStatSummary(resultJSON, fqName, otherVNList, data);
@@ -853,7 +880,8 @@ nwMonApi.getAllConnNetStatDetails = function(req, res) {
     });
 }
 
-nwMonApi.getPortLevelFlowSeries = function(req, res) {
+function getPortLevelFlowSeries (req, res) 
+{
     var ip          = req.query['ip'];
     var port        = req.query['port'];
     var fqName      = req.query['fqName'];
@@ -894,7 +922,8 @@ nwMonApi.getPortLevelFlowSeries = function(req, res) {
                                              appData);
 }
 
-nwMonApi.getFlowSeriesByCPU = function(req, res) {
+function getFlowSeriesByCPU (req, res) 
+{
     var source    = req.query['source'];
     var sampleCnt = req.query['sampleCnt'];
     var minsSince = req.query['minsSince'];
@@ -1547,7 +1576,7 @@ function parseAndGetMissingVNsUVEs (fqName, vnUVE, callback)
     var addNew = false;
     var dataObjArr = [];
     var arrIndex = 0;
-    var url = '/analytics/virtual-network/*?kfilt=';
+    var url = '/analytics/uves/virtual-network/*?kfilt=';
 
     for (var i = 0; i < vnCnt; i++) {
         vnName = vnUVE[i]['name'];
@@ -1642,7 +1671,13 @@ function parseAndGetMissingVNsUVEs (fqName, vnUVE, callback)
         callback(null, resultJSON);
         return;
     }
-    opServer.api.get(url, function(err, data) {
+    var postData = {};
+    var kfiltArr = url.split('/*?kfilt=');
+    url = kfiltArr[0];
+    if (kfiltArr[1]) {
+        postData['kfilt'] = kfiltArr[1].split(',');
+    }
+    opServer.api.post(url, postData, function(err, data) {
         if (err || (null == data)) {
             logutils.logger.error('In Network Topology: we did not get data ' +
                                   'for: ' + url);
@@ -1842,7 +1877,7 @@ function updateServiceInstanceConfigData (scResultJSON, siConfig, appData,
                     storedSIList[fqn] = fqn;
                     reqUrl = '/service-instance/' +
                         siConfig[k]['uuid'];
-                    commonUtils.createReqObj(dataObjArr, l++, reqUrl,
+                    commonUtils.createReqObj(dataObjArr, reqUrl,
                                              global.HTTP_REQUEST_GET, 
                                              null, null, null,
                                              appData);
@@ -1916,7 +1951,59 @@ function makeBulkDataByFqn (fqName, data)
     }
     return data;
 }
- 
+
+function createNWTopoVNNode (vnName, status)
+{
+    var node = {};
+    node['name'] = vnName;
+    node['more_attr'] = {};
+    node['node_type'] = global.STR_NODE_TYPE_VIRTUAL_NETWORK;
+    node['status'] = status;
+    return node;
+}
+
+function updateMissingVNsByConfig (fqName, nwTopoData, configData)
+{
+    var nwList = {};
+    try {
+        var vnConfig = configData['virtual-networks'];
+        var vnConfigCnt = vnConfig.length;
+    } catch(e) {
+        return nwTopoData;
+    }
+    try {
+        var nodesCnt = nwTopoData['nodes'].length;
+    } catch(e) {
+        nwTopoData = {};
+        nwTopoData['nodes'] = [];
+        nodesCnt = 0;
+    }
+    try {
+        var linkCnt = nwTopoData['links'].length;
+    } catch(e) {
+        nwTopoData['links'] = [];
+    }
+
+    for (var i = 0; i < nodesCnt; i++) {
+        var vn = nwTopoData['nodes'][i]['name'];
+        if (vn) {
+            nwList[vn] = vn;
+        }
+    }
+    for (i = 0; i < vnConfigCnt; i++) {
+        try {
+            var vn = vnConfig[i]['fq_name'].join(':');
+            if ((nwList[vn] == null) &&
+                (true == isAllowedVN(fqName, vn))) {
+                nwTopoData['nodes'][nodesCnt++] = createNWTopoVNNode(vn, "Active");
+            }
+        } catch(e) {
+            continue;
+        }
+    }
+    return nwTopoData;
+}
+
 function getNetworkTreeTopology (req, res, appData)
 {
     var fqName = req.query['fqName'];
@@ -1928,24 +2015,25 @@ function getNetworkTreeTopology (req, res, appData)
         'UveVirtualNetworkAgent:out_tpkts,UveVirtualNetworkAgent:in_tpkts,' +
         'UveVirtualNetworkAgent:in_stats,UveVirtualNetworkAgent:virtualmachine_list,' +
         'UveVirtualNetworkAgent:associated_fip_count,UveVirtualNetworkAgent:out_stats,' +
-        'UveVirtualNetworkConfig:connected_networks,UveVirtualNetworkConfig:partially_connected_networks';
+        'UveVirtualNetworkConfig';
 
-    commonUtils.createReqObj(dataObjArr, 0, reqUrl, global.HTTP_REQUEST_GET,
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
                              null, opApiServer, null, appData);
     reqUrl = '/analytics/service-chain/*' + fqName + '*';
-    commonUtils.createReqObj(dataObjArr, 1, reqUrl, global.HTTP_REQUEST_GET,
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
                              null, opApiServer, null, appData);
     reqUrl = '/virtual-networks';
-    commonUtils.createReqObj(dataObjArr, 2, reqUrl, global.HTTP_REQUEST_GET,
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
                              null, configApiServer, null, appData);
     reqUrl = '/service-instances';
-    commonUtils.createReqObj(dataObjArr, 3, reqUrl, global.HTTP_REQUEST_GET,
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
                              null, configApiServer, null, appData);
     async.map(dataObjArr, 
               commonUtils.getServerResponseByRestApi(configApiServer, false),
               function(err, data) {
         data[0] = makeBulkDataByFqn(fqName, data[0]);
         processNetworkTopology(fqName, data, appData, function(err, result) {
+            result = updateMissingVNsByConfig(fqName, result, data[2]);
             commonUtils.handleJSONResponse(null, res, result);
         });
     });
@@ -1987,6 +2075,7 @@ function processVMDetailsUVE (fqName, vmUVE)
 
 function getVMListByType (type, configData, appData, callback)
 {
+    var insertedVMList = {};
     var idx = 0;
     var vmOpList = [];
     var dataObjArr = [];
@@ -1999,9 +2088,17 @@ function getVMListByType (type, configData, appData, callback)
         */
         vmList =
             configData['virtual-network']['virtual_machine_interface_back_refs'];
+	if (null == vmList) {
+	    callback(null, null);
+	    return;
+	}
         var vmCnt = vmList.length;
         for (var i = 0; i < vmCnt; i++) {
-            vmOpList[idx++] = vmList[i]['to'][0];
+            vmUUID = vmList[i]['to'][0];
+            if (null == insertedVMList[vmUUID]) {
+                vmOpList[idx++] = vmUUID;
+                insertedVMList[vmUUID] = vmUUID;
+            }
         }
         callback(null, vmOpList);
     } else if (type == 'project') {
@@ -2018,7 +2115,7 @@ function getVMListByType (type, configData, appData, callback)
             }
             */
             reqUrl = '/virtual-network/' + vnList[i]['uuid'];
-            commonUtils.createReqObj(dataObjArr, j++, reqUrl, null, null, null, null,
+            commonUtils.createReqObj(dataObjArr, reqUrl, null, null, null, null,
                                      appData);
         }
         async.map(dataObjArr,
@@ -2034,9 +2131,14 @@ function getVMListByType (type, configData, appData, callback)
                 }
                 var vmCnt = vmList.length;
                 for (var j = 0; j < vmCnt; j++) {
-                    vmOpList[idx++] = vmList[j]['to'][0]; 
+                    vmUUID = vmList[j]['to'][0];
+                    if (null == insertedVMList[vmUUID]) {
+                        vmOpList[idx++] = vmUUID;
+                        insertedVMList[vmUUID] = vmUUID;
+                    }
                 }
             }
+            vmOpList.sort();
             callback(null, vmOpList);
         });
     }
@@ -2061,7 +2163,7 @@ function getVMDetails (req, res, appData)
         return;
     }
 
-    var opServerUrl = '/analytics/virtual-machine/*?kfilt=';
+    var opServerUrl = '/analytics/uves/virtual-machine';
     configApiServer.apiGet(url, appData, function(err, data) {
         if (err || (null == data)) {
             commonUtils.handleJSONResponse(err, res, resultJSON);
@@ -2072,8 +2174,9 @@ function getVMDetails (req, res, appData)
                 commonUtils.handleJSONResponse(err, res, resultJSON);
                 return;
             }
-            opServerUrl += vmOpList.join(',');
-            opApiServer.apiGet(opServerUrl, appData, function(err, data) {
+            var postData = {};
+            postData['kfilt'] = vmOpList;
+            opApiServer.apiPost(opServerUrl, postData, appData, function(err, data) {
                 if (err || (null == data)) {
                     commonUtils.handleJSONResponse(err, res, resultJSON);
                     return;
@@ -2082,24 +2185,6 @@ function getVMDetails (req, res, appData)
             });
         });
     });
-}
-
-function getnThIndexByLastKey (lastKey, entries, matchStr)
-{
-    if (null == lastKey) {
-        return -1;
-    }
-    try {
-        var cnt = entries.length;
-    } catch(e) {
-        return -1;
-    }
-    for (var i = 0; i < cnt; i++) {
-        if (lastKey == entries[i][matchStr]) {
-            return i;
-        }
-    }
-    return -2;
 }
 
 function processInstanceReqByLastUUID (lastUUID, count, fromConfigList, 
@@ -2115,6 +2200,16 @@ function processInstanceReqByLastUUID (lastUUID, count, fromConfigList,
     });
 }
 
+function processVirtualNetworksReqByLastUUID (lastUUID, count, fromConfigList,
+                                              vnList, filtUrl, callback)
+{
+    getOpServerPagedResponseByLastKey(lastUUID, count, fromConfigList, vnList, 
+                                      'virtual-network', filtUrl, 
+                                      function(err, data) {
+        callback(err, data);
+    });
+}
+
 function getOpServerPagedResponseByLastKey (lastKey, count, isFromConfig,
                                             list, type, filtUrl, callback)
 {
@@ -2122,7 +2217,7 @@ function getOpServerPagedResponseByLastKey (lastKey, count, isFromConfig,
     var retLastUUID = null;
     var resultJSON = {};
     var typeStr = type + 's';
-    var url = '/analytics/' + type + '/*?kfilt=';
+    var url = '/analytics/uves/' + type + '/*?kfilt=';
 
     resultJSON['data'] = [];
     resultJSON['lastKey'] = null;
@@ -2134,7 +2229,7 @@ function getOpServerPagedResponseByLastKey (lastKey, count, isFromConfig,
     } else {
         matchStr = 'name';
     }
-    var index = getnThIndexByLastKey (lastKey, list, matchStr);
+    var index = nwMonUtils.getnThIndexByLastKey (lastKey, list, matchStr);
     if (index == -2) {
         callback(null, resultJSON);
         return;
@@ -2174,14 +2269,21 @@ function getOpServerPagedResponseByLastKey (lastKey, count, isFromConfig,
     /* filtURL already contains the url, /analytics/uves, so remove this and
      * then append to our url
      */
+    var kfiltUrlKey = '/*?kfilt=';
+    var splArr = url.split(kfiltUrlKey);
+    var postData = {};
+    if (splArr.length == 2) {
+        postData['kfilt'] = splArr[1].split(',');
+        url = splArr[0];
+    }
+     
     if (filtUrl) {
-        var pos = filtUrl.indexOf('cfilt');
-        if (pos != -1) {
-            filt = filtUrl.slice(pos);
-            url += '&' + filt;
+        var cfiltArr = filtUrl.split('cfilt=');
+        if (cfiltArr.length == 2) {
+            postData['cfilt'] = cfiltArr[1].split(',');
         }
     }
-    opServer.api.get(url, function(err, data) {
+    opServer.api.post(url, postData, function(err, data) {
         resultJSON['data'] = data;
         resultJSON['lastKey'] = retLastUUID;
         if (null == retLastUUID) {
@@ -2193,24 +2295,24 @@ function getOpServerPagedResponseByLastKey (lastKey, count, isFromConfig,
     });
 }
 
-function makeUVEList (keys)
+function createEmptyPaginatedData ()
 {
-    var result = [];
-    var len = keys.length;
-    for (var i = 0; i < len; i++) {
-        result[i] = {};
-        result[i]['name'] = keys[i];
-    }
-    return result;
+    var resultJSON = {};
+    resultJSON['data'] = {};
+    resultJSON['data']['value'] = [];
+    resultJSON['more'] = false;
+    resultJSON['lastKey'] = null;
+    return resultJSON;
 }
 
 function getInstanceDetailsByFqn (fqnUUID, lastUUID, count, res, appData)
 {
-    var resultJSON = [];
     var fqnUUID = res.req.query['fqnUUID'];
     var type    = res.req.query['type'];
     var url = null;
     var filtUrl = null;
+
+    var resultJSON = createEmptyPaginatedData();
 
     if (type == 'vn') {
         url = '/virtual-network/' + fqnUUID;
@@ -2232,7 +2334,7 @@ function getInstanceDetailsByFqn (fqnUUID, lastUUID, count, res, appData)
                 commonUtils.handleJSONResponse(err, res, resultJSON);
                 return;
             }
-            var data = makeUVEList(vmOpList);
+            var data = nwMonUtils.makeUVEList(vmOpList);
             processInstanceReqByLastUUID(lastUUID, count, false, data, 
                                          filtUrl, function(err, data) {
                 commonUtils.handleJSONResponse(err, res, data);
@@ -2241,9 +2343,104 @@ function getInstanceDetailsByFqn (fqnUUID, lastUUID, count, res, appData)
     });
 }
 
-function getInstanceDetails (req, res, appData)
+function getVNListByProject (projectFqn, appData, callback)
 {
     var resultJSON = [];
+    var url = '/virtual-networks?parent_type=project&parent_fq_name_str=' +
+        projectFqn;
+
+    configApiServer.apiGet(url, appData, function(err, data) {
+        if (err || (null == data)) {
+            callback(err, data);
+            return;
+        }
+        var vnData = data['virtual-networks'];
+        var vnCnt = vnData.length;
+        for (var i = 0; i < vnCnt; i++) {
+            resultJSON.push(vnData[i]['fq_name'].join(':'));
+        }
+        resultJSON.sort();
+        callback(null, resultJSON);
+    });
+}
+
+function getVirtualNetworksDetailsByFqn (fqn, lastUUID, count, res, appData)
+{
+    var fqn = res.req.query['fqn'];
+    var filtUrl = null;
+
+    var filtData = infra.buildBulkUVEUrls(res.req.body, appData);
+    if (filtData && filtData[0]) {
+        filtUrl = filtData[0]['reqUrl'];
+    }
+    var fqnArr = fqn.split(':');
+    var len = fqnArr.length;
+    var resultJSON = createEmptyPaginatedData();
+    
+    if (2 == len) {
+        /* Project */
+        getVNListByProject(fqn, appData, function(err, vnList) {
+            if (err || (null == vnList) || (!vnList.length)) {
+                commonUtils.handleJSONResponse(err, res, resultJSON);
+                return;
+            }
+
+            var data = nwMonUtils.makeUVEList(vnList);
+            processVirtualNetworksReqByLastUUID(lastUUID, count, false, data,
+                                                filtUrl, function(err, data) {
+                commonUtils.handleJSONResponse(err, res, data);
+            });
+        });
+    }
+}
+
+function getVirtualNetworksDetails (req, res, appData)
+{
+    var fqn = req.query['fqn'];
+    var lastUUID = req.query['lastKey'];
+    var count = req.query['count'];
+    var url = '/analytics/uves/virtual-networks';
+    var filtUrl = null;
+
+    var resultJSON = createEmptyPaginatedData();
+    var filtData = infra.buildBulkUVEUrls(res.req.body, appData);
+    if (filtData && filtData[0]) {
+        filtUrl = filtData[0]['reqUrl'];
+    }
+    if (null == count) {
+        count = -1;
+    } else {
+        count = parseInt(count);
+    }
+    if (null != fqn) {
+        getVirtualNetworksDetailsByFqn(fqn, lastUUID, count, res, appData);
+        return;
+    }
+    opApiServer.apiGet(url, appData, function(err, data) {
+        if (err || (null == data)) {
+            commonUtils.handleJSONResponse(err, res, resultJSON);
+            return;
+        }
+        data.sort(sortUVEList);
+        processVirtualNetworksReqByLastUUID(lastUUID, count, false, data, 
+                                            filtUrl, function(err, data) {
+            commonUtils.handleJSONResponse(err, res, data);
+        });
+    });
+}
+
+function sortUVEList (uveEntry1, uveEntry2)
+{
+    if (uveEntry1['name'] > uveEntry2['name']) {
+        return 1;
+    } else if (uveEntry1['name'] < uveEntry2['name']) {
+        return -1;
+    }
+    return 0;
+}
+
+function getInstanceDetails (req, res, appData)
+{
     var fqnUUID = req.query['fqnUUID'];
     var lastUUID = req.query['lastKey'];
     var count = req.query['count'];
@@ -2251,12 +2448,16 @@ function getInstanceDetails (req, res, appData)
     var url = '/analytics/virtual-machines';
     var filtUrl = null;
 
+    var resultJSON = createEmptyPaginatedData();
+
     var filtData = infra.buildBulkUVEUrls(res.req.body, appData);
     if (filtData && filtData[0]) {
         filtUrl = filtData[0]['reqUrl'];
     }
     if (null == count) {
         count = -1;
+    } else {
+        count = parseInt(count);
     }
     if (null != fqnUUID) {
         if (null == type) {
@@ -2273,6 +2474,7 @@ function getInstanceDetails (req, res, appData)
             commonUtils.handleJSONResponse(err, res, resultJSON);
             return;
         }
+        data.sort(sortUVEList);
         processInstanceReqByLastUUID(lastUUID, count, false, data, 
                                      filtUrl, function(err, data) {
             commonUtils.handleJSONResponse(err, res, data);
@@ -2280,9 +2482,31 @@ function getInstanceDetails (req, res, appData)
     });
 }
 
+/* List all public functions */
+exports.getTopNetworkDetailsByDomain = getTopNetworkDetailsByDomain;
+exports.getTopNetworkDetailsByProject = getTopNetworkDetailsByProject;
+exports.getFlowSeriesByVN = getFlowSeriesByVN;
+exports.getFlowSeriesByInstance = getFlowSeriesByInstance;
+exports.getProjectSummary = getProjectSummary;
+exports.getNetworkTopology = getNetworkTopology;
+exports.getNetworStats = getNetworStats;
+exports.getVMFloatingIPList = getVMFloatingIPList;
+exports.getVNStatsSummary = getVNStatsSummary;
+exports.getTopNwDetailsByVM = getTopNwDetailsByVM;
+exports.getFlowSeriesByVM = getFlowSeriesByVM;
+exports.getVMStatsSummary = getVMStatsSummary;
+exports.getConnectedNWsStatsSummary = getConnectedNWsStatsSummary;
+exports.getConnectedNWsStatsByType = getConnectedNWsStatsByType;
+exports.getFlowEntriesByFlowTuple = getFlowEntriesByFlowTuple;
+exports.getNetworkTopStatsDetails = getNetworkTopStatsDetails;
+exports.getNetworkStatsSummary = getNetworkStatsSummary;
+exports.getAllConnNetStatDetails = getAllConnNetStatDetails;
+exports.getPortLevelFlowSeries = getPortLevelFlowSeries;
+exports.getFlowSeriesByCPU = getFlowSeriesByCPU;
 exports.getVirtualNetworksSummary = getVirtualNetworksSummary;
 exports.getVirtualMachinesSummary = getVirtualMachinesSummary;
 exports.getNetworkTreeTopology = getNetworkTreeTopology;
 exports.getVMDetails = getVMDetails;
 exports.getInstanceDetails = getInstanceDetails;
+exports.getVirtualNetworksDetails = getVirtualNetworksDetails;
 

@@ -12,6 +12,9 @@ global = {};
 global.service = {};
 global.service.MAINSEREVR = 'mainServer';
 global.service.MIDDLEWARE = 'middleware';
+
+global.STR_MAIN_WEB_SERVER_READY = 'mainWebServerReady';
+
 /* JOB */
 global.FLOW_CACHE_DATA_SORT = 'flowCacheSortJSONData';
 global.STR_JOB_RUN_COUNT = 'runCount';
@@ -40,6 +43,14 @@ global.QE_DFLT_REDIS_DB = 2;
 /* Generic Caching related global variables */
 global.STR_JOB_TYPE_CACHE = 'cache';
 global.STR_SEND_TO_JOB_SERVER = 'sendToJobServer';
+global.STR_DISCOVERY_SERVICE_RESPONSE = 'discoveryServiceResponse';
+global.DISC_SERVICE_TYPE_OP_SERVER = 'OpServer';
+global.DISC_SERVICE_MAX_INST_COUNT_OP_SERVER = 20;
+global.DISC_SERVICE_TYPE_API_SERVER = 'ApiServer';
+global.DISC_SERVICE_MAX_INST_COUNT_API_SERVER = 20;
+global.DISC_SERVER_SUB_CLINET = 'discoveryServiceSubscribeClient';
+global.DISC_SERVER_SUB_CLIENT_RESPONSE = 'discoveryServiceSubscribeClientResp';
+global.DISC_SERVICE_MAX_INST_COUNT = 20;
 
 /* Topology tree caching */
 global.STR_GET_PROJECTS_TREE = 'getProjectsTree';
@@ -78,7 +89,7 @@ global.HTTP_STATUS_PAGE_NOT_FOUND = 404;
 global.HTTP_STATUS_FORBIDDEN_STR = 'Unauthorized access';
 global.HTTP_STATUS_INTERNAL_ERROR = 500;
 global.HTTP_STATUS_GATEWAY_TIMEOUT = 504;
-global.STR_CACHE_RETRIEVE_ERROR = 'Redis GET error';
+global.STR_CACHE_RETRIEVE_ERROR = 'Server data retrieval error';
 global.STR_HTTP_REQ_INTERNAL_ERROR = 'Internal error occurred';
 global.STR_JOB_TYPE_CACHE_FLOW_DATA = 'cacheFlowData';
 global.STR_JOB_TYPE_CACHE_FLOW_DATA_TIME = 'cacheFlowDataTime';
@@ -179,6 +190,7 @@ global.label = {};
 global.label.VNCONFIG_API_SERVER = 'vnconfig-api-server';
 global.label.OPS_API_SERVER = 'ops-api-server';
 global.label.IDENTITY_SERVER = 'identity-server';
+global.label.DISCOVERY_SERVER = 'discovery-server';
 global.label.API_SERVER = 'api-server'
 global.SANDESH_CONTROL_NODE_PORT = '8083';
 global.SANDESH_COMPUTE_NODE_PORT = '8085';
@@ -214,8 +226,7 @@ global.QUERY_JSON = {
 };
 
 global.FORMAT_TABLE_COLUMNS = {
-    FlowSeriesTable: {"sum(bytes)": "sum_bytes", "sum(packets)": "sum_packets", "avg(bytes)": "avg_bytes", "avg(packets)": "avg_packets"},
-    FlowRecordTable: {"agg-bytes": "agg_bytes", "agg-packets": "agg_packets"}
+    'FlowSeriesTable': {"sum(bytes)": "sum_bytes", "sum(packets)": "sum_packets", "avg(bytes)": "avg_bytes", "avg(packets)": "avg_packets"}
 };
 
 global.VALID_LIKE_OPR_FIELDS = ['sourcevn', 'destvn'];
@@ -226,6 +237,7 @@ global.DEFAULT_ASYNC_REQUEST_TIMEOUT = 30 * 1000;
 /* 8 seconds */
 global.BGP_NODE_SUMMARY_GET_TIMEOUT = 5 * 1000;
 /* 5 Seconds */
+global.DEFAULT_CB_TIMEOUT = 20 * 1000;
 
 global.QUERY_STRING_SORT_ASC = 1;
 global.QUERY_STRING_SORT_DESC = 2;

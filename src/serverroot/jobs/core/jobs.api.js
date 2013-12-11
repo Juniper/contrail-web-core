@@ -14,6 +14,7 @@ var redis = require("redis")
     , commonUtils = require('../../utils/common.utils')
     , eventEmitter = require('events').EventEmitter
     , async = require('async')
+    , discServ = require('./discoveryservice.api')
 	, messages = require('../../common/messages');
 
 if (!module.parent) {
@@ -24,13 +25,13 @@ if (!module.parent) {
 
 var jobListenerReadyQ = {};
 var jobListenerReadyQEvent = new eventEmitter();
-jobsApi.jobListenerReadyQEvent = jobListenerReadyQEvent;
 
 jobsApi.kue = kue;
 
 jobsApi.storeQ = {};
 
-kue.redis.createClient = function () {
+kue.redis.createClient = function ()
+{
     var server_port = (config.redis_server_port) ?
         config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
     var server_ip = (config.redis_server_ip) ?
@@ -46,7 +47,7 @@ commonUtils.createRedisClient(function(client) {
     jobsApi.redisClient = client;
     jobsApi.jobs = kue.createQueue();
     jobsApi.jobs.promote();
-    jobsApi.jobListenerReadyQEvent.emit('kueReady');
+    jobListenerReadyQEvent.emit('kueReady');
 });
 
 /* kue UI listening port */
@@ -67,14 +68,16 @@ var JOB_PRIORITY_HIGH = -10;
 var JOB_PRIORITY_CRITICAL = -15;
 
 var jobCheckState = ['delayed'];
-function checkKueJobPriority(jobPriority) {
+function checkKueJobPriority(jobPriority)
+{
 	return ((jobPriority === 'low') ||
 		(jobPriority === 'normal') ||
 		(jobPriority === 'high') ||
 		(jobPriority === 'critical'));
 }
 
-getKueJobPriorityByValue = function (priority) {
+function getKueJobPriorityByValue (priority)
+{
 	switch (priority) {
 		case JOB_PRIORITY_LOW:
 			return 'low';
@@ -91,7 +94,8 @@ getKueJobPriorityByValue = function (priority) {
 	}
 }
 
-jobsApi.getKueJobExist = function(jobStr, callback) {
+function getKueJobExist (jobStr, callback)
+{
     var oldJobStr = jobStr, oldCallback = callback;
     if (typeof oldJobStr === 'undefined' || typeof oldCallback === 'undefined') {
         return function (newJobStr, newCallback) {
@@ -117,7 +121,8 @@ jobsApi.getKueJobExist = function(jobStr, callback) {
     }
 }
 
-jobsApi.doJobExist = function(jobName, callback) {
+function doJobExist (jobName, callback)
+{
     /* Check wheather job is already created or not */
     var len = jobCheckState.length;
     var kueJobStrArr = [];
@@ -127,7 +132,7 @@ jobsApi.doJobExist = function(jobName, callback) {
     for (var i = 0; i < len; i++) {
         kueJobStrArr[i] = 'q:jobs:' + jobName + ':' + jobCheckState[i];
     }
-    async.map(kueJobStrArr, jobsApi.getKueJobExist, function(err, resultArr) {
+    async.map(kueJobStrArr, getKueJobExist, function(err, resultArr) {
         if (resultArr) {
             count = resultArr.length;
             for (i = 0; i < count; i++) {
@@ -152,8 +157,9 @@ jobsApi.doJobExist = function(jobName, callback) {
  @runCount   : how many times the job should be executed once
  done, if 0, then it runs infinite time
  */
-jobsApi.createJob = function (jobName, jobTitle, jobPriority, delayInMS, runCount, taskData) {
-    jobsApi.doJobExist(jobName, function(err, jobExists) {
+function createJob (jobName, jobTitle, jobPriority, delayInMS, runCount, taskData)
+{
+    doJobExist(jobName, function(err, jobExists) {
         if (true == jobExists) {
             /* Create a Job with runCount = 1, so only one time run */
             runCount = 1;
@@ -176,7 +182,8 @@ jobsApi.createJob = function (jobName, jobTitle, jobPriority, delayInMS, runCoun
     });
 }
 
-jobsApi.getJobInfo = function (job) {
+function getJobInfo (job)
+{
 	var obj = {
 		jobType:job.type,
 		jobTitle:job.data.title,
@@ -191,7 +198,8 @@ jobsApi.getJobInfo = function (job) {
 /* Function: removeJobFromKue
  This function is used to remove the job from Kue Q
  */
-removeJobFromKue = function (job, callback) {
+function removeJobFromKue (job, callback)
+{
 	logutils.logger.info("Removing the job:", job.id);
 	job.remove(function (err) {
 		if (err) {
@@ -208,7 +216,8 @@ removeJobFromKue = function (job, callback) {
  This function is used to check if the job should be requeued, if yes, then
  the old job is removed from queue and a new one gets created
  */
-checkAndRequeueJobs = function (job) {
+function checkAndRequeueJobs (job)
+{
     var jobType = job.type;
     var jobData = job.data;//commonUtils.cloneObj(job.data);
     var jobPriority = job._priority;
@@ -223,11 +232,11 @@ checkAndRequeueJobs = function (job) {
         removeJobFromKue(job, function(err) {
             if (null == err) {
                 /* Job got removed, so create a new one now */
-                jobsApi.createJob(jobType, jobData.title,
-                                  getKueJobPriorityByValue(jobPriority),
-                                  jobData.taskData.nextRunDelay,
-                                  (!jobData.runCount) ? 0 :
-                                  jobData.runCount - 1, jobData.taskData);
+                createJob(jobType, jobData.title,
+                          getKueJobPriorityByValue(jobPriority),
+                          jobData.taskData.nextRunDelay,
+                          (!jobData.runCount) ? 0 :
+                          jobData.runCount - 1, jobData.taskData);
                 logutils.logger.debug("Job Got requeued with Job Type:" +
                                       job.type);
            }
@@ -245,7 +254,8 @@ checkAndRequeueJobs = function (job) {
  This function is handler for different Kue Job events.
  When from application, done() API gets called, then this API gets invoked
  */
-jobsApi.doCheckJobsProcess = function () {
+function doCheckJobsProcess ()
+{
 	jobsApi.jobs.on('job complete', function (id) {
 		logutils.logger.info("We are on jobs.on for event 'job complete', id:" + id);
 		jobsApi.kue.Job.get(id, function (err, job) {
@@ -264,13 +274,31 @@ jobsApi.doCheckJobsProcess = function () {
 /* Function: createJobByMsgObj
  This function is used to create a job by message coming from mainServer
  */
-jobsApi.createJobByMsgObj = function (msg) {
-	var msgJSON = JSON.parse(msg);
-	jobsApi.createJob(msgJSON.jobName, msgJSON.jobName, msgJSON.jobPriority,
-		msgJSON.firstRunDelay, msgJSON.runCount, msgJSON.data);
+function createJobByMsgObj (msg)
+{
+    var msgJSON = JSON.parse(msg.toString());
+    switch (msgJSON['jobType']) {
+    case global.STR_MAIN_WEB_SERVER_READY:
+        /* The main webServer is ready now, now start discovery service subscription
+         */
+        discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MAINSEREVR);
+        break;
+
+    case global.STR_DISC_SUBSCRIBE_MSG:
+        logutils.logger.debug("We got on-demand discovery SUB message for " +
+                              "serverType " + msgJSON['serverType']);
+        discServ.subscribeDiscoveryServiceOnDemand(msgJSON['serverType']);
+        break;
+
+    default:
+        createJob(msgJSON.jobName, msgJSON.jobName, msgJSON.jobPriority,
+                  msgJSON.firstRunDelay, msgJSON.runCount, msgJSON.data);
+        break;
+    }
 }
 
-getChannelkeyByHashUrl = function(lookupHash, myHash, url) {
+function getChannelkeyByHashUrl (lookupHash, myHash, url)
+{
     var channelObj = {};
     var createTime = commonUtils.getCurrentTimestamp();
     var pubChannel = createTime + global.ZWQ_MSG_SEPERATOR + lookupHash +
@@ -282,14 +310,16 @@ getChannelkeyByHashUrl = function(lookupHash, myHash, url) {
     return channelObj;
 }
 
-defDoneCallback = function() {
+function defDoneCallback ()
+{
     console.log("We are done");
 }
 
-jobsApi.createJobListener = function(lookupHash, myHash, url, oldPubChannel, oldSaveChannelKey, 
-                                     processCallback, doneCallback,
-                                     doCrateJob, runCount, nextRunDelay, data,
-                                     done, jobData) {
+function createJobListener (lookupHash, myHash, url, oldPubChannel, oldSaveChannelKey, 
+                            processCallback, doneCallback,
+                            doCrateJob, runCount, nextRunDelay, data,
+                            done, jobData)
+{
     var channelObj = getChannelkeyByHashUrl(lookupHash, myHash, url);
     /* First create an entry in jobListening Q */
     var obj = {
@@ -304,35 +334,39 @@ jobsApi.createJobListener = function(lookupHash, myHash, url, oldPubChannel, old
         doneCallback = defDoneCallback;
     }
 
-    var createJobObj = jobsApi.createJobObj(lookupHash, url, runCount,
-                                            nextRunDelay, jobData);
+    var jobObj = createJobObj(lookupHash, url, runCount,
+                              nextRunDelay, jobData);
     /* Now store the data in StoreQ */
     var storeObj = {'data': data, 'jobData': jobData};
-    jobsApi.storeDataInStoreQ(obj.pubChannel, storeObj);
+    storeDataInStoreQ(obj.pubChannel, storeObj);
 
-    processCallback(channelObj.pubChannel, channelObj.saveChannelKey, createJobObj,
+    processCallback(channelObj.pubChannel, channelObj.saveChannelKey, jobObj,
                     doneCallback);
     if (doCrateJob) {
-        jobsApi.createJob(createJobObj.title, createJobObj.title,
+        createJob(jobObj.title, jobObj.title,
         /* Background jobs always normal priority */
-                          'normal', nextRunDelay,
-                          createJobObj.runCount, createJobObj.taskData);
+                  'normal', nextRunDelay,
+                  jobObj.runCount, jobObj.taskData);
     }
 }
 
-jobsApi.deleteQ = function(pubChannel) {
+function deleteQ (pubChannel)
+{
     delete jobsApi.storeQ[pubChannel];
 }
 
-jobsApi.getDataFromStoreQ = function(pubChannel) {
+function getDataFromStoreQ (pubChannel)
+{
     return jobsApi.storeQ[pubChannel];
 }
 
-jobsApi.storeDataInStoreQ = function(pubChannel, data) {
+function storeDataInStoreQ (pubChannel, data)
+{
     jobsApi.storeQ[pubChannel] = data;
 }
 
-jobsApi.createJobObj = function(hash, url, runCount, nextRunDelay, data) {
+function createJobObj (hash, url, runCount, nextRunDelay, data)
+{
     jobsApi.jobInternalReqId++;
     var  jobData = {};
     jobData.title = hash;
@@ -348,7 +382,7 @@ jobsApi.createJobObj = function(hash, url, runCount, nextRunDelay, data) {
     return jobData;
 }
 
-jobsApi.jobListenerReadyQEvent.on('dataPublished', function(pubChannel, pubData) {
+jobListenerReadyQEvent.on('dataPublished', function(pubChannel, pubData) {
     logutils.logger.debug("Got notified on Job Listener Channel:" + pubChannel);
     /* Check if the originator of this request is myself */
     var channelObj = jobListenerReadyQ[pubChannel];
@@ -359,7 +393,13 @@ jobsApi.jobListenerReadyQEvent.on('dataPublished', function(pubChannel, pubData)
     var hash = channelObj.myHash + global.ZWQ_MSG_SEPERATOR + channelObj.lookupHash;
     logutils.logger.debug("Getting channelObj:" + channelObj);
 
-    jobsApi.jobListenerReadyQEvent.emit(hash, pubData, channelObj.pubChannel, 
-                                        channelObj.saveChannelKey, channelObj.done);
+    jobListenerReadyQEvent.emit(hash, pubData, channelObj.pubChannel, 
+                                channelObj.saveChannelKey, channelObj.done);
 });
+
+exports.jobListenerReadyQEvent = jobListenerReadyQEvent;
+exports.createJobListener = createJobListener;
+exports.createJobByMsgObj = createJobByMsgObj;
+exports.doCheckJobsProcess = doCheckJobsProcess;
+exports.getDataFromStoreQ = getDataFromStoreQ;
 
