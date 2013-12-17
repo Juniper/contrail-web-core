@@ -15,8 +15,6 @@ var qeapi = module.exports,
     global = require('../../common/global'),
     qs = require('querystring'),
     underscore = require('underscore'),
-    adminApi = require('./admin.api'),
-    siConfigApi = require('./serviceinstanceconfig.api'),
     opServer;
 
 var redis = require("redis"),
@@ -62,12 +60,12 @@ function executeQuery(res, options)
     });
 };
 
-function initPollingConfig(options, fromTime, toTime) 
+function initPollingConfig(options, fromTime, toTime)
 {
     var timeRange = (toTime - fromTime) / 60000000;
     if (timeRange <= 720) {
         options.pollingInterval = 5000;
-        options.maxCounter = 3;
+        options.maxCounter = 2;
         options.pollingTimeout = 1200000;
     } else if (timeRange > 720 && timeRange <= 1440) {
         options.pollingInterval = 30000;
@@ -136,7 +134,8 @@ function updateQueryStatus(options)
     var queryStatus = {
         startTime:options.startTime, queryId:options.queryId,
         url:options.url, queryJSON:options.queryJSON, progress:options.progress, status:options.status,
-        tableName:options.queryJSON['table'], count:options.count, timeTaken:-1, errorMessage:options.errorMessage
+        tableName:options.queryJSON['table'], count:options.count, timeTaken:-1, errorMessage:options.errorMessage,
+        reRunTimeRange: options.reRunTimeRange, reRunQueryString: getReRunQueryString(options.reRunQuery, options.reRunTimeRange)
     };
     if (queryStatus.tableName == 'FlowSeriesTable' || queryStatus.tableName.indexOf('StatTable.') != -1) {
         queryStatus.tg = options.tg;
@@ -146,6 +145,25 @@ function updateQueryStatus(options)
         queryStatus.timeTaken = (options.endTime - queryStatus.startTime) / 1000;
     }
     redisClient.hmset(options.queryQueue, options.queryId, JSON.stringify(queryStatus));
+};
+
+function getReRunQueryString(reRunQuery, reRunTimeRange)
+{
+    var reRunQueryString;
+    delete reRunQuery['queryId'];
+    delete reRunQuery['skip'];
+    delete reRunQuery['take'];
+    delete reRunQuery['page'];
+    delete reRunQuery['pageSize'];
+    if(reRunTimeRange != null && reRunTimeRange != '0') {
+        delete reRunQuery['fromTime'];
+        delete reRunQuery['fromTimeUTC'];
+        delete reRunQuery['toTime'];
+        delete reRunQuery['toTimeUTC'];
+        delete reRunQuery['reRunTimeRange'];
+    }
+    reRunQueryString = qs.stringify(reRunQuery);
+    return reRunQueryString;
 };
 
 function parseQueryTime(queryId) 
@@ -173,24 +191,24 @@ function processQueryResults(res, queryResults, options)
         } else {
             responseJSON = resultJSON.slice(0, pageSize);
         }
-        commonUtils.handleJSONResponse(null, res, {data:responseJSON, total:total});
+        commonUtils.handleJSONResponse(null, res, {data:responseJSON, total:total, queryJSON: queryJSON});
     }
-    saveQueryResult2Redis(resultJSON, total, queryId, pageSize);
+    saveQueryResult2Redis(resultJSON, total, queryId, pageSize, getSortStatus4Query(queryJSON), queryJSON);
     if (table == 'FlowSeriesTable') {
         saveData4Chart2Redis(queryId, resultJSON, getPlotFields(queryJSON['select_fields']));
     }
 };
 
-function saveQueryResult2Redis(resultData, total, queryId, pageSize, sort) 
+function saveQueryResult2Redis(resultData, total, queryId, pageSize, sort, queryJSON)
 {
     var endRow;
     if (sort != null) {
         redisClient.set(queryId + ":sortStatus", JSON.stringify(sort));
     }
     // TODO: Should we need to save every page?
-    redisClient.set(queryId, JSON.stringify({data:resultData, total:total}));
+    redisClient.set(queryId, JSON.stringify({data:resultData, total:total, queryJSON: queryJSON}));
     if (total == 0) {
-        redisClient.set(queryId + ':page1', JSON.stringify({data:[], total:0}));
+        redisClient.set(queryId + ':page1', JSON.stringify({data:[], total:0, queryJSON: queryJSON}));
     } else {
         for (var j = 0, k = 1; j < total; k++) {
             endRow = k * pageSize;
@@ -198,11 +216,23 @@ function saveQueryResult2Redis(resultData, total, queryId, pageSize, sort)
                 endRow = resultData.length;
             }
             var spliceData = resultData.slice(j, endRow);
-            redisClient.set(queryId + ':page' + k, JSON.stringify({data:spliceData, total:total}));
+            redisClient.set(queryId + ':page' + k, JSON.stringify({data:spliceData, total:total, queryJSON: queryJSON}));
             j = endRow;
         }
     }
 };
+
+function getSortStatus4Query(queryJSON) {
+    var sortFields, sortDirection, sortStatus;
+    sortFields = queryJSON['sort_fields'];
+    sortDirection = queryJSON['sort'];
+
+    if(sortFields != null && sortFields.length > 0 && sortDirection != null) {
+        sortStatus = [{"field": sortFields[0],"dir": sortDirection == 2 ? 'desc' : 'asc'}];
+    }
+    return sortStatus;
+};
+
 
 function getPlotFields(selectFields) 
 {
@@ -316,10 +346,10 @@ function parseSLQuery(reqQuery)
     return msgQuery;
 };
 
-function setMicroTimeRange(query, fromTime, toTime) 
+function setMicroTimeRange(query, fromTime, toTime)
 {
-    query.start_time = fromTime * 1000;
-    query.end_time = toTime * 1000;
+        query.start_time = fromTime * 1000;
+       query.end_time = toTime * 1000;
 };
 
 function createSLWhere(msgQuery, moduleId, messageType, source, category) 
@@ -690,19 +720,19 @@ function getQueryJSON4Table(tableName)
 {
     var queryJSON;
     if(tableName == 'MessageTable') {
-        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Type", "Source", "ModuleId", "Messagetype", "Xmlmessage", "Level", "Category"], "filter": [{"name": "Type", "value": "1", "op": 1}], "sort_fields": ['MessageTS'], "sort": 2};
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Type", "Source", "ModuleId", "Messagetype", "Xmlmessage", "Level", "Category"], "filter": [{"name": "Type", "value": "1", "op": 1}], "sort_fields": ['MessageTS'], "sort": 2, "limit": 150000};
     } else if(tableName == 'ObjectTableQueryTemplate') {
-        queryJSON = {"table": '', "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": []};
+        queryJSON = {"table": '', "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": [], "limit": 50000};
     } else if(tableName == 'FlowSeriesTable') {
-        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ['flow_class_id', 'direction_ing']};
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ['T', 'flow_class_id', 'direction_ing'], "sort_fields": ['T'], "sort": 2, "limit": 150000};
     } else if(tableName == 'FlowRecordTable') {
-        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ['vrouter', 'sourcevn', 'sourceip', 'sport', 'destvn', 'destip', 'dport', 'protocol', 'direction_ing']};
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ['vrouter', 'sourcevn', 'sourceip', 'sport', 'destvn', 'destip', 'dport', 'protocol', 'direction_ing'], "limit": 150000};
     } else if(tableName.indexOf('Object') != -1) {
-        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": []};
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": [], "limit": 50000};
     } else if(tableName.indexOf('StatTable.') != -1) {
-        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": []};
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": [], "limit": 150000};
     } else {
-        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": []};
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": [], "limit": 150000};
     }
     return queryJSON;
 };
@@ -778,8 +808,8 @@ function handleQueryResponse(res, options)
                 startIndex = (page - 1) * pageSize;
                 endIndex = (total < (startIndex + pageSize)) ? total : (startIndex + pageSize);
                 responseJSON = resultJSON['data'].slice(startIndex, endIndex);
-                commonUtils.handleJSONResponse(null, res, {data:responseJSON, total:total});
-                saveQueryResult2Redis(resultJSON['data'], total, queryId, pageSize, sort);
+                commonUtils.handleJSONResponse(null, res, {data:responseJSON, total:total, queryJSON: resultJSON['queryJSON']});
+                saveQueryResult2Redis(resultJSON['data'], total, queryId, pageSize, sort, resultJSON['queryJSON']);
             });
         } else {
             commonUtils.handleJSONResponse(null, res, result ? JSON.parse(result) : []);
@@ -787,32 +817,68 @@ function handleQueryResponse(res, options)
     });
 };
 
-function sortJSON(resultArray, sort, callback) 
-{
+function quickSortPartition(array, left, right, sort) {
     var sortField = sort[0]['field'],
-        sortDir = sort[0]['dir'] == 'desc' ? 0 : 1;
-    sortField = sortField.replace(/([\"\[\]])/g, '');
-    resultArray.sort(function (a, b) {
-        var a1st = -1;
-        var b1st = 1;
-        var equal = 0;
-        if (b[sortField] < a[sortField]) {
-            return sortDir == 1 ? b1st : a1st;
-        } else if (a[sortField] < b[sortField]) {
-            return sortDir == 1 ? a1st : b1st;
-        } else {
-            return equal;
+        sortDir = sort[0]['dir'] == 'desc' ? 0 : 1,
+        rightFieldValue = array[right - 1][sortField],
+        min = left, max;
+    for (max = left; max < right - 1; max += 1) {
+        if (sortDir && array[max][sortField] <= rightFieldValue) {
+            quickSortSwap(array, max, min);
+            min += 1;
+        } else if (!sortDir && array[max][sortField] >= rightFieldValue) {
+            quickSortSwap(array, max, min);
+            min += 1;
         }
-    });
-    callback();
+    }
+    quickSortSwap(array, min, right - 1);
+    return min;
+}
+
+function quickSortSwap(array, max, min) {
+    var temp = array[max];
+    array[max] = array[min];
+    array[min] = temp;
+    return array;
+}
+
+function quickSort(array, left, right, sort, qsStatus) {
+    if (left < right) {
+        var p = quickSortPartition(array, left, right, sort);
+        qsStatus.started++;
+        process.nextTick(function() {
+            quickSort(array, left, p, sort, qsStatus);
+        });
+        qsStatus.started++;
+        process.nextTick(function() {
+            quickSort(array, p + 1, right, sort, qsStatus)
+        });
+    }
+    qsStatus.ended++
+}
+
+function sortJSON(resultArray, sortParams, callback) {
+    var qsStatus = {started: 1, ended: 0},
+        sortField = sortParams[0]['field'], sortBy = [{}];
+    sortField = sortField.replace(/([\"\[\]])/g, '');
+    sortBy[0]['field'] = sortField;
+    sortBy[0]['dir'] = sortParams[0]['dir'];
+    quickSort(resultArray, 0, resultArray.length, sortBy, qsStatus);
+    qsStatus['intervalId'] = setInterval(function(qsStatus, callback) {
+        if(qsStatus.started == qsStatus.ended) {
+            callback();
+            clearInterval(qsStatus['intervalId']);
+        }
+    }, 2000, qsStatus, callback);
 };
 
-function runNewQuery(req, res, queryId) 
+function runNewQuery(req, res, queryId)
 {
     var reqQuery = req.query, tableName = reqQuery['table'],
         queryId = reqQuery['queryId'], pageSize = parseInt(reqQuery['pageSize']),
         async = (reqQuery['async'] != null && reqQuery['async'] == "true") ? true : false,
-        options = {queryId:queryId, pageSize:pageSize, counter:0, status:"run", async:async, count:0, progress:0, errorMessage:""},
+        reRunTimeRange = reqQuery['reRunTimeRange'], reRunQuery = reqQuery,
+        options = {queryId:queryId, pageSize:pageSize, counter:0, status:"run", async:async, count:0, progress:0, errorMessage:"", reRunTimeRange: reRunTimeRange, reRunQuery: reRunQuery},
         queryJSON;
     if (tableName == 'MessageTable') {
         queryJSON = parseSLQuery(reqQuery);
