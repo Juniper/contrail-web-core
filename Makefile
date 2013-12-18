@@ -6,6 +6,7 @@ REPORTER = dot
 WEBUISERVER = contrail-web-core
 WEBUICLIENT = contrail-web-ui
 WEBUITHIRDPARTY = contrail-web-third-party
+MYDIR="`pwd`"
 
 $(WEBUISERVER):
 	if [ ! -d ../$(WEBUISERVER) ]; then git clone https://github.com/Juniper/contrail-web-core.git ../$(WEBUISERVER); else cd ../$(WEBUISERVER) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
@@ -19,17 +20,28 @@ $(WEBUITHIRDPARTY):
 repos: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY)
 
 package:
-	cp -a ../$(WEBUICLIENT)/* .
-	cp -a ../$(WEBUITHIRDPARTY)/node_modules node_modules
+	make clean
+	mkdir -p node_modules
+	cp -r -p ../$(WEBUICLIENT)/* .
+	cp -r -p ../$(WEBUITHIRDPARTY)/node_modules/* node_modules/
+	mv -f html/dashboard.tmpl html/dashboard.html
+	mv -f html/login.tmpl html/login.html
+	mv -f html/login-error.tmpl html/login-error.html
 	./generate-files.sh
 	./dev-install.sh
 	./prod-dev.sh html/dashboard.html prod_env dev_env true
 	./prod-dev.sh html/login.html prod_env dev_env true
 	./prod-dev.sh html/login-error.html prod_env dev_env true
 
-all:	
-	ln -sf ../$(WEBUICLIENT)/* .
+all:
+	make clean
+	echo $(MYDIR)
+	mkdir html
+	ln -sf ../$(WEBUICLIENT)/webroot webroot
 	ln -sf ../$(WEBUITHIRDPARTY)/node_modules node_modules
+	ln -sf $(MYDIR)/../$(WEBUICLIENT)/html/dashboard.tmpl html/dashboard.html
+	ln -sf $(MYDIR)/../$(WEBUICLIENT)/html/login.tmpl html/login.html
+	ln -sf $(MYDIR)/../$(WEBUICLIENT)/html/login-error.tmpl html/login-error.html
 	./generate-files.sh
 	./dev-install.sh
 
