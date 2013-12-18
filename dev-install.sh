@@ -2,7 +2,7 @@
 # Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
 #
 
-#!/bin/sh
+#!/bin/bash
 
 #Start - Copy kendoUI from contrail-web-third-party
 

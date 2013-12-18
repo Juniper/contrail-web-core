@@ -37,12 +37,14 @@ function getFirstGlobalvRouterConfig(appData, callback) {
         function(error, data) {
     		if (error) {
     			callback(error, null);
+    			return;
     		}
     		var gvrUUID = null;
     		if(data["global-vrouter-configs"].length > 0) {
     			gvrUUID = data["global-vrouter-configs"][0].uuid; 
     		} else {
     			callback(error, null);
+    			return;
     		}
 		    var gvrGetURL = '/global-vrouter-config/' + gvrUUID;
 	        configApiServer.apiGet(gvrGetURL, appData,

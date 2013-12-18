@@ -888,8 +888,13 @@ function runNewQuery(req, res, queryId)
         options.queryQueue = 'lqq';
     } else if (tableName == 'FlowSeriesTable') {
         queryJSON = parseFSQuery(reqQuery);
-        options.tg = reqQuery['tgValue'];
-        options.tgUnit = reqQuery['tgUnits'];
+        if(queryJSON['select_fields'].indexOf('bytes') == -1 && queryJSON['select_fields'].indexOf('packets') == -1) {
+            options.tg = reqQuery['tgValue'];
+            options.tgUnit = reqQuery['tgUnits'];
+        } else {
+            options.tg = '';
+            options.tgUnit = '';
+        }
         options.queryQueue = 'fqq';
     } else if (tableName == 'FlowRecordTable') {
         queryJSON = parseFRQuery(reqQuery);

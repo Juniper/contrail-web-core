@@ -16,13 +16,16 @@ $(WEBUICLIENT):
 $(WEBUITHIRDPARTY):
 	if [ ! -d ../$(WEBUITHIRDPARTY) ]; then git clone https://github.com/Juniper/contrail-web-third-party.git ../$(WEBUITHIRDPARTY); else cd ../$(WEBUITHIRDPARTY) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
-repos: $(WEBUICLIENT) $(WEBUITHIRDPARTY)
+repos: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY)
 
-package: 
+package:
 	cp -a ../$(WEBUICLIENT)/* .
 	cp -a ../$(WEBUITHIRDPARTY)/node_modules node_modules
 	./generate-files.sh
 	./dev-install.sh
+	./prod-dev.sh html/dashboard.html prod_env dev_env true
+	./prod-dev.sh html/login.html prod_env dev_env true
+	./prod-dev.sh html/login-error.html prod_env dev_env true
 
 all:	
 	ln -sf ../$(WEBUICLIENT)/* .
@@ -32,13 +35,25 @@ all:
 
 dev-env:
 	make all
-	./prod-dev.sh html/dashboard.html dev_env prod_env
-	./prod-dev.sh html/login.html dev_env prod_env
+	./prod-dev.sh html/dashboard.html dev_env prod_env true
+	./prod-dev.sh html/login.html dev_env prod_env true
+	./prod-dev.sh html/login-error.html dev_env prod_env true
 
 prod-env:
-	make all
-	./prod-dev.sh html/dashboard.html prod_env dev_env
-	./prod-dev.sh html/login.html prod_env dev_env
+	make all 
+	./prod-dev.sh html/dashboard.html prod_env dev_env true
+	./prod-dev.sh html/login.html prod_env dev_env true
+	./prod-dev.sh html/login-error.html prod_env dev_env true
+
+rem-ts-dev:
+	./prod-dev.sh html/dashboard.html dev_env prod_env false
+	./prod-dev.sh html/login.html dev_env prod_env false
+	./prod-dev.sh html/login-error.html dev_env prod_env false
+
+rem-ts-prod:
+	./prod-dev.sh html/dashboard.html prod_env dev_env false
+	./prod-dev.sh html/login.html prod_env dev_env false
+	./prod-dev.sh html/login-error.html prod_env dev_env false
 
 check: test
 
