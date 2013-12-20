@@ -463,9 +463,11 @@ function parseOTWhere(otQuery, where, objectId)
 
 function parseFSQuery(reqQuery) 
 {
-    var select, where, filters, fromTimeUTC, toTimeUTC, fsQuery, table, tg, tgUnit, direction;
+    var select, where, filters, fromTimeUTC, toTimeUTC, fsQuery, table, tg, tgUnit, direction, autoLimit, autoSort;
     table = reqQuery['table'];
-    fsQuery = getQueryJSON4Table(table);
+    autoLimit = (reqQuery['autoLimit'] != null && reqQuery['autoLimit'] == "true") ? true : false;
+    autoSort = (reqQuery['autoSort'] != null && reqQuery['autoSort'] == "true") ? true : false
+    fsQuery = getQueryJSON4Table(table, autoSort, autoLimit);
     fromTimeUTC = reqQuery['fromTimeUTC'];
     toTimeUTC = reqQuery['toTimeUTC'];
     select = reqQuery['select'];
@@ -716,7 +718,7 @@ function getOperatorCode(operator)
     }
 };
 
-function getQueryJSON4Table(tableName)
+function getQueryJSON4Table(tableName, autoSort, autoLimit)
 {
     var queryJSON;
     if(tableName == 'MessageTable') {
@@ -724,7 +726,15 @@ function getQueryJSON4Table(tableName)
     } else if(tableName == 'ObjectTableQueryTemplate') {
         queryJSON = {"table": '', "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": [], "limit": 50000};
     } else if(tableName == 'FlowSeriesTable') {
-        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ['T', 'flow_class_id', 'direction_ing'], "sort_fields": ['T'], "sort": 2, "limit": 150000};
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ['flow_class_id', 'direction_ing']};
+        if(autoSort) {
+            queryJSON['select_fields'].push('T');
+            queryJSON['sort_fields'] = ['T'];
+            queryJSON['sort'] = 2;
+        }
+        if(autoLimit) {
+            queryJSON['limit'] =  150000;
+        }
     } else if(tableName == 'FlowRecordTable') {
         queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ['vrouter', 'sourcevn', 'sourceip', 'sport', 'destvn', 'destip', 'dport', 'protocol', 'direction_ing'], "limit": 150000};
     } else if(tableName.indexOf('Object') != -1) {

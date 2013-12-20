@@ -295,7 +295,7 @@ function readVNForIpams(error, ipamConfig, ipamPostData, response, appData)
     	var domain = ipamPostData["network-ipam"]["fq_name"][0];
     	var project = ipamPostData["network-ipam"]["fq_name"][1];
     	var tenantId = domain + ":" + project;
-    	var vnsGetURL = "/virtual-networks?parent_type=project&parent_fq_name_str=" + tenantId.toString();
+        var vnsGetURL = "/virtual-networks";
 	    configApiServer.apiGet(vnsGetURL, appData,
 	    	function(error, data) {
 	            for(var i=0; null != data["virtual-networks"][i]; i++) {

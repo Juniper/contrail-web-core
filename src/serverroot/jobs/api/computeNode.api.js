@@ -450,8 +450,10 @@ function processComputeNodeInterface (pubChannel, saveChannelKey,
 function getAclFlowByACLSandeshResponse (ip, aclSandeshResp, callback)
 {
     var resultJSON = [];
+    var aclCnt = 0;
     var aclData = jsonPath(aclSandeshResp, "$..AclSandeshData");
     var urlLists = [];
+    var objFlag = false;
     var url = ip + '@' + global.SANDESH_COMPUTE_NODE_PORT + '@' +
         '/Snh_AclFlowReq?x=';
 
@@ -459,9 +461,14 @@ function getAclFlowByACLSandeshResponse (ip, aclSandeshResp, callback)
         callback(resultJSON);
         return;
     }
-    aclData = aclData[0];
     try {
-        var aclCnt = aclData.length;
+        if (aclData[0] instanceof Array) {
+            aclData = aclData[0];
+            aclCnt = aclData.length;
+        } else {
+            aclCnt = 1;
+            objFlag = true;
+        }
     } catch(e) {
         callback(resultJSON);
         return;
@@ -473,10 +480,16 @@ function getAclFlowByACLSandeshResponse (ip, aclSandeshResp, callback)
     async.map(urlLists, 
               commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, true),
               function(err, result) {
+
         for (var i = 0; i < aclCnt; i++) {
             try {
-                aclSandeshResp['AclResp']['acl_list']['list']['AclSandeshData'][i]['flow_count']
-                    = result[i]['AclFlowResp']['flow_count'][0]['_'];
+                if (true == objFlag) {
+                    aclSandeshResp['AclResp']['acl_list']['list']['AclSandeshData']['flow_count']
+                        = result[i]['AclFlowResp']['flow_count'][0]['_'];
+                } else {
+                    aclSandeshResp['AclResp']['acl_list']['list']['AclSandeshData'][i]['flow_count']
+                        = result[i]['AclFlowResp']['flow_count'][0]['_'];
+                }
             } catch(e) {
             }
         }
