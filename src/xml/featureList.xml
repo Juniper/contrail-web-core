@@ -82,8 +82,6 @@
     </item>
     <item>
         <feature>setting</feature>
-        <read-access>admin</read-access>
-        <write-access>admin</write-access>
     </item>
     <item>
         <feature>proxy</feature>

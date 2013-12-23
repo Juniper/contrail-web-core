@@ -17,7 +17,7 @@ sed -e 's/<!-- End '$2' -->/End '$2'/g' $1 > $tmpFile
 sed -e 's/End '$2' -->/End '$2'/g' $tmpFile > $1
 sed -e 's/End '$2'/<!-- End '$2' -->/g' $1 > $tmpFile
 ctDate=$(date +%s)
-if [ $4 == true ] ; then 
+if [ $4 = true ] ; then 
     sed -e 's/built_at=""/built_at=/g' $tmpFile > $1
     sed -e s/built_at=[0-9]*/built_at=$ctDate/g $1 > $tmpFile
 else 

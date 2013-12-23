@@ -66,15 +66,15 @@ function initPollingConfig(options, fromTime, toTime)
     if (timeRange <= 720) {
         options.pollingInterval = 5000;
         options.maxCounter = 2;
-        options.pollingTimeout = 1200000;
+        options.pollingTimeout = 3600000;
     } else if (timeRange > 720 && timeRange <= 1440) {
         options.pollingInterval = 30000;
         options.maxCounter = 1;
-        options.pollingTimeout = 2400000;
+        options.pollingTimeout = 5400000;
     } else {
         options.pollingInterval = 60000;
         options.maxCounter = 1;
-        options.pollingTimeout = 3600000;
+        options.pollingTimeout = 7200000;
     }
 };
 
