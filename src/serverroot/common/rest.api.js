@@ -176,6 +176,7 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
                                      (null != response.statusCode)) ?
                                      response.statusCode :
                                      global.HTTP_STATUS_INTERNAL_ERROR;
+            error['code'] = data.code;
             callback(error, '', response);
         } else {
             /* Data is xml/json format */

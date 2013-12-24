@@ -10,6 +10,9 @@ var url         = require('url');
 var http        = require('http');
 var https       = require('https');
 var logutils    = require('../../utils/log.utils');
+var appErrors   = require('../../errors/app.errors');
+var util        = require('util');
+var messages    = require('../../common/messages');
 
 function forwardProxyRequest (request, response, appData)
 {
@@ -72,8 +75,15 @@ function forwardProxyRequest (request, response, appData)
         });
         res.on('data', function(chunk) {
             body += chunk;
-       });
-    });
+        });
+    }).on('error', function(err) {
+          logutils.logger.error(err.stack);
+          var error = 
+            new appErrors.ConnectionError(util.format(messages.error.api_conn,
+                                                      options.hostname + ':' +
+                                                      options.port));
+          response.send(global.HTTP_STATUS_INTERNAL_ERROR, error.message);
+    }); 
     rqst.end();
 }
 

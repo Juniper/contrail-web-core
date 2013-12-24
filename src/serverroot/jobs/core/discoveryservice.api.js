@@ -24,6 +24,9 @@ var server_port = (( null != config) && (null != config.discoveryService) &&
 
 var discServer = rest.getAPIServer({apiName: global.label.DISCOVERY_SERVER,
                                    server: server_ip, port: server_port});
+var discLocalServer = rest.getAPIServer({apiName: global.label.DISCOVERY_SERVER,
+                                        server: global.DFLT_SERVER_IP,
+                                        port: server_port});
 
 var redisPubClient;
 var redisSubClient;
@@ -59,7 +62,14 @@ function subscribeToDiscoveryService (serviceObj, callback)
     var url = '/subscribe';
 
     discServer.api.post(url, postJson, function(err, data) {
-        callback(err, data);
+        if ((null != err) && (('ECONNREFUSED' == err.code) || 
+                               ('ETIMEOUT' == err.code))) {
+            discLocalServer.api.post(url, postJson, function(err, data) {
+                callback(err, data);
+            });
+        } else {
+            callback(err, data);
+        }
     });
 }
 
