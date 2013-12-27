@@ -4,77 +4,139 @@
 
 #!/bin/bash
 
-#Start - Copy kendoUI from contrail-web-third-party
 
-rm -rf webroot/assets/kendoui
-mkdir -p webroot/assets/kendoui
-cp -r ../contrail-web-third-party/kendoui.complete.2013.1.514.commercial/js webroot/assets/kendoui/
-cp -r ../contrail-web-third-party/kendoui.complete.2013.1.514.commercial/styles webroot/assets/kendoui/
+ONE_BACK='..'
+TWO_BACK='../..'
+THREE_BACK='../../..'
+FOUR_BACK='../../../..'
+FIVE_BACK='../../../../..'
 
-#End - Copy KendoUI from contrail-web-third-party
+if [ $1 = 'prod' ] ; then 
+    #Start - Copy kendoUI from contrail-web-third-party
+    rm -rf webroot/assets/kendoui
+    mkdir -p webroot/assets/kendoui
+    cp -r ../contrail-web-third-party/kendoui.complete.2013.1.514.commercial/js webroot/assets/kendoui/
+    cp -r ../contrail-web-third-party/kendoui.complete.2013.1.514.commercial/styles webroot/assets/kendoui/
+    #End - Copy KendoUI from contrail-web-third-party
 
-#Start - Copy d3/vnd3 files from contrail-web-third-party
+    #Start - Copy d3/vnd3 files from contrail-web-third-party
+    rm -rf webroot/assets/d3
+    mkdir -p webroot/assets/d3/js
+    cp -r ../contrail-web-third-party/d3/d3.js webroot/assets/d3/js/
 
-rm -rf webroot/assets/d3
-mkdir -p webroot/assets/d3/js
-cp -r ../contrail-web-third-party/d3/d3.js webroot/assets/d3/js/
+    rm -rf webroot/assets/crossfilter
+    mkdir -p webroot/assets/crossfilter/js
+    cp -r ../contrail-web-third-party/crossfilter/crossfilter.min.js webroot/assets/crossfilter/js/
 
-rm -rf webroot/assets/crossfilter
-mkdir -p webroot/assets/crossfilter/js
-cp -r ../contrail-web-third-party/crossfilter/crossfilter.min.js webroot/assets/crossfilter/js/
+    rm -rf webroot/assets/nvd3
+    mkdir -p webroot/assets/nvd3/js
+    mkdir -p webroot/assets/nvd3/css
+    cp -r ../contrail-web-third-party/nvd3/nv.d3.js webroot/assets/nvd3/js/
+    cp -r ../contrail-web-third-party/nvd3/lib/fisheye.js webroot/assets/nvd3/js/fisheye.js
+    cp -r ../contrail-web-third-party/nvd3/src/nv.d3.css webroot/assets/nvd3/css/
+    #End - Copy d3/nvd3 files from contrail-web-third-party
 
-rm -rf webroot/assets/nvd3
-mkdir -p webroot/assets/nvd3/js
-mkdir -p webroot/assets/nvd3/css
-cp -r ../contrail-web-third-party/nvd3/nv.d3.js webroot/assets/nvd3/js/
-cp -r ../contrail-web-third-party/nvd3/lib/fisheye.js webroot/assets/nvd3/js/fisheye.js
-cp -r ../contrail-web-third-party/nvd3/src/nv.d3.css webroot/assets/nvd3/css/
+    #Start - Copy JQuery files from contrail-web-third-party
+    rm -rf webroot/assets/jquery
+    mkdir -p webroot/assets/jquery
+    cp -r ../contrail-web-third-party/jquery webroot/assets/jquery/js
+    cp -r ../contrail-web-third-party/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js webroot/assets/jquery/js/
+    #End - Copy JQuery files from contrail-web-third-party
 
-#End - Copy d3/nvd3 files from contrail-web-third-party
+    #Start - Copy Bootstrap from contrail-web-third-party
+    rm -rf webroot/assets/bootstrap
+    mkdir webroot/assets/bootstrap
+    cp -r ../contrail-web-third-party/bootstrap-v2.3.2/js webroot/assets/bootstrap/js
+    cp -r ../contrail-web-third-party/bootstrap-v2.3.2/css webroot/assets/bootstrap/css
+    #End - Copy Bootstrap from contrail-web-third-party
 
-#Start - Copy JQuery files from contrail-web-third-party
+    #Start - Copy Font-Awesome from contrail-web-third-party
+    rm -rf webroot/assets/font-awesome
+    mkdir webroot/assets/font-awesome
+    cp -r ../contrail-web-third-party/font-awesome-v3.2.1/font webroot/assets/font-awesome/font
+    cp -r ../contrail-web-third-party/font-awesome-v3.2.1/css webroot/assets/font-awesome/css
 
-rm -rf webroot/assets/jquery
-mkdir -p webroot/assets/jquery
-cp -r ../contrail-web-third-party/jquery webroot/assets/jquery/js
-cp -r ../contrail-web-third-party/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js webroot/assets/jquery/js/
+    rm -rf webroot/font
+    cp -r ../contrail-web-third-party/font-awesome-v3.2.1/font webroot/font
+    #End - Copy Font-Awesome from contrail-web-third-party
 
-#End - Copy JQuery files from contrail-web-third-party
+    #Start - Copy Font-Opensans from contrail-web-third-party
+    rm -rf webroot/assets/fonts-opensans
+    mkdir webroot/assets/fonts-opensans
+    cp -r ../contrail-web-third-party/fonts-opensans webroot/assets/
 
-#Start - Copy Bootstrap from contrail-web-third-party
+    rm -f webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
+    cp -r  ../contrail-web-third-party/fonts-opensans/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff  webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
 
-rm -rf webroot/assets/bootstrap
-mkdir webroot/assets/bootstrap
-cp -r ../contrail-web-third-party/bootstrap-v2.3.2/js webroot/assets/bootstrap/js
-cp -r ../contrail-web-third-party/bootstrap-v2.3.2/css webroot/assets/bootstrap/css
+    rm -f webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+    cp -r  ../contrail-web-third-party/fonts-opensans/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff  webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+else
+    #Start - Link KendoUI from contrail-web-third-party
+    rm -rf webroot/assets/kendoui
+    mkdir -p webroot/assets/kendoui
+    ln -sf $FOUR_BACK/contrail-web-third-party/kendoui.complete.2013.1.514.commercial/js webroot/assets/kendoui/js
+    ln -sf $FOUR_BACK/contrail-web-third-party/kendoui.complete.2013.1.514.commercial/styles webroot/assets/kendoui/styles
+    #End - Link KendoUI from contrail-web-third-party
 
-#End - Copy Bootstrap from contrail-web-third-party
+    #Start - Link d3/vnd3 files from contrail-web-third-party
+    rm -rf webroot/assets/d3
+    mkdir -p webroot/assets/d3/js
+    ln -sf $FIVE_BACK/contrail-web-third-party/d3/d3.js webroot/assets/d3/js/d3.js
 
-#Start - Copy Font-Awesome from contrail-web-third-party
+    rm -rf webroot/assets/crossfilter
+    mkdir -p webroot/assets/crossfilter/js
+    ln -sf $FIVE_BACK/contrail-web-third-party/crossfilter/crossfilter.min.js webroot/assets/crossfilter/js/crossfilter.min.js
 
-rm -rf webroot/assets/font-awesome
-mkdir webroot/assets/font-awesome
-cp -r ../contrail-web-third-party/font-awesome-v3.2.1/font webroot/assets/font-awesome/font
-cp -r ../contrail-web-third-party/font-awesome-v3.2.1/css webroot/assets/font-awesome/css
+    rm -rf webroot/assets/nvd3
+    mkdir -p webroot/assets/nvd3/js
+    mkdir -p webroot/assets/nvd3/css
+    ln -sf $FIVE_BACK/contrail-web-third-party/nvd3/nv.d3.js webroot/assets/nvd3/js/nv.d3.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/nvd3/lib/fisheye.js webroot/assets/nvd3/js/fisheye.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/nvd3/src/nv.d3.css webroot/assets/nvd3/css/nv.d3.css
+    #End - Link d3/nvd3 files from contrail-web-third-party
 
-rm -rf webroot/font
-cp -r ../contrail-web-third-party/font-awesome-v3.2.1/font webroot/font
+    #Start - Link JQuery files from contrail-web-third-party
+    rm -rf webroot/assets/jquery/js
+    mkdir -p webroot/assets/jquery/js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery-1.8.3.min.js webroot/assets/jquery/js/jquery-1.8.3.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery-1.9.1.min.js webroot/assets/jquery/js/jquery-1.9.1.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.ba-bbq.min.js webroot/assets/jquery/js/jquery.ba-bbq.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.dataTables.min.js webroot/assets/jquery/js/jquery.dataTables.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.json-2.4.min.js webroot/assets/jquery/js/jquery.json-2.4.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.timer.js webroot/assets/jquery/js/jquery.timer.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.ui.touch-punch.min.js webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.xml2json.js webroot/assets/jquery/js/jquery.xml2json.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js webroot/assets/jquery/js/jquery-ui-1.10.3.custom.min.js
+    #End - Link JQuery files from contrail-web-third-party
 
-#End - Copy Font-Awesome from contrail-web-third-party
+    #Start - Link Bootstrap from contrail-web-third-party
+    rm -rf webroot/assets/bootstrap
+    mkdir webroot/assets/bootstrap
+    ln -sf $FOUR_BACK/contrail-web-third-party/bootstrap-v2.3.2/js webroot/assets/bootstrap/js
+    ln -sf $FOUR_BACK/contrail-web-third-party/bootstrap-v2.3.2/css webroot/assets/bootstrap/css
+    #End - Link Bootstrap from contrail-web-third-party
 
-#Start - Copy Font-Opensans from contrail-web-third-party
+    #Start - Link Font-Awesome from contrail-web-third-party
+    rm -rf webroot/assets/font-awesome
+    mkdir webroot/assets/font-awesome
+    ln -sf $FOUR_BACK/contrail-web-third-party/font-awesome-v3.2.1/font webroot/assets/font-awesome/font
+    ln -sf $FOUR_BACK/contrail-web-third-party/font-awesome-v3.2.1/css webroot/assets/font-awesome/css
 
-rm -rf webroot/assets/fonts-opensans
-mkdir webroot/assets/fonts-opensans
-cp -r ../contrail-web-third-party/fonts-opensans webroot/assets/
+    rm -rf webroot/font
+    ln -sf $TWO_BACK/contrail-web-third-party/font-awesome-v3.2.1/font webroot/font
+    #End - Link Font-Awesome from contrail-web-third-party
 
-rm -f webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
-cp -r  ../contrail-web-third-party/fonts-opensans/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff  webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
+    #Start - Link Font-Opensans from contrail-web-third-party
+    rm -rf webroot/assets/fonts-opensans
+    ln -sf $THREE_BACK/contrail-web-third-party/fonts-opensans webroot/assets/fonts-opensans
 
-rm -f webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
-cp -r  ../contrail-web-third-party/fonts-opensans/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff  webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+    rm -f webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
+    ln -sf  $THREE_BACK/contrail-web-third-party/fonts-opensans/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff  webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
 
-#End - Copy Font-Awesome from contrail-web-third-party
+    rm -f webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+    ln -sf  $THREE_BACK/contrail-web-third-party/fonts-opensans/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff  webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+    #End - Link Font-Awesome from contrail-web-third-party
+fi
 
 #Start - Merging All JS files
 rm -f webroot/js/contrail-all-1.js
@@ -163,6 +225,5 @@ cat ${MAINCSS[3]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[4]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[5]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[6]} >> webroot/css/contrail-all.css
-
 #End - Merging ALL CSS files
 

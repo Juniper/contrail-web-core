@@ -27,7 +27,7 @@ package:
 	mv -f html/login.tmpl html/login.html
 	mv -f html/login-error.tmpl html/login-error.html
 	./generate-files.sh
-	./dev-install.sh
+	./dev-install.sh prod
 	./prod-dev.sh html/dashboard.html prod_env dev_env true
 	./prod-dev.sh html/login.html prod_env dev_env true
 	./prod-dev.sh html/login-error.html prod_env dev_env true
@@ -41,7 +41,7 @@ all:
 	ln -sf ../../$(WEBUICLIENT)/html/login.tmpl html/login.html
 	ln -sf ../../$(WEBUICLIENT)/html/login-error.tmpl html/login-error.html
 	./generate-files.sh
-	./dev-install.sh
+	./dev-install.sh dev
 
 make-ln:
 	cp -af html/dashboard.html ../$(WEBUICLIENT)/html/dashboard.tmpl
