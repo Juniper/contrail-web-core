@@ -39,7 +39,7 @@ function checkIfServiceRespDataExists (service, data)
 
 function storeServiceRespData (service, data)
 {
-    if ((null == service) || (null == data)) {
+    if ((null == service) || (null == data) || (null == data['ttl'])) {
         return;
     }
     var serviceType = service['serviceType'];
