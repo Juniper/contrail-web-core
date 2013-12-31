@@ -8,13 +8,13 @@ WEBUICLIENT = contrail-web-ui
 WEBUITHIRDPARTY = contrail-web-third-party
 
 $(WEBUISERVER):
-	if [ ! -d ../$(WEBUISERVER) ]; then git clone https://github.com/Juniper/contrail-web-core.git ../$(WEBUISERVER); else cd ../$(WEBUISERVER) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
+	if [ ! -d ../$(WEBUISERVER) ]; then git clone git@github.com:Juniper/contrail-web-core.git ../$(WEBUISERVER); else cd ../$(WEBUISERVER) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
 $(WEBUICLIENT):
-	if [ ! -d ../$(WEBUICLIENT) ]; then git clone https://github.com/Juniper/contrail-web-ui.git ../$(WEBUICLIENT); else cd ../$(WEBUICLIENT) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
+	if [ ! -d ../$(WEBUICLIENT) ]; then git clone git@github.com:Juniper/contrail-web-ui.git ../$(WEBUICLIENT); else cd ../$(WEBUICLIENT) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
 $(WEBUITHIRDPARTY):
-	if [ ! -d ../$(WEBUITHIRDPARTY) ]; then git clone https://github.com/Juniper/contrail-web-third-party.git ../$(WEBUITHIRDPARTY); else cd ../$(WEBUITHIRDPARTY) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
+	if [ ! -d ../$(WEBUITHIRDPARTY) ]; then git clone git@github.com:Juniper/contrail-web-third-party.git ../$(WEBUITHIRDPARTY); else cd ../$(WEBUITHIRDPARTY) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
 repos: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY)
 
