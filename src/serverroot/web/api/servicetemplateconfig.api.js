@@ -280,9 +280,7 @@ function listServiceTemplateImages(request, response, appData)
  */
 function getSystemFlavors(request, response, appdata)
 {
-    console.log("SERVER HIT!!!");
     computeApi.getFlavors(request, function(err, data) {
-        console.log("OUTPUT:"+JSON.stringify(data));                  
         commonUtils.handleJSONResponse(err, response, data);
     });
 }
