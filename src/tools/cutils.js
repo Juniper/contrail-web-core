@@ -1068,9 +1068,18 @@ function getProtocol(protocol) {
     return (isSet(protocol)) ? protocol.toLowerCase() : "any";
 }
 
-function getFQNofVN(vn) {
-    var fqn =
-        jsonPath(configObj, "$..virtual-networks[?(@.fq_name[2]=='" + vn + "')]");
+function getFQNofVN(domain, project, vn) {
+	if(!isSet(domain) || !isSet(project)) {
+		if(isSet(vn)) {
+			return vn;
+		} else {
+			return null;
+		}
+	}
+    var fqn = jsonPath(configObj, 
+            "$..virtual-networks[?(@.fq_name[0]=='" + domain + 
+            "' && @.fq_name[1]=='" + project + 
+            "' && @.fq_name[2]=='" + vn + "')]");
     if (fqn && fqn.length == 1) {
         fqn = fqn[0].fq_name;
         fqn = (fqn.toString()).replace(/,/g, ":");

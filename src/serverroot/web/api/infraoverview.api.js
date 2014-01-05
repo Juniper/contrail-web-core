@@ -167,7 +167,7 @@ function getvRouterDetailConfigUVEData (configData, uuidList, nodeList, addGen,
         postData['kfilt'] = [];
         if (null != nodeList) {
             var nodeCnt = nodeList.length;
-            var kfilt = ['VRouterAgent', 'Contrail-Vrouter-Nodemgr'];
+            var kfilt = ['VRouterAgent'];
             var kLen = kfilt.length;
             for (var i = 0; i < nodeCnt; i++) {
                 for (var j = 0; j < kLen; j++) {
@@ -175,8 +175,7 @@ function getvRouterDetailConfigUVEData (configData, uuidList, nodeList, addGen,
                 }
             }
         } else {
-            postData['kfilt'] = ['*:VRouterAgent',
-                '*:Contrail-Vrouter-Nodemgr'];
+            postData['kfilt'] = ['*:VRouterAgent'];
         }
         postData['cfilt'] = ['ModuleClientState:client_info',
                              'ModuleServerState:generator_info'];
@@ -259,7 +258,7 @@ function dovRouterListPostProcess (configData, uuidList, nodeList, addGen,
         }
         resultJSON =
             checkAndGetSummaryJSON(confData, uveData,
-                                   ['VRouterAgent','Contrail-Vrouter-Nodemgr']);
+                                   ['VRouterAgent']);
         callback(null, resultJSON);
     });
 }
@@ -382,10 +381,9 @@ function getvRouterDetails (req, res, appData)
             });
         } else {
             var postData = {};
-            postData['kfilt'] = [host + ':VRouterAgent',
-                                 host + ':Contrail-Vrouter-Nodemgr'];
+            postData['kfilt'] = [host + ':VRouterAgent'];
             addGeneratorInfoToUVE(postData, data, host,
-                                  ['VRouterAgent','Contrail-Vrouter-Nodemgr'],
+                                  ['VRouterAgent'],
                                   function(err, data) {
                 getDataFromConfigNode('virtual-routers', host, appData, 
                                       data, function(err, data) {
@@ -693,7 +691,7 @@ function addGenCollData (genData, collData, resultJSON, lastIndex)
 
 function postProcessAnalyticsNodeSummaryJSON (collUVEData, genUVEData) 
 {
-    var moduleNames = ['QueryEngine', 'Contrail-Analytics-Nodemgr',
+    var moduleNames = ['QueryEngine',
                        'OpServer', 'Collector'];
     var modCnt = moduleNames.length;
     var modHost = null;
@@ -776,7 +774,7 @@ function getAnalyticsNodeSummary (req, res, appData)
     if (null != addGen) {
         reqUrl = '/analytics/uves/generator';
         var postData = {};
-        postData['kfilt'] = ['*:Collector', '*:Contrail-Analytics-Nodemgr',
+        postData['kfilt'] = ['*:Collector',
                              '*:OpServer', '*:QueryEngine'];
         postData['cfilt'] = ['ModuleClientState:client_info', 
                              'ModuleServerState:generator_info'];
@@ -804,7 +802,6 @@ function getAnalyticsNodeDetails (req, res, appData)
 
     var postData = {};
     postData['kfilt'] = [hostName + ':Collector', 
-                         hostName + ':Contrail-Analytics-Nodemgr',
                          hostName + ':OpServer',
                          hostName + ':QueryEngine'];
     opServer.api.post(url, postData, function(err, genData) {
@@ -1074,7 +1071,7 @@ function getControlNodeDetailConfigUVEData (configData, addGen, appData, callbac
                              postData, opApiServer, null, appData);
     if (null != addGen) {
         var genPostData = {};
-        genPostData['kfilt'] = ['*:ControlNode', '*:Contrail-Control-Nodemgr'];
+        genPostData['kfilt'] = ['*:ControlNode'];
         genPostData['cfilt'] = ['ModuleClientState:client_info',
                                 'ModuleServerState:generator_info'];
         reqUrl = '/analytics/uves/generator';
@@ -1113,7 +1110,7 @@ function getControlNodesSummary (req, res, appData)
             }
             resultJSON =
                 checkAndGetSummaryJSON(configData, uveData, 
-                    ['ControlNode', 'Contrail-Control-Nodemgr']);
+                    ['ControlNode']);
             commonUtils.handleJSONResponse(err, res, resultJSON);
         });
     }, global.DEFAULT_CB_TIMEOUT));
@@ -1181,10 +1178,9 @@ function getControlNodeDetails (req, res, appData)
             });
         } else {
             var postData = {};
-            postData['kfilt'] = [hostName + ':ControlNode',
-                                 hostName + ':Contrail-Control-Nodemgr'];
+            postData['kfilt'] = [hostName + ':ControlNode'];
             addGeneratorInfoToUVE(postData, data, hostName, 
-                                  ['ControlNode', 'Contrail-Control-Nodemgr'],
+                                  ['ControlNode'],
                                   function(err, data) {
                 getDataFromConfigNode('bgp-routers', hostName, appData, 
                                       data, function(err, data) {
@@ -1216,8 +1212,7 @@ function getConfigNodesList (req, res, appData)
 
 function parseConfigNodeProcessUVEs (resultJSON, configProcessUVEs, host)
 {
-    var cfgProc = ['ServiceMonitor', 'Schema', 'ApiServer',
-        'Contrail-Config-Nodemgr'];
+    var cfgProc = ['ServiceMonitor', 'Schema', 'ApiServer'];
     var cfgProcLen = cfgProc.length;
     try {
         var cfgProcUVEData = configProcessUVEs['value'];
@@ -1287,8 +1282,7 @@ function getConfigNodeDetails (req, res, appData)
     reqUrl = '/analytics/config-node/' + hostName + '?flat';
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
                              null, opApiServer, null, appData);
-    genPostData['kfilt'] = ['*:ApiServer*', '*:Schema', '*:ServiceMonitor',
-                            '*:Contrail-Config-Nodemgr'];
+    genPostData['kfilt'] = ['*:ApiServer*', '*:Schema', '*:ServiceMonitor'];
     reqUrl = '/analytics/uves/generator';
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
                              genPostData, opApiServer, null, appData);
@@ -1317,8 +1311,7 @@ function getConfigNodesSummary (req, res, appData)
     if (null != addGen) {
         reqUrl = '/analytics/uves/generator';
         var genPostData = {};
-        genPostData['kfilt'] = ['*:ApiServer*', '*:Schema', '*:ServiceMonitor',
-                              '*:Contrail-Config-Nodemgr'];
+        genPostData['kfilt'] = ['*:ApiServer*', '*:Schema', '*:ServiceMonitor'];
         genPostData['cfilt'] = ['ModuleClientState:client_info',
                                 'ModuleServerState:generator_info'];
         commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
