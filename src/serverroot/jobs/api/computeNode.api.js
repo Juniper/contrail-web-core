@@ -317,7 +317,7 @@ function getComputeNodeInterface (pubChannel, saveChannelKey,
     
     async.map(dataObjArr,
               commonUtils.getServerRespByRestApi(vRouterRestAPI, true),
-              function(err, data) {
+              commonUtils.doEnsureExecution(function(err, data) {
         if (data) {
             redisPub.publishDataToRedis(pubChannel, saveChannelKey,
                                         global.HTTP_STATUS_RESP_OK,
@@ -330,7 +330,7 @@ function getComputeNodeInterface (pubChannel, saveChannelKey,
                                         global.STR_CACHE_RETRIEVE_ERROR, 0,
                                         0, done);
         }
-    });
+    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
 function getFlowCountAndSendvRouterAclResponse (ip, results, pubChannel,
@@ -529,15 +529,23 @@ function processComputeNodeAcl (pubChannel, saveChannelKey,
     commonUtils.createReqObj(dataObjArr, '/Snh_AclReq?uuid=');
     async.map(dataObjArr,
               commonUtils.getServerRespByRestApi(vRouterRestAPI, false),
-              function(err, data) {
+              commonUtils.doEnsureExecution(function(err, data) {
         /* Now get flow_count for each ACL UUID */
+        if ((null != err) || (null == data)) {
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                                        global.HTTP_STATUS_INTERNAL_ERROR,
+                                        global.STR_CACHE_RETRIEVE_ERROR,
+                                        global.STR_CACHE_RETRIEVE_ERROR, 0,
+                                        0, done);
+            return;
+        }
         getAclFlowByACLSandeshResponse(nodeIp, data[0], function(result) {
             redisPub.publishDataToRedis(pubChannel, saveChannelKey,
                                         global.HTTP_STATUS_RESP_OK,
                                         JSON.stringify(result),
                                         JSON.stringify(result), 0, 0, done);
         });
-    });
+    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
 function getvRouterList (pubChannel, saveChannelKey, jobData, done)

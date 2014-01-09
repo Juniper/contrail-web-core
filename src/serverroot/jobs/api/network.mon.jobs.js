@@ -854,14 +854,14 @@ function processTopPortByProject (pubChannel, saveChannelKey, jobData, done)
                 'with Query' + JSON.stringify(dataObjArr[0]['data']),
                 JSON.stringify(dataObjArr[1]['data']));
             async.map(dataObjArr, commonUtils.getServerRespByRestApi(opServer, true),
-                function (err, data) {
+                commonUtils.doEnsureExecution(function(err, data) {
                     parseNetStatDataProjectOrNetwork(resultJSON, data, srcSelectArr, destSelectArr);
                     redisPub.publishDataToRedis(pubChannel, saveChannelKey,
                         global.HTTP_STATUS_RESP_OK,
                         JSON.stringify(resultJSON),
                         JSON.stringify(resultJSON),
                         0, 0, done);
-                });
+                }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
         });
 }
 
@@ -1019,7 +1019,7 @@ function processVNFlowSeriesData (pubChannel, saveChannelKey, jobData, done)
     logutils.logger.debug(messages.qe.qe_execution + 'VN Flow Series data ' +
         vnName);
     flowCache.getFlowSeriesData('vn', appData, srcQueryJSON, destQueryJSON,
-        function (err, data) {
+        commonUtils.doEnsureExecution(function(err, data) {
             if (data != null) {
                 resultJSON = data;
             } else {
@@ -1030,7 +1030,7 @@ function processVNFlowSeriesData (pubChannel, saveChannelKey, jobData, done)
                 JSON.stringify(resultJSON),
                 JSON.stringify(resultJSON),
                 0, 0, done);
-        });
+        }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
 function processVNsFlowSeriesData (pubChannel, saveChannelKey, jobData, done)
@@ -2545,7 +2545,8 @@ function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, done)
     queryJSON['sort'] = global.QUERY_STRING_SORT_ASC;
     var selectEleCnt = queryJSON['select_fields'].length;
     queryJSON['select_fields'].splice(selectEleCnt - 1, 1);
-    executeQueryString(queryJSON, function (err, resultJSON) {
+    executeQueryString(queryJSON, 
+                       commonUtils.doEnsureExecution(function(err, resultJSON) {
         formatCPULoadXMLData(resultJSON, function (err, results) {
             /* Check if there is any data, if no data, then there is no change
              * in cpu/memory utilization, so we did not get the data, so now
@@ -2584,7 +2585,7 @@ function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, done)
                     0, 0, done);
             });
         });
-    });
+    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
 function getStartEndPort (portRange)
@@ -2666,7 +2667,7 @@ function getTrafficStatsByPort (pubChannel, saveChannelKey, jobData, done)
                           JSON.stringify(dataObjArr[0]['data']),
                           JSON.stringify(dataObjArr[1]['data']));
     async.map(dataObjArr, commonUtils.getServerRespByRestApi(opServer, true),
-              function (err, data) {
+              commonUtils.doEnsureExecution(function(err, data) {
         var resultJSON = {};
         parseNetStatDataProjectOrNetwork(resultJSON, data, srcSelectArr,
                                          destSelectArr);
@@ -2675,7 +2676,7 @@ function getTrafficStatsByPort (pubChannel, saveChannelKey, jobData, done)
                         JSON.stringify(resultJSON),
                         JSON.stringify(resultJSON),
                         0, 0, done);
-        });
+        }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
 exports.getTrafficStatsByPort = getTrafficStatsByPort;

@@ -1212,7 +1212,7 @@ function getConfigNodesList (req, res, appData)
 
 function parseConfigNodeProcessUVEs (resultJSON, configProcessUVEs, host)
 {
-    var cfgProc = ['ServiceMonitor', 'Schema', 'ApiServer'];
+    var cfgProc = ['ApiServer'];
     var cfgProcLen = cfgProc.length;
     try {
         var cfgProcUVEData = configProcessUVEs['value'];
@@ -1282,7 +1282,7 @@ function getConfigNodeDetails (req, res, appData)
     reqUrl = '/analytics/config-node/' + hostName + '?flat';
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
                              null, opApiServer, null, appData);
-    genPostData['kfilt'] = ['*:ApiServer*', '*:Schema', '*:ServiceMonitor'];
+    genPostData['kfilt'] = ['*:ApiServer*'];
     reqUrl = '/analytics/uves/generator';
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
                              genPostData, opApiServer, null, appData);
@@ -1311,7 +1311,7 @@ function getConfigNodesSummary (req, res, appData)
     if (null != addGen) {
         reqUrl = '/analytics/uves/generator';
         var genPostData = {};
-        genPostData['kfilt'] = ['*:ApiServer*', '*:Schema', '*:ServiceMonitor'];
+        genPostData['kfilt'] = ['*:ApiServer*'];
         genPostData['cfilt'] = ['ModuleClientState:client_info',
                                 'ModuleServerState:generator_info'];
         commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,

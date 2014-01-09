@@ -59,7 +59,13 @@ function startServers ()
 
 function jobServerPurgeAndStart (redisClient)
 {
-    redisClient.flushdb(function (err) {
+    redisClient.flushall(function (err) {
+        if (err) {
+            logutils.logger.error("web-ui Redis FLUSALL error:" + err);
+        } else {
+            logutils.logger.debug("web-ui Redis FLUSHALL done.");
+        }
+    /*
         var uiDB = config.redisDBIndex;
         if (null == uiDB) {
             uiDB = global.WEBUI_DFLT_REDIS_DB;
@@ -69,6 +75,7 @@ function jobServerPurgeAndStart (redisClient)
         } else {
             logutils.logger.debug("Redis FLUSHDB " + uiDB + " Done.");
         }
+    */
     });
 }
 

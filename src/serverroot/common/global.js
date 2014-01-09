@@ -178,6 +178,8 @@ global.DFLT_SERVER_IP = '127.0.0.1';
 global.DFLT_HTTP_REQUEST_TIMEOUT_TIME = 115 * 1000;
 /* 5 minutes 10 secs */
 global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME = (5 * 60 + 10) * 1000; 
+/* 20 Minutes - From Middleware, do callback timeout of 20 minutes */
+global.DEFAULT_MIDDLEWARE_API_TIMEOUT = 20 * 60 * 1000;
 
 global.EMPTY_BGP_PEER_ATTR_JSON = {"session": [
     {"attributes": [
