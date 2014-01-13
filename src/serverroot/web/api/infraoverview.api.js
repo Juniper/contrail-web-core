@@ -1795,7 +1795,7 @@ function getServerResponseByModType (req, res, appData)
     var postData = req.body;
     var dataObjArr = [];
 
-    dataObjArr = buildBulkUVEUrls(postData, appData);
+    dataObjArr = getBulkUVEPostURLs(postData, appData);
     if (null == dataObjArr) {
         var err = new appErrors.RESTServerError('postData is not correct');
         commonUtils.handleJSONResponse(err, res, null);
@@ -1867,6 +1867,53 @@ function getvRouterList (appData, callback)
         }
         callback(null, resultJSON, uuidList);
     });
+}
+
+function getBulkUVEPostURLs (filtData, appData)
+{
+    filtData = filtData['data'];
+    var url = '/analytics/uves/';
+    var dataObjArr = [];
+
+    try {
+        var modCnt = filtData.length;
+    } catch(e) {
+        return null;
+    }
+    for (var i = 0; i < modCnt; i++) {
+        var postData = {};
+        type = filtData[i]['type'];
+        hostname = filtData[i]['hostname'];
+        module = filtData[i]['module'];
+        /* All URLs should be valid */
+        if (null == type) {
+            return null;
+        }
+        if (null != filtData[i]['kfilt']) {
+            postData['kfilt'] = filtData[i]['kfilt'].split(',');
+        }
+        if (null != filtData[i]['cfilt']) {
+            postData['cfilt'] = filtData[i]['cfilt'].split(',');
+        }
+        if (null != filtData[i]['mfilt']) {
+            postData['mfilt'] = filtData[i]['mfilt'].split(',');
+        }
+        url += type;
+
+        var kfilt = "";
+        if (null != hostname) {
+            kfilt += hostname + ':';
+        }
+        if (null != module) {
+            kfilt += module;
+        } else {
+            kfilt += '*';
+        }
+        //postData['kfilt'].splice(0, 0, kfilt);
+        commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_POST,
+                                 postData, opApiServer, null, appData);
+    }
+    return dataObjArr;
 }
 
 exports.getvRoutersSummary = getvRoutersSummary;
