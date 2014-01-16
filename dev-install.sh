@@ -1,9 +1,8 @@
+#!/usr/bin/env bash
+
 #
 # Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
 #
-
-#!/bin/bash
-
 
 ONE_BACK='..'
 TWO_BACK='../..'
