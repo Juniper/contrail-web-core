@@ -670,6 +670,21 @@ function updateVirtualNetwork (request, response, appData)
             commonUtils.handleJSONResponse(error, response, null);
             return;
         }
+        var vmiBackRefs =
+            data['virtual-network']['virtual_machine_interface_back_refs'];
+        if (null != vmiBackRefs) {
+            var vmiCnt = vmiBackRefs.length;
+            for (var i = 0; i < vmiCnt; i++) {
+                uuidList.push(vmiBackRefs[i]['uuid']);
+            }
+            if (vmiCnt > 0) {
+                var error = 
+                    new appErrors.RESTServerError('Virtual machine back refs ' +
+                                                  uuidList.concat(',') + 'exist');
+                commonUtils.handleJSONResponse(error, response, null);
+                return;
+            }
+        }
         updateVNPolicyRefs(data, response, appData);
     });
 }
@@ -739,6 +754,8 @@ function deleteVirtualNetwork (request, response, appData)
     var vnDelURL         = '/virtual-network/';
     var virtualNetworkId = null;
     var requestParams    = url.parse(request.url, true);
+    var uuidList         = [];
+    var dataObjArr       = [];
 
     if (virtualNetworkId = request.param('id').toString()) {
         vnDelURL += virtualNetworkId;
@@ -748,10 +765,52 @@ function deleteVirtualNetwork (request, response, appData)
         commonUtils.handleJSONResponse(error, response, null);
         return;
     }
-    configApiServer.apiDelete(vnDelURL, appData,
-                            function(error, data) {
-                            deleteVirtualNetworkCb(error, data, response)
-                            });
+    configApiServer.apiGet(vnDelURL, appData, function(err, data) {
+        if (err || (null == data)) {
+            var error = new appErrors.RESTServerError('Virtual Network Id' +
+                                                      virtualNetworkId + ' does not exist');
+            commonUtils.handleJSONResponse(error, response, null);
+            return;
+        }
+
+        var vmiBackRefs = 
+            data['virtual-network']['virtual_machine_interface_back_refs'];
+        if (null != vmiBackRefs) {
+            var vmiCnt = vmiBackRefs.length;
+            for (var i = 0; i < vmiCnt; i++) {
+                uuidList.push(vmiBackRefs[i]['uuid']);
+            }   
+            if (vmiCnt > 0) {
+                var error =
+                    new appErrors.RESTServerError('Virtual machine back refs ' +
+                                                  uuidList.join(',') + ' exist');
+                commonUtils.handleJSONResponse(error, response, null);
+                return;                                
+            }
+        }
+        /* Check if we have any floating-ip-pool */
+        var fipPoolList = data['virtual-network']['floating_ip_pools'];
+        if (null != fipPoolList) {
+            var fipPoolCnt = fipPoolList.length;
+            for (i = 0; i < fipPoolCnt; i++) {
+                dataObjArr[i] = {};
+                dataObjArr[i]['virtualNetworkId'] = virtualNetworkId;
+                dataObjArr[i]['fipPoolId'] = fipPoolList[i]['uuid'];
+                dataObjArr[i]['appData'] = appData;
+            }
+            async.map(dataObjArr, fipPoolDelete, function(err, results) {
+                configApiServer.apiDelete(vnDelURL, appData,
+                                          function(error, data) {
+                    deleteVirtualNetworkCb(error, data, response);
+                });
+            });
+        } else {
+            configApiServer.apiDelete(vnDelURL, appData,
+                                      function(error, data) {
+                deleteVirtualNetworkCb(error, data, response);
+            });
+        }
+    });
 }
 
 function doIpamSubnetExist(nwIpam, nwSubnet, vnNwIpamRefs)
