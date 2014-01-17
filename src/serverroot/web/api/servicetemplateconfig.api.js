@@ -126,6 +126,22 @@ function stListAggCb(error, results, response)
     commonUtils.handleJSONResponse(error, response, serviceTemplates);
 }
 
+function getServiceTemplates (dataObj, callback)
+{
+    var serviceTemplates = {}, finalResults;
+
+    var configData = dataObj['configData'];
+    var dataObjArr = dataObj['dataObjArr'];
+    
+    async.map(dataObjArr,
+              commonUtils.getServerResponseByRestApi(configApiServer,
+                                                     true),
+              function(err, result) {
+        serviceTemplates['service_templates'] = result;
+        callback(err, serviceTemplates);
+    });
+}
+
 /**
  * @filterDefaultAnalyzerTemplate
  * private function
@@ -139,6 +155,26 @@ function filterDefaultAnalyzerTemplate(serviceTemplates)
         name = serviceTemplates[i]['service-template']['name'];
         if (name != 'analyzer-template') {
             filteredTemplates[j++] = serviceTemplates[i];
+        }
+    }
+    return filteredTemplates;
+}
+
+function filterDefAnalyzerTemplate (svcTmpl)
+{
+    var j = 0;
+    var filteredTemplates = [];
+    try {
+        var svcTmplLen = svcTmpl.length;
+    } catch(e) {
+        return svcTmpl;
+    }
+    for (var i = 0; i < svcTmplLen; i++) {
+        try {
+            if (svcTmpl[i]['to'][1] != 'analyzer-template') {
+                filteredTemplates[j++] = svcTmpl[i];
+            }
+        } catch(e) {
         }
     }
     return filteredTemplates;
@@ -234,7 +270,6 @@ function setSTRead(error, stConfig, response, appData)
     }
 
     stGetURL += stConfig['service-template']['uuid'];
-    console.log(stGetURL);
     configApiServer.apiGet(stGetURL, appData,
         function (error, data) {
             stSendResponse(error, data, response)
@@ -286,7 +321,10 @@ function getSystemFlavors(request, response, appdata)
 }
 
 exports.listServiceTemplates = listServiceTemplates;
+exports.getServiceTemplates  = getServiceTemplates;
 exports.listServiceTemplateImages = listServiceTemplateImages;
 exports.createServiceTemplate = createServiceTemplate;
 exports.deleteServiceTemplate = deleteServiceTemplate;
 exports.getSystemFlavors = getSystemFlavors;
+exports.filterDefAnalyzerTemplate = filterDefAnalyzerTemplate;
+

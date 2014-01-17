@@ -110,7 +110,7 @@ function setPolicyRulesSequence(polConfig)
  * 2. Reads the response of policy get from config api server
  *    and sends it back to the client.
  */
-function getPolicyCb(error, polConfig, response) 
+function getPolicyCb(error, polConfig, callback) 
 {
     if (error) {
         commonUtils.handleJSONResponse(error, response, null);
@@ -121,7 +121,7 @@ function getPolicyCb(error, polConfig, response)
     delete polConfig['network-policy']['_type'];
 
     polConfig = setPolicyRulesSequence(polConfig);
-    commonUtils.handleJSONResponse(error, response, polConfig);
+    callback(error, polConfig);
 }
 
 /**
@@ -140,17 +140,35 @@ function getPolicy(request, response, appData)
     var polGetURL = '/network-policy';
 
     if ((policyId = request.param('id'))) {
-        polGetURL += '/' + policyId.toString();
+        getPolicyAsync({uuid:policyId, appData:appData}, 
+                       function(err, data) {
+            commonUtils.handleJSONResponse(err, response, data);
+        });
     } else {
         /**
          * TODO - Add Language independent error code and return
          */
     }
+}
 
-    configApiServer.apiGet(polGetURL, appData,
-        function (error, data) {
-            getPolicyCb(error, data, response)
-        });
+function getPolicyAsync (policyObj, callback)
+{
+    var policyId = policyObj['uuid'];
+    var appData = policyObj['appData'];
+
+    var reqUrl = '/network-policy/' + policyId;
+    configApiServer.apiGet(reqUrl, appData, function(err, data) {
+        getPolicyCb(err, data, callback);
+    });
+}
+
+function readPolicys (policyObj, callback)
+{
+    var dataObjArr = policyObj['reqDataArr'];
+    console.log("Getting dataObjArr:", dataObjArr);
+    async.map(dataObjArr, getPolicyAsync, function(err, data) {
+        callback(err, data);
+    });
 }
 
 /**
@@ -803,6 +821,7 @@ function deleteAnalyzerPolicy(policyId, appData, deleteAnalyzerCB)
 
 exports.listPolicys = listPolicys;
 exports.getPolicy = getPolicy;
+exports.readPolicys = readPolicys;
 exports.createPolicy = createPolicy;
 exports.updatePolicy = updatePolicy;
 exports.createDynamicPolicy = createDynamicPolicy;
