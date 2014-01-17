@@ -52,18 +52,18 @@ function listFloatingIpsCb (error, fipListData, response)
  * private function
  * 1. Callback for the fip gets, sends all fips to client.
  */
-function fipListAggCb (error, results, response) 
+function fipListAggCb (error, results, callback) 
 {
     var fipConfigBackRefs = {};
 
     if (error) {
-       commonUtils.handleJSONResponse(error, response, null);
-       return;
+        callback(error, null);
+        return;
     }
 
     fipConfigBackRefs['floating_ip_back_refs'] = [];
     fipConfigBackRefs['floating_ip_back_refs'] = results;
-    commonUtils.handleJSONResponse(error, response, fipConfigBackRefs);
+    callback(error, fipConfigBackRefs);
 }
 
 /**
@@ -87,11 +87,13 @@ function getFipsForProjectCb (error, fipListData, response, appData)
 
     fipConfigBackRefs['floating_ip_back_refs'] = [];
 
+    console.log("Getting FIP LIst :", JSON.stringify(fipListData));
     if ('floating_ip_back_refs' in fipListData['project']) {
         fipConfigBackRefs['floating_ip_back_refs'] =
               fipListData['project']['floating_ip_back_refs'];
     }
 
+    console.log("Getting Back refs:", fipConfigBackRefs);
     fipLength = fipConfigBackRefs['floating_ip_back_refs'].length;
 
     if (!fipLength) {
@@ -109,8 +111,35 @@ function getFipsForProjectCb (error, fipListData, response, appData)
     async.map(dataObjArr,
               commonUtils.getAPIServerResponse(configApiServer.apiGet, false),
               function(error, results) {
-              fipListAggCb(error, results, response)
+              fipListAggCb(error, results, function (err, data) {
+                commonUtils.handleJSONResponse(error, response, data);
               });
+    });
+}
+
+function listFloatingIpsAsync (fipObj, callback)
+{
+    var fipObjArr = [];
+    var dataObjArr = fipObj['reqDataArr'];
+    var reqLen = dataObjArr.length;
+
+    for (var i = 0; i < reqLen; i++) {
+        url = '/floating-ip/' + dataObjArr[i]['uuid'];
+        commonUtils.createReqObj(fipObjArr, url, null, null, null, null,
+                                 dataObjArr[i]['appData']);
+    }
+    console.log("fipObjArr:", fipObjArr);
+    if (!reqLen) {
+        callback(null, null);
+        return;
+    }
+    async.map(fipObjArr,
+              commonUtils.getAPIServerResponse(configApiServer.apiGet, false),
+              function(err, results) {
+        fipListAggCb(err, results, function (err, data) {
+            callback(err, data);
+        });
+    });
 }
 
 /**
@@ -398,3 +427,5 @@ exports.listFloatingIpPools = listFloatingIpPools;
 exports.createFloatingIp    = createFloatingIp
 exports.deleteFloatingIp    = deleteFloatingIp
 exports.updateFloatingIp    = updateFloatingIp
+exports.listFloatingIpsAsync = listFloatingIpsAsync;
+

@@ -78,14 +78,14 @@ function listVirtualNetworks (request, response, appData)
  * private function
  * 1. Called from the last callback of vn config processig
  */ 
-function sendVnGetResponse (error, response, vnConfig) 
+function sendVnGetResponse (error, vnConfig, callback) 
 {
 
     delete vnConfig['virtual-network']['access_control_lists'];
     delete vnConfig['virtual-network']['href'];
     delete vnConfig['virtual-network']['id_perms'];
     delete vnConfig['virtual-network']['routing_instances'];
-    commonUtils.handleJSONResponse(error, response, vnConfig);
+    callback(error, vnConfig);
 }
 
 /**
@@ -93,14 +93,14 @@ function sendVnGetResponse (error, response, vnConfig)
  * private function
  * 1. Parses the quantum subnets and adds it to ipam refs of the VN config
  */
-function parseVNSubnets (error, response, vnConfig) 
+function parseVNSubnets (error, vnConfig, callback) 
 {
     var ipamRef       = null;
     var ipamSubnetLen = 0, i = 0;
 
     if (error) {
-       commonUtils.handleJSONResponse(error, response, null);
-       return;
+        callback(error, null);
+        return;
     }
 
     var k = 0;
@@ -146,7 +146,7 @@ function parseVNSubnets (error, response, vnConfig)
     } catch(e) {
         logutils.logger.debug("In parseVNSubnets(): JSON Parse error:" + e);
     }
-    sendVnGetResponse(error, response, vnConfig);
+    sendVnGetResponse(error, vnConfig, callback);
 }
 
 /**
@@ -154,13 +154,13 @@ function parseVNSubnets (error, response, vnConfig)
  * private function
  * 1. Called from the last callback of vn config processig
  */ 
-function VnGetSubnetResponse (error, response, vnConfig) 
+function VnGetSubnetResponse (error, vnConfig, callback)
 {
     if (error) {
-       commonUtils.handleJSONResponse(error, response, null);
-       return;
+        callback(error, null);
+        return;
     }
-    parseVNSubnets(error, response, vnConfig);
+    parseVNSubnets(error, vnConfig, callback);
 }
 
 /**
@@ -168,13 +168,13 @@ function VnGetSubnetResponse (error, response, vnConfig)
  * private function
  * 1. Callback for the floating ip pool get for a give VN.
  */
-function VNFloatingIpPoolAggCb (error, results, response, vnConfig, appData) 
+function VNFloatingIpPoolAggCb (error, results, vnConfig, appData, callback)
 {
     var i = 0, floatingIpPoolsLen = 0;
 
     if (error) {
-       commonUtils.handleJSONResponse(error, response, null);
-       return;
+        callback(error, null);
+        return;
     }
 
     floatingIpPoolsLen = results.length;
@@ -183,7 +183,7 @@ function VNFloatingIpPoolAggCb (error, results, response, vnConfig, appData)
                      results[i]['floating-ip-pool']['project_back_refs'];
     }
 
-    VnGetSubnetResponse(error, response, vnConfig);
+    VnGetSubnetResponse(error, vnConfig, callback);
 }
 
 /**
@@ -192,7 +192,7 @@ function VNFloatingIpPoolAggCb (error, results, response, vnConfig, appData)
  * 1. Gets the Floating ip pool list and then does an individual get on
  *    the floating ip pool for a given virtual network
  */
-function parseVNFloatingIpPools (error, response, vnConfig, appData) 
+function parseVNFloatingIpPools (error, vnConfig, appData, callback)
 {
     var fipPoolRef     = null;
     var dataObjArr     = [];
@@ -214,15 +214,15 @@ function parseVNFloatingIpPools (error, response, vnConfig, appData)
     }
 
     if (!dataObjArr.length) {
-        VnGetSubnetResponse(error, response, vnConfig);
+        VnGetSubnetResponse(error, vnConfig, callback);
         return;
     }
 
     async.map(dataObjArr,
               commonUtils.getAPIServerResponse(configApiServer.apiGet, false),
               function(error, results) {
-                  VNFloatingIpPoolAggCb(error, results, response, vnConfig,
-                                        appData);
+                  VNFloatingIpPoolAggCb(error, results, vnConfig,
+                                        appData, callback);
               });
 }
 
@@ -236,15 +236,15 @@ function parseVNFloatingIpPools (error, response, vnConfig, appData)
  *    - Gets each Floating IP pool
  *    - ACL Reference is already part of the virtual-network get
  */
-function getVirtualNetworkCb (error, vnGetData, response, appData) 
+function getVirtualNetworkCb (error, vnGetData, appData, callback) 
 {
 
     if (error) {
-       commonUtils.handleJSONResponse(error, response, null);
+       callback(error, null);
        return;
     }
 
-    parseVNFloatingIpPools(error, response, vnGetData, appData);
+    parseVNFloatingIpPools(error, vnGetData, appData, callback);
 }
 
 /**
@@ -252,7 +252,7 @@ function getVirtualNetworkCb (error, vnGetData, response, appData)
  * private function
  * 1. Needs network uuid in string format
  */
-function readVirtualNetwork (response, netIdStr, appData) 
+function readVirtualNetwork (netIdStr, appData, callback) 
 {
     var vnGetURL         = '/virtual-network/';
 
@@ -260,13 +260,13 @@ function readVirtualNetwork (response, netIdStr, appData)
         vnGetURL += netIdStr;
     } else {
         error = new appErrors.RESTServerError('Add Virtual Network id');
-        commonUtils.handleJSONResponse(error, response, null);
+        callback(error, null);
         return;
     }
 
     configApiServer.apiGet(vnGetURL, appData,
                          function(error, data) {
-                         getVirtualNetworkCb(error, data, response, appData);
+                         getVirtualNetworkCb(error, data, appData, callback);
                          });
 }
 
@@ -289,7 +289,29 @@ function getVirtualNetwork (request, response, appData)
         commonUtils.handleJSONResponse(error, response, null);
         return;
     }
-    readVirtualNetwork(response, virtualNetworkId, appData);
+    readVirtualNetwork(virtualNetworkId, appData,
+                       function(err, data) {
+        commonUtils.handleJSONResponse(err, response, data);
+    });
+}
+
+function readVirtualNetworkAsync (vnObj, callback)
+{
+    console.log("Getting in readVirtualNetworkAsync", vnObj);
+    var vnID = vnObj['uuid'];
+    var appData = vnObj['appData'];
+
+    readVirtualNetwork(vnID, appData, function(err, data) {
+        callback(err, data);
+    });
+}
+
+function readVirtualNetworks (dataObj, callback)
+{
+    var dataObjArr = dataObj['reqDataArr'];
+    async.map(dataObjArr, readVirtualNetworkAsync, function(err, data) {
+        callback(err, data);
+    });
 }
 
 /**
@@ -650,7 +672,10 @@ function updateVNPolicyRefs (vnConfig, response, appData)
             if (err) {
                 commonUtils.handleJSONResponse(err, response, null);
             } else {
-                readVirtualNetwork(response, vnId, appData); 
+                readVirtualNetworkAsync({vnId:vnId, appData:appData},
+                                        function(err, data) {
+                    commonUtils.handleJSONResponse(err, response, data);
+                });
             }
         });
     }); 
@@ -860,7 +885,10 @@ function updateVNSubnetByConfigData (request, response, vnConfigData, appData,
         if (error) {
             commonUtils.handleJSONResponse(error, response, null);
         } else {
-            readVirtualNetwork(response, virtualNetworkId, appData);
+            readVirtualNetworkAsync({vnID:virtualNetworkId, appData:appData},
+                                    function(err, data) {
+                commonUtils.handleJSONResponse(err, response, data);
+            });
         }
     });
 }
@@ -984,9 +1012,10 @@ function createFipPoolUpdateSendResponse (error, results, response,
        return;
     }
 
-    readVirtualNetwork(response,
-                       fipPostData['virtual-network']['uuid'].toString(),
-                       appData);
+    readVirtualNetwork(fipPostData['virtual-network']['uuid'].toString(),
+                       appData, function(err, data) {
+        commonUtils.handleJSONResponse(err, response, data);
+    });
     return;
 }
 
@@ -1152,7 +1181,10 @@ function updateVNFipPoolAdd (request, response, appData)
     var vnId = fipPostData['virtual-network']['uuid'];
 
     updateVNFipPoolAddCb(fipPostData, appData, function(err, data) {
-        readVirtualNetwork(response, vnId, appData);
+        readVirtualNetwork(vnId, appData,
+                           function(err, data) {
+            commonUtils.handleJSONResponse(err, response, data);
+        });
     });
 }
 
@@ -1360,7 +1392,9 @@ function updateVNFipPoolDelete (request, response, appData)
     obj[0]['fipPoolId'] = fipPoolId;
     obj[0]['appData'] = appData;
     async.map(obj, fipPoolDelete, function(err, results) {
-        readVirtualNetwork(response, virtualNetworkId, appData);
+        readVirtualNetwork(virtualNetworkId, appData, function(err, data) {
+            commonUtils.handleJSONResponse(err, response, data);
+        });
     });
 }
 
@@ -1391,7 +1425,9 @@ function updateFipPoolUpdateSendResponse (error, results,
        return;
     }
 
-    readVirtualNetwork(response, virtualNetworkId, appData);
+    readVirtualNetwork(virtualNetworkId, appData, function(err, data) {
+        commonUtils.handleJSONResponse(err, response, data);
+    });
 
     return;
 }
@@ -1639,8 +1675,11 @@ function updateVNFipPoolUpdate (request, response, appData)
                                 commonUtils.handleJSONResponse(err, response,
                                                                appData);
                             } else {
-                                readVirtualNetwork(response, virtualNetworkId,
-                                                   appData);
+                                readVirtualNetwork(virtualNetworkId, appData,
+                                                   function(err, data) {
+                                    commonUtils.handleJSONResponse(err, response, 
+                                                                   data);
+                                });
                             }
                         });
      });
@@ -1658,7 +1697,9 @@ function updateVNNetPoliciesSendResponse(error, results,
        return;
     }
 
-    readVirtualNetwork(response, virtualNetworkId, appData);
+    readVirtualNetwork(virtualNetworkId, appData, function(err, data) {
+        commonUtils.handleJSONResponse(err, response, data);
+    });
 
     return;
 }
@@ -1898,7 +1939,9 @@ function updateVNRouteTargetUpdate (error, vnConfig, vnPostData,
     function(error, data) {
         if (error) {
         } else {
-            readVirtualNetwork(response, virtualNetworkId, appData);
+            readVirtualNetwork(virtualNetworkId, appData, function(err, data) {
+                commonUtils.handleJSONResponse(err, response, data);
+            });
         }
         return;
    });
@@ -1936,6 +1979,8 @@ function updateVNRouteTargets (request, response, appData)
 
 exports.listVirtualNetworks          = listVirtualNetworks;
 exports.getVirtualNetwork            = getVirtualNetwork;
+exports.readVirtualNetworks          = readVirtualNetworks;
+exports.readVirtualNetworkAsync      = readVirtualNetworkAsync;
 exports.createVirtualNetwork         = createVirtualNetwork;
 exports.updateVirtualNetwork         = updateVirtualNetwork;
 exports.deleteVirtualNetwork         = deleteVirtualNetwork;

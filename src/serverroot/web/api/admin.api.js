@@ -21,6 +21,12 @@ var rest = require('../../common/rest.api'),
     configApiServer = require('../../common/configServer.api'),
     plugins = require('../../orchestration/plugins/plugins.api'),
     nwMonUtils = require('../../common/nwMon.utils'),
+    vnConfig = require('./vnconfig.api'),
+    fipConfig = require('./fipconfig.api'),
+    polConfig = require('./policyconfig.api'),
+    ipamConfig = require('./ipamconfig.api'),
+    vdnsConfig = require('./virtualdnsconfig.api'),
+    svcTempl = require('./servicetemplateconfig.api'),
 	opServer;
 
 var parser = null;
@@ -1737,11 +1743,13 @@ function getMatchStrByType (type)
     case 'virtual-network':
         return 'virtual_networks';
     case 'network-ipam':
-        return 'network-ipams';
+        return 'network_ipams';
     case 'floating-ip-pool':
         return 'floating_ip_pool_refs';
     case 'security-group':
         return 'security_groups';
+    case 'floating-ip':
+        return 'floating_ip_back_refs'
     default:
         return null;
     }
@@ -1760,11 +1768,56 @@ function getParentByReqType (type)
 function isParentProject (type) {
     switch (type) {
     case 'virtual-DNS-record':
+    case 'service-template':
+	case 'virtual-DNS':
         return false;
     default:
         return true;
     }
 }
+
+function createReqArrByType (dataObjArr, type, obj)
+{
+    switch(type) {
+    case 'virtual-network':
+    case 'floating-ip':
+    case 'network-policy':
+    case 'network-ipam':
+    case 'virtual-DNS':
+    case 'virtual-DNS-record':
+        dataObjArr.push({uuid: obj['uuid'], appData: obj['appData']});
+        break;
+    default:
+        break;
+    }
+}
+
+var configCBList = 
+{
+    'virtual-network': vnConfig.readVirtualNetworks,
+    'network-policy': polConfig.readPolicys,
+    'network-ipam': ipamConfig.readIpams,
+    'virtual-DNS': vdnsConfig.readVirtualDNSs,
+    'virtual-DNS-record': vdnsConfig.readVirtualDNSRecords,
+    'service-template': svcTempl.getServiceTemplates,
+    'floating-ip': fipConfig.listFloatingIpsAsync
+}
+
+function getConfigCallbackByType (type)
+{
+    return configCBList[type];
+}
+
+var filterCBList =
+{
+    'service-template': svcTempl.filterDefAnalyzerTemplate
+}
+
+function filterConfigListApi (type)
+{
+    return filterCBList[type];
+}
+
 function getApiServerDataByPage (req, res, appData)
 {
     var count = req.query['count'];
@@ -1775,6 +1828,8 @@ function getApiServerDataByPage (req, res, appData)
     var retLastKey = null;
     var found = false;
     var dataObjArr = [];
+    var reqDataObjArr = [];
+    var configListData = null;
 
     var matchStr = type + 's';
     var url = '/' + matchStr;
@@ -1788,8 +1843,15 @@ function getApiServerDataByPage (req, res, appData)
     if (null != fqnUUID) {
         switch (type) {
         case 'virtual-DNS-record':
-            url = '/' + matchStr + '?parent_type=' + getParentByReqType(type) +
-                '&parent_fq_name_str=' + fqnUUID;
+            url = '/virtual-DNS/' + fqnUUID;
+            break;
+        case 'service-template':
+            url = '/domain/' + fqnUUID;
+            matchStr = 'service_templates';
+            break;
+        case 'virtual-DNS':
+            url = '/domain/' + fqnUUID;
+            matchStr = 'virtual_DNSs';
             break;
         default:
             url = '/project/' + fqnUUID;
@@ -1810,11 +1872,31 @@ function getApiServerDataByPage (req, res, appData)
                 return;
             }
         }
-        var configListData = configList[matchStr];
+        switch (type) {
+        case 'virtual-DNS-record':
+            try {
+                configListData = configList['virtual-DNS']['virtual_DNS_records'];
+            } catch(e) {
+                configListData = null;
+            }
+            break;
+        case 'service-template':
+        case 'virtual-DNS':
+            configListData = configList['domain'][matchStr];
+            break;
+        default:
+            configListData = configList[matchStr];
+            break;
+        }
         if (null == configListData) {
             commonUtils.handleJSONResponse(err, res, resultJSON);
             return;
         }
+        var filterCb = filterConfigListApi(type);
+        if (null != filterCb) {
+            configListData = filterCb(configListData);
+        }
+
         var index = nwMonUtils.getnThIndexByLastKey(lastKey, configListData, keyStr);
         if (index == -2) {
             commonUtils.handleJSONResponse(err, res, resultJSON);
@@ -1837,9 +1919,13 @@ function getApiServerDataByPage (req, res, appData)
         }
         for (var i = index + 1, j = 0; i < totCnt; i++) {
             if (configListData[i]) {
-                url = '/' + type + '/' + configListData[i][keyStr]
+                url = '/' + type + '/' + configListData[i][keyStr];
                 commonUtils.createReqObj(dataObjArr, url, null, null, null,
                                          null, appData);
+                createReqArrByType(reqDataObjArr, type,
+                                   {uuid: configListData[i][keyStr],
+                                    appData: appData, 
+                                    dataObjArr: dataObjArr});
                 found = true;
             }
         }
@@ -1847,20 +1933,37 @@ function getApiServerDataByPage (req, res, appData)
             commonUtils.handleJSONResponse(err, res, resultJSON);
             return;
         }
-        async.map(dataObjArr,
-                  commonUtils.getServerResponseByRestApi(configApiServer, true),
-                  function(err, data) {
-            var result = {};
-            result['data'] = data;
-            result['lastKey'] = retLastKey;
-            if (null == retLastKey) {
-                result['more'] = false;
-            } else {
-                result['more'] = true;
-            }
-            commonUtils.handleJSONResponse(err, res, result);
-        });
+        var callback = getConfigCallbackByType(type);
+        if (null == callback) {
+            async.map(dataObjArr,
+                      commonUtils.getServerResponseByRestApi(configApiServer,
+                                                             true),
+                      function(err, result) {
+                sendConfigPagedResponse(err, result, res, retLastKey);
+            });
+        } else {
+            var dataObj = {};
+            dataObj['configData'] = configList;
+            dataObj['reqDataArr'] = reqDataObjArr;
+            dataObj['dataObjArr'] = dataObjArr;
+            callback(dataObj, function(err, result) {
+                sendConfigPagedResponse(err, result, res, retLastKey);
+            });
+        }
     });
+}
+
+function sendConfigPagedResponse (err, data, res, retLastKey)
+{
+    var result = {};
+    result['data'] = data;
+    result['lastKey'] = retLastKey;
+    if (null == retLastKey) {
+        result['more'] = false;
+    } else {
+        result['more'] = true;
+    }
+    commonUtils.handleJSONResponse(err, res, result);
 }
 
 exports.updateGlobalASN = updateGlobalASN;

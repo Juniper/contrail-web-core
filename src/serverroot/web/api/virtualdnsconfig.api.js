@@ -108,8 +108,30 @@ function listVirtualDNSsCb (error, vdnsListData, response, appData)
     async.map(dataObjArr,
               commonUtils.getAPIServerResponse(configApiServer.apiGet, false),
               function(error, results) {
-                  virtualDNSsListAggCb(error, results, response);
+                  virtualDNSsListAggCb(error, results, function(err, data) {
+                      commonUtils.handleJSONResponse(err, response, data);
+                  });
               });
+}
+
+function getVdnsAsync (vdnsObj, callback)
+{
+    var vdnsId = vdnsObj['uuid'];
+    var appData = vdnsObj['appData'];
+
+    var reqUrl = '/virtual-DNS/' + vdnsId;
+
+    configApiServer.apiGet(reqUrl, appData, function(err, data) {
+        callback(null, data);
+    });
+} 
+
+function readVirtualDNSs (vdnsObj, callback)
+{
+    var dataObjArr = vdnsObj['reqDataArr'];
+    async.map(dataObjArr, getVdnsAsync, function(err, data) {
+        virtualDNSsListAggCb(err, data, callback);
+    });
 }
 
 /**
@@ -117,15 +139,15 @@ function listVirtualDNSsCb (error, vdnsListData, response, appData)
  * private function
  * 1. Callback for the listVirtualDNSsCb gets, sends all virtual DNSs to client.
  */
-function virtualDNSsListAggCb (error, results, response) 
+function virtualDNSsListAggCb (error, results, callback) 
 {
     if (error) {
-       commonUtils.handleJSONResponse(error, response, null);
-       return;
+        callback(error, null);
+        return;
     }
     vdnss = {};
     vdnss["virtual_DNSs"] = results;
-    commonUtils.handleJSONResponse(error, response, vdnss);
+    callback(error, vdnss);
 }
 
 /**
@@ -424,7 +446,10 @@ function parseVDNSRecords(error, response, vdnsConfig, appData)
 	async.map(dataObjArr,
 		  commonUtils.getAPIServerResponse(configApiServer.apiGet, false),
           function(error, results) {
-              VDNSRecordAggCb(error, results, response, vdnsConfig, appData);
+              VDNSRecordAggCb(error, results, vdnsConfig, 
+                              function (error, data) {
+                    commonUtils.handleJSONResponse(error, response, data);
+              });
           });
           
 }
@@ -434,13 +459,13 @@ function parseVDNSRecords(error, response, vdnsConfig, appData)
  * private function
  * 1. Callback for the Virtual DNS Record get for a give Virtual DNS.
  */
-function VDNSRecordAggCb (error, results, response, vdnsConfig, appData) 
+function VDNSRecordAggCb (error, results, vdnsConfig, callback) 
 {
     var i = 0, vdnsRecordsLen = 0;
 
     if (error) {
-       commonUtils.handleJSONResponse(error, response, null);
-       return;
+        callback(error, null);
+        return;
     }
 
     vdnsRecordsLen = results.length;
@@ -449,7 +474,7 @@ function VDNSRecordAggCb (error, results, response, vdnsConfig, appData)
                      results[i]['virtual-DNS-record']['virtual_DNS_record_data'];
     }
 
-    commonUtils.handleJSONResponse(error, response, vdnsConfig);
+    callback(error, vdnsConfig);
 }
 
 /**
@@ -920,13 +945,50 @@ function getVirtualDNSSandeshRecords (req, res, appData)
     });
 }
 
+function getVdnsRecordsAsync (dataObj, callback)
+{
+
+}
+
+function readVirtualDNSRecords (vdnRecordsObj, callback)
+{
+    var dataObjArr = [];
+    var reqDataArr = vdnRecordsObj['reqDataArr'];
+    var configData = vdnRecordsObj['configData'];
+    var dataObjArr = vdnRecordsObj['dataObjArr'];
+    var vdnsRecData = [];
+
+    async.map(dataObjArr,
+              commonUtils.getServerResponseByRestApi(configApiServer, true),
+              function(err, result) {
+        if ((null != err) || (null == result)) {
+            callback(err, result);
+            return;
+        }
+        VDNSRecordAggCb(err, result, configData, function(err, data) {
+            var vdnsRec = data['virtual-DNS']['virtual_DNS_records'];
+            cnt = vdnsRec.length;
+            for (i = 0; i < cnt; i++) {
+                if (null != vdnsRec[i]['virtual_DNS_record_data']) {
+                    vdnsRecData.push(vdnsRec[i]);
+                }
+            }
+            data['virtual-DNS']['virtual_DNS_records'] = [];
+            data['virtual-DNS']['virtual_DNS_records'] = vdnsRecData;
+            callback(err, data);
+        });
+    });
+}
+
 exports.listVirtualDNSs           = listVirtualDNSs;
 exports.createVirtualDNS          = createVirtualDNS;
 exports.updateVirtualDNS          = updateVirtualDNS;
 exports.deleteVirtualDNS     	  = deleteVirtualDNS;
 exports.getVirtualDNS             = getVirtualDNS;
+exports.readVirtualDNSs           = readVirtualDNSs;
 exports.updateVDNSRecordAdd	      = updateVDNSRecordAdd;
 exports.updateVDNSRecordUpdate    = updateVDNSRecordUpdate;
 exports.updateVDNSRecordDelete	  = updateVDNSRecordDelete;
 exports.updateVDNSIpams           = updateVDNSIpams;
 exports.getVirtualDNSSandeshRecords = getVirtualDNSSandeshRecords;
+exports.readVirtualDNSRecords       = readVirtualDNSRecords;
