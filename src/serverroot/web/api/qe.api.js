@@ -884,7 +884,7 @@ function sortJSON(resultArray, sortParams, callback) {
 
 function runNewQuery(req, res, queryId)
 {
-    var reqQuery = req.query, tableName = reqQuery['table'],
+    var reqQuery = req.query, tableName = reqQuery['table'], tableType = reqQuery['tableType'],
         queryId = reqQuery['queryId'], pageSize = parseInt(reqQuery['pageSize']),
         async = (reqQuery['async'] != null && reqQuery['async'] == "true") ? true : false,
         reRunTimeRange = reqQuery['reRunTimeRange'], reRunQuery = reqQuery,
@@ -893,7 +893,7 @@ function runNewQuery(req, res, queryId)
     if (tableName == 'MessageTable') {
         queryJSON = parseSLQuery(reqQuery);
         options.queryQueue = 'lqq';
-    } else if (tableName.indexOf('Object') != -1) {
+    } else if (tableType == 'OBJECT' || tableName.indexOf('Object') != -1) {
         queryJSON = parseOTQuery(reqQuery)
         options.queryQueue = 'lqq';
     } else if (tableName == 'FlowSeriesTable') {
