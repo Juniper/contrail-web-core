@@ -50,6 +50,7 @@ function executeQuery(res, options)
             } else if (async) {
                 initPollingConfig(options, queryJSON.start_time, queryJSON.end_time)
                 options['url'] = jsonData['href'];
+                options['opsQueryId'] = parseOpsQueryIdFromUrl(jsonData['href']);
                 setTimeout(fetchQueryResults, 1000, res, jsonData, options);
                 options['intervalId'] = setInterval(fetchQueryResults, options.pollingInterval, res, jsonData, options);
                 options['timeoutId'] = setTimeout(stopFetchQueryResult, options.pollingTimeout, options);
@@ -76,6 +77,17 @@ function initPollingConfig(options, fromTime, toTime)
         options.maxCounter = 1;
         options.pollingTimeout = 7200000;
     }
+};
+
+function parseOpsQueryIdFromUrl(url)
+{
+    var opsQueryId = "",
+        urlArray;
+    if(url != null) {
+        urlArray = url.split('/');
+        opsQueryId = urlArray[urlArray.length - 1];
+    }
+    return opsQueryId;
 };
 
 function fetchQueryResults(res, jsonData, options) 
@@ -135,7 +147,8 @@ function updateQueryStatus(options)
         startTime:options.startTime, queryId:options.queryId,
         url:options.url, queryJSON:options.queryJSON, progress:options.progress, status:options.status,
         tableName:options.queryJSON['table'], count:options.count, timeTaken:-1, errorMessage:options.errorMessage,
-        reRunTimeRange: options.reRunTimeRange, reRunQueryString: getReRunQueryString(options.reRunQuery, options.reRunTimeRange)
+        reRunTimeRange: options.reRunTimeRange, reRunQueryString: getReRunQueryString(options.reRunQuery, options.reRunTimeRange),
+        opsQueryId: options.opsQueryId
     };
     if (queryStatus.tableName == 'FlowSeriesTable' || queryStatus.tableName.indexOf('StatTable.') != -1) {
         queryStatus.tg = options.tg;
@@ -884,16 +897,16 @@ function sortJSON(resultArray, sortParams, callback) {
 
 function runNewQuery(req, res, queryId)
 {
-    var reqQuery = req.query, tableName = reqQuery['table'],
+    var reqQuery = req.query, tableName = reqQuery['table'], tableType = reqQuery['tableType'],
         queryId = reqQuery['queryId'], pageSize = parseInt(reqQuery['pageSize']),
         async = (reqQuery['async'] != null && reqQuery['async'] == "true") ? true : false,
         reRunTimeRange = reqQuery['reRunTimeRange'], reRunQuery = reqQuery,
-        options = {queryId:queryId, pageSize:pageSize, counter:0, status:"run", async:async, count:0, progress:0, errorMessage:"", reRunTimeRange: reRunTimeRange, reRunQuery: reRunQuery},
+        options = {queryId:queryId, pageSize:pageSize, counter:0, status:"run", async:async, count:0, progress:0, errorMessage:"", reRunTimeRange: reRunTimeRange, reRunQuery: reRunQuery, opsQueryId: ""},
         queryJSON;
     if (tableName == 'MessageTable') {
         queryJSON = parseSLQuery(reqQuery);
         options.queryQueue = 'lqq';
-    } else if (tableName.indexOf('Object') != -1) {
+    } else if (tableType == 'OBJECT' || tableName.indexOf('Object') != -1) {
         queryJSON = parseOTQuery(reqQuery)
         options.queryQueue = 'lqq';
     } else if (tableName == 'FlowSeriesTable') {
