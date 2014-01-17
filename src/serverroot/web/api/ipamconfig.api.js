@@ -80,16 +80,16 @@ function listIpams (request, response, appData)
  * 2. Reads the response of ipam get from config api server
  *    and sends it back to the client.
  */
-function getIpamCb (error, ipamConfig, response) 
+function getIpamCb (error, ipamConfig, callback) 
 {
     if (error) {
-       commonUtils.handleJSONResponse(error, response, null);
-       return;
+        callback(error, null);
+        return;
     }
     delete ipamConfig['network-ipam']['id_perms'];
     delete ipamConfig['network-ipam']['href'];
     delete ipamConfig['network-ipam']['_type'];
-    commonUtils.handleJSONResponse(error, response, ipamConfig);
+    callback(error, ipamConfig);
 }
 
 /**
@@ -108,17 +108,35 @@ function getIpam (request, response, appData)
     var ipamGetURL    = '/network-ipam';
 
     if ((ipamId = request.param('id'))) {
-        ipamGetURL += '/' + ipamId.toString();
+        getIpamAsync({uuid: ipamId, appData: appData},
+                     function(err, data) {
+            commonUtils.handleJSONResponse(err, response, data);
+        });
     } else {
         /**
          * TODO - Add Language independent error code and return
          */
     }
+}
 
-    configApiServer.apiGet(ipamGetURL, appData,
-                         function(error, data) {
-                         getIpamCb(error, data, response)
-                         });
+function getIpamAsync (ipamObj, callback)
+{
+    var ipamId = ipamObj['uuid'];
+    var appData = ipamObj['appData'];
+
+    var reqUrl = '/network-ipam/' + ipamId;
+    configApiServer.apiGet(reqUrl, appData, function(err, data) {
+        getIpamCb(err, data, callback);
+    });
+}
+
+function readIpams (ipamObj, callback)
+{
+    var dataObjArr = ipamObj['reqDataArr'];
+    console.log("Getting dataObjs:", dataObjArr);
+    async.map(dataObjArr, getIpamAsync, function(err, data) {
+        callback(err, data);
+    });
 }
 
 /**
@@ -679,6 +697,7 @@ function updateIpamInVDNSCb(error, result, ipamConfig, response, ipamId, appData
 }
 exports.listIpams  = listIpams;
 exports.getIpam    = getIpam;
+exports.readIpams  = readIpams;
 exports.createIpam = createIpam;
 exports.deleteIpam = deleteIpam;
 exports.updateIpam = updateIpam;
