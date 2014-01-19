@@ -309,7 +309,7 @@ function parsevRouterAclEntries (data, aclData, lastIndex)
 }
 
 function getComputeNodeInterface (pubChannel, saveChannelKey, 
-                                  ip, jobData, done)
+                                  ip, jobData, callback)
 {
     var dataObjArr = [];
 
@@ -322,22 +322,18 @@ function getComputeNodeInterface (pubChannel, saveChannelKey,
               commonUtils.getServerRespByRestApi(vRouterRestAPI, true),
               commonUtils.doEnsureExecution(function(err, data) {
         if (data) {
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                        global.HTTP_STATUS_RESP_OK,
-                                        JSON.stringify(data),
-                                        JSON.stringify(data), 0, 0, done);
+            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(data),
+                     JSON.stringify(data), 0, 0);
         } else {
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                        global.HTTP_STATUS_INTERNAL_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                        0, done);
+            callback(global.HTTP_STATUS_INTERNAL_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
         }
     }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
 function getFlowCountAndSendvRouterAclResponse (ip, results, pubChannel,
-                                                saveChannelKey, done)
+                                                saveChannelKey, callback)
 {
     var urlLists = [];
     urlLists[0] = [url];
@@ -352,11 +348,8 @@ function getFlowCountAndSendvRouterAclResponse (ip, results, pubChannel,
     async.map(urlLists, commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, true), 
               function(err, resultsArr) {
         if (null == resultsArr) {
-	        redisPub.publishDataToRedis(pubChannel, saveChannelKey, 
-	                                    global.HTTP_STATUS_RESP_OK, 
-	                                    JSON.stringify(results), 
-	                                    JSON.stringify(results), 0, 0,
-	                                    done);
+            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(results),
+                     JSON.stringify(results), 0, 0);
             return;
         }
         for (i = 0; i < aclCount; i++) {
@@ -367,38 +360,29 @@ function getFlowCountAndSendvRouterAclResponse (ip, results, pubChannel,
                 results[i]['flow_count'] = 0;
             }    
         }
-        redisPub.publishDataToRedis(pubChannel, saveChannelKey, 
-                                    global.HTTP_STATUS_RESP_OK, 
-                                    JSON.stringify(results), 
-                                    JSON.stringify(results), 0, 0,
-                                    done);
-            
+        callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(results),
+                 JSON.stringify(results), 0, 0);
         return;
     });
 }
 
 function getComputeNodeAcl (pubChannel, saveChannelKey, data,
-                            sData, jobData, done)
+                            sData, jobData, callback)
 {
     var results = [];
     /* Now retrieve compute node name */
     if (null == sData) {
-        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                    global.HTTP_STATUS_INTERNAL_ERROR,
-                                    global.STR_CACHE_RETRIEVE_ERROR,
-                                    global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                    0, done);
+        callback(global.HTTP_STATUS_INTERNAL_ERROR,
+                 global.STR_CACHE_RETRIEVE_ERROR,
+                 global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
         return;
     }
     
     var ip = sData['nodeIp'];
     if (null == ip) {
-    
-        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                    global.HTTP_STATUS_INTERNAL_ERROR,
-                                    global.STR_CACHE_RETRIEVE_ERROR,
-                                    global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                    0, done);
+        callback(global.HTTP_STATUS_INTERNAL_ERROR,
+                 global.STR_CACHE_RETRIEVE_ERROR,
+                 global.STR_CACHE_RETRIEVE_ERROR, 0, 0); 
         return;
     }
     /* Now send sandesh Message */
@@ -408,22 +392,20 @@ function getComputeNodeAcl (pubChannel, saveChannelKey, data,
     async.map(urlLists, commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, true), 
               function(err, results) {
         if (null == results) {
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                        global.HTTP_STATUS_INTERNAL_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                        0, done);
+            callback(global.HTTP_STATUS_INTERNAL_ERROR,global.STR_CACHE_RETRIEVE_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
             return;
         }
         results = jsonPath(results, "$..AclSandeshData");
         results = parseComputeNodeAcl(results);
         /* Now update the flow count from ACL Flow */
-        getFlowCountAndSendvRouterAclResponse(ip, results, pubChannel, saveChannelKey, done);
+        getFlowCountAndSendvRouterAclResponse(ip, results, pubChannel,
+                                              saveChannelKey, callback);
     });
 }
 
 function processComputeNodeInterface (pubChannel, saveChannelKey, 
-                                      jobData, done)
+                                      jobData, callback)
 {
     /* We get the interface details from Sandesh */
     var url = jobData.taskData.url;
@@ -439,14 +421,11 @@ function processComputeNodeInterface (pubChannel, saveChannelKey,
         /* Currently UI does not send this request, so will implement 
            later when requires 
          */
-        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                    global.HTTP_STATUS_INTERNAL_ERROR,
-                                    global.STR_CACHE_RETRIEVE_ERROR,
-                                    global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                    0, done);
+        callback(global.HTTP_STATUS_INTERNAL_ERROR,global.STR_CACHE_RETRIEVE_ERROR,
+                 global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
     } else {
         getComputeNodeInterface(pubChannel, saveChannelKey,
-                                            nodeIp, jobData, done);
+                                            nodeIp, jobData, callback);
     }
 }
 
@@ -501,7 +480,7 @@ function getAclFlowByACLSandeshResponse (ip, aclSandeshResp, callback)
 }
 
 function processComputeNodeAcl (pubChannel, saveChannelKey, 
-                                jobData, done)
+                                jobData, callback)
 {
     /* We get the interface details from Sandesh */
     var url = jobData.taskData.url;
@@ -520,11 +499,8 @@ function processComputeNodeAcl (pubChannel, saveChannelKey,
         /* Currently UI does not send this request, so will implement 
            later when requires 
          */
-        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                    global.HTTP_STATUS_INTERNAL_ERROR,
-                                    global.STR_CACHE_RETRIEVE_ERROR,
-                                    global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                    0, done);
+        callback(global.HTTP_STATUS_INTERNAL_ERROR,global.STR_CACHE_RETRIEVE_ERROR,
+                 global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
         return;
     }
     var vRouterRestAPI =
@@ -535,51 +511,41 @@ function processComputeNodeAcl (pubChannel, saveChannelKey,
               commonUtils.doEnsureExecution(function(err, data) {
         /* Now get flow_count for each ACL UUID */
         if ((null != err) || (null == data)) {
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                        global.HTTP_STATUS_INTERNAL_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                        0, done);
+            callback(global.HTTP_STATUS_INTERNAL_ERROR,global.STR_CACHE_RETRIEVE_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
             return;
         }
         getAclFlowByACLSandeshResponse(nodeIp, data[0], function(result) {
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                        global.HTTP_STATUS_RESP_OK,
-                                        JSON.stringify(result),
-                                        JSON.stringify(result), 0, 0, done);
+            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(result),
+                     JSON.stringify(result), 0, 0);
         });
     }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
-function getvRouterList (pubChannel, saveChannelKey, jobData, done)
+function getvRouterList (pubChannel, saveChannelKey, jobData, callback)
 {
     var obj = {
         'pubChannel': pubChannel, 
         'saveChannelKey': saveChannelKey, 
         'jobData': jobData, 
-        'done': done
     };
     adminApiHelper.processVirtualRouters(null, null, global.GET_VROUTERS_LIST,
-                                         obj, jobData);
+                                         obj, jobData, callback);
 }
 
-function getvRouterSummaryByJob (pubChannel, saveChannelKey, jobData, done)
+function getvRouterSummaryByJob (pubChannel, saveChannelKey, jobData, callback)
 {
     var appData = jobData.taskData.appData;
     appData['addGen'] = null;
     var addGen = null;
     var url = '/virtual-routers';
-    infraCmn.getvRouterList(jobData,
-                           commonUtils.doEnsureExecution(function(err, nodeList,
-                                                                  uuidList) {
+    infraCmn.getvRouterList(jobData, function(err, nodeList, uuidList) {
         infraCmn.dovRouterListProcess(null, uuidList, nodeList, addGen, jobData,
-                     commonUtils.doEnsureExecution(function(err, resultJSON) {
+                                      function(err, resultJSON) {
             if (undefined == resultJSON) {
-                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                            global.HTTP_STATUS_INTERNAL_ERROR, 
-                                            global.STR_CACHE_RETRIEVE_ERROR,
-                                            global.STR_CACHE_RETRIEVE_ERROR,
-                                            0, 0, done);
+                callback(global.HTTP_STATUS_INTERNAL_ERROR, 
+                         global.STR_CACHE_RETRIEVE_ERROR,
+                         global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
                 return;
             }
             if ((null == appData['addGen']) || 
@@ -601,16 +567,13 @@ function getvRouterSummaryByJob (pubChannel, saveChannelKey, jobData, done)
             dataObj['reqBy'] = jobData.taskData.reqBy;
             dataObj['jobRefreshTimeMilliSecs'] = jobData['taskData']['nextRunDelay'];
             dataObj['data'] = resultJSON;
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                        global.HTTP_STATUS_RESP_OK,
-                                        JSON.stringify(dataObj),
-                                        JSON.stringify(dataObj),
-                                        1, 0, done, jobData);
-        }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
-    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
+            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(dataObj),
+                     JSON.stringify(dataObj), 1, 0);
+        });
+    });
 }
 
-function processAclSandeshData (pubChannel, saveChannelKey, nodeIp, done, 
+function processAclSandeshData (pubChannel, saveChannelKey, nodeIp, callback, 
                                 aclResponse)
 {
     var idx = 0;
@@ -633,49 +596,39 @@ function processAclSandeshData (pubChannel, saveChannelKey, nodeIp, done,
         async.map(urlLists, commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, true),
                   function(err, results) {
             if (results == null) {
-	            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-	                                        global.HTTP_STATUS_INTERNAL_ERROR,
-	                                        global.STR_CACHE_RETRIEVE_ERROR,
-	                                        global.STR_CACHE_RETRIEVE_ERROR, 0,
-	                                        0, done);
+                callback(global.HTTP_STATUS_INTERNAL_ERROR, 
+                         global.STR_CACHE_RETRIEVE_ERROR,
+                         global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
             } else {
                 /* Now parse the data and send back */
                 var resultJSON = adminApiHelper.processAclFlowsSandeshData(uuidLists, results); 
-                redisPub.publishDataToRedis(pubChannel, saveChannelKey, 
-                                    global.HTTP_STATUS_RESP_OK, 
-                                    JSON.stringify(resultJSON), 
-                                    JSON.stringify(resultJSON), 0, 0,
-                                    done);        
+                callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
+                         JSON.stringify(resultJSON), 0, 0);
             }
         });           
     } catch(e) {
-        redisPub.publishDataToRedis(pubChannel, saveChannelKey, 
-                                    global.HTTP_STATUS_RESP_OK, 
-                                    JSON.stringify(resultJSON), 
-                                    JSON.stringify(resultJSON), 0, 0,
-                                    done);        
+            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
+                     JSON.stringify(resultJSON), 0, 0);
     }
 }
 
-function getComputeNodeAclFlows (pubChannel, saveChannelKey, nodeIp, done)
+function getComputeNodeAclFlows (pubChannel, saveChannelKey, nodeIp, callback)
 {
     var urlLists = [];
     urlLists[0] = nodeIp + '@' + global.SANDESH_COMPUTE_NODE_PORT + '@' + '/Snh_AclReq?uuid=';
     async.map(urlLists, commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, true), 
               function(err, results) {
         if (null == results) {
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                        global.HTTP_STATUS_INTERNAL_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                        0, done);
+            callback(global.HTTP_STATUS_INTERNAL_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
             return;
         }
-        processAclSandeshData(pubChannel, saveChannelKey, nodeIp, done, results[0]);
+        processAclSandeshData(pubChannel, saveChannelKey, nodeIp, callback, results[0]);
     });
 }
 
-function getvRouterAclFlows (pubChannel, saveChannelKey, jobData, done)
+function getvRouterAclFlows (pubChannel, saveChannelKey, jobData, callback)
 {
     var url = jobData.taskData.url;
     var allDetails = false;
@@ -690,13 +643,11 @@ function getvRouterAclFlows (pubChannel, saveChannelKey, jobData, done)
         /* Currently UI does not send this request, so will implement 
            later when requires 
          */
-        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                    global.HTTP_STATUS_INTERNAL_ERROR,
-                                    global.STR_CACHE_RETRIEVE_ERROR,
-                                    global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                    0, done);
+        callback(global.HTTP_STATUS_INTERNAL_ERROR,
+                 global.STR_CACHE_RETRIEVE_ERROR,
+                 global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
     } else {
-        getComputeNodeAclFlows(pubChannel, saveChannelKey, nodeIp, done);   
+        getComputeNodeAclFlows(pubChannel, saveChannelKey, nodeIp, callback);   
     }
 }
 
@@ -713,7 +664,7 @@ function getGeneratorsDataInChunk (dataObj, callback)
 
 }
 
-function getvRouterGenByJob (pubChannel, saveChannelKey, jobData, done)
+function getvRouterGenByJob (pubChannel, saveChannelKey, jobData, callback)
 {
     var url = '/analytics/uves/generators';
     var filtData = [];
@@ -722,11 +673,9 @@ function getvRouterGenByJob (pubChannel, saveChannelKey, jobData, done)
 
     opApiServer.apiGet(url, jobData, function(err, data) {
         if ((null != err) || (null == data)) {
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                        global.HTTP_STATUS_INTERNAL_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                        0, done);
+            callback(global.HTTP_STATUS_INTERNAL_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
             return;
         }
         var genCnt = data.length;
@@ -770,11 +719,9 @@ function getvRouterGenByJob (pubChannel, saveChannelKey, jobData, done)
                         function(err, data) {
             /* Now Merge the data */
             if ((null != err) || (null == data)) {
-                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                            global.HTTP_STATUS_INTERNAL_ERROR,
-                                            global.STR_CACHE_RETRIEVE_ERROR,
-                                            global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                            0, done);
+                callback(global.HTTP_STATUS_INTERNAL_ERROR,
+                         global.STR_CACHE_RETRIEVE_ERROR,
+                         global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
                 return;
             }
             var cnt = data.length;
@@ -793,13 +740,10 @@ function getvRouterGenByJob (pubChannel, saveChannelKey, jobData, done)
             dataObj['reqBy'] = jobData.taskData.reqBy;
             dataObj['jobRefreshTimeMilliSecs'] = jobData['taskData']['nextRunDelay'];
             dataObj['data'] = resultJSON;
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey, 
-                                        global.HTTP_STATUS_RESP_OK, 
-                                        JSON.stringify(dataObj), 
-                                        JSON.stringify(dataObj), 1, 0,
-                                        done);
-        }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT);
-    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT);
+            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(dataObj),
+                     JSON.stringify(dataObj), 1, 0);
+        });
+    });
 }
 
 function getVRouterJobRefreshTimer (cachedData)
