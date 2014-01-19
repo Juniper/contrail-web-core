@@ -86,11 +86,14 @@ function authenticate (req, res, callback)
         post = req.body,
         username = post.username,
         password = post.password,
+        urlHash = '',
         userJSON, tokenJSON, roleJSON;
     var userCipher = null;
     var passwdCipher = null
     var userEncrypted = null;
     var passwdEncrypted = null;
+    if(post.urlHash != null)
+        urlHash = post.urlHash;
 
     doAuth(username, password, function (err, data, response) {
         if ((err) || (null == data)) {
@@ -112,7 +115,7 @@ function authenticate (req, res, callback)
                               '; expires=' +
                               new Date(new Date().getTime() +
                                        global.MAX_AGE_SESSION_ID).toUTCString());
-                res.redirect('/tenants/monitor/network');
+                res.redirect('/tenants/monitor/network' + urlHash);
             });
         });
     });
