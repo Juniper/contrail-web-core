@@ -16,6 +16,9 @@ var rest = require('../../common/rest.api'),
     adminApiHelper = require('../../common/adminapi.helper'),
     jobsApi = require('../core/jobs.api'),
     jsonPath = require('JSONPath').eval,
+    configApiServer = require('../../common/configServer.api'),
+    opApiServer = require('../../common/opServer.api'),
+    infraCmn = require('../../common/infra.common.api'),
     bgpNode = require('./bgpNode.api');
 
 computeNode = module.exports;
@@ -560,6 +563,53 @@ function getvRouterList (pubChannel, saveChannelKey, jobData, done)
                                          obj, jobData);
 }
 
+function getvRouterSummaryByJob (pubChannel, saveChannelKey, jobData, done)
+{
+    var appData = jobData.taskData.appData;
+    appData['addGen'] = null;
+    var addGen = null;
+    var url = '/virtual-routers';
+    infraCmn.getvRouterList(jobData,
+                           commonUtils.doEnsureExecution(function(err, nodeList,
+                                                                  uuidList) {
+        infraCmn.dovRouterListProcess(null, uuidList, nodeList, addGen, jobData,
+                     commonUtils.doEnsureExecution(function(err, resultJSON) {
+            if (undefined == resultJSON) {
+                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                                            global.HTTP_STATUS_INTERNAL_ERROR, 
+                                            global.STR_CACHE_RETRIEVE_ERROR,
+                                            global.STR_CACHE_RETRIEVE_ERROR,
+                                            0, 0, done);
+                return;
+            }
+            if ((null == appData['addGen']) || 
+                (undefined == appData['addGen'])) {
+                var cnt = resultJSON.length;
+                for (var i = 0; i < cnt; i++) {
+                    try {
+                        delete resultJSON[i]['value']['VRouterAgent'];
+                        resultJSON[i]['value']['VRouterAgent'] = {};
+                    } catch(e) {
+                    }
+                }
+            }
+            var dataObj = resultJSON;
+            var curTime = commonUtils.getCurrentTimestamp();
+            var dataObj = {};
+            dataObj['jobStartTime'] = jobData['jobStartTime'];
+            dataObj['jobEndTime'] = curTime;
+            dataObj['reqBy'] = jobData.taskData.reqBy;
+            dataObj['jobRefreshTimeMilliSecs'] = jobData['taskData']['nextRunDelay'];
+            dataObj['data'] = resultJSON;
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                                        global.HTTP_STATUS_RESP_OK,
+                                        JSON.stringify(dataObj),
+                                        JSON.stringify(dataObj),
+                                        1, 0, done, jobData);
+        }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
+    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
+}
+
 function processAclSandeshData (pubChannel, saveChannelKey, nodeIp, done, 
                                 aclResponse)
 {
@@ -650,6 +700,132 @@ function getvRouterAclFlows (pubChannel, saveChannelKey, jobData, done)
     }
 }
 
+function getGeneratorsDataInChunk (dataObj, callback)
+{
+    var postData = {};
+    postData['kfilt'] = dataObj['kfilt'];
+    postData['cfilt'] = dataObj['cfilt'];
+    var jobData = dataObj['jobData'];
+    var url = '/analytics/uves/generator';
+    opApiServer.apiPost(url, postData, jobData, function(err, data) {
+        callback(err, data);
+    });
+
+}
+
+function getvRouterGenByJob (pubChannel, saveChannelKey, jobData, done)
+{
+    var url = '/analytics/uves/generators';
+    var filtData = [];
+    var postDataArr = [];
+    var resultJSON = [];
+
+    opApiServer.apiGet(url, jobData, function(err, data) {
+        if ((null != err) || (null == data)) {
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                                        global.HTTP_STATUS_INTERNAL_ERROR,
+                                        global.STR_CACHE_RETRIEVE_ERROR,
+                                        global.STR_CACHE_RETRIEVE_ERROR, 0,
+                                        0, done);
+            return;
+        }
+        var genCnt = data.length;
+        var kfilt = ['VRouterAgent'];
+        var kLen = kfilt.length;
+        for (var i = 0; i < genCnt; i++) {
+            for (var j = 0; j < kLen; j++) {
+                try {
+                    var idx = data[i]['name'].indexOf(kfilt[j]);
+                    if (idx != -1) {
+                        filtData.push(data[i]['name']);
+                    }
+                } catch(e) {
+                }
+            }
+        }
+        genCnt = filtData.length;
+        if (genCnt > global.VROUTER_COUNT_IN_JOB) {
+            filtData.sort();
+        }
+        var postDataIncrCnt = 
+            Math.floor(genCnt / global.VROUTER_COUNT_IN_JOB) + 1;
+        idx = 0;
+        for (var i = 0; i < postDataIncrCnt; i++) {
+            postDataArr[i] = {};
+            postDataArr[i]['kfilt'] = [];
+            postDataArr[i]['cfilt'] = ['ModuleClientState:client_info',
+                                       'ModuleServerState:generator_info'];
+            postDataArr[i]['jobData'] = jobData;
+            postDataArr[i]['index'] = i;
+            for (j = idx; j < genCnt; j++) {
+                postDataArr[i]['kfilt'].push(filtData[j]);
+                if ((j != 0) && (0 == j % global.VROUTER_COUNT_IN_JOB)) {
+                    idx = j + 1;
+                    break;
+                }
+            }
+        }
+        /* Now issue request */
+        async.mapSeries(postDataArr, getGeneratorsDataInChunk, 
+                        function(err, data) {
+            /* Now Merge the data */
+            if ((null != err) || (null == data)) {
+                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                                            global.HTTP_STATUS_INTERNAL_ERROR,
+                                            global.STR_CACHE_RETRIEVE_ERROR,
+                                            global.STR_CACHE_RETRIEVE_ERROR, 0,
+                                            0, done);
+                return;
+            }
+            var cnt = data.length;
+            for (i = 0; i < cnt; i++) {
+                try {
+                    if (null != data[i]['value']) {
+                        resultJSON = resultJSON.concat(data[i]['value']);
+                    }
+                } catch(e) {
+                }
+            }
+            var curTime = commonUtils.getCurrentTimestamp();
+            var dataObj = {};
+            dataObj['jobStartTime'] = jobData['jobStartTime'];
+            dataObj['jobEndTime'] = curTime;
+            dataObj['reqBy'] = jobData.taskData.reqBy;
+            dataObj['jobRefreshTimeMilliSecs'] = jobData['taskData']['nextRunDelay'];
+            dataObj['data'] = resultJSON;
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey, 
+                                        global.HTTP_STATUS_RESP_OK, 
+                                        JSON.stringify(dataObj), 
+                                        JSON.stringify(dataObj), 1, 0,
+                                        done);
+        }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT);
+    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT);
+}
+
+function getVRouterJobRefreshTimer (cachedData)
+{
+    if (null == cachedData) {
+        return null;
+    }
+    try {
+        var data = JSON.parse(cachedData);
+        var vRouterData = data['data'];
+        var vRouterCnt = vRouterData.length;
+        if (vRouterCnt <= 1000) {
+            return 3 * 60 * 1000; /* 5 minutes */
+        } else if ((vRouterCnt > 1000) && (vRouterCnt <= 2000)) {
+            return 7 * 60 * 1000; /* 7 minutes */
+        } else if ((vRouterCnt > 2000) && (vRouterCnt <= 3000)) {
+            return 11 * 60 * 1000; /* 11 minutes */
+        } else {
+            return 13 * 60 * 1000; /* 13 minutes */
+        }
+    } catch(e) {
+        return null;
+    }
+    return null;
+}
+
 exports.getvRouterAclFlows = getvRouterAclFlows;
 exports.getComputeNodeAcl = getComputeNodeAcl;
 exports.getComputeNodeAclFlows = getComputeNodeAclFlows;
@@ -657,4 +833,7 @@ exports.getvRouterList = getvRouterList;
 exports.processComputeNodeInterface = processComputeNodeInterface;
 exports.getComputeNodeInterface = getComputeNodeInterface;
 exports.processComputeNodeAcl = processComputeNodeAcl;
+exports.getvRouterSummaryByJob = getvRouterSummaryByJob;
+exports.getvRouterGenByJob = getvRouterGenByJob;
+exports.getVRouterJobRefreshTimer = getVRouterJobRefreshTimer;
 

@@ -74,6 +74,9 @@ global.FLOW_STAT_CACHE_PURGE_ON_PROGRESS = 1;
 global.FLOW_STAT_CACHE_PURGE_COMPLETE = 2;
 global.STR_FLOW_STAT_ABS_URL = '/flow-statistics';
 
+global.REQ_BY_UI = 'ReqByUI';
+global.REQ_AT_SYS_INIT = 'ReqAtInit';
+
 /* http status codes
  */
 global.HTTP_REQUEST_GET = 'get';
@@ -203,6 +206,13 @@ global.HTTP_URL = 'http://';
 global.RESP_DATA_NOT_AVAILABLE = '-';
 global.GET_VROUTERS_LIST = 'getVRoutersList';
 global.GET_VIRTUAL_ROUTERS = 'getVirtualRouters';
+global.STR_GET_VROUTERS_SUMMARY = 'getVRoutersSummary';
+global.STR_GET_VROUTERS_GENERATORS = 'getVRoutersGenerators';
+global.VROUTER_COUNT_IN_JOB = 100;
+
+global.VROUTER_SUMM_JOB_REFRESH_TIME = 5 * 60 * 1000;
+global.VROUTER_GENR_JOB_REFRESH_TIME = 4 * 60 * 1000;
+global.MAX_INT_VALUE = 429496729;
 
 global.RUN_QUERY_URL = '/analytics/query';
 global.GET_TABLES_URL = '/analytics/tables';

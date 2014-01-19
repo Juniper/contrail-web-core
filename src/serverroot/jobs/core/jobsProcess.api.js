@@ -247,6 +247,20 @@ jobsProcess.processCPULoadFlowSeriesRequestByJob = function(pubChannel,
                                           jobData, done);
 }
 
+function processvRoutersSummaryRequestByJob (pubChannel, saveChannelKey,
+                                             jobData, done)
+{
+    computeNode.getvRouterSummaryByJob(pubChannel, saveChannelKey, jobData,
+                                       done);
+}
+
+function processvRoutersGenRequestByJob (pubChannel, saveChannelKey,
+                                         jobData, done)
+{
+    computeNode.getvRouterGenByJob(pubChannel, saveChannelKey, jobData,
+                                   done);
+}
+
 jobsProcess.mainJobprocessControlNodesSummaryRequestByJob = 
     function(pubChannel, saveChannelKey, dependData, storedData, jobData, done) {
     bgpNode.getControlNodesSummary(pubChannel, saveChannelKey, JSON.parse(dependData), 
@@ -286,3 +300,5 @@ jobsProcess.processcRouterAclFlowsRequestByJob =
     computeNode.getvRouterAclFlows(pubChannel, saveChannelKey, jobData, done);
 }
 
+exports.processvRoutersSummaryRequestByJob = processvRoutersSummaryRequestByJob;
+exports.processvRoutersGenRequestByJob = processvRoutersGenRequestByJob;

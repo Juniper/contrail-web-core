@@ -89,7 +89,7 @@ function deleteCachePendingQueueEntry (channel)
 /* Function: createDataAndSendToJobServer
  This function is used to create reqData ready to send to Job Server
  */
-function createDataAndSendToJobServer (jobType, hash, reqData, req, res)
+function createDataAndSendToJobServer (jobType, hash, reqData, req, res, saveCtx)
 {
 	var reqJSON = JSON.parse(reqData);
 	var reqUrl = reqJSON.data.url;
@@ -108,7 +108,11 @@ function createDataAndSendToJobServer (jobType, hash, reqData, req, res)
 	 accordingly based on this conext
 	 */
 	logutils.logger.debug("We got the channel as:" + channel);
-	insertReqCtxToCachePendingQueue(req, res, channel);
+    if (true == saveCtx) {
+	    insertReqCtxToCachePendingQueue(req, res, channel);
+    } else {
+        /* Response already sent */
+    }
 	/* Send the request to master */
 	process.send(obj);
 }
@@ -124,15 +128,16 @@ function queueDataFromCacheOrSendRequest (req, res, jobType, jobName,
                                           sendToJobServerAlways, appData)
 {
 	var reqData = createReqData(req, jobType, jobName, reqUrl, jobRunCount,
-		defCallback, firstRunDelay, nextRunDelay, appData);
+		defCallback, firstRunDelay, nextRunDelay, appData, global.REQ_BY_UI);
 	var reqJSON = JSON.parse(reqData);
 	var reqUrl = reqJSON.data.url;
 	var hash = reqJSON.jobName;
 	var channel = redisSub.createChannelByHashURL(hash, reqUrl);
+    var saveCtx = true;
 	if (true === sendToJobServerAlways) {
 	    /* Do not populate the data from cache */
 	    cacheApi.createDataAndSendToJobServer(global.STR_JOB_TYPE_CACHE, hash,
-                                              reqData, req, res);
+                                              reqData, req, res, saveCtx);
         return;
     }                                      
     
@@ -142,13 +147,35 @@ function queueDataFromCacheOrSendRequest (req, res, jobType, jobName,
 				"data from redis:[hash:#]" + hash + " [reqData:#]" + reqData);
 			throw err;
 		}
-		if (value == null || value == 0) {
+        var reqBy = global.REQ_BY_UI;
+        if (null != value) {
+            try {
+                var data = JSON.parse(value);
+                if (null != data['reqBy']) {
+                    reqBy = data['reqBy'];
+                }
+            } catch(e) {
+            }
+        }
+            
+		if ((value == null || value == 0) || (global.REQ_AT_SYS_INIT == reqBy)) {
 			logutils.logger.info("We could not get the data in cache:");
 			/* Data not stored in cache, so let us send a request to Job Server to
 			 create cache for this
 			 */
+            if (global.REQ_AT_SYS_INIT == reqBy) {
+                /* Cache was created at init time, this is the first request
+                 * from UI since cache created, as at init time, we do not have
+                 * keystone info, so we may not get the complete information
+                 * from API Server at init time, so send the cached info to UI
+                 * and parallelly send request to update the cache
+                 */
+                handleJSONResponse(err, req, res, value);
+                saveCtx = false;
+            }
+                
 			cacheApi.createDataAndSendToJobServer(global.STR_JOB_TYPE_CACHE, hash,
-				reqData, req, res);
+				                                  reqData, req, res, saveCtx);
 		} else {
 			handleJSONResponse(err, req, res, value);
 		}
@@ -180,7 +207,7 @@ function queueDataFromCacheOrSendRequest (req, res, jobType, jobName,
  if defCallback: 0, define the callback in job process section
  */
 function createReqData (req, type, jobName, reqUrl, runCount, defCallback, 
-                        firstRunDelay, nextRunDelay, appData)
+                        firstRunDelay, nextRunDelay, appData, reqBy)
 {
     var authObj = {
         /* authObj contains all the auth related parameters, which may be needed
@@ -210,6 +237,7 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 			url:reqUrl,
 			pubChannel: pubChannel,
 			saveChannelKey: saveChannelKey,
+			reqBy: reqBy,
 			appData: appData
 		}
 	};

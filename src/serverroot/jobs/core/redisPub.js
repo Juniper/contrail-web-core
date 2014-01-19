@@ -17,10 +17,13 @@ if (!module.parent) {
 }
 
 redisPub = module.exports;
-
-commonUtils.createRedisClient(function(client) {
-    redisPub.redisPubClient = client;
-});
+function createRedisPubClient (callback)
+{
+    commonUtils.createRedisClient(function(client) {
+        redisPub.redisPubClient = client;
+        callback();
+    });
+}
 
 function doSetToRedis (key, data)
 {
@@ -33,12 +36,34 @@ function doSetToRedis (key, data)
 }
 
 function publishDataToRedis (pubChannel, saveChannelKey, errCode, pubData, 
-                             saveData, doSave, expiryTime, done)
+                             saveData, doSave, expiryTime, done, jobData)
 {
+    var curTime = commonUtils.getCurrentTimestamp();
+
 	var pubDataObj = {
 		errCode:errCode,
 		data:(pubData)
 	};
+    /*
+     Will enable genertic data format later, once all the frontend code also can 
+     handle this data format
+    try {
+        saveData = JSON.parse(saveData);
+    } catch(e) {
+    }
+    try {
+        var reqBy = jobData.taskData.reqBy;
+    } catch(e) {
+        reqBy = global.REQ_BY_UI;
+    }
+    var saveDataObj = {
+        'data': saveData,
+        'timeUpdated': curTime,
+        'reqBy': reqBy
+    }
+
+    saveData = JSON.stringify(saveDataObj);
+    */
 	logutils.logger.info("Data Publish done on Channel:" + pubChannel);
 	redisPub.redisPubClient.publish(pubChannel, JSON.stringify(pubDataObj));
 
@@ -83,5 +108,5 @@ function sendRedirectRequestToMainServer (jobData)
 exports.sendRedirectRequestToMainServer = sendRedirectRequestToMainServer;
 exports.publishDataToRedis = publishDataToRedis;
 exports.createChannelByHashURL = createChannelByHashURL;
-
+exports.createRedisPubClient = createRedisPubClient;
 

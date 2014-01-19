@@ -46,6 +46,34 @@ kueJobListen = function() {
     kue.app.listen(kuePort);
 }
 
+function createVRouterSummaryJob ()
+{
+    var appData = {};
+    appData['addGen'] = true;
+    var url = '/virtual-routers';
+    jobsApi.createJobAtInit(global.STR_GET_VROUTERS_SUMMARY, url, 
+                            global.VROUTER_SUMM_JOB_REFRESH_TIME,
+                            /* Wait for 5 minutes to start job at web-ui start
+                             * */
+                            0, global.VROUTER_SUMM_JOB_REFRESH_TIME, appData);
+}
+
+function createVRouterGeneratorsJob ()
+{
+    var url = '/virtual-routers';
+    jobsApi.createJobAtInit(global.STR_GET_VROUTERS_GENERATORS, url, 
+                            global.VROUTER_SUMM_JOB_REFRESH_TIME,
+                            /* Wait for 5 minutes to start job at web-ui start
+                             * */
+                            0, global.VROUTER_GENR_JOB_REFRESH_TIME, null);
+}
+
+function createJobsAtInit ()
+{
+    createVRouterSummaryJob();
+    createVRouterGeneratorsJob();
+}
+
 function startServers ()
 {
     kueJobListen();
@@ -55,6 +83,9 @@ function startServers ()
     jobsApi.doCheckJobsProcess();
     discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MIDDLEWARE);
     discServ.startWatchDiscServiceRetryList();
+    redisPub.createRedisPubClient(function() {
+        createJobsAtInit();
+    });
 }
 
 function jobServerPurgeAndStart (redisClient)

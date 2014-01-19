@@ -32,7 +32,11 @@ function getApiServerRequestedByData (appData)
                 return configJobServer;
             } catch(e) {
                 /* Nothing specified, assert */
-                assert(0);
+                if (global.REQ_AT_SYS_INIT == appData['taskData']['reqBy']) {
+                    return configJobServer;
+                } else {
+                    assert(0);
+                }
             }
         }
         break;
