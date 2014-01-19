@@ -15,6 +15,8 @@ var redis = require("redis")
     , eventEmitter = require('events').EventEmitter
     , async = require('async')
     , discServ = require('./discoveryservice.api')
+    , UUID = require('uuid-js')
+    , computeNode = require('../api/computeNode.api')
 	, messages = require('../../common/messages');
 
 if (!module.parent) {
@@ -161,8 +163,22 @@ function createJob (jobName, jobTitle, jobPriority, delayInMS, runCount, taskDat
 {
     doJobExist(jobName, function(err, jobExists) {
         if (true == jobExists) {
-            /* Create a Job with runCount = 1, so only one time run */
             runCount = 1;
+            /* Create a Job with runCount = 1, so only one time run */
+            jobsApi.kue.Job.rangeByType(jobName, 'delayed', 0,
+                                        global.MAX_INT_VALUE, 'desc',
+                                        function (err, selectedJobs) {
+                selectedJobs.forEach(function (job) {
+                    var reqBy = job.data.taskData.reqBy;
+                    if ((global.REQ_AT_SYS_INIT == reqBy) &&
+                        (global.REQ_AT_SYS_INIT != taskData.reqBy)) {
+                        /* Stored JOB is Requested at System INIT */
+                        job.data.taskData = taskData;
+                        checkAndRequeueJobs(job);
+                        return;
+                    }
+                });
+            });
         }
 	    var jobTitleStr = (jobTitle == null) ? jobName : jobTitle;
 	    var obj = { 'title':jobTitleStr, 'runCount':runCount, 'taskData':taskData };
@@ -212,12 +228,64 @@ function removeJobFromKue (job, callback)
 	});
 }
 
-/* Function: checkAndRequeueJobs
+function checkTimeBoundJob (jobName)
+{
+    var timeBoundJobList = [global.STR_GET_VROUTERS_SUMMARY];
+    var len = timeBoundJobList.length;
+    for (var i = 0; i < len; i++) {
+        if (jobName == timeBoundJobList[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+var jobNextRefreshTimerCBList = {
+    'getVRoutersSummary': computeNode.getVRouterJobRefreshTimer,
+    'getVRoutersGenerators': computeNode.getVRouterJobRefreshTimer
+}
+
+function getJobNextRefreshTime (job, callback)
+{
+    if (true == checkTimeBoundJob(job.type)) {
+        var refCb = jobNextRefreshTimerCBList[job.type];
+        if (null == refCb) {
+            /* App does not want to override the refresh time */
+            callback(null);
+            return;
+        }
+        redisPub.redisPubClient.get(job.data.taskData.saveChannelKey, 
+                                    function(err, data) {
+            if ((null == err) || (null != data)) {
+                var nextRefTime = refCb(data);
+                callback(nextRefTime);
+                return;
+            }
+        });
+    } else {
+        callback(null);
+    }
+}
+
+function checkAndRequeueJobs (job)
+{
+    getJobNextRefreshTime(job, function(nextRunDelay) {
+        checkAndRequeueJob(job, nextRunDelay);
+    });
+}
+
+/* Function: checkAndRequeueJob
  This function is used to check if the job should be requeued, if yes, then
  the old job is removed from queue and a new one gets created
  */
-function checkAndRequeueJobs (job)
+function checkAndRequeueJob (job, nextRunDelay)
 {
+    /* First check the job type */
+    if (null == nextRunDelay) {
+        /* DO not do anything */
+    } else {
+        job.data.taskData.nextRunDelay = nextRunDelay;
+    }
     var jobType = job.type;
     var jobData = job.data;//commonUtils.cloneObj(job.data);
     var jobPriority = job._priority;
@@ -269,6 +337,31 @@ function doCheckJobsProcess ()
 			checkAndRequeueJobs(job);
 		});
 	});
+}
+
+function createJobAtInit (jobName, url, firstRunDelay, runCount, nextRunDelay, appData)
+{
+    var msgObj = {};
+    msgObj['jobName'] = jobName;
+    msgObj['priority'] = 'normal';
+    msgObj['jobType'] = global.STR_JOB_TYPE_CACHE;
+    msgObj['runCount'] = runCount;
+    msgObj['runDelay'] = firstRunDelay;
+    msgObj['data'] = {};
+    msgObj['data']['appData'] = appData;
+    msgObj['data']['authObj'] = {};
+    msgObj['data']['authObj']['sessionId'] = "";
+    msgObj['data']['authObj']['token'] = {};
+    msgObj['data']['defCallback'];
+    msgObj['data']['jobCreateReqTime'] = commonUtils.getCurrentTimestamp();
+    msgObj['data']['nextRunDelay'] = nextRunDelay;
+    msgObj['data']['pubChannel'] = UUID.create().toString();
+    msgObj['data']['saveChannelKey'] = redisPub.createChannelByHashURL(jobName, url);
+    msgObj['data']['requester'] = process.pid;
+    msgObj['data']['reqId'] = 0;
+    msgObj['data']['url'] = url;
+    msgObj['data']['reqBy'] = global.REQ_AT_SYS_INIT;
+    createJob(jobName, jobName, 'normal', firstRunDelay, runCount, msgObj['data']);
 }
 
 /* Function: createJobByMsgObj
@@ -402,4 +495,5 @@ exports.createJobListener = createJobListener;
 exports.createJobByMsgObj = createJobByMsgObj;
 exports.doCheckJobsProcess = doCheckJobsProcess;
 exports.getDataFromStoreQ = getDataFromStoreQ;
+exports.createJobAtInit = createJobAtInit;
 

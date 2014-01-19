@@ -1193,6 +1193,14 @@ function executeShellCommand (cmd, callback)
     });
 }
 
+function copyObject(dest, src)
+{
+    for (key in src) {
+        dest[key] = src[key];
+    }
+    return dest;
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1230,4 +1238,5 @@ exports.long2ip = long2ip;
 exports.getDataFromSandeshByIPUrl = getDataFromSandeshByIPUrl;
 exports.doEnsureExecution = doEnsureExecution;
 exports.directory = directory;
+exports.copyObject = copyObject;
 

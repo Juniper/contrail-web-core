@@ -114,7 +114,12 @@ function getnThIndexByLastKey (lastKey, entries, matchStr)
         return -1;
     }
     for (var i = 0; i < cnt; i++) {
-        if (lastKey == entries[i][matchStr]) {
+        if (null == matchStr) {
+            matchedStr = entries[i];
+        } else {
+            matchedStr = entries[i][matchStr];
+        }
+        if (lastKey == matchedStr) {
             return i;
         }
     }

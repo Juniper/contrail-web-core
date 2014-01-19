@@ -15,6 +15,10 @@
       <path>./jobsProcess.api</path>
   </require>
   <require>
+      <define>commonUtils</define>
+      <path>../../utils/common.utils</path>
+  </require>
+  <require>
       <define>config</define>
       <path>../../../../config/config.global</path>
   </require>
@@ -66,6 +70,14 @@
   <item>
     <jobName>getVRoutersList</jobName>
     <callback>processvRouterListRequestByJob</callback>
+  </item>
+  <item>
+    <jobName>getVRoutersSummary</jobName>
+    <callback>processvRoutersSummaryRequestByJob</callback>
+  </item>
+  <item>
+    <jobName>getVRoutersGenerators</jobName>
+    <callback>processvRoutersGenRequestByJob</callback>
   </item>
   <item>
     <jobName>getComputeNodeAclFlows</jobName>

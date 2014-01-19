@@ -476,6 +476,20 @@
         <callback>infra.getvRoutersSummary</callback>
     </item>
     <item>
+        <!-- Get compute nodes Summary -->
+        <url>/api/admin/monitor/infrastructure/vrouters/cached-summary</url>
+        <method>get</method>
+        <feature>compute-node</feature>
+        <callback>infra.getvRoutersSummaryByJob</callback>
+    </item>
+    <item>
+        <!-- Get vRouter Generator Details -->
+        <url>/api/admin/monitor/infrastructure/vrouters/cached-generators</url>
+        <method>get</method>
+        <feature>compute-node</feature>
+        <callback>infra.getvRouterGenerators</callback>
+    </item>
+    <item>
         <!-- Lists the compute nodes tree -->
         <url>/api/admin/monitor/infrastructure/vrouters/summaryInfo</url>
         <method>get</method>

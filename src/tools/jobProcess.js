@@ -77,7 +77,10 @@ createFile = function(result) {
     jobCbStr +=   "\n  jobsApi.jobs.process('";
     jobCbStr += itemList[i]['jobName'] + "', maxActiveJobs, function(job, done) {";
     jobCbStr += jobChannel;
-    jobCbStr += "\n    jobsProcess." + itemList[i]['callback'] + "(\n";
+    jobCbStr += "\n";
+    jobCbStr += "    var jobStartTime = commonUtils.getCurrentTimestamp();\n";
+    jobCbStr += "    job.data['jobStartTime'] = jobStartTime;\n";
+    jobCbStr += "    jobsProcess." + itemList[i]['callback'] + "(\n";
     jobCbStr += "        job.data.taskData.pubChannel,\n";
     jobCbStr += "        job.data.taskData.saveChannelKey,\n";
     jobCbStr += "        job.data, done);";
