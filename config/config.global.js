@@ -110,5 +110,9 @@ config.logo_file = '/usr/src/contrail/contrail-webui/webroot/img/juniper-network
 config.qe = {};
 config.qe.enable_stat_queries = false;
 
+/* Configure level of logs */
+config.logs = {};
+config.logs.level = 'debug';
+
 // Export this as a module.
 module.exports = config;

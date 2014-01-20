@@ -5,16 +5,18 @@
 var winston = require('winston'),
 	logutils = module.exports,
 	messages = require('../common/messages'),
-	util = require('util');
+	util = require('util'),
+    config = require('../../../config/config.global.js'),
+    logLevel = config['logs']['level'];
+
+logLevel = (logLevel != null && logLevel != '') ? logLevel : 'debug';
 
 /**
  * Constructor to create new Winston logger.
  */
 logutils.logger = new (winston.Logger)({
 	transports:[
-		new (winston.transports.Console)({colorize:true, timestamp:true}),
-		new (winston.transports.File)({filename:'/var/log/contrail-webui.log',
-                                      level: 'error'})
+		new (winston.transports.Console)({colorize:true, timestamp:true, level: logLevel})
 	]
 });
 
