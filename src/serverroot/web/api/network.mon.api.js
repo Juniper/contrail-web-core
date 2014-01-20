@@ -929,13 +929,15 @@ function getFlowSeriesByCPU (req, res)
     var minsSince = req.query['minsSince'];
     var moduleId  = req.query['moduleId'];
     var minsAlign = req.query['minsAlign'];
+    var endTime = req.query['endTime'];
 
     var appData = {
         source: source,
         sampleCnt: sampleCnt,
         minsSince: minsSince,
         minsAlign: minsAlign,
-        moduleId: moduleId
+        moduleId: moduleId,
+        endTime: endTime
     };
 
     var url = '/flow_series/cpu';
