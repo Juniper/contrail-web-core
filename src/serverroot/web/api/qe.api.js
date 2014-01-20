@@ -62,7 +62,22 @@ function executeQuery(res, options)
 
 function initPollingConfig(options, fromTime, toTime)
 {
-    var timeRange = (toTime - fromTime) / 60000000;
+    var timeRange = null;
+    if (true == isNaN(fromTime)) {
+        var str = 'now-';
+        /* Check if we have keyword now in that */
+        var pos = fromTime.indexOf(str);
+        if (pos != -1) {
+            var mins = fromTime.slice(pos + str.length);
+            mins = mins.substr(0, mins.length - 1);
+            mins = parseInt(mins);
+        } else {
+            assert(0);
+        }
+        timeRange = mins;
+    } else {
+        timeRange = (toTime - fromTime) / 60000000;
+    }
     if (timeRange <= 720) {
         options.pollingInterval = 5000;
         options.maxCounter = 2;
@@ -348,8 +363,16 @@ function parseSLQuery(reqQuery)
 
 function setMicroTimeRange(query, fromTime, toTime)
 {
+    if (true == isNaN(fromTime)) {
+        query.start_time = fromTime;
+    } else {
         query.start_time = fromTime * 1000;
-       query.end_time = toTime * 1000;
+    }
+    if (true == isNaN(toTime)) {
+        query.end_time = toTime;
+    } else {
+        query.end_time = toTime * 1000;
+    }
 };
 
 function createSLWhere(msgQuery, moduleId, messageType, source, category) 
