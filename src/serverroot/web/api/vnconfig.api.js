@@ -297,7 +297,6 @@ function getVirtualNetwork (request, response, appData)
 
 function readVirtualNetworkAsync (vnObj, callback)
 {
-    console.log("Getting in readVirtualNetworkAsync", vnObj);
     var vnID = vnObj['uuid'];
     var appData = vnObj['appData'];
 
@@ -672,7 +671,7 @@ function updateVNPolicyRefs (vnConfig, response, appData)
             if (err) {
                 commonUtils.handleJSONResponse(err, response, null);
             } else {
-                readVirtualNetworkAsync({vnId:vnId, appData:appData},
+                readVirtualNetworkAsync({uuid:vnId, appData:appData},
                                         function(err, data) {
                     commonUtils.handleJSONResponse(err, response, data);
                 });
@@ -885,7 +884,7 @@ function updateVNSubnetByConfigData (request, response, vnConfigData, appData,
         if (error) {
             commonUtils.handleJSONResponse(error, response, null);
         } else {
-            readVirtualNetworkAsync({vnID:virtualNetworkId, appData:appData},
+            readVirtualNetworkAsync({uuid:virtualNetworkId, appData:appData},
                                     function(err, data) {
                 commonUtils.handleJSONResponse(err, response, data);
             });
