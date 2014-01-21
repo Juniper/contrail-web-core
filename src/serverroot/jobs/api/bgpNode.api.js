@@ -139,7 +139,7 @@ function processControlNodeTree (data)
  the req type
  */
 function sendNodeResByReq (pubChannel, saveChannelKey, errCode, pubData, 
-                           saveData, reqType, done) {
+                           saveData, reqType, callback) {
 	var doSave = 0;
 	var expireTime = 6000000;
 	if (errCode == global.HTTP_STATUS_RESP_OK) {
@@ -147,20 +147,15 @@ function sendNodeResByReq (pubChannel, saveChannelKey, errCode, pubData,
 	}
 
 	if (global.STR_GET_NODES == reqType) {
-		redisPub.publishDataToRedis(pubChannel, saveChannelKey, errCode, pubData,
-			                        saveData, doSave, 60000, done);
+        callback(errCode, pubData, saveData, doSave, expireTime);
 	} else if (global.STR_GET_NODES_TREE == reqType) {
 		saveData = processControlNodeTree(saveData);
 		if (null == saveData) {
-			redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-				global.HTTP_STATUS_INTERNAL_ERROR,
-				global.STR_CACHE_RETRIEVE_ERROR,
-				global.STR_CACHE_RETRIEVE_ERROR, 0,
-				expireTime, done);
+            callback(global.HTTP_STATUS_INTERNAL_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR, 0, expireTime);
 		} else {
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey, errCode, 
-                                        saveData, saveData, doSave, expireTime,
-                                        done);
+            callback(errCode, pubData, saveData, doSave, expireTime);
 		}
 	}
 }
@@ -170,7 +165,7 @@ function sendNodeResByReq (pubChannel, saveChannelKey, errCode, pubData,
  * @param {Object} HTTP Response
  * @param {Object} JSON of all Virtual Routers
  */
-function getUnionBGPandVR(pubChannel, saveChannelKey, vrJSON, reqType, done,
+function getUnionBGPandVR(pubChannel, saveChannelKey, vrJSON, reqType, callback,
                           jobData)
 {
     var dataObjArr = [];
@@ -187,7 +182,7 @@ function getUnionBGPandVR(pubChannel, saveChannelKey, vrJSON, reqType, done,
 	configApiServer.apiGet(url, jobData, function (error, jsonData) {
 		if (error) {
 			sendNodeResByReq(pubChannel, saveChannelKey, global.HTTP_STATUS_INTERNAL_ERROR,
-				global.STR_CACHE_RETRIEVE_ERROR, global.STR_CACHE_RETRIEVE_ERROR, reqType, done);
+				global.STR_CACHE_RETRIEVE_ERROR, global.STR_CACHE_RETRIEVE_ERROR, reqType, callback);
 
 		} else {
 			try {
@@ -221,19 +216,19 @@ function getUnionBGPandVR(pubChannel, saveChannelKey, vrJSON, reqType, done,
 								}
 							}
 							sendNodeResByReq(pubChannel, saveChannelKey, global.HTTP_STATUS_RESP_OK,
-								JSON.stringify(bgpJSON), JSON.stringify(bgpJSON), reqType, done);
+								JSON.stringify(bgpJSON), JSON.stringify(bgpJSON), reqType, callback);
 						} else {
 							sendNodeResByReq(pubChannel, saveChannelKey, global.HTTP_STATUS_INTERNAL_ERROR,
-								global.STR_CACHE_RETRIEVE_ERROR, global.STR_CACHE_RETRIEVE_ERROR, reqType, done);
+								global.STR_CACHE_RETRIEVE_ERROR, global.STR_CACHE_RETRIEVE_ERROR, reqType, callback);
 						}
 					});
 				} else {
 					sendNodeResByReq(pubChannel, saveChannelKey, global.HTTP_STATUS_RESP_OK,
-						JSON.stringify(bgpJSON), JSON.stringify(bgpJSON), reqType, done);
+						JSON.stringify(bgpJSON), JSON.stringify(bgpJSON), reqType, callback);
 				}
 			} catch (e) {
 				sendNodeResByReq(pubChannel, saveChannelKey, global.HTTP_STATUS_INTERNAL_ERROR,
-					global.STR_CACHE_RETRIEVE_ERROR, global.STR_CACHE_RETRIEVE_ERROR, reqType, done);
+					global.STR_CACHE_RETRIEVE_ERROR, global.STR_CACHE_RETRIEVE_ERROR, reqType, callback);
 			}
 		}
 	});
@@ -244,7 +239,7 @@ function getUnionBGPandVR(pubChannel, saveChannelKey, vrJSON, reqType, done,
  the control node API request coming from Web Client
  */
 
-function processNodes (pubChannel, saveChannelKey, jobData, done)
+function processNodes (pubChannel, saveChannelKey, jobData, callback)
 {
     var dataObjArr = [];
 	var url = jobData.taskData.url;
@@ -254,7 +249,7 @@ function processNodes (pubChannel, saveChannelKey, jobData, done)
 			sendNodeResByReq(pubChannel, saveChannelKey,
 				global.HTTP_STATUS_INTERNAL_ERROR,
 				global.STR_CACHE_RETRIEVE_ERROR,
-				global.STR_CACHE_RETRIEVE_ERROR, reqType, done);
+				global.STR_CACHE_RETRIEVE_ERROR, reqType, callback);
 		} else {
 			try {
 				var resultJSON = jsonData,
@@ -279,47 +274,42 @@ function processNodes (pubChannel, saveChannelKey, jobData, done)
 						if (!err) {
 							adminApiHelper.processVRJSON(resultJSON, results);
 							getUnionBGPandVR(pubChannel, saveChannelKey,
-                                             resultJSON, reqType, done, jobData);
+                                             resultJSON, reqType, callback, jobData);
 						} else {
 							sendNodeResByReq(pubChannel, saveChannelKey, global.HTTP_STATUS_INTERNAL_ERROR,
-								global.STR_CACHE_RETRIEVE_ERROR, global.STR_CACHE_RETRIEVE_ERROR, reqType, done);
+								global.STR_CACHE_RETRIEVE_ERROR, global.STR_CACHE_RETRIEVE_ERROR, reqType, callback);
 						}
 					});
 				} else {
 					getUnionBGPandVR(pubChannel, saveChannelKey, resultJSON,
-                                     reqType, done, jobData);
+                                     reqType, callback, jobData);
 				}
 			} catch (e) {
 				sendNodeResByReq(pubChannel, saveChannelKey, global.HTTP_STATUS_INTERNAL_ERROR,
-					global.STR_CACHE_RETRIEVE_ERROR, global.STR_CACHE_RETRIEVE_ERROR, reqType, done);
+					global.STR_CACHE_RETRIEVE_ERROR, global.STR_CACHE_RETRIEVE_ERROR, reqType, callback);
 			}
 		}
 	});
 }
 
 function sendPublishReqToGetNodes (lookupHash, myHash, url, pubChannel, 
-                                   saveChannelKey, done, data, jobData) {
+                                   saveChannelKey, callback, data, jobData) {
     jobsApi.createJobListener(lookupHash, myHash, url, pubChannel, saveChannelKey, 
                               processNodes, null, false, 0,
-                              5 * 60 * 1000, data, done, jobData);
+                              5 * 60 * 1000, data, callback, jobData);
 }
 
-function getControlNodeLists (pubChannel, saveChannelKey, jobData, done)
+function getControlNodeLists (pubChannel, saveChannelKey, jobData, callback)
 {
     var doSave = 1;
     adminApiHelper.getControlNodeList(jobData, function(err, jsonData) {
         if (err || (null == jsonData)) {
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                        global.HTTP_STATUS_INTERNAL_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR,
-                                        global.STR_CACHE_RETRIEVE_ERROR, 0,
-                                        0, done);
+            callback(global.HTTP_STATUS_INTERNAL_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR,
+                     global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
          } else {
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey, 
-                                        global.HTTP_STATUS_RESP_OK, 
-                                        JSON.stringify(jsonData), 
-                                        JSON.stringify(jsonData), doSave, 
-                                        1 * 60 * 1000, done);
+            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(jsonData),
+                     JSON.stringify(jsonData), doSave, 10 * 60 * 1000);
         }
     });
 }

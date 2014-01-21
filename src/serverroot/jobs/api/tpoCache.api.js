@@ -225,7 +225,7 @@ function getProjectsTreeWithDomain (resultJSON, domainList, projectTreeData)
 }
 
 function processTreeTopoCache (pubChannel, saveChannelKey, 
-                               jobData, done)
+                               jobData, callback)
 {
     var reqUrl = url = jobData.taskData.url;
     var appData = jobData.taskData.appData;
@@ -241,10 +241,8 @@ function processTreeTopoCache (pubChannel, saveChannelKey,
     configApiServer.apiGet(url, jobData, function(err, results) {
         if (err || (null == results) || (results['domains'] == null) ||
             (results['domains'].length == 0)) {
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                        global.HTTP_STATUS_INTERNAL_ERROR,
-                                        emptyResultArr, emptyResultArr, 0,
-                                        0, done);
+            callback(global.HTTP_STATUS_RESP_OK, emptyResultArr, emptyResultArr,
+                     1, 0);
             return;
         }
         var domainCnt = results['domains'].length;
@@ -263,18 +261,13 @@ function processTreeTopoCache (pubChannel, saveChannelKey,
         }
         async.map(dataObjArr, getProjectsTreeByDomain, function(err, jsonData) {
             if (err) {
-                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                    global.HTTP_STATUS_INTERNAL_ERROR,
-                    emptyResultArr, emptyResultArr, 0,
-                    0, done);
+                callback(global.HTTP_STATUS_RESP_OK, emptyResultArr,
+                         emptyResultArr, 1, 0);
                 return;
             }
             getProjectsTreeWithDomain(resultJSON, domainList, jsonData);
-            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                                        global.HTTP_STATUS_RESP_OK,
-                                        JSON.stringify(resultJSON), 
-                                        JSON.stringify(resultJSON), 1, 
-                                        0, done);
+            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
+                     JSON.stringify(resultJSON), true);
         });
     });
 }

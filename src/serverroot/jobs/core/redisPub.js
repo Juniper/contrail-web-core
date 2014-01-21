@@ -40,6 +40,20 @@ function publishDataToRedis (pubChannel, saveChannelKey, errCode, pubData,
 {
     var curTime = commonUtils.getCurrentTimestamp();
 
+    if (undefined === errCode) {
+        /* This should have happened, that we have not got any response from
+         * backend, till we waited global.DEFAULT_MIDDLEWARE_API_TIMEOUT 
+         * so mark it as failure
+         */
+        logutils.logger.error("We did not get response in time with pubChannel:"
+                              + pubChannel);
+        errCode = global.HTTP_STATUS_INTERNAL_ERROR;
+        pubData = global.STR_CACHE_RETRIEVE_ERROR_IN_TIME;
+        saveData = global.STR_CACHE_RETRIEVE_ERROR_IN_TIME;
+        doSave = 0;
+        expiryTime = 0;
+    }
+
 	var pubDataObj = {
 		errCode:errCode,
 		data:(pubData)
