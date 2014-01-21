@@ -11,240 +11,239 @@ var  topoCache = require('../api/topoCache.api')
 
 var jobsProcess = module.exports;
 
-jobsProcess.processTreeTopoCacheRequestByJob = function (pubChannel, saveChannelKey, jobData, done) {
-	topoCache.processTreeTopoCache(pubChannel, saveChannelKey, jobData, done);
+jobsProcess.processTreeTopoCacheRequestByJob = function (pubChannel, saveChannelKey, jobData, callback) {
+	topoCache.processTreeTopoCache(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processNetworkTopologyRequestByJob = function (pubChannel, 
                                                            saveChannelKey, 
-                                                           jobData, done) {
-    tpoCache.processTreeTopoCache(pubChannel, saveChannelKey, jobData, done);
+                                                           jobData, callback) {
+    tpoCache.processTreeTopoCache(pubChannel, saveChannelKey, jobData, callback);
 }
 
-jobsProcess.processControlNodeRequestByJob = function (pubChannel, saveChannelKey, jobData, done) {
-	bgpNode.processNodes(pubChannel, saveChannelKey, jobData, done);
+jobsProcess.processControlNodeRequestByJob = function (pubChannel, saveChannelKey, jobData, callback) {
+	bgpNode.processNodes(pubChannel, saveChannelKey, jobData, callback);
 }
 
-jobsProcess.processNodesRequestByJob = function (pubChannel, saveChannelKey, jobData, done) {
-	bgpNode.processNodes(pubChannel, saveChannelKey, jobData, done);
+jobsProcess.processNodesRequestByJob = function (pubChannel, saveChannelKey, jobData, callback) {
+	bgpNode.processNodes(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processControlNodesTreeRequestByJob = function (pubChannel,
                                                                saveChannelKey,
-                                                               jobData, done) {
-    bgpNode.getControlNodeLists(pubChannel, saveChannelKey, jobData, done);
+                                                               jobData, callback) {
+    bgpNode.getControlNodeLists(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processControlNodeBgpPeerRequestByJob = function(pubChannel,
                                                              saveChannelKey,
-                                                             jobData, done) {
-    bgpNode.processControlNodeBgpPeer(pubChannel, saveChannelKey, jobData, done);
+                                                             jobData, callback) {
+    bgpNode.processControlNodeBgpPeer(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processControlNodesSummaryRequestByJob = function(pubChannel,
                                                              saveChannelKey,
-                                                             jobData, done) {
-    bgpNode.processControlNodesSummary(pubChannel, saveChannelKey, jobData, done);
+                                                             jobData, callback) {
+    bgpNode.processControlNodesSummary(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processComputeNodeInterfaceRequestByJob = function(pubChannel,
                                                              saveChannelKey,
-                                                             jobData, done) {
-    computeNode.processComputeNodeInterface(pubChannel, saveChannelKey, jobData, done);
+                                                             jobData, callback) {
+    computeNode.processComputeNodeInterface(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processComputeNodeAclRequestByJob = function(pubChannel,
                                                          saveChannelKey,
-                                                         jobData, done) {
-    computeNode.processComputeNodeAcl(pubChannel, saveChannelKey, jobData, done);
+                                                         jobData, callback) {
+    computeNode.processComputeNodeAcl(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processTopNwDetailsByProjectRequestByJob = function(pubChannel,
                                                                 saveChannelKey,
-                                                                jobData, done) {
-    nwMonJobsApi.processTopNwDetailsByProject(pubChannel, saveChannelKey, jobData, done);
+                                                                jobData, callback) {
+    nwMonJobsApi.processTopNwDetailsByProject(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processTopProjectDetailsByDomainRequestByJob = function(pubChannel,
                                                                      saveChannelKey,
-                                                                     jobData, done) {
-    nwMonJobsApi.processTopProjectDetailsByDomain(pubChannel, saveChannelKey, jobData, done);
+                                                                     jobData, callback) {
+    nwMonJobsApi.processTopProjectDetailsByDomain(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processTopNwDetailsByDomainRequestByJob = function(pubChannel, 
                                                                saveChannelKey, 
-                                                               jobData, done) {
-    nwMonJobsApi.processTopNwDetailsByDomain(pubChannel, saveChannelKey, jobData, done);
+                                                               jobData, callback) {
+    nwMonJobsApi.processTopNwDetailsByDomain(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processTopFlowsByConnectedNetworkRequestByJob = function(pubChannel, 
                                                                saveChannelKey, 
-                                                               jobData, done) {
-    nwMonJobsApi.processTopFlowsByConnectedNetwork(pubChannel, saveChannelKey, jobData, done);
+                                                               jobData, callback) {
+    nwMonJobsApi.processTopFlowsByConnectedNetwork(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processConnNetStatsSummaryRequestByJob = function(pubChannel, 
                                                               saveChannelKey, 
-                                                              jobData, done) {
-    nwMonJobsApi.processConnNetStatsSummary(pubChannel, saveChannelKey, jobData, done);
+                                                              jobData, callback) {
+    nwMonJobsApi.processConnNetStatsSummary(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processTopPortByProjectRequestByJob = function(pubChannel, 
                                                           saveChannelKey, 
-                                                          jobData, done) {
+                                                          jobData, callback) {
     var appData = jobData.taskData.appData;
     nwMonJobsApi.getTrafficStatsByPort(pubChannel, saveChannelKey, jobData,
-                                       done);
+                                       callback);
 }
 
 jobsProcess.processTopPortByNetworkRequestByJob = function(pubChannel, 
                                                           saveChannelKey, 
-                                                          jobData, done) {
+                                                          jobData, callback) {
     var appData = jobData.taskData.appData;
     nwMonJobsApi.getTrafficStatsByPort(pubChannel, saveChannelKey, jobData,
-                                       done);
+                                       callback);
 }
 
 jobsProcess.processTopPortByConnNetRequestByJob = function(pubChannel,
                                                            saveChannelKey,
-                                                           jobData, done) {
+                                                           jobData, callback) {
     nwMonJobsApi.processTopPortByNetwork(pubChannel, saveChannelKey, jobData,
-                                         done,
+                                         callback,
                                          global.STR_GET_TOP_PORT_BY_CONN_NW);
 }
 
 jobsProcess.processTopPeerByNetworkRequestByJob = function(pubChannel, 
                                                saveChannelKey, 
-                                               jobData, done) {
-    nwMonJobsApi.processTopPeerByNetwork(pubChannel, saveChannelKey, jobData, done);
+                                               jobData, callback) {
+    nwMonJobsApi.processTopPeerByNetwork(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processTopPeerByConnNetRequestByJob = function(pubChannel,
                                                            saveChannelKey,
-                                                           jobData, done) {
+                                                           jobData, callback) {
     nwMonJobsApi.processTopPeerByNetwork(pubChannel, saveChannelKey, jobData,
-                                         done,
+                                         callback,
                                          global.STR_GET_TOP_PEER_BY_CONN_NW);
 }
 
 jobsProcess.processTopPeerDetailsRequestByJob = function(pubChannel,
                                                      saveChannelKey,
-                                                     jobData, done) {
-    console.log("getting Top Peer:");
+                                                     jobData, callback) {
     nwMonJobsApi.processTopPeerDetails(pubChannel, saveChannelKey, jobData,
-                                       done);
+                                       callback);
 }
 
 jobsProcess.processTopFlowsByDomainRequestByJob = function(pubChannel, 
                                                           saveChannelKey, 
-                                                          jobData, done) {
-    nwMonJobsApi.processTopFlowsByDomain(pubChannel, saveChannelKey, jobData, done);
+                                                          jobData, callback) {
+    nwMonJobsApi.processTopFlowsByDomain(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processTopFlowsByProjectRequestByJob = function(pubChannel, 
                                                           saveChannelKey, 
-                                                          jobData, done) {
-    nwMonJobsApi.processTopFlowsByProject(pubChannel, saveChannelKey, jobData, done);
+                                                          jobData, callback) {
+    nwMonJobsApi.processTopFlowsByProject(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processTopFlowsByNetworkRequestByJob = function(pubChannel, 
                                                             saveChannelKey, 
-                                                            jobData, done) {
+                                                            jobData, callback) {
     nwMonJobsApi.processTopFlowsByNetwork(pubChannel, saveChannelKey, jobData,
-                                          done, null);
+                                          callback, null);
 }
 
 jobsProcess.processTopFlowsByConnNetRequestByJob = function(pubChannel,
                                                             saveChannelKey,
-                                                            jobData, done) {
+                                                            jobData, callback) {
     nwMonJobsApi.processTopFlowsByNetwork(pubChannel, saveChannelKey, jobData,
-                                          done,
+                                          callback,
                                           global.STR_GET_TOP_FLOWS_BY_CONN_NW);
 }
 
 jobsProcess.processTopPortByDomainRequestByJob = function(pubChannel, 
                                                           saveChannelKey, 
-                                                          jobData, done) {
-    nwMonJobsApi.processTopPortByDomain(pubChannel, saveChannelKey, jobData, done);
+                                                          jobData, callback) {
+    nwMonJobsApi.processTopPortByDomain(pubChannel, saveChannelKey, jobData, callback);
 }
                                                                                                                              
 jobsProcess.processVNFlowSeriesDataRequestByJob = function(pubChannel, 
                                                            saveChannelKey, 
-                                                           jobData, done) {
+                                                           jobData, callback) {
     nwMonJobsApi.processVNFlowSeriesData(pubChannel, saveChannelKey, 
-                                          jobData, done);
+                                          jobData, callback);
 }
 
 jobsProcess.processVNsFlowSeriesDataRequestByJob = function(pubChannel, 
                                                            saveChannelKey, 
-                                                           jobData, done) {
-    nwMonJobsApi.processVNsFlowSeriesData(pubChannel, saveChannelKey, jobData, done);
+                                                           jobData, callback) {
+    nwMonJobsApi.processVNsFlowSeriesData(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processTopPeerByDomainRequestByJob = function(pubChannel, 
                                                          saveChannelKey, 
-                                                         jobData, done) {
-    nwMonJobsApi.processTopPeerByDomain(pubChannel, saveChannelKey, jobData, done); 
+                                                         jobData, callback) {
+    nwMonJobsApi.processTopPeerByDomain(pubChannel, saveChannelKey, jobData, callback); 
 }
 
 jobsProcess.processTopPeerByProjectRequestByJob = function(pubChannel, 
                                                          saveChannelKey, 
-                                                         jobData, done) {
-    nwMonJobsApi.processTopPeerByProject(pubChannel, saveChannelKey, jobData, done); 
+                                                         jobData, callback) {
+    nwMonJobsApi.processTopPeerByProject(pubChannel, saveChannelKey, jobData, callback); 
 }
 
 jobsProcess.processTopPeerByVMRequestByJob = function(pubChannel, 
                                                       saveChannelKey, 
-                                                      jobData, done) {
-    nwMonJobsApi.processTopPeerByVM(pubChannel, saveChannelKey, jobData, done); 
+                                                      jobData, callback) {
+    nwMonJobsApi.processTopPeerByVM(pubChannel, saveChannelKey, jobData, callback); 
 }
 
 jobsProcess.processTopPortByVMRequestByJob = function(pubChannel, 
                                                       saveChannelKey, 
-                                                      jobData, done) {
-    nwMonJobsApi.processTopPortByVM(pubChannel, saveChannelKey, jobData, done); 
+                                                      jobData, callback) {
+    nwMonJobsApi.processTopPortByVM(pubChannel, saveChannelKey, jobData, callback); 
 }
 
 jobsProcess.processTopFlowsByVMRequestByJob = function(pubChannel, 
                                                       saveChannelKey, 
-                                                      jobData, done) {
-    nwMonJobsApi.processTopFlowsByVM(pubChannel, saveChannelKey, jobData, done); 
+                                                      jobData, callback) {
+    nwMonJobsApi.processTopFlowsByVM(pubChannel, saveChannelKey, jobData, callback); 
 }
 
 jobsProcess.processFlowSeriesByVMRequestByJob = function(pubChannel, 
                                                       saveChannelKey, 
-                                                      jobData, done) {
-    nwMonJobsApi.processVMFlowSeriesData(pubChannel, saveChannelKey, jobData, done); 
+                                                      jobData, callback) {
+    nwMonJobsApi.processVMFlowSeriesData(pubChannel, saveChannelKey, jobData, callback); 
 }
 
 jobsProcess.processVMStatSummaryRequestByJob = function(pubChannel, 
                                                         saveChannelKey, 
-                                                        jobData, done) {
+                                                        jobData, callback) {
     nwMonJobsApi.processVMStatSummary(pubChannel, 
-                                      saveChannelKey, jobData, done); 
+                                      saveChannelKey, jobData, callback); 
 }
 
 jobsProcess.processPortLevelFlowSeriesRequestByJob = function(pubChannel,
                                                               saveChannelKey,
-                                                              jobData, done) {
+                                                              jobData, callback) {
     nwMonJobsApi.getPortLevelFlowSeries(pubChannel, saveChannelKey, jobData,
-                                        done);
+                                        callback);
 }
 
 jobsProcess.processFlowDetailsByFlowTupleRequestByJob = function(pubChannel, 
                                                                  saveChannelKey,
-                                                                 jobData, done) {
+                                                                 jobData, callback) {
     nwMonJobsApi.processTopFlowsByNetwork(pubChannel, saveChannelKey, jobData,
-                                          done,
+                                          callback,
                                           global.STR_GET_FLOW_DETAILS_BY_FLOW_TUPLE);
 }
 
 jobsProcess.processCPULoadFlowSeriesRequestByJob = function(pubChannel,
                                                             saveChannelKey,
                                                             jobData,
-                                                            done) {
+                                                            callback) {
     nwMonJobsApi.processCPULoadFlowSeries(pubChannel, saveChannelKey,
-                                          jobData, done);
+                                          jobData, callback);
 }
 
 function processvRoutersSummaryRequestByJob (pubChannel, saveChannelKey,
@@ -262,42 +261,42 @@ function processvRoutersGenRequestByJob (pubChannel, saveChannelKey,
 }
 
 jobsProcess.mainJobprocessControlNodesSummaryRequestByJob = 
-    function(pubChannel, saveChannelKey, dependData, storedData, jobData, done) {
+    function(pubChannel, saveChannelKey, dependData, storedData, jobData, callback) {
     bgpNode.getControlNodesSummary(pubChannel, saveChannelKey, JSON.parse(dependData), 
-                                   storedData, jobData, done);
+                                   storedData, jobData, callback);
 }
 
 jobsProcess.mainJobprocessControlNodeBgpPeerRequestByJob =   
-    function(pubChannel, saveChannelKey, dependData, storedData, jobData, done) {
+    function(pubChannel, saveChannelKey, dependData, storedData, jobData, callback) {
     bgpNode.getControlNodeBgpPeer(pubChannel, saveChannelKey, dependData, 
-                                  storedData, jobData, done);
+                                  storedData, jobData, callback);
 }
 
 jobsProcess.mainJobprocessComputeNodeInterfaceRequestByJob =
-    function(pubChannel, saveChannelKey, dependData, storedData, jobData, done) {
+    function(pubChannel, saveChannelKey, dependData, storedData, jobData, callback) {
     computeNode.getComputeNodeInterface(pubChannel, saveChannelKey, dependData, 
-                                        storedData, jobData, done);
+                                        storedData, jobData, callback);
 }
 
 jobsProcess.mainJobprocessComputeNodeAclRequestByJob =
-    function(pubChannel, saveChannelKey, dependData, storedData, jobData, done) {
+    function(pubChannel, saveChannelKey, dependData, storedData, jobData, callback) {
     computeNode.getComputeNodeAcl(pubChannel, saveChannelKey, dependData, 
-                                  storedData, jobData, done);
+                                  storedData, jobData, callback);
 }
 
 jobsProcess.processControlNodeAutoCompleteListRequestByJob =   
-    function(pubChannel, saveChannelKey, jobData, done) {
-    bgpNode.getControlNodeAutoCompleteList(pubChannel, saveChannelKey, jobData, done);
+    function(pubChannel, saveChannelKey, jobData, callback) {
+    bgpNode.getControlNodeAutoCompleteList(pubChannel, saveChannelKey, jobData, callback);
 }
   
 jobsProcess.processvRouterListRequestByJob =   
-    function(pubChannel, saveChannelKey, jobData, done) {
-    computeNode.getvRouterList(pubChannel, saveChannelKey, jobData, done);
+    function(pubChannel, saveChannelKey, jobData, callback) {
+    computeNode.getvRouterList(pubChannel, saveChannelKey, jobData, callback);
 }
 
 jobsProcess.processcRouterAclFlowsRequestByJob =
-    function(pubChannel, saveChannelKey, jobData, done) {
-    computeNode.getvRouterAclFlows(pubChannel, saveChannelKey, jobData, done);
+    function(pubChannel, saveChannelKey, jobData, callback) {
+    computeNode.getvRouterAclFlows(pubChannel, saveChannelKey, jobData, callback);
 }
 
 exports.processvRoutersSummaryRequestByJob = processvRoutersSummaryRequestByJob;
