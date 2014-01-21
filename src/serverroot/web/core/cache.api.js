@@ -125,10 +125,12 @@ function createDataAndSendToJobServer (jobType, hash, reqData, req, res, saveCtx
 function queueDataFromCacheOrSendRequest (req, res, jobType, jobName, 
                                           reqUrl, defCallback, jobRunCount, 
                                           firstRunDelay, nextRunDelay,
-                                          sendToJobServerAlways, appData)
+                                          sendToJobServerAlways, appData,
+                                          cbTimeout)
 {
 	var reqData = createReqData(req, jobType, jobName, reqUrl, jobRunCount,
-		defCallback, firstRunDelay, nextRunDelay, appData, global.REQ_BY_UI);
+		defCallback, firstRunDelay, nextRunDelay, appData, global.REQ_BY_UI,
+        cbTimeout);
 	var reqJSON = JSON.parse(reqData);
 	var reqUrl = reqJSON.data.url;
 	var hash = reqJSON.jobName;
@@ -207,7 +209,7 @@ function queueDataFromCacheOrSendRequest (req, res, jobType, jobName,
  if defCallback: 0, define the callback in job process section
  */
 function createReqData (req, type, jobName, reqUrl, runCount, defCallback, 
-                        firstRunDelay, nextRunDelay, appData, reqBy)
+                        firstRunDelay, nextRunDelay, appData, reqBy, cbTimeout)
 {
     var authObj = {
         /* authObj contains all the auth related parameters, which may be needed
@@ -220,6 +222,9 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 	var reqId = longPoll.lastRequestId;
 	var pubChannel = redisSub.createPubChannelKey();
 	req.pubChannel = pubChannel;
+    if ((null == cbTimeout) || (undefined == cbTimeout)) {
+        cbTimeout = global.DEFAULT_MIDDLEWARE_API_TIMEOUT;
+    }
 	var saveChannelKey = redisSub.createChannelByHashURL(jobName, reqUrl);
 	var reqMsgObj = {
 		jobType:type,
@@ -238,6 +243,7 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 			pubChannel: pubChannel,
 			saveChannelKey: saveChannelKey,
 			reqBy: reqBy,
+			cbTimeout: cbTimeout,
 			appData: appData
 		}
 	};
