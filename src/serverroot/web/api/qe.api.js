@@ -63,7 +63,22 @@ function executeQuery(res, options)
 
 function initPollingConfig(options, fromTime, toTime)
 {
-    var timeRange = (toTime - fromTime) / 60000000;
+    var timeRange = null;
+    if (true == isNaN(fromTime)) {
+        var str = 'now-';
+        /* Check if we have keyword now in that */
+        var pos = fromTime.indexOf(str);
+        if (pos != -1) {
+            var mins = fromTime.slice(pos + str.length);
+            mins = mins.substr(0, mins.length - 1);
+            mins = parseInt(mins);
+        } else {
+            assert(0);
+        }
+        timeRange = mins;
+    } else {
+        timeRange = (toTime - fromTime) / 60000000;
+    }
     if (timeRange <= 720) {
         options.pollingInterval = 5000;
         options.maxCounter = 2;

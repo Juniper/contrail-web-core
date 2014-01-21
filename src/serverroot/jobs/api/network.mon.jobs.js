@@ -292,6 +292,7 @@ function createVNListObjArr (networkList, isSrcVn)
 
 function createTimeQueryJsonObj (minsSince)
 {
+/*
     var endTime = commonUtils.getUTCTime(new Date().getTime());
     var startTime = 0;
 
@@ -299,10 +300,10 @@ function createTimeQueryJsonObj (minsSince)
         startTime =
             commonUtils.getUTCTime(commonUtils.adjustDate(new Date(), {'min':-minsSince}).getTime());
     }
-
+*/
     var timeObj = {};
-    timeObj['start_time'] = startTime * 1000;
-    timeObj['end_time'] = endTime * 1000;
+    timeObj['start_time'] = 'now-' + minsSince +'m';//startTime * 1000;
+    timeObj['end_time'] = 'now';//endTime * 1000;
     return timeObj;
 }
 
@@ -809,8 +810,16 @@ function createTimeQueryJsonObjByAppData (appData)
     var timeObj = {};
 
     if (appData['startTime']) {
-        timeObj['start_time'] = parseInt(appData['startTime']) * 1000;
-        timeObj['end_time'] = parseInt(appData['endTime']) * 1000;
+        if (true == isNaN(appData['startTime'])) {
+            timeObj['start_time'] = appData['startTime'];
+        } else {
+            timeObj['start_time'] = parseInt(appData['startTime']) * 1000;
+        }
+        if (true == isNaN(appData['endTime'])) {
+            timeObj['end_time'] = appData['endTime'];
+        } else {
+            timeObj['end_time'] = parseInt(appData['endTime']) * 1000;
+        }
     } else {
         timeObj = createTimeQueryJsonObj(appData['minsSince']);
     }
