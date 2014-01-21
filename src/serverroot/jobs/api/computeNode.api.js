@@ -720,7 +720,8 @@ function getvRouterGenByJob (pubChannel, saveChannelKey, jobData, done)
     var postDataArr = [];
     var resultJSON = [];
 
-    opApiServer.apiGet(url, jobData, function(err, data) {
+    opApiServer.apiGet(url, jobData, 
+                        commonUtils.doEnsureExecution(function(err, data) {
         if ((null != err) || (null == data)) {
             redisPub.publishDataToRedis(pubChannel, saveChannelKey,
                                         global.HTTP_STATUS_INTERNAL_ERROR,
@@ -767,7 +768,7 @@ function getvRouterGenByJob (pubChannel, saveChannelKey, jobData, done)
         }
         /* Now issue request */
         async.mapSeries(postDataArr, getGeneratorsDataInChunk, 
-                        function(err, data) {
+                        commonUtils.doEnsureExecution(function(err, data) {
             /* Now Merge the data */
             if ((null != err) || (null == data)) {
                 redisPub.publishDataToRedis(pubChannel, saveChannelKey,
@@ -798,8 +799,8 @@ function getvRouterGenByJob (pubChannel, saveChannelKey, jobData, done)
                                         JSON.stringify(dataObj), 
                                         JSON.stringify(dataObj), 1, 0,
                                         done);
-        }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT);
-    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT);
+        }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
+    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
 function getVRouterJobRefreshTimer (cachedData)
