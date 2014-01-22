@@ -694,21 +694,6 @@ function updateVirtualNetwork (request, response, appData)
             commonUtils.handleJSONResponse(error, response, null);
             return;
         }
-        var vmiBackRefs =
-            data['virtual-network']['virtual_machine_interface_back_refs'];
-        if (null != vmiBackRefs) {
-            var vmiCnt = vmiBackRefs.length;
-            for (var i = 0; i < vmiCnt; i++) {
-                uuidList.push(vmiBackRefs[i]['uuid']);
-            }
-            if (vmiCnt > 0) {
-                var error = 
-                    new appErrors.RESTServerError('Virtual machine back refs ' +
-                                                  uuidList.concat(',') + 'exist');
-                commonUtils.handleJSONResponse(error, response, null);
-                return;
-            }
-        }
         updateVNPolicyRefs(data, response, appData);
     });
 }
