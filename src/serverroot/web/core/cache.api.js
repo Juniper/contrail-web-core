@@ -25,20 +25,27 @@ commonUtils.createRedisClient(function(client) {
     cacheApi.redisClient = client;
 });
 
-var cachePendingQueue = [];
+var cachePendingQueue = {};
 
 /* Function: insertReqCtxToCachePendingQueue
  This function is used to insert req context to cache pending queue
  */
 function insertReqCtxToCachePendingQueue (req, res, channel)
 {
-	var obj = {
-		'req':req,
-		'res':res,
-		'channel':channel
-	};
-
-	cachePendingQueue.push(obj);
+    if (null == cachePendingQueue[channel]) {
+        cachePendingQueue[channel] = [];
+        /* This is the first request for this channel */
+    } else {
+        /* Some active job is already running, so this is the waiting client on
+         * the same PubChannel
+         */
+    }
+    var obj = {
+        'req':req,
+        'res':res,
+        'channel':channel
+    };
+    cachePendingQueue[channel].push(obj);
 }
 
 /* Function: checkCachePendingQueue
@@ -48,26 +55,19 @@ function insertReqCtxToCachePendingQueue (req, res, channel)
  */
 function checkCachePendingQueue (channel)
 {
-    var qLen = cachePendingQueue.length;
-	if (!qLen) {
+    var pendQ = cachePendingQueue[channel];
+    if (null == pendQ) {
+        logutils.logger.info("Got PUB msg with channel [" + channel +
+                             "], but no entry in pendingQ");
         return null;
-	}
-	/* Now check if we have any channel matching with any channel in
-	 pending queue */
-	/* TODO: if we can optimize the searching, may be by HASH */
-	for (var i = 0; i < qLen; i++) {
-		var qEntry = cachePendingQueue[i];
-		if ((qEntry) && (qEntry['channel'] == channel)) {
-			logutils.logger.debug("We got the channel as:" + channel);
-			break;
-		}
-	}
-	if (i == qLen) {
-		logutils.logger.info("Got PUB msg with channel [" + channel +
-		                     "], but no entry in pendingQ");
-		return null;
-	}
-	return cachePendingQueue[i];
+    }
+    var qLen = pendQ.length;
+    if (!qLen) {
+        logutils.logger.info("Got PUB msg with channel [" + channel +
+                             "], but no req Ctx entry in pendingQ");
+        return null;
+    }
+    return pendQ;
 }
 
 /* Function: deleteCachePendingQueueEntry
@@ -75,15 +75,10 @@ function checkCachePendingQueue (channel)
  */
 function deleteCachePendingQueueEntry (channel)
 {
-    var qLen = cachePendingQueue.length;
-    for (var i = 0; i < qLen; i++) {
-        var qEntry = cachePendingQueue[i];
-        if ((qEntry) && (qEntry['channel'] == channel)) {
-            cachePendingQueue.splice(i, 1);
-            return;
-        }
+    if (null == cachePendingQueue[channel]) {
+        return;
     }
-    return;
+    delete cachePendingQueue[channel];
 }
 
 /* Function: createDataAndSendToJobServer
@@ -133,14 +128,49 @@ function queueDataFromCacheOrSendRequest (req, res, jobType, jobName,
 	var reqUrl = reqJSON.data.url;
 	var hash = reqJSON.jobName;
 	var channel = redisSub.createChannelByHashURL(hash, reqUrl);
+
+    cacheApi.redisClient.zrange('q:jobs:' + jobName + ':' + 'active' , 0,
+                                global.MAX_INT_VALUE,
+                                function(err, data) {
+        if ((null == err) && (null != data) && (data instanceof Array) &&
+            (0 != data.length)) {
+            /* We have same active job, so do not issue once again
+             */
+            cacheApi.redisClient.hgetall('q:job:' + data[0], 
+                                         function(err, hash) {
+                if ((null == err) && (null != hash)) {
+                    try {
+                        var data = JSON.parse(hash['data']);
+                        var pubChannel = data['taskData']['pubChannel'];
+                        /* Now insert this into reqCtxQ */
+                        insertReqCtxToCachePendingQueue(req, res,
+                                                        pubChannel);
+                        return;
+                    } catch(e) {
+                        sendReqToJobServer(req, res, reqData, channel, hash,
+                                           sendToJobServerAlways);
+                    }
+                } else {
+                    sendReqToJobServer(req, res, reqData, channel, hash,
+                                       sendToJobServerAlways);
+                }
+            });
+        } else {
+            sendReqToJobServer(req, res, reqData, channel, hash,
+                               sendToJobServerAlways);
+        }
+    });
+}
+
+function sendReqToJobServer (req, res, reqData, channel, hash,
+                             sendToJobServerAlways)
+{
     var saveCtx = true;
-	if (true === sendToJobServerAlways) {
-	    /* Do not populate the data from cache */
-	    cacheApi.createDataAndSendToJobServer(global.STR_JOB_TYPE_CACHE, hash,
+    if (true === sendToJobServerAlways) {
+        cacheApi.createDataAndSendToJobServer(global.STR_JOB_TYPE_CACHE, hash,
                                               reqData, req, res, saveCtx);
         return;
-    }                                      
-    
+    }
 	cacheApi.redisClient.get(channel, function (err, value) {
 		if (err) {
 			logutils.logger.error("We got error while retrieving the " +
@@ -250,8 +280,8 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
  */
 function sendResponseByChannel (channel, msg)
 {
-	var obj = checkCachePendingQueue(channel);
-    if (null == obj) {
+    var pendClientLists = checkCachePendingQueue(channel);
+    if (null == pendClientLists) {
         return;
     }
 	var isJson = 0;
@@ -260,7 +290,10 @@ function sendResponseByChannel (channel, msg)
 		isJson = 1;
 		/* In error case, application will send only the error string */
 	}
-	longPoll.insertResToReadyQ(obj.res, msgParse.data, msgParse.errCode, isJson);
+
+    longPoll.insertDataToSendAllClients(pendClientLists, msgParse.data, 
+                                        msgParse.errCode, isJson);
+    deleteCachePendingQueueEntry(channel);
 }
 
 function handleJSONResponse(error, req, res, jsonStr)
