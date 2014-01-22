@@ -158,9 +158,9 @@ function filterInAnalyzerInstances(results, response, appData)
     for (i = 0; i < results.length; i++) {
         templateRefs = results[i]['service-instance']['service_template_refs'];
         for (j = 0; j < templateRefs.length; j++) {
-            if (templateRefs[j]['to'][1] == global.DEFAULT_ANALYZER_TEMPLATE) {
+            siName = results[i]['service-instance']['fq_name'][2];
+            if (templateRefs[j]['to'][1] == global.DEFAULT_ANALYZER_TEMPLATE && siName != global.DEFAULT_FLOW_PCAP_ANALYZER && siName != global.DEFAULT_INTERFACE_PCAP_ANALYZER) {
                 filteredResults[k] = results[i];
-                siName = results[i]['service-instance']['fq_name'][2];
                 dynamicPolicyNames[k] = getDefaultAnalyzerPolicyName(siName);
                 k += 1;
                 break;
@@ -894,11 +894,12 @@ function updateVMInterfaceProperties(response, appData, options) {
                 interfaceProperties['interface_mirror'] = getInterfaceMirrorProperty(defaultPCAPAnalyzerFQN, direction);
             }
             configApiServer.apiPut(interfaceUrl, interfaceJSON, appData, function (error, jsonData) {
+                var analyzerNotReadyMsg = 'Interface packet-capture analyzer is not ready. Please try again after few minutes.';
                 if (error) {
                     logutils.logger.error(error.stack);
                     commonUtils.handleJSONResponse(error, response, null);
                 } else if (options.action == 'start') {
-                    getPCAPAnalyzerVMId(response, appData, options, function (response, responseJSON) {
+                    getPCAPAnalyzerVMId(response, appData, options, analyzerNotReadyMsg, function (response, responseJSON) {
                         commonUtils.handleJSONResponse(null, response, responseJSON);
                     });
                 } else {
@@ -913,7 +914,7 @@ function updateVMInterfaceProperties(response, appData, options) {
  * @getPCAPAnalyzerVMId
  * private function
  */
-function getPCAPAnalyzerVMId(response, appData, responseJSON, callback) {
+function getPCAPAnalyzerVMId(response, appData, responseJSON, errorMessage, callback) {
     var siUrl = '/service-instance/' + responseJSON['defaultPCAPAnalyzerUUID'], vmBackRef;
     configApiServer.apiGet(siUrl, appData, function (error, jsonData) {
         if (error) {
@@ -926,7 +927,7 @@ function getPCAPAnalyzerVMId(response, appData, responseJSON, callback) {
                 responseJSON['projectUUID'] = jsonData['service-instance']['parent_uuid'];
                 callback(response, responseJSON);
             } else {
-                commonUtils.handleJSONResponse(null, response, {message: 'Interface packet-capture analyzer is not ready. Please try again after few minutes.'});
+                commonUtils.handleJSONResponse(null, response, {message: errorMessage});
             }
         }
     });
@@ -953,15 +954,16 @@ function configurePacketCapture4Flow(request, response, appData) {
     };
 
     check4DefaultAnalyzer(response, appData, options, function (error, response, appData, options, isAnalyzerPresent) {
+        var analyzerNotReadyMsg = 'Flow packet-capture analyzer is not ready. Please try again after few minutes.';
         if (error) {
             commonUtils.handleJSONResponse(error, response, null);
         } else if (isAnalyzerPresent) {
-            getPCAPAnalyzerVMId(response, appData, options, function (response, responseJSON) {
+            getPCAPAnalyzerVMId(response, appData, options, analyzerNotReadyMsg, function (response, responseJSON) {
                 fetchDefaultAnalyzerPolicyCB(response, appData, responseJSON);
             });
         } else {
             createDefaultPCAPAnalyzer(response, appData, options, function (response) {
-                commonUtils.handleJSONResponse(null, response, {message: 'Flows packet-capture analyzer is not ready. Please try again after few minutes.'});
+                commonUtils.handleJSONResponse(null, response, {message: 'Default flow analyzer was not available. A new analyzer has been created. Please try again after few minutes.'});
             });
         }
     });

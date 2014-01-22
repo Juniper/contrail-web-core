@@ -290,17 +290,25 @@ function createVNListObjArr (networkList, isSrcVn)
     return vnListObjArr;
 }
 
-function createTimeQueryJsonObj (minsSince)
+function createTimeQueryJsonObj (minsSince, endTime)
 {
-    var endTime = commonUtils.getUTCTime(new Date().getTime());
-    var startTime = 0;
+    var startTime = 0, timeObj = {};
 
-    if (minsSince != -1) {
-        startTime =
-            commonUtils.getUTCTime(commonUtils.adjustDate(new Date(), {'min':-minsSince}).getTime());
+    if(endTime != null && endTime != '' ) {
+        try {
+            endTime = parseInt(endTime);
+        } catch (err) {
+            endTime = commonUtils.getUTCTime(new Date().getTime());
+        }
+    } else {
+        endTime = commonUtils.getUTCTime(new Date().getTime());
     }
 
-    var timeObj = {};
+    if (minsSince != -1) {
+        startTime = commonUtils.getUTCTime(commonUtils.adjustDate(new Date(endTime), {'min':-minsSince}).getTime());
+    }
+
+
     timeObj['start_time'] = startTime * 1000;
     timeObj['end_time'] = endTime * 1000;
     return timeObj;
@@ -2480,7 +2488,6 @@ function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, done)
     var appData = jobData.taskData.appData;
 
     var source = appData.source;
-    var minsSince = appData.minsSince;
     var moduleId = appData.moduleId;
     var tableName, whereClause;
 
@@ -2530,7 +2537,7 @@ function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, done)
     }
 
     whereClause = formatAndClause(whereClause);
-    var timeObj = createTimeQueryJsonObj(appData.minsSince);
+    var timeObj = createTimeQueryJsonObj(appData.minsSince, appData.endTime);
     var timeGran = nwMonUtils.getTimeGranByTimeSlice(timeObj, appData.sampleCnt);
     var strTimeGran = 'T=' + timeGran;
     var selectArr = ["MessageTS", "ObjectLog"];

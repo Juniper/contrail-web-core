@@ -994,6 +994,12 @@
         <feature>siconfig</feature>
         <callback>siconfigapi.configurePacketCapture4Interface</callback>
     </item>
+    <item>
+        <url>/api/tenants/config/flow/packet-capture</url>
+        <method>post</method>
+        <feature>siconfig</feature>
+        <callback>siconfigapi.configurePacketCapture4Flow</callback>
+    </item>
 
     <!-- API / Feature definition for Virtual DNS configuration -->
     <!-- 1. List Virtual DNS                 - /api/tenants/config/virtual-DNSs/:id,
