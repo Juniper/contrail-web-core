@@ -478,12 +478,12 @@ function parseFSQuery(reqQuery)
 {
     var select, where, filters, fromTimeUTC, toTimeUTC, fsQuery, table, tg, tgUnit, direction, autoLimit, autoSort;
     table = reqQuery['table'];
+    select = reqQuery['select'];
     autoLimit = (reqQuery['autoLimit'] != null && reqQuery['autoLimit'] == "true") ? true : false;
-    autoSort = (reqQuery['autoSort'] != null && reqQuery['autoSort'] == "true") ? true : false
+    autoSort = (reqQuery['autoSort'] != null && reqQuery['autoSort'] == "true" && select.indexOf('time-granularity') != -1) ? true : false
     fsQuery = getQueryJSON4Table(table, autoSort, autoLimit);
     fromTimeUTC = reqQuery['fromTimeUTC'];
     toTimeUTC = reqQuery['toTimeUTC'];
-    select = reqQuery['select'];
     where = reqQuery['where'];
     filters = reqQuery['filters'];
     tg = reqQuery['tgValue'];
