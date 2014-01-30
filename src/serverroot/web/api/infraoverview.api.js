@@ -246,11 +246,11 @@ function getvRouterDetailConfigUVEData (configData, uuidList, nodeList, addGen,
             var kLen = kfilt.length;
             for (var i = 0; i < nodeCnt; i++) {
                 for (var j = 0; j < kLen; j++) {
-                    postData['kfilt'].push(nodeList[i] + ':' + kfilt[j]);
+                    postData['kfilt'].push(nodeList[i] + ':*' + kfilt[j] + '*');
                 }
             }
         } else {
-            postData['kfilt'] = ['*:VRouterAgent'];
+            postData['kfilt'] = ['*:VRouterAgent*'];
         }
         postData['cfilt'] = ['ModuleClientState:client_info',
                              'ModuleServerState:generator_info'];
@@ -330,13 +330,18 @@ function addGeneratorInfoToUVE (postData, uve, host, modules, callback)
         data = data['value'];
         len = data.length;
         var modCnt = modules.length;
-        for (var i = 0; i < modCnt; i++) {
-            name = host + ':' + modules[i];
-            for (var j = 0; j < len; j++) {
-                if (name == data[j]['name']) {
-                    resultJSON[modules[i]] = data[j]['value'];
-                    break;
+        for (var i = 0; i < len; i++) {
+            try {
+                if (false == 
+                    infraCmn.modExistInGenList(modules, host, data[i]['name'])) {
+                    continue;
                 }
+                var modInstName = infraCmn.getModInstName(data[i]['name']);
+                if (null == modInstName) {
+                    continue;
+                }
+                resultJSON[modInstName] = data[i]['value'];
+            } catch(e) {
             }
         }
         resultJSON = commonUtils.copyObject(resultJSON, uve);
@@ -361,7 +366,7 @@ function getvRouterDetails (req, res, appData)
             });
         } else {
             var postData = {};
-            postData['kfilt'] = [host + ':VRouterAgent'];
+            postData['kfilt'] = [host + ':*VRouterAgent*'];
             addGeneratorInfoToUVE(postData, data, host,
                                   ['VRouterAgent'],
                                   function(err, data) {
@@ -684,6 +689,7 @@ function postProcessAnalyticsNodeSummaryJSON (collUVEData, genUVEData)
             return resultJSON;
         }
         for (var i = 0, l = 0; i < collDataLen; i++) {
+          try {
             resultJSON[lastIndex] = {};
             resultJSON[lastIndex]['name'] = collData[i]['name'];
             resultJSON[lastIndex]['value'] = {};
@@ -691,17 +697,28 @@ function postProcessAnalyticsNodeSummaryJSON (collUVEData, genUVEData)
                 commonUtils.copyObject(resultJSON[lastIndex]['value'],
                                        collData[i]['value']);
             for (var j = 0; j < genDataLen; j++) {
-                for (var k = 0; k < modCnt; k++) {
-                    modHost = collData[i]['name'] + ':' + moduleNames[k];
-                    if (modHost == genData[j]['name']) {
-                        resultJSON[lastIndex]['value'][moduleNames[k]] = {};
-                        resultJSON[lastIndex]['value'][moduleNames[k]] =
-                            commonUtils.copyObject(resultJSON[lastIndex]['value'][moduleNames[k]],
-                                                   genData[j]['value']);
+                try {
+                    if (false == 
+                        infraCmn.modExistInGenList(moduleNames, 
+                                                   collData[i]['name'],
+                                                   genData[j]['name'])) {
+                        continue;
                     }
+                    var genName = genData[j]['name'];
+                    var pos = genName.indexOf(':');
+                    mod = genName.slice(pos + 1);
+                    resultJSON[lastIndex]['value'][mod] = {};
+                    resultJSON[lastIndex]['value'][mod] =
+                        commonUtils.copyObject(resultJSON[lastIndex]['value'][mod],
+                                               genData[j]['value']);
+                } catch (e) {
+                    continue;
                 }
             }
             lastIndex++;
+          } catch(e) {
+              continue;
+          }
         }
     } catch(e) {
     }
@@ -740,8 +757,8 @@ function getAnalyticsNodeSummary (req, res, appData)
     if (null != addGen) {
         reqUrl = '/analytics/uves/generator';
         var postData = {};
-        postData['kfilt'] = ['*:Collector',
-                             '*:OpServer', '*:QueryEngine'];
+        postData['kfilt'] = ['*:Collector*',
+                             '*:OpServer*', '*:QueryEngine*'];
         postData['cfilt'] = ['ModuleClientState:client_info', 
                              'ModuleServerState:generator_info'];
         commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
@@ -767,9 +784,9 @@ function getAnalyticsNodeDetails (req, res, appData)
     var url = '/analytics/uves/generator';
 
     var postData = {};
-    postData['kfilt'] = [hostName + ':Collector', 
-                         hostName + ':OpServer',
-                         hostName + ':QueryEngine'];
+    postData['kfilt'] = [hostName + ':*Collector*', 
+                         hostName + ':*OpServer*',
+                         hostName + ':*QueryEngine*'];
     opServer.api.post(url, postData, function(err, genData) {
         if (err || (null == genData)) {
             commonUtils.handleJSONResponse(err, res, resultJSON);
@@ -870,7 +887,7 @@ function getControlNodeDetailConfigUVEData (configData, addGen, appData, callbac
                              postData, opApiServer, null, appData);
     if (null != addGen) {
         var genPostData = {};
-        genPostData['kfilt'] = ['*:ControlNode'];
+        genPostData['kfilt'] = ['*:ControlNode*'];
         genPostData['cfilt'] = ['ModuleClientState:client_info',
                                 'ModuleServerState:generator_info'];
         reqUrl = '/analytics/uves/generator';
@@ -977,7 +994,7 @@ function getControlNodeDetails (req, res, appData)
             });
         } else {
             var postData = {};
-            postData['kfilt'] = [hostName + ':ControlNode'];
+            postData['kfilt'] = [hostName + '*:ControlNode*'];
             addGeneratorInfoToUVE(postData, data, hostName, 
                                   ['ControlNode'],
                                   function(err, data) {
@@ -1011,8 +1028,7 @@ function getConfigNodesList (req, res, appData)
 
 function parseConfigNodeProcessUVEs (resultJSON, configProcessUVEs, host)
 {
-    var cfgProc = ['ApiServer'];
-    var cfgProcLen = cfgProc.length;
+    var moduleList = ['ApiServer'];
     try {
         var cfgProcUVEData = configProcessUVEs['value'];
         var cfgProcUVEDataLen = cfgProcUVEData.length;
@@ -1020,21 +1036,22 @@ function parseConfigNodeProcessUVEs (resultJSON, configProcessUVEs, host)
         return resultJSON;
     }
     for (var i = 0; i < cfgProcUVEDataLen; i++) {
-        for (j = 0; j < cfgProcLen; j++) {
-            cfgProcName = cfgProc[j];
-            name = host + ':' + cfgProcName;
-            var procName = cfgProcUVEData[i]['name'];
-            var pos = procName.indexOf(name);
-            if (pos != -1) {
-                var cfgArr = procName.split(':');
-                if (cfgArr.length > 1) {
-                    procName = cfgArr[1];
-                }
-                resultJSON[procName] = {};
-                resultJSON[procName] = 
-                    commonUtils.copyObject(resultJSON[procName],
-                                           cfgProcUVEData[i]['value']);
+        if (false == infraCmn.modExistInGenList(moduleList, host,
+                                                cfgProcUVEData[i]['name'])) {
+            continue;
+        }
+        try {
+            var modInstName =
+                infraCmn.getModInstName(cfgProcUVEData[i]['name']);
+            if (null == modInstName) {
+                continue;
             }
+            resultJSON[modInstName] = {};
+            resultJSON[modInstName] =
+                commonUtils.copyObject(resultJSON[modInstName],
+                                       cfgProcUVEData[i]['value']);
+        } catch(e) {
+            continue;
         }
     }
     return resultJSON;
@@ -1064,8 +1081,9 @@ function postProcessConfigNodeSummary (uves)
         resultJSON[i]['value']['configNode'] = 
             commonUtils.copyObject(resultJSON[i]['value']['configNode'],
                        configData[i]['value']);
-        resultJSON[i]['value'] = parseConfigNodeProcessUVEs(resultJSON[i]['value'], uves[1],
-                                                   host);
+        resultJSON[i]['value'] = 
+            parseConfigNodeProcessUVEs(resultJSON[i]['value'], uves[1],
+                                       host);
     }
     return resultJSON;
 }
