@@ -813,7 +813,7 @@ function getVRouterJobRefreshTimer (cachedData)
         var vRouterData = data['data'];
         var vRouterCnt = vRouterData.length;
         if (vRouterCnt <= 1000) {
-            return 3 * 60 * 1000; /* 5 minutes */
+            return 5 * 60 * 1000; /* 5 minutes */
         } else if ((vRouterCnt > 1000) && (vRouterCnt <= 2000)) {
             return 7 * 60 * 1000; /* 7 minutes */
         } else if ((vRouterCnt > 2000) && (vRouterCnt <= 3000)) {

@@ -8,18 +8,79 @@ var commonUtils = require('../utils/common.utils'),
     adminApiHelper = require('./adminapi.helper'),
     logutils = require('../utils/log.utils'),
     jsonPath = require('JSONPath').eval,
+    assert = require('assert'),
     async = require('async');
 
-function updateGeneratorInfo (resultJSON, genInfo, name)
+function getModuleType (modName)
+{
+    switch(modName){
+    case 'VRouterAgent':
+        return 'Compute';
+    case 'ControlNode':
+        return 'Control';
+    case 'ApiServer':
+        return 'Config';
+    case 'Collector':
+    case 'OpServer':
+    case 'QueryEngine':
+        return 'Analytics';
+    default:
+        logutils.logger.error('Unknown moduleName used: ' + modName);
+        assert(0);
+    }
+}
+
+function modExistInGenList (moduleList, hostName, genName)
+{
+    if ((null == moduleList) || (null == genName)) {
+        return false;
+    }
+    var modCnt = moduleList.length;
+    for (var i = 0; i < modCnt; i++) {
+        var modType = getModuleType(moduleList[i]);
+        gen = hostName + ':' + modType + ':' + moduleList[i];
+        pos = genName.indexOf(gen);
+        if (-1 != pos) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function getModInstName (genName)
+{
+    if (null == genName) {
+        return null;
+    }
+    /* Generator Name field is a combination of 
+       hostname:type:module:instId
+       This function returns type:module:instId
+     */
+    var pos = genName.indexOf(':');
+    return genName.slice(pos + 1);
+}
+
+function updateGeneratorInfo (resultJSON, genInfo, hostName, moduleNames)
 {
     try {
+        var modType = getModuleType(moduleNames[0]);
+        var mod = hostName + ':' + modType + ':';
         var genCnt = genInfo.length;
-        for (var i = 0; i < genCnt; i++) {
-            if (name == genInfo[i]['name']) {
-                resultJSON = commonUtils.copyObject(resultJSON, genInfo[i]['value']);
-            }
-        }
     } catch(e) {
+        return resultJSON;
+    }
+    for (var i = 0; i < genCnt; i++) {
+        if (false == modExistInGenList(moduleNames, hostName,
+                                       genInfo[i]['name'])) {
+            continue;
+        }
+        try {
+            modStr = getModInstName(genInfo[i]['name']);
+            resultJSON[modStr] = {};
+            resultJSON[modStr] = 
+                commonUtils.copyObject(resultJSON[modStr], genInfo[i]['value']);
+        } catch(e) {
+        }
     }
     return resultJSON;
 }
@@ -164,15 +225,8 @@ function checkAndGetSummaryJSON (configData, uves, moduleNames)
         }
     }
     for (var p = 0; p < j; p++) {
-        for (var k = 0; k < modCnt; k++) {
-            try {
-                name = resultJSON[p]['name'] + ':' + moduleNames[k];
-                moduleName = moduleNames[k];
-                resultJSON[p]['value'][moduleName] = {};
-                updateGeneratorInfo(resultJSON[p]['value'][moduleName], genInfo, name);
-            } catch(e) {
-            }
-        }
+        updateGeneratorInfo(resultJSON[p]['value'], genInfo,
+                            resultJSON[p]['name'], moduleNames);
     }
     return resultJSON;
 }
@@ -416,3 +470,7 @@ exports.dovRouterListProcess = dovRouterListProcess;
 exports.checkAndGetSummaryJSON = checkAndGetSummaryJSON;
 exports.getvRouterList = getvRouterList;
 exports.getNodeListByLastKey = getNodeListByLastKey;
+exports.getModuleType = getModuleType;
+exports.modExistInGenList = modExistInGenList;
+exports.getModInstName = getModInstName;
+
