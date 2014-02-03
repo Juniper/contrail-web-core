@@ -608,7 +608,7 @@ function updatePolicyUpdateNets(error, results, polConfig, policyId, appData, ca
  */
 function updatePolicyAssocNetRead(error, polConfig, polPostData, policyId, appData, callback) 
 {
-    var url = null;
+    var reqUrl = null;
     var vnRef = [];
     var vnURL = [];
     var vnRefLen = 0, i = 0;
@@ -651,8 +651,8 @@ function updatePolicyAssocNetRead(error, polConfig, polPostData, policyId, appDa
                 'uuid':uuid,
                 'oper':'add'
             };
-            url = '/virtual-network/' + uuid;
-            commonUtils.createReqObj(dataObjArr, url,
+            reqUrl = '/virtual-network/' + uuid;
+            commonUtils.createReqObj(dataObjArr, reqUrl,
                 global.HTTP_REQUEST_GET, null, null, null,
                 appData);
         }
@@ -673,8 +673,8 @@ function updatePolicyAssocNetRead(error, polConfig, polPostData, policyId, appDa
         for (i = 0; i < vnRefLen; i++) {
             uuid = vnRef[i]['uuid'];
             if (polConfig['network-policy']['net_uuid'][uuid] == null) {
-                url = '/virtual-network/' + uuid;
-                commonUtils.createReqObj(dataObjArr, url,
+                reqUrl = '/virtual-network/' + uuid;
+                commonUtils.createReqObj(dataObjArr, reqUrl,
                     global.HTTP_REQUEST_GET, null, null,
                     null, appData);
             }
@@ -702,8 +702,8 @@ function updatePolicyAssocNetRead(error, polConfig, polPostData, policyId, appDa
     for (i = 0; i < vnUIRefLen; i++) {
         uuid = vnUIRef[i]['uuid'];
         if (polConfig['network-policy']['net_uuid'][uuid] == null) {
-            url = '/virtual-network/' + uuid;
-            commonUtils.createReqObj(dataObjArr, url,
+            reqUrl = '/virtual-network/' + uuid;
+            commonUtils.createReqObj(dataObjArr, reqUrl,
                 global.HTTP_REQUEST_GET, null, null, null,
                 appData);
         }

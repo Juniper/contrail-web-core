@@ -10,7 +10,7 @@ var rest = require('../../common/rest.api'),
     jsonPath = require('JSONPath').eval,
     appErrors = require('../../errors/app.errors.js'),
     adminApiHelper = require('../../common/adminapi.helper'),
-    url = require('url'),
+    urlMod = require('url'),
     nwMonUtils = require('../../common/nwMon.utils'),
     opApiServer = require('../../common/opServer.api'),
     infraCmn = require('../../common/infra.common.api'),
@@ -1451,7 +1451,7 @@ function parsevRouterFlowsSandeshData (flowSandeshData)
 
 function getvRouterFlowsDetail (req, res, appData)
 {
-    var queryData = url.parse(req.url, true);
+    var queryData = urlMod.parse(req.url, true);
     var flowKey = queryData.query['flowKey'];
     var ip = queryData.query['ip'];
     var aclUUID = queryData.query['aclUUID'];
