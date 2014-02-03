@@ -355,7 +355,7 @@ function createVNSubnetAdd (error, vnConfig, vnPostData,
                           ['subnet']['ip_prefix'].length) {
             delete vnPostData['virtual-network']['network_ipam_refs'];
         } else {
-            var url = '/virtual-network/' +
+            var reqUrl = '/virtual-network/' +
                 vnConfig['virtual-network']['uuid'].toString();
             var putData = { 'virtual-network' :
                 {
@@ -363,7 +363,7 @@ function createVNSubnetAdd (error, vnConfig, vnPostData,
                     'network_ipam_refs': netIpamRef
                 }
             };
-            configApiServer.apiPut(url, putData, appData, function(error, data) {
+            configApiServer.apiPut(reqUrl, putData, appData, function(error, data) {
                 createVirtualNetworkCb (error, vnConfig,
                                         vnPostData, response, appData);
             });
@@ -685,9 +685,9 @@ function updateVirtualNetwork (request, response, appData)
     var vnId = request.param('id');
     var vnPutData = request.body;
 
-    var url = '/virtual-network/' + vnId;
+    var reqUrl = '/virtual-network/' + vnId;
 
-    configApiServer.apiGet(url, appData, function(err, data) {
+    configApiServer.apiGet(reqUrl, appData, function(err, data) {
         if (err || (null == data)) {
             var error = new appErrors.RESTServerError('Virtual Network Id' +
                                                       vnId + ' does not exist');

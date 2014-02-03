@@ -69,7 +69,7 @@ function listServiceTemplates(request, response, appData)
  */
 function listServiceTemplatesCb(error, stListData, response, appData) 
 {
-    var url = null;
+    var reqUrl = null;
     var dataObjArr = [];
     var i = 0, stLength = 0;
     var serviceTemplates = {};
@@ -95,8 +95,8 @@ function listServiceTemplatesCb(error, stListData, response, appData)
 
     for (i = 0; i < stLength; i++) {
         var stRef = serviceTemplates['service_templates'][i];
-        url = '/service-template/' + stRef['uuid'];
-        commonUtils.createReqObj(dataObjArr, url,
+        reqUrl = '/service-template/' + stRef['uuid'];
+        commonUtils.createReqObj(dataObjArr, reqUrl,
             global.HTTP_REQUEST_GET, null, null, null,
             appData);
     }
