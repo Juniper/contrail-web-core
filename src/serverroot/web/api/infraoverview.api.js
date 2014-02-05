@@ -1821,4 +1821,8 @@ exports.buildBulkUVEUrls = buildBulkUVEUrls;
 exports.getvRoutersSummaryByJob = getvRoutersSummaryByJob;
 exports.getAnalyticsGenPagedSummary = getAnalyticsGenPagedSummary;
 exports.getvRouterGenerators = getvRouterGenerators;
+exports.postProcessConfigNodeSummary = postProcessConfigNodeSummary;
+exports.postProcessConfigNodeDetails = postProcessConfigNodeDetails;
+exports.postProcessAnalyticsNodeSummaryJSON =
+    postProcessAnalyticsNodeSummaryJSON;
 
