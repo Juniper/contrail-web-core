@@ -27,5 +27,9 @@
     "ssh2": "0.2.12",
     "uuid-js": "0.7.4",
     "xml2js": "0.2.3"
+  },
+  "devDependencies": {
+      "grunt-contrib-qunit": "0.3.0",
+      "grunt-contrib-jshint": "0.7.2"
   }
 }
