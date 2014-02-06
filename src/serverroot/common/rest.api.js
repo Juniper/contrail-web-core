@@ -156,7 +156,8 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
              * issue once again discovery subscribe request, the remote server
              * may be down, so discovery server should send the Up Servers now
              */
-            if (('ECONNREFUSED' == data.code) || ('ETIMEOUT' == data.code)) {
+            if ((true == process.mainModule.exports['discServEnable']) &&
+                (('ECONNREFUSED' == data.code) || ('ETIMEOUT' == data.code))) {
                 if (false == isRetry) {
                     /* Only one time send a retry */
                     discClient.sendDiscSubMessageOnDemand(self.name);
