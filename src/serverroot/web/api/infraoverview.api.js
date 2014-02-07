@@ -1705,7 +1705,10 @@ function buildGenList (genList)
     }
     for (var i = 0; i < cnt; i++) {
         try {
-            modGenList.push(genList[i]['source'] + ':' + genList[i]['module_id']);
+            modGenList.push(genList[i]['source'] + ':' + 
+                            genList[i]['node_type'] + ':' +
+                            genList[i]['module_id'] + ':' +
+                            genList[i]['instance_id']);
         } catch(e) {
             logutils.logger.error("JSON Parse error while building generator" +
                                   " list");
