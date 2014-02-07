@@ -413,7 +413,7 @@ function defDoneCallback ()
 function createJobListener (lookupHash, myHash, url, oldPubChannel, oldSaveChannelKey, 
                             processCallback, doneCallback,
                             doCrateJob, runCount, nextRunDelay, data,
-                            callback, jobData)
+                            done, jobData)
 {
     var channelObj = getChannelkeyByHashUrl(lookupHash, myHash, url);
     /* First create an entry in jobListening Q */
@@ -422,7 +422,7 @@ function createJobListener (lookupHash, myHash, url, oldPubChannel, oldSaveChann
         'myHash': myHash,
         'pubChannel': oldPubChannel,
         'saveChannelKey': oldSaveChannelKey, 
-        'callback': callback
+        'done': done
     };
     jobListenerReadyQ[channelObj.pubChannel] = obj;
     if (doneCallback == null) {
@@ -474,7 +474,6 @@ function createJobObj (hash, url, runCount, nextRunDelay, data)
     jobData.taskData.defCallback = 0;
     jobData.taskData.url = url;
     jobData.taskData.authObj = data.taskData.authObj;
-    jobData.taskData.cbTimeout = data.taskData.cbTimeout;
     return jobData;
 }
 
@@ -490,7 +489,7 @@ jobListenerReadyQEvent.on('dataPublished', function(pubChannel, pubData) {
     logutils.logger.debug("Getting channelObj:" + channelObj);
 
     jobListenerReadyQEvent.emit(hash, pubData, channelObj.pubChannel, 
-                                channelObj.saveChannelKey, channelObj.callback);
+                                channelObj.saveChannelKey, channelObj.done);
 });
 
 exports.jobListenerReadyQEvent = jobListenerReadyQEvent;

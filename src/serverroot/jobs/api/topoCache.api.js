@@ -204,7 +204,7 @@ function getProjectsTreeWithDomain (resultJSON, domainList, projectTreeData)
 }
 
 function processTreeTopoCache (pubChannel, saveChannelKey, 
-                               jobData, callback)
+                               jobData, done)
 {
     var reqUrl = url = jobData.taskData.url;
     var appData = jobData.taskData.appData;
@@ -220,8 +220,10 @@ function processTreeTopoCache (pubChannel, saveChannelKey,
     
     async.map(domainList, getProjectsTreeByDomain, function(err, jsonData) {
         if (err) {
-            callback(global.HTTP_STATUS_RESP_OK, emptyResultArr, emptyResultArr,
-                     0, 0);
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                global.HTTP_STATUS_INTERNAL_ERROR,
+                emptyResultArr, emptyResultArr, 0,
+                0, done);
             return;
         }
         getProjectsTreeWithDomain(resultJSON, domainList, jsonData);
@@ -231,9 +233,11 @@ function processTreeTopoCache (pubChannel, saveChannelKey,
             treeJSON = jsonData[0]
         }
         
-
-        callback(emptyResultArr, JSON.stringify(treeJSON),
-                 JSON.stringify(treeJSON), 1, 0);
+        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                                    global.HTTP_STATUS_RESP_OK,
+                                    JSON.stringify(treeJSON), 
+                                    JSON.stringify(treeJSON), 1, 
+                                    0, done);
     });
 }
 
