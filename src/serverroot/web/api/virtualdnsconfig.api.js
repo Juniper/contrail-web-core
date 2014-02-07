@@ -659,7 +659,7 @@ function updateVDNSIpams (request, response, appData)
 function updateVirtualDnsAssocIpamRead(error, vdnsConfig, vdnsPostData, 
 		                               vdnsId, appData, callback) 
 {
-    var url = null;
+    var reqUrl = null;
     var ipamRef = [];
     var ipamURL = [];
     var ipamRefLen = 0, i = 0;
@@ -705,8 +705,8 @@ function updateVirtualDnsAssocIpamRead(error, vdnsConfig, vdnsPostData,
                 'uuid':uuid,
                 'oper':'add'
             };
-            url = '/network-ipam/' + uuid;
-            commonUtils.createReqObj(dataObjArr, url,
+            reqUrl = '/network-ipam/' + uuid;
+            commonUtils.createReqObj(dataObjArr, reqUrl,
                 global.HTTP_REQUEST_GET, null, null, null,
                 appData);
         }
@@ -727,8 +727,8 @@ function updateVirtualDnsAssocIpamRead(error, vdnsConfig, vdnsPostData,
         for (i = 0; i < ipamRefLen; i++) {
             uuid = ipamRef[i]['uuid'];
             if (vdnsConfig['virtual-DNS']['ipam_uuid'][uuid] == null) {
-                url = '/network-ipam/' + uuid;
-                commonUtils.createReqObj(dataObjArr, url,
+                reqUrl = '/network-ipam/' + uuid;
+                commonUtils.createReqObj(dataObjArr, reqUrl,
                     global.HTTP_REQUEST_GET, null, null,
                     null, appData);
             }
@@ -756,8 +756,8 @@ function updateVirtualDnsAssocIpamRead(error, vdnsConfig, vdnsPostData,
     for (i = 0; i < ipamUIRefLen; i++) {
         uuid = ipamUIRef[i]['uuid'];
         if (vdnsConfig['virtual-DNS']['ipam_uuid'][uuid] == null) {
-            url = '/network-ipam/' + uuid;
-            commonUtils.createReqObj(dataObjArr, url,
+            reqUrl = '/network-ipam/' + uuid;
+            commonUtils.createReqObj(dataObjArr, reqUrl,
                 global.HTTP_REQUEST_GET, null, null, null,
                 appData);
         }
@@ -922,11 +922,11 @@ function getVirtualDNSSandeshRecordsSendCb (ip, req, res)
 function getVirtualDNSSandeshRecords (req, res, appData)
 {
     var dataObjArr = [];
-    var url = '/analytics/uves/dns-node/*';
-    commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_GET, null,
+    var reqUrl = '/analytics/uves/dns-node/*';
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET, null,
                              opApiServer, null, appData);
-    url = '/analytics/uves/generator/*:DnsAgent?flat';
-    commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_GET, null,
+    reqUrl = '/analytics/uves/generator/*:DnsAgent?flat';
+    commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET, null,
                              opApiServer, null, appData);
     async.map(dataObjArr,
               commonUtils.getServerResponseByRestApi(opApiServer, false),

@@ -17,7 +17,6 @@ var messages = require('../../common/messages');
 var global = require('../../common/global');
 var appErrors = require('../../errors/app.errors.js');
 var util = require('util');
-var url = require('url');
 var serviceTemplate = require('./servicetemplateconfig.api.js');
 var computeApi = require('../../common/computemanager.api');
 var authApi = require('../../common/auth.api');
@@ -68,8 +67,8 @@ function listServiceInstances(request, response, appData)
  */
 function listAllServiceInstances(response, appData) 
 {
-    var url = "/service-instances";
-    configApiServer.apiGet(url, appData, function (error, jsonData) {
+    var reqUrl = "/service-instances";
+    configApiServer.apiGet(reqUrl, appData, function (error, jsonData) {
         if (error) {
             logutils.logger.error(error.stack);
             commonUtils.handleJSONResponse(null, response, []);
@@ -88,7 +87,7 @@ function listAllServiceInstances(response, appData)
  */
 function listServiceInstancesCb(error, siListData, response, appData, template) 
 {
-    var url = null;
+    var reqUrl = null;
     var dataObjArr = [];
     var i = 0, siLength = 0;
     var serviceInstances = {};
@@ -114,8 +113,8 @@ function listServiceInstancesCb(error, siListData, response, appData, template)
 
     for (i = 0; i < siLength; i++) {
         var siRef = serviceInstances['service_instances'][i];
-        url = '/service-instance/' + siRef['uuid'];
-        commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_GET,
+        reqUrl = '/service-instance/' + siRef['uuid'];
+        commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
             null, null, null, appData);
     }
 
@@ -234,9 +233,9 @@ function getNetworkPolicyDetailsByProjList(projList, appData, callback) {
         }
         for (var j = 0; j < policyCnt; j++) {
             try {
-                var url =
+                var reqUrl =
                     '/network-policy/' + policys[j]['uuid'];
-                commonUtils.createReqObj(dataObjArr, url,
+                commonUtils.createReqObj(dataObjArr, reqUrl,
                     global.HTTP_REQUEST_GET, null, null,
                     null, appData);
             } catch (e) {
@@ -310,8 +309,8 @@ function getVNDetailsByServiceInstances(serviceInstances, appData, callback) {
         var serInst = serviceInstances[i]['service-instance'];
         var projUUID = serInst['parent_uuid'];
         if (null == insertedProjList[projUUID]) {
-            url = '/project/' + projUUID;
-            commonUtils.createReqObj(dataObjArr, url,
+            reqUrl = '/project/' + projUUID;
+            commonUtils.createReqObj(dataObjArr, reqUrl,
                 global.HTTP_REQUEST_GET,
                 null, null, null, appData);
             insertedProjList[projUUID] = projUUID;
@@ -709,10 +708,10 @@ function getServiceInstanceDetails(siObj, callback) {
     var servInstId = siObj['servInstId'];
     var vmFound = true;
 
-    var url = '/service-instance/' + servInstId;
+    var reqUrl = '/service-instance/' + servInstId;
     var err = null;
 
-    configApiServer.apiGet(url, appData, function (err, data) {
+    configApiServer.apiGet(reqUrl, appData, function (err, data) {
         if (err || (null == data)) {
             err = new appErrors.RESTServerError('Invalid Service Instance' +
                 'Id ' + servInstId);

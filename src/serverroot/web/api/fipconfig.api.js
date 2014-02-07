@@ -75,7 +75,7 @@ function fipListAggCb (error, results, callback)
  */
 function getFipsForProjectCb (error, fipListData, response, appData) 
 {
-    var url               = null;
+    var reqUrl            = null;
     var dataObjArr        = [];
     var i = 0, fipLength  = 0;
     var fipConfigBackRefs = {};
@@ -87,13 +87,11 @@ function getFipsForProjectCb (error, fipListData, response, appData)
 
     fipConfigBackRefs['floating_ip_back_refs'] = [];
 
-    console.log("Getting FIP LIst :", JSON.stringify(fipListData));
     if ('floating_ip_back_refs' in fipListData['project']) {
         fipConfigBackRefs['floating_ip_back_refs'] =
               fipListData['project']['floating_ip_back_refs'];
     }
 
-    console.log("Getting Back refs:", fipConfigBackRefs);
     fipLength = fipConfigBackRefs['floating_ip_back_refs'].length;
 
     if (!fipLength) {
@@ -103,8 +101,8 @@ function getFipsForProjectCb (error, fipListData, response, appData)
 
     for (i = 0; i < fipLength; i++) {
        fipRef = fipConfigBackRefs['floating_ip_back_refs'][i];
-       url = '/floating-ip/' + fipRef['uuid'];
-       commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_GET,
+       reqUrl = '/floating-ip/' + fipRef['uuid'];
+       commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
                                 null, null, null, appData);
     }
 
@@ -124,11 +122,10 @@ function listFloatingIpsAsync (fipObj, callback)
     var reqLen = dataObjArr.length;
 
     for (var i = 0; i < reqLen; i++) {
-        url = '/floating-ip/' + dataObjArr[i]['uuid'];
-        commonUtils.createReqObj(fipObjArr, url, null, null, null, null,
+        reqUrl = '/floating-ip/' + dataObjArr[i]['uuid'];
+        commonUtils.createReqObj(fipObjArr, reqUrl, null, null, null, null,
                                  dataObjArr[i]['appData']);
     }
-    console.log("fipObjArr:", fipObjArr);
     if (!reqLen) {
         callback(null, null);
         return;
