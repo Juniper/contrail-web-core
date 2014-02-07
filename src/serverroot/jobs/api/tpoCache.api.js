@@ -225,7 +225,7 @@ function getProjectsTreeWithDomain (resultJSON, domainList, projectTreeData)
 }
 
 function processTreeTopoCache (pubChannel, saveChannelKey, 
-                               jobData, callback)
+                               jobData, done)
 {
     var reqUrl = url = jobData.taskData.url;
     var appData = jobData.taskData.appData;
@@ -241,8 +241,10 @@ function processTreeTopoCache (pubChannel, saveChannelKey,
     configApiServer.apiGet(url, jobData, function(err, results) {
         if (err || (null == results) || (results['domains'] == null) ||
             (results['domains'].length == 0)) {
-            callback(global.HTTP_STATUS_RESP_OK, emptyResultArr, emptyResultArr,
-                     1, 0);
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                                        global.HTTP_STATUS_INTERNAL_ERROR,
+                                        emptyResultArr, emptyResultArr, 0,
+                                        0, done);
             return;
         }
         var domainCnt = results['domains'].length;
@@ -261,13 +263,18 @@ function processTreeTopoCache (pubChannel, saveChannelKey,
         }
         async.map(dataObjArr, getProjectsTreeByDomain, function(err, jsonData) {
             if (err) {
-                callback(global.HTTP_STATUS_RESP_OK, emptyResultArr,
-                         emptyResultArr, 1, 0);
+                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                    global.HTTP_STATUS_INTERNAL_ERROR,
+                    emptyResultArr, emptyResultArr, 0,
+                    0, done);
                 return;
             }
             getProjectsTreeWithDomain(resultJSON, domainList, jsonData);
-            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                     JSON.stringify(resultJSON), true);
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                                        global.HTTP_STATUS_RESP_OK,
+                                        JSON.stringify(resultJSON), 
+                                        JSON.stringify(resultJSON), 1, 
+                                        0, done);
         });
     });
 }

@@ -55,8 +55,8 @@ createFile = function(result) {
   jobCbStr += "\n";
   jobCbStr += "\n";
   jobCbStr += "if (!module.parent) {";
-  jobCbStr += "\n    console.log(\"Call main app through 'node app'\");";
-  jobCbStr += "\n    process.exit(1);";
+  jobCbStr += "\n  console.log(\"Call main app through 'node app'\");";
+  jobCbStr += "\n  process.exit(1);";
   jobCbStr += "\n}";
   jobCbStr += "\n";
   jobCbStr += "var jobsCb = module.exports;";
@@ -66,47 +66,37 @@ createFile = function(result) {
   jobCbStr += "\nvar maxActiveJobs = config.maxActiveJobs || defMaxActiveJobs;\n";
   jobCbStr += "\n";
 
-  jobChannel += "\n        /* Publish the data on pubChannel And Save the data key as \n";
-  jobChannel +=   "           saveChannel\n";
-  jobChannel +=   "         */\n";
+  jobChannel += "\n  /* Publish the data on pubChannel And Save the data key as \n";
+  jobChannel +=   "     saveChannelKey\n";
+  jobChannel +=   "   */";
 
   jobCbStr += "jobsCb.jobsProcess = function() {";
 
   len = itemList.length;
   for (var i = 0; i < len; i++) {
-    jobCbStr +=   "\n    jobsApi.jobs.process('";
+    jobCbStr +=   "\n  jobsApi.jobs.process('";
     jobCbStr += itemList[i]['jobName'] + "', maxActiveJobs, function(job, done) {";
     jobCbStr += jobChannel;
-    jobCbStr += "        var jobStartTime = commonUtils.getCurrentTimestamp();\n";
-    jobCbStr += "        job.data['jobStartTime'] = jobStartTime;\n";
-    jobCbStr += "        var pubChannel = job.data.taskData.pubChannel;\n" +
-                "        if (null == pubChannel) {\n" +
-                "            logutils.logger.error('pubChannel is null for jobData as ' + job.data);\n" +
-                "        }\n" +
-                "        var saveChannel = job.data.taskData.saveChannel;\n" +
-                "        var cbTimeout = job.data.taskData.cbTimeout;\n";
-    jobCbStr += "        jobsProcess." + itemList[i]['callback'] + "(pubChannel, saveChannel,\n" +
-                "              job.data, commonUtils.doEnsureExecution(function(errCode, pubData, saveData, doSave, expTime) {\n" +
-                "            redisPub.publishDataToRedis(pubChannel, saveChannel, errCode, pubData, saveData,\n" +
-                "                                        doSave, expTime, done);\n"
-    jobCbStr += "        }, cbTimeout));\n";
-    jobCbStr += "    });\n";
+    jobCbStr += "\n";
+    jobCbStr += "    var jobStartTime = commonUtils.getCurrentTimestamp();\n";
+    jobCbStr += "    job.data['jobStartTime'] = jobStartTime;\n";
+    jobCbStr += "    jobsProcess." + itemList[i]['callback'] + "(\n";
+    jobCbStr += "        job.data.taskData.pubChannel,\n";
+    jobCbStr += "        job.data.taskData.saveChannelKey,\n";
+    jobCbStr += "        job.data, done);";
+    jobCbStr += "\n  });\n";
     if (itemList[i]['requireJob']) {
         dependFound = true;
         jobDependStr += "    jobsApi.jobListenerReadyQEvent.on(" +
             "'" + itemList[i]['jobName'] + '@' + itemList[i]['requireJob'] + "'" + ",\n" +
-            "        function(dependData, pubChannel, saveChannel, done) {\n";
-        jobDependStr += "        var storedData = jobsApi.getDataFromStoreQ(pubChannel);\n";
-        jobDependStr += "        var cbTimeout = job.data.taskData.cbTimeout;\n";
-        jobDependStr += "        /* Now call the API to do the main work */\n";
-        jobDependStr += "        jobsProcess.mainJob" + itemList[i]['callback'] + "(\n" +
-                        "            pubChannel, saveChannel, dependData, storedData.data," +
-                        " storedData.jobData,\n" +
-                        "            commonUtils.doEnsureExecution(function(errCode, pubData, saveData, doSave, expTime) {\n" +
-                        "               redisPub.publishDataToRedis(pubChannel, saveChannel, errCode, pubData, saveData,\n" +
-                        "                                           doSave, expTime, done);\n" +
-                        "        }, cbTimeout));\n";
-        jobDependStr += "    })\n";
+            "       function(dependData, pubChannel, saveChannelKey, done) {\n";
+        jobDependStr += "       var storedData =" +
+            "jobsApi.getDataFromStoreQ(pubChannel);\n";
+        jobDependStr += "       /* Now call the API to do the main work */\n";
+        jobDependStr += "       jobsProcess.mainJob" + itemList[i]['callback'] + "(\n" +
+                        "           pubChannel, saveChannelKey, dependData, storedData.data," +
+                        " storedData.jobData, done);\n";
+        jobDependStr += "    });\n";
     }
   }
   jobCbStr += "}\n";
