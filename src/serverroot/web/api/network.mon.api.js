@@ -2511,4 +2511,8 @@ exports.getNetworkTreeTopology = getNetworkTreeTopology;
 exports.getVMDetails = getVMDetails;
 exports.getInstanceDetails = getInstanceDetails;
 exports.getVirtualNetworksDetails = getVirtualNetworksDetails;
+exports.isAllowedVN = isAllowedVN;
+exports.getVNListByProject = getVNListByProject;
+exports.getOpServerPagedResponseByLastKey = getOpServerPagedResponseByLastKey;
+exports.sortUVEList = sortUVEList;
 

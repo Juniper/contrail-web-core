@@ -60,6 +60,7 @@ dev-env:
 	./prod-dev.sh html/login.html dev_env prod_env true
 	./prod-dev.sh html/login-error.html dev_env prod_env true
 	make make-ln
+	./unit-test.sh init
 
 prod-env:
 	make all 
@@ -82,7 +83,14 @@ rem-ts-prod:
 
 check: test
 
-test: test-integration
+test-node:
+	./unit-test.sh node
+	
+test-ui:
+	./unit-test.sh ui
+test: 
+	make test-node
+	make test-ui
          
 test-integration:
 	@NODE_ENV=test ./node_modules/.bin/mocha \
