@@ -945,52 +945,9 @@ function getVirtualDNSSandeshRecords (req, res, appData)
     });
 }
 
-/**
- * VDNSRecordsAggByConfig
- * private function
- * 1. Callback for readVirtualDNSRecords, sends virtual DNS recordss 
- *    specified in result to client.
- */
-function VDNSRecordsAggByConfig (err, result, vdnsConfig, callback)
+function getVdnsRecordsAsync (dataObj, callback)
 {
-    var uuid = null;
-    if (null != err) {
-        callback(err, result);
-        return;
-    }
-    var err = new appErrors.RESTServerError('VDNS Record not found in Config');
-    var vdnsRecSetObjs = {};
-    try {
-        var vdnsRecs = vdnsConfig['virtual-DNS']['virtual_DNS_records'];
-        var vdnsRecsLen = vdnsRecs.length;
-    } catch(e) {
-        callback(err, null);
-        return;
-    }
-    for (var i = 0; i < vdnsRecsLen; i++) {
-        uuid = vdnsRecs[i]['uuid'];
-        vdnsRecSetObjs[uuid] = vdnsRecs[i]; 
-    }
 
-    var tempConf = commonUtils.cloneObj(vdnsRecs);
-    var resLen = result.length;
-    vdnsConfig['virtual-DNS']['virtual_DNS_records'] = [];
-    for (i = 0, j = 0; i < resLen; i++) {
-        try {
-            uuid = result[i]['virtual-DNS-record']['uuid'];
-            if (vdnsRecSetObjs[uuid]) {
-                vdnsConfig['virtual-DNS']['virtual_DNS_records'][j] = {};
-                vdnsConfig['virtual-DNS']['virtual_DNS_records'][j] =
-                    vdnsRecSetObjs[uuid];
-                vdnsConfig['virtual-DNS']['virtual_DNS_records'][j]['virtual_DNS_record_data']
-                    = result[i]['virtual-DNS-record']['virtual_DNS_record_data'];
-                j++;
-            }
-        } catch(e) {
-            continue;
-        }
-    }
-    callback(null, vdnsConfig);
 }
 
 function readVirtualDNSRecords (vdnRecordsObj, callback)
@@ -1008,11 +965,7 @@ function readVirtualDNSRecords (vdnRecordsObj, callback)
             callback(err, result);
             return;
         }
-        VDNSRecordsAggByConfig(err, result, configData, function(err, data) {
-            if ((null != err) || (null == data)) {
-                callback(err, null);
-                return;
-            }
+        VDNSRecordAggCb(err, result, configData, function(err, data) {
             var vdnsRec = data['virtual-DNS']['virtual_DNS_records'];
             cnt = vdnsRec.length;
             for (i = 0; i < cnt; i++) {
