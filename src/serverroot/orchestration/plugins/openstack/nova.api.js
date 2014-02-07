@@ -8,6 +8,8 @@ var rest = require('../../../common/rest.api'),
     url = require('url'),
     logutils = require('../../../utils/log.utils'),
     async = require('async'),
+    plugins = require('../plugins.api'),
+    appErrors = require('../../../errors/app.errors.js'),
     commonUtils = require('../../../utils/common.utils')
     ;
 var novaAPIServer;
@@ -133,6 +135,52 @@ novaApi.post = function(reqUrl, reqData, req, callback, stopRetry) {
     });
 }
 
+var novaAPIVerList = ['v1.1', 'v2'];
+
+var getVMStatsByProjectCB = {
+    'v1.1': getVMStatsByProjectV11,
+    'v2': getVMStatsByProjectV11
+};
+
+function getVMStatsByProjectV11 (err, data, callback)
+{
+    callback(err, data);
+}
+
+var getServiceInstanceVMStatusCB = {
+    'v1.1': getServiceInstanceVMStatusV11,
+    'v2': getServiceInstanceVMStatusV11
+}
+
+function getServiceInstanceVMStatusV11 (err, data, callback)
+{
+    callback(err, data);
+}
+
+var getFlavorsCB = {
+    'v1.1': getFlavorsV11,
+    'v2': getFlavorsV11
+};
+
+function getFlavorsV11 (err, data, callback)
+{
+    callback(err, data);
+}
+
+var launchVNCCB = {
+    'v1.1' : launchVNCV11,
+    'v2': launchVNCV11
+};
+
+function launchVNCV11 (error, data, callback)
+{
+    if (error) {
+        callback(error, null);
+    } else {
+        callback(null, data);
+    }
+}
+
 function getNovaData (novaCallObj, callback)
 {
     var req = novaCallObj['req'];
@@ -141,6 +189,18 @@ function getNovaData (novaCallObj, callback)
     novaApi.get(reqUrl, req, function(err, data) {
         callback(err, data);
     }, true);
+}
+
+function getVMStatsByProjectByAPIVersion (err, data, apiVer, callback)
+{
+    var VMStatsByProjectCB = getVMStatsByProjectCB[apiVer];
+    if (null == VMStatsByProjectCB) {
+        var str = 'Nova API Version not supported:' + apiVer;
+        var error = appErrors.RESTServerError(str);
+        callback(error, null);
+        return;
+    }
+    VMStatsByProjectCB(err, data, callback);
 }
 
 function getVMStatsByProject (projUUID, req, callback)
@@ -157,12 +217,35 @@ function getVMStatsByProject (projUUID, req, callback)
             return;
         }
         var tenantId = data['tenant']['id'];
-        var reqUrl = '/v1.1/' + tenantId + '/servers/detail';
-        novaApi.get(reqUrl, req, function(err, data) {
-            callback(err, data);
+        plugins.getServiceAPIVersionByReqObj(req,
+                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
+                                             function(apiVer) {
+            if (null == apiVer) {
+                error = 
+                    new appErrors.RESTServerError('apiVersion for NOVA is NULL');
+                callback(error, null);
+                return;
+            }
+            var reqUrlPrefix = '/' + tenantId + '/servers/detail';
+            var startIndex = 0;
+            novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex, 
+                                       function(err, data, ver) {
+                getVMStatsByProjectByAPIVersion(err, data, ver, callback);
+            });
         });
     });
+}
 
+function getServiceInstanceVMStatusByAPIVersion (err, data, apiVer, callback)
+{
+    var serviceInstanceVMStatusCB = getServiceInstanceVMStatusCB[apiVer];
+    if (null == serviceInstanceVMStatusCB) {
+        var str = 'Nova API Version not supported:' + apiVer;
+        var error = appErrors.RESTServerError(str);
+        callback(error, null);
+        return;
+    }
+    serviceInstanceVMStatusCB(err, data, callback);
 }
 
 function getServiceInstanceVMStatus (req, vmRefs, callback)
@@ -180,16 +263,51 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
         }
         var tenantId = data['tenant']['id'];
         var vmRefsCnt = vmRefs.length;
-        for (var i = 0; i < vmRefsCnt; i++) {
-            reqUrl = '/v1.1/' + tenantId + '/servers/' + vmRefs[i]['uuid'];
-            novaCallObjArr[i] = {};
-            novaCallObjArr[i]['req'] = req;
-            novaCallObjArr[i]['reqUrl'] = reqUrl;
-        }
-        async.map(novaCallObjArr, getNovaData, function(err, data) {
-            callback(err, data);
+        plugins.getServiceAPIVersionByReqObj(req,
+                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
+                                             function(apiVer) {
+            if (null == apiVer) {
+                error = 
+                    new appErrors.RESTServerError('apiVersion for NOVA is NULL');
+                callback(error, null);
+                return;
+            }
+            var reqUrlPrefix = '/servers/' + vmRefs[0]['uuid'];
+            var startIndex = 0;
+            novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex, 
+                                       function (error, data, ver) {
+                if ((null != error) || (null == data)) {
+                    var err = 
+                        new appErrors.RESTServerError('apiVersion for NOVA is NULL');
+                    getServiceInstanceVMStatusByAPIVersion(err, null, null,
+                                                           callback);
+                    return;
+                }
+                for (var i = 0; i < vmRefsCnt; i++) {
+                    reqUrl = '/' + ver +'/' + tenantId + '/servers/' + vmRefs[i]['uuid'];
+                    novaCallObjArr[i] = {};
+                    novaCallObjArr[i]['req'] = req;
+                    novaCallObjArr[i]['reqUrl'] = reqUrl;
+                }
+                async.map(novaCallObjArr, getNovaData, function(err, data) {
+                    getServiceInstanceVMStatusByAPIVersion(err, data, ver,
+                                                           callback); 
+                });
+            });
         });
     });
+}
+
+function launchVNCByAPIVersion (data, apiVer, callback)
+{
+    var lnchCB = launchVNCCB[apiVer];
+    if (null == lnchCB) {
+        var str = 'Nova API Version not supported:' + apiVer;
+        var err = appErrors.appErrors(str);
+        callback(err, null);
+        return;
+    }
+    lnchCB(err, data, callback);
 }
 
 function launchVNC (request, callback)
@@ -212,36 +330,71 @@ function launchVNC (request, callback)
             callback(error, null);
             return;
         }
-        /* Now create the final req */
-        var vncURL = '/v1.1/';
         projectId = data.tenant.id;
-        vncURL += projectId.toString() + "/servers/";
-        if (requestParams.query.vm_id) {
-            vmId = requestParams.query.vm_id;
-            vncURL += vmId.toString();
-        }
-        var headers = {};
-        headers['X-Auth-Token'] = data.id;
-        headers['X-Auth-Project-Id'] = data.tenant.id;
-        novaApi.get(vncURL, request,
-                    function (error, data) {
-            if (error) {
+        /* Now create the final req */
+        plugins.getServiceAPIVersionByReqObj(request,
+                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
+                                             function(apiVer) {
+            if (null == apiVer) {
+                error = 
+                    new appErrors.RESTServerError('apiVersion for NOVA is NULL');
                 callback(error, null);
-            } else {
-                novaApi.post(vncURL + "/action", 
-                             {"os-getVNCConsole":{"type":"novnc"}}, 
-                             request, function (error, data) {
-                    if (error) {
-                        callback(error, null);
-                    } else {
-                        callback(null, data);
-                    }
-                });
+                return;
             }
+
+            var vncURL = '/' + projectId.toString() + "/servers/";
+            if (requestParams.query.vm_id) {
+                vmId = requestParams.query.vm_id;
+                vncURL += vmId.toString();
+            }
+            var startIndex = 0;
+            novaApiGetByAPIVersionList(vncURL, apiVer, request, startIndex, 
+                                       function (error, data, ver) {
+                if (error) {
+                    callback(error, null);
+                } else {
+                    vncURL = '/' + ver + vncURL;
+                    novaApi.post(vncURL + "/action", 
+                                 {"os-getVNCConsole":{"type":"novnc"}}, 
+                                 request, function (error, data) {
+                        launchVNCByAPIVersion(data, ver, callback);
+                    });
+                }
+            });
         });
     });
 }
 
+function getFlavorsByAPIVersion (err, data, apiVer, callback)
+{
+    var flavorsCB = getFlavorsCB[apiVer];
+    if (null == flavorsCB) {
+        var str = 'Nova API Version not supported:' + apiVer;
+        callback(err, data);
+        return;
+    }
+    flavorsCB(err, data, callback);
+}
+
+function novaApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex,
+                                     callback)
+{
+    var apiVer = plugins.getApiVersion(novaAPIVerList, apiVerList, startIndex);
+    if (null == apiVer) {
+        var err = new appErrors.RESTServerError('apiVersion for NOVA is NULL');
+        callback(err, null);
+        return;
+    }
+    var reqUrl = '/' + apiVer['version'] + reqUrlPrefix;
+    novaApi.get(reqUrl, req, function(err, data) {
+        if ((null != err) || (null == data)) {
+            novaApiGetByAPIVersionList(reqUrlPrefix, apiVerList, req,
+                                       startIndex + 1, callback);
+        } else {
+            callback(null, data, apiVerList[startIndex]);
+        }
+    });
+}
 
 function getFlavors (req, callback)
 {   
@@ -251,15 +404,27 @@ function getFlavors (req, callback)
         return;
     }
     authApi.getTokenObj(req, tenantStr, true, function(err, data) {
-        if (err) {
+        if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
             callback(err, null);
             return;
         }
         var tenantId = data['tenant']['id'];
-        var reqUrl = '/v1.1/' + tenantId + '/flavors/detail';
-        novaApi.get(reqUrl, req, function(err, data) {
-            callback(err, data);
+        plugins.getServiceAPIVersionByReqObj(req,
+                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
+                                             function(apiVer) {
+            if (null == apiVer) {
+                error = 
+                    new appErrors.RESTServerError('apiVersion for NOVA is NULL');
+                callback(error, null);
+                return;
+            }
+            var reqUrlPrefix = '/' + tenantId + '/flavors/detail';
+            var startIndex = 0;
+            novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex,
+                                       function(err, data, ver) {
+                getFlavorsByAPIVersion(err, data, ver, callback);
+            });
         });
     });
 }

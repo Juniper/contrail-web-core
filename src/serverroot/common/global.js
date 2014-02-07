@@ -77,6 +77,14 @@ global.STR_FLOW_STAT_ABS_URL = '/flow-statistics';
 global.REQ_BY_UI = 'ReqByUI';
 global.REQ_AT_SYS_INIT = 'ReqAtInit';
 
+/* Openstack Components */
+global.SERVICE_ENDPT_TYPE_COMPUTE = 'compute';
+global.SERVICE_ENDPT_TYPE_NETWORK = 'network';
+global.SERVICE_ENDPT_TYPE_IMAGE = 'image';
+global.SERVICE_ENDPT_TYPE_VOLUME = 'volume';
+global.SERVICE_ENDPT_TYPE_EC2 = 'ec2';
+global.SERVICE_ENDPT_TYPE_IDENTITY = 'identity';
+
 /* http status codes
  */
 global.HTTP_REQUEST_GET = 'get';

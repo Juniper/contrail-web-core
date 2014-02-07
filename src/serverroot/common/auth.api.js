@@ -184,6 +184,13 @@ function formatTenantList (projectLists, apiProjects, callback)
     });
 }
 
+function getServiceCatalog (req, callback)
+{
+    authMethodApi.getServiceCatalog(req, function(data) {
+        callback(data);
+    });
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.saveUserAuthInRedis = saveUserAuthInRedis;
 exports.getTenantList = getTenantList;
@@ -195,4 +202,5 @@ exports.checkAndUpdateDefTenantToken = checkAndUpdateDefTenantToken;
 exports.getAPIServerAuthParams = getAPIServerAuthParams;
 exports.createAuthKeyBySessionId = createAuthKeyBySessionId;
 exports.formatTenantList = formatTenantList;
+exports.getServiceCatalog = getServiceCatalog;
 

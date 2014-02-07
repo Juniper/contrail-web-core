@@ -5,6 +5,8 @@
 var rest = require('../../../common/rest.api'),
     config = require('../../../../../config/config.global.js'),
     authApi = require('../../../common/auth.api'),
+    plugins = require('../plugins.api'),
+    appErrors = require('../../../errors/app.errors'),
     commonUtils = require('../../../utils/common.utils')
     ;
 var glanceAPIServer;
@@ -95,11 +97,74 @@ glanceApi.get = function(reqUrl, req, callback, stopRetry) {
     });
 }
 
+var imageListVerList = ['v1'];
+
+var imageListCB = {
+    'v1': getImageListV1
+};
+
+function getImageListV1 (err, data, callback)
+{
+    callback(err, data);
+}
+
+function parseImageListByAPIVersion (err, data, apiVer, callback)
+{
+    if (null != err) {
+        imgListCB(err, data, callback);
+        return;
+    }
+    var imgListCB = imageListCB[apiVer];
+    if (null == imgListCB) {
+        var str = 'Glance API Version <' + apiVer + '>' +
+            ' not supported';
+        var error = appErrors.RESTServerError(str);
+        callback(error, null);
+        return;
+    }
+    imgListCB(err, data, callback);
+}
+
+function glanceApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex,
+                                       callback)
+{
+    var apiVer = plugins.getApiVersion(imageListVerList, apiVerList, startIndex);
+    if (null == apiVer) {
+        var err = new appErrors.RESTServerError('apiVersion <' +
+                                                apiVerList.join(',') + '> for' +
+                                                ' Glance is unsupported');
+        callback(err, null, null);
+        return;
+    }   
+    var reqUrl = '/' + apiVer['version'] + reqUrlPrefix;
+    glanceApi.get(reqUrl, req, function(err, data) {
+        if ((null != err) || (null == data)) {
+            glanceApiGetByAPIVersionList(reqUrlPrefix, apiVerList, req,
+                                         startIndex + 1, callback);
+        } else {
+            callback(null, data, apiVerList[startIndex]);
+        }   
+    }); 
+}
+
 function getImageList (req, callback)
 {
-    var glanceImagesURL = '/v1.0/images';
-    glanceApi.get(glanceImagesURL, req, function(err, data) {
-        callback(err, data);
+    plugins.getServiceAPIVersionByReqObj(req,
+                                         global.SERVICE_ENDPT_TYPE_IMAGE, 
+                                         function(apiVer) {
+        if (null == apiVer) {
+            var error =
+                new appErrors.RESTServerError('apiVersion for Glance is NULL');
+            callback(error, null);
+            return;
+        }
+
+        var glanceImagesURL = '/images';
+        var startIndex = 0;
+        glanceApiGetByAPIVersionList(glanceImagesURL, apiVer, req, startIndex, 
+                                     function(err, data, ver) {
+            parseImageListByAPIVersion(err, data, ver, callback);
+        });
     });
 }
 
