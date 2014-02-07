@@ -22,7 +22,8 @@ if [ $1 = 'node' ] ; then
     grunt node-qunit
 fi
 if [ $1 = 'ui' ] ; then
-    cp .jshintrc webroot/monitor/bgp/.jshintrc
+    ln -sf $FOUR_BACK/contrail-web-core/.jshintrc webroot/monitor/bgp/.jshintrc
+    ln -sf $FOUR_BACK/contrail-web-third-party/node_modules webroot/monitor/bgp/node_modules
     cd webroot/monitor/bgp
     grunt qunit
 fi
