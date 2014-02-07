@@ -399,8 +399,7 @@ function processAndSendVRSummaryResponse (vRouterJSON, res)
                         vRouterJSON, ipList);
 }
 
-function sendvRouterResponse (res, type, resultJSON, resultArr, dataObj,
-                              callback)
+function sendvRouterResponse (res, type, resultJSON, resultArr, dataObj)
 {
     if (type === global.GET_VIRTUAL_ROUTERS) {
         processVRJSON(resultJSON, resultArr);
@@ -408,30 +407,35 @@ function sendvRouterResponse (res, type, resultJSON, resultArr, dataObj,
     } else if (type == global.GET_VROUTERS_LIST) {
         resultJSON = [];
         processvRouterList(resultJSON, resultArr);
-        callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                 JSON.stringify(resultJSON), 1, 0);
+        redisPub.publishDataToRedis(dataObj.pubChannel, dataObj.saveChannelKey,
+                                    global.HTTP_STATUS_RESP_OK,
+                                    JSON.stringify(resultJSON),
+                                    JSON.stringify(resultJSON),
+                                    1, 0, dataObj.done);
     }
 }
 
-function sendvRouterErrorResponse (res, err, type, dataObj, callback)
+function sendvRouterErrorResponse (res, err, type, dataObj)
 {
     if (type === global.GET_VIRTUAL_ROUTERS) {
         commonUtils.handleJSONResponse(err, res, null);
     } else if (type == global.GET_VROUTERS_LIST) {
-        callback(global.HTTP_STATUS_INTERNAL_ERROR,
-                 global.STR_CACHE_RETRIEVE_ERROR,
-                 global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
+        redisPub.publishDataToRedis(dataObj.pubChannel, dataObj.saveChannelKey,
+                                    global.HTTP_STATUS_INTERNAL_ERROR,
+                                    global.STR_CACHE_RETRIEVE_ERROR,
+                                    global.STR_CACHE_RETRIEVE_ERROR, 0,
+                                    0, dataObj.done);
     }
 }
 
-function processVirtualRouters (req, res, type, dataObj, appData, callback)
+function processVirtualRouters (req, res, type, dataObj, appData)
 {
     var url = '/virtual-routers';
     var resultJSON = [];
 
     configApiServer.apiGet(url, appData, function (error, jsonData) {
         if (error) {
-            sendvRouterErrorResponse(res, error, type, dataObj, callback);
+            sendvRouterErrorResponse(res, error, type, dataObj);
         } else {
             try {
                 var vrJSON = jsonData,
@@ -455,19 +459,16 @@ function processVirtualRouters (req, res, type, dataObj, appData, callback)
                                                                true),
                               function (err, results) {
                         if (!err) {
-                            sendvRouterResponse(res, type, vrJSON, results,
-                                                dataObj, callback);
+                            sendvRouterResponse(res, type, vrJSON, results, dataObj);
                         } else {
-                            sendvRouterErrorResponse(res, error, type, dataObj,
-                                                     callback);
+                            sendvRouterErrorResponse(res, error, type, dataObj);
                         }
                     });
                 } else {
-                    sendvRouterResponse(res, type, vrJSON, vrJSON, dataObj,
-                                        callback);
+                    sendvRouterResponse(res, type, vrJSON, vrJSON, dataObj);
                 }
             } catch (e) {
-                sendvRouterErrorResponse(res, e, type, dataObj, callback);
+                sendvRouterErrorResponse(res, e, type, dataObj);
             }
         }
     });

@@ -22,10 +22,6 @@
       <define>config</define>
       <path>../../../../config/config.global</path>
   </require>
-  <require>
-      <define>commonUtils</define>
-      <path>../../utils/common.utils</path>
-  </require>
   <!-- Define Job Names and the corresponding callback -->
   <item>
     <jobName>getProjectsTree</jobName>
