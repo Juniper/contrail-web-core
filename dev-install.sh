@@ -69,6 +69,31 @@ if [ $1 = 'prod' ] ; then
 
     rm -f webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
     cp -r  ../contrail-web-third-party/fonts-opensans/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff  webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+    #End - Copy Font-Opensans from contrail-web-third-party
+
+    #Start - Copy Handlebars from contrail-web-third-party
+    rm -rf webroot/assets/handlebars
+    mkdir webroot/assets/handlebars
+    cp -r ../contrail-web-third-party/handlebars-v1.3.0/handlebars-v1.3.0.js webroot/assets/handlebars/handlebars-v1.3.0.js
+    #End - Copy Handlebars from contrail-web-third-party
+
+    #Start - Copy Select2 from contrail-web-third-party
+    rm -rf webroot/assets/select2
+    mkdir -p webroot/assets/select2/js
+    mkdir -p webroot/assets/select2/styles
+    cp -r ../contrail-web-third-party/select2-v3.4.5/select2.min.js webroot/assets/select2/js/select2.min.js
+    cp -r ../contrail-web-third-party/select2-v3.4.5/select2.css webroot/assets/select2/styles/select2.css
+    cp -r ../contrail-web-third-party/select2-v3.4.5/select2-bootstrap.css webroot/assets/select2/styles/select2-bootstrap.css
+    cp -r ../contrail-web-third-party/select2-v3.4.5/select2.png webroot/assets/select2/styles/select2.png
+    cp -r ../contrail-web-third-party/select2-v3.4.5/select2x2.png webroot/assets/select2/styles/select2x2.png
+    cp -r ../contrail-web-third-party/select2-v3.4.5/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
+    #End - Copy Select2 from contrail-web-third-party
+
+    #Start - Copy Knockout from contrail-web-third-party
+    rm -rf webroot/assets/knockout
+    mkdir webroot/assets/knockout
+    cp -r ../contrail-web-third-party/knockout-v3.0.0/knockout-3.0.0.js webroot/assets/knockout/knockout-3.0.0.js
+    #End - Copy Knockout from contrail-web-third-party
 else
     #Start - Link KendoUI from contrail-web-third-party
     rm -rf webroot/assets/kendoui
@@ -135,6 +160,30 @@ else
     rm -f webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
     ln -sf  $THREE_BACK/contrail-web-third-party/fonts-opensans/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff  webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
     #End - Link Font-Awesome from contrail-web-third-party
+
+    #Start - Link Handlebars from contrail-web-third-party
+    rm -rf webroot/assets/handlebars
+    mkdir webroot/assets/handlebars
+    ln -sf $FOUR_BACK/contrail-web-third-party/handlebars-v1.3.0/handlebars-v1.3.0.js webroot/assets/handlebars/handlebars-v1.3.0.js
+    #End - Link Handlebars from contrail-web-third-party
+
+    #Start - Link Select2 from contrail-web-third-party
+    rm -rf webroot/assets/select2
+    mkdir -p webroot/assets/select2/js
+    mkdir -p webroot/assets/select2/styles
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2.min.js webroot/assets/select2/js/select2.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2.css webroot/assets/select2/styles/select2.css
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2-bootstrap.css webroot/assets/select2/styles/select2-bootstrap.css
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2.png webroot/assets/select2/styles/select2.png
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2x2.png webroot/assets/select2/styles/select2x2.png
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
+    #End - Link Select2 from contrail-web-third-party
+
+    #Start - Link Knockout from contrail-web-third-party
+    rm -rf webroot/assets/knockout
+    mkdir webroot/assets/knockout
+    ln -sf $FOUR_BACK/contrail-web-third-party/knockout-v3.0.0/knockout-3.0.0.js webroot/assets/knockout/knockout-3.0.0.js
+    #End - Link Knockout from contrail-web-third-party
 fi
 
 #Start - Merging All JS files
@@ -204,7 +253,6 @@ cat ${MAINFILE[23]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[24]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[25]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[26]} >> webroot/js/contrail-all-5.js
-
 
 # End - Merging All JS files
 
