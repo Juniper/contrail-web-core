@@ -42,7 +42,12 @@ module.exports = function( grunt ) {
             }
         },
         jshint: {
-            src: ['*.js']
+            options: {
+                ignores: [
+                    "../contrail-web-ui/**/node_modules/**/*.js",
+                ]
+            },
+            all: ['../contrail-web-ui/**/js/*.js']
         }
     });
 
