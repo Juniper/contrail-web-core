@@ -60,6 +60,9 @@ dev-env:
 	./prod-dev.sh html/login.html dev_env prod_env true
 	./prod-dev.sh html/login-error.html dev_env prod_env true
 	make make-ln
+
+test-env:
+	make dev-env
 	./unit-test.sh init
 
 prod-env:
