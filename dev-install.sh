@@ -89,6 +89,24 @@ if [ $1 = 'prod' ] ; then
     cp -r ../contrail-web-third-party/select2-v3.4.5/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
     #End - Copy Select2 from contrail-web-third-party
 
+    #Start - Copy Slickgrid from contrail-web-third-party
+    rm -rf webroot/assets/slickgrid
+    mkdir -p webroot/assets/slickgrid/js
+    mkdir -p webroot/assets/slickgrid/styles
+    cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.core.js webroot/assets/slickgrid/js/slick.core.js
+    cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.grid.js webroot/assets/slickgrid/js/slick.grid.js
+    cp -r ../contrail-web-third-party/slickgrid-v2.1.0/lib/jquery.event.drag-2.2.js webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
+    cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.grid.css webroot/assets/slickgrid/styles/slick.grid.css
+    #End - Copy Slickgrid from contrail-web-third-party
+
+    #Start - Cooy Datetimepicker from contrail-web-third-party
+    rm -rf webroot/assets/datetimepicker
+    mkdir -p webroot/assets/datetimepicker/js
+    mkdir -p webroot/assets/datetimepicker/styles
+    cp -r ../contrail-web-third-party/datetimepicker-v2.1.9/jquery.datetimepicker.js webroot/assets/datetimepicker/js/jquery.datetimepicker.js
+    cp -r ../contrail-web-third-party/datetimepicker-v2.1.9/jquery.datetimepicker.css webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
+    #End - Cooy Datetimepicker from contrail-web-third-party
+
     #Start - Copy Knockout from contrail-web-third-party
     rm -rf webroot/assets/knockout
     mkdir webroot/assets/knockout
@@ -178,6 +196,24 @@ else
     ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2x2.png webroot/assets/select2/styles/select2x2.png
     ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
     #End - Link Select2 from contrail-web-third-party
+
+    #Start - Link Slickgrid from contrail-web-third-party
+    rm -rf webroot/assets/slickgrid
+    mkdir -p webroot/assets/slickgrid/js
+    mkdir -p webroot/assets/slickgrid/styles
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.core.js webroot/assets/slickgrid/js/slick.core.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.grid.js webroot/assets/slickgrid/js/slick.grid.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/lib/jquery.event.drag-2.2.js webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.grid.css webroot/assets/slickgrid/styles/slick.grid.css
+    #End - Link Slickgrid from contrail-web-third-party
+
+    #Start - Link Datetimepicker from contrail-web-third-party
+    rm -rf webroot/assets/datetimepicker
+    mkdir -p webroot/assets/datetimepicker/js
+    mkdir -p webroot/assets/datetimepicker/styles
+    ln -sf $FIVE_BACK/contrail-web-third-party/datetimepicker-v2.1.9/jquery.datetimepicker.js webroot/assets/datetimepicker/js/jquery.datetimepicker.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/datetimepicker-v2.1.9/jquery.datetimepicker.css webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
+    #End - Link Datetimepicker from contrail-web-third-party
 
     #Start - Link Knockout from contrail-web-third-party
     rm -rf webroot/assets/knockout
