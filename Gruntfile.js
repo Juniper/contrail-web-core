@@ -18,7 +18,7 @@ module.exports = function( grunt ) {
     grunt.initConfig({
         pkg: grunt.file.readJSON( "package.json" ),
         concat: {
-            "src-js": {
+            "qunit-js": {
                 options: { process: process },
                 src: [
                     UI_THIRD_PARTY + "qunit/src/intro.js",
@@ -33,16 +33,40 @@ module.exports = function( grunt ) {
                 ],
                 dest: "webroot/assets/qunit/qunit.js"
             },
-            "src-css": {
+            "qunit-css": {
                 options: { process: process },
                 src: [
                     UI_THIRD_PARTY + "qunit/src/qunit.css"
                 ],
                 dest: "webroot/assets/qunit/qunit.css"
+            },
+            "sinon-js" : {
+                options: {process: process},
+                src: [
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/spy.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/call.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/behavior.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/stub.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/mock.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/collection.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/assert.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/sandbox.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/test.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/test_case.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/assert.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/match.js",
+                ],
+                dest: "webroot/assets/sinon/sinon.js"
             }
         },
         jshint: {
-            src: ['*.js']
+            options: {
+                ignores: [
+                    "../contrail-web-ui/**/node_modules/**/*.js",
+                ]
+            },
+            all: ['../contrail-web-ui/**/js/*.js']
         }
     });
 
