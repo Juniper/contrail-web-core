@@ -628,8 +628,7 @@ function getNwListByNwArray (networkListsArr)
     return nwLists;
 }
 
-function processTopNwDetailsByDomain (pubChannel, saveChannelKey, jobData,
-                                      callback)
+function processTopNwDetailsByDomain (pubChannel, saveChannelKey, jobData, done)
 {
     var url = jobData.taskData.url;
     var urlLists = [];
@@ -671,8 +670,11 @@ function processTopNwDetailsByDomain (pubChannel, saveChannelKey, jobData,
             function (err, data) {
                 parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
                 resultJSON = getTopNCountEntry(resultJSON, limit, null);
-                callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON), 
-                         JSON.stringify(resultJSON), 0, 0);
+                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                    global.HTTP_STATUS_RESP_OK,
+                    JSON.stringify(resultJSON),
+                    JSON.stringify(resultJSON),
+                    0, 0, done);
             });
     });
 }
@@ -710,8 +712,7 @@ function addNwCountByProject (resultJSON, projects, nws)
     }
 }
 
-function processTopProjectDetailsByDomain (pubChannel, saveChannelKey, jobData,
-                                           callback)
+function processTopProjectDetailsByDomain (pubChannel, saveChannelKey, jobData, done)
 {
     var url = jobData.taskData.url;
     var urlLists = [];
@@ -752,14 +753,18 @@ function processTopProjectDetailsByDomain (pubChannel, saveChannelKey, jobData,
                 getAggDataByDomainOrProject(resultJSON, 'project', function (err, resultJSON) {
                     addNwCountByProject(resultJSON, projectLists, networkLists);
                     var result = getTopNCountEntry(resultJSON, limit, null);
-                    callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(result), 
-                             JSON.stringify(result), 0, 0);
+                    redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                        global.HTTP_STATUS_RESP_OK,
+                        JSON.stringify(result),
+                        JSON.stringify(result),
+                        0, 0, done);
+
                 });
             });
     });
 }
 
-function processTopPortByDomain (pubChannel, saveChannelKey, jobData, callback)
+function processTopPortByDomain (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
 
@@ -798,8 +803,11 @@ function processTopPortByDomain (pubChannel, saveChannelKey, jobData, callback)
             function (err, data) {
                 parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
                 resultJSON = getTopNCountEntry(resultJSON, limit, null);
-                callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON), 
-                         JSON.stringify(resultJSON), 0, 0);
+                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                    global.HTTP_STATUS_RESP_OK,
+                    JSON.stringify(resultJSON),
+                    JSON.stringify(resultJSON),
+                    0, 0, done);
             });
     });
 }
@@ -817,7 +825,7 @@ function createTimeQueryJsonObjByAppData (appData)
     return timeObj;
 }
 
-function processTopPortByProject (pubChannel, saveChannelKey, jobData, callback)
+function processTopPortByProject (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
 
@@ -854,13 +862,14 @@ function processTopPortByProject (pubChannel, saveChannelKey, jobData, callback)
                 'with Query' + JSON.stringify(dataObjArr[0]['data']),
                 JSON.stringify(dataObjArr[1]['data']));
             async.map(dataObjArr, commonUtils.getServerRespByRestApi(opServer, true),
-                function(err, data) {
+                commonUtils.doEnsureExecution(function(err, data) {
                     parseNetStatDataProjectOrNetwork(resultJSON, data, srcSelectArr, destSelectArr);
-                    callback(global.HTTP_STATUS_RESP_OK,
-                             JSON.stringify(resultJSON),
-                             JSON.stringify(resultJSON),
-                             0, 0);
-                });
+                    redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                        global.HTTP_STATUS_RESP_OK,
+                        JSON.stringify(resultJSON),
+                        JSON.stringify(resultJSON),
+                        0, 0, done);
+                }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
         });
 }
 
@@ -894,7 +903,7 @@ function parseFlowData (data)
     return resultJSON;
 }
 
-function processTopFlowsByProject (pubChannel, saveChannelKey, jobData, callback)
+function processTopFlowsByProject (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
 
@@ -920,13 +929,16 @@ function processTopFlowsByProject (pubChannel, saveChannelKey, jobData, callback
                 var resultJSON = [];
                 resultJSON = parseFlowData(data);
                 resultJSON = getTopNCountEntry(resultJSON, limit, 'bytes');
-                callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                         JSON.stringify(resultJSON), 0, 0);
+                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                    global.HTTP_STATUS_RESP_OK,
+                    JSON.stringify(resultJSON),
+                    JSON.stringify(resultJSON),
+                    0, 0, done);
             });
         });
 }
 
-function processTopFlowsByDomain (pubChannel, saveChannelKey, jobData, callback)
+function processTopFlowsByDomain (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
 
@@ -955,8 +967,11 @@ function processTopFlowsByDomain (pubChannel, saveChannelKey, jobData, callback)
             var resultJSON = [];
             resultJSON = parseFlowData(data);
             resultJSON = getTopNCountEntry(resultJSON, limit, 'bytes');
-            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                     JSON.stringify(resultJSON), 0, 0);
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                global.HTTP_STATUS_RESP_OK,
+                JSON.stringify(resultJSON),
+                JSON.stringify(resultJSON),
+                0, 0, done);
         });
     });
 }
@@ -975,7 +990,7 @@ function doConcatArr (data)
     return result;
 }
 
-function processVNFlowSeriesData (pubChannel, saveChannelKey, jobData, callback)
+function processVNFlowSeriesData (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
     var srcVNObjArr = [];
@@ -1012,18 +1027,21 @@ function processVNFlowSeriesData (pubChannel, saveChannelKey, jobData, callback)
     logutils.logger.debug(messages.qe.qe_execution + 'VN Flow Series data ' +
         vnName);
     flowCache.getFlowSeriesData('vn', appData, srcQueryJSON, destQueryJSON,
-        function(err, data) {
+        commonUtils.doEnsureExecution(function(err, data) {
             if (data != null) {
                 resultJSON = data;
             } else {
                 resultJSON = {};
             }
-            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                     JSON.stringify(resultJSON), 0, 0);
-        });
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                global.HTTP_STATUS_RESP_OK,
+                JSON.stringify(resultJSON),
+                JSON.stringify(resultJSON),
+                0, 0, done);
+        }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
-function processVNsFlowSeriesData (pubChannel, saveChannelKey, jobData, callback)
+function processVNsFlowSeriesData (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
     var srcVNObjArr = [];
@@ -1070,13 +1088,15 @@ function processVNsFlowSeriesData (pubChannel, saveChannelKey, jobData, callback
             } else {
                 resultJSON = {};
             }
-            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                     JSON.stringify(resultJSON), 0, 0);
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                global.HTTP_STATUS_RESP_OK,
+                JSON.stringify(resultJSON),
+                JSON.stringify(resultJSON),
+                0, 0, done);
         });
 }
 
-function processTopNwDetailsByProject (pubChannel, saveChannelKey, jobData,
-                                       callback)
+function processTopNwDetailsByProject (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
     var project = appData['project'];
@@ -1102,13 +1122,16 @@ function processTopNwDetailsByProject (pubChannel, saveChannelKey, jobData,
             nwMonUtils.getStatDataByQueryJSON(srcQueryJSON, destQueryJSON, function (err, data) {
                 parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
                 resultJSON = getTopNCountEntry(resultJSON, limit, null);
-                callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                         JSON.stringify(resultJSON), 0, 0);
+                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                    global.HTTP_STATUS_RESP_OK,
+                    JSON.stringify(resultJSON),
+                    JSON.stringify(resultJSON),
+                    0, 0, done);
             });
         });
 }
 
-function processTopPeerByDomain (pubChannel, saveChannelKey, jobData, callback)
+function processTopPeerByDomain (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
     var domain = appData['domain'];
@@ -1135,13 +1158,16 @@ function processTopPeerByDomain (pubChannel, saveChannelKey, jobData, callback)
         nwMonUtils.getStatDataByQueryJSON(srcQueryJSON, destQueryJSON, function (err, data) {
             parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
             resultJSON = getTopNCountEntry(resultJSON, limit, null);
-            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                     JSON.stringify(resultJSON), 0, 0);
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                global.HTTP_STATUS_RESP_OK,
+                JSON.stringify(resultJSON),
+                JSON.stringify(resultJSON),
+                0, 0, done);
         });
     });
 }
 
-function processTopPeerByProject (pubChannel, saveChannelKey, jobData, callback)
+function processTopPeerByProject (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
     var project = appData['project'];
@@ -1168,13 +1194,16 @@ function processTopPeerByProject (pubChannel, saveChannelKey, jobData, callback)
             nwMonUtils.getStatDataByQueryJSON(srcQueryJSON, destQueryJSON, function (err, data) {
                 parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
                 resultJSON = getTopNCountEntry(resultJSON, limit, null);
-                callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                         JSON.stringify(resultJSON), 0, 0);
+                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                    global.HTTP_STATUS_RESP_OK,
+                    JSON.stringify(resultJSON),
+                    JSON.stringify(resultJSON),
+                    0, 0, done);
             });
         });
 }
 
-function processTopPortByNetwork (pubChannel, saveChannelKey, jobData, callback, type)
+function processTopPortByNetwork (pubChannel, saveChannelKey, jobData, done, type)
 {
     var appData = jobData.taskData.appData;
 
@@ -1233,12 +1262,15 @@ function processTopPortByNetwork (pubChannel, saveChannelKey, jobData, callback,
         commonUtils.cloneObj(destQueryJSON));
     nwMonUtils.getStatDataByQueryJSON(srcQueryJSON, destQueryJSON, function (err, data) {
         parseNetStatDataProjectOrNetwork(resultJSON, data, srcSelectArr, destSelectArr);
-        callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                 JSON.stringify(resultJSON), 0, 0);
+        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+            global.HTTP_STATUS_RESP_OK,
+            JSON.stringify(resultJSON),
+            JSON.stringify(resultJSON),
+            0, 0, done);
     });
 }
 
-function processTopPeerByNetwork (pubChannel, saveChannelKey, jobData, callback, type)
+function processTopPeerByNetwork (pubChannel, saveChannelKey, jobData, done, type)
 {
     var appData = jobData.taskData.appData;
 
@@ -1290,8 +1322,11 @@ function processTopPeerByNetwork (pubChannel, saveChannelKey, jobData, callback,
     nwMonUtils.getStatDataByQueryJSON(srcQueryJSON, destQueryJSON, function (err, data) {
         parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
         resultJSON = getTopNCountEntry(resultJSON, limit, null);
-        callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                 JSON.stringify(resultJSON), 0, 0);
+        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+            global.HTTP_STATUS_RESP_OK,
+            JSON.stringify(resultJSON),
+            JSON.stringify(resultJSON),
+            0, 0, done);
     });
 }
 
@@ -1316,7 +1351,7 @@ function getFlowQueryJSONByAppData (appData, VNObjArr, selectArr, timeObj)
     return queryJSON;
 }
 
-function processTopFlowsByNetwork (pubChannel, saveChannelKey, jobData, callback, type)
+function processTopFlowsByNetwork (pubChannel, saveChannelKey, jobData, done, type)
 {
     var appData = jobData.taskData.appData;
 
@@ -1356,12 +1391,15 @@ function processTopFlowsByNetwork (pubChannel, saveChannelKey, jobData, callback
         var resultJSON = [];
         resultJSON = parseFlowData(data);
         resultJSON = getTopNCountEntry(resultJSON, limit, 'bytes');
-        callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                 JSON.stringify(resultJSON), 0, 0);
+        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+            global.HTTP_STATUS_RESP_OK,
+            JSON.stringify(resultJSON),
+            JSON.stringify(resultJSON),
+            0, 0, done);
     });
 }
 
-function processTopPeerByVM (pubChannel, saveChannelKey, jobData, callback)
+function processTopPeerByVM (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
 
@@ -1395,12 +1433,15 @@ function processTopPeerByVM (pubChannel, saveChannelKey, jobData, callback)
     nwMonUtils.getStatDataByQueryJSON(srcQueryJSON, destQueryJSON, function (err, data) {
         parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
         resultJSON = getTopNCountEntry(resultJSON, limit, null);
-        callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                 JSON.stringify(resultJSON), 0, 0);
+        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+            global.HTTP_STATUS_RESP_OK,
+            JSON.stringify(resultJSON),
+            JSON.stringify(resultJSON),
+            0, 0, done);
     });
 }
 
-function processTopPortByVM (pubChannel, saveChannelKey, jobData, callback)
+function processTopPortByVM (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
 
@@ -1441,12 +1482,15 @@ function processTopPortByVM (pubChannel, saveChannelKey, jobData, callback)
     nwMonUtils.getStatDataByQueryJSON(srcQueryJSON, destQueryJSON, function (err, data) {
         parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
         resultJSON = getTopNCountEntry(resultJSON, limit, null);
-        callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                 JSON.stringify(resultJSON), 0, 0);
+        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+            global.HTTP_STATUS_RESP_OK,
+            JSON.stringify(resultJSON),
+            JSON.stringify(resultJSON),
+            0, 0, done);
     });
 }
 
-function processTopFlowsByVM (pubChannel, saveChannelKey, jobData, callback)
+function processTopFlowsByVM (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
 
@@ -1481,12 +1525,15 @@ function processTopFlowsByVM (pubChannel, saveChannelKey, jobData, callback)
         var resultJSON = [];
         resultJSON = parseFlowData(data);
         resultJSON = getTopNCountEntry(resultJSON, limit, 'bytes');
-        callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                 JSON.stringify(resultJSON), 0, 0);
+        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+            global.HTTP_STATUS_RESP_OK,
+            JSON.stringify(resultJSON),
+            JSON.stringify(resultJSON),
+            0, 0, done);
     });
 }
 
-function processVMFlowSeriesData (pubChannel, saveChannelKey, jobData, callback)
+function processVMFlowSeriesData (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
     var srcVNObjArr = [];
@@ -1535,8 +1582,11 @@ function processVMFlowSeriesData (pubChannel, saveChannelKey, jobData, callback)
             } else {
                 resultJSON = {};
             }
-            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                     JSON.stringify(resultJSON), 0, 0);
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                global.HTTP_STATUS_RESP_OK,
+                JSON.stringify(resultJSON),
+                JSON.stringify(resultJSON),
+                0, 0, done);
         });
 }
 
@@ -1588,7 +1638,7 @@ function parseVMStats (resultJSON, data)
     }
 }
 
-function processStatSummary (pubChannel, saveChannelKey, jobData, callback, type)
+function processStatSummary (pubChannel, saveChannelKey, jobData, done, type)
 {
     var appData = jobData.taskData.appData;
     var vnName = appData['vnName'];
@@ -1660,12 +1710,15 @@ function processStatSummary (pubChannel, saveChannelKey, jobData, callback, type
         function (err, data) {
             var resultJSON = {};
             parseVMStats(resultJSON, data);
-            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                     JSON.stringify(resultJSON), 0, 0);
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                global.HTTP_STATUS_RESP_OK,
+                JSON.stringify(resultJSON),
+                JSON.stringify(resultJSON),
+                0, 0, done);
         });
 }
 
-function processVMStatSummary (pubChannel, saveChannelKey, jobData, callback)
+function processVMStatSummary (pubChannel, saveChannelKey, jobData, done)
 {
     setTimeout(function () {
         /* For processing the VM Stats, QE takes much time, as QE currently does
@@ -1674,18 +1727,18 @@ function processVMStatSummary (pubChannel, saveChannelKey, jobData, callback)
          * callback to be called after 2 seconds, before that all other top
          * Peer, top port request etc will be processed
          */
-        processStatSummary(pubChannel, saveChannelKey, jobData, callback);
+        processStatSummary(pubChannel, saveChannelKey, jobData, done);
     }, 2000);
 }
 
-function processConnNetStatsSummary (pubChannel, saveChannelKey, jobData, callback)
+function processConnNetStatsSummary (pubChannel, saveChannelKey, jobData, done)
 {
-    processStatSummary(pubChannel, saveChannelKey, jobData, callback,
+    processStatSummary(pubChannel, saveChannelKey, jobData, done,
                        global.GET_STAT_SUMMARY_BY_CONN_NWS);
 }
 
 function processTopPeerDetailsByDomainAndPort (pubChannel, saveChannelKey, 
-                                               jobData, callback, fqName, sport)
+                                               jobData, done, fqName, sport)
 {
     var appData = jobData.taskData.appData;
     var srcVNObjArr = [];
@@ -1724,14 +1777,17 @@ function processTopPeerDetailsByDomainAndPort (pubChannel, saveChannelKey,
             var resultJSON = [];
             parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
             resultJSON = getTopNCountEntry(resultJSON, limit, null);
-            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                     JSON.stringify(resultJSON), 0, 0);
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                global.HTTP_STATUS_RESP_OK,
+                JSON.stringify(resultJSON),
+                JSON.stringify(resultJSON),
+                0, 0, done);
         });
     });
 }
 
 function processTopPeerDetailsByProjectAndPort (pubChannel, saveChannelKey, 
-                                                jobData, callback, fqName, sport)
+                                                jobData, done, fqName, sport)
 {
     var appData = jobData.taskData.appData;
     var resultJSON = [];
@@ -1769,15 +1825,17 @@ function processTopPeerDetailsByProjectAndPort (pubChannel, saveChannelKey,
             nwMonUtils.getStatDataByQueryJSON(srcQueryJSON, destQueryJSON, function (err, data) {
                 parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
                 resultJSON = getTopNCountEntry(resultJSON, limit, null);
-                callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                         JSON.stringify(resultJSON), 0,
-                         0);
+                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                    global.HTTP_STATUS_RESP_OK,
+                    JSON.stringify(resultJSON),
+                    JSON.stringify(resultJSON),
+                    0, 0, done);
             });
         });
 }
 
 function processTopPeerDetailsByNetworkAndPort (pubChannel, saveChannelKey, 
-                                                jobData, callback, fqName, sport)
+                                                jobData, done, fqName, sport)
 {
     var appData = jobData.taskData.appData;
 
@@ -1815,13 +1873,16 @@ function processTopPeerDetailsByNetworkAndPort (pubChannel, saveChannelKey,
     nwMonUtils.getStatDataByQueryJSON(srcQueryJSON, destQueryJSON, function (err, data) {
         parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
         resultJSON = getTopNCountEntry(resultJSON, limit, null);
-        callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                 JSON.stringify(resultJSON), 0, 0);
+        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+            global.HTTP_STATUS_RESP_OK,
+            JSON.stringify(resultJSON),
+            JSON.stringify(resultJSON),
+            0, 0, done);
     });
 }
 
 function processTopPeerDetailsByVNsAndPort (pubChannel, saveChannelKey, jobData,
-                                            callback, srcVN, destVN, port)
+                                            done, srcVN, destVN, port)
 {
     var appData = jobData.taskData.appData;
 
@@ -1862,12 +1923,15 @@ function processTopPeerDetailsByVNsAndPort (pubChannel, saveChannelKey, jobData,
     nwMonUtils.getStatDataByQueryJSON(srcQueryJSON, destQueryJSON, function (err, data) {
         parseNetStatDataByDomainOrProject(resultJSON, data, srcSelectArr, destSelectArr);
         resultJSON = getTopNCountEntry(resultJSON, limit, null);
-        callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                 JSON.stringify(resultJSON), 0, 0);
+        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+            global.HTTP_STATUS_RESP_OK,
+            JSON.stringify(resultJSON),
+            JSON.stringify(resultJSON),
+            0, 0, done);
     });
 }
 
-function processTopPeerDetails (pubChannel, saveChannelKey, jobData, callback)
+function processTopPeerDetails (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
     var reqType = appData.reqType;
@@ -1879,7 +1943,7 @@ function processTopPeerDetails (pubChannel, saveChannelKey, jobData, callback)
 
     if (srcVN && destVN) {
         processTopPeerDetailsByVNsAndPort(pubChannel, saveChannelKey,
-            jobData, callback, srcVN, destVN,
+            jobData, done, srcVN, destVN,
             appData.port);
         return;
     }
@@ -1892,23 +1956,23 @@ function processTopPeerDetails (pubChannel, saveChannelKey, jobData, callback)
     if (fqNameArrLen == 1) {
         /* Domain Context */
         processTopPeerDetailsByDomainAndPort(pubChannel, saveChannelKey,
-            jobData, callback, fqName,
+            jobData, done, fqName,
             appData.port);
     } else if (fqNameArrLen == 2) {
         /* Project */
         processTopPeerDetailsByProjectAndPort(pubChannel, saveChannelKey, jobData,
-            callback, fqName,
+            done, fqName,
             appData.port);
     } else if (fqNameArrLen == 3) {
         /* Network */
         processTopPeerDetailsByNetworkAndPort(pubChannel, saveChannelKey, jobData,
-            callback, fqName, appData.sourcevn,
+            done, fqName, appData.sourcevn,
             appData.port);
     }
 }
 
 function processPortLevelFlowSeriesByDomain (pubChannel, saveChannelKey,
-                                             jobData, callback)
+                                             jobData, done)
 {
     var appData = jobData.taskData.appData;
     var domain = appData['fqName'];
@@ -1969,14 +2033,17 @@ function processPortLevelFlowSeriesByDomain (pubChannel, saveChannelKey,
                 } else {
                     resultJSON = {};
                 }
-                callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                         JSON.stringify(resultJSON), 0, 0);
+                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                    global.HTTP_STATUS_RESP_OK,
+                    JSON.stringify(resultJSON),
+                    JSON.stringify(resultJSON),
+                    0, 0, done);
             });
     });
 }
 
 function processPortLevelFlowSeriesByProject (pubChannel, saveChannelKey,
-                                              jobData, callback)
+                                              jobData, done)
 {
     var appData = jobData.taskData.appData;
     var project = appData['fqName'];
@@ -2038,16 +2105,17 @@ function processPortLevelFlowSeriesByProject (pubChannel, saveChannelKey,
                     } else {
                         resultJSON = {};
                     }
-                    callback(global.HTTP_STATUS_RESP_OK,
-                             JSON.stringify(resultJSON),
-                             JSON.stringify(resultJSON),
-                             0, 0);
+                    redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                        global.HTTP_STATUS_RESP_OK,
+                        JSON.stringify(resultJSON),
+                        JSON.stringify(resultJSON),
+                        0, 0, done);
                 });
         });
 }
 
 function processPortLevelFlowSeriesByNetwork (pubChannel, saveChannelKey, 
-                                              jobData, callback)
+                                              jobData, done)
 {
     var appData = jobData.taskData.appData;
     var fqName = appData['fqName'];
@@ -2120,12 +2188,15 @@ function processPortLevelFlowSeriesByNetwork (pubChannel, saveChannelKey,
             } else {
                 resultJSON = {};
             }
-            callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                     JSON.stringify(resultJSON), 0, 0);
+            redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                global.HTTP_STATUS_RESP_OK,
+                JSON.stringify(resultJSON),
+                JSON.stringify(resultJSON),
+                0, 0, done);
         });
 }
 
-function getPortLevelFlowSeries (pubChannel, saveChannelKey, jobData, callback)
+function getPortLevelFlowSeries (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
     var fqName = appData.fqName;
@@ -2133,7 +2204,7 @@ function getPortLevelFlowSeries (pubChannel, saveChannelKey, jobData, callback)
 
     if (appData.srcVN && appData.destVN) {
         processPortLevelFlowSeriesByNetwork(pubChannel, saveChannelKey, jobData,
-            callback);
+            done);
         return;
     }
 
@@ -2143,15 +2214,15 @@ function getPortLevelFlowSeries (pubChannel, saveChannelKey, jobData, callback)
     if (fqNameArrLen == 1) {
         /* Domain Context */
         processPortLevelFlowSeriesByDomain(pubChannel, saveChannelKey, jobData,
-            callback);
+            done);
     } else if (fqNameArrLen == 2) {
         /* Project */
         processPortLevelFlowSeriesByProject(pubChannel, saveChannelKey, jobData,
-            callback);
+            done);
     } else if (fqNameArrLen == 3) {
         /* Network */
         processPortLevelFlowSeriesByNetwork(pubChannel, saveChannelKey, jobData,
-            callback);
+            done);
     }
 }
 
@@ -2412,7 +2483,7 @@ function getCpuMemoryFlowSeriesByUVE(appData, callback)
     });
 }
 
-function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, callback)
+function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
 
@@ -2457,9 +2528,11 @@ function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, callback
         }
     } else {
         /* ModuleId is MUST */
-        callback(global.HTTP_STATUS_INTERNAL_ERROR,
-                 global.STR_CACHE_RETRIEVE_ERROR, 
-                 global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
+        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+            global.HTTP_STATUS_INTERNAL_ERROR,
+            global.STR_CACHE_RETRIEVE_ERROR,
+            global.STR_CACHE_RETRIEVE_ERROR, 0,
+            0, done);
         return;
     }
 
@@ -2480,7 +2553,7 @@ function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, callback
     var selectEleCnt = queryJSON['select_fields'].length;
     queryJSON['select_fields'].splice(selectEleCnt - 1, 1);
     executeQueryString(queryJSON, 
-                       function(err, resultJSON) {
+                       commonUtils.doEnsureExecution(function(err, resultJSON) {
         formatCPULoadXMLData(resultJSON, function (err, results) {
             /* Check if there is any data, if no data, then there is no change
              * in cpu/memory utilization, so we did not get the data, so now
@@ -2489,9 +2562,11 @@ function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, callback
              */
             getCpuMemoryFlowSeriesByUVE(appData, function (resultJSON) {
                 if (resultJSON == null) {
-                    callback(global.HTTP_STATUS_INTERNAL_ERROR,
-                             global.STR_CACHE_RETRIEVE_ERROR,
-                             global.STR_CACHE_RETRIEVE_ERROR, 0, 0);
+                    redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                        global.HTTP_STATUS_INTERNAL_ERROR,
+                        global.STR_CACHE_RETRIEVE_ERROR,
+                        global.STR_CACHE_RETRIEVE_ERROR,
+                        0, 0, done);
                     return;
                 }
                 if ((results == null) || (results.length == 0)) {
@@ -2501,18 +2576,23 @@ function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, callback
                     results =
                         formatFlowSeriesForCPUMemory(curCpuMemData, timeObj,
                             timeGran, resultJSON['num_cpu']);
-                    callback(global.HTTP_STATUS_RESP_OK,
-                             JSON.stringify(results), JSON.stringify(results), 0,
-                             0);
+                    redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                        global.HTTP_STATUS_RESP_OK,
+                        JSON.stringify(results),
+                        JSON.stringify(results),
+                        0, 0, done);
                     return;
                 }
                 results = formatFlowSeriesForCPUMemory(results, timeObj, timeGran,
                     resultJSON['num_cpu']);
-                callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(results),
-                         JSON.stringify(results), 0, 0);
+                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                    global.HTTP_STATUS_RESP_OK,
+                    JSON.stringify(results),
+                    JSON.stringify(results),
+                    0, 0, done);
             });
         });
-    });
+    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
 function getStartEndPort (portRange)
@@ -2554,7 +2634,7 @@ function getWhereClauseByPortRange (portRange, protocol, fqName, timeObj, isSrc)
     return whereClause;
 }
 
-function getTrafficStatsByPort (pubChannel, saveChannelKey, jobData, callback)
+function getTrafficStatsByPort (pubChannel, saveChannelKey, jobData, done)
 {
     var appData = jobData.taskData.appData;
 
@@ -2594,13 +2674,16 @@ function getTrafficStatsByPort (pubChannel, saveChannelKey, jobData, callback)
                           JSON.stringify(dataObjArr[0]['data']),
                           JSON.stringify(dataObjArr[1]['data']));
     async.map(dataObjArr, commonUtils.getServerRespByRestApi(opServer, true),
-              function(err, data) {
+              commonUtils.doEnsureExecution(function(err, data) {
         var resultJSON = {};
         parseNetStatDataProjectOrNetwork(resultJSON, data, srcSelectArr,
                                          destSelectArr);
-        callback(global.HTTP_STATUS_RESP_OK, JSON.stringify(resultJSON),
-                 JSON.stringify(resultJSON), 0, 0);
-    });
+        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                        global.HTTP_STATUS_RESP_OK,
+                        JSON.stringify(resultJSON),
+                        JSON.stringify(resultJSON),
+                        0, 0, done);
+        }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
 exports.getTrafficStatsByPort = getTrafficStatsByPort;
