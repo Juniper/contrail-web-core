@@ -22,6 +22,9 @@ var hostName = config.jobServer.server_ip
 
 var workerSock = axon.socket('pull');
 var myIdentity = global.service.MIDDLEWARE;
+var discServEnable = ((null != config.discoveryService) &&
+                      (null != config.discoveryService.enable)) ?
+                      config.discoveryService.enable : true;
 
 /* Function: processMsg
  Handler for message processing for messages coming from main Server
@@ -81,8 +84,10 @@ function startServers ()
     jobsCb.addjobListenerEvent();
     jobsCb.jobsProcess();
     jobsApi.doCheckJobsProcess();
-    discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MIDDLEWARE);
-    discServ.startWatchDiscServiceRetryList();
+    if (true == discServEnable) {
+        discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MIDDLEWARE);
+        discServ.startWatchDiscServiceRetryList();
+    }
     redisPub.createRedisPubClient(function() {
         createJobsAtInit();
     });
@@ -125,4 +130,5 @@ jobsApi.jobListenerReadyQEvent.on('kueReady', function() {
 });
 
 exports.myIdentity = myIdentity;
+exports.discServEnable = discServEnable;
 

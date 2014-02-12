@@ -149,14 +149,20 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
     restApi(reqUrl, options).on('complete', function(data, response) {
         if (data instanceof Error ||
             parseInt(response.statusCode) >= 400) {
-            logutils.logger.error('URL [' + reqUrl + ']' + 
-                                  ' returned error [' + data + ']');
+            try {
+                logutils.logger.error('URL [' + reqUrl + ']' + 
+                                      ' returned error [' + JSON.stringify(data) + ']');
+            } catch(e) {
+                logutils.logger.error('URL [' + reqUrl + ']' +
+                                      ' returned error [' + data + ']');
+            }
             /* Invalid data, throw error */
             /* Check if the error code is ECONNREFUSED or ETIMEOUT, if yes then
              * issue once again discovery subscribe request, the remote server
              * may be down, so discovery server should send the Up Servers now
              */
-            if (('ECONNREFUSED' == data.code) || ('ETIMEOUT' == data.code)) {
+            if ((true == process.mainModule.exports['discServEnable']) &&
+                (('ECONNREFUSED' == data.code) || ('ETIMEOUT' == data.code))) {
                 if (false == isRetry) {
                     /* Only one time send a retry */
                     discClient.sendDiscSubMessageOnDemand(self.name);

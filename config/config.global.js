@@ -41,6 +41,7 @@ config.analytics.server_port = '8081';
 config.discoveryService = {};
 config.discoveryService.server_ip = '127.0.0.1';
 config.discoveryService.server_port = '5998';
+config.discoveryService.enable = true;
 
 /* Job Server */
 config.jobServer = {};
