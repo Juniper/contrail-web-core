@@ -15,6 +15,7 @@ var config = require('../../../../../config/config.global'),
     crypto = require('crypto'),
     appErrors = require('../../../errors/app.errors.js'),
     commonUtils = require('../../../utils/common.utils'),
+    async = require('async'),
     rest = require('../../../common/rest.api');
 
 var authServerIP = ((config.identityManager) && (config.identityManager.ip)) ? 
@@ -25,6 +26,8 @@ var authServerPort =
 
 authAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
                                    server:authServerIP, port:authServerPort});
+
+var authAPIVers = ['v2.0'];
 
 /** Function: getUserRoleByAuthResponse
  *  1. This function is used to get the user role by keystone roleList response
@@ -71,14 +74,48 @@ function createProjectListInReqObj (req, tenantList)
     req.session.projectList = dataObj;
 }
 
+function getAuthRespondData (error, data)
+{
+    var dataObj = {};
+    dataObj['error'] = error;
+    dataObj['data'] = data;
+    return dataObj;
+}
+
+function makeAuthPostReq (dataObj, callback)
+{
+    var reqUrl = dataObj['reqUrl'];
+    var data = dataObj['data'];
+
+    authAPIServer.api.post(reqUrl, data, function(error, data) {
+        callback(error, data);
+    });
+}
+
+function makeAuthGetReq (dataObj, callback)
+{
+    var reqUrl = dataObj['reqUrl'];
+    var headers = dataObj['headers']; 
+
+    authAPIServer.api.get(reqUrl, function(error, data) {
+        callback(error, data);
+    }, headers);
+}
+
 /** Function: getTenantListByToken
  *  1. This API is used to get the list of the projects for current User using token
  *  @public function
  */
 function getTenantListByToken (token, callback)
 {
-  var url = '/v2.0/tenants';
+    var reqUrl = '/tenants';
+    getAuthDataByReqUrl(token, reqUrl, callback);
+}
+
+function getAuthDataByReqUrl (token, authUrl, callback)
+{
   var headers = {};
+  var dataObjArr = [];
 
   if (null == token) {
       var err = 
@@ -86,15 +123,20 @@ function getTenantListByToken (token, callback)
       callback(err, null);
       return;
   }
-  headers['X-Auth-Token'] = token.id;
-
-  authAPIServer.api.get(url, function(err, data) {
-    if (!err) {
+  var apiVerCnt = authAPIVers.length;
+  for (var i = 0; i < apiVerCnt; i++) {
+      reqUrl = '/' + authAPIVers[i] + authUrl;
+      headers['X-Auth-Token'] = token.id;
+      dataObjArr.push({'reqUrl': reqUrl, 'headers': headers});
+  }
+  var startIndex = 0;
+  getAuthData(null, dataObjArr, startIndex, makeAuthGetReq, function(err, data) {
+    if (null == err) {
         callback(null, data);
     } else {
         callback(err, null);
     }
-  }, headers);
+  });
 }
 
 /* Function: getTenantList
@@ -103,7 +145,13 @@ function getTenantListByToken (token, callback)
 function getTenantList (req, callback)
 {
     var token = req.session.last_token_used;
-    getTenantListByToken(token, function(err, data) {
+    var reqUrl = '/tenants';
+    getAuthRetryData(token, req, reqUrl, callback);
+}
+
+function getAuthRetryData (token, req, reqUrl, callback)
+{
+    getAuthDataByReqUrl(token, reqUrl, function(err, data) {
         if ((err) &&
             (err.responseCode == global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
             /* Get new Token and retry once again */
@@ -114,7 +162,7 @@ function getTenantList (req, callback)
                     callback(error, null);
                     return;
                 }
-                getTenantListByToken(token, function(err, newData) {
+                getAuthDataByReqUrl(token, reqUrl, function(err, newData) {
                     callback(err, newData);
                 });
             });
@@ -161,6 +209,36 @@ function formatTenantList (keyStoneProjects, apiProjects, callback)
     callback(projects);
 }
 
+function getKeystoneAPIVersions ()
+{
+    return authAPIVers;
+}
+
+function getAuthData (error, reqArr, index, authCB, callback)
+{
+    var authApiVerList = getKeystoneAPIVersions();
+    var len = reqArr.length;
+    if (index >= len) {
+        var str = 'Did not get Auth Response for auth API versions:' +
+            authApiVerList.join(',');
+        var err = 
+            new appErrors.RESTServerError(str);
+        if (null == error) {
+            error = err;
+        }
+        callback(error, null);
+        return;
+    }
+    authCB(reqArr[index], function(err, data) {
+        if ((null == err) && (null != data)) {
+            callback(null, data);
+            return;
+        } else {
+            getAuthData(err, reqArr, index + 1, authCB, callback);
+        }
+    });
+}
+
 /** Function: doAuth
  *  1. Authenticate and get user and token. Call the callback function on 
  *     successful authentication.
@@ -172,6 +250,7 @@ function formatTenantList (keyStoneProjects, apiProjects, callback)
  */
 function doAuth (username, password, tenantName, callback)
 {
+    var reqArr = [];
     var data = {
         auth:{
             passwordCredentials:{
@@ -184,9 +263,16 @@ function doAuth (username, password, tenantName, callback)
     if (tenantName) {
         data['auth']['tenantName'] = tenantName;
     }
-    var reqUrl = '/v2.0/tokens';
-    authAPIServer.api.post(reqUrl, data, function(error, data) {
-        if (!error) {
+    var authApiVerList = getKeystoneAPIVersions();
+    var apiVerCnt = authApiVerList.length;
+    for (var i = 0; i < apiVerCnt; i++) {
+        reqUrl = '/' + authApiVerList[i] + '/tokens';
+        reqArr.push({'reqUrl': reqUrl, 'data': data,
+                    'version': authApiVerList[i]});
+    }
+    var startIndex = 0;
+    getAuthData(null, reqArr, startIndex, makeAuthPostReq, function(err, data) {
+        if (null == err) {
             callback(data);
         } else {
             callback(null);
@@ -232,6 +318,32 @@ function updateTokenIdForProject (req, tenantId, token)
  */
 function getToken (req, tenantId, forceAuth, callback)
 {
+    var projEntry = getProjectObj(req, tenantId);
+    if ((projEntry) && (projEntry['token']) && (null == forceAuth)) {
+        logutils.logger.debug("We are having project already in DB:" +
+                              tenantId);
+        callback(null, projEntry['token']);
+        return;
+    }
+    getUserAuthData(req, tenantId, function(err, data) {
+        if ((null != err) || (null == data) || (null == data.access)) {
+            callback(err, null);
+        } else {
+            callback(null, data.access.token);
+        }
+    });
+}
+
+function updateLastTokenUsed (req, data)
+{
+    if ((null != data) && (null != data.access) && 
+        (null != data.access.token)) {
+        req.session.last_token_used = data.access.token;
+    }
+}
+
+function getUserAuthData (req, tenantId, callback)
+{
     /* First check if we have tokenId against the tenantId 
        in req.session.projectList 
      */
@@ -240,12 +352,6 @@ function getToken (req, tenantId, forceAuth, callback)
     var userDecrypted = null;
     var passwdDecrypted = null;
 
-    var projEntry = getProjectObj(req, tenantId);
-    if ((projEntry) && (projEntry['token']) && (null == forceAuth)) {
-        logutils.logger.debug("We are having project already in DB:" + tenantId);
-        callback(null, projEntry['token']);
-        return;
-    }
     /* We did not get the Token, so now send the request to get the token id with the 
        Auth Obj Stored in Redis
      */
@@ -270,13 +376,32 @@ function getToken (req, tenantId, forceAuth, callback)
             }
             /* Now save this token against this project */
             if (tenantId) {
-                logutils.logger.debug("Got the token successfully for tenant:" + tenantId);
+                logutils.logger.debug("Got the token successfully for tenant:" +
+                                      tenantId);
             }
             updateTokenIdForProject(req, tenantId, data);
             authApi.checkAndUpdateDefTenantToken(req, tenantId, data);
-            callback(null, data.access.token);
+            updateLastTokenUsed(req, data);
+            callback(null, data);
             return;
         });
+    });
+}
+
+function getServiceCatalog (req, callback)
+{
+    try {
+        var tenant = req.session.def_token_used.tenant.name;
+    } catch(e) {
+        logutils.logger.error("Tenant not found in Default Token.");
+        tenant = null;
+    }
+    getUserAuthData(req, tenant, function(err, data) {
+        if ((null != err) || (null == data) || (null == data.access)) {
+            callback(null);
+            return;
+        }
+        callback(data.access.serviceCatalog);
     });
 }
 
@@ -455,4 +580,5 @@ exports.getTokenBySession = getTokenBySession;
 exports.updateDefTenantToken = updateDefTenantToken;
 exports.getAPIServerAuthParamsByReq = getAPIServerAuthParamsByReq;
 exports.formatTenantList = formatTenantList;
+exports.getServiceCatalog = getServiceCatalog;
 
