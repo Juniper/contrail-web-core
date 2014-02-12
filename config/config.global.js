@@ -41,6 +41,10 @@ config.analytics.server_port = '8081';
 config.discoveryService = {};
 config.discoveryService.server_ip = '127.0.0.1';
 config.discoveryService.server_port = '5998';
+/* Specifiy true if subscription to discovery server should be enabled, else
+ * specify false. Other than true/false value here is treated as true
+ */
+config.discoveryService.enable = true;
 
 /* Job Server */
 config.jobServer = {};

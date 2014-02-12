@@ -372,9 +372,12 @@ function createJobByMsgObj (msg)
     var msgJSON = JSON.parse(msg.toString());
     switch (msgJSON['jobType']) {
     case global.STR_MAIN_WEB_SERVER_READY:
-        /* The main webServer is ready now, now start discovery service subscription
-         */
-        discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MAINSEREVR);
+        if (true == process.mainModule.exports['discServEnable']) {
+            /* The main webServer is ready now, now start discovery service 
+             * subscription
+             */
+            discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MAINSEREVR);
+        }
         break;
 
     case global.STR_DISC_SUBSCRIBE_MSG:

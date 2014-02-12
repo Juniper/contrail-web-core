@@ -79,8 +79,8 @@ function getDiscServiceByServiceType (serviceType)
         } catch(e) {
         }
     }
-    logutils.logger.error("Unknown Service Type Request Rxed in " +
-                          "getDiscServiceByServiceType(): " + serviceType);
+    //logutils.logger.error("Unknown Service Type Request Rxed in " +
+     //                     "getDiscServiceByServiceType(): " + serviceType);
     return null;
 }
 
