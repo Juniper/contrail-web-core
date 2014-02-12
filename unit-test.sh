@@ -11,7 +11,7 @@ FIVE_BACK='../../../../..'
 SIX_BACK='../../../../../..'
 
 #List all feature directories from where we need to run the test cases
-featureDirectories=(monitor/bgp monitor/tenant_network)
+featureDirectories=(monitor/bgp monitor/tenant_network js)
 
 if [ $1 = 'init' ] ; then
     ln -sf $FOUR_BACK/.jshintrc src/serverroot/web/api/.jshintrc
@@ -19,8 +19,6 @@ if [ $1 = 'init' ] ; then
     ln -sf $FIVE_BACK/contrail-web-third-party/node_modules src/serverroot/web/api/node_modules
     #Generates qunit.js & qunit.css files by concatinating files from contrail-web-third-party/qunit
     grunt build
-    ln -sf $FIVE_BACK/contrail-web-core/.jshintrc webroot/monitor/bgp/test/.jshintrc
-    ln -sf $FIVE_BACK/contrail-web-third-party/node_modules webroot/monitor/bgp/test/node_modules
     #copy the default Gruntfile.js if it's not present in feature test directory
     for currFeatureDir in "${featureDirectories[@]}"
     do
@@ -39,6 +37,8 @@ if [ $1 = 'init' ] ; then
             fi
         done
     done
+    ln -sf $FOUR_BACK/contrail-web-core/.jshintrc webroot/js/test/.jshintrc
+    ln -sf $FOUR_BACK/contrail-web-third-party/node_modules webroot/js/test/node_modules
 fi
 
 if [ $1 = 'node' ] ; then
