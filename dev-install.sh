@@ -95,6 +95,7 @@ if [ $1 = 'prod' ] ; then
     mkdir -p webroot/assets/slickgrid/styles
     cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.core.js webroot/assets/slickgrid/js/slick.core.js
     cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.grid.js webroot/assets/slickgrid/js/slick.grid.js
+    cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.dataview.js webroot/assets/slickgrid/js/slick.dataview.js
     cp -r ../contrail-web-third-party/slickgrid-v2.1.0/lib/jquery.event.drag-2.2.js webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
     cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.grid.css webroot/assets/slickgrid/styles/slick.grid.css
     #End - Copy Slickgrid from contrail-web-third-party
@@ -203,6 +204,7 @@ else
     mkdir -p webroot/assets/slickgrid/styles
     ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.core.js webroot/assets/slickgrid/js/slick.core.js
     ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.grid.js webroot/assets/slickgrid/js/slick.grid.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.dataview.js webroot/assets/slickgrid/js/slick.dataview.js
     ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/lib/jquery.event.drag-2.2.js webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
     ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.grid.css webroot/assets/slickgrid/styles/slick.grid.css
     #End - Link Slickgrid from contrail-web-third-party
