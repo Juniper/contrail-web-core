@@ -789,10 +789,19 @@ function getJSONClone(json)
     return JSON.parse(newJSONStr);
 };
 
-// Handle request to run query.
-function runQuery (req, res) 
+function runGETQuery (req, res) {
+    var reqQuery = req.query;
+    runQuery(req, res, reqQuery);
+}
+
+function runPOSTQuery (req, res) {
+    var reqQuery = req.body;
+    runQuery(req, res, reqQuery);
+}
+
+function runQuery (req, res, reqQuery)
 {
-    var reqQuery = req.query, queryId = reqQuery['queryId'],
+    var queryId = reqQuery['queryId'],
         page = reqQuery['page'], sort = reqQuery['sort'],
         pageSize = parseInt(reqQuery['pageSize']), options;
     options = {"queryId":queryId, "page":page, "sort":sort, "pageSize":pageSize, "toSort":true};
@@ -805,11 +814,11 @@ function runQuery (req, res)
             } else if (exists == 1) {
                 returnCachedQueryResult(res, options, handleQueryResponse);
             } else {
-                runNewQuery(req, res, queryId);
+                runNewQuery(req, res, queryId, reqQuery);
             }
         });
     } else {
-        runNewQuery(req, res);
+        runNewQuery(req, res, null, reqQuery);
     }
 };
 
@@ -918,9 +927,9 @@ function sortJSON(resultArray, sortParams, callback) {
     }, 2000, qsStatus, callback);
 };
 
-function runNewQuery(req, res, queryId)
+function runNewQuery(req, res, queryId, reqQuery)
 {
-    var reqQuery = req.query, tableName = reqQuery['table'], tableType = reqQuery['tableType'],
+    var tableName = reqQuery['table'], tableType = reqQuery['tableType'],
         queryId = reqQuery['queryId'], pageSize = parseInt(reqQuery['pageSize']),
         async = (reqQuery['async'] != null && reqQuery['async'] == "true") ? true : false,
         reRunTimeRange = reqQuery['reRunTimeRange'], reRunQuery = reqQuery,
@@ -1121,7 +1130,8 @@ function isEmptyObject(obj)
     return true;
 };
 
-exports.runQuery = runQuery;
+exports.runGETQuery = runGETQuery;
+exports.runPOSTQuery = runPOSTQuery;
 exports.getTables = getTables;
 exports.getColumnValues = getColumnValues;
 exports.getTableSchema = getTableSchema;
