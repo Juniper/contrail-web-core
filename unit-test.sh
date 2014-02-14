@@ -37,6 +37,8 @@ if [ $1 = 'init' ] ; then
             fi
         done
     done
+    ln -sf $THREE_BACK/contrail-web-core/.jshintrc webroot/test/.jshintrc
+    ln -sf $THREE_BACK/contrail-web-third-party/node_modules webroot/test/node_modules
     ln -sf $FOUR_BACK/contrail-web-core/.jshintrc webroot/js/test/.jshintrc
     ln -sf $FOUR_BACK/contrail-web-third-party/node_modules webroot/js/test/node_modules
 fi

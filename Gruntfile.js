@@ -56,6 +56,11 @@ module.exports = function( grunt ) {
                     UI_THIRD_PARTY + "Sinon.JS/lib/sinon/test_case.js",
                     UI_THIRD_PARTY + "Sinon.JS/lib/sinon/assert.js",
                     UI_THIRD_PARTY + "Sinon.JS/lib/sinon/match.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/util/event.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/util/fake_timers.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/util/fake_server_with_clock.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/util/fake_xml_http_request.js",
+                    UI_THIRD_PARTY + "Sinon.JS/lib/sinon/util/fake_server.js",
                 ],
                 dest: "webroot/assets/sinon/sinon.js"
             }
