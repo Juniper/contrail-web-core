@@ -18,7 +18,7 @@ var GLOBAL_CONFIG_FILE = WEB_ROOT + JS_DIR + "config_global" + JS_EXTN;
 var CONFIG_OUTPUT_DIR = WEB_ROOT + CONFIG + "/";
 
 createIncludeFile();
-readFiles();
+//readFiles();
 
 function createIncludeFile() {
     fs.stat(GLOBAL_CONFIG_FILE, function(a) {
