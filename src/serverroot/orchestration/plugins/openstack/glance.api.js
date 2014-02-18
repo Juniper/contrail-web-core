@@ -97,10 +97,11 @@ glanceApi.get = function(reqUrl, req, callback, stopRetry) {
     });
 }
 
-var imageListVerList = ['v1'];
+var imageListVerList = ['v1', 'v2'];
 
 var imageListCB = {
-    'v1': getImageListV1
+    'v1': getImageListV1,
+    'v2': getImageListV1
 };
 
 function getImageListV1 (err, data, callback)
@@ -110,15 +111,11 @@ function getImageListV1 (err, data, callback)
 
 function parseImageListByAPIVersion (err, data, apiVer, callback)
 {
-    if (null != err) {
-        imgListCB(err, data, callback);
-        return;
-    }
     var imgListCB = imageListCB[apiVer];
-    if (null == imgListCB) {
+    if ((null == imgListCB) || (null != err)) {
         var str = 'Glance API Version <' + apiVer + '>' +
             ' not supported';
-        var error = appErrors.RESTServerError(str);
+        var error = new appErrors.RESTServerError(str);
         callback(error, null);
         return;
     }
