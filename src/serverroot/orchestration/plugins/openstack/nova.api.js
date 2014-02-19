@@ -180,6 +180,40 @@ function launchVNCV11 (error, data, callback)
         callback(null, data);
     }
 }
+/* Wrapper function to Nova-Server to DELETE a VM Instance */
+novaApi.delete = function(reqUrl, req, callback, stopRetry) {
+    var headers = {};
+    var forceAuth = stopRetry;
+    var tenantId = getTenantIdByReqCookie(req);
+    if (null == tenantId) {
+        /* Just return as we will be redirected to login page */
+        return;
+    }
+
+    headers['User-Agent'] = 'Contrail-WebClient';
+    doNovaOpCb(reqUrl, tenantId, req, novaApi.get, stopRetry,
+                function(err, tokenObj) {
+        if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
+            callback(err, null);
+        } else {
+            headers['X-Auth-Token'] = tokenObj.id;
+                    novaAPIServer.api.delete(reqUrl, function(err, data) {
+                if (err) {
+                    /* Just retry in case of if it fails, it may happen that failure is
+                     * due to token change, so give one more change
+                     */
+                    if (stopRetry) {
+                                callback(err, data);
+                    } else {
+                        novaApi.get(reqUrl, req, callback, true);
+                    }
+                 } else {
+                    callback(err, data);
+                 }
+                    }, headers);
+        }
+    });
+}
 
 function getNovaData (novaCallObj, callback)
 {
@@ -429,9 +463,104 @@ function getFlavors (req, callback)
     });
 }
 
+function instanceActions(req, callback, action) 
+{
+    var tenantStr = getTenantIdByReqCookie(req);
+    if(null == tenantStr) {
+         /* Just return as we will be redirected to login page */
+        return; 
+    }
+    authApi.getTokenObj(req, tenantStr, true, function(err, data){
+        if(err) {
+            logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
+            callback(err, null);
+            return;
+        }
+        var tenantId = data['tenant']['id'];
+        var serverId = req.param('serverId');
+        var reqUrl = '/v1.1/' + tenantId + '/servers/' + serverId;
+        var postData = '';
+        if(action  === 'delete') {
+            novaApi.delete(reqUrl,  req, function(err, data){
+                callback(err, data);
+            });
+        }
+        else {
+            reqUrl = reqUrl + '/action';
+            switch(action) {
+                case 'pause':
+                    postData = {"pause":null};
+                    break;
+                case 'resume':
+                    postData = {"os-resetState": {"state": "active"}};
+                    break;
+                case 'suspend':
+                    postData = {"suspend":null};
+                    break;
+                case 'soft-reboot':
+                    postData = {"reboot": {"type": "SOFT"}};
+                    break;
+                case 'hard-reboot':
+                    postData = {"reboot": {"type": "HARD"}};
+                    break;
+                case 'create-image':
+                    var imgName = req.body['imageName'];
+                    console.log("IMG-NAME:" + imgName);
+                    postData = {"createImage": {"name": imgName, "metadata": {}}};
+                    break;
+            }
+        } 
+        novaApi.post(reqUrl, postData, req, function(err, data){
+            callback(err, data);
+        }); 
+    });
+}
+
+
+function pauseInstance(req, callback) 
+{
+    instanceActions(req, callback, 'pause');
+}
+
+function resumeInstance(req, callback) 
+{
+    instanceActions(req, callback, 'resume');    
+}
+
+function suspendInstance(req, callback) 
+{
+    instanceActions(req, callback, 'suspend'); 
+}
+
+function deleteInstance(req, callback) 
+{
+    instanceActions(req, callback, 'delete');
+}
+
+function softRebootInstance(req, callback)
+{
+    instanceActions(req, callback, 'soft-reboot');
+}
+
+function hardRebootInstance(req, callback)
+{
+    instanceActions(req, callback, 'hard-reboot');
+}
+
+function createImage(req, callback)
+{
+    instanceActions(req, callback, 'create-image');    
+}
 
 exports.launchVNC = launchVNC;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
 exports.getFlavors = getFlavors;
+exports.pauseInstance = pauseInstance;
+exports.resumeInstance = resumeInstance;
+exports.suspendInstance = suspendInstance;
+exports.deleteInstance = deleteInstance;
+exports.softRebootInstance = softRebootInstance;
+exports.hardRebootInstance = hardRebootInstance;
+exports.createImage = createImage;
 

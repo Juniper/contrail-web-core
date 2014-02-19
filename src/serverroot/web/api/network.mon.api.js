@@ -16,8 +16,8 @@ var cacheApi = require('../core/cache.api'),
     infra = require('./infraoverview.api'),
     logutils = require('../../utils/log.utils'),
     nwMonUtils = require('../../common/nwMon.utils'),
-    appErrors = require('../../errors/app.errors');
-
+    appErrors = require('../../errors/app.errors'),
+    computeApi = require('../../common/computemanager.api');
 nwMonApi = module.exports;
 opServer = rest.getAPIServer({apiName: global.label.OPS_API_SERVER, 
                               server: config.analytics.server_ip, 
@@ -2484,6 +2484,55 @@ function getInstanceDetails (req, res, appData)
     });
 }
 
+function pauseInstance(req, res, appData)
+{
+    computeApi.pauseInstance(req, function(err, data){
+        commonUtils.handleJSONResponse(err, res, data);    
+    });
+}
+
+function resumeInstance(req, res, appData)
+{
+    computeApi.resumeInstance(req, function(err, data){
+        commonUtils.handleJSONResponse(err, res, data);    
+    });
+}
+
+function suspendInstance(req, res, appData)
+{
+    computeApi.suspendInstance(req, function(err, data){
+        commonUtils.handleJSONResponse(err, res, data);    
+    });
+}
+
+function deleteInstance(req, res, appData)
+{
+    computeApi.deleteInstance(req, function(err, data){
+        commonUtils.handleJSONResponse(err, res, data);    
+    });
+}
+
+function softRebootInstance(req, res, appData)
+{
+    computeApi.softRebootInstance(req, function(err, data){
+        commonUtils.handleJSONResponse(err, res, data);    
+    });
+}
+
+function hardRebootInstance(req, res, appData)
+{
+    computeApi.hardRebootInstance(req, function(err, data){
+        commonUtils.handleJSONResponse(err, res, data);    
+    });
+}
+
+function createImage(req, res, appData)
+{
+    computeApi.createImage(req, function(err, data){
+        commonUtils.handleJSONResponse(err, res, data);    
+    });
+}
+
 /* List all public functions */
 exports.getTopNetworkDetailsByDomain = getTopNetworkDetailsByDomain;
 exports.getTopNetworkDetailsByProject = getTopNetworkDetailsByProject;
@@ -2515,4 +2564,10 @@ exports.isAllowedVN = isAllowedVN;
 exports.getVNListByProject = getVNListByProject;
 exports.getOpServerPagedResponseByLastKey = getOpServerPagedResponseByLastKey;
 exports.sortUVEList = sortUVEList;
-
+exports.pauseInstance = pauseInstance;
+exports.resumeInstance = resumeInstance;
+exports.suspendInstance = suspendInstance;
+exports.deleteInstance = deleteInstance;
+exports.softRebootInstance = softRebootInstance;
+exports.hardRebootInstance = hardRebootInstance;
+exports.createImage = createImage;
