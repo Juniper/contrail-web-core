@@ -39,7 +39,8 @@ if (!module.parent)
  * @listServiceInstances
  * public function
  * 1. URL /api/tenants/config/service-instances/:id
- * 2. Gets list of service instances for a given project
+ * 2. Gets list of service instances for a given project and get the instances
+ *    status from nova and send the status along with config data
  * 3. Needs project id as the id
  * 4. Calls listServiceInstancesCb that process data from config
  *    api server and sends back the http response.
@@ -58,6 +59,30 @@ function listServiceInstances(request, response, appData)
         function (error, data) {
             listServiceInstancesCb(error, data, response, appData, template)
         });
+}
+
+/*
+ * @listServiceInstances
+ * public function
+ * 1. URL /api/tenants/config/service-instances/:id
+ * 2. Gets list of service instances for a given project 
+ * 3. Needs project id as the id
+ * 4. Calls getServiceInstancesCb that process data from config
+ *    api server and sends back the http response.
+ */
+function getServiceInstances (request, response, appData)
+{
+    var projectId, projectURL = '/project', template;
+    var emptyResult = [];
+    if ((projectId = request.param('id'))) {
+        projectURL += '/' + projectId.toString();
+    } else {
+        //TODO - Add Language independent error code and return
+    }
+    configApiServer.apiGet(projectURL, appData,
+                           function(error, data) {
+        getServiceInstancesCB(error, data, response, appData, template);
+    });
 }
 
 /**
@@ -125,6 +150,57 @@ function listServiceInstancesCb(error, siListData, response, appData, template)
         });
 }
 
+/*
+ * @getServiceInstancesCb
+ * private function
+ * 1. Callback for getServiceInstances
+ * 2. Reads the response of per project SI list from config api server
+ *    and sends it back to the client.
+ */
+function getServiceInstancesCB(error, siListData, response, appData, template)
+{
+    var reqUrl = null;
+    var dataObjArr = [];
+    var i = 0, siLength = 0;
+    var serviceInstances = {};
+    var emptyResult = [];
+
+    if (error) {
+        commonUtils.handleJSONResponse(error, response, null);
+        return;
+    }
+
+    serviceInstances['service_instances'] = [];
+
+    if ('service_instances' in siListData['project']) {
+        serviceInstances['service_instances'] =
+            siListData['project']['service_instances'];
+    }
+
+    siLength = serviceInstances['service_instances'].length;
+
+    if (!siLength) {
+        commonUtils.handleJSONResponse(null, response, emptyResult);
+        return;
+    }
+
+    for (i = 0; i < siLength; i++) {
+        var siRef = serviceInstances['service_instances'][i];
+        reqUrl = '/service-instance/' + siRef['uuid'];
+        commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
+            null, null, null, appData);
+    }
+    async.map(dataObjArr,
+              commonUtils.getAPIServerResponse(configApiServer.apiGet, false),
+              function (error, results) {
+        if ((null != error) || (null == results)) {
+            commonUtils.handleJSONResponse(error, response, null);
+            return;
+        }
+        siGetListAggCB(results, response, appData);
+    });
+}
+
 /**
  * @siListAggCb
  * private function
@@ -142,6 +218,91 @@ function siListAggCb(error, results, response, appData, template)
     } else {
         filterOutAnalyzerInstances(results, response, appData);
     }
+}
+
+/**
+ * @getServiceInstanceStatusByProject
+ * public function
+ * 1. URL /api/tenants/config/list-service-instances/:id
+ * 2. Gets list of service instances for a given project
+ * 3. Needs project id as the id
+ * 4. Calls listServiceInstancesCb that process data from config
+ *    api server and sends back the http response.
+ */
+function getServiceInstanceStatusByProject (request, response, appData)
+{
+    var siObjArr = [];
+    var projId = request.param('id');
+    var filteredResults = request.body;
+    var instCnt = filteredResults.length;
+    var serviceInstances = {};
+    serviceInstances['service_instances'] = filteredResults;
+    for (var i = 0; i < instCnt; i++) {
+        siObjArr[i] = {};
+        siObjArr[i]['req'] = response.req;
+        siObjArr[i]['appData'] = appData;
+        siObjArr[i]['servInstId'] = filteredResults[i]['service-instance']['uuid'];
+        siObjArr[i]['servInstData'] = filteredResults[i];
+     }
+     logutils.logger.debug("VM Status Nova Query Started at:" + new Date());
+     async.map(siObjArr, getServiceInstDetails, function(err, data) {
+        logutils.logger.debug("VM Status Nova Response processed at:" + new
+                              Date());
+        commonUtils.handleJSONResponse(null, response, data);
+    });
+}
+
+/**
+ * @filterAnalyzerInstancesByType
+ * private function
+ * 1. This function is used to filter out SIs based on the type and matchReq
+      If type is matched and matchReq is set as false, then it returns all the
+      SIs which are not of type, are returned, If matchReq is set to true, then
+      only SIs which are of type, are returned
+ */
+function filterAnalyzerInstancesByType (results, type, matchReq)
+{
+    var found = false;
+    var siObjArr = [];
+    var filteredResults = [], templateRefs, serviceInstances = {},
+        i, k = 0;
+    var resLen = results.length;
+    for (i = 0; i < resLen; i++) {
+        try {
+            found = false;
+            templateRefs = results[i]['service-instance']['service_template_refs'];
+            if ((false == matchReq) && (templateRefs[0]['to'][1] != type)) {
+                found = true;
+            } else if ((true == matchReq) && (templateRefs[0]['to'][1] == type)) {
+                found = true;
+            }
+        } catch(e) {
+            logutils.logger.error("In filterAnalyzerInstancesByType:" +
+                                  "JSON Parse error:" + e);
+        }
+        if (true == found) {
+            if (templateRefs[0]['to'][1] != type) {
+                filteredResults[k] = results[i];
+                k++;
+            }
+        }
+    }
+    return filteredResults;
+}
+
+/**
+ * @siGetListAggCb
+ * private function
+ * 1. Callback for the SI gets, sends all SIs to client which are of not analyzer
+ *    template
+ */
+function siGetListAggCB (results, response, appData)
+{
+    var filteredResults =
+        filterAnalyzerInstancesByType(results,
+                                      global.DEFAULT_ANALYZER_TEMPLATE,
+                                      false);
+    commonUtils.handleJSONResponse(null, response, filteredResults);
 }
 
 /**
@@ -487,7 +648,6 @@ function updateServiceInstance(request, response, appData)
     var siPostData = request.body;
     var error;
 
-    console.log("Getting in UPDATE");
     if (typeof(siPostData) != 'object') {
         error = new appErrors.RESTServerError('Invalid Post Data');
         commonUtils.handleJSONResponse(error, response, null);
@@ -750,6 +910,48 @@ function getServiceInstanceDetails(siObj, callback) {
                 callback(err, resultJSON);
             }
         });
+    });
+}
+
+function getServiceInstDetails(siObj, callback)
+{
+    var req = siObj['req'];
+    var appData = siObj['appData'];
+    var servInstId = siObj['servInstId'];
+    var data = siObj['servInstData'];
+    var vmFound = true;
+
+    var result = {};
+    try {
+        var vmRefs = data['service-instance']['virtual_machine_back_refs'];
+        if (null == vmRefs) {
+            vmFound = false;
+        }
+    } catch (e) {
+        vmFound = false;
+    }
+    if (false == vmFound) {
+        result['ConfigData'] = data;
+        result['vmStatus'] = global.STR_VM_STATE_SPAWNING;
+        updateVMStatusByCreateTS(result);
+        callback(null, result);
+        return;
+    }
+    computeApi.getServiceInstanceVMStatus(req, vmRefs, function (err, result) {
+        if (err) {
+            logutils.logger.debug('Error in retrieving VM details for ' +
+                                  ' Instance Id: ' + servInstId +
+                                  ' with error:' + err);
+            callback(null, data);
+        } else {
+            var resultJSON = {};
+            resultJSON['ConfigData'] = data;
+            resultJSON['VMDetails'] = result;
+            /* Now update the vmStatus field */
+            resultJSON = updateVMStatus(resultJSON);
+            updateVMStatusByCreateTS(resultJSON);
+            callback(err, resultJSON);
+        }
     });
 }
 
@@ -1065,3 +1267,6 @@ exports.getServiceInstance = getServiceInstance;
 exports.configurePacketCapture4Interface = configurePacketCapture4Interface;
 exports.configurePacketCapture4Flow = configurePacketCapture4Flow;
 exports.updateServiceInstance = updateServiceInstance;
+exports.getServiceInstances = getServiceInstances;
+exports.getServiceInstanceStatusByProject = getServiceInstanceStatusByProject;
+
