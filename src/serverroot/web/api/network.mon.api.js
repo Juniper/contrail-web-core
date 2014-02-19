@@ -2286,6 +2286,32 @@ function getOpServerPagedResponseByLastKey (lastKey, count, isFromConfig,
         }
     }
     opServer.api.post(url, postData, function(err, data) {
+        if (data && data['value']) {
+            var resCnt = data['value'].length;
+            if (resCnt < count) {
+                /* We have got less number of elements compared to whatever we
+                 * sent to opSrever in kfilt, so these entries may be existing
+                 * in API Server, but not in opServer, so add these in the
+                 * response 
+                 */
+                var tempResData = {};
+                for (i = 0; i < resCnt; i++) {
+                    if (null == data['value'][i]) {
+                        continue;
+                    }
+                    vnName = data['value'][i]['name'];
+                    tempResData[vnName] = vnName;
+                }
+                var kFiltLen = postData['kfilt'].length;
+                for (i = 0; i < kFiltLen; i++) {
+                    vnName = postData['kfilt'][i];
+                    if (null == tempResData[vnName]) {
+                        tempResData[vnName] = vnName;
+                        data['value'].push({'name': vnName, 'value': {}});
+                    }
+                }
+            }
+        }
         resultJSON['data'] = data;
         resultJSON['lastKey'] = retLastUUID;
         if (null == retLastUUID) {
@@ -2347,22 +2373,8 @@ function getInstanceDetailsByFqn (fqnUUID, lastUUID, count, res, appData)
 
 function getVNListByProject (projectFqn, appData, callback)
 {
-    var resultJSON = [];
-    var url = '/virtual-networks?parent_type=project&parent_fq_name_str=' +
-        projectFqn;
-
-    configApiServer.apiGet(url, appData, function(err, data) {
-        if (err || (null == data)) {
-            callback(err, data);
-            return;
-        }
-        var vnData = data['virtual-networks'];
-        var vnCnt = vnData.length;
-        for (var i = 0; i < vnCnt; i++) {
-            resultJSON.push(vnData[i]['fq_name'].join(':'));
-        }
-        resultJSON.sort();
-        callback(null, resultJSON);
+    aggConfigVNList(projectFqn, appData, function(err, vnList) {
+        callback(err, vnList);
     });
 }
 
@@ -2387,8 +2399,7 @@ function getVirtualNetworksDetailsByFqn (fqn, lastUUID, count, res, appData)
                 return;
             }
 
-            var data = nwMonUtils.makeUVEList(vnList);
-            processVirtualNetworksReqByLastUUID(lastUUID, count, false, data,
+            processVirtualNetworksReqByLastUUID(lastUUID, count, false, vnList,
                                                 filtUrl, function(err, data) {
                 commonUtils.handleJSONResponse(err, res, data);
             });
@@ -2396,13 +2407,52 @@ function getVirtualNetworksDetailsByFqn (fqn, lastUUID, count, res, appData)
     }
 }
 
+function aggConfigVNList (fqn, appData, callback)
+{
+    var dataObjArr = [];
+    var vnList     = [];
+    var configURL = null;
+    if (null != fqn) {
+        configURL = '/virtual-networks?parent_type=project&parent_fq_name_str=' +
+            fqn;
+    } else {
+        configURL = '/virtual-networks';
+    }
+    configApiServer.apiGet(configURL, appData, function(err, configVNData) {
+    
+        if (err || (null == configVNData)) {
+            callback(err, vnList);
+            return;
+        }
+        var vnName = null;
+        var tmpVNList = {};
+        if ((null != configVNData) && 
+            (null != configVNData['virtual-networks'])) {
+            var vnConfigList = configVNData['virtual-networks'];
+            var vnConfigCnt = vnConfigList.length;
+            for (var i = 0; i < vnConfigCnt; i++) {
+                try {
+                    vnName =
+                        configVNData['virtual-networks'][i]['fq_name'].join(':');
+                } catch(e) {
+                    continue;
+                }
+                tmpVNList[vnName] = vnName;
+                vnList.push({'name': vnName});
+            }
+        }
+        callback(err, vnList);
+    });
+}
+
 function getVirtualNetworksDetails (req, res, appData)
 {
     var fqn = req.query['fqn'];
     var lastUUID = req.query['lastKey'];
     var count = req.query['count'];
-    var url = '/analytics/uves/virtual-networks';
     var filtUrl = null;
+    var vnList = [];
+    var dataObjArr = [];
 
     var resultJSON = createEmptyPaginatedData();
     var filtData = infra.buildBulkUVEUrls(res.req.body, appData);
@@ -2418,13 +2468,13 @@ function getVirtualNetworksDetails (req, res, appData)
         getVirtualNetworksDetailsByFqn(fqn, lastUUID, count, res, appData);
         return;
     }
-    opApiServer.apiGet(url, appData, function(err, data) {
-        if (err || (null == data)) {
+    aggConfigVNList(null, appData, function(err, vnList) {
+        vnList.sort(sortUVEList);
+        if (0 == vnList.length) {
             commonUtils.handleJSONResponse(err, res, resultJSON);
             return;
         }
-        data.sort(sortUVEList);
-        processVirtualNetworksReqByLastUUID(lastUUID, count, false, data, 
+        processVirtualNetworksReqByLastUUID(lastUUID, count, false, vnList, 
                                             filtUrl, function(err, data) {
             commonUtils.handleJSONResponse(err, res, data);
         });
