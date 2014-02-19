@@ -953,6 +953,19 @@
         <callback>siconfigapi.listServiceInstances</callback>
     </item>
     <item>
+        <url>/api/tenants/config/list-service-instances/:id</url>
+        <method>get</method>
+        <feature>siconfig</feature>
+        <callback>siconfigapi.getServiceInstances</callback>
+    </item>
+    <item>
+        <url>/api/tenants/config/service-instances-status/:id</url>
+        <method>post</method>
+        <feature>siconfig</feature>
+        <timeout>900000</timeout>
+        <callback>siconfigapi.getServiceInstanceStatusByProject</callback>
+    </item>
+    <item>
         <url>/api/tenants/config/service-instance/:id</url>
         <method>get</method>
         <feature>siconfig</feature>
