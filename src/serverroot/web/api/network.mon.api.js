@@ -2373,7 +2373,7 @@ function getInstanceDetailsByFqn (fqnUUID, lastUUID, count, res, appData)
 
 function getVNListByProject (projectFqn, appData, callback)
 {
-    aggConfigUVEVNList(projectFqn, appData, function(err, vnList) {
+    aggConfigVNList(projectFqn, appData, function(err, vnList) {
         callback(err, vnList);
     });
 }
@@ -2407,9 +2407,8 @@ function getVirtualNetworksDetailsByFqn (fqn, lastUUID, count, res, appData)
     }
 }
 
-function aggConfigUVEVNList (fqn, appData, callback)
+function aggConfigVNList (fqn, appData, callback)
 {
-    var dataObjArr = [];
     var vnList     = [];
     var configURL = null;
     if (null != fqn) {
@@ -2418,24 +2417,12 @@ function aggConfigUVEVNList (fqn, appData, callback)
     } else {
         configURL = '/virtual-networks';
     }
-    commonUtils.createReqObj(dataObjArr, configURL,
-                             global.HTTP_REQUEST_GET,
-                             null, configApiServer, null, appData);
-    var uveURL = '/analytics/uves/virtual-networks';
-    commonUtils.createReqObj(dataObjArr, uveURL,
-                             global.HTTP_REQUEST_GET, 
-                             null, opApiServer, null, appData);
-    async.map(dataObjArr,
-              commonUtils.getServerResponseByRestApi(configApiServer,
-                                                     true),
-              function(err, data) {
-        if (err || (null == data)) {
+    configApiServer.apiGet(configURL, appData, function(err, configVNData) {
+        if (err || (null == configVNData)) {
             callback(err, vnList);
             return;
         }
-        var configVNData = data[0];
         var vnName = null;
-        var tmpVNList = {};
         if ((null != configVNData) && 
             (null != configVNData['virtual-networks'])) {
             var vnConfigList = configVNData['virtual-networks'];
@@ -2447,25 +2434,11 @@ function aggConfigUVEVNList (fqn, appData, callback)
                 } catch(e) {
                     continue;
                 }
-                tmpVNList[vnName] = vnName;
                 vnList.push({'name': vnName});
             }
         }
-        var uveVNData = data[1];
-        if (null != uveVNData) {
-            var vnUVECnt = uveVNData.length;
-            for (i = 0; i < vnUVECnt; i++) {
-                try {
-                    vnName = uveVNData[i]['name'];
-                } catch(e) {
-                    continue;
-                }
-                if ((null == tmpVNList[vnName]) &&
-                    (-1 != vnName.indexOf(fqn))) {
-                    vnList.push({'name': vnName});
-                    tmpVNList[vnName] = vnName;
-                }
-            }
+        if (0 != vnList.length) {
+            vnList.sort(sortUVEList);
         }
         callback(err, vnList);
     });
@@ -2494,8 +2467,7 @@ function getVirtualNetworksDetails (req, res, appData)
         getVirtualNetworksDetailsByFqn(fqn, lastUUID, count, res, appData);
         return;
     }
-    aggConfigUVEVNList(null, appData, function(err, vnList) {
-        vnList.sort(sortUVEList);
+    aggConfigVNList(null, appData, function(err, vnList) {
         if (0 == vnList.length) {
             commonUtils.handleJSONResponse(err, res, resultJSON);
             return;
