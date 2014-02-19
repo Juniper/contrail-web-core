@@ -1415,6 +1415,12 @@
         <callback>adminapi.getOrchestrationPluginModel</callback>
     </item>
     <item>
+        <url>/api/service/networking/web-server-info</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>adminapi.getWebServerInfo</callback>
+    </item>
+    <item>
         <url>/api/admin/config/get-data</url>
         <method>get</method>
         <feature>orchestration</feature>

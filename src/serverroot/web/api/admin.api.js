@@ -1966,6 +1966,22 @@ function sendConfigPagedResponse (err, data, res, retLastKey)
     commonUtils.handleJSONResponse(err, res, result);
 }
 
+/* Function: getWebServerInfo
+   Req URL: /api/service/networking/web-server-info
+   Send basic information about Web Server
+ */
+function getWebServerInfo (req, res, appData)
+{
+    var serverObj = plugins.getOrchestrationPluginModel();
+    if (null == serverObj) {
+        /* We will not come here any time */
+        logutils.logger.error("We did not get Orchestration Model");
+        assert(0);
+    }
+    serverObj ['serverUTCTime'] = commonUtils.getCurrentUTCTime();
+    commonUtils.handleJSONResponse(null, res, serverObj);
+}
+
 exports.updateGlobalASN = updateGlobalASN;
 exports.getGlobalASN    = getGlobalASN;
 exports.deleteBGPRouter = deleteBGPRouter;
@@ -1979,5 +1995,6 @@ exports.getControlNodeDetailsFromConfig = getControlNodeDetailsFromConfig;
 exports.getApiServerDataByPage = getApiServerDataByPage;
 exports.getvRouterL2Routes = getvRouterL2Routes;
 exports.getWebConfigValueByName = getWebConfigValueByName;
+exports.getWebServerInfo = getWebServerInfo;
 
 
