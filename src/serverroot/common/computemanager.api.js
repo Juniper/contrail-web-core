@@ -52,8 +52,56 @@ function getVMStatsByProject (projUUID, req, callback)
 
 function getFlavors(req, callback)
 {
-    computeApi.getFlavors(req, function(err,data){
-        callback(err,data);
+    computeApi.getFlavors(req, function(err, data) {
+        callback(err, data);
+    });
+}
+
+function pauseInstance(req, callback)
+{
+    computeApi.pauseInstance(req, function(err, data) {
+        callback(err, data); 
+    });  
+}
+
+function resumeInstance(req, callback)
+{
+    computeApi.resumeInstance(req, function(err, data) {
+        callback(err, data);
+    });
+}
+
+function suspendInstance(req, callback)
+{
+    computeApi.suspendInstance(req, function(err, data) {
+        callback(err, data);
+    });
+}
+
+function deleteInstance(req, callback)
+{
+    computeApi.deleteInstance(req, function(err, data) {
+        callback(err, data);
+    });
+}
+
+function softRebootInstance(req, callback)
+{
+    computeApi.softRebootInstance(req, function(err, data) {
+        callback(err, data);
+    });
+}
+function hardRebootInstance(req, callback)
+{
+    computeApi.hardRebootInstance(req, function(err, data) {
+        callback(err, data);
+    });
+}
+
+function createImage(req, callback)
+{
+    computeApi.createImage(req, function(err, data) {
+        callback(err, data);
     });
 }
 
@@ -63,3 +111,11 @@ exports.launchVNC = launchVNC;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
 exports.getFlavors = getFlavors;
+exports.pauseInstance = pauseInstance;
+exports.resumeInstance = resumeInstance;
+exports.suspendInstance = suspendInstance;
+exports.deleteInstance = deleteInstance;
+exports.softRebootInstance = softRebootInstance;
+exports.hardRebootInstance = hardRebootInstance;
+exports.createImage = createImage;
+

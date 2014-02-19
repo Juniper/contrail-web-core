@@ -1258,6 +1258,48 @@
         <callback>nwMonApi.getTopNetworkDetailsByDomain</callback>
     </item>
     <item>
+        <url>/api/tenant/networking/pause-instance</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>nwMonApi.pauseInstance</callback>
+    </item>
+    <item>
+        <url>/api/tenant/networking/resume-instance</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>nwMonApi.resumeInstance</callback>
+    </item>
+    <item>
+        <url>/api/tenant/networking/suspend-instance</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>nwMonApi.suspendInstance</callback>
+    </item>
+    <item>
+        <url>/api/tenant/networking/delete-instance</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>nwMonApi.deleteInstance</callback>
+    </item>
+    <item>
+        <url>/api/tenant/networking/soft-reboot-instance</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>nwMonApi.softRebootInstance</callback>
+    </item>
+    <item>
+        <url>/api/tenant/networking/hard-reboot-instance</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>nwMonApi.hardRebootInstance</callback>
+    </item>
+    <item>
+        <url>/api/tenant/networking/create-image</url>
+        <method>post</method>
+        <feature>monitoring</feature>
+        <callback>nwMonApi.createImage</callback>
+    </item>
+    <item>
       <url>/api/tenant/networking/project/stats/top</url>
         <method>get</method>
         <timeout>300000</timeout>
