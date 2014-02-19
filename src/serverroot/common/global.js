@@ -101,6 +101,7 @@ global.HTTP_STATUS_FORBIDDEN_STR = 'Unauthorized access';
 global.HTTP_STATUS_INTERNAL_ERROR = 500;
 global.HTTP_STATUS_GATEWAY_TIMEOUT = 504;
 global.STR_CACHE_RETRIEVE_ERROR = 'Server data retrieval error';
+global.STR_CACHE_RETRIEVE_ERROR_IN_TIME = 'Server data retrieval error in time';
 global.STR_HTTP_REQ_INTERNAL_ERROR = 'Internal error occurred';
 global.STR_JOB_TYPE_CACHE_FLOW_DATA = 'cacheFlowData';
 global.STR_JOB_TYPE_CACHE_FLOW_DATA_TIME = 'cacheFlowDataTime';
