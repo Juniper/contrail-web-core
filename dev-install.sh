@@ -104,11 +104,6 @@ if [ $1 = 'prod' ] ; then
     cp -r ../contrail-web-third-party/slickgrid.enhancement.pager/libs/jquery.dropkick-1.0.0.js webroot/assets/slickgrid/js/jquery.dropkick-1.0.0.js
 
     cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.grid.css webroot/assets/slickgrid/styles/slick.grid.css
-
-    cp -r ../contrail-web-third-party/slickgrid.enhancement.pager/libs/enhancementpager.css webroot/assets/slickgrid/styles/enhancementpager.css
-    cp -r ../contrail-web-third-party/slickgrid.enhancement.pager/libs/dropkick.css webroot/assets/slickgrid/styles/dropkick.css
-
-    cp -r ../contrail-web-third-party/slickgrid.enhancement.pager/images webroot/assets/slickgrid/images
     #End - Copy Slickgrid from contrail-web-third-party
 
     #Start - Cooy Datetimepicker from contrail-web-third-party
@@ -224,11 +219,6 @@ else
     ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid.enhancement.pager/libs/jquery.dropkick-1.0.0.js webroot/assets/slickgrid/js/jquery.dropkick-1.0.0.js
 
     ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.grid.css webroot/assets/slickgrid/styles/slick.grid.css
-
-    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid.enhancement.pager/libs/enhancementpager.css webroot/assets/slickgrid/styles/enhancementpager.css
-    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid.enhancement.pager/libs/dropkick.css webroot/assets/slickgrid/styles/dropkick.css
-
-    ln -sf $FOUR_BACK/contrail-web-third-party/slickgrid.enhancement.pager/images webroot/assets/slickgrid/images
     #End - Link Slickgrid from contrail-web-third-party
 
     #Start - Link Datetimepicker from contrail-web-third-party
