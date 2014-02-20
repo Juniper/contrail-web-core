@@ -101,6 +101,7 @@ config.redisDBIndex = 1;
 /* WebUI Redis Server */
 config.redis_server_port = '6383';
 config.redis_server_ip = '127.0.0.1';
+config.redis_dump_file = '/var/lib/redis/dump-webui.rdb';
 
 /* Cache Expiry Time */
 config.cacheExpire = {};
