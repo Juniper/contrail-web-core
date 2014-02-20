@@ -164,6 +164,7 @@ messageHandler = function (msg) {
 }
 
 var workers = [];
+var timeouts = [];
 
 addClusterEventListener = function () {
 	cluster.on('fork', function (worker) {
@@ -229,7 +230,7 @@ if (cluster.isMaster) {// && (process.env.NODE_CLUSTERED == 1)) {
 	bindProducerSocket();
 	addProducerSockListener();
 
-	var timeouts = [], i;
+	var i;
 	for (i = 0; i < nodeWorkerCount; i += 1) {
 		var worker = cluster.fork();
 		workers[i] = worker;
