@@ -419,6 +419,13 @@
         <callback>infra.getControlNodePeerInfo</callback>
     </item>
     <item>
+        <!-- Get bgp-peer list paginated response -->
+        <url>/api/admin/monitor/infrastructure/controlnode/paged-bgppeer</url>
+        <method>get</method>
+        <feature>control-node</feature>
+        <callback>infra.getControlNodePeerPagedInfo</callback>
+    </item>
+    <item>
         <!-- Lists the bgp-peers -->
         <url>/api/admin/monitor/infrastructure/controlnode/peer-list</url>
         <method>get</method>
