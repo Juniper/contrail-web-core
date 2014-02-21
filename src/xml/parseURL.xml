@@ -480,6 +480,7 @@
         <url>/api/admin/monitor/infrastructure/vrouters/cached-summary</url>
         <method>get</method>
         <feature>compute-node</feature>
+        <timeout>300000</timeout>
         <callback>infra.getvRoutersSummaryByJob</callback>
     </item>
     <item>
@@ -487,6 +488,7 @@
         <url>/api/admin/monitor/infrastructure/vrouters/cached-generators</url>
         <method>get</method>
         <feature>compute-node</feature>
+        <timeout>300000</timeout>
         <callback>infra.getvRouterGenerators</callback>
     </item>
     <item>
