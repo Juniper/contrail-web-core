@@ -258,7 +258,12 @@ function getvRouterAsyncResp (dataObj, callback)
 function getvRouterSummaryConfigUVEData (configData, uuidList, nodeList, addGen,
                                          appData, callback)
 {
+    var newResult = [];
+    var newResultLen = 0;
     var dataObjArr = [];
+    var configFound = true;
+    var index;
+
     if (null != uuidList) {
         len = uuidList.length;
     } else if (null != configData) {
@@ -315,6 +320,17 @@ function getvRouterSummaryConfigUVEData (configData, uuidList, nodeList, addGen,
         dataObjArr[0 + 1]['cfilt'] = cfilt;
         dataObjArr[0 + 1]['configData'] = false;
     }
+    /* As Config Data we are already getting, so check if we have got Config or
+     * not 
+     */
+    if (!dataObjArr[0].length) {
+        /* We did not get config data */
+        dataObjArr.splice(0, 1);
+        configFound = false;
+        index = 0;
+    } else {
+        index = 1;
+    }
     async.mapSeries(dataObjArr, getvRouterAsyncResp, function(err, results) {
         if ((null != err) || (null == results)) {
             callback(err, results, len);
@@ -322,11 +338,20 @@ function getvRouterSummaryConfigUVEData (configData, uuidList, nodeList, addGen,
         }
         var cnt = results.length;
         var resultJSON = [];
-        for (var i = 1 ; i < cnt; i++) {
-            resultJSON = resultJSON.concat(results[i]['value']);
+        for (var i = index; i < cnt; i++) {
+            try {
+                resultJSON = resultJSON.concat(results[i]['value']);
+            } catch(e) {
+                logutils.logger.error("In getvRouterSummaryConfigUVEData():" +
+                                      "JSON Parse error: " + e);
+            }
         }
-        var newResult = results[0];
-        var newResultLen = newResult.length;
+        if (true == configFound) {
+            newResult = results[0];
+            newResultLen = newResult.length;
+        } else {
+            newResultLen = 0;
+        }
         newResult[newResultLen] = {};
         newResult[newResultLen]['value'] = resultJSON;
         callback(err, newResult, len);
@@ -418,7 +443,7 @@ function getvRouterList (appData, callback)
     commonUtils.createReqObj(dataObjArr, url, null, null, opApiServer, null,
                              appData);
     async.map(dataObjArr,
-              commonUtils.getServerResponseByRestApi(configApiServer, false),
+              commonUtils.getServerResponseByRestApi(configApiServer, true),
               function(err, results) {
         if (err || (null == results)) {
             callback(err, results, null);
@@ -430,6 +455,7 @@ function getvRouterList (appData, callback)
         } catch(e) {
             logutils.logger.info("In getvRouterList(), vRouter Config not " +
                                   "found");
+            vrCnt = 0;
         }
         for (var i = 0; i < vrCnt; i++) {
             try {
@@ -449,6 +475,7 @@ function getvRouterList (appData, callback)
         } catch(e) {
             logutils.logger.info("In getvRouterList(), vRouter UVE not " +
                                  "found");
+            vrCnt = 0;
         }
         for (i = 0; i < vrCnt; i++) {
             try {
