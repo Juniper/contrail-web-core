@@ -294,6 +294,11 @@ function createTimeQueryJsonObj (minsSince, endTime)
 {
     var startTime = 0, timeObj = {};
 
+    if ((null != minsSince) && ((null == endTime) || ('' == endTime))) {
+        timeObj['start_time'] = 'now-' + minsSince +'m';
+        timeObj['end_time'] = 'now';
+        return timeObj;
+    }
     if(endTime != null && endTime != '' ) {
         try {
             endTime = parseInt(endTime);
@@ -817,8 +822,16 @@ function createTimeQueryJsonObjByAppData (appData)
     var timeObj = {};
 
     if (appData['startTime']) {
-        timeObj['start_time'] = parseInt(appData['startTime']) * 1000;
-        timeObj['end_time'] = parseInt(appData['endTime']) * 1000;
+        if (true == isNaN(appData['startTime'])) {
+            timeObj['start_time'] = appData['startTime'];
+        } else {
+            timeObj['start_time'] = parseInt(appData['startTime']) * 1000;
+        }
+        if (true == isNaN(appData['endTime'])) {
+            timeObj['end_time'] = appData['endTime'];
+        } else {
+            timeObj['end_time'] = parseInt(appData['endTime']) * 1000;
+        }
     } else {
         timeObj = createTimeQueryJsonObj(appData['minsSince']);
     }
