@@ -1280,7 +1280,7 @@ function getControlNodePeerInfo (req, res, appData)
     var hostName = req.param('hostname');
     var urlLists = [];
 
-    urlLists[0] = '/analytics/bgp-peer/*' + hostName + '*';
+    urlLists[0] = '/analytics/bgp-peer/*:' + hostName + ':*';
     urlLists[1] = '/analytics/xmpp-peer/' + hostName + ':*?flat';
 
     async.map(urlLists, commonUtils.getJsonViaInternalApi(opServer.api, true),
@@ -1290,6 +1290,186 @@ function getControlNodePeerInfo (req, res, appData)
        resultJSON['xmpp-peer'] = results[1];
        commonUtils.handleJSONResponse(err, res, resultJSON);
     });
+}
+
+function getPagedPeerData (peerList, hostName, count, lastKey, appData, callback)
+{
+    var resultJSON = {};
+    var dataObjArr = [];
+    resultJSON['data'] = {};
+    resultJSON['data']['bgp-peer'] = {};
+    resultJSON['data']['bgp-peer']['value'] = [];
+    resultJSON['data']['xmpp-peer'] = {};
+    resultJSON['data']['xmpp-peer']['value'] = [];
+    resultJSON['lastKey'] = null;
+    resultJSON['more'] = false;
+    var retLastKey = null;
+
+    var matchStr = 'name';
+    var index = nwMonUtils.getnThIndexByLastKey(lastKey, peerList, matchStr); 
+    if (-2 == index) {
+        callback(null, resultJSON);
+        null;
+    }
+    try {
+        var cnt = peerList.length;
+    } catch(e) {
+        callback(null, resultJSON);
+        return;
+    }
+    if (cnt == index) {
+        /* We are already at end */
+        callback(null, resultJSON);
+        return;
+    }
+    if (-1 == count) {
+        totCnt = cnt;
+    } else {
+        totCnt = index + 1 + count;
+    }
+    if (totCnt < cnt) {
+        retLastKey = peerList[totCnt - 1][matchStr];
+    }
+    var bgpPostData = {};
+    bgpPostData['kfilt'] = [];
+    var xmppPostData = {};
+    xmppPostData['kfilt'] = [];
+
+    for (var i = index + 1; i < totCnt; i++) {
+        if (peerList[i]) {
+            if ('bgp-peer' == peerList[i]['type']) {
+                bgpPostData['kfilt'].push(peerList[i]['name']);
+            }
+            if ('xmpp-peer' == peerList[i]['type']) {
+                xmppPostData['kfilt'].push(peerList[i]['name']);
+            }
+        }
+    }
+    if (bgpPostData['kfilt'].length > 0) {
+        var bgpPeerUrl = '/analytics/uves/bgp-peer';
+        commonUtils.createReqObj(dataObjArr, bgpPeerUrl,
+                                 global.HTTP_REQUEST_POST, 
+                                 commonUtils.cloneObj(bgpPostData), null, null,
+                                 appData);
+    }
+    if (xmppPostData['kfilt'].length > 0) {
+        var xmppPeerUrl = '/analytics/uves/xmpp-peer';
+        commonUtils.createReqObj(dataObjArr, xmppPeerUrl,
+                                 global.HTTP_REQUEST_POST, 
+                                 commonUtils.cloneObj(xmppPostData), null, null,
+                                 appData);
+    }
+    if (0 == dataObjArr.length) {
+        callback(null, resultJSON);
+        return;
+    }
+    async.map(dataObjArr, 
+              commonUtils.getServerResponseByRestApi(opApiServer, true),
+              function(err, data) {
+        if ((null != err) || (null == data)) {
+            callback(err, resultJSON);
+            return;
+        }
+        if (bgpPostData['kfilt'].length > 0) {
+            bgpArrIdx = 0;
+            if (xmppPostData['kfilt'].length > 0) {
+                xmppArrIdx = 1;
+            } else {
+                xmppArrIdx = -1;
+            }
+        } else {
+            bgpArrIdx = -1;
+            if (xmppPostData['kfilt'].length > 0) {
+                xmppArrIdx = 0;
+            } else {
+                xmppArrIdx = -1;
+            }
+        }
+        if (-1 != bgpArrIdx) {
+            resultJSON['data']['bgp-peer'] = data[bgpArrIdx];
+        } else {
+            resultJSON['data']['bgp-peer']['value'] = [];
+        }
+        if (-1 != xmppArrIdx) {
+            resultJSON['data']['xmpp-peer'] = data[xmppArrIdx];
+        } else {
+            resultJSON['data']['xmpp-peer']['value'] = [];
+        }
+        resultJSON['lastKey'] = retLastKey;
+        if (null == retLastKey) {
+            resultJSON['more'] = false;
+        } else {
+            resultJSON['more'] = true;
+        }
+        callback(err, resultJSON);
+    });
+}
+
+function getControlNodePeerPagedInfo (req, res, appData)
+{
+    var hostName = req.param('hostname');
+    var resultJSON = [];
+    var urlLists = [];
+    var peerList = [];
+    var count = req.param('count');
+    var lastKey = req.param('lastKey');
+    var name = null;
+
+    if (null == count) {
+        count = -1;
+    } else {
+        count = parseInt(count);
+    }
+    urlLists[0] = '/analytics/bgp-peers';
+    urlLists[1] = '/analytics/xmpp-peers';
+
+    async.map(urlLists, commonUtils.getJsonViaInternalApi(opServer.api, true),
+              function(err, results) {
+        if ((null != err) || (null == results)) {
+            commonUtils.handleJSONResponse(err, res, resultJSON);
+            return;
+        }
+        if (null != results[0]) {
+            var bgpPeerCnt = results[0].length;
+            for (var i = 0; i < bgpPeerCnt; i++) {
+                try {
+                    name = results[0][i]['name'];
+                    if (-1 != name.indexOf(':' + hostName + ':')) {
+                        peerList.push({'name': name, 'type': 'bgp-peer'});
+                    }
+                } catch(e) {
+                    continue;
+                }
+            }
+        }
+        if (null != results[1]) {
+            var xmppPeerCnt = results[1].length;
+            for (var i = 0; i < xmppPeerCnt; i++) {
+                try {
+                    name = results[1][i]['name'];
+                    if (-1 != name.indexOf(hostName + ':')) {
+                        peerList.push({'name': name, 'type': 'xmpp-peer'});
+                    }
+                } catch(e) {
+                    continue;
+                }
+            }
+        }
+        peerList.sort(sortUVEList);
+        getPagedPeerData(peerList, hostName, count, lastKey, appData, function(err, data) {
+            commonUtils.handleJSONResponse(err, res, data);
+        });
+    });
+}
+
+function sortUVEList (uveEntry1, uveEntry2)
+{
+    if (uveEntry1['name'] > uveEntry2['name']) {
+        return 1;
+    } else if (uveEntry1['name'] < uveEntry2['name']) {
+        return -1;
+    }
+    return 0;
 }
 
 function getControlNodePeerDetails (req, res, appData)
@@ -1828,4 +2008,5 @@ exports.postProcessConfigNodeSummary = postProcessConfigNodeSummary;
 exports.postProcessConfigNodeDetails = postProcessConfigNodeDetails;
 exports.postProcessAnalyticsNodeSummaryJSON =
     postProcessAnalyticsNodeSummaryJSON;
+exports.getControlNodePeerPagedInfo = getControlNodePeerPagedInfo;
 
