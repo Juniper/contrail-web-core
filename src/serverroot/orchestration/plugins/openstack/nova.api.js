@@ -272,7 +272,7 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
                 callback(error, null);
                 return;
             }
-            var reqUrlPrefix = '/servers/' + vmRefs[0]['uuid'];
+            var reqUrlPrefix = '/' + tenantId + '/servers/' + vmRefs[0]['uuid'];
             var startIndex = 0;
             novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex, 
                                        function (error, data, ver) {

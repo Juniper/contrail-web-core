@@ -666,16 +666,9 @@ function updateVNPolicyRefs (vnConfig, response, appData)
             commonUtils.handleJSONResponse(err, response, null);
             return;
         }
-        updateFloatingIpList(vnId, vnPutData, appData, response, 
-                             function(err, data) {
-            if (err) {
-                commonUtils.handleJSONResponse(err, response, null);
-            } else {
-                readVirtualNetworkAsync({uuid:vnId, appData:appData},
-                                        function(err, data) {
-                    commonUtils.handleJSONResponse(err, response, data);
-                });
-            }
+        readVirtualNetworkAsync({uuid:vnId, appData:appData},
+                                function(err, data) {
+            commonUtils.handleJSONResponse(err, response, data);
         });
     }); 
 }
@@ -687,14 +680,22 @@ function updateVirtualNetwork (request, response, appData)
 
     var reqUrl = '/virtual-network/' + vnId;
 
-    configApiServer.apiGet(reqUrl, appData, function(err, data) {
-        if (err || (null == data)) {
-            var error = new appErrors.RESTServerError('Virtual Network Id' +
-                                                      vnId + ' does not exist');
-            commonUtils.handleJSONResponse(error, response, null);
+    vnPutData['virtual-network']['uuid'] = vnId;
+    updateFloatingIpList(vnId, vnPutData, appData, response,
+                         function(err, data) {
+        if (err) {
+            commonUtils.handleJSONResponse(err, response, null);
             return;
         }
-        updateVNPolicyRefs(data, response, appData);
+        configApiServer.apiGet(reqUrl, appData, function(err, data) {
+            if (err || (null == data)) {
+                var error = new appErrors.RESTServerError('Virtual Network Id' +
+                                                          vnId + ' does not exist');
+                commonUtils.handleJSONResponse(error, response, null);
+                return;
+            }
+            updateVNPolicyRefs(data, response, appData);
+        });
     });
 }
 

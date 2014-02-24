@@ -480,6 +480,7 @@
         <url>/api/admin/monitor/infrastructure/vrouters/cached-summary</url>
         <method>get</method>
         <feature>compute-node</feature>
+        <timeout>300000</timeout>
         <callback>infra.getvRoutersSummaryByJob</callback>
     </item>
     <item>
@@ -487,6 +488,7 @@
         <url>/api/admin/monitor/infrastructure/vrouters/cached-generators</url>
         <method>get</method>
         <feature>compute-node</feature>
+        <timeout>300000</timeout>
         <callback>infra.getvRouterGenerators</callback>
     </item>
     <item>
@@ -953,6 +955,19 @@
         <callback>siconfigapi.listServiceInstances</callback>
     </item>
     <item>
+        <url>/api/tenants/config/list-service-instances/:id</url>
+        <method>get</method>
+        <feature>siconfig</feature>
+        <callback>siconfigapi.getServiceInstances</callback>
+    </item>
+    <item>
+        <url>/api/tenants/config/service-instances-status/:id</url>
+        <method>post</method>
+        <feature>siconfig</feature>
+        <timeout>900000</timeout>
+        <callback>siconfigapi.getServiceInstanceStatusByProject</callback>
+    </item>
+    <item>
         <url>/api/tenants/config/service-instance/:id</url>
         <method>get</method>
         <feature>siconfig</feature>
@@ -1407,6 +1422,12 @@
         <method>get</method>
         <feature>orchestration</feature>
         <callback>adminapi.getOrchestrationPluginModel</callback>
+    </item>
+    <item>
+        <url>/api/service/networking/web-server-info</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>adminapi.getWebServerInfo</callback>
     </item>
     <item>
         <url>/api/admin/config/get-data</url>

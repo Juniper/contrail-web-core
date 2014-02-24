@@ -164,6 +164,7 @@ messageHandler = function (msg) {
 }
 
 var workers = [];
+var timeouts = [];
 
 addClusterEventListener = function () {
 	cluster.on('fork', function (worker) {
@@ -197,12 +198,39 @@ addClusterEventListener = function () {
 	});
 }
 
+function checkAndDeleteRedisRDB (callback)
+{
+    var redisRdb = config.redis_dump_file;
+    if (null == redisRdb) {
+        redisRdb = '/var/lib/redis/dump-webui.rdb';
+    }
+    fs.stat(redisRdb, function(err, stats) {
+        if ((null == err) && (null != stats) && (0 === stats.size)) {
+            logutils.logger.debug('dump-webui.rdb size is 0, trying to ' +
+                                 'delete');
+            fs.unlink(redisRdb, function(err) {
+                if (null != err) {
+                    logutils.logger.error('Delete of zero sized ' +
+                                          'dump-webui.rdb failed!!!');
+                } else {
+                    logutils.logger.debug('zero sized dump-webui.rdb ' +
+                                          'deleted successfully');
+                }
+                callback();
+            });
+        } else {
+            callback();
+        }
+    });
+}
+
 if (cluster.isMaster) {// && (process.env.NODE_CLUSTERED == 1)) {
+  checkAndDeleteRedisRDB(function() {
 	logutils.logger.info("Starting Contrail UI in clustered mode.");
 	bindProducerSocket();
 	addProducerSockListener();
 
-	var timeouts = [], i;
+	var i;
 	for (i = 0; i < nodeWorkerCount; i += 1) {
 		var worker = cluster.fork();
 		workers[i] = worker;
@@ -223,6 +251,7 @@ if (cluster.isMaster) {// && (process.env.NODE_CLUSTERED == 1)) {
 		});
 	}
     doPreStartServer(false);
+  });
 } else {
 	registerReqToApp();
 	/* Set maxListener to unlimited */
