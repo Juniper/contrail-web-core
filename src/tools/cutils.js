@@ -187,7 +187,7 @@ function removeRTString(rt) {
     return rt;
 }
 
-function formatPolicyRule(rule) {
+function formatPolicyRule(rule, domain, project) {
     var rule_display = "";
     if (isSet(rule) && !rule.hasOwnProperty("length")) {
         if (isSet(rule["action_list"]) && isSet(rule["action_list"]["simple_action"]))
@@ -195,12 +195,12 @@ function formatPolicyRule(rule) {
 
         if (isSet(rule["application"]) && rule["application"].length > 0) {
             rule_display += " application " + rule["application"].toString();
-            var src_addr = policy_net_display(rule["src_addresses"]); 
+            var src_addr = policy_net_display(rule["src_addresses"], domain, project); 
             if(isSet(src_addr))
                 rule_display += " network " + src_addr;
             if(isSet(rule["direction"]))
             	rule_display += " " + rule["direction"];
-            var dest_addr = policy_net_display(rule["dst_addresses"]);
+            var dest_addr = policy_net_display(rule["dst_addresses"], domain, project);
             if(isSet(dest_addr))
             	rule_display += " network " + dest_addr;
             if (isSet(rule["action_list"]))
@@ -211,7 +211,7 @@ function formatPolicyRule(rule) {
             if (isSet(rule["protocol"]))
                 rule_display += " protocol " + rule["protocol"].toString();
             
-            var src_addr = policy_net_display(rule["src_addresses"]); 
+            var src_addr = policy_net_display(rule["src_addresses"], domain, project); 
             if(isSet(src_addr))
                 rule_display += " network " + src_addr;
 
@@ -222,7 +222,7 @@ function formatPolicyRule(rule) {
             if(isSet(rule["direction"]))
             	rule_display += " " + rule["direction"];
 
-            var dest_addr = policy_net_display(rule["dst_addresses"]); 
+            var dest_addr = policy_net_display(rule["dst_addresses"], domain, project); 
             if(isSet(dest_addr))
                 rule_display += " network " + dest_addr;
 
@@ -238,7 +238,7 @@ function formatPolicyRule(rule) {
     return rule_display;
 }
 
-function policy_net_display(nets) {
+function policy_net_display(nets, domain, project) {
     var net_disp_all = "";
     if (isSet(nets) && nets.length > 0) {
         for (var i = 0; i < nets.length; i++) {
@@ -252,8 +252,19 @@ function policy_net_display(nets) {
                     net_disp +=
                         net["subnet"]["ip_prefix"] + "/" +
                             net["subnet"]["ip_prefix_len"];
-                if (isSet(net["virtual_network"]))
-                    net_disp += net["virtual_network"].toString();
+                if (isSet(net["virtual_network"])) {
+                	if(isSet(domain) && isSet(project) && isString(domain) &&
+                		isString(project)) {
+                		var splits = net["virtual_network"].split(":");
+                		if(domain === splits[0] && project === splits[1]) {
+                			net_disp += splits[2];
+                		} else {
+                			net_disp += net["virtual_network"].toString();
+                		}
+                	} else {
+                		net_disp += net["virtual_network"].toString();	
+                	}
+                }
             }
             net_disp_all += net_disp;
         }
