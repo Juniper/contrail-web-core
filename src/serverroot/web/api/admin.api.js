@@ -1897,6 +1897,7 @@ function getApiServerDataByPage (req, res, appData)
             configListData = filterCb(configListData);
         }
 
+        configListData = nwMonUtils.sortEntriesByObj(configListData, keyStr);
         var index = nwMonUtils.getnThIndexByLastKey(lastKey, configListData, keyStr);
         if (index == -2) {
             commonUtils.handleJSONResponse(err, res, resultJSON);
