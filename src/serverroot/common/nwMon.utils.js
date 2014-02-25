@@ -118,6 +118,23 @@ function createTimeObjByAppData (appData)
     return timeObj;
 }
 
+function sortEntriesByObj (entries, matchStr)
+{
+    if (null != matchStr) {
+        entries.sort(function(a, b) {
+            if (a[matchStr] > b[matchStr]) {
+                return 1;
+            } else if (a[matchStr] < b[matchStr]) {
+                return -1;
+            }
+            return 0;
+        });
+    } else {
+        entries.sort();
+    }
+    return entries;
+}
+
 function getnThIndexByLastKey (lastKey, entries, matchStr)
 {
     if (null == lastKey) {
@@ -134,8 +151,10 @@ function getnThIndexByLastKey (lastKey, entries, matchStr)
         } else {
             matchedStr = entries[i][matchStr];
         }
-        if (lastKey == matchedStr) {
+        if (matchedStr == lastKey) {
             return i;
+        } else if (matchedStr > lastKey) {
+            return i - 1;
         }
     }
     return -2;
@@ -158,4 +177,5 @@ exports.createTimeQueryObjByStartEndTime = createTimeQueryObjByStartEndTime;
 exports.createTimeObjByAppData = createTimeObjByAppData;
 exports.getnThIndexByLastKey = getnThIndexByLastKey;
 exports.makeUVEList = makeUVEList;
+exports.sortEntriesByObj = sortEntriesByObj;
 
