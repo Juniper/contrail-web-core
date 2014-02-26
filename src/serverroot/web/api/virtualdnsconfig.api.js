@@ -23,6 +23,7 @@ var UUID        = require('uuid-js');
 var configApiServer = require('../../common/configServer.api');
 var opApiServer     = require('../../common/opServer.api');
 var jsonPath    = require('JSONPath').eval;
+var infraCmn    = require('../../common/infra.common.api');
 
 /**
  * Bail out if called directly as "nodejs virtualdnsconfig.api.js"
@@ -886,10 +887,17 @@ function getDNSNodeByGeneratorsData (dnsNodes, dnsGen)
     } catch(e) {
         return null;
     }
+    var modType = infraCmn.getModuleType('DnsAgent');
     for (var i = 0; i < dnsNodesCnt; i++) {
-        var dnsAgent = dnsNodes[i]['name'] + ':DnsAgent';
-        if (dnsAgent == dnsGen[0]['name']) {
-            break;
+        try {
+            var dnsAgent = dnsNodes[i]['name'] + ':' + modType + ':DnsAgent';
+            if (-1 != dnsGen[0]['name'].indexOf(dnsAgent)) {
+                break;
+            }
+        } catch(e) {
+            logutils.logger.error("In getDNSNodeByGeneratorsData(): " +
+                                  "JSON Parse error:" + e);
+            continue;
         }
     }
     if (i == dnsNodesCnt) {
@@ -925,7 +933,7 @@ function getVirtualDNSSandeshRecords (req, res, appData)
     var reqUrl = '/analytics/uves/dns-node/*';
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET, null,
                              opApiServer, null, appData);
-    reqUrl = '/analytics/uves/generator/*:DnsAgent?flat';
+    reqUrl = '/analytics/uves/generator/*:DnsAgent:*?flat';
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET, null,
                              opApiServer, null, appData);
     async.map(dataObjArr,
