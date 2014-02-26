@@ -17,6 +17,7 @@ function getModuleType (modName)
     case 'VRouterAgent':
         return 'Compute';
     case 'ControlNode':
+    case 'DnsAgent':
         return 'Control';
     case 'ApiServer':
         return 'Config';
