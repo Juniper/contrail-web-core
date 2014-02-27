@@ -1983,6 +1983,43 @@ function getWebServerInfo (req, res, appData)
     commonUtils.handleJSONResponse(null, res, serverObj);
 }
 
+/* Function: getSandeshData
+   Req URL:  /api/admin/monitor/infrastructure/get-sandesh-data
+   Generic API to get Sandesh data 
+   Ex: Client POST body format:
+   {"data":{"ip":"nodeXX","port":"8085","url":"/Snh_VmListReq?uuid="}}
+  */
+function getSandeshData (req, res, appData)
+{
+    var dataObjArr = [];
+    var sandeshReq = req.body;
+
+    if ((null == sandeshReq) || (null == sandeshReq['data'])) {
+        var err = appErrors.RESTServerError('POST body is empty');
+        commonUtils.handleJSONResponse(err, res, null);
+        return;
+    }
+    var data = sandeshReq['data'];
+    if ((null == data) || (null == data['ip']) || (null == data['port']) ||
+        (null == data['url'])) {
+        var err = new appErrors.RESTServerError('POST body format is not correct,' +
+                                                ' ip/port/url required');
+        commonUtils.handleJSONResponse(err, res, null);
+        return;
+    }
+    var nodeRestAPI = commonUtils.getRestAPIServer(data['ip'], data['port']);
+    commonUtils.createReqObj(dataObjArr, data['url']);
+    async.map(dataObjArr,
+              commonUtils.getServerRespByRestApi(nodeRestAPI, false),
+              commonUtils.doEnsureExecution(function(err, data) {
+        if ((null == err) && (data != null)) {
+            /* Created request with single array entry */
+            data = data[0];
+        }
+        commonUtils.handleJSONResponse(err, res, data);
+    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
+}
+
 exports.updateGlobalASN = updateGlobalASN;
 exports.getGlobalASN    = getGlobalASN;
 exports.deleteBGPRouter = deleteBGPRouter;
@@ -1997,5 +2034,6 @@ exports.getApiServerDataByPage = getApiServerDataByPage;
 exports.getvRouterL2Routes = getvRouterL2Routes;
 exports.getWebConfigValueByName = getWebConfigValueByName;
 exports.getWebServerInfo = getWebServerInfo;
+exports.getSandeshData = getSandeshData;
 
 
