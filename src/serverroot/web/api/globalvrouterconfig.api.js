@@ -61,13 +61,14 @@ function getFirstGlobalvRouterConfig(appData, callback) {
 function createFirstGlobalvRouterConfig(request, appData, callback) {
     var gvrPostURL = '/global-vrouter-configs';
     var gvrPostData = {};
-    
-    if(null !== request && typeof request !== "undefined") {
-    	gvrPostData = request.body;
-    } else {
-        gvrPostData["global-vrouter-config"] = {};
+    gvrPostData["global-vrouter-config"] = {};
+    if(null !== request && typeof request !== "undefined" && null !== request.body &&
+        typeof request.body !== "undefined" && null !== request.body["global-vrouter-config"] &&
+        typeof request.body["global-vrouter-config"] !== "undefined") {
+        gvrPostData["global-vrouter-config"] = request.body["global-vrouter-config"];
     }
-    gvrPostData["global-vrouter-config"]["parent_type"] = "config-root";
+
+    gvrPostData["global-vrouter-config"]["parent_type"] = "global-system-config";
     gvrPostData["global-vrouter-config"]["fq_name"] = [];
     gvrPostData["global-vrouter-config"]["fq_name"][0] = "default-global-system-config";
     gvrPostData["global-vrouter-config"]["fq_name"][1] = "default-global-vrouter-config"
