@@ -88,6 +88,9 @@ function makeAuthPostReq (dataObj, callback)
     var data = dataObj['data'];
 
     authAPIServer.api.post(reqUrl, data, function(error, data) {
+        if (null != error) {
+            logutils.logger.error('makeAuthPostReq() error:' + error);
+        }
         callback(error, data);
     });
 }
@@ -98,6 +101,9 @@ function makeAuthGetReq (dataObj, callback)
     var headers = dataObj['headers']; 
 
     authAPIServer.api.get(reqUrl, function(error, data) {
+        if (null != error) {
+            logutils.logger.error('makeAuthGetReq() error:' + error);
+        }
         callback(error, data);
     }, headers);
 }
