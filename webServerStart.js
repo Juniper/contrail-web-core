@@ -38,6 +38,9 @@ var RedisStore = require('./lib/connect-redis')(express);
 
 var store;
 var myIdentity = global.service.MAINSEREVR;
+var discServEnable = ((null != config.discoveryService) &&
+                      (null != config.discoveryService.enable)) ?
+                      config.discoveryService.enable : true;
 
 var sessEvent = new eventEmitter();
 
@@ -389,4 +392,5 @@ function startServer ()
 }
 
 exports.myIdentity = myIdentity;
+exports.discServEnable = discServEnable;
 
