@@ -12,17 +12,16 @@ var restler = require('restler');
  */
 
 var apiProtocolList = {};
+/* Function: getHttpsOptionsDefValue
+   Get the default value for HTTPS options
+ */
 function getHttpsOptionsDefValue (reqType)
 {
     switch (reqType) {
     case 'authProtocol':
         return 'http';
-    case 'useCerts':
-    case 'validateCertificate':
     case 'strictSSL':
         return false;
-    case 'key':
-    case 'cert':
     case 'ca':
     default:
         return null;
@@ -49,6 +48,9 @@ function getHttpsOptionsByAPIType (apiType, reqType)
     return defVal;
 }
 
+/* Function: getOrchModuleByAPIType
+    Get the Orchestration Module name by REST Api Type
+ */
 function getOrchModuleByAPIType (apiType)
 {
     var orchModule = null;
@@ -125,6 +127,9 @@ function getAppReqHeader (dataObj, apiType)
     return headers;
 }
 
+/* Function: updateHttpsSecureOptions
+    Get the HTTPS Secure config option values
+ */
 function updateHttpsSecureOptions (apiType, options)
 {
     var proto = getProtocolByAPIType(apiType);
@@ -138,33 +143,15 @@ function updateHttpsSecureOptions (apiType, options)
                 logutils.logger.error('readFileSync error for ca file' + e);
             }
         }
+        /* If strictSSL is set to false, then if response.client.authorized
+         * is set as false, a secure connection is established.
+         */
         var strictSSL = getHttpsOptionsByAPIType(apiType, 'strictSSL');
         if (null != strictSSL) {
             options['strictSSL'] = strictSSL;
         }
     }
     return options;
-}
-
-function sendParsedDataToApp (data, xml2jsSettings, response, callback)
-{
-    /* Data is xml/json format */    
-    restler.parsers.xml(data, function(err, xml2JsonData) {
-        if (err) {
-            /* This MUST be a JSON response, response can be 
-             * JSON.stringify (if auto), else parsed if (json)
-             */
-            try {
-                var JSONData = JSON.parse(data);
-                callback(null, JSONData, response);
-            } catch(e) {
-                callback(null, data, response);
-            }
-        } else {
-            /* XML Response */
-            callback(null, xml2JsonData, response);
-        }
-    }, xml2jsSettings);
 }
 
 /* Function: makeHttpOrHttpsGetRestCall
@@ -227,4 +214,6 @@ exports.makeHttpOrHttpsPutRestCall = makeHttpOrHttpsPutRestCall;
 exports.makeHttpOrHttpsDelRestCall = makeHttpOrHttpsDelRestCall;
 exports.updateHttpsSecureOptions = updateHttpsSecureOptions;
 exports.apiProtocolList = apiProtocolList;
-exports.sendParsedDataToApp = sendParsedDataToApp;
+exports.getProtocolByAPIType = getProtocolByAPIType;
+exports.getOrchModuleByAPIType = getOrchModuleByAPIType;
+

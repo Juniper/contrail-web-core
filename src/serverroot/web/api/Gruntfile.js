@@ -24,6 +24,33 @@ module.exports = function(grunt) {
                     grunt.log.write("Completed infraOverview Test.");
                     return true;
                 }
+            },
+            'puginsApi': {
+                code: '../../orchestration/plugins/plugins.api.js',
+                tests: './test/plugins.api_test.js',
+                setup: config.qUnitRunnerConfig,
+                callback: function(status, stats) {
+                    grunt.log.write("Completed puginsApi Test.");
+                    return true;
+                }
+            },
+            'httpsOp': {
+                code: '../../common/httpsoptions.api.js',
+                tests: './test/httpsoptions.api_test.js',
+                setup: config.qUnitRunnerConfig,
+                callback: function(status, stats) {
+                    grunt.log.write("Completed httpsOp Test.");
+                    return true;
+                }
+            },
+            'restApi': {
+                code: '../../common/rest.api.js',
+                tests: './test/rest.api_test.js',
+                setup: config.qUnitRunnerConfig,
+                callback: function(status, stats) {
+                    grunt.log.write("Completed restApi Test.");
+                    return true;
+                }
             }
         },
         jshint: {

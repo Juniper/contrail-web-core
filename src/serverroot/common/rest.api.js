@@ -278,7 +278,7 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
             }
             self.retryMakeCall(data, restApi, params, response, callback, false);
         } else {
-            httpsOp.sendParsedDataToApp(data, xml2jsSettings, response, callback);
+            self.sendParsedDataToApp(data, xml2jsSettings, response, callback);
         }
     });
 }
