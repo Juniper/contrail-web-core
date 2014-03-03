@@ -102,7 +102,12 @@ function getServiceAPIVersionByReqObj (req, type, callback)
 
         for (i = 0; i < endPtCnt; i++) {
             try {
+                var reqProto = global.PROTOCOL_HTTP;
                 var pubUrl = endPtList[i]['publicURL'];
+                var protoIdx = pubUrl.indexOf(':');
+                if (-1 != protoIdx) {
+                    reqProto = pubUrl.substr(0, protoIdx);
+                }
                 switch (type) {
                 case 'compute':
                 case 'volume':
@@ -115,11 +120,13 @@ function getServiceAPIVersionByReqObj (req, type, callback)
                     if (-1 == idx) {
                         continue;
                     }
-                    dataObjArr.push(str.slice(idx + 1));
+                    dataObjArr.push({'version': str.slice(idx + 1), 
+                                    'protocol': reqProto});
                     break;
                 case 'image':
                     var idx = pubUrl.lastIndexOf('/');
-                    dataObjArr.push(pubUrl.slice(idx + 1));
+                    dataObjArr.push({'version': pubUrl.slice(idx + 1),
+                                    'protocol': reqProto});
                     break;
                 default:
                     break;
@@ -132,7 +139,7 @@ function getServiceAPIVersionByReqObj (req, type, callback)
             logutils.logger.error('apiVersion for ' + type + ' is NULL');
             callback(null);
         } else {
-            dataObjArr.sort(function(a, b) {return (b - a)});
+            dataObjArr.sort(function(a, b) {return (b['version'] - a['version'])});
             callback(dataObjArr);
         }
     });
@@ -148,10 +155,15 @@ function getApiVersion (suppVerList, verList, index)
     }
     for (var i = index; i < verCnt; i++) {
         for (var j = 0; j < suppVerCnt; j++) {
-            if (verList[i] != suppVerList[j]) {
+            try {
+                if (verList[i]['version'] != suppVerList[j]) {
+                    continue;
+                } else {
+                    return {'version': verList[i]['version'], 'index': i,
+                            'protocol': verList[i]['protocol']};
+                }
+            } catch(e) {
                 continue;
-            } else {
-                return {'version': verList[i], 'index': i};
             }
         }
     }

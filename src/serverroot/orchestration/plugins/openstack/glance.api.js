@@ -7,7 +7,8 @@ var rest = require('../../../common/rest.api'),
     authApi = require('../../../common/auth.api'),
     plugins = require('../plugins.api'),
     appErrors = require('../../../errors/app.errors'),
-    commonUtils = require('../../../utils/common.utils')
+    commonUtils = require('../../../utils/common.utils'),
+    httpsOp = require('../../../common/httpsoptions.api')
     ;
 var glanceAPIServer;
 
@@ -18,7 +19,7 @@ var imgMgrIp = ((config.imageManager) && (config.imageManager.ip)) ?
 var imgMgrPort = ((config.imageManager) && (config.imageManager.port)) ? 
     config.imageManager.port : '9292';
 
-glanceAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
+glanceAPIServer = rest.getAPIServer({apiName:global.label.IMAGE_SERVER,
                                       server:imgMgrIp, port:imgMgrPort});
 function getTenantIdByReqCookie (req)
 {
@@ -132,14 +133,15 @@ function glanceApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex
                                                 ' Glance is unsupported');
         callback(err, null, null);
         return;
-    }   
+    }
     var reqUrl = '/' + apiVer['version'] + reqUrlPrefix;
+    httpsOp.apiProtocolList[global.label.IMAGE_SERVER] = apiVer['protocol'];
     glanceApi.get(reqUrl, req, function(err, data) {
         if ((null != err) || (null == data)) {
             glanceApiGetByAPIVersionList(reqUrlPrefix, apiVerList, req,
                                          startIndex + 1, callback);
         } else {
-            callback(null, data, apiVerList[startIndex]);
+            callback(null, data, apiVerList[startIndex]['version']);
         }   
     }); 
 }
