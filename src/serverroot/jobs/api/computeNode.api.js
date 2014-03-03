@@ -721,7 +721,7 @@ function getvRouterGenByJob (pubChannel, saveChannelKey, jobData, done)
     var resultJSON = [];
 
     opApiServer.apiGet(url, jobData, 
-                        commonUtils.doEnsureExecution(function(err, data) {
+                       commonUtils.doEnsureExecution(function(err, data) {
         if ((null != err) || (null == data)) {
             redisPub.publishDataToRedis(pubChannel, saveChannelKey,
                                         global.HTTP_STATUS_INTERNAL_ERROR,

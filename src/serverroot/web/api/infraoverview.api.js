@@ -190,7 +190,13 @@ function getvRouterGenerators (req, res, appData)
 {
     var url = '/virtual-routers';
     var key = global.STR_GET_VROUTERS_GENERATORS;
-    var forceRefresh = req.param['forceRefresh'];
+    var forceRefresh = req.param('forceRefresh');
+    if (null == forceRefresh) {
+        forceRefresh = false;
+    } else {
+        forceRefresh = true;
+    }
+
     cacheApi.queueDataFromCacheOrSendRequest(req, res,
                                              global.STR_JOB_TYPE_CACHE, key,
                                              url, 0, 0, 0, 

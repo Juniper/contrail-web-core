@@ -28,7 +28,7 @@ var readyQ = [];
 
 var readyQEvent = new eventEmitter();
 
-readyQEvent.on('add', function(data) {
+readyQEvent.on('add', function() {
   triggerResponse();
 });
 
@@ -219,16 +219,37 @@ function insertResToReadyQ (res, data, statusCode, isJson)
   };
   
   readyQ.push(resCtx);
-  readyQEvent.emit('add', resCtx);
+  readyQEvent.emit('add');
+}
+
+function insertDataToSendAllClients (resObjList, data, statusCode, isJson)
+{
+    var resCtx = {
+        timeStamp : getCurrentTimestamp(),
+        data: data,
+        statusCode : statusCode,
+        isJson : isJson
+    };
+    var resObjCnt = resObjList.length;
+    for (var i = 0; i < resObjCnt; i++) {
+        var newResCtx = commonUtils.cloneObj(resCtx);
+        newResCtx['res'] = resObjList[i]['res'];
+        readyQ.push(newResCtx);
+    }
+    readyQEvent.emit('add');
 }
 
 function redirectToLogoutByChannel (channel)
 {
-    var reqCtxObj = cacheApi.checkCachePendingQueue(channel);
-    if (null == reqCtxObj) {
+    var reqCtxArr = cacheApi.checkCachePendingQueue(channel);
+    if ((null == reqCtxArr) || (null == reqCtxArr[0])) {
         return;
     }
-    commonUtils.redirectToLogout(reqCtxObj['req'], reqCtxObj['res']);
+    /* Always 1st entry in reqCtxArr is the requested client, others were
+     * waiting for this active job, so only for that client, redirect
+     * to login
+     */
+    commonUtils.redirectToLogout(reqCtxArr[0]['req'], reqCtxArr[0]['res']);
 }
 
 exports.redirectToLogoutByChannel = redirectToLogoutByChannel;
@@ -236,4 +257,5 @@ exports.lastRequestId = lastRequestId;
 exports.insertResToReadyQ = insertResToReadyQ;
 exports.routeAll = routeAll;
 exports.processPendingReq = processPendingReq;
+exports.insertDataToSendAllClients = insertDataToSendAllClients;
 
