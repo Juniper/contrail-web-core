@@ -27,6 +27,12 @@ config.storageManager = {};
 config.storageManager.ip = '127.0.0.1';
 config.storageManager.port = '8776';
 
+//Ceph Rest API Server and port
+config.ceph={}
+config.ceph.enabled=true;
+config.ceph.rest_ip='127.0.0.1'
+config.ceph.rest_port='5002';
+
 // VNConfig API server and port.
 config.cnfg = {};
 config.cnfg.server_ip = '127.0.0.1';
