@@ -24,11 +24,13 @@ package:
 	cp -r -p ../$(WEBUICLIENT)/* .
 	cp -r -p ../$(WEBUITHIRDPARTY)/node_modules/* node_modules/
 	mv -f html/dashboard.tmpl html/dashboard.html
+	mv -f html/storage-dashboard.tmpl html/storage-dashboard.html
 	mv -f html/login.tmpl html/login.html
 	mv -f html/login-error.tmpl html/login-error.html
 	./generate-files.sh
 	./dev-install.sh prod
 	./prod-dev.sh html/dashboard.html prod_env dev_env true
+	./prod-dev.sh html/storage-dashboard.html prod_env dev_env true
 	./prod-dev.sh html/login.html prod_env dev_env true
 	./prod-dev.sh html/login-error.html prod_env dev_env true
 
@@ -38,6 +40,7 @@ all:
 	ln -sf ../$(WEBUICLIENT)/webroot webroot
 	ln -sf ../$(WEBUITHIRDPARTY)/node_modules node_modules
 	ln -sf ../../$(WEBUICLIENT)/html/dashboard.tmpl html/dashboard.html
+	ln -sf ../../$(WEBUICLIENT)/html/storage-dashboard.tmpl html/storage-dashboard.html
 	ln -sf ../../$(WEBUICLIENT)/html/login.tmpl html/login.html
 	ln -sf ../../$(WEBUICLIENT)/html/login-error.tmpl html/login-error.html
 	./generate-files.sh
@@ -47,6 +50,9 @@ make-ln:
 	cp -af html/dashboard.html ../$(WEBUICLIENT)/html/dashboard.tmpl
 	rm -f html/dashboard.html
 	ln -sf ../../$(WEBUICLIENT)/html/dashboard.tmpl html/dashboard.html
+	cp -af html/storage-dashboard.html ../$(WEBUICLIENT)/html/storage-dashboard.tmpl
+	rm -f html/storage-dashboard.html
+	ln -sf ../../$(WEBUICLIENT)/html/storage-dashboard.tmpl html/storage-dashboard.html
 	cp -af html/login.html ../$(WEBUICLIENT)/html/login.tmpl
 	rm -f html/login.html
 	ln -sf ../../$(WEBUICLIENT)/html/login.tmpl html/login.html
@@ -57,6 +63,7 @@ make-ln:
 dev-env:
 	make all
 	./prod-dev.sh html/dashboard.html dev_env prod_env true
+	./prod-dev.sh html/storage-dashboard.html dev_env prod_env true
 	./prod-dev.sh html/login.html dev_env prod_env true
 	./prod-dev.sh html/login-error.html dev_env prod_env true
 	make make-ln
@@ -68,18 +75,21 @@ test-env:
 prod-env:
 	make all 
 	./prod-dev.sh html/dashboard.html prod_env dev_env true
+	./prod-dev.sh html/storage-dashboard.html prod_env dev_env true
 	./prod-dev.sh html/login.html prod_env dev_env true
 	./prod-dev.sh html/login-error.html prod_env dev_env true
 	make make-ln
 
 rem-ts-dev:
 	./prod-dev.sh html/dashboard.html dev_env prod_env false
+	./prod-dev.sh html/storage-dashboard.html dev_env prod_env false
 	./prod-dev.sh html/login.html dev_env prod_env false
 	./prod-dev.sh html/login-error.html dev_env prod_env false
 	make make-ln
 
 rem-ts-prod:
 	./prod-dev.sh html/dashboard.html prod_env dev_env false
+	./prod-dev.sh html/storage-dashboard.html prod_env dev_env false
 	./prod-dev.sh html/login.html prod_env dev_env false
 	./prod-dev.sh html/login-error.html prod_env dev_env false
 	make make-ln
