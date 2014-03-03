@@ -35,6 +35,7 @@
     "grunt-contrib-concat": "0.3.0",
     "grunt-qunit-junit": "0.1.0",
     "grunt-blanket-qunit": "0.2.0",
+    "grunt-node-qunit": "2.0.2",
     "qunit": "0.5.18",
     "grunt-karma": "0.6.2",
     "karma": "0.10.2",
