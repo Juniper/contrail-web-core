@@ -27,6 +27,7 @@ var rest = require('../../common/rest.api'),
     ipamConfig = require('./ipamconfig.api'),
     vdnsConfig = require('./virtualdnsconfig.api'),
     svcTempl = require('./servicetemplateconfig.api'),
+    os = require('os'),
 	opServer;
 
 var parser = null;
@@ -1980,6 +1981,7 @@ function getWebServerInfo (req, res, appData)
         assert(0);
     }
     serverObj ['serverUTCTime'] = commonUtils.getCurrentUTCTime();
+    serverObj['hostName'] = os.hostname();
     commonUtils.handleJSONResponse(null, res, serverObj);
 }
 
