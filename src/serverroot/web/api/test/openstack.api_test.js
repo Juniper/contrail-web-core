@@ -1,10 +1,11 @@
 /*
  * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
  */
-var plugins = require('../../../orchestration/plugins/plugins.api');
+var oStack = require('../../../orchestration/plugins/openstack/openstack.api');
 var authApi = require('../../../common/auth.api');
-var mockData = require('./plugins.api_mock');
+var mockData = require('./openstack.api_mock');
 var commonUtils = require('../../../utils/common.utils');
+var config = require('../../../../../config/config.global');
 
 function getServiceCatalogData (req, callback)
 {
@@ -29,27 +30,27 @@ function getServiceCatalogCompDataWithNoHTTP (req, callback)
 
 test('getServiceAPIVersionByReqObj', function() {
     authApi.getServiceCatalog = getServiceCatalogData;
-    plugins.getServiceAPIVersionByReqObj(null, 'compute', function(data) {
+    oStack.getServiceAPIVersionByReqObj(null, 'compute', function(data) {
         deepEqual(data, mockData.servCatRespComputeData_OP,
                   'Expecting Compute Data Match');
     });
-    plugins.getServiceAPIVersionByReqObj(null, 'image', function(data) {
+    oStack.getServiceAPIVersionByReqObj(null, 'image', function(data) {
         deepEqual(data, mockData.servCatRespImageData_OP,
                   'Expecting Image Data Match');
     });
-    plugins.getServiceAPIVersionByReqObj(null, 'volume', function(data) {
+    oStack.getServiceAPIVersionByReqObj(null, 'volume', function(data) {
         deepEqual(data, mockData.servCatRespVolData_OP, 
                   'Expecting Volume Data Match');
     });
     /* Test for multiple entries in endpoint for 'compute' node */
     authApi.getServiceCatalog = getServiceCatalogCompData;
-    plugins.getServiceAPIVersionByReqObj(null, 'compute', function(data) {
+    oStack.getServiceAPIVersionByReqObj(null, 'compute', function(data) {
         deepEqual(data, mockData.servCatRespCompMultData_OP,
                   'Expecting Compute Multiple Data Match');
     });
     /* Test for compute node with no http keywork in publicURL */
     authApi.getServiceCatalog = getServiceCatalogCompDataWithNoHTTP; 
-    plugins.getServiceAPIVersionByReqObj(null, 'compute', function(data) {
+    oStack.getServiceAPIVersionByReqObj(null, 'compute', function(data) {
         deepEqual(data, mockData.getServiceCatalogCompDataWithNoHTTP_OP,
                   'Expecting Compute Default HTTP Match');
     });
@@ -57,14 +58,25 @@ test('getServiceAPIVersionByReqObj', function() {
 
 test('getApiVersion', function() {
     var suppVerList = [ 'v1.1', 'v2' ];
-    var verList = [ { version: 'v1.1', protocol: 'http' } ];
+    var verList = [ { version: 'v1.1', protocol: 'http' , 'port': 8787, 'ip': '10.204.216.42'} ];
     var index = 0;
-    var suppVerList_OP = { version: 'v1.1', index: 0, protocol: 'http' };
+    config.serviceEndPointFromConfig = false;
 
-    var verObj = plugins.getApiVersion(suppVerList, verList, index);
-    deepEqual(verObj, suppVerList_OP, 'Expecting Version to match');
+    var verObj = oStack.getApiVersion(suppVerList, verList, index);
+    deepEqual(verObj, mockData.suppVerList_OP, 'Expecting Version to match');
     var suppVerList = [ 'v3' ];
-    var verObj = plugins.getApiVersion(suppVerList, verList, index);
+    var verObj = oStack.getApiVersion(suppVerList, verList, index);
     deepEqual(verObj, null, 'Expecting to return null');
+});
+
+test('getIpProtoByServCatPubUrl', function() {
+    var pubUrl = 'http://10.204.216.46:9292/v1';
+    var ipObj = oStack.getIpProtoByServCatPubUrl(pubUrl);
+    var ipObj_OP = {'ipAddr': '10.204.216.46', 'port': '9292', 'protocol':
+                    'http'};
+    deepEqual(ipObj, ipObj_OP, 'With htpp ');
+    var pubUrl = '10.204.216.46:9292/v1';
+    var ipObj = oStack.getIpProtoByServCatPubUrl(pubUrl);
+    deepEqual(ipObj, ipObj_OP, 'Without htpp ');
 });
 

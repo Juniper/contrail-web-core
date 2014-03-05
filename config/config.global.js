@@ -7,36 +7,101 @@ var config = {};
 config.orchestration = {};
 config.orchestration.Manager = 'openstack'
 
-/* Below are the config options for all Orchestration Modules below */
-// authProtocol:        
-//      Specify authProtocol either 'http' or 'https'
-// strictSSL:
-//      If true, requires certificates to be valid
-// ca: 
-//      An authority certificate to check the remote host against,
-//      if you do not want to specify then use ''
+/****************************************************************************
+ * This boolean flag indicates to communicate with Orchestration
+ * modules(networkManager, imageManager, computeManager, identityManager,
+ * storageManager), should the webServer communicate using the
+ * ip/port/authProtocol/apiVersion as specified in this file, or as returned
+ * from auth catalog list.
+ * Note: config.identityManager.apiVersion is not controlled by this boolean
+ * flag.
+ *
+ * true  - These values should be taken from this config
+ *         file.
+ * false - These values should be taken from auth catalog list 
+ *
+*****************************************************************************/
+config.serviceEndPointFromConfig = false;
+
+/****************************************************************************
+ * Below are the config options for all Orchestration Modules below:
+ *  - networkManager
+ *  - imageManager
+ *  - computeManager
+ *  - identityManager
+ *  - storageManager
+ *  - cnfg
+ *  - analytics
+ *
+ * Options:
+ * ip:
+ *      IP to connect to for this Server.
+ * port:
+ *      Port to connect to for this server
+ * authProtocol:        
+ *      Specify authProtocol either 'http' or 'https'
+ * apiVersion:
+ *      REST API Version for this server to connect to.
+ *      Specify a list of Versions in array notation.
+ *      Below are the supported list of apiVersion for the modules as of now:
+ *      imageManager    -   ['v1', 'v2']
+ *      computeManager  -   ['v1.1', 'v2']
+ *      identityManager -   ['v2.0']
+ *      storageManager  -   ['v1']
+ *
+ *      Not applicable for cnfg/analytics as of now
+ * strictSSL:
+ *      If true, requires certificates to be valid
+ * ca: 
+ *      An authority certificate to check the remote host against,
+ *      if you do not want to specify then use ''
+*****************************************************************************/
 config.networkManager = {};
 config.networkManager.ip = '127.0.0.1';
 config.networkManager.port = '9696'
+config.networkManager.authProtocol = 'http';
+config.networkManager.apiVersion = [];
+config.networkManager.strictSSL = false;
+config.networkManager.ca = '';
 
 config.imageManager = {};
 config.imageManager.ip = '127.0.0.1';
 config.imageManager.port = '9292';
+config.imageManager.authProtocol = 'http';
+config.imageManager.apiVersion = ['v1', 'v2'];
+config.imageManager.strictSSL = false;
+config.imageManager.ca = '';
 
 config.computeManager = {};
 config.computeManager.ip = '127.0.0.1';
 config.computeManager.port = '8774';
+config.computeManager.authProtocol = 'http';
+config.computeManager.apiVersion = ['v1.1', 'v2'];
+config.computeManager.strictSSL = false;
+config.computeManager.ca = '';
 
 config.identityManager = {};
 config.identityManager.ip = '127.0.0.1';
 config.identityManager.port = '5000';
 config.identityManager.authProtocol = 'http';
+/******************************************************************************
+ * Note: config.identityManager.apiVersion is not controlled by boolean flag 
+ * config.serviceEndPointFromConfig. If specified apiVersion here, then these
+ * API versions will be used while using REST API to identityManager.
+ * If want to use with default apiVersion(v2.0), then can specify it as 
+ * empty array.
+******************************************************************************/
+config.identityManager.apiVersion = ['v2.0'];
 config.identityManager.strictSSL = false;
 config.identityManager.ca = '';
 
 config.storageManager = {};
 config.storageManager.ip = '127.0.0.1';
 config.storageManager.port = '8776';
+config.storageManager.authProtocol = 'http';
+config.storageManager.apiVersion = ['v1'];
+config.storageManager.strictSSL = false;
+config.storageManager.ca = '';
 
 // VNConfig API server and port.
 config.cnfg = {};
