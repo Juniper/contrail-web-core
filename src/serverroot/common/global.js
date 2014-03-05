@@ -40,6 +40,9 @@ global.ZWQ_MSG_SEPERATOR = '@';
 global.WEBUI_DFLT_REDIS_DB = 1;
 global.QE_DFLT_REDIS_DB = 2;
 
+/* Ceph Storage Cluster golbal variables */
+global.STR_CEPH_TYPE_CLUSTER = 'getCephClusterStatus';
+
 /* Generic Caching related global variables */
 global.STR_JOB_TYPE_CACHE = 'cache';
 global.STR_SEND_TO_JOB_SERVER = 'sendToJobServer';
@@ -202,6 +205,7 @@ global.TOKEN_URL = '/v2.0/tokens';
 global.label = {};
 global.label.VNCONFIG_API_SERVER = 'vnconfig-api-server';
 global.label.OPS_API_SERVER = 'ops-api-server';
+global.label.CEPH_API_SERVER = 'ceph-api-server';
 global.label.IDENTITY_SERVER = 'identity-server';
 global.label.DISCOVERY_SERVER = 'discovery-server';
 global.label.API_SERVER = 'api-server'

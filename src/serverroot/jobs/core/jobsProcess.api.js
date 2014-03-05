@@ -6,6 +6,7 @@ var  topoCache = require('../api/topoCache.api')
 	, bgpNode = require('../api/bgpNode.api')
 	, computeNode = require('../api/computeNode.api')
 	, nwMonJobsApi = require('../api/network.mon.jobs')
+    , cephJobApi = require('../api/storage/ceph.jobs')
 	, tpoCache     = require('../api/tpoCache.api')
 	;
 
@@ -298,6 +299,11 @@ jobsProcess.processvRouterListRequestByJob =
 jobsProcess.processcRouterAclFlowsRequestByJob =
     function(pubChannel, saveChannelKey, jobData, done) {
     computeNode.getvRouterAclFlows(pubChannel, saveChannelKey, jobData, done);
+}
+
+jobsProcess.processCephClusterStatusRequestByJob =
+    function(pubChannel, saveChannelKey, jobData, done) {
+    cephJobApi.processCephClusterStatus(pubChannel, saveChannelKey, jobData, done);
 }
 
 exports.processvRoutersSummaryRequestByJob = processvRoutersSummaryRequestByJob;

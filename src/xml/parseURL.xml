@@ -113,6 +113,70 @@
          <define>infra</define>
          <path>../api/infraoverview.api</path>
     </require>
+    
+    <!--  Ceph Storage API  -->
+    <require>
+        <define>cephMonApi</define>
+        <path>../api/storage/ceph.mon.api</path>
+    </require>
+
+     <item>
+        <url>/ceph/monitor</url>
+        <method>get</method>
+        <feature>ceph-monitoring</feature>
+        <callback>handler.dashboard</callback>
+    </item>
+    <item>
+        <url>/</url>
+        <method>get</method>
+        <feature>ceph-monitoring</feature>
+        <callback>handler.home</callback>
+    </item>
+    
+     <item>
+        <url>/api/ceph/monitoring/health</url>
+        <method>get</method>
+        <feature>ceph-monitoring</feature>
+        <callback>cephMonApi.getCephClusterStatus</callback>
+    </item>
+    
+     <item>
+        <url>/api/ceph/monitoring/cluster/activity</url>
+        <method>get</method>
+        <feature>ceph-monitoring</feature>
+        <callback>cephMonApi.getCephClusterActivity</callback>
+    </item>
+    
+    <item>
+        <url>/api/ceph/monitoring/monitor/status</url>
+        <method>get</method>
+        <feature>ceph-monitoring</feature>
+        <callback>cephMonApi.getCephMonitorStatus</callback>
+    </item>
+    
+    <item>
+        <url>/api/ceph/monitoring/cluster/status</url>
+        <method>get</method>
+        <feature>ceph-monitoring</feature>
+        <callback>cephMonApi.getCephHealthSummary</callback>
+    </item>
+    
+    <item>
+        <url>/api/ceph/monitoring/osd/stats</url>
+        <method>get</method>
+        <feature>ceph-monitoring</feature>
+        <callback>cephMonApi.getCephOSDSummary</callback>
+    </item>
+    
+    <item>
+        <url>/api/ceph/monitoring/pg/stats</url>
+        <method>get</method>
+        <feature>ceph-monitoring</feature>
+        <callback>cephMonApi.getCephPGSummary</callback>
+    </item>
+    
+    <!-- Ceph Storage -->
+    
     <item>
         <url>/infra/admin</url>
         <method>get</method>
