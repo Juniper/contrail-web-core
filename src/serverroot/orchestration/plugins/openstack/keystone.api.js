@@ -27,7 +27,15 @@ var authServerPort =
 authAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
                                    server:authServerIP, port:authServerPort});
 
+
 var authAPIVers = ['v2.0'];
+if ((null != config) && (null != config.identityManager) &&
+    (null != config.identityManager.apiVersion)) {
+    if ((config.identityManager.apiVersion instanceof Array) &&
+        (0 != config.identityManager.apiVersion.length)) {
+        authAPIVers = config.identityManager.apiVersion;
+    }
+}
 
 /** Function: getUserRoleByAuthResponse
  *  1. This function is used to get the user role by keystone roleList response
