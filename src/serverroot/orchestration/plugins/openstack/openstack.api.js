@@ -79,6 +79,26 @@ function getApiTypeByServiceType (servType)
     }
 }
 
+/* Function: getOStackModuleApiVersion
+   Get the API Version from Config File, if not specified then take default 
+   suppoted API Versions
+ */
+function getOStackModuleApiVersion (apiType)
+{
+    var version = httpsOp.getHttpsOptionsByAPIType(apiType, 'apiVersion');
+    if (null == version) {
+        switch (apiType) {
+        case global.label.IMAGE_SERVER:
+            return glanceApi.imageListVerList;
+        case global.label.COMPUTE_SERVER:
+            return novaApi.novaAPIVerList;
+        default:
+            return null;
+        }
+    }
+    return version;
+}
+
 /* Function: getServiceAPIVersionByReqObj
     Get openStack Module API Version, IP, Port, Protocol from publicURL in
     keystone catalog response
@@ -89,15 +109,18 @@ function getServiceAPIVersionByReqObj (req, type, callback)
     var endPtList = [];
 
     var endPtFromConfig = config.serviceEndPointFromConfig;
-    if ((null != endPtFromConfig) && (true == endPtFromConfig)) {
+    if (null == endPtFromConfig) {
+        endPtFromConfig = true;
+    }
+    if (true == endPtFromConfig) {
         var apiType = getApiTypeByServiceType(type);
         ip = httpsOp.getHttpsOptionsByAPIType(apiType, 'ip');
         port = httpsOp.getHttpsOptionsByAPIType(apiType, 'port');
-        version = httpsOp.getHttpsOptionsByAPIType(apiType, 'apiVersion');
+        version = getOStackModuleApiVersion(apiType);
         protocol = httpsOp.getHttpsOptionsByAPIType(apiType, 'authProtocol');
         if ((null == ip) || (null == port) || (null == version) ||
             (null == protocol)) {
-            logutils.logger.error("ip/port/version/protocol not found in" +
+            logutils.logger.error("ip/port/apiVersion/authProtocol not found in" +
                                   " config file for:" + apiType);
             callback(null);
             return;
