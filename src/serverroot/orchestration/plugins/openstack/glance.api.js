@@ -185,4 +185,5 @@ function getImageList (req, callback)
 }
 
 exports.getImageList = getImageList;
+exports.imageListVerList = imageListVerList;
 

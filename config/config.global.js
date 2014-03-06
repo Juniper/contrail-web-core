@@ -21,7 +21,7 @@ config.orchestration.Manager = 'openstack'
  * false - These values should be taken from auth catalog list 
  *
 *****************************************************************************/
-config.serviceEndPointFromConfig = false;
+config.serviceEndPointFromConfig = true;
 
 /****************************************************************************
  * Below are the config options for all Orchestration Modules below:
