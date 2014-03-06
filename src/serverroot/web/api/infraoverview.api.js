@@ -360,7 +360,7 @@ function getvRouterDetails (req, res, appData)
                      commonUtils.doEnsureExecution(function(err, data) {
         if ((null != err) || (null == data)) {
             data = {};
-            getDataFromConfigNode('bgp-routers', hostName, appData,
+            getDataFromConfigNode('virtual-routers', host, appData,
                                   data, function(err, resultJSON) {
                 commonUtils.handleJSONResponse(err, res, resultJSON);
             });
