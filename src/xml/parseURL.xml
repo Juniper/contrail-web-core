@@ -116,63 +116,63 @@
     
     <!--  Ceph Storage API  -->
     <require>
-        <define>cephMonApi</define>
-        <path>../api/storage/ceph.mon.api</path>
+        <define>cephInfraApiApi</define>
+        <path>../api/storage/ceph.infra.api</path>
     </require>
 
      <item>
         <url>/ceph/monitor</url>
         <method>get</method>
-        <feature>ceph-monitoring</feature>
+        <feature>ceph</feature>
         <callback>handler.dashboard</callback>
     </item>
     <item>
         <url>/</url>
         <method>get</method>
-        <feature>ceph-monitoring</feature>
+        <feature>ceph</feature>
         <callback>handler.home</callback>
     </item>
     
      <item>
-        <url>/api/ceph/monitoring/health</url>
+        <url>/api/ceph/infra/health</url>
         <method>get</method>
-        <feature>ceph-monitoring</feature>
-        <callback>cephMonApi.getCephClusterStatus</callback>
+        <feature>ceph</feature>
+        <callback>cephInfraApiApi.getCephClusterStatus</callback>
     </item>
     
      <item>
-        <url>/api/ceph/monitoring/cluster/activity</url>
+        <url>/api/ceph/infra/cluster/activity</url>
         <method>get</method>
-        <feature>ceph-monitoring</feature>
-        <callback>cephMonApi.getCephClusterActivity</callback>
+        <feature>ceph</feature>
+        <callback>cephInfraApiApi.getCephClusterActivity</callback>
     </item>
     
     <item>
-        <url>/api/ceph/monitoring/monitor/status</url>
+        <url>/api/ceph/infra/monitor/status</url>
         <method>get</method>
-        <feature>ceph-monitoring</feature>
-        <callback>cephMonApi.getCephMonitorStatus</callback>
+        <feature>ceph</feature>
+        <callback>cephInfraApiApi.getCephMonitorStatus</callback>
     </item>
     
     <item>
-        <url>/api/ceph/monitoring/cluster/status</url>
+        <url>/api/ceph/infra/cluster/status</url>
         <method>get</method>
-        <feature>ceph-monitoring</feature>
-        <callback>cephMonApi.getCephHealthSummary</callback>
+        <feature>ceph</feature>
+        <callback>cephInfraApiApi.getCephHealthSummary</callback>
     </item>
     
     <item>
-        <url>/api/ceph/monitoring/osd/stats</url>
+        <url>/api/ceph/infra/osd/stats</url>
         <method>get</method>
-        <feature>ceph-monitoring</feature>
-        <callback>cephMonApi.getCephOSDSummary</callback>
+        <feature>ceph</feature>
+        <callback>cephInfraApiApi.getCephOSDSummary</callback>
     </item>
     
     <item>
-        <url>/api/ceph/monitoring/pg/stats</url>
+        <url>/api/ceph/infra/pg/stats</url>
         <method>get</method>
-        <feature>ceph-monitoring</feature>
-        <callback>cephMonApi.getCephPGSummary</callback>
+        <feature>ceph</feature>
+        <callback>cephInfraApiApi.getCephPGSummary</callback>
     </item>
     
     <!-- Ceph Storage -->
