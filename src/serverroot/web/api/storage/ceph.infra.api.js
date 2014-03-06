@@ -11,10 +11,11 @@ var cacheApi = require('../../core/cache.api'),
     async = require('async'),
     jsonPath = require('JSONPath').eval,
 
-cephMonApi = module.exports;
+cephInfraApi = module.exports;
 
 function getCephClusterStatus(req, res ){
     url = "/status";
+    console.log("get data:"+url);
     cacheApi.queueDataFromCacheOrSendRequest(req, res, global.STR_JOB_TYPE_CACHE,
                                              global.STR_CEPH_TYPE_CLUSTER, url,
                                              0, 1, 0, -1, true, null);

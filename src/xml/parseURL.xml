@@ -110,13 +110,13 @@
         <path>../../../../lib/request-timeout</path>
     </require>
     <require>
-         <define>infra</define>
+         <define>cephInfraApi</define>
          <path>../api/infraoverview.api</path>
     </require>
     
     <!--  Ceph Storage API  -->
     <require>
-        <define>cephInfraApiApi</define>
+        <define>cephInfraApi</define>
         <path>../api/storage/ceph.infra.api</path>
     </require>
 
@@ -137,42 +137,42 @@
         <url>/api/ceph/infra/health</url>
         <method>get</method>
         <feature>ceph</feature>
-        <callback>cephInfraApiApi.getCephClusterStatus</callback>
+        <callback>cephInfraApi.getCephClusterStatus</callback>
     </item>
     
      <item>
         <url>/api/ceph/infra/cluster/activity</url>
         <method>get</method>
         <feature>ceph</feature>
-        <callback>cephInfraApiApi.getCephClusterActivity</callback>
+        <callback>cephInfraApi.getCephClusterActivity</callback>
     </item>
     
     <item>
         <url>/api/ceph/infra/monitor/status</url>
         <method>get</method>
         <feature>ceph</feature>
-        <callback>cephInfraApiApi.getCephMonitorStatus</callback>
+        <callback>cephInfraApi.getCephMonitorStatus</callback>
     </item>
     
     <item>
         <url>/api/ceph/infra/cluster/status</url>
         <method>get</method>
         <feature>ceph</feature>
-        <callback>cephInfraApiApi.getCephHealthSummary</callback>
+        <callback>cephInfraApi.getCephHealthSummary</callback>
     </item>
     
     <item>
         <url>/api/ceph/infra/osd/stats</url>
         <method>get</method>
         <feature>ceph</feature>
-        <callback>cephInfraApiApi.getCephOSDSummary</callback>
+        <callback>cephInfraApi.getCephOSDSummary</callback>
     </item>
     
     <item>
         <url>/api/ceph/infra/pg/stats</url>
         <method>get</method>
         <feature>ceph</feature>
-        <callback>cephInfraApiApi.getCephPGSummary</callback>
+        <callback>cephInfraApi.getCephPGSummary</callback>
     </item>
     
     <!-- Ceph Storage -->

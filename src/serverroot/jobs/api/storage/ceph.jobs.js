@@ -14,8 +14,6 @@ function processCephClusterStatus(pubChannel, saveChannelKey, jobData, done){
     url = "/status";
      cephServer.apiGet(url, jobData, function (error, resultJSON) {
             if(!error && (resultJSON)) {
-                
-                    console.log("getting Data a:", resultJSON);
                      redisPub.publishDataToRedis(pubChannel, saveChannelKey,
                         global.HTTP_STATUS_RESP_OK,
                         JSON.stringify(resultJSON),
