@@ -102,7 +102,14 @@ function getCephOSDSummary(req, res, appData){
 }
 
 function parseCephOSDData(osdJSON){
-  return osdJSON;
+   var emptyObj = {};  
+    var osdMapJSON ={};
+    var osdMap = jsonPath(osdJSON, "$..osdmap");
+    if (osdMap.length > 0) {
+        osdMapJSON['osdmap']= osdMap[0];
+        return osdMapJSON;
+    }
+    return emptyObj;
 }
 
 
@@ -120,9 +127,11 @@ function getCephPGSummary(req, res, appData){
 
 function parseCephPGData(pgDataJSON){
     var emptyObj = {};  
+    var pgMapJSON ={};
     var pgMap = jsonPath(pgDataJSON, "$..pgmap");
     if (pgMap.length > 0) {
-        return pgMap[0];
+        pgMapJSON['pgmap']= pgMap[0];
+        return pgMapJSON;
     }
     return emptyObj;
 }
