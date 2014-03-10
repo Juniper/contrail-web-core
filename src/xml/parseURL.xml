@@ -137,7 +137,7 @@
         <url>/api/ceph/infra/health/status</url>
         <method>get</method>
         <feature>ceph</feature>
-        <callback>cephInfraApi.getCephClusterStatus</callback>
+        <callback>cephInfraApi.getCephClusterHealthStatus</callback>
     </item>
     
      <item>
@@ -148,7 +148,7 @@
     </item>
     
     <item>
-        <url>/api/ceph/infra/monitor/stats</url>
+        <url>/api/ceph/infra/monitor/status</url>
         <method>get</method>
         <feature>ceph</feature>
         <callback>cephInfraApi.getCephMonitorStatus</callback>
@@ -158,25 +158,25 @@
         <url>/api/ceph/infra/cluster/status</url>
         <method>get</method>
         <feature>ceph</feature>
-        <callback>cephInfraApi.getCephClusterHealthStatus</callback>
+        <callback>cephInfraApi.getCephClusterStatus</callback>
     </item>
 
     <item>
-        <url>/api/ceph/infra/cluster/df</url>
+        <url>/api/ceph/infra/cluster/df/status</url>
         <method>get</method>
         <feature>ceph</feature>
         <callback>cephInfraApi.getCephClusterDFStatus</callback>
     </item>
 
     <item>
-        <url>/api/ceph/infra/osd/stats</url>
+        <url>/api/ceph/infra/osd/status</url>
         <method>get</method>
         <feature>ceph</feature>
         <callback>cephInfraApi.getCephOSDSummary</callback>
     </item>
     
     <item>
-        <url>/api/ceph/infra/pg/stats</url>
+        <url>/api/ceph/infra/pg/status</url>
         <method>get</method>
         <feature>ceph</feature>
         <callback>cephInfraApi.getCephPGSummary</callback>
