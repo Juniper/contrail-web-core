@@ -28,6 +28,7 @@ var rest = require('../../common/rest.api'),
     vdnsConfig = require('./virtualdnsconfig.api'),
     svcTempl = require('./servicetemplateconfig.api'),
     os = require('os'),
+    request = require('request'),
 	opServer;
 
 var parser = null;
@@ -2022,6 +2023,105 @@ function getSandeshData (req, res, appData)
     }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
+function getNetworkReachableIP (dataObj, callback)
+{
+    var ip = dataObj['ip'];
+    var port = dataObj['port'];
+    var resultJSON = {};
+    var options = {};
+    options['method'] = 'GET';
+    options.headers = {
+        accept: '*/*',
+        'content-length': 0
+    };
+    var nwReachReqUrl = global.HTTP_URL + ip + ':' + port + '/';
+    options['uri'] = nwReachReqUrl;
+    resultJSON['error'] = null;
+    resultJSON['data'] = null;
+
+    request(options, commonUtils.doEnsureExecution(function(err, data) {
+        if ((err === undefined) && (data === undefined)) {
+            var errStr = 'API timeout Server:' + ip + ':' + port;
+            err = new appErrors.RESTServerError(errStr);
+            logutils.logger.error(errStr);
+        }
+        resultJSON['error'] = err;
+        resultJSON['data'] = data;
+        resultJSON['ip'] = ip;
+        resultJSON['port'] = port;
+        callback(null, resultJSON);
+    }, 10000));
+}
+
+function checkValidIP (ipAddrStr)
+{
+    try {
+        var ipArr = ipAddrStr.split('.');
+        var ipArrLen = ipArr.length;
+        if (4 != ipArrLen) {
+            return false;
+        }
+        for (i = 0; i < ipArrLen; i++) {
+            ipArr[i] = parseInt(ipArr[i]);
+        }
+        if ((0 == ipArr[0]) && (0 == ipArr[1]) &&
+            (0 == ipArr[2]) && (0 == ipArr[3])) {
+            return false;
+        }
+        if ((255 == ipArr[0]) && (255 == ipArr[1]) &&
+            (255 == ipArr[2]) && (255 == ipArr[3])) {
+            return false;
+        }
+    } catch(e) {
+        return false;
+    }
+    return true;
+}
+
+function getReachableIP (req, res, appData)
+{
+    var error = null;
+    var resultJSON = {};
+    var dataObjArr = [];
+    var postBody = req.body;
+    
+    if ((null == postBody) || (null == postBody['data'])) {
+        error = new appErrors.RESTServerError('POST Body not found');
+        commonUtils.handleJSONResponse(error, res, null);
+        return;
+    }
+    var data = postBody['data'];
+    var len = data.length;
+    for (var i = 0; i < len; i++) {
+        if (false == checkValidIP(data[i]['ip'])) {
+            continue;
+        }
+        if ((null == data[i]['ip']) || (null == data[i]['port'])) {
+            error = new appErrors.RESTServerError('IP/PORT not found in post ' +
+                                                  ' body in ' + i + 'th index');
+            commonUtils.handleJSONResponse(error, res, null);
+            return;
+        }
+        dataObjArr.push({'ip': data[i]['ip'], 'port': data[i]['port']});
+    }
+
+    async.map(dataObjArr, getNetworkReachableIP, function(err, data) {
+        if ((null != err) || (null == data)) {
+            commonUtils.handleJSONResponse(err, res, data);
+            return;
+        }
+        var respCnt = data.length;
+        for (var i = 0; i < respCnt; i++) {
+            if (null == data[i]['error']) {
+                resultJSON['ip'] = data[i]['ip'];
+                resultJSON['port'] = data[i]['port'];
+                break;
+            }
+        }
+        commonUtils.handleJSONResponse(err, res, resultJSON);
+    });
+}
+
 exports.updateGlobalASN = updateGlobalASN;
 exports.getGlobalASN    = getGlobalASN;
 exports.deleteBGPRouter = deleteBGPRouter;
@@ -2037,5 +2137,6 @@ exports.getvRouterL2Routes = getvRouterL2Routes;
 exports.getWebConfigValueByName = getWebConfigValueByName;
 exports.getWebServerInfo = getWebServerInfo;
 exports.getSandeshData = getSandeshData;
+exports.getReachableIP = getReachableIP;
 
 
