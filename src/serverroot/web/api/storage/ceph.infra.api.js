@@ -22,11 +22,11 @@ function getCephClusterStatus(req, res ){
 }
 
 
-function getCephHealthSummary(req, res, appData){
-    url = "/status";
+function getCephClusterHealthStatus(req, res, appData){
+    url = "/health";
    cephServer.apiGet(url, appData, function (error, resultJSON) {
         if(!error && (resultJSON)) {
-            var resultJSON = parseCephHealthSummaryData(resultJSON);
+            var resultJSON = parseCephHealthStatusData(resultJSON);
             commonUtils.handleJSONResponse(null, res, resultJSON);
         } else {
             commonUtils.handleJSONResponse(error, res, null);
@@ -35,8 +35,21 @@ function getCephHealthSummary(req, res, appData){
    
 }
 
-function parseCephHealthSummaryData(healthJSON){
-   return healthJSON;
+function parseCephHealthStatusData(resultJSON){
+    var emptyObj = {};  
+        var healthJSON = {};
+        var status = jsonPath(resultJSON, "$..overall_status");
+        var summary= jsonPath(resultJSON, "$..summary");
+        var details= jsonPath(resultJSON, "$..detail");
+        if (status.length > 0 ) {
+            var temp = new Object();
+            temp["overall-status"] = status[0];
+            temp["details"] = details[0];
+            temp["summary"] = summary[0];
+            healthJSON['cluster-status']= temp;
+            return healthJSON;
+        }
+        return emptyObj;
 }
 
 
@@ -68,13 +81,25 @@ function getCephMonitorStatus(req, res, appData){
         });   
 }
 
-function parseCephClusterMonitorStatus(monJSON){
-   return monJSON;
+function parseCephClusterMonitorStatus(resultJSON){
+   var emptyObj = {};  
+        var monJSON ={};
+        var monitor = jsonPath(resultJSON, "$..mons");
+        if(monitor.length >2){
+            var temp = new Object();
+            temp["all-mons"]= monitor[0];
+            temp["mons-activity"]= monitor[1];
+            temp["active-mons"]= monitor[2];
+            monJSON['monitor-status']= temp;
+            return monJSON;
+        }
+
+    return emptyObj;
 }
 
 
 function getCephClusterUsageData(req, res, appData){
-    url = "/status";
+    url = "/df";
      cephServer.apiGet(url, appData, function (error, resultJSON) {
             if(!error && (resultJSON)) {
                 var resultJSON = parseCephClusterUsageData(resultJSON);
@@ -136,6 +161,26 @@ function parseCephPGData(pgDataJSON){
     return emptyObj;
 }
 
+function getCephClusterDFStatus(req, res, appData){
+    url = "/df";
+     cephServer.apiGet(url, appData, function (error, resultJSON) {
+            if(!error && (resultJSON)) {
+                var resultJSON = parseCephDFData(resultJSON);
+                commonUtils.handleJSONResponse(null, res, resultJSON);
+            } else {
+                commonUtils.handleJSONResponse(error, res, null);
+            }
+        });
+}
+
+function parseCephDFData(dfDataJSON){
+    var emptyObj = {};  
+    var dfJSON ={};
+    
+        dfJSON['utilization-stats']= dfDataJSON;
+        return dfJSON;
+}
+
 function createEmptyPaginatedData ()
 {
     var resultJSON = {};
@@ -149,8 +194,8 @@ function createEmptyPaginatedData ()
 
 /* List all public functions */
 exports.getCephClusterStatus= getCephClusterStatus;
-
-exports.getCephHealthSummary = getCephHealthSummary;
+exports.getCephClusterDFStatus=getCephClusterDFStatus
+exports.getCephClusterHealthStatus = getCephClusterHealthStatus;
 exports.getCephClusterActivity = getCephClusterActivity;
 exports.getCephMonitorStatus = getCephMonitorStatus;
 exports.getCephClusterUsageData= getCephClusterUsageData;

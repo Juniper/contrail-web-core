@@ -134,7 +134,7 @@
     </item>
     
      <item>
-        <url>/api/ceph/infra/health</url>
+        <url>/api/ceph/infra/health/status</url>
         <method>get</method>
         <feature>ceph</feature>
         <callback>cephInfraApi.getCephClusterStatus</callback>
@@ -148,7 +148,7 @@
     </item>
     
     <item>
-        <url>/api/ceph/infra/monitor/status</url>
+        <url>/api/ceph/infra/monitor/stats</url>
         <method>get</method>
         <feature>ceph</feature>
         <callback>cephInfraApi.getCephMonitorStatus</callback>
@@ -158,9 +158,16 @@
         <url>/api/ceph/infra/cluster/status</url>
         <method>get</method>
         <feature>ceph</feature>
-        <callback>cephInfraApi.getCephHealthSummary</callback>
+        <callback>cephInfraApi.getCephClusterHealthStatus</callback>
     </item>
-    
+
+    <item>
+        <url>/api/ceph/infra/cluster/df</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephClusterDFStatus</callback>
+    </item>
+
     <item>
         <url>/api/ceph/infra/osd/stats</url>
         <method>get</method>
