@@ -126,13 +126,8 @@ function queueDataFromCacheOrSendRequest (req, res, jobType, jobName,
                                           sendToJobServerAlways, appData,
                                           postCallback)
 {
-    var postCbSet = 0;
-    if (null != postCallback) {
-        postCbSet = 1;
-    }
 	var reqData = createReqData(req, jobType, jobName, reqUrl, jobRunCount,
-		defCallback, firstRunDelay, nextRunDelay, appData, global.REQ_BY_UI,
-        postCbSet);
+		defCallback, firstRunDelay, nextRunDelay, appData, global.REQ_BY_UI);
 	var reqJSON = JSON.parse(reqData);
 	var reqUrl = reqJSON.data.url;
 	var hash = reqJSON.jobName;
@@ -297,7 +292,7 @@ function queueDataFromCacheOrSendRequestByReqObj (reqObj)
  if defCallback: 0, define the callback in job process section
  */
 function createReqData (req, type, jobName, reqUrl, runCount, defCallback, 
-                        firstRunDelay, nextRunDelay, appData, reqBy, postCbSet)
+                        firstRunDelay, nextRunDelay, appData, reqBy)
 {
     var authObj = {
         /* authObj contains all the auth related parameters, which may be needed
@@ -328,7 +323,6 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 			pubChannel: pubChannel,
 			saveChannelKey: saveChannelKey,
 			reqBy: reqBy,
-			postCbSet: postCbSet,
 			appData: appData
 		}
 	};

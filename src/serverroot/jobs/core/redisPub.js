@@ -35,34 +35,15 @@ function doSetToRedis (key, data)
 	});
 }
 
-function publishDataToRedisWithPostCb (jobData, errCode, pubData, saveData,
-                                       doSave, expiryTime, done)
-{
-    var taskData = jobData.taskData;
-    var pubChannel = taskData['pubChannel'];
-    var saveChannelKey = taskData['saveChannelKey'];
-    var postCbSet = taskData['postCbSet'];
-
-    return publishDataToRedis(pubChannel, saveChannelKey, errCode, pubData,
-                              saveData, doSave, expiryTime, done, postCbSet);
-}
-
 function publishDataToRedis (pubChannel, saveChannelKey, errCode, pubData, 
-                             saveData, doSave, expiryTime, done, jobData, postCbSet)
+                             saveData, doSave, expiryTime, done, jobData)
 {
     var curTime = commonUtils.getCurrentTimestamp();
 
-    if (null == postCbSet) {
-        postCbSet = 0;
-    } else {
-        postCbSet = parseInt(postCbSet);
-    }
-
-    var pubDataObj = {
-        errCode:errCode,
-        postCbSet:postCbSet,
-        data:(pubData)
-    };
+	var pubDataObj = {
+		errCode:errCode,
+		data:(pubData)
+	};
     /*
      Will enable genertic data format later, once all the frontend code also can 
      handle this data format
@@ -128,5 +109,4 @@ exports.sendRedirectRequestToMainServer = sendRedirectRequestToMainServer;
 exports.publishDataToRedis = publishDataToRedis;
 exports.createChannelByHashURL = createChannelByHashURL;
 exports.createRedisPubClient = createRedisPubClient;
-exports.publishDataToRedisWithPostCb = publishDataToRedisWithPostCb;
 
