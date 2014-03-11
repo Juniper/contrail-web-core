@@ -30,7 +30,7 @@ var cachePendingQueue = {};
 /* Function: insertReqCtxToCachePendingQueue
  This function is used to insert req context to cache pending queue
  */
-function insertReqCtxToCachePendingQueue (req, res, channel)
+function insertReqCtxToCachePendingQueue (req, res, channel, postCallback)
 {
     if (null == cachePendingQueue[channel]) {
         cachePendingQueue[channel] = [];
@@ -44,7 +44,8 @@ function insertReqCtxToCachePendingQueue (req, res, channel)
     var obj = {
         'req':req,
         'res':res,
-        'channel':channel
+        'channel':channel,
+        'postCallback': postCallback
     };
     cachePendingQueue[channel].push(obj);
 }
@@ -85,7 +86,8 @@ function deleteCachePendingQueueEntry (channel)
 /* Function: createDataAndSendToJobServer
  This function is used to create reqData ready to send to Job Server
  */
-function createDataAndSendToJobServer (jobType, hash, reqData, req, res, saveCtx)
+function createDataAndSendToJobServer (jobType, hash, reqData, req, res,
+                                       saveCtx, postCallback)
 {
 	var reqJSON = JSON.parse(reqData);
 	var reqUrl = reqJSON.data.url;
@@ -105,7 +107,7 @@ function createDataAndSendToJobServer (jobType, hash, reqData, req, res, saveCtx
 	 */
 	logutils.logger.debug("We got the channel as:" + channel);
     if (true == saveCtx) {
-	    insertReqCtxToCachePendingQueue(req, res, channel);
+	    insertReqCtxToCachePendingQueue(req, res, channel, postCallback);
     } else {
         /* Response already sent */
     }
@@ -121,10 +123,16 @@ function createDataAndSendToJobServer (jobType, hash, reqData, req, res, saveCtx
 function queueDataFromCacheOrSendRequest (req, res, jobType, jobName, 
                                           reqUrl, defCallback, jobRunCount, 
                                           firstRunDelay, nextRunDelay,
-                                          sendToJobServerAlways, appData)
+                                          sendToJobServerAlways, appData,
+                                          postCallback)
 {
+    var postCbSet = 0;
+    if (null != postCallback) {
+        postCbSet = 1;
+    }
 	var reqData = createReqData(req, jobType, jobName, reqUrl, jobRunCount,
-		defCallback, firstRunDelay, nextRunDelay, appData, global.REQ_BY_UI);
+		defCallback, firstRunDelay, nextRunDelay, appData, global.REQ_BY_UI,
+        postCbSet);
 	var reqJSON = JSON.parse(reqData);
 	var reqUrl = reqJSON.data.url;
 	var hash = reqJSON.jobName;
@@ -144,32 +152,33 @@ function queueDataFromCacheOrSendRequest (req, res, jobType, jobName,
                         var pubChannel = data['taskData']['pubChannel'];
                         /* Now insert this into reqCtxQ */
                         insertReqCtxToCachePendingQueue(req, res,
-                                                        pubChannel);
+                                                        pubChannel, postCallback);
                         return;
                     } catch(e) {
                         sendReqToJobServer(req, res, reqData, channel, hash,
-                                           sendToJobServerAlways);
+                                           sendToJobServerAlways, postCallback);
                     }
                 } else {
                     sendReqToJobServer(req, res, reqData, channel, hash,
-                                       sendToJobServerAlways);
+                                       sendToJobServerAlways, postCallback);
                 }
             });
         } else {
             sendReqToJobServer(req, res, reqData, channel, hash,
-                               sendToJobServerAlways);
+                               sendToJobServerAlways, postCallback);
         }
     });
 }
 
 function sendReqToJobServer (req, res, reqData, channel, hash,
-                             sendToJobServerAlways)
+                             sendToJobServerAlways, postCallback)
 {
     var saveCtx = true;
 	if (true === sendToJobServerAlways) {
 	    /* Do not populate the data from cache */
-	    cacheApi.createDataAndSendToJobServer(global.STR_JOB_TYPE_CACHE, hash,
-                                              reqData, req, res, saveCtx);
+	    createDataAndSendToJobServer(global.STR_JOB_TYPE_CACHE, hash,
+                                     reqData, req, res, saveCtx,
+                                     postCallback);
         return;
     }                                      
     
@@ -206,12 +215,61 @@ function sendReqToJobServer (req, res, reqData, channel, hash,
                 saveCtx = false;
             }
                 
-			cacheApi.createDataAndSendToJobServer(global.STR_JOB_TYPE_CACHE, hash,
-				                                  reqData, req, res, saveCtx);
+			createDataAndSendToJobServer(global.STR_JOB_TYPE_CACHE, hash,
+			                             reqData, req, res, saveCtx,
+                                         postCallback);
 		} else {
 			handleJSONResponse(err, req, res, value);
 		}
 	});
+}
+
+function queueDataFromCacheOrSendRequestByReqObj (reqObj)
+{
+    var req = reqObj['req'];
+    var res = reqObj['res'];
+    var jobType = reqObj['jobType'];
+    var jobName = reqObj['jobName'];
+    var reqUrl = reqObj['reqUrl'];
+    var defCallback = reqObj['defCallback'];
+    var jobRunCount = reqObj['jobRunCount'];
+    var firstRunDelay = reqObj['firstRunDelay'];
+    var nextRunDelay = reqObj['nextRunDelay'];
+    var sendToJobServerAlways = reqObj['sendToJobServerAlways'];
+    var appData = reqObj['appData'];
+    var postCallback = reqObj['postCallback'];
+
+    if ((null == req) || (null == res)) {
+        logutils.logger.error("req/res object not specified");
+        assert(0);
+    }
+    if (null == jobName) {
+        logutils.logger.error("jobName not specified");
+        assert(0);
+    }
+    if (null == jobType) {
+        jobType = global.STR_JOB_TYPE_CACHE;
+    }
+    if (null == reqUrl) {
+        reqUrl = '/';
+    }
+    if (null == jobRunCount) {
+        jobRunCount = 1;
+    }
+    if (null == firstRunDelay) {
+        firstRunDelay = 0;
+    }
+    if (null == nextRunDelay) {
+        nextRunDelay = -1;
+    }
+    if (null == sendToJobServerAlways) {
+        sendToJobServerAlways = false;
+    }
+    return queueDataFromCacheOrSendRequest(req, res, jobType, jobName, reqUrl,
+                                           defCallback, jobRunCount,
+                                           firstRunDelay, nextRunDelay,
+                                           sendToJobServerAlways, appData,
+                                           postCallback);
 }
 
 /* defCallback is used to identify, when the job gets schedulded, if 
@@ -239,7 +297,7 @@ function sendReqToJobServer (req, res, reqData, channel, hash,
  if defCallback: 0, define the callback in job process section
  */
 function createReqData (req, type, jobName, reqUrl, runCount, defCallback, 
-                        firstRunDelay, nextRunDelay, appData, reqBy)
+                        firstRunDelay, nextRunDelay, appData, reqBy, postCbSet)
 {
     var authObj = {
         /* authObj contains all the auth related parameters, which may be needed
@@ -270,6 +328,7 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 			pubChannel: pubChannel,
 			saveChannelKey: saveChannelKey,
 			reqBy: reqBy,
+			postCbSet: postCbSet,
 			appData: appData
 		}
 	};
@@ -292,9 +351,9 @@ function sendResponseByChannel (channel, msg)
         isJson = 1;
         /* In error case, application will send only the error string */
     }
+    deleteCachePendingQueueEntry(channel);
     longPoll.insertDataToSendAllClients(pendClientLists, msgParse.data, 
                                         msgParse.errCode, isJson);
-    deleteCachePendingQueueEntry(channel);
 }
 
 function handleJSONResponse(error, req, res, jsonStr)
@@ -310,8 +369,8 @@ function handleJSONResponse(error, req, res, jsonStr)
 exports.deleteCachePendingQueueEntry = deleteCachePendingQueueEntry;
 exports.insertReqCtxToCachePendingQueue = insertReqCtxToCachePendingQueue;
 exports.checkCachePendingQueue = checkCachePendingQueue;
-exports.createDataAndSendToJobServer = createDataAndSendToJobServer;
 exports.queueDataFromCacheOrSendRequest = queueDataFromCacheOrSendRequest;
 exports.createReqData = createReqData;
 exports.sendResponseByChannel = sendResponseByChannel;
-
+exports.queueDataFromCacheOrSendRequestByReqObj =
+    queueDataFromCacheOrSendRequestByReqObj;
