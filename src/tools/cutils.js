@@ -723,6 +723,30 @@ function getSelectedProjectObj() {
     return firstProjectName;
 }
 
+function getSelectedProjectObjNew (projectSwitcherId, elementType) {
+    var firstProjectName = "", firstProjectValue = "";
+    var cookiedProject = getCookie("project");
+    if (cookiedProject === false) {
+        if(elementType === "contrailDropdown") {
+            firstProjectName = $("#" + projectSwitcherId).data(elementType).text();
+            firstProjectValue = $("#" + projectSwitcherId).data(elementType).text();
+        }
+        setCookie("project", firstProjectName);
+        return firstProjectValue;
+    } else {
+        if(elementType === "contrailDropdown") {
+            for (var i = 0; i < $("#" + projectSwitcherId).data(elementType).getAllData().length; i++) {
+                var pname = $("#" + projectSwitcherId).data(elementType).getAllData()[i].text;
+                if (pname === cookiedProject) {
+                    return $("#" + projectSwitcherId).data(elementType).getAllData()[i].value;
+                }
+            }
+        }
+    }
+    setCookie("project", firstProjectName);
+    return firstProjectValue;
+}
+
 function getSelectedProject() {
     var cookiedProject = getCookie("project"),
         firstProjectName = $("#ddProject").data("kendoDropDownList").text();
@@ -1067,3 +1091,4 @@ cutils.deleteSuccess = deleteSuccess;
 cutils.deleteComplete = deleteComplete;
 cutils.deleteFailure = deleteFailure;
 cutils.checkSystemProject = checkSystemProject;
+cutils.getSelectedProjectObjNew = getSelectedProjectObjNew;
