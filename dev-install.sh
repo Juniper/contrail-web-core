@@ -119,6 +119,12 @@ if [ $1 = 'prod' ] ; then
     mkdir webroot/assets/knockout
     cp -r ../contrail-web-third-party/knockout-v3.0.0/knockout-3.0.0.js webroot/assets/knockout/knockout-3.0.0.js
     #End - Copy Knockout from contrail-web-third-party
+
+    #Start - Copy Moment Date-Formatter from contrail-web-third-party
+    rm -rf webroot/assets/moment
+    mkdir webroot/assets/moment
+    cp -r ../contrail-web-third-party/moment-v2.5.1/moment.min.js webroot/assets/moment/moment.min.js
+    #End - Copy Moment Date-Formatter from contrail-web-third-party
 else
     #Start - Link KendoUI from contrail-web-third-party
     rm -rf webroot/assets/kendoui
@@ -234,6 +240,12 @@ else
     mkdir webroot/assets/knockout
     ln -sf $FOUR_BACK/contrail-web-third-party/knockout-v3.0.0/knockout-3.0.0.js webroot/assets/knockout/knockout-3.0.0.js
     #End - Link Knockout from contrail-web-third-party
+
+    #Start - Link Moment Date-Formatter from contrail-web-third-party
+    rm -rf webroot/assets/moment
+    mkdir webroot/assets/moment
+    ln -sf $FOUR_BACK/contrail-web-third-party/moment-v2.5.1/moment.min.js webroot/assets/moment/moment.min.js
+    #End - Link Moment Date-Formatter from contrail-web-third-party
 fi
 
 #Start - Merging All JS files
