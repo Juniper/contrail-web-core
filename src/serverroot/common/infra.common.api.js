@@ -17,6 +17,7 @@ function getModuleType (modName)
     case 'VRouterAgent':
         return 'Compute';
     case 'ControlNode':
+    case 'DnsAgent':
         return 'Control';
     case 'ApiServer':
         return 'Config';
@@ -290,6 +291,7 @@ function getvRouterSummaryConfigUVEData (configData, uuidList, nodeList, addGen,
     var cfilt = ['VrouterStatsAgent:cpu_info',
         'VrouterAgent:virtual_machine_list',
         'VrouterAgent:self_ip_list',
+        'VrouterAgent:xmpp_peer_list',
         'VrouterAgent:total_interface_count',
         'VrouterAgent:down_interface_count', 'VrouterAgent:connected_networks',
         'VrouterAgent:control_ip', 'VrouterAgent:build_info',

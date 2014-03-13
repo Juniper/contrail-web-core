@@ -17,6 +17,20 @@ function getTimeGranByTimeSlice (timeObj, sampleCnt)
 {
     var startTime = timeObj['start_time'];
     var endTime = timeObj['end_time'];
+    if (true == isNaN(startTime)) {
+        var str = 'now-';
+        var pos = startTime.indexOf(str);
+        if (pos != -1) {
+            var mins = startTime.slice(pos + str.length);
+            mins = mins.substr(0, mins.length - 1);
+            mins = parseInt(mins);
+        } else {
+            assert(0);
+        }
+        var timeGran = (mins * 60) / sampleCnt;
+        return Math.floor(timeGran);
+    }
+
     var timeGran = (endTime - startTime) / (sampleCnt * 
         global.MILLISEC_IN_SEC * global.MICROSECS_IN_MILL);
     if (timeGran < 1) { 
@@ -83,24 +97,42 @@ function createTimeQueryObjByStartEndTime (startTime, endTime)
 function createTimeObjByAppData (appData) 
 {
     var minsSince = appData['minsSince'];
-    var timeObj = null;
+    var timeObj = {};
     if ((minsSince != null) && (null == appData['startTime'])) {
-        timeObj = createTimeObj(appData);
-        timeObj['timeGran'] = exports.getTimeGranByTimeSlice(timeObj, 
-                                                             appData['sampleCnt']);
+        timeObj['start_time'] = 'now-' + minsSince +'m';
+        timeObj['end_time'] = 'now';
+        timeObj['timeGran'] = getTimeGranByTimeSlice(timeObj, 
+                                                     appData['sampleCnt']);
     } else {
         assert(appData['startTime']);
         assert(appData['endTime']);
         timeObj = createTimeQueryObjByStartEndTime(appData['startTime'],
                                                    appData['endTime']);
         if (null == appData['timeGran']) {
-            timeObj['timeGran'] = exports.getTimeGranByTimeSlice(timeObj,
-                                                                 appData['sampleCnt']);
+            timeObj['timeGran'] = getTimeGranByTimeSlice(timeObj,
+                                                         appData['sampleCnt']);
         } else {
             timeObj['timeGran'] = parseInt(appData['timeGran']);
         }
     }
     return timeObj;
+}
+
+function sortEntriesByObj (entries, matchStr)
+{
+    if (null != matchStr) {
+        entries.sort(function(a, b) {
+            if (a[matchStr] > b[matchStr]) {
+                return 1;
+            } else if (a[matchStr] < b[matchStr]) {
+                return -1;
+            }
+            return 0;
+        });
+    } else {
+        entries.sort();
+    }
+    return entries;
 }
 
 function getnThIndexByLastKey (lastKey, entries, matchStr)
@@ -119,8 +151,10 @@ function getnThIndexByLastKey (lastKey, entries, matchStr)
         } else {
             matchedStr = entries[i][matchStr];
         }
-        if (lastKey == matchedStr) {
+        if (matchedStr == lastKey) {
             return i;
+        } else if (matchedStr > lastKey) {
+            return i - 1;
         }
     }
     return -2;
@@ -143,4 +177,5 @@ exports.createTimeQueryObjByStartEndTime = createTimeQueryObjByStartEndTime;
 exports.createTimeObjByAppData = createTimeObjByAppData;
 exports.getnThIndexByLastKey = getnThIndexByLastKey;
 exports.makeUVEList = makeUVEList;
+exports.sortEntriesByObj = sortEntriesByObj;
 

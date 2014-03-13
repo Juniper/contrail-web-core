@@ -276,6 +276,13 @@
         <callback>commonUtils.upload</callback>
     </item>
     <item>
+        <!-- Get Sandesh Data -->
+        <url>/api/admin/monitor/infrastructure/get-sandesh-data</url>
+        <method>post</method>
+        <feature>monitoring</feature>
+        <callback>adminapi.getSandeshData</callback>
+    </item>
+    <item>
         <url>/api/admin/bgp-routers/:type</url>
         <method>get</method>
         <feature>bgp</feature>
@@ -417,6 +424,13 @@
         <method>get</method>
         <feature>control-node</feature>
         <callback>infra.getControlNodePeerInfo</callback>
+    </item>
+    <item>
+        <!-- Get bgp-peer list paginated response -->
+        <url>/api/admin/monitor/infrastructure/controlnode/paged-bgppeer</url>
+        <method>get</method>
+        <feature>control-node</feature>
+        <callback>infra.getControlNodePeerPagedInfo</callback>
     </item>
     <item>
         <!-- Lists the bgp-peers -->
@@ -1440,6 +1454,12 @@
         <method>get</method>
         <feature>setting</feature>
         <callback>adminapi.getWebConfigValueByName</callback>
+    </item>
+    <item>
+        <url>/api/service/networking/get-network-reachable-ip</url>
+        <method>post</method>
+        <feature>monitoring</feature>
+        <callback>adminapi.getReachableIP</callback>
     </item>
     <item>
         <url>/api/query/cassandra/keys/:table</url>
