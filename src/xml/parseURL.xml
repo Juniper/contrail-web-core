@@ -1449,6 +1449,12 @@
         <callback>adminapi.getWebConfigValueByName</callback>
     </item>
     <item>
+        <url>/api/service/networking/get-network-reachable-ip</url>
+        <method>post</method>
+        <feature>monitoring</feature>
+        <callback>adminapi.getReachableIP</callback>
+    </item>
+    <item>
         <url>/api/query/cassandra/keys/:table</url>
         <method>get</method>
         <feature>setting</feature>
