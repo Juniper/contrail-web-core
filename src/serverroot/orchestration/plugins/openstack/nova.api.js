@@ -10,7 +10,8 @@ var rest = require('../../../common/rest.api'),
     async = require('async'),
     plugins = require('../plugins.api'),
     appErrors = require('../../../errors/app.errors.js'),
-    commonUtils = require('../../../utils/common.utils')
+    commonUtils = require('../../../utils/common.utils'),
+    httpsOp = require('../../../common/httpsoptions.api')
     ;
 var novaAPIServer;
 
@@ -21,7 +22,7 @@ var novaIP = ((config.computeManager) && (config.computeManager.ip)) ?
 var novaPort = ((config.computeManager) && (config.computeManager.port)) ? 
     config.computeManager.port : '8774';
 
-novaAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
+novaAPIServer = rest.getAPIServer({apiName:global.label.COMPUTE_SERVER,
                                       server:novaIP, port:novaPort});
 function getTenantIdByReqCookie (req)
 {
@@ -385,13 +386,14 @@ function novaApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex,
         callback(err, null);
         return;
     }
+    httpsOp.apiProtocolList[global.label.COMPUTE_SERVER] = apiVer['protocol'];
     var reqUrl = '/' + apiVer['version'] + reqUrlPrefix;
     novaApi.get(reqUrl, req, function(err, data) {
         if ((null != err) || (null == data)) {
             novaApiGetByAPIVersionList(reqUrlPrefix, apiVerList, req,
                                        startIndex + 1, callback);
         } else {
-            callback(null, data, apiVerList[startIndex]);
+            callback(null, data, apiVerList[startIndex]['version']);
         }
     });
 }

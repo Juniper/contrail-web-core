@@ -7,6 +7,14 @@ var config = {};
 config.orchestration = {};
 config.orchestration.Manager = 'openstack'
 
+/* Below are the config options for all Orchestration Modules below */
+// authProtocol:        
+//      Specify authProtocol either 'http' or 'https'
+// strictSSL:
+//      If true, requires certificates to be valid
+// ca: 
+//      An authority certificate to check the remote host against,
+//      if you do not want to specify then use ''
 config.networkManager = {};
 config.networkManager.ip = '127.0.0.1';
 config.networkManager.port = '9696'
@@ -22,6 +30,9 @@ config.computeManager.port = '8774';
 config.identityManager = {};
 config.identityManager.ip = '127.0.0.1';
 config.identityManager.port = '5000';
+config.identityManager.authProtocol = 'http';
+config.identityManager.strictSSL = false;
+config.identityManager.ca = '';
 
 config.storageManager = {};
 config.storageManager.ip = '127.0.0.1';
@@ -31,11 +42,17 @@ config.storageManager.port = '8776';
 config.cnfg = {};
 config.cnfg.server_ip = '127.0.0.1';
 config.cnfg.server_port = '8082';
+config.cnfg.authProtocol = 'http';
+config.cnfg.strictSSL = false;
+config.cnfg.ca = '';
 
 // Analytics API server and port.
 config.analytics = {};
 config.analytics.server_ip = '127.0.0.1';
 config.analytics.server_port = '8081';
+config.analytics.authProtocol = 'http';
+config.analytics.strictSSL = false;
+config.analytics.ca = '';
 
 /* Discovery Service */
 config.discoveryService = {};

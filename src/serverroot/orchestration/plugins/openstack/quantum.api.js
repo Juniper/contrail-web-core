@@ -15,7 +15,7 @@ var quantumServerIP = ((config.networkManager) && (config.networkManager.ip)) ?
 var quantumServerPort = ((config.networkManager) && (config.networkManager.port)) ?
     config.networkManager.port : '9696';
 
-quantumAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
+quantumAPIServer = rest.getAPIServer({apiName:global.label.NETWORK_SERVER,
                                       server:quantumServerIP,
                                       port:quantumServerPort});
 function getTenantIdByReqCookie (req)

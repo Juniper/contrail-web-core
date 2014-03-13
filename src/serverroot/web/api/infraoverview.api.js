@@ -229,6 +229,7 @@ function getvRouterDetailConfigUVEData (configData, uuidList, nodeList, addGen,
     postData['cfilt'] = ['VrouterStatsAgent:cpu_info',
         'VrouterAgent:virtual_machine_list',
         'VrouterAgent:self_ip_list',
+        'VrouterAgent:xmpp_peer_list',
         'VrouterAgent:total_interface_count',
         'VrouterAgent:down_interface_count', 'VrouterAgent:connected_networks',
         'VrouterAgent:control_ip', 'VrouterAgent:build_info',
@@ -360,7 +361,7 @@ function getvRouterDetails (req, res, appData)
                      commonUtils.doEnsureExecution(function(err, data) {
         if ((null != err) || (null == data)) {
             data = {};
-            getDataFromConfigNode('bgp-routers', hostName, appData,
+            getDataFromConfigNode('virtual-routers', host, appData,
                                   data, function(err, resultJSON) {
                 commonUtils.handleJSONResponse(err, res, resultJSON);
             });
@@ -750,7 +751,7 @@ function getAnalyticsNodeSummary (req, res, appData)
 
     reqUrl = '/analytics/uves/collector';
     var collPostData = {};
-    collPostData['cfilt'] = ['ModuleCpuState', 'CollectorState'];
+    collPostData['cfilt'] = ['ModuleCpuState', 'CollectorState:self_ip_list','CollectorState:build_info','CollectorState:tx_socket_stats','CollectorState:rx_socket_stats'];
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
                              collPostData, opApiServer, null, appData);
 

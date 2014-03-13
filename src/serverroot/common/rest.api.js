@@ -10,6 +10,9 @@ var http = require('http'),
 	util = require('util'),
     commonUtils = require('../utils/common.utils'),
     restler = require('restler'),
+    fs = require('fs'),
+    httpsOp = require('./httpsoptions.api'),
+    request = require('request'),
     discClient = require('./discoveryclient.api');
 
 if (!module.parent) {
@@ -93,6 +96,10 @@ APIServer.prototype.cb = function (cb)
 	}
 };
 
+/**
+ * Update the host/port from discovery server response
+ * @param {params} {object} Parameters
+ */
 APIServer.prototype.updateDiscoveryServiceParams = function (params)
 {
     var opS = require('./opServer.api');
@@ -116,6 +123,88 @@ APIServer.prototype.updateDiscoveryServiceParams = function (params)
 }
 
 /**
+ * Make a https call to server.
+ * @param {options} {object} Parameters
+ * @param {callback} {function} Callback function once response comes 
+ *        from Server
+ */
+
+APIServer.prototype.makeHttpsRestCall = function (options, callback)
+{
+    request(options, function(err, response, data) {
+        callback(err, data, response);
+    });
+}
+
+/** Retry the REST API Call, once it fails
+ * @param {err} {object} error object got from previous error response
+ * @param {restApi} {function} restler API based on method
+ * @param {params} {object} Parameters
+ * @param {response} {object} Response Object
+ * @param {callback} {function} Callback function once response comes
+ *        from Server
+ * @param {isRetry} {bool} boolean flag if it is already a retry call
+ */
+APIServer.prototype.retryMakeCall = function(err, restApi, params, 
+                                             response, callback, isRetry)
+{
+    var self = this;
+    /* Check if the error code is ECONNREFUSED or ETIMEOUT, if yes then
+     * issue once again discovery subscribe request, the remote server
+     * may be down, so discovery server should send the Up Servers now
+     */
+    if ((true == process.mainModule.exports['discServEnable']) &&
+        (('ECONNREFUSED' == err.code) || ('ETIMEOUT' == err.code))) {
+        if (false == isRetry) {
+            /* Only one time send a retry */
+            discClient.sendDiscSubMessageOnDemand(self.name);
+        }
+        var reqParams = null;
+        reqParams = discClient.resetServicesByParams(params, self.name);
+        if (null != reqParams) {
+            return self.makeCall(restApi, reqParams, callback, true);
+        }
+    }
+    error = new appErrors.RESTServerError(util.format(err));
+    error['custom'] = true;
+    error['responseCode'] = ((null != response) &&
+                             (null != response.statusCode)) ?
+                             response.statusCode :
+                             global.HTTP_STATUS_INTERNAL_ERROR;
+    error['code'] = err.code;
+    callback(error, '', response);
+}
+
+/**
+ * Send the parsed response data to APP
+ * @param {data} {object} response data either in xml/json format
+ * @param {xml2jsSettings} {object} config for xml2js knob
+ * @param {response} {object} response object
+ * @param {callback} {function} Callback function to call once data parsing is done
+ */
+APIServer.prototype.sendParsedDataToApp = function(data, xml2jsSettings, 
+                                                   response, callback)
+{
+    /* Data is xml/json format */
+    restler.parsers.xml(data, function(err, xml2JsonData) {
+        if (err) {
+            /* This MUST be a JSON response, response can be 
+             * JSON.stringify (if auto), else parsed if (json)
+             */
+            try {
+                var JSONData = JSON.parse(data);
+                callback(null, JSONData, response);
+            } catch(e) {
+                callback(null, data, response);
+            }
+        } else {
+            /* XML Response */
+            callback(null, xml2JsonData, response);
+        }
+    }, xml2jsSettings);
+}
+
+/**
  * Make a call to API server.
  * @param {restApi} {function} restler API based on method
  * @param {params} {object} Parameters 
@@ -125,6 +214,7 @@ APIServer.prototype.updateDiscoveryServiceParams = function (params)
 APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
 {
     var self = this;
+    var reqUrl = null;
     var options = {};
     var data = commonUtils.getApiPostData(params['path'], params['data']);
     var method = params['method'];
@@ -145,7 +235,37 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
     }
     params = self.updateDiscoveryServiceParams(params);
     options['parser'] = restler.parsers.auto;
-    var reqUrl = global.HTTP_URL + params.url + ':' + params.port + params.path;
+    options = httpsOp.updateHttpsSecureOptions(self.name, options);
+    if ((null != options['headers']) &&
+        (null != options['headers']['protocol']) &&
+        (global.PROTOCOL_HTTPS == options['headers']['protocol'])) {
+        delete options['headers']['protocol'];
+        reqUrl = global.HTTPS_URL + params.url + ':' + params.port + params.path;
+        options['uri'] = reqUrl;
+        options['body'] = options['data'];
+        if (('POST' != method) && ('PUT' != method)) {
+            delete options['data'];
+            delete options['body'];
+        }
+        self.makeHttpsRestCall(options, function(err, data, response) {
+            if (null != err) {
+                try {
+                    logutils.logger.error('URL [' + reqUrl + ']' + 
+                                          ' returned error [' + 
+                                          JSON.stringify(err) + ']');
+                } catch(e) {
+                    logutils.logger.error('URL [' + reqUrl + ']' +
+                                          ' returned error [' + err + ']');
+                }
+                self.retryMakeCall(err, restApi, params, response, callback, false);
+            } else {
+                self.sendParsedDataToApp(data, xml2jsSettings, response,
+                                         callback);
+            }
+        });
+        return;
+    }
+    reqUrl = global.HTTP_URL + params.url + ':' + params.port + params.path;
     restApi(reqUrl, options).on('complete', function(data, response) {
         if (data instanceof Error ||
             parseInt(response.statusCode) >= 400) {
@@ -156,52 +276,9 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
                 logutils.logger.error('URL [' + reqUrl + ']' +
                                       ' returned error [' + data + ']');
             }
-            /* Invalid data, throw error */
-            /* Check if the error code is ECONNREFUSED or ETIMEOUT, if yes then
-             * issue once again discovery subscribe request, the remote server
-             * may be down, so discovery server should send the Up Servers now
-             */
-            if ((true == process.mainModule.exports['discServEnable']) &&
-                (('ECONNREFUSED' == data.code) || ('ETIMEOUT' == data.code))) {
-                if (false == isRetry) {
-                    /* Only one time send a retry */
-                    discClient.sendDiscSubMessageOnDemand(self.name);
-                }
-                var reqParams = null;
-                reqParams = discClient.resetServicesByParams(params, self.name);
-                if (null != reqParams) {
-                    return self.makeCall(restApi, reqParams, callback, true);
-                }
-            }
-            error = new
-//            appErrors.RESTServerError(util.format(messages.error.invalid_json_xml,
-  //                                                params.url, data));
-            appErrors.RESTServerError(util.format(data));
-            error['custom'] = true;
-            error['responseCode'] = ((null != response) && 
-                                     (null != response.statusCode)) ?
-                                     response.statusCode :
-                                     global.HTTP_STATUS_INTERNAL_ERROR;
-            error['code'] = data.code;
-            callback(error, '', response);
+            self.retryMakeCall(data, restApi, params, response, callback, false);
         } else {
-            /* Data is xml/json format */
-            restler.parsers.xml(data, function(err, xml2JsonData) {
-                if (err) {
-                    /* This MUST be a JSON response, response can be 
-                     * JSON.stringify (if auto), else parsed if (json)
-                     */
-                    try {
-                        var JSONData = JSON.parse(data);
-                        callback(null, JSONData, response);
-                    } catch(e) {
-                        callback(null, data, response);
-                    }
-                } else {
-                    /* XML Response */
-                    callback(null, xml2JsonData, response);
-                }
-            }, xml2jsSettings);
+            self.sendParsedDataToApp(data, xml2jsSettings, response, callback);
         }
     });
 }

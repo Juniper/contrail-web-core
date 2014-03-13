@@ -330,7 +330,6 @@ function doCheckJobsProcess ()
 			if ((err) || (null == job)) {
 				logutils.logger.error("Some error happened or job is null:",
 					err, process.pid);
-				throw err;
 				return;
 			}
 			logutils.logger.debug("Job " + job.id + " completed by process: " + process.pid);
