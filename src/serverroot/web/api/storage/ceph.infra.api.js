@@ -87,7 +87,8 @@ function parseCephClusterMonitorList(resultJSON){
         var monitor = jsonPath(resultJSON, "$..mons");
         if(monitor.length >2){
             var temp = new Object();
-            temp["overall-status"] = jsonPath(resultJSON, "$..overall_status");;
+            var status= jsonPath(resultJSON, "$..overall_status");
+            temp["overall-status"] = status[0];
             temp["all-mons"]= monitor[0];
             temp["mons-activity"]= monitor[1];
             temp["active-mons"]= monitor[2];
