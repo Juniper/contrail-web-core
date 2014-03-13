@@ -8,7 +8,7 @@ var assert = require('assert');
 var config = require('../../../config/config.global');
 
 var serverIp = global.DFLT_SERVER_IP;
-var serverPort = '5002';
+var serverPort = '5003';
 var serverUrlVersion= "/api/v0.1";
 
 
@@ -30,6 +30,7 @@ function apiGet (url, appData, callback)
     var headers = {};
     headers['Accept'] = 'application/json';
     url = serverUrlVersion + url;
+    
     cephServer.api.get(url, function(err, data) {
         callback(err, data);
     }, headers);

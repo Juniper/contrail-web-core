@@ -38,7 +38,7 @@ function getCephClusterHealthStatus(req, res, appData){
 function parseCephHealthStatusData(resultJSON){
     var emptyObj = {};  
         var healthJSON = {};
-        var status = jsonPath(resultJSON, "$..overall_status");
+        var status = jsonPath(resultJSON, "$..status");
         var summary= jsonPath(resultJSON, "$..summary");
         var details= jsonPath(resultJSON, "$..detail");
         if (status.length > 0 ) {
@@ -69,11 +69,11 @@ function parseCephClusterActivityData(activityJSON){
    return activityJSON;
 }
 
-function getCephMonitorStatus(req, res, appData){
+function getCephMonitorList(req, res, appData){
     url = "/status";
      cephServer.apiGet(url, appData,function (error, resultJSON) {
             if(!error && (resultJSON)) {
-                var resultJSON = parseCephClusterMonitorStatus(resultJSON);
+                var resultJSON = parseCephClusterMonitorList(resultJSON);
                 commonUtils.handleJSONResponse(null, res, resultJSON);
             } else {
                 commonUtils.handleJSONResponse(error, res, null);
@@ -81,12 +81,13 @@ function getCephMonitorStatus(req, res, appData){
         });   
 }
 
-function parseCephClusterMonitorStatus(resultJSON){
+function parseCephClusterMonitorList(resultJSON){
    var emptyObj = {};  
         var monJSON ={};
         var monitor = jsonPath(resultJSON, "$..mons");
         if(monitor.length >2){
             var temp = new Object();
+            temp["overall-status"] = jsonPath(resultJSON, "$..overall_status");;
             temp["all-mons"]= monitor[0];
             temp["mons-activity"]= monitor[1];
             temp["active-mons"]= monitor[2];
@@ -115,7 +116,7 @@ function parseCephClusterUsagaeData(usageJSON){
 }
 
 function getCephOSDSummary(req, res, appData){
-    url = "/status";
+    url = "/osd/stat";
      cephServer.apiGet(url, appData, function (error, resultJSON) {
             if(!error && (resultJSON)) {
                 var resultJSON = parseCephOSDData(resultJSON);
@@ -127,16 +128,49 @@ function getCephOSDSummary(req, res, appData){
 }
 
 function parseCephOSDData(osdJSON){
-   var emptyObj = {};  
-    var osdMapJSON ={};
-    var osdMap = jsonPath(osdJSON, "$..osdmap");
-    if (osdMap.length > 0) {
-        osdMapJSON['osdmap']= osdMap[0];
+        var osdMapJSON ={};    
+        osdMapJSON['osd-stat']= osdJSON;
         return osdMapJSON;
+}
+
+function getCephOSDList(req, res, appData){
+     var dataObjArr = [];
+      var resultJSON = [];
+    urlOSDsFromPG = "/pg/dump?dumpcontents=osds";
+    commonUtils.createReqObj(dataObjArr, urlOSDsFromPG, null, null, 
+                                         null, null, appData);
+    urlOSDTree = "/osd/tree";
+    commonUtils.createReqObj(dataObjArr, urlOSDTree, null, null, 
+                                         null, null, appData);
+
+     async.map(dataObjArr,
+                      commonUtils.getAPIServerResponse(cephServer.apiGet, true),
+                      function(err, data) {
+                resultJSON = parseCephOSDList(data);        
+                commonUtils.handleJSONResponse(err, res, resultJSON);
+            });
+ 
+}
+function parseCephOSDList(osdJSON){
+    var emptyObj = {};  
+    var osdList={};
+    var osdPG= osdJSON[0];
+    var osdTree= osdJSON[1];
+
+    var rootMap = jsonPath(osdTree, "$..nodes[?(@.type=='root')]");
+    var hostMap = jsonPath(osdTree, "$..nodes[?(@.type=='host')]");
+    var osds = jsonPath(osdTree, "$..nodes[?(@.type=='osd')]");
+    
+    if (osds.length > 0) {
+        var osdMapJSON = new Object();
+        osdMapJSON["root"]= rootMap;
+        osdMapJSON["host"]= hostMap;
+        osdMapJSON["osds"]= osds;
+        osdList["osd-details"]= osdMapJSON;
+        return osdList;
     }
     return emptyObj;
 }
-
 
 function getCephPGSummary(req, res, appData){
     url = "/status";
@@ -197,9 +231,10 @@ exports.getCephClusterStatus= getCephClusterStatus;
 exports.getCephClusterDFStatus=getCephClusterDFStatus
 exports.getCephClusterHealthStatus = getCephClusterHealthStatus;
 exports.getCephClusterActivity = getCephClusterActivity;
-exports.getCephMonitorStatus = getCephMonitorStatus;
+exports.getCephMonitorList = getCephMonitorList;
 exports.getCephClusterUsageData= getCephClusterUsageData;
 exports.getCephOSDSummary=getCephOSDSummary
 exports.getCephPGSummary = getCephPGSummary;
+exports.getCephOSDList=getCephOSDList
 
 

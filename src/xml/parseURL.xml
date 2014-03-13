@@ -151,7 +151,7 @@
         <url>/api/ceph/infra/monitor/status</url>
         <method>get</method>
         <feature>ceph</feature>
-        <callback>cephInfraApi.getCephMonitorStatus</callback>
+        <callback>cephInfraApi.getCephMonitorList</callback>
     </item>
     
     <item>
@@ -174,7 +174,20 @@
         <feature>ceph</feature>
         <callback>cephInfraApi.getCephOSDSummary</callback>
     </item>
+   
+    <item>
+        <url>/api/ceph/infra/osds</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephOSDList</callback>
+    </item>
     
+    <item>
+        <url>/api/ceph/infra/mons</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephMonitorList</callback>
+    </item>
     <item>
         <url>/api/ceph/infra/pg/status</url>
         <method>get</method>
