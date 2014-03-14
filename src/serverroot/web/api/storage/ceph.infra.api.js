@@ -164,13 +164,81 @@ function parseCephOSDList(osdJSON){
     
     if (osds.length > 0) {
         var osdMapJSON = new Object();
-        osdMapJSON["root"]= rootMap;
-        osdMapJSON["host"]= hostMap;
-        osdMapJSON["osds"]= osds;
-        osdList["osd-details"]= osdMapJSON;
+        parseOSDFromPG(osds,osdPG);
+        hostMap = parseHostFromOSD(hostMap,osds);
+        osdMapJSON["osd-tree"]= parseRootFromHost(rootMap,hostMap);
+        osdList= osdMapJSON;
         return osdList;
     }
     return emptyObj;
+}
+
+function parseRootFromHost(rootJSON, hostJSON){
+    var chldCnt= rootJSON[0].children.length;
+    console.log("chldCnt:"+chldCnt);
+     for(i=0;i< chldCnt;i++){ 
+        var chldId= rootJSON[0].children[i];
+         console.log("chlId:"+chldId);
+        var hostCnt= hostJSON.length;
+        for(j=0;j< hostCnt;j++){
+            var hostId= hostJSON[j].id;
+            if(chldId == hostId){
+                rootJSON[0].children[i] = hostJSON[j];
+/*              console.log("chlId:"+chldId);
+                console.log("hostId:"+hostId);*/
+            }
+        }
+    }
+    var jsonstr = JSON.stringify(rootJSON);
+    var new_jsonstr = jsonstr.replace(/children/g, "hosts");
+    rootJSON = JSON.parse(new_jsonstr);
+
+    return rootJSON;
+}
+
+function parseHostFromOSD(hostJSON,osdsJSON){
+    var hstCnt= hostJSON.length;
+    for(i=0;i< hstCnt;i++){       
+        var cldCnt= hostJSON[i].children.length;
+        for(j=0;j< cldCnt; j++){
+            var chlId= hostJSON[i].children[j];
+            for(k=0;k< osdsJSON.length;k++){
+                var osdId= osdsJSON[k].id;
+                if(chlId==osdId){
+                  /*  console.log("hstCnt:"+hostJSON[i].name);
+                    console.log("hstlength:"+cldCnt);
+                    console.log("chlId:"+chlId);
+                    console.log("osdId:"+osdId);*/
+                    hostJSON[i].children[j] = osdsJSON[k];
+                }
+            }
+        }
+    }
+
+    var jsonstr = JSON.stringify(hostJSON);
+
+    var new_jsonstr = jsonstr.replace(/children/g, "osds");
+
+    hostJSON = JSON.parse(new_jsonstr);
+    return hostJSON;
+}
+
+function parseOSDFromPG(osdTree, osdPG ){
+    var nodeCnt= osdTree.length;
+    //log.console("count:"+nodeCnt);
+       for (i = 0; i < nodeCnt; i++) {
+        var treeId=osdTree[i].id;
+        var pgOSDId= jsonPath(osdPG,"$.output["+i+"].osd")[0];
+        if( treeId == pgOSDId){
+          /*  console.log("treeId:"+treeId);
+            console.log("pgOSDId:"+pgOSDId);*/
+            osdTree[i]['kb']=jsonPath(osdPG,"$.output["+i+"].kb")[0];
+            osdTree[i]['kb_avail']=jsonPath(osdPG, "$.output["+i+"].kb_avail")[0];
+            osdTree[i]['kb_used']=jsonPath(osdPG, "$.output["+i+"].kb_used")[0];
+            osdTree[i]['fs_perf_stat']=jsonPath(osdPG, "$.output["+i+"].fs_perf_stat")[0];
+        }   
+    }
+    return osdTree;
 }
 
 function getCephPGSummary(req, res, appData){
