@@ -190,8 +190,8 @@ function getReRunQueryString(reRunQuery, reRunTimeRange)
         delete reRunQuery['toTimeUTC'];
         delete reRunQuery['reRunTimeRange'];
     }
-    reRunQueryString = qs.stringify(reRunQuery);
-    return reRunQueryString;
+//   reRunQueryString = qs.stringify(reRunQuery);
+    return reRunQuery;
 };
 
 function parseQueryTime(queryId) 
