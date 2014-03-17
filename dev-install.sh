@@ -40,6 +40,8 @@ if [ $1 = 'prod' ] ; then
     mkdir -p webroot/assets/jquery
     cp -r ../contrail-web-third-party/jquery webroot/assets/jquery/js
     cp -r ../contrail-web-third-party/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js webroot/assets/jquery/js/
+    cp -r ../contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery-ui.css webroot/assets/jquery/js/
+    cp -r ../contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery.ui.theme.css webroot/assets/jquery/js/
     cp -r ../contrail-web-third-party/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/jquery.validate.js
     #End - Copy JQuery files from contrail-web-third-party
 
@@ -162,6 +164,8 @@ else
     ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.ui.touch-punch.min.js webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
     ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.xml2json.js webroot/assets/jquery/js/jquery.xml2json.js
     ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js webroot/assets/jquery/js/jquery-ui-1.10.3.custom.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery-ui.css webroot/assets/jquery/js/jquery-ui.css
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery.ui.theme.css webroot/assets/jquery/js/jquery.ui.theme.css
     ln -sf $FIVE_BACK/contrail-web-third-party/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/jquery.validate.js
     #End - Link JQuery files from contrail-web-third-party
 
