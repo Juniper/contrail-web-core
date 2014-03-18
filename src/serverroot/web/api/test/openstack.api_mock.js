@@ -102,6 +102,8 @@ var compEndPoint_IN =
 var servCatRespComputeData_OP =
 [
     {
+        "ip": "10.204.217.42", 
+        "port": "8774", 
         "protocol": "http", 
         "version": "v1.1"
     }
@@ -110,7 +112,9 @@ var servCatRespComputeData_OP =
 var servCatRespVolData_OP =
 [
     {
-        "protocol": "http",
+        "ip": "10.204.217.42", 
+        "port": "8776", 
+        "protocol": "http", 
         "version": "v1"
     }
 ];
@@ -118,21 +122,47 @@ var servCatRespVolData_OP =
 var servCatRespImageData_OP =
 [
     {
+        "ip": "10.204.217.42", 
+        "port": "9292", 
         "protocol": "http", 
         "version": "v1"
     }
-];
+]
 
 var servCatRespCompMultData_OP =
-[ 
-    { version: 'v1.1', protocol: 'http' },
-    { version: 'v2', protocol: 'https' } 
+[
+    {
+        "ip": "10.204.217.42", 
+        "port": "8774", 
+        "protocol": "http", 
+        "version": "v1.1"
+    }, 
+    {
+        "ip": "10.204.217.42", 
+        "port": "8774", 
+        "protocol": "https", 
+        "version": "v2"
+    }
 ];
 
 var getServiceCatalogCompDataWithNoHTTP_OP = 
-[ 
-    { version: 'v1.1', protocol: 'http' } 
+[
+    {
+        "ip": "10.204.217.42", 
+        "port": "8774", 
+        "protocol": "http", 
+        "version": "v1.1"
+    }
 ];
+
+var suppVerList_OP =
+{
+    "index": 0,
+    "protocol": "http",
+    "version": "v1.1",
+    "port": 8787,
+    "ip": '10.204.216.42'
+}; 
 
 exports.servCatRespData = servCatRespData;
 exports.servCatRespComputeData_OP = servCatRespComputeData_OP;
@@ -141,4 +171,5 @@ exports.servCatRespVolData_OP = servCatRespVolData_OP;
 exports.servCatRespCompMultData_OP = servCatRespCompMultData_OP;
 exports.getServiceCatalogCompDataWithNoHTTP_OP = getServiceCatalogCompDataWithNoHTTP_OP;
 exports.compEndPoint_IN = compEndPoint_IN;
+exports.suppVerList_OP = suppVerList_OP;
 
