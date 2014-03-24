@@ -110,9 +110,93 @@
         <path>../../../../lib/request-timeout</path>
     </require>
     <require>
-         <define>infra</define>
+         <define>cephInfraApi</define>
          <path>../api/infraoverview.api</path>
     </require>
+    
+    <!--  Ceph Storage API  -->
+    <require>
+        <define>cephInfraApi</define>
+        <path>../api/storage/ceph.infra.api</path>
+    </require>
+
+     <item>
+        <url>/ceph/monitor</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>handler.dashboard</callback>
+    </item>
+    <item>
+        <url>/</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>handler.home</callback>
+    </item>
+    
+     <item>
+        <url>/api/ceph/infra/health/status</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephClusterHealthStatus</callback>
+    </item>
+    
+     <item>
+        <url>/api/ceph/infra/cluster/activity</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephClusterActivity</callback>
+    </item>
+    
+    <item>
+        <url>/api/ceph/infra/monitor/status</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephMonitorList</callback>
+    </item>
+    
+    <item>
+        <url>/api/ceph/infra/cluster/status</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephClusterStatus</callback>
+    </item>
+
+    <item>
+        <url>/api/ceph/infra/cluster/df/status</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephClusterDFStatus</callback>
+    </item>
+
+    <item>
+        <url>/api/ceph/infra/osd/status</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephOSDSummary</callback>
+    </item>
+   
+    <item>
+        <url>/api/ceph/infra/osds</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephOSDList</callback>
+    </item>
+    
+    <item>
+        <url>/api/ceph/infra/mons</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephMonitorList</callback>
+    </item>
+    <item>
+        <url>/api/ceph/infra/pg/status</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephPGSummary</callback>
+    </item>
+    
+    <!-- Ceph Storage -->
+    
     <item>
         <url>/infra/admin</url>
         <method>get</method>

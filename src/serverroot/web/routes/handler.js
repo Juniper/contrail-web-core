@@ -25,11 +25,19 @@ if (!module.parent) {
 }
 
 exports.home = function (req, res) {
-    checkAndRedirect(req, res, 'html/dashboard.html');
+    if(config.ceph.enabled=true)
+    		checkAndRedirect(req, res, 'html/ceph-dashboard.html');
+	else{
+    		checkAndRedirect(req, res, 'html/dashboard.html');
+	}
 };
 
 exports.dashboard = function (req, res) {
-    checkAndRedirect(req, res, 'html/dashboard.html');
+    if(config.ceph.enabled=true)
+    		checkAndRedirect(req, res, 'html/ceph-dashboard.html');
+	else{
+    		checkAndRedirect(req, res, 'html/dashboard.html');
+	}
 };
 
 exports.admin = function (req, res) {

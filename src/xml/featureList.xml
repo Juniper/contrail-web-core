@@ -9,6 +9,12 @@
     <item>
         <feature>monitoring</feature>
     </item>
+    
+    <item>
+        <feature>ceph</feature>
+    </item>
+    
+    
     <item>
         <feature>bgp</feature>
         <read-access>user,admin</read-access>

@@ -3,15 +3,15 @@
 #
 
 REPORTER = dot
-WEBUISERVER = contrail-web-core
-WEBUICLIENT = contrail-web-ui
+WEBUISERVER = ceph-web-core
+WEBUICLIENT = ceph-web-ui
 WEBUITHIRDPARTY = contrail-web-third-party
 
 $(WEBUISERVER):
-	if [ ! -d ../$(WEBUISERVER) ]; then git clone git@github.com:Juniper/contrail-web-core.git ../$(WEBUISERVER); else cd ../$(WEBUISERVER) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
+	if [ ! -d ../$(WEBUISERVER) ]; then git clone git@github.com:surakula/ceph-web-core.git ../$(WEBUISERVER); else cd ../$(WEBUISERVER) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
 $(WEBUICLIENT):
-	if [ ! -d ../$(WEBUICLIENT) ]; then git clone git@github.com:Juniper/contrail-web-ui.git ../$(WEBUICLIENT); else cd ../$(WEBUICLIENT) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
+	if [ ! -d ../$(WEBUICLIENT) ]; then git clone git@github.com:surakula/ceph-web-ui.git ../$(WEBUICLIENT); else cd ../$(WEBUICLIENT) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
 $(WEBUITHIRDPARTY):
 	if [ ! -d ../$(WEBUITHIRDPARTY) ]; then git clone git@github.com:Juniper/contrail-web-third-party.git ../$(WEBUITHIRDPARTY); else cd ../$(WEBUITHIRDPARTY) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
@@ -24,11 +24,13 @@ package:
 	cp -r -p ../$(WEBUICLIENT)/* .
 	cp -r -p ../$(WEBUITHIRDPARTY)/node_modules/* node_modules/
 	mv -f html/dashboard.tmpl html/dashboard.html
+	mv -f html/ceph-dashboard.tmpl html/ceph-dashboard.html
 	mv -f html/login.tmpl html/login.html
 	mv -f html/login-error.tmpl html/login-error.html
 	./generate-files.sh
 	./dev-install.sh prod
 	./prod-dev.sh html/dashboard.html prod_env dev_env true
+	./prod-dev.sh html/ceph-dashboard.html prod_env dev_env true
 	./prod-dev.sh html/login.html prod_env dev_env true
 	./prod-dev.sh html/login-error.html prod_env dev_env true
 
@@ -38,6 +40,7 @@ all:
 	ln -sf ../$(WEBUICLIENT)/webroot webroot
 	ln -sf ../$(WEBUITHIRDPARTY)/node_modules node_modules
 	ln -sf ../../$(WEBUICLIENT)/html/dashboard.tmpl html/dashboard.html
+	ln -sf ../../$(WEBUICLIENT)/html/ceph-dashboard.tmpl html/ceph-dashboard.html
 	ln -sf ../../$(WEBUICLIENT)/html/login.tmpl html/login.html
 	ln -sf ../../$(WEBUICLIENT)/html/login-error.tmpl html/login-error.html
 	./generate-files.sh
@@ -47,6 +50,9 @@ make-ln:
 	cp -af html/dashboard.html ../$(WEBUICLIENT)/html/dashboard.tmpl
 	rm -f html/dashboard.html
 	ln -sf ../../$(WEBUICLIENT)/html/dashboard.tmpl html/dashboard.html
+	cp -af html/ceph-dashboard.html ../$(WEBUICLIENT)/html/ceph-dashboard.tmpl
+	rm -f html/ceph-dashboard.html
+	ln -sf ../../$(WEBUICLIENT)/html/ceph-dashboard.tmpl html/ceph-dashboard.html
 	cp -af html/login.html ../$(WEBUICLIENT)/html/login.tmpl
 	rm -f html/login.html
 	ln -sf ../../$(WEBUICLIENT)/html/login.tmpl html/login.html
@@ -57,6 +63,7 @@ make-ln:
 dev-env:
 	make all
 	./prod-dev.sh html/dashboard.html dev_env prod_env true
+	./prod-dev.sh html/ceph-dashboard.html dev_env prod_env true
 	./prod-dev.sh html/login.html dev_env prod_env true
 	./prod-dev.sh html/login-error.html dev_env prod_env true
 	make make-ln
@@ -68,18 +75,21 @@ test-env:
 prod-env:
 	make all 
 	./prod-dev.sh html/dashboard.html prod_env dev_env true
+	./prod-dev.sh html/ceph-dashboard.html prod_env dev_env true
 	./prod-dev.sh html/login.html prod_env dev_env true
 	./prod-dev.sh html/login-error.html prod_env dev_env true
 	make make-ln
 
 rem-ts-dev:
 	./prod-dev.sh html/dashboard.html dev_env prod_env false
+	./prod-dev.sh html/ceph-dashboard.html dev_env prod_env false
 	./prod-dev.sh html/login.html dev_env prod_env false
 	./prod-dev.sh html/login-error.html dev_env prod_env false
 	make make-ln
 
 rem-ts-prod:
 	./prod-dev.sh html/dashboard.html prod_env dev_env false
+	./prod-dev.sh html/ceph-dashboard.html prod_env dev_env false
 	./prod-dev.sh html/login.html prod_env dev_env false
 	./prod-dev.sh html/login-error.html prod_env dev_env false
 	make make-ln

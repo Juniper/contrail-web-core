@@ -191,5 +191,11 @@
     <jobName>getCPULoadFlowSeries</jobName>
     <callback>processCPULoadFlowSeriesRequestByJob</callback>
   </item>
+    <!-- Ceph Storage cluster status -->
+  <item>
+    <jobName>getCephClusterStatus</jobName>
+    <callback>processCephClusterStatusRequestByJob</callback>
+  </item>    
+    
 </jobLists>
 
