@@ -5,10 +5,11 @@
 var rest = require('../../../common/rest.api'),
     config = require('../../../../../config/config.global.js'),
     authApi = require('../../../common/auth.api'),
-    plugins = require('../plugins.api'),
     appErrors = require('../../../errors/app.errors'),
     commonUtils = require('../../../utils/common.utils'),
-    httpsOp = require('../../../common/httpsoptions.api')
+    httpsOp = require('../../../common/httpsoptions.api'),
+    oStack = require('./openstack.api'),
+    logutils = require('../../../utils/log.utils')
     ;
 var glanceAPIServer;
 
@@ -39,8 +40,8 @@ function getTenantIdByReqCookie (req)
 
 /* Function: doGlanceOpCb
  */
-function doGlanceOpCb (reqUrl, tenantId, req, glanceCallback, stopRetry,
-                       callback)
+function doGlanceOpCb (reqUrl, apiProtoIP, tenantId, req, glanceCallback, 
+                       stopRetry, callback)
 {
     var forceAuth = stopRetry;
 
@@ -54,7 +55,7 @@ function doGlanceOpCb (reqUrl, tenantId, req, glanceCallback, stopRetry,
             } else {
                 /* Retry once again */
                 console.log("We are about to retry for tenantId:" + tenantId);
-                glanceCallback(reqUrl, req, callback, true);
+                glanceCallback(reqUrl, apiProtoIP, req, callback, true);
             }
         } else {
             console.log("doGlanceOpCb() success with tenantId:" + tenantId);
@@ -64,7 +65,7 @@ function doGlanceOpCb (reqUrl, tenantId, req, glanceCallback, stopRetry,
 }         
 
 /* Wrapper function to GET Data from Glance-Server */
-glanceApi.get = function(reqUrl, req, callback, stopRetry) {
+glanceApi.get = function(reqUrl, apiProtoIP, req, callback, stopRetry) {
     var headers = {};
     var forceAuth = stopRetry;
     var tenantId = getTenantIdByReqCookie(req);
@@ -74,12 +75,14 @@ glanceApi.get = function(reqUrl, req, callback, stopRetry) {
     }
 
     headers['User-Agent'] = 'Contrail-WebClient';
-    doGlanceOpCb(reqUrl, tenantId, req, glanceApi.get, stopRetry, 
+    doGlanceOpCb(reqUrl, apiProtoIP, tenantId, req, glanceApi.get, stopRetry, 
                 function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
+            glanceAPIServer.api['hostname'] = apiProtoIP['ip'];
+            glanceAPIServer.api['port'] = apiProtoIP['port'];
 		    glanceAPIServer.api.get(reqUrl, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
@@ -88,7 +91,7 @@ glanceApi.get = function(reqUrl, req, callback, stopRetry) {
                     if (stopRetry) {
 		                callback(err, data);
                     } else {
-                        glanceApi.get(reqUrl, req, callback, true);
+                        glanceApi.get(reqUrl, apiProtoIP, req, callback, true);
                     }
                  } else {
                     callback(err, data);
@@ -112,11 +115,15 @@ function getImageListV1 (err, data, callback)
 
 function parseImageListByAPIVersion (err, data, apiVer, callback)
 {
+    var error = null;
     var imgListCB = imageListCB[apiVer];
-    if ((null == imgListCB) || (null != err)) {
-        var str = 'Glance API Version <' + apiVer + '>' +
-            ' not supported';
-        var error = new appErrors.RESTServerError(str);
+    if (null == imgListCB) {
+        if (null == err) {
+            var str = 'Glance API Version <' + apiVer + '> not supported';
+            error = new appErrors.RESTServerError(str);
+        } else {
+            error = err;
+        }
         callback(error, null);
         return;
     }
@@ -126,31 +133,41 @@ function parseImageListByAPIVersion (err, data, apiVer, callback)
 function glanceApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex,
                                        callback)
 {
-    var apiVer = plugins.getApiVersion(imageListVerList, apiVerList, startIndex);
+    var apiVers = "";
+    var apiVer = oStack.getApiVersion(imageListVerList, apiVerList, startIndex,
+                                      global.label.IMAGE_SERVER);
+    var apiVerListCnt = apiVerList.length;
+    for (var i = 0; i < apiVerListCnt; i++) {
+        if (i != 0) {
+            apiVers += ",";
+        }
+        apiVers += apiVerList[i]['version'];
+    }
     if (null == apiVer) {
-        var err = new appErrors.RESTServerError('apiVersion <' +
-                                                apiVerList.join(',') + '> for' +
+        var err = new appErrors.RESTServerError('apiVersion <' + apiVers + 
+                                                '> for' +
                                                 ' Glance is unsupported');
         callback(err, null, null);
         return;
     }
     var reqUrl = '/' + apiVer['version'] + reqUrlPrefix;
     httpsOp.apiProtocolList[global.label.IMAGE_SERVER] = apiVer['protocol'];
-    glanceApi.get(reqUrl, req, function(err, data) {
+    glanceApi.get(reqUrl, apiVer, req, function(err, data) {
         if ((null != err) || (null == data)) {
+            logutils.logger.error('glanceAPI GET error:' + err);
             glanceApiGetByAPIVersionList(reqUrlPrefix, apiVerList, req,
                                          startIndex + 1, callback);
         } else {
-            callback(null, data, apiVerList[startIndex]['version']);
+            callback(null, data, apiVer['version']);
         }   
     }); 
 }
 
 function getImageList (req, callback)
 {
-    plugins.getServiceAPIVersionByReqObj(req,
-                                         global.SERVICE_ENDPT_TYPE_IMAGE, 
-                                         function(apiVer) {
+    oStack.getServiceAPIVersionByReqObj(req,
+                                        global.SERVICE_ENDPT_TYPE_IMAGE, 
+                                        function(apiVer) {
         if (null == apiVer) {
             var error =
                 new appErrors.RESTServerError('apiVersion for Glance is NULL');
@@ -168,4 +185,5 @@ function getImageList (req, callback)
 }
 
 exports.getImageList = getImageList;
+exports.imageListVerList = imageListVerList;
 
