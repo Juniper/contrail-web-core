@@ -15,6 +15,7 @@ var qeapi = module.exports,
     global = require('../../common/global'),
     qs = require('querystring'),
     underscore = require('underscore'),
+    redisReadStream = require('redis-rstream'),
     opServer;
 
 var redis = require("redis"),
@@ -822,8 +823,32 @@ function runQuery (req, res, reqQuery)
     }
 };
 
-function returnCachedQueryResult(res, options, callback) 
-{
+function exportQueryResult (req, res) {
+    var queryId = req.query['queryId'];
+    redisClient.exists(queryId, function (err, exists) {
+        if(exists) {
+            var stream = redisReadStream(redisClient, queryId)
+            res.writeHead(global.HTTP_STATUS_RESP_OK, {'Content-Type':'application/json'});
+            stream.on('error', function (err) {
+                logutils.logger.error(err.stack);
+                var errorJSON = {error: err.message};
+                res.write(JSON.stringify(errorJSON));
+                res.end();
+            }).on('readable', function () {
+                var data;
+                while ((data = stream.read()) !== null) {
+                    res.write(data);
+                }
+            }).on('end', function () {
+                res.end();
+            });
+        } else {
+            commonUtils.handleJSONResponse(null, res, {data:[], total: 0});
+        }
+    });
+};
+
+function returnCachedQueryResult(res, options, callback) {
     var queryId = options.queryId, sort = options.sort,
         statusJSON;
     if (sort != null) {
@@ -1142,4 +1167,5 @@ exports.getChartData = getChartData;
 exports.deleteQueryCache4Ids = deleteQueryCache4Ids;
 exports.deleteQueryCache4Queue = deleteQueryCache4Queue;
 exports.flushQueryCache = flushQueryCache;
+exports.exportQueryResult = exportQueryResult;
 
