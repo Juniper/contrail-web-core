@@ -1204,6 +1204,13 @@
         <callback>qeapi.runPOSTQuery</callback>
     </item>
     <item>
+        <url>/api/admin/reports/query/export</url>
+        <method>get</method>
+        <timeout>300000</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.exportQueryResult</callback>
+    </item>
+    <item>
         <url>/api/admin/reports/query/queue</url>
         <method>get</method>
         <timeout>300000</timeout>
