@@ -22,40 +22,31 @@ function getIpProtoByServCatPubUrl (pubUrl)
 {
     var ipAddr = null;
     var port = null;
-    var reqProto = 'http';//global.PROTOCOL_HTTP;
-    var ipAddrStr = null, portStr = null;
+    var reqProto = global.PROTOCOL_HTTP;
+    var ipAddrStr = pubUrl, portStr = null;
     var ipIdx = -1, portIdx = -1;
 
-    ipIdx = pubUrl.indexOf('://');
-    if (-1 != ipIdx) {
-        /* Format is http://<ip/host>:<port>/XXXX */
-        ipAddrStr = pubUrl.slice(ipIdx + '://'.length);
-        portIdx = ipAddrStr.indexOf(':');
-        if (-1 != portIdx) {
-            ipAddr = ipAddrStr.substr(0, portIdx);
-            portStr = ipAddrStr.slice(portIdx + 1);
-            portIdx = portStr.indexOf('/');
-            if (-1 != portIdx) {
-                port = portStr.substr(0, portIdx);
-            }
-            var protoIdx = pubUrl.indexOf(':');
-            if (-1 != protoIdx) {
-                reqProto = pubUrl.substr(0, protoIdx);
-            }
-        }
-    } else {
-        /* Check if format is <ip/host>:<port>/XXXX */
-        ipIdx = pubUrl.indexOf(':');
-        if (-1 != ipIdx) {
-            /* It is of format <ip/host>:<port> */
-            ipAddr = pubUrl.substr(0, ipIdx);
-            portStr = pubUrl.slice(ipIdx + 1);
-            portIdx = portStr.indexOf('/');
-            if (-1 != portIdx) {
-                port = portStr.substr(0, portIdx);
-            }
-        }
+    ipIdx = pubUrl.indexOf(global.HTTPS_URL);
+    if (ipIdx >= 0) {
+        reqProto = global.PROTOCOL_HTTPS;
+        ipAddrStr = pubUrl.slice(ipIdx + (global.HTTPS_URL).length);
+    }
+    ipIdx = pubUrl.indexOf(global.HTTP_URL);
+    if (ipIdx >= 0) {
+        ipAddrStr = pubUrl.slice(ipIdx + (global.HTTP_URL).length);
+    }
 
+    /* Format is http://<ip/host>:<port>/XXXX */
+    portIdx = ipAddrStr.indexOf(':');
+    if (-1 != portIdx) {
+        ipAddr = ipAddrStr.substr(0, portIdx);
+        portStr = ipAddrStr.slice(portIdx + 1);
+        portIdx = portStr.indexOf('/');
+        if (-1 != portIdx) {
+            port = portStr.substr(0, portIdx);
+        } else {
+            port = portStr;
+        }
     }
     return {'ipAddr': ipAddr, 'port': port, 'protocol': reqProto};
 }
@@ -97,6 +88,28 @@ function getOStackModuleApiVersion (apiType)
         }
     }
     return version;
+}
+
+/* Function: getDfltEndPointValueByType
+   Get the version etc info by end point module types
+ */
+function getDfltEndPointValueByType (module, type)
+{
+    switch (module) {
+    case 'image':
+        if ('version' == type) {
+            return 'v1';
+        }
+        break;
+    case 'nova':
+        if ('version' == type) {
+            return 'v1.1';
+        }
+        break;
+    default:
+        break;
+    }
+    return null;
 }
 
 /* Function: getServiceAPIVersionByReqObj
@@ -206,8 +219,39 @@ function getServiceAPIVersionByReqObj (req, type, callback)
                                     'port': port});
                     break;
                 case 'image':
-                    var idx = pubUrl.lastIndexOf('/');
-                    dataObjArr.push({'version': pubUrl.slice(idx + 1),
+                    var defVer = getDfltEndPointValueByType('image', 'version');
+                    var version = null;
+                    var protoIdx = pubUrl.indexOf('://');
+                    if (protoIdx >= 0) {
+                        pubUrl = pubUrl.slice(protoIdx + '://'.length);
+                    }
+                    var idx = pubUrl.indexOf('/');
+                    if (idx >= 0) {
+                        pubUrl = pubUrl.slice(idx + 1);
+                        idx = pubUrl.indexOf('/');
+                        if (idx >= 0) {
+                            /* Format: http://localhost:9292/v1/ or
+                             * localhost:9292/v1/
+                             */
+                            version = pubUrl.substr(0, idx);
+                        } else {
+                            if (!pubUrl.length) {
+                                /* Format: http://localhost:9292/ or
+                                 * localhost:9292/
+                                 */
+                                version = defVer;
+                            } else {
+                                /* Format: http://localhost:9292/v1 or
+                                 * localhost:9292/v1
+                                 */
+                                version = pubUrl;
+                            }
+                        }
+                    } else {
+                        /* Format: http://localhost:9292 or localhost:9292 */
+                        version = defVer;
+                    }
+                    dataObjArr.push({'version': version,
                                     'protocol': reqProto, 'ip': ipAddr,
                                     'port': port});
                     break;
