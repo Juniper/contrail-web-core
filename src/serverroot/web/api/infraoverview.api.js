@@ -778,12 +778,30 @@ function getAnalyticsNodeSummary (req, res, appData)
     });
 }
 
+function filterOutGeneratorInfoFromGenerators(excludeProcessList, resultJSON) 
+{
+	for (var key in resultJSON) {
+        var label = key.toUpperCase();
+        var excludeProcessLen = excludeProcessList.length;
+        for (var i = 0; i < excludeProcessLen; i++) {
+            if (label.indexOf(excludeProcessList[i].toUpperCase()) > -1) {
+                try {
+                    delete resultJSON[key]['ModuleServerState']['generator_info'];
+                } catch(e) {
+                }
+            }
+       }
+    }
+	return resultJSON;
+}
+
 function getAnalyticsNodeDetails (req, res, appData)
 {
     var hostName = req.param('hostname');
     var resultJSON = {};
     var url = '/analytics/uves/generator';
-
+    var excludeProcessList = ['QueryEngine'];
+    
     var postData = {};
     postData['kfilt'] = [hostName + ':*Collector*', 
                          hostName + ':*OpServer*',
@@ -795,6 +813,7 @@ function getAnalyticsNodeDetails (req, res, appData)
             processAnalyticsNodeDetailJSON(hostName, genData, function(resultJSON) {
                 addAnalyticsQueryStatsToDetails(resultJSON, appData, 
                                                 function(data) {
+                	resultJSON =  filterOutGeneratorInfoFromGenerators(excludeProcessList,resultJSON);
                     commonUtils.handleJSONResponse(null, res, resultJSON);
                 });
             });
@@ -1029,7 +1048,7 @@ function getConfigNodesList (req, res, appData)
 
 function parseConfigNodeProcessUVEs (resultJSON, configProcessUVEs, host)
 {
-    var moduleList = ['ApiServer'];
+    var moduleList = ['ApiServer', 'DiscoveryService', 'ServiceMonitor', 'Schema'];
     try {
         var cfgProcUVEData = configProcessUVEs['value'];
         var cfgProcUVEDataLen = cfgProcUVEData.length;
@@ -1096,12 +1115,12 @@ function getConfigNodeDetails (req, res, appData)
     var urlLists = [];
     var resultJSON = {}; 
     var dataObjArr = [];
-
+    var excludeProcessList = ['DiscoveryService','ServiceMonitor','Schema'];
     var genPostData = {};
     reqUrl = '/analytics/config-node/' + hostName + '?flat';
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
                              null, opApiServer, null, appData);
-    genPostData['kfilt'] = ['*:ApiServer*'];
+    genPostData['kfilt'] = ['*:ApiServer*','*:DiscoveryService*','*:ServiceMonitor*','*:Schema*'];
     reqUrl = '/analytics/uves/generator';
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
                              genPostData, opApiServer, null, appData);
@@ -1113,6 +1132,7 @@ function getConfigNodeDetails (req, res, appData)
             return;
         }
         resultJSON = postProcessConfigNodeDetails(results, hostName);
+        resultJSON =  filterOutGeneratorInfoFromGenerators(excludeProcessList,resultJSON);
         commonUtils.handleJSONResponse(err, res, resultJSON);
     });
 }
