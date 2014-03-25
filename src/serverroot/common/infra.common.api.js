@@ -20,6 +20,9 @@ function getModuleType (modName)
     case 'DnsAgent':
         return 'Control';
     case 'ApiServer':
+    case 'DiscoveryService':
+    case 'ServiceMonitor':
+    case 'Schema':
         return 'Config';
     case 'Collector':
     case 'OpServer':
