@@ -12,9 +12,9 @@ var httpsOp = require('../../../common/httpsoptions.api');
 var logutils = require('../../../utils/log.utils');
 
 /* Function: getIpProtoByServCatPubUrl
-    This function is used to parse the publicURL got from keystone catalog,
+    This function is used to parse the publicURL/internalURL got from keystone catalog,
     And returns protocol (http/https), IP and port of the service 
-    publicURL can be any of below formats:
+    publicURL/internalURL can be any of below formats:
     http://xxx.xxx.xxx.xxx:xxxx/v2.0 and
     xxx.xxx.xxx.xxx:xxxx/v2.0 and
  */
@@ -113,8 +113,8 @@ function getDfltEndPointValueByType (module, type)
 }
 
 /* Function: getServiceAPIVersionByReqObj
-    Get openStack Module API Version, IP, Port, Protocol from publicURL in
-    keystone catalog response
+    Get openStack Module API Version, IP, Port, Protocol from
+    publicURL/internalURL in keystone catalog response
  */
 function getServiceAPIVersionByReqObj (req, type, callback)
 {
@@ -194,9 +194,18 @@ function getServiceAPIVersionByReqObj (req, type, callback)
             return;
         }
 
+        var takePubURL = true;
+        var pubUrl = null;
+        if (null != config.serviceEndPointTakePublicURL) {
+            takePubURL = config.serviceEndPointTakePublicURL;
+        }
         for (i = 0; i < endPtCnt; i++) {
             try {
-                var pubUrl = endPtList[i]['publicURL'];
+                if (true == takePubURL) {
+                    pubUrl = endPtList[i]['publicURL'];
+                } else {
+                    pubUrl = endPtList[i]['internalURL'];
+                }
                 var ipProtoObj = getIpProtoByServCatPubUrl(pubUrl);
                 var reqProto = ipProtoObj['protocol'];
                 var ipAddr = ipProtoObj['ipAddr'];
