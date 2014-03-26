@@ -234,6 +234,7 @@ function getVMStatsByProject (projUUID, req, callback)
             }
             var reqUrlPrefix = '/' + tenantId + '/servers/detail';
             var startIndex = 0;
+            var fallbackIndex = novaAPIVerList.length - 1;
             novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex, 
                                        function(err, data, ver) {
                 if (null != ver) {
@@ -283,8 +284,9 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
             }
             var reqUrlPrefix = '/' + tenantId + '/servers/' + vmRefs[0]['uuid'];
             var startIndex = 0;
+            var fallbackIndex = novaAPIVerList.length - 1;
             novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex, 
-                                       function (error, data, ver) {
+                                       fallbackIndex, function (error, data, ver) {
                 if ((null != error) || (null == data) || (null == ver)) {
                     var err = 
                         new appErrors.RESTServerError('apiVersion for NOVA is NULL');
@@ -314,7 +316,7 @@ function launchVNCByAPIVersion (data, apiVer, callback)
     var lnchCB = launchVNCCB[apiVer];
     if (null == lnchCB) {
         var str = 'Nova API Version not supported:' + apiVer;
-        var err = new appErrors.appErrors(str);
+        var err = new appErrors.RESTServerError(str);
         callback(err, null);
         return;
     }
@@ -359,8 +361,9 @@ function launchVNC (request, callback)
                 vncURL += vmId.toString();
             }
             var startIndex = 0;
+            var fallbackIndex = novaAPIVerList.length - 1;
             novaApiGetByAPIVersionList(vncURL, apiVer, request, startIndex, 
-                                       function (error, data, ver) {
+                                       fallbackIndex, function (error, data, ver) {
                 if ((error) || (null == ver)) {
                     callback(error, null);
                 } else {
@@ -383,7 +386,7 @@ function getFlavorsByAPIVersion (err, data, apiVer, callback)
     if (null == flavorsCB) {
         if (null == err) {
             var str = 'Nova API Version not supported:' + apiVer;
-            err = new appErrors.appErrors(str);
+            err = new appErrors.RESTServerError(str);
         }
         callback(err, null);
         return;
@@ -392,10 +395,10 @@ function getFlavorsByAPIVersion (err, data, apiVer, callback)
 }
 
 function novaApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex,
-                                     callback)
+                                     fallbackIndex, callback)
 {
     var apiVer = oStack.getApiVersion(novaAPIVerList, apiVerList, startIndex,
-                                      global.label.COMPUTE_SERVER);
+                                      fallbackIndex, global.label.COMPUTE_SERVER);
     if (null == apiVer) {
         var err = new appErrors.RESTServerError('apiVersion for NOVA is NULL');
         callback(err, null);
@@ -407,7 +410,8 @@ function novaApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex,
         if ((null != err) || (null == data)) {
             logutils.logger.error("novaAPI GET error:" + err);
             novaApiGetByAPIVersionList(reqUrlPrefix, apiVerList, req,
-                                       startIndex + 1, callback);
+                                       startIndex + 1, fallbackIndex - 1,
+                                       callback);
         } else {
             callback(null, data, apiVer);
         }
@@ -439,8 +443,9 @@ function getFlavors (req, callback)
             }
             var reqUrlPrefix = '/' + tenantId + '/flavors/detail';
             var startIndex = 0;
+            var fallbackIndex = novaAPIVerList.length - 1;
             novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex,
-                                       function(err, data, ver) {
+                                       fallbackIndex, function(err, data, ver) {
                 if (null != ver) {
                     ver = ver['version'];
                 }

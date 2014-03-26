@@ -131,11 +131,11 @@ function parseImageListByAPIVersion (err, data, apiVer, callback)
 }
 
 function glanceApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex,
-                                       callback)
+                                       fallbackIndex, callback)
 {
     var apiVers = "";
     var apiVer = oStack.getApiVersion(imageListVerList, apiVerList, startIndex,
-                                      global.label.IMAGE_SERVER);
+                                      fallbackIndex, global.label.IMAGE_SERVER);
     var apiVerListCnt = apiVerList.length;
     for (var i = 0; i < apiVerListCnt; i++) {
         if (i != 0) {
@@ -156,10 +156,11 @@ function glanceApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex
         if ((null != err) || (null == data)) {
             logutils.logger.error('glanceAPI GET error:' + err);
             glanceApiGetByAPIVersionList(reqUrlPrefix, apiVerList, req,
-                                         startIndex + 1, callback);
+                                         startIndex + 1, fallbackIndex - 1,
+                                         callback);
         } else {
             callback(null, data, apiVer['version']);
-        }   
+        }
     }); 
 }
 
@@ -177,8 +178,9 @@ function getImageList (req, callback)
 
         var glanceImagesURL = '/images';
         var startIndex = 0;
+        var fallbackIndex = imageListVerList.length - 1;
         glanceApiGetByAPIVersionList(glanceImagesURL, apiVer, req, startIndex, 
-                                     function(err, data, ver) {
+                                     fallbackIndex, function(err, data, ver) {
             parseImageListByAPIVersion(err, data, ver, callback);
         });
     });
