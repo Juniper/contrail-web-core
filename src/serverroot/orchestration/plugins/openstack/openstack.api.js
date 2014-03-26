@@ -277,7 +277,7 @@ function getServiceAPIVersionByReqObj (req, type, callback)
     index with api type as apiType
     verList is the return value from getServiceAPIVersionByReqObj()
  */
-function getApiVersion (suppVerList, verList, index, apiType)
+function getApiVersion (suppVerList, verList, index, fallbackIndex, apiType)
 {
     var ip = null;
     var port = null;
@@ -297,10 +297,27 @@ function getApiVersion (suppVerList, verList, index, apiType)
                 } else {
                     return {'version': verList[i]['version'], 'index': i,
                             'protocol': verList[i]['protocol'], 
-                            'ip': verList[i]['ip'], 'port': verList[i]['port']};
+                            'ip': verList[i]['ip'], 'port': verList[i]['port'],
+                            'fallbackIndex': -1};
                 }
             } catch(e) {
                 continue;
+            }
+        }
+    }
+    /* We are done with all versions in catalog, so now fall back to next
+     * available supported list 
+     */
+    for (var i = fallbackIndex; i >= 0; i--) {
+        for (var j = 0; j < verCnt; j++) {
+            if (suppVerList[i] != verList[j]) {
+                /* Put index verCnt, such that next time, it does not fall into
+                 * earlier loop
+                 */
+                return {'version': suppVerList[i], 'index': verCnt,
+                        'protocol': verList[j]['protocol'],
+                        'ip': verList[j]['ip'], 
+                        'port': verList[j]['port'], 'fallbackIndex': i};
             }
         }
     }
