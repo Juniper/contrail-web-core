@@ -224,6 +224,7 @@ function insertResToReadyQ (res, data, statusCode, isJson)
 
 function insertDataToSendAllClients (resObjList, data, statusCode, isJson)
 {
+    var resAdd = false;
     var resCtx = {
         timeStamp : getCurrentTimestamp(),
         data: data,
@@ -233,10 +234,31 @@ function insertDataToSendAllClients (resObjList, data, statusCode, isJson)
     var resObjCnt = resObjList.length;
     for (var i = 0; i < resObjCnt; i++) {
         var newResCtx = commonUtils.cloneObj(resCtx);
-        newResCtx['res'] = resObjList[i]['res'];
-        readyQ.push(newResCtx);
+        if (null != resObjList[i]['postCallback']) {
+            if (isJson) {
+                try {
+                    data = JSON.parse(data);
+                } catch(e) {
+                    logutils.logger.error("In insertDataToSendAllClients():" + 
+                                          "Data expected to JSON.stringified " +
+                                          "format");
+                }
+            }
+            if ((resObjList[i]['req']) && (resObjList[i]['res'])) {
+                resObjList[i]['postCallback'](resObjList[i]['req'], resObjList[i]['res'], data);
+            } else {
+                logutils.logger.error("In insertDataToSendAllClients():" + 
+                                      "req/res Obj is null");
+            }
+        } else {
+            respAdd = true;
+            newResCtx['res'] = resObjList[i]['res'];
+            readyQ.push(newResCtx);
+        }
     }
-    readyQEvent.emit('add');
+    if (true == respAdd) {
+        readyQEvent.emit('add');
+    }
 }
 
 function redirectToLogoutByChannel (channel)

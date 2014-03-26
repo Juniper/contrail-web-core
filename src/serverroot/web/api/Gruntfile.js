@@ -25,12 +25,12 @@ module.exports = function(grunt) {
                     return true;
                 }
             },
-            'puginsApi': {
-                code: '../../orchestration/plugins/plugins.api.js',
-                tests: './test/plugins.api_test.js',
+            'oStackApi': {
+                code: '../../orchestration/plugins/openstack/openstack.api.js',
+                tests: './test/openstack.api_test.js',
                 setup: config.qUnitRunnerConfig,
                 callback: function(status, stats) {
-                    grunt.log.write("Completed puginsApi Test.");
+                    grunt.log.write("Completed oStackApi Test.");
                     return true;
                 }
             },
