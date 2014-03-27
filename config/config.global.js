@@ -24,6 +24,22 @@ config.orchestration.Manager = 'openstack'
 config.serviceEndPointFromConfig = true;
 
 /****************************************************************************
+ * This boolean flag indicates if serviceEndPointFromConfig is set as false,
+ * then to take IP/Port/Protocol/Version information from auth catalog, 
+ * should publicURL OR internalURL will be used.
+ *
+ * true  - publicURL in endpoint will be used to retrieve IP/Port/Protocol/
+ *         Version information
+ * false - internalURL in endpoint will be used to retrieve
+ *         IP/Port/Protocol/Version information
+ *
+ * NOTE: if config.serviceEndPointFromConfig is set as true, then this flag
+ *       does not have any effect.
+ *
+*****************************************************************************/
+config.serviceEndPointTakePublicURL = true;
+
+/****************************************************************************
  * Below are the config options for all Orchestration Modules below:
  *  - networkManager
  *  - imageManager
