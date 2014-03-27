@@ -130,7 +130,7 @@ novaApi.post = function(reqUrl, reqData, apiProtoIP, req, callback, stopRetry) {
                     if (stopRetry) {
                       callback(err, data);
                     } else {
-                        novaApi.post(reqUrl, apiProtoIP, reqData, req, callback, true);
+                        novaApi.post(reqUrl, reqData, apiProtoIP, req, callback, true);
                     }
                  } else {
                     callback(err, data);
@@ -367,12 +367,11 @@ function launchVNC (request, callback)
                 if ((error) || (null == ver)) {
                     callback(error, null);
                 } else {
-                    ver = ver['version'];
-                    vncURL = '/' + ver + vncURL;
+                    vncURL = '/' + ver['version'] + vncURL;
                     novaApi.post(vncURL + "/action", 
                                  {"os-getVNCConsole":{"type":"novnc"}}, 
-                                 request, function (error, data) {
-                        launchVNCByAPIVersion(data, ver, callback);
+                                 ver, request, function (error, data) {
+                        launchVNCByAPIVersion(data, ver['version'], callback);
                     });
                 }
             });
