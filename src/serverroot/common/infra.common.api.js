@@ -300,7 +300,7 @@ function getvRouterSummaryConfigUVEData (configData, uuidList, nodeList, addGen,
     if (null != nodeList) {
         var nodeCnt = nodeList.length;
         var postDataIncrCnt = 
-            Math.floor(nodeCnt / global.VROUTER_COUNT_IN_JOB) + 1;
+            Math.ceil(nodeCnt / global.VROUTER_COUNT_IN_JOB);
         var idx = 0;
         for (var i = 0; i < postDataIncrCnt; i++) {
             dataObjArr[i + 1] = {};
@@ -310,7 +310,7 @@ function getvRouterSummaryConfigUVEData (configData, uuidList, nodeList, addGen,
             dataObjArr[i + 1]['configData'] = false;
             for (j = idx; j < nodeCnt; j++) {
                 dataObjArr[i + 1]['kfilt'].push(nodeList[j]);
-                if ((j != 0) && (0 == j % global.VROUTER_COUNT_IN_JOB)) {
+                if ((j != 0) && (0 == (j + 1) % global.VROUTER_COUNT_IN_JOB)) {
                     idx = j + 1;
                     break;
                 }
