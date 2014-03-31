@@ -875,26 +875,60 @@ function handleQueryResponse(res, options)
     var toSort = options.toSort, queryId = options.queryId,
         page = options.page, pageSize = options.pageSize,
         sort = options.sort;
-    redisClient.get(queryId + ((page == null || toSort) ? '' : (":page" + page)), function (error, result) {
-        if (error) {
-            logutils.logger.error(error.stack);
-            commonUtils.handleJSONResponse(error, res, null);
-        } else if (page != null && toSort) {
-            var resultJSON;
-            resultJSON = JSON.parse(result);
-            sortJSON(resultJSON['data'], sort, function () {
-                var startIndex, endIndex, total, responseJSON
-                total = resultJSON['total'];
-                startIndex = (page - 1) * pageSize;
-                endIndex = (total < (startIndex + pageSize)) ? total : (startIndex + pageSize);
-                responseJSON = resultJSON['data'].slice(startIndex, endIndex);
-                commonUtils.handleJSONResponse(null, res, {data:responseJSON, total:total, queryJSON: resultJSON['queryJSON']});
-                saveQueryResult2Redis(resultJSON['data'], total, queryId, pageSize, sort, resultJSON['queryJSON']);
-            });
-        } else {
-            commonUtils.handleJSONResponse(null, res, result ? JSON.parse(result) : []);
-        }
-    });
+    if(page == null || toSort) {
+        redisClient.exists(queryId, function (err, exists) {
+            if(exists) {
+                var stream = redisReadStream(redisClient, queryId),
+                    chunkedData, accumulatedData = [], dataBuffer, resultJSON;
+                stream.on('error', function (err) {
+                    logutils.logger.error(err.stack);
+                    commonUtils.handleJSONResponse(err, res, null);
+                }).on('readable', function () {
+                        while ((chunkedData = stream.read()) !== null) {
+                            accumulatedData.push(chunkedData)
+                        }
+                }).on('end', function () {
+                    dataBuffer = Buffer.concat(accumulatedData);
+                    resultJSON = JSON.parse(dataBuffer);
+                    if (toSort) {
+                        sortJSON(resultJSON['data'], sort, function () {
+                            var startIndex, endIndex, total, responseJSON
+                            total = resultJSON['total'];
+                            startIndex = (page - 1) * pageSize;
+                            endIndex = (total < (startIndex + pageSize)) ? total : (startIndex + pageSize);
+                            responseJSON = resultJSON['data'].slice(startIndex, endIndex);
+                            commonUtils.handleJSONResponse(null, res, {data:responseJSON, total:total, queryJSON: resultJSON['queryJSON']});
+                            saveQueryResult2Redis(resultJSON['data'], total, queryId, pageSize, sort, resultJSON['queryJSON']);
+                        });
+                    } else {
+                        commonUtils.handleJSONResponse(null, res, resultJSON);
+                    }
+                });
+            } else {
+                commonUtils.handleJSONResponse(null, res, {data:[], total: 0});
+            }
+        });
+    } else {
+        redisClient.get(queryId + ":page" + page, function (error, result) {
+            var resultJSON = result ? JSON.parse(result) : {data:[], total:0};
+            if (error) {
+                logutils.logger.error(error.stack);
+                commonUtils.handleJSONResponse(error, res, null);
+            } else if (toSort) {
+                sortJSON(resultJSON['data'], sort, function () {
+                    var startIndex, endIndex, total, responseJSON
+                    total = resultJSON['total'];
+                    startIndex = (page - 1) * pageSize;
+                    endIndex = (total < (startIndex + pageSize)) ? total : (startIndex + pageSize);
+                    responseJSON = resultJSON['data'].slice(startIndex, endIndex);
+                    commonUtils.handleJSONResponse(null, res, {data:responseJSON, total:total, queryJSON: resultJSON['queryJSON']});
+                    saveQueryResult2Redis(resultJSON['data'], total, queryId, pageSize, sort, resultJSON['queryJSON']);
+                });
+            } else {
+                commonUtils.handleJSONResponse(null, res, resultJSON);
+            }
+        });
+    }
 };
 
 function quickSortPartition(array, left, right, sort) {
