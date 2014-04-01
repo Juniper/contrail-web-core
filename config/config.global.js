@@ -213,7 +213,9 @@ config.logo_file = '/usr/src/contrail/contrail-webui/webroot/img/juniper-network
 config.qe = {};
 config.qe.enable_stat_queries = false;
 
-/* Configure level of logs */
+/* Configure level of logs, supported log levels are:
+   debug, info, notice, warning, error, crit, alert, emerg
+ */
 config.logs = {};
 config.logs.level = 'debug';
 

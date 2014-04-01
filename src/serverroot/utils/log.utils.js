@@ -6,10 +6,11 @@ var winston = require('winston'),
 	logutils = module.exports,
 	messages = require('../common/messages'),
 	util = require('util'),
-    config = require('../../../config/config.global.js'),
-    logLevel = config['logs']['level'];
+    config = require('../../../config/config.global.js');
 
-logLevel = (logLevel != null && logLevel != '') ? logLevel : 'debug';
+var logLevel = ((null != config) && (null != config.logs) &&
+                (null != config.logs.level) && ('' != config.logs.level))
+                ? config.logs.level : 'debug';
 
 /**
  * Constructor to create new Winston logger.
