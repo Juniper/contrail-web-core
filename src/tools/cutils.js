@@ -780,8 +780,26 @@ function fetchDomains(successCB, failureCB) {
     doAjaxCall("/api/tenants/config/domains", "GET", null, successCB, (failureCB) ? failureCB : "errorInFetchingDomains", null, null);
 };
 
-function fetchProjects(successCB, failureCB) {
-    doAjaxCall("/api/tenants/config/projects", "GET", null, successCB, (failureCB) ? failureCB : "errorInFetchingProjects", null, null);
+function fetchProjects(successCB, failureCB, domainUUID) {
+    if(domainUUID) {
+        domainUUID = "/" + domainUUID;
+    } else {
+        if($("#ddDomainSwitcher").hasOwnProperty("length")) {
+            //Works fine when the ID of the domain switcher is 'ddDomainSwitcher'
+            //and is either a contrailDropdown or kendoDropDownList. 
+            //Pass UUID of the Domain, otherwise. Also, remove check for 
+            //kendoDropDownList once domain switcher component in all pages
+            //are moved to contrailDropdown.
+            if(undefined !== $("#ddDomainSwitcher").data("contrailDropdown")) {
+                domainUUID = "/" + $("#ddDomainSwitcher").data("contrailDropdown").value();
+            } else if(undefined !== $("#ddDomainSwitcher").data("kendoDropDownList")) {
+                domainUUID = "/" + $("#ddDomainSwitcher").data("kendoDropDownList").value();   
+            }
+        } else {
+            domainUUID = "";
+        }
+    }
+    doAjaxCall("/api/tenants/config/projects"+domainUUID, "GET", null, successCB, (failureCB) ? failureCB : "errorInFetchingProjects", null, null);
 };
 
 function errorInFetchingProjects(error) {
