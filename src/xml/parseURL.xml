@@ -181,6 +181,13 @@
         <feature>ceph</feature>
         <callback>cephInfraApi.getCephOSDList</callback>
     </item>
+
+    <item>
+        <url>/api/ceph/infra/osds/tree</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephOSDTree</callback>
+    </item>
     
     <item>
         <url>/api/ceph/infra/mons</url>
