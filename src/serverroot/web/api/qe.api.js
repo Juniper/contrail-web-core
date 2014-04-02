@@ -1069,10 +1069,11 @@ function getObjectIds (req, res, appData)
     var objectTable = req.param('objectType'),
         objectQuery, startTime, endTime, queryOptions;
 
-    startTime = req.param('fromTimeUTC') * 1000;
-    endTime = req.param('toTimeUTC') * 1000;
+    startTime = req.param('fromTimeUTC');
+    endTime = req.param('toTimeUTC');
 
     objectQuery = {"start_time": startTime, "end_time": endTime, "select_fields": ["ObjectId"], "table": objectTable};
+    setMicroTimeRange(objectQuery, startTime, endTime)
     queryOptions = {queryId:null, async:false, status: "run", queryJSON: objectQuery, errorMessage: ""};
 
     executeQuery(res, queryOptions);
