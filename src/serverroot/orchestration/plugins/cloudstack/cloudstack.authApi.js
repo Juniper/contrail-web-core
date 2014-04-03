@@ -15,6 +15,7 @@ var config = require('../../../../../config/config.global'),
     crypto = require('crypto'),
     rest = require('../../../common/rest.api'),
     assert = require('assert'),
+    commonUtils = require('./../../../utils/common.utils'),
     cloudStackApi = require('./cloudstack.api');
 
 var authServerIP = ((config.identityManager) && (config.identityManager.ip)) ?
@@ -92,13 +93,18 @@ function authenticate (req, res, callback)
     var passwdCipher = null
     var userEncrypted = null;
     var passwdEncrypted = null;
+    var loginErrFile = 'html/login-error.html';
     if(post.urlHash != null)
         urlHash = post.urlHash;
 
     doAuth(username, password, function (err, data, response) {
         if ((err) || (null == data)) {
             req.session.isAuthenticated = false;
-            res.sendfile('html/login-error.html');
+            commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                 global.CONTRAIL_LOGIN_ERROR,
+                                                 messages.error.invalid_user_pass,
+                                                 function() { 
+            });
             return;
         }
         req.session.isAuthenticated = true;

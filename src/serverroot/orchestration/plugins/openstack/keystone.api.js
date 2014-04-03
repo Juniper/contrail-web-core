@@ -433,10 +433,15 @@ function authenticate (req, res, callback)
     var passwdEncrypted = null; 
     if(post.urlHash != null)        
         urlHash = post.urlHash;
+    var loginErrFile = 'html/login-error.html';
     doAuth(username, password, null, function (data) {
         if ((null == data) || (null == data.access)) {
             req.session.isAuthenticated = false;
-            res.sendfile('html/login-error.html');
+            commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                 global.CONTRAIL_LOGIN_ERROR, 
+                                                 messages.error.invalid_user_pass,
+                                                 function() {
+            });
             return;
         }
         req.session.isAuthenticated = true;
@@ -446,13 +451,21 @@ function authenticate (req, res, callback)
         getTenantListByToken(data.access.token, function(err, data) {
             if ((null == data) || (null == data.tenants)) {
                 req.session.isAuthenticated = false;
-                res.send(messages.error.unauthorized_to_project);
+                commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                     global.CONTRAIL_LOGIN_ERROR,
+                                                     messages.error.unauthorized_to_project,
+                                                     function() {
+                });
                 return;
             }
             var projCount = data.tenants.length;
             if (!projCount) {
                 req.session.isAuthenticated = false;
-                res.send(messages.error.unauthorized_to_project);
+                commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                     global.CONTRAIL_LOGIN_ERROR,
+                                                     messages.error.unauthorized_to_project,
+                                                     function() {
+                });
                 return;
             }
 
@@ -465,7 +478,11 @@ function authenticate (req, res, callback)
             doAuth(username, password, defProject, function(data) {
                 if (data == null) {
                     req.session.isAuthenticated = false;
-                    res.send(messages.error.unauthenticate_to_project);
+                    commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                         global.CONTRAIL_LOGIN_ERROR,
+                                                         messages.error.unauthenticate_to_project,
+                                                         function() {
+                    });
                     return;
                 } else {
                     logutils.logger.debug("After Successful auth def_token:" +
@@ -477,14 +494,22 @@ function authenticate (req, res, callback)
                             getUserRoleByAuthResponse(data['access']['user']['roles']);
                         if (roleStr == null) {
                             req.session.isAuthenticated = false;
-                            res.send(messages.error.unauthenticate_to_project);
+                            commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                                 global.CONTRAIL_LOGIN_ERROR,
+                                                                 messages.error.unauthenticate_to_project,
+                                                                 function() {
+                            });
                             return;
                         }
                     } catch(e) {
                         logutils.logger.debug("We did not get Roles in Correct JSON from" +
                                               " keystone, error: " + e);
                         req.session.isAuthenticated = false;
-                        res.send(messages.error.unauthenticate_to_project);
+                        commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                             global.CONTRAIL_LOGIN_ERROR,
+                                                             messages.error.unauthenticate_to_project,
+                                                             function() {
+                        });
                         return;
                     }
                 }
