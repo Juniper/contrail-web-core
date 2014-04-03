@@ -173,7 +173,6 @@ function getAuthRetryData (token, req, reqUrl, callback)
                                 function(error, token) {
                 if (error || (null == token)) {
                     commonUtils.redirectToLogout(req, req.res);                     
-                    callback(error, null);
                     return;
                 }
                 getAuthDataByReqUrl(token, reqUrl, function(err, newData) {
