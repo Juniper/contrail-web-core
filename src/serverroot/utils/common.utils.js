@@ -19,6 +19,7 @@ var commonUtils = module.exports,
     exec = require('child_process').exec,
     mime = require('mime'),
     os = require('os'),
+    fs = require('fs'),
     appErrors = require('../errors/app.errors.js'),
     downloadPath = '/var/log',
     contrailPath = '/contrail';
@@ -1201,6 +1202,56 @@ function copyObject(dest, src)
     return dest;
 }
 
+/* Function: readFileAndChangeContent
+   This function is used to replace originalStr with changeStr in a file located
+   in path
+ */
+function readFileAndChangeContent (path, originalStr, changeStr, callback)
+{
+    var contentStr = "";
+    fs.readFile(path, function(err, content) {
+        if (null != err) {
+            callback(err, err);
+            return;
+        }
+        try {
+            contentStr = content.toString();
+        } catch(e) {
+            contentStr = content + "";
+        }
+        var newContent = contentStr.replace(originalStr, changeStr);
+        callback(null, newContent);
+    });
+}
+
+/* Function: changeFileContentAndSend
+   This function is used to send the file content to client after replacing the
+   originalStr with changeStr in a file located in path
+ */
+function changeFileContentAndSend (response, path, originalStr, changeStr, callback)
+{
+    var errStr = "";
+    readFileAndChangeContent(path, originalStr, changeStr, 
+                             function(err, content) {
+        if (null != err) {
+            response.writeHead(global.HTTP_STATUS_INTERNAL_ERROR);
+            try {
+                errStr = err.toString();
+            } catch(e) {
+                errStr = err + "";
+            }
+            response.write(errStr);
+            response.end();
+            callback();
+            return;
+        }
+        response.writeHead(global.HTTP_STATUS_AUTHORIZATION_FAILURE);
+        response.write(content);
+        response.end();
+        callback();
+    });
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1239,4 +1290,5 @@ exports.getDataFromSandeshByIPUrl = getDataFromSandeshByIPUrl;
 exports.doEnsureExecution = doEnsureExecution;
 exports.directory = directory;
 exports.copyObject = copyObject;
+exports.changeFileContentAndSend = changeFileContentAndSend;
 

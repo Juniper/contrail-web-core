@@ -286,5 +286,7 @@ global.DEFAULT_INTERFACE_PCAP_ANALYZER = 'interface-packet-capture';
 global.DEFAULT_ANALYZER_TEMPLATE = 'analyzer-template';
 global.DEFAULT_FLOW_PCAP_ANALYZER = 'flow-packet-capture';
 
+global.CONTRAIL_LOGIN_ERROR = 'ContrailLoginError';
+
 module.exports = global;
 
