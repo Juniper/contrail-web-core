@@ -47,7 +47,6 @@ function doQuantumOpCb (reqUrl, tenantId, req, quantumCallback, stopRetry,
                 console.log("We are done retrying for tenantId:" + tenantId +
                             " with err:" + err);
                 commonUtils.redirectToLogout(req, req.res);
-                callback(err, null);
             } else {
                 /* Retry once again */
                 console.log("We are about to retry for tenantId:" + tenantId);

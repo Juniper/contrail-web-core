@@ -48,12 +48,11 @@ function doNovaOpCb (reqUrl, apiProtoIP, tenantId, req, novaCallback, stopRetry,
     var forceAuth = stopRetry;
 
     authApi.getTokenObj(req, tenantId, forceAuth, function(err, tokenObj) {
-        if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
+        if ((null != err) || (null == tokenObj) || (null == tokenObj.id)) {
             if (stopRetry) {
                 console.log("We are done retrying for tenantId:" + tenantId +
                             " with err:" + err);
                 commonUtils.redirectToLogout(req, req.res);
-                callback(err, null);
             } else {
                 /* Retry once again */
                 console.log("We are about to retry for tenantId:" + tenantId);
@@ -216,10 +215,10 @@ function getVMStatsByProject (projUUID, req, callback)
     var reqUrl = null;
 
     authApi.getTokenObj(req, tenantStr, true, function(err, data) {
-        if (err) {
+        if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " +
                                   tenantStr);
-            callback(err, null);
+            commonUtils.redirectToLogout(req, req.res);
             return;
         }
         var tenantId = data['tenant']['id'];
@@ -236,7 +235,7 @@ function getVMStatsByProject (projUUID, req, callback)
             var startIndex = 0;
             var fallbackIndex = novaAPIVerList.length - 1;
             novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex, 
-                                       function(err, data, ver) {
+                                       fallbackIndex, function(err, data, ver) {
                 if (null != ver) {
                     ver = ver['version'];
                 }
@@ -265,10 +264,10 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
     var reqUrl = null;
 
     authApi.getTokenObj(req, tenantStr, true, function(err, data) {
-        if (err) {
+        if ((null != err)  || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " +
                                   tenantStr);
-            callback(err, null);
+            commonUtils.redirectToLogout(req, req.res);
             return;
         }
         var tenantId = data['tenant']['id'];
@@ -331,18 +330,20 @@ function launchVNC (request, callback)
 
     authApi.getTokenObj(request, requestParams.query.project_id,
                         true, function (error, data) {
-        if (error) {   
+        if (null != error) {
             logutils.logger.error("Error in getting token object for tenant: " +
                                   requestParams.query.project_id);
-            callback(error, null);
         }
-        if (data == null) {
+        if (null == data) {
             logutils.logger.error("Trying to illegal access with tenantId: " +
                                   requestParams.query.project_id + 
                                   " With session: " + request.session.id);
-            callback(error, null);
+        }
+        if ((null != error) || (null == data) || (null == data.tenant)) {
+            commonUtils.redirectToLogout(request, request.res);
             return;
         }
+
         projectId = data.tenant.id;
         /* Now create the final req */
         oStack.getServiceAPIVersionByReqObj(request,
@@ -425,9 +426,9 @@ function getFlavors (req, callback)
         return;
     }
     authApi.getTokenObj(req, tenantStr, true, function(err, data) {
-        if (err) {
+        if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
-            callback(err, null);
+            commonUtils.redirectToLogout(req, req.res);
             return;
         }
         var tenantId = data['tenant']['id'];

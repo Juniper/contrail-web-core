@@ -64,7 +64,6 @@ function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
                                         function(error, token) {
                         if ((error) || (null == token)) {
                             commonUtils.redirectToLogoutByAppData(appData);
-                            callback(err, data);
                             return;
                         }
                         appData['authObj']['defTokenObj'] = token;
@@ -107,7 +106,6 @@ function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
                                         function(error, token) {
                         if ((error) || (null == token)) {
                             commonUtils.redirectToLogoutByAppData(appData);
-                            callback(err, data);
                             return;
                         }   
                         appData['authObj']['defTokenObj'] = token;
@@ -151,7 +149,6 @@ function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
                                         function(error, token) {
                         if ((error) || (null == token)) {
                             commonUtils.redirectToLogoutByAppData(appData);
-                            callback(err, data);
                             return;
                         }   
                         appData['authObj']['defTokenObj'] = token;
@@ -195,7 +192,6 @@ function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
                                         function(error, token) {
                         if ((error) || (null == token)) {
                             commonUtils.redirectToLogoutByAppData(appData);
-                            callback(err, data);
                             return;
                         }   
                         appData['authObj']['defTokenObj'] = token;
