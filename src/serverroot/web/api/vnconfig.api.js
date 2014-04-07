@@ -639,19 +639,31 @@ function updateVNPolicyRefs (vnConfig, response, appData)
     	vnPutData['virtual-network']['virtual_network_properties']['vxlan_network_identifier'];
     }
 
-    vnConfig['virtual-network']['route_target_list'] = {};
+    if ((null == vnPutData['virtual-network']['route_target_list']) &&
+        (null != vnConfig['virtual-network']['route_target_list'])) {
+        vnConfig['virtual-network']['route_target_list'] = {};
+    }
+
     if ('route_target_list' in vnPutData['virtual-network']) {
         vnConfig['virtual-network']['route_target_list'] = 
             vnPutData['virtual-network']['route_target_list'];
     }
 
-    vnConfig['virtual-network']['network_ipam_refs'] = [];
+    if ((null == vnPutData['virtual-network']['network_ipam_refs']) &&
+        (null != vnConfig['virtual-network']['network_ipam_refs'])) {
+        vnConfig['virtual-network']['network_ipam_refs'] = [];
+    }
+
     if ('network_ipam_refs' in vnPutData['virtual-network']) {
         vnConfig['virtual-network']['network_ipam_refs'] = 
             vnPutData['virtual-network']['network_ipam_refs'];
     }
 
-    vnConfig['virtual-network']['network_policy_refs'] = [];
+    if ((null == vnPutData['virtual-network']['network_policy_refs']) &&
+        (null != vnConfig['virtual-network']['network_policy_refs'])) {
+        vnConfig['virtual-network']['network_policy_refs'] = [];
+    }
+
     if ('network_policy_refs' in vnPutData['virtual-network']) {
         vnConfig['virtual-network']['network_policy_refs'] =
             vnPutData['virtual-network']['network_policy_refs'];
