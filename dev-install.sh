@@ -85,12 +85,12 @@ if [ $1 = 'prod' ] ; then
     rm -rf webroot/assets/select2
     mkdir -p webroot/assets/select2/js
     mkdir -p webroot/assets/select2/styles
-    cp -r ../contrail-web-third-party/select2-v3.4.5/select2.min.js webroot/assets/select2/js/select2.min.js
-    cp -r ../contrail-web-third-party/select2-v3.4.5/select2.css webroot/assets/select2/styles/select2.css
-    cp -r ../contrail-web-third-party/select2-v3.4.5/select2-bootstrap.css webroot/assets/select2/styles/select2-bootstrap.css
-    cp -r ../contrail-web-third-party/select2-v3.4.5/select2.png webroot/assets/select2/styles/select2.png
-    cp -r ../contrail-web-third-party/select2-v3.4.5/select2x2.png webroot/assets/select2/styles/select2x2.png
-    cp -r ../contrail-web-third-party/select2-v3.4.5/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2.min.js webroot/assets/select2/js/select2.min.js
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2.css webroot/assets/select2/styles/select2.css
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2-bootstrap.css webroot/assets/select2/styles/select2-bootstrap.css
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2.png webroot/assets/select2/styles/select2.png
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2x2.png webroot/assets/select2/styles/select2x2.png
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
     #End - Copy Select2 from contrail-web-third-party
 
     #Start - Copy Slickgrid from contrail-web-third-party
@@ -209,12 +209,12 @@ else
     rm -rf webroot/assets/select2
     mkdir -p webroot/assets/select2/js
     mkdir -p webroot/assets/select2/styles
-    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2.min.js webroot/assets/select2/js/select2.min.js
-    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2.css webroot/assets/select2/styles/select2.css
-    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2-bootstrap.css webroot/assets/select2/styles/select2-bootstrap.css
-    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2.png webroot/assets/select2/styles/select2.png
-    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2x2.png webroot/assets/select2/styles/select2x2.png
-    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.5/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2.min.js webroot/assets/select2/js/select2.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2.css webroot/assets/select2/styles/select2.css
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2-bootstrap.css webroot/assets/select2/styles/select2-bootstrap.css
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2.png webroot/assets/select2/styles/select2.png
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2x2.png webroot/assets/select2/styles/select2x2.png
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
     #End - Link Select2 from contrail-web-third-party
 
     #Start - Link Slickgrid from contrail-web-third-party
