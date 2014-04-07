@@ -121,6 +121,7 @@ function getFlowSeriesByVN (req, res)
     var relEndTime      = req.query['relEndTime'];
     var timeGran        = req.query['timeGran'];
     var minsAlign       = req.query['minsAlign'];
+    var serverTime      = req.query['useServerTime'];
     var reqKey;
     
     if (null == dstVN) {
@@ -142,6 +143,7 @@ function getFlowSeriesByVN (req, res)
         relStartTime: relStartTime,
         relEndTime: relEndTime,
         timeGran: timeGran,
+        serverTime: serverTime,
         minsAlign: minsAlign
     };
 
@@ -234,6 +236,7 @@ function getNetworStats (req, res)
     var protocol        = req.query['protocol'];
     var startTime       = req.query['startTime'];
     var endTime         = req.query['endTime'];
+    var serverTime      = req.query['useServerTime'];
     var reqKey;
  
     var appData = {
@@ -242,6 +245,7 @@ function getNetworStats (req, res)
         limit: limit,
         startTime: startTime,
         endTime: endTime,
+        serverTime: serverTime,
         protocol: protocol
     };
     if (type == 'port') {
@@ -272,36 +276,33 @@ function getVNVMData (vmJSON, vmName)
     var resultJSON = {};
     resultJSON['ipList'] = [];
     resultJSON['fipList'] = [];
-    var ipData = jsonPath(vmJSON, "$..VmInterfaceAgent");
-    if (ipData.length == 0) {
-        return resultJSON;
-    }
+    var ipData = jsonPath(vmJSON, "$..interface_list");
     try {
         var len = ipData[0].length;
         for (var i = 0; i < len; i++) {
             resultJSON['ipList'][i] = {};
             resultJSON['ipList'][i]['ip_address'] =
-                ipData[0][i]['ip_address']['#text'];
+                ipData[0][i]['ip_address'];
             resultJSON['ipList'][i]['virtual_network'] =
-                ipData[0][i]['virtual_network']['#text'];
+                ipData[0][i]['virtual_network'];
             resultJSON['ipList'][i]['vm_vn_name'] = 
-                ipData[0][i]['name']['#text'];
+                ipData[0][i]['name'];
         }
     } catch(e) {
         console.log("In getVNVMData(): IP List JSON Parse error:" + e);
     }
     try {
-        var fipData = jsonPath(vmJSON, "$..VmFloatingIPAgent");
-        if (fipData.length == 0) {
+        var fipData = jsonPath(vmJSON, "$..floating_ips");
+        if (fipData[0].length == 0) {
             return resultJSON;
         }
-        len = fipData.length;
+        len = fipData[0].length;
         for (i = 0; i < len; i++) {
             resultJSON['fipList'][i] = {};
             resultJSON['fipList'][i]['ip_address'] =
-                fipData[i]['ip_address']['#text'];
+                fipData[0][i]['ip_address'];
             resultJSON['fipList'][i]['virtual_network'] =
-                fipData[i]['virtual_network']['#text'];
+                fipData[0][i]['virtual_network'];
         }
     } catch(e) {
         console.log("In getVNVMData(): Floating IP List JSON Parse error:" + e);
@@ -312,7 +313,7 @@ function getVNVMData (vmJSON, vmName)
 function getVMFloatingIPList (req, res) 
 {
     var vmName = req.param('vmName');
-    var url = '/analytics/virtual-machine/' + vmName;
+    var url = '/analytics/virtual-machine/' + vmName + '?flat';
     opServer.authorize(function () {
         opServer.api.get(url, function (error, vmJSON) {
             if(!error && (vmJSON)) {
@@ -400,6 +401,7 @@ function getFlowSeriesByVM (req, res)
     var relEndTime         = req.query['relEndTime'];
     var timeGran        = req.query['timeGran'];
     var minsAlign       = req.query['minsAlign'];
+    var serverTime      = req.query['useServerTime'];
 
     var appData = {
         ip: ip,
@@ -412,6 +414,7 @@ function getFlowSeriesByVM (req, res)
         relStartTime: relStartTime,
         relEndTime: relEndTime,
         timeGran: timeGran,
+        serverTime: serverTime,
         minsAlign: minsAlign
     };
     var reqUrl = "/flow_series/VM=";
