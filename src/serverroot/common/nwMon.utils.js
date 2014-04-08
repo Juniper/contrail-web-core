@@ -48,7 +48,7 @@ function createTimeObj (appData)
     var startTime = 0;
 
     if (minsSince != -1) {
-        if (appData['startTime'] != null) {
+        if (null == appData['startTime']) {
             var ctDate = new Date();
             if (null != minsAlign) {
                 ctDate.setSeconds(0);
@@ -96,13 +96,21 @@ function createTimeQueryObjByStartEndTime (startTime, endTime)
 
 function createTimeObjByAppData (appData) 
 {
+    var serverTime = appData['serverTime'];
     var minsSince = appData['minsSince'];
     var timeObj = {};
     if ((minsSince != null) && (null == appData['startTime'])) {
-        timeObj['start_time'] = 'now-' + minsSince +'m';
-        timeObj['end_time'] = 'now';
-        timeObj['timeGran'] = getTimeGranByTimeSlice(timeObj, 
-                                                     appData['sampleCnt']);
+        if ((null != serverTime) && (('true' == serverTime) ||
+                                     (true == serverTime))) {
+            timeObj = createTimeObj(appData);
+            timeObj['timeGran'] = 
+                getTimeGranByTimeSlice(timeObj, appData['sampleCnt']);
+        } else {
+            timeObj['start_time'] = 'now-' + minsSince +'m';
+            timeObj['end_time'] = 'now';
+            timeObj['timeGran'] = getTimeGranByTimeSlice(timeObj, 
+                                                         appData['sampleCnt']);
+        }
     } else {
         assert(appData['startTime']);
         assert(appData['endTime']);
