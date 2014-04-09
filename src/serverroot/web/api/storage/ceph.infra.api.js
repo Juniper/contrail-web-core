@@ -256,7 +256,6 @@ function parseCephOSDTree(osdJSON){
     var rootMap = jsonPath(osdTree, "$..nodes[?(@.type=='root')]");
     var hostMap = jsonPath(osdTree, "$..nodes[?(@.type=='host')]");
     var osds = jsonPath(osdTree, "$..nodes[?(@.type=='osd')]");
-    
     if (osds.length > 0) {
         var osdMapJSON = new Object();
         parseOSDFromPG(osds,osdPG);
@@ -274,58 +273,64 @@ function parseOSDFromPG(osdTree, osdPG ){
     //log.console("count:"+nodeCnt);
     for (i = 0; i < nodeCnt; i++) {
         var treeId=osdTree[i].id;
-        var pgOSDId= jsonPath(osdPG,"$.output["+i+"].osd")[0];
-        if( treeId == pgOSDId){
-          /*  console.log("treeId:"+treeId);
-            console.log("pgOSDId:"+pgOSDId);*/
-            osdTree[i]['kb']=jsonPath(osdPG,"$.output["+i+"].kb")[0];
-            osdTree[i]['kb_avail']=jsonPath(osdPG, "$.output["+i+"].kb_avail")[0];
-            osdTree[i]['kb_used']=jsonPath(osdPG, "$.output["+i+"].kb_used")[0];
-            osdTree[i]['fs_perf_stat']=jsonPath(osdPG, "$.output["+i+"].fs_perf_stat")[0];
-        }   
+        var pgOsdCnt = jsonPath(osdPG,"$.output.length")[0];
+        for(j=0; j< pgOsdCnt; j++){
+            var pgOSDId= jsonPath(osdPG,"$.output["+j+"].osd")[0];
+            if( treeId == pgOSDId){
+              /*  console.log("treeId:"+treeId);
+                console.log("pgOSDId:"+pgOSDId);*/
+                osdTree[i]['kb']=jsonPath(osdPG,"$.output["+j+"].kb")[0];
+                osdTree[i]['kb_avail']=jsonPath(osdPG, "$.output["+j+"].kb_avail")[0];
+                osdTree[i]['kb_used']=jsonPath(osdPG, "$.output["+j+"].kb_used")[0];
+                osdTree[i]['fs_perf_stat']=jsonPath(osdPG, "$.output["+j+"].fs_perf_stat")[0];
+            }   
+        }
     }
     return osdTree;
 }
 
 function parseOSDFromDump(osdTree, osdDump){
     var nodeCnt= osdTree.length;
-    //console.log("Dump count:"+nodeCnt);
+    var osdDumpCnt = jsonPath(osdDump,"$.output.osds.length")[0];
+   // console.log("Dump count:"+osdDumpCnt);
     for (i = 0; i < nodeCnt; i++) {
         var treeId=osdTree[i].id;
-        var dumpOSDId= jsonPath(osdDump,"$.output.osds["+i+"].osd")[0];
+        for(j=0; j< osdDumpCnt; j++){
+            var dumpOSDId= jsonPath(osdDump,"$.output.osds["+j+"].osd")[0];
             /*console.log("treeId:"+treeId);
             console.log("dumpOSDId:"+dumpOSDId);
             */
-        if( treeId == dumpOSDId){
-            osdTree[i]['heartbeat_back_addr']=jsonPath(osdDump,"$.output.osds["+i+"].heartbeat_back_addr")[0];
-            osdTree[i]['heartbeat_front_addr']=jsonPath(osdDump, "$.output.osds["+i+"].heartbeat_front_addr")[0];
-            osdTree[i]['public_addr']=jsonPath(osdDump, "$.output.osds["+i+"].public_addr")[0];
-            osdTree[i]['cluster_addr']=jsonPath(osdDump, "$.output.osds["+i+"].cluster_addr")[0];
-            osdTree[i]['uuid']=jsonPath(osdDump, "$.output.osds["+i+"].uuid")[0];
-            osdTree[i]['down_at']=jsonPath(osdDump, "$.output.osds["+i+"].down_at")[0];
-            osdTree[i]['up_from']=jsonPath(osdDump, "$.output.osds["+i+"].up_from")[0];
-            osdTree[i]['lost_at']=jsonPath(osdDump, "$.output.osds["+i+"].lost_at")[0];
-            osdTree[i]['up_thru']=jsonPath(osdDump, "$.output.osds["+i+"].up_thru")[0];
-            custer_status= jsonPath(osdDump, "$.output.osds["+i+"].in")[0]
-       
-            if(custer_status==1){
-                 osdTree[i]['cluster_status']='in';
-            }else{
-                 osdTree[i]['cluster_status']='out';
+            if( treeId == dumpOSDId){
+                osdTree[i]['heartbeat_back_addr']=jsonPath(osdDump,"$.output.osds["+j+"].heartbeat_back_addr")[0];
+                osdTree[i]['heartbeat_front_addr']=jsonPath(osdDump, "$.output.osds["+j+"].heartbeat_front_addr")[0];
+                osdTree[i]['public_addr']=jsonPath(osdDump, "$.output.osds["+j+"].public_addr")[0];
+                osdTree[i]['cluster_addr']=jsonPath(osdDump, "$.output.osds["+j+"].cluster_addr")[0];
+                osdTree[i]['uuid']=jsonPath(osdDump, "$.output.osds["+j+"].uuid")[0];
+                osdTree[i]['down_at']=jsonPath(osdDump, "$.output.osds["+j+"].down_at")[0];
+                osdTree[i]['up_from']=jsonPath(osdDump, "$.output.osds["+j+"].up_from")[0];
+                osdTree[i]['lost_at']=jsonPath(osdDump, "$.output.osds["+j+"].lost_at")[0];
+                osdTree[i]['up_thru']=jsonPath(osdDump, "$.output.osds["+j+"].up_thru")[0];
+                custer_status= jsonPath(osdDump, "$.output.osds["+i+"].in")[0]
+           
+                if(custer_status==1){
+                     osdTree[i]['cluster_status']='in';
+                }else{
+                     osdTree[i]['cluster_status']='out';
+                }
+                osdTree[i]['up']=jsonPath(osdDump, "$.output.osds["+i+"].up")[0];;
+                osdTree[i]['in']=custer_status;
+                osdTree[i]['state']=jsonPath(osdDump, "$.output.osds["+i+"].state")[0];
+                osdTree[i]['last_clean_begin']=jsonPath(osdDump, "$.output.osds["+i+"].last_clean_begin")[0];
+                osdTree[i]['last_clean_end']=jsonPath(osdDump, "$.output.osds["+i+"].last_clean_end")[0];
+            }   
+            var dumpOSDId= jsonPath(osdDump,"$.output.osd_xinfo["+j+"].osd")[0];
+            if( treeId == dumpOSDId){
+                osdTree[i]['osd_xinfo']=jsonPath(osdDump,"$.output.osd_xinfo["+j+"]")[0];
             }
-            osdTree[i]['up']=jsonPath(osdDump, "$.output.osds["+i+"].up")[0];;
-            osdTree[i]['in']=custer_status;
-            osdTree[i]['state']=jsonPath(osdDump, "$.output.osds["+i+"].state")[0];
-            osdTree[i]['last_clean_begin']=jsonPath(osdDump, "$.output.osds["+i+"].last_clean_begin")[0];
-            osdTree[i]['last_clean_end']=jsonPath(osdDump, "$.output.osds["+i+"].last_clean_end")[0];
-        }   
-        var dumpOSDId= jsonPath(osdDump,"$.output.osd_xinfo["+i+"].osd")[0];
-        if( treeId == dumpOSDId){
-            osdTree[i]['osd_xinfo']=jsonPath(osdDump,"$.output.osd_xinfo["+i+"]")[0];
         }
 
     }
-return osdTree;
+    return osdTree;
 }
 
 function getCephPGStatus(req, res, appData){
