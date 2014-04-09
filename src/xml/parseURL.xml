@@ -199,9 +199,28 @@
         <url>/api/ceph/infra/pg/status</url>
         <method>get</method>
         <feature>ceph</feature>
+        <callback>cephInfraApi.getCephPGStatus</callback>
+    </item>
+    <item>
+        <url>/api/ceph/infra/pg/summary</url>
+        <method>get</method>
+        <feature>ceph</feature>
         <callback>cephInfraApi.getCephPGSummary</callback>
     </item>
-    
+
+    <item>
+        <url>/api/ceph/infra/pg/stuck</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephPGStuck</callback>
+    </item>
+    <item>
+        <url>/api/ceph/infra/pools</url>
+        <method>get</method>
+        <feature>ceph</feature>
+        <callback>cephInfraApi.getCephPGPoolsInfo</callback>
+    </item>
+
     <!-- Ceph Storage -->
     
     <item>

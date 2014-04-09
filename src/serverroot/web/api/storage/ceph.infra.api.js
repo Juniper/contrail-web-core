@@ -43,10 +43,10 @@ function parseCephHealthStatusData(resultJSON){
         var details= jsonPath(resultJSON, "$..detail");
         if (status.length > 0 ) {
             var temp = new Object();
-            temp["overall-status"] = status[0];
+            temp["overall_status"] = status[0];
             temp["details"] = details[0];
             temp["summary"] = summary[0];
-            healthJSON['cluster-status']= temp;
+            healthJSON['cluster_status']= temp;
             return healthJSON;
         }
         return emptyObj;
@@ -88,11 +88,11 @@ function parseCephClusterMonitorList(resultJSON){
         if(monitor.length >2){
             var temp = new Object();
             var status= jsonPath(resultJSON, "$..overall_status");
-            temp["overall-status"] = status[0];
-            temp["all-mons"]= monitor[0];
-            temp["mons-activity"]= monitor[1];
-            temp["active-mons"]= monitor[2];
-            monJSON['monitor-status']= temp;
+            temp["overall_status"] = status[0];
+            temp["all_mons"]= monitor[0];
+            temp["mons_activity"]= monitor[1];
+            temp["active_mons"]= monitor[2];
+            monJSON['monitor_status']= temp;
             return monJSON;
         }
 
@@ -129,14 +129,13 @@ function getCephOSDSummary(req, res, appData){
 }
 
 function parseCephOSDData(osdJSON){
-        var osdMapJSON ={};    
-        osdMapJSON['osd-stat']= osdJSON;
-        return osdMapJSON;
+    var osdMapJSON ={};    
+    osdMapJSON['osd_stat']= osdJSON;
+    return osdMapJSON;
 }
 
-function getCephOSDList(req, res, appData){
-     var dataObjArr = [];
-      var resultJSON = [];
+function getOSDListURLs(appData){
+    var dataObjArr = [];
     urlOSDsFromPG = "/pg/dump?dumpcontents=osds";
     commonUtils.createReqObj(dataObjArr, urlOSDsFromPG, null, null, 
                                          null, null, appData);
@@ -146,7 +145,13 @@ function getCephOSDList(req, res, appData){
     urlOSDDump = "/osd/dump";
     commonUtils.createReqObj(dataObjArr, urlOSDDump, null, null, 
                                          null, null, appData);
-     async.map(dataObjArr,
+    return dataObjArr;
+}
+
+function getCephOSDList(req, res, appData){
+    var resultJSON = [];
+    dataObjArr = getOSDListURLs(appData);
+    async.map(dataObjArr,
                       commonUtils.getAPIServerResponse(cephServer.apiGet, true),
                       function(err, data) {
                 resultJSON = parseCephOSDList(data);        
@@ -154,6 +159,7 @@ function getCephOSDList(req, res, appData){
             });
  
 }
+
 function parseCephOSDList(osdJSON){
     var emptyObj = {};  
     var osdList={};
@@ -169,15 +175,15 @@ function parseCephOSDList(osdJSON){
         var osdMapJSON = new Object();
         parseOSDFromPG(osds,osdPG);
         parseOSDFromDump(osds,osdDump);
-        hostMap = parseHostFromOSD(hostMap,osds);
-        osdMapJSON["osd_tree"]= parseRootFromHost(rootMap,hostMap);
+        hostMap = parseHostFromOSD(hostMap,osds, true);
+        osdMapJSON["osd_tree"]= parseRootFromHost(rootMap,hostMap,true);
         osdList= osdMapJSON;
         return osdList;
     }
     return emptyObj;
 }
 
-function parseRootFromHost(rootJSON, hostJSON){
+function parseRootFromHost(rootJSON, hostJSON, treeReplace){
     var chldCnt= rootJSON[0].children.length;
    // console.log("chldCnt:"+chldCnt);
      for(i=0;i< chldCnt;i++){ 
@@ -193,14 +199,16 @@ function parseRootFromHost(rootJSON, hostJSON){
             }
         }
     }
-    var jsonstr = JSON.stringify(rootJSON);
-    var new_jsonstr = jsonstr.replace(/children/g, "hosts");
-    rootJSON = JSON.parse(new_jsonstr);
+    if(treeReplace){
+        var jsonstr = JSON.stringify(rootJSON);
+        var new_jsonstr = jsonstr.replace(/children/g, "hosts");
+        rootJSON = JSON.parse(new_jsonstr);
+    }
 
     return rootJSON;
 }
 
-function parseHostFromOSD(hostJSON,osdsJSON){
+function parseHostFromOSD(hostJSON,osdsJSON, treeReplace){
     var hstCnt= hostJSON.length;
     for(i=0;i< hstCnt;i++){       
         var cldCnt= hostJSON[i].children.length;
@@ -218,30 +226,19 @@ function parseHostFromOSD(hostJSON,osdsJSON){
             }
         }
     }
+    if(treeReplace){
+        var jsonstr = JSON.stringify(hostJSON);
+        var new_jsonstr = jsonstr.replace(/children/g, "osds");
+        hostJSON = JSON.parse(new_jsonstr);
+    }
 
-    var jsonstr = JSON.stringify(hostJSON);
-
-    var new_jsonstr = jsonstr.replace(/children/g, "osds");
-
-    hostJSON = JSON.parse(new_jsonstr);
     return hostJSON;
 }
 
-
 function getCephOSDTree(req, res, appData){
-     var dataObjArr = [];
-      var resultJSON = [];
-    urlOSDsFromPG = "/pg/dump?dumpcontents=osds";
-    commonUtils.createReqObj(dataObjArr, urlOSDsFromPG, null, null, 
-                                         null, null, appData);
-    urlOSDTree = "/osd/tree";
-    commonUtils.createReqObj(dataObjArr, urlOSDTree, null, null, 
-                                         null, null, appData);
-
-   urlOSDDump = "/osd/dump";
-    commonUtils.createReqObj(dataObjArr, urlOSDDump, null, null, 
-                                         null, null, appData);
-     async.map(dataObjArr,
+    var resultJSON = [];
+    dataObjArr = getOSDListURLs(appData);
+    async.map(dataObjArr,
                       commonUtils.getAPIServerResponse(cephServer.apiGet, true),
                       function(err, data) {
                 resultJSON = parseCephOSDTree(data);        
@@ -249,6 +246,7 @@ function getCephOSDTree(req, res, appData){
             });
  
 }
+
 function parseCephOSDTree(osdJSON){
     var emptyObj = {};  
     var osdList={};
@@ -263,60 +261,18 @@ function parseCephOSDTree(osdJSON){
         var osdMapJSON = new Object();
         parseOSDFromPG(osds,osdPG);
         parseOSDFromDump(osds,osdDump);
-        hostMap = parseHostFromOSDTree(hostMap,osds);
-        osdMapJSON["osd_tree"]= parseRootFromHostTree(rootMap,hostMap);
+        hostMap = parseHostFromOSD(hostMap,osds, false);
+        osdMapJSON["osd_tree"]= parseRootFromHost(rootMap,hostMap,false);
         osdList= osdMapJSON;
         return osdList;
     }
     return emptyObj;
 }
 
-function parseRootFromHostTree(rootJSON, hostJSON){
-    var chldCnt= rootJSON[0].children.length;
-   // console.log("chldCnt:"+chldCnt);
-     for(i=0;i< chldCnt;i++){ 
-        var chldId= rootJSON[0].children[i];
-        // console.log("chlId:"+chldId);
-        var hostCnt= hostJSON.length;
-        for(j=0;j< hostCnt;j++){
-            var hostId= hostJSON[j].id;
-            if(chldId == hostId){
-                rootJSON[0].children[i] = hostJSON[j];
-/*              console.log("chlId:"+chldId);
-                console.log("hostId:"+hostId);*/
-            }
-        }
-    }
-    return rootJSON;
-}
-
-function parseHostFromOSDTree(hostJSON,osdsJSON){
-    var hstCnt= hostJSON.length;
-    for(i=0;i< hstCnt;i++){       
-        var cldCnt= hostJSON[i].children.length;
-        for(j=0;j< cldCnt; j++){
-            var chlId= hostJSON[i].children[j];
-            for(k=0;k< osdsJSON.length;k++){
-                var osdId= osdsJSON[k].id;
-                if(chlId==osdId){
-                  /*  console.log("hstCnt:"+hostJSON[i].name);
-                    console.log("hstlength:"+cldCnt);
-                    console.log("chlId:"+chlId);
-                    console.log("osdId:"+osdId);*/
-                    hostJSON[i].children[j] = osdsJSON[k];
-                }
-            }
-        }
-    }
-    return hostJSON;
-}
-
-
-
 function parseOSDFromPG(osdTree, osdPG ){
     var nodeCnt= osdTree.length;
     //log.console("count:"+nodeCnt);
-       for (i = 0; i < nodeCnt; i++) {
+    for (i = 0; i < nodeCnt; i++) {
         var treeId=osdTree[i].id;
         var pgOSDId= jsonPath(osdPG,"$.output["+i+"].osd")[0];
         if( treeId == pgOSDId){
@@ -334,7 +290,7 @@ function parseOSDFromPG(osdTree, osdPG ){
 function parseOSDFromDump(osdTree, osdDump){
     var nodeCnt= osdTree.length;
     //console.log("Dump count:"+nodeCnt);
-       for (i = 0; i < nodeCnt; i++) {
+    for (i = 0; i < nodeCnt; i++) {
         var treeId=osdTree[i].id;
         var dumpOSDId= jsonPath(osdDump,"$.output.osds["+i+"].osd")[0];
             /*console.log("treeId:"+treeId);
@@ -364,27 +320,19 @@ function parseOSDFromDump(osdTree, osdDump){
             osdTree[i]['last_clean_end']=jsonPath(osdDump, "$.output.osds["+i+"].last_clean_end")[0];
         }   
         var dumpOSDId= jsonPath(osdDump,"$.output.osd_xinfo["+i+"].osd")[0];
-            /*console.log("treeId:"+treeId);
-            console.log("dumpOSDId:"+dumpOSDId);
-            */
         if( treeId == dumpOSDId){
             osdTree[i]['osd_xinfo']=jsonPath(osdDump,"$.output.osd_xinfo["+i+"]")[0];
-         //   osdTree[i]['heartbeat_front_addr']=jsonPath(osdDump, "$.output.osds["+i+"].heartbeat_front_addr")[0];
-         //   osdTree[i]['public_addr']=jsonPath(osdDump, "$.output.osds["+i+"].public_addr")[0];
-       }
+        }
 
     }
- //console.log("osdTreeDump:"+osdTree[0]['last_clean_end']);
-
-    return osdTree;
+return osdTree;
 }
 
-
-function getCephPGSummary(req, res, appData){
+function getCephPGStatus(req, res, appData){
     url = "/status";
      cephServer.apiGet(url, appData, function (error, resultJSON) {
             if(!error && (resultJSON)) {
-                var resultJSON = parseCephPGData(resultJSON);
+                var resultJSON = parseCephPGStatus(resultJSON);
                 commonUtils.handleJSONResponse(null, res, resultJSON);
             } else {
                 commonUtils.handleJSONResponse(error, res, null);
@@ -392,7 +340,7 @@ function getCephPGSummary(req, res, appData){
         });
 }
 
-function parseCephPGData(pgDataJSON){
+function parseCephPGStatus(pgDataJSON){
     var emptyObj = {};  
     var pgMapJSON ={};
     var pgMap = jsonPath(pgDataJSON, "$..pgmap");
@@ -403,11 +351,65 @@ function parseCephPGData(pgDataJSON){
     return emptyObj;
 }
 
+function getCephPGSummary(req, res, appData){
+    var dataObjArr = [];
+    var resultJSON = [];
+    urlStatus = "/status";
+    commonUtils.createReqObj(dataObjArr, urlStatus, null, null, 
+                                         null, null, appData);
+
+    urlPGSummary = "/pg/dump?dumpcontents=summary";
+    commonUtils.createReqObj(dataObjArr, urlPGSummary, null, null, 
+                                         null, null, appData);
+     async.map(dataObjArr,
+                      commonUtils.getAPIServerResponse(cephServer.apiGet, true),
+                      function(err, data) {
+                resultJSON = parseCephPGData(data);        
+                commonUtils.handleJSONResponse(err, res, resultJSON);
+            });
+}
+
+function parseCephPGData(pgJSON){
+    var emptyObj = {};  
+    var pgMapJSON ={};
+    var pgStatusJson= pgJSON[0];
+    var pgSummary= pgJSON[1];
+    var pgMap = jsonPath(pgStatusJson, "$..pgmap");
+    var pgDelta = jsonPath(pgSummary, "$..pg_stats_delta")[0];
+    var pgSum= jsonPath(pgSummary, "$..pg_stats_sum")[0]; 
+
+    if (pgMap.length > 0) {
+        pgMapJSON['pg_overview']= pgMap[0];
+        pgMapJSON['pg_stats_delta']=pgDelta;
+        pgMapJSON['pg_stats_sum']=pgSum;
+        return pgMapJSON;
+    }
+    return emptyObj;
+}
+
 function getCephClusterDFStatus(req, res, appData){
     url = "/df";
+    cephServer.apiGet(url, appData, function (error, resultJSON) {
+        if(!error && (resultJSON)) {
+            var resultJSON = parseCephDFData(resultJSON);
+            commonUtils.handleJSONResponse(null, res, resultJSON);
+        } else {
+            commonUtils.handleJSONResponse(error, res, null);
+        }
+    });
+}
+
+function parseCephDFData(dfDataJSON){
+    var dfJSON ={};
+    dfJSON['utilization_stats']= dfDataJSON;
+    return dfJSON;
+}
+
+function getCephPGPoolsInfo(req, res, appData){
+    url = "/pg/dump_pools_json";
      cephServer.apiGet(url, appData, function (error, resultJSON) {
             if(!error && (resultJSON)) {
-                var resultJSON = parseCephDFData(resultJSON);
+                var resultJSON = parseCephPGPoolsData(resultJSON);
                 commonUtils.handleJSONResponse(null, res, resultJSON);
             } else {
                 commonUtils.handleJSONResponse(error, res, null);
@@ -415,24 +417,29 @@ function getCephClusterDFStatus(req, res, appData){
         });
 }
 
-function parseCephDFData(dfDataJSON){
-    var emptyObj = {};  
-    var dfJSON ={};
-    
-        dfJSON['utilization-stats']= dfDataJSON;
-        return dfJSON;
-}
-
-function createEmptyPaginatedData ()
-{
-    var resultJSON = {};
-    resultJSON['data'] = {};
-    resultJSON['data']['value'] = [];
-    resultJSON['more'] = false;
-    resultJSON['lastKey'] = null;
+function parseCephPGPoolsData(poolsJSON){
+    var resultJSON ={};
+    resultJSON['pools_info']= jsonPath(poolsJSON, "$..output")[0];
     return resultJSON;
 }
 
+function getCephPGStuck(req, res, appData){
+    url = "/pg/dump_stuck";
+     cephServer.apiGet(url, appData, function (error, resultJSON) {
+            if(!error && (resultJSON)) {
+                var resultJSON = parseCephPGStuckData(resultJSON);
+                commonUtils.handleJSONResponse(null, res, resultJSON);
+            } else {
+                commonUtils.handleJSONResponse(error, res, null);
+            }
+        });
+}
+
+function parseCephPGStuckData(pgStuckJSON){
+    var resultJSON ={};
+   // resultJSON['pg_pools_info']= jsonPath(poolsJSON, "$..output")[0];
+    return pgStuckJSON;
+}
 
 /* List all public functions */
 exports.getCephClusterStatus= getCephClusterStatus;
@@ -445,5 +452,9 @@ exports.getCephOSDSummary=getCephOSDSummary
 exports.getCephPGSummary = getCephPGSummary;
 exports.getCephOSDList=getCephOSDList
 exports.getCephOSDTree=getCephOSDTree
+exports.getCephPGStatus=getCephPGStatus
+exports.getCephPGPoolsInfo=getCephPGPoolsInfo
+exports.getCephPGStuck=getCephPGStuck
+
 
 
