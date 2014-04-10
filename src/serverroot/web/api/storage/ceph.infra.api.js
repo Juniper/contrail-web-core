@@ -7,13 +7,13 @@ var cacheApi = require('../../core/cache.api'),
     commonUtils = require('../../../utils/common.utils'),
     config = require('../../../../../config/config.global.js'),
     rest = require('../../../common/rest.api'),
-    cephServer= require('../../../common/cephServer.api'),
+    storageServer= require('../../../common/cephServer.api'),
     async = require('async'),
     jsonPath = require('JSONPath').eval,
 
-cephInfraApi = module.exports;
+storageInfraApi = module.exports;
 
-function getCephClusterStatus(req, res ){
+function getStorageClusterStatus(req, res ){
     url = "/status";
    // console.log("get data:"+url);
     cacheApi.queueDataFromCacheOrSendRequest(req, res, global.STR_JOB_TYPE_CACHE,
@@ -22,11 +22,11 @@ function getCephClusterStatus(req, res ){
 }
 
 
-function getCephClusterHealthStatus(req, res, appData){
+function getStorageClusterHealthStatus(req, res, appData){
     url = "/health";
-   cephServer.apiGet(url, appData, function (error, resultJSON) {
+   storageServer.apiGet(url, appData, function (error, resultJSON) {
         if(!error && (resultJSON)) {
-            var resultJSON = parseCephHealthStatusData(resultJSON);
+            var resultJSON = parseStorageHealthStatusData(resultJSON);
             commonUtils.handleJSONResponse(null, res, resultJSON);
         } else {
             commonUtils.handleJSONResponse(error, res, null);
@@ -35,7 +35,7 @@ function getCephClusterHealthStatus(req, res, appData){
    
 }
 
-function parseCephHealthStatusData(resultJSON){
+function parseStorageHealthStatusData(resultJSON){
     var emptyObj = {};  
         var healthJSON = {};
         var status = jsonPath(resultJSON, "$..status");
@@ -53,11 +53,11 @@ function parseCephHealthStatusData(resultJSON){
 }
 
 
-function getCephClusterActivity(req, res,appData){
+function getStorageClusterActivity(req, res,appData){
     url = "/status";
-     cephServer.apiGet(url, appData,url, function (error, resultJSON) {
+     storageServer.apiGet(url, appData,url, function (error, resultJSON) {
             if(!error && (resultJSON)) {
-                var resultJSON = parseCephClusterActivityData(resultJSON);
+                var resultJSON = parseStorageClusterActivityData(resultJSON);
                 commonUtils.handleJSONResponse(null, res, resultJSON);
             } else {
                 commonUtils.handleJSONResponse(error, res, null);
@@ -65,15 +65,15 @@ function getCephClusterActivity(req, res,appData){
         });  
 }
 
-function parseCephClusterActivityData(activityJSON){
+function parseStorageClusterActivityData(activityJSON){
    return activityJSON;
 }
 
-function getCephMonitorList(req, res, appData){
+function getStorageMonitorList(req, res, appData){
     url = "/status";
-     cephServer.apiGet(url, appData,function (error, resultJSON) {
+     storageServer.apiGet(url, appData,function (error, resultJSON) {
             if(!error && (resultJSON)) {
-                var resultJSON = parseCephClusterMonitorList(resultJSON);
+                var resultJSON = parseStorageClusterMonitorList(resultJSON);
                 commonUtils.handleJSONResponse(null, res, resultJSON);
             } else {
                 commonUtils.handleJSONResponse(error, res, null);
@@ -81,7 +81,7 @@ function getCephMonitorList(req, res, appData){
         });   
 }
 
-function parseCephClusterMonitorList(resultJSON){
+function parseStorageClusterMonitorList(resultJSON){
    var emptyObj = {};  
         var monJSON ={};
         var monitor = jsonPath(resultJSON, "$..mons");
@@ -100,11 +100,11 @@ function parseCephClusterMonitorList(resultJSON){
 }
 
 
-function getCephClusterUsageData(req, res, appData){
+function getStorageClusterUsageData(req, res, appData){
     url = "/df";
-     cephServer.apiGet(url, appData, function (error, resultJSON) {
+     storageServer.apiGet(url, appData, function (error, resultJSON) {
             if(!error && (resultJSON)) {
-                var resultJSON = parseCephClusterUsageData(resultJSON);
+                var resultJSON = parseStorageClusterUsageData(resultJSON);
                 commonUtils.handleJSONResponse(null, res, resultJSON);
             } else {
                 commonUtils.handleJSONResponse(error, res, null);
@@ -112,15 +112,15 @@ function getCephClusterUsageData(req, res, appData){
         });  
 }
 
-function parseCephClusterUsagaeData(usageJSON){
+function parseStorageClusterUsagaeData(usageJSON){
    return usageJSON;
 }
 
-function getCephOSDSummary(req, res, appData){
+function getStorageOSDSummary(req, res, appData){
     url = "/osd/stat";
-     cephServer.apiGet(url, appData, function (error, resultJSON) {
+     storageServer.apiGet(url, appData, function (error, resultJSON) {
             if(!error && (resultJSON)) {
-                var resultJSON = parseCephOSDData(resultJSON);
+                var resultJSON = parseStorageOSDData(resultJSON);
                 commonUtils.handleJSONResponse(null, res, resultJSON);
             } else {
                 commonUtils.handleJSONResponse(error, res, null);
@@ -128,7 +128,7 @@ function getCephOSDSummary(req, res, appData){
         });     
 }
 
-function parseCephOSDData(osdJSON){
+function parseStorageOSDData(osdJSON){
     var osdMapJSON ={};    
     osdMapJSON['osd_stat']= osdJSON;
     return osdMapJSON;
@@ -148,19 +148,19 @@ function getOSDListURLs(appData){
     return dataObjArr;
 }
 
-function getCephOSDList(req, res, appData){
+function getStorageOSDList(req, res, appData){
     var resultJSON = [];
     dataObjArr = getOSDListURLs(appData);
     async.map(dataObjArr,
-                      commonUtils.getAPIServerResponse(cephServer.apiGet, true),
+                      commonUtils.getAPIServerResponse(storageServer.apiGet, true),
                       function(err, data) {
-                resultJSON = parseCephOSDList(data);        
+                resultJSON = parseStorageOSDList(data);        
                 commonUtils.handleJSONResponse(err, res, resultJSON);
             });
  
 }
 
-function parseCephOSDList(osdJSON){
+function parseStorageOSDList(osdJSON){
     var emptyObj = {};  
     var osdList={};
     var osdPG= osdJSON[0];
@@ -235,19 +235,19 @@ function parseHostFromOSD(hostJSON,osdsJSON, treeReplace){
     return hostJSON;
 }
 
-function getCephOSDTree(req, res, appData){
+function getStorageOSDTree(req, res, appData){
     var resultJSON = [];
     dataObjArr = getOSDListURLs(appData);
     async.map(dataObjArr,
-                      commonUtils.getAPIServerResponse(cephServer.apiGet, true),
+                      commonUtils.getAPIServerResponse(storageServer.apiGet, true),
                       function(err, data) {
-                resultJSON = parseCephOSDTree(data);        
+                resultJSON = parseStorageOSDTree(data);        
                 commonUtils.handleJSONResponse(err, res, resultJSON);
             });
  
 }
 
-function parseCephOSDTree(osdJSON){
+function parseStorageOSDTree(osdJSON){
     var emptyObj = {};  
     var osdList={};
     var osdPG= osdJSON[0];
@@ -333,11 +333,11 @@ function parseOSDFromDump(osdTree, osdDump){
     return osdTree;
 }
 
-function getCephPGStatus(req, res, appData){
+function getStoragePGStatus(req, res, appData){
     url = "/status";
-     cephServer.apiGet(url, appData, function (error, resultJSON) {
+     storageServer.apiGet(url, appData, function (error, resultJSON) {
             if(!error && (resultJSON)) {
-                var resultJSON = parseCephPGStatus(resultJSON);
+                var resultJSON = parseStoragePGStatus(resultJSON);
                 commonUtils.handleJSONResponse(null, res, resultJSON);
             } else {
                 commonUtils.handleJSONResponse(error, res, null);
@@ -345,7 +345,7 @@ function getCephPGStatus(req, res, appData){
         });
 }
 
-function parseCephPGStatus(pgDataJSON){
+function parseStoragePGStatus(pgDataJSON){
     var emptyObj = {};  
     var pgMapJSON ={};
     var pgMap = jsonPath(pgDataJSON, "$..pgmap");
@@ -356,7 +356,7 @@ function parseCephPGStatus(pgDataJSON){
     return emptyObj;
 }
 
-function getCephPGSummary(req, res, appData){
+function getStoragePGSummary(req, res, appData){
     var dataObjArr = [];
     var resultJSON = [];
     urlStatus = "/status";
@@ -367,14 +367,14 @@ function getCephPGSummary(req, res, appData){
     commonUtils.createReqObj(dataObjArr, urlPGSummary, null, null, 
                                          null, null, appData);
      async.map(dataObjArr,
-                      commonUtils.getAPIServerResponse(cephServer.apiGet, true),
+                      commonUtils.getAPIServerResponse(storageServer.apiGet, true),
                       function(err, data) {
-                resultJSON = parseCephPGData(data);        
+                resultJSON = parseStoragePGData(data);        
                 commonUtils.handleJSONResponse(err, res, resultJSON);
             });
 }
 
-function parseCephPGData(pgJSON){
+function parseStoragePGData(pgJSON){
     var emptyObj = {};  
     var pgMapJSON ={};
     var pgStatusJson= pgJSON[0];
@@ -392,11 +392,11 @@ function parseCephPGData(pgJSON){
     return emptyObj;
 }
 
-function getCephClusterDFStatus(req, res, appData){
+function getStorageClusterDFStatus(req, res, appData){
     url = "/df";
-    cephServer.apiGet(url, appData, function (error, resultJSON) {
+    storageServer.apiGet(url, appData, function (error, resultJSON) {
         if(!error && (resultJSON)) {
-            var resultJSON = parseCephDFData(resultJSON);
+            var resultJSON = parseStorageDFData(resultJSON);
             commonUtils.handleJSONResponse(null, res, resultJSON);
         } else {
             commonUtils.handleJSONResponse(error, res, null);
@@ -404,17 +404,17 @@ function getCephClusterDFStatus(req, res, appData){
     });
 }
 
-function parseCephDFData(dfDataJSON){
+function parseStorageDFData(dfDataJSON){
     var dfJSON ={};
     dfJSON['utilization_stats']= dfDataJSON;
     return dfJSON;
 }
 
-function getCephPGPoolsInfo(req, res, appData){
+function getStoragePGPoolsInfo(req, res, appData){
     url = "/pg/dump_pools_json";
-     cephServer.apiGet(url, appData, function (error, resultJSON) {
+     storageServer.apiGet(url, appData, function (error, resultJSON) {
             if(!error && (resultJSON)) {
-                var resultJSON = parseCephPGPoolsData(resultJSON);
+                var resultJSON = parseStoragePGPoolsData(resultJSON);
                 commonUtils.handleJSONResponse(null, res, resultJSON);
             } else {
                 commonUtils.handleJSONResponse(error, res, null);
@@ -422,17 +422,17 @@ function getCephPGPoolsInfo(req, res, appData){
         });
 }
 
-function parseCephPGPoolsData(poolsJSON){
+function parseStoragePGPoolsData(poolsJSON){
     var resultJSON ={};
     resultJSON['pools_info']= jsonPath(poolsJSON, "$..output")[0];
     return resultJSON;
 }
 
-function getCephPGStuck(req, res, appData){
+function getStoragePGStuck(req, res, appData){
     url = "/pg/dump_stuck";
-     cephServer.apiGet(url, appData, function (error, resultJSON) {
+     storageServer.apiGet(url, appData, function (error, resultJSON) {
             if(!error && (resultJSON)) {
-                var resultJSON = parseCephPGStuckData(resultJSON);
+                var resultJSON = parseStoragePGStuckData(resultJSON);
                 commonUtils.handleJSONResponse(null, res, resultJSON);
             } else {
                 commonUtils.handleJSONResponse(error, res, null);
@@ -440,26 +440,26 @@ function getCephPGStuck(req, res, appData){
         });
 }
 
-function parseCephPGStuckData(pgStuckJSON){
+function parseStoragePGStuckData(pgStuckJSON){
     var resultJSON ={};
    // resultJSON['pg_pools_info']= jsonPath(poolsJSON, "$..output")[0];
     return pgStuckJSON;
 }
 
 /* List all public functions */
-exports.getCephClusterStatus= getCephClusterStatus;
-exports.getCephClusterDFStatus=getCephClusterDFStatus
-exports.getCephClusterHealthStatus = getCephClusterHealthStatus;
-exports.getCephClusterActivity = getCephClusterActivity;
-exports.getCephMonitorList = getCephMonitorList;
-exports.getCephClusterUsageData= getCephClusterUsageData;
-exports.getCephOSDSummary=getCephOSDSummary
-exports.getCephPGSummary = getCephPGSummary;
-exports.getCephOSDList=getCephOSDList
-exports.getCephOSDTree=getCephOSDTree
-exports.getCephPGStatus=getCephPGStatus
-exports.getCephPGPoolsInfo=getCephPGPoolsInfo
-exports.getCephPGStuck=getCephPGStuck
+exports.getStorageClusterStatus= getStorageClusterStatus;
+exports.getStorageClusterDFStatus=getStorageClusterDFStatus
+exports.getStorageClusterHealthStatus = getStorageClusterHealthStatus;
+exports.getStorageClusterActivity = getStorageClusterActivity;
+exports.getStorageMonitorList = getStorageMonitorList;
+exports.getStorageClusterUsageData= getStorageClusterUsageData;
+exports.getStorageOSDSummary=getStorageOSDSummary
+exports.getStoragePGSummary = getStoragePGSummary;
+exports.getStorageOSDList=getStorageOSDList
+exports.getStorageOSDTree=getStorageOSDTree
+exports.getStoragePGStatus=getStoragePGStatus
+exports.getStoragePGPoolsInfo=getStoragePGPoolsInfo
+exports.getStoragePGStuck=getStoragePGStuck
 
 
 
