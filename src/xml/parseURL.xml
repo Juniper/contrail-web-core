@@ -110,99 +110,118 @@
         <path>../../../../lib/request-timeout</path>
     </require>
     <require>
-         <define>cephInfraApi</define>
+         <define>storageInfraApi</define>
          <path>../api/infraoverview.api</path>
     </require>
     
-    <!--  Ceph Storage API  -->
+    <!--  Contrail Storage API  -->
     <require>
-        <define>cephInfraApi</define>
+        <define>storageInfraApi</define>
         <path>../api/storage/ceph.infra.api</path>
     </require>
 
      <item>
-        <url>/ceph/monitor</url>
+        <url>/storage/monitor</url>
         <method>get</method>
-        <feature>ceph</feature>
+        <feature>storage</feature>
         <callback>handler.dashboard</callback>
     </item>
     <item>
         <url>/</url>
         <method>get</method>
-        <feature>ceph</feature>
+        <feature>storage</feature>
         <callback>handler.home</callback>
     </item>
     
      <item>
-        <url>/api/ceph/infra/health/status</url>
+        <url>/api/storage/infra/health/status</url>
         <method>get</method>
-        <feature>ceph</feature>
-        <callback>cephInfraApi.getCephClusterHealthStatus</callback>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStorageClusterHealthStatus</callback>
     </item>
     
      <item>
-        <url>/api/ceph/infra/cluster/activity</url>
+        <url>/api/storage/infra/cluster/activity</url>
         <method>get</method>
-        <feature>ceph</feature>
-        <callback>cephInfraApi.getCephClusterActivity</callback>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStorageClusterActivity</callback>
     </item>
     
     <item>
-        <url>/api/ceph/infra/monitor/status</url>
+        <url>/api/storage/infra/monitor/status</url>
         <method>get</method>
-        <feature>ceph</feature>
-        <callback>cephInfraApi.getCephMonitorList</callback>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStorageMonitorList</callback>
     </item>
     
     <item>
-        <url>/api/ceph/infra/cluster/status</url>
+        <url>/api/storage/infra/cluster/status</url>
         <method>get</method>
-        <feature>ceph</feature>
-        <callback>cephInfraApi.getCephClusterStatus</callback>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStorageClusterStatus</callback>
     </item>
 
     <item>
-        <url>/api/ceph/infra/cluster/df/status</url>
+        <url>/api/storage/infra/cluster/df/status</url>
         <method>get</method>
-        <feature>ceph</feature>
-        <callback>cephInfraApi.getCephClusterDFStatus</callback>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStorageClusterDFStatus</callback>
     </item>
 
     <item>
-        <url>/api/ceph/infra/osd/status</url>
+        <url>/api/storage/infra/osd/status</url>
         <method>get</method>
-        <feature>ceph</feature>
-        <callback>cephInfraApi.getCephOSDSummary</callback>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStorageOSDSummary</callback>
     </item>
    
     <item>
-        <url>/api/ceph/infra/osds</url>
+        <url>/api/storage/infra/osds</url>
         <method>get</method>
-        <feature>ceph</feature>
-        <callback>cephInfraApi.getCephOSDList</callback>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStorageOSDList</callback>
     </item>
 
     <item>
-        <url>/api/ceph/infra/osds/tree</url>
+        <url>/api/storage/infra/osds/tree</url>
         <method>get</method>
-        <feature>ceph</feature>
-        <callback>cephInfraApi.getCephOSDTree</callback>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStorageOSDTree</callback>
     </item>
     
     <item>
-        <url>/api/ceph/infra/mons</url>
+        <url>/api/storage/infra/mons</url>
         <method>get</method>
-        <feature>ceph</feature>
-        <callback>cephInfraApi.getCephMonitorList</callback>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStorageMonitorList</callback>
     </item>
     <item>
-        <url>/api/ceph/infra/pg/status</url>
+        <url>/api/storage/infra/pg/status</url>
         <method>get</method>
-        <feature>ceph</feature>
-        <callback>cephInfraApi.getCephPGSummary</callback>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStoragePGStatus</callback>
     </item>
-    
-    <!-- Ceph Storage -->
+    <item>
+        <url>/api/storage/infra/pg/summary</url>
+        <method>get</method>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStoragePGSummary</callback>
+    </item>
+
+    <item>
+        <url>/api/storage/infra/pg/stuck</url>
+        <method>get</method>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStoragePGStuck</callback>
+    </item>
+    <item>
+        <url>/api/storage/infra/pools</url>
+        <method>get</method>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStoragePGPoolsInfo</callback>
+    </item>
+
+    <!-- Contrail Storage -->
     
     <item>
         <url>/infra/admin</url>
