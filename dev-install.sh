@@ -93,6 +93,12 @@ if [ $1 = 'prod' ] ; then
     cp -r ../contrail-web-third-party/select2-v3.4.6/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
     #End - Copy Select2 from contrail-web-third-party
 
+    #Start - Copy 2way-Multiselect from contrail-web-third-party
+    rm -rf webroot/assets/2way-multiselect
+    mkdir -p webroot/assets/2way-multiselect/js
+    cp -r ../contrail-web-third-party/multiselect-v1.0/js/multiselect.js webroot/assets/2way-multiselect/js/multiselect.js
+    #End - Copy 2way-Multiselect from contrail-web-third-party
+
     #Start - Copy Slickgrid from contrail-web-third-party
     rm -rf webroot/assets/slickgrid
     mkdir -p webroot/assets/slickgrid/js
@@ -216,6 +222,12 @@ else
     ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2x2.png webroot/assets/select2/styles/select2x2.png
     ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
     #End - Link Select2 from contrail-web-third-party
+
+    #Start - Link 2way-Multiselect from contrail-web-third-party
+    rm -rf webroot/assets/2way-multiselect
+    mkdir -p webroot/assets/2way-multiselect/js
+    ln -sf $FIVE_BACK/contrail-web-third-party/multiselect-v1.0/js/multiselect.js webroot/assets/2way-multiselect/js/multiselect.js
+    #End - Link 2way-Multiselect from contrail-web-third-party
 
     #Start - Link Slickgrid from contrail-web-third-party
     rm -rf webroot/assets/slickgrid
