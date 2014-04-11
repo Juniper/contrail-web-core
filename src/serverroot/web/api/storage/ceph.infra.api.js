@@ -132,10 +132,10 @@ function parseStorageOSDData(osdJSON){
     var osdMapJSON ={};    
     var num_osds= jsonPath(osdJSON, "$.output.num_osds")[0];
     var num_up_osds= jsonPath(osdJSON, "$.output.num_up_osds")[0];
-    var num_in_osds= jsonPath(osdJSON, "$.output.num_up_osds")[0];
-    
+    var num_in_osds= jsonPath(osdJSON, "$.output.num_in_osds")[0];
     var num_down_osds = num_osds - num_up_osds;
-    var num_out_osds = num_osds -num_in_osds;
+    var num_out_osds = num_osds - num_in_osds;
+   
     var obj = jsonPath(osdJSON, "$.output")[0];
     obj['num_down_osds'] = num_down_osds;
     obj['num_out_osds'] = num_out_osds;
