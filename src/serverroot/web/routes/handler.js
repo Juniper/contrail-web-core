@@ -10,6 +10,7 @@ var http = require('http'),
     util = require('util'),
     redis = require("redis"),
     global = require('../../common/global'),
+    storage = require('../../../../config/storage.config.global.js'),
     config = require('../../../../config/config.global.js'),
     longPoll = require('../core/longPolling.api'),
     logutils = require('../../utils/log.utils'),
@@ -25,7 +26,7 @@ if (!module.parent) {
 }
 
 exports.home = function (req, res) {
-    if(config.ceph.enabled=true)
+    if(storage.ceph.enabled=true)
     		checkAndRedirect(req, res, 'html/ceph-dashboard.html');
 	else{
     		checkAndRedirect(req, res, 'html/dashboard.html');
@@ -33,7 +34,7 @@ exports.home = function (req, res) {
 };
 
 exports.dashboard = function (req, res) {
-    if(config.ceph.enabled=true)
+    if(storage.ceph.enabled=true)
     		checkAndRedirect(req, res, 'html/ceph-dashboard.html');
 	else{
     		checkAndRedirect(req, res, 'html/dashboard.html');

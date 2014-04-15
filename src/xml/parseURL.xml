@@ -110,7 +110,7 @@
         <path>../../../../lib/request-timeout</path>
     </require>
     <require>
-         <define>storageInfraApi</define>
+         <define>infra</define>
          <path>../api/infraoverview.api</path>
     </require>
     
@@ -119,8 +119,23 @@
         <define>storageInfraApi</define>
         <path>../api/storage/ceph.infra.api</path>
     </require>
+    
+    <require>
+        <define>storageMonsApi</define>
+        <path>../api/storage/ceph.mons.api</path>
+    </require>
 
-     <item>
+    <require>
+        <define>storageOsdsApi</define>
+        <path>../api/storage/ceph.osd.api</path>
+    </require>
+    
+    <require>
+        <define>storagePGsApi</define>
+        <path>../api/storage/ceph.pg.api</path>
+    </require>    
+
+    <item>
         <url>/storage/monitor</url>
         <method>get</method>
         <feature>storage</feature>
@@ -148,13 +163,6 @@
     </item>
     
     <item>
-        <url>/api/storage/infra/monitor/status</url>
-        <method>get</method>
-        <feature>storage</feature>
-        <callback>storageInfraApi.getStorageMonitorList</callback>
-    </item>
-    
-    <item>
         <url>/api/storage/infra/cluster/status</url>
         <method>get</method>
         <feature>storage</feature>
@@ -169,56 +177,64 @@
     </item>
 
     <item>
+        <url>/api/storage/infra/monitor/status</url>
+        <method>get</method>
+        <feature>storage</feature>
+        <callback>storageMonsApi.getStorageMonitorList</callback>
+    </item>
+
+    <item>
+        <url>/api/storage/infra/mons</url>
+        <method>get</method>
+        <feature>storage</feature>
+        <callback>storageMonsaApi.getStorageMonitorList</callback>
+    </item>
+
+    <item>
         <url>/api/storage/infra/osd/status</url>
         <method>get</method>
         <feature>storage</feature>
-        <callback>storageInfraApi.getStorageOSDSummary</callback>
+        <callback>storageOsdsApi.getStorageOSDSummary</callback>
     </item>
    
     <item>
         <url>/api/storage/infra/osds</url>
         <method>get</method>
         <feature>storage</feature>
-        <callback>storageInfraApi.getStorageOSDList</callback>
+        <callback>storageOsdsApi.getStorageOSDList</callback>
     </item>
 
     <item>
         <url>/api/storage/infra/osds/tree</url>
         <method>get</method>
         <feature>storage</feature>
-        <callback>storageInfraApi.getStorageOSDTree</callback>
+        <callback>storageOsdsApi.getStorageOSDTree</callback>
     </item>
     
-    <item>
-        <url>/api/storage/infra/mons</url>
-        <method>get</method>
-        <feature>storage</feature>
-        <callback>storageInfraApi.getStorageMonitorList</callback>
-    </item>
     <item>
         <url>/api/storage/infra/pg/status</url>
         <method>get</method>
         <feature>storage</feature>
-        <callback>storageInfraApi.getStoragePGStatus</callback>
+        <callback>storagePGsApi.getStoragePGStatus</callback>
     </item>
     <item>
         <url>/api/storage/infra/pg/summary</url>
         <method>get</method>
         <feature>storage</feature>
-        <callback>storageInfraApi.getStoragePGSummary</callback>
+        <callback>storagePGsApi.getStoragePGSummary</callback>
     </item>
 
     <item>
         <url>/api/storage/infra/pg/stuck</url>
         <method>get</method>
         <feature>storage</feature>
-        <callback>storageInfraApi.getStoragePGStuck</callback>
+        <callback>storagePGsApi.getStoragePGStuck</callback>
     </item>
     <item>
         <url>/api/storage/infra/pools</url>
         <method>get</method>
         <feature>storage</feature>
-        <callback>storageInfraApi.getStoragePGPoolsInfo</callback>
+        <callback>storagePGsApi.getStoragePGPoolsInfo</callback>
     </item>
 
     <!-- Contrail Storage -->

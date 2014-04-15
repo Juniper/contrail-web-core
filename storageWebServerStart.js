@@ -10,6 +10,7 @@ var express = require('express')
 	, https = require("https")
 	, underscore = require('underscore')
 	, config = require('./config/config.global.js')
+    , storage = require('./config/storage.config.global.js')
 	, logutils = require('./src/serverroot/utils/log.utils')
 	, cluster = require('cluster')
 	, nodeWorkerCount = config.node_worker_count
@@ -53,8 +54,8 @@ if (config.insecure_access && (config.insecure_access == true)) {
 
 var httpsApp = express(),
 	httpApp = express(),
-	httpPort = config.ceph.http_port,
-	httpsPort = config.ceph.https_port,
+	httpPort = storage.ceph.http_port,
+	httpsPort = storage.ceph.https_port,
 	redisPort = (config.redis_server_port) ?
 		config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
 redisIP = (config.redis_server_ip) ?
