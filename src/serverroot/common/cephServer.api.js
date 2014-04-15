@@ -5,7 +5,7 @@
 var rest = require('./rest.api');
 var global = require('./global');
 var assert = require('assert');
-var config = require('../../../config/config.global');
+var config = require('../../../config/storage.config.global.js');
 
 var serverIp = global.DFLT_SERVER_IP;
 var serverPort = '5003';
