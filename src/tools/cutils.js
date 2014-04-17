@@ -740,7 +740,7 @@ function getSelectedProjectObjNew (projectSwitcherId, elementType) {
     if (cookiedProject === false) {
         if(elementType === "contrailDropdown") {
             firstProjectName = $("#" + projectSwitcherId).data(elementType).text();
-            firstProjectValue = $("#" + projectSwitcherId).data(elementType).text();
+            firstProjectValue = $("#" + projectSwitcherId).data(elementType).value();
         }
         setCookie("project", firstProjectName);
         return firstProjectValue;
