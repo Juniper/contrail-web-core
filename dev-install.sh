@@ -40,6 +40,10 @@ if [ $1 = 'prod' ] ; then
     mkdir -p webroot/assets/jquery
     cp -r ../contrail-web-third-party/jquery webroot/assets/jquery/js
     cp -r ../contrail-web-third-party/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js webroot/assets/jquery/js/
+    cp -r ../contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery-ui.css webroot/assets/jquery/js/
+    cp -r ../contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery.ui.theme.css webroot/assets/jquery/js/
+    cp -r ../contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/images webroot/assets/jquery/js/
+    cp -r ../contrail-web-third-party/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/jquery.validate.js
     #End - Copy JQuery files from contrail-web-third-party
 
     #Start - Copy Bootstrap from contrail-web-third-party
@@ -69,6 +73,67 @@ if [ $1 = 'prod' ] ; then
 
     rm -f webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
     cp -r  ../contrail-web-third-party/fonts-opensans/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff  webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+    #End - Copy Font-Opensans from contrail-web-third-party
+
+    #Start - Copy Handlebars from contrail-web-third-party
+    rm -rf webroot/assets/handlebars
+    mkdir webroot/assets/handlebars
+    cp -r ../contrail-web-third-party/handlebars-v1.3.0/handlebars-v1.3.0.js webroot/assets/handlebars/handlebars-v1.3.0.js
+    #End - Copy Handlebars from contrail-web-third-party
+
+    #Start - Copy Select2 from contrail-web-third-party
+    rm -rf webroot/assets/select2
+    mkdir -p webroot/assets/select2/js
+    mkdir -p webroot/assets/select2/styles
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2.min.js webroot/assets/select2/js/select2.min.js
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2.css webroot/assets/select2/styles/select2.css
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2-bootstrap.css webroot/assets/select2/styles/select2-bootstrap.css
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2.png webroot/assets/select2/styles/select2.png
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2x2.png webroot/assets/select2/styles/select2x2.png
+    cp -r ../contrail-web-third-party/select2-v3.4.6/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
+    #End - Copy Select2 from contrail-web-third-party
+
+    #Start - Copy 2way-Multiselect from contrail-web-third-party
+    rm -rf webroot/assets/2way-multiselect
+    mkdir -p webroot/assets/2way-multiselect/js
+    cp -r ../contrail-web-third-party/multiselect-v1.0/js/multiselect.js webroot/assets/2way-multiselect/js/multiselect.js
+    #End - Copy 2way-Multiselect from contrail-web-third-party
+
+    #Start - Copy Slickgrid from contrail-web-third-party
+    rm -rf webroot/assets/slickgrid
+    mkdir -p webroot/assets/slickgrid/js
+    mkdir -p webroot/assets/slickgrid/styles
+    cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.core.js webroot/assets/slickgrid/js/slick.core.js
+    cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.grid.js webroot/assets/slickgrid/js/slick.grid.js
+    cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.dataview.js webroot/assets/slickgrid/js/slick.dataview.js
+    cp -r ../contrail-web-third-party/slickgrid-v2.1.0/lib/jquery.event.drag-2.2.js webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
+
+    cp -r ../contrail-web-third-party/slickgrid.enhancement.pager/slick.enhancementpager.js webroot/assets/slickgrid/js/slick.enhancementpager.js
+    cp -r ../contrail-web-third-party/slickgrid.enhancement.pager/libs/jquery.json-2.3.min.js webroot/assets/slickgrid/js/jquery.json-2.3.min.js
+    cp -r ../contrail-web-third-party/slickgrid.enhancement.pager/libs/jquery.dropkick-1.0.0.js webroot/assets/slickgrid/js/jquery.dropkick-1.0.0.js
+
+    cp -r ../contrail-web-third-party/slickgrid-v2.1.0/slick.grid.css webroot/assets/slickgrid/styles/slick.grid.css
+    #End - Copy Slickgrid from contrail-web-third-party
+
+    #Start - Cooy Datetimepicker from contrail-web-third-party
+    rm -rf webroot/assets/datetimepicker
+    mkdir -p webroot/assets/datetimepicker/js
+    mkdir -p webroot/assets/datetimepicker/styles
+    cp -r ../contrail-web-third-party/datetimepicker-v2.1.9/jquery.datetimepicker.js webroot/assets/datetimepicker/js/jquery.datetimepicker.js
+    cp -r ../contrail-web-third-party/datetimepicker-v2.1.9/jquery.datetimepicker.css webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
+    #End - Cooy Datetimepicker from contrail-web-third-party
+
+    #Start - Copy Knockout from contrail-web-third-party
+    rm -rf webroot/assets/knockout
+    mkdir webroot/assets/knockout
+    cp -r ../contrail-web-third-party/knockout-v3.0.0/knockout-3.0.0.js webroot/assets/knockout/knockout-3.0.0.js
+    #End - Copy Knockout from contrail-web-third-party
+
+    #Start - Copy Moment Date-Formatter from contrail-web-third-party
+    rm -rf webroot/assets/moment
+    mkdir webroot/assets/moment
+    cp -r ../contrail-web-third-party/moment-v2.5.1/moment.min.js webroot/assets/moment/moment.min.js
+    #End - Copy Moment Date-Formatter from contrail-web-third-party
 else
     #Start - Link KendoUI from contrail-web-third-party
     rm -rf webroot/assets/kendoui
@@ -106,6 +171,10 @@ else
     ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.ui.touch-punch.min.js webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
     ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.xml2json.js webroot/assets/jquery/js/jquery.xml2json.js
     ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js webroot/assets/jquery/js/jquery-ui-1.10.3.custom.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery-ui.css webroot/assets/jquery/js/jquery-ui.css
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery.ui.theme.css webroot/assets/jquery/js/jquery.ui.theme.css
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/images webroot/assets/jquery/js/images
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/jquery.validate.js
     #End - Link JQuery files from contrail-web-third-party
 
     #Start - Link Bootstrap from contrail-web-third-party
@@ -135,6 +204,66 @@ else
     rm -f webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
     ln -sf  $THREE_BACK/contrail-web-third-party/fonts-opensans/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff  webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
     #End - Link Font-Awesome from contrail-web-third-party
+
+    #Start - Link Handlebars from contrail-web-third-party
+    rm -rf webroot/assets/handlebars
+    mkdir webroot/assets/handlebars
+    ln -sf $FOUR_BACK/contrail-web-third-party/handlebars-v1.3.0/handlebars-v1.3.0.js webroot/assets/handlebars/handlebars-v1.3.0.js
+    #End - Link Handlebars from contrail-web-third-party
+
+    #Start - Link Select2 from contrail-web-third-party
+    rm -rf webroot/assets/select2
+    mkdir -p webroot/assets/select2/js
+    mkdir -p webroot/assets/select2/styles
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2.min.js webroot/assets/select2/js/select2.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2.css webroot/assets/select2/styles/select2.css
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2-bootstrap.css webroot/assets/select2/styles/select2-bootstrap.css
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2.png webroot/assets/select2/styles/select2.png
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2x2.png webroot/assets/select2/styles/select2x2.png
+    ln -sf $FIVE_BACK/contrail-web-third-party/select2-v3.4.6/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
+    #End - Link Select2 from contrail-web-third-party
+
+    #Start - Link 2way-Multiselect from contrail-web-third-party
+    rm -rf webroot/assets/2way-multiselect
+    mkdir -p webroot/assets/2way-multiselect/js
+    ln -sf $FIVE_BACK/contrail-web-third-party/multiselect-v1.0/js/multiselect.js webroot/assets/2way-multiselect/js/multiselect.js
+    #End - Link 2way-Multiselect from contrail-web-third-party
+
+    #Start - Link Slickgrid from contrail-web-third-party
+    rm -rf webroot/assets/slickgrid
+    mkdir -p webroot/assets/slickgrid/js
+    mkdir -p webroot/assets/slickgrid/styles
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.core.js webroot/assets/slickgrid/js/slick.core.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.grid.js webroot/assets/slickgrid/js/slick.grid.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.dataview.js webroot/assets/slickgrid/js/slick.dataview.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/lib/jquery.event.drag-2.2.js webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
+
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid.enhancement.pager/slick.enhancementpager.js webroot/assets/slickgrid/js/slick.enhancementpager.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid.enhancement.pager/libs/jquery.json-2.3.min.js webroot/assets/slickgrid/js/jquery.json-2.3.min.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid.enhancement.pager/libs/jquery.dropkick-1.0.0.js webroot/assets/slickgrid/js/jquery.dropkick-1.0.0.js
+
+    ln -sf $FIVE_BACK/contrail-web-third-party/slickgrid-v2.1.0/slick.grid.css webroot/assets/slickgrid/styles/slick.grid.css
+    #End - Link Slickgrid from contrail-web-third-party
+
+    #Start - Link Datetimepicker from contrail-web-third-party
+    rm -rf webroot/assets/datetimepicker
+    mkdir -p webroot/assets/datetimepicker/js
+    mkdir -p webroot/assets/datetimepicker/styles
+    ln -sf $FIVE_BACK/contrail-web-third-party/datetimepicker-v2.1.9/jquery.datetimepicker.js webroot/assets/datetimepicker/js/jquery.datetimepicker.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/datetimepicker-v2.1.9/jquery.datetimepicker.css webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
+    #End - Link Datetimepicker from contrail-web-third-party
+
+    #Start - Link Knockout from contrail-web-third-party
+    rm -rf webroot/assets/knockout
+    mkdir webroot/assets/knockout
+    ln -sf $FOUR_BACK/contrail-web-third-party/knockout-v3.0.0/knockout-3.0.0.js webroot/assets/knockout/knockout-3.0.0.js
+    #End - Link Knockout from contrail-web-third-party
+
+    #Start - Link Moment Date-Formatter from contrail-web-third-party
+    rm -rf webroot/assets/moment
+    mkdir webroot/assets/moment
+    ln -sf $FOUR_BACK/contrail-web-third-party/moment-v2.5.1/moment.min.js webroot/assets/moment/moment.min.js
+    #End - Link Moment Date-Formatter from contrail-web-third-party
 fi
 
 #Start - Merging All JS files
@@ -204,7 +333,6 @@ cat ${MAINFILE[23]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[24]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[25]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[26]} >> webroot/js/contrail-all-5.js
-
 
 # End - Merging All JS files
 

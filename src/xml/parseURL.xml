@@ -1132,6 +1132,12 @@
         <callback>projectconfigapi.listProjects</callback>
     </item>
     <item>
+        <url>/api/tenants/config/projects/:domain</url>
+        <method>get</method>
+        <feature>projectconfig</feature>
+        <callback>projectconfigapi.listProjects</callback>
+    </item>
+    <item>
         <url>/api/tenants/config/domains</url>
         <method>get</method>
         <feature>projectconfig</feature>
@@ -1194,7 +1200,21 @@
         <method>get</method>
         <timeout>300000</timeout>
         <feature>query-engine</feature>
-        <callback>qeapi.runQuery</callback>
+        <callback>qeapi.runGETQuery</callback>
+    </item>
+    <item>
+        <url>/api/admin/reports/query</url>
+        <method>post</method>
+        <timeout>300000</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.runPOSTQuery</callback>
+    </item>
+    <item>
+        <url>/api/admin/reports/query/export</url>
+        <method>get</method>
+        <timeout>300000</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.exportQueryResult</callback>
     </item>
     <item>
         <url>/api/admin/reports/query/queue</url>
