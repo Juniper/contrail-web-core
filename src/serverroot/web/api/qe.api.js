@@ -164,7 +164,7 @@ function updateQueryStatus(options)
         url:options.url, queryJSON:options.queryJSON, progress:options.progress, status:options.status,
         tableName:options.queryJSON['table'], count:options.count, timeTaken:-1, errorMessage:options.errorMessage,
         reRunTimeRange: options.reRunTimeRange, reRunQueryString: getReRunQueryString(options.reRunQuery, options.reRunTimeRange),
-        opsQueryId: options.opsQueryId
+        opsQueryId: options.opsQueryId, engQueryStr: options['engQueryStr']
     };
     if (queryStatus.tableName == 'FlowSeriesTable' || queryStatus.tableName.indexOf('StatTable.') != -1) {
         queryStatus.tg = options.tg;
@@ -370,7 +370,7 @@ function parseSLQuery(reqQuery)
         createSLFilter(msgQuery, level);
     }
     if (filters != null && filters != '') {
-        parseLogsFilter(msgQuery, filters);
+        parseFilter(msgQuery, filters);
     }
     return msgQuery;
 };
@@ -449,7 +449,7 @@ function parseOTQuery(reqQuery)
         objTraceQuery['limit'] = limit;
     }
     if (filters != null && filters != '') {
-        parseLogsFilter(objTraceQuery, filters);
+        parseFilter(objTraceQuery, filters);
     }
     return objTraceQuery;
 };
@@ -521,20 +521,20 @@ function parseFSQuery(reqQuery)
     if (direction >= 0) {
         fsQuery['dir'] = direction;
     }
-    parseFilter(fsQuery, filters);
+    parseFSFilter(fsQuery, filters);
     return fsQuery;
 };
 
 function parseStatsQuery(reqQuery)
 {
-    var select, where, fromTimeUTC, toTimeUTC, statQuery, table, tg, tgUnit;
+    var select, where, fromTimeUTC, toTimeUTC, statQuery, filters, table, tg, tgUnit;
     table = reqQuery['table'];
     statQuery = getQueryJSON4Table(table);
     fromTimeUTC = reqQuery['fromTimeUTC'];
     toTimeUTC = reqQuery['toTimeUTC'];
     select = reqQuery['select'];
     where = reqQuery['where'];
-    //filters = reqQuery['filters'];
+    filters = reqQuery['filters'];
     tg = reqQuery['tgValue'];
     tgUnit = reqQuery['tgUnits'];
     setMicroTimeRange(statQuery, fromTimeUTC, toTimeUTC);
@@ -542,6 +542,9 @@ function parseStatsQuery(reqQuery)
         parseSelect(statQuery, select, tg, tgUnit);
     }
     parseWhere(statQuery, where);
+    if (filters != null && filters != '') {
+        parseFilter(statQuery, filters);
+    }
     return statQuery;
 };
 
@@ -616,7 +619,7 @@ function parseWhere(query, where)
     }
 };
 
-function parseLogsFilter(query, filters) 
+function parseFilter(query, filters)
 {
     var filtersArray, filtersLength, filterClause = [], i, filterObj;
     if (filters != null && filters.trim() != '') {
@@ -657,7 +660,7 @@ function parseFilterObj(filter, operator)
     return filterObj
 };
 
-function parseFilter(query, filters) 
+function parseFSFilter(query, filters)
 {
     var arrayStart, arrayEnd, sortFieldsStr, sortFieldsArray,
         limitSortOrderStr, limitSortOrderArray, count, sortOrder, limitArray, limit;
@@ -777,7 +780,7 @@ function getQueryJSON4Table(tableName, autoSort, autoLimit)
     } else if(tableName.indexOf('Object') != -1) {
         queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": [], "limit": 50000};
     } else if(tableName.indexOf('StatTable.') != -1) {
-        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": [], "limit": 150000};
+        queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": [], "filter": [], "limit": 150000};
     } else {
         queryJSON = {"table": tableName, "start_time": "", "end_time": "", "select_fields": [], "limit": 150000};
     }
@@ -991,8 +994,8 @@ function runNewQuery(req, res, queryId, reqQuery)
     var tableName = reqQuery['table'], tableType = reqQuery['tableType'],
         queryId = reqQuery['queryId'], pageSize = parseInt(reqQuery['pageSize']),
         async = (reqQuery['async'] != null && reqQuery['async'] == "true") ? true : false,
-        reRunTimeRange = reqQuery['reRunTimeRange'], reRunQuery = reqQuery,
-        options = {queryId:queryId, pageSize:pageSize, counter:0, status:"run", async:async, count:0, progress:0, errorMessage:"", reRunTimeRange: reRunTimeRange, reRunQuery: reRunQuery, opsQueryId: ""},
+        reRunTimeRange = reqQuery['reRunTimeRange'], reRunQuery = reqQuery, engQueryStr = reqQuery['engQueryStr'],
+        options = {queryId:queryId, pageSize:pageSize, counter:0, status:"run", async:async, count:0, progress:0, errorMessage:"", reRunTimeRange: reRunTimeRange, reRunQuery: reRunQuery, opsQueryId: "", engQueryStr: engQueryStr},
         queryJSON;
     if (tableName == 'MessageTable') {
         queryJSON = parseSLQuery(reqQuery);
