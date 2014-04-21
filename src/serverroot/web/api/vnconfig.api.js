@@ -694,9 +694,34 @@ function updateVirtualNetwork (request, response, appData)
                 commonUtils.handleJSONResponse(error, response, null);
                 return;
             }
+            updateRouterExternalFlag(data, vnPutData);
             updateVNPolicyRefs(data, response, appData);
         });
     });
+}
+
+/**
+ * @updateRouterExternalFlag
+ * private function
+ * 1. configData:  Data returned from Config API Server.
+ * 2. requestData: PUT request data
+ * 3. Sets 'router_external' flag to true if any Floating IP Pools 
+ *    associated to this vitual network, false otherwise.
+*/
+function updateRouterExternalFlag(configData, requestData) {
+    if(requestData && requestData.hasOwnProperty("virtual-network")) {
+        if(requestData["virtual-network"].hasOwnProperty("router_external")) {
+            configData["virtual-network"]["router_external"] = 
+                requestData["virtual-network"]["router_external"];
+        } else {
+            configData["virtual-network"]["router_external"] = false;
+            if(requestData["virtual-network"].hasOwnProperty("floating_ip_pools")) {
+                if(requestData["virtual-network"]["floating_ip_pools"].length > 0) {
+                    configData["virtual-network"]["router_external"] = true;
+                }
+            }
+        }
+    }
 }
 
 /**
