@@ -396,7 +396,7 @@ function createSLWhere(msgQuery, moduleId, messageType, source, category)
         whereClauseArray.push(createClause('ModuleId', moduleId, 1));
     }
     if (messageType != null && messageType != "") {
-        whereClauseArray.push(createClause('MessageType', messageType, 1));
+        whereClauseArray.push(createClause('Messagetype', messageType, 1));
     }
     if (source != null && source != "") {
         whereClauseArray.push(createClause('Source', source, 1));
