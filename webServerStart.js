@@ -320,8 +320,16 @@ function startWebUIService (webUIIP, callback)
     
     if (false == insecureAccessFlag) {
         httpApp.get("*", function (req, res) {
-            var redirectURL = 'https://' + 
-                req.headers.host.replace(httpPort, httpsPort) + req.url;
+            var reqHost = req.headers.host;
+            var index = reqHost.indexOf(':');
+            if (-1 == index) {
+                /* here, http port: 80, in case of http port 80, req.headers.host 
+                 * does not include port, so add it
+                 */
+                reqHost = reqHost + ':80';
+            }
+            var redirectURL = global.HTTPS_URL + 
+                reqHost.replace(httpPort, httpsPort) + req.url;
             res.redirect(redirectURL);
         });
     }
