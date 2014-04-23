@@ -135,6 +135,11 @@
         <path>../api/storage/ceph.pg.api</path>
     </require>    
 
+    <require>
+        <define>storagePoolsApi</define>
+        <path>../api/storage/ceph.pool.api</path>
+    </require>   
+
     <item>
         <url>/storage/monitor</url>
         <method>get</method>
@@ -234,7 +239,7 @@
         <url>/api/storage/infra/pools</url>
         <method>get</method>
         <feature>storage</feature>
-        <callback>storagePGsApi.getStoragePGPoolsInfo</callback>
+        <callback>storagePoolsApi.getStoragePGPoolsInfo</callback>
     </item>
 
     <!-- Contrail Storage -->
