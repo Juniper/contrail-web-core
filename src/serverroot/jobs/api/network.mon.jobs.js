@@ -319,6 +319,26 @@ function createTimeQueryJsonObj (minsSince, endTime)
     return timeObj;
 }
 
+function createTimeQueryJsonObjByServerTimeFlag (minsSince, serverTimeFlag)
+{
+    var timeObj = {};
+    if ((null == serverTimeFlag) || (false == serverTimeFlag) ||
+        ('false' == serverTimeFlag)) {
+        timeObj['start_time'] = 'now-' + minsSince +'m';
+        timeObj['end_time'] = 'now';
+        return timeObj;
+    }
+
+    var endTime = commonUtils.getUTCTime(new Date().getTime());
+    var startTime =
+        commonUtils.getUTCTime(commonUtils.adjustDate(new
+                                                      Date(endTime),
+                                                      {'min':-minsSince}).getTime());
+    timeObj['start_time'] = startTime * 1000;
+    timeObj['end_time'] = endTime * 1000;
+    return timeObj;
+}
+
 function getNetworkListsByProject (projObj, callback)
 {
     var fqdn = null;
@@ -1019,7 +1039,9 @@ function processVNFlowSeriesData (pubChannel, saveChannelKey, jobData, done)
     var timeObj;
     var timeGran;
     if (minsSince != null) {
-        timeObj = createTimeQueryJsonObj(appData.minsSince);
+        timeObj = 
+            createTimeQueryJsonObjByServerTimeFlag (appData.minsSince,
+                                                    appData.serverTime);
         timeGran = nwMonUtils.getTimeGranByTimeSlice(timeObj, appData.sampleCnt);
     } else {
         timeObj =
@@ -1565,7 +1587,9 @@ function processVMFlowSeriesData (pubChannel, saveChannelKey, jobData, done)
     var timeObj;
     var timeGran;
     if (minsSince != null) {
-        timeObj = createTimeQueryJsonObj(appData['minsSince']);
+        timeObj = 
+            createTimeQueryJsonObjByServerTimeFlag(appData['minsSince'],
+                                                   appData['serverTime']);
         timeGran = nwMonUtils.getTimeGranByTimeSlice(timeObj,
             appData['sampleCnt']);
     } else {
@@ -2657,7 +2681,8 @@ function getTrafficStatsByPort (pubChannel, saveChannelKey, jobData, done)
     var dataObjArr = [];
     var resultJSON = {};
 
-    var timeObj = createTimeQueryJsonObjByAppData(appData);
+    var timeObj = createTimeQueryJsonObjByServerTimeFlag(appData.minsSince,
+                                                         appData.serverTime);
 
     var srcWhereClause = getWhereClauseByPortRange(appData['portRange'],
                                                    appData['protocol'],
@@ -2691,6 +2716,14 @@ function getTrafficStatsByPort (pubChannel, saveChannelKey, jobData, done)
         var resultJSON = {};
         parseNetStatDataProjectOrNetwork(resultJSON, data, srcSelectArr,
                                          destSelectArr);
+        resultJSON['startTime'] = srcQueryJSON['start_time'];
+        resultJSON['endTime'] = srcQueryJSON['end_time'];
+        if (false == isNaN(srcQueryJSON['start_time'])) {
+            resultJSON['startTime'] = resultJSON['startTime'] /
+                global.MICROSECS_IN_MILL;
+            resultJSON['endTime'] = resultJSON['endTime'] /
+                global.MICROSECS_IN_MILL;
+        }
         redisPub.publishDataToRedis(pubChannel, saveChannelKey,
                         global.HTTP_STATUS_RESP_OK,
                         JSON.stringify(resultJSON),

@@ -1,0 +1,9 @@
+src/serverroot/jobs/core/jobsCb.api.js
+src/serverroot/web/core/feature.list.js
+src/serverroot/web/routes/url.routes.js
+html
+node_modules
+webroot
+*~
+*.swp
+*.swo
