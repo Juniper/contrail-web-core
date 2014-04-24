@@ -67,6 +67,7 @@ function parseStoragePGData(pgJSON){
         pgMapJSON['pg_overview']= pgMap[0];
         pgMapJSON['pg_stats_delta']=pgDelta;
         pgMapJSON['pg_stats_sum']=pgSum;
+        pgMapJSON['stamp'] =jsonPath(pgSummary, "$.output.stamp")[0];
         return pgMapJSON;
     }
     return emptyObj;

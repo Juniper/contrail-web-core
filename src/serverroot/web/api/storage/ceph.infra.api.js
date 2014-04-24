@@ -105,14 +105,80 @@ function parseStorageDFData(dfDataJSON){
     return dfJSON;
 }
 
+function getStorageClusterThroughput(req, res, appData){
+    url = "/pg/dump?dumpcontents=summary";
+    storageServer.apiGet(url, appData, function (error, resultJSON) {
+            if(!error && (resultJSON)) {
+                var resultJSON = parseStorageClusterThroughput(resultJSON);
+                commonUtils.handleJSONResponse(null, res, resultJSON);
+            } else {
+                commonUtils.handleJSONResponse(error, res, null);
+            }
+        });
 
+}
+
+function parseStorageClusterThroughput(tPutJSON){
+    var resultJSON = {};
+   
+    var tPutMapJSON = new Object();
+        var tempTPUT = new Object();
+        tempTPUT["num_read"] = jsonPath(tPutJSON, "$.output.pg_stats_sum.stat_sum.num_read")[0];
+        tempTPUT["num_write"] = jsonPath(tPutJSON, "$.output.pg_stats_sum.stat_sum.num_write")[0];
+        tempTPUT["num_read_kb"] = jsonPath(tPutJSON, "$.output.pg_stats_sum.stat_sum.num_read_kb")[0];
+        tempTPUT["num_write_kb"] = jsonPath(tPutJSON, "$.output.pg_stats_sum.stat_sum.num_write_kb")[0];
+       
+    tPutMapJSON = tempTPUT;
+
+    var objMapJSON = new Object();   
+        var tempTPUT = new Object();
+        tempTPUT["num_objects"] = jsonPath(tPutJSON, "$.output.pg_stats_sum.stat_sum.num_objects")[0];
+    objMapJSON = tempTPUT;
+
+    var tempJSON = new Object();
+    tempJSON['stamp'] =jsonPath(tPutJSON, "$.output.stamp")[0];
+    tempJSON['throughput']= tPutMapJSON;
+    tempJSON['object']= objMapJSON;
+ 
+ resultJSON['cluster_io'] = tempJSON;
+    
+    return resultJSON;
+}
+
+function getStorageClusterLatency(req, res, appData){
+    url = "/pg/dump?dumpcontents=summary";
+    storageServer.apiGet(url, appData, function (error, resultJSON) {
+            if(!error && (resultJSON)) {
+                var resultJSON = parseStorageClusterLatency(resultJSON);
+                commonUtils.handleJSONResponse(null, res, resultJSON);
+            } else {
+                commonUtils.handleJSONResponse(error, res, null);
+            }
+        });
+    
+}
+
+function parseStorageClusterLatency(latJSON){
+    var resultJSON = {};
+    var latMapJSON = new Object();
+        var tempLat = new Object();
+        tempLat["apply_latency_ms"] = jsonPath(latJSON, "$.output.osd_stats_sum.fs_perf_stat.apply_latency_ms")[0];
+        tempLat["commit_latency_ms"] = jsonPath(latJSON, "$.output.osd_stats_sum.fs_perf_stat.commit_latency_ms")[0];   
+    latMapJSON['stamp'] =jsonPath(latJSON, "$.output.stamp")[0];
+    latMapJSON['osd_sum_latency'] = tempLat
+    resultJSON['cluster_latency'] =  latMapJSON;
+
+    return resultJSON;
+}
 
 /* List all public functions */
-exports.getStorageClusterStatus= getStorageClusterStatus;
-exports.getStorageClusterDFStatus=getStorageClusterDFStatus
+exports.getStorageClusterStatus = getStorageClusterStatus;
+exports.getStorageClusterDFStatus = getStorageClusterDFStatus
 exports.getStorageClusterHealthStatus = getStorageClusterHealthStatus;
 exports.getStorageClusterActivity = getStorageClusterActivity;
-exports.getStorageClusterUsageData= getStorageClusterUsageData;
+exports.getStorageClusterUsageData = getStorageClusterUsageData;
+exports.getStorageClusterThroughput =  getStorageClusterThroughput;
+exports.getStorageClusterLatency = getStorageClusterLatency;
 
 
 

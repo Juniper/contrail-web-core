@@ -182,6 +182,20 @@
     </item>
 
     <item>
+        <url>/api/storage/infra/cluster/throughput</url>
+        <method>get</method>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStorageClusterThroughput</callback>
+    </item>
+
+    <item>
+        <url>/api/storage/infra/cluster/latency</url>
+        <method>get</method>
+        <feature>storage</feature>
+        <callback>storageInfraApi.getStorageClusterLatency</callback>
+    </item>
+
+    <item>
         <url>/api/storage/infra/monitor/status</url>
         <method>get</method>
         <feature>storage</feature>
