@@ -27,7 +27,7 @@ if (!module.parent) {
 
 exports.home = function (req, res) {
     if(storage.ceph.enabled=true)
-    		checkAndRedirect(req, res, 'html/ceph-dashboard.html');
+    		checkAndRedirect(req, res, 'html/storage-dashboard.html');
 	else{
     		checkAndRedirect(req, res, 'html/dashboard.html');
 	}
@@ -35,7 +35,7 @@ exports.home = function (req, res) {
 
 exports.dashboard = function (req, res) {
     if(storage.ceph.enabled=true)
-    		checkAndRedirect(req, res, 'html/ceph-dashboard.html');
+    		checkAndRedirect(req, res, 'html/storage-dashboard.html');
 	else{
     		checkAndRedirect(req, res, 'html/dashboard.html');
 	}
