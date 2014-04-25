@@ -322,49 +322,6 @@ function policy_services_display(action_list) {
     return service_str;
 }
 
-function launchVNC(e, new_window) {
-    var selects = getKendoGridForATable(getTableByID(e.id.split("_")[2])).tbody.children().find("a");
-    var index = 0;
-    for (var i = 0; i < selects.length; i++) {
-        if (selects[i].id === e.id) {
-            index = i;
-            break;
-        }
-    }
-    var table_data = getKendoGridForATable(getTableByID(e.id.split("_")[2])).dataSource.data();
-    if (isSet(table_data) && table_data.length > 0) {
-        index = Math.floor(index / 2);
-    }
-
-    table_data = getKendoGridForATable(getTableByID(e.id.split("_")[2])).dataSource.data()[index];
-
-    var vmuuid = table_data.vmuuid;
-    var project_uuid = that.getSelectedProject();
-    var cbParams = {};
-    cbParams.name = vmuuid;
-    if (!isSet(new_window) || (isSet(new_window) && new_window === false)) {
-        cbParams.new_window = false;
-        var action_window = $("#div_window_launchvnc");
-        if (!action_window.data("kendoWindow")) {
-            action_window.kendoWindow({
-                modal:true,
-                width:"1350px",
-                height:"730px",
-                title:"VNC Console: " + vmuuid
-            });
-        }
-        action_window.data("kendoWindow").center();
-        action_window.data("kendoWindow").open();
-    }
-    else if (isSet(new_window) && new_window === true)
-        cbParams.new_window = true;
-    else
-        cbParams.new_window = false;
-
-    var url = "/api/tenants/config/service-instance-vm?project_id=" + project_uuid + "&vm_id=" + vmuuid;
-    doAjaxCall(url, "GET", null, "launchVNCcb", "", false, cbParams);
-}
-
 function launchVNCcb(result, cbParams) {
     var href = jsonPath(result, "$.console.url")[0];
     if (cbParams.sameWindow) {
@@ -716,24 +673,6 @@ function ip_range(ip_str, ip_list) {
     return ip_list;
 }
 
-function getSelectedProjectObj() {
-    var cookiedProject = getCookie("project"),
-        firstProjectName = $("#ddProjectSwitcher").data("kendoDropDownList").text();
-    if (cookiedProject === false) {
-        setCookie("project", firstProjectName);
-        return firstProjectName;
-    } else {
-        for (var i = 0; i < $("#ddProjectSwitcher").data("kendoDropDownList").dataSource.data().length; i++) {
-            var pname = $("#ddProjectSwitcher").data("kendoDropDownList").dataSource.data()[i].text;
-            if (pname === cookiedProject) {
-                return $("#ddProjectSwitcher").data("kendoDropDownList").dataSource.data()[i].value;
-            }
-        }
-    }
-    setCookie("project", firstProjectName);
-    return firstProjectName;
-}
-
 function getSelectedProjectObjNew (projectSwitcherId, elementType) {
     var firstProjectName = "", firstProjectValue = "";
     var cookiedProject = getCookie("project");
@@ -758,24 +697,6 @@ function getSelectedProjectObjNew (projectSwitcherId, elementType) {
     return firstProjectValue;
 }
 
-function getSelectedProject() {
-    var cookiedProject = getCookie("project"),
-        firstProjectName = $("#ddProject").data("kendoDropDownList").text();
-    if (cookiedProject === false) {
-        setCookie("project", firstProjectName);
-        return firstProjectName;
-    } else {
-        for (var i = 0; i < $("#ddProject").data("kendoDropDownList").dataSource.data().length; i++) {
-            var pname = $("#ddProject").data("kendoDropDownList").dataSource.data()[i];
-            if (pname === cookiedProject) {
-                return cookiedProject;
-            }
-        }
-    }
-    setCookie("project", firstProjectName);
-    return firstProjectName;
-}
-
 function fetchDomains(successCB, failureCB) {
     doAjaxCall("/api/tenants/config/domains", "GET", null, successCB, (failureCB) ? failureCB : "errorInFetchingDomains", null, null);
 };
@@ -786,14 +707,9 @@ function fetchProjects(successCB, failureCB, domainUUID) {
     } else {
         if($("#ddDomainSwitcher").hasOwnProperty("length")) {
             //Works fine when the ID of the domain switcher is 'ddDomainSwitcher'
-            //and is either a contrailDropdown or kendoDropDownList. 
-            //Pass UUID of the Domain, otherwise. Also, remove check for 
-            //kendoDropDownList once domain switcher component in all pages
-            //are moved to contrailDropdown.
+            //and is a contrailDropdown. Pass UUID of the Domain, otherwise.
             if(undefined !== $("#ddDomainSwitcher").data("contrailDropdown")) {
                 domainUUID = "/" + $("#ddDomainSwitcher").data("contrailDropdown").value();
-            } else if(undefined !== $("#ddDomainSwitcher").data("kendoDropDownList")) {
-                domainUUID = "/" + $("#ddDomainSwitcher").data("kendoDropDownList").value();   
             }
         } else {
             domainUUID = "";
@@ -809,72 +725,6 @@ function errorInFetchingProjects(error) {
 function errorInFetchingDomains(error) {
     showInfoWindow("Error in Fetching domains", "Error");
 };
-
-function gridSelectAllRows(args, buttonId) {
-    var tableId = args.id.split("_")[1];
-    var checked = $("#cb_" + tableId)[0].checked;
-    if (checked === true) {
-    	if($("tr", "#" + tableId).find("td").length > 0) {
-            var colspan = $("td", "#" + tableId).attr('colspan');
-            if(typeof colspan === "undefined") {
-                $("tr.k-master-row", "#" + tableId).addClass('k-state-selected');
-                $("#" + buttonId).removeAttr("disabled");
-            }
-        }
-    } else {
-        $("tr.k-master-row", "#" + tableId).removeClass('k-state-selected');
-        $("#" + buttonId).attr("disabled", "disabled");
-    }
-    var tableRows = $("#" + tableId).data("kendoGrid").dataSource.data();
-    if (tableRows && tableRows.length > 0) {
-        for (var i = 0; i < tableRows.length; i++) {
-            $("#" + tableId + "_" + i)[0].checked = checked;
-        }
-    }
-}
-
-function gridSelectRow(args, buttonId) {
-    var tableId = args.id.split("_")[0];
-    var tableRowId = parseInt(args.id.split("_")[1]);
-    tableRowId += 1;
-    var checked = args.checked;
-    var checkedRowsLen = getCheckedRows(tableId).length;
-    var dsLen = $("#"+tableId).data("kendoGrid").dataSource.data().length;
-    if(dsLen === checkedRowsLen) {
-    	$("#cb_"+tableId).attr("checked", true);
-    } else {
-    	$("#cb_"+tableId).attr("checked", false);
-    }
-    if (checked === true) {
-        $(args).parents('.k-master-row').addClass('k-state-selected');
-        $("#" + buttonId).removeAttr("disabled");
-    } else {
-    	$(args).parents('.k-master-row').removeClass('k-state-selected');
-        var tableRows = $("#" + tableId).data("kendoGrid").dataSource.data();
-        if (tableRows && tableRows.length > 0) {
-            checkedRowFound = false;
-            for (var i = 0; i < tableRows.length; i++) {
-                if($("#" + tableId + "_" + i)[0].checked === true) {
-                    checkedRowFound = true;
-                    break;
-                }
-            }
-            if(checkedRowFound === false) {
-                $("#" + buttonId).attr("disabled", "disabled");
-            }
-        }
-    }
-}
-
-function getCheckedRows(gridId) {
-	var rows = [];
-	var ds = $("#"+gridId).data("kendoGrid").dataSource.data();
-	for(var i=0; i<ds.length; i++) {
-		if($("#"+gridId+"_"+i).prop("checked") === true)
-			rows.push(ds[i]);
-	}
-	return rows;	
-}
 
 function isValidDomainAndProject(selectedDomain, selectedProject) {
 	if(isValidDomain(selectedDomain) === true &&
@@ -1099,18 +949,12 @@ cutils.toggleButtonStateByID = toggleButtonStateByID;
 cutils.getFormatVNName = getFormatVNName;
 cutils.getApplyServices = getApplyServices;
 cutils.policy_services_display = policy_services_display;
-cutils.launchVNC = launchVNC;
 cutils.launchVNCcb = launchVNCcb;
 cutils.failureLaunchVNCcb = failureLaunchVNCcb;
-cutils.getSelectedProjectObj = getSelectedProjectObj;
-cutils.getSelectedProject = getSelectedProject;
 cutils.fetchDomains = fetchDomains;
 cutils.fetchProjects = fetchProjects;
 cutils.errorInFetchingDomains = errorInFetchingDomains;
 cutils.errorInFetchingProjects = errorInFetchingProjects;
-cutils.gridSelectAllRows = gridSelectAllRows;
-cutils.gridSelectRow = gridSelectRow;
-cutils.getCheckedRows = getCheckedRows;
 cutils.isValidDomainAndProject = isValidDomainAndProject;
 cutils.isValidDomain = isValidDomain;
 cutils.isValidProject = isValidProject; 
