@@ -227,7 +227,7 @@ function checkAndDeleteRedisRDB (callback)
 
 if (cluster.isMaster) {// && (process.env.NODE_CLUSTERED == 1)) {
   checkAndDeleteRedisRDB(function() {
-	logutils.logger.info("Starting Contrail UI in clustered mode.");
+	logutils.logger.info("Starting Contrail Storage UI in clustered mode.");
 	bindProducerSocket();
 	addProducerSockListener();
 
@@ -297,13 +297,13 @@ function startWebUIService (webUIIP, callback)
 {
     httpsServer = https.createServer(options, httpsApp);
     httpsServer.listen(httpsPort, webUIIP, function () {
-        logutils.logger.info("Contrail UI HTTPS server listening on host:" + 
+        logutils.logger.info("Contrail Storage UI HTTPS server listening on host:" + 
                              webUIIP + " Port:" + httpsPort);
     });
 
     httpServer = http.createServer(httpApp);
     httpServer.listen(httpPort, webUIIP, function () {
-        logutils.logger.info("Contrail UI HTTP server listening on host:" + 
+        logutils.logger.info("Contrail Stroage UI HTTP server listening on host:" + 
                              webUIIP + " Port:" + httpPort);
     });
 
@@ -370,7 +370,7 @@ function startServer ()
     var ifaces = os.networkInterfaces();
     if (checkIfIpAddrAny(ipList) || (null == ifaces)) {
         startWebUIService(global.IPADDR_ANY, function(err, data) {
-            logutils.logger.debug("**** Contrail-WebUI Server ****");
+            logutils.logger.debug("**** Contrail-Storage-WebUI Server ****");
         });
         return;
     }
@@ -385,7 +385,7 @@ function startServer ()
         uiIpList = [global.IPADDR_ANY];
     }
     async.mapSeries(uiIpList, startWebUIService, function(err, data) {
-        logutils.logger.debug("**** Contrail-WebUI Server ****");
+        logutils.logger.debug("**** Contrail-Storage-WebUI Server ****");
     });
 }
 

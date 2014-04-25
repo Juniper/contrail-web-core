@@ -67,27 +67,10 @@ function parseStoragePGData(pgJSON){
         pgMapJSON['pg_overview']= pgMap[0];
         pgMapJSON['pg_stats_delta']=pgDelta;
         pgMapJSON['pg_stats_sum']=pgSum;
+        pgMapJSON['stamp'] =jsonPath(pgSummary, "$.output.stamp")[0];
         return pgMapJSON;
     }
     return emptyObj;
-}
-
-function getStoragePGPoolsInfo(req, res, appData){
-    url = "/pg/dump_pools_json";
-     storageServer.apiGet(url, appData, function (error, resultJSON) {
-            if(!error && (resultJSON)) {
-                var resultJSON = parseStoragePGPoolsData(resultJSON);
-                commonUtils.handleJSONResponse(null, res, resultJSON);
-            } else {
-                commonUtils.handleJSONResponse(error, res, null);
-            }
-        });
-}
-
-function parseStoragePGPoolsData(poolsJSON){
-    var resultJSON ={};
-    resultJSON['pools_info']= jsonPath(poolsJSON, "$..output")[0];
-    return resultJSON;
 }
 
 function getStoragePGStuck(req, res, appData){
@@ -111,7 +94,6 @@ function parseStoragePGStuckData(pgStuckJSON){
 /* List all public functions */
 exports.getStoragePGSummary = getStoragePGSummary;
 exports.getStoragePGStatus=getStoragePGStatus
-exports.getStoragePGPoolsInfo=getStoragePGPoolsInfo
 exports.getStoragePGStuck=getStoragePGStuck
 
 
