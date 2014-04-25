@@ -121,24 +121,41 @@ function getStorageClusterThroughput(req, res, appData){
 function parseStorageClusterThroughput(tPutJSON){
     var resultJSON = {};
    
-    var tPutMapJSON = new Object();
+    var tPutMapSumJSON = new Object();
         var tempTPUT = new Object();
         tempTPUT["num_read"] = jsonPath(tPutJSON, "$.output.pg_stats_sum.stat_sum.num_read")[0];
         tempTPUT["num_write"] = jsonPath(tPutJSON, "$.output.pg_stats_sum.stat_sum.num_write")[0];
         tempTPUT["num_read_kb"] = jsonPath(tPutJSON, "$.output.pg_stats_sum.stat_sum.num_read_kb")[0];
         tempTPUT["num_write_kb"] = jsonPath(tPutJSON, "$.output.pg_stats_sum.stat_sum.num_write_kb")[0];
        
-    tPutMapJSON = tempTPUT;
+    tPutMapSumJSON = tempTPUT;
 
-    var objMapJSON = new Object();   
+ var tPutMapDeltaJSON = new Object();
+        var tempTPUT = new Object();
+        tempTPUT["num_read"] = jsonPath(tPutJSON, "$.output.pg_stats_delta.stat_sum.num_read")[0];
+        tempTPUT["num_write"] = jsonPath(tPutJSON, "$.output.pg_stats_delta.stat_sum.num_write")[0];
+        tempTPUT["num_read_kb"] = jsonPath(tPutJSON, "$.output.pg_stats_delta.stat_sum.num_read_kb")[0];
+        tempTPUT["num_write_kb"] = jsonPath(tPutJSON, "$.output.pg_stats_delta.stat_sum.num_write_kb")[0];
+       
+    tPutMapDeltaJSON = tempTPUT;
+
+
+    var objMapSumJSON = new Object();   
         var tempTPUT = new Object();
         tempTPUT["num_objects"] = jsonPath(tPutJSON, "$.output.pg_stats_sum.stat_sum.num_objects")[0];
-    objMapJSON = tempTPUT;
+    objMapSumJSON = tempTPUT;
+
+    var objMapDeltaJSON = new Object();   
+        var tempTPUT = new Object();
+        tempTPUT["num_objects"] = jsonPath(tPutJSON, "$.output.pg_stats_delta.stat_sum.num_objects")[0];
+    objMapDeltaJSON = tempTPUT;
 
     var tempJSON = new Object();
     tempJSON['stamp'] =jsonPath(tPutJSON, "$.output.stamp")[0];
-    tempJSON['throughput']= tPutMapJSON;
-    tempJSON['object']= objMapJSON;
+    tempJSON['throughput_sum']= tPutMapSumJSON;
+    tempJSON['throughput_delta']= tPutMapDeltaJSON;
+    tempJSON['object_sum']= objMapSumJSON;
+    tempJSON['object_delta']= objMapDeltaJSON;
  
  resultJSON['cluster_io'] = tempJSON;
     

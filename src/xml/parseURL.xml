@@ -182,7 +182,7 @@
     </item>
 
     <item>
-        <url>/api/storage/infra/cluster/throughput</url>
+        <url>/api/storage/infra/cluster/throughput/summary</url>
         <method>get</method>
         <feature>storage</feature>
         <callback>storageInfraApi.getStorageClusterThroughput</callback>
