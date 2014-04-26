@@ -11,13 +11,6 @@ FOUR_BACK='../../../..'
 FIVE_BACK='../../../../..'
 
 if [ $1 = 'prod' ] ; then 
-    #Start - Copy kendoUI from contrail-web-third-party
-    rm -rf webroot/assets/kendoui
-    mkdir -p webroot/assets/kendoui
-    cp -r ../contrail-web-third-party/kendoui.complete.2013.1.514.commercial/js webroot/assets/kendoui/
-    cp -r ../contrail-web-third-party/kendoui.complete.2013.1.514.commercial/styles webroot/assets/kendoui/
-    #End - Copy KendoUI from contrail-web-third-party
-
     #Start - Copy d3/vnd3 files from contrail-web-third-party
     rm -rf webroot/assets/d3
     mkdir -p webroot/assets/d3/js
@@ -135,13 +128,6 @@ if [ $1 = 'prod' ] ; then
     cp -r ../contrail-web-third-party/moment-v2.5.1/moment.min.js webroot/assets/moment/moment.min.js
     #End - Copy Moment Date-Formatter from contrail-web-third-party
 else
-    #Start - Link KendoUI from contrail-web-third-party
-    rm -rf webroot/assets/kendoui
-    mkdir -p webroot/assets/kendoui
-    ln -sf $FOUR_BACK/contrail-web-third-party/kendoui.complete.2013.1.514.commercial/js webroot/assets/kendoui/js
-    ln -sf $FOUR_BACK/contrail-web-third-party/kendoui.complete.2013.1.514.commercial/styles webroot/assets/kendoui/styles
-    #End - Link KendoUI from contrail-web-third-party
-
     #Start - Link d3/vnd3 files from contrail-web-third-party
     rm -rf webroot/assets/d3
     mkdir -p webroot/assets/d3/js
@@ -281,14 +267,11 @@ MAINFILE[3]=webroot/assets/jquery/js/jquery.timer.js
 MAINFILE[4]=webroot/assets/jquery/js/jquery-ui-1.10.3.custom.min.js
 MAINFILE[5]=webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
 MAINFILE[6]=webroot/assets/bootstrap/js/bootstrap.min.js
-MAINFILE[7]=webroot/assets/kendoui/js/kendo.web.min.js
-MAINFILE[8]=webroot/js/multiselect.js
 MAINFILE[9]=webroot/assets/d3/js/d3.js
 MAINFILE[10]=webroot/assets/nvd3/js/nv.d3.js
 MAINFILE[11]=webroot/assets/crossfilter/js/crossfilter.min.js
 MAINFILE[12]=webroot/js/jsonpath-0.8.0.js
 MAINFILE[13]=webroot/js/xdate.js
-MAINFILE[14]=webroot/js/kendo-utils.js
 MAINFILE[15]=webroot/js/bootstrap-utils.js
 MAINFILE[16]=webroot/js/topology_api.js
 MAINFILE[17]=webroot/js/web-utils.js
@@ -299,8 +282,7 @@ MAINFILE[21]=webroot/js/qe-utils.js
 MAINFILE[22]=webroot/js/nvd3-plugin.js
 MAINFILE[23]=webroot/js/d3-utils.js
 MAINFILE[24]=webroot/js/analyzer-utils.js
-MAINFILE[25]=webroot/js/qtip.js
-MAINFILE[26]=webroot/js/cytoscape.min.js
+MAINFILE[25]=webroot/js/contrail-common.js
 
 cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
 cat ${MAINFILE[1]} >> webroot/js/contrail-all-1.js
@@ -310,9 +292,6 @@ cat ${MAINFILE[4]} >> webroot/js/contrail-all-1.js
 cat ${MAINFILE[5]} >> webroot/js/contrail-all-1.js 
 cat ${MAINFILE[6]} >> webroot/js/contrail-all-1.js
 
-cat ${MAINFILE[7]} > webroot/js/contrail-all-2.js
-cat ${MAINFILE[8]} >> webroot/js/contrail-all-2.js
-
 cat ${MAINFILE[9]} > webroot/js/contrail-all-3.js
 
 cat ${MAINFILE[10]} > webroot/js/contrail-all-4.js 
@@ -320,7 +299,6 @@ cat ${MAINFILE[11]} >> webroot/js/contrail-all-4.js
 cat ${MAINFILE[12]} >> webroot/js/contrail-all-4.js
 cat ${MAINFILE[13]} >> webroot/js/contrail-all-4.js
 
-cat ${MAINFILE[14]} > webroot/js/contrail-all-5.js
 cat ${MAINFILE[15]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[16]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[17]} >> webroot/js/contrail-all-5.js
@@ -332,7 +310,6 @@ cat ${MAINFILE[22]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[23]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[24]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[25]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[26]} >> webroot/js/contrail-all-5.js
 
 # End - Merging All JS files
 
@@ -341,15 +318,11 @@ rm -f webroot/css/contrail-all.css
 
 MAINCSS[1]=webroot/assets/font-awesome/css/font-awesome.min.css
 MAINCSS[2]=webroot/assets/fonts-opensans/openSans.css
-MAINCSS[3]=webroot/assets/kendoui/styles/kendo.common.min.css
-MAINCSS[4]=webroot/css/kendo.contrail.css
 MAINCSS[5]=webroot/css/nv.d3.contrail.css
 MAINCSS[6]=webroot/css/vncon-web.css
 
 cat ${MAINCSS[1]} > webroot/css/contrail-all.css 
 cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[3]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[4]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[5]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[6]} >> webroot/css/contrail-all.css
 #End - Merging ALL CSS files
