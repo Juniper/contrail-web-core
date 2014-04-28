@@ -10,14 +10,7 @@ THREE_BACK='../../..'
 FOUR_BACK='../../../..'
 FIVE_BACK='../../../../..'
 
-if [ $1 = 'prod' ] ; then 
-    #Start - Copy kendoUI from contrail-web-third-party
-    rm -rf webroot/assets/kendoui
-    mkdir -p webroot/assets/kendoui
-    cp -r ../contrail-web-third-party/kendoui.complete.2013.1.514.commercial/js webroot/assets/kendoui/
-    cp -r ../contrail-web-third-party/kendoui.complete.2013.1.514.commercial/styles webroot/assets/kendoui/
-    #End - Copy KendoUI from contrail-web-third-party
-
+if [ $1 = 'prod' ] ; then
     #Start - Copy d3/vnd3 files from contrail-web-third-party
     rm -rf webroot/assets/d3
     mkdir -p webroot/assets/d3/js
@@ -135,13 +128,6 @@ if [ $1 = 'prod' ] ; then
     cp -r ../contrail-web-third-party/moment-v2.5.1/moment.min.js webroot/assets/moment/moment.min.js
     #End - Copy Moment Date-Formatter from contrail-web-third-party
 else
-    #Start - Link KendoUI from contrail-web-third-party
-    rm -rf webroot/assets/kendoui
-    mkdir -p webroot/assets/kendoui
-    ln -sf $FOUR_BACK/contrail-web-third-party/kendoui.complete.2013.1.514.commercial/js webroot/assets/kendoui/js
-    ln -sf $FOUR_BACK/contrail-web-third-party/kendoui.complete.2013.1.514.commercial/styles webroot/assets/kendoui/styles
-    #End - Link KendoUI from contrail-web-third-party
-
     #Start - Link d3/vnd3 files from contrail-web-third-party
     rm -rf webroot/assets/d3
     mkdir -p webroot/assets/d3/js
@@ -273,7 +259,6 @@ rm -f webroot/js/contrail-all-3.js
 rm -f webroot/js/contrail-all-4.js
 rm -f webroot/js/contrail-all-5.js
 
-
 MAINFILE[0]=webroot/assets/jquery/js/jquery-1.8.3.min.js
 MAINFILE[1]=webroot/assets/jquery/js/jquery.xml2json.js
 MAINFILE[2]=webroot/assets/jquery/js/jquery.ba-bbq.min.js
@@ -281,76 +266,105 @@ MAINFILE[3]=webroot/assets/jquery/js/jquery.timer.js
 MAINFILE[4]=webroot/assets/jquery/js/jquery-ui-1.10.3.custom.min.js
 MAINFILE[5]=webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
 MAINFILE[6]=webroot/assets/bootstrap/js/bootstrap.min.js
-MAINFILE[7]=webroot/assets/kendoui/js/kendo.web.min.js
-MAINFILE[8]=webroot/js/multiselect.js
-MAINFILE[9]=webroot/assets/d3/js/d3.js
-MAINFILE[10]=webroot/assets/nvd3/js/nv.d3.js
-MAINFILE[11]=webroot/assets/crossfilter/js/crossfilter.min.js
-MAINFILE[12]=webroot/js/jsonpath-0.8.0.js
-MAINFILE[13]=webroot/js/xdate.js
-MAINFILE[14]=webroot/js/kendo-utils.js
-MAINFILE[15]=webroot/js/bootstrap-utils.js
-MAINFILE[16]=webroot/js/topology_api.js
-MAINFILE[17]=webroot/js/web-utils.js
-MAINFILE[18]=webroot/js/contrail-layout.js
-MAINFILE[19]=webroot/js/config_global.js
-MAINFILE[20]=webroot/js/protocol.js
-MAINFILE[21]=webroot/js/qe-utils.js
-MAINFILE[22]=webroot/js/nvd3-plugin.js
-MAINFILE[23]=webroot/js/d3-utils.js
-MAINFILE[24]=webroot/js/analyzer-utils.js
-MAINFILE[25]=webroot/js/qtip.js
-MAINFILE[26]=webroot/js/cytoscape.min.js
+
+MAINFILE[7]=webroot/assets/d3/js/d3.js
+MAINFILE[8]=webroot/assets/nvd3/js/nv.d3.js
+
+MAINFILE[9]=webroot/assets/crossfilter/js/crossfilter.min.js
+MAINFILE[10]=webroot/js/jsonpath-0.8.0.js
+MAINFILE[11]=webroot/js/xdate.js
+MAINFILE[12]=webroot/assets/jquery/js/jquery.validate.js
+MAINFILE[13]=webroot/assets/handlebars/handlebars-v1.3.0.js
+MAINFILE[14]=webroot/assets/knockout/knockout-3.0.0.js
+MAINFILE[15]=webroot/assets/select2/js/select2.min.js
+
+MAINFILE[16]=webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
+MAINFILE[17]=webroot/assets/slickgrid/js/jquery.json-2.3.min.js
+MAINFILE[18]=webroot/assets/slickgrid/js/jquery.dropkick-1.0.0.js
+MAINFILE[19]=webroot/assets/slickgrid/js/slick.core.js
+MAINFILE[20]=webroot/assets/slickgrid/js/slick.grid.js
+MAINFILE[21]=webroot/assets/slickgrid/js/slick.dataview.js
+MAINFILE[22]=webroot/assets/slickgrid/js/slick.enhancementpager.js
+MAINFILE[23]=webroot/assets/datetimepicker/js/jquery.datetimepicker.js
+MAINFILE[24]=webroot/assets/moment/moment.min.js
+MAINFILE[25]=webroot/assets/2way-multiselect/js/multiselect.js
+
+MAINFILE[26]=webroot/js/contrail-common.js
+MAINFILE[27]=webroot/js/handlebars-utils.js
+MAINFILE[28]=webroot/js/select2-utils.js
+MAINFILE[29]=webroot/js/slickgrid-utils.js
+MAINFILE[30]=webroot/js/contrail-elements.js
+MAINFILE[31]=webroot/js/topology_api.js
+MAINFILE[32]=webroot/js/web-utils.js
+MAINFILE[33]=webroot/js/contrail-layout.js
+MAINFILE[34]=webroot/js/config_global.js
+MAINFILE[35]=webroot/js/protocol.js
+MAINFILE[36]=webroot/js/qe-utils.js
+MAINFILE[37]=webroot/js/nvd3-plugin.js
+MAINFILE[38]=webroot/js/d3-utils.js
+MAINFILE[39]=webroot/js/analyzer-utils.js
 
 cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
 cat ${MAINFILE[1]} >> webroot/js/contrail-all-1.js
-cat ${MAINFILE[2]} >> webroot/js/contrail-all-1.js 
-cat ${MAINFILE[3]} >> webroot/js/contrail-all-1.js 
-cat ${MAINFILE[4]} >> webroot/js/contrail-all-1.js 
-cat ${MAINFILE[5]} >> webroot/js/contrail-all-1.js 
+cat ${MAINFILE[2]} >> webroot/js/contrail-all-1.js
+cat ${MAINFILE[3]} >> webroot/js/contrail-all-1.js
+cat ${MAINFILE[4]} >> webroot/js/contrail-all-1.js
+cat ${MAINFILE[5]} >> webroot/js/contrail-all-1.js
 cat ${MAINFILE[6]} >> webroot/js/contrail-all-1.js
 
 cat ${MAINFILE[7]} > webroot/js/contrail-all-2.js
 cat ${MAINFILE[8]} >> webroot/js/contrail-all-2.js
 
 cat ${MAINFILE[9]} > webroot/js/contrail-all-3.js
+cat ${MAINFILE[10]} >> webroot/js/contrail-all-3.js
+cat ${MAINFILE[11]} >> webroot/js/contrail-all-3.js
+cat ${MAINFILE[12]} >> webroot/js/contrail-all-3.js
+cat ${MAINFILE[13]} >> webroot/js/contrail-all-3.js
+cat ${MAINFILE[14]} >> webroot/js/contrail-all-3.js
+cat ${MAINFILE[15]} >> webroot/js/contrail-all-3.js
 
-cat ${MAINFILE[10]} > webroot/js/contrail-all-4.js 
-cat ${MAINFILE[11]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[12]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[13]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[16]} > webroot/js/contrail-all-4.js
+cat ${MAINFILE[17]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[18]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[19]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[20]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[21]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[22]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[23]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[24]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[25]} >> webroot/js/contrail-all-4.js
 
-cat ${MAINFILE[14]} > webroot/js/contrail-all-5.js
-cat ${MAINFILE[15]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[16]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[17]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[18]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[19]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[20]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[21]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[22]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[23]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[24]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[25]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[26]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[27]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[28]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[29]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[30]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[31]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[32]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[33]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[34]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[35]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[36]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[37]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[38]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[39]} >> webroot/js/contrail-all-5.js
 
 # End - Merging All JS files
 
-#Start - Merging All CSS files 
+#Start - Merging All CSS files
 rm -f webroot/css/contrail-all.css
 
 MAINCSS[1]=webroot/assets/font-awesome/css/font-awesome.min.css
 MAINCSS[2]=webroot/assets/fonts-opensans/openSans.css
-MAINCSS[3]=webroot/assets/kendoui/styles/kendo.common.min.css
-MAINCSS[4]=webroot/css/kendo.contrail.css
-MAINCSS[5]=webroot/css/nv.d3.contrail.css
-MAINCSS[6]=webroot/css/vncon-web.css
+MAINCSS[3]=webroot/css/nv.d3.contrail.css
+MAINCSS[4]=webroot/assets/select2/styles/select2.css
+MAINCSS[5]=webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
+MAINCSS[6]=webroot/assets/slickgrid/styles/slick.grid.css
 
-cat ${MAINCSS[1]} > webroot/css/contrail-all.css 
+cat ${MAINCSS[1]} > webroot/css/contrail-all.css
 cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[3]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[4]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[5]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[6]} >> webroot/css/contrail-all.css
 #End - Merging ALL CSS files
-
