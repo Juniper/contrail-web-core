@@ -125,7 +125,7 @@ if [ $1 = 'prod' ] ; then
     #Start - Copy Moment Date-Formatter from contrail-web-third-party
     rm -rf webroot/assets/moment
     mkdir webroot/assets/moment
-    cp -r ../contrail-web-third-party/moment-v2.5.1/moment.min.js webroot/assets/moment/moment.min.js
+    cp -r ../contrail-web-third-party/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
     #End - Copy Moment Date-Formatter from contrail-web-third-party
 else
     #Start - Link d3/vnd3 files from contrail-web-third-party
@@ -248,7 +248,7 @@ else
     #Start - Link Moment Date-Formatter from contrail-web-third-party
     rm -rf webroot/assets/moment
     mkdir webroot/assets/moment
-    ln -sf $FOUR_BACK/contrail-web-third-party/moment-v2.5.1/moment.min.js webroot/assets/moment/moment.min.js
+    ln -sf $FOUR_BACK/contrail-web-third-party/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
     #End - Link Moment Date-Formatter from contrail-web-third-party
 fi
 
@@ -286,7 +286,7 @@ MAINFILE[20]=webroot/assets/slickgrid/js/slick.grid.js
 MAINFILE[21]=webroot/assets/slickgrid/js/slick.dataview.js
 MAINFILE[22]=webroot/assets/slickgrid/js/slick.enhancementpager.js
 MAINFILE[23]=webroot/assets/datetimepicker/js/jquery.datetimepicker.js
-MAINFILE[24]=webroot/assets/moment/moment.min.js
+MAINFILE[24]=webroot/assets/moment/moment.js
 MAINFILE[25]=webroot/assets/2way-multiselect/js/multiselect.js
 
 MAINFILE[26]=webroot/js/contrail-common.js
