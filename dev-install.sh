@@ -334,7 +334,7 @@ cat ${MAINFILE[23]} >> webroot/js/contrail-all-4.js
 cat ${MAINFILE[24]} >> webroot/js/contrail-all-4.js
 cat ${MAINFILE[25]} >> webroot/js/contrail-all-4.js
 
-cat ${MAINFILE[26]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[26]} > webroot/js/contrail-all-5.js
 cat ${MAINFILE[27]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[28]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[29]} >> webroot/js/contrail-all-5.js
