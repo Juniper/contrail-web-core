@@ -32,12 +32,18 @@ if [ $1 = 'prod' ] ; then
     rm -rf webroot/assets/jquery
     mkdir -p webroot/assets/jquery
     cp -r ../contrail-web-third-party/jquery webroot/assets/jquery/js
-    cp -r ../contrail-web-third-party/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js webroot/assets/jquery/js/
-    cp -r ../contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery-ui.css webroot/assets/jquery/js/
-    cp -r ../contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery.ui.theme.css webroot/assets/jquery/js/
-    cp -r ../contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/images webroot/assets/jquery/js/
     cp -r ../contrail-web-third-party/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/jquery.validate.js
     #End - Copy JQuery files from contrail-web-third-party
+
+	#Start - Copy jquery-ui files from contrail-web-third-party
+    rm -rf webroot/assets/jquery-ui
+    mkdir -p webroot/assets/jquery-ui
+    mkdir -p webroot/assets/jquery-ui/js
+    mkdir -p webroot/assets/jquery-ui/css
+    cp -r ../contrail-web-third-party/jquery-ui-1.10.4/dist/jquery-ui.js webroot/assets/jquery-ui/js/jquery-ui.js
+    cp -r ../contrail-web-third-party/jquery-ui-1.10.4/dist/jquery-ui.css webroot/assets/jquery-ui/css/jquery-ui.css
+    cp -r ../contrail-web-third-party/jquery-ui-1.10.4/themes/base/images webroot/assets/jquery-ui/css/
+    #End - Copy jquery-ui files from contrail-web-third-party
 
     #Start - Copy Bootstrap from contrail-web-third-party
     rm -rf webroot/assets/bootstrap
@@ -125,7 +131,7 @@ if [ $1 = 'prod' ] ; then
     #Start - Copy Moment Date-Formatter from contrail-web-third-party
     rm -rf webroot/assets/moment
     mkdir webroot/assets/moment
-    cp -r ../contrail-web-third-party/moment-v2.5.1/moment.min.js webroot/assets/moment/moment.min.js
+    cp -r ../contrail-web-third-party/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
     #End - Copy Moment Date-Formatter from contrail-web-third-party
 else
     #Start - Link d3/vnd3 files from contrail-web-third-party
@@ -156,12 +162,18 @@ else
     ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.timer.js webroot/assets/jquery/js/jquery.timer.js
     ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.ui.touch-punch.min.js webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
     ln -sf $FIVE_BACK/contrail-web-third-party/jquery/jquery.xml2json.js webroot/assets/jquery/js/jquery.xml2json.js
-    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js webroot/assets/jquery/js/jquery-ui-1.10.3.custom.min.js
-    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery-ui.css webroot/assets/jquery/js/jquery-ui.css
-    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/jquery.ui.theme.css webroot/assets/jquery/js/jquery.ui.theme.css
-    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.3/development-bundle/themes/smoothness/images webroot/assets/jquery/js/images
     ln -sf $FIVE_BACK/contrail-web-third-party/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/jquery.validate.js
     #End - Link JQuery files from contrail-web-third-party
+
+	#Start - Link jquery-ui files from contrail-web-third-party
+    rm -rf webroot/assets/jquery-ui
+    mkdir -p webroot/assets/jquery-ui
+    mkdir -p webroot/assets/jquery-ui/js
+    mkdir -p webroot/assets/jquery-ui/css
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.4/dist/jquery-ui.js webroot/assets/jquery-ui/js/jquery-ui.js
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.4/dist/jquery-ui.css webroot/assets/jquery-ui/css/jquery-ui.css
+    ln -sf $FIVE_BACK/contrail-web-third-party/jquery-ui-1.10.4/themes/base/images webroot/assets/jquery-ui/css/images
+    #End - Link jquery-ui files from contrail-web-third-party
 
     #Start - Link Bootstrap from contrail-web-third-party
     rm -rf webroot/assets/bootstrap
@@ -248,7 +260,7 @@ else
     #Start - Link Moment Date-Formatter from contrail-web-third-party
     rm -rf webroot/assets/moment
     mkdir webroot/assets/moment
-    ln -sf $FOUR_BACK/contrail-web-third-party/moment-v2.5.1/moment.min.js webroot/assets/moment/moment.min.js
+    ln -sf $FOUR_BACK/contrail-web-third-party/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
     #End - Link Moment Date-Formatter from contrail-web-third-party
 fi
 
@@ -263,8 +275,8 @@ MAINFILE[0]=webroot/assets/jquery/js/jquery-1.8.3.min.js
 MAINFILE[1]=webroot/assets/jquery/js/jquery.xml2json.js
 MAINFILE[2]=webroot/assets/jquery/js/jquery.ba-bbq.min.js
 MAINFILE[3]=webroot/assets/jquery/js/jquery.timer.js
-MAINFILE[4]=webroot/assets/jquery/js/jquery-ui-1.10.3.custom.min.js
-MAINFILE[5]=webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
+MAINFILE[4]=webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
+MAINFILE[5]=webroot/assets/jquery-ui/js/jquery-ui.js
 MAINFILE[6]=webroot/assets/bootstrap/js/bootstrap.min.js
 
 MAINFILE[7]=webroot/assets/d3/js/d3.js
@@ -286,7 +298,7 @@ MAINFILE[20]=webroot/assets/slickgrid/js/slick.grid.js
 MAINFILE[21]=webroot/assets/slickgrid/js/slick.dataview.js
 MAINFILE[22]=webroot/assets/slickgrid/js/slick.enhancementpager.js
 MAINFILE[23]=webroot/assets/datetimepicker/js/jquery.datetimepicker.js
-MAINFILE[24]=webroot/assets/moment/moment.min.js
+MAINFILE[24]=webroot/assets/moment/moment.js
 MAINFILE[25]=webroot/assets/2way-multiselect/js/multiselect.js
 
 MAINFILE[26]=webroot/js/contrail-common.js
