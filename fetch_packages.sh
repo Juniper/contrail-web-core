@@ -68,18 +68,10 @@ wget --no-check-certificate http://themes.googleusercontent.com/static/fonts/ope
 wget --no-check-certificate http://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
 cd -
 
-if command -v grunt >/dev/null 2 ; then
-    echo "grunt-cli already installed"
-else
-    npm install -g grunt-cli
-fi
-
-wget --no-check-certificate https://github.com/jquery/jquery-ui/archive/1.10.4.tar.gz -O 1.10.4.tar.gz
+wget --no-check-certificate https://github.com/components/jqueryui/archive/1.10.4.tar.gz -O 1.10.4.tar.gz
 tar -xf 1.10.4.tar.gz
-cd jquery-ui-1.10.4
-npm install
-grunt build
-cd -
+rm -rf 1.10.4.tar.gz
+mv jqueryui-1.10.4 jquery-ui-1.10.4
 
 #Download crossfilter
 wget --no-check-certificate https://github.com/square/crossfilter/archive/v1.2.0.tar.gz -O v1.2.0.tar.gz
