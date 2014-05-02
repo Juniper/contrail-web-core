@@ -1,5 +1,23 @@
 #function to check if the file checksum is correct
 rm -rf web-third-party
+
+INSTALL_DIR=$PWD/../build/contrail-web-third-party
+PATH=$PATH:$INSTALL_DIR/bin
+if command -v node >/dev/null 2; then {
+    echo "Node already installed"
+} else {
+    mkdir -p $INSTALL_DIR
+
+    echo "Installing NodeJS ..."
+    cd ../third_party/node-v*
+    ./configure --prefix=$INSTALL_DIR
+    make
+    make install
+    echo "Installed NodeJS"
+    cd -
+}
+fi
+
 # Web Core Third Party Modules
 if [ $1 = 'prod' ] ; then 
     npm install --production

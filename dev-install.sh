@@ -40,8 +40,8 @@ if [ $1 = 'prod' ] ; then
     mkdir -p webroot/assets/jquery-ui
     mkdir -p webroot/assets/jquery-ui/js
     mkdir -p webroot/assets/jquery-ui/css
-    cp -r ./web-third-party/jquery-ui-1.10.4/dist/jquery-ui.js webroot/assets/jquery-ui/js/jquery-ui.js
-    cp -r ./web-third-party/jquery-ui-1.10.4/dist/jquery-ui.css webroot/assets/jquery-ui/css/jquery-ui.css
+    cp -r ./web-third-party/jquery-ui-1.10.4/ui/jquery-ui.js webroot/assets/jquery-ui/js/jquery-ui.js
+    cp -r ./web-third-party/jquery-ui-1.10.4/themes/base/jquery-ui.css webroot/assets/jquery-ui/css/jquery-ui.css
     cp -r ./web-third-party/jquery-ui-1.10.4/themes/base/images webroot/assets/jquery-ui/css/
     #End - Copy jquery-ui files from web-third-party
 
@@ -170,8 +170,8 @@ else
     mkdir -p webroot/assets/jquery-ui
     mkdir -p webroot/assets/jquery-ui/js
     mkdir -p webroot/assets/jquery-ui/css
-    ln -sf $FOUR_BACK/web-third-party/jquery-ui-1.10.4/dist/jquery-ui.js webroot/assets/jquery-ui/js/jquery-ui.js
-    ln -sf $FOUR_BACK/web-third-party/jquery-ui-1.10.4/dist/jquery-ui.css webroot/assets/jquery-ui/css/jquery-ui.css
+    ln -sf $FOUR_BACK/web-third-party/jquery-ui-1.10.4/ui/jquery-ui.js webroot/assets/jquery-ui/js/jquery-ui.js
+    ln -sf $FOUR_BACK/web-third-party/jquery-ui-1.10.4/themes/base/jquery-ui.css webroot/assets/jquery-ui/css/jquery-ui.css
     ln -sf $FOUR_BACK/web-third-party/jquery-ui-1.10.4/themes/base/images webroot/assets/jquery-ui/css/images
     #End - Link jquery-ui files from web-third-party
 
