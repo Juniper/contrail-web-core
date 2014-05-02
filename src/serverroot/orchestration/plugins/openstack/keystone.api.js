@@ -432,7 +432,7 @@ function authenticate (req, res, callback)
     var passwdEncrypted = null; 
     if(post.urlHash != null)        
         urlHash = post.urlHash;
-    var loginErrFile = 'html/login-error.html';
+    var loginErrFile = 'webroot/html/login-error.html';
     doAuth(username, password, null, function (data) {
         if ((null == data) || (null == data.access)) {
             req.session.isAuthenticated = false;

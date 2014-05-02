@@ -25,11 +25,11 @@ if (!module.parent) {
 }
 
 exports.home = function (req, res) {
-    checkAndRedirect(req, res, 'html/dashboard.html');
+    checkAndRedirect(req, res, 'webroot/html/dashboard.html');
 };
 
 exports.dashboard = function (req, res) {
-    checkAndRedirect(req, res, 'html/dashboard.html');
+    checkAndRedirect(req, res, 'webroot/html/dashboard.html');
 };
 
 exports.admin = function (req, res) {
@@ -37,7 +37,7 @@ exports.admin = function (req, res) {
 };
 
 exports.login = function (req, res) {
-    res.sendfile('html/login.html');
+    res.sendfile('webroot/html/login.html');
 }
 
 var urlAllowedList = {};

@@ -93,7 +93,7 @@ function authenticate (req, res, callback)
     var passwdCipher = null
     var userEncrypted = null;
     var passwdEncrypted = null;
-    var loginErrFile = 'html/login-error.html';
+    var loginErrFile = 'webroot/html/login-error.html';
     if(post.urlHash != null)
         urlHash = post.urlHash;
 
