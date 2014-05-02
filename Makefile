@@ -4,61 +4,83 @@
 
 REPORTER = dot
 WEBUISERVER = contrail-web-core
-WEBUICLIENT = contrail-web-ui
-WEBUITHIRDPARTY = contrail-web-third-party
+WEBUICLIENT = contrail-web-controller
 
 $(WEBUISERVER):
 	if [ ! -d ../$(WEBUISERVER) ]; then git clone git@github.com:Juniper/contrail-web-core.git ../$(WEBUISERVER); else cd ../$(WEBUISERVER) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
 $(WEBUICLIENT):
-	if [ ! -d ../$(WEBUICLIENT) ]; then git clone git@github.com:Juniper/contrail-web-ui.git ../$(WEBUICLIENT); else cd ../$(WEBUICLIENT) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
+	if [ ! -d ../$(WEBUICLIENT) ]; then git clone git@github.com:Juniper/contrail-web-controller.git ../$(WEBUICLIENT); else cd ../$(WEBUICLIENT) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
-$(WEBUITHIRDPARTY):
-	if [ ! -d ../$(WEBUITHIRDPARTY) ]; then git clone git@github.com:Juniper/contrail-web-third-party.git ../$(WEBUITHIRDPARTY); else cd ../$(WEBUITHIRDPARTY) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
-repos: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY)
+repos: $(WEBUISERVER) $(WEBUICLIENT)
+
+fetch-pkgs-prod:
+	make clean
+	./fetch_packages.sh prod
+
+fetch-pkgs-dev:
+	make clean
+	./fetch_packages.sh dev
+
+fetch-pkgs:
+	./fetch_packages.sh dev
 
 package:
 	make clean
-	mkdir -p node_modules
-	cp -r -p ../$(WEBUICLIENT)/* .
-	cp -r -p ../$(WEBUITHIRDPARTY)/node_modules/* node_modules/
-	mv -f html/dashboard.tmpl html/dashboard.html
-	mv -f html/login.tmpl html/login.html
-	mv -f html/login-error.tmpl html/login-error.html
+	make fetch-pkgs-prod 
+	rm -f webroot/html/dashboard.html
+	rm -f webroot/html/login.html
+	rm -f webroot/html/login-error.html
+	cp -a webroot/html/dashboard.tmpl webroot/html/dashboard.html
+	cp -a webroot/html/login.tmpl webroot/html/login.html
+	cp -a webroot/html/login-error.tmpl webroot/html/login-error.html
+	rm -rf webroot/config
+	rm -rf webroot/monitor
+	rm -rf webroot/reports
+	rm -rf webroot/setting
+	cp -af ../$(WEBUICLIENT)/webroot/config webroot/.
+	cp -af ../$(WEBUICLIENT)/webroot/monitor webroot/.
+	cp -af ../$(WEBUICLIENT)/webroot/reports webroot/.
+	cp -af ../$(WEBUICLIENT)/webroot/setting webroot/.
+	cp -af ../$(WEBUICLIENT)/webroot/menu.xml webroot/menu.xml
 	./generate-files.sh
 	./dev-install.sh prod
-	./prod-dev.sh html/dashboard.html prod_env dev_env true
-	./prod-dev.sh html/login.html prod_env dev_env true
-	./prod-dev.sh html/login-error.html prod_env dev_env true
+	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
+	./prod-dev.sh webroot/html/login.html prod_env dev_env true
+	./prod-dev.sh webroot/html/login-error.html prod_env dev_env true
 
 all:
-	make clean
-	mkdir html
-	ln -sf ../$(WEBUICLIENT)/webroot webroot
-	ln -sf ../$(WEBUITHIRDPARTY)/node_modules node_modules
-	ln -sf ../../$(WEBUICLIENT)/html/dashboard.tmpl html/dashboard.html
-	ln -sf ../../$(WEBUICLIENT)/html/login.tmpl html/login.html
-	ln -sf ../../$(WEBUICLIENT)/html/login-error.tmpl html/login-error.html
+	mkdir -p webroot/html
+	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
+	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
+	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
 	./generate-files.sh
 	./dev-install.sh dev
 
 make-ln:
-	cp -af html/dashboard.html ../$(WEBUICLIENT)/html/dashboard.tmpl
-	rm -f html/dashboard.html
-	ln -sf ../../$(WEBUICLIENT)/html/dashboard.tmpl html/dashboard.html
-	cp -af html/login.html ../$(WEBUICLIENT)/html/login.tmpl
-	rm -f html/login.html
-	ln -sf ../../$(WEBUICLIENT)/html/login.tmpl html/login.html
-	cp -af html/login-error.html ../$(WEBUICLIENT)/html/login-error.tmpl
-	rm -f html/login-error.html
-	ln -sf ../../$(WEBUICLIENT)/html/login-error.tmpl html/login-error.html
+	cp -af webroot/html/dashboard.html webroot/html/dashboard.tmpl
+	rm -f webroot/html/dashboard.html
+	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
+	cp -af webroot/html/login.html webroot/html/login.tmpl
+	rm -f webroot/html/login.html
+	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
+	cp -af webroot/html/login-error.html webroot/html/login-error.tmpl
+	rm -f webroot/html/login-error.html
+	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
+	rm -f webroot/html/login-error.html
+	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
+	ln -sf ../../$(WEBUICLIENT)/webroot/config webroot/config
+	ln -sf ../../$(WEBUICLIENT)/webroot/monitor webroot/monitor
+	ln -sf ../../$(WEBUICLIENT)/webroot/reports webroot/reports
+	ln -sf ../../$(WEBUICLIENT)/webroot/setting webroot/setting
+	ln -sf ../../$(WEBUICLIENT)/webroot/menu.xml webroot/menu.xml
 	
 dev-env:
 	make all
-	./prod-dev.sh html/dashboard.html dev_env prod_env true
-	./prod-dev.sh html/login.html dev_env prod_env true
-	./prod-dev.sh html/login-error.html dev_env prod_env true
+	./prod-dev.sh webroot/html/dashboard.html dev_env prod_env true
+	./prod-dev.sh webroot/html/login.html dev_env prod_env true
+	./prod-dev.sh webroot/html/login-error.html dev_env prod_env true
 	make make-ln
 
 test-env:
@@ -110,8 +132,8 @@ clean:
 	rm -f src/serverroot/web/core/feature.list.js
 	rm -f src/serverroot/web/routes/url.routes.js
 	rm -rf node_modules
-	rm -rf webroot
 	rm -rf html
+	rm -rf web-third-party 
 
 .PHONY: package dev-env prod-env test test-integration test-unit clean
 

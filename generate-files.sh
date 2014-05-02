@@ -44,3 +44,4 @@ $node_exec src/tools/registerURL.js
 $node_exec src/tools/jobProcess.js
 $node_exec src/tools/parseFeature.js
 $node_exec src/tools/configTemplateGenerator.js
+
