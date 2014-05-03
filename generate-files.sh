@@ -5,7 +5,7 @@
 #
 
 INSTALL_DIR=$PWD/../build/contrail-web-third-party
-PATH=$PATH:$INSTALL_DIR/bin
+PATH=$INSTALL_DIR/bin:$PATH
 if command -v node >/dev/null 2; then {
     echo "Node already installed"
 } else {
