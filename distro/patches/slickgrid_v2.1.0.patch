@@ -1,0 +1,41 @@
+diff -Naur old/SlickGrid/slick.grid.css new/slickgrid-v2.1.0/slick.grid.css
+--- old/SlickGrid/slick.grid.css	2014-04-25 10:14:08.810983761 +0530
++++ new/slickgrid-v2.1.0/slick.grid.css	2014-04-25 10:19:30.216028804 +0530
+@@ -81,7 +81,6 @@
+ }
+ 
+ .slick-row.ui-widget-content, .slick-row.ui-state-active {
+-  position: absolute;
+   border: 0px;
+   width: 100%;
+ }
+diff -Naur old/SlickGrid/slick.grid.js new/slickgrid-v2.1.0/slick.grid.js
+--- old/SlickGrid/slick.grid.js	2014-04-25 10:14:08.811983762 +0530
++++ new/slickgrid-v2.1.0/slick.grid.js	2014-04-25 10:19:30.217028805 +0530
+@@ -924,7 +924,7 @@
+         "." + uid + " .slick-header-column { left: 1000px; }",
+         "." + uid + " .slick-top-panel { height:" + options.topPanelHeight + "px; }",
+         "." + uid + " .slick-headerrow-columns { height:" + options.headerRowHeight + "px; }",
+-        "." + uid + " .slick-cell { height:" + rowHeight + "px; }",
++   //     "." + uid + " .slick-cell { height:" + rowHeight + "px; }",
+         "." + uid + " .slick-row { height:" + options.rowHeight + "px; }"
+       ];
+ 
+@@ -1418,7 +1418,7 @@
+         rowCss += " " + metadata.cssClasses;
+       }
+ 
+-      stringArray.push("<div class='ui-widget-content " + rowCss + "' style='top:" + getRowTop(row) + "px'>");
++      stringArray.push("<div class='ui-widget-content " + rowCss + " slick-row-master slick_row_" + d.id + "' data-id='" + d.id + "'>");
+ 
+       var colspan, m;
+       for (var i = 0, ii = columns.length; i < ii; i++) {
+@@ -1664,7 +1664,7 @@
+       }
+ 
+       if (h !== oldH) {
+-        $canvas.css("height", h);
++//        $canvas.css("height", h);
+         scrollTop = $viewport[0].scrollTop;
+       }
+ 

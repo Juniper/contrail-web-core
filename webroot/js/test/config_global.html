@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>QUnit Main Test Suite</title>
+    <link rel="stylesheet" href="../../assets/qunit/qunit.css">
+
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture">test markup</div>
+
+        <script type="text/javascript">
+            var built_at="";
+        </script>
+        <script type="text/x-handlebars-template" id="timeoutTemplate">
+            <div>Timeout in fetching the details</div>
+        </script>
+
+        <script src="../../assets/qunit/qunit.js"></script>
+        <script src="../contrail-all-1.js?built_at="></script>
+        <script src="../contrail-all-2.js?built_at="></script>
+        <script src="../contrail-all-3.js?built_at="></script>
+        <script src="../contrail-all-4.js?built_at="></script>
+        <script src="../contrail-all-5.js?built_at="></script>
+        <script src="utils_mock.js"></script>
+        <script src="config_global_mock.js"></script>
+        <script src="config_global_test.js"></script>
+</body>
+</html>

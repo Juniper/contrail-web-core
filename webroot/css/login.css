@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ */
+ 
+.login-container {
+    width: 375px;
+    height:375px;
+    margin: 100px auto;
+}
+.login-container > .logo{
+    margin:0 auto;
+    text-align:center;
+}
+.content {
+    padding: 14px 28px 23px;
+    margin: 20px auto 0;
+    border: 1px solid #d5d5d5;
+}
+.login-fields input {
+    font-size: 14px;
+    padding: 1px 5px;
+    width: 272px;
+    margin: 0;
+}
+.login-container .input-prepend .add-on {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+
+}
+.login-container .input-prepend .add-on [class^="icon-"], [class*=" icon-"] {
+    font-size: 18px;
+    color: #777;
+    margin-top:2px;
+}
+
+.input-append, .input-prepend {
+    margin:10px 0;
+}
+
+#login-error .alert{
+	margin: 15px 0 0;
+}
