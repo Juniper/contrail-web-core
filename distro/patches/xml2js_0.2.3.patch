@@ -1,0 +1,189 @@
+--- old/xml2js/node_modules/sax/lib/sax.js	2014-04-26 21:19:06.000000000 +0530
++++ new/xml2js/node_modules/sax/lib/sax.js	2014-04-26 21:42:14.000000000 +0530
+@@ -909,6 +909,7 @@
+ }
+ 
+ function write (chunk) {
++  var errFlag = false;
+   var parser = this
+   if (this.error) throw this.error
+   if (parser.closed) return error(parser,
+@@ -916,6 +917,13 @@
+   if (chunk === null) return end(parser)
+   var i = 0, c = ""
+   while (parser.c = c = chunk.charAt(i++)) {
++      if ((parser.strict) && (errFlag == true)) {
++          /* If there is already XML parsing error, then we should not process rest of
++           * the chunk's character processing, as on whole it is erroneous XML
++           * data, so just break this while loop.
++           */
++          break;
++      }
+     if (parser.trackPosition) {
+       parser.position ++
+       if (c === "\n") {
+@@ -933,6 +941,7 @@
+           // have to process this as a text node.
+           // weird, but happens.
+           strictFail(parser, "Non-whitespace before first tag.")
++          errFlag = true;
+           parser.textNode = c
+           parser.state = S.TEXT
+         }
+@@ -957,8 +966,10 @@
+           parser.state = S.OPEN_WAKA
+           parser.startTagPosition = parser.position
+         } else {
+-          if (not(whitespace, c) && (!parser.sawRoot || parser.closedRoot))
++          if (not(whitespace, c) && (!parser.sawRoot || parser.closedRoot)) {
+             strictFail(parser, "Text data outside of root node.")
++            errFlag = true;
++          }
+           if (c === "&") parser.state = S.TEXT_ENTITY
+           else parser.textNode += c
+         }
+@@ -998,6 +1009,7 @@
+           parser.procInstName = parser.procInstBody = ""
+         } else {
+           strictFail(parser, "Unencoded <")
++          errFlag = true;
+           // if there was some whitespace, then add that in.
+           if (parser.startTagPosition + 1 < parser.position) {
+             var pad = parser.position - parser.startTagPosition
+@@ -1020,8 +1032,10 @@
+           parser.sgmlDecl = ""
+         } else if ((parser.sgmlDecl+c).toUpperCase() === DOCTYPE) {
+           parser.state = S.DOCTYPE
+-          if (parser.doctype || parser.sawRoot) strictFail(parser,
+-            "Inappropriately located doctype declaration")
++          if (parser.doctype || parser.sawRoot) {
++              strictFail(parser, "Inappropriately located doctype declaration");
++              errFlag = true;
++          }
+           parser.doctype = ""
+           parser.sgmlDecl = ""
+         } else if (c === ">") {
+@@ -1102,6 +1116,7 @@
+       case S.COMMENT_ENDED:
+         if (c !== ">") {
+           strictFail(parser, "Malformed comment")
++          errFlag = true;
+           // allow <!-- blah -- bloo --> in non-strict mode,
+           // which is a comment of " blah -- bloo "
+           parser.comment += "--" + c
+@@ -1169,8 +1184,10 @@
+           if (c === ">") openTag(parser)
+           else if (c === "/") parser.state = S.OPEN_TAG_SLASH
+           else {
+-            if (not(whitespace, c)) strictFail(
+-              parser, "Invalid character in tag name")
++            if (not(whitespace, c)) {
++                strictFail(parser, "Invalid character in tag name");
++                errFlag = true;
++            }
+             parser.state = S.ATTRIB
+           }
+         }
+@@ -1182,6 +1199,7 @@
+           closeTag(parser)
+         } else {
+           strictFail(parser, "Forward-slash in opening tag not followed by >")
++          errFlag = true;
+           parser.state = S.ATTRIB
+         }
+       continue
+@@ -1195,20 +1213,27 @@
+           parser.attribName = c
+           parser.attribValue = ""
+           parser.state = S.ATTRIB_NAME
+-        } else strictFail(parser, "Invalid attribute name")
++        } else {
++            strictFail(parser, "Invalid attribute name")
++            errFlag = true;
++        }
+       continue
+ 
+       case S.ATTRIB_NAME:
+         if (c === "=") parser.state = S.ATTRIB_VALUE
+         else if (c === ">") {
+           strictFail(parser, "Attribute without value")
++          errFlag = true;
+           parser.attribValue = parser.attribName
+           attrib(parser)
+           openTag(parser)
+         }
+         else if (is(whitespace, c)) parser.state = S.ATTRIB_NAME_SAW_WHITE
+         else if (is(nameBody, c)) parser.attribName += c
+-        else strictFail(parser, "Invalid attribute name")
++        else {
++            strictFail(parser, "Invalid attribute name")
++            errFlag = true;
++        }
+       continue
+ 
+       case S.ATTRIB_NAME_SAW_WHITE:
+@@ -1216,6 +1241,7 @@
+         else if (is(whitespace, c)) continue
+         else {
+           strictFail(parser, "Attribute without value")
++          errFlag = true;
+           parser.tag.attributes[parser.attribName] = ""
+           parser.attribValue = ""
+           emitNode(parser, "onattribute",
+@@ -1227,6 +1253,7 @@
+             parser.state = S.ATTRIB_NAME
+           } else {
+             strictFail(parser, "Invalid attribute name")
++            errFlag = true;
+             parser.state = S.ATTRIB
+           }
+         }
+@@ -1239,6 +1266,7 @@
+           parser.state = S.ATTRIB_VALUE_QUOTED
+         } else {
+           strictFail(parser, "Unquoted attribute value")
++          errFlag = true;
+           parser.state = S.ATTRIB_VALUE_UNQUOTED
+           parser.attribValue = c
+         }
+@@ -1288,6 +1316,7 @@
+               parser.state = S.SCRIPT
+             } else {
+               strictFail(parser, "Invalid tagname in closing tag.")
++              errFlag = true;
+             }
+           } else parser.tagName = c
+         }
+@@ -1298,8 +1327,10 @@
+           parser.tagName = ""
+           parser.state = S.SCRIPT
+         } else {
+-          if (not(whitespace, c)) strictFail(parser,
+-            "Invalid tagname in closing tag")
++          if (not(whitespace, c)) {
++              strictFail(parser, "Invalid tagname in closing tag")
++              errFlag = true;
++          }
+           parser.state = S.CLOSE_TAG_SAW_WHITE
+         }
+       continue
+@@ -1307,7 +1338,10 @@
+       case S.CLOSE_TAG_SAW_WHITE:
+         if (is(whitespace, c)) continue
+         if (c === ">") closeTag(parser)
+-        else strictFail(parser, "Invalid characters in closing tag")
++        else {
++            strictFail(parser, "Invalid characters in closing tag")
++            errFlag = true;
++        }
+       continue
+ 
+       case S.TEXT_ENTITY:
+@@ -1334,6 +1368,7 @@
+         else if (is(entity, c)) parser.entity += c
+         else {
+           strictFail(parser, "Invalid character entity")
++          errFlag = true;
+           parser[buffer] += "&" + parser.entity + c
+           parser.entity = ""
+           parser.state = returnState

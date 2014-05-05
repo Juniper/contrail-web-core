@@ -34,7 +34,7 @@ var server_ip = (config.redis_server_ip) ?
 
 var redisClient = redis.createClient(server_port,
 	server_ip);
-var RedisStore = require('./lib/connect-redis')(express);
+var RedisStore = require('connect-redis')(express);
 
 var store;
 var myIdentity = global.service.MAINSEREVR;
