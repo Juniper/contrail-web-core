@@ -29,18 +29,21 @@ cd node_modules
 patch -p1 -N < ../distro/patches/restler_2.0.1.patch
 if [ $? -ne 0 ] ; then
     echo "restler - patch apply failed"
+    exit 1
 fi
 
 # xml2js Module
 patch -p1 -N < ../distro/patches/xml2js_0.2.3.patch
 if [ $? -ne 0 ] ; then
     echo "xml2js - patch apply failed"
+    exit 1
 fi
 
 # connect-redis Module
 patch -p1 -N < ../distro/patches/connect-redis_1.4.5.patch
 if [ $? -ne 0 ] ; then
     echo "connect-redis - patch apply failed"
+    exit 1
 fi
 
 if [ $(command -v md5sum) > /dev/null 2>&1 ]; then
@@ -116,6 +119,7 @@ mv nvd3-1.0.0-beta nvd3
 patch -p1 -N < ../distro/patches/nvd3_1.0.0-beta.patch
 if [ $? -ne 0 ] ; then
     echo "nvd3 - patch apply failed"
+    exit 1
 fi
 
 wget --no-check-certificate http://knockoutjs.com/downloads/knockout-3.0.0.js
@@ -145,6 +149,7 @@ mv SlickGrid-2.1.0 slickgrid-v2.1.0
 patch -p1 -N < ../distro/patches/slickgrid_v2.1.0.patch
 if [ $? -ne 0 ] ; then
     echo "slickgrid - patch apply failed"
+    exit 1
 fi
 
 wget --no-check-certificate https://github.com/moment/moment/archive/2.6.0.tar.gz -O 2.6.0.tar.gz
@@ -169,6 +174,7 @@ mv multiselect-master multiselect-v1.0
 patch -p1 -N < ../distro/patches/multiselect_v1.0.patch
 if [ $? -ne 0 ] ; then
     echo "multiselect - patch apply failed"
+    exit 1
 fi
 
 wget --no-check-certificate https://github.com/kingleema/SlickGridEnhancementPager/archive/master.zip -O master.zip
@@ -178,6 +184,7 @@ mv SlickGridEnhancementPager-master slickgrid.enhancement.pager
 patch -p1 -N < ../distro/patches/SlickGridEnhancementPager.patch
 if [ $? -ne 0 ] ; then
     echo "SlickGridEnhancementPager - patch apply failed"
+    exit 1
 fi
 
 cd -
