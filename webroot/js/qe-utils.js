@@ -532,8 +532,9 @@ function selectNewORClause(queryPrefix) {
         whereClauseEdit = [];
     	query.whereViewModel.whereClauseEdit([]);
     	query.whereViewModel.selectedORClauseIndex('-1');
-    	var newOrClause = $(query.newORClauseTemplate({queryPrefix: queryPrefix, whereClauseEdit: whereClauseEdit})).appendTo($('#' + queryPrefix + '-or-clause-items'));
-        $('#' + queryPrefix + '-or-clause-items').append($('#' + queryPrefix + '-or-clause-item-new-term'));
+    	collapseAllORClause();
+		var newOrClause = $(query.newORClauseTemplate({queryPrefix: queryPrefix, whereClauseEdit: whereClauseEdit})).appendTo($('#' + queryPrefix + '-or-clause-items'));
+		$('#' + queryPrefix + '-or-clause-items').append($('#' + queryPrefix + '-or-clause-item-new-term'));
         appendWhere(queryPrefix,newOrClause);
 };
 
@@ -566,19 +567,36 @@ function appendWhere(queryPrefix,dis) {
 };
 
 function deleteWhereORTerm(dis){
+	$(dis).parents('.or-clause-item').prev('.or-text').remove();
 	$(dis).parents('.or-clause-item').remove();
 }
 
 function setORClauseTerm(queryPrefix, orClauseItem){
 	var orClauseStr = getOrClauseStr(queryPrefix,orClauseItem);
-	orClauseItem.find('.or-clause-item-term').empty().append((orClauseStr != '') ? '(' + orClauseStr + ')' : '');
+	orClauseItem.find('.or-clause-item-term').empty().append((orClauseStr != '') ? orClauseStr : '...');
+}
+
+function collapseAllORClause(){
+	$('.or-clause-item').removeClass('open');
+	$('.or-clause-icon-caret').addClass('icon-caret-right').removeClass('icon-caret-down');
+	$('.or-clause-item-edit').hide('slow');
 }
 
 function toggleORClause(queryPrefix,dis){
 	var disElement = $(dis).parents('.or-clause-item');
-	disElement.find('.or-clause-item-edit').toggle();
-	$(dis).toggleClass('icon-caret-down').toggleClass('icon-caret-right');
 	
+	if(disElement.hasClass('open')){
+		disElement.find('.or-clause-item-edit').hide('slow');
+		disElement.removeClass('open');
+		$(dis).removeClass('icon-caret-down').addClass('icon-caret-right');
+	}
+	else {
+		collapseAllORClause();
+		disElement.find('.or-clause-item-edit').show('slow');
+		disElement.addClass('open');
+		$(dis).addClass('icon-caret-down').removeClass('icon-caret-right');
+		
+	}
 	if(disElement.find('.or-clause-item-term').is(':visible')){
 		setORClauseTerm(queryPrefix, disElement);
 	}
@@ -605,16 +623,16 @@ function submitWhere(queryPrefix) {
 };
 
 function getOrClauseStr(queryPrefix,dis) {
-	var whereForm = '';
+	var whereForm = '',
+		fieldArray = [], opArray = [], valArray = [], val2Array = [],
+		whereClauseViewStr = "", i, length, splitFlowFieldArray = [];
+	
 	if($(dis).hasClass('or-clause-item')){
 		whereForm = $(dis);
 	}
 	else{
 		whereForm = $(dis).parents('.or-clause-item');
 	}
-
-    var fieldArray = [], opArray = [], valArray = [], val2Array = [],
-        whereClauseViewStr = "", i, length, splitFlowFieldArray = [];
     
     whereForm.find("select[name='field[]']").each(function () {
         fieldArray.push($(this).val());
@@ -733,9 +751,9 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
         value2Node.val(value2);
         value2Node.attr('placeholder', placeHolders[fieldName][1]);
     }
-    if(onchangeFlag == true){
+    //if(onchangeFlag == true){
     	setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
-    }
+    //}
 }
 
 /*
@@ -1363,11 +1381,19 @@ function push2OTColumns(columnArray, newColumnName, columns, selectedFieldName, 
             	formatter: function(r, c, v, cd, dc) {
         			var returnString = '';
             		if(typeof dc[newColumnName] !== "undefined") {
-            			returnString = '<pre>' + syntaxHighlight(dc[newColumnName]) + '</pre>'; 
+            			returnString = contrail.formatJSON2HTML(dc[newColumnName],1); 
         			}
             		return returnString;
             	},
-            	sortable: false
+            	sortable: false,
+            	events: {
+        			onClick: function(e,dc){
+        				var rowIndex = $(e.target).parents('.slick-row-master').data('id');
+        				setTimeout(function(){
+        					$('#ot-results').data('contrailGrid').adjustRowHeight(rowIndex);
+        				},500);
+        			}
+            	}
             });
         }
     }
@@ -1425,26 +1451,30 @@ function loadOTResults(options, reqQueryString, selectedFields) {
 };
 
 function toggleExpandCollapseAll(id,dis){
-	$(dis).find('i').toggleClass('icon-expand-alt').toggleClass('icon-collapse-alt');
+	var iconClass = 'expander',
+		actualClass = $(dis).find('i').attr('class');
 	
-		$('#' + id).find('.preBlock span.expanded').show();
-		$('#' + id).find('.preBlock span.collapsed').hide();
-		$('#' + id).find('.preBlock .preBlock').show();
+	if($(dis).find('i').hasClass('icon-collapse-alt')){
+		iconClass = 'collapser';
+	}
 	
-	if($(dis).find('i').hasClass('icon-expand-alt')){
-		$(dis).attr('title','Expand All');
-		// current state is collapsed
-		$('#' + id).find('pre').children().children().children().children().each(function(){
+	$(dis).find('i').attr('class','icon-spin icon-spinner');
+	$('#' + id).find('.pre-format-JSON2HTML').find('i.node-0').each(function(){
+		if($(this).hasClass(iconClass)){
 			$(this).click();
-		});
-	}
-	else{
-		$(dis).attr('title','Collapse All');
-		// current state is expanded
-
-		$('#' + id).find('i.icon-expand-alt').removeClass('icon-expand-alt').addClass('icon-collapse-alt');
-	}
+		}
+	});
 	$('#' + id).data('contrailGrid').adjustAllRowHeight();
+	setTimeout(function(){
+		$(dis).find('i').attr('class',actualClass);
+		$(dis).find('i').toggleClass('icon-expand-alt').toggleClass('icon-collapse-alt');
+		if($(dis).find('i').hasClass('icon-expand-alt')){
+			$(dis).attr('title','Expand All');
+		}
+		else{
+			$(dis).attr('title','Collapse All');
+		}
+	},500)
 }
 
 function loadOTGrid(options, rows, columns) {
@@ -1456,7 +1486,7 @@ function loadOTGrid(options, rows, columns) {
 				icon: 'icon-tasks',
 				iconCssClass: 'blue'
 			},
-    		customControls: ['<a onclick=toggleExpandCollapseAll("' + options.elementId + '",this); title="Expand all"><i class="icon-expand-alt icon-large"></i></a>']
+    		customControls: ['<a onclick=toggleExpandCollapseAll("' + options.elementId + '",this); title="Collapse all"><i class="icon-collapse-alt icon-large"></i></a>']
     	},
     	columnHeader: {
     		columns: columns
@@ -1468,14 +1498,14 @@ function loadOTGrid(options, rows, columns) {
     		dataSource:{
     	        data: rows,
     	        events: {
-                    onDataBoundCB: function() {
-                    	$('#ot-results').find('pre').each(function(){
-                    		var syntaxedJsonObj = $(this).children().children();
-                    	    syntaxedJsonObj.find('.preBlock').children('.expanded').hide();
-                    	    syntaxedJsonObj.find('.preBlock').children('.collapsed').show();
-                    	    syntaxedJsonObj.find('.preBlock').children('i').removeClass('icon-minus').addClass('icon-plus');
-                        });
-                    }
+//                    onDataBoundCB: function() {
+//                    	$('#ot-results').find('pre').each(function(){
+//                    		var syntaxedJsonObj = $(this).children().children();
+//                    	    syntaxedJsonObj.find('.preBlock').children('.expanded').hide();
+//                    	    syntaxedJsonObj.find('.preBlock').children('.collapsed').show();
+//                    	    syntaxedJsonObj.find('.preBlock').children('i').removeClass('icon-minus').addClass('icon-plus');
+//                        });
+//                    }
     	        }
     	    },
             statusMessages: {
@@ -1496,7 +1526,7 @@ function loadOTGrid(options, rows, columns) {
         }
 	};
 	
-	$('#ot-results').find('.grid-widget-header').find('.icon-collapse-alt').removeClass('icon-collapse-alt').addClass('icon-expand-alt').parent().attr('title','Expand All');
+	$('#ot-results').find('.grid-widget-header').find('.icon-expand-alt').removeClass('icon-expand-alt').addClass('icon-collapse-alt').parent().attr('title','Expand All');
 
     if(options.gridHeight != null){
     	otGridConfig.body.options.gridHeight = options.gridHeight;
@@ -1570,7 +1600,7 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 					},
 					onRequestErrorCB : function() {
 						enableButton(btnId);
-						endChartLoading(false, 'fs');
+	//					endChartLoading(false, 'fs');
 					},
 					onRequestSuccessCB : function(response) {
 						var status = response['status'];
@@ -1592,7 +1622,7 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 							        grid.refreshView();
 							    }
 							} else if (options.showChartToggle != null) {
-								endChartLoading(false, 'fs');
+						//		endChartLoading(false, 'fs');
 							}
 							options.refreshChart = false;
 						}
@@ -1781,14 +1811,14 @@ function loadQueryQueue(options) {
 };
 
 function getFSColumnDisplay4Grid(columnDisplay, selectArray) {
-    var newColumnDisplay = [],
-        displayLength = columnDisplay.length,
-        i, j = 0;
-    for (i = 0; i < displayLength; i++) {
-        if (selectArray.indexOf(columnDisplay[i].select) != -1) {
-            newColumnDisplay[j++] = columnDisplay[i].display;
-        }
-    }
+    var newColumnDisplay = [];
+    
+    $.each(columnDisplay, function(key, val){
+    	if (selectArray.indexOf(val.select) != -1) {
+    		newColumnDisplay.push(val.display);
+    	}
+    });
+
     return newColumnDisplay;
 };
 
@@ -1941,23 +1971,25 @@ function toggleToChart() {
 		$('#fs-results-link').removeClass('selected');
 	    $('#fs-chart-link').addClass('selected');
 	    
-		$('#fs-results').find('.grid-body').hide();
-	    $('#fs-results').find('.grid-footer').hide();
-	    $('#fs-results').find('.grid-load-status').hide();
+		$('#fs-results').find('.grid-body').hide('fast');
+	    $('#fs-results').find('.grid-footer').hide('fast');
+	    $('#fs-results').find('.grid-load-status').hide('fast');
 		
-		
-	    setTimeout(function(){
-		    $('#fs-chart').show();
-		    var isFCVisible = queries.fs.chartViewModel.isFCVisible;
-		    if(isFCVisible) {
-		    	createFSChart("#ts-chart", queries.fs.chart);
-	    	}
-		    var grid = $("#fs-flow-classes").data("contrailGrid");
+	    $('#fs-chart').show(function(){
+	    	var grid = $("#fs-flow-classes").data("contrailGrid");
 		    if(grid != null){
+		    	$("#fs-flow-classes").show();
 		        grid.refreshView();
 		    }
+	    	var isFCLoaded = queries.fs.chartViewModel.isFCLoaded();
+		    if(!isFCLoaded) {
+		    	createFSChart("#ts-chart", queries.fs.chart);
+		    	queries.fs.chartViewModel.isFCLoaded(true);
+	    	}
+		    
 		    $('#fs-chart-link').find('i').removeClass('icon-spin icon-spinner').addClass('icon-bar-chart');
-	    },250);
+		    $('#fs-chart').find('.chart-load-status').hide();
+	    });
 	}
 };
 
@@ -1972,13 +2004,13 @@ function getPlotFields(columnDisplay) {
     return plotFields;
 };
 
-function initFSChartLoading() {
-    queries.fs.chartViewModel.isFCVisible(false);
-};
-
-function endChartLoading(isFCVisible, queryPrefix) {
-    queries[queryPrefix].chartViewModel.isFCVisible(isFCVisible);
-};
+//function initFSChartLoading() {
+//    queries.fs.chartViewModel.isFCVisible(false);
+//};
+//
+//function endChartLoading(isFCVisible, queryPrefix) {
+//    queries[queryPrefix].chartViewModel.isFCVisible(isFCVisible);
+//};
 
 function initFSChart(columnDisplay, data, flowClassArray, fcGridDisplay) {
     var plotFields = getPlotFields(columnDisplay),
@@ -1988,7 +2020,7 @@ function initFSChart(columnDisplay, data, flowClassArray, fcGridDisplay) {
     queries.fs.chartViewModel.selectedFlows([{flowClassId: validFCId, sumBytes: null, sumPackets: null}]);
     queries.fs.chart = null;
     $('#fs-chart-link').removeClass('disabled-link');
-    createFSChart("#ts-chart", queries.fs.chart);
+//    createFSChart("#ts-chart", queries.fs.chart);
     initFlowclassGrid("#fs-flow-classes", flowClassArray, fcGridDisplay);
 };
 
@@ -2014,26 +2046,36 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
             {
                 id: 'fc-checkbox',
             	field:"", 
-            	name:" ", 
-                rerenderOnResize: false,
-                resizable: false,
+            	name:"", 
                 width:30, 
                 formatter: function(r, c, v, cd, dc){ 
                 	return '<input id="fc-checkbox-' + dc.flow_class_id +'" type="checkbox" onchange="loadSelectedFSChart(this)" value="' + dc.flow_class_id +'" class="ace-input"/><span class="ace-lbl"></span>';
+                },
+                resizable: false,
+                sortable: false,
+                width: 30,
+                searchable: false,
+                exportConfig: {
+                    allow: false
                 }
             },
             {
             	id: 'fc-label',
                 field:"", 
-                name:" ", 
-                rerenderOnResize: false,
+                name:"", 
                 resizable: false,
-                width:100, 
+                sortable: false,
+                width: 90,
+                searchable: false,
+                exportConfig: {
+                    allow: false
+                },
                 formatter: function(r, c, v, cd, dc){ 
                 	return '<span id="label-sum-bytes-'+ dc.flow_class_id + '" class="hide">Sum Bytes</span> <span id="label-sum-packets-' + dc.flow_class_id + '" class="hide">Sum Packets</span>';
                 }
             }
         ];
+    
     columnDisplay = display.concat(columnDisplay);
 
     $(elementId).contrailGrid({
@@ -2042,9 +2084,6 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
 			columns: columnDisplay
     	},
     	body: {
-    		options : {
-	    		forceFitColumns: true
-    		},
     		dataSource:{
                 data: flowClassArray,
                 events: {
@@ -2103,7 +2142,7 @@ function plotFSChart(options, columnDisplay, fcGridDisplay) {
             query['chartData'] = resultData;
         },
         error:function (xhr) {
-            endChartLoading(false, 'fs');
+ //           endChartLoading(false, 'fs');
             $('#ts-chart').html($('#no-data').html());
         }
     });
@@ -2116,7 +2155,7 @@ function plotFSChart(options, columnDisplay, fcGridDisplay) {
             flowClasses = resultData;
         },
         error:function (xhr) {
-            endChartLoading(false, 'fs');
+            //endChartLoading(false, 'fs');
             $('#ts-chart').html($('#no-data').html());
         }
     });
@@ -2134,7 +2173,7 @@ function createFSChart(selector, chart) {
         plotData = null, selectedFlow, flowClassId, color;
 
     if (isEmptyObject(fsChartData) || fsChartData == null) {
-        endChartLoading(false, 'fs');
+ //       endChartLoading(false, 'fs');
         $('#ts-chart').html($('#no-data').html());
         return;
     }
@@ -2158,7 +2197,7 @@ function createFSChart(selector, chart) {
     options['height'] = 300;
     options['yAxisLabel'] = '';
     options['y2AxisLabel'] = '';
-    endChartLoading(true, 'fs');
+ //   endChartLoading(true, 'fs');
     if(plotFields.indexOf('sum_bytes') != -1) {
         initTrafficTSChart(selector, plotData, options, chart, "formatSumBytes", "formatSumBytes");
     } else {
