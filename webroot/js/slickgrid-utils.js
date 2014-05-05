@@ -796,7 +796,8 @@ function getDefaultGridConfig() {
                 	grid.resizeCanvas();
                 	gridContainer.find('.slick-row-detail').remove();
                 	gridContainer.find('.icon-caret-down').toggleClass('icon-caret-down').toggleClass('icon-caret-right');
-                	gridContainer.data('contrailGrid').adjustAllRowHeight();
+                	this.adjustAllRowHeight();
+                	this.adjustGridAlternateColors();
                 }
             });
         }
