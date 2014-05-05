@@ -4,29 +4,18 @@
 # Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
 #
 
+INSTALL_DIR=$PWD/../build/contrail-web-third-party
+PATH=$INSTALL_DIR/bin:$PATH
 if command -v node >/dev/null 2; then {
     echo "Node already installed"
 } else {
-    INSTALL_DIR=/usr/local
-
-    # TODO This should be done for all platforms.
-    grep -qi ubuntu /etc/issue
-    if [ "$?" = "0" ]; then
-        INSTALL_DIR=$PWD/../build/contrail-web-third-party
-    fi
-
-    PATH=$PATH:$INSTALL_DIR/bin
     mkdir -p $INSTALL_DIR
 
     echo "Installing NodeJS ..."
     cd ../contrail-web-third-party/node-v*
     ./configure --prefix=$INSTALL_DIR
     make
-    if [ "$INSTALL_DIR" = "/usr/local" ]; then
-        sudo make install
-    else
-        make install
-    fi
+    make install
     echo "Installed NodeJS"
     cd -
 }
@@ -44,3 +33,4 @@ $node_exec src/tools/registerURL.js
 $node_exec src/tools/jobProcess.js
 $node_exec src/tools/parseFeature.js
 $node_exec src/tools/configTemplateGenerator.js
+

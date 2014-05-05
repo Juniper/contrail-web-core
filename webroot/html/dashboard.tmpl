@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<!--
+ Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8" content="">
+    <title>Contrail Controller</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contrail Systems">
+     <!--Bootstrap Styles-->
+    <link href="/assets/bootstrap/css/bootstrap.min.css?built_at=1398860488" rel="stylesheet"/>
+    <link href="/assets/bootstrap/css/bootstrap-responsive.min.css?built_at=1398860488" rel="stylesheet"/>
+    <link href="/assets/jquery-ui/css/jquery-ui.css?built_at=1398860488" rel="stylesheet"/>
+    <link href="/css/contrail.jquery.ui.css?built_at=1398860488" rel="stylesheet"/>
+
+    <!-- Start dev_env --> 
+    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css?built_at=1398860488"/>
+     <!-- End dev_env -->  
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome-ie7.min.css?built_at=1398860488"/>
+    <![endif]-->
+
+    <!--Fonts-->
+    <!-- Start dev_env --> 
+    <link rel="stylesheet" href="/assets/fonts-opensans/openSans.css?built_at=1398860488"/>
+     <!-- End dev_env -->  
+
+    <!--[if lte IE 8]>
+     <link rel="stylesheet" href="/css/contrail-ie.min.css?built_at=1398860488"/>
+    <![endif]-->
+
+    <!--D3 Styles-->
+    <!-- Start dev_env --> 
+    <link href="/css/nv.d3.contrail.css?built_at=1398860488" rel="stylesheet">
+     <!-- End dev_env -->
+
+    <!-- Start dev_env -->
+    <link rel="stylesheet" href="/assets/select2/styles/select2.css?built_at=1398860488" />
+    <link rel="stylesheet" href="/assets/datetimepicker/styles/jquery.datetimepicker.css?built_at=1398860488" />
+    <link rel="stylesheet" href="/assets/slickgrid/styles/slick.grid.css?built_at=1398860488">
+    <!-- End dev_env -->
+
+    <!--Contrail Styles-->
+    <!-- Start prod_env
+    <link rel="stylesheet" href="/css/contrail-all.css?built_at=1398860488"/>
+    End prod_env -->
+    <link rel="stylesheet" href="/css/contrail.layout.css?built_at=1398860488" />
+    <link rel="stylesheet" href="/css/contrail.elements.css?built_at=1398860488" />
+    <link rel="stylesheet" href="/css/contrail.responsive.css?built_at=1398860488" />
+    <link rel="stylesheet" href="/css/contrail.custom.css?built_at=1398860488" />
+</head>
+
+<body class="navbar-fixed">
+<div id="header" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a href="#" class="brand">
+                <img class="logo" src="/img/sdn-logo.png"/>
+            </a>
+            <ul class="nav ace-nav pull-right">
+                <li onclick="showMoreAlerts();">
+                    <a href="javascript:void(0);">
+                        <i class="icon-bell-alt icon-only icon-2"></i>
+                        <span id="alert_info">Alerts</span>
+                        <!-- <i class="icon-caret-down"></i> -->
+                    </a> 
+
+                    <!--<ul class="pull-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-closer">
+                        <li class="nav-header">
+                            <i class="icon-warning-sign"></i>
+                            0 New Alert
+                        </li>
+                        <!--
+                        <li>
+                            <a href="#">
+                                <div class="clearfix">
+                                            <span class="pull-left">
+                                                <i class="btn btn-mini no-hover btn-pink icon-comment"></i>
+                                                New Comments
+                                            </span>
+                                    <span class="pull-right badge badge-info">+12</span>
+                                </div>
+                            </a>
+                        </li>
+                        
+                        <li class="pull-left" onclick="showMoreAlerts();">
+                            <a href="javascript:void(0);"> See Old Alerts <i class="icon-arrow-right"></i>
+                            </a>
+                        </li>
+                    </ul> -->
+                </li>
+                <li id="user-profile" class="hide">
+                    <a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle">
+                        <i class="icon-user icon-only icon-2"></i>
+                        <span id="user_info"></span>
+                        <i class="icon-caret-down"></i>
+                    </a>
+                    <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer" id="user_menu">
+                        <li>
+                            <a href="/logout">
+                                <i class="icon-off"></i>
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!--/.container-fluid-->
+    </div>
+    <!--/.navbar-inner-->
+</div>
+<!-- /.navbar #header -->
+
+<div class="container-fluid" id="main-container">
+    <a id="menu-toggler" href="#">
+        <span></span>
+    </a>
+
+    <div id="sidebar">
+        <div id="sidebar-shortcuts">
+            <div id="sidebar-shortcuts-large">
+                <button id="btn-monitor" class="btn btn-small btn-monitor" title="Monitor" onclick="menuHandler.toggleMenuButton('monitor');">
+                    <i class="icon-bar-chart icon-large"></i>
+                </button>
+
+                <button id="btn-configure" class="btn btn-small btn-configure" title="Configure" onclick="menuHandler.toggleMenuButton('configure');">
+                    <i class="icon-wrench icon-large"></i>
+                </button>
+
+                <button id="btn-setting" class="btn btn-small btn-setting" title="Setting" onclick="menuHandler.toggleMenuButton('setting');">
+                    <i class="icon-cog icon-large"></i>
+                </button>
+
+                <button id="btn-query" class="btn btn-small btn-query" title="Query" onclick="menuHandler.toggleMenuButton('query');">
+                    <i class="icon-search icon-large"></i>
+                </button>
+            </div>
+
+            <div id="sidebar-shortcuts-mini">
+                <span class="btn btn-monitor"></span>
+
+                <span class="btn btn-configure"></span>
+
+                <span class="btn btn-setting"></span>
+
+                <span class="btn btn-query"></span>
+            </div>
+        </div>  <!--#sidebar-shortcuts-->
+        <ul id="menu" class="nav nav-list"></ul>
+    </div> <!-- #sidebar -->
+
+    <div id="main-content" class="clearfix">
+        <div id="breadcrumbs" class="fixed">
+            <ul id="breadcrumb" class="breadcrumb">
+            </ul> <!--.breadcrumb-->
+            <div class="hardrefresh breadcrumb" style="display:none">
+                <span> <i class="icon-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span>
+                <span class="loading"><i class="icon-spinner icon-spin"></i></span>
+                <span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span>
+            </div>
+            <div id="nav-search">
+                <form id="search-form" onsubmit="searchSiteMap();">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search Sitemap" class="input-small search-query" id="nav-search-input" autocomplete="off">
+                        <i class="icon-search" id="nav-search-icon"></i>
+                    </span>
+                </form>
+            </div> <!--#nav-search-->
+        </div>
+        <div id="page-content" class="clearfix">
+            <div id='content-container'></div>
+        </div>
+    </div> <!-- /.main-content -->
+</div> <!-- /.container-fluid #main-container -->
+<a href="#" id="back-to-top"><i class="icon-double-angle-up icon-only bigger-110"></i>​&nbsp; Back to Top</a>
+
+<script type="text/x-handlebars-template" id="monitor-menu-template">
+    <li class="head">
+        <a data-link="javascript:loadFeature({p:'mon_infra_dashboard'})">
+            <span> Monitor </span>
+            <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
+                <i class="icon-chevron-left"></i>
+            </span>
+        </a>
+    </li>
+    <li class="item">
+        <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'mon_infra_dashboard'})">
+            <i class="icon-desktop"></i>
+            <span>Infrastructure </span>
+        </a>
+        <ul id="mon_infra" class="submenu">
+            <li id="mon_infra_dashboard">
+                <a href="javascript:loadFeature({p:'mon_infra_dashboard'})">
+                     Dashboard
+                </a>
+            </li>
+            <li id="mon_infra_control">
+                <a href="javascript:loadFeature({p:'mon_infra_control',q:{node:'Control Nodes'}})">
+                     Control Nodes
+                </a>
+            </li>
+            <li id="mon_infra_compute">
+                <a href="javascript:loadFeature({p:'mon_infra_compute',q:{node:'vRouters'}})">
+                     Virtual Routers
+                </a>
+            </li>
+            <li id="mon_infra_analytics">
+                <a href="javascript:loadFeature({p:'mon_infra_analytics',q:{node:'Analytics Nodes'}})">
+                     Analytics Nodes
+                </a>
+            </li>
+            <li id="mon_infra_config">
+                <a href="javascript:loadFeature({p:'mon_infra_config',q:{node:'Config Nodes'}})">
+                     Config Nodes
+                </a>
+            </li>
+        </ul>
+    </li>
+    {{#IfCompare globalObj.orchModel 'openstack' operator="=="}}
+        <li class="item">
+            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'mon_net_dashboard',q:{fqName:'default-domain'}})">
+                <i class="icon-sitemap"></i>
+                <span>Networking </span>
+            </a>
+            <ul id="mon_net" class="submenu">
+                <li id="mon_net_dashboard">
+                    <a href="javascript:loadFeature({p:'mon_net_dashboard',q:{fqName:'default-domain'}})">
+                         Dashboard
+                    </a>
+                </li>
+            </ul>
+            <ul id="mon_net" class="submenu">
+                <li id="mon_net_projects">
+                    <a href="javascript:loadFeature({p:'mon_net_projects',q:{view:'list',type:'project',source:'uve',context:'',fqName:''}})">
+                         Projects
+                    </a>
+                </li>
+            </ul>
+            <ul id="mon_net" class="submenu">
+                <li id="mon_net_networks">
+                    <a href="javascript:loadFeature({p:'mon_net_networks',q:{view:'list',type:'network',source:'uve'}})">
+                         Networks
+                    </a>
+                </li>
+            </ul>
+            <ul id="mon_net" class="submenu">
+                <li id="mon_net_instances">
+                    <a href="javascript:loadFeature({p:'mon_net_instances',q:{view:'list',type:'instance',source:'uve'}})">
+                         Instances
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="item">
+            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'mon_debug_pcapture'})">
+                <i class="icon-puzzle-piece"></i>
+                <span>Debug</span>
+            </a>
+            <ul id="mon_debug" class="submenu">
+                <li id="mon_debug_pcapture">
+                    <a href="javascript:loadFeature({p:'mon_debug_pcapture'})">
+                         Packet Capture
+                    </a>
+                </li>
+            </ul>
+        </li>
+    {{/IfCompare}}
+</script>
+
+<script type="text/x-handlebars-template" id="setting-menu-template">
+    <li class="head">
+        <a data-link="javascript:loadFeature({p:'setting_configdb_fqname'})">
+            <span>Setting</span>
+            <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
+                <i class="icon-chevron-left"></i>
+            </span>
+        </a>
+    </li>
+    <li class="item">
+        <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'setting_configdb_fqname'})">
+            <i class="icon-table"></i>
+            <span>Config DB</span>
+        </a>
+        <ul id="setting_configdb" class="submenu">
+            <li id="setting_configdb_fqname">
+                <a href="javascript:loadFeature({p:'setting_configdb_fqname'})">
+                    </i> FQ Name Table
+                </a>
+            </li>
+            <li id="setting_configdb_uuid">
+                <a href="javascript:loadFeature({p:'setting_configdb_uuid'})">
+                    </i> UUID Table
+                </a>
+            </li>
+        </ul>
+    </li>
+</script>
+
+<script type="text/x-handlebars-template" id="configure-menu-template">
+    <li class="head">
+        <a data-link="javascript:loadFeature({p:'config_infra_bgp'})">
+            <span> Configure </span>
+            <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
+                <i class="icon-chevron-left"></i>
+            </span>
+        </a>
+    </li>
+    <li class="item">
+        <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'config_infra_bgp'})">
+            <i class="icon-desktop"></i>
+            <span>Infrastructure </span>
+        </a>
+        <ul id="config_infra" class="submenu">
+            <li id="config_infra_bgp">
+                <a href="javascript:loadFeature({p:'config_infra_bgp'})">
+                     BGP Peer
+                </a>
+            </li>
+            <li id="config_infra_fwdoptions">
+                <a href="javascript:loadFeature({p:'config_infra_fwdoptions'})">
+                     Forwarding Options
+                </a>
+            </li>
+            <li id="config_infra_lls">
+                <a href="javascript:loadFeature({p:'config_infra_lls'})">
+                     Link Local Services
+                </a>
+            </li>
+        </ul>
+    </li>
+    {{#IfCompare globalObj.orchModel 'openstack' operator="=="}}
+        <li class="item">
+            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'config_net_vn'})">
+                <i class="icon-sitemap"></i>
+                <span>Networking </span>
+            </a>
+            <ul id="config_net" class="submenu">
+                <li id="config_net_vn">
+                    <a href="javascript:loadFeature({p:'config_net_vn'})">
+                         Networks
+                    </a>
+                </li>
+                <li id="config_net_policies">
+                    <a href="javascript:loadFeature({p:'config_net_policies'})">
+                         Policies
+                    </a>
+                </li>
+                <li id="config_net_ipam">
+                    <a href="javascript:loadFeature({p:'config_net_ipam'})">
+                         IP Address Management
+                    </a>
+                </li>
+                <li id="config_net_fip">
+                    <a href="javascript:loadFeature({p:'config_net_fip'})">
+                         Allocate Floating IPs
+                    </a>
+                </li>
+
+            </ul>
+        </li>
+        <li class="item">
+            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'config_sc_svctemplate'})">
+                <i class="icon-link"></i>
+                <span>Services </span>
+            </a>
+            <ul id="config_sc" class="submenu">
+                <li id="config_sc_svctemplate">
+                    <a href="javascript:loadFeature({p:'config_sc_svctemplate'})">
+                         Service Templates
+                    </a>
+                </li>
+                <li id="config_sc_svcInstances">
+                    <a href="javascript:loadFeature({p:'config_sc_svcInstances'})">
+                         Service Instances
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="item">
+            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'config_dns_dnsservers'})">
+                <i class="icon-globe"></i>
+                <span>DNS </span>
+            </a>
+            <ul id="config_dns" class="submenu">
+                <li id="config_dns_dnsservers">
+                    <a href="javascript:loadFeature({p:'config_dns_dnsservers'})">
+                         Servers
+                    </a>
+                </li>
+           <li id="config_dns_dnsrecords">
+                    <a href="javascript:loadFeature({p:'config_dns_dnsrecords'})">
+                         Records
+                    </a>
+               </li>
+               <li class="hide"  id="config_dynamic_dnsrecords">
+                    <a href="javascript:loadFeature({p:'config_dynamic_dnsrecords'})">
+                         Active DNS Database
+                    </a>
+               </li>
+            </ul>
+        </li>
+    {{/IfCompare}}
+</script>
+
+<script type="text/x-handlebars-template" id="query-menu-template">
+    <li class="head">
+        <a data-link="javascript:loadFeature({p:'query_flow_series'})">
+            <span> Query </span>
+            <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
+                <i class="icon-chevron-left"></i>
+            </span>
+        </a>
+    </li>
+    <li class="item">
+        <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'query_flow_series'})">
+            <i class="icon-exchange"></i>
+            <span>Flows</span>
+        </a>
+        <ul id="query_flow" class="submenu">
+            <li id="query_flow_series">
+                <a href="javascript:loadFeature({p:'query_flow_series'})">
+                    </i> Flow Series
+                </a>
+            </li>
+            <li id="query_flow_records">
+                <a href="javascript:loadFeature({p:'query_flow_records'})">
+                    </i> Flow Records
+                </a>
+            </li>
+            <li id="query_flow_queue">
+                <a href="javascript:loadFeature({p:'query_flow_queue'})">
+                    </i> Query Queue
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="item">
+        <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'query_log_system'})">
+            <i class="icon-hdd"></i>
+            <span>Logs</span>
+        </a>
+        <ul id="query_log" class="submenu">
+            <li id="query_log_system">
+                <a href="javascript:loadFeature({p:'query_log_system'})">
+                    </i> System Logs
+                </a>
+            </li>
+            <li id="query_log_object">
+                <a href="javascript:loadFeature({p:'query_log_object'})">
+                    </i> Object Logs
+                </a>
+            </li>
+            <li id="query_log_queue">
+                <a href="javascript:loadFeature({p:'query_log_queue'})">
+                    </i> Query Queue
+                </a>
+            </li>
+        </ul>
+    </li>
+    {{#if globalObj.enable_stat_queries}}
+        <li class="item">
+            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'query_stat_cpuinfo'})">
+                <i class="icon-dashboard"></i>
+                <span>Statistics</span>
+            </a>
+            <ul id="query_stat" class="submenu">
+                <li id="query_stat_cpuinfo">
+                    <a href="javascript:loadFeature({p:'query_stat_cpuinfo'})">
+                        </i> CPU Information
+                    </a>
+                </li>
+                <li id="query_stat_qeperf">
+                    <a href="javascript:loadFeature({p:'query_stat_qeperf'})">
+                        </i> QE Performance
+                    </a>
+                </li>
+                <li id="query_stat_smsg">
+                    <a href="javascript:loadFeature({p:'query_stat_smsg'})">
+                        </i> Sandesh Messages
+                    </a>
+                </li>
+                <li id="query_stat_uvevnagent">
+                    <a href="javascript:loadFeature({p:'query_stat_uvevnagent'})">
+                        </i> VN Agent
+                    </a>
+                </li>
+                <li id="query_stat_queue">
+                    <a href="javascript:loadFeature({p:'query_stat_queue'})">
+                        </i> Query Queue
+                    </a>
+                </li>
+            </ul>
+        </li>
+    {{/if}}
+</script>
+
+<script type="text/x-handlebars-template" id="current-breadcrumb">
+ {{#each this}}
+   {{#if @last}}
+      <li class="active">
+          <a href={{href}}>{{link}}</a>
+      </li>
+   {{else}}
+      <li>
+          <a href={{href}}>{{link}}</a>
+          <span class="divider"><i class="icon-angle-right"></i></span>
+      </li>
+   {{/if}}
+ {{/each}}
+</script>
+
+<script type="text/x-handlebars-template" id="dashboard-template">
+    <div class="row-fluid">
+        <div id="dashboard-box" class="widget-box transparent">
+            {{#IfCompare noTitle null operator="=="}}
+                <div class="widget-header">
+                    <h4 class="smaller">
+                        {{#if widgetBoxId}}
+                            <i id="{{widgetBoxId}}-loading" class="icon-spinner icon-spin blue bigger-125" style="display:none"></i>
+                        {{/if}}
+                        {{#if title}}
+                            {{title}}
+                        {{else}}
+                            Information
+                        {{/if}}
+                    </h4>
+                    <div class="widget-toolbar pull-right">
+                        <a  data-action="collapse">
+                            <i class="icon-chevron-up"></i>
+                        </a>
+                    </div>
+                    {{#if showSettings}}
+                        <div class="widget-toolbar pull-right">
+                            <a data-action="settings" data-toggle="dropdown">
+                                <i class="icon-cog"></i>
+                            </a>
+                            <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">
+                                <li>
+                                    <a onclick="showBasicDetails();">
+                                        <i class="icon-list"></i> &nbsp; Basic view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a onclick="showAdvancedDetails();">
+                                        <i class="icon-code"></i> &nbsp; Advanced view
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {{/if}}
+                </div>
+            {{/IfCompare}}
+            <div class="widget-body">
+            </div><!--/widget-body-->
+        </div><!--/widget-box-->
+    </div><!--/row-->
+</script>
+
+<script type="text/x-handlebars-template" id="no-data">
+    <div class='no-data-text'>No Statistics available for this duration</div>
+</script>
+
+<script type="text/x-handlebars-template" id="title-lblval-tooltip-template">
+<div class="row-fluid chart-tooltip" style="width:250px;">
+    {{#each this}}
+        {{#IfCompare @index 0}}
+            <div class="row-fluid chart-tooltip-title">
+                <p>{{value}}</p>
+            </div>
+            <div class="row-fluid chart-tooltip-body ">
+        {{else}}
+                <div class="row-fluid chart-tooltip-row" >
+                    <span class="key span4" style="min-height:20px;">{{lbl}}:</span>
+                    <span class="value span8" style="min-height:20px;">{{value}}</span>
+                </div>
+        {{/IfCompare}}
+    {{/each}}
+        </div>
+</div>
+</script>
+
+<script type="text/x-handlebars-template" id="overlapped-bubble-tooltip">
+<div id="overlapped-bubble-wrapper" class="enabledPointer">
+     <div class="row-fluid" >
+        <div class="left-arrow-wrapper">
+            <div class="left-arrow">
+                <i class="icon-chevron-left" style="font-size: 20px;"></i>
+            </div>
+        </div>
+        <div class="tooltip-wrapper">
+          {{#each content}}
+              {{> scatterTooltip}}
+          {{/each}}
+        </div>
+        <div class="right-arrow-wrapper">
+            <div class="close-button">
+                <button type="button" id="overlapClosebutton" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+            </div>
+            <div class="right-arrow">
+                <i class="icon-chevron-right" style="font-size: 20px;"></i>
+            </div>
+        </div>
+     </div>
+     <div class="row-fluid pagecount">
+        <span class="pull-right">{{pagestr}}</span>
+    </div>
+</div>
+</script>
+
+
+<script type="text/x-handlebars-template" id="title-lblval-tooltip-template_new">
+<div class="row-fluid chart-tooltip">
+ {{#each this}}
+    {{#IfCompare @index 0 }}
+        <div class="row-fluid chart-tooltip-title">
+            <p>{{value}}</p>
+        </div>
+    {{/IfCompare}}
+    {{#IfCompare @index 0 operator='!='}}
+    <div class="row-fluid chart-tooltip-body ">
+        <div class="row-fluid chart-tooltip-row">
+            {{#IfCompare lbl '' operator='!='}}
+            <span class="key">{{lbl}}:</span>
+            {{/IfCompare}}
+            <span class="value">{{value}}</span>
+        </div>
+    </div>
+    {{/IfCompare}}
+ {{/each}}   
+</div>
+</script>
+
+<script type="text/x-handlebars-template" id="sparkline-template">
+    <div id={{id}} class="infobox infobox-blue infobox-dynamic">
+        <div class="infobox-chart">
+            <span class="sparkline"></span>
+        </div>
+
+        <div class="infobox-data">
+            <span class="infobox-data-number">{{totalCnt}}</span>
+            <div class="infobox-content">{{title}}</div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="lblval-tooltip-template">
+<div class="row-fluid chart-tooltip">
+    <div class="row-fluid chart-tooltip-body ">
+     {{#each this}}
+         <div class="row-fluid chart-tooltip-row">
+             <span class="key">{{lbl}}</span>
+             <span class="value"> {{value}}</span>
+         </div>
+       {{/each}} 
+    </div>
+</div>
+</script>
+
+<!--JQuery Scripts-->
+<!-- Start dev_env --> 
+<script src="/assets/jquery/js/jquery-1.8.3.min.js?built_at=1398860488"></script>
+<!-- End dev_env -->
+<!--
+<script src="/assets/jquery/assets/js/jquery-1.9.1.min.js?built_at=1398860488"></script>
+-->
+<!-- Start dev_env --> 
+<script src="/assets/jquery/js/jquery.xml2json.js?built_at=1398860488"></script>
+<script src="/assets/jquery/js/jquery.ba-bbq.min.js?built_at=1398860488"></script>
+<script src="/assets/jquery/js/jquery.timer.js?built_at=1398860488"></script>
+<script src="/assets/jquery-ui/js/jquery-ui.js?built_at=1398860488"></script>
+<script src="/assets/jquery/js/jquery.ui.touch-punch.min.js?built_at=1398860488"></script>
+<!-- End dev_env -->
+
+<!--Bootstrap Scripts-->
+<!-- Start dev_env --> 
+<script src="/assets/bootstrap/js/bootstrap.min.js?built_at=1398860488"></script>
+<!-- End dev_env -->
+
+<!--D3 Scripts-->
+<!-- Start dev_env --> 
+<script src="/assets/d3/js/d3.js?built_at=1398860488"></script>
+<script src="/assets/nvd3/js/nv.d3.js?built_at=1398860488"></script>
+<script src="/assets/crossfilter/js/crossfilter.min.js?built_at=1398860488"></script>
+<!-- End dev_env -->
+
+<!--Utils Scripts-->
+<!-- Start dev_env -->
+<script src="/js/jsonpath-0.8.0.js?built_at=1398860488"></script>
+<script src="/js/xdate.js?built_at=1398860488"></script>
+<script src="/assets/jquery/js/jquery.validate.js?built_at=1398860488"></script>
+<script src="/assets/handlebars/handlebars-v1.3.0.js?built_at=1398860488"></script>
+<script src="/assets/knockout/knockout-3.0.0.js?built_at=1398860488"></script>
+<script src="/assets/select2/js/select2.min.js?built_at=1398860488"></script>
+<script src="/assets/slickgrid/js/jquery.event.drag-2.2.js?built_at=1398860488"></script>
+<script src="/assets/slickgrid/js/jquery.json-2.3.min.js?built_at=1398860488"></script>
+<script src="/assets/slickgrid/js/jquery.dropkick-1.0.0.js?built_at=1398860488"></script>
+<script src="/assets/slickgrid/js/slick.core.js?built_at=1398860488"></script>
+<script src="/assets/slickgrid/js/slick.grid.js?built_at=1398860488"></script>
+<script src="/assets/slickgrid/js/slick.dataview.js?built_at=1398860488"></script>
+<script src="/assets/slickgrid/js/slick.enhancementpager.js?built_at=1398860488"></script>
+<script src="/assets/datetimepicker/js/jquery.datetimepicker.js?built_at=1398860488"></script>
+<script src="/assets/moment/moment.js?built_at=1398860488"></script>
+<script src="/assets/2way-multiselect/js/multiselect.js?built_at=1398860488"></script>
+<!-- End dev_env -->
+
+<!-- Start prod_env
+<script src="/js/contrail-all-1.js?built_at=1398860488"></script>
+<script src="/js/contrail-all-2.js?built_at=1398860488"></script>
+<script src="/js/contrail-all-3.js?built_at=1398860488"></script>
+<script src="/js/contrail-all-4.js?built_at=1398860488"></script>
+End prod_env -->
+
+<!--Contrail Scripts-->
+<!-- Start dev_env -->
+<script src="/js/contrail-common.js"></script>
+<script src="/js/handlebars-utils.js?built_at=1398860488"></script>
+<script src="/js/select2-utils.js?built_at=1398860488"></script>
+<script src="/js/slickgrid-utils.js?built_at=1398860488"></script>
+<script src="/js/contrail-elements.js?built_at=1398860488"></script>
+<script src="/js/topology_api.js?built_at=1398860488"></script>
+<script src="/js/web-utils.js?built_at=1398860488"></script>
+<script src="/js/contrail-layout.js?built_at=1398860488"></script>
+<script src="/js/config_global.js?built_at=1398860488"></script>
+<script src="/js/protocol.js?built_at=1398860488"></script>
+<script src="/js/qe-utils.js?built_at=1398860488"></script>
+<script src="/js/nvd3-plugin.js?built_at=1398860488"></script>
+<script src="/js/d3-utils.js?built_at=1398860488"></script>
+<script src="/js/analyzer-utils.js?built_at=1398860488"></script>
+<!-- End dev_env -->
+
+<!--[if lte IE 8]>
+<script src="/js/"></script>
+<![endif]-->
+<script type="text/javascript">
+    var built_at=1398860488;
+</script>
+<!-- Start prod_env
+<script src="/js/contrail-all-5.js?built_at=1398860488"></script>
+End prod_env -->
+
+</body>
+</html>
