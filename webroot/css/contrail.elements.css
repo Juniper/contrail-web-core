@@ -34,6 +34,12 @@ pre {
 pre i{
 	font-size: 8px;
 }
+.key-value {
+	display: block;
+}
+.expander, .collapser {
+	cursor: pointer;
+}
 /* header sizes */
 h1 {
   font-size: 32px;

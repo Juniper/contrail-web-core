@@ -846,7 +846,16 @@ filter: alpha(opacity=40);
   	vertical-align: top;
   	margin: 0 auto;
 }
-
+/* End - Chart Classes*/
+/* Flow Chart Classes*/
+.chart-load-status{
+	padding: 5px;
+}
+.chart-load-status p{
+	margin: 0;
+	color: #3182bd;
+}
+/* End Flow Chart Classes*/
 /* Topology */
 .topology{
 	margin:auto;	
@@ -887,9 +896,10 @@ rect.bordered {
 	padding-right: 30px;
 	resize: none;
 }
-.or-clause-item:nth-child(odd) {background: #eee;}
-.or-clause-item:last-child {background:#fff;}
-/* .or-clause-item, .and-clause-item{
+.or-clause-item{background: #fff;}
+.or-clause-item.open {background: #eee;}
+/* .or-clause-item:last-child {background:#fff;}
+ *//* .or-clause-item, .and-clause-item{
 	margin: 5px 0;
 } */
 .or-clause-item{
@@ -902,14 +912,28 @@ rect.bordered {
 	margin-left: 0.5%;
 	width: 93.5%;
 }
-.or-clauses .or-clause-item:first-child .or-text, .and-clauses .and-clause-item:first-child .and-text{
+.or-clauses .or-text:first-child {
+	display: none;
+}
+.and-clause-item {
+	margin: 0 5px;
+}
+.and-clauses .and-clause-item:first-child .and-text{
 	visibility: hidden;
 }
-.and-clause-item .and-text, .or-clause-item .or-text {
+.and-clause-item .and-text{
+	font-size: 14px;
 	text-align: center;
-	font-size: 15px;
 	color: #555;
+	padding: 5px 0;
 }
+.or-text {
+	font-size: 14px;
+	color: #000;
+	padding: 5px 0;
+	font-weight: bold;
+}
+
 .and-clause-item .new-and-text {
 	padding: 0 2px;
 }
