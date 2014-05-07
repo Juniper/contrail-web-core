@@ -11,10 +11,10 @@ var featureTitle = {
 var serializer = new XMLSerializer(),
     domParser = new DOMParser(),
     loadingOTGridColumns = [
-        { field:"MessageTS", title:"Time", width:"210px" },
-        { field:"Source", title:"Source", width:"210px" },
-        { field:"ModuleId", title:"Module Id", width:"210px" },
-        { field:"Xmlmessage", title:"Log" }
+        {id:"MessageTS", field:"MessageTS", name:"Time", width:210 },
+        {id:"Source", field:"Source", name:"Source", width:210 },
+        {id:"ModuleId", field:"ModuleId", name:"Module Id", width:210 },
+        {id:"Xmlmessage", field:"Xmlmessage", name:"Log" }
     ],
     placeHolders = {"Xmlmessage": ["Use RegEx= operator to search Xmlmessage"], "ObjectLog": ["Use RegEx= operator to search ObjectLog"], "SystemLog": ["Use RegEx= operator to search SystemLog"], "protocol_sport":["Protocol", "Any Source Port"], "protocol_dport":["Protocol", "Any Destination Port"], "sourcevn_sourceip":["Source VN", "Any Source IP"], "destvn_destip":["Destination VN", "Any Destination IP"]},
     flowWhereFields = [
@@ -1497,16 +1497,6 @@ function loadOTGrid(options, rows, columns) {
     		},
     		dataSource:{
     	        data: rows,
-    	        events: {
-//                    onDataBoundCB: function() {
-//                    	$('#ot-results').find('pre').each(function(){
-//                    		var syntaxedJsonObj = $(this).children().children();
-//                    	    syntaxedJsonObj.find('.preBlock').children('.expanded').hide();
-//                    	    syntaxedJsonObj.find('.preBlock').children('.collapsed').show();
-//                    	    syntaxedJsonObj.find('.preBlock').children('i').removeClass('icon-minus').addClass('icon-plus');
-//                        });
-//                    }
-    	        }
     	    },
             statusMessages: {
             	queued: {
