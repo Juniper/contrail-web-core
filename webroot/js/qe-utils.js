@@ -1381,7 +1381,7 @@ function push2OTColumns(columnArray, newColumnName, columns, selectedFieldName, 
             	formatter: function(r, c, v, cd, dc) {
         			var returnString = '';
             		if(typeof dc[newColumnName] !== "undefined") {
-            			returnString = contrail.formatJSON2HTML(dc[newColumnName],1); 
+            			returnString = contrail.formatJSON2HTML(dc[newColumnName],2); 
         			}
             		return returnString;
             	},
