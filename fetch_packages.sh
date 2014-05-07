@@ -1,3 +1,6 @@
+#
+# Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+#
 #function to check if the file checksum is correct
 rm -rf web-third-party
 
