@@ -142,10 +142,10 @@ tar -xf 3.4.6.tar.gz
 rm -rf 3.4.6.tar.gz
 mv select2-3.4.6 select2-v3.4.6
 
-wget --no-check-certificate https://github.com/mleibman/SlickGrid/archive/2.1.0.tar.gz -O 2.1.0.tar.gz
-tar -xf 2.1.0.tar.gz
-rm -rf 2.1.0.tar.gz
-mv SlickGrid-2.1.0 slickgrid-v2.1.0
+wget --no-check-certificate https://github.com/Juniper/SlickGrid/archive/master.tar.gz -O SlickGrid-master.tar.gz
+tar -xf SlickGrid-master.tar.gz
+rm -rf SlickGrid-master.tar.gz
+mv SlickGrid-master slickgrid-v2.1.0
 patch -p1 -N < ../distro/patches/slickgrid_v2.1.0.patch
 if [ $? -ne 0 ] ; then
     echo "slickgrid - patch apply failed"
