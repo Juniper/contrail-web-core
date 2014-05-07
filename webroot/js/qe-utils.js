@@ -1113,6 +1113,7 @@ function createDeleteConfirmWindow(queueId,gridCheckedRows) {
 		        var postDataJSON = {queryQueue: queueId, queryIds: queryIds};
 		        doAjaxCall(url, "DELETE", JSON.stringify(postDataJSON), "successDelQueryQueueCache", "failureDelQueryQueueCache", null, {gridId: queueId + "-results", queueId: queueId, checkedRows: gridCheckedRows});
 		        $('#' + queueId + '-del-confirmation').modal('hide');
+                $('#btnDeleteQueryQueue').addClass('disabled-link');
 			},
 			className: 'btn-primary'
 		}]

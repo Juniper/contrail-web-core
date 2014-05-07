@@ -116,7 +116,7 @@ function getDefaultGridConfig() {
                         },
                         successCallback: function (response) {
                             if(response.length == 0){
-                                gridContainer.data('contrailGrid').showGridMessage('empty');
+                                emptyGridHandler();
                             } else {
                                 gridContainer.data('contrailGrid').removeGridMessage();
                                 gridContainer.find('grid-footer').show();
@@ -132,7 +132,7 @@ function getDefaultGridConfig() {
                         },
                         refreshSuccessCallback: function (response, refreshDataOnly) {
                             if(response.length == 0){
-                                gridContainer.data('contrailGrid').showGridMessage('empty');
+                                emptyGridHandler();
                             }
                             //gridContainer.find('.grid-load-status').before('<div class="grid-body"></div>');
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestSuccessCB)) {
@@ -144,7 +144,7 @@ function getDefaultGridConfig() {
                             stopAutoRefresh();
                             var errorMsg = contrail.parseErrorMsgFromXHR(xhr);
                             showMessagePopup('Error', 'Error in run query: ' + errorMsg);
-                            gridContainer.data('contrailGrid').showGridMessage('error','Error: ' + errorMsg);
+                            errorGridHandler(errorMsg);
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestErrorCB)) {
                                 gridDataSource.events.onRequestErrorCB();
                             }
@@ -564,9 +564,10 @@ function getDefaultGridConfig() {
 
                     gridContainer.data('contrailGrid').removeGridMessage();
                     if(dataView.getLength() == 0){
-                        gridContainer.data('contrailGrid').showGridMessage('empty');
+                        emptyGridHandler();
                     } else {
                         gridContainer.find('.grid-footer').show();
+                        onDataGridHandler();
                     }
                 }
             };
@@ -873,6 +874,25 @@ function getDefaultGridConfig() {
                     gridActionId.remove();
                 });
             });
+        };
+        function emptyGridHandler(){
+            gridContainer.data('contrailGrid').showGridMessage('empty');
+            if(gridOptions.checkboxSelectable != false) {
+                gridContainer.find('.headerRowCheckbox').attr('disabled', true);
+            }
+        };
+
+        function errorGridHandler(errorMsg){
+            gridContainer.data('contrailGrid').showGridMessage('error','Error: ' + errorMsg);
+            if(gridOptions.checkboxSelectable != false) {
+                gridContainer.find('.headerRowCheckbox').attr('disabled', true);
+            }
+        };
+
+        function onDataGridHandler(){
+            if(gridOptions.checkboxSelectable != false) {
+                gridContainer.find('.headerRowCheckbox').removeAttr('disabled');
+            }
         };
     };
 }(jQuery));
