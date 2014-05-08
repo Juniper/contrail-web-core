@@ -97,6 +97,9 @@ cp -r ./web-third-party/select2-v3.4.6/select2-bootstrap.css webroot/assets/sele
 cp -r ./web-third-party/select2-v3.4.6/select2.png webroot/css/select2.png
 cp -r ./web-third-party/select2-v3.4.6/select2x2.png webroot/css/select2x2.png
 cp -r ./web-third-party/select2-v3.4.6/select2-spinner.gif webroot/css/select2-spinner.gif
+cp -r ./web-third-party/select2-v3.4.6/select2.png webroot/assets/select2/styles/select2.png
+cp -r ./web-third-party/select2-v3.4.6/select2x2.png webroot/assets/select2/styles/select2x2.png
+cp -r ./web-third-party/select2-v3.4.6/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
 #End - Copy Select2 from web-third-party
 
 #Start - Copy 2way-Multiselect from web-third-party
