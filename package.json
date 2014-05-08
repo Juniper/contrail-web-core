@@ -28,7 +28,8 @@
     "uuid-js": "0.7.4",
     "xml2js": "0.2.3",
     "redis-rstream": "0.1.2",
-    "connect-redis": "1.4.5"
+    "connect-redis": "1.4.5",
+    "request-timeout": "0.0.2"
   },
   "devDependencies": {
     "grunt": "0.4.2",
