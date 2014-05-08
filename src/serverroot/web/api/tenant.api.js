@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
 var rest = require('../../common/rest.api'),
@@ -901,105 +901,6 @@ function parsePingResponses (pingResps)
     return results;
 }
 
-/** 
- * Function: doPing
- * public function
- * 1. This function is used to handle a ping request coming from Web UI
- */
-function doPing (req, res) 
-{
-    var strArr = [];
-    var index  = 0;
-    var resultJSON = {};
-    var ip = req.param('ip');
-    var srcIP = req.param('srcIP');
-    var srcPort = req.param('srcPort');
-    var destIP = req.param('destIP');
-    var destPort = req.param('destPort');
-    var protocol = req.param('protocol');
-    var vrfName = req.param('vrfName');
-    var pktSize = req.param('pktSize');
-    var count = req.param('count');
-    var interval = req.param('interval');
-    var urlLists = [];
-    var ping_async_cb_timeout = 115000; /* 1 Minute 55 Seconds */
-
-    if (ip == null) {
-        strArr[index++] = 'vRouter IP';
-    }
-    if (srcIP == null) {
-        strArr[index++] = 'Source IP';
-    }
-    if (destIP == null) {
-        strArr[index++] = 'Dest IP';
-    }
-    if (protocol == null) {
-        strArr[index++] = 'Protocol';
-    }
-    if (vrfName == null) {
-        strArr[index++] = 'vrfName';
-    }
-    var len = strArr.length;
-    if (len > 0) {
-        /* Some info missing */
-        var str = strArr.join(', ');
-        var error = new appErrors.RESTServerError('Field(s) ' + "'" + str + "'"
-                                                  + ' mandatory');
-        commonUtils.handleJSONResponse(error, res, null);
-        return;
-    }
-
-    /* Defaults will be taken care by Agent */
-    if (srcPort == null) {
-        srcPort ="";
-    }
-    if (destPort == null) {
-        destPort = "";
-    }
-    if (pktSize == null) {
-        pktSize = "";
-    }
-    if (count == null) {
-        count = "";
-    }
-    if (interval == null) {
-        interval = "";
-    }
-
-    var url = ip + '@' + global.SANDESH_COMPUTE_NODE_PORT + '@' +
-        '/Snh_PingReq?source_ip=' + srcIP + '&source_port=' + srcPort +
-        '&dest_ip=' + destIP + '&dest_port=' + destPort + '&protocol=' +
-        protocol + '&vrf_name=' + vrfName + '&packet_size=' + pktSize +
-        '&count=' + count + '&interval=' + interval;
-
-    urlLists[0] = url;
-    async.map(urlLists,
-              commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, true,
-                                                    ping_async_cb_timeout),
-              function(err, results) {
-        if ((err) || (null == results)) {
-            commonUtils.handleJSONResponse(err, res, null);
-            return;
-        }
-        try {
-            var errResp = results[0]['PingErrResp']['error_response'][0]['_'];
-            /* Check if it is error response */
-            var error = new appErrors.RESTServerError(errResp);
-            commonUtils.handleJSONResponse(error, res, null);
-            return;
-        } catch(e) {
-            /* No Error */
-            pingResp = jsonPath(results, "$..PingResp");
-            resultJSON['pingResp'] = [];
-            resultJSON['pingResp'] = parsePingResponses(pingResp);
-            pingSummResp = jsonPath(results, "$..PingSummaryResp");
-            resultJSON['pingSummResp'] = [];
-            resultJSON['pingSummResp'] = parsePingResponses(pingSummResp);
-            commonUtils.handleJSONResponse(null, res, resultJSON);
-        }
-    });
-}
-
 exports.getVMState = getVMState;
 exports.getVNState = getVNState;
 exports.getProjectData = getProjectData;
@@ -1016,5 +917,4 @@ exports.getNetworkDomainSummary = getNetworkDomainSummary;
 exports.getNetworkDetails = getNetworkDetails;
 exports.populateInOutTraffic = populateInOutTraffic;
 exports.populateVNVMData = populateVNVMData;
-exports.doPing = doPing;
 

@@ -1,20 +1,14 @@
+#
+# Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+#
 #function to check if the file checksum is correct
 rm -rf web-third-party
 
-INSTALL_DIR=$PWD/../build/contrail-web-third-party
-PATH=$INSTALL_DIR/bin:$PATH
 if command -v npm >/dev/null 2; then {
-    echo "Node already installed"
+    echo "npm already installed"
 } else {
-    mkdir -p $INSTALL_DIR
-
-    echo "Installing NodeJS ..."
-    cd ../third_party/node-v*
-    ./configure --prefix=$INSTALL_DIR
-    make
-    make install
-    echo "Installed NodeJS"
-    cd -
+    echo "error: Failed dependencies: npm is needed";
+    exit 1
 }
 fi
 
@@ -66,6 +60,16 @@ wget --no-check-certificate http://getbootstrap.com/2.3.2/assets/bootstrap.zip -
 unzip -o bootstrap.zip
 rm -rf bootstrap.zip
 mv bootstrap bootstrap-v2.3.2
+
+mkdir -p xdate/js
+cd xdate/js
+wget --no-check-certificate http://arshaw.com/xdate/downloads/0.7/xdate.js
+cd -
+
+mkdir -p jsonpath/js
+cd jsonpath/js
+wget --no-check-certificate https://jsonpath.googlecode.com/files/jsonpath-0.8.0.js.txt -O jsonpath-0.8.0.js
+cd -
 
 mkdir jquery
 cd jquery

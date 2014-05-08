@@ -1,5 +1,5 @@
 <!--
- Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
 -->
 
 <urlLists>
@@ -102,12 +102,12 @@
     <require>
         <define>timeout</define>
         <!-- Available tags for timeout
-            timeout         - Request timeout in milli seconds 
+            timeout         - Request timeout in seconds 
             timeoutCallback - Callback to be called once request times out, if
                               not provided, then default callback 
                               defHandleReqTimeout() gets called
          -->
-        <path>../../../../lib/request-timeout</path>
+        <path>request-timeout</path>
     </require>
     <require>
          <define>infra</define>
@@ -494,7 +494,7 @@
         <url>/api/admin/monitor/infrastructure/vrouters/cached-summary</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <callback>infra.getvRoutersSummaryByJob</callback>
     </item>
     <item>
@@ -502,7 +502,7 @@
         <url>/api/admin/monitor/infrastructure/vrouters/cached-generators</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <callback>infra.getvRouterGenerators</callback>
     </item>
     <item>
@@ -978,7 +978,7 @@
         <url>/api/tenants/config/service-instances-status/:id</url>
         <method>post</method>
         <feature>siconfig</feature>
-        <timeout>900000</timeout>
+        <timeout>900</timeout>
         <callback>siconfigapi.getServiceInstanceStatusByProject</callback>
     </item>
     <item>
@@ -1198,42 +1198,42 @@
     <item>
         <url>/api/admin/reports/query</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>query-engine</feature>
         <callback>qeapi.runGETQuery</callback>
     </item>
     <item>
         <url>/api/admin/reports/query</url>
         <method>post</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>query-engine</feature>
         <callback>qeapi.runPOSTQuery</callback>
     </item>
     <item>
         <url>/api/admin/reports/query/export</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>query-engine</feature>
         <callback>qeapi.exportQueryResult</callback>
     </item>
     <item>
         <url>/api/admin/reports/query/queue</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>query-engine</feature>
         <callback>qeapi.getQueryQueue</callback>
     </item>
     <item>
         <url>/api/admin/reports/query/flow-classes</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>query-engine</feature>
         <callback>qeapi.getFlowClasses</callback>
     </item>
     <item>
         <url>/api/admin/reports/query/chart-data</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>query-engine</feature>
         <callback>qeapi.getChartData</callback>
     </item>
@@ -1289,35 +1289,35 @@
     <item>
       <url>/api/tenant/networking/domain/stats/top</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getTopNetworkDetailsByDomain</callback>
     </item>
     <item>
       <url>/api/tenant/networking/project/stats/top</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getTopNetworkDetailsByProject</callback>
     </item>
     <item>
         <url>/api/tenant/networking/flow-series/vn</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getFlowSeriesByVN</callback>
     </item>
     <item>
         <url>/api/tenant/networking/network/traffic-stat</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getTrafficStatBtnVns</callback>
     </item>
     <item>
         <url>/api/tenant/networking/network/stats/top</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getNetworStats</callback>
     </item> 
@@ -1348,56 +1348,56 @@
     <item>
         <url>/api/tenant/networking/vm/stats/top</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getTopNwDetailsByVM</callback>
     </item>
     <item>
         <url>/api/tenant/networking/flow-series/vm</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getFlowSeriesByVM</callback>
     </item>
     <item>
         <url>/api/tenant/networking/vm/stats/summary</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getVMStatsSummary</callback>
     </item>        
     <item>
         <url>/api/tenant/networking/network/connected/stats/summary</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getNetworkStatsSummary</callback>
     </item>        
     <item>
         <url>/api/tenant/networking/network/connected/stats/top</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getConnectedNWsStatsByType</callback>
     </item>
     <item>
         <url>/api/tenant/networking/stats/top/details</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getNetworkTopStatsDetails</callback>
     </item>
     <item>
         <url>/api/tenant/networking/network/connected/stats/details</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getAllConnNetStatDetails</callback>
     </item>
     <item>
         <url>/api/tenant/networking/network/flow-series/port</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getPortLevelFlowSeries</callback>
     </item>
@@ -1410,7 +1410,7 @@
     <item>
         <url>/api/tenant/networking/flow-series/cpu</url>
         <method>get</method>
-        <timeout>300000</timeout>
+        <timeout>300</timeout>
         <feature>monitoring</feature>
         <callback>nwMonApi.getFlowSeriesByCPU</callback>
     </item>
@@ -1438,12 +1438,6 @@
         <feature>monitoring</feature>
         <callback>nwMonApi.getInstanceDetails</callback>
     </item> 
-    <item>
-        <url>/api/service/networking/ping</url>
-        <method>get</method>
-        <feature>monitoring</feature>
-        <callback>tenantapi.doPing</callback>
-    </item>
     <item>
         <url>/api/service/networking/orchestration/model</url>
         <method>get</method>

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+# Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
 #
 
 REPORTER = dot
@@ -39,16 +39,18 @@ package:
 	rm -rf webroot/monitor
 	rm -rf webroot/reports
 	rm -rf webroot/setting
+	rm -rf webroot/menu.xml
 	cp -af ../$(WEBUICLIENT)/webroot/config webroot/.
 	cp -af ../$(WEBUICLIENT)/webroot/monitor webroot/.
 	cp -af ../$(WEBUICLIENT)/webroot/reports webroot/.
 	cp -af ../$(WEBUICLIENT)/webroot/setting webroot/.
 	cp -af ../$(WEBUICLIENT)/webroot/menu.xml webroot/menu.xml
 	./generate-files.sh
-	./dev-install.sh prod
+	./dev-install.sh
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env true
+	rm -rf web-third-party
 
 all:
 	mkdir -p webroot/html
@@ -56,7 +58,7 @@ all:
 	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
 	./generate-files.sh
-	./dev-install.sh dev
+	./dev-install.sh
 
 make-ln:
 	cp -af webroot/html/dashboard.html webroot/html/dashboard.tmpl
@@ -70,7 +72,7 @@ make-ln:
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
 	rm -f webroot/html/login-error.html
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
-	rm -f webroot/config webroot/monitor webroot/reports webroot/setting webroot/menu.xml
+	rm -rf webroot/config webroot/monitor webroot/reports webroot/setting webroot/menu.xml
 	ln -sf ../../$(WEBUICLIENT)/webroot/config webroot/config
 	ln -sf ../../$(WEBUICLIENT)/webroot/monitor webroot/monitor
 	ln -sf ../../$(WEBUICLIENT)/webroot/reports webroot/reports
@@ -94,22 +96,22 @@ prod-env:
 	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
 	./generate-files.sh
-	./dev-install.sh prod
+	./dev-install.sh
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env true
 	make make-ln
 
 rem-ts-dev:
-	./prod-dev.sh html/dashboard.html dev_env prod_env false
-	./prod-dev.sh html/login.html dev_env prod_env false
-	./prod-dev.sh html/login-error.html dev_env prod_env false
+	./prod-dev.sh webroot/html/dashboard.html dev_env prod_env false
+	./prod-dev.sh webroot/html/login.html dev_env prod_env false
+	./prod-dev.sh webroot/html/login-error.html dev_env prod_env false
 	make make-ln
 
 rem-ts-prod:
-	./prod-dev.sh html/dashboard.html prod_env dev_env false
-	./prod-dev.sh html/login.html prod_env dev_env false
-	./prod-dev.sh html/login-error.html prod_env dev_env false
+	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env false
+	./prod-dev.sh webroot/html/login.html prod_env dev_env false
+	./prod-dev.sh webroot/html/login-error.html prod_env dev_env false
 	make make-ln
 
 check: test
@@ -139,6 +141,21 @@ clean:
 	rm -f src/serverroot/web/routes/url.routes.js
 	rm -rf node_modules
 	rm -rf html
+	rm -rf webroot/assets/2way-multiselect
+	rm -rf webroot//assets/bootstrap
+	rm -rf webroot/assets/crossfilter
+	rm -rf webroot/assets/d3
+	rm -rf webroot/assets/datetimepicker
+	rm -rf webroot/assets/font-awesome
+	rm -rf webroot/assets/fonts-opensans
+	rm -rf webroot/assets/handlebars
+	rm -rf webroot/assets/jquery
+	rm -rf webroot/assets/jquery-ui
+	rm -rf webroot/assets/knockout
+	rm -rf webroot/assets/moment
+	rm -rf webroot/assets/nvd3
+	rm -rf webroot/assets/select2
+	rm -rf webroot/assets/slickgrid
 	rm -rf web-third-party 
 
 .PHONY: package dev-env prod-env test test-integration test-unit clean

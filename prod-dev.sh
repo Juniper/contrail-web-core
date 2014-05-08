@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+# Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
 #
 # This script is used to switch between production and dev environment
 #

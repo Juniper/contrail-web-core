@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ */
 function Utils() {
     var NULL = null;
     var NULL_STRING = "null";
