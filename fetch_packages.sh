@@ -70,6 +70,16 @@ unzip -o bootstrap.zip
 rm -rf bootstrap.zip
 mv bootstrap bootstrap-v2.3.2
 
+mkdir -p xdate/js
+cd xdate/js
+wget --no-check-certificate http://arshaw.com/xdate/downloads/0.7/xdate.js
+cd -
+
+mkdir -p jsonpath/js
+cd jsonpath/js
+wget --no-check-certificate https://jsonpath.googlecode.com/files/jsonpath-0.8.0.js.txt -O jsonpath-0.8.0.js
+cd -
+
 mkdir jquery
 cd jquery
 wget --no-check-certificate http://jquery-xml2json-plugin.googlecode.com/svn/trunk/jquery.xml2json.js 

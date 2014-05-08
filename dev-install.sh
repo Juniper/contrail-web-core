@@ -19,6 +19,14 @@ rm -rf webroot/assets/crossfilter
 mkdir -p webroot/assets/crossfilter/js
 cp -r ./web-third-party/crossfilter/crossfilter.min.js webroot/assets/crossfilter/js/
 
+rm -rf webroot/assets/xdate
+mkdir -p webroot/assets/xdate/js
+cp -r ./web-third-party/xdate/js/xdate.js webroot/assets/xdate/js/
+
+rm -rf webroot/assets/jsonpath
+mkdir -p webroot/assets/jsonpath/js
+cp -r ./web-third-party/jsonpath/js/jsonpath-0.8.0.js  webroot/assets/jsonpath/js/jsonpath-0.8.0.js
+
 rm -rf webroot/assets/nvd3
 mkdir -p webroot/assets/nvd3/js
 mkdir -p webroot/assets/nvd3/css
@@ -152,8 +160,8 @@ MAINFILE[7]=webroot/assets/d3/js/d3.js
 MAINFILE[8]=webroot/assets/nvd3/js/nv.d3.js
 
 MAINFILE[9]=webroot/assets/crossfilter/js/crossfilter.min.js
-MAINFILE[10]=webroot/js/jsonpath-0.8.0.js
-MAINFILE[11]=webroot/js/xdate.js
+MAINFILE[10]=webroot/assets/jsonpath/js/jsonpath-0.8.0.js
+MAINFILE[11]=webroot/assets/xdate/js/xdate.js
 MAINFILE[12]=webroot/assets/jquery/js/jquery.validate.js
 MAINFILE[13]=webroot/assets/handlebars/handlebars-v1.3.0.js
 MAINFILE[14]=webroot/assets/knockout/knockout-3.0.0.js
