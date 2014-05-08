@@ -1758,13 +1758,17 @@ function loadQueryQueue(options) {
     				icon: 'icon-list',
     				iconCssClass: 'blue'
     			},
-    			customControls: ['<a id="btnDeleteQueryQueue" onclick=deleteQueryCache4Queue("' + options.queueType + '"); title="Delete All Query Queue" class="disabled-link"><i class="icon-trash"></i></a>']
+    			customControls: ['<a id="btnDeleteQueryQueue" onclick=deleteQueryCache4Queue("' + options.queueType + '"); title="Delete All Query Queue" class="disabled-link"><i class="icon-trash"></i></a>'],
+    			defaultControls: {
+    				refreshable: true
+    			}
     		},
     		columnHeader: {
     			columns: getQueueColumnDisplay(options.elementId)
     		},
     		body: {
     			options: {
+    				autoRefresh: 60,
     				forceFitColumns: true,
     				checkboxSelectable: {
     					onNothingChecked: function(e){
