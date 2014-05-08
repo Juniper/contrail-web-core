@@ -587,11 +587,10 @@ function chartsParseFn(options, response) {
                         options: {
                             forceFitColumns:true,
                             enableColumnReorder:true,
-                            //rowHeight:30,
-                            autoHeight:true,
                             detail: !$.isEmptyObject(gridDetailConfig) ? gridDetailConfig : false,
                             sortable:true,
-                            lazyLoading: data['isAsyncLoad'] != null ? data['isAsyncLoad'] : false
+                            lazyLoading: data['isAsyncLoad'] != null ? data['isAsyncLoad'] : false,
+                            actionCell: data['config']['actionCell']
                         },
                         dataSource: dataSource,
                         statusMessages: {
