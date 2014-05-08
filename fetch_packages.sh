@@ -4,20 +4,11 @@
 #function to check if the file checksum is correct
 rm -rf web-third-party
 
-INSTALL_DIR=$PWD/../build/contrail-web-third-party
-PATH=$INSTALL_DIR/bin:$PATH
 if command -v npm >/dev/null 2; then {
-    echo "Node already installed"
+    echo "npm already installed"
 } else {
-    mkdir -p $INSTALL_DIR
-
-    echo "Installing NodeJS ..."
-    cd ../third_party/node-v*
-    ./configure --prefix=$INSTALL_DIR
-    make
-    make install
-    echo "Installed NodeJS"
-    cd -
+    echo "error: Failed dependencies: npm is needed";
+    exit 1
 }
 fi
 

@@ -7,7 +7,7 @@ module.exports = function( grunt ) {
     grunt.loadNpmTasks( "grunt-contrib-concat" );
     grunt.loadNpmTasks('grunt-contrib-jshint');
 
-    var UI_THIRD_PARTY = '../contrail-web-third-party/';
+    var UI_THIRD_PARTY = './web-third-party/';
     function process( code ) {
         return code
 
