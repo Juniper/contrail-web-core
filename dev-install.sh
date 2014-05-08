@@ -112,16 +112,16 @@ cp -r ./web-third-party/multiselect-v1.0/js/multiselect.js webroot/assets/2way-m
 rm -rf webroot/assets/slickgrid
 mkdir -p webroot/assets/slickgrid/js
 mkdir -p webroot/assets/slickgrid/styles
-cp -r ./web-third-party/slickgrid-v2.1.0/slick.core.js webroot/assets/slickgrid/js/slick.core.js
-cp -r ./web-third-party/slickgrid-v2.1.0/slick.grid.js webroot/assets/slickgrid/js/slick.grid.js
-cp -r ./web-third-party/slickgrid-v2.1.0/slick.dataview.js webroot/assets/slickgrid/js/slick.dataview.js
-cp -r ./web-third-party/slickgrid-v2.1.0/lib/jquery.event.drag-2.2.js webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
+cp -r ./web-third-party/jnpr_slickgrid/slick.core.js webroot/assets/slickgrid/js/slick.core.js
+cp -r ./web-third-party/jnpr_slickgrid/slick.grid.js webroot/assets/slickgrid/js/slick.grid.js
+cp -r ./web-third-party/jnpr_slickgrid/slick.dataview.js webroot/assets/slickgrid/js/slick.dataview.js
+cp -r ./web-third-party/jnpr_slickgrid/lib/jquery.event.drag-2.2.js webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
 
 cp -r ./web-third-party/slickgrid.enhancement.pager/slick.enhancementpager.js webroot/assets/slickgrid/js/slick.enhancementpager.js
 cp -r ./web-third-party/slickgrid.enhancement.pager/libs/jquery.json-2.3.min.js webroot/assets/slickgrid/js/jquery.json-2.3.min.js
 cp -r ./web-third-party/slickgrid.enhancement.pager/libs/jquery.dropkick-1.0.0.js webroot/assets/slickgrid/js/jquery.dropkick-1.0.0.js
 
-cp -r ./web-third-party/slickgrid-v2.1.0/slick.grid.css webroot/assets/slickgrid/styles/slick.grid.css
+cp -r ./web-third-party/jnpr_slickgrid/slick.grid.css webroot/assets/slickgrid/styles/slick.grid.css
 #End - Copy Slickgrid from web-third-party
 
 #Start - Cooy Datetimepicker from web-third-party
