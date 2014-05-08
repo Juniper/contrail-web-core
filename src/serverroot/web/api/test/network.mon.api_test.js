@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ */
 var nwMonApi = require('../network.mon.api');
 var rest = require('../../../common/rest.api');
 var configApiServer = require('../../../common/configServer.api');
