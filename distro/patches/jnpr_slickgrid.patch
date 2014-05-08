@@ -1,23 +1,24 @@
-diff -Naur old/SlickGrid/slick.grid.css new/slickgrid-v2.1.0/slick.grid.css
---- old/SlickGrid/slick.grid.css	2014-04-25 10:14:08.810983761 +0530
-+++ new/slickgrid-v2.1.0/slick.grid.css	2014-04-25 10:19:30.216028804 +0530
-@@ -81,7 +81,6 @@
+diff -Naur old/SlickGrid/slick.grid.css new/jnpr_slickgrid/slick.grid.css
+--- old/SlickGrid/slick.grid.css	2014-05-06 15:46:55.000000000 -0700
++++ new/jnpr_slickgrid/slick.grid.css	2014-05-06 14:47:22.000000000 -0700
+@@ -81,7 +81,7 @@
  }
  
  .slick-row.ui-widget-content, .slick-row.ui-state-active {
 -  position: absolute;
++/*   position: absolute; */
    border: 0px;
    width: 100%;
  }
-diff -Naur old/SlickGrid/slick.grid.js new/slickgrid-v2.1.0/slick.grid.js
---- old/SlickGrid/slick.grid.js	2014-04-25 10:14:08.811983762 +0530
-+++ new/slickgrid-v2.1.0/slick.grid.js	2014-04-25 10:19:30.217028805 +0530
+diff -Naur old/SlickGrid/slick.grid.js new/jnpr_slickgrid/slick.grid.js
+--- old/SlickGrid/slick.grid.js	2014-05-06 15:46:55.000000000 -0700
++++ new/jnpr_slickgrid/slick.grid.js	2014-05-06 14:58:37.000000000 -0700
 @@ -924,7 +924,7 @@
          "." + uid + " .slick-header-column { left: 1000px; }",
          "." + uid + " .slick-top-panel { height:" + options.topPanelHeight + "px; }",
          "." + uid + " .slick-headerrow-columns { height:" + options.headerRowHeight + "px; }",
 -        "." + uid + " .slick-cell { height:" + rowHeight + "px; }",
-+   //     "." + uid + " .slick-cell { height:" + rowHeight + "px; }",
++//        "." + uid + " .slick-cell { height:" + rowHeight + "px; }",
          "." + uid + " .slick-row { height:" + options.rowHeight + "px; }"
        ];
  
@@ -39,3 +40,12 @@ diff -Naur old/SlickGrid/slick.grid.js new/slickgrid-v2.1.0/slick.grid.js
          scrollTop = $viewport[0].scrollTop;
        }
  
+@@ -2272,7 +2272,7 @@
+         // if this click resulted in some cell child node getting focus,
+         // don't steal it back - keyboard events will still bubble up
+         // IE9+ seems to default DIVs to tabIndex=0 instead of -1, so check for cell clicks directly.
+-        if (e.target != document.activeElement || $(e.target).hasClass("slick-cell")) {
++    	  if (options.editable && (e.target != document.activeElement || $(e.target).hasClass("slick-cell"))) {
+           setFocus();
+         }
+       }
