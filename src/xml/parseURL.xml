@@ -1439,12 +1439,6 @@
         <callback>nwMonApi.getInstanceDetails</callback>
     </item> 
     <item>
-        <url>/api/service/networking/ping</url>
-        <method>get</method>
-        <feature>monitoring</feature>
-        <callback>tenantapi.doPing</callback>
-    </item>
-    <item>
         <url>/api/service/networking/orchestration/model</url>
         <method>get</method>
         <feature>orchestration</feature>
