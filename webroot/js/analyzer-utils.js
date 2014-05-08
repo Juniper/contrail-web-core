@@ -76,7 +76,7 @@ function getAnalyzerVNCUrlSuccessCB(result, cbParams) {
     var href = jsonPath(result, "$.console.url")[0];
     var modalBody = '<div class="row-fluid">' +
         '<div class="span10"><p>If console is not responding to keyboard input: click the grey status bar below.&nbsp;&nbsp;<a href="' + href + '" style="text-decoration: underline" target=_blank>Click here to show only console</a></p></div>' +
-        '<select id="pcap-direction" class="span2 pull-right"></select>' +
+        '<div id="pcap-direction" class="span2 pull-right"></div>' +
         '<i id="pcap-direction-loading" class="icon-spinner icon-spin blue bigger-150 pull-right hide"></i>' +
         '</div>' +
         '<br>' +
@@ -95,16 +95,14 @@ function getAnalyzerVNCUrlSuccessCB(result, cbParams) {
         dataValueField: "value",
         index: 0,
         change: function (e) {
-            var direction = this.value();
+            var direction = $("#pcap-direction").data("contrailDropdown").value();
             cbParams['direction'] = direction;
             cbParams['action'] = 'update';
             onChangePCAPDirection(cbParams);
         }
     }).data("contrailDropdown");
 
-    dropdownlist.select(function(dataItem) {
-        return dataItem.value === getDirectionText(cbParams['direction']);
-    });
+    dropdownlist.value(cbParams['direction']);
 }
 
 function getDirectionText(direction) {
