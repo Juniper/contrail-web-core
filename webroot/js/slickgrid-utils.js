@@ -75,7 +75,7 @@ function getDefaultGridConfig() {
         var gridConfig = {}, defaultGridConfig = getDefaultGridConfig(),
         	grid = null, dataView = null, pager = null,
         	gridDataSource, gridColumns, gridOptions,
-        	autoRefreshInterval=false, searchColumns = [],
+        	autoRefreshInterval = false, searchColumns = [],
             headerTemplate, remoteConfig = {}, ajaxConfig,
             dvConfig = null, gridContainer = this, 
             eventHandlerMap = {grid: {}, dataView: {}}, 
@@ -87,7 +87,6 @@ function getDefaultGridConfig() {
         gridDataSource = gridConfig.body.dataSource;
         gridColumns = gridConfig.columnHeader.columns;
         gridOptions = gridConfig.body.options;
-        autoRefreshInterval;
         gridConfig.footer = ($.isEmptyObject(gridConfig.footer)) ? false : gridConfig.footer;
 
         //Local Datasource means the client-side data with client-side pagination if footer initialized
@@ -116,7 +115,7 @@ function getDefaultGridConfig() {
                         },
                         successCallback: function (response) {
                             if(response.length == 0){
-                                gridContainer.data('contrailGrid').showGridMessage('empty');
+                                emptyGridHandler();
                             } else {
                                 gridContainer.data('contrailGrid').removeGridMessage();
                                 gridContainer.find('grid-footer').show();
@@ -132,7 +131,7 @@ function getDefaultGridConfig() {
                         },
                         refreshSuccessCallback: function (response, refreshDataOnly) {
                             if(response.length == 0){
-                                gridContainer.data('contrailGrid').showGridMessage('empty');
+                                emptyGridHandler();
                             }
                             //gridContainer.find('.grid-load-status').before('<div class="grid-body"></div>');
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestSuccessCB)) {
@@ -144,7 +143,7 @@ function getDefaultGridConfig() {
                             stopAutoRefresh();
                             var errorMsg = contrail.parseErrorMsgFromXHR(xhr);
                             showMessagePopup('Error', 'Error in run query: ' + errorMsg);
-                            gridContainer.data('contrailGrid').showGridMessage('error','Error: ' + errorMsg);
+                            errorGridHandler(errorMsg);
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestErrorCB)) {
                                 gridDataSource.events.onRequestErrorCB();
                             }
@@ -156,11 +155,15 @@ function getDefaultGridConfig() {
             }
         } else if(contrail.checkIfExist(gridDataSource.dataView)) {
             dataView = gridDataSource.dataView;
-            initContrailGrid(dataView);
             initDataView();
+            initContrailGrid(dataView);
             dataView.setSearchFilter(searchColumns, searchFilter);
             initClientSidePagination();
             initGridFooter();
+            gridContainer.data('contrailGrid').removeGridMessage();
+            if(dataView.getLength() == 0){
+                gridContainer.data('contrailGrid').showGridMessage('empty');
+            }
         }
 
         function searchFilter(item, args) {
@@ -181,12 +184,14 @@ function getDefaultGridConfig() {
         	}
         };
         
-        function initAutoRefresh(refreshPeriod){
-        	// TODO
-            if(refreshPeriod != false){
+        function startAutoRefresh(refreshPeriod){
+            if(refreshPeriod && !autoRefreshInterval){
 	        	autoRefreshInterval = setInterval(function(){
 	        		if(gridContainer.find('.grid-body').is(':visible')){
 	        			gridContainer.data('contrailGrid').refreshData();
+	        		}
+	        		else{
+	        			stopAutoRefresh();
 	        		}
 	        	},refreshPeriod*1000);
         	}
@@ -194,6 +199,7 @@ function getDefaultGridConfig() {
         function stopAutoRefresh(){
         	if(autoRefreshInterval){
         		clearInterval(autoRefreshInterval);
+        		autoRefreshInterval = false;
         	}
         }
 
@@ -564,9 +570,10 @@ function getDefaultGridConfig() {
 
                     gridContainer.data('contrailGrid').removeGridMessage();
                     if(dataView.getLength() == 0){
-                        gridContainer.data('contrailGrid').showGridMessage('empty');
+                        emptyGridHandler();
                     } else {
                         gridContainer.find('.grid-footer').show();
+                        onDataGridHandler();
                     }
                 }
             };
@@ -672,7 +679,7 @@ function getDefaultGridConfig() {
                 }
             }
             gridContainer.data("contrailGrid")._pager = pager;
-            initAutoRefresh(gridOptions.autoRefresh);
+            startAutoRefresh(gridOptions.autoRefresh);
         };
 
         function setDataObject4ContrailGrid() {
@@ -755,7 +762,7 @@ function getDefaultGridConfig() {
     	            gridContainer.find('.slick-row-master:visible:odd').addClass('odd');
                 },
                 destroy: function(){
-                	stopAutoRefresh(); // TODO
+                	stopAutoRefresh();
                    	$.each(eventHandlerMap.dataView, function(key, val){
                        	dataView[key].unsubscribe(val);
                    	});
@@ -779,6 +786,9 @@ function getDefaultGridConfig() {
                         return false;
                     }
                 },
+                /*
+                 * Refreshes the grid if the grid data is fetched via ajax call
+                 */
                 refreshGrid: function(){
                     if (contrail.checkIfExist(gridDataSource.remote) && contrail.checkIfExist(gridDataSource.remote.ajaxConfig.url)) {
                         gridContainer.contrailGrid(customGridConfig);
@@ -786,18 +796,36 @@ function getDefaultGridConfig() {
                         this.refreshView();
                     }
                 },
+                /*
+                 * Refreshes the Dataview if the grid data is fetched via ajax call
+                 */
                 refreshData: function() {
                     if (contrail.checkIfExist(gridDataSource.remote) && contrail.checkIfExist(gridDataSource.remote.ajaxConfig.url)) {
                         dataView.refreshData();
                     }
                 },
-                refreshView: function(type){
+                /*
+                 * Refreshes the view of the grid. Grid is rendered and related adjustments are made.
+                 */
+                refreshView: function(){
                 	grid.render();
                 	grid.resizeCanvas();
                 	gridContainer.find('.slick-row-detail').remove();
                 	gridContainer.find('.icon-caret-down').toggleClass('icon-caret-down').toggleClass('icon-caret-right');
                 	this.adjustAllRowHeight();
                 	this.adjustGridAlternateColors();
+                }, 
+                /* 
+                 * Starts AutoRefresh
+                 */
+                startAutoRefresh: function(refreshPeriod){
+                	startAutoRefresh(refreshPeriod);
+                }, 
+                /*
+                 * Stops AutoRefresh
+                 */
+                stopAutoRefresh: function(){
+                	stopAutoRefresh();
                 }
             });
         }
@@ -821,7 +849,7 @@ function getDefaultGridConfig() {
             if(headerConfig.defaultControls.refreshable){
                 template += '\
                 <div class="widget-toolbar pull-right"> \
-                    <a class="widget-toolbar-icon link-searchbox" data-action="refresh"> \
+                    <a class="widget-toolbar-icon link-searchbox" title="Refresh" data-action="refresh"> \
                         <i class="icon-repeat"></i> \
                     </a> \
                 </div>';
@@ -873,6 +901,25 @@ function getDefaultGridConfig() {
                     gridActionId.remove();
                 });
             });
+        };
+        function emptyGridHandler(){
+            gridContainer.data('contrailGrid').showGridMessage('empty');
+            if(gridOptions.checkboxSelectable != false) {
+                gridContainer.find('.headerRowCheckbox').attr('disabled', true);
+            }
+        };
+
+        function errorGridHandler(errorMsg){
+            gridContainer.data('contrailGrid').showGridMessage('error','Error: ' + errorMsg);
+            if(gridOptions.checkboxSelectable != false) {
+                gridContainer.find('.headerRowCheckbox').attr('disabled', true);
+            }
+        };
+
+        function onDataGridHandler(){
+            if(gridOptions.checkboxSelectable != false) {
+                gridContainer.find('.headerRowCheckbox').removeAttr('disabled');
+            }
         };
     };
 }(jQuery));

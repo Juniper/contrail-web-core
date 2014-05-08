@@ -11,10 +11,10 @@ var featureTitle = {
 var serializer = new XMLSerializer(),
     domParser = new DOMParser(),
     loadingOTGridColumns = [
-        { field:"MessageTS", title:"Time", width:"210px" },
-        { field:"Source", title:"Source", width:"210px" },
-        { field:"ModuleId", title:"Module Id", width:"210px" },
-        { field:"Xmlmessage", title:"Log" }
+        {id:"MessageTS", field:"MessageTS", name:"Time", width:210 },
+        {id:"Source", field:"Source", name:"Source", width:210 },
+        {id:"ModuleId", field:"ModuleId", name:"Module Id", width:210 },
+        {id:"Xmlmessage", field:"Xmlmessage", name:"Log" }
     ],
     placeHolders = {"Xmlmessage": ["Use RegEx= operator to search Xmlmessage"], "ObjectLog": ["Use RegEx= operator to search ObjectLog"], "SystemLog": ["Use RegEx= operator to search SystemLog"], "protocol_sport":["Protocol", "Any Source Port"], "protocol_dport":["Protocol", "Any Destination Port"], "sourcevn_sourceip":["Source VN", "Any Source IP"], "destvn_destip":["Destination VN", "Any Destination IP"]},
     flowWhereFields = [
@@ -1113,6 +1113,7 @@ function createDeleteConfirmWindow(queueId,gridCheckedRows) {
 		        var postDataJSON = {queryQueue: queueId, queryIds: queryIds};
 		        doAjaxCall(url, "DELETE", JSON.stringify(postDataJSON), "successDelQueryQueueCache", "failureDelQueryQueueCache", null, {gridId: queueId + "-results", queueId: queueId, checkedRows: gridCheckedRows});
 		        $('#' + queueId + '-del-confirmation').modal('hide');
+                $('#btnDeleteQueryQueue').addClass('disabled-link');
 			},
 			className: 'btn-primary'
 		}]
@@ -1381,7 +1382,7 @@ function push2OTColumns(columnArray, newColumnName, columns, selectedFieldName, 
             	formatter: function(r, c, v, cd, dc) {
         			var returnString = '';
             		if(typeof dc[newColumnName] !== "undefined") {
-            			returnString = contrail.formatJSON2HTML(dc[newColumnName],1); 
+            			returnString = contrail.formatJSON2HTML(dc[newColumnName],2); 
         			}
             		return returnString;
             	},
@@ -1497,16 +1498,6 @@ function loadOTGrid(options, rows, columns) {
     		},
     		dataSource:{
     	        data: rows,
-    	        events: {
-//                    onDataBoundCB: function() {
-//                    	$('#ot-results').find('pre').each(function(){
-//                    		var syntaxedJsonObj = $(this).children().children();
-//                    	    syntaxedJsonObj.find('.preBlock').children('.expanded').hide();
-//                    	    syntaxedJsonObj.find('.preBlock').children('.collapsed').show();
-//                    	    syntaxedJsonObj.find('.preBlock').children('i').removeClass('icon-minus').addClass('icon-plus');
-//                        });
-//                    }
-    	        }
     	    },
             statusMessages: {
             	queued: {
@@ -1767,13 +1758,17 @@ function loadQueryQueue(options) {
     				icon: 'icon-list',
     				iconCssClass: 'blue'
     			},
-    			customControls: ['<a id="btnDeleteQueryQueue" onclick=deleteQueryCache4Queue("' + options.queueType + '"); title="Delete All Query Queue" class="disabled-link"><i class="icon-trash"></i></a>']
+    			customControls: ['<a id="btnDeleteQueryQueue" onclick=deleteQueryCache4Queue("' + options.queueType + '"); title="Delete All Query Queue" class="disabled-link"><i class="icon-trash"></i></a>'],
+    			defaultControls: {
+    				refreshable: true
+    			}
     		},
     		columnHeader: {
     			columns: getQueueColumnDisplay(options.elementId)
     		},
     		body: {
     			options: {
+    				autoRefresh: 60,
     				forceFitColumns: true,
     				checkboxSelectable: {
     					onNothingChecked: function(e){

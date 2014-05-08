@@ -70,6 +70,7 @@ make-ln:
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
 	rm -f webroot/html/login-error.html
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
+	rm -f webroot/config webroot/monitor webroot/reports webroot/setting webroot/menu.xml
 	ln -sf ../../$(WEBUICLIENT)/webroot/config webroot/config
 	ln -sf ../../$(WEBUICLIENT)/webroot/monitor webroot/monitor
 	ln -sf ../../$(WEBUICLIENT)/webroot/reports webroot/reports
@@ -88,10 +89,15 @@ test-env:
 	./unit-test.sh init
 
 prod-env:
-	make all 
-	./prod-dev.sh html/dashboard.html prod_env dev_env true
-	./prod-dev.sh html/login.html prod_env dev_env true
-	./prod-dev.sh html/login-error.html prod_env dev_env true
+	mkdir -p webroot/html
+	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
+	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
+	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
+	./generate-files.sh
+	./dev-install.sh prod
+	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
+	./prod-dev.sh webroot/html/login.html prod_env dev_env true
+	./prod-dev.sh webroot/html/login-error.html prod_env dev_env true
 	make make-ln
 
 rem-ts-dev:

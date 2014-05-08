@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ */
+
 (function($) {
     $.fn.contrailAutoComplete = function(option){
         var self = this;
@@ -524,7 +528,8 @@ function constructSelect2(self, defaultOption, args) {
             minimumResultsForSearch : -1,
             dropdownAutoWidth : true,
             dataTextField: 'text',
-            dataValueField: 'id'
+            dataValueField: 'id',
+            data: []
             // Use dropdownCssClass : 'select2-large-width' when initialzing ContrailDropDown
             // to specify width of dropdown for Contrail Dropdown
             // Adding a custom CSS class is also possible. Just add a custom class to the contrail.custom.css file
@@ -561,7 +566,9 @@ function constructSelect2(self, defaultOption, args) {
                         option.change(e);
                     }
                 });
-            self.select2('val', option.data[0].text);
+            if (option.data.length !=0) {
+                self.select2('val', option.data[0].text);
+            }
         }
 
         if(typeof option.data != "undefined") {
