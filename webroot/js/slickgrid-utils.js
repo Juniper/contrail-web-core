@@ -102,6 +102,9 @@ function getDefaultGridConfig() {
             dataView.setSearchFilter(searchColumns, searchFilter);
             initClientSidePagination();
             initGridFooter();
+            if(dataView.getLength() == 0){
+                emptyGridHandler();
+            }
         } else if (contrail.checkIfExist(gridDataSource.remote)) {
             ajaxConfig = gridDataSource.remote.ajaxConfig;
             if(contrail.checkIfExist(ajaxConfig) && contrail.checkIfExist(ajaxConfig.url)) {
@@ -112,7 +115,6 @@ function getDefaultGridConfig() {
                     dvConfig = {remote: remoteConfig};
                     $.extend(true, remoteConfig, gridDataSource.remote, {
                         initCallback: function () {
-                            gridContainer.data('contrailGrid').showGridMessage('loading');
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestStartCB)) {
                                 gridDataSource.events.onRequestStartCB();
                             }
@@ -159,14 +161,13 @@ function getDefaultGridConfig() {
             }
         } else if(contrail.checkIfExist(gridDataSource.dataView)) {
             dataView = gridDataSource.dataView;
-            initDataView();
             initContrailGrid(dataView);
+            initDataView();
             dataView.setSearchFilter(searchColumns, searchFilter);
             initClientSidePagination();
             initGridFooter();
-            gridContainer.data('contrailGrid').removeGridMessage();
             if(dataView.getLength() == 0){
-                gridContainer.data('contrailGrid').showGridMessage('empty');
+                emptyGridHandler();
             }
         }
 
@@ -218,9 +219,7 @@ function getDefaultGridConfig() {
             gridContainer.append('<div class="grid-load-status hide"></div>');
             initGridEvents();
             setDataObject4ContrailGrid();
-            if(contrail.checkIfExist(dataView) && dataView.getLength() == 0){
-            	gridContainer.data('contrailGrid').showGridMessage('empty');
-            }
+            gridContainer.data('contrailGrid').showGridMessage('loading');
         };
 
         function initGridHeader() {
@@ -907,10 +906,12 @@ function getDefaultGridConfig() {
             });
         };
         function emptyGridHandler(){
-            gridContainer.data('contrailGrid').showGridMessage('empty');
-            if(gridOptions.checkboxSelectable != false) {
-                gridContainer.find('.headerRowCheckbox').attr('disabled', true);
-            }
+        	if(!gridOptions.lazyLoading) {
+        		gridContainer.data('contrailGrid').showGridMessage('empty');
+        		if(gridOptions.checkboxSelectable != false) {
+        			gridContainer.find('.headerRowCheckbox').attr('disabled', true);
+        		}
+        	}
         };
 
         function errorGridHandler(errorMsg){
