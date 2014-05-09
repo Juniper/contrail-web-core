@@ -248,7 +248,7 @@ rm -f webroot/css/contrail-all.css
 
 MAINCSS[1]=webroot/assets/font-awesome/css/font-awesome.min.css
 MAINCSS[2]=webroot/assets/fonts-opensans/openSans.css
-MAINCSS[3]=webroot/css/nv.d3.contrail.css
+MAINCSS[3]=webroot/assets/nvd3/css/nv.d3.css
 MAINCSS[4]=webroot/assets/select2/styles/select2.css
 MAINCSS[5]=webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
 MAINCSS[6]=webroot/assets/slickgrid/styles/slick.grid.css
