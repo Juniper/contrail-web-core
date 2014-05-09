@@ -1,3 +1,4 @@
+diff -Naur old/nvd3/nv.d3.js new/nvd3/nv.d3.js
 --- old/nvd3/nv.d3.js	2014-04-28 17:19:38.000000000 +0530
 +++ new/nvd3/nv.d3.js	2014-04-28 14:57:18.000000000 +0530
 @@ -131,9 +131,9 @@
@@ -574,3 +575,217 @@
  
    chart.state = function(_) {
      if (!arguments.length) return state;
+diff -Naur old/nvd3/src/nv.d3.css new/nvd3/src/nv.d3.css
+--- old/nvd3/src/nv.d3.css	2013-06-11 13:38:38.000000000 +0530
++++ new/nvd3/src/nv.d3.css	2014-05-08 19:55:00.000000000 +0530
+@@ -17,14 +17,12 @@
+ 
+ .nvtooltip {
+   position: absolute;
+-  background-color: rgba(255,255,255,0.75);
+-  padding: 1px;
++  background-color: rgba(255,255,255,1);
++  color: #393939;
++  padding: 3px;
+   border: 1px solid rgba(0,0,0,.2);
+   z-index: 10000;
+-
+-  font-family: Arial;
+-  font-size: 13px;
+-
++  font-size: 11px;
+   /*
+   transition: opacity 500ms linear;
+   -moz-transition: opacity 500ms linear;
+@@ -34,15 +32,10 @@
+   -moz-transition-delay: 500ms;
+   -webkit-transition-delay: 500ms;
+   */
+-
+   -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+   -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+   box-shadow: 0 5px 10px rgba(0,0,0,.2);
+ 
+-  -webkit-border-radius: 6px;
+-  -moz-border-radius: 6px;
+-  border-radius: 6px;
+-
+   pointer-events: none;
+ 
+   -webkit-touch-callout: none;
+@@ -60,23 +53,18 @@
+ 
+ .nvtooltip h3 {
+   margin: 0;
+-  padding: 4px 14px;
++  padding: 2px;
+   line-height: 18px;
+   font-weight: normal;
+-  background-color: rgba(247,247,247,0.75);
+-  text-align: center;
+-
++  color: #3182bd;
++  font-size: 12px;
+   border-bottom: 1px solid #ebebeb;
+-
+-  -webkit-border-radius: 5px 5px 0 0;
+-  -moz-border-radius: 5px 5px 0 0;
+-  border-radius: 5px 5px 0 0;
+ }
+ 
+ .nvtooltip p {
+   margin: 0;
+-  padding: 5px 14px;
+-  text-align: center;
++  padding: 5px 2px;
++  font-size: 11px;
+ }
+ 
+ .nvtooltip span {
+@@ -108,15 +96,6 @@
+   height:100%;
+ }
+ 
+-
+-svg text {
+-  font: normal 12px Arial;
+-}
+-
+-svg .title {
+- font: bold 14px Arial;
+-}
+-
+ .nvd3 .nv-background {
+   fill: white;
+   fill-opacity: 0;
+@@ -126,8 +105,8 @@
+ }
+ 
+ .nvd3.nv-noData {
+-  font-size: 18px;
+-  font-weight: bold;
++  font-size: 15px;
++  /* font-weight: bold; */
+ }
+ 
+ 
+@@ -162,7 +141,7 @@
+ 
+ .nvd3 .nv-axis path {
+   fill: none;
+-  stroke: #000;
++  stroke: #ccc;
+   stroke-opacity: .75;
+   shape-rendering: crispEdges;
+ }
+@@ -172,7 +151,7 @@
+ }
+ 
+ .nvd3 .nv-axis.nv-x path.domain {
+-  stroke-opacity: 0;
++  stroke-opacity: 0.75;
+ }
+ 
+ .nvd3 .nv-axis line {
+@@ -187,7 +166,7 @@
+ }
+ 
+ .nvd3 .nv-axis .nv-axisMaxMin text {
+-  font-weight: bold;
++/*   font-weight: bold; */
+ }
+ 
+ .nvd3 .x  .nv-axis .nv-axisMaxMin text,
+@@ -265,7 +244,7 @@
+ 
+ .nvd3 .nv-discretebar .nv-groups text,
+ .nvd3 .nv-multibarHorizontal .nv-groups text {
+-  font-weight: bold;
++  /* font-weight: bold; */
+   fill: rgba(0,0,0,1);
+   stroke: rgba(0,0,0,0);
+ }
+@@ -313,7 +292,7 @@
+ 
+ .nvd3 .nv-groups path.nv-line {
+   fill: none;
+-  stroke-width: 2.5px;
++  stroke-width: 1.8px;
+   /*
+   stroke-linecap: round;
+   shape-rendering: geometricPrecision;
+@@ -375,7 +354,7 @@
+ 
+ .nvd3.nv-scatter .nv-groups .nv-point.hover,
+ .nvd3 .nv-groups .nv-point.hover {
+-  stroke-width: 20px;
++  stroke-width: 3px;
+   fill-opacity: .5 !important;
+   stroke-opacity: .5 !important;
+ }
+@@ -499,7 +478,7 @@
+ *  Bullet
+ */
+ 
+-.nvd3.nv-bullet { font: 10px sans-serif; }
++/* .nvd3.nv-bullet { font: 10px sans-serif; } */
+ .nvd3.nv-bullet .nv-measure { fill-opacity: .8; }
+ .nvd3.nv-bullet .nv-measure:hover { fill-opacity: 1; }
+ .nvd3.nv-bullet .nv-marker { stroke: #000; stroke-width: 2px; }
+@@ -508,7 +487,7 @@
+ .nvd3.nv-bullet .nv-range.nv-s0 { fill: #eee; }
+ .nvd3.nv-bullet .nv-range.nv-s1 { fill: #ddd; }
+ .nvd3.nv-bullet .nv-range.nv-s2 { fill: #ccc; }
+-.nvd3.nv-bullet .nv-title { font-size: 14px; font-weight: bold; }
++.nvd3.nv-bullet .nv-title { font-size: 14px; /* font-weight: bold; */ }
+ .nvd3.nv-bullet .nv-subtitle { fill: #999; }
+ 
+ 
+@@ -578,7 +557,7 @@
+   stroke: #444;
+   fill: #000;
+   */
+-  font-weight: bold;
++/*   font-weight: bold; */
+   font-size: 1.1em;
+ }
+ 
+@@ -603,7 +582,7 @@
+ }
+ 
+ .nvd3.nv-historicalStockChart .nv-axis .nv-axislabel {
+-  font-weight: bold;
++  /* font-weight: bold; */
+ }
+ 
+ .nvd3.nv-historicalStockChart .nv-dragTarget {
+@@ -620,8 +599,8 @@
+ }
+ 
+ .nvd3 .nv-brushBackground rect {
+-  stroke: #000;
+-  stroke-width: .4;
++  stroke: #555;
++  stroke-width: .1;
+   fill: #fff;
+   fill-opacity: .7;
+ }
+@@ -695,10 +674,17 @@
+ 
+ .nvd3 .axis line, .axis path {
+   fill: none;
+-  stroke: #000;
++  stroke: #ccc;
+   shape-rendering: crispEdges;
+ }
+ 
+ .nvd3 .axis text {
+   text-shadow: 0 1px 0 #fff;
+ }
++
++.nv-scatterChart .nv-axislabel {
++	font-size: 11px
++}
++text {
++	font-size: 10px;
++}
