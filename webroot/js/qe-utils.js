@@ -579,22 +579,22 @@ function setORClauseTerm(queryPrefix, orClauseItem){
 function collapseAllORClause(){
 	$('.or-clause-item').removeClass('open');
 	$('.or-clause-icon-caret').addClass('icon-caret-right').removeClass('icon-caret-down');
-	$('.or-clause-item-edit').hide('slow');
+	$('.or-clause-item-edit').hide();
 }
 
 function toggleORClause(queryPrefix,dis){
 	var disElement = $(dis).parents('.or-clause-item');
 	
 	if(disElement.hasClass('open')){
-		disElement.find('.or-clause-item-edit').hide('slow');
+		disElement.find('.or-clause-item-edit').hide();
 		disElement.removeClass('open');
-		$(dis).removeClass('icon-caret-down').addClass('icon-caret-right');
+		disElement.find('.or-clause-icon-caret').removeClass('icon-caret-down').addClass('icon-caret-right');
 	}
 	else {
 		collapseAllORClause();
-		disElement.find('.or-clause-item-edit').show('slow');
+		disElement.find('.or-clause-item-edit').show();
 		disElement.addClass('open');
-		$(dis).addClass('icon-caret-down').removeClass('icon-caret-right');
+		disElement.find('.or-clause-icon-caret').addClass('icon-caret-down').removeClass('icon-caret-right');
 		
 	}
 	if(disElement.find('.or-clause-item-term').is(':visible')){
