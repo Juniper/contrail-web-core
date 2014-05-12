@@ -105,6 +105,9 @@ function getDefaultGridConfig() {
             if(dataView.getLength() == 0){
                 emptyGridHandler();
             }
+            else{
+            	gridContainer.data('contrailGrid').removeGridMessage();
+            }
         } else if (contrail.checkIfExist(gridDataSource.remote)) {
             ajaxConfig = gridDataSource.remote.ajaxConfig;
             if(contrail.checkIfExist(ajaxConfig) && contrail.checkIfExist(ajaxConfig.url)) {
@@ -168,6 +171,9 @@ function getDefaultGridConfig() {
             initGridFooter();
             if(dataView.getLength() == 0){
                 emptyGridHandler();
+            }
+            else{
+            	gridContainer.data('contrailGrid').removeGridMessage();
             }
         }
 
