@@ -528,7 +528,7 @@ function chartsParseFn(options, response) {
                     onInit:function (e,dc) {
                         var detailTemplate = contrail.getTemplate4Id('detailTemplate');
                         var rowData = e.data;
-                        var grid = $(e['srcElement']).closest('div.contrail-grid');
+                        var grid = $(e['target']).closest('div.contrail-grid');
                         var dataItem = dc;
                         //Issue a call for fetching the details
                         if(dataItem['url'] != null) {
