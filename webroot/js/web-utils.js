@@ -1621,6 +1621,13 @@ function isInitialized(selector) {
         return false;
 }
 
+function isScatterChartInitialized(selector) {
+   if($(selector).find('.nv-scatterChart') != null)
+      return true;
+   else
+      return false;
+}
+
 function isGridInitialized(selector) {
     if ($(selector).attr('class') != null && $(selector).attr('class').indexOf('contrail-grid') != -1)
         return true;
@@ -2939,13 +2946,13 @@ function showMoreAlerts(){
 
 function processDrillDownForNodes(e) {
      if (e['point']['type'] == 'vRouter') {
-         layoutHandler.setURLHashParams({node:'vRouters:' + e['point']['name'], tab:''}, {p:'mon_infra_compute'});
+         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_compute'});
      } else if (e['point']['type'] == 'controlNode') {
-         layoutHandler.setURLHashParams({node:'Control Nodes:' + e['point']['name'], tab:''}, {p:'mon_infra_control'});
+         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_control'});
      } else if (e['point']['type'] == 'analyticsNode') {
-         layoutHandler.setURLHashParams({node:'Analytics Nodes:' + e['point']['name'], tab:''}, {p:'mon_infra_analytics'});
+         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_analytics'});
      } else if (e['point']['type'] == 'configNode') {
-         layoutHandler.setURLHashParams({node:'Config Nodes:' + e['point']['name'], tab:''}, {p:'mon_infra_config'});
+         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_config'});
      } else if (e['point']['type'] == 'network') {
          layoutHandler.setURLHashParams({fqName:e['point']['name']}, {p:'mon_net_networks'});
      } else if (e['point']['type'] == 'project') {
