@@ -6,7 +6,11 @@ window.URL = window.URL || window.webkitURL;
 function getDefaultGridConfig() {
     var defaultSettings = {
         header: {
-            title: false,
+            title: {
+                cssClass : 'blue',
+                icon : 'icon-list',
+                iconCssClass : 'blue'
+            },
             icon: false,
             defaultControls: {
 				collapseable: true,
