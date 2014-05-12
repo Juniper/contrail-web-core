@@ -85,9 +85,9 @@ cd -
 
 mkdir fonts-opensans
 cd fonts-opensans
-wget --no-check-certificate http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600,300 -O openSans.css
-wget --no-check-certificate http://themes.googleusercontent.com/static/fonts/opensans/v6/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
-wget --no-check-certificate http://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
+wget --no-check-certificate https://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600,300 -O openSans.css
+wget --no-check-certificate https://themes.googleusercontent.com/static/fonts/opensans/v6/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+wget --no-check-certificate https://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
 cd -
 
 wget --no-check-certificate https://github.com/components/jqueryui/archive/1.10.4.tar.gz -O 1.10.4.tar.gz
