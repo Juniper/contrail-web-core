@@ -120,7 +120,7 @@
         <callback>handler.admin</callback>
     </item>
     <item>
-        <url>/tenants/monitor/network</url>
+        <url>/</url>
         <method>get</method>
         <feature>monitoring</feature>
         <callback>handler.dashboard</callback>
