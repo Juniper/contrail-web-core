@@ -1,6 +1,7 @@
 #
 # Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
 #
+
 #function to check if the file checksum is correct
 rm -rf web-third-party
 
@@ -50,9 +51,9 @@ TMP_CACHE=/tmp/cache
 
 # $1 - URL of package
 # $2 - package name
-function getPackage() {
+getPackage() {
    #If package doesn't exist in "/tmp/cache",get the package using wget
-   if [[ ! -f ${TMP_CACHE}/$2 ]];
+   if [ ! -f ${TMP_CACHE}/$2 ];
    then
       wget --no-check-certificate $1 -O ${TMP_CACHE}/$2
    fi
@@ -63,6 +64,9 @@ cd -
 mkdir web-third-party
 cd web-third-party/
 
+# fetching the packages to common directory /tmp/cache.. need to make readable
+# by others
+umask 0022
 getPackage https://github.com/cjohansen/Sinon.JS/archive/v1.8.1.tar.gz v1.8.1.tar.gz 
 tar -xf v1.8.1.tar.gz
 rm -rf v1.8.1.tar.gz
