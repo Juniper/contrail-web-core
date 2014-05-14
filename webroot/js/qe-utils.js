@@ -762,14 +762,15 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
  * Filter Clause Functions
  */
 
-function openFilter(queryPrefix) {
+function openFilter(queryPrefix, className) {
     var query = queries[queryPrefix], count,
     	filterClauseSubmit = $.makeArray(query.filterViewModel.filterClauseSubmit()),
+        fields = $.makeArray(query.filterViewModel.fields()),
         editFilterClauseTemplate = contrail.getTemplate4Id('edit-filter-clause-template');
-    
+        className = className == null ? 'modal-700' : className;
     $.contrailBootstrapModal({
     	id: queryPrefix + '-filter-popup-container',
-    	className: 'modal-700',
+    	className: className,
         title: 'Filter',
         body: '<div id="' + queryPrefix + '-new-filter"></div>',
         footer: [
@@ -794,7 +795,7 @@ function openFilter(queryPrefix) {
     });
     
     query.editFilterClauseTemplate = editFilterClauseTemplate;
-    $('#' + queryPrefix + '-new-filter').append(editFilterClauseTemplate({queryPrefix: queryPrefix, filterClauseSubmit: filterClauseSubmit}));
+    $('#' + queryPrefix + '-new-filter').append(editFilterClauseTemplate({queryPrefix: queryPrefix, filterClauseSubmit: filterClauseSubmit, fields: fields}));
     count = filterClauseSubmit.length;
     ko.applyBindings(query.filterViewModel, document.getElementById(queryPrefix + '-filter-popup-container'));
     if (count != 0) {
@@ -809,8 +810,28 @@ function openFilter(queryPrefix) {
 function submitFilter(queryPrefix) {
     var query = queries[queryPrefix],
         fieldArray = [], opArray = [], valArray = [],
-        filterClauseSubmit = [], filterClauseViewStr = "", i, length, filterForm;
-    filterForm = $('#' + queryPrefix + '-filter-popup-form');
+        orderByValue = "", checkedFilters = [],
+        sortOrder = null, limit, fieldValue, selectedFields = [],
+        filterClauseSubmit = [], filterClauseViewStr = "", i, length, filterForm,
+        filterForm = $('#' + queryPrefix + '-filter-popup-form'),
+        selectedFields = $('#' + queryPrefix + '-filter-popup-form').serializeArray();
+    $.each(selectedFields, function (i, selectedFields) {
+        if (selectedFields.name == 'sortBy') {
+            fieldValue = selectedFields.value;
+            checkedFilters.push(fieldValue);
+            orderByValue += (orderByValue.length != 0 ? ", " : "sort_fields: [") + fieldValue;
+        }
+    });
+    if (orderByValue != '') {
+        orderByValue += "]";
+        sortOrder = $("#" + queryPrefix + "-filter-popup-form select[name=sortOrder]").val();
+        orderByValue += ", sort: " + sortOrder;
+    }
+    limit = $("#" + queryPrefix + "-filter-popup-form input[name=limit]").val();
+    if (limit != null && limit.length > 0) {
+        orderByValue += (orderByValue.trim() == '' ? '' : ', ') + "limit: " + limit;
+    }
+
     filterForm.find("select[name='field[]']").each(function () {
         fieldArray.push($(this).val());
     });
@@ -827,9 +848,13 @@ function submitFilter(queryPrefix) {
             filterClauseSubmit.push({field:fieldArray[i], operator:opArray[i], value:valArray[i]});
         }
     }
+    query.filterViewModel.checkedFilters(checkedFilters);
+    query.filterViewModel.limit(limit);
+    query.filterViewModel.sortOrder(sortOrder);
     query.filterViewModel.filterClauseSubmit(filterClauseSubmit);
     query.filterViewModel.filterClauseView(filterClauseViewStr);
-    $('#' + queryPrefix + '-filter').val(filterClauseViewStr);
+
+    $('#' + queryPrefix + '-filter').val("filter: " + filterClauseViewStr + ', ' + orderByValue);
     $('#' + queryPrefix + '-filter').height($('#' + queryPrefix + '-filter')[0].scrollHeight-6);
 };
 
@@ -886,8 +911,6 @@ function addSelect(queryPrefix) {
     query.selectViewModel.checkedFields(checkedFields);
     $('#' + queryPrefix + '-select').val(selectValue);
 };
-
-
 
 function closePopupWindow(queryPrefix, windowName) {
     queries[queryPrefix][windowName].modal('hide');
@@ -980,7 +1003,10 @@ function setColumnValues(url, viewModelKey, viewModels, responseField, ignoreVal
             var validValueObservable = ko.observableArray([]);
             responseField ? (validValues = response[responseField]) : (validValues = response);
             for (var i = 0; i < validValues.length; i += 1) {
-                if (validValues[i].index == isIndexed && ignoreValues.indexOf(validValues[i].name) == -1) {
+                if(isIndexed === "all" && ignoreValues.indexOf(validValues[i].name) == -1){
+                    validValueDS.push({"name":validValues[i].name, "value":validValues[i].name});
+                }
+                else if (validValues[i].index == isIndexed && ignoreValues.indexOf(validValues[i].name) == -1) {
                     validValueDS.push({"name":validValues[i].name, "value":validValues[i].name});
                 }
             }
@@ -2741,7 +2767,7 @@ function SelectViewModel(queryPrefix, resetFunction) {
             "sum(bytes)": ko.observable(true),
             "sum(packets)": ko.observable(true)
         };
-    } else if (['acpu', 'qeperf', 'vna'].indexOf(queryPrefix) != -1) {
+    } else if (['acpu', 'qeperf', 'vna', 'smsg'].indexOf(queryPrefix) != -1) {
         this.fields = ko.observableArray([]);
         this.isEnabled = {'T': ko.observable(true)};
     }
@@ -2765,6 +2791,7 @@ function FilterViewModel(queryPrefix, resetFunction) {
         {name:"!=", value:"!="},
         {name:"RegEx=", value:"RegEx="}
     ]);
+    this.fields = ko.observableArray([]);
     this.selectFields = ko.observableArray([]);
     this.filterClauseSubmit = ko.observableArray([]);
     this.filterClauseView = ko.observable("");
@@ -2772,8 +2799,15 @@ function FilterViewModel(queryPrefix, resetFunction) {
     this.Messagetype = ko.observableArray([]);
     this.Source = ko.observableArray([]);
     this.reset = resetFunction;
+    this.orderTypes = [
+        { name: "ASC", value: "asc" },
+        { name: "DESC", value: "desc"}
+    ];
+    this.checkedOrderBy = ko.observableArray([]);
+    this.checkedFilters = ko.observableArray([]);
+    this.limit = ko.observable("150000");
+    this.sortOrder = ko.observable("asc");
 };
-
 
 function exportServersideQueryResults(gridConfig, gridContainer) {
     var gridDataSource = gridConfig.body.dataSource,
