@@ -805,6 +805,9 @@ function openFilter(queryPrefix, className) {
     } else {
         loadFilterOptions(queryPrefix + '-first-filter-clause', queryPrefix, -1);
     }
+    $('#' + queryPrefix + '-filter-accordion').accordion({
+    	heightStyle: "content"
+    });
 };
 
 function submitFilter(queryPrefix) {
