@@ -627,7 +627,7 @@ function processAnalyticsNodeDetailJSON (hostName, genUVEData, callback)
     var data = null;
     var resultJSON = [];
     var lastIndex = 0;
-    var url = '/analytics/collector/' + hostName + '?flat';
+    var url = '/analytics/uves/analytics-node/' + hostName + '?flat';
     opServer.api.get(url, function (err, collUVEData) {
         if (err || (collUVEData == null)) {
             callback(genUVEData);
@@ -749,7 +749,7 @@ function getAnalyticsNodeSummary (req, res, appData)
     var resultJSON = [];
     var dataObjArr = [];
 
-    reqUrl = '/analytics/uves/collector';
+    reqUrl = '/analytics/uves/analytics-node';
     var collPostData = {};
     collPostData['cfilt'] = ['ModuleCpuState', 'CollectorState:self_ip_list','CollectorState:build_info','CollectorState:tx_socket_stats','CollectorState:rx_socket_stats'];
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
@@ -823,7 +823,7 @@ function getAnalyticsNodeDetails (req, res, appData)
 
 function getAnalyticsNodeList (req, res)
 {
-    var url = '/analytics/collectors';
+    var url = '/analytics/uves/analytics-nodes';
 
     opServer.api.get(url, function(err, data) {
         if (err || (null == data)) {
@@ -900,7 +900,7 @@ function getControlNodeDetailConfigUVEData (configData, addGen, appData, callbac
                                  global.HTTP_REQUEST_GET, null, configApiServer, null, 
                                  appData);
     }
-    reqUrl = '/analytics/uves/bgp-router';
+    reqUrl = '/analytics/uves/control-node';
     var postData = {};
     postData['cfilt'] = ['BgpRouterState'];
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
@@ -1001,7 +1001,7 @@ function getDataFromConfigNode(str, hostName, appData, data, callback)
 function getControlNodeDetails (req, res, appData)
 {
     var hostName = req.param('hostname');
-    var url = '/analytics/bgp-router/' + hostName + '?flat';
+    var url = '/analytics/uves/control-node/' + hostName + '?flat';
     var resultJSON = {};
 
     opServer.api.get(url, 
@@ -1876,7 +1876,7 @@ function getServerResponseByModType (req, res, appData)
 
 function getGeneratorsList (hostName, appData, callback)
 {
-    var reqUrl = '/analytics/uves/collector';
+    var reqUrl = '/analytics/uves/analytics-node';
     var dataObjArr = [];
     var postData = {};
     postData['kfilt'] = [hostName];
