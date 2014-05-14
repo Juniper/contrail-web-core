@@ -19,6 +19,7 @@ var global      = require('../../common/global');
 var appErrors   = require('../../errors/app.errors.js');
 var util        = require('util');
 var url         = require('url');
+var jsonPath    = require('JSONPath').eval;
 var configApiServer = require('../../common/configServer.api');
 
 /**
@@ -227,6 +228,44 @@ function parseVNFloatingIpPools (error, vnConfig, appData, callback)
 }
 
 /**
+ * @addRouteTargetDataToConfigByRoutingInstData
+ * private function
+ * 1. Reads the response of list of routing-instance data and add route 
+ *    target entries from it to vnConfigData
+ */
+function addRouteTargetDataToConfigByRoutingInstData (vnConfigData,
+                                                      routInstData)
+{
+    if (null == routInstData) {
+        return;
+    }
+    var routTargetData = jsonPath(routInstData, "$..route_target_refs");
+    if (!routTargetData.length) {
+        return;
+    }
+    routTargetData = routTargetData[0];
+    try {
+        routTargetCnt = routTargetData.length;
+        if (!routTargetCnt) {
+            return;
+        }
+        vnConfigData['virtual-network']['route_target_list'] = {};
+        vnConfigData['virtual-network']['route_target_list']['route_target']
+            = [];
+        for (var i = 0; i < routTargetCnt; i++) {
+            var routTgtTo = routTargetData[i]['to'];
+            var routTgtToCnt = routTgtTo.length;
+            for (var j = 0; j < routTgtToCnt; j++) {
+                vnConfigData['virtual-network']['route_target_list']['route_target'].push(routTargetData[i]['to'][j]);
+            }
+        }
+    } catch(e) {
+        logutils.logger.debug("In addRouteTargetDataToConfigByRoutingInstData():" +
+                              "JSON Parse error:" + e);
+    }
+}
+
+/**
  * @getVirtualNetworkCb
  * private function
  * 1. Callback for getVirtualNetwork
@@ -238,13 +277,38 @@ function parseVNFloatingIpPools (error, vnConfig, appData, callback)
  */
 function getVirtualNetworkCb (error, vnGetData, appData, callback) 
 {
+    var dataObjArr  = [];
+    var routInstUrl = null;
 
     if (error) {
        callback(error, null);
        return;
     }
 
-    parseVNFloatingIpPools(error, vnGetData, appData, callback);
+    /* Get the route target list from routing-instance */
+    var routingInstData = vnGetData['virtual-network']['routing_instances'];
+    if (null != routingInstData) {
+        var routingInstCnt = routingInstData.length;
+        if (routingInstCnt > 0) {
+            for (var i = 0; i < routingInstCnt; i++) {
+                routInstUrl = '/routing-instance/' + routingInstData[i]['uuid'];
+                commonUtils.createReqObj(dataObjArr, routInstUrl, null, null, null,
+                                         null, appData);
+            }
+            async.map(dataObjArr,
+                      commonUtils.getServerResponseByRestApi(configApiServer,
+                                                             true),
+                      function(err, routInstData) {
+                addRouteTargetDataToConfigByRoutingInstData(vnGetData,
+                                                            routInstData);
+                parseVNFloatingIpPools(error, vnGetData, appData, callback);
+            });
+        } else {
+            parseVNFloatingIpPools(error, vnGetData, appData, callback);
+        }
+    } else {
+        parseVNFloatingIpPools(error, vnGetData, appData, callback);
+    }
 }
 
 /**
