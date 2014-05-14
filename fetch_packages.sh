@@ -167,8 +167,8 @@ mv select2-3.4.6 select2-v3.4.6
 getPackage https://github.com/Juniper/SlickGrid/archive/master.tar.gz SlickGrid-master.tar.gz
 tar -xf SlickGrid-master.tar.gz
 rm -rf SlickGrid-master.tar.gz
-mv SlickGrid-master slickgrid-v2.1.0
-patch -p1 -N < ../distro/patches/slickgrid_v2.1.0.patch
+mv SlickGrid-master jnpr_slickgrid
+patch -p1 -N < ../distro/patches/jnpr_slickgrid.patch
 if [ $? -ne 0 ] ; then
     echo "slickgrid - patch apply failed"
     exit 1

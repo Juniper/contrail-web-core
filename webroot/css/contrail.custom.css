@@ -5,8 +5,6 @@
  /* moving vcon-web.css */
   
 .project-autoflow {
-  /*height: 495px;*/
-
   overflow: auto;
   -webkit-transform: translatez(0);
 }
@@ -14,12 +12,6 @@
   height: 510px;
   overflow: auto;
   -webkit-transform: translatez(0);
-}
-#projectTree {
-  display: inline-block;
-  vertical-align: top;
-  text-align: left;
-  margin: 0 0em;
 }
 .rootfolder {
   background-position: 0 0;
@@ -40,10 +32,6 @@
     margin: 0 0 10px 0;
     padding: 0;
 }
-#splitter {
-  border: 0px;
-}
-
 .pane-content {
   padding: 0 10px;
 }
@@ -56,19 +44,8 @@
   width: 90px;
   height: 70px;
 }
-#companyName {
-  display: inline-block;
-  vertical-align: top;
-  padding-top: 15px;
-}
 .no-background {
   background: none;
-}
-#splitter .splitter-pane-content {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  padding: 10px;
-  height: 100%;
 }
 .no-float {
   float: none !important;
@@ -202,18 +179,6 @@
 .pull-down-10 {
   margin-top: 10px;
 }
-#timeseries-interval-tabs {
-  width: 210px;
-  float: left;
-  padding-top: 10px;
-  margin-left: 40px;
-}
-
-#timeseries-interval-tabs + .chart-types {
-  float: right;
-  margin: 0px;
-  margin-right: 110px;
-}
 #network-overview #chart-top {
   clear: both;
 }
@@ -225,11 +190,6 @@
 }
 .div-column {
   display: inline-block;
-}
-.topSearchBox {
-  position: relative;
-  display: inline-block;
-  float: right;
 }
 .searchTxt {
   width: 140px;
@@ -260,66 +220,6 @@
   top: 50%;
   left: 50%;
 }
-.toggle-options {
-  list-style: none;
-  display: inline-block;
-  padding-left: 5px;
-  margin: 6px 0px;
-}
-.toggle-options ul,
-.toggle-optionsul {
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-.toggle-options li {
-  display: inline-block;
-  color: #15C;
-}
-.toggle-options li a {
-  text-decoration: underline;
-}
-.toggle-options li.active {
-  
-  color: black;
-}
-.toggle-options li.active a {
-  text-decoration: none;
-}
-.toggle-options li:hover {
-  cursor: pointer;
-}
-.toggle-options li.active:hover {
-  cursor: default;
-}
-.toggle-section h3 {
-  display: inline-block;
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-.toggle-group {
-  position: relative;
-  height: 45px;
-}
-.toggle-group .toggle-section {
-  display: inline-block;
-  position: absolute;
-}
-.toggle-group .toggle-section:nth-child(1) {
-  left: 40px;
-}
-.toggle-group .toggle-section:nth-child(2) {
-  right: 40px;
-}
-.cLblContainer {
-  border: 1px solid;
-  border-color: #DBECF4;
-  background-color: #EAF4F9;
-}
-.cGridContainer {
-  border: 1px solid;
-  border-color: #DBECF4;
-  box-shadow: 7px 7px 7px #AAA;
-}
 .cW30 {
   width: 30%;
 }
@@ -341,34 +241,6 @@
 .cW99 {
   width: 99%;
 }
-.cLblColumn {
-  display: inline-block;
-  vertical-align: top;
-}
-.cLbl {
-  color: #003F59;
-  line-height: normal;
- 
-  margin: 4px;
-  display: inline-block;
-  /*background-color:#EAF4F9;*/
-
-}
-.dashboard-pane {
-  border: 1px solid;
-  border-color: #DBECF4;
-  background-color: #EAF4F9;
-  border-spacing: 4px 8px;
-}
-.dashboard-pane .table-cell.dashboard-item-lbl,
-.dashboard-pane .table-cell.dashboard-item-value {
-
-  line-height: normal;
- margin: 4px;
-}
-.dashboard-pane .table-cell.dashboard-item-lbl {
-  width: 130px;
-}
 .details-pane {
   border-color: #DBECF4;
   border-spacing: 4px 8px;
@@ -389,8 +261,6 @@
 }
 .chart-toolbar .toolbar-elem {
   display: inline-block;
-  /*position:absolute;*/
-
 }
 .chart-legend {
  padding: 4px;
@@ -898,15 +768,10 @@ rect.bordered {
 }
 .or-clause-item{background: #fff;}
 .or-clause-item.open {background: #eee;}
-/* .or-clause-item:last-child {background:#fff;}
- *//* .or-clause-item, .and-clause-item{
-	margin: 5px 0;
-} */
-.or-clause-item{
-	padding: 5px 0;
-}
+.or-clause-item-term{cursor:pointer; }
+.or-clause-item-condensed{padding: 5px 0;}
 .or-clause-item-edit{
-	padding: 5px 0 0;
+	padding: 2px 0 0;
 }
 .or-clause-item > .span11{
 	margin-left: 0.5%;
@@ -915,9 +780,6 @@ rect.bordered {
 .or-clauses .or-text:first-child {
 	display: none;
 }
-.and-clause-item {
-	margin: 0 5px;
-}
 .and-clauses .and-clause-item:first-child .and-text{
 	visibility: hidden;
 }
@@ -925,7 +787,7 @@ rect.bordered {
 	font-size: 14px;
 	text-align: center;
 	color: #555;
-	padding: 5px 0;
+	padding: 5px 10px;
 }
 .or-text {
 	font-size: 14px;
@@ -933,7 +795,9 @@ rect.bordered {
 	padding: 5px 0;
 	font-weight: bold;
 }
-
+.and-clause-item.row-fluid [class*="span"] {
+	min-height: 28px !important;
+}
 .and-clause-item .new-and-text {
 	padding: 0 2px;
 }
@@ -941,7 +805,7 @@ rect.bordered {
 	padding: 0 5px;
 }
 .or-clause-item .icon-remove{
-	color:#777;
+	color:#aaa;
 }
 .and-clause-item .icon-remove{
 	font-size:11px;
