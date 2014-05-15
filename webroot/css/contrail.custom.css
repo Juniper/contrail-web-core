@@ -604,22 +604,6 @@ ul.configActionMenu {
 	max-width: 152px;
 	height: 40px;
 }
-/*
-*for alerts popup
-*/
-
-#moreAlerts > div.modal-body {
-  overflow:visible;
-}
-
-/*#alertContent {
-  overflow: scroll;
-  max-height: 365px;
-}*/
-
-#alertContent .slick-viewport {
-   max-height: 272px;
-}
 .infobox > .stat{
 	font-size:11px;
 }

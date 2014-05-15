@@ -626,8 +626,6 @@ function chartsParseFn(options, response) {
                     searchToolbar:(data['config'] != null && data['config']['widgetGridTitle'] != null) ? true : false*/
                 }, data['config']));
                 var cGrid = $(this).data('contrailGrid');
-                if(data['idField'] != null)
-                    $(this).data('idField',data['idField']);
                 //If deferredObj is pending and record count is empty..then show loading icon implies that first set of records are not fetched yet
                 if((data['deferredObj'] != null && data['deferredObj'].state() == 'pending' && data['dataSource'].getItems().length == 0)
                         || data['url'] != null) {
@@ -1440,19 +1438,6 @@ function applyGridDefHandlers(cGrid, options) {
     });
 }
 
-function updateCpuSparkLines(kGrid,data){
-	//clear the sparklines before updating them
-	$('.gridSparkline').html('');
-	$('.gridSparkline').each(function() {
-        var rowIndex = $(this).closest('td').parent().index();
-        var data;
-        if(kGrid.dataSource.at(rowIndex) != null)
-        	data = kGrid.dataSource.at(rowIndex)['histCpuArr'];
-        if(data != null) {
-            drawSparkLine4Selector(this, 'blue-grid-sparkline', data.toJSON());
-        }
-    });
-}
 
 function sort(object) {
     if (Array.isArray(object)) {
@@ -2220,12 +2205,19 @@ function loadAlertsContent(){
                 body: {
                     options: {
                         forceFitColumns:true,
-                        autoHeight : false,
-                        gridHeight : 300
                     },
-                    forceFitColumns: true,
                     dataSource: {
                         data: alertsData
+                    },
+                    statusMessages: {
+                        empty: {
+                            text: 'No Alerts to display'
+                        }, 
+                        errorGettingData: {
+                            type: 'error',
+                            iconClasses: 'icon-warning',
+                            text: 'Error in getting Data.'
+                        }
                     }
                 },
                 columnHeader: {
@@ -2233,6 +2225,7 @@ function loadAlertsContent(){
                         {
                             field:'nName',
                             name:'Node',
+                            minWidth:150,
                             formatter: function(r,c,v,cd,dc){
                                 if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['nName']) != "undefined")
                                     return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['nName']+"</span>";
@@ -2242,10 +2235,11 @@ function loadAlertsContent(){
                         },{
                             field:'pName',
                             name:'Process',
-                            width:170
+                            minWidth:100
                         },{
                             field:'msg',
                             name:'Status',
+                            minWidth:200,
                             formatter: function(r,c,v,cd,dc) {
                                 if(typeof(dc['popupMsg']) != "undefined")
                                     return dc['popupMsg'];
@@ -2255,7 +2249,7 @@ function loadAlertsContent(){
                         },{
                             field:'timeStamp',
                             name:'Time',
-                            width:160,
+                            minWidth:100,
                             formatter:function(r,c,v,cd,dc) {
                                 if(typeof(dc['timeStamp']) != "undefined")
                                     return getFormattedDate(dc['timeStamp']/1000);
@@ -2274,12 +2268,11 @@ function loadAlertsContent(){
                 }
             });
         }
-        alertsGrid = $('#alertContent').data('contrailGrid');
-
         alertsWindow.modal('show');
+        alertsGrid = $('#alertContent').data('contrailGrid');
         alertsGrid.refreshView();
         alertsGrid._grid.resizeCanvas();
-        alertsGrid.removeGridMessage();
+        alertsGrid.removeGridLoading();
         globalObj.showAlertsPopup = false;
     }
 }
@@ -2535,7 +2528,8 @@ function SingleDataSource(dsName) {
 }
 //Maintain an array of instances referring to each dataSource
 SingleDataSource.instances = {};
-//Maintain an array of subscribeFns for each dataSource which is required as we need to pass on those function pointers to unsubscribe from onPagingInfoChanged event
+//Maintain an array of subscribeFns for each dataSource which is required as we need to pass on 
+//those function pointers to unsubscribe from onPagingInfoChanged event
 SingleDataSource.subscribeFns = {};
 
 /**
