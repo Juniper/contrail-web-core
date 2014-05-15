@@ -64,6 +64,8 @@ cd -
 mkdir web-third-party
 cd web-third-party/
 
+mkdir -p -m 0777 $TMP_CACHE
+
 # fetching the packages to common directory /tmp/cache.. need to make readable
 # by others
 umask 0022
