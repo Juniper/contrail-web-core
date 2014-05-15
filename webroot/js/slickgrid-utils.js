@@ -8,7 +8,7 @@ function getDefaultGridConfig() {
         header: {
             title: {
                 cssClass : 'blue',
-                icon : 'icon-list',
+                icon : '',
                 iconCssClass : 'blue'
             },
             icon: false,
@@ -668,6 +668,19 @@ function getDefaultGridConfig() {
         function initGridFooter(serverSidePagination) {
             if(gridConfig.footer != false) {
                 gridContainer.append('<div class="grid-footer hide"></div>');
+                
+                gridContainer.find('.grid-footer').append('<div class="slick-pager"> \
+                		<span class="slick-pager-nav"> \
+                			<span class="pager-control"><i class="icon-step-backward icon-disabled pager-control-first"></i></span>\
+                			<span class="pager-control"> <i class="icon-backward icon-disabled pager-control-prev"></i></span> \
+                			<span class="pager-page-info"><div class="csg-current-page"></div> of <span class="csg-total-page-count"></span></span> \
+                			<span class="pager-control"> <i class="icon-forward icon-disabled pager-control-next"></i></span> \
+                			<span class="pager-control"> <i class="icon-step-forward icon-disabled pager-control-last"></i></span> \
+                		</span> \
+                		<span class="slick-pager-info"></span>\
+                		<span class="slick-pager-sizes"><div class="csg-pager-sizes"></div></span>\
+                	</div>');
+                
                 if(serverSidePagination) {
                     pager = new Slick.Controls.EnhancementPager({
                         gridContainer: gridContainer,
@@ -936,7 +949,7 @@ function getDefaultGridConfig() {
 }(jQuery));
 
 var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
-    var $info = null, pageSizeSelect = pagingInfo.pageSizeSelect,
+    var pageSizeSelect = pagingInfo.pageSizeSelect,
     	csgCurrentPageDropDown = null, csgPagerSizesDropdown = null,
         footerContainer = gridContainer.find('.grid-footer');
 
@@ -966,12 +979,12 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
         $.each(data.pageSizeSelect,function(key,val){
             returnData.push({
                 id: val,
-                text: String(val)
+                text: String(val) + ' Records'
             });
         });
         returnData.push({
             id: parseInt(data.totalRows),
-            text: 'All'
+            text: 'All Records'
         });
         return returnData;
     }
@@ -981,47 +994,38 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
         for(var i = 0 ; i < n ; i++){
             returnData.push({
                 id: i,
-                text: String((i+1))
+                text: 'Page ' + String((i+1))
             });
         }
         return returnData;
     };
 
     function constructPagerUI() {
-        footerContainer.empty();
-        var $nav = $("<span class='slick-pager-nav' />").appendTo(footerContainer),
-            iconPrefix, iconSuffix;
-        $info = $("<span class='slick-pager-info' />").appendTo(footerContainer);
-        $sizes = $("<span class='slick-pager-sizes' />").appendTo(footerContainer);
-
-
-        // Pager Controls (pager-Nav)
-        iconPrefix = '<span class="pager-control"> <i class="';
-        iconSuffix = '"></i></span>';
-        $(iconPrefix + "icon-step-backward" + iconSuffix).click(gotoFirst).appendTo($nav);
-        $(iconPrefix + "icon-backward" + iconSuffix).click(gotoPrev).appendTo($nav);
-
-
-        $('<span class="pager-page-info"> <div class="csg-current-page"></div> of <span class="csg-total-page-count"></span></span>').appendTo($nav);
-
+    	footerContainer.find('.pager-control-first').click(gotoFirst);
+    	footerContainer.find('.pager-control-prev').click(gotoPrev);
+    	footerContainer.find('.pager-control-next').click(gotoNext);
+    	footerContainer.find('.pager-control-last').click(gotoLast);
+    	
         csgCurrentPageDropDown = footerContainer.find('.csg-current-page').contrailDropdown({
             placeholder: 'Select..',
-            data: [{id: 0, text: '1'}],
+            data: [{id: 0, text: 'Page 1'}],
             change: function(e){
                 dataView.setPagingOptions({pageNum: e.val});
+                csgCurrentPageDropDown.value(String(e.val));
+            },
+            formatResult: function(item) {
+                return '<span class="grid-footer-dropdown-item">' + item.text + '</span>';
             }
         }).data('contrailDropdown');
         csgCurrentPageDropDown.value('0');
-
-        $(iconPrefix + "icon-forward" + iconSuffix).click(gotoNext).appendTo($nav);
-        $(iconPrefix + "icon-step-forward" + iconSuffix).click(gotoLast).appendTo($nav);
-
-        $sizes.append('<div class="csg-pager-sizes"></div> Records per page');
 
         csgPagerSizesDropdown = footerContainer.find('.csg-pager-sizes').contrailDropdown({
             data: populatePagerSelect(pagingInfo),
             change: function(e){
                 dataView.setPagingOptions({pageSize: parseInt(e.val), pageNum: 0});
+            },
+            formatResult: function(item) {
+                return '<span class="grid-footer-dropdown-item">' + item.text + '</span>';
             }
         }).data('contrailDropdown');
         csgPagerSizesDropdown.value(String(pagingInfo.pageSize));
@@ -1029,8 +1033,6 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
         footerContainer.find(".ui-icon-container").hover(function () {
             $(this).toggleClass("ui-state-hover");
         });
-
-        footerContainer.children().wrapAll("<div class='slick-pager' />");
     }
 
     function updatePager(pagingInfo) {
@@ -1049,7 +1051,7 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
             footerContainer.find(".icon-backward").removeClass("icon-disabled");
         }
 
-        $info.text("Total: " + pagingInfo.totalRows + " records");
+        footerContainer.find(".slick-pager-info").text("Total: " + pagingInfo.totalRows + " records");
         footerContainer.find('.csg-total-page-count').text(pagingInfo.totalPages);
 
         var currentPageSelectData = populateCurrentPageSelect(pagingInfo.totalPages);
@@ -1076,7 +1078,6 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
             isFilterUnchanged: true
         });
         dataView.setPagingOptions({pageSize: n});
-        //container.find('.csg-current-page').select2('val', String(n));
     }
 
     function gotoFirst() {
