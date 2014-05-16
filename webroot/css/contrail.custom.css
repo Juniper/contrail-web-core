@@ -1302,6 +1302,9 @@ label.jqInvalid{
 	background: #c6dbef;
 	color: #555;
 }
+.select2-results .select2-disabled.select2-result-label {
+	background: none;
+}
 /* Autocomplete Custom CSS */
 .ui-autocomplete {
     max-height: 300px;

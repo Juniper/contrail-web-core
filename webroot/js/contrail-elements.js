@@ -7,19 +7,22 @@
         option = (typeof option === "undefined") ? {} : option;
         self.autocomplete(option);
         return self;
-    }
+    };
+    
     $.fn.contrailMultiselect = function(option,option2){
         var self = this;
         option.multiple = true;
         self.data('contrailMultiselect', constructSelect2(self, option, option2));
         return self;
-    }
+    };
+    
     $.fn.contrailTabs = function(option) {
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
         self.tabs(option);
         return self;
-    }
+    };
+    
     $.fn.contrailNumericTextbox = function (option) {
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
@@ -34,7 +37,8 @@
             }
         });
         return self;
-    }
+    };
+    
     $.fn.contrailDateTimePicker = function(option) {
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
@@ -66,12 +70,14 @@
             }
         });
         return self;
-    }
+    };
+    
     $.fn.contrailDropdown = function(defaultOption, args) {
         var self = this;
         self.data('contrailDropdown', constructSelect2(self, defaultOption, args));
         return self;
-    }
+    };
+    
     $.fn.contrailCombobox = function(option) {
         var self = this, formattedData = [];
 
@@ -85,7 +91,7 @@
             input.autocomplete(option);
 
             if(option == 'enable'){
-                input.removeAttr('disabled')
+                input.removeAttr('disabled');
             }
             else if(option == 'disable'){
                 input.attr('disabled','disabled');
@@ -266,7 +272,7 @@
                         .append("<a>" + item.label + "</a>")
                         .appendTo(ul);
                 }
-            }
+            };
 
             $("<span>")
                 .addClass('add-on')
@@ -288,6 +294,7 @@
             dis.option.sourceMap = constructSourceMap(formattedData, 'value');
         };
     };
+    
     $.fn.contrail2WayMultiselect = function (givenOptions) {
         var defaultOptions = {
             dataTextField: "label",
@@ -429,6 +436,7 @@
           </div>');
         };
     };
+    
     $.extend({
         contrailBootstrapModal:function (options) {
             options.id = options.id != undefined ? options.id : '';
@@ -566,7 +574,12 @@ function constructSelect2(self, defaultOption, args) {
             dropdownAutoWidth : true,
             dataTextField: 'text',
             dataValueField: 'id',
-            data: []
+            data: [],
+            formatResultCssClass: function(obj){
+            	if(obj.label && 'children' in obj){
+            		return 'select2-result-label';
+            	}
+            }
             // Use dropdownCssClass : 'select2-large-width' when initialzing ContrailDropDown
             // to specify width of dropdown for Contrail Dropdown
             // Adding a custom CSS class is also possible. Just add a custom class to the contrail.custom.css file
@@ -667,8 +680,8 @@ function constructSelect2(self, defaultOption, args) {
                 }
             },
             enableOptionList: function (flag, disableItemList) {
-                for (j = 0; j < disableItemList.length; j++) {
-                    for (i = 0; i < option.data.length; i++) {
+                for (var j = 0; j < disableItemList.length; j++) {
+                    for (var i = 0; i < option.data.length; i++) {
                         if (disableItemList[j] === option.data[i][option.dataTextField.dsVar]) {
                             option.data[i].disabled = !flag;
                         }
@@ -683,7 +696,7 @@ function constructSelect2(self, defaultOption, args) {
             },
             isEnabled: function(){
                 if($(self.selector).prop('disabled')){
-                    return false
+                    return false;
                 }else{
                     return true;
                 }
