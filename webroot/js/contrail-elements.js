@@ -493,6 +493,9 @@ function formatData(data, option) {
     if (typeof data[0] === 'object') {
         if (typeof option.dataValueField !== 'undefined' && typeof option.dataTextField !== 'undefined') {
             $.each(data, function (key, val) {
+                if ('children' in val){
+                    formatData(val.children, option);
+                }
                 data[key][option.dataValueField.apiVar] = val[option.dataValueField.dsVar];
                 data[key][option.dataTextField.apiVar] = val[option.dataTextField.dsVar];
             });
@@ -511,12 +514,47 @@ function formatData(data, option) {
 };
 
 function constructSourceMap(data, fieldName) {
-    var sourceMap = {},
-        source = typeof data != 'undefined' ? data : [];
-    $.each(source, function (key, val) {
-        sourceMap[val[fieldName]] = key;
+    return traverseMap(typeof data != 'undefined' ? data : [],fieldName,'');
+};
+
+function traverseMap(obj, fieldName, parentKey){
+    var returnObj = {};
+    $.each(obj, function (key, val) {
+        returnObj[val[fieldName]] = parentKey + key;
+        if('children' in val){
+            returnObj = $.extend(returnObj,traverseMap(val.children, fieldName, parentKey + key + '.'));
+        }
     });
-    return sourceMap;
+    return returnObj;
+};
+function findTextInObj(text, data){
+    var found = false;
+    for (var i = 0; i < data.length; i++){
+        if (data[i].text === text){
+            return data[i];
+        }
+        if('children' in data[i]){
+            var found = findTextInObj(text, data[i].children);
+            if(found){
+                break;
+            }
+        }
+    }
+    return found;
+};
+
+function  fetchSourceMapData(index, data){
+    var arr = index.split("."),
+        returnVal = data;
+
+    $.each(arr, function(key, value){
+        if('children' in returnVal){
+            returnVal = returnVal.children[value];
+        } else{
+            returnVal = returnVal[value];
+        }
+    });
+    return returnVal;
 };
 
 function constructSelect2(self, defaultOption, args) {
@@ -588,20 +626,18 @@ function constructSelect2(self, defaultOption, args) {
                 }
                 for(var i = 0; i < selectedValue.length; i++) {
                     index = option.sourceMap[selectedValue[i]];
-                    selectedObjects.push(option.data[index]);
+                    selectedObjects.push(fetchSourceMapData(index, option.data));
                 }
                 return selectedObjects;
             },
             text: function(text) {
                 if(typeof text !== 'undefined') {
                     var data = self.data('select2').opts.data;
-                    $.each(data, function(key, val) {
-                        if (val.text === text) {
-                            self.select2('val', val.id);
-                        }
-                    });
+                    var answer = findTextInObj(text, data);
+                    self.select2('val', answer.id);
                 } else {
-                    return (self.select2('data') != null) ? self.select2('data').text : null;
+                    if (self.select2('data') != null)
+                        return (self.select2('data') != null) ? self.select2('data').text : null;
                 }
             },
             value: function(value) {

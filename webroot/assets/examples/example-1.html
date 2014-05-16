@@ -319,17 +319,84 @@ $(document).ready(function(){
 //y.setData(data);
 // Dont specify the dropdownCssClass if you dont need to specify custom width for DropDown
 // contrailDropdown with remote data source example
-    $('#e2').contrailDropdown({
-        dataTextField:"name",
-        dataValueField: "value",
-        dataSource:{
-            type: 'remote',
-            url:'data/data1.json'
+//    $('#e2').contrailDropdown({
+//        dataTextField:"name",
+//        dataValueField: "value",
+//        dataSource:{
+//            type: 'remote',
+//            url:'data/data1.json'
+//        },
+//        // called on change event
+//        change: contrailDropdownChangeHandler
+//    });
+        var data = [
+        {
+            "t": "any",
+            "v": "a"
         },
-        // called on change event
-        change: contrailDropdownChangeHandler
-    });
+        {
+            "t": "local",
+            "v": "b"
+        },
+        {
+            "t": "Networks",
+            "v":"c",
+            "disabled" : true,
+            "children": [
+                {
+                    "t": "VN1",
+                    "v": "ca",
+                    "children": [
+                        {
+                            "t": "VN11",
+                            "v": "caa"
+                        }],
+                },
+                {
+                    "t": "VN2",
+                    "v": "cb"
+                },
+                {
+                    "t": "VN3",
+                    "v": "cc"
+                }
+            ]
+        },
+        {
+            "t": "Policies",
+            "disabled" : true,
+            "v":"d",
+            "children": [
+                {
+                    "t": "P1",
+                    "v": "da",
+                },
+                {
+                    "t": "P2",
+                    "v": "db",
+                },
+                {
+                    "t": "P3",
+                    "v": "dc",
+                }
+            ]
+        },
+        {
+            "t": "Prefix",
+            "v":"e"
+        }
+    ];
+    //$("#e2").select2({data: data});
+
+$("#e2").contrailDropdown({
+    dataTextField: 't',
+    dataValueField: 'v',
+    data: data
+});
     function contrailDropdownChangeHandler() {};
+
+    function contrailDropdownChangeHandler() {
+    };
 
     var option = {
         data: [{id:0, text:'California'}, {id:1, text:'Washington'},{id:2, text:'New york'}, {id:3, text:'Nevada'}, {id:4, text:'New Jersey'}]
