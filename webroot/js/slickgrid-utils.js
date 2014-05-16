@@ -142,11 +142,15 @@ function getDefaultGridConfig() {
                             if(response.length == 0){
                                 emptyGridHandler();
                             }
-                            //gridContainer.find('.grid-load-status').before('<div class="grid-body"></div>');
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestSuccessCB)) {
                                 gridDataSource.events.onRequestSuccessCB(response);
                             }
                             dataView.setData(response);
+                            if(gridConfig.header.defaultControls.refreshable){
+                            	setTimeout(function(){
+                            		gridContainer.find('.link-refreshable i').removeClass('icon-spin icon-spinner').addClass('icon-repeat');
+                            	},1000);
+                            }
                         },
                         failureCallback: function (xhr) {
                             stopAutoRefresh();
@@ -250,7 +254,8 @@ function getDefaultGridConfig() {
 	                        e.stopPropagation();
                         break;
 	                    case 'refresh':
-	                    	gridContainer.data('contrailGrid').refreshData();
+	                    	gridContainer.find('.link-refreshable i').removeClass('icon-repeat').addClass('icon-spin icon-spinner');
+                            gridContainer.data('contrailGrid').refreshData();
 	                    break;
 	                    case 'export':
 	                        var gridDSConfig = gridDataSource,
@@ -552,7 +557,7 @@ function getDefaultGridConfig() {
                             left: offset.left-155 + 'px'
                         }).show();
                         e.stopPropagation();
-                        initOnClickDocument($('#' + gridContainer.prop('id') + '-action-menu-' + args.row),function(){
+                        initOnClickDocument('#' + gridContainer.prop('id') + '-action-menu-' + args.row,function(){
                         	$('#' + gridContainer.prop('id') + '-action-menu-' + args.row).hide();
                         });
                     }
@@ -562,9 +567,9 @@ function getDefaultGridConfig() {
             grid['onClick'].subscribe(eventHandlerMap.grid['onClick']);
         };
         
-        function initOnClickDocument(container, callback) {
+        function initOnClickDocument(containerIdentifier, callback) {
         	$(document).on('click',function (e) {
-   			    if (!container.is(e.target) && container.has(e.target).length === 0){
+        		if(!$(e.target).closest(gridContainer.find(containerIdentifier)).length) {
    			    	callback();
    			    }
     		});
@@ -657,11 +662,11 @@ function getDefaultGridConfig() {
                 $(this).focus();
             });
             
-            initOnClickDocument(gridContainer.find('.input-searchbox'),function(){
-            	if(gridContainer.find('.input-searchbox').is(':visible')){
+            initOnClickDocument('.input-searchbox',function(){
+        	    if(gridContainer.find('.input-searchbox').is(":visible")) {
                 	gridContainer.find('.input-searchbox').hide();
                 	gridContainer.find('.link-searchbox').show();
-            	}
+                }
             });
         }
 
@@ -871,7 +876,7 @@ function getDefaultGridConfig() {
             if(headerConfig.defaultControls.refreshable){
                 template += '\
                 <div class="widget-toolbar pull-right"> \
-                    <a class="widget-toolbar-icon link-searchbox" title="Refresh" data-action="refresh"> \
+                    <a class="widget-toolbar-icon link-refreshable" title="Refresh" data-action="refresh"> \
                         <i class="icon-repeat"></i> \
                     </a> \
                 </div>';
