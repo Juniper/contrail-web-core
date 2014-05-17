@@ -5,6 +5,7 @@
 REPORTER = dot
 WEBUISERVER = contrail-web-core
 WEBUICLIENT = contrail-web-controller
+THIRDPARTY = third_party
 
 $(WEBUISERVER):
 	if [ ! -d ../$(WEBUISERVER) ]; then git clone git@github.com:Juniper/contrail-web-core.git ../$(WEBUISERVER); else cd ../$(WEBUISERVER) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
@@ -12,8 +13,10 @@ $(WEBUISERVER):
 $(WEBUICLIENT):
 	if [ ! -d ../$(WEBUICLIENT) ]; then git clone git@github.com:Juniper/contrail-web-controller.git ../$(WEBUICLIENT); else cd ../$(WEBUICLIENT) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
+$(THIRDPARTY):
+	if [ ! -d ../$(THIRDPARTY) ]; then git clone git@github.com:Juniper/contrail-third-party.git ../$(THIRDPARTY); else cd ../$(THIRDPARTY) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
-repos: $(WEBUISERVER) $(WEBUICLIENT)
+repos: $(WEBUISERVER) $(WEBUICLIENT) $(THIRDPARTY)
 
 fetch-pkgs-prod:
 	make clean
@@ -50,7 +53,7 @@ package:
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env true
-	rm -rf web-third-party
+	rm -rf web_third_party
 
 all:
 	mkdir -p webroot/html
@@ -124,22 +127,13 @@ test-ui:
 test: 
 	make test-node
 	make test-ui
-         
-test-integration:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
-	--reporter $(REPORTER) \ 
-	tests/integration/*.js
              
-test-unit:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
-	--reporter $(REPORTER) \
-	tests/unit/*.js 
-
 clean:
 	rm -f src/serverroot/jobs/core/jobsCb.api.js
 	rm -f src/serverroot/web/core/feature.list.js
 	rm -f src/serverroot/web/routes/url.routes.js
 	rm -rf node_modules
+	rm -rf web_third_party
 	rm -rf html
 	rm -rf webroot/assets/2way-multiselect
 	rm -rf webroot//assets/bootstrap
@@ -156,7 +150,6 @@ clean:
 	rm -rf webroot/assets/nvd3
 	rm -rf webroot/assets/select2
 	rm -rf webroot/assets/slickgrid
-	rm -rf web-third-party 
 
-.PHONY: package dev-env prod-env test test-integration test-unit clean
+.PHONY: package dev-env prod-env test clean
 
