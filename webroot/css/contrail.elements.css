@@ -3999,3 +3999,9 @@ td.td-actions a.td-action {
 	cursor: pointer;
 	color: #3182bd;
 }
+/*style is to remove the hover colors of info boxes in dashboard
+*/
+.infobox-dynamic:hover {
+	border: 1px solid #D8D8D8;
+    box-shadow: none;
+}
