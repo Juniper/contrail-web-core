@@ -515,15 +515,15 @@ function initTrafficTSChart(selector, data, options, chart, yFormatter, y2Format
     if(chart == null) {
         nv.addGraph(function () {
             var values = data[0].values, start, end, brushExtent = null;
-            if (values.length >= 43) {
-                start = values[values.length - 43];
+            if (values.length >= 100) {
+                start = values[values.length - 100];
                 end = values[values.length - 1];
                 brushExtent = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
             }
 
             chart = nv.models.lineWithExtendedFocusChart().height2(90).margin2({top:10, right:30, bottom:20, left:60}).brushExtent(brushExtent);
 
-            //chart.interpolate("monotone");
+            chart.interpolate(interpolateSankey);
 
             chart.xAxis.tickFormat(function (d) {
                 return d3.time.format('%H:%M:%S')(new Date(d));
@@ -551,7 +551,7 @@ function initTrafficTSChart(selector, data, options, chart, yFormatter, y2Format
             nv.utils.windowResize(function(){
                 updateChartOnResize(selector,chart);
             });
-          //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
+            //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
             if(options['deferredObj'] != null)
                 options['deferredObj'].resolve();
             return chart;
