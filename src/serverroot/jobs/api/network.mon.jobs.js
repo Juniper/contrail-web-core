@@ -2493,17 +2493,17 @@ function getCpuMemoryFlowSeriesByUVE(appData, callback)
     var moduleId = appData.moduleId;
 
     if (moduleId == 'ControlNode') {
-        url = '/analytics/bgp-router/' + source + '?flat';
+        url = '/analytics/uves/control-node/' + source + '?flat';
     } else if (moduleId == 'vRouterAgent') {
-        url = '/analytics/vrouter/' + source + '?flat';
+        url = '/analytics/uves/vrouter/' + source + '?flat';
     } else if ((moduleId == 'ApiServer') ||
         (moduleId == 'Schema') ||
         (moduleId == 'ServiceMonitor')) {
-        url = '/analytics/config-node/' + source + '?flat';
+        url = '/analytics/uves/config-node/' + source + '?flat';
     } else if ((moduleId == 'Collector') ||
         (moduleId == 'OpServer') ||
         (moduleId == 'QueryEngine')) {
-        url = '/analytics/collector/' + source + '?flat';
+        url = '/analytics/uves/analytics-node/' + source + '?flat';
     } else {
         /* Not supported module */
         assert(0);

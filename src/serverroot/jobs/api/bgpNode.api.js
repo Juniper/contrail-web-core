@@ -183,7 +183,7 @@ function getUnionBGPandVR(pubChannel, saveChannelKey, vrJSON, reqType, done,
 		vrMap[name] = type;
 	}
 	// TODO Replace by dynamic url.
-	url = '/bgp-routers?parent_fq_name_str=default-domain:default-project:ip-fabric:__default__';
+	url = '/control-nodes?parent_fq_name_str=default-domain:default-project:ip-fabric:__default__';
 	configApiServer.apiGet(url, jobData, function (error, jsonData) {
 		if (error) {
 			sendNodeResByReq(pubChannel, saveChannelKey, global.HTTP_STATUS_INTERNAL_ERROR,
@@ -198,7 +198,7 @@ function getUnionBGPandVR(pubChannel, saveChannelKey, vrJSON, reqType, done,
 				if (bgpCount != 0) {
 					for (i = 0; i < bgpCount; i += 1) {
 						uuid = bgpJSON["bgp-routers"][i].uuid;
-						url = '/bgp-router/' + uuid;
+						url = '/control-node/' + uuid;
 						logutils.logger.debug("getUnionBGPandVR: " + url);
 						bgpURLs[i] = [url];
                         commonUtils.createReqObj(dataObjArr, bgpURLs[i],
