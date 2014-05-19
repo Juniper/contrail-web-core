@@ -2277,6 +2277,9 @@ button.btn:active {
 .width-980 {width:980px !important;}
 .width-1120 {width:1120px !important;}
 
+/* word-break framework */
+.word-break-normal {word-break: normal;}
+
 .blue-sparkline {
     stroke: steelblue;
     stroke-width: 1.3;

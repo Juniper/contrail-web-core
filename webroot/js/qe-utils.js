@@ -39,7 +39,8 @@ var slColumnsDisplay = [
     {
         field:"MessageTS",
         name:"Time",
-        width:210,
+        width:180,
+        minWidth: 180,
         formatter: function(r, c, v, cd, dc) {
             return (dc.MessageTS && dc.MessageTS!='') ? formatMicroDate(dc.MessageTS) : '';
         }
@@ -47,7 +48,7 @@ var slColumnsDisplay = [
     {
         field:"Source",
         name:"Source",
-        width:150,
+        width:100,
         formatter: function(r, c, v, cd, dc) {
             return handleNull4Grid(dc.Source);
         }
@@ -55,7 +56,8 @@ var slColumnsDisplay = [
     {
         field:"ModuleId",
         name:"Module Id",
-        width:150,
+        width:120,
+        minWidth:120,
         formatter: function(r, c, v, cd, dc) {
             return handleNull4Grid(dc.ModuleId);
         }
@@ -63,7 +65,7 @@ var slColumnsDisplay = [
     {
         field:"Category",
         name:"Category",
-        width:150,
+        width:100,
         formatter: function(r, c, v, cd, dc) {
             return handleNull4Grid(dc.Category);
         }
@@ -71,7 +73,7 @@ var slColumnsDisplay = [
     {
         field:"Messagetype",
         name:"Log Type",
-        width:250,
+        width:120,
         formatter: function(r, c, v, cd, dc) {
             return handleNull4Grid(dc.Messagetype);
         }
@@ -79,7 +81,7 @@ var slColumnsDisplay = [
     {
         field:"Level",
         name:"Level",
-        width:150,
+        width:100,
         hidden:true,
         formatter: function(r, c, v, cd, dc) {
             return getLevelName4Value(dc.Level);
@@ -88,9 +90,9 @@ var slColumnsDisplay = [
     {
         field:"Xmlmessage",
         name:"Log",
-        width:400,
+        width:500,
         formatter: function(r, c, v, cd, dc) {
-            return formatXML2JSON(dc.Xmlmessage);
+            return '<span class="word-break-normal">' + formatXML2JSON(dc.Xmlmessage) + '</span>';
         }
     }
 ];
@@ -108,6 +110,7 @@ function getQueueColumnDisplay(queueId) {
         	field: "startTime", 
         	name:"Date", 
         	width:150, 
+        	minWidth: 150,
         	formatter: function(r, c, v, cd, dc) {
         		return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss');
         	}
@@ -116,13 +119,15 @@ function getQueueColumnDisplay(queueId) {
         	id:"opsQueryId", 
         	field:"opsQueryId", 
         	name:"Query Id", 
-        	width:250, 
+        	width:200, 
         	sortable:false
         },
         {	
         	id:"reRunTimeRange",
         	field:"reRunTimeRange", 
-        	name:"Time Range", width:100, 
+        	name:"Time Range", 
+        	width:100,
+        	minWidth: 100,
         	formatter: function(r, c, v, cd, dc) {
         		return formatReRunTime(dc.reRunTimeRange);
         	}, 
@@ -139,13 +144,13 @@ function getQueueColumnDisplay(queueId) {
         		
         		$.each(engQueryObj, function(key, val){
         			if(key == 'select' && val != ''){
-        				engQueryStr += '<div class="row-fluid"><div class="span3">' + key.toUpperCase() + '</div><div class="span9">*</div></div>';
+        				engQueryStr += '<div class="row-fluid"><span class="bold">' + key.toUpperCase() + '</span> &nbsp;*</div>';
         			}
         			else if((key == 'where' || key == 'filter') && val == ''){
         				engQueryStr += '';
         			}
         			else {
-        				engQueryStr += '<div class="row-fluid"><div class="span3">' + key.toUpperCase() + '</div><div class="span9">' + val + '</div></div>';
+        				engQueryStr += '<div class="row-fluid word-break-normal"><span class="bold">' + key.toUpperCase() + '</span> &nbsp;' + val + '</div>';
         			}
         		});
         		return engQueryStr;
@@ -1183,7 +1188,8 @@ function loadSLResults(options, reqQueryObj, requestType) {
         },
         body: {
             options: {
-                sortable: true
+                sortable: true,
+                forceFitColumns: true
             },
             dataSource: {
                 remote: {
@@ -1274,7 +1280,7 @@ function formatStruct(xmlNode) {
 };
 
 function formatSandesh(xmlNode, is4SystemLogs) {
-    var messageString = '', nodeCount, i, node, nodeHTML;
+    var messageString = '', nodeCount, i;
     $(xmlNode).find("file").each(function () {
         $(this).remove();
     });
@@ -1504,7 +1510,7 @@ function toggleExpandCollapseAll(id,dis){
 		else{
 			$(dis).attr('title','Collapse All');
 		}
-	},500)
+	},500);
 }
 
 function loadOTGrid(options, rows, columns) {
@@ -1601,7 +1607,8 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 		},
 		body : {
 			options: {
-				sortable: true
+				sortable: true,
+				forceFitColumns: true
 			},
 			dataSource : {
 				remote: {
@@ -2071,13 +2078,13 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
                 id: 'fc-checkbox',
             	field:"", 
             	name:"", 
+            	resizable: false,
                 width:30, 
+                minWidth: 30,
                 formatter: function(r, c, v, cd, dc){ 
                 	return '<input id="fc-checkbox-' + dc.flow_class_id +'" type="checkbox" onchange="loadSelectedFSChart(this)" value="' + dc.flow_class_id +'" class="ace-input"/><span class="ace-lbl"></span>';
                 },
-                resizable: false,
                 sortable: false,
-                width: 30,
                 searchable: false,
                 exportConfig: {
                     allow: false
@@ -2090,6 +2097,7 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
                 resizable: false,
                 sortable: false,
                 width: 90,
+                minWidth: 90,
                 searchable: false,
                 exportConfig: {
                     allow: false
