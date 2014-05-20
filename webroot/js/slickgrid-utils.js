@@ -589,12 +589,12 @@ function getDefaultGridConfig() {
                         gridContainer.find('.grid-footer').show();
                         onDataGridHandler();
                     }
+                    gridContainer.find('.slick-row-detail').hide();
                 }
             };
             
             eventHandlerMap.dataView['onRowsChanged'] = function (e, args) {
                 //Refresh the grid only if it's not destroyed
-                
                 setTimeout(function(){
                 	if($(gridContainer).data('contrailGrid')) {
                         grid.invalidateRows(args.rows);
@@ -663,7 +663,7 @@ function getDefaultGridConfig() {
             });
             
             initOnClickDocument('.input-searchbox',function(){
-        	    if(gridContainer.find('.input-searchbox').is(":visible")) {
+        	    if(gridContainer.find('.input-searchbox').is(":visible") && gridContainer.find('.input-searchbox').find('input').val() == '') {
                 	gridContainer.find('.input-searchbox').hide();
                 	gridContainer.find('.link-searchbox').show();
                 }
@@ -891,7 +891,7 @@ function getDefaultGridConfig() {
                     <span class="input-searchbox hide"> \
                         <span class="input-icon"> \
                             <input type="text" placeholder="Search {{this.text}}" class="input-medium input-grid-search"> \
-                            <i class="widget-toolbar-icon icon-search" data-action="search"></i> \
+                            <i class="widget-toolbar-icon icon-search"></i> \
                         </span> \
                     </span> \
                 </div>';
