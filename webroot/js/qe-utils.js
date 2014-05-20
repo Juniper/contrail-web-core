@@ -93,7 +93,14 @@ var slColumnsDisplay = [
         width:500,
         formatter: function(r, c, v, cd, dc) {
             return '<span class="word-break-normal">' + formatXML2JSON(dc.Xmlmessage) + '</span>';
-        }
+        },
+        exportConfig: {
+			allow: true,
+			advFormatter: function(dc) {
+				return formatXML2JSON(dc.Xmlmessage);
+			}
+		}
+       
     }
 ];
 
@@ -155,7 +162,26 @@ function getQueueColumnDisplay(queueId) {
         		});
         		return engQueryStr;
         	},
-            sortable:false
+            sortable:false,
+            exportConfig: {
+				allow: true,
+				advFormatter: function(dc) {
+					var engQueryObj = JSON.parse(dc.engQueryStr),
+        			engQueryStr = '';
+					$.each(engQueryObj, function(key, val){	
+						if(key == 'select' && val != ''){
+	        				engQueryStr += key.toUpperCase() + ' * ';
+	        			}
+	        			else if((key == 'where' || key == 'filter') && val == ''){
+	        				engQueryStr += '';
+	        			}
+	        			else {
+	        				engQueryStr += key.toUpperCase() + ' ' + val + ' ';
+	        			}
+					});
+					return engQueryStr;
+				}
+			}
         },
         {
         	id:"progress", 
@@ -1428,6 +1454,12 @@ function push2OTColumns(columnArray, newColumnName, columns, selectedFieldName, 
         			}
             		return returnString;
             	},
+            	exportConfig: {
+    				allow: true,
+    				advFormatter: function(dc) {
+    					return JSON.stringify(dc[newColumnName], undefined, 2);
+    				}
+    			},
             	sortable: false,
             	events: {
         			onClick: function(e,dc){
