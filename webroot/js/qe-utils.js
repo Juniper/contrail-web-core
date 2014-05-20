@@ -366,14 +366,20 @@ function viewQueryResult(gridId, rowIndex, reRunTimeRange, reRunQueryObj, reRun)
 };
 
 function getQueryPrefix4Table(tableName) {
-    var queryPrefix = null;
+    var queryPrefix = null,
+        acpuStatTables = [
+            'StatTable.AnalyticsCpuState.cpu_info',
+            'StatTable.ComputeCpuState.cpu_info',
+            'StatTable.ConfigCpuState.cpu_info',
+            'StatTable.ControlCpuState.cpu_info'
+        ];
     if (tableName == 'FlowRecordTable') {
         queryPrefix = 'fr';
     } else if (tableName == 'FlowSeriesTable') {
         queryPrefix = 'fs';
     } else if (tableName == 'MessageTable') {
         queryPrefix = 'sl';
-    } else if (tableName == 'StatTable.AnalyticsCpuState.cpu_info') {
+    } else if (acpuStatTables.indexOf(tableName) != -1 ) {
         queryPrefix = 'acpu';
     } else if (tableName == 'StatTable.QueryPerfInfo.query_stats') {
         queryPrefix = 'qeperf';
@@ -471,9 +477,10 @@ function clearGrid(elementId) {
 function openSelect(queryPrefix) {
     var query = queries[queryPrefix];
 
-    if($('#' + queryPrefix + '-select-popup-container').length == 0){
-        $('body').append(query.selectTemplate);
+    if($('#' + queryPrefix + '-select-popup-container').length != 0){
+        $('body').find('#' + queryPrefix + '-select-popup-container').remove();
     }
+    $('body').append(query.selectTemplate);
     ko.cleanNode(document.getElementById(queryPrefix + '-select-popup-container'));
     ko.applyBindings(query.selectViewModel, document.getElementById(queryPrefix + '-select-popup-container'));
     query.selectWindow = $('#' + queryPrefix + '-select-popup-container');
