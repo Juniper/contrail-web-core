@@ -53,7 +53,6 @@ package:
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env true
-	rm -rf web_third_party
 
 all:
 	mkdir -p webroot/html
@@ -133,7 +132,6 @@ clean:
 	rm -f src/serverroot/web/core/feature.list.js
 	rm -f src/serverroot/web/routes/url.routes.js
 	rm -rf node_modules
-	rm -rf web_third_party
 	rm -rf html
 	rm -rf webroot/assets/2way-multiselect
 	rm -rf webroot//assets/bootstrap
