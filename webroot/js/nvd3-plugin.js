@@ -32,8 +32,7 @@
  WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// NOTICE: The following chart has been derived from NVD3 lineWithFocusChart.
-
+// The following chart has been taken from NVD3 lineWithFocusChart.
 nv.models.lineWithExtendedFocusChart = function () {
 
     //=======================================
@@ -601,4 +600,16 @@ function getAggData4Navigator(data) {
         newData.push(newDataSet)
     }
     return newData;
+};
+
+function interpolateSankey(points) {
+    var x0 = points[0][0], y0 = points[0][1], x1, y1, x2,
+        path = [x0, ",", y0],
+        i = 0, n = points.length;
+    while (++i < n) {
+        x1 = points[i][0], y1 = points[i][1], x2 = (x0 + x1) / 2;
+        path.push("C", x2, ",", y0, " ", x2, ",", y1, " ", x1, ",", y1);
+        x0 = x1, y0 = y1;
+    }
+    return path.join("");
 };

@@ -354,7 +354,7 @@ function getvRouterDetails (req, res, appData)
 {
     var host        = req.param('hostname');
     var flatParse   = req.param('flat');
-    var url         = '/analytics/vrouter/' + host + '?flat';
+    var url         = '/analytics/uves/vrouter/' + host + '?flat';
     var resultJSON = {};
     
     opServer.api.get(url, 
@@ -1040,7 +1040,7 @@ function getUVByUrlEAndSendData (url, errResponse, res, appData)
 
 function getConfigNodesList (req, res, appData)
 {
-    var url = '/analytics/config-nodes';
+    var url = '/analytics/uves/config-nodes';
     var errResponse = {};
 
     getUVByUrlEAndSendData(url, errResponse, res, appData);
@@ -1117,7 +1117,7 @@ function getConfigNodeDetails (req, res, appData)
     var dataObjArr = [];
     var excludeProcessList = ['DiscoveryService','ServiceMonitor','Schema'];
     var genPostData = {};
-    reqUrl = '/analytics/config-node/' + hostName + '?flat';
+    reqUrl = '/analytics/uves/config-node/' + hostName + '?flat';
     commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_GET,
                              null, opApiServer, null, appData);
     genPostData['kfilt'] = ['*:ApiServer*','*:DiscoveryService*','*:ServiceMonitor*','*:Schema*'];

@@ -1,8 +1,8 @@
 diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid.enhancement.pager/slick.enhancementpager.js
---- old/SlickGridEnhancementPager/slick.enhancementpager.js	2014-04-25 10:27:06.576069762 +0530
-+++ new/slickgrid.enhancement.pager/slick.enhancementpager.js	2014-04-25 10:29:26.443077615 +0530
-@@ -1,253 +1,262 @@
- ﻿/**
+--- old/SlickGridEnhancementPager/slick.enhancementpager.js	2014-05-15 15:12:37.000000000 -0700
++++ new/slickgrid.enhancement.pager/slick.enhancementpager.js	2014-05-15 15:21:44.000000000 -0700
+@@ -1,253 +1,248 @@
+-﻿/**
 -* SlickGrid Enhancement Pager
 -*
 -* An easy-to-use slickgrid pager.
@@ -12,6 +12,7 @@ diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid
 -* Copyright 2012 KingleeMa <https://github.com/kingleema>
 -*
 -*/
++/**
 + * SlickGrid Enhancement Pager
 + *
 + * An easy-to-use slickgrid pager.
@@ -123,136 +124,7 @@ diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid
 -                    var changedvalue = parseInt($(".currentpage").val()) + 1;
 -                    if (changedvalue > parseInt($("#totalpages").text())) {
 -                        changedvalue = parseInt($("#totalpages").text());
-+	function EnhancementPager(paramObj) {
-+		var ajaxPostData = paramObj.params,
-+			defaultPageSize = 100,
-+			events = paramObj.events,
-+            gridDSConfig = paramObj.gridConfig.body.dataSource,
-+            sortable = paramObj.gridConfig.body.options.sortable,
-+            timeout = gridDSConfig.remote.timeout;
-+		if (isNaN(timeout)) {
-+			timeout = 30000;
-+		}
-+		var postedData = {};
-+		postedData['pageSize'] = defaultPageSize;
-+        postedData['page'] = 1;
-+		if (ajaxPostData !== null && ajaxPostData != undefined) {
-+			$.each(ajaxPostData, function (k, v) {
-+				postedData[k] = v;
-+			});
-+		}
-+		
-+		initPager(paramObj.pagerType, paramObj.trans, timeout);
-+		getData(1, paramObj.remoteUrl, paramObj.pagerType, ajaxPostData, timeout);
-+
-+		function populatePagerSelect(data){
-+			var returnData = [];
-+			$.each(data,function(key,val){
-+				returnData.push({
-+					id: val,
-+					text: String(val)
-+				});
-+			});
-+			return returnData;
-+		}
-+
-+		function initPager(pagertype, trans, waiting) {
-+			paramObj.container.html('');
-+			var container = paramObj.container;
-+			var $nav = $("<span class='slick-pager-nav' />").appendTo(container);
-+			$info = $("<span class='slick-pager-info' />").appendTo(container);
-+			$sizes = $("<span class='slick-pager-sizes' />").appendTo(container);
-+
-+			// Pager Controls (pager-Nav)
-+
-+			$('<span class="pager-control resultset_first"> <i class="icon-step-backward"></i></span>').appendTo($nav);
-+			$('<span class="pager-control resultset_prev"> <i class="icon-backward"></i></span>').appendTo($nav);
-+
-+
-+			$('<span class="pager-page-info"> <div class="csg-current-page"></div> of <span class="csg-total-page-count"></span></span>').appendTo($nav);
-+
-+			$('<span class="pager-control resultset_next"> <i class="icon-forward"></i></span>').appendTo($nav);
-+			$('<span class="pager-control resultset_last"> <i class="icon-step-forward"></i></span>').appendTo($nav);
-+
-+			if(paramObj.options.pageSizeSelect != undefined){
-+				$sizes.append('<div class="csg-pager-sizes"></div> Records per page');
-+				container.find('.csg-pager-sizes').select2({
-+					placeholder: 'Select..',
-+					data: populatePagerSelect(paramObj.options.pageSizeSelect),
-+					minimumResultsForSearch: -1
-+				}).on('change', function(e){
-+					var pageIndex = 1;
-+					getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
-+	
-+					var pagesize = parseInt(e.val);
-+					var total = parseInt(paramObj.container.find('.totalrecords').text());
-+					var totalpages = parseInt(Math.floor(parseFloat(total / pagesize)) + 1);
-+					var currentPageSelectData = populateCurrentPageSelect(totalpages);
-+					paramObj.container.find('.csg-current-page').select2('destroy');
-+					paramObj.container.find('.csg-current-page').select2({ 
-+						data: currentPageSelectData,
-+						placeholder: 'Select..',
-+						minimumResultsForSearch: -1
-+					}).on('change', function(e){
-+						var pageIndex = e.val;
-+						if (pageIndex < 1) {
-+							pageIndex = 1;
-+						}
-+						if (pageIndex > parseInt(paramObj.container.find('.csg-total-page-count').text())) {
-+							pageIndex = parseInt(paramObj.container.find('.csg-total-page-count').text());
-+						}
-+						paramObj.container.find('.csg-current-page').select2('val',String(pageIndex));
-+						getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
-+					}).select2('val','1');
-+	
-+				}).select2('val',String(paramObj.options.pageSize));
-+			} else {
-+				$sizes.append('<span class="csg-pager-sizes-select">' + paramObj.options.pageSize + '</span> Records per page');
-+				$sizes.css({padding: '9px'});
-+			}
-+
-+			container.children().wrapAll('<div class="slick-pager hide" />');
-+
-+			$info.empty().append('Total: <span class="totalrecords"></span> records');
-+			$(".resultset_first").click(function () {
-+				var pageIndex = 1;
-+				getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
-+			});
-+			$(".resultset_prev").click(function () {
-+				if (isNaN(parseInt(container.find('.csg-current-page').select2('val')))) {
-+					container.find('.csg-current-page').select2('val','1');
-+				}
-+				var pageIndex = parseInt(container.find('.csg-current-page').select2('val')) - 1;
-+				if (pageIndex < 1) {
-+					pageIndex = 1;
-+				}
-+				getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
-+			});
-+			$(".resultset_next").click(function () {
-+				if (isNaN(parseInt(container.find('.csg-current-page').select2('val')))) {
-+					container.find('.csg-current-page').select2('val','1');
-+				}
-+				var pageIndex = parseInt(container.find('.csg-current-page').select2('val')) + 1;
-+				if (pageIndex > parseInt(paramObj.container.find('.csg-total-page-count').text())) {
-+					pageIndex = parseInt(paramObj.container.find('.csg-total-page-count').text());
-+				}
-+				getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
-+			});
-+			$(".resultset_last").click(function () {
-+				var pageIndex = parseInt(paramObj.container.find('.csg-total-page-count').text());
-+				getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
-+			});
-+            if(sortable != null && sortable) {
-+                paramObj.datagrid.onSort.subscribe(function (e, args) {
-+                	var argsSortColsField = (args.multiColumnSort) ? args.sortCols[0].sortCol.field : args.sortCol.field,
-+                    	sortAsc = (args.multiColumnSort) ? args.sortCols[0].sortAsc : args.sortAsc;
-+                        sortDir = sortAsc ? 'asc' : 'desc',
-+                        sortOptions = [{field: argsSortColsField, dir: sortDir}],
-+                        pageNumber = container.find('.csg-current-page').select2('val');
-+                    if (isNaN(parseInt(pageNumber))) {
-+                        pageNumber = '1';
-+                        container.find('.csg-current-page').select2('val', pageNumber);
-                     }
+-                    }
 -                    getData(changedvalue, paramObj.remoteUrl, pagertype, paramObj.params, waiting);
 -                });
 -                $(".pageminus").click(function () {
@@ -290,7 +162,121 @@ diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid
 -                $(".resultset_prev").click(function () {
 -                    if (isNaN(parseInt($(".currentpage").val()))) {
 -                        $(".currentpage").val(1);
--                    }
++	function EnhancementPager(paramObj) {
++		var ajaxPostData = paramObj.params,
++			defaultPageSize = 100,
++			csgCurrentPageDropDown = null, 
++			csgPagerSizesDropdown = null,
++			events = paramObj.events,
++            gridDSConfig = paramObj.gridConfig.body.dataSource,
++            sortable = paramObj.gridConfig.body.options.sortable,
++            timeout = gridDSConfig.remote.timeout;
++		if (isNaN(timeout)) {
++			timeout = 30000;
++		}
++		var postedData = {};
++		postedData['pageSize'] = defaultPageSize;
++        postedData['page'] = 1;
++		if (ajaxPostData !== null && ajaxPostData != undefined) {
++			$.each(ajaxPostData, function (k, v) {
++				postedData[k] = v;
++			});
++		}
++		
++		initPager(paramObj.pagerType, paramObj.trans, timeout);
++		getData(1, paramObj.remoteUrl, paramObj.pagerType, ajaxPostData, timeout);
++
++		function populatePagerSelect(data){
++			var returnData = [];
++			$.each(data,function(key,val){
++				returnData.push({
++					id: val,
++					text: String(val)
++				});
++			});
++			return returnData;
++		}
++
++		function initPager(pagertype, trans, waiting) {
++			var container = paramObj.container;
++				
++			if(paramObj.options.pageSizeSelect != undefined){
++				csgPagerSizesDropdown = container.find('.csg-pager-sizes').contrailDropdown({
++					placeholder: 'Select..',
++					data: populatePagerSelect(paramObj.options.pageSizeSelect),
++					change: function(e){
++						var pageIndex = 1;
++						getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
++		
++						var pagesize = parseInt(e.val);
++						var total = parseInt(paramObj.container.find('.totalrecords').text());
++						var totalpages = parseInt(Math.floor(parseFloat(total / pagesize)) + 1);
++						csgCurrentPageDropDown = paramObj.container.find('.csg-current-page').contrailDropdown({ 
++							data: populateCurrentPageSelect(totalpages),
++							placeholder: 'Select..',
++							change: function(e){
++								var pageIndex = e.val;
++								if (pageIndex < 1) {
++									pageIndex = 1;
++								}
++								if (pageIndex > parseInt(paramObj.container.find('.csg-total-page-count').text())) {
++									pageIndex = parseInt(paramObj.container.find('.csg-total-page-count').text());
++								}
++								csgCurrentPageDropDown.value(String(pageIndex));
++								getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
++							}
++						});
++						csgCurrentPageDropDown.value('1');
++					}
++				}).data('contrailDropdown');
++				csgPagerSizesDropdown.value(String(paramObj.options.pageSize));
++			} else {
++				container.find('.csg-pager-sizes').append(paramObj.options.pageSize + ' Records');
++				container.find('.csg-pager-sizes').width(60);
++			}
++
++			container.find(".slick-pager-info").empty().append('Total: <span class="totalrecords"></span> records');
++
++			container.find(".pager-control-first").click(function () {
++				var pageIndex = 1;
++				getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
++			});
++			container.find(".pager-control-prev").click(function () {
++				if (isNaN(parseInt(csgCurrentPageDropDown.value()))) {
++					csgCurrentPageDropDown.value('1');
++				}
++				var pageIndex = parseInt(csgCurrentPageDropDown.value()) - 1;
++				if (pageIndex < 1) {
++					pageIndex = 1;
++				}
++				getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
++			});
++			container.find(".pager-control-next").click(function () {
++				if (isNaN(parseInt(csgCurrentPageDropDown.value()))) {
++					csgCurrentPageDropDown.value('1');
++				}
++				var pageIndex = parseInt(csgCurrentPageDropDown.value()) + 1;
++				if (pageIndex > parseInt(paramObj.container.find('.csg-total-page-count').text())) {
++					pageIndex = parseInt(paramObj.container.find('.csg-total-page-count').text());
++				}
++				getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
++			});
++			container.find(".pager-control-last").click(function () {
++				var pageIndex = parseInt(paramObj.container.find('.csg-total-page-count').text());
++				getData(pageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, waiting);
++			});
++			
++            if(sortable != null && sortable) {
++                paramObj.datagrid.onSort.subscribe(function (e, args) {
++                	var argsSortColsField = (args.multiColumnSort) ? args.sortCols[0].sortCol.field : args.sortCol.field,
++                    	sortAsc = (args.multiColumnSort) ? args.sortCols[0].sortAsc : args.sortAsc;
++                        sortDir = sortAsc ? 'asc' : 'desc',
++                        sortOptions = [{field: argsSortColsField, dir: sortDir}],
++                        pageNumber = csgCurrentPageDropDown.value();
++                    if (isNaN(parseInt(pageNumber))) {
++                        pageNumber = '1';
++                        csgCurrentPageDropDown.value(pageNumber);
+                     }
 -                    var changedvalue = parseInt($(".currentpage").val()) - 1;
 -                    if (changedvalue < 1) {
 -                        changedvalue = 1;
@@ -310,9 +296,8 @@ diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid
 -                $(".resultset_last").click(function () {
 -                    var changedvalue = parseInt($("#totalpages").text());
 -                    getData(changedvalue, paramObj.remoteUrl, pagertype, paramObj.params, waiting);
-+                    getData(pageNumber, paramObj.remoteUrl, pagertype, ajaxPostData, waiting, sortOptions);
-                 });
-             }
+-                });
+-            }
 -            $('.recordsperpage').dropkick({
 -                change: function (value, label) {
 -                    var changedvalue = 1;
@@ -345,8 +330,9 @@ diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid
 -            if (params !== null && params != undefined) {
 -                $.each(params, function (k, v) {
 -                    postedData[k] = $(v).val();
--                });
--            }
++                    getData(pageNumber, paramObj.remoteUrl, pagertype, ajaxPostData, waiting, sortOptions);
+                 });
+             }
 -            $.ajax({
 -                url: url,
 -                type: 'POST',
@@ -388,6 +374,11 @@ diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid
 -                    $("#dataloading").removeAttr("disabled");
 -                    $('#dataloading').removeClass('dataloading');
 -                    $('#dataloading').addClass('refresh');
+-                }
+-            });
+-        }
+-    }
+-    $.extend(true, window, { Slick: { Controls: { EnhancementPager: EnhancementPager}} });
 +		}
 +
 +		function populateCurrentPageSelect(n){
@@ -395,14 +386,14 @@ diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid
 +			for(var i = 1 ; i <= n ; i++){
 +				returnData.push({
 +					id: i,
-+					text: String((i))
++					text: 'Page ' + String((i))
 +				});
 +			}
 +			return returnData;
 +		};
 +
 +		function getData(pageIndex, url, pagertype, ajaxPostData, timeout, sortOptions) {
-+			var pagesize = parseInt((paramObj.options.pageSizeSelect != undefined) ? paramObj.container.find('.csg-pager-sizes').select2('val') : paramObj.options.pageSize);
++			var pagesize = parseInt((paramObj.options.pageSizeSelect != undefined) ? csgPagerSizesDropdown.value() : paramObj.options.pageSize);
 +			postedData['pageSize'] = pagesize;
 +			postedData['page'] = pageIndex;
 +			if (ajaxPostData !== null && ajaxPostData != undefined) {
@@ -411,11 +402,7 @@ diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid
 +				});
 +                if(sortable) {
 +                   postedData['sort'] = sortOptions;
-                 }
--            });
--        }
--    }
--    $.extend(true, window, { Slick: { Controls: { EnhancementPager: EnhancementPager}} });
++                }
 +			}
 +			$.ajax({
 +				url: url,
@@ -475,23 +462,24 @@ diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid
 +									var totalpages = parseInt(Math.ceil(parseFloat(total / pagesize)));
 +			
 +									var currentPageSelectData = populateCurrentPageSelect(totalpages);
-+									paramObj.container.find('.csg-current-page').select2('destroy');
-+									paramObj.container.find('.csg-current-page').select2({ 
++									csgCurrentPageDropDown = paramObj.container.find('.csg-current-page').contrailDropdown({ 
 +										val: '1',
 +										data: currentPageSelectData,
 +										placeholder: 'Select..',
-+										minimumResultsForSearch: -1
-+									}).on('change', function(e){
-+										var changedPageIndex = e.val;
-+										if (changedPageIndex < 1) {
-+											changedPageIndex = 1;
++										change: function(e){
++											var changedPageIndex = e.val;
++											if (changedPageIndex < 1) {
++												changedPageIndex = 1;
++											}
++											if (changedPageIndex > parseInt(paramObj.container.find('.csg-total-page-count').text())) {
++												changedPageIndex = parseInt(paramObj.container.find('.csg-total-page-count').text());
++											}
++											csgCurrentPageDropDown.value(String(changedPageIndex));
++											getData(changedPageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, timeout);
 +										}
-+										if (changedPageIndex > parseInt(paramObj.container.find('.csg-total-page-count').text())) {
-+											changedPageIndex = parseInt(paramObj.container.find('.csg-total-page-count').text());
-+										}
-+										paramObj.container.find('.csg-current-page').select2('val',String(changedPageIndex));
-+										getData(changedPageIndex, paramObj.remoteUrl, pagertype, ajaxPostData, timeout);
-+									}).select2('val', String(pageIndex));
++									}).data('contrailDropdown');
++									
++									csgCurrentPageDropDown.value(String(pageIndex));
 +			
 +									paramObj.container.find('.csg-total-page-count').text(totalpages);
 +									paramObj.container.find('.slick-pager').show();

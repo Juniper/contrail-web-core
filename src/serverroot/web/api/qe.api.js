@@ -527,7 +527,7 @@ function parseFSQuery(reqQuery)
 
 function parseStatsQuery(reqQuery)
 {
-    var select, where, fromTimeUTC, toTimeUTC, statQuery, filters, table, tg, tgUnit;
+    var select, where, fromTimeUTC, toTimeUTC, statQuery, filters, table, tg, tgUnit, filtersArray;
     table = reqQuery['table'];
     statQuery = getQueryJSON4Table(table);
     fromTimeUTC = reqQuery['fromTimeUTC'];
@@ -543,7 +543,12 @@ function parseStatsQuery(reqQuery)
     }
     parseWhere(statQuery, where);
     if (filters != null && filters != '') {
-        parseFilter(statQuery, filters);
+        // splitting the filters and using parseFilter for the [name, value, operator] and parseFSFilter for
+        // [sortfields, sortby, limit]
+        filtersArray = filters.split(',');
+        parseFilter(statQuery, filtersArray[0].toString().replace("filter: ",""));
+        filtersArray.shift();
+        parseFSFilter(statQuery, filtersArray.toString());
     }
     return statQuery;
 };
@@ -1206,4 +1211,5 @@ exports.deleteQueryCache4Ids = deleteQueryCache4Ids;
 exports.deleteQueryCache4Queue = deleteQueryCache4Queue;
 exports.flushQueryCache = flushQueryCache;
 exports.exportQueryResult = exportQueryResult;
+exports.getQueryJSON4Table = getQueryJSON4Table;
 

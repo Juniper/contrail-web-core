@@ -8,7 +8,7 @@ function getDefaultGridConfig() {
         header: {
             title: {
                 cssClass : 'blue',
-                icon : 'icon-list',
+                icon : '',
                 iconCssClass : 'blue'
             },
             icon: false,
@@ -142,11 +142,15 @@ function getDefaultGridConfig() {
                             if(response.length == 0){
                                 emptyGridHandler();
                             }
-                            //gridContainer.find('.grid-load-status').before('<div class="grid-body"></div>');
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestSuccessCB)) {
                                 gridDataSource.events.onRequestSuccessCB(response);
                             }
                             dataView.setData(response);
+                            if(gridConfig.header.defaultControls.refreshable){
+                            	setTimeout(function(){
+                            		gridContainer.find('.link-refreshable i').removeClass('icon-spin icon-spinner').addClass('icon-repeat');
+                            	},1000);
+                            }
                         },
                         failureCallback: function (xhr) {
                             stopAutoRefresh();
@@ -250,7 +254,8 @@ function getDefaultGridConfig() {
 	                        e.stopPropagation();
                         break;
 	                    case 'refresh':
-	                    	gridContainer.data('contrailGrid').refreshData();
+	                    	gridContainer.find('.link-refreshable i').removeClass('icon-repeat').addClass('icon-spin icon-spinner');
+                            gridContainer.data('contrailGrid').refreshData();
 	                    break;
 	                    case 'export':
 	                        var gridDSConfig = gridDataSource,
@@ -552,7 +557,7 @@ function getDefaultGridConfig() {
                             left: offset.left-155 + 'px'
                         }).show();
                         e.stopPropagation();
-                        initOnClickDocument($('#' + gridContainer.prop('id') + '-action-menu-' + args.row),function(){
+                        initOnClickDocument('#' + gridContainer.prop('id') + '-action-menu-' + args.row,function(){
                         	$('#' + gridContainer.prop('id') + '-action-menu-' + args.row).hide();
                         });
                     }
@@ -562,9 +567,9 @@ function getDefaultGridConfig() {
             grid['onClick'].subscribe(eventHandlerMap.grid['onClick']);
         };
         
-        function initOnClickDocument(container, callback) {
+        function initOnClickDocument(containerIdentifier, callback) {
         	$(document).on('click',function (e) {
-   			    if (!container.is(e.target) && container.has(e.target).length === 0){
+        		if(!$(e.target).closest(gridContainer.find(containerIdentifier)).length) {
    			    	callback();
    			    }
     		});
@@ -657,17 +662,30 @@ function getDefaultGridConfig() {
                 $(this).focus();
             });
             
-            initOnClickDocument(gridContainer.find('.input-searchbox'),function(){
-            	if(gridContainer.find('.input-searchbox').is(':visible')){
+            initOnClickDocument('.input-searchbox',function(){
+        	    if(gridContainer.find('.input-searchbox').is(":visible")) {
                 	gridContainer.find('.input-searchbox').hide();
                 	gridContainer.find('.link-searchbox').show();
-            	}
+                }
             });
         }
 
         function initGridFooter(serverSidePagination) {
             if(gridConfig.footer != false) {
                 gridContainer.append('<div class="grid-footer hide"></div>');
+                
+                gridContainer.find('.grid-footer').append('<div class="slick-pager"> \
+                		<span class="slick-pager-nav"> \
+                			<span class="pager-control"><i class="icon-step-backward icon-disabled pager-control-first"></i></span>\
+                			<span class="pager-control"> <i class="icon-backward icon-disabled pager-control-prev"></i></span> \
+                			<span class="pager-page-info"><div class="csg-current-page"></div> of <span class="csg-total-page-count"></span></span> \
+                			<span class="pager-control"> <i class="icon-forward icon-disabled pager-control-next"></i></span> \
+                			<span class="pager-control"> <i class="icon-step-forward icon-disabled pager-control-last"></i></span> \
+                		</span> \
+                		<span class="slick-pager-info"></span>\
+                		<span class="slick-pager-sizes"><div class="csg-pager-sizes"></div></span>\
+                	</div>');
+                
                 if(serverSidePagination) {
                     pager = new Slick.Controls.EnhancementPager({
                         gridContainer: gridContainer,
@@ -858,7 +876,7 @@ function getDefaultGridConfig() {
             if(headerConfig.defaultControls.refreshable){
                 template += '\
                 <div class="widget-toolbar pull-right"> \
-                    <a class="widget-toolbar-icon link-searchbox" title="Refresh" data-action="refresh"> \
+                    <a class="widget-toolbar-icon link-refreshable" title="Refresh" data-action="refresh"> \
                         <i class="icon-repeat"></i> \
                     </a> \
                 </div>';
@@ -936,7 +954,7 @@ function getDefaultGridConfig() {
 }(jQuery));
 
 var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
-    var $info = null, pageSizeSelect = pagingInfo.pageSizeSelect,
+    var pageSizeSelect = pagingInfo.pageSizeSelect,
     	csgCurrentPageDropDown = null, csgPagerSizesDropdown = null,
         footerContainer = gridContainer.find('.grid-footer');
 
@@ -966,12 +984,12 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
         $.each(data.pageSizeSelect,function(key,val){
             returnData.push({
                 id: val,
-                text: String(val)
+                text: String(val) + ' Records'
             });
         });
         returnData.push({
             id: parseInt(data.totalRows),
-            text: 'All'
+            text: 'All Records'
         });
         return returnData;
     }
@@ -981,47 +999,38 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
         for(var i = 0 ; i < n ; i++){
             returnData.push({
                 id: i,
-                text: String((i+1))
+                text: 'Page ' + String((i+1))
             });
         }
         return returnData;
     };
 
     function constructPagerUI() {
-        footerContainer.empty();
-        var $nav = $("<span class='slick-pager-nav' />").appendTo(footerContainer),
-            iconPrefix, iconSuffix;
-        $info = $("<span class='slick-pager-info' />").appendTo(footerContainer);
-        $sizes = $("<span class='slick-pager-sizes' />").appendTo(footerContainer);
-
-
-        // Pager Controls (pager-Nav)
-        iconPrefix = '<span class="pager-control"> <i class="';
-        iconSuffix = '"></i></span>';
-        $(iconPrefix + "icon-step-backward" + iconSuffix).click(gotoFirst).appendTo($nav);
-        $(iconPrefix + "icon-backward" + iconSuffix).click(gotoPrev).appendTo($nav);
-
-
-        $('<span class="pager-page-info"> <div class="csg-current-page"></div> of <span class="csg-total-page-count"></span></span>').appendTo($nav);
-
+    	footerContainer.find('.pager-control-first').click(gotoFirst);
+    	footerContainer.find('.pager-control-prev').click(gotoPrev);
+    	footerContainer.find('.pager-control-next').click(gotoNext);
+    	footerContainer.find('.pager-control-last').click(gotoLast);
+    	
         csgCurrentPageDropDown = footerContainer.find('.csg-current-page').contrailDropdown({
             placeholder: 'Select..',
-            data: [{id: 0, text: '1'}],
+            data: [{id: 0, text: 'Page 1'}],
             change: function(e){
                 dataView.setPagingOptions({pageNum: e.val});
+                csgCurrentPageDropDown.value(String(e.val));
+            },
+            formatResult: function(item) {
+                return '<span class="grid-footer-dropdown-item">' + item.text + '</span>';
             }
         }).data('contrailDropdown');
         csgCurrentPageDropDown.value('0');
-
-        $(iconPrefix + "icon-forward" + iconSuffix).click(gotoNext).appendTo($nav);
-        $(iconPrefix + "icon-step-forward" + iconSuffix).click(gotoLast).appendTo($nav);
-
-        $sizes.append('<div class="csg-pager-sizes"></div> Records per page');
 
         csgPagerSizesDropdown = footerContainer.find('.csg-pager-sizes').contrailDropdown({
             data: populatePagerSelect(pagingInfo),
             change: function(e){
                 dataView.setPagingOptions({pageSize: parseInt(e.val), pageNum: 0});
+            },
+            formatResult: function(item) {
+                return '<span class="grid-footer-dropdown-item">' + item.text + '</span>';
             }
         }).data('contrailDropdown');
         csgPagerSizesDropdown.value(String(pagingInfo.pageSize));
@@ -1029,8 +1038,6 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
         footerContainer.find(".ui-icon-container").hover(function () {
             $(this).toggleClass("ui-state-hover");
         });
-
-        footerContainer.children().wrapAll("<div class='slick-pager' />");
     }
 
     function updatePager(pagingInfo) {
@@ -1049,7 +1056,7 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
             footerContainer.find(".icon-backward").removeClass("icon-disabled");
         }
 
-        $info.text("Total: " + pagingInfo.totalRows + " records");
+        footerContainer.find(".slick-pager-info").text("Total: " + pagingInfo.totalRows + " records");
         footerContainer.find('.csg-total-page-count').text(pagingInfo.totalPages);
 
         var currentPageSelectData = populateCurrentPageSelect(pagingInfo.totalPages);
@@ -1076,7 +1083,6 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
             isFilterUnchanged: true
         });
         dataView.setPagingOptions({pageSize: n});
-        //container.find('.csg-current-page').select2('val', String(n));
     }
 
     function gotoFirst() {

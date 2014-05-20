@@ -1682,8 +1682,7 @@ function getvRouterMCastRoutes (req, res) {
 
 // Handle request to get a JSON of all collectors.
 adminapi.getCollectorList = function (res) {
-    var url;
-    url = "/analytics/collectors";
+    var url = "/analytics/uves/analytics-nodes";
     opServer.authorize(function () {
         opServer.api.get(url, function (error, data) {
             if (error) {

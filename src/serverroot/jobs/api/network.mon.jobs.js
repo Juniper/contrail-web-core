@@ -16,6 +16,7 @@ var rest = require('../../common/rest.api'),
     flowCache = require('../../common/flowCache.api'),
     nwMonUtils = require('../../common/nwMon.utils'),
     configApiServer = require('../../common/configServer.api'),
+    qeAPI = require('../../web/api/qe.api'),
     assert = require('assert'),
     opServer;
 
@@ -124,13 +125,10 @@ function formatQueryString (table, whereClauseObjArr, selectFieldObjArr,
     return commonUtils.cloneObj(queryJSON);
 }
 
-function formatQueryStringWithWhereClause (table, whereClause, selectFieldObjArr,
-                                           timeObj, noSortReqd, limit, dir)
+function formatQueryStringWithWhereClause (table, whereClause, selectFieldObjArr, timeObj, noSortReqd, limit, dir)
 {
-    var queryJSON = {};
-    var whereClauseLen = 0;
-    queryJSON = global.QUERY_JSON[table];
-    var selectLen = selectFieldObjArr.length;
+    var queryJSON = qeAPI.getQueryJSON4Table(table),
+        selectLen = selectFieldObjArr.length;
     queryJSON['select_fields'] = [];
 
     for (var i = 0; i < selectLen; i++) {
@@ -2323,34 +2321,24 @@ function parseCPULoadXMLData (cpuLoadXmlMsg, callback)
 
 function formatCPULoadXMLData (resultJSON, callback)
 {
-    var cpuLoad = {};
     var results = [];
-    var cnt = 0;
+    var counter = 0;
     try {
         resultJSON = resultJSON['value'];
-        cnt = resultJSON.length;
-        for (var i = 0; i < cnt; i++) {
-            results[i] = resultJSON[i]['ObjectLog'];
+        counter = resultJSON.length;
+        for (var i = 0; i < counter; i++) {
+            results[i] = {};
+            results[i]['MessageTS'] = resultJSON[i]['T'];
+            results[i]['cpuData'] = {"cpu_share": resultJSON[i]['cpu_info.cpu_share']};
+            if(resultJSON[i]['cpu_info.one_min_cpuload'])
+                results[i]['cpuData']['cpuLoadAvg'] = {one_min_avg: resultJSON[i]['cpu_info.one_min_cpuload']};
+            results[i]['memData'] = {"memInfo": {"virt": resultJSON[i]['cpu_info.mem_virt']}};
+            if(resultJSON[i]['cpu_info.used_sys_mem'])
+                results[i]['memData']['sysMemInfo'] = {used: resultJSON[i]['cpu_info.used_sys_mem']};
         }
-        async.map(results, parseCPULoadXMLData, function (err, data) {
-            for (i = 0; i < cnt; i++) {
-                resultJSON[i]['cpuData'] = {};
-                resultJSON[i]['memData'] = {};
-                if (resultJSON[i]['ObjectLog']) {
-                    delete resultJSON[i]['ObjectLog'];
-                }
-                try {
-                    resultJSON[i]['cpuData'] = data[i]['cpuData'];
-                    resultJSON[i]['memData'] = data[i]['memData'];
-                } catch (e) {
-                    logutils.logger.debug("IN formatCPULoadXMLData: JSON Parse error:" +
-                        e);
-                }
-            }
-            callback(err, resultJSON);
-        });
+        callback(null, results);
     } catch (e) {
-        logutils.logger.debug("In formatCPULoadXMLData(): JSON Parse error: " + e);
+        logutils.logger.error("In formatCPULoadXMLData(): JSON Parse error: " + e);
         callback(null, '');
     }
 }
@@ -2447,8 +2435,7 @@ function formatFlowSeriesForCPUMemory(cpuMemFlowSeriesData, timeObj, timeGran, n
     resultJSON['summary'] = {};
     resultJSON['summary']['start_time'] = timeObj['start_time'];
     resultJSON['summary']['end_time'] = timeObj['end_time'];
-    resultJSON['summary']['timeGran_microsecs'] =
-        Math.floor(timeGran) * global.MILLISEC_IN_SEC * global.MICROSECS_IN_MILL;
+    resultJSON['summary']['timeGran_microsecs'] = Math.floor(timeGran) * global.MILLISEC_IN_SEC * global.MICROSECS_IN_MILL;
 
     resultJSON['summary']['numCpu'] = num_cpu;
     resultJSON['summary']['loadInfo'] = {};
@@ -2475,35 +2462,28 @@ function getCurrentCpuMemDataJson(timeObj, moduleId, cpuMemData, timeGran)
             return resultJSON;
         }
         resultJSON[0] = {};
-        resultJSON[0]['MessageTS'] = timeObj['start_time'] +
-            Math.floor(timeGran) * global.MILLISEC_IN_SEC *
-                global.MICROSECS_IN_MILL;
+        resultJSON[0]['MessageTS'] = timeObj['start_time'] + Math.floor(timeGran) * global.MILLISEC_IN_SEC * global.MICROSECS_IN_MILL;
         resultJSON[0]['cpuData'] = cpuMemData['cpuData'];
         resultJSON[0]['memData'] = cpuMemData['memData'];
         return resultJSON;
     } catch (e) {
-        logutils.logger.debug("In getCurrentCpuMemDataJson(): JSON Parse error:"
-            + e);
+        logutils.logger.debug("In getCurrentCpuMemDataJson(): JSON Parse error:" + e);
     }
 }
 
 function getCpuMemoryFlowSeriesByUVE(appData, callback)
 {
-    var source = appData.source;
-    var moduleId = appData.moduleId;
+    var source = appData.source,
+        moduleId = appData.moduleId, url;
 
     if (moduleId == 'ControlNode') {
-        url = '/analytics/bgp-router/' + source + '?flat';
+        url = '/analytics/uves/control-node/' + source + '?flat';
     } else if (moduleId == 'vRouterAgent') {
-        url = '/analytics/vrouter/' + source + '?flat';
-    } else if ((moduleId == 'ApiServer') ||
-        (moduleId == 'Schema') ||
-        (moduleId == 'ServiceMonitor')) {
-        url = '/analytics/config-node/' + source + '?flat';
-    } else if ((moduleId == 'Collector') ||
-        (moduleId == 'OpServer') ||
-        (moduleId == 'QueryEngine')) {
-        url = '/analytics/collector/' + source + '?flat';
+        url = '/analytics/uves/vrouter/' + source + '?flat';
+    } else if ((moduleId == 'ApiServer') || (moduleId == 'Schema') || (moduleId == 'ServiceMonitor')) {
+        url = '/analytics/uves/config-node/' + source + '?flat';
+    } else if ((moduleId == 'Collector') || (moduleId == 'OpServer') || (moduleId == 'QueryEngine')) {
+        url = '/analytics/uves/analytics-node/' + source + '?flat';
     } else {
         /* Not supported module */
         assert(0);
@@ -2522,11 +2502,11 @@ function getCpuMemoryFlowSeriesByUVE(appData, callback)
 
 function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, done)
 {
-    var appData = jobData.taskData.appData;
-
-    var source = appData.source;
-    var moduleId = appData.moduleId;
-    var tableName, whereClause;
+    var appData = jobData.taskData.appData,
+        source = appData.source,
+        moduleId = appData.moduleId,
+        tableName, whereClause,
+        selectArr = ["T", "Source", "cpu_info.mem_virt", "cpu_info.cpu_share"];
 
     whereClause = [
         {'ObjectId':source},
@@ -2536,32 +2516,32 @@ function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, done)
         /* ModuleId : ControlNode/VRouterAgent */
         switch (moduleId) {
             case 'ControlNode':
-                tableName = 'ObjectBgpRouter';
-                whereClause = [
-                    {'ObjectId':source}
-                ];
+                tableName = 'StatTable.ControlCpuState.cpu_info';
+                selectArr.push("cpu_info.module_id");
+                whereClause = [{'Source':source}, {'cpu_info.module_id': moduleId}];
                 break;
             case 'vRouterAgent':
-                tableName = 'ObjectVRouter';
-                whereClause = [
-                    {'ObjectId':source},
-                    {"Messagetype":'VrouterStats'}
-                ];
+                tableName = 'StatTable.ComputeCpuState.cpu_info';
+                selectArr.push("cpu_info.used_sys_mem");
+                selectArr.push("cpu_info.one_min_cpuload");
+                whereClause = [{'Source':source}];
                 break;
             case 'ApiServer':
             case 'Schema':
             case 'ServiceMonitor':
-                tableName = 'ObjectConfigNode';
+                tableName = 'StatTable.ConfigCpuState.cpu_info';
+                selectArr.push("cpu_info.module_id");
+                whereClause = [{'Source':source}, {'cpu_info.module_id': moduleId}];
                 break;
             case 'OpServer':
             case 'Collector':
             case 'QueryEngine':
-                tableName = 'ObjectCollectorInfo';
-                whereClause.push({'Messagetype':'ModuleCpuStateTrace'});
+                tableName = 'StatTable.AnalyticsCpuState.cpu_info';
+                selectArr.push("cpu_info.module_id");
+                whereClause = [{'Source':source}, {'cpu_info.module_id': moduleId}];
                 break;
             default:
-                logutils.logger.debug("In processCPULoadFlowSeries():" +
-                    "Unknown module id: " + moduleId);
+                logutils.logger.debug("In processCPULoadFlowSeries():" + "Unknown module id: " + moduleId);
         }
     } else {
         /* ModuleId is MUST */
@@ -2576,60 +2556,44 @@ function processCPULoadFlowSeries (pubChannel, saveChannelKey, jobData, done)
     whereClause = formatAndClause(whereClause);
     var timeObj = createTimeQueryJsonObj(appData.minsSince, appData.endTime);
     var timeGran = nwMonUtils.getTimeGranByTimeSlice(timeObj, appData.sampleCnt);
-    var strTimeGran = 'T=' + timeGran;
-    var selectArr = ["MessageTS", "ObjectLog"];
-    var queryJSON =
-        formatQueryStringWithWhereClause(tableName,
-            whereClause,
-            selectArr, timeObj, null,
-            null);
-    delete queryJSON['filter'];
+    var queryJSON = formatQueryStringWithWhereClause(tableName, whereClause, selectArr, timeObj, true);
+    delete queryJSON['limit'];
     delete queryJSON['dir'];
-    queryJSON['sort_fields'] = ['MessageTS'];
-    queryJSON['sort'] = global.QUERY_STRING_SORT_ASC;
     var selectEleCnt = queryJSON['select_fields'].length;
     queryJSON['select_fields'].splice(selectEleCnt - 1, 1);
-    executeQueryString(queryJSON, 
-                       commonUtils.doEnsureExecution(function(err, resultJSON) {
-        formatCPULoadXMLData(resultJSON, function (err, results) {
-            /* Check if there is any data, if no data, then there is no change
-             * in cpu/memory utilization, so we did not get the data, so now
-             * send a query to opserver to get latest data and from that 
-             * build the result json
-             */
-            getCpuMemoryFlowSeriesByUVE(appData, function (resultJSON) {
-                if (resultJSON == null) {
-                    redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                        global.HTTP_STATUS_INTERNAL_ERROR,
-                        global.STR_CACHE_RETRIEVE_ERROR,
-                        global.STR_CACHE_RETRIEVE_ERROR,
-                        0, 0, done);
-                    return;
-                }
-                if ((results == null) || (results.length == 0)) {
-                    var curCpuMemData =
-                        getCurrentCpuMemDataJson(timeObj, moduleId,
-                            resultJSON, timeGran);
-                    results =
-                        formatFlowSeriesForCPUMemory(curCpuMemData, timeObj,
-                            timeGran, resultJSON['num_cpu']);
+    executeQueryString(queryJSON,
+        commonUtils.doEnsureExecution(function(err, resultJSON) {
+            formatCPULoadXMLData(resultJSON, function (err, results) {
+                /* Check if there is any data, if no data, then there is no change
+                 * in cpu/memory utilization, so we did not get the data, so now
+                 * send a query to opserver to get latest data and from that
+                 * build the result json
+                 */
+                getCpuMemoryFlowSeriesByUVE(appData, function (resultJSON) {
+                    if (resultJSON == null) {
+                        redisPub.publishDataToRedis(pubChannel, saveChannelKey,
+                            global.HTTP_STATUS_INTERNAL_ERROR,
+                            global.STR_CACHE_RETRIEVE_ERROR,
+                            global.STR_CACHE_RETRIEVE_ERROR,
+                            0, 0, done);
+                        return;
+                    }
+                    if ((results == null) || (results.length == 0)) {
+                        var curCpuMemData = getCurrentCpuMemDataJson(timeObj, moduleId, resultJSON, timeGran);
+                        results = formatFlowSeriesForCPUMemory(curCpuMemData, timeObj, timeGran, resultJSON['num_cpu']);
+                        var resultsStr = JSON.stringify(results);
+                        redisPub.publishDataToRedis(pubChannel, saveChannelKey, global.HTTP_STATUS_RESP_OK, resultsStr, resultsStr, 0, 0, done);
+                        return;
+                    }
+                    results = formatFlowSeriesForCPUMemory(results, timeObj, timeGran, resultJSON['num_cpu']);
                     redisPub.publishDataToRedis(pubChannel, saveChannelKey,
                         global.HTTP_STATUS_RESP_OK,
                         JSON.stringify(results),
                         JSON.stringify(results),
                         0, 0, done);
-                    return;
-                }
-                results = formatFlowSeriesForCPUMemory(results, timeObj, timeGran,
-                    resultJSON['num_cpu']);
-                redisPub.publishDataToRedis(pubChannel, saveChannelKey,
-                    global.HTTP_STATUS_RESP_OK,
-                    JSON.stringify(results),
-                    JSON.stringify(results),
-                    0, 0, done);
+                });
             });
-        });
-    }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
+        }, global.DEFAULT_MIDDLEWARE_API_TIMEOUT));
 }
 
 function getStartEndPort (portRange)

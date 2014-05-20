@@ -39,7 +39,8 @@ var slColumnsDisplay = [
     {
         field:"MessageTS",
         name:"Time",
-        width:210,
+        width:180,
+        minWidth: 180,
         formatter: function(r, c, v, cd, dc) {
             return (dc.MessageTS && dc.MessageTS!='') ? formatMicroDate(dc.MessageTS) : '';
         }
@@ -47,7 +48,7 @@ var slColumnsDisplay = [
     {
         field:"Source",
         name:"Source",
-        width:150,
+        width:100,
         formatter: function(r, c, v, cd, dc) {
             return handleNull4Grid(dc.Source);
         }
@@ -55,7 +56,8 @@ var slColumnsDisplay = [
     {
         field:"ModuleId",
         name:"Module Id",
-        width:150,
+        width:120,
+        minWidth:120,
         formatter: function(r, c, v, cd, dc) {
             return handleNull4Grid(dc.ModuleId);
         }
@@ -63,7 +65,7 @@ var slColumnsDisplay = [
     {
         field:"Category",
         name:"Category",
-        width:150,
+        width:100,
         formatter: function(r, c, v, cd, dc) {
             return handleNull4Grid(dc.Category);
         }
@@ -71,7 +73,7 @@ var slColumnsDisplay = [
     {
         field:"Messagetype",
         name:"Log Type",
-        width:250,
+        width:120,
         formatter: function(r, c, v, cd, dc) {
             return handleNull4Grid(dc.Messagetype);
         }
@@ -79,7 +81,7 @@ var slColumnsDisplay = [
     {
         field:"Level",
         name:"Level",
-        width:150,
+        width:100,
         hidden:true,
         formatter: function(r, c, v, cd, dc) {
             return getLevelName4Value(dc.Level);
@@ -88,9 +90,9 @@ var slColumnsDisplay = [
     {
         field:"Xmlmessage",
         name:"Log",
-        width:400,
+        width:500,
         formatter: function(r, c, v, cd, dc) {
-            return formatXML2JSON(dc.Xmlmessage);
+            return '<span class="word-break-normal">' + formatXML2JSON(dc.Xmlmessage) + '</span>';
         }
     }
 ];
@@ -108,6 +110,7 @@ function getQueueColumnDisplay(queueId) {
         	field: "startTime", 
         	name:"Date", 
         	width:150, 
+        	minWidth: 150,
         	formatter: function(r, c, v, cd, dc) {
         		return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss');
         	}
@@ -116,13 +119,15 @@ function getQueueColumnDisplay(queueId) {
         	id:"opsQueryId", 
         	field:"opsQueryId", 
         	name:"Query Id", 
-        	width:250, 
+        	width:200, 
         	sortable:false
         },
         {	
         	id:"reRunTimeRange",
         	field:"reRunTimeRange", 
-        	name:"Time Range", width:100, 
+        	name:"Time Range", 
+        	width:100,
+        	minWidth: 100,
         	formatter: function(r, c, v, cd, dc) {
         		return formatReRunTime(dc.reRunTimeRange);
         	}, 
@@ -139,13 +144,13 @@ function getQueueColumnDisplay(queueId) {
         		
         		$.each(engQueryObj, function(key, val){
         			if(key == 'select' && val != ''){
-        				engQueryStr += '<div class="row-fluid"><div class="span3">' + key.toUpperCase() + '</div><div class="span9">*</div></div>';
+        				engQueryStr += '<div class="row-fluid"><span class="bold">' + key.toUpperCase() + '</span> &nbsp;*</div>';
         			}
         			else if((key == 'where' || key == 'filter') && val == ''){
         				engQueryStr += '';
         			}
         			else {
-        				engQueryStr += '<div class="row-fluid"><div class="span3">' + key.toUpperCase() + '</div><div class="span9">' + val + '</div></div>';
+        				engQueryStr += '<div class="row-fluid word-break-normal"><span class="bold">' + key.toUpperCase() + '</span> &nbsp;' + val + '</div>';
         			}
         		});
         		return engQueryStr;
@@ -361,14 +366,20 @@ function viewQueryResult(gridId, rowIndex, reRunTimeRange, reRunQueryObj, reRun)
 };
 
 function getQueryPrefix4Table(tableName) {
-    var queryPrefix = null;
+    var queryPrefix = null,
+        acpuStatTables = [
+            'StatTable.AnalyticsCpuState.cpu_info',
+            'StatTable.ComputeCpuState.cpu_info',
+            'StatTable.ConfigCpuState.cpu_info',
+            'StatTable.ControlCpuState.cpu_info'
+        ];
     if (tableName == 'FlowRecordTable') {
         queryPrefix = 'fr';
     } else if (tableName == 'FlowSeriesTable') {
         queryPrefix = 'fs';
     } else if (tableName == 'MessageTable') {
         queryPrefix = 'sl';
-    } else if (tableName == 'StatTable.AnalyticsCpuState.cpu_info') {
+    } else if (acpuStatTables.indexOf(tableName) != -1 ) {
         queryPrefix = 'acpu';
     } else if (tableName == 'StatTable.QueryPerfInfo.query_stats') {
         queryPrefix = 'qeperf';
@@ -466,9 +477,10 @@ function clearGrid(elementId) {
 function openSelect(queryPrefix) {
     var query = queries[queryPrefix];
 
-    if($('#' + queryPrefix + '-select-popup-container').length == 0){
-        $('body').append(query.selectTemplate);
+    if($('#' + queryPrefix + '-select-popup-container').length != 0){
+        $('body').find('#' + queryPrefix + '-select-popup-container').remove();
     }
+    $('body').append(query.selectTemplate);
     ko.cleanNode(document.getElementById(queryPrefix + '-select-popup-container'));
     ko.applyBindings(query.selectViewModel, document.getElementById(queryPrefix + '-select-popup-container'));
     query.selectWindow = $('#' + queryPrefix + '-select-popup-container');
@@ -762,14 +774,15 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
  * Filter Clause Functions
  */
 
-function openFilter(queryPrefix) {
+function openFilter(queryPrefix, className) {
     var query = queries[queryPrefix], count,
     	filterClauseSubmit = $.makeArray(query.filterViewModel.filterClauseSubmit()),
+        fields = $.makeArray(query.filterViewModel.fields()),
         editFilterClauseTemplate = contrail.getTemplate4Id('edit-filter-clause-template');
-    
+        className = className == null ? 'modal-700' : className;
     $.contrailBootstrapModal({
     	id: queryPrefix + '-filter-popup-container',
-    	className: 'modal-700',
+    	className: className,
         title: 'Filter',
         body: '<div id="' + queryPrefix + '-new-filter"></div>',
         footer: [
@@ -794,7 +807,7 @@ function openFilter(queryPrefix) {
     });
     
     query.editFilterClauseTemplate = editFilterClauseTemplate;
-    $('#' + queryPrefix + '-new-filter').append(editFilterClauseTemplate({queryPrefix: queryPrefix, filterClauseSubmit: filterClauseSubmit}));
+    $('#' + queryPrefix + '-new-filter').append(editFilterClauseTemplate({queryPrefix: queryPrefix, filterClauseSubmit: filterClauseSubmit, fields: fields}));
     count = filterClauseSubmit.length;
     ko.applyBindings(query.filterViewModel, document.getElementById(queryPrefix + '-filter-popup-container'));
     if (count != 0) {
@@ -804,13 +817,36 @@ function openFilter(queryPrefix) {
     } else {
         loadFilterOptions(queryPrefix + '-first-filter-clause', queryPrefix, -1);
     }
+    $('#' + queryPrefix + '-filter-accordion').accordion({
+    	heightStyle: "content"
+    });
 };
 
 function submitFilter(queryPrefix) {
     var query = queries[queryPrefix],
         fieldArray = [], opArray = [], valArray = [],
-        filterClauseSubmit = [], filterClauseViewStr = "", i, length, filterForm;
-    filterForm = $('#' + queryPrefix + '-filter-popup-form');
+        orderByValue = "", checkedFilters = [],
+        sortOrder = null, limit, fieldValue, selectedFields = [],
+        filterClauseSubmit = [], filterClauseViewStr = "", i, length, filterForm,
+        filterForm = $('#' + queryPrefix + '-filter-popup-form'),
+        selectedFields = $('#' + queryPrefix + '-filter-popup-form').serializeArray();
+    $.each(selectedFields, function (i, selectedFields) {
+        if (selectedFields.name == 'sortBy') {
+            fieldValue = selectedFields.value;
+            checkedFilters.push(fieldValue);
+            orderByValue += (orderByValue.length != 0 ? ", " : "sort_fields: [") + fieldValue;
+        }
+    });
+    if (orderByValue != '') {
+        orderByValue += "]";
+        sortOrder = $("#" + queryPrefix + "-filter-popup-form select[name=sortOrder]").val();
+        orderByValue += ", sort: " + sortOrder;
+    }
+    limit = $("#" + queryPrefix + "-filter-popup-form input[name=limit]").val();
+    if (limit != null && limit.length > 0) {
+        orderByValue += (orderByValue.trim() == '' ? '' : ', ') + "limit: " + limit;
+    }
+
     filterForm.find("select[name='field[]']").each(function () {
         fieldArray.push($(this).val());
     });
@@ -827,9 +863,13 @@ function submitFilter(queryPrefix) {
             filterClauseSubmit.push({field:fieldArray[i], operator:opArray[i], value:valArray[i]});
         }
     }
+    query.filterViewModel.checkedFilters(checkedFilters);
+    query.filterViewModel.limit(limit);
+    query.filterViewModel.sortOrder(sortOrder);
     query.filterViewModel.filterClauseSubmit(filterClauseSubmit);
     query.filterViewModel.filterClauseView(filterClauseViewStr);
-    $('#' + queryPrefix + '-filter').val(filterClauseViewStr);
+
+    $('#' + queryPrefix + '-filter').val("filter: " + filterClauseViewStr + ', ' + orderByValue);
     $('#' + queryPrefix + '-filter').height($('#' + queryPrefix + '-filter')[0].scrollHeight-6);
 };
 
@@ -886,8 +926,6 @@ function addSelect(queryPrefix) {
     query.selectViewModel.checkedFields(checkedFields);
     $('#' + queryPrefix + '-select').val(selectValue);
 };
-
-
 
 function closePopupWindow(queryPrefix, windowName) {
     queries[queryPrefix][windowName].modal('hide');
@@ -980,7 +1018,10 @@ function setColumnValues(url, viewModelKey, viewModels, responseField, ignoreVal
             var validValueObservable = ko.observableArray([]);
             responseField ? (validValues = response[responseField]) : (validValues = response);
             for (var i = 0; i < validValues.length; i += 1) {
-                if (validValues[i].index == isIndexed && ignoreValues.indexOf(validValues[i].name) == -1) {
+                if(isIndexed === "all" && ignoreValues.indexOf(validValues[i].name) == -1){
+                    validValueDS.push({"name":validValues[i].name, "value":validValues[i].name});
+                }
+                else if (validValues[i].index == isIndexed && ignoreValues.indexOf(validValues[i].name) == -1) {
                     validValueDS.push({"name":validValues[i].name, "value":validValues[i].name});
                 }
             }
@@ -1154,7 +1195,8 @@ function loadSLResults(options, reqQueryObj, requestType) {
         },
         body: {
             options: {
-                sortable: true
+                sortable: true,
+                forceFitColumns: true
             },
             dataSource: {
                 remote: {
@@ -1245,7 +1287,7 @@ function formatStruct(xmlNode) {
 };
 
 function formatSandesh(xmlNode, is4SystemLogs) {
-    var messageString = '', nodeCount, i, node, nodeHTML;
+    var messageString = '', nodeCount, i;
     $(xmlNode).find("file").each(function () {
         $(this).remove();
     });
@@ -1475,7 +1517,7 @@ function toggleExpandCollapseAll(id,dis){
 		else{
 			$(dis).attr('title','Collapse All');
 		}
-	},500)
+	},500);
 }
 
 function loadOTGrid(options, rows, columns) {
@@ -1572,7 +1614,8 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 		},
 		body : {
 			options: {
-				sortable: true
+				sortable: true,
+				forceFitColumns: true
 			},
 			dataSource : {
 				remote: {
@@ -2042,13 +2085,13 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
                 id: 'fc-checkbox',
             	field:"", 
             	name:"", 
+            	resizable: false,
                 width:30, 
+                minWidth: 30,
                 formatter: function(r, c, v, cd, dc){ 
                 	return '<input id="fc-checkbox-' + dc.flow_class_id +'" type="checkbox" onchange="loadSelectedFSChart(this)" value="' + dc.flow_class_id +'" class="ace-input"/><span class="ace-lbl"></span>';
                 },
-                resizable: false,
                 sortable: false,
-                width: 30,
                 searchable: false,
                 exportConfig: {
                     allow: false
@@ -2061,6 +2104,7 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
                 resizable: false,
                 sortable: false,
                 width: 90,
+                minWidth: 90,
                 searchable: false,
                 exportConfig: {
                     allow: false
@@ -2741,7 +2785,7 @@ function SelectViewModel(queryPrefix, resetFunction) {
             "sum(bytes)": ko.observable(true),
             "sum(packets)": ko.observable(true)
         };
-    } else if (['acpu', 'qeperf', 'vna'].indexOf(queryPrefix) != -1) {
+    } else if (['acpu', 'qeperf', 'vna', 'smsg'].indexOf(queryPrefix) != -1) {
         this.fields = ko.observableArray([]);
         this.isEnabled = {'T': ko.observable(true)};
     }
@@ -2765,6 +2809,7 @@ function FilterViewModel(queryPrefix, resetFunction) {
         {name:"!=", value:"!="},
         {name:"RegEx=", value:"RegEx="}
     ]);
+    this.fields = ko.observableArray([]);
     this.selectFields = ko.observableArray([]);
     this.filterClauseSubmit = ko.observableArray([]);
     this.filterClauseView = ko.observable("");
@@ -2772,8 +2817,15 @@ function FilterViewModel(queryPrefix, resetFunction) {
     this.Messagetype = ko.observableArray([]);
     this.Source = ko.observableArray([]);
     this.reset = resetFunction;
+    this.orderTypes = [
+        { name: "ASC", value: "asc" },
+        { name: "DESC", value: "desc"}
+    ];
+    this.checkedOrderBy = ko.observableArray([]);
+    this.checkedFilters = ko.observableArray([]);
+    this.limit = ko.observable("150000");
+    this.sortOrder = ko.observable("asc");
 };
-
 
 function exportServersideQueryResults(gridConfig, gridContainer) {
     var gridDataSource = gridConfig.body.dataSource,

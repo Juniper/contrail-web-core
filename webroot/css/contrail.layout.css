@@ -2232,6 +2232,7 @@ button.btn:active {
 .margin-5-0-0 {margin:5px 0 0 !important;}
 .margin-0-5 {margin:0 5px !important;}
 .margin-0-0-5 {margin:0 0 5px !important;}
+.margin-0-0-0-5 {margin:0 0 0 5px !important;}
 .margin-10 {margin:10px !important;}
 .margin-10-0 {margin:10px 0 !important;}
 .margin-10-0-0 {margin:10px 0 0 !important;}
@@ -2275,6 +2276,9 @@ button.btn:active {
 .width-840 {width:840px !important;}
 .width-980 {width:980px !important;}
 .width-1120 {width:1120px !important;}
+
+/* word-break framework */
+.word-break-normal {word-break: normal;}
 
 .blue-sparkline {
     stroke: steelblue;
