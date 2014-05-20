@@ -1211,4 +1211,5 @@ exports.deleteQueryCache4Ids = deleteQueryCache4Ids;
 exports.deleteQueryCache4Queue = deleteQueryCache4Queue;
 exports.flushQueryCache = flushQueryCache;
 exports.exportQueryResult = exportQueryResult;
+exports.getQueryJSON4Table = getQueryJSON4Table;
 
