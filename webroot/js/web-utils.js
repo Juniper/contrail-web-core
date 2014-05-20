@@ -1130,15 +1130,19 @@ function MenuHandler() {
         //window[currMenuObj['class']] = null;
     }
 
-    this.getMenuObjByHash = function (menuHash, currMenuObj) {
+    this.getMenuObjByHash = function (menuHash, currMenuObj, parentsArr) {
+        parentsArr = ifNull(parentsArr,[]) ;
         if (currMenuObj == null)
             currMenuObj = menuObj['items']['item'];
         for (var i = 0; i < currMenuObj.length; i++) {
             //console.info(currMenuObj[i]['hash']);
-            if (currMenuObj[i]['hash'] == menuHash)
+            if (currMenuObj[i]['hash'] == menuHash){
+                currMenuObj[i]['parents'] = parentsArr;
                 return currMenuObj[i];
+            }
             if ((currMenuObj[i]['items'] != null) && (currMenuObj[i]['items']['item'] != null) && (currMenuObj[i]['items']['item'].length > 0)) {
-                var retVal = self.getMenuObjByHash(menuHash, currMenuObj[i]['items']['item']);
+                parentsArr.push(currMenuObj[i]);
+                var retVal = self.getMenuObjByHash(menuHash, currMenuObj[i]['items']['item'], parentsArr);
                 if (retVal != -1)
                     return retVal;
             }
@@ -1157,6 +1161,7 @@ function MenuHandler() {
     }
 
     this.loadResourcesFromMenuObj = function(currMenuObj,deferredObj) {
+        var parents = currMenuObj['parents'];
         if (currMenuObj['rootDir'] != null) {
             //Update page Hash only if we are moving to a different view
             var currHashObj = layoutHandler.getURLHashObj();
@@ -1167,40 +1172,67 @@ function MenuHandler() {
             var deferredObjs = [];
             var rootDir = currMenuObj['rootDir'];
             var viewDeferredObjs = [];
-            if (currMenuObj['view'] != null) {
-                if (!(currMenuObj['view'] instanceof Array)) {
-                    currMenuObj['view'] = [currMenuObj['view']];
-                }
-                $.each(currMenuObj['view'], function () {
-                    var viewDeferredObj = $.Deferred();
-                    viewDeferredObjs.push(viewDeferredObj);
-                    var viewPath = rootDir + '/views/' + this + '?built_at=' + built_at;
-                    templateLoader.loadExtTemplate(viewPath, viewDeferredObj, currMenuObj['hash']);
+            //Load the parent views
+            if(parents != null && parents.length > 0){
+                $.each(parents,function(i,parent){
+                    var parentRootDir = parent['rootDir'];
+                    if (parentRootDir != null && parent['view'] != null) {
+                        loadViewResources(parent,currMenuObj['hash']);
+                    }
                 });
+            }
+            //Load the feature views
+            if (currMenuObj['view'] != null) {
+                loadViewResources(currMenuObj,currMenuObj['hash']);
             } 
             //View file need to be downloaded first before executing any JS file
             $.when.apply(window, viewDeferredObjs).done(function() {
-                if (currMenuObj['js'] instanceof Array) {
-                } else
-                    currMenuObj['js'] = [currMenuObj['js']];
-                var isLoadFn = currMenuObj['loadFn'] != null ? true : false;
-                var isReloadRequired = true;
-                //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
-                if(currMenuObj['class'] == 'infraMonitorView' || currMenuObj['class'] == 'tenantNetworkMonitorView')
-                    isReloadRequired = false;
-                $.each(currMenuObj['js'], function () {
-                    //Load the JS file only if it's not loaded already
-                    //if (window[currMenuObj['class']] == null)
-                    if(($.inArray(rootDir + '/js/' + this,globalObj['loadedScripts']) == -1) ||
-                        (isLoadFn == true) || (isReloadRequired == true))
-                        deferredObjs.push(getScript(rootDir + '/js/' + this));
-                });
+                //Load the parent js
+                if(parents != null && parents.length > 0){
+                    $.each(parents,function(i,parent){
+                        var parentRootDir = parent['rootDir'];
+                        if (parentRootDir != null && parent['js'] != null) {
+                            loadJsResources(parent);
+                        }
+                    });
+                }
+                loadJsResources(currMenuObj);
                 /*$.each(currMenuObj['css'],function() {
                      deferredObjs.push(loadCSS(rootDir + '/css/' + this));
                  });*/
                 $.when.apply(window, deferredObjs).done(function () {
                     deferredObj.resolve();
                 });
+            });
+        }
+        
+        function loadViewResources(menuObj,hash){
+            if (!(menuObj['view'] instanceof Array)) {
+                menuObj['view'] = [menuObj['view']];
+            }
+            $.each(menuObj['view'], function () {
+                var viewDeferredObj = $.Deferred();
+                viewDeferredObjs.push(viewDeferredObj);
+                var viewPath = menuObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
+                templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+            });
+        }
+        
+        function loadJsResources(menuObj){
+            if (menuObj['js'] instanceof Array) {
+            } else
+                menuObj['js'] = [menuObj['js']];
+            var isLoadFn = menuObj['loadFn'] != null ? true : false;
+            var isReloadRequired = true;
+            //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
+            if(menuObj['class'] == 'infraMonitorView' || menuObj['class'] == 'tenantNetworkMonitorView')
+                isReloadRequired = false;
+            $.each(menuObj['js'], function () {
+                //Load the JS file only if it's not loaded already
+                //if (window[menuObj['class']] == null)
+                if(($.inArray(menuObj['rootDir'] + '/js/' + this,globalObj['loadedScripts']) == -1) ||
+                    (isLoadFn == true) || (isReloadRequired == true))
+                    deferredObjs.push(getScript(menuObj['rootDir'] + '/js/' + this));
             });
         }
     }
@@ -1267,13 +1299,6 @@ function isDropdownInitialized(selector){
     if($('#s2id_' + selector).length > 0)
         return true;
     else 
-        return false;
-}
-
-function isScatterChartInitialized(selector){
-	if ($(selector + ' > svg') != [])
-        return true;
-    else
         return false;
 }
 
