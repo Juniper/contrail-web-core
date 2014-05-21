@@ -103,9 +103,7 @@ cd -
 
 mkdir fonts-opensans
 cd fonts-opensans
-getPackage http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600,300 openSans.css
-getPackage http://themes.googleusercontent.com/static/fonts/opensans/v6/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
-getPackage http://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
+getPackage http://themes.googleusercontent.com/static/fonts/opensans/v8/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
 cd -
 
 getPackage https://github.com/components/jqueryui/archive/1.10.4.tar.gz 1.10.4.tar.gz

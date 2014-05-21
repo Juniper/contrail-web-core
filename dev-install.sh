@@ -76,9 +76,6 @@ cp -r ./web-third-party/fonts-opensans webroot/assets/
 
 rm -f webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
 cp -r  ./web-third-party/fonts-opensans/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff  webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
-
-rm -f webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
-cp -r  ./web-third-party/fonts-opensans/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff  webroot/css/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
 #End - Copy Font-Opensans from web-third-party
 
 #Start - Copy Handlebars from web-third-party
@@ -249,16 +246,14 @@ cat ${MAINFILE[39]} >> webroot/js/contrail-all-5.js
 rm -f webroot/css/contrail-all.css
 
 MAINCSS[1]=webroot/assets/font-awesome/css/font-awesome.min.css
-MAINCSS[2]=webroot/assets/fonts-opensans/openSans.css
-MAINCSS[3]=webroot/assets/nvd3/css/nv.d3.css
-MAINCSS[4]=webroot/assets/select2/styles/select2.css
-MAINCSS[5]=webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
-MAINCSS[6]=webroot/assets/slickgrid/styles/slick.grid.css
+MAINCSS[2]=webroot/assets/nvd3/css/nv.d3.css
+MAINCSS[3]=webroot/assets/select2/styles/select2.css
+MAINCSS[4]=webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
+MAINCSS[5]=webroot/assets/slickgrid/styles/slick.grid.css
 
 cat ${MAINCSS[1]} > webroot/css/contrail-all.css
 cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[3]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[4]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[5]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[6]} >> webroot/css/contrail-all.css
 #End - Merging ALL CSS files
