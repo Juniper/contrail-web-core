@@ -47,7 +47,7 @@ elif [ $(command -v md5) > /dev/null 2>&1 ]; then
     md5_exec=md5
 fi
 
-TMP_CACHE=/tmp/cache
+TMP_CACHE=/tmp/cache/$USER/third_party
 
 # $1 - URL of package
 # $2 - package name
