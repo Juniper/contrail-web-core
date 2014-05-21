@@ -2167,7 +2167,7 @@ function showMoreAlerts(){
 
 function processDrillDownForNodes(e) {
      if (e['point']['type'] == 'vRouter') {
-         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_compute'});
+         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_vrouter'});
      } else if (e['point']['type'] == 'controlNode') {
          layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_control'});
      } else if (e['point']['type'] == 'analyticsNode') {

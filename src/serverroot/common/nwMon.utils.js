@@ -8,11 +8,18 @@
  */
 
 var commonUtils = require('../utils/common.utils'),
+    rest = require('./rest.api'),
     logutils = require('../utils/log.utils'),
+    infraCmn = require('./infra.common.api'),
     assert = require('assert'),
+    config = require('../../../config/config.global.js'),
+    opApiServer = require('./opServer.api'),
     async = require('async');
 
 
+var opServer = rest.getAPIServer({apiName:global.label.OPS_API_SERVER,
+                                  server:config.analytics.server_ip,
+                                  port:config.analytics.server_port });
 function getTimeGranByTimeSlice (timeObj, sampleCnt)
 {
     var startTime = timeObj['start_time'];
@@ -179,6 +186,37 @@ function makeUVEList (keys)
     return result;
 }
 
+function buildBulkUVEUrls (filtData, appData)
+{
+    filtData = filtData['data'];
+    var url = '/analytics/uves';
+    var dataObjArr = [];
+
+    try {
+        var modCnt = filtData.length;
+    } catch(e) {
+        return null;
+    }
+    for (var i = 0; i < modCnt; i++) {
+        type = filtData[i]['type'];
+        hostname = filtData[i]['hostname'];
+        module = filtData[i]['module'];
+        cfilt = filtData[i]['cfilt'];
+        kfilt = filtData[i]['kfilt'];
+        mfilt = filtData[i]['mfilt'];
+        reqUrl = 
+            infraCmn.getBulkUVEUrl(type, hostname, module,
+                                   {cfilt:cfilt, kfilt:kfilt, mfilt:mfilt});
+        /* All URLs should be valid */
+        if (null == reqUrl) {
+            return null;
+        }
+        commonUtils.createReqObj(dataObjArr, reqUrl, null,
+                                 null, opApiServer, null, appData);
+    }
+    return dataObjArr;
+}
+
 exports.getTimeGranByTimeSlice = getTimeGranByTimeSlice;
 exports.getStatDataByQueryJSON = getStatDataByQueryJSON;
 exports.createTimeQueryObjByStartEndTime = createTimeQueryObjByStartEndTime;
@@ -186,4 +224,5 @@ exports.createTimeObjByAppData = createTimeObjByAppData;
 exports.getnThIndexByLastKey = getnThIndexByLastKey;
 exports.makeUVEList = makeUVEList;
 exports.sortEntriesByObj = sortEntriesByObj;
+exports.buildBulkUVEUrls = buildBulkUVEUrls;
 

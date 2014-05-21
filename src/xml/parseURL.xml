@@ -88,8 +88,24 @@
         <path>../../common/global</path>
     </require>
     <require>
-        <define>infra</define>
-        <path>../api/infraoverview.api</path>
+        <define>infraControl</define>
+        <path>../api/controlnode.api</path>
+    </require>
+    <require>
+        <define>infravRouter</define>
+        <path>../api/vrouternode.api</path>
+    </require>
+    <require>
+        <define>infraConfig</define>
+        <path>../api/confignode.api</path>
+    </require>
+    <require>
+        <define>infraAna</define>
+        <path>../api/analyticsnode.api</path>
+    </require>
+    <require>
+        <define>infraCmn</define>
+        <path>../../common/infra.common.api</path>
     </require>
     <require>
         <define>sshapi</define>
@@ -108,10 +124,6 @@
                               defHandleReqTimeout() gets called
          -->
         <path>request-timeout</path>
-    </require>
-    <require>
-         <define>infra</define>
-         <path>../api/infraoverview.api</path>
     </require>
     <item>
         <url>/infra/admin</url>
@@ -402,7 +414,7 @@
         <url>/api/admin/monitor/infrastructure/controlnodes/summary</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>infra.getControlNodesSummary</callback>
+        <callback>infraControl.getControlNodesSummary</callback>
     </item>
     <item>
         <!-- Gets summary of all control nodes -->
@@ -416,21 +428,21 @@
         <url>/api/admin/monitor/infrastructure/controlnode/details</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>infra.getControlNodeDetails</callback>
+        <callback>infraControl.getControlNodeDetails</callback>
     </item>
     <item>
         <!-- Lists the details of control node -->
         <url>/api/admin/monitor/infrastructure/controlnode/bgppeer</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>infra.getControlNodePeerInfo</callback>
+        <callback>infraControl.getControlNodePeerInfo</callback>
     </item>
     <item>
         <!-- Get bgp-peer list paginated response -->
         <url>/api/admin/monitor/infrastructure/controlnode/paged-bgppeer</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>infra.getControlNodePeerPagedInfo</callback>
+        <callback>infraControl.getControlNodePeerPagedInfo</callback>
     </item>
     <item>
         <!-- Lists the bgp-peers -->
@@ -444,7 +456,7 @@
         <url>/api/admin/monitor/infrastructure/controlnode/bgppeer-details</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>infra.getControlNodePeerDetails</callback>
+        <callback>infraControl.getControlNodePeerDetails</callback>
     </item>
     <item>
         <!-- Fills the Peer Source and Routing Instances in Combo Box -->
@@ -473,7 +485,7 @@
         <url>/api/admin/monitor/infrastructure/controlnode/sandesh</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>infra.getControlNodeSandeshRequest</callback>
+        <callback>infraControl.getControlNodeSandeshRequest</callback>
     </item>
     <item>
         <!-- Lists the compute nodes tree -->
@@ -487,7 +499,7 @@
         <url>/api/admin/monitor/infrastructure/vrouters/summary</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>infra.getvRoutersSummary</callback>
+        <callback>infravRouter.getvRoutersSummary</callback>
     </item>
     <item>
         <!-- Get compute nodes Summary -->
@@ -495,7 +507,7 @@
         <method>get</method>
         <feature>compute-node</feature>
         <timeout>300</timeout>
-        <callback>infra.getvRoutersSummaryByJob</callback>
+        <callback>infravRouter.getvRoutersSummaryByJob</callback>
     </item>
     <item>
         <!-- Get vRouter Generator Details -->
@@ -503,7 +515,7 @@
         <method>get</method>
         <feature>compute-node</feature>
         <timeout>300</timeout>
-        <callback>infra.getvRouterGenerators</callback>
+        <callback>infravRouter.getvRouterGenerators</callback>
     </item>
     <item>
         <!-- Lists the compute nodes tree -->
@@ -517,7 +529,7 @@
         <url>/api/admin/monitor/infrastructure/vrouter/details</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>infra.getvRouterDetails</callback>
+        <callback>infravRouter.getvRouterDetails</callback>
     </item>
     <item>
         <!-- Lists the interface details of compute node -->
@@ -545,7 +557,7 @@
         <url>/api/admin/monitor/infrastructure/vrouter/flows</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>infra.getvRouterFlowsDetail</callback>
+        <callback>infravRouter.getvRouterFlowsDetail</callback>
     </item>
     <item>
         <url>/api/admin/monitor/infrastructure/vrouter/vrf-list</url>
@@ -578,55 +590,55 @@
         <url>/api/admin/monitor/infrastructure/analyticsnodes</url>
         <method>get</method>
         <feature>analytics-node</feature>
-        <callback>infra.getAnalyticsNodeList</callback>
+        <callback>infraAna.getAnalyticsNodeList</callback>
     </item>
     <item>
         <!-- Lists the analytics node summary -->
         <url>/api/admin/monitor/infrastructure/analyticsnodes/summary</url>
         <method>get</method>
         <feature>analytics-node</feature>
-        <callback>infra.getAnalyticsNodeSummary</callback>
+        <callback>infraAna.getAnalyticsNodeSummary</callback>
     </item>
     <item>
         <!-- Lists the analytics node details -->
         <url>/api/admin/monitor/infrastructure/analyticsnode/details</url>
         <method>get</method>
         <feature>analytics-node</feature>
-        <callback>infra.getAnalyticsNodeDetails</callback>
+        <callback>infraAna.getAnalyticsNodeDetails</callback>
     </item>
     <item>
         <!-- Lists the analytics node detail -->
         <url>/api/admin/monitor/infrastructure/analyticsnode/generators</url>
         <method>get</method>
         <feature>analytics-node</feature>
-        <callback>infra.getAnalyticsNodeGenerators</callback>
+        <callback>infraAna.getAnalyticsNodeGenerators</callback>
     </item>
     <item>
         <url>/api/admin/monitor/infrastructure/confignodes</url>
         <method>get</method>
         <feature>config-node</feature>
-        <callback>infra.getConfigNodesList</callback>
+        <callback>infraConfig.getConfigNodesList</callback>
     </item>
     <item>
         <!-- Lists the confignodes summary -->
         <url>/api/admin/monitor/infrastructure/confignodes/summary</url>
         <method>get</method>
         <feature>config-node</feature>
-        <callback>infra.getConfigNodesSummary</callback>
+        <callback>infraConfig.getConfigNodesSummary</callback>
     </item>
     <item>
         <!-- Lists the confignode details -->
         <url>/api/admin/monitor/infrastructure/confignode/details</url>
         <method>get</method>
         <feature>config-node</feature>
-        <callback>infra.getConfigNodeDetails</callback>
+        <callback>infraConfig.getConfigNodeDetails</callback>
     </item>
     <item>
         <!-- Use cfilt/mfilt/kfilt to get filtered data -->
         <url>/api/tenant/get-data</url>
         <method>post</method>
         <feature>monitoring</feature>
-        <callback>infra.getServerResponseByModType</callback>
+        <callback>infraCmn.getServerResponseByModType</callback>
     </item>
 
     <!-- API / Feature definition for Global vRouter configuration -->
