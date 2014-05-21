@@ -2287,6 +2287,9 @@ button.btn:active {
 /* word-break framework */
 .word-break-normal {word-break: normal;}
 
+/* cursor framework */
+.cursor-pointer {cursor: pointer;}
+
 .blue-sparkline {
     stroke: steelblue;
     stroke-width: 1.3;
