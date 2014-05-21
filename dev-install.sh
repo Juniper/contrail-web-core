@@ -73,9 +73,6 @@ cp -r ./web-third-party/font-awesome-v3.2.1/font webroot/font
 rm -rf webroot/assets/fonts-opensans
 mkdir webroot/assets/fonts-opensans
 cp -r ./web-third-party/fonts-opensans webroot/assets/
-
-rm -f webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
-cp -r  ./web-third-party/fonts-opensans/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff  webroot/css/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
 #End - Copy Font-Opensans from web-third-party
 
 #Start - Copy Handlebars from web-third-party
