@@ -231,7 +231,7 @@
         <url>/api/admin/virtual-routers/:type</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>adminapi.getVirtualRouters</callback>
+        <callback>infravRouter.getVirtualRouters</callback>
     </item>
     <item>
         <url>/api/admin/test-update</url>
@@ -292,7 +292,7 @@
         <url>/api/admin/monitor/infrastructure/get-sandesh-data</url>
         <method>post</method>
         <feature>monitoring</feature>
-        <callback>adminapi.getSandeshData</callback>
+        <callback>infraCmn.getSandeshData</callback>
     </item>
     <item>
         <url>/api/admin/bgp-routers/:type</url>
@@ -407,7 +407,7 @@
         <url>/api/admin/monitor/infrastructure/controlnodes</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>adminapi.getControlNodesTree</callback>
+        <callback>infraControl.getControlNodesTree</callback>
     </item>
     <item>
         <!-- Gets summary of all control nodes -->
@@ -421,7 +421,7 @@
         <url>/api/admin/monitor/infrastructure/controlnodes/summaryInfo</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>adminapi.getControlNodesSummary</callback>
+        <callback>infraControl.getControlNodesSummary</callback>
     </item>
     <item>
         <!-- Lists the control nodes tree -->
@@ -449,7 +449,7 @@
         <url>/api/admin/monitor/infrastructure/controlnode/peer-list</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>adminapi.getBgpPeerList</callback>
+        <callback>infraControl.getBgpPeerList</callback>
     </item>
     <item>
         <!-- details of control node bgp-peer -->
@@ -463,14 +463,14 @@
         <url>/api/admin/monitor/infrastructure/controlnode/routes/rout-inst-list</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>adminapi.getControlNodeRoutingInstanceList</callback>
+        <callback>infraControl.getControlNodeRoutingInstanceList</callback>
     </item>
     <item>
         <!-- Lists the details of control node -->
         <url>/api/admin/monitor/infrastructure/controlnode/bgppeer/detail</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>adminapi.getControlNodesDetail</callback>
+        <callback>infraControl.getControlNodesDetail</callback>
     </item>
     <item>
         <!-- Lists the details of control node
@@ -479,7 +479,7 @@
         <url>/api/admin/monitor/infrastructure/controlnode/routes</url>
         <method>get</method>
         <feature>control-node</feature>
-        <callback>adminapi.getControlNodeRoutes</callback>
+        <callback>infraControl.getControlNodeRoutes</callback>
     </item>
     <item>
         <url>/api/admin/monitor/infrastructure/controlnode/sandesh</url>
@@ -492,7 +492,7 @@
         <url>/api/admin/monitor/infrastructure/vrouters</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>adminapi.getComputeNodesTree</callback>
+        <callback>infravRouter.getComputeNodesTree</callback>
     </item>
     <item>
         <!-- Lists the compute nodes tree -->
@@ -522,7 +522,7 @@
         <url>/api/admin/monitor/infrastructure/vrouters/summaryInfo</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>adminapi.getComputeNodesSummary</callback>
+        <callback>infravRouter.getComputeNodesSummary</callback>
     </item>
     <item>
         <!-- Lists the compute nodes tree -->
@@ -536,21 +536,21 @@
         <url>/api/admin/monitor/infrastructure/vrouter/interface</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>adminapi.getComputeNodeInterface</callback>
+        <callback>infravRouter.getComputeNodeInterface</callback>
     </item>
     <item>
         <!-- Lists the interface details of compute node -->
         <url>/api/admin/monitor/infrastructure/vrouter/vn</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>adminapi.getComputeNodeVN</callback>
+        <callback>infravRouter.getComputeNodeVN</callback>
     </item>
     <item>
         <!-- Lists the acl details of compute node -->
         <url>/api/admin/monitor/infrastructure/vrouter/acl</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>adminapi.getComputeNodeAcl</callback>
+        <callback>infravRouter.getComputeNodeAcl</callback>
     </item>
     <item>
         <!-- Lists the acl details of compute node -->
@@ -563,28 +563,28 @@
         <url>/api/admin/monitor/infrastructure/vrouter/vrf-list</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>adminapi.getvRouterVrfList</callback>
+        <callback>infravRouter.getvRouterVrfList</callback>
     </item>
     <item>
         <!-- Lists all the UCast entries of vRouter -->
         <url>/api/admin/monitor/infrastructure/vrouter/ucast-routes</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>adminapi.getvRouterUCastRoutes</callback>
+        <callback>infravRouter.getvRouterUCastRoutes</callback>
     </item>
     <item>
         <!-- Lists all the MCast entries of vRouter -->
         <url>/api/admin/monitor/infrastructure/vrouter/mcast-routes</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>adminapi.getvRouterMCastRoutes</callback>
+        <callback>infravRouter.getvRouterMCastRoutes</callback>
     </item>
     <item>
         <!-- Lists all the Layer2 Route entries of vRouter -->
         <url>/api/admin/monitor/infrastructure/vrouter/l2-routes</url>
         <method>get</method>
         <feature>compute-node</feature>
-        <callback>adminapi.getvRouterL2Routes</callback>
+        <callback>infravRouter.getvRouterL2Routes</callback>
     </item>
     <item>
         <url>/api/admin/monitor/infrastructure/analyticsnodes</url>
@@ -1454,13 +1454,13 @@
         <url>/api/service/networking/orchestration/model</url>
         <method>get</method>
         <feature>orchestration</feature>
-        <callback>adminapi.getOrchestrationPluginModel</callback>
+        <callback>commonUtils.getOrchestrationPluginModel</callback>
     </item>
     <item>
         <url>/api/service/networking/web-server-info</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>adminapi.getWebServerInfo</callback>
+        <callback>commonUtils.getWebServerInfo</callback>
     </item>
     <item>
         <url>/api/admin/config/get-data</url>
@@ -1478,7 +1478,7 @@
         <url>/api/service/networking/get-network-reachable-ip</url>
         <method>post</method>
         <feature>monitoring</feature>
-        <callback>adminapi.getReachableIP</callback>
+        <callback>infraCmn.getReachableIP</callback>
     </item>
     <item>
         <url>/api/query/cassandra/keys/:table</url>

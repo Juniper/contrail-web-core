@@ -457,10 +457,173 @@ function getPagedPeerData (peerList, hostName, count, lastKey, appData, callback
     });
 }
 
+function parseControlNodeHostsList (resultJSON, jsonData)
+{
+    try {
+        var bgpRtr = jsonData['bgp-routers'];
+        var nodeCount = bgpRtr.length;
+        var j = 0;
+        for (var i = 0; i < nodeCount; i++) {
+            try {
+                resultJSON[j] = bgpRtr[i]['fq_name'][4];
+                j++;
+            } catch(e) {
+               logutils.logger.debug("BGP hostName not set for uuid: " + bgpRtr[i]['uuid']);
+               continue;
+            }  
+        }
+    } catch(e) {
+        return [];
+    }
+}
+
+/* Function: getControlNodeHosts 
+    This API is used to get the Control Node Host Lists
+ */
+function getControlNodeHosts (req, res)
+{
+    var url = '/bgp-routers?parent_fq_name_str=default-domain:default-project:ip-fabric:__default__';
+    configApiServer.apiGet(url, appData, function (error, jsonData) {
+        if (error) {
+            commonUtils.handleJSONResponse(error, res, null);
+        } else {
+            var resultJSON = [];
+            parseControlNodeHostsList(resultJSON, jsonData);
+            commonUtils.handleJSONResponse(null, res, resultJSON);
+        }
+    });
+}
+
+function getControlNodesTree (req, res, appData)
+{
+    var isHostName = req.param('hostlists');
+    if (isHostName) {
+        getControlNodeHosts(req, res);
+        return;
+    }
+    var url = '/virtual-routers';
+    /* Now send cache updation request for list of control node names */
+    cacheApi.queueDataFromCacheOrSendRequest(req, res, global.STR_JOB_TYPE_CACHE,
+                                             global.STR_GET_NODES_TREE, url, 0,
+                                             /* Update every 5 minutes */
+                                             0, 0, 1 * 60 * 1000, true);
+    return;
+}
+
+function getBgpPeerList (req, res, appData)
+{
+    var hostname = req.param('hostname');
+    var urlList = [];
+
+    urlList[0] = '/analytics/uves/xmpp-peer/' + hostname +
+        ':*?cfilt=XmppPeerInfoData:identifier';
+    urlList[1] = '/analytics/uves/bgp-peer/*:' + hostname +
+        ':*?cfilt=BgpPeerInfoData:peer_address';
+
+    async.map(urlList,
+        commonUtils.getJsonViaInternalApi(opServer.api, true),
+        function(err, data) {
+        if (err || (null == data)) {
+            commonUtils.handleJSONResponse(null, res, []);
+            return;
+        }
+        var bgpPeer = jsonPath(data[0], "$..identifier");
+        var xmppPeer = jsonPath(data[1], "$..peer_address");
+        if ((!bgpPeer.length) && (!xmppPeer.length)) {
+            peer = [];
+        } else {
+            if (!bgpPeer.length) {
+                peer = xmppPeer;
+            } else if (!xmppPeer.length) {
+                peer = bgpPeer;
+            } else {
+                peer = bgpPeer.concat(xmppPeer);
+            }
+        }
+        commonUtils.handleJSONResponse(err, res, peer);
+    });
+}
+
+function getControlNodeRoutingInstanceList (req, res, appData)
+{
+    var queryData = urlMod.parse(req.url, true);
+    var ip = queryData.query['ip'];
+    var hostname = queryData.query['hostname'];
+
+    var url = ip + '@' + global.SANDESH_CONTROL_NODE_PORT + '@' +
+                    '/Snh_ShowRoutingInstanceReq?name=';
+    var urlLists = [];
+    urlLists[0] = [url];
+    async.map(urlLists, commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, true),
+            function(err, results) {
+        if (!err) {
+            var resultJSON = {};
+            adminApiHelper.processControlNodeRoutingInstanceList(resultJSON, results);
+            commonUtils.handleJSONResponse(null, res, resultJSON);
+        } else {
+            commonUtils.handleJSONResponse(err, res, resultJSON);
+        }
+    });
+}
+
+function getControlNodeRoutes (req, res, appData)
+{
+    var queryData = urlMod.parse(req.url, true);
+    var ip = queryData.query['ip'];
+    var routingInst = queryData.query['routingInst'];
+    var routingTable = queryData.query['routingTable'];
+    var prefix = queryData.query['prefix'];
+    var count = queryData.query['limit'];
+    var peerSource = queryData.query['peerSource'];
+    var addrFamily = queryData.query['addrFamily'];
+    var protocol = queryData.query['protocol'];
+    var dataObjArr = [];
+
+    if (null == routingInst) {
+        routingInst ='';
+    }
+    if (null == routingTable) {
+        routingTable = '';
+    }
+    if (null == prefix) {
+        prefix = '';
+    }
+    if (null == count) {
+        count = '';
+    }
+    if (addrFamily) {
+        addrFamily = '.' + addrFamily + '.';
+    }
+
+    url =  '/Snh_ShowRouteReq?routing_table=' + encodeURIComponent(routingTable) +
+        '&routing_instance=' + encodeURIComponent(routingInst) +
+        '&prefix=' + encodeURIComponent(prefix) + '&start_routing_instance=' +
+        '&start_routing_table=&start_prefix=&count=' + count;
+
+    var resultJSON = [];
+    var bgpRtrRestAPI =
+        commonUtils.getRestAPIServer(ip, global.SANDESH_CONTROL_NODE_PORT);
+    commonUtils.createReqObj(dataObjArr, url);
+    async.map(dataObjArr,
+              commonUtils.getServerRespByRestApi(bgpRtrRestAPI, true),
+              function(err, data) {
+        if (data) {
+            commonUtils.handleJSONResponse(null, res, data);
+        } else {
+            commonUtils.handleJSONResponse(null, res, []);
+        }
+    });
+}
+
 exports.getControlNodesSummary = getControlNodesSummary;
 exports.getControlNodeDetails = getControlNodeDetails;
 exports.getControlNodePeerInfo = getControlNodePeerInfo;
 exports.getControlNodePeerDetails = getControlNodePeerDetails;
 exports.getControlNodePeerPagedInfo = getControlNodePeerPagedInfo;
 exports.getControlNodeSandeshRequest = getControlNodeSandeshRequest;
+exports.getControlNodesTree = getControlNodesTree;
+exports.getControlNodeRoutingInstanceList = getControlNodeRoutingInstanceList;
+exports.getBgpPeerList = getBgpPeerList;
+exports.getControlNodeRoutes = getControlNodeRoutes;
+
 

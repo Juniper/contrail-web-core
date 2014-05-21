@@ -403,9 +403,277 @@ function getvRouterDetailConfigUVEData (configData, uuidList, nodeList, addGen,
     });
 }
 
+// Handle request to get a JSON of Virtual Routers
+function getVirtualRouters (req, res, appData)
+{
+    adminApiHelper.processVirtualRouters(req, res, global.GET_VIRTUAL_ROUTERS,
+                                         null, appData);
+};
+
+function getComputeNodeVN (req, res, appData)
+{
+    var queryData = urlMod.parse(req.url, true);
+    var ip = queryData.query['ip'];
+    var dataObjArr = [];
+
+    var vRouterRestAPI =
+        commonUtils.getRestAPIServer(ip, global.SANDESH_COMPUTE_NODE_PORT);
+    commonUtils.createReqObj(dataObjArr, '/Snh_VnListReq?name=');
+
+    async.map(dataObjArr,
+              commonUtils.getServerRespByRestApi(vRouterRestAPI, false),
+              function(err, data) {
+        if (!err) {
+            commonUtils.handleJSONResponse(null, res, data);
+        } else {
+            commonUtils.handleJSONResponse(err, res, []);
+        }
+    });
+}
+
+function getComputeNodeInterface (req, res, appData)
+{
+    var queryData = urlMod.parse(req.url, true);
+    var url = "";
+    if (queryData.query['ip']) {
+        url = '/Snh_ItfReq?name=' + queryData.query['ip'];
+    } else {
+        url = '/Snh_ItfReq?name=';
+    }
+    cacheApi.queueDataFromCacheOrSendRequest(req, res,
+                                             global.STR_JOB_TYPE_CACHE,
+                                             global.STR_GET_COMPUTE_NODE_INTERFACE,
+                                             url, 0, 1, 0, -1, true);
+}
+
+function getComputeNodeAcl (req, res, appData)
+{
+    var queryData = urlMod.parse(req.url, true);
+    var url = "";
+    if (queryData.query['ip']) {
+        url = '/Snh_AclReq?uuid=' + queryData.query['ip'];
+    } else {
+        url = '/Snh_AclReq?uuid=';
+    }
+    cacheApi.queueDataFromCacheOrSendRequest(req, res,
+                                             global.STR_JOB_TYPE_CACHE,
+                                             global.STR_GET_COMPUTE_NODE_ACL,
+                                             url, 0, 1, 0, -1, true);
+}
+
+function getComputeNodeAclFlows (req, res, appData)
+{
+    var queryData = urlMod.parse(req.url, true);
+    var url = "";
+    if (queryData.query['ip']) {
+        url = '/Snh_AclReq?uuid=' + queryData.query['ip'];
+    } else {
+        url = '/Snh_AclReq?uuid=';
+    }
+    cacheApi.queueDataFromCacheOrSendRequest(req, res,
+                                             global.STR_JOB_TYPE_CACHE,
+                                             global.STR_GET_COMPUTE_NODE_ACL_FLOWS,
+                                             url, 0, 1, 0, -1, true);
+}
+
+function getVrfIndexList (ip, callback)
+{
+    var dataObjArr = [];
+    var urlLists = [];
+    var lastIndex = 0;
+    var resultArr = [];
+
+    urlLists[0] = ip + '@' + global.SANDESH_COMPUTE_NODE_PORT + '@' +
+        '/Snh_VrfListReq?_x=';
+    async.map(urlLists,
+              commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, true),
+              function(err, data) {
+        if (data) {
+            var vrfData = jsonPath(data, "$..VrfSandeshData");
+            if (vrfData.length == 0) {
+                callback(null);
+                return;
+            }
+            commonUtils.createJSONBySandeshResponseArr(resultArr, vrfData[0],
+                                                       lastIndex);
+            if (resultArr) {
+                callback(resultArr);
+                return;
+            }
+        }
+        callback(null);
+    });
+}
+
+function getvRouterUCastRoutes (req, res) {
+    var ip = req.param('ip');
+    var ucIndex = req.param('vrfindex');
+    var index = 0;
+    var dataObjArr = [];
+    var vRouterRestAPI = commonUtils.getRestAPIServer(ip,
+                                                      global.SANDESH_COMPUTE_NODE_PORT);
+
+    if (null != ucIndex) {
+        commonUtils.createReqObj(dataObjArr, '/Snh_Inet4UcRouteReq?vrf_index=' +
+                                 ucIndex);
+        sendvRouterRoutes(req, res, dataObjArr, vRouterRestAPI);
+        return;
+    }
+    /* First get the ucindex from VRF */
+    getVrfIndexList(ip, function(results) {
+        if (null == results) {
+            commonUtils.handleJSONResponse(null, res, []);
+            return;
+        }
+        var vrfListLen = results.length;
+        for (var i = 0; i < vrfListLen; i++) {
+            commonUtils.createReqObj(dataObjArr,
+                                     '/Snh_Inet4UcRouteReq?vrf_index=' +
+                                     results[i]['ucindex']);
+        }
+        async.map(dataObjArr,
+                  commonUtils.getServerRespByRestApi(vRouterRestAPI,
+                                                     true),
+                  function(err, data) {
+            if (data) {
+                commonUtils.handleJSONResponse(null, res, data);
+            } else {
+                commonUtils.handleJSONResponse(null, res, []);
+            }
+        });
+    });
+}
+
+function getvRouterL2Routes (req, res)
+{
+    var ip = req.param('ip');
+    var vrfIndex = req.param('vrfindex');
+    var index = 0;
+    var dataObjArr = [];
+    var vRouterRestAPI =
+        commonUtils.getRestAPIServer(ip, global.SANDESH_COMPUTE_NODE_PORT);
+
+    if (null != vrfIndex) {
+        commonUtils.createReqObj(dataObjArr, '/Snh_Layer2RouteReq?x=' +
+                                 vrfIndex);
+        sendvRouterRoutes(req, res, dataObjArr, vRouterRestAPI);
+        return;
+    }
+    /* First get the l2index from VRF List */
+    getVrfIndexList(ip, function(results) {
+        if (null == results) {
+            commonUtils.handleJSONResponse(null, res, []);
+            return;
+        }
+        var vrfListLen = results.length;
+        for (var i = 0; i < vrfListLen; i++) {
+            commonUtils.createReqObj(dataObjArr,
+                                     '/Snh_Layer2RouteReq?x=' +
+                                     results[i]['l2index']);
+        }
+        async.map(dataObjArr,
+                  commonUtils.getServerRespByRestApi(vRouterRestAPI,
+                                                     true),
+                  function(err, data) {
+            if (data) {
+                commonUtils.handleJSONResponse(null, res, data);
+            } else {
+                commonUtils.handleJSONResponse(null, res, []);
+            }
+        });
+    });
+}
+
+function sendvRouterRoutes (req, res, dataObjArr, vRouterRestAPI)
+{
+    async.map(dataObjArr,
+              commonUtils.getServerRespByRestApi(vRouterRestAPI,
+                                                 true),
+        function(err, data) {
+        if (data) {
+            commonUtils.handleJSONResponse(null, res, data);
+        } else {
+            commonUtils.handleJSONResponse(null, res, []);
+        }
+    });
+}
+
+function getvRouterMCastRoutes (req, res) {
+    var index = 0;
+    var ip = req.param('ip');
+    var vrfIndex = req.param('vrfindex');
+
+    var dataObjArr = [];
+    var vRouterRestAPI = commonUtils.getRestAPIServer(ip,
+                                                      global.SANDESH_COMPUTE_NODE_PORT);
+    if (null != vrfIndex) {
+        commonUtils.createReqObj(dataObjArr, '/Snh_Inet4McRouteReq?vrf_index=' +
+                                 vrfIndex);
+        sendvRouterRoutes(req, res, dataObjArr, vRouterRestAPI);
+        return;
+    }
+    /* First get the mcindex from VRF */
+    getVrfIndexList(ip, function(results) {
+        if (null == results) {
+            commonUtils.handleJSONResponse(null, res, []);
+            return;
+        }
+        var vrfListLen = results.length;
+        for (var i = 0; i < vrfListLen; i++) {
+            commonUtils.createReqObj(dataObjArr,
+                                     '/Snh_Inet4McRouteReq?vrf_index=' +
+                                     results[i]['mcindex']);
+        }
+        async.map(dataObjArr,
+                  commonUtils.getServerRespByRestApi(vRouterRestAPI,
+                                                     true),
+                  function(err, data) {
+            if (data) {
+                commonUtils.handleJSONResponse(null, res, data);
+            } else {
+                commonUtils.handleJSONResponse(null, res, []);
+            }
+        });
+    });
+}
+
+function getvRouterVrfList (req, res)
+{
+    var ip = req.param('ip');
+    var urlLists = [];
+    var lastIndex = 0;
+    var resultArr = [];
+
+    urlLists[0] = ip + '@' + global.SANDESH_COMPUTE_NODE_PORT + '@' +
+        '/Snh_VrfListReq?name=';
+    async.map(urlLists,
+              commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, true),
+              function(err, results) {
+        var data = jsonPath(results, "$..VrfSandeshData");
+        if (data.length == 0) {
+            commonUtils.handleJSONResponse(null, res, []);
+            return;
+        }
+        lastIndex = commonUtils.createJSONBySandeshResponseArr(resultArr,
+                                                               data[0],
+                                                               lastIndex);
+        commonUtils.handleJSONResponse(null, res, resultArr);
+    });
+}
+
 exports.getvRoutersSummaryByJob = getvRoutersSummaryByJob;
 exports.getvRouterPagedSummary = getvRouterPagedSummary;
 exports.getvRouterGenerators = getvRouterGenerators;
 exports.getvRouterDetails = getvRouterDetails;
 exports.getvRouterFlowsDetail = getvRouterFlowsDetail;
 exports.getvRoutersSummary = getvRoutersSummary;
+exports.getVirtualRouters = getVirtualRouters;
+exports.getComputeNodeVN = getComputeNodeVN;
+exports.getComputeNodeInterface = getComputeNodeInterface;
+exports.getComputeNodeAcl = getComputeNodeAcl;
+exports.getComputeNodeAclFlows = getComputeNodeAclFlows;
+exports.getvRouterUCastRoutes = getvRouterUCastRoutes;
+exports.getvRouterMCastRoutes = getvRouterMCastRoutes;
+exports.getvRouterVrfList = getvRouterVrfList;
+exports.getvRouterL2Routes = getvRouterL2Routes;
+
