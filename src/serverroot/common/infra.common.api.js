@@ -498,6 +498,295 @@ function getvRouterList (appData, callback)
     });
 }
 
+function addGeneratorInfoToUVE (postData, uve, host, modules, callback)
+{
+    var resultJSON = {};
+    var url = '/analytics/uves/generator';
+
+    opServer.api.post(url, postData,
+                      commonUtils.doEnsureExecution(function(err, data) {
+        if ((null != err) || (null == data) || (null == data['value'])) {
+            callback(null, uve);
+            return;
+        }
+        data = data['value'];
+        len = data.length;
+        var modCnt = modules.length;
+        for (var i = 0; i < len; i++) {
+            try {
+                if (false ==
+                    modExistInGenList(modules, host, data[i]['name'])) {
+                    continue;
+                }
+                var modInstName = getModInstName(data[i]['name']);
+                if (null == modInstName) {
+                    continue;
+                }
+                resultJSON[modInstName] = data[i]['value'];
+            } catch(e) {
+            }
+        }
+        resultJSON = commonUtils.copyObject(resultJSON, uve);
+        callback(null, resultJSON);
+    }, global.DEFAULT_CB_TIMEOUT));
+}
+
+function filterOutGeneratorInfoFromGenerators(excludeProcessList, resultJSON)
+{
+    for (var key in resultJSON) {
+        var label = key.toUpperCase();
+        var excludeProcessLen = excludeProcessList.length;
+        for (var i = 0; i < excludeProcessLen; i++) {
+            if (label.indexOf(excludeProcessList[i].toUpperCase()) > -1) {
+                try {
+                    delete resultJSON[key]['ModuleServerState']['generator_info'];
+                } catch(e) {
+                }
+            }
+       }
+    }
+    return resultJSON;
+}
+
+function getUVEByUrlAndSendData (url, errResponse, res, appData)
+{
+    opServer.api.get(url, function(err, data) {
+        if (err || (null == data)) {
+            commonUtils.handleJSONResponse(err, res, errResponse);
+        } else {
+            commonUtils.handleJSONResponse(err, res, data);
+        }
+    });
+}
+
+function sortUVEList (uveEntry1, uveEntry2)
+{
+    if (uveEntry1['name'] > uveEntry2['name']) {
+        return 1;
+    } else if (uveEntry1['name'] < uveEntry2['name']) {
+        return -1;
+    }
+    return 0;
+}
+
+function sendSandeshRequest (req, res, dataObjArr, restAPI)
+{
+    async.map(dataObjArr,
+              commonUtils.getServerRespByRestApi(restAPI, true),
+              function(err, data) {
+        if (data) {
+            commonUtils.handleJSONResponse(null, res, data);
+        } else {
+            commonUtils.handleJSONResponse(null, res, []);
+        }
+    });
+}
+
+function getCpuStatDataByUVE (cpuInfo)
+{
+    var result = {};
+    result['CpuLoadInfo'] = {};
+    try {
+        var resultJSON = jsonPath(cpuInfo, "$..SysMemInfo");
+        var data = {};
+        result['CpuLoadInfo']['SysMemInfo'] =
+            commonUtils.createJSONByUVEResponse(data,
+                                                resultJSON[0]);
+    } catch(e) {
+    }
+    try {
+        resultJSON = jsonPath(cpuInfo, "$..MemInfo");
+        result['CpuLoadInfo']['MemInfo'] =
+            commonUtils.createJSONByUVEResponse(data,
+                                                resultJSON[0]);
+    } catch(e) {
+    }
+     try {
+        resultJSON = jsonPath(cpuInfo, "$..CpuLoadAvg");
+        result['CpuLoadInfo']['CpuLoadAvg'] =
+            commonUtils.createJSONByUVEResponse(data,
+                                                resultJSON[0]);
+    } catch(e) {
+    }
+    try {
+        resultJSON = jsonPath(cpuInfo, "$..num_cpu");
+        result['CpuLoadInfo']['num_cpu'] = resultJSON[0]['#text'];
+    } catch(e) {
+    }
+    try {
+        resultJSON = jsonPath(cpuInfo, "$..cpu_share");
+        result['CpuLoadInfo']['cpu_share'] = resultJSON[0]['#text'];
+    } catch(e) {
+    }
+    return result;
+}
+
+function parseUVECpuStatsData (cpuInfo)
+{
+    var resultJSON = [];
+    var results = [];
+    var cnt = cpuInfo.length;
+    for (var i = 0; i < cnt; i++) {
+        results[i] = {};
+        results[i] = getCpuStatDataByUVE(cpuInfo[i]);
+    }
+    return results;
+}
+
+function getBulkUVEUrl (type, hostname, module, filtObj)
+{
+    var cfilt = filtObj['cfilt'];
+    var kfilt = filtObj['kfilt'];
+    var mfilt = filtObj['mfilt'];
+    var reqUrl = '/analytics/uves/';
+    if (null == type) {
+        return null;
+    }
+
+    reqUrl += type + '/';
+    if (null != hostname) {
+        reqUrl += hostname + ':';
+    //} else {
+     //   reqUrl += '*';
+    }
+    if (null != module) {
+        reqUrl += module;
+    } else {
+        reqUrl += '*';
+    }
+    if (null != kfilt) {
+        reqUrl += '?kfilt=' + kfilt;
+    }
+    if (null != cfilt) {
+        if (null != kfilt) {
+            reqUrl += '&';
+        } else {
+            reqUrl += '?';
+        }
+        reqUrl += 'cfilt=' + cfilt;
+    }
+    if (null != mfilt) {
+        if ((null != cfilt) || (null != kfilt)) {
+            reqUrl += '&';
+        } else {
+            reqUrl += '?';
+        }
+        reqUrl += 'mfilt=' + mfilt;
+    }
+    return reqUrl;
+}
+
+function getBulkUVEPostURLs (filtData, appData)
+{
+    filtData = filtData['data'];
+    var url = '/analytics/uves/';
+    var dataObjArr = [];
+
+    try {
+        var modCnt = filtData.length;
+    } catch(e) {
+        return null;
+    }
+    for (var i = 0; i < modCnt; i++) {
+        var postData = {};
+        type = filtData[i]['type'];
+        hostname = filtData[i]['hostname'];
+        module = filtData[i]['module'];
+        /* All URLs should be valid */
+        if (null == type) {
+            return null;
+        }
+        if (null != filtData[i]['kfilt']) {
+            postData['kfilt'] = filtData[i]['kfilt'].split(',');
+        }
+        if (null != filtData[i]['cfilt']) {
+            postData['cfilt'] = filtData[i]['cfilt'].split(',');
+        }
+        if (null != filtData[i]['mfilt']) {
+            postData['mfilt'] = filtData[i]['mfilt'].split(',');
+        }
+        url += type;
+
+        var kfilt = "";
+        if (null != hostname) {
+            kfilt += hostname + ':';
+        }
+        if (null != module) {
+            kfilt += module;
+        } else {
+            kfilt += '*';
+        }
+        //postData['kfilt'].splice(0, 0, kfilt);
+        commonUtils.createReqObj(dataObjArr, url, global.HTTP_REQUEST_POST,
+                                 postData, opApiServer, null, appData);
+    }
+    return dataObjArr;
+}
+
+function getServerResponseByModType (req, res, appData)
+{
+    var postData = req.body;
+    var dataObjArr = [];
+
+    dataObjArr = getBulkUVEPostURLs(postData, appData);
+    if (null == dataObjArr) {
+        var err = new appErrors.RESTServerError('postData is not correct');
+        commonUtils.handleJSONResponse(err, res, null);
+        return;
+    }
+    async.map(dataObjArr,
+              commonUtils.getServerResponseByRestApi(opApiServer, false),
+              function(err, resultJSON) {
+        commonUtils.handleJSONResponse(err, res, resultJSON);
+    });
+}
+
+function getDataFromConfigNode (str, hostName, appData, data, callback)
+{
+    var url = '/' + str;
+    data['nodeStatus'] = 'Down';
+    configApiServer.apiGet(url, appData,
+                           commonUtils.doEnsureExecution(function(err, configData) {
+        if ((null != err) || (null == configData)) {
+            callback(null, data);
+            return;
+        }
+        var configData = configData[str];
+        var dataLen = configData.length;
+        for (var i = 0; i < dataLen; i++) {
+            try {
+                fqNameLen = configData[i]['fq_name'].length;
+                if (hostName == configData[i]['fq_name'][fqNameLen - 1]) {
+                    break;
+                }
+            } catch(e) {
+            }
+        }
+        if (i == dataLen) {
+            callback(null, data);
+            return;
+        }
+        if (str == 'bgp-routers') {
+            url = '/bgp-router/';
+        } else if (str == 'virtual-routers') {
+            url = '/virtual-router/';
+        }
+        try {
+            url += configData[i]['uuid'];
+        } catch(e) {
+            callback(null, data);
+            return;
+        }
+        configApiServer.apiGet(url, appData,
+                               commonUtils.doEnsureExecution(function(err, configData) {
+            data['ConfigData'] = {};
+            data['ConfigData'] = configData;
+            data['nodeStatus'] = 'Up';
+            callback(null, data);
+        }, global.DEFAULT_CB_TIMEOUT));
+    }, global.DEFAULT_CB_TIMEOUT));
+}
+
 exports.dovRouterListProcess = dovRouterListProcess;
 exports.checkAndGetSummaryJSON = checkAndGetSummaryJSON;
 exports.getvRouterList = getvRouterList;
@@ -505,4 +794,13 @@ exports.getNodeListByLastKey = getNodeListByLastKey;
 exports.getModuleType = getModuleType;
 exports.modExistInGenList = modExistInGenList;
 exports.getModInstName = getModInstName;
+exports.addGeneratorInfoToUVE = addGeneratorInfoToUVE;
+exports.getUVEByUrlAndSendData = getUVEByUrlAndSendData;
+exports.sortUVEList = sortUVEList;
+exports.sendSandeshRequest = sendSandeshRequest;
+exports.getServerResponseByModType = getServerResponseByModType;
+exports.getDataFromConfigNode = getDataFromConfigNode;
+exports.filterOutGeneratorInfoFromGenerators =
+    filterOutGeneratorInfoFromGenerators;
+exports.getBulkUVEUrl = getBulkUVEUrl;
 

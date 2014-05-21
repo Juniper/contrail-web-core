@@ -34,14 +34,6 @@ function getMockVNList (url, appData, callback)
     callback(null, jsonData.vnListAPIServerRespData);
 }
 
-test("network.mon.api API sortUVEList", function(assert) {
-    var val1 = {};
-    var val2 = {};
-    val1['name'] = 'default-domain:demo:vn1';
-    val2['name'] = 'default-domain:demo:vn2';
-    var value = nwMonApi.sortUVEList(val1, val2);
-    equal(-1, value, "We expect to be -1");
-});
 test("network.mon.api API getOpServerPagedResponseByLastKey", function(assert) {
     /* Override the opServer.api.post call */
     opServer.api.post = getOpServerPagedResp;
