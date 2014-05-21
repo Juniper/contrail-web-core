@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #
 # Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
 #
@@ -14,7 +16,7 @@ if command -v npm >/dev/null 2; then {
 fi
 
 # Web Core Third Party Modules
-if [ $1 = 'prod' ] ; then 
+if [ "$1" == 'prod' ]; then
     npm install --production
 else
     npm install
@@ -47,7 +49,7 @@ elif [ $(command -v md5) > /dev/null 2>&1 ]; then
     md5_exec=md5
 fi
 
-TMP_CACHE=/tmp/cache/$USER/third_party
+TMP_CACHE=/tmp/cache/$USER/third_party/webui
 
 # $1 - URL of package
 # $2 - package name
