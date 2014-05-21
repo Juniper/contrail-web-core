@@ -583,6 +583,17 @@ function cancelOR(dis){
 	edit.remove();
 }
 
+function validateOrClause(element){
+    var valueNode = $('#' + element).find("input[name='value[]']"),
+        value2Node = $('#' + element).find("input[name='value2[]']");
+    if(valueNode.data('contrailCombobox').value()){
+        value2Node.prop('disabled', false);
+    } else{
+        value2Node.val('');
+        value2Node.prop('disabled', true);
+    }
+}
+
 function appendWhere(queryPrefix,dis) {
 	var disElement = '';
 	if($(dis).hasClass('or-clause-item')){
@@ -779,7 +790,8 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
             data:fieldData != null ? fieldData() : []
         }, 
         change: function(e, ui){
-        	setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
+            validateOrClause(element);
+            setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
         }
     });
     valueNode.data('contrailCombobox').value(value);
@@ -788,6 +800,7 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
         value2Node = $('#' + element).find("input[name='value2[]']");
         value2Node.val(value2);
         value2Node.attr('placeholder', placeHolders[fieldName][1]);
+        (value2Node.val() != "") ? value2Node.prop('disabled', false) :value2Node.prop('disabled', true);
     }
     //if(onchangeFlag == true){
     	setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
