@@ -1189,6 +1189,13 @@ function flushQueryCache (req, res)
     });
 };
 
+// Handle request to get current time of server
+function getCurrentTime (req, res)
+{
+    var currentTime = new Date().getTime();
+    commonUtils.handleJSONResponse(null, res, {currentTime: currentTime});
+};
+
 function isEmptyObject(obj) 
 {
     for (var prop in obj) {
@@ -1212,4 +1219,5 @@ exports.deleteQueryCache4Queue = deleteQueryCache4Queue;
 exports.flushQueryCache = flushQueryCache;
 exports.exportQueryResult = exportQueryResult;
 exports.getQueryJSON4Table = getQueryJSON4Table;
+exports.getCurrentTime = getCurrentTime;
 
