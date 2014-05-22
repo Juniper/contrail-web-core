@@ -2,6 +2,9 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 (function($) {
+    $.ui.tabs.prototype._tabKeydown = function(event){
+        return;
+    }
     $.fn.contrailAutoComplete = function(option){
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
