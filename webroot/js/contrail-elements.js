@@ -573,7 +573,7 @@ function constructSelect2(self, defaultOption, args) {
         self.select2(defaultOption, args);
     } else{
         var option = {
-            minimumResultsForSearch : -1,
+            minimumResultsForSearch : 7,
             dropdownAutoWidth : true,
             dataTextField: 'text',
             dataValueField: 'id',
