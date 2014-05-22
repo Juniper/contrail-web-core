@@ -413,16 +413,11 @@ function getDefaultGridConfig() {
 	                                        cellSpaceColumn++;
 	                                    }
 	
-	                                    var source = gridOptions.detail.template;
-	                                    source = source.replace(/ }}/g, "}}");
-	                                    source = source.replace(/{{ /g, "{{");
-	
-	                                    var template = Handlebars.compile(source);
 	                                    $(target).parents('.slick-row-master').after(' \
 	            	            				<div class="ui-widget-content slick-row slick-row-detail" data-id="' + $(target).parents('.slick-row-master').data('id') + '"> \
 	            	            					<div class="slick-cell l' + cellSpaceColumn + ' r' + cellSpaceRow + '"> \
 	            		            					<div class="slick-row-detail-container"> \
-	            	            							' + template(dc) + ' \
+	            		            						<div class="slick-row-detail-template-' + $(target).parents('.slick-row-master').data('id') + '"></div> \
 	            	            						</div> \
 	            	            					</div> \
 	            	            				</div>');
@@ -434,7 +429,7 @@ function getDefaultGridConfig() {
 	                                		e['detailRow'] = $(target).parents('.slick-row-master').next().find('.slick-row-detail-container');
 	                                		gridOptions.detail.onInit(e,dc);
 	                                    }
-	                                    gridContainer.data('contrailGrid').adjustDetailRowHeight($(target).parents('.slick-row-master').data('id'));
+	                                	refreshDetailTemplateById($(target).parents('.slick-row-master').data('id'));
                                 	}
                                 	else{
                                 		$(target).parents('.slick-row-master').next('.slick-row-detail').show();
@@ -498,6 +493,18 @@ function getDefaultGridConfig() {
 	            }
         	}
         };
+        
+        function refreshDetailTemplateById(id){
+        	var source = gridOptions.detail.template;
+            source = source.replace(/ }}/g, "}}");
+            source = source.replace(/{{ /g, "{{");
+
+            var template = Handlebars.compile(source),
+            	dc = dataView.getItemById(id);
+        	
+        	gridContainer.find('.slick-row-detail-template-' + id).html(template(dc));
+        	gridContainer.data('contrailGrid').adjustDetailRowHeight(id);
+        }
         
         function initGridEvents() {
         	
@@ -607,8 +614,9 @@ function getDefaultGridConfig() {
 
                         // Assigning odd and even classes to take care of coloring effect on alternate rows
                         gridContainer.data('contrailGrid').adjustGridAlternateColors();
-
-                        gridContainer.find('.slick-row-detail').hide();
+                        
+                        // Refreshing the detail view
+                        gridContainer.data('contrailGrid').refreshDetailView();
                     }
                 }, 50);
             };
@@ -837,11 +845,19 @@ function getDefaultGridConfig() {
                 refreshView: function(){
                 	grid.render();
                 	grid.resizeCanvas();
-                	gridContainer.find('.slick-row-detail').remove();
-                	gridContainer.find('.icon-caret-down').toggleClass('icon-caret-down').toggleClass('icon-caret-right');
                 	this.adjustAllRowHeight();
                 	this.adjustGridAlternateColors();
+                	this.refreshDetailView();
                 }, 
+                /*
+                 * Refreshes the detail view of the grid. Grid is rendered and related adjustments are made.
+                 */
+                refreshDetailView: function(){
+                	gridContainer.find('.slick-row-detail').each(function(){
+                    	gridContainer.find('.slick_row_' + $(this).data('id')).after($(this));
+                    	refreshDetailTemplateById($(this).data('id'));
+                    });
+                },
                 /* 
                  * Starts AutoRefresh
                  */
