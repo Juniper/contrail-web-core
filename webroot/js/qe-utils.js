@@ -1993,7 +1993,8 @@ function setUTCTime(queryPrefix, reqQueryString, options, timeRange) {
 };
 
 function setUTCTimeObj(queryPrefix, reqObject, options, timeRange) {
-    timeRange = timeRange == null ? getTimeRange(queryPrefix): timeRange;
+    var serverCurrentTime = options ? options['serverCurrentTime'] : null;
+    timeRange = timeRange == null ? getTimeRange(queryPrefix, serverCurrentTime): timeRange;
     if (options != null) {
         options.fromTime = timeRange.fromTimeUTC;
         options.toTime = timeRange.toTimeUTC;
@@ -2004,15 +2005,19 @@ function setUTCTimeObj(queryPrefix, reqObject, options, timeRange) {
     return reqObject;
 };
 
-function getTimeRange(queryPrefix) {
+function getTimeRange(queryPrefix, serverCurrentTime) {
     var selectId = '#' + queryPrefix + '-query-form',
         timeRange = $(selectId + " select[name='timeRange']").val(),
         fromDate, toDate, fromTimeUTC, toTimeUTC, fromTime, toTime, now;
     if (timeRange != 0) {
-        now = new Date();
-        now.setSeconds(0);
-        now.setMilliseconds(0);
-        toTimeUTC = now.getTime();
+        if(serverCurrentTime) {
+            toTimeUTC = serverCurrentTime;
+        } else {
+            now = new Date();
+            now.setSeconds(0);
+            now.setMilliseconds(0);
+            toTimeUTC = now.getTime();
+        }
         fromTimeUTC = toTimeUTC - (timeRange * 1000);
         if(queryPrefix !== 'fs') {
             toTime = "now";
@@ -2909,14 +2914,20 @@ function getQueryModel(title) {
         };
 }
 function getEngQueryStr(reqQueryObj){
-	return JSON.stringify({
+    var engQueryJSON = {
 		select: reqQueryObj.select,
 		from: reqQueryObj.table,
 		where: reqQueryObj.where,
-		fromTime: reqQueryObj.fromTime,
-		toTime: reqQueryObj.toTime,
 		filter: reqQueryObj.filters
-	});
+	};
+    if(reqQueryObj.toTimeUTC == "now") {
+        engQueryJSON['fromTime'] = reqQueryObj.fromTimeUTC;
+        engQueryJSON['toTime'] = reqQueryObj.toTimeUTC;
+    } else {
+        engQueryJSON['fromTime'] = moment(reqQueryObj.fromTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
+        engQueryJSON['toTime'] = moment(reqQueryObj.toTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
+    }
+    return JSON.stringify(engQueryJSON);
 };
 
 $.fn.serializeObject = function() {
