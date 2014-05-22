@@ -105,7 +105,11 @@ function initializePrototypes() {
 }
 
 function collapseElement(e) {
-    $(e).toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+    if($(e).prop("tagName").toUpperCase() == "I"){
+        $(e).toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+    } else {
+        $(e).find("i").toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+    }
     var widgetBodyElem = $(e).parents('div.widget-box').find('div.widget-body');
     var widgetBoxElem = $(e).parents('div.widget-box');
     $(widgetBoxElem).toggleClass('collapsed');	
@@ -1461,6 +1465,7 @@ function applyGridDefHandlers(cGrid, options) {
     dataSource.onUpdateData.subscribe(function(){
        if(dataSource.getItems().length == 0)
            cGrid.showGridMessage('empty',noMsg);
+       cGrid.refreshView();
     });
 }
 
@@ -2369,7 +2374,7 @@ function ManageDataSource() {
                 'analyticsNodeDS':{
                     ongoing:false,
                     lastUpdated:null,
-                    populateFn:['getAllAnalyticsNodes','getGeneratorsForInfraNodes'],
+                    populateFn:['getAllAnalyticsNodes','getGeneratorsForInfraNodes','startFetchingCollectorStateGenInfos'],
                     deferredObj:null,
                     dataSource:null
                 },
@@ -2425,17 +2430,21 @@ function ManageDataSource() {
         //Set ongoing to true before issuing the calls for refreshing the dataSource
         dsObj['ongoing'] = true;
         if(dsObj['populateFn'] instanceof Array) {
-            window[dsObj['populateFn'][0]](deferredObj,dataSource,dsObj,dsName);
-            $.each(dsObj['populateFn'].slice(1),function(idx,populateFn) {
-                    var secondDefObj = $.Deferred();
-                    deferredObj.done(function(dsData) {
-                        window[populateFn](secondDefObj,dsData['dataSource'],dsName);
-                    });
-                    secondDefObj.done(function(response) {
-                        //Update the dataSource with the combined response from populateFns
-                        dataSource.setData(response);
-                    });
-            });
+            var defObjArr = [];
+                defObjArr.push(deferredObj);
+                window[dsObj['populateFn'][0]](defObjArr[0],dataSource,dsObj,dsName);  
+              for(var i = 0; i < dsObj['populateFn'].length; i++) {
+                  var loopDefObj = $.Deferred();
+                  defObjArr.push(loopDefObj);
+                  defObjArr[i].done(function(i){
+                      return function(arguments){
+                          if(window[dsObj['populateFn'][i + 1]] != null)
+                              window[dsObj['populateFn'][i + 1]](defObjArr[i + 1],arguments['dataSource'],dsName);
+                          else
+                              dataSource.setData(arguments['dataSource'].getItems());
+                      };
+                  }(i));
+              }
         } else
             window[dsObj['populateFn']](deferredObj,dataSource,dsObj,dsName);
         manageDataSource.setLastupdatedTime(dsObj,{status:'inprogess'});

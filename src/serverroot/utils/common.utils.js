@@ -1252,6 +1252,31 @@ function changeFileContentAndSend (response, path, originalStr, changeStr, callb
     });
 }
 
+function getOrchestrationPluginModel (req, res, appData)
+{
+    var plugins = require('../orchestration/plugins/plugins.api');
+    var modelObj = plugins.getOrchestrationPluginModel();
+    commonUtils.handleJSONResponse(null, res, modelObj);
+}
+
+/* Function: getWebServerInfo
+   Req URL: /api/service/networking/web-server-info
+   Send basic information about Web Server
+ */
+function getWebServerInfo (req, res, appData)
+{
+    var plugins = require('../orchestration/plugins/plugins.api');
+    var serverObj = plugins.getOrchestrationPluginModel();
+    if (null == serverObj) {
+        /* We will not come here any time */
+        logutils.logger.error("We did not get Orchestration Model");
+        assert(0);
+    }
+    serverObj ['serverUTCTime'] = commonUtils.getCurrentUTCTime();
+    serverObj['hostName'] = os.hostname();
+    commonUtils.handleJSONResponse(null, res, serverObj);
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1291,4 +1316,6 @@ exports.doEnsureExecution = doEnsureExecution;
 exports.directory = directory;
 exports.copyObject = copyObject;
 exports.changeFileContentAndSend = changeFileContentAndSend;
+exports.getOrchestrationPluginModel = getOrchestrationPluginModel;
+exports.getWebServerInfo = getWebServerInfo;
 

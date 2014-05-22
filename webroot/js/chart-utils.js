@@ -364,7 +364,7 @@ function markOverlappedBubblesOnHover (e,chart){
 }
 
 function isScatterChartInitialized(selector) {
-   if($(selector).find('.nv-scatterChart') != null)
+   if($(selector + ' > svg').length > 0)
       return true;
    else
       return false;
