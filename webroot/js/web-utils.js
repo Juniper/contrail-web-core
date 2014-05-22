@@ -105,7 +105,11 @@ function initializePrototypes() {
 }
 
 function collapseElement(e) {
-    $(e).toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+    if($(e).prop("tagName").toUpperCase() == "I"){
+        $(e).toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+    } else {
+        $(e).find("i").toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+    }
     var widgetBodyElem = $(e).parents('div.widget-box').find('div.widget-body');
     var widgetBoxElem = $(e).parents('div.widget-box');
     $(widgetBoxElem).toggleClass('collapsed');	
