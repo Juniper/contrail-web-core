@@ -891,6 +891,9 @@ a.selectAllLink:hover {
 .contrail-grid{
 	border-bottom: 1px solid #dadada;
 }
+.contrail-grid > .collapsed {
+	display: none;
+}
 .slick-sort-indicator{
 	margin-left: 0;	
 	margin-top: 0;
@@ -1266,6 +1269,12 @@ label.jqInvalid{
 }
 .select2-container-multi .select2-choices .select2-search-field {
 	margin: 0 0 0 5px;
+}
+.select2-drop-auto-width .select2-search {
+	padding: 4px;
+}
+ .select2-search input {
+ 	background: #fff url('select2.png') no-repeat 100% -22px;
 }
 .select2-results {
 	margin: 0;

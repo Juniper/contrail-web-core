@@ -127,7 +127,7 @@ function getDefaultGridConfig() {
                                 emptyGridHandler();
                             } else {
                                 gridContainer.data('contrailGrid').removeGridMessage();
-                                gridContainer.find('grid-footer').show();
+                                gridContainer.find('grid-footer').removeClass('hide');
                             }
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestSuccessCB)) {
                                 gridDataSource.events.onRequestSuccessCB(response);
@@ -282,9 +282,9 @@ function getDefaultGridConfig() {
 	                    	gridHeader.find('i.collapse-icon').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
 	                    	
 	                    	if(gridHeader.find('i.collapse-icon').hasClass('icon-chevron-up')){
-	                			gridContainer.children().show();
+	                			gridContainer.children().removeClass('collapsed');
 	                    	} else if(gridHeader.find('i.collapse-icon').hasClass('icon-chevron-down')){
-	                    		gridContainer.children().hide();
+	                    		gridContainer.children().addClass('collapsed');
 	                    		gridHeader.show();
 	                    	}
 	                    break;
@@ -502,8 +502,13 @@ function getDefaultGridConfig() {
             var template = Handlebars.compile(source),
             	dc = dataView.getItemById(id);
         	
-        	gridContainer.find('.slick-row-detail-template-' + id).html(template(dc));
-        	gridContainer.data('contrailGrid').adjustDetailRowHeight(id);
+            if(contrail.checkIfExist(dc)){
+            	gridContainer.find('.slick-row-detail-template-' + id).html(template(dc));
+            	gridContainer.data('contrailGrid').adjustDetailRowHeight(id);
+            }
+            else {
+            	gridContainer.find('.slick-row-detail-template-' + id).parents('.slick-row-detail').remove();
+            }
         }
         
         function initGridEvents() {
@@ -593,7 +598,7 @@ function getDefaultGridConfig() {
                     if(dataView.getLength() == 0){
                         emptyGridHandler();
                     } else {
-                        gridContainer.find('.grid-footer').show();
+                        gridContainer.find('.grid-footer').removeClass('hide');
                         onDataGridHandler();
                     }
                     gridContainer.find('.slick-row-detail').hide();
@@ -707,7 +712,7 @@ function getDefaultGridConfig() {
                     });
                 } else {
                 	if(dataView.getLength() != 0){
-                    	gridContainer.find('.grid-footer').show();
+                    	gridContainer.find('.grid-footer').removeClass('hide');
                     }
                     pager = new SlickGridPager(dataView, gridContainer, gridConfig.footer.pager.options);
                     pager.init();
@@ -725,11 +730,11 @@ function getDefaultGridConfig() {
                 _pager: pager,
                 expand: function(){
                 	gridContainer.find('i.collapse-icon').addClass('icon-chevron-up').removeClass('icon-chevron-down');
-            		gridContainer.children().show();
+            		gridContainer.children().removeClass('collapsed');
                 },
                 collapse: function(){
                 	gridContainer.find('i.collapse-icon').removeClass('icon-chevron-up').addClass('icon-chevron-down');
-                    gridContainer.children().hide();
+                    gridContainer.children().addClass('collapsed');
                     gridContainer.find('.grid-header').show();
                 },
                 getCheckedRows: function(){
@@ -759,11 +764,11 @@ function getDefaultGridConfig() {
                 		gridContainer.find('.grid-header-icon-loading').show();
                 	}
                 	messageHtml = (contrail.checkIfExist(gridStatusMsgConfig[status])) ? '<p class="' + gridStatusMsgConfig[status].type + '"><i class="' + gridStatusMsgConfig[status].iconClasses + '"></i> ' + statusMsg + '</p>' : status;
-                	gridContainer.find('.grid-load-status').html(messageHtml).show();
+                	gridContainer.find('.grid-load-status').html(messageHtml).removeClass('hide');
 
                 },
                 removeGridMessage: function(){
-                    gridContainer.find('.grid-load-status').html('').hide();
+                    gridContainer.find('.grid-load-status').html('').addClass('hide');
                     if(gridOptions.lazyLoading == null || !gridOptions.lazyLoading) {
                         this.removeGridLoading();
                     }
