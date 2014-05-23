@@ -612,14 +612,6 @@ function chartsParseFn(options, response) {
                             }
                         }
                     },
-                    footer : {
-                        pager : {
-                            options : {
-                                pageSize : 50,
-                                pageSizeSelect : [ 5, 10, 50, 100 ]
-                            }
-                        }
-                    },
                     columnHeader: {
                         columns:data['columns'],
                     },
@@ -2386,14 +2378,6 @@ function loadAlertsContent(){
                                     return "";
                             }
                         }]
-                },
-                footer : {
-                    pager : {
-                        options : {
-                            pageSize : 50,
-                            pageSizeSelect : [10, 50, 100, 200, 500 ]
-                        }
-                    }
                 }
             });
         }
