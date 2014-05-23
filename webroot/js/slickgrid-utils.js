@@ -155,8 +155,10 @@ function getDefaultGridConfig() {
                         failureCallback: function (xhr) {
                             stopAutoRefresh();
                             var errorMsg = contrail.parseErrorMsgFromXHR(xhr);
-                            showMessagePopup('Error', 'Error in run query: ' + errorMsg);
-                            errorGridHandler(errorMsg);
+                            if(xhr.status && xhr.statusText != 'abort') {
+                                showMessagePopup('Error', 'Error: ' + errorMsg);
+                                errorGridHandler('Error: ' + errorMsg);
+                            }
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestErrorCB)) {
                                 gridDataSource.events.onRequestErrorCB();
                             }
