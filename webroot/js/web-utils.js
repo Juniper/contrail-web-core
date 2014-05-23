@@ -1241,10 +1241,11 @@ function MenuHandler() {
             if ((currMenuObj[i]['items'] != null) && (currMenuObj[i]['items']['item'] != null) && (currMenuObj[i]['items']['item'].length > 0)) {
                 parentsArr.push(currMenuObj[i]);
                 var retVal = self.getMenuObjByHash(menuHash, currMenuObj[i]['items']['item'], parentsArr);
-                if (retVal != -1)
+                if (retVal != -1) {
                     return retVal;
-                else
+                } else {
                     parentsArr.pop();
+                }
             }
         }
         return -1;
