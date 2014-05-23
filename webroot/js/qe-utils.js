@@ -151,13 +151,13 @@ function getQueueColumnDisplay(queueId) {
         		
         		$.each(engQueryObj, function(key, val){
         			if(key == 'select' && val != ''){
-        				engQueryStr += '<div class="row-fluid"><span class="bold">' + key.toUpperCase() + '</span> &nbsp;*</div>';
+        				engQueryStr += '<div class="row-fluid"><span class="bolder">' + key.toUpperCase() + '</span> &nbsp;*</div>';
         			}
         			else if((key == 'where' || key == 'filter') && val == ''){
         				engQueryStr += '';
         			}
         			else {
-        				engQueryStr += '<div class="row-fluid word-break-normal"><span class="bold">' + key.toUpperCase() + '</span> &nbsp;' + val + '</div>';
+        				engQueryStr += '<div class="row-fluid word-break-normal"><span class="bolder">' + key.toUpperCase() + '</span> &nbsp;' + val + '</div>';
         			}
         		});
         		return engQueryStr;

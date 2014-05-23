@@ -776,7 +776,7 @@ rect.bordered {
 	font-size: 14px;
 	color: #000;
 	padding: 5px 0;
-	font-weight: bold;
+	font-weight: 600;
 }
 .and-clause-item.row-fluid [class*="span"] {
 	min-height: 28px !important;
@@ -1016,7 +1016,7 @@ a.selectAllLink:hover {
 
 .slick-pager .slick-pager-nav {
   display: inline-block;
-  float: left;
+  float: right;
 }
 .slick-pager .slick-pager-nav .pager-control{
 	padding:0 5px;
@@ -1033,12 +1033,12 @@ a.selectAllLink:hover {
 }
 .slick-pager .slick-pager-info, .slick-pager .slick-pager-sizes  {
   	display: block;
-  	float: right;
+  	float: left;
   	height: 20px;
 }
 .slick-pager .slick-pager-info {
-	border-left: 1px solid #eee;
-	padding: 0 2px 0 9px;
+	border-right: 1px solid #eee;
+	padding: 0 9px 0 5px;
 	height: 20px;
 }
 .csg-current-page {
@@ -1063,7 +1063,6 @@ margin-right: 15px;
 	height: 20px;
 }
 .csg-pager-sizes {
-	margin: 0 5px;
 	width: 90px;
 	float: left;
 }
