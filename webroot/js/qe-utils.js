@@ -1679,7 +1679,6 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 					},
 					onRequestErrorCB : function() {
 						enableButton(btnId);
-	//					endChartLoading(false, 'fs');
 					},
 					onRequestSuccessCB : function(response) {
 						var status = response['status'];
@@ -1694,14 +1693,12 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 						if (options.refreshChart != null && options.refreshChart) {
 							if (options.showChartToggle) {
 								queries.fs.chartViewModel.options(options);
-								plotFSChart(options,columnDisplay,fcGridDisplay);
+								plotFSChart(options, columnDisplay, fcGridDisplay);
 								
 							    var grid = $("#fs-flow-classes").data("contrailGrid");
 							    if(grid != null){
 							        grid.refreshView();
 							    }
-							} else if (options.showChartToggle != null) {
-						//		endChartLoading(false, 'fs');
 							}
 							options.refreshChart = false;
 						}
@@ -2092,30 +2089,6 @@ function getPlotFields(columnDisplay) {
     return plotFields;
 };
 
-//function initFSChartLoading() {
-//    queries.fs.chartViewModel.isFCVisible(false);
-//};
-//
-//function endChartLoading(isFCVisible, queryPrefix) {
-//    queries[queryPrefix].chartViewModel.isFCVisible(isFCVisible);
-//};
-
-function initFSChart(columnDisplay, data, flowClassArray, fcGridDisplay) {
-    var plotFields = getPlotFields(columnDisplay),
-        validFCId = findFirstValidFCId(flowClassArray);
-    queries.fs.chartViewModel.flowClasses(flowClassArray);
-    queries.fs.chartViewModel.plotFields(plotFields);
-    queries.fs.chartViewModel.selectedFlows([{flowClassId: validFCId, sumBytes: null, sumPackets: null}]);
-    queries.fs.chart = null;
-    $('#fs-chart-link').removeClass('disabled-link');
-//    createFSChart("#ts-chart", queries.fs.chart);
-    initFlowclassGrid("#fs-flow-classes", flowClassArray, fcGridDisplay);
-};
-
-function setGroupName(group, series) {
-    return "";
-};
-
 function findFirstValidFCId(flowClassArray) {
     for(var i = 0; i < flowClassArray.length; i++) {
         if(flowClassArray[i]['sourcevn'] != "__UNKNOWN__" && flowClassArray[i]['destvn'] != "__UNKNOWN__") {
@@ -2229,10 +2202,6 @@ function plotFSChart(options, columnDisplay, fcGridDisplay) {
         dataType:"json",
         success:function (resultData) {
             query['chartData'] = resultData;
-        },
-        error:function (xhr) {
- //           endChartLoading(false, 'fs');
-            $('#ts-chart').html($('#no-data').html());
         }
     });
     flowClassesReq = $.ajax({
@@ -2242,55 +2211,52 @@ function plotFSChart(options, columnDisplay, fcGridDisplay) {
         dataType:"json",
         success:function (resultData) {
             flowClasses = resultData;
-        },
-        error:function (xhr) {
-            //endChartLoading(false, 'fs');
-            $('#ts-chart').html($('#no-data').html());
         }
     });
     $.when(chartDataReq, flowClassesReq).done(function () {
-        initFSChart(columnDisplay, query['chartData'], flowClasses, fcGridDisplay);
+        var plotFields = getPlotFields(columnDisplay),
+            validFCId = findFirstValidFCId(flowClasses);
+        queries.fs.chartViewModel.flowClasses(flowClasses);
+        queries.fs.chartViewModel.plotFields(plotFields);
+        queries.fs.chartViewModel.selectedFlows([{flowClassId: validFCId, sumBytes: null, sumPackets: null}]);
+        queries.fs.chart = null;
+        $('#fs-chart-link').removeClass('disabled-link');
+        initFlowclassGrid("#fs-flow-classes", flowClasses, fcGridDisplay);
     });
 };
 
 function createFSChart(selector, chart) {
-    var seriesValues = queries.fs.chartViewModel.seriesValues(),
-        plotFields = queries.fs.chartViewModel.plotFields(),
+    var plotFields = queries.fs.chartViewModel.plotFields(),
         options = queries.fs.chartViewModel.options(),
         selectedFlows = queries.fs.chartViewModel.selectedFlows(),
         fsChartData = queries['fs']['chartData'],
         plotData = null, selectedFlow, flowClassId, color;
 
-    if (isEmptyObject(fsChartData) || fsChartData == null) {
- //       endChartLoading(false, 'fs');
-        $('#ts-chart').html($('#no-data').html());
-        return;
-    }
-
-    for (var i = 0; i < selectedFlows.length; i++) {
-        selectedFlow = selectedFlows[i];
-        flowClassId = selectedFlow['flowClassId'];
-        color = d3_category5[i];
-        if (plotFields.indexOf("sum_bytes") != -1) {
-            selectedFlow["sumBytes"] = "badge-color-" + i;
-        } else if (plotFields.indexOf("sum_packets") != -1) {
-            selectedFlow["sumPackets"] = "badge-color-" + i;
+    if (!isEmptyObject(fsChartData) && fsChartData != null) {
+        for (var i = 0; i < selectedFlows.length; i++) {
+            selectedFlow = selectedFlows[i];
+            flowClassId = selectedFlow['flowClassId'];
+            color = d3_category5[i];
+            if (plotFields.indexOf("sum_bytes") != -1) {
+                selectedFlow["sumBytes"] = "badge-color-" + i;
+            } else if (plotFields.indexOf("sum_packets") != -1) {
+                selectedFlow["sumPackets"] = "badge-color-" + i;
+            }
+            assignColors2FlowClass(selectedFlow);
+            if (i == 0) {
+                plotData = addMissingPoints(fsChartData[flowClassId], options, plotFields, color, i + 1);
+            } else {
+                plotData = plotData.concat(addMissingPoints(fsChartData[flowClassId], options, plotFields, color, i + 1));
+            }
         }
-        assignColors2FlowClass(selectedFlow);
-        if (i == 0) {
-            plotData = addMissingPoints(fsChartData[flowClassId], options, plotFields, color, i + 1);
+        options['height'] = 300;
+        options['yAxisLabel'] = '';
+        options['y2AxisLabel'] = '';
+        if(plotFields.indexOf('sum_bytes') != -1) {
+            initTrafficTSChart(selector, plotData, options, chart, "formatSumBytes", "formatSumBytes");
         } else {
-            plotData = plotData.concat(addMissingPoints(fsChartData[flowClassId], options, plotFields, color, i + 1));
+            initTrafficTSChart(selector, plotData, options, chart, "formatSumPackets", "formatSumPackets");
         }
-    }
-    options['height'] = 300;
-    options['yAxisLabel'] = '';
-    options['y2AxisLabel'] = '';
- //   endChartLoading(true, 'fs');
-    if(plotFields.indexOf('sum_bytes') != -1) {
-        initTrafficTSChart(selector, plotData, options, chart, "formatSumBytes", "formatSumBytes");
-    } else {
-        initTrafficTSChart(selector, plotData, options, chart, "formatSumPackets", "formatSumPackets");
     }
 };
 
