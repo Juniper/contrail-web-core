@@ -871,7 +871,7 @@ function deleteComplete(cbParams) {
     	var msg = "";
     	var objects = [];
         for(var i=0; i<cbParams.errors.length; i++) {
-            objects[i] = cbParams.selected_rows[i][cbParams.errorField];
+            objects[i] = cbParams.selected_rows[cbParams.errors[i]][cbParams.errorField];
             msg = msg +
             cbParams.errorField + ": " + cbParams.selected_rows[i][cbParams.errorField] + "<br>" +
             cbParams.errorDesc[i] + "<br><br>";
