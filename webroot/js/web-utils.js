@@ -17,6 +17,7 @@ var DEFAULT_TIME_SLICE = 3600000,
     pageContainer = "#content-container",
     dblClick = 0;
 var CONTRAIL_STATUS_USER = [];
+var roles = {TENANT : "user",ADMIN : "admin"};
 var CONTRAIL_STATUS_PWD = [];
 var flowKeyStack = [];
 var aclIterKeyStack = [];
@@ -944,15 +945,19 @@ function MenuHandler() {
     var self = this;
     var menuObj;
     self.deferredObj = $.Deferred();
-    var menuDefferedObj = $.Deferred(), orchDefferedObj = $.Deferred(), statDefferredObj = $.Deferred();
+    var menuDefferedObj = $.Deferred(),statDefferredObj = $.Deferred(),webServerDefObj = $.Deferred();
 
     this.loadMenu = function () {
         $.get('/menu.xml?built_at=' + built_at, function (xml) {
             menuObj = $.xml2json(xml);
-            processXMLJSON(menuObj);
-            menuDefferedObj.resolve();
+            webServerDefObj.always(function(){
+                processXMLJSON(menuObj);
+                var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'],'menushortcut'));
+                $("#sidebar-shortcuts").html(menuShortcuts);
+                menuObj['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
+                menuDefferedObj.resolve();
+            });
         });
-        orchDefferedObj.resolve();
         //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
         
         $.ajax({
@@ -970,6 +975,8 @@ function MenuHandler() {
                 }
                 globalObj['webServerInfo'] = response;
             }    
+        }).always(function(){
+            webServerDefObj.resolve();
         });
         
         $.ajax({
@@ -979,35 +986,122 @@ function MenuHandler() {
                 statDefferredObj.resolve();
         });
 
-        $.when.apply(window, [menuDefferedObj, orchDefferedObj, statDefferredObj]).done(function () {
+        $.when.apply(window, [menuDefferedObj, webServerDefObj, statDefferredObj]).done(function () {
             self.deferredObj.resolve();
         });
     }
-
+    
+    this.filterMenuItems = function(items,type){
+        if(type == null) {
+            items = items.filter(function(value){
+                var hasAccess = false;
+                hasAccess = checkForAccess(value);
+                if(value['items'] != null && value['items']['item'] instanceof Array && hasAccess)
+                    value['items']['item'] = menuHandler.filterMenuItems(value['items']['item']);
+                return hasAccess;
+            });
+            return items;
+        } else if(type == 'menushortcut') {
+            var result = [];
+            for(var i = 0;i < items.length; i++){
+                var obj = {};
+                obj['iconClass'] = items[i]['iconClass'],obj['id'] = items[i]['name'],obj['label'] = items[i]['label'];
+                /*If top level item has access tag then check for it
+                  else check for the access tag in the sub menu items
+                */
+                if(items[i]['access'] != null)
+                    obj['cssClass'] = checkForAccess(items[i]) ? "btn-"+items[i]['name'] : "disabledBtn";
+                else if(items[i]['items'] != null && items[i]['items']['item'] instanceof Array) {
+                    var subMenu = items[i]['items']['item'],allowed = false;
+                    for(var j = 0; j < subMenu.length; j++) {
+                        if(subMenu[j]['access'] != null) {
+                            /*
+                             * if atleast one submenu item is allowed then menu button should not be disabled
+                             */
+                            if(checkForAccess(subMenu[j]))
+                                allowed = true;
+                        /*
+                         * if any submenu item has no access tag which mean it is accessible to everyone so menu button should not be disabled
+                         */
+                        } else {
+                            allowed = true;
+                            break;
+                        }
+                    }
+                    obj['cssClass'] = allowed ? "btn-"+items[i]['name'] : "disabledBtn";
+                //Menu with no sub items,so disabling it
+                } else 
+                    obj['cssClass'] = "disabledBtn";
+                result.push(obj);
+            }
+            return result;
+        }
+    }
+    
+    /*
+     * This function checks whether the user(from globalCacheObj) is permitted to view the menu item(which the parameter)
+     * and returns true if permitted else false
+     */
+    function checkForAccess(value){
+        var roleExists = false,orchExists = false;
+        var orchModel = globalObj['webServerInfo']['orchestrationModel'];
+        var role = globalObj['webServerInfo']['role'];
+        if(value.access != null && value.access.roles != null) {
+            if(!(value.access.roles.role instanceof Array))
+                value.access.roles.role = [value.access.roles.role];
+            var rolesArr = value.access.roles.role;
+            for(var i = 0; i < rolesArr.length; i++){
+                /**
+                 * Two cases, we need to check
+                 * 1)if negation(!) exists in role then the role should not match with the value in globalCacheObj
+                 * 2)If negation not there in the then just need to compare the role
+                 */
+                if((rolesArr[i].indexOf('!') > -1 && rolesArr[i] != "!"+role) || rolesArr[i] == role)
+                   roleExists = true; 
+            }
+            if(!(value.access.orchModels.model instanceof Array))
+                value.access.orchModels.model = [value.access.orchModels.model];
+            var orchModels = value.access.orchModels.model;
+            for(var i = 0;i < orchModels.length; i++ ){
+                if((orchModels[i].indexOf('!') > -1 && orchModels[i] != "!"+orchModel) || orchModels[i] == orchModel)
+                    orchExists = true; 
+            }
+            return (roleExists && orchExists);
+        } else {
+            return true;
+        }
+    }
+    
     this.toggleMenuButton = function (menuButton, currPageHash, lastPageHash) {
         var currentBCTemplate = contrail.getTemplate4Id('current-breadcrumb');
         var currPageHashArray, subMenuId, reloadMenu, linkId;
         if (menuButton == null) {
             currPageHashArray = currPageHash.split('_');
             //Looks scalable only till 2nd level menu
-            subMenuId = '#' + currPageHashArray[0] + '_' + currPageHashArray[1];
             linkId = '#' + currPageHashArray[0] + '_' + currPageHashArray[1] + '_' + currPageHashArray[2];
+            subMenuId = $(linkId).parent('ul.submenu');
             menuButton = getMenuButtonName(currPageHashArray[0]);
             //If user has switched between top-level menu
             reloadMenu = check2ReloadMenu(lastPageHash, currPageHashArray[0]);
         }
         if (reloadMenu == null || reloadMenu) {
+            var menu = {};
+            for(var i = 0;i < menuObj['items']['item'].length; i++) {
+                if(menuObj['items']['item'][i]['name'] == menuButton)
+                    menu =  menuObj['items']['item'][i];
+            }
             $('#menu').html('');
-            $('#menu').html(contrail.getTemplate4Id(menuButton + '-menu-template')({globalObj: globalObj}));
+            $('#menu').html(contrail.getTemplate4Id('menu-template')(menu));
             if ($('#sidebar').hasClass('menu-min')) {
                 $('#sidebar-collapse').find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
             }
             this.selectMenuButton("#btn-" + menuButton);
         }
         if (subMenuId == null) {
-            subMenuId = "#" + $('.item:first').find('ul:first').attr("id");
-            window.location = $(subMenuId).find('li:first a').attr("href"); // TODO: Avoid reload of page; fix it via hash.
+            subMenuId = $('.item:first').find('ul:first');
+            window.location = $('.item:first').find('ul:first').find('li:first a').attr("href"); // TODO: Avoid reload of page; fix it via hash.
         } else {
+            subMenuId = $(linkId).parent('ul.submenu');
             toggleSubMenu($(subMenuId), linkId);
             var currURL = window.location.href.split(window.location.host)[1];
             //Modify breadcrumb only if current URL is same as default one
@@ -1046,7 +1140,7 @@ function MenuHandler() {
         $('#btn-setting').removeClass("active");
         $(buttonId).addClass("active");
     }
-
+    
     /*
      * post-processing of menu XML JSON
      * JSON expectes item to be an array,but xml2json make item as an object if there is only one instance
@@ -1149,6 +1243,8 @@ function MenuHandler() {
                 var retVal = self.getMenuObjByHash(menuHash, currMenuObj[i]['items']['item'], parentsArr);
                 if (retVal != -1)
                     return retVal;
+                else
+                    parentsArr.pop();
             }
         }
         return -1;
@@ -1253,7 +1349,8 @@ function MenuHandler() {
                     } else if (currMenuObj['class'] != null) {
                         //Cleanup the container
                         $(contentContainer).html('');
-                        window[currMenuObj['class']].load({containerId:contentContainer, hashParams:layoutHandler.getURLHashParams()});
+                        if(window[currMenuObj['class']] != null)
+                            window[currMenuObj['class']].load({containerId:contentContainer, hashParams:layoutHandler.getURLHashParams()});
                     }
                 });
         } catch (error) {

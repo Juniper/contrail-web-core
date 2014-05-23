@@ -1415,3 +1415,13 @@ a.disabled-link, a.disabled-link:hover{
 	color: #ccc;
 	cursor: default !important;
 }
+.disabledBtn, .disabledBtn:hover {
+    background-color: #898989 !important;
+    border-color: #898989;
+    border-top: #fff 0px solid !important;
+    cursor: default;
+}
+
+.disabledBtn i {
+    cursor: default;
+}

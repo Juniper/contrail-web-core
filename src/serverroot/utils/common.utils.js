@@ -1274,6 +1274,7 @@ function getWebServerInfo (req, res, appData)
     }
     serverObj ['serverUTCTime'] = commonUtils.getCurrentUTCTime();
     serverObj['hostName'] = os.hostname();
+    serverObj['role'] = req.session.userRole;
     commonUtils.handleJSONResponse(null, res, serverObj);
 }
 
