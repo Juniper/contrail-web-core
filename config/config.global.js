@@ -209,6 +209,11 @@ config.cacheExpire.topo_tree_time = 600; /* Seconds */
 /* Logo File: Use complete path of logo file location */
 config.logo_file = '/usr/src/contrail/contrail-webui/webroot/img/juniper-networks-logo.png';
 
+config.featurePkg = {};
+/* Add new feature Package Config details below */
+config.featurePkg.webController = {};
+config.featurePkg.webController.path = '/usr/src/contrail/contrail-web-controller';
+
 /* Enable/disable Stat Query Links in Sidebar*/
 config.qe = {};
 config.qe.enable_stat_queries = false;

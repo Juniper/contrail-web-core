@@ -1277,6 +1277,33 @@ function getWebServerInfo (req, res, appData)
     commonUtils.handleJSONResponse(null, res, serverObj);
 }
 
+function mergeAllPackageList (serverType)
+{
+    var pkgList = [];
+    pkgList.push(require('../../../webroot/pkgxml/package.js').pkgList);
+    for (key in config.featurePkg) {
+        if ((config.featurePkg[key]) && (config.featurePkg[key]['path']) && 
+            (true == fs.existsSync(config.featurePkg[key]['path'] +
+                                   '/webroot/pkgxml/package.js'))) {
+            pkgList.push(require(config.featurePkg[key]['path'] +
+                        '/webroot/pkgxml/package.js').pkgList);
+        }
+    }
+    /*
+    var pkgStr = "var pkgList = " + JSON.stringify(pkgList);
+    pkgStr += ";\nexports.pkgList = pkgList;\n";
+
+    var path = null;
+    if (global.service.MAINSEREVR == serverType) {
+        path = __dirname + '/../web/core/packages.js';
+    } else {
+        path = __dirname + '/../jobs/core/packages.js';
+    }
+    fs.writeFileSync(path, pkgStr);
+    */
+    return pkgList;
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1318,4 +1345,5 @@ exports.copyObject = copyObject;
 exports.changeFileContentAndSend = changeFileContentAndSend;
 exports.getOrchestrationPluginModel = getOrchestrationPluginModel;
 exports.getWebServerInfo = getWebServerInfo;
+exports.mergeAllPackageList = mergeAllPackageList;
 

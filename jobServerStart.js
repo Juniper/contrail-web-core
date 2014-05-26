@@ -5,16 +5,14 @@
 var axon = require('axon')
 	, jobsApi = require('./src/serverroot/jobs/core/jobs.api')
 	, assert = require('assert')
-	, jobsCb = require('./src/serverroot/jobs/core/jobsCb.api')
     , jobsApi = require('./src/serverroot/jobs/core/jobs.api')
 	, global = require('./src/serverroot/common/global')
 	, redisPub = require('./src/serverroot/jobs/core/redisPub')
-	, bgpNode = require('./src/serverroot/jobs/api/bgpNode.api')
-	, computeNode = require('./src/serverroot/jobs/api/computeNode.api')
     , kue = require('kue')
     , commonUtils = require('./src/serverroot/utils/common.utils')
     , logutils = require('./src/serverroot/utils/log.utils')
     , discServ = require('./src/serverroot/jobs/core/discoveryservice.api')
+    , jsonPath = require('JSONPath').eval
 	, config = require('./config/config.global.js');
 
 var hostName = config.jobServer.server_ip
@@ -25,6 +23,8 @@ var myIdentity = global.service.MIDDLEWARE;
 var discServEnable = ((null != config.discoveryService) &&
                       (null != config.discoveryService.enable)) ?
                       config.discoveryService.enable : true;
+
+var pkgList = commonUtils.mergeAllPackageList(global.service.MIDDLEWARE);
 
 /* Function: processMsg
  Handler for message processing for messages coming from main Server
@@ -77,12 +77,32 @@ function createJobsAtInit ()
     createVRouterGeneratorsJob();
 }
 
+function getDestPathByPkgPathURL (destPath)
+{
+    var destArrPath = destPath.split(':');
+    if (destArrPath.length > 1) {
+        destPath = config.featurePkg[destArrPath[0]]['path'] + '/' + destArrPath[1];
+    }
+    return destPath;
+}
+
+function registerTojobListenerEvent()
+{
+    var destPath = null;
+    var jobProcData = jsonPath(pkgList, "$..jobProcess[0]");
+    var jobProcDataLen = jobProcData.length;
+    for (var i = 0; i < jobProcDataLen; i++) {
+        destPath = getDestPathByPkgPathURL(jobProcData[i]['output'][0]);
+        require(destPath).addjobListenerEvent();
+        require(destPath).jobsProcess();
+    }
+}
+
 function startServers ()
 {
     kueJobListen();
     connectToMainServer();
-    jobsCb.addjobListenerEvent();
-    jobsCb.jobsProcess();
+    registerTojobListenerEvent();
     jobsApi.doCheckJobsProcess();
     if (true == discServEnable) {
         discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MIDDLEWARE);
@@ -131,4 +151,4 @@ jobsApi.jobListenerReadyQEvent.on('kueReady', function() {
 
 exports.myIdentity = myIdentity;
 exports.discServEnable = discServEnable;
-
+exports.pkgList = pkgList;

@@ -9,6 +9,9 @@ if (!module.parent) {
 
 global = {};
 
+global.INSTALLED_PACKAGE_TYPE_BASE = 'base';
+global.INSTALLED_PACKAGE_TYPE_FEATURE = 'contrail-feature';
+
 global.service = {};
 global.service.MAINSEREVR = 'mainServer';
 global.service.MIDDLEWARE = 'middleware';

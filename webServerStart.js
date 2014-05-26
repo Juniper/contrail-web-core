@@ -3,7 +3,6 @@
  */
 
 var express = require('express')
-	, handler = require('./src/serverroot/web/routes/handler')
 	, path = require('path')
 	, fs = require("fs")
 	, http = require('http')
@@ -16,16 +15,16 @@ var express = require('express')
 	, axon = require('axon')
 	, producerSock = axon.socket('push')
 	, redisSub = require('./src/serverroot/web/core/redisSub')
-	, global = require('./src/serverroot/common/global')
+    , global = require('./src/serverroot/common/global')
 	, redis = require("redis")
 	, eventEmitter = require('events').EventEmitter
-	, urlRoutes = require('./src/serverroot/web/routes/url.routes')
     , authApi = require('./src/serverroot/common/auth.api')
     , async = require('async')
     , os = require('os')
     , commonUtils = require('./src/serverroot/utils/common.utils')
     , discClient = require('./src/serverroot/common/discoveryclient.api')
-	, featureList = require('./src/serverroot/web/core/feature.list.js');
+    , jsonPath = require('JSONPath').eval
+    ;
 
 var server_port = (config.redis_server_port) ?
 	config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
@@ -67,7 +66,7 @@ function initializeAppConfig (appObj)
 {
     var app = appObj.app;
     var port = appObj.port;
-    app.set('port', process.env.PORT || port);
+    //app.set('port', process.env.PORT || port);
     app.use(express.cookieParser());
     store = new RedisStore({host:redisIP, port:redisPort,
         prefix:global.STR_REDIS_STORE_SESSION_ID_PREFIX,
@@ -82,12 +81,46 @@ function initializeAppConfig (appObj)
         app.use(express.methodOverride());
         app.use(express.bodyParser());
         app.use(app.router);
-        app.use(express.static(path.join(__dirname, 'webroot'), {maxAge: 3600*24*3*1000}));
-
+        registerStaticFiles(app);
     // Catch-all error handler
     app.use(function (err, req, res, next) {
         logutils.logger.error(err.stack);
         res.send(500, 'An unexpected error occurred!');
+    });
+}
+
+var pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
+var pkgNameLists = jsonPath(pkgList, "$..name[0]");
+var pkgNameListsLen = pkgNameLists.length;
+
+function loadStaticFiles (pkgNameObj, callback)
+{
+    var app     = pkgNameObj['app'];
+    var pkgName = pkgNameObj['pkgName'];
+
+    app.use(express.static(path.join(process.cwd(), 'webroot'),
+                           {maxAge: 3600*24*3*1000}));
+    if ((null == config.featurePkg[pkgName]) || (null == config.featurePkg[pkgName]['path'])) {
+        callback(null);
+        return;
+    }
+    /* First register core webroot directory */
+    var dirPath = path.join(config.featurePkg[pkgName]['path'], 'webroot');
+    fs.exists(dirPath, function(exists) {
+        if (exists) {
+            app.use(express.static(dirPath, {maxAge: 3600*24*3*1000}));
+            callback(null);
+        }
+    });
+}
+
+function registerStaticFiles (app)
+{
+    var staticFileDirLists = [];
+    for (var i = 0; i < pkgNameListsLen; i++) {
+        staticFileDirLists.push({'app': app, 'pkgName': pkgNameLists[i]});
+    }
+    async.map(staticFileDirLists, loadStaticFiles, function(err) {
     });
 }
 
@@ -124,16 +157,39 @@ store.eventEmitter.on('sessionDeleted', function (sid) {
     authApi.deleteAuthDataBySessionId(sessionId);
 });
 
-registerReqToApp = function () {
+function getDestPathByPkgPathURL (destPath)
+{
+    var destArrPath = destPath.split(':');
+    if (destArrPath.length > 1) {
+        destPath = config.featurePkg[destArrPath[0]]['path'] + '/' + destArrPath[1];
+    }
+    return destPath;
+}
+
+function loadAllFeatureURLs (myApp)
+{
+    var parseURLData = jsonPath(pkgList, "$..parseURL[0]");
+    var parseURLDataLen = parseURLData.length;
+    for (var i = 0; i < parseURLDataLen; i++) {
+        destPath = getDestPathByPkgPathURL(parseURLData[i]['output'][0]);
+        require(destPath).registerURLsToApp(myApp);
+    }
+    return;
+}
+
+function registerReqToApp ()
+{
     var myApp = httpsApp;
     if (true == insecureAccessFlag) {
         myApp = httpApp;
     }
-	urlRoutes.registerURLsToApp(myApp);
+    loadAllFeatureURLs(myApp);
+	var handler = require('./src/serverroot/web/routes/handler')
 	handler.addAppReqToAllowedList(myApp.routes);
 }
 
-bindProducerSocket = function () {
+function bindProducerSocket ()
+{
 	var hostName = config.jobServer.server_ip
 		, port = config.jobServer.server_port
 		;
@@ -146,7 +202,8 @@ bindProducerSocket = function () {
 	console.log('nodeJS Server bound to port %s to Job Server ', port);
 }
 
-sendRequestToJobServer = function (msg) {
+function sendRequestToJobServer (msg)
+{
 	var timer = setInterval(function () {
 		console.log("SENDING to jobServer:", msg);
 		producerSock.send(msg.reqData);
@@ -154,13 +211,15 @@ sendRequestToJobServer = function (msg) {
 	}, 1000);
 }
 
-addProducerSockListener = function () {
+function addProducerSockListener ()
+{
 	producerSock.on('message', function (msg) {
 		console.log("Got A message, [%s]", msg);
 	});
 }
 
-messageHandler = function (msg) {
+function messageHandler (msg)
+{
 	if (msg.cmd && msg.cmd == global.STR_SEND_TO_JOB_SERVER) {
 		sendRequestToJobServer(msg);
 	}
@@ -169,7 +228,8 @@ messageHandler = function (msg) {
 var workers = [];
 var timeouts = [];
 
-addClusterEventListener = function () {
+function addClusterEventListener ()
+{
 	cluster.on('fork', function (worker) {
 		logutils.logger.info('Forking worker #', worker.id);
 		cluster.workers[worker.id].on('message', messageHandler);
@@ -199,6 +259,17 @@ addClusterEventListener = function () {
 	cluster.on('disconnect', function (worker) {
 		logutils.logger.debug('The worker #' + worker.id + ' has disconnected.');
 	});
+}
+
+function registerFeatureLists ()
+{
+    var featureList = jsonPath(pkgList, "$..featureList[0]");
+    var featureListLen = featureList.length;
+    for (var i = 0; i < featureListLen; i++) {
+        destPath = getDestPathByPkgPathURL(featureList[i]['output'][0]);
+        require(destPath).registerFeature();
+    }
+    return;
 }
 
 function checkAndDeleteRedisRDB (callback)
@@ -256,14 +327,13 @@ if (cluster.isMaster) {// && (process.env.NODE_CLUSTERED == 1)) {
     doPreStartServer(false);
   });
 } else {
-	registerReqToApp();
-	/* Set maxListener to unlimited */
-	process.setMaxListeners(0);
-	featureList.registerFeature();
+    registerReqToApp();
+    /* Set maxListener to unlimited */
+    process.setMaxListeners(0);
+    registerFeatureLists();
     redisSub.createRedisClientAndSubscribeMsg(function() {
         discClient.sendWebServerReadyMessage();
     });
-
     /* All the config should be set before this line */
     startServer();
 }
@@ -401,4 +471,4 @@ function startServer ()
 
 exports.myIdentity = myIdentity;
 exports.discServEnable = discServEnable;
-
+exports.pkgList = pkgList;

@@ -1,0 +1,79 @@
+<!--
+ Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+-->
+
+<urlLists>
+    <!-- Define module name here which is being referenced in the generated 
+         file
+     -->
+     <require>
+        <define>longPoll</define>
+        <path>../core/longPolling.api</path>
+     </require>
+     <require>
+        <define>cacheApi</define>
+        <path>../core/cache.api</path>
+    </require>
+    <require>
+        <define>rbac</define>
+        <path>../core/rbac.api</path>
+    </require>
+    <require>
+        <define>handler</define>
+        <path>./handler</path>
+    </require>
+    <require>
+        <define>commonUtils</define>
+        <path>../../utils/common.utils</path>
+    </require>
+    <require>
+        <define>global</define>
+        <path>../../common/global</path>
+    </require>
+    <require>
+        <define>timeout</define>
+        <!-- Available tags for timeout
+            timeout         - Request timeout in seconds 
+            timeoutCallback - Callback to be called once request times out, if
+                              not provided, then default callback 
+                              defHandleReqTimeout() gets called
+         -->
+        <path>request-timeout</path>
+    </require>
+    <item>
+        <url>/infra/admin</url>
+        <method>get</method>
+        <feature>admin-config</feature>
+        <callback>handler.admin</callback>
+    </item>
+    <item>
+        <url>/</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.dashboard</callback>
+    </item>
+    <item>
+        <url>/</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.home</callback>
+    </item>
+    <item>
+        <url>/login</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.login</callback>
+    </item>
+    <item>
+        <url>/authenticate</url>
+        <method>post</method>
+        <feature>monitoring</feature>
+        <callback>handler.authenticate</callback>
+    </item>
+    <item>
+        <url>/logout</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.logout</callback>
+    </item>
+</urlLists>
