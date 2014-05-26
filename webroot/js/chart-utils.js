@@ -97,9 +97,11 @@
                 d[i]['values'] = values;
             }
             chartOptions['seriesMap'] = seriesType;
-            chartOptions['tooltipFn'] = ifNull(data['tooltipFn'], bgpMonitor.nodeTooltipFn);
-            if(chartOptions['multiTooltip'] || chartOptions['forcedTooltip']) {
-                //d = markOverlappedBubbles(d);
+            var tooltipFn = chartOptions['tooltipFn'];
+            chartOptions['tooltipFn'] = function(e,x,y,chart) {
+                                            return scatterTooltipFn(e,x,y,chart,tooltipFn);
+                                        };
+            if(chartOptions['multiTooltip']) {
                 chartOptions['tooltipRenderedFn'] = function(tooltipContainer,e,chart) {
                     if(e['point']['overlappedNodes'] != undefined && e['point']['overlappedNodes'].length >1) {
                        var result = {};
@@ -110,13 +112,13 @@
                        else if(e['point']['type'] == 'sport' || e['point']['type'] == 'dport')
                            result = getMultiTooltipContent(e,tenantNetworkMonitor.getPortTooltipContents,chart);
                        else
-                           result = getMultiTooltipContent(e,bgpMonitor.getTooltipContents,chart);
+                           result = getMultiTooltipContent(e,tooltipFn,chart);
                        
                        if(chartOptions['multiTooltip'] && result['content'].length > 1)
                            bindEventsOverlapTooltip(result,tooltipContainer);
                     }
                 }
-            }    
+            }
             if(chartOptions['scatterOverlapBubbles'])
                 d = scatterOverlapBubbles(d);
             chartOptions['sizeMinMax'] = sizeMinMax;
@@ -297,6 +299,25 @@
         }
     })
 })(jQuery);
+
+/**
+ * TooltipFn for scatter chart
+ */
+function scatterTooltipFn(e,x,y,chart,tooltipFormatFn) {
+    e['point']['overlappedNodes'] = markOverlappedBubblesOnHover(e,chart).reverse();
+    var tooltipContents = [];
+    if(e['point']['overlappedNodes'] == undefined || e['point']['overlappedNodes'].length <= 1) {
+        if(typeof(tooltipFormatFn) == 'function') {
+            tooltipContents = tooltipFormatFn(e['point']);
+        }
+        //Format the alerts to display in tooltip
+        $.each(e['point']['alerts'],function(idx,obj) {
+            if(obj['tooltipAlert'] != false)
+                tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
+        });
+        return formatLblValueTooltip(tooltipContents);
+    }
+}
 
 /**
  * function takes the parameters total node repsones(one in dashboard) and changes the x-axis and y-axis 
