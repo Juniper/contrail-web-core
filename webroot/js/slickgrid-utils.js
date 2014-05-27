@@ -612,7 +612,7 @@ function getDefaultGridConfig() {
                 setTimeout(function(){
                 	if($(gridContainer).data('contrailGrid')) {
                 		var checkedRows = gridContainer.data('contrailGrid').getCheckedRows();
-                    	grid.invalidateRows(args.rows);
+                    	grid.invalidateAllRows();
                         grid.render();
                         if(contrail.checkIfFunction(gridDataSource.events.onDataBoundCB)) {
                             gridDataSource.events.onDataBoundCB();
@@ -666,7 +666,7 @@ function getDefaultGridConfig() {
         			}
         			return 0;
         		};
-        		dataView.sort(comparer, args.sortAsc);
+        		dataView.sort(comparer);
         	};
         	
         	grid['onSort'].subscribe(eventHandlerMap.grid['onSort']);
