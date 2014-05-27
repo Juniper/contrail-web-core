@@ -35,7 +35,7 @@ package:
 	cp -a webroot/html/dashboard.tmpl webroot/html/dashboard.html
 	cp -a webroot/html/login.tmpl webroot/html/login.html
 	cp -a webroot/html/login-error.tmpl webroot/html/login-error.html
-	./generate-files.sh $(REPO)
+	./generate-files.sh 'prod-env' $(REPO)
 	./dev-install.sh
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login.html prod_env dev_env true
@@ -43,15 +43,7 @@ package:
 	rm -rf web-third-party
 
 package-feature:
-	./generate-files.sh $(REPO)
-
-all:
-	mkdir -p webroot/html
-	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
-	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
-	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
-	./generate-files.sh $(REPO)
-	./dev-install.sh
+	./generate-files.sh 'dev-env' $(REPO)
 
 make-ln:
 	cp -af webroot/html/dashboard.html webroot/html/dashboard.tmpl
@@ -67,7 +59,12 @@ make-ln:
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
 	
 dev-env:
-	make all
+	mkdir -p webroot/html
+	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
+	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
+	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
+	./generate-files.sh "dev-env" $(REPO)
+	./dev-install.sh
 	./prod-dev.sh webroot/html/dashboard.html dev_env prod_env true
 	./prod-dev.sh webroot/html/login.html dev_env prod_env true
 	./prod-dev.sh webroot/html/login-error.html dev_env prod_env true
@@ -82,7 +79,7 @@ prod-env:
 	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
 	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
-	./generate-files.sh $(REPO)
+	./generate-files.sh "prod-env" $(REPO)
 	./dev-install.sh
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login.html prod_env dev_env true

@@ -12,6 +12,6 @@ else
   echo "error: Failed dependencies: node/nodejs is needed";
   exit;
 fi;
-$node_exec src/tools/parsePackage.js "$@"
+$node_exec src/tools/preParsePackage.js "$@"
 $node_exec src/tools/configTemplateGenerator.js
 

@@ -22,7 +22,7 @@ function parseURLFile (result, fileToGen, cb)
   var longPollArrStr = "";
 
   commentStr += "/*\n";
-  commentStr += " * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.\n";
+  commentStr += " * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.\n";
   commentStr += " */\n";
   commentStr += "\n";
   var date = new Date();
