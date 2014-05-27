@@ -611,7 +611,8 @@ function getDefaultGridConfig() {
                 //Refresh the grid only if it's not destroyed
                 setTimeout(function(){
                 	if($(gridContainer).data('contrailGrid')) {
-                        grid.invalidateRows(args.rows);
+                		var checkedRows = gridContainer.data('contrailGrid').getCheckedRows();
+                    	grid.invalidateRows(args.rows);
                         grid.render();
                         if(contrail.checkIfFunction(gridDataSource.events.onDataBoundCB)) {
                             gridDataSource.events.onDataBoundCB();
@@ -624,6 +625,13 @@ function getDefaultGridConfig() {
                         
                         // Refreshing the detail view
                         gridContainer.data('contrailGrid').refreshDetailView();
+                        
+                        //Retain the checked rows and set it back
+                        var ids = [];
+                    	$.each(checkedRows, function(key,val){
+                    		ids.push(val.id);
+                    	});
+                    	gridContainer.data('contrailGrid').setCheckedRows(ids);
                     }
                 }, 50);
             };
@@ -739,12 +747,23 @@ function getDefaultGridConfig() {
                     gridContainer.children().addClass('collapsed');
                     gridContainer.find('.grid-header').show();
                 },
+                /*
+                 * Returns an array of data of the checked rows via checkbox when checkboxSelectable is set to true
+                 */
                 getCheckedRows: function(){
                     var returnValue = [];
                     gridContainer.find('.rowCheckbox:checked').each(function(key, val){
                         returnValue.push(grid.getDataItem($(this).val()));
                     });
                     return returnValue;
+                },
+                /*
+                 * Sets the checked rows of the rows based on rowIndices
+                 */
+                setCheckedRows: function(rowIndices) {
+                	$.each(rowIndices, function(key, val){
+                		gridContainer.find('.slick_row_' + val).find('.rowCheckbox').attr('checked','checked');
+                	});
                 },
                 getSelectedRow: function(){
                     return grid.getDataItem(gridContainer.data('contrailGrid').selectedRow);
@@ -850,11 +869,17 @@ function getDefaultGridConfig() {
                  * Refreshes the view of the grid. Grid is rendered and related adjustments are made.
                  */
                 refreshView: function(){
+                	var checkedRows = this.getCheckedRows();
                 	grid.render();
                 	grid.resizeCanvas();
                 	this.adjustAllRowHeight();
                 	this.adjustGridAlternateColors();
                 	this.refreshDetailView();
+                	var ids = [];
+                	$.each(checkedRows, function(key,val){
+                		ids.push(val.id);
+                	});
+                	this.setCheckedRows(ids);
                 }, 
                 /*
                  * Refreshes the detail view of the grid. Grid is rendered and related adjustments are made.
@@ -862,6 +887,7 @@ function getDefaultGridConfig() {
                 refreshDetailView: function(){
                 	gridContainer.find('.slick-row-detail').each(function(){
                     	gridContainer.find('.slick_row_' + $(this).data('id')).after($(this));
+                    	gridContainer.find('.slick_row_' + $(this).data('id')).find('.toggleDetailIcon').addClass('icon-caret-down').removeClass('icon-caret-right');
                     	refreshDetailTemplateById($(this).data('id'));
                     });
                 },
