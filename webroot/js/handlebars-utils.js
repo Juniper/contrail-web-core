@@ -62,6 +62,10 @@ Handlebars.registerHelper('syntaxHighlight', function(rawdata, options) {
     return syntaxHighlight(rawdata);
 });
 
+Handlebars.registerHelper('formatJSON2HTML', function(rawdata, options) {
+    return contrail.formatJSON2HTML(rawdata,2);
+});
+
 Handlebars.registerHelper('makeItValidDOMId', function(id, options) {
     return id.replace(/:/g,'-');
 });

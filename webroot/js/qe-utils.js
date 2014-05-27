@@ -1867,7 +1867,7 @@ function loadQueryQueue(options) {
     					return getQueueActionColumn(options.elementId, dc);
     				},
                     detail: {
-                        template: '<pre>{{{displayJson queryJSON}}}</pre>'
+                        template: '<pre>{{{formatJSON2HTML queryJSON}}}</pre>'
                     }
     			},
                 dataSource: {
