@@ -881,11 +881,12 @@ a.selectAllLink:hover {
 	padding: 0 4px;
 }
 .grid-header .widget-header{
-	color: #666;
+	color: #777;
 	cursor: default;
 }
 .grid-header .widget-toolbar .select2-chosen {
 	color: #3182bd;
+	font-weight: 600;
 }
 /* Sort Icon from font-awesome */
 .contrail-grid{

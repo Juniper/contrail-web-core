@@ -157,7 +157,11 @@ function getQueueColumnDisplay(queueId) {
         				engQueryStr += '';
         			}
         			else {
-        				engQueryStr += '<div class="row-fluid word-break-normal"><span class="bolder">' + key.toUpperCase() + '</span> &nbsp;' + val + '</div>';
+        				var formattedKey = key;
+        				if(key == 'from_time' || key == 'to_time'){
+        					formattedKey = key.split('_').join(' ');
+        				}
+        				engQueryStr += '<div class="row-fluid word-break-normal"><span class="bolder">' + formattedKey.toUpperCase() + '</span> &nbsp;' + val + '</div>';
         			}
         		});
         		return engQueryStr;
@@ -176,7 +180,11 @@ function getQueueColumnDisplay(queueId) {
 	        				engQueryStr += '';
 	        			}
 	        			else {
-	        				engQueryStr += key.toUpperCase() + ' ' + val + ' ';
+	        				var formattedKey = key;
+        					if(key == 'from_time' || key == 'to_time'){
+        						formattedKey = key.split('_').join(' ');
+        					}
+	        				engQueryStr += formattedKey.toUpperCase() + ' ' + val + ' ';
 	        			}
 					});
 					return engQueryStr;
@@ -2887,11 +2895,11 @@ function getEngQueryStr(reqQueryObj){
 		filter: reqQueryObj.filters
 	};
     if(reqQueryObj.toTimeUTC == "now") {
-        engQueryJSON['fromTime'] = reqQueryObj.fromTimeUTC;
-        engQueryJSON['toTime'] = reqQueryObj.toTimeUTC;
+        engQueryJSON['from_time'] = reqQueryObj.fromTimeUTC;
+        engQueryJSON['to_time'] = reqQueryObj.toTimeUTC;
     } else {
-        engQueryJSON['fromTime'] = moment(reqQueryObj.fromTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
-        engQueryJSON['toTime'] = moment(reqQueryObj.toTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
+        engQueryJSON['from_time'] = moment(reqQueryObj.fromTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
+        engQueryJSON['to_time'] = moment(reqQueryObj.toTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
     }
     return JSON.stringify(engQueryJSON);
 };
