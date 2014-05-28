@@ -676,7 +676,7 @@ function ip_range(ip_str, ip_list) {
 function getSelectedProjectObjNew (projectSwitcherId, elementType) {
     var firstProjectName = "", firstProjectValue = "";
     var cookiedProject = getCookie("project");
-    if (cookiedProject === false) {
+    if (cookiedProject === false || cookiedProject === "null") {
         if(elementType === "contrailDropdown") {
             firstProjectName = $("#" + projectSwitcherId).data(elementType).text();
             firstProjectValue = $("#" + projectSwitcherId).data(elementType).value();
@@ -918,6 +918,19 @@ function checkSystemProject(project) {
 	return false;
 }
 
+function scrollUp(contWindow,div,boolCollapse){
+    if(46 >= Math.abs(
+        $(contWindow).find("div.modal-body")[0].getBoundingClientRect().bottom - 
+        $(div)[0].getBoundingClientRect().bottom)) {
+        $($(contWindow).find("div.modal-body")[0]).animate({
+         scrollTop: $(div)[0].getBoundingClientRect().top
+        }, 1000);
+    }
+    if(boolCollapse === true){
+        collapseElement(div);
+    }
+}
+
 cutils.getCookie = getCookie;
 cutils.setCookie = setCookie;
 cutils.isSet = isSet;
@@ -964,4 +977,5 @@ cutils.deleteSuccess = deleteSuccess;
 cutils.deleteComplete = deleteComplete;
 cutils.deleteFailure = deleteFailure;
 cutils.checkSystemProject = checkSystemProject;
+cutils.scrollUp = scrollUp;
 cutils.getSelectedProjectObjNew = getSelectedProjectObjNew;
