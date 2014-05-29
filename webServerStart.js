@@ -3,21 +3,21 @@
  */
 
 var express = require('express')
-	, path = require('path')
-	, fs = require("fs")
-	, http = require('http')
-	, https = require("https")
-	, underscore = require('underscore')
-	, config = require('./config/config.global.js')
-	, logutils = require('./src/serverroot/utils/log.utils')
-	, cluster = require('cluster')
-	, nodeWorkerCount = config.node_worker_count
-	, axon = require('axon')
-	, producerSock = axon.socket('push')
-	, redisSub = require('./src/serverroot/web/core/redisSub')
+    , path = require('path')
+    , fs = require("fs")
+    , http = require('http')
+    , https = require("https")
+    , underscore = require('underscore')
+    , config = require('./config/config.global.js')
+    , logutils = require('./src/serverroot/utils/log.utils')
+    , cluster = require('cluster')
+    , nodeWorkerCount = config.node_worker_count
+    , axon = require('axon')
+    , producerSock = axon.socket('push')
+    , redisSub = require('./src/serverroot/web/core/redisSub')
     , global = require('./src/serverroot/common/global')
-	, redis = require("redis")
-	, eventEmitter = require('events').EventEmitter
+    , redis = require("redis")
+    , eventEmitter = require('events').EventEmitter
     , async = require('async')
     , authApi = require('./src/serverroot/common/auth.api')
     , async = require('async')
@@ -28,12 +28,12 @@ var express = require('express')
     ;
 
 var server_port = (config.redis_server_port) ?
-	config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
+    config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
 var server_ip = (config.redis_server_ip) ?
-	config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
+    config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
 
 var redisClient = redis.createClient(server_port,
-	server_ip);
+    server_ip);
 var RedisStore = require('connect-redis')(express);
 
 var store;
@@ -45,8 +45,8 @@ var discServEnable = ((null != config.discoveryService) &&
 var sessEvent = new eventEmitter();
 
 var options = {
-	key:fs.readFileSync('./keys/cs-key.pem'),
-	cert:fs.readFileSync('./keys/cs-cert.pem')
+    key:fs.readFileSync('./keys/cs-key.pem'),
+    cert:fs.readFileSync('./keys/cs-cert.pem')
 };
 
 var insecureAccessFlag = false;
@@ -55,13 +55,13 @@ if (config.insecure_access && (config.insecure_access == true)) {
 }
 
 var httpsApp = express(),
-	httpApp = express(),
-	httpPort = config.http_port,
-	httpsPort = config.https_port,
-	redisPort = (config.redis_server_port) ?
-		config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
-redisIP = (config.redis_server_ip) ?
-	config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
+    httpApp = express(),
+    httpPort = config.http_port,
+    httpsPort = config.https_port,
+    redisPort = (config.redis_server_port) ?
+        config.redis_server_port : global.DFLT_REDIS_SERVER_PORT,
+    redisIP = (config.redis_server_ip) ?
+        config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
 
 function initializeAppConfig (appObj)
 {
@@ -197,39 +197,39 @@ function registerReqToApp ()
 
 function bindProducerSocket ()
 {
-	var hostName = config.jobServer.server_ip
-		, port = config.jobServer.server_port
-		;
+    var hostName = config.jobServer.server_ip
+        , port = config.jobServer.server_port
+        ;
 
-	var connectURL = 'tcp://' + hostName + ":" + port;
-	/* Master of this nodeJS Server should connect to the worker
-	 Server of other nodeJS server
-	 */
-	producerSock.bind(connectURL);
-	console.log('nodeJS Server bound to port %s to Job Server ', port);
+    var connectURL = 'tcp://' + hostName + ":" + port;
+    /* Master of this nodeJS Server should connect to the worker
+       Server of other nodeJS server
+     */
+    producerSock.bind(connectURL);
+    console.log('nodeJS Server bound to port %s to Job Server ', port);
 }
 
 function sendRequestToJobServer (msg)
 {
-	var timer = setInterval(function () {
-		console.log("SENDING to jobServer:", msg);
-		producerSock.send(msg.reqData);
-		clearTimeout(timer);
-	}, 1000);
+    var timer = setInterval(function () {
+        console.log("SENDING to jobServer:", msg);
+        producerSock.send(msg.reqData);
+        clearTimeout(timer);
+    }, 1000);
 }
 
 function addProducerSockListener ()
 {
-	producerSock.on('message', function (msg) {
-		console.log("Got A message, [%s]", msg);
-	});
+    producerSock.on('message', function (msg) {
+        console.log("Got A message, [%s]", msg);
+    });
 }
 
 function messageHandler (msg)
 {
-	if (msg.cmd && msg.cmd == global.STR_SEND_TO_JOB_SERVER) {
-		sendRequestToJobServer(msg);
-	}
+    if (msg.cmd && msg.cmd == global.STR_SEND_TO_JOB_SERVER) {
+        sendRequestToJobServer(msg);
+    }
 }
 
 var workers = [];
@@ -237,35 +237,35 @@ var timeouts = [];
 
 function addClusterEventListener ()
 {
-	cluster.on('fork', function (worker) {
-		logutils.logger.info('Forking worker #', worker.id);
-		cluster.workers[worker.id].on('message', messageHandler);
-		timeouts[worker.id] = setTimeout(function () {
-			logutils.logger.error(['Worker taking too long to start.']);
-		}, 2000);
-	});
-	cluster.on('listening', function (worker, address) {
-		logutils.logger.info('Worker #' + worker.id + ' listening on port: '
-			+ address.port);
-		clearTimeout(timeouts[worker.id]);
-	});
-	cluster.on('online', function (worker) {
-		logutils.logger.info('Worker #' + worker.id + ' is online.');
-	});
-	cluster.on('exit', function (worker, code, signal) {
-		logutils.logger.error(['The worker #' + worker.id +
-			' has exited with exit code ' +
-			worker.process.exitCode]);
-		clearTimeout(timeouts[worker.id]);
-		// Don't try to restart the workers when disconnect or destroy has been called
-		if (worker.suicide !== true) {
-			logutils.logger.debug('Worker #' + worker.id + ' did not commit suicide.');
-			workers[worker.id] = cluster.fork();
-		}
-	});
-	cluster.on('disconnect', function (worker) {
-		logutils.logger.debug('The worker #' + worker.id + ' has disconnected.');
-	});
+    cluster.on('fork', function (worker) {
+        logutils.logger.info('Forking worker #', worker.id);
+        cluster.workers[worker.id].on('message', messageHandler);
+        timeouts[worker.id] = setTimeout(function () {
+            logutils.logger.error(['Worker taking too long to start.']);
+        }, 2000);
+    });
+    cluster.on('listening', function (worker, address) {
+        logutils.logger.info('Worker #' + worker.id + ' listening on port: '
+                             + address.port);
+        clearTimeout(timeouts[worker.id]);
+    });
+    cluster.on('online', function (worker) {
+        logutils.logger.info('Worker #' + worker.id + ' is online.');
+    });
+    cluster.on('exit', function (worker, code, signal) {
+        logutils.logger.error(['The worker #' + worker.id +
+                              ' has exited with exit code ' +
+                              worker.process.exitCode]);
+        clearTimeout(timeouts[worker.id]);
+        // Don't try to restart the workers when disconnect or destroy has been called
+        if (worker.suicide !== true) {
+            logutils.logger.debug('Worker #' + worker.id + ' did not commit suicide.');
+            workers[worker.id] = cluster.fork();
+        }
+    });
+    cluster.on('disconnect', function (worker) {
+        logutils.logger.debug('The worker #' + worker.id + ' has disconnected.');
+    });
 }
 
 function registerFeatureLists ()
