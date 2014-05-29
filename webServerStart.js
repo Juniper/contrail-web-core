@@ -18,6 +18,7 @@ var express = require('express')
     , global = require('./src/serverroot/common/global')
 	, redis = require("redis")
 	, eventEmitter = require('events').EventEmitter
+    , async = require('async')
     , authApi = require('./src/serverroot/common/auth.api')
     , async = require('async')
     , os = require('os')
@@ -89,9 +90,7 @@ function initializeAppConfig (appObj)
     });
 }
 
-var pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
-var pkgNameLists = jsonPath(pkgList, "$..name[0]");
-var pkgNameListsLen = pkgNameLists.length;
+var pkgList = null;
 
 function loadStaticFiles (pkgNameObj, callback)
 {
@@ -116,6 +115,8 @@ function loadStaticFiles (pkgNameObj, callback)
 
 function registerStaticFiles (app)
 {
+    var pkgNameLists = jsonPath(pkgList, "$..name[0]");
+    var pkgNameListsLen = pkgNameLists.length;
     var staticFileDirLists = [];
     for (var i = 0; i < pkgNameListsLen; i++) {
         staticFileDirLists.push({'app': app, 'pkgName': pkgNameLists[i]});
@@ -124,14 +125,17 @@ function registerStaticFiles (app)
     });
 }
 
-if (false == insecureAccessFlag) {
-    httpsApp.configure(function () {
-        initializeAppConfig({app:httpsApp, port:httpsPort});
-    });
-} else {
-    httpApp.configure(function () {
-        initializeAppConfig({app:httpApp, port:httpPort});
-    });
+function initAppConfig ()
+{
+    if (false == insecureAccessFlag) {
+        httpsApp.configure(function () {
+            initializeAppConfig({app:httpsApp, port:httpsPort});
+        });
+    } else {
+        httpApp.configure(function () {
+            initializeAppConfig({app:httpApp, port:httpPort});
+        });
+    }
 }
 
 getSessionIdByRedisSessionStore = function(redisStoreSessId) {
@@ -145,17 +149,20 @@ getSessionIdByRedisSessionStore = function(redisStoreSessId) {
 
 /* Set max listeners to 0 */
 //store.eventEmitter.setMaxListeners(0);
-store.eventEmitter.on('sessionDeleted', function (sid) {
-	/* Handle session delete cases here */
-	console.log("Session got expired:", sid);
-    /* Delete authKey from Redis for this Session ID */
-    /* NOTE: sid is of format as: 
-       global.STR_REDIS_STORE_SESSION_ID_PREFIXsessionId, so extract sessionId
-       from here
-     */
-    var sessionId = getSessionIdByRedisSessionStore(sid);
-    authApi.deleteAuthDataBySessionId(sessionId);
-});
+function registerSessionDeleteEvent ()
+{
+    store.eventEmitter.on('sessionDeleted', function (sid) {
+        /* Handle session delete cases here */
+        console.log("Session got expired:", sid);
+        /* Delete authKey from Redis for this Session ID */
+        /* NOTE: sid is of format as: 
+           global.STR_REDIS_STORE_SESSION_ID_PREFIXsessionId, so extract sessionId
+           from here
+         */
+        var sessionId = getSessionIdByRedisSessionStore(sid);
+        authApi.deleteAuthDataBySessionId(sessionId);
+    });
+}
 
 function getDestPathByPkgPathURL (destPath)
 {
@@ -184,8 +191,8 @@ function registerReqToApp ()
         myApp = httpApp;
     }
     loadAllFeatureURLs(myApp);
-	var handler = require('./src/serverroot/web/routes/handler')
-	handler.addAppReqToAllowedList(myApp.routes);
+    var handler = require('./src/serverroot/web/routes/handler')
+    handler.addAppReqToAllowedList(myApp.routes);
 }
 
 function bindProducerSocket ()
@@ -298,44 +305,51 @@ function checkAndDeleteRedisRDB (callback)
     });
 }
 
-if (cluster.isMaster) {// && (process.env.NODE_CLUSTERED == 1)) {
-  checkAndDeleteRedisRDB(function() {
-	logutils.logger.info("Starting Contrail UI in clustered mode.");
-	bindProducerSocket();
-	addProducerSockListener();
+function startWebCluster ()
+{
+    if (cluster.isMaster) {
+        clusterMasterInit(function(err) {
+            logutils.logger.info("Starting Contrail UI in clustered mode.");
+            bindProducerSocket();
+            addProducerSockListener();
 
-	var i;
-	for (i = 0; i < nodeWorkerCount; i += 1) {
-		var worker = cluster.fork();
-		workers[i] = worker;
-	}
+            var i;
+            for (i = 0; i < nodeWorkerCount; i += 1) {
+                var worker = cluster.fork();
+                workers[i] = worker;
+            }
 
-	addClusterEventListener();
+            addClusterEventListener();
 
-	// Trick by Ian Young to make cluster and supervisor play nicely together.
-	// https://github.com/isaacs/node-supervisor/issues/40#issuecomment-4330946
-	if (process.env.NODE_HOT_RELOAD === 1) {
-		var signals = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
-		underscore.each(signals, function (signal) {
-			process.on(signal, function () {
-				underscore.each(cluster.workers, function (worker) {
-					worker.destroy();
-				});
-			});
-		});
-	}
-    doPreStartServer(false);
-  });
-} else {
-    registerReqToApp();
-    /* Set maxListener to unlimited */
-    process.setMaxListeners(0);
-    registerFeatureLists();
-    redisSub.createRedisClientAndSubscribeMsg(function() {
-        discClient.sendWebServerReadyMessage();
-    });
-    /* All the config should be set before this line */
-    startServer();
+            // Trick by Ian Young to make cluster and supervisor play nicely together.
+            // https://github.com/isaacs/node-supervisor/issues/40#issuecomment-4330946
+            if (process.env.NODE_HOT_RELOAD === 1) {
+                var signals = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
+                underscore.each(signals, function (signal) {
+                    process.on(signal, function () {
+                        underscore.each(cluster.workers, function (worker) {
+                            worker.destroy();
+                        });
+                    });
+                });
+            }
+        });
+        doPreStartServer(false);
+    } else {
+        clusterWorkerInit(function(error) {
+            initAppConfig();
+            registerSessionDeleteEvent();
+            registerReqToApp();
+            /* Set maxListener to unlimited */
+            process.setMaxListeners(0);
+            registerFeatureLists();
+            redisSub.createRedisClientAndSubscribeMsg(function() {
+                discClient.sendWebServerReadyMessage();
+            });
+            /* All the config should be set before this line */
+            startServer();
+        });
+    }
 }
 
 function doPreStartServer (isRetry)
@@ -468,6 +482,30 @@ function startServer ()
         logutils.logger.debug("**** Contrail-WebUI Server ****");
     });
 }
+
+/* Function: clusterMasterInit
+    Initialization call for Master
+ */
+function clusterMasterInit (callback)
+{
+    checkAndDeleteRedisRDB(function() {
+        callback();
+    });
+}
+
+/* Function: clusterWorkerInit
+    Initialization call for Worker
+ */
+function clusterWorkerInit (callback)
+{
+    commonUtils.compareAndMergeDefaultConfig(function(err) {
+        pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
+        callback();
+    });
+}
+
+/* Start Main Server */
+startWebCluster();
 
 exports.myIdentity = myIdentity;
 exports.discServEnable = discServEnable;
