@@ -711,7 +711,10 @@ filter: alpha(opacity=40);
 /* End Flow Chart Classes*/
 /* Topology */
 .topology{
-	margin:auto;	
+    width: 100%;
+    height: 220px;
+    margin: auto;
+    overflow: scroll;
 }
 .topology_breadthfirst{
 	height:inherit;

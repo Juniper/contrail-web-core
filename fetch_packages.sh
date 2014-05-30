@@ -196,6 +196,16 @@ getPackage http://builds.handlebarsjs.com.s3.amazonaws.com/handlebars-v1.3.0.js 
 mkdir handlebars-v1.3.0
 mv handlebars-v1.3.0.js handlebars-v1.3.0/.
 
+getPackage https://github.com/DavidDurman/joint/archive/v0.9.0.tar.gz joint-v0.9.0.tar.gz
+tar -xf joint-v0.9.0.tar.gz
+rm -rf joint-v0.9.0.tar.gz
+mv joint-0.9.0 joint-v0.9.0
+
+getPackage https://github.com/timmywil/jquery.panzoom/archive/2.0.5.tar.gz jquery.panzoom-v2.0.5.tar.gz
+tar -xf jquery.panzoom-v2.0.5.tar.gz
+rm -rf jquery.panzoom-v2.0.5.tar.gz
+mv jquery.panzoom-2.0.5 jquery.panzoom-v2.0.5
+
 getPackage https://github.com/crlcu/multiselect/archive/master.zip multiselect.zip
 unzip -o multiselect.zip
 rm -rf multiselect.zip

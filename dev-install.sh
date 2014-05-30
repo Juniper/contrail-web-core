@@ -40,6 +40,7 @@ rm -rf webroot/assets/jquery
 mkdir -p webroot/assets/jquery
 cp -r ./web-third-party/jquery webroot/assets/jquery/js
 cp -r ./web-third-party/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/jquery.validate.js
+cp -r ./web-third-party/jquery.panzoom-v2.0.5/dist/jquery.panzoom.min.js webroot/assets/jquery/js/jquery.panzoom.min.js
 #End - Copy JQuery files from web-third-party
 
 #Start - Copy jquery-ui files from web-third-party
@@ -137,6 +138,15 @@ rm -rf webroot/assets/moment
 mkdir webroot/assets/moment
 cp -r ./web-third-party/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
 #End - Copy Moment Date-Formatter from web-third-party
+
+#Start - Copy Joint from web-third-party
+rm -rf webroot/assets/joint
+mkdir -p webroot/assets/joint/js
+mkdir -p webroot/assets/joint/css
+cp -r ./web-third-party/joint-v0.9.0/dist/joint.nojquery.js webroot/assets/joint/js/
+cp -r ./web-third-party/joint-v0.9.0/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
+cp -r ./web-third-party/joint-v0.9.0/dist/joint.nojquery.css webroot/assets/joint/css/
+#End - Copy Joint from web-third-party
 
 #Start - Merging All JS files
 rm -f webroot/js/contrail-all-1.js

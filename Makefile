@@ -156,6 +156,7 @@ clean:
 	rm -rf webroot/assets/nvd3
 	rm -rf webroot/assets/select2
 	rm -rf webroot/assets/slickgrid
+	rm -rf webroot/assets/joint
 	rm -rf web-third-party 
 
 .PHONY: package dev-env prod-env test test-integration test-unit clean
