@@ -127,7 +127,7 @@ function getDefaultGridConfig() {
                                 emptyGridHandler();
                             } else {
                                 gridContainer.data('contrailGrid').removeGridMessage();
-                                gridContainer.find('grid-footer').show();
+                                gridContainer.find('grid-footer').removeClass('hide');
                             }
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestSuccessCB)) {
                                 gridDataSource.events.onRequestSuccessCB(response);
@@ -155,8 +155,10 @@ function getDefaultGridConfig() {
                         failureCallback: function (xhr) {
                             stopAutoRefresh();
                             var errorMsg = contrail.parseErrorMsgFromXHR(xhr);
-                            showMessagePopup('Error', 'Error in run query: ' + errorMsg);
-                            errorGridHandler(errorMsg);
+                            if(xhr.status && xhr.statusText != 'abort') {
+                                showMessagePopup('Error', 'Error: ' + errorMsg);
+                                errorGridHandler('Error: ' + errorMsg);
+                            }
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestErrorCB)) {
                                 gridDataSource.events.onRequestErrorCB();
                             }
@@ -282,9 +284,9 @@ function getDefaultGridConfig() {
 	                    	gridHeader.find('i.collapse-icon').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
 	                    	
 	                    	if(gridHeader.find('i.collapse-icon').hasClass('icon-chevron-up')){
-	                			gridContainer.children().show();
+	                			gridContainer.children().removeClass('collapsed');
 	                    	} else if(gridHeader.find('i.collapse-icon').hasClass('icon-chevron-down')){
-	                    		gridContainer.children().hide();
+	                    		gridContainer.children().addClass('collapsed');
 	                    		gridHeader.show();
 	                    	}
 	                    break;
@@ -413,16 +415,11 @@ function getDefaultGridConfig() {
 	                                        cellSpaceColumn++;
 	                                    }
 	
-	                                    var source = gridOptions.detail.template;
-	                                    source = source.replace(/ }}/g, "}}");
-	                                    source = source.replace(/{{ /g, "{{");
-	
-	                                    var template = Handlebars.compile(source);
 	                                    $(target).parents('.slick-row-master').after(' \
 	            	            				<div class="ui-widget-content slick-row slick-row-detail" data-id="' + $(target).parents('.slick-row-master').data('id') + '"> \
 	            	            					<div class="slick-cell l' + cellSpaceColumn + ' r' + cellSpaceRow + '"> \
 	            		            					<div class="slick-row-detail-container"> \
-	            	            							' + template(dc) + ' \
+	            		            						<div class="slick-row-detail-template-' + $(target).parents('.slick-row-master').data('id') + '"></div> \
 	            	            						</div> \
 	            	            					</div> \
 	            	            				</div>');
@@ -434,7 +431,7 @@ function getDefaultGridConfig() {
 	                                		e['detailRow'] = $(target).parents('.slick-row-master').next().find('.slick-row-detail-container');
 	                                		gridOptions.detail.onInit(e,dc);
 	                                    }
-	                                    gridContainer.data('contrailGrid').adjustDetailRowHeight($(target).parents('.slick-row-master').data('id'));
+	                                	refreshDetailTemplateById($(target).parents('.slick-row-master').data('id'));
                                 	}
                                 	else{
                                 		$(target).parents('.slick-row-master').next('.slick-row-detail').show();
@@ -498,6 +495,23 @@ function getDefaultGridConfig() {
 	            }
         	}
         };
+        
+        function refreshDetailTemplateById(id){
+        	var source = gridOptions.detail.template;
+            source = source.replace(/ }}/g, "}}");
+            source = source.replace(/{{ /g, "{{");
+
+            var template = Handlebars.compile(source),
+            	dc = dataView.getItemById(id);
+        	
+            if(contrail.checkIfExist(dc)){
+            	gridContainer.find('.slick-row-detail-template-' + id).html(template(dc));
+            	gridContainer.data('contrailGrid').adjustDetailRowHeight(id);
+            }
+            else {
+            	gridContainer.find('.slick-row-detail-template-' + id).parents('.slick-row-detail').remove();
+            }
+        }
         
         function initGridEvents() {
         	
@@ -586,18 +600,19 @@ function getDefaultGridConfig() {
                     if(dataView.getLength() == 0){
                         emptyGridHandler();
                     } else {
-                        gridContainer.find('.grid-footer').show();
+                        gridContainer.find('.grid-footer').removeClass('hide');
                         onDataGridHandler();
                     }
+                    gridContainer.find('.slick-row-detail').hide();
                 }
             };
             
             eventHandlerMap.dataView['onRowsChanged'] = function (e, args) {
                 //Refresh the grid only if it's not destroyed
-                
                 setTimeout(function(){
                 	if($(gridContainer).data('contrailGrid')) {
-                        grid.invalidateRows(args.rows);
+                		var checkedRows = gridContainer.data('contrailGrid').getCheckedRows();
+                    	grid.invalidateAllRows();
                         grid.render();
                         if(contrail.checkIfFunction(gridDataSource.events.onDataBoundCB)) {
                             gridDataSource.events.onDataBoundCB();
@@ -607,8 +622,16 @@ function getDefaultGridConfig() {
 
                         // Assigning odd and even classes to take care of coloring effect on alternate rows
                         gridContainer.data('contrailGrid').adjustGridAlternateColors();
-
-                        gridContainer.find('.slick-row-detail').hide();
+                        
+                        // Refreshing the detail view
+                        gridContainer.data('contrailGrid').refreshDetailView();
+                        
+                        //Retain the checked rows and set it back
+                        var ids = [];
+                    	$.each(checkedRows, function(key,val){
+                    		ids.push(val.id);
+                    	});
+                    	gridContainer.data('contrailGrid').setCheckedRows(ids);
                     }
                 }, 50);
             };
@@ -643,7 +666,7 @@ function getDefaultGridConfig() {
         			}
         			return 0;
         		};
-        		dataView.sort(comparer, args.sortAsc);
+        		dataView.sort(comparer);
         	};
         	
         	grid['onSort'].subscribe(eventHandlerMap.grid['onSort']);
@@ -663,7 +686,7 @@ function getDefaultGridConfig() {
             });
             
             initOnClickDocument('.input-searchbox',function(){
-        	    if(gridContainer.find('.input-searchbox').is(":visible")) {
+        	    if(gridContainer.find('.input-searchbox').is(":visible") && gridContainer.find('.input-searchbox').find('input').val() == '') {
                 	gridContainer.find('.input-searchbox').hide();
                 	gridContainer.find('.link-searchbox').show();
                 }
@@ -699,7 +722,7 @@ function getDefaultGridConfig() {
                     });
                 } else {
                 	if(dataView.getLength() != 0){
-                    	gridContainer.find('.grid-footer').show();
+                    	gridContainer.find('.grid-footer').removeClass('hide');
                     }
                     pager = new SlickGridPager(dataView, gridContainer, gridConfig.footer.pager.options);
                     pager.init();
@@ -717,19 +740,30 @@ function getDefaultGridConfig() {
                 _pager: pager,
                 expand: function(){
                 	gridContainer.find('i.collapse-icon').addClass('icon-chevron-up').removeClass('icon-chevron-down');
-            		gridContainer.children().show();
+            		gridContainer.children().removeClass('collapsed');
                 },
                 collapse: function(){
                 	gridContainer.find('i.collapse-icon').removeClass('icon-chevron-up').addClass('icon-chevron-down');
-                    gridContainer.children().hide();
+                    gridContainer.children().addClass('collapsed');
                     gridContainer.find('.grid-header').show();
                 },
+                /*
+                 * Returns an array of data of the checked rows via checkbox when checkboxSelectable is set to true
+                 */
                 getCheckedRows: function(){
                     var returnValue = [];
                     gridContainer.find('.rowCheckbox:checked').each(function(key, val){
                         returnValue.push(grid.getDataItem($(this).val()));
                     });
                     return returnValue;
+                },
+                /*
+                 * Sets the checked rows of the rows based on rowIndices
+                 */
+                setCheckedRows: function(rowIndices) {
+                	$.each(rowIndices, function(key, val){
+                		gridContainer.find('.slick_row_' + val).find('.rowCheckbox').attr('checked','checked');
+                	});
                 },
                 getSelectedRow: function(){
                     return grid.getDataItem(gridContainer.data('contrailGrid').selectedRow);
@@ -751,11 +785,11 @@ function getDefaultGridConfig() {
                 		gridContainer.find('.grid-header-icon-loading').show();
                 	}
                 	messageHtml = (contrail.checkIfExist(gridStatusMsgConfig[status])) ? '<p class="' + gridStatusMsgConfig[status].type + '"><i class="' + gridStatusMsgConfig[status].iconClasses + '"></i> ' + statusMsg + '</p>' : status;
-                	gridContainer.find('.grid-load-status').html(messageHtml).show();
+                	gridContainer.find('.grid-load-status').html(messageHtml).removeClass('hide');
 
                 },
                 removeGridMessage: function(){
-                    gridContainer.find('.grid-load-status').html('').hide();
+                    gridContainer.find('.grid-load-status').html('').addClass('hide');
                     if(gridOptions.lazyLoading == null || !gridOptions.lazyLoading) {
                         this.removeGridLoading();
                     }
@@ -835,13 +869,28 @@ function getDefaultGridConfig() {
                  * Refreshes the view of the grid. Grid is rendered and related adjustments are made.
                  */
                 refreshView: function(){
+                	var checkedRows = this.getCheckedRows();
                 	grid.render();
                 	grid.resizeCanvas();
-                	gridContainer.find('.slick-row-detail').remove();
-                	gridContainer.find('.icon-caret-down').toggleClass('icon-caret-down').toggleClass('icon-caret-right');
                 	this.adjustAllRowHeight();
                 	this.adjustGridAlternateColors();
+                	this.refreshDetailView();
+                	var ids = [];
+                	$.each(checkedRows, function(key,val){
+                		ids.push(val.id);
+                	});
+                	this.setCheckedRows(ids);
                 }, 
+                /*
+                 * Refreshes the detail view of the grid. Grid is rendered and related adjustments are made.
+                 */
+                refreshDetailView: function(){
+                	gridContainer.find('.slick-row-detail').each(function(){
+                    	gridContainer.find('.slick_row_' + $(this).data('id')).after($(this));
+                    	gridContainer.find('.slick_row_' + $(this).data('id')).find('.toggleDetailIcon').addClass('icon-caret-down').removeClass('icon-caret-right');
+                    	refreshDetailTemplateById($(this).data('id'));
+                    });
+                },
                 /* 
                  * Starts AutoRefresh
                  */
@@ -891,7 +940,7 @@ function getDefaultGridConfig() {
                     <span class="input-searchbox hide"> \
                         <span class="input-icon"> \
                             <input type="text" placeholder="Search {{this.text}}" class="input-medium input-grid-search"> \
-                            <i class="widget-toolbar-icon icon-search" data-action="search"></i> \
+                            <i class="widget-toolbar-icon icon-search"></i> \
                         </span> \
                     </span> \
                 </div>';

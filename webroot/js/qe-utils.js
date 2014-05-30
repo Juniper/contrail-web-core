@@ -93,7 +93,14 @@ var slColumnsDisplay = [
         width:500,
         formatter: function(r, c, v, cd, dc) {
             return '<span class="word-break-normal">' + formatXML2JSON(dc.Xmlmessage) + '</span>';
-        }
+        },
+        exportConfig: {
+			allow: true,
+			advFormatter: function(dc) {
+				return formatXML2JSON(dc.Xmlmessage);
+			}
+		}
+       
     }
 ];
 
@@ -144,18 +151,45 @@ function getQueueColumnDisplay(queueId) {
         		
         		$.each(engQueryObj, function(key, val){
         			if(key == 'select' && val != ''){
-        				engQueryStr += '<div class="row-fluid"><span class="bold">' + key.toUpperCase() + '</span> &nbsp;*</div>';
+        				engQueryStr += '<div class="row-fluid"><span class="bolder">' + key.toUpperCase() + '</span> &nbsp;*</div>';
         			}
         			else if((key == 'where' || key == 'filter') && val == ''){
         				engQueryStr += '';
         			}
         			else {
-        				engQueryStr += '<div class="row-fluid word-break-normal"><span class="bold">' + key.toUpperCase() + '</span> &nbsp;' + val + '</div>';
+        				var formattedKey = key;
+        				if(key == 'from_time' || key == 'to_time'){
+        					formattedKey = key.split('_').join(' ');
+        				}
+        				engQueryStr += '<div class="row-fluid word-break-normal"><span class="bolder">' + formattedKey.toUpperCase() + '</span> &nbsp;' + val + '</div>';
         			}
         		});
         		return engQueryStr;
         	},
-            sortable:false
+            sortable:false,
+            exportConfig: {
+				allow: true,
+				advFormatter: function(dc) {
+					var engQueryObj = JSON.parse(dc.engQueryStr),
+        			engQueryStr = '';
+					$.each(engQueryObj, function(key, val){	
+						if(key == 'select' && val != ''){
+	        				engQueryStr += key.toUpperCase() + ' * ';
+	        			}
+	        			else if((key == 'where' || key == 'filter') && val == ''){
+	        				engQueryStr += '';
+	        			}
+	        			else {
+	        				var formattedKey = key;
+        					if(key == 'from_time' || key == 'to_time'){
+        						formattedKey = key.split('_').join(' ');
+        					}
+	        				engQueryStr += formattedKey.toUpperCase() + ' ' + val + ' ';
+	        			}
+					});
+					return engQueryStr;
+				}
+			}
         },
         {
         	id:"progress", 
@@ -557,6 +591,17 @@ function cancelOR(dis){
 	edit.remove();
 }
 
+function validateOrClause(element){
+    var valueNode = $('#' + element).find("input[name='value[]']"),
+        value2Node = $('#' + element).find("input[name='value2[]']");
+    if(valueNode.data('contrailCombobox').value()){
+        value2Node.prop('disabled', false);
+    } else{
+        value2Node.val('');
+        value2Node.prop('disabled', true);
+    }
+}
+
 function appendWhere(queryPrefix,dis) {
 	var disElement = '';
 	if($(dis).hasClass('or-clause-item')){
@@ -753,7 +798,8 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
             data:fieldData != null ? fieldData() : []
         }, 
         change: function(e, ui){
-        	setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
+            validateOrClause(element);
+            setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
         }
     });
     valueNode.data('contrailCombobox').value(value);
@@ -762,6 +808,7 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
         value2Node = $('#' + element).find("input[name='value2[]']");
         value2Node.val(value2);
         value2Node.attr('placeholder', placeHolders[fieldName][1]);
+        (value2Node.val() != "") ? value2Node.prop('disabled', false) :value2Node.prop('disabled', true);
     }
     //if(onchangeFlag == true){
     	setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
@@ -1428,6 +1475,12 @@ function push2OTColumns(columnArray, newColumnName, columns, selectedFieldName, 
         			}
             		return returnString;
             	},
+            	exportConfig: {
+    				allow: true,
+    				advFormatter: function(dc) {
+    					return JSON.stringify(dc[newColumnName], undefined, 2);
+    				}
+    			},
             	sortable: false,
             	events: {
         			onClick: function(e,dc){
@@ -1634,7 +1687,6 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 					},
 					onRequestErrorCB : function() {
 						enableButton(btnId);
-	//					endChartLoading(false, 'fs');
 					},
 					onRequestSuccessCB : function(response) {
 						var status = response['status'];
@@ -1649,14 +1701,12 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 						if (options.refreshChart != null && options.refreshChart) {
 							if (options.showChartToggle) {
 								queries.fs.chartViewModel.options(options);
-								plotFSChart(options,columnDisplay,fcGridDisplay);
+								plotFSChart(options, columnDisplay, fcGridDisplay);
 								
 							    var grid = $("#fs-flow-classes").data("contrailGrid");
 							    if(grid != null){
 							        grid.refreshView();
 							    }
-							} else if (options.showChartToggle != null) {
-						//		endChartLoading(false, 'fs');
 							}
 							options.refreshChart = false;
 						}
@@ -1825,7 +1875,7 @@ function loadQueryQueue(options) {
     					return getQueueActionColumn(options.elementId, dc);
     				},
                     detail: {
-                        template: '<pre>{{{displayJson queryJSON}}}</pre>'
+                        template: '<pre>{{{formatJSON2HTML queryJSON}}}</pre>'
                     }
     			},
                 dataSource: {
@@ -1948,7 +1998,8 @@ function setUTCTime(queryPrefix, reqQueryString, options, timeRange) {
 };
 
 function setUTCTimeObj(queryPrefix, reqObject, options, timeRange) {
-    timeRange = timeRange == null ? getTimeRange(queryPrefix): timeRange;
+    var serverCurrentTime = options ? options['serverCurrentTime'] : null;
+    timeRange = timeRange == null ? getTimeRange(queryPrefix, serverCurrentTime): timeRange;
     if (options != null) {
         options.fromTime = timeRange.fromTimeUTC;
         options.toTime = timeRange.toTimeUTC;
@@ -1959,15 +2010,19 @@ function setUTCTimeObj(queryPrefix, reqObject, options, timeRange) {
     return reqObject;
 };
 
-function getTimeRange(queryPrefix) {
+function getTimeRange(queryPrefix, serverCurrentTime) {
     var selectId = '#' + queryPrefix + '-query-form',
         timeRange = $(selectId + " select[name='timeRange']").val(),
         fromDate, toDate, fromTimeUTC, toTimeUTC, fromTime, toTime, now;
     if (timeRange != 0) {
-        now = new Date();
-        now.setSeconds(0);
-        now.setMilliseconds(0);
-        toTimeUTC = now.getTime();
+        if(serverCurrentTime) {
+            toTimeUTC = serverCurrentTime;
+        } else {
+            now = new Date();
+            now.setSeconds(0);
+            now.setMilliseconds(0);
+            toTimeUTC = now.getTime();
+        }
         fromTimeUTC = toTimeUTC - (timeRange * 1000);
         if(queryPrefix !== 'fs') {
             toTime = "now";
@@ -2040,30 +2095,6 @@ function getPlotFields(columnDisplay) {
         }
     }
     return plotFields;
-};
-
-//function initFSChartLoading() {
-//    queries.fs.chartViewModel.isFCVisible(false);
-//};
-//
-//function endChartLoading(isFCVisible, queryPrefix) {
-//    queries[queryPrefix].chartViewModel.isFCVisible(isFCVisible);
-//};
-
-function initFSChart(columnDisplay, data, flowClassArray, fcGridDisplay) {
-    var plotFields = getPlotFields(columnDisplay),
-        validFCId = findFirstValidFCId(flowClassArray);
-    queries.fs.chartViewModel.flowClasses(flowClassArray);
-    queries.fs.chartViewModel.plotFields(plotFields);
-    queries.fs.chartViewModel.selectedFlows([{flowClassId: validFCId, sumBytes: null, sumPackets: null}]);
-    queries.fs.chart = null;
-    $('#fs-chart-link').removeClass('disabled-link');
-//    createFSChart("#ts-chart", queries.fs.chart);
-    initFlowclassGrid("#fs-flow-classes", flowClassArray, fcGridDisplay);
-};
-
-function setGroupName(group, series) {
-    return "";
 };
 
 function findFirstValidFCId(flowClassArray) {
@@ -2179,10 +2210,6 @@ function plotFSChart(options, columnDisplay, fcGridDisplay) {
         dataType:"json",
         success:function (resultData) {
             query['chartData'] = resultData;
-        },
-        error:function (xhr) {
- //           endChartLoading(false, 'fs');
-            $('#ts-chart').html($('#no-data').html());
         }
     });
     flowClassesReq = $.ajax({
@@ -2192,55 +2219,52 @@ function plotFSChart(options, columnDisplay, fcGridDisplay) {
         dataType:"json",
         success:function (resultData) {
             flowClasses = resultData;
-        },
-        error:function (xhr) {
-            //endChartLoading(false, 'fs');
-            $('#ts-chart').html($('#no-data').html());
         }
     });
     $.when(chartDataReq, flowClassesReq).done(function () {
-        initFSChart(columnDisplay, query['chartData'], flowClasses, fcGridDisplay);
+        var plotFields = getPlotFields(columnDisplay),
+            validFCId = findFirstValidFCId(flowClasses);
+        queries.fs.chartViewModel.flowClasses(flowClasses);
+        queries.fs.chartViewModel.plotFields(plotFields);
+        queries.fs.chartViewModel.selectedFlows([{flowClassId: validFCId, sumBytes: null, sumPackets: null}]);
+        queries.fs.chart = null;
+        $('#fs-chart-link').removeClass('disabled-link');
+        initFlowclassGrid("#fs-flow-classes", flowClasses, fcGridDisplay);
     });
 };
 
 function createFSChart(selector, chart) {
-    var seriesValues = queries.fs.chartViewModel.seriesValues(),
-        plotFields = queries.fs.chartViewModel.plotFields(),
+    var plotFields = queries.fs.chartViewModel.plotFields(),
         options = queries.fs.chartViewModel.options(),
         selectedFlows = queries.fs.chartViewModel.selectedFlows(),
         fsChartData = queries['fs']['chartData'],
         plotData = null, selectedFlow, flowClassId, color;
 
-    if (isEmptyObject(fsChartData) || fsChartData == null) {
- //       endChartLoading(false, 'fs');
-        $('#ts-chart').html($('#no-data').html());
-        return;
-    }
-
-    for (var i = 0; i < selectedFlows.length; i++) {
-        selectedFlow = selectedFlows[i];
-        flowClassId = selectedFlow['flowClassId'];
-        color = d3_category5[i];
-        if (plotFields.indexOf("sum_bytes") != -1) {
-            selectedFlow["sumBytes"] = "badge-color-" + i;
-        } else if (plotFields.indexOf("sum_packets") != -1) {
-            selectedFlow["sumPackets"] = "badge-color-" + i;
+    if (!isEmptyObject(fsChartData) && fsChartData != null) {
+        for (var i = 0; i < selectedFlows.length; i++) {
+            selectedFlow = selectedFlows[i];
+            flowClassId = selectedFlow['flowClassId'];
+            color = d3_category5[i];
+            if (plotFields.indexOf("sum_bytes") != -1) {
+                selectedFlow["sumBytes"] = "badge-color-" + i;
+            } else if (plotFields.indexOf("sum_packets") != -1) {
+                selectedFlow["sumPackets"] = "badge-color-" + i;
+            }
+            assignColors2FlowClass(selectedFlow);
+            if (i == 0) {
+                plotData = addMissingPoints(fsChartData[flowClassId], options, plotFields, color, i + 1);
+            } else {
+                plotData = plotData.concat(addMissingPoints(fsChartData[flowClassId], options, plotFields, color, i + 1));
+            }
         }
-        assignColors2FlowClass(selectedFlow);
-        if (i == 0) {
-            plotData = addMissingPoints(fsChartData[flowClassId], options, plotFields, color, i + 1);
+        options['height'] = 300;
+        options['yAxisLabel'] = '';
+        options['y2AxisLabel'] = '';
+        if(plotFields.indexOf('sum_bytes') != -1) {
+            initTrafficTSChart(selector, plotData, options, chart, "formatSumBytes", "formatSumBytes");
         } else {
-            plotData = plotData.concat(addMissingPoints(fsChartData[flowClassId], options, plotFields, color, i + 1));
+            initTrafficTSChart(selector, plotData, options, chart, "formatSumPackets", "formatSumPackets");
         }
-    }
-    options['height'] = 300;
-    options['yAxisLabel'] = '';
-    options['y2AxisLabel'] = '';
- //   endChartLoading(true, 'fs');
-    if(plotFields.indexOf('sum_bytes') != -1) {
-        initTrafficTSChart(selector, plotData, options, chart, "formatSumBytes", "formatSumBytes");
-    } else {
-        initTrafficTSChart(selector, plotData, options, chart, "formatSumPackets", "formatSumPackets");
     }
 };
 
@@ -2864,14 +2888,20 @@ function getQueryModel(title) {
         };
 }
 function getEngQueryStr(reqQueryObj){
-	return JSON.stringify({
+    var engQueryJSON = {
 		select: reqQueryObj.select,
 		from: reqQueryObj.table,
 		where: reqQueryObj.where,
-		fromTime: reqQueryObj.fromTime,
-		toTime: reqQueryObj.toTime,
 		filter: reqQueryObj.filters
-	});
+	};
+    if(reqQueryObj.toTimeUTC == "now") {
+        engQueryJSON['from_time'] = reqQueryObj.fromTimeUTC;
+        engQueryJSON['to_time'] = reqQueryObj.toTimeUTC;
+    } else {
+        engQueryJSON['from_time'] = moment(reqQueryObj.fromTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
+        engQueryJSON['to_time'] = moment(reqQueryObj.toTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
+    }
+    return JSON.stringify(engQueryJSON);
 };
 
 $.fn.serializeObject = function() {

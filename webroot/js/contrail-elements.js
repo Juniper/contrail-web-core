@@ -2,6 +2,9 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 (function($) {
+    $.ui.tabs.prototype._tabKeydown = function(event){
+        return;
+    }
     $.fn.contrailAutoComplete = function(option){
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
@@ -442,7 +445,7 @@
             options.id = options.id != undefined ? options.id : '';
             var className = (options.className == null) ? '' : options.className;
 
-            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal hide"> \
+            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal hide" tabindex="-1" role="dialog" aria-hidden="true"> \
         		<div class="modal-header"> \
         	    	<button id="modal-header-close" type="button" class="close"><i class="icon-remove"></i></button> \
         			<h6 class="modal-header-title"></h6> \
@@ -483,7 +486,7 @@
                     if (typeof footerButton.onclick === 'function') {
                         footerButton.onclick(footerButton.onClickParams);
                     }
-                    else if(typeof footerButton.onclick === 'string'){
+                    else if(footerButton.onclick != 'close' && typeof footerButton.onclick === 'string'){
                         window[footerButton.onclick](footerButton.onClickParams);
                     }
                 });
@@ -570,7 +573,7 @@ function constructSelect2(self, defaultOption, args) {
         self.select2(defaultOption, args);
     } else{
         var option = {
-            minimumResultsForSearch : -1,
+            minimumResultsForSearch : 7,
             dropdownAutoWidth : true,
             dataTextField: 'text',
             dataValueField: 'id',

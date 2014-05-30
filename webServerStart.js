@@ -271,7 +271,7 @@ if (cluster.isMaster) {// && (process.env.NODE_CLUSTERED == 1)) {
 function doPreStartServer (isRetry)
 {
     var rootPath = path.join(__dirname, 'webroot');
-    var defLogoFile = '/img/juniper-networks-logo.png';
+    var defLogoFile = '/img/opencontrail-logo.png';
     var srcLogoFile = rootPath + defLogoFile;
 
     if ((null != config.logo_file) && (false == isRetry)) {

@@ -101,6 +101,7 @@ function successHandlerLineChart(data, cbParams) {
     if ($('#' + boxId).is(':visible')) {
         onClickLineChart(data, cbParams);
     }
+    $('.' + selectorId).addClass('cursor-pointer');
     $('.' + selectorId).click(function () {
         toggleWidgetsVisibility(options.showWidgetIds, options.hideWidgetIds);
         onClickLineChart(data, cbParams)

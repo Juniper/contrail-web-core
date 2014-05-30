@@ -103,9 +103,16 @@ cd -
 
 mkdir fonts-opensans
 cd fonts-opensans
-getPackage http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600,300 openSans.css
-getPackage http://themes.googleusercontent.com/static/fonts/opensans/v6/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
-getPackage http://themes.googleusercontent.com/static/fonts/opensans/v6/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
+getPackage http://themes.googleusercontent.com/static/fonts/opensans/v8/DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff DXI1ORHCpsQm3Vp6mXoaTaRDOzjiPcYnFooOUGCOsRk.woff
+getPackage http://themes.googleusercontent.com/static/fonts/opensans/v8/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
+getPackage http://themes.googleusercontent.com/static/fonts/opensans/v8/MTP_ySUJH_bn48VBG8sNSqRDOzjiPcYnFooOUGCOsRk.woff MTP_ySUJH_bn48VBG8sNSqRDOzjiPcYnFooOUGCOsRk.woff
+getPackage http://themes.googleusercontent.com/static/fonts/opensans/v8/k3k702ZOKiLJc3WVjuplzKRDOzjiPcYnFooOUGCOsRk.woff k3k702ZOKiLJc3WVjuplzKRDOzjiPcYnFooOUGCOsRk.woff
+getPackage http://themes.googleusercontent.com/static/fonts/opensans/v8/EInbV5DfGHOiMmvb1Xr-hqRDOzjiPcYnFooOUGCOsRk.woff EInbV5DfGHOiMmvb1Xr-hqRDOzjiPcYnFooOUGCOsRk.woff
+getPackage http://themes.googleusercontent.com/static/fonts/opensans/v8/PRmiXeptR36kaC0GEAetxvR_54zmj3SbGZQh3vCOwvY.woff PRmiXeptR36kaC0GEAetxvR_54zmj3SbGZQh3vCOwvY.woff
+getPackage http://themes.googleusercontent.com/static/fonts/opensans/v8/xjAJXh38I15wypJXxuGMBrrIa-7acMAeDBVuclsi6Gc.woff xjAJXh38I15wypJXxuGMBrrIa-7acMAeDBVuclsi6Gc.woff
+getPackage http://themes.googleusercontent.com/static/fonts/opensans/v8/PRmiXeptR36kaC0GEAetxuw_rQOTGi-AJs5XCWaKIhU.woff PRmiXeptR36kaC0GEAetxuw_rQOTGi-AJs5XCWaKIhU.woff
+getPackage http://themes.googleusercontent.com/static/fonts/opensans/v8/PRmiXeptR36kaC0GEAetxhbnBKKEOwRKgsHDreGcocg.woff PRmiXeptR36kaC0GEAetxhbnBKKEOwRKgsHDreGcocg.woff
+getPackage http://themes.googleusercontent.com/static/fonts/opensans/v8/PRmiXeptR36kaC0GEAetxsBo4hlZyBvkZICS3KpNonM.woff PRmiXeptR36kaC0GEAetxsBo4hlZyBvkZICS3KpNonM.woff
 cd -
 
 getPackage https://github.com/components/jqueryui/archive/1.10.4.tar.gz 1.10.4.tar.gz

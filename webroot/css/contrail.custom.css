@@ -601,7 +601,6 @@ ul.configActionMenu {
 .brand img{display:inline-block;}
 .brand img.logo{ 
 	margin-left:-5px;
-	max-width: 152px;
 	height: 40px;
 }
 .infobox > .stat{
@@ -777,7 +776,7 @@ rect.bordered {
 	font-size: 14px;
 	color: #000;
 	padding: 5px 0;
-	font-weight: bold;
+	font-weight: 600;
 }
 .and-clause-item.row-fluid [class*="span"] {
 	min-height: 28px !important;
@@ -813,7 +812,6 @@ a.selectAllLink:hover {
 .sparklines-box{
 	border: 1px solid #dedede;
 	padding: 5px;
-	cursor: pointer;
 }
 .sparklines-box p.sparkline-title{
 	padding: 0 5px 2px;
@@ -883,15 +881,19 @@ a.selectAllLink:hover {
 	padding: 0 4px;
 }
 .grid-header .widget-header{
-	color: #666;
+	color: #777;
 	cursor: default;
 }
 .grid-header .widget-toolbar .select2-chosen {
 	color: #3182bd;
+	font-weight: 600;
 }
 /* Sort Icon from font-awesome */
 .contrail-grid{
 	border-bottom: 1px solid #dadada;
+}
+.contrail-grid > .collapsed {
+	display: none;
 }
 .slick-sort-indicator{
 	margin-left: 0;	
@@ -1018,7 +1020,7 @@ a.selectAllLink:hover {
 
 .slick-pager .slick-pager-nav {
   display: inline-block;
-  float: left;
+  float: right;
 }
 .slick-pager .slick-pager-nav .pager-control{
 	padding:0 5px;
@@ -1035,12 +1037,12 @@ a.selectAllLink:hover {
 }
 .slick-pager .slick-pager-info, .slick-pager .slick-pager-sizes  {
   	display: block;
-  	float: right;
+  	float: left;
   	height: 20px;
 }
 .slick-pager .slick-pager-info {
-	border-left: 1px solid #eee;
-	padding: 0 2px 0 9px;
+	border-right: 1px solid #eee;
+	padding: 0 9px 0 5px;
 	height: 20px;
 }
 .csg-current-page {
@@ -1065,7 +1067,6 @@ margin-right: 15px;
 	height: 20px;
 }
 .csg-pager-sizes {
-	margin: 0 5px;
 	width: 90px;
 	float: left;
 }
@@ -1269,6 +1270,12 @@ label.jqInvalid{
 }
 .select2-container-multi .select2-choices .select2-search-field {
 	margin: 0 0 0 5px;
+}
+.select2-drop-auto-width .select2-search {
+	padding: 4px;
+}
+ .select2-search input {
+ 	background: #fff url('select2.png') no-repeat 100% -22px;
 }
 .select2-results {
 	margin: 0;

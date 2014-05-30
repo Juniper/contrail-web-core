@@ -1285,6 +1285,12 @@
         <feature>query-engine</feature>s
         <callback>qeapi.getObjectIds</callback>
     </item>
+    <item>
+        <url>/api/admin/current-time</url>
+        <method>get</method>
+        <feature>query-engine</feature>
+        <callback>qeapi.getCurrentTime</callback>
+    </item>
     <!-- Monitoring Overview Details -->
     <item>
         <url>/api/tenant/networking/domain/summary</url>

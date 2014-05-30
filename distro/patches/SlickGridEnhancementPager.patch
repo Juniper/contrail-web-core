@@ -1,7 +1,7 @@
 diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid.enhancement.pager/slick.enhancementpager.js
 --- old/SlickGridEnhancementPager/slick.enhancementpager.js	2014-05-15 15:12:37.000000000 -0700
-+++ new/slickgrid.enhancement.pager/slick.enhancementpager.js	2014-05-15 15:21:44.000000000 -0700
-@@ -1,253 +1,248 @@
++++ new/slickgrid.enhancement.pager/slick.enhancementpager.js	2014-05-23 12:06:41.000000000 -0700
+@@ -1,253 +1,250 @@
 -﻿/**
 -* SlickGrid Enhancement Pager
 -*
@@ -423,8 +423,10 @@ diff -Naur old/SlickGridEnhancementPager/slick.enhancementpager.js new/slickgrid
 +				},
 +				error: function (xhr) {
 +					var errorMsg = contrail.parseErrorMsgFromXHR(xhr);
-+                    showMessagePopup('Error', 'Error in run query: ' + errorMsg);
-+                    paramObj.gridContainer.data('contrailGrid').showGridMessage('error','Error: ' + errorMsg);
++                    if(xhr.status && xhr.statusText != 'abort') {
++                        showMessagePopup('Error', 'Error: ' + errorMsg);
++                        paramObj.gridContainer.data('contrailGrid').showGridMessage('Error','Error: ' + errorMsg);
++                    }
 +					if(events.onRequestErrorCB && typeof events.onRequestErrorCB === 'function') {
 +                        events.onRequestErrorCB();
 +                    }
