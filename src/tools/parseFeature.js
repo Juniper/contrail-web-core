@@ -8,7 +8,8 @@ var fs = require('fs'),
 
 var featureLists = [];
 
-createFile = function(result) {
+function parseFeatureFile (result, fileToGen, callback)
+{
   var itemList = result['featureLists']['item'];
   var len = 0;
   var featureCbStr = "";
@@ -18,7 +19,7 @@ createFile = function(result) {
   var feature, readAccess, writeAccess;
 
   commentStr += "/*\n";
-  commentStr += " * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.\n";
+  commentStr += " * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.\n";
   commentStr += " */\n";
   commentStr += "\n";
   var date = new Date();
@@ -35,17 +36,26 @@ createFile = function(result) {
   var requiresList = result['featureLists']['require'];
   var len = requiresList.length;
   for (var i = 0; i < len; i++) {
+      var splitter = (requiresList[i]['path']).toString().split('+');
       if (i == 0) {
          if ((requiresList[i] == null) || (null == requiresList[i]['define']) ||
              (null == requiresList[i]['path'])) {
              assert(0);
          }
-         featureCbStr += 'var ' + requiresList[i]['define'] + ' = require(' +
-            "'" + requiresList[i]['path'] + "')\n";
+         featureCbStr += 'var ' + requiresList[i]['define'] + ' = require(';
+         if (splitter.length <= 1) {
+            featureCbStr += "'" + requiresList[i]['path'] + "')\n";
+         } else {
+            featureCbStr += requiresList[i]['path'] + ")\n";
+         }
          continue;
       }
-      featureCbStr += '  , ' + requiresList[i]['define'] + ' = require(' +
-          "'" + requiresList[i]['path'] + "')\n";
+      featureCbStr += '  , ' + requiresList[i]['define'] + ' = require(';
+      if (splitter.length <= 1) {
+          featureCbStr += "'" + requiresList[i]['path'] + "')\n";
+      } else {
+          featureCbStr += requiresList[i]['path'] + ")\n";
+      }
   }
   featureCbStr += "  ;\n";
   featureCbStr += "\n";
@@ -78,15 +88,17 @@ createFile = function(result) {
   }
   featureCbStr += "}\n\n";
 
-  fs.writeFile(__dirname + '/../serverroot/web/core/feature.list.js', featureCbStr, function(err) {
+  fs.writeFile(fileToGen, featureCbStr, function(err) {
     if (err) throw err;
+    console.log("Done, creating file: " + fileToGen);
+    callback(err);
   });
 }
 
+/*
 var parser = new xml2js.Parser();
 parser.addListener('end', function(result) {
-    /* Create new file and add this info */
-    createFile(result);
+    parseFeatureFile(result, fileToGen);
     console.log("Done, creating file: " + __dirname + 
                 '/../serverroot/web/core/feature.list.js');
 });
@@ -95,4 +107,7 @@ fs.readFile(__dirname + '/../xml/featureList.xml', function(err, data) {
     parser.parseString(data);
 });
 
+*/
+
+exports.parseFeatureFile = parseFeatureFile;
 

@@ -17,6 +17,7 @@ var http = require('http'),
     crypto = require('crypto'),
     redisSub = require('../core/redisSub'),
     authApi = require('../../common/auth.api'),
+    fs = require('fs'),
     messages = require('../../common/messages');
 
 if (!module.parent) {
@@ -119,6 +120,7 @@ exports.isSessionAuthenticated = function(req) {
  */
 checkAndRedirect = function(req, res, sendFile) {
     var data = exports.checkURLInAllowedList(req);
+    var loginErrFile = 'webroot/html/login-error.html';
     if (null == data) {
         res.send(global.HTTP_STATUS_PAGE_NOT_FOUND, "The page can not be found");
         res.end();
@@ -127,7 +129,17 @@ checkAndRedirect = function(req, res, sendFile) {
     if (false == exports.isSessionAuthenticated(req)) {
         res.redirect('/login');
     } else {
-        res.sendfile(sendFile);
+        var pkgList = process.mainModule.exports['pkgList'];
+        if (pkgList.length > 1) {
+            res.sendfile(sendFile);
+        } else {
+            /* Only Base Package installed */
+            commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                 global.CONTRAIL_LOGIN_ERROR,
+                                                 "Install feature package",
+                                                 function() {
+            });
+        }
     }
 }
 

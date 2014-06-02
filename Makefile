@@ -35,30 +35,15 @@ package:
 	cp -a webroot/html/dashboard.tmpl webroot/html/dashboard.html
 	cp -a webroot/html/login.tmpl webroot/html/login.html
 	cp -a webroot/html/login-error.tmpl webroot/html/login-error.html
-	rm -rf webroot/config
-	rm -rf webroot/monitor
-	rm -rf webroot/reports
-	rm -rf webroot/setting
-	rm -rf webroot/menu.xml
-	cp -af ../$(WEBUICLIENT)/webroot/config webroot/.
-	cp -af ../$(WEBUICLIENT)/webroot/monitor webroot/.
-	cp -af ../$(WEBUICLIENT)/webroot/reports webroot/.
-	cp -af ../$(WEBUICLIENT)/webroot/setting webroot/.
-	cp -af ../$(WEBUICLIENT)/webroot/menu.xml webroot/menu.xml
-	./generate-files.sh
+	./generate-files.sh 'prod-env' $(REPO)
 	./dev-install.sh
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env true
 	rm -rf web-third-party
 
-all:
-	mkdir -p webroot/html
-	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
-	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
-	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
-	./generate-files.sh
-	./dev-install.sh
+package-feature:
+	./generate-files.sh 'dev-env' $(REPO)
 
 make-ln:
 	cp -af webroot/html/dashboard.html webroot/html/dashboard.tmpl
@@ -72,15 +57,14 @@ make-ln:
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
 	rm -f webroot/html/login-error.html
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
-	rm -rf webroot/config webroot/monitor webroot/reports webroot/setting webroot/menu.xml
-	ln -sf ../../$(WEBUICLIENT)/webroot/config webroot/config
-	ln -sf ../../$(WEBUICLIENT)/webroot/monitor webroot/monitor
-	ln -sf ../../$(WEBUICLIENT)/webroot/reports webroot/reports
-	ln -sf ../../$(WEBUICLIENT)/webroot/setting webroot/setting
-	ln -sf ../../$(WEBUICLIENT)/webroot/menu.xml webroot/menu.xml
 	
 dev-env:
-	make all
+	mkdir -p webroot/html
+	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
+	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
+	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
+	./generate-files.sh "dev-env" $(REPO)
+	./dev-install.sh
 	./prod-dev.sh webroot/html/dashboard.html dev_env prod_env true
 	./prod-dev.sh webroot/html/login.html dev_env prod_env true
 	./prod-dev.sh webroot/html/login-error.html dev_env prod_env true
@@ -95,7 +79,7 @@ prod-env:
 	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
 	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
-	./generate-files.sh
+	./generate-files.sh "prod-env" $(REPO)
 	./dev-install.sh
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login.html prod_env dev_env true
@@ -140,7 +124,6 @@ clean:
 	rm -f src/serverroot/web/core/feature.list.js
 	rm -f src/serverroot/web/routes/url.routes.js
 	rm -rf node_modules
-	rm -rf html
 	rm -rf webroot/assets/2way-multiselect
 	rm -rf webroot//assets/bootstrap
 	rm -rf webroot/assets/crossfilter
@@ -157,6 +140,8 @@ clean:
 	rm -rf webroot/assets/select2
 	rm -rf webroot/assets/slickgrid
 	rm -rf web-third-party 
+	rm -rf webroot/assets/jsonpath
+	rm -rf webroot/assets/xdate
 
 .PHONY: package dev-env prod-env test test-integration test-unit clean
 
