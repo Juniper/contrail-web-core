@@ -50,26 +50,37 @@ function drawVisualization(config) {
         }
 
         for(i = 0; i < links.length; i++) {
-            var options = {
+            var optionsForward = {
                 sourceId: nodeMap[links[i]['src']],
-                targetId: nodeMap[links[i]['dst']],
-                direction: links[i]['dir']
+                targetId: nodeMap[links[i]['dst']]
+            }, optionsBackward = {
+                sourceId: nodeMap[links[i]['dst']],
+                targetId: nodeMap[links[i]['src']]
             }, link;
-
-            link = new ContrailElement('link', options);
-            elements.push(link);
+            if(links[i]['dir'] == 'bi') {
+                link = new ContrailElement('link', optionsForward);
+                links[i]['outLink'] = link;
+                elements.push(link);
+                link = new ContrailElement('link', optionsBackward);
+                links[i]['inLink'] = link;
+                elements.push(link);
+            } else {
+                link = new ContrailElement('link', optionsForward);
+                links[i]['outLink'] = link;
+                elements.push(link);
+            }
         }
 
         graph.addCells(elements);
 
-        joint.layout.contrail.DirectedGraph.layout(graph, { setLinkVertices: false, edgeSep: 30, nodeSep: 35, rankSep: 50, rankDir: "TB" });
+        joint.layout.contrail.DirectedGraph.layout(graph, { setLinkVertices: false, edgeSep:1, nodeSep: 80, rankSep: 80, rankDir: "LR" });
 
-        var svg = document.querySelector(selectorId + ' svg g'),
+        var svg = document.querySelector(selectorId + ' svg'),
             bbox = svg.getBBox(),
             width = Math.ceil(bbox.width),
             height = Math.ceil(bbox.height);
 
-        paper.setDimensions(width, height, 20);
+        paper.setDimensions(width, height, 1);
         initPanZoom(selectorId)
     });
 }
@@ -81,12 +92,46 @@ function initPanZoom(elementId) {
         $zoomIn: $topologyHeader.find("#topology-zoomin"),
         $zoomOut: $topologyHeader.find("#topology-zoomout"),
         $reset: $topologyHeader.find("#topology-reset"),
-        maxScale: 2
+        increment: 0.4,
+        minScale: 0.5,
+        maxScale: 2,
+        duration: 500
     });
 };
 
+function setupTransition4Link(nodeMap, link, paper, graph) {
+    var trafficStats = link['more_attributes'],
+        inStats = trafficStats['in_stats'],
+        inLink = link['inLink'],
+        outLink = link['outLink'],
+        packets, srcName, source,
+        srcId, i, transitionLink;
+    for(i = 0; inStats && i < inStats.length; i++) {
+        packets = inStats[i]['pkts'];
+        if(packets > 0) {
+            srcName = inStats[i]['src'];
+            srcId = nodeMap[srcName]
+            if(inLink.get('source').id == srcId) {
+                transitionLink = inLink;
+            } else {
+                transitionLink = outLink;
+            }
+            startTransition4Link(transitionLink, paper, 5, 5000);
+        }
+    }
+}
+
+function startTransition4Link(link, paper, sec, interval) {
+    var token = V('circle', { r: 3, fill: '#ff7f0e' });
+    $(paper.viewport).append(token.node);
+    token.animateAlongPath({ dur: sec + 's', repeatCount: 1 }, paper.findViewByModel(link).$('.connection')[0]);
+    setInterval(function(){
+        token.animateAlongPath({ dur: sec + 's', repeatCount: 1 }, paper.findViewByModel(link).$('.connection')[0]);
+    }, interval);
+}
+
 joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
-    markup: '<g class="rotatable"><g class="scalable"><image/></g><a><text/></a></g>',
+    markup: '<image/><text/>',
 
     defaults: joint.util.deepSupplement({
         type: 'contrail.VirtualNetwork',
@@ -139,9 +184,7 @@ joint.shapes.contrail.ServiceInstance = joint.dia.Element.extend({
                 'stroke-width': '1px',
                 'stroke': 'black'
             },
-            a: {
-                //'xlink:href': ''
-            }
+            a: {}
         }
 
     }, joint.dia.Element.prototype.defaults)
@@ -150,11 +193,11 @@ joint.shapes.contrail.ServiceInstance = joint.dia.Element.extend({
 joint.shapes.contrail.Link = function(options) {
     var linkConfig = {
         markup: [
-                    '<path class="connection" stroke="black"></path>',
-                    '<path class="marker-source" fill="black" stroke="black" />',
-                    '<path class="marker-target" fill="black" stroke="black" />',
-                    '<g class="labels"/>'
-                ]. join(''),
+            '<path class="connection" stroke="black"></path>',
+            '<path class="marker-source" fill="black" stroke="black" />',
+            '<path class="marker-target" fill="black" stroke="black" />',
+            '<g class="labels"/>'
+        ]. join(''),
         source: { id: options.sourceId },
         target: { id: options.targetId },
         smooth: true,
@@ -166,12 +209,7 @@ joint.shapes.contrail.Link = function(options) {
         }
     }, link;
 
-    if(options.direction == 'bi') {
-        linkConfig['attrs']['.marker-source'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
-        linkConfig['attrs']['.marker-target'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
-    } else if(options.direction == 'uni') {
-        linkConfig['attrs']['.marker-target'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
-    }
+    linkConfig['attrs']['.marker-target'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
 
     link = new joint.dia.Link(linkConfig);
     return link;
@@ -196,8 +234,8 @@ joint.layout.contrail.DirectedGraph = $.extend(true, joint.layout.DirectedGraph,
         layoutGraph.eachNode(function(u, value) {
             if (!value.dummy) {
                 graph.get('cells').get(u).set('position', {
-                    x: value.x + 30 - value.width/2,
-                    y: value.y + 30 - value.height/2
+                    x: value.x + 50 - value.width/2,
+                    y: value.y + 50 - value.height/2
                 });
             }
         });
