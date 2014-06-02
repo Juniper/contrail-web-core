@@ -584,7 +584,8 @@ function chartsParseFn(options, response) {
                 var kGrid = $(this).contrailGrid($.extend({
                     header : {
                         title: {
-                            text: data['config']['widgetGridTitle']
+                            text: data['config']['widgetGridTitle'],
+                            icon: data['config']['widgetIcon'] != null ? data['config']['widgetIcon']  : 'icon-list' 
                         },
                         customControls:ifNull(data['config']['widgetGridActions'],[])
                     },
@@ -1559,10 +1560,16 @@ function applyGridDefHandlers(cGrid, options) {
     var dataSource = cGrid._dataView;
     if (options['noMsg'] != null)
         noMsg = options['noMsg'];
-    dataSource.onUpdateData.subscribe(function(){
-       if(dataSource.getItems().length == 0)
-           cGrid.showGridMessage('empty',noMsg);
-       cGrid.refreshView();
+    dataSource.onUpdateData.subscribe(function() {
+        /* Here we are overriding the cGrid value with current grid Object in the DOM because cGrid is referring to the earlier instance which is already destroyed.
+         * This is just a work around need to look a better solution,
+        */
+        if($('.contrail-grid').data('contrailGrid') != null){
+            cGrid = $('.contrail-grid').data('contrailGrid');
+            if(dataSource.getItems().length == 0)
+                cGrid.showGridMessage('empty',noMsg);
+            cGrid.refreshView();
+        }
     });
 }
 
@@ -2327,6 +2334,7 @@ function loadAlertsContent(){
                     title : {
                         text : 'Details',
                         cssClass : 'blue',
+                        icon : 'icon-list'
                     },
                     customControls: []
                 },
