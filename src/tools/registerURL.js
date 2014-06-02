@@ -9,7 +9,8 @@ var fs = require('fs'),
 
 var urlLists = [];
 
-createFile = function(result) {
+function parseURLFile (result, fileToGen, cb)
+{
   var itemList = result['urlLists']['item'];
   var urlCbStr = "";
   var commentStr = "";
@@ -21,7 +22,7 @@ createFile = function(result) {
   var longPollArrStr = "";
 
   commentStr += "/*\n";
-  commentStr += " * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.\n";
+  commentStr += " * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.\n";
   commentStr += " */\n";
   commentStr += "\n";
   var date = new Date();
@@ -38,17 +39,26 @@ createFile = function(result) {
   var requiresList = result['urlLists']['require'];
   var len = requiresList.length;
   for (var i = 0; i < len; i++) {
-      if (i == 0) {  
+      var splitter = (requiresList[i]['path']).toString().split('+');
+      if (i == 0) {
          if ((requiresList[i] == null) || (null == requiresList[i]['define']) ||
              (null == requiresList[i]['path'])) {
              assert(0);
          }
-         urlCbStr += 'var ' + requiresList[i]['define'] + ' = require(' + 
-            "'" + requiresList[i]['path'] + "')\n";
+         urlCbStr += 'var ' + requiresList[i]['define'] + ' = require(';
+         if (splitter.length <= 1) {
+             urlCbStr += "'" + requiresList[i]['path'] + "')\n";
+         } else {
+             urlCbStr += requiresList[i]['path'] +")\n";
+         }
          continue;
       }
-      urlCbStr += '  , ' + requiresList[i]['define'] + ' = require(' +
-          "'" + requiresList[i]['path'] + "')\n";
+      urlCbStr += '  , ' + requiresList[i]['define'] + ' = require(';
+      if (splitter.length <= 1) {
+          urlCbStr += "'" + requiresList[i]['path'] + "')\n";
+      } else {
+          urlCbStr += requiresList[i]['path'] + ")\n";
+      }
   }
   urlCbStr += "  ;\n";
 
@@ -159,21 +169,36 @@ createFile = function(result) {
   urlCbStr += "}\n";
 
   urlCbStr += longPollArrStr;
-  fs.writeFile(__dirname + '/../serverroot/web/routes/url.routes.js', urlCbStr, function(err) {
+  fs.writeFile(fileToGen, urlCbStr, function(err) {
     if (err) throw err;
+    console.log("Done, creating file: " + fileToGen);
+    cb(err);
   });
 }
 
+/*
+var args = process.argv.slice(2);
 var parser = new xml2js.Parser();
 parser.addListener('end', function(result) {
-    /* Create new file and add this info */
-    createFile(result);
-    console.log("Done, creating file: " + __dirname +
-                '/../serverroot/web/routes/url.routes.js');
+    var fileToGen = null;
+    if ('base' == args[0]) {
+        fileToGen = __dirname + '/../serverroot/web/routes/url.routes.base.js';
+    } else {
+        fileToGen = __dirname + '/../serverroot/web/routes/url.routes.js';
+    }
+    parseURLFile(result, fileToGen);
 });
 
-fs.readFile(__dirname + '/../xml/parseURL.xml', function(err, data) {
+
+var parseFile = null;
+if ('base' == args[0]) {
+    parseFile = '../xml/parseURLBase.xml';
+} else {
+    parseFile = '../xml/parseURL.xml';
+}
+fs.readFile(__dirname + '/' + parseFile, function(err, data) {
     parser.parseString(data);
 });
-
+*/
+exports.parseURLFile = parseURLFile;
 
