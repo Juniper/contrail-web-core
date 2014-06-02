@@ -9,10 +9,10 @@
 var url         = require('url');
 var http        = require('http');
 var https       = require('https');
-var logutils    = require('../../utils/log.utils');
-var appErrors   = require('../../errors/app.errors');
+var logutils    = require('../utils/log.utils');
+var appErrors   = require('../errors/app.errors');
 var util        = require('util');
-var messages    = require('../../common/messages');
+var messages    = require('./messages');
 
 function forwardProxyRequest (request, response, appData)
 {

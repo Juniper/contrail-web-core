@@ -2,11 +2,17 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var  topoCache = require('../api/topoCache.api')
-	, bgpNode = require('../api/bgpNode.api')
-	, computeNode = require('../api/computeNode.api')
-	, nwMonJobsApi = require('../api/network.mon.jobs')
-	, tpoCache     = require('../api/tpoCache.api')
+var config = require('../../../../config/config.global');
+var  topoCache = require(config.featurePkg.webController.path +
+                         '/webroot/monitor/tenant_network/jobs/topoCache.api')
+	, bgpNode = require(config.featurePkg.webController.path +
+                        '/webroot/monitor/infra/controlnode/jobs/controlnode.jobs.api')
+	, computeNode = require(config.featurePkg.webController.path +
+                            '/webroot/monitor/infra/vrouter/jobs/vrouternode.jobs.api')
+	, nwMonJobsApi = require(config.featurePkg.webController.path +
+                             '/webroot/monitor/tenant_network/jobs/network.mon.jobs')
+	, tpoCache     = require(config.featurePkg.webController.path + 
+                             '/webroot/monitor/tenant_network/jobs/tpoCache.api');
 	;
 
 var jobsProcess = module.exports;
