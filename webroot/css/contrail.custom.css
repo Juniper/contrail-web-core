@@ -852,6 +852,15 @@ a.selectAllLink:hover {
 
 /* Slickgrid Header Styles */
 
+/*For wrapping the header names*/
+.slick-column-name { 
+	white-space: normal; 
+}
+
+.slick-header-column.ui-state-default {
+    height: 100%;
+}
+
 .grid-body.ui-widget {
 	width:100%;
 	border: none;

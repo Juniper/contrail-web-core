@@ -613,14 +613,6 @@ function chartsParseFn(options, response) {
                             }
                         }
                     },
-                    footer : {
-                        pager : {
-                            options : {
-                                pageSize : 50,
-                                pageSizeSelect : [ 5, 10, 50, 100 ]
-                            }
-                        }
-                    },
                     columnHeader: {
                         columns:data['columns'],
                     },
@@ -1242,10 +1234,11 @@ function MenuHandler() {
             if ((currMenuObj[i]['items'] != null) && (currMenuObj[i]['items']['item'] != null) && (currMenuObj[i]['items']['item'].length > 0)) {
                 parentsArr.push(currMenuObj[i]);
                 var retVal = self.getMenuObjByHash(menuHash, currMenuObj[i]['items']['item'], parentsArr);
-                if (retVal != -1)
+                if (retVal != -1) {
                     return retVal;
-                else
+                } else {
                     parentsArr.pop();
+                }
             }
         }
         return -1;
@@ -2393,14 +2386,6 @@ function loadAlertsContent(){
                                     return "";
                             }
                         }]
-                },
-                footer : {
-                    pager : {
-                        options : {
-                            pageSize : 50,
-                            pageSizeSelect : [10, 50, 100, 200, 500 ]
-                        }
-                    }
                 }
             });
         }

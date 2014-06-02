@@ -64,7 +64,14 @@ function getDefaultGridConfig() {
             	}
             }
         },
-        footer: false
+        footer : {
+            pager : {
+                options : {
+                    pageSize : 50,
+                    pageSizeSelect : [10, 50, 100, 200, 500 ]
+                }
+            }
+        }
     };
     return defaultSettings;
 };
