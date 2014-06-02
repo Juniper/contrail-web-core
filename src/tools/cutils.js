@@ -257,7 +257,12 @@ function policy_net_display(nets, domain, project) {
                 		isString(project)) {
                 		var splits = net["virtual_network"].split(":");
                 		if(domain === splits[0] && project === splits[1]) {
-                			net_disp += splits[2];
+                            if(splits[2].toLowerCase() === "any" || 
+                                splits[2].toLowerCase() === "local"){
+                                net_disp = net["virtual_network"].toString();
+                            } else {
+                               net_disp += splits[2];
+                            }
                 		} else {
                 			net_disp += net["virtual_network"].toString();
                 		}
