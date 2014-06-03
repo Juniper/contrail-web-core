@@ -712,9 +712,11 @@ filter: alpha(opacity=40);
 /* Topology */
 .topology{
     width: 100%;
-    height: 220px;
     margin: auto;
     overflow: scroll;
+}
+#topology svg {
+	height: auto !important;
 }
 .topology_breadthfirst{
 	height:inherit;
@@ -885,21 +887,22 @@ a.selectAllLink:hover {
 	margin-top: 1px;
 	font-size: 14px;
 }
-.grid-header .select2-container{
+.grid-header .select2-container, .widget-header .select2-container, .breadcrumb .select2-container{
 	margin-bottom: 2px;
 }
-.grid-header .select2-container a.select2-choice{
+.grid-header .select2-container a.select2-choice, .widget-header .select2-container a.select2-choice, .breadcrumb .select2-container a.select2-choice{
 	border: none;
 	padding: 0 4px;
 }
-.grid-header .widget-header{
+.grid-header .widget-header, .widget-header .widget-toolbar{
 	color: #777;
 	cursor: default;
 }
-.grid-header .widget-toolbar .select2-chosen {
+.grid-header .widget-toolbar .select2-chosen, .widget-header .widget-toolbar .select2-chosen, .breadcrumb .select2-chosen {
 	color: #3182bd;
 	font-weight: 600;
 }
+
 /* Sort Icon from font-awesome */
 .contrail-grid{
 	border-bottom: 1px solid #dadada;
@@ -1398,7 +1401,7 @@ input.datetimepicker{
 	border-bottom: 1px solid #eee;
 }
 .ui-tabs .ui-tabs-nav{
-	margin: -10px -10px 10px -10px;
+	margin: -3px -10px 10px -10px;
 	padding: 1px 1px 0 1px;
 }
 .ui-tabs-panel.ui-widget-content {
@@ -1412,6 +1415,41 @@ input.datetimepicker{
 	text-decoration: none;
 }
 /* End - Jquery UI Tabs */
+/* Begin - Jquery UI Tabs with Widget Header */
+.contrail-widget-tabs.ui-tabs.ui-widget {
+	border: none;
+	padding: 0;
+}
+.contrail-widget-tabs.ui-tabs .ui-widget-header{
+	border: none;
+	background: none;
+	border-bottom: 1px solid #ccc;
+	line-height: 28px;
+	font-size: 13px;
+}
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav{
+	margin: 0;
+	padding: 1px 1px 0 10px;
+}
+.contrail-widget-tabs.ui-tabs-panel.ui-widget-content {
+	padding: 0;
+}
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a, .ui-tabs .ui-tabs-nav li.ui-state-hover a{
+	color: #3182bd;
+}
+.contrail-widget-tabs.ui-tabs .ui-state-default a, .ui-state-default a:link, .ui-tabs .ui-state-default a:visited {
+	color: #787878;
+	text-decoration: none;
+	
+}
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a{
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #fff;
+	margin-bottom: -1px;
+}
+/* End - Jquery UI Tabs with Widget Header */
 /* Begin - Jquery UI Accordion */
 .ui-accordion-header {
 	border-bottom: 1px solid #eee;

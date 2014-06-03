@@ -3207,8 +3207,8 @@ td.td-actions a.td-action {
 
 /** info and stats mini boxes **/
 .infobox-container {
- /*  text-align: center; */
   font-size: 0;
+  margin: 7px 0 0;
 }
 .infobox {
   width: 135px;

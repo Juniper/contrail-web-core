@@ -28,7 +28,6 @@ function drawVisualization(config) {
     $.getJSON(url, function(response) {
         var graph = new joint.dia.Graph,
             paper = new joint.dia.Paper({
-                height: 250,
                 el: $(selectorId),
                 model: graph
             });
@@ -78,10 +77,10 @@ function drawVisualization(config) {
         var svg = document.querySelector(selectorId + ' svg'),
             bbox = svg.getBBox(),
             width = Math.ceil(bbox.width),
-            height = Math.ceil(bbox.height);
+            height = Math.ceil(bbox.height) + 100;
 
         paper.setDimensions(width, height, 1);
-        initPanZoom(selectorId)
+        initPanZoom(selectorId);
     });
 }
 
@@ -253,6 +252,35 @@ joint.layout.contrail.DirectedGraph = $.extend(true, joint.layout.DirectedGraph,
         return { width: layoutGraph.graph().width, height: layoutGraph.graph().height };
     }
 });
+
+function resizeWidget(self,elementId){
+	if($(self).find('i').hasClass('icon-resize-full')){
+		$(self).find('i').removeClass('icon-resize-full').addClass('icon-resize-small');
+		$('#project-visualization-charts').hide();
+	}
+	else{
+		$(self).find('i').removeClass('icon-resize-small').addClass('icon-resize-full');
+		$('#project-visualization-charts').show();
+	}
+	setTopologyHeight(elementId);
+}
+
+function setTopologyHeight(elementId){
+	var topologyHeight = window.innerHeight;
+	
+	if($('#project-visualization-charts').is(':visible')){
+		topologyHeight = topologyHeight - 475;
+	}
+	else{
+		topologyHeight -= 200 ;
+	}
+	setTimeout(function(){
+		var svgHeight = $(elementId + ' svg').attr('height');
+		$(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight) ? svgHeight : topologyHeight));
+	},500)
+	
+	$(elementId).parent().css('width','100%');
+}
 
 function createTestData() {
     var testData = {nodes: [], links: []}, node;
