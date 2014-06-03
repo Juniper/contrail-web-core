@@ -17,7 +17,7 @@ function ContrailElement(type, options) {
             contrailElement = new joint.shapes.contrail.Link(options);
             break;
         default:
-            contrailElement = new joint.shapes.contrail.VirtualNetwork(options);
+            contrailElement = new joint.shapes.contrail.Element(options);
     }
     return contrailElement;
 }
@@ -81,6 +81,19 @@ function drawVisualization(config) {
 
         paper.setDimensions(width, height, 1);
         initPanZoom(selectorId);
+        $(selectorId + " text").on('mousedown touchstart', function(e) {
+            e.stopImmediatePropagation();
+            paper.pointerdown(e);
+        });
+
+        $(selectorId + " image").on('mousedown touchstart', function(e) {
+            e.stopImmediatePropagation();
+            paper.pointerdown(e);
+        });
+
+        for(i = 0; i < links.length; i++) {
+            //setupTransition4Link(nodeMap, links[i], paper, graph);
+        }
     });
 }
 
@@ -130,7 +143,7 @@ function startTransition4Link(link, paper, sec, interval) {
 }
 
 joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
-    markup: '<image/><text/>',
+    markup: '<image/><a><text/></a>',
 
     defaults: joint.util.deepSupplement({
         type: 'contrail.VirtualNetwork',
@@ -157,7 +170,7 @@ joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
 });
 
 joint.shapes.contrail.ServiceInstance = joint.dia.Element.extend({
-    markup: '<g class="rotatable"><g class="scalable"><polygon class="outer"/><polygon class="inner"/></g><a><text/></a></g>',
+    markup: '<polygon class="outer"/><polygon class="inner"/><a><text/></a>',
 
     defaults: joint.util.deepSupplement({
 
@@ -166,11 +179,11 @@ joint.shapes.contrail.ServiceInstance = joint.dia.Element.extend({
         attrs: {
             '.outer': {
                 fill: '#3498DB', stroke: '#2980B9', 'stroke-width': 2,
-                points: '40,0 80,40 40,80 0,40'
+                points: '15,0 30,15 15,30 0,15'
             },
             '.inner': {
                 fill: '#3498DB', stroke: '#2980B9', 'stroke-width': 2,
-                points: '40,5 75,40 40,75 5,40',
+                points: '15, 3 27,15 15,27 3,15',
                 display: 'none'
             },
             text: {
@@ -184,6 +197,42 @@ joint.shapes.contrail.ServiceInstance = joint.dia.Element.extend({
                 'stroke': 'black'
             },
             a: {}
+        }
+
+    }, joint.dia.Element.prototype.defaults)
+});
+
+
+joint.shapes.contrail.Element = joint.dia.Element.extend({
+    markup: '<polygon class="outer"/><polygon class="inner"/><a><text/></a>',
+
+    defaults: joint.util.deepSupplement({
+
+        type: 'contrail.Element',
+        size: { width: 30, height: 30 },
+        attrs: {
+            '.outer': {
+                fill: '#ff7f0e', stroke: '#ff7f0e', 'stroke-width': 2,
+                points: '15,0 30,15 15,30 0,15'
+            },
+            '.inner': {
+                fill: '#ff7f0e', stroke: '#ff7f0e', 'stroke-width': 2,
+                points: '15, 3 27,15 15,27 3,15',
+                display: 'none'
+            },
+            text: {
+                'font-size': 12,
+                'ref-x':.5,
+                'ref-y': -5,
+                'y-alignment': 'middle',
+                'text-anchor': 'middle',
+                'ref': 'polygon',
+                'stroke-width': '1px',
+                'stroke': 'black'
+            },
+            a: {
+                //'xlink:href': '#'
+            }
         }
 
     }, joint.dia.Element.prototype.defaults)
