@@ -36,7 +36,7 @@ function renderVisualization(config, data) {
         elements = data['elements'],
         nodes = data['nodes'],
         links = data['links'],
-        rankDir, newGraphSize;
+        rankDir, newGraphSize, $panzoom;
 
     var graph = new joint.dia.Graph,
         paper = new joint.dia.Paper({
@@ -49,8 +49,6 @@ function renderVisualization(config, data) {
     rankDir = (nodes.length > 12 || (links.length == 0)) ? 'TB' : 'LR';
     newGraphSize = joint.layout.contrail.DirectedGraph.layout(graph, { setLinkVertices: false, edgeSep:1, nodeSep: 80, rankSep: 80, rankDir: rankDir });
     paper.setDimensions(newGraphSize.width, newGraphSize.height + 100, 1);
-
-    initPanZoom(selectorId);
 
     $(selectorId + " text").on('mousedown touchstart', function(e) {
         e.stopImmediatePropagation();
@@ -70,6 +68,22 @@ function renderVisualization(config, data) {
     for(var i = 0; i < links.length; i++) {
         //setupTransition4Link(data['nodeMap'], links[i], paper, graph);
     }
+
+    $panzoom = initPanZoom(selectorId);
+
+    $panzoom.parent().on('mousewheel.focal', function( e ) {
+        e.preventDefault();
+        var delta = e.delta || e.originalEvent.wheelDelta;
+        var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+        $panzoom.panzoom('zoom', zoomOut, {
+            increment:.05,
+            animate: false,
+            minScale: 0.5,
+            maxScale: 2.5,
+            duration: 500,
+            focal: e
+        });
+    });
 }
 
 function formatData4Visualization(response) {
@@ -115,16 +129,12 @@ function formatData4Visualization(response) {
 
 function initPanZoom(elementId) {
     var $topology = $(elementId),
-        $topologyHeader = $(elementId + "-header");
-    $topology.panzoom({
-        $zoomIn: $topologyHeader.find("#topology-zoomin"),
-        $zoomOut: $topologyHeader.find("#topology-zoomout"),
-        $reset: $topologyHeader.find("#topology-reset"),
-        increment: 0.4,
-        minScale: 0.5,
-        maxScale: 2,
-        duration: 500
+        $topologyHeader = $(elementId + "-header"),
+        $panzoom;
+    $panzoom = $topology.panzoom({
+        $reset: $topologyHeader.find("#topology-reset")
     });
+    return $panzoom;
 };
 
 function setupTransition4Link(nodeMap, link, paper, graph) {
