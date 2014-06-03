@@ -147,7 +147,7 @@ joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
 
     defaults: joint.util.deepSupplement({
         type: 'contrail.VirtualNetwork',
-        size: {'width': 30, 'height': 30},
+        size: {'width': 35, 'height': 35},
         attrs: {
             text: {
                 'font-size': 12,
@@ -161,8 +161,8 @@ joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
             },
             a: {},
             image: {
-                'width': 30,
-                'height': 30,
+                'width': 35,
+                'height': 35,
                 'xlink:href': "/img/vpn.png"
             }
         }
