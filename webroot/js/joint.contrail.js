@@ -62,6 +62,11 @@ function renderVisualization(config, data) {
         paper.pointerdown(e);
     });
 
+    $(selectorId + " polygon").on('mousedown touchstart', function(e) {
+        e.stopImmediatePropagation();
+        paper.pointerdown(e);
+    });
+
     for(var i = 0; i < links.length; i++) {
         //setupTransition4Link(data['nodeMap'], links[i], paper, graph);
     }
