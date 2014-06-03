@@ -236,14 +236,14 @@ joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
         size: {'width': 35, 'height': 35},
         attrs: {
             text: {
-                'font-size': 12,
-                'ref-x':.5,
+            	'ref-x':.5,
                 'ref-y': -5,
                 'y-alignment': 'middle',
                 'text-anchor': 'middle',
                 'ref': 'image',
-                'stroke-width': '1px',
-                'stroke': 'black'
+                'stroke-width': '0.4px',
+                'stroke': '#333',
+                'fill': '#333'
             },
             a: {},
             image: {
