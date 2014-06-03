@@ -23,78 +23,89 @@ function ContrailElement(type, options) {
 }
 
 function drawVisualization(config) {
-    var url = config.url, selectorId = config.selectorId ;
+    var url = config.url;
 
     $.getJSON(url, function(response) {
-        var graph = new joint.dia.Graph,
-            paper = new joint.dia.Paper({
-                el: $(selectorId),
-                model: graph
-            });
-        //response = createTestData();
-        var nodeMap = {}, elements = [],
-            nodes = response['nodes'],
-            links = response['links'];
-
-        for(var i = 0; i < nodes.length; i++) {
-            var nodeName = nodes[i]['name'],
-                nodeType = nodes[i]['node_type'],
-                nodeStatus = nodes[i]['status'],
-                imageLink, element, options;
-            imageLink = (nodeStatus == "Deleted") ? "/img/vpn-deleted.png" : "/img/vpn.png";
-            options = {attrs: { image: {'xlink:href': imageLink}}};
-            element = new ContrailElement(nodeType, options).attr("text/text", nodeName.split(":")[2]);
-            elements.push(element);
-            nodeMap[nodeName] = element.id;
-        }
-
-        for(i = 0; i < links.length; i++) {
-            var optionsForward = {
-                sourceId: nodeMap[links[i]['src']],
-                targetId: nodeMap[links[i]['dst']]
-            }, optionsBackward = {
-                sourceId: nodeMap[links[i]['dst']],
-                targetId: nodeMap[links[i]['src']]
-            }, link;
-            if(links[i]['dir'] == 'bi') {
-                link = new ContrailElement('link', optionsForward);
-                links[i]['outLink'] = link;
-                elements.push(link);
-                link = new ContrailElement('link', optionsBackward);
-                links[i]['inLink'] = link;
-                elements.push(link);
-            } else {
-                link = new ContrailElement('link', optionsForward);
-                links[i]['outLink'] = link;
-                elements.push(link);
-            }
-        }
-
-        graph.addCells(elements);
-
-        joint.layout.contrail.DirectedGraph.layout(graph, { setLinkVertices: false, edgeSep:1, nodeSep: 80, rankSep: 80, rankDir: "LR" });
-
-        var svg = document.querySelector(selectorId + ' svg'),
-            bbox = svg.getBBox(),
-            width = Math.ceil(bbox.width),
-            height = Math.ceil(bbox.height) + 100;
-
-        paper.setDimensions(width, height, 1);
-        initPanZoom(selectorId);
-        $(selectorId + " text").on('mousedown touchstart', function(e) {
-            e.stopImmediatePropagation();
-            paper.pointerdown(e);
-        });
-
-        $(selectorId + " image").on('mousedown touchstart', function(e) {
-            e.stopImmediatePropagation();
-            paper.pointerdown(e);
-        });
-
-        for(i = 0; i < links.length; i++) {
-            //setupTransition4Link(nodeMap, links[i], paper, graph);
-        }
+        var data = formatData4Visualization(response);
+        renderVisualization(config, data);
     });
+}
+
+function renderVisualization(config, data) {
+    var selectorId = config.selectorId,
+        elements = data['elements'],
+        nodes = data['nodes'],
+        links = data['links'],
+        rankDir, newGraphSize;
+
+    var graph = new joint.dia.Graph,
+        paper = new joint.dia.Paper({
+            el: $(selectorId),
+            model: graph
+        });
+
+    graph.addCells(elements);
+
+    rankDir = (nodes.length > 12 || (links.length == 0)) ? 'TB' : 'LR';
+    newGraphSize = joint.layout.contrail.DirectedGraph.layout(graph, { setLinkVertices: false, edgeSep:1, nodeSep: 80, rankSep: 80, rankDir: rankDir });
+    paper.setDimensions(newGraphSize.width, newGraphSize.height + 100, 1);
+
+    initPanZoom(selectorId);
+
+    $(selectorId + " text").on('mousedown touchstart', function(e) {
+        e.stopImmediatePropagation();
+        paper.pointerdown(e);
+    });
+
+    $(selectorId + " image").on('mousedown touchstart', function(e) {
+        e.stopImmediatePropagation();
+        paper.pointerdown(e);
+    });
+
+    for(var i = 0; i < links.length; i++) {
+        //setupTransition4Link(data['nodeMap'], links[i], paper, graph);
+    }
+}
+
+function formatData4Visualization(response) {
+    var nodeMap = {}, elements = [],
+        nodes = response['nodes'],
+        links = response['links'];
+
+    for(var i = 0; i < nodes.length; i++) {
+        var nodeName = nodes[i]['name'],
+            nodeType = nodes[i]['node_type'],
+            nodeStatus = nodes[i]['status'],
+            imageLink, element, options;
+        imageLink = (nodeStatus == "Deleted") ? "/img/vpn-deleted.png" : "/img/vpn.png";
+        options = {attrs: { image: {'xlink:href': imageLink}}};
+        element = new ContrailElement(nodeType, options).attr("text/text", nodeName.split(":")[2]);
+        elements.push(element);
+        nodeMap[nodeName] = element.id;
+    }
+
+    for(i = 0; i < links.length; i++) {
+        var optionsForward = {
+            sourceId: nodeMap[links[i]['src']],
+            targetId: nodeMap[links[i]['dst']]
+        }, optionsBackward = {
+            sourceId: nodeMap[links[i]['dst']],
+            targetId: nodeMap[links[i]['src']]
+        }, link;
+        if(links[i]['dir'] == 'bi') {
+            link = new ContrailElement('link', optionsForward);
+            links[i]['outLink'] = link;
+            elements.push(link);
+            link = new ContrailElement('link', optionsBackward);
+            links[i]['inLink'] = link;
+            elements.push(link);
+        } else {
+            link = new ContrailElement('link', optionsForward);
+            links[i]['outLink'] = link;
+            elements.push(link);
+        }
+    }
+    return {elements: elements, nodeMap: nodeMap, nodes: nodes, links: links};
 }
 
 function initPanZoom(elementId) {
@@ -141,6 +152,76 @@ function startTransition4Link(link, paper, sec, interval) {
         token.animateAlongPath({ dur: sec + 's', repeatCount: 1 }, paper.findViewByModel(link).$('.connection')[0]);
     }, interval);
 }
+
+function resizeWidget(self,elementId){
+	if($(self).find('i').hasClass('icon-resize-full')){
+		$(self).find('i').removeClass('icon-resize-full').addClass('icon-resize-small');
+		$('#project-visualization-charts').hide();
+	}
+	else{
+		$(self).find('i').removeClass('icon-resize-small').addClass('icon-resize-full');
+		$('#project-visualization-charts').show();
+	}
+	setTopologyHeight(elementId);
+}
+
+function setTopologyHeight(elementId){
+	var topologyHeight = window.innerHeight;
+	
+	if($('#project-visualization-charts').is(':visible')){
+		topologyHeight = topologyHeight - 475;
+	}
+	else{
+		topologyHeight -= 200 ;
+	}
+	setTimeout(function(){
+		var svgHeight = $(elementId + ' svg').attr('height');
+		$(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight) ? svgHeight : topologyHeight));
+	},500)
+	
+	$(elementId).parent().css('width','100%');
+}
+
+
+function drawTestVisualization(config) {
+    var data = formatData4Visualization(createTestData());
+    renderVisualization(config, data);
+}
+
+function createTestData() {
+    var testData = {nodes: [], links: []}, node;
+
+    for(var i = 1; i <= 11; i++) {
+        node = {name: 'default-domain:admin:vnetwork' + i, node_type: 'virtual-network', status:'Active'};
+        testData['nodes'].push(node);
+    }
+
+    node = {name: 'default-domain:admin:test', node_type: 'virtual-network', status:'Deleted'};
+    testData['nodes'].push(node);
+
+    for(var i = 1; i <= 2; i++) {
+        node = {name: 'default-domain:admin:sinstance' + i, node_type: 'service-instance', status:'Active'};
+        testData['nodes'].push(node);
+    }
+
+    var connections = [[2, 3, 4,5,6,7], [8,9,3], [], [10], [11]];
+
+    for(var i = 0; i < connections.length; i++) {
+        var con = connections[i], link;
+        if(i % 3 == 0) {
+            link = {src: 'default-domain:admin:vnetwork' + (i + 1) , dst: 'default-domain:admin:sinstance' + (i/3 + 1), dir:'uni'};
+            testData['links'].push(link);
+            link = {src: 'default-domain:admin:sinstance' + (i/3 + 1) , dst: 'default-domain:admin:vnetwork' + (i + 2), dir:'uni'};
+            testData['links'].push(link);
+        }
+        for(var j = 0; j < con.length; j++) {
+            link = {src: 'default-domain:admin:vnetwork' + (i + 1) , dst: 'default-domain:admin:vnetwork' + con[j], dir: (i / 2 == 0) ? 'uni' : 'bi'};
+            testData['links'].push(link);
+        }
+    }
+    return testData;
+};
+
 
 joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
     markup: '<image/><a><text/></a>',
@@ -301,66 +382,3 @@ joint.layout.contrail.DirectedGraph = $.extend(true, joint.layout.DirectedGraph,
         return { width: layoutGraph.graph().width, height: layoutGraph.graph().height };
     }
 });
-
-function resizeWidget(self,elementId){
-	if($(self).find('i').hasClass('icon-resize-full')){
-		$(self).find('i').removeClass('icon-resize-full').addClass('icon-resize-small');
-		$('#project-visualization-charts').hide();
-	}
-	else{
-		$(self).find('i').removeClass('icon-resize-small').addClass('icon-resize-full');
-		$('#project-visualization-charts').show();
-	}
-	setTopologyHeight(elementId);
-}
-
-function setTopologyHeight(elementId){
-	var topologyHeight = window.innerHeight;
-	
-	if($('#project-visualization-charts').is(':visible')){
-		topologyHeight = topologyHeight - 475;
-	}
-	else{
-		topologyHeight -= 200 ;
-	}
-	setTimeout(function(){
-		var svgHeight = $(elementId + ' svg').attr('height');
-		$(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight) ? svgHeight : topologyHeight));
-	},500)
-	
-	$(elementId).parent().css('width','100%');
-}
-
-function createTestData() {
-    var testData = {nodes: [], links: []}, node;
-
-    for(var i = 1; i <= 11; i++) {
-        node = {name: 'default-domain:admin:vnetwork' + i, node_type: 'virtual-network', status:'Active'};
-        testData['nodes'].push(node);
-    }
-
-    node = {name: 'default-domain:admin:test', node_type: 'virtual-network', status:'Deleted'};
-    testData['nodes'].push(node);
-
-    for(var i = 1; i <= 2; i++) {
-        node = {name: 'default-domain:admin:sinstance' + i, node_type: 'service-instance', status:'Active'};
-        testData['nodes'].push(node);
-    }
-
-    var connections = [[2, 3, 4,5,6,7], [8,9,3], [], [10], [11]];
-
-    for(var i = 0; i < connections.length; i++) {
-        var con = connections[i], link;
-        if(i % 3 == 0) {
-            link = {src: 'default-domain:admin:vnetwork' + (i + 1) , dst: 'default-domain:admin:sinstance' + (i/3 + 1), dir:'uni'};
-            testData['links'].push(link);
-            link = {src: 'default-domain:admin:sinstance' + (i/3 + 1) , dst: 'default-domain:admin:vnetwork' + (i + 2), dir:'uni'};
-            testData['links'].push(link);
-        }
-        for(var j = 0; j < con.length; j++) {
-            link = {src: 'default-domain:admin:vnetwork' + (i + 1) , dst: 'default-domain:admin:vnetwork' + con[j], dir: (i / 2 == 0) ? 'uni' : 'bi'};
-            testData['links'].push(link);
-        }
-    }
-    return testData;
-};
