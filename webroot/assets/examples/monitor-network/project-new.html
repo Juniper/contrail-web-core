@@ -457,9 +457,8 @@ End prod_env -->
 	$(document).ready(function(){
 		$('#tabs').contrailWidgetTabs();
 		
-		var config= {url: '/api/tenant/monitoring/network-topology?fqName=default-domain:admin', selectorId: '#topology'};
-        drawVisualization(config);
-        
+		var config= {selectorId: '#topology'};
+        drawTestVisualization(config);
         setTopologyHeight('#topology');
 	});
 	
