@@ -584,8 +584,7 @@ function chartsParseFn(options, response) {
                 var kGrid = $(this).contrailGrid($.extend({
                     header : {
                         title: {
-                            text: data['config']['widgetGridTitle'],
-                            icon: data['config']['widgetIcon'] != null ? data['config']['widgetIcon']  : 'icon-list' 
+                            text: data['config']['widgetGridTitle']
                         },
                         customControls:ifNull(data['config']['widgetGridActions'],[])
                     },
@@ -1132,6 +1131,17 @@ function MenuHandler() {
         $('#btn-query').removeClass("active");
         $('#btn-setting').removeClass("active");
         $(buttonId).addClass("active");
+    }
+    /*
+     * Here we are checking whether the hash exists in the menu object
+     */
+    this.isHashExists = function (hashObj) {
+        //if the hash is null,which means no change in the current hash conveys that already it exists in menuObj
+        if(hashObj != null && (hashObj['p'] == null || menuHandler.getMenuObjByHash(hashObj['p']) != -1))
+            return true;
+        else 
+            return false;
+                
     }
     
     /*
