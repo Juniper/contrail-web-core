@@ -208,38 +208,50 @@ function startTransition4Link(link, paper, sec, interval) {
 }
 
 function resizeWidget(self,elementId){
-    if($(self).find('i').hasClass('icon-resize-full')){
-        $(self).find('i').removeClass('icon-resize-full').addClass('icon-resize-small');
-        $('#project-visualization-charts').hide();
-    }
-    else{
-        $(self).find('i').removeClass('icon-resize-small').addClass('icon-resize-full');
-        $('#project-visualization-charts').show();
-    }
-    setTopologyHeight(elementId);
+	if($(self).find('i').hasClass('icon-resize-full')){
+		$(self).find('i').removeClass('icon-resize-full').addClass('icon-resize-small');
+		$(self).parents('.widget-box').find('.project-visualization-charts').hide();
+	}
+	else{
+		$(self).find('i').removeClass('icon-resize-small').addClass('icon-resize-full');
+		$(self).parents('.widget-box').find('.project-visualization-charts').show();
+	}
+	setTopologyHeight(elementId, true);
 }
 
-function setTopologyHeight(elementId){
-    var topologyHeight = window.innerHeight;
-
-    if($('#project-visualization-charts').is(':visible')){
-        topologyHeight = topologyHeight - 435;
-    }
-    else{
-        topologyHeight -= 200 ;
-    }
-    setTimeout(function(){
-        var svgHeight = $(elementId + ' svg').attr('height');
-        $(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight) ? svgHeight : topologyHeight));
-    },500)
-
-    $(elementId).parent().css('width','100%');
+function setTopologyHeight(elementId, resizeFlag){
+	var topologyHeight = window.innerHeight;
+	
+	if($(elementId).parents('.widget-box').find('.project-visualization-charts').is(':visible')){
+		topologyHeight = topologyHeight - 500;
+	}
+	else{
+		topologyHeight -= 175 ;
+	}
+	
+	var svgHeight = $(elementId + ' svg').attr('height');
+	$(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight && !resizeFlag) ? svgHeight : topologyHeight));
+	
+	$(elementId).parent().css('width','100%');
 }
-
 
 function drawTestVisualization(config) {
     var data = formatData4BiDirVisualization(createTestData());
     renderVisualization(config, data);
+    
+    $.contextMenu({
+        selector: 'g', 
+        callback: function(key, options) {
+            var m = "clicked: " + key;
+            window.console && console.log(m) || alert(m); 
+        },
+        items: {
+            "view": {name: "View"},
+            "edit": {name: "Edit"},
+            "monitor": {name: "Monitor"},
+            
+        }
+    });
 }
 
 function createTestData() {
