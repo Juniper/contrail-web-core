@@ -58,13 +58,7 @@ HTTPS clone URL:
     cd contrail-web-core
     make repos
 
-or SSH clone URL:
-
-    git clone https://github.com/Juniper/contrail-web-controller.git
-
-or HTTPS clone URL:
-
-    git clone git@github.com:Juniper/contrail-web-controller.git    
+'make repos' downloads two more repos contrail-web-controller and contrail-third-party in contrail-web-controller and third_party directory respectively in parent directory.
     
 
 4) Execute the following commands under `contrail-web-core` directory to setup development environment. It downloads all the third-party libraries and generates the files required for Contrail Web UI.
@@ -72,9 +66,16 @@ or HTTPS clone URL:
     make fetch-pkgs-dev
     make dev-env
 
+'make fetch-pkgs-dev' downloads all the third-party modules required for development. 
+
+'make dev-env' sets the environment for development. It copies all the third-party modules in correct path.
+Please note this step changes the file contents in dashboard.tmpl, login.tmpl and login-error.tmpl under webroot/html directory. So if you have any changes in any of these three files, before check-in, you MUST issue below command
+    
+    make rem-ts-prod
+
 5) Start `redis-server` on port 6383, 6383 is the default port used by Contrail Web UI, the port can be changed as explained in 'Configuration parameters' section.
 
-    redis-server -p 6383
+    redis-server --port 6383
 
 
 #### Configuration parameters
@@ -138,8 +139,6 @@ Default credentials are
     The file 'config.global.js' holds configuration parameters related to web server (IP address/Port/Protocol,Caching, Log levels etc). 
     It also has configuration parameters required to communicate with underlying orchestration modules, the IP addresses/Port/Protocol these module listen at etc. 
     Refer section 'Configuration parameters' for further details.
-
-**distro**&nbsp;&nbsp;&nbsp;&nbsp; - Contains patches to be applied on top of existing third party softwares/modules/libraries etc.
 
 **keys**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Contains certificate file, certificate request, RSA private key files.
 

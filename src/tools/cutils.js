@@ -257,7 +257,12 @@ function policy_net_display(nets, domain, project) {
                 		isString(project)) {
                 		var splits = net["virtual_network"].split(":");
                 		if(domain === splits[0] && project === splits[1]) {
-                			net_disp += splits[2];
+                            if(splits[2].toLowerCase() === "any" 
+                                || splits[2].toLowerCase() === "local"){
+                                net_disp = net["virtual_network"].toString();
+                            } else {
+								net_disp += splits[2];
+                            }
                 		} else {
                 			net_disp += net["virtual_network"].toString();
                 		}
@@ -676,7 +681,7 @@ function ip_range(ip_str, ip_list) {
 function getSelectedProjectObjNew (projectSwitcherId, elementType) {
     var firstProjectName = "", firstProjectValue = "";
     var cookiedProject = getCookie("project");
-    if (cookiedProject === false) {
+    if (cookiedProject === false || cookiedProject === "null" || cookiedProject === "undefined") {
         if(elementType === "contrailDropdown") {
             firstProjectName = $("#" + projectSwitcherId).data(elementType).text();
             firstProjectValue = $("#" + projectSwitcherId).data(elementType).value();
@@ -691,6 +696,8 @@ function getSelectedProjectObjNew (projectSwitcherId, elementType) {
                     return $("#" + projectSwitcherId).data(elementType).getAllData()[i].value;
                 }
             }
+            firstProjectName = $("#" + projectSwitcherId).data(elementType).text();
+            firstProjectValue = $("#" + projectSwitcherId).data(elementType).value();
         }
     }
     setCookie("project", firstProjectName);
@@ -871,7 +878,7 @@ function deleteComplete(cbParams) {
     	var msg = "";
     	var objects = [];
         for(var i=0; i<cbParams.errors.length; i++) {
-            objects[i] = cbParams.selected_rows[i][cbParams.errorField];
+            objects[i] = cbParams.selected_rows[cbParams.errors[i]][cbParams.errorField];
             msg = msg +
             cbParams.errorField + ": " + cbParams.selected_rows[i][cbParams.errorField] + "<br>" +
             cbParams.errorDesc[i] + "<br><br>";
@@ -916,6 +923,19 @@ function checkSystemProject(project) {
 	if(sysProjects.indexOf(project) !== -1)
 		return true;
 	return false;
+}
+
+function scrollUp(contWindow,div,boolCollapse){
+    if(46 >= Math.abs(
+        $(contWindow).find("div.modal-body")[0].getBoundingClientRect().bottom - 
+        $(div)[0].getBoundingClientRect().bottom)) {
+        $($(contWindow).find("div.modal-body")[0]).animate({
+         scrollTop: $(div)[0].getBoundingClientRect().top
+        }, 1000);
+    }
+    if(boolCollapse === true){
+        collapseElement(div);
+    }
 }
 
 cutils.getCookie = getCookie;
@@ -964,4 +984,5 @@ cutils.deleteSuccess = deleteSuccess;
 cutils.deleteComplete = deleteComplete;
 cutils.deleteFailure = deleteFailure;
 cutils.checkSystemProject = checkSystemProject;
+cutils.scrollUp = scrollUp;
 cutils.getSelectedProjectObjNew = getSelectedProjectObjNew;
