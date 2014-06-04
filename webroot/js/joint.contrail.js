@@ -26,21 +26,20 @@ function drawVisualization(config) {
     var url = config.url;
 
     $.getJSON(url, function(response) {
-        var data = formatData4Visualization(response);
+        var data = formatData4BiDirVisualization(response);
         renderVisualization(config, data);
     });
-    
+
     $.contextMenu({
-        selector: 'g', 
+        selector: 'g',
         callback: function(key, options) {
             var m = "clicked: " + key;
-            window.console && console.log(m) || alert(m); 
+            window.console && console.log(m) || alert(m);
         },
         items: {
             "view": {name: "View"},
             "edit": {name: "Edit"},
-            "monitor": {name: "Monitor"},
-            
+            "monitor": {name: "Monitor"}
         }
     });
 }
@@ -100,22 +99,34 @@ function renderVisualization(config, data) {
     });
 }
 
+function formatData4BiDirVisualization(response) {
+    var nodeMap = {}, elements = [],
+        nodes = response['nodes'],
+        links = response['links'];
+
+    formatNodesData(nodes, elements, nodeMap);
+
+    for(i = 0; i < links.length; i++) {
+        var options = {
+            sourceId: nodeMap[links[i]['src']],
+            targetId: nodeMap[links[i]['dst']],
+            direction: links[i]['dir'],
+            linkType: 'bi'
+        }, link;
+
+        link = new ContrailElement('link', options);
+        elements.push(link);
+    }
+
+    return {elements: elements, nodeMap: nodeMap, nodes: nodes, links: links};
+}
+
 function formatData4Visualization(response) {
     var nodeMap = {}, elements = [],
         nodes = response['nodes'],
         links = response['links'];
 
-    for(var i = 0; i < nodes.length; i++) {
-        var nodeName = nodes[i]['name'],
-            nodeType = nodes[i]['node_type'],
-            nodeStatus = nodes[i]['status'],
-            imageLink, element, options;
-        imageLink = (nodeStatus == "Deleted") ? "/img/vpn-deleted.png" : "/img/vpn.png";
-        options = {attrs: { image: {'xlink:href': imageLink}}};
-        element = new ContrailElement(nodeType, options).attr("text/text", nodeName.split(":")[2]);
-        elements.push(element);
-        nodeMap[nodeName] = element.id;
-    }
+    formatNodesData(nodes, elements, nodeMap);
 
     for(i = 0; i < links.length; i++) {
         var optionsForward = {
@@ -139,6 +150,20 @@ function formatData4Visualization(response) {
         }
     }
     return {elements: elements, nodeMap: nodeMap, nodes: nodes, links: links};
+}
+
+function formatNodesData(nodes, elements, nodeMap) {
+    for(var i = 0; i < nodes.length; i++) {
+        var nodeName = nodes[i]['name'],
+            nodeType = nodes[i]['node_type'],
+            nodeStatus = nodes[i]['status'],
+            imageLink, element, options;
+        imageLink = (nodeStatus == "Deleted") ? "/img/vpn-deleted.png" : "/img/vpn.png";
+        options = {attrs: { image: {'xlink:href': imageLink}}};
+        element = new ContrailElement(nodeType, options).attr("text/text", nodeName.split(":")[2]);
+        elements.push(element);
+        nodeMap[nodeName] = element.id;
+    }
 }
 
 function initPanZoom(elementId) {
@@ -183,37 +208,37 @@ function startTransition4Link(link, paper, sec, interval) {
 }
 
 function resizeWidget(self,elementId){
-	if($(self).find('i').hasClass('icon-resize-full')){
-		$(self).find('i').removeClass('icon-resize-full').addClass('icon-resize-small');
-		$('#project-visualization-charts').hide();
-	}
-	else{
-		$(self).find('i').removeClass('icon-resize-small').addClass('icon-resize-full');
-		$('#project-visualization-charts').show();
-	}
-	setTopologyHeight(elementId);
+    if($(self).find('i').hasClass('icon-resize-full')){
+        $(self).find('i').removeClass('icon-resize-full').addClass('icon-resize-small');
+        $('#project-visualization-charts').hide();
+    }
+    else{
+        $(self).find('i').removeClass('icon-resize-small').addClass('icon-resize-full');
+        $('#project-visualization-charts').show();
+    }
+    setTopologyHeight(elementId);
 }
 
 function setTopologyHeight(elementId){
-	var topologyHeight = window.innerHeight;
-	
-	if($('#project-visualization-charts').is(':visible')){
-		topologyHeight = topologyHeight - 435;
-	}
-	else{
-		topologyHeight -= 200 ;
-	}
-	setTimeout(function(){
-		var svgHeight = $(elementId + ' svg').attr('height');
-		$(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight) ? svgHeight : topologyHeight));
-	},500)
-	
-	$(elementId).parent().css('width','100%');
+    var topologyHeight = window.innerHeight;
+
+    if($('#project-visualization-charts').is(':visible')){
+        topologyHeight = topologyHeight - 435;
+    }
+    else{
+        topologyHeight -= 200 ;
+    }
+    setTimeout(function(){
+        var svgHeight = $(elementId + ' svg').attr('height');
+        $(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight) ? svgHeight : topologyHeight));
+    },500)
+
+    $(elementId).parent().css('width','100%');
 }
 
 
 function drawTestVisualization(config) {
-    var data = formatData4Visualization(createTestData());
+    var data = formatData4BiDirVisualization(createTestData());
     renderVisualization(config, data);
 }
 
@@ -253,14 +278,14 @@ function createTestData() {
 
 
 joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
-    markup: '<image/><a><text/></a>',
+    markup: '<image/><text/>',
 
     defaults: joint.util.deepSupplement({
         type: 'contrail.VirtualNetwork',
         size: {'width': 35, 'height': 35},
         attrs: {
             text: {
-            	'ref-x':.5,
+                'ref-x':.5,
                 'ref-y': -5,
                 'y-alignment': 'middle',
                 'text-anchor': 'middle',
@@ -269,7 +294,6 @@ joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
                 'stroke': '#333',
                 'fill': '#333'
             },
-            a: {},
             image: {
                 'width': 35,
                 'height': 35,
@@ -280,7 +304,7 @@ joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
 });
 
 joint.shapes.contrail.ServiceInstance = joint.dia.Element.extend({
-    markup: '<polygon class="outer"/><polygon class="inner"/><a><text/></a>',
+    markup: '<polygon class="outer"/><polygon class="inner"/><text/>',
 
     defaults: joint.util.deepSupplement({
 
@@ -306,8 +330,7 @@ joint.shapes.contrail.ServiceInstance = joint.dia.Element.extend({
                 'stroke-width': '0.4px',
                 'stroke': '#333',
                 'fill': '#333'
-            },
-            a: {}
+            }
         }
 
     }, joint.dia.Element.prototype.defaults)
@@ -315,7 +338,7 @@ joint.shapes.contrail.ServiceInstance = joint.dia.Element.extend({
 
 
 joint.shapes.contrail.Element = joint.dia.Element.extend({
-    markup: '<polygon class="outer"/><polygon class="inner"/><a><text/></a>',
+    markup: '<polygon class="outer"/><polygon class="inner"/><text/>',
 
     defaults: joint.util.deepSupplement({
 
@@ -341,9 +364,6 @@ joint.shapes.contrail.Element = joint.dia.Element.extend({
                 'stroke-width': '0.4px',
                 'stroke': '#333',
                 'fill': '#333'
-            },
-            a: {
-                //'xlink:href': '#'
             }
         }
 
@@ -369,7 +389,16 @@ joint.shapes.contrail.Link = function(options) {
         }
     }, link;
 
-    linkConfig['attrs']['.marker-target'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
+    if(options['linkType'] == 'bi') {
+        if(options.direction == 'bi') {
+            linkConfig['attrs']['.marker-source'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
+            linkConfig['attrs']['.marker-target'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
+        } else if(options.direction == 'uni') {
+            linkConfig['attrs']['.marker-target'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
+        }
+    } else {
+        linkConfig['attrs']['.marker-target'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
+    }
 
     link = new joint.dia.Link(linkConfig);
     return link;
@@ -409,7 +438,6 @@ joint.layout.contrail.DirectedGraph = $.extend(true, joint.layout.DirectedGraph,
                 }
             });
         }
-
         return { width: layoutGraph.graph().width, height: layoutGraph.graph().height };
     }
 });
