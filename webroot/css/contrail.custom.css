@@ -719,7 +719,6 @@ filter: alpha(opacity=40);
 	height: auto !important;
 }
 #topology svg text {
-	font-family: "Open Sans";
 	font-size: 11px;
 	font-weight:200;
 }
@@ -1497,4 +1496,15 @@ a.disabled-link, a.disabled-link:hover{
 
 .disabledBtn i {
     cursor: default;
+}
+
+/* Context Menu */
+.context-menu-list {
+	background-color: #fff;
+}
+.context-menu-list .context-menu-item {
+	background-color: #fff;	
+}
+.context-menu-list .context-menu-item:hover {
+	background-color: #c6dbef;
 }

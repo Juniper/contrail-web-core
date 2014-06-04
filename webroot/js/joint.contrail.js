@@ -29,6 +29,20 @@ function drawVisualization(config) {
         var data = formatData4Visualization(response);
         renderVisualization(config, data);
     });
+    
+    $.contextMenu({
+        selector: 'g', 
+        callback: function(key, options) {
+            var m = "clicked: " + key;
+            window.console && console.log(m) || alert(m); 
+        },
+        items: {
+            "view": {name: "View"},
+            "edit": {name: "Edit"},
+            "monitor": {name: "Monitor"},
+            
+        }
+    });
 }
 
 function renderVisualization(config, data) {
@@ -184,7 +198,7 @@ function setTopologyHeight(elementId){
 	var topologyHeight = window.innerHeight;
 	
 	if($('#project-visualization-charts').is(':visible')){
-		topologyHeight = topologyHeight - 475;
+		topologyHeight = topologyHeight - 435;
 	}
 	else{
 		topologyHeight -= 200 ;
@@ -289,8 +303,9 @@ joint.shapes.contrail.ServiceInstance = joint.dia.Element.extend({
                 'y-alignment': 'middle',
                 'text-anchor': 'middle',
                 'ref': 'polygon',
-                'stroke-width': '1px',
-                'stroke': 'black'
+                'stroke-width': '0.4px',
+                'stroke': '#333',
+                'fill': '#333'
             },
             a: {}
         }
@@ -323,8 +338,9 @@ joint.shapes.contrail.Element = joint.dia.Element.extend({
                 'y-alignment': 'middle',
                 'text-anchor': 'middle',
                 'ref': 'polygon',
-                'stroke-width': '1px',
-                'stroke': 'black'
+                'stroke-width': '0.4px',
+                'stroke': '#333',
+                'fill': '#333'
             },
             a: {
                 //'xlink:href': '#'
