@@ -4,15 +4,15 @@
 
 var config = require('../../../../config/config.global');
 var  topoCache = require(config.featurePkg.webController.path +
-                         '/webroot/monitor/tenant_network/jobs/topoCache.api')
+                         '/webroot/monitor/tenant-network/jobs/topoCache.api')
 	, bgpNode = require(config.featurePkg.webController.path +
                         '/webroot/monitor/infra/controlnode/jobs/controlnode.jobs.api')
 	, computeNode = require(config.featurePkg.webController.path +
                             '/webroot/monitor/infra/vrouter/jobs/vrouternode.jobs.api')
 	, nwMonJobsApi = require(config.featurePkg.webController.path +
-                             '/webroot/monitor/tenant_network/jobs/network.mon.jobs')
+                             '/webroot/monitor/tenant-network/jobs/network.mon.jobs')
 	, tpoCache     = require(config.featurePkg.webController.path + 
-                             '/webroot/monitor/tenant_network/jobs/tpoCache.api');
+                             '/webroot/monitor/tenant-network/jobs/tpoCache.api');
 	;
 
 var jobsProcess = module.exports;
