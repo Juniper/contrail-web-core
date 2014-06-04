@@ -148,6 +148,15 @@ cp -r ./web-third-party/joint-v0.9.0/dist/joint.layout.DirectedGraph.js webroot/
 cp -r ./web-third-party/joint-v0.9.0/dist/joint.nojquery.css webroot/assets/joint/css/
 #End - Copy Joint from web-third-party
 
+#Start - Copy jquery-contextMenu from web-third-party
+rm -rf webroot/assets/jquery-contextMenu
+mkdir -p webroot/assets/jquery-contextMenu/js
+mkdir -p webroot/assets/jquery-contextMenu/css
+cp -r ./web-third-party/jquery-contextMenu-1.6.5/src/jquery.contextMenu.js webroot/assets/jquery-contextMenu/js/
+cp -r ./web-third-party/jquery-contextMenu-1.6.5/src/jquery.ui.position.js webroot/assets/jquery-contextMenu/js/
+cp -r ./web-third-party/jquery-contextMenu-1.6.5/src/jquery.contextMenu.css webroot/assets/jquery-contextMenu/css
+#End - Copy jquery-contextMenu from web-third-party
+
 #Start - Merging All JS files
 rm -f webroot/js/contrail-all-1.js
 rm -f webroot/js/contrail-all-2.js

@@ -206,6 +206,11 @@ tar -xf jquery.panzoom-v2.0.5.tar.gz
 rm -rf jquery.panzoom-v2.0.5.tar.gz
 mv jquery.panzoom-2.0.5 jquery.panzoom-v2.0.5
 
+getPackage https://github.com/medialize/jQuery-contextMenu/archive/v1.6.5.tar.gz jquery-contextMenu-v1.6.5.tar.gz
+tar -xf jquery-contextMenu-v1.6.5.tar.gz
+rm -rf jquery-contextMenu-v1.6.5.tar.gz
+mv jquery-contextMenu-1.6.5.tar.gz jquery-contextMenu-v1.6.5.tar.gz
+
 getPackage https://github.com/crlcu/multiselect/archive/master.zip multiselect.zip
 unzip -o multiselect.zip
 rm -rf multiselect.zip
