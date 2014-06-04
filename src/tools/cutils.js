@@ -681,7 +681,7 @@ function ip_range(ip_str, ip_list) {
 function getSelectedProjectObjNew (projectSwitcherId, elementType) {
     var firstProjectName = "", firstProjectValue = "";
     var cookiedProject = getCookie("project");
-    if (cookiedProject === false || cookiedProject === "null") {
+    if (cookiedProject === false || cookiedProject === "null" || cookiedProject === "undefined") {
         if(elementType === "contrailDropdown") {
             firstProjectName = $("#" + projectSwitcherId).data(elementType).text();
             firstProjectValue = $("#" + projectSwitcherId).data(elementType).value();
@@ -696,6 +696,8 @@ function getSelectedProjectObjNew (projectSwitcherId, elementType) {
                     return $("#" + projectSwitcherId).data(elementType).getAllData()[i].value;
                 }
             }
+            firstProjectName = $("#" + projectSwitcherId).data(elementType).text();
+            firstProjectValue = $("#" + projectSwitcherId).data(elementType).value();
         }
     }
     setCookie("project", firstProjectName);
