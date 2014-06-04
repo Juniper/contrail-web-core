@@ -167,9 +167,9 @@ cp -r ./$THIRD_PARTY/joint-v0.9.0/dist/joint.nojquery.css webroot/assets/joint/c
 rm -rf webroot/assets/jquery-contextMenu
 mkdir -p webroot/assets/jquery-contextMenu/js
 mkdir -p webroot/assets/jquery-contextMenu/css
-cp -r ./$THIRD_PARTY/jquery-contextMenu-1.6.5/src/jquery.contextMenu.js webroot/assets/jquery-contextMenu/js/
-cp -r ./$THIRD_PARTY/jquery-contextMenu-1.6.5/src/jquery.ui.position.js webroot/assets/jquery-contextMenu/js/
-cp -r ./$THIRD_PARTY/jquery-contextMenu-1.6.5/src/jquery.contextMenu.css webroot/assets/jquery-contextMenu/css
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.contextMenu.js webroot/assets/jquery-contextMenu/js/
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.ui.position.js webroot/assets/jquery-contextMenu/js/
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.contextMenu.css webroot/assets/jquery-contextMenu/css
 #End - Copy jquery-contextMenu from web-third-party
 
 #Start - Merging All JS files

@@ -132,6 +132,7 @@ clean:
 	rm -rf webroot/assets/select2
 	rm -rf webroot/assets/slickgrid
 	rm -rf webroot/assets/joint
+	rm -rf webroot/assets/jquery-contextMenu
 	rm -rf webroot/assets/jsonpath
 	rm -rf webroot/assets/xdate
 
