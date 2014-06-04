@@ -338,7 +338,7 @@ function LayoutHandler() {
 
     /** Override the entire hash object with the given one */
     this.setURLHashObj = function (obj) {
-        if(!(obj['p'] != null && checkAccessForHash(obj['p'])))
+        if(!menuHandler.isHashExists(obj))
             return
         var currHashObj = self.getURLHashObj();
         //Update Hash only if it differs from current hash
@@ -356,7 +356,7 @@ function LayoutHandler() {
     /** Sets the vaue of 'q' in urlHash */
     this.setURLHashParams = function (hashParams, obj) {
         var merge = true, triggerHashChange = true;
-        if(!(obj['p'] != null && checkAccessForHash(obj['p'])))
+        if(!menuHandler.isHashExists(obj))
                 return
         if (obj != null) {
             merge = ifNull(obj['merge'], true);
@@ -376,17 +376,6 @@ function LayoutHandler() {
             else
                 $.bbq.pushState({q:hashParams});
         }
-    }
-    /*
-     * Here we are checking whether the user has access to the hash and we allow to change the hash only
-     * if has access.
-     */
-    function checkAccessForHash(hash) {
-        if(hash != null && menuHandler.getMenuObjByHash(hash) != -1)
-            return true;
-        else 
-            return false;
-            
     }
 }
 
