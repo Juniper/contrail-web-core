@@ -1,0 +1,15 @@
+<!--
+ Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+-->
+
+<jobLists>
+  <!-- Define module name here which is being referenced in the generated 
+       file
+   -->
+  <require>
+      <define>config</define>
+      <path>../../../../config/config.global</path>
+  </require>
+  <!-- Define Job Names and the corresponding callback -->
+</jobLists>
+

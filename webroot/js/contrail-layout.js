@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
 function handleSideMenu() {
@@ -338,6 +338,8 @@ function LayoutHandler() {
 
     /** Override the entire hash object with the given one */
     this.setURLHashObj = function (obj) {
+        if(!menuHandler.isHashExists(obj))
+            return
         var currHashObj = self.getURLHashObj();
         //Update Hash only if it differs from current hash
         if (JSON.stringify(sort(currHashObj)) != JSON.stringify(sort(obj))) {
@@ -354,6 +356,8 @@ function LayoutHandler() {
     /** Sets the vaue of 'q' in urlHash */
     this.setURLHashParams = function (hashParams, obj) {
         var merge = true, triggerHashChange = true;
+        if(!menuHandler.isHashExists(obj))
+                return
         if (obj != null) {
             merge = ifNull(obj['merge'], true);
             triggerHashChange = ifNull(obj['triggerHashChange'], true);
@@ -388,8 +392,11 @@ function onHashChange(lastHash, currHash) {
         reloadMenu = true, currPageHashArray, subMenuId;
     var lastMenuObj = menuHandler.getMenuObjByHash(lastPageHash);
     try {
-        if (currPageHash == '') {
-            currPageHash = "mon_infra_dashboard";
+        if (currPageHash == '') {            
+            if(globalObj['webServerInfo']['role'] == roles['ADMIN'])
+                currPageHash = "mon_infra_dashboard";
+            if(globalObj['webServerInfo']['role'] == roles['TENANT'])
+                currPageHash = "mon_net_dashboard"; //TODO: Need to check whether queryparams needed or not
         }
         var currMenuObj = menuHandler.getMenuObjByHash(currPageHash);
         //Toggle menu button only if there is a change in hash of main menu[Monitor/Configure/Settings/Queries]

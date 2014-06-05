@@ -1,22 +1,31 @@
+/*
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ */
 (function($) {
+    $.ui.tabs.prototype._tabKeydown = function(event){
+        return;
+    }
     $.fn.contrailAutoComplete = function(option){
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
         self.autocomplete(option);
         return self;
-    }
+    };
+    
     $.fn.contrailMultiselect = function(option,option2){
         var self = this;
         option.multiple = true;
         self.data('contrailMultiselect', constructSelect2(self, option, option2));
         return self;
-    }
+    };
+    
     $.fn.contrailTabs = function(option) {
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
         self.tabs(option);
         return self;
-    }
+    };
+    
     $.fn.contrailNumericTextbox = function (option) {
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
@@ -31,7 +40,8 @@
             }
         });
         return self;
-    }
+    };
+    
     $.fn.contrailDateTimePicker = function(option) {
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
@@ -63,12 +73,14 @@
             }
         });
         return self;
-    }
+    };
+    
     $.fn.contrailDropdown = function(defaultOption, args) {
         var self = this;
         self.data('contrailDropdown', constructSelect2(self, defaultOption, args));
         return self;
-    }
+    };
+    
     $.fn.contrailCombobox = function(option) {
         var self = this, formattedData = [];
 
@@ -82,7 +94,7 @@
             input.autocomplete(option);
 
             if(option == 'enable'){
-                input.removeAttr('disabled')
+                input.removeAttr('disabled');
             }
             else if(option == 'disable'){
                 input.attr('disabled','disabled');
@@ -263,7 +275,7 @@
                         .append("<a>" + item.label + "</a>")
                         .appendTo(ul);
                 }
-            }
+            };
 
             $("<span>")
                 .addClass('add-on')
@@ -285,6 +297,7 @@
             dis.option.sourceMap = constructSourceMap(formattedData, 'value');
         };
     };
+    
     $.fn.contrail2WayMultiselect = function (givenOptions) {
         var defaultOptions = {
             dataTextField: "label",
@@ -426,12 +439,13 @@
           </div>');
         };
     };
+    
     $.extend({
         contrailBootstrapModal:function (options) {
             options.id = options.id != undefined ? options.id : '';
             var className = (options.className == null) ? '' : options.className;
 
-            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal hide"> \
+            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal hide" tabindex="-1" role="dialog" aria-hidden="true"> \
         		<div class="modal-header"> \
         	    	<button id="modal-header-close" type="button" class="close"><i class="icon-remove"></i></button> \
         			<h6 class="modal-header-title"></h6> \
@@ -472,7 +486,7 @@
                     if (typeof footerButton.onclick === 'function') {
                         footerButton.onclick(footerButton.onClickParams);
                     }
-                    else if(typeof footerButton.onclick === 'string'){
+                    else if(footerButton.onclick != 'close' && typeof footerButton.onclick === 'string'){
                         window[footerButton.onclick](footerButton.onClickParams);
                     }
                 });
@@ -490,6 +504,9 @@ function formatData(data, option) {
     if (typeof data[0] === 'object') {
         if (typeof option.dataValueField !== 'undefined' && typeof option.dataTextField !== 'undefined') {
             $.each(data, function (key, val) {
+                if ('children' in val){
+                    formatData(val.children, option);
+                }
                 data[key][option.dataValueField.apiVar] = val[option.dataValueField.dsVar];
                 data[key][option.dataTextField.apiVar] = val[option.dataTextField.dsVar];
             });
@@ -508,12 +525,47 @@ function formatData(data, option) {
 };
 
 function constructSourceMap(data, fieldName) {
-    var sourceMap = {},
-        source = typeof data != 'undefined' ? data : [];
-    $.each(source, function (key, val) {
-        sourceMap[val[fieldName]] = key;
+    return traverseMap(typeof data != 'undefined' ? data : [],fieldName,'');
+};
+
+function traverseMap(obj, fieldName, parentKey){
+    var returnObj = {};
+    $.each(obj, function (key, val) {
+        returnObj[val[fieldName]] = parentKey + key;
+        if('children' in val){
+            returnObj = $.extend(returnObj,traverseMap(val.children, fieldName, parentKey + key + '.'));
+        }
     });
-    return sourceMap;
+    return returnObj;
+};
+function findTextInObj(text, data){
+    var found = false;
+    for (var i = 0; i < data.length; i++){
+        if (data[i].text === text){
+            return data[i];
+        }
+        if('children' in data[i]){
+            var found = findTextInObj(text, data[i].children);
+            if(found){
+                break;
+            }
+        }
+    }
+    return found;
+};
+
+function  fetchSourceMapData(index, data){
+    var arr = index.split("."),
+        returnVal = data;
+
+    $.each(arr, function(key, value){
+        if('children' in returnVal){
+            returnVal = returnVal.children[value];
+        } else{
+            returnVal = returnVal[value];
+        }
+    });
+    return returnVal;
 };
 
 function constructSelect2(self, defaultOption, args) {
@@ -521,10 +573,16 @@ function constructSelect2(self, defaultOption, args) {
         self.select2(defaultOption, args);
     } else{
         var option = {
-            minimumResultsForSearch : -1,
+            minimumResultsForSearch : 7,
             dropdownAutoWidth : true,
             dataTextField: 'text',
-            dataValueField: 'id'
+            dataValueField: 'id',
+            data: [],
+            formatResultCssClass: function(obj){
+            	if(obj.label && 'children' in obj){
+            		return 'select2-result-label';
+            	}
+            }
             // Use dropdownCssClass : 'select2-large-width' when initialzing ContrailDropDown
             // to specify width of dropdown for Contrail Dropdown
             // Adding a custom CSS class is also possible. Just add a custom class to the contrail.custom.css file
@@ -561,7 +619,9 @@ function constructSelect2(self, defaultOption, args) {
                         option.change(e);
                     }
                 });
-            self.select2('val', option.data[0].text);
+            if (option.data.length !=0) {
+                self.select2('val', option.data[0].text);
+            }
         }
 
         if(typeof option.data != "undefined") {
@@ -582,20 +642,18 @@ function constructSelect2(self, defaultOption, args) {
                 }
                 for(var i = 0; i < selectedValue.length; i++) {
                     index = option.sourceMap[selectedValue[i]];
-                    selectedObjects.push(option.data[index]);
+                    selectedObjects.push(fetchSourceMapData(index, option.data));
                 }
                 return selectedObjects;
             },
             text: function(text) {
                 if(typeof text !== 'undefined') {
                     var data = self.data('select2').opts.data;
-                    $.each(data, function(key, val) {
-                        if (val.text === text) {
-                            self.select2('val', val.id);
-                        }
-                    });
+                    var answer = findTextInObj(text, data);
+                    self.select2('val', answer.id);
                 } else {
-                    return (self.select2('data') != null) ? self.select2('data').text : null;
+                    if (self.select2('data') != null)
+                        return (self.select2('data') != null) ? self.select2('data').text : null;
                 }
             },
             value: function(value) {
@@ -625,8 +683,8 @@ function constructSelect2(self, defaultOption, args) {
                 }
             },
             enableOptionList: function (flag, disableItemList) {
-                for (j = 0; j < disableItemList.length; j++) {
-                    for (i = 0; i < option.data.length; i++) {
+                for (var j = 0; j < disableItemList.length; j++) {
+                    for (var i = 0; i < option.data.length; i++) {
                         if (disableItemList[j] === option.data[i][option.dataTextField.dsVar]) {
                             option.data[i].disabled = !flag;
                         }
@@ -641,7 +699,7 @@ function constructSelect2(self, defaultOption, args) {
             },
             isEnabled: function(){
                 if($(self.selector).prop('disabled')){
-                    return false
+                    return false;
                 }else{
                     return true;
                 }

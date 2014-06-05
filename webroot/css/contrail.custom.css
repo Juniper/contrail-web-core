@@ -1,12 +1,10 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
  
  /* moving vcon-web.css */
   
 .project-autoflow {
-  /*height: 495px;*/
-
   overflow: auto;
   -webkit-transform: translatez(0);
 }
@@ -14,12 +12,6 @@
   height: 510px;
   overflow: auto;
   -webkit-transform: translatez(0);
-}
-#projectTree {
-  display: inline-block;
-  vertical-align: top;
-  text-align: left;
-  margin: 0 0em;
 }
 .rootfolder {
   background-position: 0 0;
@@ -40,10 +32,6 @@
     margin: 0 0 10px 0;
     padding: 0;
 }
-#splitter {
-  border: 0px;
-}
-
 .pane-content {
   padding: 0 10px;
 }
@@ -56,19 +44,8 @@
   width: 90px;
   height: 70px;
 }
-#companyName {
-  display: inline-block;
-  vertical-align: top;
-  padding-top: 15px;
-}
 .no-background {
   background: none;
-}
-#splitter .splitter-pane-content {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  padding: 10px;
-  height: 100%;
 }
 .no-float {
   float: none !important;
@@ -202,18 +179,6 @@
 .pull-down-10 {
   margin-top: 10px;
 }
-#timeseries-interval-tabs {
-  width: 210px;
-  float: left;
-  padding-top: 10px;
-  margin-left: 40px;
-}
-
-#timeseries-interval-tabs + .chart-types {
-  float: right;
-  margin: 0px;
-  margin-right: 110px;
-}
 #network-overview #chart-top {
   clear: both;
 }
@@ -225,11 +190,6 @@
 }
 .div-column {
   display: inline-block;
-}
-.topSearchBox {
-  position: relative;
-  display: inline-block;
-  float: right;
 }
 .searchTxt {
   width: 140px;
@@ -260,66 +220,6 @@
   top: 50%;
   left: 50%;
 }
-.toggle-options {
-  list-style: none;
-  display: inline-block;
-  padding-left: 5px;
-  margin: 6px 0px;
-}
-.toggle-options ul,
-.toggle-optionsul {
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-.toggle-options li {
-  display: inline-block;
-  color: #15C;
-}
-.toggle-options li a {
-  text-decoration: underline;
-}
-.toggle-options li.active {
-  
-  color: black;
-}
-.toggle-options li.active a {
-  text-decoration: none;
-}
-.toggle-options li:hover {
-  cursor: pointer;
-}
-.toggle-options li.active:hover {
-  cursor: default;
-}
-.toggle-section h3 {
-  display: inline-block;
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-.toggle-group {
-  position: relative;
-  height: 45px;
-}
-.toggle-group .toggle-section {
-  display: inline-block;
-  position: absolute;
-}
-.toggle-group .toggle-section:nth-child(1) {
-  left: 40px;
-}
-.toggle-group .toggle-section:nth-child(2) {
-  right: 40px;
-}
-.cLblContainer {
-  border: 1px solid;
-  border-color: #DBECF4;
-  background-color: #EAF4F9;
-}
-.cGridContainer {
-  border: 1px solid;
-  border-color: #DBECF4;
-  box-shadow: 7px 7px 7px #AAA;
-}
 .cW30 {
   width: 30%;
 }
@@ -341,34 +241,6 @@
 .cW99 {
   width: 99%;
 }
-.cLblColumn {
-  display: inline-block;
-  vertical-align: top;
-}
-.cLbl {
-  color: #003F59;
-  line-height: normal;
- 
-  margin: 4px;
-  display: inline-block;
-  /*background-color:#EAF4F9;*/
-
-}
-.dashboard-pane {
-  border: 1px solid;
-  border-color: #DBECF4;
-  background-color: #EAF4F9;
-  border-spacing: 4px 8px;
-}
-.dashboard-pane .table-cell.dashboard-item-lbl,
-.dashboard-pane .table-cell.dashboard-item-value {
-
-  line-height: normal;
- margin: 4px;
-}
-.dashboard-pane .table-cell.dashboard-item-lbl {
-  width: 130px;
-}
 .details-pane {
   border-color: #DBECF4;
   border-spacing: 4px 8px;
@@ -389,8 +261,6 @@
 }
 .chart-toolbar .toolbar-elem {
   display: inline-block;
-  /*position:absolute;*/
-
 }
 .chart-legend {
  padding: 4px;
@@ -731,24 +601,7 @@ ul.configActionMenu {
 .brand img{display:inline-block;}
 .brand img.logo{ 
 	margin-left:-5px;
-	max-width: 152px;
 	height: 40px;
-}
-/*
-*for alerts popup
-*/
-
-#moreAlerts > div.modal-body {
-  overflow:visible;
-}
-
-/*#alertContent {
-  overflow: scroll;
-  max-height: 365px;
-}*/
-
-#alertContent .slick-viewport {
-   max-height: 272px;
 }
 .infobox > .stat{
 	font-size:11px;
@@ -846,7 +699,16 @@ filter: alpha(opacity=40);
   	vertical-align: top;
   	margin: 0 auto;
 }
-
+/* End - Chart Classes*/
+/* Flow Chart Classes*/
+.chart-load-status{
+	padding: 5px;
+}
+.chart-load-status p{
+	margin: 0;
+	color: #3182bd;
+}
+/* End Flow Chart Classes*/
 /* Topology */
 .topology{
 	margin:auto;	
@@ -887,28 +749,37 @@ rect.bordered {
 	padding-right: 30px;
 	resize: none;
 }
-.or-clause-item:nth-child(odd) {background: #eee;}
-.or-clause-item:last-child {background:#fff;}
-/* .or-clause-item, .and-clause-item{
-	margin: 5px 0;
-} */
-.or-clause-item{
-	padding: 5px 0;
-}
+.or-clause-item{background: #fff;}
+.or-clause-item.open {background: #eee;}
+.or-clause-item-term{cursor:pointer; }
+.or-clause-item-condensed{padding: 5px 0;}
 .or-clause-item-edit{
-	padding: 5px 0 0;
+	padding: 2px 0 0;
 }
 .or-clause-item > .span11{
 	margin-left: 0.5%;
 	width: 93.5%;
 }
-.or-clauses .or-clause-item:first-child .or-text, .and-clauses .and-clause-item:first-child .and-text{
+.or-clauses .or-text:first-child {
+	display: none;
+}
+.and-clauses .and-clause-item:first-child .and-text{
 	visibility: hidden;
 }
-.and-clause-item .and-text, .or-clause-item .or-text {
+.and-clause-item .and-text{
+	font-size: 14px;
 	text-align: center;
-	font-size: 15px;
 	color: #555;
+	padding: 5px 10px;
+}
+.or-text {
+	font-size: 14px;
+	color: #000;
+	padding: 5px 0;
+	font-weight: 600;
+}
+.and-clause-item.row-fluid [class*="span"] {
+	min-height: 28px !important;
 }
 .and-clause-item .new-and-text {
 	padding: 0 2px;
@@ -917,7 +788,7 @@ rect.bordered {
 	padding: 0 5px;
 }
 .or-clause-item .icon-remove{
-	color:#777;
+	color:#aaa;
 }
 .and-clause-item .icon-remove{
 	font-size:11px;
@@ -941,7 +812,6 @@ a.selectAllLink:hover {
 .sparklines-box{
 	border: 1px solid #dedede;
 	padding: 5px;
-	cursor: pointer;
 }
 .sparklines-box p.sparkline-title{
 	padding: 0 5px 2px;
@@ -982,6 +852,15 @@ a.selectAllLink:hover {
 
 /* Slickgrid Header Styles */
 
+/*For wrapping the header names*/
+.slick-column-name { 
+	white-space: normal; 
+}
+
+.slick-header-column.ui-state-default {
+    height: 100%;
+}
+
 .grid-body.ui-widget {
 	width:100%;
 	border: none;
@@ -1010,12 +889,21 @@ a.selectAllLink:hover {
 	border: none;
 	padding: 0 4px;
 }
-
+.grid-header .widget-header{
+	color: #777;
+	cursor: default;
+}
+.grid-header .widget-toolbar .select2-chosen {
+	color: #3182bd;
+	font-weight: 600;
+}
 /* Sort Icon from font-awesome */
 .contrail-grid{
 	border-bottom: 1px solid #dadada;
 }
-
+.contrail-grid > .collapsed {
+	display: none;
+}
 .slick-sort-indicator{
 	margin-left: 0;	
 	margin-top: 0;
@@ -1118,16 +1006,16 @@ a.selectAllLink:hover {
 
 .grid-footer{
 	width:100%;
-	height:35px;	
+	height:22px;	
 	border-top: 1px solid #dadada;
 	margin-top: -2px;
+	font-size: 11px;
 }
 .slick-pager {
   width: 100%;
-  height: 26px;
+  height: 20px;
   vertical-align: middle;
 }
-
 .slick-pager .slick-pager-status {
   display: inline-block;
   padding: 6px;
@@ -1141,11 +1029,10 @@ a.selectAllLink:hover {
 
 .slick-pager .slick-pager-nav {
   display: inline-block;
-  float: left;
-  padding: 2px;
+  float: right;
 }
 .slick-pager .slick-pager-nav .pager-control{
-	padding:3px 5px;
+	padding:0 5px;
 	color: #555;
 	float: left;
 }
@@ -1153,34 +1040,43 @@ a.selectAllLink:hover {
 	color: #ccc;
 }
 .pager-page-info{
-	padding:1px 5px;
+	padding:0 5px;
 	float: left;
+	height: 20px;
 }
-
 .slick-pager .slick-pager-info, .slick-pager .slick-pager-sizes  {
-  display: block;
-  float: right;
-  padding: 3px 9px;
+  	display: block;
+  	float: left;
+  	height: 20px;
 }
 .slick-pager .slick-pager-info {
-	padding: 7px 9px;
+	border-right: 1px solid #eee;
+	padding: 0 9px 0 5px;
+	height: 20px;
 }
-
-.slick-pager .slick-pager-info {
-	border-left: 1px solid #eee;
-}
-
 .csg-current-page {
-	width: 50px; 
 	float: left;
-	margin: 0 5px;
+	width: 75px; 
 }
 .select2-container.csg-current-page {
 	float: none;
+	font-size: 11px;
+}
+.slick-pager .select2-container .select2-choice > .select2-chosen {
+margin-right: 15px;
+}
+.slick-pager .select2-container .select2-choice{
+	height: 20px;
+}
+.slick-pager .select2-container .select2-arrow{
+	width:20px;
+}
+.slick-pager .select2-container .select2-chosen, .slick-pager .select2-container .select2-arrow{
+	line-height: 20px;
+	height: 20px;
 }
 .csg-pager-sizes {
-	margin: 0 5px;
-	width: 50px;
+	width: 90px;
 	float: left;
 }
 .csg-pager-sizes-static {
@@ -1193,11 +1089,13 @@ a.selectAllLink:hover {
 .slick-pager .slick-pager-settings * {
   vertical-align: middle;
 }
-
 .slick-pager .slick-pager-settings a {
-  padding: 2px;
-  text-decoration: underline;
-  cursor: pointer;
+  	padding: 2px;
+  	text-decoration: underline;
+  	cursor: pointer;
+}
+.grid-footer-dropdown-item {
+	font-size: 11px;
 }
 .action-cog-cell {
 	overflow:visible;
@@ -1251,14 +1149,36 @@ label.jqInvalid{
 	content: "\f0d7";
 } */
 
-/* 2 Way Multiselect Custom CSS 
-.twoWayMultiSelectList {
-	padding: 0 5px;
-}
-.twoWayMultiSelectList option{
+/* Begin - 2 Way Multiselect Custom CSS */
+.contrail2WayMultiselect ol{
+	list-style-type: none;
+	margin:0;
+	padding:0;
+	border: 1px solid #ccc;
+	overflow-y:scroll;
 	font-size: 12px;
-	line-height: 15px;
-}*/
+}
+.contrail2WayMultiselect ol li{
+	border: none;
+	padding: 5px;
+	color: #555;
+}
+.contrail2WayMultiselect ol li.ui-selected{
+	background: #c6dbef;
+}
+.contrail2WayMultiselect .multiselect-controls {
+	margin-top: 20px;
+}
+.contrail2WayMultiselect .multiselect-controls .multiselect-control {
+	text-align:center;
+	font-size: 20px;
+	margin: 10px 0;
+}
+.contrail2WayMultiselect.disabled .multiselect-control i{
+	color: #eee;
+	cursor: default;	
+}
+/* End - 2 Way Multiselect Custom CSS */
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
 	border: none;
 	background: none;
@@ -1360,6 +1280,12 @@ label.jqInvalid{
 .select2-container-multi .select2-choices .select2-search-field {
 	margin: 0 0 0 5px;
 }
+.select2-drop-auto-width .select2-search {
+	padding: 4px;
+}
+ .select2-search input {
+ 	background: #fff url('select2.png') no-repeat 100% -22px;
+}
 .select2-results {
 	margin: 0;
 	padding: 0;
@@ -1391,6 +1317,9 @@ label.jqInvalid{
 .select2-results .select2-highlighted {
 	background: #c6dbef;
 	color: #555;
+}
+.select2-results .select2-disabled.select2-result-label {
+	background: none;
 }
 /* Autocomplete Custom CSS */
 .ui-autocomplete {
@@ -1454,7 +1383,7 @@ input.datetimepicker{
 	color: #3182bd;
 	font-weight: 700;
 }
-/* Jquery UI Tabs CSS */
+/* Begin - Jquery UI Tabs */
 .ui-tabs.ui-widget {
 	border: none;
 	padding: 0;
@@ -1479,9 +1408,36 @@ input.datetimepicker{
 	color: #787878;
 	text-decoration: none;
 }
-
+/* End - Jquery UI Tabs */
+/* Begin - Jquery UI Accordion */
+.ui-accordion-header {
+	border-bottom: 1px solid #eee;
+}
+.ui-accordion-content.ui-widget-content {
+	border: none;
+}
+.ui-accordion .ui-accordion-header .ui-accordion-header-icon {
+	left: 0;
+}
+.ui-accordion .ui-accordion-icons {
+	padding-left: 1.5em;
+}
+.ui-accordion .ui-accordion-content {
+	padding: 1em 1.5em;
+}
+/* End - Jquery UI Tabs */
 /* a Links */
 a.disabled-link, a.disabled-link:hover{
 	color: #ccc;
 	cursor: default !important;
+}
+.disabledBtn, .disabledBtn:hover {
+    background-color: #898989 !important;
+    border-color: #898989;
+    border-top: #fff 0px solid !important;
+    cursor: default;
+}
+
+.disabledBtn i {
+    cursor: default;
 }

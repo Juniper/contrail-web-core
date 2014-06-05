@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ */
 'use strict';
 var config = require('../../../../tests/defQUnitRunnerConfig');
 

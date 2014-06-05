@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
 var jobsApi = module.exports;
@@ -16,9 +16,13 @@ var redis = require("redis")
     , async = require('async')
     , discServ = require('./discoveryservice.api')
     , UUID = require('uuid-js')
-    , computeNode = require('../api/computeNode.api')
 	, messages = require('../../common/messages');
 
+try {
+    computeNode = require('../api/vrouternode.jobs.api');
+} catch(e) {
+    computeNode = {};
+}
 if (!module.parent) {
 	logutils.logger.warn(util.format(messages.warn.invalid_mod_call,
 		module.filename));

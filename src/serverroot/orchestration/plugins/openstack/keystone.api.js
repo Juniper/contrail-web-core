@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
 /**
@@ -524,7 +524,7 @@ function authenticate (req, res, callback)
                                   '; expires=' + 
                                   new Date(new Date().getTime() +
                                            global.MAX_AGE_SESSION_ID).toUTCString());
-                    res.redirect('/tenants/monitor/network' + urlHash);
+                    res.redirect('/' + urlHash);
                 });
             });
         });

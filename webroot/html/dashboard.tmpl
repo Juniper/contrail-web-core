@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
- Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
 -->
 <html lang="en">
 <head>
@@ -10,46 +10,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Contrail Systems">
      <!--Bootstrap Styles-->
-    <link href="/assets/bootstrap/css/bootstrap.min.css?built_at=1398860488" rel="stylesheet"/>
-    <link href="/assets/bootstrap/css/bootstrap-responsive.min.css?built_at=1398860488" rel="stylesheet"/>
-    <link href="/assets/jquery-ui/css/jquery-ui.css?built_at=1398860488" rel="stylesheet"/>
-    <link href="/css/contrail.jquery.ui.css?built_at=1398860488" rel="stylesheet"/>
+    <link href="/assets/bootstrap/css/bootstrap.min.css?built_at=" rel="stylesheet"/>
+    <link href="/assets/bootstrap/css/bootstrap-responsive.min.css?built_at=" rel="stylesheet"/>
+    <link href="/assets/jquery-ui/css/jquery-ui.css?built_at=" rel="stylesheet"/>
+    <link href="/css/contrail.jquery.ui.css?built_at=" rel="stylesheet"/>
 
-    <!-- Start dev_env --> 
-    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css?built_at=1398860488"/>
-     <!-- End dev_env -->  
+    <!-- Start dev_env 
+    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css?built_at="/>
+     End dev_env -->  
     <!--[if IE 7]>
-    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome-ie7.min.css?built_at=1398860488"/>
+    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome-ie7.min.css?built_at="/>
     <![endif]-->
 
-    <!--Fonts-->
-    <!-- Start dev_env --> 
-    <link rel="stylesheet" href="/assets/fonts-opensans/openSans.css?built_at=1398860488"/>
-     <!-- End dev_env -->  
-
     <!--[if lte IE 8]>
-     <link rel="stylesheet" href="/css/contrail-ie.min.css?built_at=1398860488"/>
+     <link rel="stylesheet" href="/css/contrail-ie.min.css?built_at="/>
     <![endif]-->
 
     <!--D3 Styles-->
-    <!-- Start dev_env --> 
-    <link href="/css/nv.d3.contrail.css?built_at=1398860488" rel="stylesheet">
-     <!-- End dev_env -->
+    <!-- Start dev_env 
+    <link href="/assets/nvd3/css/nv.d3.css?built_at=" rel="stylesheet">
+     End dev_env -->
 
-    <!-- Start dev_env -->
-    <link rel="stylesheet" href="/assets/select2/styles/select2.css?built_at=1398860488" />
-    <link rel="stylesheet" href="/assets/datetimepicker/styles/jquery.datetimepicker.css?built_at=1398860488" />
-    <link rel="stylesheet" href="/assets/slickgrid/styles/slick.grid.css?built_at=1398860488">
-    <!-- End dev_env -->
+    <!-- Start dev_env
+    <link rel="stylesheet" href="/assets/select2/styles/select2.css?built_at=" />
+    <link rel="stylesheet" href="/assets/datetimepicker/styles/jquery.datetimepicker.css?built_at=" />
+    <link rel="stylesheet" href="/assets/slickgrid/styles/slick.grid.css?built_at=">
+    End dev_env -->
 
     <!--Contrail Styles-->
-    <!-- Start prod_env
-    <link rel="stylesheet" href="/css/contrail-all.css?built_at=1398860488"/>
-    End prod_env -->
-    <link rel="stylesheet" href="/css/contrail.layout.css?built_at=1398860488" />
-    <link rel="stylesheet" href="/css/contrail.elements.css?built_at=1398860488" />
-    <link rel="stylesheet" href="/css/contrail.responsive.css?built_at=1398860488" />
-    <link rel="stylesheet" href="/css/contrail.custom.css?built_at=1398860488" />
+    <!-- Start prod_env -->
+    <link rel="stylesheet" href="/css/contrail-all.css?built_at="/>
+    <!-- End prod_env -->
+    <link rel="stylesheet" href="/css/contrail.layout.css?built_at=" />
+    <link rel="stylesheet" href="/css/contrail.elements.css?built_at=" />
+    <link rel="stylesheet" href="/css/contrail.responsive.css?built_at=" />
+    <link rel="stylesheet" href="/css/contrail.custom.css?built_at=" />
 </head>
 
 <body class="navbar-fixed">
@@ -121,33 +116,7 @@
 
     <div id="sidebar">
         <div id="sidebar-shortcuts">
-            <div id="sidebar-shortcuts-large">
-                <button id="btn-monitor" class="btn btn-small btn-monitor" title="Monitor" onclick="menuHandler.toggleMenuButton('monitor');">
-                    <i class="icon-bar-chart icon-large"></i>
-                </button>
-
-                <button id="btn-configure" class="btn btn-small btn-configure" title="Configure" onclick="menuHandler.toggleMenuButton('configure');">
-                    <i class="icon-wrench icon-large"></i>
-                </button>
-
-                <button id="btn-setting" class="btn btn-small btn-setting" title="Setting" onclick="menuHandler.toggleMenuButton('setting');">
-                    <i class="icon-cog icon-large"></i>
-                </button>
-
-                <button id="btn-query" class="btn btn-small btn-query" title="Query" onclick="menuHandler.toggleMenuButton('query');">
-                    <i class="icon-search icon-large"></i>
-                </button>
-            </div>
-
-            <div id="sidebar-shortcuts-mini">
-                <span class="btn btn-monitor"></span>
-
-                <span class="btn btn-configure"></span>
-
-                <span class="btn btn-setting"></span>
-
-                <span class="btn btn-query"></span>
-            </div>
+            
         </div>  <!--#sidebar-shortcuts-->
         <ul id="menu" class="nav nav-list"></ul>
     </div> <!-- #sidebar -->
@@ -177,326 +146,61 @@
 </div> <!-- /.container-fluid #main-container -->
 <a href="#" id="back-to-top"><i class="icon-double-angle-up icon-only bigger-110"></i>​&nbsp; Back to Top</a>
 
-<script type="text/x-handlebars-template" id="monitor-menu-template">
+<script type="text/x-handlebars-template" id="menu-shortcuts">
+            <div id="sidebar-shortcuts-large">
+                {{#each this}}
+                    {{#IfCompare this.cssClass 'disabledBtn' operator='!='}}
+                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');">
+                    {{else}}
+                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');" disabled>
+                    {{/IfCompare}}    
+                            <i class="{{this.iconClass}} icon-large"></i>
+                    </button>
+                {{/each}}
+            </div>
+
+            <div id="sidebar-shortcuts-mini">
+                {{#each this}}
+                    <span class="btn btn-{{this.id}}"></span>
+                {{/each}}
+            </div>
+</script>
+<script type="text/x-handlebars-template" id="menu-template">
     <li class="head">
-        <a data-link="javascript:loadFeature({p:'mon_infra_dashboard'})">
-            <span> Monitor </span>
+        <a data-link='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+            <span>{{this.label}}</span>
             <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
                 <i class="icon-chevron-left"></i>
             </span>
         </a>
     </li>
-    <li class="item">
-        <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'mon_infra_dashboard'})">
-            <i class="icon-desktop"></i>
-            <span>Infrastructure </span>
-        </a>
-        <ul id="mon_infra" class="submenu">
-            <li id="mon_infra_dashboard">
-                <a href="javascript:loadFeature({p:'mon_infra_dashboard'})">
-                     Dashboard
-                </a>
-            </li>
-            <li id="mon_infra_control">
-                <a href="javascript:loadFeature({p:'mon_infra_control',q:{node:'Control Nodes'}})">
-                     Control Nodes
-                </a>
-            </li>
-            <li id="mon_infra_compute">
-                <a href="javascript:loadFeature({p:'mon_infra_compute',q:{node:'vRouters'}})">
-                     Virtual Routers
-                </a>
-            </li>
-            <li id="mon_infra_analytics">
-                <a href="javascript:loadFeature({p:'mon_infra_analytics',q:{node:'Analytics Nodes'}})">
-                     Analytics Nodes
-                </a>
-            </li>
-            <li id="mon_infra_config">
-                <a href="javascript:loadFeature({p:'mon_infra_config',q:{node:'Config Nodes'}})">
-                     Config Nodes
-                </a>
-            </li>
-        </ul>
-    </li>
-    {{#IfCompare globalObj.orchModel 'openstack' operator="=="}}
+    {{#each this.items.item}}
         <li class="item">
-            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'mon_net_dashboard',q:{fqName:'default-domain'}})">
-                <i class="icon-sitemap"></i>
-                <span>Networking </span>
+            <a href="\\#" class="dropdown-toggle" data-link='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+                <i class="{{this.iconClass}}"></i>
+                <span>{{this.label}}</span>
             </a>
-            <ul id="mon_net" class="submenu">
-                <li id="mon_net_dashboard">
-                    <a href="javascript:loadFeature({p:'mon_net_dashboard',q:{fqName:'default-domain'}})">
-                         Dashboard
-                    </a>
-                </li>
-            </ul>
-            <ul id="mon_net" class="submenu">
-                <li id="mon_net_projects">
-                    <a href="javascript:loadFeature({p:'mon_net_projects',q:{view:'list',type:'project',source:'uve',context:'',fqName:''}})">
-                         Projects
-                    </a>
-                </li>
-            </ul>
-            <ul id="mon_net" class="submenu">
-                <li id="mon_net_networks">
-                    <a href="javascript:loadFeature({p:'mon_net_networks',q:{view:'list',type:'network',source:'uve'}})">
-                         Networks
-                    </a>
-                </li>
-            </ul>
-            <ul id="mon_net" class="submenu">
-                <li id="mon_net_instances">
-                    <a href="javascript:loadFeature({p:'mon_net_instances',q:{view:'list',type:'instance',source:'uve'}})">
-                         Instances
-                    </a>
-                </li>
+            <ul class="submenu">
+                {{#IfCompare this.items null operator='!='}}
+                    {{#each this.items.item}}
+                        <li id="{{this.hash}}">
+                            <a href='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+                                {{this.label}}
+                            </a>
+                        </li>
+                   {{/each}}
+                {{/IfCompare}}
+                {{#IfCompare this.items null operator='=='}}
+                    <li id="{{this.hash}}">
+                        <a href='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+                             {{this.label}}
+                        </a>
+                    </li>
+                {{/IfCompare}}
             </ul>
         </li>
-        <li class="item">
-            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'mon_debug_pcapture'})">
-                <i class="icon-puzzle-piece"></i>
-                <span>Debug</span>
-            </a>
-            <ul id="mon_debug" class="submenu">
-                <li id="mon_debug_pcapture">
-                    <a href="javascript:loadFeature({p:'mon_debug_pcapture'})">
-                         Packet Capture
-                    </a>
-                </li>
-            </ul>
-        </li>
-    {{/IfCompare}}
+    {{/each}}
 </script>
-
-<script type="text/x-handlebars-template" id="setting-menu-template">
-    <li class="head">
-        <a data-link="javascript:loadFeature({p:'setting_configdb_fqname'})">
-            <span>Setting</span>
-            <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
-                <i class="icon-chevron-left"></i>
-            </span>
-        </a>
-    </li>
-    <li class="item">
-        <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'setting_configdb_fqname'})">
-            <i class="icon-table"></i>
-            <span>Config DB</span>
-        </a>
-        <ul id="setting_configdb" class="submenu">
-            <li id="setting_configdb_fqname">
-                <a href="javascript:loadFeature({p:'setting_configdb_fqname'})">
-                    </i> FQ Name Table
-                </a>
-            </li>
-            <li id="setting_configdb_uuid">
-                <a href="javascript:loadFeature({p:'setting_configdb_uuid'})">
-                    </i> UUID Table
-                </a>
-            </li>
-        </ul>
-    </li>
-</script>
-
-<script type="text/x-handlebars-template" id="configure-menu-template">
-    <li class="head">
-        <a data-link="javascript:loadFeature({p:'config_infra_bgp'})">
-            <span> Configure </span>
-            <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
-                <i class="icon-chevron-left"></i>
-            </span>
-        </a>
-    </li>
-    <li class="item">
-        <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'config_infra_bgp'})">
-            <i class="icon-desktop"></i>
-            <span>Infrastructure </span>
-        </a>
-        <ul id="config_infra" class="submenu">
-            <li id="config_infra_bgp">
-                <a href="javascript:loadFeature({p:'config_infra_bgp'})">
-                     BGP Peer
-                </a>
-            </li>
-            <li id="config_infra_fwdoptions">
-                <a href="javascript:loadFeature({p:'config_infra_fwdoptions'})">
-                     Forwarding Options
-                </a>
-            </li>
-            <li id="config_infra_lls">
-                <a href="javascript:loadFeature({p:'config_infra_lls'})">
-                     Link Local Services
-                </a>
-            </li>
-        </ul>
-    </li>
-    {{#IfCompare globalObj.orchModel 'openstack' operator="=="}}
-        <li class="item">
-            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'config_net_vn'})">
-                <i class="icon-sitemap"></i>
-                <span>Networking </span>
-            </a>
-            <ul id="config_net" class="submenu">
-                <li id="config_net_vn">
-                    <a href="javascript:loadFeature({p:'config_net_vn'})">
-                         Networks
-                    </a>
-                </li>
-                <li id="config_net_policies">
-                    <a href="javascript:loadFeature({p:'config_net_policies'})">
-                         Policies
-                    </a>
-                </li>
-                <li id="config_net_ipam">
-                    <a href="javascript:loadFeature({p:'config_net_ipam'})">
-                         IP Address Management
-                    </a>
-                </li>
-                <li id="config_net_fip">
-                    <a href="javascript:loadFeature({p:'config_net_fip'})">
-                         Allocate Floating IPs
-                    </a>
-                </li>
-
-            </ul>
-        </li>
-        <li class="item">
-            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'config_sc_svctemplate'})">
-                <i class="icon-link"></i>
-                <span>Services </span>
-            </a>
-            <ul id="config_sc" class="submenu">
-                <li id="config_sc_svctemplate">
-                    <a href="javascript:loadFeature({p:'config_sc_svctemplate'})">
-                         Service Templates
-                    </a>
-                </li>
-                <li id="config_sc_svcInstances">
-                    <a href="javascript:loadFeature({p:'config_sc_svcInstances'})">
-                         Service Instances
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="item">
-            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'config_dns_dnsservers'})">
-                <i class="icon-globe"></i>
-                <span>DNS </span>
-            </a>
-            <ul id="config_dns" class="submenu">
-                <li id="config_dns_dnsservers">
-                    <a href="javascript:loadFeature({p:'config_dns_dnsservers'})">
-                         Servers
-                    </a>
-                </li>
-           <li id="config_dns_dnsrecords">
-                    <a href="javascript:loadFeature({p:'config_dns_dnsrecords'})">
-                         Records
-                    </a>
-               </li>
-               <li class="hide"  id="config_dynamic_dnsrecords">
-                    <a href="javascript:loadFeature({p:'config_dynamic_dnsrecords'})">
-                         Active DNS Database
-                    </a>
-               </li>
-            </ul>
-        </li>
-    {{/IfCompare}}
-</script>
-
-<script type="text/x-handlebars-template" id="query-menu-template">
-    <li class="head">
-        <a data-link="javascript:loadFeature({p:'query_flow_series'})">
-            <span> Query </span>
-            <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
-                <i class="icon-chevron-left"></i>
-            </span>
-        </a>
-    </li>
-    <li class="item">
-        <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'query_flow_series'})">
-            <i class="icon-exchange"></i>
-            <span>Flows</span>
-        </a>
-        <ul id="query_flow" class="submenu">
-            <li id="query_flow_series">
-                <a href="javascript:loadFeature({p:'query_flow_series'})">
-                    </i> Flow Series
-                </a>
-            </li>
-            <li id="query_flow_records">
-                <a href="javascript:loadFeature({p:'query_flow_records'})">
-                    </i> Flow Records
-                </a>
-            </li>
-            <li id="query_flow_queue">
-                <a href="javascript:loadFeature({p:'query_flow_queue'})">
-                    </i> Query Queue
-                </a>
-            </li>
-        </ul>
-    </li>
-    <li class="item">
-        <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'query_log_system'})">
-            <i class="icon-hdd"></i>
-            <span>Logs</span>
-        </a>
-        <ul id="query_log" class="submenu">
-            <li id="query_log_system">
-                <a href="javascript:loadFeature({p:'query_log_system'})">
-                    </i> System Logs
-                </a>
-            </li>
-            <li id="query_log_object">
-                <a href="javascript:loadFeature({p:'query_log_object'})">
-                    </i> Object Logs
-                </a>
-            </li>
-            <li id="query_log_queue">
-                <a href="javascript:loadFeature({p:'query_log_queue'})">
-                    </i> Query Queue
-                </a>
-            </li>
-        </ul>
-    </li>
-    {{#if globalObj.enable_stat_queries}}
-        <li class="item">
-            <a href="\\#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'query_stat_cpuinfo'})">
-                <i class="icon-dashboard"></i>
-                <span>Statistics</span>
-            </a>
-            <ul id="query_stat" class="submenu">
-                <li id="query_stat_cpuinfo">
-                    <a href="javascript:loadFeature({p:'query_stat_cpuinfo'})">
-                        </i> CPU Information
-                    </a>
-                </li>
-                <li id="query_stat_qeperf">
-                    <a href="javascript:loadFeature({p:'query_stat_qeperf'})">
-                        </i> QE Performance
-                    </a>
-                </li>
-                <li id="query_stat_smsg">
-                    <a href="javascript:loadFeature({p:'query_stat_smsg'})">
-                        </i> Sandesh Messages
-                    </a>
-                </li>
-                <li id="query_stat_uvevnagent">
-                    <a href="javascript:loadFeature({p:'query_stat_uvevnagent'})">
-                        </i> VN Agent
-                    </a>
-                </li>
-                <li id="query_stat_queue">
-                    <a href="javascript:loadFeature({p:'query_stat_queue'})">
-                        </i> Query Queue
-                    </a>
-                </li>
-            </ul>
-        </li>
-    {{/if}}
-</script>
-
 <script type="text/x-handlebars-template" id="current-breadcrumb">
  {{#each this}}
    {{#if @last}}
@@ -660,86 +364,88 @@
 </script>
 
 <!--JQuery Scripts-->
-<!-- Start dev_env --> 
-<script src="/assets/jquery/js/jquery-1.8.3.min.js?built_at=1398860488"></script>
-<!-- End dev_env -->
+<!-- Start dev_env 
+<script src="/assets/jquery/js/jquery-1.8.3.min.js?built_at="></script>
+End dev_env -->
 <!--
-<script src="/assets/jquery/assets/js/jquery-1.9.1.min.js?built_at=1398860488"></script>
+<script src="/assets/jquery/assets/js/jquery-1.9.1.min.js?built_at="></script>
 -->
-<!-- Start dev_env --> 
-<script src="/assets/jquery/js/jquery.xml2json.js?built_at=1398860488"></script>
-<script src="/assets/jquery/js/jquery.ba-bbq.min.js?built_at=1398860488"></script>
-<script src="/assets/jquery/js/jquery.timer.js?built_at=1398860488"></script>
-<script src="/assets/jquery-ui/js/jquery-ui.js?built_at=1398860488"></script>
-<script src="/assets/jquery/js/jquery.ui.touch-punch.min.js?built_at=1398860488"></script>
-<!-- End dev_env -->
+<!-- Start dev_env 
+<script src="/assets/jquery/js/jquery.xml2json.js?built_at="></script>
+<script src="/assets/jquery/js/jquery.ba-bbq.min.js?built_at="></script>
+<script src="/assets/jquery/js/jquery.timer.js?built_at="></script>
+<script src="/assets/jquery-ui/js/jquery-ui.js?built_at="></script>
+<script src="/assets/jquery/js/jquery.ui.touch-punch.min.js?built_at="></script>
+End dev_env -->
 
 <!--Bootstrap Scripts-->
-<!-- Start dev_env --> 
-<script src="/assets/bootstrap/js/bootstrap.min.js?built_at=1398860488"></script>
-<!-- End dev_env -->
+<!-- Start dev_env 
+<script src="/assets/bootstrap/js/bootstrap.min.js?built_at="></script>
+End dev_env -->
 
 <!--D3 Scripts-->
-<!-- Start dev_env --> 
-<script src="/assets/d3/js/d3.js?built_at=1398860488"></script>
-<script src="/assets/nvd3/js/nv.d3.js?built_at=1398860488"></script>
-<script src="/assets/crossfilter/js/crossfilter.min.js?built_at=1398860488"></script>
-<!-- End dev_env -->
+<!-- Start dev_env 
+<script src="/assets/d3/js/d3.js?built_at="></script>
+<script src="/assets/nvd3/js/nv.d3.js?built_at="></script>
+<script src="/assets/crossfilter/js/crossfilter.min.js?built_at="></script>
+End dev_env -->
 
 <!--Utils Scripts-->
-<!-- Start dev_env -->
-<script src="/js/jsonpath-0.8.0.js?built_at=1398860488"></script>
-<script src="/js/xdate.js?built_at=1398860488"></script>
-<script src="/assets/jquery/js/jquery.validate.js?built_at=1398860488"></script>
-<script src="/assets/handlebars/handlebars-v1.3.0.js?built_at=1398860488"></script>
-<script src="/assets/knockout/knockout-3.0.0.js?built_at=1398860488"></script>
-<script src="/assets/select2/js/select2.min.js?built_at=1398860488"></script>
-<script src="/assets/slickgrid/js/jquery.event.drag-2.2.js?built_at=1398860488"></script>
-<script src="/assets/slickgrid/js/jquery.json-2.3.min.js?built_at=1398860488"></script>
-<script src="/assets/slickgrid/js/jquery.dropkick-1.0.0.js?built_at=1398860488"></script>
-<script src="/assets/slickgrid/js/slick.core.js?built_at=1398860488"></script>
-<script src="/assets/slickgrid/js/slick.grid.js?built_at=1398860488"></script>
-<script src="/assets/slickgrid/js/slick.dataview.js?built_at=1398860488"></script>
-<script src="/assets/slickgrid/js/slick.enhancementpager.js?built_at=1398860488"></script>
-<script src="/assets/datetimepicker/js/jquery.datetimepicker.js?built_at=1398860488"></script>
-<script src="/assets/moment/moment.js?built_at=1398860488"></script>
-<script src="/assets/2way-multiselect/js/multiselect.js?built_at=1398860488"></script>
-<!-- End dev_env -->
+<!-- Start dev_env
+<script src="/assets/jsonpath/js/jsonpath-0.8.0.js?built_at="></script>
+<script src="/assets/xdate/js/xdate.js?built_at="></script>
+<script src="/assets/jquery/js/jquery.validate.js?built_at="></script>
+<script src="/assets/handlebars/handlebars-v1.3.0.js?built_at="></script>
+<script src="/assets/knockout/knockout-3.0.0.js?built_at="></script>
+<script src="/assets/select2/js/select2.min.js?built_at="></script>
+<script src="/assets/slickgrid/js/jquery.event.drag-2.2.js?built_at="></script>
+<script src="/assets/slickgrid/js/jquery.json-2.3.min.js?built_at="></script>
+<script src="/assets/slickgrid/js/jquery.dropkick-1.0.0.js?built_at="></script>
+<script src="/assets/slickgrid/js/slick.core.js?built_at="></script>
+<script src="/assets/slickgrid/js/slick.grid.js?built_at="></script>
+<script src="/assets/slickgrid/js/slick.dataview.js?built_at="></script>
+<script src="/assets/slickgrid/js/slick.enhancementpager.js?built_at="></script>
+<script src="/assets/datetimepicker/js/jquery.datetimepicker.js?built_at="></script>
+<script src="/assets/moment/moment.js?built_at="></script>
+<script src="/assets/2way-multiselect/js/multiselect.js?built_at="></script>
+End dev_env -->
 
-<!-- Start prod_env
-<script src="/js/contrail-all-1.js?built_at=1398860488"></script>
-<script src="/js/contrail-all-2.js?built_at=1398860488"></script>
-<script src="/js/contrail-all-3.js?built_at=1398860488"></script>
-<script src="/js/contrail-all-4.js?built_at=1398860488"></script>
-End prod_env -->
+<!-- Start prod_env -->
+<script src="/js/contrail-all-1.js?built_at="></script>
+<script src="/js/contrail-all-2.js?built_at="></script>
+<script src="/js/contrail-all-3.js?built_at="></script>
+<script src="/js/contrail-all-4.js?built_at="></script>
+<!-- End prod_env -->
 
 <!--Contrail Scripts-->
-<!-- Start dev_env -->
+<!-- Start dev_env
 <script src="/js/contrail-common.js"></script>
-<script src="/js/handlebars-utils.js?built_at=1398860488"></script>
-<script src="/js/select2-utils.js?built_at=1398860488"></script>
-<script src="/js/slickgrid-utils.js?built_at=1398860488"></script>
-<script src="/js/contrail-elements.js?built_at=1398860488"></script>
-<script src="/js/topology_api.js?built_at=1398860488"></script>
-<script src="/js/web-utils.js?built_at=1398860488"></script>
-<script src="/js/contrail-layout.js?built_at=1398860488"></script>
-<script src="/js/config_global.js?built_at=1398860488"></script>
-<script src="/js/protocol.js?built_at=1398860488"></script>
-<script src="/js/qe-utils.js?built_at=1398860488"></script>
-<script src="/js/nvd3-plugin.js?built_at=1398860488"></script>
-<script src="/js/d3-utils.js?built_at=1398860488"></script>
-<script src="/js/analyzer-utils.js?built_at=1398860488"></script>
-<!-- End dev_env -->
+<script src="/js/handlebars-utils.js?built_at="></script>
+<script src="/js/select2-utils.js?built_at="></script>
+<script src="/js/slickgrid-utils.js?built_at="></script>
+<script src="/js/contrail-elements.js?built_at="></script>
+<script src="/js/topology_api.js?built_at="></script>
+<script src="/js/chart-utils.js?built_at="></script>
+<script src="/js/web-utils.js?built_at="></script>
+<script src="/js/contrail-layout.js?built_at="></script>
+<script src="/js/config_global.js?built_at="></script>
+<script src="/js/protocol.js?built_at="></script>
+<script src="/js/qe-utils.js?built_at="></script>
+<script src="/js/nvd3-plugin.js?built_at="></script>
+<script src="/js/d3-utils.js?built_at="></script>
+<script src="/js/analyzer-utils.js?built_at="></script>
+End dev_env -->
+
 
 <!--[if lte IE 8]>
 <script src="/js/"></script>
 <![endif]-->
 <script type="text/javascript">
-    var built_at=1398860488;
+    var built_at="";
 </script>
-<!-- Start prod_env
-<script src="/js/contrail-all-5.js?built_at=1398860488"></script>
-End prod_env -->
+<!-- Start prod_env -->
+<script src="/js/contrail-all-5.js?built_at="></script>
+<!-- End prod_env -->
 
 </body>
 </html>

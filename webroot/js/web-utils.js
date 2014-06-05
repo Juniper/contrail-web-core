@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
 var globalObj = {},
@@ -17,6 +17,7 @@ var DEFAULT_TIME_SLICE = 3600000,
     pageContainer = "#content-container",
     dblClick = 0;
 var CONTRAIL_STATUS_USER = [];
+var roles = {TENANT : "user",ADMIN : "admin"};
 var CONTRAIL_STATUS_PWD = [];
 var flowKeyStack = [];
 var aclIterKeyStack = [];
@@ -105,7 +106,11 @@ function initializePrototypes() {
 }
 
 function collapseElement(e) {
-    $(e).toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+    if($(e).prop("tagName").toUpperCase() == "I"){
+        $(e).toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+    } else {
+        $(e).find("i").toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+    }
     var widgetBodyElem = $(e).parents('div.widget-box').find('div.widget-body');
     var widgetBoxElem = $(e).parents('div.widget-box');
     $(widgetBoxElem).toggleClass('collapsed');	
@@ -154,96 +159,6 @@ function keys(obj) {
 
 var defaultSeriesColors = [ "#70b5dd", "#1083c7", "#1c638d" ];
 var defColors = ['#1c638d', '#4DA3D5'];
-
-
-/**
- * @options['objectType']   project|network|flow|peer|port
- * @options['view']         chart|list
- * Do any logarthmic calculations here
- */
-function chartsParseFn(options, response) {
-    var obj = response;
-    var view = options['view'];
-    var objType = options['objectType'];
-    var objSource = options['source'];
-    var fqName = options['fqName'];
-    var logScale = ifNull(options['logScale'], 0);
-    if (options['chart'] != null) {
-        var selector = options['chart'];
-        if ($(selector).hasClass('negate') || (logScale > 0)) {
-            var data = obj;
-            var fields = [];
-            var series = options['series'];
-            $.each(series, function (idx, obj) {
-                fields.push(obj['field']);
-            });
-            if ($(selector).hasClass('negate')) {
-                $.each(data, function (idx, obj) {
-                    $.each(fields, function (i, field) {
-                        data[idx][field] = -1 * data[idx][field];
-                    });
-                });
-            }
-            if (logScale > 0) {
-                $.each(data, function (idx, obj) {
-                    $.each(fields, function (i, field) {
-                        data[idx][field] = log2(data[idx][field]);
-                    });
-                });
-            }
-        }
-    }
-
-    if(objType == 'project' && objSource == 'uve') {
-        obj = $.map(tenantNetworkMonitorUtils.filterVNsNotInCfg(response['value'],fqName), function (currObj, idx) {
-            currObj['inBytes'] = jsonPath(currObj, '$..in_bytes')[0];
-            currObj['outBytes'] = jsonPath(currObj, '$..out_bytes')[0];
-            currObj['project'] = currObj['name'].split(':').slice(0, 2).join(':');
-            return currObj;
-        });
-        var projArr = [], projData = {};
-        $.each(obj, function (idx, d) {
-            if (!(d['project'] in projData)) {
-                projData[d['project']] = {
-                    inBytes:0,
-                    inThroughput:0,
-                    outThroughput:0,
-                    outBytes:0,
-                    vnCount:0
-                }
-            }
-            projData[d['project']]['inBytes'] += ifNull(jsonPath(d, '$..in_bytes')[0], 0);
-            projData[d['project']]['outBytes'] += ifNull(jsonPath(d, '$..out_bytes')[0], 0);
-            projData[d['project']]['inThroughput'] += ifNull(jsonPath(d, '$..in_bandwidth_usage')[0], 0);
-            projData[d['project']]['outThroughput'] += ifNull(jsonPath(d, '$..out_bandwidth_usage')[0], 0);
-            projData[d['project']]['vnCount']++;
-        });
-        $.each(projData, function (key, obj) {
-            $.extend(obj, {name:key});
-            projArr.push(obj);
-        });
-        obj = projArr;
-    } else if (objType == 'network') {
-        obj = tenantNetworkMonitorUtils.networkParseFn(response);
-    } else if (objType == 'instance') {
-        obj = tenantNetworkMonitorUtils.instanceParseFn(response);
-    } else if (objType == 'port') {
-    } else if (objType == 'peer') {
-    } else if ($.inArray(objType, ['flow', 'flowdetail']) > -1) {
-        obj = $.map(response, function (obj, idx) {
-            obj['sourceip'] = long2ip(obj['sourceip']);
-            obj['destip'] = long2ip(obj['destip']);
-            //obj['protocol'] = formatProtocol(obj['protocol']);
-            if (view == 'list') {
-                //obj['bytes'] = formatBytes(obj['bytes']);
-            }
-            obj['name'] = ifNull(obj['sourceip'], obj['destip']);
-            obj['name'] += ':' + ifNull(obj['sport'], obj['dport']);
-            return obj;
-        });
-    }
-    return obj;
-}
 
 (function ($) {
     $.extend($.fn, {
@@ -528,7 +443,7 @@ function chartsParseFn(options, response) {
                     onInit:function (e,dc) {
                         var detailTemplate = contrail.getTemplate4Id('detailTemplate');
                         var rowData = e.data;
-                        var grid = $(e['srcElement']).closest('div.contrail-grid');
+                        var grid = $(e['target']).closest('div.contrail-grid');
                         var dataItem = dc;
                         //Issue a call for fetching the details
                         if(dataItem['url'] != null) {
@@ -587,11 +502,10 @@ function chartsParseFn(options, response) {
                         options: {
                             forceFitColumns:true,
                             enableColumnReorder:true,
-                            //rowHeight:30,
-                            autoHeight:true,
                             detail: !$.isEmptyObject(gridDetailConfig) ? gridDetailConfig : false,
                             sortable:true,
-                            lazyLoading: data['isAsyncLoad'] != null ? data['isAsyncLoad'] : false
+                            lazyLoading: data['isAsyncLoad'] != null ? data['isAsyncLoad'] : false,
+                            actionCell: data['config']['actionCell']
                         },
                         dataSource: dataSource,
                         statusMessages: {
@@ -608,14 +522,6 @@ function chartsParseFn(options, response) {
                             }
                         }
                     },
-                    footer : {
-                        pager : {
-                            options : {
-                                pageSize : 50,
-                                pageSizeSelect : [ 5, 10, 50, 100 ]
-                            }
-                        }
-                    },
                     columnHeader: {
                         columns:data['columns'],
                     },
@@ -627,8 +533,6 @@ function chartsParseFn(options, response) {
                     searchToolbar:(data['config'] != null && data['config']['widgetGridTitle'] != null) ? true : false*/
                 }, data['config']));
                 var cGrid = $(this).data('contrailGrid');
-                if(data['idField'] != null)
-                    $(this).data('idField',data['idField']);
                 //If deferredObj is pending and record count is empty..then show loading icon implies that first set of records are not fetched yet
                 if((data['deferredObj'] != null && data['deferredObj'].state() == 'pending' && data['dataSource'].getItems().length == 0)
                         || data['url'] != null) {
@@ -734,368 +638,6 @@ function triggerDatasourceEvents(dataSource){
         $(dataSource).trigger('change');
     }
 }
-
-(function ($) {
-    $.extend($.fn, {
-        initMemCPUSparkLines: function(data, parser, propertyNames, slConfig) {
-            var selector = $(this);
-            createD3SparkLines(selector, data, parser, propertyNames, slConfig);
-        },
-        initMemCPULineChart:function (obj, height) {
-            var selector = $(this);
-            var options = {};
-            var url = obj.url;
-            options.titles = obj.titles;
-            options.height = height;
-            options.parser = obj.parser;
-            options.plotOnLoad = obj.plotOnLoad;
-            options.showWidgetIds = obj.showWidgetIds;
-            options.hideWidgetIds = obj.hideWidgetIds;
-            createD3MemCPUChart(selector, url, options);
-        },
-        initD3TSChart: function (obj) {
-            var selector = $(this);
-            var url = (typeof(obj['url']) == 'function') ? obj['url']() : obj['url'];
-            var cbParams = {selector: selector};
-            chartHandler(url, "GET", null, null, 'parseTSChartData', "successHandlerTSChart", null, false, cbParams, 310000);
-        },
-        initScatterChart:function (data) {
-            var selector = $(this), toFormat = '',
-                chartOptions = ifNull(data['chartOptions'],{}), chart, yMaxMin, d;
-            var hoveredOnTooltip,tooltipTimeoutId;
-            var xLbl = ifNull(data['xLbl'], 'CPU (%)'),
-                yLbl = ifNull(data['yLbl'], 'Memory (MB)');
-
-            var xLblFormat = ifNull(data['xLblFormat'], d3.format()),
-                yLblFormat = ifNull(data['yLblFormat'], d3.format());
-
-            var yDataType = ifNull(data['yDataType'], '');
-
-            if ($.inArray(ifNull(data['title'], ''), ['vRouters', 'Analytic Nodes', 'Config Nodes', 'Control Nodes']) > -1) {
-                data['forceX'] = [0, 0.15];
-                xLblFormat = ifNull(data['xLblFormat'], d3.format('.02f'));
-                //yLblFormat = ifNull(data['xLblFormat'],d3.format('.02f'));
-            }
-            if (data['d'] != null)
-                d = data['d'];
-
-            //Merge the data values array if there are multiple categories plotted in chart, to get min/max values
-            var dValues = $.map(d,function(obj,idx) {
-                return obj['values'];
-            });
-            dValues = flattenList(dValues);
-
-            if(data['yLblFormat'] == null) {
-                yLblFormat = function(y) {
-                    return parseFloat(d3.format('.02f')(y)).toString();
-                };
-            }
-
-            //If the axis is bytes, check the max and min and decide the scale KB/MB/GB
-            //Set size domain
-            var sizeMinMax = getBubbleSizeRange(dValues);
-
-            logMessage('scatterChart', 'sizeMinMax', sizeMinMax);
-
-            //Decide the best unit to display in y-axis (B/KB/MB/GB/..) and convert the y-axis values to that scale
-            if (yDataType == 'bytes') {
-                var result = formatByteAxis(d);
-                d = result['data'];
-                yLbl += result['yLbl'];
-            }
-            chartOptions['multiTooltip'] = true;
-            chartOptions['scatterOverlapBubbles'] = false;
-            chartOptions['xLbl'] = xLbl;
-            chartOptions['yLbl'] = yLbl;
-            chartOptions['xLblFormat'] = xLblFormat;
-            chartOptions['yLblFormat'] = yLblFormat;
-            chartOptions['forceX'] = data['forceX'];
-            chartOptions['forceY'] = data['forceY'];
-            if(data['xPositive'] != null)
-                chartOptions['xPositive'] = data['xPositive'];
-            if(data['yPositive'] != null)
-                chartOptions['yPositive'] = data['yPositive'];
-            if(data['addDomainBuffer'] != null)
-                chartOptions['addDomainBuffer'] = data['addDomainBuffer'];
-            var seriesType = {};
-            for(var i = 0;i < d.length; i++ ) {
-                var values = [];
-                if(d[i]['values'].length > 0)
-                    seriesType[d[i]['values'][0]['type']] = i;
-                $.each(d[i]['values'],function(idx,obj){
-                    obj['multiTooltip'] = chartOptions['multiTooltip'];
-                    obj['fqName'] = data['fqName'];
-                    values.push(obj);
-                })
-                d[i]['values'] = values;
-            }
-            chartOptions['seriesMap'] = seriesType;
-            chartOptions['tooltipFn'] = ifNull(data['tooltipFn'], bgpMonitor.nodeTooltipFn);
-            if(chartOptions['multiTooltip'] || chartOptions['forcedTooltip']) {
-                //d = markOverlappedBubbles(d);
-                chartOptions['tooltipRenderedFn'] = function(tooltipContainer,e,chart) {
-                    if(e['point']['overlappedNodes'] != undefined && e['point']['overlappedNodes'].length >1) {
-                       var result = {};
-                       if(e['point']['type'] == 'project')
-                           result = getMultiTooltipContent(e,tenantNetworkMonitor.getProjectTooltipContents,chart);
-                       else if(e['point']['type'] == 'network')
-                           result = getMultiTooltipContent(e,tenantNetworkMonitor.getNetworkTooltipContents,chart);
-                       else if(e['point']['type'] == 'sport' || e['point']['type'] == 'dport')
-                           result = getMultiTooltipContent(e,tenantNetworkMonitor.getPortTooltipContents,chart);
-                       else
-                           result = getMultiTooltipContent(e,bgpMonitor.getTooltipContents,chart);
-                       
-                       if(chartOptions['multiTooltip'] && result['content'].length > 1)
-                           bindEventsOverlapTooltip(result,tooltipContainer);
-                    }
-                }
-            }    
-            if(chartOptions['scatterOverlapBubbles'])
-                d = scatterOverlapBubbles(d);
-            chartOptions['sizeMinMax'] = sizeMinMax;
-
-            chartOptions['stateChangeFunction'] = function (e) {
-                //nv.log('New State:', JSON.stringify(e));
-            };
-
-
-            chartOptions['elementClickFunction'] = function (e) {
-                processDrillDownForNodes(e);
-            };
-            chartOptions['elementMouseoutFn'] = function (e) {
-                if(e['point']['overlappedNodes'] != undefined && e['point']['overlappedNodes'].length > 1) {
-                    if(tooltipTimeoutId != undefined)
-                        clearTimeout(tooltipTimeoutId);
-                    tooltipTimeoutId = setTimeout(function(){
-                        tooltipTimeoutId = undefined;  
-                        if(hoveredOnTooltip != true){
-                            nv.tooltip.cleanup();
-                        }
-                      },1500);    
-                }
-            };
-            chartOptions['elementMouseoverFn'] = function(e) {
-                if(tooltipTimeoutId != undefined)
-                    clearTimeout(tooltipTimeoutId);
-            }
-            if(data['hideLoadingIcon'] != false)
-                $(this).parents('.widget-box').find('.icon-spinner').hide();
-            if(data['loadedDeferredObj'] != null)
-                data['loadedDeferredObj'].fail(function(errObj){
-                    if(errObj['errTxt'] != null && errObj['errTxt'] != 'abort') { 
-                        showMessageInChart({selector:$(selector),chartObj:$(selector).data('chart'),xLbl:chartOptions['xLbl'],yLbl:chartOptions['yLbl'],
-                            msg:'Error in fetching details',type:'bubblechart'});
-                    }
-                });
-            chartOptions['deferredObj'] = data['deferredObj'];
-            initScatterBubbleChart(selector, d, chart, chartOptions);
-
-            if(data['widgetBoxId'] != null)
-                endWidgetLoading(data['widgetBoxId']);
-            /**
-             * function takes the parameters tooltipContainer object and the tooltip array for multitooltip and binds the 
-             * events like drill down on tooltip and click on left and right arrows
-             * @param result
-             * @param tooltipContainer
-             */
-            function bindEventsOverlapTooltip(result,tooltipContainer) {
-                var page = 1;
-                var perPage = result['perPage'];
-                var pagestr = "";
-                var data = [];
-                result['perPage'] = perPage;
-                data = $.extend(true,[],result['content']); 
-                result['content'] = result['content'].slice(0,perPage);
-                if(result['perPage'] > 1)
-                    result['pagestr'] = 1 +" - "+result['content'].length +" of "+data.length;
-                else if(result['perPage'] == 1)
-                    result['pagestr'] = 1 +" / "+data.length;
-                $(tooltipContainer).find('div.enabledPointer').parent().html(formatLblValueMultiTooltip(result));
-                $(tooltipContainer).find('div.left-arrow').on('click',function(e){
-                    result['button'] = 'left';
-                    handleLeftRightBtnClick(result,tooltipContainer);
-                });
-                $(tooltipContainer).find('div.right-arrow').on('click',function(e){
-                    result['button'] = 'right';
-                    handleLeftRightBtnClick(result,tooltipContainer);
-                });
-                $(tooltipContainer).find('div.tooltip-wrapper').find('div.chart-tooltip').on('click',function(e){
-                    bubbleDrillDown($(this).find('div.chart-tooltip-title').find('p').text(),result['nodeMap']);
-                });
-                $(tooltipContainer).find('div.enabledPointer').on('mouseover',function(e){
-                    //console.log("Inside the mouse over");
-                    hoveredOnTooltip = true; 
-                });
-                $(tooltipContainer).find('div.enabledPointer').on('mouseleave',function(e){
-                    //console.log("Inside the mouseout ");
-                    hoveredOnTooltip = false;
-                    nv.tooltip.cleanup();
-                });
-                $(tooltipContainer).find('button.close').on('click',function(e){
-                    hoveredOnTooltip = false;
-                    nv.tooltip.cleanup();
-                });
-                function handleLeftRightBtnClick(result,tooltipContainer) {
-                       var content = [];
-                       var leftPos = 'auto',rightPos = 'auto';
-                       if(result['button'] == 'left') {
-                            if($(tooltipContainer).css('left') == 'auto') {
-                                leftPos = $(tooltipContainer).offset()['left'];
-                                $(tooltipContainer).css('left',leftPos);
-                                $(tooltipContainer).css('right','auto');
-                            }
-                            if(page == 1)
-                                return;
-                            page = page-1;
-                            if(result['perPage'] > 1)
-                                pagestr = (page - 1) * perPage+1 +" - "+ (page) * perPage;
-                            else if(result['perPage'] == 1)
-                                pagestr = (page - 1) * perPage+1;
-                            if(page <= 1) {
-                                if(result['perPage'] > 1)
-                                    pagestr = 1 +" - "+ (page) * perPage;
-                                else if(result['perPage'] == 1)
-                                    pagestr = 1;
-                            }
-                            content = data.slice((page-1) * perPage,page * perPage);
-                      } else if (result['button'] == 'right') {
-                          if($(tooltipContainer).css('right') == 'auto') {
-                              leftPos = $(tooltipContainer).offset()['left'];
-                              rightPos = $(tooltipContainer).offsetParent().width() - $(tooltipContainer).outerWidth() - leftPos;
-                              $(tooltipContainer).css('right', rightPos);
-                              $(tooltipContainer).css('left','auto');
-                          }
-                            if(Math.ceil(data.length/perPage) == page)
-                                return;
-                            page += 1;
-                            if(result['perPage'] > 1)
-                                pagestr = (page - 1) * perPage+1 +" - "+ (page) * perPage;
-                            else if(result['perPage'] == 1)
-                                pagestr = (page - 1) * perPage+1;
-                            content = data.slice((page-1) * perPage,page * perPage);
-                            if(data.length <= page * perPage) {
-                                if(result['perPage'] > 1)
-                                    pagestr = (data.length-perPage)+1 +" - "+ data.length;
-                                else if(result['perPage'] == 1)
-                                    pagestr = (data.length-perPage)+1;
-                                content = data.slice((data.length - perPage),data.length);
-                            } 
-                      }
-                      leftPos = $(tooltipContainer).offset()['left'];
-                      rightPos = $(tooltipContainer).offsetParent().width() - $(tooltipContainer).outerWidth() - leftPos;
-                      result['content'] = content;
-                      if(result['perPage'] > 1)
-                          pagestr += " of "+data.length;
-                      else if(result['perPage'] == 1)
-                          pagestr += " / "+data.length;
-                      result['perPage'] = perPage;
-                      $(tooltipContainer).css('left',0);
-                      $(tooltipContainer).css('right','auto');
-                      $(tooltipContainer).find('div.tooltip-wrapper').html("");
-                      for(var i = 0;i<result['content'].length ; i++) {
-                          $(tooltipContainer).find('div.tooltip-wrapper').append(formatLblValueTooltip(result['content'][i]));
-                      }
-                      $(tooltipContainer).find('div.pagecount span').html(pagestr);
-                      if(result['button'] == 'left') {
-                        //Incase the tooltip doesnot accomodate in the right space available 
-                          if($(tooltipContainer).outerWidth() > ($(tooltipContainer).offsetParent().width() - leftPos)){
-                              $(tooltipContainer).css('right',0);
-                              $(tooltipContainer).css('left','auto');
-                          } else {
-                              $(tooltipContainer).css('left',leftPos);
-                          }
-                      } else if(result['button'] == 'right') {
-                          //Incase the tooltip doesnot accomodate in the left space available  
-                          if($(tooltipContainer).outerWidth() > ($(tooltipContainer).offsetParent().width() - rightPos)){
-                              $(tooltipContainer).css('left',0);
-                          } else {
-                              $(tooltipContainer).css('right',rightPos);
-                              $(tooltipContainer).css('left','auto');
-                          }
-                      }
-                      //binding the click on tooltip for bubble drill down
-                      $(tooltipContainer).find('div.tooltip-wrapper').find('div.chart-tooltip').on('click',function(e){
-                          bubbleDrillDown($(this).find('div.chart-tooltip-title').find('p').text(),result['nodeMap']);
-                      });
-                }
-                function bubbleDrillDown(nodeName,nodeMap) {
-                    var e = nodeMap[nodeName];
-                    processDrillDownForNodes(e);
-                }
-                $(window).off('resize.multiTooltip');
-                $(window).on('resize.multiTooltip',function(e){
-                    nv.tooltip.cleanup();
-                });
-            }
-        }
-    })
-})(jQuery);
-
-/**
- * function takes the parameters total node repsones(one in dashboard) and changes the x-axis and y-axis 
- * based on the buffer set to avoid overlap of bubble
- * 
- * @param data
- * @returns
- */
-
-function scatterOverlapBubbles (data){
-    var bubbles = data[0]['values'];
-    for(var i = 0;i < bubbles.length; i++ ){
-        var x = bubbles[i]['x'];
-        var y = bubbles[i]['y'];
-        var buffer = 4;//In percent
-        $.each(bubbles,function(idx,obj){
-            if((!isNaN(x) && !isNaN(y) && Math.abs(x-obj['x'])/x) * 100 <= buffer && (Math.abs(y-obj['y'])/y) * 100 <= buffer && bubbles[i]['name'] != obj['name']){
-                if(idx % 2 !=0) {
-                    obj['x'] = obj['x'] +obj['x']*(buffer/100);
-                    //obj['y'] = obj['y'] +obj['y']*(buffer/100);
-                } else if(idx % 2 ==0 || x !=0 || y !=0 ) {
-                    obj['x'] = obj['x'] -obj['x']*(buffer/100);
-                    //obj['y'] = obj['y'] -obj['y']*(buffer/100);
-                }
-            } else if (isNaN(x) && isNaN(y) && isNaN(obj['x']) && isNaN(obj['y'])){
-                obj['x']
-                if(idx % 2 !=0) {
-                    obj['x'] = obj['x'] +obj['x']*(buffer/100);
-                    //obj['y'] = obj['y'] +obj['y']*(buffer/100);
-                } else if(idx % 2 ==0 || x !=0 || y !=0 ) {
-                    obj['x'] = obj['x'] -obj['x']*(buffer/100);
-                    //obj['y'] = obj['y'] -obj['y']*(buffer/100);
-                }
-            }
-        });
-    }
-    data[0]['values'] = bubbles;
-    return data;	
-}
-/**
- * function checks for the overlapped points in the total data and returns 
- */
-function markOverlappedBubblesOnHover (e,chart){
-    var totalSeries = [],data = e['series'],xDiff,yDiff;
-    xDiff = chart.xAxis.domain()[1] - chart.xAxis.domain()[0];
-    yDiff = chart.yAxis.domain()[1] - chart.yAxis.domain()[0];
-    for(var i = 0;i<data.length; i++){
-        $.merge(totalSeries,data[i]['values']);
-    }
-    var x = e['point']['x'];
-    var y = e['point']['y'];
-    var buffer = 1.5;//In percent
-    var overlappedNodes = [];
-    $.each(totalSeries,function(idx,obj) {
-        if((Math.abs(x-obj['x'])/xDiff) * 100 <= buffer && 
-            (Math.abs(y-obj['y'])/yDiff) * 100 <= buffer) {
-            overlappedNodes.push({name:obj['name'],type:obj['type']});
-        } else if (isNaN(x) && isNaN(y) && isNaN(obj['x']) && isNaN(obj['y'])) {
-            overlappedNodes.push({name:obj['name'],type:obj['type']});
-        } else if (x == 0 && y == 0 && obj['x'] == 0 && obj['y'] == 0) {
-            overlappedNodes.push({name:obj['name'],type:obj['type']});
-        }
-    });
-    return overlappedNodes;
-}
-
 
 function prettifyBytes(obj) {
     var bytes = obj['bytes'];
@@ -1305,15 +847,19 @@ function MenuHandler() {
     var self = this;
     var menuObj;
     self.deferredObj = $.Deferred();
-    var menuDefferedObj = $.Deferred(), orchDefferedObj = $.Deferred(), statDefferredObj = $.Deferred();
+    var menuDefferedObj = $.Deferred(),statDefferredObj = $.Deferred(),webServerDefObj = $.Deferred();
 
     this.loadMenu = function () {
         $.get('/menu.xml?built_at=' + built_at, function (xml) {
             menuObj = $.xml2json(xml);
-            processXMLJSON(menuObj);
-            menuDefferedObj.resolve();
+            webServerDefObj.always(function(){
+                processXMLJSON(menuObj);
+                var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'],'menushortcut'));
+                $("#sidebar-shortcuts").html(menuShortcuts);
+                menuObj['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
+                menuDefferedObj.resolve();
+            });
         });
-        orchDefferedObj.resolve();
         //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
         
         $.ajax({
@@ -1331,6 +877,8 @@ function MenuHandler() {
                 }
                 globalObj['webServerInfo'] = response;
             }    
+        }).always(function(){
+            webServerDefObj.resolve();
         });
         
         $.ajax({
@@ -1340,35 +888,122 @@ function MenuHandler() {
                 statDefferredObj.resolve();
         });
 
-        $.when.apply(window, [menuDefferedObj, orchDefferedObj, statDefferredObj]).done(function () {
+        $.when.apply(window, [menuDefferedObj, webServerDefObj, statDefferredObj]).done(function () {
             self.deferredObj.resolve();
         });
     }
-
+    
+    this.filterMenuItems = function(items,type){
+        if(type == null) {
+            items = items.filter(function(value){
+                var hasAccess = false;
+                hasAccess = checkForAccess(value);
+                if(value['items'] != null && value['items']['item'] instanceof Array && hasAccess)
+                    value['items']['item'] = menuHandler.filterMenuItems(value['items']['item']);
+                return hasAccess;
+            });
+            return items;
+        } else if(type == 'menushortcut') {
+            var result = [];
+            for(var i = 0;i < items.length; i++){
+                var obj = {};
+                obj['iconClass'] = items[i]['iconClass'],obj['id'] = items[i]['name'],obj['label'] = items[i]['label'];
+                /*If top level item has access tag then check for it
+                  else check for the access tag in the sub menu items
+                */
+                if(items[i]['access'] != null)
+                    obj['cssClass'] = checkForAccess(items[i]) ? "btn-"+items[i]['name'] : "disabledBtn";
+                else if(items[i]['items'] != null && items[i]['items']['item'] instanceof Array) {
+                    var subMenu = items[i]['items']['item'],allowed = false;
+                    for(var j = 0; j < subMenu.length; j++) {
+                        if(subMenu[j]['access'] != null) {
+                            /*
+                             * if atleast one submenu item is allowed then menu button should not be disabled
+                             */
+                            if(checkForAccess(subMenu[j]))
+                                allowed = true;
+                        /*
+                         * if any submenu item has no access tag which mean it is accessible to everyone so menu button should not be disabled
+                         */
+                        } else {
+                            allowed = true;
+                            break;
+                        }
+                    }
+                    obj['cssClass'] = allowed ? "btn-"+items[i]['name'] : "disabledBtn";
+                //Menu with no sub items,so disabling it
+                } else 
+                    obj['cssClass'] = "disabledBtn";
+                result.push(obj);
+            }
+            return result;
+        }
+    }
+    
+    /*
+     * This function checks whether the user(from globalCacheObj) is permitted to view the menu item(which the parameter)
+     * and returns true if permitted else false
+     */
+    function checkForAccess(value){
+        var roleExists = false,orchExists = false;
+        var orchModel = globalObj['webServerInfo']['orchestrationModel'];
+        var role = globalObj['webServerInfo']['role'];
+        if(value.access != null && value.access.roles != null) {
+            if(!(value.access.roles.role instanceof Array))
+                value.access.roles.role = [value.access.roles.role];
+            var rolesArr = value.access.roles.role;
+            for(var i = 0; i < rolesArr.length; i++){
+                /**
+                 * Two cases, we need to check
+                 * 1)if negation(!) exists in role then the role should not match with the value in globalCacheObj
+                 * 2)If negation not there in the then just need to compare the role
+                 */
+                if((rolesArr[i].indexOf('!') > -1 && rolesArr[i] != "!"+role) || rolesArr[i] == role)
+                   roleExists = true; 
+            }
+            if(!(value.access.orchModels.model instanceof Array))
+                value.access.orchModels.model = [value.access.orchModels.model];
+            var orchModels = value.access.orchModels.model;
+            for(var i = 0;i < orchModels.length; i++ ){
+                if((orchModels[i].indexOf('!') > -1 && orchModels[i] != "!"+orchModel) || orchModels[i] == orchModel)
+                    orchExists = true; 
+            }
+            return (roleExists && orchExists);
+        } else {
+            return true;
+        }
+    }
+    
     this.toggleMenuButton = function (menuButton, currPageHash, lastPageHash) {
         var currentBCTemplate = contrail.getTemplate4Id('current-breadcrumb');
         var currPageHashArray, subMenuId, reloadMenu, linkId;
         if (menuButton == null) {
             currPageHashArray = currPageHash.split('_');
             //Looks scalable only till 2nd level menu
-            subMenuId = '#' + currPageHashArray[0] + '_' + currPageHashArray[1];
             linkId = '#' + currPageHashArray[0] + '_' + currPageHashArray[1] + '_' + currPageHashArray[2];
+            subMenuId = $(linkId).parent('ul.submenu');
             menuButton = getMenuButtonName(currPageHashArray[0]);
             //If user has switched between top-level menu
             reloadMenu = check2ReloadMenu(lastPageHash, currPageHashArray[0]);
         }
         if (reloadMenu == null || reloadMenu) {
+            var menu = {};
+            for(var i = 0;i < menuObj['items']['item'].length; i++) {
+                if(menuObj['items']['item'][i]['name'] == menuButton)
+                    menu =  menuObj['items']['item'][i];
+            }
             $('#menu').html('');
-            $('#menu').html(contrail.getTemplate4Id(menuButton + '-menu-template')({globalObj: globalObj}));
+            $('#menu').html(contrail.getTemplate4Id('menu-template')(menu));
             if ($('#sidebar').hasClass('menu-min')) {
                 $('#sidebar-collapse').find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
             }
             this.selectMenuButton("#btn-" + menuButton);
         }
         if (subMenuId == null) {
-            subMenuId = "#" + $('.item:first').find('ul:first').attr("id");
-            window.location = $(subMenuId).find('li:first a').attr("href"); // TODO: Avoid reload of page; fix it via hash.
+            subMenuId = $('.item:first').find('ul:first');
+            window.location = $('.item:first').find('ul:first').find('li:first a').attr("href"); // TODO: Avoid reload of page; fix it via hash.
         } else {
+            subMenuId = $(linkId).parent('ul.submenu');
             toggleSubMenu($(subMenuId), linkId);
             var currURL = window.location.href.split(window.location.host)[1];
             //Modify breadcrumb only if current URL is same as default one
@@ -1407,7 +1042,18 @@ function MenuHandler() {
         $('#btn-setting').removeClass("active");
         $(buttonId).addClass("active");
     }
-
+    /*
+     * Here we are checking whether the hash exists in the menu object
+     */
+    this.isHashExists = function (hashObj) {
+        //if the hash is null,which means no change in the current hash conveys that already it exists in menuObj
+        if(hashObj != null && (hashObj['p'] == null || menuHandler.getMenuObjByHash(hashObj['p']) != -1))
+            return true;
+        else 
+            return false;
+                
+    }
+    
     /*
      * post-processing of menu XML JSON
      * JSON expectes item to be an array,but xml2json make item as an object if there is only one instance
@@ -1495,17 +1141,24 @@ function MenuHandler() {
         //window[currMenuObj['class']] = null;
     }
 
-    this.getMenuObjByHash = function (menuHash, currMenuObj) {
+    this.getMenuObjByHash = function (menuHash, currMenuObj, parentsArr) {
+        parentsArr = ifNull(parentsArr,[]) ;
         if (currMenuObj == null)
             currMenuObj = menuObj['items']['item'];
         for (var i = 0; i < currMenuObj.length; i++) {
             //console.info(currMenuObj[i]['hash']);
-            if (currMenuObj[i]['hash'] == menuHash)
+            if (currMenuObj[i]['hash'] == menuHash){
+                currMenuObj[i]['parents'] = parentsArr;
                 return currMenuObj[i];
+            }
             if ((currMenuObj[i]['items'] != null) && (currMenuObj[i]['items']['item'] != null) && (currMenuObj[i]['items']['item'].length > 0)) {
-                var retVal = self.getMenuObjByHash(menuHash, currMenuObj[i]['items']['item']);
-                if (retVal != -1)
+                parentsArr.push(currMenuObj[i]);
+                var retVal = self.getMenuObjByHash(menuHash, currMenuObj[i]['items']['item'], parentsArr);
+                if (retVal != -1) {
                     return retVal;
+                } else {
+                    parentsArr.pop();
+                }
             }
         }
         return -1;
@@ -1522,6 +1175,7 @@ function MenuHandler() {
     }
 
     this.loadResourcesFromMenuObj = function(currMenuObj,deferredObj) {
+        var parents = currMenuObj['parents'];
         if (currMenuObj['rootDir'] != null) {
             //Update page Hash only if we are moving to a different view
             var currHashObj = layoutHandler.getURLHashObj();
@@ -1532,40 +1186,67 @@ function MenuHandler() {
             var deferredObjs = [];
             var rootDir = currMenuObj['rootDir'];
             var viewDeferredObjs = [];
-            if (currMenuObj['view'] != null) {
-                if (!(currMenuObj['view'] instanceof Array)) {
-                    currMenuObj['view'] = [currMenuObj['view']];
-                }
-                $.each(currMenuObj['view'], function () {
-                    var viewDeferredObj = $.Deferred();
-                    viewDeferredObjs.push(viewDeferredObj);
-                    var viewPath = rootDir + '/views/' + this + '?built_at=' + built_at;
-                    templateLoader.loadExtTemplate(viewPath, viewDeferredObj, currMenuObj['hash']);
+            //Load the parent views
+            if(parents != null && parents.length > 0){
+                $.each(parents,function(i,parent){
+                    var parentRootDir = parent['rootDir'];
+                    if (parentRootDir != null && parent['view'] != null) {
+                        loadViewResources(parent,currMenuObj['hash']);
+                    }
                 });
+            }
+            //Load the feature views
+            if (currMenuObj['view'] != null) {
+                loadViewResources(currMenuObj,currMenuObj['hash']);
             } 
             //View file need to be downloaded first before executing any JS file
             $.when.apply(window, viewDeferredObjs).done(function() {
-                if (currMenuObj['js'] instanceof Array) {
-                } else
-                    currMenuObj['js'] = [currMenuObj['js']];
-                var isLoadFn = currMenuObj['loadFn'] != null ? true : false;
-                var isReloadRequired = true;
-                //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
-                if(currMenuObj['class'] == 'infraMonitorView' || currMenuObj['class'] == 'tenantNetworkMonitorView')
-                    isReloadRequired = false;
-                $.each(currMenuObj['js'], function () {
-                    //Load the JS file only if it's not loaded already
-                    //if (window[currMenuObj['class']] == null)
-                    if(($.inArray(rootDir + '/js/' + this,globalObj['loadedScripts']) == -1) ||
-                        (isLoadFn == true) || (isReloadRequired == true))
-                        deferredObjs.push(getScript(rootDir + '/js/' + this));
-                });
+                //Load the parent js
+                if(parents != null && parents.length > 0){
+                    $.each(parents,function(i,parent){
+                        var parentRootDir = parent['rootDir'];
+                        if (parentRootDir != null && parent['js'] != null) {
+                            loadJsResources(parent);
+                        }
+                    });
+                }
+                loadJsResources(currMenuObj);
                 /*$.each(currMenuObj['css'],function() {
                      deferredObjs.push(loadCSS(rootDir + '/css/' + this));
                  });*/
                 $.when.apply(window, deferredObjs).done(function () {
                     deferredObj.resolve();
                 });
+            });
+        }
+        
+        function loadViewResources(menuObj,hash){
+            if (!(menuObj['view'] instanceof Array)) {
+                menuObj['view'] = [menuObj['view']];
+            }
+            $.each(menuObj['view'], function () {
+                var viewDeferredObj = $.Deferred();
+                viewDeferredObjs.push(viewDeferredObj);
+                var viewPath = menuObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
+                templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+            });
+        }
+        
+        function loadJsResources(menuObj){
+            if (menuObj['js'] instanceof Array) {
+            } else
+                menuObj['js'] = [menuObj['js']];
+            var isLoadFn = menuObj['loadFn'] != null ? true : false;
+            var isReloadRequired = true;
+            //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
+            if(menuObj['class'] == 'infraMonitorView' || menuObj['class'] == 'tenantNetworkMonitorView')
+                isReloadRequired = false;
+            $.each(menuObj['js'], function () {
+                //Load the JS file only if it's not loaded already
+                //if (window[menuObj['class']] == null)
+                if(($.inArray(menuObj['rootDir'] + '/js/' + this,globalObj['loadedScripts']) == -1) ||
+                    (isLoadFn == true) || (isReloadRequired == true))
+                    deferredObjs.push(getScript(menuObj['rootDir'] + '/js/' + this));
             });
         }
     }
@@ -1582,7 +1263,8 @@ function MenuHandler() {
                     } else if (currMenuObj['class'] != null) {
                         //Cleanup the container
                         $(contentContainer).html('');
-                        window[currMenuObj['class']].load({containerId:contentContainer, hashParams:layoutHandler.getURLHashParams()});
+                        if(window[currMenuObj['class']] != null)
+                            window[currMenuObj['class']].load({containerId:contentContainer, hashParams:layoutHandler.getURLHashParams()});
                     }
                 });
         } catch (error) {
@@ -1635,13 +1317,6 @@ function isDropdownInitialized(selector){
         return false;
 }
 
-function isScatterChartInitialized(selector){
-	if ($(selector + ' > svg') != [])
-        return true;
-    else
-        return false;
-}
-
 function flattenList(arr) {
     //Flatten one-level of the list
     return $.map(arr, function (val) {
@@ -1664,23 +1339,24 @@ function flattenArr(arr) {
 $.deparam = function (query) {
     var query_string = {};
     var query = ifNull(query,'');
-    if (query.indexOf('?') > -1)
+    if (query.indexOf('?') > -1) {
         query = query.substr(query.indexOf('?') + 1);
-    var vars = query.split("&");
-    for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split("=");
-        pair[0] = decodeURIComponent(pair[0]);
-        pair[1] = decodeURIComponent(pair[1]);
-        // If first entry with this name
-        if (typeof query_string[pair[0]] === "undefined") {
-            query_string[pair[0]] = pair[1];
-            // If second entry with this name
-        } else if (typeof query_string[pair[0]] === "string") {
-            var arr = [ query_string[pair[0]], pair[1] ];
-            query_string[pair[0]] = arr;
-            // If third or later entry with this name
-        } else {
-            query_string[pair[0]].push(pair[1]);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            pair[0] = decodeURIComponent(pair[0]);
+            pair[1] = decodeURIComponent(pair[1]);
+            // If first entry with this name
+            if (typeof query_string[pair[0]] === "undefined") {
+                query_string[pair[0]] = pair[1];
+                // If second entry with this name
+            } else if (typeof query_string[pair[0]] === "string") {
+                var arr = [ query_string[pair[0]], pair[1] ];
+                query_string[pair[0]] = arr;
+                // If third or later entry with this name
+            } else {
+                query_string[pair[0]].push(pair[1]);
+            }
         }
     }
     return query_string;
@@ -1797,25 +1473,19 @@ function applyGridDefHandlers(cGrid, options) {
     var dataSource = cGrid._dataView;
     if (options['noMsg'] != null)
         noMsg = options['noMsg'];
-    dataSource.onUpdateData.subscribe(function(){
-       if(dataSource.getItems().length == 0)
-           cGrid.showGridMessage('empty',noMsg);
-    });
-}
-
-function updateCpuSparkLines(kGrid,data){
-	//clear the sparklines before updating them
-	$('.gridSparkline').html('');
-	$('.gridSparkline').each(function() {
-        var rowIndex = $(this).closest('td').parent().index();
-        var data;
-        if(kGrid.dataSource.at(rowIndex) != null)
-        	data = kGrid.dataSource.at(rowIndex)['histCpuArr'];
-        if(data != null) {
-            drawSparkLine4Selector(this, 'blue-grid-sparkline', data.toJSON());
+    dataSource.onUpdateData.subscribe(function() {
+        /* Here we are overriding the cGrid value with current grid Object in the DOM because cGrid is referring to the earlier instance which is already destroyed.
+         * This is just a work around need to look a better solution,
+        */
+        if($('.contrail-grid').data('contrailGrid') != null){
+            cGrid = $('.contrail-grid').data('contrailGrid');
+            if(dataSource.getItems().length == 0)
+                cGrid.showGridMessage('empty',noMsg);
+            cGrid.refreshView();
         }
     });
 }
+
 
 function sort(object) {
     if (Array.isArray(object)) {
@@ -1898,44 +1568,6 @@ function getContextObj(data) {
 
 function capitalize(s) {
     return s[0].toUpperCase() + s.slice(1);
-}
-
-function constructChartDS(obj, elem) {
-    var chartDS;
-    if (obj['url'] != null) {
-        chartDS = {
-            transport:{
-                read:{
-                    url:function () {
-                        //If user has changed the default selection in the chart navigator
-                        if (globalObj.startDt != null && (typeof(obj['url']) == 'string')) {
-                            var url = obj['url'];
-                            var urlParams = $.deparam(obj['url']);
-                            //delete urlParams['minsSince'];
-                            delete urlParams['sampleCnt'];
-                            urlParams['startTime'] = globalObj.startDt.getTime();
-                            urlParams['endTime'] = globalObj.endDt.getTime();
-                            var path = url.split('?')[0];
-                            return path + '?' + $.param(urlParams);
-                        } else if (typeof(obj['url'] == 'string')) {
-                            return obj['url'];
-                        }
-                    }
-                }
-            },
-            schema:{
-                parse:function (response) {
-                    if (obj['parseFn'] != null)
-                        return obj['parseFn'](response);
-                }
-            }
-        }
-        if (typeof(obj['url']) != 'string') {
-            $.extend(true, chartDS, {transport:{read:{url:obj['url']}}});
-        }
-    } else
-        chartDS = obj['dataSource'];
-    return chartDS;
 }
 
 var tooltipFns = {
@@ -2219,143 +1851,8 @@ var bgpMonitor = {
                 return x;
         }
     },
-    
 }
 
-/**
- * This function takes event object and tooltip function which is used to get the content of the each tooltip
- * and chart and returns the object consists of all the tooltips of overlapped nodes and perpage etc info
- * @param e
- * @param tooltipFn
- * @param chart
- * @returns result
- */
-function getMultiTooltipContent(e,tooltipFn,chart) {
-    var tooltipArray = [],result = {},nodeMap = {};
-    var perPage = 1;
-    var overlappedNodes = e['point']['overlappedNodes'];
-    var series = [];
-    for(var i = 0;i < e['series'].length; i++){
-        $.merge(series,e['series'][i]['values']);
-    }
-    for(var i = 0;i < overlappedNodes.length; i++){
-        var data = $.grep(series,function(obj,idx) {
-            return (obj['name'] == overlappedNodes[i]['name'] && obj['type'] == overlappedNodes[i]['type'] && 
-                    !chart.state()['disabled'][chart.seriesMap()[obj['type']]]);
-        });
-        if(!isEmptyObject(data)) {
-            data['point'] = data[0];
-            tooltipArray.push(tooltipFn(data));
-            nodeMap[tooltipFn(data)[0]['value']] = data;
-        }
-    }
-    result['content'] = tooltipArray;
-    result['nodeMap'] = nodeMap;
-    result['perPage'] = perPage;
-    var limit = (result['content'].length >= result['perPage']) ? result['perPage'] : result['content'].length;
-    if(result['perPage'] > 1)
-        result['pagestr']  = 1+" - "+limit+" of "+result['content'].length ;
-    else if(result['perPage'] == 1)
-        result['pagestr']  = 1+" / "+result['content'].length ;
-    return result;
-}
-
-function getOverlappedBubbles(e) {
-    //Get the count of overlapping bubbles
-    var series = [];
-    for(var i = 0;i < e['series'].length; i++){
-        $.merge(series,e['series'][i]['values']);
-    }
-    var matchedRecords = $.grep(series,function(currObj,idx) {
-        return (currObj['x'] == e['point']['x']) && (currObj['y'] == e['point']['y']);
-    });
-    return matchedRecords;
-}
-
-var tenantNetworkMonitor = {
-    projectTooltipFn : function(e,x,y,chart) {
-        //Get the count of overlapping bubbles
-        var matchedRecords = getOverlappedBubbles(e);
-        e['point']['overlappedNodes'] =  matchedRecords;
-        if(matchedRecords.length <= 1) {
-            var tooltipContents = tenantNetworkMonitor.getProjectTooltipContents(e);
-            return formatLblValueTooltip(tooltipContents);
-        } else if(e['point']['multiTooltip']) {
-           var result = getMultiTooltipContent(e, tenantNetworkMonitor.getProjectTooltipContents,chart);
-           result['content'] = result['content'].slice(0,result['perPage']);
-           return formatLblValueMultiTooltip(result);
-        }
-    },
-    getProjectTooltipContents : function(e) {
-        var tooltipContents = [
-           //{lbl:'Name', value:matchedRecords.length > 1 ? e['point']['name'] +
-               //contrail.format(' ({0})',matchedRecords.length) : e['point']['name']},
-           {lbl:'Name', value:e['point']['name']},
-           {lbl:'Interfaces', value:e['point']['x']},
-           {lbl:'Networks', value:e['point']['y']},
-           {lbl:'Throughput', value:formatThroughput(e['point']['throughput'])}
-        ];
-        return tooltipContents;
-    },
-    networkTooltipFn:function (e,x,y,chart) {
-        var matchedRecords = getOverlappedBubbles(e);
-        e['point']['overlappedNodes'] =  matchedRecords;
-        if(matchedRecords.length <= 1) {
-            var tooltipContents = tenantNetworkMonitor.getNetworkTooltipContents(e); 
-            return formatLblValueTooltip(tooltipContents);
-        } else if(e['point']['multiTooltip']) {
-            var result = getMultiTooltipContent(e, tenantNetworkMonitor.getNetworkTooltipContents,chart);
-            result['content'] = result['content'].slice(0,result['perPage']);
-            return formatLblValueMultiTooltip(result);
-        }
-    },
-    getNetworkTooltipContents : function(e) {
-        var tooltipContents = [
-           //{lbl:'Name', value:matchedRecords.length > 1 ? e['point']['name'] +
-               //contrail.format(' ({0})',matchedRecords.length) : e['point']['name']},
-           {lbl:'Name', value:e['point']['name']},
-           {lbl:'Interfaces', value:e['point']['x']},
-           {lbl:'Connected Networks', value:e['point']['y']},
-           {lbl:'Throughput', value:formatThroughput(e['point']['throughput'])}
-        ];
-        return tooltipContents;
-    },
-    portTooltipFn: function(e,x,y,chart) {
-        /*var tooltipContents = [
-         {lbl:'Name', value:typeof(e) == 'string' ? e : e['point']['type']},
-         ];*/
-        e['point']['overlappedNodes'] = markOverlappedBubblesOnHover(e,chart);
-        if(e['point']['overlappedNodes'] == undefined || e['point']['overlappedNodes'].length <= 1) {
-            var tooltipContents = tenantNetworkMonitor.getPortTooltipContents(e);
-            return formatLblValueTooltip(tooltipContents);
-        } else if(e['point']['multiTooltip']) {
-            var result = getMultiTooltipContent(e, tenantNetworkMonitor.getPortTooltipContents,chart);
-            if(result['content'].length == 1){
-                var tooltipContents = tenantNetworkMonitor.getPortTooltipContents(e);
-                return formatLblValueTooltip(tooltipContents);
-            }
-            result['content'] = result['content'].slice(0,result['perPage']);
-            return formatLblValueMultiTooltip(result);
-        }
-    },
-    getPortTooltipContents: function(e) {
-        if(e['point']['type'] == 'sport')
-            titlePrefix = 'Source';
-        else if(e['point']['type'] == 'dport')
-            titlePrefix = 'Destination';
-        if(e['point']['name'].toString().indexOf('-') > -1)
-            name = titlePrefix + ' Port Range (' + e['point']['name'] + ')';
-        else
-            name = titlePrefix + ' Port ' + e['point']['name'];
-        var tooltipContents = [
-            {lbl:'Port Range', value:name},
-            {lbl:'Flows', value:e['point']['flowCnt']},
-            {lbl:'Bandwidth', value:formatBytes(ifNull(e['point']['origY'],e['point']['y']))},
-            //{lbl:'Type', value:e['point']['type']}
-        ];
-        return tooltipContents;
-    }
-}
 function wrapValue(str) {
     return '<span class="text-info">' + str + '</span>';
 }
@@ -2437,259 +1934,6 @@ function diffDates(startDt, endDt, type) {
     }
 }
 
-
-//Start - Crossfilter chart routines
-//Renders the specified chart or list.
-function render(method) {
-    d3.select(this).call(method);
-}
-
-//Whenever the brush moves, re-rendering everything.
-function renderAll(chart) {
-    chart.each(render);
-    //list.each(render);
-    //d3.select("#active").text(formatNumber(all.value()));
-}
-
-function reset(i) {
-    /*charts[i].filter(null);
-     renderAll(chart);*/
-};
-
-function barChart() {
-    if (!barChart.id) barChart.id = 0;
-    var toolTip_text = "";
-    var margin = {top:0, right:10, bottom:10, left:10},
-        x,
-        y = d3.scale.linear().range([50, 0]),
-        id = barChart.id++,
-        axis = d3.svg.axis().orient("bottom"),
-        brush = d3.svg.brush(),
-        brushDirty,
-        dimension,
-        group,
-        round,
-        toolTip;
-
-    function chart(div) {
-        var width = x.range()[1],
-            height = y.range()[0],
-            xaxis_max_value = x.domain()[1];
-        logMessage('crossFilterChart','Start');
-        $.each(group.top(Infinity),function(idx,obj) {
-            logMessage('crossFilterChart',obj['key'],obj['value']);
-        });
-        /*
-         if(group.top(1).length > 0)
-         y.domain([0, group.top(1)[0].value]);
-         else
-         y.domain([0, 0]);
-         */
-
-        div.each(function () {
-            var div = d3.select(this),
-                g = div.select("g");
-
-            // Create the skeletal chart.
-            if (g.empty()) {
-                div.select(".title").append("span")
-                    //.attr("href", "javascript:reset(" + id + ")") //Can be commented
-                    .attr("class", "reset")
-                    .text("reset")
-                    .style("display", "none");
-
-                g = div.insert("svg", "div.title")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
-                    .append("g")
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-                g.append("clipPath")
-                    .attr("id", "clip-" + id)
-                    .append("rect")
-                    .attr("width", width)
-                    .attr("height", height);
-                var bars = g.selectAll(".bar")
-                    .data(["background", "foreground"])
-                    .enter().append("path")
-                    .attr("class", function (d) {
-                        return d + " bar";
-                    })
-                    .datum(group.all());
-                if (toolTip) {
-                    var data;
-                    bars.call(d3.helper.tooltip()
-                        .style({color:'blue'})
-                        .text(function (eve) {
-                            return toolTip_text;
-                        })
-                    )
-                        .on('mouseover', function (eve) {
-                            var co = d3.mouse(this);
-                            var x = co[0] * (xaxis_max_value / width);//scaling down the width(240) of the rectangle to x-axis(26) values
-                            for (var i = 0; i < eve.length; i++) {
-                                if (x >= eve[i].key && x <= (eve[i].key + 10)) {
-                                    data = [
-                                        {lbl:div.select('.title').text().split('reset')[0], value:eve[i].key},
-                                        {lbl:'Virtual Routers', value:eve[i].value}
-                                    ];
-                                    toolTip_text = contrail.getTemplate4Id('lblval-tooltip-template')(data);
-                                }
-                            }
-                        });
-                }
-                g.selectAll(".foreground.bar")
-                    .attr("clip-path", "url(#clip-" + id + ")");
-
-                g.append("g")
-                    .attr("class", "axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(axis);
-                // Initialize the brush component with pretty resize handles.
-                var gBrush = g.append("g").attr("class", "brush").call(brush);
-                gBrush.selectAll("rect").attr("height", height);
-                gBrush.selectAll(".resize").append("path").attr("d", resizePath);
-            }
-            // Only redraw the brush if set externally.
-            if (brushDirty) {
-                brushDirty = false;
-                g.selectAll(".brush").call(brush);
-                div.select(".title span").style("display", brush.empty() ? "none" : null);
-                if (brush.empty()) {
-                    g.selectAll("#clip-" + id + " rect")
-                        .attr("x", 0)
-                        .attr("width", width);
-                } else {
-                    var extent = brush.extent();
-                    g.selectAll("#clip-" + id + " rect")
-                        .attr("x", x(extent[0]))
-                        .attr("width", x(extent[1]) - x(extent[0]));
-                }
-            }
-
-            g.selectAll(".bar").attr("d", barPath);
-        });
-
-        function barPath(groups) {
-            var path = [],
-                i = -1,
-                n = groups.length,
-                d;
-            while (++i < n) {
-                d = groups[i];
-                path.push("M", x(d.key), ",", height, "V", y(d.value), "h9V", height);
-            }
-            if(path.length == 0)
-                return null;
-            else
-                return path.join("");
-        }
-
-        function resizePath(d) {
-            var e = +(d == "e"),
-                x = e ? 1 : -1,
-                y = height / 3;
-            return "M" + (.5 * x) + "," + y
-                + "A6,6 0 0 " + e + " " + (6.5 * x) + "," + (y + 6)
-                + "V" + (2 * y - 6)
-                + "A6,6 0 0 " + e + " " + (.5 * x) + "," + (2 * y)
-                + "Z"
-                + "M" + (2.5 * x) + "," + (y + 8)
-                + "V" + (2 * y - 8)
-                + "M" + (4.5 * x) + "," + (y + 8)
-                + "V" + (2 * y - 8);
-        }
-    }
-
-    brush.on("brushstart.chart", function () {
-        var div = d3.select(this.parentNode.parentNode.parentNode);
-        div.select(".title span").style("display", null);
-    });
-
-    brush.on("brush.chart", function () {
-        var g = d3.select(this.parentNode),
-            extent = brush.extent();
-        if (round) g.select(".brush")
-            .call(brush.extent(extent = extent.map(round)))
-            .selectAll(".resize")
-            .style("display", null);
-        g.select("#clip-" + id + " rect")
-            .attr("x", x(extent[0]))
-            .attr("width", x(extent[1]) - x(extent[0]));
-        extent[0] = Math.floor(extent[0]); 
-        dimension.filterRange(extent);
-    });
-
-    brush.on("brushend.chart", function () {
-        if (brush.empty()) {
-            var div = d3.select(this.parentNode.parentNode.parentNode);
-            div.select(".title span").style("display", "none");
-            div.select("#clip-" + id + " rect").attr("x", null).attr("width", "100%");
-            dimension.filterAll();
-        }
-    });
-
-    chart.margin = function (_) {
-        if (!arguments.length) return margin;
-        margin = _;
-        return chart;
-    };
-
-    chart.x = function (_) {
-        if (!arguments.length) return x;
-        x = _;
-        axis.scale(x);
-        brush.x(x);
-        return chart;
-    };
-
-    chart.y = function (_) {
-        if (!arguments.length) return y;
-        y = _;
-        return chart;
-    };
-
-    chart.dimension = function (_) {
-        if (!arguments.length) return dimension;
-        dimension = _;
-        return chart;
-    };
-
-    chart.filter = function (_) {
-        if (_) {
-            brush.extent(_);
-            dimension.filterRange(_);
-        } else {
-            brush.clear();
-            dimension.filterAll();
-        }
-        brushDirty = true;
-        return chart;
-    };
-
-    chart.group = function (_) {
-        if (!arguments.length) return group;
-        group = _;
-        return chart;
-    };
-
-    chart.round = function (_) {
-        if (!arguments.length) return round;
-        round = _;
-        return chart;
-    };
-    chart.toolTip = function (_) {
-        if (!arguments.length) return toolTip;
-        toolTip = _;
-        return chart;
-    };
-
-    return d3.rebind(chart, brush, "on");
-}
-
-//End - Crossfilter chart routines
-
-
 String.prototype.padleft = function (length, character) {
     return new Array(length - this.length + 1).join(character || ' ') + this;
 }
@@ -2755,84 +1999,6 @@ function initDeferred(data) {
         }
     });
 }
-
-d3.helper = {};
-
-d3.helper.tooltip = function () {
-    var tooltipDiv;
-    var bodyNode = d3.select('body').node();
-    var attrs = {};
-    var text = '';
-    var styles = {};
-
-    function tooltip(selection) {
-
-        selection.on('mouseover.tooltip', function (pD, pI) {
-            var name, value;
-            // Clean up lost tooltips
-            d3.select('body').selectAll('div.tooltip').remove();
-            // Append tooltip
-            tooltipDiv = d3.select('body').append('div');
-            tooltipDiv.attr(attrs);
-            tooltipDiv.style(styles);
-            var absoluteMousePos = d3.mouse(bodyNode);
-            tooltipDiv.style({
-                left:(absoluteMousePos[0] + 10) + 'px',
-                top:(absoluteMousePos[1] - 15) + 'px',
-                position:'absolute',
-                'z-index':1001
-            });
-            // Add text using the accessor function, Crop text arbitrarily
-            // Info:commented the style calulating part of the tooltip because our tooltip template take care of it
-            /*tooltipDiv.style('width', function (d, i) {
-                return (text(pD, pI).length > 80) ? '300px' : null;
-            })*/
-            tooltipDiv.html(function (d, i) {
-                    return text(pD, pI);
-                });
-        })
-            .on('mousemove.tooltip', function (pD, pI) {
-                // Move tooltip
-                var absoluteMousePos = d3.mouse(bodyNode);
-                //Info: null check in included to support in IE
-                if(tooltipDiv != null) {
-	                tooltipDiv.style({
-	                    left:(absoluteMousePos[0] + 10) + 'px',
-	                    top:(absoluteMousePos[1] - 15) + 'px'
-	                });
-	                // Keep updating the text, it could change according to position
-	                tooltipDiv.html(function (d, i) {
-	                    return text(pD, pI);
-	                });
-                }
-            })
-            .on('mouseout.tooltip', function (pD, pI) {
-                // Remove tooltip
-                tooltipDiv.remove();
-            });
-
-    }
-
-    tooltip.attr = function (_x) {
-        if (!arguments.length) return attrs;
-        attrs = _x;
-        return this;
-    };
-
-    tooltip.style = function (_x) {
-        if (!arguments.length) return styles;
-        styles = _x;
-        return this;
-    };
-
-    tooltip.text = function (_x) {
-        if (!arguments.length) return text;
-        text = d3.functor(_x);
-        return this;
-    };
-
-    return tooltip;
-};
 
 //DNS TTL Validations
 function validateTTLRange(v){
@@ -2939,13 +2105,13 @@ function showMoreAlerts(){
 
 function processDrillDownForNodes(e) {
      if (e['point']['type'] == 'vRouter') {
-         layoutHandler.setURLHashParams({node:'vRouters:' + e['point']['name'], tab:''}, {p:'mon_infra_compute'});
+         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_vrouter'});
      } else if (e['point']['type'] == 'controlNode') {
-         layoutHandler.setURLHashParams({node:'Control Nodes:' + e['point']['name'], tab:''}, {p:'mon_infra_control'});
+         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_control'});
      } else if (e['point']['type'] == 'analyticsNode') {
-         layoutHandler.setURLHashParams({node:'Analytics Nodes:' + e['point']['name'], tab:''}, {p:'mon_infra_analytics'});
+         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_analytics'});
      } else if (e['point']['type'] == 'configNode') {
-         layoutHandler.setURLHashParams({node:'Config Nodes:' + e['point']['name'], tab:''}, {p:'mon_infra_config'});
+         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_config'});
      } else if (e['point']['type'] == 'network') {
          layoutHandler.setURLHashParams({fqName:e['point']['name']}, {p:'mon_net_networks'});
      } else if (e['point']['type'] == 'project') {
@@ -2997,18 +2163,26 @@ function loadAlertsContent(){
                     title : {
                         text : 'Details',
                         cssClass : 'blue',
+                        icon : 'icon-list'
                     },
                     customControls: []
                 },
                 body: {
                     options: {
                         forceFitColumns:true,
-                        autoHeight : false,
-                        gridHeight : 300
                     },
-                    forceFitColumns: true,
                     dataSource: {
                         data: alertsData
+                    },
+                    statusMessages: {
+                        empty: {
+                            text: 'No Alerts to display'
+                        }, 
+                        errorGettingData: {
+                            type: 'error',
+                            iconClasses: 'icon-warning',
+                            text: 'Error in getting Data.'
+                        }
                     }
                 },
                 columnHeader: {
@@ -3016,6 +2190,7 @@ function loadAlertsContent(){
                         {
                             field:'nName',
                             name:'Node',
+                            minWidth:150,
                             formatter: function(r,c,v,cd,dc){
                                 if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['nName']) != "undefined")
                                     return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['nName']+"</span>";
@@ -3025,10 +2200,11 @@ function loadAlertsContent(){
                         },{
                             field:'pName',
                             name:'Process',
-                            width:170
+                            minWidth:100
                         },{
                             field:'msg',
                             name:'Status',
+                            minWidth:200,
                             formatter: function(r,c,v,cd,dc) {
                                 if(typeof(dc['popupMsg']) != "undefined")
                                     return dc['popupMsg'];
@@ -3038,7 +2214,7 @@ function loadAlertsContent(){
                         },{
                             field:'timeStamp',
                             name:'Time',
-                            width:160,
+                            minWidth:100,
                             formatter:function(r,c,v,cd,dc) {
                                 if(typeof(dc['timeStamp']) != "undefined")
                                     return getFormattedDate(dc['timeStamp']/1000);
@@ -3046,23 +2222,14 @@ function loadAlertsContent(){
                                     return "";
                             }
                         }]
-                },
-                footer : {
-                    pager : {
-                        options : {
-                            pageSize : 50,
-                            pageSizeSelect : [10, 50, 100, 200, 500 ]
-                        }
-                    }
                 }
             });
         }
-        alertsGrid = $('#alertContent').data('contrailGrid');
-
         alertsWindow.modal('show');
+        alertsGrid = $('#alertContent').data('contrailGrid');
         alertsGrid.refreshView();
         alertsGrid._grid.resizeCanvas();
-        alertsGrid.removeGridMessage();
+        alertsGrid.removeGridLoading();
         globalObj.showAlertsPopup = false;
     }
 }
@@ -3133,7 +2300,7 @@ function ManageDataSource() {
                 'analyticsNodeDS':{
                     ongoing:false,
                     lastUpdated:null,
-                    populateFn:['getAllAnalyticsNodes','getGeneratorsForInfraNodes'],
+                    populateFn:['getAllAnalyticsNodes','getGeneratorsForInfraNodes','startFetchingCollectorStateGenInfos'],
                     deferredObj:null,
                     dataSource:null
                 },
@@ -3189,17 +2356,21 @@ function ManageDataSource() {
         //Set ongoing to true before issuing the calls for refreshing the dataSource
         dsObj['ongoing'] = true;
         if(dsObj['populateFn'] instanceof Array) {
-            window[dsObj['populateFn'][0]](deferredObj,dataSource,dsObj,dsName);
-            $.each(dsObj['populateFn'].slice(1),function(idx,populateFn) {
-                    var secondDefObj = $.Deferred();
-                    deferredObj.done(function(dsData) {
-                        window[populateFn](secondDefObj,dsData['dataSource'],dsName);
-                    });
-                    secondDefObj.done(function(response) {
-                        //Update the dataSource with the combined response from populateFns
-                        dataSource.setData(response);
-                    });
-            });
+            var defObjArr = [];
+                defObjArr.push(deferredObj);
+                window[dsObj['populateFn'][0]](defObjArr[0],dataSource,dsObj,dsName);  
+              for(var i = 0; i < dsObj['populateFn'].length; i++) {
+                  var loopDefObj = $.Deferred();
+                  defObjArr.push(loopDefObj);
+                  defObjArr[i].done(function(i){
+                      return function(arguments){
+                          if(window[dsObj['populateFn'][i + 1]] != null)
+                              window[dsObj['populateFn'][i + 1]](defObjArr[i + 1],arguments['dataSource'],dsName);
+                          else
+                              dataSource.setData(arguments['dataSource'].getItems());
+                      };
+                  }(i));
+              }
         } else
             window[dsObj['populateFn']](deferredObj,dataSource,dsObj,dsName);
         manageDataSource.setLastupdatedTime(dsObj,{status:'inprogess'});
@@ -3318,7 +2489,8 @@ function SingleDataSource(dsName) {
 }
 //Maintain an array of instances referring to each dataSource
 SingleDataSource.instances = {};
-//Maintain an array of subscribeFns for each dataSource which is required as we need to pass on those function pointers to unsubscribe from onPagingInfoChanged event
+//Maintain an array of subscribeFns for each dataSource which is required as we need to pass on 
+//those function pointers to unsubscribe from onPagingInfoChanged event
 SingleDataSource.subscribeFns = {};
 
 /**
@@ -3345,111 +2517,6 @@ function hideHardRefresh() {
     }
 }
 
-/*
- * Given an array of values, returns the min/max range to be set on size domain
- */
-function getBubbleSizeRange(values) {
-    var sizeMinMax = [];
-    sizeMinMax = d3.extent(values, function (obj) {
-        return  obj['size']
-    });
-    if (sizeMinMax[0] == sizeMinMax[1]) {
-        sizeMinMax = [sizeMinMax[0] * .9, sizeMinMax[0] * 1.1];
-    } else {
-        sizeMinMax = [sizeMinMax[0], sizeMinMax[1]];
-    }
-    return sizeMinMax;
-} 
-
-var updateCharts = new updateChartsClass();
-/*
- * Utility functions for progressive loading of charts
- */
-function updateChartsClass() {
-    this.getResponse = function(obj) {
-        $(obj['selector']).closest('div.widget-box').find('i.icon-spinner').show();
-        $.ajax({
-            url:obj['url'],
-        }).done(function(response) {
-            var result = {};
-            if(obj['type'] == 'bubblechart' && obj['parseFn'] != null) {
-                result = obj['parseFn'](response,obj['url']);
-            } else if(obj['type'] == 'timeseriescharts' && obj['parseFn'] != null) {
-                result['data'] = obj['parseFn'](response,{selector:$(obj['selector']).parent('div.ts-chart')});
-            }
-            $.extend(result,obj);
-            updateCharts.updateView(result);
-        }).always(function(){
-            $(obj['selector']).closest('div.widget-box').find('i.icon-spinner').hide();
-        }).error(function(){
-            var chart;
-            if(obj['type'] == 'bubblechart')
-                chart = $(obj['selector']).parent('div.stack-chart').data('chart');
-            else if(obj['type'] == 'timeseriescharts')
-                chart = $(obj['selector']).parent('div.ts-chart').data('chart');
-            showMessageInChart({selector:$(obj['selector']).parent('div.ts-chart'),chartObj:chart,msg:'Error in fetching details.',type:obj['type']});
-        });
-    }
-
-    /**
-     * this methods sets the extra parameters like multitooltip etc which are needed to plot the chart
-     */
-    this.setUpdateParams = function(data) {
-        var bubbleSizeMinMax = getBubbleSizeRange(data);
-        var d3scale = d3.scale.linear().range([1,2]).domain(bubbleSizeMinMax);
-        data = $.map(data,function(d){
-            d = $.extend(d,{multiTooltip:true,size:d3scale(d['size'])}); 
-            return d;
-          });
-        return data;
-    }
-    /**
-     * Re-render the UI widget with updated data
-     */
-    this.updateView = function(obj) {
-        if(obj['type'] == 'bubblechart') {
-           if(obj['selector'] != null && $(obj['selector']).parent('div.stack-chart') != null) {
-                var chart = $(obj['selector']).parent('div.stack-chart').data('chart');
-                if(obj['axisFormatFn'] != null) {
-                    var result = window[obj['axisFormatFn']](obj['data']);
-                    obj['data'] = result['data'];
-                    if(obj['yLbl'] != null)
-                    chart.yAxis.axisLabel(obj['yLbl']+" "+result['yLbl']);
-                }
-                d3.select(obj['selector']).datum(obj['data']);
-                chart.update();  
-           }
-        } else if(obj['type'] == 'infrabubblechart') {
-           if(obj['selector'] != null && $(obj['selector']).parent('div') != null) {
-                var chart = $(obj['selector']).parent('div').data('chart');
-                if(obj['axisformatFn'] != null) {
-                    var result = window[obj['axisformatFn']](obj['data']);
-                    obj['data'] = result['data'];
-                    chart.yAxis.axisLabel(obj['yLbl']+" "+result['yLbl']);
-                }
-                d3.select(obj['selector']).datum(obj['data']);
-                if(chart != null)
-                    chart.update();  
-           }
-        } else if(obj['type'] == 'timeseriescharts') {
-            if(obj['selector'] != null && $(obj['selector']).parent('div.ts-chart') != null) {
-                var chart = $(obj['selector']).parent('div.ts-chart').data('chart');
-                var isEmptyObj = true;
-                for(var i = 0;i < obj['data'].length;i++){
-                    if(obj['data'][i]['values'].length > 0 )
-                        isEmptyObj = false;
-                }
-                if(!isEmptyObj){
-                    d3.select(obj['selector']).datum(obj['data']);
-                    chart.update(); 
-                } else {
-                    showMessageInChart({selector:$(obj['selector']).parent('div.ts-chart'),chartObj:chart,msg:'No Data Available.',type:obj['type']});
-                } 
-            }
-        }
-    }
-}
-
 /**
  * Function is event handler for the more and hide link in the overall node status of infra details page
  * accepts parameters of type array or single element but need to send with '#' or '.'
@@ -3462,77 +2529,6 @@ function toggleOverallNodeStatus(selector) {
     } else 
         $(selector).toggleClass('hide');
 }
-
-/**
- * Function displays message in the chart basesd on the selector passed and initializes the chart in case if the chart is not yet 
- * intialized
- */
-function showMessageInChart(data){
-    var chartData = [{key:'vRouters',values:[]}];
-    if(data['selector'] != null) {
-        //if chart object is null initialises it with empty data
-        var selector = data['selector'];
-        if(data['chartObj'] == null) {
-            var deferredObj = $.Deferred();
-            if(data['type'] == 'bubblechart' || data['type'] == 'infrabubblechart') {
-                chartData = [{key:'vRouters',values:[]}];
-                $(selector).initScatterChart({d:chartData,xLbl:ifNull(data['xLbl'],''),yLbl:ifNull(data['yLbl'],''),deferredObj:deferredObj});
-            } else if(data['type'] == 'timeseriescharts') {
-                chartData = [{"key": "In Bytes","values": [],"color": "#1f77b4"},{"key": "Out Bytes","values": [],"color": "#6baed6"}];
-                initTrafficTSChart($(selector).attr('id'),chartData,{deferredObj:deferredObj,height:300},null);
-            }
-            deferredObj.done(function(){
-                data['chartObj'] = $(selector).data('chart');
-                updateChartMessage();
-            })
-        } else {
-            updateChartMessage();
-        }
-    }
-    
-    function updateChartMessage(){
-        $(selector).find('svg:first').children('g').remove();
-        d3.select($(selector).find('svg')[0]).datum(chartData);
-        data['chartObj'].update();
-        $(selector).find('text.nv-noData').text(data['msg']);
-        // Setting the customMsg flag because as we are rendering the chart with empty data onWindowResize chart update gets triggered 
-        // and overriding the message to "No data Available". In such cases we check this flag and update the relevant message  
-        $(selector).find('text.nv-noData').data('customMsg',true);
-    }
-}
-
-/*
- * Format byte axis labels (KB/MB/GB..)based on min/max values
- */
-function formatByteAxis(data) {
-    var toFormat = '',yLbl = '';
-    var dValues = $.map(data,function(obj,idx) {
-        return obj['values'];
-    });
-    dValues = flattenList(dValues);
-    yMaxMin = $.map(d3.extent(dValues, function (obj) {
-        return  obj['y']
-    }), function (value, idx) {
-        return formatBytes(value);
-    });
-    if (yMaxMin[0].split(' ')[1] == yMaxMin[1].split(' ')[1]) {
-        toFormat = yMaxMin[0].split(' ')[1];
-    } else {
-        toFormat = yMaxMin[1].split(' ')[1];
-    }
-    $.each(data,function(idx,obj) {
-        data[idx]['values'] = $.map(data[idx]['values'], function (obj, idx) {
-            obj['origY'] = obj['y'];
-            obj['y'] = prettifyBytes({bytes:obj['y'], stripUnit:true, prefix:toFormat});
-            return obj;
-        });
-    });
-    if (toFormat != null) {
-        yLbl += ' (' + toFormat + ')';
-    }
-    return {data:data,yLbl:yLbl};
-}
-
 
 /**
  * Get the value of a property inside a json object with a given path

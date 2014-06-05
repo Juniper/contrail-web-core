@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
 var http = require('http'),
@@ -11,6 +11,7 @@ var http = require('http'),
     commonUtils = require('../utils/common.utils'),
     restler = require('restler'),
     fs = require('fs'),
+    global = require('./global'),
     httpsOp = require('./httpsoptions.api'),
     request = require('request'),
     discClient = require('./discoveryclient.api');

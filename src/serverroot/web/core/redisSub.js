@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
 redisSub = module.exports;
@@ -9,6 +9,7 @@ var redis = require('redis')
   , config = require('../../../../config/config.global.js')
   , logutils = require('../../utils/log.utils')
   , util = require('util')
+  , global = require('../../common/global')
   , UUID = require('uuid-js')
   , messages = require('../../common/messages')
   , longPolling = require('./longPolling.api')

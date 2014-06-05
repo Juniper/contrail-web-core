@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
 /**
@@ -8,8 +8,8 @@
  */
 var Connection  = require('ssh2');
 var async       = require('async');
-var commonUtils = require('../../utils/common.utils');
-var appErrors   = require('../../errors/app.errors.js');
+var commonUtils = require('../utils/common.utils');
+var appErrors   = require('../errors/app.errors.js');
 
 function getServiceStatus (req, res, appData)
 {

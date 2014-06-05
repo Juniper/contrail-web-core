@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ */
 var httpsOp = require('../../../common/httpsoptions.api');
 var global = require('../../../common/global');
 var mockData = require('./httpsoptions.api_mock');

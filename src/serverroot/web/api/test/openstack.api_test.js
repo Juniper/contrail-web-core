@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 var oStack = require('../../../orchestration/plugins/openstack/openstack.api');
 var authApi = require('../../../common/auth.api');

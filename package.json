@@ -28,7 +28,8 @@
     "uuid-js": "0.7.4",
     "xml2js": "0.2.3",
     "redis-rstream": "0.1.2",
-    "connect-redis": "1.4.5"
+    "connect-redis": "1.4.5",
+    "request-timeout": "0.0.2"
   },
   "devDependencies": {
     "grunt": "0.4.2",
@@ -50,6 +51,9 @@
     "karma-chrome-launcher": "0.1.2",
     "karma-html2js-preprocessor": "0.1.0",
     "karma-junit-reporter": "0.2.1",
-    "karma-safari-launcher": "0.1.1"
+    "karma-safari-launcher": "0.1.1",
+    "sinon": "1.9.1",
+    "karma-sinon": "1.0.3",
+    "grunt-cli": "0.1.13"
   }
 }

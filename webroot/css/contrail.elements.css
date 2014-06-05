@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
  
 /* elements */
@@ -33,6 +33,12 @@ pre {
 .key { color: #393939; }
 pre i{
 	font-size: 8px;
+}
+.key-value {
+	display: block;
+}
+.expander, .collapser {
+	cursor: pointer;
 }
 /* header sizes */
 h1 {
@@ -230,10 +236,10 @@ blockquote.pull-right {
 }
 .lighter {
   font-weight: lighter;
-} 
-.bolder {
-  font-weight: bolder;
 }
+.bold { font-weight: 600;}
+.bolder { font-weight: 700;}
+.boldest { font-weight: 800;}
 .inline {
   display: inline-block !important;
 }
@@ -3992,4 +3998,10 @@ td.td-actions a.td-action {
 #overallNodeStatus span, #overallNodeStatus span:hover {
 	cursor: pointer;
 	color: #3182bd;
+}
+/*style is to remove the hover colors of info boxes in dashboard
+*/
+.infobox-dynamic:hover {
+	border: 1px solid #D8D8D8;
+    box-shadow: none;
 }

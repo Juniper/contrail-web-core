@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
 var commonUtils = module.exports,
@@ -20,6 +20,7 @@ var commonUtils = module.exports,
     mime = require('mime'),
     os = require('os'),
     fs = require('fs'),
+    async = require('async'),
     appErrors = require('../errors/app.errors.js'),
     downloadPath = '/var/log',
     contrailPath = '/contrail';
@@ -1252,6 +1253,135 @@ function changeFileContentAndSend (response, path, originalStr, changeStr, callb
     });
 }
 
+function getOrchestrationPluginModel (req, res, appData)
+{
+    var plugins = require('../orchestration/plugins/plugins.api');
+    var modelObj = plugins.getOrchestrationPluginModel();
+    commonUtils.handleJSONResponse(null, res, modelObj);
+}
+
+/* Function: getWebServerInfo
+   Req URL: /api/service/networking/web-server-info
+   Send basic information about Web Server
+ */
+function getWebServerInfo (req, res, appData)
+{
+    var plugins = require('../orchestration/plugins/plugins.api');
+    var serverObj = plugins.getOrchestrationPluginModel();
+    if (null == serverObj) {
+        /* We will not come here any time */
+        logutils.logger.error("We did not get Orchestration Model");
+        assert(0);
+    }
+    serverObj ['serverUTCTime'] = commonUtils.getCurrentUTCTime();
+    serverObj['hostName'] = os.hostname();
+    serverObj['role'] = req.session.userRole;
+    commonUtils.handleJSONResponse(null, res, serverObj);
+}
+
+function mergeAllPackageList (serverType)
+{
+    var pkgList = [];
+    pkgList.push(require('../../../webroot/pkgxml/package.js').pkgList);
+    for (key in config.featurePkg) {
+        if ((config.featurePkg[key]) && (config.featurePkg[key]['path']) && 
+            (true == fs.existsSync(config.featurePkg[key]['path'] +
+                                   '/webroot/pkgxml/package.js'))) {
+            pkgList.push(require(config.featurePkg[key]['path'] +
+                        '/webroot/pkgxml/package.js').pkgList);
+        }
+    }
+    /*
+    var pkgStr = "var pkgList = " + JSON.stringify(pkgList);
+    pkgStr += ";\nexports.pkgList = pkgList;\n";
+
+    var path = null;
+    if (global.service.MAINSEREVR == serverType) {
+        path = __dirname + '/../web/core/packages.js';
+    } else {
+        path = __dirname + '/../jobs/core/packages.js';
+    }
+    fs.writeFileSync(path, pkgStr);
+    */
+    return pkgList;
+}
+
+/* Function: compareAndMergeDefaultConfig
+   This function is used to compare and merge missing configuration from
+   default.config.global.js with config file
+ */
+function compareAndMergeDefaultConfig (callback)
+{
+    var confFile = __dirname + '/../../../config/config.global.js';//'/etc/contrail/config.global.js';
+    var defConfFile = __dirname + '/../../../config/default.config.global.js';
+    var splitter = '=';
+    var startCmpStr = 'config';
+    compareAndMergeFiles(confFile, defConfFile, startCmpStr, splitter,
+                         function (err) {
+        callback(err);
+    });
+}
+
+/* Function: compareAndMergeFiles
+   This function is used to mege two files line by line comparing the left
+   porton of splitter of fileToCmp with fileWithCmp.
+
+   args: 
+    fileToCmp: The file to which comparison is done, finally the extra string in
+               fileWithCmp gets copied in fileToCmp.
+    fileWithCmp: The file with with comparison is done
+    startCmpStr: comparison is done on lines which have start string as
+                 startCmpStr
+    splitter: splitter of the line of each comparison
+    callback: callback function to call once done
+ */
+function compareAndMergeFiles (fileToCmp, fileWithCmp, startCmpStr, splitter,
+                               callback)
+{
+    try {
+        var fileToCmpCtnt = fs.readFileSync(fileToCmp, 'utf8');
+        var fileWithCmpCtnt = fs.readFileSync(fileWithCmp, 'utf8');
+    } catch(e) {
+        logutils.logger.error("readFileSync error: " + e);
+        callback(null);
+        return;
+    }
+
+    var linesToCmp = fileToCmpCtnt.split("\n");
+    var linesToCmpCnt = linesToCmp.length;
+    var fileToCmpObj = {};
+    for (var i = 0; i < linesToCmpCnt; i++) {
+        linesToCmp[i] = (linesToCmp[i]).trim();
+        var idx = linesToCmp[i].indexOf(splitter);
+        if (idx > -1) {
+            if (0 == linesToCmp[i].indexOf(startCmpStr)) {
+                fileToCmpObj[linesToCmp[i].substr(0, idx)] =
+                    linesToCmp[i];
+            }
+        }
+    }
+    var linesWithCmp = fileWithCmpCtnt.split("\n");
+    var linesWithCmpCnt = linesWithCmp.length;
+    var fileWithCmpObj = {};
+    for (var i = 0; i < linesWithCmpCnt; i++) {
+        linesWithCmp[i] = (linesWithCmp[i]).trim();
+        var idx = linesWithCmp[i].indexOf(splitter);
+        if (idx > -1) {
+            if (0 ==linesWithCmp[i].indexOf(startCmpStr)) {
+                fileWithCmpObj[linesWithCmp[i].substr(0, idx)] =
+                    linesWithCmp[i];
+            }
+        }
+    }
+    for (key in fileWithCmpObj) {
+        if (null == fileToCmpObj[key]) {
+            fileToCmpCtnt += fileWithCmpObj[key] + "\n";
+        }
+    }
+    fs.writeFileSync(fileToCmp, fileToCmpCtnt);
+    callback(null);
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1291,4 +1421,8 @@ exports.doEnsureExecution = doEnsureExecution;
 exports.directory = directory;
 exports.copyObject = copyObject;
 exports.changeFileContentAndSend = changeFileContentAndSend;
+exports.getOrchestrationPluginModel = getOrchestrationPluginModel;
+exports.getWebServerInfo = getWebServerInfo;
+exports.mergeAllPackageList = mergeAllPackageList;
+exports.compareAndMergeDefaultConfig = compareAndMergeDefaultConfig;
 
