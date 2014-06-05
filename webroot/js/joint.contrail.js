@@ -228,11 +228,12 @@ function setTopologyHeight(elementId, resizeFlag){
 	else{
 		topologyHeight -= 175 ;
 	}
-	
-	var svgHeight = $(elementId + ' svg').attr('height');
-	$(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight && !resizeFlag) ? svgHeight : topologyHeight));
-	
-	$(elementId).parent().css('width','100%');
+
+	setTimeout(function(){
+		var svgHeight = $(elementId + ' svg').attr('height');
+		$(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight && !(contrail.checkIfExist(resizeFlag) && resizeFlag)) ? svgHeight : topologyHeight));
+		$(elementId).parent().css('width','100%');
+	},500)
 }
 
 function drawTestVisualization(config) {
