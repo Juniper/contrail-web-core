@@ -606,11 +606,11 @@ function getDefaultGridConfig() {
                     gridContainer.data('contrailGrid').removeGridMessage();
                     if(dataView.getLength() == 0){
                         emptyGridHandler();
+                        gridContainer.find('.slick-row-detail').remove();
                     } else {
                         gridContainer.find('.grid-footer').removeClass('hide');
                         onDataGridHandler();
                     }
-                    gridContainer.find('.slick-row-detail').hide();
                 }
             };
             
