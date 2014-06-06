@@ -538,7 +538,6 @@ var defColors = ['#1c638d', '#4DA3D5'];
                         || data['url'] != null) {
                     cGrid.showGridMessage('loading'); 
                 }
-                applyGridDefHandlers($(this).data('contrailGrid'),data['config']);
                 //As events will not be triggered on cached dataSource,fire events manually
                 //widget loading icon will be hidden when the deferredobj resolves or rejects
                 if(data['deferredObj'] != null) {
@@ -1465,28 +1464,6 @@ function renderSparkLines(cellNode,row,dataContext,colDef) {
         });
 }
 
-function applyGridDefHandlers(cGrid, options) {
-    var options = ifNull(options,{});
-    if (typeof cGrid == "undefined")
-        return;
-    var noMsg = 'No data to display';
-    var dataSource = cGrid._dataView;
-    if (options['noMsg'] != null)
-        noMsg = options['noMsg'];
-    dataSource.onUpdateData.subscribe(function() {
-        /* Here we are overriding the cGrid value with current grid Object in the DOM because cGrid is referring to the earlier instance which is already destroyed.
-         * This is just a work around need to look a better solution,
-        */
-        if($('.contrail-grid').data('contrailGrid') != null){
-            cGrid = $('.contrail-grid').data('contrailGrid');
-            if(dataSource.getItems().length == 0)
-                cGrid.showGridMessage('empty',noMsg);
-            cGrid.refreshView();
-        }
-    });
-}
-
-
 function sort(object) {
     if (Array.isArray(object)) {
         return object.sort();
@@ -2163,7 +2140,6 @@ function loadAlertsContent(){
                     title : {
                         text : 'Details',
                         cssClass : 'blue',
-                        icon : 'icon-list'
                     },
                     customControls: []
                 },
