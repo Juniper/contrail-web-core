@@ -116,33 +116,6 @@ function collapseElement(e) {
     $(widgetBoxElem).toggleClass('collapsed');	
 }
 
-var templateLoader = (function ($, host) {
-    //Loads external templates from path and injects in to page DOM
-    return{
-        loadExtTemplate:function (path, deferredObj, containerName) {
-            //Load the template only if it doesn't exists in DOM
-            var tmplLoader = $.get(path)
-                .success(function (result) {
-                    //Add templates to DOM
-                    if (containerName != null) {
-                        $('body').append('<div id="' + containerName + '"></div>');
-                        $('#' + containerName).append(result);
-                    } else
-                        $("body").append(result);
-                    if (deferredObj != null)
-                        deferredObj.resolve();
-                })
-                .error(function (result) {
-                    if(result['statusText'] != 'abort')
-                        showInfoWindow("Error while loading page.",'Error');
-                });
-
-            tmplLoader.complete(function () {
-                $(host).trigger("TEMPLATE_LOADED", [path]);
-            });
-        }
-    };
-})(jQuery, document);
 
 var siteMap = {};
 var siteMapSearchStrings = [];
