@@ -4,6 +4,22 @@
 
 joint = $.extend(true, joint, {shapes: {contrail: {}}, layout: {contrail: {}}});
 
+var imageMap = {
+    'virtual-network': 'vpn',
+    'network-policy': 'policy',
+    'service-instance-l2': 'l2',
+    'service-instance-l3': 'l2',
+    'service-instance-analyzer': 'analyzer',
+    'service-instance-firewall': 'firewall',
+    'service-instance-nat': 'nat',
+    'service-instance-lb': 'lb',
+    'service-instance': 'nat',
+    'security-group': 'sg',
+    'floating-ip': 'fip',
+    'network-ipam': 'ipam',
+    'router': 'router'
+};
+
 function ContrailElement(type, options) {
     var contrailElement;
     switch(type) {
@@ -12,6 +28,15 @@ function ContrailElement(type, options) {
             break;
         case 'service-instance':
             contrailElement = new joint.shapes.contrail.ServiceInstance(options);
+            break;
+        case 'network-policy':
+            contrailElement = new joint.shapes.contrail.NetworkPolicy(options);
+            break;
+        case 'security-group':
+            contrailElement = new joint.shapes.contrail.SecurityGroup(options);
+            break;
+        case 'network-ipam':
+            contrailElement = new joint.shapes.contrail.NetworkIPAM(options);
             break;
         case 'link':
             contrailElement = new joint.shapes.contrail.Link(options);
@@ -28,19 +53,18 @@ function drawVisualization(config) {
     $.getJSON(url, function(response) {
         var data = formatData4BiDirVisualization(response);
         renderVisualization(config, data);
-    });
-
-    $.contextMenu({
-        selector: 'g',
-        callback: function(key, options) {
-            var m = "clicked: " + key;
-            window.console && console.log(m) || alert(m);
-        },
-        items: {
-            "view": {name: "View"},
-            "edit": {name: "Edit"},
-            "monitor": {name: "Monitor"}
-        }
+        $.contextMenu({
+            selector: 'g',
+            callback: function(key, options) {
+                var m = "clicked: " + key;
+                window.console && console.log(m) || alert(m);
+            },
+            items: {
+                "view": {name: "View"},
+                "edit": {name: "Edit"},
+                "monitor": {name: "Monitor"}
+            }
+        });
     });
 }
 
@@ -60,7 +84,7 @@ function renderVisualization(config, data) {
     graph.addCells(elements);
 
     rankDir = (nodes.length > 12 || (links.length == 0)) ? 'TB' : 'LR';
-    newGraphSize = joint.layout.contrail.DirectedGraph.layout(graph, { setLinkVertices: false, edgeSep:1, nodeSep: 80, rankSep: 80, rankDir: rankDir });
+    newGraphSize = joint.layout.contrail.DirectedGraph.layout(graph, { setLinkVertices: false, edgeSep:1, nodeSep: 50, rankSep: 50, rankDir: rankDir });
     paper.setDimensions(newGraphSize.width, newGraphSize.height + 100, 1);
 
     $(selectorId + " text").on('mousedown touchstart', function(e) {
@@ -89,7 +113,7 @@ function renderVisualization(config, data) {
         var delta = e.delta || e.originalEvent.wheelDelta;
         var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
         $panzoom.panzoom('zoom', zoomOut, {
-            increment:.05,
+            increment:.02,
             animate: false,
             minScale: 0.5,
             maxScale: 2.5,
@@ -102,23 +126,143 @@ function renderVisualization(config, data) {
 function formatData4BiDirVisualization(response) {
     var nodeMap = {}, elements = [],
         nodes = response['nodes'],
-        links = response['links'];
-
-    formatNodesData(nodes, elements, nodeMap);
-
-    for(i = 0; i < links.length; i++) {
-        var options = {
-            sourceId: nodeMap[links[i]['src']],
-            targetId: nodeMap[links[i]['dst']],
-            direction: links[i]['dir'],
-            linkType: 'bi'
-        }, link;
-
-        link = new ContrailElement('link', options);
-        elements.push(link);
-    }
+        links = response['links'],
+        configData = response['configData'];
+    createNodes4ConfigData(configData, nodes);
+    createNodeElements(nodes, elements, nodeMap);
+    createLinkElements(links, elements, nodeMap);
 
     return {elements: elements, nodeMap: nodeMap, nodes: nodes, links: links};
+}
+
+function createNodes4ConfigData(configData, nodes) {
+    var networkPolicys = configData['network-policys'],
+        securityGroups = configData['security-groups'],
+        networkIPAMS = configData['network-ipams'],
+        name, i;
+
+    for(i = 0; networkPolicys != null && i < networkPolicys.length; i++) {
+        name = networkPolicys[i]['network-policy']['fq_name'].join(':');
+        nodes.push({name: name, node_type: 'network-policy'});
+    }
+
+    for(i = 0; securityGroups != null && i < securityGroups.length; i++) {
+        name = securityGroups[i]['security-group']['fq_name'].join(':');
+        nodes.push({name: name, node_type: 'security-group'});
+    }
+
+    for(i = 0; networkIPAMS!= null && i < networkIPAMS.length; i++) {
+        name = networkIPAMS[i]['network-ipam']['fq_name'].join(':');
+        nodes.push({name: name, node_type: 'network-ipam'});
+    }
+}
+
+function createNodeElements(nodes, elements, nodeMap) {
+    for(var i = 0; i < nodes.length; i++) {
+        var nodeName = nodes[i]['name'],
+            nodeType = nodes[i]['node_type'],
+            imageLink, element, options, imageName;
+        imageName = getImageName(nodes[i]);
+        imageLink = '/img/icons/' + imageName;
+        options = {attrs: { image: {'xlink:href': imageLink}}};
+        element = new ContrailElement(nodeType, options).attr("text/text", nodeName.split(":")[2]);
+        elements.push(element);
+        nodeMap[nodeName] = element.id;
+    }
+}
+
+function createLinkElements(links, elements, nodeMap) {
+    for(var i = 0; i < links.length; i++) {
+        var sInstances = links[i] ['service_inst'],
+            dir = links[i]['dir'],
+            options, link;
+
+        if(sInstances == null || sInstances.length == 0) {
+            options = {
+                sourceId: nodeMap[links[i]['src']],
+                targetId: nodeMap[links[i]['dst']],
+                direction: dir,
+                linkType: 'bi'
+            };
+            link = new ContrailElement('link', options);
+            elements.push(link);
+        } else {
+            options = { direction: dir, linkType: 'bi'};
+            for (var j = 0; j < sInstances.length; j++) {
+                if(j == 0) {
+                    options['sourceId'] = nodeMap[links[i]['src']];
+                    options['targetId'] = nodeMap[sInstances[j]['name']];
+                } else {
+                    options['sourceId'] = nodeMap[sInstances[j - 1]['name']];
+                    options['targetId'] = nodeMap[sInstances[j]['name']];
+                }
+                link = new ContrailElement('link', options);
+                elements.push(link);
+            }
+            options['sourceId'] = nodeMap[sInstances[j - 1]['name']];
+            options['targetId'] = nodeMap[links[i]['dst']];
+            link = new ContrailElement('link', options);
+            elements.push(link);
+        }
+    }
+}
+
+function getImageName(node) {
+    var nodeStatus = node['status'],
+        serviceType = node['service_type'],
+        nodeType = node['node_type'],
+        imageName;
+
+    nodeType = (serviceType != null) ? (nodeType + '-' + serviceType) : nodeType;
+    imageName = imageMap[nodeType];
+
+    if(imageName == null) {
+        imageName = 'opencontrail-icon.png';
+    } else if (nodeStatus == 'Deleted') {
+        imageName += '-deleted.png';
+    } else {
+        imageName += '.png';
+    }
+    return imageName;
+};
+
+function initPanZoom(elementId) {
+    var $topology = $(elementId),
+        $topologyHeader = $(elementId + "-header"),
+        $panzoom;
+    $panzoom = $topology.panzoom({
+        $reset: $topologyHeader.find("#topology-reset")
+    });
+    return $panzoom;
+};
+
+function resizeWidget(self,elementId){
+    if($(self).find('i').hasClass('icon-resize-full')){
+        $(self).find('i').removeClass('icon-resize-full').addClass('icon-resize-small');
+        $(self).parents('.widget-box').find('.project-visualization-charts').hide();
+    }
+    else{
+        $(self).find('i').removeClass('icon-resize-small').addClass('icon-resize-full');
+        $(self).parents('.widget-box').find('.project-visualization-charts').show();
+    }
+    setTopologyHeight(elementId, true);
+}
+
+function setTopologyHeight(elementId, resizeFlag){
+    var topologyHeight = window.innerHeight;
+
+    if($(elementId).parents('.widget-box').find('.project-visualization-charts').is(':visible')){
+        topologyHeight = topologyHeight - 500;
+    }
+    else{
+        topologyHeight -= 175 ;
+    }
+
+    setTimeout(function(){
+        var svgHeight = $(elementId + ' svg').attr('height');
+        $(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight && !(contrail.checkIfExist(resizeFlag) && resizeFlag)) ? svgHeight : topologyHeight));
+        $(elementId).parent().css('width','100%');
+    },500)
 }
 
 function formatData4Visualization(response) {
@@ -126,9 +270,9 @@ function formatData4Visualization(response) {
         nodes = response['nodes'],
         links = response['links'];
 
-    formatNodesData(nodes, elements, nodeMap);
+    createNodeElements(nodes, elements, nodeMap);
 
-    for(i = 0; i < links.length; i++) {
+    for(var i = 0; i < links.length; i++) {
         var optionsForward = {
             sourceId: nodeMap[links[i]['src']],
             targetId: nodeMap[links[i]['dst']]
@@ -151,30 +295,6 @@ function formatData4Visualization(response) {
     }
     return {elements: elements, nodeMap: nodeMap, nodes: nodes, links: links};
 }
-
-function formatNodesData(nodes, elements, nodeMap) {
-    for(var i = 0; i < nodes.length; i++) {
-        var nodeName = nodes[i]['name'],
-            nodeType = nodes[i]['node_type'],
-            nodeStatus = nodes[i]['status'],
-            imageLink, element, options;
-        imageLink = (nodeStatus == "Deleted") ? "/img/vpn-deleted.png" : "/img/vpn.png";
-        options = {attrs: { image: {'xlink:href': imageLink}}};
-        element = new ContrailElement(nodeType, options).attr("text/text", nodeName.split(":")[2]);
-        elements.push(element);
-        nodeMap[nodeName] = element.id;
-    }
-}
-
-function initPanZoom(elementId) {
-    var $topology = $(elementId),
-        $topologyHeader = $(elementId + "-header"),
-        $panzoom;
-    $panzoom = $topology.panzoom({
-        $reset: $topologyHeader.find("#topology-reset")
-    });
-    return $panzoom;
-};
 
 function setupTransition4Link(nodeMap, link, paper, graph) {
     var trafficStats = link['more_attributes'],
@@ -207,51 +327,21 @@ function startTransition4Link(link, paper, sec, interval) {
     }, interval);
 }
 
-function resizeWidget(self,elementId){
-	if($(self).find('i').hasClass('icon-resize-full')){
-		$(self).find('i').removeClass('icon-resize-full').addClass('icon-resize-small');
-		$(self).parents('.widget-box').find('.project-visualization-charts').hide();
-	}
-	else{
-		$(self).find('i').removeClass('icon-resize-small').addClass('icon-resize-full');
-		$(self).parents('.widget-box').find('.project-visualization-charts').show();
-	}
-	setTopologyHeight(elementId, true);
-}
-
-function setTopologyHeight(elementId, resizeFlag){
-	var topologyHeight = window.innerHeight;
-	
-	if($(elementId).parents('.widget-box').find('.project-visualization-charts').is(':visible')){
-		topologyHeight = topologyHeight - 500;
-	}
-	else{
-		topologyHeight -= 175 ;
-	}
-
-	setTimeout(function(){
-		var svgHeight = $(elementId + ' svg').attr('height');
-		$(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight && !(contrail.checkIfExist(resizeFlag) && resizeFlag)) ? svgHeight : topologyHeight));
-		$(elementId).parent().css('width','100%');
-	},500)
-}
-
 function drawTestVisualization(config) {
-    var data = formatData4BiDirVisualization(createTestData());
-    renderVisualization(config, data);
-    
-    $.contextMenu({
-        selector: 'g', 
-        callback: function(key, options) {
-            var m = "clicked: " + key;
-            window.console && console.log(m) || alert(m); 
-        },
-        items: {
-            "view": {name: "View"},
-            "edit": {name: "Edit"},
-            "monitor": {name: "Monitor"},
-            
-        }
+    $.getJSON('/assets/examples/data/project.json', function(response) {
+        var data = formatData4BiDirVisualization(response);
+        renderVisualization(config, data);
+        $.contextMenu({
+            selector: 'g',
+            callback: function(key, options) {
+                var m = "clicked: " + key;
+                window.console && console.log(m) || alert(m);
+            },
+            items: {
+                "view": {name: "View"},
+                "edit": {name: "Edit"}
+            }
+        });
     });
 }
 
@@ -289,17 +379,16 @@ function createTestData() {
     return testData;
 };
 
-
-joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
+joint.shapes.contrail.ImageElement = joint.shapes.basic.Generic.extend({
     markup: '<image/><text/>',
 
     defaults: joint.util.deepSupplement({
-        type: 'contrail.VirtualNetwork',
-        size: {'width': 35, 'height': 35},
+        type: 'contrail.ImageElement',
+        size: {'width': 60, 'height': 60},
         attrs: {
             text: {
                 'ref-x':.5,
-                'ref-y': -5,
+                'ref-y': 3,
                 'y-alignment': 'middle',
                 'text-anchor': 'middle',
                 'ref': 'image',
@@ -308,53 +397,47 @@ joint.shapes.contrail.VirtualNetwork = joint.shapes.basic.Generic.extend({
                 'fill': '#333'
             },
             image: {
-                'width': 35,
-                'height': 35,
-                'xlink:href': "/img/vpn.png"
+                'width': 60,
+                'height': 60
             }
         }
     }, joint.shapes.basic.Generic.prototype.defaults)
 });
 
-joint.shapes.contrail.ServiceInstance = joint.dia.Element.extend({
-    markup: '<polygon class="outer"/><polygon class="inner"/><text/>',
-
+joint.shapes.contrail.VirtualNetwork = joint.shapes.contrail.ImageElement.extend({
     defaults: joint.util.deepSupplement({
-
-        type: 'contrail.ServiceInstance',
-        size: { width: 30, height: 30 },
-        attrs: {
-            '.outer': {
-                fill: '#3498DB', stroke: '#2980B9', 'stroke-width': 2,
-                points: '15,0 30,15 15,30 0,15'
-            },
-            '.inner': {
-                fill: '#3498DB', stroke: '#2980B9', 'stroke-width': 2,
-                points: '15, 3 27,15 15,27 3,15',
-                display: 'none'
-            },
-            text: {
-                'font-size': 12,
-                'ref-x':.5,
-                'ref-y': -5,
-                'y-alignment': 'middle',
-                'text-anchor': 'middle',
-                'ref': 'polygon',
-                'stroke-width': '0.4px',
-                'stroke': '#333',
-                'fill': '#333'
-            }
-        }
-
-    }, joint.dia.Element.prototype.defaults)
+        type: 'contrail.VirtualNetwork'
+    }, joint.shapes.contrail.ImageElement.prototype.defaults)
 });
 
+joint.shapes.contrail.ServiceInstance = joint.shapes.contrail.ImageElement.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.ServiceInstance'
+    }, joint.shapes.contrail.ImageElement.prototype.defaults)
+});
+
+joint.shapes.contrail.NetworkPolicy = joint.shapes.contrail.ImageElement.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.NetworkPolicy'
+    }, joint.shapes.contrail.ImageElement.prototype.defaults)
+});
+
+joint.shapes.contrail.SecurityGroup = joint.shapes.contrail.ImageElement.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.SecurityGroup'
+    }, joint.shapes.contrail.ImageElement.prototype.defaults)
+});
+
+joint.shapes.contrail.NetworkIPAM = joint.shapes.contrail.ImageElement.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.NetworkIPAM'
+    }, joint.shapes.contrail.ImageElement.prototype.defaults)
+});
 
 joint.shapes.contrail.Element = joint.dia.Element.extend({
     markup: '<polygon class="outer"/><polygon class="inner"/><text/>',
 
     defaults: joint.util.deepSupplement({
-
         type: 'contrail.Element',
         size: { width: 30, height: 30 },
         attrs: {
@@ -389,7 +472,8 @@ joint.shapes.contrail.Link = function(options) {
             '<path class="connection" stroke="black"></path>',
             '<path class="marker-source" fill="black" stroke="black" />',
             '<path class="marker-target" fill="black" stroke="black" />',
-            '<g class="labels"/>'
+            '<g class="marker-vertices"/>',
+            '<g class="labels"></g>'
         ]. join(''),
         source: { id: options.sourceId },
         target: { id: options.targetId },
