@@ -6,6 +6,7 @@ var globalObj = {},
     contentContainer = "#content-container";
 
 globalObj['loadedScripts'] = [];
+globalObj['loadedCSS'] = [];
 globalObj['orchModel'] = 'openstack';
 globalObj.NUM_FLOW_DATA_POINTS = 1000;
 var timeStampAlert = [],timeStampTolearence = 5 * 60 * 1000;//To check the mismatch between the browser time and the webserver time
@@ -1171,6 +1172,10 @@ function MenuHandler() {
             if (currMenuObj['view'] != null) {
                 loadViewResources(currMenuObj,currMenuObj['hash']);
             } 
+            //Load the feature css files
+            if(currMenuObj['css'] != null) {
+                loadCssResources(currMenuObj);
+            }
             //View file need to be downloaded first before executing any JS file
             $.when.apply(window, viewDeferredObjs).done(function() {
                 //Load the parent js
@@ -1201,6 +1206,20 @@ function MenuHandler() {
                 viewDeferredObjs.push(viewDeferredObj);
                 var viewPath = menuObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
                 templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+            });
+        }
+
+        function loadCssResources(menuObj,hash) {
+            if (!(menuObj['css'] instanceof Array)) {
+                menuObj['css'] = [menuObj['css']];
+            }
+            $.each(menuObj['css'],function() {
+                var cssPath = menuObj['rootDir'] + '/css/' + this;
+                if($.inArray(cssPath,globalObj['loadedCSS']) == -1) {
+                    globalObj['loadedCSS'].push(cssPath);
+                    var cssLink = $("<link rel='stylesheet' type='text/css' href='"+cssPath+"'>");
+                    $('head').append(cssLink);
+                }
             });
         }
         
