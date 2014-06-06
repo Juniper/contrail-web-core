@@ -1441,3 +1441,7 @@ a.disabled-link, a.disabled-link:hover{
 .disabledBtn i {
     cursor: default;
 }
+
+.separator-top {
+    border-top : 1px solid #ddd;
+}
