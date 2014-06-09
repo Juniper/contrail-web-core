@@ -38,6 +38,9 @@ function ContrailElement(type, options) {
         case 'network-ipam':
             contrailElement = new joint.shapes.contrail.NetworkIPAM(options);
             break;
+        case 'router':
+            contrailElement = new joint.shapes.contrail.LogicalRouter(options);
+            break;
         case 'link':
             contrailElement = new joint.shapes.contrail.Link(options);
             break;
@@ -440,6 +443,12 @@ joint.shapes.contrail.SecurityGroup = joint.shapes.contrail.ImageElement.extend(
 joint.shapes.contrail.NetworkIPAM = joint.shapes.contrail.ImageElement.extend({
     defaults: joint.util.deepSupplement({
         type: 'contrail.NetworkIPAM'
+    }, joint.shapes.contrail.ImageElement.prototype.defaults)
+});
+
+joint.shapes.contrail.LogicalRouter = joint.shapes.contrail.ImageElement.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.LogicalRouter'
     }, joint.shapes.contrail.ImageElement.prototype.defaults)
 });
 
