@@ -6,6 +6,7 @@ var globalObj = {},
     contentContainer = "#content-container";
 
 globalObj['loadedScripts'] = [];
+globalObj['loadedCSS'] = [];
 globalObj['orchModel'] = 'openstack';
 globalObj.NUM_FLOW_DATA_POINTS = 1000;
 var timeStampAlert = [],timeStampTolearence = 5 * 60 * 1000;//To check the mismatch between the browser time and the webserver time
@@ -116,33 +117,6 @@ function collapseElement(e) {
     $(widgetBoxElem).toggleClass('collapsed');	
 }
 
-var templateLoader = (function ($, host) {
-    //Loads external templates from path and injects in to page DOM
-    return{
-        loadExtTemplate:function (path, deferredObj, containerName) {
-            //Load the template only if it doesn't exists in DOM
-            var tmplLoader = $.get(path)
-                .success(function (result) {
-                    //Add templates to DOM
-                    if (containerName != null) {
-                        $('body').append('<div id="' + containerName + '"></div>');
-                        $('#' + containerName).append(result);
-                    } else
-                        $("body").append(result);
-                    if (deferredObj != null)
-                        deferredObj.resolve();
-                })
-                .error(function (result) {
-                    if(result['statusText'] != 'abort')
-                        showInfoWindow("Error while loading page.",'Error');
-                });
-
-            tmplLoader.complete(function () {
-                $(host).trigger("TEMPLATE_LOADED", [path]);
-            });
-        }
-    };
-})(jQuery, document);
 
 var siteMap = {};
 var siteMapSearchStrings = [];
@@ -538,7 +512,6 @@ var defColors = ['#1c638d', '#4DA3D5'];
                         || data['url'] != null) {
                     cGrid.showGridMessage('loading'); 
                 }
-                applyGridDefHandlers($(this).data('contrailGrid'),data['config']);
                 //As events will not be triggered on cached dataSource,fire events manually
                 //widget loading icon will be hidden when the deferredobj resolves or rejects
                 if(data['deferredObj'] != null) {
@@ -1199,6 +1172,10 @@ function MenuHandler() {
             if (currMenuObj['view'] != null) {
                 loadViewResources(currMenuObj,currMenuObj['hash']);
             } 
+            //Load the feature css files
+            if(currMenuObj['css'] != null) {
+                loadCssResources(currMenuObj);
+            }
             //View file need to be downloaded first before executing any JS file
             $.when.apply(window, viewDeferredObjs).done(function() {
                 //Load the parent js
@@ -1229,6 +1206,20 @@ function MenuHandler() {
                 viewDeferredObjs.push(viewDeferredObj);
                 var viewPath = menuObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
                 templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+            });
+        }
+
+        function loadCssResources(menuObj,hash) {
+            if (!(menuObj['css'] instanceof Array)) {
+                menuObj['css'] = [menuObj['css']];
+            }
+            $.each(menuObj['css'],function() {
+                var cssPath = menuObj['rootDir'] + '/css/' + this;
+                if($.inArray(cssPath,globalObj['loadedCSS']) == -1) {
+                    globalObj['loadedCSS'].push(cssPath);
+                    var cssLink = $("<link rel='stylesheet' type='text/css' href='"+cssPath+"'>");
+                    $('head').append(cssLink);
+                }
             });
         }
         
@@ -1464,28 +1455,6 @@ function renderSparkLines(cellNode,row,dataContext,colDef) {
             drawSparkLine4Selector(this, 'blue-grid-sparkline', dataContext['histCpuArr']);
         });
 }
-
-function applyGridDefHandlers(cGrid, options) {
-    var options = ifNull(options,{});
-    if (typeof cGrid == "undefined")
-        return;
-    var noMsg = 'No data to display';
-    var dataSource = cGrid._dataView;
-    if (options['noMsg'] != null)
-        noMsg = options['noMsg'];
-    dataSource.onUpdateData.subscribe(function() {
-        /* Here we are overriding the cGrid value with current grid Object in the DOM because cGrid is referring to the earlier instance which is already destroyed.
-         * This is just a work around need to look a better solution,
-        */
-        if($('.contrail-grid').data('contrailGrid') != null){
-            cGrid = $('.contrail-grid').data('contrailGrid');
-            if(dataSource.getItems().length == 0)
-                cGrid.showGridMessage('empty',noMsg);
-            cGrid.refreshView();
-        }
-    });
-}
-
 
 function sort(object) {
     if (Array.isArray(object)) {
@@ -2163,7 +2132,6 @@ function loadAlertsContent(){
                     title : {
                         text : 'Details',
                         cssClass : 'blue',
-                        icon : 'icon-list'
                     },
                     customControls: []
                 },
