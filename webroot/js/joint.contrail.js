@@ -22,7 +22,7 @@ var imageMap = {
 
 function ContrailElement(type, options) {
     var contrailElement;
-    switch(type) {
+    switch (type) {
         case 'virtual-network':
             contrailElement = new joint.shapes.contrail.VirtualNetwork(options);
             break;
@@ -50,12 +50,12 @@ function ContrailElement(type, options) {
 function drawVisualization(config) {
     var url = config.url;
 
-    $.getJSON(url, function(response) {
+    $.getJSON(url, function (response) {
         var data = formatData4BiDirVisualization(response);
         renderVisualization(config, data);
         $.contextMenu({
             selector: 'g',
-            callback: function(key, options) {
+            callback: function (key, options) {
                 var m = "clicked: " + key;
                 window.console && console.log(m) || alert(m);
             },
@@ -83,37 +83,39 @@ function renderVisualization(config, data) {
 
     graph.addCells(elements);
 
-    rankDir = (nodes.length > 12 || (links.length == 0)) ? 'TB' : 'LR';
+    //rankDir = (nodes.length > 12 || (links.length == 0)) ? 'TB' : 'LR';
+    rankDir = 'LR';
     newGraphSize = joint.layout.contrail.DirectedGraph.layout(graph, { setLinkVertices: false, edgeSep:1, nodeSep: 50, rankSep: 50, rankDir: rankDir });
-    paper.setDimensions(newGraphSize.width, newGraphSize.height + 100, 1);
+    console.log(newGraphSize);
+    paper.setDimensions(newGraphSize.width + 100, newGraphSize.height + 100, 1);
 
-    $(selectorId + " text").on('mousedown touchstart', function(e) {
+    $(selectorId + " text").on('mousedown touchstart', function (e) {
         e.stopImmediatePropagation();
         paper.pointerdown(e);
     });
 
-    $(selectorId + " image").on('mousedown touchstart', function(e) {
+    $(selectorId + " image").on('mousedown touchstart', function (e) {
         e.stopImmediatePropagation();
         paper.pointerdown(e);
     });
 
-    $(selectorId + " polygon").on('mousedown touchstart', function(e) {
+    $(selectorId + " polygon").on('mousedown touchstart', function (e) {
         e.stopImmediatePropagation();
         paper.pointerdown(e);
     });
 
-    for(var i = 0; i < links.length; i++) {
+    for (var i = 0; i < links.length; i++) {
         //setupTransition4Link(data['nodeMap'], links[i], paper, graph);
     }
 
     $panzoom = initPanZoom(selectorId);
 
-    $panzoom.parent().on('mousewheel.focal', function( e ) {
+    $panzoom.parent().on('mousewheel.focal', function (e) {
         e.preventDefault();
         var delta = e.delta || e.originalEvent.wheelDelta;
         var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
         $panzoom.panzoom('zoom', zoomOut, {
-            increment:.02,
+            increment: .02,
             animate: false,
             minScale: 0.5,
             maxScale: 2.5,
@@ -141,24 +143,24 @@ function createNodes4ConfigData(configData, nodes) {
         networkIPAMS = configData['network-ipams'],
         name, i;
 
-    for(i = 0; networkPolicys != null && i < networkPolicys.length; i++) {
+    for (i = 0; networkPolicys != null && i < networkPolicys.length; i++) {
         name = networkPolicys[i]['network-policy']['fq_name'].join(':');
         nodes.push({name: name, node_type: 'network-policy'});
     }
 
-    for(i = 0; securityGroups != null && i < securityGroups.length; i++) {
+    for (i = 0; securityGroups != null && i < securityGroups.length; i++) {
         name = securityGroups[i]['security-group']['fq_name'].join(':');
         nodes.push({name: name, node_type: 'security-group'});
     }
 
-    for(i = 0; networkIPAMS!= null && i < networkIPAMS.length; i++) {
+    for (i = 0; networkIPAMS != null && i < networkIPAMS.length; i++) {
         name = networkIPAMS[i]['network-ipam']['fq_name'].join(':');
         nodes.push({name: name, node_type: 'network-ipam'});
     }
 }
 
 function createNodeElements(nodes, elements, nodeMap) {
-    for(var i = 0; i < nodes.length; i++) {
+    for (var i = 0; i < nodes.length; i++) {
         var nodeName = nodes[i]['name'],
             nodeType = nodes[i]['node_type'],
             imageLink, element, options, imageName;
@@ -172,12 +174,12 @@ function createNodeElements(nodes, elements, nodeMap) {
 }
 
 function createLinkElements(links, elements, nodeMap) {
-    for(var i = 0; i < links.length; i++) {
+    for (var i = 0; i < links.length; i++) {
         var sInstances = links[i] ['service_inst'],
             dir = links[i]['dir'],
             options, link;
 
-        if(sInstances == null || sInstances.length == 0) {
+        if (sInstances == null || sInstances.length == 0) {
             options = {
                 sourceId: nodeMap[links[i]['src']],
                 targetId: nodeMap[links[i]['dst']],
@@ -189,7 +191,7 @@ function createLinkElements(links, elements, nodeMap) {
         } else {
             options = { direction: dir, linkType: 'bi'};
             for (var j = 0; j < sInstances.length; j++) {
-                if(j == 0) {
+                if (j == 0) {
                     options['sourceId'] = nodeMap[links[i]['src']];
                     options['targetId'] = nodeMap[sInstances[j]['name']];
                 } else {
@@ -216,7 +218,7 @@ function getImageName(node) {
     nodeType = (serviceType != null) ? (nodeType + '-' + serviceType) : nodeType;
     imageName = imageMap[nodeType];
 
-    if(imageName == null) {
+    if (imageName == null) {
         imageName = 'opencontrail-icon.png';
     } else if (nodeStatus == 'Deleted') {
         imageName += '-deleted.png';
@@ -231,38 +233,39 @@ function initPanZoom(elementId) {
         $topologyHeader = $(elementId + "-header"),
         $panzoom;
     $panzoom = $topology.panzoom({
-        $reset: $topologyHeader.find("#topology-reset")
+        $reset: $topologyHeader.find("#topology-reset"),
+        disableZoom: true
     });
     return $panzoom;
 };
 
-function resizeWidget(self,elementId){
-    if($(self).find('i').hasClass('icon-resize-full')){
+function resizeWidget(self, elementId) {
+    if ($(self).find('i').hasClass('icon-resize-full')) {
         $(self).find('i').removeClass('icon-resize-full').addClass('icon-resize-small');
         $(self).parents('.widget-box').find('.project-visualization-charts').hide();
     }
-    else{
+    else {
         $(self).find('i').removeClass('icon-resize-small').addClass('icon-resize-full');
         $(self).parents('.widget-box').find('.project-visualization-charts').show();
     }
     setTopologyHeight(elementId, true);
 }
 
-function setTopologyHeight(elementId, resizeFlag){
+function setTopologyHeight(elementId, resizeFlag) {
     var topologyHeight = window.innerHeight;
 
-    if($(elementId).parents('.widget-box').find('.project-visualization-charts').is(':visible')){
+    if ($(elementId).parents('.widget-box').find('.project-visualization-charts').is(':visible')) {
         topologyHeight = topologyHeight - 500;
     }
-    else{
-        topologyHeight -= 175 ;
+    else {
+        topologyHeight -= 175;
     }
 
-    setTimeout(function(){
+    setTimeout(function () {
         var svgHeight = $(elementId + ' svg').attr('height');
         $(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight && !(contrail.checkIfExist(resizeFlag) && resizeFlag)) ? svgHeight : topologyHeight));
-        $(elementId).parent().css('width','100%');
-    },500)
+        $(elementId).parent().css('width', '100%');
+    }, 500)
 }
 
 function formatData4Visualization(response) {
@@ -272,7 +275,7 @@ function formatData4Visualization(response) {
 
     createNodeElements(nodes, elements, nodeMap);
 
-    for(var i = 0; i < links.length; i++) {
+    for (var i = 0; i < links.length; i++) {
         var optionsForward = {
             sourceId: nodeMap[links[i]['src']],
             targetId: nodeMap[links[i]['dst']]
@@ -280,7 +283,7 @@ function formatData4Visualization(response) {
             sourceId: nodeMap[links[i]['dst']],
             targetId: nodeMap[links[i]['src']]
         }, link;
-        if(links[i]['dir'] == 'bi') {
+        if (links[i]['dir'] == 'bi') {
             link = new ContrailElement('link', optionsForward);
             links[i]['outLink'] = link;
             elements.push(link);
@@ -303,12 +306,12 @@ function setupTransition4Link(nodeMap, link, paper, graph) {
         outLink = link['outLink'],
         packets, srcName, source,
         srcId, i, transitionLink;
-    for(i = 0; inStats && i < inStats.length; i++) {
+    for (i = 0; inStats && i < inStats.length; i++) {
         packets = inStats[i]['pkts'];
-        if(packets > 0) {
+        if (packets > 0) {
             srcName = inStats[i]['src'];
             srcId = nodeMap[srcName]
-            if(inLink.get('source').id == srcId) {
+            if (inLink.get('source').id == srcId) {
                 transitionLink = inLink;
             } else {
                 transitionLink = outLink;
@@ -322,18 +325,18 @@ function startTransition4Link(link, paper, sec, interval) {
     var token = V('circle', { r: 3, fill: '#ff7f0e' });
     $(paper.viewport).append(token.node);
     token.animateAlongPath({ dur: sec + 's', repeatCount: 1 }, paper.findViewByModel(link).$('.connection')[0]);
-    setInterval(function(){
+    setInterval(function () {
         token.animateAlongPath({ dur: sec + 's', repeatCount: 1 }, paper.findViewByModel(link).$('.connection')[0]);
     }, interval);
 }
 
 function drawTestVisualization(config) {
-    $.getJSON('/assets/examples/data/project.json', function(response) {
+    $.getJSON('/assets/examples/data/project.json', function (response) {
         var data = formatData4BiDirVisualization(response);
         renderVisualization(config, data);
         $.contextMenu({
             selector: 'g',
-            callback: function(key, options) {
+            callback: function (key, options) {
                 var m = "clicked: " + key;
                 window.console && console.log(m) || alert(m);
             },
@@ -348,31 +351,37 @@ function drawTestVisualization(config) {
 function createTestData() {
     var testData = {nodes: [], links: []}, node;
 
-    for(var i = 1; i <= 11; i++) {
-        node = {name: 'default-domain:admin:vnetwork' + i, node_type: 'virtual-network', status:'Active'};
+    for (var i = 1; i <= 11; i++) {
+        node = {name: 'default-domain:admin:vnetwork' + i, node_type: 'virtual-network', status: 'Active'};
         testData['nodes'].push(node);
     }
 
-    node = {name: 'default-domain:admin:test', node_type: 'virtual-network', status:'Deleted'};
+    node = {name: 'default-domain:admin:test', node_type: 'virtual-network', status: 'Deleted'};
     testData['nodes'].push(node);
 
-    for(var i = 1; i <= 2; i++) {
-        node = {name: 'default-domain:admin:sinstance' + i, node_type: 'service-instance', status:'Active'};
+    for (var i = 1; i <= 2; i++) {
+        node = {name: 'default-domain:admin:sinstance' + i, node_type: 'service-instance', status: 'Active'};
         testData['nodes'].push(node);
     }
 
-    var connections = [[2, 3, 4,5,6,7], [8,9,3], [], [10], [11]];
+    var connections = [
+        [2, 3, 4, 5, 6, 7],
+        [8, 9, 3],
+        [],
+        [10],
+        [11]
+    ];
 
-    for(var i = 0; i < connections.length; i++) {
+    for (var i = 0; i < connections.length; i++) {
         var con = connections[i], link;
-        if(i % 3 == 0) {
-            link = {src: 'default-domain:admin:vnetwork' + (i + 1) , dst: 'default-domain:admin:sinstance' + (i/3 + 1), dir:'uni'};
+        if (i % 3 == 0) {
+            link = {src: 'default-domain:admin:vnetwork' + (i + 1), dst: 'default-domain:admin:sinstance' + (i / 3 + 1), dir: 'uni'};
             testData['links'].push(link);
-            link = {src: 'default-domain:admin:sinstance' + (i/3 + 1) , dst: 'default-domain:admin:vnetwork' + (i + 2), dir:'uni'};
+            link = {src: 'default-domain:admin:sinstance' + (i / 3 + 1), dst: 'default-domain:admin:vnetwork' + (i + 2), dir: 'uni'};
             testData['links'].push(link);
         }
-        for(var j = 0; j < con.length; j++) {
-            link = {src: 'default-domain:admin:vnetwork' + (i + 1) , dst: 'default-domain:admin:vnetwork' + con[j], dir: (i / 2 == 0) ? 'uni' : 'bi'};
+        for (var j = 0; j < con.length; j++) {
+            link = {src: 'default-domain:admin:vnetwork' + (i + 1), dst: 'default-domain:admin:vnetwork' + con[j], dir: (i / 2 == 0) ? 'uni' : 'bi'};
             testData['links'].push(link);
         }
     }
@@ -387,7 +396,7 @@ joint.shapes.contrail.ImageElement = joint.shapes.basic.Generic.extend({
         size: {'width': 60, 'height': 60},
         attrs: {
             text: {
-                'ref-x':.5,
+                'ref-x': .5,
                 'ref-y': 3,
                 'y-alignment': 'middle',
                 'text-anchor': 'middle',
@@ -452,7 +461,7 @@ joint.shapes.contrail.Element = joint.dia.Element.extend({
             },
             text: {
                 'font-size': 12,
-                'ref-x':.5,
+                'ref-x': .5,
                 'ref-y': -5,
                 'y-alignment': 'middle',
                 'text-anchor': 'middle',
@@ -466,7 +475,7 @@ joint.shapes.contrail.Element = joint.dia.Element.extend({
     }, joint.dia.Element.prototype.defaults)
 });
 
-joint.shapes.contrail.Link = function(options) {
+joint.shapes.contrail.Link = function (options) {
     var linkConfig = {
         markup: [
             '<path class="connection" stroke="black"></path>',
@@ -474,7 +483,7 @@ joint.shapes.contrail.Link = function(options) {
             '<path class="marker-target" fill="black" stroke="black" />',
             '<g class="marker-vertices"/>',
             '<g class="labels"></g>'
-        ]. join(''),
+        ].join(''),
         source: { id: options.sourceId },
         target: { id: options.targetId },
         smooth: true,
@@ -486,11 +495,11 @@ joint.shapes.contrail.Link = function(options) {
         }
     }, link;
 
-    if(options['linkType'] == 'bi') {
-        if(options.direction == 'bi') {
+    if (options['linkType'] == 'bi') {
+        if (options.direction == 'bi') {
             linkConfig['attrs']['.marker-source'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
             linkConfig['attrs']['.marker-target'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
-        } else if(options.direction == 'uni') {
+        } else if (options.direction == 'uni') {
             linkConfig['attrs']['.marker-target'] = { fill: '#333333', d: 'M 6 0 L 0 3 L 6 6 z' };
         }
     } else {
@@ -502,33 +511,43 @@ joint.shapes.contrail.Link = function(options) {
 };
 
 joint.layout.contrail.DirectedGraph = $.extend(true, joint.layout.DirectedGraph, {
-    layout: function(graph, opt) {
+    layout: function (graph, opt) {
 
         opt = opt || {};
 
         var inputGraph = this._prepareData(graph);
         var runner = dagre.layout();
 
-        if (opt.debugLevel) { runner.debugLevel(opt.debugLevel); }
-        if (opt.rankDir) { runner.rankDir(opt.rankDir); }
-        if (opt.rankSep) { runner.rankSep(opt.rankSep); }
-        if (opt.edgeSep) { runner.edgeSep(opt.edgeSep); }
-        if (opt.nodeSep) { runner.nodeSep(opt.nodeSep); }
+        if (opt.debugLevel) {
+            runner.debugLevel(opt.debugLevel);
+        }
+        if (opt.rankDir) {
+            runner.rankDir(opt.rankDir);
+        }
+        if (opt.rankSep) {
+            runner.rankSep(opt.rankSep);
+        }
+        if (opt.edgeSep) {
+            runner.edgeSep(opt.edgeSep);
+        }
+        if (opt.nodeSep) {
+            runner.nodeSep(opt.nodeSep);
+        }
 
         var layoutGraph = runner.run(inputGraph);
 
-        layoutGraph.eachNode(function(u, value) {
+        layoutGraph.eachNode(function (u, value) {
             if (!value.dummy) {
                 graph.get('cells').get(u).set('position', {
-                    x: value.x + 50 - value.width/2,
-                    y: value.y + 50 - value.height/2
+                    x: value.x + 50 - value.width / 2,
+                    y: value.y + 50 - value.height / 2
                 });
             }
         });
 
         if (opt.setLinkVertices) {
 
-            layoutGraph.eachEdge(function(e, u, v, value) {
+            layoutGraph.eachEdge(function (e, u, v, value) {
                 var link = graph.get('cells').get(e);
                 if (link) {
                     graph.get('cells').get(e).set('vertices', value.points);
