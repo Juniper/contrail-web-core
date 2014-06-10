@@ -224,6 +224,7 @@ MAINFILE[37]=webroot/js/nvd3-plugin.js
 MAINFILE[38]=webroot/js/d3-utils.js
 MAINFILE[39]=webroot/js/analyzer-utils.js
 MAINFILE[40]=webroot/js/chart-utils.js
+MAINFILE[41]=webroot/js/dashboard-utils.js
 
 cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
 cat ${MAINFILE[1]} >> webroot/js/contrail-all-1.js
@@ -270,6 +271,7 @@ cat ${MAINFILE[36]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[37]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[38]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[39]} >> webroot/js/contrail-all-5.js
+cat ${MAINFILE[41]} >> webroot/js/contrail-all-5.js
 
 # End - Merging All JS files
 

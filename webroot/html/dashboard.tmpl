@@ -148,222 +148,6 @@
 </div> <!-- /.container-fluid #main-container -->
 <a href="#" id="back-to-top"><i class="icon-double-angle-up icon-only bigger-110"></i>​&nbsp; Back to Top</a>
 
-<script type="text/x-handlebars-template" id="menu-shortcuts">
-            <div id="sidebar-shortcuts-large">
-                {{#each this}}
-                    {{#IfCompare this.cssClass 'disabledBtn' operator='!='}}
-                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');">
-                    {{else}}
-                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');" disabled>
-                    {{/IfCompare}}    
-                            <i class="{{this.iconClass}} icon-large"></i>
-                    </button>
-                {{/each}}
-            </div>
-
-            <div id="sidebar-shortcuts-mini">
-                {{#each this}}
-                    <span class="btn btn-{{this.id}}"></span>
-                {{/each}}
-            </div>
-</script>
-<script type="text/x-handlebars-template" id="menu-template">
-    <li class="head">
-        <a data-link='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
-            <span>{{this.label}}</span>
-            <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
-                <i class="icon-chevron-left"></i>
-            </span>
-        </a>
-    </li>
-    {{#each this.items.item}}
-        <li class="item">
-            <a href="\\#" class="dropdown-toggle" data-link='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
-                <i class="{{this.iconClass}}"></i>
-                <span>{{this.label}}</span>
-            </a>
-            <ul class="submenu">
-                {{#IfCompare this.items null operator='!='}}
-                    {{#each this.items.item}}
-                        <li id="{{this.hash}}">
-                            <a href='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
-                                {{this.label}}
-                            </a>
-                        </li>
-                   {{/each}}
-                {{/IfCompare}}
-                {{#IfCompare this.items null operator='=='}}
-                    <li id="{{this.hash}}">
-                        <a href='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
-                             {{this.label}}
-                        </a>
-                    </li>
-                {{/IfCompare}}
-            </ul>
-        </li>
-    {{/each}}
-</script>
-<script type="text/x-handlebars-template" id="current-breadcrumb">
- {{#each this}}
-   {{#if @last}}
-      <li class="active">
-          <a href={{href}}>{{link}}</a>
-      </li>
-   {{else}}
-      <li>
-          <a href={{href}}>{{link}}</a>
-          <span class="divider"><i class="icon-angle-right"></i></span>
-      </li>
-   {{/if}}
- {{/each}}
-</script>
-
-<script type="text/x-handlebars-template" id="dashboard-template">
-    <div class="row-fluid">
-        <div id="dashboard-box" class="widget-box transparent">
-            {{#IfCompare noTitle null operator="=="}}
-                <div class="widget-header">
-                    <h4 class="smaller">
-                        {{#if widgetBoxId}}
-                            <i id="{{widgetBoxId}}-loading" class="icon-spinner icon-spin blue bigger-125" style="display:none"></i>
-                        {{/if}}
-                        {{#if title}}
-                            {{title}}
-                        {{else}}
-                            Information
-                        {{/if}}
-                    </h4>
-                    <div class="widget-toolbar pull-right">
-                        <a  data-action="collapse">
-                            <i class="icon-chevron-up"></i>
-                        </a>
-                    </div>
-                    {{#if showSettings}}
-                        <div class="widget-toolbar pull-right">
-                            <a data-action="settings" data-toggle="dropdown">
-                                <i class="icon-cog"></i>
-                            </a>
-                            <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">
-                                <li>
-                                    <a onclick="showBasicDetails();">
-                                        <i class="icon-list"></i> &nbsp; Basic view
-                                    </a>
-                                </li>
-                                <li>
-                                    <a onclick="showAdvancedDetails();">
-                                        <i class="icon-code"></i> &nbsp; Advanced view
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    {{/if}}
-                </div>
-            {{/IfCompare}}
-            <div class="widget-body">
-            </div><!--/widget-body-->
-        </div><!--/widget-box-->
-    </div><!--/row-->
-</script>
-
-<script type="text/x-handlebars-template" id="no-data">
-    <div class='no-data-text'>No Statistics available for this duration</div>
-</script>
-
-<script type="text/x-handlebars-template" id="title-lblval-tooltip-template">
-<div class="row-fluid chart-tooltip" style="width:250px;">
-    {{#each this}}
-        {{#IfCompare @index 0}}
-            <div class="row-fluid chart-tooltip-title">
-                <p>{{value}}</p>
-            </div>
-            <div class="row-fluid chart-tooltip-body ">
-        {{else}}
-                <div class="row-fluid chart-tooltip-row" >
-                    <span class="key span4" style="min-height:20px;">{{lbl}}:</span>
-                    <span class="value span8" style="min-height:20px;">{{value}}</span>
-                </div>
-        {{/IfCompare}}
-    {{/each}}
-        </div>
-</div>
-</script>
-
-<script type="text/x-handlebars-template" id="overlapped-bubble-tooltip">
-<div id="overlapped-bubble-wrapper" class="enabledPointer">
-     <div class="row-fluid" >
-        <div class="left-arrow-wrapper">
-            <div class="left-arrow">
-                <i class="icon-chevron-left" style="font-size: 20px;"></i>
-            </div>
-        </div>
-        <div class="tooltip-wrapper">
-          {{#each content}}
-              {{> scatterTooltip}}
-          {{/each}}
-        </div>
-        <div class="right-arrow-wrapper">
-            <div class="close-button">
-                <button type="button" id="overlapClosebutton" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
-            </div>
-            <div class="right-arrow">
-                <i class="icon-chevron-right" style="font-size: 20px;"></i>
-            </div>
-        </div>
-     </div>
-     <div class="row-fluid pagecount">
-        <span class="pull-right">{{pagestr}}</span>
-    </div>
-</div>
-</script>
-
-
-<script type="text/x-handlebars-template" id="title-lblval-tooltip-template_new">
-<div class="row-fluid chart-tooltip">
- {{#each this}}
-    {{#IfCompare @index 0 }}
-        <div class="row-fluid chart-tooltip-title">
-            <p>{{value}}</p>
-        </div>
-    {{/IfCompare}}
-    {{#IfCompare @index 0 operator='!='}}
-    <div class="row-fluid chart-tooltip-body ">
-        <div class="row-fluid chart-tooltip-row">
-            {{#IfCompare lbl '' operator='!='}}
-            <span class="key">{{lbl}}:</span>
-            {{/IfCompare}}
-            <span class="value">{{value}}</span>
-        </div>
-    </div>
-    {{/IfCompare}}
- {{/each}}   
-</div>
-</script>
-
-<script type="text/x-handlebars-template" id="sparkline-template">
-    <div id={{id}} class="infobox infobox-blue infobox-dynamic">
-        <div class="infobox-chart">
-            <span class="sparkline"></span>
-        </div>
-
-        <div class="infobox-data">
-            <span class="infobox-data-number">{{totalCnt}}</span>
-            <div class="infobox-content">{{title}}</div>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-handlebars-template" id="lblval-tooltip-template">
-<div class="row-fluid chart-tooltip">
-    <div class="row-fluid chart-tooltip-body ">
-     {{#each this}}
-         <div class="row-fluid chart-tooltip-row">
-             <span class="key">{{lbl}}</span>
-             <span class="value"> {{value}}</span>
-         </div>
-       {{/each}} 
-    </div>
-</div>
-</script>
 
 <!--JQuery Scripts-->
 <!-- Start dev_env 
@@ -419,6 +203,41 @@ End dev_env -->
 <script src="/js/contrail-all-4.js?built_at="></script>
 <!-- End prod_env -->
 
+<script type="text/javascript">
+var templateLoader = (function ($, host) {
+    //Loads external templates from path and injects in to page DOM
+    return{
+        loadExtTemplate:function (path, deferredObj, containerName) {
+            //Load the template only if it doesn't exists in DOM
+            var tmplLoader = $.ajax({url:path})
+                .success(function (result) {
+                    //Add templates to DOM
+                    if (containerName != null) {
+                        $('body').append('<div id="' + containerName + '"></div>');
+                        $('#' + containerName).append(result);
+                    } else
+                        $("body").append(result);
+                    if (deferredObj != null)
+                        deferredObj.resolve();
+                })
+                .error(function (result) {
+                    if(result['statusText'] != 'abort')
+                        showInfoWindow("Error while loading page.",'Error');
+                });
+
+            tmplLoader.complete(function () {
+                $(host).trigger("TEMPLATE_LOADED", [path]);
+            });
+        }
+    };
+})(jQuery, document);
+$.ajaxSetup({async:false});
+//Need to issue the call synchronously as the following scripts refer to the templates in this file
+templateLoader.loadExtTemplate('/views/contrail-common.view');
+$.ajaxSetup({async:true});
+
+</script>
+
 <!--Contrail Scripts-->
 <!-- Start dev_env
 <script src="/js/contrail-common.js"></script>
@@ -436,6 +255,7 @@ End dev_env -->
 <script src="/js/nvd3-plugin.js?built_at="></script>
 <script src="/js/d3-utils.js?built_at="></script>
 <script src="/js/analyzer-utils.js?built_at="></script>
+<script src="/js/dashboard-utils.js?built_at="></script>
 End dev_env -->
 
 <script src="/assets/joint/js/joint.nojquery.js"></script>

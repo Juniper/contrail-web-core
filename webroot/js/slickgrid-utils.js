@@ -606,11 +606,11 @@ function getDefaultGridConfig() {
                     gridContainer.data('contrailGrid').removeGridMessage();
                     if(dataView.getLength() == 0){
                         emptyGridHandler();
+                        gridContainer.find('.slick-row-detail').remove();
                     } else {
                         gridContainer.find('.grid-footer').removeClass('hide');
                         onDataGridHandler();
                     }
-                    gridContainer.find('.slick-row-detail').hide();
                 }
             };
             
@@ -649,6 +649,9 @@ function getDefaultGridConfig() {
                     if(contrail.checkIfFunction(gridDataSource.events.onUpdateDataCB)) {
                         gridDataSource.events.onUpdateDataCB();
                     }
+                    if(gridDataSource.dataView != null && gridDataSource.dataView.getItems().length == 0)
+                        gridContainer.data('contrailGrid').showGridMessage('empty');
+                    gridContainer.data('contrailGrid').refreshView();
                 }
             };
             

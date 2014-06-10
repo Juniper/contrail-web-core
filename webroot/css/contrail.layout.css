@@ -2308,16 +2308,21 @@ button.btn:active {
 .margin-25-0 {margin:25px 0 !important;}
 .margin-25-0-0 {margin:25px 0 0 !important;}
 .margin-top-25 {margin-top:25px !important;}
-.margin-left-60{margin-left:60px !important;}
+.margin-left-60 {margin-left:60px !important;}
+.margin-right-10 {margin-right:10px !important}
+.margin-right-60 {margin-right:60px !important}
+.margin-left-23-right-10{margin-left:23px; margin-right:10px !important}
+.margin-left-16-pct {margin-left:16% !important}
 
 /* padding framework */
-.padding-2 {padding:2px !important;}
+.padding-2 {padding:2px !important;}    
 .padding-2-0 {padding:2px 0 !important;}
 .padding-5 {padding:5px !important;}
 .padding-5-0 {padding:5px 0 !important;}
 .padding-10 {padding:10px !important;}
 .padding-10-0 {padding:10px 0 !important;}
 .padding-15 {padding:15px !important;}
+.padding-top-5{padding-top:5px !important;}
 
 /* height framework */
 .height-200 {height:200px !important;}

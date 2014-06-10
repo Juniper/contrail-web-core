@@ -6,6 +6,7 @@ var globalObj = {},
     contentContainer = "#content-container";
 
 globalObj['loadedScripts'] = [];
+globalObj['loadedCSS'] = [];
 globalObj['orchModel'] = 'openstack';
 globalObj.NUM_FLOW_DATA_POINTS = 1000;
 var timeStampAlert = [],timeStampTolearence = 5 * 60 * 1000;//To check the mismatch between the browser time and the webserver time
@@ -116,33 +117,6 @@ function collapseElement(e) {
     $(widgetBoxElem).toggleClass('collapsed');	
 }
 
-var templateLoader = (function ($, host) {
-    //Loads external templates from path and injects in to page DOM
-    return{
-        loadExtTemplate:function (path, deferredObj, containerName) {
-            //Load the template only if it doesn't exists in DOM
-            var tmplLoader = $.get(path)
-                .success(function (result) {
-                    //Add templates to DOM
-                    if (containerName != null) {
-                        $('body').append('<div id="' + containerName + '"></div>');
-                        $('#' + containerName).append(result);
-                    } else
-                        $("body").append(result);
-                    if (deferredObj != null)
-                        deferredObj.resolve();
-                })
-                .error(function (result) {
-                    if(result['statusText'] != 'abort')
-                        showInfoWindow("Error while loading page.",'Error');
-                });
-
-            tmplLoader.complete(function () {
-                $(host).trigger("TEMPLATE_LOADED", [path]);
-            });
-        }
-    };
-})(jQuery, document);
 
 var siteMap = {};
 var siteMapSearchStrings = [];
@@ -538,7 +512,6 @@ var defColors = ['#1c638d', '#4DA3D5'];
                         || data['url'] != null) {
                     cGrid.showGridMessage('loading'); 
                 }
-                applyGridDefHandlers($(this).data('contrailGrid'),data['config']);
                 //As events will not be triggered on cached dataSource,fire events manually
                 //widget loading icon will be hidden when the deferredobj resolves or rejects
                 if(data['deferredObj'] != null) {
@@ -1199,6 +1172,10 @@ function MenuHandler() {
             if (currMenuObj['view'] != null) {
                 loadViewResources(currMenuObj,currMenuObj['hash']);
             } 
+            //Load the feature css files
+            if(currMenuObj['css'] != null) {
+                loadCssResources(currMenuObj);
+            }
             //View file need to be downloaded first before executing any JS file
             $.when.apply(window, viewDeferredObjs).done(function() {
                 //Load the parent js
@@ -1229,6 +1206,20 @@ function MenuHandler() {
                 viewDeferredObjs.push(viewDeferredObj);
                 var viewPath = menuObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
                 templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+            });
+        }
+
+        function loadCssResources(menuObj,hash) {
+            if (!(menuObj['css'] instanceof Array)) {
+                menuObj['css'] = [menuObj['css']];
+            }
+            $.each(menuObj['css'],function() {
+                var cssPath = menuObj['rootDir'] + '/css/' + this;
+                if($.inArray(cssPath,globalObj['loadedCSS']) == -1) {
+                    globalObj['loadedCSS'].push(cssPath);
+                    var cssLink = $("<link rel='stylesheet' type='text/css' href='"+cssPath+"'>");
+                    $('head').append(cssLink);
+                }
             });
         }
         
@@ -1465,28 +1456,6 @@ function renderSparkLines(cellNode,row,dataContext,colDef) {
         });
 }
 
-function applyGridDefHandlers(cGrid, options) {
-    var options = ifNull(options,{});
-    if (typeof cGrid == "undefined")
-        return;
-    var noMsg = 'No data to display';
-    var dataSource = cGrid._dataView;
-    if (options['noMsg'] != null)
-        noMsg = options['noMsg'];
-    dataSource.onUpdateData.subscribe(function() {
-        /* Here we are overriding the cGrid value with current grid Object in the DOM because cGrid is referring to the earlier instance which is already destroyed.
-         * This is just a work around need to look a better solution,
-        */
-        if($('.contrail-grid').data('contrailGrid') != null){
-            cGrid = $('.contrail-grid').data('contrailGrid');
-            if(dataSource.getItems().length == 0)
-                cGrid.showGridMessage('empty',noMsg);
-            cGrid.refreshView();
-        }
-    });
-}
-
-
 function sort(object) {
     if (Array.isArray(object)) {
         return object.sort();
@@ -1595,262 +1564,6 @@ function monitorRefresh(selector) {
         $(this).data('loaded', false);
         gridDS.refreshData();
     });
-}
-
-
-var bgpMonitor = {
-    nodeTooltipFn:function (e,x,y,chart) {
-        var result = {};
-            //markOverlappedBubblesOnHover reuturns Overlapped nodes in ascending order of severity
-            //Reverse the nodes such that high severity nodes are displayed first in the tooltip 
-            e['point']['overlappedNodes'] = markOverlappedBubblesOnHover(e,chart).reverse();
-            if(e['point']['overlappedNodes'] == undefined || e['point']['overlappedNodes'].length <= 1) {
-                return formatLblValueTooltip(bgpMonitor.getTooltipContents(e));
-            } else if(e['point']['multiTooltip'] == true) {
-                result = getMultiTooltipContent(e,bgpMonitor.getTooltipContents,chart);
-                result['content'] = result['content'].slice(0,result['perPage']);
-                return formatLblValueMultiTooltip(result);
-            }
-    },
-    getNextHopType:function (data) {
-    	var type = data['path']['nh']['NhSandeshData']['type'];
-    	if($.type(type) != "string"){
-    		return '-';
-    	} else {
-    		return type;
-    	}
-    },
-    /**
-     * Sort alerts first by severity and with in same severity,sort by timestamp if available
-     */
-    sortInfraAlerts: function(a,b) {
-        if(a['sevLevel'] != b['sevLevel'])
-            return a['sevLevel'] - b['sevLevel'];
-        if(a['sevLevel'] == b['sevLevel']) {
-            if(a['timeStamp'] != null && b['timeStamp'] != null)
-                return b['timeStamp'] - a['timeStamp'];
-        }
-        return 0;
-    },
-    sortNodesByColor: function(a,b) {
-        var colorPriorities = [d3Colors['green'],d3Colors['blue'],d3Colors['orange'],d3Colors['red']];
-        var aColor = $.inArray(a['color'],colorPriorities); 
-        var bColor = $.inArray(b['color'],colorPriorities);
-        return aColor-bColor;
-    },
-    getTooltipContents:function(e) {
-        //Get the count of overlapping bubbles
-        var series = e['series'];
-        var processDetails = e['point']['processDetails'];
-        var tooltipContents = [
-            //{lbl:'Host Name', value:matchedRecords.length > 1 ? e['point']['name'] +
-              //  contrail.format(' ({0})',matchedRecords.length) : e['point']['name']},
-            {lbl:'Host Name', value: e['point']['name']},
-            {lbl:'Version', value:e['point']['version']},
-            //{lbl:'CPU', value:e['point']['x'].toFixed(2) + ' %'},
-            //{lbl:'Memory', value:parseInt(e['point']['y']) + ' MB'}
-            {lbl:'CPU', value:$.isNumeric(e['point']['cpu']) ? e['point']['cpu'] + '%' : e['point']['cpu']},
-            {lbl:'Memory', value:e['point']['memory']}
-        ];
-        if (e['point']['type'] == 'vRouter') {
-            //tooltipContents.push({lbl:'Throughput', value:e['point']['size']-1});
-            $.each(e['point']['alerts'],function(idx,obj) {
-                if(obj['tooltipAlert'] != false)
-                    tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
-            });
-        } else if (e['point']['type'] == 'controlNode') {
-            $.each(e['point']['alerts'],function(idx,obj) {
-                if(obj['tooltipAlert'] != false)
-                    tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
-            });
-        } else if (e['point']['type'] == 'analyticsNode') {
-            if(e['point']['pendingQueryCnt'] != null && e['point']['pendingQueryCnt'] > 0)
-              tooltipContents.push({lbl:'Pending Queries', value:e['point']['pendingQueryCnt']});
-            $.each(e['point']['alerts'],function(idx,obj) {
-                if(obj['tooltipAlert'] != false)
-                    tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
-            });
-        } else if (e['point']['type'] == 'configNode') {
-            $.each(e['point']['alerts'],function(idx,obj) {
-                if(obj['tooltipAlert'] != false)
-                    tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
-            });
-        }
-        return tooltipContents;
-    },
-    getNextHopDetails:function (data) {
-        var nhType = bgpMonitor.getNextHopType(data);
-        //var nhData = jsonPath(data,'$..PathSandeshData').pop();
-        var nhData = data['path'];
-        //nhData['nh'] = nhData['nh']['NhSandeshData'];
-        var nextHopData = nhData['nh']['NhSandeshData'];
-        var intf = nextHopData['itf'], mac = nextHopData['mac'], destVN = nhData['dest_vn'], source = nhData['peer'], policy = nextHopData['policy'], lbl = nhData['label'];
-        var sip = nextHopData['sip'], dip = nextHopData['dip'], tunnelType = nextHopData['tunnel_type'], valid = nextHopData['valid'], vrf = nextHopData['vrf'];
-        if (nhType == 'arp') {
-            //return contrail.format('Intf: {0} VRF: {1} Mac: {2} Source IP: {3}',nextHopData['itf'],nextHopData['vrf'],nextHopData['mac'],nextHopData['sip']);
-            return contrail.format(wrapLabelValue('Interface', nextHopData['itf']) + wrapLabelValue('Mac', nextHopData['mac']) + wrapLabelValue('IP', nextHopData['sip']) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType == 'resolve' || nhType == 'receive') {
-            return contrail.format(wrapLabelValue('Source', nhData['peer']) + wrapLabelValue('Destination VN', nhData['dest_vn'])  + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType == 'interface') {
-            return contrail.format(wrapLabelValue('Interface', intf) + wrapLabelValue('Destination VN', destVN) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType == 'tunnel') {
-            return contrail.format(wrapLabelValue('Source IP', sip) +  wrapLabelValue('Destination IP', dip) + wrapLabelValue('Destination VN', destVN) + wrapLabelValue('Label', lbl) +
-            		 wrapLabelValue('Tunnel type', tunnelType) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType == 'vlan') {
-            return contrail.format(wrapLabelValue('Source', nhData['peer']) + wrapLabelValue('Destination VN', destVN) + wrapLabelValue('Label', lbl) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType == 'discard') {
-            return contrail.format(wrapLabelValue('Source', nhData['peer']) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType.toLowerCase() == 'composite' || nhType.toLowerCase().search('l3 composite') != -1) {
-            var vrf = nextHopData['vrf'];
-            var refCount = nextHopData['ref_count'];
-            var policy = nextHopData['policy'];
-            var valid = nextHopData['valid'];
-            var label = nhData['label'];
-            var mcDataString = '';
-            var mcData;
-            if (nextHopData['mc_list'] != null && nextHopData['mc_list']['list'] != null && nextHopData['mc_list']['list']['McastData'] != null) {
-                mcData = nextHopData['mc_list']['list']['McastData'];
-                if (mcData.length > 1) {
-                    for (var a = 0; a < mcData.length; a++) {
-                        mcDataString = mcDataString.concat("{");
-                        var dataObj = mcData[a]
-                        for (x in dataObj) {
-                            if (x == "type" || x == "sip" || x == "dip" || x == "label" || x == "itf")
-                                mcDataString = mcDataString.concat(' ' + x + ': ' + dataObj[x]);
-                        }
-                        mcDataString = mcDataString.concat("}");
-                    }
-                } else {
-                    mcDataString = mcDataString.concat("{");
-                    for (x in mcData) {
-                        if (x == "type" || x == "sip" || x == "dip" || x == "label" || x == "itf")
-                            mcDataString = mcDataString.concat(' ' + x + ': ' + mcData[x]);
-                    }
-                    mcDataString = mcDataString.concat("}");
-                }
-            }
-            var x = contrail.format(wrapLabelValue('Source IP', sip) + wrapLabelValue('Destination IP', dip) + wrapLabelValue('vrf', vrf) + wrapLabelValue('Ref count', refCount) +
-                wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid) + wrapLabelValue('Label', label) + wrapLabelValue('Multicast Data', mcDataString));
-            return x;
-        } else {
-        	var x = contrail.format(wrapLabelValue('Source IP', sip) + wrapLabelValue('Destination IP', dip) + wrapLabelValue('vrf', vrf) + wrapLabelValue('Ref count', refCount) +
-                    wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid) + wrapLabelValue('Label', lbl));
-                return x;
-        }
-    },
-    getNextHopDetailsForMulticast:function (data) {
-        var nhType = bgpMonitor.getNextHopType(data);
-        //var nhData = jsonPath(data,'$..PathSandeshData').pop();
-        var nhData = data['path'];
-        var nextHopData = nhData['nh']['NhSandeshData'];
-        // var intf = nextHopData['itf'], mac = nextHopData['mac'], destVN = nhData['dest_vn'], source = nhData['peer'], policy = nextHopData['policy'], lbl = nhData['label'];
-        //var sip = nextHopData['sip'], dip = nextHopData['dip']
-        var refCount = nextHopData['ref_count'];
-        var valid = nextHopData['valid'];
-        var policy = nextHopData['policy'];
-        var sip = nextHopData['sip'];
-        var dip = nextHopData['dip'];
-        var vrf = nextHopData['vrf'];
-        var label = nextHopData['label'];
-        var mcDataString = '';
-        var mcData;
-        if (nextHopData['mc_list'] != null && nextHopData['mc_list']['list'] != null && nextHopData['mc_list']['list']['McastData'] != null) {
-            mcData = nextHopData['mc_list']['list']['McastData'];
-            if (mcData.length > 1) {
-                for (var a = 0; a < mcData.length; a++) {
-                    mcDataString = mcDataString.concat("{");
-                    var dataObj = mcData[a]
-                    for (x in dataObj) {
-                        if (x == "type" || x == "sip" || x == "dip" || x == "label" || x == "itf")
-                            mcDataString = mcDataString.concat(' ' + x + ': ' + dataObj[x]);
-                    }
-                    mcDataString = mcDataString.concat("}");
-                }
-            } else {
-                mcDataString = mcDataString.concat("{");
-                for (x in mcData) {
-                    if (x == "type" || x == "sip" || x == "dip" || x == "label" || x == "itf")
-                        mcDataString = mcDataString.concat(' ' + x + ': ' + mcData[x]);
-                }
-                mcDataString = mcDataString.concat("}");
-            }
-        }
-        if (nhType == 'arp') {
-            return contrail.format(wrapLabelValue('Interface', nextHopData['itf']) + wrapLabelValue('Mac', nextHopData['mac']) + wrapLabelValue('Source IP', nextHopData['sip']) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType == 'resolve') {
-            return contrail.format(wrapLabelValue('Source', nhData['peer']) + wrapLabelValue('Destination VN', nhData['dest_vn']) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType == 'receive') {
-            return contrail.format(wrapLabelValue('Reference Count', refCount) + wrapLabelValue('Valid', valid) + wrapLabelValue('Policy', policy));
-        } else if (nhType == 'interface') {
-            return contrail.format(wrapLabelValue('Interface', intf) + wrapLabelValue('Destination VN', destVN) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType == 'tunnel') {
-            return contrail.format(wrapLabelValue('Destination IP', dip) + wrapLabelValue('Destination VN', destVN) + wrapLabelValue('Label', lbl) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else {
-            var x = contrail.format(wrapLabelValue('Source IP', sip) + wrapLabelValue('Destination IP', dip) + wrapLabelValue('vrf', vrf) + wrapLabelValue('Ref count', refCount) +
-                wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid) + wrapLabelValue('Label', label) + wrapLabelValue('Multicast Data', mcDataString));
-            return x;
-        } 
-    },
-    getNextHopDetailsForL2:function (data) {
-        var nhType = bgpMonitor.getNextHopType(data);
-        //var nhData = jsonPath(data,'$..PathSandeshData').pop();
-        var nhData = data['path'];
-        //nhData['nh'] = nhData['nh']['NhSandeshData'];
-        var nextHopData = nhData['nh']['NhSandeshData'];
-        var intf = nextHopData['itf'], mac = nextHopData['mac'], destVN = nhData['dest_vn'], source = nhData['peer'], policy = nextHopData['policy'], lbl = nhData['label'];
-        var sip = nextHopData['sip'], dip = nextHopData['dip'], valid = nextHopData['valid'], vrf = nextHopData['vrf'], tunnelType = nextHopData['tunnel_type'];
-        if (nhType == 'arp') {
-            //return contrail.format('Intf: {0} VRF: {1} Mac: {2} Source IP: {3}',nextHopData['itf'],nextHopData['vrf'],nextHopData['mac'],nextHopData['sip']);
-            return contrail.format(wrapLabelValue('Interface', nextHopData['itf']) + wrapLabelValue('Mac', nextHopData['mac']) + wrapLabelValue('IP', nextHopData['sip']) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType == 'resolve' || nhType == 'receive') {
-            return contrail.format(wrapLabelValue('Source', nhData['peer']) + wrapLabelValue('Destination VN', nhData['dest_vn']) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType == 'interface') {
-            return contrail.format(wrapLabelValue('Interface', intf) + wrapLabelValue('Valid', valid) + wrapLabelValue('Policy', policy));
-        } else if (nhType == 'tunnel') {
-            return contrail.format(wrapLabelValue('Source IP', sip) +  wrapLabelValue('Destination IP', dip) + wrapLabelValue('Valid', valid) + wrapLabelValue('Policy', policy) + wrapLabelValue('Vrf', vrf) 
-            		+ wrapLabelValue('Label', lbl) + wrapLabelValue('Tunnel type', tunnelType));
-        } else if (nhType == 'vlan') {
-            return contrail.format(wrapLabelValue('Source', nhData['peer']) + wrapLabelValue('Destination VN', destVN) + wrapLabelValue('Label', lbl) + wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid));
-        } else if (nhType == 'discard') {
-            return contrail.format(wrapLabelValue('Source', nhData['peer']));
-        } else if (nhType.toLowerCase() == 'composite'  || nhType.toLowerCase().search('l2 composite') != -1) {
-            var vrf = nextHopData['vrf'];
-            var refCount = nextHopData['ref_count'];
-            var policy = nextHopData['policy'];
-            var valid = nextHopData['valid'];
-            var label = nhData['label'];
-            var mcDataString = '';
-            var mcData;
-            if (nextHopData['mc_list'] != null && nextHopData['mc_list']['list'] != null && nextHopData['mc_list']['list']['McastData'] != null) {
-                mcData = nextHopData['mc_list']['list']['McastData'];
-                if (mcData.length > 1) {
-                    for (var a = 0; a < mcData.length; a++) {
-                        mcDataString = mcDataString.concat("{");
-                        var dataObj = mcData[a]
-                        for (x in dataObj) {
-                            if (x == "type" || x == "sip" || x == "dip" || x == "label" || x == "itf")
-                                mcDataString = mcDataString.concat(' ' + x + ': ' + dataObj[x]);
-                        }
-                        mcDataString = mcDataString.concat("}");
-                    }
-                } else {
-                    mcDataString = mcDataString.concat("{");
-                    for (x in mcData) {
-                        if (x == "type" || x == "sip" || x == "dip" || x == "label" || x == "itf")
-                            mcDataString = mcDataString.concat(' ' + x + ': ' + mcData[x]);
-                    }
-                    mcDataString = mcDataString.concat("}");
-                }
-            }
-            var x = contrail.format(wrapLabelValue('Source IP', sip) + wrapLabelValue('Destination IP', dip) + wrapLabelValue('vrf', vrf) + wrapLabelValue('Ref count', refCount) +
-                wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid) + wrapLabelValue('Label', label) + wrapLabelValue('Multicast Data', mcDataString));
-            return x;
-        } else {
-        	var x = contrail.format(wrapLabelValue('Source IP', sip) + wrapLabelValue('Destination IP', dip) + wrapLabelValue('vrf', vrf) +
-                    wrapLabelValue('Policy', policy) + wrapLabelValue('Valid', valid) + wrapLabelValue('Label', lbl));
-                return x;
-        }
-    },
 }
 
 function wrapValue(str) {
@@ -2163,7 +1876,6 @@ function loadAlertsContent(){
                     title : {
                         text : 'Details',
                         cssClass : 'blue',
-                        icon : 'icon-list'
                     },
                     customControls: []
                 },

@@ -638,6 +638,10 @@ ul.configActionMenu {
 	width:420px;
 	margin-left: -210px;
 }
+.modal-560{
+	width:560px;
+	margin-left: -280px;
+}
 .modal-700{
 	width:700px;
 	margin-left: -350px;
@@ -1516,6 +1520,10 @@ a.disabled-link, a.disabled-link:hover{
     cursor: default;
 }
 
+.separator-top {
+    border-top : 1px solid #ddd;
+}
+
 /* Context Menu */
 .context-menu-list {
 	background-color: #fff;
@@ -1524,5 +1532,5 @@ a.disabled-link, a.disabled-link:hover{
 	background-color: #fff;	
 }
 .context-menu-list .context-menu-item:hover {
-	background-color: #c6dbef;
+    background-color: #c6dbef;
 }

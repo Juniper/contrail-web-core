@@ -1,0 +1,373 @@
+<!--
+ Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+-->
+
+<script type="text/x-handlebars-template" id="menu-shortcuts">
+            <div id="sidebar-shortcuts-large">
+                {{#each this}}
+                    {{#IfCompare this.cssClass 'disabledBtn' operator='!='}}
+                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');">
+                    {{else}}
+                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');" disabled>
+                    {{/IfCompare}}    
+                            <i class="{{this.iconClass}} icon-large"></i>
+                    </button>
+                {{/each}}
+            </div>
+
+            <div id="sidebar-shortcuts-mini">
+                {{#each this}}
+                    <span class="btn btn-{{this.id}}"></span>
+                {{/each}}
+            </div>
+</script>
+<script type="text/x-handlebars-template" id="menu-template">
+    <li class="head">
+        <a data-link='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+            <span>{{this.label}}</span>
+            <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
+                <i class="icon-chevron-left"></i>
+            </span>
+        </a>
+    </li>
+    {{#each this.items.item}}
+        <li class="item">
+            <a href="\\#" class="dropdown-toggle" data-link='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+                <i class="{{this.iconClass}}"></i>
+                <span>{{this.label}}</span>
+            </a>
+            <ul class="submenu">
+                {{#IfCompare this.items null operator='!='}}
+                    {{#each this.items.item}}
+                        <li id="{{this.hash}}">
+                            <a href='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+                                {{this.label}}
+                            </a>
+                        </li>
+                   {{/each}}
+                {{/IfCompare}}
+                {{#IfCompare this.items null operator='=='}}
+                    <li id="{{this.hash}}">
+                        <a href='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+                             {{this.label}}
+                        </a>
+                    </li>
+                {{/IfCompare}}
+            </ul>
+        </li>
+    {{/each}}
+</script>
+<script type="text/x-handlebars-template" id="current-breadcrumb">
+ {{#each this}}
+   {{#if @last}}
+      <li class="active">
+          <a href={{href}}>{{link}}</a>
+      </li>
+   {{else}}
+      <li>
+          <a href={{href}}>{{link}}</a>
+          <span class="divider"><i class="icon-angle-right"></i></span>
+      </li>
+   {{/if}}
+ {{/each}}
+</script>
+
+<script type="text/x-handlebars-template" id="dashboard-template">
+    <div class="row-fluid">
+        <div id="dashboard-box" class="widget-box transparent">
+            {{#IfCompare noTitle null operator="=="}}
+                <div class="widget-header">
+                    <h4 class="smaller">
+                        {{#if widgetBoxId}}
+                            <i id="{{widgetBoxId}}-loading" class="icon-spinner icon-spin blue bigger-125" style="display:none"></i>
+                        {{/if}}
+                        {{#if title}}
+                            {{title}}
+                        {{else}}
+                            Information
+                        {{/if}}
+                    </h4>
+                    <div class="widget-toolbar pull-right">
+                        <a  data-action="collapse">
+                            <i class="icon-chevron-up"></i>
+                        </a>
+                    </div>
+                    {{#if showSettings}}
+                        <div class="widget-toolbar pull-right">
+                            <a data-action="settings" data-toggle="dropdown">
+                                <i class="icon-cog"></i>
+                            </a>
+                            <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">
+                                <li>
+                                    <a onclick="showBasicDetails();">
+                                        <i class="icon-list"></i> &nbsp; Basic view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a onclick="showAdvancedDetails();">
+                                        <i class="icon-code"></i> &nbsp; Advanced view
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {{/if}}
+                </div>
+            {{/IfCompare}}
+            <div class="widget-body">
+            </div><!--/widget-body-->
+        </div><!--/widget-box-->
+    </div><!--/row-->
+</script>
+
+<script type="text/x-handlebars-template" id="no-data">
+    <div class='no-data-text'>No Statistics available for this duration</div>
+</script>
+
+<script type="text/x-handlebars-template" id="title-lblval-tooltip-template">
+<div class="row-fluid chart-tooltip" style="width:250px;">
+    {{#each this}}
+        {{#IfCompare @index 0}}
+            <div class="row-fluid chart-tooltip-title">
+                <p>{{value}}</p>
+            </div>
+            <div class="row-fluid chart-tooltip-body ">
+        {{else}}
+                <div class="row-fluid chart-tooltip-row" >
+                    <span class="key span4" style="min-height:20px;">{{lbl}}:</span>
+                    <span class="value span8" style="min-height:20px;">{{value}}</span>
+                </div>
+        {{/IfCompare}}
+    {{/each}}
+        </div>
+</div>
+</script>
+
+<script type="text/x-handlebars-template" id="overlapped-bubble-tooltip">
+<div id="overlapped-bubble-wrapper" class="enabledPointer">
+     <div class="row-fluid" >
+        <div class="left-arrow-wrapper">
+            <div class="left-arrow">
+                <i class="icon-chevron-left" style="font-size: 20px;"></i>
+            </div>
+        </div>
+        <div class="tooltip-wrapper">
+          {{#each content}}
+              {{> scatterTooltip}}
+          {{/each}}
+        </div>
+        <div class="right-arrow-wrapper">
+            <div class="close-button">
+                <button type="button" id="overlapClosebutton" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+            </div>
+            <div class="right-arrow">
+                <i class="icon-chevron-right" style="font-size: 20px;"></i>
+            </div>
+        </div>
+     </div>
+     <div class="row-fluid pagecount">
+        <span class="pull-right">{{pagestr}}</span>
+    </div>
+</div>
+</script>
+
+
+<script type="text/x-handlebars-template" id="title-lblval-tooltip-template_new">
+<div class="row-fluid chart-tooltip">
+ {{#each this}}
+    {{#IfCompare @index 0 }}
+        <div class="row-fluid chart-tooltip-title">
+            <p>{{value}}</p>
+        </div>
+    {{/IfCompare}}
+    {{#IfCompare @index 0 operator='!='}}
+    <div class="row-fluid chart-tooltip-body ">
+        <div class="row-fluid chart-tooltip-row">
+            {{#IfCompare lbl '' operator='!='}}
+            <span class="key">{{lbl}}:</span>
+            {{/IfCompare}}
+            <span class="value">{{value}}</span>
+        </div>
+    </div>
+    {{/IfCompare}}
+ {{/each}}   
+</div>
+</script>
+
+<script type="text/x-handlebars-template" id="sparkline-template">
+    <div id={{id}} class="infobox infobox-blue infobox-dynamic">
+        <div class="infobox-chart">
+            <span class="sparkline"></span>
+        </div>
+
+        <div class="infobox-data">
+            <span class="infobox-data-number">{{totalCnt}}</span>
+            <div class="infobox-content">{{title}}</div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="lblval-tooltip-template">
+<div class="row-fluid chart-tooltip">
+    <div class="row-fluid chart-tooltip-body ">
+     {{#each this}}
+         <div class="row-fluid chart-tooltip-row">
+             <span class="key">{{lbl}}</span>
+             <span class="value"> {{value}}</span>
+         </div>
+       {{/each}} 
+    </div>
+</div>
+</script>
+
+<!--
+    Start:Dashboard templates
+-->
+
+<script type="text/x-handlebars-template" id="infoList-template">
+    <ul class="item-list">
+        {{#each this}}
+            <li>
+                <label class="inline">
+                    <span class="key"> {{lbl}} </span>
+                    <span class="value"> {{value}} </span>
+                </label>
+            </li>
+        {{/each}}
+    </ul>
+</script>
+<script type="text/x-handlebars-template" id="logList-template">
+    <ul class="item-list">
+        {{#each this}}
+            <div class="itemdiv commentdiv infobox-blue">
+                <div class="body">
+                    <div class="row-fluid">
+                        <div class="name span9 break-and-wrap-word">
+                            <a style="cursor:default"> {{moduleId}} </a>
+                            </div>
+                            <div class="time span3">
+                                <i class="icon-time" style="cursor:default"></i>
+                                <span class="green"> {{timeStr}} </span>
+                            </div>
+                        </div>
+                        <div class="text"> {{message}} </div>
+                    </div>
+                </div>
+        {{else}}
+            <p>No Logs found.</p>
+        {{/each}}
+    </ul>
+</script>
+
+<script type="text/x-handlebars-template" id="alerts-template">
+    <ul class="item-list">
+        {{#each this}}
+            <div class="itemdiv commentdiv infobox-blue">
+                <div class="body">
+                    {{#typeof timeStamp "string"}}
+                        <div class="time">
+                            <i class="icon-time"></i>
+                            <span> {{#getRelativeTime timeStamp}}{{/getRelativeTime}} </span>
+                        </div>
+                    {{/typeof}}
+                    {{#IfCompare nName null }}
+                        <div class="text"> {{msg}}</div>                        
+                    {{else}}
+                        <div class="text"> {{nName}} , {{pName}} , {{msg}}</div>
+                    {{/IfCompare}}
+                </div>
+            </div>
+            {{else}}
+                <p>No Alerts found.</p>
+        {{/each}}
+        {{#IfCompare this.length 0 operator=">"}}
+            <div id="moreAlertsLink" style="cursor:pointer;"><a>More</a></div>
+        {{/IfCompare}}
+    </ul>
+</script>
+
+<script type="text/x-handlebars-template" id="moreAlerts-template">
+<div id="moreAlerts" class="modal modal-840 hide">
+	  <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+        <h6 class="modal-header-title">Alerts</h6>
+     </div>
+     <div class="modal-body">
+	   <div id="alertContent" style="height:333px">
+	 </div>
+	  <div class="modal-footer">
+	     <button id="alertsClose" class="btn btn-primary btn-mini" data-dismiss="modal" aria-hidden="true">Close</button>
+	  </div> 
+	 </div>
+</div>
+</script>
+
+<script type="text/x-handlebars-template" id="infobox-template">
+    <div id="{{id}}" class="infobox infobox-grey">
+        <div class="infobox-icon">
+            <i class="icon-sitemap"></i>
+        </div>
+        {{#if totalCntField}} 
+            <div class="infobox-data">
+                <span class="infobox-data-number" data-bind='text:{{totalCntField}}'>&nbsp;</span>
+            </div>
+            {{!--<div class="stat stat-success" data-bind='text:{{activeCntField}}'>&nbsp;</div>--}}
+            <div class="stat stat-important" style="display:none" data-bind='text:{{inactiveCntField}}'>&nbsp;</div>
+        {{else}}
+            <div class="infobox-data">
+                <span class="infobox-data-number">{{totalCnt}}</span>
+            </div>
+            <div class="stat stat-success">{{activeCnt}}</div>
+            <div class="stat stat-important">{{inactiveCnt}}</div>
+        {{/if}}
+        <div class="infobox-content">{{title}}</div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="infra-dashboard">
+    <div class="row-fluid">
+        <div class="row-fluid">
+            <div id='topStats' class="span12 infobox-container"></div>
+        </div>
+		<hr class="hr-8"/>
+        <div id="dashboard-charts" class="row-fluid">
+        </div> 
+        
+		<hr />
+
+		<div id="dashboard-stats" class="row-fluid">
+            <div class="span4">
+                <div id="logs-box" class="widget-box transparent">
+                    <div class="widget-header"></div>
+                    <div class="widget-body">
+                        <div class="widget-main padding-4">
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div class="span4">
+                <div id="sysinfo-box" class="widget-box transparent">
+                    <div class="widget-header"></div>
+                    <div class="widget-body">
+                        <div id="system-info-stat" class="widget-main">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="span4">
+                <div id="alerts-box" class="widget-box transparent">
+                    <div class="widget-header"></div>
+                    <div class="widget-body">
+						<div id="alerts-box-content" class="widget-main padding-4">
+                        	
+						</div>
+					</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!--
+    End:Dashboard templates
+-->
