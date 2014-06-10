@@ -89,22 +89,49 @@ function renderVisualization(config, data) {
     //rankDir = (nodes.length > 12 || (links.length == 0)) ? 'TB' : 'LR';
     rankDir = 'LR';
     newGraphSize = joint.layout.contrail.DirectedGraph.layout(graph, { setLinkVertices: false, edgeSep:1, nodeSep: 50, rankSep: 50, rankDir: rankDir });
-    console.log(newGraphSize);
     paper.setDimensions(newGraphSize.width + 100, newGraphSize.height + 100, 1);
 
-    $(selectorId + " text").on('mousedown touchstart', function (e) {
-        e.stopImmediatePropagation();
-        paper.pointerdown(e);
+
+    paper.on("cell:pointerdblclick", function (cellView, evt, x, y) {
+        var clickedElement = cellView.model,
+            zoomedElementId = paper['zoomedElementId'],
+            cBox = paper.getContentBBox(),
+            currentZoomedElement, zoomedElement, lastClickedElement;
+
+        if(zoomedElementId != null) {
+            zoomedElement = graph.getCell(zoomedElementId);
+            console.log(zoomedElement['attributes']['nodeDetails']);
+            lastClickedElement = createNodeElement(zoomedElement['attributes']['nodeDetails']);
+            graph.addCell(lastClickedElement);
+            replaceElementInGraph(graph, zoomedElement, lastClickedElement);
+            paper['zoomedElementId'] = null;
+        } else {
+            paper.scale(0.4, 0.4);
+        }
+
+        currentZoomedElement = new joint.shapes.contrail.ZoomedElement();
+        currentZoomedElement['attributes']['nodeDetails'] = clickedElement['attributes']['nodeDetails'];
+        graph.addCell(currentZoomedElement);
+        replaceElementInGraph(graph, clickedElement, currentZoomedElement);
+        paper['zoomedElementId'] = currentZoomedElement.id;
+        newGraphSize = joint.layout.contrail.DirectedGraph.layout(graph, { setLinkVertices: false, edgeSep: 1, nodeSep: 50, rankSep: 50, rankDir: 'LR' });
+        paper.setDimensions(newGraphSize.width + 100, newGraphSize.height + 100, 1);
     });
 
-    $(selectorId + " image").on('mousedown touchstart', function (e) {
-        e.stopImmediatePropagation();
-        paper.pointerdown(e);
-    });
+    paper.on('blank:pointerdblclick', function(evt, x, y) {
+        var zoomedElementId = paper['zoomedElementId'],
+            zoomedElement, lastClickedElement;
 
-    $(selectorId + " polygon").on('mousedown touchstart', function (e) {
-        e.stopImmediatePropagation();
-        paper.pointerdown(e);
+        if(zoomedElementId != null) {
+            zoomedElement = graph.getCell(zoomedElementId);
+            lastClickedElement = createNodeElement(zoomedElement['attributes']['nodeDetails']);
+            graph.addCell(lastClickedElement);
+            replaceElementInGraph(graph, zoomedElement, lastClickedElement);
+            paper['zoomedElementId'] = null;
+            newGraphSize = joint.layout.contrail.DirectedGraph.layout(graph, { setLinkVertices: false, edgeSep: 1, nodeSep: 50, rankSep: 50, rankDir: 'LR' });
+            paper.setDimensions(newGraphSize.width + 100, newGraphSize.height + 100, 1);
+            paper.scale(1, 1);
+        }
     });
 
     for (var i = 0; i < links.length; i++) {
@@ -126,6 +153,43 @@ function renderVisualization(config, data) {
             focal: e
         });
     });
+
+    $(selectorId + " text").on('mousedown touchstart', function (e) {
+        e.stopImmediatePropagation();
+        paper.pointerdown(e);
+    });
+
+    $(selectorId + " image").on('mousedown touchstart', function (e) {
+        e.stopImmediatePropagation();
+        paper.pointerdown(e);
+    });
+
+    $(selectorId + " polygon").on('mousedown touchstart', function (e) {
+        alert("hi")
+        e.stopImmediatePropagation();
+        paper.pointerdown(e);
+    });
+    $(selectorId + " path").on('mousedown touchstart', function (e) {
+        e.stopImmediatePropagation();
+        paper.pointerdown(e);
+    });
+}
+
+function replaceElementInGraph(graph, oldElement, newElement) {
+    var connectedLinks = graph.getConnectedLinks(oldElement),
+        oldElementId = oldElement['id'];
+    for (var i = 0; i < connectedLinks.length; i++) {
+        var link = graph.getCell(connectedLinks[i].id);
+        var newLink = link.clone();
+        if (newLink['attributes']['source']['id'] == oldElementId) {
+            newLink['attributes']['source']['id'] = newElement.id;
+        } else {
+            newLink['attributes']['target']['id'] = newElement.id;
+        }
+        graph.addCell(newLink);
+        link.remove();
+    }
+    oldElement.remove();
 }
 
 function formatData4BiDirVisualization(response) {
@@ -163,17 +227,24 @@ function createNodes4ConfigData(configData, nodes) {
 }
 
 function createNodeElements(nodes, elements, nodeMap) {
+    var newElement, nodeName;
     for (var i = 0; i < nodes.length; i++) {
-        var nodeName = nodes[i]['name'],
-            nodeType = nodes[i]['node_type'],
-            imageLink, element, options, imageName;
-        imageName = getImageName(nodes[i]);
-        imageLink = '/img/icons/' + imageName;
-        options = {attrs: { image: {'xlink:href': imageLink}}};
-        element = new ContrailElement(nodeType, options).attr("text/text", nodeName.split(":")[2]);
-        elements.push(element);
-        nodeMap[nodeName] = element.id;
+        newElement = createNodeElement(nodes[i]),
+        nodeName = nodes[i]['name'];
+        elements.push(newElement);
+        nodeMap[nodeName] = newElement.id;
     }
+}
+
+function createNodeElement(node) {
+    var nodeName = node['name'],
+        nodeType = node['node_type'],
+        imageLink, element, options, imageName;
+    imageName = getImageName(node);
+    imageLink = '/img/icons/' + imageName;
+    options = {attrs: { image: {'xlink:href': imageLink}}, nodeDetails: node};
+    element = new ContrailElement(nodeType, options).attr("text/text", nodeName.split(":")[2]);
+    return element;
 }
 
 function createLinkElements(links, elements, nodeMap) {
@@ -347,7 +418,7 @@ function drawTestVisualization(config) {
                 "view": {name: "View"},
                 "edit": {name: "Edit"}
             }
-        });
+    });
     });
 }
 
@@ -450,6 +521,56 @@ joint.shapes.contrail.LogicalRouter = joint.shapes.contrail.ImageElement.extend(
     defaults: joint.util.deepSupplement({
         type: 'contrail.LogicalRouter'
     }, joint.shapes.contrail.ImageElement.prototype.defaults)
+});
+
+joint.shapes.contrail.Element = joint.dia.Element.extend({
+    markup: '<polygon class="outer"/><polygon class="inner"/><text/>',
+
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.Element',
+        size: { width: 30, height: 30 },
+        attrs: {
+            '.outer': {
+                fill: '#ff7f0e', stroke: '#ff7f0e', 'stroke-width': 2,
+                points: '15,0 30,15 15,30 0,15'
+            },
+            '.inner': {
+                fill: '#ff7f0e', stroke: '#ff7f0e', 'stroke-width': 2,
+                points: '15, 3 27,15 15,27 3,15',
+                display: 'none'
+            },
+            text: {
+                'font-size': 12,
+                'ref-x': .5,
+                'ref-y': -5,
+                'y-alignment': 'middle',
+                'text-anchor': 'middle',
+                'ref': 'polygon',
+                'stroke-width': '0.4px',
+                'stroke': '#333',
+                'fill': '#333'
+            }
+        }
+
+    }, joint.dia.Element.prototype.defaults)
+});
+
+joint.shapes.contrail.ZoomedElement = joint.shapes.basic.Rect.extend({
+    markup: '<rect/><text/>',
+
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.ZoomedElement',
+        size: { width: 1200, height: 1200 },
+        attrs: {
+            rect: { rx: 0, ry: 0, 'stroke-width': 1, stroke: 'black', 'stroke-dasharray': '10,2', width: 1200, height: 1200 },
+            text: {
+                'text': 'Zoomed View',
+                'fill': 'black',
+                'font-weight': 'normal'
+            }
+        }
+
+    }, joint.shapes.basic.Rect.prototype.defaults)
 });
 
 joint.shapes.contrail.Element = joint.dia.Element.extend({
