@@ -213,6 +213,7 @@ config.featurePkg = {};
 /* Add new feature Package Config details below */
 config.featurePkg.webController = {};
 config.featurePkg.webController.path = '/usr/src/contrail/contrail-web-controller';
+config.featurePkg.webController.enable = true;
 
 /* Enable/disable Stat Query Links in Sidebar*/
 config.qe = {};
