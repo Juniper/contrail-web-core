@@ -371,3 +371,108 @@
 <!--
     End:Dashboard templates
 -->
+<script type="text/x-handlebars-template" id="widget-header-template">
+        <h4 class="smaller">
+            {{#if widgetBoxId}}
+                <i id="{{widgetBoxId}}-loading" class="icon-spinner icon-spin blue bigger-125" style="display:none"></i> 
+            {{/if}}
+            <span>{{title}}</span>
+        </h4>
+
+        <div class="widget-toolbar pull-right">
+            <a data-action="collapse">
+                <i class="icon-chevron-up"></i>
+            </a>
+        </div>
+</script>
+<script type="text/x-handlebars-template" id="gridsTemplateJSONDetails">
+    <div>
+        <div class="row-fluid">
+            <div class="row-fluid">
+                <label>Details :</label>
+            </div>
+            <div class="row-fluid">
+                <div><pre>{{{displayJson raw_json}}}</pre></div>
+            </div>
+        </div>
+   </div>
+</script>
+<script type="text/x-handlebars-template" id = "overallNodeStatusTemplate">
+    <div id = "overallNodeStatus">
+        <div id = "allItems" class="hide">
+            {{#each this.result}}
+                <p style="margin: 0 0 0 0">
+                    {{#IfCompare sevLevel null operator='!='}}
+                        {{#renderStatusTemplate sevLevel}}{{/renderStatusTemplate}}
+                    {{/IfCompare}}
+                    {{msg}}
+                </p>
+            {{/each}}
+            <span onclick="toggleOverallNodeStatus(['#allItems','#defaultItems']);"> hide</span>
+        </div>
+        {{#IfCompare this.showMore true}}
+            <div id = "defaultItems">
+                {{#each this.result}}
+                    <p style="margin: 0 0 0 0">
+                        {{#IfCompare @index ../defaultItems operator='<'}}
+                            {{#IfCompare sevLevel null operator='!='}}
+                                {{#renderStatusTemplate sevLevel}}{{/renderStatusTemplate}}
+                            {{/IfCompare}}
+                            {{msg}}
+                        {{/IfCompare}}
+                    </p>
+                {{/each}}  
+                {{#IfCompare this.result.length this.defaultItems operator='>'}}
+                    <span onclick="toggleOverallNodeStatus(['#allItems','#defaultItems']);"> {{#ArthematicOps this.result.length this.defaultItems operator='-'}}
+                    {{/ArthematicOps}} more</span>
+               {{/IfCompare}}
+            </div>
+        {{/IfCompare}}
+    </div>
+</script>
+
+<script type = "text/x-handlebars-template" id = "statusTemplate">
+    {{#IfCompare sevLevel sevLevels.ERROR }} 
+        <span class="status-badge-rounded-small status-inactive"></span>
+    {{else}}
+        {{#IfCompare sevLevel sevLevels.WARNING}} 
+            <span class="status-badge-rounded-small status-partially-active"></span>
+        {{/IfCompare}}
+    {{/IfCompare}}
+</script>
+
+<script type="text/x-handlebars-template" id="dashboard-body-template">
+    <div class="widget-main row-fluid">
+            {{#IfCompare showSettings true options='=='}}
+                <div id="divAdvanced" class="row-fluid hide">
+                    <div><pre>{{{displayJson nodeData}}}</pre></div>
+                </div>
+            {{/IfCompare}}
+            <div id="divBasic" class="row-fluid">
+                <ul id="detail-columns" class="item-list">
+                    {{#each d}}
+                        <li>
+                            <label class="inline row-fluid">
+                                <div class="key span5">{{{this.lbl}}}</div>
+                                <div class="value span7"> 
+                                    {{#if this.value}}
+                                        {{{this.value}}}
+                                    {{else}}
+                                         --
+                                    {{/if}}
+                                </div>
+                            </label>
+                        </li>
+                    {{/each}} <!-- /each d -->
+                </ul>   
+            </div><!--/span-->
+            <div id="divStatus" hidden="true" class="row-fluid">
+                <div id="divContrailStatus" class="row-fluid"></div>
+                <!-- <div class="row-fluid">
+                    <label class="span3">Opentstack Status</label><i id="icon_divOpenStackStatus" class="icon-expand-alt" onclick="toggleDetails('divOpenStackStatus');"></i>
+                </div>
+                <div id="divOpenStackStatus" hidden="true" class="widget-main padding-4" class="row-fluid"></div>
+                -->
+            </div>
+    </div><!-- /widget-main --> 
+</script>
