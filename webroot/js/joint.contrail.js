@@ -44,6 +44,13 @@ function ContrailElement(type, options) {
         case 'link':
             contrailElement = new joint.shapes.contrail.Link(options);
             break;
+        /*
+         * Collections: Elements embedded inside collections
+         */
+        case 'collection-element':
+        	contrailElement = new joint.shapes.contrail.CollectionElement(options);
+        	break;
+            
         default:
             contrailElement = new joint.shapes.contrail.Element(options);
     }
@@ -73,18 +80,19 @@ function drawVisualization(config) {
 
 function renderVisualization(config, data) {
     var selectorId = config.selectorId,
-        elements = data['elements'],
+    	connectedElements = data['connectedElements'],
+    	configElements = data['configElements'],
         nodes = data['nodes'],
         links = data['links'],
         rankDir, newGraphSize, $panzoom;
 
     var graph = new joint.dia.Graph,
         paper = new joint.dia.Paper({
-            el: $(selectorId),
+            el: $(selectorId + '-connected-elements'),
             model: graph
         });
 
-    graph.addCells(elements);
+    graph.addCells(connectedElements);
 
     //rankDir = (nodes.length > 12 || (links.length == 0)) ? 'TB' : 'LR';
     rankDir = 'LR';
@@ -133,12 +141,19 @@ function renderVisualization(config, data) {
             paper.scale(1, 1);
         }
     });
+    var graphConfig = new joint.dia.Graph,
+    	paperConfig = new joint.dia.Paper({
+	        el: $(selectorId + '-config-elements'),
+	        model: graphConfig
+	    });
 
+    graphConfig.addCells(configElements);
+    
     for (var i = 0; i < links.length; i++) {
         //setupTransition4Link(data['nodeMap'], links[i], paper, graph);
     }
 
-    $panzoom = initPanZoom(selectorId);
+    $panzoom = initPanZoom(selectorId + '-connected-elements');
 
     $panzoom.parent().on('mousewheel.focal', function (e) {
         e.preventDefault();
@@ -165,7 +180,6 @@ function renderVisualization(config, data) {
     });
 
     $(selectorId + " polygon").on('mousedown touchstart', function (e) {
-        alert("hi")
         e.stopImmediatePropagation();
         paper.pointerdown(e);
     });
@@ -193,36 +207,47 @@ function replaceElementInGraph(graph, oldElement, newElement) {
 }
 
 function formatData4BiDirVisualization(response) {
-    var nodeMap = {}, elements = [],
+    var nodeMap = {}, configElements = [], connectedElements = [],
         nodes = response['nodes'],
         links = response['links'],
+        collections = {},
         configData = response['configData'];
-    createNodes4ConfigData(configData, nodes);
-    createNodeElements(nodes, elements, nodeMap);
-    createLinkElements(links, elements, nodeMap);
+    createNodes4ConfigData(configData, nodes, collections);
+    createCollectionElements(collections, configElements, nodeMap);
+    createNodeElements(nodes, connectedElements, nodeMap);
+    createLinkElements(links, connectedElements, nodeMap);
 
-    return {elements: elements, nodeMap: nodeMap, nodes: nodes, links: links};
+    return {connectedElements: connectedElements, configElements: configElements, nodeMap: nodeMap, nodes: nodes, links: links};
 }
 
-function createNodes4ConfigData(configData, nodes) {
+function createNodes4ConfigData(configData, nodes, collections) {
     var networkPolicys = configData['network-policys'],
         securityGroups = configData['security-groups'],
         networkIPAMS = configData['network-ipams'],
         name, i;
 
-    for (i = 0; networkPolicys != null && i < networkPolicys.length; i++) {
-        name = networkPolicys[i]['network-policy']['fq_name'].join(':');
-        nodes.push({name: name, node_type: 'network-policy'});
+    if(networkPolicys.length > 0){
+    	collections.networkPolicys = {name: 'Network Policies', node_type: 'collection-element', nodes: []};
+    	for (i = 0; networkPolicys != null && i < networkPolicys.length; i++) {
+            name = networkPolicys[i]['network-policy']['fq_name'].join(':');
+            collections.networkPolicys.nodes.push({name: name, node_type: 'network-policy'});
+        }
+    }
+    
+    if(securityGroups.length > 0){
+    	collections.securityGroups = {name: 'Security Groups', node_type: 'collection-element', nodes: []};
+	    for (i = 0; securityGroups != null && i < securityGroups.length; i++) {
+	        name = securityGroups[i]['security-group']['fq_name'].join(':');
+	        collections.securityGroups.nodes.push({name: name, node_type: 'security-group'});
+	    }
     }
 
-    for (i = 0; securityGroups != null && i < securityGroups.length; i++) {
-        name = securityGroups[i]['security-group']['fq_name'].join(':');
-        nodes.push({name: name, node_type: 'security-group'});
-    }
-
-    for (i = 0; networkIPAMS != null && i < networkIPAMS.length; i++) {
-        name = networkIPAMS[i]['network-ipam']['fq_name'].join(':');
-        nodes.push({name: name, node_type: 'network-ipam'});
+    if(networkIPAMS.length > 0){
+    	collections.networkIPAMS = {name: 'Network IPAMS', node_type: 'collection-element', nodes: []};
+	    for (i = 0; networkIPAMS!= null && i < networkIPAMS.length; i++) {
+	        name = networkIPAMS[i]['network-ipam']['fq_name'].join(':');
+	        collections.networkIPAMS.nodes.push({name: name, node_type: 'network-ipam'});
+	    }
     }
 }
 
@@ -245,6 +270,54 @@ function createNodeElement(node) {
     options = {attrs: { image: {'xlink:href': imageLink}}, nodeDetails: node};
     element = new ContrailElement(nodeType, options).attr("text/text", nodeName.split(":")[2]);
     return element;
+}
+
+function createCollectionElements(collections, elements, nodeMap) {
+	var elementDimension = {
+		width: 45,
+		height: 45,
+		marginLeft: 15,
+		marginRight: 15, 
+		marginTop: 5,
+		marginBottom: 10,
+		firstRowMarginTop: 20
+	};
+    var collectionPositionX = 5,
+    	collectionPositionY = 0,
+    	width = (elementDimension.width + elementDimension.marginLeft + elementDimension.marginRight) * 3,
+    	height = 0,
+    	collectionMarginTop = 0;
+    $.each(collections, function(collectionKey, collectionValue){
+		var nodeRows = Math.ceil(collectionValue.nodes.length / 3);
+		collectionPositionY += height + elementDimension.marginTop + elementDimension.marginBottom + collectionMarginTop;
+		height = nodeRows * (elementDimension.width + elementDimension.marginTop + elementDimension.marginBottom) + elementDimension.marginTop + elementDimension.marginBottom + elementDimension.firstRowMarginTop;
+		var options = {
+    		    position: { x: collectionPositionX, y: collectionPositionY },
+    		    attrs: { rect: { width: width, height: height }}
+    		};
+		
+		var collectionElement = new ContrailElement(collectionValue.node_type, options).attr("text/text", collectionValue.name);
+	    elements.push(collectionElement);
+	    nodeMap[collectionValue.name] = collectionElement.id;
+	    
+	    $.each(collectionValue.nodes, function(collectionNodeKey, collectionNodeValue){
+	    	var collectionNodePositionX = collectionPositionX + (collectionNodeKey % 3) * (elementDimension.width + elementDimension.marginLeft + elementDimension.marginRight) 
+	    		+ elementDimension.marginLeft,
+	    		collectionNodePositionY = elementDimension.firstRowMarginTop + (collectionPositionY) + Math.floor(collectionNodeKey / 3) * (elementDimension.width + elementDimension.marginTop + elementDimension.marginBottom) + elementDimension.marginTop + elementDimension.marginBottom;
+	    	var nodeName = collectionNodeValue['name'],
+	            nodeType = collectionNodeValue['node_type'],
+	            imageName = getImageName(collectionNodeValue),
+	        	imageLink = '/img/icons/' + imageName,
+	        	options = {
+	    			position: { x: collectionNodePositionX, y: collectionNodePositionY },
+	    			attrs: { image: {'xlink:href': imageLink, width: elementDimension.width, height: elementDimension.height}}
+	    		},
+	        	element = new ContrailElement(nodeType, options).attr("text/text", nodeName.split(":")[2]);
+	        collectionElement.embed(element);
+	        elements.push(element);
+	        nodeMap[nodeName] = element.id;
+	    });
+    });
 }
 
 function createLinkElements(links, elements, nodeMap) {
@@ -329,7 +402,7 @@ function setTopologyHeight(elementId, resizeFlag) {
     var topologyHeight = window.innerHeight;
 
     if ($(elementId).parents('.widget-box').find('.project-visualization-charts').is(':visible')) {
-        topologyHeight = topologyHeight - 500;
+        topologyHeight = topologyHeight - 412;
     }
     else {
         topologyHeight -= 175;
@@ -339,7 +412,7 @@ function setTopologyHeight(elementId, resizeFlag) {
         var svgHeight = $(elementId + ' svg').attr('height');
         $(elementId).parent().height((topologyHeight < 190) ? 190 : ((topologyHeight > svgHeight && !(contrail.checkIfExist(resizeFlag) && resizeFlag)) ? svgHeight : topologyHeight));
         $(elementId).parent().css('width', '100%');
-    }, 500)
+    }, 500);
 }
 
 function formatData4Visualization(response) {
@@ -485,6 +558,27 @@ joint.shapes.contrail.ImageElement = joint.shapes.basic.Generic.extend({
             }
         }
     }, joint.shapes.basic.Generic.prototype.defaults)
+});
+
+joint.shapes.contrail.CollectionElement = joint.shapes.basic.Generic.extend({
+	markup: '<rect><image/></rect><text/>',
+	defaults: joint.util.deepSupplement({
+        type: 'contrail.CollectionElement',
+        attrs: { 
+        	rect: { rx: 0, ry: 0, 'stroke-width': '.8px', stroke: '#666', 'stroke-dasharray': '10,2' },
+            text: {
+                'ref-x':.5,
+                'ref-y': 5,
+                'y-alignment': 'top',
+                'x-alignment': 'left',
+                'text-anchor': 'middle',
+                'ref': 'rect',
+                'stroke-width': '0.4px',
+                'stroke': '#333',
+                'fill': '#333'
+            },
+        }
+    }, joint.shapes.basic.Rect.prototype.defaults)
 });
 
 joint.shapes.contrail.VirtualNetwork = joint.shapes.contrail.ImageElement.extend({

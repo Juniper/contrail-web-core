@@ -478,7 +478,7 @@
                     "fq_name": [
                         "default-domain",
                         "admin",
-                        "default-analyzer-am1-policy"
+                        "analyzer-policy"
                     ],
                     "uuid": "ba5f013f-e19c-4d37-8697-e520be6b36d6",
                     "parent_uuid": "69b7d6d9-93d0-421a-b040-430ec6cd7037",

@@ -242,8 +242,17 @@
 							</div>
 						</div>
 	                    <div class="widget-body row-fluid">
-	                    	<div style="height: 190px;">
-	                    		<div id="topology" class="panzoom row-fluid" style="overflow: scroll;"></div>
+	                    	<div style="height: 190px; overflow: hidden;">
+	                    		<div id="topology" class="panzoom row-fluid">
+	                    			<div style="float: left; width: 100%; display: block;">
+										<div style="margin-left: 255px;">
+											<div id="topology-connected-elements" style="width:100%;">
+											</div>
+										</div>
+									</div>
+	                    			<div id="topology-config-elements" style="float:left; width:255px; margin-left:-100%;">
+	                    			</div>
+	                    		</div>
 	                    	</div>
 	                    	<div class="row-fluid project-visualization-charts margin-10-0-0">
                    		        <div id="tabs">
@@ -260,7 +269,7 @@
 					                </div>
 					                -->
 					                <div id="tabs-2" style="padding:5px 0;">
-					                    <img style="height: 268px;" src="/assets/examples/monitor-network/images/port-distribution-chart.jpg" />
+					                    <img style="height: 180px;" src="/assets/examples/monitor-network/images/port-distribution-chart.jpg" />
 					                </div>
 					                
 					            </div>
