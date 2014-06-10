@@ -78,12 +78,6 @@
             chartOptions['yLblFormat'] = yLblFormat;
             chartOptions['forceX'] = data['forceX'];
             chartOptions['forceY'] = data['forceY'];
-            if(data['xPositive'] != null)
-                chartOptions['xPositive'] = data['xPositive'];
-            if(data['yPositive'] != null)
-                chartOptions['yPositive'] = data['yPositive'];
-            if(data['addDomainBuffer'] != null)
-                chartOptions['addDomainBuffer'] = data['addDomainBuffer'];
             var seriesType = {};
             for(var i = 0;i < d.length; i++ ) {
                 var values = [];
@@ -97,26 +91,31 @@
                 d[i]['values'] = values;
             }
             chartOptions['seriesMap'] = seriesType;
-            chartOptions['tooltipFn'] = ifNull(data['tooltipFn'], bgpMonitor.nodeTooltipFn);
-            if(chartOptions['multiTooltip'] || chartOptions['forcedTooltip']) {
-                //d = markOverlappedBubbles(d);
+            var tooltipFn = chartOptions['tooltipFn'];
+            chartOptions['tooltipFn'] = function(e,x,y,chart) {
+                                            return scatterTooltipFn(e,x,y,chart,tooltipFn);
+                                        };
+            if(chartOptions['multiTooltip']) {
+                chartOptions['tooltipFn'] = function(e,x,y,chart) {
+                    return scatterTooltipFn(e,x,y,chart,tooltipFn);
+                }
                 chartOptions['tooltipRenderedFn'] = function(tooltipContainer,e,chart) {
                     if(e['point']['overlappedNodes'] != undefined && e['point']['overlappedNodes'].length >1) {
-                       var result = {};
-                       if(e['point']['type'] == 'project')
-                           result = getMultiTooltipContent(e,tenantNetworkMonitor.getProjectTooltipContents,chart);
-                       else if(e['point']['type'] == 'network')
-                           result = getMultiTooltipContent(e,tenantNetworkMonitor.getNetworkTooltipContents,chart);
-                       else if(e['point']['type'] == 'sport' || e['point']['type'] == 'dport')
-                           result = getMultiTooltipContent(e,tenantNetworkMonitor.getPortTooltipContents,chart);
-                       else
-                           result = getMultiTooltipContent(e,bgpMonitor.getTooltipContents,chart);
+                       var result = getMultiTooltipContent(e,tooltipFn,chart);
+                        //Need to remove
+                        $.each(result['content'],function(idx,nodeObj) {
+                            var key = nodeObj[0]['value'];
+                            $.each(ifNull(result['nodeMap'][key]['point']['alerts'],[]),function(idx,obj) {
+                                if(obj['tooltipAlert'] != false)
+                                    nodeObj.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
+                            });
+                        });
                        
                        if(chartOptions['multiTooltip'] && result['content'].length > 1)
                            bindEventsOverlapTooltip(result,tooltipContainer);
                     }
                 }
-            }    
+            }
             if(chartOptions['scatterOverlapBubbles'])
                 d = scatterOverlapBubbles(d);
             chartOptions['sizeMinMax'] = sizeMinMax;
@@ -159,6 +158,20 @@
 
             if(data['widgetBoxId'] != null)
                 endWidgetLoading(data['widgetBoxId']);
+
+            function nodeTooltipFn(e,x,y,chart,tooltipFn) {
+                var result = {};
+                    //markOverlappedBubblesOnHover reuturns Overlapped nodes in ascending order of severity
+                    //Reverse the nodes such that high severity nodes are displayed first in the tooltip 
+                    e['point']['overlappedNodes'] = markOverlappedBubblesOnHover(e,chart).reverse();
+                    if(e['point']['overlappedNodes'] == undefined || e['point']['overlappedNodes'].length <= 1) {
+                        return formatLblValueTooltip(tooltipFn(e));
+                    } else if(e['point']['multiTooltip'] == true) {
+                        result = getMultiTooltipContent(e,tooltipFn,chart);
+                        result['content'] = result['content'].slice(0,result['perPage']);
+                        return formatLblValueMultiTooltip(result);
+                    }
+            }
             /**
              * function takes the parameters tooltipContainer object and the tooltip array for multitooltip and binds the 
              * events like drill down on tooltip and click on left and right arrows
@@ -299,6 +312,36 @@
 })(jQuery);
 
 /**
+ * TooltipFn for scatter chart
+ */
+function scatterTooltipFn(e,x,y,chart,tooltipFormatFn) {
+    e['point']['overlappedNodes'] = markOverlappedBubblesOnHover(e,chart).reverse();
+    var tooltipContents = [];
+    if(e['point']['overlappedNodes'] == undefined || e['point']['overlappedNodes'].length <= 1) {
+        if(typeof(tooltipFormatFn) == 'function') {
+            tooltipContents = tooltipFormatFn(e['point']);
+        } 
+        //Format the alerts to display in tooltip
+        $.each(ifNull(e['point']['alerts'],[]),function(idx,obj) {
+            if(obj['tooltipAlert'] != false)
+                tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
+        });
+        return formatLblValueTooltip(tooltipContents);
+    } else if(e['point']['multiTooltip'] == true) {
+        result = getMultiTooltipContent(e,tooltipFormatFn,chart);
+        $.each(result['content'],function(idx,nodeObj) {
+            var key = nodeObj[0]['value'];
+            $.each(ifNull(result['nodeMap'][key]['point']['alerts'],[]),function(idx,obj) {
+                if(obj['tooltipAlert'] != false)
+                    nodeObj.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
+            });
+        });
+        result['content'] = result['content'].slice(0,result['perPage']);
+        return formatLblValueMultiTooltip(result);
+    }
+}
+
+/**
  * function takes the parameters total node repsones(one in dashboard) and changes the x-axis and y-axis 
  * based on the buffer set to avoid overlap of bubble
  * 
@@ -392,9 +435,10 @@ function getMultiTooltipContent(e,tooltipFn,chart) {
                     !chart.state()['disabled'][chart.seriesMap()[obj['type']]]);
         });
         if(!isEmptyObject(data)) {
-            data['point'] = data[0];
-            tooltipArray.push(tooltipFn(data));
-            nodeMap[tooltipFn(data)[0]['value']] = data;
+            //data['point'] = data[0];
+            tooltipArray.push(tooltipFn(data[0]));
+            //Creates a hashMap based on first key/value in tooltipContent
+            nodeMap[tooltipFn(data[0])[0]['value']] = {point:data[0]};
         }
     }
     result['content'] = tooltipArray;

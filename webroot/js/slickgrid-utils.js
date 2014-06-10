@@ -649,6 +649,9 @@ function getDefaultGridConfig() {
                     if(contrail.checkIfFunction(gridDataSource.events.onUpdateDataCB)) {
                         gridDataSource.events.onUpdateDataCB();
                     }
+                    if(gridDataSource.dataView != null && gridDataSource.dataView.getItems().length == 0)
+                        gridContainer.data('contrailGrid').showGridMessage('empty');
+                    gridContainer.data('contrailGrid').refreshView();
                 }
             };
             
