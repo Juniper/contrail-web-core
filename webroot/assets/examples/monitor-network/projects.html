@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<!--
+ Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8" content="">
+    <title>Contrail Controller</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contrail Systems">
+     <!--Bootstrap Styles-->
+    <link href="/assets/bootstrap/css/bootstrap.min.css?built_at=1400794926" rel="stylesheet"/>
+    <link href="/assets/bootstrap/css/bootstrap-responsive.min.css?built_at=1400794926" rel="stylesheet"/>
+    <link href="/assets/jquery-ui/css/jquery-ui.css?built_at=1400794926" rel="stylesheet"/>
+    <link href="/css/contrail.jquery.ui.css?built_at=1400794926" rel="stylesheet"/>
+
+    <!-- Start dev_env --> 
+    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css?built_at=1400794926"/>
+     <!-- End dev_env -->  
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome-ie7.min.css?built_at=1400794926"/>
+    <![endif]-->
+
+    <!--[if lte IE 8]>
+     <link rel="stylesheet" href="/css/contrail-ie.min.css?built_at=1400794926"/>
+    <![endif]-->
+
+    <!--D3 Styles-->
+    <!-- Start dev_env --> 
+    <link href="/assets/nvd3/css/nv.d3.css?built_at=1400794926" rel="stylesheet">
+     <!-- End dev_env -->
+
+    <!-- Start dev_env -->
+    <link rel="stylesheet" href="/assets/select2/styles/select2.css?built_at=1400794926" />
+    <link rel="stylesheet" href="/assets/datetimepicker/styles/jquery.datetimepicker.css?built_at=1400794926" />
+    <link rel="stylesheet" href="/assets/slickgrid/styles/slick.grid.css?built_at=1400794926">
+    <!-- End dev_env -->
+
+    <!--Contrail Styles-->
+    <!-- Start prod_env
+    <link rel="stylesheet" href="/css/contrail-all.css?built_at=1400794926"/>
+    End prod_env -->
+    <link rel="stylesheet" href="/css/contrail.layout.css?built_at=1400794926" />
+    <link rel="stylesheet" href="/css/contrail.elements.css?built_at=1400794926" />
+    <link rel="stylesheet" href="/css/contrail.responsive.css?built_at=1400794926" />
+    <link rel="stylesheet" href="/css/contrail.custom.css?built_at=1400794926" />
+</head>
+
+<body class="navbar-fixed">
+<div id="header" class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a href="#" class="brand">
+                <img class="logo" src="/img/sdn-logo.png"/>
+            </a>
+            <ul class="nav ace-nav pull-right">
+                <li onclick="showMoreAlerts();">
+                    <a href="javascript:void(0);">
+                        <i class="icon-bell-alt icon-only icon-2"></i>
+                        <span id="alert_info">Alerts</span>
+                        <!-- <i class="icon-caret-down"></i> -->
+                    </a> 
+                </li>
+                <li id="user-profile" class="hide">
+                    <a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle">
+                        <i class="icon-user icon-only icon-2"></i>
+                        <span id="user_info"></span>
+                        <i class="icon-caret-down"></i>
+                    </a>
+                    <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer" id="user_menu">
+                        <li>
+                            <a href="/logout">
+                                <i class="icon-off"></i>
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!--/.container-fluid-->
+    </div>
+    <!--/.navbar-inner-->
+</div>
+<!-- /.navbar #header -->
+
+<div class="container-fluid" id="main-container">
+    <a id="menu-toggler" href="#">
+        <span></span>
+    </a>
+
+    <div id="sidebar">
+        <div id="sidebar-shortcuts">
+            <div id="sidebar-shortcuts-large">
+                <button id="btn-monitor" class="btn btn-small btn-monitor" title="Monitor" onclick="menuHandler.toggleMenuButton('monitor');">
+                    <i class="icon-bar-chart icon-large"></i>
+                </button>
+
+                <button id="btn-configure" class="btn btn-small btn-configure" title="Configure" onclick="menuHandler.toggleMenuButton('configure');">
+                    <i class="icon-wrench icon-large"></i>
+                </button>
+
+                <button id="btn-setting" class="btn btn-small btn-setting" title="Setting" onclick="menuHandler.toggleMenuButton('setting');">
+                    <i class="icon-cog icon-large"></i>
+                </button>
+
+                <button id="btn-query" class="btn btn-small btn-query" title="Query" onclick="menuHandler.toggleMenuButton('query');">
+                    <i class="icon-search icon-large"></i>
+                </button>
+            </div>
+
+            <div id="sidebar-shortcuts-mini">
+                <span class="btn btn-monitor"></span>
+
+                <span class="btn btn-configure"></span>
+
+                <span class="btn btn-setting"></span>
+
+                <span class="btn btn-query"></span>
+            </div>
+        </div>  <!--#sidebar-shortcuts-->
+        <ul id="menu" class="nav nav-list">
+        	<li class="item">
+        		<a href="#" class="dropdown-toggle" >
+		            <i class="icon-desktop"></i>
+		            <span>Infrastructure </span>
+		        </a>
+        	</li>
+        	<li class="item open active">
+	            <a href="\\#" class="dropdown-toggle">
+	                <i class="icon-sitemap"></i>
+	                <span>Networking </span>
+	            </a>
+	            <ul id="mon_net" class="submenu" style="display: block;">
+	                <li id="mon_net_dashboard">
+	                    <a href="dashboard.html">
+	                         Dashboard
+	                    </a>
+	                </li>
+	            </ul>
+	            <ul id="mon_net" class="submenu">
+	                <li id="mon_net_projects" class="active">
+	                    <a href="projects.html">
+	                         Projects
+	                    </a>
+	                </li>
+	            </ul>
+	            <ul id="mon_net" class="submenu">
+	                <li id="mon_net_networks">
+	                    <a href="networks.html">
+	                         Networks
+	                    </a>
+	                </li>
+	            </ul>
+	            <ul id="mon_net" class="submenu">
+	                <li id="mon_net_instances">
+	                    <a href="instances.html">
+	                         Instances
+	                    </a>
+	                </li>
+	            </ul>
+	        </li>
+	        <li class="item">
+	        	<a href="#" class="dropdown-toggle" data-link="javascript:loadFeature({p:'mon_debug_pcapture'})">
+		            <i class="icon-puzzle-piece"></i>
+		            <span>Debug</span>
+		        </a>
+	        </li>
+        </ul>
+    </div> <!-- #sidebar -->
+
+    <div id="main-content" class="clearfix">
+        <div id="breadcrumbs" class="fixed">
+            <ul id="breadcrumb" class="breadcrumb">
+	            <li>
+	                <a>Monitor</a>
+	                <span class="divider"><i class="icon-angle-right"></i></span>
+	            </li>
+	            <li>
+	                <a>Networking</a>
+	                <span class="divider"><i class="icon-angle-right"></i></span>
+	            </li>
+	            <li class="active">
+	                <a>Projects</a>
+	            </li>
+            </ul> <!--.breadcrumb-->
+            <div class="hardrefresh breadcrumb" style="display:none">
+                <span> <i class="icon-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span>
+                <span class="loading"><i class="icon-spinner icon-spin"></i></span>
+                <span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span>
+            </div>
+            <div id="nav-search">
+                <form id="search-form" onsubmit="searchSiteMap();">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search Sitemap" class="input-small search-query" id="nav-search-input" autocomplete="off">
+                        <i class="icon-search" id="nav-search-icon"></i>
+                    </span>
+                </form>
+            </div> <!--#nav-search-->
+        </div>
+        <div id="page-content" class="clearfix">
+            <div id='content-container'>
+            	<div class="row-fluid">
+            		<div id="recent-box" class="widget-box transparent">
+             	       	<div id="controlNodes-header" class="widget-header">
+							<h4 class="smaller">
+							    <i id="recent-loading" class="icon-spinner icon-spin blue bigger-125" style="display: none;"></i>
+							    <span>Projects</span>
+							</h4>
+							
+							<div class="widget-toolbar pull-right">
+							    <a data-action="collapse" style="display: inline-block;">
+							        <i class="icon-chevron-up"></i>
+							    </a>
+							</div>
+						</div>
+	                    <div class="widget-body">
+	                        <div style="width:100%;">
+								<img src="/assets/examples/monitor-network/images/projects-chart.jpg" />
+							</div>
+	                     </div>
+	                </div>
+					<div id="projects-grid"></div>
+					
+				</div>
+            </div>
+        </div>
+    </div> <!-- /.main-content -->
+</div> <!-- /.container-fluid #main-container -->
+<a href="#" id="back-to-top"><i class="icon-double-angle-up icon-only bigger-110"></i>​&nbsp; Back to Top</a>
+
+<!--JQuery Scripts-->
+<!-- Start dev_env --> 
+<script src="/assets/jquery/js/jquery-1.8.3.min.js?built_at=1400794926"></script>
+<!-- End dev_env -->
+<!--
+<script src="/assets/jquery/assets/js/jquery-1.9.1.min.js?built_at=1400794926"></script>
+-->
+<!-- Start dev_env --> 
+<script src="/assets/jquery/js/jquery.xml2json.js?built_at=1400794926"></script>
+<script src="/assets/jquery/js/jquery.ba-bbq.min.js?built_at=1400794926"></script>
+<script src="/assets/jquery/js/jquery.timer.js?built_at=1400794926"></script>
+<script src="/assets/jquery-ui/js/jquery-ui.js?built_at=1400794926"></script>
+<script src="/assets/jquery/js/jquery.ui.touch-punch.min.js?built_at=1400794926"></script>
+<!-- End dev_env -->
+
+<!--Bootstrap Scripts-->
+<!-- Start dev_env --> 
+<script src="/assets/bootstrap/js/bootstrap.min.js?built_at=1400794926"></script>
+<!-- End dev_env -->
+
+<!--D3 Scripts-->
+<!-- Start dev_env --> 
+<script src="/assets/d3/js/d3.js?built_at=1400794926"></script>
+<script src="/assets/nvd3/js/nv.d3.js?built_at=1400794926"></script>
+<script src="/assets/crossfilter/js/crossfilter.min.js?built_at=1400794926"></script>
+<!-- End dev_env -->
+
+<!--Utils Scripts-->
+<!-- Start dev_env -->
+<script src="/assets/jsonpath/js/jsonpath-0.8.0.js?built_at=1400794926"></script>
+<script src="/assets/xdate/js/xdate.js?built_at=1400794926"></script>
+<script src="/assets/jquery/js/jquery.validate.js?built_at=1400794926"></script>
+<script src="/assets/handlebars/handlebars-v1.3.0.js?built_at=1400794926"></script>
+<script src="/assets/knockout/knockout-3.0.0.js?built_at=1400794926"></script>
+<script src="/assets/select2/js/select2.min.js?built_at=1400794926"></script>
+<script src="/assets/slickgrid/js/jquery.event.drag-2.2.js?built_at=1400794926"></script>
+<script src="/assets/slickgrid/js/jquery.json-2.3.min.js?built_at=1400794926"></script>
+<script src="/assets/slickgrid/js/jquery.dropkick-1.0.0.js?built_at=1400794926"></script>
+<script src="/assets/slickgrid/js/slick.core.js?built_at=1400794926"></script>
+<script src="/assets/slickgrid/js/slick.grid.js?built_at=1400794926"></script>
+<script src="/assets/slickgrid/js/slick.dataview.js?built_at=1400794926"></script>
+<script src="/assets/slickgrid/js/slick.enhancementpager.js?built_at=1400794926"></script>
+<script src="/assets/datetimepicker/js/jquery.datetimepicker.js?built_at=1400794926"></script>
+<script src="/assets/moment/moment.js?built_at=1400794926"></script>
+<script src="/assets/2way-multiselect/js/multiselect.js?built_at=1400794926"></script>
+<!-- End dev_env -->
+
+<!-- Start prod_env
+<script src="/js/contrail-all-1.js?built_at=1400794926"></script>
+<script src="/js/contrail-all-2.js?built_at=1400794926"></script>
+<script src="/js/contrail-all-3.js?built_at=1400794926"></script>
+<script src="/js/contrail-all-4.js?built_at=1400794926"></script>
+End prod_env -->
+
+<!--Contrail Scripts-->
+<!-- Start dev_env -->
+<script src="/js/contrail-common.js"></script>
+<script src="/js/handlebars-utils.js?built_at=1400794926"></script>
+<script src="/js/select2-utils.js?built_at=1400794926"></script>
+<script src="/js/slickgrid-utils.js?built_at=1400794926"></script>
+<script src="/js/contrail-elements.js?built_at=1400794926"></script>
+<script src="/js/topology_api.js?built_at=1400794926"></script>
+<script src="/js/chart-utils.js?built_at=1400794926"></script>
+<script src="/js/web-utils.js?built_at=1400794926"></script>
+<script src="/js/contrail-layout.js?built_at=1400794926"></script>
+<script src="/js/config_global.js?built_at=1400794926"></script>
+<script src="/js/protocol.js?built_at=1400794926"></script>
+<script src="/js/qe-utils.js?built_at=1400794926"></script>
+<script src="/js/nvd3-plugin.js?built_at=1400794926"></script>
+<script src="/js/d3-utils.js?built_at=1400794926"></script>
+<script src="/js/analyzer-utils.js?built_at=1400794926"></script>
+<!-- End dev_env -->
+
+
+<!--[if lte IE 8]>
+<script src="/js/"></script>
+<![endif]-->
+<script type="text/javascript">
+    var built_at=1400794926;
+    $(document).ready(function(){
+    	
+    	var gridColumns = [ {
+    		id : "project",
+    		field : "project",
+    		name : "Project",
+    		width : 500
+    	}, {
+    		id : "networkCount",
+    		field : "networkCount",
+    		name : "Networks",
+    		width : 100
+    	}, {
+    		id : "trafficInOut",
+    		field : "trafficInOut",
+    		name : "Traffic (In/Out)",
+    		width : 250
+    	}, {
+    		id : "throughputInOut",
+    		field : "throughputInOut",
+    		name : "Throughput (In/Out)",
+    		width : 250
+    	}];
+    	
+        function getGridData(count, startIndex){
+            var data = [];
+            var startTime = 1392739617269614 + startIndex*1000000;
+            for (var i = 0; i < count; i++) {
+                data.push({
+                    "project" : 'Project ' + i + ':TestVN-contrail-default-domain-admin-project-network',
+                    "networkCount" : 13,
+                    "trafficInOut" : "43.44 GB",
+                    "throughputInOut" : "32.55 GB",
+                });
+            }
+            return data;
+        };
+
+        var gridData = getGridData(20, 1);
+    	
+    	$('#projects-grid').contrailGrid({
+    		header : {
+    			title : {
+    				text : 'Project Summary',
+    			},
+    			customControls: ['Domain: &nbsp;<div id="domainDropDown" />']
+    		},
+    		columnHeader : {
+    			columns : gridColumns
+    		},
+    		body : {
+    			options : {
+    				forceFitColumns: true
+    			},
+    			dataSource : {
+    				data : gridData
+    			},
+    		},
+    		footer : {
+    			pager : {
+    				options : {
+    					pageSize : 10,
+    					pageSizeSelect : [ 5, 10, 50 ]
+    				}
+    			}
+    		}
+    	});
+    	
+    	$('#domainDropDown').contrailDropdown({
+    		data: [
+       			{id:0,text:'All domains'},
+    			{id:1,text:'Domain 1'},
+    			{id:2,text:'Domain 2'}
+    		]
+    	});
+    	$('#domainDropDown').data('contrailDropdown').value(0);
+    });
+</script>
+<!-- Start prod_env
+<script src="/js/contrail-all-5.js?built_at=1400794926"></script>
+End prod_env -->
+
+</body>
+</html>

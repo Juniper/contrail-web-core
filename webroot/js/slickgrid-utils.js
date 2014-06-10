@@ -606,11 +606,11 @@ function getDefaultGridConfig() {
                     gridContainer.data('contrailGrid').removeGridMessage();
                     if(dataView.getLength() == 0){
                         emptyGridHandler();
+                        gridContainer.find('.slick-row-detail').remove();
                     } else {
                         gridContainer.find('.grid-footer').removeClass('hide');
                         onDataGridHandler();
                     }
-                    gridContainer.find('.slick-row-detail').hide();
                 }
             };
             
@@ -687,12 +687,19 @@ function getDefaultGridConfig() {
         function initSearchBox() {
             // Search Textbox Keyup
             gridContainer.find('.input-searchbox input').on('keyup', function(e) {
-                dataView.setFilterArgs({
-                    searchString: this.value,
-                    searchColumns: searchColumns
-                });
-                dataView.refresh();
-                $(this).focus();
+            	var searchValue = this.value;
+            	setTimeout(function(){
+                    if(searchValue == gridContainer.find('.input-searchbox input').val() && searchValue != null) {
+                    	dataView.setFilterArgs({
+                            searchString: searchValue,
+                            searchColumns: searchColumns
+                        });
+                        dataView.refresh();
+                        gridContainer.find('.slick-row-detail').remove();
+                        gridContainer.find('.input-searchbox input').focus();
+                    }
+                },300);
+            	
             });
             
             initOnClickDocument('.input-searchbox',function(){
@@ -878,13 +885,14 @@ function getDefaultGridConfig() {
                 /*
                  * Refreshes the view of the grid. Grid is rendered and related adjustments are made.
                  */
-                refreshView: function(){
+                refreshView: function(refreshDetailTemplateFlag){
+                	var refreshDetailTemplateFlag = (contrail.checkIfExist(refreshDetailTemplateFlag)) ? refreshDetailTemplateFlag : true;
                 	var checkedRows = this.getCheckedRows();
                 	grid.render();
                 	grid.resizeCanvas();
                 	this.adjustAllRowHeight();
                 	this.adjustGridAlternateColors();
-                	this.refreshDetailView();
+                	this.refreshDetailView(refreshDetailTemplateFlag);
                 	var ids = [];
                 	$.each(checkedRows, function(key,val){
                 		ids.push(val.id);
@@ -894,11 +902,18 @@ function getDefaultGridConfig() {
                 /*
                  * Refreshes the detail view of the grid. Grid is rendered and related adjustments are made.
                  */
-                refreshDetailView: function(){
+                refreshDetailView: function(refreshDetailTemplateFlag){
                 	gridContainer.find('.slick-row-detail').each(function(){
-                    	gridContainer.find('.slick_row_' + $(this).data('id')).after($(this));
-                    	gridContainer.find('.slick_row_' + $(this).data('id')).find('.toggleDetailIcon').addClass('icon-caret-down').removeClass('icon-caret-right');
-                    	refreshDetailTemplateById($(this).data('id'));
+                		if(gridContainer.find('.slick_row_' + $(this).data('id')).is(':visible')){
+                			gridContainer.find('.slick_row_' + $(this).data('id')).after($(this));
+                			gridContainer.find('.slick_row_' + $(this).data('id')).find('.toggleDetailIcon').addClass('icon-caret-down').removeClass('icon-caret-right');
+                        	if(refreshDetailTemplateFlag){
+                        		refreshDetailTemplateById($(this).data('id'));
+                        	}
+                		}
+                		else{
+                			$(this).remove();
+                		}
                     });
                 },
                 /* 
@@ -1395,7 +1410,7 @@ function exportGridData2CSV(gridConfig, gridData) {
 $(window).on('resize',function(){
 	$('.contrail-grid').each(function(){
 		if(contrail.checkIfExist($(this).data('contrailGrid'))){
-			$(this).data('contrailGrid').refreshView();
+			$(this).data('contrailGrid').refreshView(false);
 		}
 	});
 });

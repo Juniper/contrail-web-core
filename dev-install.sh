@@ -43,6 +43,10 @@ cp -af ./$THIRD_PARTY/jquery.dataTables.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-1.8.3.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-1.9.1.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/
+cp -af ./$THIRD_PARTY/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/jquery.validate.js
+cp -af ./$THIRD_PARTY/jquery.panzoom-v2.0.5/dist/jquery.panzoom.min.js webroot/assets/jquery/js/jquery.panzoom.min.js
+#End - Copy JQuery files from web-third-party
+
 #End - Copy JQuery files from $THIRD_PARTY
 
 #Start - Copy jquery-ui files from $THIRD_PARTY
@@ -149,6 +153,24 @@ rm -rf webroot/assets/moment
 mkdir webroot/assets/moment
 cp -af ./$THIRD_PARTY/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
 #End - Copy Moment Date-Formatter from $THIRD_PARTY
+
+#Start - Copy Joint from web-third-party
+rm -rf webroot/assets/joint
+mkdir -p webroot/assets/joint/js
+mkdir -p webroot/assets/joint/css
+cp -r ./$THIRD_PARTY/joint-v0.9.0/dist/joint.nojquery.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.0/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.0/dist/joint.nojquery.css webroot/assets/joint/css/
+#End - Copy Joint from web-third-party
+
+#Start - Copy jquery-contextMenu from web-third-party
+rm -rf webroot/assets/jquery-contextMenu
+mkdir -p webroot/assets/jquery-contextMenu/js
+mkdir -p webroot/assets/jquery-contextMenu/css
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.contextMenu.js webroot/assets/jquery-contextMenu/js/
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.ui.position.js webroot/assets/jquery-contextMenu/js/
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.contextMenu.css webroot/assets/jquery-contextMenu/css
+#End - Copy jquery-contextMenu from web-third-party
 
 #Start - Merging All JS files
 rm -f webroot/js/contrail-all-1.js

@@ -1,0 +1,143 @@
+{
+    "nodes": [
+        {
+            "name": "default-domain:admin:office1",
+            "more_attr": {
+                "in_bytes": 0,
+                "in_tpkts": 0,
+                "out_bytes": 0,
+                "out_tpkts": 0,
+                "vm_cnt": 0,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:backend1",
+            "more_attr": {
+                "in_bytes": 52035221508,
+                "in_tpkts": 153848228,
+                "out_bytes": 51978717490,
+                "out_tpkts": 152885715,
+                "vm_cnt": 2,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:frontend1",
+            "more_attr": {
+                "in_bytes": 51979320331,
+                "in_tpkts": 152887164,
+                "out_bytes": 52034699688,
+                "out_tpkts": 153847294,
+                "vm_cnt": 2,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:si-firewall1",
+            "node_type": "service-instance",
+            "service_type": "firewall",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:si-load-balancer2",
+            "node_type": "service-instance",
+            "service_type": "lb",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:si-analyzer1",
+            "node_type": "service-instance",
+            "service_type": "analyzer",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:si-analyzer2",
+            "node_type": "service-instance",
+            "service_type": "analyzer",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:logical-router",
+            "node_type": "router",
+            "status": "Active"
+        }
+
+    ],
+    "links": [
+        {
+            "src": "default-domain:admin:frontend1",
+            "dst": "default-domain:admin:office1",
+            "dir": "uni",
+            "more_attributes": {},
+            "service_inst": [
+                {
+                    "name": "default-domain:admin:si-analyzer2",
+                    "type": "analyzer"
+                }
+            ]
+        },
+        {
+            "src": "default-domain:admin:frontend1",
+            "dst": "default-domain:admin:logical-router",
+            "dir": "uni",
+            "more_attributes": {}
+        },
+        {
+            "src": "default-domain:admin:logical-router",
+            "dst": "default-domain:admin:backend1",
+            "more_attributes": {
+                "in_stats": [
+                    {
+                        "src": "default-domain:admin:frontend1",
+                        "dst": "default-domain:admin:backend1",
+                        "pkts": 152885606,
+                        "bytes": 49838290556
+                    },
+                    {
+                        "src": "default-domain:admin:backend1",
+                        "dst": "default-domain:admin:frontend1",
+                        "pkts": 153846933,
+                        "bytes": 49880771668
+                    }
+                ],
+                "out_stats": [
+                    {
+                        "src": "default-domain:admin:frontend1",
+                        "dst": "default-domain:admin:backend1",
+                        "pkts": 153846933,
+                        "bytes": 49880771668
+                    },
+                    {
+                        "src": "default-domain:admin:backend1",
+                        "dst": "default-domain:admin:frontend1",
+                        "pkts": 152885606,
+                        "bytes": 49838290556
+                    }
+                ]
+            },
+            "service_inst": [
+                {
+                    "name": "default-domain:admin:si-firewall1",
+                    "type": "firewall"
+                },
+                {
+                    "name": "default-domain:admin:si-load-balancer2",
+                    "type": "lb"
+                },
+                {
+                    "name": "default-domain:admin:si-analyzer1",
+                    "type": "analyzer"
+                }
+            ],
+            "dir": "uni"
+        }
+    ],
+    "configData": {}
+}

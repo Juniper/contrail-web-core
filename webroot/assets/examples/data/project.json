@@ -1,0 +1,1681 @@
+{
+    "nodes": [
+        {
+            "name": "default-domain:admin:office1",
+            "more_attr": {
+                "in_bytes": 0,
+                "in_tpkts": 0,
+                "out_bytes": 0,
+                "out_tpkts": 0,
+                "vm_cnt": 0,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:office2",
+            "more_attr": {
+                "in_bytes": 0,
+                "in_tpkts": 0,
+                "out_bytes": 0,
+                "out_tpkts": 0,
+                "vm_cnt": 0,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:office3",
+            "more_attr": {
+                "in_bytes": 0,
+                "in_tpkts": 0,
+                "out_bytes": 0,
+                "out_tpkts": 0,
+                "vm_cnt": 0,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:office4",
+            "more_attr": {
+                "in_bytes": 0,
+                "in_tpkts": 0,
+                "out_bytes": 0,
+                "out_tpkts": 0,
+                "vm_cnt": 0,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:backend1",
+            "more_attr": {
+                "in_bytes": 52035221508,
+                "in_tpkts": 153848228,
+                "out_bytes": 51978717490,
+                "out_tpkts": 152885715,
+                "vm_cnt": 2,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:backend2",
+            "more_attr": {
+                "in_bytes": 52035221508,
+                "in_tpkts": 153848228,
+                "out_bytes": 51978717490,
+                "out_tpkts": 152885715,
+                "vm_cnt": 2,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:backend3",
+            "more_attr": {
+                "in_bytes": 52035221508,
+                "in_tpkts": 153848228,
+                "out_bytes": 51978717490,
+                "out_tpkts": 152885715,
+                "vm_cnt": 2,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:backend4",
+            "more_attr": {
+                "in_bytes": 52035221508,
+                "in_tpkts": 153848228,
+                "out_bytes": 51978717490,
+                "out_tpkts": 152885715,
+                "vm_cnt": 2,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:home1",
+            "more_attr": {
+                "in_bytes": 0,
+                "in_tpkts": 0,
+                "out_bytes": 0,
+                "out_tpkts": 0,
+                "vm_cnt": 0,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:home2",
+            "more_attr": {
+                "in_bytes": 0,
+                "in_tpkts": 0,
+                "out_bytes": 0,
+                "out_tpkts": 0,
+                "vm_cnt": 0,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:home3",
+            "more_attr": {
+                "in_bytes": 0,
+                "in_tpkts": 0,
+                "out_bytes": 0,
+                "out_tpkts": 0,
+                "vm_cnt": 0,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:home4",
+            "more_attr": {
+                "in_bytes": 0,
+                "in_tpkts": 0,
+                "out_bytes": 0,
+                "out_tpkts": 0,
+                "vm_cnt": 0,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:frontend1",
+            "more_attr": {
+                "in_bytes": 51979320331,
+                "in_tpkts": 152887164,
+                "out_bytes": 52034699688,
+                "out_tpkts": 153847294,
+                "vm_cnt": 2,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:frontend2",
+            "more_attr": {
+                "in_bytes": 51979320331,
+                "in_tpkts": 152887164,
+                "out_bytes": 52034699688,
+                "out_tpkts": 153847294,
+                "vm_cnt": 2,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:frontend3",
+            "more_attr": {
+                "in_bytes": 51979320331,
+                "in_tpkts": 152887164,
+                "out_bytes": 52034699688,
+                "out_tpkts": 153847294,
+                "vm_cnt": 2,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:frontend4",
+            "more_attr": {
+                "in_bytes": 51979320331,
+                "in_tpkts": 152887164,
+                "out_bytes": 52034699688,
+                "out_tpkts": 153847294,
+                "vm_cnt": 2,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:test",
+            "more_attr": {
+                "in_bytes": 0,
+                "in_tpkts": 0,
+                "out_bytes": 0,
+                "out_tpkts": 0,
+                "vm_cnt": 0,
+                "fip_cnt": 0
+            },
+            "node_type": "virtual-network",
+            "status": "Deleted"
+        },
+        {
+            "name": "default-domain:admin:si-firewall1",
+            "node_type": "service-instance",
+            "service_type": "firewall",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:si-firewall2",
+            "node_type": "service-instance",
+            "service_type": "firewall",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:si-firewall3",
+            "node_type": "service-instance",
+            "service_type": "firewall",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:si-firewall4",
+            "node_type": "service-instance",
+            "service_type": "firewall",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:si-load-balancer1",
+            "node_type": "service-instance",
+            "service_type": "lb",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:si-load-balancer2",
+            "node_type": "service-instance",
+            "service_type": "lb",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:si-analyzer1",
+            "node_type": "service-instance",
+            "service_type": "analyzer",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:si-analyzer2",
+            "node_type": "service-instance",
+            "service_type": "analyzer",
+            "status": "Active"
+        },
+        {
+            "name": "default-domain:admin:logical-router",
+            "node_type": "router",
+            "status": "Active"
+        }
+
+    ],
+    "links": [
+        {
+            "src": "default-domain:admin:office1",
+            "dst": "default-domain:admin:backend1",
+            "dir": "bi",
+            "more_attributes": {
+                "in_stats": [],
+                "out_stats": []
+            },
+            "service_inst": [
+                {
+                    "name": "default-domain:admin:si-firewall2",
+                    "type": "firewall"
+                }
+            ]
+        },
+        {
+            "src": "default-domain:admin:office1",
+            "dst": "default-domain:admin:backend2",
+            "dir": "bi",
+            "more_attributes": {
+                "in_stats": [],
+                "out_stats": []
+            }
+        },
+        {
+            "src": "default-domain:admin:office1",
+            "dst": "default-domain:admin:backend3",
+            "dir": "bi",
+            "more_attributes": {
+                "in_stats": [],
+                "out_stats": []
+            },
+            "service_inst": [
+                {
+                    "name": "default-domain:admin:si-firewall3",
+                    "type": "firewall"
+                }
+            ]
+        },
+        {
+            "src": "default-domain:admin:backend3",
+            "dst": "default-domain:admin:backend4",
+            "dir": "bi",
+            "more_attributes": {
+                "in_stats": [],
+                "out_stats": []
+            }
+        },
+        {
+            "src": "default-domain:admin:frontend2",
+            "dst": "default-domain:admin:frontend3",
+            "dir": "uni",
+            "more_attributes": {},
+            "service_inst": [
+                {
+                    "name": "default-domain:admin:si-firewall4",
+                    "type": "firewall"
+                }
+            ]
+        },
+        {
+            "src": "default-domain:admin:frontend3",
+            "dst": "default-domain:admin:frontend4",
+            "dir": "uni",
+            "more_attributes": {},
+            "service_inst": [
+                {
+                    "name": "default-domain:admin:si-analyzer2",
+                    "type": "analyzer"
+                }
+            ]
+        },
+        {
+            "src": "default-domain:admin:frontend1",
+            "dst": "default-domain:admin:office1",
+            "dir": "uni",
+            "more_attributes": {},
+            "service_inst": [
+                {
+                    "name": "default-domain:admin:si-analyzer2",
+                    "type": "analyzer"
+                }
+            ]
+        },
+        {
+            "src": "default-domain:admin:office2",
+            "dst": "default-domain:admin:office3",
+            "dir": "uni",
+            "more_attributes": {}
+        },
+        {
+            "src": "default-domain:admin:office3",
+            "dst": "default-domain:admin:office4",
+            "dir": "uni",
+            "more_attributes": {}
+        },
+        {
+            "src": "default-domain:admin:office1",
+            "dst": "default-domain:admin:office4",
+            "dir": "uni",
+            "more_attributes": {},
+            "service_inst": [
+                {
+                    "name": "default-domain:admin:si-load-balancer1",
+                    "type": "lb"
+                }
+            ]
+        },
+        {
+            "src": "default-domain:admin:office2",
+            "dst": "default-domain:admin:home1",
+            "dir": "uni",
+            "more_attributes": {}
+        },
+        {
+            "src": "default-domain:admin:office2",
+            "dst": "default-domain:admin:home2",
+            "dir": "uni",
+            "more_attributes": {},
+            "service_inst": [
+                {
+                    "name": "default-domain:admin:si-load-balancer2",
+                    "type": "lb"
+                }
+            ]
+        },
+        {
+            "src": "default-domain:admin:office3",
+            "dst": "default-domain:admin:home3",
+            "dir": "uni",
+            "more_attributes": {}
+        },
+        {
+            "src": "default-domain:admin:office4",
+            "dst": "default-domain:admin:home4",
+            "dir": "uni",
+            "more_attributes": {}
+        },
+        {
+            "src": "default-domain:admin:frontend1",
+            "dst": "default-domain:admin:logical-router",
+            "dir": "uni",
+            "more_attributes": {}
+        },
+        {
+            "src": "default-domain:admin:logical-router",
+            "dst": "default-domain:admin:backend1",
+            "more_attributes": {
+                "in_stats": [
+                    {
+                        "src": "default-domain:admin:frontend1",
+                        "dst": "default-domain:admin:backend1",
+                        "pkts": 152885606,
+                        "bytes": 49838290556
+                    },
+                    {
+                        "src": "default-domain:admin:backend1",
+                        "dst": "default-domain:admin:frontend1",
+                        "pkts": 153846933,
+                        "bytes": 49880771668
+                    }
+                ],
+                "out_stats": [
+                    {
+                        "src": "default-domain:admin:frontend1",
+                        "dst": "default-domain:admin:backend1",
+                        "pkts": 153846933,
+                        "bytes": 49880771668
+                    },
+                    {
+                        "src": "default-domain:admin:backend1",
+                        "dst": "default-domain:admin:frontend1",
+                        "pkts": 152885606,
+                        "bytes": 49838290556
+                    }
+                ]
+            },
+            "service_inst": [
+                {
+                    "name": "default-domain:admin:si-firewall1",
+                    "type": "firewall"
+                },
+                {
+                    "name": "default-domain:admin:si-load-balancer2",
+                    "type": "lb"
+                },
+                {
+                    "name": "default-domain:admin:si-analyzer1",
+                    "type": "analyzer"
+                }
+            ],
+            "dir": "uni"
+        }
+    ],
+    "configData": {
+        "network-policys": [
+            {
+                "network-policy": {
+                    "fq_name": [
+                        "default-domain",
+                        "admin",
+                        "analyzer-policy"
+                    ],
+                    "uuid": "ba5f013f-e19c-4d37-8697-e520be6b36d6",
+                    "parent_uuid": "69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_href": "http://10.84.14.1:8082/project/69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_type": "project",
+                    "virtual_network_back_refs": [
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "backend"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/4577c7be-cf53-47d1-9967-9b2155fb0aaa",
+                            "attr": {
+                                "timer": {
+                                    "start_time": ""
+                                },
+                                "sequence": {
+                                    "major": 2,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "4577c7be-cf53-47d1-9967-9b2155fb0aaa"
+                        },
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "frontend"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/cbdf85a6-aa83-4d68-95fb-a2677d04dc7e",
+                            "attr": {
+                                "timer": {
+                                    "start_time": ""
+                                },
+                                "sequence": {
+                                    "major": 2,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "cbdf85a6-aa83-4d68-95fb-a2677d04dc7e"
+                        }
+                    ],
+                    "network_policy_entries": {
+                        "policy_rule": [
+                            {
+                                "direction": "<>",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:backend1"
+                                    }
+                                ],
+                                "action_list": {
+                                    "simple_action": null,
+                                    "gateway_name": null,
+                                    "apply_service": null,
+                                    "mirror_to": {
+                                        "analyzer_name": "default-domain:admin:am1"
+                                    }
+                                },
+                                "dst_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ],
+                                "ui_rule_id": {
+                                    "first": null
+                                },
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:frontend1"
+                                    }
+                                ],
+                                "rule_sequence": {
+                                    "major": 1,
+                                    "minor": 0
+                                },
+                                "src_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "name": "default-analyzer-am1-policy"
+                }
+            },
+            {
+                "network-policy": {
+                    "fq_name": [
+                        "default-domain",
+                        "admin",
+                        "f2b-allow-policy"
+                    ],
+                    "uuid": "f6bb10e6-d2c3-4d96-ae19-6bca42101a30",
+                    "parent_uuid": "69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_href": "http://10.84.14.1:8082/project/69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_type": "project",
+                    "virtual_network_back_refs": [
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "home"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/428edddd-184c-4849-8ef9-fdaff1337f9a",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "428edddd-184c-4849-8ef9-fdaff1337f9a"
+                        },
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "backend"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/4577c7be-cf53-47d1-9967-9b2155fb0aaa",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "4577c7be-cf53-47d1-9967-9b2155fb0aaa"
+                        },
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "frontend"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/cbdf85a6-aa83-4d68-95fb-a2677d04dc7e",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "cbdf85a6-aa83-4d68-95fb-a2677d04dc7e"
+                        },
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "office"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/d7a9489e-8021-42c6-a41a-bdd91ddf15ea",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "d7a9489e-8021-42c6-a41a-bdd91ddf15ea"
+                        }
+                    ],
+                    "network_policy_entries": {
+                        "policy_rule": [
+                            {
+                                "direction": "<>",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:backend1"
+                                    }
+                                ],
+                                "action_list": {
+                                    "simple_action": "pass",
+                                    "gateway_name": null,
+                                    "apply_service": null,
+                                    "mirror_to": null
+                                },
+                                "dst_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:frontend1"
+                                    }
+                                ],
+                                "rule_sequence": {
+                                    "major": 1,
+                                    "minor": 0
+                                },
+                                "src_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ]
+                            },
+                            {
+                                "direction": "<>",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:home1"
+                                    }
+                                ],
+                                "action_list": {
+                                    "simple_action": null,
+                                    "gateway_name": null,
+                                    "apply_service": [
+                                        "default-domain:admin:analyzer-instance"
+                                    ],
+                                    "mirror_to": null
+                                },
+                                "dst_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:office1"
+                                    }
+                                ],
+                                "rule_sequence": {
+                                    "major": 2,
+                                    "minor": 0
+                                },
+                                "src_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ]
+                            },
+                            {
+                                "direction": "<>",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:backend1"
+                                    }
+                                ],
+                                "action_list": {
+                                    "simple_action": "pass",
+                                    "gateway_name": null,
+                                    "apply_service": null,
+                                    "mirror_to": null
+                                },
+                                "dst_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:office1"
+                                    }
+                                ],
+                                "rule_sequence": {
+                                    "major": 3,
+                                    "minor": 0
+                                },
+                                "src_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "name": "f2b-allow-policy"
+                }
+            },
+            {
+                "network-policy": {
+                    "fq_name": [
+                        "default-domain",
+                        "admin",
+                        "office-home-policy"
+                    ],
+                    "uuid": "f6bb10e6-d2c3-4d96-ae19-6bca42101a30",
+                    "parent_uuid": "69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_href": "http://10.84.14.1:8082/project/69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_type": "project",
+                    "virtual_network_back_refs": [
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "home"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/428edddd-184c-4849-8ef9-fdaff1337f9a",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "428edddd-184c-4849-8ef9-fdaff1337f9a"
+                        },
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "backend"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/4577c7be-cf53-47d1-9967-9b2155fb0aaa",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "4577c7be-cf53-47d1-9967-9b2155fb0aaa"
+                        },
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "frontend"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/cbdf85a6-aa83-4d68-95fb-a2677d04dc7e",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "cbdf85a6-aa83-4d68-95fb-a2677d04dc7e"
+                        },
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "office"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/d7a9489e-8021-42c6-a41a-bdd91ddf15ea",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "d7a9489e-8021-42c6-a41a-bdd91ddf15ea"
+                        }
+                    ],
+                    "network_policy_entries": {
+                        "policy_rule": [
+                            {
+                                "direction": "<>",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:backend1"
+                                    }
+                                ],
+                                "action_list": {
+                                    "simple_action": "pass",
+                                    "gateway_name": null,
+                                    "apply_service": null,
+                                    "mirror_to": null
+                                },
+                                "dst_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:frontend1"
+                                    }
+                                ],
+                                "rule_sequence": {
+                                    "major": 1,
+                                    "minor": 0
+                                },
+                                "src_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ]
+                            },
+                            {
+                                "direction": "<>",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:home1"
+                                    }
+                                ],
+                                "action_list": {
+                                    "simple_action": null,
+                                    "gateway_name": null,
+                                    "apply_service": [
+                                        "default-domain:admin:analyzer-instance"
+                                    ],
+                                    "mirror_to": null
+                                },
+                                "dst_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:office1"
+                                    }
+                                ],
+                                "rule_sequence": {
+                                    "major": 2,
+                                    "minor": 0
+                                },
+                                "src_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ]
+                            },
+                            {
+                                "direction": "<>",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:backend1"
+                                    }
+                                ],
+                                "action_list": {
+                                    "simple_action": "pass",
+                                    "gateway_name": null,
+                                    "apply_service": null,
+                                    "mirror_to": null
+                                },
+                                "dst_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:office1"
+                                    }
+                                ],
+                                "rule_sequence": {
+                                    "major": 3,
+                                    "minor": 0
+                                },
+                                "src_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "name": "office-home-policy"
+                }
+            },
+            {
+                "network-policy": {
+                    "fq_name": [
+                        "default-domain",
+                        "admin",
+                        "h2o-allow-policy"
+                    ],
+                    "uuid": "f6bb10e6-d2c3-4d96-ae19-6bca42101a30",
+                    "parent_uuid": "69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_href": "http://10.84.14.1:8082/project/69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_type": "project",
+                    "virtual_network_back_refs": [
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "home"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/428edddd-184c-4849-8ef9-fdaff1337f9a",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "428edddd-184c-4849-8ef9-fdaff1337f9a"
+                        },
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "backend"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/4577c7be-cf53-47d1-9967-9b2155fb0aaa",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "4577c7be-cf53-47d1-9967-9b2155fb0aaa"
+                        },
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "frontend"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/cbdf85a6-aa83-4d68-95fb-a2677d04dc7e",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "cbdf85a6-aa83-4d68-95fb-a2677d04dc7e"
+                        },
+                        {
+                            "to": [
+                                "default-domain",
+                                "admin",
+                                "office"
+                            ],
+                            "href": "http://10.84.14.1:8082/virtual-network/d7a9489e-8021-42c6-a41a-bdd91ddf15ea",
+                            "attr": {
+                                "timer": null,
+                                "sequence": {
+                                    "major": 0,
+                                    "minor": 0
+                                }
+                            },
+                            "uuid": "d7a9489e-8021-42c6-a41a-bdd91ddf15ea"
+                        }
+                    ],
+                    "network_policy_entries": {
+                        "policy_rule": [
+                            {
+                                "direction": "<>",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:backend1"
+                                    }
+                                ],
+                                "action_list": {
+                                    "simple_action": "pass",
+                                    "gateway_name": null,
+                                    "apply_service": null,
+                                    "mirror_to": null
+                                },
+                                "dst_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:frontend1"
+                                    }
+                                ],
+                                "rule_sequence": {
+                                    "major": 1,
+                                    "minor": 0
+                                },
+                                "src_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ]
+                            },
+                            {
+                                "direction": "<>",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:home1"
+                                    }
+                                ],
+                                "action_list": {
+                                    "simple_action": null,
+                                    "gateway_name": null,
+                                    "apply_service": [
+                                        "default-domain:admin:analyzer-instance"
+                                    ],
+                                    "mirror_to": null
+                                },
+                                "dst_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:office1"
+                                    }
+                                ],
+                                "rule_sequence": {
+                                    "major": 2,
+                                    "minor": 0
+                                },
+                                "src_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ]
+                            },
+                            {
+                                "direction": "<>",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:backend1"
+                                    }
+                                ],
+                                "action_list": {
+                                    "simple_action": "pass",
+                                    "gateway_name": null,
+                                    "apply_service": null,
+                                    "mirror_to": null
+                                },
+                                "dst_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": null,
+                                        "virtual_network": "default-domain:admin:office1"
+                                    }
+                                ],
+                                "rule_sequence": {
+                                    "major": 3,
+                                    "minor": 0
+                                },
+                                "src_ports": [
+                                    {
+                                        "end_port": -1,
+                                        "start_port": -1
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "name": "h2o-allow-policy"
+                }
+            }
+        ],
+        "network-ipams": [
+            {
+                "network-ipam": {
+                    "fq_name": ["default-domain", "admin", "ipam1"],
+                    "uuid": "2c6912a6-eaa7-4097-a3fa-eed1ff95c052",
+                    "parent_uuid": "69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_href": "http://10.84.14.1:8082/project/69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_type": "project",
+                    "virtual_network_back_refs": [
+                        {
+                            "to": ["default-domain", "admin", "home"],
+                            "href": "http://10.84.14.1:8082/virtual-network/428edddd-184c-4849-8ef9-fdaff1337f9a",
+                            "attr": {
+                                "ipam_subnets": [
+                                    {
+                                        "subnet": {
+                                            "gw": "10.4.1.254",
+                                            "ip_prefix": "10.4.1.0",
+                                            "ip_prefix_len": 24
+                                        },
+                                        "default_gateway": "10.4.1.254"
+                                    }
+                                ]
+                            },
+                            "uuid": "428edddd-184c-4849-8ef9-fdaff1337f9a"
+                        },
+                        {
+                            "to": ["default-domain", "admin", "backend"],
+                            "href": "http://10.84.14.1:8082/virtual-network/4577c7be-cf53-47d1-9967-9b2155fb0aaa",
+                            "attr": {
+                                "ipam_subnets": [
+                                    {
+                                        "subnet_uuid": null,
+                                        "subnet": {
+                                            "gw": "10.2.1.254",
+                                            "ip_prefix": "10.2.1.0",
+                                            "ip_prefix_len": 24
+                                        },
+                                        "default_gateway": "10.2.1.254"
+                                    }
+                                ],
+                                "host_routes": null
+                            },
+                            "uuid": "4577c7be-cf53-47d1-9967-9b2155fb0aaa"
+                        },
+                        {
+                            "to": ["default-domain", "admin", "frontend"],
+                            "href": "http://10.84.14.1:8082/virtual-network/cbdf85a6-aa83-4d68-95fb-a2677d04dc7e",
+                            "attr": {
+                                "ipam_subnets": [
+                                    {
+                                        "subnet_uuid": null,
+                                        "subnet": {
+                                            "gw": "10.1.1.254",
+                                            "ip_prefix": "10.1.1.0",
+                                            "ip_prefix_len": 24
+                                        },
+                                        "default_gateway": "10.1.1.254"
+                                    }
+                                ],
+                                "host_routes": null
+                            },
+                            "uuid": "cbdf85a6-aa83-4d68-95fb-a2677d04dc7e"
+                        },
+                        {
+                            "to": ["default-domain", "admin", "office"],
+                            "href": "http://10.84.14.1:8082/virtual-network/d7a9489e-8021-42c6-a41a-bdd91ddf15ea",
+                            "attr": {
+                                "ipam_subnets": [
+                                    {
+                                        "subnet_uuid": null,
+                                        "subnet": {
+                                            "gw": null,
+                                            "ip_prefix": "10.3.1.0",
+                                            "ip_prefix_len": 24
+                                        },
+                                        "default_gateway": "10.3.1.254"
+                                    }
+                                ],
+                                "host_routes": null
+                            },
+                            "uuid": "d7a9489e-8021-42c6-a41a-bdd91ddf15ea"
+                        }
+                    ],
+                    "network_ipam_mgmt": {
+                        "ipam_method": "dhcp"
+                    },
+                    "href": "http://10.84.14.1:8082/network-ipam/2c6912a6-eaa7-4097-a3fa-eed1ff95c052",
+                    "name": "ipam1"
+                }
+            },
+            {
+                "network-ipam": {
+                    "fq_name": ["default-domain", "admin", "ipam2"],
+                    "uuid": "2c6912a6-eaa7-4097-a3fa-eed1ff95c052",
+                    "parent_uuid": "69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_href": "http://10.84.14.1:8082/project/69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_type": "project",
+                    "virtual_network_back_refs": [
+                        {
+                            "to": ["default-domain", "admin", "home"],
+                            "href": "http://10.84.14.1:8082/virtual-network/428edddd-184c-4849-8ef9-fdaff1337f9a",
+                            "attr": {
+                                "ipam_subnets": [
+                                    {
+                                        "subnet": {
+                                            "gw": "10.4.1.254",
+                                            "ip_prefix": "10.4.1.0",
+                                            "ip_prefix_len": 24
+                                        },
+                                        "default_gateway": "10.4.1.254"
+                                    }
+                                ]
+                            },
+                            "uuid": "428edddd-184c-4849-8ef9-fdaff1337f9a"
+                        },
+                        {
+                            "to": ["default-domain", "admin", "backend"],
+                            "href": "http://10.84.14.1:8082/virtual-network/4577c7be-cf53-47d1-9967-9b2155fb0aaa",
+                            "attr": {
+                                "ipam_subnets": [
+                                    {
+                                        "subnet_uuid": null,
+                                        "subnet": {
+                                            "gw": "10.2.1.254",
+                                            "ip_prefix": "10.2.1.0",
+                                            "ip_prefix_len": 24
+                                        },
+                                        "default_gateway": "10.2.1.254"
+                                    }
+                                ],
+                                "host_routes": null
+                            },
+                            "uuid": "4577c7be-cf53-47d1-9967-9b2155fb0aaa"
+                        },
+                        {
+                            "to": ["default-domain", "admin", "frontend"],
+                            "href": "http://10.84.14.1:8082/virtual-network/cbdf85a6-aa83-4d68-95fb-a2677d04dc7e",
+                            "attr": {
+                                "ipam_subnets": [
+                                    {
+                                        "subnet_uuid": null,
+                                        "subnet": {
+                                            "gw": "10.1.1.254",
+                                            "ip_prefix": "10.1.1.0",
+                                            "ip_prefix_len": 24
+                                        },
+                                        "default_gateway": "10.1.1.254"
+                                    }
+                                ],
+                                "host_routes": null
+                            },
+                            "uuid": "cbdf85a6-aa83-4d68-95fb-a2677d04dc7e"
+                        },
+                        {
+                            "to": ["default-domain", "admin", "office"],
+                            "href": "http://10.84.14.1:8082/virtual-network/d7a9489e-8021-42c6-a41a-bdd91ddf15ea",
+                            "attr": {
+                                "ipam_subnets": [
+                                    {
+                                        "subnet_uuid": null,
+                                        "subnet": {
+                                            "gw": null,
+                                            "ip_prefix": "10.3.1.0",
+                                            "ip_prefix_len": 24
+                                        },
+                                        "default_gateway": "10.3.1.254"
+                                    }
+                                ],
+                                "host_routes": null
+                            },
+                            "uuid": "d7a9489e-8021-42c6-a41a-bdd91ddf15ea"
+                        }
+                    ],
+                    "network_ipam_mgmt": {
+                        "ipam_method": "dhcp"
+                    },
+                    "href": "http://10.84.14.1:8082/network-ipam/2c6912a6-eaa7-4097-a3fa-eed1ff95c052",
+                    "name": "ipam2"
+                }
+            }
+        ],
+        "security-groups": [
+            {
+                "security-group": {
+                    "virtual_machine_interface_back_refs": [
+                        {
+                            "to": ["c141f090-94c0-4cdc-b4cc-2a32fc3a35fc", "116b9bd5-25b9-4791-8cb9-d9682d7c0869"],
+                            "href": "http://10.84.14.1:8082/virtual-machine-interface/116b9bd5-25b9-4791-8cb9-d9682d7c0869",
+                            "attr": null,
+                            "uuid": "116b9bd5-25b9-4791-8cb9-d9682d7c0869"
+                        },
+                        {
+                            "to": ["aea3c42c-989a-4135-9896-0d1388c302a1", "4a9ad600-1453-44cf-968b-527938ffb568"],
+                            "href": "http://10.84.14.1:8082/virtual-machine-interface/4a9ad600-1453-44cf-968b-527938ffb568",
+                            "attr": null,
+                            "uuid": "4a9ad600-1453-44cf-968b-527938ffb568"
+                        },
+                        {
+                            "to": ["08b07a25-944c-4dd5-9229-2aca82efa97c", "7d641928-72ea-483e-8b79-4ed70a842ce5"],
+                            "href": "http://10.84.14.1:8082/virtual-machine-interface/7d641928-72ea-483e-8b79-4ed70a842ce5",
+                            "attr": null,
+                            "uuid": "7d641928-72ea-483e-8b79-4ed70a842ce5"
+                        },
+                        {
+                            "to": ["c141f090-94c0-4cdc-b4cc-2a32fc3a35fc", "d6aaa0c6-cb73-4d6d-ba2f-89fb2de6bb3e"],
+                            "href": "http://10.84.14.1:8082/virtual-machine-interface/d6aaa0c6-cb73-4d6d-ba2f-89fb2de6bb3e",
+                            "attr": null,
+                            "uuid": "d6aaa0c6-cb73-4d6d-ba2f-89fb2de6bb3e"
+                        }
+                    ],
+                    "fq_name": ["default-domain", "admin", "security-group1"],
+                    "uuid": "2337a9c9-6dc9-4535-8e3f-fa7ef6817d90",
+                    "access_control_lists": [
+                        {
+                            "to": ["default-domain", "admin", "default", "ingress-access-control-list"],
+                            "href": "http://10.84.14.1:8082/access-control-list/0ae0b231-5eed-4701-b09a-2c33b07b9eeb",
+                            "uuid": "0ae0b231-5eed-4701-b09a-2c33b07b9eeb"
+                        },
+                        {
+                            "to": ["default-domain", "admin", "default", "egress-access-control-list"],
+                            "href": "http://10.84.14.1:8082/access-control-list/f8e0c47c-4c61-4a62-938e-1cafd6039cf4",
+                            "uuid": "f8e0c47c-4c61-4a62-938e-1cafd6039cf4"
+                        }
+                    ],
+                    "parent_uuid": "69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_href": "http://10.84.14.1:8082/project/69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_type": "project",
+                    "security_group_id": 1,
+                    "href": "http://10.84.14.1:8082/security-group/2337a9c9-6dc9-4535-8e3f-fa7ef6817d90",
+                    "security_group_entries": {
+                        "policy_rule": [
+                            {
+                                "direction": ">",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": "local",
+                                        "subnet": null,
+                                        "virtual_network": null
+                                    }
+                                ],
+                                "action_list": null,
+                                "rule_uuid": "787f3fee-a304-45f9-87e9-91bbde52bbb2",
+                                "dst_ports": [
+                                    {
+                                        "end_port": 65535,
+                                        "start_port": 0
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": "default-domain:admin:security-group1",
+                                        "subnet": null,
+                                        "virtual_network": null
+                                    }
+                                ],
+                                "rule_sequence": null,
+                                "src_ports": [
+                                    {
+                                        "end_port": 65535,
+                                        "start_port": 0
+                                    }
+                                ]
+                            },
+                            {
+                                "direction": ">",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": {
+                                            "ip_prefix": "0.0.0.0",
+                                            "ip_prefix_len": 0
+                                        },
+                                        "virtual_network": null
+                                    }
+                                ],
+                                "action_list": null,
+                                "rule_uuid": "09ee4a45-123f-4a95-aa65-b2226a03c92e",
+                                "dst_ports": [
+                                    {
+                                        "end_port": 65535,
+                                        "start_port": 0
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": "local",
+                                        "subnet": null,
+                                        "virtual_network": null
+                                    }
+                                ],
+                                "rule_sequence": null,
+                                "src_ports": [
+                                    {
+                                        "end_port": 65535,
+                                        "start_port": 0
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "name": "security-group1"
+                }
+            },
+            {
+                "security-group": {
+                    "virtual_machine_interface_back_refs": [
+                        {
+                            "to": ["c141f090-94c0-4cdc-b4cc-2a32fc3a35fc", "116b9bd5-25b9-4791-8cb9-d9682d7c0869"],
+                            "href": "http://10.84.14.1:8082/virtual-machine-interface/116b9bd5-25b9-4791-8cb9-d9682d7c0869",
+                            "attr": null,
+                            "uuid": "116b9bd5-25b9-4791-8cb9-d9682d7c0869"
+                        },
+                        {
+                            "to": ["aea3c42c-989a-4135-9896-0d1388c302a1", "4a9ad600-1453-44cf-968b-527938ffb568"],
+                            "href": "http://10.84.14.1:8082/virtual-machine-interface/4a9ad600-1453-44cf-968b-527938ffb568",
+                            "attr": null,
+                            "uuid": "4a9ad600-1453-44cf-968b-527938ffb568"
+                        },
+                        {
+                            "to": ["08b07a25-944c-4dd5-9229-2aca82efa97c", "7d641928-72ea-483e-8b79-4ed70a842ce5"],
+                            "href": "http://10.84.14.1:8082/virtual-machine-interface/7d641928-72ea-483e-8b79-4ed70a842ce5",
+                            "attr": null,
+                            "uuid": "7d641928-72ea-483e-8b79-4ed70a842ce5"
+                        },
+                        {
+                            "to": ["c141f090-94c0-4cdc-b4cc-2a32fc3a35fc", "d6aaa0c6-cb73-4d6d-ba2f-89fb2de6bb3e"],
+                            "href": "http://10.84.14.1:8082/virtual-machine-interface/d6aaa0c6-cb73-4d6d-ba2f-89fb2de6bb3e",
+                            "attr": null,
+                            "uuid": "d6aaa0c6-cb73-4d6d-ba2f-89fb2de6bb3e"
+                        }
+                    ],
+                    "fq_name": ["default-domain", "admin", "security-group2"],
+                    "uuid": "2337a9c9-6dc9-4535-8e3f-fa7ef6817d90",
+                    "access_control_lists": [
+                        {
+                            "to": ["default-domain", "admin", "default", "ingress-access-control-list"],
+                            "href": "http://10.84.14.1:8082/access-control-list/0ae0b231-5eed-4701-b09a-2c33b07b9eeb",
+                            "uuid": "0ae0b231-5eed-4701-b09a-2c33b07b9eeb"
+                        },
+                        {
+                            "to": ["default-domain", "admin", "default", "egress-access-control-list"],
+                            "href": "http://10.84.14.1:8082/access-control-list/f8e0c47c-4c61-4a62-938e-1cafd6039cf4",
+                            "uuid": "f8e0c47c-4c61-4a62-938e-1cafd6039cf4"
+                        }
+                    ],
+                    "parent_uuid": "69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_href": "http://10.84.14.1:8082/project/69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_type": "project",
+                    "security_group_id": 1,
+                    "href": "http://10.84.14.1:8082/security-group/2337a9c9-6dc9-4535-8e3f-fa7ef6817d90",
+                    "security_group_entries": {
+                        "policy_rule": [
+                            {
+                                "direction": ">",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": "local",
+                                        "subnet": null,
+                                        "virtual_network": null
+                                    }
+                                ],
+                                "action_list": null,
+                                "rule_uuid": "787f3fee-a304-45f9-87e9-91bbde52bbb2",
+                                "dst_ports": [
+                                    {
+                                        "end_port": 65535,
+                                        "start_port": 0
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": "default-domain:admin:security-group2",
+                                        "subnet": null,
+                                        "virtual_network": null
+                                    }
+                                ],
+                                "rule_sequence": null,
+                                "src_ports": [
+                                    {
+                                        "end_port": 65535,
+                                        "start_port": 0
+                                    }
+                                ]
+                            },
+                            {
+                                "direction": ">",
+                                "protocol": "any",
+                                "dst_addresses": [
+                                    {
+                                        "security_group": null,
+                                        "subnet": {
+                                            "ip_prefix": "0.0.0.0",
+                                            "ip_prefix_len": 0
+                                        },
+                                        "virtual_network": null
+                                    }
+                                ],
+                                "action_list": null,
+                                "rule_uuid": "09ee4a45-123f-4a95-aa65-b2226a03c92e",
+                                "dst_ports": [
+                                    {
+                                        "end_port": 65535,
+                                        "start_port": 0
+                                    }
+                                ],
+                                "application": [],
+                                "src_addresses": [
+                                    {
+                                        "security_group": "local",
+                                        "subnet": null,
+                                        "virtual_network": null
+                                    }
+                                ],
+                                "rule_sequence": null,
+                                "src_ports": [
+                                    {
+                                        "end_port": 65535,
+                                        "start_port": 0
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "name": "security-group2"
+                }
+            }
+        ],
+        "service-instances": [
+            {
+                "service-instance": {
+                    "fq_name": [
+                        "default-domain",
+                        "admin",
+                        "si-analyzer"
+                    ],
+                    "uuid": "557d0908-f37b-4507-b74e-8767bf92b0a9",
+                    "parent_type": "project",
+                    "parent_uuid": "69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "parent_href": "http://10.84.14.1:8082/project/69b7d6d9-93d0-421a-b040-430ec6cd7037",
+                    "service_instance_properties": {
+                        "right_virtual_network": "default-domain:admin:backend1",
+                        "left_virtual_network": "default-domain:admin:frontend1",
+                        "interface_list": [
+                            {
+                                "virtual_network": "default-domain:admin:frontend1"
+                            },
+                            {
+                                "virtual_network": "default-domain:admin:backend1"
+                            }
+                        ]
+                    },
+                    "href": "http://10.84.14.1:8082/service-instance/557d0908-f37b-4507-b74e-8767bf92b0a9",
+                    "service_template_refs": [
+                        {
+                            "to": [
+                                "default-domain",
+                                "template1"
+                            ],
+                            "href": "http://10.84.14.1:8082/service-template/40eddb50-f9f7-4dd4-b5c0-3c84ad3e8f81",
+                            "attr": null,
+                            "uuid": "40eddb50-f9f7-4dd4-b5c0-3c84ad3e8f81"
+                        }
+                    ],
+                    "name": "si-analyzer"
+                }
+            }
+        ]
+    }
+}
