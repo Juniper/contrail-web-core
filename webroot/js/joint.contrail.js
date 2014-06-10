@@ -277,10 +277,10 @@ function createNodeElement(node) {
 
 function createCollectionElements(collections, elements, nodeMap) {
 	var elementDimension = {
-		width: 45,
-		height: 45,
-		marginLeft: 15,
-		marginRight: 15, 
+		width: 40,
+		height: 40,
+		marginLeft: 17,
+		marginRight: 17, 
 		marginTop: 5,
 		marginBottom: 10,
 		firstRowMarginTop: 20
@@ -543,7 +543,7 @@ joint.shapes.contrail.ImageElement = joint.shapes.basic.Generic.extend({
 
     defaults: joint.util.deepSupplement({
         type: 'contrail.ImageElement',
-        size: {'width': 60, 'height': 60},
+        size: {'width': 50, 'height': 50},
         attrs: {
             text: {
                 'ref-x': .5,
@@ -556,25 +556,25 @@ joint.shapes.contrail.ImageElement = joint.shapes.basic.Generic.extend({
                 'fill': '#333'
             },
             image: {
-                'width': 60,
-                'height': 60
+                'width': 50,
+                'height': 50
             }
         }
     }, joint.shapes.basic.Generic.prototype.defaults)
 });
 
-joint.shapes.contrail.CollectionElement = joint.shapes.basic.Generic.extend({
+joint.shapes.contrail.CollectionElement = joint.shapes.basic.Rect.extend({
 	markup: '<rect><image/></rect><text/>',
 	defaults: joint.util.deepSupplement({
         type: 'contrail.CollectionElement',
         attrs: { 
-        	rect: { rx: 0, ry: 0, 'stroke-width': '.8px', stroke: '#666', 'stroke-dasharray': '10,2' },
+        	rect: { rx: 0, ry: 0, 'stroke-width': '0.8px', stroke: '#fff', 'stroke-dasharray': '10,3' },
             text: {
-                'ref-x':.5,
+                'ref-x':0.03,
                 'ref-y': 5,
                 'y-alignment': 'top',
                 'x-alignment': 'left',
-                'text-anchor': 'middle',
+                'text-anchor': 'left',
                 'ref': 'rect',
                 'stroke-width': '0.4px',
                 'stroke': '#333',
@@ -659,7 +659,7 @@ joint.shapes.contrail.ZoomedElement = joint.shapes.basic.Rect.extend({
         type: 'contrail.ZoomedElement',
         size: { width: 1200, height: 1200 },
         attrs: {
-            rect: { rx: 0, ry: 0, 'stroke-width': 1, stroke: 'black', 'stroke-dasharray': '10,2', width: 1200, height: 1200 },
+            rect: { rx: 0, ry: 0, 'stroke-width': '0.5px', stroke: '#555', 'stroke-dasharray': '10,4', width: 1200, height: 1200 },
             text: {
                 'text': 'Zoomed View',
                 'fill': 'black',

@@ -726,26 +726,31 @@ filter: alpha(opacity=40);
 }
 
 #topology svg g.CollectionElement text {
-	font-size: 12px;
+	font-size: 13px;
 	font-weight:400;
 }
 
 #topology svg g.NetworkPolicy text, #topology svg g.SecurityGroup text, #topology svg g.NetworkIPAM text  {
-	font-size: 7px;
+	font-size: 9px;
 	font-weight:200;
 }
 
 #topology svg g.element {
-	opacity: 0.8;
+	opacity: 0.7;
 }
 #topology svg g.element:hover {
 	opacity: 1;
 }
-#topology svg g.element:hover text{
-	font-size: 14px;
+#topology svg g.CollectionElement, #topology svg g.CollectionElement:hover {
+	opacity: 0.9;
+}
+ #topology svg g.element:hover text{
+	font-weight:600;
+} 
+#topology svg g.CollectionElement:hover text {
+	font-size: 13px;
 	font-weight:400;
 }
-
 .topology_breadthfirst{
 	height:inherit;
 	width:auto;	
@@ -1452,8 +1457,8 @@ input.datetimepicker{
 	border: none;
 	background: none;
 	border-bottom: 1px solid #ccc;
-	line-height: 28px;
-	font-size: 13px;
+	line-height: 20px;
+	font-size: 11px;
 }
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav{
 	margin: 0;
