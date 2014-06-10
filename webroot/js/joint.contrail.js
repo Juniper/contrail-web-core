@@ -106,9 +106,12 @@ function renderVisualization(config, data) {
             cBox = paper.getContentBBox(),
             currentZoomedElement, zoomedElement, lastClickedElement;
 
+        if(zoomedElementId == clickedElement['id']) {
+            return;
+        }
+
         if(zoomedElementId != null) {
             zoomedElement = graph.getCell(zoomedElementId);
-            console.log(zoomedElement['attributes']['nodeDetails']);
             lastClickedElement = createNodeElement(zoomedElement['attributes']['nodeDetails']);
             graph.addCell(lastClickedElement);
             replaceElementInGraph(graph, zoomedElement, lastClickedElement);
