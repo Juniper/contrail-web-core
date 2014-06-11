@@ -355,7 +355,7 @@ function startWebCluster ()
 function doPreStartServer (isRetry)
 {
     var rootPath = path.join(__dirname, 'webroot');
-    var defLogoFile = '/img/opencontrail-logo.png';
+    var defLogoFile = '/img/juniper-networks-logo.png';
     var srcLogoFile = rootPath + defLogoFile;
 
     if ((null != config.logo_file) && (false == isRetry)) {
