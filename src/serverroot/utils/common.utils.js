@@ -1284,7 +1284,9 @@ function mergeAllPackageList (serverType)
     var pkgList = [];
     pkgList.push(require('../../../webroot/pkgxml/package.js').pkgList);
     for (key in config.featurePkg) {
-        if ((config.featurePkg[key]) && (config.featurePkg[key]['path']) && 
+        if ((config.featurePkg[key]) && (config.featurePkg[key]['path']) &&
+            ((null == config.featurePkg[key]['enable']) ||
+             (true == config.featurePkg[key]['enable'])) &&
             (true == fs.existsSync(config.featurePkg[key]['path'] +
                                    '/webroot/pkgxml/package.js'))) {
             pkgList.push(require(config.featurePkg[key]['path'] +

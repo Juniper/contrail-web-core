@@ -26,9 +26,6 @@ fetch-pkgs-dev:
 	make clean
 	./fetch_packages.sh dev
 
-fetch-pkgs:
-	./fetch_packages.sh dev
-
 package:
 	make clean
 	make fetch-pkgs-prod 
@@ -43,9 +40,6 @@ package:
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env true
-
-package-feature:
-	./generate-files.sh 'dev-env' $(REPO)
 
 make-ln:
 	cp -af webroot/html/dashboard.html webroot/html/dashboard.tmpl
@@ -88,19 +82,17 @@ prod-env:
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env true
 	make make-ln
 
-rem-ts-dev:
+clear-cache-dev:
 	./prod-dev.sh webroot/html/dashboard.html dev_env prod_env false
 	./prod-dev.sh webroot/html/login.html dev_env prod_env false
 	./prod-dev.sh webroot/html/login-error.html dev_env prod_env false
 	make make-ln
 
-rem-ts-prod:
+clear-cache-prod:
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env false
 	./prod-dev.sh webroot/html/login.html prod_env dev_env false
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env false
 	make make-ln
-
-check: test
 
 test-node:
 	./unit-test.sh node
@@ -116,23 +108,7 @@ clean:
 	rm -f src/serverroot/web/core/feature.list.js
 	rm -f src/serverroot/web/routes/url.routes.js
 	rm -rf node_modules
-	rm -rf webroot/assets/2way-multiselect
-	rm -rf webroot//assets/bootstrap
-	rm -rf webroot/assets/crossfilter
-	rm -rf webroot/assets/d3
-	rm -rf webroot/assets/datetimepicker
-	rm -rf webroot/assets/font-awesome
-	rm -rf webroot/assets/fonts-opensans
-	rm -rf webroot/assets/handlebars
-	rm -rf webroot/assets/jquery
-	rm -rf webroot/assets/jquery-ui
-	rm -rf webroot/assets/knockout
-	rm -rf webroot/assets/moment
-	rm -rf webroot/assets/nvd3
-	rm -rf webroot/assets/select2
-	rm -rf webroot/assets/slickgrid
-	rm -rf webroot/assets/jsonpath
-	rm -rf webroot/assets/xdate
+	rm -rf webroot/assets
 
 .PHONY: package dev-env prod-env test clean
 

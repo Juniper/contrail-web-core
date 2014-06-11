@@ -1358,43 +1358,6 @@ function reloadGrid(grid){
 	grid.refreshData();
 }
 
-/**
- * Template to show the tooltip on grid cells
- */
-function cellTemplate(options) {
-    var name = null, nameStr = '', cellText = '', titleStr = '', nameCls = '', tooltipCls = '', onclickAction = '',colorCls = '';
-    if (options == null)
-        options = {};
-    name = ifNull(options['name'], name);
-    cellText = ifNull(options['cellText'], cellText);
-    //Assign title attribute only if tooltipCls is present
-    if ((cellText != null) && (cellText.indexOf('#') != 0))
-        cellText = '#=' + cellText + '#';
-    var tooltipText = cellText;
-    tooltipText = ifNull(options['tooltipText'], tooltipText);
-
-    if (name != null) {
-        nameStr = 'name="' + name + '"';
-        nameCls = 'cell-hyperlink';
-    }
-    if ((options['tooltip'] == true) || (options['tooltipText'] != null) || (options['tooltipFn'] != null)) {
-        tooltipCls = 'mastertooltip';
-        if (options['tooltipFn'] != null) {
-            titleStr = 'title="#=tooltipFns.' + options['tooltipFn'] + '(data)#"';
-        } else
-            titleStr = 'title="' + tooltipText + '"';
-    }
-    if (options['onclick'] != null) {
-        onclickAction = 'onclick="' + options['onclick'] + '"';
-    }
-    if (options['applyColor']){
-        colorCls = '#=decideColor(\'{1}\',hostNameColor)#';
-    } else {
-        colorCls = nameCls;
-    }
-    return contrail.format("<div class='{1} {5}' {0} {2} {4}>{3}</div>", nameStr, tooltipCls, titleStr, cellText, onclickAction, colorCls);
-}
-
 /* 
  * Function to style links on grid cell
  */
@@ -1817,15 +1780,7 @@ function showMoreAlerts(){
  */
 
 function processDrillDownForNodes(e) {
-     if (e['point']['type'] == 'vRouter') {
-         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_vrouter'});
-     } else if (e['point']['type'] == 'controlNode') {
-         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_control'});
-     } else if (e['point']['type'] == 'analyticsNode') {
-         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_analytics'});
-     } else if (e['point']['type'] == 'configNode') {
-         layoutHandler.setURLHashParams({node:e['point']['name'], tab:''}, {p:'mon_infra_config'});
-     } else if (e['point']['type'] == 'network') {
+     if (e['point']['type'] == 'network') {
          layoutHandler.setURLHashParams({fqName:e['point']['name']}, {p:'mon_net_networks'});
      } else if (e['point']['type'] == 'project') {
          layoutHandler.setURLHashParams({fqName:e['point']['name']}, {p:'mon_net_projects'});
