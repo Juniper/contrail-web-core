@@ -49,7 +49,7 @@
 			   				var proxyURL = getProxyURL();
 							document.getElementById('proxyURL_' + req).value=proxyURL + '/Snh_' + req  ;
 							//alert(document.getElementById('proxyURL_' + req).value);
-							this.submit();
+							return true;
 						};
 						
 						function onLinkClick(params){
@@ -208,7 +208,7 @@
                             <input id="proxyURL_{$reqx}" type="hidden" value="" name="proxyURL"></input>
                             <div class="control-group">
                                 <div class="controls">
-                                    <button class="btn btn-small btn-primary" 
+                                    <button type="submit" class="btn btn-small btn-primary" 
                                     		onclick="setURL('{$reqx}');">
 													Send
 									</button>
