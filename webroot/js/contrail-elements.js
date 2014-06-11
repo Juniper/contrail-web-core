@@ -82,7 +82,8 @@
     };
     
     $.fn.contrailCombobox = function(option) {
-        var self = this, formattedData = [];
+        var self = this, formattedData = [],
+            asyncVal = false;
 
         self.globalSelect = {};
         self.globalDisableList = [];
@@ -104,16 +105,22 @@
             option.dataValueField = {dsVar: option.dataValueField, apiVar: 'id'};
             if(!$.isEmptyObject(option) && typeof option.dataSource !== 'undefined') {
                 if(option.dataSource.type == "remote"){
+                    if(contrail.checkIfExist(option.dataSource.async)){
+                        asyncVal =  option.dataSource.async;
+                    }
                     $.ajax({
                         url: option.dataSource.url,
                         dataType: "json",
-                        async: false,
+                        async: asyncVal,
                         success: function( data ) {
                             if(typeof option.dataSource.parse !== "undefined"){
                                 var parsedData = option.dataSource.parse(data);
                                 formattedData = formatData(parsedData, option);
                             }else {
                                 formattedData = formatData(data, option);
+                            }
+                            if(contrail.checkIfExist(option.dataSource.async) && option.dataSource.async == true ){
+                                self.data('contrailCombobox').setData(parsedData);
                             }
                         }
                     });
@@ -266,6 +273,10 @@
                 .appendTo( wrapper )
                 .autocomplete(option)
                 .attr('placeholder', option.placeholder);
+
+            if(contrail.checkIfExist(option.defaultValue)){
+                    input.val(option.defaultValue);
+            }
 
             input.data("ui-autocomplete")._renderItem = function (ul, item) {
                 if(dis.globalDisableList.indexOf(item.label) != -1){
