@@ -1282,29 +1282,17 @@ function getWebServerInfo (req, res, appData)
 function mergeAllPackageList (serverType)
 {
     var pkgList = [];
-    pkgList.push(require('../../../webroot/pkgxml/package.js').pkgList);
+    pkgList.push(require('../../../webroot/common/api/package.js').pkgList);
     for (key in config.featurePkg) {
         if ((config.featurePkg[key]) && (config.featurePkg[key]['path']) &&
             ((null == config.featurePkg[key]['enable']) ||
              (true == config.featurePkg[key]['enable'])) &&
             (true == fs.existsSync(config.featurePkg[key]['path'] +
-                                   '/webroot/pkgxml/package.js'))) {
+                                   '/webroot/common/api/package.js'))) {
             pkgList.push(require(config.featurePkg[key]['path'] +
-                        '/webroot/pkgxml/package.js').pkgList);
+                        '/webroot/common/api/package.js').pkgList);
         }
     }
-    /*
-    var pkgStr = "var pkgList = " + JSON.stringify(pkgList);
-    pkgStr += ";\nexports.pkgList = pkgList;\n";
-
-    var path = null;
-    if (global.service.MAINSEREVR == serverType) {
-        path = __dirname + '/../web/core/packages.js';
-    } else {
-        path = __dirname + '/../jobs/core/packages.js';
-    }
-    fs.writeFileSync(path, pkgStr);
-    */
     return pkgList;
 }
 

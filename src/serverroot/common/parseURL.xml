@@ -1,0 +1,33 @@
+<!--
+ Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+-->
+
+<urlLists>
+    <require>
+        <define>parseURLReq</define>
+        <path>./parseURLRequire</path>
+    </require>
+    <require>
+        <define>sshapi</define>
+        <path>./sshcommand.api</path>
+    </require>
+    <require>
+        <define>proxyapi</define>
+        <path>./proxy.api</path>
+    </require>
+    <item>
+        <url>/api/service/networking/device-status/:ip</url>
+        <method>post</method>
+        <feature>monitoring</feature>
+        <callback>sshapi.getServiceStatus</callback>
+    </item>
+    <item>
+        <url>/proxy</url>
+        <!-- Proxy URL format:
+            /proxy?proxyURL=<URL>&<argument-list>
+        -->
+        <method>get</method>
+        <feature>proxy</feature>
+        <callback>proxyapi.forwardProxyRequest</callback>
+    </item>
+</urlLists>
