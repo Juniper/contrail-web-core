@@ -126,7 +126,10 @@
 
 
             chartOptions['elementClickFunction'] = function (e) {
-                processDrillDownForNodes(e);
+                if(typeof(chartOptions['clickFn']) == 'function')
+                    chartOptions['clickFn'](e['point']);
+                else
+                    processDrillDownForNodes(e);
             };
             chartOptions['elementMouseoutFn'] = function (e) {
                 if(e['point']['overlappedNodes'] != undefined && e['point']['overlappedNodes'].length > 1) {
@@ -159,19 +162,6 @@
             if(data['widgetBoxId'] != null)
                 endWidgetLoading(data['widgetBoxId']);
 
-            function nodeTooltipFn(e,x,y,chart,tooltipFn) {
-                var result = {};
-                    //markOverlappedBubblesOnHover reuturns Overlapped nodes in ascending order of severity
-                    //Reverse the nodes such that high severity nodes are displayed first in the tooltip 
-                    e['point']['overlappedNodes'] = markOverlappedBubblesOnHover(e,chart).reverse();
-                    if(e['point']['overlappedNodes'] == undefined || e['point']['overlappedNodes'].length <= 1) {
-                        return formatLblValueTooltip(tooltipFn(e));
-                    } else if(e['point']['multiTooltip'] == true) {
-                        result = getMultiTooltipContent(e,tooltipFn,chart);
-                        result['content'] = result['content'].slice(0,result['perPage']);
-                        return formatLblValueMultiTooltip(result);
-                    }
-            }
             /**
              * function takes the parameters tooltipContainer object and the tooltip array for multitooltip and binds the 
              * events like drill down on tooltip and click on left and right arrows
