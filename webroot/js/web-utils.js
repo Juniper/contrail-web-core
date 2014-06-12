@@ -1178,6 +1178,7 @@ function MenuHandler() {
                     var parentRootDir = parent['rootDir'];
                     if (parentRootDir != null && parent['view'] != null) {
                         loadViewResources(parent,currMenuObj['hash']);
+                        loadCssResources(parent,currMenuObj['hash']);
                     }
                 });
             }
@@ -1223,6 +1224,8 @@ function MenuHandler() {
         }
 
         function loadCssResources(menuObj,hash) {
+            if(menuObj['css'] == null)
+                return;
             if (!(menuObj['css'] instanceof Array)) {
                 menuObj['css'] = [menuObj['css']];
             }
