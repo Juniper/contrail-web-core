@@ -228,11 +228,19 @@ var defColors = ['#1c638d', '#4DA3D5'];
                                 return data['parseFn'](response);
                             else
                                 return [response];
+                        },successCallback:function(response) {
+                            statsDatasource.setData(response);
+                            var statViewModel = new (function() {
+                                var self = this;
+                                self.toNetwork = ko.observable('');
+                                self.fromNetwork = ko.observable('');
+                            })();
+                            statViewModel.toNetwork(response[0]['toNetwork']);
+                            statViewModel.fromNetwork(response[0]['fromNetwork']);
+                            ko.applyBindings(statViewModel, statsElem[0]);
                         }
                     },
                 });
-                statsDatasource.refreshData();
-                statsElem.data('dataSource', statsDatasource);
             } else {
                 ko.applyBindings(data['viewModel'], statsElem[0]);
             }
