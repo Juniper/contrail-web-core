@@ -1449,3 +1449,7 @@ a.disabled-link, a.disabled-link:hover{
 .separator-top {
     border-top : 1px solid #ddd;
 }
+
+p.error {
+color: #b94a48;
+}
