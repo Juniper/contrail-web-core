@@ -2,6 +2,10 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
+/* Set corePath before loading any other module */
+var corePath = process.cwd();
+exports.corePath = corePath;
+
 var express = require('express')
     , path = require('path')
     , fs = require("fs")
