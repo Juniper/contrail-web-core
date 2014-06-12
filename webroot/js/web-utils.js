@@ -426,11 +426,16 @@ var defColors = ['#1c638d', '#4DA3D5'];
                             }).done(function(result) {
                                 //There will be only one entry in response,look at 0th element as we are requesting for specific VN/VM
                                 var response = result;
-                                if(result['value'] != null)
+                                if(result['value'] != null && result['value'][0] != null) {
                                     response = result['value'][0];
-                                e.detailRow.find('.row-fluid.advancedDetails').html('<div><pre style="background-color:white">' + syntaxHighlight(response) + '</pre></div>');
-                                e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response)));
-                                $(grid).data('contrailGrid').adjustDetailRowHeight(dataItem['id']);
+                                    e.detailRow.find('.row-fluid.advancedDetails').html('<div><pre style="background-color:white">' + syntaxHighlight(response) + '</pre></div>');
+                                    e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response)));
+                                    $(grid).data('contrailGrid').adjustDetailRowHeight(dataItem['id']);
+                                } else {
+                                    $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>');
+                                }
+                            }).fail(function(){
+                                $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>'); 
                             });
                         } else
                             e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](rowData)));
