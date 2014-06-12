@@ -51,7 +51,7 @@ function infraMonitorClass() {
          }
          var processAlerts = self.getAllProcessAlerts(viewModels);
          var allAlerts = alerts_nodes.concat(processAlerts);
-         allAlerts.sort(bgpMonitor.sortInfraAlerts);
+         allAlerts.sort(dashboardUtils.sortInfraAlerts);
          var dashboardCF = crossfilter(dashboardDataArr);
          var nameDimension = dashboardCF.dimension(function(d) { return d.name });
          var verDimension = dashboardCF.dimension(function(d) { return d.version });
