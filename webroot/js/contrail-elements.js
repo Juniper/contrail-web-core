@@ -611,7 +611,7 @@ function constructSelect2(self, defaultOption, args) {
             }
             option.data = source;
         }
-        if(typeof option.data != "undefined") {
+        if(typeof option.data != "undefined" && option.data.length > 0 ) {
             option.data = formatData(option.data,option);
             self.select2(option)
                 .on("change", function(e) {
