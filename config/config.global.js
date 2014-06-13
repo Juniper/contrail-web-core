@@ -207,7 +207,7 @@ config.cacheExpire.flow_stat_time = 600; /* Seconds */
 config.cacheExpire.topo_tree_time = 600; /* Seconds */
 
 /* Logo File: Use complete path of logo file location */
-config.logo_file = '/usr/src/contrail/contrail-webui/webroot/img/juniper-networks-logo.png';
+config.logo_file = '/usr/src/contrail/contrail-web-core/webroot/img/opencontrail-logo.png';
 
 config.featurePkg = {};
 /* Add new feature Package Config details below */
