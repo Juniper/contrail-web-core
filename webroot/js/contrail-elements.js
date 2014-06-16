@@ -641,7 +641,8 @@ function constructSelect2(self, defaultOption, args) {
         
         return {
             getAllData: function(){
-                return self.data('select2').opts.data;
+                if(self.data('select2') != null)
+                    return self.data('select2').opts.data;
             },
             getSelectedData: function() {
                 var selectedValue = self.select2('val'),
