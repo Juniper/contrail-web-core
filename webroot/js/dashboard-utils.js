@@ -210,6 +210,7 @@ function infraMonitorClass() {
         var infraDashboardTemplate = contrail.getTemplate4Id('infra-dashboard');
         $(contentContainer).html('');
         $(contentContainer).html(infraDashboardTemplate);
+        viewModels=[];
 
         loadInfoBoxes();
         loadLogs();
