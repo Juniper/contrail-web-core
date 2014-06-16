@@ -168,6 +168,14 @@ global.DEMO_USER_MAX_AGE_SESSION = 2 * 60 * 60 * 1000;
 global.STR_ROLE_USER = 'user';
 global.STR_ROLE_ADMIN = 'admin';
 
+global.STR_EXT_ROLE_NETADMIN = 'netadmin';
+global.STR_EXT_ROLE_KEYSTONEADMIN = 'KeystoneAdmin';
+global.STR_EXT_ROLE_MEMBER_ = '_member_';
+global.STR_EXT_ROLE_SYSADMIN = 'sysadmin';
+global.STR_EXT_ROLE_KEYSTONE_SERVICE_ADMIN = 'KeystoneServiceAdmin';
+global.STR_EXT_ROLE_MEMBER = 'Member';
+global.STR_EXT_ROLE_ADMIN = 'admin';
+
 /* Service Instance */
 global.INSTANCE_SPAWNING_TIMEOUT = 10 * 60 * 1000;
 /* 10 Mins */
