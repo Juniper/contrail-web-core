@@ -126,8 +126,8 @@ function parseProcessMemCPUData(response, cbParams) {
     var flowSeries = response['flow-series'];
     var titles = cbParams.options.titles;
     var data = {}, time, cpuDS = [], memDS = [], startTime, endTime;
-    startTime = parseInt(response['summary']['start_time']);
-    endTime = parseInt(response['summary']['end_time']);
+    startTime = parseInt(getValueByJsonPath(response,'summary;start_time'));
+    endTime = parseInt(getValueByJsonPath(response,'summary;end_time'));
     if (flowSeries.length == 1) {
         addMemCPU2DS4Process(startTime, flowSeries[0], cpuDS, memDS);
         addMemCPU2DS4Process(endTime, flowSeries[0], cpuDS, memDS);
@@ -150,7 +150,7 @@ function parseProcessMemCPUData(response, cbParams) {
 };
 
 function addMemCPU2DS4Process(time, dataRecord, cpuDS, memDS) {
-    var cpuShare = dataRecord['cpuData']['cpu_share'];
+    var cpuShare = getValueByJsonPath(dataRecord,'cpuData;cpu_share');
     if (cpuShare != null && cpuShare != "-") {
         try {
             cpuShare = parseFloat(cpuShare);
@@ -159,7 +159,7 @@ function addMemCPU2DS4Process(time, dataRecord, cpuDS, memDS) {
             // Ignore
         }
     }
-    var virtMemory = dataRecord['memData']['memInfo']['virt'];
+    var virtMemory = getValueByJsonPath(dataRecord,'memData;memInfo;virt');
     if (virtMemory != null && virtMemory != "-") {
         try {
             virtMemory = parseInt(virtMemory);
@@ -174,8 +174,8 @@ function parseSystemMemCPUData(response, cbParams) {
     var flowSeries = response['flow-series'];
     var titles = cbParams.options.titles;
     var data = {}, time, cpuDS = [], memDS = [];
-    var startTime = parseInt(response['summary']['start_time']);
-    var endTime = parseInt(response['summary']['end_time']);
+    var startTime = parseInt(getValueByJsonPath(response,'summary;start_time'));
+    var endTime = parseInt(getValueByJsonPath(response,'summary;end_time'));
     if (flowSeries.length == 1) {
         addMemCPU2DS4System(startTime, flowSeries[0], cpuDS, memDS);
         addMemCPU2DS4System(endTime, flowSeries[0], cpuDS, memDS);
@@ -198,7 +198,7 @@ function parseSystemMemCPUData(response, cbParams) {
 };
 
 function addMemCPU2DS4System(time, dataRecord, cpuDS, memDS) {
-    var avgCPU = dataRecord['cpuData']['cpuLoadAvg']['one_min_avg'];
+    var avgCPU = getValueByJsonPath(dataRecord,'cpuData;cpuLoadAvg;one_min_avg');
     if (avgCPU != null && avgCPU != "-") {
         try {
             avgCPU = parseFloat(avgCPU);
@@ -207,7 +207,7 @@ function addMemCPU2DS4System(time, dataRecord, cpuDS, memDS) {
             // Ignore
         }
     }
-    var usedMem = dataRecord['memData']['sysMemInfo']['used'];
+    var usedMem = getValueByJsonPath(dataRecord,'memData;sysMemInfo;used'); 
     if (usedMem != null && usedMem != "-") {
         try {
             usedMem = parseFloat(usedMem);
