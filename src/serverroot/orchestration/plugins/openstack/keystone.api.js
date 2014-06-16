@@ -52,8 +52,14 @@ function getUserRoleByAuthResponse (resRoleList)
         return global.STR_ROLE_USER;
     }
     var rolesCount = resRoleList.length;
+    var userRoleStr = null;
     for (var i = 0; i < rolesCount; i++) {
-        if (resRoleList[i]['name'] != 'Member') {
+        userRoleStr = resRoleList[i]['name'];
+        if ((global.STR_EXT_ROLE_NETADMIN == userRoleStr) || 
+            (global.STR_EXT_ROLE_KEYSTONEADMIN == userRoleStr) ||
+            (global.STR_EXT_ROLE_SYSADMIN == userRoleStr) ||
+            (global.STR_EXT_ROLE_KEYSTONE_SERVICE_ADMIN == userRoleStr) ||
+            (global.STR_EXT_ROLE_ADMIN == userRoleStr)) {
             return global.STR_ROLE_ADMIN;
         }
     }
@@ -418,6 +424,63 @@ function getServiceCatalog (req, callback)
     });
 }
 
+function getUserRoleByTenant (userObj, callback)
+{
+    var username = userObj['username'];
+    var password = userObj['password'];
+    var tenant   = userObj['tenant'];
+    doAuth(username, password, tenant, function(data) {
+        if ((null != data) && (null != data['access']) && 
+            (null != data['access']['user']) &&
+            (null != data['access']['user']['roles'])) {
+            callback(null, data['access']['user']['roles']);
+        } else {
+            callback(null, null);
+        }
+    });
+}
+
+function getUserRoleByAllTenants (username, password, tenantlist, callback)
+{
+    var tenantObjArr = [];
+    if (null == tenantlist) {
+        return null;
+    }
+    var tenantCnt = tenantlist.length;
+    var userRoleStr = global.STR_ROLE_USER;
+
+    for (var i = 0; i < tenantCnt; i++) {
+        if ((null != tenantlist[i]) && (null != tenantlist[i]['name'])) {
+            tenantObjArr[i] = {'username': username, 'password': password,
+                'tenant': tenantlist[i]['name']};
+        }
+    }
+    if (!tenantObjArr.length) {
+        return userRoleStr;
+    }
+
+    async.map(tenantObjArr, getUserRoleByTenant, function(err, data) {
+        if (data) {
+            var dataLen = data.length;
+            for (var i = 0; i < dataLen; i++) {
+                if (null == data[i]) {
+                    continue;
+                }
+                userRoleStr =
+                    getUserRoleByAuthResponse(data[i]); 
+                if (global.STR_ROLE_ADMIN == userRoleStr) {
+                    /* if as 'admin', then no need to check for anything
+                     * else
+                     */
+                    callback(userRoleStr);
+                    return;
+                }
+            }
+        }
+        callback(userRoleStr);
+    });
+}
+
 function authenticate (req, res, callback)
 {
     var self = this,
@@ -430,9 +493,12 @@ function authenticate (req, res, callback)
     var passwdCipher = null
     var userEncrypted = null;
     var passwdEncrypted = null; 
-    if(post.urlHash != null)        
-        urlHash = post.urlHash;
     var loginErrFile = 'webroot/html/login-error.html';
+
+    if (post.urlHash != null) {
+        urlHash = post.urlHash;
+    }
+
     doAuth(username, password, null, function (data) {
         if ((null == data) || (null == data.access)) {
             req.session.isAuthenticated = false;
@@ -472,8 +538,9 @@ function authenticate (req, res, callback)
                so we are using the last entry in the tenant list as default 
                project
              */
-            var defProject = data.tenants[projCount - 1]['name'];
-            createProjectListInReqObj(req, data.tenants);
+            var tenantList = data.tenants;
+            var defProject = tenantList[projCount - 1]['name'];
+            createProjectListInReqObj(req, tenantList);
             doAuth(username, password, defProject, function(data) {
                 if (data == null) {
                     req.session.isAuthenticated = false;
@@ -487,10 +554,10 @@ function authenticate (req, res, callback)
                     logutils.logger.debug("After Successful auth def_token:" +
                                           JSON.stringify(data.access));
                     req.session.def_token_used = data.access.token;
-                    try {
-                        var roleStr = null;
-                        roleStr =
-                            getUserRoleByAuthResponse(data['access']['user']['roles']);
+                    var roleStr = null;
+                    getUserRoleByAllTenants(username, password,
+                                            tenantList, 
+                                            function(roleStr) {
                         if (roleStr == null) {
                             req.session.isAuthenticated = false;
                             commonUtils.changeFileContentAndSend(res, loginErrFile,
@@ -500,32 +567,22 @@ function authenticate (req, res, callback)
                             });
                             return;
                         }
-                    } catch(e) {
-                        logutils.logger.debug("We did not get Roles in Correct JSON from" +
-                                              " keystone, error: " + e);
-                        req.session.isAuthenticated = false;
-                        commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                             global.CONTRAIL_LOGIN_ERROR,
-                                                             messages.error.unauthenticate_to_project,
-                                                             function() {
+                        /* Save the user-id/password in Redis in encrypted format.
+                         */
+                        authApi.saveUserAuthInRedis(username, password, req, function(err) {
+                            req.session.isAuthenticated = true;
+                            req.session.userRole = roleStr;
+                            //setSessionTimeoutByReq(req);
+                            updateTokenIdForProject(req, defProject, data);
+                            logutils.logger.info("Login Successful with tenants.");
+                            res.setHeader('Set-Cookie', "username=" + username + 
+                                          '; expires=' + 
+                                          new Date(new Date().getTime() +
+                                          global.MAX_AGE_SESSION_ID).toUTCString());
+                            res.redirect('/' + urlHash);
                         });
-                        return;
-                    }
+                    });
                 }
-                /* Save the user-id/password in Redis in encrypted format.
-                 */
-                authApi.saveUserAuthInRedis(username, password, req, function(err) {
-                    req.session.isAuthenticated = true;
-                    req.session.userRole = roleStr;
-                    //setSessionTimeoutByReq(req);
-                    updateTokenIdForProject(req, defProject, data);
-                    logutils.logger.info("Login Successful with tenants.");
-                    res.setHeader('Set-Cookie', "username=" + username + 
-                                  '; expires=' + 
-                                  new Date(new Date().getTime() +
-                                           global.MAX_AGE_SESSION_ID).toUTCString());
-                    res.redirect('/' + urlHash);
-                });
             });
         });
     });
