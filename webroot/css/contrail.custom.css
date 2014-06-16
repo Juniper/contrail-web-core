@@ -1453,3 +1453,7 @@ a.disabled-link, a.disabled-link:hover{
 p.error {
 color: #b94a48;
 }
+
+.highlight-blue{
+	color: #3182bd;
+}
