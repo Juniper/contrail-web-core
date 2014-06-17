@@ -210,7 +210,7 @@
                        var leftPos = 'auto',rightPos = 'auto';
                        if(result['button'] == 'left') {
                             if($(tooltipContainer).css('left') == 'auto') {
-                                leftPos = $(tooltipContainer).offset()['left'];
+                                leftPos = $(tooltipContainer).position()['left'];
                                 $(tooltipContainer).css('left',leftPos);
                                 $(tooltipContainer).css('right','auto');
                             }
@@ -230,7 +230,7 @@
                             content = data.slice((page-1) * perPage,page * perPage);
                       } else if (result['button'] == 'right') {
                           if($(tooltipContainer).css('right') == 'auto') {
-                              leftPos = $(tooltipContainer).offset()['left'];
+                              leftPos = $(tooltipContainer).position()['left'];
                               rightPos = $(tooltipContainer).offsetParent().width() - $(tooltipContainer).outerWidth() - leftPos;
                               $(tooltipContainer).css('right', rightPos);
                               $(tooltipContainer).css('left','auto');
@@ -251,7 +251,7 @@
                                 content = data.slice((data.length - perPage),data.length);
                             } 
                       }
-                      leftPos = $(tooltipContainer).offset()['left'];
+                      leftPos = $(tooltipContainer).position()['left'];
                       rightPos = $(tooltipContainer).offsetParent().width() - $(tooltipContainer).outerWidth() - leftPos;
                       result['content'] = content;
                       if(result['perPage'] > 1)
