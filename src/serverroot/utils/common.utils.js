@@ -1312,16 +1312,13 @@ function mergeAllPackageList (serverType)
    This function is used to compare and merge missing configuration from
    default.config.global.js with config file
  */
-function compareAndMergeDefaultConfig (callback)
+function compareAndMergeDefaultConfig ()
 {
     var confFile = __dirname + '/../../../config/config.global.js';//'/etc/contrail/config.global.js';
     var defConfFile = __dirname + '/../../../config/default.config.global.js';
     var splitter = '=';
     var startCmpStr = 'config';
-    compareAndMergeFiles(confFile, defConfFile, startCmpStr, splitter,
-                         function (err) {
-        callback(err);
-    });
+    return compareAndMergeFiles(confFile, defConfFile, startCmpStr, splitter);
 }
 
 /* Function: compareAndMergeFiles
@@ -1337,9 +1334,17 @@ function compareAndMergeDefaultConfig (callback)
     splitter: splitter of the line of each comparison
     callback: callback function to call once done
  */
-function compareAndMergeFiles (fileToCmp, fileWithCmp, startCmpStr, splitter,
-                               callback)
+function compareAndMergeFiles (fileToCmp, fileWithCmp, startCmpStr, splitter)
 {
+    var oldConfig = require(fileToCmp);
+    var defConfig = require(fileWithCmp);
+    for (key in defConfig) {
+        if (null == oldConfig[key]) {
+            oldConfig[key] = defConfig[key];
+        }
+    }
+    return oldConfig;
+/*
     try {
         var fileToCmpCtnt = fs.readFileSync(fileToCmp, 'utf8');
         var fileWithCmpCtnt = fs.readFileSync(fileWithCmp, 'utf8');
@@ -1381,7 +1386,8 @@ function compareAndMergeFiles (fileToCmp, fileWithCmp, startCmpStr, splitter,
         }
     }
     fs.writeFileSync(fileToCmp, fileToCmpCtnt);
-    callback(null);
+    return fileToCmp;
+*/
 }
 
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
