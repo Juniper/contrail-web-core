@@ -12,8 +12,9 @@ var axon = require('axon')
     , commonUtils = require('./src/serverroot/utils/common.utils')
     , logutils = require('./src/serverroot/utils/log.utils')
     , discServ = require('./src/serverroot/jobs/core/discoveryservice.api')
-    , jsonPath = require('JSONPath').eval
-    , config = require('./config/config.global.js');
+    , jsonPath = require('JSONPath').eval;
+
+var config = commonUtils.compareAndMergeDefaultConfig();
 
 var hostName = config.jobServer.server_ip
     , port = config.jobServer.server_port;
