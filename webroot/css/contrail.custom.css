@@ -601,7 +601,6 @@ ul.configActionMenu {
 .brand img{display:inline-block;}
 .brand img.logo{ 
 	margin-left:-5px;
-	max-width: 152px;
 	height: 40px;
 }
 .infobox > .stat{
@@ -817,7 +816,6 @@ a.selectAllLink:hover {
 .sparklines-box{
 	border: 1px solid #dedede;
 	padding: 5px;
-	cursor: pointer;
 }
 .sparklines-box p.sparkline-title{
 	padding: 0 5px 2px;
