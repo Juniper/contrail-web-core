@@ -16,7 +16,7 @@ featureDirectories=(monitor/bgp monitor/tenant_network js config/vn)
 if [ $1 = 'init' ] ; then
     ln -sf $FOUR_BACK/.jshintrc src/serverroot/web/api/.jshintrc
     ln -sf $TWO_BACK/contrail-web-controller/webroot/test webroot/test
-    #Generates qunit.js & qunit.css files by concatinating files from contrail-web-third-party/qunit
+    #Generates qunit.js & qunit.css files by concatinating files from contrail-webui-third-party/qunit
     grunt build
     #copy the default Gruntfile.js if it's not present in feature test directory
     for currFeatureDir in "${featureDirectories[@]}"
@@ -26,7 +26,7 @@ if [ $1 = 'init' ] ; then
             mkdir -p webroot/${currFeatureDir}/test
         fi
         ln -sf $FIVE_BACK/contrail-web-core/.jshintrc webroot/${currFeatureDir}/test/.jshintrc
-        ln -sf $FIVE_BACK/contrail-web-third-party/node_modules webroot/${currFeatureDir}/test/node_modules
+        ln -sf $FIVE_BACK/contrail-webui-third-party/node_modules webroot/${currFeatureDir}/test/node_modules
         confFiles=(Gruntfile.js karma.conf.js) 
         for currConfFile in "${confFiles[@]}"
         do

@@ -58,7 +58,7 @@ HTTPS clone URL:
     cd contrail-web-core
     make repos
 
-'make repos' downloads two more repos contrail-web-controller and contrail-third-party in contrail-web-controller and third_party directory respectively in parent directory.
+'make repos' downloads two more repos contrail-web-controller and contrail-webui-third-party in parent directory.
     
 
 4) Execute the following commands under `contrail-web-core` directory to setup development environment. It downloads all the third-party libraries and generates the files required for Contrail Web UI.
