@@ -153,6 +153,9 @@ function doAjaxCall(targetUrl, methodType, postData, successHandler, failureHand
                     window[success](res, cbParams);
             })
             .fail(function (res) {
+                if(res.statusText === 'abort') {
+                    return;
+                }      
                 if(hideErrorMsg !== "true" && hideErrorMsg !== true) {
                     if(res.responseText && res.responseText != "") {
                         showInfoWindow(res.responseText, res.statusText);

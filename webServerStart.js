@@ -8,10 +8,8 @@ var express = require('express')
     , http = require('http')
     , https = require("https")
     , underscore = require('underscore')
-    , config = require('./config/config.global.js')
     , logutils = require('./src/serverroot/utils/log.utils')
     , cluster = require('cluster')
-    , nodeWorkerCount = config.node_worker_count
     , axon = require('axon')
     , producerSock = axon.socket('push')
     , redisSub = require('./src/serverroot/web/core/redisSub')
@@ -26,6 +24,10 @@ var express = require('express')
     , discClient = require('./src/serverroot/common/discoveryclient.api')
     , jsonPath = require('JSONPath').eval
     ;
+
+var config = commonUtils.compareAndMergeDefaultConfig();
+var pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
+var nodeWorkerCount = config.node_worker_count;
 
 var server_port = (config.redis_server_port) ?
     config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
@@ -89,8 +91,6 @@ function initializeAppConfig (appObj)
         res.send(500, 'An unexpected error occurred!');
     });
 }
-
-var pkgList = null;
 
 function loadStaticFiles (pkgNameObj, callback)
 {
@@ -498,10 +498,7 @@ function clusterMasterInit (callback)
  */
 function clusterWorkerInit (callback)
 {
-    commonUtils.compareAndMergeDefaultConfig(function(err) {
-        pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
-        callback();
-    });
+    callback();
 }
 
 /* Start Main Server */

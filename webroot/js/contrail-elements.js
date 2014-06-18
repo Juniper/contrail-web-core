@@ -436,7 +436,7 @@
             self.html('<div class="row-fluid">\
                 <div class="span5">\
                     <label>'+options.leftTitle+'</label>\
-                    <select name="from" id="multiselect_from" class="span'+options.sizeLeft+'" size="8" multiple="multiple"></select>\
+                    <select name="from" id="multiselect_from" class="span'+options.sizeLeft+' height-150" size="8" multiple="multiple"></select>\
                 </div>\
                 <div class="span1">\
                     <br><br><br>\
@@ -445,7 +445,7 @@
                 </div>\
                 <div class="span5">\
                      <label>'+options.rightTitle+'</label>\
-                     <select name="to" id="multiselect_to" class="span'+options.sizeRight+'" size="8" multiple="multiple"></select>\
+                     <select name="to" id="multiselect_to" class="span'+options.sizeRight+' height-150" size="8" multiple="multiple"></select>\
                 </div>\
           </div>');
         };
@@ -641,7 +641,8 @@ function constructSelect2(self, defaultOption, args) {
         
         return {
             getAllData: function(){
-                return self.data('select2').opts.data;
+                if(self.data('select2') != null)
+                    return self.data('select2').opts.data;
             },
             getSelectedData: function() {
                 var selectedValue = self.select2('val'),

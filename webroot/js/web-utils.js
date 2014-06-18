@@ -228,11 +228,19 @@ var defColors = ['#1c638d', '#4DA3D5'];
                                 return data['parseFn'](response);
                             else
                                 return [response];
+                        },successCallback:function(response) {
+                            statsDatasource.setData(response);
+                            var statViewModel = new (function() {
+                                var self = this;
+                                self.toNetwork = ko.observable('');
+                                self.fromNetwork = ko.observable('');
+                            })();
+                            statViewModel.toNetwork(response[0]['toNetwork']);
+                            statViewModel.fromNetwork(response[0]['fromNetwork']);
+                            ko.applyBindings(statViewModel, statsElem[0]);
                         }
                     },
                 });
-                statsDatasource.refreshData();
-                statsElem.data('dataSource', statsDatasource);
             } else {
                 ko.applyBindings(data['viewModel'], statsElem[0]);
             }
@@ -426,11 +434,16 @@ var defColors = ['#1c638d', '#4DA3D5'];
                             }).done(function(result) {
                                 //There will be only one entry in response,look at 0th element as we are requesting for specific VN/VM
                                 var response = result;
-                                if(result['value'] != null)
+                                if(result['value'] != null && result['value'][0] != null) {
                                     response = result['value'][0];
-                                e.detailRow.find('.row-fluid.advancedDetails').html('<div><pre style="background-color:white">' + syntaxHighlight(response) + '</pre></div>');
-                                e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response)));
-                                $(grid).data('contrailGrid').adjustDetailRowHeight(dataItem['id']);
+                                    e.detailRow.find('.row-fluid.advancedDetails').html('<div><pre style="background-color:white">' + syntaxHighlight(response) + '</pre></div>');
+                                    e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response)));
+                                    $(grid).data('contrailGrid').adjustDetailRowHeight(dataItem['id']);
+                                } else {
+                                    $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>');
+                                }
+                            }).fail(function(){
+                                $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>'); 
                             });
                         } else
                             e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](rowData)));
@@ -1165,6 +1178,7 @@ function MenuHandler() {
                     var parentRootDir = parent['rootDir'];
                     if (parentRootDir != null && parent['view'] != null) {
                         loadViewResources(parent,currMenuObj['hash']);
+                        loadCssResources(parent,currMenuObj['hash']);
                     }
                 });
             }
@@ -1210,6 +1224,8 @@ function MenuHandler() {
         }
 
         function loadCssResources(menuObj,hash) {
+            if(menuObj['css'] == null)
+                return;
             if (!(menuObj['css'] instanceof Array)) {
                 menuObj['css'] = [menuObj['css']];
             }

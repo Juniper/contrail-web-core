@@ -4005,3 +4005,8 @@ td.td-actions a.td-action {
 	border: 1px solid #D8D8D8;
     box-shadow: none;
 }
+/* Style is to fix the height of the select element as it shown uneven height in firefox 
+*/
+.height-150 {
+    height : 150px !important;           
+}
