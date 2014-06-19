@@ -442,6 +442,10 @@ function getUserRoleByTenant (userObj, callback)
 
 function getUserRoleByAllTenants (username, password, tenantlist, callback)
 {
+    /* Treat all the user role as admin */
+    callback(global.STR_ROLE_ADMIN);
+    return;
+
     var tenantObjArr = [];
     if (null == tenantlist) {
         return null;
