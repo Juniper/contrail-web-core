@@ -11,7 +11,7 @@ FIVE_BACK='../../../../..'
 SIX_BACK='../../../../../..'
 
 #List all feature directories from where we need to run the test cases
-featureDirectories=(monitor/bgp monitor/tenant_network js config/vn)
+featureDirectories=(monitor/infra monitor/tenant_network js config/vn)
 
 if [ $1 = 'init' ] ; then
     ln -sf $FOUR_BACK/.jshintrc src/serverroot/web/api/.jshintrc

@@ -161,8 +161,8 @@ MAINFILE[0]=webroot/assets/jquery/js/jquery-1.8.3.min.js
 MAINFILE[1]=webroot/assets/jquery/js/jquery.xml2json.js
 MAINFILE[2]=webroot/assets/jquery/js/jquery.ba-bbq.min.js
 MAINFILE[3]=webroot/assets/jquery/js/jquery.timer.js
-MAINFILE[4]=webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
-MAINFILE[5]=webroot/assets/jquery-ui/js/jquery-ui.js
+MAINFILE[4]=webroot/assets/jquery-ui/js/jquery-ui.js
+MAINFILE[5]=webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
 MAINFILE[6]=webroot/assets/bootstrap/js/bootstrap.min.js
 
 MAINFILE[7]=webroot/assets/d3/js/d3.js
