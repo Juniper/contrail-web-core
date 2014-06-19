@@ -146,25 +146,55 @@ function doAjaxCall(targetUrl, methodType, postData, successHandler, failureHand
         if(isSet(timeout) && isNumber(timeout) && timeout > 0) {
         	config.timeout = timeout;
         }
-        $.ajax(config)
-            .success(function (res) {
-                configObj = $.extend({}, configObj, res);
-                if (typeof window[success] === "function")
-                    window[success](res, cbParams);
-            })
-            .fail(function (res) {
-                if(hideErrorMsg !== "true" && hideErrorMsg !== true) {
-                    if(res.responseText && res.responseText != "") {
-                        showInfoWindow(res.responseText, res.statusText);
-                    }
+
+        if(methodType === "POST") {
+            var parent_type = jsonPath(JSON.parse(postData), "$..parent_type");
+            if(null !== parent_type && false !== parent_type && 
+                parent_type.length == 1) {
+                parent_type = parent_type[0];
+                if(parent_type === "project" || 
+                    parent_type === "floating_ip_pool") {
+                    var fqn = jsonPath(JSON.parse(postData), "$.*.fq_name")[0];
+                    var projectUUId = 
+                        jsonPath(configObj, "$.projects[?(@.fq_name[0]=='" + fqn[0] + "' && @.fq_name[1]=='" + fqn[1] + "')]")[0].uuid;
+                    var getProject = {
+                        type:"GET",
+                        url:"/api/tenants/config/project/" + projectUUId + "?exclude_children=True&exclude_back_refs=True",
+                        abortOnNavigate:true
+                    };
+                    $.ajax(getProject)
+                        .success(function (res) {
+                            callAjax(config, success, failure, hideErrorMsg, cbParams);
+                        })
+                        .fail(function (res) {
+                            callAjax(config, success, failure, hideErrorMsg, cbParams);
+                        });
                 }
-                console.log("Error in getting/submitting data");
-                if (typeof window[failure] === "function")
-                    window[failure](res, cbParams);
-            });
+            }
+        } else {
+            callAjax(config, success, failure, hideErrorMsg, cbParams);
+        }
     }
     else 
     	return false;
+}
+
+function callAjax(config, success, failure, hideErrorMsg, cbParams) {
+    $.ajax(config)
+        .success(function (res) {
+            configObj = $.extend({}, configObj, res);
+            if (typeof window[success] === "function")
+                window[success](res, cbParams);
+        })
+        .fail(function (res) {
+            if(hideErrorMsg !== "true" && hideErrorMsg !== true) {
+                if(res.responseText && res.responseText != "") {
+                    showInfoWindow(res.responseText, res.statusText);
+                }
+            }
+            if (typeof window[failure] === "function")
+                window[failure](res, cbParams);
+        });
 }
 
 function toggleButtonStateByID(id, enable) {
@@ -946,6 +976,7 @@ cutils.isNumber = isNumber;
 cutils.isString = isString;
 cutils.pad = pad;
 cutils.doAjaxCall = doAjaxCall;
+cutils.callAjax = callAjax;
 cutils.formatPolicyRule = formatPolicyRule;
 cutils.policy_net_display = policy_net_display;
 cutils.policy_ports_display = policy_ports_display;
