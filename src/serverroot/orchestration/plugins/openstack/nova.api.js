@@ -49,14 +49,35 @@ function doNovaOpCb (reqUrl, apiProtoIP, tenantId, req, novaCallback, stopRetry,
 
     authApi.getTokenObj(req, tenantId, forceAuth, function(err, tokenObj) {
         if ((null != err) || (null == tokenObj) || (null == tokenObj.id)) {
-            if (stopRetry) {
-                console.log("We are done retrying for tenantId:" + tenantId +
-                            " with err:" + err);
-                commonUtils.redirectToLogout(req, req.res);
+            /* Try with default-tenant now */
+            var defTenant = req.session.def_token_used.tenant.name;
+            logutils.logger.debug("Token Get failed for tenant: " + tenantId +
+                                  ", now retrying with default tenant: " + defTenant);
+            if (tenantId != defTenant) {
+                authApi.getTokenObj(req, defTenant, forceAuth, function(err, tokenObj) {
+                    if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
+                        if (stopRetry) {
+                            console.log("We are done retrying for default tenantId:" + defTenant+
+                                        " with err:" + err);
+                            commonUtils.redirectToLogout(req, req.res);
+                        } else {
+                            console.log("We are about to retry for tenantId:" + tenantId);
+                            novaCallback(reqUrl, apiProtoIP, req, callback, true);
+                        }
+                    } else {
+                        callback(err, tokenObj);
+                    }
+                });
             } else {
-                /* Retry once again */
-                console.log("We are about to retry for tenantId:" + tenantId);
-                novaCallback(reqUrl, apiProtoIP, req, callback, true);
+                if (stopRetry) {
+                    console.log("We are done retrying for tenantId:" + tenantId +
+                                " with err:" + err);
+                    commonUtils.redirectToLogout(req, req.res);
+                } else {
+                    /* Retry once again */
+                    console.log("We are about to retry for tenantId:" + tenantId);
+                    novaCallback(reqUrl, apiProtoIP, req, callback, true);
+                }
             }
         } else {
             console.log("doNovaOpCb() success with tenantId:" + tenantId);
@@ -213,15 +234,21 @@ function getVMStatsByProject (projUUID, req, callback)
     var tenantStr = getTenantIdByReqCookie(req);
     var novaCallObjArr = [];
     var reqUrl = null;
+    var tenantId = null;
 
     authApi.getTokenObj(req, tenantStr, true, function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
+        /*
             logutils.logger.error("Error in getting token object for tenant: " +
                                   tenantStr);
             commonUtils.redirectToLogout(req, req.res);
             return;
+         */
+            tenantId = req.session.def_token_used.tenant.id;
+        } else {
+            tenantId = data['tenant']['id'];
         }
-        var tenantId = data['tenant']['id'];
+
         oStack.getServiceAPIVersionByReqObj(req,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
                                             function(apiVer) {
@@ -262,15 +289,20 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
     var tenantStr = getTenantIdByReqCookie(req);
     var novaCallObjArr = [];
     var reqUrl = null;
+    var tenantId = null;
 
     authApi.getTokenObj(req, tenantStr, true, function(err, data) {
         if ((null != err)  || (null == data) || (null == data['tenant'])) {
+        /*
             logutils.logger.error("Error in getting token object for tenant: " +
                                   tenantStr);
             commonUtils.redirectToLogout(req, req.res);
             return;
+         */
+            tenantId = req.session.def_token_used.tenant.id;
+        } else {
+            tenantId = data['tenant']['id'];
         }
-        var tenantId = data['tenant']['id'];
         var vmRefsCnt = vmRefs.length;
         oStack.getServiceAPIVersionByReqObj(req,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
@@ -327,6 +359,7 @@ function launchVNC (request, callback)
     var projectId = null;
     var vmId = null;
     var requestParams = url.parse(request.url, true);
+    var projectId = null;
 
     authApi.getTokenObj(request, requestParams.query.project_id,
                         true, function (error, data) {
@@ -340,11 +373,15 @@ function launchVNC (request, callback)
                                   " With session: " + request.session.id);
         }
         if ((null != error) || (null == data) || (null == data.tenant)) {
+        /*
             commonUtils.redirectToLogout(request, request.res);
             return;
+         */
+            projectId = request.session.def_token_used.tenant.id;
+        } else {
+            projectId = data['tenant']['id'];
         }
 
-        projectId = data.tenant.id;
         /* Now create the final req */
         oStack.getServiceAPIVersionByReqObj(request,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
@@ -419,7 +456,8 @@ function novaApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex,
 }
 
 function getFlavors (req, callback)
-{   
+{
+    var tenantId = null;
     var tenantStr = getTenantIdByReqCookie(req);
     if (null == tenantStr) {
         /* Just return as we will be redirected to login page */
@@ -427,11 +465,15 @@ function getFlavors (req, callback)
     }
     authApi.getTokenObj(req, tenantStr, true, function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
+        /*
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
             commonUtils.redirectToLogout(req, req.res);
             return;
+         */
+            tenantId = req.session.def_token_used.tenant.id;
+        } else {
+            tenantId = data['tenant']['id'];
         }
-        var tenantId = data['tenant']['id'];
         oStack.getServiceAPIVersionByReqObj(req,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
                                             function(apiVer) {

@@ -47,14 +47,35 @@ function doGlanceOpCb (reqUrl, apiProtoIP, tenantId, req, glanceCallback,
 
     authApi.getTokenObj(req, tenantId, forceAuth, function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
-            if (stopRetry) {
-                console.log("We are done retrying for tenantId:" + tenantId +
-                            " with err:" + err);
-                commonUtils.redirectToLogout(req, req.res);
+            /* Try with default-tenant now */
+            var defTenant = req.session.def_token_used.tenant.name;
+            logutils.logger.debug("Token Get failed for tenant: " + tenantId + 
+                                  ", now retrying with default tenant: " + defTenant);
+            if (tenantId != defTenant) {
+                authApi.getTokenObj(req, defTenant, forceAuth, function(err, tokenObj) {
+                    if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
+                        if (stopRetry) {
+                            console.log("We are done retrying for default tenantId:" + defTenant +
+                                        " with err:" + err);
+                            commonUtils.redirectToLogout(req, req.res);
+                        } else {
+                            console.log("We are about to retry for tenantId:" + tenantId);
+                            glanceCallback(reqUrl, apiProtoIP, req, callback, true);
+                        }
+                    } else {
+                        callback(err, tokenObj);
+                    }
+                });
             } else {
-                /* Retry once again */
-                console.log("We are about to retry for tenantId:" + tenantId);
-                glanceCallback(reqUrl, apiProtoIP, req, callback, true);
+                if (stopRetry) {
+                    console.log("We are done retrying for tenantId:" + tenantId +
+                                " with err:" + err);
+                    commonUtils.redirectToLogout(req, req.res);
+                } else {
+                    /* Retry once again */
+                    console.log("We are about to retry for tenantId:" + tenantId);
+                    glanceCallback(reqUrl, apiProtoIP, req, callback, true);
+                }
             }
         } else {
             console.log("doGlanceOpCb() success with tenantId:" + tenantId);
