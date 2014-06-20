@@ -146,28 +146,80 @@ function doAjaxCall(targetUrl, methodType, postData, successHandler, failureHand
         if(isSet(timeout) && isNumber(timeout) && timeout > 0) {
         	config.timeout = timeout;
         }
-        $.ajax(config)
-            .success(function (res) {
-                configObj = $.extend({}, configObj, res);
-                if (typeof window[success] === "function")
-                    window[success](res, cbParams);
-            })
-            .fail(function (res) {
-                if(res.statusText === 'abort') {
-                    return;
-                }      
-                if(hideErrorMsg !== "true" && hideErrorMsg !== true) {
-                    if(res.responseText && res.responseText != "") {
-                        showInfoWindow(res.responseText, res.statusText);
-                    }
+
+        if(methodType === "POST") {
+            var jsonPostData = JSON.parse(data);
+            var projectUUId = "";
+            var parent_type = jsonPath(jsonPostData, "$..parent_type");
+            if(null !== parent_type && false !== parent_type && 
+                parent_type.length == 1) {
+                parent_type = parent_type[0];
+                if(parent_type === "project") {
+                    var fqn = jsonPath(jsonPostData, "$.*..fq_name")[0];
+                    projectUUId = 
+                        jsonPath(configObj, "$.projects[?(@.fq_name[0]=='" + fqn[0] + "' && @.fq_name[1]=='" + fqn[1] + "')]")[0].uuid;
+                    var dataType = jsonPath(jsonPostData, "$.*")[0];
+                    dataType["parent_uuid"] = projectUUId;
+                } else if(parent_type === "domain") {
+                    var fqn = jsonPath(jsonPostData, "$.*.fq_name")[0];
+                    var domainUUId = 
+                        jsonPath(configObj, "$.domains[?(@.fq_name[0]=='" + fqn[0] + "')]")[0].uuid;
+                    var dataType = jsonPath(jsonPostData, "$.*")[0];
+                    dataType["parent_uuid"] = domainUUId;
+                } else if(parent_type === "floating-ip-pool") {
+                    var fqn = jsonPath(jsonPostData, "$.*.fq_name")[0];
+                    var fipoolUUId = 
+                        jsonPath(configObj, "$.floating-ip-pools[?(@.to[0]=='" + fqn[0] + "' && @.to[1]=='" + fqn[1] + 
+                            "' && @.to[2]=='" + fqn[2] + "')]")[0].uuid;
+                    var dataType = jsonPath(jsonPostData, "$.*")[0];
+                    dataType["parent_uuid"] = fipoolUUId;
                 }
-                console.log("Error in getting/submitting data");
-                if (typeof window[failure] === "function")
-                    window[failure](res, cbParams);
-            });
+                data = JSON.stringify(jsonPostData);
+                config.data = data;
+
+                var getProject = {
+                    type:"GET",
+                    abortOnNavigate:true
+                };
+                if(parent_type === "project" || parent_type === "floating-ip-pool") {
+                    getProject["url"] = "/api/tenants/config/project/" + projectUUId + 
+                        "?exclude_children=True&exclude_back_refs=True";
+                }
+                $.ajax(getProject)
+                    .success(function (res) {
+                        callAjax(config, success, failure, hideErrorMsg, cbParams);
+                    })
+                    .fail(function (res) {
+                        callAjax(config, success, failure, hideErrorMsg, cbParams);
+                    });
+            } else {
+                callAjax(config, success, failure, hideErrorMsg, cbParams);
+            }
+        } else {
+            callAjax(config, success, failure, hideErrorMsg, cbParams);
+        }
     }
-    else 
+    else {
     	return false;
+    }
+}
+
+function callAjax(config, success, failure, hideErrorMsg, cbParams) {
+    $.ajax(config)
+        .success(function (res) {
+            configObj = $.extend({}, configObj, res);
+            if (typeof window[success] === "function")
+                window[success](res, cbParams);
+        })
+        .fail(function (res) {
+            if(hideErrorMsg !== "true" && hideErrorMsg !== true) {
+                if(res.responseText && res.responseText != "") {
+                    showInfoWindow(res.responseText, res.statusText);
+                }
+            }
+            if (typeof window[failure] === "function")
+                window[failure](res, cbParams);
+        });
 }
 
 function toggleButtonStateByID(id, enable) {
@@ -707,6 +759,43 @@ function getSelectedProjectObjNew (projectSwitcherId, elementType) {
     return firstProjectValue;
 }
 
+function getSelectedDomainProjectObjNew (filterSwitcherId, elementType, filterType) {
+    var firstFilterName = "", firstFilterValue = "";
+    var cookiedFilter = getCookie(filterType);
+    var dataSrc = $("#" + filterSwitcherId).data(elementType).getAllData()[0];
+    if (cookiedFilter === false || cookiedFilter === "null" || cookiedFilter === "undefined") {
+        if(elementType === "contrailDropdown") {
+            firstFilterName = dataSrc ? dataSrc.text : "";
+            firstFilterValue = dataSrc ? dataSrc.value : "";
+        }
+    } else {
+        if(elementType === "contrailDropdown") {
+            for (var i = 0; i < $("#" + filterSwitcherId).data(elementType).getAllData().length; i++) {
+                var pname = $("#" + filterSwitcherId).data(elementType).getAllData()[i].text;
+                if (pname === cookiedFilter) {
+                    return $("#" + filterSwitcherId).data(elementType).getAllData()[i].value;
+                }
+            }
+            firstFilterName = dataSrc ? dataSrc.text : "";
+            firstFilterValue = dataSrc ? dataSrc.value : "";
+        }
+    }
+    setCookie(filterType, firstFilterName);
+    return firstFilterValue;
+}
+
+function setDomainProjectEmptyMsg(filterSwitcherId, filterType) {
+        var filter = filterType === 'project'? 'Projects' : 'Domains';
+        var emptyObj = [{text:'No '+ filter +' found',value:"Message"}];
+        $("#" + filterSwitcherId).data("contrailDropdown").setData(emptyObj);
+        $("#" + filterSwitcherId).data("contrailDropdown").text(emptyObj[0].text);
+        $("#" + filterSwitcherId).data("contrailDropdown").enable(false);
+}
+
+function emptyCookie(filterType) {
+    setCookie(filterType, "");
+}
+
 function fetchDomains(successCB, failureCB) {
     doAjaxCall("/api/tenants/config/domains", "GET", null, successCB, (failureCB) ? failureCB : "errorInFetchingDomains", null, null);
 };
@@ -941,6 +1030,7 @@ function scrollUp(contWindow,div,boolCollapse){
     }
 }
 
+
 cutils.getCookie = getCookie;
 cutils.setCookie = setCookie;
 cutils.isSet = isSet;
@@ -949,6 +1039,7 @@ cutils.isNumber = isNumber;
 cutils.isString = isString;
 cutils.pad = pad;
 cutils.doAjaxCall = doAjaxCall;
+cutils.callAjax = callAjax;
 cutils.formatPolicyRule = formatPolicyRule;
 cutils.policy_net_display = policy_net_display;
 cutils.policy_ports_display = policy_ports_display;
@@ -989,3 +1080,6 @@ cutils.deleteFailure = deleteFailure;
 cutils.checkSystemProject = checkSystemProject;
 cutils.scrollUp = scrollUp;
 cutils.getSelectedProjectObjNew = getSelectedProjectObjNew;
+cutils.getSelectedDomainProjectObjNew = getSelectedDomainProjectObjNew;
+cutils.setDomainProjectEmptyMsg = setDomainProjectEmptyMsg;
+cutils.emptyCookie = emptyCookie;
