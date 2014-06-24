@@ -269,10 +269,14 @@
                             <span> {{#getRelativeTime timeStamp}}{{/getRelativeTime}} </span>
                         </div>
                     {{/typeof}}
-                    {{#IfCompare nName null }}
+                    {{#IfCompare name null operator="=="}}
                         <div class="text"> {{msg}}</div>                        
                     {{else}}
-                        <div class="text"> {{nName}} , {{pName}} , {{msg}}</div>
+                        {{#IfCompare link null operator="!="}}
+                            <div class="text"> <span class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}})>{{name}}</span> , {{type}} , {{msg}}</div>
+                        {{else}}
+                            <div class="text"> {{name}} , {{type}} , {{msg}}</div>
+                        {{/IfCompare}}
                     {{/IfCompare}}
                 </div>
             </div>
@@ -280,7 +284,7 @@
                 <p>No Alerts found.</p>
         {{/each}}
         {{#IfCompare this.length 0 operator=">"}}
-            <div id="moreAlertsLink" style="cursor:pointer;"><a>More</a></div>
+            <div id="moreAlertsLink" style="cursor:pointer;margin-left:5px"><a>More</a></div>
         {{/IfCompare}}
     </ul>
 </script>

@@ -4010,3 +4010,7 @@ td.td-actions a.td-action {
 .height-150 {
     height : 150px !important;           
 }
+.hyperlink {
+    color:#3182bd;
+    cursor:pointer;
+}

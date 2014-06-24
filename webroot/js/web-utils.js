@@ -53,6 +53,7 @@ var infraAlertMsgs = {
         'IFMAP_DOWN'            : "Ifmap Connection down",
         'PROCESS_DOWN'          : "{0:Process;Processes} down",
         'PROCESS_STOPPED'       : "{0} stopped",
+        'PROCESS_DOWN_MSG'      : "{0} down",
         'PROCESS_COREDUMP'      : "{0:core dump;core dumps}",
         'PROCESS_RESTART'       : "{0:restart;restarts}"
     }
