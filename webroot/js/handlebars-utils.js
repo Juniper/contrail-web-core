@@ -93,6 +93,10 @@ Handlebars.registerHelper('eachCustomIncrement', function(context,loopstart,incr
     return ret;
 });
 
+Handlebars.registerHelper('jsonStringify', function(jsonObj) {
+    return JSON.stringify(jsonObj);
+});
+
 Handlebars.registerHelper('getValue', function(context,key,options) {
     if(typeof(context) == 'string') {
         try{
