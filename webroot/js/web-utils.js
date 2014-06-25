@@ -2516,7 +2516,7 @@ function toggleOverallNodeStatus(selector) {
  */
 function getValueByJsonPath(obj,pathStr,defValue) {
     try {
-    	var currObj = $.extend(true,{},obj);
+    	var currObj = obj;
         var pathArr = pathStr.split(';');
         var arrLength = pathArr.length;
         for(var i=0;i<arrLength;i++) {
@@ -2525,7 +2525,12 @@ function getValueByJsonPath(obj,pathStr,defValue) {
             } else
                 return defValue;
         }
-        return currObj;
+        if(currObj instanceof Array)
+            return $.extend(true,[],currObj);
+        else if(typeof(currObj) == "object")
+            return $.extend(true,{},currObj);
+        else
+            return currObj;
     } catch(e) {
         return defValue;
     }
