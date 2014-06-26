@@ -212,6 +212,9 @@ function callAjax(config, success, failure, hideErrorMsg, cbParams) {
                 window[success](res, cbParams);
         })
         .fail(function (res) {
+            if(res.statusText === 'abort') {
+                return;
+            }         
             if(hideErrorMsg !== "true" && hideErrorMsg !== true) {
                 if(res.responseText && res.responseText != "") {
                     showInfoWindow(res.responseText, res.statusText);
