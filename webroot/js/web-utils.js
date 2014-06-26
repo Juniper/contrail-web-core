@@ -2345,3 +2345,18 @@ function uniqueArray(arr) {
     });
     return retArr;
 }
+
+function showAdvancedDetails(){
+    $('#divBasic').hide();
+    $('#divStatus').hide();
+    $('#divAdvanced').show();
+    $('#divAdvanced').parents('.widget-box').find('.widget-header h4 .subtitle').remove();
+    $('#divAdvanced').parents('.widget-box').find('.widget-header h4').append('<span class="subtitle">(Advanced)</span>')
+}
+
+function showBasicDetails(){
+    $('#divAdvanced').hide();
+    $('#divStatus').hide();
+    $('#divBasic').show();
+    $('#divAdvanced').parents('.widget-box').find('.widget-header h4 .subtitle').remove();
+}
