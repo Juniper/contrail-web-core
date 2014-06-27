@@ -236,5 +236,19 @@ config.logs.level = 'debug';
 ******************************************************************************/
 config.getDomainProjectsFromApiServer = false;
 
+/******************************************************************************
+ * Boolean flag enableFipProjectsFromApiServer indicates wheather floating ip 
+ * pool list should be retrieved across all the projects or on a specific
+ * project.
+ * If Set
+ *      - true, floating ip pool list should be retrieved only from the current
+ *          project
+ *      - false, floating ip pool list should be retrieved across all the
+ *          projects
+ * Default: false
+ *
+******************************************************************************/
+config.enableFipProjectsFromApiServer = false;
+
 // Export this as a module.
 module.exports = config;
