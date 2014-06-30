@@ -548,3 +548,26 @@
             </div><!--/span-->
     </div><!-- /widget-main --> 
 </script>
+
+<script type="text/x-handlebars-template" id="chart-settings">
+    <div class="chart-settings">
+        <div class="chart-settings-wrapper hide">
+            <div class="chart-settings-expand">
+                {{# each this}}
+                    <div style="display:inline-block;">
+                        <label style="margin-bottom:0px;display:inline-block;font-size:11px;">{{this.lbl}} : </label><div id="{{this.id}}" style="font-size:11px;"></div>
+                    </div>
+                    {{#IfCompare @index ../this.length operator='<'}}
+                        |
+                    {{/IfCompare}} 
+                {{/each}}
+            </div>
+            <div style="background-color: white;margin-left: 70px; margin-right: 20px;" class="upArrow">
+                <img src="/img/upArrow.png"></img>
+            </div>
+        </div>
+       <div class="chart-settings-hide">
+            <img src="/img/downArrow.png"></img>
+       </div>
+    </div>
+</script>
