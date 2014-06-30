@@ -2,7 +2,7 @@
 # Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
 #
 
-THIRD_PARTY='../third_party'
+THIRD_PARTY='../contrail-webui-third-party'
 
 rm -rf node_modules
 mkdir -p node_modules

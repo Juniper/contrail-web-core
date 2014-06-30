@@ -4,7 +4,7 @@
 # Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
 #
 
-THIRD_PARTY='../third_party'
+THIRD_PARTY='../contrail-webui-third-party'
 
 #Start - Copy d3/vnd3 files from $THIRD_PARTY
 rm -rf webroot/assets/d3

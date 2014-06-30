@@ -5,7 +5,7 @@
 REPORTER = dot
 WEBUISERVER = contrail-web-core
 WEBUICLIENT = contrail-web-controller
-THIRDPARTY = third_party
+WEBUITHIRDPARTY = contrail-webui-third-party
 
 $(WEBUISERVER):
 	if [ ! -d ../$(WEBUISERVER) ]; then git clone git@github.com:Juniper/contrail-web-core.git ../$(WEBUISERVER); else cd ../$(WEBUISERVER) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
@@ -13,10 +13,10 @@ $(WEBUISERVER):
 $(WEBUICLIENT):
 	if [ ! -d ../$(WEBUICLIENT) ]; then git clone git@github.com:Juniper/contrail-web-controller.git ../$(WEBUICLIENT); else cd ../$(WEBUICLIENT) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
-$(THIRDPARTY):
-	if [ ! -d ../$(THIRDPARTY) ]; then git clone git@github.com:Juniper/contrail-third-party.git ../$(THIRDPARTY); else cd ../$(THIRDPARTY) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
+$(WEBUITHIRDPARTY):
+	if [ ! -d ../$(WEBUITHIRDPARTY) ]; then git clone git@github.com:Juniper/contrail-webui-third-party.git ../$(WEBUITHIRDPARTY); else cd ../$(WEBUITHIRDPARTY) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
-repos: $(WEBUISERVER) $(WEBUICLIENT) $(THIRDPARTY)
+repos: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY)
 
 fetch-pkgs-prod:
 	make clean
