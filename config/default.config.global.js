@@ -224,5 +224,16 @@ config.qe.enable_stat_queries = false;
 config.logs = {};
 config.logs.level = 'debug';
 
+/******************************************************************************
+ * Boolean flag getDomainProjectsFromApiServer indicates wheather the project
+ * list should come from API Server or Identity Manager.
+ * If Set 
+ *      - true, then project list will come from API Server
+ *      - false, then project list will come from Identity Manager
+ * Default: false
+ *
+******************************************************************************/
+config.getDomainProjectsFromApiServer = false;
+
 // Export this as a module.
 module.exports = config;
