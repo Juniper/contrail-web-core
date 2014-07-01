@@ -172,6 +172,9 @@ function infraMonitorClass() {
             $(currTabContainer).show();
             //Trigger refresh on svg charts
             $(currTabContainer).find('svg').trigger('refresh');
+            if($(currTabContainer).find('svg').length > 0){
+                $(currTabContainer).find('svg').resize();
+            }
         });
 
         //When all node details are fetched,upedate alerts & info boxes
