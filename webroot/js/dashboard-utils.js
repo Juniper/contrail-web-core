@@ -40,17 +40,12 @@ function infraMonitorClass() {
          var infoListTemplate = contrail.getTemplate4Id("infoList-template");
          var alertTemplate=contrail.getTemplate4Id("alerts-template");
          var dashboardDataArr = [];
-         var alerts_fatal=[],alerts_stop=[],alerts_nodes=[],alerts_core=[],alerts_shutdown=[];
          var nodeAlerts=self.getNodeAlerts(viewModels);
          $.each(viewModels,function(idx,currViewModel) {
              dashboardDataArr = dashboardDataArr.concat(currViewModel.data());
          });
-         for(var i=0;i<nodeAlerts.length;i++){
-             alerts_nodes.push({nName:nodeAlerts[i]['name'],pName:nodeAlerts[i]['type'],sevLevel:nodeAlerts[i]['sevLevel'],
-                timeStamp:nodeAlerts[i]['timeStamp'],msg:nodeAlerts[i]['msg']});
-         }
          var processAlerts = self.getAllProcessAlerts(viewModels);
-         var allAlerts = alerts_nodes.concat(processAlerts);
+         var allAlerts = nodeAlerts.concat(processAlerts);
          allAlerts.sort(dashboardUtils.sortInfraAlerts);
          var dashboardCF = crossfilter(dashboardDataArr);
          var nameDimension = dashboardCF.dimension(function(d) { return d.name });

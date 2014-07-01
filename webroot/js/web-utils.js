@@ -53,6 +53,7 @@ var infraAlertMsgs = {
         'IFMAP_DOWN'            : "Ifmap Connection down",
         'PROCESS_DOWN'          : "{0:Process;Processes} down",
         'PROCESS_STOPPED'       : "{0} stopped",
+        'PROCESS_DOWN_MSG'      : "{0} down",
         'PROCESS_COREDUMP'      : "{0:core dump;core dumps}",
         'PROCESS_RESTART'       : "{0:restart;restarts}"
     }
@@ -1871,29 +1872,31 @@ function loadAlertsContent(){
                 columnHeader: {
                     columns:[ 
                         {
-                            field:'nName',
+                            field:'name',
                             name:'Node',
                             minWidth:150,
                             formatter: function(r,c,v,cd,dc){
-                                if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['nName']) != "undefined")
-                                    return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['nName']+"</span>";
+                                if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['name']) != "undefined")
+                                    return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['name']+"</span>";
                                 else
-                                    return dc['nName'];
-                            }
+                                    return dc['name'];
+                            },
+                            events: {
+                                onClick: function(e,dc) {
+                                    var nodeType = dc['pName'];
+                                    if(dc['link'] != null)
+                                    layoutHandler.setURLHashObj(dc['link']);
+                                }
+                            },
+                            cssClass: 'cell-hyperlink-blue',
                         },{
-                            field:'pName',
+                            field:'type',
                             name:'Process',
                             minWidth:100
                         },{
                             field:'msg',
                             name:'Status',
                             minWidth:200,
-                            formatter: function(r,c,v,cd,dc) {
-                                if(typeof(dc['popupMsg']) != "undefined")
-                                    return dc['popupMsg'];
-                                else
-                                    return dc['msg'];
-                            }
                         },{
                             field:'timeStamp',
                             name:'Time',
