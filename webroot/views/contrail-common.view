@@ -242,7 +242,7 @@
                 <div class="body">
                     <div class="row-fluid">
                         <div class="name span9 break-and-wrap-word">
-                            <a style="cursor:default"> {{moduleId}} </a>
+                            <span class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}})> {{moduleId}} </span>
                             </div>
                             <div class="time span3">
                                 <i class="icon-time" style="cursor:default"></i>

@@ -132,6 +132,14 @@ function infraMonitorClass() {
                         obj['moduleId'] = contrail.format('{0}',obj['ModuleId']);
                     else
                         obj['moduleId'] = contrail.format('{0} ({1})',obj['ModuleId'],obj['Source']);
+                    if($.inArray(obj['ModuleId'],[UVEModuleIds['DISCOVERY_SERVICE'],UVEModuleIds['SERVICE_MONITOR'],UVEModuleIds['SCHEMA'],UVEModuleIds['CONFIG_NODE']]) != -1)
+                        obj['link'] = {p:'mon_infra_config',q:{node:obj['Source'],tab:''}};
+                    else if($.inArray(obj['ModuleId'],[UVEModuleIds['COLLECTOR'],UVEModuleIds['OPSERVER'],UVEModuleIds['QUERYENGINE']],obj['ModuleId']) != -1)
+                        obj['link'] = {p:'mon_infra_analytics',q:{node:obj['Source'],tab:''}};
+                    else if($.inArray(obj['ModuleId'],[UVEModuleIds['VROUTER_AGENT']]) != -1)
+                        obj['link'] = {p:'mon_infra_vrouter',q:{node:obj['Source'],tab:''}};
+                    else if($.inArray(obj['ModuleId'],[UVEModuleIds['CONTROLNODE']]) != -1)
+                        obj['link'] = {p:'mon_infra_control',q:{node:obj['Source'],tab:''}};
                     return obj;
                 });
                 deferredObj.resolve(retArr);
