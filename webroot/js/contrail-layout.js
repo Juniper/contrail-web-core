@@ -54,11 +54,10 @@ function onClickSidebarCollapse() {
 }
 
 function enableSearchAhead() {
-    $('#nav-search-input').typeahead({
+    $('#nav-search-input').contrailAutoComplete({
         source:siteMapSearchStrings,
-        updater:function (item) {
-            $('#nav-search-input').focus();
-            return item;
+        select: function( event, ui ) {
+        	searchSiteMap();
         }
     });
 }
