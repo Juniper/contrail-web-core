@@ -348,6 +348,7 @@ body.navbar-fixed {
   color: #599AC9;
   font-size: 14px;
   line-height: 24px;
+  cursor: default;
 }
 /* Sidebar */
 #sidebar {
