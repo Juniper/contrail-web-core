@@ -7,8 +7,8 @@
        file
    -->
   <require>
-      <define>config</define>
-      <path>../../../../config/config.global</path>
+      <define>parseJobsReq</define>
+      <path>../../common/parseJobsRequire</path>
   </require>
   <!-- Define Job Names and the corresponding callback -->
 </jobLists>

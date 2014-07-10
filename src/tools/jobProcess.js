@@ -73,7 +73,7 @@ function parseJobListFile (result, fileToGen, cb)
   jobCbStr += "\n";
   jobCbStr += "\n";
   jobCbStr += "\nvar defMaxActiveJobs = 10;";
-  jobCbStr += "\nvar maxActiveJobs = config.maxActiveJobs || defMaxActiveJobs;\n";
+  jobCbStr += "\nvar maxActiveJobs = parseJobsReq.config.maxActiveJobs || defMaxActiveJobs;\n";
   jobCbStr += "\n";
 
   jobChannel += "\n  /* Publish the data on pubChannel And Save the data key as \n";
@@ -87,11 +87,11 @@ function parseJobListFile (result, fileToGen, cb)
     len = itemList.length;
   }
   for (var i = 0; i < len; i++) {
-    jobCbStr +=   "\n  jobsApi.jobs.process('";
+    jobCbStr +=   "\n  parseJobsReq.jobsApi.jobs.process('";
     jobCbStr += itemList[i]['jobName'] + "', maxActiveJobs, function(job, done) {";
     jobCbStr += jobChannel;
     jobCbStr += "\n";
-    jobCbStr += "    var jobStartTime = commonUtils.getCurrentTimestamp();\n";
+    jobCbStr += "    var jobStartTime = parseJobsReq.commonUtils.getCurrentTimestamp();\n";
     jobCbStr += "    job.data['jobStartTime'] = jobStartTime;\n";
     jobCbStr += "    jobsProcess." + itemList[i]['callback'] + "(\n";
     jobCbStr += "        job.data.taskData.pubChannel,\n";
@@ -100,11 +100,11 @@ function parseJobListFile (result, fileToGen, cb)
     jobCbStr += "\n  });\n";
     if (itemList[i]['requireJob']) {
         dependFound = true;
-        jobDependStr += "    jobsApi.jobListenerReadyQEvent.on(" +
+        jobDependStr += "    parseJobsReq.jobsApi.jobListenerReadyQEvent.on(" +
             "'" + itemList[i]['jobName'] + '@' + itemList[i]['requireJob'] + "'" + ",\n" +
             "       function(dependData, pubChannel, saveChannelKey, done) {\n";
         jobDependStr += "       var storedData =" +
-            "jobsApi.getDataFromStoreQ(pubChannel);\n";
+            "parseJobsReq.jobsApi.getDataFromStoreQ(pubChannel);\n";
         jobDependStr += "       /* Now call the API to do the main work */\n";
         jobDependStr += "       jobsProcess.mainJob" + itemList[i]['callback'] + "(\n" +
                         "           pubChannel, saveChannelKey, dependData, storedData.data," +
