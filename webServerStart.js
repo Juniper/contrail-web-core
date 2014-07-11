@@ -26,11 +26,13 @@ var express = require('express')
     , os = require('os')
     , commonUtils = require('./src/serverroot/utils/common.utils')
     , discClient = require('./src/serverroot/common/discoveryclient.api')
+    , assert = require('assert')
     , jsonPath = require('JSONPath').eval
     ;
 
 var config = commonUtils.compareAndMergeDefaultConfig();
 var pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
+assert(pkgList);
 var nodeWorkerCount = config.node_worker_count;
 
 var server_port = (config.redis_server_port) ?
@@ -99,18 +101,12 @@ function initializeAppConfig (appObj)
 function loadStaticFiles (pkgNameObj, callback)
 {
     var app     = pkgNameObj['app'];
-    var pkgName = pkgNameObj['pkgName'];
 
-    app.use(express.static(path.join(process.cwd(), 'webroot'),
-                           {maxAge: 3600*24*3*1000}));
-    if ((null == config.featurePkg[pkgName]) || (null == config.featurePkg[pkgName]['path'])) {
-        callback(null);
-        return;
-    }
     /* First register core webroot directory */
-    var dirPath = path.join(config.featurePkg[pkgName]['path'], 'webroot');
+    var dirPath = path.join(pkgNameObj['pkgDir'], 'webroot');
     fs.exists(dirPath, function(exists) {
         if (exists) {
+            logutils.logger.debug("Registering Static Directory: " + dirPath);
             app.use(express.static(dirPath, {maxAge: 3600*24*3*1000}));
             callback(null);
         }
@@ -119,11 +115,10 @@ function loadStaticFiles (pkgNameObj, callback)
 
 function registerStaticFiles (app)
 {
-    var pkgNameLists = jsonPath(pkgList, "$..name[0]");
-    var pkgNameListsLen = pkgNameLists.length;
     var staticFileDirLists = [];
+    var pkgNameListsLen = pkgList.length;
     for (var i = 0; i < pkgNameListsLen; i++) {
-        staticFileDirLists.push({'app': app, 'pkgName': pkgNameLists[i]});
+        staticFileDirLists.push({'app': app, 'pkgDir': pkgList[i]['dirPath']});
     }
     async.map(staticFileDirLists, loadStaticFiles, function(err) {
     });
@@ -168,22 +163,18 @@ function registerSessionDeleteEvent ()
     });
 }
 
-function getDestPathByPkgPathURL (destPath)
-{
-    var destArrPath = destPath.split(':');
-    if (destArrPath.length > 1) {
-        destPath = config.featurePkg[destArrPath[0]]['path'] + '/' + destArrPath[1];
-    }
-    return destPath;
-}
-
 function loadAllFeatureURLs (myApp)
 {
-    var parseURLData = jsonPath(pkgList, "$..parseURL[0]");
-    var parseURLDataLen = parseURLData.length;
-    for (var i = 0; i < parseURLDataLen; i++) {
-        destPath = getDestPathByPkgPathURL(parseURLData[i]['output'][0]);
-        require(destPath).registerURLsToApp(myApp);
+    var pkgListLen = pkgList.length;
+    for (var i = 0; i < pkgListLen; i++) {
+        if (pkgList[i]['parseURL.xml']) {
+            var urlListLen = pkgList[i]['parseURL.xml'].length;
+            for (var j = 0; j < urlListLen; j++) {
+                logutils.logger.debug("Registered URLs to APP :" +
+                                      pkgList[i]['parseURL.xml'][j]);
+                require(pkgList[i]['parseURL.xml'][j]).registerURLsToApp(myApp);
+            }
+        }
     }
     return;
 }
@@ -274,11 +265,16 @@ function addClusterEventListener ()
 
 function registerFeatureLists ()
 {
-    var featureList = jsonPath(pkgList, "$..featureList[0]");
-    var featureListLen = featureList.length;
-    for (var i = 0; i < featureListLen; i++) {
-        destPath = getDestPathByPkgPathURL(featureList[i]['output'][0]);
-        require(destPath).registerFeature();
+    var pkgListLen = pkgList.length;
+    for (var i = 0; i < pkgListLen; i++) {
+        if (pkgList[i]['featureList.xml']) {
+            var featureLen = pkgList[i]['featureList.xml'].length;
+            for (var j = 0; j < featureLen; j++) {
+                logutils.logger.debug("Registering feature Lists: " +
+                                      pkgList[i]['featureList.xml'][j]);
+                require(pkgList[i]['featureList.xml'][j]).registerFeature();
+            }
+        }
     }
     return;
 }
