@@ -23,12 +23,17 @@ var commonUtils = module.exports,
     async = require('async'),
     appErrors = require('../errors/app.errors.js'),
     downloadPath = '/var/log',
+    dir = require('node-dir'),
+    xml2js = require('xml2js'),
+    js2xml = require('data2xml')(),
     contrailPath = '/contrail';
 if (!module.parent) {
     logutils.logger.warn(util.format(
                          messages.warn.invalid_mod_call, module.filename));
     process.exit(1);
 }
+
+var parser = new xml2js.Parser();
 
 var redisClientCreateEvent = new eventEmitter();
 
@@ -1378,6 +1383,119 @@ function compareAndMergeFiles (fileToCmp, fileWithCmp, startCmpStr, splitter)
 */
 }
 
+function getAllJsons (menuDir, callback)
+{
+    var match = /menu.xml/;
+    dir.readFiles(menuDir, {
+        match: match, recursive: false}, 
+        function(err, content, filename, next) {
+        if (err) {
+            logutils.logger.error('Error while processing menu.xml file ' +
+                                  'in ' + menuDir);
+            next();
+        }
+        if ('application/xml' != mime.lookup(filename)) {
+            next();
+        } else {
+            parser.parseString(content, function(err, content) {
+                callback(err, content);
+                return;
+            });
+        }
+    });
+}
+
+function mergeMenuObjects (menuObj1, menuObj2)
+{
+    var found = false;
+    var itms1 = menuObj1['menu']['items'][0]['item'];
+    var itms2 = menuObj2['menu']['items'][0]['item'];
+
+    var itms1Len = itms1.length;
+    var itms2Len = itms2.length;
+    for (var k = 0; k < itms2Len; k++) {
+        for (var l = 0; l < itms1Len; l++) {
+            if (itms1[l]['label'][0] == itms2[k]['label'][0]) {
+                if ((null == itms2[k]['items']) ||
+                    (null == itms2[k]['items'][0]) ||
+                    (null == itms2[k]['items'][0]['item'])) {
+                    continue;
+                }
+                if ((null == itms1[l]['items']) ||
+                    (null == itms1[l]['items'][0]) ||
+                    (null == itms1[l]['items'][0]['item'])) {
+                    itms1[l]['items'] = [];
+                    itms1[l]['items'][0] = {};
+                    itms1[l]['items'][0] = itms2[k]['items'][0];
+                }
+                var items1 = itms1[l]['items'][0]['item'];
+                var items2 = itms2[k]['items'][0]['item'];
+                var items1Len = items1.length;
+                var items2Len = items2.length;
+                for (var i = 0; i < items2Len; i++) {
+                    for (var j = 0; j < items1Len; j++) {
+                        if (items1[j]['label'][0] == items2[i]['label'][0]) {
+                            items1[j]['items'][0]['item'] = 
+                                items1[j]['items'][0]['item'].concat(items2[j]['items'][0]['item']);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (j == items1Len) {
+                        items1.push(items2[i]); 
+                    }
+                }
+            }
+            if (l == itms1Len) {
+                itms1.push(itms2[k]);
+            }
+        }
+    }
+    return menuObj1;
+}
+
+function mergeAllMenuXMLFiles (pkgList, mergePath, callback)
+{
+    var pkgLen = pkgList.length;
+    var menuDirs = [];
+    if (1 == pkgLen) {
+        /* Only core package, nothing to do */
+        callback();
+        return;
+    }
+    if (2 == pkgLen) {
+        cmd = 'cp -af ' + pkgList[1]['dirPath'] + '/webroot/menu.xml ' + 
+            mergePath + '/menu.xml';
+        exec(cmd, function(error, stdout, stderr) {
+            assert(error == null);
+            callback();
+            return;
+        });
+        return;
+    }
+    for (var i = 1; i < pkgLen; i++) {
+        menuDirs.push(pkgList[i]['dirPath'] + '/webroot/'); 
+    }
+    async.map(menuDirs, getAllJsons, function(err, data) {
+        var len = data.length;
+        var resJSON = null;
+        for (var i = 0; i < len; i++) {
+            if (0 == i) {
+                resJSON = data[i];
+            }
+            if (null != data[i + 1]) {
+                resJSON = mergeMenuObjects(resJSON, data[i + 1]);
+            }
+        }
+        var xmlData = js2xml('ContrailTopLevelElement', resJSON);
+        xmlData = xmlData.replace("<ContrailTopLevelElement>", "");
+        xmlData = xmlData.replace("</ContrailTopLevelElement>", "");
+        var writeFile = __dirname + '/../../../webroot/menu.xml';
+        fs.writeFileSync(writeFile, xmlData);
+        callback();
+    });
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1421,4 +1539,5 @@ exports.getOrchestrationPluginModel = getOrchestrationPluginModel;
 exports.getWebServerInfo = getWebServerInfo;
 exports.mergeAllPackageList = mergeAllPackageList;
 exports.compareAndMergeDefaultConfig = compareAndMergeDefaultConfig;
+exports.mergeAllMenuXMLFiles = mergeAllMenuXMLFiles;
 

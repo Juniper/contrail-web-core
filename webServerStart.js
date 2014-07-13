@@ -488,8 +488,11 @@ function startServer ()
  */
 function clusterMasterInit (callback)
 {
-    checkAndDeleteRedisRDB(function() {
-        callback();
+    var mergePath = path.join(__dirname, 'webroot');
+    commonUtils.mergeAllMenuXMLFiles(pkgList, mergePath, function() {
+        checkAndDeleteRedisRDB(function() {
+            callback();
+        });
     });
 }
 
