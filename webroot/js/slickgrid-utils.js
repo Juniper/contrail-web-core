@@ -737,6 +737,7 @@ function getDefaultGridConfig() {
                         events: gridDataSource.events,
                         options: gridConfig.footer.pager.options
                     });
+                    gridContainer.find('.slick-pager-sizes').hide();
                 } else {
                 	if(dataView.getLength() != 0){
                     	gridContainer.find('.grid-footer').removeClass('hide');
