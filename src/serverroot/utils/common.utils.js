@@ -23,7 +23,6 @@ var commonUtils = module.exports,
     async = require('async'),
     appErrors = require('../errors/app.errors.js'),
     downloadPath = '/var/log',
-    dir = require('node-dir'),
     xml2js = require('xml2js'),
     js2xml = require('data2xml')(),
     contrailPath = '/contrail';
@@ -1397,23 +1396,12 @@ function compareAndMergeFiles (fileToCmp, fileWithCmp, startCmpStr, splitter)
 
 function getAllJsons (menuDir, callback)
 {
-    var match = /menu.xml/;
-    dir.readFiles(menuDir, {
-        match: match, recursive: false}, 
-        function(err, content, filename, next) {
-        if (err) {
-            logutils.logger.error('Error while processing menu.xml file ' +
-                                  'in ' + menuDir);
-            next();
-        }
-        if ('application/xml' != mime.lookup(filename)) {
-            next();
-        } else {
-            parser.parseString(content, function(err, content) {
-                callback(err, content);
-                return;
-            });
-        }
+    var fileName = menuDir + '/menu.xml';
+    fs.readFile(fileName, function(err, content) {
+        parser.parseString(content, function(err, content) {
+            callback(err, content);
+            return;
+        });
     });
 }
 
@@ -1468,8 +1456,19 @@ function mergeMenuObjects (menuObj1, menuObj2)
 
 function mergeAllMenuXMLFiles (pkgList, mergePath, callback)
 {
+    var writeFile = mergePath + '/menu.xml';
+    var cmd = 'rm -f ' + writeFile;
+    exec(cmd, function(error, stdout, stderr) {
+         mergeFeatureMenuXMLFiles(pkgList, mergePath, callback);
+    });
+}
+
+function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
+{
     var pkgLen = pkgList.length;
     var menuDirs = [];
+    var writeFile = mergePath + '/menu.xml';
+
     if (1 == pkgLen) {
         /* Only core package, nothing to do */
         callback();
@@ -1478,7 +1477,7 @@ function mergeAllMenuXMLFiles (pkgList, mergePath, callback)
     var pkgNames = jsonPath(pkgList, "$..name[0]");
     if (2 == pkgLen) {
         cmd = 'cp -af ' + config.featurePkg[pkgNames[1]].path + '/webroot/menu.xml ' + 
-            mergePath + '/menu.xml';
+            writeFile; 
         exec(cmd, function(error, stdout, stderr) {
             assert(error == null);
             callback();
@@ -1503,7 +1502,6 @@ function mergeAllMenuXMLFiles (pkgList, mergePath, callback)
         var xmlData = js2xml('ContrailTopLevelElement', resJSON);
         xmlData = xmlData.replace("<ContrailTopLevelElement>", "");
         xmlData = xmlData.replace("</ContrailTopLevelElement>", "");
-        var writeFile = __dirname + '/../../../webroot/menu.xml';
         fs.writeFileSync(writeFile, xmlData);
         callback();
     });
