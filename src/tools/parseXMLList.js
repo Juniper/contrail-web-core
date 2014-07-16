@@ -104,7 +104,10 @@ function processXMLFiles (fileObj, callback)
     writeToPkgFile(pkgDir, true, str, function() {
         dir.readFiles(pkgDir, {
             match: match, excludeDir: /node_modules/}, function(err, content, filename, next) {
-            if (err) throw err;
+            if (err) {
+                callback(err);
+                return;
+            }
             if ('application/xml' != mime.lookup(filename)) {
                 next();
             } else {
@@ -164,14 +167,17 @@ function deleteAutoGenFiles (pkgDirObj, callback)
     var pkgDir = pkgDirObj['pkgDir'];
     var match = pkgDirObj['match'];
 
-    console.log("Gettug match as:", pkgDirObj);
     dir.readFiles(pkgDir, {
         match: match, excludeDir: /node_modules/}, 
         function(err, content, next) {
             if (err) throw err;
             next();
         }, function(err, files) {
-            console.log("Getting files as:", files);
+            if ((null != err) || (null == files) || (!files.length)) {
+                console.log("dir.readFiles error for Dir:" + pkgDir + ":" + err);
+                callback(err);
+                return;
+            }
             async.map(files, deleleAutoGenFile, function(err) {
                 cmd = 'rm -f ' + pkgDir + '/webroot/common/api/package.js';
                 exec(cmd, function(err, stdout, stderr) {
