@@ -6,6 +6,7 @@ REPORTER = dot
 WEBUISERVER = contrail-web-core
 WEBUICLIENT = contrail-web-controller
 WEBUITHIRDPARTY = contrail-webui-third-party
+THIRD_PARTY='../contrail-webui-third-party'
 
 $(WEBUISERVER):
 	if [ ! -d ../$(WEBUISERVER) ]; then git clone git@github.com:Juniper/contrail-web-core.git ../$(WEBUISERVER); else cd ../$(WEBUISERVER) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
@@ -20,11 +21,17 @@ repos: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY)
 
 fetch-pkgs-prod:
 	make clean
-	./fetch_packages.sh prod
+	rm -rf node_modules
+	mkdir -p node_modules
+	cp -rf $THIRD_PARTY/node_modules/* node_modules/.
 
 fetch-pkgs-dev:
 	make clean
-	./fetch_packages.sh dev
+	rm -rf node_modules
+	mkdir -p node_modules
+	python ../contrail-webui-third-party/packages.xml    
+	python ../contrail-webui-third-party/packages_dev.xml    
+	cp -rf $THIRD_PARTY/node_modules/* node_modules/.
 
 package:
 	make clean
