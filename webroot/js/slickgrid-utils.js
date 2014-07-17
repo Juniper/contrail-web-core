@@ -337,7 +337,11 @@ function getDefaultGridConfig() {
 	                    id: "slick_sel",
 	                    field: "sel",
 	                    formatter: function(r, c, v, cd, dc) {
-	                        return '<input type="checkbox" class="ace-input rowCheckbox" value="' + r +'"/> <span class="ace-lbl"></span>';
+	                    	var enabled = true;
+	                    	if(contrail.checkIfFunction(gridOptions.checkboxSelectable.enableRowCheckbox)){
+	                    		enabled = gridOptions.checkboxSelectable.enableRowCheckbox(dc);
+	                    	}
+	                        return '<input type="checkbox" class="ace-input rowCheckbox" value="' + r +'" ' + ((!enabled) ? 'disabled="disabled"' : '') + '/> <span class="ace-lbl"></span>';
 	                    },
 	                    id: "_checkbox_selector",
 	                    name: '<input type="checkbox" class="ace-input headerRowCheckbox" /> <span class="ace-lbl"></span>',
@@ -360,7 +364,12 @@ function getDefaultGridConfig() {
 	
 	                gridContainer.find('.headerRowCheckbox').live('click', function(){
 	                    if($(this).attr('checked') == 'checked'){
-	                        gridContainer.find('.rowCheckbox').attr('checked','checked');
+	                        gridContainer.find('.rowCheckbox').attr('checked',function(i,val){
+	                        	if($(this).attr('disabled') != 'disabled'){
+	                        		return 'checked';
+	                        	}
+	                        	return false;
+	                        });
 	                        (contrail.checkIfExist(onSomethingChecked) ? onSomethingChecked() : '');
 	                        (contrail.checkIfExist(onEverythingChecked) ? onEverythingChecked() : '');
 	                    } else {
@@ -1022,7 +1031,17 @@ function getDefaultGridConfig() {
 
         function onDataGridHandler(){
             if(gridOptions.checkboxSelectable != false) {
-                gridContainer.find('.headerRowCheckbox').removeAttr('disabled');
+                var disabled = true;
+                gridContainer.find('.rowCheckbox').each(function(){
+                	disabled = disabled && ($(this).attr('disabled') == 'disabled');
+                });
+                if(!disabled){
+                	gridContainer.find('.headerRowCheckbox').removeAttr('disabled');
+                }
+                else{
+                	gridContainer.find('.headerRowCheckbox').attr('disabled','disabled');
+            		
+                }
             }
         };
     };
