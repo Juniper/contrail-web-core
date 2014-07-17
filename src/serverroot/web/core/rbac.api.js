@@ -5,6 +5,7 @@
 var commonUtils = require('../../utils/common.utils')
   , logutils = require('../../utils/log.utils')
   , util = require('util')
+  , roleMap = require('./rolemap.api')
   , messages = require('../../common/messages')
 
 if (!module.parent) {
@@ -12,12 +13,6 @@ if (!module.parent) {
                                   module.filename));
   process.exit(1);
 }
-
-var userRole = {
-  admin: global.USER_ROLE_ADMIN,
-  user: global.USER_ROLE_USER,
-  demo: global.USER_ROLE_DEMO
-};
 
 var userRoleMap = {};
 var userFeatureMap = {};
@@ -37,15 +32,21 @@ String.prototype.trim=function() {
  */
 function getRoleValueByString (roleStr)
 {
+  var roleListObjs = {};
   if (null == roleStr) {
     return null;
   }
+  var index = 0;
+  for (key in roleMap.extRoleMapList) {
+      roleListObjs[key] = index++;
+  }
+
   var str = roleStr.split(',');
   var len = str.length;
   var roleBitMask = 0;
   if (roleStr == 'all') {
-    for (key in userRole) {
-      var roleBit = parseInt(userRole[key]);
+    for (key in roleListObjs) {
+      var roleBit = parseInt(roleListObjs[key]);
       roleBitMask = parseInt(roleBitMask) + parseInt(1 << roleBit);
     }
     return roleBitMask;
@@ -53,7 +54,7 @@ function getRoleValueByString (roleStr)
 
   for (var i = 0; i < len; i++) {
     var iStr = str[i].trim();
-    var roleBit = parseInt(userRole[iStr]);
+    var roleBit = parseInt(roleListObjs[iStr]);
     roleBitMask = parseInt(roleBitMask) + parseInt(1 << roleBit);
   }
   return roleBitMask;
@@ -163,24 +164,20 @@ function addFeatureAccess (feature, readAccess, writeAccess)
   userFeatureToAccessMap[feature] = commonUtils.cloneObj(accessRight); 
 }
 
-/* Function: mapUserRoleToInternalRole
-    This function is used to map roles derived from Identity Server to Role
-    derived by Web Server
- */
-function mapUserRoleToInternalRole (userRole)
-{
-  return userRole;
-}
-
 /* Function: checkUserAccess
     This function is used to check the access privileges
  */
 function checkUserAccess (req, res)
 {
-  var userRoleStr = req.session.userRole;
-  var roleStr = mapUserRoleToInternalRole(userRoleStr);
-  var userAccess = getUserAccess(req, roleStr);
-  return userAccess;
+  var userRoles = req.session.userRole;
+  var userRoleLen = userRoles.length;
+  for (var i = 0; i < userRoleLen; i++) {
+      userAccess = getUserAccess(req, userRoles[i]);
+      if (true == userAccess) {
+          return true;
+      }
+  }
+  return false;
 }
 
 exports.setFeatureByURL = setFeatureByURL;
