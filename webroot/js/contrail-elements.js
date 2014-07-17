@@ -310,6 +310,7 @@
     };
     
     $.fn.contrail2WayMultiselect = function (givenOptions) {
+    	var self = this;
         var defaultOptions = {
             dataTextField: "label",
             dataValueField: "value",
@@ -317,39 +318,107 @@
             rightTitle: "Right",
             sizeLeft: 8,
             sizeRight: 8,
+            controls: {
+            	single: true,
+            	all: true
+            },
+			beforeMoveOneToRight: function() { return true; },
+			afterMoveOneToRight: function(){},
+			beforeMoveAllToRight: function(){ return true; },
+			afterMoveAllToRight: function(){},
+			beforeMoveOneToLeft: function(){ return true; },
+			afterMoveOneToLeft: function(){},
+			beforeMoveAllToLeft: function(){ return true; },
+			afterMoveAllToLeft: function(){},
         };
         var options = $.extend({}, defaultOptions, givenOptions);
         constructContrail2WayMultiselect(this, options);
 
         options = (typeof options === "undefined") ? {} : options;
-        options.left = $(this).find('#multiselect_from');
-        options.leftAll = $(this).find('#left_All');
-        options.leftSelected = $(this).find('#left_Selected');
-        options.right = $(this).find('#multiselect_to');
-        options.rightAll = $(this).find('#right_All');
-        options.rightSelected = $(this).find('#right_Selected');
+        
+        var multiselectContainer = {
+        		lists: {
+        			left: $(this).find('.multiselect-left'),
+            		right: $(this).find('.multiselect-right')
+        		},
+        		controls: {
+        			leftAll: $(this).find('.multiselect-control-left-all'),
+        			leftSelected: $(this).find('.multiselect-control-left-selected'),
+        			rightAll: $(this).find('.multiselect-control-right-all'),
+        			rightSelected: $(this).find('.multiselect-control-right-selected')
+        		}
+        	};
 
-        var self = this,
-            multiselect = self.find('#multiselect_from').multiselect(options);
+        function getListData(selector){
+        	var result = [];
+            selector.each(function() {
+                var item = {};
+                item[options.dataValueField] = $(this).data('value');
+                item[options.dataTextField] = $(this).text();
+                result.push(item);
+            });
+            return result;
+        }
+        
+        function moveLeftToRight(){
+        	if(options.beforeMoveOneToRight() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
+	        	var leftSelectedData = getListData(multiselectContainer.lists.left.find('li.ui-selected'));
+	        	self.data('contrail2WayMultiselect').deleteLeftData(leftSelectedData);
+	        	self.data('contrail2WayMultiselect').updateRightData(leftSelectedData);
+	        	options.afterMoveOneToRight();
+        	}
+        	
+        }
+        
+        function moveRightToLeft(){
+        	if(options.beforeMoveOneToLeft() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
+	        	var rightSelectedData = getListData(multiselectContainer.lists.right.find('li.ui-selected'));
+	        	self.data('contrail2WayMultiselect').deleteRightData(rightSelectedData);
+	        	self.data('contrail2WayMultiselect').updateLeftData(rightSelectedData);
+	        	options.afterMoveOneToLeft();
+        	}
+        }
+        
+        function moveLeftAll(){
+        	if(options.beforeMoveAllToRight() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
+	        	var leftData = getListData(multiselectContainer.lists.left.find('li'));
+	        	self.data('contrail2WayMultiselect').deleteLeftAllData();
+	        	self.data('contrail2WayMultiselect').updateRightData(leftData);
+	        	options.afterMoveAllToRight();
+        	}
+        }
 
+        function moveRightAll(){
+        	if(options.beforeMoveAllToLeft() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
+	        	var rightData = getListData(multiselectContainer.lists.right.find('li'));
+	        	self.data('contrail2WayMultiselect').deleteRightAllData();
+	        	self.data('contrail2WayMultiselect').updateLeftData(rightData);
+	        	options.afterMoveAllToLeft();
+        	}
+        }
+
+        multiselectContainer.controls.leftSelected.on('click', function(){
+        	moveLeftToRight();
+        });
+        
+        multiselectContainer.controls.rightSelected.on('click', function(){
+        	moveRightToLeft();
+        });
+        
+        multiselectContainer.controls.leftAll.on('click', function(){
+        	moveLeftAll();
+        });
+        
+        multiselectContainer.controls.rightAll.on('click', function(){
+        	moveRightAll();
+        });
+        
         self.data('contrail2WayMultiselect', {
             getLeftData: function () {
-                var result = [];
-                $.each(multiselect.left.find('option'), function (key, value) {
-                    result[key] = {};
-                    result[key][options.dataValueField] = $(value).val();
-                    result[key][options.dataTextField] = $(value).text();
-                });
-                return result;
+            	return getListData(multiselectContainer.lists.left.find('li'));
             },
             getRightData: function () {
-                var result = [];
-                $.each(multiselect.right.find('option'), function (key, value) {
-                    result[key] = {};
-                    result[key][options.dataValueField] = $(value).val(),
-                    result[key][options.dataTextField] = $(value).text()
-                });
-                return result;
+            	return getListData(multiselectContainer.lists.right.find('li'));
             },
             setLeftData: function (data) {
                 this.deleteLeftAllData();
@@ -360,94 +429,75 @@
                 this.updateRightData(data);
             },
             updateLeftData: function (data) {
-                for (var i = 0; i < data.length; i++) {
-                    $(multiselect.left).append('<option value=' + data[i][options.dataValueField] + '>' + data[i][options.dataTextField] + '</option>');
-                }
+                $.each(data, function(key,val){
+                	$(multiselectContainer.lists.left).append('<li class="ui-widget-content" data-value=' + val[options.dataValueField] + '>' + val[options.dataTextField] + '</li>');
+                });
             },
             updateRightData: function (data) {
-                for (var i = 0; i < data.length; i++) {
-                    $(multiselect.right).append('<option value=' + data[i][options.dataValueField] + '>' + data[i][options.dataTextField] + '</option>');
-                }
+            	$.each(data, function(key,val){
+                	$(multiselectContainer.lists.right).append('<li class="ui-widget-content" data-value=' + val[options.dataValueField] + '>' + val[options.dataTextField] + '</li>');
+                });
             },
             getLeftSelectedData: function () {
-                var result = [];
-                $.each(multiselect.left.find('option:selected'), function (key, value) {
-                    result[key] = {};
-                    result[key][options.dataValueField] = $(value).val(),
-                    result[key][options.dataTextField] = $(value).text()
-                });
-                return result;
+            	return getListData(multiselectContainer.lists.left.find('li.ui-selected'));
             },
             getRightSelectedData: function () {
-                var result = [];
-                $.each(multiselect.right.find('option:selected'), function (key, value) {
-                    result[key] = {};
-                    result[key][options.dataValueField] = $(value).val(),
-                    result[key][options.dataTextField] = $(value).text()
-                });
-                return result;
+            	return getListData(multiselectContainer.lists.right.find('li.ui-selected'));
             },
-            deleteLeftData: function (value) {
-                for(var i= 0; i< value.length; i++){
-                    multiselect.left.find('option[value='+value[i]+']').remove();
-                }
+            deleteLeftData: function (data) {
+            	$.each(data, function(key,val){
+                	$(multiselectContainer.lists.left).find('li[data-value=' + val[options.dataValueField] + ']').remove();;
+                });
             },
             deleteLeftAllData: function () {
-                multiselect.left.find('option').remove();
+                multiselectContainer.lists.left.find('li').remove();
             },
-            deleteRightData: function (value) {
-                for(var i= 0; i< value.length; i++){
-                    multiselect.right.find('option[value='+value[i]+']').remove();
-                }
+            deleteRightData: function (data) {
+            	$.each(data, function(key,val){
+                	$(multiselectContainer.lists.right).find('li[data-value=' + val[options.dataValueField] + ']').remove();;
+                });
             },
             deleteRightAllData: function () {
-                multiselect.right.find('option').remove();
+                multiselectContainer.lists.right.find('li').remove();
             },
             show: function () {
-                $(multiselect.left).show();
-                $(multiselect.right).show();
-                $.each(multiselect.actions, function (key, value) {
-                    $(value).show();
-                });
+            	self.find('.contrail2WayMultiselect').show();
             },
             hide: function () {
-                $(multiselect.left).hide();
-                $(multiselect.right).hide();
-                $.each(multiselect.actions, function (key, value) {
-                    $(value).hide();
-                });
+                self.find('.contrail2WayMultiselect').hide();
             },
             disable: function () {
-                $(multiselect.left).prop("disabled", true);
-                $(multiselect.right).prop("disabled", true);
-                $.each(multiselect.actions, function (key, value) {
-                    $(value).prop("disabled", true);
-                });
+                self.find('.contrail2WayMultiselect').addClass('disabled');
+                self.find('.multiselect-list').selectable('disable');
             },
             enable: function () {
-                $(multiselect.left).prop("disabled", false);
-                $(multiselect.right).prop("disabled", false);
-                $.each(multiselect.actions, function (key, value) {
-                    $(value).prop("disabled", false);
-                });
+            	self.find('.contrail2WayMultiselect').removeClass('disabled');
+            	self.find('.multiselect-list').selectable('enable');
+            },
+            destroy: function(){
+            	self.find('.multiselect-list').selectable('destroy');
+            	self.html('');
             }
         });
         function constructContrail2WayMultiselect(self, options){
-            self.html('<div class="row-fluid">\
+        	self.html('<div class="contrail2WayMultiselect row-fluid">\
                 <div class="span5">\
                     <label>'+options.leftTitle+'</label>\
-                    <select name="from" id="multiselect_from" class="span'+options.sizeLeft+' height-150" size="8" multiple="multiple"></select>\
+                    <ol class="row-fluid multiselect-left multiselect-list" style="height:'+(options.sizeLeft * 30).toString()+'px;"></ol>\
                 </div>\
-                <div class="span1">\
-                    <br><br><br>\
-                    <div class="span12 offset3"><button type="button" id="right_Selected" class=" btn btn-mini btn-primary"><i class="icon-chevron-right"></i></button></div>\
-                    <div class="span12 offset3"><button type="button" id="left_Selected"  class=" btn btn-mini btn-primary"><i class="icon-chevron-left"></i></button></div>\
+                <div class="span2 multiselect-controls">\
+                    ' + ((options.controls.single) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-selected icon-angle-right"></i></div>\
+                    <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-selected icon-angle-left"></i></div>' : '') + '\
+                    ' + ((options.controls.all) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-all icon-double-angle-right"></i></div>\
+                    <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-all icon-double-angle-left"></i></div>' : '') + '\
                 </div>\
                 <div class="span5">\
                      <label>'+options.rightTitle+'</label>\
-                     <select name="to" id="multiselect_to" class="span'+options.sizeRight+' height-150" size="8" multiple="multiple"></select>\
+                     <ol class="row-fluid multiselect-right multiselect-list" style="height:'+(options.sizeRight * 30).toString()+'px;"></ol>\
                 </div>\
-          </div>');
+            </div>');
+            
+            self.find('.multiselect-list').selectable();
         };
     };
     
