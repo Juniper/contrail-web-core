@@ -1432,6 +1432,7 @@ function mergeMenuItems (obj1, obj2)
 {
     var found = false;
     if (obj1['label'][0] == obj2['label'][0]) {
+        obj1 = mergeResourceObjs(obj1, obj2);
         found = true;
         var itemObj1 = obj1['items'][0]['item'];
         var itemObj2 = obj2['items'][0]['item'];
@@ -1530,6 +1531,7 @@ function mergeMenuObjects (menuObj1, menuObj2)
             itms1[l] = checkAndCreateResourceObject(itms1[l], false);
             itms2[k] = checkAndCreateResourceObject(itms2[k], false);
             if (itms1[l]['label'][0] == itms2[k]['label'][0]) {
+                itms1[l] = mergeResourceObjs(itms1[l], itms2[k]);
                 found = true;
                 if ((null == itms2[k]['items']) ||
                     (null == itms2[k]['items'][0]) ||
