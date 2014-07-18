@@ -25,6 +25,7 @@ var commonUtils = module.exports,
     downloadPath = '/var/log',
     xml2js = require('xml2js'),
     js2xml = require('data2xml')(),
+    pd = require('pretty-data').pd,
     contrailPath = '/contrail';
 if (!module.parent) {
     logutils.logger.warn(util.format(
@@ -1405,6 +1406,116 @@ function getAllJsons (menuDir, callback)
     });
 }
 
+function createEmptyResourceObj ()
+{
+    var obj = {};
+    obj['resources'] = [];
+    obj['resources'][0] = {};
+    obj['resources'][0]['resource'] = [];
+    return obj;
+}
+
+function mergeResourceObjs (obj1, obj2)
+{
+    if (null == obj2['resources']) {
+        return obj1;
+    }
+    if (null == obj1['resources']) {
+        obj1 = createEmptyResourceObj();
+    }
+    obj1['resources'][0]['resource'] =
+        obj1['resources'][0]['resource'].concat(obj2['resources'][0]['resource']);
+    return obj1;
+}
+
+function mergeMenuItems (obj1, obj2)
+{
+    var found = false;
+    if (obj1['label'][0] == obj2['label'][0]) {
+        found = true;
+        var itemObj1 = obj1['items'][0]['item'];
+        var itemObj2 = obj2['items'][0]['item'];
+        var itemObj1Len = itemObj1.length;
+        var itemObj2Len = itemObj2.length;
+
+        for (var i = 0; i < itemObj2Len; i++) {
+            for (var j = 0; j < itemObj1Len; j++) {
+                if (itemObj1[j]['label'][0] == itemObj2[i]['label'][0]) {
+                    itemObj1[j] = mergeResourceObjs(itemObj1[j], itemObj2[i]);
+                    break;
+                }
+            }
+            if (j == itemObj1Len) {
+                /* Not found so push it */
+                itemObj1.push(itemObj2[i]);
+            }
+        }
+    }
+    return {obj: obj1, found: found};
+}
+
+function createResourceObject (obj)
+{
+    if ((null != obj['js']) || (null != obj['view']) ||
+        (null != obj['class']) || (null != obj['rootDir']) ||
+        (null != obj['css'])) {// || (null != obj['access'])) {
+        obj['resources'] = [];
+        obj['resources'][0] = {};
+        obj['resources'][0]['resource'] = [];
+        obj['resources'][0]['resource'][0] = {};
+        if (null != obj['rootDir']) {
+            obj['resources'][0]['resource'][0]['rootDir'] = obj['rootDir'];
+            delete obj['rootDir'];
+        }
+        if (null != obj['js']) {
+            obj['resources'][0]['resource'][0]['js'] = obj['js'];
+            delete obj['js'];
+        }
+        if (null != obj['view']) {
+            obj['resources'][0]['resource'][0]['view'] = obj['view'];
+            delete obj['view'];
+        }
+        if (null != obj['css']) {
+            obj['resources'][0]['resource'][0]['css'] = obj['css'];
+            delete obj['css'];
+        }
+        if (null != obj['class']) {
+            obj['resources'][0]['resource'][0]['class'] = obj['class'];
+            delete obj['class'];
+        }
+        /*
+        if (null != obj['access']) {
+            obj['resources'][0]['resource'][0]['access'] = obj['access'];
+            delete obj['access'];
+        }
+        */
+    }
+    return obj;
+}
+
+function checkAndCreateResourceObject (obj, isDeep)
+{
+    if (null != obj['resources']) {
+        return obj;
+    }
+    obj = createResourceObject(obj);
+    if (true == isDeep) {
+        if ((null != obj['items']) && (null != obj['items'][0]['item'])) {
+            var cnt = obj['items'][0]['item'].length;
+            for (var i = 0; i < cnt; i++) {
+                obj['items'][0]['item'][i] =
+                    createResourceObject(obj['items'][0]['item'][i]);
+            }
+        }
+    }
+    return obj;
+}
+
+function convertResourceObject (object)
+{
+    var obj = object['items'][0]['item'];
+}
+
 function mergeMenuObjects (menuObj1, menuObj2)
 {
     var found = false;
@@ -1414,8 +1525,12 @@ function mergeMenuObjects (menuObj1, menuObj2)
     var itms1Len = itms1.length;
     var itms2Len = itms2.length;
     for (var k = 0; k < itms2Len; k++) {
+        found = false;
         for (var l = 0; l < itms1Len; l++) {
+            itms1[l] = checkAndCreateResourceObject(itms1[l], false);
+            itms2[k] = checkAndCreateResourceObject(itms2[k], false);
             if (itms1[l]['label'][0] == itms2[k]['label'][0]) {
+                found = true;
                 if ((null == itms2[k]['items']) ||
                     (null == itms2[k]['items'][0]) ||
                     (null == itms2[k]['items'][0]['item'])) {
@@ -1427,28 +1542,32 @@ function mergeMenuObjects (menuObj1, menuObj2)
                     itms1[l]['items'] = [];
                     itms1[l]['items'][0] = {};
                     itms1[l]['items'][0] = itms2[k]['items'][0];
+                    continue;
                 }
                 var items1 = itms1[l]['items'][0]['item'];
                 var items2 = itms2[k]['items'][0]['item'];
+
                 var items1Len = items1.length;
                 var items2Len = items2.length;
                 for (var i = 0; i < items2Len; i++) {
                     for (var j = 0; j < items1Len; j++) {
-                        if (items1[j]['label'][0] == items2[i]['label'][0]) {
-                            items1[j]['items'][0]['item'] = 
-                                items1[j]['items'][0]['item'].concat(items2[j]['items'][0]['item']);
-                            found = true;
-                            break;
-                        }
+                        items1[j] = checkAndCreateResourceObject(items1[j],
+                                                                 true);
+                        items2[i] = checkAndCreateResourceObject(items2[i], true);
+                        var newObj = mergeMenuItems(items1[j], items2[i]);
+                        items1[j] = newObj['obj'];
+                        objFound = newObj['found'];
+                        break;
                     }
-                    if (j == items1Len) {
+                    if (false == objFound) {
                         items1.push(items2[i]); 
                     }
                 }
+                break;
             }
-            if (l == itms1Len) {
-                itms1.push(itms2[k]);
-            }
+        }
+        if (found == false) {
+            itms1.push(itms2[k]);
         }
     }
     return menuObj1;
@@ -1502,6 +1621,7 @@ function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
         var xmlData = js2xml('ContrailTopLevelElement', resJSON);
         xmlData = xmlData.replace("<ContrailTopLevelElement>", "");
         xmlData = xmlData.replace("</ContrailTopLevelElement>", "");
+        xmlData = pd.xml(xmlData);
         fs.writeFileSync(writeFile, xmlData);
         callback();
     });
