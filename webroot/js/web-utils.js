@@ -1119,19 +1119,24 @@ function MenuHandler() {
         if (currMenuObj == null)
             return;
         //Call destory function on viewClass which is being unloaded
-        if ((currMenuObj['class'] != null) && (typeof(window[currMenuObj['class']]) == 'function' || typeof(window[currMenuObj['class']]) == 'object') &&
-            (typeof(window[currMenuObj['class']]['destroy']) == 'function')) {
-			$.allajax.abort();
-			
-            try {
-                window[currMenuObj['class']]['destroy']();
-            } catch (error) {
-                console.log(error.stack);
+        $.each(currMenuObj['resources']['resource'],function(idx,currResourceObj) {
+            if ((currResourceObj['class'] != null) && (typeof(window[currResourceObj['class']]) == 'function' || typeof(window[currResourceObj['class']]) == 'object') &&
+                (typeof(window[currResourceObj['class']]['destroy']) == 'function')) {
+                $.allajax.abort();
+                
+                try {
+                    window[currResourceObj['class']]['destroy']();
+                } catch (error) {
+                    console.log(error.stack);
+                }
             }
-        }
-        //window[currMenuObj['class']] = null;
+            //window[currResourceObj['class']] = null;
+        });
     }
 
+    /**
+     * parentsArr is used to load the resources specified in the menu hierarchy
+     */
     this.getMenuObjByHash = function (menuHash, currMenuObj, parentsArr) {
         parentsArr = ifNull(parentsArr,[]) ;
         if (currMenuObj == null)
@@ -1224,7 +1229,7 @@ function MenuHandler() {
             }
 
             function loadCssResources(menuObj,hash) {
-                $.each(menuObj['resources']['resource'],function(idx,currResourceObj) {
+                $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
                     if(currResourceObj['css'] == null)
                         return;
                     if (!(currResourceObj['css'] instanceof Array)) {
@@ -1242,7 +1247,7 @@ function MenuHandler() {
             }
             
             function loadJsResources(menuObj) {
-                $.each(menuObj['resources']['resource'],function(idx,currResourceObj) {
+                $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
                     if (!(currResourceObj['js'] instanceof Array)) 
                         currResourceObj['js'] = [currResourceObj['js']];
                     var isLoadFn = currResourceObj['loadFn'] != null ? true : false;
@@ -1271,7 +1276,7 @@ function MenuHandler() {
                 deferredObj.done(function () {
                     //Cleanup the container
                     $(contentContainer).html('');
-                    $.each(currMenuObj['resources']['resource'],function(idx,currResourceObj) {
+                    $.each(getValueByJsonPath(currMenuObj,'resources;resource',[]),function(idx,currResourceObj) {
                         if (currResourceObj['class'] != null) {
                             if(window[currResourceObj['class']] != null)
                                 window[currResourceObj['class']].load({containerId:contentContainer, hashParams:layoutHandler.getURLHashParams()});
