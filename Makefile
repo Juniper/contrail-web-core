@@ -23,7 +23,7 @@ fetch-pkgs-prod:
 	make clean
 	rm -rf node_modules
 	mkdir -p node_modules
-	cp -rf $THIRD_PARTY/node_modules/* node_modules/.
+	cp -rf $(THIRD_PARTY)/node_modules/* node_modules/.
 
 fetch-pkgs-dev:
 	make clean
@@ -31,7 +31,7 @@ fetch-pkgs-dev:
 	mkdir -p node_modules
 	python ../contrail-webui-third-party/packages.xml    
 	python ../contrail-webui-third-party/packages_dev.xml    
-	cp -rf $THIRD_PARTY/node_modules/* node_modules/.
+	cp -rf $(THIRD_PARTY)/node_modules/* node_modules/.
 
 package:
 	make clean
