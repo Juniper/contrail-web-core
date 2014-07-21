@@ -74,7 +74,7 @@ wget --no-check-certificate http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch
 wget --no-check-certificate https://raw.githubusercontent.com/cowboy/jquery-bbq/master/jquery.ba-bbq.min.js
 wget --no-check-certificate https://jquery-timer.googlecode.com/files/jquery.timer.js
 wget --no-check-certificate https://jquery-json.googlecode.com/files/jquery.json-2.4.min.js
-wget --no-check-certificate http://datatables.net/download/build/jquery.dataTables.min.js
+wget --no-check-certificate http://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.0/jquery.dataTables.min.js
 wget --no-check-certificate http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js -O jquery-1.8.3.min.js
 wget --no-check-certificate http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js -O jquery-1.9.1.min.js
 cd -
