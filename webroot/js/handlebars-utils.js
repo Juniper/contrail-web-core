@@ -138,7 +138,7 @@ Handlebars.registerHelper('getHashFromMenuItem',function(menuItem){
             });
             result['q'] = params;
         }
-        return JSON.stringify(result);
+        return $.param.fragment(location.href,result)
     }
 });
 
