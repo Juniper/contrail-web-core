@@ -235,6 +235,7 @@ config.logs.level = 'debug';
  *
 ******************************************************************************/
 config.getDomainProjectsFromApiServer = false;
-
+config.network = {};
+config.network.L2L3Mode = "l3";
 // Export this as a module.
 module.exports = config;

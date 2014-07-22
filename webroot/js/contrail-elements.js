@@ -691,7 +691,7 @@ function constructSelect2(self, defaultOption, args) {
                     });
 
                 if(option.data.length > 0){
-                    self.select2('val', option.data[0].text);
+                    self.select2('val', option.data[0].value);
                 }
             },
             enableOptionList: function (flag, disableItemList) {
