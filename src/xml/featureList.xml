@@ -78,6 +78,11 @@
         <write-access>user,admin</write-access>
     </item>
     <item>
+        <feature>quotasconfig</feature>
+        <read-access>user,admin</read-access>
+        <write-access>user,admin</write-access>
+    </item>    
+    <item>
         <feature>orchestration</feature>
     </item>
     <item>
