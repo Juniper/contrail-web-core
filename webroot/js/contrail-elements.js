@@ -691,14 +691,26 @@ function constructSelect2(self, defaultOption, args) {
                     });
 
                 if(option.data.length > 0){
-                    self.select2('val', option.data[0].value);
+                    if(option.data[0].children != undefined && option.data[0].children.length > 0) {
+                        self.select2('val', option.data[1].children[0].value);
+                    } else {
+                        self.select2('val', option.data[0].value);                    
+                    }
                 }
             },
             enableOptionList: function (flag, disableItemList) {
                 for (var j = 0; j < disableItemList.length; j++) {
                     for (var i = 0; i < option.data.length; i++) {
-                        if (disableItemList[j] === option.data[i][option.dataTextField.dsVar]) {
-                            option.data[i].disabled = !flag;
+                        if(option.data[i].children === undefined) {
+                            if (disableItemList[j] === option.data[i][option.dataTextField.dsVar]) {
+                                option.data[i].disabled = !flag;
+                            }
+                        } else {
+                            for(var k = 0;k < option.data[i].children.length; k++) {
+                                if(disableItemList[j] === option.data[i].children[k][option.dataTextField.dsVar]) {
+                                     option.data[i].children[k].disabled = !flag;
+                                }
+                            }
                         }
                     }
                 }
