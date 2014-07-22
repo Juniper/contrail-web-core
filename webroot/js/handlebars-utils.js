@@ -66,6 +66,10 @@ Handlebars.registerHelper('formatJSON2HTML', function(rawdata, options) {
     return contrail.formatJSON2HTML(rawdata,2);
 });
 
+Handlebars.registerHelper('formatString2HTML', function(string) {
+    return string;
+});
+
 Handlebars.registerHelper('makeItValidDOMId', function(id, options) {
     return id.replace(/:/g,'-');
 });
