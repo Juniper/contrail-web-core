@@ -861,8 +861,15 @@ function MenuHandler() {
                 menuDefferedObj.resolve();
             });
         });
+        //Add an event listener for clicking on menu items
+        $('#menu').on('click','ul > li > a',function(e) {
+            var href = $(this).attr('href');
+            loadFeature($.deparam.fragment(href));
+            if(!e.ctrlKey){
+                e.preventDefault();//Stop the page to navigate to the url set in href
+            }
+        });
         //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
-        
         $.ajax({
             url:'/api/service/networking/web-server-info'
         }).done(function (response) {
@@ -1367,7 +1374,7 @@ function flattenArr(arr) {
     return retArr;
 }
 
-$.deparam = function (query) {
+$.deparamURLArgs = function (query) {
     var query_string = {};
     var query = ifNull(query,'');
     if (query.indexOf('?') > -1) {
@@ -2285,7 +2292,7 @@ function getOutputByPagination(dataSource,cfg,dsObj) {
     var transportCfg = ifNull(cfg['transportCfg'],{});
     var dsObj = ifNull(dsObj,{});
     var dsName = dsObj['name'];
-    var urlParams = $.deparam(transportCfg['url']);
+    var urlParams = $.deparamURLArgs(transportCfg['url']);
     urlParams['startAt'] = dsObj['updateStartTime'];
     transportCfg['url'] = ifNull(transportCfg['url'],'').split('?')[0] + '?' + $.param(urlParams);
     if(cfg['deferredObj'] != null) {
@@ -2297,7 +2304,7 @@ function getOutputByPagination(dataSource,cfg,dsObj) {
             abortOnNavigate:discardOngoingUpdate == true ? true : false
         },transportCfg)).done(function(response) {
             //Check if the response is for the current series of requests
-            var urlParams = $.deparam(transportCfg['url']);
+            var urlParams = $.deparamURLArgs(transportCfg['url']);
             if(dsName != null && globalObj['dataSources'][dsName] != null) {
                 if(urlParams['startAt'] != globalObj['dataSources'][dsName]['updateStartTime']) {
                     return; 
@@ -2330,7 +2337,7 @@ function getOutputByPagination(dataSource,cfg,dsObj) {
             		cfg['loadedDeferredObj'].resolve({dataSource:dataSource});
                 }
             } else if (response['more'] == true) {
-                var urlParams = $.deparam(transportCfg['url']);
+                var urlParams = $.deparamURLArgs(transportCfg['url']);
                 urlParams['lastKey'] = response['lastKey'];
                 cfg['currData'] = currData;
                 transportCfg['url'] = transportCfg['url'].split('?')[0] + '?' + $.param(urlParams);

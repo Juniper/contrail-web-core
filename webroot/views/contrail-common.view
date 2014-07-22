@@ -21,9 +21,10 @@
                 {{/each}}
             </div>
 </script>
+
 <script type="text/x-handlebars-template" id="menu-template">
     <li class="head">
-        <a data-link='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+        <a data-link='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
             <span>{{this.label}}</span>
             <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
                 <i class="icon-chevron-left"></i>
@@ -32,7 +33,7 @@
     </li>
     {{#each this.items.item}}
         <li class="item">
-            <a href="\\#" class="dropdown-toggle" data-link='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+            <a href="\\#" class="dropdown-toggle" data-link='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
                 <i class="{{this.iconClass}}"></i>
                 <span>{{this.label}}</span>
             </a>
@@ -40,7 +41,7 @@
                 {{#IfCompare this.items null operator='!='}}
                     {{#each this.items.item}}
                         <li id="{{this.hash}}">
-                            <a href='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+                            <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
                                 {{this.label}}
                             </a>
                         </li>
@@ -48,7 +49,7 @@
                 {{/IfCompare}}
                 {{#IfCompare this.items null operator='=='}}
                     <li id="{{this.hash}}">
-                        <a href='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+                        <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
                              {{this.label}}
                         </a>
                     </li>
