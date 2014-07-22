@@ -508,7 +508,7 @@ function loadFeature(hashParams) {
 }
 
 /* Info Window Modal*/
-function showInfoWindow(msg, title, detail) {
+function showInfoWindow(msg, title, detail,yesFunction) {
     //detail = "check check check check check <br> check check check
     //check check check check check <br> check check check";
     if ($('.modal-backdrop').is(':visible')) {
@@ -529,11 +529,25 @@ function showInfoWindow(msg, title, detail) {
             className: 'detailNote'
         });
     }
-    footerValue.push({
-        title: 'Close',
-	    onclick: 'close',
-	    className: 'btn-primary'
-    });
+    if(yesFunction != "" && yesFunction != null){
+        footerValue.push({
+            title: 'Yes',
+	        onclick: window[yesFunction],
+	        className: 'btn-primary'
+        });
+        footerValue.push({
+            title: 'No',
+	        onclick: 'close',
+	        className: 'btn-primary'
+        });
+    } else {
+        footerValue.push({
+            title: 'Close',
+	        onclick: 'close',
+	        className: 'btn-primary'
+        });
+    }
+    
     $.contrailBootstrapModal({
         id: 'infoWindow',
         title: title,
