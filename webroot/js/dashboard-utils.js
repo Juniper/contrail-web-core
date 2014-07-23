@@ -78,10 +78,34 @@ function infraMonitorClass() {
          endWidgetLoading('sysinfo');
          if(timeStampAlert.length > 0)
              allAlerts = allAlerts.concat(timeStampAlert)
-         globalObj['alertsData'] = allAlerts;
-         if(globalObj.showAlertsPopup){
-             loadAlertsContent();
+         //Filtering the alerts for alerts popup based on the detailAlert flag
+         var popupAlerts = [];
+         for(var i=0;i<allAlerts.length;i++) {
+            if(allAlerts[i]['detailAlert'] != false)
+                popupAlerts.push(allAlerts[i]);
          }
+         if(popupAlerts.length > 0)
+             globalObj['dataSources']['alertsDS']['dataSource'].setData(popupAlerts);
+         var alertsDef = $.Deferred();
+         if(globalObj.showAlertsPopup){
+             loadAlertsContent(alertsDef);
+         }
+         //Need to resolve the alertsDef once all the dashboard datasource are resolved
+         var dataSources = globalObj['dataSources'];
+         var defObjArr = [];
+         $.each(dataSources,function(key,value){
+             $.each(value,function(innerKey,innerValue){
+                if(innerKey == 'type' && innerValue == 'infradashboard')
+                    if(value['deferredObj'] != null)
+                        defObjArr.push(value['deferredObj']);
+             });
+         })
+         $.when(defObjArr).then(function(){
+             alertsDef.resolve();
+         },function(){
+             alertsDef.reject();
+         });
+         //alertsDef.resolve();
          var detailAlerts = [];
          for(var i = 0; i < allAlerts.length; i++ ){
              if(allAlerts[i]['detailAlert'] != false)

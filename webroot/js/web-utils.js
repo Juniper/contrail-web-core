@@ -1835,100 +1835,94 @@ function processDrillDownForNodes(e) {
      }
 }
 
-function loadAlertsContent(){
-    if(globalObj.alertsData!=undefined) {
-        var data = globalObj.alertsData;
-        var renderPopupEveryTime = true,alertsData = [];
-        $('#header ul li.nav-header').text(data.length+' New Alerts');
-        var alerts = contrail.getTemplate4Id("alerts-template");
-        for(var i=0;i<data.length;i++) {
-            if(data[i]['detailAlert'] != false)
-                alertsData.push(data[i]);
-        }
-        var alertsTemplate = contrail.getTemplate4Id('moreAlerts-template');
-        var statusTemplate = contrail.getTemplate4Id('statusTemplate');
-        var alertsGrid;
-        if(renderPopupEveryTime || $("#moreAlerts").length == 0) {
-            $("#moreAlerts").remove();
-            $('body').append(alertsTemplate({}));
-            alertsWindow = $("#moreAlerts");
-            alertsWindow.modal({backdrop:'static',keyboard:false,show:false});
-            $("#alertsClose").click(function(){
-                alertsWindow.hide();
-            });
-            $("#alertContent").contrailGrid({
-                header : {
-                    title : {
-                        text : 'Details',
-                        cssClass : 'blue',
-                    },
-                    customControls: []
+function loadAlertsContent(deferredObj){
+    var alertsDS = globalObj['dataSources']['alertsDS']['dataSource'];
+    var renderPopupEveryTime = true,alertsData = [];
+    //$('#header ul li.nav-header').text(data.length+' New Alerts');
+    var alerts = contrail.getTemplate4Id("alerts-template");
+    var alertsTemplate = contrail.getTemplate4Id('moreAlerts-template');
+    var statusTemplate = contrail.getTemplate4Id('statusTemplate');
+    var alertsGrid;
+    if(renderPopupEveryTime || $("#moreAlerts").length == 0) {
+        $("#moreAlerts").remove();
+        $('body').append(alertsTemplate({}));
+        alertsWindow = $("#moreAlerts");
+        alertsWindow.modal({backdrop:'static',keyboard:false,show:false});
+        $("#alertsClose").click(function(){
+            alertsWindow.hide();
+        });
+        $("#alertContent").contrailGrid({
+            header : {
+                title : {
+                    text : 'Details',
+                    cssClass : 'blue',
                 },
-                body: {
-                    options: {
-                        forceFitColumns:true,
-                    },
-                    dataSource: {
-                        data: alertsData
-                    },
-                    statusMessages: {
-                        empty: {
-                            text: 'No Alerts to display'
-                        }, 
-                        errorGettingData: {
-                            type: 'error',
-                            iconClasses: 'icon-warning',
-                            text: 'Error in getting Data.'
-                        }
+                customControls: []
+            },
+            body: {
+                options: {
+                    forceFitColumns:true,
+                    lazyLoading: true
+                },
+                dataSource: {
+                    dataView: alertsDS,
+                },
+                statusMessages: {
+                    empty: {
+                        text: 'No Alerts to display'
+                    }, 
+                    errorGettingData: {
+                        type: 'error',
+                        iconClasses: 'icon-warning',
+                        text: 'Error in getting Data.'
                     }
-                },
-                columnHeader: {
-                    columns:[ 
-                        {
-                            field:'nName',
-                            name:'Node',
-                            minWidth:150,
-                            formatter: function(r,c,v,cd,dc){
-                                if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['nName']) != "undefined")
-                                    return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['nName']+"</span>";
-                                else
-                                    return dc['nName'];
-                            }
-                        },{
-                            field:'pName',
-                            name:'Process',
-                            minWidth:100
-                        },{
-                            field:'msg',
-                            name:'Status',
-                            minWidth:200,
-                            formatter: function(r,c,v,cd,dc) {
-                                if(typeof(dc['popupMsg']) != "undefined")
-                                    return dc['popupMsg'];
-                                else
-                                    return dc['msg'];
-                            }
-                        },{
-                            field:'timeStamp',
-                            name:'Time',
-                            minWidth:100,
-                            formatter:function(r,c,v,cd,dc) {
-                                if(typeof(dc['timeStamp']) != "undefined")
-                                    return getFormattedDate(dc['timeStamp']/1000);
-                                else
-                                    return "";
-                            }
-                        }]
                 }
-            });
-        }
-        alertsWindow.modal('show');
-        alertsGrid = $('#alertContent').data('contrailGrid');
+            },
+            columnHeader: {
+                columns:[ 
+                    {
+                        field:'nName',
+                        name:'Node',
+                        minWidth:150,
+                        formatter: function(r,c,v,cd,dc){
+                            if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['nName']) != "undefined")
+                                return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['nName']+"</span>";
+                            else
+                                return dc['nName'];
+                        }
+                    },{
+                        field:'pName',
+                        name:'Process',
+                        minWidth:100
+                    },{
+                        field:'msg',
+                        name:'Status',
+                        minWidth:200,
+                    },{
+                        field:'timeStamp',
+                        name:'Time',
+                        minWidth:100,
+                        formatter:function(r,c,v,cd,dc) {
+                            if(typeof(dc['timeStamp']) != "undefined")
+                                return getFormattedDate(dc['timeStamp']/1000);
+                            else
+                                return "";
+                        }
+                    }]
+            }
+        });
+    }
+    alertsWindow.modal('show');
+    alertsGrid = $('#alertContent').data('contrailGrid');
+    if(alertsGrid != null) {
         alertsGrid.refreshView();
         alertsGrid._grid.resizeCanvas();
-        alertsGrid.removeGridLoading();
-        globalObj.showAlertsPopup = false;
+        deferredObj.always(function(){
+            alertsGrid.removeGridLoading();
+            alertsGrid._eventHandlerMap.dataView['onUpdateData']();
+        });
     }
+    globalObj.showAlertsPopup = false;
 }
 
 
@@ -1975,15 +1969,19 @@ function ManageDataSource() {
                     dataSource:null,
                     error:null
                 },
-
+                'alertsDS':{
+                    dataSource:new ContrailDataView()
+                },
                 //PortRange data for Port Distribution drill-down
                 'portRangeData':{
                 },
+                //type flag added to differentiate infra dashboard datasource with other datasources
                 'controlNodeDS':{
                     ongoing:false,
                     lastUpdated:null,
                     populateFn:['getAllControlNodes','getGeneratorsForInfraNodes'],
                     deferredObj:null,
+                    type:'infradashboard',
                     dataSource:null
                 },
                 'computeNodeDS':{
@@ -1992,6 +1990,7 @@ function ManageDataSource() {
                     populateFn:['getAllvRouters','getGeneratorsForInfraNodes'],
                     deferredObj:null,
                     dataSource:null,
+                    type:'infradashboard',
                     cachedData:true//whether we maintain backend cache
                 },
                 'analyticsNodeDS':{
@@ -1999,6 +1998,7 @@ function ManageDataSource() {
                     lastUpdated:null,
                     populateFn:['getAllAnalyticsNodes','getGeneratorsForInfraNodes','startFetchingCollectorStateGenInfos'],
                     deferredObj:null,
+                    type:'infradashboard',
                     dataSource:null
                 },
                 'configNodeDS':{
@@ -2006,6 +2006,7 @@ function ManageDataSource() {
                     lastUpdated:null,
                     populateFn:['getAllConfigNodes','getGeneratorsForInfraNodes'],
                     deferredObj:null,
+                    type:'infradashboard',
                     dataSource:null
                 },
             };
