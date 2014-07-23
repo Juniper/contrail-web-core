@@ -555,7 +555,34 @@ $("#e2").contrailDropdown({
 		},
 		body : {
 			options : {
-				checkboxSelectable: true
+				checkboxSelectable: {
+					enableRowCheckbox: function(dc) {
+						return (dc.index %2 == 0);
+	                }
+				},
+				actionCell: function(dc){
+					if(dc.index %2 == 0){
+						return [
+		                    {
+		                        title: 'Edit',
+		                        iconClass: 'icon-edit',
+		                        onClick: function(rowIndex){
+		                            console.log(rowIndex);
+		                        }
+		                    },
+		                    {
+		                        title: 'Delete',
+		                        iconClass: 'icon-trash',
+		                        onClick: function(rowIndex){
+		                        	console.log(rowIndex);
+		                        }
+		                    }
+		                ];	
+					}
+					else{
+						return [];
+					}
+				},
 			},
 			dataSource : {
 				data : gridData

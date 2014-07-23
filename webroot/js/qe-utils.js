@@ -2513,7 +2513,8 @@ function populateLogWhere(queryPrefix, where) {
 
 function populateLogFilter(queryPrefix, filters) {
     var filterClauseStr = '', filterANDClauseStr, filterName,
-        filterANDClauseSubmit, filterClauseSubmitArray = [];
+        filterANDClauseSubmit, filterClauseSubmitArray = [], newFilter = [];
+    filters = filters[0];
     for (var i = 0; i < filters.length; i++) {
         filterName = filters[i].name;
         if(filterName == 'Type' || filterName == 'Level') {

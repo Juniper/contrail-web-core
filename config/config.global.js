@@ -235,6 +235,7 @@ config.logs.level = 'debug';
  *
 ******************************************************************************/
 config.getDomainProjectsFromApiServer = false;
-
+config.network = {};
+config.network.L2 = "Disable";//Enable (or) Disable
 // Export this as a module.
 module.exports = config;

@@ -249,46 +249,44 @@ function formatPolicyRule(rule, domain, project) {
     var rule_display = "";
     if (isSet(rule) && !rule.hasOwnProperty("length")) {
         if (isSet(rule["action_list"]) && isSet(rule["action_list"]["simple_action"]))
-            rule_display += rule["action_list"]["simple_action"];
+            rule_display += policyRuleFormat(rule["action_list"]["simple_action"]);
 
         if (isSet(rule["application"]) && rule["application"].length > 0) {
-            rule_display += " application " + rule["application"].toString();
-            var src_addr = policy_net_display(rule["src_addresses"], domain, project); 
-            if(isSet(src_addr))
-                rule_display += " network " + src_addr;
+            rule_display += " application " + policyRuleFormat(rule["application"].toString());
+            var src_addr = formatSrcDestAddresses(rule["src_addresses"], domain, project);
+            rule_display += src_addr;
             if(isSet(rule["direction"]))
-            	rule_display += " " + rule["direction"];
+            	rule_display += policyRuleFormat(rule["direction"]);
             var dest_addr = policy_net_display(rule["dst_addresses"], domain, project);
-            if(isSet(dest_addr))
-            	rule_display += " network " + dest_addr;
+            var dest_addr = formatSrcDestAddresses(rule["dst_addresses"], domain, project); 
+            rule_display += dest_addr;
             if (isSet(rule["action_list"]))
-                rule_display += " action " + rule["action_list"].toString();
+                rule_display += " action" + policyRuleFormat(rule["action_list"].toString());
         } else {
         	if(null !== rule["simple_action"] && typeof rule["simple_action"] !== "undefined")
-        	    rule_display += rule["simple_action"];
+        	    rule_display += policyRuleFormat(rule["simple_action"]);
             if (isSet(rule["protocol"]))
-                rule_display += " protocol " + rule["protocol"].toString();
+                //rule_display += " protocol " + rule["protocol"].toString();
+                  rule_display += ' protocol ' + policyRuleFormat(rule["protocol"].toString());
             
-            var src_addr = policy_net_display(rule["src_addresses"], domain, project); 
-            if(isSet(src_addr))
-                rule_display += " network " + src_addr;
+            var src_addr = formatSrcDestAddresses(rule["src_addresses"], domain, project);
+            rule_display += src_addr;
 
             var src_ports = policy_ports_display(rule["src_ports"]); 
             if(isSet(src_ports))
-                rule_display += src_ports;
+                rule_display += " port " + policyRuleFormat(src_ports);
 
             if(isSet(rule["direction"]))
-            	rule_display += " " + rule["direction"];
+            	rule_display += ' ' + policyRuleFormat(rule["direction"]);
 
-            var dest_addr = policy_net_display(rule["dst_addresses"], domain, project); 
-            if(isSet(dest_addr))
-                rule_display += " network " + dest_addr;
+            var dest_addr = formatSrcDestAddresses(rule["dst_addresses"], domain, project); 
+            rule_display += dest_addr;
 
             var dst_ports = policy_ports_display(rule["dst_ports"]); 
             if(isSet(dst_ports))
-                rule_display += dst_ports;
+                rule_display += ' port ' + policyRuleFormat(dst_ports);
 
-            var action_list = policy_services_display(rule["action_list"]); 
+            var action_list = policy_services_display(rule["action_list"], domain, project); 
             if(isSet(action_list))
                 rule_display += action_list;
         }
@@ -296,20 +294,37 @@ function formatPolicyRule(rule, domain, project) {
     return rule_display;
 }
 
+function formatSrcDestAddresses (rule, domain, project) {
+    var rule_display = '';
+    var addrSrcDest = policy_net_display(rule, domain, project); 
+    if(isSet(addrSrcDest.value)) {
+        if(addrSrcDest.label) {
+            rule_display = " network " + policyRuleFormat(addrSrcDest.value);
+        } else {
+             rule_display = " " + policyRuleFormat(addrSrcDest.value);                   
+        }  
+    }
+    return rule_display;     
+}
+
 function policy_net_display(nets, domain, project) {
     var net_disp_all = "";
+    var isShowLabel = true;
     if (isSet(nets) && nets.length > 0) {
         for (var i = 0; i < nets.length; i++) {
             var net_disp = "";
             var net = nets[i];
             if (isSet(net)) {
-                if (isSet(net["security_group"]))
+                if (isSet(net["security_group"])) {
                     net_disp += net["security_group"].toString();
+                }    
                 if (isSet(net["subnet"]) && isSet(net["subnet"]["ip_prefix"]) &&
-                    isSet(net["subnet"]["ip_prefix_len"]))
+                    isSet(net["subnet"]["ip_prefix_len"])) {
+                    isShowLabel = false;
                     net_disp +=
                         net["subnet"]["ip_prefix"] + "/" +
                             net["subnet"]["ip_prefix_len"];
+                }            
                 if (isSet(net["virtual_network"])) {
                 	if(isSet(domain) && isSet(project) && isString(domain) &&
                 		isString(project)) {
@@ -322,7 +337,14 @@ function policy_net_display(nets, domain, project) {
 								net_disp += splits[2];
                             }
                 		} else {
-                			net_disp += net["virtual_network"].toString();
+                            //prepare network display format
+                            var netArry = net["virtual_network"].toString().split(':');
+                            if(netArry[0].toLowerCase() != 'any' && netArry[0].toLowerCase() != 'local') {
+                                netArry = netArry[2] + ' (' + netArry[0] + ':' + netArry[1] + ')';
+                			    net_disp += netArry;
+                            } else {
+                			    net_disp += netArry[0];                                
+                            }
                 		}
                 	} else {
                 		net_disp += net["virtual_network"].toString();	
@@ -332,17 +354,17 @@ function policy_net_display(nets, domain, project) {
             net_disp_all += net_disp;
         }
     }
-    return net_disp_all;
+    return {value : net_disp_all, label : isShowLabel} ;
 }
 
 function policy_ports_display(ports) {
     var ports_str = "";
     if (isSet(ports) && ports.length > 0) {
         if (ports.length == 1 && ports[0]["start_port"] == -1) {
-            ports_str += " port any";
+            ports_str += " any";
         }
         else {
-            ports_str += " port [";
+            ports_str += " [";
             for (var i = 0; i < ports.length; i++) {
                 var p = ports[i];
                 if (isSet(p["start_port"])) {
@@ -364,22 +386,45 @@ function policy_ports_display(ports) {
     return ports_str;
 }
 
-function policy_services_display(action_list) {
+function policy_services_display(action_list, domain, project) {
     var service_str = "";
     if (isSet(action_list)) {
         var as = action_list.apply_service;
         var mt = action_list.mirror_to;
         if (isSet(as) && as.length > 0) {
-            service_str += " apply_service ";
+            var services_value = "";
             for (var i = 0; i < as.length; i++) {
-                service_str += as[i];
+                var item = as[i].split(':');
+                if(item.length === 3) {
+                    if(item[0] === domain &&
+                        item[1] === project) {
+                        item = item[2];  
+                    } else {               
+                        item = item[2] + ' (' + item[0] + ':' + item[1] + ')'; 
+                    }    
+                } else {
+                    item = item[0];
+                }
+                services_value += item;
                 if (i != (as.length - 1)) {
-                    service_str += ",";
+                    services_value += ",";
                 }
             }
+            service_str += ' services ' + policyRuleFormat(services_value);
         }
         if (isSet(mt) && isSet(mt.analyzer_name)) {
-            service_str += " mirror_to " + mt.analyzer_name;
+            mt.analyzer_name = mt.analyzer_name.split(':');
+            if(mt.analyzer_name.length === 3) {
+                if(mt.analyzer_name[0] === domain && 
+                    mt.analyzer_name[1] === project) {
+                    mt.analyzer_name = mt.analyzer_name[2];        
+                } else {
+                    mt.analyzer_name = mt.analyzer_name[2] + ' (' + mt.analyzer_name[0] + ':' + mt.analyzer_name[1] + ')'; 
+                }    
+            } else {
+                mt.analyzer_name = mt.analyzer_name[0];
+            }
+            service_str += ' mirror ' + policyRuleFormat(mt.analyzer_name);
         }
     }
     return service_str;
@@ -1033,8 +1078,12 @@ function scrollUp(contWindow,div,boolCollapse){
     }
 }
 
+function policyRuleFormat(text) {
+    return '<span class="rule-format">' + text  + '</span>';
+}
 
-cutils.getCookie = getCookie;
+
+cutils.getCookie = getCookie;       
 cutils.setCookie = setCookie;
 cutils.isSet = isSet;
 cutils.isObject = isObject;
@@ -1086,3 +1135,5 @@ cutils.getSelectedProjectObjNew = getSelectedProjectObjNew;
 cutils.getSelectedDomainProjectObjNew = getSelectedDomainProjectObjNew;
 cutils.setDomainProjectEmptyMsg = setDomainProjectEmptyMsg;
 cutils.emptyCookie = emptyCookie;
+cutils.policyRuleFormat = policyRuleFormat;
+cutils.formatSrcDestAddresses = formatSrcDestAddresses;
