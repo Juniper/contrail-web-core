@@ -251,27 +251,42 @@ function getNodeStatusForSummaryPages(data,page) {
             msgs.push(data['alerts'][i]['msg']);
         }
     }
+    result['nodeSeverity'] = data['alerts'][0] != null ? data['alerts'][0]['sevLevel'] : mapD3ColorToSevLevel(data['color']);
     //Status is pushed to messages array only if the status is "UP" and tooltip alerts(which are displaying in tooltip) are zero
     if(ifNull(data['status'],"").indexOf('Up') > -1 && tooltipAlerts.length == 0) {
         msgs.push(data['status']);
-        tooltipAlerts.push({msg:data['status'],sevLevel:sevLevels['INFO']});
+        tooltipAlerts.push({msg:data['status'],sevLevel:result['nodeSeverity']});
     } else if(ifNull(data['status'],"").indexOf('Down') > -1) {
         //Need to discuss and add the down status 
         //msgs.push(data['status']);
         //tooltipAlerts.push({msg:data['status'],sevLevel:sevLevels['ERROR']})
     }
     result['alerts'] = tooltipAlerts;
-    result['nodeSeverity'] = data['alerts'][0] != null ? data['alerts'][0]['sevLevel'] : sevLevels['INFO'];
+    result['nodeColor'] = data['color'];
     result['messages'] = msgs;
      var statusTemplate = contrail.getTemplate4Id('statusTemplate');
-    if(page == 'summary') 
-        return statusTemplate({sevLevel:result['nodeSeverity'],sevLevels:sevLevels});
+    if(page == 'summary') {
+    	var mappedSevLevel = mapD3ColorToSevLevel(result['nodeColor']);
+        return statusTemplate({sevLevel:mappedSevLevel,sevLevels:sevLevels});
+    }
     return result;
+}
+
+function mapD3ColorToSevLevel(d3Color){
+	if(d3Color == d3Colors.red){
+	    return sevLevels.ERROR;
+	} else if(d3Color == d3Colors.orange){
+        return sevLevels.WARNING;
+    } else if(d3Color == d3Colors.blue){
+        return sevLevels.NOTICE;
+    } else if(d3Color == d3Colors.green){
+        return sevLevels.INFO;
+    }
 }
 
 var dashboardUtils = {
     sortNodesByColor: function(a,b) {
-        var colorPriorities = [d3Colors['green'],d3Colors['blue'],d3Colors['orange'],d3Colors['red']];
+        var colorPriorities = [d3Colors['red'],d3Colors['orange'],d3Colors['blue'],d3Colors['green']];
         var aColor = $.inArray(a['color'],colorPriorities); 
         var bColor = $.inArray(b['color'],colorPriorities);
         return aColor-bColor;

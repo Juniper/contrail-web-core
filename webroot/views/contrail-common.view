@@ -439,10 +439,15 @@
 <script type = "text/x-handlebars-template" id = "statusTemplate">
     {{#IfCompare sevLevel sevLevels.ERROR }} 
         <span class="status-badge-rounded-small status-inactive"></span>
-    {{else}}
-        {{#IfCompare sevLevel sevLevels.WARNING}} 
-            <span class="status-badge-rounded-small status-partially-active"></span>
-        {{/IfCompare}}
+    {{/IfCompare}}
+    {{#IfCompare sevLevel sevLevels.WARNING}} 
+        <span class="status-badge-rounded-small status-partially-active"></span>
+    {{/IfCompare}}
+    {{#IfCompare sevLevel sevLevels.NOTICE}} 
+        <span class="status-badge-rounded-small status-idle"></span>
+    {{/IfCompare}}
+    {{#IfCompare sevLevel sevLevels.INFO}} 
+        <span class="status-badge-rounded-small status-active"></span>
     {{/IfCompare}}
 </script>
 
