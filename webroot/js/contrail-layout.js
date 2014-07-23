@@ -402,21 +402,21 @@ function onHashChange(lastHash, currHash) {
         menuHandler.toggleMenuButton(null, currPageHash, lastPageHash);
         //If curr URL is same as default URL, remove non-menu breadcrumbs
         //Always re-load the view if menu is clicked
-        if (((lastPageHash == currPageHash) || ((currMenuObj['class'] != null) && (currMenuObj['class'] == lastMenuObj['class'])))
+
+        //If hashchange is within the same page
+        if ((lastPageHash == currPageHash)
                 && (globalObj['menuClicked'] == null || globalObj['menuClicked'] == false)) {
             var deferredObj = $.Deferred();
-            //Load JS files
-            if(currMenuObj['js'].length > 0) {
-                menuHandler.loadResourcesFromMenuObj(currMenuObj,deferredObj);
-            } else
-                deferredObj.resolve();
+            menuHandler.loadResourcesFromMenuObj(currMenuObj,deferredObj);
             deferredObj.done(function() {
                 //If hashchange is within the same page
                 var currMenuObj = menuHandler.getMenuObjByHash(currPageHash);
-                if (window[currMenuObj['class']] != null && 
-                    window[currMenuObj['class']]['updateViewByHash'] != null) {
-                    window[currMenuObj['class']].updateViewByHash(currPageQueryStr, lastPageQueryStr);
-                }
+                $.each(currMenuObj['resources']['resource'],function(idx,currResourceObj) {
+                    if (window[currResourceObj['class']] != null && 
+                        window[currResourceObj['class']]['updateViewByHash'] != null) {
+                        window[currResourceObj['class']].updateViewByHash(currPageQueryStr, lastPageQueryStr);
+                    }
+                });
             });
         } else {
             globalObj['menuClicked'] = false;
