@@ -438,7 +438,12 @@ var defColors = ['#1c638d', '#4DA3D5'];
                                 if(result['value'] != null && result['value'][0] != null) {
                                     response = result['value'][0];
                                     e.detailRow.find('.row-fluid.advancedDetails').html('<div><pre style="background-color:white">' + syntaxHighlight(response) + '</pre></div>');
-                                    e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response)));
+                                    //DataItem consists of row data,passing it as a parameter to the parsefunction
+                                    e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response,dataItem)));
+                                    $(grid).data('contrailGrid').adjustDetailRowHeight(dataItem['id']);
+                                } else if(!isEmptyObject(response)) {
+                                    e.detailRow.find('.row-fluid.advancedDetails').html('<div><pre style="background-color:white">' + syntaxHighlight(response) + '</pre></div>');
+                                    e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response,dataItem)));
                                     $(grid).data('contrailGrid').adjustDetailRowHeight(dataItem['id']);
                                 } else {
                                     $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>');
