@@ -300,7 +300,7 @@ function getNodeStatusForSummaryPages(data,page) {
 
 var dashboardUtils = {
     sortNodesByColor: function(a,b) {
-        var colorPriorities = [d3Colors['green'],d3Colors['blue'],d3Colors['orange'],d3Colors['red']];
+        var colorPriorities = [d3Colors['red'],d3Colors['orange'],d3Colors['blue'],d3Colors['green']];
         var aColor = $.inArray(a['color'],colorPriorities); 
         var bColor = $.inArray(b['color'],colorPriorities);
         return aColor-bColor;
