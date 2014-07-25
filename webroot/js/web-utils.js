@@ -979,7 +979,7 @@ function MenuHandler() {
         if (menuButton == null) {
             currPageHashArray = currPageHash.split('_');
             //Looks scalable only till 2nd level menu
-            linkId = '#' + currPageHashArray[0] + '_' + currPageHashArray[1] + '_' + currPageHashArray[2];
+            linkId = '#' + currPageHash;
             subMenuId = $(linkId).parent('ul.submenu');
             menuButton = getMenuButtonName(currPageHashArray[0]);
             //If user has switched between top-level menu
