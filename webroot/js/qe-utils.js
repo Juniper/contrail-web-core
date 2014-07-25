@@ -1700,6 +1700,7 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 					onDataBoundCB : function() {
 						if (options.refreshChart != null && options.refreshChart) {
 							if (options.showChartToggle) {
+								queries.fs.chartViewModel.isFCLoaded(false);
 								queries.fs.chartViewModel.options(options);
 								plotFSChart(options, columnDisplay, fcGridDisplay);
 								
@@ -2064,9 +2065,9 @@ function toggleToChart() {
 		$('#fs-results-link').removeClass('selected');
 	    $('#fs-chart-link').addClass('selected');
 	    
-		$('#fs-results').find('.grid-body').hide('fast');
-	    $('#fs-results').find('.grid-footer').hide('fast');
-	    $('#fs-results').find('.grid-load-status').hide('fast');
+		$('#fs-results').find('.grid-body').hide();
+	    $('#fs-results').find('.grid-footer').hide();
+	    $('#fs-results').find('.grid-load-status').hide();
 		
 	    $('#fs-chart').show(function(){
 	    	var grid = $("#fs-flow-classes").data("contrailGrid");
@@ -2148,6 +2149,11 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
     
     columnDisplay = display.concat(columnDisplay);
 
+    if(contrail.checkIfExist($(elementId).data("contrailGrid"))){
+    	$(elementId).data("contrailGrid").destroy();
+    }
+    $(elementId).empty();
+	
     $(elementId).contrailGrid({
     	header: false,
     	columnHeader: {
