@@ -1,0 +1,23 @@
+<!--
+ Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+-->
+<roleList>
+    <item>
+        <uiRole>admin</uiRole>
+        <extRole>
+            <item>admin</item>
+            <item>KeystoneAdmin</item>
+            <item>KeystoneServiceAdmin</item>
+            <item>netadmin</item>
+            <item>sysadmin</item>
+        </extRole>
+    </item>
+    <item>
+        <uiRole>user</uiRole>
+        <extRole>
+            <item>Member</item>
+            <item>_member_</item>
+        </extRole>
+    </item>
+</roleList>
+

@@ -16,6 +16,7 @@ var config = require('../../../../../config/config.global'),
     appErrors = require('../../../errors/app.errors.js'),
     commonUtils = require('../../../utils/common.utils'),
     async = require('async'),
+    roleMap = require('../../../web/core/rolemap.api'),
     rest = require('../../../common/rest.api');
 
 var authServerIP = ((config.identityManager) && (config.identityManager.ip)) ? 
@@ -43,27 +44,31 @@ if ((null != config) && (null != config.identityManager) &&
  */
 function getUserRoleByAuthResponse (resRoleList)
 {
+    var uiRoles = [];
+    var tmpRoleObj = {};
     if ((null == resRoleList) || (!resRoleList.length)) {
         /* Ideally if Role is not associated, then we should not allow user to
          * login, but we are assigning role as 'Member' to the user to not to
          * block UI
 //        return null;
          */
-        return global.STR_ROLE_USER;
+        return [global.STR_ROLE_USER];
     }
     var rolesCount = resRoleList.length;
-    var userRoleStr = null;
+    var extRoleStr = null;
     for (var i = 0; i < rolesCount; i++) {
-        userRoleStr = resRoleList[i]['name'];
-        if ((global.STR_EXT_ROLE_NETADMIN == userRoleStr) || 
-            (global.STR_EXT_ROLE_KEYSTONEADMIN == userRoleStr) ||
-            (global.STR_EXT_ROLE_SYSADMIN == userRoleStr) ||
-            (global.STR_EXT_ROLE_KEYSTONE_SERVICE_ADMIN == userRoleStr) ||
-            (global.STR_EXT_ROLE_ADMIN == userRoleStr)) {
-            return global.STR_ROLE_ADMIN;
+        extRoleStr = resRoleList[i]['name'];
+        if ((null != roleMap.uiRoleMapList[extRoleStr]) &&
+            (null == tmpRoleObj[roleMap.uiRoleMapList[extRoleStr]])) {
+            uiRoles.push(roleMap.uiRoleMapList[extRoleStr]);
+            tmpRoleObj[roleMap.uiRoleMapList[extRoleStr]] = 
+                roleMap.uiRoleMapList[extRoleStr];
         }
     }
-    return global.STR_ROLE_USER;
+    if (uiRoles.length) {
+        return uiRoles;
+    }
+    return [global.STR_ROLE_USER];
 }
 
 /** Function: createProjectListInReqObj
@@ -442,12 +447,14 @@ function getUserRoleByTenant (userObj, callback)
 
 function getUserRoleByAllTenants (username, password, tenantlist, callback)
 {
+    var uiRoles = [];
+    var tmpUIRoleObjs = {};
     var tenantObjArr = [];
     if (null == tenantlist) {
         return null;
     }
     var tenantCnt = tenantlist.length;
-    var userRoleStr = global.STR_ROLE_USER;
+    var userRoles = [global.STR_ROLE_USER];
 
     for (var i = 0; i < tenantCnt; i++) {
         if ((null != tenantlist[i]) && (null != tenantlist[i]['name'])) {
@@ -456,7 +463,7 @@ function getUserRoleByAllTenants (username, password, tenantlist, callback)
         }
     }
     if (!tenantObjArr.length) {
-        return userRoleStr;
+        return userRoles;
     }
 
     async.map(tenantObjArr, getUserRoleByTenant, function(err, data) {
@@ -466,18 +473,18 @@ function getUserRoleByAllTenants (username, password, tenantlist, callback)
                 if (null == data[i]) {
                     continue;
                 }
-                userRoleStr =
+                userRoles =
                     getUserRoleByAuthResponse(data[i]); 
-                if (global.STR_ROLE_ADMIN == userRoleStr) {
-                    /* if as 'admin', then no need to check for anything
-                     * else
-                     */
-                    callback(userRoleStr);
-                    return;
+                var userRolesCnt = userRoles.length;
+                for (var j = 0; j < userRolesCnt; j++) {
+                    if (null == tmpUIRoleObjs[userRoles[j]]) {
+                        uiRoles.push(userRoles[j]);
+                        tmpUIRoleObjs[userRoles[j]] = userRoles[j];
+                    }
                 }
             }
         }
-        callback(userRoleStr);
+        callback(uiRoles);
     });
 }
 
@@ -554,11 +561,11 @@ function authenticate (req, res, callback)
                     logutils.logger.debug("After Successful auth def_token:" +
                                           JSON.stringify(data.access));
                     req.session.def_token_used = data.access.token;
-                    var roleStr = null;
+                    var uiRoles = null;
                     getUserRoleByAllTenants(username, password,
                                             tenantList, 
-                                            function(roleStr) {
-                        if (roleStr == null) {
+                                            function(uiRoles) {
+                        if ((null == uiRoles) || (!uiRoles.length)) {
                             req.session.isAuthenticated = false;
                             commonUtils.changeFileContentAndSend(res, loginErrFile,
                                                                  global.CONTRAIL_LOGIN_ERROR,
@@ -571,7 +578,7 @@ function authenticate (req, res, callback)
                          */
                         authApi.saveUserAuthInRedis(username, password, req, function(err) {
                             req.session.isAuthenticated = true;
-                            req.session.userRole = roleStr;
+                            req.session.userRole = uiRoles;
                             //setSessionTimeoutByReq(req);
                             updateTokenIdForProject(req, defProject, data);
                             logutils.logger.info("Login Successful with tenants.");
