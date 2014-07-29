@@ -1629,6 +1629,21 @@ function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
     });
 }
 
+/**
+ * @convertUUIDToString
+ * This function takes UUID without - and converts to UUID with dashes
+ */
+function convertUUIDToString (uuid) {
+    var newUUID = "";
+    newUUID =
+        uuid.substr(0, 8) + '-' +
+        uuid.substr(8, 4) + '-' +
+        uuid.substr(12, 4) + '-' +
+        uuid.substr(16, 4) + '-' +
+        uuid.substr(20, 12);
+    return newUUID;
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1673,4 +1688,5 @@ exports.getWebServerInfo = getWebServerInfo;
 exports.mergeAllPackageList = mergeAllPackageList;
 exports.compareAndMergeDefaultConfig = compareAndMergeDefaultConfig;
 exports.mergeAllMenuXMLFiles = mergeAllMenuXMLFiles;
+exports.convertUUIDToString = convertUUIDToString;
 

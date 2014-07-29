@@ -144,10 +144,9 @@ function doAuthenticate (req, res, callback) {
     });
 }
 
-function getTokenObj (req, tenantId, forceAuth, callback)
+function getTokenObj (authObj, callback)
 {
-    authMethodApi.getToken(req, tenantId, forceAuth, 
-                           function(err, data) {
+    authMethodApi.getToken(authObj, function(err, data) { 
         callback(err, data);
     });
 }
@@ -155,6 +154,20 @@ function getTokenObj (req, tenantId, forceAuth, callback)
 function getTenantList (req, callback)
 {
     authMethodApi.getTenantList(req, function(err, data) {
+        callback(err, data);
+    });
+}
+
+function getProjectList (req, appData, callback)
+{
+    authMethodApi.getProjectList(req, appData, function(err, data) {
+        callback(err, data);
+    });
+}
+
+function getDomainList (req, callback)
+{
+    authMethodApi.getDomainList(req, function(err, data) {
         callback(err, data);
     });
 }
@@ -184,6 +197,11 @@ function formatTenantList (projectLists, apiProjects, callback)
     });
 }
 
+function isDefaultDomain (request, domain)
+{
+    return authMethodApi.isDefaultDomain(request, domain);
+}
+
 function getServiceCatalog (req, callback)
 {
     authMethodApi.getServiceCatalog(req, function(data) {
@@ -203,4 +221,7 @@ exports.getAPIServerAuthParams = getAPIServerAuthParams;
 exports.createAuthKeyBySessionId = createAuthKeyBySessionId;
 exports.formatTenantList = formatTenantList;
 exports.getServiceCatalog = getServiceCatalog;
+exports.getDomainList = getDomainList;
+exports.getProjectList = getProjectList;
+exports.isDefaultDomain = isDefaultDomain;
 

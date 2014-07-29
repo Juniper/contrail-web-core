@@ -60,7 +60,8 @@ function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
                 if ((null != defProject) && (err.responseCode ==
                                              global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
                     /* Retry once again */
-                    authApi.getTokenObj(appData['authObj']['req'], defProject, true,
+                    authApi.getTokenObj({'req': appData['authObj']['req'],
+                                        'tenant': defProject, 'forceAuth': true},
                                         function(error, token) {
                         if ((error) || (null == token)) {
                             commonUtils.redirectToLogoutByAppData(appData);
@@ -102,7 +103,8 @@ function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
                 if ((null != defProject) && (err.responseCode ==
                                              global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
                     /* Retry once again */
-                    authApi.getTokenObj(appData['authObj']['req'], defProject, true,
+                    authApi.getTokenObj({'req': appData['authObj']['req'],
+                                        'tenant': defProject, 'forceAuth': true},
                                         function(error, token) {
                         if ((error) || (null == token)) {
                             commonUtils.redirectToLogoutByAppData(appData);
@@ -145,7 +147,8 @@ function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
                 if ((null != defProject) && (err.responseCode ==
                                              global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
                     /* Retry once again */
-                    authApi.getTokenObj(appData['authObj']['req'], defProject, true,
+                    authApi.getTokenObj({'req': appData['authObj']['req'],
+                                        'tenant': defProject, 'forceAuth': true},
                                         function(error, token) {
                         if ((error) || (null == token)) {
                             commonUtils.redirectToLogoutByAppData(appData);
@@ -188,7 +191,8 @@ function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
                 if ((null != defProject) && (err.responseCode ==
                                              global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
                     /* Retry once again */
-                    authApi.getTokenObj(appData['authObj']['req'], defProject, true,
+                    authApi.getTokenObj({'req': appData['authObj']['req'],
+                                        'tenant': defProject, 'forceAuth': true},
                                         function(error, token) {
                         if ((error) || (null == token)) {
                             commonUtils.redirectToLogoutByAppData(appData);
