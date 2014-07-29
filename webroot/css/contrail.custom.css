@@ -749,6 +749,14 @@ rect.bordered {
 }
 
 /* Query Pages */
+.advanced-options-link{
+    font-size:10px;
+    color:#999;
+    cursor:pointer;
+}
+.advanced-options-link:hover{
+    color:#3182bd;
+}
 .where-textarea, .filter-textarea {
 	padding-right: 30px;
 	resize: none;
