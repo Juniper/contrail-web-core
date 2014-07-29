@@ -838,6 +838,7 @@ function pushBreadcrumb(breadcrumbsArr) {
 function MenuHandler() {
     var self = this;
     var menuObj;
+    //onHashChange is triggered once it is resolved
     self.deferredObj = $.Deferred();
     var menuDefferedObj = $.Deferred(),statDefferredObj = $.Deferred(),webServerDefObj = $.Deferred();
 
@@ -1058,6 +1059,10 @@ function MenuHandler() {
      * JSON expectes item to be an array,but xml2json make item as an object if there is only one instance
      */
     function processXMLJSON(json) {
+        if((json['resources'] != null) && json['resources']['resource'] != null) {
+            if(!(json['resources']['resource'] instanceof Array))
+                json['resources']['resource'] = [json['resources']['resource']];
+        }
         if ((json['items'] != null) && (json['items']['item'] != null)) {
             if (json['items']['item'] instanceof Array) {
                 for (var i = 0; i < json['items']['item'].length; i++) {
@@ -1127,19 +1132,24 @@ function MenuHandler() {
         if (currMenuObj == null)
             return;
         //Call destory function on viewClass which is being unloaded
-        if ((currMenuObj['class'] != null) && (typeof(window[currMenuObj['class']]) == 'function' || typeof(window[currMenuObj['class']]) == 'object') &&
-            (typeof(window[currMenuObj['class']]['destroy']) == 'function')) {
-			$.allajax.abort();
-			
-            try {
-                window[currMenuObj['class']]['destroy']();
-            } catch (error) {
-                console.log(error.stack);
+        $.each(currMenuObj['resources']['resource'],function(idx,currResourceObj) {
+            if ((currResourceObj['class'] != null) && (typeof(window[currResourceObj['class']]) == 'function' || typeof(window[currResourceObj['class']]) == 'object') &&
+                (typeof(window[currResourceObj['class']]['destroy']) == 'function')) {
+                $.allajax.abort();
+                
+                try {
+                    window[currResourceObj['class']]['destroy']();
+                } catch (error) {
+                    console.log(error.stack);
+                }
             }
-        }
-        //window[currMenuObj['class']] = null;
+            //window[currResourceObj['class']] = null;
+        });
     }
 
+    /**
+     * parentsArr is used to load the resources specified in the menu hierarchy
+     */
     this.getMenuObjByHash = function (menuHash, currMenuObj, parentsArr) {
         parentsArr = ifNull(parentsArr,[]) ;
         if (currMenuObj == null)
@@ -1175,7 +1185,7 @@ function MenuHandler() {
 
     this.loadResourcesFromMenuObj = function(currMenuObj,deferredObj) {
         var parents = currMenuObj['parents'];
-        if (currMenuObj['rootDir'] != null) {
+        if (currMenuObj['rootDir'] != null || getValueByJsonPath(currMenuObj,'resources;resource',[]).length > 0) {
             //Update page Hash only if we are moving to a different view
             var currHashObj = layoutHandler.getURLHashObj();
             if (currHashObj['p'] != currMenuObj['hash']) {
@@ -1189,85 +1199,84 @@ function MenuHandler() {
             if(parents != null && parents.length > 0){
                 $.each(parents,function(i,parent){
                     var parentRootDir = parent['rootDir'];
-                    if (parentRootDir != null && parent['view'] != null) {
+                    if (parentRootDir != null || getValueByJsonPath(parent,'resources;resource',[]).length > 0) {
                         loadViewResources(parent,currMenuObj['hash']);
                         loadCssResources(parent,currMenuObj['hash']);
                     }
                 });
             }
             //Load the feature views
-            if (currMenuObj['view'] != null) {
-                loadViewResources(currMenuObj,currMenuObj['hash']);
-            } 
+            loadViewResources(currMenuObj,currMenuObj['hash']);
             //Load the feature css files
-            if(currMenuObj['css'] != null) {
-                loadCssResources(currMenuObj);
-            }
+            loadCssResources(currMenuObj);
+
             //View file need to be downloaded first before executing any JS file
             $.when.apply(window, viewDeferredObjs).done(function() {
                 //Load the parent js
                 if(parents != null && parents.length > 0){
                     $.each(parents,function(i,parent){
                         var parentRootDir = parent['rootDir'];
-                        if (parentRootDir != null && parent['js'] != null) {
+                        if (parentRootDir != null || getValueByJsonPath(parent,'resources;resource',[]).length > 0) {
                             loadJsResources(parent);
                         }
                     });
                 }
                 loadJsResources(currMenuObj);
-                /*$.each(currMenuObj['css'],function() {
-                     deferredObjs.push(loadCSS(rootDir + '/css/' + this));
-                 });*/
                 $.when.apply(window, deferredObjs).done(function () {
                     deferredObj.resolve();
                 });
             });
-        }
         
-        function loadViewResources(menuObj,hash){
-            if (!(menuObj['view'] instanceof Array)) {
-                menuObj['view'] = [menuObj['view']];
+            function loadViewResources(menuObj,hash) {
+                $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
+                    if (!(currResourceObj['view'] instanceof Array)) {
+                        currResourceObj['view'] = [currResourceObj['view']];
+                    }
+                    $.each(currResourceObj['view'], function () {
+                        var viewDeferredObj = $.Deferred();
+                        viewDeferredObjs.push(viewDeferredObj);
+                        var viewPath = currResourceObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
+                        templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+                    });
+                })
             }
-            $.each(menuObj['view'], function () {
-                var viewDeferredObj = $.Deferred();
-                viewDeferredObjs.push(viewDeferredObj);
-                var viewPath = menuObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
-                templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
-            });
-        }
 
-        function loadCssResources(menuObj,hash) {
-            if(menuObj['css'] == null)
-                return;
-            if (!(menuObj['css'] instanceof Array)) {
-                menuObj['css'] = [menuObj['css']];
+            function loadCssResources(menuObj,hash) {
+                $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
+                    if(currResourceObj['css'] == null)
+                        return;
+                    if (!(currResourceObj['css'] instanceof Array)) {
+                        currResourceObj['css'] = [currResourceObj['css']];
+                    }
+                    $.each(currResourceObj['css'],function() {
+                        var cssPath = currResourceObj['rootDir'] + '/css/' + this;
+                        if($.inArray(cssPath,globalObj['loadedCSS']) == -1) {
+                            globalObj['loadedCSS'].push(cssPath);
+                            var cssLink = $("<link rel='stylesheet' type='text/css' href='"+cssPath+"'>");
+                            $('head').append(cssLink);
+                        }
+                    });
+                });
             }
-            $.each(menuObj['css'],function() {
-                var cssPath = menuObj['rootDir'] + '/css/' + this;
-                if($.inArray(cssPath,globalObj['loadedCSS']) == -1) {
-                    globalObj['loadedCSS'].push(cssPath);
-                    var cssLink = $("<link rel='stylesheet' type='text/css' href='"+cssPath+"'>");
-                    $('head').append(cssLink);
-                }
-            });
-        }
-        
-        function loadJsResources(menuObj){
-            if (menuObj['js'] instanceof Array) {
-            } else
-                menuObj['js'] = [menuObj['js']];
-            var isLoadFn = menuObj['loadFn'] != null ? true : false;
-            var isReloadRequired = true;
-            //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
-            if(menuObj['class'] == 'infraMonitorView' || menuObj['class'] == 'tenantNetworkMonitorView')
-                isReloadRequired = false;
-            $.each(menuObj['js'], function () {
-                //Load the JS file only if it's not loaded already
-                //if (window[menuObj['class']] == null)
-                if(($.inArray(menuObj['rootDir'] + '/js/' + this,globalObj['loadedScripts']) == -1) ||
-                    (isLoadFn == true) || (isReloadRequired == true))
-                    deferredObjs.push(getScript(menuObj['rootDir'] + '/js/' + this));
-            });
+            
+            function loadJsResources(menuObj) {
+                $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
+                    if (!(currResourceObj['js'] instanceof Array)) 
+                        currResourceObj['js'] = [currResourceObj['js']];
+                    var isLoadFn = currResourceObj['loadFn'] != null ? true : false;
+                    var isReloadRequired = true;
+                    //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
+                    if(currResourceObj['class'] == 'infraMonitorView' || currResourceObj['class'] == 'tenantNetworkMonitorView')
+                        isReloadRequired = false;
+                    $.each(currResourceObj['js'], function () {
+                        //Load the JS file only if it's not loaded already
+                        //if (window[currResourceObj['class']] == null)
+                        if(($.inArray(currResourceObj['rootDir'] + '/js/' + this,globalObj['loadedScripts']) == -1) ||
+                            (isLoadFn == true) || (isReloadRequired == true))
+                            deferredObjs.push(getScript(currResourceObj['rootDir'] + '/js/' + this));
+                    });
+                });
+            }
         }
     }
 
@@ -1278,14 +1287,14 @@ function MenuHandler() {
         try {
                 self.loadResourcesFromMenuObj(currMenuObj,deferredObj);
                 deferredObj.done(function () {
-                    if (currMenuObj['loadFn'] != null) {
-                        window[currMenuObj['loadFn']]();
-                    } else if (currMenuObj['class'] != null) {
-                        //Cleanup the container
-                        $(contentContainer).html('');
-                        if(window[currMenuObj['class']] != null)
-                            window[currMenuObj['class']].load({containerId:contentContainer, hashParams:layoutHandler.getURLHashParams()});
-                    }
+                    //Cleanup the container
+                    $(contentContainer).html('');
+                    $.each(getValueByJsonPath(currMenuObj,'resources;resource',[]),function(idx,currResourceObj) {
+                        if (currResourceObj['class'] != null) {
+                            if(window[currResourceObj['class']] != null)
+                                window[currResourceObj['class']].load({containerId:contentContainer, hashParams:layoutHandler.getURLHashParams()});
+                        }
+                    });
                 });
         } catch (error) {
             console.log(error.stack);
