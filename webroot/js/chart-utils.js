@@ -289,7 +289,10 @@
                 }
                 function bubbleDrillDown(nodeName,nodeMap) {
                     var e = nodeMap[nodeName];
-                    processDrillDownForNodes(e);
+                    if(typeof(chartOptions['clickFn']) == 'function')
+                        chartOptions['clickFn'](e['point']);
+                    else
+                        processDrillDownForNodes(e);
                 }
                 $(window).off('resize.multiTooltip');
                 $(window).on('resize.multiTooltip',function(e){
