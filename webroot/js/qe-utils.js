@@ -29,10 +29,7 @@ var queries = {
     fr: getQueryModel(),
     sl: getQueryModel(),
     ot: getQueryModel(),
-    acpu: getQueryModel("Query CPU Information"),
-    qeperf: getQueryModel("Query QE Performance"),
-    vna: getQueryModel("Query VN Agent"),
-    smsg: getQueryModel("Query Sandesh Messages")
+    stat: getQueryModel("Statistics Query")
 };
 
 var slColumnsDisplay = [
@@ -400,31 +397,17 @@ function viewQueryResult(gridId, rowIndex, reRunTimeRange, reRunQueryObj, reRun)
 };
 
 function getQueryPrefix4Table(tableName) {
-    var queryPrefix = null,
-        acpuStatTables = [
-            'StatTable.AnalyticsCpuState.cpu_info',
-            'StatTable.ComputeCpuState.cpu_info',
-            'StatTable.ConfigCpuState.cpu_info',
-            'StatTable.ControlCpuState.cpu_info'
-        ];
+    var queryPrefix = null;
     if (tableName == 'FlowRecordTable') {
-        queryPrefix = 'fr';
+        return queryPrefix = 'fr';
     } else if (tableName == 'FlowSeriesTable') {
-        queryPrefix = 'fs';
+        return queryPrefix = 'fs';
     } else if (tableName == 'MessageTable') {
-        queryPrefix = 'sl';
-    } else if (acpuStatTables.indexOf(tableName) != -1 ) {
-        queryPrefix = 'acpu';
-    } else if (tableName == 'StatTable.QueryPerfInfo.query_stats') {
-        queryPrefix = 'qeperf';
-    } else if (tableName == 'StatTable.UveVirtualNetworkAgent.vn_stats') {
-        queryPrefix = 'vna';
-    } else if (tableName == 'StatTable.SandeshMessageStat.msg_info') {
-        queryPrefix = 'smsg';
+        return queryPrefix = 'sl';
     } else if (tableName.indexOf('Object') != -1) {
-        queryPrefix = 'ol';
+        return queryPrefix = 'ol';
     }
-    return queryPrefix;
+    return 'stat';
 }
 
 function deleteQueryCache4Queue(queueId) {
@@ -1081,21 +1064,17 @@ function setColumnValues(url, viewModelKey, viewModels, responseField, ignoreVal
     });
 };
 
-function setFromValues(url, viewModelKey, viewModel, queryPrefix) {
+function setStatQueryFromValues(url, viewModelKey , viewModel) {
     var validValues, validValueDS = [];
-
-    if(queryPrefix != 'acpu'){
-        return;
-    }
     $.ajax({
         url: url,
         dataType: "json",
         success: function(response) {
             validValues = response;
             for (var i = 0; i < validValues.length; i += 1) {
-                if(validValues[i].name.indexOf("cpu_info")!=-1){
+                if(validValues[i].name.indexOf("StatTable")!=-1){
                     validValueDS.push({"name":validValues[i].display_name, "value":validValues[i].name});
-                    viewModel.fromTables.push({name:validValues[i].display_name, value:validValues[i].name});
+                    viewModel[viewModelKey].push({name:validValues[i].display_name, value:validValues[i].name});
                 }
             }
         }
@@ -1978,7 +1957,7 @@ function selectTimeRange(element, queryPrefix) {
     } else {
         queries[queryPrefix].queryViewModel.isCustomTRVisible(false);
     }
-    if (queryPrefix == 'fs' || queryPrefix == 'acpu' || queryPrefix == 'qeperf' || queryPrefix == 'vna') {
+    if (queryPrefix == 'fs' || queryPrefix == 'stat') {
         resetTGValues(val == 0, queryPrefix);
     }
     if (queryPrefix == 'ot') {
@@ -2779,7 +2758,7 @@ function QueryViewModel(queryPrefix, resetFunction, isTGActive) {
         this.objectIds =  ko.observableArray([]);
         this.levels = ko.observableArray([]);
         this.categories = ko.observableArray([]);
-    } else if (queryPrefix == 'acpu') {
+    } else if (queryPrefix == 'stat') {
         this.fromTables = ko.observableArray([]);
     }
 
@@ -2816,7 +2795,7 @@ function SelectViewModel(queryPrefix, resetFunction) {
             "sum(bytes)": ko.observable(true),
             "sum(packets)": ko.observable(true)
         };
-    } else if (['acpu', 'qeperf', 'vna', 'smsg'].indexOf(queryPrefix) != -1) {
+    } else if (['stat'].indexOf(queryPrefix) != -1) {
         this.fields = ko.observableArray([]);
         this.isEnabled = {'T': ko.observable(true)};
     }
