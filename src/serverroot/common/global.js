@@ -246,7 +246,13 @@ global.QUERY_JSON = {
     ObjectCollectorInfo: {"table": 'ObjectCollectorInfo', "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": []},
     ObjectSITable: {"table": 'ObjectSITable', "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": []},
     FlowSeriesTable: {"table": 'FlowSeriesTable', "start_time": "", "end_time": "", "select_fields": ['flow_class_id', 'direction_ing']},
-    FlowRecordTable: {"table": 'FlowRecordTable', "start_time": "", "end_time": "", "select_fields": ['vrouter', 'sourcevn', 'sourceip', 'sport', 'destvn', 'destip', 'dport', 'protocol', 'direction_ing']}
+    FlowRecordTable: {"table": 'FlowRecordTable', "start_time": "", "end_time": "", "select_fields": ['vrouter', 'sourcevn', 'sourceip', 'sport', 'destvn', 'destip', 'dport', 'protocol', 'direction_ing']},
+    StatTable_UveVirtualNetworkAgent_vn_stats: {"table": 'StatTable.UveVirtualNetworkAgent.vn_stats',"start_time": "", "end_time": "", 
+                                                "select_fields": []},
+    StatTable_VirtualMachineStats_if_stats: {"table": 'StatTable.VirtualMachineStats.if_stats',"start_time": "", "end_time": "", 
+                                                    "select_fields": []},
+    StatTable_VirtualMachineStats_fip_stats: {"table": 'StatTable.VirtualMachineStats.fip_stats',"start_time": "", "end_time": "", 
+                                                        "select_fields": []},
 };
 
 global.FORMAT_TABLE_COLUMNS = {

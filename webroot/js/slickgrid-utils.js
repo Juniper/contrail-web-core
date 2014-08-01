@@ -827,6 +827,9 @@ function getDefaultGridConfig() {
                 removeGridLoading: function(){
                     gridContainer.find('.grid-header-icon-loading').hide();
                 },
+                showGridLoading: function() {
+                    gridContainer.find('.grid-header-icon-loading').show();
+                },
                 adjustAllRowHeight: function() {
                 	var self = this;
                     gridContainer.find('.slick-row-master').each(function(){

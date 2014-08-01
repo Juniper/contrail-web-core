@@ -197,7 +197,7 @@ var defColors = ['#1c638d', '#4DA3D5'];
                             if (chartData['link']['context'] == 'instance') {
                                 //Get the instance ip from drop-down
                                 var instObj = getSelInstanceFromDropDown();
-                                $.extend(detailObj, {ip:instObj['ip'], vnName:instObj['vnName']});
+                                $.extend(detailObj, {ip:instObj['ip_address'], vnName:instObj['virtual_network']});
                             }
                             if (chartData['class'] != null)
                                 viewObj = chartData['class'];
@@ -682,7 +682,11 @@ function prettifyBytes(obj) {
 }
 
 function formatThroughput(bytes,noDecimal,maxPrecision) {
-    return formatBytes(bytes,noDecimal,maxPrecision).replace('B','b') + 'ps';
+    var data = formatBytes(bytes,noDecimal,maxPrecision);
+    if(data != '-')
+        return data.replace('B','b') + 'ps';
+    else
+        return '-';
 }
 
 function formatBytes(bytes, noDecimal, maxPrecision, precision) {
