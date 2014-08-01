@@ -30,6 +30,7 @@ var discServEnable = ((null != config.discoveryService) &&
                       config.discoveryService.enable : true;
 
 var pkgList = commonUtils.mergeAllPackageList(global.service.MIDDLEWARE);
+assert(pkgList);
 
 /* Function: processMsg
  Handler for message processing for messages coming from main Server
@@ -82,24 +83,22 @@ function createJobsAtInit ()
     createVRouterGeneratorsJob();
 }
 
-function getDestPathByPkgPathURL (destPath)
-{
-    var destArrPath = destPath.split(':');
-    if (destArrPath.length > 1) {
-        destPath = config.featurePkg[destArrPath[0]]['path'] + '/' + destArrPath[1];
-    }
-    return destPath;
-}
-
 function registerTojobListenerEvent()
 {
-    var destPath = null;
-    var jobProcData = jsonPath(pkgList, "$..jobProcess[0]");
-    var jobProcDataLen = jobProcData.length;
-    for (var i = 0; i < jobProcDataLen; i++) {
-        destPath = getDestPathByPkgPathURL(jobProcData[i]['output'][0]);
-        require(destPath).addjobListenerEvent();
-        require(destPath).jobsProcess();
+    var pkgDir;
+    var pkgListLen = pkgList.length;
+    for (var i = 0; i < pkgListLen; i++) {
+        if (pkgList[i]['jobProcess.xml']) {
+            pkgDir = commonUtils.getPkgPathByPkgName(pkgList[i]['pkgName']);
+            var jobListLen = pkgList[i]['jobProcess.xml'].length;
+            for (var j = 0; j < jobListLen; j++) {
+                logutils.logger.debug("Registering jobListeners: " +
+                                      pkgDir + pkgList[i]['jobProcess.xml'][j]);
+                require(pkgDir +
+                        pkgList[i]['jobProcess.xml'][j]).addjobListenerEvent();
+                require(pkgDir + pkgList[i]['jobProcess.xml'][j]).jobsProcess();
+            }
+        }
     }
 }
 
