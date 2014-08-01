@@ -1496,3 +1496,7 @@ color: #b94a48;
 .rule-item .select2-container, .rule-item  input {
     background : transparent;
 }
+
+#pageHeader.navbar .nav > li {
+    float:right;
+}
