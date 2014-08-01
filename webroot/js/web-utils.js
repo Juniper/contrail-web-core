@@ -197,7 +197,12 @@ var defColors = ['#1c638d', '#4DA3D5'];
                             if (chartData['link']['context'] == 'instance') {
                                 //Get the instance ip from drop-down
                                 var instObj = getSelInstanceFromDropDown();
-                                $.extend(detailObj, {ip:instObj['ip'], vnName:instObj['vnName']});
+                                $.extend(detailObj, 
+                                        {
+                                            ip:instObj['ip_address'],
+                                            vnName:instObj['virtual_network']
+                                        }
+                                );
                             }
                             if (chartData['class'] != null)
                                 viewObj = chartData['class'];
@@ -680,9 +685,17 @@ function prettifyBytes(obj) {
     logMessage('formatBytes', bytes, multiplier, prefixIdx, bytes / multiplier);
     return formatStr;
 }
-
+/*
+ * This function formats the Throughput value if the input is integer/float which inturn uses the
+ * formatBytes function 
+ * example of output 1234 bps 
+ */
 function formatThroughput(bytes,noDecimal,maxPrecision) {
-    return formatBytes(bytes,noDecimal,maxPrecision).replace('B','b') + 'ps';
+    var data = formatBytes(bytes,noDecimal,maxPrecision);
+    if(data != '-')
+        return data.replace('B','b') + 'ps';
+    else
+        return '-';
 }
 
 function formatBytes(bytes, noDecimal, maxPrecision, precision) {
@@ -1976,7 +1989,8 @@ function ManageDataSource() {
                 'networkDS':{
                     name:'networkDS',
                     ongoing:false,
-                    populateFn:'getVirtualNetworksData',
+                    populateFn:'networkPopulateFns.getVirtualNetworksData',
+                    onChange:'networkPopulateFns.networkDSChangeHandler',
                     updateStartTime:null,   //Time at which update started
                     lastUpdated:null,
                     deferredObj:null,
@@ -1989,8 +2003,8 @@ function ManageDataSource() {
                     name:'instDS',
                     ongoing:false,
                     lastUpdated:null,
-                    populateFn:'getAllInstances',
-                    onChange:'getStatsForVM',
+                    populateFn:'instancePopulateFns.getAllInstances',
+                    onChange:'instancePopulateFns.instanceDSChangeHandler',
                     deferredObj:null,
                     dataSource:null,
                     error:null
@@ -2075,21 +2089,33 @@ function ManageDataSource() {
         if(dsObj['populateFn'] instanceof Array) {
             var defObjArr = [];
                 defObjArr.push(deferredObj);
-                window[dsObj['populateFn'][0]](defObjArr[0],dataSource,dsObj,dsName);  
+                if(dsObj['populateFn'][0].indexOf('.') > -1) {
+                    var fnArr = dsObj['populateFn'][0].split('.');
+                    window[fnArr[0]][fnArr[1]](defObjArr[0],dataSource,dsObj,dsName);
+                } else
+                    window[dsObj['populateFn'][0]](defObjArr[0],dataSource,dsObj,dsName);  
               for(var i = 0; i < dsObj['populateFn'].length; i++) {
                   var loopDefObj = $.Deferred();
                   defObjArr.push(loopDefObj);
                   defObjArr[i].done(function(i){
                       return function(arguments){
-                          if(window[dsObj['populateFn'][i + 1]] != null)
+                          if(window[dsObj['populateFn'][i + 1]] != null && dsObj['populateFn'][i + 1].indexOf('.') == -1)
                               window[dsObj['populateFn'][i + 1]](defObjArr[i + 1],arguments['dataSource'],dsName);
-                          else
+                          else if(window[dsObj['populateFn'][i + 1]] != null && dsObj['populateFn'][i + 1].indexOf('.') > -1) {
+                              var fnArr = dsObj['populateFn'][i + 1].split('.');
+                              window[fnArr[0]][fnArr[1]](defObjArr[i + 1],arguments['dataSource'],dsName);
+                          } else
                               dataSource.setData(arguments['dataSource'].getItems());
                       };
                   }(i));
               }
-        } else
-            window[dsObj['populateFn']](deferredObj,dataSource,dsObj,dsName);
+        } else {
+            if(dsObj['populateFn'].indexOf('.') > -1) {
+                var fnArr = dsObj['populateFn'].split('.');
+                window[fnArr[0]][fnArr[1]](deferredObj,dataSource,dsObj,dsName);
+            } else
+                window[dsObj['populateFn']](deferredObj,dataSource,dsObj,dsName);
+        }
         manageDataSource.setLastupdatedTime(dsObj,{status:'inprogess'});
         deferredObj.fail(function(errObj){
             dsObj['ongoing'] = false;
@@ -2192,18 +2218,31 @@ function SingleDataSource(dsName) {
     instances[dsName].push(this);
     var singleDSObj = manageDataSource.getDataSource(dsName);
     //singleDSObj['dataSource'].onPagingInfoChanged.unsubscribeAll();
-    var subscribeFn = function () {
+    var subscribeFn = function (e,arguments) {
+        var dataViewEventArgs = arguments;
            $.each(instances[dsName],function(idx,obj) {
                $(obj).trigger('change');
+               if(singleDSObj['onChange'] != null) {
+                   $(obj).trigger('startLoading');
+                   var deferredObj = $.Deferred();
+                   if(singleDSObj['onChange'].indexOf('.') > -1) {
+                       var fnArr = singleDSObj['onChange'].split('.');
+                       window[fnArr[0]][fnArr[1]](singleDSObj['dataSource'],dataViewEventArgs,deferredObj);
+                   } else
+                       window[singleDSObj['onChange']](singleDSObj['dataSource'],dataViewEventArgs,deferredObj);
+                   deferredObj.always(function(){
+                       $(obj).trigger('endLoading'); 
+                   });
+               }
            });
        };
     //Unsubscribe old listeners for this dataSource
     $.each(subscribeFns[dsName],function(idx,fn) {
-       singleDSObj['dataSource'].onUpdateData.unsubscribe(fn);
+       singleDSObj['dataSource'].onDataUpdate.unsubscribe(fn);
     });
     subscribeFns[dsName] = [];
     subscribeFns[dsName].push(subscribeFn);
-    singleDSObj['dataSource'].onUpdateData.subscribe(subscribeFn);
+    singleDSObj['dataSource'].onDataUpdate.subscribe(subscribeFn);
 
     this.getDataSourceObj = function() {
         return singleDSObj;

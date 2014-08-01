@@ -246,9 +246,53 @@ global.QUERY_JSON = {
     ObjectCollectorInfo: {"table": 'ObjectCollectorInfo', "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": []},
     ObjectSITable: {"table": 'ObjectSITable', "start_time": "", "end_time": "", "select_fields": ["MessageTS", "Source", "ModuleId"], "sort_fields": ['MessageTS'], "sort": 2, "filter": []},
     FlowSeriesTable: {"table": 'FlowSeriesTable', "start_time": "", "end_time": "", "select_fields": ['flow_class_id', 'direction_ing']},
-    FlowRecordTable: {"table": 'FlowRecordTable', "start_time": "", "end_time": "", "select_fields": ['vrouter', 'sourcevn', 'sourceip', 'sport', 'destvn', 'destip', 'dport', 'protocol', 'direction_ing']}
+    FlowRecordTable: {"table": 'FlowRecordTable', "start_time": "", "end_time": "", "select_fields": ['vrouter', 'sourcevn', 'sourceip', 'sport', 'destvn', 'destip', 'dport', 'protocol', 'direction_ing']},
+    StatTable_UveVirtualNetworkAgent_vn_stats: {
+                                                    "table": 'StatTable.UveVirtualNetworkAgent.vn_stats',
+                                                    "start_time": "",
+                                                    "end_time": "", 
+                                                    "select_fields": []
+                                                },
+    StatTable_VirtualMachineStats_if_stats: {
+                                                    "table": 'StatTable.VirtualMachineStats.if_stats',
+                                                    "start_time": "",
+                                                    "end_time": "", 
+                                                    "select_fields": []
+                                             },
+    StatTable_VirtualMachineStats_fip_stats: {
+                                                    "table": 'StatTable.VirtualMachineStats.fip_stats',
+                                                    "start_time": "",
+                                                    "end_time": "", 
+                                                    "select_fields": []
+                                             },
 };
 
+global.STATS_PROP = {
+                    'vn': {
+                            'inBytes':'SUM(vn_stats.in_bytes)',
+                            'outBytes':'SUM(vn_stats.out_bytes)',
+                            'inPkts':'SUM(vn_stats.in_tpkts)',
+                            'outPkts':'SUM(vn_stats.out_tpkts)'
+                          },
+                    'conn-vn': {
+                            'inBytes':'SUM(vn_stats.in_bytes)',
+                            'outBytes':'SUM(vn_stats.out_bytes)',
+                            'inPkts':'SUM(vn_stats.in_pkts)',
+                            'outPkts':'SUM(vn_stats.out_pkts)'
+                          },
+                    'vm': {
+                            'inBytes':'SUM(if_stats.in_bytes)',
+                            'outBytes':'SUM(if_stats.out_bytes)',
+                            'inPkts':'SUM(if_stats.in_pkts)',
+                            'outPkts':'SUM(if_stats.out_pkts)'
+                           },
+                    'fip' : {
+                            'inBytes':'SUM(fip_stats.in_bytes)',
+                            'outBytes':'SUM(fip_stats.out_bytes)',
+                            'inPkts':'SUM(fip_stats.in_pkts)',
+                            'outPkts':'SUM(fip_stats.out_pkts)'
+                           },
+                 };
 global.FORMAT_TABLE_COLUMNS = {
     'FlowSeriesTable': {"sum(bytes)": "sum_bytes", "sum(packets)": "sum_packets", "avg(bytes)": "avg_bytes", "avg(packets)": "avg_packets"}
 };
