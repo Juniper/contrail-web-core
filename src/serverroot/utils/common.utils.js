@@ -1689,6 +1689,17 @@ function getPkgPathByPkgName (pkgName)
     return config.featurePkg[pkgName].path;
 }
 
+/**
+ * This function takes two parameters and compares the first one with null if it matches,
+ * then it returns the second parameter else first parameter.
+ */
+function ifNull(value, defValue) {
+    if (value == null)
+        return defValue;
+    else
+        return value;
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1735,4 +1746,4 @@ exports.compareAndMergeDefaultConfig = compareAndMergeDefaultConfig;
 exports.mergeAllMenuXMLFiles = mergeAllMenuXMLFiles;
 exports.getPkgPathByPkgName = getPkgPathByPkgName;
 exports.getUserRoleListPerTenant = getUserRoleListPerTenant;
-
+exports.ifNull = ifNull;

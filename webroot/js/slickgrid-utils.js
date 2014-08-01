@@ -651,7 +651,20 @@ function getDefaultGridConfig() {
                     }
                 }, 50);
             };
-            
+            eventHandlerMap.dataView['onDataUpdate'] = function(e,args) {
+                //Refresh the grid only if it's not destroyed
+                if($(gridContainer).data('contrailGrid')) {
+                    grid.invalidateAllRows();
+                    grid.updateRowCount();
+                    grid.render();
+                    if(contrail.checkIfFunction(gridDataSource.events.onDataUpdate)) {
+                        gridDataSource.events.onDataUpdate();
+                    }
+                    if(gridDataSource.dataView != null && gridDataSource.dataView.getItems().length == 0)
+                        gridContainer.data('contrailGrid').showGridMessage('empty');
+                    gridContainer.data('contrailGrid').refreshView();
+                }
+            };
             eventHandlerMap.dataView['onUpdateData'] = function () {
                 //Refresh the grid only if it's not destroyed
                 if($(gridContainer).data('contrailGrid')) {
@@ -811,11 +824,13 @@ function getDefaultGridConfig() {
                         statusMsg = contrail.checkIfExist(customMsg) ? customMsg : (contrail.checkIfExist(gridStatusMsgConfig[status]) ? gridStatusMsgConfig[status].text : ''),
                         messageHtml;
                 	this.removeGridMessage();
-                	if(status == 'loading'){
+                	if(status == 'loading' || status == 'loadingNextPage'){
                 		gridContainer.find('.grid-header-icon-loading').show();
                 	}
-                	messageHtml = (contrail.checkIfExist(gridStatusMsgConfig[status])) ? '<p class="' + gridStatusMsgConfig[status].type + '"><i class="' + gridStatusMsgConfig[status].iconClasses + '"></i> ' + statusMsg + '</p>' : status;
-                	gridContainer.find('.grid-load-status').html(messageHtml).removeClass('hide');
+                	if(status != 'loadingNextPage') {
+                	    messageHtml = (contrail.checkIfExist(gridStatusMsgConfig[status])) ? '<p class="' + gridStatusMsgConfig[status].type + '"><i class="' + gridStatusMsgConfig[status].iconClasses + '"></i> ' + statusMsg + '</p>' : status;
+                	    gridContainer.find('.grid-load-status').html(messageHtml).removeClass('hide');
+                	}
 
                 },
                 removeGridMessage: function(){
