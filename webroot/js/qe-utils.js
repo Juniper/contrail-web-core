@@ -397,17 +397,17 @@ function viewQueryResult(gridId, rowIndex, reRunTimeRange, reRunQueryObj, reRun)
 };
 
 function getQueryPrefix4Table(tableName) {
-    var queryPrefix = null;
+    var queryPrefix = 'stat';
     if (tableName == 'FlowRecordTable') {
-        return queryPrefix = 'fr';
+        queryPrefix = 'fr';
     } else if (tableName == 'FlowSeriesTable') {
-        return queryPrefix = 'fs';
+        queryPrefix = 'fs';
     } else if (tableName == 'MessageTable') {
-        return queryPrefix = 'sl';
+        queryPrefix = 'sl';
     } else if (tableName.indexOf('Object') != -1) {
-        return queryPrefix = 'ol';
+        queryPrefix =  'ol';
     }
-    return 'stat';
+    return queryPrefix;
 }
 
 function deleteQueryCache4Queue(queueId) {
@@ -1064,7 +1064,7 @@ function setColumnValues(url, viewModelKey, viewModels, responseField, ignoreVal
     });
 };
 
-function setStatQueryFromValues(url, viewModelKey , viewModel) {
+function setStatQueryFromValues(url, viewModelKey , viewModel, queryJSON) {
     var validValues, validValueDS = [];
     $.ajax({
         url: url,
@@ -1076,6 +1076,9 @@ function setStatQueryFromValues(url, viewModelKey , viewModel) {
                     validValueDS.push({"name":validValues[i].display_name, "value":validValues[i].name});
                     viewModel[viewModelKey].push({name:validValues[i].display_name, value:validValues[i].name});
                 }
+            }
+            if(queryJSON != null && typeof queryJSON.table != 'undefined'){
+                $('#stat-table').select2('val', queryJSON.table);
             }
         }
     });
