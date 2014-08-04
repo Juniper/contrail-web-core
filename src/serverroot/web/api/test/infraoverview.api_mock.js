@@ -99,7 +99,8 @@ var configSummWGenData =
                                 "module_id": "ApiServer"
                             }
                         ], 
-                        "process_state_list": [
+                        "NodeStatus":{
+                        "process_info": [
                             {
                                 "core_file_list": [], 
                                 "exit_count": 0, 
@@ -188,7 +189,7 @@ var configSummWGenData =
                                 "start_count": 1, 
                                 "stop_count": 0
                             }
-                        ]
+                        ]}
                     }
                 }
             }, 
@@ -311,7 +312,8 @@ var configSummWGenData =
                                 "module_id": "ApiServer"
                             }
                         ], 
-                        "process_state_list": [
+                        "NodeStatus":{
+                        "process_info": [
                             {
                                 "core_file_list": [], 
                                 "exit_count": 0, 
@@ -400,7 +402,7 @@ var configSummWGenData =
                                 "start_count": 1, 
                                 "stop_count": 0
                             }
-                        ], 
+                        ]}, 
                         "schema_xmer_cpu_share": [
                             {
                                 "history-10": {
@@ -723,7 +725,8 @@ var configSummWGenData_OP =
                             "module_id": "ApiServer"
                         }
                     ], 
-                    "process_state_list": [
+                    "NodeStatus":{
+                    "process_info": [
                         {
                             "core_file_list": [], 
                             "exit_count": 0, 
@@ -812,7 +815,7 @@ var configSummWGenData_OP =
                             "start_count": 1, 
                             "stop_count": 0
                         }
-                    ]
+                    ]}
                 }
             }
         }
@@ -965,7 +968,8 @@ var configSummWGenData_OP =
                             "module_id": "ApiServer"
                         }
                     ], 
-                    "process_state_list": [
+                    "NodeStatus":{
+                    "process_info": [
                         {
                             "core_file_list": [], 
                             "exit_count": 0, 
@@ -1054,7 +1058,7 @@ var configSummWGenData_OP =
                             "start_count": 1, 
                             "stop_count": 0
                         }
-                    ], 
+                    ]}, 
                     "schema_xmer_cpu_share": [
                         {
                             "history-10": {
@@ -1283,7 +1287,8 @@ var configSummWOGenData =
                                 "module_id": "ApiServer"
                             }
                         ], 
-                        "process_state_list": [
+                        "NodeStatus":{
+                        "process_info": [
                             {
                                 "core_file_list": [], 
                                 "exit_count": 0, 
@@ -1372,7 +1377,7 @@ var configSummWOGenData =
                                 "start_count": 1, 
                                 "stop_count": 0
                             }
-                        ]
+                        ]}
                     }
                 }
             }, 
@@ -1495,7 +1500,8 @@ var configSummWOGenData =
                                 "module_id": "ApiServer"
                             }
                         ], 
-                        "process_state_list": [
+                        "NodeStatus":{
+                        "process_info": [
                             {
                                 "core_file_list": [], 
                                 "exit_count": 0, 
@@ -1584,7 +1590,7 @@ var configSummWOGenData =
                                 "start_count": 1, 
                                 "stop_count": 0
                             }
-                        ], 
+                        ]}, 
                         "schema_xmer_cpu_share": [
                             {
                                 "history-10": {
@@ -1813,7 +1819,8 @@ var configSummWOGenData_OP =
                             "module_id": "ApiServer"
                         }
                     ], 
-                    "process_state_list": [
+                    "NodeStatus":{
+                    "process_info": [
                         {
                             "core_file_list": [], 
                             "exit_count": 0, 
@@ -1902,7 +1909,7 @@ var configSummWOGenData_OP =
                             "start_count": 1, 
                             "stop_count": 0
                         }
-                    ]
+                    ]}
                 }
             }
         }
@@ -2027,7 +2034,8 @@ var configSummWOGenData_OP =
                             "module_id": "ApiServer"
                         }
                     ], 
-                    "process_state_list": [
+                    "NodeStatus":{
+                    "process_info": [
                         {
                             "core_file_list": [], 
                             "exit_count": 0, 
@@ -2116,7 +2124,7 @@ var configSummWOGenData_OP =
                             "start_count": 1, 
                             "stop_count": 0
                         }
-                    ], 
+                    ]}, 
                     "schema_xmer_cpu_share": [
                         {
                             "history-10": {
@@ -2367,7 +2375,8 @@ var configDetailsData =
                     "module_id": "ApiServer"
                 }
             ], 
-            "process_state_list": [
+            "NodeStatus":{
+            "process_info": [
                 {
                     "core_file_list": [], 
                     "exit_count": 0, 
@@ -2456,7 +2465,7 @@ var configDetailsData =
                     "start_count": 1, 
                     "stop_count": 0
                 }
-            ], 
+            ]}, 
             "schema_xmer_cpu_share": [
                 {
                     "history-10": {
@@ -3517,7 +3526,8 @@ var configDetailsData_OP =
                     "module_id": "ApiServer"
                 }
             ], 
-            "process_state_list": [
+            "NodeStatus":{
+            "process_info": [
                 {
                     "core_file_list": [], 
                     "exit_count": 0, 
@@ -3606,7 +3616,7 @@ var configDetailsData_OP =
                     "start_count": 1, 
                     "stop_count": 0
                 }
-            ], 
+            ]}, 
             "schema_xmer_cpu_share": [
                 {
                     "history-10": {
@@ -4015,7 +4025,8 @@ var analyticsSummWOGenData =
                             }
                         }
                     ], 
-                    "process_state_list": [
+                    "NodeStatus":{
+                    "process_info": [
                         {
                             "core_file_list": [], 
                             "exit_count": 0, 
@@ -4093,7 +4104,7 @@ var analyticsSummWOGenData =
                             "start_count": 1, 
                             "stop_count": 0
                         }
-                    ], 
+                    ]}, 
                     "queryengine_cpu_share": [
                         {
                             "history-10": {
@@ -4428,7 +4439,8 @@ var analyticsSummWOGenData =
                             }
                         }
                     ], 
-                    "process_state_list": [
+                    "NodeStatus":{
+                    "process_info": [
                         {
                             "core_file_list": [], 
                             "exit_count": 0, 
@@ -4506,7 +4518,7 @@ var analyticsSummWOGenData =
                             "start_count": 1, 
                             "stop_count": 0
                         }
-                    ], 
+                    ]}, 
                     "queryengine_cpu_share": [
                         {
                             "history-10": {
@@ -4855,7 +4867,8 @@ var analyticsSummWGenData =
                             }
                         }
                     ], 
-                    "process_state_list": [
+                    "NodeStatus":{
+                    "process_info": [
                         {
                             "core_file_list": [], 
                             "exit_count": 0, 
@@ -4933,7 +4946,7 @@ var analyticsSummWGenData =
                             "start_count": 1, 
                             "stop_count": 0
                         }
-                    ], 
+                    ]}, 
                     "queryengine_cpu_share": [
                         {
                             "history-10": {
@@ -5269,7 +5282,8 @@ var analyticsSummWGenData =
                             }
                         }
                     ], 
-                    "process_state_list": [
+                    "NodeStatus":{
+                    "process_info": [
                         {
                             "core_file_list": [], 
                             "exit_count": 0, 
@@ -5347,7 +5361,7 @@ var analyticsSummWGenData =
                             "start_count": 1, 
                             "stop_count": 0
                         }
-                    ], 
+                    ]}, 
                     "queryengine_cpu_share": [
                         {
                             "history-10": {
@@ -5695,7 +5709,8 @@ var analyticsSummWOGenData_OP =
                         }
                     }
                 ], 
-                "process_state_list": [
+                "NodeStatus":{
+                "process_info": [
                     {
                         "core_file_list": [], 
                         "exit_count": 0, 
@@ -5773,7 +5788,7 @@ var analyticsSummWOGenData_OP =
                         "start_count": 1, 
                         "stop_count": 0
                     }
-                ], 
+                ]}, 
                 "queryengine_cpu_share": [
                     {
                         "history-10": {
@@ -6110,7 +6125,8 @@ var analyticsSummWOGenData_OP =
                         }
                     }
                 ], 
-                "process_state_list": [
+                "NodeStatus":{
+                "process_info": [
                     {
                         "core_file_list": [], 
                         "exit_count": 0, 
@@ -6188,7 +6204,7 @@ var analyticsSummWOGenData_OP =
                         "start_count": 1, 
                         "stop_count": 0
                     }
-                ], 
+                ]}, 
                 "queryengine_cpu_share": [
                     {
                         "history-10": {
@@ -6791,7 +6807,8 @@ var analyticsSummWOGenData_OP =
                         }
                     }
                 ], 
-                "process_state_list": [
+                "NodeStatus":{
+                "process_info": [
                     {
                         "core_file_list": [], 
                         "exit_count": 0, 
@@ -6869,7 +6886,7 @@ var analyticsSummWOGenData_OP =
                         "start_count": 1, 
                         "stop_count": 0
                     }
-                ], 
+                ]}, 
                 "queryengine_cpu_share": [
                     {
                         "history-10": {
@@ -7204,7 +7221,8 @@ var analyticsSummWOGenData_OP =
                         }
                     }
                 ], 
-                "process_state_list": [
+                "NodeStatus":{
+                "process_info": [
                     {
                         "core_file_list": [], 
                         "exit_count": 0, 
@@ -7282,7 +7300,7 @@ var analyticsSummWOGenData_OP =
                         "start_count": 1, 
                         "stop_count": 0
                     }
-                ], 
+                ]}, 
                 "queryengine_cpu_share": [
                     {
                         "history-10": {
@@ -7745,7 +7763,8 @@ var analyticsSummWGenData_OP =
                         }
                     }
                 ], 
-                "process_state_list": [
+                "NodeStatus":{
+                "process_info": [
                     {
                         "core_file_list": [], 
                         "exit_count": 0, 
@@ -7823,7 +7842,7 @@ var analyticsSummWGenData_OP =
                         "start_count": 1, 
                         "stop_count": 0
                     }
-                ], 
+                ]}, 
                 "queryengine_cpu_share": [
                     {
                         "history-10": {
@@ -8275,7 +8294,8 @@ var analyticsSummWGenData_OP =
                         }
                     }
                 ], 
-                "process_state_list": [
+                "NodeStatus":{
+                "process_info": [
                     {
                         "core_file_list": [], 
                         "exit_count": 0, 
@@ -8353,7 +8373,7 @@ var analyticsSummWGenData_OP =
                         "start_count": 1, 
                         "stop_count": 0
                     }
-                ], 
+                ]}, 
                 "queryengine_cpu_share": [
                     {
                         "history-10": {
