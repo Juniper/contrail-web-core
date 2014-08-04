@@ -1132,7 +1132,7 @@ function MenuHandler() {
         if (currMenuObj == null)
             return;
         //Call destory function on viewClass which is being unloaded
-        $.each(currMenuObj['resources']['resource'],function(idx,currResourceObj) {
+        $.each(getValueByJsonPath(currMenuObj,'resources;resource',[]),function(idx,currResourceObj) {
             if ((currResourceObj['class'] != null) && (typeof(window[currResourceObj['class']]) == 'function' || typeof(window[currResourceObj['class']]) == 'object') &&
                 (typeof(window[currResourceObj['class']]['destroy']) == 'function')) {
                 $.allajax.abort();
@@ -1195,38 +1195,7 @@ function MenuHandler() {
             var deferredObjs = [];
             var rootDir = currMenuObj['rootDir'];
             var viewDeferredObjs = [];
-            //Load the parent views
-            if(parents != null && parents.length > 0){
-                $.each(parents,function(i,parent){
-                    var parentRootDir = parent['rootDir'];
-                    if (parentRootDir != null || getValueByJsonPath(parent,'resources;resource',[]).length > 0) {
-                        loadViewResources(parent,currMenuObj['hash']);
-                        loadCssResources(parent,currMenuObj['hash']);
-                    }
-                });
-            }
-            //Load the feature views
-            loadViewResources(currMenuObj,currMenuObj['hash']);
-            //Load the feature css files
-            loadCssResources(currMenuObj);
 
-            //View file need to be downloaded first before executing any JS file
-            $.when.apply(window, viewDeferredObjs).done(function() {
-                //Load the parent js
-                if(parents != null && parents.length > 0){
-                    $.each(parents,function(i,parent){
-                        var parentRootDir = parent['rootDir'];
-                        if (parentRootDir != null || getValueByJsonPath(parent,'resources;resource',[]).length > 0) {
-                            loadJsResources(parent);
-                        }
-                    });
-                }
-                loadJsResources(currMenuObj);
-                $.when.apply(window, deferredObjs).done(function () {
-                    deferredObj.resolve();
-                });
-            });
-        
             function loadViewResources(menuObj,hash) {
                 $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
                     if (!(currResourceObj['view'] instanceof Array)) {
@@ -1277,6 +1246,38 @@ function MenuHandler() {
                     });
                 });
             }
+
+            //Load the parent views
+            if(parents != null && parents.length > 0){
+                $.each(parents,function(i,parent){
+                    var parentRootDir = parent['rootDir'];
+                    if (parentRootDir != null || getValueByJsonPath(parent,'resources;resource',[]).length > 0) {
+                        loadViewResources(parent,currMenuObj['hash']);
+                        loadCssResources(parent,currMenuObj['hash']);
+                    }
+                });
+            }
+            //Load the feature views
+            loadViewResources(currMenuObj,currMenuObj['hash']);
+            //Load the feature css files
+            loadCssResources(currMenuObj);
+
+            //View file need to be downloaded first before executing any JS file
+            $.when.apply(window, viewDeferredObjs).done(function() {
+                //Load the parent js
+                if(parents != null && parents.length > 0){
+                    $.each(parents,function(i,parent){
+                        var parentRootDir = parent['rootDir'];
+                        if (parentRootDir != null || getValueByJsonPath(parent,'resources;resource',[]).length > 0) {
+                            loadJsResources(parent);
+                        }
+                    });
+                }
+                loadJsResources(currMenuObj);
+                $.when.apply(window, deferredObjs).done(function () {
+                    deferredObj.resolve();
+                });
+            });
         }
     }
 
