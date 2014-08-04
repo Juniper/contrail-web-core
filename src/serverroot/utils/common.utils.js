@@ -1545,6 +1545,85 @@ function mergeAllMenuXMLFiles (pkgList, mergePath, callback)
     });
 }
 
+/** Array: customeMenuChangeCB
+  * Holds for all the custom menu handlers
+      pkgList : List of packages (if installed) for which the handler should
+                be applied.
+      CB      : The callback
+  */
+var customeMenuChangeCB = [
+    {
+        pkgList: ['webController', 'webStorage'],
+        CB: controllerStorageMenuChangeCB
+    }
+];
+
+/** Function: controllerStorageMenuChangeCB
+  * This function is used to do custom change of menu when
+  * webController/webStorage package is installed.
+  * Custom Changes:
+  *     1. Under Monitor -> Storage should come before Debug Menu item.
+  */
+function controllerStorageMenuChangeCB (pkgList, resJson)
+{
+    try {
+        var items = resJson['menu']['items'][0]['item'][0]['items'][0]['item'];
+    } catch(e) {
+        logutils.logger.error("Something REALLY wrong happened:" + e);
+        return resJson;
+    }
+
+    /* Put Debug Menu before Storage Menu */
+    var tmp = items[2];
+    items[2] = items[3];
+    items[3] = tmp;
+    return resJson;
+}
+
+/** Function: getCustomeMenuChangeHandler
+  * This function is used to get the custom menu change handler based on the
+  * number of packages installed
+  */
+function getCustomeMenuChangeHandler (pkgList)
+{
+    var pkgLen = pkgList.length;
+    var pkgName = "";
+    var pkgNameList = [];
+
+    /* We should exclude core pkg to compute */
+    for (var i = 1; i < pkgLen; i++) {
+        pkgNameList.push(pkgList[i]['pkgName']);
+    }
+    pkgNameList.sort();
+    var pkgName = pkgNameList.join();
+    var customeMenuChangeCBLen = customeMenuChangeCB.length;
+    for (var i = 0; i < customeMenuChangeCBLen; i++) {
+        if (pkgLen - 1 != customeMenuChangeCB[i]['pkgList'].length) {
+            continue;
+        }
+        var cbPkgNameList = customeMenuChangeCB[i]['pkgList'].sort();
+        var cbPkgName = cbPkgNameList.join();
+        if (cbPkgName == pkgName) {
+            return customeMenuChangeCB[i]['CB'];
+        }
+    }
+    return null;
+}
+
+/** Function: customMenuChange
+  * This function is used to change the menu positions based on the packages
+  * installed
+  */
+function customMenuChange (pkgList, resMenuObj)
+{
+    var menuCB = getCustomeMenuChangeHandler(pkgList);
+    if (null == menuCB) {
+        return resMenuObj;
+    }
+    resMenuObj = menuCB(pkgList, resMenuObj);
+    return resMenuObj;
+}
+
 function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
 {
     var pkgDir = null;
@@ -1584,6 +1663,7 @@ function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
                 resJSON = mergeMenuObjects(resJSON, data[i + 1]);
             }
         }
+        resJSON = customMenuChange(pkgList, resJSON);
         var xmlData = js2xml('ContrailTopLevelElement', resJSON);
         xmlData = xmlData.replace("<ContrailTopLevelElement>", "");
         xmlData = xmlData.replace("</ContrailTopLevelElement>", "");
