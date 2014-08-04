@@ -37,7 +37,10 @@ function parseURLFile (result, fileToGen, cb)
 
   urlCbStr += commentStr;
   var requiresList = result['urlLists']['require'];
-  var len = requiresList.length;
+  var len = 0;
+  if (requiresList) {
+    len = requiresList.length;
+  }
   for (var i = 0; i < len; i++) {
       var splitter = (requiresList[i]['path']).toString().split('+');
       if (i == 0) {
@@ -78,10 +81,10 @@ function parseURLFile (result, fileToGen, cb)
   '  var str = ' + '"Request timed out: URL::" + req.url;\n' +
   '  if (req.pubChannel) {\n' + 
   '    /* Delete the Req Pending Q Entry */\n' +
-  '    cacheApi.deleteCachePendingQueueEntry(req.pubChannel);\n' +    
+  '    parseURLReq.cacheApi.deleteCachePendingQueueEntry(req.pubChannel);\n' +    
   '  };\n' +
   '  res.req.invalidated = true;\n' +
-  '  res.send(global.HTTP_STATUS_GATEWAY_TIMEOUT, str);\n' +
+  '  res.send(parseURLReq.global.HTTP_STATUS_GATEWAY_TIMEOUT, str);\n' +
   '}\n' +
   '\n';
   
@@ -91,7 +94,10 @@ function parseURLFile (result, fileToGen, cb)
   commentStr = "/* Register the URL with callback */\n";
   urlCbStr += commentStr;
 
-  len = itemList.length;
+  len = 0;
+  if (itemList) {
+    len = itemList.length;
+  }
   for (var i = 0; i < len; i++) {
     timeout = null;
     /* register URLs */
@@ -126,7 +132,7 @@ function parseURLFile (result, fileToGen, cb)
     longPollArrStr += "  /* Check if this request needs to be added in \n";
     longPollArrStr += "     pendingQ \n";
     longPollArrStr += "   */\n";
-    longPollArrStr += "  var reqCtx = longPoll.routeAll(req, res, next);\n";
+    longPollArrStr += "  var reqCtx = parseURLReq.longPoll.routeAll(req, res, next);\n";
     longPollArrStr += "  if (null == reqCtx) {\n";
     longPollArrStr += "    /* either not a valid URL, or unAuthed session */\n";
     longPollArrStr += "  } else {\n";
@@ -135,11 +141,11 @@ function parseURLFile (result, fileToGen, cb)
     if (null != timeout) {
       timeout = parseInt(timeout);
     }
-    longPollArrStr += "    timeout(req, res, ";
+    longPollArrStr += "    parseURLReq.timeout(req, res, ";
     if (null != timeout) {
       longPollArrStr += parseInt(itemList[i]['timeout']) + ");\n";
     } else {
-      longPollArrStr += "global.DFLT_HTTP_REQUEST_TIMEOUT_TIME);\n";
+      longPollArrStr += "parseURLReq.global.DFLT_HTTP_REQUEST_TIMEOUT_TIME);\n";
     }
     longPollArrStr += "    req.once('timeout', ";
     if (null != itemList[i]['timeoutCallback']) {
@@ -148,7 +154,7 @@ function parseURLFile (result, fileToGen, cb)
       longPollArrStr += 'defHandleReqTimeout);\n';
     }
     longPollArrStr += "    /* Now process the resuest */\n";
-    longPollArrStr += "    longPoll.processPendingReq(reqCtx, next, " +
+    longPollArrStr += "    parseURLReq.longPoll.processPendingReq(reqCtx, next, " +
       itemList[i]['callback'] + ");\n";
     longPollArrStr += "  }\n";
     longPollArrStr += "}\n";
@@ -158,7 +164,7 @@ function parseURLFile (result, fileToGen, cb)
       callback.substr(1, pos - 1) + "_" + callback.slice(pos + 1) + ");\n";
  
     /* Register feature string with URL */
-    capStr += "  rbac.setFeatureByURL(" + "'" + itemList[i]['url'] + "'";
+    capStr += "  parseURLReq.rbac.setFeatureByURL(" + "'" + itemList[i]['url'] + "'";
     capStr += ", " + "'" + method + "'" + ", " + "app.routes, " + "'" +
       itemList[i]['feature'] + "'" + ");\n";
   }

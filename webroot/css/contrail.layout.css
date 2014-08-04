@@ -2372,3 +2372,13 @@ button.btn:active {
     margin-top: 2px;
     height: 15px;
 }
+
+.textareaNoresize {
+    resize: none;
+}
+.text-left {
+    text-align: left!important;
+}
+.textBackground {
+    background-color: #eee!important;
+}

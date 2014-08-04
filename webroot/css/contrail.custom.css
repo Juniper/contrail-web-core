@@ -1496,3 +1496,19 @@ color: #b94a48;
 .rule-item .select2-container, .rule-item  input {
     background : transparent;
 }
+
+#pageHeader.navbar .nav > li {
+    float:right;
+}
+.image-network:before  {
+  content : url(../img/network.png);
+  vertical-align : middle;
+}
+.image-policy:before {
+  content : url(../img/policy.png);
+  vertical-align : middle;
+}
+.image-subnet:before {
+  content : url(../img/subnet.png);
+  vertical-align : middle;
+}
