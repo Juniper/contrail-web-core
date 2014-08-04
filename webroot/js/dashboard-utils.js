@@ -92,7 +92,7 @@ function infraMonitorClass() {
         if(globalObj.showAlertsPopup){
             loadAlertsContent(alertsDeferredObj);
         }
-        /*Need to resolve the alertsDef once all the alertsDS depend datasource are loaded
+        /*Need to resolve the alertsDefObj once all the alertsDS depend datasource are loaded
          */
         var allDSResolved = true;
         if(alertDS['depends'] instanceof Array) {
