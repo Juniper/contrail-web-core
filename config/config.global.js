@@ -235,7 +235,13 @@ config.logs.level = 'debug';
  *
 ******************************************************************************/
 config.getDomainProjectsFromApiServer = false;
+/*****************************************************************************
+* Boolean flag L2_Only indicates the default forwarding-mode of a network.
+* Allowed values : true / false
+* Set this flag to true if all the networks are to be L2 networks, 
+* set to false otherwise.
+*****************************************************************************/
 config.network = {};
-config.network.L2 = "Disable";//Enable (or) Disable
+config.network.L2_Only = true;
 // Export this as a module.
 module.exports = config;
