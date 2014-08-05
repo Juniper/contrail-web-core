@@ -235,7 +235,14 @@ config.logs.level = 'debug';
  *
 ******************************************************************************/
 config.getDomainProjectsFromApiServer = false;
+/*****************************************************************************
+* Boolean flag L2_Only, To set L2 and L2&L3 Mode. It is configarable in 
+* Virtual network page.
+* Values - true/false
+*    - true : L2 mode will be set.
+*    - false : L2 and L3 can be set from VN config page
+*****************************************************************************/
 config.network = {};
-config.network.L2 = "Disable";//Enable (or) Disable
+config.network.L2_Only = true;
 // Export this as a module.
 module.exports = config;
