@@ -65,6 +65,8 @@ function getApiTypeByServiceType (servType)
         return global.label.NETWORK_SERVER;
     case global.SERVICE_ENDPT_TYPE_IDENTITY:
         return global.label.IDENTITY_SERVER;
+    case global.SERVICE_ENDPT_TYPE_VOLUME:
+        return global.label.STORAGE_SERVER;
     default:
         return servType;
     }

@@ -44,6 +44,7 @@ fi
 
 if [ $1 = 'node' ] ; then
     ln -sf $FOUR_BACK/.jshintrc src/serverroot/web/api/.jshintrc
+    ln -sf $FOUR_BACK/node_modules src/serverroot/web/api/node_modules
     cd src/serverroot/web/api
     grunt node-qunit
 fi
