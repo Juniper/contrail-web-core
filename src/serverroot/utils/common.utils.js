@@ -1287,29 +1287,17 @@ function getWebServerInfo (req, res, appData)
 function mergeAllPackageList (serverType)
 {
     var pkgList = [];
-    pkgList.push(require('../../../webroot/pkgxml/package.js').pkgList);
+    pkgList.push(require('../../../webroot/common/api/package.js').pkgList);
     for (key in config.featurePkg) {
         if ((config.featurePkg[key]) && (config.featurePkg[key]['path']) &&
             ((null == config.featurePkg[key]['enable']) ||
              (true == config.featurePkg[key]['enable'])) &&
             (true == fs.existsSync(config.featurePkg[key]['path'] +
-                                   '/webroot/pkgxml/package.js'))) {
+                                   '/webroot/common/api/package.js'))) {
             pkgList.push(require(config.featurePkg[key]['path'] +
-                        '/webroot/pkgxml/package.js').pkgList);
+                                 '/webroot/common/api/package.js').pkgList);
         }
     }
-    /*
-    var pkgStr = "var pkgList = " + JSON.stringify(pkgList);
-    pkgStr += ";\nexports.pkgList = pkgList;\n";
-
-    var path = null;
-    if (global.service.MAINSEREVR == serverType) {
-        path = __dirname + '/../web/core/packages.js';
-    } else {
-        path = __dirname + '/../jobs/core/packages.js';
-    }
-    fs.writeFileSync(path, pkgStr);
-    */
     return pkgList;
 }
 
@@ -1638,6 +1626,7 @@ function customMenuChange (pkgList, resMenuObj)
 
 function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
 {
+    var pkgDir = null;
     var pkgLen = pkgList.length;
     var menuDirs = [];
     var writeFile = mergePath + '/menu.xml';
@@ -1649,7 +1638,8 @@ function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
     }
     var pkgNames = jsonPath(pkgList, "$..name[0]");
     if (2 == pkgLen) {
-        cmd = 'cp -af ' + config.featurePkg[pkgNames[1]].path + '/webroot/menu.xml ' + 
+        pkgDir = config.featurePkg[pkgList[1]['pkgName']].path;
+        cmd = 'cp -af ' + pkgDir + '/webroot/menu.xml ' +
             writeFile; 
         exec(cmd, function(error, stdout, stderr) {
             assert(error == null);
@@ -1659,7 +1649,8 @@ function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
         return;
     }
     for (var i = 1; i < pkgLen; i++) {
-        menuDirs.push(config.featurePkg[pkgNames[i]].path + '/webroot/'); 
+        pkgDir = config.featurePkg[pkgList[i]['pkgName']].path;
+        menuDirs.push(pkgDir + '/webroot/');
     }
     async.map(menuDirs, getAllJsons, function(err, data) {
         var len = data.length;
@@ -1680,6 +1671,14 @@ function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
         fs.writeFileSync(writeFile, xmlData);
         callback();
     });
+}
+
+function getPkgPathByPkgName (pkgName)
+{
+    if (null == pkgName) {
+        return process.mainModule.exports['corePath'];
+    }
+    return config.featurePkg[pkgName].path;
 }
 
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
@@ -1726,4 +1725,5 @@ exports.getWebServerInfo = getWebServerInfo;
 exports.mergeAllPackageList = mergeAllPackageList;
 exports.compareAndMergeDefaultConfig = compareAndMergeDefaultConfig;
 exports.mergeAllMenuXMLFiles = mergeAllMenuXMLFiles;
+exports.getPkgPathByPkgName = getPkgPathByPkgName;
 
