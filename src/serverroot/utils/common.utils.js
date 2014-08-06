@@ -1321,9 +1321,34 @@ function compareAndMergeDefaultConfig ()
 {
     var confFile = __dirname + '/../../../config/config.global.js';//'/etc/contrail/config.global.js';
     var defConfFile = __dirname + '/../../../config/default.config.global.js';
-    var splitter = '=';
-    var startCmpStr = 'config';
-    return compareAndMergeFiles(confFile, defConfFile, startCmpStr, splitter);
+    return compareAndMergeFiles(confFile, defConfFile);
+}
+
+/* Function: mergeObjects
+    This function is used to merge default config with actual config, so any
+    config is missed in actual config, that is added from default config.
+ */
+function mergeObjects (defaults, configs)
+{
+    if (null == configs) {
+        return defaults;
+    }
+    if (null == defaults) {
+        return configs;
+    }
+    Object.keys(defaults).forEach(function(keyDefault) {
+        if (typeof configs[keyDefault] == "undefined") {
+            configs[keyDefault] = defaults[keyDefault];
+        } else if (isObject(defaults[keyDefault]) && isObject(configs[keyDefault])) {
+            mergeObjects(defaults[keyDefault], configs[keyDefault]);
+        }
+    });
+
+    function isObject(object) {
+        return Object.prototype.toString.call(object) === '[object Object]';
+    }
+
+    return configs;
 }
 
 /* Function: compareAndMergeFiles
@@ -1334,65 +1359,13 @@ function compareAndMergeDefaultConfig ()
     fileToCmp: The file to which comparison is done, finally the extra string in
                fileWithCmp gets copied in fileToCmp.
     fileWithCmp: The file with with comparison is done
-    startCmpStr: comparison is done on lines which have start string as
-                 startCmpStr
-    splitter: splitter of the line of each comparison
-    callback: callback function to call once done
  */
-function compareAndMergeFiles (fileToCmp, fileWithCmp, startCmpStr, splitter)
+function compareAndMergeFiles (fileToCmp, fileWithCmp)
 {
     var oldConfig = require(fileToCmp);
     var defConfig = require(fileWithCmp);
-    for (key in defConfig) {
-        if (null == oldConfig[key]) {
-            oldConfig[key] = defConfig[key];
-        }
-    }
-    return oldConfig;
-/*
-    try {
-        var fileToCmpCtnt = fs.readFileSync(fileToCmp, 'utf8');
-        var fileWithCmpCtnt = fs.readFileSync(fileWithCmp, 'utf8');
-    } catch(e) {
-        logutils.logger.error("readFileSync error: " + e);
-        callback(null);
-        return;
-    }
-
-    var linesToCmp = fileToCmpCtnt.split("\n");
-    var linesToCmpCnt = linesToCmp.length;
-    var fileToCmpObj = {};
-    for (var i = 0; i < linesToCmpCnt; i++) {
-        linesToCmp[i] = (linesToCmp[i]).trim();
-        var idx = linesToCmp[i].indexOf(splitter);
-        if (idx > -1) {
-            if (0 == linesToCmp[i].indexOf(startCmpStr)) {
-                fileToCmpObj[linesToCmp[i].substr(0, idx)] =
-                    linesToCmp[i];
-            }
-        }
-    }
-    var linesWithCmp = fileWithCmpCtnt.split("\n");
-    var linesWithCmpCnt = linesWithCmp.length;
-    var fileWithCmpObj = {};
-    for (var i = 0; i < linesWithCmpCnt; i++) {
-        linesWithCmp[i] = (linesWithCmp[i]).trim();
-        var idx = linesWithCmp[i].indexOf(splitter);
-        if (idx > -1) {
-            if (0 ==linesWithCmp[i].indexOf(startCmpStr)) {
-                fileWithCmpObj[linesWithCmp[i].substr(0, idx)] =
-                    linesWithCmp[i];
-            }
-        }
-    }
-    for (key in fileWithCmpObj) {
-        if (null == fileToCmpObj[key]) {
-            fileToCmpCtnt += fileWithCmpObj[key] + "\n";
-        }
-    }
-    fs.writeFileSync(fileToCmp, fileToCmpCtnt);
-    return fileToCmp;
-*/
+    var config = mergeObjects(defConfig, oldConfig);
+    return config;
 }
 
 function getAllJsons (menuDir, callback)
