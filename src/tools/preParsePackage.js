@@ -8,11 +8,12 @@ var args = process.argv.slice(2);
 var parsePkg = require('./parseXMLList.js');
 var async = require('async');
 var exec = require('child_process').exec;
+var path = require('path');
 
 if ('prod-env' == args[0]) {
     var pkg = args[1].split(',');
     /* pkg[0] -> pkg path , pkg[1] -> pkg name */
-    parsePkg.readAndProcessPkgXMLFiles(pkg[0], (pkg[1] == undefined) ? null :
+    parsePkg.readAndProcessPkgXMLFiles(path.normalize(pkg[0]), (pkg[1] == undefined) ? null :
                                        pkg[1]);
 } else {
     parsePkg.deleteAllAutoGenFiles(function() {
