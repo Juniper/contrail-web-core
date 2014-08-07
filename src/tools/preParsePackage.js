@@ -12,7 +12,13 @@ var exec = require('child_process').exec;
 if ('prod-env' == args[0]) {
     var pkg = args[1].split(',');
     /* pkg[0] -> pkg path , pkg[1] -> pkg name */
-    parsePkg.readAndProcessPkgXMLFiles(pkg[0], (pkg[1] == undefined) ? null :
+    pkgDir = pkg[0];
+    if (-1 != pkgDir.indexOf('../')) {
+        var pkgDirArr = pkgDir.split('/../');
+        var lastIdx = pkgDirArr[0].lastIndexOf('/');
+        pkgDir = pkgDirArr[0].substr(0, lastIdx) + "/" + pkgDirArr[1];
+    }
+    parsePkg.readAndProcessPkgXMLFiles(pkgDir, (pkg[1] == undefined) ? null :
                                        pkg[1]);
 } else {
     parsePkg.deleteAllAutoGenFiles(function() {
