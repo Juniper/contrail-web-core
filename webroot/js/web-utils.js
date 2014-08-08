@@ -28,7 +28,7 @@ if(typeof(built_at) == 'undefined')
 var TENANT_API_URL = "/api/tenant/get-data";
 var SANDESH_DATA_URL = "/api/admin/monitor/infrastructure/get-sandesh-data";
 var INDENT_RIGHT = "&nbsp;&nbsp;&nbsp;&nbsp;";
-var INST_PAGINATION_CNT = 50;
+var INST_PAGINATION_CNT = 3;
 var NETWORKS_PAGINATION_CNT = 5;
 var sevLevels = {
     ERROR   : 0, //Red
@@ -1971,6 +1971,7 @@ function ManageDataSource() {
                     ongoing:false,
                     lastUpdated:null,
                     populateFn:'getAllInstances',
+                    onChange:'getStatsForVM',
                     deferredObj:null,
                     dataSource:null,
                     error:null
@@ -2172,19 +2173,21 @@ function SingleDataSource(dsName) {
     instances[dsName].push(this);
     var singleDSObj = manageDataSource.getDataSource(dsName);
     //singleDSObj['dataSource'].onPagingInfoChanged.unsubscribeAll();
-    var subscribeFn = function () {
+    var subscribeFn = function (e,arguments) {
+        var dataViewEventArgs = arguments;
            $.each(instances[dsName],function(idx,obj) {
-               $(obj).trigger('change');
+               $(obj).trigger('change',dataViewEventArgs);
+               if(singleDSObj['onChange'] != null)
+                   window[singleDSObj['onChange']](singleDSObj['dataSource'],dataViewEventArgs);
            });
        };
     //Unsubscribe old listeners for this dataSource
     $.each(subscribeFns[dsName],function(idx,fn) {
-       singleDSObj['dataSource'].onUpdateData.unsubscribe(fn);
+       singleDSObj['dataSource'].onRowsChanged.unsubscribe(fn);
     });
     subscribeFns[dsName] = [];
     subscribeFns[dsName].push(subscribeFn);
-    singleDSObj['dataSource'].onUpdateData.subscribe(subscribeFn);
-
+    singleDSObj['dataSource'].onRowsChanged.subscribe(subscribeFn);
     this.getDataSourceObj = function() {
         return singleDSObj;
     }
