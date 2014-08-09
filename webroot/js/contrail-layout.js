@@ -392,9 +392,9 @@ function onHashChange(lastHash, currHash) {
     var lastMenuObj = menuHandler.getMenuObjByHash(lastPageHash);
     try {
         if (currPageHash == '') {            
-            if(globalObj['webServerInfo']['role'] == roles['ADMIN'])
+            if($.inArray(roles['ADMIN'],globalObj['webServerInfo']['role']) > -1)
                 currPageHash = "mon_infra_dashboard";
-            if(globalObj['webServerInfo']['role'] == roles['TENANT'])
+            else if($.inArray(roles['TENANT'],globalObj['webServerInfo']['role']) > -1)
                 currPageHash = "mon_net_dashboard"; //TODO: Need to check whether queryparams needed or not
         }
         var currMenuObj = menuHandler.getMenuObjByHash(currPageHash);

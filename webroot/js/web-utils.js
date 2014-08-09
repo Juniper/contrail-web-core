@@ -894,6 +894,8 @@ function MenuHandler() {
         });
     }
     
+    //Filter the menu items based on allowedRolesList for each feature and comparing them with the logged-in user roles
+    //type = menushortcut returns only the first level menu (Configure,Monitor)
     this.filterMenuItems = function(items,type){
         if(type == null) {
             items = items.filter(function(value){
@@ -942,25 +944,25 @@ function MenuHandler() {
     }
     
     /*
-     * This function checks whether the user(from globalCacheObj) is permitted to view the menu item(which the parameter)
+     * This function checks whether the user(from globalObj) is permitted to view the menu item(which the parameter)
      * and returns true if permitted else false
      */
     function checkForAccess(value){
         var roleExists = false,orchExists = false;
         var orchModel = globalObj['webServerInfo']['orchestrationModel'];
-        var role = globalObj['webServerInfo']['role'];
+        var loggedInUserRoles = globalObj['webServerInfo']['role'];
         if(value.access != null && value.access.roles != null) {
             if(!(value.access.roles.role instanceof Array))
                 value.access.roles.role = [value.access.roles.role];
             var rolesArr = value.access.roles.role;
-            for(var i = 0; i < rolesArr.length; i++){
-                /**
-                 * Two cases, we need to check
-                 * 1)if negation(!) exists in role then the role should not match with the value in globalCacheObj
-                 * 2)If negation not there in the then just need to compare the role
-                 */
-                if((rolesArr[i].indexOf('!') > -1 && rolesArr[i] != "!"+role) || rolesArr[i] == role)
-                   roleExists = true; 
+            var allowedRolesList = [];
+            
+            //If any one of userRole is in allowedRolesList
+            for(var i=0;i<rolesArr.length;i++) {
+                if($.inArray(rolesArr[i],loggedInUserRoles) > -1) {
+                    roleExists = true;
+                    break;
+                }
             }
             if(!(value.access.orchModels.model instanceof Array))
                 value.access.orchModels.model = [value.access.orchModels.model];
