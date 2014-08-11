@@ -3726,6 +3726,12 @@ td.td-actions a.td-action {
   background-color: #FFF;
   position: relative;
 }
+.item-list-without-border > li {
+  border-bottom: none !important;
+  padding: 1px !important;
+  background-color: #FFF;
+  position: relative;
+}
 .item-list > li .key {
 	font-weight: normal;	
 	color: #3182bd;
