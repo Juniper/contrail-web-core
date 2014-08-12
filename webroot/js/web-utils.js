@@ -649,7 +649,16 @@ function prettifyBytes(obj) {
     bytes = parseInt(bytes);
     bytes = makePositive(bytes);
     var bytePrefixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'];
-    var multipliers = [1, 1024, 1024 * 1024, 1024 * 1024 * 1024];
+    var multipliers = [
+        1, //B
+        1024, //KB
+        1024 * 1024, //MB
+        1024 * 1024 * 1024, //GB
+        1024 * 1024 * 1024 * 1024, //TB
+        1024 * 1024 * 1024 * 1024 * 1024, //PB
+        1024 * 1024 * 1024 * 1024 * 1024 * 1024, //EB
+        1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 //ZB
+    ];
     var prefixIdx = 0;
     var multiplier = 1;
     if ($.inArray(obj['prefix'], bytePrefixes) > -1) {
