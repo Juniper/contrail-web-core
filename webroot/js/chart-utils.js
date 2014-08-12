@@ -29,14 +29,11 @@
         initScatterChart:function (data) {
             var selector = $(this), toFormat = '',
                 chartOptions = ifNull(data['chartOptions'],{}), chart, yMaxMin, d;
-            var hoveredOnTooltip,tooltipTimeoutId;
-            var xLbl = ifNull(data['xLbl'], 'CPU (%)'),
-                yLbl = ifNull(data['yLbl'], 'Memory (MB)');
-
-            var xLblFormat = ifNull(data['xLblFormat'], d3.format()),
-                yLblFormat = ifNull(data['yLblFormat'], d3.format());
-
-            var yDataType = ifNull(data['yDataType'], '');
+            var hoveredOnTooltip,tooltipTimeoutId,yLbl = ifNull(chartOptions['yLbl'], 'Memory (MB)');
+            var yLblFormat = function(y) {
+                return parseFloat(d3.format('.02f')(y)).toString();
+            }
+            var yDataType = ifNull(chartOptions['yDataType'], '');
 
             if ($.inArray(ifNull(data['title'], ''), ['vRouters', 'Analytic Nodes', 'Config Nodes', 'Control Nodes']) > -1) {
                 xLblFormat = ifNull(data['xLblFormat'], d3.format('.02f'));
@@ -50,13 +47,6 @@
                 return obj['values'];
             });
             dValues = flattenList(dValues);
-
-            if(data['yLblFormat'] == null) {
-                yLblFormat = function(y) {
-                    return parseFloat(d3.format('.02f')(y)).toString();
-                };
-            }
-
             //If the axis is bytes, check the max and min and decide the scale KB/MB/GB
             //Set size domain
             var sizeMinMax = getBubbleSizeRange(dValues);
@@ -71,12 +61,10 @@
             }
             chartOptions['multiTooltip'] = true;
             chartOptions['scatterOverlapBubbles'] = false;
-            chartOptions['xLbl'] = xLbl;
+            chartOptions['xLblFormat'] = ifNull(chartOptions['xLblFormat'], d3.format()),
+            chartOptions['yLblFormat'] = ifNull(chartOptions['yLblFormat'], yLblFormat);
+            chartOptions['xLbl'] = ifNull(chartOptions['xLbl'], 'CPU (%)');
             chartOptions['yLbl'] = yLbl;
-            chartOptions['xLblFormat'] = xLblFormat;
-            chartOptions['yLblFormat'] = yLblFormat;
-            chartOptions['forceX'] = data['forceX'];
-            chartOptions['forceY'] = data['forceY'];
             var seriesType = {};
             for(var i = 0;i < d.length; i++ ) {
                 var values = [];
@@ -122,8 +110,13 @@
             chartOptions['stateChangeFunction'] = function (e) {
                 //nv.log('New State:', JSON.stringify(e));
             };
-
-
+            var d3Scale = d3.scale.linear().range([1,2]).domain(chartOptions['sizeMinMax']);
+            //Adjust the size domain to have limit on minumum bubble size
+            $.each(d,function(idx,currSeries) {
+                currSeries['values'] = $.each(currSeries['values'],function(idx,obj) {
+                        obj['size']  = d3Scale(obj['size']);
+                    });
+            });
             chartOptions['elementClickFunction'] = function (e) {
                 if(typeof(chartOptions['clickFn']) == 'function')
                     chartOptions['clickFn'](e['point']);
@@ -148,16 +141,116 @@
             }
             if(data['hideLoadingIcon'] != false)
                 $(this).parents('.widget-box').find('.icon-spinner').hide();
-            if(data['loadedDeferredObj'] != null)
-                data['loadedDeferredObj'].fail(function(errObj){
-                    if(errObj['errTxt'] != null && errObj['errTxt'] != 'abort') { 
-                        showMessageInChart({selector:$(selector),chartObj:$(selector).data('chart'),xLbl:chartOptions['xLbl'],yLbl:chartOptions['yLbl'],
-                            msg:'Error in fetching details',type:'bubblechart'});
-                    }
-                });
-            chartOptions['deferredObj'] = data['deferredObj'];
-            initScatterBubbleChart(selector, d, chart, chartOptions);
-
+            if(!isScatterChartInitialized("#"+$(selector).attr('id'))) {
+                 if(data['loadedDeferredObj'] != null)
+                     data['loadedDeferredObj'].fail(function(errObj){
+                         if(errObj['errTxt'] != null && errObj['errTxt'] != 'abort') { 
+                             showMessageInChart({selector:$(selector),chartObj:$(selector).data('chart'),xLbl:chartOptions['xLbl'],yLbl:chartOptions['yLbl'],
+                                 msg:'Error in fetching details',type:'bubblechart'});
+                         }
+                     });
+                 if(chartOptions['deferredObj'] != null && chartOptions['deferredObj'].state() == 'pending') {
+                     chartOptions['deferredObj'].done(function(){
+                         var settings = [];
+                         if(chartOptions['xAxisParams'] != null) { 
+                             settings.push({id:'xAxisParams',lbl:'X-Axis parameters'});
+                         }
+                         if(chartOptions['yAxisParams'] != null) {
+                             settings.push({id:'yAxisParams',lbl:'Y-Axis parameters'});
+                         }
+                         if(chartOptions['showSettings']) {
+                             $(selector).parent('div').append(contrail.getTemplate4Id('chart-settings')(settings));
+                             showAxisParams(settings);
+                         }
+                     });
+                 }
+                 function showAxisParams(settings) {
+                     var selParent = $(selector).parent('div');
+                     $(selParent).find('div.chart-settings-hide img').bind('click',function(clickEvt){
+                         $('div.chart-settings-hide').addClass('hide');
+                         $('div.chart-settings-wrapper').removeClass('hide');
+                         $(selParent).find('div.chart-settings-wrapper').removeClass('hide');
+                         $(selParent).find('div.upArrow img').on('click',function(){
+                             $('div.chart-settings-wrapper').addClass('hide');
+                             $('div.chart-settings-hide').removeClass('hide');
+                         });
+                         var chartObj = $.extend(true,{},data);
+                         var updateChartParams = chartObj['chartOptions'];
+                         $.each(settings,function(idx,setVal){
+                             var id = setVal['id'],data = [];
+                             var axisType = id.indexOf('xAxis') > -1 ? 'x' : 'y';
+                             $("#"+id).contrailDropdown({
+                                 dataTextField:"text",
+                                 dataValueField:"value",
+                                 change:function(e){
+                                     var chartData = d3.select($(selector).find('svg')[0]).datum();
+                                     var selValue = $(e['target']).data('contrailDropdown').getSelectedData()[0]['text'];
+                                     updateChartParams['tooltipFn'] = tooltipFn;
+                                     $.each(chartData,function(idx,dataItem){
+                                         $.each(dataItem['values'],function(sIdx,value){
+                                             $.each(chartOptions[id],function(index,obj){
+                                                if(obj['lbl'] == selValue) {
+                                                    var values = [],range = [];
+                                                    $.each(chartData,function(idx,data){
+                                                       values = $.merge(values,data['values']); 
+                                                    });
+                                                     /* here if type is null, considering it as default data type integer
+                                                     * In case of single point (which mean only one bubble or main bubbles with same x and y value)
+                                                     * minimum and maximum will be same so whole axis will have only two values so we are setting the domain.
+                                                     */
+                                                    if(obj['formatFn'] != null) {
+                                                        value[axisType] = parseInt(obj['formatFn'](value[obj['key']]));
+                                                    } else {
+                                                        if(obj['type'] != null) {
+                                                            updateChartParams[axisType+"LblFormat"] = d3.format('.02f');
+                                                            value[axisType] = parseFloat(value[obj['key']]);
+                                                        } else {
+                                                            updateChartParams[axisType+"LblFormat"] = d3.format('0d');
+                                                            value[axisType] = parseInt(value[obj['key']]);
+                                                        }
+                                                    }
+                                                    range = d3.extent(values,function(item){return item[axisType]});
+                                                    if(obj['type'] == null && range[1] == range[0]) {
+                                                        range[0] = (range[0] - range[0] * 0.05 < 0 ) ? 0 : Math.floor(range[0] - range[0] * 0.05);
+                                                        range[1] = Math.ceil(range[1] + range[1] * 0.05);
+                                                        updateChartParams[axisType+"Domain"] = [range[0],range[1]]; 
+                                                    } 
+                                                    if(obj['dataType'] == 'bytes') {
+                                                        var result = formatByteAxis(chartData);
+                                                        chartData = result['data'];
+                                                        updateChartParams[axisType+'Lbl'] = obj['lbl'] + result[axisType+'Lbl'];
+                                                    } else 
+                                                        updateChartParams[axisType+'Lbl'] = obj['lbl'];
+                                                    
+                                                }
+                                             });
+                                         }); 
+                                     });
+                                     chartObj['d'] = chartData;
+                                     chartObj['chartOptions'] = updateChartParams;
+                                     $(selector).initScatterChart(chartObj);
+                                 }
+                             });
+                             $.each(chartOptions[id],function(idx,obj){
+                                 var obj = {
+                                         id:obj['lbl'],
+                                         text:obj['lbl'],
+                                         value:obj['lbl']
+                                 };
+                                 data.push(obj);
+                             });
+                             $("#"+id).data('contrailDropdown').setData(data);
+                         })  
+                     }); 
+                 }
+                initScatterBubbleChart(selector, d, chart, chartOptions);
+            } else {
+                 chart = $(selector).data('chart');
+                 var svg = $(selector).find('svg')[0];
+                 chart = setChartOptions(chart,chartOptions);
+                 d3.select(svg).datum(d);
+                 chart.update();
+            }
             if(data['widgetBoxId'] != null)
                 endWidgetLoading(data['widgetBoxId']);
 
@@ -192,11 +285,9 @@
                     bubbleDrillDown($(this).find('div.chart-tooltip-title').find('p').text(),result['nodeMap']);
                 });
                 $(tooltipContainer).find('div.enabledPointer').on('mouseover',function(e){
-                    //console.log("Inside the mouse over");
                     hoveredOnTooltip = true; 
                 });
                 $(tooltipContainer).find('div.enabledPointer').on('mouseleave',function(e){
-                    //console.log("Inside the mouseout ");
                     hoveredOnTooltip = false;
                     nv.tooltip.cleanup();
                 });
@@ -209,7 +300,7 @@
                        var leftPos = 'auto',rightPos = 'auto';
                        if(result['button'] == 'left') {
                             if($(tooltipContainer).css('left') == 'auto') {
-                                leftPos = $(tooltipContainer).position()['left'];
+                                leftPos = $(tooltipContainer).offset()['left'];
                                 $(tooltipContainer).css('left',leftPos);
                                 $(tooltipContainer).css('right','auto');
                             }
@@ -229,7 +320,7 @@
                             content = data.slice((page-1) * perPage,page * perPage);
                       } else if (result['button'] == 'right') {
                           if($(tooltipContainer).css('right') == 'auto') {
-                              leftPos = $(tooltipContainer).position()['left'];
+                              leftPos = $(tooltipContainer).offset()['left'];
                               rightPos = $(tooltipContainer).offsetParent().width() - $(tooltipContainer).outerWidth() - leftPos;
                               $(tooltipContainer).css('right', rightPos);
                               $(tooltipContainer).css('left','auto');
@@ -250,7 +341,7 @@
                                 content = data.slice((data.length - perPage),data.length);
                             } 
                       }
-                      leftPos = $(tooltipContainer).position()['left'];
+                      leftPos = $(tooltipContainer).offset()['left'];
                       rightPos = $(tooltipContainer).offsetParent().width() - $(tooltipContainer).outerWidth() - leftPos;
                       result['content'] = content;
                       if(result['perPage'] > 1)
@@ -425,7 +516,7 @@ function getMultiTooltipContent(e,tooltipFn,chart) {
         });
         if(!isEmptyObject(data)) {
             //data['point'] = data[0];
-            tooltipArray.push(tooltipFn(data[0]));
+            tooltipArray.push(tooltipFn(data[0],null,null));
             //Creates a hashMap based on first key/value in tooltipContent
             nodeMap[tooltipFn(data[0])[0]['value']] = {point:data[0]};
         }
@@ -844,29 +935,42 @@ function updateChartsClass() {
      * Re-render the UI widget with updated data
      */
     this.updateView = function(obj) {
-        if(obj['type'] == 'bubblechart') {
-           if(obj['selector'] != null && $(obj['selector']).parent('div.stack-chart') != null) {
-                var chart = $(obj['selector']).parent('div.stack-chart').data('chart');
-                if(obj['axisFormatFn'] != null) {
-                    var result = window[obj['axisFormatFn']](obj['data']);
-                    obj['data'] = result['data'];
-                    if(obj['yLbl'] != null)
-                    chart.yAxis.axisLabel(obj['yLbl']+" "+result['yLbl']);
-                }
-                d3.select(obj['selector']).datum(obj['data']);
-                chart.update();  
-           }
-        } else if(obj['type'] == 'infrabubblechart') {
-           if(obj['selector'] != null && $(obj['selector']).parent('div') != null) {
-                var chart = $(obj['selector']).parent('div').data('chart');
-                if(obj['axisformatFn'] != null) {
-                    var result = window[obj['axisformatFn']](obj['data']);
-                    obj['data'] = result['data'];
-                    chart.yAxis.axisLabel(obj['yLbl']+" "+result['yLbl']);
-                }
-                d3.select(obj['selector']).datum(obj['data']);
-                if(chart != null)
-                    chart.update();  
+        if(obj['type'] == 'bubblechart' || obj['type'] == 'infrabubblechart') {
+           var chart = null;
+           if(obj['type'] == 'bubblechart' && obj['selector'] != null && $(obj['selector']).parent('div.stack-chart') != null) 
+               chart = $(obj['selector']).parent('div.stack-chart').data('chart');
+           else if (obj['type'] == 'infrabubblechart' && obj['selector'] != null && $(obj['selector']).parent('div') != null)
+               chart = $(obj['selector']).parent('div').data('chart');
+           if(chart != null) {
+               if(obj['axisFormatFn'] != null) {
+                   var result = window[obj['axisFormatFn']](obj['data']);
+                   obj['data'] = result['data'];
+                   if(obj['yLbl'] != null)
+                       obj['yLbl'] += result['yLbl'];
+                   //chart.yAxis.axisLabel(obj['yLbl']+" "+result['yLbl']);
+               }
+               if(obj['xValueType'] == 'float')
+                   chart.xAxis.tickFormat(d3.format('.02f'));
+               else if(obj['xValueType'] == 'integer'){
+                   var xDomain = d3.extent(obj['data'][0]['values'],function(item){return item['x']});
+                   if(Math.abs(xDomain[1] - xDomain[0]) < 5)
+                       chart.xDomain([xDomain[0],xDomain[1] + 5]);
+                   chart.xAxis.tickFormat(d3.format('0d'));
+               }
+               if(obj['yValueType'] == 'float')
+                   chart.yAxis.tickFormat(d3.format('.02f'));
+               else if(obj['yValueType'] == 'integer'){
+                   var yDomain = d3.extent(obj['data'][0]['values'],function(item){return item['y']});
+                   if(Math.abs(yDomain[1] - yDomain[0]) < 5)
+                       chart.yDomain([yDomain[0],yDomain[1] + 5]);
+                   chart.yAxis.tickFormat(d3.format('0d'));
+               }
+               if(obj['xLbl'] != null)
+                   chart.xAxis.axisLabel(obj['xLbl']);
+               if(obj['yLbl'] != null)
+                   chart.yAxis.axisLabel(obj['yLbl']);
+               d3.select(obj['selector']).datum(obj['data']);
+               chart.update();
            }
         } else if(obj['type'] == 'timeseriescharts') {
             if(obj['selector'] != null && $(obj['selector']).parent('div.ts-chart') != null) {
