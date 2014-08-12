@@ -7,7 +7,6 @@ function infraMonitorClass() {
     var viewModels=[]; 
     var dashboardConfig = [];
     var tabs = [];
-
     //Show down node count only if it's > 0
     function showHideDownNodeCnt() {
         var downSelectors = $('[data-bind="text:downCnt"]');
@@ -35,18 +34,11 @@ function infraMonitorClass() {
     this.updateViewByHash = function (hashObj, lastHashObj) {
         self.load({hashParams:hashObj});
     }
-    
-    this.updateAlertsAndInfoBoxes = function() {
-         var infoListTemplate = contrail.getTemplate4Id("infoList-template");
-         var alertTemplate=contrail.getTemplate4Id("alerts-template");
-         var dashboardDataArr = [];
-         var nodeAlerts=self.getNodeAlerts(viewModels);
+    this.updateInfoBoxes = function() {
+         var infoListTemplate = contrail.getTemplate4Id("infoList-template"),dashboardDataArr = [];;
          $.each(viewModels,function(idx,currViewModel) {
              dashboardDataArr = dashboardDataArr.concat(currViewModel.data());
          });
-         var processAlerts = self.getAllProcessAlerts(viewModels);
-         var allAlerts = nodeAlerts.concat(processAlerts);
-         allAlerts.sort(dashboardUtils.sortInfraAlerts);
          var dashboardCF = crossfilter(dashboardDataArr);
          var nameDimension = dashboardCF.dimension(function(d) { return d.name });
          var verDimension = dashboardCF.dimension(function(d) { return d.version });
@@ -71,24 +63,54 @@ function infraMonitorClass() {
              infoData.push({lbl:'version',value:verGroup.all()[0]['key']});
          $('#system-info-stat').html(infoListTemplate(infoData));
          endWidgetLoading('sysinfo');
-         if(timeStampAlert.length > 0)
-             allAlerts = allAlerts.concat(timeStampAlert)
-         globalObj['alertsData'] = allAlerts;
-         if(globalObj.showAlertsPopup){
-             loadAlertsContent();
-         }
-         var detailAlerts = [];
-         for(var i = 0; i < allAlerts.length; i++ ){
-             if(allAlerts[i]['detailAlert'] != false)
-                 detailAlerts.push(allAlerts[i]);
-         }
-         //Display only 5 alerts in "Dashboard"
-         $('#alerts-box-content').html(alertTemplate(detailAlerts.slice(0,5)));
-         endWidgetLoading('alerts');
-         $("#moreAlertsLink").click(loadAlertsContent);
     }
     
-
+    this.updateAlerts = function(){
+        var alertTemplate=contrail.getTemplate4Id("alerts-template");
+        var nodeAlerts=self.getNodeAlerts(viewModels);
+        var processAlerts = self.getAllProcessAlerts(viewModels);
+        var allAlerts = nodeAlerts.concat(processAlerts);
+        allAlerts.sort(dashboardUtils.sortInfraAlerts);
+        if(timeStampAlert.length > 0)
+            allAlerts = allAlerts.concat(timeStampAlert)
+        //Filtering the alerts for alerts popup based on the detailAlert flag
+        var popupAlerts = [];
+        for(var i=0;i<allAlerts.length;i++) {
+           if(allAlerts[i]['detailAlert'] != false)
+               popupAlerts.push(allAlerts[i]);
+        }
+        var alertDS = globalObj['dataSources']['alertsDS']
+        if(popupAlerts.length > 0)
+            alertDS['dataSource'].setData(popupAlerts);
+        if(globalObj.showAlertsPopup){
+            alertsDef = alertDS['deferredObj'];
+            loadAlertsContent(alertsDef);
+        }
+        /*Need to resolve the alertsDef once all the alertsDS depend datasource are loaded
+         */
+        var allDSResolved = true;
+        if(alertDS['depends'] instanceof Array) {
+            for(var i = 0; i < alertDS['depends'].length; i++){
+                 var dataSource = globalObj['dataSources'][alertDS['depends'][i]];
+                 if(manageDataSource.isLoading(dataSource))
+                     allDSResolved = false
+            }
+        }
+        if(allDSResolved && alertsDef != null)
+            alertsDef.resolve();
+        var detailAlerts = [];
+        for(var i = 0; i < allAlerts.length; i++ ){
+            if(allAlerts[i]['detailAlert'] != false)
+                detailAlerts.push(allAlerts[i]);
+        }
+        //Display only 5 alerts in "Dashboard"
+        $('#alerts-box-content').html(alertTemplate(detailAlerts.slice(0,5)));
+        endWidgetLoading('alerts');
+        $("#moreAlertsLink").click(function(){
+            loadAlertsContent();
+        });
+    }
+    
     this.addInfoBox = function(infoBoxObj) {
         //If dashboard is not already loaded,load it
         if($('.infobox-container').length == 0)
@@ -111,7 +133,8 @@ function infraMonitorClass() {
         $(nodeDS).on('change',function() {
             var data = dataSource.getItems();
             obj['viewModel'].data(data);
-            self.updateAlertsAndInfoBoxes();
+            self.updateInfoBoxes();
+            self.updateAlerts();
         });
         infoBoxObj['viewModel'].downCnt.subscribe(function(newValue) {
             showHideDownNodeCnt();
@@ -220,7 +243,13 @@ function infraMonitorClass() {
 
         loadInfoBoxes();
         loadLogs();
-
+        //Setting the alertsDS in global datasource object
+        //depends attribute conveys the datasource dependcies
+        globalObj['dataSources']['alertsDS'] = {
+                                                    dataSource:new ContrailDataView(),
+                                                    depends:['controlNodeDS','computeNodeDS','analyticsNodeDS','configNodeDS'],
+                                                    deferredObj: $.Deferred()
+                                               }
         //Initialize the common stuff
         $($('#dashboard-stats .widget-header')[0]).initWidgetHeader({title:'Logs',widgetBoxId :'logs'});
         $($('#dashboard-stats .widget-header')[1]).initWidgetHeader({title:'System Information', widgetBoxId: 'sysinfo'});
@@ -271,7 +300,7 @@ function getNodeStatusForSummaryPages(data,page) {
 
 var dashboardUtils = {
     sortNodesByColor: function(a,b) {
-        var colorPriorities = [d3Colors['green'],d3Colors['blue'],d3Colors['orange'],d3Colors['red']];
+        var colorPriorities = [d3Colors['red'],d3Colors['orange'],d3Colors['blue'],d3Colors['green']];
         var aColor = $.inArray(a['color'],colorPriorities); 
         var bColor = $.inArray(b['color'],colorPriorities);
         return aColor-bColor;

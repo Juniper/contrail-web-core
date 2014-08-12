@@ -3726,6 +3726,12 @@ td.td-actions a.td-action {
   background-color: #FFF;
   position: relative;
 }
+.item-list-without-border > li {
+  border-bottom: none !important;
+  padding: 1px !important;
+  background-color: #FFF;
+  position: relative;
+}
 .item-list > li .key {
 	font-weight: normal;	
 	color: #3182bd;
@@ -4013,4 +4019,26 @@ td.td-actions a.td-action {
 .hyperlink {
     color:#3182bd;
     cursor:pointer;
+}
+.chart-settings-hide {
+	height: 1px;
+	background-color: #dddddd;
+	margin-left: 70px;
+	margin-right: 20px;
+}
+.chart-settings-expand {
+	margin-left: 70px;
+	margin-right: 20px;
+	border: 1px solid #e5e5e5;
+	background-color: #e5e5e5;
+	border-radius: 3px;
+	padding:2px;
+}
+
+.chart-settings img,.chart-settings-hide img {
+	vertical-align: top;
+	margin-right: auto;
+	margin-left: auto;
+	display: block;
+	cursor:pointer;
 }

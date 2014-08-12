@@ -439,10 +439,15 @@
 <script type = "text/x-handlebars-template" id = "statusTemplate">
     {{#IfCompare sevLevel sevLevels.ERROR }} 
         <span class="status-badge-rounded-small status-inactive"></span>
-    {{else}}
-        {{#IfCompare sevLevel sevLevels.WARNING}} 
-            <span class="status-badge-rounded-small status-partially-active"></span>
-        {{/IfCompare}}
+    {{/IfCompare}}
+    {{#IfCompare sevLevel sevLevels.WARNING}} 
+        <span class="status-badge-rounded-small status-partially-active"></span>
+    {{/IfCompare}}
+    {{#IfCompare sevLevel sevLevels.NOTICE}} 
+        <span class="status-badge-rounded-small status-idle"></span>
+    {{/IfCompare}}
+    {{#IfCompare sevLevel sevLevels.INFO}} 
+        <span class="status-badge-rounded-small status-active"></span>
     {{/IfCompare}}
 </script>
 
@@ -480,4 +485,89 @@
                 -->
             </div>
     </div><!-- /widget-main --> 
+</script>
+
+<script type="text/x-handlebars-template" id="gridDetailTemplate">
+    <div>
+        <div class="inline row-fluid position-relative pull-right margin-0-5">
+            <div class="dropdown-toggle pull-right" data-toggle="dropdown">
+                <i class="icon-cog icon-only bigger-110"></i>
+            </div>
+            <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">
+                <li>
+                    <a onclick="toggleDivs('advancedDetails_{{#makeItValidDOMId name}}{{/makeItValidDOMId}}','basicDetails_{{#makeItValidDOMId name}}{{/makeItValidDOMId}}');">
+                        <i class="icon-list">&nbsp;Basic</i>
+                    </a>
+                </li>
+                <li>
+                    <a onclick="toggleDivs('basicDetails_{{#makeItValidDOMId name}}{{/makeItValidDOMId}}','advancedDetails_{{#makeItValidDOMId name}}{{/makeItValidDOMId}}');">
+                        <i class="icon-code">&nbsp;Advanced</i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="row-fluid basicDetails" id="basicDetails_{{#makeItValidDOMId name}}{{/makeItValidDOMId}}">
+            {{#if url}} 
+                <i class="icon-spinner icon-spin blue bigger-125"></i>
+            {{/if}}
+        </div>
+        {{!-- var rawdata = ifNull(data['rawData'],data);--}}
+        <div class="row-fluid advancedDetails" style="display:none;" id="advancedDetails_{{#makeItValidDOMId name}}{{/makeItValidDOMId}}">
+            {{#if url}}
+                <i class="icon-spinner icon-spin blue bigger-125"></i>
+            {{else}}
+                {{#if raw_json}}
+                    <div><pre style="background-color:white">{{#syntaxHighlight raw_json}}{{/syntaxHighlight}}</pre></div>
+                {{else}}
+                    <div><pre style="background-color:white">{{#syntaxHighlight rawdata}}{{/syntaxHighlight}}</pre></div>
+                {{/if}}
+            {{/if}}
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="infra-summary-details-template">
+    <div class="widget-main row-fluid">
+            <div id="divBasic" class="row-fluid">
+                <ul id="detail-columns" class="item-list item-list-without-border">
+                    {{#each d}}
+                        <li>
+                            <label class="inline row-fluid">
+                                <div class="key span2">{{{this.lbl}}}</div>
+                                <div class="value span10"> 
+                                    {{#if this.value}}
+                                        {{{this.value}}}
+                                    {{else}}
+                                         --
+                                    {{/if}}
+                                </div>
+                            </label>
+                        </li>
+                    {{/each}} <!-- /each d -->
+                </ul>   
+            </div><!--/span-->
+    </div><!-- /widget-main --> 
+</script>
+
+<script type="text/x-handlebars-template" id="chart-settings">
+    <div class="chart-settings">
+        <div class="chart-settings-wrapper hide">
+            <div class="chart-settings-expand">
+                {{# each this}}
+                    <div style="display:inline-block;">
+                        <label style="margin-bottom:0px;display:inline-block;font-size:11px;">{{this.lbl}} : </label><div id="{{this.id}}" style="font-size:11px;"></div>
+                    </div>
+                    {{#IfCompare @index ../this.length operator='<'}}
+                        |
+                    {{/IfCompare}} 
+                {{/each}}
+            </div>
+            <div style="background-color: white;margin-left: 70px; margin-right: 20px;" class="upArrow">
+                <img src="/img/upArrow.png"></img>
+            </div>
+        </div>
+       <div class="chart-settings-hide">
+            <img src="/img/downArrow.png"></img>
+       </div>
+    </div>
 </script>

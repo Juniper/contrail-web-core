@@ -838,6 +838,7 @@ function pushBreadcrumb(breadcrumbsArr) {
 function MenuHandler() {
     var self = this;
     var menuObj;
+    //onHashChange is triggered once it is resolved
     self.deferredObj = $.Deferred();
     var menuDefferedObj = $.Deferred(),statDefferredObj = $.Deferred(),webServerDefObj = $.Deferred();
 
@@ -1058,6 +1059,10 @@ function MenuHandler() {
      * JSON expectes item to be an array,but xml2json make item as an object if there is only one instance
      */
     function processXMLJSON(json) {
+        if((json['resources'] != null) && json['resources']['resource'] != null) {
+            if(!(json['resources']['resource'] instanceof Array))
+                json['resources']['resource'] = [json['resources']['resource']];
+        }
         if ((json['items'] != null) && (json['items']['item'] != null)) {
             if (json['items']['item'] instanceof Array) {
                 for (var i = 0; i < json['items']['item'].length; i++) {
@@ -1127,19 +1132,24 @@ function MenuHandler() {
         if (currMenuObj == null)
             return;
         //Call destory function on viewClass which is being unloaded
-        if ((currMenuObj['class'] != null) && (typeof(window[currMenuObj['class']]) == 'function' || typeof(window[currMenuObj['class']]) == 'object') &&
-            (typeof(window[currMenuObj['class']]['destroy']) == 'function')) {
-			$.allajax.abort();
-			
-            try {
-                window[currMenuObj['class']]['destroy']();
-            } catch (error) {
-                console.log(error.stack);
+        $.each(getValueByJsonPath(currMenuObj,'resources;resource',[]),function(idx,currResourceObj) {
+            if ((currResourceObj['class'] != null) && (typeof(window[currResourceObj['class']]) == 'function' || typeof(window[currResourceObj['class']]) == 'object') &&
+                (typeof(window[currResourceObj['class']]['destroy']) == 'function')) {
+                $.allajax.abort();
+                
+                try {
+                    window[currResourceObj['class']]['destroy']();
+                } catch (error) {
+                    console.log(error.stack);
+                }
             }
-        }
-        //window[currMenuObj['class']] = null;
+            //window[currResourceObj['class']] = null;
+        });
     }
 
+    /**
+     * parentsArr is used to load the resources specified in the menu hierarchy
+     */
     this.getMenuObjByHash = function (menuHash, currMenuObj, parentsArr) {
         parentsArr = ifNull(parentsArr,[]) ;
         if (currMenuObj == null)
@@ -1175,7 +1185,7 @@ function MenuHandler() {
 
     this.loadResourcesFromMenuObj = function(currMenuObj,deferredObj) {
         var parents = currMenuObj['parents'];
-        if (currMenuObj['rootDir'] != null) {
+        if (currMenuObj['rootDir'] != null || getValueByJsonPath(currMenuObj,'resources;resource',[]).length > 0) {
             //Update page Hash only if we are moving to a different view
             var currHashObj = layoutHandler.getURLHashObj();
             if (currHashObj['p'] != currMenuObj['hash']) {
@@ -1185,88 +1195,88 @@ function MenuHandler() {
             var deferredObjs = [];
             var rootDir = currMenuObj['rootDir'];
             var viewDeferredObjs = [];
+
+            function loadViewResources(menuObj,hash) {
+                $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
+                    if (!(currResourceObj['view'] instanceof Array)) {
+                        currResourceObj['view'] = [currResourceObj['view']];
+                    }
+                    $.each(currResourceObj['view'], function () {
+                        var viewDeferredObj = $.Deferred();
+                        viewDeferredObjs.push(viewDeferredObj);
+                        var viewPath = currResourceObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
+                        templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+                    });
+                })
+            }
+
+            function loadCssResources(menuObj,hash) {
+                $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
+                    if(currResourceObj['css'] == null)
+                        return;
+                    if (!(currResourceObj['css'] instanceof Array)) {
+                        currResourceObj['css'] = [currResourceObj['css']];
+                    }
+                    $.each(currResourceObj['css'],function() {
+                        var cssPath = currResourceObj['rootDir'] + '/css/' + this;
+                        if($.inArray(cssPath,globalObj['loadedCSS']) == -1) {
+                            globalObj['loadedCSS'].push(cssPath);
+                            var cssLink = $("<link rel='stylesheet' type='text/css' href='"+cssPath+"'>");
+                            $('head').append(cssLink);
+                        }
+                    });
+                });
+            }
+            
+            function loadJsResources(menuObj) {
+                $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
+                    if (!(currResourceObj['js'] instanceof Array)) 
+                        currResourceObj['js'] = [currResourceObj['js']];
+                    var isLoadFn = currResourceObj['loadFn'] != null ? true : false;
+                    var isReloadRequired = true;
+                    //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
+                    if(currResourceObj['class'] == 'infraMonitorView' || currResourceObj['class'] == 'tenantNetworkMonitorView')
+                        isReloadRequired = false;
+                    $.each(currResourceObj['js'], function () {
+                        //Load the JS file only if it's not loaded already
+                        //if (window[currResourceObj['class']] == null)
+                        if(($.inArray(currResourceObj['rootDir'] + '/js/' + this,globalObj['loadedScripts']) == -1) ||
+                            (isLoadFn == true) || (isReloadRequired == true))
+                            deferredObjs.push(getScript(currResourceObj['rootDir'] + '/js/' + this));
+                    });
+                });
+            }
+
             //Load the parent views
             if(parents != null && parents.length > 0){
                 $.each(parents,function(i,parent){
                     var parentRootDir = parent['rootDir'];
-                    if (parentRootDir != null && parent['view'] != null) {
+                    if (parentRootDir != null || getValueByJsonPath(parent,'resources;resource',[]).length > 0) {
                         loadViewResources(parent,currMenuObj['hash']);
                         loadCssResources(parent,currMenuObj['hash']);
                     }
                 });
             }
             //Load the feature views
-            if (currMenuObj['view'] != null) {
-                loadViewResources(currMenuObj,currMenuObj['hash']);
-            } 
+            loadViewResources(currMenuObj,currMenuObj['hash']);
             //Load the feature css files
-            if(currMenuObj['css'] != null) {
-                loadCssResources(currMenuObj);
-            }
+            loadCssResources(currMenuObj);
+
             //View file need to be downloaded first before executing any JS file
             $.when.apply(window, viewDeferredObjs).done(function() {
                 //Load the parent js
                 if(parents != null && parents.length > 0){
                     $.each(parents,function(i,parent){
                         var parentRootDir = parent['rootDir'];
-                        if (parentRootDir != null && parent['js'] != null) {
+                        if (parentRootDir != null || getValueByJsonPath(parent,'resources;resource',[]).length > 0) {
                             loadJsResources(parent);
                         }
                     });
                 }
                 loadJsResources(currMenuObj);
-                /*$.each(currMenuObj['css'],function() {
-                     deferredObjs.push(loadCSS(rootDir + '/css/' + this));
-                 });*/
                 $.when.apply(window, deferredObjs).done(function () {
                     deferredObj.resolve();
                 });
-            });
-        }
-        
-        function loadViewResources(menuObj,hash){
-            if (!(menuObj['view'] instanceof Array)) {
-                menuObj['view'] = [menuObj['view']];
-            }
-            $.each(menuObj['view'], function () {
-                var viewDeferredObj = $.Deferred();
-                viewDeferredObjs.push(viewDeferredObj);
-                var viewPath = menuObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
-                templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
-            });
-        }
-
-        function loadCssResources(menuObj,hash) {
-            if(menuObj['css'] == null)
-                return;
-            if (!(menuObj['css'] instanceof Array)) {
-                menuObj['css'] = [menuObj['css']];
-            }
-            $.each(menuObj['css'],function() {
-                var cssPath = menuObj['rootDir'] + '/css/' + this;
-                if($.inArray(cssPath,globalObj['loadedCSS']) == -1) {
-                    globalObj['loadedCSS'].push(cssPath);
-                    var cssLink = $("<link rel='stylesheet' type='text/css' href='"+cssPath+"'>");
-                    $('head').append(cssLink);
-                }
-            });
-        }
-        
-        function loadJsResources(menuObj){
-            if (menuObj['js'] instanceof Array) {
-            } else
-                menuObj['js'] = [menuObj['js']];
-            var isLoadFn = menuObj['loadFn'] != null ? true : false;
-            var isReloadRequired = true;
-            //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
-            if(menuObj['class'] == 'infraMonitorView' || menuObj['class'] == 'tenantNetworkMonitorView')
-                isReloadRequired = false;
-            $.each(menuObj['js'], function () {
-                //Load the JS file only if it's not loaded already
-                //if (window[menuObj['class']] == null)
-                if(($.inArray(menuObj['rootDir'] + '/js/' + this,globalObj['loadedScripts']) == -1) ||
-                    (isLoadFn == true) || (isReloadRequired == true))
-                    deferredObjs.push(getScript(menuObj['rootDir'] + '/js/' + this));
             });
         }
     }
@@ -1278,14 +1288,14 @@ function MenuHandler() {
         try {
                 self.loadResourcesFromMenuObj(currMenuObj,deferredObj);
                 deferredObj.done(function () {
-                    if (currMenuObj['loadFn'] != null) {
-                        window[currMenuObj['loadFn']]();
-                    } else if (currMenuObj['class'] != null) {
-                        //Cleanup the container
-                        $(contentContainer).html('');
-                        if(window[currMenuObj['class']] != null)
-                            window[currMenuObj['class']].load({containerId:contentContainer, hashParams:layoutHandler.getURLHashParams()});
-                    }
+                    //Cleanup the container
+                    $(contentContainer).html('');
+                    $.each(getValueByJsonPath(currMenuObj,'resources;resource',[]),function(idx,currResourceObj) {
+                        if (currResourceObj['class'] != null) {
+                            if(window[currResourceObj['class']] != null)
+                                window[currResourceObj['class']].load({containerId:contentContainer, hashParams:layoutHandler.getURLHashParams()});
+                        }
+                    });
                 });
         } catch (error) {
             console.log(error.stack);
@@ -1834,102 +1844,107 @@ function processDrillDownForNodes(e) {
      }
 }
 
-function loadAlertsContent(){
-    if(globalObj.alertsData!=undefined) {
-        var data = globalObj.alertsData;
-        var renderPopupEveryTime = true,alertsData = [];
-        $('#header ul li.nav-header').text(data.length+' New Alerts');
-        var alerts = contrail.getTemplate4Id("alerts-template");
-        for(var i=0;i<data.length;i++) {
-            if(data[i]['detailAlert'] != false)
-                alertsData.push(data[i]);
-        }
-        var alertsTemplate = contrail.getTemplate4Id('moreAlerts-template');
-        var statusTemplate = contrail.getTemplate4Id('statusTemplate');
-        var alertsGrid;
-        if(renderPopupEveryTime || $("#moreAlerts").length == 0) {
-            $("#moreAlerts").remove();
-            $('body').append(alertsTemplate({}));
-            alertsWindow = $("#moreAlerts");
-            alertsWindow.modal({backdrop:'static',keyboard:false,show:false});
-            $("#alertsClose").click(function(){
-                alertsWindow.hide();
-            });
-            $("#alertContent").contrailGrid({
-                header : {
-                    title : {
-                        text : 'Details',
-                        cssClass : 'blue',
-                    },
-                    customControls: []
+function loadAlertsContent(deferredObj){
+    var alertsDS = globalObj['dataSources']['alertsDS']['dataSource'];
+    var renderPopupEveryTime = true,alertsData = [];
+    //$('#header ul li.nav-header').text(data.length+' New Alerts');
+    var alerts = contrail.getTemplate4Id("alerts-template");
+    var alertsTemplate = contrail.getTemplate4Id('moreAlerts-template');
+    var statusTemplate = contrail.getTemplate4Id('statusTemplate');
+    var alertsGrid;
+    if(renderPopupEveryTime || $("#moreAlerts").length == 0) {
+        $("#moreAlerts").remove();
+        $('body').append(alertsTemplate({}));
+        alertsWindow = $("#moreAlerts");
+        alertsWindow.modal({backdrop:'static',keyboard:false,show:false});
+        $("#alertsClose").click(function(){
+            alertsWindow.hide();
+        });
+        $("#alertContent").contrailGrid({
+            header : {
+                title : {
+                    text : 'Details',
+                    cssClass : 'blue',
                 },
-                body: {
-                    options: {
-                        forceFitColumns:true,
-                    },
-                    dataSource: {
-                        data: alertsData
-                    },
-                    statusMessages: {
-                        empty: {
-                            text: 'No Alerts to display'
-                        }, 
-                        errorGettingData: {
-                            type: 'error',
-                            iconClasses: 'icon-warning',
-                            text: 'Error in getting Data.'
-                        }
+                customControls: []
+            },
+            body: {
+                options: {
+                    forceFitColumns:true,
+                    lazyLoading: true
+                },
+                dataSource: {
+                    dataView: alertsDS,
+                },
+                statusMessages: {
+                    empty: {
+                        text: 'No Alerts to display'
+                    }, 
+                    errorGettingData: {
+                        type: 'error',
+                        iconClasses: 'icon-warning',
+                        text: 'Error in getting Data.'
                     }
-                },
-                columnHeader: {
-                    columns:[ 
-                        {
-                            field:'name',
-                            name:'Node',
-                            minWidth:150,
-                            formatter: function(r,c,v,cd,dc){
-                                if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['name']) != "undefined")
-                                    return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['name']+"</span>";
-                                else
-                                    return dc['name'];
-                            },
-                            events: {
-                                onClick: function(e,dc) {
-                                    var nodeType = dc['pName'];
-                                    if(dc['link'] != null)
-                                    layoutHandler.setURLHashObj(dc['link']);
-                                }
-                            },
-                            cssClass: 'cell-hyperlink-blue',
-                        },{
-                            field:'type',
-                            name:'Process',
-                            minWidth:100
-                        },{
-                            field:'msg',
-                            name:'Status',
-                            minWidth:200,
-                        },{
-                            field:'timeStamp',
-                            name:'Time',
-                            minWidth:100,
-                            formatter:function(r,c,v,cd,dc) {
-                                if(typeof(dc['timeStamp']) != "undefined")
-                                    return getFormattedDate(dc['timeStamp']/1000);
-                                else
-                                    return "";
-                            }
-                        }]
                 }
-            });
-        }
-        alertsWindow.modal('show');
-        alertsGrid = $('#alertContent').data('contrailGrid');
+            },
+            columnHeader: {
+                columns:[ 
+                    {
+                        field:'name',
+                        name:'Node',
+                        minWidth:150,
+                        formatter: function(r,c,v,cd,dc){
+                            if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['name']) != "undefined")
+                                return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['name']+"</span>";
+                            else
+                                return dc['name'];
+                        },
+                        events: {
+                            onClick: function(e,dc) {
+                                var nodeType = dc['pName'];
+                                if(dc['link'] != null)
+                                layoutHandler.setURLHashObj(dc['link']);
+                            }
+                        },
+                        cssClass: 'cell-hyperlink-blue',
+                    },{
+                        field:'type',
+                        name:'Process',
+                        minWidth:100
+                    },{
+                        field:'msg',
+                        name:'Status',
+                        minWidth:200,
+                    },{
+                        field:'timeStamp',
+                        name:'Time',
+                        minWidth:100,
+                        formatter:function(r,c,v,cd,dc) {
+                            if(typeof(dc['timeStamp']) != "undefined")
+                                return getFormattedDate(dc['timeStamp']/1000);
+                            else
+                                return "";
+                        }
+                    }]
+            }
+        });
+    }
+    alertsWindow.modal('show');
+    alertsGrid = $('#alertContent').data('contrailGrid');
+    if(alertsGrid != null) {
         alertsGrid.refreshView();
         alertsGrid._grid.resizeCanvas();
-        alertsGrid.removeGridLoading();
-        globalObj.showAlertsPopup = false;
+        if(deferredObj != null) {
+            deferredObj.always(function(){
+                alertsGrid.removeGridLoading();
+                alertsGrid._eventHandlerMap.dataView['onUpdateData']();
+            }); 
+        } else {
+            alertsGrid.removeGridLoading();
+            alertsGrid._eventHandlerMap.dataView['onUpdateData']();
+        }
     }
+    globalObj.showAlertsPopup = false;
 }
 
 
@@ -1976,7 +1991,6 @@ function ManageDataSource() {
                     dataSource:null,
                     error:null
                 },
-
                 //PortRange data for Port Distribution drill-down
                 'portRangeData':{
                 },
@@ -2088,6 +2102,19 @@ function ManageDataSource() {
             manageDataSource.setLastupdatedTime(dsObj,{status:'done'});
         });
         return dsObj;
+    }
+    /**
+     * This function returns the state of the Datasource, whether it is populated or in progress based on the deferred object state
+     */
+    this.isLoading = function(dsObj) {
+        if(dsObj['deferredObj'] != null) {
+            var defObj = dsObj['deferredObj'],state = defObj.state();
+            if(state == 'pending')
+                return true;
+            else(state == 'resolved' || state == 'rejected')
+                return false;
+        }
+        return null;
     }
     
     /**
