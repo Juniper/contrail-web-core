@@ -39,6 +39,7 @@
             var yDataType = ifNull(data['yDataType'], '');
 
             if ($.inArray(ifNull(data['title'], ''), ['vRouters', 'Analytic Nodes', 'Config Nodes', 'Control Nodes']) > -1) {
+                data['forceX'] = [0, 0.15];
                 xLblFormat = ifNull(data['xLblFormat'], d3.format('.02f'));
                 //yLblFormat = ifNull(data['xLblFormat'],d3.format('.02f'));
             }
