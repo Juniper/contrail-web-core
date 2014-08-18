@@ -4,7 +4,8 @@
 
 /* This file uses pareseURL.xml and creates the file featureRoutes.api.js */
 var fs = require('fs'),
-    xml2js = require('xml2js');
+    xml2js = require('xml2js'),
+    global = require('../serverroot/common/global');
 
 var featureLists = [];
 
@@ -80,6 +81,10 @@ function parseFeatureFile (result, fileToGen, callback)
     feature = itemList[i]['feature'];
     readAccess = (itemList[i]['read-access'] == null) ? 'all' :
       itemList[i]['read-access'];
+    if (('all' != readAccess) &&
+        (-1 == readAccess[0].indexOf(global.STR_ROLE_ADMIN))) {
+        readAccess[0] = readAccess[0] + ',' + global.STR_ROLE_ADMIN;
+    }
     writeAccess = (itemList[i]['write-access'] == null) ? 'all' :
       itemList[i]['write-access'];
     
