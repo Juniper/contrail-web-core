@@ -11,8 +11,8 @@
     </item>
     <item>
         <feature>bgp</feature>
-        <read-access>user,admin</read-access>
-        <write-access>user,admin</write-access>
+        <read-access>member,superAdmin</read-access>
+        <write-access>member,superAdmin</write-access>
     </item>
     <item>
         <feature>pcapture</feature>
@@ -34,53 +34,53 @@
     </item>
     <item>
         <feature>globalvrouterconfig</feature>
-        <read-access>user,admin</read-access>
-        <write-access>user,admin</write-access>
+        <read-access>member,superAdmin</read-access>
+        <write-access>member,superAdmin</write-access>
     </item>
     <item>
         <feature>vnconfig</feature>
-        <read-access>user,admin</read-access>
-        <write-access>user,admin</write-access>
+        <read-access>member,superAdmin</read-access>
+        <write-access>member,superAdmin</write-access>
     </item>
     <item>
         <feature>policyconfig</feature>
-        <read-access>user,admin</read-access>
-        <write-access>user,admin</write-access>
+        <read-access>member,superAdmin</read-access>
+        <write-access>member,superAdmin</write-access>
     </item>
     <item>
         <feature>fipconfig</feature>
-        <read-access>user,admin</read-access>
-        <write-access>user,admin</write-access>
+        <read-access>member,superAdmin</read-access>
+        <write-access>member,superAdmin</write-access>
     </item>
     <item>
         <feature>projectconfig</feature>
-        <read-access>user,admin</read-access>
-        <write-access>user,admin</write-access>
+        <read-access>member,superAdmin</read-access>
+        <write-access>member,superAdmin</write-access>
     </item>
     <item>
         <feature>ipamconfig</feature>
-        <read-access>user,admin</read-access>
-        <write-access>user,admin</write-access>
+        <read-access>member,superAdmin</read-access>
+        <write-access>member,superAdmin</write-access>
     </item>
     <item>
         <feature>stconfig</feature>
-        <read-access>user,admin</read-access>
-        <write-access>user,admin</write-access>
+        <read-access>member,superAdmin</read-access>
+        <write-access>member,superAdmin</write-access>
     </item>
     <item>
         <feature>siconfig</feature>
-        <read-access>user,admin</read-access>
-        <write-access>user,admin</write-access>
+        <read-access>member,superAdmin</read-access>
+        <write-access>member,superAdmin</write-access>
     </item>
     <item>
         <feature>virtualdnsconfig</feature>
-        <read-access>user,admin</read-access>
-        <write-access>user,admin</write-access>
+        <read-access>member,superAdmin</read-access>
+        <write-access>member,superAdmin</write-access>
     </item>
     <item>
         <feature>quotasconfig</feature>
-        <read-access>user,admin</read-access>
-        <write-access>user,admin</write-access>
+        <read-access>member,superAdmin</read-access>
+        <write-access>member,superAdmin</write-access>
     </item>    
     <item>
         <feature>orchestration</feature>
