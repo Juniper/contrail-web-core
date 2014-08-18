@@ -13,6 +13,7 @@ var xml2js      = require('xml2js');
 var config      = require('../../config/config.global');
 var assert      = require('assert');
 var featurePr   = require('./parseFeature');
+var parseRole   = require('./parseRoleMap');
 var fileListObj = {};
 
 var parser = new xml2js.Parser();
@@ -25,6 +26,8 @@ function getAutoGenFileByFileMatch (filePath, match)
         return filePath + '/jobsCb.api.js';
     } else if ('/featureList.xml/' == match) {
         return filePath + '/feature.list.js';
+    } else if ('/roleList.xml/' == match) {
+        return filePath + '/rolemap.api.js';
     }
     assert(0);
 }
@@ -47,6 +50,8 @@ function parseXMLAndWriteFile (content, filePath, match, callback)
             jobPr.parseJobListFile(content, filename, callback);
         } else if ('/featureList.xml/' == match) {
             featurePr.parseFeatureFile(content, filename, callback);
+        } else if ('/roleList.xml/' == match) {
+            parseRole.parseRoleMapFile(content, filename, callback);
         }
     });
 }
@@ -57,6 +62,7 @@ function readAndProcessPkgXMLFiles (pkgDir, pkgName, callback)
     fileListArr.push({'pkgDir': pkgDir, 'match': /parseURL.xml/});
     fileListArr.push({'pkgDir': pkgDir, 'match': /jobProcess.xml/});
     fileListArr.push({'pkgDir': pkgDir, 'match': /featureList.xml/});
+    fileListArr.push({'pkgDir': pkgDir, 'match': /roleList.xml/});
     var str = "var pkgList = {};\n";
     str += "exports.pkgList = pkgList;\n";
     if (null == pkgName) {
@@ -144,6 +150,8 @@ function deleteAllAutoGenFiles (callback)
                                'match': /jobProcess.xml/});
         fearutePkgDirList.push({'pkgDir': config.featurePkg[key]['path'], 
                                'match': /featureList.xml/});
+        fearutePkgDirList.push({'pkgDir': config.featurePkg[key]['path'], 
+                               'match': /roleList.xml/});
     }
     fearutePkgDirList.push({'pkgDir': __dirname + '/../..', 
                            'match': /parseURL.xml/});
@@ -151,6 +159,8 @@ function deleteAllAutoGenFiles (callback)
                            'match': /jobProcess.xml/});
     fearutePkgDirList.push({'pkgDir': __dirname + '/../..',
                            'match': /featureList.xml/});
+    fearutePkgDirList.push({'pkgDir': __dirname + '/../..',
+                           'match': /roleList.xml/});
     async.map(fearutePkgDirList, deleteAutoGenFiles, function(err) {
         callback(err);
     });
