@@ -327,7 +327,7 @@ function LayoutHandler() {
         if (windowHeight < 768)
             windowHeight = 768;
         //Subtract the height of pageHeader and seperator height
-        return (windowHeight - $('#header').outerHeight() - 1);
+        return (windowHeight - $('#pageHeader').outerHeight() - 1);
     }
 
     /** Returns the entire hash object */
@@ -620,13 +620,13 @@ $(document).ready(function () {
         var current_scroll = $(this).scrollTop();
 
         if (current_scroll < 50 || previous_scroll - current_scroll > 40) {
-            $("#header").show();
+            $("#pageHeader").show();
             $('#sidebar').removeClass('scrolled');
             $('#breadcrumbs').removeClass('scrolled');
             $('#back-to-top').fadeOut();
         }
         else {
-            $("#header").hide();
+            $("#pageHeader").hide();
             $('#sidebar').addClass('scrolled');
             $('#breadcrumbs').addClass('scrolled');
             $('#back-to-top').fadeIn();
