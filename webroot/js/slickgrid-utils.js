@@ -104,11 +104,11 @@ function getDefaultGridConfig() {
         if (contrail.checkIfExist(gridDataSource.data)) {
             dataView = new ContrailDataView();
             initContrailGrid(dataView);
-            initDataView();
-            dataView.setData(gridDataSource.data);
-            dataView.setSearchFilter(searchColumns, searchFilter);
             initClientSidePagination();
             initGridFooter();
+            initDataView();
+            dataView.setSearchFilter(searchColumns, searchFilter);
+            dataView.setData(gridDataSource.data);
             if(dataView.getLength() == 0){
                 emptyGridHandler();
             }
@@ -139,11 +139,11 @@ function getDefaultGridConfig() {
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestSuccessCB)) {
                                 gridDataSource.events.onRequestSuccessCB(response);
                             }
-                            initDataView();
-                            dataView.setData(response);
-                            dataView.setSearchFilter(searchColumns, searchFilter);
                             initClientSidePagination();
                             initGridFooter();
+                            initDataView();
+                            dataView.setSearchFilter(searchColumns, searchFilter);
+                            dataView.setData(response);
                         },
                         refreshSuccessCallback: function (response, refreshDataOnly) {
                             if(response.length == 0){
