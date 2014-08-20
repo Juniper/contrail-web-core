@@ -2847,6 +2847,7 @@ function exportServersideQueryResults(gridConfig, gridContainer) {
     $.ajax({
         url: exportUrl,
         type: "GET",
+        timeout: 300000,
         error: function (xhr) {
             var errorMsg = contrail.parseErrorMsgFromXHR(xhr);
             gridContainer.data('contrailGrid').removeGridMessage();
