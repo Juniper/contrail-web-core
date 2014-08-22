@@ -296,5 +296,10 @@ global.DEFAULT_FLOW_PCAP_ANALYZER = 'flow-packet-capture';
 
 global.CONTRAIL_LOGIN_ERROR = 'ContrailLoginError';
 
+/* Keystone */
+global.KEYSTONE_V3_DEFAULT_DOMAIN = 'default';
+global.KEYSTONE_V2_DEFAULT_DOMAIN = 'default-domain';
+global.KEYSTONE_V3_TOKEN_URL = '/v3/auth/tokens';
+
 module.exports = global;
 

@@ -243,5 +243,20 @@ config.getDomainProjectsFromApiServer = false;
 *****************************************************************************/
 config.network = {};
 config.network.L2_enable = false;
+
+/******************************************************************************
+ * Boolean flag getDomainsFromApiServer indicates wheather the domain
+ * list should come from API Server or Identity Manager.
+ * If Set
+ *      - true, then domain list will come from API Server
+ *      - false, then domain list will come from Identity Manager
+ * Default: true
+ * NOTE: if config.identityManager.apiVersion is set as v2.0, then this flag
+ *       does not have any effect, in that case the domain list is retrieved
+ *       from API Server.
+ *
+*****************************************************************************/
+config.getDomainsFromApiServer = false;
+
 // Export this as a module.
 module.exports = config;

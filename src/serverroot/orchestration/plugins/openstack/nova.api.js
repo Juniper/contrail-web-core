@@ -47,7 +47,8 @@ function doNovaOpCb (reqUrl, apiProtoIP, tenantId, req, novaCallback, stopRetry,
 {
     var forceAuth = stopRetry;
 
-    authApi.getTokenObj(req, tenantId, forceAuth, function(err, tokenObj) {
+    authApi.getTokenObj({'req': req, 'tenant': tenantId, 'forceAuth': forceAuth}, 
+                        function(err, tokenObj) {
         if ((null != err) || (null == tokenObj) || (null == tokenObj.id)) {
             if (stopRetry) {
                 console.log("We are done retrying for tenantId:" + tenantId +
@@ -214,7 +215,8 @@ function getVMStatsByProject (projUUID, req, callback)
     var novaCallObjArr = [];
     var reqUrl = null;
 
-    authApi.getTokenObj(req, tenantStr, true, function(err, data) {
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': true}, 
+                        function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " +
                                   tenantStr);
@@ -263,7 +265,8 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
     var novaCallObjArr = [];
     var reqUrl = null;
 
-    authApi.getTokenObj(req, tenantStr, true, function(err, data) {
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': true}, 
+                        function(err, data) {
         if ((null != err)  || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " +
                                   tenantStr);
@@ -328,8 +331,9 @@ function launchVNC (request, callback)
     var vmId = null;
     var requestParams = url.parse(request.url, true);
 
-    authApi.getTokenObj(request, requestParams.query.project_id,
-                        true, function (error, data) {
+    authApi.getTokenObj({'req': request, 'tenant':
+                        requestParams.query.project_id, 'forceAuth': true}, 
+                        function(error, data) {
         if (null != error) {
             logutils.logger.error("Error in getting token object for tenant: " +
                                   requestParams.query.project_id);
@@ -425,7 +429,8 @@ function getFlavors (req, callback)
         /* Just return as we will be redirected to login page */
         return;
     }
-    authApi.getTokenObj(req, tenantStr, true, function(err, data) {
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': true}, 
+                        function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
             commonUtils.redirectToLogout(req, req.res);

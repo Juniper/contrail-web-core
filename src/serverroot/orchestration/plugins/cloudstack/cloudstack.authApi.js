@@ -16,6 +16,7 @@ var config = require('../../../../../config/config.global'),
     rest = require('../../../common/rest.api'),
     assert = require('assert'),
     commonUtils = require('./../../../utils/common.utils'),
+    configUtils = require('../../../common/configServer.utils'),
     cloudStackApi = require('./cloudstack.api');
 
 var authServerIP = ((config.identityManager) && (config.identityManager.ip)) ?
@@ -168,8 +169,21 @@ function getTenantList (req, callback)
     });
 }
 
+function getProjectList (req, appData, callback)
+{
+    getTenantList(req, function(err, tenantList) {
+       configUtils.listProjectsAPIServer(err, tenantList, appData,
+                                             function(err, data) {
+            formatTenantList(tenantList, data, function(projects) {
+                callback(null, projects);
+            });
+        });
+    });
+}
+
 exports.getAPIServerAuthParamsByReq = getAPIServerAuthParamsByReq;
 exports.authenticate = authenticate;
 exports.getTenantList = getTenantList;
 exports.formatTenantList = formatTenantList;
+exports.getProjectList = getProjectList;
 

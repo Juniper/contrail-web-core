@@ -41,7 +41,8 @@ function doQuantumOpCb (reqUrl, tenantId, req, quantumCallback, stopRetry,
 {
     var forceAuth = stopRetry;
 
-    authApi.getTokenObj(req, tenantId, forceAuth, function(err, tokenObj) {
+    authApi.getTokenObj({'req': req, 'tenant': tenant, 'forceAuth': forceAuth}, 
+                        function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             if (stopRetry) {
                 console.log("We are done retrying for tenantId:" + tenantId +
