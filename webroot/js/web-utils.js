@@ -2397,3 +2397,27 @@ function showBasicDetails(){
     $('#divBasic').show();
     $('#divAdvanced').parents('.widget-box').find('.widget-header h4 .subtitle').remove();
 }
+
+function getFormattedDate(timeStamp){
+    if(!$.isNumeric(timeStamp))
+        return '';
+    else{
+    var date=new Date(timeStamp),fmtDate="",mnth,hrs,mns,secs,dte;
+    dte=date.getDate()+"";
+    if(dte.length==1)
+        dte="0"+dte;
+    mnth=parseInt(date.getMonth()+1)+"";
+    if(mnth.length==1)
+        mnth="0"+mnth;
+    hrs=parseInt(date.getHours())+"";
+    if(hrs.length==1)
+        hrs="0"+hrs;
+    mns=date.getMinutes()+"";
+    if(mns.length==1)
+        mns="0"+mns;
+    secs=date.getSeconds()+"";
+    if(secs.length==1)
+        secs="0"+secs;
+    fmtDate=date.getFullYear()+"-"+mnth+"-"+dte+"  "+hrs+":"+mns+":"+secs;
+    return fmtDate;}
+}
