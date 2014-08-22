@@ -714,8 +714,16 @@ function constructSelect2(self, defaultOption, args) {
                     var answer = findTextInObj(text, data);
                     self.select2('val', answer.id);
                 } else {
-                    if (self.select2('data') != null)
+                    if(typeof self.select2('data').length !== 'undefined' && self.select2('data').length > 0){
+                        var result = [];
+                        for(var i=0; i< self.select2('data').length; i++){
+                            result.push(self.select2('data')[i].text);
+                        }
+                        return result;
+                    }
+                    if (self.select2('data') != null){
                         return (self.select2('data') != null) ? self.select2('data').text : null;
+                    }
                 }
             },
             value: function(value) {
