@@ -9,7 +9,7 @@ globalObj['loadedScripts'] = [];
 globalObj['loadedCSS'] = [];
 globalObj['orchModel'] = 'openstack';
 globalObj.NUM_FLOW_DATA_POINTS = 1000;
-var timeStampAlert = [],timeStampTolearence = 5 * 60 * 1000;//To check the mismatch between the browser time and the webserver time
+var globalAlerts = [],timeStampTolearence = 5 * 60 * 1000;//To check the mismatch between the browser time and the webserver time
 var enableHardRefresh = false;  //Set to true if "Hard Refresh" provision need to be shown in UI
 //Set to true if we want to discard ongoing requests while refreshing the dataSource and start fetching from beginnging
 //Ajax calls shouldn't be aborted if we don't want to discard ongoing update
@@ -870,11 +870,11 @@ function MenuHandler() {
                 response['timeDiffInMillisecs'] =  response['serverUTCTime'] - new Date().getTime();
                if(Math.abs(response['timeDiffInMillisecs']) > timeStampTolearence){
                     if(response['timeDiffInMillisecs'] > 0)
-                        timeStampAlert = [{msg:infraAlertMsgs['TIMESTAMP_MISMATCH_BEHIND'].format(diffDates(new XDate(),new XDate(response['serverUTCTime']),'rounded')),
-                                sevLevel:sevLevels['INFO']}];
+                        globalAlerts.push({msg:infraAlertMsgs['TIMESTAMP_MISMATCH_BEHIND'].format(diffDates(new XDate(),new XDate(response['serverUTCTime']),'rounded')),
+                                sevLevel:sevLevels['INFO']});
                     else
-                        timeStampAlert = [{msg:infraAlertMsgs['TIMESTAMP_MISMATCH_AHEAD'].format(diffDates(new XDate(response['serverUTCTime']),new XDate(),'rounded')),
-                                sevLevel:sevLevels['INFO']}];
+                        globalAlerts.push({msg:infraAlertMsgs['TIMESTAMP_MISMATCH_AHEAD'].format(diffDates(new XDate(response['serverUTCTime']),new XDate(),'rounded')),
+                                sevLevel:sevLevels['INFO']});
                 }
                 globalObj['webServerInfo'] = response;
             }    

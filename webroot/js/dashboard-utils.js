@@ -77,8 +77,8 @@ function infraMonitorClass() {
         var processAlerts = self.getAllProcessAlerts(viewModels);
         var allAlerts = alerts_nodes.concat(processAlerts);
         allAlerts.sort(dashboardUtils.sortInfraAlerts);
-        if(timeStampAlert.length > 0)
-            allAlerts = allAlerts.concat(timeStampAlert)
+        if(globalAlerts.length > 0)
+            allAlerts = allAlerts.concat(globalAlerts)
         //Filtering the alerts for alerts popup based on the detailAlert flag
         var popupAlerts = [];
         for(var i=0;i<allAlerts.length;i++) {
