@@ -164,26 +164,15 @@ global.STR_SESSION_AUTHENTICATED = 'sessAuthenticated';
 global.STR_AUTH_KEY = 'authenticationKey';
 global.DEMO_USER_MAX_AGE_SESSION = 2 * 60 * 60 * 1000;
 /* 2 Hrs */
-;
-global.STR_ROLE_USER = 'user';
-global.STR_ROLE_ADMIN = 'admin';
 
-global.STR_EXT_ROLE_NETADMIN = 'netadmin';
-global.STR_EXT_ROLE_KEYSTONEADMIN = 'KeystoneAdmin';
-global.STR_EXT_ROLE_MEMBER_ = '_member_';
-global.STR_EXT_ROLE_SYSADMIN = 'sysadmin';
-global.STR_EXT_ROLE_KEYSTONE_SERVICE_ADMIN = 'KeystoneServiceAdmin';
-global.STR_EXT_ROLE_MEMBER = 'Member';
-global.STR_EXT_ROLE_ADMIN = 'admin';
+/* UI Roles */
+global.STR_ROLE_USER = 'member';
+global.STR_ROLE_ADMIN = 'superAdmin';
 
 /* Service Instance */
 global.INSTANCE_SPAWNING_TIMEOUT = 10 * 60 * 1000;
 /* 10 Mins */
 
-/* User Role */
-global.USER_ROLE_ADMIN = 1;
-global.USER_ROLE_USER = 2;
-global.USER_ROLE_DEMO = 3;
 global.DFLT_REDIS_SERVER_PORT = '6383';
 global.DFLT_REDIS_SERVER_IP = '127.0.0.1';
 global.DFLT_UPLOAD_PATH = '/tmp';
