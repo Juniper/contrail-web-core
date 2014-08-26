@@ -57,9 +57,25 @@ function getFlavors(req, callback)
     });
 }
 
+function getOSHostList(req, callback)
+{
+    computeApi.getOSHostList(req, function(err,data){
+        callback(err,data);
+    });
+}
+
+function getAvailabilityZoneList(req, callback)
+{
+    computeApi.getAvailabilityZoneList(req, function(err,data){
+        callback(err,data);
+    });
+}
+
 exports.apiGet = apiGet;
 exports.apiPost = apiPost;
 exports.launchVNC = launchVNC;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
 exports.getFlavors = getFlavors;
+exports.getOSHostList = getOSHostList;
+exports.getAvailabilityZoneList = getAvailabilityZoneList;
