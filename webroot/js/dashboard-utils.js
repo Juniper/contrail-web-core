@@ -46,7 +46,8 @@ function infraMonitorClass() {
          var verGroup = verDimension.group();
          var verArr = [];
          var systemCnt = nameDimension.group().all().length;
-         var infoData = [{lbl:'No of servers',value:systemCnt}];
+         var infoData = [{lbl:'No. of servers',value:systemCnt}];
+         infoData.push({lbl:'No. of logical nodes', value:dashboardDataArr.length});
          //Distinct Versions
          if(verGroup.all().length > 1) {
              //verArr = verGroup.order(function(d) { return d.value;}).top(2);

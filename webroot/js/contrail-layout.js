@@ -327,7 +327,7 @@ function LayoutHandler() {
         if (windowHeight < 768)
             windowHeight = 768;
         //Subtract the height of pageHeader and seperator height
-        return (windowHeight - $('#header').outerHeight() - 1);
+        return (windowHeight - $('#pageHeader').outerHeight() - 1);
     }
 
     /** Returns the entire hash object */
@@ -392,9 +392,9 @@ function onHashChange(lastHash, currHash) {
     var lastMenuObj = menuHandler.getMenuObjByHash(lastPageHash);
     try {
         if (currPageHash == '') {            
-            if(globalObj['webServerInfo']['role'] == roles['ADMIN'])
+            if($.inArray(roles['ADMIN'],globalObj['webServerInfo']['role']) > -1)
                 currPageHash = "mon_infra_dashboard";
-            if(globalObj['webServerInfo']['role'] == roles['TENANT'])
+            else if($.inArray(roles['TENANT'],globalObj['webServerInfo']['role']) > -1)
                 currPageHash = "mon_net_dashboard"; //TODO: Need to check whether queryparams needed or not
         }
         var currMenuObj = menuHandler.getMenuObjByHash(currPageHash);
@@ -620,13 +620,13 @@ $(document).ready(function () {
         var current_scroll = $(this).scrollTop();
 
         if (current_scroll < 50 || previous_scroll - current_scroll > 40) {
-            $("#header").show();
+            $("#pageHeader").show();
             $('#sidebar').removeClass('scrolled');
             $('#breadcrumbs').removeClass('scrolled');
             $('#back-to-top').fadeOut();
         }
         else {
-            $("#header").hide();
+            $("#pageHeader").hide();
             $('#sidebar').addClass('scrolled');
             $('#breadcrumbs').addClass('scrolled');
             $('#back-to-top').fadeIn();

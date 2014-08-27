@@ -6,6 +6,14 @@
 
 THIRD_PARTY='../contrail-webui-third-party'
 
+#Start - copy javascript-ipv6 node module files for IPv4/v6 address manipulations/validations
+rm -rf webroot/assets/ip
+mkdir -p webroot/assets/ip
+cp -af node_modules/ipv6/lib/browser/jsbn-combined.js webroot/assets/ip/
+cp -af node_modules/ipv6/lib/browser/sprintf.js webroot/assets/ip/
+cp -af node_modules/ipv6/ipv6.js webroot/assets/ip/
+#End - copy javascript-ipv6 node module files for IPv4/v6 address manipulations/validations
+
 #Start - Copy d3/vnd3 files from $THIRD_PARTY
 rm -rf webroot/assets/d3
 mkdir -p webroot/assets/d3/js
@@ -187,6 +195,10 @@ MAINFILE[23]=webroot/assets/datetimepicker/js/jquery.datetimepicker.js
 MAINFILE[24]=webroot/assets/moment/moment.js
 MAINFILE[25]=webroot/assets/2way-multiselect/js/multiselect.js
 
+MAINFILE[42]=webroot/assets/ip/jsbn-combined.js
+MAINFILE[43]=webroot/assets/ip/sprintf.js
+MAINFILE[44]=webroot/assets/ip/ipv6.js
+
 MAINFILE[26]=webroot/js/contrail-common.js
 MAINFILE[27]=webroot/js/handlebars-utils.js
 MAINFILE[28]=webroot/js/select2-utils.js
@@ -233,6 +245,9 @@ cat ${MAINFILE[22]} >> webroot/js/contrail-all-4.js
 cat ${MAINFILE[23]} >> webroot/js/contrail-all-4.js
 cat ${MAINFILE[24]} >> webroot/js/contrail-all-4.js
 cat ${MAINFILE[25]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[42]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[43]} >> webroot/js/contrail-all-4.js
+cat ${MAINFILE[44]} >> webroot/js/contrail-all-4.js
 
 cat ${MAINFILE[26]} > webroot/js/contrail-all-5.js
 cat ${MAINFILE[27]} >> webroot/js/contrail-all-5.js

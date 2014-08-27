@@ -47,7 +47,8 @@ function doNovaOpCb (reqUrl, apiProtoIP, tenantId, req, novaCallback, stopRetry,
 {
     var forceAuth = stopRetry;
 
-    authApi.getTokenObj(req, tenantId, forceAuth, function(err, tokenObj) {
+    authApi.getTokenObj({'req': req, 'tenant': tenantId, 'forceAuth': forceAuth}, 
+                        function(err, tokenObj) {
         if ((null != err) || (null == tokenObj) || (null == tokenObj.id)) {
             if (stopRetry) {
                 console.log("We are done retrying for tenantId:" + tenantId +
@@ -166,6 +167,25 @@ var getFlavorsCB = {
     'v2': getFlavorsV11
 };
 
+var getOSHostListCB = {
+    'v1.1': getOSHostV11,
+    'v2': getOSHostV11
+};
+
+var availabilityZoneCB = {
+    'v1.1': getAvailabilityZoneV11,
+    'v2': getAvailabilityZoneV11
+};
+
+
+function getOSHostV11 (err, data, callback){
+    callback(err, data);
+}
+
+function getAvailabilityZoneV11 (err, data, callback){
+    callback(err, data);
+}
+
 function getFlavorsV11 (err, data, callback)
 {
     callback(err, data);
@@ -214,7 +234,8 @@ function getVMStatsByProject (projUUID, req, callback)
     var novaCallObjArr = [];
     var reqUrl = null;
 
-    authApi.getTokenObj(req, tenantStr, true, function(err, data) {
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': true}, 
+                        function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " +
                                   tenantStr);
@@ -263,7 +284,8 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
     var novaCallObjArr = [];
     var reqUrl = null;
 
-    authApi.getTokenObj(req, tenantStr, true, function(err, data) {
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': true}, 
+                        function(err, data) {
         if ((null != err)  || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " +
                                   tenantStr);
@@ -328,8 +350,9 @@ function launchVNC (request, callback)
     var vmId = null;
     var requestParams = url.parse(request.url, true);
 
-    authApi.getTokenObj(request, requestParams.query.project_id,
-                        true, function (error, data) {
+    authApi.getTokenObj({'req': request, 'tenant':
+                        requestParams.query.project_id, 'forceAuth': true}, 
+                        function(error, data) {
         if (null != error) {
             logutils.logger.error("Error in getting token object for tenant: " +
                                   requestParams.query.project_id);
@@ -394,6 +417,34 @@ function getFlavorsByAPIVersion (err, data, apiVer, callback)
     flavorsCB(err, data, callback);
 }
 
+function getOSHostListByAPIVersion (err, data, apiVer, callback)
+{
+    var osHostListCB = getOSHostListCB[apiVer];
+    if (null == osHostListCB) {
+        if (null == err) {
+            var str = 'Nova API Version not supported:' + apiVer;
+            err = new appErrors.RESTServerError(str);
+        }
+        callback(err, null);
+        return;
+    }
+    osHostListCB(err, data, callback);
+}
+
+function getAvailabilityZone (err, data, apiVer, callback)
+{
+    var availabilityZoneListCB = availabilityZoneCB[apiVer];
+    if (null == availabilityZoneListCB) {
+        if (null == err) {
+            var str = 'Nova API Version not supported:' + apiVer;
+            err = new appErrors.RESTServerError(str);
+        }
+        callback(err, null);
+        return;
+    }
+    availabilityZoneListCB(err, data, callback);
+}
+
 function novaApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex,
                                      fallbackIndex, callback)
 {
@@ -425,7 +476,8 @@ function getFlavors (req, callback)
         /* Just return as we will be redirected to login page */
         return;
     }
-    authApi.getTokenObj(req, tenantStr, true, function(err, data) {
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': true}, 
+                        function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
             commonUtils.redirectToLogout(req, req.res);
@@ -455,10 +507,88 @@ function getFlavors (req, callback)
     });
 }
 
+function getOSHostList(req, callback)
+{   
+    var tenantStr = getTenantIdByReqCookie(req);
+    if (null == tenantStr) {
+        /* Just return as we will be redirected to login page */
+        return;
+    }
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth':
+                         true}, function(err, data) {
+        if ((null != err) || (null == data) || (null == data['tenant'])) {
+            logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
+            commonUtils.redirectToLogout(req, req.res);
+            return;
+        }
+        var tenantId = data['tenant']['id'];
+        oStack.getServiceAPIVersionByReqObj(req,
+                                            global.SERVICE_ENDPT_TYPE_COMPUTE,
+                                            function(apiVer) {
+            if (null == apiVer) {
+                error = 
+                    new appErrors.RESTServerError('apiVersion for NOVA is NULL');
+                callback(error, null);
+                return;
+            }
+            var reqUrlPrefix = '/' + tenantId + '/os-hosts';
+            var startIndex = 0;
+            var fallbackIndex = novaAPIVerList.length - 1;
+            novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex,
+                                       fallbackIndex, function(err, data, ver) {
+                if (null != ver) {
+                    ver = ver['version'];
+                }
+                getOSHostListByAPIVersion(err, data, ver, callback);
+            });
+        });
+    });
+}
+
+function getAvailabilityZoneList(req, callback)
+{   
+    var tenantStr = getTenantIdByReqCookie(req);
+    if (null == tenantStr) {
+        /* Just return as we will be redirected to login page */
+        return;
+    }
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth':
+                         true}, function(err, data) {
+        if ((null != err) || (null == data) || (null == data['tenant'])) {
+            logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
+            commonUtils.redirectToLogout(req, req.res);
+            return;
+        }
+        var tenantId = data['tenant']['id'];
+        oStack.getServiceAPIVersionByReqObj(req,
+                                            global.SERVICE_ENDPT_TYPE_COMPUTE,
+                                            function(apiVer) {
+            if (null == apiVer) {
+                error = 
+                    new appErrors.RESTServerError('apiVersion for NOVA is NULL');
+                callback(error, null);
+                return;
+            }
+            var reqUrlPrefix = '/' + tenantId + '/os-availability-zone';
+            var startIndex = 0;
+            var fallbackIndex = novaAPIVerList.length - 1;
+            novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex,
+                                       fallbackIndex, function(err, data, ver) {
+                if (null != ver) {
+                    ver = ver['version'];
+                }
+                getAvailabilityZone(err, data, ver, callback);
+            });
+        });
+    });
+}
+
 
 exports.launchVNC = launchVNC;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
 exports.getFlavors = getFlavors;
+exports.getOSHostList =  getOSHostList;
+exports.getAvailabilityZoneList =  getAvailabilityZoneList;
 exports.novaAPIVerList = novaAPIVerList;
 

@@ -18,7 +18,7 @@ var DEFAULT_TIME_SLICE = 3600000,
     pageContainer = "#content-container",
     dblClick = 0;
 var CONTRAIL_STATUS_USER = [];
-var roles = {TENANT : "user",ADMIN : "admin"};
+var roles = {TENANT : "member",ADMIN : "superAdmin"};
 var CONTRAIL_STATUS_PWD = [];
 var flowKeyStack = [];
 var aclIterKeyStack = [];
@@ -649,7 +649,16 @@ function prettifyBytes(obj) {
     bytes = parseInt(bytes);
     bytes = makePositive(bytes);
     var bytePrefixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'];
-    var multipliers = [1, 1024, 1024 * 1024, 1024 * 1024 * 1024];
+    var multipliers = [
+        1, //B
+        1024, //KB
+        1024 * 1024, //MB
+        1024 * 1024 * 1024, //GB
+        1024 * 1024 * 1024 * 1024, //TB
+        1024 * 1024 * 1024 * 1024 * 1024, //PB
+        1024 * 1024 * 1024 * 1024 * 1024 * 1024, //EB
+        1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 //ZB
+    ];
     var prefixIdx = 0;
     var multiplier = 1;
     if ($.inArray(obj['prefix'], bytePrefixes) > -1) {
@@ -885,6 +894,8 @@ function MenuHandler() {
         });
     }
     
+    //Filter the menu items based on allowedRolesList for each feature and comparing them with the logged-in user roles
+    //type = menushortcut returns only the first level menu (Configure,Monitor)
     this.filterMenuItems = function(items,type){
         if(type == null) {
             items = items.filter(function(value){
@@ -933,25 +944,30 @@ function MenuHandler() {
     }
     
     /*
-     * This function checks whether the user(from globalCacheObj) is permitted to view the menu item(which the parameter)
+     * This function checks whether the user(from globalObj) is permitted to view the menu item(which the parameter)
      * and returns true if permitted else false
      */
     function checkForAccess(value){
         var roleExists = false,orchExists = false;
         var orchModel = globalObj['webServerInfo']['orchestrationModel'];
-        var role = globalObj['webServerInfo']['role'];
+        var loggedInUserRoles = globalObj['webServerInfo']['role'];
         if(value.access != null && value.access.roles != null) {
             if(!(value.access.roles.role instanceof Array))
                 value.access.roles.role = [value.access.roles.role];
             var rolesArr = value.access.roles.role;
-            for(var i = 0; i < rolesArr.length; i++){
-                /**
-                 * Two cases, we need to check
-                 * 1)if negation(!) exists in role then the role should not match with the value in globalCacheObj
-                 * 2)If negation not there in the then just need to compare the role
-                 */
-                if((rolesArr[i].indexOf('!') > -1 && rolesArr[i] != "!"+role) || rolesArr[i] == role)
-                   roleExists = true; 
+            var allowedRolesList = [];
+
+            //If logged-in user has superAdmin role,then allow all features
+            if($.inArray(roles['ADMIN'],loggedInUserRoles) > -1) {
+                roleExists = true;
+            } else {
+                //If any one of userRole is in allowedRolesList
+                for(var i=0;i<rolesArr.length;i++) {
+                    if($.inArray(rolesArr[i],loggedInUserRoles) > -1) {
+                        roleExists = true;
+                        break;
+                    }
+                }
             }
             if(!(value.access.orchModels.model instanceof Array))
                 value.access.orchModels.model = [value.access.orchModels.model];
@@ -2387,4 +2403,28 @@ function showBasicDetails(){
     $('#divStatus').hide();
     $('#divBasic').show();
     $('#divAdvanced').parents('.widget-box').find('.widget-header h4 .subtitle').remove();
+}
+
+function getFormattedDate(timeStamp){
+    if(!$.isNumeric(timeStamp))
+        return '';
+    else{
+    var date=new Date(timeStamp),fmtDate="",mnth,hrs,mns,secs,dte;
+    dte=date.getDate()+"";
+    if(dte.length==1)
+        dte="0"+dte;
+    mnth=parseInt(date.getMonth()+1)+"";
+    if(mnth.length==1)
+        mnth="0"+mnth;
+    hrs=parseInt(date.getHours())+"";
+    if(hrs.length==1)
+        hrs="0"+hrs;
+    mns=date.getMinutes()+"";
+    if(mns.length==1)
+        mns="0"+mns;
+    secs=date.getSeconds()+"";
+    if(secs.length==1)
+        secs="0"+secs;
+    fmtDate=date.getFullYear()+"-"+mnth+"-"+dte+"  "+hrs+":"+mns+":"+secs;
+    return fmtDate;}
 }

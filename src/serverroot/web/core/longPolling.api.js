@@ -160,6 +160,15 @@ function routeAll (req, res, next)
 {
   /* nodejs sets the timeout 2 minute, override this timeout here */
   req.socket.setTimeout(global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME);
+  if (null == req.session.sessionExpSyncToIdentityToken) {
+      /* Sync Session Timeout to Identity Service Token Exp Time */
+      if (req.session && req.session.last_token_used &&
+          req.session.last_token_used.expires) {
+          req.session.cookie.expires = new
+              Date(req.session.last_token_used.expires);
+          req.session.sessionExpSyncToIdentityToken = true;
+      }
+  }
   var u = url.parse(req.url, true);
   if ((null == req.route) || (null == handler.checkURLInAllowedList(req))) {
       /* Not a Valid URL */

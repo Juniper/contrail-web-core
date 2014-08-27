@@ -45,7 +45,8 @@ function doGlanceOpCb (reqUrl, apiProtoIP, tenantId, req, glanceCallback,
 {
     var forceAuth = stopRetry;
 
-    authApi.getTokenObj(req, tenantId, forceAuth, function(err, tokenObj) {
+    authApi.getTokenObj({'req': req, 'tenant': tenantId, 'forceAuth': forceAuth}, 
+                        function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             if (stopRetry) {
                 console.log("We are done retrying for tenantId:" + tenantId +
