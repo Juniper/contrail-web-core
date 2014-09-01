@@ -28,6 +28,21 @@ function getServiceCatalogCompDataWithNoHTTP (req, callback)
     callback(data);
 }
 
+function initIPs ()
+{
+    config.computeManager.ip = '10.204.217.42';
+    config.imageManager.ip = '10.204.217.42';
+    config.storageManager.ip = '10.204.217.42';
+}
+
+QUnit.module("openStackAPI", {
+    setup: function () {
+        initIPs();
+    },
+    teardown: function() {
+    }
+});
+
 test('getServiceAPIVersionByReqObj', function() {
     authApi.getServiceCatalog = getServiceCatalogData;
     oStack.getServiceAPIVersionByReqObj(null, 'compute', function(data) {
