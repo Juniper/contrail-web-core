@@ -28,17 +28,35 @@ function getServiceCatalogCompDataWithNoHTTP (req, callback)
     callback(data);
 }
 
+function initIPs ()
+{
+    config.computeManager.ip = '10.204.217.42';
+    config.imageManager.ip = '10.204.217.42';
+    config.storageManager.ip = '10.204.217.42';
+}
+
+QUnit.module("openStackAPI", {
+    setup: function () {
+        initIPs();
+    },
+    teardown: function() {
+    }
+});
+
 test('getServiceAPIVersionByReqObj', function() {
     authApi.getServiceCatalog = getServiceCatalogData;
-    oStack.getServiceAPIVersionByReqObj(null, 'compute', function(data) {
+    oStack.getServiceAPIVersionByReqObj(null, global.SERVICE_ENDPT_TYPE_COMPUTE,
+                                        function(data) {
         deepEqual(data, mockData.servCatRespComputeData_OP,
                   'Expecting Compute Data Match');
     });
-    oStack.getServiceAPIVersionByReqObj(null, 'image', function(data) {
+    oStack.getServiceAPIVersionByReqObj(null, global.SERVICE_ENDPT_TYPE_IMAGE,
+                                        function(data) {
         deepEqual(data, mockData.servCatRespImageData_OP,
                   'Expecting Image Data Match');
     });
-    oStack.getServiceAPIVersionByReqObj(null, 'volume', function(data) {
+    oStack.getServiceAPIVersionByReqObj(null, global.SERVICE_ENDPT_TYPE_VOLUME,
+                                        function(data) {
         deepEqual(data, mockData.servCatRespVolData_OP, 
                   'Expecting Volume Data Match');
     });
