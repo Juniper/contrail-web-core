@@ -32,7 +32,7 @@
     </li>
     {{#each this.items.item}}
         <li class="item">
-            <a href="\\#" class="dropdown-toggle" data-link='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
+            <a href='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})' data-link='javascript:loadFeature({{#getHashFromMenuItem this}}{{/getHashFromMenuItem}})'>
                 <i class="{{this.iconClass}}"></i>
                 <span>{{this.label}}</span>
             </a>
