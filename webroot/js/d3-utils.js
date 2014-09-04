@@ -499,7 +499,7 @@ function successHandlerTSChart(data, cbParams) {
     var selectorId = "#" + $(cbParams.selector).attr('id');
     var options = {
         height:300,
-        yAxisLabel: 'Bytes per 7 secs',
+        yAxisLabel: 'Bytes per 30 secs',
         y2AxisLabel: 'Bytes per min'
     };
     initTrafficTSChart(selectorId, data, options, null, "formatSumBytes", "formatSumBytes");
