@@ -194,10 +194,10 @@ config.node_worker_count = 1;
 config.maxActiveJobs = 10;
 
 /* Redis DB index for Web-UI */
-config.redisDBIndex = 1;
+config.redisDBIndex = 3;
 
 /* WebUI Redis Server */
-config.redis_server_port = '6383';
+config.redis_server_port = '6379';
 config.redis_server_ip = '127.0.0.1';
 config.redis_dump_file = '/var/lib/redis/dump-webui.rdb';
 

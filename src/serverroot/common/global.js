@@ -37,8 +37,9 @@ global.STR_VM_STATE_PARTIALLY_ACTIVE = 'Partially Active';
 /* ZMQ */
 global.ZWQ_MSG_SEPERATOR = '@';
 
-global.WEBUI_DFLT_REDIS_DB = 1;
-global.QE_DFLT_REDIS_DB = 2;
+global.WEBUI_SESSION_REDIS_DB = 2;
+global.WEBUI_DFLT_REDIS_DB = 3;
+global.QE_DFLT_REDIS_DB = 4;
 
 /* Generic Caching related global variables */
 global.STR_JOB_TYPE_CACHE = 'cache';
@@ -173,7 +174,7 @@ global.STR_ROLE_ADMIN = 'superAdmin';
 global.INSTANCE_SPAWNING_TIMEOUT = 10 * 60 * 1000;
 /* 10 Mins */
 
-global.DFLT_REDIS_SERVER_PORT = '6383';
+global.DFLT_REDIS_SERVER_PORT = '6379';
 global.DFLT_REDIS_SERVER_IP = '127.0.0.1';
 global.DFLT_UPLOAD_PATH = '/tmp';
 /** nodeJS timeout is 2 minutes, so set the timeout less than that, as when we
