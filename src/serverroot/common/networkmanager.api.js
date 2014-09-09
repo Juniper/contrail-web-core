@@ -7,12 +7,15 @@
  */
 
 var config = require('../../../config/config.global');
+var orch = require('../orchestration/orchestration.api');
 
-var orchModel = ((config.orchestration) && (config.orchestration.Manager)) ?
-    config.orchestration.Manager : 'openstack';
+var orchModel = orch.getOrchestrationModel();
 
+var nwMgrApi;
 if (orchModel == 'openstack') {
-    var nwMgrApi = require('../orchestration/plugins/openstack/quantum.api');
+    nwMgrApi = require('../orchestration/plugins/openstack/quantum.api');
+} else if ('none' == orchModel) {
+    nwMgrApi = require('../orchestration/plugins/no-orch/noOrchestration.api');
 }
 
 function apiGet (reqUrl, req, callback)

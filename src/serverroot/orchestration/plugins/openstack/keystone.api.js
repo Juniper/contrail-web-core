@@ -19,6 +19,7 @@ var config = require('../../../../../config/config.global'),
     roleMap = require('../../../web/core/rolemap.api'),
     exec = require('child_process').exec,
     configUtils = require('../../../common/configServer.utils'),
+    plugins = require('../plugins.api'),
     rest = require('../../../common/rest.api');
 
 var authServerIP = ((config.identityManager) && (config.identityManager.ip)) ? 
@@ -917,7 +918,7 @@ function authenticate (req, res, callback)
             });
             return;
         }
-        setAllCookies(req, res, {'username': username}, function() {
+        plugins.setAllCookies(req, res, {'username': username}, function() {
             res.redirect('/' + urlHash);
         });
     });
@@ -948,93 +949,6 @@ function formatDomainList (tenantList)
         domainObjs[data[i]['domain_id']].push(data[i]['name']);
     }
     return domainObjs;
-}
-
-function setAllCookies (req, res, cookieObj, callback)
-{
-    res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
-                  '; expires=' +
-                  new Date(new Date().getTime() +
-                           global.MAX_AGE_SESSION_ID).toUTCString());
-    var domCookie = req.cookies.domain;
-    getTenantList(req, function(err, data) {
-        if ((null != err) || (null == data) || (null == data['tenants'])) {
-            logutils.logger.error('Tenant List retrieval error');
-            callback();
-            return;
-        }
-        var tenLen = data['tenants'].length;
-        var defDomainId = data['tenants'][tenLen - 1]['domain_id'];
-        if (null == defDomainId) {
-            defDomainId = global.KEYSTONE_V2_DEFAULT_DOMAIN;
-        }
-        var defProj = data['tenants'][tenLen - 1]['name'];
-        if (null == req.cookies) {
-            /* Now check the tenantlist response, and if domain is there in
-             * response, then set it, else set as default-domain
-             */
-            res.setHeader('Set-Cookie', 'domain=' + defDomainId +
-                          '; expires=' + new Date(new Date().getTime() +
-                                                  global.MAX_AGE_SESSION_ID).toUTCString());
-            res.setHeader('Set-Cookie', 'project=' + defProj +
-                          '; expires=' + new Date(new Date().getTime() +
-                                                  global.MAX_AGE_SESSION_ID).toUTCString());
-        } else {
-            if (null == req.cookies.domain) {
-                res.setHeader('Set-Cookie', 'domain=' + defDomainId +
-                              '; expires=' + new Date(new Date().getTime() +
-                                                      global.MAX_AGE_SESSION_ID).toUTCString());
-            } else {
-                /* First check if we have this domain now or not */
-                if (false == doDomainExist(req.cookies.domain, data)) {
-                    res.setHeader('Set-Cookie', 'domain=' + defDomainId +
-                                  '; expires=' + new Date(new Date().getTime() +
-                                                          global.MAX_AGE_SESSION_ID).toUTCString());
-                    domCookie = defDomainId;
-                }
-            }
-            if (null == req.cookies.project) {
-                res.setHeader('Set-Cookie', 'project=' + defProj +
-                              '; expires=' + new Date(new Date().getTime() +
-                                                      global.MAX_AGE_SESSION_ID).toUTCString());
-            } else {
-                if ('v2.0' == req.session.authApiVersion) {
-                    /* Just check if the project exists or not */
-                    var projCnt = data['tenants'].length;
-                    for (var i = 0; i < projCnt; i++) {
-                        if (data['tenants'][i] == req.cookies.project) {
-                            /* it is fine */
-                            break;
-                        }
-                    }
-                    if (i == projCnt) {
-                        res.setHeader('Set-Cookie', 'project=' + defProj +
-                                      '; expires=' + new Date(new Date().getTime() +
-                                                              global.MAX_AGE_SESSION_ID).toUTCString());
-                    }
-                } else {
-                    var domList = formatDomainList(data);
-                    var projList = domList[domCookie];
-                    var projCnt = projList.length;
-                    for (var i = 0; i < projCnt; i++) {
-                        if (projList[i] == req.cookies.project) {
-                            /* It is fine */
-                            break;
-                        }
-                    }
-                    if (i == projCnt) {
-                        /* We did not find the already set project cookie value in
-                         * our project list
-                         */
-                        res.setHeader('Set-Cookie', 'project=' + defProj +
-                                      '; expires=' + new Date(new Date().getTime() +
-                                                              global.MAX_AGE_SESSION_ID).toUTCString());
-                    }
-                }
-            }
-        }
-        callback();
-    });
 }
 
 function getV3ProjectListByToken (req, tokenId, callback)
