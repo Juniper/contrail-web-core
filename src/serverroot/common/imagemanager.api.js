@@ -7,12 +7,14 @@
  */
 
 var config = require('../../../config/config.global');
+var orch = require('../orchestration/orchestration.api');
 
-var orchModel = ((config.orchestration) && (config.orchestration.Manager)) ?
-    config.orchestration.Manager : 'openstack';
+var orchModel = orch.getOrchestrationModel();
 
 if (orchModel == 'openstack') {
     var imageApi = require('../orchestration/plugins/openstack/glance.api');
+} else if ('none' == orchModel) {
+    imageApi = require('../orchestration/plugins/no-orch/noOrchestration.api');
 }
 
 function apiGet (reqUrl, req, callback)

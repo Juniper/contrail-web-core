@@ -236,5 +236,24 @@ config.logs.level = 'debug';
 ******************************************************************************/
 config.getDomainProjectsFromApiServer = false;
 
+/******************************************************************************
+ * Below are the config options to bypass authentication when
+ * config.orchestration.Manager is set to 'none'
+ *
+ * username - This username required while login.
+ * password - This password required while login.
+ * roles    - User role, options are 'superAdmin' and 'member';
+ *
+ * NOTE: This username and password is not used to authenticate using some
+ *       identity manager.
+ *       If config.orchestration.Manager is set other than 'none', this config
+ *       option does not have any effect.
+ *
+ ******************************************************************************/
+config.noauth = {};
+config.noauth.username = 'admin';
+config.noauth.password = 'contrail123';
+config.noauth.roles = ['superAdmin'];
+
 // Export this as a module.
 module.exports = config;

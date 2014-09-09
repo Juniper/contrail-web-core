@@ -5,6 +5,14 @@
 var config = {};
 
 config.orchestration = {};
+/****************************************************************************
+ * Specify Orchestration Model
+ * Available models are:
+ *  - openstack
+ *  - cloudstack
+ * If you do not want to specify any model, set it to 'none'
+ *
+*****************************************************************************/
 config.orchestration.Manager = 'openstack'
 
 /****************************************************************************

@@ -14,16 +14,19 @@ var config = require('../../../config/config.global'),
     logutils = require('../utils/log.utils'),
     commonUtils = require('../utils/common.utils'),
     redisSub = require('../web/core/redisSub'),
+    orch = require('../orchestration/orchestration.api'),
     global = require('./global');
 
-var orchModel = ((config.orchestration) && (config.orchestration.Manager)) ?
-    config.orchestration.Manager : 'openstack';
-
+var authMethodApi;
+var orchModel = orch.getOrchestrationModel();
 if (orchModel == 'openstack') {
-    var authMethodApi = require('../orchestration/plugins/openstack/keystone.api');
-} else {
-    var authMethodApi =
+    authMethodApi = require('../orchestration/plugins/openstack/keystone.api');
+} else if ('cloudstack' == orchModel) {
+    authMethodApi =
         require('../orchestration/plugins/cloudstack/cloudstack.authApi');
+} else {
+    authMethodApi =
+        require('../orchestration/plugins/no-orch/noOrchestration.api');
 }
 
 /* Function: createUserAuthObj
