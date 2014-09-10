@@ -925,32 +925,6 @@ function authenticate (req, res, callback)
 
 }
 
-function doDomainExist (domain, domainList)
-{
-    var data = domainList['tenants'];
-    var cnt = data.length;
-    for (var i = 0; i < cnt; i++) {
-        if (domain == data[i]['domain_id']) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function formatDomainList (tenantList)
-{
-    var domainObjs = {};
-    var data = tenantList['tenants'];
-    var len = data.length;
-    for (var i = 0; i < len; i++) {
-        if (null == domainObjs[data[i]['domain_id']]) {
-            domainObjs[data[i]['domain_id']] = [];
-        }
-        domainObjs[data[i]['domain_id']].push(data[i]['name']);
-    }
-    return domainObjs;
-}
-
 function getV3ProjectListByToken (req, tokenId, callback)
 {
     var reqUrl = '/v3/users/' + req.session.userid + '/projects';
