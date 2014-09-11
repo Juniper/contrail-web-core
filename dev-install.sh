@@ -14,6 +14,12 @@ cp -af node_modules/ipv6/lib/browser/sprintf.js webroot/assets/ip/
 cp -af node_modules/ipv6/ipv6.js webroot/assets/ip/
 #End - copy javascript-ipv6 node module files for IPv4/v6 address manipulations/validations
 
+#Start - copy requirejs file
+rm -rf webroot/assets/requirejs
+mkdir -p webroot/assets/requirejs
+cp -af ./$THIRD_PARTY/require.js webroot/assets/requirejs/js/
+#End - copy requirejs file
+
 #Start - Copy d3/vnd3 files from $THIRD_PARTY
 rm -rf webroot/assets/d3
 mkdir -p webroot/assets/d3/js
