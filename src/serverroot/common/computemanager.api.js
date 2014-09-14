@@ -7,12 +7,15 @@
  */
 
 var config = require('../../../config/config.global');
+var orch = require('../orchestration/orchestration.api');
 
-var orchModel = ((config.orchestration) && (config.orchestration.Manager)) ?
-    config.orchestration.Manager : 'openstack';
+var orchModel = orch.getOrchestrationModel();
 
+var computeApi;
 if (orchModel == 'openstack') {
-    var computeApi = require('../orchestration/plugins/openstack/nova.api');
+    computeApi = require('../orchestration/plugins/openstack/nova.api');
+} else if ('none' == orchModel) {
+    computeApi = require('../orchestration/plugins/no-orch/noOrchestration.api');
 }
 
 function apiGet (reqUrl, req, callback)

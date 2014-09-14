@@ -11,9 +11,10 @@ var configMainServer = require('../../web/api/configServer.main.api');
 var configJobServer = require('../../jobs/api/configServer.jobs.api');
 var assert = require('assert');
 var authApi = require('../../common/auth.api');
+var logutils = require('../../utils/log.utils');
+var orch = require('../orchestration.api');
 
-var orchModel = ((config.orchestration) && (config.orchestration.Manager)) ?
-    config.orchestration.Manager : 'openstack';
+var orchModel = orch.getOrchestrationModel();
 
 function getApiServerRequestedByData (appData)
 {
@@ -41,7 +42,7 @@ function getApiServerRequestedByData (appData)
             }
         }
         break;
-    default:
+    case 'cloudstack':
         /* If authentication is done via cloudstack, we can not have
          * multi_tenancy, as config Server does not do authentication through
          * cloudstack now */
@@ -52,6 +53,14 @@ function getApiServerRequestedByData (appData)
             return configJobServer;
         }
         break;
+    default:
+        if (null != appData['taskData']) {
+            if ((global.REQ_AT_SYS_INIT == appData['taskData']['reqBy']) ||
+                (null != appData['taskData']['authObj'])) {
+                return configJobServer;
+            }
+        }
+        return configMainServer;
     }
 }
 
@@ -60,6 +69,127 @@ function getOrchestrationPluginModel ()
     return {'orchestrationModel' : orchModel}
 }
 
+function doDomainExist (domain, domainList)
+{
+    var data = domainList['tenants'];
+    var cnt = data.length;
+    for (var i = 0; i < cnt; i++) {
+        if (domain == data[i]['domain_id']) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function formatDomainList (tenantList)
+{
+    var domainObjs = {};
+    var data = tenantList['tenants'];
+    var len = data.length;
+    for (var i = 0; i < len; i++) {
+        if (null == domainObjs[data[i]['domain_id']]) {
+            domainObjs[data[i]['domain_id']] = [];
+        }
+        domainObjs[data[i]['domain_id']].push(data[i]['name']);
+    }
+    return domainObjs;
+}
+
+function setAllCookies (req, res, cookieObj, callback)
+{
+    var defDomainId;
+    res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
+                  '; expires=' +
+                  new Date(new Date().getTime() +
+                           global.MAX_AGE_SESSION_ID).toUTCString());
+    var domCookie = req.cookies.domain;
+    authApi.getTenantList(req, function(err, data) {
+        if ((null != err) || (null == data) || (null == data['tenants'])) {
+            logutils.logger.error('Tenant List retrieval error');
+            callback();
+            return;
+        }
+        var tenLen = data['tenants'].length;
+        if (!tenLen) {
+            logutils.logger.error("Tenant List empty");
+            callback();
+            return;
+        } else {
+            defDomainId = data['tenants'][tenLen - 1]['domain_id'];
+            if (null == defDomainId) {
+                defDomainId = global.KEYSTONE_V2_DEFAULT_DOMAIN;
+            }
+        }
+        var defProj = data['tenants'][tenLen - 1]['name'];
+        if (null == req.cookies) {
+            /* Now check the tenantlist response, and if domain is there in
+             * response, then set it, else set as default-domain
+             */
+            res.setHeader('Set-Cookie', 'domain=' + defDomainId +
+                          '; expires=' + new Date(new Date().getTime() +
+                                                  global.MAX_AGE_SESSION_ID).toUTCString());
+            res.setHeader('Set-Cookie', 'project=' + defProj +
+                          '; expires=' + new Date(new Date().getTime() +
+                                                  global.MAX_AGE_SESSION_ID).toUTCString());
+        } else {
+            if (null == req.cookies.domain) {
+                res.setHeader('Set-Cookie', 'domain=' + defDomainId +
+                              '; expires=' + new Date(new Date().getTime() +
+                                                      global.MAX_AGE_SESSION_ID).toUTCString());
+            } else {
+                /* First check if we have this domain now or not */
+                if (false == doDomainExist(req.cookies.domain, data)) {
+                    res.setHeader('Set-Cookie', 'domain=' + defDomainId +
+                                  '; expires=' + new Date(new Date().getTime() +
+                                                          global.MAX_AGE_SESSION_ID).toUTCString());
+                    domCookie = defDomainId;
+                }
+            }
+            if (null == req.cookies.project) {
+                res.setHeader('Set-Cookie', 'project=' + defProj +
+                              '; expires=' + new Date(new Date().getTime() +
+                                                      global.MAX_AGE_SESSION_ID).toUTCString());
+            } else {
+                if ('v2.0' == req.session.authApiVersion) {
+                    /* Just check if the project exists or not */
+                    var projCnt = data['tenants'].length;
+                    for (var i = 0; i < projCnt; i++) {
+                        if (data['tenants'][i] == req.cookies.project) {
+                            /* it is fine */
+                            break;
+                        }
+                    }
+                    if (i == projCnt) {
+                        res.setHeader('Set-Cookie', 'project=' + defProj +
+                                      '; expires=' + new Date(new Date().getTime() +
+                                                              global.MAX_AGE_SESSION_ID).toUTCString());
+                    }
+                } else {
+                    var domList = formatDomainList(data);
+                    var projList = domList[domCookie];
+                    var projCnt = projList.length;
+                    for (var i = 0; i < projCnt; i++) {
+                        if (projList[i] == req.cookies.project) {
+                            /* It is fine */
+                            break;
+                        }
+                    }
+                    if (i == projCnt) {
+                        /* We did not find the already set project cookie value in
+                         * our project list
+                         */
+                        res.setHeader('Set-Cookie', 'project=' + defProj +
+                                      '; expires=' + new Date(new Date().getTime() +
+                                                              global.MAX_AGE_SESSION_ID).toUTCString());
+                    }
+                }
+            }
+        }
+        callback();
+    });
+}
+
 exports.getApiServerRequestedByData = getApiServerRequestedByData;
 exports.getOrchestrationPluginModel = getOrchestrationPluginModel;
+exports.setAllCookies = setAllCookies;
 

@@ -973,8 +973,11 @@ function MenuHandler() {
                 value.access.orchModels.model = [value.access.orchModels.model];
             var orchModels = value.access.orchModels.model;
             for(var i = 0;i < orchModels.length; i++ ){
-                if((orchModels[i].indexOf('!') > -1 && orchModels[i] != "!"+orchModel) || orchModels[i] == orchModel)
+                if (((orchModels[i].indexOf('!') > -1) &&
+                     (orchModels[i] != "!"+orchModel)) ||
+                    (orchModels[i] == orchModel) || ('none' == orchModel)) {
                     orchExists = true; 
+                }
             }
             return (roleExists && orchExists);
         } else {
