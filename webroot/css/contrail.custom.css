@@ -2184,3 +2184,13 @@ color: #b94a48;
 .row-fluid.form-multiselect-label [class*="span"] {
     min-height: 25px;
 }
+
+/*style to fix the detail template height*/
+
+.slick-grid-detail-content-height{
+    height : 300px !important;
+}
+
+.slick-grid-detail-sub-content-height{
+    height : 290px !important;
+}

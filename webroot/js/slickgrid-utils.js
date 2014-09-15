@@ -502,8 +502,8 @@ function getDefaultGridConfig() {
 	                gridContainer.find('.slick-row-detail').live('click', function(){
 	                	var rowId = $(this).data('cgrid');
 	                	setTimeout(function(){
-	                	    if(gridContainer.data('contrailGrid') != null)
-	                	        gridContainer.data('contrailGrid').adjustDetailRowHeight(rowId);
+	                	    // if(gridContainer.data('contrailGrid') != null)
+	                	        // gridContainer.data('contrailGrid').adjustDetailRowHeight(rowId);
 	                	},100);
 	                });
 	            }
