@@ -429,8 +429,8 @@ function getV3TokenURL ()
 function getV3Token (authObj, callback)
 {
     if ((null == authObj['username']) || (null == authObj['password'])) {
-        authApi.getDecryptedUserBySessionId(authObj['req'].session.id,
-                                            function(err, authData) {
+        authApi.getUserDetailsByReqObj(authObj['req'],
+                                       function(err, authData) {
             if (null != authObj['tenant']) {
                 authData['tenant'] = authObj['tenant'];
             }
@@ -757,7 +757,7 @@ function getUserAuthData (req, tenantId, callback)
        Auth Obj Stored in Redis
      */
     /* First get the userId and password Details from the sessionId */
-    authApi.getDecryptedUserBySessionId(req.session.id, function(err, authObj) {
+    authApi.getUserDetailsByReqObj(req, function(err, authObj) {
         if ((err) || (null == authObj)) {
             callback(err, null);
             return;
@@ -1043,8 +1043,8 @@ function doV3Auth (req, callback)
                 createProjectListInReqObj(req, projects['projects']);
                 getUserRoleByProjectList(projects['projects'], userObj,
                                          function(roleStr) {
-                    authApi.saveUserAuthInRedis(username, password, req,
-                                                function(err) {
+                    authApi.pushUserAuthToSession(username, password, req,
+                                                  function(err) {
                         /* Now get the default token which is the token by last
                          * project in the project list
                          */
@@ -1142,7 +1142,7 @@ function doV2Auth (req, callback)
                         }
                         /* Save the user-id/password in Redis in encrypted format.
                          */
-                        authApi.saveUserAuthInRedis(username, password, req, function(err) {
+                        authApi.pushUserAuthToSession(username, password, req, function(err) {
                             req.session.isAuthenticated = true;
                             req.session.userRole = uiRoles;
                             req.session.authApiVersion = 'v2.0';

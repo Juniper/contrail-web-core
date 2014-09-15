@@ -49,7 +49,7 @@ function createAuthKeyBySessionId (sessionId)
     return (global.STR_AUTH_KEY + global.ZWQ_MSG_SEPERATOR + sessionId);
 }
 
-function saveUserAuthInRedis (username, password, req, callback)
+function pushUserAuthToSession (username, password, req, callback)
 {
     var userCipher = null;
     var passwdCipher = null
@@ -64,73 +64,27 @@ function saveUserAuthInRedis (username, password, req, callback)
                                       userCipher.final('hex');
     passwdEncrypted = passwdCipher.update(password, 'utf8', 'hex') +
                                           passwdCipher.final('hex');
-    var redisStoreKey =
-        createAuthKeyBySessionId(req.session.id);
-    var userObj = createUserAuthObj(userEncrypted,
-                                                passwdEncrypted);
-    redisSub.redisPerClient.set(redisStoreKey, userObj, function(err) {
-        if (err) {
-            /* Redis Set Error */
-            logutils.logger.error("User auth store error " +
-                                  err);
-        } else {
-            logutils.logger.debug("User auth stored in redis " + 
-                                  req.session.id);
-        }
-        callback(err);
-    });
+    req.session.auth = {'userid': userEncrypted, 'passwd': passwdEncrypted}
+    callback(null);
 }
 
-function getDecryptedUserBySessionId (sessionId, callback)
+function getUserDetailsByReqObj (req, callback)
 {
-    var data;
-    var userDecipher, passwdDecipher, userDecrypted, passwdDecrypted;
+    var auth = req.session.auth;
+    var userid = auth['userid'];
+    var passwd = auth['passwd'];
 
-    var authKey = createAuthKeyBySessionId(sessionId);
-    redisSub.redisPerClient.get(authKey, function(err, data) {
-        if (err) {
-            logutils.logger.error("Redis get error for Session:" + sessionId +
-                                  " Got Redis error:" + err);
-            callback(err, null);
-            return;
-        }
-        if (null == data) {
-            logutils.logger.error("Did not get authObj for Session:" +
-                                  sessionId);
-            callback(err, null);
-            return;
-        }
-        /* We got the authObj */
-        data = JSON.parse(data);
-        /* Decrypt the userName and Password first */
-        userDecipher = crypto.createDecipher(global.MD5_ALGO_AES256,
-                                             global.MD5_MY_KEY);
-        passwdDecipher = crypto.createDecipher(global.MD5_ALGO_AES256,
-                                               global.MD5_MY_KEY);
-        userDecrypted = userDecipher.update(data['username'], 'hex', 'utf8') +
-                                            userDecipher.final('utf8');
-        passwdDecrypted = passwdDecipher.update(data['password'], 'hex', 'utf8') +
-                                                passwdDecipher.final('utf8');
+    /* Decrypt the userName and Password first */
+    userDecipher = crypto.createDecipher(global.MD5_ALGO_AES256,
+                                         global.MD5_MY_KEY);
+    passwdDecipher = crypto.createDecipher(global.MD5_ALGO_AES256,
+                                           global.MD5_MY_KEY);
+    userDecrypted = userDecipher.update(userid, 'hex', 'utf8') +
+        userDecipher.final('utf8');
+    passwdDecrypted = passwdDecipher.update(passwd, 'hex', 'utf8') +
+        passwdDecipher.final('utf8');
 
-        callback(null, {username:userDecrypted, password:passwdDecrypted});
-   });
-}
-
-/* Function: deleteAuthDataBySessionId
-   This function is called when session expires.
-   It is used to delete the Auth entry from redis by session id 
- */
-function deleteAuthDataBySessionId (sessionId) {
-    var authKey = createAuthKeyBySessionId(sessionId);
-    redisSub.redisPerClient.del(authKey, function(err) {
-        if (err) {
-            logutils.logger.error("Redis DEL error [" + err + "] while " +
-                                  "deleting authKey: " + authKey);
-        } else {
-            logutils.logger.debug("Redis DEL successful while deleting " +
-                                  "authKey: " + authKey);
-        }
-    });
+    callback(null, {username:userDecrypted, password:passwdDecrypted});
 }
 
 /** Function: authorize
@@ -213,10 +167,10 @@ function getServiceCatalog (req, callback)
 }
 
 exports.doAuthenticate = doAuthenticate;
-exports.saveUserAuthInRedis = saveUserAuthInRedis;
+exports.pushUserAuthToSession = pushUserAuthToSession;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
-exports.getDecryptedUserBySessionId = getDecryptedUserBySessionId;
+exports.getUserDetailsByReqObj = getUserDetailsByReqObj;
 exports.deleteAuthDataBySessionId = deleteAuthDataBySessionId;
 exports.getTokenObjBySession = getTokenObjBySession;
 exports.checkAndUpdateDefTenantToken = checkAndUpdateDefTenantToken;

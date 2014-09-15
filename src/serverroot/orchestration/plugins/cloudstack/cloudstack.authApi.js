@@ -116,7 +116,7 @@ function authenticate (req, res, callback)
         req.session.sessionKey = data['loginresponse']['sessionkey'];
         getUsers(req, function(userLists) {
             updateUserKeys(req, username, userLists);
-            authApi.saveUserAuthInRedis(username, password, req, function(err) {
+            authApi.pushUserAuthToSession(username, password, req, function(err) {
                 logutils.logger.info("Login Successful with tenants.");
                 res.setHeader('Set-Cookie', "username=" + username +
                               '; expires=' +
