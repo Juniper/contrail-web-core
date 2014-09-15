@@ -894,6 +894,16 @@ a.selectAllLink:hover {
 	margin-top: 1px;
 	font-size: 14px;
 }
+.grid-header .ui-multiselect {
+	height: 23px !important;
+	margin-bottom: 4px;
+	border-color: #ddd;
+	padding: 1px 6px 3px 24px;
+}
+.grid-header .icon-filter {
+	margin-top: 1px;
+	font-size: 14px;
+}
 .grid-header .select2-container{
 	margin-bottom: 2px;
 }
@@ -1515,3 +1525,207 @@ color: #b94a48;
   content : url(../img/subnet.png);
   vertical-align : middle;
 }
+
+/* Group Detail Container Styles */
+.group-detail-container h6 {
+	padding: 0 0 5px;
+	margin: 0 5px 5px;
+	color: #3182bd;
+	border-bottom: 1px solid #eee;
+}
+.group-detail-container ul.item-list li {
+	border: none; 
+	padding: 2px 5px;
+}
+.group-detail-container ul.item-list li .key {
+	color:#777; 
+	font-weight:200;
+}
+.group-detail-container ul.item-list li .value {
+	color:#555;
+	font-weight:400;
+}
+
+/* Jquery Steps style*/
+
+/* wizard */
+.wizard > .steps {
+    padding: 2px 0 5px;
+    background-color: #eee;
+}
+.wizard > .steps ul {
+    list-style: none;
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 6px 0 0;
+    position: relative;
+}
+.wizard > .steps ul li {
+    display: block;
+    text-align: center;
+    float: left;
+}
+.wizard > .steps > ul > li {
+    width: 50%;
+}
+.wizard > .steps a, .wizard > .steps a:hover, .wizard > .steps a:active,
+.wizard > .steps .disabled a, .wizard > .steps .disabled a:hover, .wizard > .steps .disabled a:active,
+.wizard > .steps .done a, .wizard > .steps .done a:hover, .wizard > .steps .done a:active {
+    background-color: #eee;
+    color: #555;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+.wizard > .steps .current a, .wizard > .steps .current a:hover, .wizard > .steps .current a:active {
+    background-color: #eee;
+    color: #3182bd;
+}
+.wizard > .steps ul li .number {
+    text-align: center;
+    border: 3px solid #CED1D6;
+    color: #546474;
+    font-size: 15px;
+    border-radius: 18px;
+    line-height: 12px;
+    padding: 2px 7px;
+    background-color: #FFF;
+    position: relative;
+    z-index: 2;
+    display: inline;
+}
+
+.wizard > .steps ul li.subStep .number {
+    border: 6px solid #CED1D6;
+    color: #546474;
+    font-size: 0px;
+    border-radius: 15px;
+    line-height: 1px;
+    padding: 1px 1px;
+    top: -6px;
+}
+
+.wizard > .steps ul li:before {
+    /* the line running through each step*/
+
+    display: block;
+    content: "";
+    width: 100%;
+    height: 1px;
+    font-size: 0;
+    overflow: hidden;
+    border-top: 4px solid #CED1D6;
+    position: relative;
+    top: 12px;
+    z-index: 1;
+}
+.wizard > .steps ul li:last-child:before {
+    max-width: 50%;
+    width: 50%;
+}
+.wizard > .steps ul li:first-child:before {
+    max-width: 50%;
+    left: 50%;
+}
+.wizard > .steps ul li.current:before,
+.wizard > .steps ul li.done:before,
+.wizard > .steps ul li.current .number,
+.wizard > .steps ul li.done .number {
+    border-color: #5293C4;
+}
+.wizard > .steps ul li.done .number:before {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    padding: 8px 0px;
+    border-radius: 32px;
+    content: "\f00c";
+    background-color: #FFF;
+    z-index: 103;
+    font-family: FontAwesome;
+    font-size: 17px;
+    color: #87BA21;
+}
+
+.wizard > .steps ul li.subStep.done .number:before {
+    display: none;
+}
+
+.wizard > .steps ul li .title {
+    display: block;
+    margin-top: 5px;
+    max-width: 100%;
+    color: #949EA7;
+    font-size: 13px;
+    z-index: 104;
+    text-align: center;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+.wizard > .steps ul li.done .title,
+.wizard > .steps ul li.current .title {
+    color: #2B3D53;
+}
+.wizard > .content {
+    min-height: 270px;
+    overflow-y: auto;
+    background-color: #fff;
+}
+.wizard > .content > .body {
+    height: auto;
+}
+.wizard > .actions {
+    margin-top: 15px;
+    padding: 8px 0 5px;
+    border-top: 1px solid #eee;
+}
+.wizard > .actions a, .wizard > .actions a:hover, .wizard > .actions a:active {
+    border-radius: 0;
+    padding: 0 5px;
+}
+
+/* Checked Multiselect styles */
+
+.ui-multiselect { padding:3px 0 3px 4px; text-align:left; border: 1px solid #dadada; color: #777; }
+.ui-multiselect span.ui-icon { float:right }
+.ui-multiselect-single .ui-multiselect-checkboxes input { position:absolute !important; top: auto !important; left:-9999px; }
+.ui-multiselect-single .ui-multiselect-checkboxes label { padding:5px !important }
+
+.ui-multiselect-header { margin-bottom:3px; padding:0; border: none; background-color: #eee; border-bottom: 2px solid #eee;}
+.ui-multiselect-header ul { display: none;}
+.ui-multiselect-header ul li { float:left; padding:0 10px 0 0 }
+.ui-multiselect-header a { text-decoration:none }
+.ui-multiselect-header a:hover { text-decoration:underline }
+.ui-multiselect-header span.ui-icon { float:left }
+.ui-multiselect-header li.ui-multiselect-close { float:right; text-align:right; padding-right:0 }
+
+.ui-multiselect-controls {background-color: #eee;}
+.ui-multiselect-controls button{
+	line-height: 18px;
+	margin: 4px 2px;
+	font-size: 11px;
+}
+
+.ui-multiselect-menu { display:none; position:absolute; z-index:10000; text-align: left }
+.ui-multiselect-checkboxes { position:relative /* fixes bug in IE6/7 */; overflow-y:scroll }
+.ui-multiselect-checkboxes label { cursor:default; display:block; border:1px solid transparent; padding:3px 3px 3px 10px }
+.ui-multiselect-checkboxes label input { position:relative !important; top:1px }
+.ui-multiselect-checkboxes input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] + .ace-lbl::before {
+	margin-left: -20px;
+	margin-right: 8px;
+}
+.ui-multiselect-checkboxes li { clear:both; font-size:0.9em; padding-right:3px }
+.ui-multiselect-checkboxes li .ace-lbl { color: #555;}
+.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label { font-weight:bold; border-bottom:1px solid #eee; margin-left: 3px;}
+.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label a { display:block; padding:3px; margin:1px 0; text-decoration:none }
+
+/* remove label borders in IE6 because IE6 does not support transparency */
+* html .ui-multiselect-checkboxes label { border:none }
+
+.ui-multiselect-hasfilter ul { position:relative; top:2px }
+.ui-multiselect-filter { float:left; font-size:11px; margin: 2px; width: 94%;}
+.ui-multiselect-filter input { width:100%; font-size:10px; height:15px; padding:2px; border:1px solid #dadada; -webkit-appearance:textfield; -webkit-box-sizing:content-box; }

@@ -500,6 +500,211 @@
             self.find('.multiselect-list').selectable();
         };
     };
+
+    $.fn.contrailWizard = function (config) {
+        var self = this,
+            steps = config.steps,
+            stepsInitFlag = [];
+
+        self.addClass('contrailWizard');
+
+        for (var i = 0 ; i < steps.length ; i++){
+            stepsInitFlag.push(false);
+        }
+
+        config.onInit = function (event, currentIndex) {
+            if(contrail.checkIfFunction(steps[currentIndex].onInitFromPrevious)) {
+                steps[currentIndex].onInitFromPrevious(config.params);
+            }
+            if(contrail.checkIfFunction(steps[currentIndex].onInitFromNext)) {
+                steps[currentIndex].onInitFromNext(config.params);
+            }
+            stepsInitFlag[currentIndex] = true;
+
+            if(contrail.checkIfFunction(steps[currentIndex].onLoadFromPrevious)) {
+                steps[currentIndex].onLoadFromPrevious(config.params);
+            }
+            if(contrail.checkIfFunction(steps[currentIndex].onLoadFromNext)) {
+                steps[currentIndex].onLoadFromNext(config.params);
+            }
+        };
+
+        config.onStepChanged = function(event, currentIndex, priorIndex) {
+            if(currentIndex < priorIndex) {
+                self.find('.steps').find('li:eq(' + priorIndex + ')').removeClass('done');
+            }
+
+            if(!stepsInitFlag[currentIndex]) {
+                if(currentIndex > priorIndex && contrail.checkIfFunction(steps[currentIndex].onInitFromNext)) {
+                    steps[currentIndex].onInitFromNext(config.params);
+                }
+                else if(currentIndex < priorIndex && contrail.checkIfFunction(steps[currentIndex].onInitFromPrevious)) {
+                    steps[currentIndex].onInitFromPrevious(config.params);
+                }
+                stepsInitFlag[currentIndex] = true;
+            }
+
+            if(currentIndex > priorIndex && contrail.checkIfFunction(steps[currentIndex].onLoadFromNext)) {
+                steps[currentIndex].onLoadFromNext(config.params);
+            }
+            else if(currentIndex < priorIndex && contrail.checkIfFunction(steps[currentIndex].onLoadFromPrevious)) {
+                steps[currentIndex].onLoadFromPrevious(config.params);
+            }
+        };
+
+        config.onStepChanging = function (event, currentIndex, newIndex) {
+
+            // Next Button clicked
+            if(currentIndex < newIndex && contrail.checkIfFunction(steps[currentIndex].onNext)) {
+                return steps[currentIndex].onNext(config.params);
+            }
+            // Previous Button Clicked
+            else if(currentIndex > newIndex && contrail.checkIfFunction(steps[currentIndex].onPrevious)) {
+                return steps[currentIndex].onPrevious(config.params);
+            }
+            else {
+                return true;
+            }
+        };
+
+        config.onFinished = function (event, currentIndex) {
+            steps[currentIndex].onNext(config.params);
+        }
+
+        self.steps(config);
+
+        self.data('contrailWizard', {
+            destroy: function() {
+                self.steps('destroy');
+            }
+        })
+    };
+
+    $.fn.contrailCheckedMultiselect = function (config) {
+        var self = this,
+            parse = contrail.checkIfFunction(config.parse) ? config.parse: null;
+
+        self.prop('id',config.elementId);
+        config.dataTextField = {dsVar: config.dataTextField, apiVar: 'text'};
+        config.dataValueField = {dsVar: config.dataValueField, apiVar: 'id'};
+
+        var defaultConfig = {
+                dataTextField : 'text',
+                dataValueField: 'id',
+                //header: false,
+                minWidth: 'auto',
+                control: {
+                    apply: {
+                        click: function (self, checkedRows) {
+                        }
+                    },
+                    cancel: {
+                        click: function (self, checkedRows) {
+                        }
+                    }
+                },
+                selectedList: 3
+            },
+            defaultFilterConfig = {
+                label: false
+            },
+            config = $.extend(true, defaultConfig, config),
+            defaultFilterConfig = $.extend(true, defaultFilterConfig, config.filterConfig),
+            template = null, preChecked = [];
+
+        if (contrail.checkIfExist(config.data)) {
+            config.data = formatData(config.data, config);
+        }
+
+        if (!contrail.checkIfExist(self.data('contrailCheckedMultiselect'))) {
+            /*
+             * Initializing default config and extending it
+             */
+            if(contrail.checkIfExist(config.dataSource)){
+                contrail.ajaxHandler(config.dataSource, null, successHandler, failureHandler);
+            }
+
+            function successHandler(response){
+                if(!contrail.checkIfExist(response)){
+                    throw "Error getting data from server";
+                }
+                var parsedData = (contrail.checkIfFunction(parse)) ? parse(response) : response;
+
+                config.data = formatData(parsedData, config);
+                initCheckedMultiselect(config, defaultFilterConfig);
+            };
+            function failureHandler(){};
+
+            function initCheckedMultiselect (config, defaultFilterConfig) {
+                template = contrail.getTemplate4Id('checked-multiselect-optgroup-template');
+                $(self).append(template(config));
+
+                var multiselect = self.find('select').multiselect(config).multiselectfilter(defaultFilterConfig);
+                preChecked = self.find('select').multiselect('getChecked');
+                /*
+                 * Appending controls and related events
+                 */
+
+                var multiSelectMenu = self.find('select').multiselect("widget");
+                multiSelectMenu.find('input[type="checkbox"]').addClass('ace-input');
+                multiSelectMenu.find('input[type="checkbox"]').next('span').addClass('ace-lbl');
+
+                if(config.control != false) {
+                    var applyBtn = $('<button class="btn btn-mini btn-primary pull-right ui-multiselect-control-apply">Apply</button>'),
+                        cancelBtn = $('<button class="btn btn-mini pull-right ui-multiselect-control-cancel">Cancel</button>'),
+                        msControls = $('<div class="row-fluid ui-multiselect-controls""></div>');
+
+                    msControls.append((config.control.apply) ? applyBtn : '')
+                        .append((config.control.cancel) ? cancelBtn : '');
+
+                    if (contrail.checkIfFunction(config.control.apply.click)) {
+                        applyBtn.on('click', function () {
+                            var checkedRows = self.find('select').multiselect('getChecked')
+                            config.control.apply.click(self, checkedRows);
+                            self.find('select').multiselect('close');
+                        })
+                    }
+                    if (contrail.checkIfFunction(config.control.cancel.click)) {
+                        cancelBtn.on('click', function () {
+                            var checkedRows = self.find('select').multiselect('getChecked')
+                            config.control.cancel.click(self, checkedRows);
+                            self.find('select').multiselect('close');
+                        })
+                    }
+
+                    multiSelectMenu.append(msControls);
+                }
+
+                self.data('contrailCheckedMultiselect', $.extend(true, getDefaultMultiselectMethods(), {
+                    getPreChecked: function () {
+                        return preChecked;
+                    },
+                    setChecked   : function (checkedElements) {
+                        this.uncheckAll();
+                        $.each(checkedElements, function (elementKey, elementValue) {
+                            $(elementValue).click();
+                        });
+                    }
+                }));
+            };
+        }
+        else {
+            self.find('select').multiselect(config);
+        }
+
+        function getDefaultMultiselectMethods () {
+            var methodObj = {},
+                defaultMethods = ['open', 'refresh', 'uncheckAll', 'getChecked'];
+
+            $.each(defaultMethods, function (defaultMethodKey, defaultMethodValue) {
+                methodObj[defaultMethodValue] = function () {
+                    return self.find('select').multiselect(defaultMethodValue);
+                };
+            });
+
+            return methodObj;
+        }
+    };
     
     $.extend({
         contrailBootstrapModal:function (options) {
@@ -536,24 +741,28 @@
             modalId.find('.modal-header-title').empty().append(options.title != undefined ? options.title : '&nbsp;');
             modalId.find('.modal-body').empty().append(options.body);
 
-            $.each(options.footer, function (key, footerButton) {
-                var btnId = (footerButton.id != undefined && footerButton.id != '') ? footerButton.id : options.id + 'btn' + key,
-                    btn = '<button id="' + btnId + '" class="btn btn-mini ' + ((footerButton.className != undefined && footerButton.className != '') ? footerButton.className : '') + '"'
-                        + ((footerButton.onclick === 'close') ? ' data-dismiss="modal" aria-hidden="true"' : '') + '>'
-                        + ((footerButton.title != undefined) ? footerButton.title : '') + '</button>';
+            if(options.footer != false) {
+                $.each(options.footer, function (key, footerButton) {
+                    var btnId = (footerButton.id != undefined && footerButton.id != '') ? footerButton.id : options.id + 'btn' + key,
+                        btn = '<button id="' + btnId + '" class="btn btn-mini ' + ((footerButton.className != undefined && footerButton.className != '') ? footerButton.className : '') + '"'
+                            + ((footerButton.onclick === 'close') ? ' data-dismiss="modal" aria-hidden="true"' : '') + '>'
+                            + ((footerButton.title != undefined) ? footerButton.title : '') + '</button>';
 
-                modalId.find('.modal-footer').append(btn);
-                $('#' + btnId).on('click', function() {
-                    if (typeof footerButton.onclick === 'function') {
-                        footerButton.onclick(footerButton.onClickParams);
-                    }
-                    else if(footerButton.onclick != 'close' && typeof footerButton.onclick === 'string'){
-                        window[footerButton.onclick](footerButton.onClickParams);
-                    }
+                    modalId.find('.modal-footer').append(btn);
+                    $('#' + btnId).on('click', function () {
+                        if (typeof footerButton.onclick === 'function') {
+                            footerButton.onclick(footerButton.onClickParams);
+                        }
+                        else if (footerButton.onclick != 'close' && typeof footerButton.onclick === 'string') {
+                            window[footerButton.onclick](footerButton.onClickParams);
+                        }
+                    });
+
                 });
-
-            });
-
+            }
+            else {
+                modalId.find('.modal-footer').remove();
+            }
             modalId.modal({backdrop:'static', keyboard:false});
         }
     });

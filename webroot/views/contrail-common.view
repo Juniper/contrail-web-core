@@ -476,3 +476,15 @@
             </div>
     </div><!-- /widget-main --> 
 </script>
+
+<script type="text/x-handlebars-template" id="checked-multiselect-optgroup-template">
+	<select multiple="multiple" size="5" class="row-fluid">
+		{{#each data}}
+  			<optgroup label="{{text}}" data-value={{id}}>
+				{{#each children}}
+    				<option value="{%22parent%22:%22{{../id}}%22,%22value%22:%22{{id}}%22}" {{#IfCompare selected true operator='==' }}selected="true"{{/IfCompare}}>{{text}}</option>
+				{{/each}}
+  			</optgroup> 
+		{{/each}}   
+	</select>
+</script>

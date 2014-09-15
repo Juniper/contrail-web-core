@@ -42,6 +42,7 @@ cp -af ./$THIRD_PARTY/nvd3/src/nv.d3.css webroot/assets/nvd3/css/
 #Start - Copy JQuery files from $THIRD_PARTY
 rm -rf webroot/assets/jquery
 mkdir -p webroot/assets/jquery/js
+mkdir -p webroot/assets/jquery/css
 cp -af ./$THIRD_PARTY/jquery.xml2json.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.ui.touch-punch.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.ba-bbq.min.js webroot/assets/jquery/js/
@@ -51,6 +52,9 @@ cp -af ./$THIRD_PARTY/jquery.dataTables.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-1.8.3.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-1.9.1.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/
+cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/build/jquery.steps.min.js webroot/assets/jquery/js/
+cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/demo/css/jquery.steps.css webroot/assets/jquery/css/
+
 #End - Copy JQuery files from $THIRD_PARTY
 
 #Start - Copy jquery-ui files from $THIRD_PARTY
@@ -61,6 +65,11 @@ cp -af ./$THIRD_PARTY/jquery-ui-1.10.4/ui/jquery-ui.js webroot/assets/jquery-ui/
 cp -af ./$THIRD_PARTY/jquery-ui-1.10.4/themes/base/jquery-ui.css webroot/assets/jquery-ui/css/jquery-ui.css
 cp -af ./$THIRD_PARTY/jquery-ui-1.10.4/themes/base/images webroot/assets/jquery-ui/css/
 #End - Copy jquery-ui files from $THIRD_PARTY
+
+#Start - Copy jquery-ui-multiselect files from $THIRD_PARTY
+cp -af ./$THIRD_PARTY/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.js webroot/assets/jquery-ui/js/jquery.multiselect.js
+cp -af ./$THIRD_PARTY/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.filter.js webroot/assets/jquery-ui/js/jquery.multiselect.filter.js
+#End - Copy jquery-ui-multiselect files from $THIRD_PARTY
 
 #Start - Copy Bootstrap from $THIRD_PARTY
 rm -rf webroot/assets/bootstrap
@@ -116,12 +125,6 @@ cp -af ./$THIRD_PARTY/select2-v3.4.6/select2x2.png webroot/assets/select2/styles
 cp -af ./$THIRD_PARTY/select2-v3.4.6/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
 #End - Copy Select2 from $THIRD_PARTY
 
-#Start - Copy 2way-Multiselect from $THIRD_PARTY
-rm -rf webroot/assets/2way-multiselect
-mkdir -p webroot/assets/2way-multiselect/js
-cp -af ./$THIRD_PARTY/multiselect-v1.0/js/multiselect.js webroot/assets/2way-multiselect/js/multiselect.js
-#End - Copy 2way-Multiselect from $THIRD_PARTY
-
 #Start - Copy Slickgrid from $THIRD_PARTY
 rm -rf webroot/assets/slickgrid
 mkdir -p webroot/assets/slickgrid/js
@@ -157,6 +160,31 @@ rm -rf webroot/assets/moment
 mkdir webroot/assets/moment
 cp -af ./$THIRD_PARTY/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
 #End - Copy Moment Date-Formatter from $THIRD_PARTY
+
+#Start - Copy Backbone from $THIRD_PARTY
+rm -rf webroot/assets/backbone
+mkdir webroot/assets/backbone
+cp -af ./$THIRD_PARTY/backbone-min.js webroot/assets/backbone/backbone-min.js
+cp -af ./$THIRD_PARTY/backbone-min.map webroot/assets/backbone/backbone-min.map
+cp -af ./$THIRD_PARTY/knockback.min.js webroot/assets/backbone/knockback.min.js
+cp -af ./$THIRD_PARTY/backbone-validation-amd.js webroot/assets/backbone/backbone-validation-amd.js
+#End - Copy Backbone from $THIRD_PARTY
+
+#Start - Copy Requirejs & Textjs from $THIRD_PARTY
+rm -rf webroot/assets/requirejs
+mkdir webroot/assets/requirejs
+#cp -af ./$THIRD_PARTY/require.min.js webroot/assets/requirejs/require.min.js
+#cp -af ./$THIRD_PARTY/text.js webroot/assets/requirejs/text.js
+cp -af ./$THIRD_PARTY/requirejs-v1.0.2/require.js webroot/assets/requirejs/require.js
+cp -af ./$THIRD_PARTY/text.js webroot/assets/requirejs/text.js
+#End - Copy Requirejs & Textjs  from $THIRD_PARTY
+
+#Start - Copy Underscore from $THIRD_PARTY
+rm -rf webroot/assets/underscore
+mkdir webroot/assets/underscore
+cp -af ./$THIRD_PARTY/underscore-min.js webroot/assets/underscore/underscore-min.js
+cp -af ./$THIRD_PARTY/underscore-min.map webroot/assets/underscore/underscore-min.map
+#End - Copy Underscore from $THIRD_PARTY
 
 #Start - Merging All JS files
 rm -f webroot/js/contrail-all-1.js
@@ -216,6 +244,12 @@ MAINFILE[39]=webroot/js/analyzer-utils.js
 MAINFILE[40]=webroot/js/chart-utils.js
 MAINFILE[41]=webroot/js/dashboard-utils.js
 
+MAINFILE[42]=webroot/assets/jquery-ui/js/jquery.multiselect.js
+MAINFILE[43]=webroot/assets/jquery-ui/js/jquery.multiselect.filter.js
+MAINFILE[44]=webroot/assets/requirejs/require.js
+MAINFILE[45]=webroot/assets/jquery/js/jquery.steps.min.js
+
+
 cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
 cat ${MAINFILE[1]} >> webroot/js/contrail-all-1.js
 cat ${MAINFILE[2]} >> webroot/js/contrail-all-1.js
@@ -266,6 +300,11 @@ cat ${MAINFILE[38]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[39]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[41]} >> webroot/js/contrail-all-5.js
 
+cat ${MAINFILE[42]} >> webroot/js/contrail-all-6.js
+cat ${MAINFILE[43]} >> webroot/js/contrail-all-6.js
+cat ${MAINFILE[44]} >> webroot/js/contrail-all-6.js
+cat ${MAINFILE[45]} >> webroot/js/contrail-all-6.js
+
 # End - Merging All JS files
 
 #Start - Merging All CSS files
@@ -276,10 +315,12 @@ MAINCSS[2]=webroot/assets/nvd3/css/nv.d3.css
 MAINCSS[3]=webroot/assets/select2/styles/select2.css
 MAINCSS[4]=webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
 MAINCSS[5]=webroot/assets/slickgrid/styles/slick.grid.css
+MAINCSS[6]=webroot/assets/jquery/css/jquery.steps.css
 
 cat ${MAINCSS[1]} > webroot/css/contrail-all.css
 cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[3]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[4]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[5]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[6]} >> webroot/css/contrail-all.css
 #End - Merging ALL CSS files

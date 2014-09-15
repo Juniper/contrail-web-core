@@ -881,15 +881,8 @@ function MenuHandler() {
         }).always(function(){
             webServerDefObj.resolve();
         });
-        
-        $.ajax({
-            url:'/api/admin/webconfig/qe/enable_stat_queries'
-        }).done(function (result) {
-                globalObj['enable_stat_queries'] = result['enable_stat_queries'];
-                statDefferredObj.resolve();
-        });
 
-        $.when.apply(window, [menuDefferedObj, webServerDefObj, statDefferredObj]).done(function () {
+        $.when.apply(window, [menuDefferedObj, webServerDefObj]).done(function () {
             self.deferredObj.resolve();
         });
     }
@@ -1143,19 +1136,21 @@ function MenuHandler() {
         if (currMenuObj == null)
             return;
         //Call destory function on viewClass which is being unloaded
-        $.each(getValueByJsonPath(currMenuObj,'resources;resource',[]),function(idx,currResourceObj) {
-            if ((currResourceObj['class'] != null) && (typeof(window[currResourceObj['class']]) == 'function' || typeof(window[currResourceObj['class']]) == 'object') &&
-                (typeof(window[currResourceObj['class']]['destroy']) == 'function')) {
-                $.allajax.abort();
-                
-                try {
-                    window[currResourceObj['class']]['destroy']();
-                } catch (error) {
-                    console.log(error.stack);
+        if(currMenuObj['resources'] != null) {
+            $.each(getValueByJsonPath(currMenuObj, 'resources;resource', []), function (idx, currResourceObj) {
+                if ((currResourceObj['class'] != null) && (typeof(window[currResourceObj['class']]) == 'function' || typeof(window[currResourceObj['class']]) == 'object') &&
+                    (typeof(window[currResourceObj['class']]['destroy']) == 'function')) {
+                    $.allajax.abort();
+
+                    try {
+                        window[currResourceObj['class']]['destroy']();
+                    } catch (error) {
+                        console.log(error.stack);
+                    }
                 }
-            }
-            //window[currResourceObj['class']] = null;
-        });
+                //window[currResourceObj['class']] = null;
+            });
+        }
     }
 
     /**
@@ -1212,12 +1207,14 @@ function MenuHandler() {
                     if (!(currResourceObj['view'] instanceof Array)) {
                         currResourceObj['view'] = [currResourceObj['view']];
                     }
-                    $.each(currResourceObj['view'], function () {
-                        var viewDeferredObj = $.Deferred();
-                        viewDeferredObjs.push(viewDeferredObj);
-                        var viewPath = currResourceObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
-                        templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
-                    });
+                    if(currResourceObj['view'] != null && currResourceObj['view'].length > 0 && currResourceObj['view'][0] != null) {
+                        $.each(currResourceObj['view'], function () {
+                            var viewDeferredObj = $.Deferred();
+                            viewDeferredObjs.push(viewDeferredObj);
+                            var viewPath = currResourceObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
+                            templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+                        });
+                    }
                 })
             }
 

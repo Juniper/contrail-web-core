@@ -1272,7 +1272,9 @@ function getOrchestrationPluginModel (req, res, appData)
 function getWebServerInfo (req, res, appData)
 {
     var plugins = require('../orchestration/plugins/plugins.api');
-    var serverObj = plugins.getOrchestrationPluginModel();
+    var serverObj = plugins.getOrchestrationPluginModel(),
+        featurePackages = config.featurePkg;
+
     if (null == serverObj) {
         /* We will not come here any time */
         logutils.logger.error("We did not get Orchestration Model");
@@ -1281,6 +1283,12 @@ function getWebServerInfo (req, res, appData)
     serverObj ['serverUTCTime'] = commonUtils.getCurrentUTCTime();
     serverObj['hostName'] = os.hostname();
     serverObj['role'] = req.session.userRole;
+    serverObj['featurePkg'] = {};
+
+    for (var key in featurePackages) {
+        serverObj['featurePkg'][key] = featurePackages[key]['enable'];
+    }
+
     commonUtils.handleJSONResponse(null, res, serverObj);
 }
 
