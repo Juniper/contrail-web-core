@@ -208,9 +208,19 @@ function getDefaultGridConfig() {
             		if(typeof val.formatter !== 'undefined'){
                 		queryString = String(val.formatter(0, 0, 0, 0, item));
             		}
-            		if(queryString.toLowerCase().indexOf(args.searchString.toLowerCase()) != -1){
-            			returnFlag = true;
-            		}
+                    //extending search to comma separted input values
+                    if(args.searchString.indexOf(',') === -1) {
+            		    if(queryString.toLowerCase().indexOf(args.searchString.trim().toLowerCase()) != -1){
+            		    	returnFlag = true;
+            		    }
+                    } else {
+                        var searchStrArry = args.searchString.split(',');
+                        for(var i = 0; i < searchStrArry.length; i++) {
+            		        if(searchStrArry[i] != '' && queryString.toLowerCase().indexOf(searchStrArry[i].trim().toLowerCase()) != -1){
+            		        	returnFlag = true;
+            		        }
+                        }
+                    }
             	});
             	return returnFlag;
         	}
