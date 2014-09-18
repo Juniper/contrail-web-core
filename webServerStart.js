@@ -122,7 +122,7 @@ function registerStaticFiles (app)
         pkgDir = commonUtils.getPkgPathByPkgName(pkgList[i]['pkgName']);
         staticFileDirLists.push({'app': app, 'pkgDir': pkgDir});
     }
-    async.map(staticFileDirLists, loadStaticFiles, function(err) {
+    async.mapSeries(staticFileDirLists, loadStaticFiles, function(err) {
     });
 }
 
