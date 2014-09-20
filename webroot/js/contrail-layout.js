@@ -389,13 +389,19 @@ function onHashChange(lastHash, currHash) {
         currPageQueryStr = ifNull(currHash['q'], {}),
         lastPageQueryStr = ifNull(lastHash['q'], {}),
         reloadMenu = true, currPageHashArray, subMenuId;
-    var lastMenuObj = menuHandler.getMenuObjByHash(lastPageHash);
+
+    var lastMenuObj = menuHandler.getMenuObjByHash(lastPageHash),
+        webServerInfo = globalObj['webServerInfo'];
+
     try {
-        if (currPageHash == '') {            
-            if($.inArray(roles['ADMIN'],globalObj['webServerInfo']['role']) > -1)
+        if (currPageHash == '') {
+            if(webServerInfo['featurePkg']['serverManager'] && !webServerInfo['featurePkg']['webController']) {
+                currPageHash = "setting_sm_clusters";
+            } else if($.inArray(roles['ADMIN'], webServerInfo['role']) > -1) {
                 currPageHash = "mon_infra_dashboard";
-            else if($.inArray(roles['TENANT'],globalObj['webServerInfo']['role']) > -1)
-                currPageHash = "mon_net_dashboard"; //TODO: Need to check whether queryparams needed or not
+            } else if ($.inArray(roles['TENANT'], webServerInfo['role']) > -1) {
+                currPageHash = "mon_net_dashboard";
+            }
         }
         var currMenuObj = menuHandler.getMenuObjByHash(currPageHash);
         //Toggle menu button only if there is a change in hash of main menu[Monitor/Configure/Settings/Queries]

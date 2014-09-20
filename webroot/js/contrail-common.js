@@ -114,7 +114,7 @@ function Contrail() {
 		}
 		else {
 			output += '<i class="node-' + currentDepth + ' icon-minus collapser"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node">';
-			$.each(jsonObj, function(key, val){
+            $.each(jsonObj, function(key, val){
 				if(objType['type'] == 'object') {
 					output += '<li class="key-value"><span class="key">' + key + '</span>: ';
 				}
@@ -122,7 +122,7 @@ function Contrail() {
 					output += '<li class="key-value">';	
 				}
 				
-				if(typeof val == 'object'){
+				if(val != null && typeof val == 'object'){
 					output += '<span class="value">' + formatJsonObject(val, formatDepth-1, currentDepth+1) + '</span>';
 				}
 				else {

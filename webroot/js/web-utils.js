@@ -9,7 +9,7 @@ globalObj['loadedScripts'] = [];
 globalObj['loadedCSS'] = [];
 globalObj['orchModel'] = 'openstack';
 globalObj.NUM_FLOW_DATA_POINTS = 1000;
-var timeStampAlert = [],timeStampTolearence = 5 * 60 * 1000;//To check the mismatch between the browser time and the webserver time
+var globalAlerts = [],timeStampTolearence = 5 * 60 * 1000;//To check the mismatch between the browser time and the webserver time
 var enableHardRefresh = false;  //Set to true if "Hard Refresh" provision need to be shown in UI
 //Set to true if we want to discard ongoing requests while refreshing the dataSource and start fetching from beginnging
 //Ajax calls shouldn't be aborted if we don't want to discard ongoing update
@@ -53,6 +53,7 @@ var infraAlertMsgs = {
         'IFMAP_DOWN'            : "Ifmap Connection down",
         'PROCESS_DOWN'          : "{0:Process;Processes} down",
         'PROCESS_STOPPED'       : "{0} stopped",
+        'PROCESS_DOWN_MSG'      : "{0} down",
         'PROCESS_COREDUMP'      : "{0:core dump;core dumps}",
         'PROCESS_RESTART'       : "{0:restart;restarts}"
     }
@@ -870,26 +871,19 @@ function MenuHandler() {
                 response['timeDiffInMillisecs'] =  response['serverUTCTime'] - new Date().getTime();
                if(Math.abs(response['timeDiffInMillisecs']) > timeStampTolearence){
                     if(response['timeDiffInMillisecs'] > 0)
-                        timeStampAlert = [{msg:infraAlertMsgs['TIMESTAMP_MISMATCH_BEHIND'].format(diffDates(new XDate(),new XDate(response['serverUTCTime']),'rounded')),
-                                sevLevel:sevLevels['INFO']}];
+                        globalAlerts.push({msg:infraAlertMsgs['TIMESTAMP_MISMATCH_BEHIND'].format(diffDates(new XDate(),new XDate(response['serverUTCTime']),'rounded')),
+                                sevLevel:sevLevels['INFO']});
                     else
-                        timeStampAlert = [{msg:infraAlertMsgs['TIMESTAMP_MISMATCH_AHEAD'].format(diffDates(new XDate(response['serverUTCTime']),new XDate(),'rounded')),
-                                sevLevel:sevLevels['INFO']}];
+                        globalAlerts.push({msg:infraAlertMsgs['TIMESTAMP_MISMATCH_AHEAD'].format(diffDates(new XDate(response['serverUTCTime']),new XDate(),'rounded')),
+                                sevLevel:sevLevels['INFO']});
                 }
                 globalObj['webServerInfo'] = response;
             }    
         }).always(function(){
             webServerDefObj.resolve();
         });
-        
-        $.ajax({
-            url:'/api/admin/webconfig/qe/enable_stat_queries'
-        }).done(function (result) {
-                globalObj['enable_stat_queries'] = result['enable_stat_queries'];
-                statDefferredObj.resolve();
-        });
 
-        $.when.apply(window, [menuDefferedObj, webServerDefObj, statDefferredObj]).done(function () {
+        $.when.apply(window, [menuDefferedObj, webServerDefObj]).done(function () {
             self.deferredObj.resolve();
         });
     }
@@ -1143,19 +1137,21 @@ function MenuHandler() {
         if (currMenuObj == null)
             return;
         //Call destory function on viewClass which is being unloaded
-        $.each(getValueByJsonPath(currMenuObj,'resources;resource',[]),function(idx,currResourceObj) {
-            if ((currResourceObj['class'] != null) && (typeof(window[currResourceObj['class']]) == 'function' || typeof(window[currResourceObj['class']]) == 'object') &&
-                (typeof(window[currResourceObj['class']]['destroy']) == 'function')) {
-                $.allajax.abort();
-                
-                try {
-                    window[currResourceObj['class']]['destroy']();
-                } catch (error) {
-                    console.log(error.stack);
+        if(currMenuObj['resources'] != null) {
+            $.each(getValueByJsonPath(currMenuObj, 'resources;resource', []), function (idx, currResourceObj) {
+                if ((currResourceObj['class'] != null) && (typeof(window[currResourceObj['class']]) == 'function' || typeof(window[currResourceObj['class']]) == 'object') &&
+                    (typeof(window[currResourceObj['class']]['destroy']) == 'function')) {
+                    $.allajax.abort();
+
+                    try {
+                        window[currResourceObj['class']]['destroy']();
+                    } catch (error) {
+                        console.log(error.stack);
+                    }
                 }
-            }
-            //window[currResourceObj['class']] = null;
-        });
+                //window[currResourceObj['class']] = null;
+            });
+        }
     }
 
     /**
@@ -1212,12 +1208,14 @@ function MenuHandler() {
                     if (!(currResourceObj['view'] instanceof Array)) {
                         currResourceObj['view'] = [currResourceObj['view']];
                     }
-                    $.each(currResourceObj['view'], function () {
-                        var viewDeferredObj = $.Deferred();
-                        viewDeferredObjs.push(viewDeferredObj);
-                        var viewPath = currResourceObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
-                        templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
-                    });
+                    if(currResourceObj['view'] != null && currResourceObj['view'].length > 0 && currResourceObj['view'][0] != null) {
+                        $.each(currResourceObj['view'], function () {
+                            var viewDeferredObj = $.Deferred();
+                            viewDeferredObjs.push(viewDeferredObj);
+                            var viewPath = currResourceObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
+                            templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+                        });
+                    }
                 })
             }
 

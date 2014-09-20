@@ -39,6 +39,7 @@ global.ZWQ_MSG_SEPERATOR = '@';
 
 global.WEBUI_DFLT_REDIS_DB = 1;
 global.QE_DFLT_REDIS_DB = 2;
+global.SM_DFLT_REDIS_DB = 3;
 
 /* Generic Caching related global variables */
 global.STR_JOB_TYPE_CACHE = 'cache';
