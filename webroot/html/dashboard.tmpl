@@ -99,6 +99,14 @@
                     </ul> -->
                 </li>
             </ul>
+            <div id="nav-search">
+                <form id="search-form" onsubmit="searchSiteMap();">
+                    <span class="input-icon">
+                        <input type="text" placeholder="Search Sitemap" class="input-small search-query" id="nav-search-input" autocomplete="off">
+                        <i class="icon-search" id="nav-search-icon"></i>
+                    </span>
+                </form>
+            </div>
         </div>
         <!--/.container-fluid-->
     </div>
@@ -127,14 +135,6 @@
                 <span class="loading"><i class="icon-spinner icon-spin"></i></span>
                 <span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span>
             </div>
-            <div id="nav-search">
-                <form id="search-form" onsubmit="searchSiteMap();">
-                    <span class="input-icon">
-                        <input type="text" placeholder="Search Sitemap" class="input-small search-query" id="nav-search-input" autocomplete="off">
-                        <i class="icon-search" id="nav-search-icon"></i>
-                    </span>
-                </form>
-            </div> <!--#nav-search-->
         </div>
         <div id="page-content" class="clearfix">
             <div id='content-container'></div>

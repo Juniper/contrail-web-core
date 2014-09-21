@@ -3103,7 +3103,7 @@ td.td-actions a.td-action {
   background-color: #cecece;
   pointer-events: none;*/
 }
-/* progressbar */
+/* progressbar 
 .progress {
   border-radius: 0;
   height: 18px;
@@ -3204,11 +3204,11 @@ td.td-actions a.td-action {
   bottom: 0;
   background: radial-gradient(9px 9px 0deg, circle cover, #00ffff 0%, rgba(0, 0, 255, 0) 100%, #0000ff 95%);
 }
-
+*/
 /** info and stats mini boxes **/
 .infobox-container {
- /*  text-align: center; */
   font-size: 0;
+  margin: 7px 0 0;
 }
 .infobox {
   width: 135px;
@@ -3942,6 +3942,16 @@ td.td-actions a.td-action {
 .badge-color-2 {background-color: #ff7f0e;}
 .badge-color-3 {background-color: #2ca02c;}
 .badge-color-4 {background-color: #9e9ac8 ;}
+
+.label-icon-badge {
+	font-size: 12px;
+}
+
+.icon-badge-color-0 {color: #1f77b4;}
+.icon-badge-color-1 {color: #6baed6;}
+.icon-badge-color-2 {color: #ff7f0e;}
+.icon-badge-color-3 {color: #2ca02c;}
+.icon-badge-color-4 {color: #9e9ac8 ;}
 
 /* status-badge-rounded */
 .status-badge-rounded {

@@ -597,12 +597,7 @@ ul.configActionMenu {
 	right: -2px;
 	margin: 1px 0;
 }
-.navbar .brand{padding: 10px;}
-.brand img{display:inline-block;}
-.brand img.logo{ 
-	margin-left:-5px;
-	height: 40px;
-}
+
 .infobox > .stat{
 	font-size:11px;
 }
@@ -703,6 +698,13 @@ filter: alpha(opacity=40);
   	vertical-align: top;
   	margin: 0 auto;
 }
+.port-distribution-chart {
+	zoom: 1;
+  	width: 100%;
+  	height: 250px;
+  	vertical-align: top;
+  	margin: 0 auto;
+}
 /* End - Chart Classes*/
 /* Flow Chart Classes*/
 .chart-load-status{
@@ -715,7 +717,9 @@ filter: alpha(opacity=40);
 /* End Flow Chart Classes*/
 /* Topology */
 .topology{
-	margin:auto;	
+    width: 100%;
+    margin: auto;
+    overflow: scroll;
 }
 .topology_breadthfirst{
 	height:inherit;
@@ -894,6 +898,9 @@ a.selectAllLink:hover {
 	margin-top: 1px;
 	font-size: 14px;
 }
+.grid-header .select2-container, .widget-header .select2-container, .breadcrumb .select2-container{
+	margin-bottom: 2px;
+}
 .grid-header .ui-multiselect {
 	height: 23px !important;
 	margin-bottom: 4px;
@@ -907,15 +914,15 @@ a.selectAllLink:hover {
 .grid-header .select2-container{
 	margin-bottom: 2px;
 }
-.grid-header .select2-container a.select2-choice{
+.grid-header .select2-container a.select2-choice, .widget-header .select2-container a.select2-choice, .breadcrumb .select2-container a.select2-choice{
 	border: none;
 	padding: 0 4px;
 }
-.grid-header .widget-header{
+.grid-header .widget-header, .widget-header .widget-toolbar{
 	color: #777;
 	cursor: default;
 }
-.grid-header .widget-toolbar .select2-chosen {
+.grid-header .widget-toolbar .select2-chosen, .widget-header .widget-toolbar .select2-chosen, .breadcrumb .select2-chosen {
 	color: #3182bd;
 	font-weight: 600;
 }
@@ -1417,7 +1424,7 @@ input.datetimepicker{
 	border-bottom: 1px solid #eee;
 }
 .ui-tabs .ui-tabs-nav{
-	margin: -10px -10px 10px -10px;
+	margin: -3px -10px 10px -10px;
 	padding: 1px 1px 0 1px;
 }
 .ui-tabs-panel.ui-widget-content {
@@ -1430,7 +1437,58 @@ input.datetimepicker{
 	color: #787878;
 	text-decoration: none;
 }
+.ui-tabs .contrail-tabs-loading {
+	margin-right: 5px;
+}
 /* End - Jquery UI Tabs */
+/* Begin - Jquery UI Tabs with Widget Header */
+.contrail-widget-tabs.ui-tabs.ui-widget {
+	border: none;
+	padding: 0;
+}
+.contrail-widget-tabs.ui-tabs .ui-widget-header{
+	border: none;
+	background: none;
+	border-bottom: 1px solid #ccc;
+	line-height: 20px;
+	font-size: 12px;
+}
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav{
+	margin: 0 0 5px 0;
+	padding: 1px 1px 0 10px;
+}
+.contrail-widget-tabs .ui-tabs-panel.ui-widget-content {
+	padding: 1em 1.5em;
+}
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a, .ui-tabs .ui-tabs-nav li.ui-state-hover a{
+	color: #3182bd;
+}
+.contrail-widget-tabs.ui-tabs .ui-state-default a, .ui-state-default a:link, .ui-tabs .ui-state-default a:visited {
+	color: #787878;
+	text-decoration: none;
+	
+}
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a{
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #fff;
+	margin-bottom: -1px;
+}
+
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice {
+	border: none;
+	padding-right: 3px;
+}
+
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+	padding: 2px 6px;
+}
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.tabs-toolbar {
+	float:right;
+	font-size: 15px;
+}
+/* End - Jquery UI Tabs with Widget Header */
 /* Begin - Jquery UI Accordion */
 .ui-accordion-header {
 	border-bottom: 1px solid #eee;
@@ -1467,10 +1525,261 @@ a.disabled-link, a.disabled-link:hover{
 .separator-top {
     border-top : 1px solid #ddd;
 }
-
 p.error {
 color: #b94a48;
 }
+
+/* Visualization */
+
+.font-element {
+    position: absolute;
+    pointer-events: none;
+    -webkit-user-select: none;
+    padding: 0;
+    z-index: 1;
+}
+.font-element i {
+	font-size: 35px;
+	color: #555;
+}
+
+.font-element i.icon-contrail-virtual-network, .font-element i.icon-contrail-virtual-machine {
+	color: #637939;
+}
+.font-element i.icon-contrail-service-instance {
+	color: #d62728;
+	font-size: 30px;
+}
+.font-element i.icon-contrail-router {
+	color: #ff7f0e;
+}
+.font-element i.icon-contrail-security-group {
+	color: #875d8d;
+}
+.font-element i.icon-contrail-network-policy {
+	color: #498AB9;
+	font-size: 33px;
+}
+
+.topology-visualization svg {
+    height: auto !important;
+    width: auto !important;
+
+}
+.topology-visualization svg text {
+    font-size: 11px;
+    font-weight:200;
+}
+
+.topology-visualization svg g.ZoomedElement text {
+    font-size: 13px;
+    font-weight:400;
+}
+
+.topology-visualization-config-elements svg g text {
+    font-size: 9px;
+    font-weight:200;
+}
+
+.topology-visualization svg g.element {
+    opacity: 1;
+}
+.topology-visualization svg g image{
+    opacity: 0.7;
+}
+.topology-visualization svg g.link {
+    opacity: 0.6;
+}
+.topology-visualization svg g.element:hover,
+.topology-visualization svg g.link:hover {
+    opacity: 1;
+}
+.topology-visualization svg g.element:hover text{
+    font-weight:600;
+}
+.topology-visualization .dimHighlighted {
+    opacity: 0.3 !important;
+}
+.topology-visualization .faintHighlighted {
+    opacity: 0.5 !important;
+}
+.topology-visualization .elementHighlighted, .topology-visualization .elementSelectedHighlighted {
+    opacity: 1 !important;
+}
+.topology-visualization .elementHighlighted.VirtualNetwork i {
+	color: #498AB9;
+}
+.topology-visualization svg g.ZoomedElement,
+.topology-visualization svg g.ZoomedElement:hover {
+    opacity: 1;
+}
+.topology-visualization svg .link-tools .tool-remove, 
+.topology-visualization svg .link-tools .tool-options { 
+	display: none 
+}
+.topology-visualization-loading {
+	margin: 120px auto;
+	text-align: center;
+	color: #555;	
+	width: 250px;
+}
+.topology-visualization-loading.progress.active .bar {
+  -webkit-animation: progress-bar-stripes 0.3s linear infinite;
+     -moz-animation: progress-bar-stripes 0.3s linear infinite;
+      -ms-animation: progress-bar-stripes 0.3s linear infinite;
+       -o-animation: progress-bar-stripes 0.3s linear infinite;
+          animation: progress-bar-stripes 0.3s linear infinite;
+}
+.topology-visualization-loading.progress-striped .bar {
+  	background-color: #6baed6;
+}
+.topology-visualization.colmask {
+	position:relative;		
+    clear:both;
+    float:left;
+    width:100%;				
+	overflow:hidden;		
+}
+.topology-visualization.holygrail .colmid {
+    float:left;
+    width:200%;
+    margin-left:-200px; 	
+    position:relative;
+    right:100%;
+    background:#fff;    	
+}
+.topology-visualization.holygrail .colleft {
+    float:left;
+    width:100%;
+    margin-left:-50%;
+    position:relative;
+    left:400px;         	
+}
+.topology-visualization.holygrail .col1wrap {
+	float:left;
+    width:50%;
+    position:relative;
+    right:200px;        	
+ 	padding-bottom:1em; 	
+}
+.topology-visualization.holygrail .col1 {
+    margin:0 100px 0 170px;     	
+    position:relative;
+    left:200%;
+    overflow:hidden;
+}
+.topology-visualization.holygrail .col2 {
+    float:left;
+    float:right;			
+    width:150px;        	
+    position:relative;
+    right:40px;         	
+}
+.topology-visualization.holygrail .col3 {
+    float:left;
+    float:right;			
+    width:80px;        	
+    margin-right:65px;  	
+    position:relative;
+    left:50%;
+}
+
+.topology-visualization .breadcrumbs {
+    color:#3182bd;
+    font-family:Open Sans;
+}
+.topology-visualization .breadcrumbs .breadcrumb-item {
+    margin: 5px 10px;
+    width: 50px;
+    float: right;
+    padding: 2px 0;
+    text-align:center;
+    background-color:#fff;
+    border-radius:5px;
+    border:1px solid #ddd;
+    -moz-box-shadow:    4px 3px 5px 0px #ccc;
+    -webkit-box-shadow: 4px 3px 5px 0px #ccc;
+    box-shadow:         4px 3px 5px 0px #ccc;
+    cursor: pointer;
+}
+.topology-visualization .breadcrumbs .breadcrumb-item .breadcrumb-item-text {
+    font-size:10px;
+    margin: 0 2px;
+	width: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 16px;     /* fallback */
+    max-height: 32px;      /* fallback */
+    -webkit-line-clamp: 1; /* number of lines to show */
+    -webkit-box-orient: vertical;
+}
+.topology-visualization .breadcrumbs .breadcrumb-item .breadcrumb-item-image {
+    width:30px;
+}
+.topology-visualization .zoom-controls {
+	padding: 10px 10px 0 13px;
+	font-size: 15px;
+}
+.topology-visualization .zoom-controls i {
+	color: #777;
+}
+.topology-visualization .zoom-controls .dropdown-menu {
+	right: -11px;
+	top: 33px;
+}
+.topology-visualization .zoom-controls .dropdown-menu i {
+	margin-right: 5px;
+}
+
+.topology-visualization-tabs .select2-container .select2-choice {
+	border: none;
+	padding-right: 3px;
+}
+
+/* Context Menu */
+.context-menu-list {
+    background-color: #fff;
+}
+.context-menu-list .context-menu-item {
+    background-color: #fff;
+}
+.context-menu-list .context-menu-item:hover {
+    background-color: #c6dbef;
+}
+.context-menu-item {
+	padding: 2px 5px;
+}
+
+/* Bootstrap popovers */
+.popover {
+	width: 800px;
+}
+.popover .arrow {
+	display: none;
+}
+.popover .popover-title {
+	background-color: #fff;
+	color: #3182bd;
+	padding: 5px;
+	font-size: 12px;
+}
+.popover .popover-content{
+	padding: 0;
+}
+.popover .popover-content .chart-tooltip {
+    border: none;
+    box-shadow: none;
+    padding: 5px;
+}
+.popover .popover-content .element-name-text {
+	padding: 5px;
+	color: #555;
+	font-style: italic;
+	font-size: 13px;
+	margin-bottom: 0;
+}
+
 /*policy rule styles */
 
 #windowCreatePolicy .rule-item .select2-chosen {
@@ -1524,6 +1833,66 @@ color: #b94a48;
 .image-subnet:before {
   content : url(../img/subnet.png);
   vertical-align : middle;
+}
+
+/* Chart Control styles */
+
+.chart-control-nav {
+    margin-bottom: 0;
+}
+.chart-control-icon {
+    color: #555;
+    padding: 0 5px;
+}
+.chart-control-menu {
+    right:0;
+    left:auto;
+    top:27px;
+}
+.chart-control-menu a {
+    color: #555;
+}
+.chart-control-menu a.dropdownSelected {
+    font-weight: 600;
+    color: #3182bd;
+}
+
+.flow-class-chart .colmask {
+    position:relative;		/* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
+    clear:both;
+    float:left;
+    width:100%;			/* width of whole page */
+    overflow:hidden;	/* This chops off any overhanging divs */
+}
+.flow-class-chart .rightmenu {
+
+}
+.flow-class-chart .rightmenu .colleft {
+    float:left;
+    width:200%;
+    margin-left:-33px;
+    position:relative;
+    right:100%;
+    background:#fff;
+}
+.flow-class-chart .rightmenu .col1wrap {
+    float:left;
+    width:50%;
+    position:relative;
+    left:50%;
+    padding-bottom:1em;
+}
+.flow-class-chart .rightmenu .col1 {
+    margin:0 0 0 40px;
+    overflow:hidden;
+}
+.flow-class-chart .rightmenu .col2 {
+    float: right;
+    width: 30px;
+    position: relative;
+    left: 32px;
+    background:#eee;
+    height: 282px;
 }
 
 /* Group Detail Container Styles */
