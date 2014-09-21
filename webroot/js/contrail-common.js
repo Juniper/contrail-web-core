@@ -93,6 +93,16 @@ function Contrail() {
             failureHandler(response);
         });
     };
+
+    this.truncateText = function(text, size){
+    	if(text.length <= size){
+    		return text;
+    	}
+    	else{
+    		return text.substr(0,(size-3)) + '...';
+    	}
+    };
+    
     this.formatJSON2HTML = function(json, formatDepth){
     	if(typeof json == 'string'){
     		json = JSON.parse(json);
@@ -172,4 +182,52 @@ function Contrail() {
 	   });
 	   return o;
 	};
+	
+	/*
+	 * .addClassSVG(className)
+	 * Adds the specified class(es) to each of the set of matched SVG elements.
+	 */
+	$.fn.addClassSVG = function(className){
+		$(this).attr('class', function(index, existingClassNames) {
+		    return existingClassNames + ' ' + className;
+		});
+		return this;
+	};
+	
+	/*
+	 * .removeClassSVG(className)
+	 * Removes the specified class to each of the set of matched SVG elements.
+	 */
+	$.fn.removeClassSVG = function(className){
+		$(this).attr('class', function(index, existingClassNames) {
+    		var re = new RegExp(className, 'g');
+    		return existingClassNames.replace(re, '');
+    	});
+		return this;
+	};
+	
+	/*
+	 * .hasClassSVG(className)
+	 * Determine whether any of the matched SVG elements are assigned the given class.
+	 */
+	$.fn.hasClassSVG = function(className){
+		var existingClassNames = $(this).attr('class').split(' ');
+		return (existingClassNames.indexOf(className) > -1 ? true : false);
+	};
+	
+	/*
+	 * .parentsSVG(className)
+	 * Get the ancestors of each element in the current set of matched elements or SVG elements, optionally filtered by a selector
+	 */
+	$.fn.parentsSVG = function(selector){
+		var parents = $(this).parents(),
+			outputParents = [];
+		$.each(parents, function(keyParents, valueParents){
+			if($(valueParents).is(selector)){
+				outputParents.push(valueParents);
+			}
+		});
+		return outputParents;
+	};
+	
 })(jQuery);
