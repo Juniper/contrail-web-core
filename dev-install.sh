@@ -196,7 +196,7 @@ rm -rf webroot/assets/requirejs
 mkdir webroot/assets/requirejs
 #cp -af ./$THIRD_PARTY/require.min.js webroot/assets/requirejs/require.min.js
 #cp -af ./$THIRD_PARTY/text.js webroot/assets/requirejs/text.js
-cp -af ./$THIRD_PARTY/requirejs-v1.0.2/require.js webroot/assets/requirejs/require.js
+cp -af ./$THIRD_PARTY/require.js webroot/assets/requirejs/require.js
 cp -af ./$THIRD_PARTY/text.js webroot/assets/requirejs/text.js
 #End - Copy Requirejs & Textjs  from $THIRD_PARTY
 
