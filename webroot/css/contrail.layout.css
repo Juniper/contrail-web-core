@@ -86,7 +86,7 @@ body:before {
   z-index: -1;
 }
 body.navbar-fixed {
-  padding-top: 62px;
+  padding-top: 52px;
 }
 .container-fluid {
 	padding-right: 0px;
@@ -122,9 +122,15 @@ body.navbar-fixed {
   color: #ffffff;
 }
 .navbar .brand {
-  color: #ffffff;
-  font-size: 24px;
-  text-shadow: none;
+	color: #ffffff;
+  	font-size: 24px;
+  	text-shadow: none;
+	padding: 5px 10px;
+}
+.brand img{display:inline-block;}
+.brand img.logo{ 
+	margin-left:-5px;
+	height: 40px;
 }
 .navbar .nav > li > a,
 .navbar .nav > li > a:hover,
@@ -136,7 +142,7 @@ body.navbar-fixed {
 /* ace-nav */
 .ace-nav {
   height: 100%;
-  padding:8px 0;
+  padding:3px 0;
 }
 .ace-nav > li {
   line-height: 45px;
@@ -230,7 +236,7 @@ body.navbar-fixed {
 #page-content {
   background: #ffffff;
   margin: 0;
-  padding: 50px 10px 30px;
+  padding: 43px 10px 27px;
 }
 #page-content .page-header:first-child {
   margin: 0 0 12px;
@@ -306,17 +312,15 @@ body.navbar-fixed {
 }
 /* searchbox */
 #nav-search {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  line-height: 24px;
+	margin: 13px 10px;
+	float: right;
+  	line-height: 24px;
 }
 #nav-search .form-search {
   margin: 1px 0 0;
 }
 #nav-search-input {
-  /* border-color: #6baed6; */
-  border-width: 1px;
+	border: 1px solid #dedede;
   width: 160px;
   height: 18px !important;
   font-size: 13px;
@@ -355,7 +359,7 @@ body.navbar-fixed {
   width: 182px;
   position: fixed;
   bottom: 0px;
-  top: 62px;
+  top: 52px;
   margin-left: 0;
   margin-top: 0;
   border-right: 1px solid #cccccc;
@@ -2288,6 +2292,10 @@ button.btn:active {
     background-color: rgba(0, 0, 0, .2);
 }
 
+/* font framework*/
+.font-size-15{font-size:15px !important;}
+.font-size-20{font-size:20px !important;}
+
 /* margin framework */
 .margin-5 {margin:5px !important;}
 .margin-5-0 {margin:5px 0 !important;}
@@ -2327,6 +2335,7 @@ button.btn:active {
 
 /* height framework */
 .height-200 {height:200px !important;}
+.height-250 {height:250px !important;}
 .height-300 {height:300px !important;}
 .height-400 {height:400px !important;}
 .height-500 {height:500px !important;}
