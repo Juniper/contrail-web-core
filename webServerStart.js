@@ -40,8 +40,6 @@ var server_port = (config.redis_server_port) ?
 var server_ip = (config.redis_server_ip) ?
     config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
 
-var redisClient = redis.createClient(server_port,
-    server_ip);
 var RedisStore = require('connect-redis')(express);
 
 var store;
@@ -78,8 +76,9 @@ function initializeAppConfig (appObj)
     app.set('port', process.env.PORT || port);
     app.use(express.cookieParser());
     store = new RedisStore({host:redisIP, port:redisPort,
-        prefix:global.STR_REDIS_STORE_SESSION_ID_PREFIX,
-        eventEmitter:sessEvent});
+                           db:global.WEBUI_SESSION_REDIS_DB,
+                           prefix:global.STR_REDIS_STORE_SESSION_ID_PREFIX,
+                           eventEmitter:sessEvent});
 
     app.use(express.session({ store:store,
         secret:'enterasupbK3xg8qescJK.dUbdgfVq0D70UaLTMGTzO4yx5vVJral2zIhVersecretkey',

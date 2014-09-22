@@ -54,6 +54,9 @@ cp -af ./$THIRD_PARTY/jquery-1.9.1.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/build/jquery.steps.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/demo/css/jquery.steps.css webroot/assets/jquery/css/
+cp -af ./$THIRD_PARTY/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/jquery.validate.js
+cp -af ./$THIRD_PARTY/jquery.panzoom-v2.0.5/dist/jquery.panzoom.min.js webroot/assets/jquery/js/jquery.panzoom.min.js
+#End - Copy JQuery files from web-third-party
 
 #End - Copy JQuery files from $THIRD_PARTY
 
@@ -161,6 +164,24 @@ mkdir webroot/assets/moment
 cp -af ./$THIRD_PARTY/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
 #End - Copy Moment Date-Formatter from $THIRD_PARTY
 
+#Start - Copy Joint from web-third-party
+rm -rf webroot/assets/joint
+mkdir -p webroot/assets/joint/js
+mkdir -p webroot/assets/joint/css
+cp -r ./$THIRD_PARTY/joint-v0.9.0/dist/joint.nojquery.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.0/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.0/dist/joint.nojquery.css webroot/assets/joint/css/
+#End - Copy Joint from web-third-party
+
+#Start - Copy jquery-contextMenu from web-third-party
+rm -rf webroot/assets/jquery-contextMenu
+mkdir -p webroot/assets/jquery-contextMenu/js
+mkdir -p webroot/assets/jquery-contextMenu/css
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.contextMenu.js webroot/assets/jquery-contextMenu/js/
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.ui.position.js webroot/assets/jquery-contextMenu/js/
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.contextMenu.css webroot/assets/jquery-contextMenu/css
+#End - Copy jquery-contextMenu from web-third-party
+
 #Start - Copy Backbone from $THIRD_PARTY
 rm -rf webroot/assets/backbone
 mkdir webroot/assets/backbone
@@ -175,7 +196,7 @@ rm -rf webroot/assets/requirejs
 mkdir webroot/assets/requirejs
 #cp -af ./$THIRD_PARTY/require.min.js webroot/assets/requirejs/require.min.js
 #cp -af ./$THIRD_PARTY/text.js webroot/assets/requirejs/text.js
-cp -af ./$THIRD_PARTY/requirejs-v1.0.2/require.js webroot/assets/requirejs/require.js
+cp -af ./$THIRD_PARTY/require.js webroot/assets/requirejs/require.js
 cp -af ./$THIRD_PARTY/text.js webroot/assets/requirejs/text.js
 #End - Copy Requirejs & Textjs  from $THIRD_PARTY
 
