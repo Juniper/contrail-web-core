@@ -265,10 +265,10 @@ MAINFILE[39]=webroot/js/analyzer-utils.js
 MAINFILE[40]=webroot/js/chart-utils.js
 MAINFILE[41]=webroot/js/dashboard-utils.js
 
-MAINFILE[42]=webroot/assets/jquery-ui/js/jquery.multiselect.js
-MAINFILE[43]=webroot/assets/jquery-ui/js/jquery.multiselect.filter.js
-MAINFILE[44]=webroot/assets/requirejs/require.js
-MAINFILE[45]=webroot/assets/jquery/js/jquery.steps.min.js
+MAINFILE[45]=webroot/assets/jquery-ui/js/jquery.multiselect.js
+MAINFILE[46]=webroot/assets/jquery-ui/js/jquery.multiselect.filter.js
+MAINFILE[47]=webroot/assets/requirejs/require.js
+MAINFILE[48]=webroot/assets/jquery/js/jquery.steps.min.js
 
 
 cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
@@ -321,10 +321,10 @@ cat ${MAINFILE[38]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[39]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[41]} >> webroot/js/contrail-all-5.js
 
-cat ${MAINFILE[42]} >> webroot/js/contrail-all-6.js
-cat ${MAINFILE[43]} >> webroot/js/contrail-all-6.js
-cat ${MAINFILE[44]} >> webroot/js/contrail-all-6.js
 cat ${MAINFILE[45]} >> webroot/js/contrail-all-6.js
+cat ${MAINFILE[46]} >> webroot/js/contrail-all-6.js
+cat ${MAINFILE[47]} >> webroot/js/contrail-all-6.js
+cat ${MAINFILE[48]} >> webroot/js/contrail-all-6.js
 
 # End - Merging All JS files
 
