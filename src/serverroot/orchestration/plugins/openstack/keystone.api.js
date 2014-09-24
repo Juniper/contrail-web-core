@@ -361,21 +361,32 @@ function formatV3AuthTokenData (authObj, isUnscoped)
     var username = authObj['username'];
     var password = authObj['password'];
     var tenant = authObj['tenant'];
+    var tokenId = authObj['token'];
     var domain = getV3DomainIfNotAvailable(authObj['domain']);
 
-    var v3data = {
-        "auth": {
-            "identity": {
-                "methods": [
-                    "password"
-                    ],
-                "password": {
-                    "user": {
-                        "domain": {
-                            "name": domain
-                        },
-                        "name": username,
-                        "password": password
+    var v3data = {};
+
+    if (null != tokenId) {
+        v3data['auth'] = {};
+        v3data['auth']['identity'] = {};
+        v3data['auth']['identity']['methods'] = ['token'];
+        v3data['auth']['identity']['token'] = {}
+        v3data['auth']['identity']['token']['id'] = tokenId;
+    } else {
+        v3data = {
+            "auth": {
+                "identity": {
+                    "methods": [
+                        "password"
+                        ],
+                    "password": {
+                        "user": {
+                            "domain": {
+                                "name": domain
+                            },
+                            "name": username,
+                            "password": password
+                        }
                     }
                 }
             }
@@ -811,11 +822,14 @@ function getUserRoleByTenant (userObj, callback)
     var username = userObj['username'];
     var password = userObj['password'];
     var tenant   = userObj['tenant'];
+    var userData = {};
     doAuth(userObj, function(data) {
         if ((null != data) && (null != data['access']) && 
             (null != data['access']['user']) &&
             (null != data['access']['user']['roles'])) {
-            callback(null, data['access']['user']['roles']);
+            userData['data'] = data;
+            userData['roles'] = data['access']['user']['roles'];
+            callback(null, userData);
         } else {
             callback(null, null);
         }
@@ -844,14 +858,17 @@ function getUserRoleByAllTenants (username, password, tenantlist, callback)
     }
 
     async.map(tenantObjArr, getUserRoleByTenant, function(err, data) {
+        var rolesPerTenant = {};
         if (data) {
             var dataLen = data.length;
             for (var i = 0; i < dataLen; i++) {
-                if (null == data[i]) {
+                if ((null == data[i]) || (null == data[i]['roles'])) {
                     continue;
                 }
                 userRoles =
-                    getUserRoleByAuthResponse(data[i]); 
+                    getUserRoleByAuthResponse(data[i]['roles']);
+                rolesPerTenant[data[i]['data']['access']['token']['tenant']['name']]
+                    = userRoles;
                 var userRolesCnt = userRoles.length;
                 for (var j = 0; j < userRolesCnt; j++) {
                     if (null == tmpUIRoleObjs[userRoles[j]]) {
@@ -861,7 +878,7 @@ function getUserRoleByAllTenants (username, password, tenantlist, callback)
                 }
             }
         }
-        callback(uiRoles);
+        callback(uiRoles, rolesPerTenant);
     });
 }
 
@@ -963,21 +980,34 @@ function getProjectDetails (projects, userObj, callback)
 
 function getUserRoleByProjectList (projects, userObj, callback)
 {
-    var userRole = global.STR_ROLE_USER;
+    var uiRoles = [];
+    var tmpUIRoleObjs = {};
+    var userRole = [global.STR_ROLE_USER];
+    var roleListPerTenant = {};
     getProjectDetails (projects, userObj, function(err, projs) {
         if ((null != err) || (null == projs)) {
-            callback(err, projs);
+            callback(projs, null);
             return;
         }
         var resCnt = projs.length;
         for (var i = 0; i < resCnt; i++) {
-            var userRole = getUserRoleByAuthResponse(projs[i]['token']['roles']);
-            if (global.STR_ROLE_ADMIN == userRole) {
-                callback(userRole);
-                return;
+            var userRoles = getUserRoleByAuthResponse(projs[i]['token']['roles']);
+            var userRolesCnt = userRoles.length;
+            for (var j = 0; j < userRolesCnt; j++) {
+                if (null == tmpUIRoleObjs[userRoles[j]]) {
+                    uiRoles.push(userRoles[j]);
+                    tmpUIRoleObjs[userRoles[j]] = userRoles[j];
+                }
             }
+
+            roleListPerTenant[projs[i]['token']['project']['name']] =
+                userRoles;
         }
-        callback(userRole);
+        if (!uiRoles.length) {
+            callback(userRole, null);
+        } else {
+            callback(uiRoles, roleListPerTenant);
+        }
     });
 }
 
@@ -1071,6 +1101,53 @@ function doV3Auth (req, callback)
                         });
                     });
                 });
+            });
+        });
+    });
+}
+
+function getV3UserRoleListPerTenant (req, callback)
+{
+    var userObj = {};
+    userObj['token'] = req.session.last_token_used.id;
+    getV3ProjectListByToken(req, req.session.last_token_used.id,
+                            function(err, projects) {
+        getUserRoleByProjectList(projects['projects'], userObj, callback);
+    });
+
+}
+
+var userRoleGetCB =
+{
+    'v2.0': getV2UserRoleListPerTenant,
+    'v3': getV3UserRoleListPerTenant
+};
+
+function getUserRoleListPerTenant (req, callback)
+{
+    var authVer = req.session.authApiVersion;
+    var getUserRoleCB = userRoleGetCB[authVer];
+
+    getUserRoleCB(req, callback);
+}
+
+function getV2UserRoleListPerTenant (req, callback)
+{
+    getTenantListByToken(req, req.session.last_token_used, function(err, data) {
+        /* Got all the tenant-list */
+        if ((err) || (null == data)) {
+            callback(err, data);
+            return;
+        }
+        authApi.getDecryptedUserBySessionId(req.session.id,
+                                            function(err, authData) {
+            if ((err) || (null == authData)) {
+                commonUtils.redirectToLogout(req, req.res);
+                return;
+            }
+            getUserRoleByAllTenants(authData.username, authData.password,
+                                    data.tenants, function(roles, data) {
+                callback(err, data);
             });
         });
     });
@@ -1431,4 +1508,5 @@ exports.getDomainList = getDomainList;
 exports.getProjectList = getProjectList;
 exports.isDefaultDomain = isDefaultDomain;
 exports.getDefaultDomain = getDefaultDomain;
+exports.getUserRoleListPerTenant = getUserRoleListPerTenant;
 
