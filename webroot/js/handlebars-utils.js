@@ -132,7 +132,7 @@ Handlebars.registerHelper('getHashFromMenuItem',function(menuItem){
             });
             result['q'] = params;
         }
-        return JSON.stringify(result);
+        return $.param.fragment(location.href,result);
     } else {
         if(menuItem['hash'] != null)
             result['p'] = menuItem['hash'];
