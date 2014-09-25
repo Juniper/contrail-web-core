@@ -90,7 +90,7 @@ function clone(obj) {
     throw new Error("Unable to copy obj! Its type isnt supported.");
 }
 
-function doAjaxCall(targetUrl, methodType, postData, successHandler, failureHandler, cacheEnabled, callbackParams, timeOut, hideErrMsg,abortCall) {
+function doAjaxCall(targetUrl, methodType, postData, successHandler, failureHandler, cacheEnabled, callbackParams, timeOut, hideErrMsg,abortCall,projectUUID) {
     var url = targetUrl, type = methodType, cache = cacheEnabled,
         success = successHandler, failure = failureHandler, data = postData,
         cbParams = callbackParams, headers = {}, timeout = timeOut, hideErrorMsg = hideErrMsg;
@@ -625,6 +625,85 @@ function getStartPort(port) {
     return -1;
 }
 
+function genarateGateway(cidr,from){
+    var ciderValue = new v4.Address(cidr); 
+    var gateway;
+    if(ciderValue.isValid() === true){
+        var ipcreated;
+        var bigInt;
+        if(from == "end" || from == "" ){
+            ipcreated = ciderValue.endAddress();
+            bigInt = ipcreated.bigInteger() -1;
+        } else {
+            ipcreated = ciderValue.startAddress();
+            bigInt = ipcreated.bigInteger();
+        }
+        gateway = v4.Address.fromBigInteger(bigInt).address;
+    } else {    
+        ciderValue = new v6.Address(cidr); 
+        if(ciderValue.isValid() === true && ciderValue.getScope() == "Global"){
+            var ipcreated;
+            var bigInt;
+            if(from == "end"){
+                ipcreated = ciderValue.endAddress();
+                var bg1 = ipcreated.bigInteger();
+                bigInt = bg1.subtract(new BigInteger("1",10))
+			} else  {
+                ipcreated = ciderValue.startAddress();
+                var bg1 = ipcreated.bigInteger();
+                bigInt = bg1.add(new BigInteger("1",10))
+            }
+            gateway = new v6.Address.fromBigInteger(bigInt).correctForm()
+
+        } else {
+            return false;
+        }
+    }
+    return gateway;
+}
+
+function isIPBoundToRange(range,ipAddress){
+    var IP = new v4.Address(ipAddress); 
+    var IPRange = new v4.Address(range); 
+    if(IP.isValid() === true && IPRange.isValid() === true){
+        return IP.isInSubnet(IPRange);
+    } else {
+        IP = new v6.Address(ipAddress); 
+        IPRange = new v6.Address(range);        
+        if(IP.isValid() === true && IPRange.isValid() === true){
+            return IP.isInSubnet(IPRange);
+        }
+    }
+}
+
+function isValidIP(ipAddress){
+    var IP = new v4.Address(ipAddress); 
+    if(IP.isValid() === true){
+        return true;
+    }
+    IP = new v6.Address(ipAddress); 
+    if(IP.isValid() === true){
+        return true;
+    }
+    return false;
+}
+
+function isIPv4(ipAddress){
+    var IP = new v4.Address(ipAddress); 
+    if(IP.isValid() === true){
+        return true;
+    }
+    return false;
+}
+
+function isIPv6(ipAddress){
+    var IP = new v6.Address(ipAddress); 
+    if(IP.isValid() === true){
+        return true;
+    }
+    return false;
+}
+
 function validip(ip) {
     if (null != ip && "" != ip) {
         ipsplit = ip.split("/");
@@ -1102,7 +1181,8 @@ function checkSystemProject(project) {
 	return false;
 }
 
-function scrollUp(contWindow,div,boolCollapse){
+function scrollUp(contWindow,div,boolCollapse,collapseDivID){
+    //div.scrollIntoView();
     if(46 >= Math.abs(
         $(contWindow).find("div.modal-body")[0].getBoundingClientRect().bottom - 
         $(div)[0].getBoundingClientRect().bottom)) {
@@ -1111,7 +1191,7 @@ function scrollUp(contWindow,div,boolCollapse){
         }, 1000);
     }
     if(boolCollapse === true){
-        collapseElement(div);
+        collapseElement(div,collapseDivID);
     }
 }
 
@@ -1176,3 +1256,8 @@ cutils.policyRuleFormat = policyRuleFormat;
 cutils.formatSrcDestAddresses = formatSrcDestAddresses;
 cutils.prepareFQN = prepareFQN;
 cutils.getFQNofPolicy = getFQNofPolicy;
+cutils.genarateGateway = genarateGateway;
+cutils.isValidIP = isValidIP;
+cutils.isIPv4 = isIPv4;
+cutils.isIPv6 = isIPv6;
+cutils.isIPBoundToRange = isIPBoundToRange;
