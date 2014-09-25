@@ -429,11 +429,14 @@ function getUserRoleByTenant (userObj, callback)
     var username = userObj['username'];
     var password = userObj['password'];
     var tenant   = userObj['tenant'];
+    var userData = {};
     doAuth(username, password, tenant, function(data) {
         if ((null != data) && (null != data['access']) && 
             (null != data['access']['user']) &&
             (null != data['access']['user']['roles'])) {
-            callback(null, data['access']['user']['roles']);
+            userData['data'] = data;
+            userData['roles'] = data['access']['user']['roles']
+            callback(null, userData);
         } else {
             callback(null, null);
         }
@@ -443,11 +446,13 @@ function getUserRoleByTenant (userObj, callback)
 function getUserRoleByAllTenants (username, password, tenantlist, callback)
 {
     var tenantObjArr = [];
+    var tenantName = null;
     if (null == tenantlist) {
         return null;
     }
     var tenantCnt = tenantlist.length;
     var userRoleStr = global.STR_ROLE_USER;
+    var isAdminRole = false;
 
     for (var i = 0; i < tenantCnt; i++) {
         if ((null != tenantlist[i]) && (null != tenantlist[i]['name'])) {
@@ -456,28 +461,40 @@ function getUserRoleByAllTenants (username, password, tenantlist, callback)
         }
     }
     if (!tenantObjArr.length) {
-        return userRoleStr;
+        callback(userRoleStr, null);
+        return;
     }
 
     async.map(tenantObjArr, getUserRoleByTenant, function(err, data) {
+        var rolesPerTenant = {};
         if (data) {
             var dataLen = data.length;
             for (var i = 0; i < dataLen; i++) {
-                if (null == data[i]) {
+                if ((null == data[i]) || (null == data[i]['roles'])) {
                     continue;
                 }
                 userRoleStr =
-                    getUserRoleByAuthResponse(data[i]); 
+                    getUserRoleByAuthResponse(data[i]['roles']);
+                try {
+                    tenantName =
+                        data[i]['data']['access']['token']['tenant']['name'];
+                } catch(e) {
+                    logutils.logger.error("We did not get tenant name:" + e);
+                    continue;
+                }
+                rolesPerTenant[tenantName] = userRoleStr;
                 if (global.STR_ROLE_ADMIN == userRoleStr) {
                     /* if as 'admin', then no need to check for anything
                      * else
                      */
-                    callback(userRoleStr);
-                    return;
+                    isAdminRole = true;
                 }
             }
         }
-        callback(userRoleStr);
+        if (true == isAdminRole) {
+            userRoleStr = global.STR_ROLE_ADMIN;
+        }
+        callback(userRoleStr, rolesPerTenant);
     });
 }
 
@@ -668,6 +685,28 @@ function getAPIServerAuthParamsByReq (req)
   return token;
 }
 
+function getUserRoleListPerTenant (req, callback)
+{
+    getTenantListByToken(req.session.last_token_used, function(err, data) {
+        /* Got all the tenant-list */
+        if ((err) || (null == data) || (null == data.tenants)) {
+            callback(err, null);
+            return;
+        }
+        authApi.getDecryptedUserBySessionId(req.session.id,
+                                            function(err, authData) {
+            if ((err) || (null == authData)) {
+                commonUtils.redirectToLogout(req, req.res);
+                return;
+            }
+            getUserRoleByAllTenants(authData.username, authData.password,
+                                    data.tenants, function(roles, data) {
+                callback(err, data);
+            });
+        });
+    });
+}
+
 exports.authenticate = authenticate;
 exports.getToken = getToken;
 exports.getTenantList = getTenantList;
@@ -676,4 +715,5 @@ exports.updateDefTenantToken = updateDefTenantToken;
 exports.getAPIServerAuthParamsByReq = getAPIServerAuthParamsByReq;
 exports.formatTenantList = formatTenantList;
 exports.getServiceCatalog = getServiceCatalog;
+exports.getUserRoleListPerTenant = getUserRoleListPerTenant;
 
