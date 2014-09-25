@@ -3943,6 +3943,16 @@ td.td-actions a.td-action {
 .badge-color-3 {background-color: #2ca02c;}
 .badge-color-4 {background-color: #9e9ac8 ;}
 
+.label-icon-badge {
+ 	font-size: 12px;
+ }
+
+.icon-badge-color-0 {color: #1f77b4;}
+.icon-badge-color-1 {color: #6baed6;}
+.icon-badge-color-2 {color: #ff7f0e;}
+.icon-badge-color-3 {color: #2ca02c;}
+.icon-badge-color-4 {color: #9e9ac8 ;}
+
 /* status-badge-rounded */
 .status-badge-rounded {
 	border-radius: 10px; 

@@ -1684,7 +1684,7 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 							if (options.showChartToggle) {
 								queries.fs.chartViewModel.isFCLoaded(false);
 								queries.fs.chartViewModel.options(options);
-								plotFSChart(options, columnDisplay, fcGridDisplay);
+								populateData4FSChart(options, columnDisplay, fcGridDisplay);
 								
 							    var grid = $("#fs-flow-classes").data("contrailGrid");
 							    if(grid != null){
@@ -1718,8 +1718,8 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 			$('#ts-chart').empty();
 		}
 		
-		gridConfig.header.customControls = ['<a title="View Results as Grid" id="fs-results-link" class="margin-0-5 selected" onclick="toggleToGrid();"><i class="icon-table"></i></a> \
-		                      <a title="View Results as Chart" id="fs-chart-link" class="margin-0-5 disabled-link" onclick="toggleToChart();"><i class="icon-bar-chart"></i></a>'];
+		gridConfig.header.customControls = ['<a title="View Results as Grid" id="fs-results-link" class="margin-0-5 selected" onclick=toggleToGrid("fs");><i class="icon-table"></i></a> \
+		                      <a title="View Results as Chart" id="fs-chart-link" class="margin-0-5 disabled-link" onclick=toggleToChart("fs");><i class="icon-bar-chart"></i></a>'];
 	}
 	else if(options.queryPrefix == 'fr'){
 		gridConfig.body.options = {
@@ -1740,10 +1740,10 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 	$('#fs-results').find('a[data-action="collapse"]').on('click', function(){
 		if($(this).find('i.collapse-icon').hasClass('icon-chevron-up')){
 			if($('#fs-results-link').hasClass('selected')){
-				toggleToGrid();
+				toggleToGrid('fs');
 			}
 			else if($('#fs-chart-link').hasClass('selected')){
-				toggleToChart();
+				toggleToChart('fs');
 			}
 		}
 		else if($(this).find('i.collapse-icon').hasClass('icon-chevron-down')){
@@ -1752,10 +1752,9 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 	});
 };
 
-function loadStatResults(options, reqQueryObj, columnDisplay) {
+function loadStatResults(options, reqQueryObj, columnDisplay, statQueryGridDisplay, statChartGridDisplay) {
 	var url = '/api/admin/reports/query',
         btnId = options.btnId;
-
     $("#" + options.elementId).contrailGrid({
     	header: {
 			title:{
@@ -1766,7 +1765,9 @@ function loadStatResults(options, reqQueryObj, columnDisplay) {
 			},
             defaultControls: {
 				searchable: false
-            }
+            },
+            customControls: ['<a title="View Results as Grid" id="stat-results-link" class="margin-0-5 selected" onclick=toggleToGrid("stat");><i class="icon-table"></i></a> \
+		                      <a title="View Results as Chart" id="stat-chart-link" class="margin-0-5 disabled-link" onclick=toggleToChart("stat");><i class="icon-bar-chart"></i></a>']
 		},
 		columnHeader: {
 			columns: columnDisplay
@@ -1794,8 +1795,25 @@ function loadStatResults(options, reqQueryObj, columnDisplay) {
                     	enableButton(btnId);
                     },
                     onRequestSuccessCB: function(response) {
+                    	var status = response['status'];
+						if (status == 'queued') {
+							options.showChartToggle = false;
+						}
                     	enableButton(btnId);
                     	return onQueryResult(options.elementId, "No Stat Results found for the given duration.", response['status'], 'sqq');
+                    },
+                    onDataBoundCB : function() {
+                    	if (options.showChartToggle) {
+                			queries.stat.chartViewModel.isFCLoaded(false);
+	                        queries.stat.chartViewModel.options(options);
+	                        populateData4StatChart(options, columnDisplay, statChartGridDisplay);
+	//                                var grid = $("#fs-flow-classes").data("contrailGrid");
+	//                                if(grid != null){
+	//                                    grid.refreshView();
+	//                                }
+                    	}
+                        options.refreshChart = false;
+
                     }
                 }
             },
@@ -1982,7 +2000,7 @@ function setUTCTime(queryPrefix, reqQueryString, options, timeRange) {
 
 function setUTCTimeObj(queryPrefix, reqObject, options, timeRange) {
     var serverCurrentTime = options ? options['serverCurrentTime'] : null;
-    timeRange = timeRange == null ? getTimeRange(queryPrefix, serverCurrentTime): timeRange;
+    timeRange = timeRange == null ? getTimeRange(queryPrefix, serverCurrentTime, reqObject['tgUnits'], reqObject['tgValue']): timeRange;
     if (options != null) {
         options.fromTime = timeRange.fromTimeUTC;
         options.toTime = timeRange.toTimeUTC;
@@ -1993,10 +2011,12 @@ function setUTCTimeObj(queryPrefix, reqObject, options, timeRange) {
     return reqObject;
 };
 
-function getTimeRange(queryPrefix, serverCurrentTime) {
+function getTimeRange(queryPrefix, serverCurrentTime, tgUnits, tgValue) {
     var selectId = '#' + queryPrefix + '-query-form',
         timeRange = $(selectId + " select[name='timeRange']").val(),
-        fromDate, toDate, fromTimeUTC, toTimeUTC, fromTime, toTime, now;
+        fromDate, toDate, fromTimeUTC, toTimeUTC, fromTime, toTime, now,TGmicrosecs = 0;
+    TGmicrosecs = getTGmicrosecs(tgValue, tgUnits);
+
     if (timeRange != 0) {
         if(serverCurrentTime) {
             toTimeUTC = serverCurrentTime;
@@ -2007,7 +2027,7 @@ function getTimeRange(queryPrefix, serverCurrentTime) {
             toTimeUTC = now.getTime();
         }
         fromTimeUTC = toTimeUTC - (timeRange * 1000);
-        if(queryPrefix !== 'fs') {
+        if(queryPrefix !== 'fs' && queryPrefix !== 'stat' ) {
             toTime = "now";
             fromTime = "now-" + timeRange + "s";
         } else {
@@ -2015,6 +2035,7 @@ function getTimeRange(queryPrefix, serverCurrentTime) {
             fromTime = fromTimeUTC;
         }
     } else {
+        // used for custom time range
         fromDate = $(selectId + " input[name='fromTime']").val();
         fromTimeUTC = new Date(fromDate).getTime();
         fromTime = fromTimeUTC;
@@ -2022,49 +2043,77 @@ function getTimeRange(queryPrefix, serverCurrentTime) {
         toTimeUTC = new Date(toDate).getTime();
         toTime = toTimeUTC;
     }
+    if(queryPrefix == 'stat' && typeof fromTimeUTC !== 'undefined' && typeof TGmicrosecs !== 'undefined'){
+        fromTimeUTC = updateFromTime(fromTimeUTC, TGmicrosecs);
+    }
     return {fromTime: fromTime, toTime: toTime, fromTimeUTC:fromTimeUTC, toTimeUTC:toTimeUTC, reRunTimeRange: timeRange};
 };
 
-function toggleToGrid() {
-	$('#fs-results-link').find('i').addClass('icon-spin icon-spinner').removeClass('icon-table');
+function getTGmicrosecs(tg, tgUnit)
+{
+    if (tgUnit == 'secs') {
+        return tg * 1000;
+    } else if (tgUnit == 'mins') {
+        return tg * 60 * 1000;
+    } else if (tgUnit == 'hrs') {
+        return tg * 3600 * 1000;
+    } else if (tgUnit == 'days') {
+        return tg * 86400 * 1000;
+    }
+};
+
+function updateFromTime(fromTimeUTC, TGSecs){
+    fromTimeUTC = TGSecs * Math.ceil(fromTimeUTC/TGSecs);
+    return fromTimeUTC;
+};
+
+function toggleToGrid(queryPrefix) {
+	$('#'+queryPrefix+'-results-link').find('i').addClass('icon-spin icon-spinner').removeClass('icon-table');
     
-	$('#fs-chart-link').removeClass('selected');
-    $('#fs-results-link').addClass('selected');
+	$('#'+queryPrefix+'-chart-link').removeClass('selected');
+    $('#'+queryPrefix+'-results-link').addClass('selected');
     
-	$('#fs-chart').hide();
-    $('#fs-results').find('.grid-body').show();
-    $('#fs-results').find('.grid-footer').show();
-    $('#fs-results').find('.grid-load-status').show();
+	$('#'+queryPrefix+'-chart').hide();
+    $('#'+queryPrefix+'-results').find('.grid-body').show();
+    $('#'+queryPrefix+'-results').find('.grid-footer').show();
+    $('#'+queryPrefix+'-results').find('.grid-load-status').show();
     setTimeout(function(){
-    	$('#fs-results-link').find('i').removeClass('icon-spin icon-spinner').addClass('icon-table');
+    	$('#'+queryPrefix+'-results-link').find('i').removeClass('icon-spin icon-spinner').addClass('icon-table');
     },500);
 };
 
-function toggleToChart() {
-	if(!$('#fs-chart-link').hasClass('disabled-link')){
-		$('#fs-chart-link').find('i').addClass('icon-spin icon-spinner').removeClass('icon-bar-chart');
+function toggleToChart(queryPrefix) {
+    if(queries[queryPrefix].chartViewModel.plotFields().length == 0){
+        return;
+    }
+	if(!$('#'+queryPrefix+'-chart-link').hasClass('disabled-link')){
+		$('#'+queryPrefix+'-chart-link').find('i').addClass('icon-spin icon-spinner').removeClass('icon-bar-chart');
 		
-		$('#fs-results-link').removeClass('selected');
-	    $('#fs-chart-link').addClass('selected');
+		$('#'+queryPrefix+'-results-link').removeClass('selected');
+	    $('#'+queryPrefix+'-chart-link').addClass('selected');
 	    
-		$('#fs-results').find('.grid-body').hide();
-	    $('#fs-results').find('.grid-footer').hide();
-	    $('#fs-results').find('.grid-load-status').hide();
+		$('#'+queryPrefix+'-results').find('.grid-body').hide();
+	    $('#'+queryPrefix+'-results').find('.grid-footer').hide();
+	    $('#'+queryPrefix+'-results').find('.grid-load-status').hide();
 		
-	    $('#fs-chart').show(function(){
-	    	var grid = $("#fs-flow-classes").data("contrailGrid");
+	    $('#'+queryPrefix+'-chart').show(function(){
+	    	var grid = $('#'+queryPrefix+'-flow-classes').data("contrailGrid");
 		    if(grid != null){
-		    	$("#fs-flow-classes").show();
+		    	$('#'+queryPrefix+'-flow-classes').show();
 		        grid.refreshView();
 		    }
-	    	var isFCLoaded = queries.fs.chartViewModel.isFCLoaded();
+	    	var isFCLoaded = queries[queryPrefix].chartViewModel.isFCLoaded();
 		    if(!isFCLoaded) {
-		    	createFSChart("#ts-chart", queries.fs.chart);
-		    	queries.fs.chartViewModel.isFCLoaded(true);
+                if(queryPrefix == 'stat'){
+                    createStatChart("#ts-chart", queries.stat.chart);
+                } else{
+                    createFSChart("#ts-chart", queries.fs.chart);
+                }
+		    	queries[queryPrefix].chartViewModel.isFCLoaded(true);
 	    	}
 		    
-		    $('#fs-chart-link').find('i').removeClass('icon-spin icon-spinner').addClass('icon-bar-chart');
-		    $('#fs-chart').find('.chart-load-status').hide();
+		    $('#'+queryPrefix+'-chart-link').find('i').removeClass('icon-spin icon-spinner').addClass('icon-bar-chart');
+		    $('#'+queryPrefix+'-chart').find('.chart-load-status').hide();
 	    });
 	}
 };
@@ -2080,6 +2129,16 @@ function getPlotFields(columnDisplay) {
     return plotFields;
 };
 
+function findFirstValidSCId(flowClassArray) {
+    for(var i = 0; i < flowClassArray.length; i++) {
+        return flowClassArray[i]['stat_flow_class_id'];
+    }
+    if(flowClassArray.length > 0) {
+        return flowClassArray[0]['stat_flow_class_id'];
+    } else {
+        return null;
+    }
+}
 function findFirstValidFCId(flowClassArray) {
     for(var i = 0; i < flowClassArray.length; i++) {
         if(flowClassArray[i]['sourcevn'] != "__UNKNOWN__" && flowClassArray[i]['destvn'] != "__UNKNOWN__") {
@@ -2093,6 +2152,82 @@ function findFirstValidFCId(flowClassArray) {
     }
 }
 
+function initStatclassGrid(elementId, flowClassArray, columnDisplay) {
+    var display = [
+        {
+            id: 'fc-checkbox',
+            field:"",
+            name:"",
+            resizable: false,
+            width:30,
+            minWidth: 30,
+            formatter: function(r, c, v, cd, dc){
+                return '<input id="fc-checkbox-' + dc.id +'" type="checkbox" onchange="loadSelectedStatChart(this)" value="' + dc.stat_flow_class_id +'" data-id="' + dc.id + '" class="ace-input"/><span class="ace-lbl"></span>';
+            },
+            sortable: false,
+            searchable: false,
+            exportConfig: {
+                allow: false
+            }
+        },
+        {
+            id: 'fc-label',
+            field:"",
+            name:"",
+            resizable: false,
+            sortable: false,
+            width: 30,
+            minWidth: 30,
+            searchable: false,
+            exportConfig: {
+                allow: false
+            },
+            formatter: function(r, c, v, cd, dc){
+                return '<span id="label-sum-bytes-'+ dc.id + '" class="label-icon-badge hide"><i class="icon-circle"></i></span>';
+            }
+        }
+    ];
+
+    columnDisplay = display.concat(columnDisplay);
+
+    if(contrail.checkIfExist($(elementId).data("contrailGrid"))){
+        $(elementId).data("contrailGrid").destroy();
+    }
+    $(elementId).empty();
+
+    $(elementId).contrailGrid({
+        header: false,
+        columnHeader: {
+            columns: columnDisplay
+        },
+        body: {
+            options: {
+                forceFitColumns: true
+            },
+            dataSource:{
+                data: flowClassArray,
+                events: {
+                    onDataBoundCB: function() {
+                        var selectedFlows = queries['stat']['chartViewModel'].selectedFlows();
+
+                        $.each(selectedFlows, function(selectedFlowKey, selectedFlowValue){
+                			$('#fc-checkbox-' + selectedFlowValue.r).prop('checked', true);
+	                        assignColors2FlowClass(selectedFlowValue);
+                		});
+                    }
+                }
+            }
+        },
+        footer: {
+            pager: {
+                options: {
+                    pageSize: 100,
+                    pageSizeSelect: [100,500,1000]
+                }
+            }
+        }
+    });
+};
 function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
     var display = [
             {
@@ -2103,7 +2238,7 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
                 width:30, 
                 minWidth: 30,
                 formatter: function(r, c, v, cd, dc){ 
-                	return '<input id="fc-checkbox-' + dc.flow_class_id +'" type="checkbox" onchange="loadSelectedFSChart(this)" value="' + dc.flow_class_id +'" class="ace-input"/><span class="ace-lbl"></span>';
+                	return '<input id="fc-checkbox-' + dc.id +'" type="checkbox" onchange="loadSelectedFSChart(this)" value="' + dc.flow_class_id + '" data-id="' + dc.id + '"class="ace-input"/><span class="ace-lbl"></span>';
                 },
                 sortable: false,
                 searchable: false,
@@ -2117,14 +2252,15 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
                 name:"", 
                 resizable: false,
                 sortable: false,
-                width: 90,
-                minWidth: 90,
+                width: 30,
+                minWidth: 30,
                 searchable: false,
                 exportConfig: {
                     allow: false
                 },
                 formatter: function(r, c, v, cd, dc){ 
-                	return '<span id="label-sum-bytes-'+ dc.flow_class_id + '" class="hide">Sum Bytes</span> <span id="label-sum-packets-' + dc.flow_class_id + '" class="hide">Sum Packets</span>';
+                	return '<span id="label-sum-bytes-'+ dc.id + '" class="label-icon-badge hide"><i class="icon-circle"></i></span> \
+                		<span id="label-sum-packets-' + dc.id + '" class="label-icon-badge hide"><i class="icon-circle"></i></span>';
                 }
             }
         ];
@@ -2135,7 +2271,7 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
     	$(elementId).data("contrailGrid").destroy();
     }
     $(elementId).empty();
-	
+
     $(elementId).contrailGrid({
     	header: false,
     	columnHeader: {
@@ -2146,13 +2282,12 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
                 data: flowClassArray,
                 events: {
                 	onDataBoundCB: function() {
-                		var selectedFlows = queries['fs']['chartViewModel'].selectedFlows(),
-	                        count = selectedFlows.length, flowClassId;
-	                    for (var i = 0; i < count; i++) {
-	                        flowClassId = selectedFlows[i]['flowClassId'];
-	                        $('#fc-checkbox-' + flowClassId).prop('checked', true);
-	                        assignColors2FlowClass(selectedFlows[i]);
-	                    }
+                		var selectedFlows = queries['fs']['chartViewModel'].selectedFlows();
+
+                		$.each(selectedFlows, function(selectedFlowKey, selectedFlowValue){
+                			$('#fc-checkbox-' + selectedFlowValue.r).prop('checked', true);
+	                        assignColors2FlowClass(selectedFlowValue);
+                		});
                 	}
                 }
             }
@@ -2169,28 +2304,62 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
 };
 
 function assignColors2FlowClass(selectedFlow) {
-    var flowClassId = selectedFlow['flowClassId'];
+    var flowClassId = selectedFlow['r'];
     if (selectedFlow["sumBytes"] != null) {
+        $('#label-sum-packets-' + flowClassId).hide();
         $('#label-sum-bytes-' + flowClassId).show();
-        $('#label-sum-bytes-' + flowClassId).removeAttr("class");
-        $('#label-sum-bytes-' + flowClassId).addClass("badge " + selectedFlow["sumBytes"]);
+        $('#label-sum-bytes-' + flowClassId + ' i').removeAttr("class");
+        $('#label-sum-bytes-' + flowClassId + ' i').addClass('icon-circle ' + selectedFlow["sumBytes"]);
     } else if (selectedFlow["sumPackets"] != null) {
         $('#label-sum-bytes-' + flowClassId).hide();
         $('#label-sum-packets-' + flowClassId).show();
-        $('#label-sum-packets-' + flowClassId).removeAttr("class");
-        $('#label-sum-packets-' + flowClassId).addClass("badge " + selectedFlow["sumPackets"]);
+        $('#label-sum-packets-' + flowClassId + ' i').removeAttr("class");
+        $('#label-sum-packets-' + flowClassId + ' i').addClass("icon-circle " + selectedFlow["sumPackets"]);
     } else {
         $('#label-sum-bytes-' + flowClassId).hide();
         $('#label-sum-packets-' + flowClassId).hide();
     }
 };
 
-function plotFSChart(options, columnDisplay, fcGridDisplay) {
+function constructChartControlDropdown(queryPrefix, columnLabels) {
+	var chartControlTemplate = contrail.getTemplate4Id('chart-control-template');
+    var yAxisdata = [];
+    for(var i=0; i<queries[queryPrefix].chartViewModel.plotFields().length; i++){
+        yAxisdata.push({'id': i, 'text': columnLabels[queries[queryPrefix].chartViewModel.plotFields()[i]], value: queries[queryPrefix].chartViewModel.plotFields()[i]});
+    }
+    
+	$('#'+queryPrefix+'-chart').find('.chart-control').show().html(chartControlTemplate({elementId: queryPrefix+'-chart-list', options:yAxisdata}));
+    $('#' + queryPrefix+'-chart-list-0').addClass('dropdownSelected');
+    
+    $('#' + queryPrefix + '-chart-list').find('a').on('click', function(){
+    	var plotFields = [];
+    	plotFields.push($(this).data('value'));
+    	queries[queryPrefix].chartViewModel.plotFields(plotFields);
+    	if(queryPrefix == 'stat'){
+	    	createStatChart("#ts-chart", queries[queryPrefix].chart);
+    	}
+    	else{
+    		createFSChart("#ts-chart", queries[queryPrefix].chart);
+    	}
+    	
+    	$(this).parents('ul').find('a').removeClass('dropdownSelected');
+    	$(this).addClass('dropdownSelected');
+    })
+
+};
+
+function populateData4StatChart(options, columnDisplay, statChartGridDisplay) {
+    if(queries.stat.chartViewModel.plotFields().length == 0){
+        return;
+    }
     var query = queries[options.queryPrefix],
+    	queryPrefix = options.queryPrefix,
         queryId = options.queryId,
         chartUrl = '/api/admin/reports/query/chart-data?queryId=' + queryId,
         flowUrl = '/api/admin/reports/query/flow-classes?queryId=' + queryId,
-        flowClasses = null, chartDataReq, flowClassesReq;
+        flowClasses = null, chartDataReq, flowClassesReq, 
+        columnLabels = [];
+    
     chartDataReq = $.ajax({
         type:"GET",
         url:chartUrl,
@@ -2209,16 +2378,102 @@ function plotFSChart(options, columnDisplay, fcGridDisplay) {
             flowClasses = resultData;
         }
     });
+    
+    $.each(columnDisplay, function(columnKey, columnValue){
+    	columnLabels[columnValue.field] = columnValue.name;
+    });
+
+    constructChartControlDropdown(queryPrefix, columnLabels);
+    
+    $.when(chartDataReq, flowClassesReq).done(function () {
+        var validFCId = findFirstValidSCId(flowClasses), plotFields = [];
+        plotFields.push(queries.stat.chartViewModel.plotFields()[0]);
+        queries.stat.chartViewModel.plotFields(plotFields);
+        queries.stat.chartViewModel.statClasses(flowClasses);
+        queries.stat.chartViewModel.columnLabels(columnLabels);
+        queries.stat.chartViewModel.selectedFlows([{flowClassId: validFCId, sumBytes: null, sumPackets: null, r: 'id_0', colorIndex: 0}]);
+        queries.stat.chart = null;
+        $('#stat-chart-link').removeClass('disabled-link');
+        initStatclassGrid("#stat-flow-classes", flowClasses, statChartGridDisplay);
+        //createStatChart("#ts-chart", queries.stat.chart);
+    });
+};
+
+function populateData4FSChart(options, columnDisplay, fcGridDisplay) {
+    var query = queries[options.queryPrefix],
+    	queryPrefix = options.queryPrefix,
+        queryId = options.queryId,
+        chartUrl = '/api/admin/reports/query/chart-data?queryId=' + queryId,
+        flowUrl = '/api/admin/reports/query/flow-classes?queryId=' + queryId,
+        flowClasses = null, chartDataReq, flowClassesReq,
+        columnLabels = [];
+
+    chartDataReq = $.ajax({
+        type:"GET",
+        url:chartUrl,
+        timeout:options.timeOut,
+        dataType:"json",
+        success:function (resultData) {
+            query['chartData'] = resultData;
+        }
+    });
+    flowClassesReq = $.ajax({
+        type:"GET",
+        url:flowUrl,
+        timeout:options.timeOut,
+        dataType:"json",
+        success:function (resultData) {
+            flowClasses = resultData;
+        }
+    });
+
     $.when(chartDataReq, flowClassesReq).done(function () {
         var plotFields = getPlotFields(columnDisplay),
             validFCId = findFirstValidFCId(flowClasses);
         queries.fs.chartViewModel.flowClasses(flowClasses);
         queries.fs.chartViewModel.plotFields(plotFields);
-        queries.fs.chartViewModel.selectedFlows([{flowClassId: validFCId, sumBytes: null, sumPackets: null}]);
+        queries.fs.chartViewModel.selectedFlows([{flowClassId: validFCId, sumBytes: null, sumPackets: null, r: 'id_0', colorIndex: 0}]);
         queries.fs.chart = null;
         $('#fs-chart-link').removeClass('disabled-link');
         initFlowclassGrid("#fs-flow-classes", flowClasses, fcGridDisplay);
+        
+        $.each(columnDisplay, function(columnKey, columnValue){
+        	columnLabels[columnValue.field] = columnValue.name;
+        });
+
+        constructChartControlDropdown(queryPrefix, columnLabels);
     });
+};
+
+function createStatChart(selector, chart) {
+    var plotFields = queries.stat.chartViewModel.plotFields(),
+        options = queries.stat.chartViewModel.options(),
+        selectedFlows = queries.stat.chartViewModel.selectedFlows(),
+        fsChartData = queries['stat']['chartData'],
+        plotData = null, color;
+
+    if (!isEmptyObject(fsChartData) && fsChartData != null) {
+        for (var i = 0; i < selectedFlows.length; i++) {
+            var selectedFlow = selectedFlows[i],
+                flowClassId = selectedFlow['flowClassId'];
+            color = d3_category5[selectedFlow.colorIndex];
+            selectedFlow["sumBytes"] = "icon-badge-color-" + selectedFlow.colorIndex;
+            assignColors2FlowClass(selectedFlow);
+            if (i == 0) {
+                plotData = addStatMissingPoints(fsChartData[flowClassId], options, plotFields, color, i + 1);
+            } else {
+                plotData = plotData.concat(addStatMissingPoints(fsChartData[flowClassId], options, plotFields, color, i + 1));
+            }
+        }
+        options['height'] = 300;
+        options['yAxisLabel'] = $('a[data-value="' + plotFields[0] + '"]').text();
+        options['y2AxisLabel'] = '';
+        if(plotFields.indexOf('sum_bytes') != -1) {
+            initTrafficTSChart(selector, plotData, options, chart, "formatSumBytes", "formatSumBytes");
+        } else {
+            initTrafficTSChart(selector, plotData, options, chart, "formatSumPackets", "formatSumPackets");
+        }
+    }
 };
 
 function createFSChart(selector, chart) {
@@ -2232,11 +2487,11 @@ function createFSChart(selector, chart) {
         for (var i = 0; i < selectedFlows.length; i++) {
             selectedFlow = selectedFlows[i];
             flowClassId = selectedFlow['flowClassId'];
-            color = d3_category5[i];
+            color = d3_category5[selectedFlow.colorIndex];
             if (plotFields.indexOf("sum_bytes") != -1) {
-                selectedFlow["sumBytes"] = "badge-color-" + i;
+                selectedFlow["sumBytes"] = "icon-badge-color-" + selectedFlow.colorIndex;
             } else if (plotFields.indexOf("sum_packets") != -1) {
-                selectedFlow["sumPackets"] = "badge-color-" + i;
+                selectedFlow["sumPackets"] = "icon-badge-color-" + selectedFlow.colorIndex;
             }
             assignColors2FlowClass(selectedFlow);
             if (i == 0) {
@@ -2246,7 +2501,7 @@ function createFSChart(selector, chart) {
             }
         }
         options['height'] = 300;
-        options['yAxisLabel'] = '';
+        options['yAxisLabel'] = $('a[data-value="' + plotFields[0] + '"]').text();
         options['y2AxisLabel'] = '';
         if(plotFields.indexOf('sum_bytes') != -1) {
             initTrafficTSChart(selector, plotData, options, chart, "formatSumBytes", "formatSumBytes");
@@ -2255,7 +2510,90 @@ function createFSChart(selector, chart) {
         }
     }
 };
+function getAvailableColorIndices(queryPrefix){
+    var selectedFlows = queries[queryPrefix].chartViewModel.selectedFlows(),
+        availableColorIndices = [0,1,2,3,4];
 
+    $.each(selectedFlows, function(selectedFlowKey, selectedFlowValue) {
+        availableColorIndices.splice(availableColorIndices.indexOf(selectedFlowValue.colorIndex), 1);
+    });
+    return availableColorIndices;
+}
+
+function addStatMissingPoints(tsData, options, plotFields, color, counter) {
+	var queryFromTime = options.fromTime,
+		queryToTime = options.toTime,
+		responseFromTime = Object.keys(tsData)[0],
+		responseToTime = Object.keys(tsData)[Object.keys(tsData).length - 1];
+	
+    var interval = options.interval * 1000,
+        plotData = [], addPoint, flowClassId = null,
+        values4pf = {};
+    for(var i=0; i< plotFields.length; i++){
+        var key = plotFields[i];
+        values4pf[key] = [];
+    }
+
+    /* 
+     * Setting Flow Class ID
+     */
+    for (key in tsData) {
+        if (tsData[key]['stat_flow_class_id'] != null) {
+            flowClassId = tsData[key]['stat_flow_class_id'];
+            break;
+        }
+    }
+    
+    /* 
+     * Setting zero values
+     */
+    var fromTimeDiff = responseFromTime - queryFromTime,
+    	toTimeDiff = queryFromTime - responseToTime,
+    	startPlotFields = [],
+    	endPlotFields = [];
+    
+    if(fromTimeDiff > interval){
+    	startPlotFields.push({x:queryFromTime + interval, y: 0, 'stat_flow_class_id':flowClassId});
+    }
+    if(fromTimeDiff > (2 * interval)){
+    	startPlotFields.push({x:responseFromTime - interval, y: 0, 'stat_flow_class_id':flowClassId});
+    }
+    if(toTimeDiff > interval){
+    	endPlotFields.push({x:queryToTime, y: 0, 'stat_flow_class_id':flowClassId})
+    }
+    if(toTimeDiff > (2 * interval)){
+    	endPlotFields.push({x:responseToTime + interval, y: 0, 'stat_flow_class_id':flowClassId})
+    }
+    
+    /* 
+     * Populating response values
+     */
+    for (var k = 0; k < plotFields.length; k++) {
+    	values4pf[plotFields[k]] = startPlotFields.concat(values4pf[plotFields[k]]);
+    	
+    	$.each(tsData,function(tsDataKey, tsDataValue){
+    		addPoint = {'x':parseInt(tsDataKey), 'stat_flow_class_id':flowClassId};
+            if (tsData[tsDataKey.toString()] != null) {
+                addPoint['y'] = tsData[tsDataKey][plotFields[k]];
+            } else {
+                addPoint['y'] = 0;
+            }
+            values4pf[plotFields[k]].push(addPoint);
+    	});
+    	values4pf[plotFields[k]] = values4pf[plotFields[k]].concat(endPlotFields);
+    }
+    var columnLabels = queries.stat.chartViewModel.columnLabels();
+    $.each(values4pf, function(index, value) {
+        plotData.push({'key': "#" + counter + ': '+columnLabels[index], color: color, values: value});
+    });
+//    if(sumBytes.length > 0) {
+//        plotData.push({'key': "#" + counter + ': Sum Bytes', color: color, values: sumBytes});
+//    } else if(sumPackets.length > 0) {
+//        plotData.push({'key': "#" + counter + ': Sum Packets', color: color, values: sumPackets});
+//    }
+    
+    return plotData;
+};
 function addMissingPoints(tsData, options, plotFields, color, counter) {
     var fromTime = options.fromTime,
         toTime = options.toTime,
@@ -2445,8 +2783,7 @@ function populateSelect(queryPrefix, selectArray, defaultColumns) {
 };
 
 function populateTimeGranularity(queryPrefix, selectFields, tg, tgUnit) {
-    initTimeGranularity(selectFields, queries[queryPrefix], queryPrefix);
-    if (tg != '' && tgUnit != '') {
+    if (initTimeGranularity(selectFields, queries[queryPrefix], queryPrefix) && tg != '' && tgUnit != '') {
         $('#' + queryPrefix + '-tg-value').data('contrailNumericTextbox').value(tg);
         $('#' + queryPrefix + '-tg-units').select2('val', tgUnit);
     }
@@ -2662,10 +2999,14 @@ function initTimeGranularity(checkedFields, query, queryPrefix) {
         $(tgValueId).removeAttr('validationMessage');
         $(tgValueId).attr('required', 'required');
         $(tgValueId).attr('validationMessage', 'Time Granularity Required.');
+        
+        return true;
     } else {
         query.queryViewModel.isTGVisible(false);
         $(tgValueId).removeAttr('required');
         $(tgValueId).removeAttr('validationMessage');
+        
+        return false;
     }
 };
 

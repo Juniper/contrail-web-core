@@ -1515,3 +1515,61 @@ color: #b94a48;
   content : url(../img/subnet.png);
   vertical-align : middle;
 }
+
+.chart-control-nav {
+    margin-bottom: 0;
+}
+.chart-control-icon {
+    color: #555;
+    padding: 0 5px;
+}
+.chart-control-menu {
+    right:0;
+    left:auto;
+    top:27px;
+}
+.chart-control-menu a {
+    color: #555;
+}
+.chart-control-menu a.dropdownSelected {
+    font-weight: 600;
+    color: #3182bd;
+}
+
+.flow-class-chart .colmask {
+    position:relative;		/* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
+    clear:both;
+    float:left;
+    width:100%;			/* width of whole page */
+    overflow:hidden;	/* This chops off any overhanging divs */
+}
+.flow-class-chart .rightmenu {
+
+}
+.flow-class-chart .rightmenu .colleft {
+    float:left;
+    width:200%;
+    margin-left:-33px;
+    position:relative;
+    right:100%;
+    background:#fff;
+}
+.flow-class-chart .rightmenu .col1wrap {
+    float:left;
+    width:50%;
+    position:relative;
+    left:50%;
+    padding-bottom:1em;
+}
+.flow-class-chart .rightmenu .col1 {
+    margin:0 0 0 40px;
+    overflow:hidden;
+}
+.flow-class-chart .rightmenu .col2 {
+    float: right;
+    width: 30px;
+    position: relative;
+    left: 32px;
+    background:#eee;
+    height: 282px;
+}
