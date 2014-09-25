@@ -4,7 +4,8 @@
 (function($) {
     $.ui.tabs.prototype._tabKeydown = function(event){
         return;
-    }
+    };
+
     $.fn.contrailAutoComplete = function(option){
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
@@ -58,7 +59,7 @@
             option: option,
             setMinDateTime: function(minDateTime) {
                 self.data('contrailDateTimePicker').option.minDate = moment(minDateTime).format('MMM DD, YYYY');
-                self.data('contrailDateTimePicker').option.minTime = moment(minDateTime).format('hh:mm:ss A');;
+                self.data('contrailDateTimePicker').option.minTime = moment(minDateTime).format('hh:mm:ss A');
 
                 self.addClass('datetimepicker')
                     .datetimepicker(self.data('contrailDateTimePicker').option);
@@ -329,7 +330,7 @@
 			beforeMoveOneToLeft: function(){ return true; },
 			afterMoveOneToLeft: function(){},
 			beforeMoveAllToLeft: function(){ return true; },
-			afterMoveAllToLeft: function(){},
+			afterMoveAllToLeft: function(){}
         };
         var options = $.extend({}, defaultOptions, givenOptions);
         constructContrail2WayMultiselect(this, options);
@@ -513,13 +514,22 @@
         }
 
         config.onInit = function (event, currentIndex) {
-            if(contrail.checkIfFunction(steps[currentIndex].onInitFromPrevious)) {
-                steps[currentIndex].onInitFromPrevious(config.params);
+            $.each(steps, function(stepKey, stepValue){
+                if(contrail.checkIfFunction(stepValue.onInitWizard)) {
+                    stepValue.onInitWizard();
+                    stepsInitFlag[stepKey] = true;
+                }
+            });
+
+            if(!stepsInitFlag[currentIndex]){
+                if(contrail.checkIfFunction(steps[currentIndex].onInitFromPrevious)) {
+                    steps[currentIndex].onInitFromPrevious(config.params);
+                }
+                if(contrail.checkIfFunction(steps[currentIndex].onInitFromNext)) {
+                    steps[currentIndex].onInitFromNext(config.params);
+                }
+                stepsInitFlag[currentIndex] = true;
             }
-            if(contrail.checkIfFunction(steps[currentIndex].onInitFromNext)) {
-                steps[currentIndex].onInitFromNext(config.params);
-            }
-            stepsInitFlag[currentIndex] = true;
 
             if(contrail.checkIfFunction(steps[currentIndex].onLoadFromPrevious)) {
                 steps[currentIndex].onLoadFromPrevious(config.params);
@@ -527,11 +537,20 @@
             if(contrail.checkIfFunction(steps[currentIndex].onLoadFromNext)) {
                 steps[currentIndex].onLoadFromNext(config.params);
             }
+            showStepButtons(steps[currentIndex].showButtons);
         };
 
         config.onStepChanged = function(event, currentIndex, priorIndex) {
+            var currentStepLiElement = self.find('.steps').find('li:eq(' + currentIndex + ')');
             if(currentIndex < priorIndex) {
                 self.find('.steps').find('li:eq(' + priorIndex + ')').removeClass('done');
+                currentStepLiElement.removeClass('completed');
+            }
+            else if(currentIndex > priorIndex) {
+
+                if(!currentStepLiElement.hasClass('subStep')) {
+                    currentStepLiElement = self.find('.steps').find('li.done').addClass('completed')
+                }
             }
 
             if(!stepsInitFlag[currentIndex]) {
@@ -550,21 +569,25 @@
             else if(currentIndex < priorIndex && contrail.checkIfFunction(steps[currentIndex].onLoadFromPrevious)) {
                 steps[currentIndex].onLoadFromPrevious(config.params);
             }
+            showStepButtons(steps[currentIndex].showButtons);
         };
 
         config.onStepChanging = function (event, currentIndex, newIndex) {
 
+            var returnFlag = true;
             // Next Button clicked
             if(currentIndex < newIndex && contrail.checkIfFunction(steps[currentIndex].onNext)) {
-                return steps[currentIndex].onNext(config.params);
+                returnFlag = steps[currentIndex].onNext(config.params);
             }
             // Previous Button Clicked
             else if(currentIndex > newIndex && contrail.checkIfFunction(steps[currentIndex].onPrevious)) {
-                return steps[currentIndex].onPrevious(config.params);
+                returnFlag = steps[currentIndex].onPrevious(config.params);
             }
-            else {
-                return true;
+
+            if(returnFlag) {
+                self.find('.steps').find('li:eq(' + newIndex + ')').removeClass('completed');
             }
+            return returnFlag;
         };
 
         config.onFinished = function (event, currentIndex) {
@@ -573,11 +596,52 @@
 
         self.steps(config);
 
-        self.data('contrailWizard', {
-            destroy: function() {
-                self.steps('destroy');
+        self.find('.actions').find('a').addClass('btn btn-mini')
+        self.find('.actions').find('a[href="#next"]').addClass('btn-primary');
+        self.find('.actions').find('a[href="#finish"]').addClass('btn-primary');
+
+        $('.wizard > .steps > ul > li').css({
+            'max-width': (100/steps.length) + '%'
+        });
+
+        var stepIndex = 0;
+        $('.wizard > .steps ul li').each(function(key, value){
+            if(steps[key].stepType == 'sub-step'){
+                $(this).addClass('subStep');
+                $(this).find('.number').text('');
+                $(this).find('.title').text('');
+
+            }
+            else {
+                $(this).find('.number').text(++stepIndex);
             }
         })
+
+        function showStepButtons(showButtons){
+            self.find('.actions').find('a').parent('li[aria-hidden!="true"]').show();
+            if(contrail.checkIfExist(showButtons)) {
+                $.each(showButtons, function (showButtonKey, showButtonValue) {
+                    if (!showButtonValue) {
+                        self.find('.actions').find('a[href="#' + showButtonKey + '"]').parent('li').hide();
+                    }
+                });
+            }
+        }
+
+        self.data('contrailWizard', $.extend(true, {}, getDefaultStepsMethods(), {}));
+
+        function getDefaultStepsMethods() {
+            var methodObj = {},
+                defaultMethods = ['next', 'previous', 'finish', 'destroy', 'skip'];
+
+            $.each(defaultMethods, function (defaultMethodKey, defaultMethodValue) {
+                methodObj[defaultMethodValue] = function () {
+                    return self.steps(defaultMethodValue);
+                };
+            });
+
+            return methodObj;
+        }
     };
 
     $.fn.contrailCheckedMultiselect = function (config) {

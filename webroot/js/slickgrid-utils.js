@@ -91,8 +91,7 @@ function getDefaultGridConfig() {
             headerTemplate, remoteConfig = {}, ajaxConfig,
             dvConfig = null, gridContainer = this, 
             eventHandlerMap = {grid: {}, dataView: {}}, 
-            scrolledStatus = {scrollLeft: 0, scrollTop: 0},
-            checkboxSelector;
+            scrolledStatus = {scrollLeft: 0, scrollTop: 0};
 
         // Extending the params with default settings
         $.extend(true, gridConfig, defaultGridConfig, customGridConfig);
@@ -194,11 +193,6 @@ function getDefaultGridConfig() {
             else{
             	gridContainer.data('contrailGrid').removeGridMessage();
             }
-        }
-
-        if (gridOptions.slickCheckboxSelectable == true) {
-            grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
-            grid.registerPlugin(checkboxSelector);
         }
 
         function searchFilter(item, args) {
@@ -421,15 +415,7 @@ function getDefaultGridConfig() {
                     		(contrail.checkIfExist(onNothingChecked) ? onNothingChecked() : '');
                     	}
 	                });
-	            } else if (gridOptions.slickCheckboxSelectable == true) {
-                    columns = [];
-                    checkboxSelector = new Slick.CheckboxSelectColumn({
-                        cssClass: "slick-cell-checkboxsel"
-                    });
-                    columns.push(checkboxSelector.getColumnDefinition());
-                    columns = columns.concat(gridColumns);
-                    gridColumns = columns;
-                }
+	            }
 
 	            if (gridOptions.detail != false) {
 	                columns = [];
@@ -747,7 +733,7 @@ function getDefaultGridConfig() {
             eventHandlerMap.dataView['onUpdateData'] = function () {
                 //Refresh the grid only if it's not destroyed
                 if($(gridContainer).data('contrailGrid')) {
-                    grid.invalidateAllRows();
+                	grid.invalidateAllRows();
                 	grid.updateRowCount();
                     grid.render();
                     if(contrail.checkIfFunction(gridDataSource.events.onUpdateDataCB)) {
@@ -1116,7 +1102,9 @@ function getDefaultGridConfig() {
 
         function addGridHeaderAction(key, actionConfig, gridContainer) {
             var actionId = gridContainer.prop('id') + '-header-action-' + key;
-            var action = $('<div class="widget-toolbar pull-right"><a class="widget-toolbar-icon" title="' + actionConfig.title + '">' +
+            var action = $('<div class="widget-toolbar pull-right"><a ' + (contrail.checkIfExist(actionConfig.linkElementId) ? 'id="' + actionConfig.linkElementId + '" ' : '') +
+                ' class="widget-toolbar-icon' + (contrail.checkIfExist(actionConfig.disabledLink) ? ' disabled-link' : '') + '" ' +
+                'title="' + actionConfig.title + '">' +
                 '<i class="' + actionConfig.iconClass + '"></i></a>' +
                 '</div>').appendTo('#' + gridContainer.prop('id') + '-header');
 
@@ -1128,7 +1116,8 @@ function getDefaultGridConfig() {
         function addGridHeaderActionDroplist(key, actionConfig, gridContainer) {
             var actions = actionConfig.actions,
                 actionId = gridContainer.prop('id') + '-header-action-' + key;
-            var actionsTemplate = '<div class="widget-toolbar pull-right"><a class="dropdown-toggle" data-toggle="dropdown" href="#">' +
+            var actionsTemplate = '<div class="widget-toolbar pull-right"><a ' + (contrail.checkIfExist(actionConfig.linkElementId) ? 'id="' + actionConfig.linkElementId + '" ' : '') +
+                'class="dropdown-toggle' + (contrail.checkIfExist(actionConfig.disabledLink) ? ' disabled-link' : '" data-toggle="dropdown') + '">' +
                 '<i class="' + actionConfig.iconClass + '"></i></a>' +
                 '<ul id="' + actionId + '" class="pull-right dropdown-menu dropdown-caret">' +
                 '</ul></div>';
