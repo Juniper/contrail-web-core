@@ -722,8 +722,8 @@ function getDefaultGridConfig() {
                     grid.invalidateAllRows();
                     grid.updateRowCount();
                     grid.render();
-                    if(contrail.checkIfFunction(gridDataSource.events.onUpdateDataCB)) {
-                        gridDataSource.events.onUpdateDataCB();
+                    if(contrail.checkIfFunction(gridDataSource.events.onDataUpdate)) {
+                        gridDataSource.events.onDataUpdate();
                     }
                     if(gridDataSource.dataView != null && gridDataSource.dataView.getItems().length == 0)
                         gridContainer.data('contrailGrid').showGridMessage('empty');
