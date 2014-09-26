@@ -236,5 +236,14 @@ config.logs.level = 'debug';
 ******************************************************************************/
 config.getDomainProjectsFromApiServer = false;
 
+/*****************************************************************************
+* Boolean flag Address_from_start indicates the gateway ip of the subnet.
+* Allowed values : true / false
+* Set this flag to true if Gateway's IP Address has to be genarated from first,
+* set to false to fetch the last IP Address.
+*****************************************************************************/
+config.network = {};
+config.network.address_from_start = true;
+
 // Export this as a module.
 module.exports = config;
