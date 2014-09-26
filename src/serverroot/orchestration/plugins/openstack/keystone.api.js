@@ -687,6 +687,25 @@ function getAPIServerAuthParamsByReq (req)
 
 function getUserRoleListPerTenant (req, callback)
 {
+    var project = req.param('project');
+
+    if (null != project) {
+        var tenantList = [];
+        tenantList[0] = {};
+        tenantList[0]['name'] = project;
+        authApi.getDecryptedUserBySessionId(req.session.id,
+                                            function(err, authData) {
+            if ((err) || (null == authData)) {
+                commonUtils.redirectToLogout(req, req.res);
+                return;
+            }
+            getUserRoleByAllTenants(authData.username, authData.password,
+                                    tenantList, function(roles, data) {
+                callback(err, data);
+            });
+        });
+        return;
+    }
     getTenantListByToken(req.session.last_token_used, function(err, data) {
         /* Got all the tenant-list */
         if ((err) || (null == data) || (null == data.tenants)) {
