@@ -1284,6 +1284,14 @@ function getWebServerInfo (req, res, appData)
     commonUtils.handleJSONResponse(null, res, serverObj);
 }
 
+function getUserRoleListPerTenant (req, res, callback)
+{
+    var authApi = require('../common/auth.api');
+    authApi.getUserRoleListPerTenant(req, function(err, data) {
+        commonUtils.handleJSONResponse(null, res, data);
+    });
+}
+
 function mergeAllPackageList (serverType)
 {
     var pkgList = [];
@@ -1726,4 +1734,5 @@ exports.mergeAllPackageList = mergeAllPackageList;
 exports.compareAndMergeDefaultConfig = compareAndMergeDefaultConfig;
 exports.mergeAllMenuXMLFiles = mergeAllMenuXMLFiles;
 exports.getPkgPathByPkgName = getPkgPathByPkgName;
+exports.getUserRoleListPerTenant = getUserRoleListPerTenant;
 

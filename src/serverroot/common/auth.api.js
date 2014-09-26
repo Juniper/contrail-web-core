@@ -191,6 +191,13 @@ function getServiceCatalog (req, callback)
     });
 }
 
+function getUserRoleListPerTenant (req, callback)
+{
+    authMethodApi.getUserRoleListPerTenant(req, function(err, data) {
+        callback(err, data);
+    });
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.saveUserAuthInRedis = saveUserAuthInRedis;
 exports.getTenantList = getTenantList;
@@ -203,4 +210,6 @@ exports.getAPIServerAuthParams = getAPIServerAuthParams;
 exports.createAuthKeyBySessionId = createAuthKeyBySessionId;
 exports.formatTenantList = formatTenantList;
 exports.getServiceCatalog = getServiceCatalog;
+exports.getUserRoleListPerTenant = getUserRoleListPerTenant;
+
 
