@@ -143,6 +143,10 @@ function infraMonitorClass() {
             self.updateInfoBoxes();
             self.updateAlerts();
         });
+        //if cached data is available trigger event to update
+        if(result['lastUpdated'] != null && (result['error'] == null || result['error']['errTxt'] == 'abort')){
+            triggerDatasourceEvents(nodeDS);
+        }
         infoBoxObj['viewModel'].downCnt.subscribe(function(newValue) {
             showHideDownNodeCnt();
         });
