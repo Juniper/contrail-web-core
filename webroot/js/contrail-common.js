@@ -56,6 +56,8 @@ function Contrail() {
             reqTimeOut = config['timeout'], dataUrl = config['url'],
             postData = config['data'], ajaxConfig = {};
 
+        ajaxConfig.async = contrail.checkIfExist(config.async) ? config.async : true;
+
         cacheEnabled = (cacheEnabled) == null ? false : cacheEnabled;
 
         if(initHandler != null) {

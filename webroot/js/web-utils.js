@@ -28,7 +28,7 @@ if(typeof(built_at) == 'undefined')
 var TENANT_API_URL = "/api/tenant/get-data";
 var SANDESH_DATA_URL = "/api/admin/monitor/infrastructure/get-sandesh-data";
 var INDENT_RIGHT = "&nbsp;&nbsp;&nbsp;&nbsp;";
-var INST_PAGINATION_CNT = 5;
+var INST_PAGINATION_CNT = 50;
 var NETWORKS_PAGINATION_CNT = 5;
 var sevLevels = {
     ERROR   : 0, //Red
@@ -107,14 +107,20 @@ function initializePrototypes() {
     }
 }
 
-function collapseElement(e) {
+function collapseElement(e,collapseDivID) {
     if($(e).prop("tagName").toUpperCase() == "I"){
         $(e).toggleClass('icon-caret-right').toggleClass('icon-caret-down');
     } else {
         $(e).find("i").toggleClass('icon-caret-right').toggleClass('icon-caret-down');
     }
-    var widgetBodyElem = $(e).parents('div.widget-box').find('div.widget-body');
-    var widgetBoxElem = $(e).parents('div.widget-box');
+    //var widgetBodyElem = $(e).parents('div.widget-box').find('div.widget-body');
+    var widgetBoxElem;
+    if(collapseDivID != null && collapseDivID != "" && collapseDivID != undefined){
+        widgetBoxElem = $(collapseDivID);
+       // widgetBoxElem.toggleClass('hide');	
+    }
+    else 
+        widgetBoxElem = $(e).parents('div.widget-box');
     $(widgetBoxElem).toggleClass('collapsed');	
 }
 

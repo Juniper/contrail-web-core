@@ -2310,6 +2310,7 @@ button.btn:active {
 .margin-15 {margin:15px !important;}
 .margin-15-0 {margin:15px 0 !important;}
 .margin-15-0-0 {margin:15px 0 0 !important;}
+.margin-0-0-15 {margin:0 0 15px !important;}
 .margin-20 {margin:20px !important;}
 .margin-20-0 {margin:20px 0 !important;}
 .margin-20-0-0 {margin:20px 0 0 !important;}
@@ -2328,6 +2329,8 @@ button.btn:active {
 .padding-2-0 {padding:2px 0 !important;}
 .padding-5 {padding:5px !important;}
 .padding-5-0 {padding:5px 0 !important;}
+.padding-6-0 {padding:6px 0 !important;}
+.padding-0-0-5 {padding: 0 0 5px !important;}
 .padding-10 {padding:10px !important;}
 .padding-10-0 {padding:10px 0 !important;}
 .padding-15 {padding:15px !important;}

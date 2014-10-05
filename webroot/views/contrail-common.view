@@ -440,9 +440,9 @@
     {{#IfCompare sevLevel sevLevels.ERROR }} 
         <span class="status-badge-rounded-small status-inactive"></span>
     {{else}}
-        {{#IfCompare sevLevel sevLevels.WARNING}} 
-            <span class="status-badge-rounded-small status-partially-active"></span>
-        {{/IfCompare}}
+    {{#IfCompare sevLevel sevLevels.WARNING}} 
+        <span class="status-badge-rounded-small status-partially-active"></span>
+    {{/IfCompare}}
     {{/IfCompare}}
 </script>
 
@@ -463,7 +463,11 @@
                                     {{#if this.value}}
                                         {{{this.value}}}
                                     {{else}}
-                                         --
+                                        {{#IfCompare this.value '0' options='=='}}
+                                            0
+                                        {{else}}
+                                         	--
+                                        {{/IfCompare}}
                                     {{/if}}
                                 </div>
                             </label>
@@ -490,6 +494,6 @@
     				<option value="{%22parent%22:%22{{../id}}%22,%22value%22:%22{{id}}%22}" {{#IfCompare selected true operator='==' }}selected="true"{{/IfCompare}}>{{text}}</option>
 				{{/each}}
   			</optgroup> 
-		{{/each}}   
+                        {{/each}}
 	</select>
 </script>

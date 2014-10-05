@@ -1509,7 +1509,10 @@ input.datetimepicker{
 /* a Links */
 a.disabled-link, a.disabled-link:hover{
 	color: #ccc;
-	cursor: default !important;
+	cursor: initial !important;
+}
+a.disabled-link i {
+    cursor: default;
 }
 .disabledBtn, .disabledBtn:hover {
     background-color: #898989 !important;
@@ -2012,14 +2015,15 @@ color: #b94a48;
     right: 0;
     padding: 8px 0px;
     border-radius: 32px;
-    content: "\f00c";
     background-color: #FFF;
     z-index: 103;
+}
+.wizard > .steps ul li.completed .number:before {
+    content: "\f00c";
     font-family: FontAwesome;
     font-size: 17px;
     color: #87BA21;
 }
-
 .wizard > .steps ul li.subStep.done .number:before {
     display: none;
 }
@@ -2040,7 +2044,8 @@ color: #b94a48;
     color: #2B3D53;
 }
 .wizard > .content {
-    min-height: 270px;
+    min-height: 257px;
+    margin: 0;
     overflow-y: auto;
     background-color: #fff;
 }
@@ -2098,3 +2103,13 @@ color: #b94a48;
 .ui-multiselect-hasfilter ul { position:relative; top:2px }
 .ui-multiselect-filter { float:left; font-size:11px; margin: 2px; width: 94%;}
 .ui-multiselect-filter input { width:100%; font-size:10px; height:15px; padding:2px; border:1px solid #dadada; -webkit-appearance:textfield; -webkit-box-sizing:content-box; }
+
+/* Section View Styles */
+.modal-body > form > .section-content {
+    padding: 1em 1.5em;
+}
+.row-fluid.form-input-label [class*="span"],
+.row-fluid.form-dropdown-label [class*="span"],
+.row-fluid.form-multiselect-label [class*="span"] {
+    min-height: 25px;
+}
