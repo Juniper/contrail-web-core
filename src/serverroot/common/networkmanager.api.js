@@ -9,12 +9,12 @@
 var config = process.mainModule.exports['config'];
 var orch = require('../orchestration/orchestration.api');
 
-var orchModel = orch.getOrchestrationModel();
+var orchModels = orch.getOrchestrationModels();
 
 var nwMgrApi;
-if (orchModel == 'openstack') {
+if (orchModels.indexOf('openstack') != -1) {
     nwMgrApi = require('../orchestration/plugins/openstack/neutron.api');
-} else if ('none' == orchModel) {
+} else if (orchModels.indexOf('none') != -1) {
     nwMgrApi = require('../orchestration/plugins/no-orch/noOrchestration.api');
 }
 

@@ -17,16 +17,19 @@ var config = process.mainModule.exports['config'],
     orch = require('../orchestration/orchestration.api'),
     global = require('./global');
 
-var authMethodApi;
-var orchModel = orch.getOrchestrationModel();
-if (orchModel == 'openstack') {
-    authMethodApi = require('../orchestration/plugins/openstack/keystone.api');
-} else if ('cloudstack' == orchModel) {
-    authMethodApi =
-        require('../orchestration/plugins/cloudstack/cloudstack.authApi');
-} else {
-    authMethodApi =
-        require('../orchestration/plugins/no-orch/noOrchestration.api');
+var keystoneAuthApi = require('../orchestration/plugins/openstack/keystone.api');
+var cloudstackAuthApi  =
+    require('../orchestration/plugins/cloudstack/cloudstack.authApi');
+var noOrchestrationAuthApi  =
+    require('../orchestration/plugins/no-orch/noOrchestration.api');
+var vCenterAuthApi = 
+    require('../orchestration/plugins/vcenter/vcenter.authApi');
+
+var getAuthMethod = {
+    'vcenter': vCenterAuthApi,
+    'openstack': keystoneAuthApi,
+    'cloudstack' : cloudstackAuthApi,
+    'none'       : noOrchestrationAuthApi
 }
 
 /* Function: createUserAuthObj
@@ -58,41 +61,44 @@ function createAuthKeyBySessionId (sessionId)
   * 2. public function
   */
 function doAuthenticate (req, res, appData, callback) {
-    authMethodApi.authenticate(req, res, appData, function(err, data) {
+    getAuthMethod[req.session.loggedInOrchestrationMode].authenticate(req, res,
+                                                                      appData, function(err, data) {
         callback(err, data);
     });
 }
 
 function getTokenObj (authObj, callback)
 {
-    authMethodApi.getToken(authObj, function(err, data) { 
+    var req = authObj.req 
+    getAuthMethod[req.session.loggedInOrchestrationMode].getToken(authObj, function(err, data) { 
         callback(err, data);
     });
 }
 
 function getTenantList (req, callback)
 {
-    authMethodApi.getTenantList(req, function(err, data) {
+    getAuthMethod[req.session.loggedInOrchestrationMode].getTenantList(req, function(err, data) {
         callback(err, data);
     });
 }
 
 function getProjectList (req, appData, callback)
 {
-    authMethodApi.getProjectList(req, appData, function(err, data) {
+    getAuthMethod[req.session.loggedInOrchestrationMode].getProjectList(req, appData, function(err, data) {
         callback(err, data);
     });
 }
 
 function getDomainList (req, callback)
 {
-    authMethodApi.getDomainList(req, function(err, data) {
+    getAuthMethod[req.session.loggedInOrchestrationMode].getDomainList(req, function(err, data) {
         callback(err, data);
     });
 }
 
 function getNewTokenObjByToken (authObj, callback) {
-    authMethodApi.getUserAuthDataByAuthObj(authObj,
+    var req = authObj.req 
+    getAuthMethod[req.session.loggedInOrchestrationMode].getUserAuthDataByAuthObj(authObj,
                                        function(err, data) {
         callback(err, data);
     });
@@ -100,17 +106,17 @@ function getNewTokenObjByToken (authObj, callback) {
 
 function checkAndUpdateDefTenantToken (req, tenantId, data)
 {
-    return authMethodApi.updateDefTenantToken(req, tenantId, data);
+    return getAuthMethod[req.session.loggedInOrchestrationMode].updateDefTenantToken(req, tenantId, data);
 }
 
 function getAPIServerAuthParams (req)
 {
-    return authMethodApi.getAPIServerAuthParamsByReq(req);
+    return getAuthMethod[req.session.loggedInOrchestrationMode].getAPIServerAuthParamsByReq(req);
 }
 
 function formatTenantList (projectLists, apiProjects, callback)
 {
-    authMethodApi.formatTenantList(projectLists, apiProjects, 
+    getAuthMethod[req.session.loggedInOrchestrationMode].formatTenantList(req, projectLists, apiProjects, 
                                    function (projects) {
         callback(projects);
     });
@@ -118,34 +124,37 @@ function formatTenantList (projectLists, apiProjects, callback)
 
 function isDefaultDomain (request, domain)
 {
-    return authMethodApi.isDefaultDomain(request, domain);
+    return getAuthMethod[request.session.loggedInOrchestrationMode].isDefaultDomain(request, domain);
 }
 
 function getDefaultDomain (req)
 {
-    return authMethodApi.getDefaultDomain(req);
+    return getAuthMethod[req.session.loggedInOrchestrationMode].getDefaultDomain(req);
 }
 
 function getServiceCatalog (req, callback)
 {
-    authMethodApi.getServiceCatalog(req, function(data) {
+    getAuthMethod[req.session.loggedInOrchestrationMode].getServiceCatalog(req, function(data) {
         callback(data);
     });
 }
 
-function getUIRolesByExtRoles (extRoles)
+function getUIRolesByExtRoles (req, extRoles)
 {
-    return authMethodApi.getUserRoleByAuthResponse(extRoles);
+    return getAuthMethod[req.session.loggedInOrchestrationMode].getUserRoleByAuthResponse(extRoles);
 }
 
 function getCookieObjs (req, appData, callback)
 {
-    return authMethodApi.getCookieObjs(req, appData, callback);
+    return getAuthMethod[req.session.loggedInOrchestrationMode].getCookieObjs(req, appData, callback);
 }
 
 function getSessionExpiryTime (req, appData, callback)
 {
-    return authMethodApi.getSessionExpiryTime(req, appData, callback);
+    if (null != req.session.loggedInOrchestrationMode) {
+        return getAuthMethod[req.session.loggedInOrchestrationMode].getSessionExpiryTime(req, appData, callback);
+    }
+    return null;
 }
 
 exports.doAuthenticate = doAuthenticate;

@@ -334,6 +334,7 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
                 domain: req.cookies.domain,
                 project: req.cookies.project,
             },
+			loggedInOrchestrationMode: req.session.loggedInOrchestrationMode,
 			appData: appData
 		}
 	};

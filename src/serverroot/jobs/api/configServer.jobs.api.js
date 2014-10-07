@@ -6,6 +6,7 @@ var rest = require('../../common/rest.api'),
     config = process.mainModule.exports.config,
     authApi = require('../../common/auth.api'),
     redisPub = require('../core/redisPub'),
+    logutils = require('../../utils/log.utils'),
     configServer;
 
 configServer = rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,

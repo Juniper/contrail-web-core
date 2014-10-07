@@ -60,7 +60,7 @@
                     </a>
                     <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer" id="user_menu">
                         <li>
-                            <a href="/logout">
+                            <a href="logout">
                                 <i class="icon-off"></i>
                                 Logout
                             </a>
@@ -206,6 +206,9 @@ End dev_env -->
 <!-- End prod_env -->
 
 <script type="text/javascript">
+//Set the base URI
+if(document.location.pathname.indexOf('/vcenter') == 0)
+    $('head').append('<base href="/vcenter/" />');
 var templateLoader = (function ($, host) {
     //Loads external templates from path and injects in to page DOM
     return{
