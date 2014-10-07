@@ -50,6 +50,9 @@
         <write-access>member</write-access>
     </item>
     <item>
+        <feature>vCenterVNconfig</feature>
+    </item>
+    <item>
         <feature>policyconfig</feature>
         <read-access>member</read-access>
         <write-access>member</write-access>

@@ -36,8 +36,41 @@ exports.admin = function (req, res) {
     checkAndRedirect(req, res, 'html/admin.html');
 };
 
-exports.login = function (req, res) {
-    res.sendfile('webroot/html/login.html');
+function login (req, res)
+{
+    //If vCenter is only orchestration model,redirect to '/vcenter/login'
+    var orch = config.orchestration.Manager;
+    var models = orch.split(',');
+    if(models.indexOf('vcenter') > -1 && models.length == 1)
+        commonUtils.redirectToURL(req,res,'/vcenter/login');
+    else
+        res.sendfile('webroot/html/login.html');
+}
+
+function vcenter_login (req, res, appData)
+{
+    //Move setting loggedInOrchestrationMode to longPolling??
+    //req.session.loggedInOrchestrationMode = 'vcenter';
+    var orch = config.orchestration.Manager;
+    var models = orch.split(',');
+    //If vcenter orchestration is not set and user tries to launch "/vcenter/login",redirect to "/login"
+    if (-1 == models.indexOf('vcenter')) {
+        commonUtils.redirectToURL(req, res, '/login');
+    } else {
+        // return login(req, res);
+        return res.sendfile('webroot/html/login.html');
+    }
+}
+
+function vcenter_logout (req, res, appData)
+{
+    var orch = config.orchestration.Manager;
+    var models = orch.split(',');
+    if (req.session.loggedInOrchestrationMode != 'vcenter') {
+        commonUtils.redirectToURL(req, res, '/logout');
+    } else {
+        return logout(req, res);
+    }
 }
 
 var urlAllowedList = {};
@@ -126,7 +159,7 @@ checkAndRedirect = function(req, res, sendFile) {
         return;
     }
     if (false == exports.isSessionAuthenticated(req)) {
-        res.redirect('/login');
+        commonUtils.redirectToLogin(req, res);
     } else {
         var pkgList = process.mainModule.exports['pkgList'];
         if (pkgList.length > 1) {
@@ -175,15 +208,24 @@ exports.authenticate = function (req, res, appData) {
         logutils.logger.debug('Getting err ' + err);
     });
 }
+exports.vcenter_authenticate = function (req, res, appData) {
+    /* Call module independent API */
+    authApi.doAuthenticate(req, res, appData, function(err, data) {
+        /* Already logged */
+        logutils.logger.debug('Getting err ' + err);
+    });
+}
 
-exports.logout = function (req, res) {
+function logout (req, res)
+{
+    res.header('Cache-Control', 
+               'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    commonUtils.redirectToLogin(req, res);
+    //Need to destroy the session after redirectToLogin as login page depends on orchestrationModel
     if (req.session.userid) {
         req.session.isAuthenticated = false;
         req.session.destroy();
     }
-    res.header('Cache-Control', 
-               'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-    res.redirect('/login');
 };
 
 function putData(id, callback) {
@@ -284,4 +326,8 @@ exports.testCreate = function (req, res) {
 	}
 };
 
+exports.login = login;
+exports.logout = logout;
+exports.vcenter_login = vcenter_login;
+exports.vcenter_logout = vcenter_logout;
 

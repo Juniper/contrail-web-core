@@ -11,22 +11,22 @@ var assert = require('assert');
 var config = process.mainModule.exports.config;
 var plugins = require('../orchestration/plugins/plugins.api');
 
-function getApiServerRequestedByData (appData)
+function getApiServerRequestedByData (appData, reqBy)
 {
-    return plugins.getApiServerRequestedByData(appData);
+    return plugins.getApiServerRequestedByData(appData, reqBy);
 }
 
 function apiGet (url, appData, callback)
 {
-    var service = getApiServerRequestedByData(appData);
+    var service = getApiServerRequestedByData(appData, global.label.API_SERVER);
     service.apiGet(url, appData, function(err, data) {
         callback(err, data);
     });
 }
 
-function apiPut (url, putData, appData, callback) 
+function apiPut (url, putData, appData, callback)
 {
-    var service = getApiServerRequestedByData(appData);
+    var service = getApiServerRequestedByData(appData, global.label.API_SERVER);
     service.apiPut(url, putData, appData, function(err, data) {
         callback(err, data);
     });
@@ -35,7 +35,7 @@ function apiPut (url, putData, appData, callback)
 
 function apiPost (url, postData, appData, callback) 
 {
-    var service = getApiServerRequestedByData(appData);
+    var service = getApiServerRequestedByData(appData, global.label.API_SERVER);
     service.apiPost(url, postData, appData, function(err, data) {
         callback(err, data);
     });
@@ -43,7 +43,7 @@ function apiPost (url, postData, appData, callback)
 
 function apiDelete (url, appData, callback) 
 {
-    var service = getApiServerRequestedByData(appData);
+    var service = getApiServerRequestedByData(appData, global.label.API_SERVER);
     service.apiDelete(url, appData, function(err, data) {
         callback(err, data);
     });

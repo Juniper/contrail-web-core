@@ -9,6 +9,8 @@
 var config = process.mainModule.exports['config'];
 var configMainServer = require('../../web/api/configServer.main.api');
 var configJobServer = require('../../jobs/api/configServer.jobs.api');
+var vCenterMainServer = require('../../web/api/vCenterServer.main.api');
+//var vCenterJobServer = require('../../web/api/vCenterServer.jobs.api');
 var assert = require('assert');
 var authApi = require('../../common/auth.api');
 var logutils = require('../../utils/log.utils');
@@ -16,21 +18,55 @@ var orch = require('../orchestration.api');
 var configUtils = require('../../common/configServer.utils');
 var commonUtils = require('../../utils/common.utils');
 
-var orchModel = orch.getOrchestrationModel();
+var orchModels = orch.getOrchestrationModels();
 
-function getApiServerRequestedByData (appData)
+function getApiServerRequestedByData (appData,reqBy)
 {
     assert(appData);
     var defproject = null;
+    var loggedInOrchestrationMode = 'openstack';
+    if ((null != appData) && (null != appData['authObj']) &&
+        (null != appData['authObj']['req']) &&
+        (null != appData['authObj']['req'].session) &&
+        (null != appData['authObj']['req'].session.loggedInOrchestrationMode)) {
+        loggedInOrchestrationMode =
+            appData['authObj']['req'].session.loggedInOrchestrationMode;
+    } else {
+        if ((null != appData) && (null != appData.taskData) &&
+            (null != appData.taskData.loggedInOrchestrationMode)) {
+            loggedInOrchestrationMode =
+                appData.taskData.loggedInOrchestrationMode;
+        }
+    }
+    return getApiServerRequestedByApp(loggedInOrchestrationMode, appData,reqBy);
+}
+
+function getApiServerRequestedByApp (loggedInOrchestrationMode, appData, reqBy)
+{
+    console.log("reqBy a:S", reqBy, loggedInOrchestrationMode);
+    switch (reqBy) {
+    case global.label.API_SERVER:
+        return getApiServerRequestedByApiServer(loggedInOrchestrationMode,
+                                                appData);
+    case global.label.VCENTER_SERVER:
+        return getApiServerRequestedByvCenter(loggedInOrchestrationMode,
+                                              appData);
+    default:
+        assert(0);
+    }
+}
+
+function getApiServerRequestedByApiServer (loggedInOrchestrationMode, appData)
+{
     switch (orchModel) {
-    case 'openstack':
-    case 'cloudstack':
-    case 'none':
-        var genBy = appData['genBy'];
+        case 'openstack':
+        case 'cloudstack':
+        case 'vcenter':
+        case 'none':
+            var genBy = appData['genBy'];
         if (null == genBy) {
             genBy = appData['taskData']['genBy'];
-        }
-
+        }   
         if (global.service.MAINSEREVR == genBy) {
             return configMainServer;
         } else if (global.service.MIDDLEWARE == genBy) {
@@ -39,8 +75,8 @@ function getApiServerRequestedByData (appData)
             logutils.logger.error("We did not get info of generator");
             return configMainServer;
         }
-        break;
-    default:
+        break
+        default:
         if (null != appData['taskData']) {
             if ((global.REQ_AT_SYS_INIT == appData['taskData']['reqBy']) ||
                 (null != appData['taskData']['authObj'])) {
@@ -51,9 +87,25 @@ function getApiServerRequestedByData (appData)
     }
 }
 
+function getApiServerRequestedByvCenter (loggedInOrchestrationMode, appData)
+{
+    /* Openstack auth is keystone based, as config Server does not do
+     * authentication using cloudstack, so for now add check
+     */
+        var genBy = appData['genBy'];
+        if (null == genBy) {
+            genBy = appData['taskData']['genBy'];
+        }
+        if (global.service.MAINSEREVR == genBy) {
+            return vCenterMainServer;
+        } else {
+            return vCenterJobServer;
+        }
+}
+
 function getOrchestrationPluginModel ()
 {
-    return {'orchestrationModel' : orchModel}
+    return {'orchestrationModel' : orchModels}
 }
 
 function doDomainExist (domain, domainList)

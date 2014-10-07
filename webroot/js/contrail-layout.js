@@ -395,7 +395,13 @@ function onHashChange(lastHash, currHash) {
 
     try {
         if (currPageHash == '') {
-            if(webServerInfo['featurePkg']['serverManager'] && !webServerInfo['featurePkg']['webController']) {
+            if(webServerInfo['loggedInOrchestrationMode'] == 'vcenter') {
+                //If vCenter is the only orchestration model
+                if(webServerInfo['orchestrationModel'].length == 1)
+                    currPageHash = "mon_infra_dashboard";
+                else
+                    currPageHash = 'mon_net_dashboard';
+            } else if(webServerInfo['featurePkg']['serverManager'] && !webServerInfo['featurePkg']['webController']) {
                 currPageHash = "setting_sm_clusters";
             } else if($.inArray(roles['ADMIN'], webServerInfo['role']) > -1) {
                 currPageHash = "mon_infra_dashboard";
@@ -648,10 +654,12 @@ $(document).ready(function () {
 		return false;
 	});
 
+    //Handle if any ajax response fails because of session expiry and redirect to login page
     $(document).ajaxComplete(function (event, xhr, settings) {
         var urlHash = window.location.hash;
         var redirectHeader = xhr.getResponseHeader('X-Redirect-Url');
         if (redirectHeader != null) {
+            //Carry the current hash parameters to redirect URL(login page) such that user will be taken to the same page once he logs in
             if(redirectHeader.indexOf('#') == -1)
                 window.location.href = redirectHeader + urlHash;
             else

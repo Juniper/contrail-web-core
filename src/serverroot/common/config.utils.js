@@ -58,4 +58,4 @@ function compareAndMergeFiles (fileToCmp, fileWithCmp)
 }
 
 exports.compareAndMergeDefaultConfig = compareAndMergeDefaultConfig;
-
+exports.mergeObjects = mergeObjects;
