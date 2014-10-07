@@ -919,7 +919,9 @@ function MenuHandler() {
         });
     }
     
-    //Filter the menu items based on allowedRolesList for each feature and comparing them with the logged-in user roles
+    //Filter the menu items based 
+    //  * allowedRolesList for each feature and comparing them with the logged-in user roles
+    //  * allowedOrchestrationModels for each feature and comparing it against loggedInOrchestrationMode 
     //type = menushortcut returns only the first level menu (Configure,Monitor)
     this.filterMenuItems = function(items,type){
         if(type == null) {
@@ -976,14 +978,26 @@ function MenuHandler() {
         var roleExists = false,orchExists = false,accessFnRetVal = false; 
         var orchModel = globalObj['webServerInfo']['loggedInOrchestrationMode'];
         var loggedInUserRoles = globalObj['webServerInfo']['role'];
-        if(value.access != null && value.access.roles != null) {
-            if(!(value.access.roles.role instanceof Array))
-                value.access.roles.role = [value.access.roles.role];
-            var rolesArr = value.access.roles.role;
-            var allowedRolesList = [];
+        if(value.access != null) {
+            if(value.access.roles != null) {
+                if(!(value.access.roles.role instanceof Array))
+                    value.access.roles.role = [value.access.roles.role];
+                var rolesArr = value.access.roles.role;
+                var allowedRolesList = [];
 
-            //If logged-in user has superAdmin role,then allow all features
-            if($.inArray(roles['ADMIN'],loggedInUserRoles) > -1) 
+                //If logged-in user has superAdmin role,then allow all features
+                if($.inArray(roles['ADMIN'],loggedInUserRoles) > -1) {
+                    roleExists = true;
+                } else {
+                    //If any one of userRole is in allowedRolesList
+                    for(var i=0;i<rolesArr.length;i++) {
+                        if($.inArray(rolesArr[i],loggedInUserRoles) > -1) {
+                            roleExists = true;
+                            break;
+                        }
+                    }
+                }
+            } else
                 roleExists = true;
 
             if(value.access.accessFn != null) {
@@ -1360,12 +1374,13 @@ function MenuHandler() {
     }
 }
 
+
 var menuAccessFns = {
-    checkMonitorInfraAccess : function() {
+     hideInFederatedvCenter : function() {
         //Hide in case of multiple orchestration modes along with vCenter and loggedInOrchestrationMode is vCenter
         if(globalObj['webServerInfo']['loggedInOrchestrationMode'] == 'vcenter' &&
-               globalObj['webServerInfo']['orchestrationModel'].length > 1 &&
-               globalObj['webServerInfo']['orchestrationModel'].indexOf('vcenter') > -1)
+                globalObj['webServerInfo']['orchestrationModel'].length > 1 &&
+                globalObj['webServerInfo']['orchestrationModel'].indexOf('vcenter') > -1)
             return false;
         else
             return true;
@@ -2508,4 +2523,21 @@ function getFormattedDate(timeStamp){
         secs="0"+secs;
     fmtDate=date.getFullYear()+"-"+mnth+"-"+dte+"  "+hrs+":"+mns+":"+secs;
     return fmtDate;}
+}
+
+//Returns true if the loggedInOrchestrationMode is vcenter
+function isVCenter() {
+    if(globalObj['webServerInfo']['loggedInOrchestrationMode'] == 'vcenter')
+        return true;
+    else
+        return false; 
+}
+//Returns the corresponding NetMask for a givne prefix length
+function prefixToNetMask(prefixLen) {
+    var prefix = Math.pow(2,prefixLen) - 1;
+    var binaryString = prefix.toString(2);
+    for(var i=binaryString.length;i<32;i++) {
+            binaryString += '0';
+    }
+    return v4.Address.fromHex(parseInt(binaryString,2).toString(16)).address;
 }

@@ -9,12 +9,12 @@
 var config = process.mainModule.exports['config'];
 var orch = require('../orchestration/orchestration.api');
 
-var orchModel = orch.getOrchestrationModel();
+var orchModels = orch.getOrchestrationModels();
 
 var computeApi;
-if (orchModel == 'openstack') {
+if (-1 != orchModels.indexOf('openstack')) {
     computeApi = require('../orchestration/plugins/openstack/nova.api');
-} else if ('none' == orchModel) {
+} else if (-1 != orchModels.indexOf('none')) {
     computeApi = require('../orchestration/plugins/no-orch/noOrchestration.api');
 }
 

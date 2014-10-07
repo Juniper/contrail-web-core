@@ -888,6 +888,7 @@ function callAPIServerByParam (apiCallback, dataObj, ignoreError, callback)
     var headers = dataObj['headers'];
     var data    = dataObj['data'];
     var appData = dataObj['appData'];
+    // console.log("Getting SERVER OBJ:", method, reqUrl, headers, data, appData);
 
     if ((global.HTTP_REQUEST_PUT == method) ||
         (global.HTTP_REQUEST_POST == method)) {
@@ -1213,12 +1214,36 @@ function getApiPostData (url, postData)
 
 function redirectToLogout (req, res)
 {
+    if(req.session.loggedInOrchestrationMode == 'vcenter' || req['originalUrl'].indexOf('/vcenter') > -1) {
+        redURL = '/vcenter/logout';
+    } else {
+        redURL = '/logout';
+    }
+    redirectToURL(req, res, redURL);
+}
+
+function redirectToLogin (req, res)
+{
+    if(req.session.loggedInOrchestrationMode == 'vcenter') {
+        console.log("In vcenter login");
+        redURL = '/vcenter/login';
+    } else {
+        console.log("In login");
+        redURL = '/login';
+    }
+    redirectToURL(req, res, redURL);
+}
+
+function redirectToURL(req, res, redURL)
+{
     var ajaxCall = req.headers['x-requested-with'];
     if (ajaxCall == 'XMLHttpRequest') {
-       res.setHeader('X-Redirect-Url', '/logout');
+        console.log("Getting 307");
+       res.setHeader('X-Redirect-Url', redURL);
        res.send(307, '');
     } else {
-       res.redirect('/logout');
+        console.log("REDIRECT");
+       res.redirect(redURL);
     }
 }
 
@@ -1321,6 +1346,7 @@ function getWebServerInfo (req, res, appData)
     serverObj['role'] = req.session.userRole;
     serverObj['featurePkg'] = {};
     serverObj['uiConfig'] = ui; 
+    serverObj['loggedInOrchestrationMode'] = req.session.loggedInOrchestrationMode;
 
     for (var key in featurePackages) {
         serverObj['featurePkg'][key] = featurePackages[key]['enable'];
@@ -1352,7 +1378,7 @@ function getUserRoleListPerTenant (req, res, callback)
             redirectToLogout(req, res);
             return;
         }
-        var uiRoles = authApi.getUIRolesByExtRoles(roles);
+        var uiRoles = authApi.getUIRolesByExtRoles(req, roles);
         userRolesObj[project] = uiRoles;
         commonUtils.handleJSONResponse(null, res, userRolesObj);
         return;
@@ -1366,7 +1392,7 @@ function getUserRoleListPerTenant (req, res, callback)
             redirectToLogout(req, res);
             return;
         }
-        rolesPerTenant[key] = authApi.getUIRolesByExtRoles(roles);
+        rolesPerTenant[key] = authApi.getUIRolesByExtRoles(req, roles);
     }
     handleJSONResponse(null, res, rolesPerTenant);
 }
@@ -1385,6 +1411,7 @@ function mergeAllPackageList (serverType)
                                  '/webroot/common/api/package.js').pkgList);
         }
     }
+    logutils.logger.debug("Built Package List as:" + JSON.stringify(pkgList));
     return pkgList;
 }
 
@@ -1784,6 +1811,8 @@ exports.parseUVEListData = parseUVEListData;
 exports.parseUVEObjectData = parseUVEObjectData;
 exports.getApiPostData = getApiPostData;
 exports.redirectToLogout = redirectToLogout;
+exports.redirectToLogin = redirectToLogin;
+exports.redirectToURL = redirectToURL;
 exports.redirectToLogoutByAppData = redirectToLogoutByAppData;
 exports.getServerResponseByRestApi = getServerResponseByRestApi;
 exports.executeShellCommand = executeShellCommand;

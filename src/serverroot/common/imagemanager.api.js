@@ -9,11 +9,11 @@
 var config = process.mainModule.exports['config'];
 var orch = require('../orchestration/orchestration.api');
 
-var orchModel = orch.getOrchestrationModel();
+var orchModels = orch.getOrchestrationModels();
 
-if (orchModel == 'openstack') {
+if (orchModels.indexOf('openstack') != -1) {
     var imageApi = require('../orchestration/plugins/openstack/glance.api');
-} else if ('none' == orchModel) {
+} else if (orchModels.indexOf('none') != -1) {
     imageApi = require('../orchestration/plugins/no-orch/noOrchestration.api');
 }
 
