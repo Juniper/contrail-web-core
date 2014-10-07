@@ -113,6 +113,15 @@ function processPendingReq (ctx, next, callback)
   var defProjectObj = {};
 
   delete pendingReqQObj[ctx.id];// = null;
+  //If loggedInOrchestrationMode doesn't exist in session
+  if(checkLoginReq(ctx.req)) {
+    ctx.req.session.loggedInOrchestrationMode = 'openstack';
+    if(ctx.req.url.indexOf('/vcenter') == 0)
+        ctx.req.session.loggedInOrchestrationMode = 'vcenter';
+  }
+
+  console.log("GETTING LOGGED IN MODE:",
+              ctx.req.session.loggedInOrchestrationMode);
   /* Process the request */
   defTokenObj = authApi.getAPIServerAuthParams(ctx.req);
   var appData = {
@@ -122,6 +131,7 @@ function processPendingReq (ctx, next, callback)
     },
     genBy: global.service.MAINSEREVR
   };
+  //console.log("Getting appdata as:", appData);
   callback(ctx.req, ctx.res, appData);
 }
 
@@ -148,8 +158,9 @@ function registerRestrictedURL ()
  */
 function checkLoginReq (req)
 {
-  return ((req.url == '/login') || (req.url == '/authenticate') ||
-          (req.url == '/logout'));
+  return ((req.url == '/login') || (req.url == '/authenticate') || (req.url == '/vcenter/authenticate') ||
+          (req.url == '/logout') || (req.url == '/vcenter/login') ||
+          (req.url == '/vcenter/logout'));
 }
 
 /* Function: routeAll
@@ -161,6 +172,12 @@ function routeAll (req, res, next)
 {
   /* nodejs sets the timeout 2 minute, override this timeout here */
   req.socket.setTimeout(global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME);
+  if(checkLoginReq(req)) {
+    console.log("Login Req, req.url:", req.url);
+    req.session.loggedInOrchestrationMode = 'openstack';
+    if(req.url.indexOf('/vcenter') == 0)
+        req.session.loggedInOrchestrationMode = 'vcenter';
+  }
   if (null == req.session.sessionExpSyncToIdentityToken) {
       if (null != authApi.getSessionExpiryTime) {
         var sessExp = authApi.getSessionExpiryTime(req);

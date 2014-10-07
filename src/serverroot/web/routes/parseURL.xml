@@ -27,6 +27,12 @@
         <callback>handler.dashboard</callback>
     </item>
     <item>
+        <url>/vcenter</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.dashboard</callback>
+    </item>
+    <item>
         <url>/</url>
         <method>get</method>
         <feature>monitoring</feature>
@@ -39,16 +45,34 @@
         <callback>handler.login</callback>
     </item>
     <item>
+        <url>/vcenter/login</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.vcenter_login</callback>
+    </item>
+    <item>
         <url>/authenticate</url>
         <method>post</method>
         <feature>monitoring</feature>
         <callback>handler.authenticate</callback>
     </item>
     <item>
+        <url>/vcenter/authenticate</url>
+        <method>post</method>
+        <feature>monitoring</feature>
+        <callback>handler.vcenter_authenticate</callback>
+    </item>
+    <item>
         <url>/logout</url>
         <method>get</method>
         <feature>monitoring</feature>
         <callback>handler.logout</callback>
+    </item>
+    <item>
+        <url>/vcenter/logout</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.vcenter_logout</callback>
     </item>
     <item>
         <url>/api/admin/test-update</url>

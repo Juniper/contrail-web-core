@@ -32,3 +32,12 @@ appErrors.RESTServerError.prototype.name = 'REST Server Error';
 appErrors.RESTServerError.prototype.responseCode =
     global.HTTP_STATUS_INTERNAL_ERROR;
 
+// SOAP Server Error
+appErrors.SOAPServerError = function (msg) {
+    appErrors.SOAPServerError.super_.call(this, msg, this.constructor);
+};
+util.inherits(appErrors.SOAPServerError, AbstractError);
+appErrors.SOAPServerError.prototype.name = 'SOAP Server Error';
+appErrors.SOAPServerError.prototype.responseCode =
+    global.HTTP_STATUS_INTERNAL_ERROR;
+

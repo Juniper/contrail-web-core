@@ -290,3 +290,8 @@ module.exports.getAPIServer = function (params)
 	return new APIServer(params);
 };
 
+// Export this as a module.
+module.exports.getSOAPApiServer= function (params)
+{
+    return new APIServer(params);
+};
