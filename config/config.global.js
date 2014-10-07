@@ -145,7 +145,6 @@ config.analytics.ca = '';
 
 /* Discovery Service */
 config.discoveryService = {};
-config.discoveryService.server_ip = '127.0.0.1';
 config.discoveryService.server_port = '5998';
 /* Specifiy true if subscription to discovery server should be enabled, else
  * specify false. Other than true/false value here is treated as true
@@ -160,11 +159,6 @@ config.jobServer.server_port = '3000';
 /* Upload/Download Directory */
 config.files = {};
 config.files.download_path = '/tmp';
-
-/* Redis Server */
-config.redis = {};
-config.redis.server_port = '6379';
-config.redis.server_ip = '127.0.0.1';
 
 /* Cassandra Server */
 config.cassandra = {};
@@ -208,11 +202,6 @@ config.redisDBIndex = 3;
 config.redis_server_port = '6379';
 config.redis_server_ip = '127.0.0.1';
 config.redis_dump_file = '/var/lib/redis/dump-webui.rdb';
-
-/* Cache Expiry Time */
-config.cacheExpire = {};
-config.cacheExpire.flow_stat_time = 600; /* Seconds */
-config.cacheExpire.topo_tree_time = 600; /* Seconds */
 
 /* Logo File: Use complete path of logo file location */
 config.logo_file = '/usr/src/contrail/contrail-web-core/webroot/img/opencontrail-logo.png';
