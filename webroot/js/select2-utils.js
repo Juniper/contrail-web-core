@@ -2,6 +2,59 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
+
+ko.bindingHandlers.contrailDropdown = {
+    init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        var valueObj = valueAccessor(),
+            allBindings = allBindingsAccessor(),
+            dropDown = $(element).contrailDropdown(valueObj).data('contrailDropdown');
+
+        if (allBindings.value) {
+            var value = ko.utils.unwrapObservable(allBindings.value);
+            if(typeof value === 'function') {
+                dropDown.value(value());
+            } else {
+                dropDown.value(value);
+            }
+        }
+        else {
+            dropDown.value('');
+        }
+
+        ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+            $(element).select2('destroy');
+        });
+    },
+    update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+        $(element).trigger('change');
+    }
+};
+
+ko.bindingHandlers.contrailMultiselect = {
+    init  : function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        var valueObj = valueAccessor(),
+            allBindings = allBindingsAccessor(),
+            lookupKey = allBindings.lookupKey,
+            multiselect = $(element).contrailMultiselect(valueObj).data('contrailMultiselect');
+
+        if (allBindings.value) {
+            var value = ko.utils.unwrapObservable(allBindings.value);
+            if (typeof value === 'function') {
+                multiselect.value(value());
+            } else {
+                multiselect.value(value);
+            }
+        }
+
+        ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+            $(element).select2('destroy');
+        });
+    },
+    update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+        $(element).trigger('change');
+    }
+};
+
 ko.bindingHandlers.select2 = {
     init: function(element, valueAccessor, allBindingsAccessor) {
         var obj = valueAccessor(),

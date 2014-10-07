@@ -4,14 +4,14 @@ requirejs.config({
     paths: {
         'jquery'                    : "/assets/jquery/js/jquery-1.8.3.min",
         'jquery.xml2json'           : '/assets/jquery/js/jquery.xml2json',
-        'jquery.ba-bbq':'/assets/jquery/js/jquery.ba-bbq.min',
+        'jquery.ba-bbq'             :'/assets/jquery/js/jquery.ba-bbq.min',
         'jquery.timer'              : '/assets/jquery/js/jquery.timer',
         'jquery-ui'                 : '/assets/jquery-ui/js/jquery-ui',
-        'jquery.ui.touch-punch' : '/assets/jquery/js/jquery.ui.touch-punch.min',
-        'bootstrap'             : '/assets/bootstrap/js/bootstrap.min',
+        'jquery.ui.touch-punch'     : '/assets/jquery/js/jquery.ui.touch-punch.min',
+        'bootstrap'                 : '/assets/bootstrap/js/bootstrap.min',
         'd3'                        : '/assets/d3/js/d3',
         'nv.d3'                     : '/assets/nvd3/js/nv.d3',
-        'crossfilter'           : '/assets/crossfilter/js/crossfilter.min',
+        'crossfilter'               : '/assets/crossfilter/js/crossfilter.min',
         'jsonpath'                  : '/assets/jsonpath/js/jsonpath-0.8.0',
         'xdate'                     : "/assets/xdate/js/xdate",
         'jquery.validate'           : "/assets/jquery/js/jquery.validate",
@@ -32,7 +32,7 @@ requirejs.config({
         'jsbn-combined'             : "/assets/ip/jsbn-combined",
         'contrail-common'           : "/js/contrail-common",
         'handlebars-utils'          : "/js/handlebars-utils",
-        'select2-utils'                   : "/js/select2-utils",
+        'select2-utils'             : "/js/select2-utils",
         'slickgrid-utils'           : "/js/slickgrid-utils",
         'contrail-elements'         : "/js/contrail-elements",
         'topology_api'              : "/js/topology_api",
@@ -52,10 +52,10 @@ requirejs.config({
     },
     shim: {
         'jquery.multiselect' : {
-            deps: ['jquery']
+            deps: ['jquery', 'jquery-ui']
         },
         'jquery.multiselect.filter' : {
-            deps: ['jquery']
+            deps: ['jquery', 'jquery.multiselect']
         },
         'jquery.steps.min' : {
             deps: ['jquery']
@@ -123,11 +123,14 @@ requirejs.config({
         'slickgrid-utils': {
             deps: ['jquery','slick.grid','slick.dataview']
         },
+        'slick.dataview': {
+            deps: ['jquery','slick.grid']
+        },
         'contrail-elements': {
             deps: ['jquery-ui']
         },
         'chart-utils': {
-            deps: ['jquery']
+            deps: ['jquery', 'd3']
         },
         'web-utils': {
             deps: ['jquery','knockout']
@@ -139,7 +142,7 @@ requirejs.config({
             deps: ['jquery','handlebars']
         },
         'nvd3-plugin': {
-            deps: ['nv.d3']
+            deps: ['nv.d3', 'd3']
         },
         'd3-utils': {
             deps: ['d3']
@@ -152,19 +155,21 @@ requirejs.config({
         },
         'ipv6' : {
             deps: ['sprintf','jsbn-combined']
+        },
+        'contrail-layout' : {
+            deps: ['contrail-elements']
         }
     }
 });
-require(['knockout'],function(ko) {
-    window.ko = ko;
-});
-require(['jquery'],function($) {
+require(['jquery', 'knockout'], function($, Knockout) {
+    window.ko = Knockout;
     loadCommonTemplates();
 });
 
-require(['jquery','jquery-ui','jquery.xml2json','jquery.ba-bbq','jquery.timer','jquery.ui.touch-punch',
+
+require(['jquery-ui','jquery.xml2json','jquery.ba-bbq','jquery.timer','jquery.ui.touch-punch',
         'bootstrap','d3','nv.d3','crossfilter','jsonpath','xdate','jquery.validate',
-        'handlebars','knockout','select2','jquery.event.drag','jquery.json','jquery.droppick','slick.core',
+        'handlebars','select2','jquery.event.drag','jquery.json','jquery.droppick','slick.core',
         'slick.grid','slick.enhancementpager','jquery.datetimepicker','moment',
         'contrail-common','handlebars-utils','select2-utils','slickgrid-utils','contrail-elements',
         'topology_api','chart-utils','web-utils','contrail-layout','config_global','protocol',
