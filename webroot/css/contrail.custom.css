@@ -894,10 +894,6 @@ a.selectAllLink:hover {
 	margin-bottom: 4px;
 	border-color: #ddd;
 }
-.grid-header .icon-search {
-	margin-top: 1px;
-	font-size: 14px;
-}
 .grid-header .select2-container, .widget-header .select2-container, .breadcrumb .select2-container{
 	margin-bottom: 2px;
 }
@@ -907,7 +903,7 @@ a.selectAllLink:hover {
 	border-color: #ddd;
 	padding: 1px 6px 3px 24px;
 }
-.grid-header .icon-filter {
+.grid-header [class*="icon-"]{
 	margin-top: 1px;
 	font-size: 14px;
 }
@@ -2044,13 +2040,15 @@ color: #b94a48;
     color: #2B3D53;
 }
 .wizard > .content {
-    min-height: 257px;
+    min-height: 277px;
     margin: 0;
     overflow-y: auto;
     background-color: #fff;
 }
 .wizard > .content > .body {
     height: auto;
+    width: 96%;
+    padding: 7px 2%;
 }
 .wizard > .actions {
     margin-top: 15px;
@@ -2060,6 +2058,13 @@ color: #b94a48;
 .wizard > .actions a, .wizard > .actions a:hover, .wizard > .actions a:active {
     border-radius: 0;
     padding: 0 5px;
+}
+.wizard .stepInfo p {
+    color: #888;
+    margin: 10px 10px 0;
+}
+.wizard .stepInfo p .selectedServerCount{
+    color: #3182bd;
 }
 
 /* Checked Multiselect styles */

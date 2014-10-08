@@ -167,7 +167,6 @@ function getDefaultGridConfig() {
                             stopAutoRefresh();
                             var errorMsg = contrail.parseErrorMsgFromXHR(xhr);
                             if(xhr.status && xhr.statusText != 'abort') {
-                                showMessagePopup('Error', 'Error: ' + errorMsg);
                                 errorGridHandler('Error: ' + errorMsg);
                             }
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestErrorCB)) {
@@ -252,63 +251,68 @@ function getDefaultGridConfig() {
                 generateGridHeaderTemplate(gridConfig.header);
 
                 gridContainer.find('.grid-widget-header .widget-toolbar-icon').on('click', function(e) {
-                    var command = $(this).attr('data-action'),
-                        gridHeader = $(this).parents(".grid-header");
+                    if(!$(this).hasClass('disabled-link')) {
+                        var command = $(this).attr('data-action'),
+                            gridHeader = $(this).parents(".grid-header");
 
-                    switch (command) {
-	                    case 'search':
-	                        gridHeader.find('.link-searchbox').toggle();
-	                        gridHeader.find('.input-searchbox').toggle();
-	                        if(gridHeader.find('.input-searchbox').is(':visible')){
-	                            gridHeader.find('.input-searchbox input').focus();
-	                        } else {
-	                            gridHeader.find('.input-searchbox input').val('');
-	                        }
-	                        e.stopPropagation();
-                        break;
-	                    case 'multiselect':
-	                        gridHeader.find('.link-multiselectbox').toggle();
-	                        gridHeader.find('.input-multiselectbox').toggle();
-	                        if(gridHeader.find('.input-multiselectbox').is(':visible')){
-	                        	gridHeader.find('.input-multiselectbox .input-icon').data('contrailCheckedMultiselect').open();
-	                        }
-	                        e.stopPropagation();
-                        break;
-	                    case 'refresh':
-	                    	gridContainer.find('.link-refreshable i').removeClass('icon-repeat').addClass('icon-spin icon-spinner');
-                            gridContainer.data('contrailGrid').refreshData();
-	                    break;
-	                    case 'export':
-	                        var gridDSConfig = gridDataSource,
-	                            gridData = [], dv;
-
-	                        gridContainer.find('a[data-action="export"] i').removeClass('icon-download-alt').addClass('icon-spin icon-spinner');
-	                        gridContainer.find('a[data-action="export"]').prop('title','Exporting...').data('action','exporting').addClass('blue');
-	                        if(contrail.checkIfExist(gridDSConfig.remote) && gridDSConfig.remote.serverSidePagination) {
-                                var exportCB =  gridDSConfig.remote.exportFunction;
-                                if(exportCB != null) {
-                                    exportCB(gridConfig, gridContainer);
+                        switch (command) {
+                            case 'search':
+                                gridHeader.find('.link-searchbox').toggle();
+                                gridHeader.find('.input-searchbox').toggle();
+                                if (gridHeader.find('.input-searchbox').is(':visible')) {
+                                    gridHeader.find('.input-searchbox input').focus();
+                                } else {
+                                    gridHeader.find('.input-searchbox input').val('');
                                 }
-	                        } else {
-	                            dv = gridContainer.data('contrailGrid')._dataView;
-	                            gridData = dv.getItems();
-                                exportGridData2CSV(gridConfig, gridData);
-	                            setTimeout(function(){
-		                            gridContainer.find('a[data-action="export"] i').addClass('icon-download-alt').removeClass('icon-spin icon-spinner');
-		                        	gridContainer.find('a[data-action="export"]').prop('title','Export as CSV').data('action','export').removeClass('blue');
-	                            },500);
-	                        }
-                        break;
-	                    case 'collapse':
-	                    	gridHeader.find('i.collapse-icon').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+                                e.stopPropagation();
+                                break;
+                            case 'multiselect':
+                                var linkMultiselectBox = $(this).parent().find('.link-multiselectbox'),
+                                    inputMultiselectBox = $(this).parent().find('.input-multiselectbox');
 
-	                    	if(gridHeader.find('i.collapse-icon').hasClass('icon-chevron-up')){
-	                			gridContainer.children().removeClass('collapsed');
-	                    	} else if(gridHeader.find('i.collapse-icon').hasClass('icon-chevron-down')){
-	                    		gridContainer.children().addClass('collapsed');
-	                    		gridHeader.show();
-	                    	}
-	                    break;
+                                linkMultiselectBox.toggle();
+                                inputMultiselectBox.toggle();
+                                if (inputMultiselectBox.is(':visible')) {
+                                    inputMultiselectBox.find('.input-icon').data('contrailCheckedMultiselect').open();
+                                }
+                                e.stopPropagation();
+                                break;
+                            case 'refresh':
+                                gridContainer.find('.link-refreshable i').removeClass('icon-repeat').addClass('icon-spin icon-spinner');
+                                gridContainer.data('contrailGrid').refreshData();
+                                break;
+                            case 'export':
+                                var gridDSConfig = gridDataSource,
+                                    gridData = [], dv;
+
+                                gridContainer.find('a[data-action="export"] i').removeClass('icon-download-alt').addClass('icon-spin icon-spinner');
+                                gridContainer.find('a[data-action="export"]').prop('title', 'Exporting...').data('action', 'exporting').addClass('blue');
+                                if (contrail.checkIfExist(gridDSConfig.remote) && gridDSConfig.remote.serverSidePagination) {
+                                    var exportCB = gridDSConfig.remote.exportFunction;
+                                    if (exportCB != null) {
+                                        exportCB(gridConfig, gridContainer);
+                                    }
+                                } else {
+                                    dv = gridContainer.data('contrailGrid')._dataView;
+                                    gridData = dv.getItems();
+                                    exportGridData2CSV(gridConfig, gridData);
+                                    setTimeout(function () {
+                                        gridContainer.find('a[data-action="export"] i').addClass('icon-download-alt').removeClass('icon-spin icon-spinner');
+                                        gridContainer.find('a[data-action="export"]').prop('title', 'Export as CSV').data('action', 'export').removeClass('blue');
+                                    }, 500);
+                                }
+                                break;
+                            case 'collapse':
+                                gridHeader.find('i.collapse-icon').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+
+                                if (gridHeader.find('i.collapse-icon').hasClass('icon-chevron-up')) {
+                                    gridContainer.children().removeClass('collapsed');
+                                } else if (gridHeader.find('i.collapse-icon').hasClass('icon-chevron-down')) {
+                                    gridContainer.children().addClass('collapsed');
+                                    gridHeader.show();
+                                }
+                                break;
+                        }
                     }
                 });
 
@@ -992,7 +996,7 @@ function getDefaultGridConfig() {
                 	this.refreshDetailView(refreshDetailTemplateFlag);
                 	var cgrids = [];
                 	$.each(checkedRows, function(key,val){
-                		ids.push(val.cgrid);
+                        cgrids.push(val.cgrid);
                 	});
                 	this.setCheckedRows(cgrids);
                 }, 
@@ -1136,14 +1140,15 @@ function getDefaultGridConfig() {
         
         function addGridHeaderActionCheckedMultiselect(key, actionConfig, gridContainer) {
             var actions = actionConfig.actions,
-                actionId = gridContainer.prop('id') + '-header-action-' + key;
+                actionId = (contrail.checkIfExist(actionConfig.actionId)) ? actionConfig.actionId : gridContainer.prop('id') + '-header-action-' + key;
             var actionsTemplate = '<div id="' + actionId + '" class="widget-toolbar pull-right"> \
-		            <a class="widget-toolbar-icon link-multiselectbox" data-action="multiselect"> \
+		            <a class="widget-toolbar-icon link-multiselectbox' + (contrail.checkIfExist(actionConfig.disabledLink) ? ' disabled-link' : '') + '" \
+		            title="' + actionConfig.title + '" data-action="multiselect"> \
 		            <i class="' + actionConfig.iconClass + '"></i> \
 		        </a> \
 		        <span class="input-multiselectbox hide"> \
 		            <span class="input-icon"> \
-		            	<i class="widget-toolbar-icon icon-filter"></i> \
+		            	<i class="widget-toolbar-icon ' + actionConfig.iconClass + '"></i> \
 		            </span> \
 		        </span> \
 		    </div>';
@@ -1156,10 +1161,12 @@ function getDefaultGridConfig() {
 //   	        	gridContainer.find('.link-multiselectbox').hide();
 //   	        }
 
-            initOnClickDocument('.input-multiselectbox',function(e){
-            	if($(e.target).parents('.ui-multiselect-menu').length == 0 && gridContainer.find('.input-multiselectbox').is(":visible") && $('#' + actionId).find('.input-icon').data('contrailCheckedMultiselect').getChecked().length == 0) {
-   	            	gridContainer.find('.input-multiselectbox').hide();
-       	        	gridContainer.find('.link-multiselectbox').show();
+            initOnClickDocument($('#' + actionId).find('.input-multiselectbox'),function(e){
+            	if($(e.target).parents('.ui-multiselect-menu').length == 0 &&
+                    gridContainer.find($('#' + actionId).find('.input-multiselectbox')).is(":visible") &&
+                    $('#' + actionId).find('.input-icon').data('contrailCheckedMultiselect').getChecked().length == 0) {
+   	            	gridContainer.find($('#' + actionId).find('.input-multiselectbox')).hide();
+       	        	gridContainer.find($('#' + actionId).find('.link-multiselectbox')).show();
            		}
             });
         };
