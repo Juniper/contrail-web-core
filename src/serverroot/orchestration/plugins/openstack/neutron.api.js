@@ -4,20 +4,21 @@
 
 var rest = require('../../../common/rest.api'),
     config = require('../../../../../config/config.global.js'),
-    authApi = require('../../../common/auth.api')
+    authApi = require('../../../common/auth.api'),
+    commonUtils = require('../../../utils/common.utils')
     ;
-var quantumAPIServer;
+var neutronAPIServer;
 
-quantumApi = module.exports;
+neutronApi = module.exports;
 
-var quantumServerIP = ((config.networkManager) && (config.networkManager.ip)) ?
+var neutronServerIP = ((config.networkManager) && (config.networkManager.ip)) ?
     config.networkManager.ip : global.DFLT_SERVER_IP;
-var quantumServerPort = ((config.networkManager) && (config.networkManager.port)) ?
+var neutronServerPort = ((config.networkManager) && (config.networkManager.port)) ?
     config.networkManager.port : '9696';
 
-quantumAPIServer = rest.getAPIServer({apiName:global.label.NETWORK_SERVER,
-                                      server:quantumServerIP,
-                                      port:quantumServerPort});
+neutronAPIServer = rest.getAPIServer({apiName:global.label.NETWORK_SERVER,
+                                      server:neutronServerIP,
+                                      port:neutronServerPort});
 function getTenantIdByReqCookie (req)
 {
     if (req.cookies && req.cookies.project) {
@@ -34,14 +35,14 @@ function getTenantIdByReqCookie (req)
     }
 }
 
-/* Function: doQuantumOpCb
+/* Function: doNeutronOpCb
  */
-function doQuantumOpCb (reqUrl, tenantId, req, quantumCallback, stopRetry,
+function doNeutronOpCb (reqUrl, tenantId, req, neutronCallback, stopRetry,
                         callback)
 {
     var forceAuth = stopRetry;
 
-    authApi.getTokenObj({'req': req, 'tenant': tenant, 'forceAuth': forceAuth}, 
+    authApi.getTokenObj({'req': req, 'tenant': tenantId, 'forceAuth': forceAuth}, 
                         function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             if (stopRetry) {
@@ -51,17 +52,17 @@ function doQuantumOpCb (reqUrl, tenantId, req, quantumCallback, stopRetry,
             } else {
                 /* Retry once again */
                 console.log("We are about to retry for tenantId:" + tenantId);
-                quantumCallback(reqUrl, req, callback, true);
+                neutronCallback(reqUrl, req, callback, true);
             }
         } else {
-            console.log("doQuantumOpCb() success with tenantId:" + tenantId);
+            console.log("doNeutronOpCb() success with tenantId:" + tenantId);
             callback(err, tokenObj);
         }
     });
 }         
 
-/* Wrapper function to GET Data from Quantum-Server */
-quantumApi.get = function(reqUrl, req, callback, stopRetry) {
+/* Wrapper function to GET Data from Neutron-Server */
+neutronApi.get = function(reqUrl, req, callback, stopRetry) {
     var headers = {};
     var forceAuth = stopRetry;
     var tenantId = getTenantIdByReqCookie(req);
@@ -71,13 +72,13 @@ quantumApi.get = function(reqUrl, req, callback, stopRetry) {
     }
 
     headers['User-Agent'] = 'Contrail-WebClient';
-    doQuantumOpCb(reqUrl, tenantId, req, quantumApi.get, stopRetry, 
+    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.get, stopRetry, 
                 function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
-		    quantumAPIServer.api.get(reqUrl, function(err, data) {
+		    neutronAPIServer.api.get(reqUrl, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
                      * due to token change, so give one more change
@@ -85,7 +86,7 @@ quantumApi.get = function(reqUrl, req, callback, stopRetry) {
                     if (stopRetry) {
 		                callback(err, data);
                     } else {
-                        quantumApi.get(reqUrl, req, callback, true);
+                        neutronApi.get(reqUrl, req, callback, true);
                     }
                  } else {
                     callback(err, data);
@@ -95,8 +96,8 @@ quantumApi.get = function(reqUrl, req, callback, stopRetry) {
     });
 }
 
-/* Wrapper function to PUT data to Quantum-Server */
-quantumApi.put = function(reqUrl, reqData, req, callback, stopRetry) { 
+/* Wrapper function to PUT data to Neutron-Server */
+neutronApi.put = function(reqUrl, reqData, req, callback, stopRetry) { 
     var headers = {};
     var tenantId = getTenantIdByReqCookie(req);
     if (null == tenantId) {
@@ -105,13 +106,13 @@ quantumApi.put = function(reqUrl, reqData, req, callback, stopRetry) {
     }
 
     headers['User-Agent'] = 'Contrail-WebClient';
-    doQuantumOpCb(reqUrl, tenantId, req, quantumApi.get, stopRetry, 
+    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.get, stopRetry, 
                 function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
-            quantumAPIServer.api.put(reqUrl, function(err, data) {
+            neutronAPIServer.api.put(reqUrl, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
                      * due to token change, so give one more change
@@ -119,7 +120,7 @@ quantumApi.put = function(reqUrl, reqData, req, callback, stopRetry) {
                     if (stopRetry) {
                       callback(err, data);
                     } else {
-                        quantumApi.put(reqUrl, reqData, req, callback, true);
+                        neutronApi.put(reqUrl, reqData, req, callback, true);
                     }
                  } else {
                     callback(err, data);
@@ -129,8 +130,8 @@ quantumApi.put = function(reqUrl, reqData, req, callback, stopRetry) {
     });
 }
 
-/* Wrapper function to POST data to Quantum-Server */
-quantumApi.post = function(reqUrl, reqData, req, callback, stopRetry) { 
+/* Wrapper function to POST data to Neutron-Server */
+neutronApi.post = function(reqUrl, reqData, req, callback, stopRetry) { 
     var headers = {};
     var i = 0;
     var tenantId = getTenantIdByReqCookie(req);
@@ -140,13 +141,13 @@ quantumApi.post = function(reqUrl, reqData, req, callback, stopRetry) {
     }
 
     headers['User-Agent'] = 'Contrail-WebClient';
-    doQuantumOpCb(reqUrl, tenantId, req, quantumApi.get, stopRetry, 
+    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.get, stopRetry, 
                 function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
-            quantumAPIServer.api.post(reqUrl, reqData, function(err, data) {
+            neutronAPIServer.api.post(reqUrl, reqData, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
                      * due to token change, so give one more change
@@ -154,7 +155,7 @@ quantumApi.post = function(reqUrl, reqData, req, callback, stopRetry) {
                     if (stopRetry) {
                       callback(err, data);
                     } else {
-                        quantumApi.post(reqUrl, reqData, req, callback, true);
+                        neutronApi.post(reqUrl, reqData, req, callback, true);
                     }
                  } else {
                     callback(err, data);
@@ -164,8 +165,8 @@ quantumApi.post = function(reqUrl, reqData, req, callback, stopRetry) {
     });
 }
 
-/* Wrapper function to DELETE entry from Quantum-Server */
-quantumApi.delete = function(reqUrl, req, callback, stopRetry) { 
+/* Wrapper function to DELETE entry from Neutron-Server */
+neutronApi.delete = function(reqUrl, req, callback, stopRetry) { 
     var headers = {};
     var tenantId = getTenantIdByReqCookie(req);
     if (null == tenantId) {
@@ -175,13 +176,13 @@ quantumApi.delete = function(reqUrl, req, callback, stopRetry) {
 
     headers['User-Agent'] = 'Contrail-WebClient';
 
-    doQuantumOpCb(reqUrl, tenantId, req, quantumApi.get, stopRetry, 
+    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.get, stopRetry, 
                 function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
-            quantumAPIServer.api.delete(reqUrl, function(err, data) {
+            neutronAPIServer.api.delete(reqUrl, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
                      * due to token change, so give one more change
@@ -189,7 +190,7 @@ quantumApi.delete = function(reqUrl, req, callback, stopRetry) {
                     if (stopRetry) {
                       callback(err, data);
                     } else {
-                        quantumApi.delete(reqUrl, req, callback, true);
+                        neutronApi.delete(reqUrl, req, callback, true);
                     }
                  } else {
                     callback(err, data);
@@ -198,4 +199,12 @@ quantumApi.delete = function(reqUrl, req, callback, stopRetry) {
         }
     });
 }
+
+function createNetworkPort (req, postData, callback)
+{
+    var url = '/v2.0/ports.json';
+    neutronApi.post(url, postData, req, callback);
+}
+
+exports.createNetworkPort = createNetworkPort;
 

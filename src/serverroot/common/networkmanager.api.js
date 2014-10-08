@@ -13,7 +13,7 @@ var orchModel = orch.getOrchestrationModel();
 
 var nwMgrApi;
 if (orchModel == 'openstack') {
-    nwMgrApi = require('../orchestration/plugins/openstack/quantum.api');
+    nwMgrApi = require('../orchestration/plugins/openstack/neutron.api');
 } else if ('none' == orchModel) {
     nwMgrApi = require('../orchestration/plugins/no-orch/noOrchestration.api');
 }
@@ -46,8 +46,15 @@ function apiDelete (reqUrl, req, callback)
     });
 }
 
+function createNetworkPort (req, postData, project, callback)
+{
+    req.cookies.project = project;
+    nwMgrApi.createNetworkPort(req, postData, callback);
+}
+
 exports.apiGet = apiGet;
 exports.apiPost = apiPost;
 exports.apiPut = apiPut;
 exports.apiDelete = apiDelete;
+exports.createNetworkPort = createNetworkPort;
 
