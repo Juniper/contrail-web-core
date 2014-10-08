@@ -93,7 +93,17 @@
         <feature>virtualroutersconfig</feature>
         <read-access>member</read-access>
         <write-access>member</write-access>
-    </item>    
+    </item> 
+    <item>
+        <feature>physicalroutersconfig</feature>
+        <read-access>member</read-access>
+        <write-access>member</write-access>
+    </item>     
+    <item>
+        <feature>physicalinterfacesconfig</feature>
+        <read-access>member</read-access>
+        <write-access>member</write-access>
+    </item>     
     <item>
         <feature>orchestration</feature>
     </item>
