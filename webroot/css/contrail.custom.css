@@ -1503,8 +1503,8 @@ input.datetimepicker{
 }
 /* End - Jquery UI Tabs */
 /* a Links */
-a.disabled-link, a.disabled-link:hover{
-	color: #ccc;
+a.disabled-link, a.disabled-link:hover, i.disabled-link, i.disabled-link:hover{
+	color: #ccc !important;
 	cursor: initial !important;
 }
 a.disabled-link i {

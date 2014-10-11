@@ -36,6 +36,31 @@ function Contrail() {
         }
         return isFunction;
     };
+    /*
+        Function to check if key exist inside an object
+        deep (Boolean): If true, the merge becomes recursive (aka. deep copy).
+        valueObject : Object to be searched.
+        pathString: path to be traversed, separated by .(dot)
+     */
+    this.checkIfKeyExistInObject = function(deep, valueObject, pathString) {
+        if(deep) {
+            var pathArray = pathString.split('.'),
+                traversedValue = valueObject,
+                returnFlag = true;
+            $.each(pathArray, function(pathKey, pathValue) {
+                if(contrail.checkIfExist(traversedValue[pathValue])) {
+                    traversedValue = traversedValue[pathValue];
+                } else {
+                    returnFlag = false;
+                    return;
+                }
+            });
+
+            return returnFlag;
+        } else {
+            return contrail.checkIfExist(value[pathString]);
+        }
+    }
     this.parseErrorMsgFromXHR = function(xhr) {
         var errorMsg = '';
         if(contrail.checkIfExist(xhr.errorThrown)) {
