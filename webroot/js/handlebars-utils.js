@@ -132,7 +132,7 @@ Handlebars.registerHelper('getHashFromMenuItem',function(menuItem){
             });
             result['q'] = params;
         }
-        return $.param.fragment(location.href,result);
+        return $.param.fragment(location.href,result,2);
     } else {
         if(menuItem['hash'] != null)
             result['p'] = menuItem['hash'];
@@ -142,8 +142,10 @@ Handlebars.registerHelper('getHashFromMenuItem',function(menuItem){
             });
             result['q'] = params;
         }
-        return $.param.fragment(location.href,result)
+        return $.param.fragment(location.href,result,2)
     }
 });
 
-
+Handlebars.registerHelper('showHideLogicalInterface', function(type) {
+    return type === 'Physical' ? 'show' : 'hide';
+});
