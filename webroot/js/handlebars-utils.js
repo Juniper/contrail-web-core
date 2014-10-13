@@ -146,4 +146,6 @@ Handlebars.registerHelper('getHashFromMenuItem',function(menuItem){
     }
 });
 
-
+Handlebars.registerHelper('showHideLogicalInterface', function(type) {
+    return type === 'Physical' ? 'show' : 'hide';
+});
