@@ -268,6 +268,9 @@ global.QUERY_JSON = {
                                                     "end_time": "", 
                                                     "select_fields": []
                                              },
+    OverlayToUnderlayFlowMap: {"table": 'OverlayToUnderlayFlowMap', "start_time": "",
+                            "end_time": "", "select_fields": ["u_prouter", "u_pifindex"]}
+                                    
 };
 
 global.STATS_PROP = {
@@ -342,4 +345,3 @@ global.VCENTER_SDK_PATH = '/sdk';
 global.VCENTER_WSDL = 'webroot/js/vim.wsdl';
 
 module.exports = global;
-

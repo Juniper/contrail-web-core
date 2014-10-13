@@ -499,3 +499,16 @@
         {{/each}}
 	</select>
 </script>
+
+<script type="text/x-handlebars-template" id="tooltip-content-template">
+    <div class="row-fluid chart-tooltip">
+        <div class="row-fluid chart-tooltip-body ">
+            {{#each this}}
+                <div class="row-fluid chart-tooltip-row">
+                    <span class="key span4" style="min-height:20px;">{{lbl}}:</span>
+                    <span class="value span8" style="min-height:20px;">{{value}}</span>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+</script>
