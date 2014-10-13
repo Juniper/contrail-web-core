@@ -573,3 +573,39 @@ function populatePortsInRule(type, rule, ports) {
         rule[portType][0]["end_port"] = -1;
     }
 };
+
+function showUnderlayPaths(data) {
+    var currentUrlHashObj = layoutHandler.getURLHashObj(),
+        currentPage = currentUrlHashObj.p,
+        currentParams = currentUrlHashObj.q;
+        var params = {
+            "minsSince" : 300
+        };
+        //params.src_vrouter_ip = data.vrouter;
+        params.srcIP = data.sourceip;
+        params.destIP = data.destip;
+        params.srcVN = data.sourcevn;
+        params.destVN = data.destvn;
+        params.sport = data.sport;
+        params.dport = data.dport;
+        params.protocol = data.protocol;
+        params.direction = (data.direction_ing === 0) ? "egress" : "ingress";
+        switch(currentPage) {
+            case 'mon_infra_underlay':
+                var cfg = {
+                    url     : "/api/tenant/networking/underlay-path",
+                    type    : "POST",
+                    data    : {data: params},
+                    callback : function(response) {
+                        underlayRenderer.getModel().setHighlightedNodes(response['nodes']);
+                        underlayRenderer.getModel().setHighlightedLinks(response['links']);
+                        underlayRenderer.getView().highlightPath();
+                    }
+                };
+                underlayRenderer.getController().getModelData(cfg);
+                break;
+            case 'query_flow_records':
+                layoutHandler.setURLHashParams(params,{p:'mon_infra_underlay',merge:false});
+                break;
+        }
+}

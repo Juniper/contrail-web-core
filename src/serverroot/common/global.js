@@ -267,6 +267,9 @@ global.QUERY_JSON = {
                                                     "end_time": "", 
                                                     "select_fields": []
                                              },
+    OverlayToUnderlayFlowMap: {"table": 'OverlayToUnderlayFlowMap', "start_time": "",
+                            "end_time": "", "select_fields": ["u_prouter", "u_pifindex"]}
+                                    
 };
 
 global.STATS_PROP = {
@@ -337,4 +340,3 @@ global.KEYSTONE_V2_DEFAULT_DOMAIN = 'default-domain';
 global.KEYSTONE_V3_TOKEN_URL = '/v3/auth/tokens';
 
 module.exports = global;
-

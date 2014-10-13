@@ -1730,6 +1730,14 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 		gridConfig.body.options = {
 			actionCell: [
 				{
+					title: 'Show Underlay Paths',
+					iconClass: 'icon-edit',
+					onClick: function(rowIndex){
+                        var dataItem = $('#' + options.elementId).data('contrailGrid')._grid.getDataItem(rowIndex);
+						showUnderlayPaths(dataItem);
+					}
+				},
+				{
 					title: 'Start Packet Capture',
 					iconClass: 'icon-edit',
 					onClick: function(rowIndex){
