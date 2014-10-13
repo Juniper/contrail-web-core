@@ -1893,6 +1893,10 @@ color: #b94a48;
     background:#eee;
     height: 282px;
 }
+.image-Security:before {
+  content : url(../img/policy.png);
+  vertical-align : middle;
+}
 
 /* Group Detail Container Styles */
 .group-detail-container h6 {
