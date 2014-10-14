@@ -660,16 +660,7 @@
                 dataValueField: 'id',
                 //header: false,
                 minWidth: 'auto',
-                control: {
-                    apply: {
-                        click: function (self, checkedRows) {
-                        }
-                    },
-                    cancel: {
-                        click: function (self, checkedRows) {
-                        }
-                    }
-                },
+                control: false,
                 selectedList: 3
             },
             defaultFilterConfig = {
@@ -705,27 +696,21 @@
             multiSelectMenu.find('input[type="checkbox"]').next('span').addClass('ace-lbl');
 
             if(config.control != false) {
-                var applyBtn = $('<button class="btn btn-mini btn-primary pull-right ui-multiselect-control-apply">Apply</button>'),
-                    cancelBtn = $('<button class="btn btn-mini pull-right ui-multiselect-control-cancel">Cancel</button>'),
-                    msControls = $('<div class="row-fluid ui-multiselect-controls""></div>');
+                var msControls = $('<div class="row-fluid ui-multiselect-controls""></div>');
 
-                msControls.append((config.control.apply) ? applyBtn : '')
-                    .append((config.control.cancel) ? cancelBtn : '');
+                $.each(config.control, function(controlKey, controlValue) {
+                    var btn = $('<button class="btn btn-mini ' + (contrail.checkIfExist(controlValue.cssClass) ? controlValue.cssClass : '') +
+                        ' pull-right ui-multiselect-control-apply">' + controlValue.label + '</button>');
+                    msControls.append(btn);
 
-                if (contrail.checkIfFunction(config.control.apply.click)) {
-                    applyBtn.on('click', function () {
-                        var checkedRows = self.find('select').multiselect('getChecked')
-                        config.control.apply.click(self, checkedRows);
-                        self.find('select').multiselect('close');
-                    })
-                }
-                if (contrail.checkIfFunction(config.control.cancel.click)) {
-                    cancelBtn.on('click', function () {
-                        var checkedRows = self.find('select').multiselect('getChecked')
-                        config.control.cancel.click(self, checkedRows);
-                        self.find('select').multiselect('close');
-                    })
-                }
+                    if (contrail.checkIfFunction(controlValue.click)) {
+                        btn.on('click', function () {
+                            var checkedRows = self.find('select').multiselect('getChecked')
+                            controlValue.click(self, checkedRows);
+                            self.find('select').multiselect('close');
+                        })
+                    }
+                })
 
                 multiSelectMenu.append(msControls);
             }
@@ -765,7 +750,7 @@
 
         function getDefaultMultiselectMethods () {
             var methodObj = {},
-                defaultMethods = ['open', 'refresh', 'uncheckAll', 'getChecked'];
+                defaultMethods = ['open', 'refresh', 'uncheckAll', 'getChecked', 'disable', 'enable'];
 
             $.each(defaultMethods, function (defaultMethodKey, defaultMethodValue) {
                 methodObj[defaultMethodValue] = function () {

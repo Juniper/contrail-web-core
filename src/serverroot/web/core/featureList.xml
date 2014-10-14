@@ -88,7 +88,12 @@
         <feature>quotasconfig</feature>
         <read-access>member</read-access>
         <write-access>member</write-access>
-    </item>    
+    </item>
+    <item>
+        <feature>securitygroupconfig</feature>
+        <read-access>member</read-access>
+        <write-access>member</write-access>
+    </item>
     <item>
         <feature>orchestration</feature>
     </item>

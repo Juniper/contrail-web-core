@@ -1503,8 +1503,8 @@ input.datetimepicker{
 }
 /* End - Jquery UI Tabs */
 /* a Links */
-a.disabled-link, a.disabled-link:hover{
-	color: #ccc;
+a.disabled-link, a.disabled-link:hover, i.disabled-link, i.disabled-link:hover{
+	color: #ccc !important;
 	cursor: initial !important;
 }
 a.disabled-link i {
@@ -1892,6 +1892,10 @@ color: #b94a48;
     left: 32px;
     background:#eee;
     height: 282px;
+}
+.image-Security:before {
+  content : url(../img/policy.png);
+  vertical-align : middle;
 }
 
 /* Group Detail Container Styles */

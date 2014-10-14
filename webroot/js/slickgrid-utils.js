@@ -101,6 +101,10 @@ function getDefaultGridConfig() {
         gridOptions = gridConfig.body.options;
         gridConfig.footer = ($.isEmptyObject(gridConfig.footer)) ? false : gridConfig.footer;
 
+        if(contrail.checkIfKeyExistInObject(true, customGridConfig, 'footer.pager.options.pageSizeSelect')) {
+            gridConfig.footer.pager.options.pageSizeSelect = customGridConfig.footer.pager.options.pageSizeSelect;
+        }
+
         //Local Datasource means the client-side data with client-side pagination if footer initialized
         if (contrail.checkIfExist(gridDataSource.data)) {
             dataView = new ContrailDataView();
@@ -322,6 +326,9 @@ function getDefaultGridConfig() {
                 		if(typeof val.searchable == 'undefined' || val.searchable != false)
                             searchColumns.push(val);
                 	}
+                    if(!contrail.checkIfExist(val.tooltip)) {
+                        val.toolTip = val.name;
+                    }
                 });
             }
 
@@ -1142,33 +1149,24 @@ function getDefaultGridConfig() {
             var actions = actionConfig.actions,
                 actionId = (contrail.checkIfExist(actionConfig.actionId)) ? actionConfig.actionId : gridContainer.prop('id') + '-header-action-' + key;
             var actionsTemplate = '<div id="' + actionId + '" class="widget-toolbar pull-right"> \
-		            <a class="widget-toolbar-icon link-multiselectbox' + (contrail.checkIfExist(actionConfig.disabledLink) ? ' disabled-link' : '') + '" \
-		            title="' + actionConfig.title + '" data-action="multiselect"> \
-		            <i class="' + actionConfig.iconClass + '"></i> \
-		        </a> \
-		        <span class="input-multiselectbox hide"> \
+		        <span class="input-multiselectbox"> \
 		            <span class="input-icon"> \
-		            	<i class="widget-toolbar-icon ' + actionConfig.iconClass + '"></i> \
+		            	<i class="widget-toolbar-icon ' + actionConfig.iconClass + (contrail.checkIfExist(actionConfig.disabledLink) ? ' disabled-link' : '') + '"></i> \
 		            </span> \
 		        </span> \
 		    </div>';
 
             $(actionsTemplate).appendTo('#' + gridContainer.prop('id') + '-header');
             $('#' + actionId).find('.input-icon').contrailCheckedMultiselect(actionConfig.elementConfig);
-            
+
+            if(actionConfig.disabledLink) {
+                $('#' + actionId).find('.input-icon').data('contrailCheckedMultiselect').disable();
+            }
+
 //            if($('#' + actionId).find('.input-icon').data('contrailCheckedMultiselect').getChecked().length > 0){
 //            	gridContainer.find('.input-multiselectbox').show();
 //   	        	gridContainer.find('.link-multiselectbox').hide();
 //   	        }
-
-            initOnClickDocument($('#' + actionId).find('.input-multiselectbox'),function(e){
-            	if($(e.target).parents('.ui-multiselect-menu').length == 0 &&
-                    gridContainer.find($('#' + actionId).find('.input-multiselectbox')).is(":visible") &&
-                    $('#' + actionId).find('.input-icon').data('contrailCheckedMultiselect').getChecked().length == 0) {
-   	            	gridContainer.find($('#' + actionId).find('.input-multiselectbox')).hide();
-       	        	gridContainer.find($('#' + actionId).find('.link-multiselectbox')).show();
-           		}
-            });
         };
 
         function addGridRowActionDroplist(actionConfig, gridContainer, rowIndex) {
