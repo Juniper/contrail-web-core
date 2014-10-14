@@ -2141,6 +2141,7 @@ function ManageDataSource() {
             dsObj['ongoing'] = false;
             dsObj['lastUpdated'] = new Date().getTime();
             dsObj['error'] = null;
+            dsObj['clean'] = true;
             manageDataSource.setLastupdatedTime(dsObj,{status:'done'});
         });
         return dsObj;
