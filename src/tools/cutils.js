@@ -1219,6 +1219,33 @@ function policyRuleFormat(text) {
     return '<span class="rule-format">' + text  + '</span>';
 }
 
+function formatVirtualRouterType(type) {
+    var formattedType = '';
+    if(type === '-') {
+         formattedType = type;
+    } else if(typeof type === 'object') {
+        for(var i = 0; i < type.length; i++) {
+            var actText = '';
+            switch(type[i]) {
+                case 'embedded' :
+                    actText = 'Embedded';
+                    break;
+                case 'tor-agent' :
+                    actText = 'TOR Agent';
+                    break; 
+                case 'tor-service-node' :
+                    actText = 'TOR Service Node';
+                    break;                 
+            }                
+            if(formattedType === '') {
+                formattedType = actText
+            } else {
+                formattedType += ' , ' + actText;
+            }
+        }
+    }
+    return formattedType;         
+}
 
 cutils.getCookie = getCookie;       
 cutils.setCookie = setCookie;
@@ -1283,3 +1310,4 @@ cutils.isValidIP = isValidIP;
 cutils.isIPv4 = isIPv4;
 cutils.isIPv6 = isIPv6;
 cutils.isIPBoundToRange = isIPBoundToRange;
+cutils.formatVirtualRouterType = formatVirtualRouterType;
