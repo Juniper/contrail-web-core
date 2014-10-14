@@ -1081,6 +1081,32 @@ function createRedisClient (redisDBIndex, callback)
     });
 }
 
+/* Function: flushRedisDB
+    Used to flush the Redis DB
+ */
+function flushRedisDB (redisDB, callback)
+{
+    var server_port = (config.redis_server_port) ?
+        config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
+    var server_ip = (config.redis_server_ip) ?
+        config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
+    var redisClient = redis.createClient(server_port,
+        server_ip);
+    redisClient.select(redisDB, function(err, res) {
+        redisClient.flushdb(function(err) {
+            if (null != err) {
+                logutils.logger.error("Redis FLUSHDB " + redisDB + " error:" +
+                                      err);
+            } else {
+                logutils.logger.debug("Redis FLUSHDB "+ redisDB + " done");
+            }
+            redisClient.quit(function(err) {
+                callback();
+            });
+        });
+    });
+}
+
 function parseUVEArrayData (result, data)
 {
     var len = data.length;
@@ -1721,6 +1747,7 @@ exports.createJSONByUVEResponse = createJSONByUVEResponse;
 exports.createJSONByUVEResponseArr = createJSONByUVEResponseArr;
 exports.getRestAPIServer = getRestAPIServer;
 exports.createRedisClient = createRedisClient;
+exports.flushRedisDB = flushRedisDB;
 exports.redisClientCreateEvent = redisClientCreateEvent;
 exports.getWebUIRedisDBIndex = getWebUIRedisDBIndex;
 exports.getCurrentUTCTime = getCurrentUTCTime;
@@ -1762,3 +1789,4 @@ exports.mergeAllMenuXMLFiles = mergeAllMenuXMLFiles;
 exports.getPkgPathByPkgName = getPkgPathByPkgName;
 exports.convertUUIDToString = convertUUIDToString;
 exports.ifNull = ifNull;
+

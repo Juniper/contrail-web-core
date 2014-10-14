@@ -16,6 +16,7 @@ var axon = require('axon')
     , commonUtils = require('./src/serverroot/utils/common.utils')
     , logutils = require('./src/serverroot/utils/log.utils')
     , discServ = require('./src/serverroot/jobs/core/discoveryservice.api')
+    , async = require('async')
     , jsonPath = require('JSONPath').eval;
 
 var config = commonUtils.compareAndMergeDefaultConfig();
@@ -119,23 +120,10 @@ function startServers ()
 
 function jobServerPurgeAndStart (redisClient)
 {
-    redisClient.flushall(function (err) {
-        if (err) {
-            logutils.logger.error("web-ui Redis FLUSALL error:" + err);
-        } else {
-            logutils.logger.debug("web-ui Redis FLUSHALL done.");
-        }
-    /*
-        var uiDB = config.redisDBIndex;
-        if (null == uiDB) {
-            uiDB = global.WEBUI_DFLT_REDIS_DB;
-        }
-        if (err) {
-            logutils.logger.error("web-ui Redis FLUSHDB " + uiDB + " error:" + err);
-        } else {
-            logutils.logger.debug("Redis FLUSHDB " + uiDB + " Done.");
-        }
-    */
+    var redisDBs = [global.WEBUI_SESSION_REDIS_DB, global.WEBUI_DFLT_REDIS_DB,
+        global.QE_DFLT_REDIS_DB, global.SM_DFLT_REDIS_DB];
+    async.map(redisDBs, commonUtils.flushRedisDB, function() {
+        /* Already logged */
     });
 }
 
