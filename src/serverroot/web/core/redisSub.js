@@ -33,7 +33,7 @@ function createRedisClientAndSubscribeMsg (callback)
     });
 }
 
-commonUtils.createRedisClient(0, function(client) {
+commonUtils.createRedisClient(global.WEBUI_SESSION_REDIS_DB, function(client) {
     redisSub.redisPerClient = client;
 });
 
