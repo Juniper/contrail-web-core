@@ -248,5 +248,12 @@ config.staticAuth[0].username = 'admin';
 config.staticAuth[0].password = 'contrail123';
 config.staticAuth[0].roles = ['superAdmin'];
 
+/*****************************************************************************
+* Below are the delimiter list for physical/logical interface creation.
+* Allowed values : [',', ':']
+*****************************************************************************/
+config.physicaldevices = {};
+config.physicaldevices.interface_delimiters = ['.', ':'];
+
 // Export this as a module.
 module.exports = config;
