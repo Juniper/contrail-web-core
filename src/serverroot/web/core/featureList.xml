@@ -95,6 +95,11 @@
         <write-access>member</write-access>
     </item>
     <item>
+        <feature>logicalroutersconfig</feature>
+        <read-access>member</read-access>
+        <write-access>member</write-access>
+    </item>
+    <item>
         <feature>orchestration</feature>
     </item>
     <item>
