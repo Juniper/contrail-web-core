@@ -146,8 +146,12 @@ Handlebars.registerHelper('getHashFromMenuItem',function(menuItem){
     }
 });
 
-Handlebars.registerHelper('showHideLogicalInterface', function(type) {
+Handlebars.registerHelper('showHidePIDetails', function(type) {
     return type === 'Physical' ? 'show' : 'hide';
+});
+
+Handlebars.registerHelper('showHideLIDetails', function(type) {
+    return type === 'Logical' ? 'show' : 'hide';
 });
 
 Handlebars.registerHelper('formatVirtualRouterType', function(type) {
