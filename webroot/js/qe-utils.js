@@ -16,7 +16,16 @@ var serializer = new XMLSerializer(),
         {id:"ModuleId", field:"ModuleId", name:"Module Id", width:210 },
         {id:"Xmlmessage", field:"Xmlmessage", name:"Log" }
     ],
-    placeHolders = {"Xmlmessage": ["Use RegEx= operator to search Xmlmessage"], "ObjectLog": ["Use RegEx= operator to search ObjectLog"], "SystemLog": ["Use RegEx= operator to search SystemLog"], "protocol_sport":["Protocol", "Any Source Port"], "protocol_dport":["Protocol", "Any Destination Port"], "sourcevn_sourceip":["Source VN", "Any Source IP"], "destvn_destip":["Destination VN", "Any Destination IP"]},
+    placeHolders = {
+                    "Xmlmessage": ["Use RegEx= operator to search Xmlmessage"], 
+                    "ObjectLog": ["Use RegEx= operator to search ObjectLog"], 
+                    "SystemLog": ["Use RegEx= operator to search SystemLog"], 
+                    "protocol_sport":["Protocol", "Any Source Port"], 
+                    "protocol_dport":["Protocol", "Any Destination Port"], 
+                    "sourcevn_sourceip":["Source VN", "Any Source IP"], 
+                    "destvn_destip":["Destination VN", "Any Destination IP"],
+                    "vrouter":["VRouter","Any VMI IP"]
+    },
     flowWhereFields = [
         {"name":"Source VN, Source IP", "value":"sourcevn_sourceip"},
         {"name":"Dest. VN, Dest. IP", "value":"destvn_destip"},
