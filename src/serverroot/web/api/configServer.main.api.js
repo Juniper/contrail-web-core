@@ -43,13 +43,16 @@ function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
     var headers = {};
     var authObj;
     try {
+        defProject = getDefProjectByAppData(appData);
         headers['X-Auth-Token'] =
             appData['authObj']['defTokenObj']['id'];
+        headers['X_API_ROLE'] =
+            appData['authObj'].req.session.userRoles[defProject].join(',');
         headers = getHeaders(headers, appHeaders);
-        defProject = getDefProjectByAppData(appData);
     } catch(e) {
         /* We did not have authorized yet */
         headers['X-Auth-Token'] = null;
+        headers['X_API_ROLE'] = null;
         defProject = null;
     }
     configServer.api.get(reqUrl, function(err, data) {
@@ -86,13 +89,16 @@ function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
     var headers = {}; 
     var authObj;
     try {
+        defProject = getDefProjectByAppData(appData);
         headers['X-Auth-Token'] =
             appData['authObj']['defTokenObj']['id'];
+        headers['X_API_ROLE'] =
+            appData['authObj'].req.session.userRoles[defProject].join(',');
         headers = getHeaders(headers, appHeaders);
-        defProject = getDefProjectByAppData(appData);
     } catch(e) {
         /* We did not have authorized yet */
         headers['X-Auth-Token'] = null;
+        headers['X_API_ROLE'] = null;
         defProject = null;
     }   
     configServer.api.put(reqUrl, reqData, function(err, data) {
@@ -130,13 +136,16 @@ function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
     var headers = {}; 
     var authObj;
     try {
+        defProject = getDefProjectByAppData(appData);
         headers['X-Auth-Token'] =
             appData['authObj']['defTokenObj']['id'];
+        headers['X_API_ROLE'] =
+            appData['authObj'].req.session.userRoles[defProject].join(',');
         headers = getHeaders(headers, appHeaders);
-        defProject = getDefProjectByAppData(appData);
     } catch(e) {
         /* We did not have authorized yet */
         headers['X-Auth-Token'] = null;
+        headers['X_API_ROLE'] = null;
         defProject = null;
     }
     configServer.api.post(reqUrl, reqData, function(err, data) {
@@ -174,13 +183,16 @@ function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
     var headers = {}; 
     var authObj;
     try {
+        defProject = getDefProjectByAppData(appData);
         headers['X-Auth-Token'] =
             appData['authObj']['defTokenObj']['id'];
+        headers['X_API_ROLE'] =
+            appData['authObj'].req.session.userRoles[defProject].join(',');
         headers = getHeaders(headers, appHeaders);
-        defProject = getDefProjectByAppData(appData);
     } catch(e) {
         /* We did not have authorized yet */
         headers['X-Auth-Token'] = null;
+        headers['X_API_ROLE'] = null;
         defProject = null;
     }
     configServer.api.delete(reqUrl, function(err, data) {

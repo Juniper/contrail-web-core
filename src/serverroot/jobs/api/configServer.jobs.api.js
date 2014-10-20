@@ -28,13 +28,16 @@ function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
     var defProject = null;
     var tokenId = null;
     try {
-        var tokenId = jobData['taskData']['authObj']['token']['id'];
-        headers['X-Auth-Token'] = tokenId;
-        headers = getHeaders(headers, appHeaders);
+        tokenId = jobData['taskData']['authObj']['token']['id'];
         defProject = jobData['taskData']['authObj']['token']['tenant']['name'];
+        headers['X-Auth-Token'] = tokenId;
+        headers['X_API_ROLE'] =
+            jobData['taskData']['userRoles'][defProject].join(',');
+        headers = getHeaders(headers, appHeaders);
     } catch(e) {
         /* We did not have authorized yet */
         headers['X-Auth-Token'] = null;
+        headers['X_API_ROLE'] = null;
         defProject = null;
     }
     configServer.api.get(reqUrl, function(err, data) {
@@ -75,12 +78,15 @@ function apiPut (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
     var tokenId = null;
     try {
         tokenId = jobData['taskData']['authObj']['token']['id'];
-        headers['X-Auth-Token'] = tokenId;
-        headers = getHeaders(headers, appHeaders);
         defProject = jobData['taskData']['authObj']['token']['tenant']['name'];
+        headers['X-Auth-Token'] = tokenId;
+        headers['X_API_ROLE'] =
+            jobData['taskData']['userRoles'][defProject].join(',');
+        headers = getHeaders(headers, appHeaders);
     } catch(e) {
         /* We did not have authorized yet */
         headers['X-Auth-Token'] = null;
+        headers['X_API_ROLE'] = null;
         defProject = null;
     }
     configServer.api.put(reqUrl, function(err, data) {
@@ -119,15 +125,18 @@ function apiPost (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
     var headers = {};
     var authObj;
     var defProject = null;
+    var tokenId = null;
     try {
         tokenId = jobData['taskData']['authObj']['token']['id'];
-        headers['X-Auth-Token'] =
-            jobData['taskData']['authObj']['token']['id'];
-        headers = getHeaders(headers, appHeaders);
         defProject = jobData['taskData']['authObj']['token']['tenant']['name'];
+        headers['X-Auth-Token'] = tokenId;
+        headers['X_API_ROLE'] =
+            jobData['taskData']['userRoles'][defProject].join(',');
+        headers = getHeaders(headers, appHeaders);
     } catch(e) {
         /* We did not have authorized yet */
         headers['X-Auth-Token'] = null;
+        headers['X_API_ROLE'] = null;
         defProject = null;
     }
     configServer.api.post(reqUrl, function(err, data) {
@@ -168,13 +177,15 @@ function apiDelete (reqUrl, jobData, callback, appHeaders, stopRetry)
     var tokenId = null;
     try {
         tokenId = jobData['taskData']['authObj']['token']['id'];
-        headers['X-Auth-Token'] =
-            jobData['taskData']['authObj']['token']['id'];
-        headers = getHeaders(headers, appHeaders);
         defProject = jobData['taskData']['authObj']['token']['tenant']['name'];
+        headers['X-Auth-Token'] = tokenId;
+        headers['X_API_ROLE'] =
+            jobData['taskData']['userRoles'][defProject].join(',');
+        headers = getHeaders(headers, appHeaders);
     } catch(e) {
         /* We did not have authorized yet */
         headers['X-Auth-Token'] = null;
+        headers['X_API_ROLE'] = null;
         defProject = null;
     }
     configServer.api.delete(reqUrl, function(err, data) {

@@ -1012,21 +1012,41 @@ function getProjectDetails (projects, userObj, callback)
 
 function getUserRoleByProjectList (projects, userObj, callback)
 {
+    var resTokenObjs = {};
     var userRole = global.STR_ROLE_USER;
     getProjectDetails (projects, userObj, function(err, projs, tokenObjs) {
         if ((null != err) || (null == projs)) {
             callback(null, tokenObjs);
             return;
         }
+        var projCnt = projs.length;
+        for (var i = 0; i < projCnt; i++) {
+            try {
+                var projName = projs[i]['token']['project']['name'];
+                resTokenObjs[projName] = projs[i];
+                if (null != tokenObjs[projName]) {
+                    resTokenObjs[projName]['token']['id'] =
+                        tokenObjs[projName]['token']['id'];
+                    resTokenObjs[projName]['token']['tenant'] =
+                        tokenObjs[projName]['token']['tenant'];
+                    resTokenObjs[projName]['user'] = {};
+                    resTokenObjs[projName]['user']['roles'] =
+                        resTokenObjs[projName]['token']['roles'];
+                }
+            } catch(e) {
+                logutils.logger.error("In getUserRoleByProjectList(): JSON " + 
+                                      "Parse error:" + e);
+            }
+        }
         var resCnt = projs.length;
         for (var i = 0; i < resCnt; i++) {
             var userRole = getUserRoleByAuthResponse(projs[i]['token']['roles']);
             if (global.STR_ROLE_ADMIN == userRole) {
-                callback(userRole, tokenObjs);
+                callback(userRole, resTokenObjs);
                 return;
             }
         }
-        callback(userRole, tokenObjs);
+        callback(userRole, resTokenObjs);
     });
 }
 
@@ -1095,6 +1115,8 @@ function doV3Auth (req, callback)
                     req.session.def_token_used = tokenObjs[defProject]['token'];
                     req.session.authApiVersion = 'v3';
                     req.session.tokenObjs = tokenObjs;
+                    req.session.userRoles =
+                        userRoleListByTokenObjs(tokenObjs);
                     updateTokenIdForProject(req, defProject,
                                             req.session.def_token_used);
                     req.session.isAuthenticated = true;
@@ -1106,6 +1128,28 @@ function doV3Auth (req, callback)
             });
         });
     });
+}
+
+function userRoleListByTokenObjs (tokenObjs)
+{
+    var userRoleObj = {};
+    for (var key in tokenObjs) {
+        try {
+            userRoleObj[key] = [];
+            var roleList = tokenObjs[key]['user']['roles'];
+            var roleListLen = roleList.length;
+        } catch(e) {
+            logutils.logger.error("In userRoleListByTokenObjs(): " +
+                                  "roles parse error:" + e);
+            roleListLen = 0;
+        }
+        for (var i = 0; i < roleListLen; i++) {
+            if ((null != roleList[i]) && (null != roleList[i]['name'])) {
+                userRoleObj[key].push(roleList[i]['name']);
+            }
+        }
+    }
+    return userRoleObj;
 }
 
 function doV2Auth (req, callback)
@@ -1178,6 +1222,8 @@ function doV2Auth (req, callback)
                         req.session.userRole = uiRoles;
                         req.session.authApiVersion = 'v2.0';
                         req.session.tokenObjs = tokenObjs;
+                        req.session.userRoles =
+                            userRoleListByTokenObjs(tokenObjs);
                         //setSessionTimeoutByReq(req);
                         updateTokenIdForProject(req, defProject, data);
                         updateLastTokenUsed(req, data);

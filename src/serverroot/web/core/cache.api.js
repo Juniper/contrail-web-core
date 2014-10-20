@@ -328,6 +328,7 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 			pubChannel: pubChannel,
 			saveChannelKey: saveChannelKey,
 			reqBy: reqBy,
+			userRoles: req.session.userRoles,
 			appData: appData
 		}
 	};
