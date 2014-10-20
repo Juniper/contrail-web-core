@@ -255,5 +255,11 @@ config.staticAuth[0].roles = ['superAdmin'];
 config.physicaldevices = {};
 config.physicaldevices.interface_delimiters = ['.', ':'];
 
+/*****************************************************************************
+* Below are the disabled list of UI features.
+*****************************************************************************/
+config.features = {};
+config.features.disabled = [];
+
 // Export this as a module.
 module.exports = config;

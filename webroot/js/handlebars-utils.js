@@ -124,9 +124,9 @@ Handlebars.registerHelper('getHashFromMenuItem',function(menuItem){
     var result = {},params = {},childItems = [];
     if(menuItem['items'] != null && menuItem['items']['item'] != null){
         childItems = menuItem['items']['item'];
-        if(childItems[0]['hash'] != null)
+        if(childItems != null && childItems.length > 0 && childItems[0]['hash'] != null)
             result['p'] = childItems[0]['hash'];
-        if(childItems[0]['queryParams'] != null){
+        if(childItems != null && childItems.length > 0 && childItems[0]['queryParams'] != null){
             $.each(childItems[0]['queryParams'],function(key,value){
                 params[key] = value
             });
