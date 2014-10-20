@@ -123,4 +123,7 @@
     <item>
         <feature>proxy</feature>
     </item>
+    <item>
+        <feature>portconfig</feature>
+    </item>
 </featureLists>
