@@ -29,7 +29,7 @@ var TENANT_API_URL = "/api/tenant/get-data";
 var SANDESH_DATA_URL = "/api/admin/monitor/infrastructure/get-sandesh-data";
 var INDENT_RIGHT = "&nbsp;&nbsp;&nbsp;&nbsp;";
 var INST_PAGINATION_CNT = 50;
-var NETWORKS_PAGINATION_CNT = 5;
+var NETWORKS_PAGINATION_CNT = 25;
 var sevLevels = {
     ERROR   : 0, //Red
     WARNING : 1, //Orange
