@@ -136,7 +136,7 @@ jobsProcess.processTopPeerByConnNetRequestByJob = function(pubChannel,
 jobsProcess.processTopPeerDetailsRequestByJob = function(pubChannel,
                                                      saveChannelKey,
                                                      jobData, done) {
-    console.log("getting Top Peer:");
+    logutils.logger.debug("getting Top Peer:");
     nwMonJobsApi.processTopPeerDetails(pubChannel, saveChannelKey, jobData,
                                        done);
 }

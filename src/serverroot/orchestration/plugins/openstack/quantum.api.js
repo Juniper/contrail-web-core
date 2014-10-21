@@ -45,16 +45,18 @@ function doQuantumOpCb (reqUrl, tenantId, req, quantumCallback, stopRetry,
                         function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             if (stopRetry) {
-                console.log("We are done retrying for tenantId:" + tenantId +
-                            " with err:" + err);
+                logutils.logger.debug("We are done retrying for tenantId:" +
+                                      tenantId + " with err:" + err);
                 commonUtils.redirectToLogout(req, req.res);
             } else {
                 /* Retry once again */
-                console.log("We are about to retry for tenantId:" + tenantId);
+                logutils.logger.debug("We are about to retry for tenantId:" +
+                                      tenantId);
                 quantumCallback(reqUrl, req, callback, true);
             }
         } else {
-            console.log("doQuantumOpCb() success with tenantId:" + tenantId);
+            logutils.logger.debug("doQuantumOpCb() success with tenantId:" +
+                                  tenantId);
             callback(err, tokenObj);
         }
     });

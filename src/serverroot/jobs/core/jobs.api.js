@@ -411,7 +411,7 @@ function getChannelkeyByHashUrl (lookupHash, myHash, url)
 
 function defDoneCallback ()
 {
-    console.log("We are done");
+    logutils.logger.debug("We are done");
 }
 
 function createJobListener (lookupHash, myHash, url, oldPubChannel, oldSaveChannelKey, 
