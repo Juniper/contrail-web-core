@@ -360,7 +360,7 @@ function handleJSONResponse(error, req, res, jsonStr)
 	if (!error) {
 		longPoll.insertResToReadyQ(res, jsonStr, global.HTTP_STATUS_RESP_OK, 1);
 	} else {
-		console.log(error.stack);
+		logutils.logger.debug(error.stack);
 		res.send(error.responseCode, error.message);
 	}
 }

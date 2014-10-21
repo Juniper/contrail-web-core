@@ -46,7 +46,7 @@ processMsg = function (msg) {
 connectToMainServer = function () {
     var connectURL = 'tcp://' + hostName + ":" + port;
     workerSock.connect(connectURL);
-    console.log('Job Server connected to port ', port);
+    logutils.logger.info('Job Server connected to port ' + port);
 }
 
 kueJobListen = function() {

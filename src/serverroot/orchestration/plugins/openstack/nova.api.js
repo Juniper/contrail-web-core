@@ -50,16 +50,18 @@ function doNovaOpCb (reqUrl, apiProtoIP, tenantId, req, novaCallback, stopRetry,
     authApi.getTokenObj(req, tenantId, forceAuth, function(err, tokenObj) {
         if ((null != err) || (null == tokenObj) || (null == tokenObj.id)) {
             if (stopRetry) {
-                console.log("We are done retrying for tenantId:" + tenantId +
-                            " with err:" + err);
+                logutils.logger.debug("We are done retrying for tenantId:" +
+                                      tenantId + " with err:" + err);
                 commonUtils.redirectToLogout(req, req.res);
             } else {
                 /* Retry once again */
-                console.log("We are about to retry for tenantId:" + tenantId);
+                logutils.logger.debug("We are about to retry for tenantId:" +
+                                      tenantId);
                 novaCallback(reqUrl, apiProtoIP, req, callback, true);
             }
         } else {
-            console.log("doNovaOpCb() success with tenantId:" + tenantId);
+            logutils.logger.debug("doNovaOpCb() success with tenantId:" +
+                                  tenantId);
             callback(err, tokenObj);
         }
     });

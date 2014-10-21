@@ -154,7 +154,7 @@ function registerSessionDeleteEvent ()
 {
     store.eventEmitter.on('sessionDeleted', function (sid) {
         /* Handle session delete cases here */
-        console.log("Session got expired:", sid);
+        logutils.logger.debug("Session got expired: " + sid);
         /* Delete authKey from Redis for this Session ID */
         /* NOTE: sid is of format as: 
            global.STR_REDIS_STORE_SESSION_ID_PREFIXsessionId, so extract sessionId
