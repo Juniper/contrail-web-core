@@ -132,6 +132,12 @@ function queueDataFromCacheOrSendRequest (req, res, jobType, jobName,
 	var reqUrl = reqJSON.data.url;
 	var hash = reqJSON.jobName;
 	var channel = redisSub.createChannelByHashURL(hash, reqUrl);
+    if ((null == sendToJobServerAlways) || (false == sendToJobServerAlways)) {
+        sendReqToJobServer(req, res, reqData, channel, hash,
+                           sendToJobServerAlways, postCallback);
+        return;
+    }
+
     cacheApi.redisClient.zrange('q:jobs:' + jobName + ':' + 'active' , 0,
                                global.MAX_INT_VALUE,
                                function(err, data) {
@@ -209,7 +215,6 @@ function sendReqToJobServer (req, res, reqData, channel, hash,
                 handleJSONResponse(err, req, res, value);
                 saveCtx = false;
             }
-                
 			createDataAndSendToJobServer(global.STR_JOB_TYPE_CACHE, hash,
 			                             reqData, req, res, saveCtx,
                                          postCallback);
@@ -323,6 +328,7 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 			pubChannel: pubChannel,
 			saveChannelKey: saveChannelKey,
 			reqBy: reqBy,
+			userRoles: req.session.userRoles,
 			appData: appData
 		}
 	};
