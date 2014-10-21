@@ -494,6 +494,6 @@
     				<option value="{%22parent%22:%22{{../id}}%22,%22value%22:%22{{id}}%22}" {{#IfCompare selected true operator='==' }}selected="true"{{/IfCompare}}>{{text}}</option>
 				{{/each}}
   			</optgroup> 
-                        {{/each}}
+        {{/each}}
 	</select>
 </script>

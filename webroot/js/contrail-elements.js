@@ -661,14 +661,23 @@
                 //header: false,
                 minWidth: 'auto',
                 control: false,
-                selectedList: 3
+                selectedList: 3,
+                tristate: false,
+                emptyOptionText: 'No option found.'
             },
             defaultFilterConfig = {
                 label: false
             },
             config = $.extend(true, defaultConfig, config),
             defaultFilterConfig = $.extend(true, defaultFilterConfig, config.filterConfig),
-            template = null, preChecked = [];
+            template = null, preChecked = [],
+            multiSelectMenu = null;
+
+            if(config.tristate) {
+                config.optgrouptoggle = function(event, ui) {
+                   multiSelectMenu.find('input[type="checkbox"]').tristate('state', ui.checked);
+                }
+            }
 
         function successHandler(response){
             if(!contrail.checkIfExist(response)){
@@ -685,16 +694,29 @@
             template = contrail.getTemplate4Id('checked-multiselect-optgroup-template');
             $(self).append(template(config));
 
+            if (config.data.length == 0) {
+                config.height = 'auto';
+            }
+
             var multiselect = self.find('select').multiselect(config).multiselectfilter(defaultFilterConfig);
             preChecked = self.find('select').multiselect('getChecked');
+
+            multiSelectMenu = self.find('select').multiselect("widget");
+
+            if (config.data.length == 0) {
+                multiSelectMenu.append('<p class="padding-0-0-5 margin-0-5">'+ config.emptyOptionText + '</p>')
+            }
+
+            if(config.tristate){
+                multiSelectMenu.find('input[type="checkbox"]').tristate({state: null}).addClass('ace-input-tristate');
+            } else {
+                multiSelectMenu.find('input[type="checkbox"]').addClass('ace-input');
+            }
+            multiSelectMenu.find('input[type="checkbox"]').next('span').addClass('ace-lbl');
+
             /*
              * Appending controls and related events
              */
-
-            var multiSelectMenu = self.find('select').multiselect("widget");
-            multiSelectMenu.find('input[type="checkbox"]').addClass('ace-input');
-            multiSelectMenu.find('input[type="checkbox"]').next('span').addClass('ace-lbl');
-
             if(config.control != false) {
                 var msControls = $('<div class="row-fluid ui-multiselect-controls""></div>');
 
@@ -705,7 +727,12 @@
 
                     if (contrail.checkIfFunction(controlValue.click)) {
                         btn.on('click', function () {
-                            var checkedRows = self.find('select').multiselect('getChecked')
+                            var checkedRows = [];
+                            if(config.tristate){
+                                checkedRows = multiSelectMenu.find('input[type="checkbox"]:determinate');
+                            } else {
+                                checkedRows = self.find('select').multiselect('getChecked');
+                            }
                             controlValue.click(self, checkedRows);
                             self.find('select').multiselect('close');
                         })
@@ -719,11 +746,28 @@
                 getPreChecked: function () {
                     return preChecked;
                 },
-                setChecked   : function (checkedElements) {
+                setChecked: function (checkedElements) {
                     this.uncheckAll();
                     $.each(checkedElements, function (elementKey, elementValue) {
                         $(elementValue).click();
                     });
+                },
+                setCheckedState: function (state) {
+                    this.uncheckAll();
+                    if(config.tristate) {
+                        if (typeof state === "boolean" || state == null) {
+                            multiSelectMenu.find('input[type="checkbox"]').tristate('state', state)
+                        } else if (typeof state === "object") {
+                            $.each(state, function (stateKey, stateValue) {
+                                $(multiSelectMenu.find('input[type="checkbox"]')[stateKey]).tristate('state', stateValue);
+                            });
+                        }
+                    } else {
+                        if(typeof state === "boolean" && state) {
+                            this.checkAll();
+                        }
+                        //TODO handle else if typeof state === object
+                    }
                 }
             }));
         };

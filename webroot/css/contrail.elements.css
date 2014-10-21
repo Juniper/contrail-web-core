@@ -975,6 +975,111 @@ input.ace-input[type=radio] + .ace-lbl::before {
 input.ace-input[type=radio]:checked + .ace-lbl::before {
   content: "\2022";
 }
+
+/* Tistate Checkbox and Radio */
+
+input.ace-input-tristate[type=checkbox] {
+    opacity: 0;
+    position: absolute;
+    z-index: 12;
+    width: 18px;
+    height: 18px;
+}
+input.ace-input-tristate[type=checkbox]:checked,
+input.ace-input-tristate[type=checkbox]:focus {
+    outline: none !important;
+}
+input.ace-input-tristate[type=checkbox] + .ace-lbl {
+    position: relative;
+    z-index: 11;
+    display: inline-block;
+    margin: 0;
+    line-height: 20px;
+    min-height: 14px;
+    min-width: 14px;
+    font-weight: normal;
+    font-size: 13px;
+}
+input.ace-input-tristate[type=checkbox] + .ace-lbl.padding-16::before {
+    margin-right: 16px;
+}
+input.ace-input-tristate[type=checkbox] + .ace-lbl.padding-12::before {
+    margin-right: 12px;
+}
+input.ace-input-tristate[type=checkbox] + .ace-lbl.padding-8::before {
+    margin-right: 8px;
+}
+input.ace-input-tristate[type=checkbox] + .ace-lbl.padding-4::before {
+    margin-right: 4px;
+}
+input.ace-input-tristate[type=checkbox] + .ace-lbl.padding-0::before {
+    margin-right: 0px;
+}
+input.ace-input-tristate[type=checkbox] + .ace-lbl::before {
+    font-family: fontAwesome;
+    font-weight: normal;
+    font-size: 11px;
+    content: "\a0";
+    background-color: #FAFAFA;
+    border: 1px solid #CCC;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    /*, inset 0px -15px 10px -12px rgba(0,0,0,0.05);*/
+
+    border-radius: 0;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    height: 13px;
+    line-height: 13px;
+    min-width: 13px;
+    margin: -2px 3px 0 0;
+
+}
+input.ace-input-tristate[type=checkbox][indeterminate=indeterminate] + .ace-lbl::before {
+    display: inline-block;
+    content: '\f068';
+    color: #777;
+    background-color: #F5F8FC;
+    border-color: #adb8c0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
+}
+input.ace-input-tristate[type=checkbox][checked=checked] + .ace-lbl::before {
+    display: inline-block;
+    content: '\f00c';
+    color: #3182bd;
+    background-color: #F5F8FC;
+    border-color: #adb8c0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
+}
+input.ace-input-tristate[type=checkbox] + .ace-lbl::before {
+    display: inline-block;
+    content: '\f00d';
+    color: #dd5a43;
+    background-color: #F5F8FC;
+    border-color: #adb8c0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
+}
+input.ace-input-tristate[type=checkbox]:active + .ace-lbl::before,
+input.ace-input-tristate[type=checkbox]:checked:active + .ace-lbl::before {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px 1px 3px rgba(0, 0, 0, 0.1);
+}
+input.ace-input-tristate[type=checkbox].ace-checkbox-2 + .ace-lbl::before {
+    box-shadow: none;
+}
+input.ace-input-tristate[type=checkbox].ace-checkbox-2:checked + .ace-lbl::before {
+    background-color: #f9a021;
+    border-color: #f9a021;
+    color: #FFF;
+}
+input.ace-input-tristate[type=checkbox]:disabled + .ace-lbl::before,
+input.ace-input-tristate[type=checkbox][disabled] + .ace-lbl::before,
+input.ace-input-tristate[type=checkbox].disabled + .ace-lbl::before {
+    background-color: #DDD !important;
+    border-color: #CCC !important;
+    box-shadow: none !important;
+    color: #BBB;
+}
+
 /* CSS3 switches */
 input[type=checkbox].ace-switch {
   width: 55px;
