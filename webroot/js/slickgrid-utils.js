@@ -1135,8 +1135,12 @@ function getDefaultGridConfig() {
 
             $(actionsTemplate).appendTo('#' + gridContainer.prop('id') + '-header');
             $.each(actions, function(key, actionItemConfig){
+                if (actionItemConfig.divider) {
+                    $('<li class="divider"></li>').appendTo('#' + actionId);
+                }
+
                 var actionItem = $('<li><a data-original-title="' + actionItemConfig.title + '"> \
-                                        <i class="' + actionItemConfig.iconClass + '"></i> &nbsp; ' + actionItemConfig.title + '</a> \
+                                        <i class="' + actionItemConfig.iconClass + ' margin-right-10"></i>' + actionItemConfig.title + '</a> \
                                         </li>').appendTo('#' + actionId);
 
                 $(actionItem).on('click', function(){
@@ -1172,9 +1176,13 @@ function getDefaultGridConfig() {
         function addGridRowActionDroplist(actionConfig, gridContainer, rowIndex) {
             var gridActionId = $('<ul id="' + gridContainer.prop('id') + '-action-menu-' + rowIndex + '" class="dropdown-menu pull-right dropdown-caret grid-action-menu"></ul>').appendTo('body');
             $.each(actionConfig, function(key, actionItemConfig){
+                if (actionItemConfig.divider) {
+                   $('<li class="divider"></li>').appendTo('#' + gridContainer.prop('id') + '-action-menu-' + rowIndex);
+                }
+
                 var actionItem = $('\
                     <li><a class="tooltip-success" data-rel="tooltip" data-placement="left" data-original-title="' + actionItemConfig.title + '"> \
-                        <i class="' + actionItemConfig.iconClass + '"></i> &nbsp; ' + actionItemConfig.title + '</a> \
+                        <i class="' + actionItemConfig.iconClass + ' margin-right-10"></i>' + actionItemConfig.title + '</a> \
                     </li>').appendTo('#' + gridContainer.prop('id') + '-action-menu-' + rowIndex);
 
                 $(actionItem).on('click', function(){
