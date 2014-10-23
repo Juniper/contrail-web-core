@@ -4047,6 +4047,8 @@ td.td-actions a.td-action {
 .badge-color-2 {background-color: #ff7f0e;}
 .badge-color-3 {background-color: #2ca02c;}
 .badge-color-4 {background-color: #9e9ac8 ;}
+.badge-color-5 {background-color: #bcbd22 ;}
+.badge-color-6 {background-color: #a55194 ;}
 
 .label-icon-badge {
 	font-size: 12px;
@@ -4057,6 +4059,8 @@ td.td-actions a.td-action {
 .icon-badge-color-2 {color: #ff7f0e;}
 .icon-badge-color-3 {color: #2ca02c;}
 .icon-badge-color-4 {color: #9e9ac8 ;}
+.icon-badge-color-5 {color: #bcbd22 ;}
+.icon-badge-color-6 {color: #a55194 ;}
 
 /* status-badge-rounded */
 .status-badge-rounded {
