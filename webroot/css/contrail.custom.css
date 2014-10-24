@@ -683,6 +683,10 @@ filter: alpha(opacity=40);
 	background-color: #fff;
 }
 
+/* Font Awesome Icons */
+
+.icon-muted{color: #777;}
+
 /* NVD3 Styles */
 
 /* aligning heights of all input types */
