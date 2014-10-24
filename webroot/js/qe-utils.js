@@ -1861,7 +1861,8 @@ function loadQueryQueue(options) {
     			},
     			customControls: ['<a id="btnDeleteQueryQueue" onclick=deleteQueryCache4Queue("' + options.queueType + '"); title="Delete All Query Queue" class="disabled-link"><i class="icon-trash"></i></a>'],
     			defaultControls: {
-    				refreshable: true
+    				refreshable: true,
+                    searchable: false
     			}
     		},
     		columnHeader: {
