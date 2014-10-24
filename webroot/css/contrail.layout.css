@@ -1685,6 +1685,9 @@ button.btn:active {
   border-radius: 0 !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+.dropdown-menu .divider {
+    margin: 5px 1px;
+}
 .dropdown-menu li a {
   font-size: 13px;
   padding-left: 11px;
@@ -2295,6 +2298,9 @@ button.btn:active {
 /* font framework*/
 .font-size-10{font-size:10px !important;}
 .font-size-11{font-size:11px !important;}
+.font-size-12{font-size:12px !important;}
+.font-size-13{font-size:13px !important;}
+.font-size-14{font-size:14px !important;}
 .font-size-15{font-size:15px !important;}
 .font-size-20{font-size:20px !important;}
 
