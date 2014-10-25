@@ -503,6 +503,12 @@
     };
 
     $.fn.contrailWizard = function (config) {
+        var defaultConfig = {
+            enableStepJump: false
+        };
+
+        config = $.extend(true, {}, config, defaultConfig);
+
         var self = this,
             steps = config.steps,
             stepsInitFlag = [];
@@ -574,6 +580,9 @@
 
         config.onStepChanging = function (event, currentIndex, newIndex) {
 
+            if (Math.abs(currentIndex - newIndex) != 1 && !config.enableStepJump) {
+                return false;
+            }
             var returnFlag = true;
             // Next Button clicked
             if(currentIndex < newIndex && contrail.checkIfFunction(steps[currentIndex].onNext)) {
@@ -679,19 +688,10 @@
                 }
             }
 
-        function successHandler(response){
-            if(!contrail.checkIfExist(response)){
-                throw "Error getting data from server";
-            }
-            var parsedData = (contrail.checkIfFunction(parse)) ? parse(response) : response;
-            config.data = formatData(parsedData, config);
-            initCheckedMultiselect(config, defaultFilterConfig);
-        };
-
-        function failureHandler(){};
-
-        function initCheckedMultiselect (config, defaultFilterConfig) {
+        function constructCheckedMultiselect (config, defaultFilterConfig) {
             template = contrail.getTemplate4Id('checked-multiselect-optgroup-template');
+            $(self).find('select').remove();
+            $(self).find('button').remove();
             $(self).append(template(config));
 
             if (config.data.length == 0) {
@@ -768,25 +768,35 @@
                         }
                         //TODO handle else if typeof state === object
                     }
+                },
+                refresh: function () {
+                    this.destroy();
+                    initCheckedMultiselect(config, defaultFilterConfig);
                 }
             }));
         };
+
+        function initCheckedMultiselect (config, defaultFilterConfig) {
+            if(contrail.checkIfExist(config.dataSource)){
+                contrail.ajaxHandler(config.dataSource, null, function (response){
+                    if(!contrail.checkIfExist(response)){
+                        throw "Error getting data from server";
+                    }
+                    var parsedData = (contrail.checkIfFunction(parse)) ? parse(response) : response;
+                    config.data = formatData(parsedData, config);
+                    constructCheckedMultiselect(config, defaultFilterConfig);
+                });
+            } else {
+                constructCheckedMultiselect(config, defaultFilterConfig);
+            }
+        }
 
         if (contrail.checkIfExist(config.data)) {
             config.data = formatData((contrail.checkIfFunction(parse)) ? parse(config.data) : config.data, config);
         }
 
         if (!contrail.checkIfExist(self.data('contrailCheckedMultiselect'))) {
-            /*
-             * Initializing default config and extending it
-             */
-            if(contrail.checkIfExist(config.dataSource)){
-                contrail.ajaxHandler(config.dataSource, null, successHandler, failureHandler);
-            } else {
-                initCheckedMultiselect(config, defaultFilterConfig);
-            }
-
-
+            initCheckedMultiselect(config, defaultFilterConfig);
         }
         else {
             self.find('select').multiselect(config);
@@ -794,7 +804,7 @@
 
         function getDefaultMultiselectMethods () {
             var methodObj = {},
-                defaultMethods = ['open', 'refresh', 'uncheckAll', 'getChecked', 'disable', 'enable'];
+                defaultMethods = ['open', 'refresh', 'uncheckAll', 'getChecked', 'disable', 'enable', 'destroy'];
 
             $.each(defaultMethods, function (defaultMethodKey, defaultMethodValue) {
                 methodObj[defaultMethodValue] = function () {
