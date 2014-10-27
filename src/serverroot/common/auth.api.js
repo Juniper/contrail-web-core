@@ -139,4 +139,5 @@ exports.getServiceCatalog = getServiceCatalog;
 exports.getDomainList = getDomainList;
 exports.getProjectList = getProjectList;
 exports.isDefaultDomain = isDefaultDomain;
+exports.getNewTokenObjByToken = getNewTokenObjByToken;
 
