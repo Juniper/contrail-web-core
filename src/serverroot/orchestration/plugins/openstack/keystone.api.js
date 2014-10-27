@@ -1498,4 +1498,5 @@ exports.getProjectList = getProjectList;
 exports.isDefaultDomain = isDefaultDomain;
 exports.getDefaultDomain = getDefaultDomain;
 exports.getUserAuthDataByAuthObj = getUserAuthDataByAuthObj;
+exports.getUserRoleByAuthResponse = getUserRoleByAuthResponse;
 
