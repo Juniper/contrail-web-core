@@ -91,8 +91,8 @@ function getDomainList (req, callback)
     });
 }
 
-function getNewTokenObjByToken (tokenId, tenantId, forceAuth, callback) {
-    authMethodApi.getUserAuthDataByAuthObj(tenantId, tenantId, forceAuth,
+function getNewTokenObjByToken (authObj, callback) {
+    authMethodApi.getUserAuthDataByAuthObj(authObj,
                                        function(err, data) {
         callback(err, data);
     });
