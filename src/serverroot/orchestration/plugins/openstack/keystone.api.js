@@ -73,28 +73,6 @@ function getUserRoleByAuthResponse (resRoleList)
     return [global.STR_ROLE_USER];
 }
 
-/** Function: createProjectListInReqObj
- *  1. This function is used to create the project List to be stored in 
- *     req.session key as project name
- *  @private function
- */
-function createProjectListInReqObj (req, tenantList)
-{
-    var tenantCount = tenantList.length;
-    var dataObj = {};
-    var projectName = null;
-    for (var i = 0; i < tenantCount; i++) {
-        projectName = tenantList[i]['name'];
-        dataObj[projectName] =
-        {  
-            'id': tenantList[i]['id'],
-            'description': tenantList[i]['description'],
-            'enabled': tenantList[i]['enabled']
-        };
-    }
-    req.session.projectList = dataObj;
-}
-
 function getAuthRespondData (error, data)
 {
     var dataObj = {};
@@ -570,7 +548,11 @@ function sendV3CurlPostReq (authObj, callback)
         ' -H "Content-type: application/json" ' + authProto + '://' + authIP +
         ':' + authPort + reqUrl;
     exec(cmd, function(err, stdout, stderr) {
-        callback(err, JSON.parse(stdout));
+        if (null != err) {
+            callback(err, null);
+        } else {
+            callback(err, JSON.parse(stdout));
+        }
     });
 }
 
@@ -679,17 +661,6 @@ function doAuth (authObj, callback)
     });
 }
 
-/* Function: getProjectObj
-    This function is used to get the project Object from the tenantId
- */
-function getProjectObj (req, tenantId)
-{
-    if (null == tenantId) {
-        return null;
-    }
-    return req.session.projectList[tenantId];
-}
-
 /* Function: updateTokenIdForProject
     This function is used to update the Token for a particular project in 
     req.session
@@ -699,7 +670,7 @@ function updateTokenIdForProject (req, tenantId, token)
     if (null == tenantId) {
         return;
     }
-    var projObj = getProjectObj(req, tenantId);
+    var projObj = getTokenIdByProject(req, tenantId);
     if (projObj) {
         try {
             projObj['token'] = token.access.token;
@@ -746,11 +717,11 @@ function getV2Token (authObj, callback)
     var tenantId    = authObj['tenant'];
     var forceAuth   = authObj['forceAuth'];
 
-    var projEntry = getProjectObj(req, tenantId);
-    if ((projEntry) && (projEntry['token'])) {
+    var projEntry = getTokenIdByProject(req, tenantId);
+    if (null != projEntry) {
         logutils.logger.debug("We are having project already in DB:" +
                               tenantId);
-        callback(null, projEntry['token']);
+        callback(null, projEntry);
         return;
     }
     getUserAuthData(req, tenantId, function(err, data) {
@@ -770,16 +741,33 @@ function updateLastTokenUsed (req, data)
     }
 }
 
+function getTokenIdByProject (req, tenantName)
+{
+    if ((null != req.session) && (null != req.session.tokenObjs) &&
+        (null != req.session.tokenObjs[tenantName])) {
+        return req.session.tokenObjs[tenantName]['token'];
+    }
+    return null;
+
+}
+
 function getUserAuthData (req, tenantName, callback)
 {
+    var token = getTokenIdByProject(req, tenantName);
+    callback(null, token);
+    return;
     var lastTokenUsed = getLastIdTokenUsed(req);
     var authObj = {};
-    authObj['tokenid'] = lastTokenUsed.id;
+    authObj['tokenid'] = token.id;
     if (null == tenantName) {
         tenantName = req.cookies.project;
     }
     authObj['tenant'] = tenantName;
-    getUserAuthDataByAuthObj (authObj, function(data) {
+    getUserAuthDataByAuthObj (authObj, function(err, data) {
+        if ((null != err) || (null == data)) {
+            callback(err, data);
+            return;
+        }
         updateTokenIdForProject(req, tenantName, data);
         authApi.checkAndUpdateDefTenantToken(req, tenantName, data);
         updateLastTokenUsed(req, data);
@@ -789,11 +777,14 @@ function getUserAuthData (req, tenantName, callback)
 
 function getUserAuthDataByAuthObj (authObj, callback)
 {
+    var tenantName = authObj['tenant'];
     doAuth(authObj, function(data) {
         if (data == null) {
-            if (tenantName) {
+            if ((null != tenantName) && (null != authObj['req']) && 
+                (null != authObj['req'].session.id)) {
                 logutils.logger.error("Trying to illegal access with tenantName: " +
-                                      tenantName + " With session: " + req.session.id);
+                                      tenantName + " With session: " +
+                                      authObj['req'].session.id);
             }
             var err = new
                 appErrors.RESTServerError(messages.error.unauthenticate_to_project);
@@ -1109,7 +1100,6 @@ function doV3Auth (req, callback)
                     callback(messages.error.unauthorized_to_project);
                     return;
                 }
-                createProjectListInReqObj(req, projects['projects']);
                 getUserRoleByProjectList(projects['projects'], userObj,
                                          function(roleStr, tokenObjs) {
                     req.session.def_token_used = tokenObjs[defProject]['token'];
@@ -1195,7 +1185,6 @@ function doV2Auth (req, callback)
              */
             var tenantList = data.tenants;
             var defProject = tenantList[projCount - 1]['name'];
-            createProjectListInReqObj(req, tenantList);
             var userObj = {'username': username, 'password': password,
                            'tenant': defProject};
             doAuth(userObj, function(data) {
@@ -1479,7 +1468,7 @@ function formatIdentityMgrProjects (error, request, projectLists, domList, callb
             var tenant = projectLists['tenants'][i];
             domain = getDefaultDomain(request);
             if ((null != tenant['domain_id']) &&
-                (null != domList['domains'])) {
+                (null != domList) && (null != domList['domains'])) {
                 uuid = commonUtils.convertUUIDToString(tenant["domain_id"]);
                 domain = getDomainNameByUUID(request, uuid, domList['domains']);
             }
@@ -1508,4 +1497,6 @@ exports.getDomainList = getDomainList;
 exports.getProjectList = getProjectList;
 exports.isDefaultDomain = isDefaultDomain;
 exports.getDefaultDomain = getDefaultDomain;
+exports.getUserAuthDataByAuthObj = getUserAuthDataByAuthObj;
+exports.getUserRoleByAuthResponse = getUserRoleByAuthResponse;
 

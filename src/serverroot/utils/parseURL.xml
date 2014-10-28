@@ -44,5 +44,11 @@
         <feature>monitoring</feature>
         <callback>commonUtils.getWebServerInfo</callback>
     </item>
+    <item>
+        <url>/api/service/networking/user-roles</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>commonUtils.getUserRoleListPerTenant</callback>
+    </item>
 </urlLists>
 

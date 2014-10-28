@@ -56,6 +56,7 @@ cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/build/jquery.steps.min.js webroot/asset
 cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/demo/css/jquery.steps.css webroot/assets/jquery/css/
 cp -af ./$THIRD_PARTY/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/jquery.validate.js
 cp -af ./$THIRD_PARTY/jquery.panzoom-v2.0.5/dist/jquery.panzoom.min.js webroot/assets/jquery/js/jquery.panzoom.min.js
+cp -af ./$THIRD_PARTY/tristate/jquery.tristate.js webroot/assets/jquery/js/jquery.tristate.js
 #End - Copy JQuery files from web-third-party
 
 #End - Copy JQuery files from $THIRD_PARTY
@@ -242,7 +243,7 @@ MAINFILE[21]=webroot/assets/slickgrid/js/slick.dataview.js
 MAINFILE[22]=webroot/assets/slickgrid/js/slick.enhancementpager.js
 MAINFILE[23]=webroot/assets/datetimepicker/js/jquery.datetimepicker.js
 MAINFILE[24]=webroot/assets/moment/moment.js
-MAINFILE[25]=webroot/assets/2way-multiselect/js/multiselect.js
+MAINFILE[25]=webroot/assets/jquery/js/jquery.tristate.js
 
 MAINFILE[42]=webroot/assets/ip/jsbn-combined.js
 MAINFILE[43]=webroot/assets/ip/sprintf.js

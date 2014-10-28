@@ -48,9 +48,13 @@ requirejs.config({
         'dashboard-utils'           : "/js/dashboard-utils",
         'jquery.multiselect'        : "/assets/jquery-ui/js/jquery.multiselect",
         'jquery.multiselect.filter' : "/assets/jquery-ui/js/jquery.multiselect.filter",
-        'jquery.steps.min'          : "/assets/jquery/js/jquery.steps.min"
+        'jquery.steps.min'          : "/assets/jquery/js/jquery.steps.min",
+        'jquery.tristate'          : "/assets/jquery/js/jquery.tristate"
     },
     shim: {
+        'jquery.tristate' : {
+            deps: ['jquery', 'jquery-ui']
+        },
         'jquery.multiselect' : {
             deps: ['jquery', 'jquery-ui']
         },
@@ -174,5 +178,5 @@ require(['jquery-ui','jquery.xml2json','jquery.ba-bbq','jquery.timer','jquery.ui
         'contrail-common','handlebars-utils','select2-utils','slickgrid-utils','contrail-elements',
         'topology_api','chart-utils','web-utils','contrail-layout','config_global','protocol',
         'qe-utils','nvd3-plugin','d3-utils','analyzer-utils','dashboard-utils','ipv6',
-        'jquery.multiselect','jquery.multiselect.filter','jquery.steps.min','slick.dataview'],function(contrail) {
+        'jquery.tristate','jquery.multiselect','jquery.multiselect.filter','jquery.steps.min','slick.dataview'],function(contrail) {
 });

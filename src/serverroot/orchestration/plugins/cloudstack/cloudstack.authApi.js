@@ -116,14 +116,12 @@ function authenticate (req, res, callback)
         req.session.sessionKey = data['loginresponse']['sessionkey'];
         getUsers(req, function(userLists) {
             updateUserKeys(req, username, userLists);
-            authApi.saveUserAuthInRedis(username, password, req, function(err) {
-                logutils.logger.info("Login Successful with tenants.");
-                res.setHeader('Set-Cookie', "username=" + username +
-                              '; expires=' +
-                              new Date(new Date().getTime() +
-                                       global.MAX_AGE_SESSION_ID).toUTCString());
-                res.redirect('/' + urlHash);
-            });
+            logutils.logger.info("Login Successful with tenants.");
+            res.setHeader('Set-Cookie', "username=" + username +
+                          '; expires=' +
+                          new Date(new Date().getTime() +
+                                   global.MAX_AGE_SESSION_ID).toUTCString());
+            res.redirect('/' + urlHash);
         });
     });
 }

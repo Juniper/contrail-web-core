@@ -872,14 +872,16 @@ function MenuHandler() {
 
     this.loadMenu = function () {
         $.get('/menu.xml?built_at=' + built_at, function (xml) {
-            menuObj = $.xml2json(xml);
-            webServerDefObj.always(function(){
-                processXMLJSON(menuObj);
-                var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'],'menushortcut'));
-                $("#sidebar-shortcuts").html(menuShortcuts);
-                menuObj['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
-                menuDefferedObj.resolve();
-            });
+            $.get('/api/admin/webconfig/features/disabled?built_at=' + built_at, function(disabledFeatures) {
+                menuObj = $.xml2json(xml);
+                webServerDefObj.always(function(){
+                    processXMLJSON(menuObj, disabledFeatures);
+                    var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'],'menushortcut'));
+                    $("#sidebar-shortcuts").html(menuShortcuts);
+                    ['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
+                    menuDefferedObj.resolve();
+                });            
+            })
         });
         //Add an event listener for clicking on menu items
         $('#menu').on('click','ul > li > a',function(e) {
@@ -1089,19 +1091,28 @@ function MenuHandler() {
      * post-processing of menu XML JSON
      * JSON expectes item to be an array,but xml2json make item as an object if there is only one instance
      */
-    function processXMLJSON(json) {
+    function processXMLJSON(json, disabledFeatures) {
         if((json['resources'] != null) && json['resources']['resource'] != null) {
             if(!(json['resources']['resource'] instanceof Array))
                 json['resources']['resource'] = [json['resources']['resource']];
         }
         if ((json['items'] != null) && (json['items']['item'] != null)) {
             if (json['items']['item'] instanceof Array) {
-                for (var i = 0; i < json['items']['item'].length; i++) {
-                    processXMLJSON(json['items']['item'][i]);
-                    add2SiteMap(json['items']['item'][i]);
-                }
+                    var currItem = json['items']['item'];
+                    for (var i = (currItem.length - 1); i > -1; i--) {
+                        //remove diabled features from the menu obeject
+                        if(currItem[i]['hash'] != undefined 
+                                && disabledFeatures.disabled.indexOf(currItem[i]['hash']) !== -1) {
+                            currItem.splice(i, 1);
+                        } else {
+                            if(currItem[i] != undefined) {
+                                processXMLJSON(currItem[i], disabledFeatures);
+                                add2SiteMap(currItem[i]);
+                            }
+                        }
+                    }
             } else {
-                processXMLJSON(json['items']['item']);
+                processXMLJSON(json['items']['item'], disabledFeatures);
                 add2SiteMap(json['items']['item']);
                 json['items']['item'] = [json['items']['item']];
             }

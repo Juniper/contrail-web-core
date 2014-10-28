@@ -1325,6 +1325,48 @@ function getWebServerInfo (req, res, appData)
     commonUtils.handleJSONResponse(null, res, serverObj);
 }
 
+function getUserRoleListPerTenant (req, res, callback)
+{
+    var userRolesObj = {};
+    var project = req.param('project');
+    try {
+        var tokenObjs = req.session.tokenObjs;
+    } catch(e) {
+        redirectToLogout(req, res);
+        return;
+    }
+    var rolesPerTenant = {};
+    if (null == tokenObjs) {
+        redirectToLogout(req, res);
+        return;
+    }
+    if (null != project) {
+        try {
+            var roles = tokenObjs[project]['user']['roles'];
+        } catch(e) {
+            logutils.logger.error("Roles not found..Redirecting to login page");
+            redirectToLogout(req, res);
+            return;
+        }
+        var uiRoles = authApi.getUIRolesByExtRoles(roles);
+        userRolesObj[project] = uiRoles;
+        commonUtils.handleJSONResponse(null, res, userRolesObj);
+        return;
+    }
+    for (var key in tokenObjs) {
+        try {
+            var roles = tokenObjs[key]['user']['roles'];
+        } catch(e) {
+            logutils.logger.error("Roles not found for project " +
+                                  key + " ..Redirecting to login page");
+            redirectToLogout(req, res);
+            return;
+        }
+        rolesPerTenant[key] = authApi.getUIRolesByExtRoles(roles);
+    }
+    handleJSONResponse(null, res, rolesPerTenant);
+}
+
 function mergeAllPackageList (serverType)
 {
     var pkgList = [];
@@ -1796,4 +1838,5 @@ exports.mergeAllMenuXMLFiles = mergeAllMenuXMLFiles;
 exports.getPkgPathByPkgName = getPkgPathByPkgName;
 exports.convertUUIDToString = convertUUIDToString;
 exports.ifNull = ifNull;
+exports.getUserRoleListPerTenant = getUserRoleListPerTenant;
 

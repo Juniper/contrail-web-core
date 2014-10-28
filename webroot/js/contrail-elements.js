@@ -503,6 +503,12 @@
     };
 
     $.fn.contrailWizard = function (config) {
+        var defaultConfig = {
+            enableStepJump: false
+        };
+
+        config = $.extend(true, {}, config, defaultConfig);
+
         var self = this,
             steps = config.steps,
             stepsInitFlag = [];
@@ -574,6 +580,9 @@
 
         config.onStepChanging = function (event, currentIndex, newIndex) {
 
+            if (Math.abs(currentIndex - newIndex) != 1 && !config.enableStepJump) {
+                return false;
+            }
             var returnFlag = true;
             // Next Button clicked
             if(currentIndex < newIndex && contrail.checkIfFunction(steps[currentIndex].onNext)) {
@@ -661,40 +670,53 @@
                 //header: false,
                 minWidth: 'auto',
                 control: false,
-                selectedList: 3
+                selectedList: 3,
+                tristate: false,
+                emptyOptionText: 'No option found.'
             },
             defaultFilterConfig = {
                 label: false
             },
             config = $.extend(true, defaultConfig, config),
             defaultFilterConfig = $.extend(true, defaultFilterConfig, config.filterConfig),
-            template = null, preChecked = [];
+            template = null, preChecked = [],
+            multiSelectMenu = null;
 
-        function successHandler(response){
-            if(!contrail.checkIfExist(response)){
-                throw "Error getting data from server";
+            if(config.tristate) {
+                config.optgrouptoggle = function(event, ui) {
+                   multiSelectMenu.find('input[type="checkbox"]').tristate('state', ui.checked);
+                }
             }
-            var parsedData = (contrail.checkIfFunction(parse)) ? parse(response) : response;
-            config.data = formatData(parsedData, config);
-            initCheckedMultiselect(config, defaultFilterConfig);
-        };
 
-        function failureHandler(){};
-
-        function initCheckedMultiselect (config, defaultFilterConfig) {
+        function constructCheckedMultiselect (config, defaultFilterConfig) {
             template = contrail.getTemplate4Id('checked-multiselect-optgroup-template');
+            $(self).find('select').remove();
+            $(self).find('button').remove();
             $(self).append(template(config));
+
+            if (config.data.length == 0) {
+                config.height = 'auto';
+            }
 
             var multiselect = self.find('select').multiselect(config).multiselectfilter(defaultFilterConfig);
             preChecked = self.find('select').multiselect('getChecked');
+
+            multiSelectMenu = self.find('select').multiselect("widget");
+
+            if (config.data.length == 0) {
+                multiSelectMenu.append('<p class="padding-0-0-5 margin-0-5">'+ config.emptyOptionText + '</p>')
+            }
+
+            if(config.tristate){
+                multiSelectMenu.find('input[type="checkbox"]').tristate({state: null}).addClass('ace-input-tristate');
+            } else {
+                multiSelectMenu.find('input[type="checkbox"]').addClass('ace-input');
+            }
+            multiSelectMenu.find('input[type="checkbox"]').next('span').addClass('ace-lbl');
+
             /*
              * Appending controls and related events
              */
-
-            var multiSelectMenu = self.find('select').multiselect("widget");
-            multiSelectMenu.find('input[type="checkbox"]').addClass('ace-input');
-            multiSelectMenu.find('input[type="checkbox"]').next('span').addClass('ace-lbl');
-
             if(config.control != false) {
                 var msControls = $('<div class="row-fluid ui-multiselect-controls""></div>');
 
@@ -705,7 +727,12 @@
 
                     if (contrail.checkIfFunction(controlValue.click)) {
                         btn.on('click', function () {
-                            var checkedRows = self.find('select').multiselect('getChecked')
+                            var checkedRows = [];
+                            if(config.tristate){
+                                checkedRows = multiSelectMenu.find('input[type="checkbox"]:determinate');
+                            } else {
+                                checkedRows = self.find('select').multiselect('getChecked');
+                            }
                             controlValue.click(self, checkedRows);
                             self.find('select').multiselect('close');
                         })
@@ -719,30 +746,57 @@
                 getPreChecked: function () {
                     return preChecked;
                 },
-                setChecked   : function (checkedElements) {
+                setChecked: function (checkedElements) {
                     this.uncheckAll();
                     $.each(checkedElements, function (elementKey, elementValue) {
                         $(elementValue).click();
                     });
+                },
+                setCheckedState: function (state) {
+                    this.uncheckAll();
+                    if(config.tristate) {
+                        if (typeof state === "boolean" || state == null) {
+                            multiSelectMenu.find('input[type="checkbox"]').tristate('state', state)
+                        } else if (typeof state === "object") {
+                            $.each(state, function (stateKey, stateValue) {
+                                $(multiSelectMenu.find('input[type="checkbox"]')[stateKey]).tristate('state', stateValue);
+                            });
+                        }
+                    } else {
+                        if(typeof state === "boolean" && state) {
+                            this.checkAll();
+                        }
+                        //TODO handle else if typeof state === object
+                    }
+                },
+                refresh: function () {
+                    this.destroy();
+                    initCheckedMultiselect(config, defaultFilterConfig);
                 }
             }));
         };
+
+        function initCheckedMultiselect (config, defaultFilterConfig) {
+            if(contrail.checkIfExist(config.dataSource)){
+                contrail.ajaxHandler(config.dataSource, null, function (response){
+                    if(!contrail.checkIfExist(response)){
+                        throw "Error getting data from server";
+                    }
+                    var parsedData = (contrail.checkIfFunction(parse)) ? parse(response) : response;
+                    config.data = formatData(parsedData, config);
+                    constructCheckedMultiselect(config, defaultFilterConfig);
+                });
+            } else {
+                constructCheckedMultiselect(config, defaultFilterConfig);
+            }
+        }
 
         if (contrail.checkIfExist(config.data)) {
             config.data = formatData((contrail.checkIfFunction(parse)) ? parse(config.data) : config.data, config);
         }
 
         if (!contrail.checkIfExist(self.data('contrailCheckedMultiselect'))) {
-            /*
-             * Initializing default config and extending it
-             */
-            if(contrail.checkIfExist(config.dataSource)){
-                contrail.ajaxHandler(config.dataSource, null, successHandler, failureHandler);
-            } else {
-                initCheckedMultiselect(config, defaultFilterConfig);
-            }
-
-
+            initCheckedMultiselect(config, defaultFilterConfig);
         }
         else {
             self.find('select').multiselect(config);
@@ -750,7 +804,7 @@
 
         function getDefaultMultiselectMethods () {
             var methodObj = {},
-                defaultMethods = ['open', 'refresh', 'uncheckAll', 'getChecked', 'disable', 'enable'];
+                defaultMethods = ['open', 'refresh', 'uncheckAll', 'getChecked', 'disable', 'enable', 'destroy'];
 
             $.each(defaultMethods, function (defaultMethodKey, defaultMethodValue) {
                 methodObj[defaultMethodValue] = function () {
