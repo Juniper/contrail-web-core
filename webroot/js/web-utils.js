@@ -972,9 +972,9 @@ function MenuHandler() {
      * This function checks whether the user(from globalObj) is permitted to view the menu item(which the parameter)
      * and returns true if permitted else false
      */
-    function checkForAccess(value){
-        var roleExists = false,orchExists = false;
-        var orchModel = globalObj['webServerInfo']['orchestrationModel'];
+    function checkForAccess(value) {
+        var roleExists = false,orchExists = false,accessFnRetVal = false; 
+        var orchModel = globalObj['webServerInfo']['loggedInOrchestrationMode'];
         var loggedInUserRoles = globalObj['webServerInfo']['role'];
         if(value.access != null && value.access.roles != null) {
             if(!(value.access.roles.role instanceof Array))
@@ -983,28 +983,27 @@ function MenuHandler() {
             var allowedRolesList = [];
 
             //If logged-in user has superAdmin role,then allow all features
-            if($.inArray(roles['ADMIN'],loggedInUserRoles) > -1) {
+            if($.inArray(roles['ADMIN'],loggedInUserRoles) > -1) 
                 roleExists = true;
-            } else {
-                //If any one of userRole is in allowedRolesList
-                for(var i=0;i<rolesArr.length;i++) {
-                    if($.inArray(rolesArr[i],loggedInUserRoles) > -1) {
-                        roleExists = true;
-                        break;
+
+            if(value.access.accessFn != null) {
+                accessFnRetVal = menuAccessFns[value.access.accessFn]();
+            } else
+                accessFnRetVal = true;
+
+            if(value.access.orchModels != null) {
+                if(!(value.access.orchModels.model instanceof Array))
+                    value.access.orchModels.model = [value.access.orchModels.model];
+                var orchModels = value.access.orchModels.model;
+
+                for(var i = 0;i < orchModels.length; i++ ){
+                    if ((orchModels[i] == orchModel) || ('none' == orchModel)) {
+                        orchExists = true; 
                     }
                 }
-            }
-            if(!(value.access.orchModels.model instanceof Array))
-                value.access.orchModels.model = [value.access.orchModels.model];
-            var orchModels = value.access.orchModels.model;
-            for(var i = 0;i < orchModels.length; i++ ){
-                if (((orchModels[i].indexOf('!') > -1) &&
-                     (orchModels[i] != "!"+orchModel)) ||
-                    (orchModels[i] == orchModel) || ('none' == orchModel)) {
-                    orchExists = true; 
-                }
-            }
-            return (roleExists && orchExists);
+            } else
+                orchExists = true;
+            return (roleExists && orchExists && accessFnRetVal);
         } else {
             return true;
         }
@@ -1358,6 +1357,18 @@ function MenuHandler() {
         self.destroyView(globalObj.currMenuObj);
         var currMenuObj = self.getMenuObjByName(name);
         self.loadViewFromMenuObj(currMenuObj);
+    }
+}
+
+var menuAccessFns = {
+    checkMonitorInfraAccess : function() {
+        //Hide in case of multiple orchestration modes along with vCenter and loggedInOrchestrationMode is vCenter
+        if(globalObj['webServerInfo']['loggedInOrchestrationMode'] == 'vcenter' &&
+               globalObj['webServerInfo']['orchestrationModel'].length > 1 &&
+               globalObj['webServerInfo']['orchestrationModel'].indexOf('vcenter') > -1)
+            return false;
+        else
+            return true;
     }
 }
 
