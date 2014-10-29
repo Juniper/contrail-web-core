@@ -72,7 +72,7 @@ neutronApi.get = function(reqUrl, req, callback, stopRetry) {
     }
 
     headers['User-Agent'] = 'Contrail-WebClient';
-    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.get, stopRetry, 
+    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.get, stopRetry,
                 function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             callback(err, null);
@@ -106,7 +106,7 @@ neutronApi.put = function(reqUrl, reqData, req, callback, stopRetry) {
     }
 
     headers['User-Agent'] = 'Contrail-WebClient';
-    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.get, stopRetry, 
+    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.put, stopRetry,
                 function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             callback(err, null);
@@ -141,7 +141,7 @@ neutronApi.post = function(reqUrl, reqData, req, callback, stopRetry) {
     }
 
     headers['User-Agent'] = 'Contrail-WebClient';
-    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.get, stopRetry, 
+    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.post, stopRetry,
                 function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             callback(err, null);
@@ -176,7 +176,7 @@ neutronApi.delete = function(reqUrl, req, callback, stopRetry) {
 
     headers['User-Agent'] = 'Contrail-WebClient';
 
-    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.get, stopRetry, 
+    doNeutronOpCb(reqUrl, tenantId, req, neutronApi.delete, stopRetry,
                 function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             callback(err, null);
@@ -206,5 +206,12 @@ function createNetworkPort (req, postData, callback)
     neutronApi.post(url, postData, req, callback);
 }
 
+function deleteNetworkPort (req, portId, callback)
+{
+    var url = '/v2.0/ports/' + portId + '.json';
+    neutronApi.delete(url, req, callback);
+}
+
 exports.createNetworkPort = createNetworkPort;
+exports.deleteNetworkPort = deleteNetworkPort;
 

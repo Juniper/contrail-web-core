@@ -52,9 +52,15 @@ function createNetworkPort (req, postData, project, callback)
     nwMgrApi.createNetworkPort(req, postData, callback);
 }
 
+function deleteNetworkPort (req, portId, callback)
+{
+    nwMgrApi.deleteNetworkPort(req, portId, callback);
+}
+
 exports.apiGet = apiGet;
 exports.apiPost = apiPost;
 exports.apiPut = apiPut;
 exports.apiDelete = apiDelete;
 exports.createNetworkPort = createNetworkPort;
+exports.deleteNetworkPort = deleteNetworkPort;
 
