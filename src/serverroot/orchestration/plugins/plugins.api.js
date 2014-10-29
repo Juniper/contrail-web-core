@@ -94,6 +94,22 @@ function formatDomainList (tenantList)
     }
     return domainObjs;
 }
+var adminProjects = ['admin'];
+function getAdminProjectList (req)
+{
+    var adminProjectList = [];
+    var adminProjectsCnt = adminProjects.length;
+    var userRoles = req.session.userRoles;
+    for (key in userRoles) {
+        for (var i = 0; i < adminProjectsCnt; i++) {
+            if (-1 !=
+                req.session.userRoles[key].indexOf(adminProjects[i])) {
+                adminProjectList.push(key);
+            }
+        }
+    }
+    return adminProjectList;
+}
 
 function setAllCookies (req, res, cookieObj, callback)
 {
@@ -103,22 +119,51 @@ function setAllCookies (req, res, cookieObj, callback)
                   new Date(new Date().getTime() +
                            global.MAX_AGE_SESSION_ID).toUTCString());
     var domCookie = req.cookies.domain;
+    var adminProjectList = getAdminProjectList(req);
     authApi.getTenantList(req, function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenants'])) {
             logutils.logger.error('Tenant List retrieval error');
             callback();
             return;
         }
+
+        var adminProjectCnt = adminProjectList.length;
         var tenLen = data['tenants'].length;
         if (!tenLen) {
             logutils.logger.error("Tenant List empty");
             callback();
             return;
-        } else {
-            defDomainId = data['tenants'][tenLen - 1]['domain_id'];
-            if (null == defDomainId) {
+        }
+        var j = 0;
+        for (var i = 0; i < adminProjectCnt; i++) {
+            for (j = 0; j < tenLen; j++) {
+                if (adminProjectList[i] == data['tenants'][j]['name']) {
+                    break;
+                }
+            }
+        }
+        if ((i != 0) && (j != tenLen)) {
+            defDomainId = data['tenants'][j]['domain_id'];
+            if (null != defDomainId) {
+                if (authApi.isDefaultDomain(req, defDomainId)) {
+                    defDomainId = authApi.getDefaultDomain(req);
+                }
+            } else {
                 defDomainId = global.KEYSTONE_V2_DEFAULT_DOMAIN;
             }
+            defProj = data['tenants'][j]['name'];
+            res.setHeader('Set-Cookie', 'domain=' + defDomainId +
+                          '; expires=' + new Date(new Date().getTime() +
+                                                  global.MAX_AGE_SESSION_ID).toUTCString());
+            res.setHeader('Set-Cookie', 'project=' + defProj +
+                          '; expires=' + new Date(new Date().getTime() +
+                                                  global.MAX_AGE_SESSION_ID).toUTCString());
+            callback();
+            return;
+        }
+        defDomainId = data['tenants'][tenLen - 1]['domain_id'];
+        if (null == defDomainId) {
+            defDomainId = global.KEYSTONE_V2_DEFAULT_DOMAIN;
         }
         var defProj = data['tenants'][tenLen - 1]['name'];
         if (null == req.cookies) {
