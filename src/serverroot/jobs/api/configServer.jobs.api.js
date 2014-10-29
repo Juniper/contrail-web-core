@@ -21,6 +21,45 @@ function getHeaders(defHeaders, appHeaders)
     return headers;
 }
 
+function getDefProjectByJobData (jobData)
+{
+    var defProject = null;
+    try {
+        defProject = jobData['taskData']['cookies']['project'];
+        if (null == defProject) {
+            defProject = jobData['taskData']['authObj']['token']['tenant']['name'];
+        }
+    } catch(e) {
+        logutils.logger.error("In getDefProjectByJobData(): JSON Parse error:" +
+                              e);
+        return null;
+    }
+    return defProject;
+}
+
+function getAuthTokenByJobData (jobData)
+{
+    var project = getDefProjectByJobData(jobData);
+    try {
+        var tokenObjs = jobData['taskData']['tokenObjs'];
+        if ((null != tokenObjs) && (null != tokenObjs[project]) &&
+            (null != tokenObjs[project]['token']) &&
+            (null != tokenObjs[project]['token']['id'])) {
+            return tokenObjs[project]['token']['id'];
+        }
+    } catch(e) {
+        logutils.logger.error("In JOB getAuthTokenByJobData(): JSON Parse " +
+                              "error:" + e);
+    }
+    try {
+        return jobData['taskData']['authObj']['token']['id'];
+    } catch(e) {
+        logutils.logger.error("In JOB getAuthTokenByJobData(): JSON Parse " +
+                              "error:" + e);
+        return null;
+    }
+}
+
 function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
 {
     var headers = {};
@@ -28,9 +67,8 @@ function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
     var defProject = null;
     var tokenId = null;
     try {
-        tokenId = jobData['taskData']['authObj']['token']['id'];
-        defProject = jobData['taskData']['authObj']['token']['tenant']['name'];
-        headers['X-Auth-Token'] = tokenId;
+        defProject = getDefProjectByJobData(jobData);
+        headers['X-Auth-Token'] = getAuthTokenByJobData(jobData);
         headers['X_API_ROLE'] =
             jobData['taskData']['userRoles'][defProject].join(',');
         headers = getHeaders(headers, appHeaders);
@@ -77,9 +115,8 @@ function apiPut (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
     var defProject = null;
     var tokenId = null;
     try {
-        tokenId = jobData['taskData']['authObj']['token']['id'];
-        defProject = jobData['taskData']['authObj']['token']['tenant']['name'];
-        headers['X-Auth-Token'] = tokenId;
+        defProject = getDefProjectByJobData(jobData);
+        headers['X-Auth-Token'] = getAuthTokenByJobData(jobData);
         headers['X_API_ROLE'] =
             jobData['taskData']['userRoles'][defProject].join(',');
         headers = getHeaders(headers, appHeaders);
@@ -127,9 +164,8 @@ function apiPost (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
     var defProject = null;
     var tokenId = null;
     try {
-        tokenId = jobData['taskData']['authObj']['token']['id'];
-        defProject = jobData['taskData']['authObj']['token']['tenant']['name'];
-        headers['X-Auth-Token'] = tokenId;
+        defProject = getDefProjectByJobData(jobData);
+        headers['X-Auth-Token'] = getAuthTokenByJobData(jobData);
         headers['X_API_ROLE'] =
             jobData['taskData']['userRoles'][defProject].join(',');
         headers = getHeaders(headers, appHeaders);
@@ -176,9 +212,8 @@ function apiDelete (reqUrl, jobData, callback, appHeaders, stopRetry)
     var defProject = null;
     var tokenId = null;
     try {
-        tokenId = jobData['taskData']['authObj']['token']['id'];
-        defProject = jobData['taskData']['authObj']['token']['tenant']['name'];
-        headers['X-Auth-Token'] = tokenId;
+        defProject = getDefProjectByJobData(jobData);
+        headers['X-Auth-Token'] = getAuthTokenByJobData(jobData);
         headers['X_API_ROLE'] =
             jobData['taskData']['userRoles'][defProject].join(',');
         headers = getHeaders(headers, appHeaders);

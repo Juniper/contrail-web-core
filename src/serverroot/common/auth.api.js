@@ -57,8 +57,8 @@ function createAuthKeyBySessionId (sessionId)
   *              callback
   * 2. public function
   */
-function doAuthenticate (req, res, callback) {
-    authMethodApi.authenticate(req, res, function(err, data) {
+function doAuthenticate (req, res, appData, callback) {
+    authMethodApi.authenticate(req, res, appData, function(err, data) {
         callback(err, data);
     });
 }
@@ -121,6 +121,11 @@ function isDefaultDomain (request, domain)
     return authMethodApi.isDefaultDomain(request, domain);
 }
 
+function getDefaultDomain (req)
+{
+    return authMethodApi.getDefaultDomain(req);
+}
+
 function getServiceCatalog (req, callback)
 {
     authMethodApi.getServiceCatalog(req, function(data) {
@@ -131,6 +136,11 @@ function getServiceCatalog (req, callback)
 function getUIRolesByExtRoles (extRoles)
 {
     return authMethodApi.getUserRoleByAuthResponse(extRoles);
+}
+
+function getCookieObjs (req, appData, callback)
+{
+    return authMethodApi.getCookieObjs(req, appData, callback);
 }
 
 exports.doAuthenticate = doAuthenticate;
@@ -146,4 +156,6 @@ exports.getProjectList = getProjectList;
 exports.isDefaultDomain = isDefaultDomain;
 exports.getNewTokenObjByToken = getNewTokenObjByToken;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
+exports.getDefaultDomain = getDefaultDomain;
+exports.getCookieObjs = getCookieObjs;
 

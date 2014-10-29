@@ -169,9 +169,9 @@ getUserRoleByAuthResponse = function(resRoleList) {
     return global.STR_ROLE_USER;
 }
 
-exports.authenticate = function (req, res) {
+exports.authenticate = function (req, res, appData) {
     /* Call module independent API */
-    authApi.doAuthenticate(req, res, function(err, data) {
+    authApi.doAuthenticate(req, res, appData, function(err, data) {
         /* Already logged */
         logutils.logger.debug('Getting err ' + err);
     });

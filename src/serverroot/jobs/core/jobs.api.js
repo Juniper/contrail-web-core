@@ -165,6 +165,7 @@ function doJobExist (jobName, callback)
  */
 function createJob (jobName, jobTitle, jobPriority, delayInMS, runCount, taskData)
 {
+    taskData['genBy'] = global.service.MIDDLEWARE;
     doJobExist(jobName, function(err, jobExists) {
         if (true == jobExists) {
             runCount = 1;

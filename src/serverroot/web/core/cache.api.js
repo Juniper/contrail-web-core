@@ -329,6 +329,11 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 			saveChannelKey: saveChannelKey,
 			reqBy: reqBy,
 			userRoles: req.session.userRoles,
+            tokenObjs: req.session.tokenObjs,
+            cookies: {
+                domain: req.cookies.domain,
+                project: req.cookies.project,
+            },
 			appData: appData
 		}
 	};
