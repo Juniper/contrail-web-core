@@ -121,6 +121,11 @@ function isDefaultDomain (request, domain)
     return authMethodApi.isDefaultDomain(request, domain);
 }
 
+function getDefaultDomain (req)
+{
+    return authMethodApi.getDefaultDomain(req);
+}
+
 function getServiceCatalog (req, callback)
 {
     authMethodApi.getServiceCatalog(req, function(data) {
@@ -146,4 +151,5 @@ exports.getProjectList = getProjectList;
 exports.isDefaultDomain = isDefaultDomain;
 exports.getNewTokenObjByToken = getNewTokenObjByToken;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
+exports.getDefaultDomain = getDefaultDomain;
 

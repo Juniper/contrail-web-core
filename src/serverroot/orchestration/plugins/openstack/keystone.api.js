@@ -912,6 +912,22 @@ function makeAuth (req, startIndex, lastErrStr, callback)
     });
 }
 
+var adminRoles = ['admin'];
+
+function isAdminRoleInProjects (userRolesPerProject)
+{
+    var adminRolesCnt = adminRoles.length;
+    for (key in userRolesPerProject) {
+        var roles = userRolesPerProject[key];
+        for (var i = 0; i < adminRolesCnt; i++) {
+            if (-1 != userRolesPerProject[key].indexOf(adminRoles[i])) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 function authenticate (req, res, callback)
 {
     var urlHash = '';
@@ -931,6 +947,18 @@ function authenticate (req, res, callback)
                 logutils.logger.error("Very much unexpected, we came here!!!");
                 errStr = "Unexpected event happened";
             }
+            commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                 global.CONTRAIL_LOGIN_ERROR,
+                                                 errStr, function() {
+            });
+            return;
+        }
+        /* Check if the user role is Member, then throw error, Member role is
+         * not allowed to login
+         */
+        if (false == isAdminRoleInProjects(req.session.userRoles)) {
+            /* Logged in user is not admin, so redirect to login page */
+            errStr = "Only admin user is allowed to login"
             commonUtils.changeFileContentAndSend(res, loginErrFile,
                                                  global.CONTRAIL_LOGIN_ERROR,
                                                  errStr, function() {

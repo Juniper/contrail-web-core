@@ -267,6 +267,7 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         return;
     }
     reqUrl = global.HTTP_URL + params.url + ':' + params.port + params.path;
+    console.log("Sending reqUrl as:", reqUrl, options['headers']);
     restApi(reqUrl, options).on('complete', function(data, response) {
         if (data instanceof Error ||
             parseInt(response.statusCode) >= 400) {
