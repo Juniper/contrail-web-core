@@ -459,7 +459,7 @@ function getDefaultGridConfig() {
 	                                    }
 	
 	                                    $(target).parents('.slick-row-master').after(' \
-	            	            				<div class="ui-widget-content slick-row slick-row-detail" data-id="' + $(target).parents('.slick-row-master').data('cgridid') + '"> \
+	            	            				<div class="ui-widget-content slick-row slick-row-detail" data-id="' + $(target).parents('.slick-row-master').data('cgrid') + '"> \
 	            	            					<div class="slick-cell l' + cellSpaceColumn + ' r' + cellSpaceRow + '"> \
 	            		            					<div class="slick-row-detail-container"> \
 	            		            						<div class="slick-row-detail-template-' + $(target).parents('.slick-row-master').data('cgrid') + '"></div> \
