@@ -3125,7 +3125,11 @@ function QueryViewModel(queryPrefix, resetFunction, isTGActive) {
 };
 
 function WhereViewModel(queryPrefix, resetFunction) {
-    this.opValues = ko.observableArray([{ name: "=", value: "=" }]);
+    if(queryPrefix == 'stat'){
+        this.opValues = ko.observableArray([{ name: "=", value: "=" }, { name: "Starts with", value: "Starts with" }]);
+    } else {
+        this.opValues = ko.observableArray([{ name: "=", value: "=" }]);
+    }
     this.selectFields = ko.observableArray([]);
     this.whereClauseView = ko.observableArray([]);
     this.whereClauseSubmit = ko.observableArray([]);
