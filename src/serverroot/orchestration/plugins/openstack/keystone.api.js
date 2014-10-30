@@ -1391,7 +1391,7 @@ function getProjectList (req, appData, callback)
         isProjectListFromApiServer = false;
     }
     if (true == isProjectListFromApiServer) {
-        configUtils.getProjectsFromApiServer(request, appData,
+        configUtils.getProjectsFromApiServer(req, appData,
                                                function(error, data) {
             callback(error, data);
         });
