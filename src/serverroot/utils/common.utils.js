@@ -1790,6 +1790,19 @@ function ifNull(value, defValue) {
         return value;
 }
 
+function getWebConfigValueByName (req, res, appData)
+{
+    var type = req.param('type'),
+        variable = req.param('variable'),
+        configObj = {}, value;
+    if(type != null && variable != null) {
+        value = ((null != config[type]) && (null != config[type][variable])) ?
+            config[type][variable] : null;
+        configObj[variable] = value;
+    }
+    commonUtils.handleJSONResponse(null, res, configObj);
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1839,4 +1852,4 @@ exports.getPkgPathByPkgName = getPkgPathByPkgName;
 exports.convertUUIDToString = convertUUIDToString;
 exports.ifNull = ifNull;
 exports.getUserRoleListPerTenant = getUserRoleListPerTenant;
-
+exports.getWebConfigValueByName = getWebConfigValueByName;
