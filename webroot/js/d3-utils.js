@@ -611,6 +611,8 @@ function initScatterBubbleChart(selector, data, chart, chartOptions) {
             chart.scatter.yPositive(chartOptions['yPositive']);
         if(chartOptions['addDomainBuffer'] != null && chart.scatter != null)
             chart.scatter.addDomainBuffer(chartOptions['addDomainBuffer']);
+        if(chartOptions['useVoronoi'] != null && chart.scatter != null)
+            chart.scatter.useVoronoi(chartOptions['useVoronoi']);
 
         //If more than one category is displayed,enable showLegend
         if(data.length == 1) {

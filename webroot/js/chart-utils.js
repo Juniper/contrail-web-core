@@ -157,6 +157,7 @@
                     }
                 });
             chartOptions['deferredObj'] = data['deferredObj'];
+            chartOptions['useVoronoi'] = false;
             initScatterBubbleChart(selector, d, chart, chartOptions);
 
             if(data['widgetBoxId'] != null)
