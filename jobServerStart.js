@@ -4,7 +4,9 @@
 
 /* Set corePath before loading any other module */
 var corePath = process.cwd();
+var config = require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig();
 exports.corePath = corePath;
+exports.config = config;
 
 var axon = require('axon')
     , jobsApi = require('./src/serverroot/jobs/core/jobs.api')
@@ -18,8 +20,6 @@ var axon = require('axon')
     , discServ = require('./src/serverroot/jobs/core/discoveryservice.api')
     , async = require('async')
     , jsonPath = require('JSONPath').eval;
-
-var config = commonUtils.compareAndMergeDefaultConfig();
 
 var hostName = config.jobServer.server_ip
     , port = config.jobServer.server_port;
@@ -144,3 +144,4 @@ jobsApi.jobListenerReadyQEvent.on('kueReady', function() {
 exports.myIdentity = myIdentity;
 exports.discServEnable = discServEnable;
 exports.pkgList = pkgList;
+

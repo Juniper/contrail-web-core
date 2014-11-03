@@ -8,7 +8,7 @@
  * corresponding module is loaded via this file.
  */
 
-var config = require('../../../config/config.global'),
+var config = process.mainModule.exports['config'],
     crypto = require('crypto'),
     redis = require('redis'),
     logutils = require('../utils/log.utils'),

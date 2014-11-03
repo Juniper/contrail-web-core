@@ -6,7 +6,7 @@ redisSub = module.exports;
 
 var redis = require('redis')
   , cacheApi = require('./cache.api')
-  , config = require('../../../../config/config.global.js')
+  , config = process.mainModule.exports.config
   , logutils = require('../../utils/log.utils')
   , util = require('util')
   , global = require('../../common/global')

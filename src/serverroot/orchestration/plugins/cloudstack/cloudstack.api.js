@@ -5,7 +5,7 @@
 /**
  * This file contains the functions for REST APIs for Cloud Stack Service
  */
-var config = require('../../../../../config/config.global'),
+var config = process.mainModule.exports['config'],
     global = require('../../../common/global'),
     messages = require('../../../common/messages'),
     logutils = require('../../../utils/log.utils'),

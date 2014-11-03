@@ -3,7 +3,7 @@
  */
 
 var authApi = require('./auth.api');
-var config = require('../../../config/config.global');
+var config = process.mainModule.exports.config;
 var commonUtils = require('../utils/common.utils');
 var async = require('async');
 var configApiServer = require('./configServer.api');

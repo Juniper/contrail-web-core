@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var config = require('../../../../config/config.global.js'),
+var config = process.mainModule.exports.config,
     rest = require('../../common/rest.api'),
     async = require('async'),
     logutils = require('../../utils/log.utils'),

@@ -3,7 +3,7 @@
  */
 
 var global = require('./global'),
-    config = require('../../../config/config.global'),
+    config = process.mainModule.exports.config,
     commonUtils = require('../utils/common.utils'),
     logutils = require('../utils/log.utils');
 

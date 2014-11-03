@@ -3,7 +3,7 @@
  */
 
 var rest = require('../../../common/rest.api'),
-    config = require('../../../../../config/config.global.js'),
+    config = process.mainModule.exports.config,
     authApi = require('../../../common/auth.api'),
     url = require('url'),
     logutils = require('../../../utils/log.utils'),
