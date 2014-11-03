@@ -42,9 +42,6 @@
     <link rel="stylesheet" href="/css/contrail.elements.css?built_at=" />
     <link rel="stylesheet" href="/css/contrail.responsive.css?built_at=" />
     <link rel="stylesheet" href="/css/contrail.custom.css?built_at=" />
-    <!-- Start dev_env
-    <script data-main="js/main" src="/assets/requirejs/require.js"></script>
-    End dev_env -->
 </head>
 
 <body class="navbar-fixed">
@@ -146,6 +143,61 @@
 </div> <!-- /.container-fluid #main-container -->
 <a href="#" id="back-to-top"><i class="icon-double-angle-up icon-only bigger-110"></i>​&nbsp; Back to Top</a>
 
+<!--JQuery Scripts-->
+<!-- Start dev_env 
+<script src="/assets/jquery/js/jquery-1.8.3.min.js?built_at="></script>
+End dev_env -->
+<!--
+<script src="/assets/jquery/assets/js/jquery-1.9.1.min.js?built_at="></script>
+-->
+<!-- Start dev_env 
+<script src="/assets/jquery/js/jquery.xml2json.js?built_at="></script>
+<script src="/assets/jquery/js/jquery.ba-bbq.min.js?built_at="></script>
+<script src="/assets/jquery/js/jquery.timer.js?built_at="></script>
+<script src="/assets/jquery-ui/js/jquery-ui.js?built_at="></script>
+<script src="/assets/jquery/js/jquery.ui.touch-punch.min.js?built_at="></script>
+End dev_env -->
+
+<!-- Start dev_env
+<script src="/assets/ip/jsbn-combined.js"></script>
+<script src="/assets/ip/sprintf.js"></script>
+<script src="/assets/ip/ipv6.js"></script>
+End dev_env -->
+
+<!--Bootstrap Scripts-->
+<!-- Start dev_env 
+<script src="/assets/bootstrap/js/bootstrap.min.js?built_at="></script>
+End dev_env -->
+
+<!--D3 Scripts-->
+<!-- Start dev_env 
+<script src="/assets/d3/js/d3.js?built_at="></script>
+<script src="/assets/nvd3/js/nv.d3.js?built_at="></script>
+<script src="/assets/crossfilter/js/crossfilter.min.js?built_at="></script>
+End dev_env -->
+
+<!--Utils Scripts-->
+<!-- Start dev_env
+<script src="/assets/jsonpath/js/jsonpath-0.8.0.js?built_at="></script>
+<script src="/assets/xdate/js/xdate.js?built_at="></script>
+<script src="/assets/jquery/js/jquery.validate.js?built_at="></script>
+<script src="/assets/handlebars/handlebars-v1.3.0.js?built_at="></script>
+<script src="/assets/knockout/knockout-3.0.0.js?built_at="></script>
+<script src="/assets/select2/js/select2.min.js?built_at="></script>
+<script src="/assets/slickgrid/js/jquery.event.drag-2.2.js?built_at="></script>
+<script src="/assets/slickgrid/js/jquery.json-2.3.min.js?built_at="></script>
+<script src="/assets/slickgrid/js/jquery.dropkick-1.0.0.js?built_at="></script>
+<script src="/assets/slickgrid/js/slick.core.js?built_at="></script>
+<script src="/assets/slickgrid/js/slick.grid.js?built_at="></script>
+<script src="/assets/slickgrid/js/slick.dataview.js?built_at="></script>
+<script src="/assets/slickgrid/js/slick.enhancementpager.js?built_at="></script>
+<script src="/assets/datetimepicker/js/jquery.datetimepicker.js?built_at="></script>
+<script src="/assets/moment/moment.js?built_at="></script>
+<script src="/assets/jquery-ui/js/jquery.multiselect.js?built_at="></script>
+<script src="/assets/jquery-ui/js/jquery.multiselect.filter.js?built_at="></script>
+<script src="/assets/jquery/js/jquery.tristate?built_at="></script>
+End dev_env -->
+
 <!-- Start prod_env -->
 <script src="/js/contrail-all-1.js?built_at="></script>
 <script src="/js/contrail-all-2.js?built_at="></script>
@@ -154,45 +206,59 @@
 <!-- End prod_env -->
 
 <script type="text/javascript">
-    function loadCommonTemplates() {
-        //Loads external templates from path and injects in to page DOM
-        templateLoader = (function ($, host) {
-            return{
-                loadExtTemplate:function (path, deferredObj, containerName) {
-                    //Load the template only if it doesn't exists in DOM
-                    var tmplLoader = $.ajax({url:path})
-                        .success(function (result) {
-                            //Add templates to DOM
-                            if (containerName != null) {
-                                $('body').append('<div id="' + containerName + '"></div>');
-                                $('#' + containerName).append(result);
-                            } else
-                                $("body").append(result);
-                            if (deferredObj != null)
-                                deferredObj.resolve();
-                        })
-                        .error(function (result) {
-                            if(result['statusText'] != 'abort')
-                                showInfoWindow("Error while loading page.",'Error');
-                        });
+var templateLoader = (function ($, host) {
+    //Loads external templates from path and injects in to page DOM
+    return{
+        loadExtTemplate:function (path, deferredObj, containerName) {
+            //Load the template only if it doesn't exists in DOM
+            var tmplLoader = $.ajax({url:path})
+                .success(function (result) {
+                    //Add templates to DOM
+                    if (containerName != null) {
+                        $('body').append('<div id="' + containerName + '"></div>');
+                        $('#' + containerName).append(result);
+                    } else
+                        $("body").append(result);
+                    if (deferredObj != null)
+                        deferredObj.resolve();
+                })
+                .error(function (result) {
+                    if(result['statusText'] != 'abort')
+                        showInfoWindow("Error while loading page.",'Error');
+                });
 
-                    tmplLoader.complete(function () {
-                        $(host).trigger("TEMPLATE_LOADED", [path]);
-                    });
-                }
-            };
-        })(jQuery, document);
-        $.ajaxSetup({async:false});
-        //Need to issue the call synchronously as the following scripts refer to the templates in this file
-        templateLoader.loadExtTemplate('/views/contrail-common.view');
-        $.ajaxSetup({async:true});
-    }
+            tmplLoader.complete(function () {
+                $(host).trigger("TEMPLATE_LOADED", [path]);
+            });
+        }
+    };
+})(jQuery, document);
+$.ajaxSetup({async:false});
+//Need to issue the call synchronously as the following scripts refer to the templates in this file
+templateLoader.loadExtTemplate('/views/contrail-common.view');
+$.ajaxSetup({async:true});
 </script>
-<!-- Start prod_env -->
-<script type="text/javascript">
-    loadCommonTemplates()
-</script>
-<!-- End prod_env -->
+<!--Contrail Scripts-->
+<!-- Start dev_env
+<script src="/js/contrail-common.js"></script>
+<script src="/js/handlebars-utils.js?built_at="></script>
+<script src="/js/select2-utils.js?built_at="></script>
+<script src="/js/slickgrid-utils.js?built_at="></script>
+<script src="/js/contrail-elements.js?built_at="></script>
+<script src="/js/topology_api.js?built_at="></script>
+<script src="/js/chart-utils.js?built_at="></script>
+<script src="/js/web-utils.js?built_at="></script>
+<script src="/js/contrail-layout.js?built_at="></script>
+<script src="/js/config_global.js?built_at="></script>
+<script src="/js/protocol.js?built_at="></script>
+<script src="/js/qe-utils.js?built_at="></script>
+<script src="/js/nvd3-plugin.js?built_at="></script>
+<script src="/js/d3-utils.js?built_at="></script>
+<script src="/js/analyzer-utils.js?built_at="></script>
+<script src="/js/dashboard-utils.js?built_at="></script>
+<script src="/assets/requirejs/require.js?built_at="></script>
+<script src="/assets/jquery/js/jquery.steps.min.js?built_at="></script>
+End dev_env -->
 
 <!--[if lte IE 8]>
 <script src="/js/"></script>
