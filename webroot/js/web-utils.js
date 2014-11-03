@@ -1102,7 +1102,7 @@ function MenuHandler() {
                     for (var i = (currItem.length - 1); i > -1; i--) {
                         //remove diabled features from the menu obeject
                         if(currItem[i]['hash'] != undefined 
-                                && disabledFeatures.disabled.indexOf(currItem[i]['hash']) !== -1) {
+                                && disabledFeatures.disabled != null && disabledFeatures.disabled.indexOf(currItem[i]['hash']) !== -1) {
                             currItem.splice(i, 1);
                         } else {
                             if(currItem[i] != undefined) {
