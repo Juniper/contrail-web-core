@@ -1936,17 +1936,17 @@ function loadAlertsContent(deferredObj){
             columnHeader: {
                 columns:[ 
                     {
-                        field:'nName',
+                        field:'name',
                         name:'Node',
                         minWidth:150,
                         formatter: function(r,c,v,cd,dc){
-                            if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['nName']) != "undefined")
-                                return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['nName']+"</span>";
+                            if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['name']) != "undefined")
+                                return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['name']+"</span>";
                             else
-                                return dc['nName'];
+                                return dc['name'];
                         }
                     },{
-                        field:'pName',
+                        field:'type',
                         name:'Process',
                         minWidth:100
                     },{
