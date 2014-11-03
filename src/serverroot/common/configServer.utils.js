@@ -79,6 +79,7 @@ function getDomainsFromApiServer (appData, callback)
 
 function getTenantListAndSyncDomain (request, appData, callback)
 {
+    var domain          = request.param('domain');
     var domainObjs      = {'domains':[]};
     var tmpDomainObjs   = {};
     var domArr          = [];
@@ -94,6 +95,12 @@ function getTenantListAndSyncDomain (request, appData, callback)
             if ((null != domId) && (false == authApi.isDefaultDomain(request, domId))) {
                 domId =
                     commonUtils.convertUUIDToString(tenantList['tenants'][i]['domain_id']);
+                if ((null != domain) && (domId != domain)) {
+                    tenantList['tenants'].splice(i, 1);
+                    i--;
+                    projCnt--;
+                    continue;
+                }
             }
             if ((null != domId) && (null == tmpDomainObjs[domId])) {
                 domainObjs['domains'].push({'fq_name': [domId], 'uuid': domId});
@@ -119,6 +126,7 @@ function getTenantListAndSyncDomain (request, appData, callback)
                 var allDomCnt = allDomList.length;
                 var domCnt = domainObjs['domains'].length;
                 for (var i = 0; i < domCnt; i++) {
+                    domFound = true;
                     for (var j = 0; j < allDomCnt; j++) {
                         if ((true == 
                              authApi.isDefaultDomain(request, domainObjs['domains'][i]['uuid'])) &&
@@ -129,6 +137,11 @@ function getTenantListAndSyncDomain (request, appData, callback)
                              * it fails, as fqname ['default', 'XXX'] does not
                              * exist
                              */
+                            if ((null != domain) && 
+                                (domain != allDomList['uuid'])) {
+                                domFound = false;
+                                break;
+                            }
                             domainObjs['domains'][i]['fq_name'] =
                                 allDomList[j]['fq_name'];
                             domainObjs['domains'][i]['uuid'] =
@@ -141,6 +154,9 @@ function getTenantListAndSyncDomain (request, appData, callback)
                                 allDomList[j]['fq_name'];
                             break;
                         }
+                    }
+                    if (false == domFound) {
+                        continue;
                     }
                 }
                 callback(null, domainObjs, tenantList, domList);
