@@ -119,7 +119,8 @@ function processPendingReq (ctx, next, callback)
     authObj: {
       req: ctx.req,
       defTokenObj: defTokenObj
-    }
+    },
+    genBy: global.service.MAINSEREVR
   };
   callback(ctx.req, ctx.res, appData);
 }

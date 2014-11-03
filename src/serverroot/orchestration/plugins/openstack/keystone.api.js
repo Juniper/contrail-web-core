@@ -912,7 +912,23 @@ function makeAuth (req, startIndex, lastErrStr, callback)
     });
 }
 
-function authenticate (req, res, callback)
+var adminRoles = ['admin'];
+
+function isAdminRoleInProjects (userRolesPerProject)
+{
+    var adminRolesCnt = adminRoles.length;
+    for (key in userRolesPerProject) {
+        var roles = userRolesPerProject[key];
+        for (var i = 0; i < adminRolesCnt; i++) {
+            if (-1 != userRolesPerProject[key].indexOf(adminRoles[i])) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function authenticate (req, res, appData, callback)
 {
     var urlHash = '';
     var post = req.body,
@@ -937,7 +953,19 @@ function authenticate (req, res, callback)
             });
             return;
         }
-        plugins.setAllCookies(req, res, {'username': username}, function() {
+        /* Check if the user role is Member, then throw error, Member role is
+         * not allowed to login
+         */
+        if (false == isAdminRoleInProjects(req.session.userRoles)) {
+            /* Logged in user is not admin, so redirect to login page */
+            errStr = "Only admin user is allowed to login"
+            commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                 global.CONTRAIL_LOGIN_ERROR,
+                                                 errStr, function() {
+            });
+            return;
+        }
+        plugins.setAllCookies(req, res, appData, {'username': username}, function() {
             res.redirect('/' + urlHash);
         });
     });
@@ -1384,6 +1412,70 @@ function getProjectsFromKeystone (request, appData, callback)
     });
 }
 
+function buildAdminProjectListByReqObj (req)
+{
+    var adminRolesCnt = adminRoles.length;
+    var tokenObjs = req.session.tokenObjs;
+    var domProjects = {};
+    for (key in tokenObjs) {
+        try {
+            var roles = tokenObjs[key]['user']['roles'];
+            var rolesCnt = roles.length;
+        } catch(e) {
+            logutils.logger.error("Did not find role for project:" + key +
+                                  " error:" + e);
+            continue;
+        }
+        for (var i = 0; i < adminRolesCnt; i++) {
+            for (var j = 0; j < rolesCnt; j++) {
+                if (-1 != roles[j]['name'].indexOf(adminRoles[i])) {
+                    break;
+                }
+            }
+        }
+        if (j == rolesCnt) {
+            continue;
+        }
+        try {
+            var tenant = tokenObjs[key]['token']['tenant'];
+            var domain = tenant['domain'];
+        } catch(e) {
+            logutils.logger.error("Did not find tenant:" + e);
+        }
+        if (null == domain) {
+            domain = getDefaultDomain(req);
+        } else if (isDefaultDomain(domain)) {
+            domain = getDefaultDomain(req);
+        } else {
+            domain = commonUtils.convertUUIDToString(domain);
+        }
+        if (null == domProjects[domain]) {
+            domProjects[domain] = [];
+        }
+        domProjects[domain].push(key);
+    }
+    return domProjects;
+}
+
+function filterProjectList (req, projectList)
+{
+    var filtProjects = {'projects': []};
+    var domProjects = buildAdminProjectListByReqObj(req);
+    var projects = projectList['projects'];
+    var projCnt = projects.length;
+    for (var i = 0; i < projCnt; i++) {
+        var domain = domProjects[projects[i]['fq_name'][0]];
+        var project = domProjects[projects[i]['fq_name'][1]];
+        if (null == domProjects[domain]) {
+            continue;
+        }
+        if (-1 != domProjects[domain].indexOf(project)) {
+            filtProjects['projects'].push(projects[i]);
+        }
+    }
+    return filtProjects;
+}
+
 function getProjectList (req, appData, callback)
 {
     var isProjectListFromApiServer = config.getDomainProjectsFromApiServer;
@@ -1393,11 +1485,19 @@ function getProjectList (req, appData, callback)
     if (true == isProjectListFromApiServer) {
         configUtils.getProjectsFromApiServer(req, appData,
                                                function(error, data) {
-            callback(error, data);
+            var filtProjects = filterProjectList(req, data);
+            callback(error, filtProjects);
         });
     } else {
+        getAdminProjectList(req, appData, 
+                            function(adminProjectObjs, domainObjs, tenantList,
+                                     domList, formattedAllTenantList,
+                                     adminProjectList) {
+            callback(null, adminProjectList);
+        /*
         getProjectsFromKeystone(req, appData, function(error, data) {
             callback(error, data);
+        */
         });
     }
 }
@@ -1486,6 +1586,173 @@ function formatIdentityMgrProjects (error, request, projectLists, domList, callb
     }
 }
 
+var adminRoles = ['admin'];
+function getDomainFqnByDomainUUID (domUUID, domainObjs)
+{
+    var domCnt = 0;
+    try {
+        var domains = domainObjs['domains'];
+        domCnt  = domains.length;
+    } catch(e) {
+        domCnt = 0;
+    }
+    for (var i = 0; i < domCnt; i++) {
+        if (domains[i]['uuid'] == domUUID) {
+            return domains[i]['fq_name'][0];
+        }
+    }
+    return null;
+}
+
+function getAdminProjectList (req, appData, callback)
+{
+    var adminProjectList = {'projects': []};
+    var adminProjectObjs = {};
+    configUtils.getTenantListAndSyncDomain(req, appData,
+                                           function(err, domainObjs,
+                                                    tenantList, domList) {
+        if ((null != err) || (null == tenantList) ||
+            (null == tenantList['tenants'])) {
+            logutils.logger.error('Tenant List retrieval error');
+            callback(null, domainObjs, tenantList, domList, null);
+            return;
+        }
+        var tokenObjs = req.session.tokenObjs;
+        for (key in tokenObjs) {
+            try {
+                var domain = tokenObjs[key]['token']['tenant']['domain'];
+            } catch(e) {
+                logutils.logger.error("In getAdminProjectList(): " +
+                                      "JSON parse error:" + e);
+            }
+            if (null == domain) {
+                domain = global.KEYSTONE_V2_DEFAULT_DOMAIN;
+            } else {
+                domain = domain['id'];
+                /* Check if it is default domain */
+                if (authApi.isDefaultDomain(req, domain)) {
+                    domain = getDefaultDomain(req);
+                } else {
+                    domain = getDomainFqnByDomainUUID(domain, domainObjs);
+                }
+            }
+            var roles = tokenObjs[key]['user']['roles'];
+            var rolesCnt = roles.length;
+            for (var i = 0 ; i < rolesCnt; i++) {
+                var adminRolesCnt = adminRoles.length;
+                for (var j = 0; j < adminRolesCnt; j++) {
+                    if ( -1 != roles[i]['name'].indexOf(adminRoles[j])) {
+                        if (null == adminProjectObjs[domain]) {
+                            adminProjectObjs[domain] = [];
+                        }
+                        adminProjectObjs[domain].push(key);
+                    }
+                }
+            }
+        }
+        formatIdentityMgrProjects(err, req, tenantList, domList,
+                                  function(error, formattedAllTenantList) {
+            var projs = formattedAllTenantList['projects'];
+            var tenCnt = projs.length;
+            for (var i = 0; i < tenCnt; i++) {
+                var domain = projs[i]['fq_name'][0];
+                if (null != adminProjectObjs[domain]) {
+                    if (-1 !=
+                        adminProjectObjs[domain].indexOf(projs[i]['fq_name'][1])) {
+                        adminProjectList['projects'].push(projs[i]);
+                    }
+                }
+            }
+            callback(adminProjectObjs, domainObjs, tenantList, domList,
+                     formattedAllTenantList, adminProjectList);
+        });
+    });
+}
+
+function getCookieObjs (req, appData, callback)
+{
+    var cookieObjs = {};
+    var domCookie = req.cookies.domain;
+    getAdminProjectList(req, appData, function(adminProjectObjs, domainObjs,
+                                               tenantList, domList) {
+        for (key in  adminProjectObjs) {
+            cookieObjs['domain'] = key;
+            cookieObjs['project'] = adminProjectObjs[key][0];
+            callback(cookieObjs);
+            return;
+        }
+        return;
+        if ((null != err) || (null == tenantList) || (null == tenantList['tenants'])) {
+            logutils.logger.error('Tenant List retrieval error');
+            callback(cookieObjs);
+            return;
+        }
+
+        var tenLen = tenantList['tenants'].length;
+        if (!tenLen) {
+            logutils.logger.error("Tenant List empty");
+            callback(cookieObjs);
+            return;
+        } else {
+            defDomainId = tenantList['tenants'][tenLen - 1]['domain_id'];
+            if (null == defDomainId) {
+                defDomainId = global.KEYSTONE_V2_DEFAULT_DOMAIN;
+            }
+        }
+        var defProj = tenantList['tenants'][tenLen - 1]['name'];
+        if (null == req.cookies) {
+            /* Now check the tenantlist response, and if domain is there in
+             * response, then set it, else set as default-domain
+             */
+            cookieObjs['domain'] = defDomainId;
+            cookieObjs['project'] = defProj;
+        } else {
+            if (null == req.cookies.domain) {
+                cookieObjs['domain'] = defDomainId;
+            } else {
+                /* First check if we have this domain now or not */
+                if (false == doDomainExist(req.cookies.domain, tenantList)) {
+                    cookieObjs['domain'] = defDomainId;
+                }
+            }
+            if (null == req.cookies.project) {
+                cookieObjs['project'] = defProj;
+            } else {
+                if ('v2.0' == req.session.authApiVersion) {
+                    /* Just check if the project exists or not */
+                    var projCnt = tenantList['tenants'].length;
+                    for (var i = 0; i < projCnt; i++) {
+                        if (tenantList['tenants'][i] == req.cookies.project) {
+                            /* it is fine */
+                            break;
+                        }
+                    }
+                    if (i == projCnt) {
+                        cookieObjs['project'] = defProj;
+                    }
+                } else {
+                    var domList = formatDomainList(tenantList);
+                    var projList = domList[domCookie];
+                    var projCnt = projList.length;
+                    for (var i = 0; i < projCnt; i++) {
+                        if (projList[i] == req.cookies.project) {
+                            /* It is fine */
+                            break;
+                        }
+                    }
+                    if (i == projCnt) {
+                        /* We did not find the already set project cookie value in
+                         * our project list
+                         */
+                        cookieObjs['project'] = defProj;
+                    }
+                }
+            }
+        }
+        callback(cookieObjs);
+    });
+}
+
 exports.authenticate = authenticate;
 exports.getToken = getToken;
 exports.getTenantList = getTenantList;
@@ -1499,4 +1766,5 @@ exports.isDefaultDomain = isDefaultDomain;
 exports.getDefaultDomain = getDefaultDomain;
 exports.getUserAuthDataByAuthObj = getUserAuthDataByAuthObj;
 exports.getUserRoleByAuthResponse = getUserRoleByAuthResponse;
+exports.getCookieObjs = getCookieObjs;
 

@@ -1102,7 +1102,7 @@ function MenuHandler() {
                     for (var i = (currItem.length - 1); i > -1; i--) {
                         //remove diabled features from the menu obeject
                         if(currItem[i]['hash'] != undefined 
-                                && disabledFeatures.disabled.indexOf(currItem[i]['hash']) !== -1) {
+                                && disabledFeatures.disabled != null && disabledFeatures.disabled.indexOf(currItem[i]['hash']) !== -1) {
                             currItem.splice(i, 1);
                         } else {
                             if(currItem[i] != undefined) {
@@ -1936,17 +1936,17 @@ function loadAlertsContent(deferredObj){
             columnHeader: {
                 columns:[ 
                     {
-                        field:'nName',
+                        field:'name',
                         name:'Node',
                         minWidth:150,
                         formatter: function(r,c,v,cd,dc){
-                            if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['nName']) != "undefined")
-                                return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['nName']+"</span>";
+                            if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['name']) != "undefined")
+                                return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['name']+"</span>";
                             else
-                                return dc['nName'];
+                                return dc['name'];
                         }
                     },{
-                        field:'pName',
+                        field:'type',
                         name:'Process',
                         minWidth:100
                     },{

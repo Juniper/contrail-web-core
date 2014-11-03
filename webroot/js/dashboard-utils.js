@@ -71,12 +71,8 @@ function infraMonitorClass() {
         var alertTemplate=contrail.getTemplate4Id("alerts-template");
         var alerts_nodes=[];
         var nodeAlerts=self.getNodeAlerts(viewModels);
-        for(var i=0;i<nodeAlerts.length;i++){
-            alerts_nodes.push({nName:nodeAlerts[i]['name'],pName:nodeAlerts[i]['type'],sevLevel:nodeAlerts[i]['sevLevel'],
-               timeStamp:nodeAlerts[i]['timeStamp'],msg:nodeAlerts[i]['msg']});
-        }
         var processAlerts = self.getAllProcessAlerts(viewModels);
-        var allAlerts = alerts_nodes.concat(processAlerts);
+        var allAlerts = nodeAlerts.concat(processAlerts);
         allAlerts.sort(dashboardUtils.sortInfraAlerts);
         if(globalAlerts.length > 0)
             allAlerts = allAlerts.concat(globalAlerts)

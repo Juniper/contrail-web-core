@@ -37,6 +37,16 @@ function getDefProjectByAppData (appData)
     return defProject;
 }
 
+function getAuthTokenByProject (req, defToken, project)
+{
+    if ((null != req.session.tokenObjs[project]) &&
+        (null != req.session.tokenObjs[project]['token']) &&
+        (null != req.session.tokenObjs[project]['token']['id'])) {
+        return req.session.tokenObjs[project]['token']['id'];
+    }
+    return defToken;
+}
+
 function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
 {
     var defProject = null;
@@ -45,7 +55,9 @@ function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
     try {
         defProject = getDefProjectByAppData(appData);
         headers['X-Auth-Token'] =
-            appData['authObj']['defTokenObj']['id'];
+            getAuthTokenByProject(appData['authObj'].req,
+                                  appData['authObj']['defTokenObj']['id'],
+                                  defProject);
         headers['X_API_ROLE'] =
             appData['authObj'].req.session.userRoles[defProject].join(',');
         headers = getHeaders(headers, appHeaders);
@@ -91,7 +103,9 @@ function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
     try {
         defProject = getDefProjectByAppData(appData);
         headers['X-Auth-Token'] =
-            appData['authObj']['defTokenObj']['id'];
+            getAuthTokenByProject(appData['authObj'].req,
+                                  appData['authObj']['defTokenObj']['id'],
+                                  defProject);
         headers['X_API_ROLE'] =
             appData['authObj'].req.session.userRoles[defProject].join(',');
         headers = getHeaders(headers, appHeaders);
@@ -138,7 +152,9 @@ function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
     try {
         defProject = getDefProjectByAppData(appData);
         headers['X-Auth-Token'] =
-            appData['authObj']['defTokenObj']['id'];
+            getAuthTokenByProject(appData['authObj'].req,
+                                  appData['authObj']['defTokenObj']['id'],
+                                  defProject);
         headers['X_API_ROLE'] =
             appData['authObj'].req.session.userRoles[defProject].join(',');
         headers = getHeaders(headers, appHeaders);
@@ -185,7 +201,9 @@ function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
     try {
         defProject = getDefProjectByAppData(appData);
         headers['X-Auth-Token'] =
-            appData['authObj']['defTokenObj']['id'];
+            getAuthTokenByProject(appData['authObj'].req,
+                                  appData['authObj']['defTokenObj']['id'],
+                                  defProject);
         headers['X_API_ROLE'] =
             appData['authObj'].req.session.userRoles[defProject].join(',');
         headers = getHeaders(headers, appHeaders);

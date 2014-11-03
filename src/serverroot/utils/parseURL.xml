@@ -50,5 +50,10 @@
         <feature>monitoring</feature>
         <callback>commonUtils.getUserRoleListPerTenant</callback>
     </item>
+    <item>
+        <url>/api/admin/webconfig/:type/:variable</url>
+        <method>get</method>
+        <feature>setting</feature>
+        <callback>commonUtils.getWebConfigValueByName</callback>
+    </item>
 </urlLists>
-
