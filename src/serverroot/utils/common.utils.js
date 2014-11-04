@@ -1306,7 +1306,8 @@ function getWebServerInfo (req, res, appData)
 {
     var plugins = require('../orchestration/plugins/plugins.api');
     var serverObj = plugins.getOrchestrationPluginModel(),
-        featurePackages = config.featurePkg;
+        featurePackages = config.featurePkg,
+        ui = config.ui;
 
     if (null == serverObj) {
         /* We will not come here any time */
@@ -1317,6 +1318,7 @@ function getWebServerInfo (req, res, appData)
     serverObj['hostName'] = os.hostname();
     serverObj['role'] = req.session.userRole;
     serverObj['featurePkg'] = {};
+    serverObj['uiConfig'] = ui; 
 
     for (var key in featurePackages) {
         serverObj['featurePkg'][key] = featurePackages[key]['enable'];

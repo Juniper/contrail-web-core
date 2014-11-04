@@ -57,6 +57,9 @@ var infraAlertMsgs = {
         'PROCESS_COREDUMP'      : "{0:core dump;core dumps}",
         'PROCESS_RESTART'       : "{0:restart;restarts}"
     }
+////Contant to check if a nodemanger is installed in the setup or not and use is appropriately
+var IS_NODE_MANAGER_INSTALLED = true;
+
 //Sets the following prototype if not defined already.
 //Array.prototype.unique - returns unique values of an array.
 //Array.prototype.diff - difference between two arrays.
@@ -1334,6 +1337,8 @@ function MenuHandler() {
         try {
                 self.loadResourcesFromMenuObj(currMenuObj,deferredObj);
                 deferredObj.done(function () {
+                    //set the global variable
+                    IS_NODE_MANAGER_INSTALLED = getValueByJsonPath(globalObj,'webServerInfo;uiConfig;nodemanager;installed',true);
                     //Cleanup the container
                     $(contentContainer).html('');
                     $.each(getValueByJsonPath(currMenuObj,'resources;resource',[]),function(idx,currResourceObj) {

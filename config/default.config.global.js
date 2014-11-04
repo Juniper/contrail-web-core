@@ -248,6 +248,8 @@ config.staticAuth[0].username = 'admin';
 config.staticAuth[0].password = 'contrail123';
 config.staticAuth[0].roles = ['superAdmin'];
 
+
+
 /*****************************************************************************
 * Below are the delimiter list for physical/logical interface creation.
 * Allowed values : [',', ':']
@@ -260,6 +262,17 @@ config.physicaldevices.interface_delimiters = ['.', ':'];
 *****************************************************************************/
 config.features = {};
 config.features.disabled = ['config_pd'];
+
+/*****************************************************************************
+* Below are the configurations used only for ui
+*****************************************************************************/
+config.ui = {};
+
+/*****************************************************************************
+* Below is the flag to indicate UI that node manager is installed or not.
+*****************************************************************************/
+config.ui.nodemanager = {};
+config.ui.nodemanager.installed = true;
 
 // Export this as a module.
 module.exports = config;
