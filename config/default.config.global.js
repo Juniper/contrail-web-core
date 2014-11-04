@@ -276,3 +276,13 @@ config.ui.nodemanager.installed = true;
 
 // Export this as a module.
 module.exports = config;
+
+// vcenter related parameters
+config.vcenter.server_ip = '10.84.24.111';      //vCenter IP
+config.vcenter.server_port = '443';             //Port
+config.vcenter.authProtocol = 'https';          //http or https
+config.vcenter.datacenter = 'vcenter';          //datacenter name
+config.vcenter.dvsswitch = 'vswitch';           //dvsswitch name
+config.vcenter.strictSSL = false;               //Strictly Validate the certificate
+config.vcenter.ca = '';                         //specify the certificate key file
+
