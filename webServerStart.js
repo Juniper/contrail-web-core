@@ -4,7 +4,9 @@
 
 /* Set corePath before loading any other module */
 var corePath = process.cwd();
+var config = require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig();
 exports.corePath = corePath;
+exports.config = config;
 
 var express = require('express')
     , path = require('path')
@@ -30,7 +32,6 @@ var express = require('express')
     , jsonPath = require('JSONPath').eval
     ;
 
-var config = commonUtils.compareAndMergeDefaultConfig();
 var pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
 assert(pkgList);
 var nodeWorkerCount = config.node_worker_count;
@@ -511,3 +512,4 @@ startWebCluster();
 exports.myIdentity = myIdentity;
 exports.discServEnable = discServEnable;
 exports.pkgList = pkgList;
+

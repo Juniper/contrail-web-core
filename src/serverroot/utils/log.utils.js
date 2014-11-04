@@ -6,7 +6,7 @@ var winston = require('winston'),
 	logutils = module.exports,
 	messages = require('../common/messages'),
 	util = require('util'),
-    config = require('../../../config/config.global.js');
+    config = process.mainModule.exports.config;
 
 var logLevel = ((null != config) && (null != config.logs) &&
                 (null != config.logs.level) && ('' != config.logs.level))

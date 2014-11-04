@@ -456,22 +456,24 @@
             <div id="divBasic" class="row-fluid">
                 <ul id="detail-columns" class="item-list">
                     {{#each d}}
-                        <li>
-                            <label class="inline row-fluid">
-                                <div class="key span5">{{{this.lbl}}}</div>
-                                <div class="value span7"> 
-                                    {{#if this.value}}
-                                        {{{this.value}}}
-                                    {{else}}
-                                        {{#IfCompare this.value '0' options='=='}}
-                                            0
+                        {{#if this}}
+                            <li>
+                                <label class="inline row-fluid">
+                                    <div class="key span5">{{{this.lbl}}}</div>
+                                    <div class="value span7"> 
+                                        {{#if this.value}}
+                                            {{{this.value}}}
                                         {{else}}
-                                         	--
-                                        {{/IfCompare}}
-                                    {{/if}}
-                                </div>
-                            </label>
-                        </li>
+                                            {{#IfCompare this.value '0' options='=='}}
+                                                0
+                                            {{else}}
+                                             	--
+                                            {{/IfCompare}}
+                                        {{/if}}
+                                    </div>
+                                </label>
+                            </li>
+                        {{/if}}
                     {{/each}} <!-- /each d -->
                 </ul>   
             </div><!--/span-->

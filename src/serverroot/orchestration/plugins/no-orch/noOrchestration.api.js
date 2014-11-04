@@ -8,12 +8,12 @@
  *
  */
 var plugins = require('../plugins.api');
-var config = require('../../../../../config/config.global');
+var config = process.mainModule.exports['config'];
 var commonUtils = require('../../../utils/common.utils');
 var messages = require('../../../common/messages');
 var configUtils = require('../../../common/configServer.utils');
 
-function authenticate (req, res, callback)
+function authenticate (req, res, appData, callback)
 {
     var urlHash = '';
     var post = req.body;
@@ -56,7 +56,7 @@ function authenticate (req, res, callback)
     }
     req.session.isAuthenticated = true;
     req.session.userRole = userList[i]['roles'];
-    plugins.setAllCookies(req, res, {'username': username}, function() {
+    plugins.setAllCookies(req, res, appData, {'username': username}, function() {
         res.redirect('/' + urlHash);
     });
 }
@@ -83,6 +83,22 @@ function getProjectList (req, appData, callback)
     configUtils.getProjectsFromApiServer(req, appData,
                                          function(error, data) {
         callback(error, data);
+    });
+}
+
+function getCookieObjs (req, appData, callback)
+{
+    var cookieObjs = {};
+    getProjectList(req, appData, function(err, data) {
+        if ((null != err) || (null == data) || (null == data['projects']) ||
+            (!data['projects'].length)) {
+            callback(cookieObjs);
+            return;
+        }
+        var projectList = data['projects'];
+        cookieObjs['domain'] = projectList[0]['fq_name'][0];
+        cookieObjs['project'] = projectList[0]['fq_name'][1];
+        callback(cookieObjs);
     });
 }
 
@@ -131,4 +147,5 @@ exports.getOSHostList = getOSHostList;
 exports.getAvailabilityZoneList = getAvailabilityZoneList;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
+exports.getCookieObjs = getCookieObjs;
 

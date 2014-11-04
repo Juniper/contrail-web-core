@@ -3,7 +3,7 @@
  */
 
 var authApi = require('./auth.api');
-var config = require('../../../config/config.global');
+var config = process.mainModule.exports.config;
 var commonUtils = require('../utils/common.utils');
 var async = require('async');
 var configApiServer = require('./configServer.api');
@@ -39,18 +39,19 @@ function getProjectsFromApiServer (request, appData, callback)
     var projectList = {"projects": []};
 
     var domain = request.param('domain');
-    if (null != domain) {
+    if ((null != domain) && (0 != domain.length)) {
         reqURL = '/domain/' + domain;
     } else {
         reqURL = '/projects';
     }
     configApiServer.apiGet(reqURL, appData, function(err, data) {
         if ((null != err) || (null == data) || ((null != domain) &&
-            ((null == data['domain']) || (null == data['domain']['projects'])))) {
+            (0 != domain.length) && ((null == data['domain']) ||
+                                     (null == data['domain']['projects'])))) {
             callback(err, projectList);
             return;
         }
-        if (null == domain) {
+        if ((null == domain) || (0 == domain.length)) {
             callback(err, data);
             return;
         }

@@ -6,7 +6,7 @@
  * This file contains the util functions for all plugins
  */
 
-var config = require('../../../../config/config.global');
+var config = process.mainModule.exports['config'];
 var configMainServer = require('../../web/api/configServer.main.api');
 var configJobServer = require('../../jobs/api/configServer.jobs.api');
 var assert = require('assert');
@@ -14,6 +14,7 @@ var authApi = require('../../common/auth.api');
 var logutils = require('../../utils/log.utils');
 var orch = require('../orchestration.api');
 var configUtils = require('../../common/configServer.utils');
+var commonUtils = require('../../utils/common.utils');
 
 var orchModel = orch.getOrchestrationModel();
 
@@ -99,6 +100,17 @@ function getAdminProjectList (req)
 
 function setAllCookies (req, res, appData, cookieObj, callback)
 {
+    if (null == appData['authObj']['defTokenObj']) {
+        /* We have not got defTokenObj filled yet while sending to Auth
+         * Module, so fill it up here
+         */
+        var adminProjectList = getAdminProjectList(req);
+        /* adminProjectList must not empty array */
+        if (adminProjectList.length) {
+            appData['authObj']['defTokenObj'] =
+                req.session.tokenObjs[adminProjectList[0]]['token'];
+        }
+    }
     var defDomainId;
     res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
                   '; expires=' +

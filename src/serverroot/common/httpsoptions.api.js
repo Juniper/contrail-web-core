@@ -3,7 +3,7 @@
  */
 
 var fs      = require('fs');
-var config  = require('../../../config/config.global');
+var config  = process.mainModule.exports.config;
 var request = require('request');
 var restler = require('restler');
 
