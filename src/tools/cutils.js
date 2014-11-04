@@ -651,12 +651,14 @@ function genarateGateway(cidr,from){
     if(ciderValue.isValid() === true){
         var ipcreated;
         var bigInt;
-        if(from == "end" || from == "" ){
+        if(from == "end"){
             ipcreated = ciderValue.endAddress();
-            bigInt = ipcreated.bigInteger() -1;
-        } else {
+            var bg1 = ipcreated.bigInteger();
+            bigInt = bg1.subtract(new BigInteger("1",10));
+        } else if(from == "start" || from == "" ){
             ipcreated = ciderValue.startAddress();
-            bigInt = ipcreated.bigInteger();
+            var bg1 = ipcreated.bigInteger();
+            bigInt = bg1.add(new BigInteger("1",10));
         }
         gateway = v4.Address.fromBigInteger(bigInt).address;
     } else {    
@@ -667,11 +669,11 @@ function genarateGateway(cidr,from){
             if(from == "end"){
                 ipcreated = ciderValue.endAddress();
                 var bg1 = ipcreated.bigInteger();
-                bigInt = bg1.subtract(new BigInteger("1",10))
-			} else  {
+                bigInt = bg1.subtract(new BigInteger("1",10));
+            } else if(from == "start" || from == "" ){
                 ipcreated = ciderValue.startAddress();
                 var bg1 = ipcreated.bigInteger();
-                bigInt = bg1.add(new BigInteger("1",10))
+                bigInt = bg1.add(new BigInteger("1",10));
             }
             gateway = new v6.Address.fromBigInteger(bigInt).correctForm()
 
@@ -1218,9 +1220,8 @@ function scrollUp(contWindow,div,boolCollapse,collapseDivID){
 function policyRuleFormat(text) {
     return '<span class="rule-format">' + text  + '</span>';
 }
-
 function formatVirtualRouterType(type) {
-    var formattedType = '';
+    var formattedType = '';	
     if(type === '-') {
          formattedType = type;
     } else if(typeof type === 'object') {
@@ -1238,7 +1239,7 @@ function formatVirtualRouterType(type) {
                     break;                 
             }                
             if(formattedType === '') {
-                formattedType = actText
+                formattedType = actText	
             } else {
                 formattedType += ' , ' + actText;
             }
