@@ -7,7 +7,7 @@
  */
 
 var authApi = require('../../../common/auth.api');
-var config = require('../../../../../config/config.global');
+var config = process.mainModule.exports['config'];
 var httpsOp = require('../../../common/httpsoptions.api');
 var logutils = require('../../../utils/log.utils');
 

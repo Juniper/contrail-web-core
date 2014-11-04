@@ -5,7 +5,7 @@
 var rest = require('./rest.api');
 var global = require('./global');
 var assert = require('assert');
-var config = require('../../../config/config.global');
+var config = process.mainModule.exports['config'];
 
 var serverIp = global.DFLT_SERVER_IP;
 var serverPort = '8081';

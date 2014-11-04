@@ -3,7 +3,7 @@
  */
 
 var redis = require('redis')
-	, config = require('../../../../config/config.global.js')
+	, config = process.mainModule.exports.config
 	, logutils = require('../../utils/log.utils')
 	, messages = require('../../common/messages')
     , jobsApi = require('./jobs.api')

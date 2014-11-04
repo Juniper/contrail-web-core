@@ -8,7 +8,7 @@
  *
  */
 var plugins = require('../plugins.api');
-var config = require('../../../../../config/config.global');
+var config = process.mainModule.exports['config'];
 var commonUtils = require('../../../utils/common.utils');
 var messages = require('../../../common/messages');
 var configUtils = require('../../../common/configServer.utils');

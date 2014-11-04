@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var config = require('../../../config/config.global');
+var config = process.mainModule.exports['config'];
 
 function getOrchestrationModel ()
 {

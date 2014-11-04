@@ -6,7 +6,7 @@
  * This file contains the util functions for all plugins
  */
 
-var config = require('../../../../config/config.global');
+var config = process.mainModule.exports['config'];
 var configMainServer = require('../../web/api/configServer.main.api');
 var configJobServer = require('../../jobs/api/configServer.jobs.api');
 var assert = require('assert');
