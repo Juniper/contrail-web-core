@@ -459,7 +459,7 @@ function getDefaultGridConfig() {
 	                                    }
 	
 	                                    $(target).parents('.slick-row-master').after(' \
-	            	            				<div class="ui-widget-content slick-row slick-row-detail" data-id="' + $(target).parents('.slick-row-master').data('cgrid') + '"> \
+	            	            				<div class="ui-widget-content slick-row slick-row-detail" data-cgrid="' + $(target).parents('.slick-row-master').data('cgrid') + '"> \
 	            	            					<div class="slick-cell l' + cellSpaceColumn + ' r' + cellSpaceRow + '"> \
 	            		            					<div class="slick-row-detail-container"> \
 	            		            						<div class="slick-row-detail-template-' + $(target).parents('.slick-row-master').data('cgrid') + '"></div> \
@@ -653,9 +653,18 @@ function getDefaultGridConfig() {
                         addGridRowActionDroplist(actionCellArray, gridContainer, args.row);
                         var offset = $(e.target).offset();
                         $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).css({
-                            top: offset.top+20 + 'px',
-                            left: offset.left-155 + 'px'
-                        }).show();
+                            top: (offset.top + 20) + 'px',
+                            left: (offset.left - 155) + 'px'
+                        }).show(function() {
+                            var dropdownHeight = $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).height(),
+                                windowHeight = $(window).height(),
+                                currentScrollPosition = $(window).scrollTop(),
+                                actionScrollPosition = offset.top + 20 - currentScrollPosition;
+
+                            if((actionScrollPosition + dropdownHeight) > windowHeight) {
+                                window.scrollTo(0, (actionScrollPosition + dropdownHeight) - windowHeight + currentScrollPosition);
+                            }
+                        });
                         e.stopPropagation();
                         initOnClickDocument('#' + gridContainer.prop('id') + '-action-menu-' + args.row,function(){
                             $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).hide();
