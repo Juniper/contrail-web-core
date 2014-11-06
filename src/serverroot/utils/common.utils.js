@@ -1754,7 +1754,17 @@ function convertUUIDToString (uuid) {
         uuid.substr(20, 12);
     return newUUID;
 }
-
+/**
+ * This function accepts the uuid with hyphen(-) and returns the uuid without '-'
+ */
+function convertApiServerUUIDtoKeystoneUUID(uuidStr) {
+    if(uuidStr != null) {
+        var uuid = ifNull(uuidStr,"").split('-').join('');
+        return uuid;
+    } else
+        return null;
+}
+/**
 /**
  * This function takes two parameters and compares the first one with null if it matches,
  * then it returns the second parameter else first parameter.
@@ -1849,3 +1859,4 @@ exports.getUserRoleListPerTenant = getUserRoleListPerTenant;
 exports.getWebConfigValueByName = getWebConfigValueByName;
 exports.isMultiTenancyEnabled = isMultiTenancyEnabled;
 exports.prefixToNetMask = prefixToNetMask;
+exports.convertApiServerUUIDtoKeystoneUUID = convertApiServerUUIDtoKeystoneUUID;
