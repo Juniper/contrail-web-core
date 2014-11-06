@@ -61,7 +61,7 @@ function authenticate (req, res, appData, callback)
     });
 }
 
-function getTenantList (req, callback)
+function getTenantList (req, appData, callback)
 {
     var projList = {"tenants": []};
 
