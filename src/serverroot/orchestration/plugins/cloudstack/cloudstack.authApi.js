@@ -157,7 +157,7 @@ function formatTenantList (req, cloudstackProjects, apiProjects, callback)
     callback(resultJSON);
 }
 
-function getTenantList (req, callback)
+function getTenantList (req, appData, callback)
 {
     var postData = {};
     var cmd = 'listProjects';
@@ -169,7 +169,7 @@ function getTenantList (req, callback)
 
 function getProjectList (req, appData, callback)
 {
-    getTenantList(req, function(err, tenantList) {
+    getTenantList(req, appData, function(err, tenantList) {
        configUtils.listProjectsAPIServer(err, tenantList, appData,
                                              function(err, data) {
             formatTenantList(req, tenantList, data, function(projects) {

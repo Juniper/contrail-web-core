@@ -84,7 +84,7 @@ function getTenantListAndSyncDomain (request, appData, callback)
     var domainObjs      = {'domains':[]};
     var tmpDomainObjs   = {};
     var domArr          = [];
-    authApi.getTenantList(request, function(error, tenantList) {
+    authApi.getTenantList(request, appData, function(error, tenantList) {
         if ((null != error) || (null == tenantList) ||
             (null == tenantList['tenants'])) {
             callback(error, null, null, null);

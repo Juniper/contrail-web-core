@@ -192,7 +192,7 @@ var getTenantListCB = {
 /* Function: getTenantList
     This API is used to get the list of projects for the logged in user
  */
-function getTenantList (req, callback)
+function getTenantList (req, appData, callback)
 {
     var lastAuthVerUsed = req.session.authApiVersion;
     var token = req.session.last_token_used;

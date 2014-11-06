@@ -93,13 +93,30 @@ function authenticate (req, res, appData, callback)
     });
 }
 
-function getTenantList (req, callback)
-{
-    var projList = {"tenants": []};
-
-    callback(null, projList);
+function getTenantList(req,appData,callback) {
+    vCenterPluginApi.getProjectList(req,appData,function(err,projectList){
+        console.log("Projects are "+JSON.stringify(projectList));
+        if (err || (null == projectList)){
+            callback(err,null);
+            return;
+        }
+        var response = {
+            "tenants_links": [], 
+            "tenants": []
+        };
+        for (var i = 0; i < commonUtils.ifNull(projectList['projects'],[]).length; i++) {
+            var projectObj = projectList['projects'][i];
+            var tenantObj = {
+                "description": null, 
+                "enabled": true, 
+                "id": commonUtils.convertApiServerUUIDtoKeystoneUUID(projectObj['uuid']),
+                "name": projectObj['fq_name'].pop()
+            };
+            response['tenants'].push(tenantObj);
+        }
+        callback(err,response);
+    });
 }
-
 function getServiceCatalog (req, callback)
 {
     callback(null);
