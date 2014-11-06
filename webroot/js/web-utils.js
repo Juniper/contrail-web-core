@@ -2275,7 +2275,6 @@ function SingleDataSource(dsName) {
     var subscribeFn = function (e,arguments) {
         var dataViewEventArgs = arguments;
            $.each(instances[dsName],function(idx,obj) {
-               $(obj).trigger('change');
                if(singleDSObj['onChange'] != null) {
                    $(obj).trigger('startLoading');
                    var deferredObj = $.Deferred();
@@ -2288,6 +2287,7 @@ function SingleDataSource(dsName) {
                        $(obj).trigger('endLoading'); 
                    });
                }
+               $(obj).trigger('change');
            });
        };
     //Unsubscribe old listeners for this dataSource

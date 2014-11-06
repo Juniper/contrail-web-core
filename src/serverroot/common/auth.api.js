@@ -75,9 +75,9 @@ function getTokenObj (authObj, callback)
     });
 }
 
-function getTenantList (req, callback)
+function getTenantList (req, appData, callback)
 {
-    getAuthMethod[req.session.loggedInOrchestrationMode].getTenantList(req, function(err, data) {
+    getAuthMethod[req.session.loggedInOrchestrationMode].getTenantList(req, appData, function(err, data) {
         callback(err, data);
     });
 }
