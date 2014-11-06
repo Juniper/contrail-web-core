@@ -136,6 +136,18 @@ function getVMStatsByProject (projUUID, req, callback)
     callback(null, null);
 }
 
+function getSessionExpiryTime (req, appData, callback)
+{
+    var cfgSessTimeout =
+        ((null != config.session) && (null != config.session.timeout)) ?
+        config.session.timeout : null;
+    var defSessTimeout = global.MAX_AGE_SESSION_ID;
+    if (null == cfgSessTimeout) {
+        return defSessTimeout;
+    }
+    return cfgSessTimeout;
+}
+
 exports.authenticate = authenticate;
 exports.getServiceCatalog = getServiceCatalog;
 exports.getAPIServerAuthParamsByReq = getAPIServerAuthParamsByReq;
@@ -148,4 +160,5 @@ exports.getAvailabilityZoneList = getAvailabilityZoneList;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
 exports.getCookieObjs = getCookieObjs;
+exports.getSessionExpiryTime = getSessionExpiryTime;
 

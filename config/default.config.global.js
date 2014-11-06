@@ -284,5 +284,25 @@ config.vcenter.dvsswitch = 'vswitch';           //dvsswitch name
 config.vcenter.strictSSL = false;               //Strictly Validate the certificate
 config.vcenter.ca = '';                         //specify the certificate key file
 
+/*****************************************************************************
+ * The below flag indicates wheather multi_tenancy is enabled or not.
+ *
+ * NOTE: This flag does not implement multi_tenancy at API Server. This flag
+ * needs to be in sync with API Server Config file multi_tenancy flag.
+ * Default:  true
+ */
+config.multi_tenancy = {};
+config.multi_tenancy.enabled = true;
+
+/*****************************************************************************
+ * timeout - Contrail UI Session timeout value in milli seconds
+ *
+ * NOTE: If the authentication is done via some identity manager (like
+ * keystone), and if it is having some token expiry, then session timeout is set
+ * to mimimum of token expiry and session.timeout config value
+ *****************************************************************************/
+config.session = {};
+config.session.timeout = 24 * 60 * 60 * 1000;
+
 // Export this as a module.
 module.exports = config;

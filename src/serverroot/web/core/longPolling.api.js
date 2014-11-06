@@ -162,12 +162,13 @@ function routeAll (req, res, next)
   /* nodejs sets the timeout 2 minute, override this timeout here */
   req.socket.setTimeout(global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME);
   if (null == req.session.sessionExpSyncToIdentityToken) {
-      /* Sync Session Timeout to Identity Service Token Exp Time */
-      if (req.session && req.session.last_token_used &&
-          req.session.last_token_used.expires) {
-          req.session.cookie.expires = new
-              Date(req.session.last_token_used.expires);
-          req.session.sessionExpSyncToIdentityToken = true;
+      if (null != authApi.getSessionExpiryTime) {
+        var sessExp = authApi.getSessionExpiryTime(req);
+        if (null != sessExp) {
+            var sessExpAt = new Date().getTime() + sessExp;
+            req.session.cookie.expires = new Date(sessExpAt);
+            req.session.sessionExpSyncToIdentityToken = true;
+        }
       }
   }
   var u = url.parse(req.url, true);

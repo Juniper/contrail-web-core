@@ -1753,6 +1753,31 @@ function getCookieObjs (req, appData, callback)
     });
 }
 
+function getSessionExpiryTime (req, appData, callback)
+{
+    var cfgSessTimeout =
+        ((null != config.session) && (null != config.session.timeout)) ?
+        config.session.timeout : null;
+    var tokenSessTimeout = null;
+    try {
+        var tokenSessIssuedAt = new
+            Date(req.session.last_token_used.issued_at).getTime();
+        var tokenSessExpAt = new Date(req.session.last_token_used.expires).getTime();
+        tokenSessTimeout = tokenSessExpAt - tokenSessIssuedAt;
+    } catch(e) {
+        tokenSessTimeout = null;
+    }
+    if (null != tokenSessTimeout) {
+        if (null != cfgSessTimeout) {
+            return ((tokenSessTimeout < cfgSessTimeout) ? tokenSessTimeout :
+                    cfgSessTimeout);
+        } else {
+            return tokenSessTimeout;
+        }
+    }
+    return null;
+}
+
 exports.authenticate = authenticate;
 exports.getToken = getToken;
 exports.getTenantList = getTenantList;
@@ -1767,4 +1792,5 @@ exports.getDefaultDomain = getDefaultDomain;
 exports.getUserAuthDataByAuthObj = getUserAuthDataByAuthObj;
 exports.getUserRoleByAuthResponse = getUserRoleByAuthResponse;
 exports.getCookieObjs = getCookieObjs;
+exports.getSessionExpiryTime = getSessionExpiryTime;
 
