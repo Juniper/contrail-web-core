@@ -179,9 +179,22 @@ function getProjectList (req, appData, callback)
     });
 }
 
+function getSessionExpiryTime (req, appData, callback)
+{
+    var cfgSessTimeout =
+        ((null != config.session) && (null != config.session.timeout)) ?
+        config.session.timeout : null;
+    var defSessTimeout = global.MAX_AGE_SESSION_ID;
+    if (null == cfgSessTimeout) {
+        return defSessTimeout;
+    }
+    return cfgSessTimeout;
+}
+
 exports.getAPIServerAuthParamsByReq = getAPIServerAuthParamsByReq;
 exports.authenticate = authenticate;
 exports.getTenantList = getTenantList;
 exports.formatTenantList = formatTenantList;
 exports.getProjectList = getProjectList;
+exports.getSessionExpiryTime = getSessionExpiryTime;
 

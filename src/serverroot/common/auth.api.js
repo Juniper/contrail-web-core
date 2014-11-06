@@ -143,6 +143,11 @@ function getCookieObjs (req, appData, callback)
     return authMethodApi.getCookieObjs(req, appData, callback);
 }
 
+function getSessionExpiryTime (req, appData, callback)
+{
+    return authMethodApi.getSessionExpiryTime(req, appData, callback);
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -158,4 +163,5 @@ exports.getNewTokenObjByToken = getNewTokenObjByToken;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getDefaultDomain = getDefaultDomain;
 exports.getCookieObjs = getCookieObjs;
+exports.getSessionExpiryTime = getSessionExpiryTime;
 

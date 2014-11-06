@@ -60,24 +60,38 @@ function getAuthTokenByJobData (jobData)
     }
 }
 
+function configAppHeaders (headers, jobData)
+{
+    var defProject = getDefProjectByJobData(jobData);
+    var multiTenancyEnabled =
+        ((null != config.multi_tenancy) &&
+         (null != config.multi_tenancy.enabled)) ?
+        config.multi_tenancy.enabled : true;
+    try {
+        headers['X-Auth-Token'] = getAuthTokenByJobData(jobData);
+    } catch(e) {
+        headers['X-Auth-Token'] = null;
+    }
+    if (true == multiTenancyEnabled) {
+        try {
+            headers['X_API_ROLE'] = jobData['taskData']['userRoles'][defProject].join(',');
+        } catch(e) {
+            headers['X_API_ROLE'] = null;
+        }
+    }
+    return headers;
+}
+
 function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
 {
     var headers = {};
     var authObj;
     var defProject = null;
     var tokenId = null;
-    try {
-        defProject = getDefProjectByJobData(jobData);
-        headers['X-Auth-Token'] = getAuthTokenByJobData(jobData);
-        headers['X_API_ROLE'] =
-            jobData['taskData']['userRoles'][defProject].join(',');
-        headers = getHeaders(headers, appHeaders);
-    } catch(e) {
-        /* We did not have authorized yet */
-        headers['X-Auth-Token'] = null;
-        headers['X_API_ROLE'] = null;
-        defProject = null;
-    }
+    defProject = getDefProjectByJobData(jobData);
+    headers = configAppHeaders(headers, jobData);
+    headers = getHeaders(headers, appHeaders);
+
     configServer.api.get(reqUrl, function(err, data) {
         if (err) {
             if (stopRetry) {
@@ -114,18 +128,11 @@ function apiPut (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
     var authObj;
     var defProject = null;
     var tokenId = null;
-    try {
-        defProject = getDefProjectByJobData(jobData);
-        headers['X-Auth-Token'] = getAuthTokenByJobData(jobData);
-        headers['X_API_ROLE'] =
-            jobData['taskData']['userRoles'][defProject].join(',');
-        headers = getHeaders(headers, appHeaders);
-    } catch(e) {
-        /* We did not have authorized yet */
-        headers['X-Auth-Token'] = null;
-        headers['X_API_ROLE'] = null;
-        defProject = null;
-    }
+
+    defProject = getDefProjectByJobData(jobData);
+    headers = configAppHeaders(headers, jobData);
+    headers = getHeaders(headers, appHeaders);
+
     configServer.api.put(reqUrl, function(err, data) {
         if (err) {
             if (stopRetry) {
@@ -163,18 +170,11 @@ function apiPost (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
     var authObj;
     var defProject = null;
     var tokenId = null;
-    try {
-        defProject = getDefProjectByJobData(jobData);
-        headers['X-Auth-Token'] = getAuthTokenByJobData(jobData);
-        headers['X_API_ROLE'] =
-            jobData['taskData']['userRoles'][defProject].join(',');
-        headers = getHeaders(headers, appHeaders);
-    } catch(e) {
-        /* We did not have authorized yet */
-        headers['X-Auth-Token'] = null;
-        headers['X_API_ROLE'] = null;
-        defProject = null;
-    }
+
+    defProject = getDefProjectByJobData(jobData);
+    headers = configAppHeaders(headers, jobData);
+    headers = getHeaders(headers, appHeaders);
+
     configServer.api.post(reqUrl, function(err, data) {
         if (err) {
             if (stopRetry) {
@@ -211,18 +211,11 @@ function apiDelete (reqUrl, jobData, callback, appHeaders, stopRetry)
     var authObj;
     var defProject = null;
     var tokenId = null;
-    try {
-        defProject = getDefProjectByJobData(jobData);
-        headers['X-Auth-Token'] = getAuthTokenByJobData(jobData);
-        headers['X_API_ROLE'] =
-            jobData['taskData']['userRoles'][defProject].join(',');
-        headers = getHeaders(headers, appHeaders);
-    } catch(e) {
-        /* We did not have authorized yet */
-        headers['X-Auth-Token'] = null;
-        headers['X_API_ROLE'] = null;
-        defProject = null;
-    }
+
+    defProject = getDefProjectByJobData(jobData);
+    headers = configAppHeaders(headers, jobData);
+    headers = getHeaders(headers, appHeaders);
+
     configServer.api.delete(reqUrl, function(err, data) {
         if (err) {
             if (stopRetry) {
