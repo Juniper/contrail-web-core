@@ -73,6 +73,7 @@ body {
   font-family: 'Open Sans';
   font-size: 13px;
   color: #393939;
+  overflow-y: scroll;
 }
 body:before {
   content: "";
@@ -1898,6 +1899,7 @@ button.btn:active {
 .dropdown-menu {
   border-radius: 0 !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
 .dropdown-menu li a {
   font-size: 13px;

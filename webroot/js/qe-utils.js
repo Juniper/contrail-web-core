@@ -1471,7 +1471,7 @@ function push2OTColumns(columnArray, newColumnName, columns, selectedFieldName, 
             	sortable: false,
             	events: {
         			onClick: function(e,dc){
-        				var rowIndex = $(e.target).parents('.slick-row-master').data('id');
+        				var rowIndex = $(e.target).parents('.slick-row-master').data('cgrid');
         				setTimeout(function(){
         					$('#ot-results').data('contrailGrid').adjustRowHeight(rowIndex);
         				},500);

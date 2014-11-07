@@ -2087,17 +2087,6 @@ color: #b94a48;
 .detail-header-row {
   border-bottom: 1px solid #eee;
 }
-.horizontal-actions {
-  margin: 5px 0 0;
-}
-.horizontal-actions .horizontal-action-item {
-  color: #777;
-  padding: 5px 8px;
-  border-left: 1px solid #eee;
-}
-.horizontal-actions .horizontal-action-item:hover {
-  color: #3182bd;
-}
 
 .group-detail-action-item {
     margin: 0 8px;
