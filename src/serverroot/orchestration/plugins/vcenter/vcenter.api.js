@@ -46,7 +46,8 @@ function queryIpPools(appData) {
 
 function destroyIpPool(appData,poolId) {
     return new Promise(function(resolve,reject) {
-        vCenterApi.doCall({
+        populatevCenterParams(appData).done(function(response) {
+            vCenterApi.doCall({
             method    : 'DestroyIpPool',
             headers : {
                 SOAPAction: "urn:vim25/5.1"
@@ -67,8 +68,9 @@ function destroyIpPool(appData,poolId) {
                 id: poolId, //Get it from QueryIpPools
                 force: false
             }
-        },appData,function(err,data,resHeaders) {
-            resolve(data);
+            },appData,function(err,data,resHeaders) {
+                resolve(data);
+            });
         });
     });
 }
@@ -76,6 +78,10 @@ function destroyIpPool(appData,poolId) {
 function destroyTask(appData,objType,name) {
     return new Promise(function(resolve,reject) {
         getIdByMobName(appData,objType,name).done(function(response) {
+            if(response == false) {
+                resolve({Fault:{faultstring:objType + ' ' + name + " doesn't exist"}});
+                return;
+            }
             vCenterApi.doCall({
                 method    : 'Destroy_Task',
                 headers : {
@@ -254,24 +260,27 @@ function getIdByMobName(appData,objType,name) {
                             resolve(response);
                         else {
                             var objArr = response['RetrievePropertiesExResponse']['returnval']['objects']['propSet']['val'][0]['_value']['ManagedObjectReference'];
-                            var isFound = false;
-                            for(var i =0;i<objArr.length;i++) {
-                                if(isFound == false) {
-                                    retrievePropertiesExForObj(appData,objType,objArr[i]['_value']).done(function(response) {
-                                        if(response['Fault'] != null) {
-                                            resolve(response);
-                                        } else {
-                                            var currName = response['RetrievePropertiesExResponse']['returnval']['objects']['propSet']['val']['_value'];
-                                            var currid = response['RetrievePropertiesExResponse']['returnval']['objects']['obj']['_value'];
-                                            logutils.logger.debug(currName,currid);
-                                            if(currName == name) {
-                                                isFound = true;
-                                                resolve(currid);
-                                            }
-                                        }
-                                    });
-                                }
+                            function matchObjName(objId,callback) {
+                                retrievePropertiesExForObj(appData,objType,objId['_value']).done(function(response) {
+                                    if(response['Fault'] != null) {
+                                        resolve(response);
+                                    } else {
+                                        var currName = response['RetrievePropertiesExResponse']['returnval']['objects']['propSet']['val']['_value'];
+                                        var currid = response['RetrievePropertiesExResponse']['returnval']['objects']['obj']['_value'];
+                                        logutils.logger.debug(currName,currid);
+                                        if(currName == name) {
+                                            resolve(currid);
+                                            callback({'found':true},true);
+                                        } else
+                                            callback(null,false);
+                                    }
+                                });
                             }
+                            async.mapSeries(objArr,matchObjName,function(err,results) {
+                                //If objId not found for the given name
+                                if(results.indexOf(true) < 0)
+                                    resolve(false);
+                            });
                         }
                     });
                 }
@@ -286,8 +295,16 @@ function populatevCenterParams(appData) {
             resolve();
         else {
             getIdByMobName(appData,'Datacenter',config.vcenter.datacenter).done(function(response) {
-                dataCenterName = response;
+                if(response == false) {
+                    resolve(false);
+                    return;
+                } else
+                    dataCenterName = response;
                 getIdByMobName(appData,'DistributedVirtualSwitch',config.vcenter.dvsswitch).done(function(response) {
+                    if(response == false) {
+                        resolve(false);
+                        return;
+                    }
                     vSwitchName = response;
                     resolve();
                 });
@@ -339,8 +356,16 @@ function getProjectList (req, appData, callback)
 function createNetwork(userData,appData,callback) {
     //waitFor dataCenterName & vSwitchName to be fetched
     populatevCenterParams(appData).done(function(response) {
+        if(response == false) {
+            callback(null,{'Fault': {'faultstring': "Given Datacenter/switchname doesn't exist"}});
+            return;
+        }
         createPortGroup(userData,appData,callback).done(function(response) {
             var portGroupId = null;
+            if(response['Fault'] != null) {
+                callback(null,response);
+                return;
+            }
             getIdByMobName(appData,'DistributedVirtualPortgroup',userData['name']).done(function(response) {
                 portGroupId = response;
                 userData['portGroupId'] = portGroupId;
@@ -445,7 +470,10 @@ function createIpPool(userData,appData,callback) {
                         ipv4Config: {
                             subnetAddress: userData['subnet']['address'],
                             netmask: userData['subnet']['netmask'],
-                            gateway:userData['subnet']['gateway']
+                            gateway:userData['subnet']['gateway'],
+                            dhcpServerAvailable : false/*,
+                            ipPoolEnabled : true    //Check - range is mandatory for setting this to true??
+                            */
                         },
                         networkAssociation: {
                             network: {
