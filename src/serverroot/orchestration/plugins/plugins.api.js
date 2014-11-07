@@ -100,6 +100,8 @@ function getAdminProjectList (req)
 
 function setAllCookies (req, res, appData, cookieObj, callback)
 {
+    var loginErrFile = 'webroot/html/login-error.html';
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
     if (null == appData['authObj']['defTokenObj']) {
         /* We have not got defTokenObj filled yet while sending to Auth
          * Module, so fill it up here
@@ -109,6 +111,26 @@ function setAllCookies (req, res, appData, cookieObj, callback)
         if (adminProjectList.length) {
             appData['authObj']['defTokenObj'] =
                 req.session.tokenObjs[adminProjectList[0]]['token'];
+        } else {
+            /* Check if multi_tenancy enabled */
+            if (true == multiTenancyEnabled) {
+                /* We should not come here, multi_tenancy enabled, why we came
+                 * here still
+                 */
+                logutils.logger.error("No Admin Projects!!!");
+                errStr = "No admin projects";
+                commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                     global.CONTRAIL_LOGIN_ERROR,
+                                                     errStr, function() {
+                });
+                return;
+            }
+            var tokenObjs = req.session.tokenObjs;
+            for (key in tokenObjs) {
+                appData['authObj']['defTokenObj'] =
+                    req.session.tokenObjs[key]['token'];
+                break;
+            }
         }
     }
     var defDomainId;
@@ -134,4 +156,4 @@ function setAllCookies (req, res, appData, cookieObj, callback)
 exports.getApiServerRequestedByData = getApiServerRequestedByData;
 exports.getOrchestrationPluginModel = getOrchestrationPluginModel;
 exports.setAllCookies = setAllCookies;
-
+exports.doDomainExist = doDomainExist;

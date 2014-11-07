@@ -347,15 +347,6 @@
 .display-inline {
   display: inline-block;
 }
-.tooltip {
-  display: none;
-  position: absolute;
-  background-color: #DAECF4;
-  border-radius: 5px;
-  padding: 5px;
-  color: #003F59;
- 
-}
 pre.prettyprint {
   border: 0px;
   white-space: pre-wrap;
@@ -1783,6 +1774,22 @@ color: #b94a48;
 	margin-bottom: 0;
 }
 
+/* Bootstrap Tooltips*/
+.tooltip, .tooltip.bottom {
+  margin: 0;
+  padding: 0;
+}
+.tooltip .tooltip-arrow {
+  border: none;
+}
+.tooltip .tooltip-inner {
+  background-color: #FFFFE1;
+  color: #333;
+  text-shadow: none;
+  padding: 5px;
+  border: 1px solid #ccc;
+  font-weight: normal;
+}
 /*policy rule styles */
 
 #windowCreatePolicy .rule-item .select2-chosen {
@@ -2072,6 +2079,23 @@ color: #b94a48;
     margin: 10px 10px 0;
 }
 .wizard .stepInfo p .selectedServerCount{
+    color: #3182bd;
+}
+
+/* Server Manager Page Styles */
+
+.detail-header-row {
+  border-bottom: 1px solid #eee;
+}
+
+.group-detail-action-item {
+    margin: 0 8px;
+    color: #777;
+}
+.group-detail-action-item:hover {
+    color: #333;
+}
+.group-detail-action-item.selected, .group-detail-action-item.selected:hover {
     color: #3182bd;
 }
 

@@ -26,6 +26,8 @@ var commonUtils = module.exports,
     xml2js = require('xml2js'),
     js2xml = require('data2xml')(),
     pd = require('pretty-data').pd,
+    v4 = require('ipv6').v4,
+    v6 = require('ipv6').v6;
     contrailPath = '/contrail';
 if (!module.parent) {
     logutils.logger.warn(util.format(
@@ -1750,6 +1752,23 @@ function getWebConfigValueByName (req, res, appData)
     commonUtils.handleJSONResponse(null, res, configObj);
 }
 
+function isMultiTenancyEnabled ()
+{
+    return ((null != config.multi_tenancy) &&
+            (null != config.multi_tenancy.enabled)) ?
+        config.multi_tenancy.enabled : true;
+}
+
+//Returns the corresponding NetMask for a givne prefix length
+function prefixToNetMask(prefixLen) {
+    var prefix = Math.pow(2,prefixLen) - 1;
+    var binaryString = prefix.toString(2);
+    for(var i=binaryString.length;i<32;i++) {
+            binaryString += '0';
+    }
+    return v4.Address.fromHex(parseInt(binaryString,2).toString(16)).address;
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1799,4 +1818,5 @@ exports.convertUUIDToString = convertUUIDToString;
 exports.ifNull = ifNull;
 exports.getUserRoleListPerTenant = getUserRoleListPerTenant;
 exports.getWebConfigValueByName = getWebConfigValueByName;
-
+exports.isMultiTenancyEnabled = isMultiTenancyEnabled;
+exports.prefixToNetMask = prefixToNetMask;
