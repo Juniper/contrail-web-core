@@ -953,11 +953,12 @@ function authenticate (req, res, appData, callback)
             });
             return;
         }
-        /* Check if the user role is Member, then throw error, Member role is
-         * not allowed to login
-         */
-        if (false == isAdminRoleInProjects(req.session.userRoles)) {
-            /* Logged in user is not admin, so redirect to login page */
+        var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
+        if ((true == multiTenancyEnabled) &&
+            (false == isAdminRoleInProjects(req.session.userRoles))) {
+            /* Logged in user is not admin in multi_tenancy mode,
+               so redirect to login page
+             */
             errStr = "Only admin user is allowed to login"
             commonUtils.changeFileContentAndSend(res, loginErrFile,
                                                  global.CONTRAIL_LOGIN_ERROR,
@@ -1478,6 +1479,8 @@ function filterProjectList (req, projectList)
 
 function getProjectList (req, appData, callback)
 {
+    var filtProjects;
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
     var isProjectListFromApiServer = config.getDomainProjectsFromApiServer;
     if (null == isProjectListFromApiServer) {
         isProjectListFromApiServer = false;
@@ -1485,7 +1488,11 @@ function getProjectList (req, appData, callback)
     if (true == isProjectListFromApiServer) {
         configUtils.getProjectsFromApiServer(req, appData,
                                                function(error, data) {
-            var filtProjects = filterProjectList(req, data);
+            if (true == multiTenancyEnabled) {
+                filtProjects = filterProjectList(req, data);
+            } else {
+                filtProjects = data;
+            }
             callback(error, filtProjects);
         });
     } else {
@@ -1493,7 +1500,11 @@ function getProjectList (req, appData, callback)
                             function(adminProjectObjs, domainObjs, tenantList,
                                      domList, formattedAllTenantList,
                                      adminProjectList) {
-            callback(null, adminProjectList);
+            if (true == multiTenancyEnabled) {
+                callback(null, adminProjectList);
+            } else {
+                callback(null, formattedAllTenantList);
+            }
         /*
         getProjectsFromKeystone(req, appData, function(error, data) {
             callback(error, data);
@@ -1673,16 +1684,19 @@ function getCookieObjs (req, appData, callback)
 {
     var cookieObjs = {};
     var domCookie = req.cookies.domain;
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
     getAdminProjectList(req, appData, function(adminProjectObjs, domainObjs,
                                                tenantList, domList) {
-        for (key in  adminProjectObjs) {
-            cookieObjs['domain'] = key;
-            cookieObjs['project'] = adminProjectObjs[key][0];
-            callback(cookieObjs);
+        if (true == multiTenancyEnabled) {
+            for (key in  adminProjectObjs) {
+                cookieObjs['domain'] = key;
+                cookieObjs['project'] = adminProjectObjs[key][0];
+                callback(cookieObjs);
+            }
             return;
         }
-        return;
-        if ((null != err) || (null == tenantList) || (null == tenantList['tenants'])) {
+        /* multi_tenancy is disabled */
+        if ((null == tenantList) || (null == tenantList['tenants'])) {
             logutils.logger.error('Tenant List retrieval error');
             callback(cookieObjs);
             return;
@@ -1711,7 +1725,7 @@ function getCookieObjs (req, appData, callback)
                 cookieObjs['domain'] = defDomainId;
             } else {
                 /* First check if we have this domain now or not */
-                if (false == doDomainExist(req.cookies.domain, tenantList)) {
+                if (false == plugins.doDomainExist(req.cookies.domain, tenantList)) {
                     cookieObjs['domain'] = defDomainId;
                 }
             }

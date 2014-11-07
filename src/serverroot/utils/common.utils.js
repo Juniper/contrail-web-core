@@ -1750,6 +1750,13 @@ function getWebConfigValueByName (req, res, appData)
     commonUtils.handleJSONResponse(null, res, configObj);
 }
 
+function isMultiTenancyEnabled ()
+{
+    return ((null != config.multi_tenancy) &&
+            (null != config.multi_tenancy.enabled)) ?
+        config.multi_tenancy.enabled : true;
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1799,4 +1806,5 @@ exports.convertUUIDToString = convertUUIDToString;
 exports.ifNull = ifNull;
 exports.getUserRoleListPerTenant = getUserRoleListPerTenant;
 exports.getWebConfigValueByName = getWebConfigValueByName;
+exports.isMultiTenancyEnabled = isMultiTenancyEnabled;
 

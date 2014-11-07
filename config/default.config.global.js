@@ -286,6 +286,9 @@ config.vcenter.ca = '';                         //specify the certificate key fi
 
 /*****************************************************************************
  * The below flag indicates wheather multi_tenancy is enabled or not.
+ * If set
+ *  true  - Only admin users can login to UI.
+ *  false - All users are allowed to login to UI.
  *
  * NOTE: This flag does not implement multi_tenancy at API Server. This flag
  * needs to be in sync with API Server Config file multi_tenancy flag.
