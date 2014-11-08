@@ -50,10 +50,7 @@ function getAuthTokenByProject (req, defToken, project)
 function configAppHeaders (headers, appData)
 {
     var defProject = getDefProjectByAppData(appData);
-    var multiTenancyEnabled =
-        ((null != config.multi_tenancy) &&
-         (null != config.multi_tenancy.enabled)) ?
-        config.multi_tenancy.enabled : true;
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
     try {
         headers['X-Auth-Token'] =
             getAuthTokenByProject(appData['authObj'].req,
@@ -77,6 +74,7 @@ function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
 {
     var defProject = null;
     var headers = {};
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     var defProject = getDefProjectByAppData(appData);
     headers = configAppHeaders(headers, appData);
@@ -93,7 +91,11 @@ function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
                                         'tenant': defProject, 'forceAuth': true},
                                         function(error, token) {
                         if ((error) || (null == token)) {
-                            commonUtils.redirectToLogoutByAppData(appData);
+                            if (true == multiTenancyEnabled) {
+                                commonUtils.redirectToLogoutByAppData(appData);
+                                return;
+                            }
+                            callback(err, data);
                             return;
                         }
                         appData['authObj']['defTokenObj'] = token;
@@ -113,6 +115,7 @@ function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 {
     var defProject = null;
     var headers = {}; 
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     var defProject = getDefProjectByAppData(appData);
     headers = configAppHeaders(headers, appData);
@@ -130,7 +133,11 @@ function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
                                         'tenant': defProject, 'forceAuth': true},
                                         function(error, token) {
                         if ((error) || (null == token)) {
-                            commonUtils.redirectToLogoutByAppData(appData);
+                            if (true == multiTenancyEnabled) {
+                                commonUtils.redirectToLogoutByAppData(appData);
+                                return;
+                            }
+                            callback(err, data);
                             return;
                         }   
                         appData['authObj']['defTokenObj'] = token;
@@ -151,6 +158,7 @@ function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 {
     var defProject = null;
     var headers = {}; 
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     var defProject = getDefProjectByAppData(appData);
     headers = configAppHeaders(headers, appData);
@@ -168,7 +176,11 @@ function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
                                         'tenant': defProject, 'forceAuth': true},
                                         function(error, token) {
                         if ((error) || (null == token)) {
-                            commonUtils.redirectToLogoutByAppData(appData);
+                            if (true == multiTenancyEnabled) {
+                                commonUtils.redirectToLogoutByAppData(appData);
+                                return;
+                            }
+                            callback(err, data);
                             return;
                         }   
                         appData['authObj']['defTokenObj'] = token;
@@ -189,6 +201,7 @@ function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
 {
     var defProject = null;
     var headers = {}; 
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     var defProject = getDefProjectByAppData(appData);
     headers = configAppHeaders(headers, appData);
@@ -206,7 +219,11 @@ function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
                                         'tenant': defProject, 'forceAuth': true},
                                         function(error, token) {
                         if ((error) || (null == token)) {
-                            commonUtils.redirectToLogoutByAppData(appData);
+                            if (true == multiTenancyEnabled) {
+                                commonUtils.redirectToLogoutByAppData(appData);
+                                return;
+                            }
+                            callback(err, data);
                             return;
                         }   
                         appData['authObj']['defTokenObj'] = token;
