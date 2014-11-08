@@ -2081,7 +2081,9 @@ color: #b94a48;
 .wizard .stepInfo p .selectedServerCount{
     color: #3182bd;
 }
-
+.wizard > .content > .body input {
+    display: inline;
+}
 /* Server Manager Page Styles */
 
 .detail-header-row {

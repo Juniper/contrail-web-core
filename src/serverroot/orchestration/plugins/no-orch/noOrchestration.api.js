@@ -120,6 +120,11 @@ function getOSHostList (req, callback)
     callback(null, list);
 }
 
+function getToken (authObj, callback)
+{
+    callback(null, null);
+}
+
 function getAvailabilityZoneList (req, callback)
 {
     var list = {"availabilityZoneInfo": []};
@@ -161,4 +166,5 @@ exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
+exports.getToken = getToken;
 

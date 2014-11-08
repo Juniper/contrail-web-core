@@ -6,6 +6,8 @@ var rest = require('../../common/rest.api'),
     config = process.mainModule.exports.config,
     authApi = require('../../common/auth.api'),
     redisPub = require('../core/redisPub'),
+    logitils = require('../../utils/log.utils'),
+    commonUtils = require('../../utils/common.utils'),
     configServer;
 
 configServer = rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,
@@ -91,6 +93,7 @@ function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
     defProject = getDefProjectByJobData(jobData);
     headers = configAppHeaders(headers, jobData);
     headers = getHeaders(headers, appHeaders);
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     configServer.api.get(reqUrl, function(err, data) {
         if (err) {
@@ -106,8 +109,13 @@ function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
                                                   function(error, token) {
                                                       
                         if ((error) || (null == token)) {
-                            redisPub.sendRedirectRequestToMainServer(jobData);
-                            return;
+                            if (true == multiTenancyEnabled) {
+                                redisPub.sendRedirectRequestToMainServer(jobData);
+                                return;
+                            } else {
+                                callback(err, data);
+                                return;
+                            }
                         }
                         jobData['taskData']['authObj']['token'] = token;
                         exports.apiGet(reqUrl, jobData, callback, appHeaders, true);
@@ -132,6 +140,7 @@ function apiPut (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
     defProject = getDefProjectByJobData(jobData);
     headers = configAppHeaders(headers, jobData);
     headers = getHeaders(headers, appHeaders);
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     configServer.api.put(reqUrl, function(err, data) {
         if (err) {
@@ -147,7 +156,11 @@ function apiPut (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
                                                   function(error, token) {
 
                         if ((error) || (null == token)) {
-                            redisPub.sendRedirectRequestToMainServer(jobData);
+                            if (true == multiTenancyEnabled) {
+                                redisPub.sendRedirectRequestToMainServer(jobData);
+                                return;
+                            }
+                            callback(err, data);
                             return;
                         }
                         jobData['taskData']['authObj']['token'] = token;
@@ -174,6 +187,7 @@ function apiPost (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
     defProject = getDefProjectByJobData(jobData);
     headers = configAppHeaders(headers, jobData);
     headers = getHeaders(headers, appHeaders);
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     configServer.api.post(reqUrl, function(err, data) {
         if (err) {
@@ -189,7 +203,11 @@ function apiPost (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
                                                   function(error, token) {
 
                         if ((error) || (null == token)) {
-                            redisPub.sendRedirectRequestToMainServer(jobData);
+                            if (true == multiTenancyEnabled) {
+                                redisPub.sendRedirectRequestToMainServer(jobData);
+                                return;
+                            }
+                            callback(err, data);
                             return;
                         }
                         jobData['taskData']['authObj']['token'] = token;
@@ -215,6 +233,7 @@ function apiDelete (reqUrl, jobData, callback, appHeaders, stopRetry)
     defProject = getDefProjectByJobData(jobData);
     headers = configAppHeaders(headers, jobData);
     headers = getHeaders(headers, appHeaders);
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     configServer.api.delete(reqUrl, function(err, data) {
         if (err) {
@@ -230,7 +249,11 @@ function apiDelete (reqUrl, jobData, callback, appHeaders, stopRetry)
                                                   function(error, token) {
 
                         if ((error) || (null == token)) {
-                            redisPub.sendRedirectRequestToMainServer(jobData);
+                            if (true == multiTenancyEnabled) {
+                                redisPub.sendRedirectRequestToMainServer(jobData);
+                                return;
+                            }
+                            callback(err, data);
                             return;
                         }
                         jobData['taskData']['authObj']['token'] = token;
