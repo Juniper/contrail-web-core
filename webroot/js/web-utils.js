@@ -1001,7 +1001,8 @@ function MenuHandler() {
                 roleExists = true;
 
             if(value.access.accessFn != null) {
-                accessFnRetVal = menuAccessFns[value.access.accessFn]();
+                if(typeof(menuAccessFns[value.access.accessFn]) == 'function')
+                    accessFnRetVal = menuAccessFns[value.access.accessFn]();
             } else
                 accessFnRetVal = true;
 

@@ -49,7 +49,7 @@ function doCall (userData, appData, callback, appHeaders)
     }
     SoapApi.api.doCall(userData, function(err, resData, resHeaders) {
         //If vmwareSession is expired,redirect to Login page
-        if(err == null && resData['Fault'] != null && resData['Fault']['detail']['NotAuthenticatedFault'] != null) {
+        if(err != null && resData['Fault'] != null && resData['Fault']['detail']['NotAuthenticatedFault'] != null) {
             var req = appData['authObj']['req'];
             var res = appData['authObj']['req']['res'];
             commonUtils.redirectToLogout(req,res);

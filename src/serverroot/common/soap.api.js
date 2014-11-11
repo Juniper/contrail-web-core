@@ -85,11 +85,9 @@ SoapAPIServer.prototype.makeCall = function (soapClient, userData, callback)
                     (null != res['data']['Fault']['faultstring'])) {
                     logutils.logger.debug("getting MESSAGE AS:", JSON.stringify(res['data']));
                     var error = null;
-                    /* Comment for now as callback can construct the error object from res.data
-                     * error = new appErrors.SOAPServerError(res['data']['Fault']['faultstring']);
-                     * error['custom'] = true;
-                     * error['responseCode'] = global.HTTP_STATUS_INTERNAL_ERROR;
-                     */
+                     error = new appErrors.SOAPServerError(res['data']['Fault']['faultstring']);
+                     error['custom'] = true;
+                     error['responseCode'] = global.HTTP_STATUS_INTERNAL_ERROR;
                     /*
                     TODO: Map the faultCode with HTTP Error code
                     error['responseCode'] =
