@@ -22,5 +22,27 @@ function getOrchestrationModels ()
     return orchModels;
 }
 
+var associatedOrchModels = ['vcenter'];
+
+function getOrchestrationModelsByReqURL (reqURL)
+{
+    var model = 'openstack';
+    var orchModels = getOrchestrationModels();
+    console.log("orchModels as:", orchModels);
+    if (!orchModels.length) {
+        logutils.logger.error("Specify the orchestration model in config file");
+        assert(0);
+    }
+    if (1 == orchModels.length) {
+        return orchModels[0];
+    }
+    var associatedOrchModelsCnt = associatedOrchModels.length;
+    if (-1 != reqURL.indexOf('vcenter')) {
+        return 'vcenter';
+    }
+    return model;
+}
+
 exports.getOrchestrationModels = getOrchestrationModels;
+exports.getOrchestrationModelsByReqURL = getOrchestrationModelsByReqURL;
 
