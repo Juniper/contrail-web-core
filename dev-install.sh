@@ -270,7 +270,7 @@ MAINFILE[41]=webroot/js/dashboard-utils.js
 
 MAINFILE[45]=webroot/assets/jquery-ui/js/jquery.multiselect.js
 MAINFILE[46]=webroot/assets/jquery-ui/js/jquery.multiselect.filter.js
-#MAINFILE[47]=webroot/assets/requirejs/require.js
+MAINFILE[47]=webroot/assets/requirejs/require.js
 MAINFILE[48]=webroot/assets/jquery/js/jquery.steps.min.js
 
 MAINFILE[49]=webroot/assets/joint/js/joint.nojquery.js
@@ -279,13 +279,6 @@ MAINFILE[51]=webroot/js/joint.contrail.js
 MAINFILE[52]=webroot/assets/jquery/js/jquery.panzoom.min.js
 MAINFILE[53]=webroot/assets/jquery-contextMenu/js/jquery.ui.position.js
 MAINFILE[54]=webroot/assets/jquery-contextMenu/js/jquery.contextMenu.js
-
-cat ${MAINFILE[49]} > webroot/js/contrail-all-7.js
-cat ${MAINFILE[50]} >> webroot/js/contrail-all-7.js
-cat ${MAINFILE[51]} >> webroot/js/contrail-all-7.js
-cat ${MAINFILE[52]} >> webroot/js/contrail-all-7.js
-cat ${MAINFILE[53]} >> webroot/js/contrail-all-7.js
-cat ${MAINFILE[54]} >> webroot/js/contrail-all-7.js
 
 cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
 cat ${MAINFILE[1]} >> webroot/js/contrail-all-1.js
@@ -339,8 +332,15 @@ cat ${MAINFILE[41]} >> webroot/js/contrail-all-5.js
 
 cat ${MAINFILE[45]} > webroot/js/contrail-all-6.js
 cat ${MAINFILE[46]} >> webroot/js/contrail-all-6.js
-#cat ${MAINFILE[47]} >> webroot/js/contrail-all-6.js
+cat ${MAINFILE[47]} >> webroot/js/contrail-all-6.js
 cat ${MAINFILE[48]} >> webroot/js/contrail-all-6.js
+
+cat ${MAINFILE[49]} > webroot/js/contrail-all-7.js
+cat ${MAINFILE[50]} >> webroot/js/contrail-all-7.js
+cat ${MAINFILE[51]} >> webroot/js/contrail-all-7.js
+cat ${MAINFILE[52]} >> webroot/js/contrail-all-7.js
+cat ${MAINFILE[53]} >> webroot/js/contrail-all-7.js
+cat ${MAINFILE[54]} >> webroot/js/contrail-all-7.js
 
 # End - Merging All JS files
 
