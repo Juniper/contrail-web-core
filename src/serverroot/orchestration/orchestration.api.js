@@ -4,15 +4,45 @@
 
 var config = process.mainModule.exports['config'];
 
-function getOrchestrationModel ()
+function getOrchestrationModels ()
 {
-    var orchModel = null;
+    var orchModels = [];
     if ((null != config.orchestration) &&
         (null != config.orchestration.Manager)) {
         orchModel = config.orchestration.Manager;
     }
-    return orchModel;
+    orchModels = orchModel.split(',');
+    var len = orchModels.length;
+    if (len <= 1) {
+        return orchModels;
+    }
+    for (var i = 0; i < len; i++) {
+        orchModels[i] = orchModels[i].trim();
+    }
+    return orchModels;
 }
 
-exports.getOrchestrationModel = getOrchestrationModel;
+var associatedOrchModels = ['vcenter'];
+
+function getOrchestrationModelsByReqURL (reqURL)
+{
+    var model = 'openstack';
+    var orchModels = getOrchestrationModels();
+    console.log("orchModels as:", orchModels);
+    if (!orchModels.length) {
+        logutils.logger.error("Specify the orchestration model in config file");
+        assert(0);
+    }
+    if (1 == orchModels.length) {
+        return orchModels[0];
+    }
+    var associatedOrchModelsCnt = associatedOrchModels.length;
+    if (-1 != reqURL.indexOf('vcenter')) {
+        return 'vcenter';
+    }
+    return model;
+}
+
+exports.getOrchestrationModels = getOrchestrationModels;
+exports.getOrchestrationModelsByReqURL = getOrchestrationModelsByReqURL;
 

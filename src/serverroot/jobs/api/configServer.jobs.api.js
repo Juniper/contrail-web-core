@@ -6,7 +6,7 @@ var rest = require('../../common/rest.api'),
     config = process.mainModule.exports.config,
     authApi = require('../../common/auth.api'),
     redisPub = require('../core/redisPub'),
-    logitils = require('../../utils/log.utils'),
+    logutils = require('../../utils/log.utils'),
     commonUtils = require('../../utils/common.utils'),
     configServer;
 

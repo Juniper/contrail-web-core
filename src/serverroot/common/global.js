@@ -208,6 +208,7 @@ global.label.STORAGE_SERVER = 'storage-server';
 global.label.COMPUTE_SERVER = 'compute-server';
 global.label.DISCOVERY_SERVER = 'discovery-server';
 global.label.API_SERVER = 'api-server'
+global.label.VCENTER_SERVER = 'vCenter-server'
 global.SANDESH_CONTROL_NODE_PORT = '8083';
 global.SANDESH_COMPUTE_NODE_PORT = '8085';
 global.SANDESH_DNS_AGENT_PORT = '8092';
@@ -267,6 +268,9 @@ global.QUERY_JSON = {
                                                     "end_time": "", 
                                                     "select_fields": []
                                              },
+    OverlayToUnderlayFlowMap: {"table": 'OverlayToUnderlayFlowMap', "start_time": "",
+                            "end_time": "", "select_fields": ["u_prouter", "u_pifindex"]}
+                                    
 };
 
 global.STATS_PROP = {
@@ -336,5 +340,8 @@ global.KEYSTONE_V3_DEFAULT_DOMAIN = 'default';
 global.KEYSTONE_V2_DEFAULT_DOMAIN = 'default-domain';
 global.KEYSTONE_V3_TOKEN_URL = '/v3/auth/tokens';
 
-module.exports = global;
+/* vCenter Config */
+global.VCENTER_SDK_PATH = '/sdk';
+global.VCENTER_WSDL = 'webroot/js/vim.wsdl';
 
+module.exports = global;

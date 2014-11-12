@@ -151,13 +151,13 @@ function formatClodStackTenantList (data)
     return resultJSON;
 }
 
-function formatTenantList (cloudstackProjects, apiProjects, callback)
+function formatTenantList (req, cloudstackProjects, apiProjects, callback)
 {
     var resultJSON = formatClodStackTenantList(cloudstackProjects);
     callback(resultJSON);
 }
 
-function getTenantList (req, callback)
+function getTenantList (req, appData, callback)
 {
     var postData = {};
     var cmd = 'listProjects';
@@ -169,10 +169,10 @@ function getTenantList (req, callback)
 
 function getProjectList (req, appData, callback)
 {
-    getTenantList(req, function(err, tenantList) {
+    getTenantList(req, appData, function(err, tenantList) {
        configUtils.listProjectsAPIServer(err, tenantList, appData,
                                              function(err, data) {
-            formatTenantList(tenantList, data, function(projects) {
+            formatTenantList(req, tenantList, data, function(projects) {
                 callback(null, projects);
             });
         });

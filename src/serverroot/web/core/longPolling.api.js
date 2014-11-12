@@ -13,6 +13,7 @@ var assert = require("assert")
     , authApi = require('../../common/auth.api')
     , messages = require('../../common/messages')
     , rbac = require('./rbac.api')
+    , orch = require('../../orchestration/orchestration.api')
     ;
 
 if (!module.parent) {
@@ -113,6 +114,14 @@ function processPendingReq (ctx, next, callback)
   var defProjectObj = {};
 
   delete pendingReqQObj[ctx.id];// = null;
+  //If loggedInOrchestrationMode doesn't exist in session
+  if (checkLoginReq(ctx.req)) {
+    ctx.req.session.loggedInOrchestrationMode =
+        orch.getOrchestrationModelsByReqURL(ctx.req.url);
+    logutils.logger.debug("Getting Logged In Orchestration Mode:",
+                          ctx.req.session.loggedInOrchestrationMode);
+  }
+
   /* Process the request */
   defTokenObj = authApi.getAPIServerAuthParams(ctx.req);
   var appData = {
@@ -148,8 +157,9 @@ function registerRestrictedURL ()
  */
 function checkLoginReq (req)
 {
-  return ((req.url == '/login') || (req.url == '/authenticate') ||
-          (req.url == '/logout'));
+  return ((req.url == '/login') || (req.url == '/authenticate') || (req.url == '/vcenter/authenticate') ||
+          (req.url == '/logout') || (req.url == '/vcenter/login') ||
+          (req.url == '/vcenter/logout'));
 }
 
 /* Function: routeAll
@@ -161,6 +171,10 @@ function routeAll (req, res, next)
 {
   /* nodejs sets the timeout 2 minute, override this timeout here */
   req.socket.setTimeout(global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME);
+  if (checkLoginReq(req)) {
+    req.session.loggedInOrchestrationMode =
+        orch.getOrchestrationModelsByReqURL(req.url);
+  }
   if (null == req.session.sessionExpSyncToIdentityToken) {
       if (null != authApi.getSessionExpiryTime) {
         var sessExp = authApi.getSessionExpiryTime(req);

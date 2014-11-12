@@ -1120,7 +1120,7 @@ function deleteObject(cbParams) {
 	if(cbParams && (cbParams.index < cbParams.selected_rows.length)) {
 		var selected_row_data = cbParams.selected_rows[cbParams.index];
 	    doAjaxCall(cbParams.url + selected_row_data[cbParams.urlField], 
-	        "DELETE", null, "deleteSuccess", "deleteFailure", null, cbParams, null, true);
+	        "DELETE", JSON.stringify(selected_row_data), "deleteSuccess", "deleteFailure", null, cbParams, cbParams.timeout, true);
 	} else {
 		deleteComplete(cbParams);
 	}

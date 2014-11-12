@@ -37,9 +37,11 @@
         <div class="content">
             <h3>Login</h3>
             <hr/>
-            <form action="authenticate" method="post" class="login-fields">
+            <form action="authenticate" onsubmit="return preFillURLHash()" method="post" class="login-fields">
 				<p>Sign in using your registered account:</p>
 				
+                <input type="hidden" id="urlHash" name="urlHash" value=window.location.hash></input>
+                <input type="hidden" id="urlPath" name="urlPath" value=window.location.pathname></input>
 				<div id="login-error">
 		            <div class="alert alert-error">
 		                <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -68,6 +70,13 @@
 </div>
 <script src="/assets/jquery/js/jquery-1.8.3.min.js?built_at="></script>
 <script src="/assets/bootstrap/js/bootstrap.min.js?built_at="></script>
+<script type="text/javascript">
+function preFillURLHash() {
+    document.getElementById('urlHash').value = window.location.hash;
+    document.getElementById('urlPath').value = window.location.pathname.replace('/login','');;
+    return true;
+}
+</script>
 </body>
 </html>
 

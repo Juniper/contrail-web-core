@@ -192,7 +192,7 @@ var getTenantListCB = {
 /* Function: getTenantList
     This API is used to get the list of projects for the logged in user
  */
-function getTenantList (req, callback)
+function getTenantList (req, appData, callback)
 {
     var lastAuthVerUsed = req.session.authApiVersion;
     var token = req.session.last_token_used;
@@ -245,7 +245,7 @@ function getAuthRetryData (token, req, reqUrl, callback)
     });
 }
 
-function formatTenantList (keyStoneProjects, apiProjects, callback) 
+function formatTenantList (req, keyStoneProjects, apiProjects, callback) 
 {
     var projObj     = {};
     var projectsLen = 0;
@@ -930,11 +930,14 @@ function isAdminRoleInProjects (userRolesPerProject)
 
 function authenticate (req, res, appData, callback)
 {
-    var urlHash = '';
+    var urlHash = '',urlPath = '';
     var post = req.body,
         username = post.username;
     if (post.urlHash != null) {
         urlHash = post.urlHash;
+    }
+    if (post.urlPath != null) {
+        urlPath = post.urlPath;
     }
     var loginErrFile = 'webroot/html/login-error.html';
     var identityApiVerList = config.identityManager.apiVersion;
@@ -967,7 +970,10 @@ function authenticate (req, res, appData, callback)
             return;
         }
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
-            res.redirect('/' + urlHash);
+            if(urlPath != '') 
+                res.redirect(urlPath + urlHash);
+            else
+                res.redirect('/' + urlHash);
         });
     });
 

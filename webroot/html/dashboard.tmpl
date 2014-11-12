@@ -14,6 +14,7 @@
     <link href="/assets/bootstrap/css/bootstrap-responsive.min.css?built_at=" rel="stylesheet"/>
     <link href="/assets/jquery-ui/css/jquery-ui.css?built_at=" rel="stylesheet"/>
     <link href="/css/contrail.jquery.ui.css?built_at=" rel="stylesheet"/>
+    <link href="/assets/joint/css/joint.nojquery.css?built_at=" rel="stylesheet"/>
 
     <!-- Start dev_env 
     <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css?built_at="/>
@@ -42,6 +43,9 @@
     <link rel="stylesheet" href="/css/contrail.elements.css?built_at=" />
     <link rel="stylesheet" href="/css/contrail.responsive.css?built_at=" />
     <link rel="stylesheet" href="/css/contrail.custom.css?built_at=" />
+    <link rel="stylesheet" href="/css/contrail.font.css?built_at=" />
+    <!-- Start dev_env
+    End dev_env -->
 </head>
 
 <body class="navbar-fixed">
@@ -60,7 +64,7 @@
                     </a>
                     <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer" id="user_menu">
                         <li>
-                            <a href="/logout">
+                            <a href="logout">
                                 <i class="icon-off"></i>
                                 Logout
                             </a>
@@ -159,6 +163,13 @@ End dev_env -->
 End dev_env -->
 
 <!-- Start dev_env
+<script src="/assets/joint/js/joint.nojquery.js?built_at="></script>
+<script src="/assets/joint/js/joint.layout.DirectedGraph.js?built_at="></script>
+<script src="/assets/jquery/js/jquery.panzoom.min.js?built_at="></script>
+<script src="/js/joint.contrail.js?built_at="></script>
+End dev_env -->
+
+<!-- Start dev_env
 <script src="/assets/ip/jsbn-combined.js"></script>
 <script src="/assets/ip/sprintf.js"></script>
 <script src="/assets/ip/ipv6.js"></script>
@@ -206,6 +217,9 @@ End dev_env -->
 <!-- End prod_env -->
 
 <script type="text/javascript">
+//Set the base URI
+if(document.location.pathname.indexOf('/vcenter') == 0)
+    $('head').append('<base href="/vcenter/" />');
 var templateLoader = (function ($, host) {
     //Loads external templates from path and injects in to page DOM
     return{
@@ -269,6 +283,7 @@ End dev_env -->
 <!-- Start prod_env -->
 <script src="/js/contrail-all-5.js?built_at="></script>
 <script src="/js/contrail-all-6.js?built_at="></script>
+<script src="/js/contrail-all-7.js?built_at="></script>
 <!-- End prod_env -->
 
 </body>

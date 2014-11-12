@@ -32,7 +32,11 @@ function getDefProjectByAppData (appData)
             defProject = appData['authObj']['defTokenObj']['tenant']['name'];
         }
     } catch(e) {
-        defProject = appData['authObj']['defTokenObj']['tenant']['name'];
+        if ((null != appData) && (null != appData['authObj']) &&
+            (null != appData['authObj']['defTokenObj']) &&
+            (null != appData['authObj']['defTokenObj']['tenant'])) {
+            defProject = appData['authObj']['defTokenObj']['tenant']['name'];
+        }
     }
     return defProject;
 }

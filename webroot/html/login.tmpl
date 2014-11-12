@@ -40,6 +40,7 @@
 				<p>Sign in using your registered account:</p>
 
                 <input type="hidden" id="urlHash" name="urlHash" value=window.location.hash></input>
+                <input type="hidden" id="urlPath" name="urlPath" value=window.location.pathname></input>
                	<div class="input-prepend">
                 	<span class="add-on"><i class="icon-user"></i></span>
                    	<input class="span2" type="text" name="username" value="" placeholder="Username">
@@ -62,16 +63,18 @@
 <script type="text/javascript">
 function preFillURLHash() {
     document.getElementById('urlHash').value = window.location.hash;
+    //If loginURL is '/vcenter/login',urlPath is sent as '/vcenter'
+    document.getElementById('urlPath').value = window.location.pathname.replace('/login','');
     return true;
 }
 </script>
-<!-- Start prod_env -->
-<link rel="stylesheet" href="/css/contrail-all.css?built_at="/>
-<script src="/js/contrail-all-1.js?built_at="></script>
-<script src="/js/contrail-all-2.js?built_at="></script>
-<script src="/js/contrail-all-3.js?built_at="></script>
-<script src="/js/contrail-all-4.js?built_at="></script>
-<!-- End prod_env -->
+<!-- Start prod_env
+<link rel="stylesheet" href="/css/contrail-all.css?built_at=1413797632"/>
+<script src="/js/contrail-all-1.js?built_at=1413797632"></script>
+<script src="/js/contrail-all-2.js?built_at=1413797632"></script>
+<script src="/js/contrail-all-3.js?built_at=1413797632"></script>
+<script src="/js/contrail-all-4.js?built_at=1413797632"></script>
+End prod_env -->
 </body>
 </html>
 

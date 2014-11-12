@@ -22,7 +22,34 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+@font-face {
+    font-family: 'contrail-core';
+    src:url('/css/fonts/contrail-core.eot?e1umid');
+    src:url('/css/fonts/contrail-core.eot?#iefixe1umid') format('embedded-opentype'),
+        url('/css/fonts/contrail-core.woff?e1umid') format('woff'),
+        url('/css/fonts/contrail-core.ttf?e1umid') format('truetype'),
+        url('/css/fonts/contrail-core.svg?e1umid#contrail-core') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
 
+[class^="icon-contrail-core"], [class*=" icon-contrail-core"] {
+    font-family: 'contrail-core';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-contrail-coreswitch:before {
+    content: "\b700";
+}
 .icon-contrail-firewall:before, .icon-contrail-service-instance:before {
 	content: "\e600";
 }
@@ -50,3 +77,11 @@
 .icon-contrail-virtual-network:before {
 	content: "\e608";
 }
+.icon-contrail-spine:before {
+    content: "\e601";
+}
+.icon-contrail-tor:before {
+    content: "\e601";
+}
+.icon-contrail-vrouter:before {
+    content: url(/img/vrouter.png);
