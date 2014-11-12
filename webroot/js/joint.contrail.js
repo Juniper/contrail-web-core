@@ -5,6 +5,8 @@
 joint = $.extend(true, joint, {shapes: {contrail: {}}, layout: {contrail: {}}});
 
 var IMAGE_MAP = {
+    'physical-router': 'prouter',
+    'virtual-router' : 'vrouter',
     'virtual-network': 'vpn',
     'network-policy': 'policy',
     'service-instance-l2': 'l2',
@@ -101,6 +103,32 @@ var contextMenuConfig =  {
 };
 
 var tooltipConfig = {
+	    PhysicalRouter: {
+	      title: function(element, jointConfig){
+	        return 'Physical Router';
+	      },
+	      content: function(element, jointConfig){
+	        var viewElement = jointConfig.connectedGraph.getCell(element.attr('model-id')),
+	          tooltipContent = contrail.getTemplate4Id('prouter-tooltip-content-template');
+	        
+	        return tooltipContent([{lbl:'Name', value: viewElement.attributes.prouterDetails['name']},
+	                               {lbl:'Links', value: viewElement.attributes.prouterDetails.connected_prouters}]);
+	        
+	      }
+	    },
+		VirtualRouter: {
+	      title: function(element, jointConfig){
+	        return 'Virtual Router';
+	      },
+	      content: function(element, jointConfig){
+	        var viewElement = jointConfig.connectedGraph.getCell(element.attr('model-id')),
+	          tooltipContent = contrail.getTemplate4Id('vrouter-tooltip-content-template');
+	        
+	        return tooltipContent([{lbl:'Name', value: viewElement.attributes.vrouterDetails['name']},
+	                               {lbl:'Links', value: viewElement.attributes.vrouterDetails.connected_vrouters}]);
+	        
+	      }
+	    },
 		VirtualNetwork: {
 			title: function(element, jointConfig){
 				return 'Virtual Network';
@@ -253,6 +281,12 @@ var VM_GRAPH_OPTIONS = {
 function ContrailElement(type, options) {
     var contrailElement;
     switch (type) {
+        case 'physical-router': 
+            contrailElement = new joint.shapes.contrail.PhysicalRouter(options);
+            break;
+        case 'virtual-router': 
+            contrailElement = new joint.shapes.contrail.VirtualRouter(options);
+            break;
         case 'virtual-network':
             contrailElement = new joint.shapes.contrail.VirtualNetwork(options);
             break;
@@ -290,7 +324,7 @@ function ContrailElement(type, options) {
 function drawVisualization(config) {
     var url = config.url;
     $.getJSON(url, function (response) {
-    	setTimeout(function(){
+    	setTimeout(function(){     
     		var data = formatData4BiDirVisualization(response),
 	        	jointConfig = renderVisualization(config, data);
 
@@ -1532,6 +1566,32 @@ joint.shapes.contrail.LogicalRouterView = joint.shapes.contrail.FontElementView.
     }, joint.shapes.contrail.FontElementView.prototype.defaults)
 });
 
+joint.shapes.contrail.PhysicalRouter = joint.shapes.contrail.FontElement.extend({
+    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="PhysicalRouter"/></g></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.PhysicalRouter'
+    }, joint.shapes.contrail.FontElement.prototype.defaults)
+});
+
+joint.shapes.contrail.PhysicalRouterView = joint.shapes.contrail.FontElementView.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.PhysicalRouterView'
+    }, joint.shapes.contrail.FontElementView.prototype.defaults)
+});
+
+joint.shapes.contrail.VirtualRouter = joint.shapes.contrail.FontElement.extend({
+    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="VirtualRouter"/></g></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.VirtualRouter'
+    }, joint.shapes.contrail.FontElement.prototype.defaults)
+});
+
+joint.shapes.contrail.VirtualRouterView = joint.shapes.contrail.FontElementView.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.VirtualRouterView'
+    }, joint.shapes.contrail.FontElementView.prototype.defaults)
+});
+
 //joint.shapes.contrail.LogicalRouter = joint.shapes.contrail.ImageElement.extend({
 //    defaults: joint.util.deepSupplement({
 //        type: 'contrail.LogicalRouter'
@@ -1672,21 +1732,31 @@ joint.shapes.contrail.Link = function (options) {
         },
         linkDetails: options.linkDetails
     }, link;
-
+    var connectionStroke = linkConfig['linkDetails']['connectionStroke'];
+    var markerTargetStroke = linkConfig['linkDetails']['markerTargetStroke'];
+    var markerSourceStroke = linkConfig['linkDetails']['markerSourceStroke'];
     if (options['linkType'] == 'bi') {
         if (options.direction == 'bi') {
             linkConfig['attrs']['.marker-source'] = { fill: '#333', d: 'M 6 0 L 0 3 L 6 6 z' };
             linkConfig['attrs']['.marker-target'] = { fill: '#333', d: 'M 6 0 L 0 3 L 6 6 z' };
         } else if (options.direction == 'uni') {
-            linkConfig['attrs']['.marker-target'] = { fill: '#e80015', stroke: '#e80015', d: 'M 6 0 L 0 3 L 6 6 z' };
+            linkConfig['attrs']['.marker-target'] = { fill: '#e80015', stroke: markerTargetStroke != null ? markerTargetStroke : '#e80015',
+                                                      d: 'M 6 0 L 0 3 L 6 6 z' };
             linkConfig['attrs']['.connection']['stroke'] = '#e80015';
             linkConfig['attrs']['.connection']['stroke-width'] = 1;
             linkConfig['attrs']['.connection']['stroke-dasharray'] = '4 4';
         }
+    } else if(options['linkType'] == 'pr-pr' || options['linkType'] == 'vr-vr' ||
+        options['linkType'] == 'pr-vr' || options['linkType'] == 'vr-pr' ||
+        options['linkType'] == 'vr-vm' || options['linkType'] == 'vm-vr' ||
+        options['linkType'] == 'vr-vn' || options['linkType'] == 'vn-vr' ||
+        options['linkType'] == 'vm-vm' || options['linkType'] == 'vn-vn' ||
+        options['linkType'] == 'vm-vn' || options['linkType'] == 'vn-vm') {
+            linkConfig['attrs']['.connection']['stroke'] = connectionStroke != null ? connectionStroke : '#e80015';
+            linkConfig['attrs']['.connection']['stroke-width'] = 2;
     } else {
-        linkConfig['attrs']['.marker-target'] = { fill: '#333', d: 'M 6 0 L 0 3 L 6 6 z' };
+    	linkConfig['attrs']['.marker-target'] = { fill: '#333', d: 'M 6 0 L 0 3 L 6 6 z' };
     }
-
     link = new joint.dia.Link(linkConfig);
     return link;
 };

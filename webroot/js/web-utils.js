@@ -926,6 +926,12 @@ function MenuHandler() {
     this.filterMenuItems = function(items,type){
         if(type == null) {
             items = items.filter(function(value){
+                if(value.hash === "mon_infra_underlay") {
+                    if(globalObj.webServerInfo.underlayEnabled == true)
+                        return true;
+                    else
+                        return false;
+                }
                 var hasAccess = false;
                 hasAccess = checkForAccess(value);
                 if(value['items'] != null && value['items']['item'] instanceof Array && hasAccess)

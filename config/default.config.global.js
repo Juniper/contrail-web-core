@@ -261,7 +261,7 @@ config.physicaldevices.interface_delimiters = ['.', ':'];
 * Below are the disabled list of UI features.
 *****************************************************************************/
 config.features = {};
-config.features.disabled = ['config_pd'];
+config.features.disabled = ['config_pd','mon_infra_underlay'];
 
 /*****************************************************************************
 * Below are the configurations used only for ui
@@ -306,6 +306,11 @@ config.multi_tenancy.enabled = true;
  *****************************************************************************/
 config.session = {};
 config.session.timeout = 24 * 60 * 60 * 1000;
+/*
+ * Knob to show Underlay feature under Monitor->Infra section  
+ */
+config.underlay = {};
+config.underlay.enabled = false;
 
 // Export this as a module.
 module.exports = config;

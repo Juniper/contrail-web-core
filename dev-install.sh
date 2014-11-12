@@ -214,6 +214,8 @@ rm -f webroot/js/contrail-all-2.js
 rm -f webroot/js/contrail-all-3.js
 rm -f webroot/js/contrail-all-4.js
 rm -f webroot/js/contrail-all-5.js
+rm -f webroot/js/contrail-all-6.js
+rm -f webroot/js/contrail-all-7.js
 
 MAINFILE[0]=webroot/assets/jquery/js/jquery-1.8.3.min.js
 MAINFILE[1]=webroot/assets/jquery/js/jquery.xml2json.js
@@ -268,9 +270,22 @@ MAINFILE[41]=webroot/js/dashboard-utils.js
 
 MAINFILE[45]=webroot/assets/jquery-ui/js/jquery.multiselect.js
 MAINFILE[46]=webroot/assets/jquery-ui/js/jquery.multiselect.filter.js
-MAINFILE[47]=webroot/assets/requirejs/require.js
+#MAINFILE[47]=webroot/assets/requirejs/require.js
 MAINFILE[48]=webroot/assets/jquery/js/jquery.steps.min.js
 
+MAINFILE[49]=webroot/assets/joint/js/joint.nojquery.js
+MAINFILE[50]=webroot/assets/joint/js/joint.layout.DirectedGraph.js
+MAINFILE[51]=webroot/js/joint.contrail.js
+MAINFILE[52]=webroot/assets/jquery/js/jquery.panzoom.min.js
+MAINFILE[53]=webroot/assets/jquery-contextMenu/js/jquery.ui.position.js
+MAINFILE[54]=webroot/assets/jquery-contextMenu/js/jquery.contextMenu.js
+
+cat ${MAINFILE[49]} > webroot/js/contrail-all-7.js
+cat ${MAINFILE[50]} >> webroot/js/contrail-all-7.js
+cat ${MAINFILE[51]} >> webroot/js/contrail-all-7.js
+cat ${MAINFILE[52]} >> webroot/js/contrail-all-7.js
+cat ${MAINFILE[53]} >> webroot/js/contrail-all-7.js
+cat ${MAINFILE[54]} >> webroot/js/contrail-all-7.js
 
 cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
 cat ${MAINFILE[1]} >> webroot/js/contrail-all-1.js
@@ -322,9 +337,9 @@ cat ${MAINFILE[38]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[39]} >> webroot/js/contrail-all-5.js
 cat ${MAINFILE[41]} >> webroot/js/contrail-all-5.js
 
-cat ${MAINFILE[45]} >> webroot/js/contrail-all-6.js
+cat ${MAINFILE[45]} > webroot/js/contrail-all-6.js
 cat ${MAINFILE[46]} >> webroot/js/contrail-all-6.js
-cat ${MAINFILE[47]} >> webroot/js/contrail-all-6.js
+#cat ${MAINFILE[47]} >> webroot/js/contrail-all-6.js
 cat ${MAINFILE[48]} >> webroot/js/contrail-all-6.js
 
 # End - Merging All JS files
@@ -339,10 +354,18 @@ MAINCSS[4]=webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
 MAINCSS[5]=webroot/assets/slickgrid/styles/slick.grid.css
 MAINCSS[6]=webroot/assets/jquery/css/jquery.steps.css
 
+MAINCSS[7]=webroot/assets/joint/css/joint.nojquery.css
+MAINCSS[8]=webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css
+MAINCSS[9]=webroot/css/contrail.font.css
+
 cat ${MAINCSS[1]} > webroot/css/contrail-all.css
 cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[3]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[4]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[5]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[6]} >> webroot/css/contrail-all.css
+
+cat ${MAINCSS[7]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[8]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[9]} >> webroot/css/contrail-all.css
 #End - Merging ALL CSS files
