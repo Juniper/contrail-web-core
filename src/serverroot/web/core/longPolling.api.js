@@ -13,6 +13,7 @@ var assert = require("assert")
     , authApi = require('../../common/auth.api')
     , messages = require('../../common/messages')
     , rbac = require('./rbac.api')
+    , orch = require('../../orchestration/orchestration.api')
     ;
 
 if (!module.parent) {
@@ -114,14 +115,13 @@ function processPendingReq (ctx, next, callback)
 
   delete pendingReqQObj[ctx.id];// = null;
   //If loggedInOrchestrationMode doesn't exist in session
-  if(checkLoginReq(ctx.req)) {
-    ctx.req.session.loggedInOrchestrationMode = 'openstack';
-    if(ctx.req.url.indexOf('/vcenter') == 0)
-        ctx.req.session.loggedInOrchestrationMode = 'vcenter';
+  if (checkLoginReq(ctx.req)) {
+    ctx.req.session.loggedInOrchestrationMode =
+        orch.getOrchestrationModelsByReqURL(ctx.req.url);
+    logutils.logger.debug("Getting Logged In Orchestration Mode:",
+                          ctx.req.session.loggedInOrchestrationMode);
   }
 
-  console.log("GETTING LOGGED IN MODE:",
-              ctx.req.session.loggedInOrchestrationMode);
   /* Process the request */
   defTokenObj = authApi.getAPIServerAuthParams(ctx.req);
   var appData = {
@@ -131,7 +131,6 @@ function processPendingReq (ctx, next, callback)
     },
     genBy: global.service.MAINSEREVR
   };
-  //console.log("Getting appdata as:", appData);
   callback(ctx.req, ctx.res, appData);
 }
 
@@ -172,11 +171,9 @@ function routeAll (req, res, next)
 {
   /* nodejs sets the timeout 2 minute, override this timeout here */
   req.socket.setTimeout(global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME);
-  if(checkLoginReq(req)) {
-    console.log("Login Req, req.url:", req.url);
-    req.session.loggedInOrchestrationMode = 'openstack';
-    if(req.url.indexOf('/vcenter') == 0)
-        req.session.loggedInOrchestrationMode = 'vcenter';
+  if (checkLoginReq(req)) {
+    req.session.loggedInOrchestrationMode =
+        orch.getOrchestrationModelsByReqURL(req.url);
   }
   if (null == req.session.sessionExpSyncToIdentityToken) {
       if (null != authApi.getSessionExpiryTime) {
