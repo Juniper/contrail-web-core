@@ -15,6 +15,27 @@ var vSwitchName = null;
 var dataCenterDef = deferred();
 var vSwitchDef = deferred();
 
+function logout(appData) {
+    return new Promise(function(resolve,reject) {
+            vCenterApi.doCall({
+                method    : 'Logout',
+                headers : {
+                    SOAPAction: "urn:vim25/5.1"
+                },
+                params : {
+                    _this : {
+                        _attributes : {
+                            type: 'SessionManager'
+                        },
+                        _value : 'SessionManager'
+                    }
+                }
+            },appData,function(err,data,resHeaders) {
+                resolve(data);
+            });
+        });
+}
+
 function queryIpPools(appData) {
     return new Promise(function(resolve,reject) {
         populatevCenterParams(appData).done(function(response) {
@@ -172,6 +193,7 @@ function retrievePropertiesEx(appData,sessKey,objType,name) {
     });
 }
 
+
 function retrievePropertiesExForObj(appData,objType,name) {
     var pathSet = 'name';
     if(objType == 'Task')
@@ -312,8 +334,16 @@ function populatevCenterParams(appData) {
         }
     });
 }
-
-function waitForTask(appData,taskId,currDef) {
+//No of times to retry to check for a task status
+var maxRetryCnt = 30;
+function waitForTask(appData,taskId,currDef,retryCnt) {
+    if(retryCnt == null)
+        retryCnt = 0;
+    if(retryCnt == maxRetryCnt) {
+        currDef.resolve('');
+        return;
+    }
+    retryCnt++;
     retrievePropertiesExForObj(appData,'Task',taskId).done(function(response) {
     var currState = response['RetrievePropertiesExResponse']['returnval']['objects']['propSet']['val'][0]['_value']['state'];
     if(currState == 'success')
@@ -404,7 +434,7 @@ function createPortGroup(userData,appData,callback) {
                                     },
                                     _value : {
                                         inherited : false,
-                                        pvlanId : 401
+                                        pvlanId : userData['pVlanId']
                                     }
                                 },
                                 securityPolicy : {
@@ -440,6 +470,7 @@ function createPortGroup(userData,appData,callback) {
                 });
                 return;
             } else {
+                resolve(data);
                 logutils.logger.debug(err);
             }
         })
@@ -505,3 +536,4 @@ exports.getProjectList = getProjectList;
 exports.destroyTask = destroyTask;
 exports.destroyIpPool = destroyIpPool;
 exports.queryIpPools = queryIpPools;
+exports.logout = logout;
