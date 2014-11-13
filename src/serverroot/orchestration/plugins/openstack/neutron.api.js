@@ -112,7 +112,7 @@ neutronApi.put = function(reqUrl, reqData, req, callback, stopRetry) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
-            neutronAPIServer.api.put(reqUrl, function(err, data) {
+            neutronAPIServer.api.put(reqUrl, reqData, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
                      * due to token change, so give one more change
