@@ -888,7 +888,6 @@ function callAPIServerByParam (apiCallback, dataObj, ignoreError, callback)
     var headers = dataObj['headers'];
     var data    = dataObj['data'];
     var appData = dataObj['appData'];
-    // console.log("Getting SERVER OBJ:", method, reqUrl, headers, data, appData);
 
     if ((global.HTTP_REQUEST_PUT == method) ||
         (global.HTTP_REQUEST_POST == method)) {
@@ -1225,10 +1224,8 @@ function redirectToLogout (req, res)
 function redirectToLogin (req, res)
 {
     if(req.session.loggedInOrchestrationMode == 'vcenter') {
-        console.log("In vcenter login");
         redURL = '/vcenter/login';
     } else {
-        console.log("In login");
         redURL = '/login';
     }
     redirectToURL(req, res, redURL);
@@ -1238,11 +1235,9 @@ function redirectToURL(req, res, redURL)
 {
     var ajaxCall = req.headers['x-requested-with'];
     if (ajaxCall == 'XMLHttpRequest') {
-        console.log("Getting 307");
        res.setHeader('X-Redirect-Url', redURL);
        res.send(307, '');
     } else {
-        console.log("REDIRECT");
        res.redirect(redURL);
     }
 }
@@ -1808,6 +1803,70 @@ function prefixToNetMask(prefixLen) {
     return v4.Address.fromHex(parseInt(binaryString,2).toString(16)).address;
 }
 
+/* Function: getAvailableIpByIPList
+   This function is used to find the ipAddr from the available ip List.
+   1. If the IP is not already allocated in ipListObj, then ipAddr is returned
+   2. If ipAddr is allocated in ipListObj, then based on subnet find the start
+      and end Ip Address, then check if any Ip start from startAddress is already
+      there in ipListObj, if not return that, else lookup till we reach endAddress
+ */
+function getAvailableIpByIPList (ipListObj, ipAddr, subnet)
+{
+    var isV4Addr = true;
+
+    var v6Addr = new v6.Address(ipAddr);
+    if (true == v6Addr.isValid()) {
+        isV4Addr = false;
+    }
+
+    if (null == ipListObj[ipAddr]) {
+        /* Ip is available */
+        return {'err': null, 'address': ipAddr};
+    }
+    if (true == isV4Addr) {
+        var newV4IpSubnet = new v4.Address(subnet);
+        if (false == newV4IpSubnet.isValid()) {
+            var err =
+                new appErrors.RESTServerError('Subnet is not valid ' +
+                                              'ipv4 one');
+            return {'err': err, 'address': null};
+        }
+        startIpAddr = newV4IpSubnet.startAddress();
+        endIpAddr = newV4IpSubnet.endAddress();
+    } else {
+        var newV6IpSubnet = new v6.Address(subnet);
+        if (false == newV6IpSubnet.isValid()) {
+            var err =
+                new appErrors.RESTServerError('Subnet is not valid ' +
+                                              'ipv6 one');
+            return {'err': err, 'address': null};
+        }
+        startIpAddr = newV6IpSubnet.startAddress();
+        endIpAddr = newV6IpSubnet.endAddress();
+    }
+    var i = 1;
+    ipAddr = startIpAddr;
+    while (ipAddr != endIpAddr) {
+        var bg1 = startIpAddr.bigInteger();
+        bigInt = bg1.add(new BigInteger(i.toString(), 10));
+        if (true == isV4Addr) {
+            ipAddr =
+                (new v4.Address.fromBigInteger(bigInt)).correctForm();
+        } else {
+            ipAddr =
+                (new v6.Address.fromBigInteger(bigInt)).correctForm();
+        }
+        if (null == ipListObj[ipAddr]) {
+            break;
+        }
+        i++;
+    }
+    if (ipAddr == endIpAddr) {
+        return {'err': null, 'address': null};
+    }
+    return {'err': null, 'address': ipAddr};
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1862,3 +1921,5 @@ exports.getWebConfigValueByName = getWebConfigValueByName;
 exports.isMultiTenancyEnabled = isMultiTenancyEnabled;
 exports.prefixToNetMask = prefixToNetMask;
 exports.convertApiServerUUIDtoKeystoneUUID = convertApiServerUUIDtoKeystoneUUID;
+exports.getAvailableIpByIPList = getAvailableIpByIPList;
+
