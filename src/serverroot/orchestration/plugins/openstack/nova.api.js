@@ -40,10 +40,20 @@ function getTenantIdByReqCookie (req)
     }
 }
 
+function getHeaders(defHeaders, appHeaders)
+{
+    var headers = defHeaders;
+    for (key in appHeaders) {
+        /* App Header overrides default header */
+        headers[key] = appHeaders[key];
+    }
+    return headers;
+}
+
 /* Function: doNovaOpCb
  */
 function doNovaOpCb (reqUrl, apiProtoIP, tenantId, req, novaCallback, stopRetry,
-                     callback)
+                     appHeaders, callback)
 {
     var forceAuth = stopRetry;
 
@@ -57,7 +67,7 @@ function doNovaOpCb (reqUrl, apiProtoIP, tenantId, req, novaCallback, stopRetry,
             } else {
                 /* Retry once again */
                 console.log("We are about to retry for tenantId:" + tenantId);
-                novaCallback(reqUrl, apiProtoIP, req, callback, true);
+                novaCallback(reqUrl, apiProtoIP, req, callback, true, appHeaders);
             }
         } else {
             console.log("doNovaOpCb() success with tenantId:" + tenantId);
@@ -67,7 +77,7 @@ function doNovaOpCb (reqUrl, apiProtoIP, tenantId, req, novaCallback, stopRetry,
 }         
 
 /* Wrapper function to GET Data from Nova-Server */
-novaApi.get = function(reqUrl, apiProtoIP, req, callback, stopRetry) {
+novaApi.get = function(reqUrl, apiProtoIP, req, callback, stopRetry, appHeaders) {
     var headers = {};
     var forceAuth = stopRetry;
     var tenantId = getTenantIdByReqCookie(req);
@@ -77,14 +87,15 @@ novaApi.get = function(reqUrl, apiProtoIP, req, callback, stopRetry) {
     }
 
     headers['User-Agent'] = 'Contrail-WebClient';
-    doNovaOpCb(reqUrl, apiProtoIP, tenantId, req, novaApi.get, stopRetry, 
-                function(err, tokenObj) {
+    doNovaOpCb(reqUrl, apiProtoIP, tenantId, req, novaApi.get, stopRetry,
+               appHeaders, function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
             novaAPIServer.api['hostname'] = apiProtoIP['ip'];
             novaAPIServer.api['port'] = apiProtoIP['port'];
+            headers = getHeaders(headers, appHeaders);
 		    novaAPIServer.api.get(reqUrl, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
@@ -104,7 +115,8 @@ novaApi.get = function(reqUrl, apiProtoIP, req, callback, stopRetry) {
 }
 
 /* Wrapper function to POST data to Nova-Server */
-novaApi.post = function(reqUrl, reqData, apiProtoIP, req, callback, stopRetry) { 
+novaApi.post = function(reqUrl, reqData, apiProtoIP, req, callback, stopRetry,
+                        appHeaders) {
     var headers = {};
     var i = 0;
     var tenantId = getTenantIdByReqCookie(req);
@@ -114,14 +126,15 @@ novaApi.post = function(reqUrl, reqData, apiProtoIP, req, callback, stopRetry) {
     }
 
     headers['User-Agent'] = 'Contrail-WebClient';
-    doNovaOpCb(reqUrl, apiProtoIP, tenantId, req, novaApi.post, stopRetry, 
-                function(err, tokenObj) {
+    doNovaOpCb(reqUrl, apiProtoIP, tenantId, req, novaApi.post, stopRetry,
+               appHeaders, function(err, tokenObj) {
         if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
             novaAPIServer.api['hostname'] = apiProtoIP['ip'];
             novaAPIServer.api['port'] = apiProtoIP['port'];
+            headers = getHeaders(headers, appHeaders);
             novaAPIServer.api.post(reqUrl, reqData, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
@@ -130,7 +143,48 @@ novaApi.post = function(reqUrl, reqData, apiProtoIP, req, callback, stopRetry) {
                     if (stopRetry) {
                       callback(err, data);
                     } else {
-                        novaApi.post(reqUrl, reqData, apiProtoIP, req, callback, true);
+                        novaApi.post(reqUrl, reqData, apiProtoIP, req, callback,
+                                     true, appHeaders);
+                    }
+                 } else {
+                    callback(err, data);
+                 }
+            }, headers);
+        }
+    });
+}
+
+novaApi.delete = function (reqUrl, apiProtoIP, req, callback, stopRetry,
+                           appHeaders)
+{
+    var headers = {};
+    var i = 0;
+    var tenantId = getTenantIdByReqCookie(req);
+    if (null == tenantId) {
+        /* Just return as we will be redirected to login page */
+        return;
+    }
+
+    headers['User-Agent'] = 'Contrail-WebClient';
+    doNovaOpCb(reqUrl, apiProtoIP, tenantId, req, novaApi.delete, stopRetry,
+               appHeaders, function(err, tokenObj) {
+        if ((err) || (null == tokenObj) || (null == tokenObj.id)) {
+            callback(err, null);
+        } else {
+            headers['X-Auth-Token'] = tokenObj.id;
+            novaAPIServer.api['hostname'] = apiProtoIP['ip'];
+            novaAPIServer.api['port'] = apiProtoIP['port'];
+            headers = getHeaders(headers, appHeaders);
+            novaAPIServer.api.delete(reqUrl, function(err, data) {
+                if (err) {
+                    /* Just retry in case of if it fails, it may happen that failure is
+                     * due to token change, so give one more change
+                     */
+                    if (stopRetry) {
+                      callback(err, data);
+                    } else {
+                        novaApi.delete(reqUrl, apiProtoIP, req, callback,
+                                     true, appHeaders);
                     }
                  } else {
                     callback(err, data);
@@ -147,24 +201,19 @@ var getVMStatsByProjectCB = {
     'v2': getVMStatsByProjectV11
 };
 
-function getVMStatsByProjectV11 (err, data, callback)
-{
-    callback(err, data);
-}
-
 var getServiceInstanceVMStatusCB = {
     'v1.1': getServiceInstanceVMStatusV11,
     'v2': getServiceInstanceVMStatusV11
 }
 
-function getServiceInstanceVMStatusV11 (err, data, callback)
-{
-    callback(err, data);
-}
-
 var getFlavorsCB = {
     'v1.1': getFlavorsV11,
     'v2': getFlavorsV11
+};
+
+var launchVNCCB = {
+    'v1.1' : launchVNCV11,
+    'v2': launchVNCV11
 };
 
 var getOSHostListCB = {
@@ -177,6 +226,10 @@ var availabilityZoneCB = {
     'v2': getAvailabilityZoneV11
 };
 
+var portAttachSendRespCB = {
+    'v1.1': portAttachSendRespV11,
+    'v2': portAttachSendRespV11
+};
 
 function getOSHostV11 (err, data, callback){
     callback(err, data);
@@ -191,11 +244,6 @@ function getFlavorsV11 (err, data, callback)
     callback(err, data);
 }
 
-var launchVNCCB = {
-    'v1.1' : launchVNCV11,
-    'v2': launchVNCV11
-};
-
 function launchVNCV11 (error, data, callback)
 {
     if (error) {
@@ -203,6 +251,25 @@ function launchVNCV11 (error, data, callback)
     } else {
         callback(null, data);
     }
+}
+
+function portAttachSendRespV11 (error, data, callback)
+{
+    if (null != error) {
+        callback(error, null);
+    } else {
+        callback(null, data);
+    } 
+}
+
+function getVMStatsByProjectV11 (err, data, callback)
+{
+    callback(err, data);
+}
+
+function getServiceInstanceVMStatusV11 (err, data, callback)
+{
+    callback(err, data);
 }
 
 function getNovaData (novaCallObj, callback)
@@ -583,6 +650,142 @@ function getAvailabilityZoneList(req, callback)
     });
 }
 
+function portAttachSendResp (err, data, apiVer, callback)
+{
+    var portAttachCB = portAttachSendRespCB[apiVer];
+    if (null == portAttachCB) {
+        var str = 'Nova API Version not supported:' + apiVer;
+        var err = new appErrors.RESTServerError(str);
+        callback(err, null);
+        return;
+    }
+    portAttachCB(err, data, callback);
+}
+
+function portAttach (req, callback)
+{
+    var postData = req.body;
+    var portID = postData.portID;
+    var netID = postData.netID;
+    var fixedIP = postData.fixedIP;
+    var vmUUID = postData.vmUUID;
+    var appHeaders = {};
+
+    if (null == vmUUID) {
+        var error = new appErrors.RESTServerError('Server not specified');
+        callback(error, null);
+        return;
+    }
+    var tenantStr = getTenantIdByReqCookie(req);
+    if (null == tenantStr) {
+        /* Just return as we will be redirected to login page */
+        return;
+    }
+    var novaPostData = {'interfaceAttachment': {}};
+    if (null != portID) {
+        novaPostData['interfaceAttachment']['port_id'] = portID;
+    }
+    if (null != netID) {
+        novaPostData['interfaceAttachment']['net_id'] = netID;
+    }
+    if (null != fixedIP) {
+        novaPostData['interfaceAttachment']['fixed_ips'] = [];
+        var fixedIPLen = fixedIP.length;
+        for (var i = 0; i < fixedIPLen; i++) {
+            novaPostData['interfaceAttachment']['fixed_ips'].push({'ip_address':
+                                                                  fixedIP[i]});
+        }
+    }
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth':
+                         true}, function(err, data) {
+        if ((null != err) || (null == data) || (null == data['tenant'])) {
+            logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
+            commonUtils.redirectToLogout(req, req.res);
+            return;
+        }
+        var tenantId = data['tenant']['id'];
+        oStack.getServiceAPIVersionByReqObj(req,
+                                            global.SERVICE_ENDPT_TYPE_COMPUTE,
+                                            function(apiVer) {
+            if (null == apiVer) {
+                error =
+                    new appErrors.RESTServerError('apiVersion for NOVA is NULL');
+                callback(error, null);
+                return;
+            }
+            var reqUrlPrefix = '/' + tenantId + '/flavors/detail';
+            var startIndex = 0;
+            var fallbackIndex = novaAPIVerList.length - 1;
+            appHeaders['X-Auth-Project-Id'] = tenantStr;
+            novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex,
+                                       fallbackIndex, function(err, data, ver) {
+                if ((null != err) || (null == ver)) {
+                    callback(err, null);
+                    return;
+                }
+                reqUrlPrefix = '/' + tenantId + '/servers/' + vmUUID + '/os-interface';
+                var reqUrl = '/' + ver['version'] + reqUrlPrefix;
+                novaApi.post(reqUrl, novaPostData, ver, req,
+                             function(error, data) {
+                    portAttachSendResp(err, data, ver['version'], callback);
+                }, false, appHeaders);
+            });
+        });
+    }); 
+}
+
+function portDetach (req, callback)
+{
+    var appHeaders = {};
+    var vmUUID = req.param('vmUUID');
+    var portID = req.param('portID');
+    if (null == vmUUID) {
+        var error = new appErrors.RESTServerError('Server not specified');
+        callback(error, null);
+        return;
+    }
+    var tenantStr = getTenantIdByReqCookie(req);
+    if (null == tenantStr) {
+        /* Just return as we will be redirected to login page */
+        return;
+    }
+
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth':
+                         true}, function(err, data) {
+        if ((null != err) || (null == data) || (null == data['tenant'])) {
+            logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
+            commonUtils.redirectToLogout(req, req.res);
+            return;
+        }
+        var tenantId = data['tenant']['id'];
+        oStack.getServiceAPIVersionByReqObj(req,
+                                            global.SERVICE_ENDPT_TYPE_COMPUTE,
+                                            function(apiVer) {
+            if (null == apiVer) {
+                error =
+                    new appErrors.RESTServerError('apiVersion for NOVA is NULL');
+                callback(error, null);
+                return;
+            }
+            var reqUrlPrefix = '/' + tenantId + '/flavors/detail';
+            var startIndex = 0;
+            var fallbackIndex = novaAPIVerList.length - 1;
+            appHeaders['X-Auth-Project-Id'] = tenantStr;
+            novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex,
+                                       fallbackIndex, function(err, data, ver) {
+                if ((null != err) || (null == ver)) {
+                    callback(err, null);
+                    return;
+                }
+                reqUrlPrefix = '/' + tenantId + '/servers/' + vmUUID + '/os-interface/' + portID;
+                var reqUrl = '/' + ver['version'] + reqUrlPrefix;
+                novaApi.delete(reqUrl, ver, req, function(err, data) {
+                    callback(err, data);
+                }, false, appHeaders);
+            });
+        });
+    });
+}
 
 exports.launchVNC = launchVNC;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
@@ -591,4 +794,6 @@ exports.getFlavors = getFlavors;
 exports.getOSHostList =  getOSHostList;
 exports.getAvailabilityZoneList =  getAvailabilityZoneList;
 exports.novaAPIVerList = novaAPIVerList;
+exports.portAttach = portAttach;
+exports.portDetach = portDetach;
 

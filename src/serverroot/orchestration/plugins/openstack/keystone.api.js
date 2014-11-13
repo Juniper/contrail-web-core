@@ -1693,12 +1693,10 @@ function getCookieObjs (req, appData, callback)
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
     getAdminProjectList(req, appData, function(adminProjectObjs, domainObjs,
                                                tenantList, domList) {
-        if (true == multiTenancyEnabled) {
-            for (key in  adminProjectObjs) {
-                cookieObjs['domain'] = key;
-                cookieObjs['project'] = adminProjectObjs[key][0];
-                callback(cookieObjs);
-            }
+        for (key in  adminProjectObjs) {
+            cookieObjs['domain'] = key;
+            cookieObjs['project'] = adminProjectObjs[key][0];
+            callback(cookieObjs);
             return;
         }
         /* multi_tenancy is disabled */
