@@ -16,6 +16,7 @@ var redis = require("redis")
     , async = require('async')
     , discServ = require('./discoveryservice.api')
     , UUID = require('uuid-js')
+    , jobUtils = require('../../common/jobs.utils')
 	, messages = require('../../common/messages');
 
 try {
@@ -186,6 +187,11 @@ function createJob (jobName, jobTitle, jobPriority, delayInMS, runCount, taskDat
             });
         }
 	    var jobTitleStr = (jobTitle == null) ? jobName : jobTitle;
+        /* Update any jobData parameters if any changed in last iteration of job
+         * processing
+         */
+        taskData =
+            jobUtils.getAndUpdateChangedJobTaskData(jobTitleStr, taskData);
 	    var obj = { 'title':jobTitleStr, 'runCount':runCount, 'taskData':taskData };
 	    var newJob = jobsApi.jobs.create(jobName, obj);
 	    if (delayInMS) {
@@ -343,15 +349,40 @@ function doCheckJobsProcess ()
 	});
 }
 
-function createJobAtInit (jobName, url, firstRunDelay, runCount, nextRunDelay, appData)
+function createJobAtInit (jobObj)
 {
+    if (null == jobObj) {
+        logutils.logger.error("In createJobAtInit(): jobObj is null");
+        return;
+    }
+    var jobName = jobObj['jobName'];
+    if (null == jobName) {
+        logutils.logger.error("In createJobAtInit(): jobName is null");
+        assert(0);
+    }
+    var url = jobObj['url'];
+    var firstRunDelay = jobObj['firstRunDelay'];
+    var runCount = jobObj['runCount'];
+    var nextRunDelay = jobObj['nextRunDelay'];
+    var appData = jobObj['appData'];
+    var orchModel = jobObj['orchModel'];
     var msgObj = {};
     msgObj['jobName'] = jobName;
     msgObj['priority'] = 'normal';
     msgObj['jobType'] = global.STR_JOB_TYPE_CACHE;
-    msgObj['runCount'] = runCount;
-    msgObj['runDelay'] = firstRunDelay;
+    if (null == runCount) {
+        msgObj['runCount'] = 0;
+    } else {
+        msgObj['runCount'] = runCount;
+    }
+    if (null == firstRunDelay) {
+        /* Let the whole system come up, so default start job after 2 minutes */
+        msgObj['runDelay'] = 2 * 60 * 1000;
+    } else {
+        msgObj['runDelay'] = firstRunDelay;
+    }
     msgObj['data'] = {};
+    msgObj['data']['loggedInOrchestrationMode'] = orchModel;
     msgObj['data']['appData'] = appData;
     msgObj['data']['authObj'] = {};
     msgObj['data']['authObj']['sessionId'] = "";

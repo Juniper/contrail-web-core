@@ -157,6 +157,15 @@ function getSessionExpiryTime (req, appData, callback)
     return null;
 }
 
+function getUserAuthDataByConfigAuthObj (loggedInOrchestrationMode, authObj, callback)
+{
+    if (null == loggedInOrchestrationMode) {
+        loggedInOrchestrationMode = 'openstack';
+    }
+    getAuthMethod[loggedInOrchestrationMode].getUserAuthDataByConfigAuthObj(authObj,
+                                                                            callback);
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -173,4 +182,5 @@ exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getDefaultDomain = getDefaultDomain;
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
+exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
 
