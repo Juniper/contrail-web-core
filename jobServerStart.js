@@ -61,22 +61,29 @@ function createVRouterSummaryJob ()
 {
     var appData = {};
     appData['addGen'] = true;
+    var jobObj = {};
     var url = '/virtual-routers';
-    jobsApi.createJobAtInit(global.STR_GET_VROUTERS_SUMMARY, url, 
-                            global.VROUTER_SUMM_JOB_REFRESH_TIME,
-                            /* Wait for 5 minutes to start job at web-ui start
-                             * */
-                            0, global.VROUTER_SUMM_JOB_REFRESH_TIME, appData);
+    jobObj['jobName'] = global.STR_GET_VROUTERS_SUMMARY;
+    jobObj['url'] = url;
+    jobObj['firstRunDelay'] = global.VROUTER_SUMM_JOB_REFRESH_TIME;
+    jobObj['runCount'] = 0;
+    jobObj['nextRunDelay'] = global.VROUTER_SUMM_JOB_REFRESH_TIME;
+    jobObj['orchModel'] = 'openstack';
+    jobObj['appData'] = appData;
+    jobsApi.createJobAtInit(jobObj);
 }
 
 function createVRouterGeneratorsJob ()
 {
     var url = '/virtual-routers';
-    jobsApi.createJobAtInit(global.STR_GET_VROUTERS_GENERATORS, url, 
-                            global.VROUTER_SUMM_JOB_REFRESH_TIME,
-                            /* Wait for 5 minutes to start job at web-ui start
-                             * */
-                            0, global.VROUTER_GENR_JOB_REFRESH_TIME, null);
+    var jobObj = {};
+    jobObj['jobName'] = global.STR_GET_VROUTERS_GENERATORS;
+    jobObj['url'] = url;
+    jobObj['firstRunDelay'] = global.VROUTER_SUMM_JOB_REFRESH_TIME;
+    jobObj['runCount'] = 0;
+    jobObj['nextRunDelay'] = global.VROUTER_GENR_JOB_REFRESH_TIME;
+    jobObj['orchModel'] = 'openstack';
+    jobsApi.createJobAtInit(jobObj);
 }
 
 function createJobsAtInit ()
@@ -142,18 +149,15 @@ function startServers ()
     });
 }
 
-function jobServerPurgeAndStart (redisClient)
+function jobServerPurgeAndStart (redisClient, callback)
 {
     var redisDBs = [global.WEBUI_SESSION_REDIS_DB, global.WEBUI_DFLT_REDIS_DB,
         global.QE_DFLT_REDIS_DB, global.SM_DFLT_REDIS_DB];
     async.map(redisDBs, commonUtils.flushRedisDB, function() {
         /* Already logged */
+        callback();
     });
 }
-
-commonUtils.createRedisClient(function(client) {
-    jobServerPurgeAndStart(client);
-});
 
 workerSock.on('message', function (msg) {
     /* Now based on the message type, act */
@@ -162,7 +166,11 @@ workerSock.on('message', function (msg) {
 
 jobsApi.jobListenerReadyQEvent.on('kueReady', function() {
     /* Now start real server processing */
-    startServers();
+    commonUtils.createRedisClient(function(client) {
+        jobServerPurgeAndStart(client, function() {
+            startServers();
+        });
+    });
 });
 
 exports.myIdentity = myIdentity;
