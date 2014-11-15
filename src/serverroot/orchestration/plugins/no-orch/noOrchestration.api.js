@@ -153,6 +153,11 @@ function getSessionExpiryTime (req, appData, callback)
     return cfgSessTimeout;
 }
 
+function getUserAuthDataByConfigAuthObj (authObj, callback)
+{
+    callback(null, null);
+}
+
 exports.authenticate = authenticate;
 exports.getServiceCatalog = getServiceCatalog;
 exports.getAPIServerAuthParamsByReq = getAPIServerAuthParamsByReq;
@@ -167,4 +172,5 @@ exports.getVMStatsByProject = getVMStatsByProject;
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.getToken = getToken;
+exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
 
