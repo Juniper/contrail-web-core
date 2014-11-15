@@ -8,6 +8,7 @@ var rest = require('../../common/rest.api'),
     redisPub = require('../core/redisPub'),
     logutils = require('../../utils/log.utils'),
     commonUtils = require('../../utils/common.utils'),
+    jobsUtils = require('../../common/jobs.utils'),
     configServer;
 
 configServer = rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,
@@ -22,6 +23,11 @@ function getHeaders(defHeaders, appHeaders)
     }
     return headers;
 }
+
+var configAdminTenant =
+    ((null != config.identityManager) &&
+     (null != config.identityManager.admin_tenant_name)) ?
+    config.identityManager.admin_tenant_name : null;
 
 function getDefProjectByJobData (jobData)
 {
@@ -41,7 +47,12 @@ function getDefProjectByJobData (jobData)
 
 function getAuthTokenByJobData (jobData)
 {
-    var project = getDefProjectByJobData(jobData);
+    var project = null;
+    if (null != configAdminTenant) {
+        project = configAdminTenant;
+    } else {
+        project = getDefProjectByJobData(jobData);
+    }
     try {
         var tokenObjs = jobData['taskData']['tokenObjs'];
         if ((null != tokenObjs) && (null != tokenObjs[project]) &&
@@ -84,13 +95,50 @@ function configAppHeaders (headers, jobData)
     return headers;
 }
 
+function updateJobDataTokenObjsByNewToken (jobData, token)
+{
+    var tenant = token['tenant'];
+    var project = tenant['name'];
+    try {
+        jobData.taskData.tokenObjs[project]['token'] = token;
+    } catch(e) {
+        logutils.logger.error("In updateJobDataTokenObjsByNewToken() :" +
+                              "JSON Parse error:" + e);
+    }
+}
+
+function updateJobDataAuthObjToken (jobData, token)
+{
+    jobData['taskData']['authObj']['token'] = token;
+    updateJobDataTokenObjsByNewToken(jobData, token);
+    jobsUtils.registerForJobTaskDataChange(jobData, 'authObj');
+    jobsUtils.registerForJobTaskDataChange(jobData, 'tokenObjs');
+}
+
+function buildAuthObjByJobData (jobData)
+{
+    var userAuthObj = {};
+
+    if ((null != jobData.taskData.username) &&
+        (null != jobData.taskData.password)) {
+        userAuthObj =
+            authApi.decryptUserAuth({'username': jobData.taskData.username,
+                                     'password': jobData.taskData.password});
+    }
+    var defProject = getDefProjectByJobData(jobData);
+    if (null != configAdminTenant) {
+        userAuthObj['tenant'] = configAdminTenant;
+    } else {
+        userAuthObj['tenant'] = defProject;
+    }
+    return userAuthObj;
+}
+
 function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
 {
     var headers = {};
-    var authObj;
-    var defProject = null;
-    var tokenId = null;
-    defProject = getDefProjectByJobData(jobData);
+    var authObj = buildAuthObjByJobData(jobData);
+
     headers = configAppHeaders(headers, jobData);
     headers = getHeaders(headers, appHeaders);
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
@@ -100,24 +148,24 @@ function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
             if (stopRetry) {
                 callback(err, data);
             } else {
-                if ((null != defProject) && (null != tokenId) &&
-                    (err.responseCode ==
-                     global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
+                if (err.responseCode ==
+                     global.HTTP_STATUS_AUTHORIZATION_FAILURE) {
                     /* Retry once again */
-                    authApi.getNewTokenObjByToken({'tokenid': tokenId,
-                                                  'tenant': defProject},
-                                                  function(error, token) {
-                                                      
-                        if ((error) || (null == token)) {
+                    authApi.getUserAuthDataByConfigAuthObj(jobData.taskData.loggedInOrchestrationMode,
+                                                           authObj,
+                                                  function(error, data) {
+                        if ((error) || (null == data) ||
+                            (null == data.access) ||
+                            (null == data.access.token)) {
                             if (true == multiTenancyEnabled) {
                                 redisPub.sendRedirectRequestToMainServer(jobData);
-                                return;
-                            } else {
                                 callback(err, data);
                                 return;
                             }
+                            callback(err, data);
+                            return;
                         }
-                        jobData['taskData']['authObj']['token'] = token;
+                        updateJobDataAuthObjToken(jobData, data.access.token);
                         exports.apiGet(reqUrl, jobData, callback, appHeaders, true);
                    });
                 } else {
@@ -133,11 +181,8 @@ function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
 function apiPut (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
 {
     var headers = {};
-    var authObj;
-    var defProject = null;
-    var tokenId = null;
+    var authObj = buildAuthObjByJobData(jobData);
 
-    defProject = getDefProjectByJobData(jobData);
     headers = configAppHeaders(headers, jobData);
     headers = getHeaders(headers, appHeaders);
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
@@ -147,23 +192,24 @@ function apiPut (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
             if (stopRetry) {
                 callback(err, data);
             } else {
-                if ((null != defProject) && (null != tokenId) &&
-                    (err.responseCode ==
-                     global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
+                if (err.responseCode ==
+                     global.HTTP_STATUS_AUTHORIZATION_FAILURE) {
                     /* Retry once again */
-                    authApi.getNewTokenObjByToken({'tokenid': tokenId,
-                                                  'tenant': defProject},
-                                                  function(error, token) {
-
-                        if ((error) || (null == token)) {
+                    authApi.getUserAuthDataByConfigAuthObj(jobData.taskData.loggedInOrchestrationMode,
+                                                           authObj,
+                                                  function(error, data) {
+                        if ((error) || (null == data) ||
+                            (null == data.access) ||
+                            (null == data.access.token)) {
                             if (true == multiTenancyEnabled) {
                                 redisPub.sendRedirectRequestToMainServer(jobData);
+                                callback(err, data);
                                 return;
                             }
                             callback(err, data);
                             return;
                         }
-                        jobData['taskData']['authObj']['token'] = token;
+                        updateJobDataAuthObjToken(jobData, data.access.token);
                         exports.apiPut(reqUrl, jobData, callback, appHeaders, true);
                    });
                 } else {
@@ -180,11 +226,8 @@ function apiPut (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
 function apiPost (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
 {
     var headers = {};
-    var authObj;
-    var defProject = null;
-    var tokenId = null;
+    var authObj = buildAuthObjByJobData(jobData);
 
-    defProject = getDefProjectByJobData(jobData);
     headers = configAppHeaders(headers, jobData);
     headers = getHeaders(headers, appHeaders);
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
@@ -194,23 +237,24 @@ function apiPost (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
             if (stopRetry) {
                 callback(err, data);
             } else {
-                if ((null != defProject) && (null != tokenId) &&
-                    (err.responseCode ==
-                     global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
+                if (err.responseCode ==
+                     global.HTTP_STATUS_AUTHORIZATION_FAILURE) {
                     /* Retry once again */
-                    authApi.getNewTokenObjByToken({'tokenid': tokenId,
-                                                  'tenant': defProject},
-                                                  function(error, token) {
-
-                        if ((error) || (null == token)) {
+                    authApi.getUserAuthDataByConfigAuthObj(jobData.taskData.loggedInOrchestrationMode,
+                                                           authObj,
+                                                  function(error, data) {
+                        if ((error) || (null == data) ||
+                            (null == data.access) ||
+                            (null == data.access.token)) {
                             if (true == multiTenancyEnabled) {
                                 redisPub.sendRedirectRequestToMainServer(jobData);
+                                callback(err, data);
                                 return;
                             }
                             callback(err, data);
                             return;
                         }
-                        jobData['taskData']['authObj']['token'] = token;
+                        updateJobDataAuthObjToken(jobData, data.access.token);
                         exports.apiPost(reqUrl, jobData, callback, appHeaders, true);
                    });
                 } else {
@@ -226,11 +270,8 @@ function apiPost (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
 function apiDelete (reqUrl, jobData, callback, appHeaders, stopRetry)
 {
     var headers = {};
-    var authObj;
-    var defProject = null;
-    var tokenId = null;
+    var authObj = buildAuthObjByJobData(jobData);
 
-    defProject = getDefProjectByJobData(jobData);
     headers = configAppHeaders(headers, jobData);
     headers = getHeaders(headers, appHeaders);
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
@@ -240,23 +281,24 @@ function apiDelete (reqUrl, jobData, callback, appHeaders, stopRetry)
             if (stopRetry) {
                 callback(err, data);
             } else {
-                if ((null != defProject) && (null != tokenId) &&
-                    (err.responseCode ==
-                     global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
+                if (err.responseCode ==
+                     global.HTTP_STATUS_AUTHORIZATION_FAILURE) {
                     /* Retry once again */
-                    authApi.getNewTokenObjByToken({'tokenid': tokenId,
-                                                  'tenant': defProject},
-                                                  function(error, token) {
-
-                        if ((error) || (null == token)) {
+                    authApi.getUserAuthDataByConfigAuthObj(jobData.taskData.loggedInOrchestrationMode,
+                                                           authObj,
+                                                  function(error, data) {
+                        if ((error) || (null == data) ||
+                            (null == data.access) ||
+                            (null == data.access.token)) {
                             if (true == multiTenancyEnabled) {
                                 redisPub.sendRedirectRequestToMainServer(jobData);
+                                callback(err, data);
                                 return;
                             }
                             callback(err, data);
                             return;
                         }
-                        jobData['taskData']['authObj']['token'] = token;
+                        updateJobDataAuthObjToken(jobData, data.access.token);
                         exports.apiDelete(reqUrl, jobData, callback, appHeaders, true);
                    });
                 } else {

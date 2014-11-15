@@ -328,6 +328,8 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 			pubChannel: pubChannel,
 			saveChannelKey: saveChannelKey,
 			reqBy: reqBy,
+			username: req.session.username,
+			password: req.session.password,
 			userRoles: req.session.userRoles,
             tokenObjs: req.session.tokenObjs,
             cookies: {

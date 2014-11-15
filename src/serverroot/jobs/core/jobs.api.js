@@ -16,6 +16,7 @@ var redis = require("redis")
     , async = require('async')
     , discServ = require('./discoveryservice.api')
     , UUID = require('uuid-js')
+    , jobUtils = require('../../common/jobs.utils')
 	, messages = require('../../common/messages');
 
 try {
@@ -186,6 +187,11 @@ function createJob (jobName, jobTitle, jobPriority, delayInMS, runCount, taskDat
             });
         }
 	    var jobTitleStr = (jobTitle == null) ? jobName : jobTitle;
+        /* Update any jobData parameters if any changed in last iteration of job
+         * processing
+         */
+        taskData =
+            jobUtils.getAndUpdateChangedJobTaskData(jobTitleStr, taskData);
 	    var obj = { 'title':jobTitleStr, 'runCount':runCount, 'taskData':taskData };
 	    var newJob = jobsApi.jobs.create(jobName, obj);
 	    if (delayInMS) {

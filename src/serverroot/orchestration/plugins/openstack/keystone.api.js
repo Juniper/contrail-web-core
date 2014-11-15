@@ -801,6 +801,42 @@ function getUserAuthDataByAuthObj (authObj, callback)
     });
 }
 
+function getUserAuthDataByConfigAuthObj (authObj, callback)
+{
+    var error = new appErrors.RESTServerError("auth object not found in config");
+    if (null == authObj) {
+        authObj = {};
+    }
+    if (null == authObj['username']) {
+        if ((null != config.identityManager) &&
+            (null != config.identityManager.admin_user)) {
+            authObj['username'] = config.identityManager.admin_user;
+        } else {
+            callback(error, null);
+            return;
+        }
+    }
+    if (null == authObj['password']) {
+        if ((null != config.identityManager) &&
+            (null != config.identityManager.admin_password)) {
+            authObj['password'] = config.identityManager.admin_password;
+        } else {
+            callback(error, null);
+            return;
+        }
+    }
+    if (null == authObj['tenant']) {
+        if ((null != config.identityManager) &&
+            (null != config.identityManager.admin_tenant_name)) {
+            authObj['tenant'] = config.identityManager.admin_tenant_name;
+        } else {
+            callback(error, null);
+            return;
+        }
+    }
+    getUserAuthDataByAuthObj(authObj, callback);
+}
+
 function getServiceCatalog (req, callback)
 {
     try {
@@ -932,7 +968,8 @@ function authenticate (req, res, appData, callback)
 {
     var urlHash = '',urlPath = '';
     var post = req.body,
-        username = post.username;
+        username = post.username,
+        password = post.password;
     if (post.urlHash != null) {
         urlHash = post.urlHash;
     }
@@ -969,6 +1006,9 @@ function authenticate (req, res, appData, callback)
             });
             return;
         }
+        var userAuthObj = authApi.encryptUserAuth({'username': username, 'password': password});
+        req.session.username = userAuthObj['username'];
+        req.session.password = userAuthObj['password'];
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
             if(urlPath != '') 
                 res.redirect(urlPath + urlHash);
@@ -1811,4 +1851,5 @@ exports.getUserAuthDataByAuthObj = getUserAuthDataByAuthObj;
 exports.getUserRoleByAuthResponse = getUserRoleByAuthResponse;
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
+exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
 

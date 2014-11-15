@@ -118,18 +118,15 @@ function startServers ()
     });
 }
 
-function jobServerPurgeAndStart (redisClient)
+function jobServerPurgeAndStart (redisClient, callback)
 {
     var redisDBs = [global.WEBUI_SESSION_REDIS_DB, global.WEBUI_DFLT_REDIS_DB,
         global.QE_DFLT_REDIS_DB, global.SM_DFLT_REDIS_DB];
     async.map(redisDBs, commonUtils.flushRedisDB, function() {
         /* Already logged */
+        callback();
     });
 }
-
-commonUtils.createRedisClient(function(client) {
-    jobServerPurgeAndStart(client);
-});
 
 workerSock.on('message', function (msg) {
     /* Now based on the message type, act */
@@ -138,7 +135,11 @@ workerSock.on('message', function (msg) {
 
 jobsApi.jobListenerReadyQEvent.on('kueReady', function() {
     /* Now start real server processing */
-    startServers();
+    commonUtils.createRedisClient(function(client) {
+        jobServerPurgeAndStart(client, function() {
+            startServers();
+        });
+    });
 });
 
 exports.myIdentity = myIdentity;

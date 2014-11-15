@@ -157,6 +157,49 @@ function getSessionExpiryTime (req, appData, callback)
     return null;
 }
 
+function getUserAuthDataByConfigAuthObj (loggedInOrchestrationMode, authObj, callback)
+{
+    if (null == loggedInOrchestrationMode) {
+        loggedInOrchestrationMode = 'openstack';
+    }
+    getAuthMethod[loggedInOrchestrationMode].getUserAuthDataByConfigAuthObj(authObj,
+                                                                            callback);
+}
+
+function encryptUserAuth (userAuthObj)
+{
+    var username = userAuthObj['username'];
+    var password = userAuthObj['password'];
+    var userCipher = null;
+    var passwdCipher = null
+    var userEncrypted = null;
+    var passwdEncrypted = null;
+
+    userCipher = crypto.createCipher(global.MD5_ALGO_AES256,
+                                     global.MD5_MY_KEY);
+    passwdCipher = crypto.createCipher(global.MD5_ALGO_AES256,
+                                       global.MD5_MY_KEY);
+    userEncrypted = userCipher.update(username, 'utf8', 'hex') +
+                                      userCipher.final('hex');
+    passwdEncrypted = passwdCipher.update(password, 'utf8', 'hex') +
+                                          passwdCipher.final('hex');
+    return {'username': userEncrypted, 'password': passwdEncrypted};
+}
+
+function decryptUserAuth (userAuthObj)
+{
+    var userDecipher, passwdDecipher, userDecrypted, passwdDecrypted;
+    userDecipher = crypto.createDecipher(global.MD5_ALGO_AES256,
+                                             global.MD5_MY_KEY);
+    passwdDecipher = crypto.createDecipher(global.MD5_ALGO_AES256,
+                                           global.MD5_MY_KEY);
+    userDecrypted = userDecipher.update(userAuthObj['username'], 'hex', 'utf8') +
+                                        userDecipher.final('utf8');
+    passwdDecrypted = passwdDecipher.update(userAuthObj['password'], 'hex', 'utf8') +
+                                            passwdDecipher.final('utf8');
+    return {'username': userDecrypted, 'password': passwdDecrypted};
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -173,4 +216,6 @@ exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getDefaultDomain = getDefaultDomain;
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
-
+exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
+exports.encryptUserAuth = encryptUserAuth;
+exports.decryptUserAuth = decryptUserAuth;
