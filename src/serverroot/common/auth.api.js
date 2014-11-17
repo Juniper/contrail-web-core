@@ -96,9 +96,15 @@ function getDomainList (req, callback)
     });
 }
 
-function getNewTokenObjByToken (authObj, callback) {
-    var req = authObj.req 
-    getAuthMethod[req.session.loggedInOrchestrationMode].getUserAuthDataByAuthObj(authObj,
+function getNewTokenObjByToken (authObj, callback)
+{
+    var req = authObj.req;
+    if ((null == req) || (null == req.session)) {
+        loggedInOrchestrationMode = authObj['orchModel'];
+    } else {
+        loggedInOrchestrationMode = req.session.loggedInOrchestrationMode;
+    }
+    getAuthMethod[loggedInOrchestrationMode].getUserAuthDataByAuthObj(authObj,
                                        function(err, data) {
         callback(err, data);
     });

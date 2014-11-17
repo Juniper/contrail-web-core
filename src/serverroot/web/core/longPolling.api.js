@@ -289,15 +289,27 @@ function insertDataToSendAllClients (resObjList, data, statusCode, isJson)
 function redirectToLogoutByChannel (channel)
 {
     var reqCtxArr = cacheApi.checkCachePendingQueue(channel);
-    if ((null == reqCtxArr) || (null == reqCtxArr[0]) ||
-        (null == reqCtxArr[0]['req']) || (null == reqCtxArr[0]['res'])) {
+    if (null == reqCtxArr) {
         return;
     }
-    /* Always 1st entry in reqCtxArr is the requested client, others were
-     * waiting for this active job, so only for that client, redirect
-     * to login
-     */
-    commonUtils.redirectToLogout(reqCtxArr[0]['req'], reqCtxArr[0]['res']);
+    var reqCtxArrLen = reqCtxArr.length;
+    for (var i = 0; i < reqCtxArrLen; i++) {
+        if ((null != reqCtxArr[i]) && (null != reqCtxArr[i]['req']) &&
+            (null != reqCtxArr[i]['res'])) {
+            /* First request is the initiator, and rest are only pending */
+            break;
+        }
+    }
+    if (i == reqCtxArrLen) {
+        return;
+    }
+    commonUtils.redirectToLogout(reqCtxArr[i]['req'], reqCtxArr[i]['res'],
+                                 function() {
+        /* We have redirected to logout page, so remove this channel from the
+         * pending queue
+         */
+        cacheApi.deleteCachePendingQueueEntry(channel);
+    });
 }
 
 exports.redirectToLogoutByChannel = redirectToLogoutByChannel;
