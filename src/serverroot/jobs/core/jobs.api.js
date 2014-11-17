@@ -16,6 +16,7 @@ var redis = require("redis")
     , async = require('async')
     , discServ = require('./discoveryservice.api')
     , UUID = require('uuid-js')
+    , jobUtils = require('../../common/jobs.utils')
 	, messages = require('../../common/messages');
 
 try {
@@ -301,6 +302,12 @@ function checkAndRequeueJob (job, nextRunDelay)
         });
 		return;
 	}
+    /* Update any jobData parameters if any changed in last iteration of job
+     * processing
+     */
+    var jobTitleStr = (jobData.title == null) ? jobType : jobData.title;
+    jobData.taskData =
+        jobUtils.getAndUpdateChangedJobTaskData(jobTitleStr, jobData.taskData);
 	if (jobData.taskData.nextRunDelay != -1) {
         removeJobFromKue(job, function(err) {
             if (null == err) {
@@ -343,8 +350,15 @@ function doCheckJobsProcess ()
 	});
 }
 
-function createJobAtInit (jobName, url, firstRunDelay, runCount, nextRunDelay, appData)
+function createJobAtInit (jobObj)
 {
+    var jobName = jobObj['jobName'];
+    var url = jobObj['url'];
+    var firstRunDelay = jobObj['firstRunDelay'];
+    var runCount = jobObj['runCount'];
+    var nextRunDelay = jobObj['nextRunDelay'];
+    var appData = jobObj['appData'];
+    var orchModel = jobObj['orchModel'];
     var msgObj = {};
     msgObj['jobName'] = jobName;
     msgObj['priority'] = 'normal';
@@ -352,6 +366,7 @@ function createJobAtInit (jobName, url, firstRunDelay, runCount, nextRunDelay, a
     msgObj['runCount'] = runCount;
     msgObj['runDelay'] = firstRunDelay;
     msgObj['data'] = {};
+    msgObj['data']['loggedInOrchestrationMode'] = orchModel;
     msgObj['data']['appData'] = appData;
     msgObj['data']['authObj'] = {};
     msgObj['data']['authObj']['sessionId'] = "";

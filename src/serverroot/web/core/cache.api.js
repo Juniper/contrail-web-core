@@ -345,21 +345,22 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
  This function is used to insert the response published on redis channel on
  ready Q
  */
-function sendResponseByChannel (channel, msg)
+function sendResponseByChannel (channel, msg, deleteChannelAtMainServer)
 {
     var pendClientLists = checkCachePendingQueue(channel);
     if (null == pendClientLists) {
         return;
     }
     var isJson = 0;
-    var msgParse = JSON.parse(msg);
-    if (global.HTTP_STATUS_RESP_OK == msgParse.errCode) {
+    if (global.HTTP_STATUS_RESP_OK == msg.errCode) {
         isJson = 1;
         /* In error case, application will send only the error string */
     }
-    deleteCachePendingQueueEntry(channel);
-    longPoll.insertDataToSendAllClients(pendClientLists, msgParse.data, 
-                                        msgParse.errCode, isJson);
+    if (true == deleteChannelAtMainServer) {
+        deleteCachePendingQueueEntry(channel);
+    }
+    longPoll.insertDataToSendAllClients(pendClientLists, msg.data,
+                                        msg.errCode, isJson);
 }
 
 function handleJSONResponse(error, req, res, jsonStr)

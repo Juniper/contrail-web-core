@@ -64,13 +64,26 @@ function publishDataToRedis (pubChannel, saveChannelKey, errCode, pubData,
 
     saveData = JSON.stringify(saveDataObj);
     */
+    var deleteChannelAtMainServer = true;
+    if ((null != jobData) && (null != jobData.taskData) &&
+        (jobData.taskData.nextRunDelay != -1)) {
+        /* For recurrent jobs, we MUST not delete the listening channel at the
+         * receiving end
+         */
+        deleteChannelAtMainServer = false;
+    }
+    var msg = {
+        msgData: pubDataObj,
+        deleteChannelAtMainServer: deleteChannelAtMainServer
+    };
 	logutils.logger.info("Data Publish done on Channel:" + pubChannel);
-	redisPub.redisPubClient.publish(pubChannel, JSON.stringify(pubDataObj));
+	redisPub.redisPubClient.publish(pubChannel, JSON.stringify(msg));
 
    /* This may be a result of request in Job Server itself, so create an event 
       to trigger it
     */
-    jobsApi.jobListenerReadyQEvent.emit('dataPublished', pubChannel, JSON.stringify(pubData));
+    jobsApi.jobListenerReadyQEvent.emit('dataPublished', pubChannel,
+                                        JSON.stringify(pubData));
          
 	/* Reids does not save the data while publishing data, so if it is needed to
 	 save the data by calling this API, set doSave = 1
