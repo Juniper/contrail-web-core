@@ -88,6 +88,20 @@ function portDetach (req, callback)
     });
 }
 
+function portAttach (req, body, callback)
+{
+    computeApi.portAttach(req, body, function(err, data) {
+        callback(err, data);
+    });
+}
+
+function portDetach (req, portID, vmUUID, callback)
+{
+    computeApi.portDetach(req, portID, vmUUID, function(err, data) {
+        callback(err, data);
+    });
+}
+
 exports.apiGet = apiGet;
 exports.apiPost = apiPost;
 exports.launchVNC = launchVNC;
