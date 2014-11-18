@@ -121,6 +121,11 @@
         <write-access>member</write-access>
     </item> 
     <item>
+        <feature>portsconfigapi</feature>
+        <read-access>member</read-access>
+        <write-access>member</write-access>
+    </item>
+    <item>
         <feature>orchestration</feature>
     </item>
     <item>

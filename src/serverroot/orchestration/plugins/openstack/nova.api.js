@@ -662,9 +662,9 @@ function portAttachSendResp (err, data, apiVer, callback)
     portAttachCB(err, data, callback);
 }
 
-function portAttach (req, callback)
+function portAttach (req, body, callback)
 {
-    var postData = req.body;
+    var postData = body;
     var portID = postData.portID;
     var netID = postData.netID;
     var fixedIP = postData.fixedIP;
@@ -734,11 +734,9 @@ function portAttach (req, callback)
     }); 
 }
 
-function portDetach (req, callback)
+function portDetach (req, portID, vmUUID, callback)
 {
     var appHeaders = {};
-    var vmUUID = req.param('vmUUID');
-    var portID = req.param('portID');
     if (null == vmUUID) {
         var error = new appErrors.RESTServerError('Server not specified');
         callback(error, null);
