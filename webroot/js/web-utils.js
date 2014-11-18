@@ -879,6 +879,7 @@ function MenuHandler() {
                 menuObj = $.xml2json(xml);
                 webServerDefObj.always(function(){
                     processXMLJSON(menuObj, disabledFeatures);
+                    globalObj['webServerInfo']['disabledFeatures'] = ifNull(disabledFeatures,[]);
                     var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'],'menushortcut'));
                     $("#sidebar-shortcuts").html(menuShortcuts);
                     ['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
@@ -926,12 +927,6 @@ function MenuHandler() {
     this.filterMenuItems = function(items,type){
         if(type == null) {
             items = items.filter(function(value){
-                if(value.hash === "mon_infra_underlay") {
-                    if(globalObj.webServerInfo.underlayEnabled == true)
-                        return true;
-                    else
-                        return false;
-                }
                 var hasAccess = false;
                 hasAccess = checkForAccess(value);
                 if(value['items'] != null && value['items']['item'] instanceof Array && hasAccess)
