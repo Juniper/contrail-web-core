@@ -73,7 +73,8 @@
 <script type="text/javascript">
 function preFillURLHash() {
     document.getElementById('urlHash').value = window.location.hash;
-    document.getElementById('urlPath').value = window.location.pathname.replace('/login','');;
+    //If URL is '/vcenter/login' or '/vcenter/authenticate',urlPath is sent as '/vcenter'
+    document.getElementById('urlPath').value = window.location.pathname.replace(/(\/login|\/authenticate)/,'');;
     return true;
 }
 </script>

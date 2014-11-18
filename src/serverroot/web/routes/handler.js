@@ -16,6 +16,7 @@ var http = require('http'),
     crypto = require('crypto'),
     redisSub = require('../core/redisSub'),
     authApi = require('../../common/auth.api'),
+    vCenterApi = require('../../orchestration/plugins/vcenter/vcenter.api');
     fs = require('fs'),
     messages = require('../../common/messages');
 
@@ -69,6 +70,7 @@ function vcenter_logout (req, res, appData)
     if (req.session.loggedInOrchestrationMode != 'vcenter') {
         commonUtils.redirectToURL(req, res, '/logout');
     } else {
+        vCenterApi.logout(appData);
         return logout(req, res);
     }
 }
