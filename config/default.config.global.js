@@ -306,11 +306,6 @@ config.multi_tenancy.enabled = true;
  *****************************************************************************/
 config.session = {};
 config.session.timeout = 24 * 60 * 60 * 1000;
-/*
- * Knob to show Underlay feature under Monitor->Infra section  
- */
-config.underlay = {};
-config.underlay.enabled = false;
 
 // Export this as a module.
 module.exports = config;

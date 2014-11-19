@@ -1748,8 +1748,8 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 			]
 		};
         if(globalObj && globalObj.hasOwnProperty('webServerInfo') &&
-                    globalObj.webServerInfo.hasOwnProperty('underlayEnabled') &&
-                    globalObj.webServerInfo.underlayEnabled == true) {
+                    globalObj.webServerInfo.hasOwnProperty('disabledFeatures') &&
+                    globalObj['webServerInfo']['disabledFeatures']['disabled'].indexOf('mon_infra_underlay') == -1) {
                     gridConfig.body.options.actionCell.push({
                             title: 'Show Underlay Paths',
                             iconClass: 'icon-edit',

@@ -1342,8 +1342,6 @@ function getWebServerInfo (req, res, appData)
     serverObj ['serverUTCTime'] = commonUtils.getCurrentUTCTime();
     serverObj['hostName'] = os.hostname();
     serverObj['role'] = req.session.userRole;
-    serverObj['underlayEnabled'] = ((null != config.underlay) && 
-            (null != config.underlay.enabled)) ? config.underlay.enabled  : true;
     serverObj['featurePkg'] = {};
     serverObj['uiConfig'] = ui; 
     serverObj['loggedInOrchestrationMode'] = req.session.loggedInOrchestrationMode;
