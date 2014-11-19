@@ -249,7 +249,7 @@ function insertResToReadyQ (res, data, statusCode, isJson)
 
 function insertDataToSendAllClients (resObjList, data, statusCode, isJson)
 {
-    var resAdd = false;
+    var respAdd = false;
     var resCtx = {
         timeStamp : getCurrentTimestamp(),
         data: data,
