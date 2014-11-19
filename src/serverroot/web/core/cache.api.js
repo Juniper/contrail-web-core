@@ -171,6 +171,21 @@ function queueDataFromCacheOrSendRequest (req, res, jobType, jobName,
     });
 }
 
+function sendRespOrDoCallback (err, req, res, value, postCallback)
+{
+    var data;
+    if (null == postCallback) {
+        handleJSONResponse(err, req, res, value);
+    } else {
+        try {
+            data = JSON.parse(value);
+        } catch(e) {
+            data = value;
+        }
+        postCallback(req, res, data);
+    }
+}
+
 function sendReqToJobServer (req, res, reqData, channel, hash,
                              sendToJobServerAlways, postCallback)
 {
@@ -212,14 +227,14 @@ function sendReqToJobServer (req, res, reqData, channel, hash,
                  * from API Server at init time, so send the cached info to UI
                  * and parallelly send request to update the cache
                  */
-                handleJSONResponse(err, req, res, value);
+                sendRespOrDoCallback(err, req, res, value, postCallback);
                 saveCtx = false;
             }
 			createDataAndSendToJobServer(global.STR_JOB_TYPE_CACHE, hash,
 			                             reqData, req, res, saveCtx,
                                          postCallback);
 		} else {
-			handleJSONResponse(err, req, res, value);
+            sendRespOrDoCallback(err, req, res, value, postCallback);
 		}
 	});
 }
