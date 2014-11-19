@@ -888,7 +888,6 @@ function callAPIServerByParam (apiCallback, dataObj, ignoreError, callback)
     var headers = dataObj['headers'];
     var data    = dataObj['data'];
     var appData = dataObj['appData'];
-    // console.log("Getting SERVER OBJ:", method, reqUrl, headers, data, appData);
 
     if ((global.HTTP_REQUEST_PUT == method) ||
         (global.HTTP_REQUEST_POST == method)) {
@@ -1212,7 +1211,7 @@ function getApiPostData (url, postData)
     }
 }
 
-function redirectToLogout (req, res)
+function redirectToLogout (req, res, callback)
 {
     if(req.session.loggedInOrchestrationMode == 'vcenter' || req['originalUrl'].indexOf('/vcenter') > -1) {
         redURL = '/vcenter/logout';
@@ -1220,15 +1219,16 @@ function redirectToLogout (req, res)
         redURL = '/logout';
     }
     redirectToURL(req, res, redURL);
+    if (null != callback) {
+        callback();
+    }
 }
 
 function redirectToLogin (req, res)
 {
     if(req.session.loggedInOrchestrationMode == 'vcenter') {
-        console.log("In vcenter login");
         redURL = '/vcenter/login';
     } else {
-        console.log("In login");
         redURL = '/login';
     }
     redirectToURL(req, res, redURL);
@@ -1238,11 +1238,9 @@ function redirectToURL(req, res, redURL)
 {
     var ajaxCall = req.headers['x-requested-with'];
     if (ajaxCall == 'XMLHttpRequest') {
-        console.log("Getting 307");
        res.setHeader('X-Redirect-Url', redURL);
        res.send(307, '');
     } else {
-        console.log("REDIRECT");
        res.redirect(redURL);
     }
 }
