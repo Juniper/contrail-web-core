@@ -20,6 +20,7 @@ try {
 } catch(e) {
     authParams = null;
 }
+
 function getHeaders(defHeaders, appHeaders)
 {
     var headers = defHeaders;
@@ -37,22 +38,22 @@ function getAuthTokenByJobData (jobData)
         return jobData['taskData']['tokenid'];
     }
 
-    logutils.logger.error("We did not get tokenid in taskData");
+    if (true == commonUtils.isMultiTenancyEnabled()) {
+        /* If multi-tenancy is disabled, then this is not error, so do not log
+         */
+        logutils.logger.error("We did not get tokenid in taskData");
+    }
     return null;
 }
 
 function configAppHeaders (headers, jobData)
 {
-    var multiTenancyEnabled =
-        ((null != config.multi_tenancy) &&
-         (null != config.multi_tenancy.enabled)) ?
-        config.multi_tenancy.enabled : true;
     try {
         headers['X-Auth-Token'] = getAuthTokenByJobData(jobData);
     } catch(e) {
         headers['X-Auth-Token'] = null;
     }
-    if (true == multiTenancyEnabled) {
+    if (true == commonUtils.isMultiTenancyEnabled()) {
         /* As we are sending with admin_user, so set the role as 'admin' */
         headers['X_API_ROLE'] = 'admin';
     }
