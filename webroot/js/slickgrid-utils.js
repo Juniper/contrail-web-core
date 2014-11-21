@@ -733,18 +733,15 @@ function getDefaultGridConfig() {
                     }
                 }, 50);
             };
+            /**
+             * Going forward need to merge onUpdateData with onDataUpdate  
+             */
             eventHandlerMap.dataView['onDataUpdate'] = function(e,args) {
                 //Refresh the grid only if it's not destroyed
                 if($(gridContainer).data('contrailGrid')) {
-                    grid.invalidateAllRows();
-                    grid.updateRowCount();
-                    grid.render();
                     if(contrail.checkIfFunction(gridDataSource.events.onDataUpdate)) {
                         gridDataSource.events.onDataUpdate();
                     }
-                    if(gridDataSource.dataView != null && gridDataSource.dataView.getItems().length == 0)
-                        gridContainer.data('contrailGrid').showGridMessage('empty');
-                    gridContainer.data('contrailGrid').refreshView();
                 }
             };
             eventHandlerMap.dataView['onUpdateData'] = function () {
