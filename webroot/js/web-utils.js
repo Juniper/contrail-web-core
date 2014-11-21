@@ -2097,6 +2097,10 @@ function ManageDataSource() {
                     deferredObj:null,
                     dataSource:null
                 },
+                'projectDS':{
+                        data:null,
+                        dataSource:null
+                }
             };
         globalObj['dataSources'] = obj;
         //ko.applyBindings(lastupdatedTimeViewModel,$('div.hardrefresh'));
