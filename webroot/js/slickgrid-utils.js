@@ -339,7 +339,7 @@ function getDefaultGridConfig() {
                         gridColumns[key].sortable = true;
                     }
                     if(contrail.checkIfExist(gridOptions.sortable.defaultSortCols) && contrail.checkIfExist(gridOptions.sortable.defaultSortCols[val.field])) {
-                        gridOptions.sortable.defaultSortCols[val.field].gridColumnKey = key;
+                        gridOptions.sortable.defaultSortCols[val.field].sortCol = val;
                     }
                 }
                 else{
@@ -569,10 +569,7 @@ function getDefaultGridConfig() {
 
                 if(contrail.checkIfExist(gridOptions.sortable.defaultSortCols)) {
                     $.each(gridOptions.sortable.defaultSortCols, function (defaultSortColKey, defaultSortColValue) {
-                        gridSortColumns.push({
-                            sortAsc: defaultSortColValue.sortAsc,
-                            sortCol: gridColumns[defaultSortColValue.gridColumnKey]
-                        })
+                        gridSortColumns.push(defaultSortColValue);
                     });
                 }
         	}
