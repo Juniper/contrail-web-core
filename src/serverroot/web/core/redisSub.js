@@ -104,7 +104,14 @@ function processRedisSubMessage (channel, msg)
         break;
 
     default:
-        cacheApi.sendResponseByChannel(channel, msg);
+        if (null == msg) {
+            logutils.logger.error("In processRedisSubMessage(): We got " +
+                                  "null message for channel:" + channel);
+            return;
+        }
+        var msgParse = JSON.parse(msg);
+        cacheApi.sendResponseByChannel(channel, msgParse['msgData'],
+                                       msgParse['deleteChannelAtMainServer']);
         redisSub.unsubsToRedis(channel);
         break;
     }

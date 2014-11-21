@@ -197,6 +197,11 @@ function getCookieObjs (req, appData, callback)
     });
 }
 
+function getUserAuthDataByConfigAuthObj (authObj, callback)
+{
+    callback(null, null);
+}
+
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.authenticate = authenticate;
@@ -210,4 +215,5 @@ exports.getOSHostList = getOSHostList;
 exports.getAvailabilityZoneList = getAvailabilityZoneList;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
+exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
 
