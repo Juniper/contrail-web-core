@@ -356,6 +356,11 @@ function startWebCluster ()
 
 function doPreStartServer (isRetry)
 {
+    generateLogoFile(isRetry);
+    generateFaviconFile(isRetry);
+}
+
+function generateLogoFile(isRetry) {
     var rootPath = path.join(__dirname, 'webroot');
     var defLogoFile = '/img/opencontrail-logo.png';
     var srcLogoFile = rootPath + defLogoFile;
@@ -365,17 +370,43 @@ function doPreStartServer (isRetry)
     }
     var destLogoFile = rootPath + '/img/sdn-logo.png';
     var cmd = 'cp -f ' + srcLogoFile + " " + destLogoFile;
-    
+
     commonUtils.executeShellCommand(cmd, function(error, stdout, stderr) {
         if (error) {
             logutils.logger.error("Error occurred while copying logo file:" +
-                                  srcLogoFile + ' to ' + destLogoFile +
-                                  ' ['+ error + ']');
+            srcLogoFile + ' to ' + destLogoFile +
+            ' ['+ error + ']');
             if (false == isRetry) {
                 logutils.logger.error("Retrying Copying default logo");
-                doPreStartServer(true);
+                generateLogoFile(true);
             } else {
                 /* Default logo is also missing !!! */
+            }
+        }
+    });
+}
+
+function generateFaviconFile(isRetry) {
+    var rootPath = path.join(__dirname, 'webroot');
+    var defFaviconFile = '/img/opencontrail-favicon.ico';
+    var srcFaviconFile = rootPath + defFaviconFile;
+
+    if ((null != config.favicon_file) && (false == isRetry)) {
+        srcFaviconFile = config.favicon_file;
+    }
+    var destFaviconFile = rootPath + '/img/sdn-favicon.ico';
+    var cmdFavicon = 'cp -f ' + srcFaviconFile + " " + destFaviconFile;
+
+    commonUtils.executeShellCommand(cmdFavicon, function(error, stdout, stderr) {
+        if (error) {
+            logutils.logger.error("Error occurred while copying favicon file:" +
+            srcFaviconFile + ' to ' + destFaviconFile +
+            ' ['+ error + ']');
+            if (false == isRetry) {
+                logutils.logger.error("Retrying Copying default favicon");
+                generateFaviconFile(true);
+            } else {
+                /* Default favicon is also missing !!! */
             }
         }
     });
