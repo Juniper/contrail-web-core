@@ -198,6 +198,9 @@ config.redis_dump_file = '/var/lib/redis/dump-webui.rdb';
 /* Logo File: Use complete path of logo file location */
 config.logo_file = '/usr/src/contrail/contrail-web-core/webroot/img/juniper-networks-logo.png';
 
+/* Favicon File: Use complete path of favicon file location */
+config.favicon_file = '/usr/src/contrail/contrail-web-core/webroot/img/juniper-networks-favicon.ico';
+
 config.featurePkg = {};
 /* Add new feature Package Config details below */
 config.featurePkg.webController = {};
