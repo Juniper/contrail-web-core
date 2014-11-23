@@ -19,6 +19,7 @@ var axon = require('axon')
     , logutils = require('./src/serverroot/utils/log.utils')
     , discServ = require('./src/serverroot/jobs/core/discoveryservice.api')
     , async = require('async')
+    , fs = require('fs')
     , jsonPath = require('JSONPath').eval;
 
 var hostName = config.jobServer.server_ip
@@ -110,6 +111,28 @@ function registerTojobListenerEvent()
     }
 }
 
+/* Function: doFeatureTaskInit
+   This function is used to do all initializations of all the feature packages
+   installed and if is set as enabled in config file
+ */
+function doFeatureTaskInit ()
+{
+    var featurePkgList = config.featurePkg;
+    for (key in featurePkgList) {
+        if ((config.featurePkg[key]) && (config.featurePkg[key]['path']) &&
+            ((null == config.featurePkg[key]['enable']) ||
+             (true == config.featurePkg[key]['enable'])) &&
+            (true == fs.existsSync(config.featurePkg[key]['path'] +
+                                   '/webroot/common/api/init.api.js'))) {
+            var initApi = require(config.featurePkg[key]['path'] +
+                                   '/webroot/common/api/init.api.js');
+            if (initApi.featureInit) {
+                initApi.featureInit();
+            }
+        }
+    }
+}
+
 function startServers ()
 {
     kueJobListen();
@@ -122,6 +145,7 @@ function startServers ()
     }
     redisPub.createRedisPubClient(function() {
         createJobsAtInit();
+        doFeatureTaskInit();
     });
 }
 
