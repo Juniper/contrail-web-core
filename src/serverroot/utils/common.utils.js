@@ -1426,13 +1426,15 @@ function getAllJsons (menuDir, callback)
     });
 }
 
-function createEmptyResourceObj ()
+function createEmptyResourceObj (obj)
 {
-    var obj = {};
+    if (null == obj) {
+        obj = {};
+    }
     obj['resources'] = [];
     obj['resources'][0] = {};
     obj['resources'][0]['resource'] = [];
-    return obj;
+    return obj['resources'];
 }
 
 function mergeResourceObjs (obj1, obj2)
@@ -1441,7 +1443,7 @@ function mergeResourceObjs (obj1, obj2)
         return obj1;
     }
     if (null == obj1['resources']) {
-        obj1 = createEmptyResourceObj();
+        obj1['resources'] = createEmptyResourceObj(obj1);
     }
     obj1['resources'][0]['resource'] =
         obj1['resources'][0]['resource'].concat(obj2['resources'][0]['resource']);
@@ -1579,7 +1581,9 @@ function mergeMenuObjects (menuObj1, menuObj2)
                         var newObj = mergeMenuItems(items1[j], items2[i]);
                         items1[j] = newObj['obj'];
                         objFound = newObj['found'];
-                        break;
+                        if (true == objFound) {
+                            break;
+                        }
                     }
                     if (false == objFound) {
                         items1.push(items2[i]); 
