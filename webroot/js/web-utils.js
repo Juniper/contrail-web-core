@@ -60,6 +60,16 @@ var infraAlertMsgs = {
 ////Contant to check if a nodemanger is installed in the setup or not and use is appropriately
 var IS_NODE_MANAGER_INSTALLED = true;
 
+var NO_RELOAD_JS_CLASSLIST = [
+    'infraMonitorView',
+    'tenantNetworkMonitorView',
+    'clustersPageLoader',
+    'serversPageLoader',
+    'imagesPageLoader',
+    'packagesPageLoader',
+    'smLoader'
+];
+
 //Sets the following prototype if not defined already.
 //Array.prototype.unique - returns unique values of an array.
 //Array.prototype.diff - difference between two arrays.
@@ -1304,8 +1314,9 @@ function MenuHandler() {
                     var isLoadFn = currResourceObj['loadFn'] != null ? true : false;
                     var isReloadRequired = true;
                     //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
-                    if(currResourceObj['class'] == 'infraMonitorView' || currResourceObj['class'] == 'tenantNetworkMonitorView')
+                    if(NO_RELOAD_JS_CLASSLIST.indexOf(currResourceObj['class']) != -1) {
                         isReloadRequired = false;
+                    }
                     $.each(currResourceObj['js'], function () {
                         //Load the JS file only if it's not loaded already
                         //if (window[currResourceObj['class']] == null)
