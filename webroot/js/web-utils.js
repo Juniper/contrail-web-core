@@ -1062,7 +1062,8 @@ function MenuHandler() {
         }
         if (subMenuId == null) {
             subMenuId = $('.item:first').find('ul:first');
-            window.location = $('.item:first').find('ul:first').find('li:first a').attr("href"); // TODO: Avoid reload of page; fix it via hash.
+            var href = $('.item:first').find('ul:first').find('li:first a').attr("href");
+            loadFeature($.deparam.fragment(href));
         } else {
             subMenuId = $(linkId).parent('ul.submenu');
             toggleSubMenu($(subMenuId), linkId);
