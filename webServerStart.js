@@ -154,7 +154,7 @@ function registerSessionDeleteEvent ()
 {
     store.eventEmitter.on('sessionDeleted', function (sid) {
         /* Handle session delete cases here */
-        console.log("Session got expired:", sid);
+        logutils.logger.debug("Session got expired: " + sid);
     });
 }
 
