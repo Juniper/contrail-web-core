@@ -60,6 +60,16 @@ var infraAlertMsgs = {
 ////Contant to check if a nodemanger is installed in the setup or not and use is appropriately
 var IS_NODE_MANAGER_INSTALLED = true;
 
+var NO_RELOAD_JS_CLASSLIST = [
+    'infraMonitorView',
+    'tenantNetworkMonitorView',
+    'clustersPageLoader',
+    'serversPageLoader',
+    'imagesPageLoader',
+    'packagesPageLoader',
+    'smLoader'
+];
+
 //Sets the following prototype if not defined already.
 //Array.prototype.unique - returns unique values of an array.
 //Array.prototype.diff - difference between two arrays.
@@ -879,6 +889,7 @@ function MenuHandler() {
                 menuObj = $.xml2json(xml);
                 webServerDefObj.always(function(){
                     processXMLJSON(menuObj, disabledFeatures);
+                    globalObj['webServerInfo']['disabledFeatures'] = ifNull(disabledFeatures,[]);
                     var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'],'menushortcut'));
                     $("#sidebar-shortcuts").html(menuShortcuts);
                     ['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
@@ -926,12 +937,6 @@ function MenuHandler() {
     this.filterMenuItems = function(items,type){
         if(type == null) {
             items = items.filter(function(value){
-                if(value.hash === "mon_infra_underlay") {
-                    if(globalObj.webServerInfo.underlayEnabled == true)
-                        return true;
-                    else
-                        return false;
-                }
                 var hasAccess = false;
                 hasAccess = checkForAccess(value);
                 if(value['items'] != null && value['items']['item'] instanceof Array && hasAccess)
@@ -1304,8 +1309,9 @@ function MenuHandler() {
                     var isLoadFn = currResourceObj['loadFn'] != null ? true : false;
                     var isReloadRequired = true;
                     //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
-                    if(currResourceObj['class'] == 'infraMonitorView' || currResourceObj['class'] == 'tenantNetworkMonitorView')
+                    if(NO_RELOAD_JS_CLASSLIST.indexOf(currResourceObj['class']) != -1) {
                         isReloadRequired = false;
+                    }
                     $.each(currResourceObj['js'], function () {
                         //Load the JS file only if it's not loaded already
                         //if (window[currResourceObj['class']] == null)
@@ -2102,6 +2108,10 @@ function ManageDataSource() {
                     deferredObj:null,
                     dataSource:null
                 },
+                'projectDS':{
+                        data:null,
+                        dataSource:null
+                }
             };
         globalObj['dataSources'] = obj;
         //ko.applyBindings(lastupdatedTimeViewModel,$('div.hardrefresh'));

@@ -801,6 +801,48 @@ function getUserAuthDataByAuthObj (authObj, callback)
     });
 }
 
+function getUserAuthDataByConfigAuthObj (authObj, callback)
+{
+    var error = new appErrors.RESTServerError("auth object not found in config");
+    try {
+        var authParams = require('../../../../../config/userAuth');
+    } catch(e) {
+        logutils.logger.error("userAuth.js not found");
+        callback(error, null);
+    }
+    if (null == authObj) {
+        authObj = {};
+    }
+    if (null == authObj['username']) {
+        if ((null != authParams) &&
+            (null != authParams.admin_user)) {
+            authObj['username'] = authParams.admin_user;
+        } else {
+            callback(error, null);
+            return;
+        }
+    }
+    if (null == authObj['password']) {
+        if ((null != authParams) &&
+            (null != authParams.admin_password)) {
+            authObj['password'] = authParams.admin_password;
+        } else {
+            callback(error, null);
+            return;
+        }
+    }
+    if (null == authObj['tenant']) {
+        if ((null != authParams) &&
+            (null != authParams.admin_tenant_name)) {
+            authObj['tenant'] = authParams.admin_tenant_name;
+        } else {
+            callback(error, null);
+            return;
+        }
+    }
+    getUserAuthDataByAuthObj(authObj, callback);
+}
+
 function getServiceCatalog (req, callback)
 {
     try {
@@ -1811,4 +1853,5 @@ exports.getUserAuthDataByAuthObj = getUserAuthDataByAuthObj;
 exports.getUserRoleByAuthResponse = getUserRoleByAuthResponse;
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
+exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
 
