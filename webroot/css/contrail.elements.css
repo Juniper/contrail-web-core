@@ -3664,6 +3664,22 @@ td.td-actions a.td-action {
   position: relative;
   margin-left:5px;
 }
+
+#alerts-box-content > .item-list > .itemdiv > .body {
+	border-bottom: 1px solid #E4ECF3;
+}
+
+#alerts-box-content > .item-list > .itemdiv > .body > .text:after {
+    border-top: 0px;	
+}
+#alerts-box-content > .item-list > .itemdiv > .body > .text {
+	display:inline-block;
+}
+#alerts-box-content > .item-list > .itemdiv > .body > .time {
+	position:relative;
+	display:inline-block;
+	right:0px;
+}
 .itemdiv > .body > .time {
   display: block;
   font-size: 11px;
