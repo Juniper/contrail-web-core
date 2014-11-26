@@ -30,7 +30,8 @@ var serializer = new XMLSerializer(),
         {"name":"Source VN, Source IP", "value":"sourcevn_sourceip"},
         {"name":"Dest. VN, Dest. IP", "value":"destvn_destip"},
         {"name":"Protocol, Source Port", "value":"protocol_sport"},
-        {"name":"Protocol, Dest. Port", "value":"protocol_dport"}
+        {"name":"Protocol, Dest. Port", "value":"protocol_dport"},
+        {"name":"Virtual Router", "value":"vrouter"}
     ];
 
 var queries = {
@@ -779,7 +780,10 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
 	var query = queries[queryPrefix],
 	    fieldName = $('#' + element).find("select[name='field[]']").val(),
 	    valueNode = $('#' + element).find("input[name='value[]']"),
-    	fieldData = query.whereViewModel[fieldName], value2Node;
+        fieldData = query.whereViewModel[fieldName], value2Node,
+        value2Node = $('#' + element).find("input[name='value2[]']"),
+        // extend the fieldData object to prevent overwriting the original one
+        cbFieldData = $.extend(true, [], contrail.checkIfFunction(fieldData) ? fieldData() : []);
 
     valueNode.contrailCombobox({
         placeholder:(placeHolders[fieldName] != null ? placeHolders[fieldName][0] : 'Select'),
@@ -787,17 +791,21 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
         dataValueField:"value",
         dataSource:{
         	type: 'local',
-            data:fieldData != null ? fieldData() : []
-        }, 
+            data:cbFieldData != null ? cbFieldData : []
+        },
         change: function(e, ui){
             validateOrClause(element);
             setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
         }
     });
     valueNode.data('contrailCombobox').value(value);
-    
-    if (placeHolders[fieldName] != null) {
-        value2Node = $('#' + element).find("input[name='value2[]']");
+
+    if (fieldName == 'vrouter') {
+        value2Node.val('');
+        value2Node.hide();
+    }
+    else if (placeHolders[fieldName] != null) {
+        value2Node.show();
         value2Node.val(value2);
         value2Node.attr('placeholder', placeHolders[fieldName][1]);
         (value2Node.val() != "") ? value2Node.prop('disabled', false) :value2Node.prop('disabled', true);
@@ -805,7 +813,7 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
     //if(onchangeFlag == true){
     	setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
     //}
-}
+};
 
 /*
  * End - Where Clause Functions
