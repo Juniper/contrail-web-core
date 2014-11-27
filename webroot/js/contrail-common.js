@@ -116,8 +116,11 @@ function Contrail() {
 
         $.ajax(ajaxConfig).success(function(response){
             successHandler(response);
-        }).fail(function(response){
-            failureHandler(response);
+        }).fail(function (error) {
+            if (error['statusText'] === "timeout") {
+                error['responseText'] = "Request timeout.";
+            }
+            failureHandler(error);
         });
     };
 
