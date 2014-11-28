@@ -154,6 +154,10 @@ config.vcenter.strictSSL = false;               //Validate the certificate or ig
 config.vcenter.ca = '';                         //specify the certificate key file
 config.vcenter.wsdl = '/usr/src/contrail/contrail-web-core/webroot/js/vim.wsdl';
 
+// multi_tenancy flag values
+config.multi_tenancy = {};
+config.multi_tenancy.enable = false;
+
 /* Discovery Service */
 config.discoveryService = {};
 config.discoveryService.server_port = '5998';
