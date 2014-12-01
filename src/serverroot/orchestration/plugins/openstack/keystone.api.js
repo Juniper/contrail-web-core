@@ -718,7 +718,8 @@ function getV2Token (authObj, callback)
     var forceAuth   = authObj['forceAuth'];
 
     var projEntry = getTokenIdByProject(req, tenantId);
-    if (null != projEntry) {
+    if ((null != projEntry) && ((null == forceAuth) ||
+        (false == forceAuth))) {
         logutils.logger.debug("We are having project already in DB:" +
                               tenantId);
         callback(null, projEntry);
@@ -754,8 +755,6 @@ function getTokenIdByProject (req, tenantName)
 function getUserAuthData (req, tenantName, callback)
 {
     var token = getTokenIdByProject(req, tenantName);
-    callback(null, token);
-    return;
     var lastTokenUsed = getLastIdTokenUsed(req);
     var authObj = {};
     authObj['tokenid'] = token.id;

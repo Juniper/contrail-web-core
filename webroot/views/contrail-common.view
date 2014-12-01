@@ -265,20 +265,26 @@
             <div class="itemdiv commentdiv infobox-blue">
                 <div class="body">
                     {{#typeof timeStamp "string"}}
-                        <div class="time">
+                        <div class="text break-and-wrap-word" style="width:75%">
+                    {{/typeof}}
+                    {{#IfCompare timeStamp null operator="=="}}
+                        <div class="text break-and-wrap-word">
+                    {{/IfCompare}}
+                    {{#IfCompare name null operator="=="}}
+                         {{msg}}</div>                        
+                    {{else}}
+                        {{#IfCompare link null operator="!="}}
+                            <span class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}})>{{name}}</span> , {{type}} , {{msg}}</div>
+                        {{else}}
+                             {{name}} , {{type}} , {{msg}}</div>
+                        {{/IfCompare}}
+                    {{/IfCompare}}
+                    {{#typeof timeStamp "string"}}
+                        <div class="time" style="width:90px">
                             <i class="icon-time"></i>
                             <span> {{#getRelativeTime timeStamp}}{{/getRelativeTime}} </span>
                         </div>
                     {{/typeof}}
-                    {{#IfCompare name null operator="=="}}
-                        <div class="text"> {{msg}}</div>                        
-                    {{else}}
-                        {{#IfCompare link null operator="!="}}
-                            <div class="text"> <span class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}})>{{name}}</span> , {{type}} , {{msg}}</div>
-                        {{else}}
-                            <div class="text"> {{name}} , {{type}} , {{msg}}</div>
-                        {{/IfCompare}}
-                    {{/IfCompare}}
                 </div>
             </div>
             {{else}}
