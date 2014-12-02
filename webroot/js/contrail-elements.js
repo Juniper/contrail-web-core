@@ -24,6 +24,14 @@
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
         self.tabs(option);
+        self.data('contrailTabs', {
+        	startLoading: function(selectedTabLinkId){
+        		$(selectedTabLinkId).prepend('<i class="icon-spinner icon-spin contrail-tabs-loading"></i>');
+        	},
+        	endLoading: function(selectedTabLinkId){
+        		$(selectedTabLinkId).find('.contrail-tabs-loading').remove();
+        	}
+        });
         return self;
     };
     

@@ -220,6 +220,19 @@
 </div>
 </script>
 
+<script type="text/x-handlebars-template" id="tooltip-content-template">
+<div class="row-fluid">
+    <div class="row-fluid">
+	{{#each this}}
+        <div class="row-fluid popover-tooltip-row {{#if dividerClass}} {{dividerClass}} {{/if}}">
+            <span class="key">{{lbl}} </span>
+            <span class="value">{{value}}</span>
+         </div>
+	{{/each}}
+	</div> 
+</div>
+</script>
+
 <!--
     Start:Dashboard templates
 -->

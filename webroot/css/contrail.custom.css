@@ -1538,11 +1538,10 @@ color: #b94a48;
 }
 
 .font-element i.icon-contrail-virtual-network, .font-element i.icon-contrail-virtual-machine {
-	color: #637939;
+    color: #498AB9;
 }
 .font-element i.icon-contrail-service-instance {
-	color: #d62728;
-	font-size: 30px;
+	color: #e7ba52;
 }
 .font-element i.icon-contrail-router {
 	color: #ff7f0e;
@@ -1551,17 +1550,21 @@ color: #b94a48;
 	color: #875d8d;
 }
 .font-element i.icon-contrail-network-policy {
-	color: #498AB9;
-	font-size: 33px;
+    color: #637939;
 }
-
+.font-element i.icon-contrail-network-ipam {
+    color: #f47671;
+}
+.font-element i.icon-contrail-virtual-machine {
+    font-size: 20px;
+}
 .topology-visualization svg {
     height: auto !important;
     width: auto !important;
 
 }
 .topology-visualization svg text {
-    font-size: 11px;
+    font-size: 10px;
     font-weight:200;
 }
 
@@ -1672,8 +1675,8 @@ color: #b94a48;
 .topology-visualization.holygrail .col3 {
     float:left;
     float:right;			
-    width:80px;        	
-    margin-right:65px;  	
+    width:50px;
+    margin-right:50px;
     position:relative;
     left:50%;
 }
@@ -1681,9 +1684,12 @@ color: #b94a48;
 .topology-visualization .breadcrumbs {
     color:#3182bd;
     font-family:Open Sans;
+    position: absolute;
+    bottom: -4px;
+    right: 5px;
 }
 .topology-visualization .breadcrumbs .breadcrumb-item {
-    margin: 5px 10px;
+    margin: 5px 0;
     width: 50px;
     float: right;
     padding: 2px 0;
@@ -1691,14 +1697,11 @@ color: #b94a48;
     background-color:#fff;
     border-radius:5px;
     border:1px solid #ddd;
-    -moz-box-shadow:    4px 3px 5px 0px #ccc;
-    -webkit-box-shadow: 4px 3px 5px 0px #ccc;
-    box-shadow:         4px 3px 5px 0px #ccc;
     cursor: pointer;
 }
 .topology-visualization .breadcrumbs .breadcrumb-item .breadcrumb-item-text {
     font-size:10px;
-    margin: 0 2px;
+    margin: 0 auto;
 	width: 40px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1708,21 +1711,25 @@ color: #b94a48;
     -webkit-line-clamp: 1; /* number of lines to show */
     -webkit-box-orient: vertical;
 }
-.topology-visualization .breadcrumbs .breadcrumb-item .breadcrumb-item-image {
-    width:30px;
+.topology-visualization .breadcrumbs .breadcrumb-item .breadcrumb-item-icon {
+    font-size:30px;
 }
-.topology-visualization .zoom-controls {
-	padding: 10px 10px 0 13px;
+.topology-visualization .topology-controls {
 	font-size: 15px;
+    width: 35px;
+    background-color: #eee;
 }
-.topology-visualization .zoom-controls i {
+.topology-visualization .topology-controls i {
 	color: #777;
 }
-.topology-visualization .zoom-controls .dropdown-menu {
-	right: -11px;
-	top: 33px;
+.topology-visualization .topology-controls .topology-control-item {
+    padding: 5px 10px;
+    width: 25px;
 }
-.topology-visualization .zoom-controls .dropdown-menu i {
+.topology-visualization .topology-controls .dropdown-menu {
+	right: 2px;
+}
+.topology-visualization .topology-controls .dropdown-menu i {
 	margin-right: 5px;
 }
 
@@ -1781,6 +1788,49 @@ color: #b94a48;
 	font-style: italic;
 	font-size: 13px;
 	margin-bottom: 0;
+}
+
+.popover.popover-tooltip {
+  width: 800px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+  box-shadow: none;
+  opacity: 1;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  color: #fff;
+  background-color: #efefef;
+  padding: 2px 0;
+}
+.popover.popover-tooltip .arrow {
+  display: none;
+}
+.popover.popover-tooltip .popover-title {
+  background-color: #eee;
+  color: #3182bd;
+  font-weight: 600;
+  padding: 0 10px ;
+  font-size: 12px;
+  border: none;
+  border-radius: 5px;
+
+}
+.popover.popover-tooltip .popover-content {
+  border: none;
+  box-shadow: none;
+  padding: 0 10px;
+}
+.popover.popover-tooltip .popover-content .popover-tooltip-row {
+  padding: 0;
+  font-size: 12px;
+}
+.popover.popover-tooltip .popover-content .popover-tooltip-row .key {
+  color: #444;
+  font-weight: 400;
+}
+.popover.popover-tooltip .popover-content .popover-tooltip-row .value {
+  color: #777;
+  font-weight: 400;
+  margin-left: 5px;
 }
 
 /* Bootstrap Tooltips*/

@@ -169,9 +169,9 @@ cp -af ./$THIRD_PARTY/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
 rm -rf webroot/assets/joint
 mkdir -p webroot/assets/joint/js
 mkdir -p webroot/assets/joint/css
-cp -r ./$THIRD_PARTY/joint-v0.9.0/dist/joint.nojquery.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.0/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.0/dist/joint.nojquery.css webroot/assets/joint/css/
+cp -r ./$THIRD_PARTY/joint-v0.9.2/dist/joint.nojquery.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.2/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.2/dist/joint.nojquery.css webroot/assets/joint/css/
 #End - Copy Joint from web-third-party
 
 #Start - Copy jquery-contextMenu from web-third-party
