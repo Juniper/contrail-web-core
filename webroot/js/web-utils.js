@@ -169,6 +169,41 @@ var defColors = ['#1c638d', '#4DA3D5'];
                     layoutHandler.setURLHashObj(data['link']['hashParams']);
             });
         },
+        initPortDistributionCharts:function (data) {
+            var chartsTemplate = contrail.getTemplate4Id('port-distribution-charts-template');
+            var networkChart, chartSelector;
+            if ((data['chartType'] == null) && ($.inArray(ifNull(data['context'], ''), ['domain', 'network', 'connected-nw', 'project', 'instance']) > -1)) {
+                networkChart = true;
+                chartSelector = '.port-distribution-chart';
+            } else {
+                networkChart = false;
+                //chartSelector = '.d3-chart';
+                chartSelector = '.port-distribution-chart';
+            }
+            $(this).html(chartsTemplate(data));
+            if (networkChart == true) {
+                //Add durationStr
+                $.each(data['d'], function (idx, obj) {
+                    if (ifNull(obj['duration'], true)) {
+                        if (obj['title'].indexOf('(') < 0)
+                            obj['title'] += durationStr;
+                    }
+                });
+                //Set the chart height to parent height - title height
+            }
+            //$(this).find('.stack-chart').setAvblSize();
+            var charts = $(this).find(chartSelector);
+            $.each(charts, function (idx, chart) {
+                //Bind the function to pass on the context of url & objectType to schema parse function
+                var chartData = data['d'][idx];
+                var chartType = ifNull(chartData['chartType'], '');
+                var fields;
+                var objectType = chartData['objectType'];
+                //Load asynchronously
+                initDeferred($.extend({},chartData,{selector:$(this),renderFn:'initScatterChart'}));
+                //If title is clickable
+            });
+        },
         initCharts:function (data) {
             var chartsTemplate = contrail.getTemplate4Id('charts-template');
             var networkChart, chartSelector;
@@ -288,6 +323,10 @@ var defColors = ['#1c638d', '#4DA3D5'];
             $(this).find('.summary-charts').each(function (idx) {
                 var contextObj = getContextObj(data);
                 $(this).initCharts($.extend({}, data['charts'][idx], {context:data['context']}, contextObj));
+            });
+            $(this).find('.port-distribution-charts').each(function (idx) {
+                var contextObj = getContextObj(data);
+                $(this).initPortDistributionCharts($.extend({}, data['charts'][idx], {context:data['context']}, contextObj));
             });
             $(this).find('.z-grid').each(function (idx) {
                 //If grid height is set pass height as 100%
@@ -874,6 +913,12 @@ function pushBreadcrumb(breadcrumbsArr) {
             $('#breadcrumb').append('<li><a>' + breadcrumbsArr[i] + '</a><span class="divider"><i class="icon-angle-right"></i></span></li>');
         }
     }
+}
+
+function pushBreadcrumbDropdown(id){
+	$('#breadcrumb').children('li').removeClass('active');
+	$('#breadcrumb').children('li:last').append('<span class="divider"><i class="icon-angle-right"></i></span>');
+	$('#breadcrumb').append('<li class="active"><div id="' + id + '"></div></li>');
 }
 
 function MenuHandler() {

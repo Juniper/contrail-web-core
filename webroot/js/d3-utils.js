@@ -522,7 +522,7 @@ function initTrafficTSChart(selector, data, options, chart, yFormatter, y2Format
                 brushExtent = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
             }
 
-            chart = nv.models.lineWithExtendedFocusChart().height2(90).margin2({top:10, right:30, bottom:20, left:60}).brushExtent(brushExtent);
+            chart = nv.models.lineWithExtendedFocusChart().height2(options.height == 250 ? 70 : 90).margin2({top:10, right:30, bottom:20, left:60}).brushExtent(brushExtent);
 
             chart.interpolate(interpolateSankey);
 
