@@ -1,34 +1,102 @@
 @font-face {
-	font-family: 'icon-contrail';
-	src:url('/img/font/icon-contrail.eot?td281h');
-	src:url('/img/font/icon-contrail.eot?#iefixtd281h') format('embedded-opentype'),
-		url('/img/font/icon-contrail.woff?td281h') format('woff'),
-		url('/img/font/icon-contrail.ttf?td281h') format('truetype'),
-		url('/img/font/icon-contrail.svg?td281h#icon-contrail') format('svg');
-	font-weight: normal;
-	font-style: normal;
+    font-family: 'icon-contrail';
+    src:url('/img/font/icon-contrail.eot?-1r7isb');
+    src:url('/img/font/icon-contrail.eot?#iefix-1r7isb') format('embedded-opentype'),
+        url('/img/font/icon-contrail.woff?-1r7isb') format('woff'),
+        url('/img/font/icon-contrail.ttf?-1r7isb') format('truetype'),
+        url('/img/font/icon-contrail.svg?-1r7isb#icon-contrail') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 
 [class^="icon-contrail-"], [class*=" icon-contrail-"] {
-	font-family: 'icon-contrail';
-	speak: none;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
+    font-family: 'icon-contrail';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
 
-	/* Better Font Rendering =========== */
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
+
+.icon-contrail-virtual-machine:before {
+    content: "\e600";
+}
+.icon-contrail-virtual-network:before {
+    content: "\e601";
+}
+.icon-contrail-network-ipam:before {
+    content: "\e602";
+}
+.icon-contrail-analytics-node:before {
+    content: "\e603";
+}
+.icon-contrail-compute-node:before {
+    content: "\e604";
+}
+.icon-contrail-config-node:before {
+    content: "\e605";
+}
+.icon-contrail-control-node:before {
+    content: "\e606";
+}
+.icon-contrail-switch:before {
+    content: "\e607";
+}
+.icon-contrail-db-node:before {
+    content: "\e608";
+}
+.icon-contrail-virtual-firewall:before {
+    content: "\e609";
+}
+.icon-contrail-nat:before {
+    content: "\e60a";
+}
+.icon-contrail-openstack-node:before {
+    content: "\e60b";
+}
+.icon-contrail-system-stats:before {
+    content: "\e60c";
+}
+.icon-contrail-virtual-router:before {
+    content: "\e60d";
+}
+.icon-contrail-webui-node:before {
+    content: "\e60e";
+}
+.icon-contrail-analytics-db:before {
+    content: "\e60f";
+}
+.icon-contrail-config-db:before {
+    content: "\e610";
+}
+.icon-contrail-system-logs:before {
+    content: "\e611";
+}
+.icon-contrail-project:before {
+    content: "\e612";
+}
+.icon-contrail-router:before {
+    content: "\e613";
+}
+.icon-contrail-network-policy:before {
+    content: "\e614";
+}
+.icon-contrail-security-group:before {
+    content: "\e615";
+}
+
 @font-face {
     font-family: 'contrail-core';
     src:url('/css/fonts/contrail-core.eot?e1umid');
     src:url('/css/fonts/contrail-core.eot?#iefixe1umid') format('embedded-opentype'),
-        url('/css/fonts/contrail-core.woff?e1umid') format('woff'),
-        url('/css/fonts/contrail-core.ttf?e1umid') format('truetype'),
-        url('/css/fonts/contrail-core.svg?e1umid#contrail-core') format('svg');
+    url('/css/fonts/contrail-core.woff?e1umid') format('woff'),
+    url('/css/fonts/contrail-core.ttf?e1umid') format('truetype'),
+    url('/css/fonts/contrail-core.svg?e1umid#contrail-core') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -46,36 +114,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
 .icon-contrail-coreswitch:before {
     content: "\b700";
-}
-.icon-contrail-firewall:before, .icon-contrail-service-instance:before {
-	content: "\e600";
-}
-.icon-contrail-router:before {
-	content: "\e601";
-}
-.icon-contrail-NAT:before {
-	content: "\e602";
-}
-.icon-contrail-network-policy:before {
-	content: "\e604";
-}
-.icon-contrail-network-policya:before {
-	content: "\e603";
-}
-.icon-contrail-security-group:before {
-	content: "\e606";
-}
-.icon-contrail-security-groupa:before {
-	content: "\e605";
-}
-.icon-contrail-virtual-machine:before {
-	content: "\e607";
-}
-.icon-contrail-virtual-network:before {
-	content: "\e608";
 }
 .icon-contrail-spine:before {
     content: "\e601";
@@ -85,3 +125,4 @@
 }
 .icon-contrail-vrouter:before {
     content: url(/img/vrouter.png);
+}
