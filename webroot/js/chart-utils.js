@@ -23,7 +23,7 @@
         initD3TSChart: function (obj) {
             var selector = $(this);
             var url = (typeof(obj['url']) == 'function') ? obj['url']() : obj['url'];
-            var cbParams = {selector: selector};
+            var cbParams = {selector: selector, height: contrail.checkIfExist(obj['height']) ? obj['height'] : 300};
             chartHandler(url, "GET", null, null, 'parseTSChartData', "successHandlerTSChart", null, false, cbParams, 310000);
         },
         initScatterChart:function (data) {

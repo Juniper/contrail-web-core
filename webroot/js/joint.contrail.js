@@ -22,6 +22,17 @@ var IMAGE_MAP = {
     'virtual-machine': 'vm'
 };
 
+var GRAPH_MARGIN = 35;
+
+var VM_GRAPH_OPTIONS = {
+	regularVMSize: {width: 20, height: 20, margin: 20},
+	minVMSize: {width: 10, height: 10},
+	externalRectRatio: {width: 16, height: 4},
+	internalRectRatio: {width: 16, height: 4},
+	minInternalRect: {width: 200, height: 100},
+	marginRatio: {width:1, height:1 }
+};
+
 var contextMenuConfig =  {
 	VirtualNetwork: function(element, jointConfig){
 		var viewElement = jointConfig.connectedGraph.getCell(element.attr('model-id')),
@@ -72,12 +83,24 @@ var contextMenuConfig =  {
 			}
 		};
 	},
+	ServiceInstance: function(element, jointConfig){
+		return {
+			items: {
+				configure: {
+					name: '<i class="icon-cog"></i><span class="margin-0-5">Configure Service Instances</span>',
+					callback: function(key, options) {
+						loadFeature({p:'config_sc_svcInstances'});
+	                }
+				}
+			}
+		};
+	},
 	link: function(element, jointConfig){
 		var viewElement = jointConfig.connectedGraph.getCell(element.attr('model-id')),
 			viewElementDetails = viewElement.attributes.linkDetails,
 			sourceName = viewElementDetails['src'].split(':')[2],
 			targetName = viewElementDetails['dst'].split(':')[2];
-		
+
 		var viewListMenu = {
 			items: {
 				trafficFromSource2Target: {
@@ -139,9 +162,9 @@ var tooltipConfig = {
 					tooltipContent = contrail.getTemplate4Id('tooltip-content-template');
 				
 				return tooltipContent([{lbl:'Name', value: viewElement.attributes.nodeDetails['name']},
-				                       {lbl:'in', value: viewElement.attributes.nodeDetails.more_attr.in_tpkts + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.in_bytes)},
-				                       {lbl:'out', value: viewElement.attributes.nodeDetails.more_attr.out_tpkts + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.out_bytes)},
-				                       {lbl:'Instances', value: viewElement.attributes.nodeDetails.more_attr.vm_cnt}]);
+				                       {lbl:'In', value: viewElement.attributes.nodeDetails.more_attr.in_tpkts + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.in_bytes)},
+				                       {lbl:'Out', value: viewElement.attributes.nodeDetails.more_attr.out_tpkts + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.out_bytes)},
+				                       {lbl:'Instance Count', value: viewElement.attributes.nodeDetails.more_attr.vm_cnt}]);
 				
 			}
 		},
@@ -153,7 +176,7 @@ var tooltipConfig = {
 				var viewElement = jointConfig.configGraph.getCell(element.attr('model-id')),
 					tooltipContent = contrail.getTemplate4Id('tooltip-content-template');
 				
-				return tooltipContent([{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name']}]);
+				return tooltipContent([{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name'].join(':')}]);
 			}
 		},
 		SecurityGroup: {
@@ -164,7 +187,7 @@ var tooltipConfig = {
 				var viewElement = jointConfig.configGraph.getCell(element.attr('model-id')),
 				tooltipContent = contrail.getTemplate4Id('tooltip-content-template');
 			
-				return tooltipContent([{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name']}]);
+				return tooltipContent([{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name'].join(':')}]);
 			}
 		},
 		NetworkIPAM: {
@@ -174,8 +197,35 @@ var tooltipConfig = {
 			content: function(element, jointConfig){
 				var viewElement = jointConfig.configGraph.getCell(element.attr('model-id')),
 				tooltipContent = contrail.getTemplate4Id('tooltip-content-template');
-			
-				return tooltipContent([{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name']}]);
+
+				return tooltipContent([{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name'].join(':') }]);
+			}
+		},
+		ServiceInstance: {
+			title: function(element, jointConfig){
+				return 'Service Instance';
+			},
+			content: function(element, jointConfig){
+				var viewElement = jointConfig.connectedGraph.getCell(element.attr('model-id')),
+				tooltipContent = contrail.getTemplate4Id('tooltip-content-template');
+
+				return tooltipContent([
+					{lbl:'Name', value: viewElement.attributes.nodeDetails['name'] },
+					{lbl:'Status', value: viewElement.attributes.nodeDetails['status'] }
+				]);
+			}
+		},
+		VirtualMachine: {
+			title: function(element, jointConfig){
+				return 'Virtual Machine';
+			},
+			content: function(element, jointConfig){
+				var viewElement = jointConfig.connectedGraph.getCell(element.attr('model-id')),
+				tooltipContent = contrail.getTemplate4Id('tooltip-content-template');
+
+				return tooltipContent([
+					{lbl:'UUID', value: viewElement.attributes.nodeDetails['fqName'] },
+				]);
 			}
 		},
 		link: {
@@ -214,7 +264,7 @@ var tooltipConfig = {
 			                  }
 			              }
 			        }else if(src==in_stats[i].dst && dst==in_stats[i].src){
-			            data.push({lbl:"Link",value:in_stats[i].src.split(':').pop()+" --- "+in_stats[i].dst.split(':').pop()});
+			            data.push({lbl:"Link",value:in_stats[i].src.split(':').pop()+" --- "+in_stats[i].dst.split(':').pop(), dividerClass: 'margin-5-0-0'});
 			            data.push({lbl:"In",value:in_stats[i].pkts+" pkts / "+formatBytes(in_stats[i].bytes)});
 			            for(var j=0;j<out_stats.length;j++){
 			                 if(src==out_stats[j].dst && dst==out_stats[j].src){
@@ -233,7 +283,7 @@ var tooltipConfig = {
 			            data.push({lbl:"Link",value:src+" --- "+dst});
 			            data.push({lbl:"In",value:"0 pkts / 0 B"});
 			            data.push({lbl:"Out",value:"0 pkts / 0 B"});
-			            data.push({lbl:"Link",value:dst+" --- "+src});
+			            data.push({lbl:"Link",value:dst+" --- "+src, dividerClass: 'margin-5-0-0'});
 			            data.push({lbl:"In",value:"0 pkts / 0 B"});
 			            data.push({lbl:"Out",value:"0 pkts / 0 B"});
 			        } else if(viewElementDetails.dir=='uni') {
@@ -252,7 +302,7 @@ var tooltipConfig = {
 			            data.push({lbl:"Link",value:src+" --- "+dst});
 			            data.push({lbl:"In",value:"0 pkts / 0 B"});
 			            data.push({lbl:"Out",value:"0 pkts / 0 B"});
-			            data.push({lbl:"Link",value:dst+" --- "+src});
+						data.push({lbl:"Link",value:dst+" --- "+src, dividerClass: 'margin-5-0-0'});
 			            data.push({lbl:"In",value:"0 pkts / 0 B"});
 			            data.push({lbl:"Out",value:"0 pkts / 0 B"});}
 			        else if(viewElementDetails.dir=='uni'){
@@ -261,22 +311,11 @@ var tooltipConfig = {
 			            data.push({lbl:"Out",value:"0 pkts / 0 B"});
 			        }
 			    }
-				
+
 				return tooltipContent(data);
 			}
 		}
 	};
-
-var GRAPH_MARGIN = 35;
-
-var VM_GRAPH_OPTIONS = {
-    regularVMSize: {width: 25, height: 20, margin: 25},
-    minVMSize: {width: 15, height: 15},
-    externalRectRatio: {width: 8, height: 4},
-    internalRectRatio: {width: 5, height: 2},
-    minInternalRect: {width: 150, height: 60},
-    marginRatio: {width:1.6, height:1 }
-};
 
 function ContrailElement(type, options) {
     var contrailElement;
@@ -335,7 +374,7 @@ function drawVisualization(config) {
 	            	opt.$menu.css({top: y + 5, left: x + 5});
 	            },
                 build: function($trigger, e){
-                	if(!$trigger.hasClassSVG('element')){
+					if(!$trigger.hasClassSVG('element') && !$trigger.hasClassSVG('link')){
                 		$trigger = $trigger.parentsSVG('g.element');
                 		if($trigger.length > 0){
                 			$trigger = $($trigger[0]);
@@ -343,7 +382,7 @@ function drawVisualization(config) {
                 	}
                 	var contextMenuItems = false;
                     if(contrail.checkIfExist($trigger)){
-	                	$.each(contextMenuConfig, function(keyConfig, valueConfig){
+						$.each(contextMenuConfig, function(keyConfig, valueConfig){
 	                        if($trigger.hasClassSVG(keyConfig)){
 	                            contextMenuItems = valueConfig($trigger, jointConfig);
 		            			$('g.' + keyConfig).popover('hide');
@@ -360,8 +399,20 @@ function drawVisualization(config) {
 	        		trigger: 'hover',
 	        		html: true,
 	        		delay: { show: 200, hide: 10 },
-	        		title: function(){
-	        			return valueConfig.title($(this), jointConfig);
+	        		placement: function(context, src) {
+						$(context).addClass('popover-tooltip');
+
+						var srcOffset = $(src).offset(),
+							bodyWidth = $('body').width();
+
+						if (srcOffset.left > (bodyWidth/2)) {
+							return 'left';
+						} else {
+							return 'right';
+						}
+					},
+					title: function(){
+						return valueConfig.title($(this), jointConfig);
 	        		},
 	        		content: function(){
 	        			return valueConfig.content($(this), jointConfig);
@@ -436,8 +487,9 @@ function renderZoomedVisualization4VN(selectorId, jointObject, params){
     	dblClickedElementId = dblClickedElement.id,
         neighbors = jointObject.connectedGraph.getNeighbors(dblClickedElement),
         neighborLinks = jointObject.connectedGraph.getConnectedLinks(dblClickedElement),
-        srcVNDetails = dblClickedElement.attributes.nodeDetails,
-        options = getZoomedVMSize($(selectorId).height(), $(selectorId).width(), srcVNDetails),
+        srcVNDetails = dblClickedElement.attributes.nodeDetails;
+		//srcVNDetails.more_attr.vm_cnt = 1;
+        var options = getZoomedVMSize($(selectorId).height(), $(selectorId).width(), srcVNDetails),
         currentZoomedElement = createCloudZoomedNodeElement(dblClickedElement['attributes']['nodeDetails'], {width: options['widthZoomedElement'], height: options['heightZoomedElement']}),
         newGraphSize;
     
@@ -474,7 +526,7 @@ function renderZoomedVisualization4VN(selectorId, jointObject, params){
 
     $('#topology-breadcrumb').append('<div id="topology-project-link" class="breadcrumb-item" title="' + projectName + '"> \
     		<p class="breadcrumb-item-text" >' + projectName + '</p> \
-    		<img class="breadcrumb-item-image" src="/img/icons/tenent.png"> \
+    		<i class="breadcrumb-item-icon icon-contrail-project"></i> \
     	</div>').show();
     
     $('#topology-project-link').on('click', function(){
@@ -499,27 +551,23 @@ function renderZoomedVisualization4VN(selectorId, jointObject, params){
 }
 
 function getZoomedVMSize(availableHeight, availableWidth, srcVNDetails) {
-    /*
-    var maxExternalRectHeight = .8 * availableHeight,
-        maxExternalRectWidth = maxExternalRectHeight * (VM_GRAPH_OPTIONS.externalRectRatio['width'] / VM_GRAPH_OPTIONS.externalRectRatio['height']);
-    */
 
-    var maxExternalRectWidth = .8 * availableWidth,
+    var maxExternalRectWidth = .7 * availableWidth,
         maxExternalRectHeight = maxExternalRectWidth * (VM_GRAPH_OPTIONS.externalRectRatio['height'] / VM_GRAPH_OPTIONS.externalRectRatio['width']);
 
-    var maxInternalRectWidth = (VM_GRAPH_OPTIONS.internalRectRatio['width'] / VM_GRAPH_OPTIONS.externalRectRatio['width']) * maxExternalRectWidth,
-        maxInternalRectHeight = (VM_GRAPH_OPTIONS.internalRectRatio['height'] / VM_GRAPH_OPTIONS.externalRectRatio['height']) * maxExternalRectHeight,
+    var vmMargin = VM_GRAPH_OPTIONS.regularVMSize['margin'],
+		maxInternalRectWidth = Math.floor(((VM_GRAPH_OPTIONS.internalRectRatio['width'] / VM_GRAPH_OPTIONS.externalRectRatio['width']) * maxExternalRectWidth)) - vmMargin,
+        maxInternalRectHeight = Math.floor(((VM_GRAPH_OPTIONS.internalRectRatio['height'] / VM_GRAPH_OPTIONS.externalRectRatio['height']) * maxExternalRectHeight)) - vmMargin,
         maxInternalRectArea = maxInternalRectHeight * maxInternalRectWidth;
 
     var noOfVMs = srcVNDetails.more_attr.vm_cnt,
     	VMHeight = VM_GRAPH_OPTIONS.regularVMSize['height'],
         VMWidth = VM_GRAPH_OPTIONS.regularVMSize['width'],
-        vmMargin = VM_GRAPH_OPTIONS.regularVMSize['margin'],
         widthNeededForVM = VM_GRAPH_OPTIONS.regularVMSize.width + vmMargin,
         heightNeededForVM = VM_GRAPH_OPTIONS.regularVMSize.height + vmMargin,
         areaPerVM = widthNeededForVM * heightNeededForVM,
         actualAreaNeededForVMs = areaPerVM * noOfVMs,
-        vmPerRow;
+        vmPerRow = 0, noOfRows;
 
     var returnObj = {
         'VMHeight': VMHeight,
@@ -528,140 +576,70 @@ function getZoomedVMSize(availableHeight, availableWidth, srcVNDetails) {
     },
     internalRectangleWidth, internalRectangleHeight, noOfVMsToDraw;
 
-    if (actualAreaNeededForVMs > maxInternalRectArea) {
+	if(noOfVMs == 0) {
+		internalRectangleWidth = VM_GRAPH_OPTIONS.minInternalRect['width'];
+		internalRectangleHeight = VM_GRAPH_OPTIONS.minInternalRect['height'];
+	} else if (actualAreaNeededForVMs >= maxInternalRectArea) {
         noOfVMsToDraw = Math.floor(maxInternalRectArea / areaPerVM);
         // Show the more link in the cloud if required
         returnObj['showMoreLink'] = true;
-        vmPerRow = Math.ceil(maxInternalRectWidth / widthNeededForVM);
-        internalRectangleWidth = maxInternalRectWidth;
-        internalRectangleHeight = maxInternalRectHeight;
+        vmPerRow = Math.floor(maxInternalRectWidth / widthNeededForVM);
+		vmPerRow = (vmPerRow == 0) ? 1 : vmPerRow;
+		noOfRows = Math.ceil(noOfVMsToDraw/vmPerRow);
+        internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
+        internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
     } else {
-        internalRectangleHeight = maxInternalRectHeight * Math.sqrt(actualAreaNeededForVMs/maxInternalRectArea) ;
-        internalRectangleWidth = maxInternalRectWidth * Math.sqrt(actualAreaNeededForVMs/maxInternalRectArea);
-        internalRectangleHeight = internalRectangleHeight < VM_GRAPH_OPTIONS.minInternalRect['height'] ? VM_GRAPH_OPTIONS.minInternalRect['height'] : internalRectangleHeight;
-        internalRectangleWidth = internalRectangleWidth < VM_GRAPH_OPTIONS.minInternalRect['width'] ? VM_GRAPH_OPTIONS.minInternalRect['width'] : internalRectangleWidth;
-        noOfVMsToDraw = noOfVMs;
-        vmPerRow = Math.ceil(internalRectangleWidth / widthNeededForVM);
+		noOfVMsToDraw = noOfVMs;
+		internalRectangleWidth = Math.ceil(maxInternalRectWidth * Math.sqrt(actualAreaNeededForVMs/maxInternalRectArea));
+		vmPerRow = Math.floor(internalRectangleWidth / widthNeededForVM);
+		vmPerRow = (vmPerRow == 0) ? 1 : vmPerRow;
+		noOfRows = Math.ceil(noOfVMsToDraw/vmPerRow);
+		internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
+		internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
+		if (internalRectangleHeight < VM_GRAPH_OPTIONS.minInternalRect['height']) {
+			internalRectangleWidth = VM_GRAPH_OPTIONS.minInternalRect['width'];
+			internalRectangleHeight = VM_GRAPH_OPTIONS.minInternalRect['height'];
+
+		}
     }
 
-    vmPerRow = (vmPerRow == 0) ? 1 : vmPerRow;
     returnObj['vmPerRow'] = vmPerRow;
-
-    if(noOfVMsToDraw % vmPerRow != 0) {
-        var rows = Math.ceil((noOfVMsToDraw/vmPerRow)/2);
-        if(noOfVMs > (2 * rows * vmPerRow)) {
-            noOfVMsToDraw = (2 * rows * vmPerRow);
-        } else {
-            noOfVMsToDraw = noOfVMs;
-        }
-    }
-
     returnObj['noOfVMsToDraw'] = noOfVMsToDraw;
-    returnObj['widthZoomedElement'] = Math.floor(internalRectangleWidth * (VM_GRAPH_OPTIONS.externalRectRatio['width'] / VM_GRAPH_OPTIONS.internalRectRatio['width']));
-    returnObj['heightZoomedElement'] = Math.floor(internalRectangleHeight * (VM_GRAPH_OPTIONS.externalRectRatio['height'] / VM_GRAPH_OPTIONS.internalRectRatio['height']));
+    returnObj['widthZoomedElement'] = internalRectangleWidth * (VM_GRAPH_OPTIONS.externalRectRatio['width'] / VM_GRAPH_OPTIONS.internalRectRatio['width']);
+    returnObj['heightZoomedElement'] = internalRectangleHeight * (VM_GRAPH_OPTIONS.externalRectRatio['height'] / VM_GRAPH_OPTIONS.internalRectRatio['height']);
     returnObj['vmList'] = srcVNDetails.more_attr.virtualmachine_list;
     returnObj['srcVNDetails'] = srcVNDetails;
-    
+
     return returnObj;
 }
 
 function createVMGraph(connectedVMGraph, currentZoomedElement, options) {
-	 var xOrigin = currentZoomedElement['attributes']['position']['x'] + (options['widthZoomedElement'] * (VM_GRAPH_OPTIONS.marginRatio['width'] / VM_GRAPH_OPTIONS.externalRectRatio['width'])),
-	 	yOrigin = currentZoomedElement['attributes']['position']['y'] + (options['heightZoomedElement'] * (VM_GRAPH_OPTIONS.marginRatio['height'] / VM_GRAPH_OPTIONS.externalRectRatio['height'])),
-    	vmWidth = options['VMWidth'],
-        vmHeight = options['VMHeight'],
-        vmMargin = options['VMMargin'],
-        xSeparation = vmWidth + vmMargin,
-        ySeparation = vmHeight + vmMargin,
-        vmPerRow = options['vmPerRow'], vmNodes = [],
-        vmGraphElements = [], centerLines = [],
-        vmNode, vmLink,
-        vmList = options['vmList'];
+	 var vmMargin = options['VMMargin'],
+    	 vmWidth = options['VMWidth'],
+         vmHeight = options['VMHeight'],
+         xSeparation = vmWidth + vmMargin,
+         ySeparation = vmHeight + vmMargin,
+         vmPerRow = options['vmPerRow'],
+		 vmLength = options['noOfVMsToDraw'],
+		 vmNodes = [], vmGraphElements = [],
+         vmNode, vmList = options['vmList'];
+
+	var xOrigin = currentZoomedElement['attributes']['position']['x'] + vmMargin/2,
+		yOrigin = currentZoomedElement['attributes']['position']['y'] + vmMargin/2;
 
     var centerLineHeight = 0.1,
-        xFactor = 0, yFactor = -1, lineCounter = 0,
-        vmLength = options['noOfVMsToDraw'];
+        xFactor = 0, yFactor = -1;
 
     for (var i = 0; i < vmLength; i++) {
         if (i % vmPerRow == 0) {
             xFactor = 0;
             yFactor++;
-            if (((i / vmPerRow)) % 2 == 0) {
-                var centerLineY = yOrigin + (ySeparation * yFactor) + vmHeight + (vmMargin) / 2 + yFactor * centerLineHeight;
-                var centerLine = new joint.shapes.basic.Rect({
-                	type: 'VirtualMachineLink',
-                    position: { x: xOrigin - (vmMargin / 2), y: centerLineY},
-                    size: { width: (xSeparation) * ((vmLength < vmPerRow) ? vmLength : vmPerRow), height: centerLineHeight},
-                    attrs: { rect: { fill: '#637939', stroke: '#637939' }}
-                });
-                centerLines.push(centerLine);
-                vmGraphElements.push(centerLine);
-                lineCounter++;
-            }
         }
         vmNode = createVirtualMachine(xOrigin + (xSeparation * xFactor), yOrigin + ((ySeparation + centerLineHeight) * yFactor), vmList[i], options['srcVNDetails']);
         xFactor++;
         vmNodes.push(vmNode);
         vmGraphElements.push(vmNode);
     }
-
-    var centerLineCounter = -1, rowCounter = 0,
-        nodeLinkY, centerLineLinkY;
-
-    for (var j = 0; j < vmNodes.length; j++) {
-        var node = vmNodes[j];
-        if (j % vmPerRow == 0) {
-            rowCounter++;
-            if (((j / vmPerRow)) % 2 == 0) {
-                centerLineCounter++;
-            }
-        }
-        var nodeY = node['attributes']['position']['y'],
-            nodeX = node['attributes']['position']['x'];
-        if (rowCounter % 2 == 0) {
-            nodeLinkY = nodeY;
-            centerLineLinkY = nodeY - vmMargin / 2;
-        } else {
-            nodeLinkY = nodeY + vmHeight;
-            centerLineLinkY = nodeLinkY + vmMargin / 2;
-        }
-        vmLink = createVMLink(vmNodes[j], centerLines[centerLineCounter], [
-                {x: nodeX + (vmWidth / 2), y: centerLineLinkY},
-                {x: nodeX + (vmWidth / 2), y: nodeLinkY}
-            ]
-        );
-        vmGraphElements.push(vmLink);
-    }
-
-//    setTimeout(function(){
-//	    $.each(vmGraphElements, function(vmGraphElementKey, vmGraphElementValue){
-//    		currentZoomedElement.embed(vmGraphElementValue);
-//    	});
-//	    
-//	},500);
-//    
-//    connectedVMGraph.on('change:position', function(cell) {
-//
-//        var parentId = cell.get('parent');
-//        if (!parentId) return;
-//
-//        var parent = graph.getCell(parentId);
-//        var parentBbox = parent.getBBox();
-//        var cellBbox = cell.getBBox();
-//
-//        if (parentBbox.containsPoint(cellBbox.origin()) &&
-//            parentBbox.containsPoint(cellBbox.topRight()) &&
-//            parentBbox.containsPoint(cellBbox.corner()) &&
-//            parentBbox.containsPoint(cellBbox.bottomLeft())) {
-//
-//            // All the four corners of the child are inside
-//            // the parent area.
-//            return;
-//        }
-//
-//        // Revert the child position.
-//        cell.set('position', cell.previous('position'));
-//    });
     
     connectedVMGraph.addCells(vmGraphElements);
 
@@ -669,10 +647,11 @@ function createVMGraph(connectedVMGraph, currentZoomedElement, options) {
         var nodeType = 'virtual-machine',
             element, options;
         
-        options = {position: { x: x, y: y }, 
-        			size: { width: vmWidth, height: vmHeight}, 
+        options = {
+					position: { x: x, y: y },
+        			size: { width: vmWidth, height: vmHeight},
         			font: {
-        				iconClass: 'icon-contrail-virtual-machine font-size-20'
+        				iconClass: 'icon-contrail-virtual-machine'
         			},
         			nodeDetails: {
         				fqName: node,
@@ -681,27 +660,6 @@ function createVMGraph(connectedVMGraph, currentZoomedElement, options) {
         		};
         element = new ContrailElement(nodeType, options);
         return element;
-    };
-
-    function createVMLink(source, target, breakpoints) {
-        var vmLink = new joint.dia.Link({
-        	type: 'VirtualMachineLink',
-            markup: [
-                '<path class="connection" stroke="black"></path>',
-                '<g class="labels"></g>'
-            ].join(''),
-            attrs: {
-                '.connection': {
-                    'stroke': '#637939',
-                    'stroke-width': 2
-                }
-            },
-            source: { id: source.id},
-            target: { id: target.id},
-            // vertices: breakpoints, // TODO - Get rid of this once the links stay perpendicular
-            router: { name: 'orthogonal' },
-        });
-        return vmLink;
     };
 }
 
@@ -795,10 +753,13 @@ function createNodes4ConfigData(configData, nodes, collections) {
     }
 
     if (networkIPAMS != null && networkIPAMS.length > 0) {
+        var font = {
+            iconClass: 'icon-contrail-network-ipam'
+        };
         collections.networkIPAMS = {name: 'Network IPAMS', node_type: 'collection-element', nodes: []};
         for (i = 0; networkIPAMS != null && i < networkIPAMS.length; i++) {
             name = networkIPAMS[i]['fq_name'].join(':');
-            collections.networkIPAMS.nodes.push({name: name, node_type: 'network-ipam', nodeDetails: networkIPAMS[i]});
+            collections.networkIPAMS.nodes.push({name: name, node_type: 'network-ipam', nodeDetails: networkIPAMS[i], font: font});
         }
     }
 }
@@ -816,19 +777,14 @@ function createNodeElements(nodes, elements, elementMap, config) {
 function createNodeElement(node, config) {
     var nodeName = node['name'],
         nodeType = node['node_type'],
-        width = (config != null && config.width != null) ? config.width : 40,
-        height = (config != null && config.height != null) ? config.height : 40,
+        width = (config != null && config.width != null) ? config.width : 35,
+        height = (config != null && config.height != null) ? config.height : 35,
         imageLink, element, options, imageName;
 
     imageName = getImageName(node);
     imageLink = '/img/icons/' + imageName;
     options = {
-    		attrs: { 
-    			image: {
-    				'xlink:href': imageLink, 
-    				width: width, 
-    				height: height
-    			},
+    		attrs: {
     			text: {
     				text: contrail.truncateText(nodeName.split(":")[2],20)
     			}
@@ -853,7 +809,7 @@ function createCloudZoomedNodeElement(nodeDetails, config) {
         attrs: {
             rect: { width: config.width * factor, height: config.height * factor},
             text: {
-                text: (nodeDetails['more_attr']['vm_cnt'] == 0) ? "No VM's available" : contrail.truncateText(nodeDetails['name'].split(":")[2],50),
+                text: (nodeDetails['more_attr']['vm_cnt'] == 0) ? "No virtual machine available." : contrail.truncateText(nodeDetails['name'].split(":")[2],50),
                 'ref-x': .5,
                 'ref-y': (nodeDetails['more_attr']['vm_cnt'] == 0) ? 65 : -20
             }
@@ -950,45 +906,96 @@ function createLinkElements(links, elements, elementMap) {
     for (var i = 0; i < links.length; i++) {
         var sInstances = links[i] ['service_inst'],
             dir = links[i]['dir'],
-            options, link;
+            source = {}, target = {};
 
         if (sInstances == null || sInstances.length == 0) {
-            options = {
-                sourceId: elementMap.node[links[i]['src']],
-                targetId: elementMap.node[links[i]['dst']],
-                direction: dir,
-                linkType: 'bi',
-                linkDetails: links[i]
-            };
-            link = new ContrailElement('link', options);
-            elements.push(link);
+			source = {
+				id: elementMap.node[links[i]['src']],
+				name: links[i]['src']
+			};
+			target = {
+				id: elementMap.node[links[i]['dst']],
+				name: links[i]['dst']
+			};
+
+			var link = createLinkElement(source, target, dir, links[i], elements, elementMap);
         } else {
-            options = { 
-            		direction: dir, 
-            		linkType: 'bi',
-            		linkDetails: links[i]
-            	};
+			var linkElements = [],
+				linkElementKeys = [],
+				linkElementKeyString = '',
+				linkElementKeyStringBi = '';
             for (var j = 0; j < sInstances.length; j++) {
                 if (j == 0) {
-                    options['sourceId'] = elementMap.node[links[i]['src']];
-                    options['targetId'] = elementMap.node[sInstances[j]['name']];
-                } else {
-                    options['sourceId'] = elementMap.node[sInstances[j - 1]['name']];
-                    options['targetId'] = elementMap.node[sInstances[j]['name']];
-                }
-                link = new ContrailElement('link', options);
-                elements.push(link);
+					source = {
+						id: elementMap.node[links[i]['src']],
+						name: links[i]['src']
+					};
+				} else {
+					source= {
+						id: elementMap.node[sInstances[j - 1]],
+						name: sInstances[j - 1]
+					};
+				}
+				target = {
+					id: elementMap.node[sInstances[j]],
+					name: sInstances[j]
+				};
+				linkElements.push({
+					source: source,
+					target: target
+				});
+				linkElementKeys.push(source.name);
             }
-            options['sourceId'] = elementMap.node[sInstances[j - 1]['name']];
-            options['targetId'] = elementMap.node[links[i]['dst']];
-            link = new ContrailElement('link', options);
-            elements.push(link);
-        }
-        elementMap.link[link.attributes.linkDetails.src + '<->' + link.attributes.linkDetails.dst] = link.id;
-        if(link.attributes.linkDetails.dir == 'bi'){
-            elementMap.link[link.attributes.linkDetails.dst + '<->' + link.attributes.linkDetails.src] = link.id;
+			source= {
+				id: elementMap.node[sInstances[j - 1]],
+				name: sInstances[j - 1]
+			};
+			target = {
+				id: elementMap.node[links[i]['dst']],
+				name: links[i]['dst']
+			};
+			linkElements.push({
+				source: source,
+				target: target
+			});
+			linkElementKeys.push(source.name);
+			linkElementKeys.push(target.name);
+
+			linkElementKeyString = linkElementKeys.join('<->');
+			elementMap.link[linkElementKeyString] = [];
+
+			if(dir == 'bi') {
+				linkElementKeyStringBi = linkElementKeys.reverse().join('<->');
+				elementMap.link[linkElementKeyStringBi] = [];
+			}
+
+			$.each(linkElements, function(linkElementKey, linkElementValue) {
+				var link = createLinkElement(linkElementValue.source, linkElementValue.target, dir, links[i], elements, elementMap);
+
+				elementMap.link[linkElementKeyString].push(link.id);
+				if(dir == 'bi') {
+					elementMap.link[linkElementKeyStringBi].push(link.id);
+				}
+			});
         }
     }
+}
+
+function createLinkElement(source, target, dir, linkDetails, elements, elementMap) {
+	var options = {
+		sourceId: source.id,
+		targetId: target.id,
+		direction: dir,
+		linkType: 'bi',
+		linkDetails: linkDetails
+	};
+	var link = new ContrailElement('link', options);
+	elements.push(link);
+	elementMap.link[source.name + '<->' + target.name] = link.id;
+	if(link.attributes.linkDetails.dir == 'bi'){
+		elementMap.link[target.name + '<->' + source.name] = link.id;
+	}
+	return link;
 }
 
 function getImageName(node) {
@@ -1035,21 +1042,20 @@ function highlightSelectedSVGElements(elementObjects){
 };
 
 function highlightSelectedElementForZoomedElement(selectorId, jointObject, params){
-	highlightElementsToFaint([
-   		$(selectorId + '-connected-elements').find('div.font-element')
-   	]);
-	
-	highlightSVGElementsToFaint([
-		$(selectorId + '-connected-elements').find('g.element'),
-		$(selectorId + '-connected-elements').find('g.link')
-	]);
-	
 	highlightSelectedSVGElements([$('g.ZoomedElement')]);
 	if(params.config.focusedElement == 'VirtualNetwork'){
 		highlightSelectedElements([$('div.VirtualMachine')]);
 		highlightSelectedSVGElements([$('g.VirtualMachine'),$('.VirtualMachineLink')]);
 	}
 	else if(params.config.focusedElement == 'VirtualMachine'){
+		highlightElementsToFaint([
+			$(selectorId + '-connected-elements').find('div.font-element')
+		]);
+
+		highlightSVGElementsToFaint([
+			$(selectorId + '-connected-elements').find('g.element'),
+			$(selectorId + '-connected-elements').find('g.link')
+		]);
 		var graphElements = jointObject.connectedGraph.getElements(),
 			vmFqName = params.config.vmFqName;
 		
@@ -1087,8 +1093,8 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
 	
 	jointObject.connectedPaper.on("cell:pointerdblclick", function (cellView, evt, x, y) {
     	var dblClickedElement = cellView.model,
-    		elementType = dblClickedElement['attributes']['type'];
-    	
+    		elementType = dblClickedElement['attributes']['type'],
+			elementMap = params.data.elementMap;
     	switch(elementType) {
 			case 'contrail.VirtualNetwork':
 				loadFeature({p:'mon_net_networks',q:{fqName:dblClickedElement['attributes']['nodeDetails']['name']}});
@@ -1109,9 +1115,9 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
 	        	$('g.link[model-id="' + modelId + '"]').removeClassSVG('faintHighlighted').addClassSVG('elementSelectedHighlighted');
 	        	
 	        	var graph = jointObject.connectedGraph,
-					targetElement = graph.getCell(dblClickedElement['attributes']['target']['id']),
-					sourceElement = graph.getCell(dblClickedElement['attributes']['source']['id']);
-				
+					targetElement = graph.getCell(elementMap.node[dblClickedElement['attributes']['linkDetails']['dst']]),
+					sourceElement = graph.getCell(elementMap.node[dblClickedElement['attributes']['linkDetails']['src']]);
+
 				loadVisualizationTab({
 					container: '#topology-visualization-tabs',
 					type: "connected-network",
@@ -1211,21 +1217,43 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
 		    		};
 		    	
 		    	$(this).on('mouseover', function(e){
-		        	$('div.font-element').addClass('dimHighlighted');
+					$('div.font-element').addClass('dimHighlighted');
 		        	$('g.element').addClassSVG('dimHighlighted');
 		        	$('g.link').addClassSVG('dimHighlighted');
 		    		
 		        	$(this).removeClassSVG('dimHighlighted').addClassSVG('elementHighlighted');
 		        	$('div[font-element-model-id="' + $(this).attr('model-id') + '"]').removeClass('dimHighlighted').addClass('elementHighlighted');
-		        	
 		        	$.each(policyRules, function(policyRuleKey, policyRuleValue){
 			    		var sourceNode = policyRuleValue.src_addresses[0],
-			    			destinationNode = policyRuleValue.dst_addresses[0];
-			    		
+			    			destinationNode = policyRuleValue.dst_addresses[0],
+							serviceInstanceNode = policyRuleValue.action_list.apply_service,
+							serviceInstanceNodeLength = 0,
+							policyRuleLinkKey = [];
+
+						highlightedElements = {
+							nodes: [],
+							links: []
+						};
+
 			    		$.each(sourceNode, function(sourceNodeKey, sourceNodeValue){
 			    			if(contrail.checkIfExist(sourceNodeValue)){
-			    				highlightedElements.nodes.push(sourceNodeValue);
-			    				highlightedElements.links.push(destinationNode[sourceNodeKey] + '<->' + sourceNodeValue);
+								highlightedElements.nodes.push(sourceNodeValue);
+								policyRuleLinkKey.push(sourceNodeValue);
+
+								if (serviceInstanceNode) {
+									serviceInstanceNodeLength = serviceInstanceNode.length
+									$.each(serviceInstanceNode, function(serviceInstanceNodeKey, serviceInstanceNodeValue) {
+										highlightedElements.nodes.push(serviceInstanceNodeValue);
+										policyRuleLinkKey.push(serviceInstanceNodeValue);
+									});
+									policyRuleLinkKey.push(destinationNode[sourceNodeKey]);
+									highlightedElements.links.push(policyRuleLinkKey.join('<->'));
+									highlightedElements.links.push(policyRuleLinkKey.reverse().join('<->'));
+
+								} else {
+									highlightedElements.links.push(destinationNode[sourceNodeKey] + '<->' + sourceNodeValue);
+									highlightedElements.links.push(sourceNodeValue + '<->' + destinationNode[sourceNodeKey]);
+								}
 			    			}
 			    		});
 			    		$.each(destinationNode, function(destinationNodeKey, destinationNodeValue){
@@ -1233,31 +1261,48 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
 			    				highlightedElements.nodes.push(destinationNodeValue);
 			    			}
 			    		});
-	
-			    		highlightedElements.nodes = $.unique(highlightedElements.nodes);
-			    		$.each(highlightedElements.nodes, function(nodeKey, nodeValue){;
-			    			var nodeElement = jointObject.connectedGraph.getCell(elementMap.node[nodeValue]);
-			    			$('g[model-id="' + nodeElement.id + '"]').addClassSVG('elementHighlighted');
-			    			$('div[font-element-model-id="' + nodeElement.id + '"]').addClass('elementHighlighted');
-			    		});
-			    		
-			    		if(policyRuleValue.action_list.simple_action == 'pass'){
-			    			highlightedElements.links = $.unique(highlightedElements.links);
-				    		$.each(highlightedElements.links, function(linkKey, linkValue){
-				    			var nodeElement = jointObject.connectedGraph.getCell(elementMap.link[linkValue]);
-				    			$('g[model-id="' + nodeElement.id + '"]').addClassSVG('elementHighlighted');
-				    			nodeElement.attr({
-				    				'.connection': { stroke: '#498AB9'},
-				    				'.marker-source': { stroke: '#498AB9', fill: '#498AB9'},
-				    				'.marker-target': { stroke: '#498AB9', fill: '#498AB9'}
-				    			});
-				    		});
-			    		}
+
+						if (elementMap.link[policyRuleLinkKey.join('<->')] || elementMap.link[policyRuleLinkKey.reverse().join('<->')]) {
+							highlightedElements.nodes = $.unique(highlightedElements.nodes);
+							$.each(highlightedElements.nodes, function(nodeKey, nodeValue) {
+								var nodeElement = jointObject.connectedGraph.getCell(elementMap.node[nodeValue]);
+								$('g[model-id="' + nodeElement.id + '"]').addClassSVG('elementHighlighted');
+								$('div[font-element-model-id="' + nodeElement.id + '"]').addClass('elementHighlighted');
+							});
+
+							if(policyRuleValue.action_list.simple_action == 'pass'){
+								highlightedElements.links = $.unique(highlightedElements.links);
+								$.each(highlightedElements.links, function(highlightedElementLinkKey, highlightedElementLinkValue){
+									if (elementMap.link[highlightedElementLinkValue]) {
+										if(typeof elementMap.link[highlightedElementLinkValue] == 'string') {
+											highlightLink(jointObject, elementMap.link[highlightedElementLinkValue]);
+										} else {
+											$.each(elementMap.link[highlightedElementLinkValue], function (linkKey, linkValue) {
+												highlightLink(jointObject, linkValue)
+											});
+										}
+
+									}
+								});
+							}
+						}
 			    	});
 		    	});
 		    });
 	    },1000);
     }
+}
+
+function highlightLink(jointObject, elementId) {
+	var linkElement = jointObject.connectedGraph.getCell(elementId);
+	if (linkElement) {
+		$('g[model-id="' + linkElement.id + '"]').addClassSVG('elementHighlighted');
+		linkElement.attr({
+			'.connection': { stroke: '#498AB9'},
+			'.marker-source': { stroke: '#498AB9', fill: '#498AB9'},
+			'.marker-target': { stroke: '#498AB9', fill: '#498AB9'}
+		});
+	}
 }
 
 function clearZoomedElement(graph, paper) {
@@ -1274,22 +1319,22 @@ function clearZoomedElement(graph, paper) {
 }
 
 function initPanZoom4ConnectedGraph(elementId) {
-	var configSelectorId = elementId + '-config-elements',
-    	connectedSelectorId = elementId + '-connected-elements';
+	var connectedSelectorId = elementId + '-connected-elements';
 	
 	$(connectedSelectorId).panzoom({
     	$zoomIn: $(elementId).find(".zoom-in"),
         $zoomOut: $(elementId).find(".zoom-out"),
         $reset: $(elementId).find(".zoom-reset")
     });
-    
-    $(configSelectorId).panzoom({
-    	disableZoom: true
-    });
 };
 
 function resizeWidget(self, elementId) {
-	$(self).find('i').toggleClass('icon-resize-full-down').toggleClass('icon-resize-small');
+	$(self).find('i').toggleClass('icon-resize-full').toggleClass('icon-resize-small');
+	if ($(self).find('i').hasClass('icon-resize-full')) {
+		$(self).prop('title','Expand Visualization')
+	} else {
+		$(self).prop('title','Collapse Visualization')
+	}
     setTopologyHeight(elementId, true);
 }
 
@@ -1313,7 +1358,28 @@ function setTopologyHeight(selectorId) {
     $(selectorId).find('.col1').height(elementHeight);
     $(selectorId + '-connected-elements svg').attr('height',elementHeight);
 	$(selectorId).parent().css('width', '100%');
-	
+	$(selectorId).parents('.visualization-container').find('.col3').height(elementHeight)
+
+	var image = document.createElementNS('http://www.w3.org/2000/svg', 'image'),
+		patt = document.createElementNS('http://www.w3.org/2000/svg', 'pattern'),
+		defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs'),
+		svg = document.getElementsByTagName('svg')[0];
+
+	patt.setAttribute('id', 'dotted');
+	patt.setAttribute('patternUnits', 'userSpaceOnUse');
+	patt.setAttribute('width', '100');
+	patt.setAttribute('height', '100');
+
+	image.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', 'https://localhost:8143/img/dotted.png');
+	image.setAttribute('x', '0');
+	image.setAttribute('y', '0');
+	image.setAttribute('width', '101');
+	image.setAttribute('height', '101');
+
+	patt.appendChild(image);
+	defs.appendChild(patt);
+	svg.appendChild(defs);
+
 	translateGraphElements(selectorId);
 };
 
@@ -1327,12 +1393,11 @@ function translateGraphElements(selectorId){
     	connectedGraph = $(selectorId).data('joint-object').connectedGraph,
     	elements = connectedGraph.getElements(),
     	links = connectedGraph.getLinks();
-	$(selectorId + '-connected-elements').data('offset', offset);	
+	$(selectorId + '-connected-elements').data('offset', offset);
 		
 	$.each(elements, function(elementKey, elementValue){
 		elementValue.translate(offset.x - oldOffset.x, offset.y - oldOffset.y);
 	});
-
 }
 
 function removeCell(options) {
@@ -1402,9 +1467,9 @@ joint.shapes.contrail.FontElement = joint.shapes.basic.Rect.extend({
         type: 'contrail.FontElement',
         size: { width: 35, height: 35 },
         attrs: {
-            rect: { stroke: 0, 'fill-opacity': 0, width: 40, height: 40},
+            rect: { stroke: 0, 'fill-opacity': 0, width: 35, height: 35},
             text: {
-            	'ref-y': -8,
+            	'ref-y': -10,
                 'x-alignment': 'middle',
                 'y-alignment': 'middle',
                 'ref': 'rect',
@@ -1446,6 +1511,37 @@ joint.shapes.contrail.FontElementView = joint.dia.ElementView.extend({
     }
 });
 
+joint.shapes.contrail.Element = joint.dia.Element.extend({
+	markup: '<text/><polygon class="outer"/><polygon class="inner"/>',
+
+	defaults: joint.util.deepSupplement({
+		type: 'contrail.Element',
+		size: { width: 30, height: 30 },
+		attrs: {
+			'.outer': {
+				fill: '#fff', stroke: '#ff7f0e', 'stroke-width': 3,
+				points: '15,0 30,15 15,30 0,15'
+			},
+			'.inner': {
+				fill: '#fff', stroke: '#ff7f0e', 'stroke-width': 3,
+				points: '15, 3 27,15 15,27 3,15',
+				display: 'none'
+			},
+			text: {
+				'font-size': 12,
+				'ref-x': .5,
+				'ref-y': -10,
+				'y-alignment': 'middle',
+				'text-anchor': 'middle',
+				'ref': 'polygon',
+				'stroke-width': '0.4px',
+				'stroke': '#333',
+				'fill': '#333'
+			}
+		}
+
+	}, joint.dia.Element.prototype.defaults)
+});
 
 //joint.shapes.contrail.VirtualNetwork = joint.shapes.contrail.ImageElement.extend({
 //    defaults: joint.util.deepSupplement({
@@ -1486,18 +1582,24 @@ joint.shapes.contrail.VirtualMachineView = joint.shapes.contrail.FontElementView
     }, joint.shapes.contrail.FontElementView.prototype.defaults)
 });
 
-joint.shapes.contrail.ServiceInstance = joint.shapes.contrail.FontElement.extend({
-    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="ServiceInstance"/></g></g>',
-    defaults: joint.util.deepSupplement({
+joint.shapes.contrail.ServiceInstance = joint.shapes.contrail.Element.extend({
+	defaults: joint.util.deepSupplement({
         type: 'contrail.ServiceInstance'
-    }, joint.shapes.contrail.FontElement.prototype.defaults)
+    }, joint.shapes.contrail.Element.prototype.defaults)
 });
 
-joint.shapes.contrail.ServiceInstanceView = joint.shapes.contrail.FontElementView.extend({
-    defaults: joint.util.deepSupplement({
-        type: 'contrail.ServiceInstanceView'
-    }, joint.shapes.contrail.FontElementView.prototype.defaults)
-});
+//joint.shapes.contrail.ServiceInstance = joint.shapes.contrail.FontElement.extend({
+//    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="ServiceInstance"/></g></g>',
+//    defaults: joint.util.deepSupplement({
+//        type: 'contrail.ServiceInstance'
+//    }, joint.shapes.contrail.FontElement.prototype.defaults)
+//});
+//
+//joint.shapes.contrail.ServiceInstanceView = joint.shapes.contrail.FontElementView.extend({
+//    defaults: joint.util.deepSupplement({
+//        type: 'contrail.ServiceInstanceView'
+//    }, joint.shapes.contrail.FontElementView.prototype.defaults)
+//});
 
 
 //joint.shapes.contrail.ServiceInstance = joint.shapes.contrail.ImageElement.extend({
@@ -1546,10 +1648,24 @@ joint.shapes.contrail.SecurityGroupView = joint.shapes.contrail.FontElementView.
     }, joint.shapes.contrail.FontElementView.prototype.defaults)
 });
 
-joint.shapes.contrail.NetworkIPAM = joint.shapes.contrail.ImageElement.extend({
+//joint.shapes.contrail.NetworkIPAM = joint.shapes.contrail.ImageElement.extend({
+//    defaults: joint.util.deepSupplement({
+//        type: 'contrail.NetworkIPAM'
+//    }, joint.shapes.contrail.ImageElement.prototype.defaults)
+//});
+
+joint.shapes.contrail.NetworkIPAM = joint.shapes.contrail.FontElement.extend({
+    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="NetworkIPAM"/></g></g>',
+
     defaults: joint.util.deepSupplement({
         type: 'contrail.NetworkIPAM'
-    }, joint.shapes.contrail.ImageElement.prototype.defaults)
+    }, joint.shapes.contrail.FontElement.prototype.defaults)
+});
+
+joint.shapes.contrail.NetworkIPAMView = joint.shapes.contrail.FontElementView.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.NetworkIPAMView'
+    }, joint.shapes.contrail.FontElementView.prototype.defaults)
 });
 
 joint.shapes.contrail.LogicalRouter = joint.shapes.contrail.FontElement.extend({
@@ -1598,44 +1714,12 @@ joint.shapes.contrail.VirtualRouterView = joint.shapes.contrail.FontElementView.
 //    }, joint.shapes.contrail.ImageElement.prototype.defaults)
 //});
 
-joint.shapes.contrail.Element = joint.dia.Element.extend({
-    markup: '<polygon class="outer"/><polygon class="inner"/><text/>',
-
-    defaults: joint.util.deepSupplement({
-        type: 'contrail.Element',
-        size: { width: 30, height: 30 },
-        attrs: {
-            '.outer': {
-                fill: '#ff7f0e', stroke: '#ff7f0e', 'stroke-width': 2,
-                points: '15,0 30,15 15,30 0,15'
-            },
-            '.inner': {
-                fill: '#ff7f0e', stroke: '#ff7f0e', 'stroke-width': 2,
-                points: '15, 3 27,15 15,27 3,15',
-                display: 'none'
-            },
-            text: {
-                'font-size': 12,
-                'ref-x': .5,
-                'ref-y': -5,
-                'y-alignment': 'middle',
-                'text-anchor': 'middle',
-                'ref': 'polygon',
-                'stroke-width': '0.4px',
-                'stroke': '#333',
-                'fill': '#333'
-            }
-        }
-
-    }, joint.dia.Element.prototype.defaults)
-});
-
 joint.shapes.contrail.ZoomedCloudElement = joint.shapes.basic.Rect.extend({
     markup: '<rect/><text/>',
     defaults: joint.util.deepSupplement({
         type: 'contrail.ZoomedElement.VirtualNetwork',
         attrs: {
-            rect: { rx: 0, ry: 0, 'stroke-width': 2, stroke: '#637939', 'stroke-dasharray': '6,3', fill: '#fff' },
+            rect: { rx: 0, ry: 0, 'stroke-width':.5, stroke: '#EEE', fill: 'url(#dotted)'},
             text: {
                 'ref-x': 0.01,
                 'ref-y': 5,
@@ -1658,7 +1742,8 @@ joint.shapes.contrail.ZoomedElement = joint.shapes.basic.Rect.extend({
     defaults: joint.util.deepSupplement({
         type: 'contrail.ZoomedElement',
         attrs: {
-            text: {
+			rect: {fill: 'url(#dotted)'},
+			text: {
                 'ref-x': 0.01,
                 'ref-y': 5,
                 'y-alignment': 'top',
@@ -1672,38 +1757,6 @@ joint.shapes.contrail.ZoomedElement = joint.shapes.basic.Rect.extend({
         }
     }, joint.shapes.basic.Rect.prototype.defaults),
     remove: removeCell
-});
-
-joint.shapes.contrail.Element = joint.dia.Element.extend({
-    markup: '<polygon class="outer"/><polygon class="inner"/><text/>',
-
-    defaults: joint.util.deepSupplement({
-        type: 'contrail.Element',
-        size: { width: 30, height: 30 },
-        attrs: {
-            '.outer': {
-                fill: '#ff7f0e', stroke: '#ff7f0e', 'stroke-width': 2,
-                points: '15,0 30,15 15,30 0,15'
-            },
-            '.inner': {
-                fill: '#ff7f0e', stroke: '#ff7f0e', 'stroke-width': 2,
-                points: '15, 3 27,15 15,27 3,15',
-                display: 'none'
-            },
-            text: {
-                'font-size': 12,
-                'ref-x': .5,
-                'ref-y': -5,
-                'y-alignment': 'middle',
-                'text-anchor': 'middle',
-                'ref': 'polygon',
-                'stroke-width': '0.4px',
-                'stroke': '#333',
-                'fill': '#333'
-            }
-        }
-
-    }, joint.dia.Element.prototype.defaults)
 });
 
 joint.shapes.contrail.LinkView = joint.dia.LinkView.extend({
