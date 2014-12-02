@@ -312,5 +312,15 @@ config.session.timeout = 24 * 60 * 60 * 1000;
 config.underlay = {};
 config.underlay.enabled = false;
 
+/*****************************************************************************
+ * router_L3Enable flag indicates whether to update external gateway 
+ * information on router in neutron.
+ *
+ * true - Will update external gateway information on router in neutron.
+ * false - Will not update external gateway information on router in neutron.
+ *****************************************************************************/
+ config.network = {}
+ config.network.router_L3Enable = true;
+
 // Export this as a module.
 module.exports = config;
