@@ -149,6 +149,7 @@ APIServer.prototype.makeHttpsRestCall = function (options, callback)
 APIServer.prototype.retryMakeCall = function(err, restApi, params, 
                                              response, callback, isRetry)
 {
+    console.log("gettoing in RETRY");
     var self = this;
     /* Check if the error code is ECONNREFUSED or ETIMEOUT, if yes then
      * issue once again discovery subscribe request, the remote server
@@ -267,7 +268,10 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         return;
     }
     reqUrl = global.HTTP_URL + params.url + ':' + params.port + params.path;
+    //console.log("reqUrl:", reqUrl, options['headers'], options['data']);
+    console.log("reqUrl:", reqUrl, options['method'],options['data'], new Date());
     restApi(reqUrl, options).on('complete', function(data, response) {
+        console.log("getting resp at:", reqUrl, new Date());
         if (data instanceof Error ||
             parseInt(response.statusCode) >= 400) {
             try {

@@ -215,6 +215,14 @@ function deleteNetworkPort (req, portId, callback)
     neutronApi.delete(url, req, callback);
 }
 
+function updateRouter (req, postData, routerId, callback)
+{
+    console.log("postData"+JSON.stringify(postData));
+    var url = '/v2.0/routers/' + routerId + '.json';
+    neutronApi.put(url, postData, req, callback);
+}
+
 exports.createNetworkPort = createNetworkPort;
 exports.deleteNetworkPort = deleteNetworkPort;
+exports.updateRouter = updateRouter;
 
