@@ -1811,6 +1811,27 @@ function prefixToNetMask(prefixLen) {
     return v4.Address.fromHex(parseInt(binaryString,2).toString(16)).address;
 }
 
+//To check if it's an IPv4 Address
+function isIPv4(ipAddr) {
+    return (new v4.Address(ipAddr)).isValid();
+}
+
+function isIPv6(ipAddr) {
+    return (new v6.Address(ipAddr)).isValid();
+}
+
+//Retruns the no of ip address in the range
+//@ ipRangeObj['start'] - Start address of range
+//@ ipRangeObj['end']   - End address of range
+function getIPRangeLen(ipRangeObj) {
+    if(isIPv4(ipRangeObj['start']) && isIPv4(ipRangeObj['end'])) {
+        return (new v4.Address(ipRangeObj['end'])).bigInteger() - (new v4.Address(ipRangeObj['start'])).bigInteger();
+    } else if(isIPv6(ipRangeObj['start']) && isIPv6(ipRangeObj['end'])) {
+        return new v6.Address(ipRangeObj['end']).bigInteger() - (new v6.Address(ipRangeObj['start'])).bigInteger();
+    } else
+        return 0;
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1865,3 +1886,4 @@ exports.getWebConfigValueByName = getWebConfigValueByName;
 exports.isMultiTenancyEnabled = isMultiTenancyEnabled;
 exports.prefixToNetMask = prefixToNetMask;
 exports.convertApiServerUUIDtoKeystoneUUID = convertApiServerUUIDtoKeystoneUUID;
+exports.getIPRangeLen = getIPRangeLen;

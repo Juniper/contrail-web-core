@@ -528,6 +528,9 @@ function createPortGroup(userData,appData,callback) {
 }
 
 function createIpPool(userData,appData,callback) {
+    var ipPoolEnabled = false;
+    if(userData['subnet']['range'] != null)
+        ipPoolEnabled = true;
     var ipPoolData = {
                 method    : 'CreateIpPool',
                 headers : {
@@ -552,9 +555,9 @@ function createIpPool(userData,appData,callback) {
                             subnetAddress: userData['subnet']['address'],
                             netmask: userData['subnet']['netmask'],
                             gateway:userData['subnet']['gateway'],
-                            dhcpServerAvailable : false/*,
-                            ipPoolEnabled : true    //Check - range is mandatory for setting this to true??
-                            */
+                            range : userData['subnet']['range'],
+                            dhcpServerAvailable : false,
+                            ipPoolEnabled : ipPoolEnabled
                         },
                         networkAssociation: {
                             network: {
@@ -568,6 +571,10 @@ function createIpPool(userData,appData,callback) {
                     },
                 }
             };
+    if(ipPoolEnabled == false) {
+        delete ipPoolData['params']['pool']['ipv4Config']['range'];
+    }
+    logutils.logger.info('createIpPool request',ipPoolData);
     return new Promise(function(resolve,reject) {
         vCenterApi.doCall(ipPoolData,appData,function(err,data,resHeaders) {
             resolve(data);
