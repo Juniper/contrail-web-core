@@ -348,9 +348,11 @@ function waitForTask(appData,taskId,currDef,retryCnt) {
     var currState = response['RetrievePropertiesExResponse']['returnval']['objects']['propSet']['val'][0]['_value']['state'];
     if(currState == 'success')
         currDef.resolve('complete');
-    else
+    else if(currState == 'error') {
+        currDef.resolve('');
+    } else 
         setTimeout(function() {
-            waitForTask(appData,taskInfo,currDef);
+            waitForTask(appData,taskId,currDef);
         },3000);
     });
 }
