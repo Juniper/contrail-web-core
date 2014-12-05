@@ -618,7 +618,9 @@ var defColors = ['#1c638d', '#4DA3D5'];
                 if(data['loadedDeferredObj'] != null)
                     $(this).data('loadedDeferredObj',data['loadedDeferredObj']);
                 //calling refreshview, because sometimes the grid seems cluttered with data in the datasource
-                cGrid.refreshView();
+                if(cGrid != null) {
+                    cGrid.refreshView();
+                }
             } else {
                 $(this).contrailGrid();
             }
