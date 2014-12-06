@@ -71,6 +71,18 @@ var contextMenuConfig =  {
 			}
 		};
 	},
+	SecurityGroup: function(element, jointConfig){
+		return {
+			items: {
+				configure: {
+					name: '<i class="icon-cog"></i><span class="margin-0-5">Configure Security Group</span>',
+					callback: function(key, options) {
+						loadFeature({p:'config_net_sg'});
+	                }
+				}
+			}
+		};
+	},
 	NetworkIPAM: function(element, jointConfig){
 		return {
 			items: {
@@ -176,7 +188,10 @@ var tooltipConfig = {
 				var viewElement = jointConfig.configGraph.getCell(element.attr('model-id')),
 					tooltipContent = contrail.getTemplate4Id('tooltip-content-template');
 				
-				return tooltipContent([{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name'].join(':')}]);
+				return tooltipContent([
+					{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name'][2]},
+					{lbl: 'Project', value: viewElement.attributes.nodeDetails['fq_name'][0] + ':' + viewElement.attributes.nodeDetails['fq_name'][1]}
+				]);
 			}
 		},
 		SecurityGroup: {
@@ -186,8 +201,11 @@ var tooltipConfig = {
 			content: function(element, jointConfig){
 				var viewElement = jointConfig.configGraph.getCell(element.attr('model-id')),
 				tooltipContent = contrail.getTemplate4Id('tooltip-content-template');
-			
-				return tooltipContent([{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name'].join(':')}]);
+
+				return tooltipContent([
+					{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name'][2]},
+					{lbl: 'Project', value: viewElement.attributes.nodeDetails['fq_name'][0] + ':' + viewElement.attributes.nodeDetails['fq_name'][1]}
+				]);
 			}
 		},
 		NetworkIPAM: {
@@ -198,7 +216,10 @@ var tooltipConfig = {
 				var viewElement = jointConfig.configGraph.getCell(element.attr('model-id')),
 				tooltipContent = contrail.getTemplate4Id('tooltip-content-template');
 
-				return tooltipContent([{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name'].join(':') }]);
+				return tooltipContent([
+					{lbl:'Name', value: viewElement.attributes.nodeDetails['fq_name'][2]},
+					{lbl: 'Project', value: viewElement.attributes.nodeDetails['fq_name'][0] + ':' + viewElement.attributes.nodeDetails['fq_name'][1]}
+				]);
 			}
 		},
 		ServiceInstance: {
@@ -345,8 +366,8 @@ function ContrailElement(type, options) {
             contrailElement = new joint.shapes.contrail.LogicalRouter(options);
             break;
         case 'collection-element':
-            contrailElement = new joint.shapes.contrail.CollectionElement(options);
-            break;
+			contrailElement = new joint.shapes.contrail.CollectionElement(options);
+			break;
         case 'virtual-machine':
             contrailElement = new joint.shapes.contrail.VirtualMachine(options);
             break;
@@ -398,7 +419,7 @@ function drawVisualization(config) {
 	    		$('g.' + keyConfig).popover({
 	        		trigger: 'hover',
 	        		html: true,
-	        		delay: { show: 200, hide: 10 },
+	        		delay: { show: 1000, hide: 10 },
 	        		placement: function(context, src) {
 						$(context).addClass('popover-tooltip');
 
@@ -820,7 +841,7 @@ function createCloudZoomedNodeElement(nodeDetails, config) {
 }
 
 function createCollectionElements(collections, elements, elementMap) {
-    var elementDimension = {
+	var elementDimension = {
         width: 37,
         height: 37,
         marginLeft: 17,
@@ -1201,7 +1222,8 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
 	    	var elementMap = params.data.elementMap;
 		    $(selectorId+'-config-elements').find('g.NetworkPolicy').each(function(){
 		    	var viewElement = jointObject.configGraph.getCell($(this).attr('model-id')),
-		    		policyRules = viewElement.attributes.nodeDetails.network_policy_entries.policy_rule,
+					policyRules = (contrail.checkIfExist(viewElement.attributes.nodeDetails.network_policy_entries))  ?
+									viewElement.attributes.nodeDetails.network_policy_entries.policy_rule : [],
 		    		highlightedElements = {
 		    			nodes: [],
 		    			links: []
@@ -1306,7 +1328,7 @@ function clearZoomedElement(graph, paper) {
 
 function initPanZoom4ConnectedGraph(elementId) {
 	var connectedSelectorId = elementId + '-connected-elements';
-	
+
 	$(connectedSelectorId).panzoom({
     	$zoomIn: $(elementId).find(".zoom-in"),
         $zoomOut: $(elementId).find(".zoom-out"),
