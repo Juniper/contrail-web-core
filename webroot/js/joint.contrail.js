@@ -1102,32 +1102,33 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
 			break;
 			case 'link':
 				var modelId = dblClickedElement.id;
-				
-				highlightElementsToFaint([
-              		$(selectorId + '-connected-elements').find('div.font-element')
-              	]);
-				
-				highlightSVGElementsToFaint([
-               		$(selectorId + '-connected-elements').find('g.element'),
-               		$(selectorId + '-connected-elements').find('g.link'),
-               	]);
-				
-	        	$('g.link[model-id="' + modelId + '"]').removeClassSVG('faintHighlighted').addClassSVG('elementSelectedHighlighted');
-	        	
-	        	var graph = jointObject.connectedGraph,
+
+				var graph = jointObject.connectedGraph,
 					targetElement = graph.getCell(elementMap.node[dblClickedElement['attributes']['linkDetails']['dst']]),
 					sourceElement = graph.getCell(elementMap.node[dblClickedElement['attributes']['linkDetails']['src']]);
 
-				loadVisualizationTab({
-					container: '#topology-visualization-tabs',
-					type: "connected-network",
-					context: "connected-nw",
-					sourceElement: sourceElement,
-					targetElement: targetElement,
-					fqName: targetElement['attributes']['nodeDetails']['name'],
-					selfElement: dblClickedElement
-				});
-				
+				if(targetElement && sourceElement) {
+					highlightElementsToFaint([
+						$(selectorId + '-connected-elements').find('div.font-element')
+					]);
+
+					highlightSVGElementsToFaint([
+						$(selectorId + '-connected-elements').find('g.element'),
+						$(selectorId + '-connected-elements').find('g.link')
+					]);
+
+					$('g.link[model-id="' + modelId + '"]').removeClassSVG('faintHighlighted').addClassSVG('elementSelectedHighlighted');
+
+					loadVisualizationTab({
+						container: '#topology-visualization-tabs',
+						type: "connected-network",
+						context: "connected-nw",
+						sourceElement: sourceElement,
+						targetElement: targetElement,
+						fqName: targetElement['attributes']['nodeDetails']['name'],
+						selfElement: dblClickedElement
+					});
+				}
 			break;
 			case 'contrail.VirtualMachine':
 				var srcVN = dblClickedElement.attributes.nodeDetails.srcVNDetails.name;
@@ -1195,16 +1196,6 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
 	    		$('g.element').removeClassSVG('dimHighlighted').removeClassSVG('elementHighlighted');
 	        	$('div.font-element').removeClass('dimHighlighted').removeClass('elementHighlighted');
 	    		$('g.link').removeClassSVG('dimHighlighted').removeClassSVG('elementHighlighted');
-	    		
-	    		var graphLinks = jointObject.connectedGraph.getLinks();
-	        	$.each(graphLinks, function(graphLinkKey, graphLinkValue){
-	        		var linkElement = jointObject.connectedGraph.getCell(graphLinkValue.id);
-	        		linkElement.attr({
-	        			'.connection': { stroke: '#333'},
-	    				'.marker-source': { stroke: '#333', fill: '#333'},
-	    				'.marker-target': { stroke: '#333', fill: '#333'}
-	    			});
-	        	});
 	        });
 	    	
 	    	var elementMap = params.data.elementMap;
@@ -1215,12 +1206,12 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
 		    			nodes: [],
 		    			links: []
 		    		};
-		    	
+
 		    	$(this).on('mouseover', function(e){
 					$('div.font-element').addClass('dimHighlighted');
 		        	$('g.element').addClassSVG('dimHighlighted');
 		        	$('g.link').addClassSVG('dimHighlighted');
-		    		
+
 		        	$(this).removeClassSVG('dimHighlighted').addClassSVG('elementHighlighted');
 		        	$('div[font-element-model-id="' + $(this).attr('model-id') + '"]').removeClass('dimHighlighted').addClass('elementHighlighted');
 		        	$.each(policyRules, function(policyRuleKey, policyRuleValue){
@@ -1297,11 +1288,6 @@ function highlightLink(jointObject, elementId) {
 	var linkElement = jointObject.connectedGraph.getCell(elementId);
 	if (linkElement) {
 		$('g[model-id="' + linkElement.id + '"]').addClassSVG('elementHighlighted');
-		linkElement.attr({
-			'.connection': { stroke: '#498AB9'},
-			'.marker-source': { stroke: '#498AB9', fill: '#498AB9'},
-			'.marker-target': { stroke: '#498AB9', fill: '#498AB9'}
-		});
 	}
 }
 
