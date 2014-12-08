@@ -619,7 +619,7 @@ var defColors = ['#1c638d', '#4DA3D5'];
                     $(this).data('loadedDeferredObj',data['loadedDeferredObj']);
                 //calling refreshview, because sometimes the grid seems cluttered with data in the datasource
                 if(cGrid != null) {
-                    cGrid.refreshView();
+                cGrid.refreshView();
                 }
             } else {
                 $(this).contrailGrid();
@@ -1415,10 +1415,23 @@ function MenuHandler() {
                     IS_NODE_MANAGER_INSTALLED = getValueByJsonPath(globalObj,'webServerInfo;uiConfig;nodemanager;installed',true);
                     //Cleanup the container
                     $(contentContainer).html('');
-                    $.each(getValueByJsonPath(currMenuObj,'resources;resource',[]),function(idx,currResourceObj) {
+
+                    setTimeout(function() {
+                        if($(contentContainer).html() == '') {
+                            $(contentContainer).html('<p id="content-container-loading"><i class="icon-spinner icon-spin"></i> &nbsp;Loading content ..</p>');
+                        }
+
+                    }, 2000);
+
+                    $.each(getValueByJsonPath(currMenuObj, 'resources;resource', []), function (idx, currResourceObj) {
                         if (currResourceObj['class'] != null) {
-                            if(window[currResourceObj['class']] != null)
-                                window[currResourceObj['class']].load({containerId:contentContainer, hashParams:layoutHandler.getURLHashParams()});
+                            if (window[currResourceObj['class']] != null) {
+                                window[currResourceObj['class']].load({
+                                    containerId: contentContainer,
+                                    hashParams: layoutHandler.getURLHashParams()
+                                });
+                                $('#content-container-loading').remove();
+                            }
                         }
                     });
                 });

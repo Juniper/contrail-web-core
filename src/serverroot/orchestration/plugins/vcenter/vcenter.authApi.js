@@ -40,7 +40,7 @@ function authenticate (req, res, appData, callback)
         password = post.password;
 
     if (post.urlPath != null) {
-        urlPath = post.urlPath;
+        urlPath = post.urlPath + '/';
     }
     if (post.urlHash != null) {
         urlHash = post.urlHash;
