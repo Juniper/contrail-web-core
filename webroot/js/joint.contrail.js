@@ -171,12 +171,14 @@ var tooltipConfig = {
 			},
 			content: function(element, jointConfig){
 				var viewElement = jointConfig.connectedGraph.getCell(element.attr('model-id')),
-					tooltipContent = contrail.getTemplate4Id('tooltip-content-template');
+					tooltipContent = contrail.getTemplate4Id('tooltip-content-template'),
+					virtualNetworkName = viewElement.attributes.nodeDetails['name'].split(':');
 				
-				return tooltipContent([{lbl:'Name', value: viewElement.attributes.nodeDetails['name']},
-				                       {lbl:'In', value: viewElement.attributes.nodeDetails.more_attr.in_tpkts + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.in_bytes)},
-				                       {lbl:'Out', value: viewElement.attributes.nodeDetails.more_attr.out_tpkts + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.out_bytes)},
-				                       {lbl:'Instance Count', value: viewElement.attributes.nodeDetails.more_attr.vm_cnt}]);
+				return tooltipContent([{lbl:'Name', value: virtualNetworkName[2]},
+					{lbl: 'Project', value: virtualNetworkName[0] + ':' + virtualNetworkName[1]},
+				    {lbl:'In', value: viewElement.attributes.nodeDetails.more_attr.in_tpkts + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.in_bytes)},
+				    {lbl:'Out', value: viewElement.attributes.nodeDetails.more_attr.out_tpkts + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.out_bytes)},
+				    {lbl:'Instance Count', value: viewElement.attributes.nodeDetails.more_attr.vm_cnt}]);
 				
 			}
 		},

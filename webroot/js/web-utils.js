@@ -619,7 +619,7 @@ var defColors = ['#1c638d', '#4DA3D5'];
                     $(this).data('loadedDeferredObj',data['loadedDeferredObj']);
                 //calling refreshview, because sometimes the grid seems cluttered with data in the datasource
                 if(cGrid != null) {
-                    cGrid.refreshView();
+                cGrid.refreshView();
                 }
             } else {
                 $(this).contrailGrid();
