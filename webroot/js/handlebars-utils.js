@@ -166,3 +166,10 @@ Handlebars.registerHelper('showLISubnet', function(type) {
     return type != null && type === 'L3' ? 'show' : 'hide';
 });
 
+Handlebars.registerHelper('showDeviceOwner', function(block) {
+    if(globalObj.webServerInfo.loggedInOrchestrationMode == 'vcenter')
+        return 'hide'; 
+    else
+        return 'show';
+});
+
