@@ -158,11 +158,11 @@ Handlebars.registerHelper('formatVirtualRouterType', function(type) {
     return formatVirtualRouterType(type);
 });
 
-Handlebars.registerHelper('showServer', function(type) {
+Handlebars.registerHelper('showLIServer', function(type) {
     return type != null && type === 'L2'  ? 'show' : 'hide';
 });
 
-Handlebars.registerHelper('showSubnet', function(type) {
+Handlebars.registerHelper('showLISubnet', function(type) {
     return type != null && type === 'L3' ? 'show' : 'hide';
 });
 
