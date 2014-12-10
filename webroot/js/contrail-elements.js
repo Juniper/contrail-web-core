@@ -979,6 +979,12 @@ function constructSelect2(self, defaultOption, args) {
         option.dataTextField = {dsVar: option.dataTextField, apiVar: 'text'};
         option.dataValueField = {dsVar: option.dataValueField, apiVar: 'id'};
 
+        var changeFunction = function(e) {
+            if (contrail.checkIfFunction(option.change)) {
+                option.change(e);
+            }
+        };
+
         if(!$.isEmptyObject(option) && typeof option.dataSource !== 'undefined') {
             if(option.dataSource.type == "remote"){
                 $.ajax({
@@ -1001,13 +1007,13 @@ function constructSelect2(self, defaultOption, args) {
         }
         if(typeof option.data != "undefined") {
             option.data = formatData(option.data,option);
+
+            if (contrail.checkIfExist(self.data('contrailDropdown'))) {
+                self.data('contrailDropdown').destroy();
+            }
+
             self.select2(option)
-                .off("change")
-                .on("change", function(e) {
-                    if (typeof option.change !== 'undefined' && typeof option.change === 'function') {
-                        option.change(e);
-                    }
-                });
+                .on("change", changeFunction);
             if (option.data.length !=0) {
                 self.select2('val', option.data[0].text);
             }
@@ -1070,12 +1076,8 @@ function constructSelect2(self, defaultOption, args) {
                 }
 
                 self.select2(option)
-                    .off("change")
-                    .on("change", function(e) {
-                        if (typeof option.change !== 'undefined' && typeof option.change === 'function') {
-                            option.change(e);
-                        }
-                    });
+                    .off("change", changeFunction)
+                    .on("change", changeFunction);
 
                 if(option.data.length > 0){
                     if(option.data[0].children != undefined && option.data[0].children.length > 0) {
@@ -1126,7 +1128,8 @@ function constructSelect2(self, defaultOption, args) {
                 return true;
             },
             destroy: function(){
-                self.select2('destroy');
+                self.off("change", changeFunction)
+                    .select2('destroy');
             },
             hide: function() {
                 self.select2("container").hide();
