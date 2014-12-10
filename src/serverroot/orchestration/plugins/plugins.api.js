@@ -24,6 +24,7 @@ function getApiServerRequestedByData (appData,reqBy)
 {
     assert(appData);
     var defproject = null;
+    //Set loggedInOrchestrionMode
     var loggedInOrchestrationMode = 'openstack';
     if ((null != appData) && (null != appData['authObj']) &&
         (null != appData['authObj']['req']) &&
@@ -43,7 +44,7 @@ function getApiServerRequestedByData (appData,reqBy)
 
 function getApiServerRequestedByApp (loggedInOrchestrationMode, appData, reqBy)
 {
-    console.log("reqBy a:S", reqBy, loggedInOrchestrationMode);
+    // console.log("reqBy a:S", reqBy, loggedInOrchestrationMode);
     switch (reqBy) {
     case global.label.API_SERVER:
         return getApiServerRequestedByApiServer(loggedInOrchestrationMode,
