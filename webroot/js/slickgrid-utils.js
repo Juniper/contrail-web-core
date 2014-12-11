@@ -709,7 +709,7 @@ function getDefaultGridConfig() {
                 //Refresh the grid only if it's not destroyed
                 setTimeout(function(){
                 	if($(gridContainer).data('contrailGrid')) {
-                		var checkedRows = gridContainer.data('contrailGrid').getCheckedRows();
+                        var checkedRows = gridContainer.data('contrailGrid').getCheckedRows();
                     	grid.invalidateAllRows();
                         grid.render();
                         if(contrail.checkIfFunction(gridDataSource.events.onDataBoundCB)) {
@@ -747,7 +747,7 @@ function getDefaultGridConfig() {
             eventHandlerMap.dataView['onUpdateData'] = function () {
                 //Refresh the grid only if it's not destroyed
                 if($(gridContainer).data('contrailGrid')) {
-                	grid.invalidateAllRows();
+                    grid.invalidateAllRows();
                 	grid.updateRowCount();
                     grid.render();
                     if(contrail.checkIfFunction(gridDataSource.events.onUpdateDataCB)) {
@@ -775,19 +775,21 @@ function getDefaultGridConfig() {
         };
 
         function performSort(cols) {
-            dataView.sort(function (dataRow1, dataRow2) {
-                for (var i = 0, l = cols.length; i < l; i++) {
-                    var field = cols[i].sortCol.field;
-                    var sign = cols[i].sortAsc ? 1 : -1;
-                    var value1 = (contrail.checkIfExist(cols[i].sortCol.sortable.sortBy) && cols[i].sortCol.sortable.sortBy == 'formattedValue') ? cols[i].sortCol.formatter('','','','',dataRow1) : dataRow1[field],
-                        value2 = (contrail.checkIfExist(cols[i].sortCol.sortable.sortBy) && cols[i].sortCol.sortable.sortBy == 'formattedValue') ? cols[i].sortCol.formatter('','','','',dataRow2) : dataRow2[field];
-                    var result = (value1 == value2 ? 0 : (value1 > value2 ? 1 : -1)) * sign;
-                    if (result != 0) {
-                        return result;
+            if(cols.length > 0) {
+                dataView.sort(function (dataRow1, dataRow2) {
+                    for (var i = 0, l = cols.length; i < l; i++) {
+                        var field = cols[i].sortCol.field;
+                        var sign = cols[i].sortAsc ? 1 : -1;
+                        var value1 = (contrail.checkIfExist(cols[i].sortCol.sortable.sortBy) && cols[i].sortCol.sortable.sortBy == 'formattedValue') ? cols[i].sortCol.formatter('', '', '', '', dataRow1) : dataRow1[field],
+                            value2 = (contrail.checkIfExist(cols[i].sortCol.sortable.sortBy) && cols[i].sortCol.sortable.sortBy == 'formattedValue') ? cols[i].sortCol.formatter('', '', '', '', dataRow2) : dataRow2[field];
+                        var result = (value1 == value2 ? 0 : (value1 > value2 ? 1 : -1)) * sign;
+                        if (result != 0) {
+                            return result;
+                        }
                     }
-                }
-                return 0;
-            });
+                    return 0;
+                });
+            }
         };
 
         function initSearchBox() {
