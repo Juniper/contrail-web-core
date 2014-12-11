@@ -1012,6 +1012,10 @@ function constructSelect2(self, defaultOption, args) {
                 self.data('contrailDropdown').destroy();
             }
 
+            if (contrail.checkIfExist(self.data('contrailMultiselect'))) {
+                self.data('contrailMultiselect').destroy();
+            }
+
             self.select2(option)
                 .on("change", changeFunction);
             if (option.data.length !=0) {
