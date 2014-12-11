@@ -39,27 +39,19 @@ exports.admin = function (req, res) {
 
 function login (req, res)
 {
-    //If vCenter is only orchestration model,redirect to '/vcenter/login'
-    var orch = config.orchestration.Manager;
-    var models = orch.split(',');
-    if(models.indexOf('vcenter') > -1 && models.length == 1)
-        commonUtils.redirectToURL(req,res,'/vcenter/login');
-    else
-        res.sendfile('webroot/html/login.html');
+    res.sendfile('webroot/html/login.html');
 }
 
 function vcenter_login (req, res, appData)
 {
     //Move setting loggedInOrchestrationMode to longPolling??
-    //req.session.loggedInOrchestrationMode = 'vcenter';
     var orch = config.orchestration.Manager;
     var models = orch.split(',');
     //If vcenter orchestration is not set and user tries to launch "/vcenter/login",redirect to "/login"
     if (-1 == models.indexOf('vcenter')) {
         commonUtils.redirectToURL(req, res, '/login');
     } else {
-        // return login(req, res);
-        return res.sendfile('webroot/html/login.html');
+       return login(req, res);
     }
 }
 
@@ -70,7 +62,9 @@ function vcenter_logout (req, res, appData)
     if (req.session.loggedInOrchestrationMode != 'vcenter') {
         commonUtils.redirectToURL(req, res, '/logout');
     } else {
-        vCenterApi.logout(appData);
+        //Issue logout on vCenter only if vmware session exists
+        if(req.session.vmware_soap_session != null)
+            vCenterApi.logout(appData);
         return logout(req, res);
     }
 }
@@ -145,6 +139,32 @@ exports.checkURLInAllowedList = function(req) {
     This function returns the isAuthenticated flag for a user session
  */
 exports.isSessionAuthenticated = function(req) {
+    //If url contains "/vcenter" and not loginReq and session doesn't contain vmware_soap_session
+    console.info('isSessionAuthenticated',req.url);
+    //If loggedInOrchestrationMode doesn't match on client and server
+    if(!longPoll.checkLoginReq(req) && req.session.loggedInOrchestrationMode != null && req.headers['x-orchestrationmode'] != null) {
+        if(req.headers['x-orchestrationmode'] != req.session.loggedInOrchestrationMode) {
+            // console.log(commonUtils.FgGreen,'not authenticated',req.headers['x-orchestrationmode'],req.session.loggedInOrchestrationMode);
+            req.session.isAuthenticated = false;
+            return false;
+        }
+    }
+    //If not login request and not /api request
+    if(!longPoll.checkLoginReq(req) && req.url.indexOf('/api') != 0) {
+        if(req.url.indexOf('/vcenter') > -1 && req.session.vmware_soap_session == null) {
+            //Moving none to vcenter orchestration mode 
+            req.session.isAuthenticated = false;
+            // console.log(commonUtils.FgGreen,'vcenter not authenticated',req.url,req.session.vmware_soap_session);
+            return false;
+        }
+        if(req.url.indexOf('/vcenter') == -1 && req.session.vmware_soap_session != null) {
+            //Moving from vCenter orchestration mode to none
+            // console.log(commonUtils.FgGreen,'none not authenticated',req.url,req.session.vmware_soap_session);
+            delete req.session.vmware_soap_session;
+            req.session.isAuthenticated = false;
+            return false;
+        }
+    }
     return ((req.session) ? req.session.isAuthenticated : false);
 }
 
@@ -224,10 +244,11 @@ function logout (req, res)
                'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
     commonUtils.redirectToLogin(req, res);
     //Need to destroy the session after redirectToLogin as login page depends on orchestrationModel
-    if (req.session.userid) {
+    //Info: Need to check why we are destroying session only if userid is set
+    // if (req.session.userid) {
         req.session.isAuthenticated = false;
         req.session.destroy();
-    }
+    // }
 };
 
 function putData(id, callback) {

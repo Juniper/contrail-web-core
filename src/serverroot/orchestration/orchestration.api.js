@@ -33,13 +33,17 @@ function getOrchestrationModelsByReqURL (reqURL)
         logutils.logger.error("Specify the orchestration model in config file");
         assert(0);
     }
+    //If only one orchestration is configured
     if (1 == orchModels.length) {
+        //If vCenter is the only orchestration mode and user accesses via '/login',set orchestration as 'none'
+        if(orchModels[0] == 'vcenter' && reqURL.indexOf('/vcenter') == -1)
+            return 'none';
         return orchModels[0];
     }
     var associatedOrchModelsCnt = associatedOrchModels.length;
-    if (-1 != reqURL.indexOf('vcenter')) {
+    if (-1 != reqURL.indexOf('/vcenter')) {
         return 'vcenter';
-    }
+    } 
     return model;
 }
 
