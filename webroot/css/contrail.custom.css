@@ -1630,6 +1630,11 @@ color: #b94a48;
 .topology-visualization-loading.progress-striped .bar {
   	background-color: #6baed6;
 }
+.visualization-empty p {
+  font-size: 14px;
+  margin: 30px auto;
+  text-align: center;
+}
 .topology-visualization.colmask {
 	position:relative;		
     clear:both;

@@ -60,11 +60,15 @@ var contextMenuConfig =  {
 		return {items: items};
 	},
 	NetworkPolicy: function(element, jointConfig){
+		var viewElement = jointConfig.configGraph.getCell(element.attr('model-id')),
+			jointElementFullName = viewElement.attributes.nodeDetails['fq_name'];
 		return {
 			items: {
 				configure: {
 					name: '<i class="icon-cog"></i><span class="margin-0-5">Configure Network Policy</span>',
 					callback: function(key, options) {
+						setCookie('domain',jointElementFullName[0]);
+						setCookie('project',jointElementFullName[1]);
 						loadFeature({p:'config_net_policies'});
 	                }
 				}
@@ -72,11 +76,15 @@ var contextMenuConfig =  {
 		};
 	},
 	SecurityGroup: function(element, jointConfig){
+		var viewElement = jointConfig.configGraph.getCell(element.attr('model-id')),
+			jointElementFullName = viewElement.attributes.nodeDetails['fq_name'];
 		return {
 			items: {
 				configure: {
 					name: '<i class="icon-cog"></i><span class="margin-0-5">Configure Security Group</span>',
 					callback: function(key, options) {
+						setCookie('domain',jointElementFullName[0]);
+						setCookie('project',jointElementFullName[1]);
 						loadFeature({p:'config_net_sg'});
 	                }
 				}
@@ -84,11 +92,15 @@ var contextMenuConfig =  {
 		};
 	},
 	NetworkIPAM: function(element, jointConfig){
+		var viewElement = jointConfig.configGraph.getCell(element.attr('model-id')),
+			jointElementFullName = viewElement.attributes.nodeDetails['fq_name'];
 		return {
 			items: {
 				configure: {
 					name: '<i class="icon-cog"></i><span class="margin-0-5">Configure Network IPAM</span>',
 					callback: function(key, options) {
+						setCookie('domain',jointElementFullName[0]);
+						setCookie('project',jointElementFullName[1]);
 						loadFeature({p:'config_net_ipam'});
 	                }
 				}
@@ -96,11 +108,15 @@ var contextMenuConfig =  {
 		};
 	},
 	ServiceInstance: function(element, jointConfig){
+		var viewElement = jointConfig.connectedGraph.getCell(element.attr('model-id')),
+			jointElementFullName = viewElement.attributes.nodeDetails['name'].split(':');
 		return {
 			items: {
 				configure: {
 					name: '<i class="icon-cog"></i><span class="margin-0-5">Configure Service Instances</span>',
 					callback: function(key, options) {
+						setCookie('domain',jointElementFullName[0]);
+						setCookie('project',jointElementFullName[1]);
 						loadFeature({p:'config_sc_svcInstances'});
 	                }
 				}
@@ -449,55 +465,59 @@ function drawVisualization(config) {
 
 function renderVisualization(config, data) {
 	$(config.selectorId).parent().find('.topology-visualization-loading').remove();
-    var selectorId = config.selectorId,
-        configSelectorId = selectorId + '-config-elements',
-        connectedSelectorId = selectorId + '-connected-elements',
-        connectedElements = data['connectedElements'],
-        configElements = data['configElements'],
-        nodes = data['nodes'], links = data['links'],
-        newGraphSize;
+	var selectorId = config.selectorId,
+		configSelectorId = selectorId + '-config-elements',
+		connectedSelectorId = selectorId + '-connected-elements',
+		connectedElements = data['connectedElements'],
+		configElements = data['configElements'],
+		nodes = data['nodes'], links = data['links'],
+		newGraphSize;
 
-    var configGraph = new joint.dia.Graph,
-	    configPaper = new joint.dia.Paper({
-	        el: $(configSelectorId),
-	        model: configGraph,
-	        width: 150,
-	        height: data.configSVGHeight,
-	        linkView: joint.shapes.contrail.LinkView
-	    }),
-	    connectedGraph = new joint.dia.Graph,
-        connectedPaper = new joint.dia.Paper({
-            el: $(connectedSelectorId),
-            model: connectedGraph,
-            linkView: joint.shapes.contrail.LinkView
-        });
+	var configGraph = new joint.dia.Graph,
+		configPaper = new joint.dia.Paper({
+			el: $(configSelectorId),
+			model: configGraph,
+			width: 150,
+			height: data.configSVGHeight,
+			linkView: joint.shapes.contrail.LinkView
+		}),
+		connectedGraph = new joint.dia.Graph,
+		connectedPaper = new joint.dia.Paper({
+			el: $(connectedSelectorId),
+			model: connectedGraph,
+			linkView: joint.shapes.contrail.LinkView
+		});
 
-    configGraph.addCells(configElements);
-    connectedGraph.addCells(connectedElements);
-    
-    var jointObject = {
-	    	configGraph: configGraph,
-	    	configPaper: configPaper,
-	    	connectedGraph: connectedGraph,
-	    	connectedPaper: connectedPaper
-	    };
-    
-    if(config.fqName.split(':').length > 2){
-    	return renderZoomedVisualization4VN(selectorId, jointObject, {config:config, data:data});
-    }
-    
-    newGraphSize = joint.layout.contrail.DirectedGraph.layout(connectedGraph, getForceFitOptions(null, null, nodes, links));
-    connectedPaper.setDimensions((($(selectorId).width() > newGraphSize.width) ? $(selectorId).width() : newGraphSize.width) + GRAPH_MARGIN, newGraphSize.height + GRAPH_MARGIN, 1);
-    
-    $(connectedSelectorId).data('actual-size', newGraphSize);
-    $(connectedSelectorId).data('offset', {x: 0, y: 0});
-    $(selectorId).data('joint-object', jointObject);
-    
-    setTopologyHeight(selectorId, false);
-    initConnectedGraphEvents(selectorId, jointObject, {config:config, data:data});
-    initPanZoom4ConnectedGraph(selectorId);
-    
-    return jointObject;
+	configGraph.addCells(configElements);
+	connectedGraph.addCells(connectedElements);
+
+	var jointObject = {
+		configGraph: configGraph,
+		configPaper: configPaper,
+		connectedGraph: connectedGraph,
+		connectedPaper: connectedPaper
+	};
+
+	if(config.fqName.split(':').length > 2){
+		return renderZoomedVisualization4VN(selectorId, jointObject, {config:config, data:data});
+	}
+
+	newGraphSize = joint.layout.contrail.DirectedGraph.layout(connectedGraph, getForceFitOptions(null, null, nodes, links));
+	connectedPaper.setDimensions((($(selectorId).width() > newGraphSize.width) ? $(selectorId).width() : newGraphSize.width) + GRAPH_MARGIN, newGraphSize.height + GRAPH_MARGIN, 1);
+
+	$(connectedSelectorId).data('actual-size', newGraphSize);
+	$(connectedSelectorId).data('offset', {x: 0, y: 0});
+	$(selectorId).data('joint-object', jointObject);
+
+	setTopologyHeight(selectorId, false);
+	initConnectedGraphEvents(selectorId, jointObject, {config:config, data:data});
+	initPanZoom4ConnectedGraph(selectorId);
+
+	if (data.connectedElements.length == 0) {
+		$(config.selectorId + '-visualization-connected-elements-empty').removeClass('hide');
+	}
+
+	return jointObject;
 }
 
 function renderZoomedVisualization4VN(selectorId, jointObject, params){

@@ -982,7 +982,7 @@ input.ace-input-tristate[type=checkbox] {
     opacity: 0;
     position: absolute;
     z-index: 12;
-    width: 18px;
+    width: 0;
     height: 18px;
 }
 input.ace-input-tristate[type=checkbox]:checked,
