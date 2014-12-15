@@ -118,7 +118,7 @@ function processPendingReq (ctx, next, callback)
   if (checkLoginReq(ctx.req)) {
     ctx.req.session.loggedInOrchestrationMode =
         orch.getOrchestrationModelsByReqURL(ctx.req.url);
-    logutils.logger.debug("Getting Logged In Orchestration Mode:",
+    logutils.logger.info("Getting Logged In Orchestration Mode:",
                           ctx.req.session.loggedInOrchestrationMode);
   }
 
