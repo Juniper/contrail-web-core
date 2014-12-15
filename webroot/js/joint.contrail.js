@@ -192,8 +192,8 @@ var tooltipConfig = {
 				
 				return tooltipContent([{lbl:'Name', value: virtualNetworkName[2]},
 					{lbl: 'Project', value: virtualNetworkName[0] + ':' + virtualNetworkName[1]},
-				    {lbl:'In', value: viewElement.attributes.nodeDetails.more_attr.in_tpkts + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.in_bytes)},
-				    {lbl:'Out', value: viewElement.attributes.nodeDetails.more_attr.out_tpkts + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.out_bytes)},
+				    {lbl:'In', value: formatNumberByCommas(viewElement.attributes.nodeDetails.more_attr.in_tpkts) + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.in_bytes)},
+				    {lbl:'Out', value: formatNumberByCommas(viewElement.attributes.nodeDetails.more_attr.out_tpkts) + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.out_bytes)},
 				    {lbl:'Instance Count', value: viewElement.attributes.nodeDetails.more_attr.vm_cnt}]);
 				
 			}
@@ -296,18 +296,18 @@ var tooltipConfig = {
 			    for(var i=0;i<in_stats.length;i++) {
 			        if(src==in_stats[i].src && dst==in_stats[i].dst){
 			           data.push({lbl:"Link",value:in_stats[i].src.split(':').pop()+" --- "+in_stats[i].dst.split(':').pop()});
-			           data.push({lbl:"In",value:in_stats[i].pkts+" pkts / "+formatBytes(in_stats[i].bytes)});
+			           data.push({lbl:"In",value: formatNumberByCommas(in_stats[i].pkts)+" packets / "+formatBytes(in_stats[i].bytes)});
 			              for(var j=0;j<out_stats.length;j++){
 			                  if(src==out_stats[j].src && dst==out_stats[j].dst){
-			                     data.push({lbl:"Out",value:out_stats[j].pkts+" pkts / "+formatBytes(out_stats[i].bytes)});
+			                     data.push({lbl:"Out",value: formatNumberByCommas(out_stats[j].pkts)+" packets / "+formatBytes(out_stats[i].bytes)});
 			                  }
 			              }
 			        }else if(src==in_stats[i].dst && dst==in_stats[i].src){
-			            data.push({lbl:"Link",value:in_stats[i].src.split(':').pop()+" --- "+in_stats[i].dst.split(':').pop(), dividerClass: 'margin-5-0-0'});
-			            data.push({lbl:"In",value:in_stats[i].pkts+" pkts / "+formatBytes(in_stats[i].bytes)});
+			            data.push({lbl:"Link",value: in_stats[i].src.split(':').pop()+" --- "+in_stats[i].dst.split(':').pop(), dividerClass: 'margin-5-0-0'});
+			            data.push({lbl:"In",value: formatNumberByCommas(in_stats[i].pkts)+" packets / "+formatBytes(in_stats[i].bytes)});
 			            for(var j=0;j<out_stats.length;j++){
 			                 if(src==out_stats[j].dst && dst==out_stats[j].src){
-			                        data.push({lbl:"Out",value:out_stats[j].pkts+" pkts / "+formatBytes(out_stats[i].bytes)});
+			                        data.push({lbl:"Out",value: formatNumberByCommas(out_stats[j].pkts) +" packets / "+formatBytes(out_stats[i].bytes)});
 			                    }
 			            }
 			       }
@@ -318,17 +318,15 @@ var tooltipConfig = {
 			        var dst=viewElementDetails.dst.split(':').pop();
 			        if(partial_msg!="")
 			            data.push({lbl:"",value:partial_msg});
-			        if(viewElementDetails.dir=='bi'){
-			            data.push({lbl:"Link",value:src+" --- "+dst});
-			            data.push({lbl:"In",value:"0 pkts / 0 B"});
-			            data.push({lbl:"Out",value:"0 pkts / 0 B"});
+
+					data.push({lbl:"Link",value:src+" --- "+dst});
+					data.push({lbl:"In",value:"0 packets / 0 B"});
+					data.push({lbl:"Out",value:"0 packets / 0 B"});
+
+					if(viewElementDetails.dir=='bi'){
 			            data.push({lbl:"Link",value:dst+" --- "+src, dividerClass: 'margin-5-0-0'});
-			            data.push({lbl:"In",value:"0 pkts / 0 B"});
-			            data.push({lbl:"Out",value:"0 pkts / 0 B"});
-			        } else if(viewElementDetails.dir=='uni') {
-			            data.push({lbl:"Link",value:src+" --- "+dst});
-			            data.push({lbl:"In",value:"0 pkts / 0 B"});
-			            data.push({lbl:"Out",value:"0 pkts / 0 B"});
+			            data.push({lbl:"In",value:"0 packets / 0 B"});
+			            data.push({lbl:"Out",value:"0 packets / 0 B"});
 			        }
 			    } else if(viewElementDetails.more_attributes!=undefined && viewElementDetails.more_attributes.in_stats!=undefined 
 			            && viewElementDetails.more_attributes.out_stats!=undefined && viewElementDetails.more_attributes.in_stats.length==0
@@ -337,17 +335,15 @@ var tooltipConfig = {
 			        var dst=viewElementDetails.dst.split(':').pop();
 			        if(partial_msg!="")
 			            data.push({lbl:"",value:partial_msg});
-			        if(viewElementDetails.dir=='bi'){
-			            data.push({lbl:"Link",value:src+" --- "+dst});
-			            data.push({lbl:"In",value:"0 pkts / 0 B"});
-			            data.push({lbl:"Out",value:"0 pkts / 0 B"});
+
+					data.push({lbl:"Link",value:src+" --- "+dst});
+					data.push({lbl:"In",value:"0 packets / 0 B"});
+					data.push({lbl:"Out",value:"0 packets / 0 B"});
+
+			        if (viewElementDetails.dir=='bi') {
 						data.push({lbl:"Link",value:dst+" --- "+src, dividerClass: 'margin-5-0-0'});
-			            data.push({lbl:"In",value:"0 pkts / 0 B"});
-			            data.push({lbl:"Out",value:"0 pkts / 0 B"});}
-			        else if(viewElementDetails.dir=='uni'){
-			            data.push({lbl:"Link",value:src+" --- "+dst});
-			            data.push({lbl:"In",value:"0 pkts / 0 B"});
-			            data.push({lbl:"Out",value:"0 pkts / 0 B"});
+			            data.push({lbl:"In",value:"0 packets / 0 B"});
+			            data.push({lbl:"Out",value:"0 packets / 0 B"});
 			        }
 			    }
 
@@ -402,7 +398,7 @@ function ContrailElement(type, options) {
 function drawVisualization(config) {
     var url = config.url;
     $.getJSON(url, function (response) {
-    	setTimeout(function(){     
+    	setTimeout(function(){
     		var data = formatData4BiDirVisualization(response),
 	        	jointConfig = renderVisualization(config, data);
 
@@ -854,7 +850,7 @@ function createCloudZoomedNodeElement(nodeDetails, config) {
             text: {
                 text: (nodeDetails['more_attr']['vm_cnt'] == 0) ? "No virtual machine available." : contrail.truncateText(nodeDetails['name'].split(":")[2],50),
                 'ref-x': .5,
-                'ref-y': (nodeDetails['more_attr']['vm_cnt'] == 0) ? 65 : -20
+                'ref-y': (nodeDetails['more_attr']['vm_cnt'] == 0) ? 35 : -20
             }
         }
     });
@@ -1381,14 +1377,15 @@ function setTopologyHeight(selectorId) {
 		tabHeight = resizeFlag ? 155 : 435,
 		minHeight = 300,
 		topologyHeight = window.innerHeight - tabHeight,
-		svgHeight = Math.max($(selectorId + '-connected-elements').data('actual-size').height, $(selectorId + '-config-elements svg').attr('height')),
+		connectedElementsHeight = ($(selectorId + '-connected-elements').data('actual-size').height) ? $(selectorId + '-connected-elements').data('actual-size').height : 0,
+		svgHeight = Math.max(connectedElementsHeight, $(selectorId + '-config-elements svg').attr('height')),
 	    elementHeight = resizeFlag ? topologyHeight : ((topologyHeight < minHeight) ? minHeight : ((svgHeight < topologyHeight) ? ((svgHeight < minHeight) ? minHeight : svgHeight) : topologyHeight));
-	
+
 	$(selectorId).parent().height(elementHeight);
     $(selectorId).find('.col1').height(elementHeight);
     $(selectorId + '-connected-elements svg').attr('height',elementHeight);
 	$(selectorId).parent().css('width', '100%');
-	$(selectorId).parents('.visualization-container').find('.col3').height(elementHeight)
+	$(selectorId).parents('.visualization-container').find('.col3').height(elementHeight);
 
 	var image = document.createElementNS('http://www.w3.org/2000/svg', 'image'),
 		patt = document.createElementNS('http://www.w3.org/2000/svg', 'pattern'),
