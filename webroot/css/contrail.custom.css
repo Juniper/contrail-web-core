@@ -28,10 +28,6 @@
 .image {
   background-position: 0 -64px;
 }
-.treeview-back h3 {
-    margin: 0 0 10px 0;
-    padding: 0;
-}
 .pane-content {
   padding: 0 10px;
 }
@@ -357,9 +353,6 @@ div.t-grid td {
 .no-padding {
   padding: 0px;
 }
-#main-container.no-padding {
-  padding: 0px;
-}
 #formRoutes #btnRouteReset {
   width: 50px;
 }
@@ -413,9 +406,6 @@ div.t-grid td {
 .tenant-mon-backup .example-title {
   margin-top: 10px;
   margin-bottom: 10px;
-}
-.login-container .error {
-  color: red;
 }
 .port-detail-template .grid-title {
   color: #4DA3D5;
@@ -475,28 +465,6 @@ ul.configActionMenu {
 }
 .flow-count #flowCnt {
   padding-right: 5px;
-}
-#formPing {
-  padding: 10px;
-  width: 800px;
-  border-radius: 8px;
-}
-#formPing label {
-  width: 100px;
-}
-#formPing .btn-holder {
-  margin-right: 10px;
-  text-align: right;
-}
-#pingContainer {
-  width: 850px;
-  margin: auto;
-}
-#pingResponse {
-  height: 300px;
-  width: 800px;
-  padding: 10px;
-  margin-top: 10px;
 }
 .infra-chart {
   margin-top: 50px;
@@ -567,7 +535,6 @@ ul.configActionMenu {
 	display:block;
 	position: absolute;
 	left: 10px;
-	top: 2px;
 	width: 10px;
 	height: 50px;
 	line-height: 38px;

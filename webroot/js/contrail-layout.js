@@ -22,6 +22,12 @@ function handleSideMenu() {
             return false;
         }
     });
+
+    var sidebarState = getCookie('sidebar');
+    if (sidebarState == 'close') {
+        $('#sidebar').addClass('menu-min');
+        $('#sidebar-collapse').find('i').removeClass('icon-chevron-left').addClass('icon-chevron-right');
+    }
 }
 
 function toggleSubMenu(subMenu, linkId) {
@@ -50,6 +56,9 @@ function onClickSidebarCollapse() {
     $minimized = $('#sidebar').hasClass('menu-min');
     if ($minimized) {
         $('.open > .submenu').removeClass('open');
+        setCookie('sidebar','close');
+    } else {
+        setCookie('sidebar','open');
     }
 }
 

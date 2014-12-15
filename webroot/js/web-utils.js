@@ -792,6 +792,25 @@ function formatBytes(bytes, noDecimal, maxPrecision, precision) {
     return formatStr;
 }
 
+function formatNumberByCommas(num) {
+    var numString = num.toString().split("").reverse(),
+        formattedNumstring = [],
+        numStringLength = numString.length;
+
+    for (var i = 0 ; i < numStringLength; i = i + 3) {
+        if (numStringLength - i < 3) {
+            formattedNumstring = formattedNumstring.concat(numString.slice(i, numStringLength));
+        } else {
+            formattedNumstring = formattedNumstring.concat(numString.slice(i, i + 3));
+            if (numStringLength - i > 3) {
+                formattedNumstring = formattedNumstring.concat([',']);
+            }
+        }
+    }
+
+    return formattedNumstring.reverse().join('');
+}
+
 function convertToBytes(formattedBytes) {
     var formatStr;
     var decimalDigits = 2;
