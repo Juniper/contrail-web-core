@@ -322,4 +322,4 @@ exports.insertResToReadyQ = insertResToReadyQ;
 exports.routeAll = routeAll;
 exports.processPendingReq = processPendingReq;
 exports.insertDataToSendAllClients = insertDataToSendAllClients;
-
+exports.checkLoginReq = checkLoginReq;

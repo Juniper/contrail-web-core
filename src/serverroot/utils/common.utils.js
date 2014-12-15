@@ -1213,7 +1213,13 @@ function getApiPostData (url, postData)
 
 function redirectToLogout (req, res, callback)
 {
-    if(req.session.loggedInOrchestrationMode == 'vcenter' || req['originalUrl'].indexOf('/vcenter') > -1) {
+    //If URL has '/vcenter',then redirect to /vcenter/logout
+    //x-orchestrationmode is set only for ajax requests,so if user changes browser URL then we need to check for loggedInOrchestrationMode 
+    if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'vcenter') {
+        redURL = '/vcenter/logout';
+    } else if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'none') {
+        redURL = '/logout';
+    } else if(req['originalUrl'].indexOf('/vcenter') > -1) {
         redURL = '/vcenter/logout';
     } else {
         redURL = '/logout';
@@ -1226,7 +1232,11 @@ function redirectToLogout (req, res, callback)
 
 function redirectToLogin (req, res)
 {
-    if(req.session.loggedInOrchestrationMode == 'vcenter') {
+    if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'vcenter') {
+        redURL = '/vcenter/login';
+    } else if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'none') {
+        redURL = '/login';
+    } else if(req['originalUrl'].indexOf('/vcenter') > -1) {
         redURL = '/vcenter/login';
     } else {
         redURL = '/login';

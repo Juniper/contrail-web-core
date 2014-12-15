@@ -681,6 +681,8 @@ $(document).ready(function () {
         //set the default timeout as 30 seconds
         timeout:30000,
         beforeSend:function (xhr, settings) {
+            if(globalObj['webServerInfo'] != null && globalObj['webServerInfo']['loggedInOrchestrationMode'] != null)
+                xhr.setRequestHeader("x-orchestrationmode",globalObj['webServerInfo']['loggedInOrchestrationMode']);
             xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         },
         error:function (xhr, e) {
