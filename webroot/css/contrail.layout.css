@@ -708,14 +708,13 @@ li [class*=" icon-"],
 .menu-min .nav-list > li > a > span {
   display: none;
   position: absolute;
-  left: 41px;
+  left: 42px;
   top: -2px;
-  width: 158px;
+  width: 163px;
   height: 39px;
   line-height: 38px;
   background-color: #f5f5f5;
   z-index: 121;
-  box-shadow: 2px 1px 2px 0 rgba(0,0,0,0.2);
   border: 1px solid #cccccc;
   padding-left: 12px;
 }
@@ -770,7 +769,7 @@ li [class*=" icon-"],
   background: #ffffff;
   position: absolute;
   z-index: 120;
-  left: 41px;
+  left: 42px;
   top: -2px;
   width: 175px;
   border: 1px solid #cccccc;
