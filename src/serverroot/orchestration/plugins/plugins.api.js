@@ -43,7 +43,7 @@ function getApiServerRequestedByData (appData,reqBy)
 
 function getApiServerRequestedByApp (loggedInOrchestrationMode, appData, reqBy)
 {
-    console.log("reqBy a:S", reqBy, loggedInOrchestrationMode);
+    // console.log("reqBy a:S", reqBy, loggedInOrchestrationMode);
     switch (reqBy) {
     case global.label.API_SERVER:
         return getApiServerRequestedByApiServer(loggedInOrchestrationMode,
