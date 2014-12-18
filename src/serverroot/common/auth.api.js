@@ -166,6 +166,11 @@ function getUserAuthDataByConfigAuthObj (loggedInOrchestrationMode, authObj, cal
                                                                             callback);
 }
 
+function deleteAllTokens (req, callback)
+{
+    getAuthMethod[req.session.loggedInOrchestrationMode].deleteAllTokens(req, callback);
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -183,4 +188,5 @@ exports.getDefaultDomain = getDefaultDomain;
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
+exports.deleteAllTokens = deleteAllTokens;
 

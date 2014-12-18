@@ -158,6 +158,11 @@ function getUserAuthDataByConfigAuthObj (authObj, callback)
     callback(null, null);
 }
 
+function deleteAllTokens (req, callback)
+{
+    callback(null);
+}
+
 exports.authenticate = authenticate;
 exports.getServiceCatalog = getServiceCatalog;
 exports.getAPIServerAuthParamsByReq = getAPIServerAuthParamsByReq;
@@ -173,4 +178,5 @@ exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.getToken = getToken;
 exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
+exports.deleteAllTokens = deleteAllTokens;
 

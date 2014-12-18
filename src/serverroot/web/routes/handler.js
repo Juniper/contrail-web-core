@@ -246,9 +246,10 @@ function logout (req, res)
     //Need to destroy the session after redirectToLogin as login page depends on orchestrationModel
     //Info: Need to check why we are destroying session only if userid is set
     // if (req.session.userid) {
+    authApi.deleteAllTokens(req, function(err) {
         req.session.isAuthenticated = false;
         req.session.destroy();
-    // }
+    });
 };
 
 function putData(id, callback) {
