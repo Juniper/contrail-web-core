@@ -927,6 +927,9 @@ a.selectAllLink:hover {
 .grid-load-status p.error{
 	color: #b94a48;
 }
+.grid-info {
+  margin-bottom: 0;
+}
 .slick-header {
 	border: none;
 	background: none;
@@ -1091,6 +1094,52 @@ margin-right: 15px;
 	width: 175px;
 }
 
+/* Editable Grid */
+
+.contrail-editable-grid-table thead {
+    padding: 5px 0;
+    line-height: 26px;
+}
+.contrail-editable-grid-table thead tr {
+    border-bottom: 1px solid #DEDEDE;
+}
+.contrail-editable-grid-table tr th {
+    font-weight: normal;
+    color: #3182bd;
+    text-align: left;
+    min-width: 40px;
+}
+.contrail-editable-grid-table tr td {
+    text-align: center;
+    /*border-right: 1px solid #DEDEDE;*/
+}
+/*.contrail-editable-grid-table tr td:first-child {*/
+   /*border-left: 1px solid #DEDEDE;*/
+/*}*/
+/*.contrail-editable-grid-table tr td input[type="text"] {*/
+    /*border: none;*/
+/*}*/
+/*.contrail-editable-grid-table tr td input.ace-input[type=checkbox] + .ace-lbl::before {*/
+    /*border: none;*/
+    /*margin-top:0;*/
+    /*padding: 5px;*/
+/*}*/
+.contrail-editable-grid-table tr td.error-cell {
+    text-align: left;
+    padding-left: 5px;
+}
+.contrail-editable-grid-table tr td.action-cell {
+    min-width: 30px;
+}
+.contrail-editable-grid-table tr td.error-cell .help-block {
+    margin-bottom: 5px;
+}
+.editable-grid-add-link {
+    text-decoration: none;
+    color: #3182bd !important;
+    cursor: pointer;
+    font-size: 13px;
+}
 /* jQuery Validation CSS*/
 label.jqInvalid{
 	padding: 2px;
@@ -1203,6 +1252,7 @@ label.jqInvalid{
 }
 .select2-container .select2-choice > .select2-chosen{
 	margin-right: 17px;
+    text-align: left;
 }
  .select2-container .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choice, .select2-container-multi .select2-choices {
 	border: none;
