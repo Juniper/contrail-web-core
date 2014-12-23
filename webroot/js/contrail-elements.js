@@ -1085,7 +1085,8 @@ function constructSelect2(self, defaultOption, args) {
 
                 if(option.data.length > 0){
                     if(option.data[0].children != undefined && option.data[0].children.length > 0) {
-                        self.select2('val', option.data[1].children[0].value);
+                        if(option.data[1] != null && option.data[1].children != null && option.data[1].children.length > 0)
+                            self.select2('val', option.data[1].children[0].value);
                     } else {
                         self.select2('val', option.data[0].value);                    
                     }
