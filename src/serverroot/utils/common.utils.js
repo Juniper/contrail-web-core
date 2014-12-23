@@ -28,7 +28,9 @@ var commonUtils = module.exports,
     pd = require('pretty-data').pd,
     v4 = require('ipv6').v4,
     v6 = require('ipv6').v6;
-    contrailPath = '/contrail';
+    contrailPath = '/contrail',
+    redisUtils = require('./redis.utils');
+
 if (!module.parent) {
     logutils.logger.warn(util.format(
                          messages.warn.invalid_mod_call, module.filename));
@@ -1065,22 +1067,13 @@ function createRedisClient (redisDBIndex, callback)
         config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
     var server_ip = (config.redis_server_ip) ?
         config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
-    var redisClient = redis.createClient(server_port,
-        server_ip);
     if (typeof redisDBIndex === 'function') {
         uiDB = getWebUIRedisDBIndex();
         callback = redisDBIndex;
     } else {
         uiDB = redisDBIndex;
     }
-    redisClient.select(uiDB, function(err, res) {
-        if (err) {
-            logutils.logger.error('Redis DB ' + uiDB + ' SELECT error:' + err);
-            assert(0);
-        } else {
-            callback(redisClient);
-        }
-    });
+    redisUtils.createRedisClientAndWait(server_port, server_ip, uiDB, callback);
 }
 
 /* Function: flushRedisDB
