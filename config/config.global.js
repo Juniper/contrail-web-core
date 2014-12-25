@@ -213,6 +213,7 @@ config.redisDBIndex = 3;
 config.redis_server_port = '6379';
 config.redis_server_ip = '127.0.0.1';
 config.redis_dump_file = '/var/lib/redis/dump-webui.rdb';
+config.redis_password = '';
 
 /* Logo File: Use complete path of logo file location */
 config.logo_file = '/usr/src/contrail/contrail-web-core/webroot/img/opencontrail-logo.png';
