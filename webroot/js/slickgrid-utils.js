@@ -88,7 +88,7 @@ function getDefaultGridConfig() {
         	gridDataSource, gridColumns, gridSortColumns = [], gridOptions,
         	autoRefreshInterval = false, searchColumns = [],
             currentSelectedRows = [],
-            headerTemplate, remoteConfig = {}, ajaxConfig,
+            remoteConfig = {}, ajaxConfig,
             dvConfig = null, gridContainer = this, 
             eventHandlerMap = {grid: {}, dataView: {}}, 
             scrolledStatus = {scrollLeft: 0, scrollTop: 0};
@@ -236,13 +236,18 @@ function getDefaultGridConfig() {
         }
 
         function initContrailGrid(dataObject){
+            var checkboxSelector = new Slick.CheckboxSelectColumn({
+                cssClass: "slick-cell-checkboxsel"
+            });
             initGridHeader();
-            initGridBodyOptions();
+            initGridBodyOptions(checkboxSelector);
             gridContainer.append('<div class="grid-body"></div>');
             if(gridOptions.autoHeight == false){
             	gridContainer.find('.grid-body').height(gridOptions.gridHeight);
             }
             grid = new Slick.Grid(gridContainer.find('.grid-body'), dataObject, gridColumns, gridOptions);
+            grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
+            grid.registerPlugin(checkboxSelector);
             gridContainer.append('<div class="grid-load-status hide"></div>');
             initGridEvents();
             setDataObject4ContrailGrid();
@@ -352,80 +357,35 @@ function getDefaultGridConfig() {
             });
         };
 
-        function initGridBodyOptions() {
+        function initGridBodyOptions(checkboxSelector) {
         	if(contrail.checkIfExist(gridOptions)){
         		var columns = [];
 
 	            // Adds checkbox to all rows and header for select all functionality
 	            if(gridOptions.checkboxSelectable != false) {
 	                columns = [];
-	                columns.push({
-	                    cssClass: "slick-cell-checkboxsel",
-	                    id: "slick_sel",
-	                    field: "sel",
-	                    formatter: function(r, c, v, cd, dc) {
-	                    	var enabled = true;
-	                    	if(contrail.checkIfFunction(gridOptions.checkboxSelectable.enableRowCheckbox)){
-	                    		enabled = gridOptions.checkboxSelectable.enableRowCheckbox(dc);
-	                    	}
-	                        return '<input type="checkbox" class="ace-input rowCheckbox" value="' + r +'" ' + ((!enabled) ? 'disabled="disabled"' : '') + '/> <span class="ace-lbl"></span>';
-	                    },
-	                    id: "_checkbox_selector",
-	                    name: '<input type="checkbox" class="ace-input headerRowCheckbox" /> <span class="ace-lbl"></span>',
-	                    resizable: false,
-	                    sortable: false,
-	                    toolTip: "Select/Deselect All",
-	                    width: 30,
-	                    searchable: false,
-	                    exportConfig: {
-	                        allow: false
-	                    }
-	                });
+                    columns.push($.extend(true, {}, checkboxSelector.getColumnDefinition(), {
+                        formatter: function(r, c, v, cd, dc) {
+                            var selectedRows = (contrail.checkIfExist(grid)) ? grid.getSelectedRows() : [];
+                            var enabled = true;
+                            if(contrail.checkIfFunction(gridOptions.checkboxSelectable.enableRowCheckbox)){
+                                enabled = gridOptions.checkboxSelectable.enableRowCheckbox(dc);
+                            }
+                            if (enabled) {
+                                return (selectedRows.indexOf(r) == -1) ?
+                                    '<input type="checkbox" class="ace-input rowCheckbox" value="' + r + '"/> <span class="ace-lbl"></span>' :
+                                    '<input type="checkbox" class="ace-input rowCheckbox" checked="checked" value="' + r + '"/> <span class="ace-lbl"></span>';
 
-	                var onNothingChecked = contrail.checkIfFunction(gridOptions.checkboxSelectable.onNothingChecked) ? gridOptions.checkboxSelectable.onNothingChecked : null,
-	                	onSomethingChecked = contrail.checkIfFunction(gridOptions.checkboxSelectable.onSomethingChecked) ? gridOptions.checkboxSelectable.onSomethingChecked : null,
-						onEverythingChecked = contrail.checkIfFunction(gridOptions.checkboxSelectable.onEverythingChecked) ? gridOptions.checkboxSelectable.onEverythingChecked : null;
+                            }
+                            else {
+                                return '<input type="checkbox" class="ace-input rowCheckbox" value="' + r + '" disabled=true/> <span class="ace-lbl"></span>';
+                            }
+                        },
+                        name: '<input type="checkbox" class="ace-input headerRowCheckbox" disabled=true/> <span class="ace-lbl"></span>'
+                    }));
 
-	                columns = columns.concat(gridColumns);
+                    columns = columns.concat(gridColumns);
 	                gridColumns = columns;
-
-	                gridContainer.find('.headerRowCheckbox').live('click', function(e){
-	                    if($(this).attr('checked') == 'checked'){
-	                        gridContainer.find('.rowCheckbox').attr('checked',function(i,val){
-	                        	if($(this).attr('disabled') != 'disabled'){
-	                        		return 'checked';
-	                        	}
-	                        	return false;
-	                        });
-	                        (contrail.checkIfExist(onSomethingChecked) ? onSomethingChecked(e) : '');
-	                        (contrail.checkIfExist(onEverythingChecked) ? onEverythingChecked(e) : '');
-	                    } else {
-	                        gridContainer.find('.rowCheckbox').removeAttr('checked');
-	                        (contrail.checkIfExist(onNothingChecked) ? onNothingChecked(e) : '');
-	                    }
-	                });
-
-	                gridContainer.find('.rowCheckbox').live('click', function(e){
-	                    if($(this).attr('checked') != 'checked'){
-	                        gridContainer.find('.headerRowCheckbox').removeAttr('checked');
-	                    }
-
-	                    var headerRowChecked = true, rowChecked = false;
-                    	gridContainer.find('.rowCheckbox').each(function(key,val){
-                    		headerRowChecked = headerRowChecked && (($(this).attr('checked') == 'checked') ? true : false);
-                    		rowChecked = rowChecked || (($(this).attr('checked') == 'checked') ? true : false);
-                    	});
-
-                    	if(headerRowChecked) {
-                    		gridContainer.find('.headerRowCheckbox').attr('checked','checked');
-                    		(contrail.checkIfExist(onSomethingChecked) ? onSomethingChecked(e) : '');
-                    		(contrail.checkIfExist(onEverythingChecked) ? onEverythingChecked(e) : '');
-                    	}else if(rowChecked) {
-                    		(contrail.checkIfExist(onSomethingChecked) ? onSomethingChecked(e) : '');
-                    	}else {
-                    		(contrail.checkIfExist(onNothingChecked) ? onNothingChecked(e) : '');
-                    	}
-	                });
 	            }
 
 	            if (gridOptions.detail != false) {
@@ -607,7 +567,79 @@ function getDefaultGridConfig() {
         	};
         	
         	grid['onScroll'].subscribe(eventHandlerMap.grid['onScroll']);
-        	
+
+            eventHandlerMap.grid['onSelectedRowsChanged'] = function(e, args){
+                var onNothingChecked = contrail.checkIfFunction(gridOptions.checkboxSelectable.onNothingChecked) ? gridOptions.checkboxSelectable.onNothingChecked : null,
+                    onSomethingChecked = contrail.checkIfFunction(gridOptions.checkboxSelectable.onSomethingChecked) ? gridOptions.checkboxSelectable.onSomethingChecked : null,
+                    onEverythingChecked = contrail.checkIfFunction(gridOptions.checkboxSelectable.onEverythingChecked) ? gridOptions.checkboxSelectable.onEverythingChecked : null;
+
+                var selectedRowLength = grid.getSelectedRows().length;
+
+                if (selectedRowLength == 0) {
+                    (contrail.checkIfExist(onNothingChecked) ? onNothingChecked(e) : '');
+                }
+                if (selectedRowLength > 0) {
+                    (contrail.checkIfExist(onSomethingChecked) ? onSomethingChecked(e) : '');
+                }
+                if (selectedRowLength == grid.getDataLength()) {
+                    (contrail.checkIfExist(onEverythingChecked) ? onEverythingChecked(e) : '');
+                }
+
+                gridContainer.data('contrailGrid').refreshView();
+            };
+
+            grid['onSelectedRowsChanged'].subscribe(eventHandlerMap.grid['onSelectedRowsChanged']);
+
+            eventHandlerMap.grid['onHeaderClick'] = function(e, args){
+                if ($(e.target).is(":checkbox")) {
+
+                    if ($(e.target).is(":checked")) {
+                        gridContainer.data('contrailGrid').setAllCheckedRows('current-page');
+
+                        var pagingInfo = dataView.getPagingInfo();
+
+                        if(pagingInfo.totalPages > 1 && !gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
+                            gridContainer.find('.grid-check-all-info').remove();
+                            gridContainer.find('.slick-header').after('<div class="alert alert-info grid-info grid-check-all-info"> ' +
+                            '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                            '<strong>' + pagingInfo.pageSize + ' records checked.</strong> <a class="check-all-link">Click here to check all ' + pagingInfo.totalRows + ' records</a>' +
+                            '</div>');
+
+                            gridContainer.find('.check-all-link')
+                                .off('click')
+                                .on('click', function(e) {
+                                    gridContainer.data('contrailGrid').setAllCheckedRows('all-page');
+                                    gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked = true;
+
+                                    gridContainer.find('.grid-check-all-info').remove();
+                                    gridContainer.find('.slick-header').after('<div class="alert alert-info grid-info grid-check-all-info"> ' +
+                                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                                    '<strong>' + pagingInfo.totalRows + ' records checked.</strong> <a class="clear-selection-link">Click here to clear selection</a>' +
+                                    '</div>');
+
+                                    gridContainer.find('.clear-selection-link')
+                                        .off('click')
+                                        .on('click', function(e) {
+                                            grid.setSelectedRows([]);
+                                            gridContainer.find('.grid-check-all-info').remove();
+                                            gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked = false;
+                                        })
+                                });
+                        }
+
+                    } else {
+                        grid.setSelectedRows([]);
+                        gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked = false;
+                        gridContainer.find('.grid-check-all-info').remove();
+                    }
+
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                }
+            };
+
+            grid['onHeaderClick'].subscribe(eventHandlerMap.grid['onHeaderClick']);
+
         	eventHandlerMap.grid['onClick'] = function (e, args) {
             	var column = grid.getColumns()[args.cell],
             		rowData = grid.getDataItem(args.row);
@@ -688,77 +720,47 @@ function getDefaultGridConfig() {
         };
         
         function initDataView() {
-            eventHandlerMap.dataView['onRowCountChanged'] = function (e, args) {
+            eventHandlerMap.dataView['onDataUpdate'] = function(e, args) {
                 //Refresh the grid only if it's not destroyed
-                if($(gridContainer).data('contrailGrid')) {
+                if($(gridContainer).data('contrailGrid') && (args.previous != args.current || args.rows.length > 0)) {
+                    grid.invalidateAllRows();
                     grid.updateRowCount();
                     grid.render();
 
-                    gridContainer.data('contrailGrid').removeGridMessage();
-                    if(dataView.getLength() == 0){
-                        emptyGridHandler();
-                        gridContainer.find('.slick-row-detail').remove();
-                    } else {
-                        gridContainer.find('.grid-footer').removeClass('hide');
-                        onDataGridHandler();
+                    //onRowCount Changed
+                    if (args.previous != args.current) {
+                        gridContainer.data('contrailGrid').removeGridMessage();
+                        if(dataView.getLength() == 0){
+                            emptyGridHandler();
+                            gridContainer.find('.slick-row-detail').remove();
+                        } else {
+                            gridContainer.find('.grid-footer').removeClass('hide');
+                            onDataGridHandler();
+                        }
                     }
-                }
-            };
-            
-            eventHandlerMap.dataView['onRowsChanged'] = function (e, args) {
-                //Refresh the grid only if it's not destroyed
-                setTimeout(function(){
-                	if($(gridContainer).data('contrailGrid')) {
-                        var checkedRows = gridContainer.data('contrailGrid').getCheckedRows();
-                    	grid.invalidateAllRows();
-                        grid.render();
+
+                    //onRows Changed
+                    if (args.rows.length > 0) {
                         if(contrail.checkIfFunction(gridDataSource.events.onDataBoundCB)) {
                             gridDataSource.events.onDataBoundCB();
                         }
+
                         // Adjusting the row height for all rows
                         gridContainer.data('contrailGrid').adjustAllRowHeight();
 
                         // Assigning odd and even classes to take care of coloring effect on alternate rows
                         gridContainer.data('contrailGrid').adjustGridAlternateColors();
-                        
+
                         // Refreshing the detail view
                         gridContainer.data('contrailGrid').refreshDetailView();
-                        
-                        //Retain the checked rows and set it back
-                        var cgrids = [];
-                        $.each(checkedRows, function(key,val){
-                            cgrids.push(val.cgrid);
-                        });
-                        gridContainer.data('contrailGrid').setCheckedRows(cgrids);
                     }
-                }, 50);
-            };
-            /**
-             * Going forward need to merge onUpdateData with onDataUpdate  
-             */
-            eventHandlerMap.dataView['onDataUpdate'] = function(e,args) {
-                //Refresh the grid only if it's not destroyed
-                if($(gridContainer).data('contrailGrid')) {
-                    if(contrail.checkIfFunction(gridDataSource.events.onDataUpdate)) {
-                        gridDataSource.events.onDataUpdate();
+
+                    if(contrail.checkIfFunction(gridDataSource.events.onDataUpdateCB)) {
+                        gridDataSource.events.onDataUpdateCB(e, args);
                     }
                 }
             };
-            eventHandlerMap.dataView['onUpdateData'] = function () {
-                //Refresh the grid only if it's not destroyed
-                if($(gridContainer).data('contrailGrid')) {
-                    grid.invalidateAllRows();
-                	grid.updateRowCount();
-                    grid.render();
-                    if(contrail.checkIfFunction(gridDataSource.events.onUpdateDataCB)) {
-                        gridDataSource.events.onUpdateDataCB();
-                    }
-                    if(gridDataSource.dataView != null && gridDataSource.dataView.getItems().length == 0)
-                        gridContainer.data('contrailGrid').showGridMessage('empty');
-                    gridContainer.data('contrailGrid').refreshView();
-                }
-            };
-            
+
             $.each(eventHandlerMap.dataView, function(key, val){
             	dataView[key].subscribe(val);
             });
@@ -865,6 +867,10 @@ function getDefaultGridConfig() {
                 _dataView: dataView,
                 _eventHandlerMap: eventHandlerMap,
                 _pager: pager,
+                _gridStates: {
+                    allPagesDataChecked: false,
+                    currentPageDataChecked: false
+                },
                 expand: function(){
                 	gridContainer.find('i.collapse-icon').addClass('icon-chevron-up').removeClass('icon-chevron-down');
             		gridContainer.children().removeClass('collapsed');
@@ -878,20 +884,50 @@ function getDefaultGridConfig() {
                  * Returns an array of data of the checked rows via checkbox when checkboxSelectable is set to true
                  */
                 getCheckedRows: function(){
-                    var returnValue = [];
-                    gridContainer.find('.rowCheckbox:checked').each(function(key, val){
-                        returnValue.push(grid.getDataItem($(this).val()));
-                    });
+                    var selectedRows = grid.getSelectedRows(),
+                        returnValue = [];
+                    if (gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
+                        $.each(selectedRows, function(selectedRowKey, selectedRowValue){
+                            returnValue.push(dataView.getItemById('id_' + selectedRowValue));
+                        });
+                    } else {
+                        $.each(selectedRows, function(selectedRowKey, selectedRowValue){
+                            returnValue.push(grid.getDataItem(selectedRowValue));
+                        });
+                    }
                     return returnValue;
                 },
                 /*
                  * Sets the checked rows of the rows based on rowIndices
                  */
                 setCheckedRows: function(rowIndices) {
-                	$.each(rowIndices, function(key, val){
-                		gridContainer.find('.slick_row_' + val).find('.rowCheckbox').attr('checked','checked');
-                	});
+                    grid.setSelectedRows(rowIndices);
                 },
+                /*
+                 * Set All Checked Rows based on type == 'current-page' and 'all-page'
+                 */
+                setAllCheckedRows: function(type) {
+                    var rows = [];
+                    if (type == 'all-page') {
+                        for (var i = 0; i < dataView.getItems().length; i++) {
+                            var enabled = true;
+                            if(contrail.checkIfFunction(gridOptions.checkboxSelectable.enableRowCheckbox)){
+                                enabled = gridOptions.checkboxSelectable.enableRowCheckbox(dataView.getItemById('id_' + i));
+                            }
+                            if (enabled) {
+                                rows.push(i);
+                            }
+                        }
+                    } else {
+                        for (var i = 0; i < grid.getDataLength(); i++) {
+                            if(gridContainer.find('.rowCheckbox[value="' + i + '"]:disabled').length == 0) {
+                                rows.push(i);
+                            }
+                        }
+                    }
+                    grid.setSelectedRows(rows);
+                },
+
                 getSelectedRow: function(){
                     return grid.getDataItem(gridContainer.data('contrailGrid').selectedRow);
                 },
@@ -1000,17 +1036,15 @@ function getDefaultGridConfig() {
                  */
                 refreshView: function(refreshDetailTemplateFlag){
                 	var refreshDetailTemplateFlag = (contrail.checkIfExist(refreshDetailTemplateFlag)) ? refreshDetailTemplateFlag : true;
-                	var checkedRows = this.getCheckedRows();
                 	grid.render();
                 	grid.resizeCanvas();
                 	this.adjustAllRowHeight();
                 	this.adjustGridAlternateColors();
                 	this.refreshDetailView(refreshDetailTemplateFlag);
-                	var cgrids = [];
-                	$.each(checkedRows, function(key,val){
-                        cgrids.push(val.cgrid);
-                	});
-                	this.setCheckedRows(cgrids);
+
+                    if (gridContainer.find('.rowCheckbox:disabled').length > 0) {
+                        gridContainer.find('.headerRowCheckbox').attr('disabled', true)
+                    }
                 }, 
                 /*
                  * Refreshes the detail view of the grid. Grid is rendered and related adjustments are made.
@@ -1217,14 +1251,13 @@ function getDefaultGridConfig() {
             if(gridOptions.checkboxSelectable != false) {
                 var disabled = true;
                 gridContainer.find('.rowCheckbox').each(function(){
-                	disabled = disabled && ($(this).attr('disabled') == 'disabled');
+                   disabled = disabled && (!contrail.checkIfExist($(this).attr('disabled')));
                 });
+
                 if(!disabled){
-                	gridContainer.find('.headerRowCheckbox').removeAttr('disabled');
-                }
-                else{
-                	gridContainer.find('.headerRowCheckbox').attr('disabled','disabled');
-            		
+                    gridContainer.find('.headerRowCheckbox').attr('disabled', true);
+                } else{
+                    gridContainer.find('.headerRowCheckbox').removeAttr('disabled');
                 }
             }
         };
@@ -1241,9 +1274,10 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
         eventMap['onPagingInfoChanged'] = function (e, pagingInfo) {
             pagingInfo.pageSizeSelect = pageSizeSelect;
             updatePager(pagingInfo);
-            gridContainer.find('.headerRowCheckbox').removeAttr('checked');
-            gridContainer.find('.rowCheckbox').removeAttr('checked');
-            
+            if(!gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
+                gridContainer.data('contrailGrid')._grid.setSelectedRows([])
+            }
+
         	setTimeout(function(){
         		if(contrail.checkIfExist(gridContainer.data('contrailGrid'))){
         			gridContainer.data('contrailGrid').adjustGridAlternateColors();
@@ -1397,19 +1431,16 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
 
 var ContrailDataView = function(dvConfig) {
     var dataView = new Slick.Data.DataView({ inlineFilters: true }),
-        contrailDataView = {}, remoteDataHandler = null,
-        onUpdateData = new Slick.Event();
+        contrailDataView = {}, remoteDataHandler = null;
 
     $.extend(true, contrailDataView, dataView, {
         _idOffset: 0,
-        onUpdateData: onUpdateData,
         setData: function (data) {
             // Setting id for each data-item; Required to instantiate data-view.
             setId4Idx(data, this);
             this.beginUpdate();
             this.setItems(data);
             this.endUpdate();
-            onUpdateData.notify();
         },
         setSearchFilter: function(searchColumns, searchFilter) {
             this.setFilterArgs({
@@ -1426,7 +1457,6 @@ var ContrailDataView = function(dvConfig) {
                 dis.addItem(val);
             });
         	this.endUpdate();
-            onUpdateData.notify();
         },
         updateData: function(data){
         	this.beginUpdate();
@@ -1435,7 +1465,6 @@ var ContrailDataView = function(dvConfig) {
         		dis.updateItem(val.cgrid,val);
             });
         	this.endUpdate();
-            onUpdateData.notify();
         },
         deleteDataByIds: function(ids){
         	this.beginUpdate();
@@ -1444,7 +1473,6 @@ var ContrailDataView = function(dvConfig) {
         		dis.deleteItem(val);
             });
         	this.endUpdate();
-            onUpdateData.notify();
         },
         setRemoteAjaxConfig: function(ajaxConfig) {
             if(contrail.checkIfExist(dvConfig.remote.ajaxConfig)) {
@@ -1484,7 +1512,6 @@ var ContrailDataView = function(dvConfig) {
                 if(!contrail.checkIfExist(val.cgrid)){
                     data[key].cgrid = 'id_' + (key + offset);
                 }
-                data[key].cgrchecked = false;
             });
             dis._idOffset += data.length;
         }

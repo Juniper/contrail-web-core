@@ -2099,11 +2099,11 @@ function loadAlertsContent(deferredObj){
         if(deferredObj != null) {
             deferredObj.always(function(){
                 alertsGrid.removeGridLoading();
-                alertsGrid._eventHandlerMap.dataView['onUpdateData']();
+                alertsGrid._eventHandlerMap.dataView['onDataUpdate']();
             }); 
         } else {
             alertsGrid.removeGridLoading();
-            alertsGrid._eventHandlerMap.dataView['onUpdateData']();
+            alertsGrid._eventHandlerMap.dataView['onDataUpdate']();
         }
     }
     globalObj.showAlertsPopup = false;
