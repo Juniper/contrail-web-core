@@ -170,8 +170,8 @@ function getDefaultGridConfig() {
                         failureCallback: function (xhr) {
                             stopAutoRefresh();
                             var errorMsg = contrail.parseErrorMsgFromXHR(xhr);
-                            if(xhr.status && xhr.statusText != 'abort') {
-                                errorGridHandler('Error: ' + errorMsg);
+                            if(xhr.statusText != 'abort') {
+                                errorGridHandler(errorMsg);
                             }
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestErrorCB)) {
                                 gridDataSource.events.onRequestErrorCB();
