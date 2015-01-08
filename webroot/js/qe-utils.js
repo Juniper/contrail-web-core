@@ -423,7 +423,7 @@ function getQueryPrefix4Table(tableName) {
 function deleteQueryCache4Queue(queueId) {
     if (!$('#btnDeleteQueryQueue').hasClass('disabled-link')) {
     	var gridCheckedRows = $("#" + queueId + "-results").data('contrailGrid').getCheckedRows();
-    	createDeleteConfirmWindow(queueId,gridCheckedRows);
+    	createDeleteConfirmWindow(queueId, gridCheckedRows);
     }
 };
 
@@ -431,7 +431,7 @@ function successDelQueryQueueCache(response, cbParams) {
     var queueId = cbParams.queueId;
 
     var dataIds = $.map(cbParams.checkedRows, function(val) {
-    	  return (val.id);
+    	  return (val.cgrid);
     });
     $("#" + queueId + "-results").data('contrailGrid')._dataView.deleteDataByIds(dataIds);   		
     
@@ -1183,7 +1183,7 @@ function createConfirmWindow(queueId) {
    });
 };
 
-function createDeleteConfirmWindow(queueId,gridCheckedRows) {
+function createDeleteConfirmWindow(queueId, gridCheckedRows) {
 	$.contrailBootstrapModal({
 		id: queueId + '-del-confirmation',
 		title: 'Remove Confirmation',

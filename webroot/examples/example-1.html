@@ -313,7 +313,6 @@
 <script src="/assets/jquery/js/jquery.timer.js?built_at=1395882185"></script>
 <script src="/assets/jquery-ui/js/jquery-ui.js?built_at=1395882185"></script>
 <script src="/assets/jquery/js/jquery.ui.touch-punch.min.js?built_at=1395882185"></script>
-<script src="/assets/jquery-ui/js/jquery.multiselect.min.js"></script>
 <!-- End dev_env -->
 
 <!--Bootstrap Scripts-->
@@ -351,12 +350,16 @@
 <script src="/assets/slickgrid/js/slick.core.js"></script>
 <script src="/assets/slickgrid/js/slick.grid.js"></script>
 <script src="/assets/slickgrid/js/slick.dataview.js"></script>
+<script src="/assets/slickgrid/js/slick.checkboxselectcolumn.js"></script>
+<script src="/assets/slickgrid/js/slick.rowselectionmodel.js"></script>
 <script src="/assets/slickgrid/js/slick.enhancementpager.js"></script>
 <script src="/js/slickgrid-utils.js"></script>
 <script src="/js/contrail-elements.js"></script>
 <script src="/js/config_global.js"></script>
 <script src="/assets/datetimepicker/js/jquery.datetimepicker.js"></script>
 <script src="/assets/moment/moment.js"></script>
+<script src="/assets/jquery-ui/js/jquery.multiselect.js"></script>
+<script src="/assets/jquery-ui/js/jquery.multiselect.filter.js"></script>
 
 <script type="text/x-handlebars-template" id="checked-multiselect-optgroup-template">
 	<select multiple="multiple" size="5" class="">
@@ -641,7 +644,7 @@ $("#e2").contrailDropdown({
 						setTimeout(function(){
 							$(e.detailRow).append('<p>Appended some content dynamically</p>');
 							$(e.detailRow).append('<p>Appended some content dynamically</p>');
-							$("#details-grid").data('contrailGrid').adjustDetailRowHeight(dc.id);
+							$("#details-grid").data('contrailGrid').adjustDetailRowHeight(dc.cgrid);
 						},1000);
 					},
 					onExpand: function(e,dc) {
@@ -675,7 +678,7 @@ $("#e2").contrailDropdown({
 		console.log('onRowsChanged event fired');
     });
 
-    contrailDataView.onUpdateData.subscribe(function(){
+    contrailDataView.onDataUpdate.subscribe(function(){
         console.log("onUpdateData event fired via dataView");
     });
 
@@ -703,7 +706,7 @@ $("#e2").contrailDropdown({
             dataSource : {
                 dataView : contrailDataView,
                 events: {
-                    onUpdateDataCB: function() {
+                    onDataUpdateCB: function() {
                         console.log("onUpdateData event fired via grid");
                     }
                 }
@@ -826,7 +829,7 @@ $("#e2").contrailDropdown({
 
     $('#btnDeleteIPAM').on('click', function(){
         var selectedRow = ipamGrid.getSelectedRow();
-        ipamGrid._dataView.deleteDataByIds([selectedRow.id]);
+        ipamGrid._dataView.deleteDataByIds([selectedRow.cgrid]);
     });
 
     function doSomething(){

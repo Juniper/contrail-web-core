@@ -927,6 +927,9 @@ a.selectAllLink:hover {
 .grid-load-status p.error{
 	color: #b94a48;
 }
+.grid-info {
+  margin-bottom: 0;
+}
 .slick-header {
 	border: none;
 	background: none;
