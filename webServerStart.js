@@ -8,6 +8,22 @@ var config = require('./src/serverroot/common/config.utils').compareAndMergeDefa
 exports.corePath = corePath;
 exports.config = config;
 
+var redisUtils = require('./src/serverroot/utils/redis.utils');
+var global = require('./src/serverroot/common/global');
+
+var server_port = (config.redis_server_port) ?
+    config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
+var server_ip = (config.redis_server_ip) ?
+    config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
+
+redisUtils.createRedisClientAndWait(server_port, server_ip,
+                                    global.WEBUI_DFLT_REDIS_DB,
+                                    function() {
+    loadWebServer();
+});
+
+function loadWebServer ()
+{
 var express = require('express')
     , path = require('path')
     , fs = require("fs")
@@ -24,7 +40,6 @@ var express = require('express')
     , eventEmitter = require('events').EventEmitter
     , async = require('async')
     , authApi = require('./src/serverroot/common/auth.api')
-    , async = require('async')
     , os = require('os')
     , commonUtils = require('./src/serverroot/utils/common.utils')
     , discClient = require('./src/serverroot/common/discoveryclient.api')
@@ -543,4 +558,5 @@ startWebCluster();
 exports.myIdentity = myIdentity;
 exports.discServEnable = discServEnable;
 exports.pkgList = pkgList;
+}
 
