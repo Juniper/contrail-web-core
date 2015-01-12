@@ -1094,6 +1094,65 @@ margin-right: 15px;
 	width: 175px;
 }
 
+/*
+ Editable Slick Grid
+*/
+.contrail-grid-editable {
+  margin-bottom: 10px;
+}
+.contrail-grid-editable .slick-header-column.ui-state-default {
+  color: #3182bd;
+}
+.contrail-grid-editable .slick-cell {
+    color: #3182bd;
+    white-space: nowrap;
+    height: 30px;
+}
+
+.slick-cell.editable {
+    border: none;
+    padding: 0;
+    border: 1px solid #eee;
+    height: 28px;
+    padding: 0 5px;
+}
+.slick-cell.editable.invalid {
+    border: 1px solid #dd5a43;
+}
+input.editor-text {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    margin: 0;
+    background: transparent;
+    outline: 0;
+    padding: 0;
+
+}
+input.editor-text[disabled] {
+    color: #222;
+    background-color: #efefef;
+}
+input.editor-contrail-dropdown, input.editor-contrail-multiselect {
+  width: 100%;
+
+}
+.editor-contrail-dropdown.select2-container .select2-choice {
+  padding: 0;
+}
+.editor-contrail-dropdown.select2-container .select2-choice > .select2-chosen {
+  margin-right: 22px;
+}
+.editor-contrail-dropdown.select2-container-active {
+  box-shadow: none;
+}
+input.editor-text:focus, input.editor-contrail-dropdown:focus  {
+    box-shadow: none;
+}
+input.editor-checkbox.ace-input[type=checkbox] + .ace-lbl::before {
+  margin: 6px;
+}
+
 /* Editable Grid */
 
 .contrail-editable-grid-table thead {

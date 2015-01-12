@@ -7,12 +7,24 @@ var corePath = process.cwd();
 var config = require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig();
 exports.corePath = corePath;
 exports.config = config;
+var redisUtils = require('./src/serverroot/utils/redis.utils');
+var global = require('./src/serverroot/common/global');
+var server_port = (config.redis_server_port) ?
+    config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
+var server_ip = (config.redis_server_ip) ?
+    config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
+redisUtils.createRedisClientAndWait(server_port, server_ip,
+                                    global.WEBUI_DFLT_REDIS_DB,
+                                    function() {
+    loadJobServer();
+});
 
+function loadJobServer ()
+{
 var axon = require('axon')
     , jobsApi = require('./src/serverroot/jobs/core/jobs.api')
     , assert = require('assert')
     , jobsApi = require('./src/serverroot/jobs/core/jobs.api')
-    , global = require('./src/serverroot/common/global')
     , redisPub = require('./src/serverroot/jobs/core/redisPub')
     , kue = require('kue')
     , commonUtils = require('./src/serverroot/utils/common.utils')
@@ -164,6 +176,7 @@ workerSock.on('message', function (msg) {
     processMsg(msg);
 });
 
+function startJobServer () {
 jobsApi.jobListenerReadyQEvent.on('kueReady', function() {
     /* Now start real server processing */
     commonUtils.createRedisClient(function(client) {
@@ -172,8 +185,12 @@ jobsApi.jobListenerReadyQEvent.on('kueReady', function() {
         });
     });
 });
+}
+
+startJobServer();
 
 exports.myIdentity = myIdentity;
 exports.discServEnable = discServEnable;
 exports.pkgList = pkgList;
+}
 
