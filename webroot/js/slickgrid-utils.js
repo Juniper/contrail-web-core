@@ -732,7 +732,7 @@ function getDefaultGridConfig() {
         function initDataView() {
             eventHandlerMap.dataView['onDataUpdate'] = function(e, args) {
                 //Refresh the grid only if it's not destroyed
-                if($(gridContainer).data('contrailGrid') && (args.previous != args.current || args.rows.length > 0)) {
+                if($(gridContainer).data('contrailGrid') != null && (args.previous != args.current || args.rows.length > 0)) {
                     grid.invalidateAllRows();
                     grid.updateRowCount();
                     grid.render();
@@ -1284,7 +1284,7 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
         eventMap['onPagingInfoChanged'] = function (e, pagingInfo) {
             pagingInfo.pageSizeSelect = pageSizeSelect;
             updatePager(pagingInfo);
-            if(!gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
+            if(gridContainer.data('contrailGrid') != null && !gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
                 gridContainer.data('contrailGrid')._grid.setSelectedRows([])
             }
 

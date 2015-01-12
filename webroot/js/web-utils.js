@@ -2103,11 +2103,11 @@ function loadAlertsContent(deferredObj){
         if(deferredObj != null) {
             deferredObj.always(function(){
                 alertsGrid.removeGridLoading();
-                alertsGrid._eventHandlerMap.dataView['onDataUpdate']();
+                alertsGrid.refreshView();
             }); 
         } else {
             alertsGrid.removeGridLoading();
-            alertsGrid._eventHandlerMap.dataView['onDataUpdate']();
+            alertsGrid.refreshView();
         }
     }
     globalObj.showAlertsPopup = false;
