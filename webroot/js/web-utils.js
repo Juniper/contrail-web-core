@@ -52,8 +52,10 @@ var infraAlertMsgs = {
         'TIMESTAMP_MISMATCH_AHEAD'    : "Browser is {0} ahead of system time",
         'IFMAP_DOWN'            : "Ifmap Connection down",
         'PROCESS_DOWN'          : "{0:Process;Processes} down",
+        'PROCESS_STARTING'      : "{0:Process;Processes} starting",
         'PROCESS_STOPPED'       : "{0} stopped",
         'PROCESS_DOWN_MSG'      : "{0} down",
+        'PROCESS_STARTING_MSG'  : "{0} starting",
         'PROCESS_COREDUMP'      : "{0:core dump;core dumps}",
         'PROCESS_RESTART'       : "{0:restart;restarts}"
     }
