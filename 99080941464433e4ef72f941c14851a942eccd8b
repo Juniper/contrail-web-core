@@ -1,0 +1,8 @@
+Verified+2: Zuul <zuul@lists.opencontrail.org>
+Approved+1: Naga Kiran <nagakiran@juniper.net>
+Code-Review+2: Naga Kiran <nagakiran@juniper.net>
+Submitted-by: Zuul <zuul@lists.opencontrail.org>
+Submitted-at: Mon, 12 Jan 2015 22:25:35 -0800
+Reviewed-on: https://review.opencontrail.org/6127
+Project: Juniper/contrail-web-core
+Branch: refs/heads/master
