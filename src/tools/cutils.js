@@ -1247,6 +1247,11 @@ function formatVirtualRouterType(type) {
     }
     return formattedType;         
 }
+function isValidMACAddress(mac) {
+    mac = mac.toUpperCase();
+    var mac_address_regex = /^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/;
+    return mac_address_regex.test(mac);
+}
 
 cutils.getCookie = getCookie;       
 cutils.setCookie = setCookie;
@@ -1312,3 +1317,4 @@ cutils.isIPv4 = isIPv4;
 cutils.isIPv6 = isIPv6;
 cutils.isIPBoundToRange = isIPBoundToRange;
 cutils.formatVirtualRouterType = formatVirtualRouterType;
+cutils.isValidMACAddress = isValidMACAddress;
