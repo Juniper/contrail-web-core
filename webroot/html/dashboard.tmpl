@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" content="">
-    <title>Contrail Controller</title>
+    <title>Contrail</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Contrail Systems">
@@ -14,44 +14,44 @@
     <link rel="shortcut icon" href="/img/sdn-favicon.ico" type="image/x-icon">
     <link rel="icon" href="/img/sdn-favicon.ico" type="image/x-icon">
 
-     <!--Bootstrap Styles-->
-    <link href="/assets/bootstrap/css/bootstrap.min.css?built_at=" rel="stylesheet"/>
-    <link href="/assets/bootstrap/css/bootstrap-responsive.min.css?built_at=" rel="stylesheet"/>
-    <link href="/assets/jquery-ui/css/jquery-ui.css?built_at=" rel="stylesheet"/>
-    <link href="/css/contrail.jquery.ui.css?built_at=" rel="stylesheet"/>
-    <link href="/assets/joint/css/joint.nojquery.css?built_at=" rel="stylesheet"/>
+    <!--Bootstrap Styles-->
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css?built_at=" rel="stylesheet"/>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap-responsive.min.css?built_at=" rel="stylesheet"/>
 
-    <!-- Start dev_env 
-    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css?built_at="/>
-     End dev_env -->  
+
+    <!-- Start dev_env
+    <link rel="stylesheet" href="/assets/jquery-ui/css/jquery-ui.css?built_at=" rel="stylesheet"/>
+    <link rel="stylesheet" href="/css/contrail.jquery.ui.css?built_at=" rel="stylesheet"/>
+    <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css?built_at=" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/nvd3/css/nv.d3.css?built_at=" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/select2/styles/select2.css?built_at=" />
+    <link rel="stylesheet" href="/assets/datetimepicker/styles/jquery.datetimepicker.css?built_at=" />
+    <link rel="stylesheet" href="/assets/slickgrid/styles/slick.grid.css?built_at=">
+    <link rel="stylesheet" href="/assets/jquery/css/jquery.steps.css?built_at=" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/joint/css/joint.nojquery.css?built_at=" rel="stylesheet"/>
+    <link rel="stylesheet" href="/assets/jquery-contextMenu/css/jquery.contextMenu.css?built_at=" />
+    End dev_env -->
+
+    <!-- Start prod_env -->
+    <link rel="stylesheet" href="/css/contrail-all.css?built_at="/>
+    <!-- End prod_env -->
+
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="/css/contrail-ie.min.css?built_at="/>
+    <![endif]-->
+
     <!--[if IE 7]>
     <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome-ie7.min.css?built_at="/>
     <![endif]-->
 
-    <!--[if lte IE 8]>
-     <link rel="stylesheet" href="/css/contrail-ie.min.css?built_at="/>
-    <![endif]-->
-
-    <!-- Start dev_env
-    <link href="/assets/jquery/css/jquery.steps.css?built_at=" rel="stylesheet" />
-    <link href="/assets/nvd3/css/nv.d3.css?built_at=" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/select2/styles/select2.css?built_at=" />
-    <link rel="stylesheet" href="/assets/datetimepicker/styles/jquery.datetimepicker.css?built_at=" />
-    <link rel="stylesheet" href="/assets/slickgrid/styles/slick.grid.css?built_at=">
-    End dev_env -->
-
     <!--Contrail Styles-->
-    <!-- Start prod_env -->
-    <link rel="stylesheet" href="/css/contrail-all.css?built_at="/>
-    <!-- End prod_env -->
-    <link rel="stylesheet" href="/assets/jquery-contextMenu/css/jquery.contextMenu.css?built_at=" />
     <link rel="stylesheet" href="/css/contrail.layout.css?built_at=" />
     <link rel="stylesheet" href="/css/contrail.elements.css?built_at=" />
     <link rel="stylesheet" href="/css/contrail.responsive.css?built_at=" />
     <link rel="stylesheet" href="/css/contrail.custom.css?built_at=" />
     <link rel="stylesheet" href="/css/contrail.font.css?built_at=" />
-    <!-- Start dev_env
-    End dev_env -->
+
+    <script data-main="js/main" src="/assets/requirejs/require.js"></script>
 </head>
 
 <body class="navbar-fixed">
@@ -82,7 +82,7 @@
                         <i class="icon-bell-alt icon-only icon-2"></i>
                         <span id="alert_info">Alerts</span>
                         <!-- <i class="icon-caret-down"></i> -->
-                    </a> 
+                    </a>
 
                     <!--<ul class="pull-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-closer">
                         <li class="nav-header">
@@ -101,7 +101,7 @@
                                 </div>
                             </a>
                         </li>
-                        
+
                         <li class="pull-left" onclick="showMoreAlerts();">
                             <a href="javascript:void(0);"> See Old Alerts <i class="icon-arrow-right"></i>
                             </a>
@@ -131,7 +131,7 @@
 
     <div id="sidebar">
         <div id="sidebar-shortcuts">
-            
+
         </div>  <!--#sidebar-shortcuts-->
         <ul id="menu" class="nav nav-list"></ul>
     </div> <!-- #sidebar -->
@@ -153,148 +153,12 @@
 </div> <!-- /.container-fluid #main-container -->
 <a href="#" id="back-to-top"><i class="icon-double-angle-up icon-only bigger-110"></i>​&nbsp; Back to Top</a>
 
-<!--JQuery Scripts-->
-<!-- Start dev_env
-<script src="/assets/jquery/js/jquery-1.8.3.min.js?built_at="></script>
-End dev_env -->
-<!--
-<script src="/assets/jquery/assets/js/jquery-1.9.1.min.js?built_at="></script>
--->
-<!-- Start dev_env
-<script src="/assets/jquery/js/jquery.xml2json.js?built_at="></script>
-<script src="/assets/jquery/js/jquery.ba-bbq.min.js?built_at="></script>
-<script src="/assets/jquery/js/jquery.timer.js?built_at="></script>
-<script src="/assets/jquery-ui/js/jquery-ui.js?built_at="></script>
-<script src="/assets/jquery/js/jquery.ui.touch-punch.min.js?built_at="></script>
-End dev_env -->
-
-<!-- Start dev_env
-<script src="/assets/joint/js/joint.nojquery.js?built_at="></script>
-<script src="/assets/joint/js/joint.layout.DirectedGraph.js?built_at="></script>
-<script src="/assets/jquery/js/jquery.panzoom.min.js?built_at="></script>
-<script src="/js/joint.contrail.js?built_at="></script>
-<script src="/assets/jquery-contextMenu/js/jquery.ui.position.js"></script>
-<script src="/assets/jquery-contextMenu/js/jquery.contextMenu.js"></script>
-End dev_env -->
-
-<!-- Start dev_env
-<script src="/assets/ip/jsbn-combined.js"></script>
-<script src="/assets/ip/sprintf.js"></script>
-<script src="/assets/ip/ipv6.js"></script>
-End dev_env -->
-
-<!--Bootstrap Scripts-->
-<!-- Start dev_env
-<script src="/assets/bootstrap/js/bootstrap.min.js?built_at="></script>
-End dev_env -->
-
-<!--D3 Scripts-->
-<!-- Start dev_env
-<script src="/assets/d3/js/d3.js?built_at="></script>
-<script src="/assets/nvd3/js/nv.d3.js?built_at="></script>
-<script src="/assets/crossfilter/js/crossfilter.min.js?built_at="></script>
-End dev_env -->
-
-<!--Utils Scripts-->
-<!-- Start dev_env
-<script src="/assets/jsonpath/js/jsonpath-0.8.0.js?built_at="></script>
-<script src="/assets/xdate/js/xdate.js?built_at="></script>
-<script src="/assets/jquery/js/jquery.validate.js?built_at="></script>
-<script src="/assets/handlebars/handlebars-v1.3.0.js?built_at="></script>
-<script src="/assets/knockout/knockout-3.0.0.js?built_at="></script>
-<script src="/assets/select2/js/select2.min.js?built_at="></script>
-<script src="/assets/slickgrid/js/jquery.event.drag-2.2.js?built_at="></script>
-<script src="/assets/slickgrid/js/jquery.json-2.3.min.js?built_at="></script>
-<script src="/assets/slickgrid/js/jquery.dropkick-1.0.0.js?built_at="></script>
-<script src="/assets/slickgrid/js/slick.core.js?built_at="></script>
-<script src="/assets/slickgrid/js/slick.grid.js?built_at="></script>
-<script src="/assets/slickgrid/js/slick.dataview.js?built_at="></script>
-<script src="/assets/slickgrid/js/slick.checkboxselectcolumn.js?built_at="></script>
-<script src="/assets/slickgrid/js/slick.rowselectionmodel.js?built_at="></script>
-<script src="/assets/slickgrid/js/slick.enhancementpager.js?built_at="></script>
-<script src="/assets/datetimepicker/js/jquery.datetimepicker.js?built_at="></script>
-<script src="/assets/moment/moment.js?built_at="></script>
-<script src="/assets/jquery-ui/js/jquery.multiselect.js?built_at="></script>
-<script src="/assets/jquery-ui/js/jquery.multiselect.filter.js?built_at="></script>
-<script src="/assets/jquery/js/jquery.tristate.js?built_at="></script>
-End dev_env -->
-
-<!-- Start prod_env -->
-<script src="/js/contrail-all-1.js?built_at="></script>
-<script src="/js/contrail-all-2.js?built_at="></script>
-<script src="/js/contrail-all-3.js?built_at="></script>
-<script src="/js/contrail-all-4.js?built_at="></script>
-<!-- End prod_env -->
-
-<script type="text/javascript">
-//Set the base URI
-if(document.location.pathname.indexOf('/vcenter') == 0)
-    $('head').append('<base href="/vcenter/" />');
-var templateLoader = (function ($, host) {
-    //Loads external templates from path and injects in to page DOM
-    return{
-        loadExtTemplate:function (path, deferredObj, containerName) {
-            //Load the template only if it doesn't exists in DOM
-            var tmplLoader = $.ajax({url:path})
-                .success(function (result) {
-                    //Add templates to DOM
-                    if (containerName != null) {
-                        $('body').append('<div id="' + containerName + '"></div>');
-                        $('#' + containerName).append(result);
-                    } else
-                        $("body").append(result);
-                    if (deferredObj != null)
-                        deferredObj.resolve();
-                })
-                .error(function (result) {
-                    if(result['statusText'] != 'abort')
-                        showInfoWindow("Error while loading page.",'Error');
-                });
-
-            tmplLoader.complete(function () {
-                $(host).trigger("TEMPLATE_LOADED", [path]);
-            });
-        }
-    };
-})(jQuery, document);
-$.ajaxSetup({async:false});
-//Need to issue the call synchronously as the following scripts refer to the templates in this file
-templateLoader.loadExtTemplate('/views/contrail-common.view');
-$.ajaxSetup({async:true});
-</script>
-<!--Contrail Scripts-->
-<!-- Start dev_env
-<script src="/js/contrail-common.js"></script>
-<script src="/js/handlebars-utils.js?built_at="></script>
-<script src="/js/select2-utils.js?built_at="></script>
-<script src="/js/slickgrid-utils.js?built_at="></script>
-<script src="/js/contrail-elements.js?built_at="></script>
-<script src="/js/topology_api.js?built_at="></script>
-<script src="/js/chart-utils.js?built_at="></script>
-<script src="/js/web-utils.js?built_at="></script>
-<script src="/js/contrail-layout.js?built_at="></script>
-<script src="/js/config_global.js?built_at="></script>
-<script src="/js/protocol.js?built_at="></script>
-<script src="/js/qe-utils.js?built_at="></script>
-<script src="/js/nvd3-plugin.js?built_at="></script>
-<script src="/js/d3-utils.js?built_at="></script>
-<script src="/js/analyzer-utils.js?built_at="></script>
-<script src="/js/dashboard-utils.js?built_at="></script>
-<script src="/assets/requirejs/require.js?built_at="></script>
-<script src="/assets/jquery/js/jquery.steps.min.js?built_at="></script>
-End dev_env -->
-
 <!--[if lte IE 8]>
 <script src="/js/"></script>
 <![endif]-->
 <script type="text/javascript">
     var built_at="";
 </script>
-<!-- Start prod_env -->
-<script src="/js/contrail-all-7.js?built_at="></script>
-<script src="/js/contrail-all-5.js?built_at="></script>
-<script src="/js/contrail-all-6.js?built_at="></script>
-<!-- End prod_env -->
 
 </body>
 </html>
