@@ -171,7 +171,10 @@ cp -af ./$THIRD_PARTY/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
 rm -rf webroot/assets/joint
 mkdir -p webroot/assets/joint/js
 mkdir -p webroot/assets/joint/css
-cp -r ./$THIRD_PARTY/joint-v0.9.2/dist/joint.nojquery.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.2/dist/joint.clean.min.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.2/lib/lodash.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.2/src/geometry.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.2/src/vectorizer.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.2/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.2/dist/joint.nojquery.css webroot/assets/joint/css/
 #End - Copy Joint from web-third-party
@@ -199,7 +202,7 @@ rm -rf webroot/assets/requirejs
 mkdir webroot/assets/requirejs
 #cp -af ./$THIRD_PARTY/require.min.js webroot/assets/requirejs/require.min.js
 #cp -af ./$THIRD_PARTY/text.js webroot/assets/requirejs/text.js
-cp -af ./$THIRD_PARTY/requirejs-v1.0.2/require.js webroot/assets/requirejs/require.js
+cp -af ./$THIRD_PARTY/require.js webroot/assets/requirejs/require.js
 cp -af ./$THIRD_PARTY/text.js webroot/assets/requirejs/text.js
 #End - Copy Requirejs & Textjs  from $THIRD_PARTY
 
@@ -353,16 +356,18 @@ cat ${MAINFILE[56]} >> webroot/js/contrail-all-7.js
 #Start - Merging All CSS files
 rm -f webroot/css/contrail-all.css
 
-MAINCSS[1]=webroot/assets/font-awesome/css/font-awesome.min.css
-MAINCSS[2]=webroot/assets/nvd3/css/nv.d3.css
-MAINCSS[3]=webroot/assets/select2/styles/select2.css
-MAINCSS[4]=webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
-MAINCSS[5]=webroot/assets/slickgrid/styles/slick.grid.css
-MAINCSS[6]=webroot/assets/jquery/css/jquery.steps.css
+MAINCSS[1]=webroot/assets/jquery-ui/css/jquery-ui.css
+MAINCSS[2]=webroot/css/contrail.jquery.ui.css
 
-MAINCSS[7]=webroot/assets/joint/css/joint.nojquery.css
-MAINCSS[8]=webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css
-MAINCSS[9]=webroot/css/contrail.font.css
+MAINCSS[3]=webroot/assets/font-awesome/css/font-awesome.min.css
+MAINCSS[4]=webroot/assets/nvd3/css/nv.d3.css
+MAINCSS[5]=webroot/assets/select2/styles/select2.css
+MAINCSS[6]=webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
+MAINCSS[7]=webroot/assets/slickgrid/styles/slick.grid.css
+MAINCSS[8]=webroot/assets/jquery/css/jquery.steps.css
+
+MAINCSS[9]=webroot/assets/joint/css/joint.nojquery.css
+MAINCSS[10]=webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css
 
 cat ${MAINCSS[1]} > webroot/css/contrail-all.css
 cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
@@ -374,4 +379,5 @@ cat ${MAINCSS[6]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[7]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[8]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[9]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[10]} >> webroot/css/contrail-all.css
 #End - Merging ALL CSS files
