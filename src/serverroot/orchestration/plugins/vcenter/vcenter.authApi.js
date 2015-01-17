@@ -78,7 +78,7 @@ function authenticate (req, res, appData, callback)
         }
         req.session.isAuthenticated = true;
         req.session.userRole = [global.STR_ROLE_ADMIN];
-        console.log("Getting urlPatha s:", urlPath, urlHash);
+        console.log("Getting urlPath as:", urlPath, urlHash);
         req.session['vmware_soap_session'] =
             resHeaders['set-cookie'][0];
             //res.redirect('/');

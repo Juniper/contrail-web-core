@@ -12,6 +12,8 @@ var Promise = require('promise');
 var deferred = require('deferred');
 var dataCenterName = null;
 var vSwitchName = null;
+var rootFolder = null;
+var networkFolder = null;
 var dataCenterDef = deferred();
 var vSwitchDef = deferred();
 
@@ -194,10 +196,12 @@ function retrievePropertiesEx(appData,sessKey,objType,name) {
 }
 
 
-function retrievePropertiesExForObj(appData,objType,name) {
+function retrievePropertiesExForObj(appData,objType,name,path) {
     var pathSet = 'name';
     if(objType == 'Task')
         pathSet = 'info';
+    if(path != null)
+        pathSet = path;
     return new Promise(function(resolve,reject) {
         vCenterApi.doCall({
             method    : 'RetrievePropertiesEx',
@@ -256,22 +260,37 @@ function retrieveServiceContent(appData) {
     });
 }
 
-function getIdByMobName(appData,objType,name) {
+function getRootFolder(appData,folderName) {
     return new Promise(function(resolve,reject) {
-        //Hack
-        // if(objType == 'Datacenter' && name == 'kiran_dc')
-        //     resolve('datacenter-5218');
-        // if(objType == 'DistributedVirtualSwitch' && name == 'kiran_dvswitch')
-        //     resolve('dvs-5613'); 
-        // if(objType == 'DistributedVirtualPortgroup' && name == 'vn2')
-        //     resolve('dvportgroup-5685');
-        retrieveServiceContent(appData).done(function(response) {
-            logutils.logger.debug(response);
-            if(response['Fault'] != null) {
-                resolve(response);
-                return;
-            }
-            var folderName = response['RetrieveServiceContentResponse']['returnval']['rootFolder']['_value'];
+        if(folderName != null)
+            resolve(folderName);
+        if(rootFolder != null)
+            resolve(rootFolder);
+        else
+            retrieveServiceContent(appData).done(function(response) {
+                var folderName = response['RetrieveServiceContentResponse']['returnval']['rootFolder']['_value'];
+                rootFolder = folderName;
+                resolve(folderName);
+            });
+    });
+}
+
+function getNetworkFolderForDataCenter(appData,datacenterId) {
+    return new Promise(function(resolve,reject) {
+        if(networkFolder != null) {
+            resolve(networkFolder);
+        } else
+            retrievePropertiesExForObj(appData,'Datacenter',datacenterId,'networkFolder').done(function(response) {
+                var folderName = response['RetrievePropertiesExResponse']['returnval']['objects']['propSet']['val']['_value'];
+                networkFolder = folderName;
+                resolve(folderName);
+            });
+    });
+}
+
+function getIdByMobName(appData,objType,name,folderName) {
+    return new Promise(function(resolve,reject) {
+        getRootFolder(appData,folderName).done(function(folderName) {
             createContainerView(appData,folderName,objType,name).done(function(response) {
                 if(response['Fault'] != null) 
                     resolve(response);
@@ -405,11 +424,13 @@ function createNetwork(userData,appData,callback) {
                 callback(null,response);
                 return;
             }
-            getIdByMobName(appData,'DistributedVirtualPortgroup',userData['name']).done(function(response) {
-                portGroupId = response;
-                userData['portGroupId'] = portGroupId;
-                createIpPool(userData,appData,callback).done(function(response) {
-                    callback(null,response);
+            getNetworkFolderForDataCenter(appData,dataCenterName).done(function(folderName) {
+                getIdByMobName(appData,'DistributedVirtualPortgroup',userData['name'],folderName).done(function(response) {
+                    portGroupId = response;
+                    userData['portGroupId'] = portGroupId;
+                    createIpPool(userData,appData,callback).done(function(response) {
+                        callback(null,response);
+                    });
                 });
             });
         });
