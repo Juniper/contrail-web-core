@@ -159,11 +159,11 @@ function addMemCPU2DS4Process(time, dataRecord, cpuDS, memDS) {
             // Ignore
         }
     }
-    var virtMemory = getValueByJsonPath(dataRecord,'memData;memInfo;virt');
-    if (virtMemory != null && virtMemory != "-") {
+    var resMemory = getValueByJsonPath(dataRecord,'memData;memInfo;res');
+    if (resMemory != null && resMemory != "-") {
         try {
-            virtMemory = parseInt(virtMemory);
-            memDS.push({x:time, y:virtMemory});
+            resMemory = parseInt(resMemory);
+            memDS.push({x:time, y:resMemory});
         } catch (error) {
             // Ignore
         }
