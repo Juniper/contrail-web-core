@@ -755,6 +755,11 @@ function getTokenIdByProject (req, tenantName)
 function getUserAuthData (req, tenantName, callback)
 {
     var token = getTokenIdByProject(req, tenantName);
+    if (null == token) {
+        /* We did not get the token available, so redirect to login page */
+        commonUtils.redirectToLogout(req, req.res);
+        return;
+    }
     var lastTokenUsed = getLastIdTokenUsed(req);
     var authObj = {};
     authObj['tokenid'] = token.id;
