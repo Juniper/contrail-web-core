@@ -511,7 +511,7 @@ var defColors = ['#1c638d', '#4DA3D5'];
                                     e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response,dataItem)));
                                     $(grid).data('contrailGrid').adjustDetailRowHeight(dataItem['cgrid']);
                                 } else {
-                                    $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>');
+                                    $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Information unavailable</p>');
                                 }
                                 if(data['rowExpansionCB'] != null && typeof(data['rowExpansionCB'] == 'function')) {
                                     data['rowExpansionCB'](response,dataItem,grid);
