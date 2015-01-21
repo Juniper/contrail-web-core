@@ -92,6 +92,15 @@ function initCustomKOBindings(Knockout) {
         }
     };
 
+    Knockout.bindingHandlers.select2 = {
+        init: function(element, valueAccessor) {
+            var options = Knockout.toJS(valueAccessor()) || {};
+            setTimeout(function() {
+                $(element).select2(options);
+            }, 0);
+        }
+    };
+
     var updateSelect2 = function (element) {
         var el = $(element);
         if (el.data('select2')) {

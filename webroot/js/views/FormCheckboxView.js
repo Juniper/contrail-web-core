@@ -8,7 +8,7 @@ define([
 ], function (_, Backbone) {
     var FormCheckboxView = Backbone.View.extend({
         render: function () {
-            var checkBoxTemplate = contrail.getTemplate4Id("sm-checkbox-view-template"),
+            var checkBoxTemplate = contrail.getTemplate4Id(smwc.TMPL_CHECKBOX_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
                 validation = this.attributes.validation,
@@ -30,7 +30,6 @@ define([
                 isChecked: viewConfig['dataBindValue'],
                 class: "span12", path: path, validation: validation
             };
-            console.log(tmplParameters);
             this.$el.html(checkBoxTemplate(tmplParameters));
         }
     });

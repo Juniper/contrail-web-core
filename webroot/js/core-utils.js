@@ -12,8 +12,13 @@ define([
     'js/views/FormCheckboxView',
     'js/views/AccordianView',
     'js/views/SectionView',
-    'js/views/WizardView'
-], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormCheckboxView, AccordianView, SectionView, WizardView) {
+    'js/views/WizardView',
+    'js/views/FormEditableGridView',
+    'js/views/GridInputView',
+    'js/views/GridCheckboxView',
+    'js/views/GridDropdownView',
+    'js/views/GridMultiselectView'
+], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormCheckboxView, AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView) {
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -305,8 +310,40 @@ define([
                     elementView.render();
                     break;
 
+                case "FormEditableGridView":
+                    elementView = new FormEditableGridView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "GridInputView":
+                    elementView = new GridInputView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "GridCheckboxView":
+                    elementView = new GridCheckboxView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "GridDropdownView":
+                    elementView = new GridDropdownView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "GridMultiselectView":
+                    elementView = new GridMultiselectView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
             }
         };
+
+        this.getAttributeFromPath = function (attributePath) {
+            var attributePathArray = attributePath.split('.'),
+                attribute = attributePathArray[attributePathArray.length - 1];
+
+            return attribute;
+        };
+
     };
     return CoreUtils;
 });

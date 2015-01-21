@@ -10,6 +10,10 @@ define([
 ], function (_, Backbone, Knockout, Knockback) {
     var ContrailViewModel = Knockback.ViewModel.extend({
 
+        formatModelConfig: function(modelConfig) {
+            return modelConfig;
+        },
+
         constructor: function (modelConfig) {
             var model, errorAttributes,
                 editingLockAttrs, _this = this,
@@ -20,6 +24,7 @@ define([
 
             modelConfig = $.extend(true, {}, this.defaultConfig, modelConfig, {errors: new Backbone.Model(errorAttributes), locks: new Backbone.Model(editingLockAttrs)});
 
+            modelConfig = this.formatModelConfig(modelConfig);
             model = new Backbone.Model(modelConfig);
             model = _.extend(model, this.validations, {_originalAttributes: modelAttributes});
 
@@ -46,7 +51,7 @@ define([
         },
 
         validateAttr: function (attributePath, validation) {
-            var attr = getAttributeFromPath(attributePath),
+            var attr = cowu.getAttributeFromPath(attributePath),
                 errors = this.model().get(smwc.KEY_MODEL_ERRORS),
                 attrErrorObj = {}, isValid;
 
@@ -56,7 +61,7 @@ define([
         },
 
         initLockAttr: function (attributePath, lockFlag) {
-            var attribute = getAttributeFromPath(attributePath),
+            var attribute = cowu.getAttributeFromPath(attributePath),
                 locks = this.model().get(smwc.KEY_MODEL_LOCKS),
                 errors = this.model().get(smwc.KEY_MODEL_ERRORS),
                 lockObj = {}, attrErrorObj = {};
@@ -69,7 +74,7 @@ define([
         },
 
         toggleLockAttr: function(attributePath) {
-            var attribute = getAttributeFromPath(attributePath),
+            var attribute = cowu.getAttributeFromPath(attributePath),
                 locks = this.model().get(smwc.KEY_MODEL_LOCKS),
                 lockedStatus = locks.attributes[attribute + smwc.LOCKED_SUFFIX_ID],
                 lockObj = {};
@@ -79,7 +84,7 @@ define([
         },
 
         showErrorAttr: function(attributePath, msg) {
-            var attribute = getAttributeFromPath(attributePath),
+            var attribute = cowu.getAttributeFromPath(attributePath),
                 errors = this.model().get(smwc.KEY_MODEL_ERRORS),
                 errorObj = {};
 
@@ -120,13 +125,6 @@ define([
         });
 
         return errorAttributes;
-    };
-
-    var getAttributeFromPath = function (attributePath) {
-        var attributePathArray = attributePath.split('.'),
-            attribute = attributePathArray[attributePathArray.length - 1];
-
-        return attribute;
     };
 
     return ContrailViewModel;
