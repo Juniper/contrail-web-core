@@ -67,7 +67,12 @@ requirejs.config({
         'slick.rowselectionmodel': "/assets/slickgrid/js/slick.rowselectionmodel",
         'underscore': 'assets/underscore/underscore-min',
         'backbone': 'assets/backbone/backbone-min',
-        'text': 'assets/requirejs/text'
+        'knockback': 'assets/backbone/knockback.min',
+        'validation': 'assets/backbone/backbone-validation-amd',
+        'text': 'assets/requirejs/text',
+        'core-utils': 'js/core-utils',
+        'contrail-model': 'js/models/ContrailModel',
+        'core-init': 'js/core-init'
     },
     shim: {
         'jquery.tristate': {
@@ -211,8 +216,14 @@ requirejs.config({
         'knockout': {
             deps: ['jquery']
         },
+        'knockback': {
+            deps: ['jquery', 'knockout', 'backbone']
+        },
+        'validation': {
+            deps: ['jquery', 'backbone']
+        },
         'lodash': {
-            exports: '_'
+            deps: ['jquery']
         },
         'joint.layout.DirectedGraph': {
             deps: ['joint']
@@ -222,6 +233,15 @@ requirejs.config({
         },
         'text': {
             deps: ['jquery']
+        },
+        'core-utils': {
+            deps: ['jquery', 'underscore']
+        },
+        'contrail-model' :{
+            deps: ['jquery', 'underscore', 'backbone', 'knockout', 'knockback']
+        },
+        'core-init': {
+            deps: ['underscore', 'validation', 'core-utils', 'knockout']
         }
     },
     waitSeconds: 0
@@ -240,7 +260,7 @@ require(['jquery', 'knockout'], function ($, Knockout) {
         'jquery.tristate', 'jquery.multiselect', 'jquery.multiselect.filter', 'jquery.steps.min', 'slick.dataview',
         'joint', 'joint.layout.DirectedGraph', 'jquery.panzoom', 'joint.contrail', 'jquery.ui.position',
         'jquery.contextMenu', 'slick.checkboxselectcolumn', 'slick.rowselectionmodel',
-        'underscore', 'backbone', 'text'], function (contrail) {});
+        'underscore', 'backbone', 'text', 'core-utils', 'core-init'], function (contrail) {});
 });
 
 function loadCommonTemplates() {
