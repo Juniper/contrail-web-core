@@ -513,6 +513,9 @@ var defColors = ['#1c638d', '#4DA3D5'];
                                 } else {
                                     $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>');
                                 }
+                                if(data['rowExpansionCB'] != null && typeof(data['rowExpansionCB'] == 'function')) {
+                                    data['rowExpansionCB'](response,dataItem,grid);
+                                }
                             }).fail(function(){
                                 $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>'); 
                             });
