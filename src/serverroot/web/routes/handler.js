@@ -140,7 +140,7 @@ exports.checkURLInAllowedList = function(req) {
  */
 exports.isSessionAuthenticated = function(req) {
     //If url contains "/vcenter" and not loginReq and session doesn't contain vmware_soap_session
-    console.info('isSessionAuthenticated',req.url);
+    // logutils.logger.info('isSessionAuthenticated',req.url);
     //If loggedInOrchestrationMode doesn't match on client and server
     if(!longPoll.checkLoginReq(req) && req.session.loggedInOrchestrationMode != null && req.headers['x-orchestrationmode'] != null) {
         if(req.headers['x-orchestrationmode'] != req.session.loggedInOrchestrationMode) {
