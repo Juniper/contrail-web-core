@@ -322,8 +322,50 @@ config.session.secret_key =
  * true - Will update external gateway information on router in neutron.
  * false - Will not update external gateway information on router in neutron.
  *****************************************************************************/
- config.network = {}
- config.network.router_L3Enable = true;
+config.network = {}
+config.network.router_L3Enable = true;
+
+/*****************************************************************************
+ * The below section specifies the list of allowed ports when requested through
+ * proxy.
+ *
+ * vrouter_node_ports - the allowed port list when the ip/host in proxy URL
+ *      used has role as vrouter/agent node
+ * control_node_ports - the allowed port list when the ip/host in proxy URL
+ *      used has role as control node
+ * analytics_node_ports - the allowed port list when the ip/host in proxy URL
+ *      used has role as analytics node
+ * config_node_ports - the allowed port list when the ip/host in proxy URL
+ *      used has role as config node
+ *
+ *****************************************************************************/
+config.proxy = {};
+config.proxy.vrouter_node_ports = [
+    '8085', /* HttpPortAgent */
+    '8102', /* HttpPortVRouterNodemgr */
+];
+config.proxy.control_node_ports = [
+    '8083', /* HttpPortControl */
+    '8092', /* HttpPortDns */
+    '8101', /* HttpPortControlNodemgr */
+
+];
+config.proxy.analytics_node_ports = [
+    '8081', /* OpServerPort */
+    '8089', /* HttpPortCollector */
+    '8090', /* HttpPortOpserver */
+    '8091', /* HttpPortQueryEngine */
+    '8104', /* HttpPortAnalyticsNodemgr */
+];
+config.proxy.config_node_ports = [
+    '5998', /* DiscoveryServerPort */
+    '8082', /* ApiServerPort */
+    '8084', /* HttpPortApiServer */
+    '8087', /* HttpPortSchemaTransformer */
+    '8088', /* HttpPortSvcMonitor */
+    '8096', /* HttpPortDeviceManager */
+    '8100', /* HttpPortConfigNodemgr */
+];
 
 // Export this as a module.
 module.exports = config;
