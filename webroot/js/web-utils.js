@@ -2263,8 +2263,10 @@ function ManageDataSource() {
                           else if(window[dsObj['populateFn'][i + 1]] != null && dsObj['populateFn'][i + 1].indexOf('.') > -1) {
                               var fnArr = dsObj['populateFn'][i + 1].split('.');
                               window[fnArr[0]][fnArr[1]](defObjArr[i + 1],arguments['dataSource'],dsName);
-                          } else
-                              dataSource.setData(arguments['dataSource'].getItems());
+                          } else {
+                              //nothing to do
+                              //dataSource.setData(arguments['dataSource'].getItems());
+                          }
                       };
                   }(i));
               }
