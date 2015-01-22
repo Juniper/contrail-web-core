@@ -219,8 +219,8 @@ define([
 
             $.each(testobj, function (attribute, value) {
                 if (_.isArray(value)) {
-                    if (contrail.checkIfExist(locks[attribute + smwc.LOCKED_SUFFIX_ID])) {
-                        lock = locks[attribute + smwc.LOCKED_SUFFIX_ID];
+                    if (contrail.checkIfExist(locks[attribute + cowc.LOCKED_SUFFIX_ID])) {
+                        lock = locks[attribute + cowc.LOCKED_SUFFIX_ID];
                         if (lock === true) {
                             delete testobj[attribute];
                         }
@@ -243,8 +243,8 @@ define([
                     if(contrail.checkIfExist(value) && (typeof value == 'string')) {
                         testobj[attribute] = value.trim();
                     }
-                    if (contrail.checkIfExist(locks[attribute + smwc.LOCKED_SUFFIX_ID])) {
-                        lock = locks[attribute + smwc.LOCKED_SUFFIX_ID];
+                    if (contrail.checkIfExist(locks[attribute + cowc.LOCKED_SUFFIX_ID])) {
+                        lock = locks[attribute + cowc.LOCKED_SUFFIX_ID];
                         if (lock === true) {
                             delete testobj[attribute];
                         }
@@ -258,9 +258,9 @@ define([
 
         this.renderView4Config = function (parentElement, model, viewObj, validation, lockEditingByDefault) {
             var viewName = viewObj['view'],
-                elementId = viewObj[smwc.KEY_ELEMENT_ID],
-                validation = (validation != null) ? validation : smwc.KEY_VALIDATION,
-                viewAttributes = {viewConfig: viewObj[smwc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
+                elementId = viewObj[cowc.KEY_ELEMENT_ID],
+                validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
+                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
                 elementView;
 
             switch (viewName) {

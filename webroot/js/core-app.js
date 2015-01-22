@@ -71,6 +71,7 @@ requirejs.config({
         'validation': 'assets/backbone/backbone-validation-amd',
         'text': 'assets/requirejs/text',
         'core-utils': 'js/core-utils',
+        'core-constants': 'js/core-constants',
         'contrail-model': 'js/models/ContrailModel',
         'core-init': 'js/core-init'
     },
@@ -237,6 +238,9 @@ requirejs.config({
         'core-utils': {
             deps: ['jquery', 'underscore']
         },
+        'core-constants': {
+            deps: ['jquery', 'underscore']
+        },
         'contrail-model' :{
             deps: ['jquery', 'underscore', 'backbone', 'knockout', 'knockback']
         },
@@ -260,7 +264,7 @@ require(['jquery', 'knockout'], function ($, Knockout) {
         'jquery.tristate', 'jquery.multiselect', 'jquery.multiselect.filter', 'jquery.steps.min', 'slick.dataview',
         'joint', 'joint.layout.DirectedGraph', 'jquery.panzoom', 'joint.contrail', 'jquery.ui.position',
         'jquery.contextMenu', 'slick.checkboxselectcolumn', 'slick.rowselectionmodel',
-        'underscore', 'backbone', 'text', 'core-utils', 'core-init'], function (contrail) {});
+        'underscore', 'backbone', 'text', 'core-utils', 'core-constants', 'core-init'], function (contrail) {});
 });
 
 function loadCommonTemplates() {

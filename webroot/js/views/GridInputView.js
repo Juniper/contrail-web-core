@@ -8,15 +8,15 @@ define([
 ], function (_, Backbone) {
     var GridInputView = Backbone.View.extend({
         render: function () {
-            var inputTemplate = contrail.getTemplate4Id(smwc.TMPL_GRID_INPUT_VIEW),
+            var inputTemplate = contrail.getTemplate4Id(cowc.TMPL_GRID_INPUT_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
                 validation = this.attributes.validation,
-                path = viewConfig[smwc.KEY_PATH],
-                type = (viewConfig[smwc.KEY_TYPE] != null) ? viewConfig[smwc.KEY_TYPE] : 'text',
+                path = viewConfig[cowc.KEY_PATH],
+                type = (viewConfig[cowc.KEY_TYPE] != null) ? viewConfig[cowc.KEY_TYPE] : 'text',
                 tmplParameters;
 
-            tmplParameters = { id: elId, name: elId, dataBindValue: viewConfig[smwc.KEY_DATABIND_VALUE], type: type, class: "span12", path: path, validation: validation };
+            tmplParameters = { id: elId, name: elId, dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE], type: type, class: "span12", path: path, validation: validation };
 
             this.$el.html(inputTemplate(tmplParameters));
         }

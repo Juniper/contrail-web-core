@@ -8,12 +8,12 @@ define([
 ], function (_, Backbone) {
     var FormInputView = Backbone.View.extend({
         render: function () {
-            var inputTemplate = contrail.getTemplate4Id(smwc.TMPL_INPUT_VIEW),
+            var inputTemplate = contrail.getTemplate4Id(cowc.TMPL_INPUT_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
                 validation = this.attributes.validation,
-                path = viewConfig[smwc.KEY_PATH],
-                type = (viewConfig[smwc.KEY_TYPE] != null) ? viewConfig[smwc.KEY_TYPE] : 'text',
+                path = viewConfig[cowc.KEY_PATH],
+                type = (viewConfig[cowc.KEY_TYPE] != null) ? viewConfig[cowc.KEY_TYPE] : 'text',
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 labelValue = (elId != null) ? smwl.get(elId) : smwl.get(path),
                 tmplParameters;
@@ -25,7 +25,7 @@ define([
 
             tmplParameters = {
                 label: labelValue, id: elId, name: elId, disabled: viewConfig['disabled'],
-                dataBindValue: viewConfig[smwc.KEY_DATABIND_VALUE],
+                dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
                 lockAttr: lockEditingByDefault, type: type,
                 class: "span12", path: path, validation: validation
             };

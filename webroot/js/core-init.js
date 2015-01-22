@@ -6,9 +6,11 @@ define([
     'underscore',
     'validation',
     'core-utils',
+    'core-constants',
     'knockout'
-], function (_, validation, CoreUtils, Knockout) {
+], function (_, validation, CoreUtils, CoreConstants, Knockout) {
     cowu = new CoreUtils();
+    cowc = new CoreConstants();
     kbValidation = validation;
     initBackboneValidation(_);
     initCustomKOBindings(Knockout);

@@ -8,11 +8,11 @@ define([
 ], function (_, Backbone) {
     var FormMultiselectView = Backbone.View.extend({
         render: function () {
-            var msTemplate = contrail.getTemplate4Id(smwc.TMPL_MULTISELECT_VIEW),
+            var msTemplate = contrail.getTemplate4Id(cowc.TMPL_MULTISELECT_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
-                elementConfig = viewConfig[smwc.KEY_ELEMENT_CONFIG],
-                path = viewConfig[smwc.KEY_PATH],
+                elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
+                path = viewConfig[cowc.KEY_PATH],
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 labelValue = (elId != null) ? smwl.get(elId) : smwl.get(path),
                 tmplParameters;
@@ -25,7 +25,7 @@ define([
             tmplParameters = {
                 label: labelValue, id: elId, name: elId,
                 lockAttr: lockEditingByDefault,
-                dataBindValue: viewConfig[smwc.KEY_DATABIND_VALUE],
+                dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
                 class: "span12", elementConfig: elementConfig
             };
 

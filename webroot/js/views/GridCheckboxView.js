@@ -8,7 +8,7 @@ define([
 ], function (_, Backbone) {
     var GridCheckboxView = Backbone.View.extend({
         render: function () {
-            var checkBoxTemplate = contrail.getTemplate4Id(smwc.TMPL_GRID_CHECKBOX_VIEW),
+            var checkBoxTemplate = contrail.getTemplate4Id(cowc.TMPL_GRID_CHECKBOX_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
                 validation = this.attributes.validation,
