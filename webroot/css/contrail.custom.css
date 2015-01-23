@@ -2303,3 +2303,11 @@ color: #b94a48;
 .slick-grid-detail-sub-content-height{
     height : 290px !important;
 }
+
+.sgSelect2 .select2-result-sub {
+    max-height: 150px;
+    overflow: auto;
+}
+.sgSelect2 .select2-results {
+    max-height: 400px;
+}
