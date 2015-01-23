@@ -1,0 +1,8 @@
+Verified+2: Zuul <zuul@lists.opencontrail.org>
+Approved+1: Abhishek Singla <singla@juniper.net>
+Code-Review+2: Abhishek Singla <singla@juniper.net>
+Submitted-by: Zuul <zuul@lists.opencontrail.org>
+Submitted-at: Fri, 23 Jan 2015 11:28:36 -0800
+Reviewed-on: https://review.opencontrail.org/6303
+Project: Juniper/contrail-web-core
+Branch: refs/heads/master
