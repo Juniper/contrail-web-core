@@ -439,12 +439,12 @@
             },
             updateLeftData: function (data) {
                 $.each(data, function(key,val){
-                	$(multiselectContainer.lists.left).append('<li class="ui-widget-content" data-value=' + val[options.dataValueField] + '>' + val[options.dataTextField] + '</li>');
+                	$(multiselectContainer.lists.left).append('<li class="ui-widget-content" data-value="' + val[options.dataValueField] + '">' + val[options.dataTextField] + '</li>');
                 });
             },
             updateRightData: function (data) {
             	$.each(data, function(key,val){
-                	$(multiselectContainer.lists.right).append('<li class="ui-widget-content" data-value=' + val[options.dataValueField] + '>' + val[options.dataTextField] + '</li>');
+                	$(multiselectContainer.lists.right).append('<li class="ui-widget-content" data-value="' + val[options.dataValueField] + '">' + val[options.dataTextField] + '</li>');
                 });
             },
             getLeftSelectedData: function () {
@@ -455,7 +455,7 @@
             },
             deleteLeftData: function (data) {
             	$.each(data, function(key,val){
-                	$(multiselectContainer.lists.left).find('li[data-value=' + val[options.dataValueField] + ']').remove();;
+                	$(multiselectContainer.lists.left).find('li[data-value="' + val[options.dataValueField] + '"]').remove();
                 });
             },
             deleteLeftAllData: function () {
@@ -463,7 +463,7 @@
             },
             deleteRightData: function (data) {
             	$.each(data, function(key,val){
-                	$(multiselectContainer.lists.right).find('li[data-value=' + val[options.dataValueField] + ']').remove();;
+                	$(multiselectContainer.lists.right).find('li[data-value="' + val[options.dataValueField] + '"]').remove();
                 });
             },
             deleteRightAllData: function () {
