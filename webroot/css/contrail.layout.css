@@ -1904,7 +1904,7 @@ button.btn:active {
 .dropdown-menu {
   border-radius: 0 !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 10;
+  z-index: 14;
 }
 .dropdown-menu li a {
   font-size: 13px;
