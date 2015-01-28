@@ -126,7 +126,7 @@ function collapseElement(e,collapseDivID) {
     if($(e).prop("tagName").toUpperCase() == "I"){
         $(e).toggleClass('icon-caret-right').toggleClass('icon-caret-down');
     } else {
-        $(e).find("i").toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+        $(e).find("i.icon-caret-right,i.icon-caret-down").toggleClass('icon-caret-right').toggleClass('icon-caret-down');
     }
     //var widgetBodyElem = $(e).parents('div.widget-box').find('div.widget-body');
     var widgetBoxElem;
