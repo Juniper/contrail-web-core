@@ -470,6 +470,8 @@ function check2ReloadMenu(lastPageHash, currentMenu) {
 
 /* JSON Highlighter + Expand & Collapse */
 function syntaxHighlight(json) {
+    if(json == null)
+        return;
 	json = JSON.stringify(json, undefined, 2)
 	json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     var syntaxedJson = json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {

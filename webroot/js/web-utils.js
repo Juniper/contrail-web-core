@@ -470,13 +470,12 @@ var defColors = ['#1c638d', '#4DA3D5'];
                                     e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response,dataItem)));
                                     $(grid).data('contrailGrid').adjustDetailRowHeight(dataItem['cgrid']);
                                 } else {
-                                    $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>');
+                                    $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>System Information unavailable</p>');
                                 }
                             }).fail(function(){
                                 $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>'); 
                             });
-                        } else
-                            e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](rowData)));
+                        } 
                     },
                     onCollapse:function (e,dc) {
                     }
@@ -923,7 +922,6 @@ function MenuHandler() {
         }).always(function(){
             webServerDefObj.resolve();
         });
-
         $.when.apply(window, [menuDefferedObj, webServerDefObj]).done(function () {
             self.deferredObj.resolve();
         });
@@ -1310,21 +1308,23 @@ function MenuHandler() {
             
             function loadJsResources(menuObj) {
                 $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
-                    if (!(currResourceObj['js'] instanceof Array)) 
-                        currResourceObj['js'] = [currResourceObj['js']];
-                    var isLoadFn = currResourceObj['loadFn'] != null ? true : false;
-                    var isReloadRequired = true;
-                    //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
-                    if(NO_RELOAD_JS_CLASSLIST.indexOf(currResourceObj['class']) != -1) {
-                        isReloadRequired = false;
+                    if (currResourceObj['js'] != null) {
+                        if (!(currResourceObj['js'] instanceof Array)) 
+                            currResourceObj['js'] = [currResourceObj['js']];
+                        var isLoadFn = currResourceObj['loadFn'] != null ? true : false;
+                        var isReloadRequired = true;
+                        //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
+                        if(NO_RELOAD_JS_CLASSLIST.indexOf(currResourceObj['class']) != -1) {
+                                isReloadRequired = false;
+                        }
+                        $.each(currResourceObj['js'], function () {
+                            //Load the JS file only if it's not loaded already
+                            //if (window[currResourceObj['class']] == null)
+                            if(($.inArray(currResourceObj['rootDir'] + '/js/' + this,globalObj['loadedScripts']) == -1) || 
+                              (isLoadFn == true) || (isReloadRequired == true)) 
+                                deferredObjs.push(getScript(currResourceObj['rootDir'] + '/js/' + this));
+                        });
                     }
-                    $.each(currResourceObj['js'], function () {
-                        //Load the JS file only if it's not loaded already
-                        //if (window[currResourceObj['class']] == null)
-                        if(($.inArray(currResourceObj['rootDir'] + '/js/' + this,globalObj['loadedScripts']) == -1) ||
-                            (isLoadFn == true) || (isReloadRequired == true))
-                            deferredObjs.push(getScript(currResourceObj['rootDir'] + '/js/' + this));
-                    });
                 });
             }
 
@@ -2564,3 +2564,4 @@ function prefixToNetMask(prefixLen) {
     }
     return v4.Address.fromHex(parseInt(binaryString,2).toString(16)).address;
 }
+
