@@ -126,7 +126,7 @@ function collapseElement(e,collapseDivID) {
     if($(e).prop("tagName").toUpperCase() == "I"){
         $(e).toggleClass('icon-caret-right').toggleClass('icon-caret-down');
     } else {
-        $(e).find("i").toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+        $(e).find("i.icon-caret-right,i.icon-caret-down").toggleClass('icon-caret-right').toggleClass('icon-caret-down');
     }
     //var widgetBodyElem = $(e).parents('div.widget-box').find('div.widget-body');
     var widgetBoxElem;
@@ -511,7 +511,7 @@ var defColors = ['#1c638d', '#4DA3D5'];
                                     e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response,dataItem)));
                                     $(grid).data('contrailGrid').adjustDetailRowHeight(dataItem['cgrid']);
                                 } else {
-                                    $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>');
+                                    $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Information unavailable</p>');
                                 }
                                 if(data['rowExpansionCB'] != null && typeof(data['rowExpansionCB'] == 'function')) {
                                     data['rowExpansionCB'](response,dataItem,grid);
@@ -957,14 +957,16 @@ function MenuHandler() {
     this.loadMenu = function () {
         $.get('/menu.xml?built_at=' + built_at, function (xml) {
             $.get('/api/admin/webconfig/features/disabled?built_at=' + built_at, function(disabledFeatures) {
-                menuObj = $.xml2json(xml);
-                webServerDefObj.always(function(){
-                    processXMLJSON(menuObj, disabledFeatures);
-                    globalObj['webServerInfo']['disabledFeatures'] = ifNull(disabledFeatures,[]);
-                    var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'],'menushortcut'));
-                    $("#sidebar-shortcuts").html(menuShortcuts);
-                    ['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
-                    menuDefferedObj.resolve();
+                $.get('/api/admin/webconfig/featurePkg/webController?built_at=' + built_at, function(webControllPkg) {
+                    menuObj = $.xml2json(xml);
+                    webServerDefObj.always(function(){
+                        processXMLJSON(menuObj, disabledFeatures);
+                        globalObj['webServerInfo']['disabledFeatures'] = ifNull(disabledFeatures,[]);
+                        var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'],'menushortcut', webControllPkg));
+                        $("#sidebar-shortcuts").html(menuShortcuts);
+                        ['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
+                        menuDefferedObj.resolve();
+                    });
                 });            
             })
         });
@@ -1005,7 +1007,7 @@ function MenuHandler() {
     //  * allowedRolesList for each feature and comparing them with the logged-in user roles
     //  * allowedOrchestrationModels for each feature and comparing it against loggedInOrchestrationMode 
     //type = menushortcut returns only the first level menu (Configure,Monitor)
-    this.filterMenuItems = function(items,type){
+    this.filterMenuItems = function(items,type,webControllerPkg){
         if(type == null) {
             items = items.filter(function(value){
                 var hasAccess = false;
@@ -1020,32 +1022,39 @@ function MenuHandler() {
             for(var i = 0;i < items.length; i++){
                 var obj = {};
                 obj['iconClass'] = items[i]['iconClass'],obj['id'] = items[i]['name'],obj['label'] = items[i]['label'];
-                /*If top level item has access tag then check for it
-                  else check for the access tag in the sub menu items
-                */
-                if(items[i]['access'] != null)
-                    obj['cssClass'] = checkForAccess(items[i]) ? "btn-"+items[i]['name'] : "disabledBtn";
-                else if(items[i]['items'] != null && items[i]['items']['item'] instanceof Array) {
-                    var subMenu = items[i]['items']['item'],allowed = false;
-                    for(var j = 0; j < subMenu.length; j++) {
-                        if(subMenu[j]['access'] != null) {
-                            /*
-                             * if atleast one submenu item is allowed then menu button should not be disabled
-                             */
-                            if(checkForAccess(subMenu[j]))
-                                allowed = true;
-                        /*
-                         * if any submenu item has no access tag which mean it is accessible to everyone so menu button should not be disabled
-                         */
-                        } else {
-                            allowed = true;
-                            break;
-                        }
-                    }
-                    obj['cssClass'] = allowed ? "btn-"+items[i]['name'] : "disabledBtn";
-                //Menu with no sub items,so disabling it
-                } else 
+                /*disable config baremetal section if contrail-web-controller package is not installed and only
+                    contrail-web-server-manager is installed*/
+                if(obj['id'] == 'configure' && (webControllerPkg.webController == null
+                    || (webControllerPkg.webController != null && !webControllerPkg.webController.enable))) {
                     obj['cssClass'] = "disabledBtn";
+                } else {
+                    /*If top level item has access tag then check for it
+                      else check for the access tag in the sub menu items
+                    */
+                    if(items[i]['access'] != null)
+                        obj['cssClass'] = checkForAccess(items[i]) ? "btn-"+items[i]['name'] : "disabledBtn";
+                    else if(items[i]['items'] != null && items[i]['items']['item'] instanceof Array) {
+                        var subMenu = items[i]['items']['item'],allowed = false;
+                        for(var j = 0; j < subMenu.length; j++) {
+                            if(subMenu[j]['access'] != null) {
+                                /*
+                                 * if atleast one submenu item is allowed then menu button should not be disabled
+                                 */
+                                if(checkForAccess(subMenu[j]))
+                                    allowed = true;
+                            /*
+                             * if any submenu item has no access tag which mean it is accessible to everyone so menu button should not be disabled
+                             */
+                            } else {
+                                allowed = true;
+                                break;
+                            }
+                        }
+                        obj['cssClass'] = allowed ? "btn-"+items[i]['name'] : "disabledBtn";
+                    //Menu with no sub items,so disabling it
+                    } else
+                        obj['cssClass'] = "disabledBtn";
+                }
                 result.push(obj);
             }
             return result;

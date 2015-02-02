@@ -89,6 +89,11 @@ function initializeAppConfig (appObj)
 {
     var app = appObj.app;
     var port = appObj.port;
+    var secretKey =
+        'enterasupbK3xg8qescJK.dUbdgfVq0D70UaLTMGTzO4yx5vVJral2zIhVersecretkey';
+    if ((null != config.session) && (null != config.session.secret_key)) {
+        secretKey = config.session.secret_key;
+    }
     app.set('port', process.env.PORT || port);
     app.use(express.cookieParser());
     store = new RedisStore({host:redisIP, port:redisPort,
@@ -97,7 +102,7 @@ function initializeAppConfig (appObj)
                            eventEmitter:sessEvent});
 
     app.use(express.session({ store:store,
-        secret:'enterasupbK3xg8qescJK.dUbdgfVq0D70UaLTMGTzO4yx5vVJral2zIhVersecretkey',
+        secret: secretKey,
         cookie:{
             maxAge:global.MAX_AGE_SESSION_ID
         }}));

@@ -85,30 +85,14 @@ function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
     headers = getHeaders(headers, appHeaders);
     configServer.api.get(reqUrl, function(err, data) {
         if (err) {
-            if (stopRetry) {
-                callback(err, data);
-            } else {
-                if ((null != defProject) && (err.responseCode ==
-                                             global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
-                    /* Retry once again */
-                    authApi.getTokenObj({'req': appData['authObj']['req'],
-                                        'tenant': defProject, 'forceAuth': true},
-                                        function(error, token) {
-                        if ((error) || (null == token)) {
-                            if (true == multiTenancyEnabled) {
-                                commonUtils.redirectToLogoutByAppData(appData);
-                                return;
-                            }
-                            callback(err, data);
-                            return;
-                        }
-                        appData['authObj']['defTokenObj'] = token;
-                        exports.apiGet(reqUrl, appData, callback, appHeaders, true);
-                   });
-                } else {
-                    callback(err, data);
+            if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
+                err.responseCode) {
+                if (true == multiTenancyEnabled) {
+                    commonUtils.redirectToLogoutByAppData(appData);
+                    return;
                 }
             }
+            callback(err, data);
         } else {
             callback(null, data);
         }
@@ -127,31 +111,14 @@ function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 
     configServer.api.put(reqUrl, reqData, function(err, data) {
         if (err) {
-            if (stopRetry) {
-                callback(err, data);
-            } else {
-                if ((null != defProject) && (err.responseCode ==
-                                             global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
-                    /* Retry once again */
-                    authApi.getTokenObj({'req': appData['authObj']['req'],
-                                        'tenant': defProject, 'forceAuth': true},
-                                        function(error, token) {
-                        if ((error) || (null == token)) {
-                            if (true == multiTenancyEnabled) {
-                                commonUtils.redirectToLogoutByAppData(appData);
-                                return;
-                            }
-                            callback(err, data);
-                            return;
-                        }   
-                        appData['authObj']['defTokenObj'] = token;
-                        exports.apiPut(reqUrl, reqData, appData, callback,
-                                       appHeaders, true);
-                   });
-                } else {
-                    callback(err, data);
+            if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
+                err.responseCode) {
+                if (true == multiTenancyEnabled) {
+                    commonUtils.redirectToLogoutByAppData(appData);
+                    return;
                 }
             }
+            callback(err, data);
         } else {
             callback(null, data);
         }
@@ -170,31 +137,14 @@ function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 
     configServer.api.post(reqUrl, reqData, function(err, data) {
         if (err) {
-            if (stopRetry) {
-                callback(err, data);
-            } else {
-                if ((null != defProject) && (err.responseCode ==
-                                             global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
-                    /* Retry once again */
-                    authApi.getTokenObj({'req': appData['authObj']['req'],
-                                        'tenant': defProject, 'forceAuth': true},
-                                        function(error, token) {
-                        if ((error) || (null == token)) {
-                            if (true == multiTenancyEnabled) {
-                                commonUtils.redirectToLogoutByAppData(appData);
-                                return;
-                            }
-                            callback(err, data);
-                            return;
-                        }   
-                        appData['authObj']['defTokenObj'] = token;
-                        exports.apiPost(reqUrl, reqData, appData, callback,
-                                        appHeaders, true);
-                   });
-                } else {
-                    callback(err, data);
+            if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
+                err.responseCode) {
+                if (true == multiTenancyEnabled) {
+                    commonUtils.redirectToLogoutByAppData(appData);
+                    return;
                 }
             }
+            callback(err, data);
         } else {
             callback(null, data);
         }
@@ -213,30 +163,14 @@ function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
 
     configServer.api.delete(reqUrl, function(err, data) {
         if (err) {
-            if (stopRetry) {
-                callback(err, data);
-            } else {
-                if ((null != defProject) && (err.responseCode ==
-                                             global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
-                    /* Retry once again */
-                    authApi.getTokenObj({'req': appData['authObj']['req'],
-                                        'tenant': defProject, 'forceAuth': true},
-                                        function(error, token) {
-                        if ((error) || (null == token)) {
-                            if (true == multiTenancyEnabled) {
-                                commonUtils.redirectToLogoutByAppData(appData);
-                                return;
-                            }
-                            callback(err, data);
-                            return;
-                        }   
-                        appData['authObj']['defTokenObj'] = token;
-                        exports.apiDelete(reqUrl, appData, callback, appHeaders, true);
-                   });
-                } else {
-                    callback(err, data);
+            if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
+                err.responseCode) {
+                if (true == multiTenancyEnabled) {
+                    commonUtils.redirectToLogoutByAppData(appData);
+                    return;
                 }
             }
+            callback(err, data);
         } else {
             callback(null, data);
         }
