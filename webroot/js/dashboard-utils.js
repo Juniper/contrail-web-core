@@ -13,7 +13,7 @@ function infraMonitorClass() {
         $.each(downSelectors,function(idx,elem) {
             if($(elem).text() == "0")
                 $(elem).hide();
-            else
+            else 
                 $(elem).show();
         });
     }
@@ -132,6 +132,13 @@ function infraMonitorClass() {
         var result = nodeDS.getDataSourceObj();
         var dataSource = result['dataSource'];
         var deferredObj = result['deferredObj'];
+      //if cached data is available trigger event to update
+        if(result['lastUpdated'] != null && (result['error'] == null || result['error']['errTxt'] == 'abort')){
+            triggerDatasourceEvents(nodeDS);
+        }
+        infoBoxObj['viewModel'].downCnt.subscribe(function(newValue) {
+            showHideDownNodeCnt();
+        });
         //Update the viewModel
         $(nodeDS).on('change',function() {
             var data = dataSource.getItems();
@@ -139,13 +146,7 @@ function infraMonitorClass() {
             self.updateInfoBoxes();
             self.updateAlerts();
         });
-        //if cached data is available trigger event to update
-        if(result['lastUpdated'] != null && (result['error'] == null || result['error']['errTxt'] == 'abort')){
-            triggerDatasourceEvents(nodeDS);
-        }
-        infoBoxObj['viewModel'].downCnt.subscribe(function(newValue) {
-            showHideDownNodeCnt();
-        });
+        
     }
 
     function loadLogs() {
