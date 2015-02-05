@@ -519,8 +519,7 @@ var defColors = ['#1c638d', '#4DA3D5'];
                             }).fail(function(){
                                 $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>'); 
                             });
-                        } else
-                            e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](rowData)));
+                        } 
                     },
                     onCollapse:function (e,dc) {
                     }
@@ -997,7 +996,6 @@ function MenuHandler() {
         }).always(function(){
             webServerDefObj.resolve();
         });
-
         $.when.apply(window, [menuDefferedObj, webServerDefObj]).done(function () {
             self.deferredObj.resolve();
         });
@@ -1399,8 +1397,8 @@ function MenuHandler() {
                         $.each(currResourceObj['js'], function () {
                             //Load the JS file only if it's not loaded already
                             //if (window[currResourceObj['class']] == null)
-                            if(($.inArray(currResourceObj['rootDir'] + '/js/' + this,globalObj['loadedScripts']) == -1) ||
-                                (isLoadFn == true) || (isReloadRequired == true))
+                            if(($.inArray(currResourceObj['rootDir'] + '/js/' + this,globalObj['loadedScripts']) == -1) || 
+                              (isLoadFn == true) || (isReloadRequired == true)) 
                                 deferredObjs.push(getScript(currResourceObj['rootDir'] + '/js/' + this));
                         });
                     }
@@ -2669,4 +2667,3 @@ function getIPforHostName(name,dataSourceName) {
        return null;
    }
 }
-

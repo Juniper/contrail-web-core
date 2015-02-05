@@ -174,6 +174,7 @@ function createJob (jobName, jobTitle, jobPriority, delayInMS, runCount, taskDat
             jobsApi.kue.Job.rangeByType(jobName, 'delayed', 0,
                                         global.MAX_INT_VALUE, 'desc',
                                         function (err, selectedJobs) {
+              if ((null == err) && (null != selectedJobs)) {
                 selectedJobs.forEach(function (job) {
                     taskData =
                         jobUtils.updateJobDataRequiresField(job.data, taskData);
@@ -186,6 +187,7 @@ function createJob (jobName, jobTitle, jobPriority, delayInMS, runCount, taskDat
                         return;
                     }
                 });
+              }
             });
         }
 	    var jobTitleStr = (jobTitle == null) ? jobName : jobTitle;
