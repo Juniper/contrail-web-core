@@ -79,7 +79,7 @@ function Contrail() {
         var contentType = null, dataType = null,
             methodType = config['type'], cacheEnabled = config['cache'],
             reqTimeOut = config['timeout'], dataUrl = config['url'],
-            postData = config['data'], ajaxConfig = {};
+            postData = JSON.stringify(config['data']), ajaxConfig = {};
 
         ajaxConfig.async = contrail.checkIfExist(config.async) ? config.async : true;
 

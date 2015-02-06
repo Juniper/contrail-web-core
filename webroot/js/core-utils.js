@@ -18,8 +18,14 @@ define([
     'js/views/GridInputView',
     'js/views/GridCheckboxView',
     'js/views/GridDropdownView',
-    'js/views/GridMultiselectView'
-], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView, AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView) {
+    'js/views/GridMultiselectView',
+    'js/views/VisualizationView',
+    'js/views/TabsView',
+    'js/views/ChartView',
+    'js/views/GridView'
+], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
+             AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
+             VisualizationView, TabsView, ChartView, GridView) {
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -34,8 +40,7 @@ define([
                         collapseable: false
                     }
                 },
-                columnHeader: {
-                },
+                columnHeader: {},
                 body: {
                     options: {
                         autoRefresh: false,
@@ -337,6 +342,26 @@ define([
 
                 case "GridMultiselectView":
                     elementView = new GridMultiselectView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "VisualizationView":
+                    elementView = new VisualizationView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "TabsView":
+                    elementView = new TabsView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "ChartView":
+                    elementView = new ChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "GridView":
+                    elementView = new GridView({el: parentElement, model: model, attributes: viewAttributes});
                     elementView.render();
                     break;
             }

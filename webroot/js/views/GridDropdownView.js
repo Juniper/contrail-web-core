@@ -6,7 +6,7 @@ define([
     'underscore',
     'backbone'
 ], function (_, Backbone) {
-    var FormDropdownView = Backbone.View.extend({
+    var GridDropdownView = Backbone.View.extend({
         render: function () {
             var dropdownTemplate = contrail.getTemplate4Id(cowc.TMPL_GRID_DROPDOWN_VIEW),
                 viewConfig = this.attributes.viewConfig,
@@ -21,5 +21,5 @@ define([
         }
     });
 
-    return FormDropdownView;
+    return GridDropdownView;
 });
