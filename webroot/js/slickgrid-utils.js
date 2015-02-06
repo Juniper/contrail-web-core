@@ -768,6 +768,9 @@ function getDefaultGridConfig() {
                     if(contrail.checkIfFunction(gridDataSource.events.onDataUpdateCB)) {
                         gridDataSource.events.onDataUpdateCB(e, args);
                     }
+                } else if (dataView.getLength() == 0){
+                    emptyGridHandler();
+                    gridContainer.find('.slick-row-detail').remove();
                 }
             };
 
