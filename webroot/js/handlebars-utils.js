@@ -66,6 +66,14 @@ Handlebars.registerHelper('formatJSON2HTML', function(rawdata, options) {
     return contrail.formatJSON2HTML(rawdata,2);
 });
 
+Handlebars.registerHelper('formatGridJSON2HTML', function(rawdata, options) {
+    var rawDataClone = $.extend(true,{}, rawdata);
+    if (contrail.checkIfExist(rawDataClone.cgrid)) {
+        delete rawDataClone.cgrid;
+    }
+    return contrail.formatJSON2HTML(rawDataClone,2);
+});
+
 Handlebars.registerHelper('formatString2HTML', function(string) {
     return string;
 });

@@ -9,6 +9,7 @@ define([
     'js/views/FormDynamicGridView',
     'js/views/FormMultiselectView',
     'js/views/FormDropdownView',
+    'js/views/FormSelect2DropdownView',
     'js/views/FormCheckboxView',
     'js/views/AccordianView',
     'js/views/SectionView',
@@ -18,7 +19,7 @@ define([
     'js/views/GridCheckboxView',
     'js/views/GridDropdownView',
     'js/views/GridMultiselectView'
-], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormCheckboxView, AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView) {
+], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView, AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView) {
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -279,8 +280,12 @@ define([
                     elementView.render();
                     break;
 
+                case "FormSelect2DropdownView":
+                    elementView = new FormSelect2DropdownView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
                 case "FormCheckboxView":
-                    console.log('here');
                     elementView = new FormCheckboxView({el: parentElement, model: model, attributes: viewAttributes});
                     elementView.render();
                     break;

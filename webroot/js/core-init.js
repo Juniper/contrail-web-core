@@ -44,7 +44,7 @@ function initBackboneValidation(_) {
 function initCustomKOBindings(Knockout) {
     Knockout.bindingHandlers.contrailDropdown = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var valueObj = valueAccessor(),
+            var valueObj = Knockout.toJS(valueAccessor()) || {},
                 allBindings = allBindingsAccessor(),
                 dropDown = $(element).contrailDropdown(valueObj).data('contrailDropdown');
 
@@ -95,11 +95,28 @@ function initCustomKOBindings(Knockout) {
     };
 
     Knockout.bindingHandlers.select2 = {
-        init: function(element, valueAccessor) {
-            var options = Knockout.toJS(valueAccessor()) || {};
-            setTimeout(function() {
-                $(element).select2(options);
-            }, 0);
+        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                $(element).select2('destroy');
+            });
+
+            var valueObj = Knockout.toJS(valueAccessor()) || {},
+                allBindings = allBindingsAccessor(),
+                lookupKey = allBindings.lookupKey;
+
+            $(element).select2(valueObj);
+
+            if (allBindings.value) {
+                var value = Knockout.utils.unwrapObservable(allBindings.value);
+                if (typeof value === 'function') {
+                    $(element).select2('val', value());
+                } else if(value && value != '') {
+                    $(element).select2('val', value);
+                }
+            }
+        },
+        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+            $(element).trigger('change');
         }
     };
 

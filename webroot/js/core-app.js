@@ -36,7 +36,7 @@ requirejs.config({
         'jsbn-combined': "/assets/ip/jsbn-combined",
         'contrail-common': "/js/contrail-common",
         'handlebars-utils': "/js/handlebars-utils",
-        'select2-utils': "/js/select2-utils",
+        //'select2-utils': "/js/select2-utils",
         'slickgrid-utils': "/js/slickgrid-utils",
         'contrail-elements': "/js/contrail-elements",
         'topology_api': "/js/topology_api",
@@ -178,9 +178,9 @@ requirejs.config({
         'qe-utils': {
             deps: ['jquery']
         },
-        'select2-utils': {
-            deps: ['jquery', 'knockout']
-        },
+        //'select2-utils': {
+        //    deps: ['jquery', 'knockout']
+        //},
         'ipv6': {
             deps: ['sprintf', 'jsbn-combined']
         },
@@ -258,7 +258,7 @@ require(['jquery', 'knockout'], function ($, Knockout) {
         'bootstrap', 'd3', 'nv.d3', 'crossfilter', 'jsonpath', 'xdate', 'jquery.validate',
         'handlebars', 'select2', 'jquery.event.drag', 'jquery.json', 'jquery.droppick', 'slick.core',
         'slick.grid', 'slick.enhancementpager', 'jquery.datetimepicker', 'moment',
-        'contrail-common', 'handlebars-utils', 'select2-utils', 'slickgrid-utils', 'contrail-elements',
+        'contrail-common', 'handlebars-utils', /*'select2-utils',*/ 'slickgrid-utils', 'contrail-elements',
         'topology_api', 'chart-utils', 'web-utils', 'contrail-layout', 'config_global', 'protocol',
         'qe-utils', 'nvd3-plugin', 'd3-utils', 'analyzer-utils', 'dashboard-utils', 'ipv6',
         'jquery.tristate', 'jquery.multiselect', 'jquery.multiselect.filter', 'jquery.steps.min', 'slick.dataview',
