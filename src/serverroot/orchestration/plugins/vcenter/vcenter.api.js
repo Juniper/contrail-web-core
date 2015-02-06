@@ -281,7 +281,14 @@ function getIdByMobName(appData,objType,name) {
                         if(response['Fault'] != null) 
                             resolve(response);
                         else {
-                            var objArr = response['RetrievePropertiesExResponse']['returnval']['objects']['propSet']['val'][0]['_value']['ManagedObjectReference'];
+                            var objArr = response['RetrievePropertiesExResponse']['returnval']['objects']['propSet']['val'];
+                            if(objArr instanceof Array)
+                                objArr = objArr[0]['_value']['ManagedObjectReference'];
+                            else
+                                objArr = objArr['ManagedObjectReference'];
+                            //If only one entity is present,wrap it in an array 
+                            if(!(objArr instanceof Array)) 
+                                objArr = [objArr];
                             function matchObjName(objId,callback) {
                                 retrievePropertiesExForObj(appData,objType,objId['_value']).done(function(response) {
                                     if(response['Fault'] != null) {
