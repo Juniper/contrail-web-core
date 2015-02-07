@@ -1228,6 +1228,9 @@ function formatVirtualRouterType(type) {
         for(var i = 0; i < type.length; i++) {
             var actText = '';
             switch(type[i]) {
+                case 'hypervisor' :
+                    actText = 'Hypervisor';
+                    break;
                 case 'embedded' :
                     actText = 'Embedded';
                     break;
