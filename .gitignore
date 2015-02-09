@@ -1,6 +1,7 @@
-src/serverroot/jobs/core/jobsCb.api.js
-src/serverroot/web/core/feature.list.js
-src/serverroot/web/routes/url.routes.js
+**/jobsCb.api.js
+**/feature.list.js
+**/url.routes.js
+**/rolemap.api.js
 node_modules
 *~
 *.swp

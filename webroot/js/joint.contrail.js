@@ -399,6 +399,8 @@ function drawVisualization(config) {
     var url = config.url;
     $.getJSON(url, function (response) {
     	setTimeout(function(){
+            $('.popover-tooltip').remove();
+
     		var data = formatData4BiDirVisualization(response),
 	        	jointConfig = renderVisualization(config, data);
 
@@ -430,10 +432,11 @@ function drawVisualization(config) {
             });
 
             $.each(tooltipConfig, function(keyConfig, valueConfig){
-	    		$('g.' + keyConfig).popover({
+                $('g.' + keyConfig).popover('destroy');
+                $('g.' + keyConfig).popover({
 	        		trigger: 'hover',
 	        		html: true,
-	        		delay: { show: 1000, hide: 10 },
+	        		delay: { show: 200, hide: 0 },
 	        		placement: function(context, src) {
 						$(context).addClass('popover-tooltip');
 
@@ -1397,7 +1400,7 @@ function setTopologyHeight(selectorId) {
 	patt.setAttribute('width', '100');
 	patt.setAttribute('height', '100');
 
-	image.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', 'https://localhost:8143/img/dotted.png');
+	image.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '/img/dotted.png');
 	image.setAttribute('x', '0');
 	image.setAttribute('y', '0');
 	image.setAttribute('width', '101');
