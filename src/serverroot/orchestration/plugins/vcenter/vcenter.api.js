@@ -16,6 +16,9 @@ var rootFolder = null;
 var networkFolder = null;
 var dataCenterDef = deferred();
 var vSwitchDef = deferred();
+var mobCache = {
+    'DistributedVirtualPortgroup' : {}
+}
 
 function logout(appData) {
     return new Promise(function(resolve,reject) {
@@ -309,6 +312,19 @@ function getIdByMobName(appData,objType,name,folderName) {
                             if(!(objArr instanceof Array)) 
                                 objArr = [objArr];
                             function matchObjName(objId,callback) {
+                                //If we are maintaining cache for the given mobType
+                                if(objType in mobCache) {
+                                    if(mobCache[objType][objId['_value']] != null) {
+                                        if(mobCache[objType][objId['_value']] == name) {
+                                            resolve(currid);
+                                            callback({'found':true},true);
+                                            return;
+                                        } else {
+                                            callback(null,false);
+                                            return;
+                                        }
+                                    }
+                                }
                                 retrievePropertiesExForObj(appData,objType,objId['_value']).done(function(response) {
                                     if(response['Fault'] != null) {
                                         resolve(response);
@@ -316,6 +332,9 @@ function getIdByMobName(appData,objType,name,folderName) {
                                         var currName = response['RetrievePropertiesExResponse']['returnval']['objects']['propSet']['val']['_value'];
                                         var currid = response['RetrievePropertiesExResponse']['returnval']['objects']['obj']['_value'];
                                         logutils.logger.debug(currName,currid);
+                                        //Populate mobCache
+                                        if(objType in mobCache)
+                                            mobCache[objType][currid] = currName;
                                         if(currName == name) {
                                             resolve(currid);
                                             callback({'found':true},true);
