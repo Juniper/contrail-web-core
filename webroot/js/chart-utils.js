@@ -18,6 +18,7 @@
             options.plotOnLoad = obj.plotOnLoad;
             options.showWidgetIds = obj.showWidgetIds;
             options.hideWidgetIds = obj.hideWidgetIds;
+            options.lineChartId = obj.lineChartId;
             createD3MemCPUChart(selector, url, options);
         },
         initD3TSChart: function (obj) {
