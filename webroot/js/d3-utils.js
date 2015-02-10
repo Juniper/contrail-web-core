@@ -96,13 +96,13 @@ function createD3SparkLines(selector, data, dataParser, propertyNames, slConfig)
 
 function successHandlerLineChart(data, cbParams) {
     var boxId = $(cbParams.selector).attr("id") + '-box';
-    var selectorId = $(cbParams.selector).attr("id") + '-link';
+    var selectorId = cbParams.options.lineChartId;
     var options = cbParams.options;
     if ($('#' + boxId).is(':visible')) {
         onClickLineChart(data, cbParams);
     }
-    $('.' + selectorId).addClass('cursor-pointer');
-    $('.' + selectorId).click(function () {
+    $('#' + selectorId).addClass('cursor-pointer');
+    $('#' + selectorId).click(function () {
         toggleWidgetsVisibility(options.showWidgetIds, options.hideWidgetIds);
         onClickLineChart(data, cbParams)
     });
