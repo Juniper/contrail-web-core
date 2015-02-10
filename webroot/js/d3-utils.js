@@ -516,8 +516,8 @@ function initTrafficTSChart(selector, data, options, chart, yFormatter, y2Format
     if(chart == null) {
         nv.addGraph(function () {
             var values = data[0].values, start, end, brushExtent = null;
-            if (values.length >= 100) {
-                start = values[values.length - 100];
+            if (values.length >= 20) {
+                start = values[values.length - 20];
                 end = values[values.length - 1];
                 brushExtent = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
             }
