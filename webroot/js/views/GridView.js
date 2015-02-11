@@ -4,15 +4,20 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
+    'backbone',
+    'contrail-list-model'
+], function (_, Backbone, ContrailListModel) {
     var GridView = Backbone.View.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
-                model = this.model,
-                elId = this.attributes.elementId;
+                model = this.model, elId = this.attributes.elementId,
+                listModelConfig = $.extend(true, {}, viewConfig.elementConfig['body']['dataSource']),
+                contrailListModel = new ContrailListModel(listModelConfig),
+                gridConfig;
 
-            var gridConfig = $.extend(true, {}, defaultGridConfig, viewConfig.elementConfig);
+            delete viewConfig.elementConfig['body']['dataSource']['remote'];
+            viewConfig.elementConfig['body']['dataSource'] = {dataView: contrailListModel};
+            gridConfig = $.extend(true, {}, defaultGridConfig, viewConfig.elementConfig);
 
             cowu.renderGrid(this.$el, gridConfig);
         }

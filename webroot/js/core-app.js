@@ -73,6 +73,8 @@ requirejs.config({
         'core-utils': 'js/core-utils',
         'core-constants': 'js/core-constants',
         'contrail-model': 'js/models/ContrailModel',
+        'contrail-list-model': 'js/models/ContrailListModel',
+        'contrail-remote-data-handler': 'js/models/ContrailRemoteDataHandler',
         'core-init': 'js/core-init'
     },
     shim: {
@@ -243,6 +245,12 @@ requirejs.config({
         },
         'contrail-model' :{
             deps: ['jquery', 'underscore', 'backbone', 'knockout', 'knockback']
+        },
+        'contrail-list-model': {
+            deps: ['contrail-remote-data-handler']
+        },
+        'contrail-remote-data-handler': {
+            deps: ['jquery', 'underscore']
         },
         'core-init': {
             deps: ['underscore', 'validation', 'core-utils', 'knockout']

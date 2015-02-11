@@ -50,13 +50,7 @@ define([
                             template: '<pre>{{{formatJSON2HTML this}}}</pre>'
                         }
                     },
-                    dataSource: {
-                        remote: {
-                            ajaxConfig: {
-                            },
-                            serverSidePagination: false
-                        }
-                    }
+                    dataSource: {}
                 }
             }, gridConfig));
         };
