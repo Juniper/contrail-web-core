@@ -78,6 +78,10 @@ test-env:
 	make dev-env
 	./unit-test.sh init
 
+sm-test-env:
+	make dev-env
+	./sm-unit-test.sh
+
 prod-env:
 	mkdir -p webroot/html
 	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
