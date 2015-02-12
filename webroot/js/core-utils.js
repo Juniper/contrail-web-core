@@ -19,13 +19,13 @@ define([
     'js/views/GridCheckboxView',
     'js/views/GridDropdownView',
     'js/views/GridMultiselectView',
-    'js/views/VisualizationView',
+    'js/views/GraphView',
     'js/views/TabsView',
     'js/views/ChartView',
     'js/views/GridView'
 ], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
              AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
-             VisualizationView, TabsView, ChartView, GridView) {
+             GraphView, TabsView, ChartView, GridView) {
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -339,8 +339,8 @@ define([
                     elementView.render();
                     break;
 
-                case "VisualizationView":
-                    elementView = new VisualizationView({el: parentElement, model: model, attributes: viewAttributes});
+                case "GraphView":
+                    elementView = new GraphView({el: parentElement, model: model, attributes: viewAttributes});
                     elementView.render();
                     break;
 
