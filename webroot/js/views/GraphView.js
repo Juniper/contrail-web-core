@@ -6,7 +6,7 @@ define([
     'underscore',
     'backbone'
 ], function (_, Backbone) {
-    var VisualizationView = Backbone.View.extend({
+    var GraphView = Backbone.View.extend({
         render: function () {
             var vTemplate = contrail.getTemplate4Id(cowc.TMPL_VISUALIZATION_VIEW),
                 viewConfig = this.attributes.viewConfig,
@@ -18,5 +18,5 @@ define([
         }
     });
 
-    return VisualizationView;
+    return GraphView;
 });
