@@ -74,6 +74,8 @@ requirejs.config({
         'core-constants': 'js/core-constants',
         'contrail-model': 'js/models/ContrailModel',
         'contrail-list-model': 'js/models/ContrailListModel',
+        'graph-view': 'js/views/GraphView',
+        'contrail-graph-model': 'js/models/ContrailGraphModel',
         'contrail-remote-data-handler': 'js/models/ContrailRemoteDataHandler',
         'core-init': 'js/core-init'
     },
@@ -243,8 +245,14 @@ requirejs.config({
         'core-constants': {
             deps: ['jquery', 'underscore']
         },
-        'contrail-model' :{
+        'contrail-model': {
             deps: ['jquery', 'underscore', 'backbone', 'knockout', 'knockback']
+        },
+        'contrail-graph-model': {
+            deps: ['jquery', 'underscore', 'backbone', 'joint.contrail', 'joint.layout.DirectedGraph']
+        },
+        'graph-view': {
+            deps: ['jquery', 'underscore', 'backbone', 'joint.contrail']
         },
         'contrail-list-model': {
             deps: ['contrail-remote-data-handler']

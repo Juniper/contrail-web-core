@@ -6,16 +6,8 @@ define([
     'underscore',
     'backbone'
 ], function (_, Backbone) {
-    var GraphView = Backbone.View.extend({
-        render: function () {
-            var vTemplate = contrail.getTemplate4Id(cowc.TMPL_VISUALIZATION_VIEW),
-                viewConfig = this.attributes.viewConfig,
-                vConfig = viewConfig['elementConfig'];
-
-            this.$el.html(vTemplate);
-
-            drawVisualization(vConfig);
-        }
+    var GraphView = joint.dia.Paper.extend({
+        linkView: joint.shapes.contrail.LinkView
     });
 
     return GraphView;

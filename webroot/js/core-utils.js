@@ -19,7 +19,7 @@ define([
     'js/views/GridCheckboxView',
     'js/views/GridDropdownView',
     'js/views/GridMultiselectView',
-    'js/views/GraphView',
+    'graph-view',
     'js/views/TabsView',
     'js/views/ChartView',
     'js/views/GridView'
@@ -261,6 +261,7 @@ define([
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
                 validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
                 viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
+                app = viewObj['app'],
                 elementView;
 
             switch (viewName) {
@@ -357,6 +358,14 @@ define([
                 case "GridView":
                     elementView = new GridView({el: parentElement, model: model, attributes: viewAttributes});
                     elementView.render();
+                    break;
+
+                default:
+                    if(app == cowc.APP_CONTRAIL_CONTROLLER) {
+                        ctwu.renderView(viewName, parentElement, model, viewAttributes);
+                    } else if(app == cowc.APP_CONTRAIL_SM) {
+                        smwu.renderView(viewName, parentElement, model, viewAttributes);
+                    }
                     break;
             }
         };

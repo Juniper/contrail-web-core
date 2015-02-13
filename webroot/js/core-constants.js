@@ -50,9 +50,12 @@ define([
         this.TMPL_DETAIL_PAGE = "core-detail-page-template";
         this.TMPL_DETAIL_PAGE_ACTION = "core-detail-page-action-template";
         this.TMPL_WIZARD_VIEW = "core-wizard-view-template";
-        this.TMPL_VISUALIZATION_VIEW = "core-visualization-template";
+        this.TMPL_NETWORKING_GRAPH_VIEW = "core-networking-graph-template";
         this.TMPL_TABS_VIEW = "core-tabs-template";
         this.TMPL_CHART_VIEW = "core-pd-chart-template";
+
+        this.APP_CONTRAIL_CONTROLLER = "contrail-controller";
+        this.APP_CONTRAIL_SM = "contrail-sm";
     };
     return CoreConstants;
 });
