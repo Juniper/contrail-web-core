@@ -512,14 +512,21 @@ function renderVisualization(config, data) {
 	initConnectedGraphEvents(selectorId, jointObject, {config:config, data:data});
 	initPanZoom4ConnectedGraph(selectorId);
 
-	if (data.connectedElements.length == 0) {
-		$(config.selectorId + '-visualization-connected-elements-empty').removeClass('hide');
-	}
+    if (data.connectedElements.length == 0) {
+        $(config.selectorId + '-visualization-connected-elements-empty').removeClass('hide');
+        $(config.selectorId + '-visualization-connected-elements-empty').find('p').text('No Virtual Network Found.');
+    }
 
 	return jointObject;
 }
 
 function renderZoomedVisualization4VN(selectorId, jointObject, params){
+    if ($.isEmptyObject(params.data.elementMap.node)) {
+        $(params.config.selectorId + '-visualization-connected-elements-empty').removeClass('hide');
+        $(params.config.selectorId + '-visualization-connected-elements-empty').find('p').text('No Graph Available.');
+        return null;
+    }
+
 	var forceFitOptions = getForceFitOptions("LR", 50),
     	config = params.config,
     	data = params.data,
