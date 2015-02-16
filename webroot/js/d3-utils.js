@@ -96,13 +96,13 @@ function createD3SparkLines(selector, data, dataParser, propertyNames, slConfig)
 
 function successHandlerLineChart(data, cbParams) {
     var boxId = $(cbParams.selector).attr("id") + '-box';
-    var selectorId = $(cbParams.selector).attr("id") + '-link';
+    var selectorId = cbParams.options.lineChartId;
     var options = cbParams.options;
     if ($('#' + boxId).is(':visible')) {
         onClickLineChart(data, cbParams);
     }
-    $('.' + selectorId).addClass('cursor-pointer');
-    $('.' + selectorId).click(function () {
+    $('#' + selectorId).addClass('cursor-pointer');
+    $('#' + selectorId).click(function () {
         toggleWidgetsVisibility(options.showWidgetIds, options.hideWidgetIds);
         onClickLineChart(data, cbParams)
     });
@@ -516,8 +516,8 @@ function initTrafficTSChart(selector, data, options, chart, yFormatter, y2Format
     if(chart == null) {
         nv.addGraph(function () {
             var values = data[0].values, start, end, brushExtent = null;
-            if (values.length >= 100) {
-                start = values[values.length - 100];
+            if (values.length >= 20) {
+                start = values[values.length - 20];
                 end = values[values.length - 1];
                 brushExtent = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
             }
