@@ -69,7 +69,8 @@ var NO_RELOAD_JS_CLASSLIST = [
     'serversPageLoader',
     'imagesPageLoader',
     'packagesPageLoader',
-    'smLoader'
+    'smLoader',
+    'nmPageLoader'
 ];
 
 //Sets the following prototype if not defined already.
@@ -1463,7 +1464,8 @@ function MenuHandler() {
                             if (window[currResourceObj['class']] != null) {
                                 window[currResourceObj['class']].load({
                                     containerId: contentContainer,
-                                    hashParams: layoutHandler.getURLHashParams()
+                                    hashParams: layoutHandler.getURLHashParams(),
+                                    function: currResourceObj['function']
                                 });
                                 $('#content-container-loading').remove();
                             }
