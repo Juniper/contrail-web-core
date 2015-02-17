@@ -50,6 +50,41 @@ function redisLog(type) {
     }
 }
 
+function redisSetAndPostProcess (key, postRedisLookupCallback, req,
+                                 appData, callback)
+{
+    postRedisLookupCallback(req, appData, function(err, data) {
+        if ((null == err) && (null != data)) {
+            process.mainModule.exports.redisClient.set(key, JSON.stringify(data),
+                                                       function(setErr) {
+                callback(err, data);
+            });
+        } else {
+            callback(err, data);
+        }
+    });
+}
+
+function checkAndGetRedisDataByKey (key, postRedisLookupCallback, req,
+                                    appData, callback)
+{
+    var forceRefresh = req.param('forceRefresh');
+    if (null != forceRefresh) {
+        redisSetAndPostProcess(key, postRedisLookupCallback, req, appData,
+                               callback);
+        return;
+    }
+    process.mainModule.exports.redisClient.get(key, function(err, value) {
+        if ((null != err) || (null == value)) {
+            redisSetAndPostProcess(key, postRedisLookupCallback, req, appData,
+                                   callback);
+            return;
+        }
+        callback(err, JSON.parse(value));
+    });
+}
+
 exports.createRedisClientAndWait = createRedisClientAndWait;
 exports.createDefRedisClientAndWait = createDefRedisClientAndWait;
+exports.checkAndGetRedisDataByKey = checkAndGetRedisDataByKey;
 
