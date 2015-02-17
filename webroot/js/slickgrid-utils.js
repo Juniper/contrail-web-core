@@ -608,34 +608,34 @@ function getDefaultGridConfig() {
 
                         var pagingInfo = dataView.getPagingInfo();
 
-                        if(pagingInfo.totalPages > 1 && !gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
-                            gridContainer.find('.grid-check-all-info').remove();
-                            gridContainer.find('.slick-header').after('<div class="alert alert-info grid-info grid-check-all-info"> ' +
-                            '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                            '<strong>' + pagingInfo.pageSize + ' records checked.</strong> <a class="check-all-link">Click here to check all ' + pagingInfo.totalRows + ' records</a>' +
-                            '</div>');
-
-                            gridContainer.find('.check-all-link')
-                                .off('click')
-                                .on('click', function(e) {
-                                    gridContainer.data('contrailGrid').setAllCheckedRows('all-page');
-                                    gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked = true;
-
-                                    gridContainer.find('.grid-check-all-info').remove();
-                                    gridContainer.find('.slick-header').after('<div class="alert alert-info grid-info grid-check-all-info"> ' +
-                                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                                    '<strong>' + pagingInfo.totalRows + ' records checked.</strong> <a class="clear-selection-link">Click here to clear selection</a>' +
-                                    '</div>');
-
-                                    gridContainer.find('.clear-selection-link')
-                                        .off('click')
-                                        .on('click', function(e) {
-                                            grid.setSelectedRows([]);
-                                            gridContainer.find('.grid-check-all-info').remove();
-                                            gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked = false;
-                                        })
-                                });
-                        }
+                        //if(pagingInfo.totalPages > 1 && !gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
+                        //    gridContainer.find('.grid-check-all-info').remove();
+                        //    gridContainer.find('.slick-header').after('<div class="alert alert-info grid-info grid-check-all-info"> ' +
+                        //    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                        //    '<strong>' + pagingInfo.pageSize + ' records checked.</strong> <a class="check-all-link">Click here to check all ' + pagingInfo.totalRows + ' records</a>' +
+                        //    '</div>');
+                        //
+                        //    gridContainer.find('.check-all-link')
+                        //        .off('click')
+                        //        .on('click', function(e) {
+                        //            gridContainer.data('contrailGrid').setAllCheckedRows('all-page');
+                        //            gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked = true;
+                        //
+                        //            gridContainer.find('.grid-check-all-info').remove();
+                        //            gridContainer.find('.slick-header').after('<div class="alert alert-info grid-info grid-check-all-info"> ' +
+                        //            '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                        //            '<strong>' + pagingInfo.totalRows + ' records checked.</strong> <a class="clear-selection-link">Click here to clear selection</a>' +
+                        //            '</div>');
+                        //
+                        //            gridContainer.find('.clear-selection-link')
+                        //                .off('click')
+                        //                .on('click', function(e) {
+                        //                    grid.setSelectedRows([]);
+                        //                    gridContainer.find('.grid-check-all-info').remove();
+                        //                    gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked = false;
+                        //                })
+                        //        });
+                        //}
 
                     } else {
                         grid.setSelectedRows([]);
