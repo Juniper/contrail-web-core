@@ -1,16 +1,15 @@
 define([
-    'underscore'
-], function (_) {
+    'underscore',
+    'contrail-remote-data-handler'
+], function (_, ContrailRemoteDataHandler) {
     var ContrailGraphModel = joint.dia.Graph.extend({
 
         initialize: function (modelConfig) {
 
             joint.dia.Graph.prototype.initialize.apply(this);
-
             this.requestInProgress = false;
-            this.elementMap = {node: {}, link: {}};
 
-            this.config = modelConfig.requestConfig;
+            this.graphConfig = modelConfig;
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
 
@@ -19,22 +18,70 @@ define([
 
         fetchData: function (successCallback) {
             var self = this,
-                url = this.config.url;
+                contrailDataHandler;
 
             self.requestInProgress = true;
+            self.elementMap = {node: {}, link: {}};
 
-            $.getJSON(url, function (response) {
-                var elementsObject = self.generateElements(response, self.elementMap);
+            var remoteHandlerConfig = getRemoteHandlerConfig(self, successCallback);
 
-                self.addCell(elementsObject['elements']);
-                if(self.forceFit) {
-                    self.directedGraphSize = graphLayoutHandler.layout(self, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
-                }
-                successCallback(self.directedGraphSize);
-                self.requestInProgress = false;
-            });
+            contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
         }
     });
+
+    var getRemoteHandlerConfig = function(contrailGraphModel, successCallback) {
+        var remoteHandlerConfig = {},
+            primaryRemote = contrailGraphModel.graphConfig.remote,
+            lazyRemote = contrailGraphModel.graphConfig.lazyRemote,
+            primaryRemoteConfig = {
+                ajaxConfig: primaryRemote.ajaxConfig,
+                dataParser: primaryRemote.dataParser,
+                initCallback: primaryRemote.initCallback,
+                successCallback: function (response) {
+                    var elementsObject = contrailGraphModel.generateElements(response, contrailGraphModel.elementMap);
+
+                    contrailGraphModel.addCell(elementsObject['elements']);
+                    if(contrailGraphModel.forceFit) {
+                        contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
+                    }
+                    successCallback(contrailGraphModel.directedGraphSize);
+                    contrailGraphModel.requestInProgress = false;
+                },
+                failureCallback: function (xhr) {
+                    if (contrail.checkIfFunction(primaryRemote.failureCallback)) {
+                        primaryRemote.failureCallback(xhr, contrailGraphModel);
+                    }
+                }
+            },
+            lazyRemoteConfig;
+
+        remoteHandlerConfig['primaryRemoteConfig'] = primaryRemoteConfig;
+        remoteHandlerConfig['lazyRemoteConfig'] = [];
+
+        for (var i = 0; lazyRemote != null && i < lazyRemote.length; i++) {
+            var lSuccessCallback = lazyRemote[i].successCallback,
+                lFailureCallback = lazyRemote[i].failureCallback;
+
+            lazyRemoteConfig = {
+                getAjaxConfig: lazyRemote[i].getAjaxConfig,
+                dataParser: lazyRemote[i].dataParser,
+                initCallback: lazyRemote[i].initCallback,
+                successCallback: function (response) {
+                    if (contrail.checkIfFunction(lSuccessCallback)) {
+                        lSuccessCallback(response, contrailGraphModel);
+                    }
+                },
+                failureCallback: function (xhr) {
+                    if (contrail.checkIfFunction(lFailureCallback)) {
+                        lFailureCallback(xhr, contrailGraphModel);
+                    }
+                }
+            }
+            remoteHandlerConfig['lazyRemoteConfig'].push(lazyRemoteConfig);
+        }
+
+        return remoteHandlerConfig;
+    };
 
     var graphLayoutHandler = $.extend(true, joint.layout.DirectedGraph, {
         layout: function (graph, opt) {

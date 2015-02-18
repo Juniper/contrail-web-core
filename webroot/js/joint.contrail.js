@@ -751,7 +751,7 @@ function createVMGraph(connectedVMGraph, currentZoomedElement, options) {
 function getForceFitOptions(rankDir, separation, nodes, links) {
     var forceFitOptions = {setLinkVertices: false, edgeSep: 1, nodeSep: 50, rankSep: 50, rankDir: "LR"};
     if (rankDir == null) {
-        rankDir = (nodes.length > 12 || (3 * (links.length) < nodes.length)) ? 'TB' : 'LR';
+        rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? 'TB' : 'LR';
     }
     forceFitOptions['rankDir'] = rankDir;
     if (separation != null) {

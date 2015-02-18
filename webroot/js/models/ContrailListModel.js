@@ -6,11 +6,11 @@ define([
     'underscore',
     'contrail-remote-data-handler'
 ], function (_, ContrailRemoteDataHandler) {
-    var ContrailDataModel = function (listModelConfig) {
+    var ContrailListModel = function (listModelConfig) {
         var dataView = new Slick.Data.DataView({inlineFilters: true}),
-            contrailDataView = {}, contrailDataHandler = null;
+            contrailListModel = {}, contrailDataHandler = null;
 
-        $.extend(true, contrailDataView, dataView, {
+        $.extend(true, contrailListModel, dataView, {
             _idOffset: 0,
             setData: function (data) {
                 // Setting id for each data-item; Required to instantiate data-view.
@@ -60,65 +60,10 @@ define([
 
         if (listModelConfig != null) {
             if (listModelConfig.data != null) {
-                contrailDataView.setData(listModelConfig.data);
+                contrailListModel.setData(listModelConfig.data);
             } else if (listModelConfig.remote != null && listModelConfig.remote.ajaxConfig != null) {
-                var remoteHandlerConfig = {},
-                    primaryRemote = listModelConfig.remote,
-                    lazyRemote = listModelConfig.lazyRemote,
-                    primaryRemoteConfig = {
-                        ajaxConfig: primaryRemote.ajaxConfig,
-                        dataParser: primaryRemote.dataParser,
-                        initCallback: primaryRemote.initCallback,
-                        successCallback: function (response) {
-                            contrailDataView.addData(response);
-                            if (contrail.checkIfFunction(primaryRemote.successCallback)) {
-                                primaryRemote.successCallback(response, contrailDataView);
-                            }
-                        },
-                        refreshSuccessCallback: function (response, cleanAndRefresh) {
-                            if (cleanAndRefresh) {
-                                contrailDataView.setData(response);
-                            } else {
-                                contrailDataView.addData(response);
-                            }
-                            if (contrail.checkIfFunction(primaryRemote.refreshSuccessCallback)) {
-                                primaryRemote.refreshSuccessCallback(response, contrailDataView);
-                            }
-                        },
-                        failureCallback: function (xhr, contrailDataView) {
-                            if (contrail.checkIfFunction(primaryRemote.failureCallback)) {
-                                primaryRemote.failureCallback(xhr, contrailDataView);
-                            }
-                        }
-                    },
-                    lazyRemoteConfig;
 
-                remoteHandlerConfig['primaryRemoteConfig'] = primaryRemoteConfig;
-
-                remoteHandlerConfig['lazyRemoteConfig'] = [];
-
-                for (var i = 0; lazyRemote != null && i < lazyRemote.length; i++) {
-                    var lSuccessCallback = lazyRemote[i].successCallback,
-                        lFailureCallback = lazyRemote[i].failureCallback;
-
-                    lazyRemoteConfig = {
-                        getAjaxConfig: lazyRemote[i].getAjaxConfig,
-                        dataParser: lazyRemote[i].dataParser,
-                        initCallback: lazyRemote[i].initCallback,
-                        successCallback: function (response) {
-                            if (contrail.checkIfFunction(lSuccessCallback)) {
-                                lSuccessCallback(response, contrailDataView);
-                            }
-                        },
-                        failureCallback: function (xhr, contrailDataView) {
-                            if (contrail.checkIfFunction(lFailureCallback)) {
-                                lFailureCallback(xhr, contrailDataView);
-                            }
-                        }
-                    }
-                    remoteHandlerConfig['lazyRemoteConfig'].push(lazyRemoteConfig);
-                }
-
+                var remoteHandlerConfig = getRemoteHandlerConfig(listModelConfig, contrailListModel),
                 contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
             }
         }
@@ -136,8 +81,69 @@ define([
             }
         }
 
-        return contrailDataView;
+        return contrailListModel;
     };
 
-    return ContrailDataModel
+    var getRemoteHandlerConfig = function(listModelConfig, contrailDataView) {
+        var remoteHandlerConfig = {},
+            primaryRemote = listModelConfig.remote,
+            lazyRemote = listModelConfig.lazyRemote,
+            primaryRemoteConfig = {
+                ajaxConfig: primaryRemote.ajaxConfig,
+                dataParser: primaryRemote.dataParser,
+                initCallback: primaryRemote.initCallback,
+                successCallback: function (response) {
+                    contrailDataView.addData(response);
+                    if (contrail.checkIfFunction(primaryRemote.successCallback)) {
+                        primaryRemote.successCallback(response, contrailDataView);
+                    }
+                },
+                refreshSuccessCallback: function (response, cleanAndRefresh) {
+                    if (cleanAndRefresh) {
+                        contrailDataView.setData(response);
+                    } else {
+                        contrailDataView.addData(response);
+                    }
+                    if (contrail.checkIfFunction(primaryRemote.refreshSuccessCallback)) {
+                        primaryRemote.refreshSuccessCallback(response, contrailDataView);
+                    }
+                },
+                failureCallback: function (xhr) {
+                    if (contrail.checkIfFunction(primaryRemote.failureCallback)) {
+                        primaryRemote.failureCallback(xhr, contrailDataView);
+                    }
+                }
+            },
+            lazyRemoteConfig;
+
+        remoteHandlerConfig['primaryRemoteConfig'] = primaryRemoteConfig;
+
+        remoteHandlerConfig['lazyRemoteConfig'] = [];
+
+        for (var i = 0; lazyRemote != null && i < lazyRemote.length; i++) {
+            var lSuccessCallback = lazyRemote[i].successCallback,
+                lFailureCallback = lazyRemote[i].failureCallback;
+
+            lazyRemoteConfig = {
+                getAjaxConfig: lazyRemote[i].getAjaxConfig,
+                dataParser: lazyRemote[i].dataParser,
+                initCallback: lazyRemote[i].initCallback,
+                successCallback: function (response) {
+                    if (contrail.checkIfFunction(lSuccessCallback)) {
+                        lSuccessCallback(response, contrailDataView);
+                    }
+                },
+                failureCallback: function (xhr) {
+                    if (contrail.checkIfFunction(lFailureCallback)) {
+                        lFailureCallback(xhr, contrailDataView);
+                    }
+                }
+            }
+            remoteHandlerConfig['lazyRemoteConfig'].push(lazyRemoteConfig);
+        }
+
+        return remoteHandlerConfig;
+    };
+
+    return ContrailListModel
 });
