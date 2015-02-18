@@ -802,7 +802,7 @@ function formatData4BiDirVisualization(response, config) {
         collections = {},
         configData = response['configData'],
         configSVGHeight = 0;
-    createNodes4ConfigData(configData, nodes, collections);
+    createNodes4ConfigData(configData, collections);
     configSVGHeight = createCollectionElements(collections, configElements, elementMap);
     createNodeElements(nodes, connectedElements, elementMap, config);
     createLinkElements(links, connectedElements, elementMap);
@@ -816,7 +816,7 @@ function formatData4BiDirVisualization(response, config) {
     };
 }
 
-function createNodes4ConfigData(configData, nodes, collections) {
+function createNodes4ConfigData(configData, collections) {
     var networkPolicys = configData['network-policys'],
         securityGroups = configData['security-groups'],
         networkIPAMS = configData['network-ipams'],
