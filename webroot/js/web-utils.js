@@ -1366,6 +1366,24 @@ function MenuHandler() {
                 })
             }
 
+            function loadTemplateResources(menuObj,hash) {
+                $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
+                    if (currResourceObj['template'] != null) {
+                        if (!(currResourceObj['template'] instanceof Array)) {
+                            currResourceObj['template'] = [currResourceObj['template']];
+                        }
+                        if(currResourceObj['template'] != null && currResourceObj['template'].length > 0 && currResourceObj['template'][0] != null) {
+                            $.each(currResourceObj['template'], function () {
+                                var viewDeferredObj = $.Deferred();
+                                viewDeferredObjs.push(viewDeferredObj);
+                                var viewPath = currResourceObj['rootDir'] + '/templates/' + this + '?built_at=' + built_at;
+                                templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+                            });
+                        }
+                    }
+                })
+            }
+
             function loadCssResources(menuObj,hash) {
                 $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
                     if(currResourceObj['css'] == null)
@@ -1412,12 +1430,14 @@ function MenuHandler() {
                     var parentRootDir = parent['rootDir'];
                     if (parentRootDir != null || getValueByJsonPath(parent,'resources;resource',[]).length > 0) {
                         loadViewResources(parent,currMenuObj['hash']);
+                        loadTemplateResources(parent,currMenuObj['hash']);
                         loadCssResources(parent,currMenuObj['hash']);
                     }
                 });
             }
             //Load the feature views
             loadViewResources(currMenuObj,currMenuObj['hash']);
+            loadTemplateResources(currMenuObj,currMenuObj['hash']);
             //Load the feature css files
             loadCssResources(currMenuObj);
 
