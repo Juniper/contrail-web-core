@@ -291,6 +291,7 @@ function getNetworkFolderForDataCenter(appData,datacenterId) {
     });
 }
 
+
 function getIdByMobName(appData,objType,name,folderName) {
     return new Promise(function(resolve,reject) {
         getRootFolder(appData,folderName).done(function(folderName) {
@@ -316,7 +317,7 @@ function getIdByMobName(appData,objType,name,folderName) {
                                 if(objType in mobCache) {
                                     if(mobCache[objType][objId['_value']] != null) {
                                         if(mobCache[objType][objId['_value']] == name) {
-                                            resolve(currid);
+                                            resolve(objId['_value']);
                                             callback({'found':true},true);
                                             return;
                                         } else {
@@ -380,7 +381,7 @@ function populatevCenterParams(appData) {
     });
 }
 //No of times to retry to check for a task status
-var maxRetryCnt = 30;
+var maxRetryCnt = 100;
 function waitForTask(appData,taskId,currDef,retryCnt) {
     if(retryCnt == null)
         retryCnt = 0;
@@ -398,7 +399,7 @@ function waitForTask(appData,taskId,currDef,retryCnt) {
     } else 
         setTimeout(function() {
             waitForTask(appData,taskId,currDef);
-        },3000);
+        },200);
     });
 }
 
