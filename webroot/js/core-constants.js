@@ -28,7 +28,7 @@ define([
         this.KEY_PATH = 'path';
         this.KEY_ELEMENT_CONFIG = 'elementConfig';
         this.KEY_DATABIND_VALUE = 'dataBindValue';
-        this.KEY_TYPE = 'type'
+        this.KEY_TYPE = 'type';
         this.KEY_UI_ADDED_PARAMS = 'ui_added_parameters'
 
         this.KEY_VALIDATION = 'validation';
@@ -53,9 +53,14 @@ define([
         this.TMPL_NETWORKING_GRAPH_VIEW = "core-networking-graph-template";
         this.TMPL_TABS_VIEW = "core-tabs-template";
         this.TMPL_CHART_VIEW = "core-pd-chart-template";
+        this.TMPL_DETAIL_FOUNDATION = "core-detail-foundation-template";
+        this.TMPL_DETAIL_SECTION = "core-detail-section-template";
+        this.TMPL_DETAIL_SECTION_COLUMN = "core-detail-section-column-template";
 
         this.APP_CONTRAIL_CONTROLLER = "contrail-controller";
         this.APP_CONTRAIL_SM = "contrail-sm";
+
+        this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
     };
     return CoreConstants;
 });

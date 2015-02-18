@@ -2068,6 +2068,14 @@ color: #b94a48;
 	color:#555;
 	font-weight:400;
 }
+.value-link {
+    text-decoration: underline;
+    color: #555 !important;
+}
+.value-link:hover {
+    text-decoration: none;
+    color: #3182bd !important;
+}
 
 /* Jquery Steps style*/
 
@@ -2292,6 +2300,14 @@ color: #b94a48;
 .row-fluid.form-dropdown-label [class*="span"],
 .row-fluid.form-multiselect-label [class*="span"] {
     min-height: 25px;
+}
+
+/* General Styles */
+
+.loading-spinner {
+    font-size:40px;
+    text-align:center;
+    padding: 20px 0 0;
 }
 
 /*style to fix the detail template height*/

@@ -546,13 +546,14 @@ function getDefaultGridConfig() {
         };
         
         function refreshDetailTemplateById(id){
-        	var source = gridOptions.detail.template;
+        	var source = gridOptions.detail.template,
+                templateKey = gridContainer.prop('id') + '-grid-detail-template';
             source = source.replace(/ }}/g, "}}");
             source = source.replace(/{{ /g, "{{");
 
-            var template = Handlebars.compile(source),
+            var template = contrail.getTemplate4Source(source, templateKey),
             	dc = dataView.getItemById(id);
-        	
+
             if(contrail.checkIfExist(dc)){
             	if(contrail.checkIfExist(gridOptions.detail.templateConfig)){
 	            	gridContainer.find('.slick-row-detail-template-' + id).html(template({dc:dc, templateConfig: gridOptions.detail.templateConfig}));
@@ -606,13 +607,14 @@ function getDefaultGridConfig() {
                     if ($(e.target).is(":checked")) {
                         gridContainer.data('contrailGrid').setAllCheckedRows('current-page');
 
-                        var pagingInfo = dataView.getPagingInfo();
+                        var pagingInfo = dataView.getPagingInfo(),
+                            currentPageRecords = (pagingInfo.pageSize * (pagingInfo.pageNum + 1)) < pagingInfo.totalRows ? pagingInfo.pageSize : (pagingInfo.totalRows - (pagingInfo.pageSize * (pagingInfo.pageNum)))
 
                         if(pagingInfo.totalPages > 1 && !gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
                             gridContainer.find('.grid-check-all-info').remove();
                             gridContainer.find('.slick-header').after('<div class="alert alert-info grid-info grid-check-all-info"> ' +
                             '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                            '<strong>' + pagingInfo.pageSize + ' records checked.</strong> <a class="check-all-link">Click here to check all ' + pagingInfo.totalRows + ' records</a>' +
+                            '<strong>' + currentPageRecords + ' records checked.</strong> <a class="check-all-link">Click here to check all ' + pagingInfo.totalRows + ' records</a>' +
                             '</div>');
 
                             gridContainer.find('.check-all-link')
@@ -897,18 +899,17 @@ function getDefaultGridConfig() {
                  * Returns an array of data of the checked rows via checkbox when checkboxSelectable is set to true
                  */
                 getCheckedRows: function(){
-                    var selectedRows = grid.getSelectedRows(),
-                        returnValue = [];
                     if (gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
-                        $.each(selectedRows, function(selectedRowKey, selectedRowValue){
-                            returnValue.push(dataView.getItemById('id_' + selectedRowValue));
-                        });
+                        return dataView.getItems();
+                        //TODO Handle a case when data is filtered
                     } else {
+                        var selectedRows = grid.getSelectedRows(),
+                            returnValue = [];
                         $.each(selectedRows, function(selectedRowKey, selectedRowValue){
                             returnValue.push(grid.getDataItem(selectedRowValue));
                         });
+                        return returnValue;
                     }
-                    return returnValue;
                 },
                 /*
                  * Sets the checked rows of the rows based on rowIndices
@@ -1293,6 +1294,7 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
 
         	setTimeout(function(){
         		if(contrail.checkIfExist(gridContainer.data('contrailGrid'))){
+                    gridContainer.data('contrailGrid').adjustAllRowHeight();
         			gridContainer.data('contrailGrid').adjustGridAlternateColors();
         		}
             },600);
