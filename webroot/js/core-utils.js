@@ -380,59 +380,110 @@ define([
 
         /* Detail Template Generator*/
 
+        this.generateBlockListKeyValueTemplate = function(config, feature) {
+            var template = '<ul class="item-list">';
+
+            $.each(config, function(configKey, configValue) {
+                template += '' +
+                '{{#IfValidJSONValueByPath "' + configValue.key + '" this ' + configKey + '}}' +
+                '<li>' +
+                '<label class="inline">' +
+                '<span class="key"> {{getLabel "' + configValue.key + '" "' + feature + '"}} </span>';
+
+                if (configValue.valueType == 'text') {
+                    template += '<span class="value"> {{{getJSONValueByPath "' + configValue.key + '" this}}} </span>';
+                } else if (configValue.valueType == 'link') {
+                    template += '<span class="value"> {{{getJSONValueLinkByPath "' + configValue.key + '" this}}} </span>';
+                } else if (configValue.valueType == 'format-bytes') {
+                    template += '<span class="value"> {{{getJSONValueFormattedBytesByPath "' + configValue.key + '" this "' + configValue.valueFormat + '"}}} </span>';
+                } else if (configValue.valueType == 'length') {
+                    template += '<span class="value"> {{{getJSONValueLengthByPath "' + configValue.key + '" this}}} </span>';
+                }
+
+                template += '</label>' +
+                '</li>' +
+                '{{/IfValidJSONValueByPath}}';
+            });
+
+            template += '</ul>';
+
+            return template;
+        };
+
         this.generateInnerTemplate = function(config, feature) {
             var template, templateObj,
                 templateGenerator = config.templateGenerator, templateGeneratorConfig = config.templateGeneratorConfig;
 
             switch (templateGenerator) {
-                case 'SectionTemplateGenerator':
+                case 'RowSectionTemplateGenerator':
                     var rowTemplate, rowTemplateObj;
                     template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_SECTION);
                     templateObj = $(template());
 
-                    $.each(templateGeneratorConfig.columns, function(columnKey, columnValue) {
-                        rowTemplate = contrail.getTemplate4Id(cowc.TMPL_DETAIL_SECTION_COLUMN);
-                        rowTemplateObj = $(rowTemplate({class: columnValue.class}));
+                    $.each(templateGeneratorConfig.rows, function (rowKey, rowValue) {
+                        rowTemplate = contrail.getTemplate4Id(cowc.TMPL_DETAIL_SECTION_ROW);
+                        rowTemplateObj = $(rowTemplate());
 
-                        $.each(columnValue.rows, function(rowKey, rowValue) {
-                            rowTemplateObj.append(self.generateInnerTemplate(rowValue, feature))
-                            templateObj.append(rowTemplateObj);
+                        rowTemplateObj.append(self.generateInnerTemplate(rowValue, feature))
+                        templateObj.append(rowTemplateObj);
+                    });
+
+
+                break;
+
+                case 'ColumnSectionTemplateGenerator':
+                    var columnTemplate, columnTemplateObj;
+                    template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_SECTION);
+                    templateObj = $(template());
+
+                    $.each(templateGeneratorConfig.columns, function (columnKey, columnValue) {
+                        columnTemplate = contrail.getTemplate4Id(cowc.TMPL_DETAIL_SECTION_COLUMN);
+                        columnTemplateObj = $(columnTemplate({class: columnValue.class}));
+
+                        $.each(columnValue.rows, function (rowKey, rowValue) {
+                            columnTemplateObj.append(self.generateInnerTemplate(rowValue, feature))
+                            templateObj.append(columnTemplateObj);
                         });
                     });
-                    break;
+
+                break;
 
                 case 'BlockListTemplateGenerator':
-                    template = '' +
-                    '<div class="detail-block-list-content"><h6>' + config.title + '</h6>' +
-                    '<ul class="item-list">';
+                    var template = '<div class="detail-block-list-content row-fluid">';
 
-                    $.each(config.templateGeneratorConfig, function(configKey, configValue) {
-                        template += '' +
-                        '{{#IfValidJSONValueByPath "' + configValue.key + '" this ' + configKey + '}}' +
-                        '<li>' +
-                        '<label class="inline">' +
-                        '<span class="key"> {{getLabel "' + configValue.key + '" "' + feature + '"}} </span>';
-
-                        if (configValue.valueType == 'text') {
-                            template += '<span class="value"> {{{getJSONValueByPath "' + configValue.key + '" this}}} </span>';
-                        } else if (configValue.valueType == 'link') {
-                            template += '<span class="value"> {{{getJSONValueLinkByPath "' + configValue.key + '" this}}} </span>';
-                        } else if (configValue.valueType == 'format-bytes') {
-                            template += '<span class="value"> {{{getJSONValueFormattedBytesByPath "' + configValue.key + '" this}}} </span>';
-                        } else if (configValue.valueType == 'length') {
-                            template += '<span class="value"> {{{getJSONValueLengthByPath "' + configValue.key + '" this}}} </span>';
-                        }
-
-                        template += '</label>' +
-                        '</li>' +
-                        '{{/IfValidJSONValueByPath}}';
-                    });
-
-                    template += '</ul>' +
-                    '<br/></div';
+                        template += '<h6>' + config.title + '</h6>' +
+                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, feature) +
+                            '<br/></div>';
 
                     templateObj = $(template);
-                    break;
+                break;
+
+                case 'BlockGridTemplateGenerator':
+
+                    var template = '<div class="detail-block-grid-content row-fluid">';
+
+                    if (contrail.checkIfExist(config.title)) {
+                        template += '<h6>' + config.title + '</h6>';
+                    }
+
+                    template += '<div class="row-fluid">' +
+                    '{{#IfValidJSONValueByPath "' + config.key + '" this 1}} ' +
+                        '{{#each ' + config.key +'}} ' +
+                            '{{#IfCompare @index 0 operator="%2"}} ' +
+                                '{{#IfCompare @index 0 operator="!="}}</div><br/>{{/IfCompare}}' +
+                                '<div class="row-fluid">' +
+                            '{{/IfCompare}}' +
+                            '<div class="span6"><div class="row-fluid">' +
+                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, feature) +
+                            '</div></div>';
+
+                    template += '{{/each}} </div> {{/IfValidJSONValueByPath}}';
+
+                    template += '</div></div>';
+
+                    templateObj = $(template);
+
+                break;
             };
 
             return(templateObj.prop('outerHTML'))

@@ -56,6 +56,7 @@ define([
         this.TMPL_DETAIL_FOUNDATION = "core-detail-foundation-template";
         this.TMPL_DETAIL_SECTION = "core-detail-section-template";
         this.TMPL_DETAIL_SECTION_COLUMN = "core-detail-section-column-template";
+        this.TMPL_DETAIL_SECTION_ROW = "core-detail-section-row-template";
 
         this.APP_CONTRAIL_CONTROLLER = "contrail-controller";
         this.APP_CONTRAIL_SM = "contrail-sm";

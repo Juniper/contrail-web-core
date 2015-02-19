@@ -197,8 +197,12 @@ Handlebars.registerHelper('getJSONValueLinkByPath', function (path, obj) {
     return '<a class="value-link" target="_blank" href="http://' + cowu.getJSONValueByPath(path, obj) + '">' + cowu.getJSONValueByPath(path, obj) + '</a>';
 });
 
-Handlebars.registerHelper('getJSONValueFormattedBytesByPath', function (path, obj) {
-    return formatBytes(cowu.getJSONValueByPath(path, obj));
+Handlebars.registerHelper('getJSONValueFormattedBytesByPath', function (path, obj, valueFormat) {
+    var value = cowu.getJSONValueByPath(path, obj);
+    if(valueFormat == 'kByte') {
+        value *= 1024
+    }
+    return formatBytes(value);
 });
 
 Handlebars.registerHelper('getJSONValueLengthByPath', function (path, obj) {
