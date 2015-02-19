@@ -10,6 +10,9 @@ define([
             this.requestInProgress = false;
 
             this.graphConfig = modelConfig;
+            this.getDataFromCache = modelConfig['getDataFromCache'];
+            this.setData2Cache = modelConfig['setData2Cache'];
+            this.uniqueKey = modelConfig['uniqueKey'];
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
 
@@ -17,19 +20,49 @@ define([
         },
 
         fetchData: function (successCallback) {
-            var self = this,
-                contrailDataHandler;
+            var self = this;
 
             self.requestInProgress = true;
             self.elementMap = {node: {}, link: {}};
 
-            var remoteHandlerConfig = getRemoteHandlerConfig(self, successCallback);
+            var remoteHandlerConfig = getRemoteHandlerConfig(self, successCallback),
+                cachedData = (self.getDataFromCache != null) ? self.getDataFromCache(self.uniqueKey) : null;
 
-            contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
+            if (cachedData != null) {
+                self.contrailDataHandler = createGraphFromCache(cachedData, self, successCallback, remoteHandlerConfig);
+            } else {
+                self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
+            }
         }
     });
 
-    var getRemoteHandlerConfig = function(contrailGraphModel, successCallback) {
+    var createGraphFromCache = function (cachedData, contrailGraphModel, successCallback, remoteHandlerConfig) {
+        var contrailDataHandler,
+            cachedGraphModel = cachedData['dataObject']['graphModel'],
+            cachedElementsMap = cachedGraphModel.elementMap,
+            cachedResponse = cachedData['dataObject']['response'],
+            cachedTime = cachedData['time'];
+
+        var elementMap = {node: {}, link: {}};
+        var elementsObject = contrailGraphModel.generateElements(cachedResponse, elementMap);
+
+        contrailGraphModel.resetCells(elementsObject['elements']);
+        contrailGraphModel.elementMap = cachedElementsMap;
+
+        if (contrailGraphModel.forceFit) {
+            contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
+        }
+
+        successCallback(contrailGraphModel.directedGraphSize);
+
+        if (60000 < ($.now() - cachedTime)) {
+            contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
+        }
+
+        return contrailDataHandler;
+    };
+
+    var getRemoteHandlerConfig = function (contrailGraphModel, successCallback) {
         var remoteHandlerConfig = {},
             primaryRemote = contrailGraphModel.graphConfig.remote,
             lazyRemote = contrailGraphModel.graphConfig.lazyRemote,
@@ -38,14 +71,24 @@ define([
                 dataParser: primaryRemote.dataParser,
                 initCallback: primaryRemote.initCallback,
                 successCallback: function (response) {
-                    var elementsObject = contrailGraphModel.generateElements(response, contrailGraphModel.elementMap);
+                    var elementMap = {node: {}, link: {}};
+                    var elementsObject = contrailGraphModel.generateElements(response, elementMap);
 
-                    contrailGraphModel.addCell(elementsObject['elements']);
-                    if(contrailGraphModel.forceFit) {
+                    contrailGraphModel.resetCells(elementsObject['elements']);
+                    contrailGraphModel.elementMap = elementMap;
+
+                    if (contrailGraphModel.forceFit) {
                         contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
                     }
                     successCallback(contrailGraphModel.directedGraphSize);
                     contrailGraphModel.requestInProgress = false;
+
+                    if (contrailGraphModel.setData2Cache != null) {
+                        contrailGraphModel.setData2Cache(contrailGraphModel.uniqueKey, {
+                            graphModel: contrailGraphModel,
+                            response: response
+                        });
+                    }
                 },
                 failureCallback: function (xhr) {
                     if (contrail.checkIfFunction(primaryRemote.failureCallback)) {
