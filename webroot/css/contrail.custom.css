@@ -2311,3 +2311,12 @@ color: #b94a48;
 .sgSelect2 .select2-results {
     max-height: 400px;
 }
+/*style to clear ports message in interface page*/
+
+.clear-ports-icon{
+    padding:5px;
+    color:#898989;
+}
+#l2ServerPanel{
+    margin-bottom:0px;
+}
