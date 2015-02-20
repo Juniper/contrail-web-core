@@ -454,6 +454,14 @@ function getDefaultGridConfig() {
                                     	gridOptions.detail.onExpand(e,dc);
                                     }
                                     $(target).removeClass('icon-caret-right').addClass('icon-caret-down');
+
+                                    var slickRowDetail = $(target).parents('.slick-row-master').next('.slick-row-detail'),
+                                        slickRowDetailHeight = slickRowDetail.height(),
+                                        detailContainerHeight = slickRowDetail.find('.slick-row-detail-container').height();
+
+                                    if (Math.abs(slickRowDetailHeight-detailContainerHeight) > 10) {
+                                        gridContainer.data('contrailGrid').adjustDetailRowHeight(slickRowDetail.data('cgrid'))
+                                    }
                                 }
                                 else if($(target).hasClass('icon-caret-down')){
                                     $(target).parents('.slick-row-master').next('.slick-row-detail').hide();
@@ -472,8 +480,8 @@ function getDefaultGridConfig() {
 	                gridContainer.find('.slick-row-detail').live('click', function(){
 	                	var rowId = $(this).data('cgrid');
 	                	setTimeout(function(){
-	                	    // if(gridContainer.data('contrailGrid') != null)
-	                	        // gridContainer.data('contrailGrid').adjustDetailRowHeight(rowId);
+	                	    if(gridContainer.data('contrailGrid') != null)
+	                	        gridContainer.data('contrailGrid').adjustDetailRowHeight(rowId);
 	                	},100);
 	                });
 	            }
@@ -1067,8 +1075,10 @@ function getDefaultGridConfig() {
                 	gridContainer.find('.slick-row-detail').each(function(){
                 		if(gridContainer.find('.slick_row_' + $(this).data('cgrid')).is(':visible')){
                 			gridContainer.find('.slick_row_' + $(this).data('cgrid')).after($(this));
-                			gridContainer.find('.slick_row_' + $(this).data('cgrid')).find('.toggleDetailIcon').addClass('icon-caret-down').removeClass('icon-caret-right');
-                        	if(refreshDetailTemplateFlag){
+                            if($(this).is(':visible')) {
+                                gridContainer.find('.slick_row_' + $(this).data('cgrid')).find('.toggleDetailIcon').addClass('icon-caret-down').removeClass('icon-caret-right');
+                            }
+                            if(refreshDetailTemplateFlag){
                         		refreshDetailTemplateById($(this).data('cgrid'));
                         	}
                 		}
