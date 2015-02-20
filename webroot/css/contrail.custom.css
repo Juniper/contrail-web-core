@@ -2310,16 +2310,6 @@ color: #b94a48;
     padding: 20px 0 0;
 }
 
-/*style to fix the detail template height*/
-
-.slick-grid-detail-content-height{
-    height : 300px !important;
-}
-
-.slick-grid-detail-sub-content-height{
-    height : 290px !important;
-}
-
 .sgSelect2 .select2-result-sub {
     max-height: 150px;
     overflow: auto;
