@@ -182,9 +182,9 @@ Handlebars.registerHelper('showDeviceOwner', function(block) {
 });
 
 Handlebars.registerHelper('getLabel', function (labelKey, feature) {
-    if (feature == 'server-manager') {
+    if (feature == cowc.APP_CONTRAIL_SM) {
         return smwl.get(labelKey);
-    } else if (feature == 'controller') {
+    } else if (feature == cowc.APP_CONTRAIL_CONTROLLER) {
         return ctwl.get(labelKey);
     }
 });

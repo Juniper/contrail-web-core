@@ -386,7 +386,7 @@ define([
 
         /* Detail Template Generator*/
 
-        this.generateBlockListKeyValueTemplate = function(config, feature) {
+        this.generateBlockListKeyValueTemplate = function(config, app) {
             var template = '<ul class="item-list">';
 
             $.each(config, function(configKey, configValue) {
@@ -394,7 +394,7 @@ define([
                 '{{#IfValidJSONValueByPath "' + configValue.key + '" this ' + configKey + '}}' +
                 '<li>' +
                 '<label class="inline">' +
-                '<span class="key"> {{getLabel "' + configValue.key + '" "' + feature + '"}} </span>';
+                '<span class="key"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>';
 
                 if (configValue.valueType == 'text') {
                     template += '<span class="value"> {{{getJSONValueByPath "' + configValue.key + '" this}}} </span>';
@@ -416,7 +416,7 @@ define([
             return template;
         };
 
-        this.generateInnerTemplate = function(config, feature) {
+        this.generateInnerTemplate = function(config, app) {
             var template, templateObj,
                 templateGenerator = config.templateGenerator, templateGeneratorConfig = config.templateGeneratorConfig;
 
@@ -430,7 +430,7 @@ define([
                         rowTemplate = contrail.getTemplate4Id(cowc.TMPL_DETAIL_SECTION_ROW);
                         rowTemplateObj = $(rowTemplate());
 
-                        rowTemplateObj.append(self.generateInnerTemplate(rowValue, feature))
+                        rowTemplateObj.append(self.generateInnerTemplate(rowValue, app))
                         templateObj.append(rowTemplateObj);
                     });
 
@@ -447,7 +447,7 @@ define([
                         columnTemplateObj = $(columnTemplate({class: columnValue.class}));
 
                         $.each(columnValue.rows, function (rowKey, rowValue) {
-                            columnTemplateObj.append(self.generateInnerTemplate(rowValue, feature))
+                            columnTemplateObj.append(self.generateInnerTemplate(rowValue, app))
                             templateObj.append(columnTemplateObj);
                         });
                     });
@@ -458,7 +458,7 @@ define([
                     var template = '<div class="detail-block-list-content row-fluid">';
 
                         template += '<h6>' + config.title + '</h6>' +
-                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, feature) +
+                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app) +
                             '<br/></div>';
 
                     templateObj = $(template);
@@ -480,7 +480,7 @@ define([
                                 '<div class="row-fluid">' +
                             '{{/IfCompare}}' +
                             '<div class="span6"><div class="row-fluid">' +
-                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, feature) +
+                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app) +
                             '</div></div>';
 
                     template += '{{/each}} </div> {{/IfValidJSONValueByPath}}';
@@ -495,16 +495,25 @@ define([
             return(templateObj.prop('outerHTML'))
         }
 
-        this.generateDetailTemplate = function(config, feature) {
+        this.generateDetailTemplateHTML = function(config, app) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
                 templateObj = $(template());
 
-            templateObj.find('.detail-foundation-content').append(self.generateInnerTemplate(config, feature));
+            templateObj.find('.detail-foundation-content').append(self.generateInnerTemplate(config, app));
             templateObj.find('.group-detail-advanced-json').append('{{{formatGridJSON2HTML this}}}')
 
             return(templateObj.prop('outerHTML'))
         }
 
+        this.generateDetailTemplate = function(config, app) {
+            var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
+                templateObj = $(template());
+
+            templateObj.find('.detail-foundation-content').append(self.generateInnerTemplate(config, app));
+            templateObj.find('.group-detail-advanced-json').append('{{{formatGridJSON2HTML this}}}')
+
+            return Handlebars.compile(templateObj.prop('outerHTML'));
+        }
     };
     return CoreUtils;
 });
