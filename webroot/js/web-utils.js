@@ -70,7 +70,7 @@ var NO_RELOAD_JS_CLASSLIST = [
     'imagesPageLoader',
     'packagesPageLoader',
     'smLoader',
-    'nmPageLoader'
+    'mnPageLoader'
 ];
 
 //Sets the following prototype if not defined already.
