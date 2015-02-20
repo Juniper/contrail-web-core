@@ -57,10 +57,22 @@
         <callback>handler.authenticate</callback>
     </item>
     <item>
+        <url>/authenticate</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.doAuthenticate</callback>
+    </item>
+    <item>
         <url>/vcenter/authenticate</url>
         <method>post</method>
         <feature>monitoring</feature>
         <callback>handler.vcenter_authenticate</callback>
+    </item>
+    <item>
+        <url>/vcenter/authenticate</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.doVcenterAuthenticate</callback>
     </item>
     <item>
         <url>/logout</url>

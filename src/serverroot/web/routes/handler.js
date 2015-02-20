@@ -349,8 +349,22 @@ exports.testCreate = function (req, res) {
 	}
 };
 
+function doAuthenticate (req, res, appData)
+{
+    /* This is a GET request, so redirect to login page */
+    return commonUtils.redirectToLogin(req, res);
+}
+
+function doVcenterAuthenticate (req, res, appData)
+{
+    /* This is a GET request, so redirect to login page */
+    return commonUtils.redirectToLogin(req, res);
+}
+
 exports.login = login;
 exports.logout = logout;
 exports.vcenter_login = vcenter_login;
 exports.vcenter_logout = vcenter_logout;
+exports.doAuthenticate = doAuthenticate;
+exports.doVcenterAuthenticate = doVcenterAuthenticate;
 
