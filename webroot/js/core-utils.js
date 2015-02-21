@@ -23,10 +23,11 @@ define([
     'js/views/TabsView',
     'js/views/ChartView',
     'js/views/GridView',
-    'js/views/DetailsView'
+    'js/views/DetailsView',
+    'js/views/ScatterChartView'
 ], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
              AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
-             GraphView, TabsView, ChartView, GridView, DetailsView) {
+             GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView) {
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -364,6 +365,11 @@ define([
 
                 case "DetailsView":
                     elementView = new DetailsView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "ScatterChartView":
+                    elementView = new ScatterChartView({el: parentElement, model: model, attributes: viewAttributes});
                     elementView.render();
                     break;
 

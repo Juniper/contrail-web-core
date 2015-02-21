@@ -10,14 +10,12 @@ define([
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = this.attributes.viewConfig,
-                url = viewConfig['url'],
+                ajaxConfig = viewConfig['ajaxConfig'],
                 self = this, deferredObj = $.Deferred();
 
             self.$el.append(loadingSpinnerTemplate);
 
-            $.ajax({
-                url: url
-            }).done(function (result) {
+            $.ajax(ajaxConfig).done(function (result) {
                 deferredObj.resolve(result);
             });
 
