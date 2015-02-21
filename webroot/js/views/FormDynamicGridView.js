@@ -17,7 +17,7 @@ define([
                 columns = viewConfig.elementConfig.columns,
                 options = viewConfig.elementConfig.options,
                 data = model.getValueByPath(viewConfig.modelAttributePath),
-                path = viewConfig[smwc.KEY_PATH],
+                path = viewConfig[cowc.KEY_PATH],
                 lockEditingByDefault = this.attributes.lockEditingByDefault;
 
             if (!(contrail.checkIfExist(lockEditingByDefault) && lockEditingByDefault)) {

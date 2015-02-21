@@ -22,6 +22,13 @@ function Contrail() {
         }
         return template;
     };
+    this.getTemplate4Source = function(source, key) {
+        if(!contrail.checkIfExist(templates[key])) {
+            templates[key] = Handlebars.compile(source)
+        }
+        return templates[key];
+
+    };
     this.checkIfExist = function(value) {
         var exist = true;
         if(value == null ||  typeof value  == "undefined") {

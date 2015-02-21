@@ -78,12 +78,16 @@ test-env:
 	make dev-env
 	./unit-test.sh init
 
+sm-test-env:
+	make dev-env
+	./sm-unit-test.sh
+
 prod-env:
 	mkdir -p webroot/html
 	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
 	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
-	./generate-files.sh "prod-env" $(REPO)
+	./generate-files.sh "dev-env" $(REPO)
 	./dev-install.sh
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login.html prod_env dev_env true

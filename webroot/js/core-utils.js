@@ -9,11 +9,25 @@ define([
     'js/views/FormDynamicGridView',
     'js/views/FormMultiselectView',
     'js/views/FormDropdownView',
+    'js/views/FormSelect2DropdownView',
     'js/views/FormCheckboxView',
     'js/views/AccordianView',
     'js/views/SectionView',
-    'js/views/WizardView'
-], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormCheckboxView, AccordianView, SectionView, WizardView) {
+    'js/views/WizardView',
+    'js/views/FormEditableGridView',
+    'js/views/GridInputView',
+    'js/views/GridCheckboxView',
+    'js/views/GridDropdownView',
+    'js/views/GridMultiselectView',
+    'graph-view',
+    'js/views/TabsView',
+    'js/views/ChartView',
+    'js/views/GridView',
+    'js/views/DetailsView',
+    'js/views/ScatterChartView'
+], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
+             AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
+             GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView) {
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -28,8 +42,7 @@ define([
                         collapseable: false
                     }
                 },
-                columnHeader: {
-                },
+                columnHeader: {},
                 body: {
                     options: {
                         autoRefresh: false,
@@ -39,13 +52,7 @@ define([
                             template: '<pre>{{{formatJSON2HTML this}}}</pre>'
                         }
                     },
-                    dataSource: {
-                        remote: {
-                            ajaxConfig: {
-                            },
-                            serverSidePagination: false
-                        }
-                    }
+                    dataSource: {}
                 }
             }, gridConfig));
         };
@@ -170,6 +177,7 @@ define([
             }
 
             if (contrail.checkIfExist(obj)) {
+                obj = $.isArray(obj) ? obj.join(', ') : obj;
                 obj = obj.toString().trim();
                 if (obj !== '' || obj === 0) {
                     return obj;
@@ -214,8 +222,8 @@ define([
 
             $.each(testobj, function (attribute, value) {
                 if (_.isArray(value)) {
-                    if (contrail.checkIfExist(locks[attribute + smwc.LOCKED_SUFFIX_ID])) {
-                        lock = locks[attribute + smwc.LOCKED_SUFFIX_ID];
+                    if (contrail.checkIfExist(locks[attribute + cowc.LOCKED_SUFFIX_ID])) {
+                        lock = locks[attribute + cowc.LOCKED_SUFFIX_ID];
                         if (lock === true) {
                             delete testobj[attribute];
                         }
@@ -238,8 +246,8 @@ define([
                     if(contrail.checkIfExist(value) && (typeof value == 'string')) {
                         testobj[attribute] = value.trim();
                     }
-                    if (contrail.checkIfExist(locks[attribute + smwc.LOCKED_SUFFIX_ID])) {
-                        lock = locks[attribute + smwc.LOCKED_SUFFIX_ID];
+                    if (contrail.checkIfExist(locks[attribute + cowc.LOCKED_SUFFIX_ID])) {
+                        lock = locks[attribute + cowc.LOCKED_SUFFIX_ID];
                         if (lock === true) {
                             delete testobj[attribute];
                         }
@@ -253,9 +261,10 @@ define([
 
         this.renderView4Config = function (parentElement, model, viewObj, validation, lockEditingByDefault) {
             var viewName = viewObj['view'],
-                elementId = viewObj[smwc.KEY_ELEMENT_ID],
-                validation = (validation != null) ? validation : smwc.KEY_VALIDATION,
-                viewAttributes = {viewConfig: viewObj[smwc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
+                elementId = viewObj[cowc.KEY_ELEMENT_ID],
+                validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
+                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
+                app = viewObj['app'],
                 elementView;
 
             switch (viewName) {
@@ -274,8 +283,12 @@ define([
                     elementView.render();
                     break;
 
+                case "FormSelect2DropdownView":
+                    elementView = new FormSelect2DropdownView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
                 case "FormCheckboxView":
-                    console.log('here');
                     elementView = new FormCheckboxView({el: parentElement, model: model, attributes: viewAttributes});
                     elementView.render();
                     break;
@@ -305,8 +318,208 @@ define([
                     elementView.render();
                     break;
 
+                case "FormEditableGridView":
+                    elementView = new FormEditableGridView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "GridInputView":
+                    elementView = new GridInputView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "GridCheckboxView":
+                    elementView = new GridCheckboxView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "GridDropdownView":
+                    elementView = new GridDropdownView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "GridMultiselectView":
+                    elementView = new GridMultiselectView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "GraphView":
+                    elementView = new GraphView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "TabsView":
+                    elementView = new TabsView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "ChartView":
+                    elementView = new ChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "GridView":
+                    elementView = new GridView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "DetailsView":
+                    elementView = new DetailsView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "ScatterChartView":
+                    elementView = new ScatterChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                default:
+                    if(app == cowc.APP_CONTRAIL_CONTROLLER) {
+                        ctwu.renderView(viewName, parentElement, model, viewAttributes);
+                    } else if(app == cowc.APP_CONTRAIL_SM) {
+                        smwu.renderView(viewName, parentElement, model, viewAttributes);
+                    }
+                    break;
             }
         };
+
+        this.getAttributeFromPath = function (attributePath) {
+            var attributePathArray = attributePath.split('.'),
+                attribute = attributePathArray[attributePathArray.length - 1];
+
+            return attribute;
+        };
+
+        /* Detail Template Generator*/
+
+        this.generateBlockListKeyValueTemplate = function(config, app) {
+            var template = '<ul class="item-list">';
+
+            $.each(config, function(configKey, configValue) {
+                template += '' +
+                '{{#IfValidJSONValueByPath "' + configValue.key + '" this ' + configKey + '}}' +
+                '<li>' +
+                '<label class="inline">' +
+                '<span class="key"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>';
+
+                if (configValue.valueType == 'text') {
+                    template += '<span class="value"> {{{getJSONValueByPath "' + configValue.key + '" this}}} </span>';
+                } else if (configValue.valueType == 'link') {
+                    template += '<span class="value"> {{{getJSONValueLinkByPath "' + configValue.key + '" this}}} </span>';
+                } else if (configValue.valueType == 'format-bytes') {
+                    template += '<span class="value"> {{{getJSONValueFormattedBytesByPath "' + configValue.key + '" this "' + configValue.valueFormat + '"}}} </span>';
+                } else if (configValue.valueType == 'length') {
+                    template += '<span class="value"> {{{getJSONValueLengthByPath "' + configValue.key + '" this}}} </span>';
+                }
+
+                template += '</label>' +
+                '</li>' +
+                '{{/IfValidJSONValueByPath}}';
+            });
+
+            template += '</ul>';
+
+            return template;
+        };
+
+        this.generateInnerTemplate = function(config, app) {
+            var template, templateObj,
+                templateGenerator = config.templateGenerator, templateGeneratorConfig = config.templateGeneratorConfig;
+
+            switch (templateGenerator) {
+                case 'RowSectionTemplateGenerator':
+                    var rowTemplate, rowTemplateObj;
+                    template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_SECTION);
+                    templateObj = $(template());
+
+                    $.each(templateGeneratorConfig.rows, function (rowKey, rowValue) {
+                        rowTemplate = contrail.getTemplate4Id(cowc.TMPL_DETAIL_SECTION_ROW);
+                        rowTemplateObj = $(rowTemplate());
+
+                        rowTemplateObj.append(self.generateInnerTemplate(rowValue, app))
+                        templateObj.append(rowTemplateObj);
+                    });
+
+
+                break;
+
+                case 'ColumnSectionTemplateGenerator':
+                    var columnTemplate, columnTemplateObj;
+                    template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_SECTION);
+                    templateObj = $(template());
+
+                    $.each(templateGeneratorConfig.columns, function (columnKey, columnValue) {
+                        columnTemplate = contrail.getTemplate4Id(cowc.TMPL_DETAIL_SECTION_COLUMN);
+                        columnTemplateObj = $(columnTemplate({class: columnValue.class}));
+
+                        $.each(columnValue.rows, function (rowKey, rowValue) {
+                            columnTemplateObj.append(self.generateInnerTemplate(rowValue, app))
+                            templateObj.append(columnTemplateObj);
+                        });
+                    });
+
+                break;
+
+                case 'BlockListTemplateGenerator':
+                    var template = '<div class="detail-block-list-content row-fluid">';
+
+                        template += '<h6>' + config.title + '</h6>' +
+                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app) +
+                            '<br/></div>';
+
+                    templateObj = $(template);
+                break;
+
+                case 'BlockGridTemplateGenerator':
+
+                    var template = '<div class="detail-block-grid-content row-fluid">';
+
+                    if (contrail.checkIfExist(config.title)) {
+                        template += '<h6>' + config.title + '</h6>';
+                    }
+
+                    template += '<div class="row-fluid">' +
+                    '{{#IfValidJSONValueByPath "' + config.key + '" this 1}} ' +
+                        '{{#each ' + config.key +'}} ' +
+                            '{{#IfCompare @index 0 operator="%2"}} ' +
+                                '{{#IfCompare @index 0 operator="!="}}</div><br/>{{/IfCompare}}' +
+                                '<div class="row-fluid">' +
+                            '{{/IfCompare}}' +
+                            '<div class="span6"><div class="row-fluid">' +
+                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app) +
+                            '</div></div>';
+
+                    template += '{{/each}} </div> {{/IfValidJSONValueByPath}}';
+
+                    template += '</div></div>';
+
+                    templateObj = $(template);
+
+                break;
+            };
+
+            return(templateObj.prop('outerHTML'))
+        }
+
+        this.generateDetailTemplateHTML = function(config, app) {
+            var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
+                templateObj = $(template());
+
+            templateObj.find('.detail-foundation-content').append(self.generateInnerTemplate(config, app));
+            templateObj.find('.group-detail-advanced-json').append('{{{formatGridJSON2HTML this}}}')
+
+            return(templateObj.prop('outerHTML'))
+        }
+
+        this.generateDetailTemplate = function(config, app) {
+            var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
+                templateObj = $(template());
+
+            templateObj.find('.detail-foundation-content').append(self.generateInnerTemplate(config, app));
+            templateObj.find('.group-detail-advanced-json').append('{{{formatGridJSON2HTML this}}}')
+
+            return Handlebars.compile(templateObj.prop('outerHTML'));
+        }
     };
     return CoreUtils;
 });

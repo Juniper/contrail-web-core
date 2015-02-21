@@ -454,6 +454,14 @@ function getDefaultGridConfig() {
                                     	gridOptions.detail.onExpand(e,dc);
                                     }
                                     $(target).removeClass('icon-caret-right').addClass('icon-caret-down');
+
+                                    var slickRowDetail = $(target).parents('.slick-row-master').next('.slick-row-detail'),
+                                        slickRowDetailHeight = slickRowDetail.height(),
+                                        detailContainerHeight = slickRowDetail.find('.slick-row-detail-container').height();
+
+                                    if (Math.abs(slickRowDetailHeight-detailContainerHeight) > 10) {
+                                        gridContainer.data('contrailGrid').adjustDetailRowHeight(slickRowDetail.data('cgrid'))
+                                    }
                                 }
                                 else if($(target).hasClass('icon-caret-down')){
                                     $(target).parents('.slick-row-master').next('.slick-row-detail').hide();
@@ -472,8 +480,8 @@ function getDefaultGridConfig() {
 	                gridContainer.find('.slick-row-detail').live('click', function(){
 	                	var rowId = $(this).data('cgrid');
 	                	setTimeout(function(){
-	                	    // if(gridContainer.data('contrailGrid') != null)
-	                	        // gridContainer.data('contrailGrid').adjustDetailRowHeight(rowId);
+	                	    if(gridContainer.data('contrailGrid') != null)
+	                	        gridContainer.data('contrailGrid').adjustDetailRowHeight(rowId);
 	                	},100);
 	                });
 	            }
@@ -546,13 +554,14 @@ function getDefaultGridConfig() {
         };
         
         function refreshDetailTemplateById(id){
-        	var source = gridOptions.detail.template;
+        	var source = gridOptions.detail.template,
+                templateKey = gridContainer.prop('id') + '-grid-detail-template';
             source = source.replace(/ }}/g, "}}");
             source = source.replace(/{{ /g, "{{");
 
-            var template = Handlebars.compile(source),
+            var template = contrail.getTemplate4Source(source, templateKey),
             	dc = dataView.getItemById(id);
-        	
+
             if(contrail.checkIfExist(dc)){
             	if(contrail.checkIfExist(gridOptions.detail.templateConfig)){
 	            	gridContainer.find('.slick-row-detail-template-' + id).html(template({dc:dc, templateConfig: gridOptions.detail.templateConfig}));
@@ -606,13 +615,14 @@ function getDefaultGridConfig() {
                     if ($(e.target).is(":checked")) {
                         gridContainer.data('contrailGrid').setAllCheckedRows('current-page');
 
-                        var pagingInfo = dataView.getPagingInfo();
+                        var pagingInfo = dataView.getPagingInfo(),
+                            currentPageRecords = (pagingInfo.pageSize * (pagingInfo.pageNum + 1)) < pagingInfo.totalRows ? pagingInfo.pageSize : (pagingInfo.totalRows - (pagingInfo.pageSize * (pagingInfo.pageNum)))
 
                         if(pagingInfo.totalPages > 1 && !gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
                             gridContainer.find('.grid-check-all-info').remove();
                             gridContainer.find('.slick-header').after('<div class="alert alert-info grid-info grid-check-all-info"> ' +
                             '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                            '<strong>' + pagingInfo.pageSize + ' records checked.</strong> <a class="check-all-link">Click here to check all ' + pagingInfo.totalRows + ' records</a>' +
+                            '<strong>' + currentPageRecords + ' records checked.</strong> <a class="check-all-link">Click here to check all ' + pagingInfo.totalRows + ' records</a>' +
                             '</div>');
 
                             gridContainer.find('.check-all-link')
@@ -897,18 +907,17 @@ function getDefaultGridConfig() {
                  * Returns an array of data of the checked rows via checkbox when checkboxSelectable is set to true
                  */
                 getCheckedRows: function(){
-                    var selectedRows = grid.getSelectedRows(),
-                        returnValue = [];
                     if (gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
-                        $.each(selectedRows, function(selectedRowKey, selectedRowValue){
-                            returnValue.push(dataView.getItemById('id_' + selectedRowValue));
-                        });
+                        return dataView.getItems();
+                        //TODO Handle a case when data is filtered
                     } else {
+                        var selectedRows = grid.getSelectedRows(),
+                            returnValue = [];
                         $.each(selectedRows, function(selectedRowKey, selectedRowValue){
                             returnValue.push(grid.getDataItem(selectedRowValue));
                         });
+                        return returnValue;
                     }
-                    return returnValue;
                 },
                 /*
                  * Sets the checked rows of the rows based on rowIndices
@@ -1066,8 +1075,10 @@ function getDefaultGridConfig() {
                 	gridContainer.find('.slick-row-detail').each(function(){
                 		if(gridContainer.find('.slick_row_' + $(this).data('cgrid')).is(':visible')){
                 			gridContainer.find('.slick_row_' + $(this).data('cgrid')).after($(this));
-                			gridContainer.find('.slick_row_' + $(this).data('cgrid')).find('.toggleDetailIcon').addClass('icon-caret-down').removeClass('icon-caret-right');
-                        	if(refreshDetailTemplateFlag){
+                            if($(this).is(':visible')) {
+                                gridContainer.find('.slick_row_' + $(this).data('cgrid')).find('.toggleDetailIcon').addClass('icon-caret-down').removeClass('icon-caret-right');
+                            }
+                            if(refreshDetailTemplateFlag){
                         		refreshDetailTemplateById($(this).data('cgrid'));
                         	}
                 		}
@@ -1293,6 +1304,7 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
 
         	setTimeout(function(){
         		if(contrail.checkIfExist(gridContainer.data('contrailGrid'))){
+                    gridContainer.data('contrailGrid').adjustAllRowHeight();
         			gridContainer.data('contrailGrid').adjustGridAlternateColors();
         		}
             },600);

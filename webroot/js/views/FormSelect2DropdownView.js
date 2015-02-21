@@ -6,14 +6,13 @@ define([
     'underscore',
     'backbone'
 ], function (_, Backbone) {
-    var FormCheckboxView = Backbone.View.extend({
+    var FormSelect2DropdownView = Backbone.View.extend({
         render: function () {
-            var checkBoxTemplate = contrail.getTemplate4Id(cowc.TMPL_CHECKBOX_VIEW),
+            var dropdownTemplate = contrail.getTemplate4Id(cowc.TMPL_SELECT2_DROPDOWN_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
-                validation = this.attributes.validation,
-                path = viewConfig['path'],
-                type = (viewConfig['type'] != null) ? viewConfig['type'] : 'checkbox',
+                elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
+                path = viewConfig[cowc.KEY_PATH],
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 labelValue = (elId != null) ? smwl.get(elId) : smwl.get(path),
                 tmplParameters;
@@ -24,15 +23,17 @@ define([
             this.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId, name: elId, disabled: viewConfig['disabled'],
-                dataBindValue: viewConfig['dataBindValue'],
-                lockAttr: lockEditingByDefault, type: type,
-                isChecked: viewConfig['dataBindValue'],
-                class: "span12", path: path, validation: validation
+                label: labelValue, id: elId, name: elId,
+                dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
+                class: "span12",
+                lockAttr: lockEditingByDefault,
+                elementConfig: elementConfig
             };
-            this.$el.html(checkBoxTemplate(tmplParameters));
+
+            this.$el.html(dropdownTemplate(tmplParameters));
+
         }
     });
 
-    return FormCheckboxView;
+    return FormSelect2DropdownView;
 });

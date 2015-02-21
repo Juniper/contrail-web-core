@@ -2068,6 +2068,14 @@ color: #b94a48;
 	color:#555;
 	font-weight:400;
 }
+.value-link {
+    text-decoration: underline;
+    color: #555 !important;
+}
+.value-link:hover {
+    text-decoration: none;
+    color: #3182bd !important;
+}
 
 /* Jquery Steps style*/
 
@@ -2294,14 +2302,12 @@ color: #b94a48;
     min-height: 25px;
 }
 
-/*style to fix the detail template height*/
+/* General Styles */
 
-.slick-grid-detail-content-height{
-    height : 300px !important;
-}
-
-.slick-grid-detail-sub-content-height{
-    height : 290px !important;
+.loading-spinner {
+    font-size:40px;
+    text-align:center;
+    padding: 20px 0 0;
 }
 
 .sgSelect2 .select2-result-sub {

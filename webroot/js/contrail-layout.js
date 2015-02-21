@@ -2,6 +2,11 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
+/*
+    flag to ignore hashChange call when we just need to change the url
+ */
+var _ignoreOnHashChange = false;
+
 function handleSideMenu() {
     $('#menu-toggler').on('click', function () {
         $('#sidebar').toggleClass('display');
@@ -433,7 +438,7 @@ function onHashChange(lastHash, currHash) {
                 //If hashchange is within the same page
                 var currMenuObj = menuHandler.getMenuObjByHash(currPageHash);
                 $.each(currMenuObj['resources']['resource'],function(idx,currResourceObj) {
-                    if (window[currResourceObj['class']] != null && 
+                    if (window[currResourceObj['class']] != null &&
                         window[currResourceObj['class']]['updateViewByHash'] != null) {
                         window[currResourceObj['class']].updateViewByHash(currPageQueryStr, lastPageQueryStr);
                     }
@@ -714,7 +719,10 @@ $(document).ready(function () {
         }
         logMessage('hashChange', JSON.stringify(lastHash), ' -> ', currHash);
         logMessage('hashChange', JSON.stringify(currHash));
-        onHashChange(lastHash, currHash);
+        if(_ignoreOnHashChange === false) {
+            onHashChange(lastHash, currHash);
+        }
+        _ignoreOnHashChange = false;
         lastHash = currHash;
     });
     handleSideMenu();

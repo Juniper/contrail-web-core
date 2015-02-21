@@ -66,6 +66,14 @@ Handlebars.registerHelper('formatJSON2HTML', function(rawdata, options) {
     return contrail.formatJSON2HTML(rawdata,2);
 });
 
+Handlebars.registerHelper('formatGridJSON2HTML', function(rawdata, options) {
+    var rawDataClone = $.extend(true,{}, rawdata);
+    if (contrail.checkIfExist(rawDataClone.cgrid)) {
+        delete rawDataClone.cgrid;
+    }
+    return contrail.formatJSON2HTML(rawDataClone,2);
+});
+
 Handlebars.registerHelper('formatString2HTML', function(string) {
     return string;
 });
@@ -173,3 +181,39 @@ Handlebars.registerHelper('showDeviceOwner', function(block) {
         return 'show';
 });
 
+Handlebars.registerHelper('getLabel', function (labelKey, feature) {
+    if (feature == cowc.APP_CONTRAIL_SM) {
+        return smwl.get(labelKey);
+    } else if (feature == cowc.APP_CONTRAIL_CONTROLLER) {
+        return ctwl.get(labelKey);
+    }
+});
+
+Handlebars.registerHelper('getJSONValueByPath', function (path, obj) {
+    return cowu.getJSONValueByPath(path, obj);
+});
+
+Handlebars.registerHelper('getJSONValueLinkByPath', function (path, obj) {
+    return '<a class="value-link" target="_blank" href="http://' + cowu.getJSONValueByPath(path, obj) + '">' + cowu.getJSONValueByPath(path, obj) + '</a>';
+});
+
+Handlebars.registerHelper('getJSONValueFormattedBytesByPath', function (path, obj, valueFormat) {
+    var value = cowu.getJSONValueByPath(path, obj);
+    if(valueFormat == 'kByte') {
+        value *= 1024
+    }
+    return formatBytes(value);
+});
+
+Handlebars.registerHelper('getJSONValueLengthByPath', function (path, obj) {
+    return cowu.getJSONValueByPath(path, obj).split(',').length;
+});
+
+Handlebars.registerHelper('IfValidJSONValueByPath', function (path, obj, index, options) {
+    var result = (cowu.getJSONValueByPath(path, obj) != "-") ? true : false;
+    if(result || index == 0) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});

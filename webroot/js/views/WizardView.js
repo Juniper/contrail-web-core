@@ -8,7 +8,7 @@ define([
 ], function (_, Backbone) {
     var WizardView = Backbone.View.extend({
         render: function () {
-            var wizardTempl = contrail.getTemplate4Id("sm-wizard-view-template"),
+            var wizardTempl = contrail.getTemplate4Id(cowc.TMPL_WIZARD_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
                 validation = this.attributes.validation,

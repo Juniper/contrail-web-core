@@ -8,11 +8,11 @@ define([
 ], function (_, Backbone) {
     var FormDropdownView = Backbone.View.extend({
         render: function () {
-            var dropdownTemplate = contrail.getTemplate4Id(smwc.TMPL_DROPDOWN_VIEW),
+            var dropdownTemplate = contrail.getTemplate4Id(cowc.TMPL_DROPDOWN_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
-                elementConfig = viewConfig[smwc.KEY_ELEMENT_CONFIG],
-                path = viewConfig[smwc.KEY_PATH],
+                elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
+                path = viewConfig[cowc.KEY_PATH],
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 labelValue = (elId != null) ? smwl.get(elId) : smwl.get(path),
                 tmplParameters;
@@ -24,7 +24,7 @@ define([
 
             tmplParameters = {
                 label: labelValue, id: elId + '_dropdown', name: elId,
-                dataBindValue: viewConfig[smwc.KEY_DATABIND_VALUE],
+                dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
                 lockAttr: lockEditingByDefault,
                 class: "span12", elementConfig: elementConfig
             };

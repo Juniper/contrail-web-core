@@ -36,7 +36,7 @@ requirejs.config({
         'jsbn-combined': "/assets/ip/jsbn-combined",
         'contrail-common': "/js/contrail-common",
         'handlebars-utils': "/js/handlebars-utils",
-        'select2-utils': "/js/select2-utils",
+        //'select2-utils': "/js/select2-utils",
         'slickgrid-utils': "/js/slickgrid-utils",
         'contrail-elements': "/js/contrail-elements",
         'topology_api': "/js/topology_api",
@@ -71,7 +71,12 @@ requirejs.config({
         'validation': 'assets/backbone/backbone-validation-amd',
         'text': 'assets/requirejs/text',
         'core-utils': 'js/core-utils',
+        'core-constants': 'js/core-constants',
         'contrail-model': 'js/models/ContrailModel',
+        'contrail-list-model': 'js/models/ContrailListModel',
+        'graph-view': 'js/views/GraphView',
+        'contrail-graph-model': 'js/models/ContrailGraphModel',
+        'contrail-remote-data-handler': 'js/models/ContrailRemoteDataHandler',
         'core-init': 'js/core-init'
     },
     shim: {
@@ -177,9 +182,9 @@ requirejs.config({
         'qe-utils': {
             deps: ['jquery']
         },
-        'select2-utils': {
-            deps: ['jquery', 'knockout']
-        },
+        //'select2-utils': {
+        //    deps: ['jquery', 'knockout']
+        //},
         'ipv6': {
             deps: ['sprintf', 'jsbn-combined']
         },
@@ -237,8 +242,23 @@ requirejs.config({
         'core-utils': {
             deps: ['jquery', 'underscore']
         },
-        'contrail-model' :{
+        'core-constants': {
+            deps: ['jquery', 'underscore']
+        },
+        'contrail-model': {
             deps: ['jquery', 'underscore', 'backbone', 'knockout', 'knockback']
+        },
+        'contrail-graph-model': {
+            deps: ['jquery', 'underscore', 'backbone', 'joint.contrail', 'joint.layout.DirectedGraph']
+        },
+        'graph-view': {
+            deps: ['jquery', 'underscore', 'backbone', 'joint.contrail']
+        },
+        'contrail-list-model': {
+            deps: ['contrail-remote-data-handler']
+        },
+        'contrail-remote-data-handler': {
+            deps: ['jquery', 'underscore']
         },
         'core-init': {
             deps: ['underscore', 'validation', 'core-utils', 'knockout']
@@ -247,55 +267,4 @@ requirejs.config({
     waitSeconds: 0
 });
 
-require(['jquery', 'knockout'], function ($, Knockout) {
-    window.ko = Knockout;
-    loadCommonTemplates();
-    require(['jquery-ui', 'jquery.xml2json', 'jquery.ba-bbq', 'jquery.timer', 'jquery.ui.touch-punch',
-        'bootstrap', 'd3', 'nv.d3', 'crossfilter', 'jsonpath', 'xdate', 'jquery.validate',
-        'handlebars', 'select2', 'jquery.event.drag', 'jquery.json', 'jquery.droppick', 'slick.core',
-        'slick.grid', 'slick.enhancementpager', 'jquery.datetimepicker', 'moment',
-        'contrail-common', 'handlebars-utils', 'select2-utils', 'slickgrid-utils', 'contrail-elements',
-        'topology_api', 'chart-utils', 'web-utils', 'contrail-layout', 'config_global', 'protocol',
-        'qe-utils', 'nvd3-plugin', 'd3-utils', 'analyzer-utils', 'dashboard-utils', 'ipv6',
-        'jquery.tristate', 'jquery.multiselect', 'jquery.multiselect.filter', 'jquery.steps.min', 'slick.dataview',
-        'joint', 'joint.layout.DirectedGraph', 'jquery.panzoom', 'joint.contrail', 'jquery.ui.position',
-        'jquery.contextMenu', 'slick.checkboxselectcolumn', 'slick.rowselectionmodel',
-        'underscore', 'backbone', 'text', 'core-utils', 'core-init'], function (contrail) {});
-});
-
-function loadCommonTemplates() {
-    //Set the base URI
-    if (document.location.pathname.indexOf('/vcenter') == 0)
-        $('head').append('<base href="/vcenter/" />');
-    templateLoader = (function ($, host) {
-        //Loads external templates from path and injects in to page DOM
-        return {
-            loadExtTemplate: function (path, deferredObj, containerName) {
-                //Load the template only if it doesn't exists in DOM
-                var tmplLoader = $.ajax({url: path})
-                    .success(function (result) {
-                        //Add templates to DOM
-                        if (containerName != null) {
-                            $('body').append('<div id="' + containerName + '"></div>');
-                            $('#' + containerName).append(result);
-                        } else
-                            $("body").append(result);
-                        if (deferredObj != null)
-                            deferredObj.resolve();
-                    })
-                    .error(function (result) {
-                        if (result['statusText'] != 'abort')
-                            showInfoWindow("Error while loading page.", 'Error');
-                    });
-
-                tmplLoader.complete(function () {
-                    $(host).trigger("TEMPLATE_LOADED", [path]);
-                });
-            }
-        };
-    })(jQuery, document);
-    $.ajaxSetup({async: false});
-    //Need to issue the call synchronously as the following scripts refer to the templates in this file
-    templateLoader.loadExtTemplate('/views/contrail-common.view');
-    $.ajaxSetup({async: true});
-};
+require(['core-init'], function() {});
