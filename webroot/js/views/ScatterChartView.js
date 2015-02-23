@@ -13,7 +13,8 @@ define([
                 viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 chartOptions = viewConfig['chartOptions'],
-                self = this, deferredObj = $.Deferred();
+                self = this, deferredObj = $.Deferred(),
+                selector = $(self.$el);
 
             self.$el.append(loadingSpinnerTemplate);
 
@@ -22,14 +23,15 @@ define([
             });
 
             deferredObj.done(function (response) {
+                var formattedResponse = response;
                 if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                    response = viewConfig['parseFn'](response);
+                    formattedResponse = viewConfig['parseFn'](response);
                 }
-                var chartViewConfig = getChartViewConfig($(self.$el), response);
+                var chartViewConfig = getChartViewConfig(selector, formattedResponse);
 
                 self.chartModel = new ScatterChartModel(chartViewConfig['chartData'], chartViewConfig['chartOptions']);
 
-                self.renderChart(chartViewConfig);
+                self.renderChart(selector, chartViewConfig);
                 self.$el.find('.loading-spinner').remove()
             });
 
@@ -40,9 +42,8 @@ define([
             });
         },
 
-        renderChart: function (chartViewConfig) {
-            var selector = chartViewConfig['selector'],
-                chartData = chartViewConfig['chartData'],
+        renderChart: function (selector, chartViewConfig) {
+            var chartData = chartViewConfig['chartData'],
                 chartModel = this.chartModel,
                 chartOptions = chartViewConfig['chartOptions'];
 
