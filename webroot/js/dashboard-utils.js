@@ -46,6 +46,12 @@ function infraMonitorClass() {
          var verGroup = verDimension.group();
          var verArr = [];
          var systemCnt = nameDimension.group().all().length;
+         var systemList = [];
+         for(var i=0;i<dashboardDataArr.length;i++) {
+            if(dashboardDataArr[i]['vRouterType'] == null || dashboardDataArr[i]['vRouterType'] != 'tor-agent')
+                systemList.push(dashboardDataArr[i]['name']);
+         }
+         systemCnt = $.unique(systemList).length;
          var infoData = [{lbl:'No. of servers',value:systemCnt}];
          infoData.push({lbl:'No. of logical nodes', value:dashboardDataArr.length});
          //Distinct Versions
