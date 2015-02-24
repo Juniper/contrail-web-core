@@ -80,7 +80,6 @@ define([
                     }
                 ],
                 onEnter: function () {
-                    console.log("onEnter");
                     $("#" + modalId).modal('hide');
                 }
             });

@@ -12,7 +12,7 @@ define([
             this.graphConfig = modelConfig;
             this.getDataFromCache = modelConfig['getDataFromCache'];
             this.setData2Cache = modelConfig['setData2Cache'];
-            this.uniqueKey = modelConfig['uniqueKey'];
+            this.ucid = modelConfig['ucid'];
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
 
@@ -26,7 +26,7 @@ define([
             self.elementMap = {node: {}, link: {}};
 
             var remoteHandlerConfig = getRemoteHandlerConfig(self, successCallback),
-                cachedData = (self.getDataFromCache != null) ? self.getDataFromCache(self.uniqueKey) : null;
+                cachedData = (self.getDataFromCache != null) ? self.getDataFromCache(self.ucid) : null;
 
             if (cachedData != null) {
                 self.contrailDataHandler = createGraphFromCache(cachedData, self, successCallback, remoteHandlerConfig);
@@ -55,7 +55,7 @@ define([
 
         successCallback(contrailGraphModel.directedGraphSize);
 
-        if (60000 < ($.now() - cachedTime)) {
+        if (cowc.GRAPH_CACHE_UPDATE_INTERVAL < ($.now() - cachedTime)) {
             contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
         }
 
@@ -82,9 +82,12 @@ define([
                     }
                     successCallback(contrailGraphModel.directedGraphSize);
                     contrailGraphModel.requestInProgress = false;
-
+                },
+                updateCacheCallback: function(completeResponse) {
+                    var response = completeResponse[0];
                     if (contrailGraphModel.setData2Cache != null) {
-                        contrailGraphModel.setData2Cache(contrailGraphModel.uniqueKey, {
+                        //TODO: Binding of cached gridModel (if any) with existing view should be destroyed.
+                        contrailGraphModel.setData2Cache(contrailGraphModel.ucid, {
                             graphModel: contrailGraphModel,
                             response: response
                         });

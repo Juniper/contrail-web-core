@@ -11,8 +11,9 @@ define([
             lazyRemoteList = remoteHandlerConfig['lazyRemoteConfig'],
             pInitHandler, pSuccessHandler, pRefreshHandler, pFailureHandler, fetchPrimaryData,
             pAjaxConfig, pUrl, pUrlParams, pDataParser, pInitCallback, pSuccessCallback,
-            pRefreshSuccessCallback, pFailureCallback, setNextUrl,
-            pRequestInProgress = false, cleanAndFresh = false, self = this;
+            pRefreshSuccessCallback, pFailureCallback, pUpdateCacheCallback, setNextUrl,
+            pRequestCompleteResponse = [], pRequestInProgress = false, lRequestsInProgress = [],
+            cleanAndFresh = false, self = this, updateActiveModel = false;
 
         var defaultConfig = {
             lazyLoading: {
@@ -31,9 +32,11 @@ define([
         pSuccessCallback = primaryRemoteConfig.successCallback;
         pRefreshSuccessCallback = primaryRemoteConfig.refreshSuccessCallback;
         pFailureCallback = primaryRemoteConfig.failureCallback;
+        pUpdateCacheCallback = primaryRemoteConfig.updateCacheCallback;
 
         pInitHandler = function () {
             pRequestInProgress = true;
+            updateActiveModel = false;
             if (contrail.checkIfFunction(pInitCallback)) {
                 pInitCallback();
             }
@@ -46,6 +49,9 @@ define([
             } else {
                 resultJSON = response;
             }
+
+            pRequestCompleteResponse.push(response);
+
             if (contrail.checkIfFunction(pSuccessCallback)) {
                 pSuccessCallback(resultJSON);
                 for (var i = 0; i < lazyRemoteList.length; i++) {
@@ -60,7 +66,7 @@ define([
                                 lazyResultJSON = lazyResponse;
                             }
 
-                            lSuccessCallback(lazyResultJSON);
+                            lSuccessCallback(lazyResultJSON, updateActiveModel);
                         };
 
                     contrail.ajaxHandler(lazyRemoteList[i].getAjaxConfig(resultJSON), lazyRemoteList[i].initCallback, lSuccessHandler, lazyRemoteList[i].failureCallback);
@@ -74,6 +80,10 @@ define([
                 pRequestInProgress = false;
                 delete pUrlParams['lastKey'];
                 pAjaxConfig['url'] = pUrl.split('?')[0] + '?' + $.param(pUrlParams);
+                if(pUpdateCacheCallback != null) {
+                    pUpdateCacheCallback(pRequestCompleteResponse);
+                    updateActiveModel = true;
+                }
             }
         };
 

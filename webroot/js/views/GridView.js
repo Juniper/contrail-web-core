@@ -10,7 +10,7 @@ define([
     var GridView = Backbone.View.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
-                model = this.model, elId = this.attributes.elementId,
+                elId = this.attributes.elementId,
                 listModelConfig = $.extend(true, {}, viewConfig.elementConfig['body']['dataSource']),
                 contrailListModel = new ContrailListModel(listModelConfig),
                 gridConfig;
