@@ -178,8 +178,7 @@ define([
             }
 
             if (contrail.checkIfExist(obj)) {
-                obj = $.isArray(obj) ? obj.join(', ') : obj;
-                obj = obj.toString().trim();
+                obj = $.isArray(obj) ? obj : obj.toString().trim();
                 if (obj !== '' || obj === 0) {
                     return obj;
                 }
@@ -406,12 +405,15 @@ define([
                 '{{#IfValidJSONValueByPath "' + configValue.key + '" this ' + configKey + '}}' +
                 '<li>' +
                 '<label class="inline">' +
-                '<span class="key"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>';
+                '<span class="key"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>' +
+                '<span class="value">{{{getValueByConfig this config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
 
                 if (configValue.valueType == 'text') {
                     template += '<span class="value"> {{{getJSONValueByPath "' + configValue.key + '" this}}} </span>';
                 } else if (configValue.valueType == 'link') {
-                    template += '<span class="value"> {{{getJSONValueLinkByPath "' + configValue.key + '" this}}} </span>';
+                    template += '<span class="value"> ' +
+                        '{{{getJSONValueLinkByPath "' + configValue.key + '" this "' + configValue.valueFormat + '" valueParams=\'' + JSON.stringify(configValue.valueParams) + '\'}}}' +
+                        ' </span>';
                 } else if (configValue.valueType == 'format-bytes') {
                     template += '<span class="value"> {{{getJSONValueFormattedBytesByPath "' + configValue.key + '" this "' + configValue.valueFormat + '"}}} </span>';
                 } else if (configValue.valueType == 'length') {
@@ -467,9 +469,8 @@ define([
                 break;
 
                 case 'BlockListTemplateGenerator':
-                    var template = '<div class="detail-block-list-content row-fluid">';
-
-                        template += '<h6>' + config.title + '</h6>' +
+                    var template = '<div class="detail-block-list-content row-fluid">' +
+                            '<h6>' + config.title + '</h6>' +
                             self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app) +
                             '<br/></div>';
 
@@ -484,20 +485,23 @@ define([
                         template += '<h6>' + config.title + '</h6>';
                     }
 
-                    template += '<div class="row-fluid">' +
-                    '{{#IfValidJSONValueByPath "' + config.key + '" this 1}} ' +
-                        '{{#each ' + config.key +'}} ' +
-                            '{{#IfCompare @index 0 operator="%2"}} ' +
-                                '{{#IfCompare @index 0 operator="!="}}</div><br/>{{/IfCompare}}' +
-                                '<div class="row-fluid">' +
-                            '{{/IfCompare}}' +
-                            '<div class="span6"><div class="row-fluid">' +
-                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app) +
-                            '</div></div>';
+                    template += '' +
+                        '<div class="row-fluid">' +
+                        '{{#IfValidJSONValueByPath "' + config.key + '" this 1}} ' +
+                            '{{#each ' + config.key +'}} ' +
+                                '{{#IfCompare @index 0 operator="%2"}} ' +
+                                    '{{#IfCompare @index 0 operator="!="}}' +
+                                        '</div><br/>' +
+                                    '{{/IfCompare}}' +
+                                    '<div class="row-fluid">' +
+                                '{{/IfCompare}}' +
+                                '<div class="span6">' +
+                                    '<div class="row-fluid">' +
+                                        self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app) +
+                                    '</div>' +
+                                '</div>';
 
-                    template += '{{/each}} </div> {{/IfValidJSONValueByPath}}';
-
-                    template += '</div></div>';
+                    template += '{{/each}} </div> {{/IfValidJSONValueByPath}}</div></div>';
 
                     templateObj = $(template);
 
@@ -505,27 +509,28 @@ define([
             };
 
             return(templateObj.prop('outerHTML'))
-        }
+        };
 
         this.generateDetailTemplateHTML = function(config, app) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
-                templateObj = $(template());
+                templateObj = $(template(config));
 
-            templateObj.find('.detail-foundation-content').append(self.generateInnerTemplate(config, app));
-            templateObj.find('.group-detail-advanced-json').append('{{{formatGridJSON2HTML this}}}')
+            templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
+            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}')
 
+            console.log(templateObj.prop('outerHTML'))
             return(templateObj.prop('outerHTML'))
-        }
+        };
 
         this.generateDetailTemplate = function(config, app) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
-                templateObj = $(template());
+                templateObj = $(template(config));
 
-            templateObj.find('.detail-foundation-content').append(self.generateInnerTemplate(config, app));
-            templateObj.find('.group-detail-advanced-json').append('{{{formatGridJSON2HTML this}}}')
+            templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
+            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}')
 
             return Handlebars.compile(templateObj.prop('outerHTML'));
-        }
+        };
     };
     return CoreUtils;
 });

@@ -190,11 +190,97 @@ Handlebars.registerHelper('getLabel', function (labelKey, feature) {
 });
 
 Handlebars.registerHelper('getJSONValueByPath', function (path, obj) {
-    return cowu.getJSONValueByPath(path, obj);
+    var pathValue = cowu.getJSONValueByPath(path, obj);
+    return $.isArray(pathValue) ? pathValue.join(', ') : pathValue;
 });
 
-Handlebars.registerHelper('getJSONValueLinkByPath', function (path, obj) {
-    return '<a class="value-link" target="_blank" href="http://' + cowu.getJSONValueByPath(path, obj) + '">' + cowu.getJSONValueByPath(path, obj) + '</a>';
+Handlebars.registerHelper('getValueByConfig', function (obj, options) {
+    var config = $.parseJSON(options.hash.config),
+        key = config.key,
+        value = cowu.getJSONValueByPath(key, obj),
+        templateGenerator = config.templateGenerator,
+        templateGeneratorConfig = config.templateGeneratorConfig,
+        returnValue;
+
+    switch (templateGenerator) {
+        case 'TextGenerator':
+            if (contrail.checkIfExist(templateGeneratorConfig)) {
+                var formatter = templateGeneratorConfig.formatter;
+                switch (formatter) {
+                    case 'byte' :
+                        returnValue = formatBytes(value);
+                    break;
+
+                    case 'kilo-byte' :
+                        returnValue = formatBytes(value * 1024);
+                    break;
+
+                    case 'length' :
+                        returnValue = value.length;
+                    break;
+                };
+            } else {
+                returnValue = $.isArray(value) ? value.join(', ') : value;
+            }
+        break;
+
+        case 'LinkGenerator':
+
+            var linkTemplate = Handlebars.compile(templateGeneratorConfig.template),
+                params = templateGeneratorConfig.params,
+                hrefLinkArray = [], hrefLink;
+
+            $.each(params, function(paramKey, paramValue) {
+                params[paramKey] = cowu.getJSONValueByPath(paramValue, obj)
+            });
+
+            if ($.isArray(value)) {
+                $.each(value, function(vKey, vValue) {
+                    hrefLink = linkTemplate({key: vValue, params: params});
+                    hrefLinkArray.push('<a class="value-link" target="_blank" href="' + hrefLink + '">' + vValue + '</a>');
+                });
+
+                returnValue = hrefLinkArray.join(', ');
+            } else {
+                hrefLink = linkTemplate({key: value, params: params});
+                returnValue = '<a class="value-link" target="_blank" href="' + hrefLink + '">' + value + '</a>';
+            }
+        break;
+    };
+
+    return returnValue;
+
+});
+
+Handlebars.registerHelper('getJSONValueLinkByPath', function (path, obj, valueFormat, options) {
+    var pathValue = cowu.getJSONValueByPath(path, obj),
+        hrefLink = '//' + pathValue;
+
+    if (contrail.checkIfExist(valueFormat) && contrail.checkIfExist(options.hash.valueParams)) {
+        var linkTemplate = Handlebars.compile(valueFormat),
+            valueParams = $.parseJSON(options.hash.valueParams);
+
+        $.each(valueParams, function(paramKey, paramValue) {
+            valueParams[paramKey] = cowu.getJSONValueByPath(paramValue, obj)
+        });
+
+        if($.isArray(pathValue)) {
+            /* Generate array of links*/
+            var hrefLinkArray = [];
+
+            $.each(pathValue, function(pvKey, pvValue) {
+                hrefLink = linkTemplate({key: pvValue, params: valueParams});
+                hrefLinkArray.push('<a class="value-link" target="_blank" href="' + hrefLink + '">' + pvValue + '</a>');
+            });
+            return hrefLinkArray.join(', ');
+        } else {
+            /* Generate single value link*/
+            hrefLink = linkTemplate({key: pathValue, params: valueParams});
+            return '<a class="value-link" target="_blank" href="' + hrefLink + '">' + cowu.getJSONValueByPath(path, obj) + '</a>';
+        }
+    }
+
+    return '<a class="value-link" target="_blank" href="' + hrefLink + '">' + cowu.getJSONValueByPath(path, obj) + '</a>';
 });
 
 Handlebars.registerHelper('getJSONValueFormattedBytesByPath', function (path, obj, valueFormat) {
@@ -206,7 +292,7 @@ Handlebars.registerHelper('getJSONValueFormattedBytesByPath', function (path, ob
 });
 
 Handlebars.registerHelper('getJSONValueLengthByPath', function (path, obj) {
-    return cowu.getJSONValueByPath(path, obj).split(',').length;
+    return cowu.getJSONValueByPath(path, obj).length;
 });
 
 Handlebars.registerHelper('IfValidJSONValueByPath', function (path, obj, index, options) {
