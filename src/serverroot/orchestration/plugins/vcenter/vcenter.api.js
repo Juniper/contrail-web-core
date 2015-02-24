@@ -291,6 +291,7 @@ function getNetworkFolderForDataCenter(appData,datacenterId) {
     });
 }
 
+
 function getIdByMobName(appData,objType,name,folderName) {
     return new Promise(function(resolve,reject) {
         getRootFolder(appData,folderName).done(function(folderName) {
@@ -380,7 +381,7 @@ function populatevCenterParams(appData) {
     });
 }
 //No of times to retry to check for a task status
-var maxRetryCnt = 30;
+var maxRetryCnt = 100;
 function waitForTask(appData,taskId,currDef,retryCnt) {
     if(retryCnt == null)
         retryCnt = 0;
@@ -398,7 +399,7 @@ function waitForTask(appData,taskId,currDef,retryCnt) {
     } else 
         setTimeout(function() {
             waitForTask(appData,taskId,currDef);
-        },3000);
+        },200);
     });
 }
 
