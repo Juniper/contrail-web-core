@@ -960,6 +960,11 @@ a.selectAllLink:hover {
 	background: none;
 	background-color: #c6dbef;
 }
+.slick-row-detail-icon {
+    font-size: 16px;
+    margin: 0 5px;
+    color: #555;
+}
 .slick-row-detail-container .row-fluid, .slick-cell .row-fluid [class*="span"]{
 	min-height: 20px;
 	font-size: 12px;
@@ -967,14 +972,17 @@ a.selectAllLink:hover {
 .slick-row-detail-container label {
 	font-size: 12px;
 }
-.slick-row-detail .slick-cell, .slick-row-detail .row-fluid, .slick-row-detail .item-list > li {
-    background-color: #fff
-}
 .slick-row.ui-widget-content.slick-row-detail{
     border: none;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #eee;
     border-bottom: 1px solid #ccc;
-    padding: 5px 0 10px;
+    padding: 0 0 10px;
+}
+.slick-row-detail .slick-cell, .slick-row-detail .row-fluid, .slick-row-detail .item-list > li {
+    background-color: #FFF
+}
+.slick-row-detail .slick-cell {
+    padding: 10px 35px;
 }
 .slick-row-detail  .row-fluid, .slick-row-detail .row-fluid [class*="span"] {
     min-height:20px;
@@ -999,6 +1007,10 @@ a.selectAllLink:hover {
 .group-detail-container ul.item-list li .value {
     color:#333;
     font-weight:400;
+}
+.slick-row-detail .block-grid-row {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 .value-link {
     text-decoration: underline;

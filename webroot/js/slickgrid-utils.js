@@ -403,7 +403,7 @@ function getDefaultGridConfig() {
 	                columns.push({
 	                    focusable: true,
 	                    formatter: function(r, c, v, cd, dc) {
-	                        return '<i class="icon-caret-right margin-0-5 toggleDetailIcon"></i>';
+	                        return '<i class="icon-caret-right toggleDetailIcon slick-row-detail-icon"></i>';
 	                    },
 	                    id: "_detail_row_icon",
 	                    rerenderOnResize: false,
@@ -421,12 +421,12 @@ function getDefaultGridConfig() {
                                 if($(target).hasClass('icon-caret-right')){
                                 	
                                 	if(!$(target).parents('.slick-row-master').next().hasClass('slick-row-detail')){
-	                                	var cellSpaceColumn = 1,
+	                                	var cellSpaceColumn = 0,
 	                                    	cellSpaceRow = gridColumns.length - 1;
 	
-	                                    if (gridOptions.checkboxSelectable != false) {
-	                                        cellSpaceColumn++;
-	                                    }
+	                                    //if (gridOptions.checkboxSelectable != false) {
+	                                    //    cellSpaceColumn++;
+	                                    //}
 	
 	                                    $(target).parents('.slick-row-master').after(' \
 	            	            				<div class="ui-widget-content slick-row slick-row-detail" data-cgrid="' + $(target).parents('.slick-row-master').data('cgrid') + '"> \

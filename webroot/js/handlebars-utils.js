@@ -252,48 +252,6 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
 
 });
 
-Handlebars.registerHelper('getJSONValueLinkByPath', function (path, obj, valueFormat, options) {
-    var pathValue = cowu.getJSONValueByPath(path, obj),
-        hrefLink = '//' + pathValue;
-
-    if (contrail.checkIfExist(valueFormat) && contrail.checkIfExist(options.hash.valueParams)) {
-        var linkTemplate = Handlebars.compile(valueFormat),
-            valueParams = $.parseJSON(options.hash.valueParams);
-
-        $.each(valueParams, function(paramKey, paramValue) {
-            valueParams[paramKey] = cowu.getJSONValueByPath(paramValue, obj)
-        });
-
-        if($.isArray(pathValue)) {
-            /* Generate array of links*/
-            var hrefLinkArray = [];
-
-            $.each(pathValue, function(pvKey, pvValue) {
-                hrefLink = linkTemplate({key: pvValue, params: valueParams});
-                hrefLinkArray.push('<a class="value-link" target="_blank" href="' + hrefLink + '">' + pvValue + '</a>');
-            });
-            return hrefLinkArray.join(', ');
-        } else {
-            /* Generate single value link*/
-            hrefLink = linkTemplate({key: pathValue, params: valueParams});
-            return '<a class="value-link" target="_blank" href="' + hrefLink + '">' + cowu.getJSONValueByPath(path, obj) + '</a>';
-        }
-    }
-
-    return '<a class="value-link" target="_blank" href="' + hrefLink + '">' + cowu.getJSONValueByPath(path, obj) + '</a>';
-});
-
-Handlebars.registerHelper('getJSONValueFormattedBytesByPath', function (path, obj, valueFormat) {
-    var value = cowu.getJSONValueByPath(path, obj);
-    if(valueFormat == 'kByte') {
-        value *= 1024
-    }
-    return formatBytes(value);
-});
-
-Handlebars.registerHelper('getJSONValueLengthByPath', function (path, obj) {
-    return cowu.getJSONValueByPath(path, obj).length;
-});
 
 Handlebars.registerHelper('IfValidJSONValueByPath', function (path, obj, index, options) {
     var result = (cowu.getJSONValueByPath(path, obj) != "-") ? true : false;

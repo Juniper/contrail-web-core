@@ -408,18 +408,6 @@ define([
                 '<span class="key"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>' +
                 '<span class="value">{{{getValueByConfig this config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
 
-                if (configValue.valueType == 'text') {
-                    template += '<span class="value"> {{{getJSONValueByPath "' + configValue.key + '" this}}} </span>';
-                } else if (configValue.valueType == 'link') {
-                    template += '<span class="value"> ' +
-                        '{{{getJSONValueLinkByPath "' + configValue.key + '" this "' + configValue.valueFormat + '" valueParams=\'' + JSON.stringify(configValue.valueParams) + '\'}}}' +
-                        ' </span>';
-                } else if (configValue.valueType == 'format-bytes') {
-                    template += '<span class="value"> {{{getJSONValueFormattedBytesByPath "' + configValue.key + '" this "' + configValue.valueFormat + '"}}} </span>';
-                } else if (configValue.valueType == 'length') {
-                    template += '<span class="value"> {{{getJSONValueLengthByPath "' + configValue.key + '" this}}} </span>';
-                }
-
                 template += '</label>' +
                 '</li>' +
                 '{{/IfValidJSONValueByPath}}';
@@ -491,17 +479,19 @@ define([
                             '{{#each ' + config.key +'}} ' +
                                 '{{#IfCompare @index 0 operator="%2"}} ' +
                                     '{{#IfCompare @index 0 operator="!="}}' +
-                                        '</div><br/>' +
+                                        '</div>' +
+                                        '<div class="row-fluid block-grid-row">' +
+                                    '{{else}}' +
+                                        '<div class="row-fluid block-grid-row">' +
                                     '{{/IfCompare}}' +
-                                    '<div class="row-fluid">' +
                                 '{{/IfCompare}}' +
                                 '<div class="span6">' +
                                     '<div class="row-fluid">' +
                                         self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app) +
                                     '</div>' +
-                                '</div>';
-
-                    template += '{{/each}} </div> {{/IfValidJSONValueByPath}}</div></div>';
+                                '</div>' +
+                            '{{/each}} </div>' +
+                        '{{/IfValidJSONValueByPath}}</div></div>';
 
                     templateObj = $(template);
 
@@ -518,7 +508,6 @@ define([
             templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
             templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}')
 
-            console.log(templateObj.prop('outerHTML'))
             return(templateObj.prop('outerHTML'))
         };
 
