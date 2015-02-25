@@ -252,10 +252,19 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
 
 });
 
-
 Handlebars.registerHelper('IfValidJSONValueByPath', function (path, obj, index, options) {
     var result = (cowu.getJSONValueByPath(path, obj) != "-") ? true : false;
     if(result || index == 0) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});
+
+Handlebars.registerHelper('IfValidJSONValueByPathLength', function (path, obj, options) {
+    var value = cowu.getJSONValueByPath(path, obj),
+        result = (value != "-") ? true : false;
+    if(result && value.length > 0) {
         return options.fn(this);
     } else {
         return options.inverse(this);

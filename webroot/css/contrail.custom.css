@@ -994,7 +994,7 @@ a.selectAllLink:hover {
     padding: 0 0 5px;
     margin: 0 5px 5px;
     color: #3182bd;
-    border-bottom: 1px solid #AAAAAA;
+    border-bottom: 1px solid #ccc;
 }
 .group-detail-container ul.item-list li {
     border: none;
@@ -1009,8 +1009,8 @@ a.selectAllLink:hover {
     font-weight:400;
 }
 .slick-row-detail .block-grid-row {
-    margin-top: 5px;
-    margin-bottom: 5px;
+    padding-top: 5px;
+    padding-bottom: 10px;
 }
 .value-link {
     text-decoration: underline;

@@ -466,15 +466,11 @@ define([
 
                 case 'BlockGridTemplateGenerator':
 
-                    var template = '<div class="detail-block-grid-content row-fluid">';
-
-                    if (contrail.checkIfExist(config.title)) {
-                        template += '<h6>' + config.title + '</h6>';
-                    }
-
-                    template += '' +
+                    var template = '<div>' +
+                        '{{#IfValidJSONValueByPathLength "' + config.key + '" this}} ' +
+                        '<div class="detail-block-grid-content row-fluid">' +
+                        (contrail.checkIfExist(config.title) ? '<h6>' + config.title + '</h6>' : '') +
                         '<div class="row-fluid">' +
-                        '{{#IfValidJSONValueByPath "' + config.key + '" this 1}} ' +
                             '{{#each ' + config.key +'}} ' +
                                 '{{#IfCompare @index 0 operator="%2"}} ' +
                                     '{{#IfCompare @index 0 operator="!="}}' +
@@ -490,7 +486,7 @@ define([
                                     '</div>' +
                                 '</div>' +
                             '{{/each}} </div>' +
-                        '{{/IfValidJSONValueByPath}}</div></div>';
+                        '</div></div> {{/IfValidJSONValueByPathLength}} </div>';
 
                     templateObj = $(template);
 
