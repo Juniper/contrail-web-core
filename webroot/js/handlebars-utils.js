@@ -217,3 +217,11 @@ Handlebars.registerHelper('IfValidJSONValueByPath', function (path, obj, index, 
         return options.inverse(this);
     }
 });
+Handlebars.registerHelper('encodedVN', function(jsonObj) {
+    if(null !== jsonObj && typeof jsonObj !== "undefined" &&
+        jsonObj.hasOwnProperty('q') &&
+        jsonObj['q'].hasOwnProperty('srcVN') && 
+        jsonObj['q']['srcVN'].indexOf(' ') !== -1)
+        jsonObj['q']['srcVN'] = encodeURIComponent(jsonObj['q']['srcVN']);
+    return JSON.stringify(jsonObj);
+});
