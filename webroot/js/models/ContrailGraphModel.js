@@ -54,8 +54,8 @@ define([
             return (self.contrailDataHandler != null) ? self.contrailDataHandler.isPrimaryRequestInProgress() : false;
         },
 
-        isLazyRequestInProgress: function() {
-            return (self.contrailDataHandler != null) ? self.contrailDataHandler.isLazyRequestInProgress() : false;
+        isVLRequestInProgress: function() {
+            return (self.contrailDataHandler != null) ? self.contrailDataHandler.isVLRequestInProgress() : false;
         },
 
         isRequestInProgress: function() {
@@ -92,7 +92,7 @@ define([
     var getRemoteHandlerConfig = function (contrailGraphModel, successCallback) {
         var remoteHandlerConfig = {},
             primaryRemote = contrailGraphModel.graphConfig.remote,
-            lazyRemote = contrailGraphModel.graphConfig.lazyRemote,
+            vlRemote = contrailGraphModel.graphConfig.lazyRemote,
             primaryRemoteConfig = {
                 ajaxConfig: primaryRemote.ajaxConfig,
                 dataParser: primaryRemote.dataParser,
@@ -109,7 +109,12 @@ define([
                     }
                     successCallback(contrailGraphModel.directedGraphSize);
                 },
-                updateCacheCallback: function(completeResponse) {
+                failureCallback: function (xhr) {
+                    if (contrail.checkIfFunction(primaryRemote.failureCallback)) {
+                        primaryRemote.failureCallback(xhr, contrailGraphModel);
+                    }
+                },
+                completeCallback: function(completeResponse) {
                     var response = completeResponse[0];
                     if (contrailGraphModel.setData2Cache != null) {
                         //TODO: Binding of cached gridModel (if any) with existing view should be destroyed.
@@ -118,38 +123,33 @@ define([
                             response: response
                         });
                     }
-                },
-                failureCallback: function (xhr) {
-                    if (contrail.checkIfFunction(primaryRemote.failureCallback)) {
-                        primaryRemote.failureCallback(xhr, contrailGraphModel);
-                    }
                 }
             },
-            lazyRemoteConfig;
+            vlRemoteList;
 
         remoteHandlerConfig['primaryRemoteConfig'] = primaryRemoteConfig;
-        remoteHandlerConfig['lazyRemoteConfig'] = [];
+        remoteHandlerConfig['vlRemoteConfig'] = {vlRemoteList: []};
 
-        for (var i = 0; lazyRemote != null && i < lazyRemote.length; i++) {
-            var lSuccessCallback = lazyRemote[i].successCallback,
-                lFailureCallback = lazyRemote[i].failureCallback;
+        for (var i = 0; vlRemote != null && i < vlRemote.length; i++) {
+            var vlSuccessCallback = vlRemote[i].successCallback,
+                vlFailureCallback = vlRemote[i].failureCallback;
 
-            lazyRemoteConfig = {
-                getAjaxConfig: lazyRemote[i].getAjaxConfig,
-                dataParser: lazyRemote[i].dataParser,
-                initCallback: lazyRemote[i].initCallback,
+            vlRemoteList = {
+                getAjaxConfig: vlRemote[i].getAjaxConfig,
+                dataParser: vlRemote[i].dataParser,
+                initCallback: vlRemote[i].initCallback,
                 successCallback: function (response) {
-                    if (contrail.checkIfFunction(lSuccessCallback)) {
-                        lSuccessCallback(response, contrailGraphModel);
+                    if (contrail.checkIfFunction(vlSuccessCallback)) {
+                        vlSuccessCallback(response, contrailGraphModel);
                     }
                 },
                 failureCallback: function (xhr) {
-                    if (contrail.checkIfFunction(lFailureCallback)) {
-                        lFailureCallback(xhr, contrailGraphModel);
+                    if (contrail.checkIfFunction(vlFailureCallback)) {
+                        vlFailureCallback(xhr, contrailGraphModel);
                     }
                 }
             }
-            remoteHandlerConfig['lazyRemoteConfig'].push(lazyRemoteConfig);
+            remoteHandlerConfig['vlRemoteConfig']['vlRemoteList'].push(vlRemoteList);
         }
 
         return remoteHandlerConfig;
