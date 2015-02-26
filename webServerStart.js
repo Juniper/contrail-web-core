@@ -10,6 +10,7 @@ exports.config = config;
 
 var redisUtils = require('./src/serverroot/utils/redis.utils');
 var global = require('./src/serverroot/common/global');
+var jsonDiff = require('./src/serverroot/common/jsondiff');
 
 var server_port = (config.redis_server_port) ?
     config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
@@ -361,6 +362,7 @@ function startWebCluster ()
     } else {
         clusterWorkerInit(function(error) {
             initAppConfig();
+            jsonDiff.doFeatureJsonDiffParamsInit();
             registerSessionDeleteEvent();
             registerReqToApp();
             /* Set maxListener to unlimited */
