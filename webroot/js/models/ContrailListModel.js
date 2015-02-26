@@ -9,33 +9,63 @@ define([
     var ContrailListModel = function (listModelConfig) {
         var contrailListModel = {}, newContrailListModel = {},
             contrailDataHandler = null, self = this,
-            cachedData, remoteHandlerConfig;
+            cachedData, lastUpdateTime, remoteHandlerConfig,
+            useCache = true;
 
-        contrailListModel = createContrailListModel(listModelConfig);
+        var defaultCacheConfig = {
+            cacheConfig: {
+                cacheTimeout: cowc.LIST_CACHE_UPDATE_INTERVAL,
+                loadOnTimeout: false
+            }
+        };
 
-        if (listModelConfig != null) {
-            if (listModelConfig.data != null) {
-                contrailListModel.setData(listModelConfig.data);
-            } else if (listModelConfig.remote != null && listModelConfig.remote.ajaxConfig != null) {
+        var modelConfig = $.extend(true, {}, listModelConfig, defaultCacheConfig),
+            cacheConfig = modelConfig['cacheConfig'];
+
+        contrailListModel = createContrailListModel(modelConfig);
+
+        if (modelConfig != null) {
+            if (modelConfig.data != null) {
+                contrailListModel.setData(modelConfig.data);
+            } else if (modelConfig.remote != null && modelConfig.remote.ajaxConfig != null) {
                 cachedData = (contrailListModel.getDataFromCache != null) ? contrailListModel.getDataFromCache(contrailListModel.ucid) : null;
+                if(cacheConfig.cacheTimeout == 0 || cachedData == null) {
+                    useCache = false;
+                } else if (cachedData != null && (cacheConfig.cacheTimeout < ($.now() - cachedData['lastUpdateTime'])) && cacheConfig.loadOnTimeout == false) {
+                    useCache = false;
+                }
 
-                if(cachedData != null) {
+                if(useCache) {
                     var cachedContrailListModel = cachedData['dataObject']['listModel'],
                         offset = cachedContrailListModel._idOffset;
 
-                    newContrailListModel = createContrailListModel(listModelConfig);
-                    remoteHandlerConfig = getUpdateRemoteHandlerConfig(listModelConfig, newContrailListModel, contrailListModel);
-                    createGridFromCache(cachedData, contrailListModel, newContrailListModel, remoteHandlerConfig);
+                    newContrailListModel = createContrailListModel(modelConfig);
+                    remoteHandlerConfig = getUpdateRemoteHandlerConfig(modelConfig, newContrailListModel, contrailListModel);
+                    contrailDataHandler = createGridFromCache(cachedData, contrailListModel, newContrailListModel, remoteHandlerConfig);
+
                 } else {
-                    remoteHandlerConfig = getRemoteHandlerConfig(listModelConfig, contrailListModel);
+                    remoteHandlerConfig = getRemoteHandlerConfig(modelConfig, contrailListModel);
                     contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
                     contrailListModel['refreshData'] = function() {
                         if(contrailDataHandler != null) {
                             contrailDataHandler.refreshData();
                         }
                     }
+
                 }
             }
+        }
+
+        this.isPrimaryRequestInProgress = function() {
+            return (contrailDataHandler != null) ? contrailDataHandler.isPrimaryRequestInProgress() : false;
+        }
+
+        this.isLazyRequestInProgress = function() {
+            return (contrailDataHandler != null) ? contrailDataHandler.isLazyRequestInProgress() : false;
+        }
+
+        this.isRequestInProgress = function() {
+            return (contrailDataHandler != null) ? contrailDataHandler.isRequestInProgress() : false;
         }
 
         return contrailListModel;
@@ -43,12 +73,12 @@ define([
 
     function createGridFromCache(cachedData, contrailListModel, newContrailListModel, remoteHandlerConfig) {
         var cachedContrailListModel = cachedData['dataObject']['listModel'],
-            cachedTime = cachedData['time'],
+            lastUpdateTime = cachedData['lastUpdateTime'],
             newContrailDataHandler;
 
         contrailListModel.setData(cachedContrailListModel.getItems());
 
-        if (cowc.LIST_CACHE_UPDATE_INTERVAL < ($.now() - cachedTime)) {
+        if (cowc.LIST_CACHE_UPDATE_INTERVAL < ($.now() - lastUpdateTime)) {
             newContrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
 
             newContrailListModel['refreshData'] = function() {
@@ -57,6 +87,8 @@ define([
                 }
             }
         }
+
+        return newContrailDataHandler;
     };
 
     function createContrailListModel(listModelConfig, offset) {
@@ -107,9 +139,9 @@ define([
             refreshData: function() {
                 // Will be set after data handler is created.
             },
-            getDataFromCache: listModelConfig['getDataFromCache'],
-            setData2Cache: listModelConfig['setData2Cache'],
-            ucid:listModelConfig['ucid']
+            getDataFromCache: listModelConfig['cacheConfig']['getDataFromCache'],
+            setData2Cache: listModelConfig['cacheConfig']['setData2Cache'],
+            ucid:listModelConfig['cacheConfig']['ucid']
         });
 
         return contrailListModel;

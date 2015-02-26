@@ -4,15 +4,23 @@ define([
 ], function (_, ContrailRemoteDataHandler) {
     var ContrailGraphModel = joint.dia.Graph.extend({
 
-        initialize: function (modelConfig) {
+        initialize: function (graphModelConfig) {
+            var defaultCacheConfig = {
+                cacheConfig: {
+                    cacheTimeout: cowc.GRAPH_CACHE_UPDATE_INTERVAL,
+                    loadOnTimeout: true
+                }
+            };
+
+            var modelConfig = $.extend(true, {}, graphModelConfig, defaultCacheConfig);
 
             joint.dia.Graph.prototype.initialize.apply(this);
-            this.requestInProgress = false;
 
+            this.cacheConfig = modelConfig['cacheConfig'];
+            this.ucid = modelConfig['cacheConfig']['ucid'];
+            this.setData2Cache = modelConfig['cacheConfig']['setData2Cache'];
+            this.getDataFromCache = modelConfig['cacheConfig']['getDataFromCache'];
             this.graphConfig = modelConfig;
-            this.getDataFromCache = modelConfig['getDataFromCache'];
-            this.setData2Cache = modelConfig['setData2Cache'];
-            this.ucid = modelConfig['ucid'];
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
 
@@ -20,19 +28,38 @@ define([
         },
 
         fetchData: function (successCallback) {
-            var self = this;
+            var self = this, useCache = true,
+                cacheConfig = self.cacheConfig;
 
-            self.requestInProgress = true;
             self.elementMap = {node: {}, link: {}};
 
             var remoteHandlerConfig = getRemoteHandlerConfig(self, successCallback),
-                cachedData = (self.getDataFromCache != null) ? self.getDataFromCache(self.ucid) : null;
+                cachedData = (cacheConfig.getDataFromCache != null) ? cacheConfig.getDataFromCache(cacheConfig.ucid) : null;
 
-            if (cachedData != null) {
+
+            if(cacheConfig.cacheTimeout == 0 || cachedData == null) {
+                useCache = false;
+            } else if (cachedData != null && (cacheConfig.cacheTimeout < ($.now() - cachedData['lastUpdateTime'])) && cacheConfig.loadOnTimeout == false) {
+                useCache = false;
+            }
+
+            if (useCache) {
                 self.contrailDataHandler = createGraphFromCache(cachedData, self, successCallback, remoteHandlerConfig);
             } else {
                 self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
             }
+        },
+
+        isPrimaryRequestInProgress: function() {
+            return (self.contrailDataHandler != null) ? self.contrailDataHandler.isPrimaryRequestInProgress() : false;
+        },
+
+        isLazyRequestInProgress: function() {
+            return (self.contrailDataHandler != null) ? self.contrailDataHandler.isLazyRequestInProgress() : false;
+        },
+
+        isRequestInProgress: function() {
+            return (self.contrailDataHandler != null) ? self.contrailDataHandler.isRequestInProgress() : false;
         }
     });
 
@@ -41,7 +68,7 @@ define([
             cachedGraphModel = cachedData['dataObject']['graphModel'],
             cachedElementsMap = cachedGraphModel.elementMap,
             cachedResponse = cachedData['dataObject']['response'],
-            cachedTime = cachedData['time'];
+            cachedTime = cachedData['lastUpdateTime'];
 
         var elementMap = {node: {}, link: {}};
         var elementsObject = contrailGraphModel.generateElements(cachedResponse, elementMap);
@@ -81,7 +108,6 @@ define([
                         contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
                     }
                     successCallback(contrailGraphModel.directedGraphSize);
-                    contrailGraphModel.requestInProgress = false;
                 },
                 updateCacheCallback: function(completeResponse) {
                     var response = completeResponse[0];

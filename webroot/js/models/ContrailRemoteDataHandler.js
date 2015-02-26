@@ -12,20 +12,12 @@ define([
             pInitHandler, pSuccessHandler, pRefreshHandler, pFailureHandler, fetchPrimaryData,
             pAjaxConfig, pUrl, pUrlParams, pDataParser, pInitCallback, pSuccessCallback,
             pRefreshSuccessCallback, pFailureCallback, pUpdateCacheCallback, setNextUrl,
-            pRequestCompleteResponse = [], pRequestInProgress = false, lRequestsInProgress = [],
-            cleanAndFresh = false, self = this, updateActiveModel = false;
-
-        var defaultConfig = {
-            lazyLoading: {
-                type: "horizontal",
-                count: 50
-            }
-        };
+            pRequestCompleteResponse = [], lRequestsInProgress = [], pRequestInProgress, lRequestInProgress,
+            completeCallback, completeHandler, cleanAndFresh = false, self = this, updateActiveModel = false;
 
         pAjaxConfig = primaryRemoteConfig.ajaxConfig;
-
-        pUrl = pAjaxConfig['url'],
-            pUrlParams = $.deparamURLArgs(pUrl);
+        pUrl = pAjaxConfig['url'];
+        pUrlParams = $.deparamURLArgs(pUrl);
 
         pDataParser = primaryRemoteConfig.dataParser;
         pInitCallback = primaryRemoteConfig.initCallback;
@@ -33,6 +25,13 @@ define([
         pRefreshSuccessCallback = primaryRemoteConfig.refreshSuccessCallback;
         pFailureCallback = primaryRemoteConfig.failureCallback;
         pUpdateCacheCallback = primaryRemoteConfig.updateCacheCallback;
+        completeCallback = remoteHandlerConfig.finalCallback;
+
+        completeHandler = function() {
+            if (contrail.checkIfFunction(completeCallback)) {
+                completeCallback();
+            }
+        };
 
         pInitHandler = function () {
             pRequestInProgress = true;
@@ -54,7 +53,12 @@ define([
 
             if (contrail.checkIfFunction(pSuccessCallback)) {
                 pSuccessCallback(resultJSON);
+                var counter = lRequestsInProgress.length;
+                lRequestsInProgress[counter] = [];
                 for (var i = 0; i < lazyRemoteList.length; i++) {
+                    var innerCounter = lRequestsInProgress[counter].length;
+                    lRequestsInProgress[counter][innerCounter] = 1;
+                    lRequestInProgress = computeLazyRequestStatus(lRequestsInProgress, completeHandler);
                     var lDataParser = lazyRemoteList[i].dataParser,
                         lSuccessCallback = lazyRemoteList[i].successCallback,
                         lSuccessHandler = function (lazyResponse) {
@@ -67,9 +71,16 @@ define([
                             }
 
                             lSuccessCallback(lazyResultJSON, updateActiveModel);
+                            lRequestsInProgress[counter][innerCounter] = 0;
+                            lRequestInProgress = computeLazyRequestStatus(lRequestsInProgress, completeHandler);
+                        },
+                        lFailureHandler = function(xhr) {
+                            lRequestsInProgress[counter][innerCounter] = 0;
+                            lRequestInProgress = computeLazyRequestStatus(lRequestsInProgress, completeHandler);
+                            lazyRemoteList[i].failureCallback(xhr)
                         };
 
-                    contrail.ajaxHandler(lazyRemoteList[i].getAjaxConfig(resultJSON), lazyRemoteList[i].initCallback, lSuccessHandler, lazyRemoteList[i].failureCallback);
+                    contrail.ajaxHandler(lazyRemoteList[i].getAjaxConfig(resultJSON), lazyRemoteList[i].initCallback, lSuccessHandler, lFailureHandler);
                 }
             }
 
@@ -131,7 +142,39 @@ define([
 
         fetchPrimaryData();
 
+        this.isPrimaryRequestInProgress = function() {
+            return pRequestInProgress;
+        }
+
+        this.isLazyRequestInProgress = function() {
+            return lRequestInProgress;
+        }
+
+        this.isRequestInProgress = function() {
+            if(pRequestInProgress || lRequestInProgress) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
         return self;
+    }
+
+    function computeLazyRequestStatus(lRequestsInProgress, completeHandler) {
+        var flattenedArray = _.flatten(lRequestsInProgress);
+
+        var inProgress = _.find(flattenedArray, function(status) {
+            return status == 1;
+        });
+
+        var requestInProgress = (typeof inProgress != "undefined") ? true : false;
+
+        if(!requestInProgress) {
+            completeHandler();
+        }
+
+        return requestInProgress;
     }
 
     return ContrailRemoteDataHandler;
