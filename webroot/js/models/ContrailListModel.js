@@ -6,10 +6,10 @@ define([
     'underscore',
     'contrail-remote-data-handler'
 ], function (_, ContrailRemoteDataHandler) {
-    var ContrailListModel = function (listModelConfig) {
+    var ContrailListModel = function (listModelConfig, parentListModel) {
         var contrailListModel = {}, newContrailListModel = {},
-            contrailDataHandler = null, self = this,
-            cachedData, lastUpdateTime, remoteHandlerConfig,
+            hlContrailListModel = {}, contrailDataHandler = null, self = this,
+            cachedData, lastUpdateTime, remoteHandlerConfig, hlRemoteConfig,
             useCache = true;
 
         var defaultCacheConfig = {
@@ -19,7 +19,7 @@ define([
             }
         };
 
-        var modelConfig = $.extend(true, {}, listModelConfig, defaultCacheConfig),
+        var modelConfig = $.extend(true, {}, defaultCacheConfig, listModelConfig),
             cacheConfig = modelConfig['cacheConfig'];
 
         contrailListModel = createContrailListModel(modelConfig);
@@ -28,6 +28,7 @@ define([
             if (modelConfig.data != null) {
                 contrailListModel.setData(modelConfig.data);
             } else if (modelConfig.remote != null && modelConfig.remote.ajaxConfig != null) {
+                hlRemoteConfig = modelConfig['remote']['hlRemoteConfig'];
                 cachedData = (contrailListModel.getDataFromCache != null) ? contrailListModel.getDataFromCache(contrailListModel.ucid) : null;
                 if(cacheConfig.cacheTimeout == 0 || cachedData == null) {
                     useCache = false;
@@ -42,16 +43,17 @@ define([
                     newContrailListModel = createContrailListModel(modelConfig);
                     remoteHandlerConfig = getUpdateRemoteHandlerConfig(modelConfig, newContrailListModel, contrailListModel);
                     contrailDataHandler = createGridFromCache(cachedData, contrailListModel, newContrailListModel, remoteHandlerConfig);
-
                 } else {
-                    remoteHandlerConfig = getRemoteHandlerConfig(modelConfig, contrailListModel);
+                    if(hlRemoteConfig != null) {
+                        hlContrailListModel = createHLazyListModel(hlRemoteConfig, contrailListModel);
+                    }
+                    remoteHandlerConfig = getRemoteHandlerConfig(modelConfig, contrailListModel, parentListModel);
                     contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
                     contrailListModel['refreshData'] = function() {
                         if(contrailDataHandler != null) {
                             contrailDataHandler.refreshData();
                         }
                     }
-
                 }
             }
         }
@@ -65,7 +67,9 @@ define([
         }
 
         this.isRequestInProgress = function() {
-            return (contrailDataHandler != null) ? contrailDataHandler.isRequestInProgress() : false;
+            var currentModelRequestInProgress = (contrailDataHandler != null) ? contrailDataHandler.isRequestInProgress() : false;
+            var hlModelRequestInProgress = (hlContrailListModel != null) ? hlContrailListModel.isRequestInProgress() : false;
+            return currentModelRequestInProgress && hlModelRequestInProgress;
         }
 
         return contrailListModel;
@@ -147,10 +151,11 @@ define([
         return contrailListModel;
     }
 
-    function getRemoteHandlerConfig(listModelConfig, contrailListModel) {
+    function getRemoteHandlerConfig(listModelConfig, contrailListModel, parentListModel) {
         var remoteHandlerConfig = {},
             primaryRemote = listModelConfig.remote,
-            vlRemote = listModelConfig.lazyRemote,
+            vlRemoteConfig = (listModelConfig.vlRemoteConfig != null) ? listModelConfig.vlRemoteConfig : {},
+            vlRemoteList = (listModelConfig.lazyRemote != null) ? listModelConfig.lazyRemote : [],
             primaryRemoteConfig = {
                 ajaxConfig: primaryRemote.ajaxConfig,
                 dataParser: primaryRemote.dataParser,
@@ -176,40 +181,53 @@ define([
                         primaryRemote.failureCallback(xhr, contrailListModel);
                     }
                 },
-                completeCallback: function() {
+                completeCallback: function(response) {
                     if (contrailListModel.setData2Cache != null) {
                         //TODO: Binding of cached listModel (if any) with existing view should be destroyed.
                         contrailListModel.setData2Cache(contrailListModel.ucid, {
                             listModel: contrailListModel
                         });
                     }
+                    if (contrail.checkIfFunction(primaryRemote.completeCallback)) {
+                        primaryRemote.completeCallback(response, contrailListModel, parentListModel);
+                    }
                 }
             },
-            vlRemoteList;
+            vlRemote;
 
         remoteHandlerConfig['primaryRemoteConfig'] = primaryRemoteConfig;
-        remoteHandlerConfig['vlRemoteConfig'] = {vlRemoteList: []};
 
-        for (var i = 0; vlRemote != null && i < vlRemote.length; i++) {
-            var lSuccessCallback = vlRemote[i].successCallback,
-                lFailureCallback = vlRemote[i].failureCallback;
+        remoteHandlerConfig['vlRemoteConfig'] = {
+            vlRemoteList: [],
+            completeCallback: function() {
+                if (contrail.checkIfFunction(vlRemoteConfig['completeCallback'])) {
+                    vlRemoteConfig['completeCallback'](contrailListModel, parentListModel);
+                }
+            }
+        };
 
-            vlRemoteList = {
-                getAjaxConfig: vlRemote[i].getAjaxConfig,
-                dataParser: vlRemote[i].dataParser,
-                initCallback: vlRemote[i].initCallback,
+
+
+        for (var i = 0; i < vlRemoteList.length; i++) {
+            var vlSuccessCallback = vlRemoteList[i].successCallback,
+                vlFailureCallback = vlRemoteList[i].failureCallback;
+
+            vlRemote = {
+                getAjaxConfig: vlRemoteList[i].getAjaxConfig,
+                dataParser: vlRemoteList[i].dataParser,
+                initCallback: vlRemoteList[i].initCallback,
                 successCallback: function (response) {
-                    if (contrail.checkIfFunction(lSuccessCallback)) {
-                        lSuccessCallback(response, contrailListModel);
+                    if (contrail.checkIfFunction(vlSuccessCallback)) {
+                        vlSuccessCallback(response, contrailListModel);
                     }
                 },
                 failureCallback: function (xhr) {
-                    if (contrail.checkIfFunction(lFailureCallback)) {
-                        lFailureCallback(xhr, contrailListModel);
+                    if (contrail.checkIfFunction(vlFailureCallback)) {
+                        vlFailureCallback(xhr, contrailListModel);
                     }
                 }
             }
-            remoteHandlerConfig['vlRemoteConfig']['vlRemoteList'].push(vlRemoteList);
+            remoteHandlerConfig['vlRemoteConfig']['vlRemoteList'].push(vlRemote);
         }
 
         return remoteHandlerConfig;
@@ -218,7 +236,7 @@ define([
     function getUpdateRemoteHandlerConfig(listModelConfig, newContrailListModel, contrailListModel) {
         var remoteHandlerConfig = {},
             primaryRemote = listModelConfig.remote,
-            vlRemote = listModelConfig.lazyRemote,
+            vlRemoteList = (listModelConfig.lazyRemote != null) ? listModelConfig.lazyRemote : [],
             primaryRemoteConfig = {
                 ajaxConfig: primaryRemote.ajaxConfig,
                 dataParser: primaryRemote.dataParser,
@@ -257,19 +275,19 @@ define([
                     contrailListModel.setData(newContrailListModel.getItems());
                 }
             },
-            vlRemoteList;
+            vlRemote;
 
         remoteHandlerConfig['primaryRemoteConfig'] = primaryRemoteConfig;
         remoteHandlerConfig['vlRemoteConfig'] = {vlRemoteList: []};
 
-        for (var i = 0; vlRemote != null && i < vlRemote.length; i++) {
-            var vlSuccessCallback = vlRemote[i].successCallback,
-                vlFailureCallback = vlRemote[i].failureCallback;
+        for (var i = 0; i < vlRemoteList.length; i++) {
+            var vlSuccessCallback = vlRemoteList[i].successCallback,
+                vlFailureCallback = vlRemoteList[i].failureCallback;
 
-            vlRemoteList = {
-                getAjaxConfig: vlRemote[i].getAjaxConfig,
-                dataParser: vlRemote[i].dataParser,
-                initCallback: vlRemote[i].initCallback,
+            vlRemote = {
+                getAjaxConfig: vlRemoteList[i].getAjaxConfig,
+                dataParser: vlRemoteList[i].dataParser,
+                initCallback: vlRemoteList[i].initCallback,
                 successCallback: function (response, updateActiveModel) {
                     if (contrail.checkIfFunction(vlSuccessCallback)) {
                         if(updateActiveModel) {
@@ -286,11 +304,15 @@ define([
                     }
                 }
             }
-            remoteHandlerConfig['vlRemoteConfig']['vlRemoteList'].push(vlRemoteList);
+            remoteHandlerConfig['vlRemoteConfig']['vlRemoteList'].push(vlRemote);
         }
 
         return remoteHandlerConfig;
     };
+
+    function createHLazyListModel(modelConfig, parentListModel) {
+        return new ContrailListModel(modelConfig, parentListModel);
+    }
 
     function setId4Idx(data, dis) {
         var offset = dis._idOffset;

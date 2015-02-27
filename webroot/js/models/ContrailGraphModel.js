@@ -63,7 +63,7 @@ define([
         }
     });
 
-    var createGraphFromCache = function (cachedData, contrailGraphModel, successCallback, remoteHandlerConfig) {
+    function createGraphFromCache(cachedData, contrailGraphModel, successCallback, remoteHandlerConfig) {
         var contrailDataHandler,
             cachedGraphModel = cachedData['dataObject']['graphModel'],
             cachedElementsMap = cachedGraphModel.elementMap,
@@ -89,7 +89,7 @@ define([
         return contrailDataHandler;
     };
 
-    var getRemoteHandlerConfig = function (contrailGraphModel, successCallback) {
+    function getRemoteHandlerConfig(contrailGraphModel, successCallback) {
         var remoteHandlerConfig = {},
             primaryRemote = contrailGraphModel.graphConfig.remote,
             vlRemote = contrailGraphModel.graphConfig.lazyRemote,
@@ -157,7 +157,6 @@ define([
 
     var graphLayoutHandler = $.extend(true, joint.layout.DirectedGraph, {
         layout: function (graph, opt) {
-
             opt = opt || {};
 
             var inputGraph = this._prepareData(graph);

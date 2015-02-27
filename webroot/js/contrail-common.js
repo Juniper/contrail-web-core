@@ -36,6 +36,23 @@ function Contrail() {
         }
         return exist;
     };
+
+    this.handleIfNull = function(value, defaultValue) {
+        if(value == null || typeof value == 'undefined') {
+            return defaultValue;
+        } else {
+            return value;
+        }
+    };
+
+    this.checkAndReplace = function(value, ifValue, replaceValue) {
+        if(value == null || typeof value == 'undefined' || value == ifValue) {
+            return replaceValue;
+        } else {
+            return value;
+        }
+    };
+
     this.checkIfFunction = function(value) {
         var isFunction = true;
         if(value == null ||  typeof value  != "function") {
