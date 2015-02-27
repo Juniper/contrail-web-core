@@ -4,31 +4,15 @@
 
 define([
     'underscore',
-    'js/views/FormInputView',
-    'js/views/FormGridView',
-    'js/views/FormDynamicGridView',
-    'js/views/FormMultiselectView',
-    'js/views/FormDropdownView',
-    'js/views/FormSelect2DropdownView',
-    'js/views/FormCheckboxView',
-    'js/views/AccordianView',
-    'js/views/SectionView',
-    'js/views/WizardView',
-    'js/views/FormEditableGridView',
-    'js/views/GridInputView',
-    'js/views/GridCheckboxView',
-    'js/views/GridDropdownView',
-    'js/views/GridMultiselectView',
-    'graph-view',
-    'js/views/TabsView',
-    'js/views/ChartView',
-    'js/views/GridView',
-    'js/views/DetailsView',
-    'js/views/ScatterChartView',
-    'js/views/LineWithFocusChartView'
+    'js/views/FormInputView', 'js/views/FormGridView', 'js/views/FormDynamicGridView', 'js/views/FormMultiselectView',
+    'js/views/FormDropdownView', 'js/views/FormSelect2DropdownView', 'js/views/FormCheckboxView',
+    'js/views/AccordianView', 'js/views/SectionView', 'js/views/WizardView', 'js/views/FormEditableGridView',
+    'js/views/GridInputView', 'js/views/GridCheckboxView', 'js/views/GridDropdownView', 'js/views/GridMultiselectView',
+    'graph-view', 'js/views/TabsView', 'js/views/ChartView', 'js/views/GridView', 'js/views/DetailsView',
+    'js/views/ScatterChartView', 'js/views/LineWithFocusChartView', 'js/views/HeatChartView'
 ], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
              AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
-             GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView, LineWithFocusChartView) {
+             GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView, LineWithFocusChartView, HeatChartView) {
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -374,6 +358,11 @@ define([
 
                 case "LineWithFocusChartView":
                     elementView = new LineWithFocusChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.render();
+                    break;
+
+                case "HeatChartView":
+                    elementView = new HeatChartView({el: parentElement, model: model, attributes: viewAttributes});
                     elementView.render();
                     break;
 
