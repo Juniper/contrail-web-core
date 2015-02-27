@@ -19,9 +19,9 @@ define([
         this.PATTERN_SUBNET_MASK = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(\d|[1-2]\d|3[0-2]))?$/;
         this.PATTERN_MAC_ADDRESS = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
 
-        this.LIST_CACHE_UPDATE_INTERVAL = 60000;
-        this.GRAPH_CACHE_UPDATE_INTERVAL = 60000;
-        this.CHART_CACHE_UPDATE_INTERVAL = 60000;
+        this.LIST_CACHE_UPDATE_INTERVAL = 30000;
+        this.GRAPH_CACHE_UPDATE_INTERVAL = 30000;
+        this.CHART_CACHE_UPDATE_INTERVAL = 30000;
 
         this.KEY_MODEL_ERRORS = 'errors';
         this.KEY_MODEL_LOCKS = 'locks';

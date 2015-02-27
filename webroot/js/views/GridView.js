@@ -40,7 +40,7 @@ define([
         footer: {
             pager: {
                 options: {
-                    pageSize: 5,
+                    pageSize: 10,
                     pageSizeSelect: [5, 10, 50]
                 }
 

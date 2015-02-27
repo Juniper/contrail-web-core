@@ -15,7 +15,7 @@ define([
         var defaultCacheConfig = {
             cacheConfig: {
                 cacheTimeout: cowc.LIST_CACHE_UPDATE_INTERVAL,
-                loadOnTimeout: false
+                loadOnTimeout: true
             }
         };
 
@@ -40,8 +40,13 @@ define([
                     var cachedContrailListModel = cachedData['dataObject']['listModel'],
                         offset = cachedContrailListModel._idOffset;
 
-                    newContrailListModel = createContrailListModel(modelConfig);
-                    remoteHandlerConfig = getUpdateRemoteHandlerConfig(modelConfig, newContrailListModel, contrailListModel);
+                    newContrailListModel = createContrailListModel(modelConfig, offset);
+
+                    if(hlRemoteConfig != null) {
+                        hlContrailListModel = createHLazyListModel(hlRemoteConfig, newContrailListModel);
+                    }
+
+                    remoteHandlerConfig = getUpdateRemoteHandlerConfig(modelConfig, newContrailListModel, contrailListModel, hlContrailListModel);
                     contrailDataHandler = createGridFromCache(cachedData, contrailListModel, newContrailListModel, remoteHandlerConfig);
                 } else {
                     if(hlRemoteConfig != null) {
@@ -206,8 +211,6 @@ define([
             }
         };
 
-
-
         for (var i = 0; i < vlRemoteList.length; i++) {
             var vlSuccessCallback = vlRemoteList[i].successCallback,
                 vlFailureCallback = vlRemoteList[i].failureCallback;
@@ -233,9 +236,10 @@ define([
         return remoteHandlerConfig;
     };
 
-    function getUpdateRemoteHandlerConfig(listModelConfig, newContrailListModel, contrailListModel) {
+    function getUpdateRemoteHandlerConfig(listModelConfig, newContrailListModel, contrailListModel, parentListModel) {
         var remoteHandlerConfig = {},
             primaryRemote = listModelConfig.remote,
+            vlRemoteConfig = (listModelConfig.vlRemoteConfig != null) ? listModelConfig.vlRemoteConfig : {},
             vlRemoteList = (listModelConfig.lazyRemote != null) ? listModelConfig.lazyRemote : [],
             primaryRemoteConfig = {
                 ajaxConfig: primaryRemote.ajaxConfig,
@@ -262,23 +266,37 @@ define([
                         primaryRemote.failureCallback(xhr, newContrailListModel);
                     }
                 },
-                completeCallback: function() {
-                    console.log("I am in complete callback");
+                completeCallback: function(response) {
                     if (newContrailListModel.setData2Cache != null) {
                         //TODO: Binding of cached listModel (if any) with existing view should be destroyed.
                         newContrailListModel.setData2Cache(newContrailListModel.ucid, {
                             listModel: newContrailListModel
                         });
                     }
+
                     // TODO: We also need update data due to lazy loading.
                     contrailListModel.setData([]);
                     contrailListModel.setData(newContrailListModel.getItems());
+
+                    if (contrail.checkIfFunction(primaryRemote.completeCallback)) {
+                        primaryRemote.completeCallback(response, contrailListModel, parentListModel);
+                        primaryRemote.completeCallback(response, newContrailListModel, parentListModel);
+                    }
                 }
             },
             vlRemote;
 
         remoteHandlerConfig['primaryRemoteConfig'] = primaryRemoteConfig;
-        remoteHandlerConfig['vlRemoteConfig'] = {vlRemoteList: []};
+
+        remoteHandlerConfig['vlRemoteConfig'] = {
+            vlRemoteList: [],
+            completeCallback: function() {
+                if (contrail.checkIfFunction(vlRemoteConfig['completeCallback'])) {
+                    vlRemoteConfig['completeCallback'](contrailListModel, parentListModel);
+                    vlRemoteConfig['completeCallback'](newContrailListModel, parentListModel);
+                }
+            }
+        };
 
         for (var i = 0; i < vlRemoteList.length; i++) {
             var vlSuccessCallback = vlRemoteList[i].successCallback,
