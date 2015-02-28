@@ -156,7 +156,25 @@ function Contrail() {
     		return text.substr(0,(size-3)) + '...';
     	}
     };
-    
+
+    this.getCookie = function(name) {
+        if(isSet(name) && isString(name)) {
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++) {
+                var x = cookies[i].substr(0, cookies[i].indexOf("="));
+                var y = cookies[i].substr(cookies[i].indexOf("=") + 1);
+                x = x.replace(/^s+|s+$/g, "").trim();
+                if (x == name)
+                    return unescape(y);
+            }
+        }
+        return false;
+    };
+
+    this.setCookie = function(name, value) {
+        document.cookie = name + "=" + escape(value) + "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/"
+    };
+
     this.formatJSON2HTML = function(json, formatDepth){
     	if(typeof json == 'string'){
     		json = JSON.parse(json);

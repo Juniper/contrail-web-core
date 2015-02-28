@@ -880,7 +880,7 @@ a.selectAllLink:hover {
 	color: #777;
 	cursor: default;
 }
-.grid-header .widget-toolbar .select2-chosen, .widget-header .widget-toolbar .select2-chosen, .breadcrumb .select2-chosen {
+.grid-header .widget-toolbar .select2-chosen, .widget-header .widget-toolbar .select2-chosen, .breadcrumb li.active .select2-chosen {
 	color: #3182bd;
 	font-weight: 600;
 }
