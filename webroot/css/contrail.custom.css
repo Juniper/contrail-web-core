@@ -2308,6 +2308,7 @@ color: #b94a48;
     position: relative;
     top: 45%;
     color: #3182bd;
+    min-height: 300px;
 }
 
 .sgSelect2 .select2-result-sub {

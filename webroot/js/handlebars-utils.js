@@ -202,6 +202,10 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
         templateGeneratorConfig = config.templateGeneratorConfig,
         returnValue;
 
+    if(value == '-') {
+        return value;
+    }
+
     switch (templateGenerator) {
         case 'TextGenerator':
             if (contrail.checkIfExist(templateGeneratorConfig)) {
