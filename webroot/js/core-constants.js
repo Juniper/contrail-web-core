@@ -6,9 +6,6 @@ define([
     'underscore'
 ], function (_) {
     var CoreConstants = function () {
-
-        this.DEFAULT_DOMAIN = "default-domain";
-
         this.TMPL_SUFFIX_ID = "-template";
         this.RESULTS_SUFFIX_ID = "-results";
         this.ERROR_SUFFIX_ID = "_error";
