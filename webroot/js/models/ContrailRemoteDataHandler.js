@@ -104,6 +104,7 @@ define([
                 pAjaxConfig['url'] = pUrl.split('?')[0] + '?' + $.param(pUrlParams);
                 if (pCompleteCallback != null) {
                     pCompleteCallback(pRequestCompleteResponse);
+                    check4AllRequestComplete();
                 }
             }
         };
@@ -166,8 +167,8 @@ define([
                     },
                     vlFailureHandler = function (xhr) {
                         vlRequestsInProgress[vlCounter][innerCounter] = 0;
+                        vlFailureCallback(xhr);
                         updateVLRequestStatus();
-                        vlFailureCallback(xhr)
                     };
 
                 contrail.ajaxHandler(vlRemoteList[i].getAjaxConfig(resultJSON), vlRemoteList[i].initCallback, vlSuccessHandler, vlFailureHandler);
@@ -185,6 +186,13 @@ define([
 
             if (!vlRequestInProgress) {
                 vlCompleteHandler();
+                check4AllRequestComplete();
+            }
+        };
+
+        function check4AllRequestComplete() {
+            if(!self.isRequestInProgress()) {
+                remoteHandlerConfig.onAllRequestsCompleteCallback();
             }
         };
     }

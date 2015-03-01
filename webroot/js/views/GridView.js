@@ -12,8 +12,13 @@ define([
             var viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
                 listModelConfig = $.extend(true, {}, viewConfig.elementConfig['body']['dataSource']),
-                contrailListModel =  contrail.handleIfNull(self.model, new ContrailListModel(listModelConfig)),
-                gridConfig;
+                contrailListModel, gridConfig;
+
+            if(this.model != null) {
+                contrailListModel =  this.model;
+            } else {
+                contrailListModel = new ContrailListModel(listModelConfig);
+            }
 
             delete viewConfig.elementConfig['body']['dataSource']['remote'];
             viewConfig.elementConfig['body']['dataSource'] = {dataView: contrailListModel};

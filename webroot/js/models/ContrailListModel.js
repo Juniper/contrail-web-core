@@ -137,7 +137,8 @@ define([
             },
             refreshData: function () {
                 // Will be set after data handler is created.
-            }
+            },
+            onAllRequestsComplete: new Slick.Event()
         });
 
         if(cacheConfig != null) {
@@ -229,6 +230,18 @@ define([
             vlRemote;
 
         remoteHandlerConfig['primaryRemoteConfig'] = primaryRemoteConfig;
+        remoteHandlerConfig['onAllRequestsCompleteCallback'] = function() {
+            if(!contrailListModel.isRequestInProgress()) {
+                contrailListModel.onAllRequestsComplete.notify();
+            }
+            if (parentModelList != null && parentModelList.length > 0) {
+                for (var i = 0; i < 1; i++) {
+                    if (!parentModelList[i].isRequestInProgress()) {
+                        parentModelList[i].onAllRequestsComplete.notify();
+                    }
+                }
+            }
+        };
 
         remoteHandlerConfig['vlRemoteConfig'] = {
             vlRemoteList: [],
@@ -325,6 +338,12 @@ define([
             vlRemote;
 
         remoteHandlerConfig['primaryRemoteConfig'] = primaryRemoteConfig;
+
+        remoteHandlerConfig['onAllRequestsCompleteCallback'] = function() {
+            //TODO: Debug why check for isRequestInProgress is not required
+            visibleContrailListModel.onAllRequestsComplete.notify();
+            newContrailListModel.onAllRequestsComplete.notify();
+        };
 
         remoteHandlerConfig['vlRemoteConfig'] = {
             vlRemoteList: [],

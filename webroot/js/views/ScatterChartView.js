@@ -46,7 +46,7 @@ define([
                     self.renderChart(selector, formattedResponse);
                 }
 
-                self.model.onDataUpdate.subscribe(function() {
+                self.model.onAllRequestsComplete.subscribe(function() {
                     var formattedResponse = self.model.getItems();
                     if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                         formattedResponse = viewConfig['parseFn'](formattedResponse);
