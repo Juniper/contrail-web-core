@@ -18,31 +18,49 @@ define([
 
             self.$el.append(loadingSpinnerTemplate);
 
-            $.ajax(ajaxConfig).done(function (result) {
-                deferredObj.resolve(result);
-            });
+            if(self.model == null) {
+                $.ajax(ajaxConfig).done(function (result) {
+                    deferredObj.resolve(result);
+                });
 
-            deferredObj.done(function (response) {
-                var formattedResponse = response;
-                if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                    formattedResponse = viewConfig['parseFn'](response);
+                deferredObj.done(function (response) {
+                    var formattedResponse = response;
+
+                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
+                        formattedResponse = viewConfig['parseFn'](response);
+                    }
+                    self.renderChart(selector, formattedResponse);
+                });
+
+                deferredObj.fail(function (errObject) {
+                    if (errObject['errTxt'] != null && errObject['errTxt'] != 'abort') {
+                        showMessageInChart({selector: self.$el, msg: 'Error in fetching Details', type: 'bubblechart'});
+                    }
+                });
+            } else {
+                if(!(self.model.isRequestInProgress())) {
+                    var formattedResponse = self.model.getItems();
+                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
+                        formattedResponse = viewConfig['parseFn'](formattedResponse);
+                    }
+                    self.renderChart(selector, formattedResponse);
                 }
-                var chartViewConfig = getChartViewConfig(selector, formattedResponse);
 
-                self.chartModel = new ScatterChartModel(chartViewConfig['chartData'], chartViewConfig['chartOptions']);
-
-                self.renderChart(selector, chartViewConfig);
-                self.$el.find('.loading-spinner').remove()
-            });
-
-            deferredObj.fail(function (errObject) {
-                if (errObject['errTxt'] != null && errObject['errTxt'] != 'abort') {
-                    showMessageInChart({selector: self.$el, msg: 'Error in fetching Details', type: 'bubblechart'});
-                }
-            });
+                self.model.onDataUpdate.subscribe(function() {
+                    var formattedResponse = self.model.getItems();
+                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
+                        formattedResponse = viewConfig['parseFn'](formattedResponse);
+                    }
+                    self.renderChart(selector, formattedResponse);
+                });
+            }
         },
 
-        renderChart: function (selector, chartViewConfig) {
+        renderChart: function (selector, formattedResponse) {
+            var chartViewConfig = getChartViewConfig(selector, formattedResponse);
+
+            this.chartModel = new ScatterChartModel(chartViewConfig['chartData'], chartViewConfig['chartOptions']);
+
             var chartData = chartViewConfig['chartData'],
                 chartModel = this.chartModel,
                 chartOptions = chartViewConfig['chartOptions'];
@@ -65,6 +83,7 @@ define([
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
 
+            $(selector).find('.loading-spinner').remove();
             nv.addGraph(chartModel);
         }
     });

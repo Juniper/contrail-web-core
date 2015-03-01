@@ -15,10 +15,10 @@ define([
 
         var pAjaxConfig, pUrl, pUrlParams, pDataParser, pInitCallback, pSuccessCallback,
             pRefreshSuccessCallback, pFailureCallback, pCompleteCallback,
-            pRequestCompleteResponse = [], pRequestInProgress;
+            pRequestCompleteResponse = [], pRequestInProgress = false;
 
-        var vlRequestsInProgress = [], vlRequestInProgress, vlCompleteCallback,
-            cleanAndFresh = false, self = this, updateActiveModel = false;
+        var vlRequestsInProgress = [], vlRequestInProgress = false, vlCompleteCallback,
+            cleanAndFresh = false, self = this;
 
         pAjaxConfig = primaryRemoteConfig.ajaxConfig;
         pUrl = pAjaxConfig['url'];
@@ -72,7 +72,9 @@ define([
 
         function pInitHandler() {
             pRequestInProgress = true;
-            updateActiveModel = false;
+            if(vlRemoteList != null && vlRemoteList.length > 0) {
+                vlRequestInProgress = true;
+            }
             if (contrail.checkIfFunction(pInitCallback)) {
                 pInitCallback();
             }
@@ -102,7 +104,6 @@ define([
                 pAjaxConfig['url'] = pUrl.split('?')[0] + '?' + $.param(pUrlParams);
                 if (pCompleteCallback != null) {
                     pCompleteCallback(pRequestCompleteResponse);
-                    updateActiveModel = true;
                 }
             }
         };
@@ -128,9 +129,9 @@ define([
             pRequestInProgress = false;
         };
 
-        function pFailureHandler(response) {
+        function pFailureHandler(xhr) {
             if (contrail.checkIfFunction(pFailureCallback)) {
-                pFailureCallback(response);
+                pFailureCallback(xhr);
             }
             pRequestInProgress = false;
         };
@@ -143,11 +144,13 @@ define([
             var vlCounter = vlRequestsInProgress.length;
             vlRequestsInProgress[vlCounter] = [];
             for (var i = 0; vlRemoteList!=null && i < vlRemoteList.length; i++) {
-                var innerCounter = vlRequestsInProgress[vlCounter].length;
+                var vlRemote = vlRemoteList[i],
+                    innerCounter = vlRequestsInProgress[vlCounter].length;
                 vlRequestsInProgress[vlCounter][innerCounter] = 1;
-                vlRequestInProgress = updateVLRequestStatus();
-                var vlDataParser = vlRemoteList[i].dataParser,
-                    vlSuccessCallback = vlRemoteList[i].successCallback,
+                updateVLRequestStatus();
+                var vlDataParser = vlRemote.dataParser,
+                    vlSuccessCallback = vlRemote.successCallback,
+                    vlFailureCallback = vlRemote.failureCallback,
                     vlSuccessHandler = function (vlResponse) {
                         var vlResultJSON;
 
@@ -157,14 +160,14 @@ define([
                             vlResultJSON = vlResponse;
                         }
 
-                        vlSuccessCallback(vlResultJSON, updateActiveModel);
+                        vlSuccessCallback(vlResultJSON);
                         vlRequestsInProgress[vlCounter][innerCounter] = 0;
-                        vlRequestInProgress = updateVLRequestStatus();
+                        updateVLRequestStatus();
                     },
                     vlFailureHandler = function (xhr) {
                         vlRequestsInProgress[vlCounter][innerCounter] = 0;
-                        vlRequestInProgress = updateVLRequestStatus();
-                        vlRemoteList[i].failureCallback(xhr)
+                        updateVLRequestStatus();
+                        vlFailureCallback(xhr)
                     };
 
                 contrail.ajaxHandler(vlRemoteList[i].getAjaxConfig(resultJSON), vlRemoteList[i].initCallback, vlSuccessHandler, vlFailureHandler);
