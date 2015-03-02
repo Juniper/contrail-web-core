@@ -152,7 +152,7 @@ define([
             params['endTime'] = new XDate().getTime();
             params['portType'] = response['type'];
             params['protocol'] = protocolMap[response['pType']];
-            layoutHandler.setURLHashParams(params, {p: 'mon_net_networks'});
+            layoutHandler.setURLHashParams(params, {p: 'mon_networking_networks'});
         });
         heatMap.on('mouseover', function () {
             d3.select(this).style('cursor', 'pointer');
