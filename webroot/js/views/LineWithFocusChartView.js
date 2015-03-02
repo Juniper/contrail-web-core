@@ -80,7 +80,7 @@ define([
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
 
-            nv.addGraph(chartModel);
+            //nv.addGraph(chartModel);
         }
     });
 

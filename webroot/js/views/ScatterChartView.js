@@ -39,6 +39,16 @@ define([
                     }
                     self.renderChart(selector, formattedResponse);
                 });
+
+                if(viewConfig.loadChartInChunks) {
+                    self.model.onDataUpdate.subscribe(function() {
+                        var formattedResponse = self.model.getItems();
+                        if (contrail.checkIfFunction(viewConfig['parseFn'])) {
+                            formattedResponse = viewConfig['parseFn'](formattedResponse);
+                        }
+                        self.renderChart(selector, formattedResponse);
+                    });
+                }
             } else {
                 $.ajax(ajaxConfig).done(function (result) {
                     deferredObj.resolve(result);
