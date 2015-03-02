@@ -64,7 +64,17 @@ function queryIpPools(appData) {
                     }
                 }
             },appData,function(err,data,resHeaders) {
-                resolve(data);
+                var ipPoolsList = [];
+                if(data['QueryIpPoolsResponse'] instanceof Array)
+                    ipPoolsList = data['QueryIpPoolsResponse'][0]['_value']['returnval'];
+                else
+                    ipPoolsList = data['QueryIpPoolsResponse']['returnval'];
+                var ipPoolMap = {};
+                //Create a map with ip-pool name as key and id as value
+                for(var i=0;i<ipPoolsList.length;i++) {
+                    ipPoolMap[ipPoolsList[i]['name']] = ipPoolsList[i]['id'];
+                }
+                resolve(ipPoolMap);
             });
         });
     });
@@ -448,8 +458,23 @@ function createNetwork(userData,appData,callback) {
                 getIdByMobName(appData,'DistributedVirtualPortgroup',userData['name'],folderName).done(function(response) {
                     portGroupId = response;
                     userData['portGroupId'] = portGroupId;
-                    createIpPool(userData,appData,callback).done(function(response) {
-                        callback(null,response);
+                    //Check if ip-pool already exists
+                    queryIpPools(appData).done(function(response) {
+                        if(response['ip-pool-for-' + userData['name']] != null) {
+                            destroyIpPool(appData,response['ip-pool-for-' + userData['name']]).done(function(response) {
+                                if(response['Fault'] != null) {
+                                    callback(null,response);
+                                    return;
+                                }
+                                createIpPool(userData,appData,callback).done(function(response) {
+                                    callback(null,response);
+                                });
+                            });
+                        } else {
+                                createIpPool(userData,appData,callback).done(function(response) {
+                                    callback(null,response);
+                                });
+                        }
                     });
                 });
             });
