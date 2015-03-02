@@ -41,7 +41,7 @@ Handlebars.registerHelper('ArthematicOps', function(lvalue, rvalue, options) {
     var operator = options.hash.operator;
     operators = {
         '+': function(l, r) { return l + r; },
-        '-': function(l, r) { return l - r; },
+        '-': function(l, r) { return l - r; }
     };
     return operators[operator](lvalue,rvalue);
 });
@@ -273,4 +273,13 @@ Handlebars.registerHelper('IfValidJSONValueByPathLength', function (path, obj, o
     } else {
         return options.inverse(this);
     }
+});
+
+Handlebars.registerHelper('encodedVN', function(jsonObj) {
+    if(null !== jsonObj && typeof jsonObj !== "undefined" &&
+        jsonObj.hasOwnProperty('q') &&
+        jsonObj['q'].hasOwnProperty('srcVN') && 
+        jsonObj['q']['srcVN'].indexOf(' ') !== -1)
+        jsonObj['q']['srcVN'] = encodeURIComponent(jsonObj['q']['srcVN']);
+    return JSON.stringify(jsonObj);
 });

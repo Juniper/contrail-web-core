@@ -2079,7 +2079,7 @@ function loadAlertsContent(deferredObj){
             body: {
                 options: {
                     forceFitColumns:true,
-                    lazyLoading: true
+                    lazyLoading:true
                 },
                 dataSource: {
                     dataView: alertsDS,
