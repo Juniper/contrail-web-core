@@ -5,57 +5,75 @@
 define([
     'underscore',
     'backbone',
-    'js/models/LineWithFocusChartModel'
-], function (_, Backbone, LineWithFocusChartModel) {
+    'js/models/LineWithFocusChartModel',
+    'contrail-list-model'
+], function (_, Backbone, LineWithFocusChartModel, ContrailListModel) {
     var LineWithFocusChartView = Backbone.View.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
-                chartOptions = viewConfig['chartOptions'],
-                self = this, deferredObj = $.Deferred();
+                self = this, deferredObj = $.Deferred(),
+                selector = $(self.$el);
 
-            self.$el.append(loadingSpinnerTemplate);
+            $(selector).append(loadingSpinnerTemplate);
 
-            var selector = $(self.$el),
-                chartOptions = {
-                    height: 300,
-                    yAxisLabel: 'Bytes per 30 secs',
-                    y2AxisLabel: 'Bytes per min',
-                    yFormatter: 'formatSumBytes',
-                    y2Formatter: 'formatSumBytes'
-                };
-
-            $.ajax(ajaxConfig).done(function (result) {
-                deferredObj.resolve(result);
-            });
-
-            deferredObj.done(function (response) {
-                var chartData = response;
-                if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                    chartData = viewConfig['parseFn'](response);
+            if (viewConfig['modelConfig'] != null) {
+                self.model = new ContrailListModel(viewConfig['modelConfig']);
+                if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
+                    var chartData = self.model.getItems();
+                    self.renderChart(selector, viewConfig, chartData);
                 }
 
-                var chartViewConfig = getChartViewConfig(chartData, chartOptions);
+                self.model.onAllRequestsComplete.subscribe(function() {
+                    var chartData = self.model.getItems();
+                    self.renderChart(selector, viewConfig, chartData);
+                });
 
-                self.chartModel = new LineWithFocusChartModel(chartOptions);
-
-                self.renderChart(selector, chartData, chartOptions, self.chartModel);
-                self.$el.find('.loading-spinner').remove()
-            });
-
-            deferredObj.fail(function (errObject) {
-                if (errObject['errTxt'] != null && errObject['errTxt'] != 'abort') {
-                    showMessageInChart({
-                        selector: self.$el,
-                        msg: 'Error in fetching Details',
-                        type: 'timeseriescharts'
+                if(viewConfig.loadChartInChunks) {
+                    self.model.onDataUpdate.subscribe(function() {
+                        var chartData = self.model.getItems();
+                        self.renderChart(selector, viewConfig, chartData);
                     });
                 }
-            });
+            } else {
+                $.ajax(ajaxConfig).done(function (result) {
+                    deferredObj.resolve(result);
+                });
+
+                deferredObj.done(function (response) {
+                    var chartData = response;
+                    self.renderChart(selector, viewConfig, chartData);
+                });
+
+                deferredObj.fail(function (errObject) {
+                    if (errObject['errTxt'] != null && errObject['errTxt'] != 'abort') {
+                        showMessageInChart({
+                            selector: self.$el,
+                            msg: 'Error in fetching Details',
+                            type: 'timeseriescharts'
+                        });
+                    }
+                });
+            }
         },
 
-        renderChart: function (selector, chartData, chartOptions, chartModel) {
+        renderChart: function (selector, viewConfig, data) {
+            var chartViewConfig, chartModel, chartData, chartOptions;
+
+            if (contrail.checkIfFunction(viewConfig['parseFn'])) {
+                data = viewConfig['parseFn'](data);
+            }
+
+            chartOptions = { height: 300, yAxisLabel: 'Bytes per 30 secs', y2AxisLabel: 'Bytes per min', yFormatter: 'formatSumBytes', y2Formatter: 'formatSumBytes'};
+
+            chartViewConfig = getChartViewConfig(data, chartOptions);
+            chartData = chartViewConfig['chartData'];
+            chartOptions = chartViewConfig['chartOptions'];
+
+            chartModel = new LineWithFocusChartModel(chartOptions);
+            this.chartModel = chartModel;
+
             if ($(selector).find("svg") != null) {
                 $(selector).empty();
             }
@@ -80,6 +98,7 @@ define([
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
 
+            $(selector).find('.loading-spinner').remove()
             //nv.addGraph(chartModel);
         }
     });

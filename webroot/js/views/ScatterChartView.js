@@ -25,28 +25,19 @@ define([
 
             if(self.model != null) {
                 if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
-                    var formattedResponse = self.model.getItems();
-                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                        formattedResponse = viewConfig['parseFn'](formattedResponse);
-                    }
-                    self.renderChart(selector, formattedResponse);
+                    var chartData = self.model.getItems();
+                    self.renderChart(selector, viewConfig, chartData);
                 }
 
                 self.model.onAllRequestsComplete.subscribe(function() {
-                    var formattedResponse = self.model.getItems();
-                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                        formattedResponse = viewConfig['parseFn'](formattedResponse);
-                    }
-                    self.renderChart(selector, formattedResponse);
+                    var chartData = self.model.getItems();
+                    self.renderChart(selector, viewConfig, chartData);
                 });
 
                 if(viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function() {
-                        var formattedResponse = self.model.getItems();
-                        if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                            formattedResponse = viewConfig['parseFn'](formattedResponse);
-                        }
-                        self.renderChart(selector, formattedResponse);
+                        var chartData = self.model.getItems();
+                        self.renderChart(selector, viewConfig, chartData);
                     });
                 }
             } else {
@@ -55,12 +46,8 @@ define([
                 });
 
                 deferredObj.done(function (response) {
-                    var formattedResponse = response;
-
-                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                        formattedResponse = viewConfig['parseFn'](response);
-                    }
-                    self.renderChart(selector, formattedResponse);
+                    var chartData = response;
+                    self.renderChart(selector, viewConfig, chartData);
                 });
 
                 deferredObj.fail(function (errObject) {
@@ -71,14 +58,19 @@ define([
             }
         },
 
-        renderChart: function (selector, formattedResponse) {
-            var chartViewConfig = getChartViewConfig(selector, formattedResponse);
+        renderChart: function (selector, viewConfig, data) {
+            var chartViewConfig, chartData, chartModel, chartOptions;
 
-            this.chartModel = new ScatterChartModel(chartViewConfig['chartData'], chartViewConfig['chartOptions']);
+            if (contrail.checkIfFunction(viewConfig['parseFn'])) {
+                data = viewConfig['parseFn'](data);
+            }
 
-            var chartData = chartViewConfig['chartData'],
-                chartModel = this.chartModel,
-                chartOptions = chartViewConfig['chartOptions'];
+            chartViewConfig = getChartViewConfig(selector, data);
+            chartData = chartViewConfig['chartData'];
+            chartOptions = chartViewConfig['chartOptions'];
+
+            this.chartModel = new ScatterChartModel(chartData, chartOptions);
+            chartModel = this.chartModel;
 
             $(selector).data('chart', chartModel);
             $(selector).append('<svg></svg>');
