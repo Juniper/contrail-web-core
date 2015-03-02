@@ -15,7 +15,8 @@ var server_ip = (config.redis_server_ip) ?
     config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
 redisUtils.createRedisClientAndWait(server_port, server_ip,
                                     global.WEBUI_DFLT_REDIS_DB,
-                                    function() {
+                                    function(redisClient) {
+    exports.redisClient = redisClient;
     loadJobServer();
 });
 
