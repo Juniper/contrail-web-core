@@ -504,6 +504,13 @@ define([
 
             return Handlebars.compile(templateObj.prop('outerHTML'));
         };
+
+        this.getValueFromTemplate = function (args) {
+            return args[0].replace(/\{(\d+)\}/g, function (m, n) {
+                n = parseInt(n) + 1;
+                return args[n];
+            });
+        };
     };
     return CoreUtils;
 });

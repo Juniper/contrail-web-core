@@ -41,6 +41,7 @@ define([
                         cachedContrailListModel = cachedData['dataObject']['listModel'];
 
                     contrailListModel.setData(cachedContrailListModel.getItems());
+                    contrailListModel.loadedFromCache = true;
 
                     if (cowc.LIST_CACHE_UPDATE_INTERVAL < ($.now() - lastUpdateTime)) {
                         newContrailListModel = initContrailListModel(cacheConfig, offset);

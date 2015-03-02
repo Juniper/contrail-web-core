@@ -5,8 +5,9 @@
 define([
     'underscore',
     'backbone',
-    'js/models/ScatterChartModel'
-], function (_, Backbone, ScatterChartModel) {
+    'js/models/ScatterChartModel',
+    'contrail-list-model'
+], function (_, Backbone, ScatterChartModel, ContrailListModel) {
     var ScatterChartView = Backbone.View.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
@@ -18,7 +19,27 @@ define([
 
             self.$el.append(loadingSpinnerTemplate);
 
-            if(self.model == null) {
+            if(viewConfig['modelConfig'] != null) {
+                self.model = new ContrailListModel(viewConfig['modelConfig']);
+            }
+
+            if(self.model != null) {
+                if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
+                    var formattedResponse = self.model.getItems();
+                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
+                        formattedResponse = viewConfig['parseFn'](formattedResponse);
+                    }
+                    self.renderChart(selector, formattedResponse);
+                }
+
+                self.model.onAllRequestsComplete.subscribe(function() {
+                    var formattedResponse = self.model.getItems();
+                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
+                        formattedResponse = viewConfig['parseFn'](formattedResponse);
+                    }
+                    self.renderChart(selector, formattedResponse);
+                });
+            } else {
                 $.ajax(ajaxConfig).done(function (result) {
                     deferredObj.resolve(result);
                 });
@@ -36,22 +57,6 @@ define([
                     if (errObject['errTxt'] != null && errObject['errTxt'] != 'abort') {
                         showMessageInChart({selector: self.$el, msg: 'Error in fetching Details', type: 'bubblechart'});
                     }
-                });
-            } else {
-                if(!(self.model.isRequestInProgress())) {
-                    var formattedResponse = self.model.getItems();
-                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                        formattedResponse = viewConfig['parseFn'](formattedResponse);
-                    }
-                    self.renderChart(selector, formattedResponse);
-                }
-
-                self.model.onAllRequestsComplete.subscribe(function() {
-                    var formattedResponse = self.model.getItems();
-                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                        formattedResponse = viewConfig['parseFn'](formattedResponse);
-                    }
-                    self.renderChart(selector, formattedResponse);
                 });
             }
         },
