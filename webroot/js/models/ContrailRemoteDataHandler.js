@@ -191,11 +191,11 @@ define([
         };
 
         function check4AllRequestComplete() {
-            if(!self.isRequestInProgress()) {
+            if(!self.isRequestInProgress() && remoteHandlerConfig['onAllRequestsCompleteCallback'] != null) {
                 remoteHandlerConfig.onAllRequestsCompleteCallback();
             }
         };
-    }
+    };
 
     return ContrailRemoteDataHandler;
 });
