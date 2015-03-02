@@ -17,7 +17,7 @@ define([
                 self = this, deferredObj = $.Deferred(),
                 selector = $(self.$el);
 
-            self.$el.append(loadingSpinnerTemplate);
+            $(selector).append(loadingSpinnerTemplate);
 
             if(viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
@@ -89,7 +89,7 @@ define([
                 chartOptions['deferredObj'].resolve();
 
             $(selector).find('.loading-spinner').remove();
-            nv.addGraph(chartModel);
+            //nv.addGraph(chartModel);
         }
     });
 
