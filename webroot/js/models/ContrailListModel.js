@@ -43,7 +43,7 @@ define([
                     contrailListModel.setData(cachedContrailListModel.getItems());
                     contrailListModel.loadedFromCache = true;
 
-                    if (cowc.LIST_CACHE_UPDATE_INTERVAL < ($.now() - lastUpdateTime)) {
+                    if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
                         newContrailListModel = initContrailListModel(cacheConfig, offset);
                         remoteHandlerConfig = getUpdateRemoteHandlerConfig(modelConfig, newContrailListModel, contrailListModel);
                         newContrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);

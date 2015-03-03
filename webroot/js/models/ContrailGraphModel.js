@@ -29,18 +29,21 @@ define([
         },
 
         fetchData: function (successCallback) {
-            var self = this, useCache = true,
+            var self = this, cacheUsedStatus = {isCacheUsed: false, reload: true },
                 cacheConfig = self.cacheConfig;
 
             self.elementMap = {node: {}, link: {}};
 
-            var remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig, successCallback),
-                cachedData = (cacheConfig.getDataFromCache != null) ? cacheConfig.getDataFromCache(cacheConfig.ucid) : null;
+            var remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig, successCallback);
 
-            useCache = isCacheValid(cacheConfig, cachedData);
+            cacheUsedStatus = setCachedData2Model(self, cacheConfig);
 
-            if (useCache) {
-                self.contrailDataHandler = createGraphFromCache(cachedData, self, successCallback, remoteHandlerConfig);
+            if (cacheUsedStatus['isCacheUsed']) {
+                successCallback(self.directedGraphSize);
+
+                if (cacheUsedStatus['reload']) {
+                    self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
+                }
             } else {
                 self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
             }
@@ -61,32 +64,6 @@ define([
         onAllRequestsComplete: new Slick.Event()
     });
 
-    function createGraphFromCache(cachedData, contrailGraphModel, successCallback, remoteHandlerConfig) {
-        var contrailDataHandler,
-            cachedGraphModel = cachedData['dataObject']['graphModel'],
-            cachedElementsMap = cachedGraphModel.elementMap,
-            cachedResponse = cachedData['dataObject']['response'],
-            cachedTime = cachedData['lastUpdateTime'];
-
-        var elementMap = {node: {}, link: {}},
-            elementsObject = contrailGraphModel.generateElements(cachedResponse, elementMap);
-
-        contrailGraphModel.resetCells(elementsObject['elements']);
-        contrailGraphModel.elementMap = cachedElementsMap;
-
-        if (contrailGraphModel.forceFit) {
-            contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
-        }
-
-        successCallback(contrailGraphModel.directedGraphSize);
-
-        if (cowc.GRAPH_CACHE_UPDATE_INTERVAL < ($.now() - cachedTime)) {
-            contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
-        }
-
-        return contrailDataHandler;
-    };
-
     function getRemoteHandlerConfig(contrailGraphModel, graphModelConfig, successCallback) {
         var remoteHandlerConfig = {},
             primaryRemote = contrailGraphModel.graphConfig.remote,
@@ -97,15 +74,7 @@ define([
                 dataParser: primaryRemote.dataParser,
                 initCallback: primaryRemote.initCallback,
                 successCallback: function (response) {
-                    var elementMap = {node: {}, link: {}};
-                    var elementsObject = contrailGraphModel.generateElements(response, elementMap);
-
-                    contrailGraphModel.resetCells(elementsObject['elements']);
-                    contrailGraphModel.elementMap = elementMap;
-
-                    if (contrailGraphModel.forceFit) {
-                        contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
-                    }
+                    setData2Model(contrailGraphModel, response);
                     successCallback(contrailGraphModel.directedGraphSize);
                 },
                 failureCallback: function (xhr) {
@@ -168,25 +137,59 @@ define([
         return remoteHandlerConfig;
     };
 
-    function isCacheValid(cacheConfig, cachedData) {
-        var useCache = true;
+    function setCachedData2Model(contrailGraphModel, cacheConfig) {
+        var isCacheUsed = false, usePrimaryCache = true,
+            reload = false, isSecondaryCacheUsed,
+            cachedData = (cacheConfig.getDataFromCache != null) ? cacheConfig.getDataFromCache(cacheConfig.ucid) : null;
 
         if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['graphModel'].error) {
-            useCache = false;
+            usePrimaryCache = false;
         } else if (cachedData != null && (cacheConfig.cacheTimeout < ($.now() - cachedData['lastUpdateTime'])) && cacheConfig.loadOnTimeout == false) {
-            useCache = false;
+            usePrimaryCache = false;
         }
 
-        return useCache;
+        if(usePrimaryCache) {
+            var cachedGraphModel = cachedData['dataObject']['graphModel'],
+                cachedRawData = cachedGraphModel.rawData,
+                cachedTime = cachedData['lastUpdateTime'];
+
+            setData2Model(contrailGraphModel, cachedRawData);
+
+            isCacheUsed = true;
+            if (cacheConfig['cacheTimeout'] < ($.now() - cachedTime)) {
+                reload = true;
+            }
+        } else if (contrail.checkIfFunction(cacheConfig['setCachedData2ModelCB'])) {
+            isSecondaryCacheUsed = cacheConfig['setCachedData2ModelCB'](contrailGraphModel);
+            if(isSecondaryCacheUsed) {
+                isCacheUsed = true;
+                reload = true;
+            }
+        }
+
+        return {isCacheUsed: isCacheUsed, reload: reload };
+    };
+
+
+    function setData2Model(contrailGraphModel, graphdata) {
+        var elementMap = {node: {}, link: {}};
+        var elementsObject = contrailGraphModel.generateElements(graphdata, elementMap);
+
+        contrailGraphModel.resetCells(elementsObject['elements']);
+        contrailGraphModel.elementMap = elementMap;
+
+        if (contrailGraphModel.forceFit) {
+            contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
+        }
     };
 
     function updateDataInCache(contrailGraphModel, completeResponse) {
         var response = completeResponse[0];
         if (contrailGraphModel.setData2Cache != null) {
+            contrailGraphModel['rawData'] = response;
             //TODO: Binding of cached gridModel (if any) with existing view should be destroyed.
             contrailGraphModel.setData2Cache(contrailGraphModel.ucid, {
-                graphModel: contrailGraphModel,
-                response: response
+                graphModel: contrailGraphModel
             });
         }
     };
