@@ -181,8 +181,8 @@ define([
     function getRemoteHandlerConfig(listModelConfig, contrailListModel, parentModelList) {
         var remoteHandlerConfig = {},
             primaryRemote = listModelConfig.remote,
-            vlRemoteConfig = (listModelConfig.vlRemoteConfig != null) ? listModelConfig.vlRemoteConfig : {},
-            vlRemoteList = (listModelConfig.lazyRemote != null) ? listModelConfig.lazyRemote : [],
+            vlRemoteConfig = contrail.handleIfNull(listModelConfig.vlRemoteConfig, {}),
+            vlRemoteList = contrail.handleIfNull(vlRemoteConfig['vlRemoteList'], []),
             primaryRemoteConfig = {
                 ajaxConfig: primaryRemote.ajaxConfig,
                 dataParser: primaryRemote.dataParser,
@@ -293,8 +293,8 @@ define([
     function getUpdateRemoteHandlerConfig(listModelConfig, newContrailListModel, visibleContrailListModel) {
         var remoteHandlerConfig = {},
             primaryRemote = listModelConfig.remote,
-            vlRemoteConfig = (listModelConfig.vlRemoteConfig != null) ? listModelConfig.vlRemoteConfig : {},
-            vlRemoteList = (listModelConfig.lazyRemote != null) ? listModelConfig.lazyRemote : [],
+            vlRemoteConfig = contrail.handleIfNull(listModelConfig.vlRemoteConfig, {}),
+            vlRemoteList = contrail.handleIfNull(vlRemoteConfig['vlRemoteList'], []),
             primaryRemoteConfig = {
                 ajaxConfig: primaryRemote.ajaxConfig,
                 dataParser: primaryRemote.dataParser,

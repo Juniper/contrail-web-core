@@ -90,8 +90,8 @@ define([
     function getRemoteHandlerConfig(contrailGraphModel, graphModelConfig, successCallback) {
         var remoteHandlerConfig = {},
             primaryRemote = contrailGraphModel.graphConfig.remote,
-            vlRemoteConfig = (graphModelConfig.vlRemoteConfig != null) ? graphModelConfig.vlRemoteConfig : {},
-            vlRemoteList = contrailGraphModel.graphConfig.lazyRemote,
+            vlRemoteConfig = contrail.handleIfNull(graphModelConfig.vlRemoteConfig, {}),
+            vlRemoteList = contrail.handleIfNull(vlRemoteConfig['vlRemoteList'], []),
             primaryRemoteConfig = {
                 ajaxConfig: primaryRemote.ajaxConfig,
                 dataParser: primaryRemote.dataParser,
@@ -141,7 +141,7 @@ define([
             }
         };
 
-        for (var i = 0; vlRemoteList != null && i < vlRemoteList.length; i++) {
+        for (var i = 0; i < vlRemoteList.length; i++) {
             var vlSuccessCallback = vlRemoteList[i].successCallback,
                 vlFailureCallback = vlRemoteList[i].failureCallback;
 
