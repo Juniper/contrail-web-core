@@ -3,7 +3,8 @@ define([
     'contrail-remote-data-handler'
 ], function (_, ContrailRemoteDataHandler) {
     var ContrailGraphModel = joint.dia.Graph.extend({
-
+        error: false,
+        errorList: [],
         initialize: function (graphModelConfig) {
             var defaultCacheConfig = {
                 cacheConfig: {
@@ -33,15 +34,10 @@ define([
 
             self.elementMap = {node: {}, link: {}};
 
-            var remoteHandlerConfig = getRemoteHandlerConfig(self, successCallback),
+            var remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig, successCallback),
                 cachedData = (cacheConfig.getDataFromCache != null) ? cacheConfig.getDataFromCache(cacheConfig.ucid) : null;
 
-
-            if(cacheConfig.cacheTimeout == 0 || cachedData == null) {
-                useCache = false;
-            } else if (cachedData != null && (cacheConfig.cacheTimeout < ($.now() - cachedData['lastUpdateTime'])) && cacheConfig.loadOnTimeout == false) {
-                useCache = false;
-            }
+            useCache = isCacheValid(cacheConfig, cachedData);
 
             if (useCache) {
                 self.contrailDataHandler = createGraphFromCache(cachedData, self, successCallback, remoteHandlerConfig);
@@ -50,17 +46,19 @@ define([
             }
         },
 
-        isPrimaryRequestInProgress: function() {
+        isPrimaryRequestInProgress: function () {
             return (self.contrailDataHandler != null) ? self.contrailDataHandler.isPrimaryRequestInProgress() : false;
         },
 
-        isVLRequestInProgress: function() {
+        isVLRequestInProgress: function () {
             return (self.contrailDataHandler != null) ? self.contrailDataHandler.isVLRequestInProgress() : false;
         },
 
-        isRequestInProgress: function() {
+        isRequestInProgress: function () {
             return (self.contrailDataHandler != null) ? self.contrailDataHandler.isRequestInProgress() : false;
-        }
+        },
+
+        onAllRequestsComplete: new Slick.Event()
     });
 
     function createGraphFromCache(cachedData, contrailGraphModel, successCallback, remoteHandlerConfig) {
@@ -70,8 +68,8 @@ define([
             cachedResponse = cachedData['dataObject']['response'],
             cachedTime = cachedData['lastUpdateTime'];
 
-        var elementMap = {node: {}, link: {}};
-        var elementsObject = contrailGraphModel.generateElements(cachedResponse, elementMap);
+        var elementMap = {node: {}, link: {}},
+            elementsObject = contrailGraphModel.generateElements(cachedResponse, elementMap);
 
         contrailGraphModel.resetCells(elementsObject['elements']);
         contrailGraphModel.elementMap = cachedElementsMap;
@@ -89,10 +87,11 @@ define([
         return contrailDataHandler;
     };
 
-    function getRemoteHandlerConfig(contrailGraphModel, successCallback) {
+    function getRemoteHandlerConfig(contrailGraphModel, graphModelConfig, successCallback) {
         var remoteHandlerConfig = {},
             primaryRemote = contrailGraphModel.graphConfig.remote,
-            vlRemote = contrailGraphModel.graphConfig.lazyRemote,
+            vlRemoteConfig = (graphModelConfig.vlRemoteConfig != null) ? graphModelConfig.vlRemoteConfig : {},
+            vlRemoteList = contrailGraphModel.graphConfig.lazyRemote,
             primaryRemoteConfig = {
                 ajaxConfig: primaryRemote.ajaxConfig,
                 dataParser: primaryRemote.dataParser,
@@ -110,40 +109,54 @@ define([
                     successCallback(contrailGraphModel.directedGraphSize);
                 },
                 failureCallback: function (xhr) {
+                    contrailGraphModel.error = true;
+                    contrailGraphModel.errorList.push(xhr);
                     if (contrail.checkIfFunction(primaryRemote.failureCallback)) {
                         primaryRemote.failureCallback(xhr, contrailGraphModel);
                     }
                 },
-                completeCallback: function(completeResponse) {
-                    var response = completeResponse[0];
-                    if (contrailGraphModel.setData2Cache != null) {
-                        //TODO: Binding of cached gridModel (if any) with existing view should be destroyed.
-                        contrailGraphModel.setData2Cache(contrailGraphModel.ucid, {
-                            graphModel: contrailGraphModel,
-                            response: response
-                        });
-                    }
+                completeCallback: function (completeResponse) {
+                    updateDataInCache(contrailGraphModel, completeResponse);
                 }
             },
             vlRemoteList;
 
         remoteHandlerConfig['primaryRemoteConfig'] = primaryRemoteConfig;
-        remoteHandlerConfig['vlRemoteConfig'] = {vlRemoteList: []};
+        remoteHandlerConfig['onAllRequestsCompleteCallback'] = function () {
+            if (!contrailGraphModel.isRequestInProgress()) {
+                contrailGraphModel.onAllRequestsComplete.notify();
+            }
+        };
 
-        for (var i = 0; vlRemote != null && i < vlRemote.length; i++) {
-            var vlSuccessCallback = vlRemote[i].successCallback,
-                vlFailureCallback = vlRemote[i].failureCallback;
+        remoteHandlerConfig['vlRemoteConfig'] = {
+            vlRemoteList: [],
+            completeCallback: function (completeResponse) {
+                if (contrail.checkIfFunction(vlRemoteConfig['completeCallback'])) {
+                    vlRemoteConfig['completeCallback'](contrailGraphModel);
+                }
+
+                if (!contrailGraphModel.isRequestInProgress()) {
+                    updateDataInCache(contrailGraphModel, completeResponse);
+                }
+            }
+        };
+
+        for (var i = 0; vlRemoteList != null && i < vlRemoteList.length; i++) {
+            var vlSuccessCallback = vlRemoteList[i].successCallback,
+                vlFailureCallback = vlRemoteList[i].failureCallback;
 
             vlRemoteList = {
-                getAjaxConfig: vlRemote[i].getAjaxConfig,
-                dataParser: vlRemote[i].dataParser,
-                initCallback: vlRemote[i].initCallback,
+                getAjaxConfig: vlRemoteList[i].getAjaxConfig,
+                dataParser: vlRemoteList[i].dataParser,
+                initCallback: vlRemoteList[i].initCallback,
                 successCallback: function (response) {
                     if (contrail.checkIfFunction(vlSuccessCallback)) {
                         vlSuccessCallback(response, contrailGraphModel);
                     }
                 },
                 failureCallback: function (xhr) {
+                    contrailGraphModel.error = true;
+                    contrailGraphModel.errorList.push(xhr);
                     if (contrail.checkIfFunction(vlFailureCallback)) {
                         vlFailureCallback(xhr, contrailGraphModel);
                     }
@@ -153,6 +166,29 @@ define([
         }
 
         return remoteHandlerConfig;
+    };
+
+    function isCacheValid(cacheConfig, cachedData) {
+        var useCache = true;
+
+        if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['graphModel'].error) {
+            useCache = false;
+        } else if (cachedData != null && (cacheConfig.cacheTimeout < ($.now() - cachedData['lastUpdateTime'])) && cacheConfig.loadOnTimeout == false) {
+            useCache = false;
+        }
+
+        return useCache;
+    };
+
+    function updateDataInCache(contrailGraphModel, completeResponse) {
+        var response = completeResponse[0];
+        if (contrailGraphModel.setData2Cache != null) {
+            //TODO: Binding of cached gridModel (if any) with existing view should be destroyed.
+            contrailGraphModel.setData2Cache(contrailGraphModel.ucid, {
+                graphModel: contrailGraphModel,
+                response: response
+            });
+        }
     };
 
     var graphLayoutHandler = $.extend(true, joint.layout.DirectedGraph, {
