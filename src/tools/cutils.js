@@ -698,6 +698,40 @@ function isIPBoundToRange(range,ipAddress){
     }
 }
 
+function isIPBoundToIPRange(rangeStart, rangeEnd, ipAddress){
+    var code = 2;//Out of Range
+    var IP = new v4.Address(ipAddress);
+    var IPRangeStart = new v4.Address(rangeStart);
+    var IPRangeEnd = new v4.Address(rangeEnd);
+    if(IP.isValid() === true && IPRangeStart.isValid() === true && IPRangeEnd.isValid()){
+        var IPInt = IP.bigInteger();
+        var startIPInt = IPRangeStart.bigInteger();
+        var endIPInt = IPRangeEnd.bigInteger();
+        if(startIPInt.compareTo(IPInt) <= 0 && endIPInt.compareTo(IPInt) >= 0){
+            code = 0;// In Range
+        }
+    } else {
+        IP = new v6.Address(ipAddress); 
+        IPRangeStart = new v6.Address(rangeStart);
+        IPRangeEnd = new v6.Address(rangeEnd);
+        if(IP.isValid() === true && IPRangeStart.isValid() === true && IPRangeEnd.isValid()){
+            var IPInt = IP.bigInteger();
+            var startIPInt = IPRangeStart.bigInteger();
+            var endIPInt = IPRangeEnd.bigInteger();
+            if(startIPInt.compareTo(IPInt) <= 0 && endIPInt.compareTo(IPInt) >= 0){
+                code = 0;// In Range
+            }
+        } else {
+            code = 1;// Invalid IP
+        }
+    }
+    //code 0-> In Range.
+    //code 1-> Invalid IP.
+    //code 2-> Not in Range.
+    return code;
+}
+
+
 function isValidIP(ipAddress){
     var IP = new v4.Address(ipAddress); 
     if(IP.isValid() === true){
@@ -1321,3 +1355,4 @@ cutils.isIPv6 = isIPv6;
 cutils.isIPBoundToRange = isIPBoundToRange;
 cutils.formatVirtualRouterType = formatVirtualRouterType;
 cutils.isValidMACAddress = isValidMACAddress;
+cutils.isIPBoundToIPRange = isIPBoundToIPRange;
