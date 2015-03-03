@@ -152,6 +152,9 @@ define([
             params['endTime'] = new XDate().getTime();
             params['portType'] = response['type'];
             params['protocol'] = protocolMap[response['pType']];
+            params['type'] = "flow";
+            params['view'] = "list";
+
             layoutHandler.setURLHashParams(params, {p: 'mon_networking_networks'});
         });
         heatMap.on('mouseover', function () {
