@@ -242,7 +242,7 @@ define([
             return testobj;
         };
 
-        this.renderView4Config = function (parentElement, model, viewObj, validation, lockEditingByDefault) {
+        this.renderView4Config = function (parentElement, model, viewObj, validation, lockEditingByDefault, modelMap) {
             var viewName = viewObj['view'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
                 validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
@@ -253,124 +253,147 @@ define([
             switch (viewName) {
                 case "AccordianView":
                     elementView = new AccordianView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "SectionView":
                     elementView = new SectionView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormDropdownView":
                     elementView = new FormDropdownView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormSelect2DropdownView":
                     elementView = new FormSelect2DropdownView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormCheckboxView":
                     elementView = new FormCheckboxView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormInputView":
                     elementView = new FormInputView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormMultiselectView":
                     elementView = new FormMultiselectView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormGridView":
                     elementView = new FormGridView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormDynamicGridView":
                     elementView = new FormDynamicGridView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "WizardView":
                     elementView = new WizardView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormEditableGridView":
                     elementView = new FormEditableGridView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GridInputView":
                     elementView = new GridInputView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GridCheckboxView":
                     elementView = new GridCheckboxView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GridDropdownView":
                     elementView = new GridDropdownView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GridMultiselectView":
                     elementView = new GridMultiselectView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GraphView":
                     elementView = new GraphView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "TabsView":
                     elementView = new TabsView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "ChartView":
                     elementView = new ChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GridView":
                     elementView = new GridView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "DetailsView":
                     elementView = new DetailsView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "ScatterChartView":
                     elementView = new ScatterChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "LineWithFocusChartView":
                     elementView = new LineWithFocusChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "HeatChartView":
                     elementView = new HeatChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 default:
                     if(app == cowc.APP_CONTRAIL_CONTROLLER) {
-                        ctwu.renderView(viewName, parentElement, model, viewAttributes);
+                        ctwu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     } else if(app == cowc.APP_CONTRAIL_SM) {
-                        smwu.renderView(viewName, parentElement, model, viewAttributes);
+                        smwu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     }
                     break;
             }

@@ -8,7 +8,7 @@ define([
     'knockout',
     'knockback'
 ], function (_, Backbone, Knockout, Knockback) {
-    var ContrailViewModel = Knockback.ViewModel.extend({
+    var ContrailModel = Knockback.ViewModel.extend({
 
         formatModelConfig: function(modelConfig) {
             return modelConfig;
@@ -127,5 +127,5 @@ define([
         return errorAttributes;
     };
 
-    return ContrailViewModel;
+    return ContrailModel;
 });
