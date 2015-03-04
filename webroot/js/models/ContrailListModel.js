@@ -30,7 +30,7 @@ define([
                 bindDataHandlerProgress2Model(contrailListModel);
             } else if (modelConfig.remote != null && modelConfig.remote.ajaxConfig != null) {
                 hlRemoteConfig = modelConfig['remote']['hlRemoteConfig'];
-                cachedData = (contrailListModel.getDataFromCache != null) ? contrailListModel.getDataFromCache(contrailListModel.ucid) : null;
+                cachedData = (contrailListModel.ucid != null) ? ctwch.getDataFromCache(contrailListModel.ucid) : null;
 
                 useCache = isCacheValid(cacheConfig, cachedData);
 
@@ -144,8 +144,6 @@ define([
 
         if(cacheConfig != null) {
             contrailListModel = $.extend(true, contrailListModel, {
-                getDataFromCache: cacheConfig['getDataFromCache'],
-                setData2Cache: cacheConfig['setData2Cache'],
                 ucid: cacheConfig['ucid']
             });
         }
@@ -390,9 +388,9 @@ define([
     };
 
     function updateDataInCache(contrailListModel) {
-        if (contrailListModel.setData2Cache != null) {
+        if (contrailListModel.ucid != null) {
             //TODO: Binding of cached listModel (if any) with existing view should be destroyed.
-            contrailListModel.setData2Cache(contrailListModel.ucid, {
+            ctwch.setData2Cache(contrailListModel.ucid, {
                 listModel: contrailListModel
             });
         }

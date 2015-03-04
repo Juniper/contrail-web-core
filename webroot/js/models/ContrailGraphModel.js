@@ -19,8 +19,6 @@ define([
 
             this.cacheConfig = modelConfig['cacheConfig'];
             this.ucid = modelConfig['cacheConfig']['ucid'];
-            this.setData2Cache = modelConfig['cacheConfig']['setData2Cache'];
-            this.getDataFromCache = modelConfig['cacheConfig']['getDataFromCache'];
             this.graphConfig = modelConfig;
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
@@ -140,7 +138,7 @@ define([
     function setCachedData2Model(contrailGraphModel, cacheConfig) {
         var isCacheUsed = false, usePrimaryCache = true,
             reload = false, isSecondaryCacheUsed,
-            cachedData = (cacheConfig.getDataFromCache != null) ? cacheConfig.getDataFromCache(cacheConfig.ucid) : null;
+            cachedData = (cacheConfig.ucid != null) ? ctwch.getDataFromCache(cacheConfig.ucid) : null;
 
         if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['graphModel'].error) {
             usePrimaryCache = false;
@@ -185,10 +183,10 @@ define([
 
     function updateDataInCache(contrailGraphModel, completeResponse) {
         var response = completeResponse[0];
-        if (contrailGraphModel.setData2Cache != null) {
+        if (contrailGraphModel.ucid != null) {
             contrailGraphModel['rawData'] = response;
             //TODO: Binding of cached gridModel (if any) with existing view should be destroyed.
-            contrailGraphModel.setData2Cache(contrailGraphModel.ucid, {
+            ctwch.setData2Cache(contrailGraphModel.ucid, {
                 graphModel: contrailGraphModel
             });
         }
