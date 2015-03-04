@@ -6,7 +6,6 @@ var globalObj = {},
     contentContainer = "#content-container";
 
 globalObj['loadedScripts'] = [];
-globalObj['loadedTemplates'] = [];
 globalObj['loadedCSS'] = [];
 globalObj['orchModel'] = 'openstack';
 globalObj.NUM_FLOW_DATA_POINTS = 1000;
@@ -1367,31 +1366,18 @@ function MenuHandler() {
                 })
             }
 
-            function loadTemplateResources(menuObj, hash) {
+            function loadTemplateResources(menuObj,hash) {
                 $.each(getValueByJsonPath(menuObj,'resources;resource',[]),function(idx,currResourceObj) {
                     if (currResourceObj['template'] != null) {
                         if (!(currResourceObj['template'] instanceof Array)) {
                             currResourceObj['template'] = [currResourceObj['template']];
                         }
-                        var isLoadFn = currResourceObj['loadFn'] != null ? true : false,
-                            isReloadRequired = true;
-
-                        if(NO_RELOAD_JS_CLASSLIST.indexOf(currResourceObj['class']) != -1) {
-                            isReloadRequired = false;
-                        }
-
                         if(currResourceObj['template'] != null && currResourceObj['template'].length > 0 && currResourceObj['template'][0] != null) {
                             $.each(currResourceObj['template'], function () {
                                 var viewDeferredObj = $.Deferred();
                                 viewDeferredObjs.push(viewDeferredObj);
-                                var templateUrl = currResourceObj['rootDir'] + '/templates/' + this;
-                                if(($.inArray(templateUrl, globalObj['loadedTemplates']) == -1) || (isLoadFn == true) || (isReloadRequired == true)) {
-                                    var templatePath = templateUrl + '?built_at=' + built_at;
-                                    templateLoader.loadExtTemplate(templatePath, viewDeferredObj, hash);
-                                    globalObj['loadedTemplates'].push(templateUrl);
-                                } else {
-                                    viewDeferredObj.resolve();
-                                }
+                                var viewPath = currResourceObj['rootDir'] + '/templates/' + this + '?built_at=' + built_at;
+                                templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
                             });
                         }
                     }
