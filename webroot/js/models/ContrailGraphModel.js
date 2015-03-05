@@ -179,6 +179,8 @@ define([
         if (contrailGraphModel.forceFit) {
             contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
         }
+        contrailGraphModel.addCells(elementsObject['zoomedElements']);
+
     };
 
     function updateDataInCache(contrailGraphModel, completeResponse) {

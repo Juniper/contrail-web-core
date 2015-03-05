@@ -33,6 +33,7 @@ var VM_GRAPH_OPTIONS = {
     marginRatio: {width: 1, height: 1}
 };
 
+/* Deprecated */
 var contextMenuConfig = {
     VirtualNetwork: function (element, jointConfig) {
         var viewElement = jointConfig.connectedGraph.getCell(element.attr('model-id')),
@@ -444,6 +445,7 @@ function drawVisualization(config) {
         var data = formatData4BiDirVisualization(response),
             jointConfig = renderVisualization(config, data);
 
+        /* Deprecated */
         $.contextMenu('destroy', 'g');
         $.contextMenu({
             selector: 'g',
@@ -1422,6 +1424,7 @@ function clearZoomedElement(graph, paper) {
     paper['zoomedLinks'] = null;
 }
 
+/* Deprecated */
 function initPanZoom4ConnectedGraph(elementId) {
     var connectedSelectorId = elementId + '-connected-elements';
 
@@ -1432,6 +1435,7 @@ function initPanZoom4ConnectedGraph(elementId) {
     });
 };
 
+/* Deprecated */
 function resizeWidget(self, elementId) {
     $(self).find('i').toggleClass('icon-resize-full').toggleClass('icon-resize-small');
     if ($(self).find('i').hasClass('icon-resize-full')) {
@@ -1442,6 +1446,7 @@ function resizeWidget(self, elementId) {
     setTopologyHeight(elementId, true);
 }
 
+/* Deprecated */
 function setTopologyHeight(selectorId) {
     /*
      * svgHeight[s], topologyHeight[t], minHeight[m]
@@ -1488,6 +1493,7 @@ function setTopologyHeight(selectorId) {
     translateGraphElements(selectorId);
 };
 
+/* Deprecated */
 function translateGraphElements(selectorId) {
     var connectedGraphSize = $(selectorId + '-connected-elements').data('actual-size'),
         oldOffset = $(selectorId + '-connected-elements').data('offset'),
