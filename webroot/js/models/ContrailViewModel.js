@@ -20,6 +20,7 @@ define([
                 self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
             }
 
+            self.onAllRequestsComplete = new Slick.Event();
             return self;
         },
 
@@ -44,8 +45,7 @@ define([
 
         error: false,
         errorList: [],
-        lastUpdateTime: null,
-        onAllRequestsComplete: new Slick.Event()
+        lastUpdateTime: null
     });
 
     function getRemoteHandlerConfig(contrailViewModel, viewModelConfig) {

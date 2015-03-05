@@ -22,22 +22,23 @@ define([
             this.graphConfig = modelConfig;
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
+            this.onAllRequestsComplete = new Slick.Event();
+            this.onDataUpdate = new Slick.Event();
 
             return this;
         },
 
-        fetchData: function (successCallback) {
+        fetchData: function () {
             var self = this, cacheUsedStatus = {isCacheUsed: false, reload: true },
                 cacheConfig = self.cacheConfig;
 
             self.elementMap = {node: {}, link: {}};
 
-            var remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig, successCallback);
-
+            var remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig);
             cacheUsedStatus = setCachedData2Model(self, cacheConfig);
 
             if (cacheUsedStatus['isCacheUsed']) {
-                successCallback(self.directedGraphSize);
+                self.onAllRequestsComplete.notify();
 
                 if (cacheUsedStatus['reload']) {
                     self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
@@ -57,12 +58,10 @@ define([
 
         isRequestInProgress: function () {
             return (self.contrailDataHandler != null) ? self.contrailDataHandler.isRequestInProgress() : false;
-        },
-
-        onAllRequestsComplete: new Slick.Event()
+        }
     });
 
-    function getRemoteHandlerConfig(contrailGraphModel, graphModelConfig, successCallback) {
+    function getRemoteHandlerConfig(contrailGraphModel, graphModelConfig) {
         var remoteHandlerConfig = {},
             primaryRemote = contrailGraphModel.graphConfig.remote,
             vlRemoteConfig = contrail.handleIfNull(graphModelConfig.vlRemoteConfig, {}),
@@ -73,7 +72,10 @@ define([
                 initCallback: primaryRemote.initCallback,
                 successCallback: function (response) {
                     setData2Model(contrailGraphModel, response);
-                    successCallback(contrailGraphModel.directedGraphSize);
+                    if (contrail.checkIfFunction(primaryRemote.successCallback)) {
+                        primaryRemote.successCallback(response, contrailGraphModel);
+                    }
+                    contrailGraphModel.onDataUpdate.notify();
                 },
                 failureCallback: function (xhr) {
                     contrailGraphModel.error = true;
@@ -81,9 +83,11 @@ define([
                     if (contrail.checkIfFunction(primaryRemote.failureCallback)) {
                         primaryRemote.failureCallback(xhr, contrailGraphModel);
                     }
+                    contrailGraphModel.onDataUpdate.notify();
                 },
                 completeCallback: function (completeResponse) {
                     updateDataInCache(contrailGraphModel, completeResponse);
+                    contrailGraphModel.onDataUpdate.notify();
                 }
             },
             vlRemoteList;
@@ -105,6 +109,7 @@ define([
                 if (!contrailGraphModel.isRequestInProgress()) {
                     updateDataInCache(contrailGraphModel, completeResponse);
                 }
+                contrailGraphModel.onDataUpdate.notify();
             }
         };
 
@@ -120,6 +125,7 @@ define([
                     if (contrail.checkIfFunction(vlSuccessCallback)) {
                         vlSuccessCallback(response, contrailGraphModel);
                     }
+                    contrailGraphModel.onDataUpdate.notify();
                 },
                 failureCallback: function (xhr) {
                     contrailGraphModel.error = true;
@@ -127,6 +133,7 @@ define([
                     if (contrail.checkIfFunction(vlFailureCallback)) {
                         vlFailureCallback(xhr, contrailGraphModel);
                     }
+                    contrailGraphModel.onDataUpdate.notify();
                 }
             }
             remoteHandlerConfig['vlRemoteConfig']['vlRemoteList'].push(vlRemoteList);
@@ -140,7 +147,7 @@ define([
             reload = false, isSecondaryCacheUsed,
             cachedData = (cacheConfig.ucid != null) ? ctwch.getDataFromCache(cacheConfig.ucid) : null;
 
-        if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['graphModel'].error) {
+        if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['graphModel'].error || cachedData['dataObject']['graphModel'].isRequestInProgress()) {
             usePrimaryCache = false;
         } else if (cachedData != null && (cacheConfig.cacheTimeout < ($.now() - cachedData['lastUpdateTime'])) && cacheConfig.loadOnTimeout == false) {
             usePrimaryCache = false;
@@ -179,8 +186,9 @@ define([
         if (contrailGraphModel.forceFit) {
             contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
         }
-        contrailGraphModel.addCells(elementsObject['zoomedElements']);
-
+        if(contrail.checkIfExist(elementsObject['zoomedElements'])) {
+            contrailGraphModel.addCells(elementsObject['zoomedElements']);
+        }
     };
 
     function updateDataInCache(contrailGraphModel, completeResponse) {

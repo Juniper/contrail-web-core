@@ -250,16 +250,16 @@ requirejs.config({
             deps: ['jquery', 'underscore', 'backbone', 'knockout', 'knockback']
         },
         'contrail-view-model': {
-            deps: ['jquery', 'underscore', 'backbone']
+            deps: ['jquery', 'underscore', 'backbone', 'slick.core']
         },
         'contrail-graph-model': {
-            deps: ['jquery', 'underscore', 'backbone', 'joint.contrail', 'joint.layout.DirectedGraph']
+            deps: ['jquery', 'underscore', 'backbone', 'joint.contrail', 'joint.layout.DirectedGraph', 'slick.core']
         },
         'graph-view': {
             deps: ['jquery', 'underscore', 'backbone', 'joint.contrail']
         },
         'contrail-list-model': {
-            deps: ['contrail-remote-data-handler']
+            deps: ['contrail-remote-data-handler', 'slick.core']
         },
         'contrail-remote-data-handler': {
             deps: ['jquery', 'underscore']

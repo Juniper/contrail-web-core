@@ -80,7 +80,7 @@ define([
     function isCacheValid(cacheConfig, cachedData) {
         var useCache = true;
 
-        if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['listModel'].error) {
+        if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['listModel'].error || cachedData['dataObject']['listModel'].isRequestInProgress()) {
             useCache = false;
         } else if (cachedData != null && (cacheConfig.cacheTimeout < ($.now() - cachedData['lastUpdateTime'])) && cacheConfig.loadOnTimeout == false) {
             useCache = false;
@@ -138,9 +138,10 @@ define([
             },
             refreshData: function () {
                 // Will be set after data handler is created.
-            },
-            onAllRequestsComplete: new Slick.Event()
+            }
         });
+
+        contrailListModel.onAllRequestsComplete = new Slick.Event();
 
         if(cacheConfig != null) {
             contrailListModel = $.extend(true, contrailListModel, {
