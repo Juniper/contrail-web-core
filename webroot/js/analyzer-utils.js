@@ -593,6 +593,12 @@ function showUnderlayPaths(data) {
         } else {
             params['minsSince'] = 300;
         }
+        if(currentPage == 'mon_infra_underlay') {
+            var progressBar = $("#network_topology").find('.topology-visualization-loading');
+            $(progressBar).show();
+            $(progressBar).css('margin-bottom',$(progressBar).parent().height());
+            
+        }
         switch(currentPage) {
             case 'mon_infra_underlay':
                 var cfg = {
@@ -600,7 +606,12 @@ function showUnderlayPaths(data) {
                     type    : "POST",
                     data    : {data: params},
                     callback : function(response) {
+                        $("#network_topology").find('.topology-visualization-loading').hide();
                         underlayRenderer.getView().highlightPath(response, {data: params});
+                    },
+                    failureCallback: function(err) {
+                        $("#network_topology").find('.topology-visualization-loading').hide();
+                        $("#underlay_topology").html('Error in fetching details');
                     }
                 };
                 underlayRenderer.getController().getModelData(cfg);
