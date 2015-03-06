@@ -9,8 +9,8 @@ define([
     var ContrailListModel = function (listModelConfig, parentModelList) {
         var contrailListModel = {}, newContrailListModel = {},
             hlContrailListModel, contrailDataHandler = null, newContrailDataHandler, self = this,
-            cachedData, lastUpdateTime, remoteHandlerConfig, hlRemoteConfig,
-            useCache = true;
+            cachedData, remoteHandlerConfig, hlRemoteConfig,
+            cacheUsedStatus = {isCacheUsed: false, reload: true };
 
         var defaultCacheConfig = {
             cacheConfig: {
@@ -31,19 +31,15 @@ define([
             } else if (modelConfig.remote != null && modelConfig.remote.ajaxConfig != null) {
                 hlRemoteConfig = modelConfig['remote']['hlRemoteConfig'];
                 cachedData = (contrailListModel.ucid != null) ? ctwch.getDataFromCache(contrailListModel.ucid) : null;
+                cacheUsedStatus = setCachedData2Model(contrailListModel, cacheConfig);
 
-                useCache = isCacheValid(cacheConfig, cachedData);
+                if (cacheUsedStatus['isCacheUsed']) {
+                    contrailListModel.onAllRequestsComplete.notify();
 
-                if (useCache) {
-                    var cachedContrailListModel = cachedData['dataObject']['listModel'],
-                        offset = cachedContrailListModel._idOffset,
-                        lastUpdateTime = cachedData['lastUpdateTime'],
-                        cachedContrailListModel = cachedData['dataObject']['listModel'];
+                    if (cacheUsedStatus['reload']) {
+                        var cachedContrailListModel = cachedData['dataObject']['listModel'],
+                            offset = cachedContrailListModel._idOffset;
 
-                    contrailListModel.setData(cachedContrailListModel.getItems());
-                    contrailListModel.loadedFromCache = true;
-
-                    if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
                         newContrailListModel = initContrailListModel(cacheConfig, offset);
                         remoteHandlerConfig = getUpdateRemoteHandlerConfig(modelConfig, newContrailListModel, contrailListModel);
                         newContrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
@@ -77,16 +73,40 @@ define([
         return contrailListModel;
     };
 
-    function isCacheValid(cacheConfig, cachedData) {
-        var useCache = true;
 
+    function setCachedData2Model(contrailListModel, cacheConfig) {
+        var isCacheUsed = false, usePrimaryCache = true,
+            reload = false, isSecondaryCacheUsed,
+            cachedData = (cacheConfig.ucid != null) ? ctwch.getDataFromCache(cacheConfig.ucid) : null;
+
+        //TODO: isRequestInProgress check should not be required
         if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['listModel'].error || cachedData['dataObject']['listModel'].isRequestInProgress()) {
-            useCache = false;
+            usePrimaryCache = false;
         } else if (cachedData != null && (cacheConfig.cacheTimeout < ($.now() - cachedData['lastUpdateTime'])) && cacheConfig.loadOnTimeout == false) {
-            useCache = false;
+            usePrimaryCache = false;
         }
 
-        return useCache;
+        if(usePrimaryCache) {
+            var cachedContrailListModel = cachedData['dataObject']['listModel'],
+                lastUpdateTime = cachedData['lastUpdateTime'],
+                cachedContrailListModel = cachedData['dataObject']['listModel'];
+
+            contrailListModel.setData(cachedContrailListModel.getItems());
+            contrailListModel.loadedFromCache = true;
+
+            isCacheUsed = true;
+            if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
+                reload = true;
+            }
+        } else if (contrail.checkIfFunction(cacheConfig['setCachedData2ModelCB'])) {
+            isSecondaryCacheUsed = cacheConfig['setCachedData2ModelCB'](contrailListModel);
+            if(isSecondaryCacheUsed) {
+                isCacheUsed = true;
+                reload = true;
+            }
+        }
+
+        return {isCacheUsed: isCacheUsed, reload: reload };
     };
 
     function initContrailListModel(cacheConfig, offset) {
@@ -272,7 +292,7 @@ define([
                 initCallback: vlRemoteList[i].initCallback,
                 successCallback: function (response) {
                     if (contrail.checkIfFunction(vlSuccessCallback)) {
-                        vlSuccessCallback(response, contrailListModel);
+                        vlSuccessCallback(response, contrailListModel, parentModelList);
                     }
                 },
                 failureCallback: function (xhr) {

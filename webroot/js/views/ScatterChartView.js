@@ -37,7 +37,9 @@ define([
                 if(viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function() {
                         var chartData = self.model.getItems();
-                        self.renderChart(selector, viewConfig, chartData);
+                        if(chartData.length != 0) {
+                            self.renderChart(selector, viewConfig, chartData);
+                        }
                     });
                 }
             } else {

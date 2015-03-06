@@ -147,6 +147,7 @@ define([
             reload = false, isSecondaryCacheUsed,
             cachedData = (cacheConfig.ucid != null) ? ctwch.getDataFromCache(cacheConfig.ucid) : null;
 
+        //TODO: isRequestInProgress check should not be required
         if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['graphModel'].error || cachedData['dataObject']['graphModel'].isRequestInProgress()) {
             usePrimaryCache = false;
         } else if (cachedData != null && (cacheConfig.cacheTimeout < ($.now() - cachedData['lastUpdateTime'])) && cacheConfig.loadOnTimeout == false) {
@@ -156,12 +157,12 @@ define([
         if(usePrimaryCache) {
             var cachedGraphModel = cachedData['dataObject']['graphModel'],
                 cachedRawData = cachedGraphModel.rawData,
-                cachedTime = cachedData['lastUpdateTime'];
+                lastUpdateTime = cachedData['lastUpdateTime'];
 
             setData2Model(contrailGraphModel, cachedRawData);
 
             isCacheUsed = true;
-            if (cacheConfig['cacheTimeout'] < ($.now() - cachedTime)) {
+            if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
                 reload = true;
             }
         } else if (contrail.checkIfFunction(cacheConfig['setCachedData2ModelCB'])) {
