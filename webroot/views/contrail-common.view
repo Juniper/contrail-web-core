@@ -849,3 +849,7 @@
 <script type="text/x-handlebars-template" id="core-detail-section-row-template">
     <div class="row-fluid detail-section-row-content"></div>
 </script>
+
+<script type="text/x-handlebars-template" id="core-loading-spinner-template">
+    <div class="loading-spinner"><i class="icon-refresh icon-spin"></i></div>
+</script>

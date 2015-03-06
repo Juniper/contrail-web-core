@@ -98,7 +98,7 @@ define([
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
 
-            $(selector).find('.loading-spinner').remove()
+            $(selector).find('.loading-spinner').remove();
             //nv.addGraph(chartModel);
         }
     });

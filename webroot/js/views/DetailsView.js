@@ -37,9 +37,6 @@ define([
                     self.$el.html(detailsTemplate(dataParser(response)));
                 });
             }
-
-            self.$el.append(loadingSpinnerTemplate);
-
         }
     });
 

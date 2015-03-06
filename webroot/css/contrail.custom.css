@@ -2477,9 +2477,8 @@ color: #b94a48;
     font-size:27px;
     text-align:center;
     position: relative;
-    top: 45%;
+    margin-top: 130px;
     color: #3182bd;
-    min-height: 300px;
 }
 
 .sgSelect2 .select2-result-sub {
