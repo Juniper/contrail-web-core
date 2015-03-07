@@ -719,10 +719,7 @@ $(document).ready(function () {
         }
         logMessage('hashChange', JSON.stringify(lastHash), ' -> ', currHash);
         logMessage('hashChange', JSON.stringify(currHash));
-        if(_ignoreOnHashChange === false) {
-            onHashChange(lastHash, currHash);
-        }
-        _ignoreOnHashChange = false;
+        onHashChange(lastHash, currHash);
         lastHash = currHash;
     });
     handleSideMenu();

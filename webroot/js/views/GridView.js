@@ -12,7 +12,8 @@ define([
             var viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
                 listModelConfig = $.extend(true, {}, viewConfig.elementConfig['body']['dataSource']),
-                contrailListModel, gridConfig;
+                contrailListModel, gridConfig,
+                self = this;
 
             if(this.model != null) {
                 contrailListModel =  this.model;
@@ -25,6 +26,14 @@ define([
             gridConfig = $.extend(true, {}, defaultGridConfig, viewConfig.elementConfig);
 
             cowu.renderGrid(this.$el, gridConfig);
+
+            if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
+                $(self.$el).data('contrailGrid').removeGridLoading();
+            }
+
+            contrailListModel.onAllRequestsComplete.subscribe(function() {
+                $(self.$el).data('contrailGrid').removeGridLoading();
+            });
         }
     });
 
@@ -39,7 +48,8 @@ define([
         body: {
             options: {
                 checkboxSelectable: true,
-                detail: false
+                detail: false,
+                lazyLoading: true
             }
         },
         footer: {
