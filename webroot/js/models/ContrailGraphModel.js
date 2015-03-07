@@ -179,7 +179,9 @@ define([
 
     function setData2Model(contrailGraphModel, graphdata) {
         var elementMap = {node: {}, link: {}};
-        var elementsObject = contrailGraphModel.generateElements(graphdata, elementMap);
+
+        //TODO: We should not edit graohModel in generateElements
+        var elementsObject = contrailGraphModel.generateElements($.extend(true, {}, graphdata), elementMap);
 
         contrailGraphModel.resetCells(elementsObject['elements']);
         contrailGraphModel.elementMap = elementMap;

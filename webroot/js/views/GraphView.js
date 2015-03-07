@@ -42,7 +42,7 @@ define([
         },
 
         render: function () {
-            var self = this, viewConfig = self.viewConfig;
+            var self = this;
 
             self.model.fetchData();
         }
