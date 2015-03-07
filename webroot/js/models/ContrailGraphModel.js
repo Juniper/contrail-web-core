@@ -9,7 +9,7 @@ define([
             var defaultCacheConfig = {
                 cacheConfig: {
                     cacheTimeout: cowc.GRAPH_CACHE_UPDATE_INTERVAL,
-                    loadOnTimeout: true
+                    loadOnTimeout: false
                 }
             };
 
@@ -183,7 +183,8 @@ define([
         //TODO: We should not edit graohModel in generateElements
         var elementsObject = contrailGraphModel.generateElements($.extend(true, {}, graphdata), elementMap);
 
-        contrailGraphModel.resetCells(elementsObject['elements']);
+        contrailGraphModel.clear();
+        contrailGraphModel.addCells(elementsObject['elements']);
         contrailGraphModel.elementMap = elementMap;
 
         if (contrailGraphModel.forceFit) {
