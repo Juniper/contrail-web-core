@@ -28,16 +28,20 @@ define([
             cowu.renderGrid(this.$el, gridConfig);
 
             if(contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
-                $(self.$el).data('contrailGrid').removeGridLoading();
-                if (contrailListModel.getItems().length == 0) {
-                    $(self.$el).data('contrailGrid').showGridMessage('empty')
+                if(contrail.checkIfExist($(self.$el).data('contrailGrid'))) {
+                    $(self.$el).data('contrailGrid').removeGridLoading();
+                    if (contrailListModel.getItems().length == 0) {
+                        $(self.$el).data('contrailGrid').showGridMessage('empty')
+                    }
                 }
             }
 
             contrailListModel.onAllRequestsComplete.subscribe(function() {
-                $(self.$el).data('contrailGrid').removeGridLoading();
-                if (contrailListModel.getItems().length == 0) {
-                    $(self.$el).data('contrailGrid').showGridMessage('empty')
+                if(contrail.checkIfExist($(self.$el).data('contrailGrid'))) {
+                    $(self.$el).data('contrailGrid').removeGridLoading();
+                    if (contrailListModel.getItems().length == 0) {
+                        $(self.$el).data('contrailGrid').showGridMessage('empty')
+                    }
                 }
             });
         }

@@ -190,8 +190,18 @@ define([
         if (contrailGraphModel.forceFit) {
             contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
         }
-        if(contrail.checkIfExist(elementsObject['zoomedElements'])) {
+        if(contrail.checkIfExist(elementsObject['zoomedNodeElement'])) {
+            var zoomedNodeElement = elementsObject['zoomedNodeElement'];
+
+            var xOrigin = zoomedNodeElement['attributes']['position']['x'],
+                yOrigin = zoomedNodeElement['attributes']['position']['y'];
+
             contrailGraphModel.addCells(elementsObject['zoomedElements']);
+
+            /* Translate zoomed elements TODO - Move to view file*/
+            $.each(elementsObject['zoomedElements'], function (zoomedElementKey, zoomedElementValue) {
+                zoomedElementValue.translate(xOrigin, yOrigin);
+            });
         }
     };
 

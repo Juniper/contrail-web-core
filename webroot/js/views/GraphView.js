@@ -99,6 +99,15 @@ define([
             $('g').popover('hide');
             $('g[model-id="' + elementId + '"').popover('show');
         });
+
+        $(document).off('click', onDocumentClickHandler)
+            .on('click', onDocumentClickHandler);
+    };
+
+    var onDocumentClickHandler = function(e) {
+        if(!$(e.target).closest('g').length) {
+            $('g').popover('hide');
+        }
     };
 
     function initRightClickEvent(rightClickConfig, jointObject) {
