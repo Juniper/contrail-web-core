@@ -75,7 +75,9 @@ define([
             chartModel = this.chartModel;
 
             $(selector).data('chart', chartModel);
-            $(selector).append('<svg></svg>');
+            if ($(selector).find('svg').length == 0) {
+                $(selector).append('<svg></svg>');
+            }
 
             if (!($(selector).is(':visible'))) {
                 $(selector).find('svg').bind("refresh", function () {
