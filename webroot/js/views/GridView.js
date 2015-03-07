@@ -27,7 +27,7 @@ define([
 
             cowu.renderGrid(this.$el, gridConfig);
 
-            if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
+            if(contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
                 $(self.$el).data('contrailGrid').removeGridLoading();
             }
 

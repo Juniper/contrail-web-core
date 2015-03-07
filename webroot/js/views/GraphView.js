@@ -52,9 +52,9 @@ define([
         $.each(tooltipConfig, function (keyConfig, valueConfig) {
             $('g.' + keyConfig).popover('destroy');
             $('g.' + keyConfig).popover({
-                trigger: 'click',
+                trigger: 'manual',
                 html: true,
-                delay: {show: 200, hide: 0},
+                animation: false,
                 placement: function (context, src) {
                     $(context).addClass('popover-tooltip');
 
@@ -90,6 +90,15 @@ define([
         if(contrail.checkIfExist(eventConfig['cell:rightclick'])) {
             initRightClickEvent(eventConfig['cell:rightclick'], jointObject);
         }
+
+        /* Tooltip event to show/hide tooltip on click */
+        jointObject.connectedPaper.on('cell:pointerclick', function(cellView, evt, x, y) {
+            var clickedElement = cellView.model,
+                elementId = clickedElement.id;
+
+            $('g').popover('hide');
+            $('g[model-id="' + elementId + '"').popover('show');
+        });
     };
 
     function initRightClickEvent(rightClickConfig, jointObject) {
