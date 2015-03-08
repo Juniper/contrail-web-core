@@ -6,9 +6,6 @@ define([
     'underscore'
 ], function (_) {
     var CoreConstants = function () {
-
-        this.DEFAULT_DOMAIN = "default-domain";
-
         this.TMPL_SUFFIX_ID = "-template";
         this.RESULTS_SUFFIX_ID = "-results";
         this.ERROR_SUFFIX_ID = "_error";
@@ -18,6 +15,10 @@ define([
         this.PATTERN_IP_ADDRESS  = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
         this.PATTERN_SUBNET_MASK = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(\d|[1-2]\d|3[0-2]))?$/;
         this.PATTERN_MAC_ADDRESS = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+
+        this.LIST_CACHE_UPDATE_INTERVAL = 60000;
+        this.GRAPH_CACHE_UPDATE_INTERVAL = 60000;
+        this.CHART_CACHE_UPDATE_INTERVAL = 60000;
 
         this.KEY_MODEL_ERRORS = 'errors';
         this.KEY_MODEL_LOCKS = 'locks';
@@ -29,7 +30,7 @@ define([
         this.KEY_ELEMENT_CONFIG = 'elementConfig';
         this.KEY_DATABIND_VALUE = 'dataBindValue';
         this.KEY_TYPE = 'type';
-        this.KEY_UI_ADDED_PARAMS = 'ui_added_parameters'
+        this.KEY_UI_ADDED_PARAMS = 'ui_added_parameters';
 
         this.KEY_VALIDATION = 'validation';
 
@@ -57,11 +58,14 @@ define([
         this.TMPL_DETAIL_SECTION = "core-detail-section-template";
         this.TMPL_DETAIL_SECTION_COLUMN = "core-detail-section-column-template";
         this.TMPL_DETAIL_SECTION_ROW = "core-detail-section-row-template";
+        this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
 
         this.APP_CONTRAIL_CONTROLLER = "contrail-controller";
         this.APP_CONTRAIL_SM = "contrail-sm";
 
-        this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
+        this.COOKIE_DOMAIN = 'domain';
+        this.COOKIE_PROJECT = 'project';
+        this.COOKIE_VIRTUAL_NETWORK = 'virtual-network';
     };
     return CoreConstants;
 });

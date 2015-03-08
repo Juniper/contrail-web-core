@@ -41,7 +41,7 @@ Handlebars.registerHelper('ArthematicOps', function(lvalue, rvalue, options) {
     var operator = options.hash.operator;
     operators = {
         '+': function(l, r) { return l + r; },
-        '-': function(l, r) { return l - r; },
+        '-': function(l, r) { return l - r; }
     };
     return operators[operator](lvalue,rvalue);
 });
@@ -190,23 +190,70 @@ Handlebars.registerHelper('getLabel', function (labelKey, feature) {
 });
 
 Handlebars.registerHelper('getJSONValueByPath', function (path, obj) {
-    return cowu.getJSONValueByPath(path, obj);
+    var pathValue = cowu.getJSONValueByPath(path, obj);
+    return $.isArray(pathValue) ? pathValue.join(', ') : pathValue;
 });
 
-Handlebars.registerHelper('getJSONValueLinkByPath', function (path, obj) {
-    return '<a class="value-link" target="_blank" href="http://' + cowu.getJSONValueByPath(path, obj) + '">' + cowu.getJSONValueByPath(path, obj) + '</a>';
-});
+Handlebars.registerHelper('getValueByConfig', function (obj, options) {
+    var config = $.parseJSON(options.hash.config),
+        key = config.key,
+        value = cowu.getJSONValueByPath(key, obj),
+        templateGenerator = config.templateGenerator,
+        templateGeneratorConfig = config.templateGeneratorConfig,
+        returnValue;
 
-Handlebars.registerHelper('getJSONValueFormattedBytesByPath', function (path, obj, valueFormat) {
-    var value = cowu.getJSONValueByPath(path, obj);
-    if(valueFormat == 'kByte') {
-        value *= 1024
+    if(value == '-') {
+        return value;
     }
-    return formatBytes(value);
-});
 
-Handlebars.registerHelper('getJSONValueLengthByPath', function (path, obj) {
-    return cowu.getJSONValueByPath(path, obj).split(',').length;
+    switch (templateGenerator) {
+        case 'TextGenerator':
+            if (contrail.checkIfExist(templateGeneratorConfig)) {
+                var formatter = templateGeneratorConfig.formatter;
+                switch (formatter) {
+                    case 'byte' :
+                        returnValue = formatBytes(value);
+                    break;
+
+                    case 'kilo-byte' :
+                        returnValue = formatBytes(value * 1024);
+                    break;
+
+                    case 'length' :
+                        returnValue = value.length;
+                    break;
+                };
+            } else {
+                returnValue = $.isArray(value) ? value.join(', ') : value;
+            }
+        break;
+
+        case 'LinkGenerator':
+
+            var linkTemplate = Handlebars.compile(templateGeneratorConfig.template),
+                params = templateGeneratorConfig.params,
+                hrefLinkArray = [], hrefLink;
+
+            $.each(params, function(paramKey, paramValue) {
+                params[paramKey] = cowu.getJSONValueByPath(paramValue, obj)
+            });
+
+            if ($.isArray(value)) {
+                $.each(value, function(vKey, vValue) {
+                    hrefLink = linkTemplate({key: vValue, params: params});
+                    hrefLinkArray.push('<a class="value-link" target="_blank" href="' + hrefLink + '">' + vValue + '</a>');
+                });
+
+                returnValue = hrefLinkArray.join(', ');
+            } else {
+                hrefLink = linkTemplate({key: value, params: params});
+                returnValue = '<a class="value-link" target="_blank" href="' + hrefLink + '">' + value + '</a>';
+            }
+        break;
+    };
+
+    return returnValue;
+
 });
 
 Handlebars.registerHelper('IfValidJSONValueByPath', function (path, obj, index, options) {
@@ -217,6 +264,17 @@ Handlebars.registerHelper('IfValidJSONValueByPath', function (path, obj, index, 
         return options.inverse(this);
     }
 });
+
+Handlebars.registerHelper('IfValidJSONValueByPathLength', function (path, obj, options) {
+    var value = cowu.getJSONValueByPath(path, obj),
+        result = (value != "-") ? true : false;
+    if(result && value.length > 0) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});
+
 Handlebars.registerHelper('encodedVN', function(jsonObj) {
     if(null !== jsonObj && typeof jsonObj !== "undefined" &&
         jsonObj.hasOwnProperty('q') &&

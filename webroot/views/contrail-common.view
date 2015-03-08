@@ -833,8 +833,8 @@
                 <a class="detail-foundation-action-item group-detail-action-item pull-right" title="Advanced JSON View" data-view="advanced-json"><i class="icon-code"></i></a>
             </div>
         {{/IfCompare}}
-        <div class="row-fluid detail-foundation-content group-detail-basic-list group-detail-item"></div>
-        <div class="row-fluid group-detail-advanced-json group-detail-item hide"></div>
+        <div class="row-fluid detail-foundation-content-basic group-detail-basic-list group-detail-item"></div>
+        <div class="row-fluid detail-foundation-content-advanced group-detail-advanced-json group-detail-item hide"></div>
     </div>
 </script>
 
@@ -848,4 +848,8 @@
 
 <script type="text/x-handlebars-template" id="core-detail-section-row-template">
     <div class="row-fluid detail-section-row-content"></div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-loading-spinner-template">
+    <div class="loading-spinner"><i class="icon-refresh icon-spin"></i></div>
 </script>

@@ -10,10 +10,10 @@ define([
         render: function () {
             var tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
                 viewConfig = this.attributes.viewConfig,
-                tabs = viewConfig['tabs'],
+                self = this, tabs = viewConfig['tabs'],
                 validation = this.attributes.validation,
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
-                self = this,
+                modelMap = this.modelMap,
                 childViewObj, childElId;
 
             this.$el.html(tabsTemplate(tabs));
@@ -25,7 +25,7 @@ define([
             for (var i = 0; i < tabs.length; i++) {
                 childViewObj = tabs[i];
                 childElId = childViewObj[cowc.KEY_ELEMENT_ID];
-                cowu.renderView4Config(this.$el.find("#" + childElId), this.model, childViewObj, validation, lockEditingByDefault);
+                cowu.renderView4Config(this.$el.find("#" + childElId), this.model, childViewObj, validation, lockEditingByDefault, modelMap);
             }
         }
     });

@@ -10,16 +10,40 @@ define([
     var GridView = Backbone.View.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
-                model = this.model, elId = this.attributes.elementId,
+                elId = this.attributes.elementId,
                 listModelConfig = $.extend(true, {}, viewConfig.elementConfig['body']['dataSource']),
-                contrailListModel = new ContrailListModel(listModelConfig),
-                gridConfig;
+                contrailListModel, gridConfig,
+                self = this;
+
+            if(this.model != null) {
+                contrailListModel =  this.model;
+            } else {
+                contrailListModel = new ContrailListModel(listModelConfig);
+            }
 
             delete viewConfig.elementConfig['body']['dataSource']['remote'];
             viewConfig.elementConfig['body']['dataSource'] = {dataView: contrailListModel};
             gridConfig = $.extend(true, {}, defaultGridConfig, viewConfig.elementConfig);
 
             cowu.renderGrid(this.$el, gridConfig);
+
+            if(contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
+                if(contrail.checkIfExist($(self.$el).data('contrailGrid'))) {
+                    $(self.$el).data('contrailGrid').removeGridLoading();
+                    if (contrailListModel.getItems().length == 0) {
+                        $(self.$el).data('contrailGrid').showGridMessage('empty')
+                    }
+                }
+            }
+
+            contrailListModel.onAllRequestsComplete.subscribe(function() {
+                if(contrail.checkIfExist($(self.$el).data('contrailGrid'))) {
+                    $(self.$el).data('contrailGrid').removeGridLoading();
+                    if (contrailListModel.getItems().length == 0) {
+                        $(self.$el).data('contrailGrid').showGridMessage('empty')
+                    }
+                }
+            });
         }
     });
 
@@ -34,14 +58,15 @@ define([
         body: {
             options: {
                 checkboxSelectable: true,
-                detail: false
+                detail: false,
+                lazyLoading: true
             }
         },
         footer: {
             pager: {
                 options: {
                     pageSize: 5,
-                    pageSizeSelect: [5, 10, 50]
+                    pageSizeSelect: [5, 10, 50, 100]
                 }
 
             }

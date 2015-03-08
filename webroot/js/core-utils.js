@@ -4,30 +4,15 @@
 
 define([
     'underscore',
-    'js/views/FormInputView',
-    'js/views/FormGridView',
-    'js/views/FormDynamicGridView',
-    'js/views/FormMultiselectView',
-    'js/views/FormDropdownView',
-    'js/views/FormSelect2DropdownView',
-    'js/views/FormCheckboxView',
-    'js/views/AccordianView',
-    'js/views/SectionView',
-    'js/views/WizardView',
-    'js/views/FormEditableGridView',
-    'js/views/GridInputView',
-    'js/views/GridCheckboxView',
-    'js/views/GridDropdownView',
-    'js/views/GridMultiselectView',
-    'graph-view',
-    'js/views/TabsView',
-    'js/views/ChartView',
-    'js/views/GridView',
-    'js/views/DetailsView',
-    'js/views/ScatterChartView'
+    'js/views/FormInputView', 'js/views/FormGridView', 'js/views/FormDynamicGridView', 'js/views/FormMultiselectView',
+    'js/views/FormDropdownView', 'js/views/FormSelect2DropdownView', 'js/views/FormCheckboxView',
+    'js/views/AccordianView', 'js/views/SectionView', 'js/views/WizardView', 'js/views/FormEditableGridView',
+    'js/views/GridInputView', 'js/views/GridCheckboxView', 'js/views/GridDropdownView', 'js/views/GridMultiselectView',
+    'graph-view', 'js/views/TabsView', 'js/views/ChartView', 'js/views/GridView', 'js/views/DetailsView',
+    'js/views/ScatterChartView', 'js/views/LineWithFocusChartView', 'js/views/HeatChartView'
 ], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
              AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
-             GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView) {
+             GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView, LineWithFocusChartView, HeatChartView) {
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -79,7 +64,6 @@ define([
                     }
                 ],
                 onEnter: function () {
-                    console.log("onEnter");
                     $("#" + modalId).modal('hide');
                 }
             });
@@ -177,8 +161,7 @@ define([
             }
 
             if (contrail.checkIfExist(obj)) {
-                obj = $.isArray(obj) ? obj.join(', ') : obj;
-                obj = obj.toString().trim();
+                obj = $.isArray(obj) ? obj : obj.toString().trim();
                 if (obj !== '' || obj === 0) {
                     return obj;
                 }
@@ -259,7 +242,7 @@ define([
             return testobj;
         };
 
-        this.renderView4Config = function (parentElement, model, viewObj, validation, lockEditingByDefault) {
+        this.renderView4Config = function (parentElement, model, viewObj, validation, lockEditingByDefault, modelMap) {
             var viewName = viewObj['view'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
                 validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
@@ -270,114 +253,147 @@ define([
             switch (viewName) {
                 case "AccordianView":
                     elementView = new AccordianView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "SectionView":
                     elementView = new SectionView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormDropdownView":
                     elementView = new FormDropdownView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormSelect2DropdownView":
                     elementView = new FormSelect2DropdownView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormCheckboxView":
                     elementView = new FormCheckboxView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormInputView":
                     elementView = new FormInputView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormMultiselectView":
                     elementView = new FormMultiselectView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormGridView":
                     elementView = new FormGridView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormDynamicGridView":
                     elementView = new FormDynamicGridView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "WizardView":
                     elementView = new WizardView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "FormEditableGridView":
                     elementView = new FormEditableGridView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GridInputView":
                     elementView = new GridInputView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GridCheckboxView":
                     elementView = new GridCheckboxView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GridDropdownView":
                     elementView = new GridDropdownView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GridMultiselectView":
                     elementView = new GridMultiselectView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GraphView":
                     elementView = new GraphView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "TabsView":
                     elementView = new TabsView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "ChartView":
                     elementView = new ChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "GridView":
                     elementView = new GridView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "DetailsView":
                     elementView = new DetailsView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 case "ScatterChartView":
                     elementView = new ScatterChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    break;
+
+                case "LineWithFocusChartView":
+                    elementView = new LineWithFocusChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    break;
+
+                case "HeatChartView":
+                    elementView = new HeatChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
                 default:
                     if(app == cowc.APP_CONTRAIL_CONTROLLER) {
-                        ctwu.renderView(viewName, parentElement, model, viewAttributes);
+                        ctwu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     } else if(app == cowc.APP_CONTRAIL_SM) {
-                        smwu.renderView(viewName, parentElement, model, viewAttributes);
+                        smwu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     }
                     break;
             }
@@ -400,17 +416,8 @@ define([
                 '{{#IfValidJSONValueByPath "' + configValue.key + '" this ' + configKey + '}}' +
                 '<li>' +
                 '<label class="inline">' +
-                '<span class="key"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>';
-
-                if (configValue.valueType == 'text') {
-                    template += '<span class="value"> {{{getJSONValueByPath "' + configValue.key + '" this}}} </span>';
-                } else if (configValue.valueType == 'link') {
-                    template += '<span class="value"> {{{getJSONValueLinkByPath "' + configValue.key + '" this}}} </span>';
-                } else if (configValue.valueType == 'format-bytes') {
-                    template += '<span class="value"> {{{getJSONValueFormattedBytesByPath "' + configValue.key + '" this "' + configValue.valueFormat + '"}}} </span>';
-                } else if (configValue.valueType == 'length') {
-                    template += '<span class="value"> {{{getJSONValueLengthByPath "' + configValue.key + '" this}}} </span>';
-                }
+                '<span class="key"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>' +
+                '<span class="value">{{{getValueByConfig this config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
 
                 template += '</label>' +
                 '</li>' +
@@ -461,9 +468,8 @@ define([
                 break;
 
                 case 'BlockListTemplateGenerator':
-                    var template = '<div class="detail-block-list-content row-fluid">';
-
-                        template += '<h6>' + config.title + '</h6>' +
+                    var template = '<div class="detail-block-list-content row-fluid">' +
+                            '<h6>' + config.title + '</h6>' +
                             self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app) +
                             '<br/></div>';
 
@@ -472,26 +478,27 @@ define([
 
                 case 'BlockGridTemplateGenerator':
 
-                    var template = '<div class="detail-block-grid-content row-fluid">';
-
-                    if (contrail.checkIfExist(config.title)) {
-                        template += '<h6>' + config.title + '</h6>';
-                    }
-
-                    template += '<div class="row-fluid">' +
-                    '{{#IfValidJSONValueByPath "' + config.key + '" this 1}} ' +
-                        '{{#each ' + config.key +'}} ' +
-                            '{{#IfCompare @index 0 operator="%2"}} ' +
-                                '{{#IfCompare @index 0 operator="!="}}</div><br/>{{/IfCompare}}' +
-                                '<div class="row-fluid">' +
-                            '{{/IfCompare}}' +
-                            '<div class="span6"><div class="row-fluid">' +
-                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app) +
-                            '</div></div>';
-
-                    template += '{{/each}} </div> {{/IfValidJSONValueByPath}}';
-
-                    template += '</div></div>';
+                    var template = '<div>' +
+                        '{{#IfValidJSONValueByPathLength "' + config.key + '" this}} ' +
+                        '<div class="detail-block-grid-content row-fluid">' +
+                        (contrail.checkIfExist(config.title) ? '<h6>' + config.title + '</h6>' : '') +
+                        '<div class="row-fluid">' +
+                            '{{#each ' + config.key +'}} ' +
+                                '{{#IfCompare @index 0 operator="%2"}} ' +
+                                    '{{#IfCompare @index 0 operator="!="}}' +
+                                        '</div>' +
+                                        '<div class="row-fluid block-grid-row">' +
+                                    '{{else}}' +
+                                        '<div class="row-fluid block-grid-row">' +
+                                    '{{/IfCompare}}' +
+                                '{{/IfCompare}}' +
+                                '<div class="span6">' +
+                                    '<div class="row-fluid">' +
+                                        self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app) +
+                                    '</div>' +
+                                '</div>' +
+                            '{{/each}} </div>' +
+                        '</div></div> {{/IfValidJSONValueByPathLength}} </div>';
 
                     templateObj = $(template);
 
@@ -499,27 +506,34 @@ define([
             };
 
             return(templateObj.prop('outerHTML'))
-        }
+        };
 
         this.generateDetailTemplateHTML = function(config, app) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
-                templateObj = $(template());
+                templateObj = $(template(config));
 
-            templateObj.find('.detail-foundation-content').append(self.generateInnerTemplate(config, app));
-            templateObj.find('.group-detail-advanced-json').append('{{{formatGridJSON2HTML this}}}')
+            templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
+            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}')
 
             return(templateObj.prop('outerHTML'))
-        }
+        };
 
         this.generateDetailTemplate = function(config, app) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
-                templateObj = $(template());
+                templateObj = $(template(config));
 
-            templateObj.find('.detail-foundation-content').append(self.generateInnerTemplate(config, app));
-            templateObj.find('.group-detail-advanced-json').append('{{{formatGridJSON2HTML this}}}')
+            templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
+            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}')
 
             return Handlebars.compile(templateObj.prop('outerHTML'));
-        }
+        };
+
+        this.getValueFromTemplate = function (args) {
+            return args[0].replace(/\{(\d+)\}/g, function (m, n) {
+                n = parseInt(n) + 1;
+                return args[n];
+            });
+        };
     };
     return CoreUtils;
 });
