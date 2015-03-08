@@ -9,7 +9,7 @@ define([
             var defaultCacheConfig = {
                 cacheConfig: {
                     cacheTimeout: cowc.GRAPH_CACHE_UPDATE_INTERVAL,
-                    loadOnTimeout: false
+                    loadOnTimeout: true
                 }
             };
 
@@ -23,6 +23,7 @@ define([
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
             this.onAllRequestsComplete = new Slick.Event();
+            this.beforeDataUpdate = new Slick.Event();
             this.onDataUpdate = new Slick.Event();
 
             return this;
@@ -179,6 +180,7 @@ define([
 
     function setData2Model(contrailGraphModel, graphdata) {
         var elementMap = {node: {}, link: {}};
+        contrailGraphModel.beforeDataUpdate.notify();
 
         //TODO: We should not edit graohModel in generateElements
         var elementsObject = contrailGraphModel.generateElements($.extend(true, {}, graphdata), elementMap);

@@ -23,6 +23,10 @@ define([
             tooltipConfig = contrail.handleIfNull(viewConfig.tooltipConfig, []);
             clickEventsConfig = contrail.handleIfNull(viewConfig.clickEvents, {});
 
+            self.model.beforeDataUpdate.subscribe(function() {
+                $(self.el).find(".font-element").remove();
+            });
+
             self.model.onAllRequestsComplete.subscribe(function() {
 
                 var directedGraphSize = self.model.directedGraphSize,
