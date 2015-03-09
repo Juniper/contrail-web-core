@@ -3099,3 +3099,36 @@ function getRandomValue(min,max){
          callback();
      }
  };
+
+function getDisplayNameforHostName(name,dataSourceName) {
+   if(globalObj.dataSources != null && globalObj.dataSources[dataSourceName] != null
+       &&  globalObj.dataSources[dataSourceName].dataSource != null) {
+       var dataSrc = globalObj.dataSources[dataSourceName].dataSource.getItems();
+       for(var i = 0;i < dataSrc.length;i++) {
+           if(dataSrc[i].name === name) {
+               return dataSrc[i].displayName;
+           }
+       }
+   } else {
+       return null;
+   }
+}
+
+/*
+ * This function validates whether the given string is a valid DOM element id,if it is not a valid one then
+ * it replaces the invalid characters with its random number + ASCII Code + random number to maintain uniqueness
+ * otherwise returns the same string
+ */
+function constructValidDOMId(id) {
+    var regex = /[^a-zA-Z0-9_]/;
+    if(id != null) {
+        for(var i = 0; i < id.length; i++) {
+           if(regex.test(id[i])) {
+               var genCode = parseInt(Math.random() * 10, 10).toString() + id[i].charCodeAt().toString()
+                   + parseInt(Math.random() * 10, 10).toString();
+               id = id.replace(id[i], genCode);
+           }
+        }
+    }
+    return id;
+}
