@@ -999,7 +999,7 @@ a.selectAllLink:hover {
     padding: 0 0 10px;
 }
 .slick-row-detail .slick-cell, .slick-row-detail .row-fluid, .slick-row-detail .item-list > li {
-    background-color: #FFF
+    background-color: transparent
 }
 .slick-row-detail .slick-cell {
     padding: 10px 35px;
@@ -1061,6 +1061,19 @@ a.selectAllLink:hover {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.slick-row.ui-widget-content.slick-row-detail{
+	border: none;
+	border-top: 1px solid #eee;
+	border-bottom: 1px solid #eee;
+    background-color:#DCE3E8;
+}
+.slick-row-detail  .row-fluid, .slick-row-detail .row-fluid [class*="span"] {
+   min-height:20px;
+}
+.slick-row-detail  .row-fluid label {
+	margin-bottom:0px;
+}
+
 .grid-footer{
 	width:100%;
 	height:22px;	
@@ -1613,10 +1626,12 @@ input.datetimepicker{
 	margin: 0 0 5px 0;
 	padding: 1px 1px 0 10px;
 }
+/*
 .contrail-tabs-classic .ui-tabs-panel.ui-widget-content,
 .contrail-widget-tabs .ui-tabs-panel.ui-widget-content {
 	padding: 1em 1.5em;
 }
+*/
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-state-hover a,
@@ -3111,3 +3126,141 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
     padding-top:5px;
     text-align:right;
 }
+/*style to fix the detail template height*/
+.slick-grid-detail-content-height{
+    height : 310px !important;
+}
+
+.slick-grid-detail-sub-content-height{
+    height : 300px !important;
+}
+
+.ui-widget-content{
+  background:white;
+}
+.widget-box{
+  padding:10px;
+}
+.contrail .ui-tabs-panel .widget-box{
+  padding:0px;
+}
+.ui-tabs-panel.ui-widget-content{
+  padding:10px;
+}
+.contrail .ui-tabs-panel.ui-widget-content{
+  padding:10px 20px;
+}
+
+.ui-tabs-panel .footer-links{
+  padding:5px 10px;
+  float:left;
+}
+
+.contrail .ui-tabs-panel{
+  overflow:visible;
+}
+.grid-canvas .contrail .ui-tabs-panel{
+  height:210px;
+  overflow:auto;
+}
+#translated.connection {
+    -ms-transform: translate(0px,10px);
+    -webkit-transform: translate(0px,10px);
+    transform: translate(0px,10px);
+}
+
+.slick-row-master.even+.slick-row-detail>.slick-cell{
+	background-color:#f5f5f5;
+}
+.slick-row-master.odd+.slick-row-detail>.slick-cell{
+	background-color:#fdfdfd;
+}
+
+
+.slick-row-master+.slick-row.ui-widget-content.slick-row-detail .slick-row-detail-container{
+	border:#e5e5e5 solid 1px;
+	padding:10px;
+	background:white;
+}
+.slick-row-master.even+.slick-row.ui-widget-content.slick-row.ui-widget-content.slick-row-detail{
+	border:none;
+}
+.slick-row-master.odd+.slick-row.ui-widget-content.slick-row.ui-widget-content.slick-row-detail{
+	border:none;
+}
+.slick-row-master.odd+.slick-row.ui-widget-content.slick-row-detail .slick-row-detail-container{
+	border:#d5d5d5 solid 1px;
+	padding:10px;
+}
+
+.contrail .ui-tabs-panel{
+  overflow:visible;
+}
+.grid-canvas .contrail .ui-tabs-panel{
+  height:195px;
+  overflow:auto;
+}
+
+.contrail-tabs-overcast.ui-tabs.ui-widget, .ui-tabs.ui-widget{
+	margin:5px 35px !important ;
+}
+#content-container>.contrail>.ui-tabs.ui-widget {
+  margin: 0px!important;
+}
+.slick-row-master.odd{
+	background:none;
+	background-color:#fdfdfd;
+}
+.padL-small{
+	padding-left:5px;
+}
+.padL-med{
+	padding-left:10px;
+}
+
+.new-column-label{
+	padding-top:5px;
+	text-align:right;
+}
+
+#content-container>.contrail .ui-tabs-panel.ui-widget-content{
+padding:0px;}
+.slick-row-detail .slick-cell .slick-cell{
+padding:0px;}
+.slick-row-detail-container div, .slick-row-detail-container ul, .slick-row-detail-container a, .slick-row-detail-container .dropdown-menu li a, .slick-row-detail-container textarea, .slick-row-detail-container ul.select2-results, .slick-row-detail-container input[type="text"], .slick-row-detail-container input[type="password"], .slick-row-detail-container input[type="datetime"], .slick-row-detail-container input[type="datetime-local"], .slick-row-detail-container input[type="date"], .slick-row-detail-container input[type="month"], .slick-row-detail-containerinput[type="time"], .slick-row-detail-container input[type="week"], .slick-row-detail-container input[type="number"], .slick-row-detail-container input[type="email"], .slick-row-detail-container input[type="url"], .slick-row-detail-container input[type="search"], .slick-row-detail-container input[type="tel"], .slick-row-detail-container input[type="color"], .slick-row-detail-container .ui-widget input, .slick-row-detail-container .ui-widget select, .slick-row-detail-container .ui-widget textarea, .slick-row-detail-container .ui-widget button{
+    font-size:11px!important;
+}
+.slick-row-detail-container h4.smaller{
+    font-size:12px;
+}
+.slick-row-detail-container h3.smaller{
+    font-size:13px;
+}
+.slick-row-detail .slick-cell .slick-cell{
+    padding:4px;
+}
+.contrail-grid   #detail-title{
+    display: block;
+}
+#content-container > .contrail > #detail-title{
+    display:none;
+}
+.contrail-grid   #detail-title{
+    display: block;
+   color:#3182bd;
+ height:30px;
+ margin:0px 5px;
+}
+#content-container > .contrail > #detail-title{
+    display:none;
+}
+#content-container .contrail-widget-tabs{
+ padding-top:5px;}
+.slick-row-master+.slick-row.ui-widget-content.slick-row-detail .slick-row-detail-container{
+ padding:10px 20px}
+
+.contrail .ui-tabs-panel.ui-widget-content{
+  padding:0px;
+}
+.contrail-tabs-overcast.ui-tabs.ui-widget, .ui-tabs.ui-widget{
+ margin:0px!important;}
