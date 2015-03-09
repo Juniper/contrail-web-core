@@ -486,14 +486,15 @@ function getDefaultGridConfig() {
 	                });
 	                columns = columns.concat(gridColumns);
 	                gridColumns = columns;
-
-	                gridContainer.find('.slick-row-detail').live('click', function(){
+                    /*Commenting below code as it is adding random heights and causes misalignments
+                        to grid when it has one more grid in the expansion detail template*/
+	                /*gridContainer.find('.slick-row-detail').live('click', function(){
 	                	var rowId = $(this).data('cgrid');
 	                	setTimeout(function(){
 	                	    if(gridContainer.data('contrailGrid') != null)
 	                	        gridContainer.data('contrailGrid').adjustDetailRowHeight(rowId);
 	                	},100);
-	                });
+	                });*/
 	            }
 
                 if (gridOptions.actionCell != false) {
@@ -1064,10 +1065,11 @@ function getDefaultGridConfig() {
                     }
                 },
                 adjustDetailRowHeight: function(rowId){
+                    var offSetHeight = 32; //To show down border line properly in the detail template view
                 	var slickdetailRow = gridContainer.find('.slick_row_' + rowId).next('.slick-row-detail'),
                     	detailContainerHeight = slickdetailRow.find('.slick-row-detail-container').height();
-                	slickdetailRow.height(detailContainerHeight+10);
-                	slickdetailRow.find('.slick-cell').height(detailContainerHeight);
+                    slickdetailRow.height(detailContainerHeight + 10 + offSetHeight);
+                    slickdetailRow.find('.slick-cell').height(detailContainerHeight + offSetHeight);
                 },
                 adjustGridAlternateColors: function(){
                 	gridContainer.find('.slick-row-master').removeClass('even').removeClass('odd');
