@@ -488,7 +488,6 @@ function getDefaultGridConfig() {
 	                });
 	                columns = columns.concat(gridColumns);
 	                gridColumns = columns;
-
 	                gridContainer.find('.slick-row-detail').live('click', function(){
 	                	var rowId = $(this).data('cgrid');
 	                	setTimeout(function(){
@@ -1068,10 +1067,11 @@ function getDefaultGridConfig() {
                     }
                 },
                 adjustDetailRowHeight: function(rowId){
+                    var offSetHeight = 20; //To show down border line properly in the detail template view
                 	var slickdetailRow = gridContainer.find('.slick_row_' + rowId).next('.slick-row-detail'),
                     	detailContainerHeight = slickdetailRow.find('.slick-row-detail-container').height();
-                	slickdetailRow.height(detailContainerHeight+10);
-                	slickdetailRow.find('.slick-cell').height(detailContainerHeight);
+                    slickdetailRow.height(detailContainerHeight + 10 + offSetHeight);
+                    slickdetailRow.find('.slick-cell').height(detailContainerHeight + offSetHeight);
                 },
                 adjustGridAlternateColors: function(){
                 	gridContainer.find('.slick-row-master').removeClass('even').removeClass('odd');
