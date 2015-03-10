@@ -731,6 +731,55 @@ function isIPBoundToIPRange(rangeStart, rangeEnd, ipAddress){
     return code;
 }
 
+function isStartAddress(cidr, ipAddress){
+    var cidrAddress = new v4.Address(cidr);
+    if(cidrAddress.isValid() == true){
+        if(isIPv4(ipAddress)){
+            var cidrBigInt = new v4.Address(ipAddress).bigInteger();
+            var IPBigInt = new v4.Address(cidrAddress.startAddress().address).bigInteger();
+            if(cidrBigInt.compareTo(IPBigInt) == 0){
+                return true;
+            }
+        }
+    } else {
+        cidrAddress = new v6.Address(cidr); 
+        if(cidrAddress.isValid() == true){
+            if(isIPv6(ipAddress)){
+                var cidrBigInt = new v6.Address(cidrAddress.startAddress().address).bigInteger();
+                var IPBigInt = new v6.Address(ipAddress).bigInteger();
+                if(cidrBigInt.compareTo(IPBigInt) == 0){
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+function isEndAddress(cidr, ipAddress){
+    var cidrAddress = new v4.Address(cidr);
+    if(cidrAddress.isValid() == true){
+        if(isIPv4(ipAddress)){
+            var cidrBigInt = new v4.Address(ipAddress).bigInteger();
+            var IPBigInt = new v4.Address(cidrAddress.endAddress().address).bigInteger();
+            if(cidrBigInt.compareTo(IPBigInt) == 0){
+                return true;
+            }
+        }
+    } else {
+        cidrAddress = new v6.Address(cidr); 
+        if(cidrAddress.isValid() == true){
+            if(isIPv6(ipAddress)){
+                var cidrBigInt = new v6.Address(cidrAddress.endAddress().address).bigInteger();
+                var IPBigInt = new v6.Address(ipAddress).bigInteger();
+                if(cidrBigInt.compareTo(IPBigInt) == 0){
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 
 function isValidIP(ipAddress){
     var IP = new v4.Address(ipAddress); 
@@ -1356,3 +1405,5 @@ cutils.isIPBoundToRange = isIPBoundToRange;
 cutils.formatVirtualRouterType = formatVirtualRouterType;
 cutils.isValidMACAddress = isValidMACAddress;
 cutils.isIPBoundToIPRange = isIPBoundToIPRange;
+cutils.isStartAddress = isStartAddress;
+cutils.isEndAddress = isEndAddress;
