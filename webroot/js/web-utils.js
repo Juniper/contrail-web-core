@@ -2689,6 +2689,7 @@ function getIPforHostName(name,dataSourceName) {
        return null;
    }
 }
+
 // This function accepts the ip and checks whether it is IPV4 or IPV6 and returns the label value html content for the IP
 function getLabelValueForIP(ip) {
     var lbl = 'IPv4';
@@ -2699,3 +2700,77 @@ function getLabelValueForIP(ip) {
     }
     return wrapLabelValue(lbl,value);
 }
+
+/**
+ * Given an ipaddress returns 
+ * "v4" if it is ipv4
+ * "v6" if it is ipv6
+ * "invalid" if not an ipaddress
+ * @param ipAddress
+ * @returns {String}
+ */
+function getIPType(ipAddress){
+    if(ipAddress == null){
+        return "invalid";
+    }
+    var IP = new v4.Address(ipAddress); 
+    if(IP.isValid() === true){
+        return "v4";
+    }
+    IP = new v6.Address(ipAddress); 
+    if(IP.isValid() === true){
+        return "v6";
+    }
+    return "invalid";
+}
+
+/**
+ * This function can be use as the sorter function in grids for values with ip
+ * @param ip1
+ * @param ip2
+ * @param sign
+ * @returns {Number}
+ */
+function comparatorIP(ip1, ip2, sign){
+    if(ip1 instanceof Array){
+        ip1 = ip1[0];
+    }
+    if(ip2 instanceof Array){
+        ip2 = ip2[0]
+    }
+    //Get ip types to see if ipv4 or ipv6
+    var ip1Type = getIPType(ip1);
+    var ip2Type = getIPType(ip2);
+    
+    //If both are valid ips
+    if(ip1Type != "invalid" && ip2Type != "invalid"){
+      //If both are of same type do the comparison
+        if(ip1Type == "v4" && ip2Type == "v4"){
+            var IP1 = new v4.Address(ip1);
+            var IP2 = new v4.Address(ip2);
+            var ip1Int = IP1.bigInteger();
+            var ip2Int = IP2.bigInteger();
+            return (ip1Int.compareTo(ip2Int) > 0)? 1 * sign : -1 * sign;
+        } else if(ip1Type == "v6" && ip2Type == "v6"){
+            var IP1 = new v6.Address(ip1);
+            var IP2 = new v6.Address(ip2);
+            var ip1Int = IP1.bigInteger();
+            var ip2Int = IP2.bigInteger();
+            return (ip1Int.compareTo(ip2Int) > 0)? 1 * sign : -1 * sign;
+        } else {
+            if (ip1Type == "v4") {
+                return 1 * sign;
+            } else {
+                return -1 * sign;
+            }
+        }
+    } else {
+        if(ip1Type != "invalid"){
+            return -1 * sign;
+        } else {
+            return 1 * sign;
+        }
+    }
+    return -1;
+}
+
