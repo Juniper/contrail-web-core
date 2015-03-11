@@ -225,6 +225,11 @@ define([
                 failureCallback: function (xhr) {
                     contrailListModel.error = true;
                     contrailListModel.errorList.push(xhr);
+                    if (parentModelList != null && parentModelList.length > 0) {
+                        for (var i = 0; i < 1; i++) {
+                            parentModelList[i].error = true;
+                        }
+                    }
                     if (contrail.checkIfFunction(primaryRemote.failureCallback)) {
                         primaryRemote.failureCallback(xhr, contrailListModel);
                     }
@@ -298,6 +303,11 @@ define([
                 failureCallback: function (xhr) {
                     contrailListModel.error = true;
                     contrailListModel.errorList.push(xhr);
+                    if (parentModelList != null && parentModelList.length > 0) {
+                        for (var i = 0; i < 1; i++) {
+                            parentModelList[i].error = true;
+                        }
+                    }
                     if (contrail.checkIfFunction(vlFailureCallback)) {
                         vlFailureCallback(xhr, contrailListModel);
                     }
