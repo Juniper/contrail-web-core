@@ -493,12 +493,24 @@
             <xsl:when test="../@link">
                 <xsl:variable name="linkx" select="../@link"/>
                 <xsl:variable name="valuex" select=".."/>
+                <xsl:variable name="link_title" select="../@link_title"/>
                 <td style="color:blue">
                     <pre>
-                        <a href="#" onclick="onLinkClick('Snh_{$linkx}?x={$valuex}');"> 
-                            <xsl:value-of select=".."/>
-                        </a>
-                    </pre>    
+                        <xsl:choose>
+                            <xsl:when test="$valuex != ''">
+                                <a href="Snh_{$linkx}?x={$valuex}">
+                                    <xsl:choose>
+                                        <xsl:when test="$link_title != ''">
+                                            <xsl:value-of select="$link_title" />
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select=".." />
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </a>
+                            </xsl:when>
+                        </xsl:choose>
+                    </pre>
                 </td>
             </xsl:when>
             <xsl:otherwise>
