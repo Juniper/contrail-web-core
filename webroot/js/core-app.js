@@ -59,6 +59,7 @@ requirejs.config({
         'vectorizer' : '/assets/joint/js/vectorizer',
         'joint.layout.DirectedGraph' : "/assets/joint/js/joint.layout.DirectedGraph",
         'joint.contrail' : "/js/joint.contrail",
+        'dagre': '/assets/joint/js/dagre',
         'lodash' : '/assets/joint/js/lodash',
         'jquery.panzoom': "/assets/jquery/js/jquery.panzoom.min",
         'jquery.ui.position': "/assets/jquery-contextMenu/js/jquery.ui.position",
@@ -236,6 +237,9 @@ requirejs.config({
         },
         'joint.contrail': {
             deps: ['joint', 'joint.layout.DirectedGraph']
+        },
+        'dagre': {
+            deps: ['jquery']
         },
         'text': {
             deps: ['jquery']
