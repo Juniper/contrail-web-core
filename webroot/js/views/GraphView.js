@@ -56,7 +56,7 @@ define([
         $.each(tooltipConfig, function (keyConfig, valueConfig) {
             $('g.' + keyConfig).popover('destroy');
             $('g.' + keyConfig).popover({
-                trigger: 'manual',
+                trigger: 'hover',
                 html: true,
                 animation: false,
                 placement: function (context, src) {
@@ -83,29 +83,35 @@ define([
     };
 
     function initClickEvents(eventConfig, jointObject) {
+        var timer = null;
         if(contrail.checkIfFunction(eventConfig['blank:pointerclick'])) {
             jointObject.connectedPaper.on('blank:pointerclick', eventConfig['blank:pointerclick']);
         }
 
+        if(contrail.checkIfFunction(eventConfig['cell:pointerclick'])) {
+            jointObject.connectedPaper.on('cell:pointerclick', function(cellView, evt, x, y) {
+
+                if (timer) {
+                    clearTimeout(timer);
+                }
+
+                timer = setTimeout(function() {
+                    eventConfig['cell:pointerclick'](cellView, evt, x, y);
+                    clearTimeout(timer);
+                }, 500);
+            });
+        }
+
         if(contrail.checkIfFunction(eventConfig['cell:pointerdblclick'])) {
-            jointObject.connectedPaper.on('cell:pointerdblclick', eventConfig['cell:pointerdblclick']);
+            jointObject.connectedPaper.on('cell:pointerdblclick', function(cellView, evt, x, y) {
+                clearTimeout(timer);
+                eventConfig['cell:pointerdblclick'](cellView, evt, x, y);
+            });
         }
 
         if(contrail.checkIfExist(eventConfig['cell:rightclick'])) {
             initRightClickEvent(eventConfig['cell:rightclick'], jointObject);
         }
-
-        /* Tooltip event to show/hide tooltip on click */
-        jointObject.connectedPaper.on('cell:pointerclick', function(cellView, evt, x, y) {
-            var clickedElement = cellView.model,
-                elementId = clickedElement.id;
-
-            $('g').popover('hide');
-            $('g[model-id="' + elementId + '"').popover('show');
-        });
-
-        $(document).off('click', onDocumentClickHandler)
-            .on('click', onDocumentClickHandler);
     };
 
     var onDocumentClickHandler = function(e) {

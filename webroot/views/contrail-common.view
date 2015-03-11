@@ -850,6 +850,11 @@
     <div class="row-fluid detail-section-row-content"></div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-2-row-content-template">
+    <div id="top-content-container" class="row-fluid margin-0-0-5"></div>
+    <div id="bottom-content-container" class="row-fluid margin-0-0-5"></div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-loading-spinner-template">
     <div class="loading-spinner"><i class="icon-refresh icon-spin"></i></div>
 </script>

@@ -84,7 +84,7 @@ function Contrail() {
         } else {
             return contrail.checkIfExist(value[pathString]);
         }
-    }
+    };
     this.parseErrorMsgFromXHR = function(xhr) {
         var errorMsg = '';
         if(contrail.checkIfExist(xhr.errorThrown)) {
