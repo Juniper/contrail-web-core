@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ */
+
 define([
     'underscore',
-    'contrail-remote-data-handler'
-], function (_, ContrailRemoteDataHandler) {
+    'contrail-remote-data-handler',
+    'js/models/GraphLayoutHandler'
+], function (_, ContrailRemoteDataHandler, GraphLayoutHandler) {
     var ContrailGraphModel = joint.dia.Graph.extend({
         error: false,
         errorList: [],
@@ -190,7 +195,8 @@ define([
         contrailGraphModel.elementMap = elementMap;
 
         if (contrailGraphModel.forceFit) {
-            contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
+            //contrailGraphModel.directedGraphSize = GraphLayoutHandler.jointLayout(contrailGraphModel, getJointLayoutOptions(elementsObject['nodes'], elementsObject['links']));
+            contrailGraphModel.directedGraphSize = GraphLayoutHandler.dagreLayout(contrailGraphModel, getDagreLayoutOptions(elementsObject['nodes'], elementsObject['links']));
         }
         if(contrail.checkIfExist(elementsObject['zoomedNodeElement'])) {
             var zoomedNodeElement = elementsObject['zoomedNodeElement'];
@@ -218,52 +224,31 @@ define([
         }
     };
 
-    var graphLayoutHandler = $.extend(true, joint.layout.DirectedGraph, {
-        layout: function (graph, opt) {
-            opt = opt || {};
-
-            var inputGraph = this._prepareData(graph);
-            var runner = dagre.layout();
-
-            if (opt.debugLevel) {
-                runner.debugLevel(opt.debugLevel);
-            }
-            if (opt.rankDir) {
-                runner.rankDir(opt.rankDir);
-            }
-            if (opt.rankSep) {
-                runner.rankSep(opt.rankSep);
-            }
-            if (opt.edgeSep) {
-                runner.edgeSep(opt.edgeSep);
-            }
-            if (opt.nodeSep) {
-                runner.nodeSep(opt.nodeSep);
-            }
-
-            var layoutGraph = runner.run(inputGraph);
-
-            layoutGraph.eachNode(function (u, value) {
-                if (!value.dummy) {
-                    graph.get('cells').get(u).set('position', {
-                        x: value.x + GRAPH_MARGIN - value.width / 2,
-                        y: value.y + GRAPH_MARGIN - value.height / 2
-                    });
-                }
-            });
-
-            if (opt.setLinkVertices) {
-
-                layoutGraph.eachEdge(function (e, u, v, value) {
-                    var link = graph.get('cells').get(e);
-                    if (link) {
-                        graph.get('cells').get(e).set('vertices', value.points);
-                    }
-                });
-            }
-            return {width: layoutGraph.graph().width, height: layoutGraph.graph().height};
+    function getJointLayoutOptions(nodes, links, rankDir, separation) {
+        var layoutOptions = {setLinkVertices: false, edgeSep: 1, nodeSep: 50, rankSep: 50, rankDir: "LR"};
+        if (rankDir == null) {
+            rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? 'TB' : 'LR';
         }
-    });
+        layoutOptions['rankDir'] = rankDir;
+        if (separation != null) {
+            layoutOptions['nodeSep'] = separation;
+            layoutOptions['rankSep'] = separation;
+        }
+        return layoutOptions;
+    };
+
+    function getDagreLayoutOptions(nodes, links, rankDir, separation) {
+        var layoutOptions = {edgeSep: 1, nodeSep: 50, rankSep: 50, rankDir: "LR", marginx: GRAPH_MARGIN, marginy: GRAPH_MARGIN};
+        if (rankDir == null) {
+            rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? 'TB' : 'LR';
+        }
+        layoutOptions['rankDir'] = rankDir;
+        if (separation != null) {
+            layoutOptions['nodeSep'] = separation;
+            layoutOptions['rankSep'] = separation;
+        }
+        return layoutOptions;
+    };
 
     return ContrailGraphModel;
 });
