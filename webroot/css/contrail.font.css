@@ -26,71 +26,101 @@
 .icon-contrail-analytics-db:before {
     content: "\e600";
 }
+
 .icon-contrail-config-db:before {
     content: "\e601";
 }
+
 .icon-contrail-contrail-core:before {
     content: "\e602";
 }
+
 .icon-contrail-virtual-machine:before {
     content: "\e603";
 }
-.icon-contrail-virtual-network:before {
+
+.icon-contrail-virtual-machine-left:before {
     content: "\e604";
 }
-.icon-contrail-network-ipam:before {
+
+.icon-contrail-virtual-machine-right:before {
     content: "\e605";
 }
-.icon-contrail-analytics-node:before {
+
+.icon-contrail-virtual-network:before {
     content: "\e606";
 }
-.icon-contrail-compute-node:before {
+
+.icon-contrail-network-ipam:before {
     content: "\e607";
 }
-.icon-contrail-config-node:before {
+
+.icon-contrail-analytics-node:before {
     content: "\e608";
 }
-.icon-contrail-control-node:before {
+
+.icon-contrail-compute-node:before {
     content: "\e609";
 }
-.icon-contrail-switch:before {
+
+.icon-contrail-config-node:before {
     content: "\e60a";
 }
-.icon-contrail-db-node:before {
+
+.icon-contrail-control-node:before {
     content: "\e60b";
 }
-.icon-contrail-virtual-firewall:before {
+
+.icon-contrail-switch:before {
     content: "\e60c";
 }
-.icon-contrail-nat:before {
+
+.icon-contrail-db-node:before {
     content: "\e60d";
 }
-.icon-contrail-openstack-node:before {
+
+.icon-contrail-virtual-firewall:before {
     content: "\e60e";
 }
-.icon-contrail-system-stats:before {
+
+.icon-contrail-nat:before {
     content: "\e60f";
 }
-.icon-contrail-virtual-router:before {
+
+.icon-contrail-openstack-node:before {
     content: "\e610";
 }
-.icon-contrail-webui-node:before {
+
+.icon-contrail-system-stats:before {
     content: "\e611";
 }
-.icon-contrail-system-logs:before {
+
+.icon-contrail-virtual-router:before {
     content: "\e612";
 }
-.icon-contrail-project:before {
+
+.icon-contrail-webui-node:before {
     content: "\e613";
 }
-.icon-contrail-router:before {
+
+.icon-contrail-system-logs:before {
     content: "\e614";
 }
-.icon-contrail-network-policy:before {
+
+.icon-contrail-project:before {
     content: "\e615";
 }
-.icon-contrail-security-group:before {
+
+.icon-contrail-router:before {
     content: "\e616";
+}
+
+.icon-contrail-network-policy:before {
+    content: "\e617";
+}
+
+.icon-contrail-security-group:before {
+    content: "\e618";
 }
 
 @font-face {

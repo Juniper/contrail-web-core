@@ -1673,7 +1673,7 @@ color: #b94a48;
 .font-element i.icon-contrail-network-ipam {
     color: #f47671;
 }
-.font-element i.icon-contrail-virtual-machine {
+.font-element i.icon-contrail-virtual-machine, .font-element i.icon-contrail-virtual-machine-left, .font-element i.icon-contrail-virtual-machine-right {
     font-size: 20px;
 }
 .topology-visualization svg {
