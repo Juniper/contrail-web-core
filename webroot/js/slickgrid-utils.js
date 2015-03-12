@@ -732,6 +732,7 @@ function getDefaultGridConfig() {
             };
             
             grid['onClick'].subscribe(eventHandlerMap.grid['onClick']);
+ 
         };
 
         function initOnClickDocument(containerIdentifier, callback) {
@@ -808,9 +809,14 @@ function getDefaultGridConfig() {
                     for (var i = 0, l = cols.length; i < l; i++) {
                         var field = cols[i].sortCol.field;
                         var sign = cols[i].sortAsc ? 1 : -1;
+                        var result = 0;
                         var value1 = (contrail.checkIfExist(cols[i].sortCol.sortable.sortBy) && cols[i].sortCol.sortable.sortBy == 'formattedValue') ? cols[i].sortCol.formatter('', '', '', '', dataRow1) : dataRow1[field],
-                            value2 = (contrail.checkIfExist(cols[i].sortCol.sortable.sortBy) && cols[i].sortCol.sortable.sortBy == 'formattedValue') ? cols[i].sortCol.formatter('', '', '', '', dataRow2) : dataRow2[field];
-                        var result = (value1 == value2 ? 0 : (value1 > value2 ? 1 : -1)) * sign;
+                                value2 = (contrail.checkIfExist(cols[i].sortCol.sortable.sortBy) && cols[i].sortCol.sortable.sortBy == 'formattedValue') ? cols[i].sortCol.formatter('', '', '', '', dataRow2) : dataRow2[field];
+                        if(cols[i].sortCol.sorter != null){
+                            result = cols[i].sortCol.sorter(value1, value2, sign); // sorter property from column definition will be called if present
+                        } else {
+                            result = (value1 == value2 ? 0 : (value1 > value2 ? 1 : -1)) * sign;
+                        }
                         if (result != 0) {
                             return result;
                         }
