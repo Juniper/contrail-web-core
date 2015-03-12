@@ -46,9 +46,11 @@ define([
         },
 
         render: function () {
-            var self = this;
+            this.model.fetchData();
+        },
 
-            self.model.fetchData();
+        refreshData: function () {
+            this.model.refreshData();
         }
     });
 

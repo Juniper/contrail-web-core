@@ -36,39 +36,33 @@ define([
 
         fetchData: function () {
             var self = this, cacheUsedStatus = {isCacheUsed: false, reload: true },
-                cacheConfig = self.cacheConfig;
+                remoteHandlerConfig, cacheConfig = self.cacheConfig;
 
-            self.elementMap = {node: {}, link: {}};
-
-            var remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig);
             cacheUsedStatus = setCachedData2Model(self, cacheConfig);
 
             if (cacheUsedStatus['isCacheUsed']) {
                 self.onAllRequestsComplete.notify();
 
                 if (cacheUsedStatus['reload']) {
+                    remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig);
+                    self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
+                } else {
+                    remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig, false);
                     self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
                 }
             } else {
+                remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig);
                 self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
             }
-        },
 
-        isPrimaryRequestInProgress: function () {
-            return (self.contrailDataHandler != null) ? self.contrailDataHandler.isPrimaryRequestInProgress() : false;
-        },
-
-        isVLRequestInProgress: function () {
-            return (self.contrailDataHandler != null) ? self.contrailDataHandler.isVLRequestInProgress() : false;
-        },
-
-        isRequestInProgress: function () {
-            return (self.contrailDataHandler != null) ? self.contrailDataHandler.isRequestInProgress() : false;
+            bindDataHandler2Model(self);
         }
     });
 
-    function getRemoteHandlerConfig(contrailGraphModel, graphModelConfig) {
-        var remoteHandlerConfig = {},
+    function getRemoteHandlerConfig(contrailGraphModel, graphModelConfig, autoFetchData) {
+        var remoteHandlerConfig = {
+                autoFetchData: (autoFetchData != null) ? autoFetchData : true
+            },
             primaryRemote = contrailGraphModel.graphConfig.remote,
             vlRemoteConfig = contrail.handleIfNull(graphModelConfig.vlRemoteConfig, {}),
             vlRemoteList = contrail.handleIfNull(vlRemoteConfig['vlRemoteList'], []),
@@ -76,13 +70,14 @@ define([
                 ajaxConfig: primaryRemote.ajaxConfig,
                 dataParser: primaryRemote.dataParser,
                 initCallback: primaryRemote.initCallback,
-                successCallback: function (response) {
-                    setData2Model(contrailGraphModel, response);
+                successCallback: function (response, resetDataFlag) {
+                    setData2Model(contrailGraphModel, response, resetDataFlag);
                     if (contrail.checkIfFunction(primaryRemote.successCallback)) {
                         primaryRemote.successCallback(response, contrailGraphModel);
                     }
                     contrailGraphModel.onDataUpdate.notify();
                 },
+                refreshSuccessCallback: function () {},
                 failureCallback: function (xhr) {
                     contrailGraphModel.error = true;
                     contrailGraphModel.errorList.push(xhr);
@@ -213,6 +208,29 @@ define([
         }
     };
 
+    function bindDataHandler2Model(contrailGraphModel) {
+        var contrailDataHandler = contrailGraphModel.contrailDataHandler;
+
+        contrailGraphModel['isPrimaryRequestInProgress'] = function () {
+            return (contrailDataHandler != null) ? contrailDataHandler.isPrimaryRequestInProgress() : false;
+        };
+
+        contrailGraphModel['isVLRequestInProgress'] = function () {
+            return (contrailDataHandler != null) ? contrailDataHandler.isVLRequestInProgress() : false;
+        };
+
+        contrailGraphModel['isRequestInProgress'] = function () {
+            return (contrailDataHandler != null) ? contrailDataHandler.isRequestInProgress() : false;
+        };
+
+        contrailGraphModel['refreshData'] = function () {
+            if(!contrailGraphModel.isRequestInProgress()) {
+                resetGraphModel4Refresh(contrailGraphModel);
+                contrailDataHandler.refreshData()
+            }
+        };
+    };
+
     function updateDataInCache(contrailGraphModel, completeResponse) {
         var response = completeResponse[0];
         if (contrailGraphModel.ucid != null) {
@@ -248,6 +266,11 @@ define([
             layoutOptions['rankSep'] = separation;
         }
         return layoutOptions;
+    };
+
+    function resetGraphModel4Refresh(graphModel) {
+        graphModel.error = false;
+        graphModel.errorList = [];
     };
 
     return ContrailGraphModel;

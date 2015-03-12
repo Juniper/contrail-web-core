@@ -13,12 +13,14 @@ define([
             hlRemoteConfig = remoteHandlerConfig['hlRemoteConfig'],
             hlRemoteList = (hlRemoteConfig != null) ? hlRemoteConfig['hlRemoteList'] : null;
 
+        var autoFetchData = remoteHandlerConfig['autoFetchData'];
+
         var pAjaxConfig, pUrl, pUrlParams, pDataParser, pInitCallback, pSuccessCallback,
             pRefreshSuccessCallback, pFailureCallback, pCompleteCallback,
             pRequestCompleteResponse = [], pRequestInProgress = false;
 
         var vlRequestsInProgress = [], vlRequestInProgress = false, vlCompleteCallback,
-            cleanAndFresh = false, self = this;
+            resetDataFlag = false, self = this;
 
         pAjaxConfig = primaryRemoteConfig.ajaxConfig;
         pUrl = pAjaxConfig['url'];
@@ -33,16 +35,6 @@ define([
         pSuccessCallback = primaryRemoteConfig.successCallback;
         pRefreshSuccessCallback = primaryRemoteConfig.refreshSuccessCallback;
         pFailureCallback = primaryRemoteConfig.failureCallback;
-
-        self.refreshData = function () {
-            //TODO
-            /*
-             if (!pRequestInProgress) {
-             cleanAndFresh = true;
-             contrail.ajaxHandler(pAjaxConfig, pInitHandler, pRefreshHandler, pFailureHandler);
-             }
-             */
-        };
 
         self.isPrimaryRequestInProgress = function () {
             return pRequestInProgress;
@@ -60,7 +52,16 @@ define([
             }
         };
 
-        fetchPrimaryData();
+        self.refreshData = function () {
+            if (!self.isRequestInProgress()) {
+                resetDataHandler4Refresh();
+                contrail.ajaxHandler(pAjaxConfig, pInitHandler, pRefreshHandler, pFailureHandler);
+            }
+        };
+
+        if(autoFetchData == null || autoFetchData) {
+            fetchPrimaryData();
+        }
 
         return self;
 
@@ -91,7 +92,8 @@ define([
             pRequestCompleteResponse.push(response);
 
             if (contrail.checkIfFunction(pSuccessCallback)) {
-                pSuccessCallback(resultJSON);
+                pSuccessCallback(resultJSON, resetDataFlag);
+                resetDataFlag = false;
                 initVLRequests(resultJSON);
             }
 
@@ -115,19 +117,10 @@ define([
         }
 
         function pRefreshHandler(response) {
-            var resultJSON;
-            if (contrail.checkIfFunction(pDataParser)) {
-                resultJSON = pDataParser(response);
-            } else {
-                resultJSON = response;
+            pSuccessHandler(response);
+            if (contrail.checkIfFunction(pRefreshSuccessCallback)) {
+                pRefreshSuccessCallback();
             }
-            if (contrail.checkIfFunction(pSuccessCallback)) {
-                pRefreshSuccessCallback(resultJSON, cleanAndFresh);
-                if (cleanAndFresh) {
-                    cleanAndFresh = false;
-                }
-            }
-            pRequestInProgress = false;
         };
 
         function pFailureHandler(xhr) {
@@ -194,6 +187,14 @@ define([
             if(!self.isRequestInProgress() && remoteHandlerConfig['onAllRequestsCompleteCallback'] != null) {
                 remoteHandlerConfig.onAllRequestsCompleteCallback();
             }
+        };
+
+        function resetDataHandler4Refresh() {
+            resetDataFlag = true;
+            pRequestCompleteResponse = [];
+            pRequestInProgress = false;
+            vlRequestsInProgress = [];
+            vlRequestInProgress = false;
         };
     };
 
