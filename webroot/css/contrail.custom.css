@@ -1655,7 +1655,7 @@ color: #b94a48;
 	color: #555;
 }
 
-.font-element i.icon-contrail-virtual-network, .font-element i.icon-contrail-virtual-machine {
+.font-element i.icon-contrail-virtual-network, .font-element i.icon-contrail-virtual-machine, .font-element i.icon-contrail-virtual-machine-left, .font-element i.icon-contrail-virtual-machine-right {
     color: #498AB9;
 }
 .font-element i.icon-contrail-service-instance {
