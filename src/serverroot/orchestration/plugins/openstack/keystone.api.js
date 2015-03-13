@@ -1531,6 +1531,7 @@ function filterProjectList (req, projectList)
 
 function getProjectList (req, appData, callback)
 {
+    var projects = {'projects': []};
     var filtProjects;
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
     var isProjectListFromApiServer = config.getDomainProjectsFromApiServer;
@@ -1548,6 +1549,7 @@ function getProjectList (req, appData, callback)
             callback(error, filtProjects);
         });
     } else {
+        /*
         getAdminProjectList(req, appData, 
                             function(adminProjectObjs, domainObjs, tenantList,
                                      domList, formattedAllTenantList,
@@ -1557,10 +1559,32 @@ function getProjectList (req, appData, callback)
             } else {
                 callback(null, formattedAllTenantList);
             }
-        /*
-        getProjectsFromKeystone(req, appData, function(error, data) {
-            callback(error, data);
         */
+        getProjectsFromKeystone(req, appData, function(error, keystoneProjs) {
+            configUtils.getProjectsFromApiServer(req, appData,
+                                                 function(err, apiProjList) {
+                if ((null != error) || (null == keystoneProjs) ||
+                    (null == keystoneProjs['projects']) ||
+                    (null != err) || (null == apiProjList) ||
+                    (null == apiProjList['projects'])) {
+                    callback(null, projects);
+                    return;
+                }
+                var apiServerProjsCnt = apiProjList['projects'].length;
+                var apiServerProjsObjs = {};
+                for (var i = 0; i < apiServerProjsCnt; i++) {
+                    apiServerProjsObjs[apiProjList['projects'][i].fq_name.join(':')]
+                        = apiProjList['projects'][i];
+                }
+                var keystoneProjsCnt = keystoneProjs['projects'].length;
+                for (var i = 0; i < keystoneProjsCnt; i++) {
+                    var fqName = keystoneProjs['projects'][i].fq_name.join(':');
+                    if (null != apiServerProjsObjs[fqName]) {
+                        projects['projects'].push(apiServerProjsObjs[fqName]);
+                    }
+                }
+                callback(error, projects);
+            });
         });
     }
 }
