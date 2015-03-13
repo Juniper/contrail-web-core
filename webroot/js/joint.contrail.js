@@ -841,6 +841,7 @@ function createNodes4ConfigData(configData, collections) {
             collections.networkPolicys.nodes.push({
                 name: name,
                 node_type: 'network-policy',
+                elementType: 'network-policy',
                 nodeDetails: networkPolicys[i],
                 font: font
             });
@@ -857,6 +858,7 @@ function createNodes4ConfigData(configData, collections) {
             collections.securityGroups.nodes.push({
                 name: name,
                 node_type: 'security-group',
+                elementType: 'security-group',
                 nodeDetails: securityGroups[i],
                 font: font
             });
@@ -873,6 +875,7 @@ function createNodes4ConfigData(configData, collections) {
             collections.networkIPAMS.nodes.push({
                 name: name,
                 node_type: 'network-ipam',
+                elementType: 'network-ipam',
                 nodeDetails: networkIPAMS[i],
                 font: font
             });
@@ -912,7 +915,8 @@ function createNodeElement(node, config) {
         nodeDetails: node,
         font: {
             iconClass: 'icon-contrail-' + nodeType
-        }
+        },
+        elementType: nodeType
     };
     element = new ContrailElement(nodeType, options);
     return element;
@@ -1103,7 +1107,8 @@ function createLinkElement(source, target, dir, linkDetails, elements, elementMa
         targetId: target.id,
         direction: dir,
         linkType: 'bi',
-        linkDetails: linkDetails
+        linkDetails: linkDetails,
+        elementType: 'connected-network'
     };
     var link = new ContrailElement('link', options);
     elements.push(link);
@@ -1901,7 +1906,8 @@ joint.shapes.contrail.Link = function (options) {
                 'stroke': '#333'
             }
         },
-        linkDetails: options.linkDetails
+        linkDetails: options.linkDetails,
+        elementType: options.elementType
     }, link;
     var connectionStroke = linkConfig['linkDetails']['connectionStroke'];
     var markerTargetStroke = linkConfig['linkDetails']['markerTargetStroke'];
