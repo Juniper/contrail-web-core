@@ -8,8 +8,6 @@ define([
     'contrail-graph-model'
 ], function (_, Joint, ContrailGraphModel) {
     var GraphView = joint.dia.Paper.extend({
-        linkView: joint.shapes.contrail.LinkView,
-
         constructor: function (viewConfig) {
             var graphConfig = viewConfig.graphModelConfig,
                 tooltipConfig, clickEventsConfig,
