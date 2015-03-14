@@ -985,6 +985,12 @@ function constructSelect2(self, defaultOption, args) {
             }
         };
 
+        var selectingFunction = function(e) {
+            if (contrail.checkIfFunction(option.selecting)) {
+                option.selecting(e);
+            }
+        };
+
         if(!$.isEmptyObject(option) && typeof option.dataSource !== 'undefined') {
             if(option.dataSource.type == "remote"){
                 $.ajax({
@@ -1017,7 +1023,8 @@ function constructSelect2(self, defaultOption, args) {
             }
 
             self.select2(option)
-                .on("change", changeFunction);
+                .on("change", changeFunction)
+                .on("select2-selecting", selectingFunction);
             if (option.data.length !=0) {
                 self.select2('val', option.data[0].text);
             }
