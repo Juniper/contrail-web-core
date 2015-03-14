@@ -10,6 +10,7 @@ define([
     var ContrailGraphModel = joint.dia.Graph.extend({
         error: false,
         errorList: [],
+        rankDir: "LR",
         initialize: function (graphModelConfig) {
             var defaultCacheConfig = {
                 cacheConfig: {
@@ -56,6 +57,12 @@ define([
             }
 
             bindDataHandler2Model(self);
+        },
+
+        reLayoutGraph: function (rankDir) {
+            var self = this;
+            setData2Model(self, self.rawData);
+            layoutGraph(self, rankDir);
         }
     });
 
@@ -72,6 +79,7 @@ define([
                 initCallback: primaryRemote.initCallback,
                 successCallback: function (response, resetDataFlag) {
                     setData2Model(contrailGraphModel, response, resetDataFlag);
+                    layoutGraph(contrailGraphModel);
                     if (contrail.checkIfFunction(primaryRemote.successCallback)) {
                         primaryRemote.successCallback(response, contrailGraphModel);
                     }
@@ -160,7 +168,9 @@ define([
                 cachedRawData = cachedGraphModel.rawData,
                 lastUpdateTime = cachedData['lastUpdateTime'];
 
-            setData2Model(contrailGraphModel, cachedRawData);
+            //setData2Model(contrailGraphModel, cachedRawData);
+            setElements2Model(contrailGraphModel, cachedGraphModel.elementMap, cachedGraphModel.elementsDataObj, cachedGraphModel.rawData);
+            layoutGraph(contrailGraphModel);
 
             isCacheUsed = true;
             if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
@@ -178,35 +188,50 @@ define([
     };
 
 
-    function setData2Model(contrailGraphModel, graphdata) {
-        var elementMap = {node: {}, link: {}};
+    function setData2Model(contrailGraphModel, response) {
+        contrailGraphModel.elementMap = {node: {}, link: {}};
         contrailGraphModel.beforeDataUpdate.notify();
 
         //TODO: We should not edit graohModel in generateElements
-        var elementsObject = contrailGraphModel.generateElements($.extend(true, {}, graphdata), elementMap);
+        var elementsDataObj = contrailGraphModel.generateElements($.extend(true, {}, response), contrailGraphModel.elementMap);
 
         contrailGraphModel.clear();
-        contrailGraphModel.addCells(elementsObject['elements']);
+        contrailGraphModel.addCells(elementsDataObj['elements']);
+        contrailGraphModel.elementsDataObj = elementsDataObj;
+        contrailGraphModel.rawData = response;
+    };
+
+    function setElements2Model(contrailGraphModel, elementMap, elementsDataObj, rawData) {
+        contrailGraphModel.beforeDataUpdate.notify();
         contrailGraphModel.elementMap = elementMap;
+        contrailGraphModel.clear();
+        contrailGraphModel.addCells(elementsDataObj['elements']);
+        contrailGraphModel.elementsDataObj = elementsDataObj;
+        contrailGraphModel.rawData = rawData;
+    };
+
+    function layoutGraph (contrailGraphModel, rankDir) {
+        var elementsDataObj = contrailGraphModel.elementsDataObj;
 
         if (contrailGraphModel.forceFit) {
+            contrailGraphModel.rankDir = (rankDir != null) ? rankDir : computeRankDir(elementsDataObj['nodes'], elementsDataObj['links']);
             //contrailGraphModel.directedGraphSize = GraphLayoutHandler.jointLayout(contrailGraphModel, getJointLayoutOptions(elementsObject['nodes'], elementsObject['links']));
-            contrailGraphModel.directedGraphSize = GraphLayoutHandler.dagreLayout(contrailGraphModel, getDagreLayoutOptions(elementsObject['nodes'], elementsObject['links']));
+            contrailGraphModel.directedGraphSize = GraphLayoutHandler.dagreLayout(contrailGraphModel, getDagreLayoutOptions(contrailGraphModel.rankDir));
         }
-        if(contrail.checkIfExist(elementsObject['zoomedNodeElement'])) {
-            var zoomedNodeElement = elementsObject['zoomedNodeElement'];
+        if (contrail.checkIfExist(elementsDataObj['zoomedNodeElement'])) {
+            var zoomedNodeElement = elementsDataObj['zoomedNodeElement'];
 
             var xOrigin = zoomedNodeElement['attributes']['position']['x'],
                 yOrigin = zoomedNodeElement['attributes']['position']['y'];
 
-            contrailGraphModel.addCells(elementsObject['zoomedElements']);
+            contrailGraphModel.addCells(elementsDataObj['zoomedElements']);
 
-            /* Translate zoomed elements TODO - Move to view file*/
-            $.each(elementsObject['zoomedElements'], function (zoomedElementKey, zoomedElementValue) {
+            /* Translate zoomed elements TODO: Move to view file */
+            $.each(elementsDataObj['zoomedElements'], function (zoomedElementKey, zoomedElementValue) {
                 zoomedElementValue.translate(xOrigin, yOrigin);
             });
         }
-    };
+    }
 
     function bindDataHandler2Model(contrailGraphModel) {
         var contrailDataHandler = contrailGraphModel.contrailDataHandler;
@@ -245,7 +270,7 @@ define([
     function getJointLayoutOptions(nodes, links, rankDir, separation) {
         var layoutOptions = {setLinkVertices: false, edgeSep: 1, nodeSep: 50, rankSep: 50, rankDir: "LR"};
         if (rankDir == null) {
-            rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? 'TB' : 'LR';
+            rankDir = computeRankDir(nodes, links);
         }
         layoutOptions['rankDir'] = rankDir;
         if (separation != null) {
@@ -255,12 +280,11 @@ define([
         return layoutOptions;
     };
 
-    function getDagreLayoutOptions(nodes, links, rankDir, separation) {
+    function getDagreLayoutOptions(rankDir, separation) {
         var layoutOptions = {edgeSep: 1, nodeSep: 50, rankSep: 50, rankDir: "LR", marginx: GRAPH_MARGIN, marginy: GRAPH_MARGIN};
-        if (rankDir == null) {
-            rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? 'TB' : 'LR';
+        if(rankDir != null) {
+            layoutOptions['rankDir'] = rankDir;
         }
-        layoutOptions['rankDir'] = rankDir;
         if (separation != null) {
             layoutOptions['nodeSep'] = separation;
             layoutOptions['rankSep'] = separation;
@@ -271,6 +295,11 @@ define([
     function resetGraphModel4Refresh(graphModel) {
         graphModel.error = false;
         graphModel.errorList = [];
+    };
+
+    function computeRankDir(nodes, links) {
+        var rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? 'TB' : 'LR';
+        return rankDir;
     };
 
     return ContrailGraphModel;
