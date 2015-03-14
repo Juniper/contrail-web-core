@@ -63,6 +63,7 @@ define([
             var self = this;
             setData2Model(self, self.rawData);
             layoutGraph(self, rankDir);
+            self.onAllRequestsComplete.notify();
         }
     });
 
@@ -168,8 +169,8 @@ define([
                 cachedRawData = cachedGraphModel.rawData,
                 lastUpdateTime = cachedData['lastUpdateTime'];
 
-            //setData2Model(contrailGraphModel, cachedRawData);
-            setElements2Model(contrailGraphModel, cachedGraphModel.elementMap, cachedGraphModel.elementsDataObj, cachedGraphModel.rawData);
+            setData2Model(contrailGraphModel, cachedRawData);
+            //setElements2Model(contrailGraphModel, cachedGraphModel.elementMap, cachedGraphModel.elementsDataObj, cachedGraphModel.rawData);
             layoutGraph(contrailGraphModel);
 
             isCacheUsed = true;
