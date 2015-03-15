@@ -1658,8 +1658,8 @@ color: #b94a48;
 .font-element i.icon-contrail-virtual-network, .font-element i.icon-contrail-virtual-machine, .font-element i.icon-contrail-virtual-machine-left, .font-element i.icon-contrail-virtual-machine-right {
     color: #498AB9;
 }
-.font-element i.icon-contrail-service-instance {
-	color: #e7ba52;
+.font-element i.icon-contrail-service-instance, .font-element i.icn-service-instance {
+	color: #ff7f0e;
 }
 /*.font-element i.icon-contrail-router {
 	color: #ff7f0e;
@@ -2069,33 +2069,85 @@ color: #b94a48;
 }
 
 .popover.popover-tooltip {
-  width: 800px;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-  box-shadow: none;
-  opacity: 1;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  color: #fff;
-  background-color: #efefef;
-  padding: 2px 0;
+    min-width: 300px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    box-shadow: none;
+    opacity: 1;
+    z-index: 1050;
+}
+.popover.popover-tooltip {
+    min-width: 300px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    box-shadow: none;
+    opacity: 1;
+    z-index: 1050;
 }
 .popover.popover-tooltip .arrow {
-  display: none;
+    display: block;
+}
+.popover.popover-tooltip .popover-remove {
+    position: relative;
+    top: 17px;
+    right: 8px;
+    color: #999999;
 }
 .popover.popover-tooltip .popover-title {
-  background-color: #eee;
-  color: #3182bd;
-  font-weight: 600;
-  padding: 0 10px ;
-  font-size: 12px;
-  border: none;
-  border-radius: 5px;
+    background-color: #EFEFEF;
+    padding: 10px 5px 3px 80px;
+    border: none;
 
+}
+.popover.popover-tooltip .popover-title .heading {
+    margin: 0 0 2px;
+    color: #3182bd;
+    font-size: 14px;
+    font-weight: 400;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 190px;
+    white-space: nowrap;
+}
+
+.popover.popover-tooltip .popover-title .sub-heading {
+    margin: 4px 0 0;
+    color: #777;
+    font-size: 13px;
+    font-weight: 400;
+}
+.popover-tooltip-icon {
+    font-size: 38px;
+    border: 1px solid #ccc;
+    padding: 7px;
+    width: 34px;
+    height: 34px;
+    position: relative;
+    left: 12px;
+    top: 11px;
+    background-color: #fff;
 }
 .popover.popover-tooltip .popover-content {
   border: none;
   box-shadow: none;
-  padding: 0 10px;
+    margin-top: -65px;
+}
+.popover.popover-tooltip .popover-content .popover-info {
+    padding: 10px;
+    margin-left: 70px;
+    width: 220px;
+}
+
+.popover.popover-tooltip .popover-content .popover-tooltip-footer {
+    border-top: 1px solid #DEDEDE;
+}
+.popover.popover-tooltip .popover-content .popover-tooltip-footer .btn {
+    margin: 7px 8px 7px 0;
+    line-height: 14px;
+    font-size:  11px;
+    padding: 3px 9px !important;
+    background-color: #efefef !important;
+    color: #777 !important;
+    border: 1px solid #ccc; !important;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-row {
   padding: 0;

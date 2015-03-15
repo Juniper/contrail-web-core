@@ -62,6 +62,9 @@ define([
         this.TMPL_DETAIL_SECTION_ROW = "core-detail-section-row-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
 
+        this.TMPL_TOOLTIP_TITLE = "tooltip-title-template";
+        this.TMPL_TOOLTIP_CONTENT = "tooltip-content-template";
+
         this.APP_CONTRAIL_CONTROLLER = "contrail-controller";
         this.APP_CONTRAIL_SM = "contrail-sm";
 

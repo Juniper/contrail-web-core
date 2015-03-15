@@ -159,3 +159,13 @@
 .icon-contrail-vrouter:before {
     content: url(/img/vrouter.png);
 }
+
+/* icon class helpers */
+.icon-rotate-45:before {
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}

@@ -36,8 +36,8 @@ define([
                 if(contrail.checkIfFunction(viewConfig.successCallback)) {
                     viewConfig.successCallback(self, directedGraphSize, jointObject);
                 }
-                initTooltip(tooltipConfig, jointObject);
                 initClickEvents(clickEventsConfig, jointObject);
+                initMouseEvents(tooltipConfig, jointObject)
             });
 
             return self;
@@ -52,11 +52,12 @@ define([
         }
     });
 
-    function initTooltip(tooltipConfig, jointObject) {
+    var initMouseEvents = function(tooltipConfig, jointObject) {
+        var timer = null;
         $.each(tooltipConfig, function (keyConfig, valueConfig) {
             $('g.' + keyConfig).popover('destroy');
             $('g.' + keyConfig).popover({
-                trigger: 'hover',
+                trigger: 'manual',
                 html: true,
                 animation: false,
                 placement: function (context, src) {
@@ -78,8 +79,57 @@ define([
                     return valueConfig.content($(this), jointObject);
                 },
                 container: $('body')
+            })
+            .off("mouseenter")
+            .on("mouseenter", function () {
+                var _this = this;
+                    clearTimeout(timer);
+                    timer = setTimeout(function(){
+                        $(_this).popover("show");
+
+                        $(".popover")
+                            .off("mouseleave")
+                            .on("mouseleave", function () {
+                                $(_this).popover('hide');
+                            }
+                        );
+
+                        $(".popover").find('.btn')
+                            .off('click')
+                            .on('click', function() {
+                                var actionKey = $(this).data('action'),
+                                    actionsCallback = valueConfig.actionsCallback($(_this), jointObject);
+
+                                actionsCallback[actionKey].callback();
+                                $(_this).popover('hide');
+                            }
+                        );
+
+                        $(".popover").find('.popover-remove-icon')
+                            .off('click')
+                            .on('click', function() {
+                                $(_this).popover('hide');
+                                $(this).parents('.popover').remove();
+                            }
+                        );
+
+                    },1000)
+            })
+            .off("mouseleave")
+            .on("mouseleave", function () {
+                var _this = this;
+                    clearTimeout(timer);
+                    setTimeout(function () {
+                    if (!$(".popover:hover").length) {
+                        $(_this).popover("hide");
+                    }
+                }, 300);
             });
+
+
         });
+
+
     };
 
     function initClickEvents(eventConfig, jointObject) {
@@ -109,9 +159,9 @@ define([
             });
         }
 
-        if(contrail.checkIfExist(eventConfig['cell:rightclick'])) {
-            initRightClickEvent(eventConfig['cell:rightclick'], jointObject);
-        }
+        //if(contrail.checkIfExist(eventConfig['cell:rightclick'])) {
+        //    initRightClickEvent(eventConfig['cell:rightclick'], jointObject);
+        //}
     };
 
     var onDocumentClickHandler = function(e) {

@@ -221,16 +221,29 @@
 </script>
 
 <script type="text/x-handlebars-template" id="tooltip-content-template">
-<div class="row-fluid">
-    <div class="row-fluid">
-	{{#each this}}
-        <div class="row-fluid popover-tooltip-row {{#if dividerClass}} {{dividerClass}} {{/if}}">
-            <span class="key">{{lbl}} </span>
-            <span class="value">{{value}}</span>
-         </div>
-	{{/each}}
-	</div> 
-</div>
+    <div class="row-fluid popover-remove">
+        <i class="icon-remove pull-right popover-remove-icon"></i>
+    </div>
+    <div class="popover-tooltip-icon font-element">
+        <i class="{{iconClass}}"></i>
+    </div>
+    <div class="row-fluid popover-info">
+        <div class="row-fluid">
+        {{#each info}}
+            <div class="row-fluid popover-tooltip-row {{#if dividerClass}} {{dividerClass}} {{/if}}">
+                <span class="key">{{lbl}} </span>
+                <span class="value">{{value}}</span>
+             </div>
+        {{/each}}
+        </div>
+    </div>
+    {{#if actions}}
+    <div class="row-fluid popover-tooltip-footer">
+        {{#each actions}}
+        <button class="btn btn-mini pull-right" data-action="{{@index}}"><i class="{{iconClass}}"></i> {{text}} </button>
+        {{/each}}
+    </div>
+    {{/if}}
 </script>
 
 <!--
@@ -517,6 +530,11 @@
   			</optgroup> 
         {{/each}}
 	</select>
+</script>
+
+<script type="text/x-handlebars-template" id="tooltip-title-template">
+    <p class="heading">{{name}}</p>
+    <p class="sub-heading">{{type}}</p>
 </script>
 
 <script type="text/x-handlebars-template" id="tooltip-content-template">
