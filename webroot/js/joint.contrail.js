@@ -1046,11 +1046,11 @@ function createCloudZoomedNodeElement(nodeDetails, config) {
     var currentZoomedElement = new joint.shapes.contrail.ZoomedCloudElement({
         size: {width: config.width * factor, height: config.height * factor},
         attrs: {
-            rect: {width: config.width * factor, height: config.height * factor},
+            rect: (nodeDetails['more_attr']['vm_cnt'] == 0) ? {width: config.width * factor, height: config.height * factor, 'stroke-width': 1, 'stroke': '#3182bd'} : {width: config.width * factor, height: config.height * factor},
             text: {
                 text: (nodeDetails['more_attr']['vm_cnt'] == 0) ? "No virtual machine available." : contrail.truncateText(nodeDetails['name'].split(":")[2], 50),
                 'ref-x': .5,
-                'ref-y': (nodeDetails['more_attr']['vm_cnt'] == 0) ? 35 : -20
+                'ref-y': (nodeDetails['more_attr']['vm_cnt'] == 0) ? 45 : -20
             }
         }
     });
