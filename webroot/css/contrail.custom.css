@@ -1767,7 +1767,7 @@ color: #b94a48;
  	padding-bottom:1em; 	
 }
 .topology-visualization.holygrail .col1 {
-    margin:0 100px 0 170px;     	
+    margin:0 100px 0 170px;
     position:relative;
     left:200%;
     overflow:hidden;
@@ -1947,7 +1947,7 @@ color: #b94a48;
     padding-bottom:1em;
 }
 .graph.holygrail .col1 {
-    margin:0 100px 0 170px;
+    margin:0 170px 0 170px;
     position:relative;
     left:200%;
     overflow:hidden;
@@ -1962,7 +1962,7 @@ color: #b94a48;
 .graph.holygrail .col3 {
     float:left;
     float:right;
-    width:50px;
+    width:150px;
     margin-right:50px;
     position:relative;
     left:50%;
