@@ -1892,16 +1892,21 @@ color: #b94a48;
 .graph svg g.element:hover text{
     font-weight:600;
 }
-.graph .dimHighlighted {
+.graph g.link.fainted {
     opacity: 0.3 !important;
 }
-.graph .faintHighlighted {
+.graph .fainted {
     opacity: 0.5 !important;
 }
-.graph .elementHighlighted, .graph .elementSelectedHighlighted {
+.graph g.element.highlighted, .graph div.font-element.highlighted {
+    outline: none;
     opacity: 1 !important;
 }
-.graph .elementHighlighted.VirtualNetwork i {
+.graph g.link.highlighted {
+    outline: none;
+    opacity: 0.6 !important;
+}
+.graph .highlighted.VirtualNetwork i {
     color: #498AB9;
 }
 .graph svg g.ZoomedElement,
