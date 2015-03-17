@@ -663,7 +663,7 @@ function genarateGateway(cidr,from){
         gateway = v4.Address.fromBigInteger(bigInt).address;
     } else {    
         ciderValue = new v6.Address(cidr); 
-        if(ciderValue.isValid() === true && ciderValue.getScope() == "Global"){
+        if(ciderValue.isValid() === true){
             var ipcreated;
             var bigInt;
             if(from == "end"){
