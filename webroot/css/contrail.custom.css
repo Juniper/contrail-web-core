@@ -2497,3 +2497,10 @@ color: #b94a48;
 #l2ServerPanel{
     margin-bottom:0px;
 }
+
+/*Joint JS - Parellel connection-wrap*/
+.connection-wrap-up {
+  fill: none;
+  stroke:#85b9dd!important;
+  stroke-width:3;
+}

@@ -59,6 +59,7 @@ requirejs.config({
         'vectorizer' : '/assets/joint/js/vectorizer',
         'joint.layout.DirectedGraph' : "/assets/joint/js/joint.layout.DirectedGraph",
         'joint.contrail' : "/js/joint.contrail",
+        'bezier' : "/assets/bezierjs/bezier",
         'lodash' : '/assets/joint/js/lodash',
         'jquery.panzoom': "/assets/jquery/js/jquery.panzoom.min",
         'jquery.ui.position': "/assets/jquery-contextMenu/js/jquery.ui.position",
@@ -229,6 +230,9 @@ requirejs.config({
             deps: ['jquery', 'backbone']
         },
         'lodash': {
+            deps: ['jquery']
+        },
+        'bezier': {
             deps: ['jquery']
         },
         'joint.layout.DirectedGraph': {
