@@ -220,7 +220,19 @@
 </div>
 </script>
 
-<script type="text/x-handlebars-template" id="tooltip-content-template">
+<script type="text/x-handlebars-template" id="element-tooltip-template">
+    <div class="popover popover-tooltip left" style="display: block;">
+        <h3 class="popover-title"></h3>
+        <div class="popover-content"></div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="element-tooltip-title-template">
+    <p class="heading">{{name}}</p>
+    <p class="sub-heading">{{type}}</p>
+</script>
+
+<script type="text/x-handlebars-template" id="element-tooltip-content-template">
     <div class="row-fluid popover-remove">
         <i class="icon-remove pull-right popover-remove-icon"></i>
     </div>
@@ -530,11 +542,6 @@
   			</optgroup> 
         {{/each}}
 	</select>
-</script>
-
-<script type="text/x-handlebars-template" id="tooltip-title-template">
-    <p class="heading">{{name}}</p>
-    <p class="sub-heading">{{type}}</p>
 </script>
 
 <script type="text/x-handlebars-template" id="tooltip-content-template">

@@ -415,9 +415,9 @@ define([
                 template += '' +
                 '{{#IfValidJSONValueByPath "' + configValue.key + '" this ' + configKey + '}}' +
                 '<li>' +
-                '<label class="inline">' +
-                '<span class="key"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>' +
-                '<span class="value">{{{getValueByConfig this config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
+                '<label class="inline row-fluid">' +
+                '<span class="key span5"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>' +
+                '<span class="value span7">{{{getValueByConfig this config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
 
                 template += '</label>' +
                 '</li>' +

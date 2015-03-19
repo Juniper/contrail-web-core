@@ -90,14 +90,10 @@ define([
                 var _this = this;
                     clearTimeout(timer);
                     timer = setTimeout(function(){
-                        $(_this).popover("show");
+                        $('g').popover('hide');
+                        $('.popover').remove();
 
-                        $(".popover")
-                            .off("mouseleave")
-                            .on("mouseleave", function () {
-                                $(_this).popover('hide');
-                            }
-                        );
+                        $(_this).popover("show");
 
                         $(".popover").find('.btn')
                             .off('click')
@@ -122,13 +118,7 @@ define([
             })
             .off("mouseleave")
             .on("mouseleave", function () {
-                var _this = this;
-                    clearTimeout(timer);
-                    setTimeout(function () {
-                    if (!$(".popover:hover").length) {
-                        $(_this).popover("hide");
-                    }
-                }, 300);
+                clearTimeout(timer);
             });
         });
     };

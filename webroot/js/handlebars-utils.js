@@ -244,7 +244,7 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
                     hrefLinkArray.push('<a class="value-link" target="_blank" href="' + hrefLink + '">' + vValue + '</a>');
                 });
 
-                returnValue = hrefLinkArray.join(', ');
+                returnValue = hrefLinkArray.join('');
             } else {
                 hrefLink = linkTemplate({key: value, params: params});
                 returnValue = '<a class="value-link" target="_blank" href="' + hrefLink + '">' + value + '</a>';
