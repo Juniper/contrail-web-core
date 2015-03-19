@@ -28,6 +28,7 @@ define([
             this.graphConfig = modelConfig;
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
+            this.rankDir = ctwc.GRAPH_DIR_LR;
             this.onAllRequestsComplete = new Slick.Event();
             this.beforeDataUpdate = new Slick.Event();
             this.onDataUpdate = new Slick.Event();
@@ -61,8 +62,8 @@ define([
 
         reLayoutGraph: function (rankDir) {
             var self = this;
-            setData2Model(self, self.rawData);
-            layoutGraph(self, rankDir);
+            setData2Model(self, self.rawData, rankDir);
+            layoutGraph(self);
             self.onAllRequestsComplete.notify();
         }
     });
@@ -79,7 +80,7 @@ define([
                 dataParser: primaryRemote.dataParser,
                 initCallback: primaryRemote.initCallback,
                 successCallback: function (response, resetDataFlag) {
-                    setData2Model(contrailGraphModel, response, resetDataFlag);
+                    setData2Model(contrailGraphModel, response);
                     layoutGraph(contrailGraphModel);
                     if (contrail.checkIfFunction(primaryRemote.successCallback)) {
                         primaryRemote.successCallback(response, contrailGraphModel);
@@ -189,12 +190,16 @@ define([
     };
 
 
-    function setData2Model(contrailGraphModel, response) {
+    function setData2Model(contrailGraphModel, response, rankDir) {
         contrailGraphModel.elementMap = {node: {}, link: {}};
         contrailGraphModel.beforeDataUpdate.notify();
 
+        if (contrailGraphModel.forceFit) {
+            contrailGraphModel.rankDir = (rankDir != null) ? rankDir : computeRankDir(response['nodes'], response['links']);
+        }
+
         //TODO: We should not edit graohModel in generateElements
-        var elementsDataObj = contrailGraphModel.generateElements($.extend(true, {}, response), contrailGraphModel.elementMap);
+        var elementsDataObj = contrailGraphModel.generateElements($.extend(true, {}, response), contrailGraphModel.elementMap, contrailGraphModel.rankDir);
 
         contrailGraphModel.clear();
         contrailGraphModel.addCells(elementsDataObj['elements']);
@@ -211,11 +216,10 @@ define([
         contrailGraphModel.rawData = rawData;
     };
 
-    function layoutGraph (contrailGraphModel, rankDir) {
+    function layoutGraph (contrailGraphModel) {
         var elementsDataObj = contrailGraphModel.elementsDataObj;
 
         if (contrailGraphModel.forceFit) {
-            contrailGraphModel.rankDir = (rankDir != null) ? rankDir : computeRankDir(elementsDataObj['nodes'], elementsDataObj['links']);
             //contrailGraphModel.directedGraphSize = GraphLayoutHandler.jointLayout(contrailGraphModel, getJointLayoutOptions(elementsObject['nodes'], elementsObject['links']));
             contrailGraphModel.directedGraphSize = GraphLayoutHandler.dagreLayout(contrailGraphModel, getDagreLayoutOptions(contrailGraphModel.rankDir));
         }

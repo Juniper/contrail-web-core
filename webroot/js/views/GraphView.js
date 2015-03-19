@@ -11,6 +11,7 @@ define([
         constructor: function (viewConfig) {
             var graphConfig = viewConfig.graphModelConfig,
                 tooltipConfig, clickEventsConfig,
+                graphControlPanelId = "#graph-control-panel",
                 self = this;
 
             self.model = new ContrailGraphModel(graphConfig);
@@ -26,12 +27,16 @@ define([
             });
 
             self.model.onAllRequestsComplete.subscribe(function() {
-
                 var directedGraphSize = self.model.directedGraphSize,
                     jointObject = {
                         connectedGraph: self.model,
                         connectedPaper: self
                     };
+
+                if(contrail.checkIfExist(viewConfig.showControlPanel) && viewConfig.showControlPanel) {
+                    var controlTemplate = contrail.getTemplate4Id(cowc.TMPL_GRAPH_CONTROL_PANEL);
+                    $(self.el).parent().parent().parent().find(graphControlPanelId).html(controlTemplate({rankDir: self.model.rankDir}));
+                }
 
                 if(contrail.checkIfFunction(viewConfig.successCallback)) {
                     viewConfig.successCallback(self, directedGraphSize, jointObject);
@@ -125,11 +130,7 @@ define([
                     }
                 }, 300);
             });
-
-
         });
-
-
     };
 
     function initClickEvents(eventConfig, jointObject) {
