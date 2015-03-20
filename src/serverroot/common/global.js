@@ -344,4 +344,7 @@ global.KEYSTONE_V3_TOKEN_URL = '/v3/auth/tokens';
 global.VCENTER_SDK_PATH = '/sdk';
 global.VCENTER_WSDL = 'webroot/js/vim.wsdl';
 
+/* Async map limit Count */
+global.ASYNC_MAP_LIMIT_COUNT = 100;
+
 module.exports = global;
