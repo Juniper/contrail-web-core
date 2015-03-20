@@ -29,6 +29,7 @@ var commonUtils = module.exports,
     v4 = require('ipv6').v4,
     v6 = require('ipv6').v6;
     contrailPath = '/contrail',
+    _ = require('underscore'),
     redisUtils = require('./redis.utils');
 
 if (!module.parent) {
@@ -1832,6 +1833,142 @@ function getIPRangeLen(ipRangeObj) {
         return 0;
 }
 
+function isSubArray (arr, subarr)
+{
+    var filteredSubarray = _.filter(subarr, function(subarrelement) {
+        return _.any(arr, function(arrelement){
+            return arrelement === subarrelement;
+        });
+    });
+    return _.isEqual(subarr, filteredSubarray);
+};
+
+
+/* Function: convertEdgelistToAdjList
+ *  This function is used to convert edge list to adjacency list in a graph
+ *
+ * Input:
+   ++++++
+    edgeList:
+    [
+        ["Rack2-DataSw","ex4500-1"],
+        ["Rack2-DataSw","Rack1-DataSw"],
+        ["Rack2-DataSw","nodeg35"],
+        ["ex4500-1","Rack2-DataSw"],
+        ["ex4500-1","Rack1-DataSw"],
+        ["Rack1-DataSw","Rack2-DataSw"],
+        ["Rack1-DataSw","ex4500-1"],
+        ["Rack1-DataSw","nodea29"],
+        ["bb8056fc","nodeg35"],
+        ["ea213e4f","nodea29"],
+        ["31e27d4c","nodeg35"]
+    ];
+    Output:
+    +++++++
+    {
+        "Rack2-DataSw": ['ex4500-1', 'Rack1-DataSw','nodeg35'],
+        "ex4500-1": ['Rack2-DataSw','Rack1-DataSw'],
+        'Rack1-DataSw': ['Rack2-DataSw', 'ex4500-1', 'nodea29'],
+        'nodeg35': ['Rack2-DataSw', 'bb8056fc', '31e27d4c'],
+        'nodea29': ['Rack1-DataSw','ea213e4f'],
+        'bb8056fc': ['nodeg35'],
+        'ea213e4f': ['nodea29'],
+        '31e27d4c': ['nodeg35']
+    };
+ */
+function convertEdgelistToAdjList (edgeList)
+{
+    var adjList = {};
+    var len = edgeList.length;
+    var  pair, u, v;
+    for (i = 0; i < len; i++) {
+        pair = edgeList[i];
+        u = pair[0];
+        v = pair[1];
+        if (adjList[u]) {
+            // append vertex v to edgeList of vertex u
+            adjList[u].push(v);
+        } else {
+            // vertex u is not in adjList, create new adjacency list for it
+            adjList[u] = [v];
+        }
+        if (adjList[v]) {
+            adjList[v].push(u);
+        } else {
+            adjList[v] = [u];
+        }
+    }
+    for (key in adjList) {
+        adjList[key] = _.uniq(adjList[key]);
+    }
+    return adjList;
+}
+
+/* Function: findAllPathsInEdgeGraph
+ *  This function is used to do breadth-first-search on graph to find all
+ *  possible paths from source to dest
+ * Ex:
+    Input:
+    ++++++
+    graph:
+    [
+        ["Rack2-DataSw","ex4500-1"],
+        ["Rack2-DataSw","Rack1-DataSw"],
+        ["Rack2-DataSw","nodeg35"],
+        ["ex4500-1","Rack2-DataSw"],
+        ["ex4500-1","Rack1-DataSw"],
+        ["Rack1-DataSw","Rack2-DataSw"],
+        ["Rack1-DataSw","ex4500-1"],
+        ["Rack1-DataSw","nodea29"],
+        ["bb8056fc","nodeg35"],
+        ["ea213e4f","nodea29"],
+        ["31e27d4c","nodeg35"]
+    ];
+    source: 31e27d4c
+    dest: ea213e4f
+    Output:
+    +++++++
+    [
+        [ '31e27d4c', 'nodeg35', 'Rack2-DataSw', 'ex4500-1', 'Rack1-DataSw', 
+            'nodea29', 'ea213e4f']
+        [ '31e27d4c', 'nodeg35', 'Rack2-DataSw', 'Rack1-DataSw', 'nodea29', 
+            'ea213e4f']
+    ]
+ */
+function findAllPathsInEdgeGraph (graph, source, dest)
+{
+    graph = convertEdgelistToAdjList(graph);
+    var validPaths = [];
+    var tmpNodeArr = [];
+    var tempPath = [source];
+    tmpNodeArr.push(tempPath);
+    while (tmpNodeArr.length != 0) {
+        var tmpPath = tmpNodeArr[0];
+        if (1 == tmpNodeArr.length) {
+            tmpNodeArr = [];
+        } else {
+            tmpNodeArr.splice(0, 1);
+        }
+
+        var lastNode = tmpPath[tmpPath.length - 1];
+        if (lastNode == dest) {
+            validPaths.push(tmpPath);
+        }
+        if (null == graph[lastNode]) {
+            return [];
+        }
+        var graphLastNodeLen = graph[lastNode].length;
+        for (var i = 0; i < graphLastNodeLen; i++) {
+            var linkNode = graph[lastNode][i];
+            if (-1 == tmpPath.indexOf(linkNode)) {
+                var newPath = tmpPath.concat([linkNode]);
+                tmpNodeArr.push(newPath);
+            }
+        }
+    }
+    return validPaths;
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1887,3 +2024,6 @@ exports.isMultiTenancyEnabled = isMultiTenancyEnabled;
 exports.prefixToNetMask = prefixToNetMask;
 exports.convertApiServerUUIDtoKeystoneUUID = convertApiServerUUIDtoKeystoneUUID;
 exports.getIPRangeLen = getIPRangeLen;
+exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
+exports.isSubArray = isSubArray;
+
