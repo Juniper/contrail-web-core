@@ -1126,6 +1126,7 @@ function createCollectionElements(collections, elements, elementMap) {
                         }
                     },
                     nodeDetails: collectionNodeValue.nodeDetails,
+                    elementType: collectionNodeValue.elementType,
                     font: collectionNodeValue.font
                 },
                 element = new ContrailElement(nodeType, options);
@@ -1281,6 +1282,9 @@ function highlightSelectedSVGElements(elementObjects) {
     });
 };
 
+/*
+    Deprecated
+ */
 function highlightSelectedElementForZoomedElement(selectorId, jointObject, params) {
     highlightSelectedSVGElements([$('g.ZoomedElement')]);
     if (params.config.focusedElement == 'VirtualNetwork') {
