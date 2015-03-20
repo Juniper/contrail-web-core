@@ -1005,7 +1005,7 @@ a.selectAllLink:hover {
     border: none;
 }
 .group-detail-container ul.item-list li .key {
-    color:#333;
+    color:#666;
 }
 .group-detail-container ul.item-list li .value {
     color:#777;
@@ -2009,7 +2009,7 @@ color: #b94a48;
 .graph .graph-controls {
     font-size: 15px;
     width: 35px;
-    background-color: #eee;
+    background-color: #F5F5F5;
 }
 .graph .graph-controls i {
     color: #777;

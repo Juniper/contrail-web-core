@@ -144,7 +144,9 @@ function Contrail() {
             if (error['statusText'] === "timeout") {
                 error['responseText'] = "Request timeout.";
             }
-            failureHandler(error);
+            if (contrail.checkIfFunction(failureHandler)) {
+                failureHandler(error);
+            }
         });
     };
 

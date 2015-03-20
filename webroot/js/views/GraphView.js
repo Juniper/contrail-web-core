@@ -124,10 +124,16 @@ define([
     };
 
     function initClickEvents(eventConfig, jointObject) {
-        var timer = null;
-        if(contrail.checkIfFunction(eventConfig['blank:pointerclick'])) {
-            jointObject.connectedPaper.on('blank:pointerclick', eventConfig['blank:pointerclick']);
-        }
+        var timer = null,
+            topContainerElement = $('#' + ctwl.TOP_CONTENT_CONTAINER);
+
+        var onTopContainerBankDblClickHandler = function(e) {
+            if(!$(e.target).closest('g').length && !$(e.target).closest('.graph-controls').length) {
+                if(contrail.checkIfFunction(eventConfig['blank:pointerdblclick'])) {
+                    eventConfig['blank:pointerdblclick']();
+                }
+            }
+        };
 
         if(contrail.checkIfFunction(eventConfig['cell:pointerclick'])) {
             jointObject.connectedPaper.on('cell:pointerclick', function(cellView, evt, x, y) {
@@ -150,44 +156,19 @@ define([
             });
         }
 
-        //if(contrail.checkIfExist(eventConfig['cell:rightclick'])) {
-        //    initRightClickEvent(eventConfig['cell:rightclick'], jointObject);
-        //}
+        $(document)
+            .off('click', onDocumentClickHandler)
+            .on('click', onDocumentClickHandler);
+
+        topContainerElement
+            .off('dblclick', onTopContainerBankDblClickHandler)
+            .on('dblclick', onTopContainerBankDblClickHandler);
     };
 
     var onDocumentClickHandler = function(e) {
-        if(!$(e.target).closest('g').length) {
+        if(!$(e.target).closest('.popover').length) {
             $('g').popover('hide');
         }
-    };
-
-    function initRightClickEvent(rightClickConfig, jointObject) {
-        $.contextMenu('destroy', 'g');
-        $.contextMenu({
-            selector: 'g',
-            position: function (opt, x, y) {
-                opt.$menu.css({top: y + 5, left: x + 5});
-            },
-            build: function ($trigger, e) {
-                if (!$trigger.hasClassSVG('element') && !$trigger.hasClassSVG('link')) {
-                    $trigger = $trigger.parentsSVG('g.element');
-                    if ($trigger.length > 0) {
-                        $trigger = $($trigger[0]);
-                    }
-                }
-                var contextMenuItems = false;
-                if (contrail.checkIfExist($trigger)) {
-                    $.each(rightClickConfig, function (keyConfig, valueConfig) {
-                        if ($trigger.hasClassSVG(keyConfig)) {
-                            contextMenuItems = valueConfig($trigger, jointObject);
-                            $('g.' + keyConfig).popover('hide');
-                            return false;
-                        }
-                    });
-                }
-                return contextMenuItems;
-            }
-        });
     };
 
     return GraphView;
