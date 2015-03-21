@@ -222,6 +222,10 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
                     case 'length' :
                         returnValue = value.length;
                     break;
+
+                    case 'throughput' :
+                        returnValue = formatThroughput(value);
+                    break;
                 };
             } else {
                 returnValue = $.isArray(value) ? value.join(', ') : value;
