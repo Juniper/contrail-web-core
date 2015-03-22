@@ -28,7 +28,7 @@ define([
             this.graphConfig = modelConfig;
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
-            this.rankDir = ctwc.GRAPH_DIR_LR;
+            this.rankDir = ctwc.DEFAULT_GRAPH_DIR;
             this.onAllRequestsComplete = new Slick.Event();
             this.beforeDataUpdate = new Slick.Event();
             this.onDataUpdate = new Slick.Event();

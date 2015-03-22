@@ -10,8 +10,9 @@ define([
     var GraphView = joint.dia.Paper.extend({
         constructor: function (viewConfig) {
             var graphConfig = viewConfig.graphModelConfig,
-                tooltipConfig, clickEventsConfig,
+                tooltipConfig, clickEventsConfig, controlPanelConfig,
                 graphControlPanelId = "#graph-control-panel",
+                graphLoadingId = '#graph-loading',
                 self = this;
 
             self.model = new ContrailGraphModel(graphConfig);
@@ -21,6 +22,7 @@ define([
 
             tooltipConfig = contrail.handleIfNull(viewConfig.tooltipConfig, []);
             clickEventsConfig = contrail.handleIfNull(viewConfig.clickEvents, {});
+            controlPanelConfig = contrail.handleIfNull(viewConfig.controlPanel, false);
 
             self.model.beforeDataUpdate.subscribe(function() {
                 $(self.el).find(".font-element").remove();
@@ -29,18 +31,34 @@ define([
             self.model.onAllRequestsComplete.subscribe(function() {
                 var directedGraphSize = self.model.directedGraphSize,
                     jointObject = {
-                        connectedGraph: self.model,
-                        connectedPaper: self
+                        graph: self.model,
+                        paper: self
                     };
 
-                if(contrail.checkIfExist(viewConfig.showControlPanel) && viewConfig.showControlPanel) {
+                if(controlPanelConfig) {
                     var controlTemplate = contrail.getTemplate4Id(cowc.TMPL_GRAPH_CONTROL_PANEL);
-                    $(self.el).parent().parent().parent().find(graphControlPanelId).html(controlTemplate({rankDir: self.model.rankDir}));
+
+                    var customConfig = $.extend(true, {}, controlPanelConfig.custom);
+
+                    $.each(customConfig, function(configKey, configValue) {
+                        if (contrail.checkIfFunction(configValue.iconClass)) {
+                            configValue.iconClass = configValue.iconClass(jointObject);
+                        }
+                    });
+
+                    $(graphControlPanelId).html(controlTemplate({
+                        defaultConfig: controlPanelConfig.default,
+                        customConfig: customConfig
+                    }));
+
+                    initControlPanelEvents(jointObject, graphControlPanelId, graphConfig, controlPanelConfig, graphControlPanelId)
                 }
 
                 if(contrail.checkIfFunction(viewConfig.successCallback)) {
-                    viewConfig.successCallback(self, directedGraphSize, jointObject);
+                    $(graphLoadingId).remove();
+                    viewConfig.successCallback(jointObject, directedGraphSize);
                 }
+
                 initClickEvents(clickEventsConfig, jointObject);
                 initMouseEvents(tooltipConfig, jointObject)
             });
@@ -56,6 +74,41 @@ define([
             this.model.refreshData();
         }
     });
+
+    var initControlPanelEvents = function(jointObject, graphControlPanelId, graphConfig, controlPanelConfig, graphControlPanelId) {
+        var graphControlPanelElement = $(graphControlPanelId);
+
+        if (controlPanelConfig.default.panzoom.enable == true) {
+            var panzommTargetId = controlPanelConfig.default.panzoom.selectorId,
+                panZoomDefaultConfig = {
+                    increment: 0.3,
+                    minScale: 0.3,
+                    maxScale: 2,
+                    duration: 300,
+                    $zoomIn: graphControlPanelElement.find(".zoom-in"),
+                    $zoomOut: graphControlPanelElement.find(".zoom-out"),
+                    $reset: graphControlPanelElement.find(".zoom-reset")
+                },
+                panzoomConfig = $.extend(true, panZoomDefaultConfig, controlPanelConfig.default.panzoom.config);
+
+            $(panzommTargetId).panzoom("reset");
+            $(panzommTargetId).panzoom("resetPan");
+            $(panzommTargetId).panzoom("destroy");
+            $(panzommTargetId).panzoom(panzoomConfig);
+
+        }
+
+        $.each(controlPanelConfig.custom, function(configKey, configValue) {
+            var graphControlElement = graphControlPanelElement.find('.' + configKey);
+
+            $.each(configValue.events, function(eventKey, eventValue) {
+                graphControlElement
+                    .off(eventKey)
+                    .on('click', eventValue(jointObject));
+            });
+        });
+
+    };
 
     var initMouseEvents = function(tooltipConfig, jointObject) {
         var timer = null;
@@ -136,7 +189,7 @@ define([
         };
 
         if(contrail.checkIfFunction(eventConfig['cell:pointerclick'])) {
-            jointObject.connectedPaper.on('cell:pointerclick', function(cellView, evt, x, y) {
+            jointObject.paper.on('cell:pointerclick', function(cellView, evt, x, y) {
 
                 if (timer) {
                     clearTimeout(timer);
@@ -150,7 +203,7 @@ define([
         }
 
         if(contrail.checkIfFunction(eventConfig['cell:pointerdblclick'])) {
-            jointObject.connectedPaper.on('cell:pointerdblclick', function(cellView, evt, x, y) {
+            jointObject.paper.on('cell:pointerdblclick', function(cellView, evt, x, y) {
                 clearTimeout(timer);
                 eventConfig['cell:pointerdblclick'](cellView, evt, x, y);
             });
