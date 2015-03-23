@@ -2775,4 +2775,22 @@ function comparatorIP(ip1, ip2, sign){
     }
     return -1;
 }
-
+/*
+ * This function formats the VN name by discarding the domain name and appending the 
+ * project name in the braces 
+ * input:either array of networks or single network like [default-domain:demo:ipv6test2],default-domain:demo:ipv6test2
+ * output:[ipv6test2 (demo)],ipv6test2 (demo)
+ */
+function formatVN(vn){
+    var formattedValue;
+    if(!$.isArray(vn))
+        vn = [vn];
+    formattedValue = $.map(vn,function(value,idx) {
+                                var fqNameArr = value.split(':');
+                                if(fqNameArr.length == 3)
+                                    return fqNameArr[2] + ' (' + fqNameArr[1] + ')';
+                                else
+                                    return value;
+                              });
+    return formattedValue;
+}
