@@ -12,7 +12,9 @@ function getCookie(name) {
 	    for (var i = 0; i < cookies.length; i++) {
 	        var x = cookies[i].substr(0, cookies[i].indexOf("="));
 	        var y = cookies[i].substr(cookies[i].indexOf("=") + 1);
-	        x = x.replace(/^s+|s+$/g, "").trim();
+	       //TODO need to see if this is required. Adding this removes 's' from beginning and the end.
+	        //x = x.replace(/^s+|s+$/g, "").trim();
+	        x = x.trim();
 	        if (x == name)
 	            return unescape(y);
 	    }
