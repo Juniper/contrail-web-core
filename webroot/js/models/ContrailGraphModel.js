@@ -156,7 +156,7 @@ define([
     function setCachedData2Model(contrailGraphModel, cacheConfig) {
         var isCacheUsed = false, usePrimaryCache = true,
             reload = false, isSecondaryCacheUsed,
-            cachedData = (cacheConfig.ucid != null) ? ctwch.getDataFromCache(cacheConfig.ucid) : null;
+            cachedData = (cacheConfig.ucid != null) ? cowch.getDataFromCache(cacheConfig.ucid) : null;
 
         //TODO: isRequestInProgress check should not be required
         if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['graphModel'].error || cachedData['dataObject']['graphModel'].isRequestInProgress()) {
@@ -266,7 +266,7 @@ define([
         if (contrailGraphModel.ucid != null) {
             contrailGraphModel['rawData'] = response;
             //TODO: Binding of cached gridModel (if any) with existing view should be destroyed.
-            ctwch.setData2Cache(contrailGraphModel.ucid, {
+            cowch.setData2Cache(contrailGraphModel.ucid, {
                 graphModel: contrailGraphModel
             });
         }

@@ -393,7 +393,7 @@ define([
                     if(app == cowc.APP_CONTRAIL_CONTROLLER) {
                         ctwu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     } else if(app == cowc.APP_CONTRAIL_SM) {
-                        smwu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
+                        smwru.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     }
                     break;
             }

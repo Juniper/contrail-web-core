@@ -30,7 +30,7 @@ define([
                 bindDataHandler2Model(contrailListModel);
             } else if (modelConfig.remote != null && modelConfig.remote.ajaxConfig != null) {
                 hlRemoteConfig = modelConfig['remote']['hlRemoteConfig'];
-                cachedData = (contrailListModel.ucid != null) ? ctwch.getDataFromCache(contrailListModel.ucid) : null;
+                cachedData = (contrailListModel.ucid != null) ? cowch.getDataFromCache(contrailListModel.ucid) : null;
                 cacheUsedStatus = setCachedData2Model(contrailListModel, cacheConfig);
 
                 if (cacheUsedStatus['isCacheUsed']) {
@@ -79,7 +79,7 @@ define([
     function setCachedData2Model(contrailListModel, cacheConfig) {
         var isCacheUsed = false, usePrimaryCache = true,
             reload = false, isSecondaryCacheUsed,
-            cachedData = (cacheConfig.ucid != null) ? ctwch.getDataFromCache(cacheConfig.ucid) : null;
+            cachedData = (cacheConfig.ucid != null) ? cowch.getDataFromCache(cacheConfig.ucid) : null;
 
         //TODO: isRequestInProgress check should not be required
         if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['listModel'].error || cachedData['dataObject']['listModel'].isRequestInProgress()) {
@@ -415,7 +415,7 @@ define([
     function updateDataInCache(contrailListModel) {
         if (contrailListModel.ucid != null) {
             //TODO: Binding of cached listModel (if any) with existing view should be destroyed.
-            ctwch.setData2Cache(contrailListModel.ucid, {
+            cowch.setData2Cache(contrailListModel.ucid, {
                 listModel: contrailListModel
             });
         }

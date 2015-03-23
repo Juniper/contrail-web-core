@@ -128,7 +128,7 @@ define([
     function updateDataInCache(contrailViewModel) {
         if (contrailViewModel.ucid != null) {
             //TODO: Binding of cached gridModel (if any) with existing view should be destroyed.
-            ctwch.setData2Cache(contrailViewModel.ucid, {viewModel: contrailViewModel});
+            cowch.setData2Cache(contrailViewModel.ucid, {viewModel: contrailViewModel});
         }
     };
 

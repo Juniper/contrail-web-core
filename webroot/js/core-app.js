@@ -80,6 +80,7 @@ requirejs.config({
         'graph-view': 'js/views/GraphView',
         'contrail-graph-model': 'js/models/ContrailGraphModel',
         'contrail-remote-data-handler': 'js/models/ContrailRemoteDataHandler',
+        'core-cache': 'js/core-cache',
         'core-init': 'js/core-init'
     },
     shim: {
