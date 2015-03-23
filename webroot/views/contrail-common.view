@@ -531,6 +531,88 @@
         </div>
     </div>
 </script>
+<script type="text/x-handlebars-template" id="chart-settings">
+    <div class="chart-settings">
+        <div class="chart-settings-wrapper hide">
+            <div class="chart-settings-expand">
+                 
+                <div id="chart-settings-header" class='chart-settings-header'>
+                    <label style="display:inline-block">Options</label>
+                    <i class="icon-chevron-up"></i>
+                </div>
+                <div style="margin-left:10px;">
+                    <div class="color-selection">
+                        <label>Severity :</label>
+                        <div class="circle red filled"></div>
+                        <div class="circle blue filled"></div>
+                        <div class="circle orange filled"></div>
+                        <div class="circle green filled"></div>
+                    </div>
+                    <div class="axis-params">
+                        {{# each this}}
+                            <div style="padding-top: 5px;">
+                                <div style="display:inline-block;">
+                                     <label style="margin-bottom:0px;display:inline-block;font-size:11px;">{{this.lbl}} : </label><div id="{{this.id}}" style="font-size:11px;"></div>
+                                </div>
+                                <div style="display:inline-block;">
+                                    <div id="{{this.id}}_crossfilter" class="chart" style="width:320px;">
+                                        <div class="title">
+                                            <span class="reset" style="display: none;">reset</span>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        {{/each}}
+                    </div>
+                    <div>
+                        <label class="chart-settings-label">Bucketize&nbsp;</label><input id="checkbox-bucketize"  type="checkbox" name="bucketize" value="bucketize" style="margin:0;"/>
+                        <div id="div-bucket-options" class="chart-sub-settings">
+                            <label class="chart-settings-label">Scatter Level :&nbsp;</label><input id="chartSettingsBucketMaxBucketizeLevel" style="height: 14px;width: 19px;font-size: 11px;" type="textbox" placeholder="3" />
+                            <label class="chart-settings-label">Buckets per axis :&nbsp;</label><input id="chartSettingsBucketPerAxis" style="height: 14px;width: 19px;font-size: 11px;" type="textbox" placeholder="7" />
+                            <button class="btnBucketSettingsApply btn btn-primary btn-minier">Apply</button> 
+                        </div>
+                   </div>
+               </div>
+            </div>
+            <!-- <div style="background-color: white;margin-left: 70px; margin-right: 20px;" class="upArrow">
+                <img src="/img/upArrow.png"></img>
+            </div> -->
+        </div>
+        <div class = "chart-settings-hide upArrow">
+            <div class="chart-settings-reset">
+              <!--  <div class="color-filter-settings-reset">
+                    <label class="chart-settings-label hyperlink-active">Severity Filter</label>
+                    <a href="#" id="chart-settings-severity-filter-remove" class="chart-settings-close" tabindex="-1">x</a>
+                </div> -->
+                <div class="bucketize-reset">
+                    <label class="chart-settings-label">Bucketize</label>
+                    <a href="#" id="chart-settings-bucketization-remove" class="chart-settings-close" tabindex="-1">x</a>
+                </div> 
+                <!--  <div class="dynamic-axis-settings-reset">
+                    <label hyperlink-active>Dynamic Axis</label>
+                    <a href="#" class="select2-search-choice-close" tabindex="-1"></a>
+                </div> 
+                <div class="all-reset">
+                    <label class="chart-settings-label">Reset All</label>
+                    <a href="#" class="chart-settings-close" tabindex="-1"></a>
+                </div> -->
+            </div>
+            <label class="chart-settings-label hyperlink-active position-right chart-setting-options underline" >Options</label> 
+           <!-- <label class="chart-settings-label hyperlink-active position-right chart-setting-options underline" id="zommout">Zoom Out</label> --> 
+            <!-- <i class="icon-gear position-right"></i> -->
+        </div>
+      <!-- <div class="chart-settings-hide">
+            <img src="/img/downArrow.png"></img>
+       </div> -->
+    </div>
+</div>
+</script>
+
+<script type="text/x-handlebars-template" id="chart-footer">
+    <div>
+        <label class="chart-settings-label position-right">Bucketize&nbsp;</label>
+    </div>
+</script>
 
 <!-- View Templates -->
 
