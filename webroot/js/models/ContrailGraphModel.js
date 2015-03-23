@@ -1,10 +1,16 @@
+/*
+ * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ */
+
 define([
     'underscore',
-    'contrail-remote-data-handler'
-], function (_, ContrailRemoteDataHandler) {
+    'contrail-remote-data-handler',
+    'js/models/GraphLayoutHandler'
+], function (_, ContrailRemoteDataHandler, GraphLayoutHandler) {
     var ContrailGraphModel = joint.dia.Graph.extend({
         error: false,
         errorList: [],
+        rankDir: "LR",
         initialize: function (graphModelConfig) {
             var defaultCacheConfig = {
                 cacheConfig: {
@@ -22,6 +28,7 @@ define([
             this.graphConfig = modelConfig;
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
+            this.rankDir = ctwc.DEFAULT_GRAPH_DIR;
             this.onAllRequestsComplete = new Slick.Event();
             this.beforeDataUpdate = new Slick.Event();
             this.onDataUpdate = new Slick.Event();
@@ -31,39 +38,40 @@ define([
 
         fetchData: function () {
             var self = this, cacheUsedStatus = {isCacheUsed: false, reload: true },
-                cacheConfig = self.cacheConfig;
+                remoteHandlerConfig, cacheConfig = self.cacheConfig;
 
-            self.elementMap = {node: {}, link: {}};
-
-            var remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig);
             cacheUsedStatus = setCachedData2Model(self, cacheConfig);
 
             if (cacheUsedStatus['isCacheUsed']) {
                 self.onAllRequestsComplete.notify();
 
                 if (cacheUsedStatus['reload']) {
+                    remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig);
+                    self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
+                } else {
+                    remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig, false);
                     self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
                 }
             } else {
+                remoteHandlerConfig = getRemoteHandlerConfig(self, this.graphConfig);
                 self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
             }
+
+            bindDataHandler2Model(self);
         },
 
-        isPrimaryRequestInProgress: function () {
-            return (self.contrailDataHandler != null) ? self.contrailDataHandler.isPrimaryRequestInProgress() : false;
-        },
-
-        isVLRequestInProgress: function () {
-            return (self.contrailDataHandler != null) ? self.contrailDataHandler.isVLRequestInProgress() : false;
-        },
-
-        isRequestInProgress: function () {
-            return (self.contrailDataHandler != null) ? self.contrailDataHandler.isRequestInProgress() : false;
+        reLayoutGraph: function (rankDir) {
+            var self = this;
+            setData2Model(self, self.rawData, rankDir);
+            layoutGraph(self);
+            self.onAllRequestsComplete.notify();
         }
     });
 
-    function getRemoteHandlerConfig(contrailGraphModel, graphModelConfig) {
-        var remoteHandlerConfig = {},
+    function getRemoteHandlerConfig(contrailGraphModel, graphModelConfig, autoFetchData) {
+        var remoteHandlerConfig = {
+                autoFetchData: (autoFetchData != null) ? autoFetchData : true
+            },
             primaryRemote = contrailGraphModel.graphConfig.remote,
             vlRemoteConfig = contrail.handleIfNull(graphModelConfig.vlRemoteConfig, {}),
             vlRemoteList = contrail.handleIfNull(vlRemoteConfig['vlRemoteList'], []),
@@ -71,13 +79,15 @@ define([
                 ajaxConfig: primaryRemote.ajaxConfig,
                 dataParser: primaryRemote.dataParser,
                 initCallback: primaryRemote.initCallback,
-                successCallback: function (response) {
+                successCallback: function (response, resetDataFlag) {
                     setData2Model(contrailGraphModel, response);
+                    layoutGraph(contrailGraphModel);
                     if (contrail.checkIfFunction(primaryRemote.successCallback)) {
                         primaryRemote.successCallback(response, contrailGraphModel);
                     }
                     contrailGraphModel.onDataUpdate.notify();
                 },
+                refreshSuccessCallback: function () {},
                 failureCallback: function (xhr) {
                     contrailGraphModel.error = true;
                     contrailGraphModel.errorList.push(xhr);
@@ -146,7 +156,7 @@ define([
     function setCachedData2Model(contrailGraphModel, cacheConfig) {
         var isCacheUsed = false, usePrimaryCache = true,
             reload = false, isSecondaryCacheUsed,
-            cachedData = (cacheConfig.ucid != null) ? ctwch.getDataFromCache(cacheConfig.ucid) : null;
+            cachedData = (cacheConfig.ucid != null) ? cowch.getDataFromCache(cacheConfig.ucid) : null;
 
         //TODO: isRequestInProgress check should not be required
         if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['graphModel'].error || cachedData['dataObject']['graphModel'].isRequestInProgress()) {
@@ -161,6 +171,8 @@ define([
                 lastUpdateTime = cachedData['lastUpdateTime'];
 
             setData2Model(contrailGraphModel, cachedRawData);
+            //setElements2Model(contrailGraphModel, cachedGraphModel.elementMap, cachedGraphModel.elementsDataObj, cachedGraphModel.rawData);
+            layoutGraph(contrailGraphModel);
 
             isCacheUsed = true;
             if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
@@ -178,33 +190,75 @@ define([
     };
 
 
-    function setData2Model(contrailGraphModel, graphdata) {
-        var elementMap = {node: {}, link: {}};
+    function setData2Model(contrailGraphModel, response, rankDir) {
+        contrailGraphModel.elementMap = {node: {}, link: {}};
         contrailGraphModel.beforeDataUpdate.notify();
 
+        if (contrailGraphModel.forceFit) {
+            contrailGraphModel.rankDir = (rankDir != null) ? rankDir : computeRankDir(response['nodes'], response['links']);
+        }
+
         //TODO: We should not edit graohModel in generateElements
-        var elementsObject = contrailGraphModel.generateElements($.extend(true, {}, graphdata), elementMap);
+        var elementsDataObj = contrailGraphModel.generateElements($.extend(true, {}, response), contrailGraphModel.elementMap, contrailGraphModel.rankDir);
 
         contrailGraphModel.clear();
-        contrailGraphModel.addCells(elementsObject['elements']);
+        contrailGraphModel.addCells(elementsDataObj['elements']);
+        contrailGraphModel.elementsDataObj = elementsDataObj;
+        contrailGraphModel.rawData = response;
+    };
+
+    function setElements2Model(contrailGraphModel, elementMap, elementsDataObj, rawData) {
+        contrailGraphModel.beforeDataUpdate.notify();
         contrailGraphModel.elementMap = elementMap;
+        contrailGraphModel.clear();
+        contrailGraphModel.addCells(elementsDataObj['elements']);
+        contrailGraphModel.elementsDataObj = elementsDataObj;
+        contrailGraphModel.rawData = rawData;
+    };
+
+    function layoutGraph (contrailGraphModel) {
+        var elementsDataObj = contrailGraphModel.elementsDataObj;
 
         if (contrailGraphModel.forceFit) {
-            contrailGraphModel.directedGraphSize = graphLayoutHandler.layout(contrailGraphModel, getForceFitOptions(null, null, elementsObject['nodes'], elementsObject['links']));
+            //contrailGraphModel.directedGraphSize = GraphLayoutHandler.jointLayout(contrailGraphModel, getJointLayoutOptions(elementsObject['nodes'], elementsObject['links']));
+            contrailGraphModel.directedGraphSize = GraphLayoutHandler.dagreLayout(contrailGraphModel, getDagreLayoutOptions(contrailGraphModel.rankDir));
         }
-        if(contrail.checkIfExist(elementsObject['zoomedNodeElement'])) {
-            var zoomedNodeElement = elementsObject['zoomedNodeElement'];
+        if (contrail.checkIfExist(elementsDataObj['zoomedNodeElement'])) {
+            var zoomedNodeElement = elementsDataObj['zoomedNodeElement'];
 
             var xOrigin = zoomedNodeElement['attributes']['position']['x'],
                 yOrigin = zoomedNodeElement['attributes']['position']['y'];
 
-            contrailGraphModel.addCells(elementsObject['zoomedElements']);
+            contrailGraphModel.addCells(elementsDataObj['zoomedElements']);
 
-            /* Translate zoomed elements TODO - Move to view file*/
-            $.each(elementsObject['zoomedElements'], function (zoomedElementKey, zoomedElementValue) {
+            /* Translate zoomed elements TODO: Move to view file */
+            $.each(elementsDataObj['zoomedElements'], function (zoomedElementKey, zoomedElementValue) {
                 zoomedElementValue.translate(xOrigin, yOrigin);
             });
         }
+    }
+
+    function bindDataHandler2Model(contrailGraphModel) {
+        var contrailDataHandler = contrailGraphModel.contrailDataHandler;
+
+        contrailGraphModel['isPrimaryRequestInProgress'] = function () {
+            return (contrailDataHandler != null) ? contrailDataHandler.isPrimaryRequestInProgress() : false;
+        };
+
+        contrailGraphModel['isVLRequestInProgress'] = function () {
+            return (contrailDataHandler != null) ? contrailDataHandler.isVLRequestInProgress() : false;
+        };
+
+        contrailGraphModel['isRequestInProgress'] = function () {
+            return (contrailDataHandler != null) ? contrailDataHandler.isRequestInProgress() : false;
+        };
+
+        contrailGraphModel['refreshData'] = function () {
+            if(!contrailGraphModel.isRequestInProgress()) {
+                resetGraphModel4Refresh(contrailGraphModel);
+                contrailDataHandler.refreshData()
+            }
+        };
     };
 
     function updateDataInCache(contrailGraphModel, completeResponse) {
@@ -212,58 +266,46 @@ define([
         if (contrailGraphModel.ucid != null) {
             contrailGraphModel['rawData'] = response;
             //TODO: Binding of cached gridModel (if any) with existing view should be destroyed.
-            ctwch.setData2Cache(contrailGraphModel.ucid, {
+            cowch.setData2Cache(contrailGraphModel.ucid, {
                 graphModel: contrailGraphModel
             });
         }
     };
 
-    var graphLayoutHandler = $.extend(true, joint.layout.DirectedGraph, {
-        layout: function (graph, opt) {
-            opt = opt || {};
-
-            var inputGraph = this._prepareData(graph);
-            var runner = dagre.layout();
-
-            if (opt.debugLevel) {
-                runner.debugLevel(opt.debugLevel);
-            }
-            if (opt.rankDir) {
-                runner.rankDir(opt.rankDir);
-            }
-            if (opt.rankSep) {
-                runner.rankSep(opt.rankSep);
-            }
-            if (opt.edgeSep) {
-                runner.edgeSep(opt.edgeSep);
-            }
-            if (opt.nodeSep) {
-                runner.nodeSep(opt.nodeSep);
-            }
-
-            var layoutGraph = runner.run(inputGraph);
-
-            layoutGraph.eachNode(function (u, value) {
-                if (!value.dummy) {
-                    graph.get('cells').get(u).set('position', {
-                        x: value.x + GRAPH_MARGIN - value.width / 2,
-                        y: value.y + GRAPH_MARGIN - value.height / 2
-                    });
-                }
-            });
-
-            if (opt.setLinkVertices) {
-
-                layoutGraph.eachEdge(function (e, u, v, value) {
-                    var link = graph.get('cells').get(e);
-                    if (link) {
-                        graph.get('cells').get(e).set('vertices', value.points);
-                    }
-                });
-            }
-            return {width: layoutGraph.graph().width, height: layoutGraph.graph().height};
+    function getJointLayoutOptions(nodes, links, rankDir, separation) {
+        var layoutOptions = {setLinkVertices: false, edgeSep: 1, nodeSep: 50, rankSep: 50, rankDir: "LR"};
+        if (rankDir == null) {
+            rankDir = computeRankDir(nodes, links);
         }
-    });
+        layoutOptions['rankDir'] = rankDir;
+        if (separation != null) {
+            layoutOptions['nodeSep'] = separation;
+            layoutOptions['rankSep'] = separation;
+        }
+        return layoutOptions;
+    };
+
+    function getDagreLayoutOptions(rankDir, separation) {
+        var layoutOptions = {edgeSep: 1, nodeSep: 50, rankSep: 50, rankDir: "LR", marginx: GRAPH_MARGIN, marginy: GRAPH_MARGIN};
+        if(rankDir != null) {
+            layoutOptions['rankDir'] = rankDir;
+        }
+        if (separation != null) {
+            layoutOptions['nodeSep'] = separation;
+            layoutOptions['rankSep'] = separation;
+        }
+        return layoutOptions;
+    };
+
+    function resetGraphModel4Refresh(graphModel) {
+        graphModel.error = false;
+        graphModel.errorList = [];
+    };
+
+    function computeRankDir(nodes, links) {
+        var rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? 'TB' : 'LR';
+        return rankDir;
+    };
 
     return ContrailGraphModel;
 });

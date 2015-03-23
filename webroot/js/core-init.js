@@ -21,10 +21,11 @@ require(['jquery', 'knockout'], function ($, Knockout) {
     window.ko = Knockout;
     loadCommonTemplates();
     require(initDepFiles, function() {
-        require(['underscore', 'validation', 'core-utils', 'core-constants', 'knockout'], function (_, validation, CoreUtils, CoreConstants, Knockout) {
-            cowu = new CoreUtils();
+        require(['underscore', 'validation', 'core-utils', 'core-constants', 'knockout', 'core-cache'], function (_, validation, CoreUtils, CoreConstants, Knockout, Cache) {
             cowc = new CoreConstants();
+            cowu = new CoreUtils();
             kbValidation = validation;
+            cowch = new Cache();
             initBackboneValidation(_);
             initCustomKOBindings(Knockout);
             initDomEvents();

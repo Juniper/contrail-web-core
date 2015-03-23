@@ -34,6 +34,8 @@ define([
 
         this.KEY_VALIDATION = 'validation';
 
+        this.TMPL_2ROW_CONTENT_VIEW = "core-2-row-content-template";
+
         this.TMPL_ACCORDIAN_VIEW = "core-accordian-view-template";
         this.TMPL_DROPDOWN_VIEW = "core-dropdown-view-template";
         this.TMPL_SELECT2_DROPDOWN_VIEW = "core-select2-dropdown-view-template";
@@ -52,6 +54,7 @@ define([
         this.TMPL_DETAIL_PAGE_ACTION = "core-detail-page-action-template";
         this.TMPL_WIZARD_VIEW = "core-wizard-view-template";
         this.TMPL_NETWORKING_GRAPH_VIEW = "core-networking-graph-template";
+        this.TMPL_GRAPH_CONTROL_PANEL = "graph-control-panel-template";
         this.TMPL_TABS_VIEW = "core-tabs-template";
         this.TMPL_CHART_VIEW = "core-pd-chart-template";
         this.TMPL_DETAIL_FOUNDATION = "core-detail-foundation-template";
@@ -59,6 +62,10 @@ define([
         this.TMPL_DETAIL_SECTION_COLUMN = "core-detail-section-column-template";
         this.TMPL_DETAIL_SECTION_ROW = "core-detail-section-row-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
+
+        this.TMPL_ELEMENT_TOOLTIP = "element-tooltip-template";
+        this.TMPL_ELEMENT_TOOLTIP_TITLE = "element-tooltip-title-template";
+        this.TMPL_ELEMENT_TOOLTIP_CONTENT = "element-tooltip-content-template";
 
         this.APP_CONTRAIL_CONTROLLER = "contrail-controller";
         this.APP_CONTRAIL_SM = "contrail-sm";

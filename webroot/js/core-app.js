@@ -59,6 +59,7 @@ requirejs.config({
         'vectorizer' : '/assets/joint/js/vectorizer',
         'joint.layout.DirectedGraph' : "/assets/joint/js/joint.layout.DirectedGraph",
         'joint.contrail' : "/js/joint.contrail",
+        'dagre': '/assets/joint/js/dagre',
         'bezier' : "/assets/bezierjs/bezier",
         'lodash' : '/assets/joint/js/lodash',
         'jquery.panzoom': "/assets/jquery/js/jquery.panzoom.min",
@@ -79,6 +80,7 @@ requirejs.config({
         'graph-view': 'js/views/GraphView',
         'contrail-graph-model': 'js/models/ContrailGraphModel',
         'contrail-remote-data-handler': 'js/models/ContrailRemoteDataHandler',
+        'core-cache': 'js/core-cache',
         'core-init': 'js/core-init'
     },
     shim: {
@@ -241,6 +243,9 @@ requirejs.config({
         'joint.contrail': {
             deps: ['joint', 'joint.layout.DirectedGraph']
         },
+        'dagre': {
+            deps: ['jquery']
+        },
         'text': {
             deps: ['jquery']
         },
@@ -260,7 +265,7 @@ requirejs.config({
             deps: ['jquery', 'underscore', 'backbone', 'joint.contrail', 'joint.layout.DirectedGraph', 'slick.core']
         },
         'graph-view': {
-            deps: ['jquery', 'underscore', 'backbone', 'joint.contrail']
+            deps: ['jquery', 'underscore', 'backbone', 'joint', 'joint.contrail']
         },
         'contrail-list-model': {
             deps: ['contrail-remote-data-handler', 'slick.core']

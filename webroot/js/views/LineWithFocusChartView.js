@@ -36,7 +36,9 @@ define([
                         self.renderChart(selector, viewConfig, chartData);
                     });
                 }
-            } else {
+            }
+            /*
+            else {
                 $.ajax(ajaxConfig).done(function (result) {
                     deferredObj.resolve(result);
                 });
@@ -56,6 +58,7 @@ define([
                     }
                 });
             }
+            */
         },
 
         renderChart: function (selector, viewConfig, data) {

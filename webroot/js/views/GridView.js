@@ -42,6 +42,12 @@ define([
                     if (contrailListModel.getItems().length == 0) {
                         $(self.$el).data('contrailGrid').showGridMessage('empty')
                     }
+                    //TODO: Execute only in refresh case.
+                    if(gridConfig.header.defaultControls.refreshable){
+                        setTimeout(function(){
+                            $(self.$el).find('.link-refreshable i').removeClass('icon-spin icon-spinner').addClass('icon-repeat');
+                        }, 1000);
+                    }
                 }
             });
         }
