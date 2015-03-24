@@ -41,6 +41,23 @@ function buildConfigDeltaJson (delta, oldJson, newJson, type, optFields,
     var optFieldsCnt = optFields.length;
     resultJSON[type] = {};
     for (var i = 0; i < optFieldsCnt; i++) {
+        var splitArr = optFields[i].split(':');
+        var splitArrLen = splitArr.length;
+        if (splitArrLen > 1) {
+            if ((null != delta[splitArr[0]]) &&
+                (null != delta[splitArr[0]][splitArr[1]])) {
+                if (null != oldJson[splitArr[0]]) {
+                    resultJSON[type][splitArr[0]] =
+                        oldJson[splitArr[0]];
+                    resultJSON[type][splitArr[0]][splitArr[1]] =
+                        newJson[splitArr[0]][splitArr[1]];
+                } else if (null != newJson[splitArr[0]]) {
+                    resultJSON[type][splitArr[0]] =
+                        newJson[splitArr[0]];
+                }
+            }
+            continue;
+        }
         if ((null != delta[optFields[i]]) && (null != newJson) &&
             (null != newJson[optFields[i]])) {
             resultJSON[type][optFields[i]] = newJson[optFields[i]];
