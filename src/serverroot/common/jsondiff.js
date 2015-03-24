@@ -40,10 +40,37 @@ function buildConfigDeltaJson (delta, oldJson, newJson, type, optFields,
     }
     var optFieldsCnt = optFields.length;
     resultJSON[type] = {};
+    var tmpOldJson = commonUtils.cloneObj(oldJson);
     for (var i = 0; i < optFieldsCnt; i++) {
-        if ((null != delta[optFields[i]]) && (null != newJson) &&
-            (null != newJson[optFields[i]])) {
-            resultJSON[type][optFields[i]] = newJson[optFields[i]];
+        var splitArr = optFields[i].split(':');
+        var splitArrLen = splitArr.length;
+        if (splitArrLen > 1) {
+            if ((null != delta[splitArr[0]]) &&
+                (null != delta[splitArr[0]][splitArr[1]])) {
+                if (null != oldJson[splitArr[0]]) {
+                    resultJSON[type][splitArr[0]] =
+                        tmpOldJson[splitArr[0]];
+                    resultJSON[type][splitArr[0]][splitArr[1]] =
+                        newJson[splitArr[0]][splitArr[1]];
+                    tmpOldJson[splitArr[0]][splitArr[1]] =
+                        newJson[splitArr[0]][splitArr[1]];
+                } else if (null != newJson[splitArr[0]]) {
+                    resultJSON[type][splitArr[0]] =
+                        newJson[splitArr[0]];
+                }
+            }
+            continue;
+        }
+        if ((null != delta[optFields[i]]) && (null != newJson)) {
+            if (null != newJson[optFields[i]]) {
+                resultJSON[type][optFields[i]] = newJson[optFields[i]];
+            } else {
+                if ((null != oldJson[optFields[i]]) &&
+                    (oldJson[optFields[i]] instanceof Array)) {
+                    /* Delete entry */
+                    resultJSON[type][optFields[i]] = [];
+                }
+            }
         }
     }
     if (null == mandateFields) {
