@@ -2530,6 +2530,117 @@ color: #b94a48;
 .row-fluid.form-multiselect-label [class*="span"] {
     min-height: 25px;
 }
+.chart-settings-label {
+	margin-bottom:0px;
+	display:inline-block;
+	font-size:11px;
+}
+
+.chart-sub-settings{
+	margin-left:10px;
+}
+
+.chart-settings-close{
+	display: inline-block;
+	width: 12px;
+	height: 13px;
+	position: inherit;
+	right: 3px;
+	top: 4px;
+	font-size: 1px;
+	outline: none;
+	background: url('select2.png') right top no-repeat;
+}
+
+.chart-settings-header {
+	position:relative;
+}
+
+.chart-settings .icon-chevron-up{
+	right:0px;
+	position:absolute;
+}
+
+.chart-settings-reset{
+	display:inline;
+	background:none;
+}
+
+.chart-settings-reset label{
+	border-color: #dadada;
+	/* border: 1px solid #aaaaaa;
+	border-radius: 1px; */
+	box-shadow: none;
+	background: none;
+	padding: 3px 3px 3px 5px;
+	line-height: 12px;
+}
+
+.position-right{
+	right:30px;
+    position:absolute;
+    margin-bottom:8px;
+    margin-top:8px;
+}
+
+.circle {
+    border: 2px solid #666666;
+    border-radius: 50%;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+    filter: alpha(opacity=60);
+    opacity: 0.6;
+
+    -webkit-box-shadow: 0 0 1px 0px rgb( 255, 255, 255);
+    box-shadow: 0 0 1px 0px rgb( 255, 255, 255);
+    width: 8px;
+    height: 8px;
+    z-index: 86;
+
+    -webkit-transition: background-color .5s ease-in-out;
+    -moz-transition: background-color .5s ease-in-out;
+    -o-transition: background-color .5s ease-in-out;
+    -ms-transition: background-color .5s ease-in-out;
+    transition: background-color .5s ease-in-out;
+}
+
+.circle.filled {
+    background-color: #666666;
+}
+
+.circle.red {
+    border: 2px solid #dc6660;
+}
+.circle.red.filled {
+    background-color: #dc6660;
+}
+.circle.green {
+    border: 2px solid #7dc48a;
+}
+.circle.green.filled {
+    background-color: #7dc48a;
+}
+.circle.blue {
+    border: 2px solid #7892dd;
+}
+.circle.blue.filled {
+    background-color: #7892dd;
+}
+.circle.orange {
+    border: 2px solid #ffbf87;
+}
+.circle.orange.filled {
+    background-color: #ffbf87;
+}
+
+.chart-settings .color-selection .circle {
+    display:inline-block;
+    margin:0 5px;
+    cursor:pointer;
+    opacity:1;
+}
+.chart-settings .color-selection label {
+    display:inline-block;
+}
 
 /* General Styles */
 

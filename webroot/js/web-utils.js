@@ -2678,6 +2678,20 @@ function prefixToNetMask(prefixLen) {
     }
     return v4.Address.fromHex(parseInt(binaryString,2).toString(16)).address;
 }
+
+/***
+ *  Returns the list of keys from a hashmap whose value matches with the given value
+ ***/
+function getKeysForValue(obj, value) {
+  var all = [];
+  for (var name in obj) {
+    if (!Object.hasOwnProperty(name) && obj[name] === value) {
+      all.push(name);
+    }
+  }
+  return all;
+}
+
 function getIPforHostName(name,dataSourceName) {
    if(globalObj.dataSources != null && globalObj.dataSources[dataSourceName] != null 
        &&  globalObj.dataSources[dataSourceName].dataSource != null) {
@@ -2775,4 +2789,273 @@ function comparatorIP(ip1, ip2, sign){
     }
     return -1;
 }
+/*
+ * This function formats the VN name by discarding the domain name and appending the 
+ * project name in the braces 
+ * input:either array of networks or single network like [default-domain:demo:ipv6test2],default-domain:demo:ipv6test2
+ * output:[ipv6test2 (demo)],ipv6test2 (demo)
+ */
+function formatVN(vn){
+    var formattedValue;
+    if(!$.isArray(vn))
+        vn = [vn];
+    formattedValue = $.map(vn,function(value,idx) {
+                                var fqNameArr = value.split(':');
+                                if(fqNameArr.length == 3)
+                                    return fqNameArr[2] + ' (' + fqNameArr[1] + ')';
+                                else
+                                    return value;
+                              });
+    return formattedValue;
+}
+ /*
+ * Methods to set and update the cross filters which are linked to the single datasource
+*/
 
+function ManageCrossFilters() {
+    this.load = function() {
+        var obj = {
+                //vRouters Cross Filter
+                'vRoutersCF':{
+                    name:'vRoutersCF',
+                    crossfilter:null,
+                    dimensions:{},
+                    callBacks:$.Callbacks("unique"),
+                    callBackFns:{}
+                }
+            };
+        globalObj['crossFilters'] = obj;
+    }
+    
+    this.getCrossFilterObj = function(cfName) {
+        return globalObj['crossFilters'][cfName];
+    }
+    
+    this.getCrossFilter = function(cfName) {
+        var cfObj = globalObj['crossFilters'][cfName];
+        if(cfObj != null)
+            return cfObj.crossfilter;
+        return null;
+    }
+    
+    this.updateCrossFilter = function(cfName,data) {
+        var cfObj = globalObj['crossFilters'][cfName];
+        var dataCF = crossfilter(data);
+        cfObj.crossfilter = dataCF;
+        var dimensions = this.getDimensions(cfName);
+        globalObj['crossFilters'][cfName] = cfObj;
+        for (var key in dimensions) {
+            if (dimensions.hasOwnProperty(key)) {
+                this.addDimension(cfName,key);
+            }
+        }
+        //cfObj.callBacks.fire();
+    }
+    
+    this.addDimension = function(cfName,dimensionName,formatFn){
+        var cfObj = globalObj['crossFilters'][cfName];
+        var dataCF = cfObj.crossfilter;
+        var dimension;
+        if(dataCF != null){
+           dimension = dataCF.dimension(function(d) { 
+               if(formatFn != null)
+                   return formatFn(d[dimensionName]);
+               else
+                   return d[dimensionName]; 
+           });
+           cfObj.dimensions[dimensionName] = dimension;
+        }
+        globalObj['crossFilters'][cfName] = cfObj;
+    }
+
+    this.getDimensions = function(cfName){
+        var cfObj = globalObj['crossFilters'][cfName];
+        if(cfObj != null && cfObj.dimensions != null){
+            return cfObj.dimensions;
+        }
+        return null;
+    }
+
+    this.getDimension = function(cfName,dimensionName){
+        var cfObj = globalObj['crossFilters'][cfName];
+        if(cfObj != null && cfObj.dimensions != null && cfObj.dimensions[dimensionName] != null){
+            return cfObj.dimensions[dimensionName];
+        }
+        return null;
+    }
+    
+    this.removeDimension = function(cfName,dimensionName){
+        var cfObj = globalObj['crossFilters'][cfName];
+        if(cfObj != null && cfObj.dimensions != null && cfObj.dimensions[dimensionName] != null){
+            var dimension = cfObj.dimensions[dimensionName];
+            dimension.dispose();
+            delete globalObj['crossFilters'][cfName]['dimensions'][dimensionName];
+            cfObj.callBacks.fire();
+        }
+    }
+    
+    this.applyFilter = function(cfName,dimensionName,criteria){
+        var cfObj = globalObj['crossFilters'][cfName];
+        var cf = this.getCrossFilter(cfName);
+        
+        if(cfObj != null && cfObj.dimensions != null && cfObj.dimensions[dimensionName] != null){
+            var dimension = cfObj.dimensions[dimensionName];
+            if(criteria == null){
+                this.removeFilter(cfName,dimensionName);
+            } else {
+                // var filterByCriteria = dimension.filterRange(criteria);
+                var filterByCriteria = dimension.filterFunction(function(d) { return d >= criteria[0] && d < criteria[1];});
+            }
+            var thirdDimension = cf.dimension(function(d) { return d[dimensionName]; });
+            var t = thirdDimension.top(Infinity);
+            thirdDimension.remove();
+           // cfObj.callBacks.fire();
+            return t;
+        }
+    }
+    
+    this.removeFilter = function(cfName,dimensionName){
+        var cfObj = globalObj['crossFilters'][cfName];
+        if(cfObj != null && cfObj.dimensions != null && cfObj.dimensions[dimensionName] != null){
+            var dimension = cfObj.dimensions[dimensionName];
+            dimension.filterAll();
+            //cfObj.callBacks.fire();
+        }
+    }
+    
+    this.getCurrentFilteredData = function(cfName){
+        var cfObj = globalObj['crossFilters'][cfName];
+        if(cfObj != null && cfObj['crossfilter'] != null){
+            var cf = cfObj['crossfilter'];
+            var thirdDimension = cf.dimension(function(d) { return d['x']; });
+            var t = thirdDimension.top(Infinity);
+            thirdDimension.remove();
+            //cfObj.callBacks.fire(t);
+            return t;
+        }
+    }
+    /** CallBacks related */
+    this.getCallBacks = function(cfName) {
+        if(globalObj['crossFilters'] != null && globalObj['crossFilters'][cfName] != null){
+            return globalObj['crossFilters'][cfName]['callBacks'];
+        }
+        return null;
+    }
+    
+    this.setCallBacks = function(cfName){
+        if(globalObj['crossFilters'] != null && globalObj['crossFilters'][cfName] != null 
+                && globalObj['crossFilters'][cfName]['callBacks'] == null){
+            globalObj['crossFilters'][cfName]['callBacks'] = $.Callbacks("unique");
+        }
+    }
+    
+    this.getCallBackFns = function(cfName){
+        if(globalObj['crossFilters'] != null && globalObj['crossFilters'][cfName] != null){
+            return globalObj['crossFilters'][cfName]['callBackFns'];
+        }
+        return null;
+    }
+    
+    this.getCallBackFn = function(cfName,callBackName){
+        if(globalObj['crossFilters'] != null && globalObj['crossFilters'][cfName] != null
+                && globalObj['crossFilters'][cfName]['callBackFns'] != null){
+            return globalObj['crossFilters'][cfName]['callBackFns'][callBackName];
+        }
+        return null;
+    }
+    
+    this.addCallBack = function(cfName,callBackName,callBackFn){
+        var callBacks = this.getCallBacks(cfName);
+        if(callBacks == null){
+            this.setCallBacks(cfName);
+        }
+        var cfObj = this.getCrossFilterObj(cfName);
+        if(cfObj != null && cfObj['callBackFns'] != null){
+            callBacks.remove(cfObj['callBackFns'][callBackName]);
+        }
+        callBacks.add(callBackFn);
+       
+        if(cfObj != null && cfObj['callBackFns'] != null){
+            cfObj['callBackFns'][callBackName] = callBackFn;
+            globalObj['crossFilters'][cfName] = cfObj;
+        }
+    }
+    
+    this.disableCallBacks = function(cfName){
+        var callBacks = this.getCallBacks(cfName);
+        callBacks.disable();
+    }
+    /* Enabling it by adding back the call back function to the callbacks*/
+    this.enableCallBacks = function(cfName){
+        var callBacks = this.getCallBacks(cfName);
+        var callBackFns = this.getCallBackFns(cfName);
+        for (var callBackName in callBackFns) {
+            if (callBackFns.hasOwnProperty(callBackName)) {
+                callBacks.add(callBackFns[callBackName]);
+            }
+        }
+    }
+    
+    this.removeCallBack = function(cfName,callBackName){
+        var callBackFn = this.getCallBackFn(cfName,callBackName);
+        var callBacks = this.getCallBacks(cfName);
+        
+        callBacks.remove(callBackFn);
+        delete globalObj['crossFilters'][cfName]['callBackFns'][callBackName];
+    }
+
+    this.removeAllCallBacks = function(cfName) {
+        var callBacks = this.getCallBackFns(cfName);
+        for(var currCallback in callBacks) {
+            this.removeCallBack(cfName,currCallback);
+        }
+    }
+    
+    this.fireCallBacks = function(cfName,options){
+        var callBacks = this.getCallBacks(cfName);
+        var ret = {};
+        if(callBacks != null){
+            var data = this.getCurrentFilteredData(cfName);
+            ret['data'] = data;
+            ret['cfg'] = {};
+            if(options != null && options.source != null){
+                ret['cfg']['source'] = options.source;
+            }
+            callBacks.fire(ret);
+        }
+    }
+}
+
+var manageCrossFilters = new ManageCrossFilters();
+manageCrossFilters.load();
+
+/**
+ * Cross filter management methods ENDS
+*/
+/*
+ * This function adds/subtract the buffer to the min and max values array provided and if "isPositive"
+ * is true it will return only positive values 
+ */
+function addBufferToRange(obj) {
+    var value = obj['values'];
+    var buffer = obj['buffer']/100;
+    var minValue = value[0];
+    var formatFn = obj['formatFn'];
+    value[0] = value[0] - value[0] * buffer;
+    value[1] = value[1] + value[1] * buffer;
+    if(obj['isPositive'] && value[0] < 0){
+        value[0] = minValue;
+    }
+    if(formatFn != null) {
+        value[0] = formatFn(value[0]);
+        value[1] = formatFn(value[1]);
+    }
+    return value;
+}
+
+/*
+ * Returns a random value within the range of min and max (parameters)
+ */
+function getRandomValue(min,max){
+    return Math.random() * (max - min) + min;
+}

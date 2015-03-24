@@ -65,11 +65,19 @@ function queryIpPools(appData) {
                 }
             },appData,function(err,data,resHeaders) {
                 var ipPoolsList = [];
-                if(data['QueryIpPoolsResponse'] instanceof Array)
-                    ipPoolsList = data['QueryIpPoolsResponse'][0]['_value']['returnval'];
-                else
-                    ipPoolsList = data['QueryIpPoolsResponse']['returnval'];
                 var ipPoolMap = {};
+                //If there exists more than ip-pool on given datacenter
+                if(data['QueryIpPoolsResponse'] instanceof Array) {
+                    ipPoolsList = data['QueryIpPoolsResponse'][0]['_value']['returnval'];
+                } else if(data['QueryIpPoolsResponse']['_value'] == '') {
+                    //If there doesn't exist any ip-pools
+                    resolve(ipPoolMap);
+                    return;
+                } else
+                    ipPoolsList = data['QueryIpPoolsResponse']['returnval'];
+                //If only one entity is present,wrap it in an array 
+                if(!(ipPoolsList instanceof Array)) 
+                    ipPoolsList = [ipPoolsList];
                 //Create a map with ip-pool name as key and id as value
                 for(var i=0;i<ipPoolsList.length;i++) {
                     ipPoolMap[ipPoolsList[i]['name']] = ipPoolsList[i]['id'];
