@@ -6,7 +6,7 @@ define([
     'underscore',
     'backbone'
 ], function (_, Backbone) {
-    var TabView = Backbone.View.extend({
+    var TabsView = Backbone.View.extend({
         render: function () {
             var tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
                 viewConfig = this.attributes.viewConfig,
@@ -16,9 +16,9 @@ define([
                 modelMap = this.modelMap,
                 childViewObj, childElId;
 
-            this.$el.html(tabsTemplate(tabs));
+            self.$el.html(tabsTemplate(tabs));
 
-            var projectTabs = this.$el.find("#contrail-tabs").contrailTabs({
+            var tabsData = self.$el.find("#contrail-tabs").contrailTabs({
                 activate: viewConfig['activate']
             }).data('contrailTabs');
 
@@ -30,5 +30,5 @@ define([
         }
     });
 
-    return TabView;
+    return TabsView;
 });

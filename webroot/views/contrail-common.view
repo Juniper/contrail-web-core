@@ -883,3 +883,18 @@
 <script type="text/x-handlebars-template" id="core-loading-spinner-template">
     <div class="loading-spinner"><i class="icon-refresh icon-spin"></i></div>
 </script>
+
+<script type="text/x-handlebars-template" id="core-tabs-template">
+    <div id="contrail-tabs" class="row-fluid contrail-widget-tabs graph-tabs">
+        <ul>
+            {{#each this}}
+            <li><a id="{{this.elementId}}-tab-link" class="contrail-tab-link" href="#{{this.elementId}}-tab">{{this.title}}</a></li>
+            {{/each}}
+        </ul>
+        {{#each this}}
+        <div id="{{this.elementId}}-tab">
+            <div id="{{this.elementId}}" class="contrail-tab-content {{this.viewConfig.class}}"></div>
+        </div>
+        {{/each}}
+    </div>
+</script>
