@@ -998,31 +998,31 @@ a.selectAllLink:hover {
 }
 .group-detail-container ul.item-list li {
     border: none;
-    padding: 2px 5px;
+    padding: 5px;
+    border-bottom: 1px solid #EEEEEE;
+}
+.group-detail-container ul.item-list li:last-child {
+    border: none;
 }
 .group-detail-container ul.item-list li .key {
-    color:#555;
-    font-weight:200;
+    color:#666;
 }
 .group-detail-container ul.item-list li .value {
-    color:#333;
-    font-weight:400;
+    color:#777;
 }
 .block-grid-row {
     padding-top: 5px;
     padding-bottom: 10px;
 }
 .value-link {
-    text-decoration: underline;
-    color: #555 !important;
+    color: #3182BD !important;
+    display: block;
 }
 .value-link:hover {
-    text-decoration: none;
-    color: #3182bd !important;
+    text-decoration: underline;
 }
 
 .slick-cell {
-	border: none;
 	border: none;
 	color: #393939;
 	font-size: 13px;
@@ -1655,11 +1655,11 @@ color: #b94a48;
 	color: #555;
 }
 
-.font-element i.icon-contrail-virtual-network, .font-element i.icon-contrail-virtual-machine {
+.font-element i.icon-contrail-virtual-network, .font-element i.icon-contrail-virtual-machine, .font-element i.icon-contrail-virtual-machine-left, .font-element i.icon-contrail-virtual-machine-right {
     color: #498AB9;
 }
-.font-element i.icon-contrail-service-instance {
-	color: #e7ba52;
+.font-element i.icon-contrail-service-instance, .font-element i.icn-service-instance {
+	color: #ff7f0e;
 }
 /*.font-element i.icon-contrail-router {
 	color: #ff7f0e;
@@ -1673,7 +1673,7 @@ color: #b94a48;
 .font-element i.icon-contrail-network-ipam {
     color: #f47671;
 }
-.font-element i.icon-contrail-virtual-machine {
+.font-element i.icon-contrail-virtual-machine, .font-element i.icon-contrail-virtual-machine-left, .font-element i.icon-contrail-virtual-machine-right {
     font-size: 20px;
 }
 .topology-visualization svg {
@@ -1767,7 +1767,7 @@ color: #b94a48;
  	padding-bottom:1em; 	
 }
 .topology-visualization.holygrail .col1 {
-    margin:0 100px 0 170px;     	
+    margin:0 100px 0 170px;
     position:relative;
     left:200%;
     overflow:hidden;
@@ -1892,16 +1892,21 @@ color: #b94a48;
 .graph svg g.element:hover text{
     font-weight:600;
 }
-.graph .dimHighlighted {
+.graph g.link.fainted {
     opacity: 0.3 !important;
 }
-.graph .faintHighlighted {
+.graph .fainted {
     opacity: 0.5 !important;
 }
-.graph .elementHighlighted, .graph .elementSelectedHighlighted {
+.graph g.element.highlighted, .graph div.font-element.highlighted {
+    outline: none;
     opacity: 1 !important;
 }
-.graph .elementHighlighted.VirtualNetwork i {
+.graph g.link.highlighted {
+    outline: none;
+    opacity: 0.6 !important;
+}
+.graph .highlighted.VirtualNetwork i {
     color: #498AB9;
 }
 .graph svg g.ZoomedElement,
@@ -1947,7 +1952,7 @@ color: #b94a48;
     padding-bottom:1em;
 }
 .graph.holygrail .col1 {
-    margin:0 100px 0 170px;
+    margin:0 170px 0 170px;
     position:relative;
     left:200%;
     overflow:hidden;
@@ -1962,7 +1967,7 @@ color: #b94a48;
 .graph.holygrail .col3 {
     float:left;
     float:right;
-    width:50px;
+    width:150px;
     margin-right:50px;
     position:relative;
     left:50%;
@@ -2004,7 +2009,7 @@ color: #b94a48;
 .graph .graph-controls {
     font-size: 15px;
     width: 35px;
-    background-color: #eee;
+    background-color: #F5F5F5;
 }
 .graph .graph-controls i {
     color: #777;
@@ -2069,45 +2074,100 @@ color: #b94a48;
 }
 
 .popover.popover-tooltip {
-  width: 800px;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-  box-shadow: none;
-  opacity: 1;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  color: #fff;
-  background-color: #efefef;
-  padding: 2px 0;
+    min-width: 300px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    box-shadow: none;
+    opacity: 1;
+    z-index: 1050;
+}
+.popover.popover-tooltip {
+    min-width: 300px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    box-shadow: none;
+    opacity: 1;
+    z-index: 1050;
 }
 .popover.popover-tooltip .arrow {
-  display: none;
+    display: block;
+}
+.popover.popover-tooltip .popover-remove {
+    position: relative;
+    top: 22px;
+    right: 8px;
+    color: #999999;
 }
 .popover.popover-tooltip .popover-title {
-  background-color: #eee;
-  color: #3182bd;
-  font-weight: 600;
-  padding: 0 10px ;
-  font-size: 12px;
-  border: none;
-  border-radius: 5px;
+    background-color: #F5F5F5;
+    padding: 5px 5px 3px 75px;
+    border: none;
 
 }
+.popover.popover-tooltip .popover-title .heading {
+    margin: 0 0 2px;
+    color: #3182bd;
+    font-size: 14px;
+    font-weight: 400;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 190px;
+    white-space: nowrap;
+}
+
+.popover.popover-tooltip .popover-title .sub-heading {
+    margin: 4px 0 1px;
+    color: #555;
+    font-size: 13px;
+    font-weight: 200;
+}
+.popover-tooltip-icon {
+    font-size: 38px;
+    border: 1px solid #ccc;
+    padding: 7px;
+    width: 34px;
+    height: 34px;
+    position: relative;
+    left: 9px;
+    top: 11px;
+    background-color: #fff;
+}
 .popover.popover-tooltip .popover-content {
-  border: none;
-  box-shadow: none;
-  padding: 0 10px;
+    border: none;
+    box-shadow: none;
+    margin-top: -65px;
+}
+.popover.popover-tooltip .popover-content .popover-info {
+    padding: 10px 5px 7px;
+    margin-left: 70px;
+    width: 220px;
+}
+
+.popover.popover-tooltip .popover-content .popover-tooltip-footer {
+    border-top: 1px solid #DEDEDE;
+}
+.popover.popover-tooltip .popover-content .popover-tooltip-footer .btn {
+    margin: 5px 6px 5px 0;
+    line-height: 14px;
+    font-size:  11px;
+    padding: 3px 9px !important;
+    background-color: #f5f5f5 !important;
+    color: #777 !important;
+    border: 1px solid #ccc; !important;
+}
+.popover.popover-tooltip .popover-content .popover-tooltip-footer .btn:hover {
+    color: #3182BD !important;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-row {
-  padding: 0;
+  padding: 1px 0;
   font-size: 12px;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-row .key {
-  color: #444;
+  color: #555;
   font-weight: 400;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-row .value {
-  color: #777;
-  font-weight: 400;
+  color: #666;
+  font-weight: 200;
   margin-left: 5px;
 }
 

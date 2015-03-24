@@ -8,11 +8,11 @@ define([
     'contrail-graph-model'
 ], function (_, Joint, ContrailGraphModel) {
     var GraphView = joint.dia.Paper.extend({
-        linkView: joint.shapes.contrail.LinkView,
-
         constructor: function (viewConfig) {
             var graphConfig = viewConfig.graphModelConfig,
-                tooltipConfig, clickEventsConfig,
+                tooltipConfig, clickEventsConfig, controlPanelConfig,
+                graphControlPanelId = "#graph-control-panel",
+                graphLoadingId = '#graph-loading',
                 self = this;
 
             self.model = new ContrailGraphModel(graphConfig);
@@ -22,37 +22,96 @@ define([
 
             tooltipConfig = contrail.handleIfNull(viewConfig.tooltipConfig, []);
             clickEventsConfig = contrail.handleIfNull(viewConfig.clickEvents, {});
+            controlPanelConfig = contrail.handleIfNull(viewConfig.controlPanel, false);
 
             self.model.beforeDataUpdate.subscribe(function() {
                 $(self.el).find(".font-element").remove();
             });
 
             self.model.onAllRequestsComplete.subscribe(function() {
-
                 var directedGraphSize = self.model.directedGraphSize,
                     jointObject = {
-                        connectedGraph: self.model,
-                        connectedPaper: self
+                        graph: self.model,
+                        paper: self
                     };
 
-                if(contrail.checkIfFunction(viewConfig.successCallback)) {
-                    viewConfig.successCallback(self, directedGraphSize, jointObject);
+                if(controlPanelConfig) {
+                    var controlTemplate = contrail.getTemplate4Id(cowc.TMPL_GRAPH_CONTROL_PANEL);
+
+                    var customConfig = $.extend(true, {}, controlPanelConfig.custom);
+
+                    $.each(customConfig, function(configKey, configValue) {
+                        if (contrail.checkIfFunction(configValue.iconClass)) {
+                            configValue.iconClass = configValue.iconClass(jointObject);
+                        }
+                    });
+
+                    $(graphControlPanelId).html(controlTemplate({
+                        defaultConfig: controlPanelConfig.default,
+                        customConfig: customConfig
+                    }));
+
+                    initControlPanelEvents(jointObject, graphControlPanelId, graphConfig, controlPanelConfig, graphControlPanelId)
                 }
-                initTooltip(tooltipConfig, jointObject);
+
+                if(contrail.checkIfFunction(viewConfig.successCallback)) {
+                    $(graphLoadingId).remove();
+                    viewConfig.successCallback(jointObject, directedGraphSize);
+                }
+
                 initClickEvents(clickEventsConfig, jointObject);
+                initMouseEvents(tooltipConfig, jointObject)
             });
 
             return self;
         },
 
         render: function () {
-            var self = this;
+            this.model.fetchData();
+        },
 
-            self.model.fetchData();
+        refreshData: function () {
+            this.model.refreshData();
         }
     });
 
-    function initTooltip(tooltipConfig, jointObject) {
+    var initControlPanelEvents = function(jointObject, graphControlPanelId, graphConfig, controlPanelConfig, graphControlPanelId) {
+        var graphControlPanelElement = $(graphControlPanelId);
+
+        if (controlPanelConfig.default.panzoom.enable == true) {
+            var panzommTargetId = controlPanelConfig.default.panzoom.selectorId,
+                panZoomDefaultConfig = {
+                    increment: 0.3,
+                    minScale: 0.3,
+                    maxScale: 2,
+                    duration: 300,
+                    $zoomIn: graphControlPanelElement.find(".zoom-in"),
+                    $zoomOut: graphControlPanelElement.find(".zoom-out"),
+                    $reset: graphControlPanelElement.find(".zoom-reset")
+                },
+                panzoomConfig = $.extend(true, panZoomDefaultConfig, controlPanelConfig.default.panzoom.config);
+
+            $(panzommTargetId).panzoom("reset");
+            $(panzommTargetId).panzoom("resetPan");
+            $(panzommTargetId).panzoom("destroy");
+            $(panzommTargetId).panzoom(panzoomConfig);
+
+        }
+
+        $.each(controlPanelConfig.custom, function(configKey, configValue) {
+            var graphControlElement = graphControlPanelElement.find('.' + configKey);
+
+            $.each(configValue.events, function(eventKey, eventValue) {
+                graphControlElement
+                    .off(eventKey)
+                    .on('click', eventValue(jointObject));
+            });
+        });
+
+    };
+
+    var initMouseEvents = function(tooltipConfig, jointObject) {
+        var timer = null;
         $.each(tooltipConfig, function (keyConfig, valueConfig) {
             $('g.' + keyConfig).popover('destroy');
             $('g.' + keyConfig).popover({
@@ -78,69 +137,91 @@ define([
                     return valueConfig.content($(this), jointObject);
                 },
                 container: $('body')
+            })
+            .off("mouseenter")
+            .on("mouseenter", function () {
+                var _this = this;
+                    clearTimeout(timer);
+                    timer = setTimeout(function(){
+                        $('g').popover('hide');
+                        $('.popover').remove();
+
+                        $(_this).popover("show");
+
+                        $(".popover").find('.btn')
+                            .off('click')
+                            .on('click', function() {
+                                var actionKey = $(this).data('action'),
+                                    actionsCallback = valueConfig.actionsCallback($(_this), jointObject);
+
+                                actionsCallback[actionKey].callback();
+                                $(_this).popover('hide');
+                            }
+                        );
+
+                        $(".popover").find('.popover-remove-icon')
+                            .off('click')
+                            .on('click', function() {
+                                $(_this).popover('hide');
+                                $(this).parents('.popover').remove();
+                            }
+                        );
+
+                    },1000)
+            })
+            .off("mouseleave")
+            .on("mouseleave", function () {
+                clearTimeout(timer);
             });
         });
     };
 
     function initClickEvents(eventConfig, jointObject) {
-        if(contrail.checkIfFunction(eventConfig['blank:pointerclick'])) {
-            jointObject.connectedPaper.on('blank:pointerclick', eventConfig['blank:pointerclick']);
+        var timer = null,
+            topContainerElement = $('#' + ctwl.TOP_CONTENT_CONTAINER);
+
+        var onTopContainerBankDblClickHandler = function(e) {
+            if(!$(e.target).closest('g').length && !$(e.target).closest('.graph-controls').length) {
+                if(contrail.checkIfFunction(eventConfig['blank:pointerdblclick'])) {
+                    eventConfig['blank:pointerdblclick']();
+                }
+            }
+        };
+
+        if(contrail.checkIfFunction(eventConfig['cell:pointerclick'])) {
+            jointObject.paper.on('cell:pointerclick', function(cellView, evt, x, y) {
+
+                if (timer) {
+                    clearTimeout(timer);
+                }
+
+                timer = setTimeout(function() {
+                    eventConfig['cell:pointerclick'](cellView, evt, x, y);
+                    clearTimeout(timer);
+                }, 500);
+            });
         }
 
         if(contrail.checkIfFunction(eventConfig['cell:pointerdblclick'])) {
-            jointObject.connectedPaper.on('cell:pointerdblclick', eventConfig['cell:pointerdblclick']);
+            jointObject.paper.on('cell:pointerdblclick', function(cellView, evt, x, y) {
+                clearTimeout(timer);
+                eventConfig['cell:pointerdblclick'](cellView, evt, x, y);
+            });
         }
 
-        if(contrail.checkIfExist(eventConfig['cell:rightclick'])) {
-            initRightClickEvent(eventConfig['cell:rightclick'], jointObject);
-        }
-
-        /* Tooltip event to show/hide tooltip on click */
-        jointObject.connectedPaper.on('cell:pointerclick', function(cellView, evt, x, y) {
-            var clickedElement = cellView.model,
-                elementId = clickedElement.id;
-
-            $('g').popover('hide');
-            $('g[model-id="' + elementId + '"').popover('show');
-        });
-
-        $(document).off('click', onDocumentClickHandler)
+        $(document)
+            .off('click', onDocumentClickHandler)
             .on('click', onDocumentClickHandler);
+
+        topContainerElement
+            .off('dblclick', onTopContainerBankDblClickHandler)
+            .on('dblclick', onTopContainerBankDblClickHandler);
     };
 
     var onDocumentClickHandler = function(e) {
-        if(!$(e.target).closest('g').length) {
+        if(!$(e.target).closest('.popover').length) {
             $('g').popover('hide');
         }
-    };
-
-    function initRightClickEvent(rightClickConfig, jointObject) {
-        $.contextMenu('destroy', 'g');
-        $.contextMenu({
-            selector: 'g',
-            position: function (opt, x, y) {
-                opt.$menu.css({top: y + 5, left: x + 5});
-            },
-            build: function ($trigger, e) {
-                if (!$trigger.hasClassSVG('element') && !$trigger.hasClassSVG('link')) {
-                    $trigger = $trigger.parentsSVG('g.element');
-                    if ($trigger.length > 0) {
-                        $trigger = $($trigger[0]);
-                    }
-                }
-                var contextMenuItems = false;
-                if (contrail.checkIfExist($trigger)) {
-                    $.each(rightClickConfig, function (keyConfig, valueConfig) {
-                        if ($trigger.hasClassSVG(keyConfig)) {
-                            contextMenuItems = valueConfig($trigger, jointObject);
-                            $('g.' + keyConfig).popover('hide');
-                            return false;
-                        }
-                    });
-                }
-                return contextMenuItems;
-            }
-        });
     };
 
     return GraphView;

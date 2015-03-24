@@ -1057,7 +1057,7 @@ function getDefaultGridConfig() {
                  * Refreshes the Dataview if the grid data is fetched via ajax call
                  */
                 refreshData: function() {
-                    if (contrail.checkIfExist(gridDataSource.remote) && contrail.checkIfExist(gridDataSource.remote.ajaxConfig.url)) {
+                    if ((contrail.checkIfExist(gridDataSource.remote) && contrail.checkIfExist(gridDataSource.remote.ajaxConfig.url)) || (contrail.checkIfExist(gridDataSource.dataView) && contrail.checkIfFunction(dataView.refreshData))) {
                         dataView.refreshData();
                     }
                     currentSelectedRows = [];
