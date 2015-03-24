@@ -580,18 +580,13 @@ function updateChartOnResize(selector,chart){
 }
 
 function initScatterBubbleChart(selector, data, chart, chartOptions) {
-    var d3Scale = d3.scale.linear().range([1,2]).domain(chartOptions['sizeMinMax']);
-    //Adjust the size domain to have limit on minumum bubble size
-    $.each(data,function(idx,currSeries) {
-        currSeries['values'] = $.each(currSeries['values'],function(idx,obj) {
-                obj['size']  = d3Scale(obj['size']);
-            });
-    });
     nv.addGraph(function () {
+        //No need to set the sizeDomain,as we already normalize the sizes before invoking this function
         chart = nv.models.scatterChart()
             .showDistX(false)
             .showDistY(false)
             .sizeDomain([0.7,2])
+            //.sizeRange([50,500])
             .tooltipXContent(null)
             .tooltipYContent(null)
             .showTooltipLines(false)
@@ -614,13 +609,12 @@ function initScatterBubbleChart(selector, data, chart, chartOptions) {
         if(chartOptions['useVoronoi'] != null && chart.scatter != null)
             chart.scatter.useVoronoi(chartOptions['useVoronoi']);
 
-        //If more than one category is displayed,enable showLegend
-        if(data.length == 1) {
+        //If there is only set of bubbles and showLegend is set to false then disable the legend 
+        if(data.length == 1 || chartOptions['showLegend'] == false) {
             chart.showLegend(false);
         }
 
         $(selector).data('chart', chart);
-
         chart.xAxis.tickFormat(chartOptions['xLblFormat']);
         chart.yAxis.tickFormat(chartOptions['yLblFormat']);
         chart.xAxis.showMaxMin(false);
@@ -635,6 +629,7 @@ function initScatterBubbleChart(selector, data, chart, chartOptions) {
         chart.scatter.dispatch.on('elementClick', chartOptions['elementClickFunction']);
         chart.scatter.dispatch.on('elementMouseout',chartOptions['elementMouseoutFn']);
         chart.scatter.dispatch.on('elementMouseover',chartOptions['elementMouseoverFn']);
+        $(selector).on('dblclick',chartOptions['elementDblClickFunction']);
         if(!($(selector).is(':visible'))) {
             $(selector).find('svg').bind("refresh", function() {
                 d3.select($(selector)[0]).select('svg').datum(data).call(chart);
@@ -653,6 +648,38 @@ function initScatterBubbleChart(selector, data, chart, chartOptions) {
     });
 }
 
+function setChartOptions(chart,chartOptions){
+    
+    chartOptions = ifNull(chartOptions,{});
+    // In case of dynamic axis while updating the chart with new parameters earlier properties 
+    // of the chart object will retain so we are setting to null if any property not exists
+    chart.tooltipRenderedFn(ifNull(chartOptions['tooltipRenderedFn'],null));
+    chart.forceX(ifNull(chartOptions['forceX'],null));
+    if(chartOptions['forceX'] != null) {
+        chart.xAxis.tickValues(chartOptions.xStops);
+    }    
+    chart.forceY(ifNull(chartOptions['forceY'],null));
+    if(chartOptions['forceY'] != null) {
+        chart.yAxis.tickValues(chartOptions.yStops);
+    }     
+    chart.seriesMap(ifNull(chartOptions['seriesMap'],null));
+    chart.scatter.xPositive(ifNull(chartOptions['xPositive'],null));
+    chart.scatter.yPositive(ifNull(chartOptions['yPositive'],null));
+    chart.scatter.addDomainBuffer(ifNull(chartOptions['addDomainBuffer'],null));
+    chart.scatter.xDomain(ifNull(chartOptions['xDomain'],null));
+    chart.scatter.yDomain(ifNull(chartOptions['yDomain'],null));
+    chart.xAxis.tickFormat(chartOptions['xLblFormat']);
+    chart.yAxis.tickFormat(chartOptions['yLblFormat']);
+    chart.xAxis.showMaxMin(false);
+    chart.yAxis.showMaxMin(false);
+    chart.yAxis.axisLabel(chartOptions['yLbl']);
+    chart.xAxis.axisLabel(chartOptions['xLbl']);
+    chart.dispatch.on('stateChange', chartOptions['stateChangeFunction']);
+    chart.scatter.dispatch.on('elementClick', chartOptions['elementClickFunction']);
+    chart.scatter.dispatch.on('elementMouseout',chartOptions['elementMouseoutFn']);
+    chart.scatter.dispatch.on('elementMouseover',chartOptions['elementMouseoverFn']);
+    return chart;
+}
 function formatSumBytes(d) {
     return formatBytes(d, false, false, 1);
 };
