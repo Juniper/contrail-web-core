@@ -537,7 +537,11 @@ function createPortGroup(userData,appData,callback) {
                                 }
                             }
                         },
-                        type: 'earlyBinding'
+                        type: 'earlyBinding',
+                        vendorSpecificConfig : {
+                            key: 'external_ipam',
+                            opaqueData: userData['static_ip']
+                        }
                     }
                 }
             };
