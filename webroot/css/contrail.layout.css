@@ -2373,7 +2373,7 @@ button.btn:active {
 .width-1120 {width:1120px !important;}
 
 /* word-break framework */
-.word-break-normal {word-break: normal;}
+.word-break-normal {word-break: normal !important;}
 
 /* cursor framework */
 .cursor-pointer {cursor: pointer;}

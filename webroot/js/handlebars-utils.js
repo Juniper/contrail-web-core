@@ -235,11 +235,19 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
         case 'LinkGenerator':
 
             var linkTemplate = Handlebars.compile(templateGeneratorConfig.template),
-                params = templateGeneratorConfig.params,
+                params = contrail.handleIfNull(templateGeneratorConfig.params, {}),
                 hrefLinkArray = [], hrefLink;
 
             $.each(params, function(paramKey, paramValue) {
-                params[paramKey] = cowu.getJSONValueByPath(paramValue, obj)
+                if ($.isPlainObject(paramValue)) {
+                    if (paramValue.type == 'fixed') {
+                        params[paramKey] = paramValue.value;
+                    } else if (paramValue.type == 'derived') {
+                        params[paramKey] = cowu.getJSONValueByPath(paramValue.value, obj)
+                    }
+                } else {
+                    params[paramKey] = cowu.getJSONValueByPath(paramValue, obj)
+                }
             });
 
             if ($.isArray(value)) {
