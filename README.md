@@ -19,14 +19,9 @@ The code that **implements** various features of the Web UI (such as Dashboard, 
 ---
 1) Download, extract and compile the following.
 
-a) **Node.JS** v0.8.15 (Recommended).
+a) **Node.JS**
 
-    wget http://nodejs.org/dist/v0.8.15/node-v0.8.15.tar.gz -O /tmp/node-v0.8.15.tar.gz
-    cd /tmp
-    tar -xf node-v0.8.15.tar.gz
-    ./configure
-    make
-    sudo make install
+Install the latest nodejs from https://nodejs.org/
 
 Verify Node.JS installation.
 
@@ -64,7 +59,7 @@ HTTPS clone URL:
 4) Execute the following commands under `contrail-web-core` directory to setup development environment. It downloads all the third-party libraries and generates the files required for Contrail Web UI.
 
     make fetch-pkgs-dev
-    make dev-env
+    make dev-env REPO=webController
 
 'make fetch-pkgs-dev' downloads all the third-party modules required for development. 
 
@@ -73,9 +68,9 @@ Please note this step changes the file contents in dashboard.tmpl, login.tmpl an
     
     make rem-ts-prod
 
-5) Start `redis-server` on port 6383, 6383 is the default port used by Contrail Web UI, the port can be changed as explained in 'Configuration parameters' section.
+5) Start `redis-server` on port 6379, 6379 is the default port used by Contrail Web UI, the port can be changed as explained in 'Configuration parameters' section.
 
-    redis-server --port 6383
+    redis-server --port 6379
 
 
 #### Configuration parameters
@@ -107,6 +102,20 @@ Fill the below with Analytics Node IP (E.g. 3.3.3.3)
 To Change the redis-server port, change the below entry and start redis-server on that specific port (E.g. 6383).
     
     config.redis_server_port
+
+Set the path where contrail-web-controller code resides
+
+    config.featurePkg.webController.path
+
+You must set the above configuration before issuing "make dev-env REPO=webController".
+
+If you want to enable authentication support of contrail-webui while communicating with redis-server, then in redis config file set the password
+
+    requirepass <password>
+
+Same password needs to be specified in contrail-webui config file:
+
+    config.redis_password
 
 #### Starting web servers
 ---
@@ -155,5 +164,6 @@ Note: All the files/directories under 'webroot' directory of [Contrail Web Contr
 ---
 * Sign the [CLA](https://secure.echosign.com/public/hostedForm?formid=6G36BHPX974EXY)
 * Submit change requests via gerrit at <http://review.opencontrail.org>.
+
 
 
