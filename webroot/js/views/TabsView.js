@@ -19,7 +19,8 @@ define([
             self.$el.html(tabsTemplate(tabs));
 
             var tabsData = self.$el.find("#contrail-tabs").contrailTabs({
-                activate: viewConfig['activate']
+                activate: viewConfig.activate,
+                theme: viewConfig.theme
             }).data('contrailTabs');
 
             for (var i = 0; i < tabs.length; i++) {
