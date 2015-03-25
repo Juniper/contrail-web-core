@@ -184,18 +184,15 @@ function getDefaultGridConfig() {
             }
         } else if(contrail.checkIfExist(gridDataSource.dataView)) {
             dataView = gridDataSource.dataView;
+            var dataViewData = dataView.getItems();
+            dataView.setData([]);
             initContrailGrid(dataView);
             initDataView();
             dataView.setSearchFilter(searchColumns, searchFilter);
             performSort(gridSortColumns);
             initClientSidePagination();
             initGridFooter();
-            if(dataView.getLength() == 0){
-                emptyGridHandler();
-            }
-            else{
-            	gridContainer.data('contrailGrid').removeGridMessage();
-            }
+            dataView.setData(dataViewData);
         }
 
         function searchFilter(item, args) {
