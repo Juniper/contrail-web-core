@@ -73,6 +73,10 @@ define([
         this.COOKIE_DOMAIN = 'domain';
         this.COOKIE_PROJECT = 'project';
         this.COOKIE_VIRTUAL_NETWORK = 'virtual-network';
+
+        this.THEME_DETAIL_WIDGET = 'widget-box';
+        this.THEME_DETAIL_DEFAULT = 'default';
+
     };
     return CoreConstants;
 });

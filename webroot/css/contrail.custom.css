@@ -887,6 +887,7 @@ a.selectAllLink:hover {
 /* Sort Icon from font-awesome */
 .contrail-grid{
 	border-bottom: 1px solid #dadada;
+    margin-bottom: 15px;
 }
 .contrail-grid > .collapsed {
 	display: none;

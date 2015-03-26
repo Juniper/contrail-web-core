@@ -468,10 +468,24 @@ define([
                 break;
 
                 case 'BlockListTemplateGenerator':
-                    var template = '<div class="detail-block-list-content row-fluid">' +
+                    var template = '';
+
+                    if (config.theme == cowc.THEME_DETAIL_WIDGET) {
+                        template = '<div class="detail-block-list-content widget-box transparent">' +
+                            '<div class="widget-header">' +
+                            '<h4 class="smaller">' + config.title + '</h4>' +
+                            '<div class="widget-toolbar pull-right"><a data-action="collapse"><i class="icon-chevron-up"></i></a></div>' +
+                            '</div>' +
+                            '<div class="widget-body"><div class="widget-main row-fluid">' +
+                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app) +
+                            '</div></div>' +
+                            '</div>';
+                    } else {
+                        template = '<div class="detail-block-list-content row-fluid">' +
                             '<h6>' + config.title + '</h6>' +
                             self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app) +
                             '<br/></div>';
+                    }
 
                     templateObj = $(template);
                 break;
@@ -513,7 +527,7 @@ define([
                 templateObj = $(template(config));
 
             templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
-            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}')
+            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}');
 
             return(templateObj.prop('outerHTML'))
         };
@@ -523,7 +537,7 @@ define([
                 templateObj = $(template(config));
 
             templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
-            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}')
+            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}');
 
             return Handlebars.compile(templateObj.prop('outerHTML'));
         };
