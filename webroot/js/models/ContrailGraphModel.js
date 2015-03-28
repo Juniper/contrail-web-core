@@ -286,7 +286,7 @@ define([
     };
 
     function getDagreLayoutOptions(rankDir, separation) {
-        var layoutOptions = {edgeSep: 1, nodeSep: 50, rankSep: 50, rankDir: "LR", marginx: GRAPH_MARGIN, marginy: GRAPH_MARGIN};
+        var layoutOptions = {edgeSep: 1, nodeSep: 50, rankSep: 50, rankDir: ctwc.GRAPH_DIR_LR, marginx: cowc.GRAPH_MARGIN_LEFT, marginy: cowc.GRAPH_MARGIN_TOP};
         if(rankDir != null) {
             layoutOptions['rankDir'] = rankDir;
         }
@@ -303,7 +303,7 @@ define([
     };
 
     function computeRankDir(nodes, links) {
-        var rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? 'TB' : 'LR';
+        var rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? ctwc.GRAPH_DIR_TB : ctwc.GRAPH_DIR_LR;
         return rankDir;
     };
 

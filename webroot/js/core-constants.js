@@ -73,6 +73,11 @@ define([
         this.COOKIE_DOMAIN = 'domain';
         this.COOKIE_PROJECT = 'project';
         this.COOKIE_VIRTUAL_NETWORK = 'virtual-network';
+
+        this.GRAPH_MARGIN_LEFT = 350;
+        this.GRAPH_MARGIN_RIGHT = 350;
+        this.GRAPH_MARGIN_TOP = 350;
+        this.GRAPH_MARGIN_BOTTOM = 350;
     };
     return CoreConstants;
 });
