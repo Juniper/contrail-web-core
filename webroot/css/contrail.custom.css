@@ -2507,6 +2507,10 @@ color: #b94a48;
 .group-detail-action-item.selected, .group-detail-action-item.selected:hover {
     color: #3182bd;
 }
+.group-detail-action-item-dropdown-menu {
+    top: 24px;
+    right: -3px !important;
+}
 
 /* Checked Multiselect styles */
 
