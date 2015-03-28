@@ -1300,24 +1300,36 @@ function getDefaultGridConfig() {
 var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
     var pageSizeSelect = pagingInfo.pageSizeSelect,
     	csgCurrentPageDropDown = null, csgPagerSizesDropdown = null,
-        footerContainer = gridContainer.find('.grid-footer');
+        footerContainer = gridContainer.find('.grid-footer'),
+        currentPagingInfo = null;
 
     this.init = function() {
         var eventMap = gridContainer.data('contrailGrid')._eventHandlerMap.dataView;
         eventMap['onPagingInfoChanged'] = function (e, pagingInfo) {
-            pagingInfo.pageSizeSelect = pageSizeSelect;
-            updatePager(pagingInfo);
-            if(gridContainer.data('contrailGrid') != null && !gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
-                gridContainer.data('contrailGrid')._grid.setSelectedRows([])
+            var currentPageNum = null, currentPageSizeSelect = null;
+
+            if (contrail.checkIfExist(currentPagingInfo)) {
+                currentPageNum = currentPagingInfo.pageNum;
+                currentPageSizeSelect = currentPagingInfo.pageSizeSelect;
             }
 
-        	setTimeout(function(){
-        		if(contrail.checkIfExist(gridContainer.data('contrailGrid'))){
-                    gridContainer.data('contrailGrid').adjustAllRowHeight();
-        			gridContainer.data('contrailGrid').adjustGridAlternateColors();
-        		}
-            },600);
-            
+            pagingInfo.pageSizeSelect = pageSizeSelect;
+            updatePager(pagingInfo);
+
+            if (pagingInfo.totalPages - pagingInfo.pageNum <= 1 || currentPageNum != pagingInfo.pageNum || currentPageSizeSelect != pageSizeSelect) {
+                if(gridContainer.data('contrailGrid') != null && !gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
+                    gridContainer.data('contrailGrid')._grid.setSelectedRows([])
+                }
+
+                setTimeout(function(){
+                    if(contrail.checkIfExist(gridContainer.data('contrailGrid'))){
+                        gridContainer.data('contrailGrid').adjustAllRowHeight();
+                        gridContainer.data('contrailGrid').adjustGridAlternateColors();
+                    }
+                },600);
+            }
+
+            currentPagingInfo = pagingInfo;
         };
         dataView.onPagingInfoChanged.subscribe(eventMap['onPagingInfoChanged']);
         constructPagerUI();
