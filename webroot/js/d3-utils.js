@@ -515,10 +515,13 @@ function initTrafficTSChart(selector, data, options, chart, yFormatter, y2Format
 
     if(chart == null) {
         nv.addGraph(function () {
-            var values = data[0].values, start, end, brushExtent = null;
-            if (values.length >= 20) {
-                start = values[values.length - 20];
-                end = values[values.length - 1];
+            var values = data[0].values,sampleCnt = values.length, start, end, brushExtent = null;
+            if(options.defaultSelRange != null && sampleCnt >= options.defaultSelRange) {
+                start = values[sampleCnt - options.defaultSelRange];
+                end = value[sampleCnt - 1 ]
+            } else if (sampleCnt >= 20) {
+                start = values[sampleCnt - 20];
+                end = values[sampleCnt - 1];
                 brushExtent = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
             }
 
