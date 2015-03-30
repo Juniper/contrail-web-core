@@ -30,6 +30,7 @@ define([
 
             self.model.onAllRequestsComplete.subscribe(function() {
                 var directedGraphSize = self.model.directedGraphSize,
+                    graphSelectorElement = self.el,
                     jointObject = {
                         graph: self.model,
                         paper: self
@@ -59,8 +60,8 @@ define([
                     viewConfig.successCallback(jointObject, directedGraphSize);
                 }
 
-                initClickEvents(clickEventsConfig, jointObject);
-                initMouseEvents(tooltipConfig, jointObject)
+                initClickEvents(graphSelectorElement, clickEventsConfig, jointObject);
+                initMouseEvents(graphSelectorElement, tooltipConfig, jointObject)
             });
 
             return self;
@@ -110,7 +111,7 @@ define([
 
     };
 
-    var initMouseEvents = function(tooltipConfig, jointObject) {
+    var initMouseEvents = function(graphSelectorElement, tooltipConfig, jointObject) {
         var timer = null;
         $.each(tooltipConfig, function (keyConfig, valueConfig) {
             $('g.' + keyConfig).popover('destroy');
@@ -174,9 +175,37 @@ define([
                 clearTimeout(timer);
             });
         });
+
+        $(graphSelectorElement).find("text").on('mousedown touchstart', function (e) {
+            e.stopImmediatePropagation();
+            //jointObject.paper.pointerdown(e);
+        });
+
+        $(graphSelectorElement).find("image").on('mousedown touchstart', function (e) {
+            e.stopImmediatePropagation();
+            //jointObject.paper.pointerdown(e);
+        });
+
+        $(graphSelectorElement).find("polygon").on('mousedown touchstart', function (e) {
+            e.stopImmediatePropagation();
+            //jointObject.paper.pointerdown(e);
+        });
+        $(graphSelectorElement).find("path").on('mousedown touchstart', function (e) {
+            e.stopImmediatePropagation();
+            //jointObject.paper.pointerdown(e);
+        });
+        $(graphSelectorElement).find("rect").on('mousedown touchstart', function (e) {
+            e.stopImmediatePropagation();
+            //jointObject.paper.pointerdown(e);
+        });
+        $(graphSelectorElement).find(".font-element").on('mousedown touchstart', function (e) {
+            e.stopImmediatePropagation();
+            //jointObject.paper.pointerdown(e);
+        });
+
     };
 
-    function initClickEvents(eventConfig, jointObject) {
+    function initClickEvents(graphSelectorElement, eventConfig, jointObject) {
         var timer = null,
             topContainerElement = $('#' + ctwl.TOP_CONTENT_CONTAINER);
 
