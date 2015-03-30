@@ -150,15 +150,15 @@ define([
         chartOptions['seriesMap'] = seriesType;
         var tooltipFn = chartOptions['tooltipFn'];
         chartOptions['tooltipFn'] = function (e, x, y, chart) {
-            return scatterTooltipFn(e, x, y, chart, tooltipFn);
+            return constructScatterTooltipFn(e, x, y, chart, tooltipFn);
         };
         if (chartOptions['multiTooltip']) {
             chartOptions['tooltipFn'] = function (e, x, y, chart) {
-                return scatterTooltipFn(e, x, y, chart, tooltipFn);
+                return constructScatterTooltipFn(e, x, y, chart, tooltipFn);
             }
             chartOptions['tooltipRenderedFn'] = function (tooltipContainer, e, chart) {
                 if (e['point']['overlappedNodes'] != undefined && e['point']['overlappedNodes'].length > 1) {
-                    var result = getMultiTooltipContent(e, tooltipFn, chart);
+                    var result = getMultiTooltipContent(e, tooltipFn, null, chart);
                     //Need to remove
                     $.each(result['content'], function (idx, nodeObj) {
                         var key = nodeObj[0]['value'];
@@ -330,7 +330,7 @@ define([
             $(tooltipContainer).css('right', 'auto');
             $(tooltipContainer).find('div.tooltip-wrapper').html("");
             for (var i = 0; i < result['content'].length; i++) {
-                $(tooltipContainer).find('div.tooltip-wrapper').append(formatLblValueTooltip(result['content'][i]));
+                $(tooltipContainer).find('div.tooltip-wrapper').append(formatLblValueTooltipNew(result['content'][i]));
             }
             $(tooltipContainer).find('div.pagecount span').html(pagestr);
             if (result['button'] == 'left') {
@@ -368,7 +368,52 @@ define([
         $(window).on('resize.multiTooltip', function (e) {
             nv.tooltip.cleanup();
         });
+
     };
+
+    function constructScatterTooltipFn(e,x,y,chart,tooltipFormatFn,bucketTooltipFn,selector) {
+        e['point']['overlappedNodes'] = markOverlappedOrBucketizedBubblesOnHover(e,chart,selector).reverse();
+        var tooltipContents = [];
+        if(e['point']['overlappedNodes'] == undefined || e['point']['overlappedNodes'].length <= 1) {
+            if(typeof(tooltipFormatFn) == 'function') {
+                tooltipContents = tooltipFormatFn(e['point']);
+            }
+            //Format the alerts to display in tooltip
+            $.each(ifNull(e['point']['alerts'],[]),function(idx,obj) {
+                if(obj['tooltipAlert'] != false)
+                    tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
+            });
+            return formatLblValueTooltipNew(tooltipContents);
+        } else if(e['point']['multiTooltip'] == true) {
+            if(e['point']['isBucket']){
+                if(typeof(bucketTooltipFn) == "function"){
+                    tooltipContents = bucketTooltipFn(e['point']);
+                }
+                $.each(ifNull(e['point']['alerts'],[]),function(idx,obj) {
+                    if(obj['tooltipAlert'] != false)
+                        tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
+                });
+                return formatLblValueTooltipNew(tooltipContents);
+            } else {
+                result = getMultiTooltipContent(e,tooltipFormatFn,bucketTooltipFn,chart,selector);
+                $.each(result['content'],function(idx,nodeObj) {
+                    var key = nodeObj[0]['value'];
+                    $.each(ifNull(result['nodeMap'][key]['point']['alerts'],[]),function(idx,obj) {
+                        if(obj['tooltipAlert'] != false)
+                            nodeObj.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
+                    });
+                });
+                result['content'] = result['content'].slice(0,result['perPage']);
+                return formatLblValueMultiTooltip(result);
+            }
+        }
+    }
+
+    function formatLblValueTooltipNew(infoObj) {
+        var tooltipTemplateSel = 'title-lblval-tooltip-template-new';
+        var tooltipTemplate = contrail.getTemplate4Id(tooltipTemplateSel);
+        return tooltipTemplate(infoObj);
+    }
 
     return ScatterChartView;
 });

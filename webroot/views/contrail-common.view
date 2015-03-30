@@ -125,22 +125,42 @@
 </script>
 
 <script type="text/x-handlebars-template" id="title-lblval-tooltip-template">
-<div class="row-fluid chart-tooltip" style="width:250px;">
-    {{#each this}}
-        {{#IfCompare @index 0}}
-            <div class="row-fluid chart-tooltip-title">
-                <p>{{value}}</p>
-            </div>
+    <div class="row-fluid chart-tooltip" style="width:250px;">
+        {{#each this}}
+            {{#IfCompare @index 0}}
+                <div class="row-fluid chart-tooltip-title">
+                    <p>{{value}}</p>
+                </div>
             <div class="row-fluid chart-tooltip-body ">
-        {{else}}
+            {{else}}
                 <div class="row-fluid chart-tooltip-row" >
                     <span class="key span4" style="min-height:20px;">{{lbl}}:</span>
                     <span class="value span8" style="min-height:20px;">{{value}}</span>
                 </div>
-        {{/IfCompare}}
-    {{/each}}
-        </div>
-</div>
+            {{/IfCompare}}
+        {{/each}}
+    </div>
+    </div>
+</script>
+
+<!-- To be removed later-->
+<script type="text/x-handlebars-template" id="title-lblval-tooltip-template-new">
+    <div class="row-fluid chart-tooltip" style="width:250px;">
+        {{#each this}}
+            {{#IfCompare @index 0}}
+                <div class="row-fluid chart-tooltip-title">
+                    <p>{{value}}</p>
+                </div>
+            <div class="row-fluid chart-tooltip-body ">
+            {{else}}
+                <div class="row-fluid chart-tooltip-row" >
+                    <span class="key {{keyClass}}" style="min-height:20px;">{{lbl}}:</span>
+                    <span class="value {{valueClass}}" style="min-height:20px;">{{value}}</span>
+                </div>
+            {{/IfCompare}}
+        {{/each}}
+    </div>
+    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="overlapped-bubble-tooltip">
@@ -221,7 +241,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="element-tooltip-template">
-    <div class="popover popover-tooltip left" style="display: block;">
+    <div class="popover popover-tooltip" style="display: block;">
         <h3 class="popover-title"></h3>
         <div class="popover-content"></div>
     </div>
@@ -243,7 +263,7 @@
         <div class="row-fluid">
         {{#each info}}
             <div class="row-fluid popover-tooltip-row {{#if dividerClass}} {{dividerClass}} {{/if}}">
-                <span class="key">{{lbl}} </span>
+                <span class="key">{{label}} </span>
                 <span class="value">{{value}}</span>
              </div>
         {{/each}}
