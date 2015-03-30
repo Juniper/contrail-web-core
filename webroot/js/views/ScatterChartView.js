@@ -43,24 +43,6 @@ define([
                     });
                 }
             }
-            /*
-            else {
-                $.ajax(ajaxConfig).done(function (result) {
-                    deferredObj.resolve(result);
-                });
-
-                deferredObj.done(function (response) {
-                    var chartData = response;
-                    self.renderChart(selector, viewConfig, chartData);
-                });
-
-                deferredObj.fail(function (errObject) {
-                    if (errObject['errTxt'] != null && errObject['errTxt'] != 'abort') {
-                        showMessageInChart({selector: self.$el, msg: 'Error in fetching Details', type: 'bubblechart'});
-                    }
-                });
-            }
-            */
         },
 
         renderChart: function (selector, viewConfig, data) {
