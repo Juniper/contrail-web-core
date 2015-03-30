@@ -965,3 +965,47 @@
 <script type="text/x-handlebars-template" id="core-loading-spinner-template">
     <div class="loading-spinner"><i class="icon-refresh icon-spin"></i></div>
 </script>
+
+
+<script type="text/x-handlebars-template" id="core-tabs-template">
+    <div id="contrail-tabs" class="row-fluid contrail-widget-tabs graph-tabs">
+        <ul>
+            {{#each this}}
+                <li><a id="{{this.elementId}}-tab-link" class="contrail-tab-link" href="#{{this.elementId}}-tab">{{this.title}}</a></li>
+            {{/each}}
+        </ul>
+        {{#each this}}
+            <div id="{{this.elementId}}-tab">
+                <div id="{{this.elementId}}" class="contrail-tab-content {{this.viewConfig.class}}"></div>
+            </div>
+        {{/each}}
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-chart-template">
+    <div class="row-fluid">
+        {{#each this.elementConfg}}
+            <div id="charts-box" class="{{#getValue "{\"1\":\"span12\",\"2\":\"span6\",\"3\":\"span4\"}" ../colCount}}{{/getValue}} widget-box transparent">
+                <div class="widget-header">
+                    <h4 class="smaller">
+                        <i id="charts-loading" class="icon-spinner icon-spin blue bigger-125"></i> {{title}}
+                    </h4>
+                    <div class="widget-toolbar pull-right">
+                        <a data-action="collapse">
+                            <i class="icon-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main" style="height:300px;">
+                        {{#IfCompare @index 1 operator='%2'}}
+                            <div class="stack-chart negate" id="{{../../id}}_{{@index}}"></div>
+                        {{else}}
+                            <div class="stack-chart" id="{{../../id}}_{{@index}}"></div>
+                        {{/IfCompare}}
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</script>
