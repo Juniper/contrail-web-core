@@ -57,7 +57,9 @@ var infraAlertMsgs = {
         'PROCESS_DOWN_MSG'      : "{0} down",
         'PROCESS_STARTING_MSG'  : "{0} starting",
         'PROCESS_COREDUMP'      : "{0:core dump;core dumps}",
-        'PROCESS_RESTART'       : "{0:restart;restarts}"
+        'PROCESS_RESTART'       : "{0:restart;restarts}",
+        'SPACE_THRESHOLD_EXCEEDED'  : '{0} space usage exceeds threshold',
+        'SPACE_USAGE_WARNING'   : '{0} space usage warning'
     }
 ////Contant to check if a nodemanger is installed in the setup or not and use is appropriately
 var IS_NODE_MANAGER_INSTALLED = true;
@@ -2081,7 +2083,7 @@ function loadAlertsContent(deferredObj){
             body: {
                 options: {
                     forceFitColumns:true,
-                    lazyLoading:true
+                    lazyLoading:false
                 },
                 dataSource: {
                     dataView: alertsDS,
@@ -2225,6 +2227,13 @@ function ManageDataSource() {
                     ongoing:false,
                     lastUpdated:null,
                     populateFn:['getAllConfigNodes','getGeneratorsForInfraNodes'],
+                    deferredObj:null,
+                    dataSource:null
+                },
+                'dbNodeDS':{
+                    ongoing:false,
+                    lastUpdated:null,
+                    populateFn:['getAllDbNodes'],
                     deferredObj:null,
                     dataSource:null
                 },
