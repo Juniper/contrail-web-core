@@ -1345,10 +1345,6 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
                 text: String(val) + ' Records'
             });
         });
-        returnData.push({
-            id: parseInt(data.totalRows),
-            text: 'All Records'
-        });
         return returnData;
     }
 
