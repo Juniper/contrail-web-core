@@ -83,6 +83,7 @@ Handlebars.registerHelper('makeItValidDOMId', function(id, options) {
 });
 
 Handlebars.registerPartial('scatterTooltip',$('#title-lblval-tooltip-template').html());
+Handlebars.registerPartial('scatterTooltipNew',$('#title-lblval-tooltip-template-new').html());
 
 
 //Handlebar register helper for formatting json in details template

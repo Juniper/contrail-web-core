@@ -191,6 +191,33 @@
 </div>
 </script>
 
+<script type="text/x-handlebars-template" id="overlapped-bubble-tooltip-new">
+    <div id="overlapped-bubble-wrapper" class="enabledPointer">
+        <div class="row-fluid" >
+            <div class="left-arrow-wrapper">
+                <div class="left-arrow">
+                    <i class="icon-chevron-left" style="font-size: 20px;"></i>
+                </div>
+            </div>
+            <div class="tooltip-wrapper">
+                {{#each content}}
+                    {{> scatterTooltipNew}}
+                {{/each}}
+            </div>
+            <div class="right-arrow-wrapper">
+                <div class="close-button">
+                    <button type="button" id="overlapClosebutton" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+                </div>
+                <div class="right-arrow">
+                    <i class="icon-chevron-right" style="font-size: 20px;"></i>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid pagecount">
+            <span class="pull-right">{{pagestr}}</span>
+        </div>
+    </div>
+</script>
 
 <script type="text/x-handlebars-template" id="title-lblval-tooltip-template_new">
 <div class="row-fluid chart-tooltip">

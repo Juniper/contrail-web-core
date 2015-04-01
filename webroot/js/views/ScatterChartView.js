@@ -246,7 +246,7 @@ define([
             result['pagestr'] = 1 + " - " + result['content'].length + " of " + data.length;
         else if (result['perPage'] == 1)
             result['pagestr'] = 1 + " / " + data.length;
-        $(tooltipContainer).find('div.enabledPointer').parent().html(formatLblValueMultiTooltip(result));
+        $(tooltipContainer).find('div.enabledPointer').parent().html(formatLblValueMultiTooltipNew(result));
         $(tooltipContainer).find('div.left-arrow').on('click', function (e) {
             result['button'] = 'left';
             handleLeftRightBtnClick(result, tooltipContainer);
@@ -404,7 +404,7 @@ define([
                     });
                 });
                 result['content'] = result['content'].slice(0,result['perPage']);
-                return formatLblValueMultiTooltip(result);
+                return formatLblValueMultiTooltipNew(result);
             }
         }
     }
@@ -413,6 +413,12 @@ define([
         var tooltipTemplateSel = 'title-lblval-tooltip-template-new';
         var tooltipTemplate = contrail.getTemplate4Id(tooltipTemplateSel);
         return tooltipTemplate(infoObj);
+    }
+
+    function formatLblValueMultiTooltipNew(data) {
+        var tooltipTemplateSel = 'overlapped-bubble-tooltip-new';
+        var tooltipTemplate = contrail.getTemplate4Id(tooltipTemplateSel);
+        return tooltipTemplate(data);
     }
 
     return ScatterChartView;
