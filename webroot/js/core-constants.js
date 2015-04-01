@@ -81,6 +81,8 @@ define([
         this.GRAPH_MARGIN_RIGHT = 350;
         this.GRAPH_MARGIN_TOP = 350;
         this.GRAPH_MARGIN_BOTTOM = 350;
+
+        this.DATA_ERROR_MESSAGE = "Error in getting data."
     };
     return CoreConstants;
 });

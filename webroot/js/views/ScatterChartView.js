@@ -31,7 +31,7 @@ define([
 
                 self.model.onAllRequestsComplete.subscribe(function() {
                     var chartData = self.model.getItems();
-                    self.renderChart(selector, viewConfig, chartData);
+                    self.renderChart(selector, viewConfig, chartData, self.model.error);
                 });
 
                 if(viewConfig.loadChartInChunks) {
@@ -45,7 +45,7 @@ define([
             }
         },
 
-        renderChart: function (selector, viewConfig, data) {
+        renderChart: function (selector, viewConfig, data, error) {
             var chartViewConfig, chartData, chartModel, chartOptions;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
@@ -58,6 +58,12 @@ define([
 
             this.chartModel = new ScatterChartModel(chartData, chartOptions);
             chartModel = this.chartModel;
+
+            if(chartModel['noDataMessage']) {
+                chartModel.noData(chartModel['noDataMessage']);
+            } else if (error) {
+                chartModel.noData(cowc.DATA_ERROR_MESSAGE);
+            }
 
             $(selector).data('chart', chartModel);
             if ($(selector).find('svg').length == 0) {

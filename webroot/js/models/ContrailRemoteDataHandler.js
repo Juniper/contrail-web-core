@@ -128,6 +128,10 @@ define([
                 pFailureCallback(xhr);
             }
             pRequestInProgress = false;
+            if (pCompleteCallback != null) {
+                pCompleteCallback(pRequestCompleteResponse);
+                check4AllRequestComplete();
+            }
         };
 
         function fetchPrimaryData() {
