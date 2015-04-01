@@ -74,10 +74,15 @@ define([
         this.COOKIE_PROJECT = 'project';
         this.COOKIE_VIRTUAL_NETWORK = 'virtual-network';
 
+        this.THEME_DETAIL_WIDGET = 'widget-box';
+        this.THEME_DETAIL_DEFAULT = 'default';
+
         this.GRAPH_MARGIN_LEFT = 350;
         this.GRAPH_MARGIN_RIGHT = 350;
         this.GRAPH_MARGIN_TOP = 350;
         this.GRAPH_MARGIN_BOTTOM = 350;
+
+        this.DATA_ERROR_MESSAGE = "Error in getting data."
     };
     return CoreConstants;
 });

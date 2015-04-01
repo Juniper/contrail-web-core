@@ -78,17 +78,13 @@ define([
 
     function setCachedData2Model(contrailListModel, cacheConfig) {
         var isCacheUsed = false, usePrimaryCache = true,
-            reload = false, isSecondaryCacheUsed,
-            cachedData = (cacheConfig.ucid != null) ? cowch.getDataFromCache(cacheConfig.ucid) : null;
+            reload = true, secondaryCacheStatus,
+            cachedData = (cacheConfig.ucid != null) ? cowch.getDataFromCache(cacheConfig.ucid) : null,
+            setCachedData2ModelCB = (cacheConfig != null) ? cacheConfig['setCachedData2ModelCB']  : null;
 
-        //TODO: isRequestInProgress check should not be required
-        if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject']['listModel'].error || cachedData['dataObject']['listModel'].isRequestInProgress()) {
-            usePrimaryCache = false;
-        } else if (cachedData != null && (cacheConfig.cacheTimeout < ($.now() - cachedData['lastUpdateTime'])) && cacheConfig.loadOnTimeout == false) {
-            usePrimaryCache = false;
-        }
+        usePrimaryCache = cowch.isCacheValid(cacheConfig, cachedData, 'listModel');
 
-        if(usePrimaryCache) {
+        if (usePrimaryCache) {
             var cachedContrailListModel = cachedData['dataObject']['listModel'],
                 lastUpdateTime = cachedData['lastUpdateTime'],
                 cachedContrailListModel = cachedData['dataObject']['listModel'];
@@ -100,15 +96,18 @@ define([
             if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
                 reload = true;
             }
-        } else if (contrail.checkIfFunction(cacheConfig['setCachedData2ModelCB'])) {
-            isSecondaryCacheUsed = cacheConfig['setCachedData2ModelCB'](contrailListModel);
-            if(isSecondaryCacheUsed) {
-                isCacheUsed = true;
+        } else if (contrail.checkIfFunction(setCachedData2ModelCB)) {
+            secondaryCacheStatus = cacheConfig['setCachedData2ModelCB'](contrailListModel, cacheConfig);
+            if (contrail.checkIfExist(secondaryCacheStatus)) {
+                isCacheUsed = contrail.handleIfNull(secondaryCacheStatus['isCacheUsed'], false);
+                reload = contrail.handleIfNull(secondaryCacheStatus['reload'], true);
+            } else {
+                isCacheUsed = false;
                 reload = true;
             }
         }
 
-        return {isCacheUsed: isCacheUsed, reload: reload };
+        return {isCacheUsed: isCacheUsed, reload: reload};
     };
 
     function initContrailListModel(cacheConfig, offset) {

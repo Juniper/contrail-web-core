@@ -20,6 +20,7 @@ define([
                 self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
             }
 
+            this.ucid = contrail.checkIfExist(modelConfig['cacheConfig']) ? modelConfig['cacheConfig']['ucid'] : null;
             self.onAllRequestsComplete = new Slick.Event();
             return self;
         },

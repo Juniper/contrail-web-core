@@ -887,6 +887,7 @@ a.selectAllLink:hover {
 /* Sort Icon from font-awesome */
 .contrail-grid{
 	border-bottom: 1px solid #dadada;
+    margin-bottom: 15px;
 }
 .contrail-grid > .collapsed {
 	display: none;
@@ -1521,62 +1522,88 @@ input.datetimepicker{
 	color: #3182bd;
 	font-weight: 700;
 }
-/* Begin - Jquery UI Tabs */
+/* Begin - Jquery UI Tabs  (theme: overcast)*/
+.contrail-tabs-overcast.ui-tabs.ui-widget,
 .ui-tabs.ui-widget {
 	border: none;
 	padding: 0;
 }
+.contrail-tabs-overcast.ui-tabs .ui-widget-header,
 .ui-tabs .ui-widget-header{
 	border: none;
 	background: none;
 	background-color:#f9f9f9;
 	border-bottom: 1px solid #eee;
 }
+.contrail-tabs-overcast.ui-tabs .ui-tabs-nav,
 .ui-tabs .ui-tabs-nav{
 	margin: -3px -10px 10px -10px;
 	padding: 1px 1px 0 1px;
 }
+.contrail-tabs-overcast.ui-tabs-panel.ui-widget-content,
 .ui-tabs-panel.ui-widget-content {
 	padding: 0;
 }
-.ui-tabs .ui-tabs-nav li.ui-tabs-active a, .ui-tabs .ui-tabs-nav li.ui-state-hover a{
+.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-state-hover a,
+.ui-tabs .ui-tabs-nav li.ui-state-hover a {
 	color: #3182bd;
 }
-.ui-tabs .ui-state-default a, .ui-state-default a:link, .ui-tabs .ui-state-default a:visited {
+.contrail-tabs-overcast.ui-tabs .ui-state-default a,
+.ui-tabs .ui-state-default a,
+.contrail-tabs-overcast.ui-tabs .ui-state-default a:link,
+.ui-tabs .ui-state-default a:link,
+.contrail-tabs-overcast.ui-tabs .ui-state-default a:visited,
+.ui-tabs .ui-state-default a:visited {
 	color: #787878;
 	text-decoration: none;
 }
+.contrail-tabs-overcast.ui-tabs .contrail-tabs-loading,
 .ui-tabs .contrail-tabs-loading {
 	margin-right: 5px;
 }
-/* End - Jquery UI Tabs */
-/* Begin - Jquery UI Tabs with Widget Header */
+/* End - Jquery UI Tabs (theme: overcast) */
+/* Begin - Jquery UI Tabs with Widget Header  (theme: classic) */
+.contrail-tabs-classic.ui-tabs.ui-widget,
 .contrail-widget-tabs.ui-tabs.ui-widget {
 	border: none;
 	padding: 0;
 }
-.contrail-widget-tabs.ui-tabs .ui-widget-header{
+.contrail-tabs-classic.ui-tabs .ui-widget-header,
+.contrail-widget-tabs.ui-tabs .ui-widget-header {
 	border: none;
 	background: none;
 	border-bottom: 1px solid #ccc;
 	line-height: 20px;
 	font-size: 12px;
 }
-.contrail-widget-tabs.ui-tabs .ui-tabs-nav{
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav {
 	margin: 0 0 5px 0;
 	padding: 1px 1px 0 10px;
 }
+.contrail-tabs-classic .ui-tabs-panel.ui-widget-content,
 .contrail-widget-tabs .ui-tabs-panel.ui-widget-content {
 	padding: 1em 1.5em;
 }
-.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a, .ui-tabs .ui-tabs-nav li.ui-state-hover a{
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-state-hover a,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-state-hover a {
 	color: #3182bd;
 }
-.contrail-widget-tabs.ui-tabs .ui-state-default a, .ui-state-default a:link, .ui-tabs .ui-state-default a:visited {
+.contrail-tabs-classic.ui-tabs .ui-state-default a,
+.contrail-widget-tabs.ui-tabs .ui-state-default a,
+.contrail-tabs-classic.ui-tabs .ui-state-default a:link,
+.contrail-widget-tabs.ui-tabs .ui-state-default a:link,
+.contrail-tabs-classic.ui-tabs .ui-state-default a:visited,
+.contrail-widget-tabs.ui-tabs .ui-state-default a:visited {
 	color: #787878;
 	text-decoration: none;
 	
 }
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a{
 	border-top: 1px solid #ccc;
 	border-left: 1px solid #ccc;
@@ -1585,19 +1612,22 @@ input.datetimepicker{
 	margin-bottom: -1px;
 }
 
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice {
 	border: none;
 	padding-right: 3px;
 }
 
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav .ui-tabs-anchor,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
 	padding: 2px 6px;
 }
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav li.tabs-toolbar,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.tabs-toolbar {
 	float:right;
 	font-size: 15px;
 }
-/* End - Jquery UI Tabs with Widget Header */
+/* End - Jquery UI Tabs with Widget Header (theme: classic) */
 /* Begin - Jquery UI Accordion */
 .ui-accordion-header {
 	border-bottom: 1px solid #eee;
@@ -2476,6 +2506,10 @@ color: #b94a48;
 }
 .group-detail-action-item.selected, .group-detail-action-item.selected:hover {
     color: #3182bd;
+}
+.group-detail-action-item-dropdown-menu {
+    top: 24px;
+    right: -3px !important;
 }
 
 /* Checked Multiselect styles */
