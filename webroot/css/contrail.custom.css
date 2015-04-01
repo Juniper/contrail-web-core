@@ -1435,6 +1435,7 @@ label.jqInvalid{
 	margin-top: -3px;
 	border: 1px solid #dadada;
 	box-shadow: none;
+    z-index: 10000;
 }
 .select2-dropdown-open .select2-choice {
 	-webkit-box-shadow: none;
@@ -2104,14 +2105,8 @@ color: #b94a48;
 }
 
 .popover.popover-tooltip {
-    min-width: 300px;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-    box-shadow: none;
-    opacity: 1;
-    z-index: 1050;
-}
-.popover.popover-tooltip {
-    min-width: 300px;
+    min-width: 320px;
+    max-width: 320px;
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     box-shadow: none;
     opacity: 1;
@@ -2199,6 +2194,39 @@ color: #b94a48;
   color: #666;
   font-weight: 200;
   margin-left: 5px;
+}
+.popover-tooltip.popover-tooltip-no-icon .popover-title {
+    padding-left: 10px;
+}
+.popover-tooltip.popover-tooltip-no-icon .popover-tooltip-icon {
+    visibility: hidden;
+}
+.popover-tooltip.popover-tooltip-no-icon .popover-content .popover-info {
+    margin-left: 5px;
+}
+/* Tooltip styles for nvd3 tooltips*/
+.nvtooltip.nvtooltip-popover{
+    padding: 0;
+}
+.nvtooltip .popover.popover-tooltip span {
+    margin: 0;
+}
+.nvtooltip .popover.popover-tooltip{
+    position: static;
+    border: none;
+}
+.nvtooltip .popover.popover-tooltip p {
+    margin: 0;
+    padding: 0;
+}
+.nvtooltip .popover.popover-tooltip .overlapped-elements-dropdown {
+    margin: 0 3px;
+}
+.nvtooltip .popover.popover-tooltip .overlapped-elements-dropdown.select2-container-active {
+    box-shadow: none;
+}
+.nvtooltip .popover.popover-tooltip .overlapped-elements-dropdown.select2-container .select2-choice .select2-arrow {
+    display: none;
 }
 
 /* Bootstrap Tooltips*/

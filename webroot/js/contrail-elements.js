@@ -1048,7 +1048,7 @@ function constructSelect2(self, defaultOption, args) {
             self.select2(option)
                 .on("change", changeFunction)
                 .on("select2-selecting", selectingFunction);
-            if (option.data.length !=0) {
+            if (option.data.length !=0 && option.ignoreFirstValue != true) {
                 self.select2('val', option.data[0].text);
             }
         }

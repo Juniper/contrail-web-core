@@ -268,7 +268,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="element-tooltip-template">
-    <div class="popover popover-tooltip" style="display: block;">
+    <div class="popover popover-tooltip{{#IfCompare content.iconClass false operator='=='}} popover-tooltip-no-icon {{/IfCompare}}" style="display: block;">
         <h3 class="popover-title"></h3>
         <div class="popover-content"></div>
     </div>

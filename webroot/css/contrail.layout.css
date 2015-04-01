@@ -2363,6 +2363,8 @@ button.btn:active {
 .height-980 {height:980px !important;}
 
 /* width framework */
+.min-width-150 {min-width:150px !important;}
+
 .width-150 {width:150px !important;}
 .width-280 {width:280px !important;}
 .width-420 {width:420px !important;}
