@@ -1443,6 +1443,9 @@ label.jqInvalid{
 .select2-drop-active {
 	border: 1px solid #dadada;
 }
+.select2-results .select2-result-label {
+    word-break: break-all;
+}
 .select2-small-width{
 	width: 250px;
 }
