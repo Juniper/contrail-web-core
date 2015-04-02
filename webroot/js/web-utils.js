@@ -30,6 +30,8 @@ var SANDESH_DATA_URL = "/api/admin/monitor/infrastructure/get-sandesh-data";
 var INDENT_RIGHT = "&nbsp;&nbsp;&nbsp;&nbsp;";
 var INST_PAGINATION_CNT = 50;
 var NETWORKS_PAGINATION_CNT = 25;
+// Need to move to controller.utils.js files once the functions are accessible globally
+var ctInitComplete = false;
 var sevLevels = {
     ERROR   : 0, //Red
     WARNING : 1, //Orange
