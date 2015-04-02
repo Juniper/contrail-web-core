@@ -30,22 +30,22 @@ define([
                     res: jsonPath(response, '$..udp_sport_bitmap')[0],
                     type: 'src',
                     pType: 'udp'
-                }));
+                }), chartOptions);
                 renderHeatChartCB(selector.find("#dst-udp-heat-chart"), ctwp.parseNetworks4PortMap({
                     res: jsonPath(response, '$..udp_dport_bitmap')[0],
                     type: 'dst',
                     pType: 'udp'
-                }));
+                }), chartOptions);
                 renderHeatChartCB(selector.find("#src-tcp-heat-chart"), ctwp.parseNetworks4PortMap({
                     res: jsonPath(response, '$..tcp_sport_bitmap')[0],
                     type: 'src',
                     pType: 'tcp'
-                }));
+                }), chartOptions);
                 renderHeatChartCB(selector.find("#dst-tcp-heat-chart"), ctwp.parseNetworks4PortMap({
                     res: jsonPath(response, '$..tcp_dport_bitmap')[0],
                     type: 'dst',
                     pType: 'tcp'
-                }));
+                }), chartOptions);
             });
 
             deferredObj.fail(function (errObject) {
@@ -60,7 +60,7 @@ define([
         }
     });
 
-    function renderHeatChartCB(selector, response) {
+    function renderHeatChartCB(selector, response, chartOptions) {
         var data = response['res'];
         var margin = {top: 20, right: 0, bottom: 100, left: 20},
             width = 960 - margin.left - margin.right,
@@ -139,24 +139,7 @@ define([
             .style("fill", function (d) {
                 return colorScale(d.value);
             });
-        heatMap.on('click', function (d) {
-            var currHashObj = layoutHandler.getURLHashObj();
-            var startRange = ((64 * d.y) + d.x) * 256;
-            var endRange = startRange + 255;
-            var params = {};
-            var protocolMap = {'icmp': 1, 'tcp': 6, 'udp': 17};
-            var divId = $($(selector)[0]).attr('id');
-            params['fqName'] = currHashObj['q']['fqName'];
-            params['port'] = startRange + "-" + endRange;
-            params['startTime'] = new XDate().addMinutes(-10).getTime();
-            params['endTime'] = new XDate().getTime();
-            params['portType'] = response['type'];
-            params['protocol'] = protocolMap[response['pType']];
-            params['type'] = "flow";
-            params['view'] = "list";
-
-            layoutHandler.setURLHashParams(params, {p: 'mon_networking_networks'});
-        });
+        heatMap.on('click', chartOptions.getClickFn(selector, response));
         heatMap.on('mouseover', function () {
             d3.select(this).style('cursor', 'pointer');
         });
