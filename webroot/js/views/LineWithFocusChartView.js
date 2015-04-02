@@ -107,14 +107,17 @@ define([
     });
 
     function getChartViewConfig(chartData, chartOptions) {
-        var values = chartData[0].values,
-            brushExtent = null, chartViewConfig = {},
-            start, end;
+        var chartViewConfig = {};
+        if (chartData.length > 0) {
+            var values = chartData[0].values,
+                brushExtent = null,
+                start, end;
 
-        if (values.length >= 20) {
-            start = values[values.length - 20];
-            end = values[values.length - 1];
-            chartOptions['brushExtent'] = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
+            if (values.length >= 20) {
+                start = values[values.length - 20];
+                end = values[values.length - 1];
+                chartOptions['brushExtent'] = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
+            }
         }
 
         chartViewConfig['chartData'] = chartData;
