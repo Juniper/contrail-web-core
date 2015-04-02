@@ -21,31 +21,40 @@
     };
     
     $.fn.contrailTabs = function(option) {
-        var self = this;
+        var self = this,
+            theme = 'overcast';
+
         option = (typeof option === "undefined") ? {} : option;
-        self.tabs(option);
-        self.data('contrailTabs', {
-        	startLoading: function(selectedTabLinkId){
-        		$(selectedTabLinkId).prepend('<i class="icon-spinner icon-spin contrail-tabs-loading"></i>');
-        	},
-        	endLoading: function(selectedTabLinkId){
-        		$(selectedTabLinkId).find('.contrail-tabs-loading').remove();
-        	},
-        	/*
-        	 * This function adds a tab to the existing tabs,which accepts two parameters 
-        	 * id,name.Id is href for anchor tag(div id) and name is the tab name
-        	 */
-        	addTab: function(id,name,options) {
-        	    if(options != null && options['position'] == 'before') {
-        	        $(self).find('ul').first().prepend('<li><a href="#'+id+'">'+name+'</a></li>');
-        	        $(self).find('ul').after('<div id="'+id+'" style="display:none">'+name+'</div>');
-        	    } else {
-        	        $(self).find('ul').first().append('<li><a href="#'+id+'">'+name+'</a></li>');
-                    $(self).append('<div id="'+id+'" style="display:none">'+name+'</div>');
-        	    }
-        	    $(self).tabs('refresh');
-        	}
-        });
+
+        if (contrail.checkIfExist(option.theme)) {
+            theme = option.theme;
+        }
+
+        self.addClass('contrail-tabs-' + theme)
+            .tabs(option)
+            .data('contrailTabs', {
+                startLoading: function(selectedTabLinkId){
+                    $(selectedTabLinkId).prepend('<i class="icon-spinner icon-spin contrail-tabs-loading"></i>');
+                },
+                endLoading: function(selectedTabLinkId){
+                    $(selectedTabLinkId).find('.contrail-tabs-loading').remove();
+                },
+                /*
+                 * This function adds a tab to the existing tabs,which accepts two parameters
+                 * id,name.Id is href for anchor tag(div id) and name is the tab name
+                 */
+                addTab: function(id,name,options) {
+                    if(options != null && options['position'] == 'before') {
+                        $(self).find('ul').first().prepend('<li><a href="#'+id+'">'+name+'</a></li>');
+                        $(self).find('ul').after('<div id="'+id+'" style="display:none">'+name+'</div>');
+                    } else {
+                        $(self).find('ul').first().append('<li><a href="#'+id+'">'+name+'</a></li>');
+                        $(self).append('<div id="'+id+'" style="display:none">'+name+'</div>');
+                    }
+                    $(self).tabs('refresh');
+                }
+            });
+
         return self;
     };
     

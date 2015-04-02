@@ -125,22 +125,42 @@
 </script>
 
 <script type="text/x-handlebars-template" id="title-lblval-tooltip-template">
-<div class="row-fluid chart-tooltip" style="width:250px;">
-    {{#each this}}
-        {{#IfCompare @index 0}}
-            <div class="row-fluid chart-tooltip-title">
-                <p>{{value}}</p>
-            </div>
+    <div class="row-fluid chart-tooltip" style="width:250px;">
+        {{#each this}}
+            {{#IfCompare @index 0}}
+                <div class="row-fluid chart-tooltip-title">
+                    <p>{{value}}</p>
+                </div>
             <div class="row-fluid chart-tooltip-body ">
-        {{else}}
+            {{else}}
                 <div class="row-fluid chart-tooltip-row" >
                     <span class="key span4" style="min-height:20px;">{{lbl}}:</span>
                     <span class="value span8" style="min-height:20px;">{{value}}</span>
                 </div>
-        {{/IfCompare}}
-    {{/each}}
-        </div>
-</div>
+            {{/IfCompare}}
+        {{/each}}
+    </div>
+    </div>
+</script>
+
+<!-- To be removed later-->
+<script type="text/x-handlebars-template" id="title-lblval-tooltip-template-new">
+    <div class="row-fluid chart-tooltip" style="width:250px;">
+        {{#each this}}
+            {{#IfCompare @index 0}}
+                <div class="row-fluid chart-tooltip-title">
+                    <p>{{value}}</p>
+                </div>
+            <div class="row-fluid chart-tooltip-body ">
+            {{else}}
+                <div class="row-fluid chart-tooltip-row" >
+                    <span class="key {{keyClass}}" style="min-height:20px;">{{lbl}}:</span>
+                    <span class="value {{valueClass}}" style="min-height:20px;">{{value}}</span>
+                </div>
+            {{/IfCompare}}
+        {{/each}}
+    </div>
+    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="overlapped-bubble-tooltip">
@@ -171,6 +191,33 @@
 </div>
 </script>
 
+<script type="text/x-handlebars-template" id="overlapped-bubble-tooltip-new">
+    <div id="overlapped-bubble-wrapper" class="enabledPointer">
+        <div class="row-fluid" >
+            <div class="left-arrow-wrapper">
+                <div class="left-arrow">
+                    <i class="icon-chevron-left" style="font-size: 20px;"></i>
+                </div>
+            </div>
+            <div class="tooltip-wrapper">
+                {{#each content}}
+                    {{> scatterTooltipNew}}
+                {{/each}}
+            </div>
+            <div class="right-arrow-wrapper">
+                <div class="close-button">
+                    <button type="button" id="overlapClosebutton" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+                </div>
+                <div class="right-arrow">
+                    <i class="icon-chevron-right" style="font-size: 20px;"></i>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid pagecount">
+            <span class="pull-right">{{pagestr}}</span>
+        </div>
+    </div>
+</script>
 
 <script type="text/x-handlebars-template" id="title-lblval-tooltip-template_new">
 <div class="row-fluid chart-tooltip">
@@ -221,7 +268,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="element-tooltip-template">
-    <div class="popover popover-tooltip left" style="display: block;">
+    <div class="popover popover-tooltip" style="display: block;">
         <h3 class="popover-title"></h3>
         <div class="popover-content"></div>
     </div>
@@ -243,7 +290,7 @@
         <div class="row-fluid">
         {{#each info}}
             <div class="row-fluid popover-tooltip-row {{#if dividerClass}} {{dividerClass}} {{/if}}">
-                <span class="key">{{lbl}} </span>
+                <span class="key">{{label}} </span>
                 <span class="value">{{value}}</span>
              </div>
         {{/each}}
@@ -934,12 +981,40 @@
 
 <script type="text/x-handlebars-template" id="core-detail-foundation-template">
     <div class="row-fluid detail-foundation-container group-detail-container">
+        <div class="row-fluid detail-foundation-action">
+        {{#each actions}}
+            {{#IfCompare type 'link' operator='==' }}
+                <a class="detail-foundation-action-item group-detail-action-item pull-right" title="{{title}}"><i class="{{iconClass}}"></i></a>
+            {{/IfCompare}}
+            {{#IfCompare type 'dropdown' operator='==' }}
+                <div class="dropdown" data-title="{{title}}">
+                    <a class="detail-foundation-action-item group-detail-action-item pull-right dropdown-toggle" data-toggle="dropdown" href="#" title="{{title}}">
+                        <i class="{{iconClass}}"></i>
+                    </a>
+                    <ul class="pull-right dropdown-menu dropdown-caret group-detail-action-item-dropdown-menu">
+                        {{#each optionList}}
+                            {{#IfCompare divider true operator='=='}}
+                                <li class="divider"></li>
+                            {{/IfCompare}}
+                            <li>
+                                <a data-title="{{title}}">
+                                    <i class="{{iconClass}}"></i> &nbsp; {{title}}
+                                </a>
+                            </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            {{/IfCompare}}
+        {{/each}}
         {{#IfCompare advancedViewOptions false operator='!=' }}
-            <div class="row-fluid detail-foundation-action">
-                <a class="detail-foundation-action-item group-detail-action-item pull-right selected" title="Basic List View" data-view="basic-list"><i class="icon-list"></i></a>
-                <a class="detail-foundation-action-item group-detail-action-item pull-right" title="Advanced JSON View" data-view="advanced-json"><i class="icon-code"></i></a>
-            </div>
+            <a class="detail-foundation-action-item group-detail-action-item group-detail-advanced-action-item pull-right selected" title="Basic List View" data-view="basic-list">
+                <i class="icon-list"></i>
+            </a>
+            <a class="detail-foundation-action-item group-detail-action-item group-detail-advanced-action-item pull-right" title="Advanced JSON View" data-view="advanced-json">
+                <i class="icon-code"></i>
+            </a>
         {{/IfCompare}}
+        </div>
         <div class="row-fluid detail-foundation-content-basic group-detail-basic-list group-detail-item"></div>
         <div class="row-fluid detail-foundation-content-advanced group-detail-advanced-json group-detail-item hide"></div>
     </div>
@@ -966,9 +1041,8 @@
     <div class="loading-spinner"><i class="icon-refresh icon-spin"></i></div>
 </script>
 
-
 <script type="text/x-handlebars-template" id="core-tabs-template">
-    <div id="contrail-tabs" class="row-fluid contrail-widget-tabs graph-tabs">
+    <div id="contrail-tabs" class="row-fluid graph-tabs">
         <ul>
             {{#each this}}
                 <li><a id="{{this.elementId}}-tab-link" class="contrail-tab-link" href="#{{this.elementId}}-tab">{{this.title}}</a></li>

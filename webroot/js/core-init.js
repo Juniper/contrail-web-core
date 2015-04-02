@@ -201,8 +201,8 @@ function initCustomKOBindings(Knockout) {
 
 function initDomEvents() {
     $(document)
-        .off('click', '.group-detail-action-item')
-        .on('click', '.group-detail-action-item', function (event) {
+        .off('click', '.group-detail-advanced-action-item')
+        .on('click', '.group-detail-advanced-action-item', function (event) {
             if (!$(this).hasClass('selected')) {
                 var thisParent = $(this).parents('.group-detail-container'),
                     newSelectedView = $(this).data('view');
@@ -210,7 +210,7 @@ function initDomEvents() {
                 thisParent.find('.group-detail-item').hide();
                 thisParent.find('.group-detail-' + newSelectedView).show();
 
-                thisParent.find('.group-detail-action-item').removeClass('selected');
+                thisParent.find('.group-detail-advanced-action-item').removeClass('selected');
                 $(this).addClass('selected');
 
                 if (contrail.checkIfExist($(this).parents('.slick-row-detail').data('cgrid'))) {

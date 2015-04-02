@@ -144,6 +144,19 @@ define([
 
             return contrailListModel;
         };
+
+        this.isCacheValid = function(cacheConfig, cachedData, modelType) {
+            var useCache = true;
+
+            //TODO: isRequestInProgress check should not be required
+            if (cacheConfig.cacheTimeout == 0 || cachedData == null || cachedData['dataObject'][modelType].error || cachedData['dataObject'][modelType].isRequestInProgress()) {
+                useCache = false;
+            } else if (cachedData != null && (cacheConfig.cacheTimeout < ($.now() - cachedData['lastUpdateTime'])) && cacheConfig.loadOnTimeout == false) {
+                useCache = false;
+            }
+
+            return useCache;
+        };
     };
 
     function initProjectCache() {
