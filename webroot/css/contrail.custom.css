@@ -2210,7 +2210,9 @@ color: #b94a48;
 }
 
 .res-icon  + .select2-offscreen  + input{ 
-    width : 95%;
+ width: -moz-calc(100% - 20px);
+    width: -webkit-calc(100% - 20px);
+    width: calc(100% - 20px);
     margin-left:3px;
 }
 
