@@ -253,13 +253,17 @@ define([
                     tooltipConfig = tooltipFn(tooltipData),
                     actionCallback = tooltipConfig.content.actions[actionKey].callback;
 
+                if(contrail.checkIfExist(overlappedElementsDropdownElement) && contrail.checkIfExist(overlappedElementsDropdownElement.data('contrailDropdown'))) {
+                    overlappedElementsDropdownElement.data('contrailDropdown').destroy();
+                }
+
                 actionCallback(tooltipData);
             });
 
         $(tooltipContainer).find('.popover-remove')
             .off('click')
             .on('click', function(e) {
-                if(contrail.checkIfExist(overlappedElementsDropdownElement.data('contrailDropdown'))) {
+                if(contrail.checkIfExist(overlappedElementsDropdownElement) && contrail.checkIfExist(overlappedElementsDropdownElement.data('contrailDropdown'))) {
                     overlappedElementsDropdownElement.data('contrailDropdown').destroy();
                 }
                 nv.tooltip.cleanup();
