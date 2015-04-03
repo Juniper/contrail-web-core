@@ -34,6 +34,9 @@
         <feature>config-node</feature>
     </item>
     <item>
+        <feature>database-node</feature>
+    </item>
+    <item>
         <feature>query-engine</feature>
     </item>
     <item>
