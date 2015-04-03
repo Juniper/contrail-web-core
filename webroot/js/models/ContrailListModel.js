@@ -46,6 +46,7 @@ define([
 
                         if (hlRemoteConfig != null) {
                             var childRemoteConfig = $.extend(true, {}, defaultCacheConfig, hlRemoteConfig);
+                            // TODO: We should use loadOnTimeout = false instead. Either pass parentListModel in updateRemoteConfig or create just one remoteConfig (preferred)
                             childRemoteConfig['cacheConfig']['cacheTimeout'] = 0;
                             hlContrailListModel = getNewContrailListModel(childRemoteConfig, [newContrailListModel]);
                         }
@@ -64,6 +65,7 @@ define([
         function createRemoteDataHandler(autoFetchData) {
             if (hlRemoteConfig != null) {
                 var childRemoteConfig = $.extend(true, {}, defaultCacheConfig, hlRemoteConfig);
+                // TODO: We should use loadOnTimeout = false instead. Either pass parentListModel in updateRemoteConfig or create just one remoteConfig (preferred)
                 childRemoteConfig['cacheConfig']['cacheTimeout'] = 0;
                 hlContrailListModel = getNewContrailListModel(childRemoteConfig, [contrailListModel]);
             }
@@ -95,6 +97,8 @@ define([
             isCacheUsed = true;
             if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
                 reload = true;
+            } else {
+                reload = false;
             }
         } else if (contrail.checkIfFunction(setCachedData2ModelCB)) {
             secondaryCacheStatus = cacheConfig['setCachedData2ModelCB'](contrailListModel, cacheConfig);
@@ -233,7 +237,7 @@ define([
                 },
                 completeCallback: function (response) {
                     if (contrail.checkIfFunction(primaryRemote.completeCallback)) {
-                        primaryRemote.completeCallback(response, contrailListModel);
+                        primaryRemote.completeCallback(response, contrailListModel, parentModelList);
                     }
 
                     if (!contrailListModel.isRequestInProgress()) {

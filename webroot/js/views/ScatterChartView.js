@@ -9,6 +9,7 @@ define([
     'contrail-list-model'
 ], function (_, Backbone, ScatterChartModel, ContrailListModel) {
     var ScatterChartView = Backbone.View.extend({
+        renderChartInProgress: false,
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = this.attributes.viewConfig,
@@ -19,7 +20,7 @@ define([
 
             $(selector).append(loadingSpinnerTemplate);
 
-            if(viewConfig['modelConfig'] != null) {
+            if(self.model == null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
 
@@ -30,14 +31,26 @@ define([
                 }
 
                 self.model.onAllRequestsComplete.subscribe(function() {
-                    var chartData = self.model.getItems();
+                    var chartData = [];
+                    if(contrail.checkIfFunction(self.model.getFilteredItems)) {
+                        chartData = self.model.getFilteredItems();
+                    } else {
+                        chartData = self.model.getItems();
+                    }
                     self.renderChart(selector, viewConfig, chartData, self.model.error);
                 });
 
                 if(viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function() {
-                        var chartData = self.model.getItems();
-                        if(chartData.length != 0) {
+                        var chartData = [];
+                        if(contrail.checkIfFunction(self.model.getFilteredItems)) {
+                            chartData = self.model.getFilteredItems();
+                        } else {
+                            chartData = self.model.getItems();
+                        }
+
+                        if(!this.renderChartInProgress) {
+                            //TODO: We should render chart less often
                             self.renderChart(selector, viewConfig, chartData);
                         }
                     });
@@ -46,6 +59,8 @@ define([
         },
 
         renderChart: function (selector, viewConfig, data, error) {
+            this.renderChartInProgress = true;
+
             var chartViewConfig, chartData, chartModel, chartOptions;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
@@ -86,6 +101,7 @@ define([
                 chartOptions['deferredObj'].resolve();
 
             $(selector).find('.loading-spinner').remove();
+            this.renderChartInProgress = false;
             //nv.addGraph(chartModel);
         }
     });
