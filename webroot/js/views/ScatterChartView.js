@@ -31,24 +31,13 @@ define([
                 }
 
                 self.model.onAllRequestsComplete.subscribe(function() {
-                    var chartData = [];
-                    if(contrail.checkIfFunction(self.model.getFilteredItems)) {
-                        chartData = self.model.getFilteredItems();
-                    } else {
-                        chartData = self.model.getItems();
-                    }
+                    var chartData = self.model.getFilteredItems();
                     self.renderChart(selector, viewConfig, chartData, self.model.error);
                 });
 
                 if(viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function() {
-                        var chartData = [];
-                        if(contrail.checkIfFunction(self.model.getFilteredItems)) {
-                            chartData = self.model.getFilteredItems();
-                        } else {
-                            chartData = self.model.getItems();
-                        }
-
+                        var chartData = self.model.getFilteredItems();
                         if(!this.renderChartInProgress) {
                             //TODO: We should render chart less often
                             self.renderChart(selector, viewConfig, chartData);

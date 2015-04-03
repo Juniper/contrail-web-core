@@ -1084,3 +1084,21 @@
         {{/each}}
     </div>
 </script>
+
+<script type="text/x-handlebars-template" id="core-not-found-page-template">
+    <div class="row-fluid content-container-not-found">
+        <div class="row-fluid">
+            <h3>Sorry, this page is not available.</h3>
+        </div>
+        <div class="row-fluid">
+            <h1 class="not-found-icon"><i class="icon-frown"></i></h1>
+        </div>
+        <div class="row-fluid not-found-text">
+            {{#if errorMessage}}
+                <h6 >{{errorMessage}}</h6>
+            {{/if}}
+            <h6>The link you followed may be broken, or there must be some change in the configuration for this page.</h6>
+            <h6><a class="not-found-nav-link" href="/">Go to the Contrail Homepage</a> | <a onclick="history.back();" >Go back to the previous page</a> </h6>
+        </div>
+    </div>
+</script>

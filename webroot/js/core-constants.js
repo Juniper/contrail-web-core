@@ -62,6 +62,7 @@ define([
         this.TMPL_DETAIL_SECTION_COLUMN = "core-detail-section-column-template";
         this.TMPL_DETAIL_SECTION_ROW = "core-detail-section-row-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
+        this.TMPL_404_NOT_FOUND = "core-not-found-page-template";
 
         this.TMPL_ELEMENT_TOOLTIP = "element-tooltip-template";
         this.TMPL_ELEMENT_TOOLTIP_TITLE = "element-tooltip-title-template";
