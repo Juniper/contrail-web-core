@@ -114,12 +114,18 @@ define([
     var initMouseEvents = function(graphSelectorElement, tooltipConfig, jointObject) {
         var timer = null;
         $.each(tooltipConfig, function (keyConfig, valueConfig) {
+            valueConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_ELEMENT_TOOLTIP, valueConfig);
             $('g.' + keyConfig).popover('destroy');
             $('g.' + keyConfig).popover({
                 trigger: 'manual',
                 html: true,
                 animation: false,
                 placement: function (context, src) {
+                    $(context).addClass('popover-tooltip');
+                    $(context).css({
+                        'min-width': valueConfig.dimension.width + 'px',
+                        'max-width': valueConfig.dimension.width + 'px'
+                    });
                     $(context).addClass('popover-tooltip');
 
                     var srcOffset = $(src).offset(),

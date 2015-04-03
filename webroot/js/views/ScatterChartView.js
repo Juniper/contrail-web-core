@@ -326,9 +326,13 @@ define([
         var tooltipElementTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP),
             tooltipElementTitleTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP_TITLE),
             tooltipElementContentTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP_CONTENT),
-            tooltipElementObj = $(tooltipElementTemplate(tooltipConfig)),
-            tooltipElementTitleObj = $(tooltipElementTitleTemplate(tooltipConfig.title)),
-            tooltipElementContentObj = $(tooltipElementContentTemplate(tooltipConfig.content));
+            tooltipElementObj, tooltipElementTitleObj, tooltipElementContentObj;
+
+        tooltipConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_ELEMENT_TOOLTIP, tooltipConfig);
+
+        tooltipElementObj = $(tooltipElementTemplate(tooltipConfig)),
+        tooltipElementTitleObj = $(tooltipElementTitleTemplate(tooltipConfig.title)),
+        tooltipElementContentObj = $(tooltipElementContentTemplate(tooltipConfig.content));
 
         tooltipElementObj.find('.popover-title').append(tooltipElementTitleObj);
         tooltipElementObj.find('.popover-content').append(tooltipElementContentObj);
