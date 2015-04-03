@@ -1826,9 +1826,9 @@ function isIPv6(ipAddr) {
 //@ ipRangeObj['end']   - End address of range
 function getIPRangeLen(ipRangeObj) {
     if(isIPv4(ipRangeObj['start']) && isIPv4(ipRangeObj['end'])) {
-        return (new v4.Address(ipRangeObj['end'])).bigInteger() - (new v4.Address(ipRangeObj['start'])).bigInteger();
+        return ((new v4.Address(ipRangeObj['end'])).bigInteger() - (new v4.Address(ipRangeObj['start'])).bigInteger()) + 1;
     } else if(isIPv6(ipRangeObj['start']) && isIPv6(ipRangeObj['end'])) {
-        return new v6.Address(ipRangeObj['end']).bigInteger() - (new v6.Address(ipRangeObj['start'])).bigInteger();
+        return ((new v6.Address(ipRangeObj['end'])).bigInteger() - (new v6.Address(ipRangeObj['start'])).bigInteger()) + 1;
     } else
         return 0;
 }
