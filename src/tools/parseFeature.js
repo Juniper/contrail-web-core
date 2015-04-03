@@ -92,7 +92,7 @@ function parseFeatureFile (result, fileToGen, callback)
         (-1 == writeAccess[0].indexOf(global.STR_ROLE_ADMIN))) {
         writeAccess[0] = writeAccess[0] + ',' + global.STR_ROLE_ADMIN;
     }
-    featureCbStr += "  rbac.addFeatureAccess(" + "'" + feature + "'" 
+    featureCbStr += "  parseFeatureReq.rbac.addFeatureAccess(" + "'" + feature + "'"
       + ", '" + readAccess + "', " + "'" + writeAccess + "');\n"; 
   }
   featureCbStr += "}\n\n";
