@@ -137,4 +137,7 @@
     <item>
         <feature>portconfig</feature>
     </item>
+    <item>
+        <feature>configUtil</feature>
+    </item>
 </featureLists>
