@@ -26,7 +26,7 @@ define([
 
             if(self.model != null) {
                 if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
-                    var chartData = self.model.getItems();
+                    var chartData = self.model.getFilteredItems();
                     self.renderChart(selector, viewConfig, chartData);
                 }
 

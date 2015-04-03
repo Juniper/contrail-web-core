@@ -19,24 +19,24 @@ define([
 
             $(selector).append(loadingSpinnerTemplate);
 
-            if (viewConfig['modelConfig'] != null) {
+            if(self.model == null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
 
             if (self.model != null) {
                 if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
-                    var chartData = self.model.getItems();
+                    var chartData = self.model.getFilteredItems();
                     self.renderChart(selector, viewConfig, chartData);
                 }
 
                 self.model.onAllRequestsComplete.subscribe(function () {
-                    var chartData = self.model.getItems();
+                    var chartData = self.model.getFilteredItems();
                     self.renderChart(selector, viewConfig, chartData);
                 });
 
                 if (viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function () {
-                        var chartData = self.model.getItems();
+                        var chartData = self.model.getFilteredItems();
                         if (chartData.length != 0) {
                             self.renderChart(selector, viewConfig, chartData);
                         }
