@@ -38,7 +38,10 @@ function buildConfigDeltaJson (delta, oldJson, newJson, type, optFields,
     if (null != newJson) {
         newJson = newJson[type];
     }
-    var optFieldsCnt = optFields.length;
+    var optFieldsCnt = 0;
+    if (null != optFields) {
+        optFieldsCnt = optFields.length;
+    }
     resultJSON[type] = {};
     var tmpOldJson = commonUtils.cloneObj(oldJson);
     for (var i = 0; i < optFieldsCnt; i++) {
