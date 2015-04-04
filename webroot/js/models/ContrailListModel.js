@@ -46,12 +46,14 @@ define([
 
                         if (hlRemoteConfig != null) {
                             var childRemoteConfig = $.extend(true, {}, defaultCacheConfig, hlRemoteConfig);
+                            // TODO: We should use loadOnTimeout = false instead. Either pass parentListModel in updateRemoteConfig or create just one remoteConfig (preferred)
                             childRemoteConfig['cacheConfig']['cacheTimeout'] = 0;
-                            hlContrailListModel = getNewContrailListModel(childRemoteConfig, [newContrailListModel]);
+                            hlContrailListModel = getNewContrailListModel(childRemoteConfig, [newContrailListModel, contrailListModel]);
                         }
                         bindDataHandler2Model(contrailListModel, newContrailDataHandler, hlContrailListModel);
                         bindDataHandler2Model(newContrailListModel, newContrailDataHandler, hlContrailListModel);
                     } else {
+                        // Setting autoFetchData=false i.e create request handler but don't fetch data
                         createRemoteDataHandler(false);
                     }
 
@@ -64,6 +66,7 @@ define([
         function createRemoteDataHandler(autoFetchData) {
             if (hlRemoteConfig != null) {
                 var childRemoteConfig = $.extend(true, {}, defaultCacheConfig, hlRemoteConfig);
+                // TODO: We should use loadOnTimeout = false instead. Either pass parentListModel in updateRemoteConfig or create just one remoteConfig (preferred)
                 childRemoteConfig['cacheConfig']['cacheTimeout'] = 0;
                 hlContrailListModel = getNewContrailListModel(childRemoteConfig, [contrailListModel]);
             }
@@ -95,6 +98,8 @@ define([
             isCacheUsed = true;
             if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
                 reload = true;
+            } else {
+                reload = false;
             }
         } else if (contrail.checkIfFunction(setCachedData2ModelCB)) {
             secondaryCacheStatus = cacheConfig['setCachedData2ModelCB'](contrailListModel, cacheConfig);
@@ -233,7 +238,7 @@ define([
                 },
                 completeCallback: function (response) {
                     if (contrail.checkIfFunction(primaryRemote.completeCallback)) {
-                        primaryRemote.completeCallback(response, contrailListModel);
+                        primaryRemote.completeCallback(response, contrailListModel, parentModelList);
                     }
 
                     if (!contrailListModel.isRequestInProgress()) {
@@ -316,7 +321,7 @@ define([
         return remoteHandlerConfig;
     };
 
-    function getUpdateRemoteHandlerConfig(listModelConfig, newContrailListModel, visibleContrailListModel) {
+    function getUpdateRemoteHandlerConfig(listModelConfig, newContrailListModel, visibleContrailListModel, parentModelList) {
         var remoteHandlerConfig = {},
             primaryRemote = listModelConfig.remote,
             vlRemoteConfig = contrail.handleIfNull(listModelConfig.vlRemoteConfig, {}),
@@ -340,6 +345,13 @@ define([
                 failureCallback: function (xhr) {
                     newContrailListModel.error = true;
                     newContrailListModel.errorList.push(xhr);
+
+                    if (parentModelList != null && parentModelList.length > 0) {
+                        for (var i = 0; i < 1; i++) {
+                            parentModelList[i].error = true;
+                        }
+                    }
+
                     if (contrail.checkIfFunction(primaryRemote.failureCallback)) {
                         primaryRemote.failureCallback(xhr, newContrailListModel);
                     }
@@ -347,7 +359,7 @@ define([
                 completeCallback: function (response) {
 
                     if (contrail.checkIfFunction(primaryRemote.completeCallback)) {
-                        primaryRemote.completeCallback(response, newContrailListModel);
+                        primaryRemote.completeCallback(response, newContrailListModel, parentModelList);
                     }
 
                     if (!newContrailListModel.isRequestInProgress()) {
@@ -355,6 +367,14 @@ define([
 
                         visibleContrailListModel.setData([]);
                         visibleContrailListModel.setData(newContrailListModel.getItems());
+                    }
+
+                    if (parentModelList != null && parentModelList.length > 0) {
+                        for (var i = 0; i < 1; i++) {
+                            if (!parentModelList[i].isRequestInProgress()) {
+                                updateDataInCache(parentModelList[i]);
+                            }
+                        }
                     }
                 }
             },
@@ -366,13 +386,21 @@ define([
             //TODO: Debug why check for isRequestInProgress is not required
             visibleContrailListModel.onAllRequestsComplete.notify();
             newContrailListModel.onAllRequestsComplete.notify();
+
+            if (parentModelList != null && parentModelList.length > 0) {
+                for (var i = 0; i < 1; i++) {
+                    if (!parentModelList[i].isRequestInProgress()) {
+                        parentModelList[i].onAllRequestsComplete.notify();
+                    }
+                }
+            }
         };
 
         remoteHandlerConfig['vlRemoteConfig'] = {
             vlRemoteList: [],
             completeCallback: function () {
                 if (contrail.checkIfFunction(vlRemoteConfig['completeCallback'])) {
-                    vlRemoteConfig['completeCallback'](newContrailListModel);
+                    vlRemoteConfig['completeCallback'](newContrailListModel, parentModelList);
                 }
 
                 if (!newContrailListModel.isRequestInProgress()) {
@@ -380,6 +408,12 @@ define([
 
                     visibleContrailListModel.setData([]);
                     visibleContrailListModel.setData(newContrailListModel.getItems());
+                }
+
+                if (parentModelList != null && parentModelList.length > 0) {
+                    if (!parentModelList[0].isRequestInProgress()) {
+                        updateDataInCache(parentModelList[0]);
+                    }
                 }
             }
         };
@@ -394,12 +428,17 @@ define([
                 initCallback: vlRemoteList[i].initCallback,
                 successCallback: function (response) {
                     if (contrail.checkIfFunction(vlSuccessCallback)) {
-                        vlSuccessCallback(response, newContrailListModel);
+                        vlSuccessCallback(response, newContrailListModel, parentModelList);
                     }
                 },
                 failureCallback: function (xhr) {
                     newContrailListModel.error = true;
                     newContrailListModel.errorList.push(xhr);
+                    if (parentModelList != null && parentModelList.length > 0) {
+                        for (var i = 0; i < 1; i++) {
+                            parentModelList[i].error = true;
+                        }
+                    }
                     if (contrail.checkIfFunction(vlFailureCallback)) {
                         vlFailureCallback(xhr, newContrailListModel);
                     }

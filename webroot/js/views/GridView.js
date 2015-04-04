@@ -67,15 +67,6 @@ define([
                 detail: false,
                 lazyLoading: true
             }
-        },
-        footer: {
-            pager: {
-                options: {
-                    pageSize: 5,
-                    pageSizeSelect: [5, 10, 50, 100]
-                }
-
-            }
         }
     };
 

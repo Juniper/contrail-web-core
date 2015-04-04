@@ -9,6 +9,7 @@ define([
     'contrail-list-model'
 ], function (_, Backbone, ScatterChartModel, ContrailListModel) {
     var ScatterChartView = Backbone.View.extend({
+        renderChartInProgress: false,
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = this.attributes.viewConfig,
@@ -19,34 +20,36 @@ define([
 
             $(selector).append(loadingSpinnerTemplate);
 
-            if(viewConfig['modelConfig'] != null) {
+            if(self.model == null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
 
             if(self.model != null) {
                 if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
-                    var chartData = self.model.getItems();
-                    self.renderChart(selector, viewConfig, chartData);
+                    self.renderChart(selector, viewConfig, self.model);
                 }
 
                 self.model.onAllRequestsComplete.subscribe(function() {
-                    var chartData = self.model.getItems();
-                    self.renderChart(selector, viewConfig, chartData, self.model.error);
+                    self.renderChart(selector, viewConfig, self.model);
                 });
 
                 if(viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function() {
-                        var chartData = self.model.getItems();
-                        if(chartData.length != 0) {
-                            self.renderChart(selector, viewConfig, chartData);
+                        if(!this.renderChartInProgress) {
+                            //TODO: We should render chart less often
+                            self.renderChart(selector, viewConfig, self.model);
                         }
                     });
                 }
             }
         },
 
-        renderChart: function (selector, viewConfig, data, error) {
-            var chartViewConfig, chartData, chartModel, chartOptions;
+        renderChart: function (selector, viewConfig, dataListModel) {
+            this.renderChartInProgress = true;
+
+            var data = dataListModel.getFilteredItems(),
+                error = dataListModel.error,
+                chartViewConfig, chartData, chartModel, chartOptions;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
@@ -59,7 +62,9 @@ define([
             this.chartModel = new ScatterChartModel(chartData, chartOptions);
             chartModel = this.chartModel;
 
-            if(chartModel['noDataMessage']) {
+            if(dataListModel.isRequestInProgress()) {
+                chartModel.noData('Loading..');
+            } else if(chartModel['noDataMessage']) {
                 chartModel.noData(chartModel['noDataMessage']);
             } else if (error) {
                 chartModel.noData(cowc.DATA_ERROR_MESSAGE);
@@ -86,19 +91,20 @@ define([
                 chartOptions['deferredObj'].resolve();
 
             $(selector).find('.loading-spinner').remove();
+            this.renderChartInProgress = false;
             //nv.addGraph(chartModel);
         }
     });
 
     function getChartViewConfig(selector, initResponse) {
-        var chartOptions = ifNull(initResponse['chartOptions'], {}), chartData;
-        var hoveredOnTooltip, tooltipTimeoutId;
+        var chartOptions = ifNull(initResponse['chartOptions'], {}),
+            chartData;
+
+        //TODO - move values to constants
         var xLbl = ifNull(initResponse['xLbl'], 'CPU (%)'),
             yLbl = ifNull(initResponse['yLbl'], 'Memory (MB)');
-
         var xLblFormat = ifNull(initResponse['xLblFormat'], d3.format()),
             yLblFormat = ifNull(initResponse['yLblFormat'], d3.format());
-
         var yDataType = ifNull(initResponse['yDataType'], '');
 
         if ($.inArray(ifNull(initResponse['title'], ''), ['vRouters', 'Analytic Nodes', 'Config Nodes', 'Control Nodes']) > -1) {
@@ -156,37 +162,30 @@ define([
         chartOptions['seriesMap'] = seriesType;
         var tooltipFn = chartOptions['tooltipFn'];
         chartOptions['tooltipFn'] = function (e, x, y, chart) {
-            return constructScatterTooltipFn(e, x, y, chart, tooltipFn);
+            return constructScatterChartTooltip(e, x, y, chart, tooltipFn);
         };
         if (chartOptions['multiTooltip']) {
             chartOptions['tooltipFn'] = function (e, x, y, chart) {
-                return constructScatterTooltipFn(e, x, y, chart, tooltipFn);
-            }
-            chartOptions['tooltipRenderedFn'] = function (tooltipContainer, e, chart) {
-                if (e['point']['overlappedNodes'] != undefined && e['point']['overlappedNodes'].length > 1) {
-                    var result = getMultiTooltipContent(e, tooltipFn, null, chart);
-                    //Need to remove
-                    $.each(result['content'], function (idx, nodeObj) {
-                        var key = nodeObj[0]['value'];
-                        $.each(ifNull(result['nodeMap'][key]['point']['alerts'], []), function (idx, obj) {
-                            if (obj['tooltipAlert'] != false)
-                                nodeObj.push({lbl: ifNull(obj['tooltipLbl'], 'Events'), value: obj['msg']});
-                        });
-                    });
+                return constructScatterChartTooltip(e, x, y, chart, tooltipFn);
+            };
 
-                    if (chartOptions['multiTooltip'] && result['content'].length > 1)
-                        bindEventsOverlapTooltip(result, tooltipContainer);
-                }
+            chartOptions['tooltipRenderedFn'] = function (tooltipContainer, e, chart) {
+                var tooltipData = e.point,
+                    overlappedNodes = tooltipData['overlappedNodes'];
+
+                initTooltipEvents(tooltipContainer, tooltipFn, tooltipData, overlappedNodes);
             }
         }
-        if (chartOptions['scatterOverlapBubbles'])
+
+        if (chartOptions['scatterOverlapBubbles']) {
             chartData = scatterOverlapBubbles(chartData);
+        }
+
         chartOptions['sizeMinMax'] = sizeMinMax;
 
         chartOptions['stateChangeFunction'] = function (e) {
             //nv.log('New State:', JSON.stringify(e));
         };
-
 
         chartOptions['elementClickFunction'] = function (e) {
             if (typeof(chartOptions['clickFn']) == 'function')
@@ -194,22 +193,10 @@ define([
             else
                 processDrillDownForNodes(e);
         };
-        chartOptions['elementMouseoutFn'] = function (e) {
-            if (e['point']['overlappedNodes'] != undefined && e['point']['overlappedNodes'].length > 1) {
-                if (tooltipTimeoutId != undefined)
-                    clearTimeout(tooltipTimeoutId);
-                tooltipTimeoutId = setTimeout(function () {
-                    tooltipTimeoutId = undefined;
-                    if (hoveredOnTooltip != true) {
-                        nv.tooltip.cleanup();
-                    }
-                }, 1500);
-            }
-        };
-        chartOptions['elementMouseoverFn'] = function (e) {
-            if (tooltipTimeoutId != undefined)
-                clearTimeout(tooltipTimeoutId);
-        }
+
+        chartOptions['elementMouseoutFn'] = function (e) {};
+        chartOptions['elementMouseoverFn'] = function (e) {};
+
         if (initResponse['hideLoadingIcon'] != false)
             $(this).parents('.widget-box').find('.icon-spinner').hide();
         if (initResponse['loadedDeferredObj'] != null)
@@ -234,198 +221,130 @@ define([
         return {selector: selector, chartData: chartData, chartOptions: chartOptions};
     };
 
-    /**
-     * function takes the parameters tooltipContainer object and the tooltip array for multitooltip and binds the
-     * events like drill down on tooltip and click on left and right arrows
-     * @param result
-     * @param tooltipContainer
-     */
-    function bindEventsOverlapTooltip(result, tooltipContainer) {
-        var page = 1;
-        var perPage = result['perPage'];
-        var pagestr = "";
-        var data = [];
-        result['perPage'] = perPage;
-        data = $.extend(true, [], result['content']);
-        result['content'] = result['content'].slice(0, perPage);
-        if (result['perPage'] > 1)
-            result['pagestr'] = 1 + " - " + result['content'].length + " of " + data.length;
-        else if (result['perPage'] == 1)
-            result['pagestr'] = 1 + " / " + data.length;
-        $(tooltipContainer).find('div.enabledPointer').parent().html(formatLblValueMultiTooltipNew(result));
-        $(tooltipContainer).find('div.left-arrow').on('click', function (e) {
-            result['button'] = 'left';
-            handleLeftRightBtnClick(result, tooltipContainer);
-        });
-        $(tooltipContainer).find('div.right-arrow').on('click', function (e) {
-            result['button'] = 'right';
-            handleLeftRightBtnClick(result, tooltipContainer);
-        });
-        $(tooltipContainer).find('div.tooltip-wrapper').find('div.chart-tooltip').on('click', function (e) {
-            bubbleDrillDown($(this).find('div.chart-tooltip-title').find('p').text(), result['nodeMap']);
-        });
-        $(tooltipContainer).find('div.enabledPointer').on('mouseover', function (e) {
-            //console.log("Inside the mouse over");
-            hoveredOnTooltip = true;
-        });
-        $(tooltipContainer).find('div.enabledPointer').on('mouseleave', function (e) {
-            //console.log("Inside the mouseout ");
-            hoveredOnTooltip = false;
-            nv.tooltip.cleanup();
-        });
-        $(tooltipContainer).find('button.close').on('click', function (e) {
-            hoveredOnTooltip = false;
-            nv.tooltip.cleanup();
-        });
+    var initTooltipEvents = function (tooltipContainer, tooltipFn, tooltipData, overlappedNodes) {
+        var overlappedElementsDropdownElement = null
 
-        function handleLeftRightBtnClick(result, tooltipContainer) {
-            var content = [];
-            var leftPos = 'auto', rightPos = 'auto';
-            if (result['button'] == 'left') {
-                if ($(tooltipContainer).css('left') == 'auto') {
-                    leftPos = $(tooltipContainer).position()['left'];
-                    $(tooltipContainer).css('left', leftPos);
-                    $(tooltipContainer).css('right', 'auto');
+        $(tooltipContainer).css('pointer-events', 'all');
+        $(tooltipContainer).addClass('nvtooltip-popover');
+
+        if (overlappedNodes != undefined && overlappedNodes.length > 1) {
+            var overlappedElementData = $.map(overlappedNodes, function(nodeValue, nodeKey) {
+                    return {id: nodeKey, text: nodeValue.name}
+                });
+
+            $(tooltipContainer).find('.popover-tooltip-footer').append('<div class="overlapped-elements-dropdown"></div>')
+            overlappedElementsDropdownElement = $(tooltipContainer).find('.overlapped-elements-dropdown');
+
+            overlappedElementsDropdownElement.contrailDropdown({
+                dataTextField: 'text',
+                dataValueField: 'id',
+                placeholder: 'View more',
+                ignoreFirstValue: true,
+                dropdownCssClass: 'min-width-150',
+                data: overlappedElementData,
+                change: function(e) {
+                    var selectedNodeKey = e.added.id,
+                        selectedNodeData = overlappedNodes[selectedNodeKey];
+
+                    $(tooltipContainer).html(generateTooltipHTML(tooltipFn(selectedNodeData)));
+                    initTooltipEvents(tooltipContainer, tooltipFn, selectedNodeData, overlappedNodes);
                 }
-                if (page == 1)
-                    return;
-                page = page - 1;
-                if (result['perPage'] > 1)
-                    pagestr = (page - 1) * perPage + 1 + " - " + (page) * perPage;
-                else if (result['perPage'] == 1)
-                    pagestr = (page - 1) * perPage + 1;
-                if (page <= 1) {
-                    if (result['perPage'] > 1)
-                        pagestr = 1 + " - " + (page) * perPage;
-                    else if (result['perPage'] == 1)
-                        pagestr = 1;
-                }
-                content = data.slice((page - 1) * perPage, page * perPage);
-            } else if (result['button'] == 'right') {
-                if ($(tooltipContainer).css('right') == 'auto') {
-                    leftPos = $(tooltipContainer).position()['left'];
-                    rightPos = $(tooltipContainer).offsetParent().width() - $(tooltipContainer).outerWidth() - leftPos;
-                    $(tooltipContainer).css('right', rightPos);
-                    $(tooltipContainer).css('left', 'auto');
-                }
-                if (Math.ceil(data.length / perPage) == page)
-                    return;
-                page += 1;
-                if (result['perPage'] > 1)
-                    pagestr = (page - 1) * perPage + 1 + " - " + (page) * perPage;
-                else if (result['perPage'] == 1)
-                    pagestr = (page - 1) * perPage + 1;
-                content = data.slice((page - 1) * perPage, page * perPage);
-                if (data.length <= page * perPage) {
-                    if (result['perPage'] > 1)
-                        pagestr = (data.length - perPage) + 1 + " - " + data.length;
-                    else if (result['perPage'] == 1)
-                        pagestr = (data.length - perPage) + 1;
-                    content = data.slice((data.length - perPage), data.length);
-                }
-            }
-            leftPos = $(tooltipContainer).position()['left'];
-            rightPos = $(tooltipContainer).offsetParent().width() - $(tooltipContainer).outerWidth() - leftPos;
-            result['content'] = content;
-            if (result['perPage'] > 1)
-                pagestr += " of " + data.length;
-            else if (result['perPage'] == 1)
-                pagestr += " / " + data.length;
-            result['perPage'] = perPage;
-            $(tooltipContainer).css('left', 0);
-            $(tooltipContainer).css('right', 'auto');
-            $(tooltipContainer).find('div.tooltip-wrapper').html("");
-            for (var i = 0; i < result['content'].length; i++) {
-                $(tooltipContainer).find('div.tooltip-wrapper').append(formatLblValueTooltipNew(result['content'][i]));
-            }
-            $(tooltipContainer).find('div.pagecount span').html(pagestr);
-            if (result['button'] == 'left') {
-                //Incase the tooltip doesnot accomodate in the right space available
-                if ($(tooltipContainer).outerWidth() > ($(tooltipContainer).offsetParent().width() - leftPos)) {
-                    $(tooltipContainer).css('right', 0);
-                    $(tooltipContainer).css('left', 'auto');
-                } else {
-                    $(tooltipContainer).css('left', leftPos);
-                }
-            } else if (result['button'] == 'right') {
-                //Incase the tooltip doesnot accomodate in the left space available
-                if ($(tooltipContainer).outerWidth() > ($(tooltipContainer).offsetParent().width() - rightPos)) {
-                    $(tooltipContainer).css('left', 0);
-                } else {
-                    $(tooltipContainer).css('right', rightPos);
-                    $(tooltipContainer).css('left', 'auto');
-                }
-            }
-            //binding the click on tooltip for bubble drill down
-            $(tooltipContainer).find('div.tooltip-wrapper').find('div.chart-tooltip').on('click', function (e) {
-                bubbleDrillDown($(this).find('div.chart-tooltip-title').find('p').text(), result['nodeMap']);
             });
         }
 
-        function bubbleDrillDown(nodeName, nodeMap) {
-            var e = nodeMap[nodeName];
-            if (typeof(chartOptions['clickFn']) == 'function')
-                chartOptions['clickFn'](e['point']);
-            else
-                processDrillDownForNodes(e);
-        }
+        $(tooltipContainer).find('.popover').find('.btn')
+            .off('click')
+            .on('click', function() {
+                var actionKey = $(this).data('action'),
+                    tooltipConfig = tooltipFn(tooltipData),
+                    actionCallback = tooltipConfig.content.actions[actionKey].callback;
 
-        $(window).off('resize.multiTooltip');
-        $(window).on('resize.multiTooltip', function (e) {
-            nv.tooltip.cleanup();
-        });
+                if(contrail.checkIfExist(overlappedElementsDropdownElement) && contrail.checkIfExist(overlappedElementsDropdownElement.data('contrailDropdown'))) {
+                    overlappedElementsDropdownElement.data('contrailDropdown').destroy();
+                }
 
+                actionCallback(tooltipData);
+            });
+
+        $(tooltipContainer).find('.popover-remove')
+            .off('click')
+            .on('click', function(e) {
+                if(contrail.checkIfExist(overlappedElementsDropdownElement) && contrail.checkIfExist(overlappedElementsDropdownElement.data('contrailDropdown'))) {
+                    overlappedElementsDropdownElement.data('contrailDropdown').destroy();
+                }
+                nv.tooltip.cleanup();
+            });
+
+        $(document)
+            .off('click', onDocumentClickHandler)
+            .on('click', onDocumentClickHandler);
     };
 
-    function constructScatterTooltipFn(e,x,y,chart,tooltipFormatFn,bucketTooltipFn,selector) {
-        e['point']['overlappedNodes'] = markOverlappedOrBucketizedBubblesOnHover(e,chart,selector).reverse();
-        var tooltipContents = [];
-        if(e['point']['overlappedNodes'] == undefined || e['point']['overlappedNodes'].length <= 1) {
-            if(typeof(tooltipFormatFn) == 'function') {
-                tooltipContents = tooltipFormatFn(e['point']);
-            }
-            //Format the alerts to display in tooltip
-            $.each(ifNull(e['point']['alerts'],[]),function(idx,obj) {
-                if(obj['tooltipAlert'] != false)
-                    tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
-            });
-            return formatLblValueTooltipNew(tooltipContents);
-        } else if(e['point']['multiTooltip'] == true) {
-            if(e['point']['isBucket']){
-                if(typeof(bucketTooltipFn) == "function"){
-                    tooltipContents = bucketTooltipFn(e['point']);
-                }
-                $.each(ifNull(e['point']['alerts'],[]),function(idx,obj) {
-                    if(obj['tooltipAlert'] != false)
-                        tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
-                });
-                return formatLblValueTooltipNew(tooltipContents);
-            } else {
-                result = getMultiTooltipContent(e,tooltipFormatFn,bucketTooltipFn,chart,selector);
-                $.each(result['content'],function(idx,nodeObj) {
-                    var key = nodeObj[0]['value'];
-                    $.each(ifNull(result['nodeMap'][key]['point']['alerts'],[]),function(idx,obj) {
-                        if(obj['tooltipAlert'] != false)
-                            nodeObj.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
-                    });
-                });
-                result['content'] = result['content'].slice(0,result['perPage']);
-                return formatLblValueMultiTooltipNew(result);
-            }
+    var onDocumentClickHandler = function(e) {
+        if(!$(e.target).closest('.nvtooltip').length) {
+            nv.tooltip.cleanup();
+
         }
-    }
+    };
 
-    function formatLblValueTooltipNew(infoObj) {
-        var tooltipTemplateSel = 'title-lblval-tooltip-template-new';
-        var tooltipTemplate = contrail.getTemplate4Id(tooltipTemplateSel);
-        return tooltipTemplate(infoObj);
-    }
+    var constructScatterChartTooltip = function(e, x, y, chart, tooltipFormatFn, bucketTooltipFn, selector) {
+        var tooltipContents = [],
+            overlappedNodes = getOverlappedNodes(e, chart, selector).reverse();
 
-    function formatLblValueMultiTooltipNew(data) {
-        var tooltipTemplateSel = 'overlapped-bubble-tooltip-new';
-        var tooltipTemplate = contrail.getTemplate4Id(tooltipTemplateSel);
-        return tooltipTemplate(data);
-    }
+        e['point']['overlappedNodes'] = overlappedNodes;
+
+        if(contrail.checkIfFunction(tooltipFormatFn)) {
+            tooltipContents = tooltipFormatFn(e['point']);
+        }
+        //Format the alerts to display in tooltip
+        $.each(ifNull(e['point']['alerts'],[]),function(idx,obj) {
+            if(obj['tooltipAlert'] != false)
+                tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
+        });
+        return generateTooltipHTML(tooltipContents);
+    };
+
+    var getOverlappedNodes = function(e, chart, selector){
+        var currentNode = e.point,
+            series = e.series,
+            overlappedNodes = [],
+            buffer = 1.5, //In percent
+            currentX = currentNode.x,
+            currentY = currentNode.y,
+            totalSeries = [],
+            xDiff = chart.xAxis.domain()[1] - chart.xAxis.domain()[0],
+            yDiff = chart.yAxis.domain()[1] - chart.yAxis.domain()[0];
+
+        $.each(series, function(seriesKey, seriesValue) {
+            $.merge(totalSeries, seriesValue.values);
+        });
+
+        $.each(totalSeries, function(totalSeriesKey, totalSeriesValue) {
+            if((Math.abs(currentX - totalSeriesValue.x) / xDiff) * 100 <= buffer && (Math.abs(currentY - totalSeriesValue.y) / yDiff) * 100 <= buffer) {
+                overlappedNodes.push(totalSeriesValue);
+            }
+        });
+
+        return overlappedNodes;
+    };
+
+    var generateTooltipHTML = function(tooltipConfig) {
+        var tooltipElementTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP),
+            tooltipElementTitleTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP_TITLE),
+            tooltipElementContentTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP_CONTENT),
+            tooltipElementObj, tooltipElementTitleObj, tooltipElementContentObj;
+
+        tooltipConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_ELEMENT_TOOLTIP, tooltipConfig);
+
+        tooltipElementObj = $(tooltipElementTemplate(tooltipConfig)),
+        tooltipElementTitleObj = $(tooltipElementTitleTemplate(tooltipConfig.title)),
+        tooltipElementContentObj = $(tooltipElementContentTemplate(tooltipConfig.content));
+
+        tooltipElementObj.find('.popover-title').append(tooltipElementTitleObj);
+        tooltipElementObj.find('.popover-content').append(tooltipElementContentObj);
+
+        return tooltipElementObj.prop('outerHTML');
+    };
 
     return ScatterChartView;
 });

@@ -1435,6 +1435,7 @@ label.jqInvalid{
 	margin-top: -3px;
 	border: 1px solid #dadada;
 	box-shadow: none;
+    z-index: 10000;
 }
 .select2-dropdown-open .select2-choice {
 	-webkit-box-shadow: none;
@@ -2107,14 +2108,8 @@ color: #b94a48;
 }
 
 .popover.popover-tooltip {
-    min-width: 300px;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-    box-shadow: none;
-    opacity: 1;
-    z-index: 1050;
-}
-.popover.popover-tooltip {
-    min-width: 300px;
+    min-width: 340px;
+    max-width: 340px;
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     box-shadow: none;
     opacity: 1;
@@ -2143,7 +2138,7 @@ color: #b94a48;
     -ms-text-overflow: ellipsis;
     text-overflow: ellipsis;
     overflow: hidden;
-    width: 190px;
+    margin-right: 20px;
     white-space: nowrap;
 }
 
@@ -2153,7 +2148,7 @@ color: #b94a48;
     font-size: 13px;
     font-weight: 200;
 }
-.popover-tooltip-icon {
+.popover.popover-tooltip .popover-tooltip-icon {
     font-size: 38px;
     border: 1px solid #ccc;
     padding: 7px;
@@ -2161,7 +2156,7 @@ color: #b94a48;
     height: 34px;
     position: relative;
     left: 9px;
-    top: 11px;
+    top: 23px;
     background-color: #fff;
 }
 .popover.popover-tooltip .popover-content {
@@ -2170,9 +2165,8 @@ color: #b94a48;
     margin-top: -65px;
 }
 .popover.popover-tooltip .popover-content .popover-info {
-    padding: 10px 5px 7px;
+    padding: 25px 5px 7px;
     margin-left: 70px;
-    width: 220px;
 }
 
 .popover.popover-tooltip .popover-content .popover-tooltip-footer {
@@ -2202,6 +2196,44 @@ color: #b94a48;
   color: #666;
   font-weight: 200;
   margin-left: 5px;
+}
+.popover-tooltip.popover-tooltip-no-icon .popover-title {
+    padding-left: 10px;
+}
+.popover-tooltip.popover-tooltip-no-icon .popover-tooltip-icon {
+    visibility: hidden;
+}
+.popover-tooltip.popover-tooltip-no-icon .popover-content .popover-info {
+    margin-left: 5px;
+}
+/* Tooltip styles for nvd3 tooltips*/
+.nvtooltip.nvtooltip-popover{
+    padding: 0;
+    -webkit-user-select: initial;
+    -khtml-user-select: initial;
+    -moz-user-select: initial;
+    -ms-user-select: initial;
+    user-select: initial;
+}
+.nvtooltip .popover.popover-tooltip span {
+    margin: 0;
+}
+.nvtooltip .popover.popover-tooltip{
+    position: static;
+    border: none;
+}
+.nvtooltip .popover.popover-tooltip p {
+    margin: 0;
+    padding: 0;
+}
+.nvtooltip .popover.popover-tooltip .overlapped-elements-dropdown {
+    margin: 0 3px;
+}
+.nvtooltip .popover.popover-tooltip .overlapped-elements-dropdown.select2-container-active {
+    box-shadow: none;
+}
+.nvtooltip .popover.popover-tooltip .overlapped-elements-dropdown.select2-container .select2-choice .select2-arrow {
+    display: none;
 }
 
 /* Bootstrap Tooltips*/

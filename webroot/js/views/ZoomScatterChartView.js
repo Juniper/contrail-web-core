@@ -9,6 +9,7 @@ define([
     'contrail-list-model'
 ], function (_, Backbone, ZoomScatterChartModel, ContrailListModel) {
     var ZoomScatterChartView = Backbone.View.extend({
+        renderChartInProgress: false,
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = this.attributes.viewConfig,
@@ -19,33 +20,35 @@ define([
 
             $(selector).append(loadingSpinnerTemplate);
 
-            if (viewConfig['modelConfig'] != null) {
+            if(self.model == null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
 
             if (self.model != null) {
                 if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
-                    var chartData = self.model.getItems();
-                    self.renderChart(selector, viewConfig, chartData);
+                    self.renderChart(selector, viewConfig, self.model);
                 }
 
                 self.model.onAllRequestsComplete.subscribe(function () {
-                    var chartData = self.model.getItems();
-                    self.renderChart(selector, viewConfig, chartData);
+                    self.renderChart(selector, viewConfig, self.model);
                 });
 
                 if (viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function () {
-                        var chartData = self.model.getItems();
-                        if (chartData.length != 0) {
-                            self.renderChart(selector, viewConfig, chartData);
+                        if(!this.renderChartInProgress) {
+                            //TODO: We should render chart less often
+                            self.renderChart(selector, viewConfig, self.model);
                         }
                     });
                 }
             }
         },
 
-        renderChart: function (selector, viewConfig, data) {
+        renderChart: function (selector, viewConfig, dataListModel) {
+            this.renderChartInProgress = true;
+            var data = dataListModel.getFilteredItems(),
+                error = dataListModel.error;
+
             var self = this, chartOptions = viewConfig['chartOptions'],
                 chartConfig = getChartConfig(selector, chartOptions),
                 margin = chartConfig['margin'],
@@ -130,6 +133,7 @@ define([
             svg.call(self.zm);
 
             $(selector).find('.loading-spinner').remove();
+            this.renderChartInProgress = false;
             //initFilterEvent()
         }
     });

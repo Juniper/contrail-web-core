@@ -268,7 +268,8 @@
 </script>
 
 <script type="text/x-handlebars-template" id="element-tooltip-template">
-    <div class="popover popover-tooltip" style="display: block;">
+    <div class="popover popover-tooltip{{#IfCompare content.iconClass false operator='=='}} popover-tooltip-no-icon {{/IfCompare}}"
+         style="display: block; min-width: {{dimension.width}}px; max-width: {{dimension.width}}px;">
         <h3 class="popover-title"></h3>
         <div class="popover-content"></div>
     </div>
@@ -280,13 +281,13 @@
 </script>
 
 <script type="text/x-handlebars-template" id="element-tooltip-content-template">
-    <div class="row-fluid popover-remove">
+    <div class="popover-remove">
         <i class="icon-remove pull-right popover-remove-icon"></i>
     </div>
     <div class="popover-tooltip-icon font-element">
         <i class="{{iconClass}}"></i>
     </div>
-    <div class="row-fluid popover-info">
+    <div class="popover-info">
         <div class="row-fluid">
         {{#each info}}
             <div class="row-fluid popover-tooltip-row {{#if dividerClass}} {{dividerClass}} {{/if}}">
@@ -1081,5 +1082,34 @@
                 </div>
             </div>
         {{/each}}
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-not-found-message-template">
+    <div class="row-fluid content-container-not-found">
+        <div class="row-fluid">
+            <h3>{{title}}</h3>
+        </div>
+        {{#if iconClass}}
+            <div class="row-fluid">
+                <h1 class="not-found-icon"><i class="icon-frown"></i></h1>
+            </div>
+        {{/if}}
+        <div class="row-fluid not-found-text">
+            {{#if errorMessage}}
+                <h6 >{{errorMessage}}</h6>
+            {{/if}}
+            {{#IfCompare defaultErrorMessage false operator='!='}}
+                <h6>The link you followed may be broken, or there must be some change in the configuration for this page.</h6>
+            {{/IfCompare}}
+            <h6>
+                <a class="not-found-nav-link" href="/">Go to the Contrail Homepage</a> |
+                <a onclick="history.back();" >Go back to the previous page</a>
+                {{#each navLinks}}
+                    | <a href="{{href}}">{{text}}</a>
+                {{/each}}
+
+            </h6>
+        </div>
     </div>
 </script>

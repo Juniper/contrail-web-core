@@ -261,7 +261,18 @@ body.navbar-fixed {
   font-size: 13px;
   color: #777;
 }
-
+.content-container-not-found {
+    text-align: center;
+    margin: 30px auto;
+    color: #555;
+}
+.content-container-not-found .not-found-icon {
+    font-size: 50px;
+    color: #3182bd;
+}
+.content-container-not-found .not-found-text {
+    color: #777;
+}
 /* breadcrumbs */
 #breadcrumbs {
   position: relative;
@@ -2363,6 +2374,8 @@ button.btn:active {
 .height-980 {height:980px !important;}
 
 /* width framework */
+.min-width-150 {min-width:150px !important;}
+
 .width-150 {width:150px !important;}
 .width-280 {width:280px !important;}
 .width-420 {width:420px !important;}

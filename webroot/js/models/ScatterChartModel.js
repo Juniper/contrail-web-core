@@ -60,6 +60,8 @@ define([
         chartModel.scatter.dispatch.on('elementMouseout', chartOptions['elementMouseoutFn']);
         chartModel.scatter.dispatch.on('elementMouseover', chartOptions['elementMouseoverFn']);
 
+        chartModel.scatter.dispatch.on('elementMouseout.tooltip', chartOptions['elementMouseoutFn']);
+
         return chartModel;
     };
 

@@ -62,6 +62,7 @@ define([
         this.TMPL_DETAIL_SECTION_COLUMN = "core-detail-section-column-template";
         this.TMPL_DETAIL_SECTION_ROW = "core-detail-section-row-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
+        this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
 
         this.TMPL_ELEMENT_TOOLTIP = "element-tooltip-template";
         this.TMPL_ELEMENT_TOOLTIP_TITLE = "element-tooltip-title-template";
@@ -81,6 +82,17 @@ define([
         this.GRAPH_MARGIN_RIGHT = 350;
         this.GRAPH_MARGIN_TOP = 350;
         this.GRAPH_MARGIN_BOTTOM = 350;
+
+        this.DEFAULT_CONFIG_ELEMENT_TOOLTIP = {
+            dimension: {
+                width: 275
+            }
+        };
+
+        this.DEFAULT_CONFIG_NOT_FOUND_PAGE = {
+            title: 'Sorry, this page is not available.',
+            iconClass: 'icon-frown'
+        };
 
         this.DATA_ERROR_MESSAGE = "Error in getting data."
     };
