@@ -459,7 +459,13 @@ function createNetwork(userData,appData,callback) {
         createPortGroup(userData,appData,callback).done(function(response) {
             var portGroupId = null;
             if(response['Fault'] != null) {
-                callback(null,response);
+                if(response['Fault']['detail'] != null && response['Fault']['detail']['ManagedObjectNotFoundFault'] !=  null) {
+                    dataCenterName = null;
+                    vSwitchName  = null;
+                    createNetwork(userData,appData,callback);
+                } else {
+                    callback(null,response);
+                }
                 return;
             }
             getNetworkFolderForDataCenter(appData,dataCenterName).done(function(folderName) {
@@ -537,7 +543,11 @@ function createPortGroup(userData,appData,callback) {
                                 }
                             }
                         },
-                        type: 'earlyBinding'
+                        type: 'earlyBinding',
+                        vendorSpecificConfig : {
+                            key: 'external_ipam',
+                            opaqueData: userData['static_ip']
+                        }
                     }
                 }
             };
