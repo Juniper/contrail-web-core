@@ -26,31 +26,30 @@ define([
 
             if(self.model != null) {
                 if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
-                    var chartData = self.model.getFilteredItems();
-                    self.renderChart(selector, viewConfig, chartData);
+                    self.renderChart(selector, viewConfig, self.model);
                 }
 
                 self.model.onAllRequestsComplete.subscribe(function() {
-                    var chartData = self.model.getFilteredItems();
-                    self.renderChart(selector, viewConfig, chartData, self.model.error);
+                    self.renderChart(selector, viewConfig, self.model);
                 });
 
                 if(viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function() {
-                        var chartData = self.model.getFilteredItems();
                         if(!this.renderChartInProgress) {
                             //TODO: We should render chart less often
-                            self.renderChart(selector, viewConfig, chartData);
+                            self.renderChart(selector, viewConfig, self.model);
                         }
                     });
                 }
             }
         },
 
-        renderChart: function (selector, viewConfig, data, error) {
+        renderChart: function (selector, viewConfig, dataListModel) {
             this.renderChartInProgress = true;
 
-            var chartViewConfig, chartData, chartModel, chartOptions;
+            var data = dataListModel.getFilteredItems(),
+                error = dataListModel.error,
+                chartViewConfig, chartData, chartModel, chartOptions;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
@@ -63,7 +62,9 @@ define([
             this.chartModel = new ScatterChartModel(chartData, chartOptions);
             chartModel = this.chartModel;
 
-            if(chartModel['noDataMessage']) {
+            if(dataListModel.isRequestInProgress()) {
+                chartModel.noData('Loading..');
+            } else if(chartModel['noDataMessage']) {
                 chartModel.noData(chartModel['noDataMessage']);
             } else if (error) {
                 chartModel.noData(cowc.DATA_ERROR_MESSAGE);
