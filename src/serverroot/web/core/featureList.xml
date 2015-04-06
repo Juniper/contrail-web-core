@@ -10,123 +10,14 @@
 -->
 <featureLists>
     <require>
-        <define>rbac</define>
-        <path>./rbac.api</path>
+        <define>parseFeatureReq</define>
+        <path>../../common/parseFeatureRequire</path>
     </require>
     <item>
+        <feature>admin-config</feature>
+    </item>
+    <item>
         <feature>monitoring</feature>
-    </item>
-    <item>
-        <feature>bgp</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>pcapture</feature>
-    </item>
-    <item>
-        <feature>control-node</feature>
-    </item>
-    <item>
-        <feature>analytics-node</feature>
-    </item>
-    <item>
-        <feature>config-node</feature>
-    </item>
-    <item>
-        <feature>database-node</feature>
-    </item>
-    <item>
-        <feature>query-engine</feature>
-    </item>
-    <item>
-        <feature>compute-node</feature>
-    </item>
-    <item>
-        <feature>globalvrouterconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>underlay</feature>
-    </item>
-    <item>
-        <feature>vnconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>vCenterVNconfig</feature>
-    </item>
-    <item>
-        <feature>policyconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>fipconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>projectconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>ipamconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>stconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>siconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>virtualdnsconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>quotasconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>securitygroupconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>logicalroutersconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>
-    <item>
-        <feature>virtualroutersconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item> 
-    <item>
-        <feature>physicalroutersconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item>     
-    <item>
-        <feature>physicalinterfacesconfig</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
-    </item> 
-    <item>
-        <feature>portsconfigapi</feature>
-        <read-access>member</read-access>
-        <write-access>member</write-access>
     </item>
     <item>
         <feature>orchestration</feature>
@@ -136,8 +27,5 @@
     </item>
     <item>
         <feature>proxy</feature>
-    </item>
-    <item>
-        <feature>portconfig</feature>
     </item>
 </featureLists>

@@ -242,6 +242,19 @@ function getJSONDiffByConfigUrl (url, appData, newJson, callback)
     });
 }
 
+function getConfigDiffAndMakeCall (url, appData, newJson, callback, headers)
+{
+    getJSONDiffByConfigUrl(url, appData, newJson, function(err, delta) {
+        if ((null != err) || (null == delta)) {
+            callback(err, delta);
+            return;
+        }
+        configApiServer.apiPut(url, delta, appData, function(err, data) {
+            callback(err, data);
+        }, headers);
+    });
+}
+
 function doFeatureJsonDiffParamsInit ()
 {
     var configJsonModifyObj = {};
@@ -268,4 +281,5 @@ exports.getConfigJSONDiff = getConfigJSONDiff;
 exports.getJSONDiffByConfigUrl = getJSONDiffByConfigUrl;
 exports.getJsonDiff = getJsonDiff;
 exports.doFeatureJsonDiffParamsInit = doFeatureJsonDiffParamsInit;
+exports.getConfigDiffAndMakeCall = getConfigDiffAndMakeCall;
 
