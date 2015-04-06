@@ -349,9 +349,6 @@ define([
             scatter();
 
         });
-
-        //TODO: Implement Zoom
-
     };
 
     return ZoomScatterChartView;
