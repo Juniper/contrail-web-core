@@ -6,8 +6,9 @@ define([
     'underscore',
     'backbone',
     'js/models/ZoomScatterChartModel',
-    'contrail-list-model'
-], function (_, Backbone, ZoomScatterChartModel, ContrailListModel) {
+    'contrail-list-model',
+    'js/views/ControlPanelView.js'
+], function (_, Backbone, ZoomScatterChartModel, ContrailListModel, ControlPanelView) {
     var ZoomScatterChartView = Backbone.View.extend({
         renderChartInProgress: false,
         render: function () {
@@ -46,18 +47,38 @@ define([
 
         renderChart: function (selector, viewConfig, dataListModel) {
             this.renderChartInProgress = true;
-            var data = dataListModel.getFilteredItems(),
-                error = dataListModel.error;
 
-            var self = this, chartOptions = viewConfig['chartOptions'],
-                chartConfig = getChartConfig(selector, chartOptions),
+            var zoomedScatterChartTemplate = contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART);
+
+            $(selector).html(zoomedScatterChartTemplate);
+
+            var self = this,
+                chartSelector = $(selector).find('.chart-container'),
+                chartControlPanelSelector = $(selector).find('.chart-control-panel-container'),
+                chartOptions = viewConfig['chartOptions'],
+                chartConfig = getChartConfig(chartSelector, chartOptions),
+                data = dataListModel.getFilteredItems(),
+                error = dataListModel.error,
+                chartModel = new ZoomScatterChartModel(data, chartConfig),
+                zm = chartModel.zoomBehavior.on("zoom", getZoomFn(self, chartModel, chartConfig));
+
+            self.zm = zm;
+
+            var viewAttributes = {
+                    viewConfig: getControlPanelConfig(self, chartModel, chartConfig)
+                },
+                controlPanelView = new ControlPanelView({
+                    el: chartControlPanelSelector,
+                    attributes: viewAttributes
+                });
+
+            controlPanelView.render();
+
+            var svg, viewObjects,
                 margin = chartConfig['margin'],
                 width = chartConfig['width'], height = chartConfig['height'];
 
-            var chartModel = new ZoomScatterChartModel(data, chartConfig),
-                zm, svg, viewObjects;
-
-            svg = d3.select($(selector)[0]).append("svg")
+            svg = d3.select($(chartSelector)[0]).append("svg")
                 .attr("id", "scatter")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
@@ -129,16 +150,15 @@ define([
 
             self.svg = svg;
             self.viewObjects = viewObjects;
-            self.zm = chartModel.zoomBehavior.on("zoom", getZoomFn(self, chartModel, chartConfig));
+
             svg.call(self.zm);
 
-            $(selector).find('.loading-spinner').remove();
             this.renderChartInProgress = false;
             //initFilterEvent()
         }
     });
 
-    function getZoomFn(chartView, chartModel, chartConfig) {
+    var getZoomFn = function(chartView, chartModel, chartConfig) {
         return function () {
             /*
              // Restrict translation to 0 value
@@ -166,6 +186,53 @@ define([
         };
     };
 
+    var initZoomEvents = function(controlPanelSelector, chartView, chartModel, chartConfig) {
+        var zm = chartView.zm,
+            zoomFn = getZoomFn(chartView, chartModel, chartConfig);
+
+        $(controlPanelSelector).find('.zoom-in').on('click', function (event) {
+            event.preventDefault();
+            if (zm.scale() < chartConfig.maxScale) {
+                zm.translate([translateChart(0, -10), translateChart(1, -350)]);
+                zm.scale(zm.scale() * 2.0);
+                zoomFn();
+            }
+        });
+
+        $(controlPanelSelector).find('.zoom-out').on('click', function () {
+            event.preventDefault();
+            if (zm.scale() > chartConfig.minScale) {
+                zm.scale(zm.scale() * 0.5);
+                zm.translate([translateChart(0, 10), translateChart(1, 350)]);
+                zoomFn();
+            }
+        });
+
+        $(controlPanelSelector).find('.zoom-reset').on('click', function () {
+            event.preventDefault();
+            zm.scale(1);
+            zm.translate([0, 0]);
+            zoomFn();
+        });
+
+        function translateChart(xy, constant) {
+            return zm.translate()[xy] + (constant * (zm.scale()));
+        };
+    };
+
+    var getControlPanelConfig = function(chartView, chartModel, chartConfig) {
+        return {
+            default: {
+                zoom: {
+                    enabled: true,
+                    events: function(controlPanelSelector) {
+                        initZoomEvents(controlPanelSelector, chartView, chartModel, chartConfig)
+                    }
+                }
+            }
+        }
+    };
+
     var getBubbleColor = function (val, array, maxColorFilterFields) {
         return 'medium';
         /*
@@ -181,9 +248,9 @@ define([
         */
     };
 
-    function getChartConfig(selector, chartOptions) {
-        var margin = {top: 50, right: 50, bottom: 50, left: 50},
-            width = $(selector).width() - margin.left - margin.right,
+    function getChartConfig(chartSelector, chartOptions) {
+        var margin = {top: 20, right: 5, bottom: 50, left: 50},
+            width = $(chartSelector).width() - margin.left - margin.right,
             height = 350 - margin.top - margin.bottom;
 
         var chartViewConfig = {
@@ -284,39 +351,7 @@ define([
         });
 
         //TODO: Implement Zoom
-        function initZoomEvents(chartView, chartModel, chartConfig) {
-            var zm = chartView.zm,
-                zoomFn = getZoomFn(chartView, chartModel, chartConfig);
 
-            d3.select('#zoomIn').on('click', function () {
-                d3.event.preventDefault();
-                if (zm.scale() < chartConfig.maxScale) {
-                    zm.translate([translateChart(0, -10), translateChart(1, -350)]);
-                    zm.scale(zm.scale() * 2.0);
-                    zoomFn();
-                }
-            });
-
-            d3.select('#zoomOut').on('click', function () {
-                d3.event.preventDefault();
-                if (zm.scale() > chartConfig.minScale) {
-                    zm.scale(zm.scale() * 0.5);
-                    zm.translate([translateChart(0, 10), translateChart(1, 350)]);
-                    zoomFn();
-                }
-            });
-
-            d3.select('#zoomReset').on('click', function () {
-                d3.event.preventDefault();
-                zm.scale(1);
-                zm.translate([0, 0]);
-                zoomFn();
-            });
-
-            function translateChart(xy, constant) {
-                return zm.translate()[xy] + (constant * (zm.scale()));
-            };
-        };
     };
 
     return ZoomScatterChartView;

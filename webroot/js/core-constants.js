@@ -54,13 +54,14 @@ define([
         this.TMPL_DETAIL_PAGE_ACTION = "core-detail-page-action-template";
         this.TMPL_WIZARD_VIEW = "core-wizard-view-template";
         this.TMPL_NETWORKING_GRAPH_VIEW = "core-networking-graph-template";
-        this.TMPL_GRAPH_CONTROL_PANEL = "graph-control-panel-template";
+        this.TMPL_CONTROL_PANEL = "core-control-panel-template";
         this.TMPL_TABS_VIEW = "core-tabs-template";
         this.TMPL_CHART_VIEW = "core-pd-chart-template";
         this.TMPL_DETAIL_FOUNDATION = "core-detail-foundation-template";
         this.TMPL_DETAIL_SECTION = "core-detail-section-template";
         this.TMPL_DETAIL_SECTION_COLUMN = "core-detail-section-column-template";
         this.TMPL_DETAIL_SECTION_ROW = "core-detail-section-row-template";
+        this.TMPL_ZOOMED_SCATTER_CHART = "core-zoomed-scatter-chart-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
         this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
 
