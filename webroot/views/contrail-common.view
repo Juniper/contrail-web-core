@@ -1113,3 +1113,29 @@
         </div>
     </div>
 </script>
+
+<script type="text/x-handlebars-template" id="core-control-panel-template">
+    <div id="control-panel-items" class="control-panel-items pull-right">
+        {{#IfCompare default.zoom.enabled true}}
+            <div class="control-panel-item zoom-in" title="Zoom In"><i class="icon-zoom-in"></i></div>
+            <div class="control-panel-item zoom-out" title="Zoom Out"><i class="icon-zoom-out"></i></div>
+            <div class="control-panel-item zoom-reset" title="Zoom Reset"><i class="icon-remove-circle"></i></div>
+        {{/IfCompare}}
+        {{#each custom}}
+            <div class="control-panel-item {{@key}}" title="{{title}}"><i class="{{iconClass}}"></i></div>
+        {{/each}}
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-template">
+    <div class="zoomed-scatter-chart-container colmask rightmenu">
+        <div class="colleft">
+            <div class="col1wrap">
+                <div class="col1 chart-container">
+                </div>
+            </div>
+            <div class="col2 chart-control-panel-container">
+            </div>
+        </div>
+    </div>
+</script>
