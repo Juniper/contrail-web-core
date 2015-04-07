@@ -1313,7 +1313,7 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
             pagingInfo.pageSizeSelect = pageSizeSelect;
             updatePager(pagingInfo);
 
-            if (pagingInfo.totalPages - pagingInfo.pageNum <= 1 || currentPageNum != pagingInfo.pageNum || currentPageSizeSelect != pageSizeSelect) {
+            if (pagingInfo.totalPages - pagingInfo.pageNum <= 1 || currentPagingInfo == null || currentPageNum != pagingInfo.pageNum || currentPageSizeSelect != pageSizeSelect) {
                 if(gridContainer.data('contrailGrid') != null && !gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
                     gridContainer.data('contrailGrid')._grid.setSelectedRows([])
                 }
