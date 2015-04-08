@@ -3012,6 +3012,10 @@ polygon {
     fill:rgba(0,0,0,0.5);
     shape-rendering:auto;
 }
+rect.zoom {
+    stroke: #3128bd;
+    fill-opacity: 0.5;
+}
 /*#zoom {*/
     /*position:absolute;*/
     /*top:30px;*/

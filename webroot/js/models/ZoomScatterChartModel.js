@@ -18,13 +18,19 @@ define([
                     return +d[modelConfig.xField];
                 }) * 1.05;
 
-        self.xMin = 0;
+        if (self.xMax <=0)
+            self.xMax = 1;
+
+        self.xMin = -0.01;
 
         self.yMax = d3.max(chartData, function (d) {
                     return +d[modelConfig.yField];
                 }) * 1.05;
 
-        self.yMin = 0;
+        if (self.yMax <=0)
+            self.yMax = 1;
+
+        self.yMin = -0.05;
 
         self.xScale = d3.scale.linear().domain([self.xMin, self.xMax]).range([0, self.width]);
         self.yScale = d3.scale.linear().domain([self.yMin, self.yMax]).range([self.height, 0]);
@@ -37,8 +43,13 @@ define([
 
         self.classes = ['high', 'medium', 'low', 'negative'];
 
-        self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").tickSize(-self.height).tickFormat(d3.format("s"));
-        self.yAxis = d3.svg.axis().scale(self.yScale).orient("left").ticks(5).tickSize(-self.width).tickFormat(d3.format("s"));
+        self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(5)
+                            .tickSize(-self.height)
+                            .tickFormat(d3.format(".02f"));
+
+        self.yAxis = d3.svg.axis().scale(self.yScale).orient("left").ticks(5)
+                            .tickSize(-self.width)
+                            .tickFormat(d3.format(".02f"));
 
         self.xMed = median(_.map(chartData, function (d) {
             return d[modelConfig.xField];

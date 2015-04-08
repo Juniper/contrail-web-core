@@ -78,13 +78,61 @@ define([
                 margin = chartConfig['margin'],
                 width = chartConfig['width'], height = chartConfig['height'];
 
+            $('#content-container').append ('<p><label for="zoom-rect"><input type="checkbox" id="zoom-rect"> zoom by rectangle</label>');
+            var zoomRect = false;
+            d3.select("#zoom-rect").on("change", function() {
+                zoomRect = this.checked;
+            });
             svg = d3.select($(chartSelector)[0]).append("svg")
-                .attr("id", "scatter")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
+                    .attr("id", "scatter")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
                 .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                    .call(self.zm)
+                .append("g")
+                    .on("mousedown", function() {
+                        if (!zoomRect) return;
+                        var e = this,
+                            origin = d3.mouse(e),
+                            rect = svg.append("rect").attr("class", "zoom");
+                        d3.select("body").classed("noselect", true);
+                        origin[0] = Math.max(0, Math.min(width, origin[0]));
+                        origin[1] = Math.max(0, Math.min(height, origin[1]));
+                        d3.select(window)
+                            .on("mousemove.zoomRect", function() {
+                                var m = d3.mouse(e);
+                                m[0] = Math.max(0, Math.min(width, m[0]));
+                                m[1] = Math.max(0, Math.min(height, m[1]));
+                                rect.attr("x", Math.min(origin[0], m[0]))
+                                    .attr("y", Math.min(origin[1], m[1]))
+                                    .attr("width", Math.abs(m[0] - origin[0]))
+                                    .attr("height", Math.abs(m[1] - origin[1]));
+                            })
+                            .on("mouseup.zoomRect", function() {
+                                d3.select(window).on("mousemove.zoomRect", null).on("mouseup.zoomRect", null);
+                                d3.select("body").classed("noselect", false);
+                                var m = d3.mouse(e);
+                                m[0] = Math.max(0, Math.min(width, m[0]));
+                                m[1] = Math.max(0, Math.min(height, m[1]));
+                                if (m[0] !== origin[0] && m[1] !== origin[1]) {
+                                    chartModel.zoomBehavior.x(
+                                            chartModel.xScale.domain([origin[0], m[0]].map(chartModel.xScale.invert).sort(function(a,b) { return a - b;}))
+                                        )
+                                        .y(
+                                            chartModel.yScale.domain([origin[1], m[1]].map(chartModel.yScale.invert).sort(function(a,b) { return a - b;}))
+                                        );
+                                }
+                                rect.remove();
 
+                                svg.select(".x.axis").call(chartModel.xAxis);
+                                svg.select(".y.axis").call(chartModel.yAxis);
+                                svg.selectAll("circle").attr("transform", function (d) {
+                                    return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                                });
+                            }, true);
+                        d3.event.stopPropagation();
+                    });
             svg.append("rect")
                 .attr("width", width)
                 .attr("height", height);
@@ -103,21 +151,6 @@ define([
                 .attr("class", "objects")
                 .attr("width", width)
                 .attr("height", height);
-
-            viewObjects.append("svg:line")
-                .attr("class", "axisLine hAxisLine")
-                .attr("x1", 0)
-                .attr("y1", 0)
-                .attr("x2", width)
-                .attr("y2", 0)
-                .attr("transform", "translate(0," + (chartModel.yScale(0)) + ")");
-
-            viewObjects.append("svg:line")
-                .attr("class", "axisLine vAxisLine")
-                .attr("x1", 0)
-                .attr("y1", 0)
-                .attr("x2", 0)
-                .attr("y2", height);
 
             viewObjects.selectAll("circle")
                 .data(chartModel.data)
@@ -151,7 +184,6 @@ define([
             self.svg = svg;
             self.viewObjects = viewObjects;
 
-            svg.call(self.zm);
 
             this.renderChartInProgress = false;
             //initFilterEvent()
@@ -160,25 +192,17 @@ define([
 
     var getZoomFn = function(chartView, chartModel, chartConfig) {
         return function () {
-            /*
-             // Restrict translation to 0 value
-             if (y.domain()[0] < 0 && x.domain()[0] < 0) {
-             zm.translate([0, height * (1 - zm.scale())]);
-             } else if (y.domain()[0] < 0) {
-             zm.translate([d3.event.translate[0], height * (1 - zm.scale())]);
-             } else if (x.domain()[0] < 0) {
-             zm.translate([0, d3.event.translate[1]]);
-             }
-             */
+             //Restrict translation to 0 value
+            if (chartModel.yScale.domain()[0] < 0 && chartModel.xScale.domain()[0] < 0) {
+                chartModel.zoomBehavior.translate([0, chartModel.height * (1 - chartModel.zoomBehavior.scale())]);
+            } else if (chartModel.yScale.domain()[0] < 0) {
+                chartModel.zoomBehavior.translate([d3.event.translate[0], chartModel.height * (1 - chartModel.zoomBehavior.scale())]);
+            } else if (chartModel.xScale.domain()[0] < 0) {
+                chartModel.zoomBehavior.translate([0, d3.event.translate[1]]);
+            }
 
             chartView.svg.select(".x.axis").call(chartModel.xAxis);
             chartView.svg.select(".y.axis").call(chartModel.yAxis);
-
-            chartView.viewObjects.select(".hAxisLine").attr("transform", "translate(0," + chartModel.yScale(0) + ")");
-            chartView.viewObjects.select(".vAxisLine").attr("transform", "translate(" + chartModel.xScale(0) + ",0)");
-
-            chartView.viewObjects.select(".hMedianLine").attr("transform", "translate(0," + chartModel.yScale(chartModel.yMed) + ")");
-            chartView.viewObjects.select(".vMedianLine").attr("transform", "translate(" + chartModel.xScale(chartModel.xMed) + ",0)");
 
             chartView.svg.selectAll("circle").attr("transform", function (d) {
                 return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
