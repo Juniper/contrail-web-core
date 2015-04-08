@@ -1256,7 +1256,8 @@ function getDefaultGridConfig() {
 
         function emptyGridHandler(){
         	if(!gridOptions.lazyLoading) {
-        		gridContainer.data('contrailGrid').showGridMessage('empty');
+        	    if(gridContainer.data('contrailGrid') != null)
+        	        gridContainer.data('contrailGrid').showGridMessage('empty');
         		if(gridOptions.checkboxSelectable != false) {
         			gridContainer.find('.headerRowCheckbox').attr('disabled', true);
         		}
