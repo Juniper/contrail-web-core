@@ -973,7 +973,8 @@ input.ace-input[type=radio] + .ace-lbl::before {
   font-size: 36px;
 }
 input.ace-input[type=radio]:checked + .ace-lbl::before {
-  content: "\2022";
+  content: "\f111";
+  font-size:10px;
 }
 
 /* Tistate Checkbox and Radio */
