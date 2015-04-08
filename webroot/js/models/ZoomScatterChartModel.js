@@ -18,11 +18,17 @@ define([
                     return +d[modelConfig.xField];
                 }) * 1.05;
 
+        if (self.xMax <=0)
+            self.xMax = 1;
+
         self.xMin = -0.01;
 
         self.yMax = d3.max(chartData, function (d) {
                     return +d[modelConfig.yField];
                 }) * 1.05;
+
+        if (self.yMax <=0)
+            self.yMax = 1;
 
         self.yMin = -0.05;
 
