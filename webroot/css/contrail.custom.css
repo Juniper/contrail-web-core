@@ -2050,8 +2050,11 @@ color: #b94a48;
     width: 35px;
     background-color: #F5F5F5;
 }
-.control-panel-items i {
+.control-panel-items .control-panel-item i {
     color: #777;
+}
+.control-panel-items .control-panel-item.active i {
+    color: #3182BD;
 }
 .control-panel-items .control-panel-item {
     padding: 5px 10px;
@@ -3013,7 +3016,7 @@ color: #b94a48;
     shape-rendering:auto;
 }
 .zoom-scatter-chart-container.rightmenu .col1 rect.zoom {
-    stroke: #3128bd;
+    stroke: #3182BD;
     fill-opacity: 0.5;
 }
 /*#zoom {*/

@@ -61,12 +61,14 @@ define([
                 error = dataListModel.error,
                 chartModel = new ZoomScatterChartModel(data, chartConfig),
                 chartData = chartModel.data,
+                zoomBySelection = false,
                 zm = chartModel.zoomBehavior.on("zoom", getZoomFn(self, chartModel, chartConfig)),
                 tooltipConfigCB = chartOptions.tooltipConfigCB,
                 clickCB = chartOptions.clickCB,
                 overlapMap = getOverlapMap(chartData);
 
             self.zm = zm;
+            self.zoomBySelection = zoomBySelection;
 
             var viewAttributes = {
                     viewConfig: getControlPanelConfig(self, chartModel, chartConfig)
@@ -82,11 +84,6 @@ define([
                 margin = chartConfig['margin'],
                 width = chartConfig['width'], height = chartConfig['height'];
 
-            $('#content-container').append ('<p><label for="zoom-rect"><input type="checkbox" id="zoom-rect"> zoom by rectangle</label>');
-            var zoomRect = false;
-            d3.select("#zoom-rect").on("change", function() {
-                zoomRect = this.checked;
-            });
             svg = d3.select($(chartSelector)[0]).append("svg")
                     .attr("id", "scatter")
                     .attr("width", width + margin.left + margin.right)
@@ -96,7 +93,7 @@ define([
                     .call(self.zm)
                 .append("g")
                     .on("mousedown", function() {
-                        if (!zoomRect) return;
+                        if (!self.zoomBySelection) return;
                         var e = this,
                             origin = d3.mouse(e),
                             rect = svg.append("rect").attr("class", "zoom");
@@ -196,7 +193,6 @@ define([
             self.svg = svg;
             self.viewObjects = viewObjects;
 
-
             this.renderChartInProgress = false;
             //initFilterEvent()
         }
@@ -263,6 +259,20 @@ define([
                     enabled: true,
                     events: function(controlPanelSelector) {
                         initZoomEvents(controlPanelSelector, chartView, chartModel, chartConfig)
+                    }
+                }
+            },
+            custom: {
+                zoomBySelectedArea: {
+                    iconClass: 'icon-crop',
+                    title: 'Zoom By Selection',
+                    events: {
+                        click: function() {
+                            return function(event) {
+                                chartView.zoomBySelection = !chartView.zoomBySelection;
+                                $(this).toggleClass('active');
+                            }
+                        }
                     }
                 }
             }
