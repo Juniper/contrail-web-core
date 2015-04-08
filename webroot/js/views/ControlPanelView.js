@@ -3,8 +3,9 @@
  */
 
 define([
-    'underscore'
-], function (_) {
+    'underscore',
+    'backbone'
+], function (_, Backbone) {
     var ControlPanelView = Backbone.View.extend({
         render: function() {
             var self = this,

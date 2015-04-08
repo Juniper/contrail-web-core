@@ -126,8 +126,18 @@ define([
                                 }
                                 rect.remove();
 
-                                svg.select(".x.axis").call(chartModel.xAxis);
-                                svg.select(".y.axis").call(chartModel.yAxis);
+                                svg.select(".x.axis")
+                                    .call(chartModel.xAxis)
+                                    .selectAll("text")
+                                        .attr("x", 0)
+                                        .attr("y", 8);
+
+                                svg.select(".y.axis")
+                                    .call(chartModel.yAxis)
+                                    .selectAll("text")
+                                        .attr("x", -8)
+                                        .attr("y", 0);
+
                                 svg.selectAll("circle").attr("transform", function (d) {
                                     return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                                 });
@@ -142,16 +152,22 @@ define([
             svg.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + height + ")")
-                .call(chartModel.xAxis);
+                .call(chartModel.xAxis)
+                .selectAll("text")
+                    .attr("x", 0)
+                    .attr("y", 8);
 
             svg.append("g")
                 .attr("class", "y axis")
-                .call(chartModel.yAxis);
+                .call(chartModel.yAxis)
+                .selectAll("text")
+                    .attr("x", -8)
+                    .attr("y", 0);
 
             viewObjects = svg.append("svg")
                 .attr("class", "objects")
                 .attr("width", width)
-                .attr("height", height);
+                .attr("height", height + chartConfig.circleRadius);
 
             viewObjects.selectAll("circle")
                 .data(chartData)
@@ -209,8 +225,17 @@ define([
                 chartModel.zoomBehavior.translate([0, d3.event.translate[1]]);
             }
 
-            chartView.svg.select(".x.axis").call(chartModel.xAxis);
-            chartView.svg.select(".y.axis").call(chartModel.yAxis);
+            chartView.svg
+                .select(".x.axis").call(chartModel.xAxis)
+                .selectAll("text")
+                    .attr("x", 0)
+                    .attr("y", 8);
+
+            chartView.svg
+                .select(".y.axis").call(chartModel.yAxis)
+                .selectAll("text")
+                    .attr("x", -8)
+                    .attr("y", 0);
 
             chartView.svg.selectAll("circle").attr("transform", function (d) {
                 return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
@@ -231,7 +256,7 @@ define([
             }
         });
 
-        $(controlPanelSelector).find('.zoom-out').on('click', function () {
+        $(controlPanelSelector).find('.zoom-out').on('click', function (event) {
             event.preventDefault();
             if (zm.scale() > chartConfig.minScale) {
                 zm.scale(zm.scale() * 0.5);
@@ -240,7 +265,7 @@ define([
             }
         });
 
-        $(controlPanelSelector).find('.zoom-reset').on('click', function () {
+        $(controlPanelSelector).find('.zoom-reset').on('click', function (event) {
             event.preventDefault();
             zm.scale(1);
             zm.translate([0, 0]);
@@ -442,9 +467,9 @@ define([
     };
 
     function getChartConfig(chartSelector, chartOptions) {
-        var margin = {top: 20, right: 5, bottom: 50, left: 50},
+        var margin = {top: 20, right: 5, bottom: 50, left: 75},
             width = $(chartSelector).width() - margin.left - margin.right,
-            height = 350 - margin.top - margin.bottom;
+            height = 275 - margin.top - margin.bottom;
 
         var chartViewConfig = {
             circleRadius: 7.0,

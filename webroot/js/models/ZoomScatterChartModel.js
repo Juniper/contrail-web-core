@@ -21,7 +21,7 @@ define([
         if (self.xMax <=0)
             self.xMax = 1;
 
-        self.xMin = -0.01;
+        self.xMin = 0;
 
         self.yMax = d3.max(chartData, function (d) {
                     return +d[modelConfig.yField];
@@ -30,7 +30,7 @@ define([
         if (self.yMax <=0)
             self.yMax = 1;
 
-        self.yMin = -0.05;
+        self.yMin = 0;
 
         self.xScale = d3.scale.linear().domain([self.xMin, self.xMax]).range([0, self.width]);
         self.yScale = d3.scale.linear().domain([self.yMin, self.yMax]).range([self.height, 0]);
@@ -43,13 +43,12 @@ define([
 
         self.classes = ['error', 'warning', 'medium', 'okay', 'default'];
 
-        self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(5)
+        self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(10)
                             .tickSize(-self.height)
                             .tickFormat(contrail.checkIfFunction(modelConfig.xLabelFormat) ? modelConfig.xLabelFormat : d3.format("d"));
-
         self.yAxis = d3.svg.axis().scale(self.yScale).orient("left").ticks(5)
                             .tickSize(-self.width)
-                            .tickFormat(contrail.checkIfFunction(modelConfig.yLabelFormat) ? modelConfig.yLabelFormat : d3.format("d"));
+                            .tickFormat(contrail.checkIfFunction(modelConfig.yLabelFormat) ? modelConfig.yLabelFormat : d3.format("d"))
 
         self.xMed = median(_.map(chartData, function (d) {
             return d[modelConfig.xField];

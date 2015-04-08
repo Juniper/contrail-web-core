@@ -2946,12 +2946,12 @@ color: #b94a48;
 .zoom-scatter-chart-container.rightmenu .col1 .axis path,
 .zoom-scatter-chart-container.rightmenu .col1 .axis line {
     fill: none;
-    stroke: rgba(0,0,0,0.1);
+    stroke: rgba(0, 0, 0, 0.1);
     shape-rendering: crispEdges;
 }
 .zoom-scatter-chart-container.rightmenu .col1 .axis text {
-    font-size: 13px;
-    fill: #666;
+    font-size: 11px;
+    fill: #888;
 }
 .zoom-scatter-chart-container.rightmenu .col1 .objects {
     cursor:move;
@@ -3023,8 +3023,8 @@ color: #b94a48;
 
 .zoom-scatter-chart-container.rightmenu .col1 .label {
     font-size:11px;
-    fill:rgba(0,0,0,0.5);
-    shape-rendering:auto;
+    font-weight: normal;
+    fill: #555;
 }
 .zoom-scatter-chart-container.rightmenu .col1 rect.zoom {
     stroke: #3182BD;
