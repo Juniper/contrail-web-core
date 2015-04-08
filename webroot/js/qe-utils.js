@@ -1755,18 +1755,6 @@ function loadFlowResults(options, reqQueryObj, columnDisplay, fcGridDisplay) {
 				}
 			]
 		};
-        if(globalObj && globalObj.hasOwnProperty('webServerInfo') &&
-                    globalObj.webServerInfo.hasOwnProperty('disabledFeatures') &&
-                    globalObj['webServerInfo']['disabledFeatures']['disabled'].indexOf('mon_infra_underlay') == -1) {
-                    gridConfig.body.options.actionCell.push({
-                            title: 'Show Underlay Paths',
-                            iconClass: 'icon-edit',
-                            onClick: function(rowIndex){
-                                var dataItem = $('#' + options.elementId).data('contrailGrid')._grid.getDataItem(rowIndex);
-                                showUnderlayPaths(dataItem);
-                            }
-                        });
-                }
 	}
 	
 	$("#" + options.elementId).contrailGrid(gridConfig);
