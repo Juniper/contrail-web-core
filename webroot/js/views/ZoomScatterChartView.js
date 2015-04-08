@@ -164,7 +164,7 @@ define([
                 .attr("transform", function (d) {
                     return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                 })
-                .attr("opacity", "0.8")
+                .attr("opacity", "0.5")
                 .on("mouseover", function(d) {
                     var tooltipData = d,
                         selfOffset = $(this).offset();
@@ -420,18 +420,25 @@ define([
     };
 
     var getBubbleColor = function (val, array, maxColorFilterFields) {
-        return 'medium';
-        /*
-        if (val > (0.75 * maxColorFilterFields)) {
-            return array[0];
-        } else if (val > (0.50 * maxColorFilterFields)) {
-            return array[1];
-        } else if (val > (0.25 * maxColorFilterFields)) {
-            return array[2];
+        if(val == null) {
+            return 'default';
         } else {
-            return array[3];
+            return val;
         }
-        */
+    };
+
+    var computeBubbleColor = function (val, array, maxColorFilterFields) {
+        if (val > (0.9 * maxColorFilterFields)) {
+            return array[0];
+        } else if (val > (0.75 * maxColorFilterFields)) {
+            return array[1];
+        } else if (val > (0.50 * maxColorFilterFields)) {
+            return array[2];
+        } else if (val > (0.25 * maxColorFilterFields)) {
+            return array[3];
+        } else {
+            return array[4];
+        }
     };
 
     function getChartConfig(chartSelector, chartOptions) {
@@ -451,7 +458,7 @@ define([
             yField: 'y',
             forceX: chartOptions.forceX,
             forceY: chartOptions.forceY,
-            colorFilterFields: 'throughput',
+            colorFilterFields: 'color',
             titleKey: chartOptions.titleField,
             categoryKey: 'project',
             margin: margin,

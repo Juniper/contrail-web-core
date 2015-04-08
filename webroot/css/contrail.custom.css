@@ -2990,27 +2990,37 @@ color: #b94a48;
     transition:fill linear 0.5s;
     cursor:default;
 }
-.zoom-scatter-chart-container.rightmenu .col1 .high {
-    fill:#1f77b4;
-    color:#1f77b4;
+
+.zoom-scatter-chart-container.rightmenu .col1 .error {
+  fill: #d62728;
+  color: #d62728;
 }
+
+.zoom-scatter-chart-container.rightmenu .col1 .warning {
+  fill: #ff7f0e;
+  color: #ff7f0e;
+}
+
 .zoom-scatter-chart-container.rightmenu .col1 .medium {
-    /*'#6baed6' , '#ff7f0e', '#2ca02c', '#9e9ac8'*/
-    fill:#6baed6;
-    color:#6baed6;
+  fill: #6baed6;
+  color: #6baed6;
 }
-.zoom-scatter-chart-container.rightmenu .col1 .low {
-    fill:#ff7f0e;
-    color:#ff7f0e;
+
+.zoom-scatter-chart-container.rightmenu .col1 .okay {
+  fill: #2ca02c;
+  color: #2ca02c;
 }
-.zoom-scatter-chart-container.rightmenu .col1 .negative {
-    fill:#2ca02c;
-    color:#2ca02c;
+
+.zoom-scatter-chart-container.rightmenu .col1 .default {
+  fill: #1f77b4;
+  color: #1f77b4;
 }
+
 .zoom-scatter-chart-container.rightmenu .col1 .inactive {
-    fill:#9e9ac8;
-    opacity:0.15;
+  fill: #9e9ac8;
+  opacity: 0.15;
 }
+
 .zoom-scatter-chart-container.rightmenu .col1 .label {
     font-size:11px;
     fill:rgba(0,0,0,0.5);

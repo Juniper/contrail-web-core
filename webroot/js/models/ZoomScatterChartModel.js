@@ -41,7 +41,7 @@ define([
             return +d[modelConfig.colorFilterFields]
         });
 
-        self.classes = ['high', 'medium', 'low', 'negative'];
+        self.classes = ['error', 'warning', 'medium', 'okay', 'default'];
 
         self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(5)
                             .tickSize(-self.height)
