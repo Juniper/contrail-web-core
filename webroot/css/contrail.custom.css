@@ -2206,6 +2206,15 @@ color: #b94a48;
 .popover-tooltip.popover-tooltip-no-icon .popover-content .popover-info {
     margin-left: 5px;
 }
+.popover.popover-tooltip .overlapped-elements-dropdown {
+    margin: 0 3px;
+}
+.popover.popover-tooltip .overlapped-elements-dropdown.select2-container-active {
+    box-shadow: none;
+}
+.popover.popover-tooltip .overlapped-elements-dropdown.select2-container .select2-choice .select2-arrow {
+    display: none;
+}
 /* Tooltip styles for nvd3 tooltips*/
 .nvtooltip.nvtooltip-popover{
     padding: 0;
@@ -2225,15 +2234,6 @@ color: #b94a48;
 .nvtooltip .popover.popover-tooltip p {
     margin: 0;
     padding: 0;
-}
-.nvtooltip .popover.popover-tooltip .overlapped-elements-dropdown {
-    margin: 0 3px;
-}
-.nvtooltip .popover.popover-tooltip .overlapped-elements-dropdown.select2-container-active {
-    box-shadow: none;
-}
-.nvtooltip .popover.popover-tooltip .overlapped-elements-dropdown.select2-container .select2-choice .select2-arrow {
-    display: none;
 }
 
 /* Bootstrap Tooltips*/
@@ -2752,14 +2752,14 @@ color: #b94a48;
 }
 
 /* Zoomed Scatterchart */
-.zoomed-scatter-chart-container.colmask {
+.zoom-scatter-chart-container.colmask {
     position:relative;		/* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
     clear:both;
     float:left;
     width:100%;			/* width of whole page */
     overflow:hidden;	/* This chops off any overhanging divs */
 }
-.zoomed-scatter-chart-container.rightmenu .colleft {
+.zoom-scatter-chart-container.rightmenu .colleft {
     float:left;
     width:200%;
     margin-left:-45px;
@@ -2767,18 +2767,18 @@ color: #b94a48;
     right:100%;
     background:#fff;
 }
-.zoomed-scatter-chart-container.rightmenu .col1wrap {
+.zoom-scatter-chart-container.rightmenu .col1wrap {
     float:left;
     width:50%;
     position:relative;
     left:50%;
     padding-bottom:1em;
 }
-.zoomed-scatter-chart-container.rightmenu .col1 {
+.zoom-scatter-chart-container.rightmenu .col1 {
     margin:0 0 0 60px;
     overflow:hidden;
 }
-.zoomed-scatter-chart-container.rightmenu .col2 {
+.zoom-scatter-chart-container.rightmenu .col2 {
     float:right;
     width:35px;
     position:relative;
@@ -2930,26 +2930,26 @@ color: #b94a48;
 /*#chart {*/
     /*height:400px;*/
 /*}*/
-svg {
+.zoom-scatter-chart-container.rightmenu .col1 svg {
     position:relative;
 }
-rect {
+.zoom-scatter-chart-container.rightmenu .col1 rect {
     fill: transparent;
     shape-rendering: crispEdges;
 }
-.axis {
+.zoom-scatter-chart-container.rightmenu .col1 .axis {
 }
-.axis path,
-.axis line {
+.zoom-scatter-chart-container.rightmenu .col1 .axis path,
+.zoom-scatter-chart-container.rightmenu .col1 .axis line {
     fill: none;
     stroke: rgba(0,0,0,0.1);
     shape-rendering: crispEdges;
 }
-.axis text {
+.zoom-scatter-chart-container.rightmenu .col1 .axis text {
     font-size: 13px;
     fill: #666;
 }
-.objects {
+.zoom-scatter-chart-container.rightmenu .col1 .objects {
     cursor:move;
 }
 /*.objects:hover .lineMed {
@@ -2957,62 +2957,62 @@ rect {
     stroke-dasharray:5,5;
     stroke-width:3px;
 }*/
-.axisLine {
+.zoom-scatter-chart-container.rightmenu .col1 .axisLine {
     shape-rendering: crispEdges;
     stroke:rgba(0,0,0,0.2);
     stroke-width:2px;
     fill:none;
 }
-.annotationsOn .medianLine {
+.zoom-scatter-chart-container.rightmenu .col1 .annotationsOn .medianLine {
     shape-rendering: crispEdges;
     stroke:rgba(1,71,87,0.4);
     stroke-width:2px;
     stroke-dasharray:10,7;
     fill:none;
 }
-.annotationsOn .med {
+.zoom-scatter-chart-container.rightmenu .col1 .annotationsOn .med {
     -moz-transition: fill linear 0.2s;
     -webkit-transition: fill linear 0.2s;
     -o-transition: fill linear 0.2s;
     transition: fill linear 0.2s;
 }
-.annotationsOn .med:hover {
+.zoom-scatter-chart-container.rightmenu .col1 .annotationsOn .med:hover {
     fill:rgba(1,71,87,0.1);
 }
-polygon {
+.zoom-scatter-chart-container.rightmenu .col1 polygon {
     -moz-transition:fill linear 0.5s;
     -webkit-transition:fill linear 0.5s;
     -o-transition:fill linear 0.5s;
     transition:fill linear 0.5s;
     cursor:default;
 }
-.high {
+.zoom-scatter-chart-container.rightmenu .col1 .high {
     fill:#1f77b4;
     color:#1f77b4;
 }
-.medium {
+.zoom-scatter-chart-container.rightmenu .col1 .medium {
     /*'#6baed6' , '#ff7f0e', '#2ca02c', '#9e9ac8'*/
     fill:#6baed6;
     color:#6baed6;
 }
-.low {
+.zoom-scatter-chart-container.rightmenu .col1 .low {
     fill:#ff7f0e;
     color:#ff7f0e;
 }
-.negative {
+.zoom-scatter-chart-container.rightmenu .col1 .negative {
     fill:#2ca02c;
     color:#2ca02c;
 }
-.inactive {
+.zoom-scatter-chart-container.rightmenu .col1 .inactive {
     fill:#9e9ac8;
     opacity:0.15;
 }
-.label {
+.zoom-scatter-chart-container.rightmenu .col1 .label {
     font-size:11px;
     fill:rgba(0,0,0,0.5);
     shape-rendering:auto;
 }
-rect.zoom {
+.zoom-scatter-chart-container.rightmenu .col1 rect.zoom {
     stroke: #3128bd;
     fill-opacity: 0.5;
 }

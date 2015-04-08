@@ -60,7 +60,11 @@ define([
                 data = dataListModel.getFilteredItems(),
                 error = dataListModel.error,
                 chartModel = new ZoomScatterChartModel(data, chartConfig),
-                zm = chartModel.zoomBehavior.on("zoom", getZoomFn(self, chartModel, chartConfig));
+                chartData = chartModel.data,
+                zm = chartModel.zoomBehavior.on("zoom", getZoomFn(self, chartModel, chartConfig)),
+                tooltipConfigCB = chartOptions.tooltipConfigCB,
+                clickCB = chartOptions.clickCB,
+                overlapMap = getOverlapMap(chartData);
 
             self.zm = zm;
 
@@ -153,7 +157,7 @@ define([
                 .attr("height", height);
 
             viewObjects.selectAll("circle")
-                .data(chartModel.data)
+                .data(chartData)
                 .enter()
                 .append("circle")
                 .attr("r", chartConfig.circleRadius)
@@ -163,7 +167,15 @@ define([
                 .attr("transform", function (d) {
                     return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                 })
-                .attr("opacity", "0.8");
+                .attr("opacity", "0.8")
+                .on("mouseover", function(d) {
+                    var tooltipData = d,
+                        selfOffset = $(this).offset();
+                    constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
+                })
+                .on("click", function(d) {
+                    clickCB(d);
+                });
 
             svg.append("text")
                 .attr("class", "x label")
@@ -255,6 +267,146 @@ define([
                 }
             }
         }
+    };
+
+    var getOverlapMap = function(data){
+        var tempMap = {},
+            finalOverlapMap = {};
+        $.each(data, function(index, value){
+            var key = (value['x'] +','+ value['y']);
+            if (key in finalOverlapMap){
+                finalOverlapMap[key].push(index);
+            } else{
+                if(key in tempMap){
+                    tempMap[key].push(index);
+                    finalOverlapMap[key] = tempMap[key];
+                    delete tempMap[key];
+                } else {
+                    var overlapArray = [];
+                    overlapArray.push(index);
+                    tempMap[key] = overlapArray;
+                }
+            }
+        });
+        return finalOverlapMap;
+    };
+
+    var generateTooltipHTML = function(tooltipConfig) {
+        var tooltipElementTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP),
+            tooltipElementTitleTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP_TITLE),
+            tooltipElementContentTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP_CONTENT),
+            tooltipElementObj, tooltipElementTitleObj, tooltipElementContentObj;
+
+        tooltipConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_ELEMENT_TOOLTIP, tooltipConfig);
+
+        tooltipElementObj = $(tooltipElementTemplate(tooltipConfig)),
+            tooltipElementTitleObj = $(tooltipElementTitleTemplate(tooltipConfig.title)),
+            tooltipElementContentObj = $(tooltipElementContentTemplate(tooltipConfig.content));
+
+        tooltipElementObj.find('.popover-title').append(tooltipElementTitleObj);
+        tooltipElementObj.find('.popover-content').append(tooltipElementContentObj);
+
+        return tooltipElementObj;
+    };
+
+    var onDocumentClicktHandler = function(e) {
+        if(!$(e.target).closest('.zoomed-scatter-popover-tooltip').length) {
+            $('.zoomed-scatter-popover-tooltip').remove();
+        }
+    };
+
+    var destroyTooltip = function(tooltipElementObj, overlappedElementsDropdownElement) {
+        if(contrail.checkIfExist(overlappedElementsDropdownElement) && contrail.checkIfExist(overlappedElementsDropdownElement.data('contrailDropdown'))) {
+            overlappedElementsDropdownElement.data('contrailDropdown').destroy();
+        }
+        if(tooltipElementObj !== null) {
+            $(tooltipElementObj).remove();
+        } else {
+            $('.zoomed-scatter-popover-tooltip').remove();
+        }
+
+    };
+
+    var constructTooltip = function(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData) {
+        var tooltipConfig = tooltipConfigCB(tooltipData),
+            tooltipElementObj = generateTooltipHTML(tooltipConfig),
+            tooltipElementKey = tooltipData['x'] + ',' + tooltipData['y'],
+            overlappedElementsDropdownElement = null;
+
+        destroyTooltip(null, overlappedElementsDropdownElement);
+        $('body').append(tooltipElementObj);
+        tooltipElementObj.addClass('zoomed-scatter-popover-tooltip');
+
+        if (tooltipElementKey in overlapMap){
+            var overlappedElementData = $.map(overlapMap[tooltipElementKey], function(overlapMapValue, overlapMapKey) {
+                var overlappedElementName = chartData[overlapMapValue].name;
+                return {id: overlapMapValue, text: overlappedElementName}
+            });
+
+            $(tooltipElementObj).find('.popover-tooltip-footer').append('<div class="overlapped-elements-dropdown"></div>');
+            overlappedElementsDropdownElement = $(tooltipElementObj).find('.overlapped-elements-dropdown');
+
+            overlappedElementsDropdownElement.contrailDropdown({
+                dataTextField: 'text',
+                dataValueField: 'id',
+                placeholder: 'View more',
+                ignoreFirstValue: true,
+                dropdownCssClass: 'min-width-150',
+                data: overlappedElementData,
+                change: function(e) {
+                    var selectedTooltipKey = e.added.id,
+                        selectedTooltipData = chartData[selectedTooltipKey];
+
+                    $(tooltipElementObj).remove();
+                    constructTooltip(selfOffset, selectedTooltipData, tooltipConfigCB, overlapMap, chartData);
+                }
+            });
+        }
+
+        var tooltipWidth = tooltipElementObj.width(),
+            tooltipHeight = tooltipElementObj.height(),
+            windowWidth = $(document).width(),
+            tooltipPositionTop = 0,
+            tooltipPositionLeft = selfOffset.left;
+
+        if(selfOffset.top > tooltipHeight / 2) {
+            tooltipPositionTop = selfOffset.top - tooltipHeight / 2;
+        }
+
+        if((windowWidth - selfOffset.left) < tooltipWidth) {
+            tooltipPositionLeft = selfOffset.left - tooltipWidth -10;
+        } else {
+            tooltipPositionLeft += 20;
+        }
+
+        $(tooltipElementObj).css({
+            top: tooltipPositionTop,
+            left: tooltipPositionLeft
+        });
+
+        $(tooltipElementObj).find('.popover-tooltip-footer').find('.btn')
+            .off('click')
+            .on('click', function() {
+                var actionKey = $(this).data('action'),
+                    actionCallback = tooltipConfig.content.actions[actionKey].callback;
+
+                destroyTooltip(tooltipElementObj, overlappedElementsDropdownElement);
+                actionCallback(tooltipData);
+            });
+
+        $(tooltipElementObj).find('.popover-remove')
+            .off('click')
+            .on('click', function(e) {
+                destroyTooltip(tooltipElementObj, overlappedElementsDropdownElement);
+            });
+
+        $(document)
+            .off('click', onDocumentClicktHandler)
+            .on('click', onDocumentClicktHandler);
+
+        $(window).on('popstate', function(event) {
+            $('.zoomed-scatter-popover-tooltip').remove();
+        });
     };
 
     var getBubbleColor = function (val, array, maxColorFilterFields) {

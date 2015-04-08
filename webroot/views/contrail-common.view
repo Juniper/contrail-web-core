@@ -1128,7 +1128,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-template">
-    <div class="zoomed-scatter-chart-container colmask rightmenu">
+    <div class="zoom-scatter-chart-container colmask rightmenu">
         <div class="colleft">
             <div class="col1wrap">
                 <div class="col1 chart-container">
