@@ -1669,7 +1669,8 @@ a.disabled-link i {
 }
 
 .separator-top {
-    border-top : 1px solid #ddd;
+  /*  border-top : 1px solid #ddd;*/
+  background-color:#f6f9fa;
 }
 p.error {
 color: #b94a48;
@@ -3187,4 +3188,12 @@ color: #b94a48;
 
 .clearfix {
     *zoom: 1;
+}
+
+.popup-accordion{
+    width:85%;
+}
+.popup-accordion ol{
+    height:200px!important;
+    overflow-y:auto;
 }
