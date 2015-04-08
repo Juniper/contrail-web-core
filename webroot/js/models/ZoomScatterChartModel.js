@@ -45,11 +45,11 @@ define([
 
         self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(5)
                             .tickSize(-self.height)
-                            .tickFormat(d3.format(".02f"));
+                            .tickFormat(contrail.checkIfFunction(modelConfig.xLabelFormat) ? modelConfig.xLabelFormat : d3.format("d"));
 
         self.yAxis = d3.svg.axis().scale(self.yScale).orient("left").ticks(5)
                             .tickSize(-self.width)
-                            .tickFormat(d3.format(".02f"));
+                            .tickFormat(contrail.checkIfFunction(modelConfig.yLabelFormat) ? modelConfig.yLabelFormat : d3.format("d"));
 
         self.xMed = median(_.map(chartData, function (d) {
             return d[modelConfig.xField];

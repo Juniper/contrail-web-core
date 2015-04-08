@@ -7,7 +7,7 @@ define([
     'backbone',
     'js/models/ZoomScatterChartModel',
     'contrail-list-model',
-    'js/views/ControlPanelView.js'
+    'js/views/ControlPanelView'
 ], function (_, Backbone, ZoomScatterChartModel, ContrailListModel, ControlPanelView) {
     var ZoomScatterChartView = Backbone.View.extend({
         renderChartInProgress: false,
@@ -445,6 +445,8 @@ define([
             minScale: 1 / 5,
             yLabel: chartOptions.yLabel,
             xLabel: chartOptions.xLabel,
+            yLabelFormat: chartOptions.yLabelFormat,
+            xLabelFormat: chartOptions.xLabelFormat,
             xField: 'x',
             yField: 'y',
             forceX: chartOptions.forceX,
