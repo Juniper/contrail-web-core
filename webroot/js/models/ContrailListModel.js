@@ -22,7 +22,7 @@ define([
         var childDefaultCacheConfig = {
             cacheConfig: {
                 cacheTimeout: 0,
-                loadOnTimeout: false
+                loadOnTimeout: true
             }
         };
 
@@ -478,7 +478,7 @@ define([
     function setId4Idx(data, dis) {
         var offset = dis._idOffset;
         // Setting id for each data-item; Required to instantiate data-view.
-        if (data.length > 0) {
+        if (data != null && data.length > 0) {
             $.each(data, function (key, val) {
                 if (!contrail.checkIfExist(val.cgrid)) {
                     data[key].cgrid = 'id_' + (key + offset);
