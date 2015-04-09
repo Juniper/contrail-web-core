@@ -5,61 +5,60 @@
 define([
     'underscore'
 ], function (_) {
-    var ZoomScatterChartModel = function(rawData, modelConfig) {
-        var self = this, chartData;
-
-        var forceX = modelConfig.forceX,
-            forceY = modelConfig.forceY;
+    var ZoomScatterChartModel = function (rawData, modelConfig) {
+        var self = this, forceX = modelConfig.forceX,
+            forceY = modelConfig.forceY, margin = modelConfig.margin,
+            chartData, d3Scale;
 
         self.data = modelConfig['dataParser'](rawData);
         chartData = self.data;
 
         self.sizeMinMax = getSizeMinMax(chartData);
 
-        var d3Scale = d3.scale.linear().range([6, 10]).domain(self.sizeMinMax);
+        d3Scale = d3.scale.linear().range([6, 10]).domain(self.sizeMinMax);
 
         $.each(chartData, function (idx, chartDataPoint) {
             chartDataPoint['size'] = contrail.handleIfNull(d3Scale(chartDataPoint['size'], 7));
         });
 
-        self.width = modelConfig['width'];
-        self.height = modelConfig['height'];
+        self.width = modelConfig['width'] - margin.left - margin.right;
+        self.height = modelConfig['height'] - margin.top - margin.bottom;
 
         self.xMax = Math.ceil(d3.max(chartData, function (d) {
-                    return +d[modelConfig.xField];
-                }) * 1.1);
+            return +d[modelConfig.xField];
+        }) * 1.1);
 
-        if (self.xMax <=0)
+        if (self.xMax <= 0)
             self.xMax = 1;
 
         self.xMin = 0;
 
         self.yMax = Math.ceil(d3.max(chartData, function (d) {
-                    return +d[modelConfig.yField];
-                }) * 1.1);
+            return +d[modelConfig.yField];
+        }) * 1.1);
 
-        if (self.yMax <=0)
+        if (self.yMax <= 0)
             self.yMax = 1;
 
         self.yMin = 0;
 
 
-        if(forceX) {
-            if(self.xMin > forceX[0]) {
+        if (forceX) {
+            if (self.xMin > forceX[0]) {
                 self.xMin = forceX[0];
             }
 
-            if(self.xMax < forceX[1]) {
+            if (self.xMax < forceX[1]) {
                 self.xMax = forceX[1];
             }
         }
 
-        if(forceY) {
-            if(self.yMin > forceY[0]) {
+        if (forceY) {
+            if (self.yMin > forceY[0]) {
                 self.yMin = forceY[0];
             }
 
-            if(self.yMax < forceY[1]) {
+            if (self.yMax < forceY[1]) {
                 self.yMax = forceY[1];
             }
         }
@@ -76,11 +75,11 @@ define([
         self.classes = ['error', 'warning', 'medium', 'okay', 'default'];
 
         self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(10)
-                            .tickSize(-self.height)
-                            .tickFormat(contrail.checkIfFunction(modelConfig.xLabelFormat) ? modelConfig.xLabelFormat : d3.format("d"));
+            .tickSize(-self.height)
+            .tickFormat(contrail.checkIfFunction(modelConfig.xLabelFormat) ? modelConfig.xLabelFormat : d3.format("d"));
         self.yAxis = d3.svg.axis().scale(self.yScale).orient("left").ticks(5)
-                            .tickSize(-self.width)
-                            .tickFormat(contrail.checkIfFunction(modelConfig.yLabelFormat) ? modelConfig.yLabelFormat : d3.format("d"))
+            .tickSize(-self.width)
+            .tickFormat(contrail.checkIfFunction(modelConfig.yLabelFormat) ? modelConfig.yLabelFormat : d3.format("d"))
 
         self.xMed = median(_.map(chartData, function (d) {
             return d[modelConfig.xField];

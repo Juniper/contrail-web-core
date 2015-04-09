@@ -21,7 +21,7 @@ define([
 
             $(selector).append(loadingSpinnerTemplate);
 
-            if(self.model == null && viewConfig['modelConfig'] != null) {
+            if (self.model == null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
 
@@ -36,21 +36,32 @@ define([
 
                 if (viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function () {
-                        if(!this.renderChartInProgress) {
+                        if (!this.renderChartInProgress) {
                             //TODO: We should render chart less often
                             self.renderChart(selector, viewConfig, self.model);
                         }
                     });
                 }
+
+                $(selector).bind("refresh", function () {
+                    $(selector).empty();
+                    self.renderChart(selector, viewConfig, self.model);
+                });
+
+                nv.utils.windowResize(function () {
+                    $(selector).empty();
+                    self.renderChart(selector, viewConfig, self.model);
+                });
             }
         },
 
         renderChart: function (selector, viewConfig, dataListModel) {
+            if (!($(selector).is(':visible'))) {
+                return;
+            }
+
             this.renderChartInProgress = true;
-
-            var zoomedScatterChartTemplate = contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART);
-
-            $(selector).html(zoomedScatterChartTemplate);
+            $(selector).html(contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART));
 
             var self = this,
                 chartSelector = $(selector).find('.chart-container'),
@@ -82,68 +93,74 @@ define([
 
             var svg, viewObjects,
                 margin = chartConfig['margin'],
-                width = chartConfig['width'], height = chartConfig['height'];
+                width = chartModel.width,
+                height = chartModel.height;
 
             svg = d3.select($(chartSelector)[0]).append("svg")
-                    .attr("id", "scatter")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
+                .attr("id", "scatter")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
                 .append("g")
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                    .call(self.zm)
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .call(self.zm)
                 .append("g")
-                    .on("mousedown", function() {
-                        if (!self.zoomBySelection) return;
-                        var e = this,
-                            origin = d3.mouse(e),
-                            rect = svg.append("rect").attr("class", "zoom");
-                        d3.select("body").classed("noselect", true);
-                        origin[0] = Math.max(0, Math.min(width, origin[0]));
-                        origin[1] = Math.max(0, Math.min(height, origin[1]));
-                        d3.select(window)
-                            .on("mousemove.zoomRect", function() {
-                                var m = d3.mouse(e);
-                                m[0] = Math.max(0, Math.min(width, m[0]));
-                                m[1] = Math.max(0, Math.min(height, m[1]));
-                                rect.attr("x", Math.min(origin[0], m[0]))
-                                    .attr("y", Math.min(origin[1], m[1]))
-                                    .attr("width", Math.abs(m[0] - origin[0]))
-                                    .attr("height", Math.abs(m[1] - origin[1]));
-                            })
-                            .on("mouseup.zoomRect", function() {
-                                d3.select(window).on("mousemove.zoomRect", null).on("mouseup.zoomRect", null);
-                                d3.select("body").classed("noselect", false);
-                                var m = d3.mouse(e);
-                                m[0] = Math.max(0, Math.min(width, m[0]));
-                                m[1] = Math.max(0, Math.min(height, m[1]));
-                                if (m[0] !== origin[0] && m[1] !== origin[1]) {
-                                    chartModel.zoomBehavior.x(
-                                            chartModel.xScale.domain([origin[0], m[0]].map(chartModel.xScale.invert).sort(function(a,b) { return a - b;}))
-                                        )
-                                        .y(
-                                            chartModel.yScale.domain([origin[1], m[1]].map(chartModel.yScale.invert).sort(function(a,b) { return a - b;}))
-                                        );
-                                }
-                                rect.remove();
+                .on("mousedown", function () {
+                    if (!self.zoomBySelection) return;
+                    var e = this,
+                        origin = d3.mouse(e),
+                        rect = svg.append("rect").attr("class", "zoom");
+                    d3.select("body").classed("noselect", true);
+                    origin[0] = Math.max(0, Math.min(width, origin[0]));
+                    origin[1] = Math.max(0, Math.min(height, origin[1]));
+                    d3.select(window)
+                        .on("mousemove.zoomRect", function () {
+                            var m = d3.mouse(e);
+                            m[0] = Math.max(0, Math.min(width, m[0]));
+                            m[1] = Math.max(0, Math.min(height, m[1]));
+                            rect.attr("x", Math.min(origin[0], m[0]))
+                                .attr("y", Math.min(origin[1], m[1]))
+                                .attr("width", Math.abs(m[0] - origin[0]))
+                                .attr("height", Math.abs(m[1] - origin[1]));
+                        })
+                        .on("mouseup.zoomRect", function () {
+                            d3.select(window).on("mousemove.zoomRect", null).on("mouseup.zoomRect", null);
+                            d3.select("body").classed("noselect", false);
+                            var m = d3.mouse(e);
+                            m[0] = Math.max(0, Math.min(width, m[0]));
+                            m[1] = Math.max(0, Math.min(height, m[1]));
+                            if (m[0] !== origin[0] && m[1] !== origin[1]) {
+                                chartModel.zoomBehavior.x(
+                                    chartModel.xScale.domain([origin[0], m[0]].map(chartModel.xScale.invert).sort(function (a, b) {
+                                        return a - b;
+                                    }))
+                                )
+                                    .y(
+                                    chartModel.yScale.domain([origin[1], m[1]].map(chartModel.yScale.invert).sort(function (a, b) {
+                                        return a - b;
+                                    }))
+                                );
+                            }
+                            rect.remove();
 
-                                svg.select(".x.axis")
-                                    .call(chartModel.xAxis)
-                                    .selectAll("text")
-                                        .attr("x", 0)
-                                        .attr("y", 8);
+                            svg.select(".x.axis")
+                                .call(chartModel.xAxis)
+                                .selectAll("text")
+                                .attr("x", 0)
+                                .attr("y", 8);
 
-                                svg.select(".y.axis")
-                                    .call(chartModel.yAxis)
-                                    .selectAll("text")
-                                        .attr("x", -8)
-                                        .attr("y", 0);
+                            svg.select(".y.axis")
+                                .call(chartModel.yAxis)
+                                .selectAll("text")
+                                .attr("x", -8)
+                                .attr("y", 0);
 
-                                svg.selectAll("circle").attr("transform", function (d) {
-                                    return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
-                                });
-                            }, true);
-                        d3.event.stopPropagation();
-                    });
+                            svg.selectAll("circle").attr("transform", function (d) {
+                                return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                            });
+                        }, true);
+                    d3.event.stopPropagation();
+                });
+
             svg.append("rect")
                 .attr("width", width)
                 .attr("height", height);
@@ -154,15 +171,15 @@ define([
                 .attr("transform", "translate(0," + height + ")")
                 .call(chartModel.xAxis)
                 .selectAll("text")
-                    .attr("x", 0)
-                    .attr("y", 8);
+                .attr("x", 0)
+                .attr("y", 8);
 
             svg.append("g")
                 .attr("class", "y axis")
                 .call(chartModel.yAxis)
                 .selectAll("text")
-                    .attr("x", -8)
-                    .attr("y", 0);
+                .attr("x", -8)
+                .attr("y", 0);
 
             viewObjects = svg.append("svg")
                 .attr("class", "objects")
@@ -183,12 +200,12 @@ define([
                     return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                 })
                 .attr("opacity", "0.5")
-                .on("mouseover", function(d) {
+                .on("mouseover", function (d) {
                     var tooltipData = d,
                         selfOffset = $(this).offset();
                     constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
                 })
-                .on("click", function(d) {
+                .on("click", function (d) {
                     clickCB(d);
                 });
 
@@ -216,9 +233,9 @@ define([
         }
     });
 
-    var getZoomFn = function(chartView, chartModel, chartConfig) {
+    var getZoomFn = function (chartView, chartModel, chartConfig) {
         return function () {
-             //Restrict translation to 0 value
+            //Restrict translation to 0 value
             var reset_s = 0;
             if ((chartModel.xScale.domain()[1] - chartModel.xScale.domain()[0]) >= (chartModel.xMax - chartModel.xMin)) {
                 chartModel.zoomBehavior.x(chartModel.xScale.domain([chartModel.xMin, chartModel.xMax]));
@@ -229,9 +246,9 @@ define([
                 reset_s += 1;
             }
             if (reset_s == 2) {
-            // Both axes are full resolution. Reset.
+                // Both axes are full resolution. Reset.
                 chartModel.zoomBehavior.scale(1);
-                chartModel.zoomBehavior.translate([0,0]);
+                chartModel.zoomBehavior.translate([0, 0]);
             }
             else {
                 if (chartModel.xScale.domain()[0] < chartModel.xMin) {
@@ -253,14 +270,14 @@ define([
             chartView.svg
                 .select(".x.axis").call(chartModel.xAxis)
                 .selectAll("text")
-                    .attr("x", 0)
-                    .attr("y", 8);
+                .attr("x", 0)
+                .attr("y", 8);
 
             chartView.svg
                 .select(".y.axis").call(chartModel.yAxis)
                 .selectAll("text")
-                    .attr("x", -8)
-                    .attr("y", 0);
+                .attr("x", -8)
+                .attr("y", 0);
 
             chartView.svg.selectAll("circle").attr("transform", function (d) {
                 return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
@@ -268,7 +285,7 @@ define([
         };
     };
 
-    var initZoomEvents = function(controlPanelSelector, chartView, chartModel, chartConfig) {
+    var initZoomEvents = function (controlPanelSelector, chartView, chartModel, chartConfig) {
         var zm = chartView.zm,
             zoomFn = getZoomFn(chartView, chartModel, chartConfig);
 
@@ -284,7 +301,7 @@ define([
         $(controlPanelSelector).find('.zoom-out').on('click', function (event) {
             event.preventDefault();
             if (zm.scale() > chartConfig.minScale) {
-                zm.scale(zm.scale() * (100/125));
+                zm.scale(zm.scale() * (100 / 125));
                 //zm.translate([translateChart(0, 10), translateChart(1, 350)]);
                 zoomFn();
             }
@@ -320,12 +337,12 @@ define([
         };
     };
 
-    var getControlPanelConfig = function(chartView, chartModel, chartConfig) {
+    var getControlPanelConfig = function (chartView, chartModel, chartConfig) {
         return {
             default: {
                 zoom: {
                     enabled: true,
-                    events: function(controlPanelSelector) {
+                    events: function (controlPanelSelector) {
                         initZoomEvents(controlPanelSelector, chartView, chartModel, chartConfig)
                     }
                 }
@@ -335,8 +352,8 @@ define([
                     iconClass: 'icon-crop',
                     title: 'Zoom By Selection',
                     events: {
-                        click: function() {
-                            return function(event) {
+                        click: function () {
+                            return function (event) {
                                 chartView.zoomBySelection = !chartView.zoomBySelection;
                                 $(this).toggleClass('active');
                             }
@@ -347,15 +364,15 @@ define([
         }
     };
 
-    var getOverlapMap = function(data){
+    var getOverlapMap = function (data) {
         var tempMap = {},
             finalOverlapMap = {};
-        $.each(data, function(index, value){
-            var key = (value['x'] +','+ value['y']);
-            if (key in finalOverlapMap){
+        $.each(data, function (index, value) {
+            var key = (value['x'] + ',' + value['y']);
+            if (key in finalOverlapMap) {
                 finalOverlapMap[key].push(index);
-            } else{
-                if(key in tempMap){
+            } else {
+                if (key in tempMap) {
                     tempMap[key].push(index);
                     finalOverlapMap[key] = tempMap[key];
                     delete tempMap[key];
@@ -369,7 +386,7 @@ define([
         return finalOverlapMap;
     };
 
-    var generateTooltipHTML = function(tooltipConfig) {
+    var generateTooltipHTML = function (tooltipConfig) {
         var tooltipElementTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP),
             tooltipElementTitleTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP_TITLE),
             tooltipElementContentTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP_CONTENT),
@@ -387,17 +404,17 @@ define([
         return tooltipElementObj;
     };
 
-    var onDocumentClicktHandler = function(e) {
-        if(!$(e.target).closest('.zoomed-scatter-popover-tooltip').length) {
+    var onDocumentClicktHandler = function (e) {
+        if (!$(e.target).closest('.zoomed-scatter-popover-tooltip').length) {
             $('.zoomed-scatter-popover-tooltip').remove();
         }
     };
 
-    var destroyTooltip = function(tooltipElementObj, overlappedElementsDropdownElement) {
-        if(contrail.checkIfExist(overlappedElementsDropdownElement) && contrail.checkIfExist(overlappedElementsDropdownElement.data('contrailDropdown'))) {
+    var destroyTooltip = function (tooltipElementObj, overlappedElementsDropdownElement) {
+        if (contrail.checkIfExist(overlappedElementsDropdownElement) && contrail.checkIfExist(overlappedElementsDropdownElement.data('contrailDropdown'))) {
             overlappedElementsDropdownElement.data('contrailDropdown').destroy();
         }
-        if(tooltipElementObj !== null) {
+        if (tooltipElementObj !== null) {
             $(tooltipElementObj).remove();
         } else {
             $('.zoomed-scatter-popover-tooltip').remove();
@@ -405,7 +422,7 @@ define([
 
     };
 
-    var constructTooltip = function(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData) {
+    var constructTooltip = function (selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData) {
         var tooltipConfig = tooltipConfigCB(tooltipData),
             tooltipElementObj = generateTooltipHTML(tooltipConfig),
             tooltipElementKey = tooltipData['x'] + ',' + tooltipData['y'],
@@ -415,8 +432,8 @@ define([
         $('body').append(tooltipElementObj);
         tooltipElementObj.addClass('zoomed-scatter-popover-tooltip');
 
-        if (tooltipElementKey in overlapMap){
-            var overlappedElementData = $.map(overlapMap[tooltipElementKey], function(overlapMapValue, overlapMapKey) {
+        if (tooltipElementKey in overlapMap) {
+            var overlappedElementData = $.map(overlapMap[tooltipElementKey], function (overlapMapValue, overlapMapKey) {
                 var overlappedElementName = chartData[overlapMapValue].name;
                 return {id: overlapMapValue, text: overlappedElementName}
             });
@@ -431,7 +448,7 @@ define([
                 ignoreFirstValue: true,
                 dropdownCssClass: 'min-width-150',
                 data: overlappedElementData,
-                change: function(e) {
+                change: function (e) {
                     var selectedTooltipKey = e.added.id,
                         selectedTooltipData = chartData[selectedTooltipKey];
 
@@ -447,12 +464,12 @@ define([
             tooltipPositionTop = 0,
             tooltipPositionLeft = selfOffset.left;
 
-        if(selfOffset.top > tooltipHeight / 2) {
+        if (selfOffset.top > tooltipHeight / 2) {
             tooltipPositionTop = selfOffset.top - tooltipHeight / 2;
         }
 
-        if((windowWidth - selfOffset.left) < tooltipWidth) {
-            tooltipPositionLeft = selfOffset.left - tooltipWidth -10;
+        if ((windowWidth - selfOffset.left) < tooltipWidth) {
+            tooltipPositionLeft = selfOffset.left - tooltipWidth - 10;
         } else {
             tooltipPositionLeft += 20;
         }
@@ -464,7 +481,7 @@ define([
 
         $(tooltipElementObj).find('.popover-tooltip-footer').find('.btn')
             .off('click')
-            .on('click', function() {
+            .on('click', function () {
                 var actionKey = $(this).data('action'),
                     actionCallback = tooltipConfig.content.actions[actionKey].callback;
 
@@ -474,7 +491,7 @@ define([
 
         $(tooltipElementObj).find('.popover-remove')
             .off('click')
-            .on('click', function(e) {
+            .on('click', function (e) {
                 destroyTooltip(tooltipElementObj, overlappedElementsDropdownElement);
             });
 
@@ -482,13 +499,13 @@ define([
             .off('click', onDocumentClicktHandler)
             .on('click', onDocumentClicktHandler);
 
-        $(window).on('popstate', function(event) {
+        $(window).on('popstate', function (event) {
             $('.zoomed-scatter-popover-tooltip').remove();
         });
     };
 
     var getBubbleColor = function (val, array, maxColorFilterFields) {
-        if(val == null) {
+        if (val == null) {
             return 'default';
         } else {
             return val;
@@ -509,10 +526,10 @@ define([
         }
     };
 
-    function getChartConfig(chartSelector, chartOptions) {
+    function getChartConfig(chartSelector, chartOptions, chartSize) {
         var margin = {top: 20, right: 5, bottom: 50, left: 75},
-            width = $(chartSelector).width() - margin.left - margin.right,
-            height = 275 - margin.top - margin.bottom;
+            width = $(chartSelector).width(),
+            height = 275;
 
         var chartViewConfig = {
             circleRadius: 7.0,
@@ -598,19 +615,6 @@ define([
             filter();
             $('#navListContainer').slideUp();
             nla.prop("checked", false);
-        });
-
-        // nvd3 method for dynamic rendering of chart on window resize
-        nv.utils.windowResize(function () {
-            var container = d3.select('#chart');
-            var svg = container.select('svg');
-            var aspect = svg.attr("width") / svg.attr("height");
-            var targetWidth = parseInt(container.style('width'));
-            svg.attr("width", targetWidth);
-            svg.attr("height", Math.round(targetWidth / aspect));
-            $('#chart').empty();
-            scatter();
-
         });
     };
 
