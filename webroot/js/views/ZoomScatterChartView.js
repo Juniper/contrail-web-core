@@ -173,7 +173,9 @@ define([
                 .data(chartData)
                 .enter()
                 .append("circle")
-                .attr("r", chartConfig.circleRadius)
+                .attr("r", function (d) {
+                    return d['size'];
+                })
                 .attr("class", function (d) {
                     return getBubbleColor(d[chartConfig.colorFilterFields], chartModel.classes, chartModel.maxColorFilterFields);
                 })

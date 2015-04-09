@@ -11,6 +11,14 @@ define([
         self.data = modelConfig['dataParser'](rawData);
         chartData = self.data;
 
+        self.sizeMinMax = getSizeMinMax(chartData);
+
+        var d3Scale = d3.scale.linear().range([6, 10]).domain(self.sizeMinMax);
+
+        $.each(chartData, function (idx, chartDataPoint) {
+            chartDataPoint['size'] = contrail.handleIfNull(d3Scale(chartDataPoint['size'], 7));
+        });
+
         self.width = modelConfig['width'];
         self.height = modelConfig['height'];
 
@@ -72,6 +80,16 @@ define([
         else
             return (parseFloat(values[half - 1]) + parseFloat(values[half])) / 2.0;
     };
+
+    function getSizeMinMax(chartData) {
+        //Merge the data values array if there are multiple categories plotted in chart, to get min/max values
+        var sizeMinMax, dValues;
+
+        dValues = flattenList(chartData);
+
+        sizeMinMax = getBubbleSizeRange(dValues);
+        return sizeMinMax;
+    }
 
     return ZoomScatterChartModel;
 });
