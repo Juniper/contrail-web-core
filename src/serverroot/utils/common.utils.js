@@ -1969,6 +1969,31 @@ function findAllPathsInEdgeGraph (graph, source, dest)
     return validPaths;
 }
 
+/**
+ * Get the value of a property inside a json object with a given path
+ */
+function getValueByJsonPath(obj,pathStr,defValue) {
+    try {
+    	var currObj = obj;
+        var pathArr = pathStr.split(';');
+        var arrLength = pathArr.length;
+        for(var i=0;i<arrLength;i++) {
+            if(currObj[pathArr[i]] != null) {
+                currObj = currObj[pathArr[i]];
+            } else
+                return defValue;
+        }
+        if(currObj instanceof Array)
+            return cloneObj(currObj);
+        else if(typeof(currObj) == "object")
+            return cloneObj(currObj);
+        else
+            return currObj;
+    } catch(e) {
+        return defValue;
+    }
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -2026,4 +2051,4 @@ exports.convertApiServerUUIDtoKeystoneUUID = convertApiServerUUIDtoKeystoneUUID;
 exports.getIPRangeLen = getIPRangeLen;
 exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
 exports.isSubArray = isSubArray;
-
+exports.getValueByJsonPath = getValueByJsonPath;
