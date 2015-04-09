@@ -275,8 +275,8 @@ define([
         $(controlPanelSelector).find('.zoom-in').on('click', function (event) {
             event.preventDefault();
             if (zm.scale() < chartConfig.maxScale) {
-                zm.translate([translateChart(0, -10), translateChart(1, -350)]);
-                zm.scale(zm.scale() * 2.0);
+                //zm.translate([translateChart(0, -10), translateChart(1, -350)]);
+                zm.scale(zm.scale() * (1.1));
                 zoomFn();
             }
         });
@@ -284,8 +284,8 @@ define([
         $(controlPanelSelector).find('.zoom-out').on('click', function (event) {
             event.preventDefault();
             if (zm.scale() > chartConfig.minScale) {
-                zm.scale(zm.scale() * 0.5);
-                zm.translate([translateChart(0, 10), translateChart(1, 350)]);
+                zm.scale(zm.scale() * (10/11));
+                //zm.translate([translateChart(0, 10), translateChart(1, 350)]);
                 zoomFn();
             }
         });
