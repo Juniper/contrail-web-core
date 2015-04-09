@@ -8,6 +8,9 @@ define([
     var ZoomScatterChartModel = function(rawData, modelConfig) {
         var self = this, chartData;
 
+        var forceX = modelConfig.forceX,
+            forceY = modelConfig.forceY;
+
         self.data = modelConfig['dataParser'](rawData);
         chartData = self.data;
 
@@ -22,23 +25,44 @@ define([
         self.width = modelConfig['width'];
         self.height = modelConfig['height'];
 
-        self.xMax = d3.max(chartData, function (d) {
+        self.xMax = Math.ceil(d3.max(chartData, function (d) {
                     return +d[modelConfig.xField];
-                }) * 1.05;
+                }) * 1.1);
 
         if (self.xMax <=0)
             self.xMax = 1;
 
         self.xMin = 0;
 
-        self.yMax = d3.max(chartData, function (d) {
+        self.yMax = Math.ceil(d3.max(chartData, function (d) {
                     return +d[modelConfig.yField];
-                }) * 1.05;
+                }) * 1.1);
 
         if (self.yMax <=0)
             self.yMax = 1;
 
         self.yMin = 0;
+
+
+        if(forceX) {
+            if(self.xMin > forceX[0]) {
+                self.xMin = forceX[0];
+            }
+
+            if(self.xMax < forceX[1]) {
+                self.xMax = forceX[1];
+            }
+        }
+
+        if(forceY) {
+            if(self.yMin > forceY[0]) {
+                self.yMin = forceY[0];
+            }
+
+            if(self.yMax < forceY[1]) {
+                self.yMax = forceY[1];
+            }
+        }
 
         self.xScale = d3.scale.linear().domain([self.xMin, self.xMax]).range([0, self.width]);
         self.yScale = d3.scale.linear().domain([self.yMin, self.yMax]).range([self.height, 0]);
