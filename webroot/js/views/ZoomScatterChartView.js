@@ -315,12 +315,14 @@ define([
 
             chartView.svg.select(".x.axis")
                 .call(chartModel.xAxis)
-                .attr("x", 0)
-                .attr("y", 8);
+                .selectAll("text")
+                    .attr("x", 0)
+                    .attr("y", 8);
             chartView.svg.select(".y.axis")
                 .call(chartModel.yAxis)
-                .attr("x", -8)
-                .attr("y", 0);
+                .selectAll("text")
+                    .attr("x", -8)
+                    .attr("y", 0);
 
             chartView.svg.selectAll("circle")
                 .attr("transform", function (d) {
