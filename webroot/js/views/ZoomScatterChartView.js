@@ -219,12 +219,35 @@ define([
     var getZoomFn = function(chartView, chartModel, chartConfig) {
         return function () {
              //Restrict translation to 0 value
-            if (chartModel.yScale.domain()[0] < 0 && chartModel.xScale.domain()[0] < 0) {
-                chartModel.zoomBehavior.translate([0, chartModel.height * (1 - chartModel.zoomBehavior.scale())]);
-            } else if (chartModel.yScale.domain()[0] < 0) {
-                chartModel.zoomBehavior.translate([d3.event.translate[0], chartModel.height * (1 - chartModel.zoomBehavior.scale())]);
-            } else if (chartModel.xScale.domain()[0] < 0) {
-                chartModel.zoomBehavior.translate([0, d3.event.translate[1]]);
+            var reset_s = 0;
+            if ((chartModel.xScale.domain()[1] - chartModel.xScale.domain()[0]) >= (chartModel.xMax - chartModel.xMin)) {
+                chartModel.zoomBehavior.x(chartModel.xScale.domain([chartModel.xMin, chartModel.xMax]));
+                reset_s = 1;
+            }
+            if ((chartModel.yScale.domain()[1] - chartModel.yScale.domain()[0]) >= (chartModel.yMax - chartModel.yMin)) {
+                chartModel.zoomBehavior.y(chartModel.yScale.domain([chartModel.yMin, chartModel.yMax]));
+                reset_s += 1;
+            }
+            if (reset_s == 2) {
+            // Both axes are full resolution. Reset.
+                chartModel.zoomBehavior.scale(1);
+                chartModel.zoomBehavior.translate([0,0]);
+            }
+            else {
+                if (chartModel.xScale.domain()[0] < chartModel.xMin) {
+                    chartModel.xScale.domain([chartModel.xMin, chartModel.xScale.domain()[1] - chartModel.xScale.domain()[0] + chartModel.xMin]);
+                }
+                if (chartModel.xScale.domain()[1] > chartModel.xMax) {
+                    var xdom0 = chartModel.xScale.domain()[0] - chartModel.xScale.domain()[1] + chartModel.xMax;
+                    chartModel.xScale.domain([xdom0, chartModel.xMax]);
+                }
+                if (chartModel.yScale.domain()[0] < chartModel.yMin) {
+                    chartModel.yScale.domain([chartModel.yMin, chartModel.yScale.domain()[1] - chartModel.yScale.domain()[0] + chartModel.yMin]);
+                }
+                if (chartModel.yScale.domain()[1] > chartModel.yMax) {
+                    var ydom0 = chartModel.yScale.domain()[0] - chartModel.yScale.domain()[1] + chartModel.yMax;
+                    chartModel.yScale.domain([ydom0, chartModel.yMax]);
+                }
             }
 
             chartView.svg
@@ -269,9 +292,27 @@ define([
 
         $(controlPanelSelector).find('.zoom-reset').on('click', function (event) {
             event.preventDefault();
+            chartModel.zoomBehavior
+                .x(chartModel.xScale.domain([chartModel.xMin, chartModel.xMax]).range([0, chartModel.width]))
+                .y(chartModel.yScale.domain([chartModel.yMin, chartModel.yMax]).range([chartModel.height, 0]));
+
+            chartView.svg.select(".x.axis")
+                .call(chartModel.xAxis)
+                .attr("x", 0)
+                .attr("y", 8);
+            chartView.svg.select(".y.axis")
+                .call(chartModel.yAxis)
+                .attr("x", -8)
+                .attr("y", 0);
+
+            chartView.svg.selectAll("circle")
+                .attr("transform", function (d) {
+                    return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                });
+
             zm.scale(1);
             zm.translate([0, 0]);
-            zoomFn();
+            //zoomFn();
         });
 
         function translateChart(xy, constant) {
