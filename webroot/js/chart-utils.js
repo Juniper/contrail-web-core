@@ -17,14 +17,14 @@ var BUCKETIZE_LEVEL_COOKIE = 'bucketizeLevel';
 var BUCKETS_PER_AXIS_COOKIE = 'bucketsPerAxis';
 (function ($) {
     var dragSrc = d3.behavior.drag();
-    var hoveredOnTooltip,chartOptions;
+    var hoveredOnTooltip;
     /**
         * function takes the parameters tooltipContainer object and the tooltip array for multitooltip and binds the 
         * events like drill down on tooltip and click on left and right arrows
         * @param result
         * @param tooltipContainer
         */
-    function bindEventsOverlapTooltip(result,tooltipContainer) {
+    function bindEventsOverlapTooltip(result,tooltipContainer,chartOptions) {
         var page = 1;
         var perPage = result['perPage'];
         var pagestr = "";
@@ -462,7 +462,7 @@ var BUCKETS_PER_AXIS_COOKIE = 'bucketsPerAxis';
             var errorNodeCnt = 0;
             var currData = $.extend(true,{},data);
             var selector = $(this), toFormat = '', chart, yMaxMin;
-            chartOptions = ifNull(data['chartOptions'],{}) ;
+            var chartOptions = ifNull(data['chartOptions'],{}) ;
             //Set data to populate to chart
             var d;
             var tooltipTimeoutId;
@@ -567,7 +567,7 @@ var BUCKETS_PER_AXIS_COOKIE = 'bucketsPerAxis';
                         });
                        
                        if(chartOptions['multiTooltip'] && result['content'].length > 1)
-                           bindEventsOverlapTooltip(result,tooltipContainer);
+                           bindEventsOverlapTooltip(result,tooltipContainer,chartOptions);
                     }
                 }
             }
