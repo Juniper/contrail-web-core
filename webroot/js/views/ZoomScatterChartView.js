@@ -66,6 +66,7 @@ define([
             var self = this,
                 chartSelector = $(selector).find('.chart-container'),
                 chartControlPanelSelector = $(selector).find('.chart-control-panel-container'),
+                chartControlPanelExpandedSelector = $(selector).find('.chart-control-panel-expanded-container'),
                 chartOptions = viewConfig['chartOptions'],
                 chartConfig = getChartConfig(chartSelector, chartOptions),
                 data = dataListModel.getFilteredItems(),
@@ -82,7 +83,7 @@ define([
             self.zoomBySelection = zoomBySelection;
 
             var viewAttributes = {
-                    viewConfig: getControlPanelConfig(self, chartModel, chartConfig)
+                    viewConfig: getControlPanelConfig(self, chartModel, chartConfig, chartControlPanelExpandedSelector)
                 },
                 controlPanelView = new ControlPanelView({
                     el: chartControlPanelSelector,
@@ -361,7 +362,71 @@ define([
                             }
                         }
                     }
-                }
+                },
+                /* filter: {
+                    iconClass: 'icon-filter',
+                    title: 'Filter',
+                    events: {
+                        click: function() {
+                            return function(event) {
+                                var controlPanelExpandedTemplate = contrail.getTemplate4Id('core-zoomed-scatter-chart-control-panel-filter-template'), //TODO
+                                    controlPanelExpandedTemplateConfig = {
+                                        groups: [
+                                            {
+                                                id: 'by-node-color',
+                                                title: 'By Node Color',
+                                                type: 'radio',
+                                                items: [
+                                                    {
+                                                        text: 'Filter 1',
+                                                        events: {
+                                                            click: function(event) {
+                                                                console.log('Filter 1');
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        text: 'Filter 2',
+                                                        events: {
+                                                            click: function(event) {
+                                                                console.log('Filter 2');
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        text: 'Filter 3',
+                                                        events: {
+                                                            click: function(event) {
+                                                                console.log('Filter 3');
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    };
+
+                                $(this).toggleClass('active');
+                                chartControlPanelExpandedSelector.toggle();
+
+                                if (chartControlPanelExpandedSelector.is(':visible')) {
+                                    chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
+
+                                    $.each(controlPanelExpandedTemplateConfig.groups, function(groupKey, groupValue) {
+                                        $.each(groupValue.items, function(itemKey, itemValue) {
+                                            //console.log($('#control-panel-filter-group-items-' + groupValue.id)
+                                            //    .find('input'))
+                                            $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
+                                                .on('click', itemValue.events.click);
+                                        });
+                                    });
+
+                                }
+
+                            }
+                        }
+                    }
+                }*/
             }
         }
     };
