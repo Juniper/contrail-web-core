@@ -99,7 +99,7 @@ define([
                 timer = null;
 
             svg = d3.select($(chartSelector)[0]).append("svg")
-                .attr("id", "scatter")
+                .attr("class", "zoom-scatter-chart")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
@@ -367,6 +367,11 @@ define([
                             return function (event) {
                                 chartView.zoomBySelection = !chartView.zoomBySelection;
                                 $(this).toggleClass('active');
+                                if ($(this).hasClass('active')) {
+                                    $('svg.zoom-scatter-chart').addClassSVG('cursor-crosshair');
+                                } else {
+                                    $('svg.zoom-scatter-chart').removeClassSVG('cursor-crosshair');
+                                }
                             }
                         }
                     }
