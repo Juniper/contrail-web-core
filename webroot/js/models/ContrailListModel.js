@@ -9,12 +9,19 @@ define([
     var ContrailListModel = function (listModelConfig, parentModelList) {
         var contrailListModel = {}, newContrailListModel = {},
             hlContrailListModel, contrailDataHandler = null, newContrailDataHandler, self = this,
-            cachedData, remoteHandlerConfig, hlRemoteConfig,
+            cachedData, remoteHandlerConfig, hlModelConfig,
             cacheUsedStatus = {isCacheUsed: false, reload: true };
 
         var defaultCacheConfig = {
             cacheConfig: {
                 cacheTimeout: cowc.LIST_CACHE_UPDATE_INTERVAL,
+                loadOnTimeout: true
+            }
+        };
+
+        var childDefaultCacheConfig = {
+            cacheConfig: {
+                cacheTimeout: 0,
                 loadOnTimeout: true
             }
         };
@@ -25,30 +32,32 @@ define([
 
             contrailListModel = initContrailListModel(cacheConfig);
 
+            if(contrail.checkIfFunction(modelConfig['remote'].onAllRequestsCompleteCB)) {
+                contrailListModel.onAllRequestsComplete.subscribe(function () {
+                    modelConfig['remote'].onAllRequestsCompleteCB(contrailListModel, parentModelList);
+                });
+            }
+
             if (modelConfig.data != null) {
                 contrailListModel.setData(modelConfig.data);
                 bindDataHandler2Model(contrailListModel);
             } else if (modelConfig.remote != null && modelConfig.remote.ajaxConfig != null) {
-                hlRemoteConfig = modelConfig['remote']['hlRemoteConfig'];
+                hlModelConfig = modelConfig['remote']['hlRemoteConfig'];
                 cachedData = (contrailListModel.ucid != null) ? cowch.getDataFromCache(contrailListModel.ucid) : null;
                 cacheUsedStatus = setCachedData2Model(contrailListModel, cacheConfig);
 
                 if (cacheUsedStatus['isCacheUsed']) {
-                    contrailListModel.onAllRequestsComplete.notify();
-
                     if (cacheUsedStatus['reload']) {
                         var cachedContrailListModel = cachedData['dataObject']['listModel'],
                             offset = cachedContrailListModel._idOffset;
 
                         newContrailListModel = initContrailListModel(cacheConfig, offset);
-                        remoteHandlerConfig = getUpdateRemoteHandlerConfig(modelConfig, newContrailListModel, contrailListModel);
+                        remoteHandlerConfig = getUpdateRemoteHandlerConfig(modelConfig, newContrailListModel, contrailListModel, parentModelList);
                         newContrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
 
-                        if (hlRemoteConfig != null) {
-                            var childRemoteConfig = $.extend(true, {}, defaultCacheConfig, hlRemoteConfig);
-                            // TODO: We should use loadOnTimeout = false instead. Either pass parentListModel in updateRemoteConfig or create just one remoteConfig (preferred)
-                            childRemoteConfig['cacheConfig']['cacheTimeout'] = 0;
-                            hlContrailListModel = getNewContrailListModel(childRemoteConfig, [newContrailListModel, contrailListModel]);
+                        if (hlModelConfig != null) {
+                            var childModelConfig = $.extend(true, {}, childDefaultCacheConfig, hlModelConfig);
+                            hlContrailListModel = getNewContrailListModel(childModelConfig, [newContrailListModel, contrailListModel]);
                         }
                         bindDataHandler2Model(contrailListModel, newContrailDataHandler, hlContrailListModel);
                         bindDataHandler2Model(newContrailListModel, newContrailDataHandler, hlContrailListModel);
@@ -56,7 +65,7 @@ define([
                         // Setting autoFetchData=false i.e create request handler but don't fetch data
                         createRemoteDataHandler(false);
                     }
-
+                    contrailListModel.onAllRequestsComplete.notify();
                 } else {
                     createRemoteDataHandler();
                 }
@@ -64,11 +73,9 @@ define([
         }
 
         function createRemoteDataHandler(autoFetchData) {
-            if (hlRemoteConfig != null) {
-                var childRemoteConfig = $.extend(true, {}, defaultCacheConfig, hlRemoteConfig);
-                // TODO: We should use loadOnTimeout = false instead. Either pass parentListModel in updateRemoteConfig or create just one remoteConfig (preferred)
-                childRemoteConfig['cacheConfig']['cacheTimeout'] = 0;
-                hlContrailListModel = getNewContrailListModel(childRemoteConfig, [contrailListModel]);
+            if (hlModelConfig != null) {
+                var childModelConfig = $.extend(true, {}, childDefaultCacheConfig, hlModelConfig);
+                hlContrailListModel = getNewContrailListModel(childModelConfig, [contrailListModel]);
             }
             remoteHandlerConfig = getRemoteHandlerConfig(modelConfig, contrailListModel, parentModelList, autoFetchData);
             contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
@@ -471,7 +478,7 @@ define([
     function setId4Idx(data, dis) {
         var offset = dis._idOffset;
         // Setting id for each data-item; Required to instantiate data-view.
-        if (data.length > 0) {
+        if (data != null && data.length > 0) {
             $.each(data, function (key, val) {
                 if (!contrail.checkIfExist(val.cgrid)) {
                     data[key].cgrid = 'id_' + (key + offset);
