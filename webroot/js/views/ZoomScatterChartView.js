@@ -95,7 +95,8 @@ define([
             var svg, viewObjects,
                 margin = chartConfig['margin'],
                 width = chartModel.width,
-                height = chartModel.height;
+                height = chartModel.height,
+                timer = null;
 
             svg = d3.select($(chartSelector)[0]).append("svg")
                 .attr("id", "scatter")
@@ -201,10 +202,17 @@ define([
                     return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                 })
                 .attr("opacity", "0.5")
-                .on("mouseover", function (d) {
+                .on("mouseenter", function (d) {
                     var tooltipData = d,
                         selfOffset = $(this).offset();
-                    constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
+
+                    clearTimeout(timer);
+                    timer = setTimeout(function() {
+                        constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
+                    }, 1500);
+                })
+                .on("mouseleave", function (d) {
+                    clearTimeout(timer);
                 })
                 .on("click", function (d) {
                     clickCB(d);

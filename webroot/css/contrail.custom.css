@@ -2946,12 +2946,12 @@ color: #b94a48;
 .zoom-scatter-chart-container.rightmenu .col1 .axis path,
 .zoom-scatter-chart-container.rightmenu .col1 .axis line {
     fill: none;
-    stroke: rgba(0, 0, 0, 0.1);
+    stroke: rgba(200, 200, 200, 0.3);
     shape-rendering: crispEdges;
 }
 .zoom-scatter-chart-container.rightmenu .col1 .axis text {
     font-size: 11px;
-    fill: #888;
+    fill: #777;
 }
 .zoom-scatter-chart-container.rightmenu .col1 .objects {
     cursor:move;
