@@ -5,12 +5,15 @@
 define([
     'underscore'
 ], function (_) {
-    var ZoomScatterChartModel = function (rawData, modelConfig) {
-        var self = this, forceX = modelConfig.forceX,
-            forceY = modelConfig.forceY, margin = modelConfig.margin,
+    var ZoomScatterChartModel = function (dataListModel, chartConfig) {
+        var self = this, forceX = chartConfig.forceX,
+            forceY = chartConfig.forceY, margin = chartConfig.margin,
+            rawData = dataListModel.getFilteredItems(),
             chartData, d3Scale;
 
-        self.data = modelConfig['dataParser'](rawData);
+        setNoDataMessage(dataListModel, self);
+        self.data = chartConfig['dataParser'](rawData);
+        self.margin = margin,
         chartData = self.data;
 
         self.sizeMinMax = getSizeMinMax(chartData);
@@ -21,27 +24,33 @@ define([
             chartDataPoint['size'] = contrail.handleIfNull(d3Scale(chartDataPoint['size'], 7));
         });
 
-        self.width = modelConfig['width'] - margin.left - margin.right;
-        self.height = modelConfig['height'] - margin.top - margin.bottom;
-
-        self.xMax = Math.ceil(d3.max(chartData, function (d) {
-            return +d[modelConfig.xField];
-        }) * 1.1);
-
-        if (self.xMax <= 0)
-            self.xMax = 1;
+        self.width = chartConfig['width'] - margin.left - margin.right;
+        self.height = chartConfig['height'] - margin.top - margin.bottom;
 
         self.xMin = 0;
-
-        self.yMax = Math.ceil(d3.max(chartData, function (d) {
-            return +d[modelConfig.yField];
-        }) * 1.1);
-
-        if (self.yMax <= 0)
-            self.yMax = 1;
-
         self.yMin = 0;
 
+        if(chartData.length > 0) {
+            self.xMax = Math.ceil(d3.max(chartData, function (d) {
+                return +d[chartConfig.xField];
+            }) * 1.1);
+
+            self.yMax = Math.ceil(d3.max(chartData, function (d) {
+                return +d[chartConfig.yField];
+            }) * 1.1);
+
+            if (self.xMax <= 0) {
+                self.xMax = 1;
+            }
+
+            if (self.yMax <= 0) {
+                self.yMax = 1;
+            }
+
+        } else {
+            self.xMax = 0;
+            self.yMax = 0;
+        }
 
         if (forceX) {
             if (self.xMin > forceX[0]) {
@@ -69,27 +78,41 @@ define([
         self.zoomBehavior = d3.behavior.zoom().x(self.xScale).y(self.yScale).scaleExtent([1, 4]);
 
         self.maxColorFilterFields = d3.max(chartData, function (d) {
-            return +d[modelConfig.colorFilterFields]
+            return +d[chartConfig.colorFilterFields]
         });
 
         self.classes = ['error', 'warning', 'medium', 'okay', 'default'];
 
         self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(10)
             .tickSize(-self.height)
-            .tickFormat(contrail.checkIfFunction(modelConfig.xLabelFormat) ? modelConfig.xLabelFormat : d3.format("d"));
+            .tickFormat(contrail.checkIfFunction(chartConfig.xLabelFormat) ? chartConfig.xLabelFormat : d3.format("d"));
         self.yAxis = d3.svg.axis().scale(self.yScale).orient("left").ticks(5)
             .tickSize(-self.width)
-            .tickFormat(contrail.checkIfFunction(modelConfig.yLabelFormat) ? modelConfig.yLabelFormat : d3.format("d"))
+            .tickFormat(contrail.checkIfFunction(chartConfig.yLabelFormat) ? chartConfig.yLabelFormat : d3.format("d"))
 
         self.xMed = median(_.map(chartData, function (d) {
-            return d[modelConfig.xField];
+            return d[chartConfig.xField];
         }));
 
         self.yMed = median(_.map(chartData, function (d) {
-            return d[modelConfig.yField];
+            return d[chartConfig.yField];
         }));
 
         return self;
+    };
+
+    function setNoDataMessage (dataListModel, chartModel) {
+        var error = dataListModel.error;
+
+        if (dataListModel.isRequestInProgress()) {
+            chartModel.noDataMessage = cowc.CHART_LOADING_MESSAGE;
+        } else if (chartModel['noDataMessage']) {
+            chartModel.noDataMessage = chartModel['noDataMessage'];
+        } else if (error) {
+            chartModel.noDataMessage = cowc.DATA_ERROR_MESSAGE;
+        } else {
+            chartModel.noDataMessage = cowc.CHART_NO_DATA_MESSAGE;
+        }
     };
 
     function median(values) {

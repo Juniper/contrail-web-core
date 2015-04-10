@@ -95,7 +95,9 @@ define([
             iconClass: 'icon-frown'
         };
 
-        this.DATA_ERROR_MESSAGE = "Error in getting data."
+        this.DATA_ERROR_MESSAGE = "Error in getting data.";
+        this.CHART_NO_DATA_MESSAGE = "No data available.";
+        this.CHART_LOADING_MESSAGE = "Loading.."
     };
     return CoreConstants;
 });
