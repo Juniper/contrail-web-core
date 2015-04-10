@@ -84,9 +84,11 @@ cp -r ./$THIRD_PARTY/bootstrap-v2.3.2/css webroot/assets/bootstrap/css
 
 #Start - Copy Font-Awesome from $THIRD_PARTY
 rm -rf webroot/assets/font-awesome
-mkdir webroot/assets/font-awesome
+mkdir -p webroot/assets/font-awesome/v4.3.0
 cp -r ./$THIRD_PARTY/font-awesome-v3.2.1/font webroot/assets/font-awesome/font
+cp -r ./$THIRD_PARTY/font-awesome-v4.3.0/fonts webroot/assets/font-awesome/v4.3.0/fonts
 cp -r ./$THIRD_PARTY/font-awesome-v3.2.1/css webroot/assets/font-awesome/css
+cp -r ./$THIRD_PARTY/font-awesome-v4.3.0/css webroot/assets/font-awesome/v4.3.0/css
 
 rm -rf webroot/font
 cp -r ./$THIRD_PARTY/font-awesome-v3.2.1/font webroot/font
