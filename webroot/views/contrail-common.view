@@ -1113,3 +1113,58 @@
         </div>
     </div>
 </script>
+
+<script type="text/x-handlebars-template" id="core-control-panel-template">
+    <div id="control-panel-items" class="control-panel-items pull-right">
+        {{#IfCompare default.zoom.enabled true}}
+            <div class="control-panel-item zoom-in" title="Zoom In"><i class="icon-zoom-in"></i></div>
+            <div class="control-panel-item zoom-out" title="Zoom Out"><i class="icon-zoom-out"></i></div>
+            <div class="control-panel-item zoom-reset" title="Zoom Reset"><i class="icon-remove-circle"></i></div>
+        {{/IfCompare}}
+        {{#each custom}}
+            <div class="control-panel-item {{@key}}" title="{{title}}"><i class="{{iconClass}}"></i></div>
+        {{/each}}
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-template">
+    <div class="zoom-scatter-chart-container colmask rightmenu">
+        <div class="colleft">
+            <div class="col1wrap">
+                <div class="col1 chart-container">
+                </div>
+            </div>
+            <div class="col2 chart-control-panel-container">
+            </div>
+            <div class="chart-control-panel-expanded-container hide"
+                 style="position: absolute; right: -10px; width: 280px; height: 95%; background-color: #fff; opacity: 0.8; border: 1px solid #ccc; overflow-y: scroll; overflow-x: hidden;"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-control-panel-filter-template">
+    <div class="control-panel-filter-container row-fluid">
+        <div class="row-fluid" style="background-color: #F5F5F5;">
+            <p class="control-panel-filter-title" style="padding: 10px; margin: 0; color: #3182bd;
+  font-size: 15px;
+  font-weight: 400;"><i class="icon-filter"></i> &nbsp; Filter</p>
+        </div>
+        <div class="row-fluid control-panel-filter-body" style="padding: 10px;">
+            {{#each groups}}
+            <div class="row-fluid control-panel-filter-group" style="margin-bottom: 10px;">
+                <h6 class="control-panel-group-filter-title" style="font-size: 13px; margin: 0;">{{title}}</h6>
+                <div id="control-panel-filter-group-items-{{id}}" class="row-fluid control-panel-filter-group-items" style="padding: 5px 0;">
+
+                {{#IfCompare type 'radio' operator='=='}}
+                    {{#each items}}
+                    <div class="row-fluid control-panel-filter-group-item padding-5-0">
+                        <input type="radio" name="control-panel-filter" class="ace-input"/><span class="ace-lbl"> {{text}}</span>
+                    </div>
+                    {{/each}}
+                {{/IfCompare}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</script>

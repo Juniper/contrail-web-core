@@ -63,7 +63,7 @@ define([
             chartModel = this.chartModel;
 
             if(dataListModel.isRequestInProgress()) {
-                chartModel.noData('Loading..');
+                chartModel.noData(cowc.CHART_LOADING_MESSAGE);
             } else if(chartModel['noDataMessage']) {
                 chartModel.noData(chartModel['noDataMessage']);
             } else if (error) {

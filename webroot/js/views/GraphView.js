@@ -5,8 +5,9 @@
 define([
     'underscore',
     'joint',
-    'contrail-graph-model'
-], function (_, Joint, ContrailGraphModel) {
+    'contrail-graph-model',
+    'js/views/ControlPanelView.js'
+], function (_, Joint, ContrailGraphModel, ControlPanelView) {
     var GraphView = joint.dia.Paper.extend({
         constructor: function (viewConfig) {
             var graphConfig = viewConfig.graphModelConfig,
@@ -37,22 +38,15 @@ define([
                     };
 
                 if(controlPanelConfig) {
-                    var controlTemplate = contrail.getTemplate4Id(cowc.TMPL_GRAPH_CONTROL_PANEL);
+                    var viewAttributes = {
+                            viewConfig: getControlPanelConfig(jointObject, graphConfig, controlPanelConfig)
+                        },
+                        controlPanelView = new ControlPanelView({
+                            el: graphControlPanelId,
+                            attributes: viewAttributes
+                        });
 
-                    var customConfig = $.extend(true, {}, controlPanelConfig.custom);
-
-                    $.each(customConfig, function(configKey, configValue) {
-                        if (contrail.checkIfFunction(configValue.iconClass)) {
-                            configValue.iconClass = configValue.iconClass(jointObject);
-                        }
-                    });
-
-                    $(graphControlPanelId).html(controlTemplate({
-                        defaultConfig: controlPanelConfig.default,
-                        customConfig: customConfig
-                    }));
-
-                    initControlPanelEvents(jointObject, graphControlPanelId, graphConfig, controlPanelConfig, graphControlPanelId)
+                    controlPanelView.render();
                 }
 
                 if(contrail.checkIfFunction(viewConfig.successCallback)) {
@@ -76,39 +70,46 @@ define([
         }
     });
 
-    var initControlPanelEvents = function(jointObject, graphControlPanelId, graphConfig, controlPanelConfig, graphControlPanelId) {
-        var graphControlPanelElement = $(graphControlPanelId);
+    var initZoomEvents = function(jointObject, controlPanelSelector, graphConfig, controlPanelConfig) {
+        var graphControlPanelElement = $(controlPanelSelector),
+            panzommTargetId = controlPanelConfig.default.zoom.selectorId,
+            panZoomDefaultConfig = {
+                increment: 0.3,
+                minScale: 0.3,
+                maxScale: 2,
+                duration: 300,
+                $zoomIn: graphControlPanelElement.find(".zoom-in"),
+                $zoomOut: graphControlPanelElement.find(".zoom-out"),
+                $reset: graphControlPanelElement.find(".zoom-reset")
+            },
+            panzoomConfig = $.extend(true, panZoomDefaultConfig, controlPanelConfig.default.zoom.config);
 
-        if (controlPanelConfig.default.panzoom.enable == true) {
-            var panzommTargetId = controlPanelConfig.default.panzoom.selectorId,
-                panZoomDefaultConfig = {
-                    increment: 0.3,
-                    minScale: 0.3,
-                    maxScale: 2,
-                    duration: 300,
-                    $zoomIn: graphControlPanelElement.find(".zoom-in"),
-                    $zoomOut: graphControlPanelElement.find(".zoom-out"),
-                    $reset: graphControlPanelElement.find(".zoom-reset")
-                },
-                panzoomConfig = $.extend(true, panZoomDefaultConfig, controlPanelConfig.default.panzoom.config);
+        $(panzommTargetId).panzoom("reset");
+        $(panzommTargetId).panzoom("resetPan");
+        $(panzommTargetId).panzoom("destroy");
+        $(panzommTargetId).panzoom(panzoomConfig);
+    };
 
-            $(panzommTargetId).panzoom("reset");
-            $(panzommTargetId).panzoom("resetPan");
-            $(panzommTargetId).panzoom("destroy");
-            $(panzommTargetId).panzoom(panzoomConfig);
+    var getControlPanelConfig = function(jointObject, graphConfig, controlPanelConfig) {
+        var customConfig = $.extend(true, {}, controlPanelConfig.custom);
 
-        }
-
-        $.each(controlPanelConfig.custom, function(configKey, configValue) {
-            var graphControlElement = graphControlPanelElement.find('.' + configKey);
-
-            $.each(configValue.events, function(eventKey, eventValue) {
-                graphControlElement
-                    .off(eventKey)
-                    .on('click', eventValue(jointObject));
-            });
+        $.each(customConfig, function(configKey, configValue) {
+            if (contrail.checkIfFunction(configValue.iconClass)) {
+                configValue.iconClass = configValue.iconClass(jointObject);
+            }
         });
 
+        return {
+            default: {
+                zoom: {
+                    enabled: true,
+                    events: function(controlPanelSelector) {
+                        initZoomEvents(jointObject, controlPanelSelector, graphConfig, controlPanelConfig);
+                    }
+                }
+            },
+            custom: customConfig
+        }
     };
 
     var initMouseEvents = function(graphSelectorElement, tooltipConfig, jointObject) {
@@ -216,7 +217,7 @@ define([
             topContainerElement = $('#' + ctwl.TOP_CONTENT_CONTAINER);
 
         var onTopContainerBankDblClickHandler = function(e) {
-            if(!$(e.target).closest('g').length && !$(e.target).closest('.graph-controls').length) {
+            if(!$(e.target).closest('g').length && !$(e.target).closest('.control-panel-items').length) {
                 if(contrail.checkIfFunction(eventConfig['blank:pointerdblclick'])) {
                     eventConfig['blank:pointerdblclick']();
                 }
