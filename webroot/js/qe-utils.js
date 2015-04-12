@@ -1096,7 +1096,9 @@ function setStatQueryFromValues(url, viewModelKey , viewModel, queryJSON, callba
                 if(validValues[i].name.indexOf("StatTable")!=-1){
                     validValueDS.push({"name":validValues[i].display_name, "value":validValues[i].name});
                     viewModel[viewModelKey].push({name:validValues[i].display_name, value:validValues[i].name});
-                    callback();
+                    if (contrail.checkIfFunction(callback)) {
+                        callback();
+                    }
                 }
             }
             if(queryJSON != null && typeof queryJSON.table != 'undefined'){
@@ -1125,7 +1127,9 @@ function setSelectValues(url, viewModelKey, viewModels, responseField, ignoreVal
             for (var j = 0; j < viewModels.length; j += 1) {
                 viewModels[j][viewModelKey] =  validValueObservable;
             }
-            callback();
+            if (contrail.checkIfFunction(callback)) {
+                callback();
+            }
         }
     });
 };
@@ -2180,14 +2184,14 @@ function findFirstValidFCId(flowClassArray) {
 function initStatclassGrid(elementId, flowClassArray, columnDisplay) {
     var display = [
         {
-            id: 'fc-checkbox',
+            id: 'sc-checkbox',
             field:"",
             name:"",
             resizable: false,
             width:30,
             minWidth: 30,
             formatter: function(r, c, v, cd, dc){
-                return '<input id="fc-checkbox-' + dc.cgrid +'" type="checkbox" onchange="loadSelectedStatChart(this)" value="' + dc.stat_flow_class_id +'" data-id="' + dc.cgrid + '" class="ace-input"/><span class="ace-lbl"></span>';
+                return '<input id="sc-checkbox-' + dc.cgrid +'" type="checkbox" onchange="loadSelectedStatChart(this)" value="' + dc.stat_flow_class_id +'" data-id="' + dc.cgrid + '" class="ace-input"/><span class="ace-lbl"></span>';
             },
             sortable: false,
             searchable: false,
@@ -2196,7 +2200,7 @@ function initStatclassGrid(elementId, flowClassArray, columnDisplay) {
             }
         },
         {
-            id: 'fc-label',
+            id: 'sc-label',
             field:"",
             name:"",
             resizable: false,
@@ -2230,27 +2234,24 @@ function initStatclassGrid(elementId, flowClassArray, columnDisplay) {
                 forceFitColumns: true
             },
             dataSource:{
-                data: flowClassArray,
-                events: {
-                    onDataBoundCB: function() {
-                        var selectedFlows = queries['stat']['chartViewModel'].selectedFlows();
-
-                        $.each(selectedFlows, function(selectedFlowKey, selectedFlowValue){
-                			$('#fc-checkbox-' + selectedFlowValue.r).prop('checked', true);
-	                        assignColors2FlowClass(selectedFlowValue);
-                		});
-                    }
-                }
+                data: flowClassArray
             }
         },
         footer: {
             pager: {
                 options: {
                     pageSize: 100,
-                    pageSizeSelect: [100,500,1000]
+                    pageSizeSelect: [100, 200, 500]
                 }
             }
         }
+    });
+
+    var selectedFlows = queries['stat']['chartViewModel'].selectedFlows();
+
+    $.each(selectedFlows, function(selectedFlowKey, selectedFlowValue){
+        $('#sc-checkbox-' + selectedFlowValue.r).prop('checked', true);
+        assignColors2FlowClass(selectedFlowValue);
     });
 };
 function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
@@ -2304,27 +2305,24 @@ function initFlowclassGrid(elementId, flowClassArray, columnDisplay) {
     	},
     	body: {
     		dataSource:{
-                data: flowClassArray,
-                events: {
-                	onDataBoundCB: function() {
-                		var selectedFlows = queries['fs']['chartViewModel'].selectedFlows();
-
-                		$.each(selectedFlows, function(selectedFlowKey, selectedFlowValue){
-                			$('#fc-checkbox-' + selectedFlowValue.r).prop('checked', true);
-	                        assignColors2FlowClass(selectedFlowValue);
-                		});
-                	}
-                }
+                data: flowClassArray
             }
     	},
     	footer: {
 			pager: {
 				options: {
 					pageSize: 100,
-					pageSizeSelect: [100,500,1000]
+					pageSizeSelect: [100, 200, 500]
 				}
 			}
         }
+    });
+
+    var selectedFlows = queries['fs']['chartViewModel'].selectedFlows();
+
+    $.each(selectedFlows, function(selectedFlowKey, selectedFlowValue){
+        $('#fc-checkbox-' + selectedFlowValue.r).prop('checked', true);
+        assignColors2FlowClass(selectedFlowValue);
     });
 };
 

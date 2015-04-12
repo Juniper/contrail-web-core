@@ -859,6 +859,11 @@ a.selectAllLink:hover {
 .grid-header .select2-container, .widget-header .select2-container, .breadcrumb .select2-container{
 	margin-bottom: 2px;
 }
+.grid-header .select2-container.select2-container-active, .widget-header .select2-container.select2-container-active, .breadcrumb .select2-container.select2-container-active{
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
 .grid-header .ui-multiselect {
 	height: 23px !important;
 	margin-bottom: 4px;
