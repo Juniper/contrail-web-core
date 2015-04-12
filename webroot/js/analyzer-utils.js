@@ -614,7 +614,10 @@ function showUnderlayPaths(data) {
                     data    : {data: params},
                     callback : function(response) {
                         $("#network_topology").find('.topology-visualization-loading').hide();
-                        underlayRenderer.getView().highlightPath(response, {data: params});
+                        if(typeof underlayRenderer === 'object') {
+                            underlayRenderer.getModel().setFlowPath(response);
+                            underlayRenderer.getView().highlightPath(response, {data: params});
+                        }
                     },
                     failureCallback: function(err) {
                         $("#network_topology").find('.topology-visualization-loading').hide();
