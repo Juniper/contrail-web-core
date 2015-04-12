@@ -816,7 +816,7 @@ function callRestAPI (serverObj, dataObj, ignoreError, callback)
             doPostJsonCb(reqUrl, err, ignoreError, jsonData, callback);
         }, headers);
     } else if (global.HTTP_REQUEST_DEL == method) {
-        serverObj.apiDelele(reqUrl, appData, function(err, jsonData) {
+        serverObj.apiDelete(reqUrl, appData, function(err, jsonData) {
             doPostJsonCb(reqUrl, err, ignoreError, jsonData, callback);
         }, headers);
     } else {
