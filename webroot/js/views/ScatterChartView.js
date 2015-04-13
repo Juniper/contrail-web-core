@@ -229,8 +229,11 @@ define([
 
         if (overlappedNodes != undefined && overlappedNodes.length > 1) {
             var overlappedElementData = $.map(overlappedNodes, function(nodeValue, nodeKey) {
+                if (tooltipData.name != nodeValue.name) {
                     return {id: nodeKey, text: nodeValue.name}
-                });
+                }
+                return null;
+            });
 
             $(tooltipContainer).find('.popover-tooltip-footer').append('<div class="overlapped-elements-dropdown"></div>')
             overlappedElementsDropdownElement = $(tooltipContainer).find('.overlapped-elements-dropdown');
@@ -238,7 +241,7 @@ define([
             overlappedElementsDropdownElement.contrailDropdown({
                 dataTextField: 'text',
                 dataValueField: 'id',
-                placeholder: 'View more',
+                placeholder: 'View more (' + overlappedElementData.length + ')',
                 ignoreFirstValue: true,
                 dropdownCssClass: 'min-width-150',
                 data: overlappedElementData,

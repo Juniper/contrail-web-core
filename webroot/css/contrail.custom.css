@@ -2216,7 +2216,10 @@ color: #b94a48;
     margin-left: 5px;
 }
 .popover.popover-tooltip .overlapped-elements-dropdown {
-    margin: 0 3px;
+    margin: 3px;
+}
+.popover.popover-tooltip .overlapped-elements-dropdown .select2-chosen{
+    font-size: 11px;
 }
 .popover.popover-tooltip .overlapped-elements-dropdown.select2-container-active {
     box-shadow: none;

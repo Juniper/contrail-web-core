@@ -143,18 +143,21 @@ define([
                 })
                 .attr("opacity", "0.5")
                 .on("mouseenter", function (d) {
-                    var tooltipData = d,
-                        selfOffset = $(this).offset();
+                    if (!self.zoomBySelection) {
+                        var tooltipData = d,
+                            selfOffset = $(this).offset();
 
-                    clearTimeout(timer);
-                    timer = setTimeout(function () {
-                        constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
-                    }, 1500);
+                        clearTimeout(timer);
+                        timer = setTimeout(function () {
+                            constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
+                        }, 1000);
+                    }
                 })
                 .on("mouseleave", function (d) {
                     clearTimeout(timer);
                 })
                 .on("click", function (d) {
+                    clearTimeout(timer);
                     clickCB(d);
                 });
 
@@ -536,7 +539,10 @@ define([
         if (tooltipElementKey in overlapMap) {
             var overlappedElementData = $.map(overlapMap[tooltipElementKey], function (overlapMapValue, overlapMapKey) {
                 var overlappedElementName = chartData[overlapMapValue].name;
-                return {id: overlapMapValue, text: overlappedElementName}
+                if (tooltipData.name != overlappedElementName) {
+                    return {id: overlapMapValue, text: overlappedElementName}
+                }
+                return null;
             });
 
             $(tooltipElementObj).find('.popover-tooltip-footer').append('<div class="overlapped-elements-dropdown"></div>');
@@ -545,7 +551,7 @@ define([
             overlappedElementsDropdownElement.contrailDropdown({
                 dataTextField: 'text',
                 dataValueField: 'id',
-                placeholder: 'View more',
+                placeholder: 'View more (' + overlappedElementData.length + ')',
                 ignoreFirstValue: true,
                 dropdownCssClass: 'min-width-150',
                 data: overlappedElementData,
