@@ -255,7 +255,7 @@ define([
                 .attr('dy', '-.7em')
                 .style('text-anchor', 'middle');
 
-            noDataText.attr('x', margin.left + (chartModel.width / 2))
+            noDataText.attr('x', chartModel.width / 2)
                 .attr('y', margin.top + (chartModel.height / 2))
                 .text(function (d) {
                     return d

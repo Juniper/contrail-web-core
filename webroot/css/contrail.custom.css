@@ -3215,3 +3215,9 @@ color: #b94a48;
     height:200px!important;
     overflow-y:auto;
 }
+
+.zoom-scatter-chart-container text {
+    stroke: none;
+    fill: #777;
+    font-weight: normal;
+}
