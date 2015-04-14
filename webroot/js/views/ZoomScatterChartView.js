@@ -371,7 +371,7 @@ define([
         };
     };
 
-    function getControlPanelConfig(chartView, chartModel, chartConfig) {
+    function getControlPanelConfig(chartView, chartModel, chartConfig, chartControlPanelExpandedSelector) {
         return {
             default: {
                 zoom: {
@@ -415,6 +415,7 @@ define([
                                                 items: [
                                                     {
                                                         text: 'Filter 1',
+                                                        labelCssClass: 'okay',
                                                         events: {
                                                             click: function (event) {
                                                                 console.log('Filter 1');
@@ -423,17 +424,10 @@ define([
                                                     },
                                                     {
                                                         text: 'Filter 2',
+                                                        labelCssClass: 'medium',
                                                         events: {
                                                             click: function (event) {
                                                                 console.log('Filter 2');
-                                                            }
-                                                        }
-                                                    },
-                                                    {
-                                                        text: 'Filter 3',
-                                                        events: {
-                                                            click: function (event) {
-                                                                console.log('Filter 3');
                                                             }
                                                         }
                                                     }
