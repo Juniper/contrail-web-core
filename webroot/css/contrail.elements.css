@@ -2340,6 +2340,10 @@ td.td-actions a.td-action {
   margin: 0 0 6px;
   border-bottom: 1px solid #CCC;
 }
+.sub-widget-box {
+	padding-left:53px;
+	padding-right:53px"
+}
 .widget-header {
   position: relative;
   height: 33px;
@@ -4169,4 +4173,26 @@ td.td-actions a.td-action {
 	margin-left: auto;
 	display: block;
 	cursor:pointer;
+}
+.line-separator{
+	height:1px;
+	
+	border-bottom:1px solid #eee;
+}
+
+.menuHeading{
+	padding:5px 15px 0px 10px;
+	color:#3182bd;
+	font-size:14px;
+}
+.menuHeading ~div{
+	margin-top: 5px;
+    margin-bottom: 3px;
+	
+}
+.details-group-heading{
+	height:0px;
+	font-weight:bold;
+	margin-top:3px;
+	margin-bottom:0px;	
 }
