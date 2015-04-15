@@ -793,6 +793,7 @@ function getDefaultGridConfig() {
         function initClientSidePagination() {
             eventHandlerMap.grid['onSort'] = function (e, args) {
                 performSort(args.sortCols);
+                grid.setSelectedRows([]);
         	};
         	
         	grid['onSort'].subscribe(eventHandlerMap.grid['onSort']);
