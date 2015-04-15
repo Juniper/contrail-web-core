@@ -90,32 +90,36 @@ function queryIpPools(appData) {
 
 function destroyIpPool(appData,poolId) {
     return new Promise(function(resolve,reject) {
-        populatevCenterParams(appData).done(function(response) {
-            vCenterApi.doCall({
-            method    : 'DestroyIpPool',
-            headers : {
-                SOAPAction: "urn:vim25/5.1"
-            },
-            params : {
-                _this : {
-                    _attributes : {
-                        type: 'IpPoolManager'
-                    },
-                    _value : 'IpPoolManager'
+        if(poolId == null) {
+            resolve({});
+        } else {
+            populatevCenterParams(appData).done(function(response) {
+                vCenterApi.doCall({
+                method    : 'DestroyIpPool',
+                headers : {
+                    SOAPAction: "urn:vim25/5.1"
                 },
-                dc: {
-                    _attributes: {
-                        type:'Datacenter'
+                params : {
+                    _this : {
+                        _attributes : {
+                            type: 'IpPoolManager'
+                        },
+                        _value : 'IpPoolManager'
                     },
-                    _value: dataCenterName
-                },
-                id: poolId, //Get it from QueryIpPools
-                force: false
-            }
-            },appData,function(err,data,resHeaders) {
-                resolve(data);
+                    dc: {
+                        _attributes: {
+                            type:'Datacenter'
+                        },
+                        _value: dataCenterName
+                    },
+                    id: poolId, //Get it from QueryIpPools
+                    force: false
+                }
+                },appData,function(err,data,resHeaders) {
+                    resolve(data);
+                });
             });
-        });
+        }
     });
 }
 
@@ -637,3 +641,5 @@ exports.destroyTask = destroyTask;
 exports.destroyIpPool = destroyIpPool;
 exports.queryIpPools = queryIpPools;
 exports.logout = logout;
+exports.getIdByMobName = getIdByMobName;
+exports.retrievePropertiesExForObj = retrievePropertiesExForObj;
