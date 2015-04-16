@@ -745,8 +745,10 @@ $.allajax = (function($) {
         }
     });
     this.abort = function () {
-        for(var i=0; i<xhrPool.length; i++) {
-            xhrPool[i].abort();
+        var tempXhrPool = [];
+        $.extend(true,tempXhrPool,xhrPool);
+        for(var i=0; i<tempXhrPool.length; i++) {
+            tempXhrPool[i].abort();
         }
     };
 
