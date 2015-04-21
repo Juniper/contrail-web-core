@@ -2598,19 +2598,19 @@ function uniqueArray(arr) {
     return retArr;
 }
 
-function showAdvancedDetails(name){
-    $('#divBasic' + '_' + name).hide();
-    $('#divStatus' + '_' + name).hide();
-    $('#divAdvanced' + '_' + name).show();
-    $('#divAdvanced' + '_' + name).parents('.widget-box').find('.widget-header h4 .subtitle').remove();
-    $('#divAdvanced' + '_' + name).parents('.widget-box').find('.widget-header h4').append('<span class="subtitle">(Advanced)</span>')
+function showAdvancedDetails(){
+    $('#divBasic').hide();
+    $('#divStatus').hide();
+    $('#divAdvanced').show();
+    $('#divAdvanced').parents('.widget-box').find('.widget-header h4 .subtitle').remove();
+    $('#divAdvanced').parents('.widget-box').find('.widget-header h4').append('<span class="subtitle">(Advanced)</span>')
 }
 
-function showBasicDetails(name){
-    $('#divAdvanced' + '_' + name).hide();
-    $('#divStatus' + '_' + name).hide();
-    $('#divBasic' + '_' + name).show();
-    $('#divAdvanced' + '_' + name).parents('.widget-box').find('.widget-header h4 .subtitle').remove();
+function showBasicDetails(){
+    $('#divAdvanced').hide();
+    $('#divStatus').hide();
+    $('#divBasic').show();
+    $('#divAdvanced').parents('.widget-box').find('.widget-header h4 .subtitle').remove();
 }
 
 function getFormattedDate(timeStamp){

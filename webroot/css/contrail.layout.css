@@ -854,9 +854,8 @@ li [class*=" icon-"],
 .footer-links{
 	padding: 8px 0;
 	background-color:#fff;
-	/*position: fixed;
-	bottom:0;*/
-    clear: left;
+	position: fixed;
+	bottom:0;
 }
 .footer-links a{
 	margin-right: 10px;
