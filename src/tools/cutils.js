@@ -782,6 +782,8 @@ function isEndAddress(cidr, ipAddress){
 }
 
 function isValidIP(ipAddress){
+    if(ipAddress == null)
+        return false;
     var IP = new v4.Address(ipAddress); 
     if(IP.isValid() === true){
         return true;
@@ -792,16 +794,18 @@ function isValidIP(ipAddress){
     }
     return false;
 }
-
 function isIPv4(ipAddress){
+    if(ipAddress == null)
+        return false;
     var IP = new v4.Address(ipAddress); 
     if(IP.isValid() === true){
         return true;
     }
     return false;
 }
-
 function isIPv6(ipAddress){
+    if(ipAddress == null )
+        return false;
     var IP = new v6.Address(ipAddress); 
     if(IP.isValid() === true){
         return true;
