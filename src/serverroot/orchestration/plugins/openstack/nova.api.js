@@ -729,7 +729,7 @@ function portAttach (req, body, callback)
                 var reqUrl = '/' + ver['version'] + reqUrlPrefix;
                 novaApi.post(reqUrl, novaPostData, ver, req,
                              function(error, data) {
-                    portAttachSendResp(err, data, ver['version'], callback);
+                    portAttachSendResp(error, data, ver['version'], callback);
                 }, false, appHeaders);
             });
         });

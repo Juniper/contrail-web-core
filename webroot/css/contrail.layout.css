@@ -2350,6 +2350,7 @@ button.btn:active {
 .margin-right-60 {margin-right:60px !important}
 .margin-left-23-right-10{margin-left:23px; margin-right:10px !important}
 .margin-left-16-pct {margin-left:16% !important}
+.margin-left-21 {margin-left:21px !important;}
 
 /* padding framework */
 .padding-2 {padding:2px !important;}
@@ -2364,6 +2365,18 @@ button.btn:active {
 .padding-top-5{padding-top:5px !important;}
 
 /* height framework */
+.height-20 {height: 20px !important;}
+.height-30 {height: 30px !important;}
+.height-40 {height: 40px !important;}
+.height-50 {height: 50px !important;}
+.height-60 {height: 60px !important;}
+.height-70 {height: 70px !important;}
+.height-80 {height: 80px !important;}
+.height-90 {height: 90px !important;}
+.height-100 {height: 100px !important;}
+.height-110 {height: 110px !important;}
+.height-120 {height: 120px !important;}
+.height-130 {height: 130px !important;}
 .height-200 {height:200px !important;}
 .height-250 {height:250px !important;}
 .height-300 {height:300px !important;}

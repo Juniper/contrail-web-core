@@ -36,6 +36,7 @@ function getDefaultGridConfig() {
                 fullWidthRows: true,
                 multiColumnSort: true,
                 rowHeight: 30,
+                fixedRowHeight: false,
                 gridHeight: 500,
                 rowSelectable: false,
                 sortable: true,
@@ -68,7 +69,7 @@ function getDefaultGridConfig() {
             pager : {
                 options : {
                     pageSize : 50,
-                    pageSizeSelect : [10, 50, 100, 200, 500 ]
+                    pageSizeSelect : [10, 50, 100, 200]
                 }
             }
         }
@@ -91,7 +92,8 @@ function getDefaultGridConfig() {
             remoteConfig = {}, ajaxConfig,
             dvConfig = null, gridContainer = this, 
             eventHandlerMap = {grid: {}, dataView: {}}, 
-            scrolledStatus = {scrollLeft: 0, scrollTop: 0};
+            scrolledStatus = {scrollLeft: 0, scrollTop: 0},
+            adjustAllRowHeightTimer = null;
 
         // Extending the params with default settings
         $.extend(true, gridConfig, defaultGridConfig, customGridConfig);
@@ -103,6 +105,10 @@ function getDefaultGridConfig() {
 
         if(contrail.checkIfKeyExistInObject(true, customGridConfig, 'footer.pager.options.pageSizeSelect')) {
             gridConfig.footer.pager.options.pageSizeSelect = customGridConfig.footer.pager.options.pageSizeSelect;
+        }
+
+        if (gridOptions.fixedRowHeight != false && _.isNumber(gridOptions.fixedRowHeight)) {
+            gridOptions.rowHeight = gridOptions.fixedRowHeight;
         }
 
         //Local Datasource means the client-side data with client-side pagination if footer initialized
@@ -343,6 +349,10 @@ function getDefaultGridConfig() {
                 	}
                     if(!contrail.checkIfExist(val.tooltip)) {
                         val.toolTip = val.name;
+                    }
+                    if (gridOptions.fixedRowHeight != false && _.isNumber(gridOptions.fixedRowHeight)) {
+                        val.cssClass = (contrail.checkIfExist(val.cssClass) ? val.cssClass + ' ' : '') +
+                                        'fixed-row-height height-' + (gridOptions.fixedRowHeight - 10);
                     }
                 });
             }
@@ -592,16 +602,17 @@ function getDefaultGridConfig() {
                     onSomethingChecked = contrail.checkIfFunction(gridOptions.checkboxSelectable.onSomethingChecked) ? gridOptions.checkboxSelectable.onSomethingChecked : null,
                     onEverythingChecked = contrail.checkIfFunction(gridOptions.checkboxSelectable.onEverythingChecked) ? gridOptions.checkboxSelectable.onEverythingChecked : null;
 
-                var selectedRowLength = grid.getSelectedRows().length;
+                var selectedRowLength = args.rows.length;
 
                 if (selectedRowLength == 0) {
                     (contrail.checkIfExist(onNothingChecked) ? onNothingChecked(e) : '');
                 }
-                if (selectedRowLength > 0) {
+                else {
                     (contrail.checkIfExist(onSomethingChecked) ? onSomethingChecked(e) : '');
-                }
-                if (selectedRowLength == grid.getDataLength()) {
-                    (contrail.checkIfExist(onEverythingChecked) ? onEverythingChecked(e) : '');
+
+                    if (selectedRowLength == grid.getDataLength()) {
+                        (contrail.checkIfExist(onEverythingChecked) ? onEverythingChecked(e) : '');
+                    }
                 }
 
                 gridContainer.data('contrailGrid').refreshView();
@@ -742,47 +753,49 @@ function getDefaultGridConfig() {
         
         function initDataView() {
             eventHandlerMap.dataView['onDataUpdate'] = function(e, args) {
-                //Refresh the grid only if it's not destroyed
-                if($(gridContainer).data('contrailGrid') != null && (args.previous != args.current || args.rows.length > 0)) {
-                    grid.invalidateAllRows();
-                    grid.updateRowCount();
-                    grid.render();
+                setTimeout(function() {
+                    //Refresh the grid only if it's not destroyed
+                    if($(gridContainer).data('contrailGrid') != null && (args.previous != args.current || args.rows.length > 0)) {
+                        grid.invalidateAllRows();
+                        grid.updateRowCount();
+                        grid.render();
 
-                    //onRowCount Changed
-                    if (args.previous != args.current) {
-                        gridContainer.data('contrailGrid').removeGridMessage();
-                        if(dataView.getLength() == 0){
-                            emptyGridHandler();
-                            gridContainer.find('.slick-row-detail').remove();
-                        } else {
-                            gridContainer.find('.grid-footer').removeClass('hide');
-                            onDataGridHandler();
-                        }
-                    }
-
-                    //onRows Changed
-                    if (args.rows.length > 0) {
-                        if(contrail.checkIfFunction(gridDataSource.events.onDataBoundCB)) {
-                            gridDataSource.events.onDataBoundCB();
+                        //onRowCount Changed
+                        if (args.previous != args.current) {
+                            gridContainer.data('contrailGrid').removeGridMessage();
+                            if(dataView.getLength() == 0){
+                                emptyGridHandler();
+                                gridContainer.find('.slick-row-detail').remove();
+                            } else {
+                                gridContainer.find('.grid-footer').removeClass('hide');
+                                onDataGridHandler();
+                            }
                         }
 
-                        // Adjusting the row height for all rows
-                        gridContainer.data('contrailGrid').adjustAllRowHeight();
+                        //onRows Changed
+                        if (args.rows.length > 0) {
+                            if(contrail.checkIfFunction(gridDataSource.events.onDataBoundCB)) {
+                                gridDataSource.events.onDataBoundCB();
+                            }
 
-                        // Assigning odd and even classes to take care of coloring effect on alternate rows
-                        gridContainer.data('contrailGrid').adjustGridAlternateColors();
+                            // Adjusting the row height for all rows
+                            gridContainer.data('contrailGrid').adjustAllRowHeight();
 
-                        // Refreshing the detail view
-                        gridContainer.data('contrailGrid').refreshDetailView();
+                            // Assigning odd and even classes to take care of coloring effect on alternate rows
+                            gridContainer.data('contrailGrid').adjustGridAlternateColors();
+
+                            // Refreshing the detail view
+                            gridContainer.data('contrailGrid').refreshDetailView();
+                        }
+
+                        if(contrail.checkIfFunction(gridDataSource.events.onDataUpdateCB)) {
+                            gridDataSource.events.onDataUpdateCB(e, args);
+                        }
+                    } else if (dataView.getLength() == 0){
+                        emptyGridHandler();
+                        gridContainer.find('.slick-row-detail').remove();
                     }
-
-                    if(contrail.checkIfFunction(gridDataSource.events.onDataUpdateCB)) {
-                        gridDataSource.events.onDataUpdateCB(e, args);
-                    }
-                } else if (dataView.getLength() == 0){
-                    emptyGridHandler();
-                    gridContainer.find('.slick-row-detail').remove();
-                }
+                }, 0);
             };
 
             $.each(eventHandlerMap.dataView, function(key, val){
@@ -915,8 +928,7 @@ function getDefaultGridConfig() {
                  */
                 getCheckedRows: function(){
                     if (gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
-                        return dataView.getItems();
-                        //TODO Handle a case when data is filtered
+                        return dataView.getFilteredItems();
                     } else {
                         var selectedRows = grid.getSelectedRows(),
                             returnValue = [];
@@ -936,9 +948,10 @@ function getDefaultGridConfig() {
                  * Set All Checked Rows based on type == 'current-page' and 'all-page'
                  */
                 setAllCheckedRows: function(type) {
-                    var rows = [];
+                    var rows = [], dataLength = 0;
                     if (type == 'all-page') {
-                        for (var i = 0; i < dataView.getItems().length; i++) {
+                        dataLength = dataView.getFilteredItems().length;
+                        for (var i = 0; i < dataLength ; i++) {
                             var enabled = true;
                             if(contrail.checkIfFunction(gridOptions.checkboxSelectable.enableRowCheckbox)){
                                 enabled = gridOptions.checkboxSelectable.enableRowCheckbox(dataView.getItemById('id_' + i));
@@ -948,7 +961,8 @@ function getDefaultGridConfig() {
                             }
                         }
                     } else {
-                        for (var i = 0; i < grid.getDataLength(); i++) {
+                        dataLength = grid.getDataLength();
+                        for (var i = 0; i < dataLength ; i++) {
                             if(gridContainer.find('.rowCheckbox[value="' + i + '"]:disabled').length == 0) {
                                 rows.push(i);
                             }
@@ -991,19 +1005,46 @@ function getDefaultGridConfig() {
                 removeGridLoading: function(){
                     gridContainer.find('.grid-header-icon-loading').hide();
                 },
-                adjustAllRowHeight: function() {
-                	var self = this;
-                    gridContainer.find('.slick-row-master').each(function(){
-                    	self.adjustRowHeight($(this).data('cgrid'));
-                    });
-                },
-                adjustRowHeight: function(rowId) {
-                    var maxHeight = 20;
-                    gridContainer.find('.slick_row_' + rowId).find('.slick-cell').each(function(){
-                        maxHeight = ($(this).height() > maxHeight) ? $(this).height() : maxHeight;
-                    });
 
-                    gridContainer.find('.slick_row_' + rowId).height(maxHeight + 10);
+                adjustAllRowHeight: function() {
+                    if (!(gridOptions.fixedRowHeight != false && _.isNumber(gridOptions.fixedRowHeight))) {
+                        var self = this;
+                        clearTimeout(adjustAllRowHeightTimer);
+                        adjustAllRowHeightTimer = setTimeout(function () {
+                            var visibleRowIds = gridContainer.find('.slick-row-master').map(function () {
+                                    return $(this).data('cgrid');
+                                }),
+                                rowChunkSize = 25, visibleRowChunk = [];
+
+                            while (visibleRowIds.length > 0) {
+                                visibleRowChunk = visibleRowIds.splice(0, rowChunkSize);
+                                self.adjustRowHeightByChunk(visibleRowChunk);
+                            }
+                        }, 50);
+                    }
+                },
+
+                adjustRowHeightByChunk: function(rowChunks) {
+                    if (!(gridOptions.fixedRowHeight != false && _.isNumber(gridOptions.fixedRowHeight))) {
+                        var self = this;
+                        setTimeout(function () {
+                            $.each(rowChunks, function (chunkKey, chunkValue) {
+                                self.adjustRowHeight(chunkValue);
+                            });
+                        }, 5);
+                    }
+                },
+
+                adjustRowHeight: function(rowId) {
+                    if (!(gridOptions.fixedRowHeight != false && _.isNumber(gridOptions.fixedRowHeight))) {
+                        var maxHeight = 20;
+                        gridContainer.find('.slick_row_' + rowId).find('.slick-cell').each(function(){
+                            maxHeight = ($(this).height() > maxHeight) ? $(this).height() : maxHeight;
+                        });
+                        maxHeight = maxHeight + 10;
+
+                        gridContainer.find('.slick_row_' + rowId).height(maxHeight);
+                    }
                 },
                 adjustDetailRowHeight: function(rowId){
                 	var slickdetailRow = gridContainer.find('.slick_row_' + rowId).next('.slick-row-detail'),
@@ -1306,17 +1347,17 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
     this.init = function() {
         var eventMap = gridContainer.data('contrailGrid')._eventHandlerMap.dataView;
         eventMap['onPagingInfoChanged'] = function (e, pagingInfo) {
-            var currentPageNum = null, currentPageSizeSelect = null;
+            var currentPageNum = null, currentPageSize = null;
 
             if (contrail.checkIfExist(currentPagingInfo)) {
                 currentPageNum = currentPagingInfo.pageNum;
-                currentPageSizeSelect = currentPagingInfo.pageSizeSelect;
+                currentPageSize = currentPagingInfo.pageSize;
             }
 
             pagingInfo.pageSizeSelect = pageSizeSelect;
             updatePager(pagingInfo);
 
-            if (pagingInfo.totalPages - pagingInfo.pageNum <= 1 || currentPagingInfo == null || currentPageNum != pagingInfo.pageNum || currentPageSizeSelect != pageSizeSelect) {
+            if (pagingInfo.totalPages - pagingInfo.pageNum <= 1 || currentPagingInfo == null || currentPageNum != pagingInfo.pageNum || currentPageSize != pagingInfo.pageSize) {
                 if(gridContainer.data('contrailGrid') != null && !gridContainer.data('contrailGrid')._gridStates.allPagesDataChecked) {
                     gridContainer.data('contrailGrid')._grid.setSelectedRows([])
                 }
