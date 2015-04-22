@@ -728,21 +728,31 @@ rect.bordered {
 	resize: none;
 }
 .or-clause-item{background: #fff;}
-.or-clause-item.open {background: #eee;}
 .or-clause-item-term{cursor:pointer; }
-.or-clause-item-condensed{padding: 5px 0;}
-.or-clause-item-edit{
-	padding: 2px 0 0;
+.or-clause-item.open {background: #eee;}
+.or-clause-item.open .or-clause-item-condensed {
+    border-bottom: 1px solid #ddd;
+}
+.or-clause-item-condensed{
+    padding: 5px 0;
 }
 .or-clause-item > .span11{
-	margin-left: 0.5%;
-	width: 93.5%;
+    margin-left: 0.5%;
+    width: 93.5%;
 }
 .or-clauses .or-text:first-child {
-	display: none;
+    display: none;
+}
+.and-clause-item {
+    padding: 10px 0 0;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #ddd;
+}
+.and-clause-item .and-clause-suffix {
+    height: 38px;
 }
 .and-clauses .and-clause-item:first-child .and-text{
-	visibility: hidden;
+    visibility: hidden;
 }
 .and-clause-item .and-text{
 	font-size: 14px;
