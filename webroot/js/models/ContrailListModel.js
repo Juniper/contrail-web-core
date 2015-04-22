@@ -10,7 +10,8 @@ define([
         var contrailListModel = {}, newContrailListModel = {},
             hlContrailListModel, contrailDataHandler = null, newContrailDataHandler, self = this,
             cachedData, remoteHandlerConfig, hlModelConfig,
-            cacheUsedStatus = {isCacheUsed: false, reload: true };
+            cacheUsedStatus = {isCacheUsed: false, reload: true},
+            sortConfig = listModelConfig['sortConfig'];
 
         var defaultCacheConfig = {
             cacheConfig: {
@@ -30,7 +31,7 @@ define([
             var modelConfig = $.extend(true, {}, defaultCacheConfig, listModelConfig),
                 cacheConfig = modelConfig['cacheConfig'];
 
-            contrailListModel = initContrailListModel(cacheConfig);
+            contrailListModel = initContrailListModel(cacheConfig, sortConfig);
 
             if(contrail.checkIfFunction(modelConfig['remote'].onAllRequestsCompleteCB)) {
                 contrailListModel.onAllRequestsComplete.subscribe(function () {
@@ -51,7 +52,7 @@ define([
                         var cachedContrailListModel = cachedData['dataObject']['listModel'],
                             offset = cachedContrailListModel._idOffset;
 
-                        newContrailListModel = initContrailListModel(cacheConfig, offset);
+                        newContrailListModel = initContrailListModel(cacheConfig, sortConfig, offset);
                         remoteHandlerConfig = getUpdateRemoteHandlerConfig(modelConfig, newContrailListModel, contrailListModel, parentModelList);
                         newContrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
 
@@ -122,7 +123,7 @@ define([
         return {isCacheUsed: isCacheUsed, reload: reload};
     };
 
-    function initContrailListModel(cacheConfig, offset) {
+    function initContrailListModel(cacheConfig, sortConfig, offset) {
         var slickDataView = new Slick.Data.DataView({inlineFilters: true}),
             contrailListModel = {};
 
@@ -130,6 +131,7 @@ define([
             _idOffset: (offset != null) ? offset : 0,
             error: false,
             errorList: [],
+            sortConfig: sortConfig,
             setData: function (data) {
                 // Setting id for each data-item; Required to instantiate data-view.
                 setId4Idx(data, this);
@@ -168,6 +170,9 @@ define([
                     dis.deleteItem(val);
                 });
                 this.endUpdate();
+            },
+            performDefaultSort: function() {
+                performDefaultSort(sortConfig, this);
             }
         });
 
@@ -485,6 +490,39 @@ define([
                 }
             });
             dis._idOffset += data.length;
+        }
+    };
+
+    function performDefaultSort(sortConfig, contrailListModel) {
+        var defaultSortColumns = contrail.checkIfExist(sortConfig) ? sortConfig['defaultSortColumns'] : [];
+
+        if(defaultSortColumns.length > 0) {
+            contrailListModel.sort(function (dataRow1, dataRow2) {
+                for (var i = 0, l = defaultSortColumns.length; i < l; i++) {
+                    var field = defaultSortColumns[i].sortColumn.field,
+                        sign = defaultSortColumns[i].sortAsc ? 1 : -1,
+                        sortColumn = defaultSortColumns[i].sortColumn,
+                        result = 0, value1, value2;
+
+                    if(contrail.checkIfExist(sortColumn.sortable)) {
+                        value1 = (contrail.checkIfExist(sortColumn.sortable.sortBy) && sortColumn.sortable.sortBy == 'formattedValue') ? sortColumn.formatter('', '', '', '', dataRow1) : dataRow1[field];
+                        value2 = (contrail.checkIfExist(sortColumn.sortable.sortBy) && sortColumn.sortable.sortBy == 'formattedValue') ? sortColumn.formatter('', '', '', '', dataRow2) : dataRow2[field];
+                    } else {
+                        value1 = dataRow1[field];
+                        value2 = dataRow2[field];
+                    }
+
+                    if(defaultSortColumns[i].sortColumn.sorter != null){
+                        result = defaultSortColumns[i].sortColumn.sorter(value1, value2, sign); // sorter property from column definition will be called if present
+                    } else {
+                        result = (value1 == value2 ? 0 : (value1 > value2 ? 1 : -1)) * sign;
+                    }
+                    if (result != 0) {
+                        return result;
+                    }
+                }
+                return 0;
+            });
         }
     };
 

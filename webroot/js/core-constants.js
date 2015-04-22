@@ -62,6 +62,8 @@ define([
         this.TMPL_DETAIL_SECTION_COLUMN = "core-detail-section-column-template";
         this.TMPL_DETAIL_SECTION_ROW = "core-detail-section-row-template";
         this.TMPL_ZOOMED_SCATTER_CHART = "core-zoomed-scatter-chart-template";
+        this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_FILTER = "core-zoomed-scatter-chart-control-panel-filter-template";
+        this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_LEGEND = "core-zoomed-scatter-chart-control-panel-legend-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
         this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
 
@@ -84,10 +86,13 @@ define([
         this.GRAPH_MARGIN_TOP = 350;
         this.GRAPH_MARGIN_BOTTOM = 350;
 
+        this.TOOLTIP_DELAY = 1000;
+
         this.DEFAULT_CONFIG_ELEMENT_TOOLTIP = {
             dimension: {
                 width: 275
-            }
+            },
+            delay: this.TOOLTIP_DELAY
         };
 
         this.DEFAULT_CONFIG_NOT_FOUND_PAGE = {
