@@ -1144,7 +1144,9 @@ margin-right: 15px;
 	overflow:visible;
 }
 .grid-action-menu {
-	width: 175px;
+	left:auto!important;
+	right:10px!important;
+	min-width:170px;
 }
 
 /*
