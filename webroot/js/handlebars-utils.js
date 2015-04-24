@@ -296,3 +296,7 @@ Handlebars.registerHelper('encodedVN', function(jsonObj) {
         jsonObj['q']['srcVN'] = encodeURIComponent(jsonObj['q']['srcVN']);
     return JSON.stringify(jsonObj);
 });
+
+Handlebars.registerHelper('handleIfNull', function(value, defaultValue) {
+    return contrail.handleIfNull(value, defaultValue);
+});

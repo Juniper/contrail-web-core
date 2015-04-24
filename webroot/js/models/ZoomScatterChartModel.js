@@ -11,7 +11,6 @@ define([
             rawData = dataListModel.getFilteredItems(),
             chartData, d3Scale;
 
-        setNoDataMessage(dataListModel, self);
         self.data = chartConfig['dataParser'](rawData);
         self.margin = margin,
         chartData = self.data;
@@ -98,11 +97,17 @@ define([
             return d[chartConfig.yField];
         }));
 
+        self.getNoDataMessage = function() {
+            updateNoDataMessage(dataListModel, self);
+            return self.noDataMessage;
+        };
+
         return self;
     };
 
-    function setNoDataMessage (dataListModel, chartModel) {
-        var error = dataListModel.error;
+    function updateNoDataMessage (dataListModel, chartModel) {
+        var error = dataListModel.error,
+            noDataMessage = cowc.CHART_LOADING_MESSAGE;
 
         if (dataListModel.isRequestInProgress()) {
             chartModel.noDataMessage = cowc.CHART_LOADING_MESSAGE;
@@ -110,9 +115,11 @@ define([
             chartModel.noDataMessage = chartModel['noDataMessage'];
         } else if (error) {
             chartModel.noDataMessage = cowc.DATA_ERROR_MESSAGE;
-        } else {
+        } else if(dataListModel.getItems().length == 0) {
             chartModel.noDataMessage = cowc.CHART_NO_DATA_MESSAGE;
         }
+
+        return noDataMessage;
     };
 
     function median(values) {
