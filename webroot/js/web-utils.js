@@ -2213,14 +2213,14 @@ function ManageDataSource() {
                 'controlNodeDS':{
                     ongoing:false,
                     lastUpdated:null,
-                    populateFn:['getAllControlNodes','getGeneratorsForInfraNodes'],
+                    populateFn:['getAllControlNodes','getGeneratorsForInfraNodes','fetchCPUStats'],
                     deferredObj:null,
                     dataSource:null
                 },
                 'computeNodeDS':{
                     ongoing:false,
                     lastUpdated:null,
-                    populateFn:['getAllvRouters','getGeneratorsForInfraNodes'],
+                    populateFn:['getAllvRouters','getGeneratorsForInfraNodes','fetchCPUStats'],
                     deferredObj:null,
                     dataSource:null,
                     cachedData:true//whether we maintain backend cache
@@ -2228,14 +2228,14 @@ function ManageDataSource() {
                 'analyticsNodeDS':{
                     ongoing:false,
                     lastUpdated:null,
-                    populateFn:['getAllAnalyticsNodes','getGeneratorsForInfraNodes','startFetchingCollectorStateGenInfos'],
+                    populateFn:['getAllAnalyticsNodes','getGeneratorsForInfraNodes','startFetchingCollectorStateGenInfos','fetchCPUStats'],
                     deferredObj:null,
                     dataSource:null
                 },
                 'configNodeDS':{
                     ongoing:false,
                     lastUpdated:null,
-                    populateFn:['getAllConfigNodes','getGeneratorsForInfraNodes'],
+                    populateFn:['getAllConfigNodes','getGeneratorsForInfraNodes','fetchCPUStats'],
                     deferredObj:null,
                     dataSource:null
                 },
@@ -3186,4 +3186,3 @@ function getIntrospectPaginationInfo(response) {
     }
     return paginationInfo;
 }
-
