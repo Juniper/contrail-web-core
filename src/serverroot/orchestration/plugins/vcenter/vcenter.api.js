@@ -339,7 +339,7 @@ function getIdByMobName(appData,objType,name,folderName) {
                                 if(objType in mobCache) {
                                     if(mobCache[objType][objId['_value']] != null) {
                                         if(mobCache[objType][objId['_value']] == name) {
-                                            resolve(currid);
+                                            resolve(objId['_value']);
                                             callback({'found':true},true);
                                             return;
                                         } else {
