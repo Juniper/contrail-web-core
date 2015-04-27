@@ -13,7 +13,7 @@ var initDepFiles = [
     'jquery.tristate', 'jquery.multiselect', 'jquery.multiselect.filter', 'jquery.steps.min', 'slick.dataview',
     'joint', 'joint.layout.DirectedGraph', 'jquery.panzoom', 'joint.contrail', 'jquery.ui.position',
     'jquery.contextMenu', 'slick.checkboxselectcolumn', 'slick.rowselectionmodel',
-    'backbone', 'text', 'contrail-model', 'bezier'
+    'backbone', 'text', 'contrail-model', 'bezier', 'uuid-js'
 ];
 
 
