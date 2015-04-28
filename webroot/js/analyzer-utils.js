@@ -601,6 +601,7 @@ function showUnderlayPaths(data) {
         }
         switch(currentPage) {
             case 'mon_infra_underlay':
+                $("#network_topology").find('.topology-visualization-loading').show();
                 var cfg = {
                     url     : "/api/tenant/networking/underlay-path",
                     type    : "POST",
@@ -611,7 +612,20 @@ function showUnderlayPaths(data) {
                     },
                     failureCallback: function(err) {
                         $("#network_topology").find('.topology-visualization-loading').hide();
-                        $("#underlay_topology").html('Error in fetching details');
+                        showInfoWindow('Error in fetching details','Error');
+                    },
+                    completeCallback: function(ajaxObj, state) {
+                        if(state != 'success') {
+                            $("#network_topology").find('.topology-visualization-loading').hide();
+                            if(state == 'timeout') {
+                                showInfoWindow('Timeout in fetching details','Error');
+                            } else {
+                                showInfoWindow('Error in fetching details','Error');
+                            }
+                            if(null !== underlayRenderer && typeof underlayRenderer === "object"){
+                                underlayRenderer.getView().resetTopology();
+                            }
+                        }
                     }
                 };
                 underlayRenderer.getController().getModelData(cfg);

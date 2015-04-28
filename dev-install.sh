@@ -223,6 +223,10 @@ mkdir webroot/assets/bezierjs
 cp -af ./$THIRD_PARTY/bezierjs-gh-pages/lib/bezier.js webroot/assets/bezierjs/bezier.js
 #End - Copy bezier from $THIRD_PARTY
 
+#Start - Copy uuid.js from $THIRD_PARTY
+cp -af ./$THIRD_PARTY/uuid.js webroot/js/uuid.js
+#End - Copy uuid.js from $THIRD_PARTY
+
 #Start - Merging All JS files
 rm -f webroot/js/contrail-all-1.js
 rm -f webroot/js/contrail-all-2.js
@@ -297,6 +301,7 @@ MAINFILE[54]=webroot/assets/jquery/js/jquery.panzoom.min.js
 MAINFILE[55]=webroot/assets/jquery-contextMenu/js/jquery.ui.position.js
 MAINFILE[56]=webroot/assets/jquery-contextMenu/js/jquery.contextMenu.js
 MAINFILE[57]=webroot/assets/bezierjs/bezier.js
+MAINFILE[58]=webroot/js/uuid.js
 
 cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
 cat ${MAINFILE[1]} >> webroot/js/contrail-all-1.js
@@ -362,6 +367,7 @@ cat ${MAINFILE[54]} >> webroot/js/contrail-all-7.js
 cat ${MAINFILE[55]} >> webroot/js/contrail-all-7.js
 cat ${MAINFILE[56]} >> webroot/js/contrail-all-7.js
 cat ${MAINFILE[57]} >> webroot/js/contrail-all-7.js
+cat ${MAINFILE[58]} >> webroot/js/contrail-all-7.js
 
 # End - Merging All JS files
 

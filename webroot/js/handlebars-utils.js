@@ -71,7 +71,7 @@ Handlebars.registerHelper('formatGridJSON2HTML', function(rawdata, options) {
     if (contrail.checkIfExist(rawDataClone.cgrid)) {
         delete rawDataClone.cgrid;
     }
-    return contrail.formatJSON2HTML(rawDataClone,2);
+    return contrail.formatJSON2HTML(rawDataClone,3);
 });
 
 Handlebars.registerHelper('formatString2HTML', function(string) {
