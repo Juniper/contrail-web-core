@@ -2206,14 +2206,14 @@ function ManageDataSource() {
                 'controlNodeDS':{
                     ongoing:false,
                     lastUpdated:null,
-                    populateFn:['getAllControlNodes','getGeneratorsForInfraNodes','fetchCPUStats'],
+                    populateFn:['getAllControlNodes','getGeneratorsForInfraNodes'],
                     deferredObj:null,
                     dataSource:null
                 },
                 'computeNodeDS':{
                     ongoing:false,
                     lastUpdated:null,
-                    populateFn:['getAllvRouters','getGeneratorsForInfraNodes','fetchCPUStats'],
+                    populateFn:['getAllvRouters','getGeneratorsForInfraNodes'],
                     deferredObj:null,
                     dataSource:null,
                     cachedData:true//whether we maintain backend cache
@@ -2221,14 +2221,14 @@ function ManageDataSource() {
                 'analyticsNodeDS':{
                     ongoing:false,
                     lastUpdated:null,
-                    populateFn:['getAllAnalyticsNodes','getGeneratorsForInfraNodes','startFetchingCollectorStateGenInfos','fetchCPUStats'],
+                    populateFn:['getAllAnalyticsNodes','getGeneratorsForInfraNodes','startFetchingCollectorStateGenInfos'],
                     deferredObj:null,
                     dataSource:null
                 },
                 'configNodeDS':{
                     ongoing:false,
                     lastUpdated:null,
-                    populateFn:['getAllConfigNodes','getGeneratorsForInfraNodes','fetchCPUStats'],
+                    populateFn:['getAllConfigNodes','getGeneratorsForInfraNodes'],
                     deferredObj:null,
                     dataSource:null
                 },
@@ -3099,5 +3099,3 @@ function getRandomValue(min,max){
          callback();
      }
  };
-
- 
