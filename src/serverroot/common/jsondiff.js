@@ -298,7 +298,7 @@ function doFeatureJsonDiffParamsInit ()
             jsonDiffApi = jsonDiffApi.configJsonModifyObj;
             for (key in jsonDiffApi) {
                 configJsonModifyObj[key] = jsonDiffApi[key];
-                if (key == 'arrayDiff') {
+                if (('arrayDiff' == key) || ('configDelete' == key)) {
                     for (tmpKey in jsonDiffApi[key]) {
                         configJsonModifyObj[key] = {};
                         configJsonModifyObj[key][tmpKey] =
