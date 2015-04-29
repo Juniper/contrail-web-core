@@ -448,7 +448,7 @@ var defColors = ['#1c638d', '#4DA3D5'];
                 	params['endTime'] = new XDate().getTime();
                		params['portType'] = response['type'];
                		params['protocol'] = protocolMap[response['pType']];
-               		layoutHandler.setURLHashParams(params,{p:'mon_net_networks'}); 
+               		layoutHandler.setURLHashParams(params,{p:'mon_networking_networks'});
                	 });
             heatMap.on('mouseover',function(){
             	d3.select(this).style('cursor','pointer');
@@ -2034,9 +2034,9 @@ function showMoreAlerts(){
 
 function processDrillDownForNodes(e) {
      if (e['point']['type'] == 'network') {
-         layoutHandler.setURLHashParams({fqName:e['point']['name']}, {p:'mon_net_networks'});
+         layoutHandler.setURLHashParams({fqName:e['point']['name']}, {p:'mon_networking_networks'});
      } else if (e['point']['type'] == 'project') {
-         layoutHandler.setURLHashParams({fqName:e['point']['name']}, {p:'mon_net_projects'});
+         layoutHandler.setURLHashParams({fqName:e['point']['name']}, {p:'mon_networking_projects'});
      } else if ($.inArray(e['point']['type'], ['sport' | 'dport'] > -1)) {
          var obj= {
              fqName:e['point']['fqName'],
@@ -2052,9 +2052,9 @@ function processDrillDownForNodes(e) {
          else if(e['point']['type'] == 'dport')
              obj['portType']='dst';
          if(obj['fqName'].split(':').length == 2) {
-             layoutHandler.setURLHashParams(obj,{p:'mon_net_projects'});
+             layoutHandler.setURLHashParams(obj,{p:'mon_networking_projects'});
          } else
-             layoutHandler.setURLHashParams(obj,{p:'mon_net_networks'});
+             layoutHandler.setURLHashParams(obj,{p:'mon_networking_networks'});
      }
 }
 
@@ -3081,13 +3081,67 @@ function getRandomValue(min,max){
     if ($.inArray(name, ['project']) > -1) {
         layoutHandler.setURLHashParams({fqName:selRowDataItem['name']},{merge:false});
     } else if($.inArray(name,['network']) > -1) {
-        layoutHandler.setURLHashParams({fqName:selRowDataItem['name']},{merge:false,p:'mon_net_networks'});
+        layoutHandler.setURLHashParams({fqName:selRowDataItem['name']},{merge:false,p:'mon_networking_networks'});
     } else if($.inArray(name,['instance']) > -1) {
-        layoutHandler.setURLHashParams({vmName:selRowDataItem['vmName'],fqName:selRowDataItem['name'],srcVN:selRowDataItem['vn'][0]},{merge:false,p:'mon_net_instances'});
+        layoutHandler.setURLHashParams({vmName:selRowDataItem['vmName'],fqName:selRowDataItem['name'],srcVN:selRowDataItem['vn'][0]},{merge:false,p:'mon_networking_instances'});
     } else if($.inArray(name,['vRouter']) > -1) {
         layoutHandler.setURLHashParams({node: selRowDataItem['vRouter'], tab:''}, {p:'mon_infra_vrouter',merge:false});
     }
 }
+
+function setProjectURLHashParams(hashParams, projectFQN, triggerHashChange) {
+    var hashObj = {
+        type: "project",
+        view: "details",
+        focusedElement: {
+            fqName: projectFQN,
+            type: 'project'
+        }
+    };
+
+    if(contrail.checkIfKeyExistInObject(true, hashParams, 'clickedElement')) {
+        hashObj.clickedElement = hashParams.clickedElement;
+    }
+
+    layoutHandler.setURLHashParams(hashObj, {p: "mon_networking_projects", merge: false, triggerHashChange: triggerHashChange});
+
+};
+
+function setNetworkURLHashParams(hashParams, networkFQN, triggerHashChange) {
+    var hashObj = {
+        type: "network",
+        view: "details",
+        focusedElement: {
+            fqName: networkFQN,
+            type: 'virtual-network'
+        }
+    };
+
+    if(contrail.checkIfKeyExistInObject(true, hashParams, 'clickedElement')) {
+        hashObj.clickedElement = hashParams.clickedElement;
+    }
+
+    layoutHandler.setURLHashParams(hashObj, {p: "mon_networking_networks", merge: false, triggerHashChange: triggerHashChange});
+
+};
+
+function setInstanceURLHashParams(hashParams, networkFQN, instanceUUID, triggerHashChange) {
+    var hashObj = {
+        type: "instance",
+        view: "details",
+        focusedElement: {
+            fqName: networkFQN,
+            type: 'virtual-network',
+            uuid: instanceUUID
+        }
+    };
+
+    if(contrail.checkIfKeyExistInObject(true, hashParams, 'clickedElement')) {
+        hashObj.clickedElement = hashParams.clickedElement;
+    }
+
+    layoutHandler.setURLHashParams(hashObj, {p: "mon_networking_instances", merge: false, triggerHashChange: triggerHashChange});
+};
 
  function check4CTInit(callback) {
      if (!ctInitComplete) {
