@@ -53,7 +53,7 @@ var contextMenuConfig = {
             items.view = {
                 name: '<i class="icon-external-link"></i><span class="margin-0-5">View Virtual Network</span>',
                 callback: function (key, options) {
-                    loadFeature({p: 'mon_net_networks', q: {fqName: viewElement['attributes']['nodeDetails']['name']}});
+                    loadFeature({p: 'mon_networking_networks', q: {fqName: viewElement['attributes']['nodeDetails']['name']}});
                 }
             };
         }
@@ -136,7 +136,7 @@ var contextMenuConfig = {
                     name: '<i class="icon-long-arrow-right"></i><span class="margin-0-5">View Traffic from ' + sourceName + ' to ' + targetName + '</span>',
                     callback: function (key, options) {
                         loadFeature({
-                            p: 'mon_net_networks',
+                            p: 'mon_networking_networks',
                             q: {fqName: viewElementDetails['dst'], srcVN: viewElementDetails['src']}
                         });
                     }
@@ -149,7 +149,7 @@ var contextMenuConfig = {
                 name: '<i class="icon-long-arrow-left"></i><span class="margin-0-5">View Traffic from ' + targetName + ' to ' + sourceName + '</span>',
                 callback: function (key, options) {
                     loadFeature({
-                        p: 'mon_net_networks',
+                        p: 'mon_networking_networks',
                         q: {fqName: viewElementDetails['src'], srcVN: viewElementDetails['dst']}
                     });
                 }
@@ -624,7 +624,7 @@ function renderZoomedVisualization4VN(selectorId, jointObject, params) {
     	</div>').show();
 
     $('#topology-project-link').on('click', function () {
-        loadFeature({p: 'mon_net_projects', q: {fqName: domainName + ':' + projectName}});
+        loadFeature({p: 'mon_networking_projects', q: {fqName: domainName + ':' + projectName}});
     });
 
     jointObject.connectedGraph = zoomedGraph;
@@ -1324,7 +1324,7 @@ function initConnectedGraphEventsForZoomedElement(selectorId, jointObject, param
     jointObject.connectedPaper.on('blank:pointerdblclick', function (evt, x, y) {
         var fqName = params['config']['fqName'],
             fqNameArray = fqName.split(':');
-        loadFeature({p: 'mon_net_projects', q: {fqName: fqNameArray[0] + ':' + fqNameArray[1]}});
+        loadFeature({p: 'mon_networking_projects', q: {fqName: fqNameArray[0] + ':' + fqNameArray[1]}});
     });
 }
 
@@ -1342,7 +1342,7 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
         switch (elementType) {
             case 'contrail.VirtualNetwork':
                 loadFeature({
-                    p: 'mon_net_networks',
+                    p: 'mon_networking_networks',
                     q: {fqName: dblClickedElement['attributes']['nodeDetails']['name']}
                 });
                 $('g.VirtualNetwork').popover('hide');
@@ -1380,7 +1380,7 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
             case 'contrail.VirtualMachine':
                 var srcVN = dblClickedElement.attributes.nodeDetails.srcVNDetails.name;
                 loadFeature({
-                    p: 'mon_net_instances',
+                    p: 'mon_networking_instances',
                     q: {
                         fqName: dblClickedElement['attributes']['nodeDetails']['fqName'],
                         srcVN: srcVN.split(':')[2] + ' (' + srcVN.split(':')[1] + ')'
@@ -1396,7 +1396,7 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
     jointObject.connectedPaper.on('blank:pointerdblclick', function (evt, x, y) {
         var fqName = params['config']['fqName'],
             fqNameArray = fqName.split(':');
-        loadFeature({p: 'mon_net_projects', q: {fqName: fqNameArray[0] + ':' + fqNameArray[1]}});
+        loadFeature({p: 'mon_networking_projects', q: {fqName: fqNameArray[0] + ':' + fqNameArray[1]}});
 
         var zoomedElementId = jointObject.connectedPaper['zoomedElementId'],
             newGraphSize;

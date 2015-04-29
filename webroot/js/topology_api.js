@@ -341,14 +341,14 @@ function mouseoverLink(eve) {
 	setTimeout(function() {$('.chart-tooltip').remove()},100);
     var elementData = d3.select(this)[0][0].__data__;
     if(elementData['shape'] == 'circle' && !isCurrentNode(elementData['id']))
-         layoutHandler.setURLHashParams({fqName:elementData['id']},{p:'mon_net_networks',merge:false});
+         layoutHandler.setURLHashParams({fqName:elementData['id']},{p:'mon_networking_networks',merge:false});
  }
  function clickLink(){
 	//To support IE we are removing the toltip on click using setimeout  
 	setTimeout(function() {$('.chart-tooltip').remove()},100);
     //if(d3.select(this)[0][0].__data__.source.shape=='circle' && d3.select(this)[0][0].__data__.target.shape=='circle')
     var elementData = d3.select(this)[0][0].__data__;
-    layoutHandler.setURLHashParams({fqName:elementData['orgDest'],srcVN:elementData['orgSrc']},{p:'mon_net_networks',merge:false});
+    layoutHandler.setURLHashParams({fqName:elementData['orgDest'],srcVN:elementData['orgSrc']},{p:'mon_networking_networks',merge:false});
  }
  function isCurrentNode(id) {
      var result = false;
