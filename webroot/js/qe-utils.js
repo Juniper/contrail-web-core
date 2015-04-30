@@ -948,6 +948,11 @@ function updateSuffixWhereOptions(queryPrefix, element) {
                     setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
                 })
         }
+        else {
+            $('#' + element).find('.and-clause-suffix').hide();
+            $('#' + element).find('.and-clause-suffix').removeClass('present');
+
+        }
     } else {
         $('#' + element).find('.and-clause-suffix').hide();
         $('#' + element).find('.and-clause-suffix').removeClass('present');
