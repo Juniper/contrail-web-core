@@ -74,6 +74,7 @@ requirejs.config({
         'text': 'assets/requirejs/text',
         'core-utils': 'js/core-utils',
         'core-constants': 'js/core-constants',
+        'core-formatters': 'js/core-formatters',
         'contrail-view-model': 'js/models/ContrailViewModel',
         'contrail-model': 'js/models/ContrailModel',
         'contrail-list-model': 'js/models/ContrailListModel',

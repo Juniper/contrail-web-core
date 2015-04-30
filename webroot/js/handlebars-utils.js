@@ -210,24 +210,8 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
     switch (templateGenerator) {
         case 'TextGenerator':
             if (contrail.checkIfExist(templateGeneratorConfig)) {
-                var formatter = templateGeneratorConfig.formatter;
-                switch (formatter) {
-                    case 'byte' :
-                        returnValue = formatBytes(value);
-                    break;
-
-                    case 'kilo-byte' :
-                        returnValue = formatBytes(value * 1024);
-                    break;
-
-                    case 'length' :
-                        returnValue = value.length;
-                    break;
-
-                    case 'throughput' :
-                        returnValue = formatThroughput(value);
-                    break;
-                };
+                var formatterKey = templateGeneratorConfig.formatter;
+                return cowf.getTextGenerator(formatterKey, value);
             } else {
                 returnValue = $.isArray(value) ? value.join(', ') : value;
             }
