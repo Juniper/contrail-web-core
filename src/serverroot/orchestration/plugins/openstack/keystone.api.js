@@ -1739,12 +1739,14 @@ function getCookieObjs (req, appData, callback)
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
     getAdminProjectList(req, appData, function(adminProjectObjs, domainObjs,
                                                tenantList, domList) {
+        /*
         for (key in  adminProjectObjs) {
             cookieObjs['domain'] = key;
             cookieObjs['project'] = adminProjectObjs[key][0];
             callback(cookieObjs);
             return;
         }
+        */
         /* multi_tenancy is disabled */
         if ((null == tenantList) || (null == tenantList['tenants'])) {
             logutils.logger.error('Tenant List retrieval error');
@@ -1777,6 +1779,8 @@ function getCookieObjs (req, appData, callback)
                 /* First check if we have this domain now or not */
                 if (false == plugins.doDomainExist(req.cookies.domain, tenantList)) {
                     cookieObjs['domain'] = defDomainId;
+                } else {
+                    cookieObjs['domain'] = req.cookies.domain;
                 }
             }
             if (null == req.cookies.project) {
@@ -1786,7 +1790,11 @@ function getCookieObjs (req, appData, callback)
                     /* Just check if the project exists or not */
                     var projCnt = tenantList['tenants'].length;
                     for (var i = 0; i < projCnt; i++) {
-                        if (tenantList['tenants'][i] == req.cookies.project) {
+                        if ((null != tenantList['tenants'][i]) &&
+                            (null != tenantList['tenants'][i]['name']) &&
+                            (tenantList['tenants'][i]['name'] ==
+                                req.cookies.project)) {
+                            cookieObjs['project'] = req.cookies.project;
                             /* it is fine */
                             break;
                         }
@@ -1801,6 +1809,7 @@ function getCookieObjs (req, appData, callback)
                     for (var i = 0; i < projCnt; i++) {
                         if (projList[i] == req.cookies.project) {
                             /* It is fine */
+                            cookieObjs['project'] = req.cookies.project;
                             break;
                         }
                     }
