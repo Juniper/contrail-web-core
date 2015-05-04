@@ -753,7 +753,6 @@ function getDefaultGridConfig() {
 
         function initDataView() {
             eventHandlerMap.dataView['onDataUpdate'] = function(e, args) {
-                setTimeout(function() {
                     //Refresh the grid only if it's not destroyed
                     if($(gridContainer).data('contrailGrid') != null && (args.previous != args.current || args.rows.length > 0)) {
                         grid.invalidateAllRows();
@@ -795,7 +794,6 @@ function getDefaultGridConfig() {
                         emptyGridHandler();
                         gridContainer.find('.slick-row-detail').remove();
                     }
-                }, 0);
             };
 
             $.each(eventHandlerMap.dataView, function(key, val){
