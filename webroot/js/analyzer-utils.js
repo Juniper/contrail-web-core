@@ -623,7 +623,7 @@ function showUnderlayPaths(data) {
                                 showInfoWindow('Error in fetching details','Error');
                             }
                             if(null !== underlayRenderer && typeof underlayRenderer === "object"){
-                                underlayRenderer.getView().resetTopology();
+                                underlayRenderer.getView().resetTopology(false);
                             }
                         }
                     }
