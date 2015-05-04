@@ -849,6 +849,10 @@ a.selectAllLink:hover {
     height: 100%;
 }
 
+.slick-header-column.hide {
+  display: none !important;
+}
+
 .grid-body.ui-widget {
 	width:100%;
 	border: none;
@@ -1043,7 +1047,7 @@ a.selectAllLink:hover {
 	color: #393939;
 	font-size: 13px;
 	padding: 5px;
-	overflow-y: hidden;
+    overflow-y: hidden;
 	word-break:break-all;
 	white-space: normal;
 }
@@ -2600,6 +2604,7 @@ color: #b94a48;
 
 .ui-multiselect-menu { display:none; position:absolute; z-index:10000; text-align: left }
 .ui-multiselect-checkboxes { position:relative /* fixes bug in IE6/7 */; overflow-y:scroll }
+.ui-multiselect-checkboxes  input.ace-input[type=checkbox] {  width: 0;  }
 .ui-multiselect-checkboxes label { cursor:default; display:block; border:1px solid transparent; padding:3px 3px 3px 10px }
 .ui-multiselect-checkboxes label input { position:relative !important; top:1px }
 .ui-multiselect-checkboxes input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] + .ace-lbl::before,
@@ -2823,28 +2828,45 @@ color: #b94a48;
     overflow-y: auto;
     overflow-x: hidden;
 }
-.control-panel-filter-container {
+.control-panel-filter-container,
+.control-panel-legend-container {
     width: 280px;
 }
-.control-panel-filter-title {
+.control-panel-filter-title,
+.control-panel-legend-title {
     background-color: #F5F5F5;
-    padding: 10px;
+    padding: 5px 10px;
     margin: 0;
     color: #3182bd;
     font-size: 15px;
     font-weight: 400;
+    height: 22px;
 }
-.control-panel-group-filter-title {
-    font-size: 14px;
-    font-weight: 400;
+.control-panel-filter-title-text,
+.control-panel-legend-title-text {
+    margin: 0 10px;
+}
+.control-panel-filter-close,
+.control-panel-legend-close {
+    color: #777777;
+}
+.control-panel-group-filter-title,
+.control-panel-group-legend-title {
+    font-size: 0.9em;
+    font-weight: bold;
     margin: 3px 0;
-
-    color: #555;
+    color: #787878;
 }
-.control-panel-filter-group-item {
+.control-panel-filter-group-item,
+.control-panel-legend-group-item {
     color: #777;
 }
-
+.control-panel-filter-group-item input.ace-input[type=checkbox] + .ace-lbl,
+.control-panel-filter-group-item input.ace-input[type=radio] + .ace-lbl,
+.control-panel-legend-group-item input.ace-input[type=checkbox] + .ace-lbl,
+.control-panel-legend-group-item input.ace-input[type=radio] + .ace-lbl {
+    font-size: 12px;
+}
 .chartContainer.value {
     border-bottom:1px solid #888;
     font-size:24px;
@@ -2869,8 +2891,11 @@ color: #b94a48;
     font-size: 11px;
     fill: #777;
 }
-.zoom-scatter-chart-container.rightmenu .col1 .objects {
-    cursor:move;
+.zoom-scatter-chart-container.rightmenu .col1 rect {
+    cursor: move;
+}
+.zoom-scatter-chart-container.rightmenu .col1 rect.zoomBySelection {
+    cursor: crosshair;
 }
 .zoom-scatter-chart-container.rightmenu .col1 .axisLine {
     shape-rendering: crispEdges;
@@ -2894,7 +2919,7 @@ color: #b94a48;
 .zoom-scatter-chart-container.rightmenu .col1 .annotationsOn .med:hover {
     fill:rgba(1,71,87,0.1);
 }
-.zoom-scatter-chart-container.rightmenu .col1 polygon {
+.zoom-scatter-chart-container.rightmenu .col1 circle {
     -moz-transition:fill linear 0.5s;
     -webkit-transition:fill linear 0.5s;
     -o-transition:fill linear 0.5s;
@@ -2904,35 +2929,40 @@ color: #b94a48;
 
 .zoom-scatter-chart-container.rightmenu .col1 .error,
 input.ace-input[type=checkbox] + .ace-lbl.error::before,
-input.ace-input[type=radio] + .ace-lbl.error::before {
+input.ace-input[type=radio] + .ace-lbl.error::before,
+i.error {
   fill: #d62728;
   color: #d62728;
 }
 
 .zoom-scatter-chart-container.rightmenu .col1 .warning,
 input.ace-input[type=checkbox] + .ace-lbl.warning::before,
-input.ace-input[type=radio] + .ace-lbl.warning::before {
+input.ace-input[type=radio] + .ace-lbl.warning::before,
+i.warning {
   fill: #ff7f0e;
   color: #ff7f0e;
 }
 
 .zoom-scatter-chart-container.rightmenu .col1 .medium,
 input.ace-input[type=checkbox] + .ace-lbl.medium::before,
-input.ace-input[type=radio] + .ace-lbl.medium::before {
+input.ace-input[type=radio] + .ace-lbl.medium::before,
+i.medium {
   fill: #6baed6;
   color: #6baed6;
 }
 
 .zoom-scatter-chart-container.rightmenu .col1 .okay,
 input.ace-input[type=checkbox] + .ace-lbl.okay::before,
-input.ace-input[type=radio] + .ace-lbl.okay::before {
+input.ace-input[type=radio] + .ace-lbl.okay::before,
+i.okay {
   fill: #2ca02c;
   color: #2ca02c;
 }
 
 .zoom-scatter-chart-container.rightmenu .col1 .default,
 input.ace-input[type=checkbox] + .ace-lbl.default::before,
-input.ace-input[type=radio] + .ace-lbl.default::before{
+input.ace-input[type=radio] + .ace-lbl.default::before,
+i.default {
   fill: #1f77b4;
   color: #1f77b4;
 }
@@ -2961,6 +2991,14 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
     stroke: none;
     fill: #777;
     font-weight: normal;
+}
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .ir {
     background-color: transparent;

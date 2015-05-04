@@ -2404,7 +2404,7 @@ button.btn:active {
 
 /* cursor framework */
 .cursor-pointer {cursor: pointer;}
-.cursor-crosshair {cursor: crosshair;}
+.cursor-crosshair {cursor: crosshair !important;}
 
 .blue-sparkline {
     stroke: steelblue;

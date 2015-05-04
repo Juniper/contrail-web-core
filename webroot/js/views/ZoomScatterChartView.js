@@ -78,7 +78,7 @@ define([
             self.zoomBySelection = zoomBySelection;
 
             var viewAttributes = {
-                    viewConfig: getControlPanelConfig(self, chartModel, chartConfig, chartControlPanelExpandedSelector)
+                    viewConfig: getControlPanelConfig(self, chartModel, chartConfig, chartOptions, chartControlPanelExpandedSelector)
                 },
                 controlPanelView = new ControlPanelView({
                     el: chartControlPanelSelector,
@@ -146,15 +146,14 @@ define([
                 })
                 .attr("opacity", "0.5")
                 .on("mouseenter", function (d) {
-                    if (!self.zoomBySelection) {
                         var tooltipData = d,
-                            selfOffset = $(this).offset();
+                        selfOffset = $(this).offset(),
+                        tooltipConfig = tooltipConfigCB(tooltipData);
 
-                        clearTimeout(timer);
-                        timer = setTimeout(function () {
-                            constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
-                        }, 1000);
-                    }
+                    clearTimeout(timer);
+                    timer = setTimeout(function () {
+                        constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
+                    }, contrail.handleIfNull(tooltipConfig.delay, cowc.TOOLTIP_DELAY));
                 })
                 .on("mouseleave", function (d) {
                     clearTimeout(timer);
@@ -187,6 +186,8 @@ define([
 
             function mouseDownCallback() {
                 if (!self.zoomBySelection) return;
+                destroyTooltip(null);
+
                 var e = this,
                     origin = d3.mouse(e),
                     rect = chartSVG.append("rect").attr("class", "zoom");
@@ -195,6 +196,8 @@ define([
                 origin[1] = Math.max(0, Math.min(height, origin[1]));
                 d3.select(window)
                     .on("mousemove.zoomRect", function () {
+                        destroyTooltip(null);
+
                         var m = d3.mouse(e);
                         m[0] = Math.max(0, Math.min(width, m[0]));
                         m[1] = Math.max(0, Math.min(height, m[1]));
@@ -204,6 +207,8 @@ define([
                             .attr("height", Math.abs(m[1] - origin[1]));
                     })
                     .on("mouseup.zoomRect", function () {
+                        destroyTooltip(null);
+
                         d3.select(window).on("mousemove.zoomRect", null).on("mouseup.zoomRect", null);
                         d3.select("body").classed("noselect", false);
                         var m = d3.mouse(e);
@@ -251,7 +256,7 @@ define([
             margin = chartModel.margin;
 
         if (!chartData || !chartData.length) {
-            var noDataText = chartSVG.selectAll('.nv-noData').data([chartModel.noDataMessage]);
+            var noDataText = chartSVG.selectAll('.nv-noData').data([chartModel.getNoDataMessage()]);
 
             noDataText.enter().append('text')
                 .attr('class', 'nvd3 nv-noData')
@@ -374,8 +379,8 @@ define([
         };
     };
 
-    function getControlPanelConfig(chartView, chartModel, chartConfig, chartControlPanelExpandedSelector) {
-        return {
+    function getControlPanelConfig(chartView, chartModel, chartConfig, chartOptions, chartControlPanelExpandedSelector) {
+        var controlPanelConfig = {
             default: {
                 zoom: {
                     enabled: true,
@@ -394,75 +399,101 @@ define([
                                 chartView.zoomBySelection = !chartView.zoomBySelection;
                                 $(this).toggleClass('active');
                                 if ($(this).hasClass('active')) {
-                                    $('svg.zoom-scatter-chart').addClassSVG('cursor-crosshair');
+                                    $('svg.zoom-scatter-chart').find('rect').addClassSVG('cursor-crosshair');
                                 } else {
-                                    $('svg.zoom-scatter-chart').removeClassSVG('cursor-crosshair');
+                                    $('svg.zoom-scatter-chart').find('rect').removeClassSVG('cursor-crosshair');
                                 }
                             }
                         }
                     }
-                },
-                /*filter: {
-                    iconClass: 'icon-filter',
-                    title: 'Filter',
-                    events: {
-                        click: function () {
-                            return function (event) {
-                                var controlPanelExpandedTemplate = contrail.getTemplate4Id('core-zoomed-scatter-chart-control-panel-filter-template'), //TODO
-                                    controlPanelExpandedTemplateConfig = {
-                                        groups: [
-                                            {
-                                                id: 'by-node-color',
-                                                title: 'By Node Color',
-                                                type: 'radio',
-                                                items: [
-                                                    {
-                                                        text: 'Filter 1',
-                                                        labelCssClass: 'okay',
-                                                        events: {
-                                                            click: function (event) {
-                                                                console.log('Filter 1');
                                                             }
                                                         }
-                                                    },
-                                                    {
-                                                        text: 'Filter 2',
-                                                        labelCssClass: 'medium',
-                                                        events: {
-                                                            click: function (event) {
-                                                                console.log('Filter 2');
-                                                            }
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        ]
                                     };
 
-                                $(this).toggleClass('active');
-                                chartControlPanelExpandedSelector.toggle();
-
-                                if (chartControlPanelExpandedSelector.is(':visible')) {
-                                    chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
-
-                                    $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
-                                        $.each(groupValue.items, function (itemKey, itemValue) {
-                                            //console.log($('#control-panel-filter-group-items-' + groupValue.id)
-                                            //    .find('input'))
-                                            $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
-                                                .on('click', itemValue.events.click);
-                                        });
-                                    });
-
-                                }
-
-                            }
-                        }
-                    }
-                }*/
-
-            }
+        if(contrail.checkIfKeyExistInObject(true, chartOptions, 'controlPanelConfig.filter.enable') && chartOptions.controlPanelConfig.filter.enable) {
+            controlPanelConfig.custom.filter = getControlPanelFilterConfig(chartOptions.controlPanelConfig.filter, chartControlPanelExpandedSelector)
         }
+
+        if(contrail.checkIfKeyExistInObject(true, chartOptions, 'controlPanelConfig.legend.enable') && chartOptions.controlPanelConfig.legend.enable) {
+            controlPanelConfig.custom.legend = getControlPanelLegendConfig(chartOptions.controlPanelConfig.legend, chartControlPanelExpandedSelector)
+        }
+
+        return controlPanelConfig;
+    };
+
+    var getControlPanelFilterConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector) {
+        return {
+            iconClass: 'icon-filter',
+                title: 'Filter',
+            events: {
+                click: function () {
+                    return function (event) {
+                        var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_FILTER),
+                            controlPanelExpandedTemplateConfig = customControlPanelFilterConfig.viewConfig,
+                            self = this;
+
+                        $(self).toggleClass('active');
+                        chartControlPanelExpandedSelector.toggle();
+
+                        if (chartControlPanelExpandedSelector.is(':visible')) {
+                            chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
+
+                            $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
+                                $.each(groupValue.items, function (itemKey, itemValue) {
+                                    $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
+                                        .on('click', itemValue.events.click);
+                                });
+                            });
+
+                            chartControlPanelExpandedSelector.find('.control-panel-filter-close')
+                                .off('click')
+                                .on('click', function() {
+                                    chartControlPanelExpandedSelector.hide();
+                                    $(self).removeClass('active');
+                                });
+                        }
+                    };
+                }
+            }
+        };
+    };
+
+    var getControlPanelLegendConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector) {
+        return {
+            iconClass: 'icon-info-sign',
+            title: 'Filter',
+            events: {
+                click: function () {
+                    return function (event) {
+                        var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_LEGEND),
+                            controlPanelExpandedTemplateConfig = customControlPanelFilterConfig.viewConfig,
+                            self = this;
+
+                        $(self).toggleClass('active');
+                        chartControlPanelExpandedSelector.toggle();
+
+                        if (chartControlPanelExpandedSelector.is(':visible')) {
+                            chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
+
+                            $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
+                                $.each(groupValue.items, function (itemKey, itemValue) {
+                                    $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
+                                        .on('click', itemValue.events.click);
+                                });
+                            });
+
+                            chartControlPanelExpandedSelector.find('.control-panel-legend-close')
+                                .off('click')
+                                .on('click', function() {
+                                    chartControlPanelExpandedSelector.hide();
+                                    $(self).removeClass('active');
+                                });
+                        }
+
+                    };
+                }
+            }
+        };
     };
 
     function getOverlapMap(data) {
@@ -495,9 +526,9 @@ define([
 
         tooltipConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_ELEMENT_TOOLTIP, tooltipConfig);
 
-        tooltipElementObj = $(tooltipElementTemplate(tooltipConfig)),
-            tooltipElementTitleObj = $(tooltipElementTitleTemplate(tooltipConfig.title)),
-            tooltipElementContentObj = $(tooltipElementContentTemplate(tooltipConfig.content));
+        tooltipElementObj = $(tooltipElementTemplate(tooltipConfig));
+        tooltipElementTitleObj = $(tooltipElementTitleTemplate(tooltipConfig.title));
+        tooltipElementContentObj = $(tooltipElementContentTemplate(tooltipConfig.content));
 
         tooltipElementObj.find('.popover-title').append(tooltipElementTitleObj);
         tooltipElementObj.find('.popover-content').append(tooltipElementContentObj);
@@ -535,7 +566,7 @@ define([
 
         if (tooltipElementKey in overlapMap) {
             var overlappedElementData = $.map(overlapMap[tooltipElementKey], function (overlapMapValue, overlapMapKey) {
-                var overlappedElementName = chartData[overlapMapValue].name;
+                var overlappedElementName = contrail.handleIfNull(chartData[overlapMapValue].name, '-');
                 if (tooltipData.name != overlappedElementName) {
                     return {id: overlapMapValue, text: overlappedElementName}
                 }

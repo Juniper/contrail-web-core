@@ -281,6 +281,10 @@ define([
         $(document)
             .off('click', onDocumentClickHandler)
             .on('click', onDocumentClickHandler);
+
+        $(window).on('popstate', function (event) {
+            nv.tooltip.cleanup();
+        });
     };
 
     var onDocumentClickHandler = function(e) {

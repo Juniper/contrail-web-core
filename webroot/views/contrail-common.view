@@ -276,7 +276,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="element-tooltip-title-template">
-    <p class="heading">{{name}}</p>
+    <p class="heading">{{#handleIfNull name '-'}}{{/handleIfNull}}</p>
     <p class="sub-heading">{{type}}</p>
 </script>
 
@@ -1103,12 +1103,13 @@
                 <h6>The link you followed may be broken, or there must be some change in the configuration for this page.</h6>
             {{/IfCompare}}
             <h6>
-                <a class="not-found-nav-link" href="/">Go to the Contrail Homepage</a> |
-                <a onclick="history.back();" >Go back to the previous page</a>
+                {{#IfCompare defaultNavLinks false operator='!='}}
+                    <a class="not-found-nav-link" href="/">Go to the Contrail Homepage</a> |
+                    <a onclick="history.back();" >Go back to the previous page</a>
+                {{/IfCompare}}
                 {{#each navLinks}}
                     | <a href="{{href}}">{{text}}</a>
                 {{/each}}
-
             </h6>
         </div>
     </div>
@@ -1144,7 +1145,11 @@
 <script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-control-panel-filter-template">
     <div class="control-panel-filter-container row-fluid">
         <div class="row-fluid">
-            <p class="control-panel-filter-title"><i class="icon-filter"></i> &nbsp; Filter</p>
+            <p class="control-panel-filter-title">
+                <span class="pull-left control-panel-filter-title-icon"><i class="icon-filter"></i></span>
+                <span class="pull-left control-panel-filter-title-text">Filter Chart</span>
+                <span class="pull-right control-panel-filter-close"><i class="icon-remove"></i></span>
+            </p>
         </div>
         <div class="row-fluid control-panel-filter-body">
             {{#each groups}}
@@ -1159,6 +1164,33 @@
                     </div>
                     {{/each}}
                 {{/IfCompare}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-control-panel-legend-template">
+    <div class="control-panel-legend-container row-fluid">
+        <div class="row-fluid">
+            <p class="control-panel-legend-title">
+                <span class="pull-left control-panel-legend-title-icon"><i class="icon-info-sign"></i></span>
+                <span class="pull-left control-panel-legend-title-text">Chart Information</span>
+                <span class="pull-right control-panel-legend-close"><i class="icon-remove"></i></span>
+            </p>
+        </div>
+        <div class="row-fluid control-panel-legend-body">
+            {{#each groups}}
+            <div class="control-panel-legend-group padding-10">
+                <h6 class="control-panel-group-legend-title">{{title}}</h6>
+                <div id="control-panel-filter-group-items-{{id}}" class="row-fluid control-panel-filter-group-items padding-5-0;">
+
+                {{#each items}}
+                    <div class="control-panel-filter-group-item padding-5-0">
+                        <i class="{{labelCssClass}}"></i> &nbsp;{{text}}
+                    </div>
+                {{/each}}
                 </div>
             </div>
             {{/each}}

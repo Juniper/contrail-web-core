@@ -53,7 +53,7 @@ var contextMenuConfig = {
             items.view = {
                 name: '<i class="icon-external-link"></i><span class="margin-0-5">View Virtual Network</span>',
                 callback: function (key, options) {
-                    loadFeature({p: 'mon_net_networks', q: {fqName: viewElement['attributes']['nodeDetails']['name']}});
+                    loadFeature({p: 'mon_networking_networks', q: {fqName: viewElement['attributes']['nodeDetails']['name']}});
                 }
             };
         }
@@ -136,7 +136,7 @@ var contextMenuConfig = {
                     name: '<i class="icon-long-arrow-right"></i><span class="margin-0-5">View Traffic from ' + sourceName + ' to ' + targetName + '</span>',
                     callback: function (key, options) {
                         loadFeature({
-                            p: 'mon_net_networks',
+                            p: 'mon_networking_networks',
                             q: {fqName: viewElementDetails['dst'], srcVN: viewElementDetails['src']}
                         });
                     }
@@ -149,7 +149,7 @@ var contextMenuConfig = {
                 name: '<i class="icon-long-arrow-left"></i><span class="margin-0-5">View Traffic from ' + targetName + ' to ' + sourceName + '</span>',
                 callback: function (key, options) {
                     loadFeature({
-                        p: 'mon_net_networks',
+                        p: 'mon_networking_networks',
                         q: {fqName: viewElementDetails['src'], srcVN: viewElementDetails['dst']}
                     });
                 }
@@ -426,6 +426,32 @@ function ContrailElement(type, options) {
         case 'virtual-machine':
             contrailElement = new joint.shapes.contrail.VirtualMachine(options);
             break;
+
+        case 'chassis':
+            contrailElement = new joint.shapes.contrail.Chassis(options);
+            break;
+        case 'line-card':
+            contrailElement = new joint.shapes.contrail.LineCard(options);
+            break;
+        case 'switch-card':
+            contrailElement = new joint.shapes.contrail.SwitchCard(options);
+            break;
+        case 'routing-engine':
+            contrailElement = new joint.shapes.contrail.RoutingEngine(options);
+            break;
+        case 'power-module':
+            contrailElement = new joint.shapes.contrail.PowerModule(options);
+            break;
+        case 'fan-module':
+            contrailElement = new joint.shapes.contrail.FanModule(options);
+            break;
+        case 'packet-forwarding-engine':
+            contrailElement = new joint.shapes.contrail.PacketForwardingEngine(options);
+            break;
+        case 'cpu':
+            contrailElement = new joint.shapes.contrail.CPU(options);
+            break;
+
         case 'link':
             contrailElement = new joint.shapes.contrail.Link(options);
             break;
@@ -624,7 +650,7 @@ function renderZoomedVisualization4VN(selectorId, jointObject, params) {
     	</div>').show();
 
     $('#topology-project-link').on('click', function () {
-        loadFeature({p: 'mon_net_projects', q: {fqName: domainName + ':' + projectName}});
+        loadFeature({p: 'mon_networking_projects', q: {fqName: domainName + ':' + projectName}});
     });
 
     jointObject.connectedGraph = zoomedGraph;
@@ -1324,7 +1350,7 @@ function initConnectedGraphEventsForZoomedElement(selectorId, jointObject, param
     jointObject.connectedPaper.on('blank:pointerdblclick', function (evt, x, y) {
         var fqName = params['config']['fqName'],
             fqNameArray = fqName.split(':');
-        loadFeature({p: 'mon_net_projects', q: {fqName: fqNameArray[0] + ':' + fqNameArray[1]}});
+        loadFeature({p: 'mon_networking_projects', q: {fqName: fqNameArray[0] + ':' + fqNameArray[1]}});
     });
 }
 
@@ -1342,7 +1368,7 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
         switch (elementType) {
             case 'contrail.VirtualNetwork':
                 loadFeature({
-                    p: 'mon_net_networks',
+                    p: 'mon_networking_networks',
                     q: {fqName: dblClickedElement['attributes']['nodeDetails']['name']}
                 });
                 $('g.VirtualNetwork').popover('hide');
@@ -1380,7 +1406,7 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
             case 'contrail.VirtualMachine':
                 var srcVN = dblClickedElement.attributes.nodeDetails.srcVNDetails.name;
                 loadFeature({
-                    p: 'mon_net_instances',
+                    p: 'mon_networking_instances',
                     q: {
                         fqName: dblClickedElement['attributes']['nodeDetails']['fqName'],
                         srcVN: srcVN.split(':')[2] + ' (' + srcVN.split(':')[1] + ')'
@@ -1396,7 +1422,7 @@ function initConnectedGraphEvents(selectorId, jointObject, params) {
     jointObject.connectedPaper.on('blank:pointerdblclick', function (evt, x, y) {
         var fqName = params['config']['fqName'],
             fqNameArray = fqName.split(':');
-        loadFeature({p: 'mon_net_projects', q: {fqName: fqNameArray[0] + ':' + fqNameArray[1]}});
+        loadFeature({p: 'mon_networking_projects', q: {fqName: fqNameArray[0] + ':' + fqNameArray[1]}});
 
         var zoomedElementId = jointObject.connectedPaper['zoomedElementId'],
             newGraphSize;
@@ -1952,6 +1978,112 @@ joint.shapes.contrail.VirtualRouterView = joint.shapes.contrail.FontElementView.
         type: 'contrail.VirtualRouterView'
     }, joint.shapes.contrail.FontElementView.prototype.defaults)
 });
+
+//Chassis components - Begin
+joint.shapes.contrail.Chassis = joint.shapes.contrail.FontElement.extend({
+    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="Chassis"/></g></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.Chassis'
+    }, joint.shapes.contrail.FontElement.prototype.defaults)
+});
+
+joint.shapes.contrail.ChassisView = joint.shapes.contrail.FontElementView.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.ChassisView'
+    }, joint.shapes.contrail.FontElementView.prototype.defaults)
+});
+
+joint.shapes.contrail.LineCard = joint.shapes.contrail.FontElement.extend({
+    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="LineCard"/></g></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.LineCard'
+    }, joint.shapes.contrail.FontElement.prototype.defaults)
+});
+
+joint.shapes.contrail.LineCardView = joint.shapes.contrail.FontElementView.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.LineCardView'
+    }, joint.shapes.contrail.FontElementView.prototype.defaults)
+});
+
+joint.shapes.contrail.SwitchCard = joint.shapes.contrail.FontElement.extend({
+    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="SwitchCard"/></g></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.SwitchCard'
+    }, joint.shapes.contrail.FontElement.prototype.defaults)
+});
+
+joint.shapes.contrail.SwitchCardView = joint.shapes.contrail.FontElementView.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.SwitchCardView'
+    }, joint.shapes.contrail.FontElementView.prototype.defaults)
+});
+
+joint.shapes.contrail.RoutingEngine = joint.shapes.contrail.FontElement.extend({
+    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="RoutingEngine"/></g></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.RoutingEngine'
+    }, joint.shapes.contrail.FontElement.prototype.defaults)
+});
+
+joint.shapes.contrail.RoutingEngineView = joint.shapes.contrail.FontElementView.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.RoutingEngineView'
+    }, joint.shapes.contrail.FontElementView.prototype.defaults)
+});
+
+joint.shapes.contrail.PowerModule = joint.shapes.contrail.FontElement.extend({
+    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="PowerModule"/></g></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.PowerModule'
+    }, joint.shapes.contrail.FontElement.prototype.defaults)
+});
+
+joint.shapes.contrail.PowerModuleView = joint.shapes.contrail.FontElementView.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.PowerModuleView'
+    }, joint.shapes.contrail.FontElementView.prototype.defaults)
+});
+
+joint.shapes.contrail.FanModule = joint.shapes.contrail.FontElement.extend({
+    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="FanModule"/></g></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.FanModule'
+    }, joint.shapes.contrail.FontElement.prototype.defaults)
+});
+
+joint.shapes.contrail.FanModuleView = joint.shapes.contrail.FontElementView.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.FanModuleView'
+    }, joint.shapes.contrail.FontElementView.prototype.defaults)
+});
+
+joint.shapes.contrail.PacketForwardingEngine = joint.shapes.contrail.FontElement.extend({
+    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="PacketForwardingEngine"/></g></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.PacketForwardingEngine'
+    }, joint.shapes.contrail.FontElement.prototype.defaults)
+});
+
+joint.shapes.contrail.PacketForwardingEngineView = joint.shapes.contrail.FontElementView.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.PacketForwardingEngineView'
+    }, joint.shapes.contrail.FontElementView.prototype.defaults)
+});
+
+joint.shapes.contrail.CPU = joint.shapes.contrail.FontElement.extend({
+    markup: '<g class="rotatable"><text/><g class="scalable"><rect class="CPU"/></g></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.CPU'
+    }, joint.shapes.contrail.FontElement.prototype.defaults)
+});
+
+joint.shapes.contrail.CPUView = joint.shapes.contrail.FontElementView.extend({
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.CPUView'
+    }, joint.shapes.contrail.FontElementView.prototype.defaults)
+});
+//Chassis components - End
 
 //joint.shapes.contrail.LogicalRouter = joint.shapes.contrail.ImageElement.extend({
 //    defaults: joint.util.deepSupplement({
