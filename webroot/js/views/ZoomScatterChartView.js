@@ -78,7 +78,7 @@ define([
             self.zoomBySelection = zoomBySelection;
 
             var viewAttributes = {
-                    viewConfig: getControlPanelConfig(self, chartModel, chartConfig, chartControlPanelExpandedSelector)
+                    viewConfig: getControlPanelConfig(self, chartModel, chartConfig, chartOptions, chartControlPanelExpandedSelector)
                 },
                 controlPanelView = new ControlPanelView({
                     el: chartControlPanelSelector,
@@ -91,11 +91,11 @@ define([
                 margin = chartConfig['margin'],
                 width = chartModel.width,
                 height = chartModel.height,
-                timer = null;
+                timer = null, circleRadius = chartConfig.circleRadius;
 
             chartSVG = d3.select($(chartSelector)[0]).append("svg")
                 .attr("class", "zoom-scatter-chart")
-                .attr("width", width + margin.left + margin.right)
+                .attr("width", width + margin.left + margin.right + circleRadius)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
@@ -104,13 +104,15 @@ define([
                 .on("mousedown", mouseDownCallback);
 
             chartSVG.append("rect")
-                .attr("width", width)
-                .attr("height", height);
+                .attr("width", width + circleRadius)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + circleRadius + ",0)")
 
 
             chartSVG.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
+                .attr("transform", "translate(" + circleRadius + "," + height + ")")
                 .call(chartModel.xAxis)
                 .selectAll("text")
                 .attr("x", 0)
@@ -118,6 +120,7 @@ define([
 
             chartSVG.append("g")
                 .attr("class", "y axis")
+                .attr("transform", "translate(" + circleRadius + ",0)")
                 .call(chartModel.yAxis)
                 .selectAll("text")
                 .attr("x", -8)
@@ -125,8 +128,8 @@ define([
 
             viewObjects = chartSVG.append("svg")
                 .attr("class", "objects")
-                .attr("width", width)
-                .attr("height", height + chartConfig.circleRadius);
+                .attr("width", width + circleRadius)
+                .attr("height", height + circleRadius);
 
             viewObjects.selectAll("circle")
                 .data(chartData)
@@ -139,22 +142,24 @@ define([
                     return getBubbleColor(d[chartConfig.colorFilterFields], chartModel.classes, chartModel.maxColorFilterFields);
                 })
                 .attr("transform", function (d) {
-                    return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                    return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                 })
                 .attr("opacity", "0.5")
                 .on("mouseenter", function (d) {
                     var tooltipData = d,
-                        selfOffset = $(this).offset();
+                        selfOffset = $(this).offset(),
+                        tooltipConfig = tooltipConfigCB(tooltipData);
 
                     clearTimeout(timer);
                     timer = setTimeout(function () {
                         constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
-                    }, 1500);
+                    }, contrail.handleIfNull(tooltipConfig.delay, cowc.TOOLTIP_DELAY));
                 })
                 .on("mouseleave", function (d) {
                     clearTimeout(timer);
                 })
                 .on("click", function (d) {
+                    clearTimeout(timer);
                     clickCB(d);
                 });
 
@@ -181,6 +186,8 @@ define([
 
             function mouseDownCallback() {
                 if (!self.zoomBySelection) return;
+                destroyTooltip(null);
+
                 var e = this,
                     origin = d3.mouse(e),
                     rect = chartSVG.append("rect").attr("class", "zoom");
@@ -189,6 +196,8 @@ define([
                 origin[1] = Math.max(0, Math.min(height, origin[1]));
                 d3.select(window)
                     .on("mousemove.zoomRect", function () {
+                        destroyTooltip(null);
+
                         var m = d3.mouse(e);
                         m[0] = Math.max(0, Math.min(width, m[0]));
                         m[1] = Math.max(0, Math.min(height, m[1]));
@@ -198,6 +207,8 @@ define([
                             .attr("height", Math.abs(m[1] - origin[1]));
                     })
                     .on("mouseup.zoomRect", function () {
+                        destroyTooltip(null);
+
                         d3.select(window).on("mousemove.zoomRect", null).on("mouseup.zoomRect", null);
                         d3.select("body").classed("noselect", false);
                         var m = d3.mouse(e);
@@ -230,7 +241,7 @@ define([
                             .attr("y", 0);
 
                         chartSVG.selectAll("circle").attr("transform", function (d) {
-                            return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                            return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                         });
                     }, true);
                 d3.event.stopPropagation();
@@ -245,14 +256,14 @@ define([
             margin = chartModel.margin;
 
         if (!chartData || !chartData.length) {
-            var noDataText = chartSVG.selectAll('.nv-noData').data([chartModel.noDataMessage]);
+            var noDataText = chartSVG.selectAll('.nv-noData').data([chartModel.getNoDataMessage()]);
 
             noDataText.enter().append('text')
                 .attr('class', 'nvd3 nv-noData')
                 .attr('dy', '-.7em')
                 .style('text-anchor', 'middle');
 
-            noDataText.attr('x', margin.left + (chartModel.width / 2))
+            noDataText.attr('x', chartModel.width / 2)
                 .attr('y', margin.top + (chartModel.height / 2))
                 .text(function (d) {
                     return d
@@ -309,7 +320,7 @@ define([
                 .attr("y", 0);
 
             chartView.svg.selectAll("circle").attr("transform", function (d) {
-                return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
             });
         };
     };
@@ -355,7 +366,7 @@ define([
 
             chartView.svg.selectAll("circle")
                 .attr("transform", function (d) {
-                    return "translate(" + chartModel.xScale(d[chartConfig.xField]) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                    return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                 });
 
             zm.scale(1);
@@ -368,8 +379,8 @@ define([
         };
     };
 
-    function getControlPanelConfig(chartView, chartModel, chartConfig) {
-        return {
+    function getControlPanelConfig(chartView, chartModel, chartConfig, chartOptions, chartControlPanelExpandedSelector) {
+        var controlPanelConfig = {
             default: {
                 zoom: {
                     enabled: true,
@@ -388,81 +399,101 @@ define([
                                 chartView.zoomBySelection = !chartView.zoomBySelection;
                                 $(this).toggleClass('active');
                                 if ($(this).hasClass('active')) {
-                                    $('svg.zoom-scatter-chart').addClassSVG('cursor-crosshair');
+                                    $('svg.zoom-scatter-chart').find('rect').addClassSVG('cursor-crosshair');
                                 } else {
-                                    $('svg.zoom-scatter-chart').removeClassSVG('cursor-crosshair');
+                                    $('svg.zoom-scatter-chart').find('rect').removeClassSVG('cursor-crosshair');
                                 }
                             }
                         }
                     }
-                },
-                /*filter: {
-                    iconClass: 'icon-filter',
-                    title: 'Filter',
-                    events: {
-                        click: function () {
-                            return function (event) {
-                                var controlPanelExpandedTemplate = contrail.getTemplate4Id('core-zoomed-scatter-chart-control-panel-filter-template'), //TODO
-                                    controlPanelExpandedTemplateConfig = {
-                                        groups: [
-                                            {
-                                                id: 'by-node-color',
-                                                title: 'By Node Color',
-                                                type: 'radio',
-                                                items: [
-                                                    {
-                                                        text: 'Filter 1',
-                                                        events: {
-                                                            click: function (event) {
-                                                                console.log('Filter 1');
-                                                            }
-                                                        }
-                                                    },
-                                                    {
-                                                        text: 'Filter 2',
-                                                        events: {
-                                                            click: function (event) {
-                                                                console.log('Filter 2');
-                                                            }
-                                                        }
-                                                    },
-                                                    {
-                                                        text: 'Filter 3',
-                                                        events: {
-                                                            click: function (event) {
-                                                                console.log('Filter 3');
-                                                            }
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    };
-
-                                $(this).toggleClass('active');
-                                chartControlPanelExpandedSelector.toggle();
-
-                                if (chartControlPanelExpandedSelector.is(':visible')) {
-                                    chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
-
-                                    $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
-                                        $.each(groupValue.items, function (itemKey, itemValue) {
-                                            //console.log($('#control-panel-filter-group-items-' + groupValue.id)
-                                            //    .find('input'))
-                                            $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
-                                                .on('click', itemValue.events.click);
-                                        });
-                                    });
-
-                                }
-
-                            }
-                        }
-                    }
-                }*/
-
+                }
             }
+        };
+
+        if(contrail.checkIfKeyExistInObject(true, chartOptions, 'controlPanelConfig.filter.enable') && chartOptions.controlPanelConfig.filter.enable) {
+            controlPanelConfig.custom.filter = getControlPanelFilterConfig(chartOptions.controlPanelConfig.filter, chartControlPanelExpandedSelector)
         }
+
+        if(contrail.checkIfKeyExistInObject(true, chartOptions, 'controlPanelConfig.legend.enable') && chartOptions.controlPanelConfig.legend.enable) {
+            controlPanelConfig.custom.legend = getControlPanelLegendConfig(chartOptions.controlPanelConfig.legend, chartControlPanelExpandedSelector)
+        }
+
+        return controlPanelConfig;
+    };
+
+    var getControlPanelFilterConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector) {
+        return {
+            iconClass: 'icon-filter',
+                title: 'Filter',
+            events: {
+                click: function () {
+                    return function (event) {
+                        var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_FILTER),
+                            controlPanelExpandedTemplateConfig = customControlPanelFilterConfig.viewConfig,
+                            self = this;
+
+                        $(self).toggleClass('active');
+                        chartControlPanelExpandedSelector.toggle();
+
+                        if (chartControlPanelExpandedSelector.is(':visible')) {
+                            chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
+
+                            $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
+                                $.each(groupValue.items, function (itemKey, itemValue) {
+                                    $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
+                                        .on('click', itemValue.events.click);
+                                });
+                            });
+
+                            chartControlPanelExpandedSelector.find('.control-panel-filter-close')
+                                .off('click')
+                                .on('click', function() {
+                                    chartControlPanelExpandedSelector.hide();
+                                    $(self).removeClass('active');
+                                });
+                        }
+                    };
+                }
+            }
+        };
+    };
+
+    var getControlPanelLegendConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector) {
+        return {
+            iconClass: 'icon-info-sign',
+            title: 'Filter',
+            events: {
+                click: function () {
+                    return function (event) {
+                        var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_LEGEND),
+                            controlPanelExpandedTemplateConfig = customControlPanelFilterConfig.viewConfig,
+                            self = this;
+
+                        $(self).toggleClass('active');
+                        chartControlPanelExpandedSelector.toggle();
+
+                        if (chartControlPanelExpandedSelector.is(':visible')) {
+                            chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
+
+                            $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
+                                $.each(groupValue.items, function (itemKey, itemValue) {
+                                    $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
+                                        .on('click', itemValue.events.click);
+                                });
+                            });
+
+                            chartControlPanelExpandedSelector.find('.control-panel-legend-close')
+                                .off('click')
+                                .on('click', function() {
+                                    chartControlPanelExpandedSelector.hide();
+                                    $(self).removeClass('active');
+                                });
+                        }
+
+                    };
+                }
+            }
+        };
     };
 
     function getOverlapMap(data) {
@@ -495,9 +526,9 @@ define([
 
         tooltipConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_ELEMENT_TOOLTIP, tooltipConfig);
 
-        tooltipElementObj = $(tooltipElementTemplate(tooltipConfig)),
-            tooltipElementTitleObj = $(tooltipElementTitleTemplate(tooltipConfig.title)),
-            tooltipElementContentObj = $(tooltipElementContentTemplate(tooltipConfig.content));
+        tooltipElementObj = $(tooltipElementTemplate(tooltipConfig));
+        tooltipElementTitleObj = $(tooltipElementTitleTemplate(tooltipConfig.title));
+        tooltipElementContentObj = $(tooltipElementContentTemplate(tooltipConfig.content));
 
         tooltipElementObj.find('.popover-title').append(tooltipElementTitleObj);
         tooltipElementObj.find('.popover-content').append(tooltipElementContentObj);
@@ -535,8 +566,11 @@ define([
 
         if (tooltipElementKey in overlapMap) {
             var overlappedElementData = $.map(overlapMap[tooltipElementKey], function (overlapMapValue, overlapMapKey) {
-                var overlappedElementName = chartData[overlapMapValue].name;
-                return {id: overlapMapValue, text: overlappedElementName}
+                var overlappedElementName = contrail.handleIfNull(chartData[overlapMapValue].name, '-');
+                if (tooltipData.name != overlappedElementName) {
+                    return {id: overlapMapValue, text: overlappedElementName}
+                }
+                return null;
             });
 
             $(tooltipElementObj).find('.popover-tooltip-footer').append('<div class="overlapped-elements-dropdown"></div>');
@@ -545,7 +579,7 @@ define([
             overlappedElementsDropdownElement.contrailDropdown({
                 dataTextField: 'text',
                 dataValueField: 'id',
-                placeholder: 'View more',
+                placeholder: 'View more (' + overlappedElementData.length + ')',
                 ignoreFirstValue: true,
                 dropdownCssClass: 'min-width-150',
                 data: overlappedElementData,
@@ -629,7 +663,7 @@ define([
 
     function getChartConfig(chartSelector, chartOptions, chartSize) {
         var margin = {top: 20, right: 5, bottom: 50, left: 75},
-            width = $(chartSelector).width(),
+            width = $(chartSelector).width() - 10,
             height = 275;
 
         var chartViewConfig = {

@@ -6,7 +6,7 @@ define([
     'underscore',
     'joint',
     'contrail-graph-model',
-    'js/views/ControlPanelView.js'
+    'js/views/ControlPanelView'
 ], function (_, Joint, ContrailGraphModel, ControlPanelView) {
     var GraphView = joint.dia.Paper.extend({
         constructor: function (viewConfig) {
@@ -175,7 +175,7 @@ define([
                             }
                         );
 
-                    },1000)
+                    }, contrail.handleIfNull(valueConfig.delay, cowc.TOOLTIP_DELAY))
             })
             .off("mouseleave")
             .on("mouseleave", function () {
@@ -249,6 +249,11 @@ define([
             .off('click', onDocumentClickHandler)
             .on('click', onDocumentClickHandler);
 
+        $(window).on('popstate', function (event) {
+            $('g').popover('hide');
+
+        });
+
         topContainerElement
             .off('dblclick', onTopContainerBankDblClickHandler)
             .on('dblclick', onTopContainerBankDblClickHandler);
@@ -257,6 +262,7 @@ define([
     var onDocumentClickHandler = function(e) {
         if(!$(e.target).closest('.popover').length) {
             $('g').popover('hide');
+            $(this).parents('.popover').remove();
         }
     };
 

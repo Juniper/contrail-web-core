@@ -71,7 +71,7 @@ Handlebars.registerHelper('formatGridJSON2HTML', function(rawdata, options) {
     if (contrail.checkIfExist(rawDataClone.cgrid)) {
         delete rawDataClone.cgrid;
     }
-    return contrail.formatJSON2HTML(rawDataClone,3);
+    return contrail.formatJSON2HTML(rawDataClone,2);
 });
 
 Handlebars.registerHelper('formatString2HTML', function(string) {
@@ -210,24 +210,8 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
     switch (templateGenerator) {
         case 'TextGenerator':
             if (contrail.checkIfExist(templateGeneratorConfig)) {
-                var formatter = templateGeneratorConfig.formatter;
-                switch (formatter) {
-                    case 'byte' :
-                        returnValue = formatBytes(value);
-                    break;
-
-                    case 'kilo-byte' :
-                        returnValue = formatBytes(value * 1024);
-                    break;
-
-                    case 'length' :
-                        returnValue = value.length;
-                    break;
-
-                    case 'throughput' :
-                        returnValue = formatThroughput(value);
-                    break;
-                };
+                var formatterKey = templateGeneratorConfig.formatter;
+                return cowf.getTextGenerator(formatterKey, value);
             } else {
                 returnValue = $.isArray(value) ? value.join(', ') : value;
             }
@@ -295,4 +279,8 @@ Handlebars.registerHelper('encodedVN', function(jsonObj) {
         jsonObj['q']['srcVN'].indexOf(' ') !== -1)
         jsonObj['q']['srcVN'] = encodeURIComponent(jsonObj['q']['srcVN']);
     return JSON.stringify(jsonObj);
+});
+
+Handlebars.registerHelper('handleIfNull', function(value, defaultValue) {
+    return contrail.handleIfNull(value, defaultValue);
 });

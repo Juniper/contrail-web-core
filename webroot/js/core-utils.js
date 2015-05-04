@@ -558,6 +558,55 @@ define([
         this.replaceAll = function(find, replace, strValue) {
             return strValue.replace(new RegExp(find, 'g'), replace);
         }
+
+        this.addUnits2Bytes = function(traffic, noDecimal, maxPrecision, precision, timeInterval) {
+            var trafficPrefixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'],
+                formatStr = '', decimalDigits = 2, size = 1024;
+
+            if (!$.isNumeric(traffic)) {
+                return '-';
+            } else if (traffic == 0) {
+                if(timeInterval != null && timeInterval != 0) {
+                    return '0 bps';
+                } else {
+                    return '0 B';
+                }
+            }
+
+            if(timeInterval != null && timeInterval != 0) {
+                trafficPrefixes = ['bps', 'kbps', 'mbps', 'gbps', 'tbps', 'pbps', 'ebps', 'zbps'];
+                size = 1000;
+                traffic = (traffic * 8) / timeInterval;
+            }
+
+            if ((maxPrecision != null) && (maxPrecision == true)) {
+                decimalDigits = 6;
+            } else if(precision != null) {
+                decimalDigits = precision < 7 ? precision : 6;
+            }
+
+            if (noDecimal != null && noDecimal == true)
+                decimalDigits = 0;
+
+
+            traffic = parseInt(traffic);
+            traffic = makePositive(traffic);
+
+            $.each(trafficPrefixes, function (idx, prefix) {
+                if (traffic < size) {
+                    formatStr = contrail.format('{0} {1}', parseFloat(traffic.toFixed(decimalDigits)), prefix);
+                    return false;
+                } else {
+                    //last iteration
+                    if (idx == (trafficPrefixes.length - 1))
+                        formatStr = contrail.format('{0} {1}', parseFloat(traffic.toFixed(decimalDigits)), prefix);
+                    else
+                        traffic = traffic / size;
+                }
+            });
+
+            return formatStr;
+        }
     };
     return CoreUtils;
 });
