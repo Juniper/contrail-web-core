@@ -2331,7 +2331,8 @@ button.btn:active {
 .margin-0-0-5 {margin:0 0 5px !important;}
 .margin-0-0-0-5 {margin:0 0 0 5px !important;}
 .margin-10 {margin:10px !important;}
-.margin-10-0 {margin:10px 0 !important;}
+.margin-10-0 {margin: 10px 0 !important;}
+.margin-0-10 {margin: 0 10px !important;}
 .margin-10-0-0 {margin:10px 0 0 !important;}
 .margin-0-0-10 {margin:0 0 10px !important;}
 .margin-15 {margin:15px !important;}
