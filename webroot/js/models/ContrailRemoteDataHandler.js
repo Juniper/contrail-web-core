@@ -143,35 +143,47 @@ define([
         function initVLRequests(resultJSON) {
             var vlCounter = vlRequestsInProgress.length;
             vlRequestsInProgress[vlCounter] = [];
-            for (var i = 0; vlRemoteList!=null && i < vlRemoteList.length; i++) {
-                var vlRemote = vlRemoteList[i],
-                    innerCounter = vlRequestsInProgress[vlCounter].length;
-                vlRequestsInProgress[vlCounter][innerCounter] = 1;
-                updateVLRequestStatus();
-                var vlDataParser = vlRemote.dataParser,
-                    vlSuccessCallback = vlRemote.successCallback,
-                    vlFailureCallback = vlRemote.failureCallback,
-                    vlSuccessHandler = function (vlResponse) {
-                        var vlResultJSON;
+            if (vlRemoteList != null) {
+                for (var i = 0; i < vlRemoteList.length; i++) {
+                    var vlRemote = vlRemoteList[i],
+                        innerCounter = vlRequestsInProgress[vlCounter].length;
+                    vlRequestsInProgress[vlCounter][innerCounter] = 1;
+                    updateVLRequestStatus();
+                    var vlDataParser = vlRemote.dataParser,
+                        vlSuccessCallback = vlRemote.successCallback,
+                        vlFailureCallback = vlRemote.failureCallback;
 
-                        if (contrail.checkIfFunction(vlDataParser)) {
-                            vlResultJSON = vlDataParser(vlResponse);
-                        } else {
-                            vlResultJSON = vlResponse;
-                        }
+                    var vlSuccessHandler = getVLSuccessHandlerFn(vlDataParser, vlSuccessCallback, vlCounter, innerCounter);
 
-                        vlSuccessCallback(vlResultJSON);
-                        vlRequestsInProgress[vlCounter][innerCounter] = 0;
-                        updateVLRequestStatus();
-                    },
-                    vlFailureHandler = function (xhr) {
-                        vlRequestsInProgress[vlCounter][innerCounter] = 0;
-                        vlFailureCallback(xhr);
-                        updateVLRequestStatus();
-                    };
+                    var vlFailureHandler = getVLFailureHandlerFn(vlFailureCallback, vlCounter, innerCounter);
 
-                contrail.ajaxHandler(vlRemoteList[i].getAjaxConfig(resultJSON), vlRemoteList[i].initCallback, vlSuccessHandler, vlFailureHandler);
+                    contrail.ajaxHandler(vlRemoteList[i].getAjaxConfig(resultJSON), vlRemoteList[i].initCallback, vlSuccessHandler, vlFailureHandler);
+                }
             }
+        };
+
+        function getVLSuccessHandlerFn(vlDataParser, vlSuccessCallback, vlCounter, innerCounter) {
+            return function (vlResponse) {
+                var vlResultJSON;
+
+                if (contrail.checkIfFunction(vlDataParser)) {
+                    vlResultJSON = vlDataParser(vlResponse);
+                } else {
+                    vlResultJSON = vlResponse;
+                }
+
+                vlSuccessCallback(vlResultJSON);
+                vlRequestsInProgress[vlCounter][innerCounter] = 0;
+                updateVLRequestStatus();
+            }
+        };
+
+        function getVLFailureHandlerFn(vlFailureCallback, vlCounter, innerCounter) {
+            return function (xhr) {
+                vlRequestsInProgress[vlCounter][innerCounter] = 0;
+                vlFailureCallback(xhr);
+                updateVLRequestStatus();
+            };
         };
 
         function updateVLRequestStatus() {
