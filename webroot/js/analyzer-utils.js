@@ -586,7 +586,13 @@ function showUnderlayPaths(data) {
         params.sport = data.sport;
         params.dport = data.dport;
         params.protocol = data.protocol;
-        params.direction = (data.direction_ing === 0) ? "egress" : "ingress";
+        if(data.direction_ing === 0) {
+            params.direction = 'egress';
+            params.nodeIp = data.other_vrouter_ip;
+        } else {
+            params.direction = 'ingress';
+            params.nodeIp = data.vrouter_ip;
+        }
         if(data.hasOwnProperty('startTime') && data.hasOwnProperty('endTime')) {
             params['startTime'] = data['startTime'];
             params['endTime'] = data['endTime'];
