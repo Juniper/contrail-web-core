@@ -662,7 +662,7 @@ define([
     };
 
     function getChartConfig(chartSelector, chartOptions, chartSize) {
-        var margin = {top: 20, right: 5, bottom: 50, left: 75},
+        var margin = {top: 20, right: 5, bottom: 50, left: 50},
             width = $(chartSelector).width() - 10,
             height = 275;
 
