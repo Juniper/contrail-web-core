@@ -278,6 +278,12 @@ global.QUERY_JSON = {
         "start_time": "",
         "end_time": "",
         "select_fields": []
+    },
+    StatTable_UveVMInterfaceAgent_fip_diff_stats: {
+        "table": 'StatTable.UveVMInterfaceAgent.fip_diff_stats',
+        "start_time": "",
+        "end_time": "",
+        "select_fields": []
     }
 };
 
