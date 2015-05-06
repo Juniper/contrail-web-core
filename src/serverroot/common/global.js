@@ -271,8 +271,14 @@ global.QUERY_JSON = {
                                                     "select_fields": []
                                              },
     OverlayToUnderlayFlowMap: {"table": 'OverlayToUnderlayFlowMap', "start_time": "",
-                            "end_time": "", "select_fields": ["u_prouter", "u_pifindex"]}
-                                    
+                            "end_time": "", "select_fields": ["u_prouter", "u_pifindex"]
+    },
+    StatTable_UveVMInterfaceAgent_if_stats: {
+        "table": 'StatTable.UveVMInterfaceAgent.if_stats',
+        "start_time": "",
+        "end_time": "",
+        "select_fields": []
+    }
 };
 
 global.STATS_PROP = {
