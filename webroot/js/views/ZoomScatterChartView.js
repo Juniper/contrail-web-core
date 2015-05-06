@@ -461,7 +461,7 @@ define([
     var getControlPanelLegendConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector) {
         return {
             iconClass: 'icon-info-sign',
-            title: 'Filter',
+            title: 'Information',
             events: {
                 click: function () {
                     return function (event) {
