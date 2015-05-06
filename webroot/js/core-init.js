@@ -5,7 +5,7 @@
 var initDepFiles = [
     'underscore', 'validation', 'xdate', 'handlebars-utils', 'contrail-common', 'slickgrid-utils', 'contrail-elements',
     'topology_api', 'chart-utils', 'qe-utils', 'nvd3-plugin', 'd3-utils', 'analyzer-utils', 'dashboard-utils',
-    'jquery.panzoom', 'joint.contrail', 'backbone', 'contrail-model', 'contrail-all-8', 'contrail-all-9'
+    'jquery.panzoom', 'joint.contrail', 'backbone', 'contrail-all-8', 'contrail-all-9'
 ];
 
 require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
