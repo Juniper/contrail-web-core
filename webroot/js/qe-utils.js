@@ -559,8 +559,10 @@ function openWhere(queryPrefix) {
     }));
     $.each(whereClauseView, function(orKey, orVal){
     	$.each(orVal.whereClauseEdit, function(andKey, andVal){
+            var value2 = contrail.checkIfExist(andVal['value2']) ? andVal['value2'] : '';
     		ko.applyBindings(query.whereViewModel, document.getElementById(queryPrefix + '-where-clause-' + orKey + '-' + andKey));
-    		loadWhereOptions(queryPrefix + '-where-clause-' + orKey + '-' + andKey, queryPrefix, andVal['value'], (contrail.checkIfExist(andVal['value2']) ? andVal['value2'] : ''));
+    		loadWhereOptions(queryPrefix + '-where-clause-' + orKey + '-' + andKey, queryPrefix, andVal['value'],
+                value2, andVal.suffixFields);
     	});
     });
     selectNewORClause(queryPrefix);
@@ -613,7 +615,7 @@ function appendWhere(queryPrefix,dis) {
     $('#' + newId).find('.' + queryPrefix + '-delete-new-and-clause').attr("onclick", "deleteAppendedWhere('" + newId + "');");
     $('#' + newId).find('.' + queryPrefix + '-new-and-clause-field').attr("onchange", "updateWhereOptions('" + newId + "', '" + queryPrefix + "','','', true);");
     ko.applyBindings(query.whereViewModel, document.getElementById(newId));
-    loadWhereOptions(newId, queryPrefix, '', '');
+    loadWhereOptions(newId, queryPrefix, '', '', null);
 };
 
 function deleteWhereORTerm(dis){
@@ -622,7 +624,8 @@ function deleteWhereORTerm(dis){
 }
 
 function setORClauseTerm(queryPrefix, orClauseItem){
-	var orClauseStr = getOrClauseStr(queryPrefix,orClauseItem);
+	//var orClauseStr = getOrClauseStr(queryPrefix, orClauseItem);
+	var orClauseStr = generateOrClauseStr(queryPrefix, orClauseItem);
 	orClauseItem.find('.or-clause-item-term').empty().append((orClauseStr != '') ? orClauseStr : '...');
 }
 
@@ -715,6 +718,54 @@ function getOrClauseStr(queryPrefix,dis) {
     return whereClauseViewStr;
 };
 
+function generateOrClauseStr (queryPrefix, dis) {
+    var whereForm = '',
+        orClause = [];
+
+    if($(dis).hasClass('or-clause-item')){
+        whereForm = $(dis);
+    } else{
+        whereForm = $(dis).parents('.or-clause-item');
+    }
+
+    whereForm.find('.and-clause-item').each(function(clause) {
+        var self = this,
+            field = $(self).find("select[name='field[]']").val(),
+            operator = $(self).find("select[name='operator[]']").val(),
+            value = contrail.checkIfExist($(self).find("input[name='value[]']").data('contrailCombobox')) ?
+                        $(self).find("input[name='value[]']").data('contrailCombobox').value() : null,
+            suffixField = null, suffixOperator = null, suffixValue = null;
+
+        if (contrail.checkIfExist(field) && contrail.checkIfExist(value) && field != '' && value != '') {
+            if ($(this).find('.and-clause-suffix').hasClass('present')) {
+                suffixField = $(this).find("[name='suffix-field[]']").data('contrailDropdown').value();
+                suffixOperator = $(this).find("[name='suffix-operator[]']").val();
+                suffixValue = $(this).find("[name='suffix-value[]']").val();
+
+                if (contrail.checkIfExist(suffixField) && contrail.checkIfExist(suffixValue) && suffixField != '' && suffixValue != '') {
+                    orClause.push(field + ' ' + operator + ' ' + value + ' & ' + suffixField + ' ' + suffixOperator + ' ' + suffixValue);
+                } else {
+                    orClause.push(field + ' ' + operator + ' ' + value);
+                }
+
+            } else {
+                if (queryPrefix == 'fs' || queryPrefix == 'fr') {
+                    var value2 = $(self).find("input[name='value2[]']").val(),
+                        fieldArray = field.split('_');
+
+                    orClause.push(fieldArray[0] + ' ' + operator + ' ' + value +
+                        ((value2 != '') ? ' AND ' + fieldArray[1] + ' ' + operator + ' ' + value2 : ''));
+
+                } else {
+                    orClause.push(field + ' ' + operator + ' ' + value);
+                }
+            }
+        }
+    });
+
+    return orClause.join(' AND ')
+}
+
 function addWhere(queryPrefix) {
 	var query = queries[queryPrefix];
 	query.whereViewModel.whereClauseView([]);
@@ -726,38 +777,84 @@ function addWhere(queryPrefix) {
 	$('#' + queryPrefix + '-or-clauses').find('.or-clause-item').each(function(){
     	if($(this).attr('id') != 'fs-or-clause-item-new-term'){
     		var	fieldArray = [], opArray = [], valArray = [], val2Array = [],
-    			whereClauseViewStr = "", i, length, whereForm, splitFlowFieldArray = [],
+    			whereClauseViewArray = [], i, length, whereForm = $(this),
+                splitFlowFieldArray = [],
     			whereClauseSubmit = [];
-    	
-    		whereForm = $(this);
-		    whereForm.find("select[name='field[]']").each(function () {
-		        fieldArray.push($(this).val());
-		    });
-		    whereForm.find("select[name='operator[]']").each(function () {
-		        opArray.push($(this).val());
-		    });
-		    whereForm.find("input[name='value[]']").each(function () {
-		        valArray.push($(this).data('contrailCombobox').value());
-		    });
-		    if (queryPrefix == 'fs' || queryPrefix == 'fr') {
-		        whereForm.find("input[name='value2[]']").each(function () {
-		            val2Array.push($(this).val());
-		        });
-		    }
-		    length = fieldArray.length;
-		    for (i = 0; i < length; i += 1) {
-		        if (queryPrefix == 'fs' || queryPrefix == 'fr') {
-		            splitFlowFieldArray = fieldArray[i].split('_');
-		            whereClauseViewStr += (valArray[i] != '') ? (((i != 0 && whereClauseViewStr != '') ? " AND " : "") + splitFlowFieldArray[0] + " " + opArray[i] + " " + valArray[i]) : "";
-		            whereClauseViewStr += (val2Array[i] != '') ? (((whereClauseViewStr != '') ? " AND " : "") + splitFlowFieldArray[1] + " " + opArray[i] + " " + val2Array[i]) : "";
-		            whereClauseSubmit.push({field:fieldArray[i], operator:opArray[i], value:valArray[i], value2:val2Array[i] });
-		        } else {
-		            whereClauseViewStr += (valArray[i] != '') ? (((i != 0 && whereClauseViewStr != '') ? " AND " : "") + fieldArray[i] + " " + opArray[i] + " " + valArray[i]) : "";
-		            whereClauseSubmit.push({field:fieldArray[i], operator:opArray[i], value:valArray[i]});
-		        }
-		    }
-		    if (whereClauseViewStr != "") {
-		        whereClauseArray.push({text: "(" + whereClauseViewStr + ")", whereClauseEdit: whereClauseSubmit});
+
+            whereForm.find('.and-clause-item').each(function(clause) {
+                var self = this,
+                    field = $(self).find("select[name='field[]']").val(),
+                    operator = $(self).find("select[name='operator[]']").val(),
+                    value = contrail.checkIfExist($(self).find("input[name='value[]']").data('contrailCombobox')) ?
+                        $(self).find("input[name='value[]']").data('contrailCombobox').value() : null,
+                    suffixField = null, suffixOperator = null, suffixValue = null;
+
+                if (contrail.checkIfExist(field) && contrail.checkIfExist(value) && field != '' && value != '') {
+                    if ($(this).find('.and-clause-suffix').hasClass('present')) {
+                        suffixField = $(this).find("[name='suffix-field[]']").data('contrailDropdown').value();
+                        suffixOperator = $(this).find("[name='suffix-operator[]']").val();
+                        suffixValue = $(this).find("[name='suffix-value[]']").val();
+
+                        if (contrail.checkIfExist(suffixField) && contrail.checkIfExist(suffixValue) && suffixField != '' && suffixValue != '') {
+                            whereClauseViewArray.push(field + ' ' + operator + ' ' + value + ' & ' + suffixField + ' ' + suffixOperator + ' ' + suffixValue);
+                            whereClauseSubmit.push({
+                                field: field, operator: operator, value: value,
+                                suffixFields: {
+                                    field: suffixField, operator: suffixOperator, value: suffixValue
+                                }
+                            });
+                        } else {
+                            whereClauseViewArray.push(field + ' ' + operator + ' ' + value);
+                            whereClauseSubmit.push({field: field, operator: operator, value: value});
+                        }
+
+                    } else {
+                        if (queryPrefix == 'fs' || queryPrefix == 'fr') {
+                            var value2 = $(self).find("input[name='value2[]']").val(),
+                                fieldArray = field.split('_');
+
+                            whereClauseViewArray.push(fieldArray[0] + ' ' + operator + ' ' + value +
+                            ((value2 != '') ? ' AND ' + fieldArray[1] + ' ' + operator + ' ' + value2 : ''));
+                            whereClauseSubmit.push({field: field, operator: operator, value: value, value2: value2});
+
+                        } else {
+                            whereClauseViewArray.push(field + ' ' + operator + ' ' + value);
+                            whereClauseSubmit.push({field: field, operator: operator, value: value});
+
+                        }
+                    }
+                }
+            });
+
+		    //whereForm.find("select[name='field[]']").each(function () {
+		    //    fieldArray.push($(this).val());
+		    //});
+		    //whereForm.find("select[name='operator[]']").each(function () {
+		    //    opArray.push($(this).val());
+		    //});
+		    //whereForm.find("input[name='value[]']").each(function () {
+		    //    valArray.push($(this).data('contrailCombobox').value());
+		    //});
+		    //if (queryPrefix == 'fs' || queryPrefix == 'fr') {
+		    //    whereForm.find("input[name='value2[]']").each(function () {
+		    //        val2Array.push($(this).val());
+		    //    });
+		    //}
+		    //length = fieldArray.length;
+		    //for (i = 0; i < length; i += 1) {
+		    //    if (queryPrefix == 'fs' || queryPrefix == 'fr') {
+		    //        splitFlowFieldArray = fieldArray[i].split('_');
+		    //        whereClauseViewStr += (valArray[i] != '') ? (((i != 0 && whereClauseViewStr != '') ? " AND " : "") + splitFlowFieldArray[0] + " " + opArray[i] + " " + valArray[i]) : "";
+		    //        whereClauseViewStr += (val2Array[i] != '') ? (((whereClauseViewStr != '') ? " AND " : "") + splitFlowFieldArray[1] + " " + opArray[i] + " " + val2Array[i]) : "";
+		    //        whereClauseSubmit.push({field:fieldArray[i], operator:opArray[i], value:valArray[i], value2:val2Array[i] });
+		    //    } else {
+		    //        whereClauseViewStr += (valArray[i] != '') ? (((i != 0 && whereClauseViewStr != '') ? " AND " : "") + fieldArray[i] + " " + opArray[i] + " " + valArray[i]) : "";
+		    //        whereClauseSubmit.push({field:fieldArray[i], operator:opArray[i], value:valArray[i]});
+		    //    }
+		    //}
+
+		    if (whereClauseViewArray.length > 0) {
+		        whereClauseArray.push({text: "(" + whereClauseViewArray.join(' AND ') + ")", whereClauseEdit: whereClauseSubmit});
 		        whereClauseSubmitArray.push(whereClauseSubmit);
 		    }
     	}
@@ -765,7 +862,7 @@ function addWhere(queryPrefix) {
     updateWhere(queryPrefix, query);
 };
 
-function loadWhereOptions(element, queryPrefix, value, value2) {
+function loadWhereOptions(element, queryPrefix, value, value2, suffixFields) {
     var fieldName = $('#' + element).find("select[name='field[]']").val();
     
     if (placeHolders[fieldName] != null) {
@@ -773,12 +870,15 @@ function loadWhereOptions(element, queryPrefix, value, value2) {
         	setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
         });
     }
+    if(contrail.checkIfExist(suffixFields)) {
+        $('#' + element).find('.and-clause-suffix').addClass('present');
+    }
     updateWhereOptions(element, queryPrefix, value, value2);
 };
 
 function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
-	var query = queries[queryPrefix],
-	    fieldName = $('#' + element).find("select[name='field[]']").val(),
+    var query = queries[queryPrefix],
+        fieldName = $('#' + element).find("select[name='field[]']").val(),
 	    valueNode = $('#' + element).find("input[name='value[]']"),
     	fieldData = query.whereViewModel[fieldName], value2Node,
         value2Node = $('#' + element).find("input[name='value2[]']"),
@@ -795,7 +895,7 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
         },
         change: function(e, ui){
             validateOrClause(element);
-            setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
+            setORClauseTerm(queryPrefix, $('#' + element).parents('.or-clause-item'));
         }
     });
     valueNode.data('contrailCombobox').value(value);
@@ -810,10 +910,55 @@ function updateWhereOptions(element, queryPrefix, value, value2, onchangeFlag) {
         value2Node.attr('placeholder', placeHolders[fieldName][1]);
         (value2Node.val() != "") ? value2Node.prop('disabled', false) :value2Node.prop('disabled', true);
     }
-    //if(onchangeFlag == true){
-    	setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
-    //}
+
+    updateSuffixWhereOptions(queryPrefix, element);
+    setORClauseTerm(queryPrefix, $('#' + element).parents('.or-clause-item'));
 };
+
+function updateSuffixWhereOptions(queryPrefix, element) {
+    var operator = $('#' + element).find("[name='operator[]']").val();
+
+    if(operator == '=') {
+        var selectFields = queries[queryPrefix].whereViewModel.selectFields(),
+            field = null,
+            fieldName = $('#' + element).find("select[name='field[]']").val(),
+            suffixes = [];
+
+        $.each(selectFields, function(fieldKey, fieldValue) {
+            if(fieldName == fieldValue.name) {
+                field = fieldValue;
+                return false;
+            }
+        });
+
+        if (field != null  && field.suffixes != null) {
+            suffixes = $.map(field.suffixes, function(value) {
+                return ({id: value, text: value});
+            });
+
+            $('#' + element).find('.and-clause-suffix').show();
+            $('#' + element).find('.and-clause-suffix').addClass('present');
+            $('#' + element).find('[name="suffix-field[]"]').contrailDropdown({
+                data: suffixes
+            });
+
+            $('#' + element).find('[name="suffix-value[]"]')
+                .off('change')
+                .on('change', function() {
+                    setORClauseTerm(queryPrefix,$('#' + element).parents('.or-clause-item'));
+                })
+        }
+        else {
+            $('#' + element).find('.and-clause-suffix').hide();
+            $('#' + element).find('.and-clause-suffix').removeClass('present');
+
+        }
+    } else {
+        $('#' + element).find('.and-clause-suffix').hide();
+        $('#' + element).find('.and-clause-suffix').removeClass('present');
+
+    }
+}
 
 /*
  * End - Where Clause Functions
@@ -1064,14 +1209,15 @@ function setColumnValues(url, viewModelKey, viewModels, responseField, ignoreVal
             var validValues, validValueDS = [];
             var validValueObservable = ko.observableArray([]);
             responseField ? (validValues = response[responseField]) : (validValues = response);
-            for (var i = 0; i < validValues.length; i += 1) {
-                if(isIndexed === "all" && ignoreValues.indexOf(validValues[i].name) == -1){
-                    validValueDS.push({"name":validValues[i].name, "value":validValues[i].name});
+            $.each(validValues, function(key, value) {
+                if(isIndexed === "all" && ignoreValues.indexOf(value.name) == -1){
+                    validValueDS.push($.extend(true, value, {value: value.name}));
                 }
-                else if (validValues[i].index == isIndexed && ignoreValues.indexOf(validValues[i].name) == -1) {
-                    validValueDS.push({"name":validValues[i].name, "value":validValues[i].name});
+                else if (value.index == isIndexed && ignoreValues.indexOf(value.name) == -1) {
+                    validValueDS.push($.extend(true, value, {value: value.name}));
                 }
-            }
+            });
+
             validValueDS = addValues != null ? validValueDS.concat(addValues) : validValueDS;
             validValueObservable(validValueDS);
             for (var j = 0; j < viewModels.length; j += 1) {
