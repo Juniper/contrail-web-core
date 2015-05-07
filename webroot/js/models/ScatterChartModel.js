@@ -9,21 +9,14 @@ define([
         var chartModel = nv.models.scatterChart()
             .showDistX(false)
             .showDistY(false)
+            // .sizeDomain([4,14])
+            // .sizeRange([4,14])
             .sizeDomain([0.7,2])
+            // .sizeRange([200,1500])
             .tooltipXContent(null)
             .tooltipYContent(null)
-            .showTooltipLines(false);
-
-        var d3Scale = d3.scale.linear().range([1, 2]).domain(chartOptions['sizeMinMax']);
-
-        //Adjust the size domain to have limit on minumum bubble size
-        $.each(chartData, function (idx, currSeries) {
-            currSeries['values'] = $.each(currSeries['values'], function (idx, obj) {
-                obj['size'] = d3Scale(obj['size']);
-            });
-        });
-
-        chartModel.tooltipContent(chartOptions['tooltipFn']);
+            .showTooltipLines(false)
+            .tooltipContent(chartOptions['tooltipFn']);
 
         if (chartOptions['tooltipRenderedFn'] != null)
             chartModel.tooltipRenderedFn(chartOptions['tooltipRenderedFn']);
@@ -41,9 +34,15 @@ define([
             chartModel.scatter.addDomainBuffer(chartOptions['addDomainBuffer']);
         if (chartOptions['useVoronoi'] != null && chartModel.scatter != null)
             chartModel.scatter.useVoronoi(chartOptions['useVoronoi']);
+        if (chartOptions['useSizeAsRadius'] != null && chartModel.scatter != null)
+            chartModel.scatter.useSizeAsRadius(chartOptions['useSizeAsRadius']);
+        if (chartOptions['sizeDomain'] != null && chartModel.scatter != null)
+            chartModel.scatter.sizeDomain(chartOptions['sizeDomain']);
+        if (chartOptions['sizeRange'] != null && chartModel.scatter != null)
+            chartModel.scatter.sizeRange(chartOptions['sizeRange']);
 
         //If more than one category is displayed,enable showLegend
-        if (chartData.length == 1) {
+        if (chartData.length == 1 || chartOptions['showLegend'] == false) {
             chartModel.showLegend(false);
         }
 
@@ -56,7 +55,12 @@ define([
         chartModel.yAxis.ticks(3);
 
         chartModel.dispatch.on('stateChange', chartOptions['stateChangeFunction']);
+        chartModel.legend.dispatch.on('legendDblclick', function(e) { 
+            console.info('legendDblclick');
+            d3.event.stopPropagation();
+            });
         chartModel.scatter.dispatch.on('elementClick', chartOptions['elementClickFunction']);
+        chartModel.scatter.dispatch.on('elementDblClick', chartOptions['elementDoubleClickFunction']);
         chartModel.scatter.dispatch.on('elementMouseout', chartOptions['elementMouseoutFn']);
         chartModel.scatter.dispatch.on('elementMouseover', chartOptions['elementMouseoverFn']);
 

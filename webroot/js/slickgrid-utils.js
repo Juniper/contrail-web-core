@@ -117,7 +117,7 @@ function getDefaultGridConfig() {
             initContrailGrid(dataView);
             initClientSidePagination();
             initGridFooter();
-            initDataView();
+            initDataView(gridConfig);
             dataView.setSearchFilter(searchColumns, searchFilter);
             dataView.setData(gridDataSource.data);
             performSort(gridSortColumns);
@@ -153,7 +153,7 @@ function getDefaultGridConfig() {
                             }
                             initClientSidePagination();
                             initGridFooter();
-                            initDataView();
+                            initDataView(gridConfig);
                             dataView.setSearchFilter(searchColumns, searchFilter);
                             dataView.setData(response);
                             performSort(gridSortColumns);
@@ -193,7 +193,7 @@ function getDefaultGridConfig() {
             var dataViewData = dataView.getItems();
             dataView.setData([]);
             initContrailGrid(dataView);
-            initDataView();
+            initDataView(gridConfig);
             dataView.setSearchFilter(searchColumns, searchFilter);
             initClientSidePagination();
             initGridFooter();
@@ -750,8 +750,8 @@ function getDefaultGridConfig() {
    			    }
     		});
         };
-
-        function initDataView() {
+        
+        function initDataView(gridConfig) {
             eventHandlerMap.dataView['onDataUpdate'] = function(e, args) {
                 setTimeout(function() {
                     //Refresh the grid only if it's not destroyed
@@ -759,6 +759,20 @@ function getDefaultGridConfig() {
                         grid.invalidateAllRows();
                         grid.updateRowCount();
                         grid.render();
+
+                        //Display filtered count in grid header
+                        if(gridConfig.header.showFilteredCntInHeader) {
+                            var totalRowCnt,filteredRowCnt;
+                            if(grid.getData() != null && grid.getData().getPagingInfo() != null) {
+                                totalRowCnt  = grid.getData().getItems().length;
+                                filteredRowCnt = grid.getData().getPagingInfo()['totalRows']
+                            }
+                            if(totalRowCnt == filteredRowCnt) {
+                                gridContainer.find('.grid-header-text').text(gridConfig.header.title.text + " (" + totalRowCnt + ")");
+                            } else {
+                                gridContainer.find('.grid-header-text').text(gridConfig.header.title.text + " (" + filteredRowCnt + " of " + totalRowCnt + ")");
+                            }
+                        }
 
                         //onRowCount Changed
                         if (args.previous != args.current) {

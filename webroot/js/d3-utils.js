@@ -585,69 +585,79 @@ function updateChartOnResize(selector,chart){
 function initScatterBubbleChart(selector, data, chart, chartOptions) {
     nv.addGraph(function () {
         //No need to set the sizeDomain,as we already normalize the sizes before invoking this function
-        chart = nv.models.scatterChart()
+        chartModel = nv.models.scatterChart()
             .showDistX(false)
             .showDistY(false)
-            .sizeDomain([0.7,2])
-            //.sizeRange([50,500])
+            .sizeDomain([4,14])
+            .sizeRange([4,14])
+            // .sizeDomain([0.7,2])
+            // .sizeRange([200,1500])
             .tooltipXContent(null)
             .tooltipYContent(null)
             .showTooltipLines(false)
             .tooltipContent(chartOptions['tooltipFn']);
         
         if(chartOptions['tooltipRenderedFn'] != null)
-        	chart.tooltipRenderedFn(chartOptions['tooltipRenderedFn']);
+        	chartModel.tooltipRenderedFn(chartOptions['tooltipRenderedFn']);
         if (chartOptions['forceX'] != null)
-            chart.forceX(chartOptions['forceX']);
+            chartModel.forceX(chartOptions['forceX']);
         if (chartOptions['forceY'] != null)
-            chart.forceY(chartOptions['forceY']);
+            chartModel.forceY(chartOptions['forceY']);
         if(chartOptions['seriesMap'] != null)
-            chart.seriesMap(chartOptions['seriesMap']);
-        if(chartOptions['xPositive'] != null && chart.scatter != null)
-            chart.scatter.xPositive(chartOptions['xPositive']);
-        if(chartOptions['yPositive'] != null && chart.scatter != null)
-            chart.scatter.yPositive(chartOptions['yPositive']);
-        if(chartOptions['addDomainBuffer'] != null && chart.scatter != null)
-            chart.scatter.addDomainBuffer(chartOptions['addDomainBuffer']);
-        if(chartOptions['useVoronoi'] != null && chart.scatter != null)
-            chart.scatter.useVoronoi(chartOptions['useVoronoi']);
+            chartModel.seriesMap(chartOptions['seriesMap']);
+        if(chartOptions['xPositive'] != null && chartModel.scatter != null)
+            chartModel.scatter.xPositive(chartOptions['xPositive']);
+        if(chartOptions['yPositive'] != null && chartModel.scatter != null)
+            chartModel.scatter.yPositive(chartOptions['yPositive']);
+        if(chartOptions['addDomainBuffer'] != null && chartModel.scatter != null)
+            chartModel.scatter.addDomainBuffer(chartOptions['addDomainBuffer']);
+        if(chartOptions['useVoronoi'] != null && chartModel.scatter != null)
+            chartModel.scatter.useVoronoi(chartOptions['useVoronoi']);
+        if(chartOptions['useSizeAsRadius'] != null && chartModel.scatter != null)
+            chartModel.scatter.useSizeAsRadius(chartOptions['useSizeAsRadius']);
 
         //If there is only set of bubbles and showLegend is set to false then disable the legend 
         if(data.length == 1 || chartOptions['showLegend'] == false) {
-            chart.showLegend(false);
+            chartModel.showLegend(false);
         }
 
-        $(selector).data('chart', chart);
-        chart.xAxis.tickFormat(chartOptions['xLblFormat']);
-        chart.yAxis.tickFormat(chartOptions['yLblFormat']);
-        chart.xAxis.showMaxMin(false);
-        chart.yAxis.showMaxMin(false);
-        chart.yAxis.axisLabel(chartOptions['yLbl']);
-        chart.xAxis.axisLabel(chartOptions['xLbl']);
-        chart.yAxis.ticks(3);
+        $(selector).data('chart', chartModel);
+        chartModel.xAxis.tickFormat(chartOptions['xLblFormat']);
+        chartModel.yAxis.tickFormat(chartOptions['yLblFormat']);
+        chartModel.xAxis.showMaxMin(false);
+        chartModel.yAxis.showMaxMin(false);
+        chartModel.yAxis.axisLabel(chartOptions['yLbl']);
+        chartModel.xAxis.axisLabel(chartOptions['xLbl']);
+        chartModel.yAxis.ticks(3);
 
         $(selector).append('<svg></svg>');
 
-        chart.dispatch.on('stateChange', chartOptions['stateChangeFunction']);
-        chart.scatter.dispatch.on('elementClick', chartOptions['elementClickFunction']);
-        chart.scatter.dispatch.on('elementMouseout',chartOptions['elementMouseoutFn']);
-        chart.scatter.dispatch.on('elementMouseover',chartOptions['elementMouseoverFn']);
+        chartModel.dispatch.on('stateChange', chartOptions['stateChangeFunction']);
+        chartModel.scatter.dispatch.on('elementClick', chartOptions['elementClickFunction']);
+        chartModel.scatter.dispatch.on('elementDblClick', chartOptions['elementDoubleClickFunction']);
+        chartModel.scatter.dispatch.on('elementMouseout',chartOptions['elementMouseoutFn']);
+        chartModel.scatter.dispatch.on('elementMouseover',chartOptions['elementMouseoverFn']);
         $(selector).on('dblclick',chartOptions['elementDblClickFunction']);
         if(!($(selector).is(':visible'))) {
             $(selector).find('svg').bind("refresh", function() {
-                d3.select($(selector)[0]).select('svg').datum(data).call(chart);
+                d3.select($(selector)[0]).select('svg').datum(data).call(chartModel);
             });
         } else {
-            d3.select($(selector)[0]).select('svg').datum(data).call(chart);
+            d3.select($(selector)[0]).select('svg').datum(data).call(chartModel);
         }
 
         nv.utils.windowResize(function(){
-            updateChartOnResize(selector,chart);
+            updateChartOnResize(selector,chartModel);
         });
         //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
         if(chartOptions['deferredObj'] != null)
             chartOptions['deferredObj'].resolve();
-        return chart;
+        return chartModel;
+    },function() {
+        if(typeof(chartOptions['onInitializingScatterChart']) == 'function') {
+            chartOptions['onInitializingScatterChart']();
+        }
+        $(selector).data('initialized',true);
     });
 }
 

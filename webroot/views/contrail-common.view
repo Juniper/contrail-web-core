@@ -134,7 +134,7 @@
             <div class="row-fluid chart-tooltip-body ">
             {{else}}
                 <div class="row-fluid chart-tooltip-row" >
-                    <span class="key span4" style="min-height:20px;">{{lbl}}:</span>
+                    <span class="key span4" style="min-height:20px;">{{label}}:</span>
                     <span class="value span8" style="min-height:20px;">{{value}}</span>
                 </div>
             {{/IfCompare}}
@@ -154,7 +154,7 @@
             <div class="row-fluid chart-tooltip-body ">
             {{else}}
                 <div class="row-fluid chart-tooltip-row" >
-                    <span class="key {{keyClass}}" style="min-height:20px;">{{lbl}}:</span>
+                    <span class="key {{keyClass}}" style="min-height:20px;">{{label}}:</span>
                     <span class="value {{valueClass}}" style="min-height:20px;">{{value}}</span>
                 </div>
             {{/IfCompare}}
@@ -230,8 +230,8 @@
     {{#IfCompare @index 0 operator='!='}}
     <div class="row-fluid chart-tooltip-body ">
         <div class="row-fluid chart-tooltip-row">
-            {{#IfCompare lbl '' operator='!='}}
-            <span class="key">{{lbl}}:</span>
+            {{#IfCompare label '' operator='!='}}
+            <span class="key">{{label}}:</span>
             {{/IfCompare}}
             <span class="value">{{value}}</span>
         </div>
@@ -259,7 +259,7 @@
     <div class="row-fluid chart-tooltip-body ">
      {{#each this}}
          <div class="row-fluid chart-tooltip-row">
-             <span class="key">{{lbl}}</span>
+             <span class="key">{{label}}</span>
              <span class="value"> {{value}}</span>
          </div>
        {{/each}} 
@@ -604,6 +604,14 @@
         </div>
     </div>
 </script>
+<script type="text/x-handlebars-template" id="color-selection">
+    <div class="color-selection" style="float:right;margin-right:20px">
+        <div data-color="red" class="circle red filled"></div>
+        <div data-color="orange" class="circle orange filled"></div>
+        <div data-color="green" class="circle green filled"></div>
+        <div data-color="blue" class="circle blue filled"></div>
+    </div>
+</script>
 <script type="text/x-handlebars-template" id="chart-settings">
     <div class="chart-settings">
         <div class="chart-settings-wrapper hide">
@@ -640,8 +648,6 @@
                     <div>
                         <label class="chart-settings-label">Bucketize&nbsp;</label><input id="checkbox-bucketize"  type="checkbox" name="bucketize" value="bucketize" style="margin:0;"/>
                         <div id="div-bucket-options" class="chart-sub-settings">
-                            <label class="chart-settings-label">Scatter Level :&nbsp;</label><input id="chartSettingsBucketMaxBucketizeLevel" style="height: 14px;width: 19px;font-size: 11px;" type="textbox" placeholder="3" />
-                            <label class="chart-settings-label">Buckets per axis :&nbsp;</label><input id="chartSettingsBucketPerAxis" style="height: 14px;width: 19px;font-size: 11px;" type="textbox" placeholder="7" />
                             <button class="btnBucketSettingsApply btn btn-primary btn-minier">Apply</button> 
                         </div>
                    </div>

@@ -1709,7 +1709,7 @@ function displayAjaxError(jQueryElem, xhr, textStatus, errorThrown) {
 
 function logMessage() {
     return;
-    var allTypes = ['flowSeriesChart','hashChange','scatterChart','formatBytes'];
+    var allTypes = ['flowSeriesChart','hashChange','scatterChart','formatBytes','bucketization'];
     var reqTypes = [];
     var timeMessages = ['flowSeriesChart'];
     var args = [], logType;
@@ -2831,6 +2831,7 @@ function ManageCrossFilters() {
                     name:'vRoutersCF',
                     crossfilter:null,
                     dimensions:{},
+                    filters:{},
                     callBacks:$.Callbacks("unique"),
                     callBackFns:{}
                 }
@@ -2875,6 +2876,7 @@ function ManageCrossFilters() {
                    return d[dimensionName]; 
            });
            cfObj.dimensions[dimensionName] = dimension;
+           cfObj.filters[dimensionName] = [];
         }
         globalObj['crossFilters'][cfName] = cfObj;
     }
@@ -2905,17 +2907,24 @@ function ManageCrossFilters() {
         }
     }
     
-    this.applyFilter = function(cfName,dimensionName,criteria){
+    this.applyFilter = function(cfName,dimensionName,criteria,filterFunc){
         var cfObj = globalObj['crossFilters'][cfName];
         var cf = this.getCrossFilter(cfName);
         
         if(cfObj != null && cfObj.dimensions != null && cfObj.dimensions[dimensionName] != null){
             var dimension = cfObj.dimensions[dimensionName];
-            if(criteria == null){
+            if(criteria == null && filterFunc == null) {
                 this.removeFilter(cfName,dimensionName);
             } else {
-                // var filterByCriteria = dimension.filterRange(criteria);
-                var filterByCriteria = dimension.filterFunction(function(d) { return d >= criteria[0] && d < criteria[1];});
+                var filterFunc = filterFunc;
+                //If custom filterFunc is not passed
+                if(filterFunc == null) { 
+                    filterFunc = function(d) {
+                        return d >= criteria[0] && d <= criteria[1]
+                    };
+                }
+                var filterByCriteria = dimension.filterFunction(filterFunc);
+                cfObj['filters'][dimensionName].push([criteria,filterFunc]);
             }
             var thirdDimension = cf.dimension(function(d) { return d[dimensionName]; });
             var t = thirdDimension.top(Infinity);
@@ -2930,6 +2939,7 @@ function ManageCrossFilters() {
         if(cfObj != null && cfObj.dimensions != null && cfObj.dimensions[dimensionName] != null){
             var dimension = cfObj.dimensions[dimensionName];
             dimension.filterAll();
+            cfObj['filters'][dimensionName] = [];
             //cfObj.callBacks.fire();
         }
     }
