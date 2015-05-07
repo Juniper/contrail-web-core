@@ -428,4 +428,5 @@ exports.getJsonDiff = getJsonDiff;
 exports.doFeatureJsonDiffParamsInit = doFeatureJsonDiffParamsInit;
 exports.getConfigDiffAndMakeCall = getConfigDiffAndMakeCall;
 exports.getConfigArrayDeltaByURL = getConfigArrayDeltaByURL;
+exports.getConfigArrayDelta = getConfigArrayDelta;
 
