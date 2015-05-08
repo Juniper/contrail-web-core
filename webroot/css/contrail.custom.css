@@ -3107,3 +3107,7 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
     height:200px!important;
     overflow-y:auto;
 }
+.new-column-label{
+    padding-top:5px;
+    text-align:right;
+}
