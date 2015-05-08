@@ -146,7 +146,7 @@ define([
                 })
                 .attr("opacity", "0.5")
                 .on("mouseenter", function (d) {
-                    var tooltipData = d,
+                        var tooltipData = d,
                         selfOffset = $(this).offset(),
                         tooltipConfig = tooltipConfigCB(tooltipData);
 
@@ -406,9 +406,9 @@ define([
                             }
                         }
                     }
-                }
-            }
-        };
+                                                            }
+                                                        }
+                                    };
 
         if(contrail.checkIfKeyExistInObject(true, chartOptions, 'controlPanelConfig.filter.enable') && chartOptions.controlPanelConfig.filter.enable) {
             controlPanelConfig.custom.filter = getControlPanelFilterConfig(chartOptions.controlPanelConfig.filter, chartControlPanelExpandedSelector)
@@ -461,7 +461,7 @@ define([
     var getControlPanelLegendConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector) {
         return {
             iconClass: 'icon-info-sign',
-            title: 'Filter',
+            title: 'Information',
             events: {
                 click: function () {
                     return function (event) {
@@ -662,7 +662,7 @@ define([
     };
 
     function getChartConfig(chartSelector, chartOptions, chartSize) {
-        var margin = {top: 20, right: 5, bottom: 50, left: 75},
+        var margin = {top: 20, right: 5, bottom: 50, left: 50},
             width = $(chartSelector).width() - 10,
             height = 275;
 

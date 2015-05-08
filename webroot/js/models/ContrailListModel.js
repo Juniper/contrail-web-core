@@ -309,28 +309,37 @@ define([
                 getAjaxConfig: vlRemoteList[i].getAjaxConfig,
                 dataParser: vlRemoteList[i].dataParser,
                 initCallback: vlRemoteList[i].initCallback,
-                successCallback: function (response) {
-                    if (contrail.checkIfFunction(vlSuccessCallback)) {
-                        vlSuccessCallback(response, contrailListModel, parentModelList);
-                    }
-                },
-                failureCallback: function (xhr) {
-                    contrailListModel.error = true;
-                    contrailListModel.errorList.push(xhr);
-                    if (parentModelList != null && parentModelList.length > 0) {
-                        for (var i = 0; i < 1; i++) {
-                            parentModelList[i].error = true;
-                        }
-                    }
-                    if (contrail.checkIfFunction(vlFailureCallback)) {
-                        vlFailureCallback(xhr, contrailListModel);
-                    }
-                }
+                successCallback: getVLRemoteSuccessCB(vlSuccessCallback, contrailListModel, parentModelList),
+                failureCallback: getVLRemoteFailureCB(vlFailureCallback, contrailListModel, parentModelList)
             }
             remoteHandlerConfig['vlRemoteConfig']['vlRemoteList'].push(vlRemote);
         };
 
+
         return remoteHandlerConfig;
+    };
+
+    function getVLRemoteSuccessCB(vlSuccessCallback, contrailListModel, parentModelList) {
+        return function (response) {
+            if (contrail.checkIfFunction(vlSuccessCallback)) {
+                vlSuccessCallback(response, contrailListModel, parentModelList);
+            }
+        };
+    };
+
+    function getVLRemoteFailureCB(vlFailureCallback, contrailListModel, parentModelList) {
+        return function (xhr) {
+            contrailListModel.error = true;
+            contrailListModel.errorList.push(xhr);
+            if (parentModelList != null && parentModelList.length > 0) {
+                for (var i = 0; i < 1; i++) {
+                    parentModelList[i].error = true;
+                }
+            }
+            if (contrail.checkIfFunction(vlFailureCallback)) {
+                vlFailureCallback(xhr, contrailListModel);
+            }
+        };
     };
 
     function getUpdateRemoteHandlerConfig(listModelConfig, newContrailListModel, visibleContrailListModel, parentModelList) {
@@ -438,23 +447,8 @@ define([
                 getAjaxConfig: vlRemoteList[i].getAjaxConfig,
                 dataParser: vlRemoteList[i].dataParser,
                 initCallback: vlRemoteList[i].initCallback,
-                successCallback: function (response) {
-                    if (contrail.checkIfFunction(vlSuccessCallback)) {
-                        vlSuccessCallback(response, newContrailListModel, parentModelList);
-                    }
-                },
-                failureCallback: function (xhr) {
-                    newContrailListModel.error = true;
-                    newContrailListModel.errorList.push(xhr);
-                    if (parentModelList != null && parentModelList.length > 0) {
-                        for (var i = 0; i < 1; i++) {
-                            parentModelList[i].error = true;
-                        }
-                    }
-                    if (contrail.checkIfFunction(vlFailureCallback)) {
-                        vlFailureCallback(xhr, newContrailListModel);
-                    }
-                }
+                successCallback: getVLRemoteSuccessCB(vlSuccessCallback, newContrailListModel, parentModelList),
+                failureCallback: getVLRemoteFailureCB(vlFailureCallback, newContrailListModel, parentModelList)
             }
             remoteHandlerConfig['vlRemoteConfig']['vlRemoteList'].push(vlRemote);
         }
