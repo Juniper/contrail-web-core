@@ -83,7 +83,9 @@ requirejs.config({
         'contrail-remote-data-handler': 'js/models/ContrailRemoteDataHandler',
         'uuid-js': 'js/uuid',
         'core-cache': 'js/core-cache',
-        'core-init': 'js/core-init'
+        'core-init': 'js/core-init',
+        'contrail-all-8': 'js/contrail-all-8',
+        'contrail-all-9': 'js/contrail-all-9'
     },
     shim: {
         'jquery.tristate': {
@@ -171,13 +173,13 @@ requirejs.config({
             deps: ['jquery', 'd3']
         },
         'web-utils': {
-            deps: ['jquery', 'knockout']
+            deps: ['jquery', 'knockout', 'xdate']
         },
         'qe-utils': {
             deps: ['jquery']
         },
         'handlebars-utils': {
-            deps: ['jquery', 'handlebars']
+            deps: ['jquery', 'handlebars', 'contrail-all-8']
         },
         'nvd3-plugin': {
             deps: ['nv.d3', 'd3']
