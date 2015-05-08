@@ -583,6 +583,7 @@ function updateChartOnResize(selector,chart){
 }
 
 function initScatterBubbleChart(selector, data, chart, chartOptions) {
+    var chartModel;
     nv.addGraph(function () {
         //No need to set the sizeDomain,as we already normalize the sizes before invoking this function
         chartModel = nv.models.scatterChart()
@@ -641,14 +642,15 @@ function initScatterBubbleChart(selector, data, chart, chartOptions) {
         if(!($(selector).is(':visible'))) {
             $(selector).find('svg').bind("refresh", function() {
                 d3.select($(selector)[0]).select('svg').datum(data).call(chartModel);
+                //Need to bind windoResize event only after chart is initialized
+                //As chartModel.update is available only after it's initialized
+                nv.utils.windowResize(chartModel.update);
             });
         } else {
             d3.select($(selector)[0]).select('svg').datum(data).call(chartModel);
+            nv.utils.windowResize(chartModel.update);
         }
 
-        nv.utils.windowResize(function(){
-            updateChartOnResize(selector,chartModel);
-        });
         //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
         if(chartOptions['deferredObj'] != null)
             chartOptions['deferredObj'].resolve();
