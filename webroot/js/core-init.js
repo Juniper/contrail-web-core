@@ -3,25 +3,17 @@
  */
 
 var initDepFiles = [
-    'jquery-ui', 'jquery.xml2json', 'jquery.ba-bbq', 'jquery.timer', 'jquery.ui.touch-punch',
-    'bootstrap', 'd3', 'nv.d3', 'crossfilter', 'jsonpath', 'xdate', 'jquery.validate',
-    'handlebars', 'select2', 'jquery.event.drag', 'jquery.json', 'jquery.droppick', 'slick.core',
-    'slick.grid', 'slick.enhancementpager', 'jquery.datetimepicker', 'moment',
-    'contrail-common', 'handlebars-utils', 'slickgrid-utils', 'contrail-elements',
-    'topology_api', 'chart-utils', 'web-utils', 'contrail-layout', 'config_global', 'protocol',
-    'qe-utils', 'nvd3-plugin', 'd3-utils', 'analyzer-utils', 'dashboard-utils', 'ipv6',
-    'jquery.tristate', 'jquery.multiselect', 'jquery.multiselect.filter', 'jquery.steps.min', 'slick.dataview',
-    'joint', 'joint.layout.DirectedGraph', 'jquery.panzoom', 'joint.contrail', 'jquery.ui.position',
-    'jquery.contextMenu', 'slick.checkboxselectcolumn', 'slick.rowselectionmodel',
-    'backbone', 'text', 'contrail-model', 'bezier', 'uuid-js'
+    'underscore', 'validation', 'xdate', 'handlebars-utils', 'contrail-common', 'slickgrid-utils', 'contrail-elements',
+    'topology_api', 'chart-utils', 'qe-utils', 'nvd3-plugin', 'd3-utils', 'analyzer-utils', 'dashboard-utils',
+    'jquery.panzoom', 'joint.contrail', 'backbone', 'contrail-all-8', 'contrail-all-9'
 ];
 
-
-require(['jquery', 'knockout'], function ($, Knockout) {
+require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
     window.ko = Knockout;
+    window.Bezier = Bezier;
     loadCommonTemplates();
-    require(initDepFiles, function() {
-        require(['underscore', 'validation', 'core-utils', 'core-constants', 'core-formatters', 'core-cache'], function (_, validation, CoreUtils, CoreConstants, CoreFormatters, Cache) {
+    require(initDepFiles, function(_, validation) {
+        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache'], function (CoreUtils, CoreConstants, CoreFormatters, Cache) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
             cowf = new CoreFormatters();
@@ -30,11 +22,9 @@ require(['jquery', 'knockout'], function ($, Knockout) {
             initBackboneValidation(_);
             initCustomKOBindings(Knockout);
             initDomEvents();
+            require(['contrail-layout'], function(){});
         });
     });
-});
-require(['bezier'], function (Bezier) {
-	window.Bezier = Bezier;
 });
 
 function loadCommonTemplates() {
