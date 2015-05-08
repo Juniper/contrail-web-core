@@ -83,7 +83,7 @@ define([
 
         this.GRAPH_MARGIN_LEFT = 350;
         this.GRAPH_MARGIN_RIGHT = 350;
-        this.GRAPH_MARGIN_TOP = 350;
+        this.GRAPH_MARGIN_TOP = 375;
         this.GRAPH_MARGIN_BOTTOM = 350;
 
         this.TOOLTIP_DELAY = 1000;
