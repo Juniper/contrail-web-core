@@ -96,45 +96,54 @@ function getJsonDiff (type, oldJson, newJson)
     return delta;
 }
 
+function isConfigFlagSet (type)
+{
+    var configJsonObj = process.mainModule.exports['configJsonModifyObj'];
+    var splitArr = type.split(':');
+    return configJsonObj[splitArr[0]]['isConfig'];
+}
+
 function getConfigJSONDiff (type, oldJson, newJson)
 {
     var typeNotFoundInJson = true;
     var tmpOldJson = {};
     var tmpNewJson = {};
-    var configJsonModifyObj = process.mainModule.exports['configJsonModifyObj'];
     var optFields = [];
     var mandateFields = [];
 
     var fieldsObj = getConfigFieldsByType(type);
+    var parentType = fieldsObj['parentType'];
+    var childType = fieldsObj['childType'];
+    if (null == childType) {
+        childType = parentType;
+    }
     if (null != fieldsObj.error) {
         logutils.logger.error("Config Diff: Not found the type: " + type);
         return null;
     }
     optFields = fieldsObj['optFields'];
     mandateFields = fieldsObj['mandateFields'];
-    if ((null != configJsonModifyObj[type]) &&
-        (null != configJsonModifyObj[type]['preProcessCB'])) {
-        var preProcessCB = configJsonModifyObj[type]['preProcessCB'];
+    if (null != fieldsObj['preProcessCB']) {
+        var preProcessCB = fieldsObj['preProcessCB'];
         var preProcessOldJsonCB = preProcessCB['applyOnOldJSON'];
         var preProcessNewJsonCB = preProcessCB['applyOnNewJSON'];
         if (null != preProcessOldJsonCB) {
-            oldJson = preProcessOldJsonCB(type, oldJson, optFields,
+            oldJson = preProcessOldJsonCB(childType, oldJson, optFields,
                                           mandateFields);
         }
         if (null != preProcessNewJsonCB) {
-            newJson = preProcessNewJsonCB(type, newJson, optFields,
+            newJson = preProcessNewJsonCB(childType, newJson, optFields,
                                           mandateFields);
         }
     }
-
-    if (null == oldJson[type]) {
+    if (null == oldJson[childType]) {
         typeNotFoundInJson = false;
-        tmpOldJson[type] = commonUtils.cloneObj(oldJson);
+        tmpOldJson[childType] = commonUtils.cloneObj(oldJson);
     } else {
         tmpOldJson = commonUtils.cloneObj(oldJson);
     }
-    if (null == newJson[type]) {
-        tmpNewJson[type] = commonUtils.cloneObj(newJson);
+    if (null == newJson[childType]) {
+        tmpNewJson[childType] = commonUtils.cloneObj(newJson);
     } else {
         tmpNewJson = commonUtils.cloneObj(newJson);
     }
@@ -143,49 +152,45 @@ function getConfigJSONDiff (type, oldJson, newJson)
         ('undefined' == delta)) {
         return null;
     }
-    var isConfig = configJsonModifyObj[type]['isConfig'];
+    var isConfig = isConfigFlagSet(type);
     if ((null == isConfig) || (false == isConfig)) {
-        return (false == typeNotFoundInJson) ? delta[type] : delta;
+        return (false == typeNotFoundInJson) ? delta[childType] : delta;
     }
     /* For config, we need to send the diff in a different way, so proceed
      * further
      */
-    if ((null != configJsonModifyObj[type]) &&
-        (null != configJsonModifyObj[type]['postProcessCB'])) {
-        var postProcess = configJsonModifyObj[type]['postProcessCB'];
-        var postProcessOldJsonCB =
-            configJsonModifyObj[type]['postProcessCB']['applyOnOldJSON'];
-        var postProcessNewJsonCB =
-            configJsonModifyObj[type]['postProcessCB']['applyOnNewJSON'];
+    if ((null != fieldsObj) &&
+        (null != fieldsObj['postProcessCB'])) {
+        var postProcess = fieldsObj['postProcessCB'];
+        var postProcessOldJsonCB = fieldsObj['postProcessCB']['applyOnOldJSON'];
+        var postProcessNewJsonCB = fieldsObj['postProcessCB']['applyOnNewJSON'];
         if (null != postProcessOldJsonCB) {
-            oldJson = postProcessOldJsonCB(type, oldJson, optFields,
+            oldJson = postProcessOldJsonCB(childType, oldJson, optFields,
                                            mandateFields);
         }
         if (null != postProcessNewJsonCB) {
-            newJson = postProcessNewJsonCB(type, newJson, optFields,
+            newJson = postProcessNewJsonCB(childType, newJson, optFields,
                                            mandateFields);
         }
     }
-    if (null == oldJson[type]) {
-        tmpOldJson[type] = commonUtils.cloneObj(oldJson);
+    if (null == oldJson[childType]) {
+        tmpOldJson[childType] = commonUtils.cloneObj(oldJson);
     } else {
         tmpOldJson = commonUtils.cloneObj(oldJson);
     }
-    if (null == newJson[type]) {
-        tmpNewJson[type] = commonUtils.cloneObj(newJson);
+    if (null == newJson[childType]) {
+        tmpNewJson[childType] = commonUtils.cloneObj(newJson);
     } else {
         tmpNewJson = commonUtils.cloneObj(newJson);
     }
-    delta = buildConfigDeltaJson(delta, tmpOldJson, tmpNewJson, type, optFields,
+    delta = buildConfigDeltaJson(delta, tmpOldJson, tmpNewJson, childType, optFields,
                                  mandateFields);
-    return (false == typeNotFoundInJson) ? delta[type] : delta;
+    return (false == typeNotFoundInJson) ? delta[childType] : delta;
 }
 
 function getConfigFieldsByType (type, isArray)
 {
     var error = null;
-    var optFields = [];
-    var mandateFields = [];
     var configJsonModifyObj = process.mainModule.exports['configJsonModifyObj'];
 
     if ((null != isArray) || (false == isArray)) {
@@ -198,29 +203,29 @@ function getConfigFieldsByType (type, isArray)
         }
         return configJsonModifyObj['arrayDiff'][type];
     }
-    if (null == configJsonModifyObj[type]) {
+    var typeSplit = type.split(':');
+    if (!((typeSplit.length == 1) || (typeSplit.length == 2))) {
+        error = new appErrors.RESTServerError('type not correct ' + type);
+        return {'error': error};
+    }
+    var configJsonObj = null;
+    if (2 == typeSplit.length) {
+        type = typeSplit[1];
+        configJsonObj = configJsonModifyObj[typeSplit[0]]['subType'];
+    } else {
+        configJsonObj = configJsonModifyObj;
+    }
+    if ((null == configJsonObj) || (null == configJsonObj[type])) {
         error = new appErrors.RESTServerError('type ' + type + ' not ' +
                                               'specified in ' +
                                               'configJsonModifyObj');
         return {'error': error};
     }
-    var configTypeObj = configJsonModifyObj[type];
-    /*
-    if (null == configTypeObj['optFields']) {
-        error = new appErrors.RESTServerError('fields not ' +
-                                              'specified in ' +
-                                              'configJsonModifyObj');
-        return {'error': error};
-    }
-    */
-    optFields = configTypeObj['optFields'];
-    mandateFields = configTypeObj['mandateFields'];
-    /*
-    if (null != configTypeObj['mandateFields']) {
-        mandateFields = configTypeObj['mandateFields'];
-    }
-    */
-    return {'error': error, 'optFields': optFields, 'mandateFields': mandateFields};
+    var configTypeObj = configJsonObj[type];
+    configTypeObj['error'] = error;
+    configTypeObj['parentType'] = typeSplit[0];
+    configTypeObj['childType'] = typeSplit[1];
+    return configTypeObj;
 }
 
 function getJSONDiffByConfigUrl (url, appData, newJson, callback)
