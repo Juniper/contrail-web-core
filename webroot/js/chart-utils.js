@@ -848,7 +848,7 @@ function zoomed(selector) {
 function scatterTooltipFn(e,x,y,chart,tooltipFormatFn,bucketTooltipFn,selector) {
     e['point']['overlappedNodes'] = markOverlappedOrBucketizedBubblesOnHover(e,chart,selector).reverse();
     var tooltipContents = [];
-    if(e['point']['isBucket']){
+    if(e['point']['isBucket']) {
         if(typeof(bucketTooltipFn) == "function"){
             tooltipContents = bucketTooltipFn(e['point'],'simple');
         }
@@ -857,8 +857,8 @@ function scatterTooltipFn(e,x,y,chart,tooltipFormatFn,bucketTooltipFn,selector) 
                 tooltipContents.push({label:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
         });
         return formatLblValueTooltip(tooltipContents);
-    } else if(e['point']['overlappedNodes'] == undefined || e['point']['overlappedNodes'].length <= Infinity) {
-        //To disable multiple-tooltip
+    } else if(e['point']['overlappedNodes'] == undefined || e['point']['overlappedNodes'].length <= 1) {
+        //To disable multiple-tooltip, set e['point']['overlappedNodes'].length < Infinity
         if(typeof(tooltipFormatFn) == 'function') {
             tooltipContents = tooltipFormatFn(e['point'],'simple');
         } 
@@ -921,6 +921,14 @@ function scatterOverlapBubbles (data){
     return data;	
 }
 
+function concatenateDataFromMultipleSeries(d) {
+    var combinedValues = [];
+    $.each(d,function(idx,obj){
+        combinedValues = combinedValues.concat(obj.values);
+    });
+    return combinedValues;
+}
+
 // Given node obj to disperse use the x and y values and size to randomly add minute values 
 // to x and y so that the nodes appear dispersed instead of a single node. 
 /* Moved to ScatterChartView.js
@@ -955,13 +963,6 @@ function filterAndDisperseNodes(data,minMaxX,minMaxY){
     return ret;
 }
 
-function concatenateDataFromMultipleSeries(d) {
-    var combinedValues = [];
-    $.each(d,function(idx,obj){
-        combinedValues = combinedValues.concat(obj.values);
-    });
-    return combinedValues;
-}
 
 function doBucketization(data,chartOptions){
     var data = $.extend(true,[],data);
@@ -1199,10 +1200,6 @@ function isScatterChartInitialized(selector) {
         return true;
     else 
         return false;
-   // if($(selector + ' > svg').length > 0)
-   //    return true;
-   // else
-   //    return false;
 }
 
 
@@ -1216,12 +1213,13 @@ function isScatterChartInitialized(selector) {
  */
 function getMultiTooltipContent(e,tooltipFn,bucketTooltipFn,chart,selector) {
     var tooltipArray = [],result = {},nodeMap = {};
+    //No. of tooltip contents to show per page
     var perPage = 1;
     var overlappedNodes = e['point']['overlappedNodes'];
     var series = concatenateDataFromMultipleSeries(e['series']);
-    var origData = $(selector).data('origData');
     if(!e.point.isBucket) {
         for(var i = 0;i < overlappedNodes.length; i++){
+            //Filter out nodes which are from disabled series
             var data = $.grep(series,function(obj,idx) {
                 return (obj['name'] == overlappedNodes[i]['name'] && obj['type'] == overlappedNodes[i]['type'] && 
                         !chart.state()['disabled'][chart.seriesMap()[obj['type']]]);
@@ -1229,9 +1227,9 @@ function getMultiTooltipContent(e,tooltipFn,bucketTooltipFn,chart,selector) {
             
             if(!isEmptyObject(data)) {
                 //data['point'] = data[0];
-                tooltipArray.push(tooltipFn(data[0],null,null,chart));
+                tooltipArray.push(tooltipFn(data[0],'simple'));
                 //Creates a hashMap based on first key/value in tooltipContent
-                nodeMap[tooltipFn(data[0])[0]['value']] = {point:data[0]};
+                nodeMap[tooltipFn(data[0],'simple')[0]['value']] = {point:data[0]};
             }
         }
     } else {
@@ -1243,22 +1241,20 @@ function getMultiTooltipContent(e,tooltipFn,bucketTooltipFn,chart,selector) {
          *     nodeMap[tooltipFn(overlappedNodes[i])[0]['value']] = {point:overlappedNodes[i]};
          * }
          */
-        tooltipArray.push(bucketTooltipFn(e['point'],null,null));
+        tooltipArray.push(bucketTooltipFn(e['point'],'simple'));
         //Creates a hashMap based on first key/value in tooltipContent
-        nodeMap[bucketTooltipFn(e['point'])[0]['value']] = {point:e['point']};
+        nodeMap[bucketTooltipFn(e['point'],'simple')[0]['value']] = {point:e['point']};
     }
     result['content'] = tooltipArray;
     result['nodeMap'] = nodeMap;
     result['perPage'] = perPage;
+    //If no.of tooltipContents to show is less than perPage
     var limit = (result['content'].length >= result['perPage']) ? result['perPage'] : result['content'].length;
     if(result['perPage'] > 1)
         result['pagestr']  = 1+" - "+limit+" of "+result['content'].length ;
     else if(result['perPage'] == 1)
         result['pagestr']  = 1+" / "+result['content'].length ;
     return result;
-}
-function getBucketTooltipContent(e,tooltipFn,chart,selector){
-    
 }
 
 function getOverlappedBubbles(e) {

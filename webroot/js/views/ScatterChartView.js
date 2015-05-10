@@ -555,14 +555,6 @@ define([
         return ret;
     }
 
-    function concatenateDataFromMultipleSeries(d) {
-        var combinedValues = [];
-        $.each(d,function(idx,obj){
-            combinedValues = combinedValues.concat(obj.values);
-        });
-        return combinedValues;
-    }
-
     function doBucketization(data,chartOptions){
         var data = $.extend(true,[],data);
         var minMax, minMaxX, minMaxY, parentMinMax, currLevel, maxBucketizeLevel, bucketsPerAxis;
