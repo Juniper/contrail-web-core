@@ -63,6 +63,31 @@ define([
                     break;
             };
         };
+
+        this.formatValueArray4Grid = function (valueArray, entriesToShow) {
+            var formattedStr = '',
+                entriesToShow = (entriesToShow == null) ? 2 : entriesToShow;
+
+            if (valueArray == null) {
+                return formattedStr;
+            }
+
+            $.each(valueArray, function (idx, value) {
+                if (idx == 0) {
+                    formattedStr += value;
+                } else if (idx < entriesToShow) {
+                    formattedStr += '<br/>' + value;
+                } else {
+                    return;
+                }
+            });
+
+            if (valueArray.length > 2) {
+                formattedStr += '<br/>' + contrail.format('({0} more)', valueArray.length - entriesToShow);
+            }
+
+            return ((formattedStr == '') ? '-' : formattedStr);
+        };
     };
     return CoreFormatters;
 });
