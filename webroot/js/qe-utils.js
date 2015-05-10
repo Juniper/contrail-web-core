@@ -743,7 +743,7 @@ function generateOrClauseStr (queryPrefix, dis) {
                 suffixValue = $(this).find("[name='suffix-value[]']").val();
 
                 if (contrail.checkIfExist(suffixField) && contrail.checkIfExist(suffixValue) && suffixField != '' && suffixValue != '') {
-                    orClause.push(field + ' ' + operator + ' ' + value + ' | ' + suffixField + ' ' + suffixOperator + ' ' + suffixValue);
+                    orClause.push(field + ' ' + operator + ' ' + value + ' & ' + suffixField + ' ' + suffixOperator + ' ' + suffixValue);
                 } else {
                     orClause.push(field + ' ' + operator + ' ' + value);
                 }
@@ -796,7 +796,7 @@ function addWhere(queryPrefix) {
                         suffixValue = $(this).find("[name='suffix-value[]']").val();
 
                         if (contrail.checkIfExist(suffixField) && contrail.checkIfExist(suffixValue) && suffixField != '' && suffixValue != '') {
-                            whereClauseViewArray.push(field + ' ' + operator + ' ' + value + ' | ' + suffixField + ' ' + suffixOperator + ' ' + suffixValue);
+                            whereClauseViewArray.push(field + ' ' + operator + ' ' + value + ' & ' + suffixField + ' ' + suffixOperator + ' ' + suffixValue);
                             whereClauseSubmit.push({
                                 field: field, operator: operator, value: value,
                                 suffixFields: {
