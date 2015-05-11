@@ -44,7 +44,6 @@ function getApiServerRequestedByData (appData,reqBy)
 
 function getApiServerRequestedByApp (loggedInOrchestrationMode, appData, reqBy)
 {
-    // console.log("reqBy a:S", reqBy, loggedInOrchestrationMode);
     switch (reqBy) {
     case global.label.API_SERVER:
         return getApiServerRequestedByApiServer(loggedInOrchestrationMode,
@@ -111,29 +110,62 @@ function getOrchestrationPluginModel ()
 
 function doDomainExist (domain, domainList)
 {
-    var data = domainList['tenants'];
+    var data = domainList['domains'];
     var cnt = data.length;
     for (var i = 0; i < cnt; i++) {
-        if (domain == data[i]['domain_id']) {
+        if (domain == data[i]['fq_name'][0]) {
             return true;
         }
     }
     return false;
 }
 
-function formatDomainList (tenantList)
+function getDomainFqnByDomainUUID (domUUID, domainObjs)
+{
+    var domCnt = 0;
+    try {
+        var domains = domainObjs['domains'];
+        domCnt  = domains.length;
+    } catch(e) {
+        domCnt = 0;
+    }
+    for (var i = 0; i < domCnt; i++) {
+        if (domains[i]['uuid'] == domUUID) {
+            return domains[i]['fq_name'][0];
+        }
+    }
+    return null;
+}
+
+function formatDomainList (req, tenantList, domainListObjs)
 {
     var domainObjs = {};
     var data = tenantList['tenants'];
     var len = data.length;
+    var domain = null;
+    var tmpDomainMap = {};
     for (var i = 0; i < len; i++) {
-        if (null == domainObjs[data[i]['domain_id']]) {
-            domainObjs[data[i]['domain_id']] = [];
+        if (null == tmpDomainMap[data[i]['domain_id']]) {
+            if (authApi.isDefaultDomain(req, data[i]['domain_id'])) {
+                domain = getDefaultDomain(req);
+            } else {
+                domain = commonUtils.convertUUIDToString(data[i]['domain_id']);
+                domain = getDomainFqnByDomainUUID(domain, domainListObjs);
+            }
+            if (null == domain) {
+                logutils.logger.error('Not found the domain ' +
+                                      data[i]['domain_id']);
+                continue;
+            }
+            tmpDomainMap[data[i]['domain_id']] = domain;
+            domainObjs[domain] = [];
         }
-        domainObjs[data[i]['domain_id']].push(data[i]['name']);
+        domain = tmpDomainMap[data[i]['domain_id']];
+        domainObjs[domain].push(data[i]['name']);
     }
     return domainObjs;
 }
+
 var adminProjects = ['admin'];
 function getAdminProjectList (req)
 {
@@ -210,3 +242,6 @@ exports.getApiServerRequestedByData = getApiServerRequestedByData;
 exports.getOrchestrationPluginModel = getOrchestrationPluginModel;
 exports.setAllCookies = setAllCookies;
 exports.doDomainExist = doDomainExist;
+exports.formatDomainList = formatDomainList;
+exports.getDomainFqnByDomainUUID = getDomainFqnByDomainUUID;
+
