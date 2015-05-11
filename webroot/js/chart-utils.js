@@ -507,11 +507,6 @@ var disableDblClick = false;
                 });
             }
 
-            //If the axis is bytes, check the max and min and decide the scale KB/MB/GB
-            //Set size domain
-            var sizeMinMax = getBubbleSizeRange(dValues);
-
-            logMessage('scatterChart', 'sizeMinMax', sizeMinMax);
 
             //Decide the best unit to display in y-axis (B/KB/MB/GB/..) and convert the y-axis values to that scale
             if (yDataType == 'bytes') {
@@ -568,7 +563,6 @@ var disableDblClick = false;
             }
             if(chartOptions['scatterOverlapBubbles'])
                 chartData = scatterOverlapBubbles(chartData);
-            chartOptions['sizeMinMax'] = sizeMinMax;
 
             chartOptions['elementClickFunction'] = function (e) {
                 disableDblClick = true;
@@ -615,36 +609,52 @@ var disableDblClick = false;
             if(initResponse['hideLoadingIcon'] != false)
                 $(this).parents('.widget-box').find('.icon-spinner').hide();
             chartOptions['useVoronoi'] = false;
-            //Adjust the size domain to have limit on minumum/maximum bubble size
-            //Maintain the same multipler for range same as domain.
-            //Let's say if domainMax/domainMin is 8,ensure rangeMax/rangeMin is 8
-            // var sizeMinMaxMultiplier = 
-            // var d3Scale = d3.scale.linear().range([1.5,6]).domain(chartOptions['sizeMinMax']);
-            var d3SizeScale; 
-            if(chartOptions['isBucketize']) {
-                // d3SizeScale = d3.scale.linear().range([Math.log2(chartOptions['sizeMinMax'][0]),Math.log2(chartOptions['sizeMinMax'][1])]).domain(chartOptions['sizeMinMax']);
-                // d3SizeScale = d3.scale.linear().range([1,Math.log2(chartOptions['sizeMinMax'][1] - chartOptions['sizeMinMax'][0])+1]).domain(chartOptions['sizeMinMax']);
-                var offset = 1.5;
-                if(sizeMinMax[0] != sizeMinMax[1]) {
-                    d3SizeScale = d3.scale.linear().range([0+offset,Math.abs(Math.log2(chartOptions['sizeMinMax'][1] - chartOptions['sizeMinMax'][0]))+offset]).domain(chartOptions['sizeMinMax']);
-                    //d3SizeScale = d3.scale.quantize().domain(chartOptions['sizeMinMax']).range([4,6,8,10,12,14]);
-                    d3SizeScale = d3.scale.quantize().domain(chartOptions['sizeMinMax']).range([6,7,9,10,11,12]);
-                    // d3SizeScale = d3.scale.log().base(2).range([1.5,6]).domain(chartOptions['sizeMinMax']);
-                    // d3SizeScale = d3.scale.linear();
-                    // d3SizeScale = d3.scale.linear().range([1.5,6]).domain(chartOptions['sizeMinMax']);
+
+            //Does all tweaks related to bubble size
+            function normalizeBubbleSizes(chartData) {
+                //Merge the data values array if there are multiple categories plotted in chart, to get min/max values
+                var dValues = $.map(chartData,function(obj,idx) {
+                    return obj['values'];
+                });
+                //If the axis is bytes, check the max and min and decide the scale KB/MB/GB
+                //Set size domain
+                var sizeMinMax = getBubbleSizeRange(dValues);
+                chartOptions['sizeMinMax'] = sizeMinMax;
+
+                logMessage('scatterChart', 'sizeMinMax', sizeMinMax);
+
+                //Adjust the size domain to have limit on minumum/maximum bubble size
+                //Maintain the same multipler for range same as domain.
+                //Let's say if domainMax/domainMin is 8,ensure rangeMax/rangeMin is 8
+                // var sizeMinMaxMultiplier = 
+                // var d3Scale = d3.scale.linear().range([1.5,6]).domain(chartOptions['sizeMinMax']);
+                var d3SizeScale; 
+                if(chartOptions['isBucketize']) {
+                    // d3SizeScale = d3.scale.linear().range([Math.log2(chartOptions['sizeMinMax'][0]),Math.log2(chartOptions['sizeMinMax'][1])]).domain(chartOptions['sizeMinMax']);
+                    // d3SizeScale = d3.scale.linear().range([1,Math.log2(chartOptions['sizeMinMax'][1] - chartOptions['sizeMinMax'][0])+1]).domain(chartOptions['sizeMinMax']);
+                    var offset = 1.5;
+                    if(sizeMinMax[0] != sizeMinMax[1]) {
+                        //d3SizeScale = d3.scale.quantize().domain(chartOptions['sizeMinMax']).range([4,6,8,10,12,14]);
+                        d3SizeScale = d3.scale.quantize().domain(chartOptions['sizeMinMax']).range([6,7,9,10,11,12]);
+                        // d3SizeScale = d3.scale.log().base(2).range([1.5,6]).domain(chartOptions['sizeMinMax']);
+                        // d3SizeScale = d3.scale.linear();
+                        // d3SizeScale = d3.scale.linear().range([1.5,6]).domain(chartOptions['sizeMinMax']);
+                    }
                 }
-            }
-            else
-                d3SizeScale = d3.scale.linear().range([6,6]).domain(chartOptions['sizeMinMax']);
-            $.each(chartData,function(idx,currSeries) {
-                currSeries['values'] = $.each(currSeries['values'],function(idx,obj) {
-                        obj = $.extend(obj, {
-                            multiTooltip: true,
-                            //size: d3SizeScale == null ? 1 : d3SizeScale(obj['size'])
-                            size: (obj['size'] == 1) ? 6 : d3SizeScale(obj['size'])
+                else {
+                    d3SizeScale = d3.scale.linear().range([6,6]).domain(chartOptions['sizeMinMax']);
+                }
+                $.each(chartData,function(idx,currSeries) {
+                    currSeries['values'] = $.each(currSeries['values'],function(idx,obj) {
+                            obj = $.extend(obj, {
+                                multiTooltip: true,
+                                //size: d3SizeScale == null ? 1 : d3SizeScale(obj['size'])
+                                size: (obj['size'] == 1) ? 6 : d3SizeScale(obj['size'])
+                            });
                         });
-                    });
-            });
+                });
+            }
+            normalizeBubbleSizes(chartData);
             if(isBucketize) {
                 //Bind drag event once scatterChart initialized
                 function onInitializingScatterChart() {
@@ -1809,12 +1819,28 @@ function formatByteAxis(data) {
  * });
  */
 
-function zoomIn(e,selector){
+function getColorFilterFn(selector) {
+    //Add color filter
+    var selectedColorElems = $(selector).find('.circle.filled');
+    var selColors = [];
+    $.each(selectedColorElems,function(idx,obj) {
+        $.each(d3Colors,function(currColorName,currColorCode) {
+            if($(obj).hasClass(currColorName)) {
+                if(selColors.indexOf(currColorName) == -1)
+                    selColors.push(currColorCode);
+            }
+        });
+    });
+    var colorFilterFunc = function(d) {
+        return selColors.indexOf(d) > -1;
+    }
+    return colorFilterFunc;
+}
+
+function zoomIn(e,selector) {
     nv.tooltip.clearedTooltip = true;
+    //As we display tool-tip with a delay,there is a chance that tooltip of drilled-down node to display in zoomed view
     nv.tooltip.cleanup();
-    var chartid = $(selector).attr('id');
-    var minMaxX = e['point']['minMaxX'];
-    var minMaxY = e['point']['minMaxY'];
     var origData = $(selector).data('origData');
     var data = $.extend(true,{},origData);
     var currLevel ;
@@ -1829,7 +1855,6 @@ function zoomIn(e,selector){
         data['chartOptions']['bucketOptions']['currLevel'] = currLevel;
     }
     
-    var minMax = {minMaxX:minMaxX,minMaxY:minMaxY};
     var bucketOptions = {};
     if(data['chartOptions'] != null && data['chartOptions']['bucketOptions'] != null){
         bucketOptions = data['chartOptions']['bucketOptions'];
@@ -1842,20 +1867,33 @@ function zoomIn(e,selector){
     var cfName = data.chartOptions['crossFilter'];
     var nameFilterFn = null;
     var selectedNames = [];
-    if(minMax['minMaxX'] == null || minMax['minMaxY'] == null) {
-        //e['point']['children'] will be available only in case of drill-down on a node and not on drag selection
-        $.each(ifNull(e['point']['children'],[]),function(idx,obj) {
-            selectedNames.push(obj['name']);
-        });
-        //We need to resort to nameFilterFn if the selected nodes have non-zero x/y values
-        nameFilterFn = function(d) {
-            return selectedNames.indexOf(d) > -1;
+    //Drilled-down on a bubble
+    if(e['point'] != null) { 
+        var minMaxX = e['point']['minMaxX'];
+        var minMaxY = e['point']['minMaxY'];
+        var minMax = {minMaxX:minMaxX,minMaxY:minMaxY};
+        if(minMax['minMaxX'] == null || minMax['minMaxY'] == null) {
+            //e['point']['children'] will be available only in case of drill-down on a node and not on drag selection
+            $.each(ifNull(e['point']['children'],[]),function(idx,obj) {
+                selectedNames.push(obj['name']);
+            });
+            //We need to resort to nameFilterFn if the selected nodes have non-zero x/y values
+            nameFilterFn = function(d) {
+                return selectedNames.indexOf(d) > -1;
+            }
+        }
+    } else {
+        //Drag-selection
+        if(e['selectedNames'] instanceof Array) {
+            nameFilterFn = function(d) {
+                return e['selectedNames'].indexOf(d) > -1;
+            }
         }
     }
-    filterUsingGlobalCrossFilter(cfName,minMaxX,minMaxY,null,nameFilterFn);
+    filterUsingGlobalCrossFilter(cfName,minMaxX,minMaxY,getColorFilterFn(selector),nameFilterFn);
 }
 
-function zoomOut(selector){
+function zoomOut(selector) {
     // console.count("Hello");
     // console.trace();
     //alert('double clicked');
@@ -1863,7 +1901,6 @@ function zoomOut(selector){
     var parentMinMax;
     var currMinMax,minMaxX,minMaxY,currLevel;
     var data = $.extend(true,{},origData);
-    var chartid = $(selector).attr('id');
     if(data['chartOptions']['isBucketize'] != true) {
         return;
     }
@@ -1874,6 +1911,8 @@ function zoomOut(selector){
     data['chartOptions']['bucketOptions']['currLevel'] = 0;
     var cfName = data.chartOptions['crossFilter'];
     $(selector).data('origData',data);
+    //Reset color-selection
+    $(selector).find('.color-selection .circle').addClass('filled');
     filterUsingGlobalCrossFilter(cfName,null,null);
 }
 
