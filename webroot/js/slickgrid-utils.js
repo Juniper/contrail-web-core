@@ -40,7 +40,10 @@ function getDefaultGridConfig() {
                 gridHeight: 500,
                 rowSelectable: false,
                 sortable: true,
-                lazyLoading: false
+                lazyLoading: false,
+                multiRowSelection: true,//This property will enable/disable selecting multiple rows of the grid
+                                        //but the checkbox in the header should be removed by the client because as of now 
+                                        //we don't have way in api to remove the checkbox in header 
             },
             dataSource: {
                 remote: null,
@@ -380,7 +383,6 @@ function getDefaultGridConfig() {
         function initGridBodyOptions(checkboxSelector) {
         	if(contrail.checkIfExist(gridOptions)){
         		var columns = [];
-
 	            // Adds checkbox to all rows and header for select all functionality
 	            if(gridOptions.checkboxSelectable != false) {
 	                columns = [];
@@ -614,8 +616,11 @@ function getDefaultGridConfig() {
                         (contrail.checkIfExist(onEverythingChecked) ? onEverythingChecked(e) : '');
                     }
                 }
-
                 gridContainer.data('contrailGrid').refreshView();
+                if (gridOptions.multiRowSelection != true) {
+                    gridContainer.find('.slick-cell-checkboxsel').find('input.rowCheckbox:visible').attr('checked',false);
+                    $(gridContainer.find('.slick-cell-checkboxsel').find('input.rowCheckbox:visible')[args.rows.pop()]).attr('checked',true);
+                }
             };
 
             grid['onSelectedRowsChanged'].subscribe(eventHandlerMap.grid['onSelectedRowsChanged']);
@@ -668,7 +673,7 @@ function getDefaultGridConfig() {
                     e.stopImmediatePropagation();
                 }
             };
-
+            
             grid['onHeaderClick'].subscribe(eventHandlerMap.grid['onHeaderClick']);
 
         	eventHandlerMap.grid['onClick'] = function (e, args) {
