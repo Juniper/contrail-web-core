@@ -131,16 +131,21 @@ Handlebars.registerHelper('getValue', function(context,key,options) {
  */
 Handlebars.registerHelper('getHashFromMenuItem',function(menuItem){
     var result = {},params = {},childItems = [];
-    if(menuItem['items'] != null && menuItem['items']['item'] != null){
+    if(menuItem['items'] != null && menuItem['items']['item'] != null) {
         childItems = menuItem['items']['item'];
-        if(childItems != null && childItems.length > 0 && childItems[0]['hash'] != null)
-            result['p'] = childItems[0]['hash'];
-        if(childItems != null && childItems.length > 0 && childItems[0]['queryParams'] != null){
-            $.each(childItems[0]['queryParams'],function(key,value){
-                params[key] = value
-            });
-            result['q'] = params;
-        }
+        //If hash is not found for its first immediate children,look for one-level down
+        var firstLevelMenuObj,leafLevelMenuObj;
+        firstLevelMenuObj = childItems[0];
+        leafLevelMenuObj = firstLevelMenuObj;
+        if(firstLevelMenuObj != null && firstLevelMenuObj['hash'] == null)
+            leafLevelMenuObj = firstLevelMenuObj['items']['item'][0];
+        if(leafLevelMenuObj == null || leafLevelMenuObj['hash'] == null)
+            return;
+        result['p'] =  leafLevelMenuObj['hash'];
+        $.each(ifNull(leafLevelMenuObj['queryParams'],[]),function(key,value){
+            params[key] = value
+        });
+        result['q'] = params;
         return $.param.fragment(location.href,result,2);
     } else {
         if(menuItem['hash'] != null)
