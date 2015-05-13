@@ -2778,6 +2778,11 @@ color: #b94a48;
   stroke:#85b9dd!important;
   stroke-width:3;
 }
+.connection-wrap-down {
+  fill: none;
+  stroke:#85b9dd!important;
+  stroke-width:3;
+}
 .display-nonodes{
   margin:15%;
   font-weight:bold;
