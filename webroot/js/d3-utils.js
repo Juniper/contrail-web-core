@@ -518,7 +518,8 @@ function initTrafficTSChart(selector, data, options, chart, yFormatter, y2Format
             var values = data[0].values,sampleCnt = values.length, start, end, brushExtent = null;
             if(options.defaultSelRange != null && sampleCnt >= options.defaultSelRange) {
                 start = values[sampleCnt - options.defaultSelRange];
-                end = value[sampleCnt - 1 ]
+                end = values[sampleCnt - 1 ];
+                brushExtent = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
             } else if (sampleCnt >= 20) {
                 start = values[sampleCnt - 20];
                 end = values[sampleCnt - 1];
