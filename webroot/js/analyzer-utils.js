@@ -588,10 +588,10 @@ function showUnderlayPaths(data) {
         params.protocol = data.protocol;
         if(data.direction_ing === 0) {
             params.direction = 'egress';
-            params.nodeIp = data.other_vrouter_ip;
+            params.nodeIP = data.other_vrouter_ip;
         } else {
             params.direction = 'ingress';
-            params.nodeIp = data.vrouter_ip;
+            params.nodeIP = data.vrouter_ip;
         }
         if(data.hasOwnProperty('startTime') && data.hasOwnProperty('endTime')) {
             params['startTime'] = data['startTime'];
@@ -614,7 +614,10 @@ function showUnderlayPaths(data) {
                     data    : {data: params},
                     callback : function(response) {
                         $("#network_topology").find('.topology-visualization-loading').hide();
-                        underlayRenderer.getView().highlightPath(response, {data: params});
+                        if(typeof underlayRenderer === 'object') {
+                            underlayRenderer.getModel().setFlowPath(response);
+                            underlayRenderer.getView().highlightPath(response, {data: params});
+                        }
                     },
                     failureCallback: function(err) {
                         $("#network_topology").find('.topology-visualization-loading').hide();

@@ -2308,7 +2308,9 @@ color: #b94a48;
 }
 
 .res-icon  + .select2-offscreen  + input{ 
-    width : 95%;
+ width: -moz-calc(100% - 20px);
+    width: -webkit-calc(100% - 20px);
+    width: calc(100% - 20px);
     margin-left:3px;
 }
 
@@ -2778,6 +2780,11 @@ color: #b94a48;
   stroke:#85b9dd!important;
   stroke-width:3;
 }
+.connection-wrap-down {
+  fill: none;
+  stroke:#85b9dd!important;
+  stroke-width:3;
+}
 .display-nonodes{
   margin:15%;
   font-weight:bold;
@@ -3099,4 +3106,8 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
 .popup-accordion ol{
     height:200px!important;
     overflow-y:auto;
+}
+.new-column-label{
+    padding-top:5px;
+    text-align:right;
 }

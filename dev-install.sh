@@ -340,9 +340,12 @@ MAINFILE[89]=webroot/assets/requirejs/text.js
 MAINFILE[90]=webroot/assets/bezierjs/bezier.js
 MAINFILE[91]=webroot/assets/select2/js/select2.min.js
 MAINFILE[92]=webroot/assets/moment/moment.min.js
-MAINFILE[93]=webroot/assets/ip/ipv6.js
-MAINFILE[94]=webroot/js/config_global.js
-MAINFILE[95]=webroot/js/protocol.js
+MAINFILE[93]=webroot/assets/ip/jsbn-combined.js
+MAINFILE[94]=webroot/assets/ip/sprintf.js
+MAINFILE[95]=webroot/assets/ip/ipv6.js
+MAINFILE[96]=webroot/js/config_global.js
+MAINFILE[97]=webroot/js/protocol.js
+MAINFILE[98]=webroot/js/uuid.js
 
 cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
 cat ${MAINFILE[1]} >> webroot/js/contrail-all-1.js
@@ -448,6 +451,9 @@ cat ${MAINFILE[92]} >> webroot/js/contrail-all-9.js
 cat ${MAINFILE[93]} >> webroot/js/contrail-all-9.js
 cat ${MAINFILE[94]} >> webroot/js/contrail-all-9.js
 cat ${MAINFILE[95]} >> webroot/js/contrail-all-9.js
+cat ${MAINFILE[96]} >> webroot/js/contrail-all-9.js
+cat ${MAINFILE[97]} >> webroot/js/contrail-all-9.js
+cat ${MAINFILE[98]} >> webroot/js/contrail-all-9.js
 
 # End - Merging All JS files
 
