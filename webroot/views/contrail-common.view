@@ -133,10 +133,17 @@
                 </div>
             <div class="row-fluid chart-tooltip-body ">
             {{else}}
-                <div class="row-fluid chart-tooltip-row" >
-                    <span class="key span4" style="min-height:20px;">{{label}}:</span>
-                    <span class="value span8" style="min-height:20px;">{{value}}</span>
-                </div>
+                {{#IfCompare true options.noLabelColon}}
+                    <div class="row-fluid chart-tooltip-row" >
+                        <span class="key span4" style="min-height:20px;">{{label}}</span>
+                        <span class="value span8" style="min-height:20px;">{{value}}</span>
+                    </div>
+                {{else}}
+                    <div class="row-fluid chart-tooltip-row" >
+                        <span class="key span4" style="min-height:20px;">{{label}}:</span>
+                        <span class="value span8" style="min-height:20px;">{{value}}</span>
+                    </div>
+                {{/IfCompare}}
             {{/IfCompare}}
         {{/each}}
     </div>
@@ -384,17 +391,17 @@
 
 <script type="text/x-handlebars-template" id="moreAlerts-template">
 <div id="moreAlerts" class="modal modal-840 hide">
-	  <div class="modal-header">
+      <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
         <h6 class="modal-header-title">Alerts</h6>
      </div>
      <div class="modal-body">
-	   <div id="alertContent"></div>
-	 </div>
-	  <div class="modal-footer">
-	     <button id="alertsClose" class="btn btn-primary btn-mini" data-dismiss="modal" aria-hidden="true">Close</button>
-	  </div> 
-	 </div>
+       <div id="alertContent"></div>
+     </div>
+      <div class="modal-footer">
+         <button id="alertsClose" class="btn btn-primary btn-mini" data-dismiss="modal" aria-hidden="true">Close</button>
+      </div> 
+     </div>
 </div>
 </script>
 
@@ -425,19 +432,19 @@
         <div class="row-fluid">
             <div id='topStats' class="span12 infobox-container"></div>
         </div>
-		<hr class="hr-8"/>
+        <hr class="hr-8"/>
         <div id="dashboard-charts" class="row-fluid">
         </div> 
         
-		<hr />
+        <hr />
 
-		<div id="dashboard-stats" class="row-fluid">
+        <div id="dashboard-stats" class="row-fluid">
             <div class="span4">
                 <div id="logs-box" class="widget-box transparent">
                     <div class="widget-header"></div>
                     <div class="widget-body">
                         <div class="widget-main padding-4">
-						</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -455,10 +462,10 @@
                 <div id="alerts-box" class="widget-box transparent">
                     <div class="widget-header"></div>
                     <div class="widget-body">
-						<div id="alerts-box-content" class="widget-main padding-4">
-                        	
-						</div>
-					</div>
+                        <div id="alerts-box-content" class="widget-main padding-4">
+                            
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -559,7 +566,7 @@
                                             {{#IfCompare this.value '0' options='=='}}
                                                 0
                                             {{else}}
-                                             	--
+                                                --
                                             {{/IfCompare}}
                                         {{/if}}
                                     </div>
@@ -581,15 +588,15 @@
 </script>
 
 <script type="text/x-handlebars-template" id="checked-multiselect-optgroup-template">
-	<select multiple="multiple" size="5" class="row-fluid">
-		{{#each data}}
-  			<optgroup label="{{text}}" data-value={{id}}>
-				{{#each children}}
-    				<option value="{%22parent%22:%22{{../id}}%22,%22value%22:%22{{id}}%22}" {{#IfCompare selected true operator='==' }}selected="true"{{/IfCompare}}>{{text}}</option>
-				{{/each}}
-  			</optgroup> 
+    <select multiple="multiple" size="5" class="row-fluid">
+        {{#each data}}
+            <optgroup label="{{text}}" data-value={{id}}>
+                {{#each children}}
+                    <option value="{%22parent%22:%22{{../id}}%22,%22value%22:%22{{id}}%22}" {{#IfCompare selected true operator='==' }}selected="true"{{/IfCompare}}>{{text}}</option>
+                {{/each}}
+            </optgroup> 
         {{/each}}
-	</select>
+    </select>
 </script>
 
 <script type="text/x-handlebars-template" id="tooltip-content-template">
