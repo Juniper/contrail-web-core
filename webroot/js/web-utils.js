@@ -3164,4 +3164,15 @@ function setInstanceURLHashParams(hashParams, networkFQN, instanceUUID, triggerH
      }
  };
 
+function checkIfDuplicates(arr){
+    
+    var sortedArr = arr.sort(); 
+
+    for (var i = 0; i < sortedArr.length - 1; i++) {
+        if (sortedArr[i + 1] == sortedArr[i]) {
+            return true;
+        }
+    }
+    return false;
+}
  
