@@ -3109,3 +3109,8 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
     padding-top:5px;
     text-align:right;
 }
+
+.select2-default {
+    width: auto !important;
+}
+
