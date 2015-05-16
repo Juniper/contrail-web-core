@@ -532,10 +532,6 @@ function createPortGroup(userData,appData,callback) {
                                 },
                                 securityPolicy : {
                                     inherited : false,
-                                    allowPromiscuous: {
-                                        inherited : false,
-                                        value : true
-                                    },
                                     macChanges : {
                                         inherited: false,
                                         value: true
