@@ -61,7 +61,8 @@ var infraAlertMsgs = {
         'PROCESS_COREDUMP'      : "{0:core dump;core dumps}",
         'PROCESS_RESTART'       : "{0:restart;restarts}",
         'SPACE_THRESHOLD_EXCEEDED'  : '{0} space usage exceeds threshold',
-        'SPACE_USAGE_WARNING'   : '{0} space usage warning'
+        'SPACE_USAGE_WARNING'   : '{0} space usage warning',
+        'NTP_UNSYNCED_ERROR'    : 'NTP state unsynchronized'
     }
 ////Contant to check if a nodemanger is installed in the setup or not and use is appropriately
 var IS_NODE_MANAGER_INSTALLED = true;
