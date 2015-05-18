@@ -1310,7 +1310,7 @@ function getDefaultGridConfig() {
         };
 
         function emptyGridHandler(){
-        	if(!gridOptions.lazyLoading) {
+        	if(!gridOptions.lazyLoading && gridContainer.data('contrailGrid')) {
         		gridContainer.data('contrailGrid').showGridMessage('empty');
         		if(gridOptions.checkboxSelectable != false) {
         			gridContainer.find('.headerRowCheckbox').attr('disabled', true);
