@@ -812,8 +812,13 @@ define([
         }
         //Format the alerts to display in tooltip
         $.each(ifNull(e['point']['alerts'],[]),function(idx,obj) {
-            if(obj['tooltipAlert'] != false)
-                tooltipContents.push({lbl:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
+            if(obj['tooltipAlert'] != false) {
+                if(tooltipContents['content'] != null && tooltipContents['content']['info'] != null) {
+                    tooltipContents['content']['info'].push({label:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
+                } else {
+                    tooltipContents.push({label:ifNull(obj['tooltipLbl'],'Events'),value:obj['msg']});
+                }
+            }
         });
         return generateTooltipHTML(tooltipContents);
     };
