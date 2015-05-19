@@ -61,6 +61,42 @@ function chartHandler(dataUrl, methodType, postData, customInitHandler, dataPars
     contrail.ajaxHandler(ajaxConfig, initHandler, successHandler, failureHandler);
 };
 
+function plotLineChart(data,  customInitHandler, dataParser, successCallBack, failureCallback,  callbackParams) {
+    var selector = callbackParams.selector, ajaxConfig = {};
+    
+    //Init
+    if (typeof window[customInitHandler] === "function") {
+        window[customInitHandler](callbackParams);
+    } else {
+//       TODO enable after everything else is fixed defaultChartInitHandler(callbackParams);
+    }
+    if(data != null){
+        var chartData = [];
+        if (typeof window[dataParser] === "function") {
+            chartData = window[dataParser](data, callbackParams)
+        } else {
+            chartData = response;
+        }
+        endWidgetLoading($(selector).attr("id"));
+        $(callbackParams.selector).empty();
+        if (typeof window[successCallBack] === "function") {
+            window[successCallBack](chartData, callbackParams);
+        } else {
+            defaultChartSuccessCallback(chartData, callbackParams);
+        }
+    } else {
+        endWidgetLoading($(selector).attr("id"));
+        if (response.responseText && response.responseText != "") {
+            showInfoWindow(response.responseText, response.statusText);
+        }
+        if ((typeof(failure) != "undefined") && (typeof window[failure] === "function")) {
+            window[failureCallback](response, cbParams);
+        } else {
+            defaultChartFailureCallback(response, callbackParams);
+        }
+    }
+};
+
 function defaultChartSuccessCallback(response, cbParams) {
     // TODO
 }
@@ -77,6 +113,11 @@ function defaultChartInitHandler(cbParams) {
 function createD3MemCPUChart(selector, url, options) {
     var cbParams = {selector:selector, options:options};
     chartHandler(url(), "GET", null, null, options.parser, "successHandlerLineChart", null, false, cbParams, 310000);
+}
+
+function createD3LineChartFromData(selector, data, options) {
+    var cbParams = {selector:selector, options:options};
+    plotLineChart(data, null, options.parser, "successHandlerLineChart", null, cbParams);
 }
 
 function createD3SparkLines(selector, data, dataParser, propertyNames, slConfig) {
@@ -118,7 +159,7 @@ function onClickLineChart(data, cbParams) {
             initCPULineChart("#" + selectorId + " #" + elementId, data[property]['ds'], cbParams.options);
         } else {
             initMemoryLineChart("#" + selectorId + " #" + elementId, data[property]['ds'], cbParams.options);
-        }
+        } 
     }
 }
 
@@ -149,6 +190,33 @@ function parseProcessMemCPUData(response, cbParams) {
     return data;
 };
 
+function parseUsageData(response, cbParams) {
+    var flowSeries = response['flow-series'];
+    var titles = cbParams.options.titles;
+    var data = {}, time, diskUsedDS = [], analyticsDbDS = [], startTime, endTime;
+//    startTime = parseInt(getValueByJsonPath(response,'summary;start_time'));
+//    endTime = parseInt(getValueByJsonPath(response,'summary;end_time'));
+    if (flowSeries.length == 1) {
+        addDiskUsageDS4Process(startTime, flowSeries[0], diskUsedDS, analyticsDbDS);
+        addDiskUsageDS4Process(endTime, flowSeries[0], diskUsedDS, analyticsDbDS);
+    } else {
+        for (var i = 0; i < flowSeries.length; i++) {
+            time = parseInt(flowSeries[i]['T']);
+            addDiskUsageDS4Process(time, flowSeries[i], diskUsedDS, analyticsDbDS);
+        }
+//        if (time < endTime && flowSeries.length > 0) {
+//            addMemCPU2DS4Process(endTime, flowSeries[flowSeries.length - 1], cpuDS, memDS);
+//        }
+    }
+    data['diskUsage'] = {ds:[
+        {values:diskUsedDS, key:titles.diskUsageTitle, color:d3_category2[0]}
+    ]};
+    data['analyticsDbSize'] = {ds:[
+        {values:analyticsDbDS, key:titles.analyticsDbSizeTitle, color:d3_category2[1]}
+    ]};
+    return data;
+};
+
 function addMemCPU2DS4Process(time, dataRecord, cpuDS, memDS) {
     var cpuShare = getValueByJsonPath(dataRecord,'cpuData;cpu_share');
     if (cpuShare != null && cpuShare != "-") {
@@ -164,6 +232,27 @@ function addMemCPU2DS4Process(time, dataRecord, cpuDS, memDS) {
         try {
             resMemory = parseInt(resMemory);
             memDS.push({x:time, y:resMemory});
+        } catch (error) {
+            // Ignore
+        }
+    }
+}
+
+function addDiskUsageDS4Process(time, dataRecord, diskUsedDS, analyticsDbDS) {
+    var diskUsed = dataRecord['database_usage.disk_space_used_1k'];
+    if (diskUsed != null && diskUsed != "-") {
+        try {
+            diskUsed = parseFloat(diskUsed);
+            diskUsedDS.push({x:time, y:diskUsed});
+        } catch (error) {
+            // Ignore
+        }
+    }
+    var analyticsDbSize = dataRecord['database_usage.analytics_db_size_1k'];
+    if (analyticsDbSize != null && analyticsDbSize != "-") {
+        try {
+            analyticsDbSize = parseInt(analyticsDbSize);
+            analyticsDbDS.push({x:time, y:analyticsDbSize});
         } catch (error) {
             // Ignore
         }
@@ -188,10 +277,10 @@ function parseSystemMemCPUData(response, cbParams) {
             addMemCPU2DS4System(endTime, flowSeries[flowSeries.length - 1], cpuDS, memDS);
         }
     }
-    data['cpu'] = {ds:[
+    data['diskUsage'] = {ds:[
         {values:cpuDS, key:titles.cpuTitle, color:d3_category2[0]}
     ]};
-    data['memory'] = {ds:[
+    data['analyticsDbSize'] = {ds:[
         {values:memDS, key:titles.memTitle, color:d3_category2[1]}
     ]};
     return data;
