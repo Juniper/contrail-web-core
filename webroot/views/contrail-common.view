@@ -135,12 +135,12 @@
             {{else}}
                 {{#IfCompare true options.noLabelColon}}
                     <div class="row-fluid chart-tooltip-row" >
-                        <span class="key span4" style="min-height:20px;">{{label}}</span>
+                        <span class="key span4" style="min-height:20px;">{{lbl}}</span>
                         <span class="value span8" style="min-height:20px;">{{value}}</span>
                     </div>
                 {{else}}
                     <div class="row-fluid chart-tooltip-row" >
-                        <span class="key span4" style="min-height:20px;">{{label}}:</span>
+                        <span class="key span4" style="min-height:20px;">{{lbl}}:</span>
                         <span class="value span8" style="min-height:20px;">{{value}}</span>
                     </div>
                 {{/IfCompare}}
