@@ -449,6 +449,18 @@ var disableDblClick = false;
             options.lineChartId = obj.lineChartId;
             createD3MemCPUChart(selector, url, options);
         },
+        initDbUsageLineChart:function (obj, height) {
+            var selector = $(this);
+            var options = {};
+            options.titles = obj.titles;
+            options.height = height;
+            options.parser = obj.parser;
+            options.plotOnLoad = obj.plotOnLoad;
+            options.showWidgetIds = obj.showWidgetIds;
+            options.hideWidgetIds = obj.hideWidgetIds;
+            options.lineChartId = obj.lineChartId;
+            createD3LineChartFromData(selector, obj.data, options);
+        },
         initD3TSChart: function (obj) {
             var selector = $(this);
             var url = (typeof(obj['url']) == 'function') ? obj['url']() : obj['url'];
