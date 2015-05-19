@@ -460,7 +460,7 @@ var disableDblClick = false;
             var origData = $.extend(true,{},initResponse);
             var selector = $(this), toFormat = '', chart, yMaxMin;
             var chartOptions = ifNull(initResponse['chartOptions'],{}) ;
-            //Set data to populate to chart
+            //Data that will be given input to chart
             var chartData;
             var tooltipTimeoutId;
             var xLbl = ifNull(chartOptions['xLbl'], 'CPU (%)'),
