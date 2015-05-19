@@ -150,7 +150,8 @@ exports.isSessionAuthenticated = function(req) {
         }
     }
     //If not login request and not /api request
-    if(!longPoll.checkLoginReq(req) && req.url.indexOf('/api') != 0) {
+    //Requests that are same across vCenter and openStack
+    if(!longPoll.checkLoginReq(req) && !longPoll.checkOrchestrationAgnosticReq(req)) {
         if(req.url.indexOf('/vcenter') > -1 && req.session.vmware_soap_session == null) {
             //Moving none to vcenter orchestration mode 
             req.session.isAuthenticated = false;
