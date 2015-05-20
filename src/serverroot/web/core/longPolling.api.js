@@ -162,6 +162,16 @@ function checkLoginReq (req)
           (req.url == '/vcenter/logout'));
 }
 
+/*
+ * Check if URL is agnostic to orchestration 
+ * If URL is not agnostic to orchestration, then we logout if the requestedURL doesn't match with 
+ * loggedInOrchestrationMode on server
+ */
+function checkOrchestrationAgnosticReq(req) 
+{
+    return req.url.indexOf('/proxy') == 0 || req.url.indexOf('/api') == 0;
+}
+
 /* Function: routeAll
     This function is invoked on each request coming from web client.
     If the req.url is in the Allowed List, then req/res context gets stored
@@ -323,3 +333,4 @@ exports.routeAll = routeAll;
 exports.processPendingReq = processPendingReq;
 exports.insertDataToSendAllClients = insertDataToSendAllClients;
 exports.checkLoginReq = checkLoginReq;
+exports.checkOrchestrationAgnosticReq = checkOrchestrationAgnosticReq;
