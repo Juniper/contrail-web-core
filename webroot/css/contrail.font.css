@@ -123,6 +123,14 @@
     content: "\e618";
 }
 
+.icon-contrail-reverse-flow:before {
+    content: "\e619";
+}
+
+.icon-contrail-trace-flow:before {
+    content: "\e61a";
+}
+
 @font-face {
     font-family: 'contrail-core';
     src:url('/css/fonts/contrail-core.eot?e1umid');

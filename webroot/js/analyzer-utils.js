@@ -622,8 +622,12 @@ function showUnderlayPaths(data) {
                             underlayRenderer.getModel().setFlowPath(response);
                             if (ifNull(response['nodes'],[]).length == 0 || ifNull(response['links'],[]).length == 0) {
                                 showInfoWindow("Cannot Map the path for selected flow", "Info");
+                                underlayRenderer.getView().resetTopology(false);
                             } else {
                                 underlayRenderer.getView().highlightPath(response, {data: params});
+                            }
+                            if(ifNull(response['nodes'],[]).length > 0 || ifNull(response['links']).length > 0) {
+                                $('html,body').animate({scrollTop:0}, 500);
                             }
                         }
                     },
