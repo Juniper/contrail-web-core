@@ -41,6 +41,7 @@ function getDefaultGridConfig() {
                 rowSelectable: false,
                 sortable: true,
                 lazyLoading: false,
+                actionCellPosition: 'end', //actionCellPosition indicates position of the settings icon whether it should be on row start and end 
                 multiRowSelection: true,//This property will enable/disable selecting multiple rows of the grid
                                         //but the checkbox in the header should be removed by the client because as of now 
                                         //we don't have way in api to remove the checkbox in header 
@@ -552,8 +553,11 @@ function getDefaultGridConfig() {
                             }
                         });
                     }
-
-                    columns = gridColumns.concat(columns);
+                    if(gridOptions.actionCellPosition == 'start') {
+                        columns = columns.concat(gridColumns);
+                    } else {
+                        columns = gridColumns.concat(columns);
+                    }
                     gridColumns = columns;
                 }
 
@@ -715,11 +719,19 @@ function getDefaultGridConfig() {
                         }
 
                         //$('#' + gridContainer.prop('id') + '-action-menu').remove();
-                        addGridRowActionDroplist(actionCellArray, gridContainer, args.row);
-                        var offset = $(e.target).offset();
-                        $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).css({
-                            top: (offset.top + 20) + 'px',
-                            left: (offset.left - 155) + 'px'
+                        addGridRowActionDroplist(actionCellArray, gridContainer, args.row,$(e.target));
+                        var offset = $(e.target).offset(),actionCellStyle = '';
+                        if(gridOptions.actionCellPosition == 'start') {
+                            actionCellStyle = 'top:'+(offset.top + 20) + 'px' + ';right:auto !important;left:'+offset.left+'px !important;';   
+                        } else {
+                            actionCellStyle = 'top:'+(offset.top + 20) + 'px' + ';left:'+(offset.left - 155)+'px;';
+                        }
+                        $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).attr('style',function(idx,obj){
+                            if (obj != null) {
+                                return obj + actionCellStyle;
+                            } else {
+                                return actionCellStyle;
+                            }
                         }).show(function() {
                             var dropdownHeight = $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).height(),
                                 windowHeight = $(window).height(),
@@ -1305,8 +1317,12 @@ function getDefaultGridConfig() {
 //   	        }
         };
 
-        function addGridRowActionDroplist(actionConfig, gridContainer, rowIndex) {
-            var gridActionId = $('<ul id="' + gridContainer.prop('id') + '-action-menu-' + rowIndex + '" class="dropdown-menu pull-right dropdown-caret grid-action-menu"></ul>').appendTo('body');
+        function addGridRowActionDroplist(actionConfig, gridContainer, rowIndex,targetElement) {
+            var menuClass = 'dropdown-menu pull-right dropdown-caret grid-action-menu';
+            if (gridOptions.actionCellPosition == 'start') {
+                menuClass = 'dropdown-menu pull-left dropdown-caret grid-action-menu';
+            }
+            var gridActionId = $('<ul id="' + gridContainer.prop('id') + '-action-menu-' + rowIndex + '" class="'+menuClass+'"></ul>').appendTo('body');
             $.each(actionConfig, function(key, actionItemConfig){
                 if (actionItemConfig.divider) {
                    $('<li class="divider"></li>').appendTo('#' + gridContainer.prop('id') + '-action-menu-' + rowIndex);
@@ -1318,7 +1334,7 @@ function getDefaultGridConfig() {
                     </li>').appendTo('#' + gridContainer.prop('id') + '-action-menu-' + rowIndex);
 
                 $(actionItem).on('click', function(){
-                    actionItemConfig.onClick(rowIndex);
+                    actionItemConfig.onClick(rowIndex,targetElement);
                     gridActionId.remove();
                 });
             });
