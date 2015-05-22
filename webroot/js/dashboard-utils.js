@@ -45,13 +45,13 @@ function infraMonitorClass() {
          var verDimension = dashboardCF.dimension(function(d) { return d.version });
          var verGroup = verDimension.group();
          var verArr = [];
-         var systemCnt = nameDimension.group().all().length;
+         var systemCnt = 0; 
          var systemList = [];
          for(var i=0;i<dashboardDataArr.length;i++) {
             if(dashboardDataArr[i]['vRouterType'] == null || dashboardDataArr[i]['vRouterType'] != 'tor-agent')
                 systemList.push(dashboardDataArr[i]['name']);
          }
-         systemCnt = $.unique(systemList).length;
+         systemCnt = systemList.unique().length;
          var infoData = [{lbl:'No. of servers',value:systemCnt}];
          infoData.push({lbl:'No. of logical nodes', value:dashboardDataArr.length});
          //Distinct Versions

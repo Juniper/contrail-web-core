@@ -92,6 +92,25 @@ function initializePrototypes() {
             this.replace(/(?:(?:^|\n)s+|s+(?:$|\n))/g, "").replace(/s+/g, " ");
         };
     }
+    if(!Array.prototype.contains) {
+        Array.prototype.contains = function(v) {
+            for(var i = 0; i < this.length; i++) {
+                if(this[i] === v) return true;
+            }
+            return false;
+        }
+    }
+    if(!Array.prototype.unique) {
+        Array.prototype.unique = function() {
+            var arr = [];
+            for(var i = 0; i < this.length; i++) {
+                if(!arr.contains(this[i])) {
+                    arr.push(this[i]);
+                }
+            }
+            return arr; 
+        }
+    }
     if (!Array.prototype.diff) {
         Array.prototype.diff = function(a) {
             return this.filter(function(i) {return !(a.indexOf(i) > -1);});
