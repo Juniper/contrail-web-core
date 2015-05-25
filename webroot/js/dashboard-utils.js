@@ -81,7 +81,7 @@ function infraMonitorClass() {
         var allAlerts = nodeAlerts.concat(processAlerts);
         allAlerts.sort(dashboardUtils.sortInfraAlerts);
         if(globalAlerts.length > 0)
-            allAlerts = allAlerts.concat(globalAlerts)
+            allAlerts = allAlerts.concat($.extend(true,[],globalAlerts));
         //Filtering the alerts for alerts popup based on the detailAlert flag
         var popupAlerts = [];
         for(var i=0;i<allAlerts.length;i++) {
@@ -235,7 +235,7 @@ function infraMonitorClass() {
                 alertsList = alertsList.concat(obj['processAlerts']);
             });
         });
-        return alertsList;
+        return $.extend(true,[],alertsList);
     }
 
     //Construct Node-specific Alerts looping through all nodes
@@ -246,7 +246,7 @@ function infraMonitorClass() {
                 alertsList = alertsList.concat(obj['nodeAlerts']);
             });
         });
-        return alertsList;
+        return $.extend(true,[],alertsList);
     }
 
     this.load = function (obj) {
