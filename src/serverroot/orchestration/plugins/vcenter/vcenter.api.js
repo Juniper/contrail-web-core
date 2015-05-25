@@ -125,8 +125,8 @@ function destroyIpPool(appData,poolId) {
 
 function destroyTask(appData,objType,name) {
     return new Promise(function(resolve,reject) {
-        getIdByMobName(appData,objType,name).done(function(response) {
-            if(response == false) {
+        getIdByMobName(appData,objType,name).done(function(objId) {
+            if(objId == false) {
                 resolve({Fault:{faultstring:objType + ' ' + name + " doesn't exist"}});
                 return;
             }
@@ -140,10 +140,14 @@ function destroyTask(appData,objType,name) {
                         _attributes : {
                             type: objType
                         },
-                        _value : response
+                        _value : objId
                     },
                 }
             },appData,function(err,data,resHeaders) {
+                //Clear the entry from cache
+                if(mobCache[objType] != null) {
+                    delete mobCache[objType][objId];
+                }
                 resolve(data);
             });
         });
@@ -285,10 +289,20 @@ function retrieveServiceContent(appData) {
     });
 }
 
-function getRootFolder(appData,folderName) {
+function getRootFolder(appData,folderName,objType) {
     return new Promise(function(resolve,reject) {
         if(folderName != null)
             resolve(folderName);
+        //In case of DistributedVirtualPortgroup,always use networkFolder
+        //else it will corrupt the cache by populating portGroup's form other datacenters
+        if(objType == 'DistributedVirtualPortgroup') {
+            populatevCenterParams(appData).done(function(response) {
+                getNetworkFolderForDataCenter(appData,dataCenterName).done(function(folderName) {
+                    resolve(folderName);
+                });
+            });
+            return;
+        }
         if(rootFolder != null)
             resolve(rootFolder);
         else
@@ -316,7 +330,7 @@ function getNetworkFolderForDataCenter(appData,datacenterId) {
 
 function getIdByMobName(appData,objType,name,folderName) {
     return new Promise(function(resolve,reject) {
-        getRootFolder(appData,folderName).done(function(folderName) {
+        getRootFolder(appData,folderName,objType).done(function(folderName) {
             createContainerView(appData,folderName,objType,name).done(function(response) {
                 if(response['Fault'] != null) 
                     resolve(response);
@@ -433,11 +447,13 @@ function getProjectList (req, appData, callback)
         var projUUIDs = [],reqUrl = '';
         data = data['projects'];
         var projURLsArr = [];
-        for(var i=0;i<data.length;i++) {
-            projUUIDs.push(data[i]['uuid']);
-            reqUrl = '/project/' + data[i]['uuid'];
-            commonUtils.createReqObj(projURLsArr, reqUrl,global.HTTP_REQUEST_GET,
-                null,null,null,appData);
+        if(data instanceof Array) {
+            for(var i=0;i<data.length;i++) {
+                projUUIDs.push(data[i]['uuid']);
+                reqUrl = '/project/' + data[i]['uuid'];
+                commonUtils.createReqObj(projURLsArr, reqUrl,global.HTTP_REQUEST_GET,
+                    null,null,null,appData);
+            }
         }
         async.map(projURLsArr,commonUtils.getAPIServerResponse(configApiServer.apiGet, true),function(error,results) {
             for(var i=0;i<results.length;i++) {
@@ -460,39 +476,51 @@ function createNetwork(userData,appData,callback) {
             callback(null,{'Fault': {'faultstring': "Given Datacenter/switchname doesn't exist"}});
             return;
         }
-        createPortGroup(userData,appData,callback).done(function(response) {
-            var portGroupId = null;
-            if(response['Fault'] != null) {
-                if(response['Fault']['detail'] != null && response['Fault']['detail']['ManagedObjectNotFoundFault'] !=  null) {
-                    dataCenterName = null;
-                    vSwitchName  = null;
-                    createNetwork(userData,appData,callback);
-                } else {
+        getNetworkFolderForDataCenter(appData,dataCenterName).done(function(folderName) {
+            getIdByMobName(appData,'DistributedVirtualPortgroup',userData['name'],folderName).done(function(response) {
+                if(response['Fault'] != null) {
                     callback(null,response);
+                    return;
                 }
-                return;
-            }
-            getNetworkFolderForDataCenter(appData,dataCenterName).done(function(folderName) {
-                getIdByMobName(appData,'DistributedVirtualPortgroup',userData['name'],folderName).done(function(response) {
-                    portGroupId = response;
-                    userData['portGroupId'] = portGroupId;
-                    //Check if ip-pool already exists
-                    queryIpPools(appData).done(function(response) {
-                        if(response['ip-pool-for-' + userData['name']] != null) {
-                            destroyIpPool(appData,response['ip-pool-for-' + userData['name']]).done(function(response) {
-                                if(response['Fault'] != null) {
-                                    callback(null,response);
-                                    return;
-                                }
-                                createIpPool(userData,appData,callback).done(function(response) {
-                                    callback(null,response);
-                                });
-                            });
+                if(response != false) {
+                    callback(null,{'Fault': {'faultstring': "Given network already exists"}});
+                    return;
+                }
+                createPortGroup(userData,appData,callback).done(function(response) {
+                    var portGroupId = null;
+                    if(response['Fault'] != null) {
+                        if(response['Fault']['detail'] != null && response['Fault']['detail']['ManagedObjectNotFoundFault'] !=  null) {
+                            dataCenterName = null;
+                            vSwitchName  = null;
+                            createNetwork(userData,appData,callback);
                         } else {
-                                createIpPool(userData,appData,callback).done(function(response) {
-                                    callback(null,response);
-                                });
+                            callback(null,response);
                         }
+                        return;
+                    }
+                    getNetworkFolderForDataCenter(appData,dataCenterName).done(function(folderName) {
+                        getIdByMobName(appData,'DistributedVirtualPortgroup',userData['name'],folderName).done(function(response) {
+                            portGroupId = response;
+                            userData['portGroupId'] = portGroupId;
+                            //Check if ip-pool already exists
+                            queryIpPools(appData).done(function(response) {
+                                if(response['ip-pool-for-' + userData['name']] != null) {
+                                    destroyIpPool(appData,response['ip-pool-for-' + userData['name']]).done(function(response) {
+                                        if(response['Fault'] != null) {
+                                            callback(null,response);
+                                            return;
+                                        }
+                                        createIpPool(userData,appData,callback).done(function(response) {
+                                            callback(null,response);
+                                        });
+                                    });
+                                } else {
+                                        createIpPool(userData,appData,callback).done(function(response) {
+                                            callback(null,response);
+                                        });
+                                }
+                            });
+                        });
                     });
                 });
             });
@@ -639,3 +667,6 @@ exports.queryIpPools = queryIpPools;
 exports.logout = logout;
 exports.getIdByMobName = getIdByMobName;
 exports.retrievePropertiesExForObj = retrievePropertiesExForObj;
+exports.populatevCenterParams = populatevCenterParams;
+exports.getNetworkFolderForDataCenter = getNetworkFolderForDataCenter;
+exports.dataCenterName = dataCenterName;
