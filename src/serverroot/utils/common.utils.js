@@ -1243,7 +1243,16 @@ function redirectToURL(req, res, redURL)
     var ajaxCall = req.headers['x-requested-with'];
     if (ajaxCall == 'XMLHttpRequest') {
        res.setHeader('X-Redirect-Url', redURL);
-       res.send(307, '');
+       var userAgent = req.headers['user-agent'];
+       if ((-1 != userAgent.indexOf('MSIE')) ||
+           (-1 != userAgent.indexOf('Trident'))) {
+           /* In IE Browser, response code 307, does not lead the browser to
+            * redirect to certain URL, so sending 200 responseCode
+            */
+           res.send(200, '');
+       } else {
+           res.send(307, '');
+       }
     } else {
        res.redirect(redURL);
     }
