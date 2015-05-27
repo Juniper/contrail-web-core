@@ -264,7 +264,7 @@ config.physicaldevices.interface_delimiters = ['.', ':'];
 * Below are the disabled list of UI features.
 *****************************************************************************/
 config.features = {};
-config.features.disabled = ['disable_expand_details'];
+config.features.disabled = [];
 
 /*****************************************************************************
 * Below are the configurations used only for ui
