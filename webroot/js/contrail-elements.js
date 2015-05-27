@@ -272,7 +272,7 @@
 
         function getComboboxOption(givenOptions) {
             var option = {
-                delay: 0,
+                delay: 500,
                 minLength: 0,
                 placeholder: "Select...",
                 dataTextField: "value",
