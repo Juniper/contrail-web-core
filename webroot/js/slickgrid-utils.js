@@ -149,7 +149,9 @@ function getDefaultGridConfig() {
                             if(response.length == 0){
                                 emptyGridHandler();
                             } else {
-                                gridContainer.data('contrailGrid').removeGridMessage();
+                                if(gridContainer.data('contrailGrid') != null) {
+                                    gridContainer.data('contrailGrid').removeGridMessage();
+                                }
                                 gridContainer.find('grid-footer').removeClass('hide');
                             }
                             if(contrail.checkIfFunction(gridDataSource.events.onRequestSuccessCB)) {
@@ -901,6 +903,9 @@ function getDefaultGridConfig() {
         }
 
         function initGridFooter(serverSidePagination) {
+            if(gridContainer.data('contrailGrid') == null) {
+                return;
+            }
             if(gridConfig.footer != false) {
                 gridContainer.append('<div class="grid-footer hide"></div>');
 
@@ -1353,7 +1358,9 @@ function getDefaultGridConfig() {
         };
 
         function errorGridHandler(errorMsg){
-            gridContainer.data('contrailGrid').showGridMessage('error','Error: ' + errorMsg);
+            if(gridContainer.data('contrailGrid') != null) {
+                gridContainer.data('contrailGrid').showGridMessage('error','Error: ' + errorMsg);
+            }
             if(gridOptions.checkboxSelectable != false) {
                 gridContainer.find('.headerRowCheckbox').attr('disabled', true);
             }
@@ -1383,6 +1390,9 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
         currentPagingInfo = null;
 
     this.init = function() {
+        if(gridContainer.data('contrailGrid') == null) {
+            return;
+        }
         var eventMap = gridContainer.data('contrailGrid')._eventHandlerMap.dataView;
         eventMap['onPagingInfoChanged'] = function (e, pagingInfo) {
             var currentPageNum = null, currentPageSize = null;
