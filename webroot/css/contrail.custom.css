@@ -1737,11 +1737,31 @@ color: #b94a48;
 .font-element i.icon-contrail-virtual-machine, .font-element i.icon-contrail-virtual-machine-left, .font-element i.icon-contrail-virtual-machine-right {
     font-size: 20px;
 }
+/*Style for the underlay topology svg elements*/
 .topology-visualization svg {
+    cursor:move;
     height: auto !important;
     width: auto !important;
-
 }
+
+.topology-visualization svg g.element {
+    cursor:default;
+    cursor:grab;
+    cursor:-webkit-grab;
+    cursor:-moz-grab;
+}
+
+.topology-visualization svg g.element:active {
+    cursor:default;
+    cursor:grabbing;
+    cursor:-webkit-grabbing;
+    cursor:-moz-grabbing;
+}
+
+.topology-visualization .connection-wrap{
+    cursor:default;
+}
+
 .topology-visualization svg text {
     font-size: 10px;
     font-weight:200;
@@ -3110,4 +3130,8 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
 .new-column-label{
     padding-top:5px;
     text-align:right;
+}
+
+.select2-default {
+    width: auto !important;
 }

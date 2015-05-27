@@ -61,7 +61,8 @@ var infraAlertMsgs = {
         'PROCESS_COREDUMP'      : "{0:core dump;core dumps}",
         'PROCESS_RESTART'       : "{0:restart;restarts}",
         'SPACE_THRESHOLD_EXCEEDED'  : '{0} space usage exceeds threshold',
-        'SPACE_USAGE_WARNING'   : '{0} space usage warning'
+        'SPACE_USAGE_WARNING'   : '{0} space usage warning',
+        'NTP_UNSYNCED_ERROR'    : 'NTP state unsynchronized'
     }
 ////Contant to check if a nodemanger is installed in the setup or not and use is appropriately
 var IS_NODE_MANAGER_INSTALLED = true;
@@ -2634,19 +2635,19 @@ function uniqueArray(arr) {
     return retArr;
 }
 
-function showAdvancedDetails(name){
-    $('#divBasic' + '_' + name).hide();
-    $('#divStatus' + '_' + name).hide();
-    $('#divAdvanced' + '_' + name).show();
-    $('#divAdvanced' + '_' + name).parents('.widget-box').find('.widget-header h4 .subtitle').remove();
-    $('#divAdvanced' + '_' + name).parents('.widget-box').find('.widget-header h4').append('<span class="subtitle">(Advanced)</span>')
+function showAdvancedDetails(){
+    $('#divBasic').hide();
+    $('#divStatus').hide();
+    $('#divAdvanced').show();
+    $('#divAdvanced').parents('.widget-box').find('.widget-header h4 .subtitle').remove();
+    $('#divAdvanced').parents('.widget-box').find('.widget-header h4').append('<span class="subtitle">(Advanced)</span>')
 }
 
-function showBasicDetails(name){
-    $('#divAdvanced' + '_' + name).hide();
-    $('#divStatus' + '_' + name).hide();
-    $('#divBasic' + '_' + name).show();
-    $('#divAdvanced' + '_' + name).parents('.widget-box').find('.widget-header h4 .subtitle').remove();
+function showBasicDetails(){
+    $('#divAdvanced').hide();
+    $('#divStatus').hide();
+    $('#divBasic').show();
+    $('#divAdvanced').parents('.widget-box').find('.widget-header h4 .subtitle').remove();
 }
 
 function getFormattedDate(timeStamp){
@@ -3164,4 +3165,15 @@ function setInstanceURLHashParams(hashParams, networkFQN, instanceUUID, triggerH
      }
  };
 
+function checkIfDuplicates(arr){
+    
+    var sortedArr = arr.sort(); 
+
+    for (var i = 0; i < sortedArr.length - 1; i++) {
+        if (sortedArr[i + 1] == sortedArr[i]) {
+            return true;
+        }
+    }
+    return false;
+}
  

@@ -45,13 +45,13 @@ function infraMonitorClass() {
          var verDimension = dashboardCF.dimension(function(d) { return d.version });
          var verGroup = verDimension.group();
          var verArr = [];
-         var systemCnt = nameDimension.group().all().length;
+         var systemCnt = 0; 
          var systemList = [];
          for(var i=0;i<dashboardDataArr.length;i++) {
             if(dashboardDataArr[i]['vRouterType'] == null || dashboardDataArr[i]['vRouterType'] != 'tor-agent')
                 systemList.push(dashboardDataArr[i]['name']);
          }
-         systemCnt = $.unique(systemList).length;
+         systemCnt = systemList.unique().length;
          var infoData = [{lbl:'No. of servers',value:systemCnt}];
          infoData.push({lbl:'No. of logical nodes', value:dashboardDataArr.length});
          //Distinct Versions
@@ -81,7 +81,7 @@ function infraMonitorClass() {
         var allAlerts = nodeAlerts.concat(processAlerts);
         allAlerts.sort(dashboardUtils.sortInfraAlerts);
         if(globalAlerts.length > 0)
-            allAlerts = allAlerts.concat(globalAlerts)
+            allAlerts = allAlerts.concat($.extend(true,[],globalAlerts));
         //Filtering the alerts for alerts popup based on the detailAlert flag
         var popupAlerts = [];
         for(var i=0;i<allAlerts.length;i++) {
@@ -234,7 +234,7 @@ function infraMonitorClass() {
                 alertsList = alertsList.concat(obj['processAlerts']);
             });
         });
-        return alertsList;
+        return $.extend(true,[],alertsList);
     }
 
     //Construct Node-specific Alerts looping through all nodes
@@ -245,7 +245,7 @@ function infraMonitorClass() {
                 alertsList = alertsList.concat(obj['nodeAlerts']);
             });
         });
-        return alertsList;
+        return $.extend(true,[],alertsList);
     }
 
     this.load = function (obj) {

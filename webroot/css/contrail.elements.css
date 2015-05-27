@@ -4196,3 +4196,12 @@ td.td-actions a.td-action {
 	margin-top:3px;
 	margin-bottom:0px;	
 }
+.selected-slick-row {
+	background: none;
+    background-color: #EBF5FC !important;
+}
+.icon-contrail-trace-flow,.icon-contrail-reverse-flow {
+    font-size: 16px;
+    line-height: 16px;
+    vertical-align: middle;
+}

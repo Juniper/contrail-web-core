@@ -593,6 +593,10 @@ function showUnderlayPaths(data) {
             params.direction = 'ingress';
             params.nodeIP = data.vrouter_ip;
         }
+        if(currentPage == 'mon_infra_underlay' && typeof underlayRenderer === 'object' && !underlayRenderer.getModel().checkIPInVrouterList(params)) {
+            showInfoWindow("Cannot Map the path for the selected flow", "Info");
+            return;
+        }
         if(data.hasOwnProperty('startTime') && data.hasOwnProperty('endTime')) {
             params['startTime'] = data['startTime'];
             params['endTime'] = data['endTime'];
@@ -616,7 +620,15 @@ function showUnderlayPaths(data) {
                         $("#network_topology").find('.topology-visualization-loading').hide();
                         if(typeof underlayRenderer === 'object') {
                             underlayRenderer.getModel().setFlowPath(response);
-                            underlayRenderer.getView().highlightPath(response, {data: params});
+                            if (ifNull(response['nodes'],[]).length == 0 || ifNull(response['links'],[]).length == 0) {
+                                showInfoWindow("Cannot Map the path for selected flow", "Info");
+                                underlayRenderer.getView().resetTopology(false);
+                            } else {
+                                underlayRenderer.getView().highlightPath(response, {data: params});
+                            }
+                            if(ifNull(response['nodes'],[]).length > 0 || ifNull(response['links']).length > 0) {
+                                $('html,body').animate({scrollTop:0}, 500);
+                            }
                         }
                     },
                     failureCallback: function(err) {
