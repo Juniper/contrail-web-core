@@ -166,7 +166,6 @@
                         value: val.innerHTML });
                 });
             }
-
             constructCombobox(self, option, formattedData);
 
             self.data('contrailCombobox', {
@@ -989,11 +988,48 @@ function constructSelect2(self, defaultOption, args) {
             dataTextField: 'text',
             dataValueField: 'id',
             data: [],
+            query: function (q) {
+                if(q.term != null){
+                    var pageSize = 50;
+                    var results = _.filter(this.data, 
+                            function(e) {
+                              return (q.term == ""  || e.text.toUpperCase().indexOf(q.term.toUpperCase()) >= 0 );
+                            });
+                    q.callback({results:results.slice((q.page-1)*pageSize, q.page*pageSize),
+                                more:results.length >= q.page*pageSize });
+                } else {
+                    var t = q.term,filtered = { results: [] }, process;
+                    process = function(datum, collection) {
+                        var group, attr;
+                        datum = datum[0];
+                        if (datum.children) {
+                            group = {};
+                            for (attr in datum) {
+                                if (datum.hasOwnProperty(attr)) group[attr]=datum[attr];
+                            }
+                            group.children=[];
+                            $(datum.children).each2(function(i, childDatum) { process(childDatum, group.children); });
+                            if (group.children.length || query.matcher(t, '', datum)) {
+                                collection.push(group);
+                            }
+                        } else {
+                            if (q.matcher(t, '', datum)) {
+                                collection.push(datum);
+                            }
+                        }
+                    };  
+                    if(t != ""){            
+                        $(this.data).each2(function(i, datum) { process(datum, filtered.results); })
+                    }
+                    q.callback({results:this.data});
+                }
+           },
             formatResultCssClass: function(obj){
             	if(obj.label && 'children' in obj){
             		return 'select2-result-label';
             	}
             }
+            
             // Use dropdownCssClass : 'select2-large-width' when initialzing ContrailDropDown
             // to specify width of dropdown for Contrail Dropdown
             // Adding a custom CSS class is also possible. Just add a custom class to the contrail.custom.css file
