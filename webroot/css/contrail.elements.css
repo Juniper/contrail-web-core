@@ -3420,7 +3420,7 @@ td.td-actions a.td-action {
 }
 .infobox > .infobox-data > .infobox-data-number {
   display: block;
-  font-size: 22px;
+  font-size: 20px;
   margin: 2px 0 4px;
   position: relative;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.15);
