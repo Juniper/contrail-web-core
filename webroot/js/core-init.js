@@ -8,9 +8,8 @@ var initDepFiles = [
     'jquery.panzoom', 'joint.contrail', 'backbone', 'contrail-all-8', 'contrail-all-9'
 ];
 
-require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
+require(['jquery', 'knockout'], function ($, Knockout) {
     window.ko = Knockout;
-    window.Bezier = Bezier;
     loadCommonTemplates();
     require(initDepFiles, function(_, validation) {
         require(['core-utils', 'core-constants', 'core-formatters', 'core-cache'], function (CoreUtils, CoreConstants, CoreFormatters, Cache) {
@@ -25,6 +24,11 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
             require(['contrail-layout'], function(){});
         });
     });
+});
+
+
+require(['bezier'], function (Bezier) {
+    window.Bezier = Bezier;
 });
 
 function loadCommonTemplates() {

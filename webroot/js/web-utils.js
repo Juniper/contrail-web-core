@@ -946,6 +946,11 @@ function pushBreadcrumb(breadcrumbsArr) {
     }
 }
 
+function removeActiveBreadcrumb(breadcrumbsArr) {
+    $('#breadcrumb').children('li:last').remove();
+    $('#breadcrumb').children('li:last').children('span').remove();
+}
+
 function pushBreadcrumbDropdown(id){
 	$('#breadcrumb').children('li').removeClass('active');
 	$('#breadcrumb').children('li:last').append('<span class="divider"><i class="icon-angle-right"></i></span>');
