@@ -171,10 +171,6 @@ global.DEMO_USER_MAX_AGE_SESSION = 2 * 60 * 60 * 1000;
 global.STR_ROLE_USER = 'member';
 global.STR_ROLE_ADMIN = 'superAdmin';
 
-/* Service Instance */
-global.INSTANCE_SPAWNING_TIMEOUT = 10 * 60 * 1000;
-/* 10 Mins */
-
 global.DFLT_REDIS_SERVER_PORT = '6379';
 global.DFLT_REDIS_SERVER_IP = '127.0.0.1';
 global.DFLT_UPLOAD_PATH = '/tmp';
