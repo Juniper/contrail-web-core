@@ -680,7 +680,7 @@ function getHorizontalZoomedVMSize(availableHeight, availableWidth, srcVNDetails
         //vmPerRow = Math.floor(maxInternalRectWidth / widthNeededForVM);
 
         noOfRows = 1;
-        internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
+        internalRectangleWidth = (((vmPerRow < ctwc.MAX_VM_TO_PLOT) ? vmPerRow :  ctwc.MAX_VM_TO_PLOT) * widthNeededForVM) + vmMargin;
         internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
 
     } else {
@@ -689,7 +689,7 @@ function getHorizontalZoomedVMSize(availableHeight, availableWidth, srcVNDetails
         //vmPerRow = Math.floor(internalRectangleWidth / widthNeededForVM);
 
         noOfRows = 1;
-        internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
+        internalRectangleWidth = (((vmPerRow < ctwc.MAX_VM_TO_PLOT) ? vmPerRow :  ctwc.MAX_VM_TO_PLOT) * widthNeededForVM) + vmMargin;
         internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
     }
 
@@ -741,7 +741,7 @@ function getVerticalZoomedVMSize(availableHeight, availableWidth, srcVNDetails) 
 
         noOfRows = Math.ceil(noOfVMsToDraw / vmPerRow);
         internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
-        internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
+        internalRectangleHeight = (((noOfRows < ctwc.MAX_VM_TO_PLOT) ? noOfRows :  ctwc.MAX_VM_TO_PLOT) * heightNeededForVM) + vmMargin;
 
     } else {
         noOfVMsToDraw = noOfVMs;
@@ -750,7 +750,7 @@ function getVerticalZoomedVMSize(availableHeight, availableWidth, srcVNDetails) 
 
         noOfRows = Math.ceil(noOfVMsToDraw / vmPerRow);
         internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
-        internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
+        internalRectangleHeight = (((noOfRows < ctwc.MAX_VM_TO_PLOT) ? noOfRows :  ctwc.MAX_VM_TO_PLOT) * heightNeededForVM) + vmMargin;
     }
 
     returnObj['vmPerRow'] = vmPerRow;
