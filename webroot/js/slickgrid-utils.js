@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 window.URL = window.URL || window.webkitURL;
-
+var slickGridSearchtimer = null;
 function getDefaultGridConfig() {
     var defaultSettings = {
         header: {
@@ -871,7 +871,10 @@ function getDefaultGridConfig() {
             // Search Textbox Keyup
             gridContainer.find('.input-searchbox input').on('keyup', function(e) {
             	var searchValue = this.value;
-            	setTimeout(function(){
+            	if(slickGridSearchtimer) {
+                    window.clearTimeout(slickGridSearchtimer);
+            	}
+            	slickGridSearchtimer = setTimeout(function(){
                     if(searchValue == gridContainer.find('.input-searchbox input').val() && searchValue != null) {
                     	dataView.setFilterArgs({
                             searchString: searchValue,
@@ -885,7 +888,7 @@ function getDefaultGridConfig() {
                         gridContainer.find('.slick-row-detail').remove();
                         gridContainer.find('.input-searchbox input').focus();
                     }
-                },300);
+                },500);
 
             });
 
