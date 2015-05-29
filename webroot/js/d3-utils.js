@@ -277,10 +277,10 @@ function parseSystemMemCPUData(response, cbParams) {
             addMemCPU2DS4System(endTime, flowSeries[flowSeries.length - 1], cpuDS, memDS);
         }
     }
-    data['diskUsage'] = {ds:[
+    data['cpu'] = {ds:[
         {values:cpuDS, key:titles.cpuTitle, color:d3_category2[0]}
     ]};
-    data['analyticsDbSize'] = {ds:[
+    data['memory'] = {ds:[
         {values:memDS, key:titles.memTitle, color:d3_category2[1]}
     ]};
     return data;
