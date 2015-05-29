@@ -498,7 +498,7 @@
                     <pre>
                         <xsl:choose>
                             <xsl:when test="$valuex != ''">
-                                <a href="Snh_{$linkx}?x={$valuex}">
+                                <a href="#" onclick="onLinkClick('Snh_{$linkx}?x={$valuex}');">
                                     <xsl:choose>
                                         <xsl:when test="$link_title != ''">
                                             <xsl:value-of select="$link_title" />
