@@ -301,8 +301,13 @@ define([
         graphModel.errorList = [];
     };
 
-    function computeRankDir(nodes, links) {
-        var rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? ctwc.GRAPH_DIR_TB : ctwc.GRAPH_DIR_LR;
+    function computeRankDir (nodes, links) {
+        var rankDir;
+        if (nodes.length < 4 && (links == null || links.length == 0)) {
+            rankDir = ctwc.GRAPH_DIR_LR;
+        } else {
+            rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? ctwc.GRAPH_DIR_TB : ctwc.GRAPH_DIR_LR;
+        }
         return rankDir;
     };
 
