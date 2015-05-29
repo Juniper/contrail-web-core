@@ -528,12 +528,13 @@ define([
             return(templateObj.prop('outerHTML'))
         };
 
-        this.generateDetailTemplateHTML = function(config, app) {
+        this.generateDetailTemplateHTML = function(config, app, jsonString) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
-                templateObj = $(template(config));
+                templateObj = $(template(config)),
+                jsonValueString = contrail.handleIfNull(jsonString, '{{{formatGridJSON2HTML this}}}');
 
             templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
-            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}');
+            templateObj.find('.detail-foundation-content-advanced').append(jsonValueString);
 
             return(templateObj.prop('outerHTML'))
         };
