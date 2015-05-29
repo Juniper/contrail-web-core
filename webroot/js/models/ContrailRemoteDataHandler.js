@@ -82,11 +82,17 @@ define([
         };
 
         function pSuccessHandler(response) {
-            var resultJSON;
+            var resultJSON = {};
             if (contrail.checkIfFunction(pDataParser)) {
-                resultJSON = pDataParser(response);
+                try {
+                    resultJSON = pDataParser(response);
+                } catch (error) {
+                    console.log(error.stack);
+                }
             } else {
-                resultJSON = response;
+                if(response != null) {
+                    resultJSON = response;
+                }
             }
 
             pRequestCompleteResponse.push(response);
@@ -97,7 +103,7 @@ define([
                 initVLRequests(resultJSON);
             }
 
-            if (response['more'] != null && response['more']) {
+            if (response != null && response['more'] != null && response['more']) {
                 setNextUrl(response['lastKey']);
                 fetchPrimaryData();
             } else {
