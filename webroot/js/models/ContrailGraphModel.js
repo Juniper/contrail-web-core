@@ -173,6 +173,8 @@ define([
             isCacheUsed = true;
             if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
                 reload = true;
+            } else {
+                reload = false;
             }
         } else if (contrail.checkIfFunction(setCachedData2ModelCB)) {
             secondaryCacheStatus = cacheConfig['setCachedData2ModelCB'](contrailGraphModel, cacheConfig);
