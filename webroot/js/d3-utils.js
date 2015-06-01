@@ -486,7 +486,7 @@ function drawSparkLine4Selector(selector, className, data) {
     });
     var graph = d3.select(selector).append("svg:svg").attr('class', className);
     var maxY = sortedData[sortedData.length - 1];
-    var x = d3.scale.linear().domain([0, 10]).range([0, 100]);
+    var x = d3.scale.linear().domain([0, ifNull(sortedData,[]).length]).range([0, 100]);
     var y = d3.scale.linear().domain([sortedData[0], maxY * 1.2]).range([10, 0]);
     var sparkLine = d3.svg.line()
         .x(function (d, i) {
