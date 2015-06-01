@@ -1982,7 +1982,7 @@ function bucketizeCFData(dataCF,accessorFn,cfg) {
     if(maxKey <= 8) {
         maxKey = 8;
     } else {
-    	bucketRange = Math.ceil(maxKey/bucketCnt);
+    	bucketRange = Math.ceil((maxKey+1)/bucketCnt);
     }
     for(var i=0;i<=maxKey;i+=bucketRange) {
         dimension.filterAll();
