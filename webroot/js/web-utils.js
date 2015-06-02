@@ -1699,7 +1699,6 @@ function selectTab(tabStrip,tabIdx) {
 }
 
 function displayAjaxError(jQueryElem, xhr, textStatus, errorThrown) {
-    showProgressMask(jQueryElem, false);
     var errMsg = "";
     if (textStatus == 'timeout')
         errMsg = "Timeout occured in fetching the details";
