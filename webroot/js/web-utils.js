@@ -947,8 +947,10 @@ function pushBreadcrumb(breadcrumbsArr) {
 }
 
 function removeActiveBreadcrumb(breadcrumbsArr) {
-    $('#breadcrumb').children('li:last').remove();
-    $('#breadcrumb').children('li:last').children('span').remove();
+    if($('#breadcrumb').children('li.active:last')) {
+        $('#breadcrumb').children('li.active:last').remove();
+        $('#breadcrumb').children('li:last').children('span').remove();
+    }
 }
 
 function pushBreadcrumbDropdown(id){
