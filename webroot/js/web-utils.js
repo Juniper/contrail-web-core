@@ -2539,6 +2539,8 @@ function getOutputByPagination(dataSource,cfg,dsObj) {
     var urlParams = $.deparamURLArgs(transportCfg['url']);
     urlParams['startAt'] = dsObj['updateStartTime'];
     transportCfg['url'] = ifNull(transportCfg['url'],'').split('?')[0] + '?' + $.param(urlParams);
+
+    // If we want to delay populating DS,pass a deferredObj
     if(cfg['deferredObj'] != null) {
         cfg['deferredObj'].done(waitForDeferred);
     } else
@@ -3175,4 +3177,13 @@ function checkIfDuplicates(arr){
     }
     return false;
 }
- 
+
+function getIntrospectPaginationInfo(response) {
+    var paginationInfo = {};
+    var paginationInfo = jsonPath(response,'$..Pagination');
+    if(paginationInfo instanceof Array && paginationInfo.length > 0) {
+        paginationInfo = getValueByJsonPath(paginationInfo,'0;req;PageReqData');
+    }
+    return paginationInfo;
+}
+
