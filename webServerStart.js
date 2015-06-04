@@ -10,7 +10,6 @@ exports.config = config;
 
 var redisUtils = require('./src/serverroot/utils/redis.utils');
 var global = require('./src/serverroot/common/global');
-var jsonDiff = require('./src/serverroot/common/jsondiff');
 
 var server_port = (config.redis_server_port) ?
     config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
@@ -47,6 +46,7 @@ var express = require('express')
     , discClient = require('./src/serverroot/common/discoveryclient.api')
     , assert = require('assert')
     , jsonPath = require('JSONPath').eval
+    , jsonDiff = require('./src/serverroot/common/jsondiff');
     ;
 
 var pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
