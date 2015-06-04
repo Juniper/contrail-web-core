@@ -219,7 +219,7 @@ requirejs.config({
             exports: 'Backbone'
         },
         'joint': {
-            deps: ['geometry', 'vectorizer', 'jquery', 'lodash', 'backbone'],
+            deps: ['geometry', 'vectorizer', 'jquery', 'backbone'],
             exports: 'joint',
             init: function (geometry, vectorizer) {
                 this.g = geometry;

@@ -1797,7 +1797,7 @@ function wrapLbl(str) {
 
 function wrapLabelValue(lbl, value) {
 	value = ifNullOrEmptyObject(value,"");
-    return '<span class="label-value-text">' + lbl + ': <span class="value">' + value + '</span></span>';
+    return '<span class="label-value-text">' + lbl + ': <span>' + value + '</span></span>';
 }
 
 

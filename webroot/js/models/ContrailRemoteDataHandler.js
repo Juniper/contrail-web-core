@@ -109,9 +109,7 @@ define([
             } else {
                 pRequestInProgress = false;
                 delete pUrlParams['lastKey'];
-                if(pUrlParams.length > 0) {
-                    pAjaxConfig['url'] = pUrl.split('?')[0] + '?' + $.param(pUrlParams);
-                }
+                pAjaxConfig['url'] = pUrl.split('?')[0] + '?' + $.param(pUrlParams);
                 if (pCompleteCallback != null) {
                     pCompleteCallback(pRequestCompleteResponse);
                     check4AllRequestComplete();

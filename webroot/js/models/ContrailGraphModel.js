@@ -230,12 +230,13 @@ define([
             var xOrigin = zoomedNodeElement['attributes']['position']['x'],
                 yOrigin = zoomedNodeElement['attributes']['position']['y'];
 
-            contrailGraphModel.addCells(elementsDataObj['zoomedElements']);
-
             /* Translate zoomed elements TODO: Move to view file */
             $.each(elementsDataObj['zoomedElements'], function (zoomedElementKey, zoomedElementValue) {
                 zoomedElementValue.translate(xOrigin, yOrigin);
             });
+
+            contrailGraphModel.addCells(elementsDataObj['zoomedElements']);
+
         }
     }
 
