@@ -123,20 +123,27 @@ define([
                 html: true,
                 animation: false,
                 placement: function (context, src) {
+                    var srcOffset = $(src).offset(),
+                        srcWidth = $(src)[0].getBoundingClientRect().width,
+                        bodyWidth = $('body').width(),
+                        bodyHeight = $('body').height(),
+                        tooltipWidth = valueConfig.dimension.width;
+
                     $(context).addClass('popover-tooltip');
                     $(context).css({
-                        'min-width': valueConfig.dimension.width + 'px',
-                        'max-width': valueConfig.dimension.width + 'px'
+                        'min-width': tooltipWidth + 'px',
+                        'max-width': tooltipWidth + 'px'
                     });
                     $(context).addClass('popover-tooltip');
 
-                    var srcOffset = $(src).offset(),
-                        bodyWidth = $('body').width();
-
-                    if (srcOffset.left > (bodyWidth / 2)) {
+                    if (srcOffset.left > tooltipWidth) {
                         return 'left';
-                    } else {
+                    } else if (bodyWidth - srcOffset.left - srcWidth > tooltipWidth){
                         return 'right';
+                    } else if (srcOffset.top > bodyHeight / 2){
+                         return 'top';
+                    } else {
+                        return 'bottom';
                     }
                 },
                 title: function () {
@@ -250,10 +257,11 @@ define([
             .off('click', onDocumentClickHandler)
             .on('click', onDocumentClickHandler);
 
-        $(window).on('popstate', function (event) {
-            $('g').popover('hide');
-
-        });
+        $(window)
+            .off('popstate')
+            .on('popstate', function (event) {
+                $('.popover').remove();
+            });
 
         topContainerElement
             .off('dblclick', onTopContainerBankDblClickHandler)
