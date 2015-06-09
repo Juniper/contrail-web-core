@@ -332,16 +332,14 @@ MAINFILE[83]=webroot/assets/slickgrid/js/slick.dataview.js
 MAINFILE[84]=webroot/assets/slickgrid/js/slick.checkboxselectcolumn.js
 MAINFILE[85]=webroot/assets/slickgrid/js/slick.rowselectionmodel.js
 MAINFILE[86]=webroot/assets/datetimepicker/js/jquery.datetimepicker.js
-MAINFILE[87]=webroot/assets/joint/js/joint.layout.DirectedGraph.js
-MAINFILE[88]=webroot/assets/joint/js/joint.nojquery.js
-MAINFILE[89]=webroot/assets/select2/js/select2.min.js
-MAINFILE[90]=webroot/assets/moment/moment.min.js
-MAINFILE[91]=webroot/assets/ip/jsbn-combined.js
-MAINFILE[92]=webroot/assets/ip/sprintf.js
-MAINFILE[93]=webroot/assets/ip/ipv6.js
-MAINFILE[94]=webroot/js/config_global.js
-MAINFILE[95]=webroot/js/protocol.js
-MAINFILE[96]=webroot/js/uuid.js
+MAINFILE[87]=webroot/assets/select2/js/select2.min.js
+MAINFILE[88]=webroot/assets/moment/moment.min.js
+MAINFILE[89]=webroot/assets/ip/jsbn-combined.js
+MAINFILE[90]=webroot/assets/ip/sprintf.js
+MAINFILE[91]=webroot/assets/ip/ipv6.js
+MAINFILE[92]=webroot/js/config_global.js
+MAINFILE[93]=webroot/js/protocol.js
+MAINFILE[94]=webroot/js/uuid.js
 
 cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
 cat ${MAINFILE[1]} >> webroot/js/contrail-all-1.js
@@ -446,8 +444,6 @@ cat ${MAINFILE[91]} >> webroot/js/contrail-all-9.js
 cat ${MAINFILE[92]} >> webroot/js/contrail-all-9.js
 cat ${MAINFILE[93]} >> webroot/js/contrail-all-9.js
 cat ${MAINFILE[94]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[95]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[96]} >> webroot/js/contrail-all-9.js
 
 # End - Merging All JS files
 

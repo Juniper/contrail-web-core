@@ -4,10 +4,9 @@
 
 define([
     'underscore',
-    'joint',
     'contrail-graph-model',
     'js/views/ControlPanelView'
-], function (_, Joint, ContrailGraphModel, ControlPanelView) {
+], function (_, ContrailGraphModel, ControlPanelView) {
     var GraphView = joint.dia.Paper.extend({
         constructor: function (viewConfig) {
             var graphConfig = viewConfig.graphModelConfig,
