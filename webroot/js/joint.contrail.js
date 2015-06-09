@@ -699,23 +699,10 @@ function getHorizontalZoomedVMSize(availableHeight, availableWidth, srcVNDetails
         noOfVMsToDraw = 0;
         internalRectangleWidth = VM_GRAPH_OPTIONS.minInternalRect['width'];
         internalRectangleHeight = VM_GRAPH_OPTIONS.minInternalRect['height'];
-    } else if (actualAreaNeededForVMs >= maxInternalRectArea) {
-        noOfVMsToDraw = Math.floor(maxInternalRectArea / areaPerVM);
-        // Show the more link in the cloud if required
-        returnObj['showMoreLink'] = true;
-        //vmPerRow = Math.floor(maxInternalRectWidth / widthNeededForVM);
-
-        noOfRows = 1;
-        internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
-        internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
-
     } else {
         noOfVMsToDraw = noOfVMs;
-        internalRectangleWidth = Math.ceil(maxInternalRectWidth * Math.sqrt(actualAreaNeededForVMs / maxInternalRectArea));
-        //vmPerRow = Math.floor(internalRectangleWidth / widthNeededForVM);
-
         noOfRows = 1;
-        internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
+        internalRectangleWidth = (((vmPerRow < ctwc.MAX_VM_TO_PLOT) ? vmPerRow :  ctwc.MAX_VM_TO_PLOT) * widthNeededForVM) + vmMargin;
         internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
     }
 
@@ -759,24 +746,11 @@ function getVerticalZoomedVMSize(availableHeight, availableWidth, srcVNDetails) 
         noOfVMsToDraw = 0;
         internalRectangleWidth = VM_GRAPH_OPTIONS.minInternalRect['width'];
         internalRectangleHeight = VM_GRAPH_OPTIONS.minInternalRect['height'];
-    } else if (actualAreaNeededForVMs >= maxInternalRectArea) {
-        noOfVMsToDraw = Math.floor(maxInternalRectArea / areaPerVM);
-        // Show the more link in the cloud if required
-        returnObj['showMoreLink'] = true;
-        //vmPerRow = Math.floor(maxInternalRectWidth / widthNeededForVM);
-
-        noOfRows = Math.ceil(noOfVMsToDraw / vmPerRow);
-        internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
-        internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
-
     } else {
         noOfVMsToDraw = noOfVMs;
-        internalRectangleWidth = Math.ceil(maxInternalRectWidth * Math.sqrt(actualAreaNeededForVMs / maxInternalRectArea));
-        //vmPerRow = Math.floor(internalRectangleWidth / widthNeededForVM);
-
         noOfRows = Math.ceil(noOfVMsToDraw / vmPerRow);
         internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
-        internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
+        internalRectangleHeight = (((noOfRows < ctwc.MAX_VM_TO_PLOT) ? noOfRows :  ctwc.MAX_VM_TO_PLOT) * heightNeededForVM) + vmMargin;
     }
 
     returnObj['vmPerRow'] = vmPerRow;

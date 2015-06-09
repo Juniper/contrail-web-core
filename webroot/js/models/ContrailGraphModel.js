@@ -173,6 +173,8 @@ define([
             isCacheUsed = true;
             if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
                 reload = true;
+            } else {
+                reload = false;
             }
         } else if (contrail.checkIfFunction(setCachedData2ModelCB)) {
             secondaryCacheStatus = cacheConfig['setCachedData2ModelCB'](contrailGraphModel, cacheConfig);
@@ -228,12 +230,13 @@ define([
             var xOrigin = zoomedNodeElement['attributes']['position']['x'],
                 yOrigin = zoomedNodeElement['attributes']['position']['y'];
 
-            contrailGraphModel.addCells(elementsDataObj['zoomedElements']);
-
             /* Translate zoomed elements TODO: Move to view file */
             $.each(elementsDataObj['zoomedElements'], function (zoomedElementKey, zoomedElementValue) {
                 zoomedElementValue.translate(xOrigin, yOrigin);
             });
+
+            contrailGraphModel.addCells(elementsDataObj['zoomedElements']);
+
         }
     }
 
@@ -301,8 +304,13 @@ define([
         graphModel.errorList = [];
     };
 
-    function computeRankDir(nodes, links) {
-        var rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? ctwc.GRAPH_DIR_TB : ctwc.GRAPH_DIR_LR;
+    function computeRankDir (nodes, links) {
+        var rankDir;
+        if (nodes.length < 4 && (links == null || links.length == 0)) {
+            rankDir = ctwc.GRAPH_DIR_LR;
+        } else {
+            rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? ctwc.GRAPH_DIR_TB : ctwc.GRAPH_DIR_LR;
+        }
         return rankDir;
     };
 

@@ -4,10 +4,9 @@
 
 define([
     'underscore',
-    'joint',
     'contrail-graph-model',
     'js/views/ControlPanelView'
-], function (_, Joint, ContrailGraphModel, ControlPanelView) {
+], function (_, ContrailGraphModel, ControlPanelView) {
     var GraphView = joint.dia.Paper.extend({
         constructor: function (viewConfig) {
             var graphConfig = viewConfig.graphModelConfig,
@@ -39,7 +38,7 @@ define([
 
                 if(controlPanelConfig) {
                     var viewAttributes = {
-                            viewConfig: getControlPanelConfig(jointObject, graphConfig, controlPanelConfig)
+                            viewConfig: getControlPanelConfig(graphSelectorElement, jointObject, graphConfig, controlPanelConfig)
                         },
                         controlPanelView = new ControlPanelView({
                             el: graphControlPanelId,
@@ -70,16 +69,14 @@ define([
         }
     });
 
-    var initZoomEvents = function(jointObject, controlPanelSelector, graphConfig, controlPanelConfig) {
+    var initZoomEvents = function(graphSelectorElement, jointObject, controlPanelSelector, graphConfig, controlPanelConfig) {
         var graphControlPanelElement = $(controlPanelSelector),
             panzommTargetId = controlPanelConfig.default.zoom.selectorId,
             panZoomDefaultConfig = {
-                increment: 0.3,
+                increment: 0.1,
                 minScale: 0.3,
                 maxScale: 2,
                 duration: 300,
-                $zoomIn: graphControlPanelElement.find(".zoom-in"),
-                $zoomOut: graphControlPanelElement.find(".zoom-out"),
                 $reset: graphControlPanelElement.find(".zoom-reset")
             },
             panzoomConfig = $.extend(true, panZoomDefaultConfig, controlPanelConfig.default.zoom.config);
@@ -88,9 +85,35 @@ define([
         $(panzommTargetId).panzoom("resetPan");
         $(panzommTargetId).panzoom("destroy");
         $(panzommTargetId).panzoom(panzoomConfig);
+
+        var performZoom = function(zoomOut) {
+            $(panzommTargetId).panzoom('resetDimensions');
+            var screenWidth = $(graphSelectorElement).parents('.col1').width(),
+                screenHeight = $(graphSelectorElement).parents('.col1').height(),
+                screenOffsetTop = $(panzommTargetId).parent().offset().top,
+                screenOffsetLeft = $(panzommTargetId).parent().offset().left,
+                focal = {
+                    clientX: screenOffsetLeft + screenWidth / 2,
+                    clientY: screenOffsetTop + screenHeight / 2
+                };
+
+            $(panzommTargetId).panzoom("zoom", zoomOut, { focal: focal});
+        };
+
+        graphControlPanelElement.find(".zoom-in")
+            .off('click')
+            .on('click', function(e) {
+                performZoom(false)
+            });
+
+        graphControlPanelElement.find(".zoom-out")
+            .off('click')
+            .on('click', function(e) {
+                performZoom(true)
+            });
     };
 
-    var getControlPanelConfig = function(jointObject, graphConfig, controlPanelConfig) {
+    var getControlPanelConfig = function(graphSelectorElement, jointObject, graphConfig, controlPanelConfig) {
         var customConfig = $.extend(true, {}, controlPanelConfig.custom);
 
         $.each(customConfig, function(configKey, configValue) {
@@ -104,7 +127,7 @@ define([
                 zoom: {
                     enabled: true,
                     events: function(controlPanelSelector) {
-                        initZoomEvents(jointObject, controlPanelSelector, graphConfig, controlPanelConfig);
+                        initZoomEvents(graphSelectorElement, jointObject, controlPanelSelector, graphConfig, controlPanelConfig);
                     }
                 }
             },
@@ -114,6 +137,7 @@ define([
 
     var initMouseEvents = function(graphSelectorElement, tooltipConfig, jointObject) {
         var timer = null;
+        $('.popover').remove();
         $.each(tooltipConfig, function (keyConfig, valueConfig) {
             valueConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_ELEMENT_TOOLTIP, valueConfig);
             $('g.' + keyConfig).popover('destroy');
@@ -122,20 +146,27 @@ define([
                 html: true,
                 animation: false,
                 placement: function (context, src) {
+                    var srcOffset = $(src).offset(),
+                        srcWidth = $(src)[0].getBoundingClientRect().width,
+                        bodyWidth = $('body').width(),
+                        bodyHeight = $('body').height(),
+                        tooltipWidth = valueConfig.dimension.width;
+
                     $(context).addClass('popover-tooltip');
                     $(context).css({
-                        'min-width': valueConfig.dimension.width + 'px',
-                        'max-width': valueConfig.dimension.width + 'px'
+                        'min-width': tooltipWidth + 'px',
+                        'max-width': tooltipWidth + 'px'
                     });
                     $(context).addClass('popover-tooltip');
 
-                    var srcOffset = $(src).offset(),
-                        bodyWidth = $('body').width();
-
-                    if (srcOffset.left > (bodyWidth / 2)) {
+                    if (srcOffset.left > tooltipWidth) {
                         return 'left';
-                    } else {
+                    } else if (bodyWidth - srcOffset.left - srcWidth > tooltipWidth){
                         return 'right';
+                    } else if (srcOffset.top > bodyHeight / 2){
+                         return 'top';
+                    } else {
+                        return 'bottom';
                     }
                 },
                 title: function () {
@@ -249,10 +280,11 @@ define([
             .off('click', onDocumentClickHandler)
             .on('click', onDocumentClickHandler);
 
-        $(window).on('popstate', function (event) {
-            $('g').popover('hide');
-
-        });
+        $(window)
+            .off('popstate')
+            .on('popstate', function (event) {
+                $('.popover').remove();
+            });
 
         topContainerElement
             .off('dblclick', onTopContainerBankDblClickHandler)

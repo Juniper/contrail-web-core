@@ -528,12 +528,13 @@ define([
             return(templateObj.prop('outerHTML'))
         };
 
-        this.generateDetailTemplateHTML = function(config, app) {
+        this.generateDetailTemplateHTML = function(config, app, jsonString) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
-                templateObj = $(template(config));
+                templateObj = $(template(config)),
+                jsonValueString = contrail.handleIfNull(jsonString, '{{{formatGridJSON2HTML this}}}');
 
             templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
-            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}');
+            templateObj.find('.detail-foundation-content-advanced').append(jsonValueString);
 
             return(templateObj.prop('outerHTML'))
         };
@@ -557,7 +558,7 @@ define([
 
         this.replaceAll = function(find, replace, strValue) {
             return strValue.replace(new RegExp(find, 'g'), replace);
-        }
+        };
 
         this.addUnits2Bytes = function(traffic, noDecimal, maxPrecision, precision, timeInterval) {
             var trafficPrefixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'],
@@ -604,9 +605,47 @@ define([
                         traffic = traffic / size;
                 }
             });
-
             return formatStr;
-        }
+        };
+
+
+        this.addUnits2Packets = function(traffic, noDecimal, maxPrecision, precision) {
+            var trafficPrefixes = ['K packets', 'M packets', "B packets", "T packets"],
+                formatStr = '', decimalDigits = 2, size = 1000;
+
+            if (!$.isNumeric(traffic)) {
+                return '-';
+            } else if (traffic == 0) {
+                return '0 packets';
+            }
+
+            if ((maxPrecision != null) && (maxPrecision == true)) {
+                decimalDigits = 6;
+            } else if(precision != null) {
+                decimalDigits = precision < 7 ? precision : 6;
+            }
+
+            if (noDecimal != null && noDecimal == true)
+                decimalDigits = 0;
+
+
+            traffic = parseInt(traffic);
+            traffic = makePositive(traffic);
+
+            $.each(trafficPrefixes, function (idx, prefix) {
+                if (traffic < size) {
+                    formatStr = contrail.format('{0} {1}', parseFloat(traffic.toFixed(decimalDigits)), prefix);
+                    return false;
+                } else {
+                    //last iteration
+                    if (idx == (trafficPrefixes.length - 1))
+                        formatStr = contrail.format('{0} {1}', parseFloat(traffic.toFixed(decimalDigits)), prefix);
+                    else
+                        traffic = traffic / size;
+                }
+            });
+            return formatStr;
+        };
     };
     return CoreUtils;
 });

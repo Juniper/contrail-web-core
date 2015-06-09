@@ -772,7 +772,6 @@ function getDefaultGridConfig() {
         
         function initDataView(gridConfig) {
             eventHandlerMap.dataView['onDataUpdate'] = function(e, args) {
-                setTimeout(function() {
                     //Display filtered count in grid header
                     if(gridConfig.header.showFilteredCntInHeader) {
                         var totalRowCnt,filteredRowCnt;
@@ -827,7 +826,6 @@ function getDefaultGridConfig() {
                         emptyGridHandler();
                         gridContainer.find('.slick-row-detail').remove();
                     }
-                }, 0);
             };
 
             $.each(eventHandlerMap.dataView, function(key, val){
