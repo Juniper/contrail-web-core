@@ -202,8 +202,7 @@ define([
         //TODO: We should not edit graohModel in generateElements
         var elementsDataObj = contrailGraphModel.generateElements($.extend(true, {}, response), contrailGraphModel.elementMap, contrailGraphModel.rankDir);
 
-        contrailGraphModel.clear();
-        contrailGraphModel.addCells(elementsDataObj['elements']);
+        contrailGraphModel.resetCells(elementsDataObj['elements']);
         contrailGraphModel.elementsDataObj = elementsDataObj;
         contrailGraphModel.rawData = response;
     };
@@ -235,7 +234,7 @@ define([
                 zoomedElementValue.translate(xOrigin, yOrigin);
             });
 
-            contrailGraphModel.addCells(elementsDataObj['zoomedElements']);
+            contrailGraphModel.resetCells(elementsDataObj['elements'].concat(elementsDataObj['zoomedElements']));
 
         }
     }
