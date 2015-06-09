@@ -1699,7 +1699,6 @@ function selectTab(tabStrip,tabIdx) {
 }
 
 function displayAjaxError(jQueryElem, xhr, textStatus, errorThrown) {
-    showProgressMask(jQueryElem, false);
     var errMsg = "";
     if (textStatus == 'timeout')
         errMsg = "Timeout occured in fetching the details";
@@ -1977,7 +1976,7 @@ function bucketizeCFData(dataCF,accessorFn,cfg) {
     if(maxKey <= 8) {
         maxKey = 8;
     } else {
-    	bucketRange = Math.ceil(maxKey/bucketCnt);
+    	bucketRange = Math.ceil((maxKey+1)/bucketCnt);
     }
     for(var i=0;i<=maxKey;i+=bucketRange) {
         dimension.filterAll();
@@ -2540,6 +2539,8 @@ function getOutputByPagination(dataSource,cfg,dsObj) {
     var urlParams = $.deparamURLArgs(transportCfg['url']);
     urlParams['startAt'] = dsObj['updateStartTime'];
     transportCfg['url'] = ifNull(transportCfg['url'],'').split('?')[0] + '?' + $.param(urlParams);
+
+    // If we want to delay populating DS,pass a deferredObj
     if(cfg['deferredObj'] != null) {
         cfg['deferredObj'].done(waitForDeferred);
     } else
@@ -3176,4 +3177,13 @@ function checkIfDuplicates(arr){
     }
     return false;
 }
- 
+
+function getIntrospectPaginationInfo(response) {
+    var paginationInfo = {};
+    var paginationInfo = jsonPath(response,'$..Pagination');
+    if(paginationInfo instanceof Array && paginationInfo.length > 0) {
+        paginationInfo = getValueByJsonPath(paginationInfo,'0;req;PageReqData');
+    }
+    return paginationInfo;
+}
+

@@ -277,10 +277,10 @@ function parseSystemMemCPUData(response, cbParams) {
             addMemCPU2DS4System(endTime, flowSeries[flowSeries.length - 1], cpuDS, memDS);
         }
     }
-    data['diskUsage'] = {ds:[
+    data['cpu'] = {ds:[
         {values:cpuDS, key:titles.cpuTitle, color:d3_category2[0]}
     ]};
-    data['analyticsDbSize'] = {ds:[
+    data['memory'] = {ds:[
         {values:memDS, key:titles.memTitle, color:d3_category2[1]}
     ]};
     return data;
@@ -486,7 +486,7 @@ function drawSparkLine4Selector(selector, className, data) {
     });
     var graph = d3.select(selector).append("svg:svg").attr('class', className);
     var maxY = sortedData[sortedData.length - 1];
-    var x = d3.scale.linear().domain([0, 10]).range([0, 100]);
+    var x = d3.scale.linear().domain([0, ifNull(sortedData,[]).length]).range([0, 100]);
     var y = d3.scale.linear().domain([sortedData[0], maxY * 1.2]).range([10, 0]);
     var sparkLine = d3.svg.line()
         .x(function (d, i) {

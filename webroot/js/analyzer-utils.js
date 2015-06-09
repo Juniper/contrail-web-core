@@ -618,6 +618,8 @@ function showUnderlayPaths(data) {
                     data    : {data: params},
                     callback : function(response) {
                         $("#network_topology").find('.topology-visualization-loading').hide();
+                        if(params['startAt'] != null && underlayLastInteracted > params['startAt'])
+                            return;
                         if(typeof underlayRenderer === 'object') {
                             underlayRenderer.getModel().setFlowPath(response);
                             if (ifNull(response['nodes'],[]).length == 0 || ifNull(response['links'],[]).length == 0) {
@@ -632,6 +634,8 @@ function showUnderlayPaths(data) {
                         }
                     },
                     failureCallback: function(err) {
+                        if(params['startAt'] != null && underlayLastInteracted > params['startAt'])
+                            return;
                         $("#network_topology").find('.topology-visualization-loading').hide();
                         showInfoWindow('Error in fetching details','Error');
                     },
