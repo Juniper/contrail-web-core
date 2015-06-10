@@ -661,8 +661,8 @@ define([
         }
     };
 
-    function getChartConfig(chartSelector, chartOptions, chartSize) {
-        var margin = {top: 20, right: 5, bottom: 50, left: 50},
+    function getChartConfig(chartSelector, chartOptions) {
+        var margin = $.extend(true, {}, {top: 20, right: 5, bottom: 50, left: 50}, chartOptions['margin']),
             width = $(chartSelector).width() - 10,
             height = 275;
 
@@ -684,7 +684,8 @@ define([
             margin: margin,
             height: height,
             width: width,
-            dataParser: chartOptions['dataParser']
+            dataParser: chartOptions['dataParser'],
+            sizeFieldName: chartOptions['sizeFieldName']
         };
 
         return chartViewConfig;
