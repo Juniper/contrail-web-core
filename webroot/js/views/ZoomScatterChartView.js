@@ -144,7 +144,7 @@ define([
                 .attr("transform", function (d) {
                     return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                 })
-                .attr("opacity", "0.5")
+                .attr("opacity", "0.6")
                 .on("mouseenter", function (d) {
                         var tooltipData = d,
                         selfOffset = $(this).offset(),
