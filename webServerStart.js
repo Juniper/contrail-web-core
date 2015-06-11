@@ -15,13 +15,13 @@ var server_port = (config.redis_server_port) ?
     config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
 var server_ip = (config.redis_server_ip) ?
     config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
-
+var doNotRegRedisErrorEvent = false;
 redisUtils.createRedisClientAndWait(server_port, server_ip,
                                     global.WEBUI_DFLT_REDIS_DB,
                                     function(redisClient) {
     exports.redisClient = redisClient;
     loadWebServer();
-});
+}, doNotRegRedisErrorEvent);
 
 function loadWebServer ()
 {

@@ -18,7 +18,8 @@ function createDefRedisClientAndWait (callback)
     });
 }
 
-function createRedisClientAndWait (port, ip, uiDB, callback)
+function createRedisClientAndWait (port, ip, uiDB, callback,
+                                   doNotRegRedisErrorEvent)
 {
     var redisClient = redis.createClient(port, ip);
     redisClient.retry_backoff = 1;
@@ -26,7 +27,9 @@ function createRedisClientAndWait (port, ip, uiDB, callback)
     redisClient.on('connect', redisLog('connect'));
     redisClient.on('ready', selectRedisDB(uiDB, redisClient, callback));
     redisClient.on('reconnecting', redisLog('reconnecting'));
-    redisClient.on('error', redisLog('error'));
+    if (false == doNotRegRedisErrorEvent) {
+        redisClient.on('error', redisLog('error'));
+    }
     redisClient.on('end', redisLog('end'));
 }
 
