@@ -2122,7 +2122,7 @@ function loadAlertsContent(deferredObj){
                         }
                     },{
                         field:'type',
-                        name:'Process',
+                        name:'Node Type/Process',
                         minWidth:100
                     },{
                         field:'msg',
