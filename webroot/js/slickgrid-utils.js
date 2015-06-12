@@ -851,6 +851,10 @@ function getDefaultGridConfig() {
                 dataView.sort(function (dataRow1, dataRow2) {
                     for (var i = 0, l = cols.length; i < l; i++) {
                         var field = cols[i].sortCol.field;
+                        var sortField = cols[i].sortCol.sortField;
+                        if(sortField != null) {
+                            field = sortField;
+                        }
                         var sign = cols[i].sortAsc ? 1 : -1;
                         var result = 0;
                         var value1 = (contrail.checkIfExist(cols[i].sortCol.sortable.sortBy) && cols[i].sortCol.sortable.sortBy == 'formattedValue') ? cols[i].sortCol.formatter('', '', '', '', dataRow1) : dataRow1[field],
