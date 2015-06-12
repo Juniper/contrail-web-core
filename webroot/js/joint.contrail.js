@@ -1833,7 +1833,7 @@ joint.shapes.contrail.VirtualNetworkView = joint.shapes.contrail.FontElementView
 joint.shapes.contrail.VirtualMachine = joint.shapes.contrail.FontElement.extend({
     markup: '<g class="rotatable"><text/><g class="scalable"><rect class="VirtualMachine"/></g></g>',
     defaults: joint.util.deepSupplement({
-        type: 'contrail.VirtualMachine'
+        type: 'contrail.VirtualMachine.no-drag-element'
     }, joint.shapes.contrail.FontElement.prototype.defaults)
 });
 

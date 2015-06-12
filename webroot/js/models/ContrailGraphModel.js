@@ -234,7 +234,7 @@ define([
                 zoomedElementValue.translate(xOrigin, yOrigin);
             });
 
-            contrailGraphModel.resetCells(elementsDataObj['elements'].concat(elementsDataObj['zoomedElements']));
+            contrailGraphModel.addCells(elementsDataObj['zoomedElements']);
 
         }
     }

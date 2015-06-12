@@ -1945,7 +1945,8 @@ color: #b94a48;
 .graph svg {
     height: auto !important;
     width: auto !important;
-
+    max-height: 100%;
+    max-width: 100%;
 }
 .graph svg text {
     font-size: 10px;
@@ -2104,6 +2105,10 @@ color: #b94a48;
 }
 .control-panel-items .control-panel-item i {
     color: #777;
+}
+.control-panel-items .control-panel-item.disabled i {
+    color: #CCC;
+    cursor: default;
 }
 .control-panel-items .control-panel-item.active i {
     color: #3182BD;
