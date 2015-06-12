@@ -12,14 +12,14 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
     window.ko = Knockout;
     window.Bezier = Bezier;
     loadCommonTemplates();
-    require(initDepFiles, function(_, validation) {
+    require(initDepFiles, function(underscore, validation) {
         require(['core-utils', 'core-constants', 'core-formatters', 'core-cache'], function (CoreUtils, CoreConstants, CoreFormatters, Cache) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
             cowf = new CoreFormatters();
             kbValidation = validation;
             cowch = new Cache();
-            initBackboneValidation(_);
+            initBackboneValidation(underscore);
             initCustomKOBindings(Knockout);
             initDomEvents();
             require(['contrail-layout'], function(){});
