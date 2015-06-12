@@ -38,7 +38,7 @@ define([
 
                 if(controlPanelConfig) {
                     var viewAttributes = {
-                            viewConfig: getControlPanelConfig(jointObject, graphConfig, controlPanelConfig)
+                            viewConfig: getControlPanelConfig(graphSelectorElement, jointObject, graphConfig, controlPanelConfig)
                         },
                         controlPanelView = new ControlPanelView({
                             el: graphControlPanelId,
@@ -69,27 +69,74 @@ define([
         }
     });
 
-    var initZoomEvents = function(jointObject, controlPanelSelector, graphConfig, controlPanelConfig) {
+    var initZoomEvents = function(graphSelectorElement, jointObject, controlPanelSelector, graphConfig, controlPanelConfig) {
         var graphControlPanelElement = $(controlPanelSelector),
             panzommTargetId = controlPanelConfig.default.zoom.selectorId,
             panZoomDefaultConfig = {
-                increment: 0.3,
-                minScale: 0.3,
+                increment: 0.2,
+                minScale: 0.2,
                 maxScale: 2,
-                duration: 300,
-                $zoomIn: graphControlPanelElement.find(".zoom-in"),
-                $zoomOut: graphControlPanelElement.find(".zoom-out"),
+                duration: 200,
+                easing: "ease-out",
                 $reset: graphControlPanelElement.find(".zoom-reset")
             },
             panzoomConfig = $.extend(true, panZoomDefaultConfig, controlPanelConfig.default.zoom.config);
+
+        var screenWidth = $(graphSelectorElement).parents('.col1').width(),
+            screenHeight = $(graphSelectorElement).parents('.col1').height(),
+            screenOffsetTop = $(panzommTargetId).parent().offset().top,
+            screenOffsetLeft = $(panzommTargetId).parent().offset().left,
+            focal = {
+                clientX: screenOffsetLeft + screenWidth / 2,
+                clientY: screenOffsetTop + screenHeight / 2
+            },
+            allowZoom = true;
 
         $(panzommTargetId).panzoom("reset");
         $(panzommTargetId).panzoom("resetPan");
         $(panzommTargetId).panzoom("destroy");
         $(panzommTargetId).panzoom(panzoomConfig);
+
+        var performZoom = function(zoomOut) {
+            //Handle clicks and queue extra clicks if performed with the duration for smooth animation
+            if (allowZoom == true) {
+                allowZoom = false;
+                $(panzommTargetId).panzoom("zoom", zoomOut, { focal: focal});
+                setTimeout(function(){
+                    allowZoom = true;
+                }, panZoomDefaultConfig.duration);
+            }
+        };
+
+        graphControlPanelElement.find(".zoom-in")
+            .off('click')
+            .on('click', function(e) {
+                e.preventDefault();
+                performZoom(false)
+            });
+
+        graphControlPanelElement.find(".zoom-out")
+            .off('click')
+            .on('click', function(e) {
+                e.preventDefault();
+                performZoom(true)
+            });
+
+        $(panzommTargetId).on('panzoompan', function(e, panzoom, x, y) {
+            $(panzommTargetId).panzoom('resetDimensions');
+
+            screenWidth = $(graphSelectorElement).parents('.col1').width(),
+                screenHeight = $(graphSelectorElement).parents('.col1').height(),
+                screenOffsetTop = $(panzommTargetId).parent().offset().top,
+                screenOffsetLeft = $(panzommTargetId).parent().offset().left,
+                focal = {
+                    clientX: screenOffsetLeft + screenWidth / 2,
+                    clientY: screenOffsetTop + screenHeight / 2
+                };
+        });
     };
 
-    var getControlPanelConfig = function(jointObject, graphConfig, controlPanelConfig) {
+    var getControlPanelConfig = function(graphSelectorElement, jointObject, graphConfig, controlPanelConfig) {
         var customConfig = $.extend(true, {}, controlPanelConfig.custom);
 
         $.each(customConfig, function(configKey, configValue) {
@@ -103,7 +150,7 @@ define([
                 zoom: {
                     enabled: true,
                     events: function(controlPanelSelector) {
-                        initZoomEvents(jointObject, controlPanelSelector, graphConfig, controlPanelConfig);
+                        initZoomEvents(graphSelectorElement, jointObject, controlPanelSelector, graphConfig, controlPanelConfig);
                     }
                 }
             },
