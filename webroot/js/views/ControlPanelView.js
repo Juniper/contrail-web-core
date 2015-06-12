@@ -27,9 +27,9 @@ define([
                         controlPanelElementSelector
                             .off(eventKey)
                             .on(eventKey, function(e) {
-                                if (!$(this).hasClass('disabled') && !$(this).hasClass('active')) {
+                                if (!$(this).hasClass('disabled') && !$(this).hasClass('refreshing')) {
                                     $(controlPanelSelector).find('.control-panel-item').addClass('disabled');
-                                    $(this).removeClass('disabled').addClass('active');
+                                    $(this).removeClass('disabled').addClass('refreshing');
                                     eventValue(e, this, controlPanelSelector);
                                 }
                             });

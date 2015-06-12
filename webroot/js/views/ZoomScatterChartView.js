@@ -394,21 +394,21 @@ define([
                     iconClass: 'icon-crop',
                     title: 'Zoom By Selection',
                     events: {
-                        click: function () {
-                            return function (event) {
-                                chartView.zoomBySelection = !chartView.zoomBySelection;
-                                $(this).toggleClass('active');
-                                if ($(this).hasClass('active')) {
-                                    $('svg.zoom-scatter-chart').find('rect').addClassSVG('cursor-crosshair');
-                                } else {
-                                    $('svg.zoom-scatter-chart').find('rect').removeClassSVG('cursor-crosshair');
-                                }
+                        click: function (event, self, controlPanelSelector) {
+                            chartView.zoomBySelection = !chartView.zoomBySelection;
+                            $(self).toggleClass('active');
+                            $(self).removeClass('refreshing');
+                            if ($(self).hasClass('active')) {
+                                $('svg.zoom-scatter-chart').find('rect').addClassSVG('cursor-crosshair');
+                            } else {
+                                $('svg.zoom-scatter-chart').find('rect').removeClassSVG('cursor-crosshair');
                             }
+                            $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
                         }
                     }
-                                                            }
-                                                        }
-                                    };
+                }
+            }
+        };
 
         if(contrail.checkIfKeyExistInObject(true, chartOptions, 'controlPanelConfig.filter.enable') && chartOptions.controlPanelConfig.filter.enable) {
             controlPanelConfig.custom.filter = getControlPanelFilterConfig(chartOptions.controlPanelConfig.filter, chartControlPanelExpandedSelector)
