@@ -512,7 +512,7 @@
                     {{msg}}
                 </p>
             {{/each}}
-            <span onclick="toggleOverallNodeStatus(['#allItems','#defaultItems']);"> hide</span>
+            <span class="hyperlink" onclick="toggleOverallNodeStatus(['#allItems','#defaultItems']);"> hide</span>
         </div>
         {{#IfCompare this.showMore true}}
             <div id = "defaultItems">
@@ -527,7 +527,7 @@
                     </p>
                 {{/each}}  
                 {{#IfCompare this.result.length this.defaultItems operator='>'}}
-                    <span onclick="toggleOverallNodeStatus(['#allItems','#defaultItems']);"> {{#ArthematicOps this.result.length this.defaultItems operator='-'}}
+                    <span class="hyperlink" onclick="toggleOverallNodeStatus(['#allItems','#defaultItems']);"> {{#ArthematicOps this.result.length this.defaultItems operator='-'}}
                     {{/ArthematicOps}} more</span>
                {{/IfCompare}}
             </div>
