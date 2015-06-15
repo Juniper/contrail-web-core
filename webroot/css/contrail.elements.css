@@ -4134,11 +4134,6 @@ td.td-actions a.td-action {
 	border:none;
 }
 
-/* Oveall node status */
-#overallNodeStatus span, #overallNodeStatus span:hover {
-	cursor: pointer;
-	color: #3182bd;
-}
 /*style is to remove the hover colors of info boxes in dashboard
 */
 .infobox-dynamic:hover {
