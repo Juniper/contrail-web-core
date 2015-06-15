@@ -2402,7 +2402,8 @@ button.btn:active {
 .word-break-normal {word-break: normal !important;}
 
 /* cursor framework */
-.cursor-pointer {cursor: pointer;}
+.cursor-default {cursor: default !important;}
+.cursor-pointer {cursor: pointer !important;}
 .cursor-crosshair {cursor: crosshair !important;}
 
 .blue-sparkline {

@@ -45,6 +45,14 @@ function Contrail() {
         }
     };
 
+    this.handleIfNaN = function(value, defaultValue) {
+        if(isNaN(value)) {
+            return defaultValue;
+        } else {
+            return value;
+        }
+    };
+
     this.checkAndReplace = function(value, ifValue, replaceValue) {
         if(value == null || typeof value == 'undefined' || value == ifValue) {
             return replaceValue;

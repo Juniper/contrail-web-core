@@ -27,10 +27,14 @@ define([
             Dagre.layout(dagreGraph);
 
             dagreGraph.nodes().forEach(function(id) {
-                var value = dagreGraph.node(id)
-                graph.get('cells').get(id).set('position', {
-                    x: value.x - value.width/2,
-                    y: value.y - value.height/2
+                var value = dagreGraph.node(id),
+                    cell = graph.get('cells').get(id),
+                    type = cell.attributes.type,
+                    rankDir = options['rankDir'];
+
+                cell.set('position', {
+                    x: value.x - value.width / 2,
+                    y: value.y - value.height / 2
                 });
             });
 

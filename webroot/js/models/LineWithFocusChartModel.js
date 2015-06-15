@@ -21,9 +21,9 @@ define([
             return d3.time.format('%H:%M:%S')(new Date(d));
         });
 
-        chartModel.yAxis.axisLabel(chartOptions.yAxisLabel).tickFormat(window[chartOptions['yFormatter']]);
+        chartModel.yAxis.axisLabel(chartOptions.yAxisLabel).tickFormat(chartOptions['yFormatter']);
 
-        chartModel.y2Axis.axisLabel(chartOptions.y2AxisLabel).tickFormat(window[chartOptions['y2Formatter']]);
+        chartModel.y2Axis.axisLabel(chartOptions.y2AxisLabel).tickFormat(chartOptions['y2Formatter']);
 
         chartModel.lines.forceY([0]);
         chartModel.lines2.forceY([0]);

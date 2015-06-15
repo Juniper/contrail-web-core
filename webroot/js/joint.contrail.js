@@ -699,23 +699,10 @@ function getHorizontalZoomedVMSize(availableHeight, availableWidth, srcVNDetails
         noOfVMsToDraw = 0;
         internalRectangleWidth = VM_GRAPH_OPTIONS.minInternalRect['width'];
         internalRectangleHeight = VM_GRAPH_OPTIONS.minInternalRect['height'];
-    } else if (actualAreaNeededForVMs >= maxInternalRectArea) {
-        noOfVMsToDraw = Math.floor(maxInternalRectArea / areaPerVM);
-        // Show the more link in the cloud if required
-        returnObj['showMoreLink'] = true;
-        //vmPerRow = Math.floor(maxInternalRectWidth / widthNeededForVM);
-
-        noOfRows = 1;
-        internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
-        internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
-
     } else {
         noOfVMsToDraw = noOfVMs;
-        internalRectangleWidth = Math.ceil(maxInternalRectWidth * Math.sqrt(actualAreaNeededForVMs / maxInternalRectArea));
-        //vmPerRow = Math.floor(internalRectangleWidth / widthNeededForVM);
-
         noOfRows = 1;
-        internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
+        internalRectangleWidth = (((vmPerRow < ctwc.MAX_VM_TO_PLOT) ? vmPerRow :  ctwc.MAX_VM_TO_PLOT) * widthNeededForVM) + vmMargin;
         internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
     }
 
@@ -759,24 +746,11 @@ function getVerticalZoomedVMSize(availableHeight, availableWidth, srcVNDetails) 
         noOfVMsToDraw = 0;
         internalRectangleWidth = VM_GRAPH_OPTIONS.minInternalRect['width'];
         internalRectangleHeight = VM_GRAPH_OPTIONS.minInternalRect['height'];
-    } else if (actualAreaNeededForVMs >= maxInternalRectArea) {
-        noOfVMsToDraw = Math.floor(maxInternalRectArea / areaPerVM);
-        // Show the more link in the cloud if required
-        returnObj['showMoreLink'] = true;
-        //vmPerRow = Math.floor(maxInternalRectWidth / widthNeededForVM);
-
-        noOfRows = Math.ceil(noOfVMsToDraw / vmPerRow);
-        internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
-        internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
-
     } else {
         noOfVMsToDraw = noOfVMs;
-        internalRectangleWidth = Math.ceil(maxInternalRectWidth * Math.sqrt(actualAreaNeededForVMs / maxInternalRectArea));
-        //vmPerRow = Math.floor(internalRectangleWidth / widthNeededForVM);
-
         noOfRows = Math.ceil(noOfVMsToDraw / vmPerRow);
         internalRectangleWidth = (vmPerRow * widthNeededForVM) + vmMargin;
-        internalRectangleHeight = (noOfRows * heightNeededForVM) + vmMargin;
+        internalRectangleHeight = (((noOfRows < ctwc.MAX_VM_TO_PLOT) ? noOfRows :  ctwc.MAX_VM_TO_PLOT) * heightNeededForVM) + vmMargin;
     }
 
     returnObj['vmPerRow'] = vmPerRow;
@@ -1169,22 +1143,27 @@ function createCollectionElements(collections, elements, elementMap) {
 }
 
 function createLinkElements(links, elements, elementMap) {
+    var link, sourceId, sourceName, targetId, linkedElements = [];
     for (var i = 0; i < links.length; i++) {
         var sInstances = links[i] ['service_inst'],
             dir = links[i]['dir'],
             source = {}, target = {};
 
         if (sInstances == null || sInstances.length == 0) {
+            sourceId = elementMap.node[links[i]['src']];
+            targetId = elementMap.node[links[i]['dst']];
+
             source = {
-                id: elementMap.node[links[i]['src']],
+                id: sourceId,
                 name: links[i]['src']
             };
             target = {
-                id: elementMap.node[links[i]['dst']],
+                id: targetId,
                 name: links[i]['dst']
             };
 
-            var link = createLinkElement(source, target, dir, links[i], elements, elementMap);
+            link = createLinkElement(source, target, dir, links[i], elements, elementMap);
+            linkedElements.push(link);
         } else {
             var linkElements = [],
                 linkElementKeys = [],
@@ -1192,18 +1171,23 @@ function createLinkElements(links, elements, elementMap) {
                 linkElementKeyStringBi = '';
             for (var j = 0; j < sInstances.length; j++) {
                 if (j == 0) {
+                    sourceId = elementMap.node[links[i]['src']];
+                    sourceName = links[i]['src'];
                     source = {
-                        id: elementMap.node[links[i]['src']],
-                        name: links[i]['src']
+                        id: sourceId,
+                        name: sourceName
                     };
                 } else {
+                    sourceId = elementMap.node[sInstances[j - 1]];
+                    sourceName = sInstances[j - 1];
                     source = {
-                        id: elementMap.node[sInstances[j - 1]],
-                        name: sInstances[j - 1]
+                        id: sourceId,
+                        name: sourceName
                     };
                 }
+                targetId = elementMap.node[sInstances[j]];
                 target = {
-                    id: elementMap.node[sInstances[j]],
+                    id: targetId,
                     name: sInstances[j]
                 };
                 linkElements.push({
@@ -1212,12 +1196,16 @@ function createLinkElements(links, elements, elementMap) {
                 });
                 linkElementKeys.push(source.name);
             }
+
+            sourceId = elementMap.node[sInstances[j - 1]];
             source = {
-                id: elementMap.node[sInstances[j - 1]],
+                id: sourceId,
                 name: sInstances[j - 1]
             };
+
+            targetId = elementMap.node[links[i]['dst']];
             target = {
-                id: elementMap.node[links[i]['dst']],
+                id: targetId,
                 name: links[i]['dst']
             };
             linkElements.push({
@@ -1236,7 +1224,8 @@ function createLinkElements(links, elements, elementMap) {
             }
 
             $.each(linkElements, function (linkElementKey, linkElementValue) {
-                var link = createLinkElement(linkElementValue.source, linkElementValue.target, dir, links[i], elements, elementMap);
+                link = createLinkElement(linkElementValue.source, linkElementValue.target, dir, links[i], elements, elementMap);
+                linkedElements.push(link);
 
                 elementMap.link[linkElementKeyString].push(link.id);
                 if (dir == 'bi') {
@@ -1245,7 +1234,8 @@ function createLinkElements(links, elements, elementMap) {
             });
         }
     }
-}
+    elementMap['linkedElements'] = linkedElements;
+};
 
 function createLinkElement(source, target, dir, linkDetails, elements, elementMap) {
     var options = {
@@ -1843,7 +1833,7 @@ joint.shapes.contrail.VirtualNetworkView = joint.shapes.contrail.FontElementView
 joint.shapes.contrail.VirtualMachine = joint.shapes.contrail.FontElement.extend({
     markup: '<g class="rotatable"><text/><g class="scalable"><rect class="VirtualMachine"/></g></g>',
     defaults: joint.util.deepSupplement({
-        type: 'contrail.VirtualMachine'
+        type: 'contrail.VirtualMachine.no-drag-element'
     }, joint.shapes.contrail.FontElement.prototype.defaults)
 });
 
@@ -2097,6 +2087,28 @@ joint.shapes.contrail.ZoomedCloudElement = joint.shapes.basic.Rect.extend({
         type: 'contrail.ZoomedElement.VirtualNetwork',
         attrs: {
             rect: {rx: 0, ry: 0, 'stroke-width': 0, stroke: '#EEE', fill: 'url(#dotted)'},
+            text: {
+                'ref-x': 0.01,
+                'ref-y': 5,
+                'y-alignment': 'top',
+                'x-alignment': 'left',
+                'text-anchor': 'middle',
+                'ref': 'rect',
+                'stroke-width': '0.4px',
+                'stroke': '#333',
+                'fill': '#333'
+            }
+        }
+    }, joint.shapes.basic.Rect.prototype.defaults),
+    remove: removeCell
+});
+
+joint.shapes.contrail.GroupParentElement = joint.shapes.basic.Rect.extend({
+    markup: '<rect/><text/>',
+    defaults: joint.util.deepSupplement({
+        type: 'contrail.GroupParentElement',
+        attrs: {
+            rect: {rx: 0, ry: 0, 'stroke-width': 0, stroke: '#EEE'},
             text: {
                 'ref-x': 0.01,
                 'ref-y': 5,
