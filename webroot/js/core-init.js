@@ -3,23 +3,23 @@
  */
 
 var initDepFiles = [
-    'underscore', 'validation', 'xdate', 'handlebars-utils', 'contrail-common', 'slickgrid-utils', 'contrail-elements',
+    'underscore', 'validation', 'handlebars-utils', 'contrail-common', 'slickgrid-utils', 'contrail-elements',
     'topology_api', 'chart-utils', 'qe-utils', 'nvd3-plugin', 'd3-utils', 'analyzer-utils', 'dashboard-utils',
-    'jquery.panzoom', 'joint.contrail', 'backbone', 'contrail-all-8', 'contrail-all-9'
+    'joint.layout.DirectedGraph', 'joint.contrail', 'backbone', 'text', 'contrail-all-8', 'contrail-all-9'
 ];
 
 require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
     window.ko = Knockout;
     window.Bezier = Bezier;
     loadCommonTemplates();
-    require(initDepFiles, function(_, validation) {
+    require(initDepFiles, function(underscore, validation) {
         require(['core-utils', 'core-constants', 'core-formatters', 'core-cache'], function (CoreUtils, CoreConstants, CoreFormatters, Cache) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
             cowf = new CoreFormatters();
             kbValidation = validation;
             cowch = new Cache();
-            initBackboneValidation(_);
+            initBackboneValidation(underscore);
             initCustomKOBindings(Knockout);
             initDomEvents();
             require(['contrail-layout'], function(){});

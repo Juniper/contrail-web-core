@@ -68,7 +68,7 @@ define([
                 data = viewConfig['parseFn'](data);
             }
 
-            chartOptions = { height: 300, yAxisLabel: 'Bytes per 30 secs', y2AxisLabel: 'Bytes per min', yFormatter: 'formatSumBytes', y2Formatter: 'formatSumBytes'};
+            chartOptions = { height: 300, yAxisLabel: 'Traffic', y2AxisLabel: '', yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }, y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }};
 
             chartViewConfig = getChartViewConfig(data, chartOptions);
             chartData = chartViewConfig['chartData'];
@@ -109,6 +109,7 @@ define([
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
         if (chartData.length > 0) {
+            spliceBorderPoints(chartData);
             var values = chartData[0].values,
                 brushExtent = null,
                 start, end;
@@ -124,6 +125,15 @@ define([
         chartViewConfig['chartOptions'] = chartOptions;
 
         return chartViewConfig;
+    };
+
+    function spliceBorderPoints(chartData) {
+        var lineChart;
+        for(var i = 0; i < chartData.length; i++) {
+            lineChart = chartData[i];
+            lineChart['values'].splice(0, 1);
+            lineChart['values'].splice((lineChart['values'].length - 1), 1);
+        }
     };
 
     return LineWithFocusChartView;

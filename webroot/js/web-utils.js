@@ -946,6 +946,13 @@ function pushBreadcrumb(breadcrumbsArr) {
     }
 }
 
+function removeActiveBreadcrumb(breadcrumbsArr) {
+    if($('#breadcrumb').children('li.active:last')) {
+        $('#breadcrumb').children('li.active:last').remove();
+        $('#breadcrumb').children('li:last').children('span').remove();
+    }
+}
+
 function pushBreadcrumbDropdown(id){
 	$('#breadcrumb').children('li').removeClass('active');
 	$('#breadcrumb').children('li:last').append('<span class="divider"><i class="icon-angle-right"></i></span>');
@@ -1790,7 +1797,7 @@ function wrapLbl(str) {
 
 function wrapLabelValue(lbl, value) {
 	value = ifNullOrEmptyObject(value,"");
-    return '<span class="label-value-text">' + lbl + ': <span class="value">' + value + '</span></span>';
+    return '<span class="label-value-text">' + lbl + ': <span>' + value + '</span></span>';
 }
 
 

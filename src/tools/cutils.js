@@ -804,15 +804,23 @@ function isIPv4(ipAddress){
     return false;
 }
 function isIPv6(ipAddress){
-    if(ipAddress == null )
+    var IP;
+
+    if(ipAddress == null ) {
         return false;
-    var IP = new v6.Address(ipAddress); 
-    if(IP.isValid() === true){
-        return true;
+    } else {
+        try {
+            IP = new v6.Address(ipAddress);
+        } catch (error) {
+            return false;
+        }
+        if(IP.isValid() === true){
+            return true;
+        }
     }
+
     return false;
 }
-
 function validip(ip) {
     if (null != ip && "" != ip) {
         ipsplit = ip.split("/");

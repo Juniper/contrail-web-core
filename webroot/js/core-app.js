@@ -219,7 +219,7 @@ requirejs.config({
             exports: 'Backbone'
         },
         'joint': {
-            deps: ['geometry', 'vectorizer', 'jquery', 'lodash', 'backbone'],
+            deps: ['geometry', 'vectorizer', 'jquery', 'backbone'],
             exports: 'joint',
             init: function (geometry, vectorizer) {
                 this.g = geometry;
@@ -260,16 +260,16 @@ requirejs.config({
             deps: ['jquery', 'underscore']
         },
         'contrail-model': {
-            deps: ['jquery', 'underscore', 'backbone', 'knockout', 'knockback']
+            deps: ['jquery', 'backbone', 'knockout', 'knockback']
         },
         'contrail-view-model': {
-            deps: ['jquery', 'underscore', 'backbone', 'slick.core']
+            deps: ['jquery', 'backbone', 'slick.core']
         },
         'contrail-graph-model': {
-            deps: ['jquery', 'underscore', 'backbone', 'joint.contrail', 'joint.layout.DirectedGraph', 'slick.core']
+            deps: ['jquery', 'backbone', 'joint.contrail', 'joint.layout.DirectedGraph', 'slick.core']
         },
         'graph-view': {
-            deps: ['jquery', 'underscore', 'backbone', 'joint', 'joint.contrail']
+            deps: ['jquery', 'backbone', 'joint', 'joint.contrail']
         },
         'contrail-list-model': {
             deps: ['contrail-remote-data-handler', 'slick.core']

@@ -82,11 +82,17 @@ define([
         };
 
         function pSuccessHandler(response) {
-            var resultJSON;
+            var resultJSON = {};
             if (contrail.checkIfFunction(pDataParser)) {
-                resultJSON = pDataParser(response);
+                try {
+                    resultJSON = pDataParser(response);
+                } catch (error) {
+                    console.log(error.stack);
+                }
             } else {
-                resultJSON = response;
+                if(response != null) {
+                    resultJSON = response;
+                }
             }
 
             pRequestCompleteResponse.push(response);
@@ -97,15 +103,13 @@ define([
                 initVLRequests(resultJSON);
             }
 
-            if (response['more'] != null && response['more']) {
+            if (response != null && response['more'] != null && response['more']) {
                 setNextUrl(response['lastKey']);
                 fetchPrimaryData();
             } else {
                 pRequestInProgress = false;
                 delete pUrlParams['lastKey'];
-                if(pUrlParams.length > 0) {
-                    pAjaxConfig['url'] = pUrl.split('?')[0] + '?' + $.param(pUrlParams);
-                }
+                pAjaxConfig['url'] = pUrl.split('?')[0] + '?' + $.param(pUrlParams);
                 if (pCompleteCallback != null) {
                     pCompleteCallback(pRequestCompleteResponse);
                     check4AllRequestComplete();

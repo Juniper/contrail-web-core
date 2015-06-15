@@ -13,7 +13,7 @@ define([
                 viewConfig = self.attributes.viewConfig,
                 controlPanelSelector = self.el;
 
-            $(controlPanelSelector).html(controlPanelTemplate(viewConfig))
+            $(controlPanelSelector).html(controlPanelTemplate(viewConfig));
 
             if (contrail.checkIfKeyExistInObject(true, viewConfig, 'default.zoom.enabled') && viewConfig.default.zoom.enabled) {
                 viewConfig.default.zoom.events(controlPanelSelector);
@@ -26,7 +26,13 @@ define([
                     $.each(configValue.events, function(eventKey, eventValue) {
                         controlPanelElementSelector
                             .off(eventKey)
-                            .on('click', eventValue());
+                            .on(eventKey, function(e) {
+                                if (!$(this).hasClass('disabled') && !$(this).hasClass('refreshing')) {
+                                    $(controlPanelSelector).find('.control-panel-item').addClass('disabled');
+                                    $(this).removeClass('disabled').addClass('refreshing');
+                                    eventValue(e, this, controlPanelSelector);
+                                }
+                            });
                     });
                 });
             }

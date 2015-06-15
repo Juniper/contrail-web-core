@@ -144,7 +144,7 @@ define([
                 .attr("transform", function (d) {
                     return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                 })
-                .attr("opacity", "0.5")
+                .attr("opacity", "0.6")
                 .on("mouseenter", function (d) {
                         var tooltipData = d,
                         selfOffset = $(this).offset(),
@@ -394,21 +394,21 @@ define([
                     iconClass: 'icon-crop',
                     title: 'Zoom By Selection',
                     events: {
-                        click: function () {
-                            return function (event) {
-                                chartView.zoomBySelection = !chartView.zoomBySelection;
-                                $(this).toggleClass('active');
-                                if ($(this).hasClass('active')) {
-                                    $('svg.zoom-scatter-chart').find('rect').addClassSVG('cursor-crosshair');
-                                } else {
-                                    $('svg.zoom-scatter-chart').find('rect').removeClassSVG('cursor-crosshair');
-                                }
+                        click: function (event, self, controlPanelSelector) {
+                            chartView.zoomBySelection = !chartView.zoomBySelection;
+                            $(self).toggleClass('active');
+                            $(self).removeClass('refreshing');
+                            if ($(self).hasClass('active')) {
+                                $('svg.zoom-scatter-chart').find('rect').addClassSVG('cursor-crosshair');
+                            } else {
+                                $('svg.zoom-scatter-chart').find('rect').removeClassSVG('cursor-crosshair');
                             }
+                            $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
                         }
                     }
-                                                            }
-                                                        }
-                                    };
+                }
+            }
+        };
 
         if(contrail.checkIfKeyExistInObject(true, chartOptions, 'controlPanelConfig.filter.enable') && chartOptions.controlPanelConfig.filter.enable) {
             controlPanelConfig.custom.filter = getControlPanelFilterConfig(chartOptions.controlPanelConfig.filter, chartControlPanelExpandedSelector)
@@ -661,8 +661,8 @@ define([
         }
     };
 
-    function getChartConfig(chartSelector, chartOptions, chartSize) {
-        var margin = {top: 20, right: 5, bottom: 50, left: 50},
+    function getChartConfig(chartSelector, chartOptions) {
+        var margin = $.extend(true, {}, {top: 20, right: 5, bottom: 50, left: 50}, chartOptions['margin']),
             width = $(chartSelector).width() - 10,
             height = 275;
 
@@ -684,7 +684,8 @@ define([
             margin: margin,
             height: height,
             width: width,
-            dataParser: chartOptions['dataParser']
+            dataParser: chartOptions['dataParser'],
+            sizeFieldName: chartOptions['sizeFieldName']
         };
 
         return chartViewConfig;

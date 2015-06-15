@@ -14,13 +14,14 @@ define([
         self.data = chartConfig['dataParser'](rawData);
         self.margin = margin,
         chartData = self.data;
+        self.sizeFieldName = contrail.handleIfNull(chartConfig['sizeFieldName'], 'size');
 
-        self.sizeMinMax = getSizeMinMax(chartData);
+        self.sizeMinMax = getSizeMinMax(chartData, self.sizeFieldName);
 
         d3Scale = d3.scale.linear().range([6, 10]).domain(self.sizeMinMax);
 
         $.each(chartData, function (idx, chartDataPoint) {
-            chartDataPoint['size'] = contrail.handleIfNull(d3Scale(chartDataPoint['size'], 7));
+            chartDataPoint['size'] = contrail.handleIfNaN(d3Scale(chartDataPoint[self.sizeFieldName]), 6);
         });
 
         self.width = chartConfig['width'] - margin.left - margin.right;
@@ -134,13 +135,26 @@ define([
             return (parseFloat(values[half - 1]) + parseFloat(values[half])) / 2.0;
     };
 
-    function getSizeMinMax(chartData) {
+    function getSizeMinMax(chartData, sizeFieldName) {
         //Merge the data values array if there are multiple categories plotted in chart, to get min/max values
         var sizeMinMax, dValues;
 
         dValues = flattenList(chartData);
 
-        sizeMinMax = getBubbleSizeRange(dValues);
+        sizeMinMax = getBubbleSizeRange(dValues, sizeFieldName);
+        return sizeMinMax;
+    }
+
+    function getBubbleSizeRange(values, sizeFieldName) {
+        var sizeMinMax = [];
+        sizeMinMax = d3.extent(values, function (obj) {
+            return  contrail.handleIfNaN(obj[sizeFieldName], 0)
+        });
+        if (sizeMinMax[0] == sizeMinMax[1]) {
+            sizeMinMax = [sizeMinMax[0] * .9, sizeMinMax[0] * 1.1];
+        } else {
+            sizeMinMax = [sizeMinMax[0], sizeMinMax[1]];
+        }
         return sizeMinMax;
     }
 
