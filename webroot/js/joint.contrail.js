@@ -201,13 +201,13 @@ var tooltipConfig = {
                 {lbl: 'Project', value: virtualNetworkName[0] + ':' + virtualNetworkName[1]},
                 {
                     lbl: 'In',
-                    value: formatNumberByCommas(viewElement.attributes.nodeDetails.more_attr.in_tpkts) + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.in_bytes)
+                    value: formatNumberByCommas(viewElement.attributes.nodeDetails.more_attributes.in_tpkts) + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attributes.in_bytes)
                 },
                 {
                     lbl: 'Out',
-                    value: formatNumberByCommas(viewElement.attributes.nodeDetails.more_attr.out_tpkts) + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attr.out_bytes)
+                    value: formatNumberByCommas(viewElement.attributes.nodeDetails.more_attributes.out_tpkts) + ' packets / ' + formatBytes(viewElement.attributes.nodeDetails.more_attributes.out_bytes)
                 },
-                {lbl: 'Instance Count', value: viewElement.attributes.nodeDetails.more_attr.vm_cnt}]);
+                {lbl: 'Instance Count', value: viewElement.attributes.nodeDetails.more_attributes.vm_count}]);
 
         }
     },
@@ -605,7 +605,9 @@ function renderZoomedVisualization4VN(selectorId, jointObject, params) {
         neighbors = jointObject.connectedGraph.getNeighbors(dblClickedElement),
         neighborLinks = jointObject.connectedGraph.getConnectedLinks(dblClickedElement),
         srcVNDetails = dblClickedElement.attributes.nodeDetails;
-    //srcVNDetails.more_attr.vm_cnt = 1;
+
+    //srcVNDetails.more_attributes.vm_count = 1;
+
     var options = getZoomedVMSize($(selectorId).height(), $(selectorId).width(), srcVNDetails),
         currentZoomedElement = createCloudZoomedNodeElement(dblClickedElement['attributes']['nodeDetails'], {
             width: options['widthZoomedElement'],
@@ -679,7 +681,7 @@ function getHorizontalZoomedVMSize(availableHeight, availableWidth, srcVNDetails
         maxInternalRectHeight = Math.floor(((VM_GRAPH_OPTIONS.internalRectRatio['height'] / VM_GRAPH_OPTIONS.externalRectRatio['height']) * maxExternalRectHeight)) - vmMargin,
         maxInternalRectArea = maxInternalRectHeight * maxInternalRectWidth;
 
-    var noOfVMs = srcVNDetails.more_attr.vm_cnt,
+    var noOfVMs = srcVNDetails.more_attributes.vm_count,
         VMHeight = VM_GRAPH_OPTIONS.regularVMSize['height'],
         VMWidth = VM_GRAPH_OPTIONS.regularVMSize['width'],
         widthNeededForVM = VM_GRAPH_OPTIONS.regularVMSize.width + vmMargin,
@@ -710,7 +712,8 @@ function getHorizontalZoomedVMSize(availableHeight, availableWidth, srcVNDetails
     returnObj['noOfVMsToDraw'] = (noOfVMsToDraw > ctwc.MAX_VM_TO_PLOT) ? ctwc.MAX_VM_TO_PLOT : noOfVMsToDraw;
     returnObj['widthZoomedElement'] = internalRectangleWidth * (VM_GRAPH_OPTIONS.externalRectRatio['width'] / VM_GRAPH_OPTIONS.internalRectRatio['width']);
     returnObj['heightZoomedElement'] = internalRectangleHeight * (VM_GRAPH_OPTIONS.externalRectRatio['height'] / VM_GRAPH_OPTIONS.internalRectRatio['height']);
-    returnObj['vmList'] = srcVNDetails.more_attr.virtualmachine_list;
+    returnObj['vmList'] = srcVNDetails.more_attributes.virtualmachine_list;
+    returnObj['vmDetailsMap'] = srcVNDetails.more_attributes.virtualmachine_details;
     returnObj['srcVNDetails'] = srcVNDetails;
 
     return returnObj;
@@ -726,7 +729,7 @@ function getVerticalZoomedVMSize(availableHeight, availableWidth, srcVNDetails) 
         maxInternalRectHeight = Math.floor(((VM_GRAPH_OPTIONS.internalRectRatio['height'] / VM_GRAPH_OPTIONS.externalRectRatio['height']) * maxExternalRectHeight)) - vmMargin,
         maxInternalRectArea = maxInternalRectHeight * maxInternalRectWidth;
 
-    var noOfVMs = srcVNDetails.more_attr.vm_cnt,
+    var noOfVMs = srcVNDetails.more_attributes.vm_count,
         VMHeight = VM_GRAPH_OPTIONS.regularVMSize['height'],
         VMWidth = VM_GRAPH_OPTIONS.regularVMSize['width'],
         widthNeededForVM = VM_GRAPH_OPTIONS.regularVMSize.width + vmMargin,
@@ -757,7 +760,8 @@ function getVerticalZoomedVMSize(availableHeight, availableWidth, srcVNDetails) 
     returnObj['noOfVMsToDraw'] = (noOfVMsToDraw > ctwc.MAX_VM_TO_PLOT) ? ctwc.MAX_VM_TO_PLOT : noOfVMsToDraw;
     returnObj['widthZoomedElement'] = internalRectangleWidth * (VM_GRAPH_OPTIONS.externalRectRatio['width'] / VM_GRAPH_OPTIONS.internalRectRatio['width']);
     returnObj['heightZoomedElement'] = internalRectangleHeight * (VM_GRAPH_OPTIONS.externalRectRatio['height'] / VM_GRAPH_OPTIONS.internalRectRatio['height']);
-    returnObj['vmList'] = srcVNDetails.more_attr.virtualmachine_list;
+    returnObj['vmList'] = srcVNDetails.more_attributes.virtualmachine_list;
+    returnObj['vmDetailsMap'] = srcVNDetails.more_attributes.virtualmachine_details;
     returnObj['srcVNDetails'] = srcVNDetails;
 
     return returnObj;
@@ -773,7 +777,7 @@ function getZoomedVMSize(availableHeight, availableWidth, srcVNDetails) {
         maxInternalRectHeight = Math.floor(((VM_GRAPH_OPTIONS.internalRectRatio['height'] / VM_GRAPH_OPTIONS.externalRectRatio['height']) * maxExternalRectHeight)) - vmMargin,
         maxInternalRectArea = maxInternalRectHeight * maxInternalRectWidth;
 
-    var noOfVMs = srcVNDetails.more_attr.vm_cnt,
+    var noOfVMs = srcVNDetails.more_attributes.vm_count,
         VMHeight = VM_GRAPH_OPTIONS.regularVMSize['height'],
         VMWidth = VM_GRAPH_OPTIONS.regularVMSize['width'],
         widthNeededForVM = VM_GRAPH_OPTIONS.regularVMSize.width + vmMargin,
@@ -820,7 +824,8 @@ function getZoomedVMSize(availableHeight, availableWidth, srcVNDetails) {
     returnObj['noOfVMsToDraw'] = noOfVMsToDraw;
     returnObj['widthZoomedElement'] = internalRectangleWidth * (VM_GRAPH_OPTIONS.externalRectRatio['width'] / VM_GRAPH_OPTIONS.internalRectRatio['width']);
     returnObj['heightZoomedElement'] = internalRectangleHeight * (VM_GRAPH_OPTIONS.externalRectRatio['height'] / VM_GRAPH_OPTIONS.internalRectRatio['height']);
-    returnObj['vmList'] = srcVNDetails.more_attr.virtualmachine_list;
+    returnObj['vmList'] = srcVNDetails.more_attributes.virtualmachine_list;
+    returnObj['vmDetailsMap'] = srcVNDetails.more_attributes.virtualmachine_details;
     returnObj['srcVNDetails'] = srcVNDetails;
 
     return returnObj;
@@ -1046,11 +1051,11 @@ function createCloudZoomedNodeElement(nodeDetails, config) {
     var currentZoomedElement = new joint.shapes.contrail.ZoomedCloudElement({
         size: {width: config.width * factor, height: config.height * factor},
         attrs: {
-            rect: (nodeDetails['more_attr']['vm_cnt'] == 0) ? {width: config.width * factor, height: config.height * factor, 'stroke-width': 1, 'stroke': '#3182bd'} : {width: config.width * factor, height: config.height * factor},
+            rect: (nodeDetails['more_attributes']['vm_count'] == 0) ? {width: config.width * factor, height: config.height * factor, 'stroke-width': 1, 'stroke': '#3182bd'} : {width: config.width * factor, height: config.height * factor},
             text: {
-                text: (nodeDetails['more_attr']['vm_cnt'] == 0) ? "No virtual machine available." : contrail.truncateText(nodeDetails['name'].split(":")[2], 50),
+                text: (nodeDetails['more_attributes']['vm_count'] == 0) ? "No virtual machine available." : contrail.truncateText(nodeDetails['name'].split(":")[2], 50),
                 'ref-x': .5,
-                'ref-y': (nodeDetails['more_attr']['vm_cnt'] == 0) ? 45 : -20
+                'ref-y': (nodeDetails['more_attributes']['vm_count'] == 0) ? 45 : -20
             }
         }
     });

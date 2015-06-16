@@ -118,7 +118,8 @@ define([
                 }
 
                 if (!contrailGraphModel.isRequestInProgress()) {
-                    updateDataInCache(contrailGraphModel, completeResponse);
+                    //TODO: Udpade of cache is currently handled by vertical lazy loading success-callback.
+                    //updateDataInCache(contrailGraphModel, completeResponse);
                 }
                 contrailGraphModel.onDataUpdate.notify();
             }
