@@ -13,6 +13,8 @@ define([
 
         self.data = chartConfig['dataParser'](rawData);
         self.margin = margin,
+        self.noDataMessage = chartConfig['noDataMessage'];
+
         chartData = self.data;
         self.sizeFieldName = contrail.handleIfNull(chartConfig['sizeFieldName'], 'size');
 
@@ -107,21 +109,18 @@ define([
     };
 
     function updateNoDataMessage (dataListModel, chartModel) {
-        var error = dataListModel.error,
-            noDataMessage = cowc.CHART_LOADING_MESSAGE;
+        var error = dataListModel.error;
 
         if (dataListModel.isRequestInProgress()) {
             chartModel.noDataMessage = cowc.CHART_LOADING_MESSAGE;
-        } else if (chartModel['noDataMessage']) {
-            chartModel.noDataMessage = chartModel['noDataMessage'];
+        } else if (contrail.checkIfExist(chartModel['noDataMessage'])) {
+            //Nothing to do
         } else if (error) {
             chartModel.noDataMessage = cowc.DATA_ERROR_MESSAGE;
         } else if(dataListModel.getItems().length == 0) {
             chartModel.noDataMessage = cowc.CHART_NO_DATA_MESSAGE;
         }
-
-        return noDataMessage;
-    };
+    }
 
     function median(values) {
         values.sort(function (a, b) {

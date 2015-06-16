@@ -685,7 +685,8 @@ define([
             height: height,
             width: width,
             dataParser: chartOptions['dataParser'],
-            sizeFieldName: chartOptions['sizeFieldName']
+            sizeFieldName: chartOptions['sizeFieldName'],
+            noDataMessage: chartOptions['noDataMessage']
         };
 
         return chartViewConfig;
