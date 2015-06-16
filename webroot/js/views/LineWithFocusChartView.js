@@ -68,7 +68,7 @@ define([
                 data = viewConfig['parseFn'](data);
             }
 
-            chartOptions = { height: 300, yAxisLabel: 'bits per second', y2AxisLabel: '', yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }, y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }};
+            chartOptions = { height: 300, yAxisLabel: 'Traffic', y2AxisLabel: '', yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }, y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }};
 
             chartViewConfig = getChartViewConfig(data, chartOptions);
             chartData = chartViewConfig['chartData'];
