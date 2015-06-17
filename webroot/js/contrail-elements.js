@@ -1052,19 +1052,33 @@ function constructSelect2(self, defaultOption, args) {
 
         if(!$.isEmptyObject(option) && typeof option.dataSource !== 'undefined') {
             if(option.dataSource.type == "remote"){
-                $.ajax({
-                    url: option.dataSource.url,
-                    dataType: "json",
-                    async: false,
-                    success: function(data) {
-                        if(typeof option.dataSource.parse !== "undefined"){
-                            var parsedData = option.dataSource.parse(data);
-                            source = formatData(parsedData, option);
-                        } else{
-                            source = formatData(data, option);
+                var asyncVal = false;
+                asyncVal = (option.dataSource.async && option.dataSource.async == true)? true : false;
+                var ajaxConfig = {
+                        url: option.dataSource.url,
+                        async: asyncVal,
+                        dataType:'json',
+                        success: function(data) {
+                            var parsedData = {};
+                            if(typeof option.dataSource.parse !== "undefined"){
+                                parsedData = option.dataSource.parse(data);
+                                source = formatData(parsedData, option);
+                            } else{
+                                source = formatData(data, option);
+                            }
+                            if(contrail.checkIfExist(option.dataSource.async) && option.dataSource.async == true ){
+                                self.data('contrailDropdown').setData(parsedData);
+                            }
                         }
-                    }
-                });
+                    };
+                if(option.dataSource.dataType) {
+                    ajaxConfig['dataType'] = option.dataSource.dataType;
+                }
+                if(option.dataSource.timeout) {
+                    ajaxConfig['timeout'] = option.dataSource.timeout;
+                }
+                $.ajax(ajaxConfig);
+                
             } else if(option.dataSource.type == "local"){
                 source = formatData(option, option.dataSource.data);
             }
