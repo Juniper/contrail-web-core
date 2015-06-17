@@ -317,7 +317,7 @@ global.VALID_LIKE_OPR_FIELDS = ['sourcevn', 'destvn'];
 global.VALID_RANGE_OPR_FIELDS = ['protocol', 'sourceip', 'destip', 'sport', 'dport'];
 
 /* Async URL Timeout */
-global.DEFAULT_ASYNC_REQUEST_TIMEOUT = 30 * 1000;
+global.DEFAULT_ASYNC_REQUEST_TIMEOUT = 300 * 1000; /* 5 Minutes */
 /* 8 seconds */
 global.BGP_NODE_SUMMARY_GET_TIMEOUT = 5 * 1000;
 /* 5 Seconds */
