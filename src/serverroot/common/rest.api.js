@@ -31,6 +31,7 @@ function APIServer(params)
 	self.hostname = params.server;
 	self.port = params.port;
 	self.xml2jsSettings = params.xml2jsSettings || {};
+	self.isRawData = (null != params.isRawData) ? params.isRawData : false;
 	self.api = new self.API(self, params.apiName);
 }
 
@@ -186,6 +187,10 @@ APIServer.prototype.retryMakeCall = function(err, restApi, params,
 APIServer.prototype.sendParsedDataToApp = function(data, xml2jsSettings, 
                                                    response, callback)
 {
+    if (true == this.isRawData) {
+        callback(null, data, response);
+        return;
+    }
     /* Data is xml/json format */
     restler.parsers.xml(data, function(err, xml2JsonData) {
         if (err) {
