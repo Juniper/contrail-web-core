@@ -2730,6 +2730,9 @@ function getIPforHostName(name,dataSourceName) {
 function getLabelValueForIP(ip) {
     var lbl = 'IPv4';
     var value = ip;
+    if(ip == '') {
+        return '';
+    }
     if(ip != null && isIPv6(ip)) {
         lbl = 'IPv6';
         value = new v6.Address(ip).correctForm();
