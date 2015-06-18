@@ -54,7 +54,7 @@ requirejs.config({
         'jquery.multiselect.filter': "/assets/jquery-ui/js/jquery.multiselect.filter",
         'jquery.steps.min': "/assets/jquery/js/jquery.steps.min",
         'jquery.tristate': "/assets/jquery/js/jquery.tristate",
-        'joint':'/assets/joint/js/joint.clean.min',
+        'joint':'/assets/joint/js/joint.clean',
         'geometry' : '/assets/joint/js/geometry',
         'vectorizer' : '/assets/joint/js/vectorizer',
         'joint.layout.DirectedGraph' : "/assets/joint/js/joint.layout.DirectedGraph",
