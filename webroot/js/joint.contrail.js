@@ -2091,7 +2091,7 @@ joint.shapes.contrail.ZoomedCloudElement = joint.shapes.basic.Rect.extend({
     defaults: joint.util.deepSupplement({
         type: 'contrail.ZoomedElement.VirtualNetwork',
         attrs: {
-            rect: {rx: 0, ry: 0, 'stroke-width': 0, stroke: '#EEE', fill: 'url(#dotted)'},
+            rect: {rx: 0, ry: 0, 'stroke-width': 0, stroke: '#EEE', fill: '#FFF'},
             text: {
                 'ref-x': 0.01,
                 'ref-y': 5,
