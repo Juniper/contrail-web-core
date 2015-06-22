@@ -315,5 +315,15 @@ function Contrail() {
 		});
 		return outputParents;
 	};
+
+    /*
+     * .redraw()
+     * Redraw or refresh the DOM to reflect the styles configured (Safari hack to render svg elements)
+     * */
+    $.fn.redraw = function() {
+        this.css('display', 'none');
+        var temp = this[0].offsetHeight;
+        this.css('display', '');
+    };
 	
 })(jQuery);
