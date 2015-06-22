@@ -149,7 +149,7 @@ function getJsonViaInternalApi (api, ignoreError, url, callback)
     }
 };
 
-function retrieveSandeshIpUrl (url, apiServer)
+function retrieveSandeshIpUrl (url, apiServer, isRawData)
 {
     try {
         var serverObj = {};
@@ -160,7 +160,9 @@ function retrieveSandeshIpUrl (url, apiServer)
         pos = subStr.indexOf('@');
         var serverPort = subStr.substr(0, pos);
         url = subStr.slice(pos + 1);
-        apiServer = apiServer({apiName:global.SANDESH_API, server:serverIp, port:serverPort });
+        apiServer =
+            apiServer({apiName:global.SANDESH_API, server:serverIp,
+                      port:serverPort, isRawData: isRawData });
         serverObj['apiServer'] = apiServer;
         serverObj['newUrl'] = url;
         return serverObj;
@@ -183,9 +185,15 @@ function doEnsureExecution (func, timeout, args, thisObj)
     return run;
 }
 
-function getDataFromSandeshByIPUrl (apiServer, ignoreError, reqTimeout, url,
+function getDataFromSandeshByIPUrl (apiServer, ignoreError, params, url,
                                     callback)
 {
+    var reqTimeout = null;
+    var isRawData = false;
+    if (null != params) {
+        reqTimeout = params['reqTimeout'];
+        isRawData = params['isRawData'];
+    }
     var oldUrl = url, oldCallback = callback;
     if (typeof oldUrl === 'undefined' || typeof oldCallback === 'undefined') {
         if (null == reqTimeout) {
@@ -193,7 +201,8 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, reqTimeout, url,
         }
         if (ignoreError) {
             return function (newUrl, newCallback) {
-                var serverObj = retrieveSandeshIpUrl(newUrl, apiServer);
+                var serverObj = retrieveSandeshIpUrl(newUrl, apiServer,
+                                                     isRawData);
                 if (serverObj == null) {
                     newCallback(null, null);
                 } else {
@@ -211,7 +220,8 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, reqTimeout, url,
             }
         } else {
             return function (newUrl, newCallback) {
-                var serverObj = retrieveSandeshIpUrl(newUrl, apiServer);
+                var serverObj = retrieveSandeshIpUrl(newUrl, apiServer,
+                                                     isRawData);
                 if (null == serverObj) {
                     var error = new
                         appErrors.RESTServerError(util.format(messages.error.invalid_url,
@@ -229,7 +239,7 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, reqTimeout, url,
             };
         }
     } else {
-        var serverObj = retrieveSandeshIpUrl(url, apiServer);
+        var serverObj = retrieveSandeshIpUrl(url, apiServer, isRawData);
         if (null == serverobj) {
             var error = new
                     appErrors.RESTServerError(util.format(messages.error.invalid_url,
@@ -263,14 +273,18 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, reqTimeout, url,
  * @param {Object} HTTP Response
  * @param {Object} Result JSON
  */
-function handleJSONResponse (error, res, json)
+function handleJSONResponse (error, res, json, isJson)
 {
     if ((res.req) && (true == res.req.invalidated)) {
         /* Req timed out, we already sent the response */
         return;
     }
 	if (!error) {
-		res.json(global.HTTP_STATUS_RESP_OK, json);
+        if ((null == isJson) || (true == isJson)) {
+            res.json(global.HTTP_STATUS_RESP_OK, json);
+        } else {
+            res.send(global.HTTP_STATUS_RESP_OK, json);
+        }
 	} else {
 		logutils.logger.error(error.stack);
 		if (error.custom) {
