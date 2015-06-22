@@ -67,7 +67,6 @@ requirejs.config({
         'jquery.contextMenu': "/assets/jquery-contextMenu/js/jquery.contextMenu",
         'slick.checkboxselectcolumn': "/assets/slickgrid/js/slick.checkboxselectcolumn",
         'slick.rowselectionmodel': "/assets/slickgrid/js/slick.rowselectionmodel",
-        'underscore': 'assets/underscore/underscore-min',
         'backbone': 'assets/backbone/backbone-min',
         'knockback': 'assets/backbone/knockback.min',
         'validation': 'assets/backbone/backbone-validation-amd',
@@ -86,6 +85,11 @@ requirejs.config({
         'core-init': 'js/core-init',
         'contrail-all-8': 'js/contrail-all-8',
         'contrail-all-9': 'js/contrail-all-9'
+    },
+    map: {
+        '*': {
+            'underscore': 'lodash'
+        }
     },
     shim: {
         'jquery.tristate': {
@@ -190,9 +194,6 @@ requirejs.config({
         'qe-utils': {
             deps: ['jquery']
         },
-        //'select2-utils': {
-        //    deps: ['jquery', 'knockout']
-        //},
         'ipv6': {
             deps: ['sprintf', 'jsbn-combined']
         },
@@ -210,9 +211,6 @@ requirejs.config({
         },
         'slick.rowselectionmodel': {
             deps: ['jquery', 'slick.grid', 'slick.dataview']
-        },
-        'underscore': {
-            deps: ['jquery']
         },
         'backbone': {
             deps: ['lodash', 'jquery'],
@@ -253,32 +251,23 @@ requirejs.config({
         'text': {
             deps: ['jquery']
         },
-        'core-utils': {
-            deps: ['jquery', 'underscore']
-        },
-        'core-constants': {
-            deps: ['jquery', 'underscore']
-        },
         'contrail-model': {
-            deps: ['jquery', 'backbone', 'knockout', 'knockback']
+            deps: ['jquery','knockout', 'knockback']
         },
         'contrail-view-model': {
-            deps: ['jquery', 'backbone', 'slick.core']
+            deps: ['jquery','slick.core']
         },
         'contrail-graph-model': {
-            deps: ['jquery', 'backbone', 'joint.contrail', 'joint.layout.DirectedGraph', 'slick.core']
+            deps: ['jquery', 'joint.contrail', 'joint.layout.DirectedGraph', 'slick.core']
         },
         'graph-view': {
-            deps: ['jquery', 'backbone', 'joint', 'joint.contrail']
+            deps: ['jquery', 'joint', 'joint.contrail']
         },
         'contrail-list-model': {
             deps: ['contrail-remote-data-handler', 'slick.core']
         },
         'contrail-remote-data-handler': {
-            deps: ['jquery', 'underscore']
-        },
-        'core-init': {
-            deps: ['underscore', 'validation', 'core-utils', 'knockout']
+            deps: ['jquery']
         }
     },
     waitSeconds: 0
