@@ -12,22 +12,25 @@ var config = process.mainModule.exports['config'];
 var commonUtils = require('../../../utils/common.utils');
 var messages = require('../../../common/messages');
 var configUtils = require('../../../common/configServer.utils');
+var appErrors = require('../../../errors/app.errors.js');
 
-function authenticate (req, res, appData, callback)
+function authenticate (userData, callback)
 {
+    var req = userData['req'];
+    var res = userData['res'];
+    var appData = userData['appData'];
     var urlHash = '';
     var post = req.body;
     var username = post.username;
     var password = post.password;
 
     var userList = config.staticAuth;
+    var error = new
+        appErrors.RESTServerError(messages.error.invalid_user_pass);
+
     if ((null == userList) || (!userList.length)) {
         req.session.isAuthenticated = false;
-        commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                             global.CONTRAIL_LOGIN_ERROR,
-                                             messages.error.invalid_user_pass,
-                                             function() {
-        });
+        callback(messages.error.invalid_user_pass, error);
         return;
     }
     if (post.urlHash != null) {
@@ -47,17 +50,13 @@ function authenticate (req, res, appData, callback)
     if (i == userListCnt) {
         /* Not matched */
         req.session.isAuthenticated = false;
-        commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                             global.CONTRAIL_LOGIN_ERROR,
-                                             messages.error.invalid_user_pass,
-                                             function() {
-        });
+        callback(messages.error.invalid_user_pass, error);
         return;
     }
     req.session.isAuthenticated = true;
     req.session.userRole = userList[i]['roles'];
     plugins.setAllCookies(req, res, appData, {'username': username}, function() {
-        res.redirect('/' + urlHash);
+        callback(null, null, '/' + urlHash);
     });
 }
 

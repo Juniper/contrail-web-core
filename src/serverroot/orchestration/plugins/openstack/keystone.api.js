@@ -658,13 +658,13 @@ function doAuth (authObj, callback)
             (null == data['error'])) {
             formatV3AuthDataToV2AuthData(data, authObj,
                                          function(err, data) {
-                callback(data);
+                callback(err, data);
             });
         } else {
             if (null == err) {
-                callback(data);
+                callback(err, data);
             } else {
-                callback(null);
+                callback(err, null);
             }
         }
     });
@@ -791,7 +791,7 @@ function getUserAuthData (req, tenantName, callback)
 function getUserAuthDataByAuthObj (authObj, callback)
 {
     var tenantName = authObj['tenant'];
-    doAuth(authObj, function(data) {
+    doAuth(authObj, function(err, data) {
         if (data == null) {
             if ((null != tenantName) && (null != authObj['req']) && 
                 (null != authObj['req'].session.id)) {
@@ -879,7 +879,7 @@ function getUserRoleByTenant (userObj, callback)
     var username = userObj['username'];
     var password = userObj['password'];
     var tenant   = userObj['tenant'];
-    doAuth(userObj, function(data) {
+    doAuth(userObj, function(err, data) {
         if ((null != data) && (null != data['access']) &&
             (null != data['access']['user']) &&
             (null != data['access']['user']['roles'])) {
@@ -944,25 +944,25 @@ var makeAuthCB = {
     'v3': doV3Auth
 }
 
-function makeAuth (req, startIndex, lastErrStr, callback)
+function makeAuth (err, req, startIndex, lastErrStr, callback)
 {
     var identityApiVerList = config.identityManager.apiVersion;
     if (null == identityApiVerList[startIndex]) {
-        callback(lastErrStr);
+        callback(lastErrStr, err);
         return;
     }
     var authCB = makeAuthCB[identityApiVerList[startIndex]];
     if (null == authCB) {
-        return makeAuth(req, startIndex + 1, lastErrStr, callback);
+        return makeAuth(err, req, startIndex + 1, lastErrStr, callback);
     }
-    authCB(req, function(errStr) {
+    authCB(req, function(errStr, err) {
         if (null == errStr) {
             logutils.logger.debug("Set authApiVersion:" +
                                   req.session.authApiVersion);
-            callback(null);
+            callback(null, err);
             return;
         } else {
-            return makeAuth(req, startIndex + 1, errStr, callback);
+            return makeAuth(err, req, startIndex + 1, errStr, callback);
         }
     });
 }
@@ -983,8 +983,11 @@ function isAdminRoleInProjects (userRolesPerProject)
     return false;
 }
 
-function authenticate (req, res, appData, callback)
+function authenticate (userData, callback)
 {
+    var req = userData['req'];
+    var res = userData['res'];
+    var appData = userData['appData'];
     var urlHash = '',urlPath = '';
     var post = req.body,
         username = post.username;
@@ -999,16 +1002,13 @@ function authenticate (req, res, appData, callback)
     var verCnt = identityApiVerList.length;
 
     var startIndex = 0;
-    makeAuth(req, startIndex, null, function(errStr) {
+    makeAuth(null, req, startIndex, null, function(errStr, err) {
         if (false == req.session.isAuthenticated) {
             if (null == errStr) {
                 logutils.logger.error("Very much unexpected, we came here!!!");
                 errStr = "Unexpected event happened";
             }
-            commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                 global.CONTRAIL_LOGIN_ERROR,
-                                                 errStr, function() {
-            });
+            callback(errStr, err);
             return;
         }
         var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
@@ -1018,20 +1018,20 @@ function authenticate (req, res, appData, callback)
                so redirect to login page
              */
             errStr = "Only admin user is allowed to login"
-            commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                 global.CONTRAIL_LOGIN_ERROR,
-                                                 errStr, function() {
-            });
+            callback(errStr, err);
             return;
         }
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
-            if(urlPath != '') 
-                res.redirect(urlPath + urlHash);
-            else
-                res.redirect('/' + urlHash);
+            var redirectPath = null;
+            if (urlPath != '') {
+                redirectPath = urlPath + urlHash;
+            } else {
+                redirectPath = '/' + urlHash;
+            }
+            callback(null, null, redirectPath);
+            return;
         });
     });
-
 }
 
 function getV3ProjectListByToken (req, tokenId, callback)
@@ -1246,10 +1246,10 @@ function doV2Auth (req, callback)
     var userObj = {'username': username, 'password': password};
 
     req.session.authApiVersion = 'v2.0';
-    doAuth(userObj, function (data) {
+    doAuth(userObj, function (err, data) {
         if ((null == data) || (null == data.access)) {
             req.session.isAuthenticated = false;
-            callback(messages.error.invalid_user_pass);
+            callback(messages.error.invalid_user_pass, err);
             return;
         }
         req.session.isAuthenticated = true;
@@ -1259,13 +1259,13 @@ function doV2Auth (req, callback)
         getTenantListByToken(req, data.access.token, function(err, data) {
             if ((null == data) || (null == data.tenants)) {
                 req.session.isAuthenticated = false;
-                callback(messages.error.unauthorized_to_project);
+                callback(messages.error.unauthorized_to_project, err);
                 return;
             }
             var projCount = data.tenants.length;
             if (!projCount) {
                 req.session.isAuthenticated = false;
-                callback(messages.error.unauthorized_to_project);
+                callback(messages.error.unauthorized_to_project, err);
                 return;
             }
 
@@ -1277,10 +1277,10 @@ function doV2Auth (req, callback)
             var defProject = tenantList[projCount - 1]['name'];
             var userObj = {'username': username, 'password': password,
                            'tenant': defProject};
-            doAuth(userObj, function(data) {
+            doAuth(userObj, function(err, data) {
                 if (data == null) {
                     req.session.isAuthenticated = false;
-                    callback(messages.error.unauthorized_to_project);
+                    callback(messages.error.unauthorized_to_project, err);
                     return;
                 } else {
                     logutils.logger.debug("After Successful auth def_token:" +
@@ -1292,7 +1292,8 @@ function doV2Auth (req, callback)
                                             function(uiRoles, tokenObjs) {
                         if ((null == uiRoles) || (!uiRoles.length)) {
                             req.session.isAuthenticated = false;
-                            callback(messages.error.unauthenticate_to_project);
+                            callback(messages.error.unauthenticate_to_project,
+                                     err);
                             return;
                         }
                         /* Save the user-id/password in Redis in encrypted format.
@@ -1418,7 +1419,7 @@ function getTokenBySession (sessionId, tenantId, forceAuth, callback)
                                                 passwdDecipher.final('utf8');
         var userObj = {'username': userDecrypted, 'password': passwdDecrypted,
                        'tenant': tenantId};
-        doAuth(userObj, function(data) {
+        doAuth(userObj, function(err, data) {
             if (data == null) {
                 logutils.logger.error("Trying to illegal access with tenantId: " +
                                       tenantId + " With session: " + sessionId);

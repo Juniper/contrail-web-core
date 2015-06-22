@@ -32,8 +32,11 @@ var authServerPort =
  //                                       vcenterParams: config.vcenter});
 // var authSOAPServer = vcenterApi.createvCenterSoapApi('vcenter');
 
-function authenticate (req, res, appData, callback)
+function authenticate (userData, callback)
 {
+    var req = userData['req'];
+    var res = userData['res'];
+    var appData = userData['appData'];
     var urlHash = '',urlPath = '';
     var post = req.body,
         username = post.username,
@@ -59,43 +62,32 @@ function authenticate (req, res, appData, callback)
             password: password
         }
     }
-    console.log("getting urlPath as:", urlPath, urlHash);
     vcenterApi.doCall(userData, appData, function(err, data, resHeaders) {
         /* Once authenticated, then store the vmware_soap_session in session,
          * and pass this in header for next calls to vcenter server 
          */
-            console.log("getting err as:", err, JSON.stringify(data), 
-                        JSON.stringify(resHeaders));
         if (null != err) {
-            var loginErrFile = 'webroot/html/login-error.html';
-            commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                 global.CONTRAIL_LOGIN_ERROR,
-                                                 err.message,
-                                                 //messages.error.invalid_user_pass,
-                                             function() {
-            });
+            callback(err.message, err);
             return;
         }
         req.session.isAuthenticated = true;
         req.session.userRole = [global.STR_ROLE_ADMIN];
-        console.log("Getting urlPath as:", urlPath, urlHash);
         req.session['vmware_soap_session'] =
             resHeaders['set-cookie'][0];
-            //res.redirect('/');
-            //return;
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
+            var redirectPath = null;
             if ('' != urlPath) {
-                res.redirect(urlPath + urlHash);
+                redirectPath = urlPath + urlHash;
             } else {
-                res.redirect('/' + urlHash);
+                redirectPath = '/' + urlHash;
             }
+            callback(null, null, redirectPath);
         });
     });
 }
 
 function getTenantList(req,appData,callback) {
     vCenterPluginApi.getProjectList(req,appData,function(err,projectList){
-        console.log("Projects are "+JSON.stringify(projectList));
         if (err || (null == projectList)){
             callback(err,null);
             return;

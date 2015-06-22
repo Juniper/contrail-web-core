@@ -15,6 +15,8 @@ var config = process.mainModule.exports['config'],
     commonUtils = require('../utils/common.utils'),
     redisSub = require('../web/core/redisSub'),
     orch = require('../orchestration/orchestration.api'),
+    async = require('async'),
+    appErrors = require('../errors/app.errors'),
     global = require('./global');
 
 var keystoneAuthApi = require('../orchestration/plugins/openstack/keystone.api');
@@ -52,6 +54,80 @@ function createAuthKeyBySessionId (sessionId)
     return (global.STR_AUTH_KEY + global.ZWQ_MSG_SEPERATOR + sessionId);
 }
 
+function callMethodsByOrchModel (orchModObj, callback)
+{
+    var orchMod = orchModObj['orchMod'];
+    var orchCallback = orchModObj['orchCallback'];
+    var userData = orchModObj['userData'];
+    getAuthMethod[orchMod].authenticate(userData, function(errStr, err,
+                                                           redirectPath) {
+        if (null != errStr) {
+            if ((null != err) &&
+                (global.HTTP_STATUS_AUTHORIZATION_FAILURE != err.responseCode)) {
+                callback(null, {'errStr': errStr, 'err': err, 'redirectPath':
+                         redirectPath});   
+                return;
+            }
+        }
+        var error = 
+            new appErrors.RESTServerError('Ignore this error, just to break' +
+                                          ' async');
+        callback(error, {'errStr': errStr, 'err': error, 'redirectPath':
+                 redirectPath});
+    });
+}
+
+function callMethodsByOrchCallback (req, userData, orchCallback, callback)
+{
+    var loggedInOrchestrationMode = req.session.loggedInOrchestrationMode;
+    var plugins = require('../orchestration/plugins/plugins.api');
+    var orchModels = plugins.getOrchestrationPluginModel().orchestrationModel;
+    var loginErrFile = 'webroot/html/login-error.html';
+    var post = req.body;
+    if (post.urlHash != null) {
+        urlHash = post.urlHash;
+    }
+    if (post.urlPath != null) {
+        urlPath = post.urlPath;
+    }
+
+    var orchModArr = [];
+    orchModArr.push({'orchMod': req.session.loggedInOrchestrationMode,
+                    'orchCallback': orchCallback, 'userData': userData});
+    var orchModelsCnt = orchModels.length;
+    /* This is a specific case, if openstack,none is set as orchestration model
+     * in config file, then try first with openstack-keystone auth and if fails
+     * due to reason other then authentication error, then try with none
+     * orchestration model
+     */
+    if (2 == orchModelsCnt) {
+        if ((-1 != orchModels.indexOf('openstack')) &&
+            (-1 != orchModels.indexOf('none'))) {
+            for (var i = 0; i < orchModelsCnt; i++) {
+                if (req.session.loggedInOrchestrationMode != orchModels[i]) {
+                    orchModArr.push({'orchMod': orchModels[i], 
+                                    'orchCallback': orchCallback,
+                                    'userData': userData});
+                }
+            }
+        }
+    }
+    async.mapSeries(orchModArr, callMethodsByOrchModel, function(err, data) {
+        var dataLen = data.length;
+        for (var i = 0; i < dataLen; i++) {
+            if (null == data[i]['errStr']) {
+                req.res.redirect(data[i]['redirectPath']);
+                return;
+            }
+        }
+        commonUtils.changeFileContentAndSend(req.res, loginErrFile,
+                                             global.CONTRAIL_LOGIN_ERROR,
+                                             data[0]['errStr'],
+                                             function() {
+        });
+    });
+}
+
 /** Function: authorize
   * 1. This function is wrapper API to authenticate the user using authentication
   *    credentials
@@ -61,10 +137,8 @@ function createAuthKeyBySessionId (sessionId)
   * 2. public function
   */
 function doAuthenticate (req, res, appData, callback) {
-    getAuthMethod[req.session.loggedInOrchestrationMode].authenticate(req, res,
-                                                                      appData, function(err, data) {
-        callback(err, data);
-    });
+    var userData = {'req': req, 'res': res, 'appData': appData};
+    callMethodsByOrchCallback(req, userData, null, callback);
 }
 
 function getTokenObj (authObj, callback)

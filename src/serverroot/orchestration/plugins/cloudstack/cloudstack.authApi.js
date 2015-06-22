@@ -82,8 +82,11 @@ function updateUserKeys (req, userName, userLists)
     req.session['userKey']['secretKey'] = users[i]['secretkey'];
 }
 
-function authenticate (req, res, appData, callback)
+function authenticate (userData, callback)
 {
+    var req = userData['req'];
+    var res = userData['res'];
+    var appData = userData['appdata'];
     var self = this,
         post = req.body,
         username = post.username,
@@ -101,11 +104,7 @@ function authenticate (req, res, appData, callback)
     doAuth(username, password, function (err, data, response) {
         if ((err) || (null == data)) {
             req.session.isAuthenticated = false;
-            commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                 global.CONTRAIL_LOGIN_ERROR,
-                                                 messages.error.invalid_user_pass,
-                                                 function() { 
-            });
+            callback(messages.error.invalid_user_pass, err);
             return;
         }
         req.session.isAuthenticated = true;
@@ -121,7 +120,7 @@ function authenticate (req, res, appData, callback)
                           '; expires=' +
                           new Date(new Date().getTime() +
                                    global.MAX_AGE_SESSION_ID).toUTCString());
-            res.redirect('/' + urlHash);
+            callback(null, null, '/' + urlHash);
         });
     });
 }
