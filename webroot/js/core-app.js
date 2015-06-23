@@ -93,13 +93,13 @@ requirejs.config({
     },
     shim: {
         'jquery.tristate': {
-            deps: ['jquery', 'jquery-ui']
+            deps: ['jquery-ui']
         },
         'jquery.multiselect': {
-            deps: ['jquery', 'jquery-ui']
+            deps: ['jquery-ui']
         },
         'jquery.multiselect.filter': {
-            deps: ['jquery', 'jquery.multiselect']
+            deps: ['jquery.multiselect']
         },
         'jquery.steps.min': {
             deps: ['jquery']
@@ -153,7 +153,7 @@ requirejs.config({
             deps: ['jquery']
         },
         'slick.grid': {
-            deps: ['jquery.event.drag']
+            deps: ['slick.core', 'jquery.event.drag']
         },
         'contrail-common': {
             deps: ['jquery']
@@ -165,19 +165,19 @@ requirejs.config({
             deps: ['jquery']
         },
         'slickgrid-utils': {
-            deps: ['jquery', 'slick.grid', 'slick.dataview']
+            deps: ['slick.dataview']
         },
         'slick.dataview': {
-            deps: ['jquery', 'slick.grid']
+            deps: ['slick.grid']
         },
         'contrail-elements': {
             deps: ['jquery-ui']
         },
         'chart-utils': {
-            deps: ['jquery', 'd3']
+            deps: ['d3']
         },
         'web-utils': {
-            deps: ['jquery', 'knockout', 'xdate']
+            deps: ['knockout', 'xdate']
         },
         'qe-utils': {
             deps: ['jquery']
@@ -207,17 +207,17 @@ requirejs.config({
             deps: ['jquery']
         },
         'slick.checkboxselectcolumn': {
-            deps: ['jquery', 'slick.grid', 'slick.dataview']
+            deps: ['slick.dataview']
         },
         'slick.rowselectionmodel': {
-            deps: ['jquery', 'slick.grid', 'slick.dataview']
+            deps: ['slick.dataview']
         },
         'backbone': {
             deps: ['lodash', 'jquery'],
             exports: 'Backbone'
         },
         'joint': {
-            deps: ['geometry', 'vectorizer', 'jquery', 'backbone'],
+            deps: ['geometry', 'vectorizer', 'backbone'],
             exports: 'joint',
             init: function (geometry, vectorizer) {
                 this.g = geometry;
@@ -228,10 +228,10 @@ requirejs.config({
             deps: ['jquery']
         },
         'knockback': {
-            deps: ['jquery', 'knockout', 'backbone']
+            deps: ['knockout', 'backbone']
         },
         'validation': {
-            deps: ['jquery', 'backbone']
+            deps: ['backbone']
         },
         'lodash': {
             deps: ['jquery']
@@ -243,7 +243,7 @@ requirejs.config({
             deps: ['joint']
         },
         'joint.contrail': {
-            deps: ['joint', 'joint.layout.DirectedGraph']
+            deps: ['joint.layout.DirectedGraph']
         },
         'dagre': {
             deps: ['jquery']
@@ -252,16 +252,16 @@ requirejs.config({
             deps: ['jquery']
         },
         'contrail-model': {
-            deps: ['jquery','knockout', 'knockback']
+            deps: ['knockback']
         },
         'contrail-view-model': {
             deps: ['jquery','slick.core']
         },
         'contrail-graph-model': {
-            deps: ['jquery', 'joint.contrail', 'joint.layout.DirectedGraph', 'slick.core']
+            deps: ['joint.contrail', 'joint.layout.DirectedGraph', 'slick.core']
         },
         'graph-view': {
-            deps: ['jquery', 'joint', 'joint.contrail']
+            deps: ['joint.contrail']
         },
         'contrail-list-model': {
             deps: ['contrail-remote-data-handler', 'slick.core']

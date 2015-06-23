@@ -5,7 +5,7 @@
 var initDepFiles = [
     'validation', 'handlebars-utils', 'contrail-common', 'slickgrid-utils', 'contrail-elements',
     'topology_api', 'chart-utils', 'qe-utils', 'nvd3-plugin', 'd3-utils', 'analyzer-utils', 'dashboard-utils',
-    'joint.layout.DirectedGraph', 'joint.contrail', 'text', 'contrail-all-8', 'contrail-all-9'
+    'joint.contrail', 'text', 'contrail-all-8', 'contrail-all-9'
 ];
 
 require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
