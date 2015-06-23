@@ -96,8 +96,16 @@ define([
         };
 
         this.DEFAULT_CONFIG_NOT_FOUND_PAGE = {
-            title: 'Sorry, this page is not available.',
-            iconClass: 'icon-frown'
+            title: 'Page not found.',
+            iconClass: 'icon-warning-sign',
+            defaultNavLinks: false
+        };
+
+        this.DEFAULT_CONFIG_ERROR_PAGE = {
+            title: "Error in getting data.",
+            iconClass: 'icon-warning-sign',
+            defaultErrorMessage: false,
+            defaultNavLinks: false
         };
 
         this.DATA_ERROR_MESSAGE = "Error in getting data.";
