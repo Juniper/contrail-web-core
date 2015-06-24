@@ -173,14 +173,14 @@ cp -af ./$THIRD_PARTY/moment-v2.6.0/min/moment.min.js webroot/assets/moment/mome
 rm -rf webroot/assets/joint
 mkdir -p webroot/assets/joint/js
 mkdir -p webroot/assets/joint/css
-cp -r ./$THIRD_PARTY/joint-v0.9.2/dist/joint.clean.min.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.2/dist/joint.clean.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.2/lib/lodash.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.2/src/geometry.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.2/src/vectorizer.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.clean.min.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.clean.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.3/lib/lodash.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.3/src/geometry.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.3/src/vectorizer.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/dagre-v0.7.1/dist/dagre.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.2/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.2/dist/joint.nojquery.css webroot/assets/joint/css/
+cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.nojquery.css webroot/assets/joint/css/
 #End - Copy Joint from web-third-party
 
 #Start - Copy jquery-contextMenu from web-third-party
