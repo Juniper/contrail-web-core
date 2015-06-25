@@ -114,6 +114,11 @@ function startSubscribeToDiscoveryService ()
         global.DISC_SERVICE_TYPE_API_SERVER;
     serviceList[1]['instCnt'] = global.DISC_SERVICE_MAX_INST_COUNT_API_SERVER;
 
+    serviceList[2] = {};
+    serviceList[2]['serviceType'] =
+        global.DISC_SERVICE_TYPE_DNS_SERVER;
+    serviceList[2]['instCnt'] = global.DISC_SERVICE_MAX_INST_COUNT_DNS_SERVER;
+
     var len = serviceList.length;
     async.map(serviceList, subscribeToDiscoveryService, function(err, data) {
         /* Send the Service responses to all the worker processes */
@@ -130,6 +135,8 @@ function getInstCountByServiceType (serviceType)
         return global.DISC_SERVICE_MAX_INST_COUNT_OP_SERVER;
     case global.DISC_SERVICE_TYPE_API_SERVER:
         return global.DISC_SERVICE_MAX_INST_COUNT_API_SERVER;
+    case global.DISC_SERVICE_TYPE_DNS_SERVER:
+        return global.DISC_SERVICE_MAX_INST_COUNT_DNS_SERVER;
     default:
         return global.DISC_SERVICE_MAX_INST_COUNT;
     }

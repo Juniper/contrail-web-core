@@ -99,6 +99,10 @@ function getDiscServiceByApiServerType (apiServerType)
         serviceType = global.DISC_SERVICE_TYPE_API_SERVER;
         break;
 
+    case global.label.DNS_SERVER:
+        serviceType = global.DISC_SERVICE_TYPE_DNS_SERVER;
+        break;
+
     default:
     //    logutils.logger.debug("Unknown Discovery Server Service Type:" + 
     //                          apiServerType);
@@ -127,6 +131,8 @@ function getServerTypeByServerName (serverName)
     case global.label.OPS_API_SERVER:
     case global.label.VNCONFIG_API_SERVER:
         return global.DISC_SERVICE_TYPE_API_SERVER;
+    case global.label.DNS_SERVER:
+        return global.DISC_SERVICE_TYPE_DNS_SERVER;
     default:
         return null;
     }
