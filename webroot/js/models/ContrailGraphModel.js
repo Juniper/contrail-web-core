@@ -64,6 +64,7 @@ define([
             var self = this;
             setData2Model(self, self.rawData, rankDir);
             layoutGraph(self);
+            addZoomElements2Graph(self);
             self.onAllRequestsComplete.notify();
         }
     });
@@ -82,6 +83,7 @@ define([
                 successCallback: function (response, resetDataFlag) {
                     setData2Model(contrailGraphModel, response);
                     layoutGraph(contrailGraphModel);
+                    addZoomElements2Graph(contrailGraphModel);
                     if (contrail.checkIfFunction(primaryRemote.successCallback)) {
                         primaryRemote.successCallback(response, contrailGraphModel);
                     }
@@ -231,12 +233,15 @@ define([
     };
 
     function layoutGraph (contrailGraphModel) {
-        var elementsDataObj = contrailGraphModel.elementsDataObj;
-
         if (contrailGraphModel.forceFit) {
             //contrailGraphModel.directedGraphSize = GraphLayoutHandler.jointLayout(contrailGraphModel, getJointLayoutOptions(elementsObject['nodes'], elementsObject['links']));
             contrailGraphModel.directedGraphSize = GraphLayoutHandler.dagreLayout(contrailGraphModel, getDagreLayoutOptions(contrailGraphModel.rankDir));
         }
+    };
+
+    function addZoomElements2Graph (contrailGraphModel) {
+        var elementsDataObj = contrailGraphModel.elementsDataObj;
+
         if (contrail.checkIfExist(elementsDataObj['zoomedNodeElement'])) {
             var zoomedNodeElement = elementsDataObj['zoomedNodeElement'];
 
@@ -251,7 +256,7 @@ define([
             contrailGraphModel.addCells(elementsDataObj['zoomedElements']);
 
         }
-    }
+    };
 
     function bindDataHandler2Model(contrailGraphModel) {
         var contrailDataHandler = contrailGraphModel.contrailDataHandler;
