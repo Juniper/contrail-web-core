@@ -28,7 +28,7 @@ define([
             this.graphConfig = modelConfig;
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
-            this.rankDir = ctwc.DEFAULT_GRAPH_DIR;
+            this.rankDir = null;
             this.onAllRequestsComplete = new Slick.Event();
             this.beforeDataUpdate = new Slick.Event();
             this.onDataUpdate = new Slick.Event();
@@ -64,6 +64,7 @@ define([
             var self = this;
             setData2Model(self, self.rawData, rankDir);
             layoutGraph(self);
+            addZoomElements2Graph(self);
             self.onAllRequestsComplete.notify();
         }
     });
@@ -82,6 +83,7 @@ define([
                 successCallback: function (response, resetDataFlag) {
                     setData2Model(contrailGraphModel, response);
                     layoutGraph(contrailGraphModel);
+                    addZoomElements2Graph(contrailGraphModel);
                     if (contrail.checkIfFunction(primaryRemote.successCallback)) {
                         primaryRemote.successCallback(response, contrailGraphModel);
                     }
@@ -118,7 +120,8 @@ define([
                 }
 
                 if (!contrailGraphModel.isRequestInProgress()) {
-                    updateDataInCache(contrailGraphModel, completeResponse);
+                    //TODO: Udpade of cache is currently handled by vertical lazy loading success-callback.
+                    //updateDataInCache(contrailGraphModel, completeResponse);
                 }
                 contrailGraphModel.onDataUpdate.notify();
             }
@@ -166,9 +169,8 @@ define([
                 cachedRawData = cachedGraphModel.rawData,
                 lastUpdateTime = cachedData['lastUpdateTime'];
 
-            setData2Model(contrailGraphModel, cachedRawData);
-            //setElements2Model(contrailGraphModel, cachedGraphModel.elementMap, cachedGraphModel.elementsDataObj, cachedGraphModel.rawData);
-            layoutGraph(contrailGraphModel);
+            setCachedElementsInModel(contrailGraphModel, cachedGraphModel);
+            //layoutGraph(contrailGraphModel);
 
             isCacheUsed = true;
             if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
@@ -195,8 +197,10 @@ define([
         contrailGraphModel.elementMap = {node: {}, link: {}};
         contrailGraphModel.beforeDataUpdate.notify();
 
-        if (contrailGraphModel.forceFit) {
-            contrailGraphModel.rankDir = (rankDir != null) ? rankDir : computeRankDir(response['nodes'], response['links']);
+        if (contrailGraphModel.forceFit && rankDir != null) {
+            contrailGraphModel.rankDir = rankDir;
+        } else if (contrailGraphModel.forceFit && !contrail.checkIfExist(contrailGraphModel.rankDir)) {
+            contrailGraphModel.rankDir = computeRankDir(response['nodes'], response['links']);
         }
 
         //TODO: We should not edit graohModel in generateElements
@@ -207,22 +211,37 @@ define([
         contrailGraphModel.rawData = response;
     };
 
-    function setElements2Model(contrailGraphModel, elementMap, elementsDataObj, rawData) {
+    function setCachedElementsInModel(contrailGraphModel, cachedGraphModel) {
+        var cachedCells = cachedGraphModel.getElements();
+        contrailGraphModel.elementMap = cachedGraphModel.elementMap;
         contrailGraphModel.beforeDataUpdate.notify();
-        contrailGraphModel.elementMap = elementMap;
-        contrailGraphModel.clear();
-        contrailGraphModel.addCells(elementsDataObj['elements']);
-        contrailGraphModel.elementsDataObj = elementsDataObj;
-        contrailGraphModel.rawData = rawData;
+
+        if (contrailGraphModel.forceFit) {
+            contrailGraphModel.rankDir = cachedGraphModel.rankDir;
+        }
+
+        contrailGraphModel.elementsDataObj = cachedGraphModel.elementsDataObj;
+        if(contrail.checkIfExist(cachedGraphModel.elementMap.linkedElements)) {
+            cachedCells = cachedCells.concat(cachedGraphModel.elementMap.linkedElements);
+        }
+
+        contrailGraphModel.resetCells(cachedCells);
+
+        contrailGraphModel.rawData = cachedGraphModel.rawData;
+        contrailGraphModel.directedGraphSize = cachedGraphModel.directedGraphSize;
+        contrailGraphModel.loadedFromCache = true;
     };
 
     function layoutGraph (contrailGraphModel) {
-        var elementsDataObj = contrailGraphModel.elementsDataObj;
-
         if (contrailGraphModel.forceFit) {
             //contrailGraphModel.directedGraphSize = GraphLayoutHandler.jointLayout(contrailGraphModel, getJointLayoutOptions(elementsObject['nodes'], elementsObject['links']));
             contrailGraphModel.directedGraphSize = GraphLayoutHandler.dagreLayout(contrailGraphModel, getDagreLayoutOptions(contrailGraphModel.rankDir));
         }
+    };
+
+    function addZoomElements2Graph (contrailGraphModel) {
+        var elementsDataObj = contrailGraphModel.elementsDataObj;
+
         if (contrail.checkIfExist(elementsDataObj['zoomedNodeElement'])) {
             var zoomedNodeElement = elementsDataObj['zoomedNodeElement'];
 
@@ -237,7 +256,7 @@ define([
             contrailGraphModel.addCells(elementsDataObj['zoomedElements']);
 
         }
-    }
+    };
 
     function bindDataHandler2Model(contrailGraphModel) {
         var contrailDataHandler = contrailGraphModel.contrailDataHandler;

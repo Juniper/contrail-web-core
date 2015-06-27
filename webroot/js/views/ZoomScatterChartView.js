@@ -93,10 +93,13 @@ define([
                 height = chartModel.height,
                 timer = null, circleRadius = chartConfig.circleRadius;
 
+        $(chartSelector).height(height + margin.top + margin.bottom)
+
             chartSVG = d3.select($(chartSelector)[0]).append("svg")
                 .attr("class", "zoom-scatter-chart")
                 .attr("width", width + margin.left + margin.right + circleRadius)
                 .attr("height", height + margin.top + margin.bottom)
+            .attr("viewbox", '0 0 ' + (width + margin.left + margin.right + circleRadius) + ' ' + (height + margin.top + margin.bottom))
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
                 .call(self.zm)
@@ -685,7 +688,8 @@ define([
             height: height,
             width: width,
             dataParser: chartOptions['dataParser'],
-            sizeFieldName: chartOptions['sizeFieldName']
+            sizeFieldName: chartOptions['sizeFieldName'],
+            noDataMessage: chartOptions['noDataMessage']
         };
 
         return chartViewConfig;

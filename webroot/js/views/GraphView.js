@@ -53,7 +53,7 @@ define([
                 }
 
                 initClickEvents(graphSelectorElement, clickEventsConfig, jointObject);
-                initMouseEvents(graphSelectorElement, tooltipConfig, jointObject)
+                initMouseEvents(graphSelectorElement, tooltipConfig, jointObject);
             });
 
             return self;

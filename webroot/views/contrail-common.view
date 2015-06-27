@@ -1105,7 +1105,7 @@
         </div>
         {{#if iconClass}}
             <div class="row-fluid">
-                <h1 class="not-found-icon"><i class="icon-frown"></i></h1>
+                <h1 class="not-found-icon"><i class="{{iconClass}}"></i></h1>
             </div>
         {{/if}}
         <div class="row-fluid not-found-text">

@@ -3,14 +3,13 @@
  */
 
 define([
-    'underscore',
     'js/views/FormInputView', 'js/views/FormGridView', 'js/views/FormDynamicGridView', 'js/views/FormMultiselectView',
     'js/views/FormDropdownView', 'js/views/FormSelect2DropdownView', 'js/views/FormCheckboxView',
     'js/views/AccordianView', 'js/views/SectionView', 'js/views/WizardView', 'js/views/FormEditableGridView',
     'js/views/GridInputView', 'js/views/GridCheckboxView', 'js/views/GridDropdownView', 'js/views/GridMultiselectView',
     'graph-view', 'js/views/TabsView', 'js/views/ChartView', 'js/views/GridView', 'js/views/DetailsView',
     'js/views/ScatterChartView', 'js/views/LineWithFocusChartView', 'js/views/HeatChartView', 'js/views/ZoomScatterChartView'
-], function (_, FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
+], function (FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
              AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
              GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView, LineWithFocusChartView, HeatChartView, ZoomScatterChartView) {
     var CoreUtils = function () {
