@@ -17,9 +17,7 @@ define([
     };
 
     var Cache = function () {
-        this.init = function () {
-            initProjectCache();
-        };
+        this.init = function () {};
 
         this.cleanCache = function(key) {
             this.set(key, {});
@@ -100,7 +98,7 @@ define([
             var listModelConfig = {
                 remote: {
                     ajaxConfig: {
-                        url: networkPopulateFns.getProjectsURL(domain)
+                        url: ctwc.getProjectsURL(domain)
                     },
                     dataParser: function(response) {
                         return  $.map(response.projects, function (n, i) {
@@ -167,24 +165,6 @@ define([
             return useCache;
         };
     };
-
-    function initProjectCache() {
-        var listModelConfig = {
-            remote: {
-                ajaxConfig: {
-                    url: networkPopulateFns.getProjectsURL(ctwc.DEFAULT_DOMAIN),
-                    type: 'GET'
-                },
-                hlRemoteConfig: ctwgc.getProjectDetailsHLazyRemoteConfig(),
-                dataParser: ctwp.projectDataParser
-            },
-            cacheConfig: {
-                ucid: ctwc.UCID_DEFAULT_DOMAIN_PROJECT_LIST //TODO: Handle multi-tenancy
-            }
-        };
-
-        //var contrailListModel = new ContrailListModel(listModelConfig);
-    }
 
     return Cache;
 });
