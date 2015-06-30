@@ -73,6 +73,7 @@ define([
 
         this.APP_CONTRAIL_CONTROLLER = "contrail-controller";
         this.APP_CONTRAIL_SM = "contrail-sm";
+        this.APP_CONTRAIL_STORAGE = "contrail-storage";
 
         this.COOKIE_DOMAIN = 'domain';
         this.COOKIE_PROJECT = 'project';

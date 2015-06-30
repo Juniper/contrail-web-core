@@ -32,6 +32,7 @@ var INST_PAGINATION_CNT = 50;
 var NETWORKS_PAGINATION_CNT = 25;
 // Need to move to controller.utils.js files once the functions are accessible globally
 var ctInitComplete = false;
+var sInitComplete = false;
 var sevLevels = {
     ERROR   : 0, //Red
     WARNING : 1, //Orange
@@ -3197,3 +3198,13 @@ function getIntrospectPaginationInfo(response) {
     return paginationInfo;
 }
 
+function check4StorageInit(callback) {
+    if (!sInitComplete) {
+        requirejs(['storage-init'], function () {
+            sInitComplete = true;
+            callback()
+        });
+    } else {
+        callback();
+    }
+};

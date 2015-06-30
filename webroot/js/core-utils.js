@@ -399,6 +399,8 @@ define([
                         ctwu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     } else if(app == cowc.APP_CONTRAIL_SM) {
                         smwru.renderView(viewName, parentElement, model, viewAttributes, modelMap);
+                    } else if(app == cowc.APP_CONTRAIL_STORAGE) {
+                        swu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     }
                     break;
             }
