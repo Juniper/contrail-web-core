@@ -631,11 +631,11 @@
 
         config.onFinished = function (event, currentIndex) {
             steps[currentIndex].onNext(config.params);
-        }
+        };
 
         self.steps(config);
 
-        self.find('.actions').find('a').addClass('btn btn-mini')
+        self.find('.actions').find('a').addClass('btn btn-mini');
         self.find('.actions').find('a[href="#next"]').addClass('btn-primary');
         self.find('.actions').find('a[href="#finish"]').addClass('btn-primary');
 
@@ -654,7 +654,7 @@
             else {
                 $(this).find('.number').text(++stepIndex);
             }
-        })
+        });
 
         function configureButton(buttons){
             self.find('.actions').find('a').parent('li[aria-hidden!="true"]').show();
@@ -670,11 +670,15 @@
             }
         }
 
-        self.data('contrailWizard', $.extend(true, {}, getDefaultStepsMethods(), {}));
+        self.data('contrailWizard', $.extend(true, {}, getDefaultStepsMethods(), {
+            'getStepsLength': function() {
+                return steps.length;
+            }
+        }));
 
         function getDefaultStepsMethods() {
             var methodObj = {},
-                defaultMethods = ['next', 'previous', 'finish', 'destroy', 'skip'];
+                defaultMethods = ['getCurrentStep', 'getCurrentIndex', 'next', 'previous', 'finish', 'destroy', 'skip'];
 
             $.each(defaultMethods, function (defaultMethodKey, defaultMethodValue) {
                 methodObj[defaultMethodValue] = function () {
@@ -848,6 +852,11 @@
     
     $.extend({
         contrailBootstrapModal:function (options) {
+            var keyupAction = $.extend(true, {}, {
+                onKeyupEnter: null,
+                onKeyupEsc: null
+            }, options.keyupAction);
+
             options.id = options.id != undefined ? options.id : '';
             var className = (options.className == null) ? '' : options.className;
 
@@ -883,6 +892,15 @@
 
             if(options.footer != false) {
                 $.each(options.footer, function (key, footerButton) {
+                    function performFooterBtnClick(footerButton) {
+                        if (typeof footerButton.onclick === 'function') {
+                            footerButton.onclick(footerButton.onClickParams);
+                        }
+                        else if (footerButton.onclick != 'close' && typeof footerButton.onclick === 'string') {
+                            window[footerButton.onclick](footerButton.onClickParams);
+                        }
+                    }
+
                     var btnId = (footerButton.id != undefined && footerButton.id != '') ? footerButton.id : options.id + 'btn' + key,
                         btn = '<button id="' + btnId + '" class="btn btn-mini ' + ((footerButton.className != undefined && footerButton.className != '') ? footerButton.className : '') + '"'
                             + ((footerButton.onclick === 'close') ? ' data-dismiss="modal" aria-hidden="true"' : '') + '>'
@@ -890,20 +908,38 @@
 
                     modalId.find('.modal-footer').append(btn);
                     $('#' + btnId).on('click', function () {
-                        if (typeof footerButton.onclick === 'function') {
-                            footerButton.onclick(footerButton.onClickParams);
-                        }
-                        else if (footerButton.onclick != 'close' && typeof footerButton.onclick === 'string') {
-                            window[footerButton.onclick](footerButton.onClickParams);
-                        }
+                        performFooterBtnClick(footerButton);
                     });
 
+                    if (!contrail.checkIfFunction(keyupAction.onKeyupEnter) && footerButton.onKeyupEnter) {
+                        keyupAction.onKeyupEnter = function () { performFooterBtnClick(footerButton); };
+                    } else if (!contrail.checkIfFunction(keyupAction.onKeyupEsc) && footerButton.onKeyupEsc) {
+                        keyupAction.onKeyupEsc = function () { performFooterBtnClick(footerButton); };
+                    }
                 });
             }
             else {
                 modalId.find('.modal-footer').remove();
             }
             modalId.modal({backdrop:'static', keyboard:false});
+
+            modalId.draggable({
+                handle: ".modal-header"
+            });
+
+            if (contrail.checkIfFunction(keyupAction.onKeyupEnter) || contrail.checkIfFunction(keyupAction.onKeyupEsc)) {
+                modalId.keyup(function(e) {
+                    var code = e.which; // recommended to use e.which, it's normalized across browsers
+                    if (code == 13) {
+                        e.preventDefault();
+                    }
+                    if (contrail.checkIfFunction(keyupAction.onKeyupEnter) && (code == 32 || code == 13 || code == 188 || code == 186)) {
+                        keyupAction.onKeyupEnter();
+                    } else if (contrail.checkIfFunction(keyupAction.onKeyupEsc) && (code == 27)) {
+                        keyupAction.onKeyupEsc();
+                    }
+                });
+            }
         }
     });
 })(jQuery);

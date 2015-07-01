@@ -192,6 +192,8 @@ Handlebars.registerHelper('getLabel', function (labelKey, feature) {
         return smwl.get(labelKey);
     } else if (feature == cowc.APP_CONTRAIL_CONTROLLER) {
         return ctwl.get(labelKey);
+    } else if (feature == cowc.APP_CONTRAIL_STORAGE) {
+        return swl.get(labelKey);
     }
 });
 

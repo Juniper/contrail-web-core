@@ -80,19 +80,18 @@ define([
                         title: 'Cancel',
                         onclick: function () {
                             options['onCancel']();
-                        }
+                        },
+                        onKeyupEsc: true
                     },
                     {
                         className: 'btn-primary btnSave',
                         title: (options['btnName']) ? options['btnName'] : 'Save',
                         onclick: function () {
                             options['onSave']();
-                        }
+                        },
+                        onKeyupEnter: true
                     }
-                ],
-                onEnter: function () {
-                    options['onCancel']();
-                }
+                ]
             });
         };
 
@@ -104,8 +103,13 @@ define([
                 title: options['title'],
                 body: options['body'],
                 footer: false,
-                onEnter: function () {
-                    options['onCancel']();
+                keyupAction: {
+                    onKeyupEnter: function() {
+                        options['onSave']();
+                    },
+                    onKeyupEsc: function() {
+                        options['onCancel']();
+                    }
                 }
             });
         };
@@ -399,6 +403,8 @@ define([
                         ctwu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     } else if(app == cowc.APP_CONTRAIL_SM) {
                         smwru.renderView(viewName, parentElement, model, viewAttributes, modelMap);
+                    } else if(app == cowc.APP_CONTRAIL_STORAGE) {
+                        swu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     }
                     break;
             }

@@ -34,19 +34,17 @@ define([
                     self.renderChart(selector, viewConfig, self.model);
                 });
 
-                if (viewConfig.loadChartInChunks) {
+                if (viewConfig.loadChartInChunks !== false) {
                     self.model.onDataUpdate.subscribe(function () {
                         self.renderChart(selector, viewConfig, self.model);
                     });
                 }
 
                 $(selector).bind("refresh", function () {
-                    $(selector).empty();
                     self.renderChart(selector, viewConfig, self.model);
                 });
 
                 nv.utils.windowResize(function () {
-                    $(selector).empty();
                     self.renderChart(selector, viewConfig, self.model);
                 });
             }
@@ -57,205 +55,226 @@ define([
                 return;
             }
 
-            this.renderChartInProgress = true;
-            $(selector).html(contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART));
-
             var self = this,
-                chartSelector = $(selector).find('.chart-container'),
-                chartControlPanelSelector = $(selector).find('.chart-control-panel-container'),
-                chartControlPanelExpandedSelector = $(selector).find('.chart-control-panel-expanded-container'),
                 chartOptions = viewConfig['chartOptions'],
-                chartConfig = getChartConfig(chartSelector, chartOptions),
-                chartModel = new ZoomScatterChartModel(dataListModel, chartConfig),
-                chartData = chartModel.data,
-                zoomBySelection = false,
-                zm = chartModel.zoomBehavior.on("zoom", getChartZoomFn(self, chartModel, chartConfig)),
-                tooltipConfigCB = chartOptions.tooltipConfigCB,
-                clickCB = chartOptions.clickCB,
-                overlapMap = getOverlapMap(chartData);
+                chartConfig;
 
-            self.zm = zm;
-            self.zoomBySelection = zoomBySelection;
+            self.renderChartInProgress = true;
 
-            var viewAttributes = {
-                    viewConfig: getControlPanelConfig(self, chartModel, chartConfig, chartOptions, chartControlPanelExpandedSelector)
-                },
-                controlPanelView = new ControlPanelView({
-                    el: chartControlPanelSelector,
-                    attributes: viewAttributes
-                });
+            if (!contrail.checkIfExist(self.chartModel)) {
+                $(selector).html(contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART));
 
-            controlPanelView.render();
+                chartConfig = getChartConfig(selector, chartOptions);
+                self.chartModel = new ZoomScatterChartModel(dataListModel, chartConfig);
+                self.zm = self.chartModel.zoomBehavior.on("zoom", getChartZoomFn(self, chartConfig));
+                self.zoomBySelection = false;
+                renderControlPanel(self, chartConfig, chartOptions, selector);
+            } else {
+                $(selector).find('.chart-container').empty();
+                chartConfig = getChartConfig(selector, chartOptions);
+                self.chartModel.refresh();
+                self.zm = self.chartModel.zoomBehavior.on("zoom", getChartZoomFn(self, chartConfig));
+                self.zoomBySelection = false;
+            }
 
-            var chartSVG, viewObjects,
-                margin = chartConfig['margin'],
-                width = chartModel.width,
-                height = chartModel.height,
-                timer = null, circleRadius = chartConfig.circleRadius;
-
-        $(chartSelector).height(height + margin.top + margin.bottom)
-
-            chartSVG = d3.select($(chartSelector)[0]).append("svg")
-                .attr("class", "zoom-scatter-chart")
-                .attr("width", width + margin.left + margin.right + circleRadius)
-                .attr("height", height + margin.top + margin.bottom)
-            .attr("viewbox", '0 0 ' + (width + margin.left + margin.right + circleRadius) + ' ' + (height + margin.top + margin.bottom))
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                .call(self.zm)
-                .append("g")
-                .on("mousedown", mouseDownCallback);
-
-            chartSVG.append("rect")
-                .attr("width", width + circleRadius)
-                .attr("height", height)
-                .append("g")
-                .attr("transform", "translate(" + circleRadius + ",0)")
-
-
-            chartSVG.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(" + circleRadius + "," + height + ")")
-                .call(chartModel.xAxis)
-                .selectAll("text")
-                .attr("x", 0)
-                .attr("y", 8);
-
-            chartSVG.append("g")
-                .attr("class", "y axis")
-                .attr("transform", "translate(" + circleRadius + ",0)")
-                .call(chartModel.yAxis)
-                .selectAll("text")
-                .attr("x", -8)
-                .attr("y", 0);
-
-            viewObjects = chartSVG.append("svg")
-                .attr("class", "objects")
-                .attr("width", width + circleRadius)
-                .attr("height", height + circleRadius);
-
-            viewObjects.selectAll("circle")
-                .data(chartData)
-                .enter()
-                .append("circle")
-                .attr("r", function (d) {
-                    return d['size'];
-                })
-                .attr("class", function (d) {
-                    return getBubbleColor(d[chartConfig.colorFilterFields], chartModel.classes, chartModel.maxColorFilterFields);
-                })
-                .attr("transform", function (d) {
-                    return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
-                })
-                .attr("opacity", "0.6")
-                .on("mouseenter", function (d) {
-                        var tooltipData = d,
-                        selfOffset = $(this).offset(),
-                        tooltipConfig = tooltipConfigCB(tooltipData);
-
-                    clearTimeout(timer);
-                    timer = setTimeout(function () {
-                        constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
-                    }, contrail.handleIfNull(tooltipConfig.delay, cowc.TOOLTIP_DELAY));
-                })
-                .on("mouseleave", function (d) {
-                    clearTimeout(timer);
-                })
-                .on("click", function (d) {
-                    clearTimeout(timer);
-                    clickCB(d);
-                });
-
-            chartSVG.append("text")
-                .attr("class", "x label")
-                .attr("text-anchor", "end")
-                .attr("x", width)
-                .attr("y", height + margin.bottom - 10)
-                .text(chartConfig.xLabel);
-
-            chartSVG.append("text")
-                .attr("class", "y label")
-                .attr("text-anchor", "end")
-                .attr("y", -margin.left)
-                .attr("x", 0)
-                .attr("dy", ".75em")
-                .attr("transform", "rotate(-90)")
-                .text(chartConfig.yLabel);
-
-            self.svg = chartSVG;
-            self.viewObjects = viewObjects;
-
-            renderChartMessage(chartSVG, chartModel);
-
-            function mouseDownCallback() {
-                if (!self.zoomBySelection) return;
-                destroyTooltip(null);
-
-                var e = this,
-                    origin = d3.mouse(e),
-                    rect = chartSVG.append("rect").attr("class", "zoom");
-                d3.select("body").classed("noselect", true);
-                origin[0] = Math.max(0, Math.min(width, origin[0]));
-                origin[1] = Math.max(0, Math.min(height, origin[1]));
-                d3.select(window)
-                    .on("mousemove.zoomRect", function () {
-                        destroyTooltip(null);
-
-                        var m = d3.mouse(e);
-                        m[0] = Math.max(0, Math.min(width, m[0]));
-                        m[1] = Math.max(0, Math.min(height, m[1]));
-                        rect.attr("x", Math.min(origin[0], m[0]))
-                            .attr("y", Math.min(origin[1], m[1]))
-                            .attr("width", Math.abs(m[0] - origin[0]))
-                            .attr("height", Math.abs(m[1] - origin[1]));
-                    })
-                    .on("mouseup.zoomRect", function () {
-                        destroyTooltip(null);
-
-                        d3.select(window).on("mousemove.zoomRect", null).on("mouseup.zoomRect", null);
-                        d3.select("body").classed("noselect", false);
-                        var m = d3.mouse(e);
-                        m[0] = Math.max(0, Math.min(width, m[0]));
-                        m[1] = Math.max(0, Math.min(height, m[1]));
-                        if (m[0] !== origin[0] && m[1] !== origin[1]) {
-                            chartModel.zoomBehavior.x(
-                                chartModel.xScale.domain([origin[0], m[0]].map(chartModel.xScale.invert).sort(function (a, b) {
-                                    return a - b;
-                                }))
-                            )
-                                .y(
-                                chartModel.yScale.domain([origin[1], m[1]].map(chartModel.yScale.invert).sort(function (a, b) {
-                                    return a - b;
-                                }))
-                            );
-                        }
-                        rect.remove();
-
-                        chartSVG.select(".x.axis")
-                            .call(chartModel.xAxis)
-                            .selectAll("text")
-                            .attr("x", 0)
-                            .attr("y", 8);
-
-                        chartSVG.select(".y.axis")
-                            .call(chartModel.yAxis)
-                            .selectAll("text")
-                            .attr("x", -8)
-                            .attr("y", 0);
-
-                        chartSVG.selectAll("circle").attr("transform", function (d) {
-                            return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
-                        });
-                    }, true);
-                d3.event.stopPropagation();
-            };
-
-            this.renderChartInProgress = false;
+            renderZoomScatterChart(self, chartConfig, chartOptions, selector);
         }
     });
 
-    function renderChartMessage(chartSVG, chartModel) {
-        var chartData = chartModel.data,
+    function renderControlPanel(chartView, chartConfig, chartOptions, selector) {
+        var chartControlPanelSelector = $(selector).find('.chart-control-panel-container'),
+            viewAttributes = {
+                viewConfig: getControlPanelConfig(chartView, chartConfig, chartOptions, selector)
+            },
+            controlPanelView = new ControlPanelView({
+                el: chartControlPanelSelector,
+                attributes: viewAttributes
+            });
+
+        controlPanelView.render();
+    };
+
+    function renderZoomScatterChart(chartView, chartConfig, chartOptions, selector) {
+        var chartSVG, viewObjects,
+            chartSelector = $(selector).find('.chart-container'),
+            chartControlPanelSelector = $(selector).find('.chart-control-panel-container'),
+            chartModel = chartView.chartModel,
+            chartData = chartModel.data,
+            tooltipConfigCB = chartOptions.tooltipConfigCB,
+            clickCB = chartOptions.clickCB,
+            overlapMap = getOverlapMap(chartData),
+            margin = chartConfig['margin'],
+            width = chartModel.width,
+            height = chartModel.height,
+            timer = null, circleRadius = chartConfig.circleRadius;
+
+        $(chartSelector).height(height + margin.top + margin.bottom)
+        $(chartControlPanelSelector).find('.control-panel-item').removeClass('active');
+
+        chartSVG = d3.select($(chartSelector)[0]).append("svg")
+            .attr("class", "zoom-scatter-chart")
+            .attr("width", width + margin.left + margin.right + circleRadius)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("viewbox", '0 0 ' + (width + margin.left + margin.right + circleRadius) + ' ' + (height + margin.top + margin.bottom))
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .call(chartView.zm)
+            .append("g")
+            .on("mousedown", mouseDownCallback);
+
+        chartSVG.append("rect")
+            .attr("width", width + circleRadius)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(" + circleRadius + ",0)")
+
+        chartSVG.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(" + circleRadius + "," + height + ")")
+            .call(chartModel.xAxis)
+            .selectAll("text")
+            .attr("x", 0)
+            .attr("y", 8);
+
+        chartSVG.append("g")
+            .attr("class", "y axis")
+            .attr("transform", "translate(" + circleRadius + ",0)")
+            .call(chartModel.yAxis)
+            .selectAll("text")
+            .attr("x", -8)
+            .attr("y", 0);
+
+        viewObjects = chartSVG.append("svg")
+            .attr("class", "objects")
+            .attr("width", width + circleRadius)
+            .attr("height", height + circleRadius);
+
+        viewObjects.selectAll("circle")
+            .data(chartData)
+            .enter()
+            .append("circle")
+            .attr("r", function (d) {
+                return d['size'];
+            })
+            .attr("class", function (d) {
+                return getBubbleColor(d[chartConfig.colorFilterFields], chartModel.classes, chartModel.maxColorFilterFields);
+            })
+            .attr("transform", function (d) {
+                return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+            })
+            .attr("opacity", "0.6")
+            .on("mouseenter", function (d) {
+                var tooltipData = d,
+                    selfOffset = $(this).offset(),
+                    tooltipConfig = tooltipConfigCB(tooltipData);
+
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                    constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
+                }, contrail.handleIfNull(tooltipConfig.delay, cowc.TOOLTIP_DELAY));
+            })
+            .on("mouseleave", function (d) {
+                clearTimeout(timer);
+            })
+            .on("click", function (d) {
+                clearTimeout(timer);
+                clickCB(d);
+            });
+
+        chartSVG.append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "end")
+            .attr("x", width)
+            .attr("y", height + margin.bottom - 10)
+            .text(chartConfig.xLabel);
+
+        chartSVG.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("y", -margin.left)
+            .attr("x", 0)
+            .attr("dy", ".75em")
+            .attr("transform", "rotate(-90)")
+            .text(chartConfig.yLabel);
+
+        chartView.svg = chartSVG;
+        chartView.viewObjects = viewObjects;
+
+        renderChartMessage(chartView);
+
+        function mouseDownCallback() {
+            if (!chartView.zoomBySelection) {
+                return;
+            }
+
+            destroyTooltip(null);
+
+            var e = this,
+                origin = d3.mouse(e),
+                rect = chartSVG.append("rect").attr("class", "zoom");
+            d3.select("body").classed("noselect", true);
+            origin[0] = Math.max(0, Math.min(width, origin[0]));
+            origin[1] = Math.max(0, Math.min(height, origin[1]));
+            d3.select(window)
+                .on("mousemove.zoomRect", function () {
+                    destroyTooltip(null);
+
+                    var m = d3.mouse(e);
+                    m[0] = Math.max(0, Math.min(width, m[0]));
+                    m[1] = Math.max(0, Math.min(height, m[1]));
+                    rect.attr("x", Math.min(origin[0], m[0]))
+                        .attr("y", Math.min(origin[1], m[1]))
+                        .attr("width", Math.abs(m[0] - origin[0]))
+                        .attr("height", Math.abs(m[1] - origin[1]));
+                })
+                .on("mouseup.zoomRect", function () {
+                    destroyTooltip(null);
+
+                    d3.select(window).on("mousemove.zoomRect", null).on("mouseup.zoomRect", null);
+                    d3.select("body").classed("noselect", false);
+                    var m = d3.mouse(e);
+                    m[0] = Math.max(0, Math.min(width, m[0]));
+                    m[1] = Math.max(0, Math.min(height, m[1]));
+                    if (m[0] !== origin[0] && m[1] !== origin[1]) {
+                        chartModel.zoomBehavior.x(
+                            chartModel.xScale.domain([origin[0], m[0]].map(chartModel.xScale.invert).sort(function (a, b) {
+                                return a - b;
+                            }))
+                        )
+                            .y(
+                            chartModel.yScale.domain([origin[1], m[1]].map(chartModel.yScale.invert).sort(function (a, b) {
+                                return a - b;
+                            }))
+                        );
+                    }
+                    rect.remove();
+
+                    chartSVG.select(".x.axis")
+                        .call(chartModel.xAxis)
+                        .selectAll("text")
+                        .attr("x", 0)
+                        .attr("y", 8);
+
+                    chartSVG.select(".y.axis")
+                        .call(chartModel.yAxis)
+                        .selectAll("text")
+                        .attr("x", -8)
+                        .attr("y", 0);
+
+                    chartSVG.selectAll("circle").attr("transform", function (d) {
+                        return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                    });
+                }, true);
+            d3.event.stopPropagation();
+        };
+
+        chartView.renderChartInProgress = false;
+    }
+
+    function renderChartMessage(chartView) {
+        var chartSVG = chartView.svg,
+            chartModel = chartView.chartModel,
+            chartData = chartModel.data,
             margin = chartModel.margin;
 
         if (!chartData || !chartData.length) {
@@ -276,8 +295,10 @@ define([
         }
     };
 
-    function getChartZoomFn(chartView, chartModel, chartConfig) {
+    function getChartZoomFn(chartView, chartConfig) {
         return function () {
+            var chartModel = chartView.chartModel;
+
             //Restrict translation to 0 value
             var reset_s = 0;
             if ((chartModel.xScale.domain()[1] - chartModel.xScale.domain()[0]) >= (chartModel.xMax - chartModel.xMin)) {
@@ -328,30 +349,28 @@ define([
         };
     };
 
-    function initZoomEvents(controlPanelSelector, chartView, chartModel, chartConfig) {
-        var zm = chartView.zm,
-            zoomFn = getChartZoomFn(chartView, chartModel, chartConfig);
+    function initZoomEvents(controlPanelSelector, chartView, chartConfig) {
+        var zoomFn = getChartZoomFn(chartView, chartConfig);
 
         $(controlPanelSelector).find('.zoom-in').on('click', function (event) {
             event.preventDefault();
-            if (zm.scale() < chartConfig.maxScale) {
-                //zm.translate([translateChart(0, -10), translateChart(1, -350)]);
-                zm.scale(zm.scale() * (1.25));
+            if (chartView.zm.scale() < chartConfig.maxScale) {
+                chartView.zm.scale(chartView.zm.scale() * (1.25));
                 zoomFn();
             }
         });
 
         $(controlPanelSelector).find('.zoom-out').on('click', function (event) {
             event.preventDefault();
-            if (zm.scale() > chartConfig.minScale) {
-                zm.scale(zm.scale() * (100 / 125));
-                //zm.translate([translateChart(0, 10), translateChart(1, 350)]);
+            if (chartView.zm.scale() > chartConfig.minScale) {
+                chartView.zm.scale(chartView.zm.scale() * (100 / 125));
                 zoomFn();
             }
         });
 
         $(controlPanelSelector).find('.zoom-reset').on('click', function (event) {
             event.preventDefault();
+            var chartModel = chartView.chartModel;
             chartModel.zoomBehavior
                 .x(chartModel.xScale.domain([chartModel.xMin, chartModel.xMax]).range([0, chartModel.width]))
                 .y(chartModel.yScale.domain([chartModel.yMin, chartModel.yMax]).range([chartModel.height, 0]));
@@ -372,49 +391,49 @@ define([
                     return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                 });
 
-            zm.scale(1);
-            zm.translate([0, 0]);
-            //zoomFn();
+            chartView.zm.scale(1);
+            chartView.zm.translate([0, 0]);
         });
 
         function translateChart(xy, constant) {
-            return zm.translate()[xy] + (constant * (zm.scale()));
+            return chartView.zm.translate()[xy] + (constant * (chartView.zm.scale()));
         };
     };
 
-    function getControlPanelConfig(chartView, chartModel, chartConfig, chartOptions, chartControlPanelExpandedSelector) {
-        var controlPanelConfig = {
-            default: {
-                zoom: {
-                    enabled: true,
-                    events: function (controlPanelSelector) {
-                        initZoomEvents(controlPanelSelector, chartView, chartModel, chartConfig)
+    function getControlPanelConfig(chartView, chartConfig, chartOptions, selector) {
+        var chartControlPanelExpandedSelector = $(selector).find('.chart-control-panel-expanded-container'),
+            controlPanelConfig = {
+                default: {
+                    zoom: {
+                        enabled: true,
+                        events: function (controlPanelSelector) {
+                            initZoomEvents(controlPanelSelector, chartView, chartConfig)
+                        }
                     }
-                }
-            },
-            custom: {
-                zoomBySelectedArea: {
-                    iconClass: 'icon-crop',
-                    title: 'Zoom By Selection',
-                    events: {
-                        click: function (event, self, controlPanelSelector) {
-                            chartView.zoomBySelection = !chartView.zoomBySelection;
-                            $(self).toggleClass('active');
-                            $(self).removeClass('refreshing');
-                            if ($(self).hasClass('active')) {
-                                $('svg.zoom-scatter-chart').find('rect').addClassSVG('cursor-crosshair');
-                            } else {
-                                $('svg.zoom-scatter-chart').find('rect').removeClassSVG('cursor-crosshair');
+                },
+                custom: {
+                    zoomBySelectedArea: {
+                        iconClass: 'icon-crop',
+                        title: 'Zoom By Selection',
+                        events: {
+                            click: function (event, self, controlPanelSelector) {
+                                chartView.zoomBySelection = !chartView.zoomBySelection;
+                                $(self).toggleClass('active');
+                                $(self).removeClass('refreshing');
+                                if ($(self).hasClass('active')) {
+                                    $('svg.zoom-scatter-chart').find('rect').addClassSVG('cursor-crosshair');
+                                } else {
+                                    $('svg.zoom-scatter-chart').find('rect').removeClassSVG('cursor-crosshair');
+                                    $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
+                                }
                             }
-                            $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
                         }
                     }
                 }
-            }
-        };
+            };
 
         if(contrail.checkIfKeyExistInObject(true, chartOptions, 'controlPanelConfig.filter.enable') && chartOptions.controlPanelConfig.filter.enable) {
-            controlPanelConfig.custom.filter = getControlPanelFilterConfig(chartOptions.controlPanelConfig.filter, chartControlPanelExpandedSelector)
+            controlPanelConfig.custom.filter = getControlPanelFilterConfig(chartOptions.controlPanelConfig.filter, chartControlPanelExpandedSelector, chartView.model)
         }
 
         if(contrail.checkIfKeyExistInObject(true, chartOptions, 'controlPanelConfig.legend.enable') && chartOptions.controlPanelConfig.legend.enable) {
@@ -424,38 +443,85 @@ define([
         return controlPanelConfig;
     };
 
-    var getControlPanelFilterConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector) {
+    var getControlPanelFilterConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector, listModel) {
+        var scatterFilterFn = function(item, args) {
+            if (args.itemCheckedLength == 0) {
+                return true;
+            } else if (args.itemValue.filterFn(item)) {
+                return args.itemChecked;
+            } else {
+                return true;
+            }
+        };
+
         return {
             iconClass: 'icon-filter',
                 title: 'Filter',
             events: {
-                click: function () {
-                    return function (event) {
-                        var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_FILTER),
-                            controlPanelExpandedTemplateConfig = customControlPanelFilterConfig.viewConfig,
-                            self = this;
+                click: function (event, self, controlPanelSelector) {
+                    var controlPanelExpandedTemplateConfig = customControlPanelFilterConfig.viewConfig;
 
-                        $(self).toggleClass('active');
-                        chartControlPanelExpandedSelector.toggle();
+                    if (chartControlPanelExpandedSelector.find('.control-panel-filter-container').length == 0) {
+                        var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_FILTER);
 
-                        if (chartControlPanelExpandedSelector.is(':visible')) {
-                            chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
+                        chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
+                    }
 
-                            $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
-                                $.each(groupValue.items, function (itemKey, itemValue) {
-                                    $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
-                                        .on('click', itemValue.events.click);
-                                });
+                    $(self).toggleClass('active');
+                    $(self).toggleClass('refreshing');
+
+                    chartControlPanelExpandedSelector.toggle();
+
+                    if (chartControlPanelExpandedSelector.is(':visible')) {
+                        $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
+                            $.each(groupValue.items, function (itemKey, itemValue) {
+                                $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
+                                    .off('click')
+                                    .on('click', function (event) {
+                                        var itemChecked = $(this).is(':checked'),
+                                            itemCheckedLength = $('#control-panel-filter-group-items-' + groupValue.id).find('input:checked').length,
+                                            scatterFilterArgs = {
+                                                itemChecked: itemChecked,
+                                                itemCheckedLength: itemCheckedLength,
+                                                itemValue: itemValue
+                                            };
+
+
+                                        if (itemCheckedLength == 0) {
+                                            $('#control-panel-filter-group-items-' + groupValue.id).find('input').prop('checked', true);
+                                        }
+
+                                        listModel.setFilterArgs(scatterFilterArgs);
+                                        listModel.setFilter(scatterFilterFn);
+
+                                        if (contrail.checkIfKeyExistInObject(true, itemValue, 'events.click')) {
+                                            itemValue.events.click(event)
+                                        }
+                                    });
+                            });
+                        });
+
+                        chartControlPanelExpandedSelector.find('.control-panel-filter-close')
+                            .off('click')
+                            .on('click', function() {
+                                chartControlPanelExpandedSelector.hide();
+                                $(self).removeClass('active');
+                                $(self).removeClass('refreshing');
+                                $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
                             });
 
-                            chartControlPanelExpandedSelector.find('.control-panel-filter-close')
-                                .off('click')
-                                .on('click', function() {
-                                    chartControlPanelExpandedSelector.hide();
-                                    $(self).removeClass('active');
+                        chartControlPanelExpandedSelector.find('.control-panel-group-filter-title')
+                            .off('click')
+                            .on('click', function() {
+                                listModel.setFilter(function(item) {
+                                    return true;
                                 });
-                        }
-                    };
+
+                                $(this).parent().find('.control-panel-filter-group-items').find('input').prop('checked', true);
+                            });
+                    } else {
+                        $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
+                    }
                 }
             }
         };
@@ -466,34 +532,33 @@ define([
             iconClass: 'icon-info-sign',
             title: 'Information',
             events: {
-                click: function () {
-                    return function (event) {
-                        var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_LEGEND),
-                            controlPanelExpandedTemplateConfig = customControlPanelFilterConfig.viewConfig,
-                            self = this;
+                click: function (event, self, controlPanelSelector) {
+                    var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_LEGEND),
+                        controlPanelExpandedTemplateConfig = customControlPanelFilterConfig.viewConfig;
 
-                        $(self).toggleClass('active');
-                        chartControlPanelExpandedSelector.toggle();
+                    $(self).toggleClass('active');
+                    chartControlPanelExpandedSelector.toggle();
 
-                        if (chartControlPanelExpandedSelector.is(':visible')) {
-                            chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
+                    if (chartControlPanelExpandedSelector.is(':visible')) {
+                        chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
 
-                            $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
-                                $.each(groupValue.items, function (itemKey, itemValue) {
-                                    $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
-                                        .on('click', itemValue.events.click);
-                                });
+                        $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
+                            $.each(groupValue.items, function (itemKey, itemValue) {
+                                $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
+                                    .on('click', itemValue.events.click);
                             });
+                        });
 
-                            chartControlPanelExpandedSelector.find('.control-panel-legend-close')
-                                .off('click')
-                                .on('click', function() {
-                                    chartControlPanelExpandedSelector.hide();
-                                    $(self).removeClass('active');
-                                });
-                        }
+                        chartControlPanelExpandedSelector.find('.control-panel-legend-close')
+                            .off('click')
+                            .on('click', function() {
+                                chartControlPanelExpandedSelector.hide();
+                                $(self).removeClass('active');
+                                $(self).removeClass('refreshing');
+                                $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
 
-                    };
+                            });
+                    }
                 }
             }
         };
@@ -664,8 +729,9 @@ define([
         }
     };
 
-    function getChartConfig(chartSelector, chartOptions) {
+    function getChartConfig(selector, chartOptions) {
         var margin = $.extend(true, {}, {top: 20, right: 5, bottom: 50, left: 50}, chartOptions['margin']),
+            chartSelector = $(selector).find('.chart-container'),
             width = $(chartSelector).width() - 10,
             height = 275;
 

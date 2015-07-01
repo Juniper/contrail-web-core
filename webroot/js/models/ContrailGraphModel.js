@@ -10,7 +10,6 @@ define([
     var ContrailGraphModel = joint.dia.Graph.extend({
         error: false,
         errorList: [],
-        rankDir: "LR",
         initialize: function (graphModelConfig) {
             var defaultCacheConfig = {
                 cacheConfig: {

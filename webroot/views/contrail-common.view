@@ -1150,9 +1150,10 @@
             </div>
             <div class="col2 chart-control-panel-container">
             </div>
+            <div class="chart-control-panel-expanded-container hide"></div>
         </div>
     </div>
-    <div class="chart-control-panel-expanded-container hide"></div>
+
 </script>
 
 <script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-control-panel-filter-template">
@@ -1160,23 +1161,27 @@
         <div class="row-fluid">
             <p class="control-panel-filter-title">
                 <span class="pull-left control-panel-filter-title-icon"><i class="icon-filter"></i></span>
-                <span class="pull-left control-panel-filter-title-text">Filter Chart</span>
+                <span class="pull-left control-panel-filter-title-text">Filter</span>
                 <span class="pull-right control-panel-filter-close"><i class="icon-remove"></i></span>
             </p>
         </div>
         <div class="row-fluid control-panel-filter-body">
             {{#each groups}}
             <div class="control-panel-filter-group margin-10">
-                <h6 class="control-panel-group-filter-title">{{title}}</h6>
+                {{#IfCompare title false operator='!='}}
+                    <h6 class="control-panel-group-filter-title">{{title}}</h6>
+                {{/IfCompare}}
                 <div id="control-panel-filter-group-items-{{id}}" class="row-fluid control-panel-filter-group-items padding-5-0;">
 
-                {{#IfCompare type 'radio' operator='=='}}
+                {{#IfCompare type 'checkbox-circle' operator='=='}}
                     {{#each items}}
-                    <div class="control-panel-filter-group-item padding-5-0">
-                        <input type="radio" name="control-panel-filter" class="ace-input"/><span class="ace-lbl {{labelCssClass}}"> {{text}}</span>
-                    </div>
+                        <div class="control-panel-filter-group-item padding-5-0">
+                            <input type="checkbox" name="control-panel-filter" class="ace-input checkbox-circle" checked/>
+                            <span class="ace-lbl checkbox-circle {{labelCssClass}}"> {{text}}</span>
+                        </div>
                     {{/each}}
                 {{/IfCompare}}
+
                 </div>
             </div>
             {{/each}}
@@ -1189,7 +1194,7 @@
         <div class="row-fluid">
             <p class="control-panel-legend-title">
                 <span class="pull-left control-panel-legend-title-icon"><i class="icon-info-sign"></i></span>
-                <span class="pull-left control-panel-legend-title-text">Chart Information</span>
+                <span class="pull-left control-panel-legend-title-text">Information</span>
                 <span class="pull-right control-panel-legend-close"><i class="icon-remove"></i></span>
             </p>
         </div>
@@ -1197,10 +1202,10 @@
             {{#each groups}}
             <div class="control-panel-legend-group padding-10">
                 <h6 class="control-panel-group-legend-title">{{title}}</h6>
-                <div id="control-panel-filter-group-items-{{id}}" class="row-fluid control-panel-filter-group-items padding-5-0;">
+                <div id="control-panel-legend-group-items-{{id}}" class="row-fluid control-panel-legend-group-items padding-5-0;">
 
                 {{#each items}}
-                    <div class="control-panel-filter-group-item padding-5-0">
+                    <div class="control-panel-legend-group-item padding-5-0">
                         <i class="{{labelCssClass}}"></i> &nbsp;{{text}}
                     </div>
                 {{/each}}

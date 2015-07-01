@@ -131,6 +131,18 @@
     content: "\e61a";
 }
 
+.icon-contrail-storage-node:before {
+    content: "\e609";
+}
+
+.icon-contrail-storage-disk:before {
+    content: "";
+}
+
+.icon-contrail-storage-monitor:before {
+    content: "";
+}
+
 @font-face {
     font-family: 'contrail-core';
     src:url('/css/fonts/contrail-core.eot?e1umid');
