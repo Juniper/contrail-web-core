@@ -771,7 +771,7 @@
                             self.find('select').multiselect('close');
                         })
                     }
-                })
+                });
 
                 multiSelectMenu.append(msControls);
             }
@@ -924,7 +924,9 @@
             modalId.modal({backdrop:'static', keyboard:false});
 
             modalId.draggable({
-                handle: ".modal-header"
+                handle: ".modal-header",
+                containment: 'body',
+                cursor: 'move'
             });
 
             if (contrail.checkIfFunction(keyupAction.onKeyupEnter) || contrail.checkIfFunction(keyupAction.onKeyupEsc)) {
