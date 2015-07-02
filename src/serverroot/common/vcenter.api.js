@@ -8,7 +8,7 @@
 
 var global = require('./global');
 var assert = require('assert');
-var config = require('../../../config/config.global');
+var config = process.mainModule.exports["config"];
 var plugins = require('../orchestration/plugins/plugins.api');
 var soap = require('./soap.api');
 var fs = require('fs');
