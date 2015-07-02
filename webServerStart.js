@@ -2,9 +2,28 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
+var assert = require('assert');
+var logutils = require('./src/serverroot/utils/log.utils');
+var args = process.argv.slice(2);
+var argsCnt = args.length;
+for (var i = 0; i < argsCnt; i++) {
+    if (('--c' == args[i]) || ('--conf_file' == args[i])) {
+        if (null == args[i + 1]) {
+            logutils.logger.error('Config file not provided');
+            assert(0);
+        } else {
+            break;
+        }
+    }
+}
+var configFile = null;
+if (argsCnt > 0) {
+    configFile = args[i + 1];
+}
 /* Set corePath before loading any other module */
 var corePath = process.cwd();
-var config = require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig();
+var config =
+    require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig(configFile);
 exports.corePath = corePath;
 exports.config = config;
 
@@ -31,7 +50,6 @@ var express = require('express')
     , http = require('http')
     , https = require("https")
     , underscore = require('underscore')
-    , logutils = require('./src/serverroot/utils/log.utils')
     , cluster = require('cluster')
     , axon = require('axon')
     , producerSock = axon.socket('push')
