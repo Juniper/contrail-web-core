@@ -1,10 +1,38 @@
 /*
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
+var assert = require('assert');
+var logutils = require('./src/serverroot/utils/log.utils');
+var args = process.argv.slice(2);
+var argsCnt = args.length;
+var configFile = null;
+for (var i = 0; i < argsCnt; i++) {
+    if (('--c' == args[i]) || ('--conf_file' == args[i])) {
+        if (null == args[i + 1]) {
+            logutils.logger.error('Config file not provided');
+            assert(0);
+        } else {
+            configFile = args[i + 1];
+            try {
+                var tmpConfig = require(configFile);
+                if ((null == tmpConfig) || (typeof tmpConfig !== 'object')) {
+                    logutils.logger.error('Config file ' + configFile + ' is not valid');
+                    assert(0);
+                }
+                break;
+            } catch(e) {
+                logutils.logger.error('Config file ' + configFile + ' not found');
+                assert(0);
+            }
+        }
+    }
+}
 
 /* Set corePath before loading any other module */
 var corePath = process.cwd();
-var config = require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig();
+var config =
+    require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig(configFile);
+
 exports.corePath = corePath;
 exports.config = config;
 
@@ -31,7 +59,6 @@ var express = require('express')
     , http = require('http')
     , https = require("https")
     , underscore = require('underscore')
-    , logutils = require('./src/serverroot/utils/log.utils')
     , cluster = require('cluster')
     , axon = require('axon')
     , producerSock = axon.socket('push')

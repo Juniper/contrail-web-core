@@ -965,35 +965,34 @@ function MenuHandler() {
     //onHashChange is triggered once it is resolved
     self.deferredObj = $.Deferred();
     var menuDefferedObj = $.Deferred(),statDefferredObj = $.Deferred(),webServerDefObj = $.Deferred();
-
+var featurePkgToMenuNameMap = {
+    'webController': 'wc',
+    'webStorage': 'ws',
+    'serverManager': 'sm'
+};
     this.loadMenu = function () {
-        $.get('/menu.xml?built_at=' + built_at, function (xml) {
-            $.get('/api/admin/webconfig/features/disabled?built_at=' + built_at, function(disabledFeatures) {
-                $.get('/api/admin/webconfig/featurePkg/webController?built_at=' + built_at, function(webControllPkg) {
-                    menuObj = $.xml2json(xml);
-                    webServerDefObj.always(function(){
-                        processXMLJSON(menuObj, disabledFeatures);
-                        globalObj['webServerInfo']['disabledFeatures'] = ifNull(disabledFeatures,[]);
-                        var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'],'menushortcut', webControllPkg));
-                        $("#sidebar-shortcuts").html(menuShortcuts);
-                        ['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
-                        menuDefferedObj.resolve();
-                    });
-                });            
-            })
-        });
-        //Add an event listener for clicking on menu items
-        $('#menu').on('click','ul > li > a',function(e) {
-            var href = $(this).attr('href');
-            loadFeature($.deparam.fragment(href));
-            if(!e.ctrlKey){
-                e.preventDefault();//Stop the page to navigate to the url set in href
-            }
-        });
         //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
         $.ajax({
             url:'/api/service/networking/web-server-info'
         }).done(function (response) {
+            var mFileName = 'menu.xml';
+            var featureMaps = [];
+            if (null != response['featurePkg']) {
+                var pkgList = response['pkgList'];
+                var pkgLen = pkgList.length;
+                for (var i = 0; i < pkgLen; i++) {
+                    if (null != featurePkgToMenuNameMap[pkgList[i]]) {
+                        featureMaps.push(featurePkgToMenuNameMap[pkgList[i]]);
+                    } else {
+                        console.log('featurePkgToMenuNameMap key is null: ' +
+                                    pkgList[i]);
+                    }
+                }
+                if (featureMaps.length > 0) {
+                    featureMaps.sort();
+                    mFileName = 'menu_' + featureMaps.join('_') + '.xml';
+                }
+            }
             if(response['serverUTCTime'] != null) {
                 response['timeDiffInMillisecs'] =  response['serverUTCTime'] - new Date().getTime();
                if(Math.abs(response['timeDiffInMillisecs']) > timeStampTolearence){
@@ -1006,6 +1005,31 @@ function MenuHandler() {
                 }
                 globalObj['webServerInfo'] = response;
             }    
+
+            $.get('/' + mFileName + '?built_at=' + built_at, function (xml) {
+                $.get('/api/admin/webconfig/features/disabled?built_at=' + built_at, function(disabledFeatures) {
+                    $.get('/api/admin/webconfig/featurePkg/webController?built_at=' + built_at, function(webControllPkg) {
+                        menuObj = $.xml2json(xml);
+                        webServerDefObj.always(function(){
+                            processXMLJSON(menuObj, disabledFeatures);
+                            globalObj['webServerInfo']['disabledFeatures'] = ifNull(disabledFeatures,[]);
+                            var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'],'menushortcut', webControllPkg));
+                            $("#sidebar-shortcuts").html(menuShortcuts);
+                            ['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
+                            menuDefferedObj.resolve();
+                        });
+                    });
+                })
+            });
+            //Add an event listener for clicking on menu items
+            $('#menu').on('click','ul > li > a',function(e) {
+                var href = $(this).attr('href');
+                loadFeature($.deparam.fragment(href));
+                if(!e.ctrlKey){
+                    e.preventDefault();//Stop the page to navigate to the url set in href
+                }
+            });
+
         }).always(function(){
             webServerDefObj.resolve();
         });
@@ -1013,7 +1037,6 @@ function MenuHandler() {
             self.deferredObj.resolve();
         });
     }
-    
     //Filter the menu items based 
     //  * allowedRolesList for each feature and comparing them with the logged-in user roles
     //  * allowedOrchestrationModels for each feature and comparing it against loggedInOrchestrationMode 

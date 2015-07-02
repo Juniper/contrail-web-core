@@ -1377,6 +1377,17 @@ function getWebServerInfo (req, res, appData)
     serverObj['role'] = req.session.userRole;
     serverObj['featurePkg'] = {};
     serverObj['uiConfig'] = ui; 
+    serverObj['pkgList'] = [];
+    var pkgList = process.mainModule.exports['pkgList'];
+    var pkgLen = pkgList.length;
+    for (var i = 1; i < pkgLen; i++) {
+        serverObj['pkgList'].push(pkgList[i]['pkgName']);
+    }
+    /* It may happen that user has written same config multiple times in config
+     * file
+     */
+    serverObj['pkgList'] = _.uniq(serverObj['pkgList']);
+
     serverObj['loggedInOrchestrationMode'] = req.session.loggedInOrchestrationMode;
 
     for (var key in featurePackages) {
@@ -1430,9 +1441,14 @@ function getUserRoleListPerTenant (req, res, callback)
 
 function mergeAllPackageList (serverType)
 {
+    var tmpPkgNameObjs = {};
     var pkgList = [];
     pkgList.push(require('../../../webroot/common/api/package.js').pkgList);
     for (key in config.featurePkg) {
+        if (null != tmpPkgNameObjs[key]) {
+            /* Already added, user has mistakenly added twice same config */
+            continue;
+        }
         if ((config.featurePkg[key]) && (config.featurePkg[key]['path']) &&
             ((null == config.featurePkg[key]['enable']) ||
              (true == config.featurePkg[key]['enable'])) &&
@@ -1440,6 +1456,7 @@ function mergeAllPackageList (serverType)
                                    '/webroot/common/api/package.js'))) {
             pkgList.push(require(config.featurePkg[key]['path'] +
                                  '/webroot/common/api/package.js').pkgList);
+            tmpPkgNameObjs[key] = true;
         }
     }
     logutils.logger.debug("Built Package List as:" + JSON.stringify(pkgList));
@@ -1630,12 +1647,34 @@ function mergeMenuObjects (menuObj1, menuObj2)
     return menuObj1;
 }
 
+var featurePkgToMenuNameMap = {
+    'webController': 'wc',
+    'webStorage': 'ws',
+    'serverManager': 'sm'
+};
+
 function mergeAllMenuXMLFiles (pkgList, mergePath, callback)
 {
-    var writeFile = mergePath + '/menu.xml';
+    var pkgLen = pkgList.length;
+    var featureArr = [];
+    var mFileName = 'menu.xml';
+
+    for (var i = 1; i < pkgLen; i++) {
+        /* i = 0; => contrail-web-core, so ignore this one */
+        var pkgName = pkgList[i]['pkgName'];
+        if (null != featurePkgToMenuNameMap[pkgName]) {
+            featureArr.push(featurePkgToMenuNameMap[pkgName]);
+        }
+    }
+    if (featureArr.length > 0) {
+        featureArr.sort();
+        mFileName = 'menu_' + featureArr.join('_') + '.xml';
+    }
+
+    var writeFile = mergePath + '/' + mFileName;
     var cmd = 'rm -f ' + writeFile;
     exec(cmd, function(error, stdout, stderr) {
-         mergeFeatureMenuXMLFiles(pkgList, mergePath, callback);
+         mergeFeatureMenuXMLFiles(pkgList, mergePath, mFileName, callback);
     });
 }
 
@@ -1718,22 +1757,21 @@ function customMenuChange (pkgList, resMenuObj)
     return resMenuObj;
 }
 
-function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
+function mergeFeatureMenuXMLFiles (pkgList, mergePath, mFileName, callback)
 {
     var pkgDir = null;
     var pkgLen = pkgList.length;
     var menuDirs = [];
-    var writeFile = mergePath + '/menu.xml';
+    var writeFile = mergePath + '/' + mFileName;
 
     if (1 == pkgLen) {
         /* Only core package, nothing to do */
         callback();
         return;
     }
-    var pkgNames = jsonPath(pkgList, "$..name[0]");
     if (2 == pkgLen) {
         pkgDir = config.featurePkg[pkgList[1]['pkgName']].path;
-        cmd = 'cp -af ' + pkgDir + '/webroot/menu.xml ' +
+        cmd = 'cp -af ' + pkgDir + '/webroot/menu.xml' + ' ' +
             writeFile; 
         exec(cmd, function(error, stdout, stderr) {
             assert(error == null);
