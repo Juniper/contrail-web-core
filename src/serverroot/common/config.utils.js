@@ -2,13 +2,18 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
+var path = require('path');
+
 /* Function: compareAndMergeDefaultConfig
    This function is used to compare and merge missing configuration from
    default.config.global.js with config file
  */
-function compareAndMergeDefaultConfig ()
+function compareAndMergeDefaultConfig (confFile)
 {
-    var confFile = __dirname + '/../../../config/config.global.js';//'/etc/contrail/config.global.js';
+    if (null == confFile) {
+        confFile = __dirname + '/../../../config/config.global.js';
+    }
+    var confFile = path.normalize(confFile);
     var defConfFile = __dirname + '/../../../config/default.config.global.js';
     return compareAndMergeFiles(confFile, defConfFile);
 }
