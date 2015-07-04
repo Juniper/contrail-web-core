@@ -1720,7 +1720,7 @@ var RemoteDataHandler = function(config, dataParser, initCallback, successCallba
 function exportGridData2CSV(gridConfig, gridData) {
     var csvString = '',
         columnNameArray = [],
-        columnExportArray = [];
+        columnExportFormatters = [];
 
     var gridColumns = gridConfig.columnHeader.columns;
 
@@ -1728,24 +1728,28 @@ function exportGridData2CSV(gridConfig, gridData) {
     $.each(gridColumns, function(key, val){
         if(typeof val.exportConfig === 'undefined' || (typeof val.exportConfig.allow !== 'undefined' && val.exportConfig.allow == true)){
             columnNameArray.push(val.name);
-            columnExportArray.push(val);
+            if(typeof val.exportConfig !== 'undefined' && typeof val.exportConfig.advFormatter === 'function' && val.exportConfig.advFormatter != false){
+                columnExportFormatters.push(function(data) { return String(val.exportConfig.advFormatter(data)); });
+            } else if((typeof val.formatter !== 'undefined') && (typeof val.exportConfig === 'undefined' || (typeof val.exportConfig.stdFormatter !== 'undefined' && val.exportConfig.stdFormatter != false))){
+                columnExportFormatters.push(function(data) { return String(val.formatter(0, 0, 0, 0, data)); });
+            } else {
+                columnExportFormatters.push(function(data) {
+                    var dataValue = String(data[val.field]);
+                    if(typeof dataValue === 'object') {
+                        return JSON.stringify(dataValue);
+                    } else {
+                        return dataValue;
+                    }
+                });
+            }
         }
     });
     csvString += columnNameArray.join(',') + '\r\n';
 
-    $.each(gridData, function(key,val){
+    $.each(gridData, function(key, val){
         var dataLineArray = [];
-        $.each(columnExportArray, function(keyCol,valCol){
-            var dataValue = String(val[valCol.field]);
-            if(typeof valCol.exportConfig !== 'undefined' && typeof valCol.exportConfig.advFormatter === 'function' && valCol.exportConfig.advFormatter != false){
-                dataValue = String(valCol.exportConfig.advFormatter(val));
-            } else if((typeof valCol.formatter !== 'undefined') && (typeof valCol.exportConfig === 'undefined' || (typeof valCol.exportConfig.stdFormatter !== 'undefined' && valCol.exportConfig.stdFormatter != false))){
-                dataValue = String(valCol.formatter(0,0,0,0,val));
-            } else {
-                if(typeof dataValue === 'object'){
-                    dataValue = JSON.stringify(dataValue);
-                }
-            }
+        $.each(columnExportFormatters, function(keyCol, valCol){
+            var dataValue = valCol(val);
             dataValue = dataValue.replace(/"/g, '');
             dataLineArray.push('"' + dataValue + '"');
         });
