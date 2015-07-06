@@ -147,7 +147,7 @@ function formatDomainList (req, tenantList, domainListObjs)
     for (var i = 0; i < len; i++) {
         if (null == tmpDomainMap[data[i]['domain_id']]) {
             if (authApi.isDefaultDomain(req, data[i]['domain_id'])) {
-                domain = getDefaultDomain(req);
+                domain = authApi.getDefaultDomain(req);
             } else {
                 domain = commonUtils.convertUUIDToString(data[i]['domain_id']);
                 domain = getDomainFqnByDomainUUID(domain, domainListObjs);
