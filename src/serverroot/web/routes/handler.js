@@ -241,15 +241,16 @@ exports.vcenter_authenticate = function (req, res, appData) {
 
 function logout (req, res)
 {
-    res.header('Cache-Control', 
+    authApi.deleteAllTokens(req, function(err) {
+        res.header('Cache-Control', 
                'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-    commonUtils.redirectToLogin(req, res);
-    //Need to destroy the session after redirectToLogin as login page depends on orchestrationModel
-    //Info: Need to check why we are destroying session only if userid is set
-    // if (req.session.userid) {
+        commonUtils.redirectToLogin(req, res);
+        /* Need to destroy the session after redirectToLogin as login page depends
+           on orchestrationModel
+         */
         req.session.isAuthenticated = false;
         req.session.destroy();
-    // }
+    });
 };
 
 function putData(id, callback) {

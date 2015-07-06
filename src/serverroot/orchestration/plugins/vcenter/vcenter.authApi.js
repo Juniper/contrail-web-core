@@ -202,6 +202,11 @@ function getUserAuthDataByConfigAuthObj (authObj, callback)
     callback(null, null);
 }
 
+function deleteAllTokens (req, callback)
+{
+    callback(null, null);
+}
+
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.authenticate = authenticate;
@@ -216,4 +221,5 @@ exports.getAvailabilityZoneList = getAvailabilityZoneList;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
 exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
+exports.deleteAllTokens = deleteAllTokens;
 
