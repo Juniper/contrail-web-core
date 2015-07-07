@@ -588,6 +588,42 @@ function sendV3CurlGetReq (dataObj, callback)
     });
 }
 
+function sendV3CurlDelReq (authObj, callback)
+{
+    var reqUrl      = authObj['reqUrl'];
+    var headers     = authObj['headers'];
+    var authIP      = authServerIP;
+    var authPort    = authServerPort;
+    var authProto   = null;
+    try {
+        authProto = config.identityManager.authProtocol;
+        if (null == authProto) {
+            authProto = global.PROTOCOL_HTTP;
+        }
+    } catch(e) {
+        authProto = global.PROTOCOL_HTTP;
+    }
+
+    var headersStr = "";
+    for (key in headers) {
+        headersStr += ' -H "' + key + ": " + headers[key] + '"';
+    }
+    headersStr += " ";
+    var cmd = 'curl -i -X DELETE ';
+    if (null != headers) {
+        cmd += headersStr;
+    }
+
+    cmd += authProto + '://' + authIP + ':' + authPort + reqUrl;
+    exec(cmd, function(err, stdout, stderr) {
+        if (null != err) {
+            callback(err, null);
+        } else {
+            callback(err, JSON.parse(stdout));
+        }
+    });
+}
+
 function formatV3AuthDataToV2AuthData (v3AuthData, authObj, callback)
 {
     var tokenObj = {};
@@ -1913,6 +1949,78 @@ function getCookieObjs (req, appData, callback)
     });
 }
 
+function authDelV2Req (authObj, callback)
+{
+    var token = authObj['token'];
+    var authParams = require('../../../../../config/userAuth');
+    var tokDelURL = '/v2.0/tokens/' + token;
+    var headers = {};
+    headers['X-Auth-Token'] = authParams.admin_token;
+    authAPIServer.api.delete(tokDelURL, function(err, data) {
+        callback(err, data);
+    }, headers);
+}
+
+var delKeystoneTokenCBs = {
+    'v2.0': deleteV2KeystoneToken,
+    'v3': deleteV3KeystoneToken,
+};
+
+function deleteV3KeystoneToken (authObj, callback)
+{
+    var headers = {};
+    var reqUrl = '/v3/auth/tokens/';
+    if (null != authObj['headers']) {
+        headers = authObj['headers'];
+    }
+    headers['X-Subject-Token'] = authObj['token'];
+    try {
+        var authParams = require('../../../../../config/userAuth');
+        headers['X-Auth-Token'] = authParams.admin_token;
+    } catch(e) {
+    }
+
+    authAPIServer.api.delete(reqUrl, function(err) {
+        callback(err);
+    }, headers);
+}
+
+function deleteV2KeystoneToken (authObj, callback)
+{
+    authDelV2Req(authObj, callback);
+}
+
+function deleteKeystoneToken (data, callback)
+{
+    var req = data['req'];
+    var authApiVer = req.session.authApiVersion;
+    var delKeystoneTokenCB = delKeystoneTokenCBs[authApiVer];
+    var token = data['token'];
+    delKeystoneTokenCB(data, function(err, delData) {
+        callback(err, delData);
+    });
+}
+
+function deleteAllTokens (req, callback)
+{
+    try {
+        var authParams = require('../../../../../config/userAuth');
+    } catch(e) {
+        logutils.logger.error("userAuth.js not found");
+        callback(null, null);
+        return;
+    }
+    var adminToken = authParams.admin_token;
+    var tokenList = [];
+    for (key in req.session.tokenObjs) {
+        tokenList.push({'req': req,
+                       'token': req.session.tokenObjs[key]['token']['id']});
+    }
+    async.map(tokenList, deleteKeystoneToken, function(err, data) {
+        callback(err, data);
+    });
+}
+
 function getSessionExpiryTime (req, appData, callback)
 {
     var cfgSessTimeout =
@@ -1954,4 +2062,4 @@ exports.getUserRoleByAuthResponse = getUserRoleByAuthResponse;
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
-
+exports.deleteAllTokens = deleteAllTokens;

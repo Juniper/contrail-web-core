@@ -15,7 +15,7 @@ var logLevel = ((null != config) && (null != config.logs) &&
 
 function getLoggingTime ()
 {
-    return moment().format('MM/DD/YYYY HH:MM:SS A');
+    return moment().format('MM/DD/YYYY hh:mm:ss A');
 }
 
 /**
