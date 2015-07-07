@@ -18,7 +18,7 @@ define([
 
         this.LIST_CACHE_UPDATE_INTERVAL = 60000;
         this.GRAPH_CACHE_UPDATE_INTERVAL = 60000;
-        this.CHART_CACHE_UPDATE_INTERVAL = 60000;
+        this.VIEWMODEL_CACHE_UPDATE_INTERVAL = 60000;
 
         this.KEY_MODEL_ERRORS = 'errors';
         this.KEY_MODEL_LOCKS = 'locks';

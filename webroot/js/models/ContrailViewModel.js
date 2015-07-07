@@ -8,20 +8,47 @@ define([
     'contrail-remote-data-handler'
 ], function (_, Backbone, ContrailRemoteDataHandler) {
     var ContrailViewModel = Backbone.Model.extend({
-        constructor: function (modelConfig) {
-            var self = this, remoteHandlerConfig;
+        constructor: function (viewModelConfig) {
+            var self = this, remoteHandlerConfig,
+                defaultCacheConfig = {
+                    cacheConfig: {
+                        cacheTimeout: cowc.VIEWMODEL_CACHE_UPDATE_INTERVAL,
+                        loadOnTimeout: true
+                    }
+                };
+
+            var modelConfig = $.extend(true, {}, viewModelConfig, defaultCacheConfig),
+                cacheConfig = modelConfig['cacheConfig'];
 
             Backbone.Model.apply(this, {});
+
+            self.ucid = contrail.checkIfExist(modelConfig['cacheConfig']) ? modelConfig['cacheConfig']['ucid'] : null;
+            self.onAllRequestsComplete = new Slick.Event();
 
             if (modelConfig['data'] != null) {
                 setData2Model(self, modelConfig['data']);
             } else if (modelConfig['remote'] != null) {
-                remoteHandlerConfig = getRemoteHandlerConfig(self, modelConfig);
-                self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
-            }
+                var cacheUsedStatus = setCachedData2Model(self, cacheConfig);
 
-            this.ucid = contrail.checkIfExist(modelConfig['cacheConfig']) ? modelConfig['cacheConfig']['ucid'] : null;
-            self.onAllRequestsComplete = new Slick.Event();
+                if (cacheUsedStatus['isCacheUsed']) {
+                    self.onAllRequestsComplete.notify();
+
+                    if (cacheUsedStatus['reload']) {
+                        remoteHandlerConfig = getRemoteHandlerConfig(self, modelConfig);
+                        self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
+                    } else {
+                        console.log("#2");
+                        remoteHandlerConfig = getRemoteHandlerConfig(self, modelConfig, false);
+                        console.log(remoteHandlerConfig);
+                        self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
+                    }
+                } else {
+                    remoteHandlerConfig = getRemoteHandlerConfig(self, modelConfig);
+                    self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
+                }
+
+                bindDataHandler2Model(self);
+            }
             return self;
         },
 
@@ -32,25 +59,15 @@ define([
             return value;
         },
 
-        isPrimaryRequestInProgress: function () {
-            return (this.contrailDataHandler != null) ? this.contrailDataHandler.isPrimaryRequestInProgress() : false;
-        },
-
-        isVLRequestInProgress: function () {
-            return (this.contrailDataHandler != null) ? this.contrailDataHandler.isVLRequestInProgress() : false;
-        },
-
-        isRequestInProgress: function () {
-            return (this.contrailDataHandler != null) ? this.contrailDataHandler.isRequestInProgress() : false;
-        },
-
         error: false,
         errorList: [],
         lastUpdateTime: null
     });
 
-    function getRemoteHandlerConfig(contrailViewModel, viewModelConfig) {
-        var remoteHandlerConfig = {},
+    function getRemoteHandlerConfig(contrailViewModel, viewModelConfig, autoFetchData) {
+        var remoteHandlerConfig = {
+                autoFetchData: (autoFetchData != null) ? autoFetchData : true
+            },
             primaryRemote = viewModelConfig.remote,
             vlRemoteConfig = contrail.handleIfNull(viewModelConfig.vlRemoteConfig, {}),
             vlRemoteList = contrail.handleIfNull(vlRemoteConfig['vlRemoteList'], []),
@@ -119,6 +136,69 @@ define([
         }
 
         return remoteHandlerConfig;
+    };
+
+    function setCachedData2Model(contrailViewModel, cacheConfig) {
+        var isCacheUsed = false, usePrimaryCache,
+            reload = true, secondaryCacheStatus,
+            cachedData = (cacheConfig.ucid != null) ? cowch.getDataFromCache(cacheConfig.ucid) : null,
+            setCachedData2ModelCB = (cacheConfig != null) ? cacheConfig['setCachedData2ModelCB'] : null;
+
+        usePrimaryCache = cowch.isCacheValid(cacheConfig, cachedData, 'viewModel');
+
+        if (usePrimaryCache) {
+            var cachedViewModel = cachedData['dataObject']['viewModel'],
+                lastUpdateTime = cachedData['lastUpdateTime'];
+
+            contrailViewModel.set(cachedViewModel.attributes);
+            contrailViewModel.loadedFromCache = true;
+
+            isCacheUsed = true;
+            if (cacheConfig['cacheTimeout'] < ($.now() - lastUpdateTime)) {
+                reload = true;
+            } else {
+                reload = false;
+            }
+        } else if (contrail.checkIfFunction(setCachedData2ModelCB)) {
+            secondaryCacheStatus = cacheConfig['setCachedData2ModelCB'](contrailViewModel, cacheConfig);
+            if (contrail.checkIfExist(secondaryCacheStatus)) {
+                isCacheUsed = contrail.handleIfNull(secondaryCacheStatus['isCacheUsed'], false);
+                reload = contrail.handleIfNull(secondaryCacheStatus['reload'], true);
+            } else {
+                isCacheUsed = false;
+                reload = true;
+            }
+        }
+
+        return {isCacheUsed: isCacheUsed, reload: reload};
+    };
+
+    function bindDataHandler2Model(contrailViewModel) {
+        var contrailDataHandler = contrailViewModel.contrailDataHandler;
+
+        contrailViewModel['isPrimaryRequestInProgress'] = function () {
+            return (contrailDataHandler != null) ? contrailDataHandler.isPrimaryRequestInProgress() : false;
+        };
+
+        contrailViewModel['isVLRequestInProgress'] = function () {
+            return (contrailDataHandler != null) ? contrailDataHandler.isVLRequestInProgress() : false;
+        };
+
+        contrailViewModel['isRequestInProgress'] = function () {
+            return (contrailDataHandler != null) ? contrailDataHandler.isRequestInProgress() : false;
+        };
+
+        contrailViewModel['refreshData'] = function () {
+            if (!contrailViewModel.isRequestInProgress()) {
+                resetViewModel4Refresh(contrailViewModel);
+                contrailDataHandler.refreshData()
+            }
+        };
+    };
+
+    function resetViewModel4Refresh(contrailViewModel) {
+        contrailViewModel.error = false;
+        contrailViewModel.errorList = [];
     };
 
     function setData2Model(contrailViewModel, viewData) {
