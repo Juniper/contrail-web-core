@@ -4,7 +4,7 @@
 
 var vCenterApi = require('../../../common/vcenter.api'),
     configApiServer = require('../../../common/configServer.api'),
-    config = require('../../../../../config/config.global'),
+    config = process.mainModule.exports["config"],
     logutils = require('../../../utils/log.utils');
 var commonUtils = require('../../../utils/common.utils');
 var async = require('async');
