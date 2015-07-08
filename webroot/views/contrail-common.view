@@ -1101,11 +1101,11 @@
 <script type="text/x-handlebars-template" id="core-not-found-message-template">
     <div class="row-fluid content-container-not-found">
         <div class="row-fluid">
-            <h3>{{title}}</h3>
+            <h4>{{title}}</h4>
         </div>
         {{#if iconClass}}
             <div class="row-fluid">
-                <h1 class="not-found-icon"><i class="{{iconClass}}"></i></h1>
+                <h2 class="not-found-icon"><i class="{{iconClass}}"></i></h2>
             </div>
         {{/if}}
         <div class="row-fluid not-found-text">

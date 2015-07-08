@@ -28,32 +28,39 @@ define([
             });
 
             self.model.onAllRequestsComplete.subscribe(function() {
-                var directedGraphSize = self.model.directedGraphSize,
-                    graphSelectorElement = self.el,
-                    jointObject = {
-                        graph: self.model,
-                        paper: self
-                    };
-
-                if(controlPanelConfig) {
-                    var viewAttributes = {
-                            viewConfig: getControlPanelConfig(graphSelectorElement, jointObject, graphConfig, controlPanelConfig)
-                        },
-                        controlPanelView = new ControlPanelView({
-                            el: graphControlPanelId,
-                            attributes: viewAttributes
-                        });
-
-                    controlPanelView.render();
-                }
-
-                if(contrail.checkIfFunction(viewConfig.successCallback)) {
+                if (self.model.error === true && contrail.checkIfFunction(viewConfig.failureCallback)) {
                     $(graphLoadingId).remove();
-                    viewConfig.successCallback(jointObject, directedGraphSize);
-                }
+                    viewConfig.failureCallback(self.model);
+                } else if (self.model.empty === true && contrail.checkIfFunction(viewConfig.emptyCallback)) {
+                    $(graphLoadingId).remove();
+                    viewConfig.emptyCallback(self.model)
+                } else {
+                    var graphSelectorElement = self.el,
+                        jointObject = {
+                            graph: self.model,
+                            paper: self
+                        };
 
-                initClickEvents(graphSelectorElement, clickEventsConfig, jointObject);
-                initMouseEvents(graphSelectorElement, tooltipConfig, jointObject);
+                    if (controlPanelConfig) {
+                        var viewAttributes = {
+                                viewConfig: getControlPanelConfig(graphSelectorElement, jointObject, graphConfig, controlPanelConfig)
+                            },
+                            controlPanelView = new ControlPanelView({
+                                el: graphControlPanelId,
+                                attributes: viewAttributes
+                            });
+
+                        controlPanelView.render();
+                    }
+
+                    if (contrail.checkIfFunction(viewConfig.successCallback)) {
+                        $(graphLoadingId).remove();
+                        viewConfig.successCallback(jointObject);
+                    }
+
+                    initClickEvents(graphSelectorElement, clickEventsConfig, jointObject);
+                    initMouseEvents(graphSelectorElement, tooltipConfig, jointObject);
+                }
             });
 
             return self;
@@ -70,7 +77,7 @@ define([
 
     var initZoomEvents = function(graphSelectorElement, jointObject, controlPanelSelector, graphConfig, controlPanelConfig) {
         var graphControlPanelElement = $(controlPanelSelector),
-            panzommTargetId = controlPanelConfig.default.zoom.selectorId,
+            panzoomTargetId = controlPanelConfig.default.zoom.selectorId,
             panZoomDefaultConfig = {
                 increment: 0.2,
                 minScale: 0.2,
@@ -80,26 +87,19 @@ define([
             },
             panzoomConfig = $.extend(true, panZoomDefaultConfig, controlPanelConfig.default.zoom.config);
 
-        var screenWidth = $(graphSelectorElement).parents('.col1').width(),
-            screenHeight = $(graphSelectorElement).parents('.col1').height(),
-            screenOffsetTop = $(panzommTargetId).parent().offset().top,
-            screenOffsetLeft = $(panzommTargetId).parent().offset().left,
-            focal = {
-                clientX: screenOffsetLeft + screenWidth / 2,
-                clientY: screenOffsetTop + screenHeight / 2
-            },
+        var focal = getZoomFocal(graphSelectorElement, panzoomTargetId),
             allowZoom = true;
 
-        $(panzommTargetId).panzoom("reset");
-        $(panzommTargetId).panzoom("resetPan");
-        $(panzommTargetId).panzoom("destroy");
-        $(panzommTargetId).panzoom(panzoomConfig);
+        $(panzoomTargetId).panzoom("reset");
+        $(panzoomTargetId).panzoom("resetPan");
+        $(panzoomTargetId).panzoom("destroy");
+        $(panzoomTargetId).panzoom(panzoomConfig);
 
         var performZoom = function(zoomOut) {
             //Handle clicks and queue extra clicks if performed with the duration for smooth animation
             if (allowZoom == true) {
                 allowZoom = false;
-                $(panzommTargetId).panzoom("zoom", zoomOut, { focal: focal});
+                $(panzoomTargetId).panzoom("zoom", zoomOut, { focal: focal});
                 setTimeout(function(){
                     allowZoom = true;
                 }, panZoomDefaultConfig.duration);
@@ -120,7 +120,7 @@ define([
             .on('click', function(e) {
                 if (!$(this).hasClass('disabled')) {
                     e.preventDefault();
-                    $(panzommTargetId).panzoom("reset");
+                    $(panzoomTargetId).panzoom("reset");
                 }
             });
 
@@ -133,19 +133,24 @@ define([
                 }
             });
 
-        $(panzommTargetId).on('panzoompan', function(e, panzoom, x, y) {
-            $(panzommTargetId).panzoom('resetDimensions');
-
-            screenWidth = $(graphSelectorElement).parents('.col1').width(),
-                screenHeight = $(graphSelectorElement).parents('.col1').height(),
-                screenOffsetTop = $(panzommTargetId).parent().offset().top,
-                screenOffsetLeft = $(panzommTargetId).parent().offset().left,
-                focal = {
-                    clientX: screenOffsetLeft + screenWidth / 2,
-                    clientY: screenOffsetTop + screenHeight / 2
-                };
+        $(panzoomTargetId).on('panzoompan', function(e, panzoom, x, y) {
+            $(panzoomTargetId).panzoom('resetDimensions');
+            focal = getZoomFocal(graphSelectorElement, panzoomTargetId);
         });
     };
+
+    function getZoomFocal(graphSelectorElement, panzoomTargetId) {
+        var screenWidth = $(graphSelectorElement).parents('.col1').width(),
+            screenHeight = $(graphSelectorElement).parents('.col1').height(),
+            screenOffsetTop = $(panzoomTargetId).parent().offset().top,
+            screenOffsetLeft = $(panzoomTargetId).parent().offset().left,
+            focal = {
+                clientX: screenOffsetLeft + screenWidth / 2,
+                clientY: screenOffsetTop + screenHeight / 2
+            };
+
+        return focal;
+    }
 
     var getControlPanelConfig = function(graphSelectorElement, jointObject, graphConfig, controlPanelConfig) {
         var customConfig = $.extend(true, {}, controlPanelConfig.custom);

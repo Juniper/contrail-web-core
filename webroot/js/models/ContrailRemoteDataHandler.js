@@ -134,6 +134,7 @@ define([
                 pFailureCallback(xhr);
             }
             pRequestInProgress = false;
+            updateVLRequestStatus();
             if (pCompleteCallback != null) {
                 pCompleteCallback(pRequestCompleteResponse);
                 check4AllRequestComplete();

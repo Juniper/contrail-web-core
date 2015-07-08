@@ -263,11 +263,11 @@ body.navbar-fixed {
 }
 .content-container-not-found {
     text-align: center;
-    margin: 30px auto;
+    margin: 50px auto;
     color: #555;
 }
 .content-container-not-found .not-found-icon {
-    font-size: 50px;
+    font-size: 40px;
     color: #3182bd;
 }
 .content-container-not-found .not-found-text {
