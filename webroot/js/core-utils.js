@@ -611,7 +611,7 @@ define([
 
 
         this.addUnits2Packets = function (traffic, noDecimal, maxPrecision, precision) {
-            var trafficPrefixes = ['K packets', 'M packets', "B packets", "T packets"],
+            var trafficPrefixes = ['packets', 'K packets', 'M packets', "B packets", "T packets"],
                 formatStr = '', decimalDigits = 2, size = 1000;
 
             if (!$.isNumeric(traffic)) {
