@@ -10,15 +10,15 @@ define([
         this.getTextGenerator = function (formatterKey, value) {
             switch (formatterKey) {
                 case 'byte' :
-                    return formatBytes(value);
+                    return cowu.addUnits2Bytes(value);
                     break;
 
                 case 'kilo-byte' :
-                    return formatBytes(value * 1024);
+                    return cowu.addUnits2Bytes(value * 1024);
                     break;
 
                 case 'mega-byte' :
-                    return formatBytes(value * 1024 * 1024);
+                    return cowu.addUnits2Bytes(value * 1024 * 1024);
                     break;
 
                 case 'length' :
@@ -60,6 +60,10 @@ define([
                     } catch (error) {
                         return value;
                     }
+                    break;
+
+                case 'packet' :
+                    return cowu.addUnits2Packets(value);
                     break;
             };
         };
