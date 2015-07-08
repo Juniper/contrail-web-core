@@ -97,8 +97,7 @@ define([
 
         if (usePrimaryCache) {
             var cachedContrailListModel = cachedData['dataObject']['listModel'],
-                lastUpdateTime = cachedData['lastUpdateTime'],
-                cachedContrailListModel = cachedData['dataObject']['listModel'];
+                lastUpdateTime = cachedData['lastUpdateTime'];
 
             contrailListModel.setData(cachedContrailListModel.getItems());
             contrailListModel.loadedFromCache = true;

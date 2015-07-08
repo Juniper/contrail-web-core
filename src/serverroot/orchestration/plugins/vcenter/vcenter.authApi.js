@@ -8,7 +8,7 @@
  */
 
 var plugins = require('../plugins.api');
-var config = require('../../../../../config/config.global'),
+var config = process.mainModule.exports["config"],
     global = require('../../../common/global'),
     messages = require('../../../common/messages'),
     logutils = require('../../../utils/log.utils'),
@@ -202,6 +202,11 @@ function getUserAuthDataByConfigAuthObj (authObj, callback)
     callback(null, null);
 }
 
+function deleteAllTokens (req, callback)
+{
+    callback(null, null);
+}
+
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.authenticate = authenticate;
@@ -216,4 +221,5 @@ exports.getAvailabilityZoneList = getAvailabilityZoneList;
 exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
 exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
+exports.deleteAllTokens = deleteAllTokens;
 
