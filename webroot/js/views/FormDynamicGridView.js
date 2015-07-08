@@ -5,8 +5,8 @@
 define([
     'underscore',
     'backbone',
-    'js/grid.editors',
-    'js/grid.formatters'
+    'core-basedir/js/grid.editors',
+    'core-basedir/js/grid.formatters'
 ], function (_, Backbone) {
     //TODO: Make it generic for any kind of form edit.
     var FormDynamicGridView = Backbone.View.extend({
