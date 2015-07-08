@@ -12,6 +12,7 @@ define([
 ], function (FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
              AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
              GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView, LineWithFocusChartView, HeatChartView, ZoomScatterChartView) {
+
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -104,10 +105,10 @@ define([
                 body: options['body'],
                 footer: false,
                 keyupAction: {
-                    onKeyupEnter: function() {
+                    onKeyupEnter: function () {
                         options['onSave']();
                     },
-                    onKeyupEsc: function() {
+                    onKeyupEsc: function () {
                         options['onCancel']();
                     }
                 }
@@ -140,7 +141,7 @@ define([
         this.createColumns4Grid = function (fieldsObj) {
             var key, columns = [];
             for (key in fieldsObj) {
-                columns.push({ id: key, field: key, name: self.getGridTitle4Field(key), width: 150, minWidth: 15 });
+                columns.push({id: key, field: key, name: self.getGridTitle4Field(key), width: 150, minWidth: 15});
             }
         };
         this.getGridTitle4Field = function (field) {
@@ -199,7 +200,7 @@ define([
             return intoObject;
         };
 
-        this.getEditConfigObj = function (configObj, locks){
+        this.getEditConfigObj = function (configObj, locks) {
             var lock = null,
                 testobj = $.extend(true, {}, configObj);
 
@@ -229,7 +230,7 @@ define([
                 // now we check if the value is locked
                 // we check it from the 'locks'
                 else {
-                    if(contrail.checkIfExist(value) && (typeof value == 'string')) {
+                    if (contrail.checkIfExist(value) && (typeof value == 'string')) {
                         testobj[attribute] = value.trim();
                     }
                     if (contrail.checkIfExist(locks[attribute + cowc.LOCKED_SUFFIX_ID])) {
@@ -399,11 +400,11 @@ define([
                     break;
 
                 default:
-                    if(app == cowc.APP_CONTRAIL_CONTROLLER) {
+                    if (app == cowc.APP_CONTRAIL_CONTROLLER) {
                         ctwu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
-                    } else if(app == cowc.APP_CONTRAIL_SM) {
+                    } else if (app == cowc.APP_CONTRAIL_SM) {
                         smwru.renderView(viewName, parentElement, model, viewAttributes, modelMap);
-                    } else if(app == cowc.APP_CONTRAIL_STORAGE) {
+                    } else if (app == cowc.APP_CONTRAIL_STORAGE) {
                         swu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     }
                     break;
@@ -419,20 +420,20 @@ define([
 
         /* Detail Template Generator*/
 
-        this.generateBlockListKeyValueTemplate = function(config, app) {
+        this.generateBlockListKeyValueTemplate = function (config, app) {
             var template = '<ul class="item-list">';
 
-            $.each(config, function(configKey, configValue) {
+            $.each(config, function (configKey, configValue) {
                 template += '' +
-                '{{#IfValidJSONValueByPath "' + configValue.key + '" this ' + configKey + '}}' +
-                '<li>' +
-                '<label class="inline row-fluid">' +
-                '<span class="key span5"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>' +
-                '<span class="value span7">{{{getValueByConfig this config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
+                    '{{#IfValidJSONValueByPath "' + configValue.key + '" this ' + configKey + '}}' +
+                    '<li>' +
+                    '<label class="inline row-fluid">' +
+                    '<span class="key span5"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>' +
+                    '<span class="value span7">{{{getValueByConfig this config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
 
                 template += '</label>' +
-                '</li>' +
-                '{{/IfValidJSONValueByPath}}';
+                    '</li>' +
+                    '{{/IfValidJSONValueByPath}}';
             });
 
             template += '</ul>';
@@ -440,7 +441,7 @@ define([
             return template;
         };
 
-        this.generateInnerTemplate = function(config, app) {
+        this.generateInnerTemplate = function (config, app) {
             var template, templateObj,
                 templateGenerator = config.templateGenerator, templateGeneratorConfig = config.templateGeneratorConfig;
 
@@ -457,9 +458,7 @@ define([
                         rowTemplateObj.append(self.generateInnerTemplate(rowValue, app))
                         templateObj.append(rowTemplateObj);
                     });
-
-
-                break;
+                    break;
 
                 case 'ColumnSectionTemplateGenerator':
                     var columnTemplate, columnTemplateObj;
@@ -475,8 +474,7 @@ define([
                             templateObj.append(columnTemplateObj);
                         });
                     });
-
-                break;
+                    break;
 
                 case 'BlockListTemplateGenerator':
                     var template = '';
@@ -499,41 +497,39 @@ define([
                     }
 
                     templateObj = $(template);
-                break;
+                    break;
 
                 case 'BlockGridTemplateGenerator':
-
                     var template = '<div>' +
                         '{{#IfValidJSONValueByPathLength "' + config.key + '" this}} ' +
                         '<div class="detail-block-grid-content row-fluid">' +
                         (contrail.checkIfExist(config.title) ? '<h6>' + config.title + '</h6>' : '') +
                         '<div class="row-fluid">' +
-                            '{{#each ' + config.key +'}} ' +
-                                '{{#IfCompare @index 0 operator="%2"}} ' +
-                                    '{{#IfCompare @index 0 operator="!="}}' +
-                                        '</div>' +
-                                        '<div class="row-fluid block-grid-row">' +
-                                    '{{else}}' +
-                                        '<div class="row-fluid block-grid-row">' +
-                                    '{{/IfCompare}}' +
-                                '{{/IfCompare}}' +
-                                '<div class="span6">' +
-                                    '<div class="row-fluid">' +
-                                        self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app) +
-                                    '</div>' +
-                                '</div>' +
-                            '{{/each}} </div>' +
+                        '{{#each ' + config.key + '}} ' +
+                        '{{#IfCompare @index 0 operator="%2"}} ' +
+                        '{{#IfCompare @index 0 operator="!="}}' +
+                        '</div>' +
+                        '<div class="row-fluid block-grid-row">' +
+                        '{{else}}' +
+                        '<div class="row-fluid block-grid-row">' +
+                        '{{/IfCompare}}' +
+                        '{{/IfCompare}}' +
+                        '<div class="span6">' +
+                        '<div class="row-fluid">' +
+                        self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app) +
+                        '</div>' +
+                        '</div>' +
+                        '{{/each}} </div>' +
                         '</div></div> {{/IfValidJSONValueByPathLength}} </div>';
 
                     templateObj = $(template);
-
-                break;
+                    break;
             };
 
-            return(templateObj.prop('outerHTML'))
+            return (templateObj.prop('outerHTML'))
         };
 
-        this.generateDetailTemplateHTML = function(config, app, jsonString) {
+        this.generateDetailTemplateHTML = function (config, app, jsonString) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
                 templateObj = $(template(config)),
                 jsonValueString = contrail.handleIfNull(jsonString, '{{{formatGridJSON2HTML this}}}');
@@ -541,10 +537,10 @@ define([
             templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
             templateObj.find('.detail-foundation-content-advanced').append(jsonValueString);
 
-            return(templateObj.prop('outerHTML'))
+            return (templateObj.prop('outerHTML'))
         };
 
-        this.generateDetailTemplate = function(config, app) {
+        this.generateDetailTemplate = function (config, app) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
                 templateObj = $(template(config));
 
@@ -561,25 +557,25 @@ define([
             });
         };
 
-        this.replaceAll = function(find, replace, strValue) {
+        this.replaceAll = function (find, replace, strValue) {
             return strValue.replace(new RegExp(find, 'g'), replace);
         };
 
-        this.addUnits2Bytes = function(traffic, noDecimal, maxPrecision, precision, timeInterval) {
+        this.addUnits2Bytes = function (traffic, noDecimal, maxPrecision, precision, timeInterval) {
             var trafficPrefixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'],
                 formatStr = '', decimalDigits = 2, size = 1024;
 
             if (!$.isNumeric(traffic)) {
                 return '-';
             } else if (traffic == 0) {
-                if(timeInterval != null && timeInterval != 0) {
+                if (timeInterval != null && timeInterval != 0) {
                     return '0 bps';
                 } else {
                     return '0 B';
                 }
             }
 
-            if(timeInterval != null && timeInterval != 0) {
+            if (timeInterval != null && timeInterval != 0) {
                 trafficPrefixes = ['bps', 'kbps', 'mbps', 'gbps', 'tbps', 'pbps', 'ebps', 'zbps'];
                 size = 1000;
                 traffic = (traffic * 8) / timeInterval;
@@ -587,7 +583,7 @@ define([
 
             if ((maxPrecision != null) && (maxPrecision == true)) {
                 decimalDigits = 6;
-            } else if(precision != null) {
+            } else if (precision != null) {
                 decimalDigits = precision < 7 ? precision : 6;
             }
 
@@ -614,7 +610,7 @@ define([
         };
 
 
-        this.addUnits2Packets = function(traffic, noDecimal, maxPrecision, precision) {
+        this.addUnits2Packets = function (traffic, noDecimal, maxPrecision, precision) {
             var trafficPrefixes = ['K packets', 'M packets', "B packets", "T packets"],
                 formatStr = '', decimalDigits = 2, size = 1000;
 
@@ -626,7 +622,7 @@ define([
 
             if ((maxPrecision != null) && (maxPrecision == true)) {
                 decimalDigits = 6;
-            } else if(precision != null) {
+            } else if (precision != null) {
                 decimalDigits = precision < 7 ? precision : 6;
             }
 
