@@ -5,7 +5,7 @@
 define([
     'underscore',
     'contrail-remote-data-handler',
-    'js/models/GraphLayoutHandler'
+    'core-basedir/js/models/GraphLayoutHandler'
 ], function (_, ContrailRemoteDataHandler, GraphLayoutHandler) {
     var ContrailGraphModel = joint.dia.Graph.extend({
         empty: false,

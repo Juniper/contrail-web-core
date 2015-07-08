@@ -5,7 +5,7 @@
 define([
     'underscore',
     'backbone',
-    'js/models/ScatterChartModel',
+    'core-basedir/js/models/ScatterChartModel',
     'contrail-list-model'
 ], function (_, Backbone, ScatterChartModel, ContrailListModel) {
     var ScatterChartView = Backbone.View.extend({

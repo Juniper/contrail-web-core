@@ -3,12 +3,12 @@
  */
 
 define([
-    'js/views/FormInputView', 'js/views/FormGridView', 'js/views/FormDynamicGridView', 'js/views/FormMultiselectView',
-    'js/views/FormDropdownView', 'js/views/FormSelect2DropdownView', 'js/views/FormCheckboxView',
-    'js/views/AccordianView', 'js/views/SectionView', 'js/views/WizardView', 'js/views/FormEditableGridView',
-    'js/views/GridInputView', 'js/views/GridCheckboxView', 'js/views/GridDropdownView', 'js/views/GridMultiselectView',
-    'graph-view', 'js/views/TabsView', 'js/views/ChartView', 'js/views/GridView', 'js/views/DetailsView',
-    'js/views/ScatterChartView', 'js/views/LineWithFocusChartView', 'js/views/HeatChartView', 'js/views/ZoomScatterChartView'
+    'core-basedir/js/views/FormInputView', 'core-basedir/js/views/FormGridView', 'core-basedir/js/views/FormDynamicGridView', 'core-basedir/js/views/FormMultiselectView',
+    'core-basedir/js/views/FormDropdownView', 'core-basedir/js/views/FormSelect2DropdownView', 'core-basedir/js/views/FormCheckboxView',
+    'core-basedir/js/views/AccordianView', 'core-basedir/js/views/SectionView', 'core-basedir/js/views/WizardView', 'core-basedir/js/views/FormEditableGridView',
+    'core-basedir/js/views/GridInputView', 'core-basedir/js/views/GridCheckboxView', 'core-basedir/js/views/GridDropdownView', 'core-basedir/js/views/GridMultiselectView',
+    'graph-view', 'core-basedir/js/views/TabsView', 'core-basedir/js/views/ChartView', 'core-basedir/js/views/GridView', 'core-basedir/js/views/DetailsView',
+    'core-basedir/js/views/ScatterChartView', 'core-basedir/js/views/LineWithFocusChartView', 'core-basedir/js/views/HeatChartView', 'core-basedir/js/views/ZoomScatterChartView'
 ], function (FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
              AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
              GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView, LineWithFocusChartView, HeatChartView, ZoomScatterChartView) {
@@ -611,7 +611,7 @@ define([
 
 
         this.addUnits2Packets = function (traffic, noDecimal, maxPrecision, precision) {
-            var trafficPrefixes = ['K packets', 'M packets', "B packets", "T packets"],
+            var trafficPrefixes = ['packets', 'K packets', 'M packets', "B packets", "T packets"],
                 formatStr = '', decimalDigits = 2, size = 1000;
 
             if (!$.isNumeric(traffic)) {

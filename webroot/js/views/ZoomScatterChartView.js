@@ -5,9 +5,9 @@
 define([
     'underscore',
     'backbone',
-    'js/models/ZoomScatterChartModel',
+    'core-basedir/js/models/ZoomScatterChartModel',
     'contrail-list-model',
-    'js/views/ControlPanelView'
+    'core-basedir/js/views/ControlPanelView'
 ], function (_, Backbone, ZoomScatterChartModel, ContrailListModel, ControlPanelView) {
     var ZoomScatterChartView = Backbone.View.extend({
         renderChartInProgress: false,

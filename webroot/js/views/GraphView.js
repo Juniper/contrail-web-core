@@ -4,7 +4,7 @@
 
 define([
     'contrail-graph-model',
-    'js/views/ControlPanelView'
+    'core-basedir/js/views/ControlPanelView'
 ], function (ContrailGraphModel, ControlPanelView) {
     var GraphView = joint.dia.Paper.extend({
         constructor: function (viewConfig) {

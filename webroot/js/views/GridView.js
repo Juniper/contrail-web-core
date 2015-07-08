@@ -6,7 +6,7 @@ define([
     'underscore',
     'backbone',
     'contrail-list-model',
-    'js/views/GridFooterView'
+    'core-basedir/js/views/GridFooterView'
 ], function (_, Backbone, ContrailListModel, GridPagerView) {
     var GridView = Backbone.View.extend({
         render: function () {
