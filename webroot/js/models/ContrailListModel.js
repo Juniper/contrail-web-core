@@ -129,6 +129,7 @@ define([
         $.extend(true, contrailListModel, slickDataView, {
             _idOffset: (offset != null) ? offset : 0,
             error: false,
+            empty: false,
             errorList: [],
             sortConfig: sortConfig,
             setData: function (data) {
