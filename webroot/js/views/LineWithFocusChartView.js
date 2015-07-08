@@ -68,7 +68,7 @@ define([
                 data = viewConfig['parseFn'](data);
             }
 
-            chartOptions = { height: 300, yAxisLabel: 'Traffic', y2AxisLabel: '', yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }, y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }};
+            chartOptions = ifNull(viewConfig['chartOptions'], {});
 
             chartViewConfig = getChartViewConfig(data, chartOptions);
             chartData = chartViewConfig['chartData'];
@@ -108,6 +108,15 @@ define([
 
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
+        var chartDefaultOptions = {
+            height: 300,
+            yAxisLabel: 'Traffic',
+            y2AxisLabel: '',
+            yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); },
+            y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }
+        };
+        var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
+
         if (chartData.length > 0) {
             spliceBorderPoints(chartData);
             var values = chartData[0].values,
