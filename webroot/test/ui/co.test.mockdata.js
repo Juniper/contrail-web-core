@@ -1,20 +1,23 @@
+/*
+ * Copyright (c) 2015 Juniper Networks, Inc. All rights reserved.
+ */
 define(['underscore'], function (_) {
 
-//Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
+    //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
     var webServerInfoMockData = {
-        "orchestrationModel"       : [
+        "orchestrationModel": [
             "openstack"
         ],
-        "serverUTCTime"            : 1436203008000,
-        "hostName"                 : "a7s14",
-        "role"                     : [
+        "serverUTCTime": 1436203008000,
+        "hostName": "a7s14",
+        "role": [
             "superAdmin"
         ],
-        "featurePkg"               : {
+        "featurePkg": {
             "webController": true,
-            "webStorage"   : true
+            "webStorage": true
         },
-        "uiConfig"                 : {
+        "uiConfig": {
             "nodemanager": {
                 "installed": true
             }
@@ -22,6 +25,6 @@ define(['underscore'], function (_) {
         "loggedInOrchestrationMode": "openstack"
     };
     return {
-        webServerInfoMockData : webServerInfoMockData
+        webServerInfoMockData: webServerInfoMockData
     }
 });
