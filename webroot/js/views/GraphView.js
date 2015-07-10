@@ -140,16 +140,18 @@ define([
     };
 
     function getZoomFocal(graphSelectorElement, panzoomTargetId) {
-        var screenWidth = $(graphSelectorElement).parents('.col1').width(),
-            screenHeight = $(graphSelectorElement).parents('.col1').height(),
-            screenOffsetTop = $(panzoomTargetId).parent().offset().top,
-            screenOffsetLeft = $(panzoomTargetId).parent().offset().left,
-            focal = {
-                clientX: screenOffsetLeft + screenWidth / 2,
-                clientY: screenOffsetTop + screenHeight / 2
-            };
+        if($(panzoomTargetId).length > 0) {
+            var screenWidth = $(graphSelectorElement).parents('.col1').width(),
+                screenHeight = $(graphSelectorElement).parents('.col1').height(),
+                screenOffsetTop = $(panzoomTargetId).parent().offset().top,
+                screenOffsetLeft = $(panzoomTargetId).parent().offset().left,
+                focal = {
+                    clientX: screenOffsetLeft + screenWidth / 2,
+                    clientY: screenOffsetTop + screenHeight / 2
+                };
 
-        return focal;
+            return focal;
+        }
     }
 
     var getControlPanelConfig = function(graphSelectorElement, jointObject, graphConfig, controlPanelConfig) {

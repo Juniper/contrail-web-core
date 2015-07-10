@@ -20,6 +20,10 @@ define([
         this.GRAPH_CACHE_UPDATE_INTERVAL = 60000;
         this.VIEWMODEL_CACHE_UPDATE_INTERVAL = 60000;
 
+        this.DOMAIN_CACHE_UPDATE_INTERVAL = 15 * 60000;
+        this.PROJECT_CACHE_UPDATE_INTERVAL = 7 * 60000;
+        this.NETWORK_CACHE_UPDATE_INTERVAL = 4 * 60000;
+
         this.KEY_MODEL_ERRORS = 'errors';
         this.KEY_MODEL_LOCKS = 'locks';
         this.KEY_ELEMENT_ID = 'elementId';

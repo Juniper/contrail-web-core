@@ -15,6 +15,27 @@ define([
 
         self.classes = ['error', 'warning', 'medium', 'okay', 'default'];
 
+        self.isRequestInProgress = function() {
+            return dataListModel.isRequestInProgress()
+        };
+
+        self.isError = function() {
+            if (contrail.checkIfExist(dataListModel.error) && dataListModel.error === true && dataListModel.errorList.length > 0) {
+                var xhr = dataListModel.errorList[0];
+                if(!(xhr.status === 0 && xhr.statusText === 'abort')) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        self.isEmpty = function() {
+            if (contrail.checkIfExist(dataListModel.empty)) {
+                return (dataListModel.empty) ? true : ((dataListModel.getFilteredItems().length == 0) ? true : false);
+            }
+            return false;
+        };
+
         self.refresh = function() {
             var rawData = dataListModel.getFilteredItems();
             self.data = contrail.checkIfFunction(chartConfig['dataParser']) ? chartConfig['dataParser'](rawData) : rawData;
@@ -103,21 +124,6 @@ define([
         };
 
         self.refresh();
-
-        self.isRequestInProgress = function() {
-            return dataListModel.isRequestInProgress()
-        };
-
-        self.isError = function() {
-            return contrail.checkIfExist(dataListModel.error) ? dataListModel.error : false;
-        };
-
-        self.isEmpty = function() {
-            if (contrail.checkIfExist(dataListModel.empty)) {
-                return (dataListModel.empty) ? true : ((dataListModel.getFilteredItems().length == 0) ? true : false);
-            }
-            return false;
-        };
 
         return self;
     };
