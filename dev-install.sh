@@ -19,6 +19,10 @@ rm -rf webroot/assets/d3
 mkdir -p webroot/assets/d3/js
 cp -af ./$THIRD_PARTY/d3/d3.js webroot/assets/d3/js/
 
+rm -rf webroot/assets/d3-v3.5.6
+mkdir -p webroot/assets/d3-v3.5.6/js
+cp -af ./$THIRD_PARTY/d3-v3.5.6/d3.*js webroot/assets/d3-v3.5.6/js/
+
 rm -rf webroot/assets/crossfilter
 mkdir -p webroot/assets/crossfilter/js
 cp -af ./$THIRD_PARTY/crossfilter/crossfilter.min.js webroot/assets/crossfilter/js/
@@ -37,6 +41,13 @@ mkdir -p webroot/assets/nvd3/css
 cp -af ./$THIRD_PARTY/nvd3/nv.d3.js webroot/assets/nvd3/js/
 cp -af ./$THIRD_PARTY/nvd3/lib/fisheye.js webroot/assets/nvd3/js/fisheye.js
 cp -af ./$THIRD_PARTY/nvd3/src/nv.d3.css webroot/assets/nvd3/css/
+
+rm -rf webroot/assets/nvd3-v1.8.1
+mkdir -p webroot/assets/nvd3-v1.8.1/js
+mkdir -p webroot/assets/nvd3-v1.8.1/css
+cp -af ./$THIRD_PARTY/nvd3-v1.8.1/build/nv.d3.*js webroot/assets/nvd3-v1.8.1/js/
+cp -af ./$THIRD_PARTY/nvd3-v1.8.1/build/nv.d3.*css webroot/assets/nvd3-v1.8.1/css/
+
 #End - Copy d3/nvd3 files from $THIRD_PARTY
 
 #Start - Copy JQuery files from $THIRD_PARTY
