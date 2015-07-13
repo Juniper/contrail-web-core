@@ -9,11 +9,11 @@ define([
     'core-basedir/js/views/GridInputView', 'core-basedir/js/views/GridCheckboxView', 'core-basedir/js/views/GridDropdownView', 'core-basedir/js/views/GridMultiselectView',
     'graph-view', 'core-basedir/js/views/TabsView', 'core-basedir/js/views/ChartView', 'core-basedir/js/views/GridView', 'core-basedir/js/views/DetailsView',
     'core-basedir/js/views/ScatterChartView', 'core-basedir/js/views/LineWithFocusChartView', 'core-basedir/js/views/HeatChartView', 'core-basedir/js/views/ZoomScatterChartView',
-    'core-basedir/js/views/HorizontalBarChartView'
+    'core-basedir/js/views/HorizontalBarChartView', 'core-basedir/js/views/LineBarWithFocusChartView'
 ], function (FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
              AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
              GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView, LineWithFocusChartView, HeatChartView, ZoomScatterChartView,
-             HorizontalBarChartView) {
+             HorizontalBarChartView, LineBarWithFocusChartView) {
 
     var CoreUtils = function () {
         var self = this;
@@ -403,10 +403,14 @@ define([
 
                 case "HorizontalBarChartView":
                     elementView = new HorizontalBarChartView({el: parentElement, model: model, attributes: viewAttributes});
-                    elementView.modelMap = modelMap;
                     elementView.render();
                     break;
 
+                case "LineBarWithFocusChartView":
+                    elementView = new LineBarWithFocusChartView({el: parentElement, model: model, attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    break;
 
                 default:
                     if (app == cowc.APP_CONTRAIL_CONTROLLER) {
@@ -655,6 +659,18 @@ define([
                 }
             });
             return formatStr;
+        };
+
+        this.interpolateSankey = function(points) {
+            var x0 = points[0][0], y0 = points[0][1], x1, y1, x2,
+                path = [x0, ",", y0],
+                i = 0, n = points.length;
+            while (++i < n) {
+                x1 = points[i][0], y1 = points[i][1], x2 = (x0 + x1) / 2;
+                path.push("C", x2, ",", y0, " ", x2, ",", y1, " ", x1, ",", y1);
+                x0 = x1, y0 = y1;
+            }
+            return path.join("");
         };
     };
     return CoreUtils;

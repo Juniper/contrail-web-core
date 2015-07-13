@@ -11,8 +11,9 @@ var coreAppPaths =  {
     'jquery-ui'                   : '/assets/jquery-ui/js/jquery-ui',
     'jquery.ui.touch-punch'       : '/assets/jquery/js/jquery.ui.touch-punch.min',
     'bootstrap'                   : '/assets/bootstrap/js/bootstrap.min',
-    'd3'                          : '/assets/d3/js/d3',
+    'd3'                          : '/assets/d3-v3.5.6/js/d3',
     'nv.d3'                       : '/assets/nvd3/js/nv.d3',
+    'nvd3v181'                    : '/js/third-party/nv.d3.v1.8.1',
     'crossfilter'                 : '/assets/crossfilter/js/crossfilter.min',
     'jsonpath'                    : '/assets/jsonpath/js/jsonpath-0.8.0',
     'xdate'                       : "/assets/xdate/js/xdate",
@@ -111,6 +112,9 @@ var coreAppShim =  {
             deps: ["jquery"]
         },
         'nv.d3': {
+            deps: ['d3']
+        },
+        'nvd3v181': {
             deps: ['d3']
         },
         'crossfilter': {
