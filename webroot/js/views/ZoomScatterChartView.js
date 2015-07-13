@@ -44,9 +44,11 @@ define([
                     self.renderChart(selector, viewConfig, self.model);
                 });
 
-                nv.utils.windowResize(function () {
-                    self.renderChart(selector, viewConfig, self.model);
-                });
+                $(window)
+                    .off('resize')
+                    .on('resize', function (e) {
+                        self.renderChart(selector, viewConfig, self.model);
+                    });
             }
         },
 
@@ -72,7 +74,7 @@ define([
             } else {
                 $(selector).find('.chart-container').empty();
                 chartConfig = getChartConfig(selector, chartOptions);
-                self.chartModel.refresh();
+                self.chartModel.refresh(chartConfig);
                 self.zm = self.chartModel.zoomBehavior.on("zoom", getChartZoomFn(self, chartConfig));
                 self.zoomBySelection = false;
             }
@@ -673,9 +675,10 @@ define([
 
         if (tooltipElementKey in overlapMap) {
             var overlappedElementData = $.map(overlapMap[tooltipElementKey], function (overlapMapValue, overlapMapKey) {
-                var overlappedElementName = contrail.handleIfNull(chartData[overlapMapValue].name, '-');
-                if (tooltipData.name != overlappedElementName) {
-                    return {id: overlapMapValue, text: overlappedElementName}
+                var overlappedElementName = contrail.handleIfNull(chartData[overlapMapValue].name, '-'),
+                    overlappedElementType = contrail.handleIfNull(ctwl.get(chartData[overlapMapValue].type), '-');;
+                if (!_.isEqual(chartData[overlapMapValue], tooltipData)) {
+                    return {id: overlapMapValue, text: overlappedElementName + ' (' + overlappedElementType + ')'}
                 }
                 return null;
             });
@@ -688,7 +691,7 @@ define([
                 dataValueField: 'id',
                 placeholder: 'View more (' + overlappedElementData.length + ')',
                 ignoreFirstValue: true,
-                dropdownCssClass: 'min-width-150',
+                dropdownCssClass: 'min-width-250',
                 data: overlappedElementData,
                 change: function (e) {
                     var selectedTooltipKey = e.added.id,

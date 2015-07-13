@@ -163,11 +163,11 @@ function Contrail() {
     };
 
     this.truncateText = function(text, size){
-    	if(text.length <= size){
+    	var textLength = text.length;
+        if(textLength <= size){
     		return text;
-    	}
-    	else{
-    		return text.substr(0,(size-3)) + '...';
+    	} else{
+    		return text.substr(0, (size - 6)) + '...' + text.substr((textLength - 3), textLength);
     	}
     };
 

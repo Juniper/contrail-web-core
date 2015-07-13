@@ -86,7 +86,7 @@ define([
                 cacheConfig : {
                     ucid: ctwc.UCID_BC_ALL_DOMAINS,
                     loadOnTimeout: false,
-                    cacheTimeout: ctwc.DOMAIN_CACHE_UPDATE_INTERVAL
+                    cacheTimeout: cowc.DOMAIN_CACHE_UPDATE_INTERVAL
                 }
             };
 
@@ -120,7 +120,7 @@ define([
                 cacheConfig : {
                     ucid: ctwc.get(ctwc.UCID_BC_DOMAIN_ALL_PROJECTS, domain),
                     loadOnTimeout: false,
-                    cacheTimeout: ctwc.PROJECT_CACHE_UPDATE_INTERVAL
+                    cacheTimeout: cowc.PROJECT_CACHE_UPDATE_INTERVAL
                 }
             };
 
@@ -146,7 +146,7 @@ define([
                 cacheConfig : {
                     ucid: ctwc.get(ctwc.UCID_BC_PROJECT_ALL_NETWORKS, projectFQN),
                     loadOnTimeout: false,
-                    cacheTimeout: ctwc.NETWORK_CACHE_UPDATE_INTERVAL
+                    cacheTimeout: cowc.NETWORK_CACHE_UPDATE_INTERVAL
                 }
             };
 

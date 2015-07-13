@@ -36,7 +36,7 @@ define([
             return false;
         };
 
-        self.refresh = function() {
+        self.refresh = function(chartConfig) {
             var rawData = dataListModel.getFilteredItems();
             self.data = contrail.checkIfFunction(chartConfig['dataParser']) ? chartConfig['dataParser'](rawData) : rawData;
 
@@ -123,7 +123,7 @@ define([
             }));
         };
 
-        self.refresh();
+        self.refresh(chartConfig);
 
         return self;
     };
