@@ -235,7 +235,7 @@ cp -af ./$THIRD_PARTY/bezierjs-gh-pages/lib/bezier.js webroot/assets/bezierjs/be
 #End - Copy bezier from $THIRD_PARTY
 
 #Start - Copy uuid.js from $THIRD_PARTY
-cp -af ./$THIRD_PARTY/uuid.js webroot/js/uuid.js
+cp -af ./$THIRD_PARTY/uuid-js.0.7.5.js webroot/js/uuid.js
 #End - Copy uuid.js from $THIRD_PARTY
 
 #Start - Merging All JS files
