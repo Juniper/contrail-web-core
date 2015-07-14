@@ -77,7 +77,7 @@ define([
             ;
 
         var margin = {top: 30, right: 30, bottom: 30, left: 60}
-            , margin2 = {top: 0, right: 30, bottom: 20, left: 60}
+            , margin2 = {top: 0, right: 30, bottom: 40, left: 60}
             , width = null
             , height = null
             , getX = function(d) { return d.x }
@@ -87,7 +87,7 @@ define([
             , focusEnable = true
             , focusShowAxisY = false
             , focusShowAxisX = true
-            , focusHeight = 50
+            , focusHeight = 90
             , extent
             , brushExtent = null
             , x
@@ -672,13 +672,13 @@ define([
             return d3.time.format('%H:%M')(new Date(d));
         });
 
-        chartModel.x2Axis.tickFormat(function (d) {
+        chartModel.x2Axis.axisLabel("Time").tickFormat(function (d) {
             return d3.time.format('%H:%M')(new Date(d));
         });
 
-        chartModel.y1Axis.axisLabel(chartOptions.y1AxisLabel).tickFormat(chartOptions['y1Formatter']);
+        chartModel.y1Axis.axisLabel(chartOptions.y1AxisLabel).tickFormat(chartOptions['y1Formatter']).showMaxMin(false);
 
-        chartModel.y2Axis.axisLabel(chartOptions.y2AxisLabel).tickFormat(chartOptions['y2Formatter']);
+        chartModel.y2Axis.axisLabel(chartOptions.y2AxisLabel).tickFormat(chartOptions['y2Formatter']).showMaxMin(false);
 
         return chartModel;
     };

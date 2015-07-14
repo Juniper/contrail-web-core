@@ -37,9 +37,7 @@ define([
                         remoteHandlerConfig = getRemoteHandlerConfig(self, modelConfig);
                         self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
                     } else {
-                        console.log("#2");
                         remoteHandlerConfig = getRemoteHandlerConfig(self, modelConfig, false);
-                        console.log(remoteHandlerConfig);
                         self.contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
                     }
                 } else {

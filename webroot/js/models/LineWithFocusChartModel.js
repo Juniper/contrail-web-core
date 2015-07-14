@@ -74,18 +74,19 @@ define([
             ;
 
         var margin = {top: 30, right: 30, bottom: 30, left: 60}
-            , margin2 = {top: 0, right: 30, bottom: 20, left: 60}
+            , margin2 = {top: 0, right: 30, bottom: 40, left: 60}
             , color = nvd3v181.utils.defaultColor()
             , width = null
             , height = null
-            , height2 = 50
+            , height2 = 90
             , useInteractiveGuideline = false
-            , x
-            , y
+            , xScale
+            , yScale
             , x2
             , y2
             , showLegend = true
             , brushExtent = null
+            , focusShowAxisY = false
             , noData = null
             , dispatch = d3.dispatch('brush', 'stateChange', 'changeState')
             , transitionDuration = 250
@@ -175,8 +176,8 @@ define([
                 }
 
                 // Setup Scales
-                x = lines.xScale();
-                y = lines.yScale();
+                xScale = lines.xScale();
+                yScale = lines.yScale()
                 x2 = lines2.xScale();
                 y2 = lines2.yScale();
 
@@ -227,7 +228,7 @@ define([
                         .height(availableHeight1)
                         .margin({left: margin.left, top: margin.top})
                         .svgContainer(container)
-                        .xScale(x);
+                        .xScale(xScale);
                     wrap.select(".nv-interactive").call(interactiveLayer);
                 }
 
@@ -271,13 +272,13 @@ define([
 
                 // Setup Main (Focus) Axes
                 xAxis
-                    .scale(x)
+                    .scale(xScale)
                     ._ticks(nvd3v181.utils.calcTicksX(availableWidth / 100, data))
                     .tickSize(-availableHeight1, 0);
 
                 yAxis
-                    .scale(y)
-                    ._ticks(nvd3v181.utils.calcTicksY(availableHeight1 / 36, data))
+                    .scale(yScale)
+                    ._ticks(nvd3v181.utils.calcTicksY(availableHeight1 / 40, data))
                     .tickSize(-availableWidth, 0);
 
                 g.select('.nv-focus .nv-x.nv-axis')
@@ -329,13 +330,15 @@ define([
                 d3.transition(g.select('.nv-context .nv-x.nv-axis'))
                     .call(x2Axis);
 
-                y2Axis
-                    .scale(y2)
-                    ._ticks(nvd3v181.utils.calcTicksY(availableHeight2 / 36, data))
-                    .tickSize(-availableWidth, 0);
+                if(focusShowAxisY) {
+                    y2Axis
+                        .scale(y2)
+                        ._ticks(nvd3v181.utils.calcTicksY(availableHeight2 / 36, data))
+                        .tickSize(-availableWidth, 0);
 
-                d3.transition(g.select('.nv-context .nv-y.nv-axis'))
-                    .call(y2Axis);
+                    d3.transition(g.select('.nv-context .nv-y.nv-axis'))
+                        .call(y2Axis);
+                }
 
                 g.select('.nv-context .nv-x.nv-axis')
                     .attr('transform', 'translate(0,' + y2.range()[0] + ')');
@@ -448,7 +451,7 @@ define([
                     brushBG
                         .data([brush.empty() ? x2.domain() : brushExtent])
                         .each(function (d, i) {
-                            var leftWidth = x2(d[0]) - x.range()[0],
+                            var leftWidth = x2(d[0]) - xScale.range()[0],
                                 rightWidth = availableWidth - x2(d[1]);
                             d3.select(this).select('.left')
                                 .attr('width', leftWidth < 0 ? 0 : leftWidth);
@@ -537,6 +540,7 @@ define([
 
         chartModel._options = Object.create({}, {
             // simple options, just get/set the necessary values
+            focusShowAxisY:    {get: function(){return focusShowAxisY;}, set: function(_){focusShowAxisY=_;}},
             width: {
                 get: function () {
                     return width;
@@ -698,9 +702,8 @@ define([
         // Customize NVD3 Chart
         //------------------------------------------------------------
 
-        chartModel.margin({top: 10, right: 30, bottom: 50, left: 75})
+        chartModel.margin({top: 20, right: 30, bottom: 50, left: 80})
             .brushExtent(chartOptions['brushExtent'])
-            .focusHeight(70)
             .useInteractiveGuideline(true);
 
         chartModel.interpolate(cowu.interpolateSankey);
@@ -709,16 +712,14 @@ define([
             return d3.time.format('%H:%M:%S')(new Date(d));
         });
 
-        chartModel.x2Axis.tickFormat(function (d) {
+        chartModel.x2Axis.axisLabel("Time").tickFormat(function (d) {
             return d3.time.format('%H:%M:%S')(new Date(d));
         });
 
-        chartModel.yAxis.axisLabel(chartOptions.yAxisLabel).tickFormat(chartOptions['yFormatter']);
+        chartModel.yAxis.axisLabel(chartOptions.yAxisLabel).axisLabelDistance(20).tickFormat(chartOptions['yFormatter']).showMaxMin(false);
 
-        chartModel.y2Axis.axisLabel(chartOptions.y2AxisLabel).tickFormat(chartOptions['y2Formatter']);
-
-        chartModel.lines.forceY([0]);
-        chartModel.lines2.forceY([0]);
+        chartModel.lines.forceY([0, 1]);
+        chartModel.lines2.forceY([0, 1]);
 
         return chartModel;
     };
