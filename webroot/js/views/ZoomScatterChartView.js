@@ -254,7 +254,7 @@ define([
     function dataLoadingHandler(chartView, chartConfig, chartOptions) {
         var noDataMessage = cowc.CHART_LOADING_MESSAGE;
         plotZoomScatterChartData(chartView, chartConfig, chartOptions);
-        chartView.svg.attr('opacity', '0.6');
+        chartView.svg.attr('opacity', '0.8');
         renderChartMessage(chartView, noDataMessage);
     }
 

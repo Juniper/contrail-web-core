@@ -8,11 +8,10 @@ define([
 ], function (ContrailGraphModel, ControlPanelView) {
     var GraphView = joint.dia.Paper.extend({
         constructor: function (viewConfig) {
-            var graphConfig = viewConfig.graphModelConfig,
+            var self = this,
+                graphConfig = viewConfig.graphModelConfig,
                 tooltipConfig, clickEventsConfig, controlPanelConfig,
-                graphControlPanelId = "#graph-control-panel",
-                graphLoadingId = '#graph-loading',
-                self = this;
+                graphControlPanelId = '#'+ ctwl.GRAPH_CONTROL_PANEL_ID;
 
             self.model = new ContrailGraphModel(graphConfig);
             self.viewConfig = viewConfig;
@@ -29,10 +28,8 @@ define([
 
             self.model.onAllRequestsComplete.subscribe(function() {
                 if (self.model.error === true && contrail.checkIfFunction(viewConfig.failureCallback)) {
-                    $(graphLoadingId).remove();
                     viewConfig.failureCallback(self.model);
                 } else if (self.model.empty === true && contrail.checkIfFunction(viewConfig.emptyCallback)) {
-                    $(graphLoadingId).remove();
                     viewConfig.emptyCallback(self.model)
                 } else {
                     var graphSelectorElement = self.el,
@@ -53,13 +50,12 @@ define([
                         controlPanelView.render();
                     }
 
-                    if (contrail.checkIfFunction(viewConfig.successCallback)) {
-                        $(graphLoadingId).remove();
-                        viewConfig.successCallback(jointObject);
-                    }
-
                     initClickEvents(graphSelectorElement, clickEventsConfig, jointObject);
                     initMouseEvents(graphSelectorElement, tooltipConfig, jointObject);
+
+                    if (contrail.checkIfFunction(viewConfig.successCallback)) {
+                        viewConfig.successCallback(jointObject);
+                    }
                 }
             });
 
@@ -83,7 +79,8 @@ define([
                 minScale: 0.2,
                 maxScale: 2,
                 duration: 200,
-                easing: "ease-out"
+                easing: "ease-out",
+                contain: 'invert'
             },
             panzoomConfig = $.extend(true, panZoomDefaultConfig, controlPanelConfig.default.zoom.config);
 
