@@ -12,7 +12,7 @@ define([
      * @returns multiBarHorizontalChartModel
      */
     var HorizontalBarChartModel = function (chartOptions) {
-        var chartModel = nv.models.multiBarHorizontalChart()
+        var chartModel = nvd3v181.models.multiBarHorizontalChart()
             .height(chartOptions.height)
             .margin(chartOptions.margin)
             .x(function (d) {
