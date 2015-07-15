@@ -13,7 +13,7 @@ var coreAppPaths =  {
     'bootstrap'                   : '/assets/bootstrap/js/bootstrap.min',
     'd3'                          : '/assets/d3-v3.5.6/js/d3',
     'nv.d3'                       : '/assets/nvd3/js/nv.d3',
-    'nvd3v181'                    : '/js/third-party/nv.d3.v1.8.1',
+    'nvd3v181'                    : '/assets/nvd3-v1.8.1/js/nv.d3',
     'crossfilter'                 : '/assets/crossfilter/js/crossfilter.min',
     'jsonpath'                    : '/assets/jsonpath/js/jsonpath-0.8.0',
     'xdate'                       : "/assets/xdate/js/xdate",

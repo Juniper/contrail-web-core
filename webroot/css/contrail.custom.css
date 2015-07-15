@@ -645,7 +645,55 @@ filter: alpha(opacity=40);
 
 .icon-muted{color: #777;}
 
-/* NVD3 Styles */
+/* NVD3 Styles - overriding nvd3-v1.8.1 styles*/
+.nvd3 .nv-axis path {
+    stroke: #ccc;
+}
+.nvd3 .nv-axis.nv-x path.domain {
+    stroke-opacity: 0.75;
+}
+.nvd3 .nv-axis .nv-axisMaxMin text {
+    font-weight: normal;
+}
+.nvtooltip {
+    font-family: 'Open Sans';
+    border-radius: 0;
+    border: 1px solid rgba(0,0,0,.2);
+    color: #393939;
+    font-size: 11px;
+}
+.nvd3 text {
+    font: normal 10px "Open Sans";
+}
+.nvd3 .title {
+    font: normal 12px "Open Sans";
+}
+.nvd3.nv-noData {
+    font-size: 16px;
+    font-weight: normal;
+}
+.nvd3.nv-bullet { font: 10px "Open Sans"; }
+.nvd3.nv-bullet .nv-title { font-size: 14px; font-weight: normal; }
+.nvd3 .nv-brushBackground rect {
+    stroke: #CCC;
+    stroke-width: .1;
+}
+.nvd3 .nv-discretebar .nv-groups text,
+.nvd3 .nv-multibarHorizontal .nv-groups text {
+    font-weight: normal;
+}
+.nvd3.nv-scatter .nv-groups .nv-point.hover,
+.nvd3 .nv-groups .nv-point.hover {
+    stroke-width: 3px;
+    fill-opacity: .5 !important;
+    stroke-opacity: .5 !important;
+}
+.nvd3.nv-sparklineplus .nv-currentValue {
+    font-weight: normal;
+}
+.nvtooltip table td.value {
+    font-weight: normal;
+}
 
 /* aligning heights of all input types */
 .row-fluid input[class*="span"], .row-fluid select[class*="span"]{
