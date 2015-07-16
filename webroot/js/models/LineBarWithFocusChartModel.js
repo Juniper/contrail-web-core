@@ -680,6 +680,8 @@ define([
 
         chartModel.y2Axis.axisLabel(chartOptions.y2AxisLabel).tickFormat(chartOptions['y2Formatter']).showMaxMin(false);
 
+        chartModel.showLegend(chartOptions.showLegend);
+
         return chartModel;
     };
 

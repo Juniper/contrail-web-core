@@ -94,6 +94,7 @@ define([
                 return formattedValue;
             },
             y1Formatter: d3.format(".01f"),
+            showLegend: true
         };
         var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
 
