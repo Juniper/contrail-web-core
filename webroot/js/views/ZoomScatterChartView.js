@@ -101,7 +101,7 @@ define([
 
         plotZoomScatterChart(chartView, chartConfig, chartOptions, selector);
 
-        if (chartModel.isPrimaryRequestInProgress()) {
+        if (chartModel.isPrimaryRequestInProgress() && !chartModel.loadedFromCache) {
             dataLoadingHandler(chartView, chartConfig, chartOptions)
         } else if (chartModel.isError() === true) {
             dataErrorHandler(chartView);

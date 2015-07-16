@@ -15,6 +15,8 @@ define([
 
         self.classes = ['error', 'warning', 'medium', 'okay', 'default'];
 
+        self.loadedFromCache = dataListModel.loadedFromCache;
+
         self.isRequestInProgress = function() {
             return dataListModel.isRequestInProgress()
         };
