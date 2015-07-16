@@ -1388,6 +1388,7 @@ function getWebServerInfo (req, res, appData)
 
 function getUserRoleListPerTenant (req, res, callback)
 {
+    var authApi = require('../common/auth.api');
     var userRolesObj = {};
     var project = req.param('project');
     try {
