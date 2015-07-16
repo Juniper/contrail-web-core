@@ -7,7 +7,7 @@ define([
 ], function (_) {
     var CoreFormatters = function () {
         var self = this;
-        this.getTextGenerator = function (formatterKey, value) {
+        this.getTextGenerator = function (formatterKey, value, obj) {
             switch (formatterKey) {
                 case 'byte' :
                     return formatBytes(value);
@@ -61,6 +61,8 @@ define([
                         return value;
                     }
                     break;
+                //run the user defined formatter function
+                default : return eval(formatterKey)(value,obj);
             };
         };
 

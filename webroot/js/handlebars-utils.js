@@ -218,7 +218,7 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
         case 'TextGenerator':
             if (contrail.checkIfExist(templateGeneratorConfig)) {
                 var formatterKey = templateGeneratorConfig.formatter;
-                return cowf.getTextGenerator(formatterKey, value);
+                return cowf.getTextGenerator(formatterKey, value, obj);
             } else {
                 returnValue = $.isArray(value) ? value.join(', ') : value;
             }
