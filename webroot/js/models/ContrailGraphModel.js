@@ -5,9 +5,10 @@
 define([
     'underscore',
     'contrail-remote-data-handler',
-    'js/models/GraphLayoutHandler'
+    'core-basedir/js/models/GraphLayoutHandler'
 ], function (_, ContrailRemoteDataHandler, GraphLayoutHandler) {
     var ContrailGraphModel = joint.dia.Graph.extend({
+        empty: false,
         error: false,
         errorList: [],
         initialize: function (graphModelConfig) {
@@ -229,6 +230,8 @@ define([
         contrailGraphModel.rawData = cachedGraphModel.rawData;
         contrailGraphModel.directedGraphSize = cachedGraphModel.directedGraphSize;
         contrailGraphModel.loadedFromCache = true;
+
+        contrailGraphModel.empty = cachedGraphModel.empty;
     };
 
     function layoutGraph (contrailGraphModel) {

@@ -5,10 +5,10 @@
 define([
     'underscore',
     'backbone',
-    'core-basedir/js/models/LineWithFocusChartModel',
+    'core-basedir/js/models/LineBarWithFocusChartModel',
     'contrail-list-model'
-], function (_, Backbone, LineWithFocusChartModel, ContrailListModel) {
-    var LineWithFocusChartView = Backbone.View.extend({
+], function (_, Backbone, LineFocusChartModel, ContrailListModel) {
+    var LineBarWithFocusChartView = Backbone.View.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = this.attributes.viewConfig,
@@ -37,28 +37,6 @@ define([
                     });
                 }
             }
-            /*
-            else {
-                $.ajax(ajaxConfig).done(function (result) {
-                    deferredObj.resolve(result);
-                });
-
-                deferredObj.done(function (response) {
-                    var chartData = response;
-                    self.renderChart(selector, viewConfig, chartData);
-                });
-
-                deferredObj.fail(function (errObject) {
-                    if (errObject['errTxt'] != null && errObject['errTxt'] != 'abort') {
-                        showMessageInChart({
-                            selector: self.$el,
-                            msg: 'Error in fetching Details',
-                            type: 'timeseriescharts'
-                        });
-                    }
-                });
-            }
-            */
         },
 
         renderChart: function (selector, viewConfig, data) {
@@ -74,7 +52,7 @@ define([
             chartData = chartViewConfig['chartData'];
             chartOptions = chartViewConfig['chartOptions'];
 
-            chartModel = new LineWithFocusChartModel(chartOptions);
+            chartModel = new LineFocusChartModel(chartOptions);
             this.chartModel = chartModel;
 
             if ($(selector).find("svg") != null) {
@@ -86,23 +64,22 @@ define([
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartModel);
 
-            if (!($(selector).is(':visible'))) {
-                $(selector).find('svg').bind("refresh", function () {
-                    d3.select($(selector)[0]).select('svg').datum(chartData).call(chartModel);
-                });
-            } else {
-                d3.select($(selector)[0]).select('svg').datum(chartData).call(chartModel);
-            }
+            nvd3v181.addGraph(function() {
+                if (!($(selector).is(':visible'))) {
+                    $(selector).find('svg').bind("refresh", function () {
+                        d3.select($(selector)[0]).select('svg').datum(chartData).transition().duration(500).call(chartModel);
+                    });
+                } else {
+                    d3.select($(selector)[0]).select('svg').datum(chartData).transition().duration(500).call(chartModel);
+                }
 
-            nv.utils.windowResize(function () {
-                updateChartOnResize(selector, chartModel);
+                nvd3v181.utils.windowResize(chartModel.update);
+
+                chartModel.dispatch.on('stateChange', function(e) { nvd3v181.log('New State:', JSON.stringify(e)); });
+                $(selector).find('.loading-spinner').remove();
+
+                return chartModel;
             });
-            //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
-            if (chartOptions['deferredObj'] != null)
-                chartOptions['deferredObj'].resolve();
-
-            $(selector).find('.loading-spinner').remove();
-            //nv.addGraph(chartModel);
         }
     });
 
@@ -110,21 +87,24 @@ define([
         var chartViewConfig = {};
         var chartDefaultOptions = {
             height: 300,
-            yAxisLabel: 'Traffic',
-            y2AxisLabel: '',
-            yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); },
-            y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }
+            y1AxisLabel: 'CPU Utilization (%)',
+            y2AxisLabel: 'Memory Usage',
+            y2Formatter: function(y2Value) {
+                var formattedValue = formatBytes(y2Value * 1024, true);
+                return formattedValue;
+            },
+            y1Formatter: d3.format(".01f"),
+            showLegend: true
         };
         var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
 
         if (chartData.length > 0) {
-            spliceBorderPoints(chartData);
             var values = chartData[0].values,
                 brushExtent = null,
                 start, end;
 
-            if (values.length >= 20) {
-                start = values[values.length - 20];
+            if (values.length >= 25) {
+                start = values[values.length - 25];
                 end = values[values.length - 1];
                 chartOptions['brushExtent'] = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
             }
@@ -136,14 +116,5 @@ define([
         return chartViewConfig;
     };
 
-    function spliceBorderPoints(chartData) {
-        var lineChart;
-        for(var i = 0; i < chartData.length; i++) {
-            lineChart = chartData[i];
-            lineChart['values'].splice(0, 1);
-            lineChart['values'].splice((lineChart['values'].length - 1), 1);
-        }
-    };
-
-    return LineWithFocusChartView;
+    return LineBarWithFocusChartView;
 });

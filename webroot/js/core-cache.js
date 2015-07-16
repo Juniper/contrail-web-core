@@ -59,7 +59,7 @@ define([
 
         this.setData2Cache = function (ucid, dataObject) {
             this.set(ucid, {lastUpdateTime: $.now(), dataObject: dataObject});
-        }
+        };
 
         this.getAllDomains = function() {
             var listModelConfig = {
@@ -85,7 +85,8 @@ define([
                 },
                 cacheConfig : {
                     ucid: ctwc.UCID_BC_ALL_DOMAINS,
-                    loadOnTimeout: false
+                    loadOnTimeout: false,
+                    cacheTimeout: cowc.DOMAIN_CACHE_UPDATE_INTERVAL
                 }
             };
 
@@ -118,7 +119,8 @@ define([
                 },
                 cacheConfig : {
                     ucid: ctwc.get(ctwc.UCID_BC_DOMAIN_ALL_PROJECTS, domain),
-                    loadOnTimeout: false
+                    loadOnTimeout: false,
+                    cacheTimeout: cowc.PROJECT_CACHE_UPDATE_INTERVAL
                 }
             };
 
@@ -143,7 +145,8 @@ define([
                 },
                 cacheConfig : {
                     ucid: ctwc.get(ctwc.UCID_BC_PROJECT_ALL_NETWORKS, projectFQN),
-                    loadOnTimeout: false
+                    loadOnTimeout: false,
+                    cacheTimeout: cowc.NETWORK_CACHE_UPDATE_INTERVAL
                 }
             };
 

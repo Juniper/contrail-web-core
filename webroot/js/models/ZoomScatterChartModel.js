@@ -15,7 +15,34 @@ define([
 
         self.classes = ['error', 'warning', 'medium', 'okay', 'default'];
 
-        self.refresh = function() {
+        self.loadedFromCache = dataListModel.loadedFromCache;
+
+        self.isRequestInProgress = function() {
+            return dataListModel.isRequestInProgress()
+        };
+
+        self.isPrimaryRequestInProgress = function() {
+            return dataListModel.isPrimaryRequestInProgress()
+        };
+
+        self.isError = function() {
+            if (contrail.checkIfExist(dataListModel.error) && dataListModel.error === true && dataListModel.errorList.length > 0) {
+                var xhr = dataListModel.errorList[0];
+                if(!(xhr.status === 0 && xhr.statusText === 'abort')) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        self.isEmpty = function() {
+            if (contrail.checkIfExist(dataListModel.empty)) {
+                return (dataListModel.empty) ? true : ((dataListModel.getFilteredItems().length == 0) ? true : false);
+            }
+            return false;
+        };
+
+        self.refresh = function(chartConfig) {
             var rawData = dataListModel.getFilteredItems();
             self.data = contrail.checkIfFunction(chartConfig['dataParser']) ? chartConfig['dataParser'](rawData) : rawData;
 
@@ -100,31 +127,12 @@ define([
             self.yMed = median(_.map(chartData, function (d) {
                 return d[chartConfig.yField];
             }));
-
-            self.getNoDataMessage = function() {
-                updateNoDataMessage(dataListModel, self, chartConfig);
-                return self.noDataMessage;
-            };
         };
 
-        self.refresh();
+        self.refresh(chartConfig);
 
         return self;
     };
-
-    function updateNoDataMessage (dataListModel, chartModel, chartConfig) {
-        var error = dataListModel.error;
-
-        if (dataListModel.isRequestInProgress()) {
-            chartModel.noDataMessage = cowc.CHART_LOADING_MESSAGE;
-        } else if (contrail.checkIfExist(chartConfig['noDataMessage'])) {
-            chartModel.noDataMessage = chartConfig.noDataMessage;
-        } else if (error) {
-            chartModel.noDataMessage = cowc.DATA_ERROR_MESSAGE;
-        } else if(dataListModel.getItems().length == 0) {
-            chartModel.noDataMessage = cowc.CHART_NO_DATA_MESSAGE;
-        }
-    }
 
     function median(values) {
         values.sort(function (a, b) {

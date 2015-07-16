@@ -4,15 +4,14 @@
 
 define([
     'contrail-graph-model',
-    'js/views/ControlPanelView'
+    'core-basedir/js/views/ControlPanelView'
 ], function (ContrailGraphModel, ControlPanelView) {
     var GraphView = joint.dia.Paper.extend({
         constructor: function (viewConfig) {
-            var graphConfig = viewConfig.graphModelConfig,
+            var self = this,
+                graphConfig = viewConfig.graphModelConfig,
                 tooltipConfig, clickEventsConfig, controlPanelConfig,
-                graphControlPanelId = "#graph-control-panel",
-                graphLoadingId = '#graph-loading',
-                self = this;
+                graphControlPanelId = '#'+ ctwl.GRAPH_CONTROL_PANEL_ID;
 
             self.model = new ContrailGraphModel(graphConfig);
             self.viewConfig = viewConfig;
@@ -28,32 +27,36 @@ define([
             });
 
             self.model.onAllRequestsComplete.subscribe(function() {
-                var directedGraphSize = self.model.directedGraphSize,
-                    graphSelectorElement = self.el,
-                    jointObject = {
-                        graph: self.model,
-                        paper: self
-                    };
+                if (self.model.error === true && contrail.checkIfFunction(viewConfig.failureCallback)) {
+                    viewConfig.failureCallback(self.model);
+                } else if (self.model.empty === true && contrail.checkIfFunction(viewConfig.emptyCallback)) {
+                    viewConfig.emptyCallback(self.model)
+                } else {
+                    var graphSelectorElement = self.el,
+                        jointObject = {
+                            graph: self.model,
+                            paper: self
+                        };
 
-                if(controlPanelConfig) {
-                    var viewAttributes = {
-                            viewConfig: getControlPanelConfig(graphSelectorElement, jointObject, graphConfig, controlPanelConfig)
-                        },
-                        controlPanelView = new ControlPanelView({
-                            el: graphControlPanelId,
-                            attributes: viewAttributes
-                        });
+                    if (controlPanelConfig) {
+                        var viewAttributes = {
+                                viewConfig: getControlPanelConfig(graphSelectorElement, jointObject, graphConfig, controlPanelConfig)
+                            },
+                            controlPanelView = new ControlPanelView({
+                                el: graphControlPanelId,
+                                attributes: viewAttributes
+                            });
 
-                    controlPanelView.render();
+                        controlPanelView.render();
+                    }
+
+                    initClickEvents(graphSelectorElement, clickEventsConfig, jointObject);
+                    initMouseEvents(graphSelectorElement, tooltipConfig, jointObject);
+
+                    if (contrail.checkIfFunction(viewConfig.successCallback)) {
+                        viewConfig.successCallback(jointObject);
+                    }
                 }
-
-                if(contrail.checkIfFunction(viewConfig.successCallback)) {
-                    $(graphLoadingId).remove();
-                    viewConfig.successCallback(jointObject, directedGraphSize);
-                }
-
-                initClickEvents(graphSelectorElement, clickEventsConfig, jointObject);
-                initMouseEvents(graphSelectorElement, tooltipConfig, jointObject);
             });
 
             return self;
@@ -70,36 +73,30 @@ define([
 
     var initZoomEvents = function(graphSelectorElement, jointObject, controlPanelSelector, graphConfig, controlPanelConfig) {
         var graphControlPanelElement = $(controlPanelSelector),
-            panzommTargetId = controlPanelConfig.default.zoom.selectorId,
+            panzoomTargetId = controlPanelConfig.default.zoom.selectorId,
             panZoomDefaultConfig = {
                 increment: 0.2,
                 minScale: 0.2,
                 maxScale: 2,
                 duration: 200,
-                easing: "ease-out"
+                easing: "ease-out",
+                contain: 'invert'
             },
             panzoomConfig = $.extend(true, panZoomDefaultConfig, controlPanelConfig.default.zoom.config);
 
-        var screenWidth = $(graphSelectorElement).parents('.col1').width(),
-            screenHeight = $(graphSelectorElement).parents('.col1').height(),
-            screenOffsetTop = $(panzommTargetId).parent().offset().top,
-            screenOffsetLeft = $(panzommTargetId).parent().offset().left,
-            focal = {
-                clientX: screenOffsetLeft + screenWidth / 2,
-                clientY: screenOffsetTop + screenHeight / 2
-            },
+        var focal = getZoomFocal(graphSelectorElement, panzoomTargetId),
             allowZoom = true;
 
-        $(panzommTargetId).panzoom("reset");
-        $(panzommTargetId).panzoom("resetPan");
-        $(panzommTargetId).panzoom("destroy");
-        $(panzommTargetId).panzoom(panzoomConfig);
+        $(panzoomTargetId).panzoom("reset");
+        $(panzoomTargetId).panzoom("resetPan");
+        $(panzoomTargetId).panzoom("destroy");
+        $(panzoomTargetId).panzoom(panzoomConfig);
 
         var performZoom = function(zoomOut) {
             //Handle clicks and queue extra clicks if performed with the duration for smooth animation
             if (allowZoom == true) {
                 allowZoom = false;
-                $(panzommTargetId).panzoom("zoom", zoomOut, { focal: focal});
+                $(panzoomTargetId).panzoom("zoom", zoomOut, { focal: focal});
                 setTimeout(function(){
                     allowZoom = true;
                 }, panZoomDefaultConfig.duration);
@@ -120,7 +117,7 @@ define([
             .on('click', function(e) {
                 if (!$(this).hasClass('disabled')) {
                     e.preventDefault();
-                    $(panzommTargetId).panzoom("reset");
+                    $(panzoomTargetId).panzoom("reset");
                 }
             });
 
@@ -133,19 +130,26 @@ define([
                 }
             });
 
-        $(panzommTargetId).on('panzoompan', function(e, panzoom, x, y) {
-            $(panzommTargetId).panzoom('resetDimensions');
+        $(panzoomTargetId).on('panzoompan', function(e, panzoom, x, y) {
+            $(panzoomTargetId).panzoom('resetDimensions');
+            focal = getZoomFocal(graphSelectorElement, panzoomTargetId);
+        });
+    };
 
-            screenWidth = $(graphSelectorElement).parents('.col1').width(),
+    function getZoomFocal(graphSelectorElement, panzoomTargetId) {
+        if($(panzoomTargetId).length > 0) {
+            var screenWidth = $(graphSelectorElement).parents('.col1').width(),
                 screenHeight = $(graphSelectorElement).parents('.col1').height(),
-                screenOffsetTop = $(panzommTargetId).parent().offset().top,
-                screenOffsetLeft = $(panzommTargetId).parent().offset().left,
+                screenOffsetTop = $(panzoomTargetId).parent().offset().top,
+                screenOffsetLeft = $(panzoomTargetId).parent().offset().left,
                 focal = {
                     clientX: screenOffsetLeft + screenWidth / 2,
                     clientY: screenOffsetTop + screenHeight / 2
                 };
-        });
-    };
+
+            return focal;
+        }
+    }
 
     var getControlPanelConfig = function(graphSelectorElement, jointObject, graphConfig, controlPanelConfig) {
         var customConfig = $.extend(true, {}, controlPanelConfig.custom);

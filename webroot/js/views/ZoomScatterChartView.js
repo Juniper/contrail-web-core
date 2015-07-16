@@ -5,9 +5,9 @@
 define([
     'underscore',
     'backbone',
-    'js/models/ZoomScatterChartModel',
+    'core-basedir/js/models/ZoomScatterChartModel',
     'contrail-list-model',
-    'js/views/ControlPanelView'
+    'core-basedir/js/views/ControlPanelView'
 ], function (_, Backbone, ZoomScatterChartModel, ContrailListModel, ControlPanelView) {
     var ZoomScatterChartView = Backbone.View.extend({
         renderChartInProgress: false,
@@ -44,9 +44,11 @@ define([
                     self.renderChart(selector, viewConfig, self.model);
                 });
 
-                nv.utils.windowResize(function () {
-                    self.renderChart(selector, viewConfig, self.model);
-                });
+                $(window)
+                    .off('resize')
+                    .on('resize', function (e) {
+                        self.renderChart(selector, viewConfig, self.model);
+                    });
             }
         },
 
@@ -72,7 +74,7 @@ define([
             } else {
                 $(selector).find('.chart-container').empty();
                 chartConfig = getChartConfig(selector, chartOptions);
-                self.chartModel.refresh();
+                self.chartModel.refresh(chartConfig);
                 self.zm = self.chartModel.zoomBehavior.on("zoom", getChartZoomFn(self, chartConfig));
                 self.zoomBySelection = false;
             }
@@ -95,20 +97,34 @@ define([
     };
 
     function renderZoomScatterChart(chartView, chartConfig, chartOptions, selector) {
+        var chartModel = chartView.chartModel;
+
+        plotZoomScatterChart(chartView, chartConfig, chartOptions, selector);
+
+        if (chartModel.isPrimaryRequestInProgress() && !chartModel.loadedFromCache) {
+            dataLoadingHandler(chartView, chartConfig, chartOptions)
+        } else if (chartModel.isError() === true) {
+            dataErrorHandler(chartView);
+        } else if(chartModel.isEmpty() === true) {
+            dataEmptyHandler(chartView, chartConfig)
+        } else {
+            dataSuccessHandler(chartView, chartConfig, chartOptions)
+        }
+
+        chartView.renderChartInProgress = false;
+    }
+
+    function plotZoomScatterChart(chartView, chartConfig, chartOptions, selector) {
         var chartSVG, viewObjects,
             chartSelector = $(selector).find('.chart-container'),
             chartControlPanelSelector = $(selector).find('.chart-control-panel-container'),
             chartModel = chartView.chartModel,
-            chartData = chartModel.data,
-            tooltipConfigCB = chartOptions.tooltipConfigCB,
-            clickCB = chartOptions.clickCB,
-            overlapMap = getOverlapMap(chartData),
             margin = chartConfig['margin'],
             width = chartModel.width,
             height = chartModel.height,
-            timer = null, circleRadius = chartConfig.circleRadius;
+            circleRadius = chartConfig.circleRadius;
 
-        $(chartSelector).height(height + margin.top + margin.bottom)
+        $(chartSelector).height(height + margin.top + margin.bottom);
         $(chartControlPanelSelector).find('.control-panel-item').removeClass('active');
 
         chartSVG = d3.select($(chartSelector)[0]).append("svg")
@@ -149,38 +165,6 @@ define([
             .attr("width", width + circleRadius)
             .attr("height", height + circleRadius);
 
-        viewObjects.selectAll("circle")
-            .data(chartData)
-            .enter()
-            .append("circle")
-            .attr("r", function (d) {
-                return d['size'];
-            })
-            .attr("class", function (d) {
-                return getBubbleColor(d[chartConfig.colorFilterFields], chartModel.classes, chartModel.maxColorFilterFields);
-            })
-            .attr("transform", function (d) {
-                return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
-            })
-            .attr("opacity", "0.6")
-            .on("mouseenter", function (d) {
-                var tooltipData = d,
-                    selfOffset = $(this).offset(),
-                    tooltipConfig = tooltipConfigCB(tooltipData);
-
-                clearTimeout(timer);
-                timer = setTimeout(function () {
-                    constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
-                }, contrail.handleIfNull(tooltipConfig.delay, cowc.TOOLTIP_DELAY));
-            })
-            .on("mouseleave", function (d) {
-                clearTimeout(timer);
-            })
-            .on("click", function (d) {
-                clearTimeout(timer);
-                clickCB(d);
-            });
-
         chartSVG.append("text")
             .attr("class", "x label")
             .attr("text-anchor", "end")
@@ -199,8 +183,6 @@ define([
 
         chartView.svg = chartSVG;
         chartView.viewObjects = viewObjects;
-
-        renderChartMessage(chartView);
 
         function mouseDownCallback() {
             if (!chartView.zoomBySelection) {
@@ -267,31 +249,90 @@ define([
                 }, true);
             d3.event.stopPropagation();
         };
-
-        chartView.renderChartInProgress = false;
     }
 
-    function renderChartMessage(chartView) {
-        var chartSVG = chartView.svg,
+    function dataLoadingHandler(chartView, chartConfig, chartOptions) {
+        var noDataMessage = cowc.CHART_LOADING_MESSAGE;
+        plotZoomScatterChartData(chartView, chartConfig, chartOptions);
+        chartView.svg.attr('opacity', '0.8');
+        renderChartMessage(chartView, noDataMessage);
+    }
+
+    function dataEmptyHandler(chartView, chartConfig) {
+        var noDataMessage = contrail.checkIfExist(chartConfig.noDataMessage) ? chartConfig.noDataMessage : cowc.CHART_NO_DATA_MESSAGE;
+        renderChartMessage(chartView, noDataMessage);
+    }
+
+    function dataErrorHandler(chartView) {
+        var noDataMessage = cowc.DATA_ERROR_MESSAGE;
+        renderChartMessage(chartView, noDataMessage);
+    }
+
+    function dataSuccessHandler(chartView, chartConfig, chartOptions) {
+        plotZoomScatterChartData(chartView, chartConfig, chartOptions);
+    }
+
+    function plotZoomScatterChartData(chartView, chartConfig, chartOptions) {
+        var viewObjects = chartView.viewObjects,
             chartModel = chartView.chartModel,
             chartData = chartModel.data,
-            margin = chartModel.margin;
+            tooltipConfigCB = chartOptions.tooltipConfigCB,
+            clickCB = chartOptions.clickCB,
+            overlapMap = getOverlapMap(chartData),
+            timer = null, circleRadius = chartConfig.circleRadius;
 
-        if (!chartData || !chartData.length) {
-            var noDataText = chartSVG.selectAll('.nv-noData').data([chartModel.getNoDataMessage()]);
+        viewObjects.selectAll("circle")
+            .data(chartData)
+            .enter()
+            .append("circle")
+            .attr("r", function (d) {
+                return d['size'];
+            })
+            .attr("class", function (d) {
+                return getBubbleColor(d[chartConfig.colorFilterFields], chartModel.classes, chartModel.maxColorFilterFields);
+            })
+            .attr("transform", function (d) {
+                return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+            })
+            .attr("opacity", "0.6")
+            .on("mouseenter", function (d) {
+                var tooltipData = d,
+                    selfOffset = $(this).offset(),
+                    tooltipConfig = tooltipConfigCB(tooltipData);
 
-            noDataText.enter().append('text')
-                .attr('class', 'nvd3 nv-noData')
-                .attr('dy', '-.7em')
-                .style('text-anchor', 'middle');
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                    constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
+                }, contrail.handleIfNull(tooltipConfig.delay, cowc.TOOLTIP_DELAY));
+            })
+            .on("mouseleave", function (d) {
+                clearTimeout(timer);
+            })
+            .on("click", function (d) {
+                clearTimeout(timer);
+                clickCB(d);
+            });
+    }
 
-            noDataText.attr('x', chartModel.width / 2)
-                .attr('y', margin.top + (chartModel.height / 2))
-                .text(function (d) {
-                    return d
-                });
-        } else {
-            chartSVG.selectAll('.nv-noData').remove();
+    function renderChartMessage(chartView, noDataMessage) {
+        var chartSVG = chartView.svg,
+            chartModel = chartView.chartModel,
+            margin = chartModel.margin,
+            noDataText = chartSVG.selectAll('.nv-noData').data([noDataMessage]);
+
+        noDataText.enter().append('text')
+            .attr('class', 'nvd3 nv-noData')
+            .attr('dy', '-.7em')
+            .style('text-anchor', 'middle');
+
+        noDataText.attr('x', chartModel.width / 2)
+            .attr('y', margin.top + (chartModel.height / 2))
+            .text(function (d) {
+                return d
+            });
+
+        if (chartModel.isRequestInProgress()) {
+            noDataText.style('fill', '#000');
         }
     };
 
@@ -634,9 +675,10 @@ define([
 
         if (tooltipElementKey in overlapMap) {
             var overlappedElementData = $.map(overlapMap[tooltipElementKey], function (overlapMapValue, overlapMapKey) {
-                var overlappedElementName = contrail.handleIfNull(chartData[overlapMapValue].name, '-');
-                if (tooltipData.name != overlappedElementName) {
-                    return {id: overlapMapValue, text: overlappedElementName}
+                var overlappedElementName = contrail.handleIfNull(chartData[overlapMapValue].name, '-'),
+                    overlappedElementType = contrail.handleIfNull(ctwl.get(chartData[overlapMapValue].type), '-');;
+                if (!_.isEqual(chartData[overlapMapValue], tooltipData)) {
+                    return {id: overlapMapValue, text: overlappedElementName + ' (' + overlappedElementType + ')'}
                 }
                 return null;
             });
@@ -649,7 +691,7 @@ define([
                 dataValueField: 'id',
                 placeholder: 'View more (' + overlappedElementData.length + ')',
                 ignoreFirstValue: true,
-                dropdownCssClass: 'min-width-150',
+                dropdownCssClass: 'min-width-250',
                 data: overlappedElementData,
                 change: function (e) {
                     var selectedTooltipKey = e.added.id,

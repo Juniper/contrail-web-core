@@ -97,8 +97,7 @@ define([
 
         if (usePrimaryCache) {
             var cachedContrailListModel = cachedData['dataObject']['listModel'],
-                lastUpdateTime = cachedData['lastUpdateTime'],
-                cachedContrailListModel = cachedData['dataObject']['listModel'];
+                lastUpdateTime = cachedData['lastUpdateTime'];
 
             contrailListModel.setData(cachedContrailListModel.getItems());
             contrailListModel.loadedFromCache = true;
@@ -130,6 +129,7 @@ define([
         $.extend(true, contrailListModel, slickDataView, {
             _idOffset: (offset != null) ? offset : 0,
             error: false,
+            empty: false,
             errorList: [],
             sortConfig: sortConfig,
             setData: function (data) {

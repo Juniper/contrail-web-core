@@ -1,64 +1,42 @@
 /*
- * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2015 Juniper Networks, Inc. All rights reserved.
  */
 
 define([
     'underscore',
     'backbone',
-    'core-basedir/js/models/LineWithFocusChartModel',
+    'core-basedir/js/models/MultiBarChartModel',
     'contrail-list-model'
-], function (_, Backbone, LineWithFocusChartModel, ContrailListModel) {
-    var LineWithFocusChartView = Backbone.View.extend({
+], function (_, Backbone, MultiBarChartModel, ContrailListModel) {
+    var MultiBarChartView = Backbone.View.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
-                self = this, deferredObj = $.Deferred(),
+                self = this,
                 selector = $(self.$el);
 
             $(selector).append(loadingSpinnerTemplate);
 
             if (viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
-                if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
+                if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
                     var chartData = self.model.getItems();
                     self.renderChart(selector, viewConfig, chartData);
                 }
 
-                self.model.onAllRequestsComplete.subscribe(function() {
+                self.model.onAllRequestsComplete.subscribe(function () {
                     var chartData = self.model.getItems();
                     self.renderChart(selector, viewConfig, chartData);
                 });
 
-                if(viewConfig.loadChartInChunks) {
-                    self.model.onDataUpdate.subscribe(function() {
+                if (viewConfig.loadChartInChunks) {
+                    self.model.onDataUpdate.subscribe(function () {
                         var chartData = self.model.getItems();
                         self.renderChart(selector, viewConfig, chartData);
                     });
                 }
             }
-            /*
-            else {
-                $.ajax(ajaxConfig).done(function (result) {
-                    deferredObj.resolve(result);
-                });
-
-                deferredObj.done(function (response) {
-                    var chartData = response;
-                    self.renderChart(selector, viewConfig, chartData);
-                });
-
-                deferredObj.fail(function (errObject) {
-                    if (errObject['errTxt'] != null && errObject['errTxt'] != 'abort') {
-                        showMessageInChart({
-                            selector: self.$el,
-                            msg: 'Error in fetching Details',
-                            type: 'timeseriescharts'
-                        });
-                    }
-                });
-            }
-            */
         },
 
         renderChart: function (selector, viewConfig, data) {
@@ -74,7 +52,7 @@ define([
             chartData = chartViewConfig['chartData'];
             chartOptions = chartViewConfig['chartOptions'];
 
-            chartModel = new LineWithFocusChartModel(chartOptions);
+            chartModel = new MultiBarChartModel(chartOptions);
             this.chartModel = chartModel;
 
             if ($(selector).find("svg") != null) {
@@ -97,38 +75,39 @@ define([
             nv.utils.windowResize(function () {
                 updateChartOnResize(selector, chartModel);
             });
-            //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
+
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
 
             $(selector).find('.loading-spinner').remove();
-            //nv.addGraph(chartModel);
         }
     });
 
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
         var chartDefaultOptions = {
-            height: 300,
-            yAxisLabel: 'Traffic',
-            y2AxisLabel: '',
-            yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); },
-            y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }
+            margin: {top: 10, right: 30, bottom: 20, left: 60},
+            height: 250,
+            xAxisLabel: 'Items',
+            xAxisTickPadding: 10,
+            yAxisLabel: 'Values',
+            yAxisTickPadding: 5,
+            yFormatter: function (d) {
+                return cowu.addUnits2Bytes(d, false, false, 2);
+            },
+            showLegend: false,
+            stacked: false,
+            showControls: false,
+            showTooltips: true,
+            reduceXTicks: true,
+            rotateLabels: 0,
+            groupSpacing: 0.1,
+            transitionDuration: 350,
+            legendRightAlign: true,
+            legendPadding: 32,
+            barColor: d3.scale.category10()
         };
         var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
-
-        if (chartData.length > 0) {
-            spliceBorderPoints(chartData);
-            var values = chartData[0].values,
-                brushExtent = null,
-                start, end;
-
-            if (values.length >= 20) {
-                start = values[values.length - 20];
-                end = values[values.length - 1];
-                chartOptions['brushExtent'] = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
-            }
-        }
 
         chartViewConfig['chartData'] = chartData;
         chartViewConfig['chartOptions'] = chartOptions;
@@ -136,14 +115,5 @@ define([
         return chartViewConfig;
     };
 
-    function spliceBorderPoints(chartData) {
-        var lineChart;
-        for(var i = 0; i < chartData.length; i++) {
-            lineChart = chartData[i];
-            lineChart['values'].splice(0, 1);
-            lineChart['values'].splice((lineChart['values'].length - 1), 1);
-        }
-    };
-
-    return LineWithFocusChartView;
+    return MultiBarChartView;
 });
