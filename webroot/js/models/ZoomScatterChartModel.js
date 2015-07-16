@@ -19,6 +19,10 @@ define([
             return dataListModel.isRequestInProgress()
         };
 
+        self.isPrimaryRequestInProgress = function() {
+            return dataListModel.isPrimaryRequestInProgress()
+        };
+
         self.isError = function() {
             if (contrail.checkIfExist(dataListModel.error) && dataListModel.error === true && dataListModel.errorList.length > 0) {
                 var xhr = dataListModel.errorList[0];
