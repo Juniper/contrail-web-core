@@ -12,23 +12,18 @@ define([
     var ZoomScatterChartView = Backbone.View.extend({
         renderChartInProgress: false,
         render: function () {
-            var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
-                viewConfig = this.attributes.viewConfig,
+            var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 chartOptions = viewConfig['chartOptions'],
                 self = this, deferredObj = $.Deferred(),
                 selector = $(self.$el);
-
-            $(selector).append(loadingSpinnerTemplate);
 
             if (self.model == null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
 
             if (self.model != null) {
-                if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
-                    self.renderChart(selector, viewConfig, self.model);
-                }
+                self.renderChart(selector, viewConfig, self.model);
 
                 self.model.onAllRequestsComplete.subscribe(function () {
                     self.renderChart(selector, viewConfig, self.model);
