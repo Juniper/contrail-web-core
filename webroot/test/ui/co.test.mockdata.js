@@ -24,7 +24,12 @@ define(['underscore'], function (_) {
         },
         "loggedInOrchestrationMode": "openstack"
     };
+    var disabledFeatureMockData = {"disabled":["config_alarms","mon_infra_mx"]};
+    var webControllerMockData = {"webController":{"path":"/usr/src/contrail-web-controller","enable":true}};
+
     return {
-        webServerInfoMockData: webServerInfoMockData
+        webServerInfoMockData: webServerInfoMockData,
+        disabledFeatureMockData: disabledFeatureMockData,
+        webControllerMockData: webControllerMockData
     }
 });

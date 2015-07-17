@@ -6,11 +6,15 @@ define(['underscore'], function(_){
 
         this.getRegExForUrl = function(url){
             var regexUrlMap = {
+                '/api/admin/webconfig/featurePkg/webController': /\/api\/admin\/webconfig\/featurePkg\/webController\?.*$/,
+                '/api/admin/webconfig/features/disabled': /\/api\/admin\/webconfig\/features\/disabled\?.*$/,
+                '/api/service/networking/web-server-info': /\/api\/service\/networking\/web-server-info.*$/,
+                '/menu.xml': /\/menu\.xml.*$/,
+                '/api/tenants/config/domains': /\/api\/tenants\/config\/domains.*$/,
                 '/sm/tags/names' : /\/sm\/tags\/names.*$/,
                 '/sm/objects/details/image': /\/sm\/objects\/details\/image\?.*$/,
                 '/api/tenant/networking/virtual-networks/details': /\/api\/tenant\/networking\/virtual-networks\/details\?.*$/,
                 '/api/tenant/networking/stats': /\/api\/tenant\/networking\/stats.*$/,
-                '/api/service/networking/web-server-info': /\/api\/service\/networking\/web-server-info.*$/
             };
 
             return regexUrlMap [url];
