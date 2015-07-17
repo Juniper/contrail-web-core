@@ -729,7 +729,9 @@ joint.shapes.contrail.Link = function (options) {
         options['linkType'] == 'vr-vm' || options['linkType'] == 'vm-vr' ||
         options['linkType'] == 'vr-vn' || options['linkType'] == 'vn-vr' ||
         options['linkType'] == 'vm-vm' || options['linkType'] == 'vn-vn' ||
-        options['linkType'] == 'vm-vn' || options['linkType'] == 'vn-vm') {
+        options['linkType'] == 'vm-vn' || options['linkType'] == 'vn-vm' ||
+        options['linkType'] == 'lc-lc' || options['linkType'] == 'pfe-lc' || 
+        options['linkType'] == 'pfe-pfe') {
         linkConfig['attrs']['.connection']['stroke'] = connectionStroke != null ? connectionStroke : '#e80015';
         linkConfig['attrs']['.connection']['stroke-width'] = 2;
     } else {

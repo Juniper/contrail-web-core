@@ -184,11 +184,11 @@
 
 @font-face {
     font-family: 'mxfont';
-    src:url('/css/fonts/mxfont.eot?usowgf');
-    src:url('/css/fonts/mxfont.eot?#iefixusowgf') format('embedded-opentype'),
-        url('/css/fonts/mxfont.woff?usowgf') format('woff'),
-        url('/css/fonts/mxfont.ttf?usowgf') format('truetype'),
-        url('/css/fonts/mxfont.svg?usowgf#mxfont') format('svg');
+    src:url('fonts/mxfont.eot?-o5tdj9');
+    src:url('fonts/mxfont.eot?#iefix-o5tdj9') format('embedded-opentype'),
+        url('fonts/mxfont.ttf?-o5tdj9') format('truetype'),
+        url('fonts/mxfont.woff?-o5tdj9') format('woff'),
+        url('fonts/mxfont.svg?-o5tdj9#mxfont') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -207,31 +207,32 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.mxicon-line-card:before {
-    content: "\61";
-}
-
-.mxicon-switch-card:before {
-    content: "\62";
-}
-
-.mxicon-routing-engine:before {
-    content: "\63";
-}
-
-.mxicon-pf-engine:before {
-    content: "\64";
-}
-
-.mxicon-fabrics:before {
-    content: "\65";
-}
-
 .mxicon-power-supply:before {
-    content: "\66";
+    content: "\e600";
 }
-
 .mxicon-fan-tray:before {
-    content: "\67";
+    content: "\e601";
+    }
+.mxicon-line-card:before {
+    content: "\e602";
+    font-size:150%;
 }
-
+.mxicon-routing-engine:before {
+    content: "\e603";
+    font-size:150%;
+}
+.mxicon-switch-card:before {
+    content: "\e604";
+    font-size:150%;
+}
+.mxicon-fabrics:before {
+    content: "\e605";
+    font-size:150%;
+}
+.mxicon-fabrics-horiz:before {
+    content: "\e606";
+    font-size:150%;
+}
+.mxicon-packet-forwarding:before {
+    content: "\e607";
+}
