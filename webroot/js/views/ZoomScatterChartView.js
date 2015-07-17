@@ -676,9 +676,11 @@ define([
         if (tooltipElementKey in overlapMap) {
             var overlappedElementData = $.map(overlapMap[tooltipElementKey], function (overlapMapValue, overlapMapKey) {
                 var overlappedElementName = contrail.handleIfNull(chartData[overlapMapValue].name, '-'),
-                    overlappedElementType = contrail.handleIfNull(ctwl.get(chartData[overlapMapValue].type), '-');;
+                    overlappedElementType = contrail.checkIfKeyExistInObject(true, tooltipConfig.content, 'overlappedElementConfig.dropdownTypeField') ?
+                        ctwl.get(chartData[overlapMapValue][tooltipConfig.content.overlappedElementConfig.dropdownTypeField]) : null;
+
                 if (!_.isEqual(chartData[overlapMapValue], tooltipData)) {
-                    return {id: overlapMapValue, text: overlappedElementName + ' (' + overlappedElementType + ')'}
+                    return {id: overlapMapValue, text: overlappedElementName + ((overlappedElementType !== null) ? ' (' + overlappedElementType + ')' : '')}
                 }
                 return null;
             });
