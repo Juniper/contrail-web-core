@@ -44,7 +44,7 @@ define(['underscore'], function (_) {
         return '<div id="pageHeader" class="navbar navbar-inverse navbar-fixed-top"> ' +
             '<div class="navbar-inner"> ' +
             '<div class="container-fluid"> ' +
-            '<a href="#" class="brand"> <img class="logo" src="/img/sdn-logo.png"/> </a> ' +
+            '<a href="#" class="brand"> <img class="logo" src="base/contrail-web-core/webroot/img/sdn-logo.png"/> </a> ' +
             '<ul style="width:270px" class="nav ace-nav pull-right"> ' +
             '<li id="user-profile" class="hide"> ' +
             '<a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle"> ' +
@@ -102,7 +102,7 @@ define(['underscore'], function (_) {
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap-responsive.min.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/jquery-ui/css/jquery-ui.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.jquery.ui.css"/>');
-        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/font-awesome/css/font-awesome.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/font-awesome.test.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/nvd3/css/nv.d3.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/select2/styles/select2.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/datetimepicker/styles/jquery.datetimepicker.css"/>');
@@ -110,7 +110,7 @@ define(['underscore'], function (_) {
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/jquery/css/jquery.steps.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail-all.css"/>');
-        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.layout.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/contrail.layout.test.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.elements.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.responsive.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.custom.css"/>');
