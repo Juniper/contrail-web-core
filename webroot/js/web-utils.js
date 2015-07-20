@@ -2,9 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var globalObj = {},
-    contentContainer = "#content-container";
-
+var contentContainer = "#content-container";
 globalObj['loadedScripts'] = [];
 globalObj['loadedCSS'] = [];
 globalObj['orchModel'] = 'openstack';

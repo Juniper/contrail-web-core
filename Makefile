@@ -76,11 +76,7 @@ dev-env:
 
 test-env:
 	make dev-env
-	./unit-test.sh init
-
-sm-test-env:
-	make dev-env
-	./sm-unit-test.sh
+	./unit-test.sh init $(REPO)
 
 prod-env:
 	mkdir -p webroot/html

@@ -13,7 +13,7 @@ SIX_BACK='../../../../../..'
 #List all feature directories from where we need to run the test cases
 featureDirectories=(monitor/infra monitor/tenant_network js config/vn)
 
-if [ $1 = 'init' ] ; then
+if [ $1 = 'init' ] && [ "$#" -eq 1 ]; then
     ln -sf $FOUR_BACK/.jshintrc src/serverroot/web/api/.jshintrc
     ln -sf $TWO_BACK/contrail-web-controller/webroot/test webroot/test
     #Generates qunit.js & qunit.css files by concatinating files from contrail-webui-third-party/qunit
@@ -48,4 +48,29 @@ if [ $1 = 'node' ] ; then
     cd src/serverroot/web/api
     grunt node-qunit
 fi
+
+if [ $2 = 'webController' ] ; then
+    echo    "**************************************************"
+    echo    "*     Networking Monitoring Unit Tests Setup     *"
+    echo -e "**************************************************\n\n"
+
+    cd ../contrail-web-controller/webroot/test/ui
+
+    echo "Creating link for node_modules....."
+    ln -sf ../../../../contrail-web-core/node_modules/ node_modules
+    echo "DONE"
+fi
+
+if [ $2 = 'serverManager' ] ; then
+    echo    "*******************************************"
+    echo    "*     Server Manager Unit Tests setup     *"
+    echo -e "*******************************************\n\n"
+
+    cd ../contrail-web-server-manager/webroot/test/ui
+
+    echo "Creating link for node_modules....."
+    ln -sf ../../../../contrail-web-core/node_modules/ node_modules
+    echo "DONE"
+fi
+
 

@@ -393,13 +393,16 @@ function LayoutHandler() {
 }
 
 function onHashChange(lastHash, currHash) {
+    var currPageHash = ifNull(currHash['p'], '');
+    if(globalObj['env'] == "test" && currPageHash == '') {
+        return;
+    }
     hideHardRefresh();
     if ($('.modal-backdrop').is(':visible')) {
         $('.modal-backdrop').remove();
         $('.modal').remove();
     }
-    var currPageHash = ifNull(currHash['p'], ''),
-        lastPageHash = ifNull(lastHash['p'], ''),
+    var lastPageHash = ifNull(lastHash['p'], ''),
         currPageQueryStr = ifNull(currHash['q'], {}),
         lastPageQueryStr = ifNull(lastHash['q'], {}),
         reloadMenu = true, currPageHashArray, subMenuId;
