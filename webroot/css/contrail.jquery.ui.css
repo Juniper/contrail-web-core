@@ -23,7 +23,7 @@
 }
 .ui-widget-content {
 	border: 1px solid #dadada;
-	background: #ffffff url("../../assets/jquery-ui/css/images/ui-bg_flat_75_ffffff_40x100.png") 50% 50% repeat-x;
+	background: #ffffff;
 	color: #787878;
 }
 .ui-widget-content a {
@@ -31,7 +31,7 @@
 }
 .ui-widget-header {
 	border: 1px solid #dadada;
-	background: #eee url("../../assets/jquery-ui/css/images/ui-bg_flat_75_eee_40x100.png") 50% 50% repeat-x;
+	background: #eee;
 	color: #787878;
 	font-weight: bold;
 }
@@ -45,7 +45,7 @@
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
 	border: 1px solid #dadada;
-	background: #fff url("../../assets/jquery-ui/css/images/ui-bg_flat_75_fff_40x100.png") 50% 50% repeat-x;
+	background: #fff;
 	font-weight: normal;
 	color: #555555;
 }
@@ -62,7 +62,7 @@
 .ui-widget-content .ui-state-focus,
 .ui-widget-header .ui-state-focus {
 	border: 1px solid #C6DBEF;
-	background: #C6DBEF url("../../assets/jquery-ui/css/images/ui-bg_flat_75_C6DBEF_40x100.png") 50% 50% repeat-x;
+	background: #C6DBEF;
 	font-weight: normal;
 	color: #212121;
 }
@@ -81,7 +81,7 @@
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active {
 	border: 1px solid #C6DBEF;
-	background: #C6DBEF url("../../assets/jquery-ui/css/images/ui-bg_flat_65_C6DBEF_40x100.png") 50% 50% repeat-x;
+	background: #C6DBEF;
 	font-weight: normal;
 	color: #212121;
 }
@@ -98,7 +98,7 @@
 .ui-widget-content .ui-state-highlight,
 .ui-widget-header .ui-state-highlight {
 	border: 1px solid #fcefa1;
-	background: #fbf9ee url("../../assets/jquery-ui/css/images/ui-bg_glass_55_fbf9ee_1x400.png") 50% 50% repeat-x;
+	background: #fbf9ee;
 	color: #363636;
 }
 .ui-state-highlight a,
@@ -110,7 +110,7 @@
 .ui-widget-content .ui-state-error,
 .ui-widget-header .ui-state-error {
 	border: 1px solid #cd0a0a;
-	background: #fef1ec url("../../assets/jquery-ui/css/images/ui-bg_glass_95_fef1ec_1x400.png") 50% 50% repeat-x;
+	background: #fef1ec;
 	color: #cd0a0a;
 }
 .ui-state-error a,
@@ -389,14 +389,14 @@
 
 /* Overlays */
 .ui-widget-overlay {
-	background: #aaaaaa url("../../assets/jquery-ui/css/images/ui-bg_flat_0_aaaaaa_40x100.png") 50% 50% repeat-x;
+	background: #aaaaaa;
 	opacity: .3;
 	filter: Alpha(Opacity=30);
 }
 .ui-widget-shadow {
 	margin: -8px 0 0 -8px;
 	padding: 8px;
-	background: #aaaaaa url("../../assets/jquery-ui/css/images/ui-bg_flat_0_aaaaaa_40x100.png") 50% 50% repeat-x;
+	background: #aaaaaa;
 	opacity: .3;
 	filter: Alpha(Opacity=30);
 	border-radius: 8px;
