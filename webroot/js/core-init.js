@@ -13,10 +13,11 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
     window.Bezier = Bezier;
     loadCommonTemplates();
     require(initDepFiles, function(validation) {
-        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache'], function (CoreUtils, CoreConstants, CoreFormatters, Cache) {
+        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache', 'core-labels'], function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
             cowf = new CoreFormatters();
+            cowl = new CoreLabels();
             kbValidation = validation;
             cowch = new Cache();
             initBackboneValidation();

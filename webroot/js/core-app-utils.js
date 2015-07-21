@@ -77,6 +77,7 @@ function getCoreAppPaths(coreBaseDir) {
         'core-utils'                  : coreBaseDir + '/js/core-utils',
         'core-constants'              : coreBaseDir + '/js/core-constants',
         'core-formatters'             : coreBaseDir + '/js/core-formatters',
+        'core-labels'                 : coreBaseDir + '/js/core-labels',
         'contrail-view-model'         : coreBaseDir + '/js/models/ContrailViewModel',
         'contrail-model'              : coreBaseDir + '/js/models/ContrailModel',
         'contrail-list-model'         : coreBaseDir + '/js/models/ContrailListModel',
