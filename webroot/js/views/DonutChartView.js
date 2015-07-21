@@ -10,11 +10,22 @@ define([
 ], function (_, Backbone, DonutChartModel, ContrailListModel) {
     var DonutChartView = Backbone.View.extend({
         render: function () {
-            var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
-                viewConfig = this.attributes.viewConfig,
+            var self = this,
+                loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
+                viewConfig = self.attributes.viewConfig,
+                elementId = self.attributes.elementId,
                 ajaxConfig = viewConfig['ajaxConfig'],
-                self = this,
                 selector = $(self.$el);
+
+            if (contrail.checkIfExist(viewConfig.title) && viewConfig.title !== false) {
+                var widgetTemplate = contrail.getTemplate4Id(cowc.TMPL_WIDGET_BOX),
+                    widgetTemplateAttr = {
+                        elementId: elementId,
+                        title: viewConfig.title
+                    };
+                $(selector).append(widgetTemplate(widgetTemplateAttr));
+                selector = ($('#' + elementId).find('.widget-main'));
+            }
 
             $(selector).append(loadingSpinnerTemplate);
 

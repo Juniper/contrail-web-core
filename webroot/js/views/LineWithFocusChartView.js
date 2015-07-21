@@ -18,8 +18,11 @@ define([
 
             $(selector).append(loadingSpinnerTemplate);
 
-            if (viewConfig['modelConfig'] != null) {
+            if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
+            }
+
+            if (self.model !== null) {
                 if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
                     var chartData = self.model.getItems();
                     self.renderChart(selector, viewConfig, chartData);
@@ -37,28 +40,6 @@ define([
                     });
                 }
             }
-            /*
-            else {
-                $.ajax(ajaxConfig).done(function (result) {
-                    deferredObj.resolve(result);
-                });
-
-                deferredObj.done(function (response) {
-                    var chartData = response;
-                    self.renderChart(selector, viewConfig, chartData);
-                });
-
-                deferredObj.fail(function (errObject) {
-                    if (errObject['errTxt'] != null && errObject['errTxt'] != 'abort') {
-                        showMessageInChart({
-                            selector: self.$el,
-                            msg: 'Error in fetching Details',
-                            type: 'timeseriescharts'
-                        });
-                    }
-                });
-            }
-            */
         },
 
         renderChart: function (selector, viewConfig, data) {

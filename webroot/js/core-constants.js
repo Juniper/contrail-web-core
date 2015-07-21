@@ -68,6 +68,7 @@ define([
         this.TMPL_ZOOMED_SCATTER_CHART = "core-zoomed-scatter-chart-template";
         this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_FILTER = "core-zoomed-scatter-chart-control-panel-filter-template";
         this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_LEGEND = "core-zoomed-scatter-chart-control-panel-legend-template";
+        this.TMPL_WIDGET_BOX = "core-widget-box-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
         this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
 
