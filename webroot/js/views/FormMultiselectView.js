@@ -11,10 +11,11 @@ define([
             var msTemplate = contrail.getTemplate4Id(cowc.TMPL_MULTISELECT_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
+                app = this.attributes.app,
                 elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
                 path = viewConfig[cowc.KEY_PATH],
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
-                labelValue = (elId != null) ? smwl.get(elId) : smwl.get(path),
+                labelValue = (elId != null) ? cowl.get(elId, app) : cowl.get(path, app),
                 tmplParameters;
 
             if (!(contrail.checkIfExist(lockEditingByDefault) && lockEditingByDefault)) {

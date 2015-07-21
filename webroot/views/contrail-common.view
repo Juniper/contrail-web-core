@@ -1215,3 +1215,15 @@
         </div>
     </div>
 </script>
+
+<script type="text/x-handlebars-template" id="core-widget-box-template">
+    <div id="{{elementId}}" class="widget-box transparent">
+        <div class="widget-header">
+            <h4 class="smaller">{{title}}</h4>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main padding-4">
+            </div>
+        </div>
+    </div>
+</script>

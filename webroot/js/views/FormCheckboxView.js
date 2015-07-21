@@ -11,11 +11,12 @@ define([
             var checkBoxTemplate = contrail.getTemplate4Id(cowc.TMPL_CHECKBOX_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
+                app = this.attributes.app,
                 validation = this.attributes.validation,
                 path = viewConfig['path'],
                 type = (viewConfig['type'] != null) ? viewConfig['type'] : 'checkbox',
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
-                labelValue = (elId != null) ? smwl.get(elId) : smwl.get(path),
+                labelValue = (elId != null) ? cowl.get(elId, app) : cowl.get(path, app),
                 tmplParameters;
 
             if (!(contrail.checkIfExist(lockEditingByDefault) && lockEditingByDefault)) {
