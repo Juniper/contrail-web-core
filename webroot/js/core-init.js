@@ -13,18 +13,20 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
     window.Bezier = Bezier;
     loadCommonTemplates();
     require(initDepFiles, function(validation) {
-        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache', 'core-labels'], function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels) {
-            cowc = new CoreConstants();
-            cowu = new CoreUtils();
-            cowf = new CoreFormatters();
-            cowl = new CoreLabels();
-            kbValidation = validation;
-            cowch = new Cache();
-            initBackboneValidation();
-            initCustomKOBindings(Knockout);
-            initDomEvents();
-            require(['contrail-layout'], function(){});
-        });
+        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache', 'core-labels', 'core-messages'],
+            function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages) {
+                cowc = new CoreConstants();
+                cowu = new CoreUtils();
+                cowf = new CoreFormatters();
+                cowl = new CoreLabels();
+                cowm = new CoreMessages();
+                kbValidation = validation;
+                cowch = new Cache();
+                initBackboneValidation();
+                initCustomKOBindings(Knockout);
+                initDomEvents();
+                require(['contrail-layout'], function(){});
+            });
     });
 });
 

@@ -707,7 +707,7 @@
         <strong>Error: </strong>
         <span data-bind="text: errors().{{prefixId}}_form_error"></span>
     </div>
-    <form name="{{prefixId}}Form" id="sm-{{prefixId}}-form" onsubmit="return false;" class="">
+    <form name="{{prefixId}}Form" id="{{prefixId}}-form" onsubmit="return false;" class="">
     </form>
 </script>
 
