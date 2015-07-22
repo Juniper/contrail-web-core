@@ -98,14 +98,14 @@ define([
 
         getFormErrorText: function (prefixId) {
             var modelErrors = this.model().attributes.errors.attributes,
-                errorText = smwm.get(smwm.SHOULD_BE_VALID, smwl.get(prefixId));
+                errorText = cowm.get(cowm.SHOULD_BE_VALID, cowl.get(prefixId));
 
             _.each(modelErrors, function (value, key) {
                 if (_.isFunction(modelErrors[key]) || (modelErrors[key] == 'false') || (modelErrors[key] == '')) {
                     delete modelErrors[key];
                 } else {
                     if (-1 == (key.indexOf('_form_error'))) {
-                        errorText = errorText + smwl.getFirstCharUpperCase(key.split('_error')[0]) + ", ";
+                        errorText = errorText + cowl.getFirstCharUpperCase(key.split('_error')[0]) + ", ";
                     }
                 }
             });
