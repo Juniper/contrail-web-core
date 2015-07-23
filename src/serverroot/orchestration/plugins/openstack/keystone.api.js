@@ -858,6 +858,7 @@ function getUserAuthDataByConfigAuthObj (authObj, callback)
     } catch(e) {
         logutils.logger.error("userAuth.js not found");
         callback(error, null);
+        return;
     }
     if (null == authObj) {
         authObj = {};
