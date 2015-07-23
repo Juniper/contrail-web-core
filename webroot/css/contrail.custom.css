@@ -1835,7 +1835,7 @@ color: #b94a48;
 	color: #555;
 }
 
-.font-element i.icon-contrail-virtual-network, .font-element i.icon-contrail-virtual-machine, .font-element i.icon-contrail-virtual-machine-top, .font-element i.icon-contrail-virtual-machine-left, .font-element i.icon-contrail-virtual-machine-right {
+.font-element i.icon-contrail-virtual-network {
     color: #498AB9;
 }
 .font-element i.icon-contrail-service-instance, .font-element i.icn-service-instance {
@@ -1853,11 +1853,13 @@ color: #b94a48;
 .font-element i.icon-contrail-network-ipam {
     color: #f47671;
 }
-.font-element i.icon-contrail-virtual-machine{
+.font-element i.icon-contrail-virtual-machine,
+.font-element i.icon-contrail-virtual-machine-top,
+.font-element i.icon-contrail-virtual-machine-bottom,
+.font-element i.icon-contrail-virtual-machine-left,
+.font-element i.icon-contrail-virtual-machine-right {
     font-size: 30px;
-}
-.font-element i.icon-contrail-virtual-machine-top, .font-element i.icon-contrail-virtual-machine-left, .font-element i.icon-contrail-virtual-machine-right {
-    font-size: 20px;
+    color: #498AB9;
 }
 /*Style for the underlay topology svg elements*/
 .topology-visualization svg {
