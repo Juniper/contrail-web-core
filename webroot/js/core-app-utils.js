@@ -3,7 +3,10 @@
  */
 
 
-var globalObj = {'env':"prod"};
+var globalObj = {'env':"prod"},
+    FEATURE_PCK_WEB_CONTROLLER = "webController",
+    FEATURE_PCK_WEB_STORAGE = "webStorage",
+    FEATURE_PCK_WEB_SERVER_MANAGER = "serverManager";
 
 function getCoreAppPaths(coreBaseDir) {
     return {
@@ -89,7 +92,8 @@ function getCoreAppPaths(coreBaseDir) {
         'core-cache'                  : coreBaseDir + '/js/core-cache',
         'core-init'                   : coreBaseDir + '/js/core-init',
         'contrail-all-8'              : coreBaseDir + '/js/contrail-all-8',
-        'contrail-all-9'              : coreBaseDir + '/js/contrail-all-9'
+        'contrail-all-9'              : coreBaseDir + '/js/contrail-all-9',
+        'menu-handler'                : coreBaseDir + '/js/handlers/MenuHandler'
     };
 };
 

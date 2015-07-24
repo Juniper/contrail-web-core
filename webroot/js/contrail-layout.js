@@ -433,8 +433,7 @@ function onHashChange(lastHash, currHash) {
         //Always re-load the view if menu is clicked
 
         //If hashchange is within the same page
-        if ((lastPageHash == currPageHash)
-                && (globalObj['menuClicked'] == null || globalObj['menuClicked'] == false)) {
+        if ((lastPageHash == currPageHash) && (globalObj['menuClicked'] == null || globalObj['menuClicked'] == false)) {
             var deferredObj = $.Deferred();
             menuHandler.loadResourcesFromMenuObj(currMenuObj,deferredObj);
             deferredObj.done(function() {
@@ -686,7 +685,6 @@ $(document).ready(function () {
         }
     });
     layoutHandler = new LayoutHandler();
-    menuHandler = new MenuHandler();
     layoutHandler.loadHeader();
     menuHandler.loadMenu();
     //Load view once menu is loaded
