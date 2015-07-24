@@ -425,7 +425,7 @@ define([
 
                 default:
                     if (app == cowc.APP_CONTRAIL_CONTROLLER) {
-                        ctwu.renderView(viewName, parentElement, model, viewAttributes, modelMap);
+                        ctwru.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     } else if (app == cowc.APP_CONTRAIL_SM) {
                         smwru.renderView(viewName, parentElement, model, viewAttributes, modelMap);
                     } else if (app == cowc.APP_CONTRAIL_STORAGE) {

@@ -3164,11 +3164,14 @@ function setInstanceURLHashParams(hashParams, networkFQN, instanceUUID, triggerH
     layoutHandler.setURLHashParams(hashObj, {p: "mon_networking_instances", merge: false, triggerHashChange: triggerHashChange});
 };
 
- function check4CTInit(callback) {
-     if (!ctInitComplete) {
-         requirejs(['controller-init'], function () {
-             ctInitComplete = true;
-             callback()
+function check4CTInit(callback) {
+    if (!ctInitComplete) {
+        requirejs(['controller-init'], function () {
+            requirejs(['controller-render'], function(ctrlRenderUtils) {
+                ctwru = new ctrlRenderUtils();
+                ctInitComplete = true;
+                callback()
+            });
          });
      } else {
          callback();
