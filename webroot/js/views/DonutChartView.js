@@ -1,40 +1,48 @@
 /*
- * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2015 Juniper Networks, Inc. All rights reserved.
  */
 
 define([
     'underscore',
     'backbone',
-    'core-basedir/js/models/LineWithFocusChartModel',
+    'core-basedir/js/models/DonutChartModel',
     'contrail-list-model'
-], function (_, Backbone, LineWithFocusChartModel, ContrailListModel) {
-    var LineWithFocusChartView = Backbone.View.extend({
+], function (_, Backbone, DonutChartModel, ContrailListModel) {
+    var DonutChartView = Backbone.View.extend({
         render: function () {
-            var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
-                viewConfig = this.attributes.viewConfig,
+            var self = this,
+                loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
+                viewConfig = self.attributes.viewConfig,
+                elementId = self.attributes.elementId,
                 ajaxConfig = viewConfig['ajaxConfig'],
-                self = this, deferredObj = $.Deferred(),
                 selector = $(self.$el);
+
+            if (contrail.checkIfExist(viewConfig.title) && viewConfig.title !== false) {
+                var widgetTemplate = contrail.getTemplate4Id(cowc.TMPL_WIDGET_BOX),
+                    widgetTemplateAttr = {
+                        elementId: elementId,
+                        title: viewConfig.title
+                    };
+                $(selector).append(widgetTemplate(widgetTemplateAttr));
+                selector = ($('#' + elementId).find('.widget-main'));
+            }
 
             $(selector).append(loadingSpinnerTemplate);
 
-            if (self.model === null && viewConfig['modelConfig'] !== null) {
+            if (viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
-            }
-
-            if (self.model !== null) {
-                if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
+                if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
                     var chartData = self.model.getItems();
                     self.renderChart(selector, viewConfig, chartData);
                 }
 
-                self.model.onAllRequestsComplete.subscribe(function() {
+                self.model.onAllRequestsComplete.subscribe(function () {
                     var chartData = self.model.getItems();
                     self.renderChart(selector, viewConfig, chartData);
                 });
 
-                if(viewConfig.loadChartInChunks) {
-                    self.model.onDataUpdate.subscribe(function() {
+                if (viewConfig.loadChartInChunks) {
+                    self.model.onDataUpdate.subscribe(function () {
                         var chartData = self.model.getItems();
                         self.renderChart(selector, viewConfig, chartData);
                     });
@@ -55,7 +63,7 @@ define([
             chartData = chartViewConfig['chartData'];
             chartOptions = chartViewConfig['chartOptions'];
 
-            chartModel = new LineWithFocusChartModel(chartOptions);
+            chartModel = new DonutChartModel(chartOptions);
             this.chartModel = chartModel;
 
             if ($(selector).find("svg") != null) {
@@ -78,38 +86,31 @@ define([
             nv.utils.windowResize(function () {
                 updateChartOnResize(selector, chartModel);
             });
-            //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
+
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
 
             $(selector).find('.loading-spinner').remove();
-            //nv.addGraph(chartModel);
         }
     });
 
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
         var chartDefaultOptions = {
-            height: 300,
-            yAxisLabel: 'Traffic',
-            y2AxisLabel: '',
-            yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); },
-            y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }
+            margin: {top: 10, right: 20, bottom: 20, left: 20},
+            height: 250,
+            showLegend: true,
+            legendPosition: "top",
+            showLabels: true,
+            showTooltips: true,
+            valueFormat: function (d) {
+                return d;
+            },
+            donutRatio: 0.5,
+            color: d3.scale.category10(),
+            noDataMessage: "Unable to get data"
         };
         var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
-
-        if (chartData.length > 0) {
-            spliceBorderPoints(chartData);
-            var values = chartData[0].values,
-                brushExtent = null,
-                start, end;
-
-            if (values.length >= 20) {
-                start = values[values.length - 20];
-                end = values[values.length - 1];
-                chartOptions['brushExtent'] = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
-            }
-        }
 
         chartViewConfig['chartData'] = chartData;
         chartViewConfig['chartOptions'] = chartOptions;
@@ -117,14 +118,5 @@ define([
         return chartViewConfig;
     };
 
-    function spliceBorderPoints(chartData) {
-        var lineChart;
-        for(var i = 0; i < chartData.length; i++) {
-            lineChart = chartData[i];
-            lineChart['values'].splice(0, 1);
-            lineChart['values'].splice((lineChart['values'].length - 1), 1);
-        }
-    };
-
-    return LineWithFocusChartView;
+    return DonutChartView;
 });

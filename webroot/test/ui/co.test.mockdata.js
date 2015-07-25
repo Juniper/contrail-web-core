@@ -14,8 +14,9 @@ define(['underscore'], function (_) {
             "superAdmin"
         ],
         "featurePkg": {
-            "webController": true,
-            "webStorage": true
+            "webController": false,
+            "webStorage": false,
+            "serverManager": false
         },
         "uiConfig": {
             "nodemanager": {
@@ -24,11 +25,17 @@ define(['underscore'], function (_) {
         },
         "loggedInOrchestrationMode": "openstack"
     };
-    var disabledFeatureMockData = {"disabled":["config_alarms","mon_infra_mx"]};
-    var webControllerMockData = {"webController":{"path":"/usr/src/contrail-web-controller","enable":true}};
+
+    var disabledFeatureMockData = {"disabled":["config_alarms","mon_infra_mx"]},
+        webControllerMockData = {"webController":{"path":"/usr/src/contrail-web-controller","enable":true}},
+        ctWebServerInfoMockData = $.extend(true, {}, webServerInfoMockData, {"featurePkg": { "webController": true }}),
+        smWebServerInfoMockData = $.extend(true, {}, webServerInfoMockData, {"featurePkg": { "serverManager": true }}),
+        sWebServerInfoMockData = $.extend(true, {}, webServerInfoMockData, {"featurePkg": { "webStorage": true }});
 
     return {
-        webServerInfoMockData: webServerInfoMockData,
+        ctWebServerInfoMockData: ctWebServerInfoMockData,
+        smWebServerInfoMockData: smWebServerInfoMockData,
+        sWebServerInfoMockData: sWebServerInfoMockData,
         disabledFeatureMockData: disabledFeatureMockData,
         webControllerMockData: webControllerMockData
     }

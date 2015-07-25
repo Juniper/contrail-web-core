@@ -3,7 +3,10 @@
  */
 
 
-var globalObj = {'env':"prod"};
+var globalObj = {'env':"prod"},
+    FEATURE_PCK_WEB_CONTROLLER = "webController",
+    FEATURE_PCK_WEB_STORAGE = "webStorage",
+    FEATURE_PCK_WEB_SERVER_MANAGER = "serverManager";
 
 function getCoreAppPaths(coreBaseDir) {
     return {
@@ -84,202 +87,205 @@ function getCoreAppPaths(coreBaseDir) {
         'contrail-list-model'         : coreBaseDir + '/js/models/ContrailListModel',
         'graph-view'                  : coreBaseDir + '/js/views/GraphView',
         'contrail-graph-model'        : coreBaseDir + '/js/models/ContrailGraphModel',
-        'contrail-remote-data-handler': coreBaseDir + '/js/models/ContrailRemoteDataHandler',
+        'contrail-remote-data-handler': coreBaseDir + '/js/handlers/ContrailRemoteDataHandler',
         'uuid-js'                     : coreBaseDir + '/js/uuid',
         'core-cache'                  : coreBaseDir + '/js/core-cache',
         'core-init'                   : coreBaseDir + '/js/core-init',
         'contrail-all-8'              : coreBaseDir + '/js/contrail-all-8',
-        'contrail-all-9'              : coreBaseDir + '/js/contrail-all-9'
+        'contrail-all-9'              : coreBaseDir + '/js/contrail-all-9',
+        'layout-handler'              : coreBaseDir + '/js/handlers/LayoutHandler',
+        'menu-handler'                : coreBaseDir + '/js/handlers/MenuHandler',
+        'content-handler'             : coreBaseDir + '/js/handlers/ContentHandler'
     };
 };
 
 var coreAppMap = {
-    '*': {
-        'underscore': 'lodash'
-    }
+        '*': {
+            'underscore': 'lodash'
+        }
 };
 
 var coreAppShim =  {
-    'jquery.tristate': {
-        deps: ['jquery-ui']
-    },
-    'jquery.multiselect': {
-        deps: ['jquery-ui']
-    },
-    'jquery.multiselect.filter': {
-        deps: ['jquery.multiselect']
-    },
-    'jquery.steps.min': {
-        deps: ['jquery']
-    },
-    'bootstrap': {
-        deps: ['jquery']
-    },
-    'd3': {
-        deps: ['jquery']
-    },
-    'nv.d3': {
-        deps: ['d3']
-    },
-    'nvd3v181': {
-        deps: ['d3']
-    },
-    'crossfilter': {
-        deps: ['d3']
-    },
-    'jquery.xml2json': {
-        deps: ['jquery']
-    },
-    'jquery.ba-bbq': {
-        deps: ['jquery']
-    },
-    'jquery.timer': {
-        deps: ['jquery']
-    },
-    'jquery-ui': {
-        deps: ['jquery']
-    },
-    'jquery.ui.touch-punch': {
-        deps: ['jquery']
-    },
-    'jquery.validate': {
-        deps: ['jquery']
-    },
-    'select2': {
-        deps: ['jquery']
-    },
-    'jquery.event.drag': {
-        deps: ['jquery']
-    },
-    'jquery.json': {
-        deps: ['jquery']
-    },
-    'jquery.droppick': {
-        deps: ['jquery']
-    },
-    'jquery.datetimepicker': {
-        deps: ['jquery']
-    },
-    'slick.core': {
-        deps: ['jquery']
-    },
-    'slick.grid': {
-        deps: ['slick.core', 'jquery.event.drag']
-    },
-    'contrail-common': {
-        deps: ['jquery']
-    },
-    'contrail-layout': {
-        deps: ['jquery.ba-bbq', 'web-utils', 'contrail-elements']
-    },
-    'slick.enhancementpager': {
-        deps: ['jquery']
-    },
-    'slickgrid-utils': {
-        deps: ['slick.dataview']
-    },
-    'slick.dataview': {
-        deps: ['slick.grid']
-    },
-    'contrail-elements': {
-        deps: ['jquery-ui']
-    },
-    'chart-utils': {
-        deps: ['d3']
-    },
-    'web-utils': {
-        deps: ['knockout', 'xdate']
-    },
-    'qe-utils': {
-        deps: ['jquery']
-    },
-    'handlebars-utils': {
-        deps: ['jquery', 'handlebars', 'contrail-all-8']
-    },
-    'nvd3-plugin': {
-        deps: ['nv.d3', 'd3']
-    },
-    'd3-utils': {
-        deps: ['d3']
-    },
-    'qe-utils': {
-        deps: ['jquery']
-    },
-    'ipv6': {
-        deps: ['sprintf', 'jsbn-combined']
-    },
-    'jquery.panzoom': {
-        deps: ['jquery']
-    },
-    'jquery.ui.position': {
-        deps: ['jquery']
-    },
-    'jquery.contextMenu': {
-        deps: ['jquery']
-    },
-    'slick.checkboxselectcolumn': {
-        deps: ['slick.dataview']
-    },
-    'slick.rowselectionmodel': {
-        deps: ['slick.dataview']
-    },
-    'backbone': {
-        deps: ['lodash', 'jquery'],
-        exports: 'Backbone'
-    },
-    'joint': {
-        deps: ['geometry', 'vectorizer', 'backbone'],
-        exports: 'joint',
-        init: function (geometry, vectorizer) {
-            this.g = geometry;
-            this.V = vectorizer;
+        'jquery.tristate': {
+            deps: ['jquery-ui']
+        },
+        'jquery.multiselect': {
+            deps: ['jquery-ui']
+        },
+        'jquery.multiselect.filter': {
+            deps: ['jquery.multiselect']
+        },
+        'jquery.steps.min': {
+            deps: ['jquery']
+        },
+        'bootstrap': {
+            deps: ['jquery']
+        },
+        'd3': {
+            deps: ['jquery']
+        },
+        'nv.d3': {
+            deps: ['d3']
+        },
+        'nvd3v181': {
+            deps: ['d3']
+        },
+        'crossfilter': {
+            deps: ['d3']
+        },
+        'jquery.xml2json': {
+            deps: ['jquery']
+        },
+        'jquery.ba-bbq': {
+            deps: ['jquery']
+        },
+        'jquery.timer': {
+            deps: ['jquery']
+        },
+        'jquery-ui': {
+            deps: ['jquery']
+        },
+        'jquery.ui.touch-punch': {
+            deps: ['jquery']
+        },
+        'jquery.validate': {
+            deps: ['jquery']
+        },
+        'select2': {
+            deps: ['jquery']
+        },
+        'jquery.event.drag': {
+            deps: ['jquery']
+        },
+        'jquery.json': {
+            deps: ['jquery']
+        },
+        'jquery.droppick': {
+            deps: ['jquery']
+        },
+        'jquery.datetimepicker': {
+            deps: ['jquery']
+        },
+        'slick.core': {
+            deps: ['jquery']
+        },
+        'slick.grid': {
+            deps: ['slick.core', 'jquery.event.drag']
+        },
+        'contrail-common': {
+            deps: ['jquery']
+        },
+        'contrail-layout': {
+            deps: ['jquery.ba-bbq', 'web-utils', 'contrail-elements']
+        },
+        'slick.enhancementpager': {
+            deps: ['jquery']
+        },
+        'slickgrid-utils': {
+            deps: ['slick.dataview']
+        },
+        'slick.dataview': {
+            deps: ['slick.grid']
+        },
+        'contrail-elements': {
+            deps: ['jquery-ui']
+        },
+        'chart-utils': {
+            deps: ['d3']
+        },
+        'web-utils': {
+            deps: ['knockout', 'xdate']
+        },
+        'qe-utils': {
+            deps: ['jquery']
+        },
+        'handlebars-utils': {
+            deps: ['jquery', 'handlebars', 'contrail-all-8']
+        },
+        'nvd3-plugin': {
+            deps: ['nv.d3', 'd3']
+        },
+        'd3-utils': {
+            deps: ['d3']
+        },
+        'qe-utils': {
+            deps: ['jquery']
+        },
+        'ipv6': {
+            deps: ['sprintf', 'jsbn-combined']
+        },
+        'jquery.panzoom': {
+            deps: ['jquery']
+        },
+        'jquery.ui.position': {
+            deps: ['jquery']
+        },
+        'jquery.contextMenu': {
+            deps: ['jquery']
+        },
+        'slick.checkboxselectcolumn': {
+            deps: ['slick.dataview']
+        },
+        'slick.rowselectionmodel': {
+            deps: ['slick.dataview']
+        },
+        'backbone': {
+            deps: ['lodash', 'jquery'],
+            exports: 'Backbone'
+        },
+        'joint': {
+            deps: ['geometry', 'vectorizer', 'backbone'],
+            exports: 'joint',
+            init: function (geometry, vectorizer) {
+                this.g = geometry;
+                this.V = vectorizer;
+            }
+        },
+        'knockout': {
+            deps: ['jquery']
+        },
+        'knockback': {
+            deps: ['knockout', 'backbone']
+        },
+        'validation': {
+            deps: ['backbone']
+        },
+        'lodash': {
+            deps: ['jquery']
+        },
+        'bezier': {
+            deps: ['jquery']
+        },
+        'joint.layout.DirectedGraph': {
+            deps: ['joint']
+        },
+        'joint.contrail': {
+            deps: ['joint.layout.DirectedGraph']
+        },
+        'dagre': {
+            deps: ['jquery']
+        },
+        'text': {
+            deps: ['jquery']
+        },
+        'contrail-model': {
+            deps: ['knockback']
+        },
+        'contrail-view-model': {
+            deps: ['jquery','slick.core']
+        },
+        'contrail-graph-model': {
+            deps: ['joint.contrail', 'joint.layout.DirectedGraph', 'slick.core']
+        },
+        'graph-view': {
+            deps: ['joint.contrail']
+        },
+        'contrail-list-model': {
+            deps: ['contrail-remote-data-handler', 'slick.core']
+        },
+        'contrail-remote-data-handler': {
+            deps: ['jquery']
         }
-    },
-    'knockout': {
-        deps: ['jquery']
-    },
-    'knockback': {
-        deps: ['knockout', 'backbone']
-    },
-    'validation': {
-        deps: ['backbone']
-    },
-    'lodash': {
-        deps: ['jquery']
-    },
-    'bezier': {
-        deps: ['jquery']
-    },
-    'joint.layout.DirectedGraph': {
-        deps: ['joint']
-    },
-    'joint.contrail': {
-        deps: ['joint.layout.DirectedGraph']
-    },
-    'dagre': {
-        deps: ['jquery']
-    },
-    'text': {
-        deps: ['jquery']
-    },
-    'contrail-model': {
-        deps: ['knockback']
-    },
-    'contrail-view-model': {
-        deps: ['jquery','slick.core']
-    },
-    'contrail-graph-model': {
-        deps: ['joint.contrail', 'joint.layout.DirectedGraph', 'slick.core']
-    },
-    'graph-view': {
-        deps: ['joint.contrail']
-    },
-    'contrail-list-model': {
-        deps: ['contrail-remote-data-handler', 'slick.core']
-    },
-    'contrail-remote-data-handler': {
-        deps: ['jquery']
-    }
 };
 
 
