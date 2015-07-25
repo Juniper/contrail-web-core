@@ -87,7 +87,7 @@ function getCoreAppPaths(coreBaseDir) {
         'contrail-list-model'         : coreBaseDir + '/js/models/ContrailListModel',
         'graph-view'                  : coreBaseDir + '/js/views/GraphView',
         'contrail-graph-model'        : coreBaseDir + '/js/models/ContrailGraphModel',
-        'contrail-remote-data-handler': coreBaseDir + '/js/models/ContrailRemoteDataHandler',
+        'contrail-remote-data-handler': coreBaseDir + '/js/handlers/ContrailRemoteDataHandler',
         'uuid-js'                     : coreBaseDir + '/js/uuid',
         'core-cache'                  : coreBaseDir + '/js/core-cache',
         'core-init'                   : coreBaseDir + '/js/core-init',
