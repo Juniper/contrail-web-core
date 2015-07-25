@@ -8,23 +8,20 @@ define(['underscore'], function (_) {
             initMenuDefObj = $.Deferred(),
             webServerInfoDefObj = $.Deferred();
 
-        self.featureAppDefObj = $.Deferred();
         //onHashChange is triggered once it is resolved
         self.deferredObj = $.Deferred();
 
         this.loadMenu = function () {
             $.get('/menu.xml?built_at=' + built_at, function (xml) {
                 $.get('/api/admin/webconfig/features/disabled?built_at=' + built_at, function (disabledFeatures) {
-                    $.get('/api/admin/webconfig/featurePkg/webController?built_at=' + built_at, function (webControllPkg) {
+                    $.get('/api/admin/webconfig/featurePkg/webController?built_at=' + built_at, function (featurePkgsInfo) {
                         menuObj = $.xml2json(xml);
-                        webServerInfoDefObj.always(function () {
-                            processXMLJSON(menuObj, disabledFeatures);
-                            globalObj['webServerInfo']['disabledFeatures'] = ifNull(disabledFeatures, []);
-                            var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', webControllPkg));
-                            $("#sidebar-shortcuts").html(menuShortcuts);
-                            ['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
-                            initMenuDefObj.resolve();
-                        });
+                        processXMLJSON(menuObj, disabledFeatures);
+                        globalObj['webServerInfo']['disabledFeatures'] = ifNull(disabledFeatures, []);
+                        var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', featurePkgsInfo));
+                        $("#sidebar-shortcuts").html(menuShortcuts);
+                        ['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
+                        initMenuDefObj.resolve();
                     });
                 })
             });
@@ -36,31 +33,8 @@ define(['underscore'], function (_) {
                     e.preventDefault();//Stop the page to navigate to the url set in href
                 }
             });
-            //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
-            $.ajax({
-                url: '/api/service/networking/web-server-info'
-            }).done(function (response) {
-                if (response['serverUTCTime'] != null) {
-                    response['timeDiffInMillisecs'] = response['serverUTCTime'] - new Date().getTime();
-                    if (Math.abs(response['timeDiffInMillisecs']) > timeStampTolearence) {
-                        if (response['timeDiffInMillisecs'] > 0)
-                            globalAlerts.push({
-                                msg: infraAlertMsgs['TIMESTAMP_MISMATCH_BEHIND'].format(diffDates(new XDate(), new XDate(response['serverUTCTime']), 'rounded')),
-                                sevLevel: sevLevels['INFO']
-                            });
-                        else
-                            globalAlerts.push({
-                                msg: infraAlertMsgs['TIMESTAMP_MISMATCH_AHEAD'].format(diffDates(new XDate(response['serverUTCTime']), new XDate(), 'rounded')),
-                                sevLevel: sevLevels['INFO']
-                            });
-                    }
-                    globalObj['webServerInfo'] = response;
-                }
-                self.loadFeatureApps(response['featurePkg']);
-            }).always(function () {
-                webServerInfoDefObj.resolve();
-            });
-            $.when.apply(window, [initMenuDefObj, webServerInfoDefObj, self.featureAppDefObj]).done(function () {
+
+            $.when.apply(window, [initMenuDefObj]).done(function () {
                 self.deferredObj.resolve();
             });
         }
@@ -367,8 +341,9 @@ define(['underscore'], function (_) {
          */
         this.getMenuObjByHash = function (menuHash, currMenuObj, parentsArr) {
             parentsArr = ifNull(parentsArr, []);
-            if (currMenuObj == null)
+            if (currMenuObj == null) {
                 currMenuObj = menuObj['items']['item'];
+            }
             for (var i = 0; i < currMenuObj.length; i++) {
                 if (currMenuObj[i]['hash'] == menuHash) {
                     currMenuObj[i]['parents'] = parentsArr;
@@ -397,205 +372,53 @@ define(['underscore'], function (_) {
             return currMenuObj;
         }
 
-        this.loadResourcesFromMenuObj = function (currMenuObj, resourcesDefObj) {
-            var parents = currMenuObj['parents'];
-            if (currMenuObj['rootDir'] != null || getValueByJsonPath(currMenuObj, 'resources;resource', []).length > 0) {
-                //Update page Hash only if we are moving to a different view
-                var currHashObj = layoutHandler.getURLHashObj();
-                if (currHashObj['p'] != currMenuObj['hash']) {
-                    layoutHandler.setURLHashObj({p: currMenuObj['hash'], q: currMenuObj['queryParams']});
-                    globalObj.hashUpdated = 1;
-                }
-                var resourceDefObjList = [],
-                    rootDir = currMenuObj['rootDir'],
-                    viewDeferredObjs = [];
-
-                function loadViewResources(menuObj, hash) {
-                    $.each(getValueByJsonPath(menuObj, 'resources;resource', []), function (idx, currResourceObj) {
-                        if (currResourceObj['view'] != null) {
-                            if (!(currResourceObj['view'] instanceof Array)) {
-                                currResourceObj['view'] = [currResourceObj['view']];
-                            }
-                            if (currResourceObj['view'] != null && currResourceObj['view'].length > 0 && currResourceObj['view'][0] != null) {
-                                $.each(currResourceObj['view'], function () {
-                                    var viewDeferredObj = $.Deferred();
-                                    viewDeferredObjs.push(viewDeferredObj);
-                                    var viewPath = pkgBaseDir + currResourceObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
-                                    templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
-                                });
-                            }
-                        }
-                    })
-                }
-
-                function loadTemplateResources(menuObj, hash) {
-                    $.each(getValueByJsonPath(menuObj, 'resources;resource', []), function (idx, currResourceObj) {
-                        if (currResourceObj['template'] != null) {
-                            if (!(currResourceObj['template'] instanceof Array)) {
-                                currResourceObj['template'] = [currResourceObj['template']];
-                            }
-                            if (currResourceObj['template'] != null && currResourceObj['template'].length > 0 && currResourceObj['template'][0] != null) {
-                                $.each(currResourceObj['template'], function () {
-                                    var viewDeferredObj = $.Deferred();
-                                    viewDeferredObjs.push(viewDeferredObj);
-                                    var viewPath = pkgBaseDir + currResourceObj['rootDir'] + '/templates/' + this + '?built_at=' + built_at;
-                                    templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
-                                });
-                            }
-                        }
-                    })
-                }
-
-                function loadCssResources(menuObj, hash) {
-                    $.each(getValueByJsonPath(menuObj, 'resources;resource', []), function (idx, currResourceObj) {
-                        if (currResourceObj['css'] == null)
-                            return;
-                        if (!(currResourceObj['css'] instanceof Array)) {
-                            currResourceObj['css'] = [currResourceObj['css']];
-                        }
-                        $.each(currResourceObj['css'], function () {
-                            var cssPath = pkgBaseDir + currResourceObj['rootDir'] + '/css/' + this;
-                            if ($.inArray(cssPath, globalObj['loadedCSS']) == -1) {
-                                globalObj['loadedCSS'].push(cssPath);
-                                var cssLink = $("<link rel='stylesheet' type='text/css' href='" + cssPath + "'>");
-                                $('head').append(cssLink);
-                            }
-                        });
-                    });
-                }
-
-                function loadJsResources(menuObj) {
-                    $.each(getValueByJsonPath(menuObj, 'resources;resource', []), function (idx, currResourceObj) {
-                        if (currResourceObj['js'] != null) {
-                            if (!(currResourceObj['js'] instanceof Array))
-                                currResourceObj['js'] = [currResourceObj['js']];
-                            var isLoadFn = currResourceObj['loadFn'] != null ? true : false;
-                            var isReloadRequired = true;
-                            //Restrict not re-loading scripts only for monitor infrastructure and monitor networks for now
-                            if (NO_RELOAD_JS_CLASSLIST.indexOf(currResourceObj['class']) != -1) {
-                                isReloadRequired = false;
-                            }
-                            $.each(currResourceObj['js'], function () {
-                                //Load the JS file only if it's not loaded already
-                                //if (window[currResourceObj['class']] == null)
-                                if (($.inArray(pkgBaseDir + currResourceObj['rootDir'] + '/js/' + this, globalObj['loadedScripts']) == -1) || (isLoadFn == true) || (isReloadRequired == true))
-                                    resourceDefObjList.push(getScript(pkgBaseDir + currResourceObj['rootDir'] + '/js/' + this));
-                            });
-                        }
-                    });
-                }
-
-                //Load the parent views
-                if (parents != null && parents.length > 0) {
-                    $.each(parents, function (i, parent) {
-                        var parentRootDir = parent['rootDir'];
-                        if (parentRootDir != null || getValueByJsonPath(parent, 'resources;resource', []).length > 0) {
-                            loadViewResources(parent, currMenuObj['hash']);
-                            loadTemplateResources(parent, currMenuObj['hash']);
-                            loadCssResources(parent, currMenuObj['hash']);
-                        }
-                    });
-                }
-                //Load the feature views
-                loadViewResources(currMenuObj, currMenuObj['hash']);
-                loadTemplateResources(currMenuObj, currMenuObj['hash']);
-                //Load the feature css files
-                loadCssResources(currMenuObj);
-
-                //View file need to be downloaded first before executing any JS file
-                $.when.apply(window, viewDeferredObjs).done(function () {
-                    //Load the parent js
-                    if (parents != null && parents.length > 0) {
-                        $.each(parents, function (i, parent) {
-                            var parentRootDir = parent['rootDir'];
-                            if (parentRootDir != null || getValueByJsonPath(parent, 'resources;resource', []).length > 0) {
-                                loadJsResources(parent);
-                            }
-                        });
-                    }
-                    loadJsResources(currMenuObj);
-                    $.when.apply(window, resourceDefObjList).done(function () {
-                        resourcesDefObj.resolve();
-                    });
-                });
-            }
-        };
-
-        this.loadViewFromMenuObj = function (currMenuObj) {
-            var resourcesDefObj = $.Deferred();
-            globalObj.currMenuObj = currMenuObj; //Store in globalObj
-            try {
-                self.loadResourcesFromMenuObj(currMenuObj, resourcesDefObj);
-                resourcesDefObj.done(function () {
-                    //set the global variable
-                    IS_NODE_MANAGER_INSTALLED = getValueByJsonPath(globalObj, 'webServerInfo;uiConfig;nodemanager;installed', true);
-                    //Cleanup the container
-                    $(contentContainer).html('');
-
-                    setTimeout(function () {
-                        if ($(contentContainer).html() == '') {
-                            $(contentContainer).html('<p id="content-container-loading"><i class="icon-spinner icon-spin"></i> &nbsp;Loading content ..</p>');
-                        }
-
-                    }, 2000);
-
-                    $.each(getValueByJsonPath(currMenuObj, 'resources;resource', []), function (idx, currResourceObj) {
-                        if (currResourceObj['class'] != null) {
-                            if (window[currResourceObj['class']] != null) {
-                                window[currResourceObj['class']].load({
-                                    containerId: contentContainer,
-                                    hashParams: layoutHandler.getURLHashParams(),
-                                    function: currResourceObj['function']
-                                });
-                                $('#content-container-loading').remove();
-                            }
-                        }
-                    });
-                });
-            } catch (error) {
-                console.log(error.stack);
-            }
-        };
-
-        this.loadFeatureApps = function (featurePackages) {
-            var featureAppDefObjList= [],
-                initAppDefObj, url;
-
-            self.initFeatureAppDefObjMap = {};
-
-            for (var key in featurePackages) {
-                if(featurePackages[key] && key == FEATURE_PCK_WEB_CONTROLLER) {
-                    url = ctBaseDir + '/common/ui/js/controller.app.js';
-                    if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                        initAppDefObj = $.Deferred();
-                        featureAppDefObjList.push(initAppDefObj);
-                        self.initFeatureAppDefObjMap[key] = initAppDefObj;
-                        featureAppDefObjList.push(getScript(url));
-                    }
-                } else if (featurePackages[key] && key == FEATURE_PCK_WEB_SERVER_MANAGER) {
-                    url = smBaseDir + '/common/ui/js/sm.app.js';
-                    if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                        initAppDefObj = $.Deferred();
-                        featureAppDefObjList.push(initAppDefObj);
-                        self.initFeatureAppDefObjMap[key] = initAppDefObj;
-                        featureAppDefObjList.push(getScript(url));
-                    }
-                }  else if (featurePackages[key] && key == FEATURE_PCK_WEB_STORAGE) {
-                    url = sBaseDir + '/common/ui/js/storage.app.js';
-                    if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                        initAppDefObj = $.Deferred();
-                        featureAppDefObjList.push(initAppDefObj);
-                        self.initFeatureAppDefObjMap[key] = initAppDefObj;
-                        featureAppDefObjList.push(getScript(url));
-                    }
-                }
-            }
-
-            $.when.apply(window, featureAppDefObjList).done(function () {
-                self.featureAppDefObj.resolve();
+        this.handleSideMenu = function() {
+            $('#menu-toggler').on('click', function () {
+                $('#sidebar').toggleClass('display');
+                $(this).toggleClass('display');
+                return false;
             });
-        };
+            //opening submenu
+            var $minimized = false;
+            $('.nav-list').on('click', function (e) {
+                if ($minimized) return;
+
+                //check to see if we have clicked on an element which is inside a .dropdown-toggle element?!
+                //if so, it means we should toggle a submenu
+                var link_element = $(e.target).closest('.dropdown-toggle');
+                if (link_element && link_element.length > 0) {
+                    var sub = link_element.next().get(0);
+                    toggleSubMenu(sub);
+                    return false;
+                }
+            });
+
+            var sidebarState = getCookie('sidebar');
+            if (sidebarState == 'close') {
+                $('#sidebar').addClass('menu-min');
+                $('#sidebar-collapse').find('i').removeClass('icon-chevron-left').addClass('icon-chevron-right');
+            }
+        }
     };
 
     return MenuHandler;
 });
+
+function toggleSubMenu(subMenu, linkId) {
+    //if we are opening this submenu, close all other submenus except the ".active" one
+    if (!$(subMenu).is(':visible')) {//ie, we are about to open it and make it visible
+        $('.open > .submenu').each(function () {
+            if (this != subMenu) {
+                $(this).slideUp(200).parent().removeClass('open').removeClass('active');
+            }
+        });
+        $(subMenu).slideToggle(200).parent().toggleClass('open').toggleClass('active');
+    }
+    if (linkId != null) {
+        $('.submenu > li').each(function () {
+            $(this).removeClass('active');
+        });
+        $(linkId).addClass('active');
+    }
+};
+

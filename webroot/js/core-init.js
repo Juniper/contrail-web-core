@@ -13,8 +13,8 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
     window.Bezier = Bezier;
     loadCommonTemplates();
     require(initDepFiles, function(validation) {
-        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache', 'core-labels', 'core-messages', 'menu-handler'],
-            function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, MenuHandler) {
+        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache', 'core-labels', 'core-messages', 'layout-handler', 'text!templates/core.common.tmpl'],
+            function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, LayoutHandler, CoreCommonTmpls) {
                 cowc = new CoreConstants();
                 cowu = new CoreUtils();
                 cowf = new CoreFormatters();
@@ -25,7 +25,8 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
                 initBackboneValidation();
                 initCustomKOBindings(Knockout);
                 initDomEvents();
-                menuHandler = new MenuHandler();
+                layoutHandler = new LayoutHandler();
+                $("body").append(CoreCommonTmpls);
                 require(['contrail-layout'], function(){});
             });
     });
@@ -62,9 +63,5 @@ function loadCommonTemplates() {
             }
         };
     })(jQuery, document);
-    $.ajaxSetup({async: false});
-    //Need to issue the call synchronously as the following scripts refer to the templates in this file
-    templateLoader.loadExtTemplate(coreBaseDir + '/views/contrail-common.view');
-    $.ajaxSetup({async: true});
 };
 

@@ -93,7 +93,9 @@ function getCoreAppPaths(coreBaseDir) {
         'core-init'                   : coreBaseDir + '/js/core-init',
         'contrail-all-8'              : coreBaseDir + '/js/contrail-all-8',
         'contrail-all-9'              : coreBaseDir + '/js/contrail-all-9',
-        'menu-handler'                : coreBaseDir + '/js/handlers/MenuHandler'
+        'layout-handler'              : coreBaseDir + '/js/handlers/LayoutHandler',
+        'menu-handler'                : coreBaseDir + '/js/handlers/MenuHandler',
+        'content-handler'             : coreBaseDir + '/js/handlers/ContentHandler'
     };
 };
 
