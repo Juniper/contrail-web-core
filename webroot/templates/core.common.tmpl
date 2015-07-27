@@ -1227,3 +1227,22 @@
         </div>
     </div>
 </script>
+
+<script type="text/x-handlebars-template" id="core-generic-edit-form-template">
+    <div class="alert alert-error" data-bind="visible: errors().{{prefixId}}_form_error">
+        <strong>Error: </strong>
+        <span data-bind="text: errors().{{prefixId}}_form_error"></span>
+    </div>
+    <form name="{{prefixId}}Form" id="{{modalId}}-form" onsubmit="return false;" class="">
+    </form>
+</script>
+
+<script type="text/x-handlebars-template" id="core-generic-delete-form-template">
+    <div class="alert alert-error" data-bind="visible: errors().{{elementId}}_error">
+        <button type="button" class="close" data-dismiss="alert"></button>
+        <strong>Error: </strong>
+        <span data-bind="text: errors().{{elementId}}_error"></span>
+    </div>
+    <div>Are you sure you want to delete {{item}} <b>{{itemId}}</b>?</div>
+</script>
+
