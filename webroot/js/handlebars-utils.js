@@ -291,3 +291,8 @@ Handlebars.registerHelper('encodedVN', function(jsonObj) {
 Handlebars.registerHelper('handleIfNull', function(value, defaultValue) {
     return contrail.handleIfNull(value, defaultValue);
 });
+
+Handlebars.registerHelper('printJSON', function(jsonObject) {
+    return JSON.stringify(jsonObject);
+});
+

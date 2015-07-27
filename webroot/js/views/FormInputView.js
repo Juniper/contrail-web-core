@@ -11,12 +11,13 @@ define([
             var inputTemplate = contrail.getTemplate4Id(cowc.TMPL_INPUT_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
-                app = this.attributes.app,
                 validation = this.attributes.validation,
                 path = viewConfig[cowc.KEY_PATH],
+                visible = this.attributes.visible,
+                placeHolder = (viewConfig['placeHolder'] != null) ? viewConfig['placeHolder'] : null,
                 type = (viewConfig[cowc.KEY_TYPE] != null) ? viewConfig[cowc.KEY_TYPE] : 'text',
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
-                labelValue = (elId != null) ? cowl.get(elId, app) : cowl.get(path, app),
+                labelValue = (elId != null) ? ctwl.get(elId) : ctwl.get(path),
                 tmplParameters;
 
             if (!(contrail.checkIfExist(lockEditingByDefault) && lockEditingByDefault)) {
@@ -25,9 +26,9 @@ define([
             this.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId, name: elId, disabled: viewConfig['disabled'],
+                label: labelValue, id: elId, name: elId, placeHolder: placeHolder, disabled: viewConfig['disabled'],
                 dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
-                lockAttr: lockEditingByDefault, type: type,
+                lockAttr: lockEditingByDefault, type: type, visible: visible,
                 class: "span12", path: path, validation: validation
             };
 
