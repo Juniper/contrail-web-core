@@ -18,8 +18,11 @@ define([
 
             $(selector).append(loadingSpinnerTemplate);
 
-            if (viewConfig['modelConfig'] != null) {
+            if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
+            }
+
+            if (self.model !== null) {
                 if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
                     var chartData = self.model.getItems();
                     self.renderChart(selector, viewConfig, chartData);
