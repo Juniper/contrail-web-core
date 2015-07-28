@@ -423,7 +423,7 @@ joint.shapes.contrail.NetworkPolicy = joint.shapes.contrail.FontElement.extend({
     markup: '<g class="rotatable"><text/><g class="scalable"><rect class="NetworkPolicy"/></g></g>',
 
     defaults: joint.util.deepSupplement({
-        type: 'contrail.NetworkPolicy'
+        type: 'contrail.NetworkPolicy.no-drag-element'
     }, joint.shapes.contrail.FontElement.prototype.defaults)
 });
 
@@ -437,7 +437,7 @@ joint.shapes.contrail.SecurityGroup = joint.shapes.contrail.FontElement.extend({
     markup: '<g class="rotatable"><text/><g class="scalable"><rect class="SecurityGroup"/></g></g>',
 
     defaults: joint.util.deepSupplement({
-        type: 'contrail.SecurityGroup'
+        type: 'contrail.SecurityGroup.no-drag-element'
     }, joint.shapes.contrail.FontElement.prototype.defaults)
 });
 
@@ -451,7 +451,7 @@ joint.shapes.contrail.NetworkIPAM = joint.shapes.contrail.FontElement.extend({
     markup: '<g class="rotatable"><text/><g class="scalable"><rect class="NetworkIPAM"/></g></g>',
 
     defaults: joint.util.deepSupplement({
-        type: 'contrail.NetworkIPAM'
+        type: 'contrail.NetworkIPAM.no-drag-element'
     }, joint.shapes.contrail.FontElement.prototype.defaults)
 });
 
@@ -613,7 +613,7 @@ joint.shapes.contrail.CPUView = joint.shapes.contrail.FontElementView.extend({
 //    }, joint.shapes.contrail.ImageElement.prototype.defaults)
 //});
 
-joint.shapes.contrail.ZoomedCloudElement = joint.shapes.basic.Rect.extend({
+joint.shapes.contrail.ZoomedVirtualNetwork = joint.shapes.basic.Rect.extend({
     markup: '<rect/><text/>',
     defaults: joint.util.deepSupplement({
         type: 'contrail.ZoomedElement.VirtualNetwork',
@@ -657,29 +657,6 @@ joint.shapes.contrail.GroupParentElement = joint.shapes.basic.Rect.extend({
     remove: removeCell
 });
 
-joint.shapes.contrail.ZoomedElement = joint.shapes.basic.Rect.extend({
-    markup: '<rect/><text/>',
-
-    defaults: joint.util.deepSupplement({
-        type: 'contrail.ZoomedElement',
-        attrs: {
-            rect: {fill: 'url(#dotted)'},
-            text: {
-                'ref-x': 0.01,
-                'ref-y': 5,
-                'y-alignment': 'top',
-                'x-alignment': 'left',
-                'text-anchor': 'left',
-                'ref': 'rect',
-                'stroke-width': '0.4px',
-                'stroke': '#333',
-                'fill': '#333'
-            }
-        }
-    }, joint.shapes.basic.Rect.prototype.defaults),
-    remove: removeCell
-});
-
 joint.shapes.contrail.LinkView = joint.dia.LinkView.extend({
     // Overriding mouse events to doing nothing
     startListening: function () {
@@ -687,58 +664,61 @@ joint.shapes.contrail.LinkView = joint.dia.LinkView.extend({
 });
 
 joint.shapes.contrail.Link = function (options) {
-    var linkConfig = {
-        markup: [
-            '<path class="connection"></path>',
-            '<path class="marker-source" fill="#333" stroke="#333" />',
-            '<path class="marker-target" fill="#333" stroke="#333" />',
-            '<path class="connection-wrap" fill="#333" stroke="#333" />'
-        ].join(''),
-        source: {id: options.sourceId},
-        target: {id: options.targetId},
-        smooth: true,
-        attrs: {
-            '.connection': {
-                'stroke': '#333'
-            },
-            '.connection-wrap': {
-                'stroke': '#333'
+    var defaultLinkConfig = {
+            markup: [
+                '<path class="connection"></path>',
+                '<path class="marker-source"/>',
+                '<path class="marker-target"/>',
+                '<path class="connection-wrap"/>'
+            ].join(''),
+            smooth: true,
+            attrs: {
+                '.connection': {
+                    'stroke': '#333'
+                },
+                '.marker-source' : {
+                    fill: '#333',
+                    stroke: '#333'
+                },
+                '.marker-target' : {
+                    fill: '#333',
+                    stroke: '#333'
+                },
+                '.connection-wrap': {
+                    fill: '#333',
+                    stroke: '#333'
+                }
             }
         },
-        linkDetails: options.linkDetails,
-        elementType: options.elementType
-    }, link;
-    var connectionStroke = linkConfig['linkDetails']['connectionStroke'];
-    var markerTargetStroke = linkConfig['linkDetails']['markerTargetStroke'];
-    var markerSourceStroke = linkConfig['linkDetails']['markerSourceStroke'];
-    if (options['linkType'] == 'bi') {
-        if (options.direction == 'bi') {
-            linkConfig['attrs']['.marker-source'] = {fill: '#333', d: 'M 6 0 L 0 3 L 6 6 z'};
-            linkConfig['attrs']['.marker-target'] = {fill: '#333', d: 'M 6 0 L 0 3 L 6 6 z'};
-        } else if (options.direction == 'uni') {
-            linkConfig['attrs']['.marker-target'] = {
-                fill: '#e80015', stroke: markerTargetStroke != null ? markerTargetStroke : '#e80015',
-                d: 'M 6 0 L 0 3 L 6 6 z'
-            };
-            linkConfig['attrs']['.connection']['stroke'] = '#e80015';
-            linkConfig['attrs']['.connection']['stroke-width'] = 1;
-            linkConfig['attrs']['.connection']['stroke-dasharray'] = '4 4';
-        }
-    } else if (options['linkType'] == 'pr-pr' || options['linkType'] == 'vr-vr' ||
+        linkConfig = contrail.checkIfExist(options.linkConfig) ? options.linkConfig : {
+            source: {id: options.sourceId},
+            target: {id: options.targetId},
+            linkDetails: options.linkDetails,
+            elementType: options.elementType
+        };
+
+    /*
+     TODO - Need to remove linkType and pass the linkConfig which gets extended further
+     */
+    if (options['linkType'] == 'pr-pr' || options['linkType'] == 'vr-vr' ||
         options['linkType'] == 'pr-vr' || options['linkType'] == 'vr-pr' ||
         options['linkType'] == 'vr-vm' || options['linkType'] == 'vm-vr' ||
         options['linkType'] == 'vr-vn' || options['linkType'] == 'vn-vr' ||
         options['linkType'] == 'vm-vm' || options['linkType'] == 'vn-vn' ||
         options['linkType'] == 'vm-vn' || options['linkType'] == 'vn-vm' ||
-        options['linkType'] == 'lc-lc' || options['linkType'] == 'pfe-lc' || 
+        options['linkType'] == 'lc-lc' || options['linkType'] == 'pfe-lc' ||
         options['linkType'] == 'pfe-pfe') {
+
+        var connectionStroke = options['linkDetails']['connectionStroke'];
+
         linkConfig['attrs']['.connection']['stroke'] = connectionStroke != null ? connectionStroke : '#e80015';
         linkConfig['attrs']['.connection']['stroke-width'] = 2;
     } else {
-        linkConfig['attrs']['.marker-target'] = {fill: '#333', d: 'M 6 0 L 0 3 L 6 6 z'};
+        //TODO - Check if this is needed
+        //linkConfig['attrs']['.marker-target'] = {d: 'M 6 0 L 0 3 L 6 6 z'};
     }
-    link = new joint.dia.Link(linkConfig);
-    return link;
+
+    return new joint.dia.Link($.extend(true, {}, defaultLinkConfig, linkConfig));
 };
 
 joint.layout.contrail.DirectedGraph = $.extend(true, joint.layout.DirectedGraph, {

@@ -3,11 +3,11 @@
  */
 @font-face {
     font-family: 'contrailFonts';
-    src:url('fonts/contrailFonts.eot?-alvopw');
-    src:url('fonts/contrailFonts.eot?#iefix-alvopw') format('embedded-opentype'),
-    url('fonts/contrailFonts.ttf?-alvopw') format('truetype'),
-    url('fonts/contrailFonts.woff?-alvopw') format('woff'),
-    url('fonts/contrailFonts.svg?-alvopw#contrailFonts') format('svg');
+    src:url('fonts/contrailFonts.eot?m3ch6z');
+    src:url('fonts/contrailFonts.eot?#iefixm3ch6z') format('embedded-opentype'),
+    url('fonts/contrailFonts.ttf?m3ch6z') format('truetype'),
+    url('fonts/contrailFonts.woff?m3ch6z') format('woff'),
+    url('fonts/contrailFonts.svg?m3ch6z#contrailFonts') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -26,28 +26,28 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-contrail-virtual-machine-interface-top:before {
+.icon-contrail-virtual-machine-top:before {
     content: "\e604";
 }
-.icon-contrail-virtual-machine-interface-left:before {
+.icon-contrail-virtual-machine-left:before {
     content: "\e605";
 }
-.icon-contrail-virtual-machine-interface-bottom:before {
+.icon-contrail-virtual-machine-bottom:before {
     content: "\e61b";
 }
-.icon-contrail-virtual-machine-interface-right:before {
+.icon-contrail-virtual-machine-right:before {
     content: "\e61c";
 }
-.icon-contrail-virtual-machine-top:before {
+.icon-contrail-virtual-machine-interface-top:before {
     content: "\e61d";
 }
-.icon-contrail-virtual-machine-left:before {
+.icon-contrail-virtual-machine-interface-left:before {
     content: "\e61e";
 }
-.icon-contrail-virtual-machine-bottom:before {
+.icon-contrail-virtual-machine-interface-bottom:before {
     content: "\e61f";
 }
-.icon-contrail-virtual-machine-right:before {
+.icon-contrail-virtual-machine-interface-right:before {
     content: "\e620";
 }
 .icon-contrail-analytics-db:before {
