@@ -112,6 +112,17 @@ define([
         };
         var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
 
+        var dataZero = true;
+        _.each(chartData, function(data) {
+            if(data.value != 0) {
+                dataZero = false;
+            }
+        });
+        if(dataZero) {
+            chartOptions['noDataMessage'] = "All values are 0.";
+            chartData = [];
+        }
+
         chartViewConfig['chartData'] = chartData;
         chartViewConfig['chartOptions'] = chartOptions;
 
