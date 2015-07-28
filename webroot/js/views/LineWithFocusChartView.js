@@ -4,11 +4,11 @@
 
 define([
     'underscore',
-    'backbone',
+    'contrail-view',
     'core-basedir/js/models/LineWithFocusChartModel',
     'contrail-list-model'
-], function (_, Backbone, LineWithFocusChartModel, ContrailListModel) {
-    var LineWithFocusChartView = Backbone.View.extend({
+], function (_, ContrailView, LineWithFocusChartModel, ContrailListModel) {
+    var LineWithFocusChartView = ContrailView.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = this.attributes.viewConfig,

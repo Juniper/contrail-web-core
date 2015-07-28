@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var FormMultiselectView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var FormMultiselectView = ContrailView.extend({
         render: function () {
             var msTemplate = contrail.getTemplate4Id(cowc.TMPL_MULTISELECT_VIEW),
                 viewConfig = this.attributes.viewConfig,

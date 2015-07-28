@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var GridInputView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var GridInputView = ContrailView.extend({
         render: function () {
             var inputTemplate = contrail.getTemplate4Id(cowc.TMPL_GRID_INPUT_VIEW),
                 viewConfig = this.attributes.viewConfig,

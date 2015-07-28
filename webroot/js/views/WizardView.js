@@ -4,32 +4,29 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var WizardView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var WizardView = ContrailView.extend({
         render: function () {
             var wizardTempl = contrail.getTemplate4Id(cowc.TMPL_WIZARD_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
                 validation = this.attributes.validation,
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
-                self = this,
-                childViewObj, childElId, steps;
+                self = this, steps;
 
             this.$el.html(wizardTempl({viewConfig: viewConfig, elementId: elId}));
             steps = viewConfig['steps'];
 
             $.each(steps, function(stepKey, stepValue){
-
                 self.model.showErrorAttr(stepValue.elementId, false);
                 if(stepValue.onInitRender == true) {
                     stepValue.onInitWizard = function(params) {
-                        cowu.renderView4Config($("#" + stepValue.elementId), self.model, stepValue, validation, lockEditingByDefault);
+                        self.renderView4Config($("#" + stepValue.elementId), self.model, stepValue, validation, lockEditingByDefault);
                     }
-                }
-                else {
+                } else {
                     stepValue.onInitFromNext = function (params) {
-                        cowu.renderView4Config($("#" + stepValue.elementId), self.model, stepValue, validation, lockEditingByDefault);
+                        self.renderView4Config($("#" + stepValue.elementId), self.model, stepValue, validation, lockEditingByDefault);
                     }
                 }
             });

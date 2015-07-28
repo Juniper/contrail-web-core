@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var ControlPanelView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var ControlPanelView = ContrailView.extend({
         render: function() {
             var self = this,
                 controlPanelTemplate = contrail.getTemplate4Id(cowc.TMPL_CONTROL_PANEL),

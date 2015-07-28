@@ -4,11 +4,11 @@
 
 define([
     'underscore',
-    'backbone',
+    'contrail-view',
     'core-basedir/js/models/DonutChartModel',
     'contrail-list-model'
-], function (_, Backbone, DonutChartModel, ContrailListModel) {
-    var DonutChartView = Backbone.View.extend({
+], function (_, ContrailView, DonutChartModel, ContrailListModel) {
+    var DonutChartView = ContrailView.extend({
         render: function () {
             var self = this,
                 loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
