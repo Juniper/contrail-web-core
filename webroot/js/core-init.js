@@ -13,13 +13,19 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
     window.Bezier = Bezier;
     loadCommonTemplates();
     require(initDepFiles, function(validation) {
-        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache', 'core-labels', 'core-messages', 'layout-handler', 'text!templates/core.common.tmpl'],
-            function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, LayoutHandler, CoreCommonTmpls) {
+        require(['core-utils', 'core-constants', 'core-formatters', 
+                 'core-cache', 'core-labels', 'core-messages', 'layout-handler',
+                 'text!templates/core.common.tmpl', 
+                 'js/views/BreadcrumbDropDownView'],
+            function (CoreUtils, CoreConstants, CoreFormatters, Cache, 
+                      CoreLabels, CoreMessages, LayoutHandler, 
+                      CoreCommonTmpls, BreadcrumbDropDownView) {
                 cowc = new CoreConstants();
                 cowu = new CoreUtils();
                 cowf = new CoreFormatters();
                 cowl = new CoreLabels();
                 cowm = new CoreMessages();
+                cobdcb = new BreadcrumbDropDownView();
                 kbValidation = validation;
                 cowch = new Cache();
                 initBackboneValidation();
