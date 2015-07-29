@@ -304,24 +304,27 @@ define([
         };
 
         if(contrail.checkIfFunction(eventConfig['cell:pointerclick'])) {
-            graphView.on('cell:pointerclick', function(cellView, evt, x, y) {
+            graphView
+                .off('cell:pointerclick')
+                .on('cell:pointerclick', function(cellView, evt, x, y) {
+                    if (timer) {
+                        clearTimeout(timer);
+                    }
 
-                if (timer) {
-                    clearTimeout(timer);
-                }
-
-                timer = setTimeout(function() {
-                    eventConfig['cell:pointerclick'](cellView, evt, x, y);
-                    clearTimeout(timer);
-                }, 500);
-            });
+                    timer = setTimeout(function() {
+                        eventConfig['cell:pointerclick'](cellView, evt, x, y);
+                        clearTimeout(timer);
+                    }, 500);
+                });
         }
 
         if(contrail.checkIfFunction(eventConfig['cell:pointerdblclick'])) {
-            graphView.on('cell:pointerdblclick', function(cellView, evt, x, y) {
-                clearTimeout(timer);
-                eventConfig['cell:pointerdblclick'](cellView, evt, x, y);
-            });
+            graphView
+                .off('cell:pointerdblclick')
+                .on('cell:pointerdblclick', function(cellView, evt, x, y) {
+                    clearTimeout(timer);
+                    eventConfig['cell:pointerdblclick'](cellView, evt, x, y);
+                });
         }
 
         $(document)
