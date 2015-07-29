@@ -18,7 +18,8 @@ define([
         this.getResolveErrorsMessage = function(fieldKey) {
             return "Please resolve all " + fieldKey + " errors.";
         };
-
+        this.NO_PROJECT_FOUND = 'No Project Found.';
+        this.NO_DOMAIN_FOUND = 'No Domain Found.';
         this.SHOULD_BE_VALID = '{0} should have a valid ';
 
         this.get = function () {

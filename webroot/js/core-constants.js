@@ -38,6 +38,9 @@ define([
 
         this.KEY_VALIDATION = 'validation';
 
+        this.URL_ALL_DOMAINS = '/api/tenants/config/domains';
+        this.URL_CONFIG_PROJECT = 'api/tenants/config/projects';
+
         this.TMPL_2ROW_CONTENT_VIEW = "core-2-row-content-template";
 
         this.TMPL_ACCORDIAN_VIEW = "core-accordian-view-template";
@@ -54,6 +57,7 @@ define([
         this.TMPL_GRID_MULTISELECT_VIEW = "core-grid-multiselect-view-template";
         this.TMPL_SECTION_VIEW = "core-section-view-template";
         this.TMPL_EDIT_FORM = "core-edit-form-template";
+        this.TMPL_GENERIC_EDIT_FORM = "core-generic-edit-form-template";
         this.TMPL_2ROW_GROUP_DETAIL = "core-grid-2-row-group-detail-template";
         this.TMPL_DETAIL_PAGE = "core-detail-page-template";
         this.TMPL_DETAIL_PAGE_ACTION = "core-detail-page-action-template";

@@ -10,11 +10,14 @@ define([
     'graph-view', 'core-basedir/js/views/TabsView', 'core-basedir/js/views/ChartView', 'core-basedir/js/views/GridView', 'core-basedir/js/views/DetailsView',
     'core-basedir/js/views/ScatterChartView', 'core-basedir/js/views/LineWithFocusChartView', 'core-basedir/js/views/HeatChartView', 'core-basedir/js/views/ZoomScatterChartView',
     'core-basedir/js/views/HorizontalBarChartView', 'core-basedir/js/views/LineBarWithFocusChartView', 'core-basedir/js/views/MultiDonutChartView', 'core-basedir/js/views/MultiBarChartView',
-    'core-basedir/js/views/DonutChartView'
-], function (FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView, FormRadioButtonView,
+    'core-basedir/js/views/DonutChartView',
+    'core-basedir/js/views/BreadcrumbDropDownView'
+], function (FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,FormRadioButtonView,
              AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
              GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView, LineWithFocusChartView, HeatChartView, ZoomScatterChartView,
-             HorizontalBarChartView, LineBarWithFocusChartView, MultiDonutChartView, MultiBarChartView, DonutChartView) {
+             HorizontalBarChartView, LineBarWithFocusChartView, 
+             MultiDonutChartView, MultiBarChartView, DonutChartView,
+             BreadcrumbDropDownView) {
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -475,6 +478,14 @@ define([
                     elementView.render();
                     return elementView;
 
+                case "BreadcrumbDropDownView":
+                    elementView = new BreadcrumbDropDownView({
+                                      el: parentElement, model: model,
+                                      attributes: viewAttributes});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    break;
+
                 default:
                     if (app == cowc.APP_CONTRAIL_CONTROLLER) {
                         return ctwru.renderView(viewName, parentElement, model, viewAttributes, modelMap, rootView);
@@ -734,6 +745,62 @@ define([
                 x0 = x1, y0 = y1;
             }
             return path.join("");
+        };
+
+        this.renderDomainProjectBreadcrumbDropDown = function(cbFun) {
+            var BreadcrumbOptionsObj = {
+                url : cowc.URL_ALL_DOMAINS,
+                elementID : cowl.DOMAINS_BREADCRUMB_DROPDOWN,
+                key : "domain",
+                cookie : cowc.COOKIE_DOMAIN,
+                noDataMsg : cowm.NO_DOMAIN_FOUND,
+                parser : this.domainParser,
+                child : {
+                    url : cowc.URL_CONFIG_PROJECT,
+                    elementID : cowl.PROJECTS_BREADCRUMB_DROPDOWN,
+                    key : "project",
+                    cookie : cowc.COOKIE_PROJECT,
+                    noDataMsg : cowm.NO_PROJECT_FOUND,
+                    parser : this.projectParser,
+                    initCB : cbFun,
+                    child : {}
+                }
+            };
+            cobdcb.renderEachBreadcrumbDropdown(BreadcrumbOptionsObj);
+        };
+
+        this.renderDomainBreadcrumbDropDown = function(cbFun) {
+            var BreadcrumbOptionsObj = {
+                url : cowc.URL_ALL_DOMAINS,
+                elementID : cowl.DOMAINS_BREADCRUMB_DROPDOWN,
+                key : "domain",
+                cookie : cowc.COOKIE_DOMAIN,
+                noDataMsg : cowm.NO_DOMAIN_FOUND,
+                parser : this.domainParser,
+                initCB : cbFun,
+                child : {}
+            };
+            cobdcb.renderEachBreadcrumbDropdown(BreadcrumbOptionsObj);
+        };
+
+        this.domainParser = function(domainResponse) {
+            return $.map(domainResponse.domains, function (n, i) {
+                return {
+                    fq_name: n.fq_name.join(':'),
+                    name: n.fq_name[0],
+                    value: n.uuid
+                };
+            });
+        };
+
+        this.projectParser = function(projectResponse) {
+            return $.map(projectResponse.projects, function (n, i) {
+                return {
+                    fq_name: n.fq_name.join(':'),
+                    name: n.fq_name[1],
+                    value: n.uuid
+                };
+            });
         };
     };
     return CoreUtils;
