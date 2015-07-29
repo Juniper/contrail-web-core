@@ -7,8 +7,21 @@ define([
     'backbone'
 ], function (_, Backbone) {
     var ContrailView = Backbone.View.extend({
-        isMyRenderInProgress: false,
-        childViewMap: {},
+        constructor: function () {
+            var self = this;
+
+            self.isMyRenderInProgress = false;
+            self.childViewMap = {};
+
+            Backbone.View.apply(self, arguments);
+
+            //The top view may not have any argument.
+            if(arguments.length > 0) {
+                self.rootView = arguments[0].rootView;
+            }
+
+            return self;
+        },
 
         isAnyRenderInProgress: function() {
             var isChildRenderInProgress = false;
