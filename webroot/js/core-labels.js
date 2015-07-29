@@ -83,6 +83,9 @@ define([
 
         this.TITLE_DETAILS = "Details";
         this.TITLE_OVERVIEW = "Overview";
+        this.BREADCRUMB_ID = "breadcrumb";
+        this.DOMAINS_BREADCRUMB_DROPDOWN = "domains-breadcrumb-dropdown";
+        this.PROJECTS_BREADCRUMB_DROPDOWN = "projects-breadcrumb-dropdown";
     };
 
     function capitalizeSentence(sentence) {

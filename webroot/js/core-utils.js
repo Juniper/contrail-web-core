@@ -617,6 +617,62 @@ define(['underscore'], function (_) {
             }
             return path.join("");
         };
+
+        this.renderDomainProjectBreadcrumbDropDown = function(cbFun) {
+            var BreadcrumbOptionsObj = {
+                url : cowc.URL_ALL_DOMAINS,
+                elementID : cowl.DOMAINS_BREADCRUMB_DROPDOWN,
+                key : "domain",
+                cookie : cowc.COOKIE_DOMAIN,
+                noDataMsg : cowm.NO_DOMAIN_FOUND,
+                parser : this.domainParser,
+                child : {
+                    url : cowc.URL_CONFIG_PROJECT,
+                    elementID : cowl.PROJECTS_BREADCRUMB_DROPDOWN,
+                    key : "project",
+                    cookie : cowc.COOKIE_PROJECT,
+                    noDataMsg : cowm.NO_PROJECT_FOUND,
+                    parser : this.projectParser,
+                    initCB : cbFun,
+                    child : {}
+                }
+            };
+            cobdcb.renderEachBreadcrumbDropdown(BreadcrumbOptionsObj);
+        };
+
+        this.renderDomainBreadcrumbDropDown = function(cbFun) {
+            var BreadcrumbOptionsObj = {
+                url : cowc.URL_ALL_DOMAINS,
+                elementID : cowl.DOMAINS_BREADCRUMB_DROPDOWN,
+                key : "domain",
+                cookie : cowc.COOKIE_DOMAIN,
+                noDataMsg : cowm.NO_DOMAIN_FOUND,
+                parser : this.domainParser,
+                initCB : cbFun,
+                child : {}
+            };
+            cobdcb.renderEachBreadcrumbDropdown(BreadcrumbOptionsObj);
+        };
+
+        this.domainParser = function(domainResponse) {
+            return $.map(domainResponse.domains, function (n, i) {
+                return {
+                    fq_name: n.fq_name.join(':'),
+                    name: n.fq_name[0],
+                    value: n.uuid
+                };
+            });
+        };
+
+        this.projectParser = function(projectResponse) {
+            return $.map(projectResponse.projects, function (n, i) {
+                return {
+                    fq_name: n.fq_name.join(':'),
+                    name: n.fq_name[1],
+                    value: n.uuid
+                };
+            });
+        };
     };
     return CoreUtils;
 });

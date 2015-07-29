@@ -38,6 +38,9 @@ define([
 
         this.KEY_VALIDATION = 'validation';
 
+        this.URL_ALL_DOMAINS = '/api/tenants/config/domains';
+        this.URL_CONFIG_PROJECT = 'api/tenants/config/projects';
+
         this.TMPL_2ROW_CONTENT_VIEW = "core-2-row-content-template";
 
         this.TMPL_ACCORDIAN_VIEW = "core-accordian-view-template";
