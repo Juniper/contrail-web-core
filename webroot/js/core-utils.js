@@ -248,6 +248,34 @@ define([
             return testobj;
         };
 
+        this.getForceAxis4Chart = function (chartData, fieldName, forceAxis) {
+            var axisMin = 0, axisMax;
+
+            if(chartData.length > 0) {
+                axisMax = Math.ceil(d3.max(chartData, function (d) {
+                        return +d[fieldName];
+                    }) * 1.1);
+
+                if (axisMax <= 0) {
+                    axisMax = 1;
+                }
+            } else {
+                axisMax = 0;
+            }
+
+            if (forceAxis) {
+                if (axisMin > forceAxis[0]) {
+                    axisMin = forceAxis[0];
+                }
+
+                if (axisMax < forceAxis[1]) {
+                    axisMax = forceAxis[1];
+                }
+            }
+
+            return [axisMin, axisMax];
+        };
+
         // Deprecated
         this.renderView4Config = function (parentElement, model, viewObj, validation, lockEditingByDefault, modelMap) {
             var viewName = viewObj['view'],
