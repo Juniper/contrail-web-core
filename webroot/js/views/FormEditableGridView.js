@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var FormEditableGridView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var FormEditableGridView = ContrailView.extend({
         render: function () {
             var editableGridTmpl = contrail.getTemplate4Id(cowc.TMPL_EDITABLE_GRID_VIEW),
                 viewConfig = this.attributes.viewConfig,
@@ -23,7 +23,7 @@ define([
             for (var j = 0; j < columns.length; j++) {
                 childViewObj = columns[j];
                 childElId = childViewObj[cowc.KEY_ELEMENT_ID];
-                cowu.renderView4Config(this.$el.find("#" + childElId), this.model, childViewObj, validation, false);
+                this.renderView4Config(this.$el.find("#" + childElId), this.model, childViewObj, validation, false);
             }
         }
     });

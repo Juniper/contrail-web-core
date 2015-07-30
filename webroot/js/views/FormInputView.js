@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var FormInputView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var FormInputView = ContrailView.extend({
         render: function () {
             var inputTemplate = contrail.getTemplate4Id(cowc.TMPL_INPUT_VIEW),
                 viewConfig = this.attributes.viewConfig,

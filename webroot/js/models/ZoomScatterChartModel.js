@@ -59,50 +59,14 @@ define([
             self.width = chartConfig['width'] - margin.left - margin.right;
             self.height = chartConfig['height'] - margin.top - margin.bottom;
 
-            self.xMin = 0;
-            self.yMin = 0;
+            forceX = cowu.getForceAxis4Chart(chartData, chartConfig.xField, forceX);
+            forceY = cowu.getForceAxis4Chart(chartData, chartConfig.yField, forceY);
 
-            if(chartData.length > 0) {
-                self.xMax = Math.ceil(d3.max(chartData, function (d) {
-                    return +d[chartConfig.xField];
-                }) * 1.1);
+            self.xMin = forceX[0];
+            self.xMax = forceX[1];
 
-                self.yMax = Math.ceil(d3.max(chartData, function (d) {
-                    return +d[chartConfig.yField];
-                }) * 1.1);
-
-                if (self.xMax <= 0) {
-                    self.xMax = 1;
-                }
-
-                if (self.yMax <= 0) {
-                    self.yMax = 1;
-                }
-
-            } else {
-                self.xMax = 0;
-                self.yMax = 0;
-            }
-
-            if (forceX) {
-                if (self.xMin > forceX[0]) {
-                    self.xMin = forceX[0];
-                }
-
-                if (self.xMax < forceX[1]) {
-                    self.xMax = forceX[1];
-                }
-            }
-
-            if (forceY) {
-                if (self.yMin > forceY[0]) {
-                    self.yMin = forceY[0];
-                }
-
-                if (self.yMax < forceY[1]) {
-                    self.yMax = forceY[1];
-                }
-            }
+            self.yMin = forceY[0];
+            self.yMax = forceY[1];
 
             self.xScale = d3.scale.linear().domain([self.xMin, self.xMax]).range([0, self.width]);
             self.yScale = d3.scale.linear().domain([self.yMin, self.yMax]).range([self.height, 0]);

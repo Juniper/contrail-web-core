@@ -4,11 +4,11 @@
 
 define([
     'underscore',
-    'backbone',
+    'contrail-view',
     'core-basedir/js/models/MultiDonutChartModel',
     'contrail-list-model'
-], function (_, Backbone, MultiDonutChartModel, ContrailListModel) {
-    var HorizontalBarChartView = Backbone.View.extend({
+], function (_, ContrailView, MultiDonutChartModel, ContrailListModel) {
+    var HorizontalBarChartView = ContrailView.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = this.attributes.viewConfig,
@@ -18,8 +18,11 @@ define([
 
             $(selector).append(loadingSpinnerTemplate);
 
-            if (viewConfig['modelConfig'] != null) {
+            if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
+            }
+
+            if (self.model !== null) {
                 if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
                     var chartData = self.model.getItems();
                     self.renderChart(selector, viewConfig, chartData);

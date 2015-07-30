@@ -95,7 +95,8 @@ function getCoreAppPaths(coreBaseDir) {
         'contrail-all-9'              : coreBaseDir + '/js/contrail-all-9',
         'layout-handler'              : coreBaseDir + '/js/handlers/LayoutHandler',
         'menu-handler'                : coreBaseDir + '/js/handlers/MenuHandler',
-        'content-handler'             : coreBaseDir + '/js/handlers/ContentHandler'
+        'content-handler'             : coreBaseDir + '/js/handlers/ContentHandler',
+        'contrail-view'               : coreBaseDir + '/js/views/ContrailView'
     };
 };
 
@@ -285,6 +286,9 @@ var coreAppShim =  {
         },
         'contrail-remote-data-handler': {
             deps: ['jquery']
+        },
+        'contrail-view' : {
+            deps: ['backbone']
         }
 };
 

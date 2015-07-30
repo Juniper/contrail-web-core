@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var HeatChartView = Backbone.View.extend({
+    'contrail-view',
+], function (_, ContrailView) {
+    var HeatChartView = ContrailView.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 heatChartTemplate = contrail.getTemplate4Id(ctwc.TMPL_VN_PORT_HEAT_CHART),

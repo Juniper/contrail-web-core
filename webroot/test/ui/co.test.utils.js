@@ -117,6 +117,19 @@ define(['underscore'], function (_) {
         return cssList;
     };
 
+    this.getFakeServer = function(serverConfig) {
+        var fakeServer = sinon.fakeServer.create();
+        fakeServer.autoRespond = (serverConfig == null || serverConfig['autoRespond'] == null) ? true : serverConfig['autoRespond'];
+        fakeServer.xhr.useFilters = true;
+
+        fakeServer.xhr.addFilter(function(method, url) {
+            var searchResult = url.search(/.*\.tmpl.*/);
+            return searchResult == -1 ? false : true;
+        });
+
+        return fakeServer;
+    };
+
     return {
         self: self,
         getRegExForUrl: getRegExForUrl,
@@ -124,6 +137,7 @@ define(['underscore'], function (_) {
         startQunitWithTimeout: startQunitWithTimeout,
         getCSSList: getCSSList,
         getSidebarHTML: getSidebarHTML,
-        getPageHeaderHTML: getPageHeaderHTML
+        getPageHeaderHTML: getPageHeaderHTML,
+        getFakeServer: getFakeServer
     };
 });

@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var GridMultiselectView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var GridMultiselectView = ContrailView.extend({
         render: function () {
             var msTemplate = contrail.getTemplate4Id(cowc.TMPL_GRID_MULTISELECT_VIEW),
                 viewConfig = this.attributes.viewConfig,

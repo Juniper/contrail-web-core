@@ -4,10 +4,10 @@
 
 define([
     'underscore',
-    'backbone',
+    'contrail-view',
     'knockout'
-], function (_, Backbone, Knockout) {
-    var AccordianView = Backbone.View.extend({
+], function (_, ContrailView, Knockout) {
+    var AccordianView = ContrailView.extend({
         render: function () {
             var accordianTempl = contrail.getTemplate4Id(cowc.TMPL_ACCORDIAN_VIEW),
                 viewConfig = this.attributes.viewConfig,
@@ -25,7 +25,7 @@ define([
 
                 this.model.showErrorAttr(childElId, getKOComputedError(viewConfig[i], this));
 
-                cowu.renderView4Config(this.$el.find("#" + childElId), this.model, childViewObj, validation, lockEditingByDefault);
+                this.renderView4Config(this.$el.find("#" + childElId), this.model, childViewObj, validation, lockEditingByDefault);
             }
 
             this.$el.find("#" + elId).accordion({
