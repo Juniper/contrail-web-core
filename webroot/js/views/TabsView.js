@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var TabsView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var TabsView = ContrailView.extend({
         render: function () {
             var tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
                 viewConfig = this.attributes.viewConfig,
@@ -14,7 +14,7 @@ define([
                 validation = this.attributes.validation,
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 modelMap = this.modelMap,
-                childViewObj, childElId;
+                childViewObj, childElId, childView;
 
             self.$el.html(tabsTemplate(tabs));
 
@@ -27,7 +27,7 @@ define([
             for (var i = 0; i < tabs.length; i++) {
                 childViewObj = tabs[i];
                 childElId = childViewObj[cowc.KEY_ELEMENT_ID];
-                cowu.renderView4Config(this.$el.find("#" + childElId), this.model, childViewObj, validation, lockEditingByDefault, modelMap);
+                childView = self.renderView4Config(this.$el.find("#" + childElId), this.model, childViewObj, validation, lockEditingByDefault, modelMap);
             }
         }
     });

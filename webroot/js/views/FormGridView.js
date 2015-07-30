@@ -4,10 +4,10 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
+    'contrail-view'
+], function (_, ContrailView) {
     //TODO: Make it generic for any kind of form edit.
-    var FormGridView = Backbone.View.extend({
+    var FormGridView = ContrailView.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
                 model = this.model,

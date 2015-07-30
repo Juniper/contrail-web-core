@@ -138,8 +138,8 @@ define(['underscore'], function (_) {
                                 $.each(currResourceObj['view'], function () {
                                     var viewDeferredObj = $.Deferred();
                                     viewDeferredObjs.push(viewDeferredObj);
-                                    var viewPath = pkgBaseDir + currResourceObj['rootDir'] + '/views/' + this + '?built_at=' + built_at;
-                                    templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+                                    var viewPath = pkgBaseDir + currResourceObj['rootDir'] + '/views/' + this;
+                                    loadExtTemplate(viewPath, viewDeferredObj, hash);
                                 });
                             }
                         }
@@ -156,8 +156,8 @@ define(['underscore'], function (_) {
                                 $.each(currResourceObj['template'], function () {
                                     var viewDeferredObj = $.Deferred();
                                     viewDeferredObjs.push(viewDeferredObj);
-                                    var viewPath = pkgBaseDir + currResourceObj['rootDir'] + '/templates/' + this + '?built_at=' + built_at;
-                                    templateLoader.loadExtTemplate(viewPath, viewDeferredObj, hash);
+                                    var viewPath = pkgBaseDir + currResourceObj['rootDir'] + '/templates/' + this;
+                                    loadExtTemplate(viewPath, viewDeferredObj, hash);
                                 });
                             }
                         }
@@ -285,3 +285,21 @@ define(['underscore'], function (_) {
 
     return ContentHandler;
 });
+
+function loadExtTemplate(path, deferredObj, containerName) {
+    path = 'text!' + path;
+
+    require([path], function(result) {
+        //Add templates to DOM
+        if (containerName != null) {
+            $('body').append('<div id="' + containerName + '"></div>');
+            $('#' + containerName).append(result);
+        } else {
+            $("body").append(result);
+        }
+
+        if (deferredObj != null) {
+            deferredObj.resolve();
+        }
+    });
+};

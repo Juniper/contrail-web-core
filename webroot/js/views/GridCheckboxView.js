@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var GridCheckboxView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var GridCheckboxView = ContrailView.extend({
         render: function () {
             var checkBoxTemplate = contrail.getTemplate4Id(cowc.TMPL_GRID_CHECKBOX_VIEW),
                 viewConfig = this.attributes.viewConfig,

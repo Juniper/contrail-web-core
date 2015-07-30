@@ -4,13 +4,12 @@
 
 define([
     'underscore',
-    'backbone',
+    'contrail-view',
     'core-basedir/js/models/ZoomScatterChartModel',
     'contrail-list-model',
     'core-basedir/js/views/ControlPanelView'
-], function (_, Backbone, ZoomScatterChartModel, ContrailListModel, ControlPanelView) {
-    var ZoomScatterChartView = Backbone.View.extend({
-        renderChartInProgress: false,
+], function (_, ContrailView, ZoomScatterChartModel, ContrailListModel, ControlPanelView) {
+    var ZoomScatterChartView = ContrailView.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
@@ -48,7 +47,7 @@ define([
         },
 
         renderChart: function (selector, viewConfig, dataListModel) {
-            if (!($(selector).is(':visible')) || this.renderChartInProgress) {
+            if (!($(selector).is(':visible')) || this.isMyRenderInProgress) {
                 return;
             }
 
@@ -56,7 +55,7 @@ define([
                 chartOptions = viewConfig['chartOptions'],
                 chartConfig;
 
-            self.renderChartInProgress = true;
+            self.isMyRenderInProgress = true;
 
             if (!contrail.checkIfExist(self.chartModel)) {
                 $(selector).html(contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART));
@@ -106,7 +105,7 @@ define([
             dataSuccessHandler(chartView, chartConfig, chartOptions)
         }
 
-        chartView.renderChartInProgress = false;
+        chartView.isMyRenderInProgress = false;
     }
 
     function plotZoomScatterChart(chartView, chartConfig, chartOptions, selector) {

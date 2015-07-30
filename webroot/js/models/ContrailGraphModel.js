@@ -195,6 +195,7 @@ define([
 
     function setData2Model(contrailGraphModel, response, rankDir) {
         contrailGraphModel.elementMap = {node: {}, link: {}};
+        contrailGraphModel.nodeSearchDropdownData = null;
         contrailGraphModel.beforeDataUpdate.notify();
 
         if (contrailGraphModel.forceFit && rankDir != null) {
@@ -214,6 +215,7 @@ define([
     function setCachedElementsInModel(contrailGraphModel, cachedGraphModel) {
         var cachedCells = cachedGraphModel.getElements();
         contrailGraphModel.elementMap = cachedGraphModel.elementMap;
+        contrailGraphModel.nodeSearchDropdownData = cachedGraphModel.nodeSearchDropdownData;
         contrailGraphModel.beforeDataUpdate.notify();
 
         if (contrailGraphModel.forceFit) {

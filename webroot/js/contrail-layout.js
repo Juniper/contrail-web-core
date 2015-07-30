@@ -137,9 +137,6 @@ $(document).ready(function () {
 
     //bootstrap v 2.3.1 prevents this event which firefox's middle mouse button "new tab link" action, so we off it!
     $(document).off('click.dropdown-menu');
-    $(document).on('TEMPLATE_LOADED', function (e) {
-        //console.info(e);
-    })
 });
 
 

@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var SectionView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var SectionView = ContrailView.extend({
 
         render: function () {
             var sectionTempl = contrail.getTemplate4Id(cowc.TMPL_SECTION_VIEW),
@@ -14,19 +14,19 @@ define([
                 validation = this.attributes.validation,
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 modelMap = this.modelMap,
-                childElId;
+                childElId, childViewObj, childView;
 
             this.$el.html(sectionTempl(viewConfig));
 
             var rows = viewConfig[cowc.KEY_ROWS],
-                columns, childViewObj;
+                columns;
 
             for (var i = 0; i < rows.length; i++) {
                 columns = rows[i].columns;
                 for (var j = 0; j < columns.length; j++) {
                     childViewObj = columns[j];
                     childElId = childViewObj[cowc.KEY_ELEMENT_ID];
-                    cowu.renderView4Config(this.$el.find("#" + childElId), this.model, childViewObj, validation, lockEditingByDefault, modelMap);
+                    childView = this.renderView4Config(this.$el.find("#" + childElId), this.model, childViewObj, validation, lockEditingByDefault, modelMap);
                 }
             }
         }
