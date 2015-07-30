@@ -4,11 +4,11 @@
 
 define([
     'underscore',
-    'backbone',
+    'contrail-view',
     'core-basedir/js/models/DonutChartModel',
     'contrail-list-model'
-], function (_, Backbone, DonutChartModel, ContrailListModel) {
-    var DonutChartView = Backbone.View.extend({
+], function (_, ContrailView, DonutChartModel, ContrailListModel) {
+    var DonutChartView = ContrailView.extend({
         render: function () {
             var self = this,
                 loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
@@ -29,7 +29,11 @@ define([
 
             $(selector).append(loadingSpinnerTemplate);
 
-            if (viewConfig['modelConfig'] != null) {
+            if (self.model === null && viewConfig['modelConfig'] !== null) {
+                self.model = new ContrailListModel(viewConfig['modelConfig']);
+            }
+
+            if (self.model !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
                 if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
                     var chartData = self.model.getItems();
@@ -111,6 +115,17 @@ define([
             noDataMessage: "Unable to get data"
         };
         var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
+
+        var dataZero = true;
+        _.each(chartData, function(data) {
+            if(data.value != 0) {
+                dataZero = false;
+            }
+        });
+        if(dataZero) {
+            chartOptions['noDataMessage'] = "All values are 0.";
+            chartData = [];
+        }
 
         chartViewConfig['chartData'] = chartData;
         chartViewConfig['chartOptions'] = chartOptions;

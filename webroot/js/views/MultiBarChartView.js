@@ -4,11 +4,11 @@
 
 define([
     'underscore',
-    'backbone',
+    'contrail-view',
     'core-basedir/js/models/MultiBarChartModel',
     'contrail-list-model'
-], function (_, Backbone, MultiBarChartModel, ContrailListModel) {
-    var MultiBarChartView = Backbone.View.extend({
+], function (_, ContrailView, MultiBarChartModel, ContrailListModel) {
+    var MultiBarChartView = ContrailView.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = this.attributes.viewConfig,

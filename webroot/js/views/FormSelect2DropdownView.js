@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var FormSelect2DropdownView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var FormSelect2DropdownView = ContrailView.extend({
         render: function () {
             var dropdownTemplate = contrail.getTemplate4Id(cowc.TMPL_SELECT2_DROPDOWN_VIEW),
                 viewConfig = this.attributes.viewConfig,

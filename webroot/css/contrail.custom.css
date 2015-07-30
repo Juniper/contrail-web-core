@@ -1707,8 +1707,74 @@ input.datetimepicker{
 }
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav li.tabs-toolbar,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.tabs-toolbar {
-	float:right;
+	float: right;
 	font-size: 15px;
+}
+/* End - Jquery UI Tabs with Widget Header (theme: classic) */
+/* Begin - Jquery UI Tabs with Widget Header  (theme: widget-classic) */
+.contrail-tabs-widget-classic.ui-tabs.ui-widget,
+.contrail-widget-tabs.ui-tabs.ui-widget {
+  border: none;
+  padding: 0;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-widget-header,
+.contrail-widget-tabs.ui-tabs .ui-widget-header {
+  border: none;
+  background: none;
+  border-bottom: 1px solid #ccc;
+  line-height: 20px;
+  font-size: 12px;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav {
+  margin: 0 0 5px 0;
+  padding: 4px 1px 0 10px;
+}
+.contrail-tabs-widget-classic .ui-tabs-panel.ui-widget-content,
+.contrail-widget-tabs .ui-tabs-panel.ui-widget-content {
+  padding: 1em 1.5em;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-state-hover a,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-state-hover a {
+  color: #3182bd;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-state-default a,
+.contrail-widget-tabs.ui-tabs .ui-state-default a,
+.contrail-tabs-widget-classic.ui-tabs .ui-state-default a:link,
+.contrail-widget-tabs.ui-tabs .ui-state-default a:link,
+.contrail-tabs-widget-classic.ui-tabs .ui-state-default a:visited,
+.contrail-widget-tabs.ui-tabs .ui-state-default a:visited {
+  color: #787878;
+  text-decoration: none;
+  padding: 4px 8px;
+  font-size: 13px;
+
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a{
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #fff;
+  margin-bottom: -1px;
+}
+
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice {
+  border: none;
+  padding-right: 3px;
+}
+
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav .ui-tabs-anchor,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+  padding: 2px 6px;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.tabs-toolbar,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.tabs-toolbar {
+  float:right;
+  font-size: 15px;
 }
 /* End - Jquery UI Tabs with Widget Header (theme: classic) */
 /* Begin - Jquery UI Accordion */
@@ -1769,7 +1835,7 @@ color: #b94a48;
 	color: #555;
 }
 
-.font-element i.icon-contrail-virtual-network, .font-element i.icon-contrail-virtual-machine, .font-element i.icon-contrail-virtual-machine-top, .font-element i.icon-contrail-virtual-machine-left, .font-element i.icon-contrail-virtual-machine-right {
+.font-element i.icon-contrail-virtual-network {
     color: #498AB9;
 }
 .font-element i.icon-contrail-service-instance, .font-element i.icn-service-instance {
@@ -1787,11 +1853,13 @@ color: #b94a48;
 .font-element i.icon-contrail-network-ipam {
     color: #f47671;
 }
-.font-element i.icon-contrail-virtual-machine{
+.font-element i.icon-contrail-virtual-machine,
+.font-element i.icon-contrail-virtual-machine-top, .font-element i.icon-contrail-virtual-machine-interface-top,
+.font-element i.icon-contrail-virtual-machine-bottom, .font-element i.icon-contrail-virtual-machine-interface-bottom,
+.font-element i.icon-contrail-virtual-machine-left, .font-element i.icon-contrail-virtual-machine-interface-left,
+.font-element i.icon-contrail-virtual-machine-right, .font-element i.icon-contrail-virtual-machine-interface-right {
     font-size: 30px;
-}
-.font-element i.icon-contrail-virtual-machine-top, .font-element i.icon-contrail-virtual-machine-left, .font-element i.icon-contrail-virtual-machine-right {
-    font-size: 20px;
+    color: #498AB9;
 }
 /*Style for the underlay topology svg elements*/
 .topology-visualization svg {
@@ -2185,7 +2253,8 @@ color: #b94a48;
 }
 .control-panel-items .control-panel-item {
     padding: 5px 10px;
-    width: 25px;
+    border-top: 2px solid #fff;
+    border-bottom: 1px solid #dedede;
 }
 .control-panel-items .dropdown-menu {
     right: 2px;
@@ -2193,7 +2262,26 @@ color: #b94a48;
 .control-panel-items .dropdown-menu i {
     margin-right: 5px;
 }
+.control-panel-expanded-container {
+    position: absolute;
+    height: 224px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 
+/* graph control panel */
+.graph-search-control-panel-expanded-container {
+    right: 33px;
+    width: 200px;
+    top: 101px;
+    height: 29px;
+}
+.graph-control-panel-search-dropdown {
+    width: 100%;
+    padding: 1px 2px;
+}
 /* Context Menu */
 .context-menu-list {
     background-color: #fff;

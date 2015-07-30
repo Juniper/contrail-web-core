@@ -193,14 +193,6 @@
 	}
 }
 
-
-
-
-
-
-
-
-
 /* responsive searchbox */
 @media only screen and (max-width: 767px) {
 	#nav-search {
@@ -252,16 +244,6 @@
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
 
 
 @media only screen and (max-width: 979px) {
@@ -318,15 +300,15 @@
 	font-size:13px; font-weight:bold;
 	text-transform:uppercase;
 
-	background-color:#444;
+	background-color:#E9E9E9;
 	color:#F3F3F3;
  }
  #menu-toggler:hover {
 	text-decoration:none;
  }
  #menu-toggler:before {
-	border-top: 1px solid #87B87F;
-	border-bottom: 1px solid #6FB3E0;
+	border-top: 1px solid #599AC8;
+	border-bottom: 1px solid #e48782;
 	height:2px; width:24px;
 	content: "";
 	position: absolute; z-index:11;
@@ -340,8 +322,8 @@
 	transition: all 0.1s ease;
  }
  #menu-toggler:after {
-	border-top: 1px solid #FFA24D;
-	border-bottom: 1px solid #D15B47;
+	border-top: 1px solid #7dc48a;
+	border-bottom: 1px solid #c79dcd;
 	content: "";
 	height:2px;	width:24px;
 	position: absolute;
@@ -366,22 +348,21 @@
 	border-width:2px;
  }
 
-
  #menu-toggler > span {
 	display:block;
 	position:absolute;
-	bottom:-17px; left:0;
+	bottom:-17px;
+ 	left:0;
 	border:1px solid transparent;
 	border-width:9px 43px;
-	border-top-color:#444;
  }
  #menu-toggler > span:after {
 	display:block; content:"MENU";
-	color:#FFF;
+	color: #3182BD;
 	position:absolute;
 	left:-8px; top:-40px;
  }
- 
+
  .breadcrumb {
 	margin-left:90px;
  }
@@ -412,7 +393,7 @@
  }
  #menu-toggler > span:after {
 	font-size:9px; font-weight:normal;
-	color:#FFF;
+	color: #FFF;
 	position:absolute;
 	left:-13px; top:-42px;
  }

@@ -4,12 +4,12 @@
 
 define([
     'underscore',
-    'backbone',
+    'contrail-view',
     'core-basedir/js/grid.editors',
     'core-basedir/js/grid.formatters'
-], function (_, Backbone) {
+], function (_, ContrailView) {
     //TODO: Make it generic for any kind of form edit.
-    var FormDynamicGridView = Backbone.View.extend({
+    var FormDynamicGridView = ContrailView.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
                 model = this.model,
