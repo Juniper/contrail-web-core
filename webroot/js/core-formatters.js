@@ -7,7 +7,7 @@ define([
 ], function (_) {
     var CoreFormatters = function () {
         var self = this;
-        this.getTextGenerator = function (formatterKey, value) {
+        this.getTextGenerator = function (formatterKey, value, obj) {
             switch (formatterKey) {
                 case 'byte' :
                     return cowu.addUnits2Bytes(value);
@@ -65,6 +65,9 @@ define([
                 case 'packet' :
                     return cowu.addUnits2Packets(value);
                     break;
+            
+                //run the user defined formatter function
+                default : return eval(formatterKey)(value,obj);
             };
         };
 
