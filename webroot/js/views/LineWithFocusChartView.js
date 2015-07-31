@@ -98,6 +98,11 @@ define([
         };
         var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
 
+        var defaultForceY = contrail.checkIfExist(chartOptions['forceY']) ? chartOptions['forceY'] : [0, 60],
+            newForceY = getForceYAxis(chartData, defaultForceY);
+
+        chartOptions['forceY'] = newForceY;
+
         if (chartData.length > 0) {
             spliceBorderPoints(chartData);
             var values = chartData[0].values,
@@ -124,6 +129,17 @@ define([
             lineChart['values'].splice(0, 1);
             lineChart['values'].splice((lineChart['values'].length - 1), 1);
         }
+    };
+
+    function getForceYAxis(chartData, defaultForceY) {
+        var dataAllLines = [], forceY;
+
+        for (var j = 0; j < chartData.length; j++) {
+            dataAllLines = dataAllLines.concat(chartData[j]['values']);
+        }
+
+        forceY = cowu.getForceAxis4Chart(dataAllLines, "y", defaultForceY);
+        return forceY[1] == defaultForceY[1] ? forceY : null;
     };
 
     return LineWithFocusChartView;

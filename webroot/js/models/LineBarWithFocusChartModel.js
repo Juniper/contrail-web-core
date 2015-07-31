@@ -662,11 +662,20 @@ define([
         chartModel.margin({top: 50, right: 100, bottom: 30, left: 70})
             .legendRightAxisHint('')
             .legendLeftAxisHint('')
-            .brushExtent(chartOptions['brushExtent']);;
-
-        chartModel.bars.forceY([0]).padData(false);
+            .brushExtent(chartOptions['brushExtent']);
 
         chartModel.interpolate(interpolateSankey);
+        chartModel.bars.padData(false);
+
+        if(chartOptions.forceY1) {
+            chartModel.bars.forceY(chartOptions.forceY1);
+            chartModel.bars2.forceY(chartOptions.forceY1);
+        }
+
+        if(chartOptions.forceY2) {
+            chartModel.lines.forceY(chartOptions.forceY2);
+            chartModel.lines2.forceY(chartOptions.forceY2);
+        }
 
         chartModel.xAxis.tickFormat(function (d) {
             return d3.time.format('%H:%M')(new Date(d));

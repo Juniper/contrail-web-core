@@ -718,8 +718,10 @@ define([
 
         chartModel.yAxis.axisLabel(chartOptions.yAxisLabel).axisLabelDistance(20).tickFormat(chartOptions['yFormatter']).showMaxMin(false);
 
-        chartModel.lines.forceY([0, 1]);
-        chartModel.lines2.forceY([0, 1]);
+        if(contrail.checkIfExist(chartOptions.forceY)) {
+            chartModel.lines.forceY(chartOptions.forceY);
+            chartModel.lines2.forceY(chartOptions.forceY);
+        }
 
         return chartModel;
     };

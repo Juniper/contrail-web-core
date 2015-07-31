@@ -23,18 +23,18 @@ define([
             }
 
             if (self.model !== null) {
-                if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
+                if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
                     var chartData = self.model.getItems();
                     self.renderChart(selector, viewConfig, chartData);
                 }
 
-                self.model.onAllRequestsComplete.subscribe(function() {
+                self.model.onAllRequestsComplete.subscribe(function () {
                     var chartData = self.model.getItems();
                     self.renderChart(selector, viewConfig, chartData);
                 });
 
-                if(viewConfig.loadChartInChunks) {
-                    self.model.onDataUpdate.subscribe(function() {
+                if (viewConfig.loadChartInChunks) {
+                    self.model.onDataUpdate.subscribe(function () {
                         var chartData = self.model.getItems();
                         self.renderChart(selector, viewConfig, chartData);
                     });
@@ -67,7 +67,7 @@ define([
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartModel);
 
-            nvd3v181.addGraph(function() {
+            nvd3v181.addGraph(function () {
                 if (!($(selector).is(':visible'))) {
                     $(selector).find('svg').bind("refresh", function () {
                         d3.select($(selector)[0]).select('svg').datum(chartData).transition().duration(500).call(chartModel);
@@ -78,7 +78,9 @@ define([
 
                 nvd3v181.utils.windowResize(chartModel.update);
 
-                chartModel.dispatch.on('stateChange', function(e) { nvd3v181.log('New State:', JSON.stringify(e)); });
+                chartModel.dispatch.on('stateChange', function (e) {
+                    nvd3v181.log('New State:', JSON.stringify(e));
+                });
                 $(selector).find('.loading-spinner').remove();
 
                 return chartModel;
@@ -92,14 +94,23 @@ define([
             height: 300,
             y1AxisLabel: 'CPU Utilization (%)',
             y2AxisLabel: 'Memory Usage',
-            y2Formatter: function(y2Value) {
+            y2Formatter: function (y2Value) {
                 var formattedValue = formatBytes(y2Value * 1024, true);
                 return formattedValue;
             },
             y1Formatter: d3.format(".01f"),
             showLegend: true
         };
+
         var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
+
+        var defaultForceY1 = contrail.checkIfExist(chartOptions['forceY1']) ? chartOptions['forceY1'] : [0, 5],
+            defaultForceY2 = contrail.checkIfExist(chartOptions['forceY2']) ? chartOptions['forceY2'] : [0, 5],
+            newForceY1 = getForceY1Axis(chartData, defaultForceY1),
+            newForceY2 = getForceY2Axis(chartData, defaultForceY2);
+
+        chartOptions['forceY1'] = newForceY1;
+        chartOptions['forceY2'] = newForceY2;
 
         if (chartData.length > 0) {
             var values = chartData[0].values,
@@ -117,6 +128,34 @@ define([
         chartViewConfig['chartOptions'] = chartOptions;
 
         return chartViewConfig;
+    };
+
+    function getForceY1Axis(chartData, defaultForceY1) {
+        var dataBars = chartData.filter(function (d) {
+                return !d.disabled && d.bar
+            }),
+            dataAllBars = [], forceY1;
+
+        for (var j = 0; j < dataBars.length; j++) {
+            dataAllBars = dataAllBars.concat(dataBars[j]['values']);
+        }
+
+        forceY1 = cowu.getForceAxis4Chart(dataAllBars, "y", defaultForceY1);
+        return forceY1;
+    };
+
+    function getForceY2Axis(chartData, defaultForceY2) {
+        var dataLines = chartData.filter(function (d) {
+                return !d.bar
+            }),
+            dataAllLines = [], forceY2;
+
+        for (var i = 0; i < dataLines.length; i++) {
+            dataAllLines = dataAllLines.concat(dataLines[i]['values']);
+        }
+
+        forceY2 = cowu.getForceAxis4Chart(dataAllLines, "y", defaultForceY2);
+        return forceY2;
     };
 
     return LineBarWithFocusChartView;
