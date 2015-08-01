@@ -1,8 +1,124 @@
 /*
  * Copyright (c) 2015 Juniper Networks, Inc. All rights reserved.
  */
-define(['underscore'], function (_) {
+define([
+    'jquery',
+    'underscore',
+    'contrail-list-model',
+    'co-test-grid-dataview',
+    'co-test-grid-gridview'
+], function ($, _, ContrailListModel, SlickGridTestDataView, SlickGridTestGridView) {
     var self = this;
+
+    this.getViewObj = function (page, id) {
+        //TODO find out the right way to access the root view object.
+        var rootViewName;
+        if (_.indexOf(cotc.MONITOR_NETWORKING_PAGES, page) != -1) {
+            rootViewName = cotc.MONITOR_NETWORKING_VIEW_TEST_OBJ;
+        } else if (_.indexOf(cotc.MONITOR_STORAGE_PAGES, page) != -1) {
+            rootViewName = cotc.MONITOR_STORAGE_VIEW_TEST_OBJ;
+        } else if (_.indexOf(cotc.MONITOR_SERVER_MANAGER_PAGES, page) != -1) {
+            rootViewName = cotc.MONITOR_SERVER_MANAGER_VIEW_TEST_OBJ;
+        } else {
+        }
+
+        if (rootViewName != null) {
+            var rootViewObj = eval(rootViewName);
+            if (contrail.checkIfExist(rootViewObj.viewMap)) {
+                return rootViewObj.viewMap[id];
+            }
+        }
+    }
+
+    this.getViewConfigObj = function (viewObj) {
+        if (contrail.checkIfExist(viewObj.attributes) && contrail.checkIfExist(viewObj.attributes.viewConfig)) {
+            return viewObj.attributes.viewConfig;
+        }
+    }
+
+    this.getDataSourceWithOnlyRemotes = function (viewConfig) {
+        if (contrail.checkIfExist(viewConfig.elementConfig)) {
+            var dataSource = viewConfig.elementConfig['body']['dataSource'];
+            //return everything except dataView, cacheConfig if exist
+            if (contrail.checkIfExist(dataSource.cacheConfig)) {
+                delete dataSource.cacheConfig;
+            }
+            if (contrail.checkIfExist(dataSource.dataView)) {
+                delete dataSource.dataView;
+            }
+            return dataSource;
+        }
+    };
+
+    this.createMockData = function (rootViewObj, testConfigObj, deferredObj) {
+        var deferredList = [];
+        _.each(testConfigObj, function (testConfig) {
+            testConfig.viewObj = rootViewObj.viewMap[testConfig.id];
+            testConfig.viewConfigObj = this.getViewConfigObj(testConfig.viewObj);
+
+            switch (testConfig.type) {
+                case cotc.TYPE_GRID_VIEW_TEST:
+                    var mockDataDeferred = $.Deferred();
+                    deferredList.push(mockDataDeferred);
+                    //Avoid cacheConfig. Need only remotes.
+                    var dataSource = this.getDataSourceWithOnlyRemotes(testConfig.viewConfigObj);
+                    var contrailListModel = new ContrailListModel(dataSource);
+                    contrailListModel.onAllRequestsComplete.subscribe(function () {
+                        var mockData = contrailListModel.getItems();
+                        testConfig.mockData = mockData;
+                        mockDataDeferred.resolve();
+                    });
+            }
+        });
+
+        $.when.apply($, deferredList).done(function () {
+            deferredObj.resolve();
+        });
+    };
+
+    this.executeGridTests = function (testConfigObj) {
+        if (contrail.checkIfExist(testConfigObj.viewObj)) {
+            _.each(testConfigObj.tests, function (suiteConfig) {
+                var gridData = testConfigObj.viewObj.$el.data('contrailGrid');
+                var gridDataView = gridData._dataView;
+                var viewConfigObj = this.getViewConfigObj(testConfigObj.viewObj);
+                var mockData = testConfigObj.mockData;
+
+                switch (suiteConfig.testSuite) {
+                    case cotc.GRID_VIEW_DATAVIEW_TEST:
+                        SlickGridTestDataView(gridDataView, mockData, suiteConfig);
+                        break;
+
+                    case cotc.GRID_VIEW_GRID_TEST:
+                        SlickGridTestGridView(testConfigObj.viewObj.$el, viewConfigObj, suiteConfig);
+                        break;
+                }
+
+            });
+        } else {
+            //log error
+        }
+    };
+
+    this.executeCommonTests = function (testConfigObj) {
+        _.each(testConfigObj, function (testConfig) {
+            switch (testConfig.type) {
+                case cotc.TYPE_GRID_VIEW_TEST:
+                    this.executeGridTests(testConfig);
+                    break;
+
+                case cotc.TYPE_CHART_VIEW_TEST:
+                    break;
+
+                case cotc.TYPE_GRAPH_VIEW_TEST:
+                    break;
+
+                default :
+                    break;
+
+            }
+        });
+    };
 
     this.getRegExForUrl = function (url) {
         var regexUrlMap = {
@@ -120,6 +236,7 @@ define(['underscore'], function (_) {
     this.getFakeServer = function(serverConfig) {
         var fakeServer = sinon.fakeServer.create();
         fakeServer.autoRespond = (serverConfig == null || serverConfig['autoRespond'] == null) ? true : serverConfig['autoRespond'];
+        fakeServer.autoRespondAfter = (serverConfig == null || serverConfig['autoRespondAfter'] == null) ? 0 : serverConfig['autoRespondAfter'];
         fakeServer.xhr.useFilters = true;
 
         fakeServer.xhr.addFilter(function(method, url) {
@@ -138,6 +255,10 @@ define(['underscore'], function (_) {
         getCSSList: getCSSList,
         getSidebarHTML: getSidebarHTML,
         getPageHeaderHTML: getPageHeaderHTML,
-        getFakeServer: getFakeServer
+        getFakeServer: getFakeServer,
+        getViewObj: getViewObj,
+        getViewConfigObj: getViewConfigObj,
+        createMockData: createMockData,
+        executeCommonTests: executeCommonTests
     };
 });
