@@ -27,59 +27,103 @@ var depArray = [
 
 ];
 
-require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
-    window.ko = Knockout;
-    window.Bezier = Bezier;
+var testAppConfig = {
+    featurePkg: '',
+    featuresDisabled: '',
+    webServerInfo: ''
+}
 
-    if (document.location.pathname.indexOf('/vcenter') == 0) {
-        $('head').append('<base href="/vcenter/" />');
+function getTestAppConfig(featureObj) {
+    requirejs(['co-test-mockdata'], function (CoreTestMockData) {
+        testAppConfig.featurePkg = JSON.stringify(CoreTestMockData[featureObj.featurePkg]);
+        testAppConfig.featuresDisabled = JSON.stringify(CoreTestMockData[featureObj.featuresDisabled]);
+        testAppConfig.webServerInfo = JSON.stringify(CoreTestMockData[featureObj.webServerInfo]);
+    });
+    return testAppConfig;
+}
+
+function setFeaturePkgAndInit(featurePkg) {
+    var featurePkgObj = {};
+    switch (featurePkg) {
+        case 'webController':
+            featurePkgObj.featurePkg = 'webControllerMockData';
+            featurePkgObj.featuresDisabled = 'disabledFeatureMockData';
+            featurePkgObj.webServerInfo = 'ctWebServerInfoMockData';
+            break;
+
+        case 'webStorage':
+            featurePkgObj.featurePkg = 'webControllerMockData';
+            featurePkgObj.featuresDisabled = 'disabledFeatureMockData';
+            featurePkgObj.webServerInfo = 'sWebServerInfoMockData';
+            break;
+
+        case 'serverManager':
+            featurePkgObj.featurePkg = 'webControllerMockData';
+            featurePkgObj.featuresDisabled = 'disabledFeatureMockData';
+            featurePkgObj.webServerInfo = 'smWebServerInfoMockData';
+            break;
+
     }
 
-    require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, Knockout, Cache, contrailCommon, CoreCommonTmpl, CoreTestUtils, LayoutHandler, CoreTestConstants) {
-        cowc = new CoreConstants();
-        cowu = new CoreUtils();
-        cowf = new CoreFormatters();
-        cowch = new Cache();
-        cotc = new CoreTestConstants();
-        kbValidation = validation;
-        initBackboneValidation(_);
-        initCustomKOBindings(Knockout);
-        initDomEvents();
-        layoutHandler = new LayoutHandler();
+    testAppInit(getTestAppConfig(featurePkgObj));
+}
 
-        $("body").addClass('navbar-fixed');
-        $("body").append(CoreTestUtils.getPageHeaderHTML());
-        $("body").append(CoreTestUtils.getSidebarHTML());
-        $("body").append(CoreCommonTmpl);
+function testAppInit(testAppConfig) {
 
-        var cssList = CoreTestUtils.getCSSList();
+    require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
+        window.ko = Knockout;
+        window.Bezier = Bezier;
 
-        for (var i = 0; i < cssList.length; i++) {
-            $("body").append(cssList[i]);
+        if (document.location.pathname.indexOf('/vcenter') == 0) {
+            $('head').append('<base href="/vcenter/" />');
         }
 
-        requirejs(['text!menu.xml'], function (menuXML) {
-            requirejs(['co-test-mockdata', 'co-test-utils'], function (CoreSlickGridMockData, TestUtils) {
-                globalObj['coTestUtils'] = TestUtils;
-                var fakeServer = sinon.fakeServer.create();
-                fakeServer.autoRespond = true;
-                fakeServer.respondWith("GET", TestUtils.getRegExForUrl('/api/admin/webconfig/featurePkg/webController'), [200, {"Content-Type": "application/json"}, JSON.stringify(CoreSlickGridMockData.webControllerMockData)]);
-                fakeServer.respondWith("GET", TestUtils.getRegExForUrl('/api/admin/webconfig/features/disabled'), [200, {"Content-Type": "application/json"}, JSON.stringify(CoreSlickGridMockData.disabledFeatureMockData)]);
-                fakeServer.respondWith("GET", TestUtils.getRegExForUrl('/api/service/networking/web-server-info'), [200, {"Content-Type": "application/json"}, JSON.stringify(CoreSlickGridMockData.ctWebServerInfoMockData)]);
-                fakeServer.respondWith("GET", TestUtils.getRegExForUrl('/menu.xml'), [200, {"Content-Type": "application/xml"}, menuXML]);
+        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, Knockout, Cache, contrailCommon, CoreCommonTmpl, CoreTestUtils, LayoutHandler, CoreTestConstants) {
+            cowc = new CoreConstants();
+            cowu = new CoreUtils();
+            cowf = new CoreFormatters();
+            cowch = new Cache();
+            cotc = new CoreTestConstants();
+            kbValidation = validation;
+            initBackboneValidation(_);
+            initCustomKOBindings(Knockout);
+            initDomEvents();
+            layoutHandler = new LayoutHandler();
 
-                //fakeServer.autoRespondAfter = 6000;
+            $("body").addClass('navbar-fixed');
+            $("body").append(CoreTestUtils.getPageHeaderHTML());
+            $("body").append(CoreTestUtils.getSidebarHTML());
+            $("body").append(CoreCommonTmpl);
 
-                requirejs(['contrail-layout'], function () {
-                    //TODO: Timeout is currently required to ensure menu is loaed i.e feature app is initialized
-                    require(allTestFiles, function () {
-                        requirejs.config({
-                            deps: allTestFiles,
-                            callback: window.__karma__.start
+            var cssList = CoreTestUtils.getCSSList();
+
+            for (var i = 0; i < cssList.length; i++) {
+                $("body").append(cssList[i]);
+            }
+
+            requirejs(['text!menu.xml'], function (menuXML) {
+                requirejs(['co-test-utils'], function (TestUtils) {
+                    globalObj['coTestUtils'] = TestUtils;
+                    var fakeServer = sinon.fakeServer.create();
+                    fakeServer.autoRespond = true;
+                    fakeServer.respondWith("GET", TestUtils.getRegExForUrl('/api/admin/webconfig/featurePkg/webController'), [200, {"Content-Type": "application/json"}, testAppConfig.featurePkg]);
+                    fakeServer.respondWith("GET", TestUtils.getRegExForUrl('/api/admin/webconfig/features/disabled'), [200, {"Content-Type": "application/json"}, testAppConfig.featuresDisabled]);
+                    fakeServer.respondWith("GET", TestUtils.getRegExForUrl('/api/service/networking/web-server-info'), [200, {"Content-Type": "application/json"}, testAppConfig.webServerInfo]);
+                    fakeServer.respondWith("GET", TestUtils.getRegExForUrl('/menu.xml'), [200, {"Content-Type": "application/xml"}, menuXML]);
+
+                    //fakeServer.autoRespondAfter = 6000;
+
+                    requirejs(['contrail-layout'], function () {
+                        //TODO: Timeout is currently required to ensure menu is loaed i.e feature app is initialized
+                        require(allTestFiles, function () {
+                            requirejs.config({
+                                deps: allTestFiles,
+                                callback: window.__karma__.start
+                            });
                         });
                     });
                 });
             });
         });
     });
-});
+}
