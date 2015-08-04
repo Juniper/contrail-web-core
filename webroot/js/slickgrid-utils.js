@@ -1292,10 +1292,16 @@ function getDefaultGridConfig() {
                 if (actionItemConfig.divider) {
                     $('<li class="divider"></li>').appendTo('#' + actionId);
                 }
-
-                var actionItem = $('<li><a data-original-title="' + actionItemConfig.title + '"> \
+                var actionItem;
+                if(actionItemConfig.readOnly) {
+                    actionItem = $('<li><i style="padding:0px 5px 0px 18px;cursor:default" class="' + actionItemConfig.iconClass + '"></i>\
+                                        <span>' + actionItemConfig.title + '</span> \
+                                        </li>').appendTo('#' + actionId);
+                } else {
+                    actionItem = $('<li><a data-original-title="' + actionItemConfig.title + '"> \
                                         <i class="' + actionItemConfig.iconClass + ' margin-right-10"></i>' + actionItemConfig.title + '</a> \
                                         </li>').appendTo('#' + actionId);
+                }
 
                 $(actionItem).on('click', function(){
                     actionItemConfig.onClick();

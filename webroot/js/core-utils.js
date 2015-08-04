@@ -294,7 +294,6 @@ define([
 
         this.renderView = function (viewName, parentElement, model, viewAttributes, modelMap, app, rootView) {
             var elementView;
-
             switch (viewName) {
                 case "AccordianView":
                     elementView = new AccordianView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});

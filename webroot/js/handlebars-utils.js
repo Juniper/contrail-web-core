@@ -295,4 +295,3 @@ Handlebars.registerHelper('handleIfNull', function(value, defaultValue) {
 Handlebars.registerHelper('printJSON', function(jsonObject) {
     return JSON.stringify(jsonObject);
 });
-
