@@ -2458,6 +2458,7 @@ function ManageCrossFilters() {
         var callBacks = this.getCallBacks(cfName);
         callBacks.disable();
     }
+
     /* Enabling it by adding back the call back function to the callbacks*/
     this.enableCallBacks = function(cfName){
         var callBacks = this.getCallBacks(cfName);
