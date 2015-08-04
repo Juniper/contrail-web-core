@@ -44,8 +44,14 @@ define([
         renderView4Config: function (parentElement, model, viewObj, validation, lockEditingByDefault, modelMap) {
             var viewName = viewObj['view'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
+                visible = (viewObj['visible'] != null) ?
+                    viewObj['visible'] : true,
+                label = viewObj['label'],
                 validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
-                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
+                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG],
+                    elementId: elementId, visible: visible, label: label,
+                    validation: validation,
+                    lockEditingByDefault: lockEditingByDefault},
                 app = viewObj['app'], renderedView;
 
             var rootView = contrail.checkIfExist(this.rootView) ? this.rootView : this;
