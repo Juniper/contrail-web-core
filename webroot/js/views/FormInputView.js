@@ -18,7 +18,7 @@ define([
                 placeHolder = (viewConfig['placeHolder'] != null) ? viewConfig['placeHolder'] : null,
                 type = (viewConfig[cowc.KEY_TYPE] != null) ? viewConfig[cowc.KEY_TYPE] : 'text',
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
-                labelValue = (elId != null) ? ctwl.get(elId, app) : ctwl.get(path, app),
+                labelValue = (elId != null) ? cowl.get(elId, app) : cowl.get(path, app),
                 tmplParameters;
 
             if (!(contrail.checkIfExist(lockEditingByDefault) && lockEditingByDefault)) {
