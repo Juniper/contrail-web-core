@@ -39,7 +39,7 @@ define([
                 });
 
                 $(window)
-                    .off('resize')
+                    //.off('resize')
                     .on('resize', function (e) {
                         self.renderChart(selector, viewConfig, self.model);
                     });

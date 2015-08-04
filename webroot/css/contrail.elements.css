@@ -3333,7 +3333,7 @@ td.td-actions a.td-action {
   vertical-align: middle;
   text-align: left;
   position: relative;
-  float:left;
+  display: inline-block;
   cursor: pointer;
 }
 .infobox-dynamic {
@@ -3585,6 +3585,23 @@ td.td-actions a.td-action {
   font-weight: normal;
   margin-top: 2px;
   margin-left: 2px;
+}
+
+.infobox-detail-container .infobox-detail-item:not(:first-child) {
+    display: none;
+}
+#vrouter-dashboard-sparkline .infobox {
+    display:block;
+}
+#vrouter-dashboard-sparkline {
+    width:155px;
+    float:left;
+}
+#vrouter-dashboard-chart {
+    margin-left: 160px; 
+}
+#vrouter-dashboard-chart .zoom-scatter-chart-container.colmask {
+    clear:none;
 }
 /* scrollbar */
 .slimScrollBar {
@@ -4024,6 +4041,13 @@ td.td-actions a.td-action {
   height: 70px;
   margin-bottom: 5px;
 }
+.vrouter-cf.charts {
+    padding-left: 60px;
+}
+.vrouter-cf.charts > .chart {
+    display:inline-block;
+}
+
 .charts > .chart > .title {
 	text-align: center;
 	width: 260px;
