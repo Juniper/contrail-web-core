@@ -55,13 +55,19 @@ define([
             return false;
         },
 
-        renderView4Config: function (parentElement, model, viewObj, validation, lockEditingByDefault, modelMap, onRenderCompleteCallback) {
+        renderView4Config: function (parentElement, model, viewObj, validation,
+            lockEditingByDefault, modelMap, onRenderCompleteCallback) {
             var viewName = viewObj['view'],
                 viewPathPrefix = viewObj['viewPathPrefix'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
+                visible = (viewObj['visible'] != null) ?
+                    viewObj['visible'] : true,
+                label = viewObj['label'],
                 validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
-                visible = (viewObj['visible'] != null) ? viewObj['visible'] :  true,
-                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault, visible: visible},
+                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG],
+                    elementId: elementId, validation: validation,
+                    lockEditingByDefault: lockEditingByDefault,
+                    visible: visible,label: label},
                 app = viewObj['app'], self = this;
 
             self.childViewMap[elementId] = null;
@@ -95,7 +101,6 @@ define([
                 add2ChildViewMap(elementId, renderedView, self);
             });
         },
-
         setRootView: function(childElId, rootView) {
             add2RootViewMap(childElId, this, rootView)
         },

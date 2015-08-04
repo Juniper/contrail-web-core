@@ -12,12 +12,14 @@ define([
             var accordianTempl = contrail.getTemplate4Id(cowc.TMPL_ACCORDIAN_VIEW),
                 viewConfig = this.attributes.viewConfig,
                 elId = this.attributes.elementId,
+                visible =  this.attributes.visible,
                 validation = this.attributes.validation,
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 errorObj = this.model.model().get(cowc.KEY_MODEL_ERRORS),
                 childViewObj, childElId, childElIdArray;
 
-            this.$el.html(accordianTempl({viewConfig: viewConfig, elementId: elId}));
+            this.$el.html(accordianTempl({viewConfig: viewConfig,
+                 elementId: elId, visible: visible}));
 
             for (var i = 0; i < viewConfig.length; i++) {
                 childViewObj = viewConfig[i];

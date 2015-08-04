@@ -54,6 +54,7 @@ define([
         this.TMPL_GRID_MULTISELECT_VIEW = "core-grid-multiselect-view-template";
         this.TMPL_SECTION_VIEW = "core-section-view-template";
         this.TMPL_EDIT_FORM = "core-edit-form-template";
+        this.TMPL_GENERIC_EDIT_FORM = "core-generic-edit-form-template";
         this.TMPL_2ROW_GROUP_DETAIL = "core-grid-2-row-group-detail-template";
         this.TMPL_DETAIL_PAGE = "core-detail-page-template";
         this.TMPL_DETAIL_PAGE_ACTION = "core-detail-page-action-template";
