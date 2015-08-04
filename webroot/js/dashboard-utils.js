@@ -4,7 +4,7 @@
 
 function infraMonitorClass() {
     var self = this;
-    var viewModels=[]; 
+    var viewModels=[];
     var dashboardConfig = [];
     var tabs = [];
     //Show down node count only if it's > 0
@@ -13,7 +13,7 @@ function infraMonitorClass() {
         $.each(downSelectors,function(idx,elem) {
             if($(elem).text() == "0")
                 $(elem).hide();
-            else 
+            else
                 $(elem).show();
         });
     }
@@ -22,7 +22,7 @@ function infraMonitorClass() {
     this.getDashboardDataObj = function(){
         return dashboardViewModel;
     }
-    /*End of Selenium Testing*/    
+    /*End of Selenium Testing*/
 
     this.destroy = function () {
         //Cancel the pending ajax calls
@@ -34,7 +34,7 @@ function infraMonitorClass() {
     this.updateViewByHash = function (hashObj, lastHashObj) {
         self.load({hashParams:hashObj});
     }
-    
+
     this.updateInfoBoxes = function() {
          var infoListTemplate = contrail.getTemplate4Id("infoList-template"),dashboardDataArr = [];;
          $.each(viewModels,function(idx,currViewModel) {
@@ -45,7 +45,7 @@ function infraMonitorClass() {
          var verDimension = dashboardCF.dimension(function(d) { return d.version });
          var verGroup = verDimension.group();
          var verArr = [];
-         var systemCnt = 0; 
+         var systemCnt = 0;
          var systemList = [];
          for(var i=0;i<dashboardDataArr.length;i++) {
             if(dashboardDataArr[i]['vRouterType'] == null || dashboardDataArr[i]['vRouterType'] != 'tor-agent')
@@ -72,7 +72,7 @@ function infraMonitorClass() {
          $('#system-info-stat').html(infoListTemplate(infoData));
          endWidgetLoading('sysinfo');
     }
-    
+
     this.updateAlerts = function(){
         var alertTemplate=contrail.getTemplate4Id("alerts-template");
         var alerts_nodes=[];
@@ -119,7 +119,7 @@ function infraMonitorClass() {
             loadAlertsContent();
         });
     }
-    
+
     this.addInfoBox = function(infoBoxObj) {
         //If dashboard is not already loaded,load it
         if($('.infobox-container').length == 0)
@@ -129,7 +129,7 @@ function infraMonitorClass() {
         var infoBoxTemplate  = contrail.getTemplate4Id('infobox-template');
         var obj = infoBoxObj;
         $('#topStats').append(infoBoxTemplate({title:obj['title'],totalCntField:'totalCnt',
-            activeCntField:'upCnt',inactiveCntField:'downCnt'})); 
+            activeCntField:'upCnt',inactiveCntField:'downCnt'}));
         var tabContentTemplate = contrail.getTemplate4Id(obj['template']);
         $('#dashboard-charts').append($('<div>').addClass('dashboard-chart-item').addClass('row-fluid').addClass('hide').html(tabContentTemplate));
         ko.applyBindings(obj['viewModel'],$('#topStats').children(':last')[0]);
@@ -152,14 +152,14 @@ function infraMonitorClass() {
             self.updateInfoBoxes();
             self.updateAlerts();
         });
-        
+
     }
 
     function loadLogs() {
         function getLogs(deferredObj) {
             var retArr = [];
             $.ajax({
-                url: monitorInfraUrls['QUERY'] + '?where=&filters=&level=4&fromTimeUTC=now-10m' + 
+                url: monitorInfraUrls['QUERY'] + '?where=&filters=&level=4&fromTimeUTC=now-10m' +
                     '&toTimeUTC=now&table=MessageTable&limit=10'
             }).done(function(result) {
                 retArr = $.map(result['data'],function(obj,idx) {
@@ -298,7 +298,7 @@ function getNodeStatusForSummaryPages(data,page) {
         msgs.push(data['status']);
         tooltipAlerts.push({msg:data['status'],sevLevel:sevLevels['INFO']});
     } else if(ifNull(data['status'],"").indexOf('Down') > -1) {
-        //Need to discuss and add the down status 
+        //Need to discuss and add the down status
         //msgs.push(data['status']);
         //tooltipAlerts.push({msg:data['status'],sevLevel:sevLevels['ERROR']})
     }
@@ -306,7 +306,7 @@ function getNodeStatusForSummaryPages(data,page) {
     result['nodeSeverity'] = data['alerts'][0] != null ? data['alerts'][0]['sevLevel'] : sevLevels['INFO'];
     result['messages'] = msgs;
      var statusTemplate = contrail.getTemplate4Id('statusTemplate');
-    if(page == 'summary') 
+    if(page == 'summary')
         return statusTemplate({sevLevel:result['nodeSeverity'],sevLevels:sevLevels});
     return result;
 }
@@ -315,13 +315,13 @@ var dashboardUtils = {
     sortNodesByColor: function(a,b) {
         // var colorPriorities = [d3Colors['green'],d3Colors['blue'],d3Colors['orange'],d3Colors['red']];
         var colorPriorities = [d3Colors['blue'],d3Colors['green'],d3Colors['orange'],d3Colors['red']];
-        var aColor = $.inArray(a['color'],colorPriorities); 
+        var aColor = $.inArray(a['color'],colorPriorities);
         var bColor = $.inArray(b['color'],colorPriorities);
         return aColor-bColor;
     },
     getDownNodeCnt : function(data) {
         var downNodes = $.grep(data,function(obj,idx) {
-                           return obj['color'] == d3Colors['red']; 
+                           return obj['color'] == ctwc.COLOR_SEVERITY_MAP['red'];
                         });
         return downNodes.length;
     },
