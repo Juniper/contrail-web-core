@@ -711,8 +711,17 @@
     </form>
 </script>
 
+<script type="text/x-handlebars-template" id="core-generic-edit-form-template">
+    <div class="alert alert-error" data-bind="visible: errors().{{prefixId}}_form_error">
+        <strong>Error: </strong>
+        <span data-bind="text: errors().{{prefixId}}_form_error"></span>
+    </div>
+    <form name="{{prefixId}}Form" id="{{modalId}}-form" onsubmit="return false;" class="">
+    </form>
+</script>
+
 <script type="text/x-handlebars-template" id="core-accordian-view-template">
-    <div id="{{elementId}}">
+    <div id="{{elementId}}" data-bind="visible: {{visible}}">
         {{#each viewConfig}}
         {{#if this.title}}
         <h3>{{this.title}} <span class="red pull-right" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="icon-warning-sign red"></i></span></h3>
@@ -724,11 +733,12 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-section-view-template">
-    {{#if this.title}}
-    <h5 class="margin-0-0-10">{{this.title}}</h5>
+    <div data-bind="visible: {{visible}}">
+    {{#if viewConfig.title}}
+    <h5 class="margin-0-0-10">{{viewConfig.title}}</h5>
     {{/if}}
-    {{#each rows}}
-    <div class="section-content">
+    {{#each viewConfig.rows}}
+    <div class="section-content" >
         <div class="row-fluid margin-0-0-5">
             {{#each this.columns}}
             <div id="{{this.elementId}}" data-bind="visible: {{this.visible}}"  class="{{this.viewConfig.class}}"></div>
@@ -736,6 +746,7 @@
         </div>
     </div>
     {{/each}}
+    <div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-wizard-view-template">
@@ -776,7 +787,7 @@
         </div>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
         {{else}}
-        <input type="{{type}}" name="{{id}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
+        <input type="{{type}}" name="{{id}}" class="{{class}}" placeholder="{{placeHolder}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
         {{/IfCompare}}
     </div>
@@ -801,6 +812,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-dropdown-view-template">
+   <div data-bind="visible: {{visible}}">
     <div class="row-fluid form-dropdown-label">
         <div class="span10">
             <label>{{label}}</label>
@@ -814,6 +826,7 @@
     <div class="row-fluid">
         <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}}, contrailDropdown: {{printJSON elementConfig}}"/>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+    </div>
     </div>
 </script>
 
