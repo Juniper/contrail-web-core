@@ -73,8 +73,8 @@ define([
             , interactiveLayer = nvd3v181.interactiveGuideline()
             ;
 
-        var margin = {top: 30, right: 30, bottom: 30, left: 60}
-            , margin2 = {top: 0, right: 30, bottom: 40, left: 60}
+        var margin = chartOptions.margin
+            , margin2 = chartOptions.margin2
             , color = nvd3v181.utils.defaultColor()
             , width = null
             , height = null
@@ -702,9 +702,8 @@ define([
         // Customize NVD3 Chart
         //------------------------------------------------------------
 
-        chartModel.margin({top: 20, right: 30, bottom: 50, left: 80})
-            .brushExtent(chartOptions['brushExtent'])
-            .useInteractiveGuideline(true);
+        chartModel.brushExtent(chartOptions['brushExtent'])
+                  .useInteractiveGuideline(true);
 
         chartModel.interpolate(cowu.interpolateSankey);
 
@@ -716,7 +715,10 @@ define([
             return d3.time.format('%H:%M:%S')(new Date(d));
         });
 
-        chartModel.yAxis.axisLabel(chartOptions.yAxisLabel).axisLabelDistance(20).tickFormat(chartOptions['yFormatter']).showMaxMin(false);
+        chartModel.yAxis.axisLabel(chartOptions.yAxisLabel)
+                        .axisLabelDistance(chartOptions.axisLabelDistance)
+                        .tickFormat(chartOptions['yFormatter'])
+                        .showMaxMin(false);
 
         if(contrail.checkIfExist(chartOptions.forceY)) {
             chartModel.lines.forceY(chartOptions.forceY);

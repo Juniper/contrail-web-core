@@ -91,7 +91,10 @@ define([
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
         var chartDefaultOptions = {
+            margin: {top: 50, right: 70, bottom: 30, left: 70},
+            margin2: {top: 0, right: 70, bottom: 40, left: 70},
             height: 300,
+            axisLabelDistance: 5,
             y1AxisLabel: 'CPU Utilization (%)',
             y2AxisLabel: 'Memory Usage',
             y2Formatter: function (y2Value) {

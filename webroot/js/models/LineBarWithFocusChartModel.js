@@ -76,8 +76,8 @@ define([
             , tooltip = nvd3v181.models.tooltip()
             ;
 
-        var margin = {top: 30, right: 30, bottom: 30, left: 60}
-            , margin2 = {top: 0, right: 30, bottom: 40, left: 60}
+        var margin = chartOptions.margin
+            , margin2 = chartOptions.margin2
             , width = null
             , height = null
             , getX = function(d) { return d.x }
@@ -659,10 +659,9 @@ define([
         // Customize NVD3 Chart
         //------------------------------------------------------------
 
-        chartModel.margin({top: 50, right: 100, bottom: 30, left: 70})
-            .legendRightAxisHint('')
-            .legendLeftAxisHint('')
-            .brushExtent(chartOptions['brushExtent']);
+        chartModel.legendRightAxisHint('')
+                  .legendLeftAxisHint('')
+                  .brushExtent(chartOptions['brushExtent']);
 
         chartModel.interpolate(interpolateSankey);
         chartModel.bars.padData(false);
@@ -685,9 +684,15 @@ define([
             return d3.time.format('%H:%M')(new Date(d));
         });
 
-        chartModel.y1Axis.axisLabel(chartOptions.y1AxisLabel).tickFormat(chartOptions['y1Formatter']).showMaxMin(false);
+        chartModel.y1Axis.axisLabel(chartOptions.y1AxisLabel)
+                         .axisLabelDistance(chartOptions.axisLabelDistance)
+                         .tickFormat(chartOptions['y1Formatter'])
+                         .showMaxMin(false);
 
-        chartModel.y2Axis.axisLabel(chartOptions.y2AxisLabel).tickFormat(chartOptions['y2Formatter']).showMaxMin(false);
+        chartModel.y2Axis.axisLabel(chartOptions.y2AxisLabel)
+                         .axisLabelDistance(chartOptions.axisLabelDistance)
+                         .tickFormat(chartOptions['y2Formatter'])
+                         .showMaxMin(false);
 
         chartModel.showLegend(chartOptions.showLegend);
 
