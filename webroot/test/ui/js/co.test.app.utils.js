@@ -2,8 +2,6 @@
  * Copyright (c) 2015 Juniper Networks, Inc. All rights reserved.
  */
 
-var globalObj = {'env': "test"};
-
 function getCoreTestAppPaths(coreBaseDir) {
     var coreTestAppBaseDir = coreBaseDir + '/test/ui/js';
 

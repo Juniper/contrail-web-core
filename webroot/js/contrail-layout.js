@@ -130,7 +130,6 @@ $(document).ready(function () {
         layoutHandler.onHashChange(lastHash, currHash);
         lastHash = currHash;
     });
-    menuHandler.handleSideMenu();
     enableSearchAhead();
     addBrowserDetection(jQuery);
     generalInit();
@@ -185,8 +184,7 @@ Object.identical = function (a, b, sortArrays) {
     return JSON.stringify(sort(a)) === JSON.stringify(sort(b));
 };
 
-$.fn.modal.Constructor.prototype.enforceFocus = function () {
-};
+$.fn.modal.Constructor.prototype.enforceFocus = function () {};
 
 function onClickSidebarCollapse() {
     var $minimized = false;
@@ -485,7 +483,7 @@ function check2ReloadMenu(lastPageHash, currentMenu) {
     return reloadMenu;
 }
 
-/* JSON Highlighter + Expand & Collapse */
+// JSON Highlighter + Expand & Collapse
 function syntaxHighlight(json) {
     if (json == null)
         return;
@@ -521,9 +519,7 @@ function syntaxHighlight(json) {
     return syntaxedJson;
 }
 
-/**
- * Loads the feature screen based on given hashParams
- */
+// Loads the feature screen based on given hashParams
 function loadFeature(hashParams) {
     globalObj['menuClicked'] = true;
     //Set hashUpdated flag only if current URL hashParams differs from the passed on
@@ -537,7 +533,7 @@ function loadFeature(hashParams) {
     layoutHandler.onHashChange(lastHash, hashParams);
 }
 
-/* Info Window Modal*/
+// Info Window Modal
 function showInfoWindow(msg, title, detail, yesFunction) {
     //detail = "check check check check check <br> check check check
     //check check check check check <br> check check check";

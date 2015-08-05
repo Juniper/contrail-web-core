@@ -45,7 +45,8 @@ define([
             var viewName = viewObj['view'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
                 validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
-                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
+                visible = (viewObj['visible'] != null) ? viewObj['visible'] :  true,
+                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault, visible: visible},
                 app = viewObj['app'], renderedView;
 
             var rootView = contrail.checkIfExist(this.rootView) ? this.rootView : this;
