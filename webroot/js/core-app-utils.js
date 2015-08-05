@@ -322,7 +322,8 @@ function initCustomKOBindings(Knockout) {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var valueObj = Knockout.toJS(valueAccessor()) || {},
                 allBindings = allBindingsAccessor(),
-                dropDown = $(element).contrailDropdown(valueObj).data('contrailDropdown');
+                elementConfig = $(element).data('elementConfig'),
+                dropDown = $(element).contrailDropdown(elementConfig).data('contrailDropdown');
 
             if (allBindings.value) {
                 var value = Knockout.utils.unwrapObservable(allBindings.value);

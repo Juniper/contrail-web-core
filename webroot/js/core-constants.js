@@ -47,6 +47,7 @@ define([
         this.TMPL_INPUT_VIEW = "core-input-view-template";
         this.TMPL_GRID_INPUT_VIEW = "core-grid-input-view-template";
         this.TMPL_CHECKBOX_VIEW = "core-checkbox-view-template";
+        this.TMPL_RADIO_BUTTON_VIEW = "core-radio-button-view-template";
         this.TMPL_GRID_CHECKBOX_VIEW = "core-grid-checkbox-view-template";
         this.TMPL_EDITABLE_GRID_VIEW = "core-editable-grid-view-template";
         this.TMPL_MULTISELECT_VIEW = "core-multiselect-view-template";

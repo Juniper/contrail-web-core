@@ -6,14 +6,16 @@ define([
     'underscore',
     'contrail-view'
 ], function (_, ContrailView) {
-    var FormDropdownView = ContrailView.extend({
+    var FormRadioButtonView = ContrailView.extend({
         render: function () {
-            var dropdownTemplate = contrail.getTemplate4Id(cowc.TMPL_DROPDOWN_VIEW),
+            var radioButtonTemplate = contrail.getTemplate4Id(cowc.TMPL_RADIO_BUTTON_VIEW),
                 viewConfig = this.attributes.viewConfig,
+                elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
                 elId = this.attributes.elementId,
                 app = this.attributes.app,
-                elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
-                path = viewConfig[cowc.KEY_PATH],
+                validation = this.attributes.validation,
+                path = viewConfig['path'],
+                type = (viewConfig['type'] != null) ? viewConfig['type'] : 'radio',
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 labelValue = (elId != null) ? cowl.get(elId, app) : cowl.get(path, app),
                 tmplParameters;
@@ -24,19 +26,18 @@ define([
             this.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId + '_dropdown', name: elId,
-                dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
+                label: labelValue, id: elId, name: elId,
+                dataBindValue: viewConfig['dataBindValue'],
                 lockAttr: lockEditingByDefault,
-                class: "span12", elementConfig: elementConfig
+                isChecked: viewConfig['dataBindValue'],
+                path: path, validation: validation,
+                elementConfig: elementConfig
             };
-
-            this.$el.html(dropdownTemplate(tmplParameters));
-            this.$el.find('#' + elId + '_dropdown').data("elementConfig", elementConfig);
-            if (contrail.checkIfFunction(elementConfig.onInit)) {
-                elementConfig.onInit(this.model.model());
-            }
+            console.log(this.model.parameters());
+            console.log(elementConfig);
+            this.$el.html(radioButtonTemplate(tmplParameters));
         }
     });
 
-    return FormDropdownView;
+    return FormRadioButtonView;
 });
