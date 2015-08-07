@@ -731,7 +731,7 @@
     <div class="section-content">
         <div class="row-fluid margin-0-0-5">
             {{#each this.columns}}
-            <div id="{{this.elementId}}" data-bind="visible: {{this.visible}}"  class="{{this.viewConfig.class}}"></div>
+            <div id="{{this.elementId}}" class="{{this.viewConfig.class}}"></div>
             {{/each}}
         </div>
     </div>
@@ -796,6 +796,26 @@
     <div class="row-fluid form-element">
         <input type="{{type}}" name="{{id}}" class="{{class}} ace-input" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} checked: {{dataBindValue}},event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
         <span class="ace-lbl"></span>
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-radio-button-view-template">
+    <div class="row-fluid form-radio-button-label">
+        <div class="span10">
+            <label>{{label}}</label>
+        </div>
+        <div class="span2">
+            <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+            </span>
+        </div>
+    </div>
+    <div class="row-fluid form-element">
+        {{#each elementConfig.dataObj}}
+        <input type="radio" name="{{../id}}" value="{{value}}" class="{{../class}} ace-input"  data-bind="{{#if ../lockAttr}}disable: locks().{{name}}_locked, {{/if}} checked: {{../dataBindValue}},event: { focusout: function() { validateAttr('{{../path}}', '{{../validation}}') } }" />
+        <span class="ace-lbl">{{label}}</span>
+        {{/each}}
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>

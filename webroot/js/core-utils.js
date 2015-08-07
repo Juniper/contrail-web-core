@@ -4,14 +4,14 @@
 
 define([
     'core-basedir/js/views/FormInputView', 'core-basedir/js/views/FormGridView', 'core-basedir/js/views/FormDynamicGridView', 'core-basedir/js/views/FormMultiselectView',
-    'core-basedir/js/views/FormDropdownView', 'core-basedir/js/views/FormSelect2DropdownView', 'core-basedir/js/views/FormCheckboxView',
+    'core-basedir/js/views/FormDropdownView', 'core-basedir/js/views/FormSelect2DropdownView', 'core-basedir/js/views/FormCheckboxView', 'core-basedir/js/views/FormRadioButtonView',
     'core-basedir/js/views/AccordianView', 'core-basedir/js/views/SectionView', 'core-basedir/js/views/WizardView', 'core-basedir/js/views/FormEditableGridView',
     'core-basedir/js/views/GridInputView', 'core-basedir/js/views/GridCheckboxView', 'core-basedir/js/views/GridDropdownView', 'core-basedir/js/views/GridMultiselectView',
     'graph-view', 'core-basedir/js/views/TabsView', 'core-basedir/js/views/ChartView', 'core-basedir/js/views/GridView', 'core-basedir/js/views/DetailsView',
     'core-basedir/js/views/ScatterChartView', 'core-basedir/js/views/LineWithFocusChartView', 'core-basedir/js/views/HeatChartView', 'core-basedir/js/views/ZoomScatterChartView',
     'core-basedir/js/views/HorizontalBarChartView', 'core-basedir/js/views/LineBarWithFocusChartView', 'core-basedir/js/views/MultiDonutChartView', 'core-basedir/js/views/MultiBarChartView',
     'core-basedir/js/views/DonutChartView'
-], function (FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView,
+], function (FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView, FormRadioButtonView,
              AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
              GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView, LineWithFocusChartView, HeatChartView, ZoomScatterChartView,
              HorizontalBarChartView, LineBarWithFocusChartView, MultiDonutChartView, MultiBarChartView, DonutChartView) {
@@ -318,6 +318,12 @@ define([
 
                 case "FormCheckboxView":
                     elementView = new FormCheckboxView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "FormRadioButtonView":
+                    elementView = new FormRadioButtonView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
                     elementView.modelMap = modelMap;
                     elementView.render();
                     return elementView;
