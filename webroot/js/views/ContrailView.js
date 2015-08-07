@@ -61,12 +61,12 @@ define([
             return renderedView;
         },
 
-        add2ChildViewMap: function(childElId, childRenderedView) {
-            this.childViewMap[childElId] = childRenderedView;
+        setRootView: function(childElId, rootView) {
+            add2RootViewMap(childElId, this, rootView)
         },
 
-        getViewConfig: function() {
-            return this.attributes.viewConfig;
+        setParentView: function(childElId, parentView) {
+            add2ChildViewMap(childElId, this, parentView);
         }
     });
 
