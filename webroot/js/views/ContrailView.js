@@ -43,22 +43,32 @@ define([
 
         renderView4Config: function (parentElement, model, viewObj, validation, lockEditingByDefault, modelMap) {
             var viewName = viewObj['view'],
+                viewPathPrefix = viewObj['viewPathPrefix'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
                 validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
                 visible = (viewObj['visible'] != null) ? viewObj['visible'] :  true,
                 viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault, visible: visible},
-                app = viewObj['app'], renderedView;
+                app = viewObj['app'], self = this;
 
-            var rootView = contrail.checkIfExist(this.rootView) ? this.rootView : this;
-            renderedView = cowu.renderView(viewName, parentElement, model, viewAttributes, modelMap, app, rootView);
+            var rootView = contrail.checkIfExist(this.rootView) ? this.rootView : this,
+                renderConfig = {
+                    parentElement: parentElement,
+                    viewName: viewName,
+                    viewPathPrefix: viewPathPrefix,
+                    model: model,
+                    viewAttributes: viewAttributes,
+                    modelMap: modelMap,
+                    app: app,
+                    rootView: rootView
+                };
 
-            // Adding child view to a map in rootView
-            add2RootViewMap(elementId, renderedView, rootView);
+            cowu.renderView(renderConfig, function(renderedView) {
+                // Adding child view to a map in rootView
+                add2RootViewMap(elementId, renderedView, rootView);
 
-            // Adding child view to a childViewMap in current view
-            add2ChildViewMap(elementId, renderedView, this);
-
-            return renderedView;
+                // Adding child view to a childViewMap in current view
+                add2ChildViewMap(elementId, renderedView, self);
+            });
         },
 
         setRootView: function(childElId, rootView) {
