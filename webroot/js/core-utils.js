@@ -2,7 +2,19 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-define(['underscore'], function (_) {
+define([
+    'core-basedir/js/views/FormInputView', 'core-basedir/js/views/FormGridView', 'core-basedir/js/views/FormDynamicGridView', 'core-basedir/js/views/FormMultiselectView',
+    'core-basedir/js/views/FormDropdownView', 'core-basedir/js/views/FormSelect2DropdownView', 'core-basedir/js/views/FormCheckboxView', 'core-basedir/js/views/FormRadioButtonView',
+    'core-basedir/js/views/AccordianView', 'core-basedir/js/views/SectionView', 'core-basedir/js/views/WizardView', 'core-basedir/js/views/FormEditableGridView',
+    'core-basedir/js/views/GridInputView', 'core-basedir/js/views/GridCheckboxView', 'core-basedir/js/views/GridDropdownView', 'core-basedir/js/views/GridMultiselectView',
+    'graph-view', 'core-basedir/js/views/TabsView', 'core-basedir/js/views/ChartView', 'core-basedir/js/views/GridView', 'core-basedir/js/views/DetailsView',
+    'core-basedir/js/views/ScatterChartView', 'core-basedir/js/views/LineWithFocusChartView', 'core-basedir/js/views/HeatChartView', 'core-basedir/js/views/ZoomScatterChartView',
+    'core-basedir/js/views/HorizontalBarChartView', 'core-basedir/js/views/LineBarWithFocusChartView', 'core-basedir/js/views/MultiDonutChartView', 'core-basedir/js/views/MultiBarChartView',
+    'core-basedir/js/views/DonutChartView'
+], function (FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView, FormRadioButtonView,
+             AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
+             GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView, LineWithFocusChartView, HeatChartView, ZoomScatterChartView,
+             HorizontalBarChartView, LineBarWithFocusChartView, MultiDonutChartView, MultiBarChartView, DonutChartView) {
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -264,7 +276,7 @@ define(['underscore'], function (_) {
             return [axisMin, axisMax];
         };
 
-        // Deprecated: We should use renderView4Config of ContrailView instead of following function.
+        // Deprecated
         this.renderView4Config = function (parentElement, model, viewObj, validation, lockEditingByDefault, modelMap) {
             var viewName = viewObj['view'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
@@ -273,47 +285,201 @@ define(['underscore'], function (_) {
                 viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault, visible: visible},
                 app = viewObj['app'];
 
-            var renderConfig = {
-                parentElement: parentElement,
-                viewName: viewName,
-                model: model,
-                viewAttributes: viewAttributes,
-                modelMap: modelMap,
-                app: app
-            };
-
-            cowu.renderView(renderConfig);
+            cowu.renderView(viewName, parentElement, model, viewAttributes, modelMap, app);
         };
 
-        this.renderView = function (renderConfig, renderCallback) {
-            var elementView, viewPath, viewName, parentElement,
-                model, viewAttributes, modelMap, rootView, viewPathPrefix,
-                app = renderConfig['app'];
+        this.renderView = function (viewName, parentElement, model, viewAttributes, modelMap, app, rootView) {
+            var elementView;
 
-            if (app == cowc.APP_CONTRAIL_CONTROLLER) {
-                ctwru.renderView(renderConfig, renderCallback);
-            } else if (app == cowc.APP_CONTRAIL_SM) {
-                smwu.renderView(renderConfig, renderCallback);
-            } else if (app == cowc.APP_CONTRAIL_STORAGE) {
-                swu.renderView(renderConfig, renderCallback);
-            } else {
-                parentElement = renderConfig['parentElement'];
-                viewName = renderConfig['viewName'];
-                viewPathPrefix = contrail.checkIfExist(renderConfig['viewPathPrefix']) ? renderConfig['viewPathPrefix'] : 'core-basedir/js/views/',
-                model = renderConfig['model'];
-                viewAttributes = renderConfig['viewAttributes'];
-                modelMap = renderConfig['modelMap'];
-                rootView = renderConfig['rootView'];
-                viewPath = viewPathPrefix + viewName;
-
-                require([viewPath], function(ElementView) {
-                    elementView = new ElementView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+            switch (viewName) {
+                case "AccordianView":
+                    elementView = new AccordianView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
                     elementView.modelMap = modelMap;
                     elementView.render();
-                    if(contrail.checkIfFunction(renderCallback)) {
-                        renderCallback(elementView);
+                    return elementView;
+
+                case "SectionView":
+                    elementView = new SectionView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "FormDropdownView":
+                    elementView = new FormDropdownView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "FormSelect2DropdownView":
+                    elementView = new FormSelect2DropdownView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "FormCheckboxView":
+                    elementView = new FormCheckboxView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "FormRadioButtonView":
+                    elementView = new FormRadioButtonView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "FormInputView":
+                    elementView = new FormInputView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "FormMultiselectView":
+                    elementView = new FormMultiselectView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "FormGridView":
+                    elementView = new FormGridView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "FormDynamicGridView":
+                    elementView = new FormDynamicGridView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "WizardView":
+                    elementView = new WizardView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "FormEditableGridView":
+                    elementView = new FormEditableGridView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "GridInputView":
+                    elementView = new GridInputView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "GridCheckboxView":
+                    elementView = new GridCheckboxView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "GridDropdownView":
+                    elementView = new GridDropdownView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    break;
+
+                case "GridMultiselectView":
+                    elementView = new GridMultiselectView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "GraphView":
+                    elementView = new GraphView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "TabsView":
+                    elementView = new TabsView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "ChartView":
+                    elementView = new ChartView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "GridView":
+                    elementView = new GridView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "DetailsView":
+                    elementView = new DetailsView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "ScatterChartView":
+                    elementView = new ScatterChartView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "LineWithFocusChartView":
+                    elementView = new LineWithFocusChartView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "HeatChartView":
+                    elementView = new HeatChartView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "ZoomScatterChartView":
+                    elementView = new ZoomScatterChartView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "HorizontalBarChartView":
+                    elementView = new HorizontalBarChartView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.render();
+                    return elementView;
+
+                case "LineBarWithFocusChartView":
+                    elementView = new LineBarWithFocusChartView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "DonutChartView":
+                    elementView = new DonutChartView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "MultiDonutChartView":
+                    elementView = new MultiDonutChartView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                case "MultiBarChartView":
+                    elementView = new MultiBarChartView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+
+                default:
+                    if (app == cowc.APP_CONTRAIL_CONTROLLER) {
+                        return ctwru.renderView(viewName, parentElement, model, viewAttributes, modelMap, rootView);
+                    } else if (app == cowc.APP_CONTRAIL_SM) {
+                        return smwru.renderView(viewName, parentElement, model, viewAttributes, modelMap, rootView);
+                    } else if (app == cowc.APP_CONTRAIL_STORAGE) {
+                        return swu.renderView(viewName, parentElement, model, viewAttributes, modelMap, rootView);
                     }
-                });
+                    return null;
             }
         };
 
