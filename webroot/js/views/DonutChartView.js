@@ -11,23 +11,9 @@ define([
     var DonutChartView = ContrailView.extend({
         render: function () {
             var self = this,
-                loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = self.attributes.viewConfig,
-                elementId = self.attributes.elementId,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 selector = $(self.$el);
-
-            if (contrail.checkIfExist(viewConfig.title) && viewConfig.title !== false) {
-                var widgetTemplate = contrail.getTemplate4Id(cowc.TMPL_WIDGET_BOX),
-                    widgetTemplateAttr = {
-                        elementId: elementId,
-                        title: viewConfig.title
-                    };
-                $(selector).append(widgetTemplate(widgetTemplateAttr));
-                selector = ($('#' + elementId).find('.widget-main'));
-            }
-
-            $(selector).append(loadingSpinnerTemplate);
 
             if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
@@ -55,7 +41,9 @@ define([
         },
 
         renderChart: function (selector, viewConfig, data) {
-            var chartViewConfig, chartModel, chartData, chartOptions;
+            var chartViewConfig, chartModel, chartData, chartOptions,
+                widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
+                chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART);
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
@@ -74,7 +62,7 @@ define([
                 $(selector).empty();
             }
 
-            $(selector).append("<svg style='height:" + chartOptions.height + "px;'></svg>");
+            $(selector).append(chartTemplate(chartOptions));
 
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartModel);
@@ -94,7 +82,10 @@ define([
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
 
-            $(selector).find('.loading-spinner').remove();
+            if (widgetConfig !== null) {
+                this.renderView4Config(selector.find('.chart-container'), self.model, widgetConfig, null, null, null);
+            }
+
         }
     });
 

@@ -66,10 +66,11 @@ define([
         this.TMPL_DETAIL_SECTION = "core-detail-section-template";
         this.TMPL_DETAIL_SECTION_COLUMN = "core-detail-section-column-template";
         this.TMPL_DETAIL_SECTION_ROW = "core-detail-section-row-template";
+        this.TMPL_CHART = "core-chart-template";
         this.TMPL_ZOOMED_SCATTER_CHART = "core-zoomed-scatter-chart-template";
         this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_FILTER = "core-zoomed-scatter-chart-control-panel-filter-template";
         this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_LEGEND = "core-zoomed-scatter-chart-control-panel-legend-template";
-        this.TMPL_WIDGET_BOX = "core-widget-box-template";
+        this.TMPL_WIDGET = "core-widget-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
         this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
 
@@ -115,9 +116,10 @@ define([
             defaultNavLinks: false
         };
 
-        this.DATA_ERROR_MESSAGE = "Error in getting data.";
-        this.CHART_NO_DATA_MESSAGE = "No data available.";
-        this.CHART_LOADING_MESSAGE = "Loading.."
+        this.DATA_REQUEST_STATE_FETCHING = 'fetching';
+        this.DATA_REQUEST_STATE_ERROR = 'error';
+        this.DATA_REQUEST_STATE_SUCCESS_EMPTY = 'success-empty';
+        this.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY = 'success-not-empty';
     };
     return CoreConstants;
 });

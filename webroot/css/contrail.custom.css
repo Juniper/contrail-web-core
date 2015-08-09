@@ -8,11 +8,6 @@
   overflow: auto;
   -webkit-transform: translatez(0);
 }
-.mc-autoflow {
-  height: 510px;
-  overflow: auto;
-  -webkit-transform: translatez(0);
-}
 .rootfolder {
   background-position: 0 0;
 }
@@ -31,15 +26,6 @@
 .pane-content {
   padding: 0 10px;
 }
-.container-fluid-nopadding {
-  padding-left: 0px;
-  padding-right: 0px;
-}
-#truncImg {
-  display: inline-block;
-  width: 90px;
-  height: 70px;
-}
 .no-background {
   background: none;
 }
@@ -52,9 +38,6 @@
 }
 .no-height {
   height: auto !important;
-}
-#instance-container {
-  padding-left: 10px;
 }
 .sub-title.main {
   padding-bottom: 16px;
@@ -74,9 +57,6 @@
   text-align: center;
 }
 .no-data .chart-toolbar {
-  display: none;
-}
-.no-data .chart-legend {
   display: none;
 }
 .big-title {
@@ -127,12 +107,6 @@
 .connected-vn-stats {
   margin-top: 10px;
 }
-#project-charts {
-  clear: both;
-}
-#project-charts .stack-div {
-  width: 48%;
-}
 .chart-types {
   float: right;
   margin: 4px 60px 4px 0px;
@@ -175,78 +149,8 @@
 .pull-down-10 {
   margin-top: 10px;
 }
-#network-overview #chart-top {
-  clear: both;
-}
-#network-overview + #project-charts {
-  margin-top: 20px;
-}
-#link-chart-top {
-  clear: both;
-}
 .div-column {
   display: inline-block;
-}
-.searchTxt {
-  width: 140px;
-  height: 15px;
-  padding: 3px 9px;
-  border: 0;
-  border: 1px solid #b3bbc5;
-  color: #5f5f5f;
-  margin-right: 10px;
-  margin-top: 8px;
-}
-.searchBtn {
-  position: absolute;
-  top: 9px;
-  left: 137px;
-}
-#project-view .chart-types {
-  float: none;
-  margin: 4px auto 4px auto;
-  width: 80px;
-}
-#instance-container .example-title {
-  margin-top: 15px;
-  margin-bottom: 15px;
-}
-#tenant-monitor-loading-mask {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-}
-.cW30 {
-  width: 30%;
-}
-.cW39 {
-  width: 39%;
-}
-.cW40 {
-  width: 40%;
-}
-.cW55 {
-  width: 55%;
-}
-.cW54 {
-  width: 54%;
-}
-.cW97 {
-  width: 97%;
-}
-.cW99 {
-  width: 99%;
-}
-.details-pane {
-  border-color: #DBECF4;
-  border-spacing: 4px 8px;
-}
-.details-pane .table-cell.dashboard-item-value {
-  margin: 4px;
-}
-.details-pane .table-cell.dashboard-item-lbl {
-  width: 130px;
-  margin: 4px;
 }
 .volume-chart.column-chart {
   overflow-x: scroll;
@@ -257,34 +161,6 @@
 }
 .chart-toolbar .toolbar-elem {
   display: inline-block;
-}
-.chart-legend {
- padding: 4px;
-  padding-left: 40px;
-}
-.chart-legend .legend-item {
-  display: inline-block;
-  margin: 0px 6px;
-}
-.chart-legend .legend-item:first-child {
-  margin-left: 0px;
-}
-.chart-legend .legend-item:last-child {
-  margin-right: 0px;
-}
-.chart-legend .legend-icon {
-  margin: 0px 6px;
-  margin-left: 0px;
-  display: inline-block;
-  border-radius: 2px;
-  width: 10px;
-  height: 10px;
-}
-.chart-legend .legend-icon.in {
-  background-color: #1083c7;
-}
-.chart-legend .legend-icon.out {
-  background-color: #1c638d;
 }
 .close-icon {
   width: 14px;
@@ -302,20 +178,11 @@
 .config-panel .close-icon:hover {
   cursor: pointer;
 }
-#network-ts-toolbar .chkbox-refresh {
-  left: 5px;
-}
 .chart-toolbar {
-  display: none;
-}
-.chart-legend {
   display: none;
 }
 .config-links {
   display: none;
-}
-#network-ts-toolbar.chart-toolbar {
-  display: block;
 }
 .filtering-tabs {
   border: 0;
@@ -419,43 +286,6 @@ div.t-grid td {
 .port-detail-template .z-grid {
   height: 250px;
 }
-/* Grid row CSS when 'action' column is present in Config features - Begin */
-/* Structure */
-.configActionMenu,
-ul.configActionMenu {
-  list-style: none;
-}
-.configActionMenu {
-  float: left;
-}
-.configActionMenu > li {
-  float: left;
-}
-.configActionMenu li a {
-  display: block;
-  border-color: #ff0 transparent transparent transparent;
-  height: 2em;
-  line-height: 2em;
-  padding: 0 1.5em;
-  text-decoration: none;
-}
-.configActionMenu ul {
-  position: absolute;
-  display: none;
-  background: #97DCF9;
-}
-.configActionMenu ul li a {
-  width: 100px;
-  color: #000;
-}
-.configActionMenu li:hover ul.noJS {
-  display: block;
-  list-style: none;
-}
-.configActionMenu ul li:hover a {
-  border: 1px solid #1c7aa2;
-}
-/* Grid row CSS when 'action' column is present in Config features - End */
 .flow-count {
   margin-bottom: 10px;
   display: inline-block;
@@ -472,53 +302,12 @@ ul.configActionMenu {
 .infra-detail {
   margin-top: 20px;
 }
-.infra-dashboard #top-stats {
-  height: 70px;
-}
-.infra-dashboard #top-stats .table {
-  height: 60px;
-}
-.infra-dashboard #vrouter-sparklines {
-  width: 200px;
-}
-.infra-dashboard #node-charts {
-  height: 225px;
-}
-.infra-dashboard .bottom-margin {
-  height: 10px;
-}
-.infra-dashboard .demo-section {
-  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-}
-.infra-dashboard .main.example-title.no-padding {
-  padding: 0px;
-}
-.infra-dashboard .stack-chart {
-  width: 98%;
-}
-.infra-dashboard .stack-chart .dashboard-pane {
-  background: none;
-  border: 0px;
-}
 .gridSparkline {
   width: 70%;
   margin-right:4px;
 }
-#networkPortMap .example-title {
-    padding:0px;
-}
-#networkSummaryTab .example-title {
-    padding:0px;
-}
 /* End - Cross filter CSS */
-.hSlider input {
-    display:none;
-}
 .vSlider input {
-    display:none;
-}
-.hSlider {
     display:none;
 }
 /* End vcon-web.css*/
@@ -1455,7 +1244,7 @@ label.jqInvalid{
 	background: none;
 }
 .select2-container .select2-choice .select2-arrow b {
-	background: none;
+	background: none !important;
   	position: relative;
 }
 .select2-container .select2-choice .select2-arrow b:before {
@@ -1817,8 +1606,8 @@ a.disabled-link i {
   /*  border-top : 1px solid #ddd;*/
   background-color:#f6f9fa;
 }
-p.error {
-color: #b94a48;
+p.error, p.error-text {
+    color: #b94a48;
 }
 
 /* Visualization */
@@ -2530,6 +2319,16 @@ color: #b94a48;
   vertical-align : middle;
 }
 
+/* Chart styles */
+.chart-container text {
+  stroke: none;
+  fill: #777;
+  font-weight: normal;
+}
+.chart-container text.nv-requestState {
+  font-size: 18px;
+  fill: #555;
+}
 /* Chart Control styles */
 
 .chart-control-nav {
@@ -3006,6 +2805,7 @@ color: #b94a48;
 .zoom-scatter-chart-container.rightmenu .col1 {
     margin:0 0 0 60px;
     overflow:hidden;
+    position: relative;
 }
 .zoom-scatter-chart-container.rightmenu .col2 {
     float:right;

@@ -6,16 +6,16 @@ define([
     'underscore'
 ], function (_) {
     var CoreMessages = function () {
-        this.getInvalidErrorMessage = function(fieldKey) {
+        this.getInvalidErrorMessage = function (fieldKey) {
             return "Please enter a valid " + cowl.getInLowerCase(fieldKey) + '.';
         };
-        this.getShortInvalidErrorMessage = function(fieldKey) {
+        this.getShortInvalidErrorMessage = function (fieldKey) {
             return "Invalid " + cowl.getInLowerCase(fieldKey) + '.';
         };
-        this.getRequiredMessage = function(fieldKey) {
+        this.getRequiredMessage = function (fieldKey) {
             return cowl.getFirstCharUpperCase(fieldKey) + ' is required.';
         };
-        this.getResolveErrorsMessage = function(fieldKey) {
+        this.getResolveErrorsMessage = function (fieldKey) {
             return "Please resolve all " + fieldKey + " errors.";
         };
 
@@ -27,6 +27,20 @@ define([
                 n = parseInt(n) + 1;
                 return args[n];
             });
+        };
+
+        this.DATA_FETCHING = "Fetching data..";
+        this.DATA_ERROR = "Error in getting data.";
+        this.DATA_SUCCESS_EMPTY = "No data available.";
+
+        this.getRequestMessage = function(requestState) {
+            if (requestState === cowc.DATA_REQUEST_STATE_FETCHING) {
+                return cowm.DATA_FETCHING;
+            } else if (requestState === cowc.DATA_REQUEST_STATE_ERROR) {
+                return cowm.DATA_ERROR;
+            } else if (requestState === cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY) {
+                return cowm.DATA_SUCCESS_EMPTY
+            }
         };
     };
     return CoreMessages;
