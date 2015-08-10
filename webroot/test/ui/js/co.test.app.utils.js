@@ -12,7 +12,12 @@ function getCoreTestAppPaths(coreBaseDir) {
         'co-test-utils'         : coreTestAppBaseDir + '/co.test.utils',
         'co-test-messages'      : coreTestAppBaseDir + '/co.test.messages',
         'co-test-mockdata'      : coreTestAppBaseDir + '/co.test.mockdata',
-        'co-test-grid-dataview' : coreTestAppBaseDir + '/grid/listmodel.test',
+        'co-unit-test'          : coreTestAppBaseDir + '/co.unit.test',
+        'co-test-grid-listmodel': coreTestAppBaseDir + '/grid/listmodel.test',
         'co-test-grid-gridview' : coreTestAppBaseDir + '/grid/gridview.test'
     };
+}
+
+function coreTestAppShim() {
+    return {};
 }

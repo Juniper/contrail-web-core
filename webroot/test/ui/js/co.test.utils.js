@@ -4,133 +4,17 @@
 define([
     'jquery',
     'underscore',
+    'co-test-messages',
     'contrail-list-model',
-    'co-test-grid-dataview',
-    'co-test-grid-gridview'
-], function ($, _, ContrailListModel, SlickGridTestDataView, SlickGridTestGridView) {
-    var self = this;
+], function ($, _, cotm, ContrailListModel) {
 
-    this.getViewObj = function (page, id) {
-        //TODO find out the right way to access the root view object.
-        var rootViewName;
-        if (_.indexOf(cotc.MONITOR_NETWORKING_PAGES, page) != -1) {
-            rootViewName = cotc.MONITOR_NETWORKING_VIEW_TEST_OBJ;
-        } else if (_.indexOf(cotc.MONITOR_STORAGE_PAGES, page) != -1) {
-            rootViewName = cotc.MONITOR_STORAGE_VIEW_TEST_OBJ;
-        } else if (_.indexOf(cotc.MONITOR_SERVER_MANAGER_PAGES, page) != -1) {
-            rootViewName = cotc.MONITOR_SERVER_MANAGER_VIEW_TEST_OBJ;
-        } else {
-        }
-
-        if (rootViewName != null) {
-            var rootViewObj = eval(rootViewName);
-            if (contrail.checkIfExist(rootViewObj.viewMap)) {
-                return rootViewObj.viewMap[id];
-            }
-        }
-    }
-
-    this.getViewConfigObj = function (viewObj) {
-        if (contrail.checkIfExist(viewObj.attributes) && contrail.checkIfExist(viewObj.attributes.viewConfig)) {
-            return viewObj.attributes.viewConfig;
-        }
-    }
-
-    this.getDataSourceWithOnlyRemotes = function (viewConfig) {
-        if (contrail.checkIfExist(viewConfig.elementConfig)) {
-            var dataSource = viewConfig.elementConfig['body']['dataSource'];
-            //return everything except dataView, cacheConfig if exist
-            if (contrail.checkIfExist(dataSource.cacheConfig)) {
-                delete dataSource.cacheConfig;
-            }
-            if (contrail.checkIfExist(dataSource.dataView)) {
-                delete dataSource.dataView;
-            }
-            return dataSource;
-        }
-    };
-
-    this.createMockData = function (rootViewObj, testConfigObj, deferredObj) {
-        var deferredList = [];
-        _.each(testConfigObj, function (testConfig) {
-            testConfig.viewObj = rootViewObj.viewMap[testConfig.id];
-            testConfig.viewConfigObj = this.getViewConfigObj(testConfig.viewObj);
-
-            switch (testConfig.type) {
-                case cotc.TYPE_GRID_VIEW_TEST:
-                    var mockDataDeferred = $.Deferred();
-                    deferredList.push(mockDataDeferred);
-                    //Avoid cacheConfig. Need only remotes.
-                    var dataSource = this.getDataSourceWithOnlyRemotes(testConfig.viewConfigObj);
-                    var contrailListModel = new ContrailListModel(dataSource);
-                    contrailListModel.onAllRequestsComplete.subscribe(function () {
-                        var mockData = contrailListModel.getItems();
-                        testConfig.mockData = mockData;
-                        mockDataDeferred.resolve();
-                    });
-            }
-        });
-
-        $.when.apply($, deferredList).done(function () {
-            deferredObj.resolve();
-        });
-    };
-
-    this.executeGridTests = function (testConfigObj) {
-        if (contrail.checkIfExist(testConfigObj.viewObj)) {
-            _.each(testConfigObj.tests, function (suiteConfig) {
-                var gridData = testConfigObj.viewObj.$el.data('contrailGrid');
-                var gridDataView = gridData._dataView;
-                var viewConfigObj = this.getViewConfigObj(testConfigObj.viewObj);
-                var mockData = testConfigObj.mockData;
-
-                switch (suiteConfig.testSuite) {
-                    case cotc.GRID_VIEW_DATAVIEW_TEST:
-                        SlickGridTestDataView(gridDataView, mockData, suiteConfig);
-                        break;
-
-                    case cotc.GRID_VIEW_GRID_TEST:
-                        SlickGridTestGridView(testConfigObj.viewObj.$el, viewConfigObj, suiteConfig);
-                        break;
-                }
-
-            });
-        } else {
-            //log error
-        }
-    };
-
-    this.executeCommonTests = function (testConfigObj) {
-        _.each(testConfigObj, function (testConfig) {
-            switch (testConfig.type) {
-                case cotc.TYPE_GRID_VIEW_TEST:
-                    this.executeGridTests(testConfig);
-                    break;
-
-                case cotc.TYPE_CHART_VIEW_TEST:
-                    break;
-
-                case cotc.TYPE_GRAPH_VIEW_TEST:
-                    break;
-
-                default :
-                    break;
-
-            }
-        });
-    };
 
     this.getRegExForUrl = function (url) {
         var regexUrlMap = {
             '/api/admin/webconfig/featurePkg/webController': /\/api\/admin\/webconfig\/featurePkg\/webController\?.*$/,
             '/api/admin/webconfig/features/disabled': /\/api\/admin\/webconfig\/features\/disabled\?.*$/,
             '/api/service/networking/web-server-info': /\/api\/service\/networking\/web-server-info.*$/,
-            '/menu.xml': /\/menu\.xml.*$/,
-            '/api/tenants/config/domains': /\/api\/tenants\/config\/domains.*$/,
-            '/sm/tags/names': /\/sm\/tags\/names.*$/,
-            '/sm/objects/details/image': /\/sm\/objects\/details\/image\?.*$/,
-            '/api/tenant/networking/virtual-networks/details': /\/api\/tenant\/networking\/virtual-networks\/details\?.*$/,
-            '/api/tenant/networking/stats': /\/api\/tenant\/networking\/stats.*$/
+            '/menu.xml': /\/menu\.xml.*$/
         };
 
         return regexUrlMap [url];
@@ -156,7 +40,7 @@ define([
     };
 
 
-    this.getPageHeaderHTML = function() {
+    this.getPageHeaderHTML = function () {
         return '<div id="pageHeader" class="navbar navbar-inverse navbar-fixed-top"> ' +
             '<div class="navbar-inner"> ' +
             '<div class="container-fluid"> ' +
@@ -186,7 +70,7 @@ define([
             '</div> <!--/.navbar-inner--> </div>';
     };
 
-    this.getSidebarHTML = function() {
+    this.getSidebarHTML = function () {
         return '<div class="container-fluid" id="main-container"> ' +
             '<a id="menu-toggler" href="#"> ' +
             '<span></span> ' +
@@ -212,7 +96,7 @@ define([
             '</div> </div>'
     };
 
-    this.getCSSList = function() {
+    this.getCSSList = function () {
         var cssList = [];
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap.min.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap-responsive.min.css"/>');
@@ -233,13 +117,13 @@ define([
         return cssList;
     };
 
-    this.getFakeServer = function(serverConfig) {
+    this.getFakeServer = function (serverConfig) {
         var fakeServer = sinon.fakeServer.create();
         fakeServer.autoRespond = (serverConfig == null || serverConfig['autoRespond'] == null) ? true : serverConfig['autoRespond'];
         fakeServer.autoRespondAfter = (serverConfig == null || serverConfig['autoRespondAfter'] == null) ? 0 : serverConfig['autoRespondAfter'];
         fakeServer.xhr.useFilters = true;
 
-        fakeServer.xhr.addFilter(function(method, url) {
+        fakeServer.xhr.addFilter(function (method, url) {
             var searchResult = url.search(/.*\.tmpl.*/);
             return searchResult == -1 ? false : true;
         });
@@ -247,8 +131,101 @@ define([
         return fakeServer;
     };
 
+    this.getViewConfigObj = function (viewObj) {
+        if ((viewObj != null) &&
+            contrail.checkIfExist(viewObj.attributes) &&
+            contrail.checkIfExist(viewObj.attributes.viewConfig)) {
+            return viewObj.attributes.viewConfig;
+        }
+    };
+
+    this.setViewObjAndViewConfig4All = function (rootViewObj, testConfig) {
+        _.each(testConfig, function (viewIdConfig) {
+            viewIdConfig.viewObj = rootViewObj.viewMap[viewIdConfig.viewId];
+            viewIdConfig.viewConfigObj = this.getViewConfigObj(viewIdConfig.viewObj);
+        })
+    };
+
+    this.formatTestModuleMessage = function (message, id) {
+        if (message != null && id != null) {
+            return message + ":" + id + " - ";
+        } else {
+            if (message != null) {
+                return message + " - ";
+            }
+        }
+    };
+
+    this.getGridDataSourceWithOnlyRemotes = function (viewConfig) {
+        if (contrail.checkIfExist(viewConfig.elementConfig)) {
+            var dataSource = viewConfig.elementConfig['body']['dataSource'];
+            //return everything except dataView, cacheConfig if exist
+            if (contrail.checkIfExist(dataSource.cacheConfig)) {
+                delete dataSource.cacheConfig;
+            }
+            if (contrail.checkIfExist(dataSource.dataView)) {
+                delete dataSource.dataView;
+            }
+            return dataSource;
+        }
+    };
+
+    this.createMockData = function (rootViewObj, testConfigObj, deferredObj) {
+        var deferredList = [];
+        _.each(testConfigObj, function (testConfig) {
+            var primaryMockDataConfig;
+
+            if (contrail.checkIfExist(testConfig.modelConfig)) {
+                primaryMockDataConfig = testConfig.modelConfig;
+            }
+
+            _.each(testConfig.suites, function (suiteConfig) {
+                var mockDataConfig = primaryMockDataConfig;
+
+                if (contrail.checkIfExist(suiteConfig.modelConfig)) {
+                    mockDataConfig = suiteConfig.modelConfig;
+                }
+
+                if (mockDataConfig != null) {
+                    suiteConfig.modelConfig = mockDataConfig; // adding the model config to suiteConfig.
+                    if (contrail.checkIfExist(mockDataConfig.dataGenerator)) {
+                        var mockDataDefObj = $.Deferred();
+                        deferredList.push(mockDataDefObj);
+                        /**
+                         * generator returns a model. if the model has promise to check if the requests are complete,
+                         * we will use that promise. otherwise the promise passed on as argument will be checked.
+                         */
+                        var optionalDefObj = $.Deferred();
+                        var onDataCompleteCB = function () {
+                            suiteConfig.model = mockDataModel;
+                            var mockData = mockDataModel.getItems();
+                            if (contrail.checkIfExist(mockDataConfig.dataParsers.mockDataParseFn)) {
+                                mockData = mockDataConfig.dataParsers.mockDataParseFn(mockData);
+                            }
+                            suiteConfig.mockData = mockData;
+                            mockDataDefObj.resolve();
+                        };
+
+                        var mockDataModel = mockDataConfig.dataGenerator(testConfig.viewObj, optionalDefObj);
+
+                        if (contrail.checkIfExist(mockDataModel.onAllRequestsComplete)) {
+                            mockDataModel.onAllRequestsComplete.subscribe(onDataCompleteCB);
+                        } else {
+                            optionalDefObj.done(onDataCompleteCB);
+                        }
+
+                    }
+                }
+            });
+        });
+
+        $.when.apply($, deferredList).done(function () {
+            deferredObj.resolve();
+        });
+    };
+
+
     return {
-        self: self,
         getRegExForUrl: getRegExForUrl,
         getNumberOfColumnsForGrid: getNumberOfColumnsForGrid,
         startQunitWithTimeout: startQunitWithTimeout,
@@ -256,9 +233,11 @@ define([
         getSidebarHTML: getSidebarHTML,
         getPageHeaderHTML: getPageHeaderHTML,
         getFakeServer: getFakeServer,
-        getViewObj: getViewObj,
         getViewConfigObj: getViewConfigObj,
-        createMockData: createMockData,
-        executeCommonTests: executeCommonTests
+        setViewObjAndViewConfig4All: setViewObjAndViewConfig4All,
+        formatTestModuleMessage: formatTestModuleMessage,
+        getGridDataSourceWithOnlyRemotes: getGridDataSourceWithOnlyRemotes,
+        createMockData: createMockData
     };
+
 });
