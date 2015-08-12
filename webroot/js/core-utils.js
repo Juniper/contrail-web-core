@@ -10,11 +10,12 @@ define([
     'graph-view', 'core-basedir/js/views/TabsView', 'core-basedir/js/views/ChartView', 'core-basedir/js/views/GridView', 'core-basedir/js/views/DetailsView',
     'core-basedir/js/views/ScatterChartView', 'core-basedir/js/views/LineWithFocusChartView', 'core-basedir/js/views/HeatChartView', 'core-basedir/js/views/ZoomScatterChartView',
     'core-basedir/js/views/HorizontalBarChartView', 'core-basedir/js/views/LineBarWithFocusChartView', 'core-basedir/js/views/MultiDonutChartView', 'core-basedir/js/views/MultiBarChartView',
-    'core-basedir/js/views/DonutChartView'
+    'core-basedir/js/views/DonutChartView','core-basedir/js/views/FormTextareaView'
 ], function (FormInputView, FormGridView, FormDynamicGridView, FormMultiselectView, FormDropdownView, FormSelect2DropdownView, FormCheckboxView, FormRadioButtonView,
              AccordianView, SectionView, WizardView, FormEditableGridView, GridInputView, GridCheckboxView, GridDropdownView, GridMultiselectView,
              GraphView, TabsView, ChartView, GridView, DetailsView, ScatterChartView, LineWithFocusChartView, HeatChartView, ZoomScatterChartView,
-             HorizontalBarChartView, LineBarWithFocusChartView, MultiDonutChartView, MultiBarChartView, DonutChartView) {
+             HorizontalBarChartView, LineBarWithFocusChartView, MultiDonutChartView, MultiBarChartView,
+             DonutChartView, FormTextareaView) {
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -97,6 +98,41 @@ define([
                 ]
             });
         };
+        
+        this.createForm = function (options) {
+            var formContainerId = options['formContainerId'];
+            $.contrailBootstrapForm({
+                id: formContainerId,
+                className: options['className'],
+                title: options['title'],
+                body: options['body'],
+                type:'form',
+                parent:options['parent'],
+                footer: [
+                    {
+                        id: 'cancelBtn',
+                        title:  (options.buttons[0]) ? options.buttons[0] : 'Reset',
+                        onclick: function () {
+                            var buttonAction = (options.buttons[0]) ? 
+                                    'on' + options.buttons[0] : 'Reset';
+                            options[buttonAction]();
+                        },
+                        onKeyupEsc: true
+                    },
+                    {
+                        className: 'btn-primary btnSave',
+                        title: (options.buttons[1]) ? options.buttons[1] : 'Submit',
+                        onclick: function () {
+                            var buttonAction = (options.buttons[0]) ? 
+                                'on' + options.buttons[1] : 'Submit';
+                            options[buttonAction]();
+                        },
+                        onKeyupEnter: true
+                    }
+                ]
+            });
+            
+        }
 
         this.createWizardModal = function (options) {
             var modalId = options['modalId'];
@@ -442,6 +478,14 @@ define([
 
                 case "ZoomScatterChartView":
                     elementView = new ZoomScatterChartView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView});
+                    elementView.modelMap = modelMap;
+                    elementView.render();
+                    return elementView;
+                
+                case "FormTextareaView":
+                    elementView = new FormTextareaView({el: parentElement,
+                            model: model, attributes: viewAttributes, rootView:
+                            rootView});
                     elementView.modelMap = modelMap;
                     elementView.render();
                     return elementView;
