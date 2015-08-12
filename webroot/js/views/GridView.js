@@ -25,8 +25,10 @@ define([
 
             contrailListModel = (self.model != null) ? self.model : new ContrailListModel(listModelConfig);
 
-            delete viewConfig.elementConfig['body']['dataSource']['remote'];
-            viewConfig.elementConfig['body']['dataSource'] = {dataView: contrailListModel};
+            // TODO remote attr is required for UT model recreation.
+            //delete viewConfig.elementConfig['body']['dataSource']['remote'];
+            //viewConfig.elementConfig['body']['dataSource'] = {dataView: contrailListModel};
+            viewConfig.elementConfig['body']['dataSource']['dataView'] = contrailListModel;
 
             gridConfig = $.extend(true, {}, getDefaultGridConfig(), viewConfig.elementConfig);
             gridContainer = $(this.$el);
