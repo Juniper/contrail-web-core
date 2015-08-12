@@ -858,16 +858,23 @@
     };
     
     $.extend({
-        contrailBootstrapModal:function (options) {
+        contrailBootstrapModal : function(options){
+            options['type'] = 'modal';
+            $.contrailBootstrapForm(options);
+        }
+    });
+    
+    $.extend({
+        contrailBootstrapForm:function (options) {
             var keyupAction = $.extend(true, {}, {
                 onKeyupEnter: null,
                 onKeyupEsc: null
             }, options.keyupAction);
-
+            var type = options['type'];
             options.id = options.id != undefined ? options.id : '';
             var className = (options.className == null) ? '' : options.className;
 
-            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal hide" tabindex="-1" role="dialog" aria-hidden="true"> \
+            var baseHTML = '<div id="' + options.id + '" class="' + className + ' modal hide" tabindex="-1" role="dialog" aria-hidden="true"> \
         		<div class="modal-header"> \
         	    	<button id="modal-header-close" type="button" class="close"><i class="icon-remove"></i></button> \
         			<h6 class="modal-header-title"></h6> \
@@ -875,9 +882,23 @@
 	        	<div class="modal-body"></div> \
 	        	<div class="modal-footer"></div> \
         	</div>';
+            
+            if(type != 'modal') {
+                baseHTML = '<div id="' + options.id + '" class="' + className + '" > \
+                            <div class="modal-header"> \
+                                <h6 class="modal-header-title"></h6> \
+                            </div> \
+                            <div class="modal-body" style="max-height:none!important"></div> \
+                            <div class="modal-footer"></div> \
+                        </div>';
+            }
 
             $('#' + options.id).remove();
-            $('body').prepend(modalHTML);
+            if(type == 'modal') {
+                $('body').prepend(baseHTML);
+            } else {
+                $(options.parent).prepend(baseHTML);
+            }
 
             if(options.closeClickAction != null) {
                 $('#modal-header-close').on('click', function() {
@@ -928,13 +949,14 @@
             else {
                 modalId.find('.modal-footer').remove();
             }
-            modalId.modal({backdrop:'static', keyboard:false});
-
-            modalId.draggable({
-                handle: ".modal-header",
-                containment: 'body',
-                cursor: 'move'
-            });
+            if(type == 'modal') {
+                modalId.modal({backdrop:'static', keyboard:false});
+                modalId.draggable({
+                    handle: ".modal-header",
+                    containment: 'body',
+                    cursor: 'move'
+                });
+            }
 
             if (contrail.checkIfFunction(keyupAction.onKeyupEnter) || contrail.checkIfFunction(keyupAction.onKeyupEsc)) {
                 modalId.keyup(function(e) {

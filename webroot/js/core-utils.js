@@ -3,6 +3,7 @@
  */
 
 define(['underscore'], function (_) {
+
     var CoreUtils = function () {
         var self = this;
         this.renderGrid = function (elementId, gridConfig) {
@@ -85,6 +86,41 @@ define(['underscore'], function (_) {
                 ]
             });
         };
+        
+        this.createForm = function (options) {
+            var formContainerId = options['formContainerId'];
+            $.contrailBootstrapForm({
+                id: formContainerId,
+                className: options['className'],
+                title: options['title'],
+                body: options['body'],
+                type:'form',
+                parent:options['parent'],
+                footer: [
+                    {
+                        id: 'cancelBtn',
+                        title:  (options.buttons[0]) ? options.buttons[0] : 'Reset',
+                        onclick: function () {
+                            var buttonAction = (options.buttons[0]) ? 
+                                    'on' + options.buttons[0] : 'Reset';
+                            options[buttonAction]();
+                        },
+                        onKeyupEsc: true
+                    },
+                    {
+                        className: 'btn-primary btnSave',
+                        title: (options.buttons[1]) ? options.buttons[1] : 'Submit',
+                        onclick: function () {
+                            var buttonAction = (options.buttons[0]) ? 
+                                'on' + options.buttons[1] : 'Submit';
+                            options[buttonAction]();
+                        },
+                        onKeyupEnter: true
+                    }
+                ]
+            });
+            
+        }
 
         this.createWizardModal = function (options) {
             var modalId = options['modalId'];

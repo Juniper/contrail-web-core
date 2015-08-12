@@ -810,6 +810,23 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-textarea-view-template">
+    <div class="row-fluid form-input-label">
+        <div class="span10">
+            <label>{{label}}</label>
+        </div>
+        <!-- <div class="span2">
+            <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+            </span>
+        </div> -->
+    </div>
+    <div class="row-fluid form-element">
+        <textarea  name="{{id}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-checkbox-view-template">
     <div class="row-fluid form-checkbox-label">
         <div class="span10">
@@ -999,19 +1016,19 @@
         </tr>
         </thead>
         <tbody data-bind="foreach: {{collection}}">
-        <tr class="data-row">
-            {{#each columns}}
-            <td id="{{elementId}}" class="data-cell"></td>
-            {{/each}}
-            {{#each rowActions}}
-            <td class="action-cell"><a href='#' data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
-            {{/each}}
-        </tr>
-        <tr class="error-row">
-            {{#each columns}}
-            <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
-            {{/each}}
-        </tr>
+            <tr class="data-row">
+                {{#each columns}}
+                <td id="{{elementId}}" class="data-cell"></td>
+                {{/each}}
+                {{#each rowActions}}
+                <td class={{#if this.class}}"{{{this.class}}}"{{else}}"action-cell"{{/if}}><a href='#' data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
+                {{/each}}
+            </tr>
+            <tr class="error-row">
+                {{#each columns}}
+                <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+                {{/each}}
+            </tr>
         </tbody>
     </table>
     {{#each gridActions}}
@@ -1022,7 +1039,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-grid-input-view-template">
-    <input type="{{type}}" name="{{name}}" class="{{class}}" data-bind="value: {{dataBindValue}}, event: { focusout: function() { validateAttr()('{{path}}', '{{validation}}', $data)} }"  />
+    <input type="{{type}}" name="{{name}}" class="{{class}}" data-bind="value: {{dataBindValue}}, event: { focusout: function(e) { console.log('arguemnts' , arguments);e.validateAttr()('{{path}}', '{{validation}}', $data)} }"  />
 </script>
 
 <script type="text/x-handlebars-template" id="core-grid-checkbox-view-template">

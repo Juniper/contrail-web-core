@@ -4200,3 +4200,7 @@ td.td-actions a.td-action {
     line-height: 16px;
     vertical-align: middle;
 }
+
+.text-area-min-height-300 {
+	height : 300px;
+}
