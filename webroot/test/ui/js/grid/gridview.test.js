@@ -275,7 +275,10 @@ define([
 
                 //generate one using the template and data from the model
                 //since the data is already present, request state is set to SUCCESS_NOT_EMPTY
-                var detailsHtml_id0 = Handlebars.compile(viewConfigBody.options.detail.template)(gridItems[0]);
+                var detailsHtml_id0 = Handlebars.compile(viewConfigBody.options.detail.template)({
+                    data: gridItems[0],
+                    requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY
+                });
 
                 equal(domDetailsHtml_id0, detailsHtml_id0,
                     "Details row html content should be equal to the one generated from view config template");

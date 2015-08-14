@@ -1244,7 +1244,7 @@ label.jqInvalid{
 	background: none;
 }
 .select2-container .select2-choice .select2-arrow b {
-	background: none;
+	background: none !important;
   	position: relative;
 }
 .select2-container .select2-choice .select2-arrow b:before {
@@ -1606,8 +1606,8 @@ a.disabled-link i {
   /*  border-top : 1px solid #ddd;*/
   background-color:#f6f9fa;
 }
-p.error {
-color: #b94a48;
+p.error, p.error-text {
+    color: #b94a48;
 }
 
 /* Visualization */
@@ -2064,7 +2064,7 @@ color: #b94a48;
 .graph-search-control-panel-expanded-container {
     right: 33px;
     width: 200px;
-    top: 101px;
+    top: 167px;
     height: 29px;
 }
 .graph-control-panel-search-dropdown {
@@ -2319,6 +2319,16 @@ color: #b94a48;
   vertical-align : middle;
 }
 
+/* Chart styles */
+.chart-container text {
+  stroke: none;
+  fill: #777;
+  font-weight: normal;
+}
+.chart-container text.nv-requestState {
+  font-size: 18px;
+  fill: #555;
+}
 /* Chart Control styles */
 
 .chart-control-nav {
@@ -2802,6 +2812,7 @@ color: #b94a48;
 .zoom-scatter-chart-container.rightmenu .col1 {
     margin:0 0 0 60px;
     overflow:hidden;
+    position: relative;
 }
 .zoom-scatter-chart-container.rightmenu .col2 {
     float:right;

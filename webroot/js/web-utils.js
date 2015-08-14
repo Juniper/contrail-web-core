@@ -73,7 +73,7 @@ var NO_RELOAD_JS_CLASSLIST = [
     'serversPageLoader',
     'imagesPageLoader',
     'packagesPageLoader',
-    'smLoader',
+    'smPageLoader',
     'mnPageLoader'
 ];
 

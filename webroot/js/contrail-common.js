@@ -317,6 +317,22 @@ function Contrail() {
 	};
 
     /*
+     * .heightSVG(className)
+     * Get the current computed height for the first element in the set of matched SVG elements.
+     */
+    $.fn.heightSVG = function(){
+        return ($(this).get(0)) ? $(this).get(0).getBBox().height : null;
+    };
+
+    /*
+     * .widthSVG(className)
+     * Get the current computed width for the first element in the set of matched SVG elements.
+     */
+    $.fn.widthSVG = function(){
+        return ($(this).get(0)) ? $(this).get(0).getBBox().width : null;
+    };
+
+    /*
      * .redraw()
      * Redraw or refresh the DOM to reflect the styles configured (Safari hack to render svg elements)
      * */

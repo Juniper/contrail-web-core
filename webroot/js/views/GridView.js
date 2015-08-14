@@ -25,10 +25,10 @@ define([
 
             contrailListModel = (self.model != null) ? self.model : new ContrailListModel(listModelConfig);
 
-            // TODO remote attr is required for UT model recreation.
             //delete viewConfig.elementConfig['body']['dataSource']['remote'];
             //viewConfig.elementConfig['body']['dataSource'] = {dataView: contrailListModel};
             viewConfig.elementConfig['body']['dataSource']['dataView'] = contrailListModel;
+
 
             gridConfig = $.extend(true, {}, getDefaultGridConfig(), viewConfig.elementConfig);
             gridContainer = $(this.$el);
@@ -467,7 +467,7 @@ define([
                     if (contrail.checkIfExist(gridOptions.detail.templateConfig)) {
                         gridContainer.find('.slick-row-detail-template-' + id).html(template({dc: dc, templateConfig: gridOptions.detail.templateConfig}));
                     } else {
-                        gridContainer.find('.slick-row-detail-template-' + id).html(template(dc));
+                        gridContainer.find('.slick-row-detail-template-' + id).html(template({data: dc, requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY}));
                     }
                     gridContainer.data('contrailGrid').adjustDetailRowHeight(id);
                 }

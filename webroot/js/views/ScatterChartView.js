@@ -76,11 +76,11 @@ define([
             }
 
             if(dataListModel.isRequestInProgress()) {
-                chartModel.noData(cowc.CHART_LOADING_MESSAGE);
+                chartModel.noData(cowm.DATA_FETCHING);
             } else if(chartModel['noDataMessage']) {
                 chartModel.noData(chartModel['noDataMessage']);
             } else if (error) {
-                chartModel.noData(cowc.DATA_ERROR_MESSAGE);
+                chartModel.noData(cowm.DATA_ERROR);
             }
 
             if ($(selector).find('svg').length == 0) {

@@ -1090,34 +1090,6 @@
     </div>
 </script>
 
-<script type="text/x-handlebars-template" id="core-chart-template">
-    <div class="row-fluid">
-        {{#each this.elementConfg}}
-            <div id="charts-box" class="{{#getValue "{\"1\":\"span12\",\"2\":\"span6\",\"3\":\"span4\"}" ../colCount}}{{/getValue}} widget-box transparent">
-                <div class="widget-header">
-                    <h4 class="smaller">
-                        <i id="charts-loading" class="icon-spinner icon-spin blue bigger-125"></i> {{title}}
-                    </h4>
-                    <div class="widget-toolbar pull-right">
-                        <a data-action="collapse">
-                            <i class="icon-chevron-up"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="widget-body">
-                    <div class="widget-main" style="height:300px;">
-                        {{#IfCompare @index 1 operator='%2'}}
-                            <div class="stack-chart negate" id="{{../../id}}_{{@index}}"></div>
-                        {{else}}
-                            <div class="stack-chart" id="{{../../id}}_{{@index}}"></div>
-                        {{/IfCompare}}
-                    </div>
-                </div>
-            </div>
-        {{/each}}
-    </div>
-</script>
-
 <script type="text/x-handlebars-template" id="core-not-found-message-template">
     <div class="row-fluid content-container-not-found">
         <div class="row-fluid">
@@ -1173,7 +1145,12 @@
             <div class="chart-control-panel-expanded-container hide"></div>
         </div>
     </div>
+</script>
 
+<script type="text/x-handlebars-template" id="core-chart-template">
+    <div class="chart-container row-fluid">
+        <svg style="height:{{height}}px;"></svg></div>
+    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-control-panel-filter-template">
@@ -1236,10 +1213,22 @@
     </div>
 </script>
 
-<script type="text/x-handlebars-template" id="core-widget-box-template">
+<script type="text/x-handlebars-template" id="core-widget-template">
     <div id="{{elementId}}" class="widget-box transparent">
         <div class="widget-header">
-            <h4 class="smaller">{{title}}</h4>
+            <h4 class="smaller" {{#IfCompare controls.top.collapseable false operator='!=='}} data-action="widget-collapse"{{/IfCompare}}>
+                {{#IfCompare header.iconClass false operator='!=='}}
+                    <i class="{{header.iconClass}} icon-large"></i>
+                {{/IfCompare}}
+                {{header.title}}
+            </h4>
+            <div class="widget-toolbar pull-right">
+                {{#IfCompare controls.top.collapseable false operator='!=='}}
+                    <a data-action="widget-collapse">
+                        <i class="icon-chevron-up"></i>
+                    </a>
+                {{/IfCompare}}
+            </div>
         </div>
         <div class="widget-body">
             <div class="widget-main padding-4">

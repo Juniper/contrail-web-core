@@ -76,8 +76,8 @@ define([
             , tooltip = nvd3v181.models.tooltip()
             ;
 
-        var margin = {top: 30, right: 30, bottom: 30, left: 60}
-            , margin2 = {top: 0, right: 30, bottom: 40, left: 60}
+        var margin = chartOptions.margin
+            , margin2 = chartOptions.margin2
             , width = null
             , height = null
             , getX = function(d) { return d.x }
@@ -140,16 +140,21 @@ define([
         };
 
         function chartModel(selection) {
-            selection.each(function(data) {
+            selection.each(function (chartDataObj) {
                 var container = d3.select(this),
-                    that = this;
+                    that = this,
+                    data = chartDataObj.data,
+                    requestState = chartDataObj.requestState;
+
                 nvd3v181.utils.initSVG(container);
                 var availableWidth = nvd3v181.utils.availableWidth(width, container, margin),
                     availableHeight1 = nvd3v181.utils.availableHeight(height, container, margin)
                         - (focusEnable ? focusHeight : 0),
                     availableHeight2 = focusHeight - margin2.top - margin2.bottom;
 
-                chartModel.update = function() { container.transition().duration(transitionDuration).call(chartModel); };
+                chartModel.update = function () {
+                    container.transition().duration(transitionDuration).call(chartModel);
+                };
                 chartModel.container = this;
 
                 state
@@ -158,7 +163,9 @@ define([
                     .update();
 
                 // DEPRECATED set state.disableddisabled
-                state.disabled = data.map(function(d) { return !!d.disabled });
+                state.disabled = data.map(function (d) {
+                    return !!d.disabled
+                });
 
                 if (!defaultState) {
                     var key;
@@ -171,17 +178,35 @@ define([
                     }
                 }
 
-                // Display No Data message if there's nothing to show.
-                if (!data || !data.length || !data.filter(function(d) { return d.values.length }).length) {
-                    nvd3v181.utils.noData(chartModel, container)
-                    return chartModel;
-                } else {
-                    container.selectAll('.nv-noData').remove();
-                }
+                var dataBars = [], dataLines = [],
+                    series1 = [], series2 = [];
 
-                // Setup Scales
-                var dataBars = data.filter(function(d) { return !d.disabled && d.bar });
-                var dataLines = data.filter(function(d) { return !d.bar }); // removed the !d.disabled clause here to fix Issue #240
+                dataBars = data.filter(function (d) {
+                    return !d.disabled && d.bar
+                });
+                dataLines = data.filter(function (d) {
+                    return !d.bar
+                }); // removed the !d.disabled clause here to fix Issue #240
+
+                series1 = data
+                    .filter(function (d) {
+                        return !d.disabled && d.bar
+                    })
+                    .map(function (d) {
+                        return d.values.map(function (d, i) {
+                            return {x: getX(d, i), y: getY(d, i)}
+                        })
+                    });
+
+                series2 = data
+                    .filter(function (d) {
+                        return !d.disabled && !d.bar
+                    })
+                    .map(function (d) {
+                        return d.values.map(function (d, i) {
+                            return {x: getX(d, i), y: getY(d, i)}
+                        })
+                    });
 
                 x = bars.xScale();
                 x2 = x2Axis.scale();
@@ -190,21 +215,6 @@ define([
                 y3 = bars2.yScale();
                 y4 = lines2.yScale();
 
-                var series1 = data
-                    .filter(function(d) { return !d.disabled && d.bar })
-                    .map(function(d) {
-                        return d.values.map(function(d,i) {
-                            return { x: getX(d,i), y: getY(d,i) }
-                        })
-                    });
-
-                var series2 = data
-                    .filter(function(d) { return !d.disabled && !d.bar })
-                    .map(function(d) {
-                        return d.values.map(function(d,i) {
-                            return { x: getX(d,i), y: getY(d,i) }
-                        })
-                    });
 
                 x.range([0, availableWidth]);
 
@@ -295,7 +305,7 @@ define([
                         {values: []}
                     ]);
                 var lines2Wrap = g.select('.nv-context .nv-linesWrap')
-                    .datum(!dataLines[0].disabled ? dataLines : [
+                    .datum((dataLines.length > 0 && !dataLines[0].disabled) ? dataLines : [
                         {values: []}
                     ]);
 
@@ -327,10 +337,8 @@ define([
                         .tickSize(dataBars.length ? 0 : -availableWidth, 0); // Show the y2 rules only if y1 has none
 
                     g.select('.nv-context .nv-y3.nv-axis')
-                        .style('opacity', dataBars.length ? 1 : 0)
                         .attr('transform', 'translate(0,' + x2.range()[0] + ')');
                     g.select('.nv-context .nv-y2.nv-axis')
-                        .style('opacity', dataLines.length ? 1 : 0)
                         .attr('transform', 'translate(' + x2.range()[1] + ',0)');
 
                     g.select('.nv-context .nv-y1.nv-axis').transition()
@@ -373,23 +381,25 @@ define([
                 // Event Handling/Dispatching (in chart's scope)
                 //------------------------------------------------------------
 
-                legend.dispatch.on('stateChange', function(newState) {
-                    for (var key in newState)
-                        state[key] = newState[key];
-                    dispatch.stateChange(state);
-                    chartModel.update();
-                });
+                if (requestState === cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY) {
+                    legend.dispatch.on('stateChange', function (newState) {
+                        for (var key in newState)
+                            state[key] = newState[key];
+                        dispatch.stateChange(state);
+                        chartModel.update();
+                    });
 
-                // Update chart from a state object passed to event handler
-                dispatch.on('changeState', function(e) {
-                    if (typeof e.disabled !== 'undefined') {
-                        data.forEach(function(series,i) {
-                            series.disabled = e.disabled[i];
-                        });
-                        state.disabled = e.disabled;
-                    }
-                    chartModel.update();
-                });
+                    // Update chart from a state object passed to event handler
+                    dispatch.on('changeState', function (e) {
+                        if (typeof e.disabled !== 'undefined') {
+                            data.forEach(function (series, i) {
+                                series.disabled = e.disabled[i];
+                            });
+                            state.disabled = e.disabled;
+                        }
+                        chartModel.update();
+                    });
+                }
 
                 //============================================================
                 // Functions
@@ -419,12 +429,13 @@ define([
                         .each(function(d,i) {
                             var leftWidth = x2(d[0]) - x2.range()[0],
                                 rightWidth = x2.range()[1] - x2(d[1]);
+
                             d3.select(this).select('.left')
-                                .attr('width',  leftWidth < 0 ? 0 : leftWidth);
+                                .attr('width',  (leftWidth < 0 || isNaN(leftWidth)) ? 0 : leftWidth);
 
                             d3.select(this).select('.right')
-                                .attr('x', x2(d[1]))
-                                .attr('width', rightWidth < 0 ? 0 : rightWidth);
+                                .attr('x', isNaN(rightWidth) ? 0 : x2(d[1]))
+                                .attr('width', (rightWidth < 0 || isNaN(rightWidth)) ? 0 : rightWidth);
                         });
                 }
 
@@ -463,18 +474,17 @@ define([
                     );
 
                     var focusLinesWrap = g.select('.nv-focus .nv-linesWrap')
-                        .datum(dataLines[0].disabled ? [{values:[]}] :
+                        .datum(dataLines.length && !dataLines[0].disabled ?
                             dataLines
                                 .map(function(d,i) {
                                     return {
                                         area: d.area,
-                                        fillOpacity: d.fillOpacity,
                                         key: d.key,
                                         values: d.values.filter(function(d,i) {
                                             return lines.x()(d,i) >= extent[0] && lines.x()(d,i) <= extent[1];
                                         })
                                     }
-                                })
+                                }) : [{values: []}]
                     );
 
                     // Update Main (Focus) X Axis
@@ -512,9 +522,7 @@ define([
                         .tickSize(dataBars.length ? 0 : -availableWidth, 0); // Show the y2 rules only if y1 has none
 
                     g.select('.nv-focus .nv-y1.nv-axis')
-                        .style('opacity', dataBars.length ? 1 : 0);
                     g.select('.nv-focus .nv-y2.nv-axis')
-                        .style('opacity', dataLines.length && !dataLines[0].disabled ? 1 : 0)
                         .attr('transform', 'translate(' + x.range()[1] + ',0)');
 
                     g.select('.nv-focus .nv-y1.nv-axis').transition().duration(transitionDuration)
@@ -659,14 +667,22 @@ define([
         // Customize NVD3 Chart
         //------------------------------------------------------------
 
-        chartModel.margin({top: 50, right: 100, bottom: 30, left: 70})
-            .legendRightAxisHint('')
-            .legendLeftAxisHint('')
-            .brushExtent(chartOptions['brushExtent']);;
-
-        chartModel.bars.forceY([0]).padData(false);
+        chartModel.legendRightAxisHint('')
+                  .legendLeftAxisHint('')
+                  .brushExtent(chartOptions['brushExtent']);
 
         chartModel.interpolate(interpolateSankey);
+        chartModel.bars.padData(false);
+
+        if(chartOptions.forceY1) {
+            chartModel.bars.forceY(chartOptions.forceY1);
+            chartModel.bars2.forceY(chartOptions.forceY1);
+        }
+
+        if(chartOptions.forceY2) {
+            chartModel.lines.forceY(chartOptions.forceY2);
+            chartModel.lines2.forceY(chartOptions.forceY2);
+        }
 
         chartModel.xAxis.tickFormat(function (d) {
             return d3.time.format('%H:%M')(new Date(d));
@@ -676,9 +692,15 @@ define([
             return d3.time.format('%H:%M')(new Date(d));
         });
 
-        chartModel.y1Axis.axisLabel(chartOptions.y1AxisLabel).tickFormat(chartOptions['y1Formatter']).showMaxMin(false);
+        chartModel.y1Axis.axisLabel(chartOptions.y1AxisLabel)
+                         .axisLabelDistance(chartOptions.axisLabelDistance)
+                         .tickFormat(chartOptions['y1Formatter'])
+                         .showMaxMin(false);
 
-        chartModel.y2Axis.axisLabel(chartOptions.y2AxisLabel).tickFormat(chartOptions['y2Formatter']).showMaxMin(false);
+        chartModel.y2Axis.axisLabel(chartOptions.y2AxisLabel)
+                         .axisLabelDistance(chartOptions.axisLabelDistance)
+                         .tickFormat(chartOptions['y2Formatter'])
+                         .showMaxMin(false);
 
         chartModel.showLegend(chartOptions.showLegend);
 

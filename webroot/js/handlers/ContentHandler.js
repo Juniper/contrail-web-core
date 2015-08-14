@@ -25,7 +25,6 @@ define(['underscore'], function (_) {
                         if ($(contentContainer).html() == '') {
                             $(contentContainer).html('<p id="content-container-loading"><i class="icon-spinner icon-spin"></i> &nbsp;Loading content ..</p>');
                         }
-
                     }, 2000);
 
                     $.each(getValueByJsonPath(currMenuObj, 'resources;resource', []), function (idx, currResourceObj) {
@@ -96,7 +95,7 @@ define(['underscore'], function (_) {
                         $.each(currMenuObj['resources']['resource'],function(idx,currResourceObj) {
                             if (window[currResourceObj['class']] != null &&
                                 window[currResourceObj['class']]['updateViewByHash'] != null) {
-                                window[currResourceObj['class']].updateViewByHash(currPageQueryStr, lastPageQueryStr);
+                                window[currResourceObj['class']].updateViewByHash(currPageQueryStr, lastPageQueryStr, currMenuObj);
                             }
                         });
                     });

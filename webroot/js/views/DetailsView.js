@@ -8,8 +8,7 @@ define([
 ], function (_, ContrailView) {
     var DetailsView = ContrailView.extend({
         render: function () {
-            var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
-                viewConfig = this.attributes.viewConfig,
+            var viewConfig = this.attributes.viewConfig,
                 data = viewConfig['data'],
                 ajaxConfig = viewConfig['ajaxConfig'],
                 templateConfig = viewConfig['templateConfig'],
@@ -19,38 +18,59 @@ define([
                 self = this, modelMap = this.modelMap;
 
             if(contrail.checkIfExist(data)) {
-                self.$el.html(detailsTemplate(data));
+                self.$el.html(detailsTemplate({data: data, requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY}));
                 initActionClickEvents(self.$el, templateConfig.actions, data);
             } else {
-                self.$el.append(loadingSpinnerTemplate);
+                self.$el.html(detailsTemplate({data: [], requestState: cowc.DATA_REQUEST_STATE_FETCHING}));
 
                 if (modelMap != null && modelMap[viewConfig['modelKey']] != null) {
                     var contrailViewModel = modelMap[viewConfig['modelKey']],
-                        attributes;
+                        attributes, requestState;
 
                     if (!contrailViewModel.isRequestInProgress()) {
+                        requestState = cowu.getRequestState4Model(contrailViewModel);
                         attributes = contrailViewModel.attributes;
-                        self.$el.html(detailsTemplate(attributes));
-                        initActionClickEvents(self.$el, templateConfig.actions, attributes);
+                        self.$el.html(detailsTemplate({data: attributes, requestState: requestState}));
+
+                        if (requestState !== 'error') {
+                            initClickEvents(self.$el, templateConfig.actions, attributes);
+                        }
                     } else {
                         contrailViewModel.onAllRequestsComplete.subscribe(function () {
+                            requestState = cowu.getRequestState4Model(contrailViewModel);
                             attributes = contrailViewModel.attributes;
-                            self.$el.html(detailsTemplate(attributes));
-                            initActionClickEvents(self.$el, templateConfig.actions, attributes);
+                            self.$el.html(detailsTemplate({data: attributes, requestState: requestState}));
+
+                            if (requestState !== 'error') {
+                                initClickEvents(self.$el, templateConfig.actions, attributes);
+                            }
                         });
                     }
                 } else {
                     contrail.ajaxHandler(ajaxConfig, null, function (response) {
-                        var parsedData = dataParser(response);
-                        self.$el.html(detailsTemplate(parsedData));
-                        initActionClickEvents(self.$el, templateConfig.actions, parsedData);
+                        var parsedData = dataParser(response),
+                            requestState = cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY;
+
+                        if ($.isEmptyObject(parsedData)) {
+                            requestState = cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY;
+                        }
+
+                        self.$el.html(detailsTemplate({data: parsedData, requestState: requestState}));
+                        initClickEvents(self.$el, templateConfig.actions, parsedData);
+                    }, function (error) {
+                        self.$el.html(detailsTemplate({data: [], requestState: cowc.DATA_REQUEST_STATE_ERROR}));
                     });
                 }
             }
         }
     });
 
-    var initActionClickEvents = function(detailEl, actions, data) {
+    function initClickEvents(detailEl, actions, data) {
+        initActionClickEvents(detailEl, actions, data);
+        initWidgetViewEvents(detailEl)
+    };
+
+    function initActionClickEvents(detailEl, actions, data) {
         if (_.isArray(actions)) {
             $.each(actions, function(actionKey, actionValue) {
                 if(actionValue.type == 'dropdown') {
@@ -65,6 +85,22 @@ define([
                 }
             })
         }
+    };
+
+    function initWidgetViewEvents(detailEl) {
+        $(detailEl).find('[data-action="list-view"]')
+            .off('click')
+            .on('click', function (event) {
+                $(this).parents('.widget-box').find('.list-view').show();
+                $(this).parents('.widget-box').find('.advanced-view').hide();
+            });
+
+        $(detailEl).find('[data-action="advanced-view"]')
+            .off('click')
+            .on('click', function (event) {
+                $(this).parents('.widget-box').find('.advanced-view').show();
+                $(this).parents('.widget-box').find('.list-view').hide();
+            })
     };
 
     return DetailsView;

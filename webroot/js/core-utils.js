@@ -164,6 +164,18 @@ define(['underscore'], function (_) {
             return '-';
         };
 
+        this.getRequestState4Model = function(model, data, checkEmptyDataCB) {
+            if (model.isRequestInProgress()) {
+                return cowc.DATA_REQUEST_STATE_FETCHING;
+            } else if (model.error === true) {
+                return cowc.DATA_REQUEST_STATE_ERROR;
+            } else if (model.empty === true || (contrail.checkIfFunction(checkEmptyDataCB) && checkEmptyDataCB(data))) {
+                return cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY;
+            } else {
+                return cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY
+            }
+        };
+
         this.formatElementId = function (strArray) {
             var elId = '',
                 str = strArray.join('_');
@@ -333,22 +345,35 @@ define(['underscore'], function (_) {
         /* Detail Template Generator*/
 
         this.generateBlockListKeyValueTemplate = function (config, app) {
-            var template = '<ul class="item-list">';
+            var template = '' +
+                '{{#IfCompare requestState "' + cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY + '" operator="!==" }}' +
+                    '{{#IfCompare requestState "' + cowc.DATA_REQUEST_STATE_FETCHING + '" operator="===" }}' +
+                        '<p>' + cowm.DATA_FETCHING+ '</p>' +
+                    '{{/IfCompare}} ' +
+                    '{{#IfCompare requestState "' + cowc.DATA_REQUEST_STATE_ERROR + '" operator="===" }}' +
+                        '<p class="error-text">' + cowm.DATA_ERROR + '</p>' +
+                    '{{/IfCompare}} ' +
+                    '{{#IfCompare requestState "' + cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY + '" operator="===" }}' +
+                        '<p>' + cowm.DATA_SUCCESS_EMPTY + '</p>' +
+                    '{{/IfCompare}} ' +
+                '{{else}}' +
+                    '<ul class="item-list">';
 
             $.each(config, function (configKey, configValue) {
                 template += '' +
-                    '{{#IfValidJSONValueByPath "' + configValue.key + '" this ' + configKey + '}}' +
+                    '{{#IfValidJSONValueByPath "' + configValue.key + '" data ' + configKey + '}}' +
                     '<li>' +
                     '<label class="inline row-fluid">' +
                     '<span class="key span5"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>' +
-                    '<span class="value span7">{{{getValueByConfig this config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
+                    '<span class="value span7">{{{getValueByConfig data config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
 
                 template += '</label>' +
                     '</li>' +
                     '{{/IfValidJSONValueByPath}}';
             });
 
-            template += '</ul>';
+            template += '</ul>' +
+                '{{/IfCompare}}';
 
             return template;
         };
@@ -382,7 +407,7 @@ define(['underscore'], function (_) {
                         columnTemplateObj = $(columnTemplate({class: columnValue.class}));
 
                         $.each(columnValue.rows, function (rowKey, rowValue) {
-                            columnTemplateObj.append(self.generateInnerTemplate(rowValue, app))
+                            columnTemplateObj.append(self.generateInnerTemplate(rowValue, app));
                             templateObj.append(columnTemplateObj);
                         });
                     });
@@ -392,14 +417,36 @@ define(['underscore'], function (_) {
                     var template = '';
 
                     if (config.theme == cowc.THEME_DETAIL_WIDGET) {
-                        template = '<div class="detail-block-list-content widget-box transparent">' +
-                            '<div class="widget-header">' +
-                            '<h4 class="smaller">' + config.title + '</h4>' +
-                            '<div class="widget-toolbar pull-right"><a data-action="collapse"><i class="icon-chevron-up"></i></a></div>' +
-                            '</div>' +
-                            '<div class="widget-body"><div class="widget-main row-fluid">' +
-                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app) +
-                            '</div></div>' +
+                        template = '' +
+                            '<div class="detail-block-list-content widget-box transparent">' +
+                                '<div class="widget-header">' +
+                                    '<h4 class="smaller">' +
+                                        '{{#IfCompare requestState "fetching" operator="==" }}' + '<i class="icon-spin icon-spinner"></i>' + '{{/IfCompare}}' +
+                                        config.title +
+                                    '</h4>' +
+                                    '<div class="widget-toolbar pull-right">' +
+                                        '<a data-action="collapse"><i class="icon-chevron-up"></i></a>' +
+                                    '</div>' +
+                                    '<div class="widget-toolbar pull-right">' +
+                                        '<a data-action="settings" data-toggle="dropdown" style="display: inline-block;"><i class="icon-cog"></i></a>' +
+                                        '<ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">' +
+                                            '<li><a data-action="list-view"><i class="icon-list"></i> &nbsp; Basic view </a></li>' +
+                                            '<li><a data-action="advanced-view"><i class="icon-code"></i> &nbsp; Advanced view </a></li>' +
+                                        '</ul>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="widget-body">' +
+                                    '<div class="widget-main row-fluid">' +
+                                        '<div class="list-view">' +
+                                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app) +
+                                        '</div>' +
+                                        '<div class="advanced-view hide">' +
+                                            '{{{formatGridJSON2HTML this.data' +
+                                                ((contrail.checkIfExist(config.templateGeneratorData) && config.templateGeneratorData !== '') ? '.' + config.templateGeneratorData : '') +
+                                            '}}}' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
                             '</div>';
                     } else {
                         template = '<div class="detail-block-list-content row-fluid">' +
@@ -457,7 +504,7 @@ define(['underscore'], function (_) {
                 templateObj = $(template(config));
 
             templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
-            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this}}}');
+            templateObj.find('.detail-foundation-content-advanced').append('{{{formatGridJSON2HTML this.data}}}');
 
             return Handlebars.compile(templateObj.prop('outerHTML'));
         };
@@ -520,7 +567,6 @@ define(['underscore'], function (_) {
             });
             return formatStr;
         };
-
 
         this.addUnits2Packets = function (traffic, noDecimal, maxPrecision, precision) {
             var trafficPrefixes = ['packets', 'K packets', 'M packets', "B packets", "T packets"],

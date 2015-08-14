@@ -73,8 +73,8 @@ define([
             , interactiveLayer = nvd3v181.interactiveGuideline()
             ;
 
-        var margin = {top: 30, right: 30, bottom: 30, left: 60}
-            , margin2 = {top: 0, right: 30, bottom: 40, left: 60}
+        var margin = chartOptions.margin
+            , margin2 = chartOptions.margin2
             , color = nvd3v181.utils.defaultColor()
             , width = null
             , height = null
@@ -94,7 +94,7 @@ define([
             , defaultState = null
             ;
 
-        lines.clipEdge(true).duration(0);
+        lines.clipEdge(false).duration(0);
         lines2.interactive(false);
         xAxis.orient('bottom').tickPadding(5);
         yAxis.orient('left');
@@ -131,9 +131,12 @@ define([
         };
 
         function chartModel(selection) {
-            selection.each(function (data) {
+            selection.each(function (chartDataObj) {
                 var container = d3.select(this),
-                    that = this;
+                    that = this,
+                    data = chartDataObj.data,
+                    requestState = chartDataObj.requestState;
+
                 nvd3v181.utils.initSVG(container);
                 var availableWidth = nvd3v181.utils.availableWidth(width, container, margin),
                     availableHeight1 = nvd3v181.utils.availableHeight(height, container, margin) - height2,
@@ -165,19 +168,9 @@ define([
                     }
                 }
 
-                // Display No Data message if there's nothing to show.
-                if (!data || !data.length || !data.filter(function (d) {
-                        return d.values.length
-                    }).length) {
-                    nvd3v181.utils.noData(chartModel, container)
-                    return chartModel;
-                } else {
-                    container.selectAll('.nv-noData').remove();
-                }
-
                 // Setup Scales
                 xScale = lines.xScale();
-                yScale = lines.yScale()
+                yScale = lines.yScale();
                 x2 = lines2.xScale();
                 y2 = lines2.yScale();
 
@@ -347,83 +340,84 @@ define([
                 // Event Handling/Dispatching (in chart's scope)
                 //------------------------------------------------------------
 
-                legend.dispatch.on('stateChange', function (newState) {
-                    for (var key in newState)
-                        state[key] = newState[key];
-                    dispatch.stateChange(state);
-                    chartModel.update();
-                });
+                if (requestState === cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY) {
+                    legend.dispatch.on('stateChange', function (newState) {
+                        for (var key in newState)
+                            state[key] = newState[key];
+                        dispatch.stateChange(state);
+                        chartModel.update();
+                    });
 
-                interactiveLayer.dispatch.on('elementMousemove', function (e) {
-                    lines.clearHighlights();
-                    var singlePoint, pointIndex, pointXLocation, allData = [];
-                    data
-                        .filter(function (series, i) {
-                            series.seriesIndex = i;
-                            return !series.disabled;
-                        })
-                        .forEach(function (series, i) {
-                            var extent = brush.empty() ? x2.domain() : brush.extent();
-                            var currentValues = series.values.filter(function (d, i) {
-                                return lines.x()(d, i) >= extent[0] && lines.x()(d, i) <= extent[1];
+                    interactiveLayer.dispatch.on('elementMousemove', function (e) {
+                        lines.clearHighlights();
+                        var singlePoint, pointIndex, pointXLocation, allData = [];
+                        data
+                            .filter(function (series, i) {
+                                series.seriesIndex = i;
+                                return !series.disabled;
+                            })
+                            .forEach(function (series, i) {
+                                var extent = brush.empty() ? x2.domain() : brush.extent();
+                                var currentValues = series.values.filter(function (d, i) {
+                                    return lines.x()(d, i) >= extent[0] && lines.x()(d, i) <= extent[1];
+                                });
+
+                                pointIndex = nvd3v181.interactiveBisect(currentValues, e.pointXValue, lines.x());
+                                var point = currentValues[pointIndex];
+                                var pointYValue = chartModel.y()(point, pointIndex);
+                                if (pointYValue != null) {
+                                    lines.highlightPoint(i, pointIndex, true);
+                                }
+                                if (point === undefined) return;
+                                if (singlePoint === undefined) singlePoint = point;
+                                if (pointXLocation === undefined) pointXLocation = chartModel.xScale()(chartModel.x()(point, pointIndex));
+                                allData.push({
+                                    key: series.key,
+                                    value: chartModel.y()(point, pointIndex),
+                                    color: color(series, series.seriesIndex)
+                                });
                             });
+                        //Highlight the tooltip entry based on which point the mouse is closest to.
+                        if (allData.length > 2) {
+                            var yValue = chartModel.yScale().invert(e.mouseY);
+                            var domainExtent = Math.abs(chartModel.yScale().domain()[0] - chartModel.yScale().domain()[1]);
+                            var threshold = 0.03 * domainExtent;
+                            var indexToHighlight = nvd3v181.nearestValueIndex(allData.map(function (d) {
+                                return d.value
+                            }), yValue, threshold);
+                            if (indexToHighlight !== null)
+                                allData[indexToHighlight].highlight = true;
+                        }
 
-                            pointIndex = nvd3v181.interactiveBisect(currentValues, e.pointXValue, lines.x());
-                            var point = currentValues[pointIndex];
-                            var pointYValue = chartModel.y()(point, pointIndex);
-                            if (pointYValue != null) {
-                                lines.highlightPoint(i, pointIndex, true);
-                            }
-                            if (point === undefined) return;
-                            if (singlePoint === undefined) singlePoint = point;
-                            if (pointXLocation === undefined) pointXLocation = chartModel.xScale()(chartModel.x()(point, pointIndex));
-                            allData.push({
-                                key: series.key,
-                                value: chartModel.y()(point, pointIndex),
-                                color: color(series, series.seriesIndex)
+                        var xValue = xAxis.tickFormat()(chartModel.x()(singlePoint, pointIndex));
+                        interactiveLayer.tooltip
+                            .position({left: e.mouseX + margin.left, top: e.mouseY + margin.top})
+                            .chartContainer(that.parentNode)
+                            .valueFormatter(function (d, i) {
+                                return d == null ? "N/A" : yAxis.tickFormat()(d);
+                            })
+                            .data({
+                                value: xValue,
+                                index: pointIndex,
+                                series: allData
+                            })();
+
+                        interactiveLayer.renderGuideLine(pointXLocation);
+                    });
+
+                    interactiveLayer.dispatch.on("elementMouseout", function (e) {
+                        lines.clearHighlights();
+                    });
+
+                    dispatch.on('changeState', function (e) {
+                        if (typeof e.disabled !== 'undefined') {
+                            data.forEach(function (series, i) {
+                                series.disabled = e.disabled[i];
                             });
-                        });
-                    //Highlight the tooltip entry based on which point the mouse is closest to.
-                    if (allData.length > 2) {
-                        var yValue = chartModel.yScale().invert(e.mouseY);
-                        var domainExtent = Math.abs(chartModel.yScale().domain()[0] - chartModel.yScale().domain()[1]);
-                        var threshold = 0.03 * domainExtent;
-                        var indexToHighlight = nvd3v181.nearestValueIndex(allData.map(function (d) {
-                            return d.value
-                        }), yValue, threshold);
-                        if (indexToHighlight !== null)
-                            allData[indexToHighlight].highlight = true;
-                    }
-
-                    var xValue = xAxis.tickFormat()(chartModel.x()(singlePoint, pointIndex));
-                    interactiveLayer.tooltip
-                        .position({left: e.mouseX + margin.left, top: e.mouseY + margin.top})
-                        .chartContainer(that.parentNode)
-                        .valueFormatter(function (d, i) {
-                            return d == null ? "N/A" : yAxis.tickFormat()(d);
-                        })
-                        .data({
-                            value: xValue,
-                            index: pointIndex,
-                            series: allData
-                        })();
-
-                    interactiveLayer.renderGuideLine(pointXLocation);
-
-                });
-
-                interactiveLayer.dispatch.on("elementMouseout", function (e) {
-                    lines.clearHighlights();
-                });
-
-                dispatch.on('changeState', function (e) {
-                    if (typeof e.disabled !== 'undefined') {
-                        data.forEach(function (series, i) {
-                            series.disabled = e.disabled[i];
-                        });
-                    }
-                    chartModel.update();
-                });
+                        }
+                        chartModel.update();
+                    });
+                }
 
                 //============================================================
                 // Functions
@@ -702,9 +696,8 @@ define([
         // Customize NVD3 Chart
         //------------------------------------------------------------
 
-        chartModel.margin({top: 20, right: 30, bottom: 50, left: 80})
-            .brushExtent(chartOptions['brushExtent'])
-            .useInteractiveGuideline(true);
+        chartModel.brushExtent(chartOptions['brushExtent'])
+                  .useInteractiveGuideline(true);
 
         chartModel.interpolate(cowu.interpolateSankey);
 
@@ -716,10 +709,15 @@ define([
             return d3.time.format('%H:%M:%S')(new Date(d));
         });
 
-        chartModel.yAxis.axisLabel(chartOptions.yAxisLabel).axisLabelDistance(20).tickFormat(chartOptions['yFormatter']).showMaxMin(false);
+        chartModel.yAxis.axisLabel(chartOptions.yAxisLabel)
+                        .axisLabelDistance(chartOptions.axisLabelDistance)
+                        .tickFormat(chartOptions['yFormatter'])
+                        .showMaxMin(false);
 
-        chartModel.lines.forceY([0, 1]);
-        chartModel.lines2.forceY([0, 1]);
+        if(contrail.checkIfExist(chartOptions.forceY)) {
+            chartModel.lines.forceY(chartOptions.forceY);
+            chartModel.lines2.forceY(chartOptions.forceY);
+        }
 
         return chartModel;
     };

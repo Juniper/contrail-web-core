@@ -246,19 +246,19 @@ define([
     }
 
     function dataLoadingHandler(chartView, chartConfig, chartOptions) {
-        var noDataMessage = cowc.CHART_LOADING_MESSAGE;
+        var noDataMessage = cowm.DATA_FETCHING;
         plotZoomScatterChartData(chartView, chartConfig, chartOptions);
         chartView.svg.attr('opacity', '0.8');
         renderChartMessage(chartView, noDataMessage);
     }
 
     function dataEmptyHandler(chartView, chartConfig) {
-        var noDataMessage = contrail.checkIfExist(chartConfig.noDataMessage) ? chartConfig.noDataMessage : cowc.CHART_NO_DATA_MESSAGE;
+        var noDataMessage = contrail.checkIfExist(chartConfig.noDataMessage) ? chartConfig.noDataMessage : cowm.DATA_SUCCESS_EMPTY;
         renderChartMessage(chartView, noDataMessage);
     }
 
     function dataErrorHandler(chartView) {
-        var noDataMessage = cowc.DATA_ERROR_MESSAGE;
+        var noDataMessage = cowm.DATA_ERROR;
         renderChartMessage(chartView, noDataMessage);
     }
 

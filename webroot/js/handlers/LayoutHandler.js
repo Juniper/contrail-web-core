@@ -10,10 +10,9 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
         $.param.fragment.noEscape(":[]");
 
         this.load = function () {
-            var webServerInfoDefObj = $.Deferred();
-
             menuHandler = new MenuHandler();
             menuHandler.loadMenu();
+            menuHandler.handleSideMenu();
 
             contentHandler = new ContentHandler();
 
