@@ -1,20 +1,20 @@
 /*
  * Copyright (c) 2015 Juniper Networks, Inc. All rights reserved.
  */
-define(['underscore'], function (_) {
-    var self = this;
+define([
+    'jquery',
+    'underscore',
+    'co-test-messages',
+    'contrail-list-model',
+], function ($, _, cotm, ContrailListModel) {
+
 
     this.getRegExForUrl = function (url) {
         var regexUrlMap = {
             '/api/admin/webconfig/featurePkg/webController': /\/api\/admin\/webconfig\/featurePkg\/webController\?.*$/,
             '/api/admin/webconfig/features/disabled': /\/api\/admin\/webconfig\/features\/disabled\?.*$/,
             '/api/service/networking/web-server-info': /\/api\/service\/networking\/web-server-info.*$/,
-            '/menu.xml': /\/menu\.xml.*$/,
-            '/api/tenants/config/domains': /\/api\/tenants\/config\/domains.*$/,
-            '/sm/tags/names': /\/sm\/tags\/names.*$/,
-            '/sm/objects/details/image': /\/sm\/objects\/details\/image\?.*$/,
-            '/api/tenant/networking/virtual-networks/details': /\/api\/tenant\/networking\/virtual-networks\/details\?.*$/,
-            '/api/tenant/networking/stats': /\/api\/tenant\/networking\/stats.*$/
+            '/menu.xml': /\/menu\.xml.*$/
         };
 
         return regexUrlMap [url];
@@ -40,7 +40,7 @@ define(['underscore'], function (_) {
     };
 
 
-    this.getPageHeaderHTML = function() {
+    this.getPageHeaderHTML = function () {
         return '<div id="pageHeader" class="navbar navbar-inverse navbar-fixed-top"> ' +
             '<div class="navbar-inner"> ' +
             '<div class="container-fluid"> ' +
@@ -70,7 +70,7 @@ define(['underscore'], function (_) {
             '</div> <!--/.navbar-inner--> </div>';
     };
 
-    this.getSidebarHTML = function() {
+    this.getSidebarHTML = function () {
         return '<div class="container-fluid" id="main-container"> ' +
             '<a id="menu-toggler" href="#"> ' +
             '<span></span> ' +
@@ -96,7 +96,7 @@ define(['underscore'], function (_) {
             '</div> </div>'
     };
 
-    this.getCSSList = function() {
+    this.getCSSList = function () {
         var cssList = [];
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap.min.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap-responsive.min.css"/>');
@@ -117,12 +117,13 @@ define(['underscore'], function (_) {
         return cssList;
     };
 
-    this.getFakeServer = function(serverConfig) {
+    this.getFakeServer = function (serverConfig) {
         var fakeServer = sinon.fakeServer.create();
         fakeServer.autoRespond = (serverConfig == null || serverConfig['autoRespond'] == null) ? true : serverConfig['autoRespond'];
+        fakeServer.autoRespondAfter = (serverConfig == null || serverConfig['autoRespondAfter'] == null) ? 0 : serverConfig['autoRespondAfter'];
         fakeServer.xhr.useFilters = true;
 
-        fakeServer.xhr.addFilter(function(method, url) {
+        fakeServer.xhr.addFilter(function (method, url) {
             var searchResult = url.search(/.*\.tmpl.*/);
             return searchResult == -1 ? false : true;
         });
@@ -130,14 +131,113 @@ define(['underscore'], function (_) {
         return fakeServer;
     };
 
+    this.getViewConfigObj = function (viewObj) {
+        if ((viewObj != null) &&
+            contrail.checkIfExist(viewObj.attributes) &&
+            contrail.checkIfExist(viewObj.attributes.viewConfig)) {
+            return viewObj.attributes.viewConfig;
+        }
+    };
+
+    this.setViewObjAndViewConfig4All = function (rootViewObj, testConfig) {
+        _.each(testConfig, function (viewIdConfig) {
+            viewIdConfig.viewObj = rootViewObj.viewMap[viewIdConfig.viewId];
+            viewIdConfig.viewConfigObj = this.getViewConfigObj(viewIdConfig.viewObj);
+        })
+    };
+
+    this.formatTestModuleMessage = function (message, id) {
+        if (message != null && id != null) {
+            return message + ":" + id + " - ";
+        } else {
+            if (message != null) {
+                return message + " - ";
+            }
+        }
+    };
+
+    this.getGridDataSourceWithOnlyRemotes = function (viewConfig) {
+        if (contrail.checkIfExist(viewConfig.elementConfig)) {
+            var dataSource = viewConfig.elementConfig['body']['dataSource'];
+            //return everything except dataView, cacheConfig if exist
+            if (contrail.checkIfExist(dataSource.cacheConfig)) {
+                delete dataSource.cacheConfig;
+            }
+            if (contrail.checkIfExist(dataSource.dataView)) {
+                delete dataSource.dataView;
+            }
+            return dataSource;
+        }
+    };
+
+    this.createMockData = function (rootViewObj, testConfigObj, deferredObj) {
+        var deferredList = [];
+        _.each(testConfigObj, function (testConfig) {
+            var primaryMockDataConfig;
+
+            if (contrail.checkIfExist(testConfig.modelConfig)) {
+                primaryMockDataConfig = testConfig.modelConfig;
+            }
+
+            _.each(testConfig.suites, function (suiteConfig) {
+                var mockDataConfig = primaryMockDataConfig;
+
+                if (contrail.checkIfExist(suiteConfig.modelConfig)) {
+                    mockDataConfig = suiteConfig.modelConfig;
+                }
+
+                if (mockDataConfig != null) {
+                    suiteConfig.modelConfig = mockDataConfig; // adding the model config to suiteConfig.
+                    if (contrail.checkIfExist(mockDataConfig.dataGenerator)) {
+                        var mockDataDefObj = $.Deferred();
+                        deferredList.push(mockDataDefObj);
+                        /**
+                         * generator returns a model. if the model has promise to check if the requests are complete,
+                         * we will use that promise. otherwise the promise passed on as argument will be checked.
+                         */
+                        var optionalDefObj = $.Deferred();
+                        var onDataCompleteCB = function () {
+                            suiteConfig.model = mockDataModel;
+                            var mockData = mockDataModel.getItems();
+                            if (contrail.checkIfExist(mockDataConfig.dataParsers.mockDataParseFn)) {
+                                mockData = mockDataConfig.dataParsers.mockDataParseFn(mockData);
+                            }
+                            suiteConfig.mockData = mockData;
+                            mockDataDefObj.resolve();
+                        };
+
+                        var mockDataModel = mockDataConfig.dataGenerator(testConfig.viewObj, optionalDefObj);
+
+                        if (contrail.checkIfExist(mockDataModel.onAllRequestsComplete)) {
+                            mockDataModel.onAllRequestsComplete.subscribe(onDataCompleteCB);
+                        } else {
+                            optionalDefObj.done(onDataCompleteCB);
+                        }
+
+                    }
+                }
+            });
+        });
+
+        $.when.apply($, deferredList).done(function () {
+            deferredObj.resolve();
+        });
+    };
+
+
     return {
-        self: self,
         getRegExForUrl: getRegExForUrl,
         getNumberOfColumnsForGrid: getNumberOfColumnsForGrid,
         startQunitWithTimeout: startQunitWithTimeout,
         getCSSList: getCSSList,
         getSidebarHTML: getSidebarHTML,
         getPageHeaderHTML: getPageHeaderHTML,
-        getFakeServer: getFakeServer
+        getFakeServer: getFakeServer,
+        getViewConfigObj: getViewConfigObj,
+        setViewObjAndViewConfig4All: setViewObjAndViewConfig4All,
+        formatTestModuleMessage: formatTestModuleMessage,
+        getGridDataSourceWithOnlyRemotes: getGridDataSourceWithOnlyRemotes,
+        createMockData: createMockData
     };
+
 });

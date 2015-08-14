@@ -2612,6 +2612,13 @@ color: #b94a48;
 .row-fluid.form-multiselect-label [class*="span"] {
     min-height: 25px;
 }
+.form-element {
+    margin-bottom: 10px;
+}
+.form-element .input-append,
+.form-element .help-block{
+    margin-bottom: 0;
+}
 .chart-settings-label {
 	margin-bottom:0px;
 	display:inline-block;
