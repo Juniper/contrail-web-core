@@ -703,7 +703,7 @@
 <!-- View Templates -->
 
 <script type="text/x-handlebars-template" id="core-edit-form-template">
-    <div class="alert alert-error" data-bind="visible: errors().{{prefixId}}_form_error">
+    <div class="alert alert-error" style="display:none;" data-bind="visible: errors().{{prefixId}}_form_error">
         <strong>Error: </strong>
         <span data-bind="text: errors().{{prefixId}}_form_error"></span>
     </div>
@@ -715,7 +715,7 @@
     <div id="{{elementId}}">
         {{#each viewConfig}}
         {{#if this.title}}
-        <h3>{{this.title}} <span class="red pull-right" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="icon-warning-sign red"></i></span></h3>
+        <h3>{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="icon-warning-sign red"></i></span></h3>
         {{/if}}
         <div id="{{this.elementId}}">
         </div>
@@ -743,7 +743,7 @@
         {{#each viewConfig.steps}}
         <h2>{{this.title}}</h2>
         <section>
-            <div class="alert alert-error" data-bind="visible: errors().{{this.elementId}}_form_error">
+            <div class="alert alert-error" style="display:none;" data-bind="visible: errors().{{this.elementId}}_form_error">
                 <button type="button" class="close" data-dismiss="alert"></button>
                 <strong>Error: </strong>
                 <span data-bind="text: errors().{{this.elementId}}_form_error"></span>
@@ -763,22 +763,21 @@
             <label>{{label}}</label>
         </div>
         <div class="span2">
-            <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                 <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
             </span>
         </div>
     </div>
     <div class="row-fluid form-element">
-        {{#IfCompare type 'password' operator='==='}}
         <div class="input-append inset span12">
-            <input type="{{type}}" name="{{id}}" class="span12 {{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
-            <span class="add-on input-type-toggle-action"><i class="icon-eye-open"></i></span>
+            {{#IfCompare type 'password' operator='==='}}
+                <input type="{{type}}" name="{{id}}" class="span12 {{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
+                <span class="add-on input-type-toggle-action"><i class="icon-eye-open"></i></span>
+            {{else}}
+                <input type="{{type}}" name="{{id}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
+            {{/IfCompare}}
         </div>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
-        {{else}}
-        <input type="{{type}}" name="{{id}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
-        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
-        {{/IfCompare}}
     </div>
 </script>
 
@@ -805,7 +804,7 @@
             <label>{{label}}</label>
         </div>
         <div class="span2">
-            <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                 <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
             </span>
         </div>
@@ -823,7 +822,7 @@
             <label>{{label}}</label>
         </div>
         <div class="span2">
-            <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                 <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
             </span>
         </div>
@@ -843,12 +842,12 @@
             <label>{{label}}</label>
         </div>
         <div class="span2">
-            <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                 <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
             </span>
         </div>
     </div>
-    <div class="row-fluid">
+    <div class="row-fluid form-element">
         <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}}, contrailDropdown: {{printJSON elementConfig}}"/>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
@@ -860,12 +859,12 @@
             <label>{{label}}</label>
         </div>
         <div class="span2">
-            <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                 <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
             </span>
         </div>
     </div>
-    <div class="row-fluid">
+    <div class="row-fluid form-element">
         <select name="{{name}}" class="{{class}}"
                 data-bind="
                     {{#if disabled}}disable: {{disabled}}, {{/if}}
@@ -875,6 +874,7 @@
                     optionsCaption: '{{elementConfig.placeholder}}',
                     select2: {}
                 "></select>
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
 
@@ -884,12 +884,12 @@
             <label>{{label}}</label>
         </div>
         <div class="span2">
-            <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                 <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
             </span>
         </div>
     </div>
-    <div class="row-fluid">
+    <div class="row-fluid form-element">
         <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}}, contrailMultiselect: {{printJSON elementConfig}}"/>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>

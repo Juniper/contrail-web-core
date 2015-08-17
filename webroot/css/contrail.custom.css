@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
- 
+
  /* moving vcon-web.css */
-  
+
 .project-autoflow {
   overflow: auto;
   -webkit-transform: translatez(0);
@@ -118,7 +118,7 @@
   display: inline-block;
   border-radius: 16px;
   overflow: hidden;
- text-align: center;
+  text-align: center;
   line-height: 32px;
   color: transparent;
 }
@@ -308,7 +308,7 @@ div.t-grid td {
 }
 /* End - Cross filter CSS */
 .vSlider input {
-    display:none;
+  display:none;
 }
 /* End vcon-web.css*/
  
@@ -2621,6 +2621,13 @@ p.error, p.error-text {
 .row-fluid.form-dropdown-label [class*="span"],
 .row-fluid.form-multiselect-label [class*="span"] {
     min-height: 25px;
+}
+.form-element {
+    margin-bottom: 10px;
+}
+.form-element .input-append,
+.form-element .help-block{
+    margin-bottom: 0;
 }
 .chart-settings-label {
 	margin-bottom:0px;

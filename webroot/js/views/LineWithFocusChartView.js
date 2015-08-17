@@ -132,16 +132,14 @@ define([
                 height: 300,
                 yAxisLabel: 'Traffic',
                 y2AxisLabel: '',
+                forceY: [0, 60],
                 yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); },
                 y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }
             };
 
         chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
 
-        var defaultForceY = contrail.checkIfExist(chartOptions['forceY']) ? chartOptions['forceY'] : [0, 60],
-            newForceY = getForceYAxis(chartData, defaultForceY);
-
-        chartOptions['forceY'] = newForceY;
+        chartOptions['forceY'] = getForceYAxis(chartData, chartOptions['forceY']);
 
         if (chartData.length > 0) {
             spliceBorderPoints(chartData);

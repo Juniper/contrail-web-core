@@ -48,7 +48,7 @@ define([
                 data = viewConfig['parseFn'](data);
             }
 
-            chartViewConfig = getChartViewConfig(data, viewConfig);
+            chartViewConfig = getChartViewConfig(data, viewConfig.chartOptions);
             chartOptions = chartViewConfig['chartOptions'];
             chartModel = new LineBarWithFocusChartModel(chartOptions);
             this.chartModel = chartModel;
@@ -126,12 +126,14 @@ define([
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
         var chartDefaultOptions = {
-            margin: {top: 50, right: 70, bottom: 30, left: 70},
+            margin: {top: 30, right: 70, bottom: 40, left: 70},
             margin2: {top: 0, right: 70, bottom: 40, left: 70},
             height: 300,
             axisLabelDistance: 5,
             y1AxisLabel: 'CPU Utilization (%)',
             y2AxisLabel: 'Memory Usage',
+            forceY1: [0, 5],
+            forceY2: [0, 5],
             y2Formatter: function (y2Value) {
                 var formattedValue = formatBytes(y2Value * 1024, true);
                 return formattedValue;
@@ -142,13 +144,8 @@ define([
 
         var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
 
-        var defaultForceY1 = contrail.checkIfExist(chartOptions['forceY1']) ? chartOptions['forceY1'] : [0, 5],
-            defaultForceY2 = contrail.checkIfExist(chartOptions['forceY2']) ? chartOptions['forceY2'] : [0, 5],
-            newForceY1 = getForceY1Axis(chartData, defaultForceY1),
-            newForceY2 = getForceY2Axis(chartData, defaultForceY2);
-
-        chartOptions['forceY1'] = newForceY1;
-        chartOptions['forceY2'] = newForceY2;
+        chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1']);
+        chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2']);
 
         if (chartData.length > 0) {
             var values = chartData[0].values,

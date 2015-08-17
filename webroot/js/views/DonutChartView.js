@@ -92,9 +92,9 @@ define([
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
         var chartDefaultOptions = {
-            margin: {top: 10, right: 20, bottom: 20, left: 20},
+            margin: {top: 0, right: 5, bottom: 0, left: 5},
             height: 250,
-            showLegend: true,
+            showLegend: false,
             legendPosition: "top",
             showLabels: true,
             showTooltips: true,

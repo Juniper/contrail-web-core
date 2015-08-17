@@ -94,7 +94,7 @@ define([
             , defaultState = null
             ;
 
-        lines.clipEdge(true).duration(0);
+        lines.clipEdge(false).duration(0);
         lines2.interactive(false);
         xAxis.orient('bottom').tickPadding(5);
         yAxis.orient('left');
