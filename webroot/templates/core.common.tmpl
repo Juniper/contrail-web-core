@@ -793,7 +793,7 @@
         </div>
     </div>
     <div class="row-fluid form-element">
-        <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}" data-bind="value: {{dataBindValue}},contrailCombobox: {{printJSON elementConfig}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
+        <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}" data-bind="value: {{dataBindValue}}, contrailCombobox: {{printJSON elementConfig}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
