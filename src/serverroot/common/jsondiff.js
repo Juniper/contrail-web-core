@@ -48,27 +48,27 @@ function buildConfigDeltaJson (delta, oldJson, newJson, type, optFields,
         var splitArr = optFields[i].split(':');
         var splitArrLen = splitArr.length;
         if (splitArrLen > 1) {
-            if ((null != delta[splitArr[0]]) &&
-                (null != delta[splitArr[0]][splitArr[1]])) {
-                if (null != oldJson[splitArr[0]]) {
+            if ((splitArr[0] in delta) &&
+                (splitArr[1] in delta[splitArr[0]])) {
+                if (splitArr[0] in oldJson) {
                     resultJSON[type][splitArr[0]] =
                         tmpOldJson[splitArr[0]];
                     resultJSON[type][splitArr[0]][splitArr[1]] =
                         newJson[splitArr[0]][splitArr[1]];
                     tmpOldJson[splitArr[0]][splitArr[1]] =
                         newJson[splitArr[0]][splitArr[1]];
-                } else if (null != newJson[splitArr[0]]) {
+                } else if (splitArr[0] in newJson) {
                     resultJSON[type][splitArr[0]] =
                         newJson[splitArr[0]];
                 }
             }
             continue;
         }
-        if ((null != delta[optFields[i]]) && (null != newJson)) {
-            if (null != newJson[optFields[i]]) {
+        if ((optFields[i] in delta) && (null != newJson)) {
+            if (optFields[i] in newJson) {
                 resultJSON[type][optFields[i]] = newJson[optFields[i]];
             } else {
-                if ((null != oldJson[optFields[i]]) &&
+                if ((optFields[i] in oldJson) &&
                     (oldJson[optFields[i]] instanceof Array)) {
                     /* Delete entry */
                     resultJSON[type][optFields[i]] = [];
@@ -81,9 +81,9 @@ function buildConfigDeltaJson (delta, oldJson, newJson, type, optFields,
     }
     var mandateFieldsCnt = mandateFields.length;
     for (var i = 0; i < mandateFieldsCnt; i++) {
-        if (null != newJson[mandateFields[i]]) {
+        if (mandateFields[i] in newJson) {
             resultJSON[type][mandateFields[i]] = newJson[mandateFields[i]];
-        } else if (null != oldJson[mandateFields[i]]) {
+        } else if (mandateFields[i] in oldJson) {
             resultJSON[type][mandateFields[i]] = oldJson[mandateFields[i]];
         }
     }
