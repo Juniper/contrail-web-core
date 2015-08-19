@@ -10,9 +10,11 @@ define([
         constructor: function () {
             var self = this;
 
-            self.isMyRenderInProgress = false;
+            self.isMyViewRenderInProgress = false;
             self.childViewMap = {};
+            self.error = false;
 
+            self.onAllViewsRenderComplete = new Slick.Event();
             self.onAllRenderComplete = new Slick.Event();
 
             Backbone.View.apply(self, arguments);
@@ -20,9 +22,14 @@ define([
             //The top view may not have any argument.
             if(arguments.length > 0) {
                 self.rootView = arguments[0].rootView;
-                var onAllRenderCompleteCB = arguments[0].onAllRenderCompleteCB;
+                var onAllViewsRenderCompleteCB = arguments[0].onAllViewsRenderCompleteCB,
+                    onAllRenderCompleteCB = arguments[0].onAllRenderCompleteCB;
 
-                if (contrail.checkIfFunction(onAllRenderCompleteCB)) {
+                if (contrail.checkIfFunction(onAllViewsRenderCompleteCB)) {
+                    self.onAllViewsRenderComplete.subscribe(function() {
+                        onAllViewsRenderCompleteCB();
+                    });
+                } else if (contrail.checkIfFunction(onAllRenderCompleteCB)) {
                     self.onAllRenderComplete.subscribe(function() {
                         onAllRenderCompleteCB();
                     });
@@ -32,42 +39,39 @@ define([
             return self;
         },
 
-        isViewRenderInProgress: function() {
+        isAnyViewRenderInProgress: function() {
             var isChildRenderInProgress = false;
 
             for(var key in this.childViewMap) {
-                if(this.childViewMap[key] == null || this.childViewMap[key].isViewRenderInProgress()) {
+                if(this.childViewMap[key] == null || this.childViewMap[key].isAnyViewRenderInProgress()) {
                     isChildRenderInProgress = true;
                     break;
                 }
             }
 
-            return isChildRenderInProgress || this.isMyRenderInProgress;
+            return isChildRenderInProgress || this.isMyViewRenderInProgress;
         },
 
         isAnyRenderInProgress: function() {
-            //TODO: We have to implement this function
-            return this.isViewRenderInProgress() || this.isModelRequestInProgress();
+            return this.isAnyViewRenderInProgress() || this.isModelRequestInProgress();
         },
 
         isModelRequestInProgress: function() {
-            //TODO: We have to implement this function
-            return false;
+            if(this.model != null && contrail.checkIfFunction(this.model.isRequestInProgress)) {
+                return this.model.isRequestInProgress();
+            } else {
+                return false;
+            }
         },
 
-        renderView4Config: function (parentElement, model, viewObj, validation,
-            lockEditingByDefault, modelMap, onRenderCompleteCallback) {
+        renderView4Config: function (parentElement, model, viewObj, validation, lockEditingByDefault, modelMap, onAllViewsRenderComplete, onAllRenderComplete) {
             var viewName = viewObj['view'],
                 viewPathPrefix = viewObj['viewPathPrefix'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
-                visible = (viewObj['visible'] != null) ?
-                    viewObj['visible'] : true,
+                visible = (viewObj['visible'] != null) ? viewObj['visible'] : true,
                 label = viewObj['label'],
                 validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
-                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG],
-                    elementId: elementId, validation: validation,
-                    lockEditingByDefault: lockEditingByDefault,
-                    visible: visible,label: label},
+                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault, visible: visible, label: label},
                 app = viewObj['app'], self = this;
 
             self.childViewMap[elementId] = null;
@@ -82,15 +86,29 @@ define([
                     modelMap: modelMap,
                     app: app,
                     rootView: rootView,
-                    onAllRenderCompleteCB: function() {
-                        if(!self.isViewRenderInProgress()) {
-                            self.onAllRenderComplete.notify();
+                    onAllViewsRenderCompleteCB: function() {
+                        if(!self.isAnyViewRenderInProgress()) {
+                            // Notify parent the one of child's rendering is complete.
+                            self.onAllViewsRenderComplete.notify();
 
-                            if(contrail.checkIfFunction(onRenderCompleteCallback)) {
-                                onRenderCompleteCallback();
+                            if(contrail.checkIfFunction(onAllViewsRenderComplete)) {
+                                // Call any callback associated with onViewRenderComplete of child view.
+                                onAllViewsRenderComplete();
                             }
                         }
                     }
+                    /*
+                    onAllRenderCompleteCB: function() {
+                        if(!self.isAnyViewRenderInProgress()) {
+                            // Notify parent the one of child's rendering is complete.
+                            self.onAllRenderComplete.notify();
+
+                            if(contrail.checkIfFunction(onAllRenderComplete)) {
+                                // Call any callback associated with onViewRenderComplete of child view.
+                                onAllRenderComplete();
+                            }
+                        }
+                    }*/
                 };
 
             cowu.renderView(renderConfig, function(renderedView) {
@@ -101,6 +119,7 @@ define([
                 add2ChildViewMap(elementId, renderedView, self);
             });
         },
+
         setRootView: function(childElId, rootView) {
             add2RootViewMap(childElId, this, rootView)
         },
@@ -109,15 +128,31 @@ define([
             add2ChildViewMap(childElId, this, parentView);
         },
 
-        beginMyRendering: function() {
-            this.isMyRenderInProgress = true;
+        beginMyViewRendering: function() {
+            this.isMyViewRenderInProgress = true;
+            this.error = false;
+        },
+
+        endMyViewRendering: function() {
+            this.isMyViewRenderInProgress = false;
+            if(!this.isAnyViewRenderInProgress()) {
+                this.onAllViewsRenderComplete.notify();
+            }
+
+            if(!this.isAnyRenderInProgress()) {
+                this.onAllRenderComplete.notify();
+            }
+        },
+
+        endMyModelRendering: function() {
+            if(!this.isAnyRenderInProgress()) {
+                this.onAllRenderComplete.notify();
+            }
         },
 
         endMyRendering: function() {
-            this.isMyRenderInProgress = false;
-            if(!this.isViewRenderInProgress()) {
-                this.onAllRenderComplete.notify();
-            }
+            this.endMyViewRendering();
+            this.endMyModelRendering();
         }
     });
 

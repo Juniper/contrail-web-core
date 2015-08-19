@@ -235,8 +235,8 @@ define([
 
         asyncTest("Common Tests", function (assert) {
             expect(0);
-            loadFeature(pageTestConfig.page.hashParams);
-            contentHandler.featureAppDefObj.done(function () {
+            var loadingStartedDefObj = loadFeature(pageTestConfig.page.hashParams);
+            loadingStartedDefObj.done(function () {
                 //additional fake server response setup
                 var responses = pageTestConfig.fakeServer.getResponsesConfig();
                 _.each(responses, function (response) {

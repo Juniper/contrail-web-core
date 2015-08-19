@@ -10,8 +10,7 @@ define(['underscore'], function (_) {
         self.isInitFeatureAppComplete = false;
         self.isInitFeatureAppInProgress = false;
 
-        this.loadViewFromMenuObj = function (currMenuObj) {
-            var resourcesDefObj = $.Deferred();
+        this.loadViewFromMenuObj = function (currMenuObj, resourcesDefObj, loadingStartedDefObj) {
             globalObj.currMenuObj = currMenuObj; //Store in globalObj
             try {
                 self.loadResourcesFromMenuObj(currMenuObj, resourcesDefObj);
@@ -33,7 +32,8 @@ define(['underscore'], function (_) {
                                 window[currResourceObj['class']].load({
                                     containerId: contentContainer,
                                     hashParams: layoutHandler.getURLHashParams(),
-                                    function: currResourceObj['function']
+                                    function: currResourceObj['function'],
+                                    loadingStartedDefObj: loadingStartedDefObj
                                 });
                                 $('#content-container-loading').remove();
                             }
@@ -45,12 +45,16 @@ define(['underscore'], function (_) {
             }
         };
 
-        this.loadContent = function(lastHash, currHash) {
-            var currPageHash = ifNull(currHash['p'], '');
+        this.loadContent = function(lastHash, currHash, loadingStartedDefObj) {
+            var currPageHash = ifNull(currHash['p'], ''),
+                resourcesDefObj = $.Deferred();
+
             if(globalObj['env'] == "test" && currPageHash == '') {
                 return;
             }
+
             hideHardRefresh();
+
             if ($('.modal-backdrop').is(':visible')) {
                 $('.modal-backdrop').remove();
                 $('.modal').remove();
@@ -58,9 +62,6 @@ define(['underscore'], function (_) {
             var lastPageHash = ifNull(lastHash['p'], ''),
                 currPageQueryStr = ifNull(currHash['q'], {}),
                 lastPageQueryStr = ifNull(lastHash['q'], {}),
-                reloadMenu = true, currPageHashArray, subMenuId;
-
-            var lastMenuObj = menuHandler.getMenuObjByHash(lastPageHash),
                 webServerInfo = globalObj['webServerInfo'];
 
             try {
@@ -87,17 +88,20 @@ define(['underscore'], function (_) {
 
                 //If hashchange is within the same page
                 if ((lastPageHash == currPageHash) && (globalObj['menuClicked'] == null || globalObj['menuClicked'] == false)) {
-                    var deferredObj = $.Deferred();
-                    contentHandler.loadResourcesFromMenuObj(currMenuObj,deferredObj);
-                    deferredObj.done(function() {
+                    contentHandler.loadResourcesFromMenuObj(currMenuObj, resourcesDefObj);
+                    resourcesDefObj.done(function() {
                         //If hashchange is within the same page
                         var currMenuObj = menuHandler.getMenuObjByHash(currPageHash);
-                        $.each(currMenuObj['resources']['resource'],function(idx,currResourceObj) {
+                        $.each(currMenuObj['resources']['resource'], function(idx,currResourceObj) {
                             if (window[currResourceObj['class']] != null &&
                                 window[currResourceObj['class']]['updateViewByHash'] != null) {
                                 window[currResourceObj['class']].updateViewByHash(currPageQueryStr, lastPageQueryStr, currMenuObj);
                             }
                         });
+
+                        if(contrail.checkIfExist(loadingStartedDefObj)) {
+                            loadingStartedDefObj.resolve();
+                        }
                     });
                 } else {
                     globalObj['menuClicked'] = false;
@@ -107,7 +111,8 @@ define(['underscore'], function (_) {
                         menuHandler.destroyView(menuObj);
                     }
                     var currMenuObj = menuHandler.getMenuObjByHash(currPageHash);
-                    contentHandler.loadViewFromMenuObj(currMenuObj);
+
+                    contentHandler.loadViewFromMenuObj(currMenuObj, resourcesDefObj, loadingStartedDefObj);
                 }
             } catch (error) {
                 console.log(error.stack);
