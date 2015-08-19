@@ -10,12 +10,15 @@ define([
         render: function () {
             var dropdownTemplate = contrail.getTemplate4Id(cowc.TMPL_DROPDOWN_VIEW),
                 viewConfig = this.attributes.viewConfig,
+                label = this.attributes.label,
                 elId = this.attributes.elementId,
                 app = this.attributes.app,
+                visible =  this.attributes.visible,
                 elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
                 path = viewConfig[cowc.KEY_PATH],
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
-                labelValue = (elId != null) ? cowl.get(elId, app) : cowl.get(path, app),
+                labelValue = (label != null)? label :((elId != null) ?
+                    cowl.get(elId, app) : cowl.get(path, app)),
                 tmplParameters;
 
             if (!(contrail.checkIfExist(lockEditingByDefault) && lockEditingByDefault)) {
@@ -26,6 +29,7 @@ define([
             tmplParameters = {
                 label: labelValue, id: elId + '_dropdown', name: elId,
                 dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
+                visible: visible,
                 lockAttr: lockEditingByDefault,
                 class: "span12", elementConfig: elementConfig
             };
