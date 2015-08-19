@@ -188,7 +188,10 @@ Handlebars.registerHelper('showDeviceOwner', function(block) {
         return 'show';
 });
 
-Handlebars.registerHelper('getLabel', function (labelKey, feature) {
+Handlebars.registerHelper('getLabel', function (label, labelKey, feature) {
+    if(label != null && label != "undefined") {
+        return label;
+    }
     if (feature == cowc.APP_CONTRAIL_SM) {
         return smwl.get(labelKey);
     } else if (feature == cowc.APP_CONTRAIL_CONTROLLER) {
