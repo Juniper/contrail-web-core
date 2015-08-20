@@ -108,7 +108,7 @@ define([
         this.DEFAULT_CONFIG_NOT_FOUND_PAGE = {
             title: 'Page not found.',
             iconClass: 'icon-warning-sign',
-            defaultNavLinks: false
+            defaultNavLinks: false,
         };
 
         this.DEFAULT_CONFIG_ERROR_PAGE = {
