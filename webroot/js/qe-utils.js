@@ -1240,8 +1240,8 @@ function setStatQueryFromValues(url, viewModelKey , viewModel, queryJSON, callba
             validValues = response;
             for (var i = 0; i < validValues.length; i += 1) {
                 if(validValues[i].name.indexOf("StatTable")!=-1){
-                    validValueDS.push({"name":validValues[i].display_name, "value":validValues[i].name});
-                    viewModel[viewModelKey].push({name:validValues[i].display_name, value:validValues[i].name});
+                        validValueDS.push({"name":validValues[i].name, "value":validValues[i].name});
+                        viewModel[viewModelKey].push({name:validValues[i].name, value:validValues[i].name});
                     if (contrail.checkIfFunction(callback)) {
                         callback();
                     }
