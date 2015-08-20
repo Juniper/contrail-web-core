@@ -2615,9 +2615,10 @@ p.error, p.error-text {
 
 /* Section View Styles */
 .modal-body > form > .section-content {
-    padding: 1em 1.5em;
+    padding: 0 1.5em;
 }
 .row-fluid.form-input-label [class*="span"],
+.row-fluid.form-combobox-label [class*="span"],
 .row-fluid.form-dropdown-label [class*="span"],
 .row-fluid.form-multiselect-label [class*="span"] {
     min-height: 25px;

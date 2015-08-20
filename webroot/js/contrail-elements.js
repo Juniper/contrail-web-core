@@ -113,7 +113,8 @@
         return self;
     };
     
-    $.fn.contrailCombobox = function(option) {
+    $.fn.contrailCombobox = function(customOption) {
+        var option = $.extend(true, {}, customOption);
         var self = this, formattedData = [],
             asyncVal = false;
 
@@ -303,7 +304,11 @@
                 .addClass('custom-combobox-input span12')
                 .appendTo( wrapper )
                 .autocomplete(option)
-                .attr('placeholder', option.placeholder);
+                .attr('placeholder', option.placeholder)
+                .on( "autocompletechange", function( event, ui ) {
+                    dis.val($(this).val());
+                    dis.trigger('change');
+                });
 
             if(contrail.checkIfExist(option.defaultValue)){
                     input.val(option.defaultValue);

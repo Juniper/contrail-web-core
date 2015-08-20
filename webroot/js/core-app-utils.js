@@ -318,6 +318,28 @@ function initBackboneValidation() {
 };
 
 function initCustomKOBindings(Knockout) {
+    Knockout.bindingHandlers.contrailCombobox = {
+        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var valueObj = Knockout.toJS(valueAccessor()) || {},
+                allBindings = allBindingsAccessor(),
+                elementConfig = $(element).data('elementConfig');
+
+            var combobox = $(element).contrailCombobox(elementConfig).data('contrailCombobox');
+            if (allBindings.value) {
+                var value = Knockout.utils.unwrapObservable(allBindings.value);
+                if (contrail.checkIfExist(value)) {
+                    if (typeof value === 'function') {
+                        combobox.value(value());
+                    } else {
+                        combobox.value(value);
+                    }
+                }
+            }
+            else {
+                combobox.value('');
+            }
+        }
+    };
     Knockout.bindingHandlers.contrailDropdown = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var valueObj = Knockout.toJS(valueAccessor()) || {},
