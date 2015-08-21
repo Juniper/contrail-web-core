@@ -427,13 +427,14 @@ define(['underscore'], function (_) {
                                     '<div class="widget-toolbar pull-right">' +
                                         '<a data-action="collapse"><i class="icon-chevron-up"></i></a>' +
                                     '</div>' +
-                                    '<div class="widget-toolbar pull-right">' +
-                                        '<a data-action="settings" data-toggle="dropdown" style="display: inline-block;"><i class="icon-cog"></i></a>' +
-                                        '<ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">' +
-                                            '<li><a data-action="list-view"><i class="icon-list"></i> &nbsp; Basic view </a></li>' +
-                                            '<li><a data-action="advanced-view"><i class="icon-code"></i> &nbsp; Advanced view </a></li>' +
-                                        '</ul>' +
-                                    '</div>' +
+                                    ((config.advancedViewOptions !== false) ? '' +
+                                        '<div class="widget-toolbar pull-right">' +
+                                            '<a data-action="settings" data-toggle="dropdown" style="display: inline-block;"><i class="icon-cog"></i></a>' +
+                                            '<ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">' +
+                                                '<li><a data-action="list-view"><i class="icon-list"></i> &nbsp; Basic view </a></li>' +
+                                                '<li><a data-action="advanced-view"><i class="icon-code"></i> &nbsp; Advanced view </a></li>' +
+                                            '</ul>' +
+                                        '</div>' : '') +
                                 '</div>' +
                                 '<div class="widget-body">' +
                                     '<div class="widget-main row-fluid">' +
@@ -491,7 +492,7 @@ define(['underscore'], function (_) {
         this.generateDetailTemplateHTML = function (config, app, jsonString) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
                 templateObj = $(template(config)),
-                jsonValueString = contrail.handleIfNull(jsonString, '{{{formatGridJSON2HTML this}}}');
+                jsonValueString = contrail.handleIfNull(jsonString, '{{{formatGridJSON2HTML this.data}}}');
 
             templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
             templateObj.find('.detail-foundation-content-advanced').append(jsonValueString);
