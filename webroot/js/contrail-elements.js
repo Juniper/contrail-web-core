@@ -305,10 +305,8 @@
                 .appendTo( wrapper )
                 .autocomplete(option)
                 .attr('placeholder', option.placeholder)
-<<<<<<< HEAD
+
                 // update the combobox when the input is updated to keep both in sync
-=======
->>>>>>> 9fa4d569fe4a12b1353814906225615850c42579
                 .on( "autocompletechange", function( event, ui ) {
                     dis.val($(this).val());
                     dis.trigger('change');
