@@ -133,8 +133,6 @@ define([
                     value: e.object['value']
                 };
 
-                console.log(dropdownOptions.changeCB)
-
                 if(contrail.checkIfFunction(dropdownOptions.changeCB)) {
                     dropdownOptions.changeCB(selectedValueData)
                 }
