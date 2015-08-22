@@ -549,6 +549,7 @@
     <div class="widget-main row-fluid">
             {{#IfCompare showSettings true options='=='}}
                 <div id="divAdvanced" class="row-fluid hide">
+                    <div id="divAdvanced-loading" class="icon-spinner icon-spin blue bigger-125" style="display: none;"></div>
                     <div><pre>{{{displayJson nodeData}}}</pre></div>
                 </div>
             {{/IfCompare}}
