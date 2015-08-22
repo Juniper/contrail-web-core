@@ -713,7 +713,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-generic-edit-form-template">
-    <div class="alert alert-error" data-bind="visible: errors().{{prefixId}}_form_error">
+    <div class="alert alert-error" style="display:none;" data-bind="visible: errors().{{prefixId}}_form_error">
         <strong>Error: </strong>
         <span data-bind="text: errors().{{prefixId}}_form_error"></span>
     </div>
@@ -1135,7 +1135,7 @@
             {{#if errorMessage}}
                 <h6 >{{errorMessage}}</h6>
             {{/if}}
-            {{#IfCompare defaultErrorMessage false operator='!='}}
+            {{#IfCompare defaultErrorMessage false operator='!=='}}
                 <h6>The link you followed may be broken, or there must be some change in the configuration for this page.</h6>
             {{/IfCompare}}
             <h6>

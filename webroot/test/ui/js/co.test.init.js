@@ -14,7 +14,7 @@ for (var file in nmTestKarma.files) {
 
 var depArray = [
     'jquery', 'underscore', 'validation', 'core-constants', 'core-utils',
-    'core-formatters', 'core-messages', 'knockout', 'core-cache', 'contrail-common',
+    'core-formatters', 'core-messages', 'core-labels', 'knockout', 'core-cache', 'contrail-common',
 
     'text!/base/contrail-web-core/webroot/templates/core.common.tmpl',
 
@@ -77,12 +77,13 @@ function testAppInit(testAppConfig) {
             $('head').append('<base href="/vcenter/" />');
         }
 
-        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages, Knockout, Cache,
+        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages, CoreLabels, Knockout, Cache,
                                     contrailCommon, CoreCommonTmpl, CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
             cowf = new CoreFormatters();
             cowm = new CoreMessages();
+            cowl = new CoreLabels();
             cowch = new Cache();
             cotc = CoreTestConstants;
             kbValidation = validation;

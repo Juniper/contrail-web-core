@@ -83,6 +83,8 @@ define([
 
         this.TITLE_DETAILS = "Details";
         this.TITLE_OVERVIEW = "Overview";
+
+        this.BREADCRUMB_ID = "breadcrumb";
     };
 
     function capitalizeSentence(sentence) {
