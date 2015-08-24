@@ -374,7 +374,7 @@ define(['underscore'], function (_) {
                     '{{#IfValidJSONValueByPath "' + configValue.key + '" data ' + configKey + '}}' +
                     '<li>' +
                     '<label class="inline row-fluid">' +
-                    '<span class="key span5"> {{getLabel "' + configValue.key + '" "' + app + '"}} </span>' +
+                    '<span class="key span5"> {{getLabel "' + configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
                     '<span class="value span7">{{{getValueByConfig data config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
 
                 template += '</label>' +
