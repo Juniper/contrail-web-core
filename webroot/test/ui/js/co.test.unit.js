@@ -202,6 +202,14 @@ define([
         });
     };
 
+    this.executeLibTests = function (testConfig) {
+        _.each(testConfig.suites, function(suiteConfig) {
+            if (contrail.checkIfExist(suiteConfig.class)) {
+                suiteConfig.class(suiteConfig);
+            }
+        });
+    }
+
     /**
      * moduleId
      * fakeServer.options {}
@@ -212,7 +220,7 @@ define([
      * testConfig.getTestConfig()
      * @param PageTestConfig
      */
-    this.testRunnerStart = function (pageTestConfig) {
+    this.startCommonTestRunner = function (pageTestConfig) {
         var self = this,
             fakeServer;
 
@@ -233,7 +241,7 @@ define([
             }
         });
 
-        asyncTest("Common Tests", function (assert) {
+        asyncTest("Core Tests", function (assert) {
             expect(0);
             var loadingStartedDefObj = loadFeature(pageTestConfig.page.hashParams);
             loadingStartedDefObj.done(function () {
@@ -265,6 +273,19 @@ define([
 
     };
 
+    this.startLibTestRunner = function(libTestConfig) {
+        var self = this;
+        asyncTest("Start Library Tests - " + ifNull(libTestConfig.libName, ""), function (assert) {
+            expect(0);
+            libTestConfig.testInitFn();
+            setTimeout(function() {
+                self.executeLibTests(libTestConfig);
+                QUnit.start();
+            }, 1000);
+
+        });
+    };
+
     return {
         getDefaultFakeServerConfig: getDefaultFakeServerConfig,
         createFakeServerResponse: createFakeServerResponse,
@@ -273,9 +294,12 @@ define([
         createViewTestConfig: createViewTestConfig,
         createPageTestConfig: createPageTestConfig,
         executeCommonTests: executeCommonTests,
+        executeLibTests: executeLibTests,
         test: cTest,
         createTestGroup: createTestGroup,
         createTestSuite: createTestSuite,
-        testRunnerStart: testRunnerStart
+        startTestRunner: startCommonTestRunner,
+        startCommonTestRunner : startCommonTestRunner,
+        startLibTestRunner: startLibTestRunner
     };
 });

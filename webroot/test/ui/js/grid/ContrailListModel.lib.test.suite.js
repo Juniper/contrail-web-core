@@ -5,19 +5,22 @@
 define([
     'co-test-utils',
     'co-test-messages',
-    'co-unit-test',
-], function (cotu, cotm, CUnit) {
+    'co-test-constants',
+    'co-test-unit',
+], function (cotu, cotm, cotc, CUnit) {
 
-    var testSuiteClass = function (viewObj, suiteConfig) {
+    //TODO update test groups and test cases.
+
+    var libTestSuiteClass = function (suiteConfig) {
         var mockData = ifNull(suiteConfig.mockData, []),
-            gridListModel = viewObj.$el.data('contrailGrid')._dataView,
+            gridListModel = new Slick.Data.DataView,
             dataParsers;
 
         if (contrail.checkIfExist(suiteConfig.modelConfig)) {
             dataParsers = suiteConfig.modelConfig.dataParsers;
         }
 
-        module(cotu.formatTestModuleMessage(cotm.TEST_SLICKGRID_LISTMODEL, viewObj.el.id));
+        module(cotu.formatTestModuleMessage(cotm.TEST_SLICKGRID_LISTMODEL, "GridView-Lib"));
 
         var gridListModelTestSuite = CUnit.createTestSuite('GridListModelTest');
 
@@ -71,6 +74,6 @@ define([
         deepEqual(mockData[0], gridListModelItems[0], "getItemByIdx[0] (listmodel first item) should equal to mockData[0]");
     }
 
-    return testSuiteClass;
+    return libTestSuiteClass;
 
 });
