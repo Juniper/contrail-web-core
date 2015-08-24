@@ -521,6 +521,7 @@ function syntaxHighlight(json) {
 
 // Loads the feature screen based on given hashParams
 function loadFeature(hashParams) {
+    var loadingStartedDefObj = $.Deferred();
     globalObj['menuClicked'] = true;
     //Set hashUpdated flag only if current URL hashParams differs from the passed on
     if (JSON.stringify(layoutHandler.getURLHashObj()) != JSON.stringify(hashParams)) {
@@ -530,7 +531,8 @@ function loadFeature(hashParams) {
     //Hiding the last updated time and refresh icon on click of an item left menu
     //hideHardRefresh();
     //Call onHashChange explicitly,as hashchange event is not triggered if there is no change in hahsParams being pushed
-    layoutHandler.onHashChange(lastHash, hashParams);
+    layoutHandler.onHashChange(lastHash, hashParams, loadingStartedDefObj);
+    return loadingStartedDefObj;
 }
 
 // Info Window Modal

@@ -302,7 +302,8 @@ define(['underscore'], function (_) {
         this.renderView = function (renderConfig, renderCallback) {
             var elementView, viewPath, viewName, parentElement,
                 model, viewAttributes, modelMap, rootView, viewPathPrefix,
-                onAllRenderCompleteCB, app = renderConfig['app'];
+                onAllViewsRenderCompleteCB, onAllRenderCompleteCB,
+                lazyRenderingComplete, app = renderConfig['app'];
 
             if (app == cowc.APP_CONTRAIL_CONTROLLER) {
                 ctwu.renderView(renderConfig, renderCallback);
@@ -319,18 +320,27 @@ define(['underscore'], function (_) {
                 modelMap = renderConfig['modelMap'];
                 rootView = renderConfig['rootView'];
                 viewPath = viewPathPrefix + viewName;
+                onAllViewsRenderCompleteCB = renderConfig['onAllViewsRenderCompleteCB'];
                 onAllRenderCompleteCB = renderConfig['onAllRenderCompleteCB'];
+                lazyRenderingComplete  = renderConfig['lazyRenderingComplete'];
 
                 require([viewPath], function(ElementView) {
-                    elementView = new ElementView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView, onAllRenderCompleteCB: onAllRenderCompleteCB});
+                    elementView = new ElementView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView, onAllViewsRenderCompleteCB: onAllViewsRenderCompleteCB, onAllRenderCompleteCB: onAllRenderCompleteCB});
                     elementView.viewName = viewName;
                     elementView.modelMap = modelMap;
-                    elementView.beginMyRendering();
-                    elementView.render();
+                    elementView.beginMyViewRendering();
+                    try {
+                        elementView.render();
+                    } catch (error) {
+                        elementView.error = true;
+                    }
                     if(contrail.checkIfFunction(renderCallback)) {
                         renderCallback(elementView);
                     }
-                    elementView.endMyRendering()
+
+                    if(lazyRenderingComplete == null || !lazyRenderingComplete) {
+                        elementView.endMyViewRendering();
+                    }
                 });
             }
         };

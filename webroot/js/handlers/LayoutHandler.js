@@ -80,17 +80,17 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
             }
         };
 
-        this.onHashChange = function(lastHash, currHash) {
+        this.onHashChange = function(lastHash, currHash, loadingStartedDefObj) {
             if(contentHandler.isInitFeatureAppComplete) {
-                contentHandler.loadContent(lastHash, currHash);
+                contentHandler.loadContent(lastHash, currHash, loadingStartedDefObj);
             } else if (contentHandler.isInitFeatureAppInProgress) {
                 contentHandler.featureAppDefObj.done(function () {
-                    contentHandler.loadContent(lastHash, currHash);
+                    contentHandler.loadContent(lastHash, currHash, loadingStartedDefObj);
                 });
             } else {
                 contentHandler.loadFeatureApps(globalObj['webServerInfo']['featurePkg']);
                 contentHandler.featureAppDefObj.done(function () {
-                    contentHandler.loadContent(lastHash, currHash);
+                    contentHandler.loadContent(lastHash, currHash, loadingStartedDefObj);
                 });
             }
         }

@@ -33,8 +33,6 @@ define([
                 path: path, validation: validation,
                 elementConfig: elementConfig
             };
-            console.log(this.model.parameters());
-            console.log(elementConfig);
             this.$el.html(radioButtonTemplate(tmplParameters));
         }
     });

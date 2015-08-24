@@ -28,9 +28,9 @@ define(['underscore'], function (_) {
 
     var disabledFeatureMockData = {"disabled":["config_alarms","mon_infra_mx"]},
         webControllerMockData = {"webController":{"path":"/usr/src/contrail-web-controller","enable":true}},
-        ctWebServerInfoMockData = $.extend(true, {}, webServerInfoMockData, {"featurePkg": { "webController": true }}),
-        smWebServerInfoMockData = $.extend(true, {}, webServerInfoMockData, {"featurePkg": { "serverManager": true }}),
-        sWebServerInfoMockData = $.extend(true, {}, webServerInfoMockData, {"featurePkg": { "webStorage": true }});
+        ctWebServerInfoMockData = _.extend({}, webServerInfoMockData, {"featurePkg": { "webController": true }}),
+        smWebServerInfoMockData = _.extend({}, webServerInfoMockData, {"featurePkg": { "serverManager": true }}),
+        sWebServerInfoMockData = _.extend({}, webServerInfoMockData, {"featurePkg": { "webStorage": true }});
 
     return {
         ctWebServerInfoMockData: ctWebServerInfoMockData,

@@ -60,7 +60,7 @@ function getCoreAppPaths(coreBaseDir) {
         'jquery.multiselect.filter'   : coreBaseDir + '/assets/jquery-ui/js/jquery.multiselect.filter',
         'jquery.steps.min'            : coreBaseDir + '/assets/jquery/js/jquery.steps.min',
         'jquery.tristate'             : coreBaseDir + '/assets/jquery/js/jquery.tristate',
-        'joint'                       : coreBaseDir + '/assets/joint/js/joint.clean.min',
+        'joint'                       : coreBaseDir + '/assets/joint/js/joint.clean',
         'geometry'                    : coreBaseDir + '/assets/joint/js/geometry',
         'vectorizer'                  : coreBaseDir + '/assets/joint/js/vectorizer',
         'joint.layout.DirectedGraph'  : coreBaseDir + '/assets/joint/js/joint.layout.DirectedGraph',
@@ -77,6 +77,7 @@ function getCoreAppPaths(coreBaseDir) {
         'knockback'                   : coreBaseDir + '/assets/backbone/knockback.min',
         'validation'                  : coreBaseDir + '/assets/backbone/backbone-validation-amd',
         'text'                        : coreBaseDir + '/assets/requirejs/text',
+        'underscore'                  : coreBaseDir + '/assets/underscore/underscore-min',
         'core-utils'                  : coreBaseDir + '/js/core-utils',
         'core-constants'              : coreBaseDir + '/js/core-constants',
         'core-formatters'             : coreBaseDir + '/js/core-formatters',
@@ -102,7 +103,7 @@ function getCoreAppPaths(coreBaseDir) {
 
 var coreAppMap = {
         '*': {
-            'underscore': 'lodash'
+            'underscore': 'underscore'
         }
 };
 
@@ -208,9 +209,6 @@ var coreAppShim =  {
         },
         'd3-utils': {
             deps: ['d3']
-        },
-        'qe-utils': {
-            deps: ['jquery']
         },
         'ipv6': {
             deps: ['sprintf', 'jsbn-combined']

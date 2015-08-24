@@ -114,8 +114,8 @@
     };
     
     $.fn.contrailCombobox = function(customOption) {
-        var option = $.extend(true, {}, customOption);
-        var self = this, formattedData = [],
+        var option = $.extend(true, {}, customOption),
+            self = this, formattedData = [],
             asyncVal = false;
 
         self.globalSelect = {};
@@ -305,6 +305,8 @@
                 .appendTo( wrapper )
                 .autocomplete(option)
                 .attr('placeholder', option.placeholder)
+
+                // update the combobox when the input is updated to keep both in sync
                 .on( "autocompletechange", function( event, ui ) {
                     dis.val($(this).val());
                     dis.trigger('change');
