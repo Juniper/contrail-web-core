@@ -557,35 +557,63 @@
         }
 
         config.onInit = function (event, currentIndex) {
+            var onInitCompleteCBCalled = false,
+                onInitCompleteCB = function(currentStep, config) {
+                    if (contrail.checkIfFunction(currentStep.onLoadFromPrevious)) {
+                        currentStep.onLoadFromPrevious(config.params);
+                    }
+                    if (contrail.checkIfFunction(currentStep.onLoadFromNext)) {
+                        currentStep.onLoadFromNext(config.params);
+                    }
+                    configureButton(currentStep.buttons);
+                };
+
             $.each(steps, function(stepKey, stepValue){
-                if(contrail.checkIfFunction(stepValue.onInitWizard)) {
-                    stepValue.onInitWizard(config.params);
+                if (contrail.checkIfFunction(stepValue.onInitWizard)) {
+                    stepValue.onInitWizard(config.params, function() {
+                        onInitCompleteCB(stepValue, config);
+                    });
+                    onInitCompleteCBCalled = true;
                     stepsInitFlag[stepKey] = true;
                 }
             });
 
-            if(!stepsInitFlag[currentIndex]){
-                if(contrail.checkIfFunction(steps[currentIndex].onInitFromPrevious)) {
-                    steps[currentIndex].onInitFromPrevious(config.params);
+            if (!stepsInitFlag[currentIndex]) {
+                if (contrail.checkIfFunction(steps[currentIndex].onInitFromPrevious)) {
+                    steps[currentIndex].onInitFromPrevious(config.params, function() {
+                        onInitCompleteCB(steps[currentIndex], config);
+                    });
+                    onInitCompleteCBCalled = true;
                 }
-                if(contrail.checkIfFunction(steps[currentIndex].onInitFromNext)) {
-                    steps[currentIndex].onInitFromNext(config.params);
+                else if(contrail.checkIfFunction(steps[currentIndex].onInitFromNext)) {
+                    steps[currentIndex].onInitFromNext(config.params, function() {
+                        onInitCompleteCB(steps[currentIndex], config);
+                    });
+                    onInitCompleteCBCalled = true;
                 }
                 stepsInitFlag[currentIndex] = true;
             }
 
-            if(contrail.checkIfFunction(steps[currentIndex].onLoadFromPrevious)) {
-                steps[currentIndex].onLoadFromPrevious(config.params);
+            if (!onInitCompleteCBCalled) {
+                onInitCompleteCB(steps[currentIndex], config)
             }
-            if(contrail.checkIfFunction(steps[currentIndex].onLoadFromNext)) {
-                steps[currentIndex].onLoadFromNext(config.params);
-            }
-            configureButton(steps[currentIndex].buttons);
+
         };
 
         config.onStepChanged = function(event, currentIndex, priorIndex) {
-            var currentStepLiElement = self.find('.steps').find('li:eq(' + currentIndex + ')');
-            if(currentIndex < priorIndex) {
+            var currentStepLiElement = self.find('.steps').find('li:eq(' + currentIndex + ')'),
+                onInitCompleteCBCalled = false,
+                onInitCompleteCB = function(currentStep, config) {
+                    if (currentIndex > priorIndex && contrail.checkIfFunction(currentStep.onLoadFromNext)) {
+                        currentStep.onLoadFromNext(config.params);
+                    }
+                    else if (currentIndex < priorIndex && contrail.checkIfFunction(currentStep.onLoadFromPrevious)) {
+                        currentStep.onLoadFromPrevious(config.params);
+                    }
+                    configureButton(currentStep.buttons);
+                };
+
+            if (currentIndex < priorIndex) {
                 self.find('.steps').find('li:eq(' + priorIndex + ')').removeClass('done');
                 currentStepLiElement.removeClass('completed');
             }
@@ -597,22 +625,25 @@
             }
 
             if(!stepsInitFlag[currentIndex]) {
-                if(currentIndex > priorIndex && contrail.checkIfFunction(steps[currentIndex].onInitFromNext)) {
-                    steps[currentIndex].onInitFromNext(config.params);
+                if (currentIndex > priorIndex && contrail.checkIfFunction(steps[currentIndex].onInitFromNext)) {
+                    steps[currentIndex].onInitFromNext(config.params, function() {
+                        onInitCompleteCB(steps[currentIndex], config)
+                    });
+                    onInitCompleteCBCalled = true;
                 }
                 else if(currentIndex < priorIndex && contrail.checkIfFunction(steps[currentIndex].onInitFromPrevious)) {
-                    steps[currentIndex].onInitFromPrevious(config.params);
+                    steps[currentIndex].onInitFromPrevious(config.params, function() {
+                        onInitCompleteCB(steps[currentIndex], config)
+                    });
+                    onInitCompleteCBCalled = true;
                 }
                 stepsInitFlag[currentIndex] = true;
             }
 
-            if(currentIndex > priorIndex && contrail.checkIfFunction(steps[currentIndex].onLoadFromNext)) {
-                steps[currentIndex].onLoadFromNext(config.params);
+            if(!onInitCompleteCBCalled) {
+                onInitCompleteCB(steps[currentIndex], config)
             }
-            else if(currentIndex < priorIndex && contrail.checkIfFunction(steps[currentIndex].onLoadFromPrevious)) {
-                steps[currentIndex].onLoadFromPrevious(config.params);
-            }
-            configureButton(steps[currentIndex].buttons);
+
         };
 
         config.onStepChanging = function (event, currentIndex, newIndex) {

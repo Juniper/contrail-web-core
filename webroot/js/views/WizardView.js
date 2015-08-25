@@ -8,41 +8,52 @@ define([
 ], function (_, ContrailView) {
     var WizardView = ContrailView.extend({
         render: function () {
-            var wizardTempl = contrail.getTemplate4Id(cowc.TMPL_WIZARD_VIEW),
-                viewConfig = this.attributes.viewConfig,
-                elId = this.attributes.elementId,
-                validation = this.attributes.validation,
-                lockEditingByDefault = this.attributes.lockEditingByDefault,
-                self = this, steps;
+            var self = this,
+                wizardTempl = contrail.getTemplate4Id(cowc.TMPL_WIZARD_VIEW),
+                viewConfig = self.attributes.viewConfig,
+                elId = self.attributes.elementId,
+                validation = self.attributes.validation,
+                lockEditingByDefault = self.attributes.lockEditingByDefault,
+                steps;
 
-            this.$el.html(wizardTempl({viewConfig: viewConfig, elementId: elId}));
+            self.$el.html(wizardTempl({viewConfig: viewConfig, elementId: elId}));
             steps = viewConfig['steps'];
 
             $.each(steps, function(stepKey, stepValue){
-                self.model.showErrorAttr(stepValue.elementId, false);
+                var stepElementId = stepValue.elementId;
+                self.model.showErrorAttr(stepElementId, false);
                 if(stepValue.onInitRender == true) {
-                    stepValue.onInitWizard = function(params) {
-                        self.renderView4Config($("#" + stepValue.elementId), self.model, stepValue, validation, lockEditingByDefault);
-                    }
+                    stepValue.onInitWizard = function(params, onInitCompleteCB) {
+                        self.renderView4Config($("#" + stepElementId), self.model, stepValue, validation, lockEditingByDefault, null, function(){
+                            if(contrail.checkIfFunction(onInitCompleteCB)) {
+                                onInitCompleteCB(params);
+                            }
+                        });
+                    };
                 } else {
-                    stepValue.onInitFromNext = function (params) {
-                        self.renderView4Config($("#" + stepValue.elementId), self.model, stepValue, validation, lockEditingByDefault);
-                    }
+                    stepValue.onInitFromNext = function (params, onInitCompleteCB) {
+                        self.onAllViewsRenderComplete.unsubscribe();
+                        self.renderView4Config($("#" + stepElementId), self.model, stepValue, validation, lockEditingByDefault, null, function(){
+                            if(contrail.checkIfFunction(onInitCompleteCB)) {
+                                onInitCompleteCB(params);
+                            }
+                        });
+                    };
                 }
             });
 
-            this.$el.find("#" + elId).contrailWizard({
+            self.$el.find("#" + elId).contrailWizard({
                 headerTag: "h2",
                 bodyTag: "section",
                 transitionEffect: "slideLeft",
                 titleTemplate: '<span class="number">#index#</span><span class="title"> #title#</span>',
                 steps: steps,
                 params: {
-                    model: this.model
+                    model: self.model
                 }
             });
 
-            this.$el.parents('.modal-body').css({'padding': '0'});
+            self.$el.parents('.modal-body').css({'padding': '0'});
         }
     });
 

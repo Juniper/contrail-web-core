@@ -29,12 +29,17 @@ function Contrail() {
         return templates[key];
 
     };
+
     this.checkIfExist = function(value) {
         var exist = true;
         if(value == null ||  typeof value  == "undefined") {
             exist = false;
         }
         return exist;
+    };
+
+    this.checkIfKnockoutBindingExist = function (id) {
+        return this.checkIfExist(ko.dataFor(document.getElementById(id)))
     };
 
     this.handleIfNull = function(value, defaultValue) {
