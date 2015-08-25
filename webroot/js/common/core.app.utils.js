@@ -341,7 +341,10 @@ function initCustomKOBindings(Knockout) {
             }
 
             dropdown = $(element).contrailDropdown(elementConfig).data('contrailDropdown');
-
+            //required for hierarchical dropdown
+            if(elementConfig.queryMap) {
+                dropdown.setData(elementConfig.data);
+            }
             Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
                 dropdown.destroy();
             });
@@ -376,6 +379,12 @@ function initCustomKOBindings(Knockout) {
                 } else if (value != '') {
                     dropdown.value(value, true);
                 }
+            }
+
+            if (allBindingsAccessor.get('customValue')) {
+                var valueBindingAccessor = allBindingsAccessor.get('customValue'),
+                value = Knockout.utils.unwrapObservable(valueBindingAccessor);
+                dropdown.customValue(value);
             }
         }
     };
