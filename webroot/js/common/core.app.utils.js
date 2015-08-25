@@ -336,7 +336,6 @@ function initCustomKOBindings(Knockout) {
             }
 
             dropdown = $(element).contrailDropdown(elementConfig).data('contrailDropdown');
-
             Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
                 dropdown.destroy();
             });
