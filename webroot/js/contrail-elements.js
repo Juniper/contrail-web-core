@@ -1055,6 +1055,22 @@ function findTextInObj(text, data){
     }
     return found;
 };
+function addNewItemMainDataSource(item, data) {
+    var newValue = item.value != null ? item.value : item.text;
+    for(var i = 0; i < data.length; i++) {
+        if(data[i].text === item.groupName) {
+            data[i].children.push(
+                {
+                   text : item.text,
+                   id : newValue,
+                   value : newValue,
+                   parent : item.groupName
+                }
+            );
+            break;
+        }
+    }
+}
 
 function  fetchSourceMapData(index, data){
     var arr = index.split("."),
@@ -1135,6 +1151,18 @@ function constructSelect2(self, defaultOption, args) {
                 option.change(e);
             }
         };
+        //subcribe to popup open and close events
+        var openFunction = function() {
+            if (contrail.checkIfFunction(option.open)) {
+                option.open();
+            }
+        };
+
+        var closeFunction = function() {
+            if (contrail.checkIfFunction(option.close)) {
+                option.close();
+            }
+        };
 
         var selectingFunction = function(e) {
             if (contrail.checkIfFunction(option.selecting)) {
@@ -1191,13 +1219,22 @@ function constructSelect2(self, defaultOption, args) {
                 .off("change", changeFunction)
                 .on("change", changeFunction)
                 .off("select2-selecting", selectingFunction)
-                .on("select2-selecting", selectingFunction);
+                .on("select2-selecting", selectingFunction)
+                .off("select2-open", openFunction)
+                .on("select2-open", openFunction)
+                .off("select2-close", closeFunction)
+                .on("select2-close", closeFunction);
 
             // set default value only if explicitly defined and if not a multiselect
             if (option.data.length > 0 && contrail.checkIfExist(option.defaultValueId) &&
                 option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple)) {
 
                 var selectedOption = option.data[option.defaultValueId];
+                if(option.data[0].children != undefined &&
+                    option.data[0].children.length > 1) {
+                    selectedOption =
+                        option.data[0].children[option.defaultValueId];
+                }
                 self.select2('val', selectedOption[option.dataValueField.dsVar]);
             }
         }
@@ -1251,6 +1288,19 @@ function constructSelect2(self, defaultOption, args) {
                     self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                 }
             },
+            customValue : function(item) {
+                if(typeof item !== 'undefined' && !jQuery.isEmptyObject(item)){
+                    var data = self.data('select2').opts.data;
+                    if(data != null && data.length > 0) {
+                        var answer = findTextInObj(item.text, data);
+                        if(!answer) {
+                            addNewItemMainDataSource(item, data);
+                        }
+                        answer = findTextInObj(item.text, data);
+                        self.select2('val', answer.value, true);
+                    }
+                }
+            },
             setData: function(data, triggerChange) {
                 self.select2('destroy');
                 option.data = formatData(data,option);
@@ -1265,13 +1315,16 @@ function constructSelect2(self, defaultOption, args) {
                 //TODO - Sync with setting of value based on defaultValueId
                 if (option.data.length != 0 && contrail.checkIfExist(option.defaultValueId) &&
                     option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple)) {
-
-                    if(option.data[0].children != undefined && option.data[0].children.length > 0) {
-                        if(option.data[1] != null && option.data[1].children != null && option.data[1].children.length > 0)
-                            self.select2('val', option.data[1].children[0][option.dataValueField.dsVar], (contrail.checkIfExist(triggerChange) ? triggerChange : false));
-                    } else {
                         self.select2('val', option.data[0][option.dataValueField.dsVar], (contrail.checkIfExist(triggerChange) ? triggerChange : false));
-                    }
+                }
+                //for Hierarchical drpdown
+                if(option.data.length != 0 &&
+                    option.data[0].children != undefined &&
+                    option.data[0].children.length > 1) {
+                    self.select2('val',
+                        option.data[0].children[1][option.dataValueField.dsVar],
+                        (contrail.checkIfExist(triggerChange) ?
+                        triggerChange : false));
                 }
             },
             enableOptionList: function (flag, disableItemList) {
