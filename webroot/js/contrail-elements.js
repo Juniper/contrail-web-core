@@ -1135,6 +1135,18 @@ function constructSelect2(self, defaultOption, args) {
                 option.change(e);
             }
         };
+        //subcribe to popup open and close events
+        var openFunction = function() {
+            if (contrail.checkIfFunction(option.open)) {
+                option.open();
+            }
+        };
+
+        var closeFunction = function() {
+            if (contrail.checkIfFunction(option.close)) {
+                option.close();
+            }
+        };
 
         var selectingFunction = function(e) {
             if (contrail.checkIfFunction(option.selecting)) {
@@ -1191,11 +1203,20 @@ function constructSelect2(self, defaultOption, args) {
                 .off("change", changeFunction)
                 .on("change", changeFunction)
                 .off("select2-selecting", selectingFunction)
-                .on("select2-selecting", selectingFunction);
+                .on("select2-selecting", selectingFunction)
+                .off("select2-open", openFunction)
+                .on("select2-open", openFunction)
+                .off("select2-close", closeFunction)
+                .on("select2-close", closeFunction);
             if (option.data.length !=0 && option.ignoreFirstValue != true) {
                 // set default value only if explicitly defined and if not a multiselect
                 if(option.defaultValueId != null && (option.data.length > option.defaultValueId) && (option.defaultValueId >= 0) && (!contrail.checkIfExist(option.multiple))) {
                     var selectedOption = option.data[option.defaultValueId];
+                    if(option.data[0].children != undefined &&
+                        option.data[0].children.length > 1) {
+                        selectedOption =
+                            option.data[0].children[option.defaultValueId];
+                    }
                     self.select2('val', selectedOption[option.dataValueField.dsVar]);
                 }
             }
@@ -1263,9 +1284,9 @@ function constructSelect2(self, defaultOption, args) {
 
                 //TODO - Sync with setting of value based on defaultValueId
                 if(option.data.length > 0){
-                    if(option.data[0].children != undefined && option.data[0].children.length > 0) {
-                        if(option.data[1] != null && option.data[1].children != null && option.data[1].children.length > 0)
-                            self.select2('val', option.data[1].children[0].value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
+                    if(option.data[0].children != undefined &&
+                        option.data[0].children.length > 1) {
+                        self.select2('val', option.data[0].children[1].value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                     } else {
                         self.select2('val', option.data[0].value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                     }
