@@ -1088,6 +1088,18 @@ function constructSelect2(self, defaultOption, args) {
                 option.change(e);
             }
         };
+        //subcribe to popup open and close events
+        var openFunction = function() {
+            if (contrail.checkIfFunction(option.open)) {
+                option.open();
+            }
+        };
+
+        var closeFunction = function() {
+            if (contrail.checkIfFunction(option.close)) {
+                option.close();
+            }
+        };
 
         var selectingFunction = function(e) {
             if (contrail.checkIfFunction(option.selecting)) {
@@ -1142,7 +1154,9 @@ function constructSelect2(self, defaultOption, args) {
 
             self.select2(option)
                 .on("change", changeFunction)
-                .on("select2-selecting", selectingFunction);
+                .on("select2-selecting", selectingFunction)
+                .on("select2-open", openFunction)
+                .on("select2-close", closeFunction);
             if (option.data.length !=0 && option.ignoreFirstValue != true) {
                 self.select2('val', option.data[0].text);
             }
@@ -1209,9 +1223,9 @@ function constructSelect2(self, defaultOption, args) {
                     .on("change", changeFunction);
 
                 if(option.data.length > 0){
-                    if(option.data[0].children != undefined && option.data[0].children.length > 0) {
-                        if(option.data[1] != null && option.data[1].children != null && option.data[1].children.length > 0)
-                            self.select2('val', option.data[1].children[0].value);
+                    if(option.data[0].children != undefined &&
+                        option.data[0].children.length > 1) {
+                        self.select2('val', option.data[0].children[1].value);
                     } else {
                         self.select2('val', option.data[0].value);                    
                     }

@@ -356,6 +356,11 @@ function initCustomKOBindings(Knockout) {
             else {
                 dropDown.value('');
             }
+            if(elementConfig.queryMap) {
+                /*Need to call SetData explicitly to set hierarchical
+                data to select2*/
+                dropDown.setData(elementConfig.data);
+            }
 
             Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
                 $(element).select2('destroy');
