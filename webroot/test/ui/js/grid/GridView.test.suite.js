@@ -7,7 +7,7 @@ define([
     'co-test-utils',
     'co-test-messages',
     'co-test-constants',
-    'co-unit-test'
+    'co-test-unit'
 ], function (_, cotu, cotm, cotc, CUnit) {
 
     var testSuiteClass = function (viewObj, suiteConfig){

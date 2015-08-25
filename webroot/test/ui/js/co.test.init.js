@@ -2,12 +2,12 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var cowc, cowu, cowf, cowch, cowm, cotc;
+var cowc, cowu, cowf, cowl, cowch, cowm, cotc;
 
 var allTestFiles = [], nmTestKarma = window.__karma__;
 
 for (var file in nmTestKarma.files) {
-    if (/Test\.js$/.test(file)) {
+    if (/\.test\.js$/.test(file)) {
         allTestFiles.push(file);
     }
 }
@@ -61,6 +61,9 @@ function setFeaturePkgAndInit(featurePkg) {
             featurePkgObj.featuresDisabled = 'disabledFeatureMockData';
             featurePkgObj.webServerInfo = 'smWebServerInfoMockData';
             break;
+
+        case 'testLibApi':
+            return testLibApiAppInit({});
 
     }
 
@@ -123,4 +126,45 @@ function testAppInit(testAppConfig) {
             });
         });
     });
+}
+
+function testLibApiAppInit(testAppConfig) {
+
+    require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
+        window.ko = Knockout;
+        window.Bezier = Bezier;
+
+        if (document.location.pathname.indexOf('/vcenter') == 0) {
+            $('head').append('<base href="/vcenter/" />');
+        }
+
+        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages, CoreLabels, Knockout, Cache,
+                                    contrailCommon, CoreCommonTmpl, CoreTestUtils, CoreTestConstants, LayoutHandler) {
+            cowc = new CoreConstants();
+            cowu = new CoreUtils();
+            cowf = new CoreFormatters();
+            cowm = new CoreMessages();
+            cowl = new CoreLabels();
+            cowch = new Cache();
+            cotc = CoreTestConstants;
+
+            $("body").addClass('navbar-fixed');
+            $("body").append(CoreTestUtils.getPageHeaderHTML());
+            $("body").append(CoreTestUtils.getSidebarHTML());
+            $("body").append(CoreCommonTmpl);
+
+            var cssList = CoreTestUtils.getCSSList();
+
+            for (var i = 0; i < cssList.length; i++) {
+                $("body").append(cssList[i]);
+            }
+            require(allTestFiles, function () {
+                requirejs.config({
+                    deps: allTestFiles,
+                    callback: window.__karma__.start
+                });
+            });
+        });
+    });
+
 }
