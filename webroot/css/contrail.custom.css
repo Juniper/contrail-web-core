@@ -2027,7 +2027,6 @@ p.error, p.error-text {
 .control-panel-items {
     font-size: 15px;
     width: 35px;
-    background-color: #F5F5F5;
 }
 .control-panel-items .control-panel-item i {
     color: #777;
@@ -2041,9 +2040,10 @@ p.error, p.error-text {
     cursor: default;
 }
 .control-panel-items .control-panel-item {
-    padding: 5px 10px;
-    border-top: 2px solid #fff;
-    border-bottom: 1px solid #dedede;
+  padding: 5px 10px;
+  margin: 5px 0 0;
+  background-color: #f9f9f9;
+  border: 1px solid #efefef;
 }
 .control-panel-items .dropdown-menu {
     right: 2px;
@@ -2326,8 +2326,8 @@ p.error, p.error-text {
   font-weight: normal;
 }
 .chart-container text.nv-requestState {
-  font-size: 18px;
-  fill: #555;
+  font-size: 16px;
+  fill: #777;
 }
 /* Chart Control styles */
 

@@ -973,9 +973,9 @@
                     if (code == 13) {
                         e.preventDefault();
                     }
-                    if (contrail.checkIfFunction(keyupAction.onKeyupEnter) && (code == 32 || code == 13 || code == 188 || code == 186)) {
+                    if (contrail.checkIfFunction(keyupAction.onKeyupEnter) && code == 13) {
                         keyupAction.onKeyupEnter();
-                    } else if (contrail.checkIfFunction(keyupAction.onKeyupEsc) && (code == 27)) {
+                    } else if (contrail.checkIfFunction(keyupAction.onKeyupEsc) && code == 27) {
                         keyupAction.onKeyupEsc();
                     }
                 });
