@@ -502,7 +502,7 @@ define(['underscore'], function (_) {
         this.generateDetailTemplateHTML = function (config, app, jsonString) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
                 templateObj = $(template(config)),
-                jsonValueString = contrail.handleIfNull(jsonString, '{{{formatGridJSON2HTML this.data}}}');
+                jsonValueString ='{{{formatGridJSON2HTML this.data' +  (contrail.checkIfExist(jsonString) ? '.' + jsonString : '') + '}}}';
 
             templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
             templateObj.find('.detail-foundation-content-advanced').append(jsonValueString);
