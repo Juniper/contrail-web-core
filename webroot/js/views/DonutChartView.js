@@ -19,43 +19,39 @@ define([
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
 
+            self.renderChart(selector, viewConfig, self.model);
+
             if (self.model !== null) {
-                self.model = new ContrailListModel(viewConfig['modelConfig']);
-                if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
-                    var chartData = self.model.getItems();
-                    self.renderChart(selector, viewConfig, chartData);
+                if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
+                    self.renderChart(selector, viewConfig, self.model);
                 }
 
-                self.model.onAllRequestsComplete.subscribe(function () {
-                    var chartData = self.model.getItems();
-                    self.renderChart(selector, viewConfig, chartData);
+                self.model.onAllRequestsComplete.subscribe(function() {
+                    self.renderChart(selector, viewConfig, self.model);
                 });
 
-                if (viewConfig.loadChartInChunks) {
-                    self.model.onDataUpdate.subscribe(function () {
-                        var chartData = self.model.getItems();
-                        self.renderChart(selector, viewConfig, chartData);
+                if(viewConfig.loadChartInChunks) {
+                    self.model.onDataUpdate.subscribe(function() {
+                        self.renderChart(selector, viewConfig, self.model);
                     });
                 }
             }
         },
 
-        renderChart: function (selector, viewConfig, data) {
-            var chartViewConfig, chartModel, chartData, chartOptions,
-                widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
-                chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART);
+        renderChart: function (selector, viewConfig, chartViewModel) {
+            var data = chartViewModel.getItems(),
+                chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
+                chartViewConfig, chartModel, chartData, chartOptions,
+                widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
             }
 
-            chartOptions = ifNull(viewConfig['chartOptions'], {});
-
-            chartViewConfig = getChartViewConfig(data, chartOptions);
-            chartData = chartViewConfig['chartData'];
+            chartViewConfig = getChartViewConfig(data, viewConfig);
             chartOptions = chartViewConfig['chartOptions'];
-
             chartModel = new DonutChartModel(chartOptions);
+
             this.chartModel = chartModel;
 
             if ($(selector).find("svg") != null) {
@@ -69,10 +65,10 @@ define([
 
             if (!($(selector).is(':visible'))) {
                 $(selector).find('svg').bind("refresh", function () {
-                    d3.select($(selector)[0]).select('svg').datum(chartData).call(chartModel);
+                    setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
                 });
             } else {
-                d3.select($(selector)[0]).select('svg').datum(chartData).call(chartModel);
+                setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
             }
 
             nv.utils.windowResize(function () {
@@ -89,23 +85,62 @@ define([
         }
     });
 
-    function getChartViewConfig(chartData, chartOptions) {
-        var chartViewConfig = {};
-        var chartDefaultOptions = {
-            margin: {top: 0, right: 5, bottom: 0, left: 5},
-            height: 250,
-            showLegend: false,
-            legendPosition: "top",
-            showLabels: true,
-            showTooltips: true,
-            valueFormat: function (d) {
-                return d;
+    function setData2Chart(selector, chartViewConfig, chartViewModel, chartModel) {
+
+        var chartData = chartViewConfig.chartData,
+            checkEmptyDataCB = function (data) {
+                return (!data || data.length === 0);
             },
-            donutRatio: 0.5,
-            color: d3.scale.category10(),
-            noDataMessage: "Unable to get data"
-        };
-        var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
+            chartDataRequestState = cowu.getRequestState4Model(chartViewModel, chartData, checkEmptyDataCB),
+            chartDataObj = {
+                data: chartData,
+                requestState: chartDataRequestState
+            },
+            chartOptions = chartViewConfig['chartOptions'];
+
+        d3.select($(selector)[0]).select('svg').datum(chartDataObj).call(chartModel);
+
+        if (chartDataRequestState !== cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY) {
+            var container = d3.select($(selector).find("svg")[0]),
+                requestStateText = container.selectAll('.nv-requestState').data([cowm.getRequestMessage(chartDataRequestState)]),
+                textPositionX = $(selector).width() / 2,
+                textPositionY = chartOptions.height / 2;
+
+            requestStateText
+                .enter().append('text')
+                .attr('class', 'nvd3 nv-requestState')
+                .attr('dy', '-.7em')
+                .style('text-anchor', 'middle');
+
+            requestStateText
+                .attr('x', textPositionX)
+                .attr('y', textPositionY)
+                .text(function(t){ return t; });
+
+        } else {
+            $(selector).find('.nv-requestState').remove();
+        }
+    }
+
+    function getChartViewConfig(chartData, viewConfig) {
+        var chartViewConfig = {},
+            chartOptions = ifNull(viewConfig['chartOptions'], {}),
+            chartDefaultOptions = {
+                margin: {top: 0, right: 0, bottom: 0, left: 0},
+                height: 250,
+                showLegend: false,
+                legendPosition: "top",
+                showLabels: true,
+                showTooltips: true,
+                valueFormat: function (d) {
+                    return d;
+                },
+                donutRatio: 0.5,
+                color: d3.scale.category10(),
+                noDataMessage: "Unable to get data"
+            };
+
+        chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
 
         var dataZero = true;
         _.each(chartData, function(data) {
