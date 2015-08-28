@@ -2824,8 +2824,9 @@ p.error, p.error-text {
 .chart-control-panel-expanded-container {
     position: absolute;
     right: -10px;
+    top: 5px;
     width: 280px;
-    height: 224px;
+    height: 245px;
     background-color: #fff;
     border: 1px solid #ccc;
     overflow-y: auto;
