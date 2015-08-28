@@ -22,7 +22,7 @@ define([
             viewConfigBody = viewConfig.elementConfig.body,
             viewConfigFooter = viewConfig.elementConfig.footer;
 
-        module(cotu.formatTestModuleMessage(cotm.TEST_SLICKGRID_GRID, el.id));
+        module(cotu.formatTestModuleMessage(cotm.TEST_GRIDVIEW_GRID, el.id));
 
         var gridViewTestSuite = CUnit.createTestSuite('GridViewTest');
 
@@ -34,7 +34,7 @@ define([
         /**
          * Test grid title.
          */
-        headerTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_GRID_TITLE, function () {
+        headerTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_GRID_TITLE, function () {
             expect(1);
             equal($(el).find('.grid-header-text').text().trim(), viewConfigHeader.title.text,
                 "grid title should be equal to the title set");
@@ -44,7 +44,7 @@ define([
          * Check grid default controls data-action configured.
          * collapseable, exportable, refreshable, searchable
          */
-        headerTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_DEFAULT_CONTROLS_DATA_ACTION,
+        headerTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_DEFAULT_CONTROLS_DATA_ACTION,
             function () {
             //by default the defaultControls are all set to true. custom viewConfig may not have it.
             if (contrail.checkIfExist(viewConfigHeader.defaultControls)) {
@@ -104,7 +104,7 @@ define([
         /**
          * Check grid default controls has icons present
          */
-        headerTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_DEFAULT_CONTROLS_ICONS, function () {
+        headerTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_DEFAULT_CONTROLS_ICONS, function () {
             //by default the defaultControls are all set to true. custom viewConfig may not have it.
             if (contrail.checkIfExist(viewConfigHeader.defaultControls)) {
                 expect(4);
@@ -190,7 +190,7 @@ define([
         /**
          * Check column names
          */
-        headerTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_COLUMN_TITLE, function () {
+        headerTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_COLUMN_TITLE, function () {
             var colNames = $(el).find('.slick-header-column .slick-column-name');
             for (var i = 0; i < viewConfigColHeader.columns.length; i++) {
                 //skip the additional columns if present
@@ -202,7 +202,7 @@ define([
         /**
          * Check the loaded columns
          */
-        headerTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_COLUMNS_LOADED, function () {
+        headerTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_COLUMNS_LOADED, function () {
             expect(1);
             equal($(el).find('.slick-header-column').length, (viewConfigColHeader.columns.length + addCols),
                 "loaded columns should be equal to the config");
@@ -211,7 +211,7 @@ define([
         /**
          * Test grid header has checkbox selectable enabled
          */
-        headerTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_HEADER_COLUMN_CHECKBOX, function () {
+        headerTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_HEADER_COLUMN_CHECKBOX, function () {
             expect(1);
             if (viewConfigBody.options.checkboxSelectable) {
                 equal($(el).find('.slick-header-columns .headerRowCheckbox').length, 1,
@@ -232,7 +232,7 @@ define([
         /**
          * Check the loaded rows
          */
-        bodyTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_ROWS_LOADED, function () {
+        bodyTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_ROWS_LOADED, function () {
             expect(1);
             equal($(el).find('.slick-row-master').length, (gridItems.length < pageSize) ? gridItems.length : pageSize,
                 "Loaded rows must be equal to pageSize or size of the data if less");
@@ -242,7 +242,7 @@ define([
         /**
          * test checkbox selectable config
          */
-        bodyTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_ROWS_CHECKBOX, function () {
+        bodyTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_ROWS_CHECKBOX, function () {
             expect(1);
             if (viewConfigBody.options.checkboxSelectable) {
                 equal($(el).find('.slick-row-master .rowCheckbox').length,
@@ -259,7 +259,7 @@ define([
          */
         if (contrail.checkIfExist(viewConfigBody.options.detail)) {
             //count the detail toggle icons. make sure all rows has it
-            bodyTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_DETAIL_ROWS_ICON, function () {
+            bodyTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_DETAIL_ROWS_ICON, function () {
                 expect(1);
                 equal($(el).find('.slick-row-master .toggleDetailIcon').length,
                     (gridItems.length < pageSize) ? gridItems.length : pageSize,
@@ -267,7 +267,7 @@ define([
             }, cotc.SEVERITY_HIGH));
 
             //toggle detail icon, check the details html.
-            bodyTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_DETAIL_ROW_TOGGLE, function () {
+            bodyTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_DETAIL_ROW_TOGGLE, function () {
                 //simulate click on first row detail toggle icon
                 $(el).find('.slick_row_id_0 .toggleDetailIcon').trigger('click');
                 //get the details html
@@ -288,7 +288,7 @@ define([
             }, cotc.SEVERITY_HIGH));
 
         } else {
-            bodyTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_DETAIL_ROWS_ICON, function () {
+            bodyTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_DETAIL_ROWS_ICON, function () {
                 expect(1);
                 equal($(el).find('.slick-row-master .toggleDetailIcon').length, 0, "Zero detail toggle icons present.");
             }, cotc.SEVERITY_HIGH));
@@ -297,7 +297,7 @@ define([
         /**
          * check fixed row height
          */
-        bodyTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_ROW_FIXED_HEIGHT, function () {
+        bodyTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_ROW_FIXED_HEIGHT, function () {
             expect(1);
             equal($(el).find('.slick_row_id_0').css('height'), viewConfigBody.options.fixedRowHeight + "px",
                 "Fixed row height should equal to configured.");
@@ -310,14 +310,14 @@ define([
         var footerTestGroup = gridViewTestSuite.createTestGroup('footer');
 
         //Test footer pager info
-        footerTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_FOOTER_PAGER_INFO, function () {
+        footerTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_FOOTER_PAGER_INFO, function () {
             expect(1);
             equal($(el).find('.slick-pager-info').text().trim(), 'Total: ' + gridItems.length + ' records',
                 "pager info should display total records present");
         }, cotc.SEVERITY_HIGH));
 
         //Footer pager size default should equal page size in config
-        footerTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_GRIDVIEW_FOOTER_PAGER_SIZE, function () {
+        footerTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_FOOTER_PAGER_SIZE, function () {
             expect(1);
             equal($(el).find('.slick-pager-sizes .select2-chosen').text().trim(),
                 viewConfigFooter.pager.options.pageSize + ' Records',

@@ -17,13 +17,13 @@ define([
             dataParsers = suiteConfig.modelConfig.dataParsers;
         }
 
-        module(cotu.formatTestModuleMessage(cotm.TEST_SLICKGRID_LISTMODEL, viewObj.el.id));
+        module(cotu.formatTestModuleMessage(cotm.TEST_GRIDVIEW_LIST_MODEL, viewObj.el.id));
 
         var gridListModelTestSuite = CUnit.createTestSuite('GridListModelTest');
 
         var basicTestGroup = gridListModelTestSuite.createTestGroup('basic');
 
-        basicTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_LISTMODEL_INITIAL_SETUP, function () {
+        basicTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_LIST_MODEL_INITIAL_SETUP, function () {
             if (mockData == null) {
                 assertEmpty(gridListModel);
             } else {
@@ -32,7 +32,7 @@ define([
 
         }, cotc.SEVERITY_HIGH));
 
-        basicTestGroup.registerTest(CUnit.test(cotm.SLICKGRID_LISTMODEL_REFRESH, function () {
+        basicTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_LIST_MODEL_REFRESH, function () {
             gridListModel.refresh();
             if (mockData == null) {
                 assertEmpty(gridListModel);
