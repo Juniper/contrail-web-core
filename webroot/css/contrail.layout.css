@@ -2353,16 +2353,17 @@ button.btn:active {
 .margin-left-21 {margin-left:21px !important;}
 
 /* padding framework */
-.padding-2 {padding:2px !important;}
-.padding-2-0 {padding:2px 0 !important;}
-.padding-5 {padding:5px !important;}
-.padding-5-0 {padding:5px 0 !important;}
-.padding-6-0 {padding:6px 0 !important;}
+.padding-2 {padding: 2px !important;}
+.padding-2-0 {padding: 2px 0 !important;}
+.padding-3-0 {padding: 3px 0 !important;}
+.padding-5 {padding: 5px !important;}
+.padding-5-0 {padding: 5px 0 !important;}
+.padding-6-0 {padding: 6px 0 !important;}
 .padding-0-0-5 {padding: 0 0 5px !important;}
-.padding-10 {padding:10px !important;}
-.padding-10-0 {padding:10px 0 !important;}
-.padding-15 {padding:15px !important;}
-.padding-top-5{padding-top:5px !important;}
+.padding-10 {padding: 10px !important;}
+.padding-10-0 {padding: 10px 0 !important;}
+.padding-15 {padding: 15px !important;}
+.padding-top-5{padding-top: 5px !important;}
 
 /* height framework */
 .height-20 {height: 20px !important;}
