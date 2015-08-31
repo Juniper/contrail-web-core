@@ -8,20 +8,17 @@ define([
 ], function (_, ContrailView) {
     var DetailsView = ContrailView.extend({
         render: function () {
-            var viewConfig = this.attributes.viewConfig,
+            var self = this,
+                viewConfig = self.attributes.viewConfig,
                 data = viewConfig['data'],
                 ajaxConfig = viewConfig['ajaxConfig'],
-                templateConfig = viewConfig['templateConfig'],
                 dataParser = viewConfig['dataParser'],
-                app = viewConfig['app'],
-                detailsTemplate = cowu.generateDetailTemplate(templateConfig, app),
-                self = this, modelMap = this.modelMap;
+                modelMap = this.modelMap;
 
             if(contrail.checkIfExist(data)) {
-                self.$el.html(detailsTemplate({data: data, requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY}));
-                initActionClickEvents(self.$el, templateConfig.actions, data);
+                self.renderDetailView({data: data, requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY});
             } else {
-                self.$el.html(detailsTemplate({data: [], requestState: cowc.DATA_REQUEST_STATE_FETCHING}));
+                self.renderDetailView({data: [], requestState: cowc.DATA_REQUEST_STATE_FETCHING});
 
                 if (modelMap != null && modelMap[viewConfig['modelKey']] != null) {
                     var contrailViewModel = modelMap[viewConfig['modelKey']],
@@ -30,20 +27,13 @@ define([
                     if (!contrailViewModel.isRequestInProgress()) {
                         requestState = cowu.getRequestState4Model(contrailViewModel);
                         attributes = contrailViewModel.attributes;
-                        self.$el.html(detailsTemplate({data: attributes, requestState: requestState}));
+                        self.renderDetailView({data: attributes, requestState: requestState});
 
-                        if (requestState !== 'error') {
-                            initClickEvents(self.$el, templateConfig.actions, attributes);
-                        }
                     } else {
                         contrailViewModel.onAllRequestsComplete.subscribe(function () {
                             requestState = cowu.getRequestState4Model(contrailViewModel);
                             attributes = contrailViewModel.attributes;
-                            self.$el.html(detailsTemplate({data: attributes, requestState: requestState}));
-
-                            if (requestState !== 'error') {
-                                initClickEvents(self.$el, templateConfig.actions, attributes);
-                            }
+                            self.renderDetailView({data: attributes, requestState: requestState});
                         });
                     }
                 } else {
@@ -55,22 +45,38 @@ define([
                             requestState = cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY;
                         }
 
-                        self.$el.html(detailsTemplate({data: parsedData, requestState: requestState}));
-                        initClickEvents(self.$el, templateConfig.actions, parsedData);
+                        self.renderDetailView({data: parsedData, requestState: requestState});
                     }, function (error) {
-                        self.$el.html(detailsTemplate({data: [], requestState: cowc.DATA_REQUEST_STATE_ERROR}));
+                        self.renderDetailView({data: [], requestState: cowc.DATA_REQUEST_STATE_ERROR});
                     });
                 }
+            }
+        },
+
+        renderDetailView: function(detailDataObj) {
+            var self = this,
+                viewConfig = self.attributes.viewConfig,
+                app = viewConfig['app'],
+                templateConfig = viewConfig['templateConfig'],
+                detailsTemplate = cowu.generateDetailTemplate(templateConfig, app);
+
+            self.$el.html(detailsTemplate(detailDataObj));
+
+            if (detailDataObj.requestState !== cowc.DATA_REQUEST_STATE_ERROR) {
+                initClickEvents(self.$el, templateConfig, detailDataObj.data);
             }
         }
     });
 
-    function initClickEvents(detailEl, actions, data) {
-        initActionClickEvents(detailEl, actions, data);
-        initWidgetViewEvents(detailEl)
+    function initClickEvents(detailEl, templateConfig, data) {
+        initActionClickEvents(detailEl, templateConfig, data);
+        initWidgetViewEvents(detailEl);
+        initDetailDataClickEvents(detailEl, templateConfig, data);
+
     };
 
-    function initActionClickEvents(detailEl, actions, data) {
+    function initActionClickEvents(detailEl, templateConfig, data) {
+        var actions = templateConfig.actions
         if (_.isArray(actions)) {
             $.each(actions, function(actionKey, actionValue) {
                 if(actionValue.type == 'dropdown') {
@@ -102,6 +108,38 @@ define([
                 $(this).parents('.widget-box').find('.list-view').hide();
             })
     };
+
+    function initDetailDataClickEvents (detailEl, templateConfig, data) {
+        if (templateConfig.templateGenerator === 'ColumnSectionTemplateGenerator') {
+            $.each(templateConfig.templateGeneratorConfig.columns, function (columnKey, columnValue) {
+                $.each(columnValue.rows, function (rowKey, rowValue) {
+                    initDetailDataClickEvents(detailEl, rowValue, data)
+                });
+            });
+        }
+
+        if (templateConfig.templateGenerator === 'BlockListTemplateGenerator') {
+            $.each(templateConfig.templateGeneratorConfig, function (configKey, configValue) {
+                initDetailDataClickEvents(detailEl, configValue, data)
+            });
+        }
+
+        if (templateConfig.templateGenerator === 'TextGenerator') {
+            if (contrail.checkIfExist(templateConfig.events)) {
+                $.each(templateConfig.events, function (eventKey, eventValue) {
+                    $(detailEl).find('.' + templateConfig.key + '-value')
+                        .off(eventKey)
+                        .on(eventKey, function (event) {
+                            eventValue(event, data);
+                        });
+                });
+            }
+        }
+
+        if (templateConfig.templateGenerator === 'LinkGenerator') {
+            //TODO
+        }
+    }
 
     return DetailsView;
 });

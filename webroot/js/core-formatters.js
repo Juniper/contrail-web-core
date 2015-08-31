@@ -7,7 +7,10 @@ define([
 ], function (_) {
     var CoreFormatters = function () {
         var self = this;
-        this.getTextGenerator = function (formatterKey, value, obj) {
+        this.getTextGenerator = function (templateGeneratorConfig, key, obj) {
+            var formatterKey = templateGeneratorConfig.formatter,
+                value = cowu.getJSONValueByPath(key, obj);
+
             switch (formatterKey) {
                 case 'byte' :
                     return cowu.addUnits2Bytes(value);
@@ -43,6 +46,22 @@ define([
 
                 case 'status-state' :
                     if(value === 'ok') {
+                        return '<span class="green">' + value + '</span>';
+                    } else {
+                        return value
+                    }
+
+                    break;
+
+                case 'health-status-state' :
+                    var iconHTML = (contrail.checkIfExist(templateGeneratorConfig.iconClass) ?
+                                    '<i class="' + templateGeneratorConfig.iconClass + ' pull-right padding-3-0"></i>' : '');
+
+                    if(value === 'critical') {
+                        return '<span class="red '+ key + '-value">'
+                            + value + iconHTML +
+                            '</span>';
+                    } else if(value === 'ok') {
                         return '<span class="green">' + value + '</span>';
                     } else {
                         return value

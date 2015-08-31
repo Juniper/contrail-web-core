@@ -250,9 +250,9 @@ define([
                 // Legend
                 //------------------------------------------------------------
 
-                if (showLegend) {
-                    var legendWidth = legend.align() ? availableWidth / 2 : availableWidth;
-                    var legendXPosition = legend.align() ? legendWidth : 0;
+                if (requestState === cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY && showLegend) {
+                    var legendWidth = availableWidth,
+                        legendXPosition = 0;
 
                     legend.width(legendWidth);
 
@@ -281,7 +281,7 @@ define([
                 //------------------------------------------------------------
 
                 // hide or show the focus context chart
-                g.select('.nv-context').style('display', focusEnable ? 'initial' : 'none');
+                g.select('.nv-context').style('display', (focusEnable && requestState === cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY) ? 'initial' : 'none');
 
                 bars2
                     .width(availableWidth)
