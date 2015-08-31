@@ -126,7 +126,7 @@ define([
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
         var chartDefaultOptions = {
-            margin: {top: 30, right: 70, bottom: 40, left: 70},
+            margin: {top: 20, right: 70, bottom: 50, left: 70},
             margin2: {top: 0, right: 70, bottom: 40, left: 70},
             height: 300,
             axisLabelDistance: 5,

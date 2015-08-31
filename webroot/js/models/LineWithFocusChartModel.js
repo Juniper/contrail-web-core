@@ -195,7 +195,7 @@ define([
                 contextEnter.append('g').attr('class', 'nv-x nv-brush');
 
                 // Legend
-                if (showLegend) {
+                if (requestState === cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY && showLegend) {
                     legend.width(availableWidth);
 
                     g.select('.nv-legendWrap')
@@ -335,6 +335,8 @@ define([
 
                 g.select('.nv-context .nv-x.nv-axis')
                     .attr('transform', 'translate(0,' + y2.range()[0] + ')');
+
+                g.select('.nv-context').style('display', (requestState === cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY) ? 'initial' : 'none');
 
                 //============================================================
                 // Event Handling/Dispatching (in chart's scope)
