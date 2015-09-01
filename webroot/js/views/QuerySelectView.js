@@ -12,7 +12,7 @@ define([
         render: function (renderConfig) {
             var selectTemplate = contrail.getTemplate4Id(ctwc.TMPL_QUERY_SELECT),
                 queryPrefix = this.model.query_prefix(),
-                modalId = queryPrefix + cowc.QE_SELECT_MODAL_SUFFIX,
+                modalId = queryPrefix + cowl.QE_SELECT_MODAL_SUFFIX,
                 self = this;
 
             var selectDataObject = self.model.select_data_object(),
@@ -20,7 +20,7 @@ define([
                 selectTmplHtml = selectTemplate(selectTmplData);
 
             cowu.createModal({
-                'modalId': modalId, 'className': 'modal-700', 'title': cowc.TITLE_QE_SELECT, 'body': selectTmplHtml, 'onSave': function () {
+                'modalId': modalId, 'className': 'modal-700', 'title': cowl.TITLE_QE_SELECT, 'body': selectTmplHtml, 'onSave': function () {
                     self.model.saveSelect({
                         init: function () {
                             self.model.showErrorAttr(queryPrefix + cowc.FORM_SUFFIX_ID, false);

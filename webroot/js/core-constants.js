@@ -127,9 +127,6 @@ define([
         this.DATA_REQUEST_STATE_ERROR = 'error';
         this.DATA_REQUEST_STATE_SUCCESS_EMPTY = 'success-empty';
         this.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY = 'success-not-empty';
-
-        this.QE_SELECT_MODAL_SUFFIX = '-select-modal';
-        this.TITLE_QE_SELECT = "Select";
     };
     return CoreConstants;
 });
