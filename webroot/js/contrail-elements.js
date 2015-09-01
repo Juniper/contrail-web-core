@@ -101,7 +101,20 @@
                     .datetimepicker(self.data('contrailDateTimePicker').option);
             },
             val: function(dateTime) {
+                console.warn('Contrail Web UI Deprecation warning: val() is depracated. use value() instead.');
                 self.val(moment(dateTime).format('MMM DD, YYYY hh:mm:ss A'));
+            },
+            value: function(dateTime) {
+                if(!contrail.checkIfExist(dateTime)) {
+                    return self.val();
+                } else {
+                    var value = moment(dateTime).format('MMM DD, YYYY hh:mm:ss A');
+                    self.val(value);
+                    return value;
+                }
+            },
+            destroy: function() {
+                self.datetimepicker('destroy')
             }
         });
         return self;

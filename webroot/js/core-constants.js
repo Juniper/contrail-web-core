@@ -43,6 +43,7 @@ define([
         this.TMPL_ACCORDIAN_VIEW = "core-accordian-view-template";
         this.TMPL_DROPDOWN_VIEW = "core-dropdown-view-template";
         this.TMPL_EDITABLE_GRID_DROPDOWN_VIEW = "editable-grid-dropdown-view-template";
+        this.TMPL_DATETIMEPICKER_VIEW = "core-datetimepicker-view-template";
         this.TMPL_SELECT2_DROPDOWN_VIEW = "core-select2-dropdown-view-template";
         this.TMPL_GRID_DROPDOWN_VIEW = "core-grid-dropdown-view-template";
         this.TMPL_INPUT_VIEW = "core-input-view-template";
