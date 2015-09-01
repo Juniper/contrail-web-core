@@ -1175,7 +1175,10 @@ function constructSelect2(self, defaultOption, args) {
                 .on("change", changeFunction)
                 .on("select2-selecting", selectingFunction);
             if (option.data.length !=0 && option.ignoreFirstValue != true) {
-                self.select2('val', option.data[0].text);
+                // set default value only if explicitly defined
+                if(option.defaultValueId != null && (option.data.length > option.defaultValueId)) {
+                    self.select2('val', option.data[option.defaultValueId].text);
+                }
             }
         }
 

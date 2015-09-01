@@ -867,6 +867,14 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="editable-grid-dropdown-view-template">
+    <div data-bind="visible: {{visible}}">
+        <div class="row-fluid form-element">
+            <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, contrailDropdown: {}"/>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-select2-dropdown-view-template">
     <div class="row-fluid form-dropdown-label">
         <div class="span10">

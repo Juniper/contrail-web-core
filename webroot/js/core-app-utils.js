@@ -342,19 +342,23 @@ function initCustomKOBindings(Knockout) {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var valueObj = Knockout.toJS(valueAccessor()) || {},
                 allBindings = allBindingsAccessor(),
-                elementConfig = $(element).data('elementConfig'),
-                dropDown = $(element).contrailDropdown(elementConfig).data('contrailDropdown');
+                elementConfig = {};
+
+            if(contrail.checkIfExist(bindingContext) && contrail.checkIfExist(bindingContext.$root)){
+                var elementConfigMap = bindingContext.$root.elementConfigMap(),
+                    elementName = $(element).attr("name");
+
+                elementConfig = elementConfigMap[elementName];
+            }
+            var dropDown = $(element).contrailDropdown(elementConfig).data('contrailDropdown');
 
             if (allBindings.value) {
                 var value = Knockout.utils.unwrapObservable(allBindings.value);
-                if (typeof value === 'function') {
+                if (typeof value === 'function' && value() != '') {
                     dropDown.value(value());
-                } else {
+                } else if (value != '') {
                     dropDown.value(value);
                 }
-            }
-            else {
-                dropDown.value('');
             }
 
             Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
