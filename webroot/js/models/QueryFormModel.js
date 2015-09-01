@@ -9,8 +9,6 @@ define([
     'contrail-model'
 ], function (_, Backbone, Knockout, ContrailModel) {
     var QueryFormModel = ContrailModel.extend({
-        defaultConfig: qewmc.getQueryModel(),
-
         constructor: function (modelData) {
             var modelRemoteDataConfig;
 
