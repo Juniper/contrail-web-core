@@ -9,42 +9,43 @@ define([
 ], function (_, ContrailView, Knockback) {
 
     var QuerySelectView = ContrailView.extend({
-        render: function () {
-            console.log()
-            var selectTmpl = contrail.getTemplate4Id(ctwc.TMPL_QUERY_SELECT),
-                modalId = 'select-modal',
-                prefixId = 'select-modal',
+        render: function (renderConfig) {
+            var selectTemplate = contrail.getTemplate4Id(ctwc.TMPL_QUERY_SELECT),
+                queryPrefix = this.model.query_prefix(),
+                modalId = queryPrefix + qewc.SELECT_MODAL_SUFFIX,
                 self = this;
 
             var selectDataObject = self.model.select_data_object(),
-                selectTmplData = {queryPrefix: self.model.query_prefix(), fields: $.makeArray(selectDataObject.select_fields), modalClass: 'modal-980'},
-                selectTmplHtml = selectTmpl(selectTmplData);
+                selectTmplData = {queryPrefix: self.model.query_prefix(), fields: $.makeArray(selectDataObject.select_fields)},
+                selectTmplHtml = selectTemplate(selectTmplData);
 
-            cowu.createModal({'modalId': modalId, 'className': 'modal-700', 'title': 'Select', 'body': selectTmplHtml, 'onSave': function () {
-                self.model.saveSelect({
-                    init: function () {
-                        self.model.showErrorAttr(prefixId + cowc.FORM_SUFFIX_ID, false);
-                        cowu.enableModalLoading(modalId);
-                    },
-                    success: function () {
-                        options['callback']();
-                        $("#" + modalId).modal('hide');
-                    },
-                    error: function (error) {
-                        cowu.disableModalLoading(modalId, function () {
-                            self.model.showErrorAttr(prefixId + cowc.FORM_SUFFIX_ID, error.responseText);
-                        });
-                    }
-                }); // TODO: Release binding on successful configure
-            }, 'onCancel': function () {
-                $("#" + modalId).modal('hide');
-            }});
+            cowu.createModal({
+                'modalId': modalId, 'className': 'modal-700', 'title': qewc.TITLE_SELECT, 'body': selectTmplHtml, 'onSave': function () {
+                    self.model.saveSelect({
+                        init: function () {
+                            self.model.showErrorAttr(queryPrefix + cowc.FORM_SUFFIX_ID, false);
+                            cowu.enableModalLoading(modalId);
+                        },
+                        success: function () {
+                            if (contrail.checkIfExist(renderConfig) && contrail.checkIfFunction(renderConfig['callback'])) {
+                                renderConfig['callback']();
+                            }
+                            $("#" + modalId).modal('hide');
+                        },
+                        error: function (error) {
+                            cowu.disableModalLoading(modalId, function () {
+                                self.model.showErrorAttr(queryPrefix + cowc.FORM_SUFFIX_ID, error.responseText);
+                            });
+                        }
+                    }); // TODO: Release binding on successful configure
+                }, 'onCancel': function () {
+                    $("#" + modalId).modal('hide');
+                }
+            });
 
             Knockback.applyBindings(self.model, document.getElementById(modalId));
         }
     });
-
-    function getSelectViewConfig() {};
 
     return QuerySelectView;
 });
