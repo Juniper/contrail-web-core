@@ -5,27 +5,28 @@
 define([
     'underscore',
     'backbone',
+    'contrail-view-model',
     'knockout',
     'knockback'
-], function (_, Backbone, Knockout, Knockback) {
+], function (_, Backbone, ContrailViewModel, Knockout, Knockback) {
     var ContrailModel = Knockback.ViewModel.extend({
 
         formatModelConfig: function(modelConfig) {
             return modelConfig;
         },
 
-        constructor: function (modelConfig) {
+        constructor: function (modelData, modelRemoteDataConfig) {
             var model, errorAttributes,
                 editingLockAttrs, _this = this,
-                modelAttributes = (modelConfig == null) ? this.defaultConfig : modelConfig;
+                modelAttributes = (modelData == null) ? this.defaultConfig : modelData;
 
             errorAttributes = generateAttributes(modelAttributes, cowc.ERROR_SUFFIX_ID, false);
             editingLockAttrs = generateAttributes(modelAttributes, cowc.LOCKED_SUFFIX_ID, true);
 
-            modelConfig = $.extend(true, {}, this.defaultConfig, modelConfig, {errors: new Backbone.Model(errorAttributes), locks: new Backbone.Model(editingLockAttrs)});
+            modelData = $.extend(true, {}, this.defaultConfig, modelData, {errors: new Backbone.Model(errorAttributes), locks: new Backbone.Model(editingLockAttrs)});
 
-            modelConfig = this.formatModelConfig(modelConfig);
-            model = new Backbone.Model(modelConfig);
+            modelData = this.formatModelConfig(modelData);
+            model = new ContrailViewModel($.extend(true, {data: modelData}, modelRemoteDataConfig));
             model = _.extend(model, this.validations, {_originalAttributes: modelAttributes});
 
             Knockback.ViewModel.prototype.constructor.call(this, model);
@@ -115,7 +116,7 @@ define([
         }
     });
 
-    var generateAttributes = function (attributes, suffix, defaultValue) {
+    function generateAttributes(attributes, suffix, defaultValue) {
         var flattenAttributes = cowu.flattenObject(attributes),
             errorAttributes = {};
 

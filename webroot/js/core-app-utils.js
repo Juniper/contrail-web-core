@@ -97,7 +97,9 @@ function getCoreAppPaths(coreBaseDir) {
         'layout-handler'              : coreBaseDir + '/js/handlers/LayoutHandler',
         'menu-handler'                : coreBaseDir + '/js/handlers/MenuHandler',
         'content-handler'             : coreBaseDir + '/js/handlers/ContentHandler',
-        'contrail-view'               : coreBaseDir + '/js/views/ContrailView'
+        'contrail-view'               : coreBaseDir + '/js/views/ContrailView',
+        'query-form-model'            : coreBaseDir + '/js/models/QueryFormModel',
+        'query-form-view'             : coreBaseDir + '/js/views/QueryFormView'
     };
 };
 

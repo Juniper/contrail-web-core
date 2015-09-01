@@ -770,7 +770,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-input-view-template">
-    <div class="row-fluid form-input-label">
+    <div class="row-fluid form-input-label" data-bind="visible: {{visible}}">
         <div class="span10">
             <label>{{label}}</label>
         </div>
@@ -780,7 +780,7 @@
             </span>
         </div>
     </div>
-    <div class="row-fluid form-element">
+    <div class="row-fluid form-element"  data-bind="visible: {{visible}}">
         <div class="input-append inset span12">
             {{#IfCompare type 'password' operator='==='}}
                 <input type="{{type}}" name="{{id}}" class="span12 {{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
@@ -794,7 +794,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-combobox-view-template">
-    <div class="row-fluid form-combobox-label">
+    <div class="row-fluid form-combobox-label" data-bind="visible: {{visible}}">
         <div class="span10">
             <label>{{label}}</label>
         </div>
@@ -804,7 +804,7 @@
             </span>
         </div>
     </div>
-    <div class="row-fluid form-element">
+    <div class="row-fluid form-element"  data-bind="visible: {{visible}}">
         <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}" data-bind="value: {{dataBindValue}}, contrailCombobox: {{printJSON elementConfig}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
@@ -1312,5 +1312,31 @@
         <span data-bind="text: errors().{{elementId}}_error"></span>
     </div>
     <div>Are you sure you want to delete {{item}} <b>{{itemId}}</b>?</div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-textarea-view-template">
+    <div class="row-fluid form-input-label" data-bind="visible: {{visible}}">
+        <div class="span10">
+            <label>{{label}}</label>
+        </div>
+        <div class="span2">
+            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+            </span>
+        </div>
+    </div>
+    <div class="row-fluid form-element"  data-bind="visible: {{visible}}">
+        <div class="input-append inset span12">
+            <textarea name="{{id}}" class="where-textarea span12 {{class}}" value="" placeholder="{{placeholder}}" rows="1" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"></textarea>
+            <span class="add-on" data-bind="visible:{{showEditIcon}}"><i class="icon-pencil" onclick=""></i></span>
+        </div>
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-button-view-template">
+    <div class="row-fluid margin-15-0-0"  data-bind="visible: {{visible}}">
+        <a class="btn btn-mini btn-primary" data-bind="click: reset">{{label}}</a>
+    </div>
 </script>
 

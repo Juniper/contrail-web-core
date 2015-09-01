@@ -47,6 +47,8 @@ define([
         this.TMPL_SELECT2_DROPDOWN_VIEW = "core-select2-dropdown-view-template";
         this.TMPL_GRID_DROPDOWN_VIEW = "core-grid-dropdown-view-template";
         this.TMPL_INPUT_VIEW = "core-input-view-template";
+        this.TMPL_TEXTAREA_VIEW = "core-textarea-view-template";
+        this.TMPL_BUTTON_VIEW = "core-button-view-template";
         this.TMPL_COMBOBOX_VIEW = "core-combobox-view-template";
         this.TMPL_GRID_INPUT_VIEW = "core-grid-input-view-template";
         this.TMPL_CHECKBOX_VIEW = "core-checkbox-view-template";
