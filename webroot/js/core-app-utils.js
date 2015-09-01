@@ -377,14 +377,22 @@ function initCustomKOBindings(Knockout) {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var valueObj = valueAccessor(),
                 allBindings = allBindingsAccessor(),
-                lookupKey = allBindings.lookupKey,
-                multiselect = $(element).contrailMultiselect(valueObj).data('contrailMultiselect');
+                elementConfig = {};
+
+            if (contrail.checkIfExist(bindingContext) && contrail.checkIfExist(bindingContext.$root)) {
+                var elementConfigMap = bindingContext.$root.elementConfigMap(),
+                    elementName = $(element).attr("name");
+
+                elementConfig = elementConfigMap[elementName];
+            }
+            var multiselect = $(element).contrailMultiselect(elementConfig).data('contrailMultiselect');
 
             if (allBindings.value) {
                 var value = Knockout.utils.unwrapObservable(allBindings.value);
-                if (typeof value === 'function') {
+                // ensure that value or value() is a array since its a multiselect
+                if (typeof value === 'function' && value() != '') {
                     multiselect.value(value());
-                } else {
+                } else if (value != '') {
                     multiselect.value(value);
                 }
             }

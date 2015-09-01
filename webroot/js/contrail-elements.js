@@ -1188,9 +1188,10 @@ function constructSelect2(self, defaultOption, args) {
                 .on("change", changeFunction)
                 .on("select2-selecting", selectingFunction);
             if (option.data.length !=0 && option.ignoreFirstValue != true) {
-                // set default value only if explicitly defined
-                if(option.defaultValueId != null && (option.data.length > option.defaultValueId)) {
-                    self.select2('val', option.data[option.defaultValueId].text);
+                // set default value only if explicitly defined and if not a multiselect
+                if(option.defaultValueId != null && (option.data.length > option.defaultValueId) && (option.defaultValueId >= 0) && (!contrail.checkIfExist(option.multiple))) {
+                    var selectedOption = option.data[option.defaultValueId];
+                    self.select2('val', selectedOption[option.dataValueField]);
                 }
             }
         }
@@ -1241,6 +1242,8 @@ function constructSelect2(self, defaultOption, args) {
                     return self.select2('val');
                 }
                 else{
+                    console.log(value);
+                    console.log(self);
                     self.select2('val', value);
                 }
             },
