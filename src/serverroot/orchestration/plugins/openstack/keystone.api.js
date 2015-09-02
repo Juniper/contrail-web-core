@@ -956,11 +956,14 @@ function getUserRoleByAllTenants (username, password, tenantlist, callback)
             var dataLen = data.length;
             var tokenObjs = {};
             for (var i = 0; i < dataLen; i++) {
-                var project = data[i]['tokenObj']['token']['tenant']['name'];
-                tokenObjs[project] = data[i]['tokenObj'];
-                if (null == data[i]) {
+                var project =
+                    commonUtils.getValueByJsonPath(data[i],
+                                                   'tokenObj;token;tenant;name',
+                                                   null);
+                if (null == project) {
                     continue;
                 }
+                tokenObjs[project] = data[i]['tokenObj'];
                 userRoles =
                     getUserRoleByAuthResponse(data[i]['roles']);
                 var userRolesCnt = userRoles.length;
