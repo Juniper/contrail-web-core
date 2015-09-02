@@ -8,8 +8,8 @@ define([
 ], function (_, ContrailView) {
     var FormMultiselectView = ContrailView.extend({
         render: function () {
-            var msTemplate = contrail.getTemplate4Id(cowc.TMPL_MULTISELECT_VIEW),
-                viewConfig = this.attributes.viewConfig,
+            var viewConfig = this.attributes.viewConfig,
+                msTemplate = contrail.getTemplate4Id((viewConfig.templateId) ? viewConfig.templateId: cowc.TMPL_MULTISELECT_VIEW),
                 label = this.attributes.label,
                 elId = this.attributes.elementId,
                 app = this.attributes.app,
@@ -26,13 +26,29 @@ define([
             this.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId, name: elId,
-                lockAttr: lockEditingByDefault,
+                label: labelValue, id: elId + '_dropdown', name: elId,
                 dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
+                lockAttr: lockEditingByDefault,
                 class: "span12", elementConfig: elementConfig
             };
 
+            /* Save the elementConfig for the dropdown in elementConfigMap in the model
+             'key' is the name of the element and 'value is the actual element config' */
+
+            // get the current elementConfigMap
+            var currentElementConfigMap = this.model.model().get('elementConfigMap');
+            if(!contrail.checkIfExist(currentElementConfigMap)){
+                currentElementConfigMap = {};
+                this.model.model().set('elementConfigMap', currentElementConfigMap);
+            }
+            // Update the existing elementConfigMap by adding the the new element elementConfig
+            // will get updated in the model also
+            currentElementConfigMap[elId] = elementConfig;
             this.$el.html(msTemplate(tmplParameters));
+            if (contrail.checkIfFunction(elementConfig.onInit)) {
+                elementConfig.onInit(this.model.model());
+            }
+
         }
     });
 

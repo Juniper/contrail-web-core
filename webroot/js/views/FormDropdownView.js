@@ -8,8 +8,8 @@ define([
 ], function (_, ContrailView) {
     var FormDropdownView = ContrailView.extend({
         render: function () {
-            var dropdownTemplate = contrail.getTemplate4Id(cowc.TMPL_DROPDOWN_VIEW),
-                viewConfig = this.attributes.viewConfig,
+            var viewConfig = this.attributes.viewConfig,
+                dropdownTemplate = contrail.getTemplate4Id((viewConfig.templateId) ? viewConfig.templateId: cowc.TMPL_DROPDOWN_VIEW),
                 label = this.attributes.label,
                 elId = this.attributes.elementId,
                 app = this.attributes.app,
@@ -34,8 +34,19 @@ define([
                 class: "span12", elementConfig: elementConfig
             };
 
+            /* Save the elementConfig for the dropdown in elementConfigMap in the model
+             'key' is the name of the element and 'value is the actual element config' */
+
+            // get the current elementConfigMap
+            var currentElementConfigMap = this.model.model().get('elementConfigMap');
+            if(!contrail.checkIfExist(currentElementConfigMap)){
+                currentElementConfigMap = {};
+                this.model.model().set('elementConfigMap', currentElementConfigMap);
+            }
+            // Update the existing elementConfigMap by adding the the new element elementConfig
+            // will get updated in the model also
+            currentElementConfigMap[elId] = elementConfig;
             this.$el.html(dropdownTemplate(tmplParameters));
-            this.$el.find('#' + elId + '_dropdown').data("elementConfig", elementConfig);
             if (contrail.checkIfFunction(elementConfig.onInit)) {
                 elementConfig.onInit(this.model.model());
             }

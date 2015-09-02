@@ -8,8 +8,8 @@ define([
 ], function (_, ContrailView) {
     var FormComboboxView = ContrailView.extend({
         render: function () {
-            var comboboxTemplate = contrail.getTemplate4Id(cowc.TMPL_COMBOBOX_VIEW),
-                viewConfig = this.attributes.viewConfig,
+            var viewConfig = this.attributes.viewConfig,
+                comboboxTemplate = contrail.getTemplate4Id((viewConfig.templateId) ? viewConfig.templateId: cowc.TMPL_COMBOBOX_VIEW),
                 elId = this.attributes.elementId,
                 app = this.attributes.app,
                 elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
@@ -30,9 +30,19 @@ define([
                 class: "span12", elementConfig: elementConfig
             };
 
-            this.$el.html(comboboxTemplate(tmplParameters));
-            this.$el.find('#' + elId + '_combobox').data("elementConfig", elementConfig);
+            /* Save the elementConfig for the dropdown in elementConfigMap in the model
+             'key' is the name of the element and 'value is the actual element config' */
 
+            // get the current elementConfigMap
+            var currentElementConfigMap = this.model.model().get('elementConfigMap');
+            if(!contrail.checkIfExist(currentElementConfigMap)){
+                currentElementConfigMap = {};
+                this.model.model().set('elementConfigMap', currentElementConfigMap);
+            }
+            // Update the existing elementConfigMap by adding the the new element elementConfig
+            // will get updated in the model also
+            currentElementConfigMap[elId] = elementConfig;
+            this.$el.html(comboboxTemplate(tmplParameters));
             if (contrail.checkIfFunction(elementConfig.onInit)) {
                 elementConfig.onInit(this.model.model());
             }

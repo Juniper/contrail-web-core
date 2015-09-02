@@ -810,6 +810,12 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="editable-grid-combobox-view-template">
+    <div class="row-fluid form-element"  data-bind="visible: {{visible}}">
+        <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}" data-bind="value: {{dataBindValue}}, contrailCombobox: {}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-checkbox-view-template">
     <div class="row-fluid form-checkbox-label">
         <div class="span10">
@@ -867,6 +873,14 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="editable-grid-dropdown-view-template">
+    <div data-bind="visible: {{visible}}">
+        <div class="row-fluid form-element">
+            <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, contrailDropdown: {}"/>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-select2-dropdown-view-template">
     <div class="row-fluid form-dropdown-label">
         <div class="span10">
@@ -906,6 +920,12 @@
     <div class="row-fluid form-element">
         <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}}, contrailMultiselect: {{printJSON elementConfig}}"/>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="editable-grid-multiselect-view-template">
+    <div class="row-fluid form-element">
+        <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, contrailMultiselect: {}"/>
     </div>
 </script>
 
