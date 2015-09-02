@@ -1072,12 +1072,14 @@
             {{/IfCompare}}
         {{/each}}
         {{#IfCompare advancedViewOptions false operator='!=' }}
-            <a class="detail-foundation-action-item group-detail-action-item group-detail-advanced-action-item pull-right selected" title="Basic List View" data-view="basic-list">
-                <i class="icon-list"></i>
-            </a>
-            <a class="detail-foundation-action-item group-detail-action-item group-detail-advanced-action-item pull-right" title="Advanced JSON View" data-view="advanced-json">
-                <i class="icon-code"></i>
-            </a>
+            {{#IfCompare theme false operator='==' }}
+                <a class="detail-foundation-action-item group-detail-action-item group-detail-advanced-action-item pull-right selected" title="Basic List View" data-view="basic-list">
+                    <i class="icon-list"></i>
+                </a>
+                <a class="detail-foundation-action-item group-detail-action-item group-detail-advanced-action-item pull-right" title="Advanced JSON View" data-view="advanced-json">
+                    <i class="icon-code"></i>
+                </a>
+            {{/IfCompare}}
         {{/IfCompare}}
         </div>
         <div class="row-fluid detail-foundation-content-basic group-detail-basic-list group-detail-item"></div>
@@ -1100,6 +1102,14 @@
 <script type="text/x-handlebars-template" id="core-2-row-content-template">
     <div id="top-content-container" class="row-fluid margin-0-0-5"></div>
     <div id="bottom-content-container" class="row-fluid margin-0-0-5"></div>
+</script>
+<!-- 2 columns with first column having 1 row and second columnn 2 rows -->
+<script type="text/x-handlebars-template" id="core-2-column-1-row-2row-content-template">
+    <div id="left-column-container" class="span5"></div>
+    <div id="right-column-container" class="span7">
+        <div id="top-right-content-container" class="row-fluid margin-0-0-5"></div>
+        <div id="bottom-right-content-container" class="row-fluid margin-0-0-5"></div>
+    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-loading-spinner-template">

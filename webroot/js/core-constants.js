@@ -39,6 +39,7 @@ define([
         this.KEY_VALIDATION = 'validation';
 
         this.TMPL_2ROW_CONTENT_VIEW = "core-2-row-content-template";
+        this.TMPL_2COLUMN_1ROW_2ROW_CONTENT_VIEW = "core-2-column-1-row-2row-content-template";
 
         this.TMPL_ACCORDIAN_VIEW = "core-accordian-view-template";
         this.TMPL_DROPDOWN_VIEW = "core-dropdown-view-template";

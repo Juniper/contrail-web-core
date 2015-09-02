@@ -864,6 +864,9 @@ a.selectAllLink:hover {
 .group-detail-container ul.item-list li .key {
     color:#666;
 }
+.group-detail-container ul.item-list li .key.label-blue{
+    color:#3182bd;
+}
 .group-detail-container ul.item-list li .value {
     color:#777;
 }
