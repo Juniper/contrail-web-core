@@ -1242,8 +1242,6 @@ function constructSelect2(self, defaultOption, args) {
                     return self.select2('val');
                 }
                 else{
-                    console.log(value);
-                    console.log(self);
                     self.select2('val', value);
                 }
             },

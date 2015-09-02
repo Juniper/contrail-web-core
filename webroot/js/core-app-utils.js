@@ -322,21 +322,25 @@ function initCustomKOBindings(Knockout) {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var valueObj = Knockout.toJS(valueAccessor()) || {},
                 allBindings = allBindingsAccessor(),
-                elementConfig = $(element).data('elementConfig');
+                elementConfig = {};
 
+            if(contrail.checkIfExist(bindingContext) && contrail.checkIfExist(bindingContext.$root)){
+                var elementConfigMap = bindingContext.$root.elementConfigMap(),
+                    elementName = $(element).attr("name");
+
+                elementConfig = elementConfigMap[elementName];
+            }
             var combobox = $(element).contrailCombobox(elementConfig).data('contrailCombobox');
+
             if (allBindings.value) {
                 var value = Knockout.utils.unwrapObservable(allBindings.value);
                 if (contrail.checkIfExist(value)) {
-                    if (typeof value === 'function') {
+                    if (typeof value === 'function' && value() != '') {
                         combobox.value(value());
-                    } else {
+                    } else if (value != ''){
                         combobox.value(value);
                     }
                 }
-            }
-            else {
-                combobox.value('');
             }
         }
     };

@@ -810,6 +810,12 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="editable-grid-combobox-view-template">
+    <div class="row-fluid form-element"  data-bind="visible: {{visible}}">
+        <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}" data-bind="value: {{dataBindValue}}, contrailCombobox: {}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-checkbox-view-template">
     <div class="row-fluid form-checkbox-label">
         <div class="span10">
