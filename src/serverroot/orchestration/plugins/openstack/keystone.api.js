@@ -919,11 +919,14 @@ function getUserRoleByAllTenants (username, password, tenantlist, callback)
             var dataLen = data.length;
             var tokenObjs = {};
             for (var i = 0; i < dataLen; i++) {
-                var project = data[i]['tokenObj']['token']['tenant']['name'];
-                tokenObjs[project] = data[i]['tokenObj'];
-                if (null == data[i]) {
+                var project =
+                    commonUtils.getValueByJsonPath(data[i],
+                                                   'tokenObj;token;tenant;name',
+                                                   null);
+                if (null == project) {
                     continue;
                 }
+                tokenObjs[project] = data[i]['tokenObj'];
                 userRoles =
                     getUserRoleByAuthResponse(data[i]['roles']);
                 var userRolesCnt = userRoles.length;
@@ -1080,10 +1083,24 @@ function getProjectDetails (projects, userObj, callback)
             var tokenObjs = {};
             var tokenCnt = tokenList.length;
             for (var i = 0; i < tokenCnt; i++) {
-                var project = tokenList[i]['tenant']['name'];
+                var project =
+                    commonUtils.getValueByJsonPath(tokenList[i], 'tenant;name',
+                                                   null);
+                if (null == project) {
+                    continue;
+                }
                 tokenObjs[project] = {};
                 tokenObjs[project]['token'] = tokenList[i];
-                tokenObjs[project]['token']['id'] =
+                var tokenID =
+                    commonUtils.getValueByJsonPath(tokenObjs[project],
+                                                   'token;id', null);
+                if (null == tokenID) {
+                    logutils.logger.error('We did not get valid token id for ' +
+                                          'project: ' + project);
+                    delete tokenObjs[project];
+                    continue;
+                }
+                tokenObjs[project]['token']['id'] = removeSpecialChars(tokenID);
                     removeSpecialChars(tokenObjs[project]['token']['id'] );
             }
             callback(err, data, tokenObjs);
@@ -1103,7 +1120,13 @@ function getUserRoleByProjectList (projects, userObj, callback)
         var projCnt = projs.length;
         for (var i = 0; i < projCnt; i++) {
             try {
-                var projName = projs[i]['token']['project']['name'];
+                var projName =
+                    commonUtils.getValueByJsonPath(projs[i],
+                                                   'token;project;name',
+                                                   null);
+                if (null == projName) {
+                    continue;
+                }
                 resTokenObjs[projName] = projs[i];
                 if (null != tokenObjs[projName]) {
                     resTokenObjs[projName]['token']['id'] =
@@ -1121,7 +1144,10 @@ function getUserRoleByProjectList (projects, userObj, callback)
         }
         var resCnt = projs.length;
         for (var i = 0; i < resCnt; i++) {
-            var userRole = getUserRoleByAuthResponse(projs[i]['token']['roles']);
+            var roles =
+                commonUtils.getValueByJsonPath(projs[i],
+                                               'token;roles', null);
+            var userRole = getUserRoleByAuthResponse(roles);
             if (global.STR_ROLE_ADMIN == userRole) {
                 callback(userRole, resTokenObjs);
                 return;
@@ -1603,13 +1629,20 @@ function getProjectList (req, appData, callback)
             async.map(tenantObjArr, getUserRoleByTenant, function(err, data) {
                 var dataLen = data.length;
                 for (var i = 0; i < dataLen; i++) {
-                    if (null == data[i]) {
+                    var project =
+                        commonUtils.getValueByJsonPath(data[i],
+                                                       'tokenObj;token;tenant;name',
+                                                       null);
+                    if (null == project) {
                         continue;
                     }
-                    var project =
-                        data[i]['tokenObj']['token']['tenant']['name'];
                     var projectUUID =
-                        data[i]['tokenObj']['token']['tenant']['id'];
+                        commonUtils.getValueByJsonPath(data[i],
+                                                       'tokenObj;token;tenant;id',
+                                                       null);
+                    if (null == projectUUID) {
+                        continue;
+                    }
                     req.session.tokenObjs[project] = data[i]['tokenObj'];
                     var userRoles = getUserRoleByAuthResponse(data[i]['roles']);
                     var rolesCnt = data[i]['roles'].length;
