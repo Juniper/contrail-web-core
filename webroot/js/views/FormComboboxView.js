@@ -15,19 +15,20 @@ define([
                 elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
                 path = viewConfig[cowc.KEY_PATH],
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
-                labelValue = (elId != null) ? cowl.get(elId, app) : cowl.get(path, app),
+                label = viewConfig.label,
+                visible =  viewConfig.visible,
+                labelValue = (label != null)? label :((elId != null)? cowl.get(elId, app) : cowl.get(path, app)),
                 tmplParameters;
 
             if (!(contrail.checkIfExist(lockEditingByDefault) && lockEditingByDefault)) {
                 lockEditingByDefault = false;
             }
+
             this.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId + '_combobox', name: elId,
-                dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
-                lockAttr: lockEditingByDefault,
-                class: "span12", elementConfig: elementConfig
+                label: labelValue, id: elId + '_combobox', name: elId, dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
+                lockAttr: lockEditingByDefault, class: "span12", elementConfig: elementConfig, visible: visible
             };
 
             /* Save the elementConfig for the dropdown in elementConfigMap in the model

@@ -101,7 +101,7 @@
                     .datetimepicker(self.data('contrailDateTimePicker').option);
             },
             val: function(dateTime) {
-                console.warn('Contrail Web UI Deprecation warning: val() is depracated. use value() instead.');
+                console.warn('Contrail WebUI Warning: Function val of ContrailDateTimePicker is deprecated. Use value() instead.');
                 self.val(moment(dateTime).format('MMM DD, YYYY hh:mm:ss A'));
             },
             value: function(dateTime) {

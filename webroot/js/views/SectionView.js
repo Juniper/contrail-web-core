@@ -11,7 +11,7 @@ define([
         render: function () {
             var sectionTempl = contrail.getTemplate4Id(cowc.TMPL_SECTION_VIEW),
                 viewConfig = this.attributes.viewConfig,
-                visible =  this.attributes.visible,
+                visible =  viewConfig.visible,
                 validation = this.attributes.validation,
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 modelMap = this.modelMap,

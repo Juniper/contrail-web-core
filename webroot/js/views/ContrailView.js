@@ -68,11 +68,13 @@ define([
             var viewName = viewObj['view'],
                 viewPathPrefix = viewObj['viewPathPrefix'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
-                visible = (viewObj['visible'] != null) ? viewObj['visible'] : true,
-                label = viewObj['label'],
                 validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
-                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault, visible: visible, label: label},
+                viewConfig = viewObj[cowc.KEY_VIEW_CONFIG],
                 app = viewObj['app'], self = this;
+
+            viewConfig['visible'] = contrail.checkIfExist(viewConfig['visible']) ? viewConfig['visible'] : true;
+
+            var viewAttributes = {viewConfig: viewConfig, elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault};
 
             self.childViewMap[elementId] = null;
 

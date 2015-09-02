@@ -10,16 +10,16 @@ define([
         render: function () {
             var textAreaTemplate = contrail.getTemplate4Id(cowc.TMPL_TEXTAREA_VIEW),
                 viewConfig = this.attributes.viewConfig,
-                label = this.attributes.label,
                 elId = this.attributes.elementId,
                 app = this.attributes.app,
                 validation = this.attributes.validation,
                 path = viewConfig[cowc.KEY_PATH],
-                visible = this.attributes.visible,
                 placeHolder = contrail.checkIfExist(viewConfig['placeHolder']) ? viewConfig['placeHolder'] : null,
                 type = (viewConfig[cowc.KEY_TYPE] != null) ? viewConfig[cowc.KEY_TYPE] : 'text',
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
-                labelValue = (label != null)? label :((elId != null) ? cowl.get(elId, app) : cowl.get(path, app)),
+                label = viewConfig.label,
+                visible =  viewConfig.visible,
+                labelValue = (label != null)? label :((elId != null)? cowl.get(elId, app) : cowl.get(path, app)),
                 showEditIcon = contrail.checkIfExist(viewConfig['editPopupConfig']) ? true : false,
                 tmplParameters;
 
