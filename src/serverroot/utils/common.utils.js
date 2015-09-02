@@ -1810,6 +1810,31 @@ function prefixToNetMask(prefixLen) {
     return v4.Address.fromHex(parseInt(binaryString,2).toString(16)).address;
 }
 
+/**
+ * Get the value of a property inside a json object with a given path
+ */
+function getValueByJsonPath(obj,pathStr,defValue) {
+    try {
+        var currObj = obj;
+        var pathArr = pathStr.split(';');
+        var arrLength = pathArr.length;
+        for(var i=0;i<arrLength;i++) {
+            if(currObj[pathArr[i]] != null) {
+                currObj = currObj[pathArr[i]];
+            } else
+                return defValue;
+        }
+        if(currObj instanceof Array)
+            return cloneObj(currObj);
+        else if(typeof(currObj) == "object")
+            return cloneObj(currObj);
+        else
+            return currObj;
+    } catch(e) {
+        return defValue;
+    }
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -1864,3 +1889,4 @@ exports.getWebConfigValueByName = getWebConfigValueByName;
 exports.isMultiTenancyEnabled = isMultiTenancyEnabled;
 exports.prefixToNetMask = prefixToNetMask;
 exports.convertApiServerUUIDtoKeystoneUUID = convertApiServerUUIDtoKeystoneUUID;
+exports.getValueByJsonPath = getValueByJsonPath;
