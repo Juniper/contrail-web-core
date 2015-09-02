@@ -1289,7 +1289,7 @@
         <div class="widget-header">
             <h4 class="smaller" {{#IfCompare controls.top.collapseable false operator='!=='}} data-action="widget-collapse"{{/IfCompare}}>
                 {{#IfCompare header.iconClass false operator='!=='}}
-                    <i class="{{header.iconClass}} icon-large"></i>
+                    <i class="{{header.iconClass}}"></i>
                 {{/IfCompare}}
                 {{header.title}}
             </h4>
@@ -1347,8 +1347,8 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-button-view-template">
-    <div class="row-fluid margin-15-0-0"  data-bind="visible: {{visible}}">
-        <a class="btn btn-mini btn-primary" data-bind="click: reset">{{label}}</a>
+    <div data-bind="visible: {{visible}}">
+        <a class="btn btn-mini {{elementConfig.btnClass}}" data-bind="click: reset">{{label}}</a>
     </div>
 </script>
 
