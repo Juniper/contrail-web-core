@@ -739,7 +739,7 @@
             <div class="section-content" >
                 <div class="row-fluid margin-0-0-5">
                     {{#each this.columns}}
-                        <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" data-bind="visible: {{this.viewConfig.visible}}"></div>
+                        <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}"></div>
                     {{/each}}
                 </div>
             </div>
