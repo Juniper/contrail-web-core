@@ -1191,7 +1191,7 @@ function constructSelect2(self, defaultOption, args) {
                 // set default value only if explicitly defined and if not a multiselect
                 if(option.defaultValueId != null && (option.data.length > option.defaultValueId) && (option.defaultValueId >= 0) && (!contrail.checkIfExist(option.multiple))) {
                     var selectedOption = option.data[option.defaultValueId];
-                    self.select2('val', selectedOption[option.dataValueField]);
+                    self.select2('val', selectedOption[option.dataValueField.dsVar]);
                 }
             }
         }
