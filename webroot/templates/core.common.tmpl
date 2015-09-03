@@ -1,6 +1,4 @@
-<!--
- Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
--->
+<!-- Copyright (c) 2014 Juniper Networks, Inc. All rights reserved. -->
 
 <script type="text/x-handlebars-template" id="menu-shortcuts">
             <div id="sidebar-shortcuts-large">
@@ -741,7 +739,7 @@
             <div class="section-content" >
                 <div class="row-fluid margin-0-0-5">
                     {{#each this.columns}}
-                    <div id="{{this.elementId}}" class="{{this.viewConfig.class}}"></div>
+                        <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" data-bind="visible: {{this.viewConfig.visible}}"></div>
                     {{/each}}
                 </div>
             </div>
