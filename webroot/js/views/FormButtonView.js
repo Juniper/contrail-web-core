@@ -15,13 +15,10 @@ define([
                 app = self.attributes.app,
                 elementConfig = viewConfig.elementConfig,
                 label = viewConfig.label,
-                visible =  viewConfig.visible,
                 labelValue = (label != null)? label :((elId != null)? cowl.get(elId, app) : cowl.get(path, app)),
                 tmplParameters;
 
-            tmplParameters = {
-                label: labelValue, id: elId, name: elId, visible: visible, class: "span3", elementConfig: elementConfig
-            };
+            tmplParameters = { label: labelValue, id: elId, name: elId, class: "span3", elementConfig: elementConfig };
 
             self.$el.html(buttonTemplate(tmplParameters));
         }

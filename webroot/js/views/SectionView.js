@@ -11,13 +11,12 @@ define([
         render: function () {
             var sectionTempl = contrail.getTemplate4Id(cowc.TMPL_SECTION_VIEW),
                 viewConfig = this.attributes.viewConfig,
-                visible =  viewConfig.visible,
                 validation = this.attributes.validation,
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 modelMap = this.modelMap,
                 childElId, childViewObj, childView;
 
-            this.$el.html(sectionTempl({viewConfig : viewConfig, visible : visible}));
+            this.$el.html(sectionTempl({viewConfig : viewConfig}));
 
             var rows = viewConfig[cowc.KEY_ROWS],
                 columns;

@@ -16,7 +16,6 @@ define([
                 path = viewConfig['path'],
                 type = (viewConfig['type'] != null) ? viewConfig['type'] : 'checkbox',
                 label = viewConfig.label,
-                visible =  viewConfig.visible,
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 labelValue = (label != null)? label :((elId != null)? cowl.get(elId, app) : cowl.get(path, app)),
                 tmplParameters;
@@ -28,8 +27,7 @@ define([
 
             tmplParameters = {
                 label: labelValue, id: elId, name: elId, disabled: viewConfig['disabled'], dataBindValue: viewConfig['dataBindValue'],
-                lockAttr: lockEditingByDefault, type: type, isChecked: viewConfig['dataBindValue'],
-                class: "span12", path: path, validation: validation, visible: visible
+                lockAttr: lockEditingByDefault, type: type, isChecked: viewConfig['dataBindValue'], class: "span12", path: path, validation: validation
             };
             this.$el.html(checkBoxTemplate(tmplParameters));
         }

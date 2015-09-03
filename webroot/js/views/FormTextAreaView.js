@@ -18,7 +18,6 @@ define([
                 type = (viewConfig[cowc.KEY_TYPE] != null) ? viewConfig[cowc.KEY_TYPE] : 'text',
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
                 label = viewConfig.label,
-                visible =  viewConfig.visible,
                 labelValue = (label != null)? label :((elId != null)? cowl.get(elId, app) : cowl.get(path, app)),
                 showEditIcon = contrail.checkIfExist(viewConfig['editPopupConfig']) ? true : false,
                 tmplParameters;
@@ -30,7 +29,7 @@ define([
 
             tmplParameters = {
                 label: labelValue, id: elId, name: elId, placeHolder: placeHolder, disabled: viewConfig['disabled'],
-                dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE], lockAttr: lockEditingByDefault, type: type, visible: visible,
+                dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE], lockAttr: lockEditingByDefault, type: type,
                 class: "span12", path: path, validation: validation, showEditIcon: showEditIcon
             };
 

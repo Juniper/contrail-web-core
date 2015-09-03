@@ -70,11 +70,8 @@ define([
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
                 validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
                 viewConfig = viewObj[cowc.KEY_VIEW_CONFIG],
+                viewAttributes = {viewConfig: viewConfig, elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
                 app = viewObj['app'], self = this;
-
-            viewConfig['visible'] = contrail.checkIfExist(viewConfig['visible']) ? viewConfig['visible'] : true;
-
-            var viewAttributes = {viewConfig: viewConfig, elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault};
 
             self.childViewMap[elementId] = null;
 

@@ -11,7 +11,6 @@ define([
             var viewConfig = this.attributes.viewConfig,
                 msTemplate = contrail.getTemplate4Id((viewConfig.templateId) ? viewConfig.templateId: cowc.TMPL_MULTISELECT_VIEW),
                 label = viewConfig.label,
-                visible =  viewConfig.visible,
                 elId = this.attributes.elementId,
                 app = this.attributes.app,
                 elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
@@ -26,10 +25,8 @@ define([
             this.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId + '_dropdown', name: elId,
-                dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
-                lockAttr: lockEditingByDefault,
-                class: "span12", elementConfig: elementConfig, visible: visible
+                label: labelValue, id: elId + '_dropdown', name: elId, dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
+                lockAttr: lockEditingByDefault, class: "span12", elementConfig: elementConfig
             };
 
             /* Save the elementConfig for the dropdown in elementConfigMap in the model
