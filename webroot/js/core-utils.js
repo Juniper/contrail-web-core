@@ -359,7 +359,7 @@ define(['underscore'], function (_) {
 
         /* Detail Template Generator*/
 
-        this.generateBlockListKeyValueTemplate = function (config, app) {
+        this.generateBlockListKeyValueTemplate = function (config, app, parentConfig) {
             var template = '' +
                 '{{#IfCompare requestState "' + cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY + '" operator="!==" }}' +
                     '{{#IfCompare requestState "' + cowc.DATA_REQUEST_STATE_FETCHING + '" operator="===" }}' +
@@ -379,8 +379,8 @@ define(['underscore'], function (_) {
                     '{{#IfValidJSONValueByPath "' + configValue.key + '" data ' + configKey + '}}' +
                     '<li>' +
                     '<label class="inline row-fluid">' +
-                    '<span class="key span5"> {{getLabel "' + configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
-                    '<span class="value span7">{{{getValueByConfig data config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
+                    '<span class="key span5 ' + parentConfig.keyClass +'"> {{getLabel "' + configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
+                    '<span class="value span7 ' + parentConfig.valueClass +'">{{{getValueByConfig data config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
 
                 template += '</label>' +
                     '</li>' +
@@ -454,7 +454,7 @@ define(['underscore'], function (_) {
                                 '<div class="widget-body">' +
                                     '<div class="widget-main row-fluid">' +
                                         '<div class="list-view">' +
-                                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app) +
+                                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app, config) +
                                         '</div>' +
                                         '<div class="advanced-view hide">' +
                                             '{{{formatGridJSON2HTML this.data' +
@@ -467,7 +467,7 @@ define(['underscore'], function (_) {
                     } else {
                         template = '<div class="detail-block-list-content row-fluid">' +
                             '<h6>' + config.title + '</h6>' +
-                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app) +
+                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app, config) +
                             '<br/></div>';
                     }
 
@@ -491,7 +491,7 @@ define(['underscore'], function (_) {
                         '{{/IfCompare}}' +
                         '<div class="span6">' +
                         '<div class="row-fluid">' +
-                        self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app) +
+                        self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app, config) +
                         '</div>' +
                         '</div>' +
                         '{{/each}} </div>' +
