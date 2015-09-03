@@ -282,9 +282,11 @@ define(['underscore'], function (_) {
                 viewPathPrefix = viewObj['viewPathPrefix'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
                 validation = (validation != null) ? validation : cowc.KEY_VALIDATION,
-                visible = (viewObj['visible'] != null) ? viewObj['visible'] :  true,
-                viewAttributes = {viewConfig: viewObj[cowc.KEY_VIEW_CONFIG], elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault, visible: visible},
+                viewConfig = viewObj[cowc.KEY_VIEW_CONFIG],
+                viewAttributes = {viewConfig: viewConfig, elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
                 app = viewObj['app'];
+
+            console.warn(cowc.DEPRECATION_WARNING_PREFIX + 'Function renderView4Config of core-utils is deprecated. Use renderView4Config() of ContrailView instead.');
 
             var renderConfig = {
                 parentElement: parentElement,
