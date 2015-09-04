@@ -1630,12 +1630,34 @@ function mergeMenuObjects (menuObj1, menuObj2)
     return menuObj1;
 }
 
+var featurePkgToMenuNameMap = {
+    'webController': 'wc',
+    'webStorage': 'ws',
+    'serverManager': 'sm'
+};
+
 function mergeAllMenuXMLFiles (pkgList, mergePath, callback)
 {
-    var writeFile = mergePath + '/menu.xml';
+    var pkgLen = pkgList.length;
+    var featureArr = [];
+    var mFileName = 'menu.xml';
+
+    for (var i = 1; i < pkgLen; i++) {
+        /* i = 0; => contrail-web-core, so ignore this one */
+        var pkgName = pkgList[i]['name'];
+        if (null != featurePkgToMenuNameMap[pkgName]) {
+            featureArr.push(featurePkgToMenuNameMap[pkgName]);
+        }
+    }
+    if (featureArr.length > 0) {
+        featureArr.sort();
+        mFileName = 'menu_' + featureArr.join('_') + '.xml';
+    }
+
+    var writeFile = mergePath + '/' + mFileName;
     var cmd = 'rm -f ' + writeFile;
     exec(cmd, function(error, stdout, stderr) {
-         mergeFeatureMenuXMLFiles(pkgList, mergePath, callback);
+         mergeFeatureMenuXMLFiles(pkgList, mergePath, mFileName, callback);
     });
 }
 
@@ -1718,12 +1740,12 @@ function customMenuChange (pkgList, resMenuObj)
     return resMenuObj;
 }
 
-function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
+function mergeFeatureMenuXMLFiles (pkgList, mergePath, mFileName, callback)
 {
     var pkgDir = null;
     var pkgLen = pkgList.length;
     var menuDirs = [];
-    var writeFile = mergePath + '/menu.xml';
+    var writeFile = mergePath + '/' + mFileName;
 
     if (1 == pkgLen) {
         /* Only core package, nothing to do */
@@ -1733,7 +1755,7 @@ function mergeFeatureMenuXMLFiles (pkgList, mergePath, callback)
     var pkgNames = jsonPath(pkgList, "$..name[0]");
     if (2 == pkgLen) {
         pkgDir = config.featurePkg[pkgList[1]['pkgName']].path;
-        cmd = 'cp -af ' + pkgDir + '/webroot/menu.xml ' +
+        cmd = 'cp -af ' + pkgDir + '/webroot/' + mFileName + ' ' +
             writeFile; 
         exec(cmd, function(error, stdout, stderr) {
             assert(error == null);
