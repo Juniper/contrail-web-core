@@ -808,12 +808,9 @@
 </script>
 
 <script type="text/x-handlebars-template" id="editable-grid-combobox-view-template">
-    <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}"
-        data-bind="
-            {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
-            value: {{dataBindValue}}, contrailCombobox: {},
-            event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"
-    />
+    <div class="row-fluid form-element"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}" data-bind="value: {{dataBindValue}}, contrailCombobox: {}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
+    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-checkbox-view-template">
@@ -874,13 +871,11 @@
 </script>
 
 <script type="text/x-handlebars-template" id="editable-grid-dropdown-view-template">
-    <input id="{{id}}" name="{{name}}" class="{{class}}"
-        data-bind="
-            {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
-            {{#if disabled}}disable: {{disabled}}, {{/if}}
-            {{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
-            value: {{dataBindValue}}, contrailDropdown: {}"
-    />
+    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="row-fluid form-element">
+            <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, contrailDropdown: {}"/>
+        </div>
+    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-select2-dropdown-view-template">
@@ -933,6 +928,26 @@
             {{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
             value: {{dataBindValue}}, contrailMultiselect: {}"
     />
+</script>
+
+<script type="text/x-handlebars-template" id="core-datetimepicker-view-template">
+    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="row-fluid form-dropdown-label">
+            <div class="span10">
+                <label>{{label}}</label>
+            </div>
+            <div class="span2">
+                <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                </span>
+            </div>
+        </div>
+        <div class="row-fluid form-element">
+            <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}},
+            contrailDateTimePicker: {{printJSON elementConfig}}"/>
+            <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+        </div>
+    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-datetimepicker-view-template">

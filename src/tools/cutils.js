@@ -1343,6 +1343,9 @@ function formatVirtualRouterType(type) {
             }
         }
     }
+    if (formattedType == '') {
+        return 'Hypervisor';
+    }
     return formattedType;         
 }
 function isValidMACAddress(mac) {
