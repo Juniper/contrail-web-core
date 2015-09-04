@@ -434,6 +434,41 @@ function initCustomKOBindings(Knockout) {
         }
     };
 
+    Knockout.bindingHandlers.contrailDateTimePicker = {
+        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var valueObj = Knockout.toJS(valueAccessor()) || {},
+                allBindings = allBindingsAccessor(),
+                elementConfig = {};
+
+            if(contrail.checkIfExist(bindingContext) && contrail.checkIfExist(bindingContext.$root)){
+                var elementConfigMap = bindingContext.$root.elementConfigMap(),
+                    elementName = $(element).attr("name");
+
+                elementConfig = elementConfigMap[elementName];
+            }
+            var dateTimePicker = $(element).contrailDateTimePicker(elementConfig).data('contrailDateTimePicker');
+
+            if (allBindings.value) {
+                var value = Knockout.utils.unwrapObservable(allBindings.value);
+                if (typeof value === 'function') {
+                    dateTimePicker.value(value());
+                } else {
+                    dateTimePicker.value(value);
+                }
+            }
+            else {
+                dateTimePicker.value('');
+            }
+
+            Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                dateTimePicker.destroy();
+            });
+        },
+        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+            $(element).trigger('change');
+        }
+    };
+
     var updateSelect2 = function (element) {
         var el = $(element);
         if (el.data('select2')) {
