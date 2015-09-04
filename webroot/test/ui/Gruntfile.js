@@ -26,13 +26,7 @@ module.exports = function (grunt) {
         {pattern: 'contrail-web-core/webroot/css/**/*.gif', included: false},
 
         {pattern: 'contrail-web-core/webroot/test/ui/js/co.test.app.js'},
-        {pattern: 'contrail-web-core/webroot/test/ui/js/**/co.test.*.js', included: false},
-        {pattern: 'contrail-web-core/webroot/test/ui/js/**/*.lib.test.suite.js', included: false},
-        {pattern: 'contrail-web-core/webroot/test/ui/js/**/*.lib.test.js', included: false},
-        //{pattern: 'contrail-web-core/webroot/test/ui/js/**/*.lib.test.js', included: false},
-        //{pattern: 'contrail-web-core/webroot/test/ui/js/**/*.lib.test.suite.js', included: false},
-        //{pattern: 'contrail-web-core/webroot/test/ui/js/**/{!(*.lib.test.js), !(*.test.suite.js)}', included: false},
-        //{pattern: 'contrail-web-core/webroot/test/ui/js/**/*.js', included: false},
+        {pattern: 'contrail-web-core/webroot/test/ui/js/**/*.js', included: false},
 
         {pattern: 'contrail-web-core/webroot/js/**/*.js', included: false},
         {pattern: 'contrail-web-core/webroot/templates/*.tmpl', included: false}
@@ -45,7 +39,6 @@ module.exports = function (grunt) {
         grid: {
             options: {
                 files: [
-                    //{pattern: 'contrail-web-core/webroot/assets/slickgrid/js/slick.*.js'},
                     {pattern: 'contrail-web-core/webroot/test/ui/js/grid/GridView.lib.test.js', included: false}
                 ],
                 preprocessors: {
