@@ -11,13 +11,13 @@ define([
             var self = this,
                 viewConfig = self.attributes.viewConfig,
                 textOptions = viewConfig.textOptions,
-                parentViewParams = textOptions.parentViewParams,
+                parentSelectedValueData = textOptions.parentSelectedValueData,
                 textElementId = self.attributes.elementId,
                 childViewConfig = null;
 
             if (contrail.checkIfExist(textOptions.childView)) {
                 if (contrail.checkIfFunction(textOptions.childView.init)) {
-                    childViewConfig = textOptions.childView.init({}, parentViewParams);
+                    childViewConfig = textOptions.childView.init({}, parentSelectedValueData);
                 } else if (!$.isEmptyObject(textOptions.childView.init)) {
                     childViewConfig = textOptions.childView.init;
                 }
