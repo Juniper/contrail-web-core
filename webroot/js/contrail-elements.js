@@ -101,7 +101,20 @@
                     .datetimepicker(self.data('contrailDateTimePicker').option);
             },
             val: function(dateTime) {
+                console.warn('Contrail WebUI Warning: Function val of ContrailDateTimePicker is deprecated. Use value() instead.');
                 self.val(moment(dateTime).format('MMM DD, YYYY hh:mm:ss A'));
+            },
+            value: function(dateTime) {
+                if(!contrail.checkIfExist(dateTime)) {
+                    return self.val();
+                } else {
+                    var value = moment(dateTime).format('MMM DD, YYYY hh:mm:ss A');
+                    self.val(value);
+                    return value;
+                }
+            },
+            destroy: function() {
+                self.datetimepicker('destroy')
             }
         });
         return self;
@@ -1178,7 +1191,7 @@ function constructSelect2(self, defaultOption, args) {
                 // set default value only if explicitly defined and if not a multiselect
                 if(option.defaultValueId != null && (option.data.length > option.defaultValueId) && (option.defaultValueId >= 0) && (!contrail.checkIfExist(option.multiple))) {
                     var selectedOption = option.data[option.defaultValueId];
-                    self.select2('val', selectedOption[option.dataValueField]);
+                    self.select2('val', selectedOption[option.dataValueField.dsVar]);
                 }
             }
         }

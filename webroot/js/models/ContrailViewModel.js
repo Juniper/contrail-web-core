@@ -27,7 +27,9 @@ define([
 
             if (modelConfig['data'] != null) {
                 setData2Model(self, modelConfig['data']);
-            } else if (modelConfig['remote'] != null) {
+            }
+
+            if (modelConfig['remote'] != null) {
                 var cacheUsedStatus = setCachedData2Model(self, cacheConfig);
 
                 if (cacheUsedStatus['isCacheUsed']) {
@@ -47,6 +49,7 @@ define([
 
                 bindDataHandler2Model(self);
             }
+
             return self;
         },
 
@@ -74,7 +77,11 @@ define([
                 dataParser: primaryRemote.dataParser,
                 initCallback: primaryRemote.initCallback,
                 successCallback: function (response) {
-                    setData2Model(contrailViewModel, response);
+                    if(contrail.checkIfFunction(primaryRemote.setData2Model)) {
+                        primaryRemote.setData2Model(contrailViewModel, response);
+                    } else {
+                        setData2Model(contrailViewModel, response);
+                    }
                 },
                 failureCallback: function (xhr) {
                     contrailViewModel.error = true;

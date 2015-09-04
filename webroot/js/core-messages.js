@@ -42,6 +42,8 @@ define([
                 return cowm.DATA_SUCCESS_EMPTY
             }
         };
+
+        this.DEPRECATION_WARNING_PREFIX = "Contrail WebUI Warning: ";
     };
     return CoreMessages;
 });
