@@ -17,7 +17,12 @@ define([
         suites: [
             {
                 class: ContrailListModelLibTestSuite,
-                group: ['all'],
+                groups: ['all'],
+                severity: cotc.SEVERITY_LOW
+            },
+            {
+                class: GridViewLibTestSuite,
+                groups: ['all'],
                 severity: cotc.SEVERITY_LOW
             }
         ]
