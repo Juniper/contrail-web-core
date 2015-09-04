@@ -1092,7 +1092,7 @@
             {{/IfCompare}}
         {{/each}}
         {{#IfCompare advancedViewOptions false operator='!=' }}
-            {{#IfCompare theme false operator='==' }}
+            {{#IfCompare theme null operator='==' }}
                 <a class="detail-foundation-action-item group-detail-action-item group-detail-advanced-action-item pull-right selected" title="Basic List View" data-view="basic-list">
                     <i class="icon-list"></i>
                 </a>
