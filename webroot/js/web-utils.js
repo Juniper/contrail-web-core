@@ -978,15 +978,14 @@ var featurePkgToMenuNameMap = {
             var mFileName = 'menu.xml';
             var featureMaps = [];
             if (null != response['featurePkg']) {
-                var featurePkg = response['featurePkg'];
-                for (key in featurePkg) {
-                    if (true == featurePkg[key]) {
-                        if (null != featurePkgToMenuNameMap[key]) {
-                            featureMaps.push(featurePkgToMenuNameMap[key]);
-                        } else {
-                            console.log('featurePkgToMenuNameMap key is null' +
-                                         key);
-                        }
+                var pkgList = response['pkgList'];
+                var pkgLen = pkgList.length;
+                for (var i = 0; i < pkgLen; i++) {
+                    if (null != featurePkgToMenuNameMap[pkgList[i]]) {
+                        featureMaps.push(featurePkgToMenuNameMap[pkgList[i]]);
+                    } else {
+                        console.log('featurePkgToMenuNameMap key is null: ' +
+                                    pkgList[i]);
                     }
                 }
                 if (featureMaps.length > 0) {
