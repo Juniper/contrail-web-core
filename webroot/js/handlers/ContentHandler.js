@@ -323,7 +323,7 @@ define(['underscore'], function (_) {
                         featureAppDefObjList.push(getScript(url));
                     }
                 }  else if (featurePackages[key] && key == FEATURE_PCK_WEB_STORAGE) {
-                    url = sBaseDir + '/common/ui/js/storage.app.js';
+                    url = strgBaseDir + '/common/ui/js/storage.app.js';
                     if(globalObj['loadedScripts'].indexOf(url) == -1) {
                         initAppDefObj = $.Deferred();
                         featureAppDefObjList.push(initAppDefObj);

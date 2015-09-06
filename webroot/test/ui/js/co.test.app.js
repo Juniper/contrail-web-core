@@ -6,7 +6,7 @@ var coreBaseDir = "/base/contrail-web-core/webroot",
     featurePkg = "testLibApi";
 
 require([
-    coreBaseDir + '/js/core-app-utils.js',
+    coreBaseDir + '/js/common/core.app.utils.js',
     coreBaseDir + '/test/ui/js/co.test.app.utils.js'
 ], function () {
     globalObj['env'] = "test";

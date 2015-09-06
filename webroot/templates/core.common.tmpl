@@ -921,8 +921,32 @@
 </script>
 
 <script type="text/x-handlebars-template" id="editable-grid-multiselect-view-template">
-    <div class="row-fluid form-element">
-        <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, contrailMultiselect: {}"/>
+    <input id="{{id}}" name="{{name}}" class="{{class}}"
+        data-bind="
+            {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
+            {{#if disabled}}disable: {{disabled}}, {{/if}}
+            {{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+            value: {{dataBindValue}}, contrailMultiselect: {}"
+    />
+</script>
+
+<script type="text/x-handlebars-template" id="core-datetimepicker-view-template">
+    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="row-fluid form-dropdown-label">
+            <div class="span10">
+                <label>{{label}}</label>
+            </div>
+            <div class="span2">
+                <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                </span>
+            </div>
+        </div>
+        <div class="row-fluid form-element">
+            <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}},
+            contrailDateTimePicker: {{printJSON elementConfig}}"/>
+            <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+        </div>
     </div>
 </script>
 
@@ -1059,7 +1083,12 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-grid-input-view-template">
-    <input type="{{type}}" name="{{name}}" class="{{class}}" data-bind="value: {{dataBindValue}}, event: { focusout: function() { validateAttr()('{{path}}', '{{validation}}', $data)} }"  />
+    <input type="{{type}}" name="{{name}}" class="{{class}}"
+        data-bind="
+            {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
+            value: {{dataBindValue}},
+            event: { focusout: function() { validateAttr()('{{path}}', '{{validation}}', $data)} }"
+    />
 </script>
 
 <script type="text/x-handlebars-template" id="core-grid-checkbox-view-template">

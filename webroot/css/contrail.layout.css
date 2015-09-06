@@ -2312,6 +2312,10 @@ button.btn:active {
     background-color: rgba(0, 0, 0, .2);
 }
 
+/* display framework */
+.display-inline-block { display: inline-block }
+.display-block { display: block }
+
 /* font framework*/
 .font-size-10{font-size:10px !important;}
 .font-size-11{font-size:11px !important;}
@@ -2333,6 +2337,7 @@ button.btn:active {
 .margin-10-0 {margin: 10px 0 !important;}
 .margin-0-10 {margin: 0 10px !important;}
 .margin-10-0-0 {margin:10px 0 0 !important;}
+.margin-0-10-0-0 { margin: 0 10px 0 0 !important; }
 .margin-0-0-10 {margin:0 0 10px !important;}
 .margin-15 {margin:15px !important;}
 .margin-15-0 {margin:15px 0 !important;}

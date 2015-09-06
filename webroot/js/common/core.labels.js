@@ -83,8 +83,11 @@ define([
 
         this.TITLE_DETAILS = "Details";
         this.TITLE_OVERVIEW = "Overview";
+        this.TITLE_QE_SELECT = "Select";
 
         this.BREADCRUMB_ID = "breadcrumb";
+
+        this.QE_SELECT_MODAL_SUFFIX = '-select-modal';
     };
 
     function capitalizeSentence(sentence) {

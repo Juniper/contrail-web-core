@@ -246,8 +246,9 @@ rm -f webroot/js/contrail-all-4.js
 rm -f webroot/js/contrail-all-5.js
 rm -f webroot/js/contrail-all-6.js
 rm -f webroot/js/contrail-all-7.js
-rm -f webroot/js/contrail-all-8.js
-rm -f webroot/js/contrail-all-9.js
+
+rm -f webroot/js/common/contrail.unified.1.js
+rm -f webroot/js/common/contrail.unified.2.js
 
 MAINFILE[0]=webroot/assets/jquery/js/jquery-1.8.3.min.js
 MAINFILE[1]=webroot/assets/jquery/js/jquery.xml2json.js
@@ -420,43 +421,43 @@ cat ${MAINFILE[56]} >> webroot/js/contrail-all-7.js
 cat ${MAINFILE[57]} >> webroot/js/contrail-all-7.js
 cat ${MAINFILE[58]} >> webroot/js/contrail-all-7.js
 
-cat ${MAINFILE[59]} > webroot/js/contrail-all-8.js
-cat ${MAINFILE[60]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[61]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[62]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[63]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[64]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[65]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[66]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[67]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[68]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[69]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[70]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[71]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[72]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[73]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[74]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[75]} >> webroot/js/contrail-all-8.js
-cat ${MAINFILE[76]} >> webroot/js/contrail-all-8.js
+cat ${MAINFILE[59]} > webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[60]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[61]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[62]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[63]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[64]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[65]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[66]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[67]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[68]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[69]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[70]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[71]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[72]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[73]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[74]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[75]} >> webroot/js/common/contrail.unified.1.js
+cat ${MAINFILE[76]} >> webroot/js/common/contrail.unified.1.js
 
-cat ${MAINFILE[77]} > webroot/js/contrail-all-9.js
-cat ${MAINFILE[78]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[79]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[80]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[81]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[82]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[83]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[84]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[85]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[86]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[87]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[88]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[89]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[90]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[91]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[92]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[93]} >> webroot/js/contrail-all-9.js
-cat ${MAINFILE[94]} >> webroot/js/contrail-all-9.js
+cat ${MAINFILE[77]} > webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[78]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[79]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[80]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[81]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[82]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[83]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[84]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[85]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[86]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[87]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[88]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[89]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[90]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[91]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[92]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[93]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[94]} >> webroot/js/common/contrail.unified.2.js
 
 # End - Merging All JS files
 

@@ -22,7 +22,7 @@ var depArray = [
 
     'layout-handler', 'web-utils', 'handlebars-utils', 'slickgrid-utils', 'contrail-elements',
     'topology_api', 'chart-utils', 'qe-utils', 'nvd3-plugin', 'd3-utils', 'analyzer-utils',
-    'dashboard-utils', 'joint.contrail', 'text', 'contrail-all-8', 'contrail-all-9',
+    'dashboard-utils', 'joint.contrail', 'text', 'contrail-unified-1', 'contrail-unified-2',
 
 ];
 

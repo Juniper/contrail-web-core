@@ -4,7 +4,7 @@
 var coreBaseDir = ".",
     ctBaseDir = ".",
     smBaseDir = ".",
-    sBaseDir = ".",
+    strgBaseDir = ".",
     pkgBaseDir = ".";
 
 requirejs.config({
