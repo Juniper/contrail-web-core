@@ -41,6 +41,7 @@ define([
             var self = this,
                 viewConfig = self.attributes.viewConfig,
                 dropdownOptions = viewConfig.dropdownOptions,
+                parentSelectedValueData = contrail.checkIfExist(dropdownOptions.parentSelectedValueData) ? dropdownOptions.parentSelectedValueData : null,
                 dropdownData = (self.model === null) ? [] : self.model.getItems(),
                 dropdownElementId = self.attributes.elementId;
 
@@ -74,6 +75,8 @@ define([
                     var onBreadcrumbDropdownChange = function(selectedValueData, dropdownOptions, type) {
                             var cookieKey = contrail.checkIfExist(dropdownOptions.cookieKey) ? dropdownOptions.cookieKey : null,
                                 childViewConfig = null;
+
+                            selectedValueData.parentSelectedValueData = parentSelectedValueData;
 
                             if (contrail.checkIfExist(dropdownOptions.childView)) {
                                 type = (contrail.checkIfExist(dropdownOptions.childView[type]) ? type : 'init');
