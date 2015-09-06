@@ -896,6 +896,10 @@ a.selectAllLink:hover {
 	cursor: pointer;
 }
 
+.slick-cell.cell-text-blue{
+    color: #3182bd;
+}
+
 .slick-cell .cell-no-link{
     color: #393939;
     cursor: default;
