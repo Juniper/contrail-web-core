@@ -283,6 +283,28 @@ define([
                 equal(domDetailsHtml_id0, detailsHtml_id0,
                     "Details row html content should be equal to the one generated from view config template");
 
+                //check basic view/advanced view if the advanced view is enabled.
+                //default or attr not present is true/enabled.
+                if (viewConfigBody.options.detail.advancedViewOptions) {
+                    //check advanced view icon
+                    equal($(el).find('.slick-row-detail-container .detail-foundation-action-item :last').attr('data-view'),
+                    "advanced-json", "advanced view icon data-view check");
+
+                    //trigger click on advanced view
+                    $(el).find('.slick-row-detail-container .detail-foundation-action-item :last i').trigger("click");
+
+                    equal($(el).find('.slick-row-detail-container .detail-foundation-content-advanced').html(),
+                        contrail.formatJSON2HTML(gridItems[0].rawData, 2),
+                        "advanced view HTML should equal to the generated JSON HTML content");
+
+                    //check basic view icon
+                    equal($(el).find('.slick-row-detail-container .detail-foundation-action-item :first').attr('data-view'),
+                        "basic-list", "basic view icon data-view check");
+
+                    //trigger click on basic view
+                    $(el).find('.slick-row-detail-container .detail-foundation-action-item :first i').trigger("click");
+
+                }
                 //simulate click to toggle the details row.
                 $(el).find('.slick_row_id_0 .toggleDetailIcon').trigger('click');
             }, cotc.SEVERITY_HIGH));

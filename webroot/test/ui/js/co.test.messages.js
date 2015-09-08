@@ -7,6 +7,7 @@ define([], function () {
     var TMessages = function() {
         this.TEST_GRIDVIEW_LIST_MODEL = 'Test GridView data model';
         this.TEST_GRIDVIEW_GRID = 'Test GridView Grid';
+        this.TEST_CHARTVIEW_ZOOM_SCATTER = 'Test ZoomScatter Chart View';
 
         this.GRIDVIEW_LIST_MODEL_INITIAL_SETUP = 'Test GridView list model setup, rows initialization';
         this.GRIDVIEW_LIST_MODEL_REFRESH = 'Test GridView list model refresh, check data items';
@@ -27,6 +28,8 @@ define([], function () {
         //footer
         this.GRIDVIEW_FOOTER_PAGER_SIZE = 'Test pager sizes loaded';
         this.GRIDVIEW_FOOTER_PAGER_INFO = 'Test pager info shown';
+
+        this.CHARTVIEW_AXIS_LABEL = 'Test chart axis labels set to the configured';
 
         this.get = function () {
             var args = arguments;
