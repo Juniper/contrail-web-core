@@ -37,6 +37,15 @@ define([
             }
         },
 
+        reset: function(data, event) {
+            this.time_range(30);
+            this.select('');
+            this.where('');
+            this.direction("ingress");
+            this.filter('');
+            this.select_data_object().reset(data);
+        },
+
         validations: {}
     });
 

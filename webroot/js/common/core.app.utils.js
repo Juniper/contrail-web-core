@@ -99,6 +99,7 @@ function getCoreAppPaths(coreBaseDir) {
         'graph-view'                  : coreBaseDir + '/js/views/GraphView',
         'contrail-view'               : coreBaseDir + '/js/views/ContrailView',
         'query-form-view'             : coreBaseDir + '/js/views/QueryFormView',
+        'query-result-view'           : coreBaseDir + '/js/views/QueryResultView',
 
         'query-form-model'            : coreBaseDir + '/js/models/QueryFormModel',
         'contrail-graph-model'        : coreBaseDir + '/js/models/ContrailGraphModel',

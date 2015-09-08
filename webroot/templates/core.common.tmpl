@@ -1377,7 +1377,7 @@
 
 <script type="text/x-handlebars-template" id="core-button-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <a class="btn btn-mini {{elementConfig.btnClass}}" data-bind="click: reset">{{label}}</a>
+        <a class="btn btn-mini {{elementConfig.btnClass}}" data-bind="click: {{elementConfig.onClick}}">{{label}}</a>
     </div>
 </script>
 
