@@ -2612,9 +2612,9 @@ p.error, p.error-text {
 .modal-body > form > .section-content {
     padding: 0 1.5em;
 }
+.row-fluid.form-label [class*="span"],
 .row-fluid.form-input-label [class*="span"],
 .row-fluid.form-combobox-label [class*="span"],
-.row-fluid.form-dropdown-label [class*="span"],
 .row-fluid.form-multiselect-label [class*="span"] {
     min-height: 25px;
 }

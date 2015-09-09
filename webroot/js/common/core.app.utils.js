@@ -353,9 +353,7 @@ function initCustomKOBindings(Knockout) {
 
     Knockout.bindingHandlers.contrailDropdown = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var valueObj = Knockout.toJS(valueAccessor()) || {},
-                allBindings = allBindingsAccessor(),
-                elementConfig = {};
+            var elementConfig = {}, dropdown;
 
             if(contrail.checkIfExist(bindingContext) && contrail.checkIfExist(bindingContext.$root)){
                 var elementConfigMap = bindingContext.$root.elementConfigMap(),
@@ -363,23 +361,44 @@ function initCustomKOBindings(Knockout) {
 
                 elementConfig = elementConfigMap[elementName];
             }
-            var dropDown = $(element).contrailDropdown(elementConfig).data('contrailDropdown');
 
-            if (allBindings.value) {
-                var value = Knockout.utils.unwrapObservable(allBindings.value);
-                if (typeof value === 'function' && value() != '') {
-                    dropDown.value(value());
-                } else if (value != '') {
-                    dropDown.value(value);
+            dropdown = $(element).contrailDropdown(elementConfig).data('contrailDropdown');
+
+            Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                dropdown.destroy();
+            });
+        },
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var elementConfig = {},
+                dropdown = $(element).data('contrailDropdown');
+
+            if(contrail.checkIfExist(bindingContext) && contrail.checkIfExist(bindingContext.$root)){
+                var elementConfigMap = bindingContext.$root.elementConfigMap(),
+                    elementName = $(element).attr("name");
+
+                elementConfig = elementConfigMap[elementName];
+            }
+
+            if (!contrail.checkIfExist(elementConfig.data) && !contrail.checkIfExist(elementConfig.dataSource) && allBindingsAccessor.get('optionList')) {
+                var optionListBindingAccessor = allBindingsAccessor.get('optionList'),
+                    optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
+                if (contrail.checkIfFunction(optionList) && optionList() != '') {
+                    dropdown.setData(optionList());
+                } else if (optionList != '') {
+                    dropdown.setData(optionList);
                 }
             }
 
-            Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
-                $(element).select2('destroy');
-            });
-        },
-        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-            $(element).trigger('change');
+            if (allBindingsAccessor.get('value')) {
+                var valueBindingAccessor = allBindingsAccessor.get('value'),
+                    value = Knockout.utils.unwrapObservable(valueBindingAccessor);
+
+                if (typeof value === 'function' && value() != '') {
+                    dropdown.value(value());
+                } else if (value != '') {
+                    dropdown.value(value);
+                }
+            }
         }
     };
 
@@ -454,11 +473,21 @@ function initCustomKOBindings(Knockout) {
 
                 elementConfig = elementConfigMap[elementName];
             }
+
             var dateTimePicker = $(element).contrailDateTimePicker(elementConfig).data('contrailDateTimePicker');
 
-            if (allBindings.value) {
-                var value = Knockout.utils.unwrapObservable(allBindings.value);
-                if (typeof value === 'function') {
+            Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                dateTimePicker.destroy();
+            });
+        },
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var dateTimePicker = $(element).data('contrailDateTimePicker');
+
+            if (allBindingsAccessor.get('value')) {
+                var valueBindingAccessor = allBindingsAccessor.get('value'),
+                    value = Knockout.utils.unwrapObservable(valueBindingAccessor);
+
+                if (contrail.checkIfFunction(value)) {
                     dateTimePicker.value(value());
                 } else {
                     dateTimePicker.value(value);
@@ -467,10 +496,37 @@ function initCustomKOBindings(Knockout) {
             else {
                 dateTimePicker.value('');
             }
+        }
+    };
 
-            Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
-                dateTimePicker.destroy();
-            });
+    Knockout.bindingHandlers.contrailNumericTextbox = {
+        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var allBindings = allBindingsAccessor(),
+                elementConfig = {};
+
+            if(contrail.checkIfExist(bindingContext) && contrail.checkIfExist(bindingContext.$root)){
+                var elementConfigMap = bindingContext.$root.elementConfigMap(),
+                    elementName = $(element).attr("name");
+
+                elementConfig = elementConfigMap[elementName];
+            }
+            var numericTextbox = $(element).contrailNumericTextbox(elementConfig).data('contrailNumericTextbox');
+
+            if (allBindings.value) {
+                var value = Knockout.utils.unwrapObservable(allBindings.value);
+                if (typeof value === 'function') {
+                    numericTextbox.value(value());
+                } else {
+                    numericTextbox.value(value);
+                }
+            }
+            else {
+                numericTextbox.value('');
+            }
+
+            //Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
+            //    numericTextbox.destroy();
+            //});
         },
         update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
             $(element).trigger('change');

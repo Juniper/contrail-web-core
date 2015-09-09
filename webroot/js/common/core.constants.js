@@ -29,6 +29,7 @@ define([
         this.KEY_ELEMENT_ID = 'elementId';
         this.KEY_ROWS = 'rows';
         this.KEY_COLUMNS = 'columns';
+        this.KEY_CHILD_VIEW = 'childView';
         this.KEY_VIEW_CONFIG = 'viewConfig';
         this.KEY_PATH = 'path';
         this.KEY_ELEMENT_CONFIG = 'elementConfig';
@@ -44,11 +45,13 @@ define([
         this.TMPL_ACCORDIAN_VIEW = "core-accordian-view-template";
         this.TMPL_DROPDOWN_VIEW = "core-dropdown-view-template";
         this.TMPL_DATETIMEPICKER_VIEW = "core-datetimepicker-view-template";
+        this.TMPL_NUMERICTEXTBOX_VIEW = "core-numerictextbox-view-template";
         this.TMPL_SELECT2_DROPDOWN_VIEW = "core-select2-dropdown-view-template";
         this.TMPL_GRID_DROPDOWN_VIEW = "core-grid-dropdown-view-template";
         this.TMPL_INPUT_VIEW = "core-input-view-template";
         this.TMPL_TEXTAREA_VIEW = "core-textarea-view-template";
         this.TMPL_BUTTON_VIEW = "core-button-view-template";
+        this.TMPL_COMPOSITE_VIEW = "core-composite-view-template";
         this.TMPL_COMBOBOX_VIEW = "core-combobox-view-template";
         this.TMPL_GRID_INPUT_VIEW = "core-grid-input-view-template";
         this.TMPL_CHECKBOX_VIEW = "core-checkbox-view-template";
@@ -79,7 +82,7 @@ define([
         this.TMPL_ZOOMED_SCATTER_CHART = "core-zoomed-scatter-chart-template";
         this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_FILTER = "core-zoomed-scatter-chart-control-panel-filter-template";
         this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_LEGEND = "core-zoomed-scatter-chart-control-panel-legend-template";
-        this.TMPL_WIDGET = "core-widget-template";
+        this.TMPL_WIDGET_VIEW = "core-widget-view-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
         this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
 
