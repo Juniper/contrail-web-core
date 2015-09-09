@@ -39,8 +39,24 @@ define([
             }
         },
 
+        getAttributes4Server: function () {
+            var modelAttrs = this.model().attributes,
+                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters'],
+                attrs4Server = {};
+
+            for (var key in modelAttrs) {
+                if(modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) == -1) {
+                    attrs4Server[key] = modelAttrs[key];
+                }
+            }
+
+            return attrs4Server;
+        },
+
         getQueryRequestPostData: function (serverCurrentTime) {
-            var reqQueryObj = {},
+            var queryReqObj = {
+                    formModelAttrs: this.getAttributes4Server()
+                },
                 selectStr = this.select(),
                 showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
                 queryPrefix = this.query_prefix(),
@@ -51,21 +67,15 @@ define([
                     btnId: queryPrefix + '-query-submit', refreshChart: true, serverCurrentTime: serverCurrentTime
                 };
 
-            reqQueryObj['timeRange'] = this.time_range();
-            reqQueryObj['fromTime'] = this.from_time();
-            reqQueryObj['toTime'] = this.to_time();
-            reqQueryObj['select'] = this.select();
-            reqQueryObj['direction'] = this.direction();
+            queryReqObj['formModelAttrs'] = qewu.setUTCTimeObj(this.query_prefix(), queryReqObj['formModelAttrs'], options);
 
-            reqQueryObj = qewu.setUTCTimeObj(this.query_prefix(), reqQueryObj, options);
+            queryReqObj.queryId = qewu.generateQueryUUID();
 
-            reqQueryObj.table = 'FlowSeriesTable';
-            reqQueryObj.queryId = qewu.generateQueryUUID();
-            reqQueryObj.async = 'true';
-            reqQueryObj.autoSort = 'true';
-            reqQueryObj.autoLimit = 'true';
+            queryReqObj.async = 'true';
+            queryReqObj.autoSort = 'true';
+            queryReqObj.autoLimit = 'true';
 
-            return reqQueryObj;
+            return queryReqObj;
         },
 
         reset: function (data, event) {

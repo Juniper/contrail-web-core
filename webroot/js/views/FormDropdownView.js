@@ -40,6 +40,7 @@ define([
                 currentElementConfigMap = {};
                 this.model.model().set('elementConfigMap', currentElementConfigMap);
             }
+
             // Update the existing elementConfigMap by adding the the new element elementConfig
             // will get updated in the model also
             currentElementConfigMap[elId] = elementConfig;
