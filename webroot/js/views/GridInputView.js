@@ -16,7 +16,16 @@ define([
                 type = (viewConfig[cowc.KEY_TYPE] != null) ? viewConfig[cowc.KEY_TYPE] : 'text',
                 tmplParameters;
 
-            tmplParameters = { id: elId, name: elId, dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE], type: type, class: "span12", path: path, validation: validation };
+            tmplParameters = {
+                id: elId,
+                name: elId,
+                dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
+                type: type,
+                class: "span12",
+                path: path,
+                validation: validation ,
+                disabled: viewConfig['disabled']
+            };
 
             this.$el.html(inputTemplate(tmplParameters));
         }

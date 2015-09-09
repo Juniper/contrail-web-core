@@ -720,7 +720,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-accordian-view-template">
-    <div id="{{elementId}}" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div id="{{elementId}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
         {{#each viewConfig}}
             {{#if this.title}}
                 <h3>{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="icon-warning-sign red"></i></span></h3>
@@ -1084,7 +1084,7 @@
 
 <script type="text/x-handlebars-template" id="core-grid-input-view-template">
     <input type="{{type}}" name="{{name}}" class="{{class}}"
-        data-bind="
+        data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}
             {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
             value: {{dataBindValue}},
             event: { focusout: function() { validateAttr()('{{path}}', '{{validation}}', $data)} }"

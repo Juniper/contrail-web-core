@@ -26,7 +26,7 @@ define([
 
             tmplParameters = {
                 label: labelValue, id: elId + '_dropdown', name: elId, dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
-                lockAttr: lockEditingByDefault, class: "span12", elementConfig: elementConfig
+                disabled: viewConfig['disabled'], lockAttr: lockEditingByDefault, class: "span12", elementConfig: elementConfig
             };
 
             /* Save the elementConfig for the dropdown in elementConfigMap in the model

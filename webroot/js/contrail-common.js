@@ -116,7 +116,8 @@ function Contrail() {
         }
         return errorMsg;
     };
-    this.ajaxHandler = function (config, initHandler, successHandler, failureHandler) {
+    this.ajaxHandler = function (config, initHandler, successHandler,
+        failureHandler, cbparam) {
         var contentType = null, dataType = null,
             methodType = config['type'], cacheEnabled = config['cache'],
             reqTimeOut = config['timeout'], dataUrl = config['url'],
@@ -156,7 +157,7 @@ function Contrail() {
         }
 
         $.ajax(ajaxConfig).success(function(response){
-            successHandler(response);
+            successHandler(response, cbparam);
         }).fail(function (error) {
             if (error['statusText'] === "timeout") {
                 error['responseText'] = "Request timeout.";
