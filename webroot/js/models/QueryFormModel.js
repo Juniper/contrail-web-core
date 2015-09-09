@@ -9,11 +9,13 @@ define([
     'contrail-model'
 ], function (_, Backbone, Knockout, ContrailModel) {
     var QueryFormModel = ContrailModel.extend({
+        defaultSelectFields: [],
+
         constructor: function (modelData) {
             var modelRemoteDataConfig;
 
             if (contrail.checkIfExist(this.defaultConfig.table_name)) {
-                modelRemoteDataConfig = getModelRemoteDataConfig(this.defaultConfig.table_name);
+                modelRemoteDataConfig = getModelRemoteDataConfig(this.defaultConfig.table_name, this.defaultSelectFields);
             }
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
@@ -37,7 +39,36 @@ define([
             }
         },
 
-        reset: function(data, event) {
+        getQueryRequestPostData: function (serverCurrentTime) {
+            var reqQueryObj = {},
+                selectStr = this.select(),
+                showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
+                queryPrefix = this.query_prefix(),
+                options = {
+                    elementId: queryPrefix + '-results', gridHeight: 480, timeOut: 120000,
+                    pageSize: 100, queryPrefix: 'fs', export: true, showChartToggle: showChartToggle,
+                    labelStep: 1, baseUnit: 'mins', fromTime: 0, toTime: 0, interval: 0,
+                    btnId: queryPrefix + '-query-submit', refreshChart: true, serverCurrentTime: serverCurrentTime
+                };
+
+            reqQueryObj['timeRange'] = this.time_range();
+            reqQueryObj['fromTime'] = this.from_time();
+            reqQueryObj['toTime'] = this.to_time();
+            reqQueryObj['select'] = this.select();
+            reqQueryObj['direction'] = this.direction();
+
+            reqQueryObj = qewu.setUTCTimeObj(this.query_prefix(), reqQueryObj, options);
+
+            reqQueryObj.table = 'FlowSeriesTable';
+            reqQueryObj.queryId = qewu.generateQueryUUID();
+            reqQueryObj.async = 'true';
+            reqQueryObj.autoSort = 'true';
+            reqQueryObj.autoLimit = 'true';
+
+            return reqQueryObj;
+        },
+
+        reset: function (data, event) {
             this.time_range(30);
             this.select('');
             this.where('');
@@ -49,8 +80,8 @@ define([
         validations: {}
     });
 
-    function getModelRemoteDataConfig(tableName) {
-        var tableSchemeUrl = '/api/admin/table/schema/' + tableName,
+    function getModelRemoteDataConfig(tableName, defaultSelectFields) {
+        var tableSchemeUrl = '/api/qe/table/schema/' + tableName,
             modelRemoteDataConfig = {
                 remote: {
                     ajaxConfig: {
@@ -58,7 +89,7 @@ define([
                         type: 'GET'
                     },
                     setData2Model: function (contrailViewModel, response) {
-                        var selectFields = getSelectFields4Table(response);
+                        var selectFields = getSelectFields4Table(response, defaultSelectFields);
                         contrailViewModel.set({
                             'ui_added_parameters': {
                                 'table_schema': response
@@ -75,12 +106,15 @@ define([
         return modelRemoteDataConfig;
     };
 
-    function getSelectFields4Table(tableSchema) {
+    function getSelectFields4Table(tableSchema, defaultSelectFields) {
         var tableColumns = tableSchema['columns'],
             filteredSelectFields = [];
 
         $.each(tableColumns, function (k, v) {
-            if (!(contrail.checkIfExist(v) && (v.name).indexOf('CLASS(') > -1) && !(contrail.checkIfExist(v) && (v.name).indexOf('UUID') > -1)) {
+            if (!(contrail.checkIfExist(v) && (v.name).indexOf('CLASS(') > -1)
+                && !(contrail.checkIfExist(v) && (v.name).indexOf('UUID') > -1)
+                && defaultSelectFields.indexOf(v.name) == -1) {
+
                 filteredSelectFields.push(v);
             }
         });
