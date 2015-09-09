@@ -720,7 +720,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-accordian-view-template">
-    <div id="{{elementId}}" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div id="{{elementId}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
         {{#each viewConfig}}
             {{#if this.title}}
                 <h3>{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="icon-warning-sign red"></i></span></h3>
@@ -819,7 +819,7 @@
 <script type="text/x-handlebars-template" id="core-editable-grid-input-view-template">
         <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
             <input type="{{type}}" name="{{name}}" class="{{class}}"
-                data-bind="
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
                     value: {{viewConfig.dataBindValue}},
                     event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data)} }"
             />
@@ -895,7 +895,7 @@
         <div class="row-fluid form-element">
             <input id="{{id}}" name="{{name}}" class="{{class}}"
                 data-bind="
-                    {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                    {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                     value: {{viewConfig.dataBindValue}},
                     optionList: {{viewConfig.dataBindOptionList}},
                     event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
