@@ -404,9 +404,7 @@ function initCustomKOBindings(Knockout) {
 
     Knockout.bindingHandlers.contrailMultiselect = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var valueObj = valueAccessor(),
-                allBindings = allBindingsAccessor(),
-                elementConfig = {};
+            var elementConfig = {}, multiselect;
 
             if (contrail.checkIfExist(bindingContext) && contrail.checkIfExist(bindingContext.$root)) {
                 var elementConfigMap = bindingContext.$root.elementConfigMap(),
@@ -414,24 +412,43 @@ function initCustomKOBindings(Knockout) {
 
                 elementConfig = elementConfigMap[elementName];
             }
-            var multiselect = $(element).contrailMultiselect(elementConfig).data('contrailMultiselect');
 
-            if (allBindings.value) {
-                var value = Knockout.utils.unwrapObservable(allBindings.value);
-                // ensure that value or value() is a array since its a multiselect
+            multiselect = $(element).contrailMultiselect(elementConfig).data('contrailMultiselect');
+
+            Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                multiselect.destroy();
+            });
+        },
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var elementConfig = {}, multiselect = $(element).data('contrailMultiselect');
+
+            if(contrail.checkIfExist(bindingContext) && contrail.checkIfExist(bindingContext.$root)){
+                var elementConfigMap = bindingContext.$root.elementConfigMap(),
+                    elementName = $(element).attr("name");
+
+                elementConfig = elementConfigMap[elementName];
+            }
+
+            if (!contrail.checkIfExist(elementConfig.data) && !contrail.checkIfExist(elementConfig.dataSource) && allBindingsAccessor.get('optionList')) {
+                var optionListBindingAccessor = allBindingsAccessor.get('optionList'),
+                    optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
+                if (contrail.checkIfFunction(optionList) && optionList() != '') {
+                    multiselect.setData(optionList());
+                } else if (optionList != '') {
+                    multiselect.setData(optionList);
+                }
+            }
+
+            if (allBindingsAccessor.get('value')) {
+                var valueBindingAccessor = allBindingsAccessor.get('value'),
+                    value = Knockout.utils.unwrapObservable(valueBindingAccessor);
+
                 if (typeof value === 'function' && value() != '') {
                     multiselect.value(value());
                 } else if (value != '') {
                     multiselect.value(value);
                 }
             }
-
-            Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
-                $(element).select2('destroy');
-            });
-        },
-        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-            $(element).trigger('change');
         }
     };
 

@@ -25,10 +25,8 @@ define([
             this.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                id: elId + '_dropdown', class: "span12",
-                name: elId, label: labelValue,
-                viewConfig: viewConfig,
-                lockAttr: lockEditingByDefault, elementConfig: elementConfig
+                id: elId + '_dropdown', class: "span12", name: elId, label: labelValue,
+                viewConfig: viewConfig, lockAttr: lockEditingByDefault
             };
 
             /* Save the elementConfig for the dropdown in elementConfigMap in the model

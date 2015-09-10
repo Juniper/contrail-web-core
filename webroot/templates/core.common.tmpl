@@ -893,68 +893,57 @@
    </div>
 </script>
 
+<script type="text/x-handlebars-template" id="editable-grid-dropdown-view-template">
+    <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <input id="{{id}}" name="{{name}}" class="{{class}}"
+            data-bind="
+                {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                value: {{viewConfig.dataBindValue}},
+                optionList: {{viewConfig.dataBindOptionList}},
+                contrailDropdown: {}"
+        />
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-grid-dropdown-view-template">
     <select name="{{name}}" class="{{class}}" data-bind="style: {width: '{{width}}px' }, options: {{elementConfig.data}}, value: {{dataBindValue}}, optionsCaption: '{{elementConfig.placeholder}}', select2: {}"></select>
 </script>
 
-<script type="text/x-handlebars-template" id="editable-grid-dropdown-view-template">
-    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="row-fluid form-element">
-            <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, contrailDropdown: {}"/>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-handlebars-template" id="core-select2-dropdown-view-template">
-    <div class="row-fluid form-label">
-        <div class="span10">
-            <label>{{label}}</label>
-        </div>
-        <div class="span2">
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </div>
-    </div>
-    <div class="row-fluid form-element">
-        <select name="{{name}}" class="{{class}}"
-                data-bind="
-                    {{#if disabled}}disable: {{disabled}}, {{/if}}
-                    {{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
-                    value: {{dataBindValue}},
-                    options: {{elementConfig.data}},
-                    optionsCaption: '{{elementConfig.placeholder}}',
-                    select2: {}
-                "></select>
-        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
-    </div>
-</script>
-
 <script type="text/x-handlebars-template" id="core-multiselect-view-template">
-    <div class="row-fluid form-multiselect-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="span10">
-            <label>{{label}}</label>
+   <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="row-fluid form-label">
+            <div class="span10">
+                <label>{{label}}</label>
+            </div>
+            <div class="span2">
+                <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                </span>
+            </div>
         </div>
-        <div class="span2">
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
+        <div class="row-fluid form-element">
+            <input id="{{id}}" name="{{name}}" class="{{class}}"
+                data-bind="
+                    {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                    value: {{viewConfig.dataBindValue}},
+                    optionList: {{viewConfig.dataBindOptionList}},
+                    contrailMultiselect: {}"
+            />
+            <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
         </div>
-    </div>
-    <div class="row-fluid form-element" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}}, contrailMultiselect: {{printJSON elementConfig}}"/>
-        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="editable-grid-multiselect-view-template">
-    <input id="{{id}}" name="{{name}}" class="{{class}}"
-        data-bind="
-            {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
-            {{#if disabled}}disable: {{disabled}}, {{/if}}
-            {{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
-            value: {{dataBindValue}}, contrailMultiselect: {}"
-    />
+    <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <input id="{{id}}" name="{{name}}" class="{{class}}"
+            data-bind="
+                {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                value: {{viewConfig.dataBindValue}},
+                optionList: {{viewConfig.dataBindOptionList}},
+                contrailMultiselect: {}"
+        />
+    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-datetimepicker-view-template">
