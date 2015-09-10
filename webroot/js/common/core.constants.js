@@ -125,6 +125,9 @@ define([
             defaultNavLinks: false
         };
 
+        this.TAB_THEME_CLASSIC = "classic";
+        this.TAB_THEME_OVERCAST = "overcast";
+
         this.DATA_REQUEST_STATE_FETCHING = 'fetching';
         this.DATA_REQUEST_STATE_ERROR = 'error';
         this.DATA_REQUEST_STATE_SUCCESS_EMPTY = 'success-empty';
