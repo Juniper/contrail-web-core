@@ -99,6 +99,7 @@ define([
             .on('click', function (event) {
                 $(this).parents('.widget-box').find('.list-view').show();
                 $(this).parents('.widget-box').find('.advanced-view').hide();
+                $(this).parents('.widget-box').find('.contrail-status-view').hide();
             });
 
         $(detailEl).find('[data-action="advanced-view"]')
@@ -106,6 +107,7 @@ define([
             .on('click', function (event) {
                 $(this).parents('.widget-box').find('.advanced-view').show();
                 $(this).parents('.widget-box').find('.list-view').hide();
+                $(this).parents('.widget-box').find('.contrail-status-view').hide();
             })
     };
 
