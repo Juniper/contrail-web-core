@@ -3,16 +3,39 @@
  */
 
 define(['underscore'], function (_) {
-    var MenuHandler = function () {
+    var MenuHandler = function (webServerInfo) {
         var self = this, menuObj,
             initMenuDefObj = $.Deferred(),
             webServerInfoDefObj = $.Deferred();
-
         //onHashChange is triggered once it is resolved
         self.deferredObj = $.Deferred();
 
+        var featurePkgToMenuNameMap = {
+            'webController': 'wc',
+            'webStorage': 'ws',
+            'serverManager': 'sm'
+        };
+
         this.loadMenu = function () {
-            $.get('/menu.xml?built_at=' + built_at, function (xml) {
+            var mFileName = 'menu.xml';
+            var featureMaps = [];
+            if (null != webServerInfo['pkgList']) {
+                var pkgList = webServerInfo['pkgList'];
+                var pkgLen = pkgList.length;
+                for (var i = 0; i < pkgLen; i++) {
+                    if (null != featurePkgToMenuNameMap[pkgList[i]]) {
+                        featureMaps.push(featurePkgToMenuNameMap[pkgList[i]]);
+                    } else {
+                        console.log('featurePkgToMenuNameMap key is null: ' +
+                                    pkgList[i]);
+                    }
+                }
+                if (featureMaps.length > 0) {
+                    featureMaps.sort();
+                    mFileName = 'menu_' + featureMaps.join('_') + '.xml';
+                }
+            }
+            $.get('/' + mFileName+ '?built_at=' + built_at, function (xml) {
                 $.get('/api/admin/webconfig/features/disabled?built_at=' + built_at, function (disabledFeatures) {
                     $.get('/api/admin/webconfig/featurePkg/webController?built_at=' + built_at, function (featurePkgsInfo) {
                         menuObj = $.xml2json(xml);

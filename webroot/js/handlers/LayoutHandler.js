@@ -10,15 +10,15 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
         $.param.fragment.noEscape(":[]");
 
         this.load = function () {
-            menuHandler = new MenuHandler();
-            menuHandler.loadMenu();
-            menuHandler.handleSideMenu();
+            getWebServerInfo(function(webServerInfo) {
+                menuHandler = new MenuHandler(webServerInfo);
+                menuHandler.loadMenu();
+                menuHandler.handleSideMenu();
+                contentHandler = new ContentHandler();
 
-            contentHandler = new ContentHandler();
-
-            getWebServerInfo(function() {
                 $.when.apply(window, [menuHandler.deferredObj]).done(function () {
                     self.onHashChange({}, $.bbq.getState());
+
                 });
             });
         };
@@ -120,7 +120,7 @@ function getWebServerInfo(callback) {
                 }
             }
             globalObj['webServerInfo'] = webServerInfo;
-            callback();
+            callback(webServerInfo);
         }
     });
 };
