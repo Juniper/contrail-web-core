@@ -47,6 +47,8 @@ define([
         this.TMPL_EDITABLE_GRID_DROPDOWN_VIEW = "editable-grid-dropdown-view-template";
         this.TMPL_MULTISELECT_VIEW = "core-multiselect-view-template";
         this.TMPL_EDITABLE_GRID_MULTISELECT_VIEW = "editable-grid-multiselect-view-template";
+        this.TMPL_COMBOBOX_VIEW = "core-combobox-view-template";
+        this.TMPL_EDITABLE_GRID_COMBOBOX_VIEW = "editable-grid-combobox-view-template";
 
         this.TMPL_DATETIMEPICKER_VIEW = "core-datetimepicker-view-template";
         this.TMPL_NUMERICTEXTBOX_VIEW = "core-numerictextbox-view-template";
@@ -55,13 +57,11 @@ define([
         this.TMPL_TEXTAREA_VIEW = "core-textarea-view-template";
         this.TMPL_BUTTON_VIEW = "core-button-view-template";
         this.TMPL_COMPOSITE_VIEW = "core-composite-view-template";
-        this.TMPL_COMBOBOX_VIEW = "core-combobox-view-template";
         this.TMPL_GRID_INPUT_VIEW = "core-grid-input-view-template";
         this.TMPL_CHECKBOX_VIEW = "core-checkbox-view-template";
         this.TMPL_RADIO_BUTTON_VIEW = "core-radio-button-view-template";
         this.TMPL_GRID_CHECKBOX_VIEW = "core-grid-checkbox-view-template";
         this.TMPL_EDITABLE_GRID_VIEW = "core-editable-grid-view-template";
-        this.TMPL_EDITABLE_GRID_COMBOBOX_VIEW = "editable-grid-combobox-view-template";
         this.TMPL_SECTION_VIEW = "core-section-view-template";
         this.TMPL_EDIT_FORM = "core-edit-form-template";
         this.TMPL_GENERIC_EDIT_FORM = "core-generic-edit-form-template";

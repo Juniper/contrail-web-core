@@ -805,29 +805,6 @@
     </div>
 </script>
 
-<script type="text/x-handlebars-template" id="core-combobox-view-template">
-    <div class="row-fluid form-combobox-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="span10">
-            <label>{{label}}</label>
-        </div>
-        <div class="span2">
-            <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </div>
-    </div>
-    <div class="row-fluid form-element"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}" data-bind="value: {{dataBindValue}}, contrailCombobox: {{printJSON elementConfig}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
-        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
-    </div>
-</script>
-
-<script type="text/x-handlebars-template" id="editable-grid-combobox-view-template">
-    <div class="row-fluid form-element"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}" data-bind="value: {{dataBindValue}}, contrailCombobox: {}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"/>
-    </div>
-</script>
-
 <script type="text/x-handlebars-template" id="core-checkbox-view-template">
     <div class="row-fluid form-checkbox-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <div class="span10">
@@ -942,6 +919,43 @@
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
                 contrailMultiselect: {}"
+        />
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-combobox-view-template">
+    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="row-fluid form-label">
+            <div class="span10">
+                <label>{{label}}</label>
+            </div>
+            <div class="span2">
+                <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                </span>
+            </div>
+        </div>
+        <div class="row-fluid form-element">
+            <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}"
+                data-bind="
+                    {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                    value: {{viewConfig.dataBindValue}},
+                    optionList: {{viewConfig.dataBindOptionList}},
+                    contrailCombobox: {}"
+            />
+            <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="editable-grid-combobox-view-template">
+    <div class="row-fluid"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}"
+            data-bind="
+                {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                value: {{viewConfig.dataBindValue}},
+                optionList: {{viewConfig.dataBindOptionList}},
+                contrailCombobox: {}"
         />
     </div>
 </script>
