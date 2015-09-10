@@ -52,7 +52,6 @@ define([
 
         this.TMPL_DATETIMEPICKER_VIEW = "core-datetimepicker-view-template";
         this.TMPL_NUMERICTEXTBOX_VIEW = "core-numerictextbox-view-template";
-        //this.TMPL_GRID_DROPDOWN_VIEW = "core-grid-dropdown-view-template";
         this.TMPL_INPUT_VIEW = "core-input-view-template";
         this.TMPL_TEXTAREA_VIEW = "core-textarea-view-template";
         this.TMPL_BUTTON_VIEW = "core-button-view-template";
