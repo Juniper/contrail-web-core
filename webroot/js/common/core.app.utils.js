@@ -542,8 +542,7 @@ function initCustomKOBindings(Knockout) {
 
     Knockout.bindingHandlers.contrailNumericTextbox = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var allBindings = allBindingsAccessor(),
-                elementConfig = {};
+            var elementConfig = {}, numericTextbox;
 
             if(contrail.checkIfExist(bindingContext) && contrail.checkIfExist(bindingContext.$root)){
                 var elementConfigMap = bindingContext.$root.elementConfigMap(),
@@ -551,11 +550,21 @@ function initCustomKOBindings(Knockout) {
 
                 elementConfig = elementConfigMap[elementName];
             }
-            var numericTextbox = $(element).contrailNumericTextbox(elementConfig).data('contrailNumericTextbox');
 
-            if (allBindings.value) {
-                var value = Knockout.utils.unwrapObservable(allBindings.value);
-                if (typeof value === 'function') {
+            numericTextbox = $(element).contrailNumericTextbox(elementConfig).data('contrailNumericTextbox');
+
+            Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                numericTextbox.destroy();
+            });
+        },
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var numericTextbox = $(element).data('contrailNumericTextbox');
+
+            if (allBindingsAccessor.get('value')) {
+                var valueBindingAccessor = allBindingsAccessor.get('value'),
+                    value = Knockout.utils.unwrapObservable(valueBindingAccessor);
+
+                if (contrail.checkIfFunction(value)) {
                     numericTextbox.value(value());
                 } else {
                     numericTextbox.value(value);
@@ -564,13 +573,6 @@ function initCustomKOBindings(Knockout) {
             else {
                 numericTextbox.value('');
             }
-
-            //Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
-            //    numericTextbox.destroy();
-            //});
-        },
-        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-            $(element).trigger('change');
         }
     };
 

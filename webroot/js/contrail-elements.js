@@ -69,6 +69,9 @@
                 } else {
                     self.spinner("value", value);
                 }
+            },
+            destroy: function() {
+                self.spinner("destroy");
             }
         });
         return self;
