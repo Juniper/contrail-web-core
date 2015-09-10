@@ -14,8 +14,8 @@ define([
         constructor: function (modelData) {
             var modelRemoteDataConfig;
 
-            if (contrail.checkIfExist(this.defaultConfig.table_name)) {
-                modelRemoteDataConfig = getModelRemoteDataConfig(this.defaultConfig.table_name, this.defaultSelectFields);
+            if (contrail.checkIfExist(modelData.table_name)) {
+                modelRemoteDataConfig = getModelRemoteDataConfig(modelData.table_name, this.defaultSelectFields);
             }
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
