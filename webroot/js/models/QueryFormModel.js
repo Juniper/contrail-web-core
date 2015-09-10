@@ -79,10 +79,10 @@ define([
         },
 
         reset: function (data, event) {
-            this.time_range(30);
+            this.time_range(1800);
             this.select('');
             this.where('');
-            this.direction("ingress");
+            this.direction("1");
             this.filter('');
             this.select_data_object().reset(data);
         },
