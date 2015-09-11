@@ -1188,13 +1188,15 @@ function constructSelect2(self, defaultOption, args) {
             }
 
             self.select2(option)
+                .off("change", changeFunction)
                 .on("change", changeFunction)
+                .off("select2-selecting", selectingFunction)
                 .on("select2-selecting", selectingFunction);
             if (option.data.length !=0 && option.ignoreFirstValue != true) {
                 // set default value only if explicitly defined and if not a multiselect
                 if(option.defaultValueId != null && (option.data.length > option.defaultValueId) && (option.defaultValueId >= 0) && (!contrail.checkIfExist(option.multiple))) {
                     var selectedOption = option.data[option.defaultValueId];
-                    self.select2('val', selectedOption[option.dataValueField.dsVar]);
+                    self.select2('val', selectedOption[option.dataValueField.dsVar], true);
                 }
             }
         }
@@ -1240,12 +1242,12 @@ function constructSelect2(self, defaultOption, args) {
                     }
                 }
             },
-            value: function(value) {
+            value: function(value, triggerChange) {
                 if(typeof value === 'undefined'){
                     return self.select2('val');
                 }
                 else{
-                    self.select2('val', value);
+                    self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                 }
             },
             setData: function(data) {
@@ -1259,12 +1261,13 @@ function constructSelect2(self, defaultOption, args) {
                     .off("change", changeFunction)
                     .on("change", changeFunction);
 
+                //TODO - Sync with setting of value based on defaultValueId
                 if(option.data.length > 0){
                     if(option.data[0].children != undefined && option.data[0].children.length > 0) {
                         if(option.data[1] != null && option.data[1].children != null && option.data[1].children.length > 0)
-                            self.select2('val', option.data[1].children[0].value);
+                            self.select2('val', option.data[1].children[0].value, true);
                     } else {
-                        self.select2('val', option.data[0].value);                    
+                        self.select2('val', option.data[0].value, true);
                     }
                 }
             },

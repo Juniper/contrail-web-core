@@ -355,9 +355,9 @@ function initCustomKOBindings(Knockout) {
             if (!contrail.checkIfExist(elementConfig.data) && !contrail.checkIfExist(elementConfig.dataSource) && allBindingsAccessor.get('optionList')) {
                 var optionListBindingAccessor = allBindingsAccessor.get('optionList'),
                     optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
-                if (contrail.checkIfFunction(optionList) && optionList() != '') {
+                if (contrail.checkIfFunction(optionList) && $.isArray(optionList())) {
                     dropdown.setData(optionList());
-                } else if (optionList != '') {
+                } else if ($.isArray(optionList)) {
                     dropdown.setData(optionList);
                 }
             }
@@ -367,9 +367,9 @@ function initCustomKOBindings(Knockout) {
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);
 
                 if (typeof value === 'function' && value() != '') {
-                    dropdown.value(value());
+                    dropdown.value(value(), true);
                 } else if (value != '') {
-                    dropdown.value(value);
+                    dropdown.value(value, true);
                 }
             }
         }
@@ -405,9 +405,9 @@ function initCustomKOBindings(Knockout) {
             if (!contrail.checkIfExist(elementConfig.data) && !contrail.checkIfExist(elementConfig.dataSource) && allBindingsAccessor.get('optionList')) {
                 var optionListBindingAccessor = allBindingsAccessor.get('optionList'),
                     optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
-                if (contrail.checkIfFunction(optionList) && optionList() != '') {
+                if (contrail.checkIfFunction(optionList) && $.isArray(optionList())) {
                     multiselect.setData(optionList());
-                } else if (optionList != '') {
+                } else if ($.isArray(optionList)) {
                     multiselect.setData(optionList);
                 }
             }
@@ -417,9 +417,9 @@ function initCustomKOBindings(Knockout) {
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);
 
                 if (typeof value === 'function' && value() != '') {
-                    multiselect.value(value());
+                    multiselect.value(value(), true);
                 } else if (value != '') {
-                    multiselect.value(value);
+                    multiselect.value(value, true);
                 }
             }
         }
@@ -455,9 +455,9 @@ function initCustomKOBindings(Knockout) {
             if (!contrail.checkIfExist(elementConfig.data) && !contrail.checkIfExist(elementConfig.dataSource) && allBindingsAccessor.get('optionList')) {
                 var optionListBindingAccessor = allBindingsAccessor.get('optionList'),
                     optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
-                if (contrail.checkIfFunction(optionList) && optionList() != '') {
+                if (contrail.checkIfFunction(optionList) && $.isArray(optionList())) {
                     combobox.setData(optionList());
-                } else if (optionList != '') {
+                } else if ($.isArray(optionList)) {
                     combobox.setData(optionList);
                 }
             }

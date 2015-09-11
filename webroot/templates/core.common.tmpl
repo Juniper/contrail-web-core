@@ -898,6 +898,7 @@
                     {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                     value: {{viewConfig.dataBindValue}},
                     optionList: {{viewConfig.dataBindOptionList}},
+                    event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                     contrailDropdown: {}"
             />
             <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
@@ -912,6 +913,7 @@
                 {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
+                event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailDropdown: {}"
         />
     </div>
@@ -935,6 +937,7 @@
                     {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                     value: {{viewConfig.dataBindValue}},
                     optionList: {{viewConfig.dataBindOptionList}},
+                    event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                     contrailMultiselect: {}"
             />
             <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
@@ -949,6 +952,7 @@
                 {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
+                event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailMultiselect: {}"
         />
     </div>
