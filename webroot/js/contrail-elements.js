@@ -1196,7 +1196,7 @@ function constructSelect2(self, defaultOption, args) {
                 // set default value only if explicitly defined and if not a multiselect
                 if(option.defaultValueId != null && (option.data.length > option.defaultValueId) && (option.defaultValueId >= 0) && (!contrail.checkIfExist(option.multiple))) {
                     var selectedOption = option.data[option.defaultValueId];
-                    self.select2('val', selectedOption[option.dataValueField.dsVar], true);
+                    self.select2('val', selectedOption[option.dataValueField.dsVar]);
                 }
             }
         }
@@ -1250,7 +1250,7 @@ function constructSelect2(self, defaultOption, args) {
                     self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                 }
             },
-            setData: function(data) {
+            setData: function(data, triggerChange) {
                 self.select2('destroy');
                 option.data = formatData(data,option);
                 if(typeof option.data != "undefined") {
@@ -1265,9 +1265,9 @@ function constructSelect2(self, defaultOption, args) {
                 if(option.data.length > 0){
                     if(option.data[0].children != undefined && option.data[0].children.length > 0) {
                         if(option.data[1] != null && option.data[1].children != null && option.data[1].children.length > 0)
-                            self.select2('val', option.data[1].children[0].value, true);
+                            self.select2('val', option.data[1].children[0].value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                     } else {
-                        self.select2('val', option.data[0].value, true);
+                        self.select2('val', option.data[0].value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                     }
                 }
             },

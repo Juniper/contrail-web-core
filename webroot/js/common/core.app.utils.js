@@ -356,9 +356,9 @@ function initCustomKOBindings(Knockout) {
                 var optionListBindingAccessor = allBindingsAccessor.get('optionList'),
                     optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
                 if (contrail.checkIfFunction(optionList) && $.isArray(optionList())) {
-                    dropdown.setData(optionList());
+                    dropdown.setData(optionList(), true);
                 } else if ($.isArray(optionList)) {
-                    dropdown.setData(optionList);
+                    dropdown.setData(optionList, true);
                 }
             }
 
@@ -406,9 +406,9 @@ function initCustomKOBindings(Knockout) {
                 var optionListBindingAccessor = allBindingsAccessor.get('optionList'),
                     optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
                 if (contrail.checkIfFunction(optionList) && $.isArray(optionList())) {
-                    multiselect.setData(optionList());
+                    multiselect.setData(optionList(), true);
                 } else if ($.isArray(optionList)) {
-                    multiselect.setData(optionList);
+                    multiselect.setData(optionList, true);
                 }
             }
 
