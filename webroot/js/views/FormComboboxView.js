@@ -8,13 +8,14 @@ define([
 ], function (_, ContrailView) {
     var FormComboboxView = ContrailView.extend({
         render: function () {
-            var viewConfig = this.attributes.viewConfig,
+            var self = this,
+                viewConfig = self.attributes.viewConfig,
                 comboboxTemplate = contrail.getTemplate4Id((viewConfig.templateId) ? viewConfig.templateId: cowc.TMPL_COMBOBOX_VIEW),
-                elId = this.attributes.elementId,
-                app = this.attributes.app,
+                elId = self.attributes.elementId,
+                app = self.attributes.app,
                 elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
                 path = viewConfig[cowc.KEY_PATH],
-                lockEditingByDefault = this.attributes.lockEditingByDefault,
+                lockEditingByDefault = self.attributes.lockEditingByDefault,
                 label = viewConfig.label,
                 labelValue = (label != null)? label :((elId != null)? cowl.get(elId, app) : cowl.get(path, app)),
                 tmplParameters;
@@ -23,28 +24,28 @@ define([
                 lockEditingByDefault = false;
             }
 
-            this.model.initLockAttr(path, lockEditingByDefault);
+            self.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId + '_combobox', name: elId, dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
-                lockAttr: lockEditingByDefault, class: "span12", elementConfig: elementConfig
+                label: labelValue, id: elId + '_combobox', name: elId, class: "span12",
+                viewConfig: viewConfig, lockAttr: lockEditingByDefault
             };
 
             /* Save the elementConfig for the dropdown in elementConfigMap in the model
              'key' is the name of the element and 'value is the actual element config' */
 
             // get the current elementConfigMap
-            var currentElementConfigMap = this.model.model().get('elementConfigMap');
+            var currentElementConfigMap = self.model.model().get('elementConfigMap');
             if(!contrail.checkIfExist(currentElementConfigMap)){
                 currentElementConfigMap = {};
-                this.model.model().set('elementConfigMap', currentElementConfigMap);
+                self.model.model().set('elementConfigMap', currentElementConfigMap);
             }
             // Update the existing elementConfigMap by adding the the new element elementConfig
             // will get updated in the model also
             currentElementConfigMap[elId] = elementConfig;
-            this.$el.html(comboboxTemplate(tmplParameters));
+            self.$el.html(comboboxTemplate(tmplParameters));
             if (contrail.checkIfFunction(elementConfig.onInit)) {
-                elementConfig.onInit(this.model.model());
+                elementConfig.onInit(self.model.model());
             }
         }
     });

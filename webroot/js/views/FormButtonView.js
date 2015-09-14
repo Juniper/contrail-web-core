@@ -6,7 +6,7 @@ define([
     'underscore',
     'contrail-view'
 ], function (_, ContrailView) {
-    var FormInputView = ContrailView.extend({
+    var FormButtonView = ContrailView.extend({
         render: function () {
             var self = this,
                 buttonTemplate = contrail.getTemplate4Id(cowc.TMPL_BUTTON_VIEW),
@@ -24,5 +24,5 @@ define([
         }
     });
 
-    return FormInputView;
+    return FormButtonView;
 });

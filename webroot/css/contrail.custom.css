@@ -867,9 +867,6 @@ a.selectAllLink:hover {
 .group-detail-container ul.item-list li .key.label-blue{
     color:#3182bd;
 }
-.group-detail-container ul.item-list li .key.label-blue.indent-right{
-    padding-left:15px;
-}
 .group-detail-container ul.item-list li .value {
     color:#777;
 }
@@ -2619,10 +2616,7 @@ p.error, p.error-text {
 .modal-body > form > .section-content {
     padding: 0 1.5em;
 }
-.row-fluid.form-input-label [class*="span"],
-.row-fluid.form-combobox-label [class*="span"],
-.row-fluid.form-dropdown-label [class*="span"],
-.row-fluid.form-multiselect-label [class*="span"] {
+.row-fluid.form-label [class*="span"] {
     min-height: 25px;
 }
 .form-element {

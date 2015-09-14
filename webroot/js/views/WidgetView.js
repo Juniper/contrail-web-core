@@ -9,7 +9,7 @@ define([
     var WidgetView = ContrailView.extend({
         render: function() {
             var self = this,
-                widgetTemplate = contrail.getTemplate4Id(cowc.TMPL_WIDGET),
+                widgetTemplate = contrail.getTemplate4Id(cowc.TMPL_WIDGET_VIEW),
                 viewAttributes = self.attributes,
                 viewConfig = viewAttributes.viewConfig,
                 elementId = viewAttributes.elementId,

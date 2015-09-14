@@ -164,8 +164,8 @@ cp -af ./$THIRD_PARTY/jnpr_slickgrid/slick.grid.css webroot/assets/slickgrid/sty
 rm -rf webroot/assets/datetimepicker
 mkdir -p webroot/assets/datetimepicker/js
 mkdir -p webroot/assets/datetimepicker/styles
-cp -af ./$THIRD_PARTY/datetimepicker-v2.1.9/jquery.datetimepicker.js webroot/assets/datetimepicker/js/jquery.datetimepicker.js
-cp -af ./$THIRD_PARTY/datetimepicker-v2.1.9/jquery.datetimepicker.css webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
+cp -af ./$THIRD_PARTY/datetimepicker-v2.4.5/jquery.datetimepicker.js webroot/assets/datetimepicker/js/jquery.datetimepicker.js
+cp -af ./$THIRD_PARTY/datetimepicker-v2.4.5/jquery.datetimepicker.css webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
 #End - Cooy Datetimepicker from $THIRD_PARTY
 
 #Start - Copy Knockout from $THIRD_PARTY

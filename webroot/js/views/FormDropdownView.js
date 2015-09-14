@@ -25,8 +25,8 @@ define([
             this.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId + '_dropdown', name: elId, dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
-                lockAttr: lockEditingByDefault, class: "span12", elementConfig: elementConfig
+                id: elId + '_dropdown', class: "span12", name: elId, label: labelValue,
+                viewConfig: viewConfig, lockAttr: lockEditingByDefault
             };
 
             /* Save the elementConfig for the dropdown in elementConfigMap in the model
@@ -38,6 +38,7 @@ define([
                 currentElementConfigMap = {};
                 this.model.model().set('elementConfigMap', currentElementConfigMap);
             }
+
             // Update the existing elementConfigMap by adding the the new element elementConfig
             // will get updated in the model also
             currentElementConfigMap[elId] = elementConfig;
