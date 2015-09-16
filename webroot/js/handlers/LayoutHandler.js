@@ -10,15 +10,15 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
         $.param.fragment.noEscape(":[]");
 
         this.load = function () {
+            menuHandler = new MenuHandler();
+
             getWebServerInfo(function(webServerInfo) {
-                menuHandler = new MenuHandler(webServerInfo);
-                menuHandler.loadMenu();
+                menuHandler.loadMenu(webServerInfo);
                 menuHandler.handleSideMenu();
                 contentHandler = new ContentHandler();
 
                 $.when.apply(window, [menuHandler.deferredObj]).done(function () {
                     self.onHashChange({}, $.bbq.getState());
-
                 });
             });
         };

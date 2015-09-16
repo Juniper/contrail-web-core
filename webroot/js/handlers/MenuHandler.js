@@ -3,7 +3,7 @@
  */
 
 define(['underscore'], function (_) {
-    var MenuHandler = function (webServerInfo) {
+    var MenuHandler = function () {
         var self = this, menuObj,
             initMenuDefObj = $.Deferred(),
             webServerInfoDefObj = $.Deferred();
@@ -16,7 +16,7 @@ define(['underscore'], function (_) {
             'serverManager': 'sm'
         };
 
-        this.loadMenu = function () {
+        this.loadMenu = function (webServerInfo) {
             var mFileName = 'menu.xml';
             var featureMaps = [];
             if (null != webServerInfo['pkgList']) {
