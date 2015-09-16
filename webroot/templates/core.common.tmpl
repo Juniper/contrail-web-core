@@ -451,6 +451,74 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="dashboard-stats">
+    <div id="dashboard-stats" class="row-fluid">
+        <div class="span4">
+            <div id="logs-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div class="widget-main padding-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div id="sysinfo-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div id="system-info-stat" class="widget-main">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div id="alerts-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div id="alerts-box-content" class="widget-main padding-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="mon-infra-dashboard">
+    <div id='dashboard-infoboxes' style="height:380px">
+    </div>
+    <div id="dashboard-stats" class="row-fluid">
+        <div class="span4">
+            <div id="logs-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div class="widget-main padding-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div id="sysinfo-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div id="system-info-stat" class="widget-main">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div id="alerts-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div id="alerts-box-content" class="widget-main padding-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="infra-dashboard">
     <div class="row-fluid">
         <div class="row-fluid">
@@ -477,7 +545,6 @@
                     <div class="widget-header"></div>
                     <div class="widget-body">
                         <div id="system-info-stat" class="widget-main">
-                            
                         </div>
                     </div>
                 </div>
@@ -487,7 +554,6 @@
                     <div class="widget-header"></div>
                     <div class="widget-body">
                         <div id="alerts-box-content" class="widget-main padding-4">
-                            
                         </div>
                     </div>
                 </div>
@@ -733,6 +799,10 @@
         <span data-bind="text: errors().{{prefixId}}_form_error"></span>
     </div>
     <form name="{{prefixId}}Form" id="{{prefixId}}-form" onsubmit="return false;" class=""></form>
+</script>
+
+<script type="text/x-handlebars-template" id="core-modal-template">
+    <div id="{{prefixId}}_modal"></div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-generic-edit-form-template">
