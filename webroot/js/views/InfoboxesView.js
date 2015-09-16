@@ -11,17 +11,32 @@ define([
             var self = this;
 
             self.$el.append($('<div/>',{
+                class:'infobox-widget'
+            }));
+            self.$el.find('.infobox-widget').append($('<div/>',{
                 class:'infobox-container'
             }));
-            self.$el.append($('<div/>',{
+            self.$el.find('.infobox-widget').append($('<hr/>', {
+                class: 'hr-8'
+            }));
+            self.$el.find('.infobox-widget').append($('<div/>',{
                 class:'infobox-detail-container'
             }));
 
             //Add click listener for infoboxes to show/hide the respective container
             self.$el.find('.infobox-container').on('click','.infobox',function() {
                 var tabIdx = $(this).index();
-                self.$el.find('.infobox-detail-container .infobox-detail-item').hide();
-                $(self.$el.find('.infobox-detail-container .infobox-detail-item')[tabIdx]).show();
+                //Hide all infobox detail containers and show the one corresponding
+                //to clicked infobox.
+                self.$el.find('.infobox-detail-container').
+                    find('.infobox-detail-item').hide();
+                $(self.$el.find('.infobox-detail-container').
+                    find('.infobox-detail-item')[tabIdx]).show();
+                //Highlight the selected infobox
+                self.$el.find('.infobox').removeClass('infobox-blue').
+                    removeClass('infobox-dark active').addClass('infobox-grey');
+                $(self.$el.find('.infobox')[tabIdx]).removeClass('infobox-grey').
+                    addClass('infobox-blue infobox-dark active');
                 $(window).resize();
             });
         },
@@ -34,6 +49,12 @@ define([
                     class:'infobox-detail-item',
                 }));
 
+            //Revisit - Highlight first infobox
+            // self.$el.find('.infobox').removeClass('infobox-blue infobox-dark active').addClass('infobox-grey');
+            // $(self.$el.find('.infobox')[0]).removeClass('infobox-grey').addClass('infobox-blue infobox-dark active');
+            $(self.$el.find('.infobox')[0]).removeClass('infobox-grey').
+                addClass('infobox-blue infobox-dark active');
+
             //Initialize view
             var chartView = new cfg['view']({
                 model: cfg['model'],
@@ -44,7 +65,7 @@ define([
             chartView[renderFn]();
 
             //Listen for changes on model to show/hide down count
-            if(cfg['model'].isRequestInProgress() == false) {
+            if(cfg['model'].loadedFromCache) {
                 updateCnt();
             };
             cfg['model'].onDataUpdate.subscribe(function() {
