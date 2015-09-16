@@ -310,7 +310,9 @@ define([
                 dataParser: vlRemoteList[i].dataParser,
                 initCallback: vlRemoteList[i].initCallback,
                 successCallback: getVLRemoteSuccessCB(vlSuccessCallback, contrailListModel, parentModelList),
-                failureCallback: getVLRemoteFailureCB(vlFailureCallback, contrailListModel, parentModelList)
+                failureCallback: getVLRemoteFailureCB(vlFailureCallback,
+                                                      contrailListModel,
+                                                      parentModelList)
             }
             remoteHandlerConfig['vlRemoteConfig']['vlRemoteList'].push(vlRemote);
         };
@@ -320,15 +322,17 @@ define([
     };
 
     function getVLRemoteSuccessCB(vlSuccessCallback, contrailListModel, parentModelList) {
-        return function (response) {
+        return function (response, getAjaxConfig) {
             if (contrail.checkIfFunction(vlSuccessCallback)) {
-                vlSuccessCallback(response, contrailListModel, parentModelList);
+                vlSuccessCallback(response, contrailListModel, parentModelList,
+                                  getAjaxConfig);
             }
         };
     };
 
-    function getVLRemoteFailureCB(vlFailureCallback, contrailListModel, parentModelList) {
-        return function (xhr) {
+    function getVLRemoteFailureCB(vlFailureCallback, contrailListModel,
+                                  parentModelList) {
+        return function (xhr, getAjaxConfig) {
             contrailListModel.error = true;
             contrailListModel.errorList.push(xhr);
             if (parentModelList != null && parentModelList.length > 0) {
@@ -337,7 +341,7 @@ define([
                 }
             }
             if (contrail.checkIfFunction(vlFailureCallback)) {
-                vlFailureCallback(xhr, contrailListModel);
+                vlFailureCallback(xhr, contrailListModel, getAjaxConfig);
             }
         };
     };
