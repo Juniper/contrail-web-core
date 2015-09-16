@@ -376,7 +376,7 @@ define(['underscore'], function (_) {
                     '{{#IfValidJSONValueByPath "' + configValue.key + '" data ' + configKey + '}}' +
                     '<li>' +
                     '<label class="inline row-fluid">' +
-                    '<span class="key span5 ' + parentConfig.keyClass +'"> {{getLabel "' + configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
+                    '<span class="key span5 ' + parentConfig.keyClass + ' ' + configValue.keyClass +'"> {{getLabel "' + configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
                     '<span class="value span7 ' + parentConfig.valueClass +'">{{{getValueByConfig data config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
 
                 template += '</label>' +
@@ -458,6 +458,8 @@ define(['underscore'], function (_) {
                                                 ((contrail.checkIfExist(config.templateGeneratorData) && config.templateGeneratorData !== '') ? '.' + config.templateGeneratorData : '') +
                                             '}}}' +
                                         '</div>' +
+                                        '<div class="contrail-status-view hide">' +
+                                        '</div>' +
                                     '</div>' +
                                 '</div>' +
                             '</div>';
@@ -493,6 +495,19 @@ define(['underscore'], function (_) {
                         '</div>' +
                         '{{/each}} </div>' +
                         '</div></div> {{/IfValidJSONValueByPathLength}} </div>';
+
+                    templateObj = $(template);
+                    break;
+
+                case 'BlockAdvancedOnlyTemplateGenerator':
+                    var template = '';
+
+                    template = '' +
+                        '<div class="advanced-view">' +
+                            '{{{formatGridJSON2HTML this.data' +
+                                ((contrail.checkIfExist(config.templateGeneratorData) && config.templateGeneratorData !== '') ? '.' + config.templateGeneratorData : '') +
+                            '}}}' +
+                        '</div>' ;
 
                     templateObj = $(template);
                     break;
