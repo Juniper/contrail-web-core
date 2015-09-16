@@ -83,6 +83,13 @@ define([
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
         this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
 
+        //Top boxes in Monitor > Infra > Dashboard that show the summary count of
+        //each node type
+        this.TMPL_INFOBOX = "infobox-summary-template";
+        //Boxes in vRouter Tab of "Monitor > Infra > Dashboard" that shows bar chart
+        //along with total count and title
+        this.TMPL_CHARTINFO = "barchart-info-template";
+
         this.TMPL_ELEMENT_TOOLTIP = "element-tooltip-template";
         this.TMPL_ELEMENT_TOOLTIP_TITLE = "element-tooltip-title-template";
         this.TMPL_ELEMENT_TOOLTIP_CONTENT = "element-tooltip-content-template";

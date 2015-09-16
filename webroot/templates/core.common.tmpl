@@ -259,6 +259,19 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="barchart-info-template">
+    <div class="infobox infobox-blue infobox-dynamic">
+        <div class="infobox-chart">
+            <span class="sparkline"></span>
+        </div>
+
+        <div class="infobox-data">
+            <span class="infobox-data-number">{{totalCnt}}</span>
+            <div class="infobox-content">{{title}}</div>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="lblval-tooltip-template">
 <div class="row-fluid chart-tooltip">
     <div class="row-fluid chart-tooltip-body ">
@@ -421,6 +434,19 @@
             <div class="stat stat-success">{{activeCnt}}</div>
             <div class="stat stat-important">{{inactiveCnt}}</div>
         {{/if}}
+        <div class="infobox-content">{{title}}</div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="infobox-summary-template">
+    <div class="infobox infobox-grey">
+        <div class="infobox-icon">
+            <i class="icon-sitemap"></i>
+        </div>
+        <div class="infobox-data">
+            <span class="infobox-data-number"></span>
+        </div>
+        <div style="display:none" class="stat stat-important"></div>
         <div class="infobox-content">{{title}}</div>
     </div>
 </script>
@@ -611,7 +637,7 @@
     </div>
 </script>
 <script type="text/x-handlebars-template" id="color-selection">
-    <div class="color-selection" style="float:right;margin-right:20px">
+    <div class="color-selection" style="position:absolute;right:20px">
         <div data-color="red" class="circle red filled"></div>
         <div data-color="orange" class="circle orange filled"></div>
         <div data-color="green" class="circle green filled"></div>
@@ -720,7 +746,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-accordian-view-template">
-    <div id="{{elementId}}" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div id="{{elementId}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
         {{#each viewConfig}}
             {{#if this.title}}
                 <h3>{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="icon-warning-sign red"></i></span></h3>
@@ -819,7 +845,7 @@
 <script type="text/x-handlebars-template" id="core-editable-grid-input-view-template">
         <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
             <input type="{{type}}" name="{{name}}" class="{{class}}"
-                data-bind="
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
                     value: {{viewConfig.dataBindValue}},
                     event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data)} }"
             />
@@ -895,7 +921,7 @@
         <div class="row-fluid form-element">
             <input id="{{id}}" name="{{name}}" class="{{class}}"
                 data-bind="
-                    {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                    {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                     value: {{viewConfig.dataBindValue}},
                     optionList: {{viewConfig.dataBindOptionList}},
                     event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },

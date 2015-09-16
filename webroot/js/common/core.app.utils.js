@@ -105,7 +105,10 @@ function getCoreAppPaths(coreBaseDir) {
         'contrail-graph-model'        : coreBaseDir + '/js/models/ContrailGraphModel',
         'contrail-view-model'         : coreBaseDir + '/js/models/ContrailViewModel',
         'contrail-model'              : coreBaseDir + '/js/models/ContrailModel',
-        'contrail-list-model'         : coreBaseDir + '/js/models/ContrailListModel'
+        'contrail-list-model'         : coreBaseDir + '/js/models/ContrailListModel',
+
+        'infoboxes'                   : coreBaseDir + '/js/views/InfoboxesView',
+        'barchart-cf'                 : coreBaseDir + '/js/views/BarChartView'
     };
 };
 
