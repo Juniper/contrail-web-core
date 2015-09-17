@@ -84,10 +84,13 @@ define([
         this.TITLE_DETAILS = "Details";
         this.TITLE_OVERVIEW = "Overview";
         this.TITLE_QE_SELECT = "Select";
+        this.TITLE_CHART = "Chart";
 
         this.BREADCRUMB_ID = "breadcrumb";
 
         this.QE_SELECT_MODAL_SUFFIX = '-select-modal';
+        this.QE_CHART_PAGE_ID = 'qe-chart-page';
+        this.QE_CHART_ID = 'qe-chart';
     };
 
     function capitalizeSentence(sentence) {

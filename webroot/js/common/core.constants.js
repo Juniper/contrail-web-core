@@ -139,6 +139,8 @@ define([
         this.DATA_REQUEST_STATE_ERROR = 'error';
         this.DATA_REQUEST_STATE_SUCCESS_EMPTY = 'success-empty';
         this.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY = 'success-not-empty';
+
+        this.QE_RESULT_CHUNK_SIZE = 10000;
     };
     return CoreConstants;
 });

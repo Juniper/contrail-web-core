@@ -71,6 +71,8 @@ define([
 
             queryReqObj.queryId = qewu.generateQueryUUID();
 
+            queryReqObj.chunk = 1;
+            queryReqObj.chunkSize = cowc.QE_RESULT_CHUNK_SIZE;
             queryReqObj.async = 'true';
             queryReqObj.autoSort = 'true';
             queryReqObj.autoLimit = 'true';
@@ -80,6 +82,8 @@ define([
 
         reset: function (data, event) {
             this.time_range(1800);
+            this.time_granularity(60);
+            this.time_granularity_unit('secs');
             this.select('');
             this.where('');
             this.direction("1");

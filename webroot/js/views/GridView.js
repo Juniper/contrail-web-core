@@ -7,7 +7,7 @@ define([
     'contrail-view',
     'contrail-list-model',
     'core-basedir/js/views/GridFooterView'
-], function (_, ContrailView, ContrailListModel, GridPagerView) {
+], function (_, ContrailView, ContrailListModel, GridFooterView) {
     var GridView = ContrailView.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
@@ -15,7 +15,7 @@ define([
                 contrailListModel, gridConfig, gridContainer,
                 customGridConfig, self = this;
 
-            var grid = null, dataView = null, pager = null,
+            var grid = null, dataView = null, footerPager = null,
                 gridDataSource, gridColumns, gridSortColumns = [], gridOptions,
                 autoRefreshInterval = false, searchColumns = [],
                 currentSelectedRows = [],
@@ -61,7 +61,7 @@ define([
                 initDataView(gridConfig);
                 dataView.setSearchFilter(searchColumns, searchFilter);
                 initClientSidePagination();
-                initGridFooter();
+                initGridFooter(gridDataSource.remote.serverSidePagination);
                 dataView.setData(dataViewData);
                 performSort(gridSortColumns);
             }
@@ -805,27 +805,18 @@ define([
                 		<span class="slick-pager-sizes"><div class="csg-pager-sizes"></div></span>\
                 	</div>');
 
-                    if (serverSidePagination) {
-                        pager = new Slick.Controls.EnhancementPager({
-                            gridContainer: gridContainer,
-                            container: $(gridContainer.find('.grid-footer')),
-                            gridConfig: gridConfig,
-                            remoteUrl: gridDataSource.remote.ajaxConfig.url,
-                            datagrid: grid,
-                            params: gridDataSource.remote.ajaxConfig.data,
-                            events: gridDataSource.events,
-                            options: gridConfig.footer.pager.options
-                        });
-                        gridContainer.find('.slick-pager-sizes').hide();
+                    if (dataView.getLength() != 0) {
+                        gridContainer.find('.grid-footer').removeClass('hide');
+                    } else if (serverSidePagination) {
+                        footerPager = new GridFooterView(dataView, gridContainer, gridConfig.footer.pager.options);
+                        footerPager.init();
+                        //gridContainer.find('.slick-pager-sizes').hide();
                     } else {
-                        if (dataView.getLength() != 0) {
-                            gridContainer.find('.grid-footer').removeClass('hide');
-                        }
-                        pager = new GridPagerView(dataView, gridContainer, gridConfig.footer.pager.options);
-                        pager.init();
+                        footerPager = new GridFooterView(dataView, gridContainer, gridConfig.footer.pager.options);
+                        footerPager.init();
                     }
                 }
-                gridContainer.data("contrailGrid")._pager = pager;
+                gridContainer.data("contrailGrid")._pager = footerPager;
                 startAutoRefresh(gridOptions.autoRefresh);
             };
 
@@ -834,7 +825,7 @@ define([
                     _grid: grid,
                     _dataView: dataView,
                     _eventHandlerMap: eventHandlerMap,
-                    _pager: pager,
+                    _pager: footerPager,
                     _gridStates: {
                         allPagesDataChecked: false,
                         currentPageDataChecked: false
