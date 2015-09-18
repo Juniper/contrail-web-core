@@ -59,7 +59,8 @@ define([
                         tabRendered[tabKey] = true;
                     }
                 },
-                theme: viewConfig.theme
+                theme: viewConfig.theme,
+                disabled: ifNull(viewConfig['disabled'], [])
             });
         },
 

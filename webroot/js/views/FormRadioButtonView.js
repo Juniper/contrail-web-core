@@ -23,8 +23,9 @@ define([
             if (!(contrail.checkIfExist(lockEditingByDefault) && lockEditingByDefault)) {
                 lockEditingByDefault = false;
             }
-            this.model.initLockAttr(path, lockEditingByDefault);
-
+            if(this.model != null) {
+                this.model.initLockAttr(path, lockEditingByDefault);
+            }
             tmplParameters = {
                 label: labelValue, id: elId, name: elId,
                 dataBindValue: viewConfig['dataBindValue'],

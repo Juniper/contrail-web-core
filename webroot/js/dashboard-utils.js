@@ -287,7 +287,7 @@ var infraDashboardView = new infraMonitorClass();
  */
 function getNodeStatusForSummaryPages(data,page) {
     var result = {},msgs = [],tooltipAlerts = [];
-    for(var i = 0;i < data['alerts'].length; i++) {
+    for(var i = 0;i < ifNull(data['alerts'],[]).length; i++) {
         if(data['alerts'][i]['tooltipAlert'] != false) {
             tooltipAlerts.push(data['alerts'][i]);
             msgs.push(data['alerts'][i]['msg']);
