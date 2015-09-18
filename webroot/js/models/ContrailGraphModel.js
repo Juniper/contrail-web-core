@@ -28,7 +28,7 @@ define([
             this.graphConfig = modelConfig;
             this.generateElements = modelConfig.generateElementsFn;
             this.forceFit = modelConfig.forceFit;
-            this.rankDir = null;
+            this.rankDir = modelConfig.ranDir;
             this.onAllRequestsComplete = new Slick.Event();
             this.beforeDataUpdate = new Slick.Event();
             this.onDataUpdate = new Slick.Event();

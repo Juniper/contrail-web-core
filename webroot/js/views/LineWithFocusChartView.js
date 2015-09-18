@@ -140,10 +140,14 @@ define([
             var values = chartData[0].values,
                 brushExtent = null,
                 start, end;
-
+            end = values[values.length - 1];
             if (values.length >= 20) {
                 start = values[values.length - 20];
-                end = values[values.length - 1];
+                chartOptions['brushExtent'] = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
+            } else if (chartOptions['defaultSelRange'] != null && 
+                  values.length >= parseInt(chartOptions['defaultSelRange'])) {
+                var selectionRange = parseInt(chartOptions['defaultSelRange']);
+                start = values[values.length - selectionRange];
                 chartOptions['brushExtent'] = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
             }
         }
