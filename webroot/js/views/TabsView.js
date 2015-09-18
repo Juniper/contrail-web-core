@@ -17,11 +17,11 @@ define([
                 childViewObj, childElId, childView;
 
             self.$el.html(tabsTemplate(tabs));
-
             var tabsData = self.$el.find("#contrail-tabs").contrailTabs({
                 active: contrail.handleIfNull(viewConfig.active, 0),
                 activate: viewConfig.activate,
-                theme: viewConfig.theme
+                theme: viewConfig.theme,
+                disabled: ifNull(viewConfig['disabled'], [])
             }).data('contrailTabs');
 
             for (var i = 0; i < tabs.length; i++) {
