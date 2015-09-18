@@ -651,7 +651,87 @@ define(['underscore'], function (_) {
             return $.map(arr, function (val) {
                 return val;
             });
-        }
+        };
+        
+        this.bindPopoverInTopology = function (tooltipConfig, graphView) {
+            var timer = null;
+            $('.popover').remove();
+            $.each(tooltipConfig, function (keyConfig, valueConfig) {
+                valueConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_ELEMENT_TOOLTIP, valueConfig);
+                $('g.' + keyConfig).popover('destroy');
+                $('g.' + keyConfig).popover({
+                    trigger: 'manual',
+                    html: true,
+                    animation: false,
+                    placement: function (context, src) {
+                        var srcOffset = $(src).offset(),
+                            srcWidth = $(src)[0].getBoundingClientRect().width,
+                            bodyWidth = $('body').width(),
+                            bodyHeight = $('body').height(),
+                            tooltipWidth = valueConfig.dimension.width;
+
+                        $(context).addClass('popover-tooltip');
+                        $(context).css({
+                            'min-width': tooltipWidth + 'px',
+                            'max-width': tooltipWidth + 'px'
+                        });
+                        $(context).addClass('popover-tooltip');
+
+                        if (srcOffset.left > tooltipWidth) {
+                            return 'left';
+                        } else if (bodyWidth - srcOffset.left - srcWidth > tooltipWidth){
+                            return 'right';
+                        } else if (srcOffset.top > bodyHeight / 2){
+                             return 'top';
+                        } else {
+                            return 'bottom';
+                        }
+                    },
+                    title: function () {
+                        return valueConfig.title($(this), graphView);
+                    },
+                    content: function () {
+                        return valueConfig.content($(this), graphView);
+                    },
+                    container: $('body')
+                })
+                .off("mouseenter")
+                .on("mouseenter", function () {
+                    var _this = this;
+                        clearTimeout(timer);
+                        timer = setTimeout(function(){
+                            $('g').popover('hide');
+                            $('.popover').remove();
+
+                            $(_this).popover("show");
+
+                            $(".popover").find('.btn')
+                                .off('click')
+                                .on('click', function() {
+                                    var actionKey = $(this).data('action'),
+                                        actionsCallback = valueConfig.actionsCallback($(_this), graphView);
+
+                                    actionsCallback[actionKey].callback();
+                                    $(_this).popover('hide');
+                                }
+                            );
+
+                            $(".popover").find('.popover-remove-icon')
+                                .off('click')
+                                .on('click', function() {
+                                    $(_this).popover('hide');
+                                    $(this).parents('.popover').remove();
+                                }
+                            );
+
+                        }, contrail.handleIfNull(valueConfig.delay, cowc.TOOLTIP_DELAY))
+                })
+                .off("mouseleave")
+                .on("mouseleave", function () {
+                    clearTimeout(timer);
+                });
+            });
+        };
     };
     return CoreUtils;
 });

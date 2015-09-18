@@ -710,9 +710,12 @@ joint.shapes.contrail.Link = function (options) {
         options['linkType'] == 'pfe-pfe') {
 
         var connectionStroke = options['linkDetails']['connectionStroke'];
-
-        linkConfig['attrs']['.connection']['stroke'] = connectionStroke != null ? connectionStroke : '#e80015';
-        linkConfig['attrs']['.connection']['stroke-width'] = 2;
+        try {
+            linkConfig['attrs']['.connection']['stroke'] = connectionStroke != null ? connectionStroke : '#e80015';
+            linkConfig['attrs']['.connection']['stroke-width'] = 2;
+        }catch(error){
+            ///continue;
+        }
     } else {
         //TODO - Check if this is needed
         //linkConfig['attrs']['.marker-target'] = {d: 'M 6 0 L 0 3 L 6 6 z'};
