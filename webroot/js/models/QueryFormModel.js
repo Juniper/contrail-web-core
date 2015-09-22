@@ -121,9 +121,9 @@ define([
         },
 
         getNameOptionList: function() {
-            var uiAddedParameters = this.model().get('ui_added_parameters');
+            var whereDataObject = this.model().get('where_data_object');
 
-            return $.map(uiAddedParameters['table_schema_formatted'], function(schemaValue, schemaKey) {
+            return $.map(whereDataObject['name_option_list'], function(schemaValue, schemaKey) {
                 if(schemaValue.index) {
                     return {id: schemaValue.name, text: schemaValue.name};
                 }
@@ -131,10 +131,10 @@ define([
         },
 
         isSuffixVisible: function(name) {
-            var uiAddedParameters = this.model().get('ui_added_parameters'),
+            var whereDataObject = this.model().get('where_data_object'),
                 suffixVisibility = false;
 
-            $.each(uiAddedParameters['table_schema_formatted'], function(schemaKey, schemaValue) {
+            $.each(whereDataObject['name_option_list'], function(schemaKey, schemaValue) {
                 if(schemaValue.name === name) {
                     suffixVisibility = !(schemaValue.suffixes === null);
                     return false;
@@ -145,10 +145,10 @@ define([
         },
 
         getSuffixNameOptionList: function(name) {
-            var uiAddedParameters = this.model().get('ui_added_parameters'),
+            var whereDataObject = this.model().get('where_data_object'),
                 suffixNameOptionList = [];
 
-            $.each(uiAddedParameters['table_schema_formatted'], function(schemaKey, schemaValue) {
+            $.each(whereDataObject['name_option_list'], function(schemaKey, schemaValue) {
                 if(schemaValue.name === name && schemaValue.suffixes !== null) {
                     suffixNameOptionList = $.map(schemaValue.suffixes, function(suffixValue, suffixKey) {
                         return {id: suffixValue, text: suffixValue};
@@ -173,38 +173,18 @@ define([
                     },
                     setData2Model: function (contrailViewModel, response) {
                         var selectFields = getSelectFields4Table(response, defaultSelectFields),
-                            tableSchemaFormatted = [];
-
-                        if (tableName === 'FlowSeriesTable') {
-                            $.each(response.columns, function(schemaKey, schemaValue) {
-                                if (schemaValue.index){
-                                    if (schemaValue.name === 'protocol') {
-                                        schemaValue.suffixes = ['sport', 'dport'];
-                                        tableSchemaFormatted.push(schemaValue);
-                                    } else if (schemaValue.name === 'sourcevn') {
-                                        schemaValue.suffixes = ['sourceip'];
-                                        tableSchemaFormatted.push(schemaValue);
-                                    } else if (schemaValue.name === 'destvn') {
-                                        schemaValue.suffixes = ['destip'];
-                                        tableSchemaFormatted.push(schemaValue);
-                                    } else if (schemaValue.name === 'vrouter') {
-                                        tableSchemaFormatted.push(schemaValue);
-                                    } else {
-                                        schemaValue.index = false;
-                                    }
-
-                                }
-                            });
-                        }
+                            whereFields = getWhereFields4NameDropdown(response, tableName);
 
                         contrailViewModel.set({
                             'ui_added_parameters': {
-                                'table_schema': response,
-                                'table_schema_formatted': tableSchemaFormatted
+                                'table_schema': response
                             }
                         });
                         contrailViewModel.attributes.select_data_object['select_fields'] = selectFields;
                         setEnable4SelectFields(selectFields, contrailViewModel.attributes.select_data_object['enable_map']);
+
+                        contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
+
                     }
                 },
                 vlRemoteConfig: {
@@ -229,6 +209,33 @@ define([
 
         return filteredSelectFields;
     };
+
+    function getWhereFields4NameDropdown(tableSchema, tableName) {
+        var tableSchemaFormatted = [];
+
+        $.each(tableSchema.columns, function(schemaKey, schemaValue) {
+            if (schemaValue.index){
+                if (tableName === 'FlowSeriesTable') {
+                    if (schemaValue.name === 'protocol') {
+                        schemaValue.suffixes = ['sport', 'dport'];
+                        tableSchemaFormatted.push(schemaValue);
+                    } else if (schemaValue.name === 'sourcevn') {
+                        schemaValue.suffixes = ['sourceip'];
+                        tableSchemaFormatted.push(schemaValue);
+                    } else if (schemaValue.name === 'destvn') {
+                        schemaValue.suffixes = ['destip'];
+                        tableSchemaFormatted.push(schemaValue);
+                    } else if (schemaValue.name === 'vrouter') {
+                        tableSchemaFormatted.push(schemaValue);
+                    } else {
+                        schemaValue.index = false;
+                    }
+                }
+            }
+        });
+
+        return tableSchemaFormatted
+    }
 
     function setEnable4SelectFields(selectFields, isEnableMap) {
         for (var i = 0; i < selectFields.length; i++) {
