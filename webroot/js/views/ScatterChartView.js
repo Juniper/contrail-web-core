@@ -745,7 +745,7 @@ define([
                 dataTextField: 'text',
                 dataValueField: 'id',
                 placeholder: 'View more (' + overlappedElementData.length + ')',
-                ignoreFirstValue: true,
+                defaultValueId: -1,
                 dropdownCssClass: 'min-width-150',
                 data: overlappedElementData,
                 change: function(e) {

@@ -60,6 +60,10 @@ define([
         this.TMPL_COMPOSITE_VIEW = "core-composite-view-template";
         this.TMPL_RADIO_BUTTON_VIEW = "core-radio-button-view-template";
         this.TMPL_EDITABLE_GRID_VIEW = "core-editable-grid-view-template";
+
+        this.TMPL_COLLECTION_VIEW = "core-collection-view-template";
+        this.TMPL_QUERY_OR_COLLECTION_VIEW = "query-or-collection-view-template";
+
         this.TMPL_SECTION_VIEW = "core-section-view-template";
         this.TMPL_EDIT_FORM = "core-edit-form-template";
         this.TMPL_GENERIC_EDIT_FORM = "core-generic-edit-form-template";

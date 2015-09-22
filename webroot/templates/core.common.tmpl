@@ -732,8 +732,7 @@
         <strong>Error: </strong>
         <span data-bind="text: errors().{{prefixId}}_form_error"></span>
     </div>
-    <form name="{{prefixId}}Form" id="{{prefixId}}-form" onsubmit="return false;" class="">
-    </form>
+    <form name="{{prefixId}}Form" id="{{prefixId}}-form" onsubmit="return false;" class=""></form>
 </script>
 
 <script type="text/x-handlebars-template" id="core-generic-edit-form-template">
@@ -1011,7 +1010,7 @@
 
 <script type="text/x-handlebars-template" id="core-editable-grid-combobox-view-template">
     <div class="row-fluid"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}"
+        <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
                 {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
@@ -1164,7 +1163,7 @@
             <td id="{{elementId}}" class="data-cell"></td>
             {{/each}}
             {{#each rowActions}}
-            <td class="action-cell"><a href='#' data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
+            <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
             {{/each}}
         </tr>
         <tr class="error-row">
@@ -1179,6 +1178,63 @@
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}</a>
     </div>
     {{/each}}
+</script>
+
+<script type="text/x-handlebars-template" id="core-collection-view-template">
+    <table class="contrail-editable-grid-table">
+        <tbody data-bind="foreach: {{viewConfig.collection}}">
+        {{#each viewConfig.rows}}
+        <tr class="data-row">
+            {{#each columns}}
+            <td id="{{elementId}}" class="data-cell" data-bind="style: {width: '{{width}}px' }"></td>
+            {{/each}}
+            {{#each rowActions}}
+            <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
+            {{/each}}
+        </tr>
+        {{/each}}
+        <tr class="error-row">
+            {{#each columns}}
+            <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+            {{/each}}
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="row-fluid collection-actions collection-actions-add">
+        <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
+            <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
+        </a>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="query-or-collection-view-template">
+    <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
+        <div class="row-fluid">
+            <p class="or-clause-text pull-left" data-bind="text: getOrClauseText()($data)">OR Text string</p>
+            <a class="collection-actions collection-actions-delete pull-right" data-bind='click: {{viewConfig.collectionActions.delete.onClick}}'>
+                <i class="{{viewConfig.collectionActions.delete.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.delete.buttonTitle}}
+            </a>
+        </div>
+        <div class="row-fluid">
+            {{#each viewConfig.rows}}
+                <div class="row-fluid">
+                    {{#each columns}}
+                        <div id="{{elementId}}" class="span11 and-clause-collection" />
+                    {{/each}}
+                    {{#each rowActions}}
+                        <div class="span1 pull-right"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></div>
+                    {{/each}}
+                </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <div class="row-fluid margin-10-0-0 collection-actions collection-actions-add">
+        <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
+            <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
+        </a>
+    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-detail-foundation-template">
@@ -1411,15 +1467,6 @@
             </div>
         </div>
     </div>
-</script>
-
-<script type="text/x-handlebars-template" id="core-generic-edit-form-template">
-    <div class="alert alert-error" data-bind="visible: errors().{{prefixId}}_form_error">
-        <strong>Error: </strong>
-        <span data-bind="text: errors().{{prefixId}}_form_error"></span>
-    </div>
-    <form name="{{prefixId}}Form" id="{{modalId}}-form" onsubmit="return false;" class="">
-    </form>
 </script>
 
 <script type="text/x-handlebars-template" id="core-generic-delete-form-template">

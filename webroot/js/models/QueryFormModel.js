@@ -6,8 +6,9 @@ define([
     'underscore',
     'backbone',
     'knockout',
-    'contrail-model'
-], function (_, Backbone, Knockout, ContrailModel) {
+    'contrail-model',
+    'query-or-model'
+], function (_, Backbone, Knockout, ContrailModel, QueryOrModel) {
     var QueryFormModel = ContrailModel.extend({
         defaultSelectFields: [],
 
@@ -21,6 +22,24 @@ define([
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
 
             return this;
+        },
+
+        formatModelConfig: function(modelConfig) {
+
+            var orClauses = [],
+                orClauseModels = [], orClauseModel,
+                orClausesCollectionModel;
+
+            $.each(orClauses, function(orClauseKey, orClauseValue) {
+                orClauseModel = new QueryOrModel(orClauseValue);
+                orClauseModels.push(orClauseModel)
+            });
+
+            orClausesCollectionModel = new Backbone.Collection(orClauseModels);
+            modelConfig['or_clauses'] = orClausesCollectionModel;
+
+
+            return modelConfig;
         },
 
         saveSelect: function (callbackObj) {
@@ -91,6 +110,56 @@ define([
             this.select_data_object().reset(data);
         },
 
+        addWhereOrClause: function(elementId) {
+            var orClauses = this.model().get('or_clauses'),
+                newOrClause = new QueryOrModel();
+
+            orClauses.add([newOrClause]);
+
+            $('#' + elementId).find('.collection').accordion('refresh');
+            $('#' + elementId).find('.collection').accordion("option", "active", -1);
+        },
+
+        getNameOptionList: function() {
+            var uiAddedParameters = this.model().get('ui_added_parameters');
+
+            return $.map(uiAddedParameters['table_schema_formatted'], function(schemaValue, schemaKey) {
+                if(schemaValue.index) {
+                    return {id: schemaValue.name, text: schemaValue.name};
+                }
+            });
+        },
+
+        isSuffixVisible: function(name) {
+            var uiAddedParameters = this.model().get('ui_added_parameters'),
+                suffixVisibility = false;
+
+            $.each(uiAddedParameters['table_schema_formatted'], function(schemaKey, schemaValue) {
+                if(schemaValue.name === name) {
+                    suffixVisibility = !(schemaValue.suffixes === null);
+                    return false;
+                }
+            });
+
+            return suffixVisibility;
+        },
+
+        getSuffixNameOptionList: function(name) {
+            var uiAddedParameters = this.model().get('ui_added_parameters'),
+                suffixNameOptionList = [];
+
+            $.each(uiAddedParameters['table_schema_formatted'], function(schemaKey, schemaValue) {
+                if(schemaValue.name === name && schemaValue.suffixes !== null) {
+                    suffixNameOptionList = $.map(schemaValue.suffixes, function(suffixValue, suffixKey) {
+                        return {id: suffixValue, text: suffixValue};
+                    });
+                    return false;
+                }
+            });
+
+            return suffixNameOptionList;
+        },
+
         validations: {}
     });
 
@@ -103,10 +172,35 @@ define([
                         type: 'GET'
                     },
                     setData2Model: function (contrailViewModel, response) {
-                        var selectFields = getSelectFields4Table(response, defaultSelectFields);
+                        var selectFields = getSelectFields4Table(response, defaultSelectFields),
+                            tableSchemaFormatted = [];
+
+                        if (tableName === 'FlowSeriesTable') {
+                            $.each(response.columns, function(schemaKey, schemaValue) {
+                                if (schemaValue.index){
+                                    if (schemaValue.name === 'protocol') {
+                                        schemaValue.suffixes = ['sport', 'dport'];
+                                        tableSchemaFormatted.push(schemaValue);
+                                    } else if (schemaValue.name === 'sourcevn') {
+                                        schemaValue.suffixes = ['sourceip'];
+                                        tableSchemaFormatted.push(schemaValue);
+                                    } else if (schemaValue.name === 'destvn') {
+                                        schemaValue.suffixes = ['destip'];
+                                        tableSchemaFormatted.push(schemaValue);
+                                    } else if (schemaValue.name === 'vrouter') {
+                                        tableSchemaFormatted.push(schemaValue);
+                                    } else {
+                                        schemaValue.index = false;
+                                    }
+
+                                }
+                            });
+                        }
+
                         contrailViewModel.set({
                             'ui_added_parameters': {
-                                'table_schema': response
+                                'table_schema': response,
+                                'table_schema_formatted': tableSchemaFormatted
                             }
                         });
                         contrailViewModel.attributes.select_data_object['select_fields'] = selectFields;

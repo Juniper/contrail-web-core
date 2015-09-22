@@ -102,6 +102,8 @@ function getCoreAppPaths(coreBaseDir) {
         'query-result-view'           : coreBaseDir + '/js/views/QueryResultView',
 
         'query-form-model'            : coreBaseDir + '/js/models/QueryFormModel',
+        'query-or-model'              : coreBaseDir + '/js/models/QueryOrModel',
+        'query-and-model'             : coreBaseDir + '/js/models/QueryAndModel',
         'contrail-graph-model'        : coreBaseDir + '/js/models/ContrailGraphModel',
         'contrail-view-model'         : coreBaseDir + '/js/models/ContrailViewModel',
         'contrail-model'              : coreBaseDir + '/js/models/ContrailModel',
@@ -369,7 +371,7 @@ function initCustomKOBindings(Knockout) {
                 var valueBindingAccessor = allBindingsAccessor.get('value'),
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);
 
-                if (typeof value === 'function' && value() != '') {
+                if (contrail.checkIfFunction(value) && value() != '') {
                     dropdown.value(value(), true);
                 } else if (value != '') {
                     dropdown.value(value, true);
