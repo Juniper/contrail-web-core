@@ -1377,21 +1377,26 @@ function getWebServerInfo (req, res, appData)
     serverObj['role'] = req.session.userRole;
     serverObj['featurePkg'] = {};
     serverObj['uiConfig'] = ui; 
-    serverObj['pkgList'] = [];
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
+    var activePkgs = [];
     for (var i = 1; i < pkgLen; i++) {
-        serverObj['pkgList'].push(pkgList[i]['pkgName']);
+        activePkgs.push(pkgList[i]['pkgName']);
     }
     /* It may happen that user has written same config multiple times in config
      * file
      */
-    serverObj['pkgList'] = _.uniq(serverObj['pkgList']);
+    activePkgs = _.uniq(activePkgs);
 
     serverObj['loggedInOrchestrationMode'] = req.session.loggedInOrchestrationMode;
 
-    for (var key in featurePackages) {
-        serverObj['featurePkg'][key] = featurePackages[key]['enable'];
+    var pkgCnt = activePkgs.length;
+    if (!pkgCnt) {
+        commonUtils.handleJSONResponse(null, res, serverObj);
+        return;
+    }
+    for (var i = 0; i < pkgCnt; i++) {
+        serverObj['featurePkg'][activePkgs[i]] = true;
     }
 
     commonUtils.handleJSONResponse(null, res, serverObj);
