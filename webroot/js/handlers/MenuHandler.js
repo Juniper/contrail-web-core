@@ -25,8 +25,7 @@ define(['underscore'], function (_) {
                     if (null != featurePkgToMenuNameMap[key]) {
                         featureMaps.push(featurePkgToMenuNameMap[key]);
                     } else {
-                        console.log('featurePkgToMenuNameMap key is null: ' +
-                                    key);
+                        console.log('featurePkgToMenuNameMap key is null: ' + key);
                     }
                 }
                 if (featureMaps.length > 0) {

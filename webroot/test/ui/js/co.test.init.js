@@ -51,13 +51,13 @@ function setFeaturePkgAndInit(featurePkg) {
             break;
 
         case 'webStorage':
-            featurePkgObj.featurePkg = 'webControllerMockData';
+            featurePkgObj.featurePkg = 'webStorageMockData';
             featurePkgObj.featuresDisabled = 'disabledFeatureMockData';
             featurePkgObj.webServerInfo = 'sWebServerInfoMockData';
             break;
 
         case 'serverManager':
-            featurePkgObj.featurePkg = 'webControllerMockData';
+            featurePkgObj.featurePkg = 'serverManagerMockData';
             featurePkgObj.featuresDisabled = 'disabledFeatureMockData';
             featurePkgObj.webServerInfo = 'smWebServerInfoMockData';
             break;
