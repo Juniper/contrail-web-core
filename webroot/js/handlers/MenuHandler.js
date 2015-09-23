@@ -19,15 +19,14 @@ define(['underscore'], function (_) {
         this.loadMenu = function (webServerInfo) {
             var mFileName = 'menu.xml';
             var featureMaps = [];
-            if (null != webServerInfo['pkgList']) {
-                var pkgList = webServerInfo['pkgList'];
-                var pkgLen = pkgList.length;
-                for (var i = 0; i < pkgLen; i++) {
-                    if (null != featurePkgToMenuNameMap[pkgList[i]]) {
-                        featureMaps.push(featurePkgToMenuNameMap[pkgList[i]]);
+            if (null != webServerInfo['featurePkg']) {
+                var pkgList = webServerInfo['featurePkg'];
+                for (var key in pkgList) {
+                    if (null != featurePkgToMenuNameMap[key]) {
+                        featureMaps.push(featurePkgToMenuNameMap[key]);
                     } else {
                         console.log('featurePkgToMenuNameMap key is null: ' +
-                                    pkgList[i]);
+                                    key);
                     }
                 }
                 if (featureMaps.length > 0) {
