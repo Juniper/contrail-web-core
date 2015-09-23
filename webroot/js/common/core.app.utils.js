@@ -421,9 +421,11 @@ function initCustomKOBindings(Knockout) {
                 var valueBindingAccessor = allBindingsAccessor.get('value'),
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);
 
-                if (typeof value === 'function' && value() != '') {
-                    multiselect.value(value(), true);
+                if (contrail.checkIfFunction(value) && value() != '') {
+                    value = $.isArray(value()) ? value() : [value()];
+                    multiselect.value(value, true);
                 } else if (value != '') {
+                    value = $.isArray(value) ? value : [value];
                     multiselect.value(value, true);
                 }
             }
