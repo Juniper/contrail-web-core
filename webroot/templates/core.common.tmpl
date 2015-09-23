@@ -1068,6 +1068,32 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-autocompletetextbox-view-template">
+    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        {{#IfCompare label false operator='!=' }}
+        <div class="row-fluid form-label">
+            <div class="span10">
+                <label>{{label}}</label>
+            </div>
+            <div class="span2">
+                <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                </span>
+            </div>
+        </div>
+        {{/IfCompare}}
+        <div class="row-fluid form-element">
+            <input id="{{id}}" name="{{name}}" class="{{class}}" type="text"
+                data-bind="
+                    {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                    value: {{dataBindValue}},
+                    contrailAutoComplete: {}"
+            />
+            <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-actions-template">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
         <i class="icon-cog"></i>
@@ -1503,4 +1529,14 @@
         <a class="btn btn-mini {{elementConfig.btnClass}}" data-bind="click: {{elementConfig.onClick}}">{{label}}</a>
     </div>
 </script>
-
+<!-- TODO make it generic -->
+<script type="text/x-handlebars-template" id="query-page-template">
+    <div id="{{queryPrefix}}-container">
+        <div id='{{queryPrefix}}-form-container'>
+            <div id='{{queryPrefix}}-form'></div>
+        </div>
+        <div id="{{queryPrefix}}-results-container">
+            <div id='{{queryPrefix}}-results'></div>
+        </div>
+    </div>
+</script>
