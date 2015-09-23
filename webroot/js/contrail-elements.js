@@ -1192,12 +1192,13 @@ function constructSelect2(self, defaultOption, args) {
                 .on("change", changeFunction)
                 .off("select2-selecting", selectingFunction)
                 .on("select2-selecting", selectingFunction);
-            if (option.data.length !=0 && option.ignoreFirstValue != true) {
-                // set default value only if explicitly defined and if not a multiselect
-                if(option.defaultValueId != null && (option.data.length > option.defaultValueId) && (option.defaultValueId >= 0) && (!contrail.checkIfExist(option.multiple))) {
-                    var selectedOption = option.data[option.defaultValueId];
-                    self.select2('val', selectedOption[option.dataValueField.dsVar]);
-                }
+
+            // set default value only if explicitly defined and if not a multiselect
+            if (option.data.length > 0 && contrail.checkIfExist(option.defaultValueId) &&
+                option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple)) {
+
+                var selectedOption = option.data[option.defaultValueId];
+                self.select2('val', selectedOption[option.dataValueField.dsVar]);
             }
         }
 
@@ -1262,12 +1263,14 @@ function constructSelect2(self, defaultOption, args) {
                     .on("change", changeFunction);
 
                 //TODO - Sync with setting of value based on defaultValueId
-                if(option.data.length > 0){
+                if (option.data.length != 0 && contrail.checkIfExist(option.defaultValueId) &&
+                    option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple)) {
+
                     if(option.data[0].children != undefined && option.data[0].children.length > 0) {
                         if(option.data[1] != null && option.data[1].children != null && option.data[1].children.length > 0)
-                            self.select2('val', option.data[1].children[0].value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
+                            self.select2('val', option.data[1].children[0][option.dataValueField.dsVar], (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                     } else {
-                        self.select2('val', option.data[0].value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
+                        self.select2('val', option.data[0][option.dataValueField.dsVar], (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                     }
                 }
             },

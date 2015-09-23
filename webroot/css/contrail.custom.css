@@ -627,6 +627,28 @@ a.selectAllLink:hover {
 	color:#3182bd;
 }
 
+/* MVC */
+.or-clause-collection.ui-accordion .ui-accordion-header {
+    border-bottom: 1px solid #fff;
+}
+.or-clause-collection.ui-accordion .ui-accordion-header,
+.or-clause-collection.ui-accordion .ui-accordion-content {
+    padding: 5px 0;
+}
+.or-clause-collection.ui-accordion .ui-accordion-header-active,
+.or-clause-collection.ui-accordion .ui-accordion-content-active {
+    background-color: #eee;
+
+}
+.or-clause-collection .or-clause-text,
+.and-clause-collection table {
+    margin: 0 0 0 20px;
+}
+.or-clause-collection .and-clause-collection .collection-actions {
+    margin: 10px 0 0 20px;
+}
+
+
 /* Dashboard Sparkline */
 #sparkLineStats{
 	width:135px;
