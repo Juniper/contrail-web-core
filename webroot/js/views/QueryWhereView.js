@@ -19,7 +19,7 @@ define([
 
             cowu.createModal({
                 'modalId': modalId, 'className': 'modal-700', 'title': cowl.TITLE_QE_WHERE, 'body': whereTmplHtml, 'onSave': function () {
-                    self.model.saveSelect({
+                    self.model.saveWhere({
                         init: function () {
                             self.model.showErrorAttr(queryPrefix + cowc.FORM_SUFFIX_ID, false);
                             cowu.enableModalLoading(modalId);

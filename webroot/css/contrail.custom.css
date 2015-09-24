@@ -630,24 +630,46 @@ a.selectAllLink:hover {
 /* MVC */
 .or-clause-collection.ui-accordion .ui-accordion-header {
     border-bottom: 1px solid #fff;
+    padding: 0;
+    margin: 0;
 }
-.or-clause-collection.ui-accordion .ui-accordion-header,
+.or-clause-collection.ui-accordion .ui-accordion-header .ui-accordion-header-icon {
+    left: 5px;
+}
 .or-clause-collection.ui-accordion .ui-accordion-content {
-    padding: 5px 0;
+    padding: 0;
+    margin-bottom: 5px;
 }
 .or-clause-collection.ui-accordion .ui-accordion-header-active,
 .or-clause-collection.ui-accordion .ui-accordion-content-active {
     background-color: #eee;
 
 }
+.or-clause-collection .or-clause-text {
+    padding: 10px;
+}
 .or-clause-collection .or-clause-text,
 .and-clause-collection table {
     margin: 0 0 0 20px;
 }
 .or-clause-collection .and-clause-collection .collection-actions {
-    margin: 10px 0 0 20px;
+  padding: 10px 0;
+  border-top: 1px solid #FFF;
+}
+.or-clause-collection .and-clause-collection .collection-actions a {
+  margin: 10px;
+}
+.or-clause-collection .collection-actions-delete i {
+    color: #777;
+    padding: 10px;
 }
 
+.and-clause-collection table tr:first-child td .and-clause-text {
+    display: none;
+}
+.and-clause-collection .collection-actions-add a {
+  color: #3182bd;
+}
 
 /* Dashboard Sparkline */
 #sparkLineStats{

@@ -12,7 +12,7 @@ define([
     var QueryOrModel = ContrailModel.extend({
 
         defaultConfig: {
-            "orText": ''
+            "orClauseText": ''
         },
 
         validateAttr: function (attributePath, validation, data) {
@@ -38,15 +38,13 @@ define([
                 andClauseModels.push(andClauseModel)
             });
 
+            andClauseModels.push(new QueryAndModel());
+
             andClausesCollectionModel = new Backbone.Collection(andClauseModels);
             modelConfig['and_clauses'] = andClausesCollectionModel;
 
 
             return modelConfig;
-        },
-
-        getThis: function() {
-            console.log(this)
         },
 
         addWhereAndClause: function() {
@@ -66,7 +64,7 @@ define([
 
         getOrClauseText: function(data) {
             var andClauses = data.and_clauses()(),
-                andClauseArray = [];
+                andClauseArray = [], orClauseText = '';
 
             $.each(andClauses, function(andClauseKey, andClauseValue) {
                 var name = andClauseValue.name(),
@@ -88,7 +86,10 @@ define([
                 }
             });
 
-            return (andClauseArray.length > 0) ? andClauseArray.join(' AND ') : '...';
+            orClauseText = (andClauseArray.length > 0) ? andClauseArray.join(' AND ') : '';
+
+            data.orClauseText(orClauseText)
+            return (orClauseText !== '') ? orClauseText : '...';
         },
 
         validations: {}

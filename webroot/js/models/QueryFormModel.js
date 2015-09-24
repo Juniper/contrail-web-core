@@ -58,6 +58,34 @@ define([
             }
         },
 
+        saveWhere: function (callbackObj) {
+
+
+            try {
+                if (contrail.checkIfFunction(callbackObj.init)) {
+                    callbackObj.init();
+                }
+                var orClauses = this.model().get('or_clauses'),
+                    orClauseStrArr = [];
+
+                $.each(orClauses.models, function(orClauseKey, orClauseValue) {
+                    if (orClauseValue.attributes.orClauseText !== '') {
+                        orClauseStrArr.push('(' + orClauseValue.attributes.orClauseText + ')')
+                    }
+                });
+
+                this.where(orClauseStrArr.join(' OR '));
+
+                if (contrail.checkIfFunction(callbackObj.success)) {
+                    callbackObj.success();
+                }
+            } catch (error) {
+                if (contrail.checkIfFunction(callbackObj.error)) {
+                    callbackObj.error(this.getFormErrorText(this.query_prefix()));
+                }
+            }
+        },
+
         getAttributes4Server: function () {
             var modelAttrs = this.model().attributes,
                 ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters'],
@@ -96,6 +124,8 @@ define([
             queryReqObj.autoSort = 'true';
             queryReqObj.autoLimit = 'true';
 
+            delete queryReqObj.formModelAttrs.or_clauses;
+
             return queryReqObj;
         },
 
@@ -108,6 +138,7 @@ define([
             this.direction("1");
             this.filter('');
             this.select_data_object().reset(data);
+            this.model().get('or_clauses').reset();
         },
 
         addWhereOrClause: function(elementId) {
