@@ -160,6 +160,38 @@ define([
             return suffixNameOptionList;
         },
 
+        getTimeGranularityUnits: function() {
+            var self = this;
+
+            return Knockout.computed(function () {
+
+                var timeRange = self.time_range(),
+                    fromTime = new Date(self.from_time()).getTime(),
+                    toTime = new Date(self.to_time()).getTime(),
+                    timeGranularityUnits = [];
+
+                timeGranularityUnits.push({id: "secs", text: "secs"});
+
+                if (timeRange == -1) {
+                    timeRange = (toTime - fromTime) / 1000;
+                }
+
+                if (timeRange > 60) {
+                    timeGranularityUnits.push({id: "mins", text: "mins"});
+                }
+                if (timeRange > 3600) {
+                    timeGranularityUnits.push({id: "hrs", text: "hrs"});
+                }
+                if (timeRange > 86400) {
+                    timeGranularityUnits.push({id: "days", text: "days"});
+                }
+
+                return timeGranularityUnits;
+
+
+            }, this);
+        },
+
         validations: {}
     });
 
