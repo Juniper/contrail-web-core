@@ -76,10 +76,13 @@ define([
         page: this.getDefaultPageConfig(),
         getTestConfig: function () {
             return {};
+        },
+        testInitFn: function() {
+            return;
         }
     };
 
-    this.createPageTestConfig = function (moduleId, fakeServerConfig, pageConfig, getTestConfigCB) {
+    this.createPageTestConfig = function (moduleId, fakeServerConfig, pageConfig, getTestConfigCB, testInitFn) {
         var pageTestConfig = defaultPageTestConfig;
         if (moduleId != null) {
             pageTestConfig.moduleId = moduleId;
@@ -92,6 +95,9 @@ define([
         }
         if (getTestConfigCB != null) {
             pageTestConfig.getTestConfig = getTestConfigCB;
+        }
+        if (testInitFn != null) {
+            pageTestConfig.testInitFn = testInitFn;
         }
         return pageTestConfig;
     };
@@ -264,8 +270,12 @@ define([
                         cotu.createMockData(testConfig.rootView, testConfig.tests, mockDataDefObj);
 
                         $.when(mockDataDefObj).done(function () {
+                            //run initializations before tests if any
+                            pageTestConfig.testInitFn();
                             self.executeCommonTests(testConfig.tests);
                             QUnit.start();
+                            //uncomment following line to console all the fake server request/responses
+                            //console.log(fakeServer.requests);
                         });
 
                     }, pageLoadTimeOut);

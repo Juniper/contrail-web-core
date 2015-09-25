@@ -15,12 +15,13 @@ define([
         var viewConfig = cotu.getViewConfigObj(viewObj),
             el = viewObj.el,
             gridData = $(el).data('contrailGrid'),
-            gridItems = gridData._dataView.getItems();
+            gridItems = gridData._dataView.getItems(),
+            gridConfig =  $.extend(true, {}, covdc.gridConfig, viewConfig.elementConfig);
 
-        var viewConfigHeader = viewConfig.elementConfig.header,
-            viewConfigColHeader = viewConfig.elementConfig.columnHeader,
-            viewConfigBody = viewConfig.elementConfig.body,
-            viewConfigFooter = viewConfig.elementConfig.footer;
+        var viewConfigHeader = gridConfig.header,
+            viewConfigColHeader = gridConfig.columnHeader,
+            viewConfigBody = gridConfig.body,
+            viewConfigFooter = gridConfig.footer;
 
         module(cotu.formatTestModuleMessage(cotm.TEST_GRIDVIEW_GRID, el.id));
 
@@ -321,8 +322,12 @@ define([
          */
         bodyTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_ROW_FIXED_HEIGHT, function () {
             expect(1);
-            equal($(el).find('.slick_row_id_0').css('height'), viewConfigBody.options.fixedRowHeight + "px",
-                "Fixed row height should equal to configured.");
+            if (viewConfigBody.options.fixedRowHeight != false && _.isNumber(viewConfigBody.options.fixedRowHeight)) {
+                equal($(el).find('.slick_row_id_0').css('height'), viewConfigBody.options.fixedRowHeight + "px",
+                    "Fixed row height should equal to configured.");
+            } else {
+                ok(true, "Fixed row height is set to false");
+            }
         }, cotc.SEVERITY_HIGH));
 
 

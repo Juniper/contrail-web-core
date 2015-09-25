@@ -17,13 +17,14 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
     }
 
     require(initDepFiles, function(validation) {
-        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache', 'core-labels', 'core-messages', 'layout-handler', 'text!templates/core.common.tmpl'],
-            function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, LayoutHandler, CoreCommonTmpls) {
+        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache', 'core-labels', 'core-messages', 'core-views-default-config', 'layout-handler', 'text!templates/core.common.tmpl'],
+            function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, LayoutHandler, CoreCommonTmpls) {
                 cowc = new CoreConstants();
                 cowu = new CoreUtils();
                 cowf = new CoreFormatters();
                 cowl = new CoreLabels();
                 cowm = new CoreMessages();
+                covdc = new CoreViewsDefaultConfig();
                 kbValidation = validation;
                 cowch = new Cache();
                 initBackboneValidation();

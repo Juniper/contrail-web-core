@@ -5,9 +5,13 @@
 define([], function () {
 
     var TMessages = function() {
-        this.TEST_GRIDVIEW_LIST_MODEL = 'Test GridView data model';
-        this.TEST_GRIDVIEW_GRID = 'Test GridView Grid';
+        this.TEST_GRIDVIEW_LIST_MODEL = 'Test Grid View data model';
+        this.TEST_GRIDVIEW_GRID = 'Test Grid View Grid';
         this.TEST_CHARTVIEW_ZOOM_SCATTER = 'Test ZoomScatter Chart View';
+        this.TEST_CHARTVIEW_LINE = 'Test Line Chart View';
+        this.TEST_CHARTVIEW_LINE_BAR = 'Test LineBar Chart View';
+        this.TEST_DETAILSVIEW = 'Test Details View';
+        this.TEST_TABSVIEW = 'Test Tabs View';
 
         this.GRIDVIEW_LIST_MODEL_INITIAL_SETUP = 'Test GridView list model setup, rows initialization';
         this.GRIDVIEW_LIST_MODEL_REFRESH = 'Test GridView list model refresh, check data items';
@@ -30,6 +34,12 @@ define([], function () {
         this.GRIDVIEW_FOOTER_PAGER_INFO = 'Test pager info shown';
 
         this.CHARTVIEW_AXIS_LABEL = 'Test chart axis labels set to the configured';
+
+        this.DETAILSVIEW_TMPL_HTML = 'Test details view html is same as generated html';
+        this.DETAILSVIEW_BASIC_ADVANCED_TOGGLE = 'Test basic and advanced view';
+
+        this.TABSVIEW_TAB_TITLE = 'Test tab tiles set to the configured';
+        this.TABSVIEW_TAB_ACTIVATE = 'Test activating each tab';
 
         this.get = function () {
             var args = arguments;

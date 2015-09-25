@@ -30,7 +30,7 @@ define([
             viewConfig.elementConfig['body']['dataSource']['dataView'] = contrailListModel;
 
 
-            gridConfig = $.extend(true, {}, getDefaultGridConfig(), viewConfig.elementConfig);
+            gridConfig = $.extend(true, {}, covdc.gridConfig, viewConfig.elementConfig);
             gridContainer = $(this.$el);
             customGridConfig = $.extend(true, {}, gridConfig);
 
@@ -1248,85 +1248,6 @@ define([
         }
     });
 
-    function getDefaultGridConfig() {
-        var defaultSettings = {
-            header: {
-                title: {
-                    cssClass: 'blue',
-                    icon: '',
-                    iconCssClass: 'blue'
-                },
-                icon: false,
-                defaultControls: {
-                    collapseable: false,
-                    exportable: true,
-                    refreshable: true,
-                    searchable: true
-                },
-                customControls: false
-            },
-            columnHeader: {
-                columns: {}
-            },
-            body: {
-                options: {
-                    actionCell: false,
-                    autoHeight: true,
-                    autoRefresh: false,
-                    checkboxSelectable: true,
-                    forceFitColumns: true,
-                    detail: {
-                        template: '<pre>{{{formatJSON2HTML this}}}</pre>'
-                    },
-                    enableCellNavigation: true,
-                    enableColumnReorder: false,
-                    enableTextSelectionOnCells: true,
-                    fullWidthRows: true,
-                    multiColumnSort: true,
-                    rowHeight: 30,
-                    fixedRowHeight: false,
-                    gridHeight: 500,
-                    rowSelectable: false,
-                    sortable: true,
-                    lazyLoading: true,
-                    actionCellPosition: 'end', //actionCellPosition indicates position of the settings icon whether it should be on row start and end
-                    multiRowSelection: true //This property will enable/disable selecting multiple rows of the grid, but the checkbox in the header should be removed by the client because as of now, we don't have way in api to remove the checkbox in header
-                },
-                dataSource: {
-                    remote: null,
-                    data: null,
-                    events: {}
-                },
-                statusMessages: {
-                    loading: {
-                        type: 'status',
-                        iconClasses: '',
-                        text: 'Loading...'
-                    },
-                    empty: {
-                        type: 'status',
-                        iconClasses: '',
-                        text: 'No Records Found.'
-                    },
-                    error: {
-                        type: 'error',
-                        iconClasses: 'icon-warning',
-                        text: 'Error - Please try again later.'
-                    }
-                }
-            },
-            footer: {
-                pager: {
-                    options: {
-                        pageSize: 50,
-                        pageSizeSelect: [10, 50, 100, 200]
-                    }
-                }
-            }
-        };
-
-        return defaultSettings;
-    };
 
     return GridView;
 });

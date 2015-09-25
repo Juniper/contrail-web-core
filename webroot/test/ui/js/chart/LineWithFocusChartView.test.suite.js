@@ -17,9 +17,9 @@ define([
             chartItems = viewObj.model.getItems(),
             chartOptions = viewConfig.chartOptions;
 
-        module(cotu.formatTestModuleMessage(cotm.TEST_CHARTVIEW_ZOOM_SCATTER, el.id));
+        module(cotu.formatTestModuleMessage(cotm.TEST_CHARTVIEW_LINE, el.id));
 
-        var chartViewTestSuite = CUnit.createTestSuite('ZoomScatterChartViewTest');
+        var chartViewTestSuite = CUnit.createTestSuite('LineWithFocusChartViewTest');
 
         /**
          * Chart basic group test cases

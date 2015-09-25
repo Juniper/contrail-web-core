@@ -19,8 +19,7 @@ define([
 
             var modelConfig = $.extend(true, {}, viewModelConfig, defaultCacheConfig),
                 cacheConfig = modelConfig['cacheConfig'];
-
-            Backbone.Model.apply(this, {});
+            Backbone.Model.call(this, {});
 
             self.ucid = contrail.checkIfExist(modelConfig['cacheConfig']) ? modelConfig['cacheConfig']['ucid'] : null;
             self.onAllRequestsComplete = new Slick.Event();

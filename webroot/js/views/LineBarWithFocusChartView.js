@@ -50,6 +50,7 @@ define([
 
             chartViewConfig = getChartViewConfig(data, viewConfig.chartOptions);
             chartOptions = chartViewConfig['chartOptions'];
+            //viewConfig.chartOptions = chartOptions;
             chartModel = new LineBarWithFocusChartModel(chartOptions);
             this.chartModel = chartModel;
 
@@ -125,24 +126,8 @@ define([
 
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
-        var chartDefaultOptions = {
-            margin: {top: 20, right: 70, bottom: 50, left: 70},
-            margin2: {top: 0, right: 70, bottom: 40, left: 70},
-            height: 300,
-            axisLabelDistance: 5,
-            y1AxisLabel: 'CPU Utilization (%)',
-            y2AxisLabel: 'Memory Usage',
-            forceY1: [0, 5],
-            forceY2: [0, 5],
-            y2Formatter: function (y2Value) {
-                var formattedValue = formatBytes(y2Value * 1024, true);
-                return formattedValue;
-            },
-            y1Formatter: d3.format(".01f"),
-            showLegend: true
-        };
 
-        var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
+        var chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
 
         chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1']);
         chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2']);

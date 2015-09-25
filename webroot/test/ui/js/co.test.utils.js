@@ -114,6 +114,8 @@ define([
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.responsive.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.custom.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.font.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/fonts/contrailFonts.ttf"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/fonts/contrailFonts.woff"/>');
         return cssList;
     };
 

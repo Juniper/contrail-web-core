@@ -86,6 +86,7 @@ function getCoreAppPaths(coreBaseDir) {
         'core-labels'                 : coreBaseDir + '/js/common/core.labels',
         'core-messages'               : coreBaseDir + '/js/common/core.messages',
         'core-cache'                  : coreBaseDir + '/js/common/core.cache',
+        'core-views-default-config'   : coreBaseDir + '/js/common/core.views.default.config',
         'core-init'                   : coreBaseDir + '/js/common/core.init',
         'nvd3-plugin'                 : coreBaseDir + '/js/common/nvd3.plugin',
         'contrail-unified-1'          : coreBaseDir + '/js/common/contrail.unified.1',

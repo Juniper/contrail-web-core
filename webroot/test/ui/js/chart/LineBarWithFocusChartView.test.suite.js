@@ -15,11 +15,12 @@ define([
         var viewConfig = cotu.getViewConfigObj(viewObj),
             el = viewObj.el,
             chartItems = viewObj.model.getItems(),
-            chartOptions = viewConfig.chartOptions;
+            chartOptions = viewConfig.chartOptions,
+            chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
 
-        module(cotu.formatTestModuleMessage(cotm.TEST_CHARTVIEW_ZOOM_SCATTER, el.id));
+        module(cotu.formatTestModuleMessage(cotm.TEST_CHARTVIEW_LINE_BAR, el.id));
 
-        var chartViewTestSuite = CUnit.createTestSuite('ZoomScatterChartViewTest');
+        var chartViewTestSuite = CUnit.createTestSuite('LineBarWithFocusChartViewTest');
 
         /**
          * Chart basic group test cases
@@ -31,13 +32,11 @@ define([
          */
         basicTestGroup.registerTest(CUnit.test(cotm.CHARTVIEW_AXIS_LABEL, function () {
             expect(2);
-            equal($(el).find('.zoom-scatter-chart .x.label').text().trim(), chartOptions.xLabel,
-                "X axis title should be equal to the title set");
-            equal($(el).find('.zoom-scatter-chart .y.label').text().trim(), chartOptions.yLabel,
-                "Y axis title should be equal to the title set");
+            equal($(el).find('.nv-linePlusBar .nv-focus .nv-y1 .nv-axislabel').text().trim(), chartOptions.y1AxisLabel,
+                "Y1 axis title should be equal to the title set");
+            equal($(el).find('.nv-linePlusBar .nv-focus .nv-y2 .nv-axislabel').text().trim(), chartOptions.y2AxisLabel,
+                "Y2 axis title should be equal to the title set");
         }, cotc.SEVERITY_LOW));
-
-
 
         chartViewTestSuite.run(suiteConfig.groups, suiteConfig.severity);
 
