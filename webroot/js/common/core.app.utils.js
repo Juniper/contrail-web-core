@@ -476,6 +476,17 @@ function initCustomKOBindings(Knockout) {
                 }
             }
 
+            if(allBindingsAccessor.get('dataSource')) {
+                var dataSourceBindingAccessor =
+                    allBindingsAccessor.get('dataSource'),
+                    dataSource = Knockout.utils.unwrapObservable(
+                        dataSourceBindingAccessor);
+                if (contrail.checkIfExist(dataSource) &&
+                    dataSource.length > 0) {
+                    combobox.setData(dataSource);
+                }
+            }
+
             if (allBindingsAccessor.get('value')) {
                 var valueBindingAccessor = allBindingsAccessor.get('value'),
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);

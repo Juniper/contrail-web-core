@@ -843,7 +843,7 @@
 
 <script type="text/x-handlebars-template" id="core-editable-grid-input-view-template">
         <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-            <input type="{{type}}" name="{{name}}" class="{{class}}"
+            <input type="{{type}}" name="{{name}}" placeholder="{{placeHolder}}" class="{{class}}"
                 data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
                     value: {{viewConfig.dataBindValue}},
                     event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data)} }"
@@ -1015,6 +1015,7 @@
             data-bind="
                 {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
+                {{#if viewConfig.dataSource}}dataSource: {{viewConfig.dataSource}}, {{/if}}
                 optionList: {{viewConfig.dataBindOptionList}},
                 contrailCombobox: {}"
         />
