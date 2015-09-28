@@ -21,7 +21,40 @@ define([
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
 
+            this.model().on( "change:table_name", this.onChangeTable, this);
+
             return this;
+        },
+
+        onChangeTable: function(model) {
+            var tableName = model.attributes.table_name,
+                tableSchemeUrl = '/api/qe/table/schema/' + tableName,
+                ajaxConfig = {
+                    url: tableSchemeUrl,
+                    type: 'GET'
+                },
+                contrailViewModel = this.model(),
+                defaultSelectFields = this.defaultSelectFields;
+
+            if(tableName != '') {
+                $.ajax(ajaxConfig).success(function(response) {
+                    var selectFields = getSelectFields4Table(response, defaultSelectFields),
+                        whereFields = getWhereFields4NameDropdown(response, tableName);
+
+                    contrailViewModel.set({
+                        'ui_added_parameters': {
+                            'table_schema': response
+                        }
+                    });
+
+                    contrailViewModel.attributes.select_data_object['select_fields'] = selectFields;
+
+                    setEnable4SelectFields(selectFields, contrailViewModel.attributes.select_data_object['enable_map']);
+
+                    contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
+
+                });
+            }
         },
 
         formatModelConfig: function(modelConfig) {
@@ -59,8 +92,6 @@ define([
         },
 
         saveWhere: function (callbackObj) {
-
-
             try {
                 if (contrail.checkIfFunction(callbackObj.init)) {
                     callbackObj.init();
