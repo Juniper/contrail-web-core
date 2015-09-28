@@ -223,6 +223,56 @@ define([
             }, this);
         },
 
+        addWhereOrClause: function(elementId) {
+            var orClauses = this.model().get('or_clauses'),
+                newOrClause = new QueryOrModel();
+
+            orClauses.add([newOrClause]);
+
+            $('#' + elementId).find('.collection').accordion('refresh');
+            $('#' + elementId).find('.collection').accordion("option", "active", -1);
+        },
+
+        getNameOptionList: function() {
+            var whereDataObject = this.model().get('where_data_object');
+
+            return $.map(whereDataObject['name_option_list'], function(schemaValue, schemaKey) {
+                if(schemaValue.index) {
+                    return {id: schemaValue.name, text: schemaValue.name};
+                }
+            });
+        },
+
+        isSuffixVisible: function(name) {
+            var whereDataObject = this.model().get('where_data_object'),
+                suffixVisibility = false;
+
+            $.each(whereDataObject['name_option_list'], function(schemaKey, schemaValue) {
+                if(schemaValue.name === name) {
+                    suffixVisibility = !(schemaValue.suffixes === null);
+                    return false;
+                }
+            });
+
+            return suffixVisibility;
+        },
+
+        getSuffixNameOptionList: function(name) {
+            var whereDataObject = this.model().get('where_data_object'),
+                suffixNameOptionList = [];
+
+            $.each(whereDataObject['name_option_list'], function(schemaKey, schemaValue) {
+                if(schemaValue.name === name && schemaValue.suffixes !== null) {
+                    suffixNameOptionList = $.map(schemaValue.suffixes, function(suffixValue, suffixKey) {
+                        return {id: suffixValue, text: suffixValue};
+                    });
+                    return false;
+                }
+            });
+
+            return suffixNameOptionList;
+        },
+
         validations: {}
     });
 

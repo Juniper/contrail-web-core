@@ -451,6 +451,74 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="dashboard-stats">
+    <div id="dashboard-stats" class="row-fluid">
+        <div class="span4">
+            <div id="logs-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div class="widget-main padding-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div id="sysinfo-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div id="system-info-stat" class="widget-main">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div id="alerts-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div id="alerts-box-content" class="widget-main padding-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="mon-infra-dashboard">
+    <div id='dashboard-infoboxes' style="height:380px">
+    </div>
+    <div id="dashboard-stats" class="row-fluid">
+        <div class="span4">
+            <div id="logs-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div class="widget-main padding-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div id="sysinfo-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div id="system-info-stat" class="widget-main">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div id="alerts-box" class="widget-box transparent">
+                <div class="widget-header"></div>
+                <div class="widget-body">
+                    <div id="alerts-box-content" class="widget-main padding-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="infra-dashboard">
     <div class="row-fluid">
         <div class="row-fluid">
@@ -477,7 +545,6 @@
                     <div class="widget-header"></div>
                     <div class="widget-body">
                         <div id="system-info-stat" class="widget-main">
-                            
                         </div>
                     </div>
                 </div>
@@ -487,7 +554,6 @@
                     <div class="widget-header"></div>
                     <div class="widget-body">
                         <div id="alerts-box-content" class="widget-main padding-4">
-                            
                         </div>
                     </div>
                 </div>
@@ -937,6 +1003,7 @@
             data-bind="
                 {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
+                {{#if viewConfig.customValue}}customValue: {{viewConfig.customValue}},{{/if}}
                 optionList: {{viewConfig.dataBindOptionList}},
                 event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailDropdown: {}"
@@ -1062,6 +1129,32 @@
                     {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                     value: {{dataBindValue}},
                     contrailNumericTextbox: {}"
+            />
+            <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-autocompletetextbox-view-template">
+    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        {{#IfCompare label false operator='!=' }}
+        <div class="row-fluid form-label">
+            <div class="span10">
+                <label>{{label}}</label>
+            </div>
+            <div class="span2">
+                <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                </span>
+            </div>
+        </div>
+        {{/IfCompare}}
+        <div class="row-fluid form-element">
+            <input id="{{id}}" name="{{name}}" class="{{class}}" type="text"
+                data-bind="
+                    {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                    value: {{dataBindValue}},
+                    contrailAutoComplete: {}"
             />
             <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
         </div>
@@ -1505,6 +1598,17 @@
 <script type="text/x-handlebars-template" id="core-button-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <a class="btn btn-mini {{elementConfig.btnClass}}" data-bind="click: {{elementConfig.onClick}}">{{label}}</a>
+    </div>
+</script>
+<!-- TODO make it generic -->
+<script type="text/x-handlebars-template" id="query-page-template">
+    <div id="{{queryPrefix}}-container">
+        <div id='{{queryPrefix}}-form-container'>
+            <div id='{{queryPrefix}}-form'></div>
+        </div>
+        <div id="{{queryPrefix}}-results-container">
+            <div id='{{queryPrefix}}-results'></div>
+        </div>
     </div>
 </script>
 

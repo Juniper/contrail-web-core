@@ -33,10 +33,12 @@ define([
 
             contrailListModel = initContrailListModel(cacheConfig, sortConfig);
 
-            if(contrail.checkIfFunction(modelConfig['remote'].onAllRequestsCompleteCB)) {
-                contrailListModel.onAllRequestsComplete.subscribe(function () {
-                    modelConfig['remote'].onAllRequestsCompleteCB(contrailListModel, parentModelList);
-                });
+            if(modelConfig['remote'] != null) {
+                if(contrail.checkIfFunction(modelConfig['remote'].onAllRequestsCompleteCB)) {
+                    contrailListModel.onAllRequestsComplete.subscribe(function () {
+                        modelConfig['remote'].onAllRequestsCompleteCB(contrailListModel, parentModelList);
+                    });
+                }
             }
 
             if (modelConfig.data != null) {

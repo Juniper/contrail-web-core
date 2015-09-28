@@ -10,16 +10,25 @@
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
         self.autocomplete(option);
+        self.data('contrailAutoComplete', {
+            value: function (value) {
+                if (typeof value === 'undefined') {
+                    return self.val();
+                } else {
+                    self.val(value);
+                }
+            }
+        });
         return self;
     };
-    
+
     $.fn.contrailMultiselect = function(option,option2){
         var self = this;
         option.multiple = true;
         self.data('contrailMultiselect', constructSelect2(self, option, option2));
         return self;
     };
-    
+
     $.fn.contrailTabs = function(option) {
         var self = this,
             theme = 'overcast';
@@ -57,7 +66,7 @@
 
         return self;
     };
-    
+
     $.fn.contrailNumericTextbox = function (option) {
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
@@ -76,7 +85,7 @@
         });
         return self;
     };
-    
+
     $.fn.contrailDateTimePicker = function(option) {
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
@@ -122,13 +131,13 @@
         });
         return self;
     };
-    
+
     $.fn.contrailDropdown = function(defaultOption, args) {
         var self = this;
         self.data('contrailDropdown', constructSelect2(self, defaultOption, args));
         return self;
     };
-    
+
     $.fn.contrailCombobox = function(customOption) {
         var option = $.extend(true, {}, customOption),
             self = this, formattedData = [],
@@ -362,7 +371,7 @@
             dis.option.sourceMap = constructSourceMap(formattedData, 'value');
         };
     };
-    
+
     $.fn.contrail2WayMultiselect = function (givenOptions) {
     	var self = this;
         var defaultOptions = {
@@ -389,7 +398,7 @@
         constructContrail2WayMultiselect(this, options);
 
         options = (typeof options === "undefined") ? {} : options;
-        
+
         var multiselectContainer = {
         		lists: {
         			left: $(this).find('.multiselect-left'),
@@ -413,7 +422,7 @@
             });
             return result;
         }
-        
+
         function moveLeftToRight(){
         	if(options.beforeMoveOneToRight() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
 	        	var leftSelectedData = getListData(multiselectContainer.lists.left.find('li.ui-selected'));
@@ -423,7 +432,7 @@
         	}
         	
         }
-        
+
         function moveRightToLeft(){
         	if(options.beforeMoveOneToLeft() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
 	        	var rightSelectedData = getListData(multiselectContainer.lists.right.find('li.ui-selected'));
@@ -432,7 +441,7 @@
 	        	options.afterMoveOneToLeft();
         	}
         }
-        
+
         function moveLeftAll(){
         	if(options.beforeMoveAllToRight() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
 	        	var leftData = getListData(multiselectContainer.lists.left.find('li'));
@@ -454,19 +463,19 @@
         multiselectContainer.controls.leftSelected.on('click', function(){
         	moveLeftToRight();
         });
-        
+
         multiselectContainer.controls.rightSelected.on('click', function(){
         	moveRightToLeft();
         });
-        
+
         multiselectContainer.controls.leftAll.on('click', function(){
         	moveLeftAll();
         });
-        
+
         multiselectContainer.controls.rightAll.on('click', function(){
         	moveRightAll();
         });
-        
+
         self.data('contrail2WayMultiselect', {
             getLeftData: function () {
             	return getListData(multiselectContainer.lists.left.find('li'));
@@ -550,7 +559,7 @@
                      <ol class="row-fluid multiselect-right multiselect-list" style="height:'+(options.sizeRight * 30).toString()+'px;"></ol>\
                 </div>\
             </div>');
-            
+
             self.find('.multiselect-list').selectable();
         };
     };
@@ -903,7 +912,7 @@
             return methodObj;
         }
     };
-    
+
     $.extend({
         contrailBootstrapModal:function (options) {
             var keyupAction = $.extend(true, {}, {
@@ -1055,6 +1064,22 @@ function findTextInObj(text, data){
     }
     return found;
 };
+function addNewItemMainDataSource(item, data) {
+    var newValue = item.value != null ? item.value : item.text;
+    for(var i = 0; i < data.length; i++) {
+        if(data[i].text === item.groupName) {
+            data[i].children.push(
+                {
+                   text : item.text,
+                   id : newValue,
+                   value : newValue,
+                   parent : item.groupName
+                }
+            );
+            break;
+        }
+    }
+}
 
 function  fetchSourceMapData(index, data){
     var arr = index.split("."),
@@ -1083,7 +1108,7 @@ function constructSelect2(self, defaultOption, args) {
             query: function (q) {
                 if(q.term != null){
                     var pageSize = 50;
-                    var results = _.filter(this.data, 
+                    var results = _.filter(this.data,
                             function(e) {
                               return (q.term == ""  || e.text.toUpperCase().indexOf(q.term.toUpperCase()) >= 0 );
                             });
@@ -1109,8 +1134,8 @@ function constructSelect2(self, defaultOption, args) {
                                 collection.push(datum);
                             }
                         }
-                    };  
-                    if(t != ""){            
+                    };
+                    if(t != ""){
                         $(this.data).each2(function(i, datum) { process(datum, filtered.results); })
                     }
                     q.callback({results:this.data});
@@ -1121,7 +1146,7 @@ function constructSelect2(self, defaultOption, args) {
             		return 'select2-result-label';
             	}
             }
-            
+
             // Use dropdownCssClass : 'select2-large-width' when initialzing ContrailDropDown
             // to specify width of dropdown for Contrail Dropdown
             // Adding a custom CSS class is also possible. Just add a custom class to the contrail.custom.css file
@@ -1133,6 +1158,18 @@ function constructSelect2(self, defaultOption, args) {
         var changeFunction = function(e) {
             if (contrail.checkIfFunction(option.change)) {
                 option.change(e);
+            }
+        };
+        //subcribe to popup open and close events
+        var openFunction = function() {
+            if (contrail.checkIfFunction(option.open)) {
+                option.open();
+            }
+        };
+
+        var closeFunction = function() {
+            if (contrail.checkIfFunction(option.close)) {
+                option.close();
             }
         };
 
@@ -1170,7 +1207,7 @@ function constructSelect2(self, defaultOption, args) {
                     ajaxConfig['timeout'] = option.dataSource.timeout;
                 }
                 $.ajax(ajaxConfig);
-                
+
             } else if(option.dataSource.type == "local"){
                 source = formatData(option, option.dataSource.data);
             }
@@ -1191,13 +1228,22 @@ function constructSelect2(self, defaultOption, args) {
                 .off("change", changeFunction)
                 .on("change", changeFunction)
                 .off("select2-selecting", selectingFunction)
-                .on("select2-selecting", selectingFunction);
+                .on("select2-selecting", selectingFunction)
+                .off("select2-open", openFunction)
+                .on("select2-open", openFunction)
+                .off("select2-close", closeFunction)
+                .on("select2-close", closeFunction);
 
             // set default value only if explicitly defined and if not a multiselect
             if (option.data.length > 0 && contrail.checkIfExist(option.defaultValueId) &&
                 option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple)) {
 
                 var selectedOption = option.data[option.defaultValueId];
+                if(option.data[0].children != undefined &&
+                    option.data[0].children.length > 1) {
+                    selectedOption =
+                        option.data[0].children[option.defaultValueId];
+                }
                 self.select2('val', selectedOption[option.dataValueField.dsVar]);
             }
         }
@@ -1205,7 +1251,7 @@ function constructSelect2(self, defaultOption, args) {
         if(typeof option.data != "undefined") {
             option.sourceMap = constructSourceMap(option.data, 'id');
         }
-        
+
         return {
             getAllData: function(){
                 if(self.data('select2') != null)
@@ -1251,6 +1297,19 @@ function constructSelect2(self, defaultOption, args) {
                     self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                 }
             },
+            customValue : function(item) {
+                if(typeof item !== 'undefined' && !jQuery.isEmptyObject(item)){
+                    var data = self.data('select2').opts.data;
+                    if(data != null && data.length > 0) {
+                        var answer = findTextInObj(item.text, data);
+                        if(!answer) {
+                            addNewItemMainDataSource(item, data);
+                        }
+                        answer = findTextInObj(item.text, data);
+                        self.select2('val', answer.value, true);
+                    }
+                }
+            },
             setData: function(data, triggerChange) {
                 self.select2('destroy');
                 option.data = formatData(data,option);
@@ -1265,13 +1324,16 @@ function constructSelect2(self, defaultOption, args) {
                 //TODO - Sync with setting of value based on defaultValueId
                 if (option.data.length != 0 && contrail.checkIfExist(option.defaultValueId) &&
                     option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple)) {
-
-                    if(option.data[0].children != undefined && option.data[0].children.length > 0) {
-                        if(option.data[1] != null && option.data[1].children != null && option.data[1].children.length > 0)
-                            self.select2('val', option.data[1].children[0][option.dataValueField.dsVar], (contrail.checkIfExist(triggerChange) ? triggerChange : false));
-                    } else {
                         self.select2('val', option.data[0][option.dataValueField.dsVar], (contrail.checkIfExist(triggerChange) ? triggerChange : false));
-                    }
+                }
+                //for Hierarchical drpdown
+                if(option.data.length != 0 &&
+                    option.data[0].children != undefined &&
+                    option.data[0].children.length > 1) {
+                    self.select2('val',
+                        option.data[0].children[1][option.dataValueField.dsVar],
+                        (contrail.checkIfExist(triggerChange) ?
+                        triggerChange : false));
                 }
             },
             enableOptionList: function (flag, disableItemList) {
