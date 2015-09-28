@@ -93,7 +93,6 @@ define([
         this.QE_CHART_ID = 'qe-chart';
         this.QE_CHART_GRID_ID = 'qe-chart-grid';
         this.QE_CHART_PAGE_ID = 'qe-chart-page';
-        this.QE_CHART_ID = 'qe-chart';
         this.QE_WHERE_MODAL_SUFFIX = '-where-modal';
     };
 
