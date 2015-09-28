@@ -590,6 +590,42 @@ function initCustomKOBindings(Knockout) {
         }
     };
 
+    Knockout.bindingHandlers.contrailAutoComplete = {
+            init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+                var elementConfig = {}, autocompleteTextBox;
+
+                if(contrail.checkIfExist(bindingContext) && contrail.checkIfExist(bindingContext.$root)){
+                    var elementConfigMap = bindingContext.$root.elementConfigMap(),
+                        elementName = $(element).attr("name");
+
+                    elementConfig = elementConfigMap[elementName];
+                }
+
+                autocompleteTextBox = $(element).contrailAutoComplete(elementConfig).data('contrailAutoComplete');
+
+                Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                    autocompleteTextBox.destroy();
+                });
+            },
+            update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+                var autocompleteTextBox = $(element).data('contrailAutoComplete');
+
+                if (allBindingsAccessor.get('value')) {
+                    var valueBindingAccessor = allBindingsAccessor.get('value'),
+                        value = Knockout.utils.unwrapObservable(valueBindingAccessor);
+
+                    if (contrail.checkIfFunction(value)) {
+                        autocompleteTextBox.value(value());
+                    } else {
+                        autocompleteTextBox.value(value);
+                    }
+                }
+                else {
+                    autocompleteTextBox.value('');
+                }
+            }
+        };
+
     var updateSelect2 = function (element) {
         var el = $(element);
         if (el.data('select2')) {

@@ -55,6 +55,7 @@ define([
         this.TMPL_EDITABLE_GRID_CHECKBOX_VIEW = "core-editable-grid-checkbox-view-template";
         this.TMPL_DATETIMEPICKER_VIEW = "core-datetimepicker-view-template";
         this.TMPL_NUMERICTEXTBOX_VIEW = "core-numerictextbox-view-template";
+        this.TMPL_AUTOCOMPLETETEXTBOX_VIEW = "core-autocompletetextbox-view-template";
         this.TMPL_TEXTAREA_VIEW = "core-textarea-view-template";
         this.TMPL_BUTTON_VIEW = "core-button-view-template";
         this.TMPL_COMPOSITE_VIEW = "core-composite-view-template";

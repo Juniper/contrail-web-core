@@ -10,16 +10,25 @@
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
         self.autocomplete(option);
+        self.data('contrailAutoComplete', {
+            value: function (value) {
+                if (typeof value === 'undefined') {
+                    return self.val();
+                } else {
+                    self.val(value);
+                }
+            }
+        });
         return self;
     };
-    
+
     $.fn.contrailMultiselect = function(option,option2){
         var self = this;
         option.multiple = true;
         self.data('contrailMultiselect', constructSelect2(self, option, option2));
         return self;
     };
-    
+
     $.fn.contrailTabs = function(option) {
         var self = this,
             theme = 'overcast';
@@ -57,7 +66,7 @@
 
         return self;
     };
-    
+
     $.fn.contrailNumericTextbox = function (option) {
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
@@ -76,7 +85,7 @@
         });
         return self;
     };
-    
+
     $.fn.contrailDateTimePicker = function(option) {
         var self = this;
         option = (typeof option === "undefined") ? {} : option;
@@ -122,13 +131,13 @@
         });
         return self;
     };
-    
+
     $.fn.contrailDropdown = function(defaultOption, args) {
         var self = this;
         self.data('contrailDropdown', constructSelect2(self, defaultOption, args));
         return self;
     };
-    
+
     $.fn.contrailCombobox = function(customOption) {
         var option = $.extend(true, {}, customOption),
             self = this, formattedData = [],
@@ -362,7 +371,7 @@
             dis.option.sourceMap = constructSourceMap(formattedData, 'value');
         };
     };
-    
+
     $.fn.contrail2WayMultiselect = function (givenOptions) {
     	var self = this;
         var defaultOptions = {
@@ -389,7 +398,7 @@
         constructContrail2WayMultiselect(this, options);
 
         options = (typeof options === "undefined") ? {} : options;
-        
+
         var multiselectContainer = {
         		lists: {
         			left: $(this).find('.multiselect-left'),
@@ -413,7 +422,7 @@
             });
             return result;
         }
-        
+
         function moveLeftToRight(){
         	if(options.beforeMoveOneToRight() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
 	        	var leftSelectedData = getListData(multiselectContainer.lists.left.find('li.ui-selected'));
@@ -423,7 +432,7 @@
         	}
         	
         }
-        
+
         function moveRightToLeft(){
         	if(options.beforeMoveOneToLeft() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
 	        	var rightSelectedData = getListData(multiselectContainer.lists.right.find('li.ui-selected'));
@@ -432,7 +441,7 @@
 	        	options.afterMoveOneToLeft();
         	}
         }
-        
+
         function moveLeftAll(){
         	if(options.beforeMoveAllToRight() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
 	        	var leftData = getListData(multiselectContainer.lists.left.find('li'));
@@ -454,19 +463,19 @@
         multiselectContainer.controls.leftSelected.on('click', function(){
         	moveLeftToRight();
         });
-        
+
         multiselectContainer.controls.rightSelected.on('click', function(){
         	moveRightToLeft();
         });
-        
+
         multiselectContainer.controls.leftAll.on('click', function(){
         	moveLeftAll();
         });
-        
+
         multiselectContainer.controls.rightAll.on('click', function(){
         	moveRightAll();
         });
-        
+
         self.data('contrail2WayMultiselect', {
             getLeftData: function () {
             	return getListData(multiselectContainer.lists.left.find('li'));
@@ -550,7 +559,7 @@
                      <ol class="row-fluid multiselect-right multiselect-list" style="height:'+(options.sizeRight * 30).toString()+'px;"></ol>\
                 </div>\
             </div>');
-            
+
             self.find('.multiselect-list').selectable();
         };
     };
@@ -903,7 +912,7 @@
             return methodObj;
         }
     };
-    
+
     $.extend({
         contrailBootstrapModal:function (options) {
             var keyupAction = $.extend(true, {}, {
@@ -1099,7 +1108,7 @@ function constructSelect2(self, defaultOption, args) {
             query: function (q) {
                 if(q.term != null){
                     var pageSize = 50;
-                    var results = _.filter(this.data, 
+                    var results = _.filter(this.data,
                             function(e) {
                               return (q.term == ""  || e.text.toUpperCase().indexOf(q.term.toUpperCase()) >= 0 );
                             });
@@ -1125,8 +1134,8 @@ function constructSelect2(self, defaultOption, args) {
                                 collection.push(datum);
                             }
                         }
-                    };  
-                    if(t != ""){            
+                    };
+                    if(t != ""){
                         $(this.data).each2(function(i, datum) { process(datum, filtered.results); })
                     }
                     q.callback({results:this.data});
@@ -1137,7 +1146,7 @@ function constructSelect2(self, defaultOption, args) {
             		return 'select2-result-label';
             	}
             }
-            
+
             // Use dropdownCssClass : 'select2-large-width' when initialzing ContrailDropDown
             // to specify width of dropdown for Contrail Dropdown
             // Adding a custom CSS class is also possible. Just add a custom class to the contrail.custom.css file
@@ -1198,7 +1207,7 @@ function constructSelect2(self, defaultOption, args) {
                     ajaxConfig['timeout'] = option.dataSource.timeout;
                 }
                 $.ajax(ajaxConfig);
-                
+
             } else if(option.dataSource.type == "local"){
                 source = formatData(option, option.dataSource.data);
             }
@@ -1242,7 +1251,7 @@ function constructSelect2(self, defaultOption, args) {
         if(typeof option.data != "undefined") {
             option.sourceMap = constructSourceMap(option.data, 'id');
         }
-        
+
         return {
             getAllData: function(){
                 if(self.data('select2') != null)

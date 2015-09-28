@@ -645,6 +645,13 @@ define(['underscore'], function (_) {
             }
             return path.join("");
         };
+
+        this.flattenList = function (arr) {
+            //Flatten one-level of the list
+            return $.map(arr, function (val) {
+                return val;
+            });
+        }
     };
     return CoreUtils;
 });
