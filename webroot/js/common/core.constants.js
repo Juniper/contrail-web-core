@@ -94,6 +94,12 @@ define([
         //Boxes in vRouter Tab of "Monitor > Infra > Dashboard" that shows bar chart
         //along with total count and title
         this.TMPL_CHARTINFO = "barchart-info-template";
+        this.TMPL_DASHBOARD_STATS = "dashboard-stats";
+        this.TMPL_INFRA_DASHBOARD = "mon-infra-dashboard";
+        this.DASHBOARD_ALERTS_GRID_SECTION_ID = "infra-dashboard-alerts-section";
+        this.DASHBOARD_ALERTS_GRID_ID = "infra-dashboard-alerts-grid";
+        this.DASHBOARD_ALERTS_GRID_TITLE = "Alerts";
+
 
         this.TMPL_ELEMENT_TOOLTIP = "element-tooltip-template";
         this.TMPL_ELEMENT_TOOLTIP_TITLE = "element-tooltip-title-template";
