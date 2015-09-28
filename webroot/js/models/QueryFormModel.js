@@ -16,7 +16,7 @@ define([
             var modelRemoteDataConfig;
 
             if (contrail.checkIfExist(modelData.table_name)) {
-                modelRemoteDataConfig = getModelRemoteDataConfig(modelData.table_name, this.defaultSelectFields);
+                modelRemoteDataConfig = getTableSchemaConfig(modelData.table_name, this.defaultSelectFields);
             }
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
@@ -276,7 +276,7 @@ define([
         validations: {}
     });
 
-    function getModelRemoteDataConfig(tableName, defaultSelectFields) {
+    function getTableSchemaConfig(tableName, defaultSelectFields) {
         var tableSchemeUrl = '/api/qe/table/schema/' + tableName,
             modelRemoteDataConfig = {
                 remote: {
