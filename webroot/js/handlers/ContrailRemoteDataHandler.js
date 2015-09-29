@@ -21,6 +21,7 @@ define([
 
         var vlRequestsInProgress = [], vlRequestInProgress = false, vlCompleteCallback,
             resetDataFlag = false, self = this;
+        var vlRequestsConfig = [];
 
         pAjaxConfig = primaryRemoteConfig.ajaxConfig;
         pUrl = pAjaxConfig['url'];
@@ -131,6 +132,7 @@ define([
 
         function pFailureHandler(xhr) {
             if (contrail.checkIfFunction(pFailureCallback)) {
+                xhr['ajaxConfig'] = pAjaxConfig;
                 pFailureCallback(xhr);
             }
             pRequestInProgress = false;
@@ -148,11 +150,14 @@ define([
         function initVLRequests(resultJSON) {
             var vlCounter = vlRequestsInProgress.length;
             vlRequestsInProgress[vlCounter] = [];
+            vlRequestsConfig[vlCounter] = [];
             if (vlRemoteList != null) {
                 for (var i = 0; i < vlRemoteList.length; i++) {
                     var vlRemote = vlRemoteList[i],
                         innerCounter = vlRequestsInProgress[vlCounter].length;
                     vlRequestsInProgress[vlCounter][innerCounter] = 1;
+                    vlRequestsConfig[vlCounter][innerCounter] =
+                        vlRemoteList[i].getAjaxConfig(resultJSON);
                     updateVLRequestStatus();
                     var vlDataParser = vlRemote.dataParser,
                         vlSuccessCallback = vlRemote.successCallback,
@@ -160,7 +165,9 @@ define([
 
                     var vlSuccessHandler = getVLSuccessHandlerFn(vlDataParser, vlSuccessCallback, vlCounter, innerCounter);
 
-                    var vlFailureHandler = getVLFailureHandlerFn(vlFailureCallback, vlCounter, innerCounter);
+                    var vlFailureHandler =
+                        getVLFailureHandlerFn(vlFailureCallback, vlCounter,
+                                              innerCounter, vlRequestsConfig);
 
                     contrail.ajaxHandler(vlRemoteList[i].getAjaxConfig(resultJSON), vlRemoteList[i].initCallback, vlSuccessHandler, vlFailureHandler);
                 }
@@ -183,10 +190,19 @@ define([
             }
         };
 
-        function getVLFailureHandlerFn(vlFailureCallback, vlCounter, innerCounter) {
+        function getVLFailureHandlerFn(vlFailureCallback, vlCounter,
+                                       innerCounter, vlRequestsConfig) {
             return function (xhr) {
+                var ajaxConfig = null;
+                if ((null != vlRequestsConfig[vlCounter]) &&
+                    (null != vlRequestsConfig[vlCounter][innerCounter])) {
+                    ajaxConfig =
+                        JSON.parse(JSON.stringify(vlRequestsConfig[vlCounter][innerCounter]));
+                }
                 vlRequestsInProgress[vlCounter][innerCounter] = 0;
+                xhr['ajaxConfig'] = ajaxConfig;
                 vlFailureCallback(xhr);
+                vlRequestsConfig[vlCounter][innerCounter] = null;
                 updateVLRequestStatus();
             };
         };
