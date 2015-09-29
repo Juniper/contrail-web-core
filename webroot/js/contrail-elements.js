@@ -1244,7 +1244,7 @@ function constructSelect2(self, defaultOption, args) {
                     selectedOption =
                         option.data[0].children[option.defaultValueId];
                 }
-                self.select2('val', selectedOption[option.dataValueField.dsVar]);
+                self.select2('val', selectedOption[option.dataValueField.dsVar], true);
             }
         }
 
@@ -1321,10 +1321,9 @@ function constructSelect2(self, defaultOption, args) {
                     .off("change", changeFunction)
                     .on("change", changeFunction);
 
-                //TODO - Sync with setting of value based on defaultValueId
                 if (option.data.length != 0 && contrail.checkIfExist(option.defaultValueId) &&
                     option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple)) {
-                        self.select2('val', option.data[0][option.dataValueField.dsVar], (contrail.checkIfExist(triggerChange) ? triggerChange : false));
+                        self.select2('val', option.data[option.defaultValueId][option.dataValueField.dsVar], (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                 }
                 //for Hierarchical drpdown
                 if(option.data.length != 0 &&

@@ -376,10 +376,10 @@ function initCustomKOBindings(Knockout) {
                 var valueBindingAccessor = allBindingsAccessor.get('value'),
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);
 
-                if (contrail.checkIfFunction(value) && value() != '') {
-                    dropdown.value(value(), true);
-                } else if (value != '') {
-                    dropdown.value(value, true);
+                value = contrail.checkIfFunction(value) ? value() : value;
+
+                if (contrail.checkIfExist(value) && value !== '') {
+                    dropdown.value(value);
                 }
             }
 
@@ -432,10 +432,9 @@ function initCustomKOBindings(Knockout) {
                 var valueBindingAccessor = allBindingsAccessor.get('value'),
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);
 
-                if (contrail.checkIfFunction(value) && value() != '') {
-                    value = $.isArray(value()) ? value() : [value()];
-                    multiselect.value(value, true);
-                } else if (value != '') {
+                value = contrail.checkIfFunction(value) ? value() : value;
+
+                if (contrail.checkIfExist(value) && value !== '') {
                     value = $.isArray(value) ? value : [value];
                     multiselect.value(value, true);
                 }

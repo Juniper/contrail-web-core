@@ -374,6 +374,8 @@ define([
                     } else {
                         schemaValue.index = false;
                     }
+                } else {
+                    tableSchemaFormatted.push(schemaValue);
                 }
             }
         });
