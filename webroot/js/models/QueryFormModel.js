@@ -140,7 +140,7 @@ define([
                 queryPrefix = this.query_prefix(),
                 options = {
                     elementId: queryPrefix + '-results', gridHeight: 480, timeOut: 120000,
-                    pageSize: 100, queryPrefix: 'fs', export: true, showChartToggle: showChartToggle,
+                    pageSize: 100, queryPrefix: queryPrefix, export: true, showChartToggle: showChartToggle,
                     labelStep: 1, baseUnit: 'mins', fromTime: 0, toTime: 0, interval: 0,
                     btnId: queryPrefix + '-query-submit', refreshChart: true, serverCurrentTime: serverCurrentTime
                 };
