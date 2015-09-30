@@ -20,7 +20,7 @@ define([
                 selectTmplHtml = selectTemplate(selectTmplData);
 
             cowu.createModal({
-                'modalId': modalId, 'className': 'modal-700', 'title': cowl.TITLE_QE_SELECT, 'body': selectTmplHtml, 'onSave': function () {
+                'modalId': modalId, 'className': 'modal-1120', 'title': cowl.TITLE_QE_SELECT, 'body': selectTmplHtml, 'onSave': function () {
                     self.model.saveSelect({
                         init: function () {
                             self.model.showErrorAttr(queryPrefix + cowc.FORM_SUFFIX_ID, false);

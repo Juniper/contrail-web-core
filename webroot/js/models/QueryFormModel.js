@@ -27,6 +27,7 @@ define([
         },
 
         onChangeTable: function(model) {
+            this.reset(this);
             var tableName = model.attributes.table_name,
                 tableSchemeUrl = '/api/qe/table/schema/' + tableName,
                 ajaxConfig = {
@@ -81,6 +82,8 @@ define([
                     callbackObj.init();
                 }
                 this.select(this.select_data_object().checked_fields().join(", "));
+                console.log(this.select_data_object().checked_fields().length)
+                console.log(this.select_data_object().checked_fields().join(", "));
                 if (contrail.checkIfFunction(callbackObj.success)) {
                     callbackObj.success();
                 }
@@ -384,6 +387,10 @@ define([
     }
 
     function setEnable4SelectFields(selectFields, isEnableMap) {
+        for (var key in isEnableMap) {
+            delete isEnableMap[key];
+        }
+
         for (var i = 0; i < selectFields.length; i++) {
             isEnableMap[selectFields[i]['name']] = ko.observable(true);
         }
