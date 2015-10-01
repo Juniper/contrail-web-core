@@ -1246,6 +1246,9 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-view-template">
+    {{#IfCompare label null operator='!='}}
+    <label style="margin:0px">{{label}}</label>
+    {{/IfCompare}}
     <table class="contrail-editable-grid-table">
         <thead>
         <tr>
