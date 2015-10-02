@@ -11,10 +11,12 @@ define([
 ], function (_, ContrailView, ZoomScatterChartModel, ContrailListModel, ControlPanelView) {
     var ZoomScatterChartView = ContrailView.extend({
         render: function () {
-            var viewConfig = this.attributes.viewConfig,
+            var self = this,
+                viewConfig = self.attributes.viewConfig,
+                widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 chartOptions = viewConfig['chartOptions'],
-                self = this, deferredObj = $.Deferred(),
+                deferredObj = $.Deferred(),
                 selector = $(self.$el);
 
             if (self.model == null && viewConfig['modelConfig'] != null) {
@@ -43,6 +45,10 @@ define([
                     .on('resize', function (e) {
                         self.renderChart(selector, viewConfig, self.model);
                     });
+            }
+
+            if (widgetConfig !== null) {
+                self.renderView4Config($(self.$el).find('.zoom-scatter-chart-container'), self.model, widgetConfig, null, null, null);
             }
         },
 

@@ -13,7 +13,12 @@ define([
             var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 self = this, deferredObj = $.Deferred(),
-                selector = $(self.$el);
+                selector = $(self.$el),
+                modelMap = contrail.handleIfNull(self.modelMap, {});
+
+            if (contrail.checkIfExist(viewConfig.modelKey) && contrail.checkIfExist(modelMap[viewConfig.modelKey])) {
+                self.model = modelMap[viewConfig.modelKey]
+            }
 
             if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);

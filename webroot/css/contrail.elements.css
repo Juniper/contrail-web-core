@@ -4097,6 +4097,7 @@ td.td-actions a.td-action {
 
 .label-icon-badge {
 	font-size: 12px;
+    color: #ccc;
 }
 
 .icon-badge-color-0 {color: #1f77b4;}

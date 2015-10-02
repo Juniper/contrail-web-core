@@ -2831,6 +2831,7 @@ p.error, p.error-text {
 }
 
 /* Zoomed Scatterchart */
+.widget-main-rightmenu.colmask,
 .zoom-scatter-chart-container.colmask {
     position:relative;		/* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
     clear:both;
@@ -2838,6 +2839,7 @@ p.error, p.error-text {
     width:100%;			/* width of whole page */
     overflow:hidden;	/* This chops off any overhanging divs */
 }
+.widget-main-rightmenu.rightmenu .colleft,
 .zoom-scatter-chart-container.rightmenu .colleft {
     float:left;
     width:200%;
@@ -2846,6 +2848,7 @@ p.error, p.error-text {
     right:100%;
     background:#fff;
 }
+.widget-main-rightmenu.rightmenu .col1wrap,
 .zoom-scatter-chart-container.rightmenu .col1wrap {
     float:left;
     width:50%;
@@ -2853,11 +2856,13 @@ p.error, p.error-text {
     left:50%;
     padding-bottom:1em;
 }
+.widget-main-rightmenu.rightmenu .col1,
 .zoom-scatter-chart-container.rightmenu .col1 {
     margin:0 0 0 60px;
     overflow:hidden;
     position: relative;
 }
+.widget-main-rightmenu.rightmenu .col2,
 .zoom-scatter-chart-container.rightmenu .col2 {
     float:right;
     width:35px;

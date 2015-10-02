@@ -1544,6 +1544,7 @@
 
 <script type="text/x-handlebars-template" id="core-widget-view-template">
     <div id="{{elementId}}" class="widget-box transparent">
+        {{#IfCompare controls.top false operator='!=='}}
         <div class="widget-header">
             <h4 class="smaller" {{#IfCompare controls.top.collapseable false operator='!=='}} data-action="widget-collapse"{{/IfCompare}}>
                 {{#IfCompare header.iconClass false operator='!=='}}
@@ -1559,8 +1560,20 @@
                 {{/IfCompare}}
             </div>
         </div>
+        {{/IfCompare}}
         <div class="widget-body">
             <div class="widget-main padding-4">
+                {{#IfCompare controls.right false operator='!=='}}
+                <div class="widget-main-rightmenu colmask rightmenu">
+                    <div class="colleft">
+                        <div class="col1wrap">
+                            <div class="col1"></div>
+                        </div>
+                        <div class="col2 control-panel-container"></div>
+                        <div class="control-panel-expanded-container hide"></div>
+                    </div>
+                </div>
+                {{/IfCompare}}
             </div>
         </div>
     </div>
