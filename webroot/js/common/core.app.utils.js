@@ -86,6 +86,7 @@ function getCoreAppPaths(coreBaseDir) {
         'core-labels'                 : coreBaseDir + '/js/common/core.labels',
         'core-messages'               : coreBaseDir + '/js/common/core.messages',
         'core-cache'                  : coreBaseDir + '/js/common/core.cache',
+        'core-views-default-config'   : coreBaseDir + '/js/common/core.views.default.config',
         'core-init'                   : coreBaseDir + '/js/common/core.init',
         'nvd3-plugin'                 : coreBaseDir + '/js/common/nvd3.plugin',
         'contrail-unified-1'          : coreBaseDir + '/js/common/contrail.unified.1',
@@ -100,6 +101,7 @@ function getCoreAppPaths(coreBaseDir) {
         'contrail-view'               : coreBaseDir + '/js/views/ContrailView',
         'query-form-view'             : coreBaseDir + '/js/views/QueryFormView',
         'query-result-view'           : coreBaseDir + '/js/views/QueryResultView',
+        'query-line-chart-view'       : coreBaseDir + '/js/views/QueryLineChartView',
 
         'query-form-model'            : coreBaseDir + '/js/models/QueryFormModel',
         'query-or-model'              : coreBaseDir + '/js/models/QueryOrModel',
@@ -374,10 +376,10 @@ function initCustomKOBindings(Knockout) {
                 var valueBindingAccessor = allBindingsAccessor.get('value'),
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);
 
-                if (contrail.checkIfFunction(value) && value() != '') {
-                    dropdown.value(value(), true);
-                } else if (value != '') {
-                    dropdown.value(value, true);
+                value = contrail.checkIfFunction(value) ? value() : value;
+
+                if (contrail.checkIfExist(value) && value !== '') {
+                    dropdown.value(value);
                 }
             }
 
@@ -430,9 +432,10 @@ function initCustomKOBindings(Knockout) {
                 var valueBindingAccessor = allBindingsAccessor.get('value'),
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);
 
-                if (typeof value === 'function' && value() != '') {
-                    multiselect.value(value(), true);
-                } else if (value != '') {
+                value = contrail.checkIfFunction(value) ? value() : value;
+
+                if (contrail.checkIfExist(value) && value !== '') {
+                    value = $.isArray(value) ? value : [value];
                     multiselect.value(value, true);
                 }
             }

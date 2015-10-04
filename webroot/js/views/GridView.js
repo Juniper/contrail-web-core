@@ -7,7 +7,7 @@ define([
     'contrail-view',
     'contrail-list-model',
     'core-basedir/js/views/GridFooterView'
-], function (_, ContrailView, ContrailListModel, GridPagerView) {
+], function (_, ContrailView, ContrailListModel, GridFooterView) {
     var GridView = ContrailView.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
@@ -15,7 +15,7 @@ define([
                 contrailListModel, gridConfig, gridContainer,
                 customGridConfig, self = this;
 
-            var grid = null, dataView = null, pager = null,
+            var grid = null, dataView = null, footerPager = null,
                 gridDataSource, gridColumns, gridSortColumns = [], gridOptions,
                 autoRefreshInterval = false, searchColumns = [],
                 currentSelectedRows = [],
@@ -30,7 +30,7 @@ define([
             viewConfig.elementConfig['body']['dataSource']['dataView'] = contrailListModel;
 
 
-            gridConfig = $.extend(true, {}, getDefaultGridConfig(), viewConfig.elementConfig);
+            gridConfig = $.extend(true, {}, covdc.gridConfig, viewConfig.elementConfig);
             gridContainer = $(this.$el);
             customGridConfig = $.extend(true, {}, gridConfig);
 
@@ -61,7 +61,7 @@ define([
                 initDataView(gridConfig);
                 dataView.setSearchFilter(searchColumns, searchFilter);
                 initClientSidePagination();
-                initGridFooter();
+                initGridFooter(gridDataSource.remote.serverSidePagination);
                 dataView.setData(dataViewData);
                 performSort(gridSortColumns);
             }
@@ -805,27 +805,18 @@ define([
                 		<span class="slick-pager-sizes"><div class="csg-pager-sizes"></div></span>\
                 	</div>');
 
-                    if (serverSidePagination) {
-                        pager = new Slick.Controls.EnhancementPager({
-                            gridContainer: gridContainer,
-                            container: $(gridContainer.find('.grid-footer')),
-                            gridConfig: gridConfig,
-                            remoteUrl: gridDataSource.remote.ajaxConfig.url,
-                            datagrid: grid,
-                            params: gridDataSource.remote.ajaxConfig.data,
-                            events: gridDataSource.events,
-                            options: gridConfig.footer.pager.options
-                        });
-                        gridContainer.find('.slick-pager-sizes').hide();
+                    if (dataView.getLength() != 0) {
+                        gridContainer.find('.grid-footer').removeClass('hide');
+                    } else if (serverSidePagination) {
+                        footerPager = new GridFooterView(dataView, gridContainer, gridConfig.footer.pager.options);
+                        footerPager.init();
+                        //gridContainer.find('.slick-pager-sizes').hide();
                     } else {
-                        if (dataView.getLength() != 0) {
-                            gridContainer.find('.grid-footer').removeClass('hide');
-                        }
-                        pager = new GridPagerView(dataView, gridContainer, gridConfig.footer.pager.options);
-                        pager.init();
+                        footerPager = new GridFooterView(dataView, gridContainer, gridConfig.footer.pager.options);
+                        footerPager.init();
                     }
                 }
-                gridContainer.data("contrailGrid")._pager = pager;
+                gridContainer.data("contrailGrid")._pager = footerPager;
                 startAutoRefresh(gridOptions.autoRefresh);
             };
 
@@ -834,7 +825,7 @@ define([
                     _grid: grid,
                     _dataView: dataView,
                     _eventHandlerMap: eventHandlerMap,
-                    _pager: pager,
+                    _pager: footerPager,
                     _gridStates: {
                         allPagesDataChecked: false,
                         currentPageDataChecked: false
@@ -1257,85 +1248,6 @@ define([
         }
     });
 
-    function getDefaultGridConfig() {
-        var defaultSettings = {
-            header: {
-                title: {
-                    cssClass: 'blue',
-                    icon: '',
-                    iconCssClass: 'blue'
-                },
-                icon: false,
-                defaultControls: {
-                    collapseable: false,
-                    exportable: true,
-                    refreshable: true,
-                    searchable: true
-                },
-                customControls: false
-            },
-            columnHeader: {
-                columns: {}
-            },
-            body: {
-                options: {
-                    actionCell: false,
-                    autoHeight: true,
-                    autoRefresh: false,
-                    checkboxSelectable: true,
-                    forceFitColumns: true,
-                    detail: {
-                        template: '<pre>{{{formatJSON2HTML this}}}</pre>'
-                    },
-                    enableCellNavigation: true,
-                    enableColumnReorder: false,
-                    enableTextSelectionOnCells: true,
-                    fullWidthRows: true,
-                    multiColumnSort: true,
-                    rowHeight: 30,
-                    fixedRowHeight: false,
-                    gridHeight: 500,
-                    rowSelectable: false,
-                    sortable: true,
-                    lazyLoading: true,
-                    actionCellPosition: 'end', //actionCellPosition indicates position of the settings icon whether it should be on row start and end
-                    multiRowSelection: true //This property will enable/disable selecting multiple rows of the grid, but the checkbox in the header should be removed by the client because as of now, we don't have way in api to remove the checkbox in header
-                },
-                dataSource: {
-                    remote: null,
-                    data: null,
-                    events: {}
-                },
-                statusMessages: {
-                    loading: {
-                        type: 'status',
-                        iconClasses: '',
-                        text: 'Loading...'
-                    },
-                    empty: {
-                        type: 'status',
-                        iconClasses: '',
-                        text: 'No Records Found.'
-                    },
-                    error: {
-                        type: 'error',
-                        iconClasses: 'icon-warning',
-                        text: 'Error - Please try again later.'
-                    }
-                }
-            },
-            footer: {
-                pager: {
-                    options: {
-                        pageSize: 50,
-                        pageSizeSelect: [10, 50, 100, 200]
-                    }
-                }
-            }
-        };
-
-        return defaultSettings;
-    };
 
     return GridView;
 });

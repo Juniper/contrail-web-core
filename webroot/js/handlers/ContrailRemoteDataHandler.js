@@ -99,7 +99,7 @@ define([
             pRequestCompleteResponse.push(response);
 
             if (contrail.checkIfFunction(pSuccessCallback)) {
-                pSuccessCallback(resultJSON, resetDataFlag);
+                pSuccessCallback(resultJSON, resetDataFlag, response);
                 resetDataFlag = false;
                 initVLRequests(resultJSON);
             }
@@ -107,9 +107,20 @@ define([
             if (response != null && response['more'] != null && response['more']) {
                 setNextUrl(response['lastKey']);
                 fetchPrimaryData();
+            } else if (response != null && response['total'] != null && response['chunk'] != null && ((response['chunk'] * response['chunkSize']) < response['total']) ) {
+                var postData = JSON.parse(pAjaxConfig['data']),
+                    chunk = postData['chunk'] + 1;
+                postData['chunk'] = chunk;
+                pAjaxConfig['data'] = JSON.stringify(postData);
+                fetchPrimaryData();
             } else {
                 pRequestInProgress = false;
                 delete pUrlParams['lastKey'];
+                if(response['total'] != null) {
+                    var postData = JSON.parse(pAjaxConfig['data']);
+                    postData['chunk'] = 1;
+                    pAjaxConfig['data'] = JSON.stringify(postData);
+                }
                 pAjaxConfig['url'] = pUrl.split('?')[0] + '?' + $.param(pUrlParams);
                 if (pCompleteCallback != null) {
                     pCompleteCallback(pRequestCompleteResponse);

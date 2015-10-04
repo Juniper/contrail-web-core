@@ -184,7 +184,8 @@ Object.identical = function (a, b, sortArrays) {
     return JSON.stringify(sort(a)) === JSON.stringify(sort(b));
 };
 
-$.fn.modal.Constructor.prototype.enforceFocus = function () {};
+$.fn.modal.Constructor.prototype.enforceFocus = function () {
+};
 
 function onClickSidebarCollapse() {
     var $minimized = false;

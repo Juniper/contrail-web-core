@@ -57,6 +57,15 @@ define([
                                                 ],
                                                 columns: [
                                                     {
+                                                        elementId: 'and-text',
+                                                        view: "FormTextView",
+                                                        width: 40,
+                                                        viewConfig: {
+                                                            value: "AND",
+                                                            class: "and-clause-text"
+                                                        }
+                                                    },
+                                                    {
                                                         elementId: 'name',
                                                         name: 'Name',
                                                         view: "FormDropdownView",
@@ -77,7 +86,7 @@ define([
                                                         name: 'operator',
                                                         view: "FormDropdownView",
                                                         class: "",
-                                                        width: 55,
+                                                        width: 100,
                                                         viewConfig: {
                                                             templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                                             path: "operator",
@@ -108,6 +117,14 @@ define([
                                             {
                                                 columns: [
                                                     {
+                                                        elementId: 'suffix-and-text',
+                                                        view: "FormTextView",
+                                                        width: 40,
+                                                        viewConfig: {
+                                                            value: "",
+                                                            class: 'suffix-and-clause-text'
+                                                        }
+                                                    },{
                                                         elementId: 'suffix-name',
                                                         name: 'suffix_name',
                                                         view: "FormDropdownView",
@@ -129,7 +146,7 @@ define([
                                                         name: 'suffix_operator',
                                                         view: "FormDropdownView",
                                                         class: "",
-                                                        width: 55,
+                                                        width: 100,
                                                         viewConfig: {
                                                             templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                                             path: "suffix_operator",
