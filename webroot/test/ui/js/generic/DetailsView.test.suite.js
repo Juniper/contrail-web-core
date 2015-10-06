@@ -3,50 +3,23 @@
  */
 
 define([
+    'jquery',
     'underscore',
     'co-test-utils',
     'co-test-messages',
     'co-test-constants',
     'co-test-unit'
-], function (_, cotu, cotm, cotc, CUnit) {
+], function ($, _, cotu, cotm, cotc, CUnit) {
 
     var testSuiteClass = function (viewObj, suiteConfig){
         var viewConfig = cotu.getViewConfigObj(viewObj),
-            modelMap = viewObj.modelMap,
             el = viewObj.el,
             data = viewConfig.data,
-            ajaxConfig = viewConfig.ajaxConfig,
-            dataParser = viewConfig.dataParser,
             app = viewConfig.app,
             templateConfig = viewConfig.templateConfig,
-            detailsTemplate = cowu.generateDetailTemplate(templateConfig, app);
-
-        if (modelMap != null && modelMap[viewConfig.modelKey] != null) {
-            var contrailViewModel = modelMap[viewConfig.modelKey],
-                requestState;
-
-            if (!contrailViewModel.isRequestInProgress()) {
-                requestState = cowu.getRequestState4Model(contrailViewModel);
-                data = contrailViewModel.attributes;
-            } else {
-                contrailViewModel.onAllRequestsComplete.subscribe(function () {
-                    requestState = cowu.getRequestState4Model(contrailViewModel);
-                    data = contrailViewModel.attributes;
-                });
-            }
-        } else {
-            contrail.ajaxHandler(ajaxConfig, null, function (response) {
-                var data = dataParser(response),
-                    requestState = cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY;
-
-                if ($.isEmptyObject(data)) {
-                    requestState = cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY;
-                }
-            }, function (error) {
-                data = [];
-                requestState = cowc.DATA_REQUEST_STATE_ERROR;
-            });
-        }
+            detailsTemplate = cowu.generateDetailTemplate(templateConfig, app),
+            requestState = cowu.getRequestState4Model(suiteConfig.model),
+            mockData = suiteConfig.mockData;
 
         module(cotu.formatTestModuleMessage(cotm.TEST_DETAILSVIEW, el.id));
 
@@ -74,7 +47,7 @@ define([
                 $(el).find('.detail-foundation-container .detail-foundation-action-item :last i').trigger("click");
 
                 equal($(el).find('.detail-foundation-container .detail-foundation-content-advanced').html(),
-                    contrail.formatJSON2HTML(data, 2),
+                    contrail.formatJSON2HTML(mockData, 2),
                     "advanced view HTML should equal to the generated JSON HTML content");
 
                 //check basic view icon
@@ -86,6 +59,12 @@ define([
 
             }
         }, cotc.SEVERITY_LOW));
+
+        /**
+         * TODO Add test case for text formatter
+         * type of formatter and key can be accessed from viewConfig
+         * the dom should have id set to extract the values. details template creation needs update.
+         */
 
         detailsViewTestSuite.run(suiteConfig.groups, suiteConfig.severity);
 
