@@ -15,7 +15,8 @@ define([
         var viewConfig = cotu.getViewConfigObj(viewObj),
             el = viewObj.el,
             chartItems = viewObj.model.getItems(),
-            chartOptions = viewConfig.chartOptions;
+            chartOptions = viewConfig.chartOptions,
+            chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions);
 
         module(cotu.formatTestModuleMessage(cotm.TEST_CHARTVIEW_LINE, el.id));
 
@@ -30,14 +31,15 @@ define([
          * Test axis labels.
          */
         basicTestGroup.registerTest(CUnit.test(cotm.CHARTVIEW_AXIS_LABEL, function () {
-            expect(2);
-            equal($(el).find('.zoom-scatter-chart .x.label').text().trim(), chartOptions.xLabel,
-                "X axis title should be equal to the title set");
-            equal($(el).find('.zoom-scatter-chart .y.label').text().trim(), chartOptions.yLabel,
-                "Y axis title should be equal to the title set");
+            equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-y .nv-axislabel').text().trim(), chartOptions.yAxisLabel,
+                "Y1 axis title should be equal to the title set");
+            if (chartOptions.y2AxisLabel != "") {
+                equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-y2 .nv-axislabel').text().trim(), chartOptions.y2AxisLabel,
+                    "Y2 axis title should be equal to the title set");
+            }
+            equal($(el).find('.nv-lineWithFocusChart .nv-context .nv-x .nv-axislabel').text().trim(), "Time",
+                "X axis title should be set as Time");
         }, cotc.SEVERITY_LOW));
-
-
 
         chartViewTestSuite.run(suiteConfig.groups, suiteConfig.severity);
 
