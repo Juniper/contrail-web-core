@@ -97,7 +97,7 @@ connectToMainServer = function () {
 kueJobListen = function() {
     /* kue UI listening port */
     var kuePort = config.kue.ui_port || 3002;
-    kue.app.listen(kuePort);
+    kue.app.listen(kuePort, '127.0.0.1');
 }
 
 function createVRouterSummaryJob ()
