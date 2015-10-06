@@ -365,8 +365,8 @@ function initCustomKOBindings(Knockout) {
             if (!contrail.checkIfExist(elementConfig.data) && !contrail.checkIfExist(elementConfig.dataSource) && allBindingsAccessor.get('optionList')) {
                 var optionListBindingAccessor = allBindingsAccessor.get('optionList'),
                     optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
-                if (contrail.checkIfFunction(optionList) && $.isArray(optionList())) {
-                    dropdown.setData(optionList(), true);
+                if (contrail.checkIfFunction(optionList) && $.isArray(optionList(viewModel))) {
+                    dropdown.setData(optionList(viewModel), true);
                 } else if ($.isArray(optionList)) {
                     dropdown.setData(optionList, true);
                 }

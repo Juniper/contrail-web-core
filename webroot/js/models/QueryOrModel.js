@@ -15,6 +15,13 @@ define([
             "orClauseText": ''
         },
 
+        constructor: function (parentModel, modelData) {
+            ContrailModel.prototype.constructor.call(this, modelData);
+            this.parentModel = parentModel;
+
+            return this;
+        },
+
         validateAttr: function (attributePath, validation, data) {
             var model = data.model().attributes.model(),
                 attr = cowu.getAttributeFromPath(attributePath),
@@ -28,17 +35,17 @@ define([
         },
 
         formatModelConfig: function(modelConfig) {
-
             var andClauses = [],
                 andClauseModels = [], andClauseModel,
-                andClausesCollectionModel;
+                andClausesCollectionModel,
+                self = this;
 
             $.each(andClauses, function(andClauseKey, andClauseValue) {
-                andClauseModel = new QueryAndModel(andClauseValue);
+                andClauseModel = new QueryAndModel(self, andClauseValue);
                 andClauseModels.push(andClauseModel)
             });
 
-            andClauseModels.push(new QueryAndModel());
+            andClauseModels.push(new QueryAndModel(self));
 
             andClausesCollectionModel = new Backbone.Collection(andClauseModels);
             modelConfig['and_clauses'] = andClausesCollectionModel;
@@ -49,7 +56,7 @@ define([
 
         addWhereAndClause: function() {
             var andClauses = this.model().attributes.model().get('and_clauses'),
-                newAndClause = new QueryAndModel();
+                newAndClause = new QueryAndModel(this);
 
             andClauses.add([newAndClause]);
         },

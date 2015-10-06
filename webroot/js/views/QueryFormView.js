@@ -78,7 +78,7 @@ define([
                                                             templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                                             path: "name",
                                                             dataBindValue: "name",
-                                                            dataBindOptionList: '$root.getNameOptionList()',
+                                                            dataBindOptionList: 'getNameOptionList',
                                                             elementConfig: {
                                                                 placeholder: 'Select Name'
                                                             }
@@ -138,7 +138,7 @@ define([
                                                             visible: "$root.isSuffixVisible(name())",
                                                             path: "suffix_name",
                                                             dataBindValue: "suffix_name",
-                                                            dataBindOptionList: '$root.getSuffixNameOptionList(name())',
+                                                            dataBindOptionList: 'getSuffixNameOptionList',
                                                             elementConfig: {
                                                                 placeholder: 'Select Suffix Name'
                                                             }
