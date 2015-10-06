@@ -11,16 +11,18 @@ define([
     var QuerySelectView = ContrailView.extend({
         render: function (renderConfig) {
             var self = this,
+                viewConfig = self.attributes.viewConfig,
                 selectTemplate = contrail.getTemplate4Id(ctwc.TMPL_QUERY_SELECT),
                 queryPrefix = self.model.query_prefix(),
-                modalId = queryPrefix + cowl.QE_SELECT_MODAL_SUFFIX;
+                modalId = queryPrefix + cowl.QE_SELECT_MODAL_SUFFIX,
+                className = viewConfig['className'];
 
             var selectDataObject = self.model.select_data_object(),
                 selectTmplData = {queryPrefix: self.model.query_prefix(), fields: $.makeArray(selectDataObject.select_fields)},
                 selectTmplHtml = selectTemplate(selectTmplData);
 
             cowu.createModal({
-                'modalId': modalId, 'className': 'modal-980', 'title': cowl.TITLE_QE_SELECT, 'body': selectTmplHtml, 'onSave': function () {
+                'modalId': modalId, 'className': className, 'title': cowl.TITLE_QE_SELECT, 'body': selectTmplHtml, 'onSave': function () {
                     self.model.saveSelect({
                         init: function () {
                             self.model.showErrorAttr(queryPrefix + cowc.FORM_SUFFIX_ID, false);

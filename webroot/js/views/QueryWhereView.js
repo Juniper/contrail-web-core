@@ -15,10 +15,11 @@ define([
                 editTemplate = contrail.getTemplate4Id(cowc.TMPL_EDIT_FORM),
                 queryPrefix = self.model.query_prefix(),
                 modalId = queryPrefix + cowl.QE_WHERE_MODAL_SUFFIX,
-                whereTmplHtml = editTemplate({prefixId: queryPrefix});
+                whereTmplHtml = editTemplate({prefixId: queryPrefix}),
+                className = viewConfig['className'];
 
             cowu.createModal({
-                'modalId': modalId, 'className': 'modal-700', 'title': cowl.TITLE_QE_WHERE, 'body': whereTmplHtml, 'onSave': function () {
+                'modalId': modalId, 'className': className, 'title': cowl.TITLE_QE_WHERE, 'body': whereTmplHtml, 'onSave': function () {
                     self.model.saveWhere({
                         init: function () {
                             self.model.showErrorAttr(queryPrefix + cowc.FORM_SUFFIX_ID, false);

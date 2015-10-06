@@ -11,11 +11,11 @@ define([
     var QueryFormView = ContrailView.extend({
 
         renderSelect: function (options) {
-            this.renderView4Config(this.$el, this.model, getSelectViewConfig());
+            this.renderView4Config(this.$el, this.model, getSelectViewConfig(contrail.checkIfExist(options) ? options : {}));
         },
 
         renderWhere: function (options) {
-            this.renderView4Config(this.$el, this.model, getWhereViewConfig());
+            this.renderView4Config(this.$el, this.model, getWhereViewConfig(contrail.checkIfExist(options) ? options : {}));
         },
 
         renderFilter: function (options) {
@@ -23,19 +23,22 @@ define([
         }
     });
 
-    function getSelectViewConfig() {
+    function getSelectViewConfig(options) {
         return {
             view: "QuerySelectView",
-            viewConfig: {}
+            viewConfig: {
+                className: contrail.checkIfExist(options.className) ? options.className : cowc.QE_DEFAULT_MODAL_CLASSNAME
+            }
         };
     };
 
-    function getWhereViewConfig() {
+    function getWhereViewConfig(options) {
         return {
             view: "QueryWhereView",
             viewConfig: {
                 elementId: 'or-clause-collection',
                 view: "FormCollectionView",
+                className: contrail.checkIfExist(options.className) ? options.className : cowc.QE_DEFAULT_MODAL_CLASSNAME,
                 viewConfig: {
                     path: 'or_clauses',
                     collection: 'or_clauses()',
