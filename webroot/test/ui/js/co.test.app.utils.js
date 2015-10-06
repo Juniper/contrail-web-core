@@ -16,7 +16,12 @@ function getCoreTestAppPaths(coreBaseDir) {
         'co-grid-contrail-list-model-test-suite'     : coreTestAppBaseDir + '/grid/ContrailListModel.test.suite',
         'co-grid-view-test-suite'                    : coreTestAppBaseDir + '/grid/GridView.test.suite',
         'co-grid-contrail-list-model-lib-test-suite' : coreTestAppBaseDir + '/grid/ContrailListModel.lib.test.suite',
-        'co-grid-view-lib-test-suite'                : coreTestAppBaseDir + '/grid/GridView.lib.test.suite'
+        'co-grid-view-lib-test-suite'                : coreTestAppBaseDir + '/grid/GridView.lib.test.suite',
+        'co-chart-view-zoom-scatter-test-suite'      : coreTestAppBaseDir + '/chart/ZoomScatterChartView.test.suite',
+        'co-chart-view-line-bar-test-suite'          : coreTestAppBaseDir + '/chart/LineBarWithFocusChartView.test.suite',
+        'co-chart-view-line-test-suite'              : coreTestAppBaseDir + '/chart/LineWithFocusChartView.test.suite',
+        'co-tabs-view-test-suite'                    : coreTestAppBaseDir + '/generic/TabsView.test.suite',
+        'co-details-view-test-suite'                 : coreTestAppBaseDir + '/generic/DetailsView.test.suite',
     };
 }
 

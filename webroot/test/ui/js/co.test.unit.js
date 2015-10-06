@@ -76,10 +76,13 @@ define([
         page: this.getDefaultPageConfig(),
         getTestConfig: function () {
             return {};
+        },
+        testInitFn: function() {
+            return;
         }
     };
 
-    this.createPageTestConfig = function (moduleId, fakeServerConfig, pageConfig, getTestConfigCB) {
+    this.createPageTestConfig = function (moduleId, fakeServerConfig, pageConfig, getTestConfigCB, testInitFn) {
         var pageTestConfig = defaultPageTestConfig;
         if (moduleId != null) {
             pageTestConfig.moduleId = moduleId;
@@ -92,6 +95,9 @@ define([
         }
         if (getTestConfigCB != null) {
             pageTestConfig.getTestConfig = getTestConfigCB;
+        }
+        if (testInitFn != null) {
+            pageTestConfig.testInitFn = testInitFn;
         }
         return pageTestConfig;
     };
@@ -243,31 +249,37 @@ define([
 
         asyncTest("Core Tests", function (assert) {
             expect(0);
-            var loadingStartedDefObj = loadFeature(pageTestConfig.page.hashParams);
-            loadingStartedDefObj.done(function () {
-                //additional fake server response setup
-                var responses = pageTestConfig.fakeServer.getResponsesConfig();
-                _.each(responses, function (response) {
-                    fakeServer.respondWith(response.method, response.url, [response.statusCode, response.headers, response.body]);
-                });
-
-                var pageLoadTimeOut = pageTestConfig.page.loadTimeout;
-
-                setTimeout(function () {
-                    var testConfig = pageTestConfig.getTestConfig();
-                    var mockDataDefObj = $.Deferred();
-
-                    cotu.setViewObjAndViewConfig4All(testConfig.rootView, testConfig.tests);
-
-                    //create and update mock data in test config
-                    cotu.createMockData(testConfig.rootView, testConfig.tests, mockDataDefObj);
-
-                    $.when(mockDataDefObj).done(function () {
-                        self.executeCommonTests(testConfig.tests);
-                        QUnit.start();
+            menuHandler.deferredObj.done(function () {
+                var loadingStartedDefObj = loadFeature(pageTestConfig.page.hashParams);
+                loadingStartedDefObj.done(function () {
+                    //additional fake server response setup
+                    var responses = pageTestConfig.fakeServer.getResponsesConfig();
+                    _.each(responses, function (response) {
+                        fakeServer.respondWith(response.method, response.url, [response.statusCode, response.headers, response.body]);
                     });
 
-                }, pageLoadTimeOut);
+                    var pageLoadTimeOut = pageTestConfig.page.loadTimeout;
+
+                    setTimeout(function () {
+                        var testConfig = pageTestConfig.getTestConfig();
+                        var mockDataDefObj = $.Deferred();
+
+                        cotu.setViewObjAndViewConfig4All(testConfig.rootView, testConfig.tests);
+
+                        //create and update mock data in test config
+                        cotu.createMockData(testConfig.rootView, testConfig.tests, mockDataDefObj);
+
+                        $.when(mockDataDefObj).done(function () {
+                            //run initializations before tests if any
+                            pageTestConfig.testInitFn();
+                            self.executeCommonTests(testConfig.tests);
+                            QUnit.start();
+                            //uncomment following line to console all the fake server request/responses
+                            //console.log(fakeServer.requests);
+                        });
+
+                    }, pageLoadTimeOut);
+                });
             });
         });
 

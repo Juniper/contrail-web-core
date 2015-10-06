@@ -129,20 +129,9 @@ define([
 
     function getChartViewConfig(chartData, viewConfig) {
         var chartViewConfig = {},
-            chartOptions = ifNull(viewConfig['chartOptions'], {}),
-            chartDefaultOptions = {
-                margin: {top: 20, right: 70, bottom: 50, left: 70},
-                margin2: {top: 0, right: 70, bottom: 40, left: 70},
-                axisLabelDistance: 5,
-                height: 300,
-                yAxisLabel: 'Traffic',
-                y2AxisLabel: '',
-                forceY: [0, 60],
-                yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); },
-                y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }
-            };
+            chartOptions = ifNull(viewConfig['chartOptions'], {});
 
-        chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
+        chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions);
 
         chartOptions['forceY'] = getForceYAxis(chartData, chartOptions['forceY']);
 

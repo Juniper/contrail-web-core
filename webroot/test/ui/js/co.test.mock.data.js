@@ -8,10 +8,11 @@ define(['underscore'], function (_) {
         "orchestrationModel": [
             "openstack"
         ],
-        "serverUTCTime": 1436203008000,
-        "hostName": "a7s14",
+        "serverUTCTime": new Date().getTime(),
+        "hostName": "phantomjs",
         "role": [
-            "superAdmin"
+            "superAdmin",
+            "member"
         ],
         "featurePkg": {
             "webController": false,
@@ -27,7 +28,9 @@ define(['underscore'], function (_) {
     };
 
     var disabledFeatureMockData = {"disabled":["config_alarms","mon_infra_mx"]},
-        webControllerMockData = {"webController":{"path":"/usr/src/contrail-web-controller","enable":true}},
+        webControllerMockData = {"webController": true},
+        webStorageMockData = {"webStorage": true},
+        serverManagerMockData = {"serverManager": true},
         ctWebServerInfoMockData = _.extend({}, webServerInfoMockData, {"featurePkg": { "webController": true }}),
         smWebServerInfoMockData = _.extend({}, webServerInfoMockData, {"featurePkg": { "serverManager": true }}),
         sWebServerInfoMockData = _.extend({}, webServerInfoMockData, {"featurePkg": { "webStorage": true }});
@@ -37,6 +40,8 @@ define(['underscore'], function (_) {
         smWebServerInfoMockData: smWebServerInfoMockData,
         sWebServerInfoMockData: sWebServerInfoMockData,
         disabledFeatureMockData: disabledFeatureMockData,
-        webControllerMockData: webControllerMockData
+        webControllerMockData: webControllerMockData,
+        webStorageMockData: webStorageMockData,
+        serverManagerMockData: serverManagerMockData
     }
 });
