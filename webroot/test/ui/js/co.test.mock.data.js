@@ -11,7 +11,8 @@ define(['underscore'], function (_) {
         "serverUTCTime": new Date().getTime(),
         "hostName": "phantomjs",
         "role": [
-            "superAdmin"
+            "superAdmin",
+            "member"
         ],
         "featurePkg": {
             "webController": false,
