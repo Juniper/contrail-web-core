@@ -55,8 +55,8 @@ define([
             elementId: 'or-clause-collection',
             view: "FormCollectionView",
             viewConfig: {
-                path: 'or_clauses',
-                collection: 'or_clauses()',
+                path: 'where_or_clauses',
+                collection: 'where_or_clauses()',
                 templateId: cowc.TMPL_QUERY_OR_COLLECTION_VIEW,
                 accordionable: true,
                 rows: [

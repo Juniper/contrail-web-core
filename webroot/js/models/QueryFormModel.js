@@ -106,18 +106,18 @@ define([
         },
 
         formatModelConfig: function(modelConfig) {
-            var orClauses = [],
-                orClauseModels = [], orClauseModel,
-                orClausesCollectionModel,
+            var whereOrClauses = [],
+                whereOrClauseModels = [], whereOrClauseModel,
+                whereOrClausesCollectionModel,
                 self = this;
 
-            $.each(orClauses, function(orClauseKey, orClauseValue) {
-                orClauseModel = new QueryOrModel(self, orClauseValue);
-                orClauseModels.push(orClauseModel)
+            $.each(whereOrClauses, function(whereOrClauseKey, whereOrClauseValue) {
+                whereOrClauseModel = new QueryOrModel(self, whereOrClauseValue);
+                whereOrClauseModels.push(whereOrClauseModel)
             });
 
-            orClausesCollectionModel = new Backbone.Collection(orClauseModels);
-            modelConfig['or_clauses'] = orClausesCollectionModel;
+            whereOrClausesCollectionModel = new Backbone.Collection(whereOrClauseModels);
+            modelConfig['where_or_clauses'] = whereOrClausesCollectionModel;
 
 
             return modelConfig;
@@ -144,16 +144,16 @@ define([
                 if (contrail.checkIfFunction(callbackObj.init)) {
                     callbackObj.init();
                 }
-                var orClauses = this.model().get('or_clauses'),
-                    orClauseStrArr = [];
+                var whereOrClauses = this.model().get('where_or_clauses'),
+                    whereOrClauseStrArr = [];
 
-                $.each(orClauses.models, function(orClauseKey, orClauseValue) {
-                    if (orClauseValue.attributes.orClauseText !== '') {
-                        orClauseStrArr.push('(' + orClauseValue.attributes.orClauseText + ')')
+                $.each(whereOrClauses.models, function(whereOrClauseKey, whereOrClauseValue) {
+                    if (whereOrClauseValue.attributes.whereOrClauseText !== '') {
+                        whereOrClauseStrArr.push('(' + whereOrClauseValue.attributes.orClauseText + ')')
                     }
                 });
 
-                this.where(orClauseStrArr.join(' OR '));
+                this.where(whereOrClauseStrArr.join(' OR '));
 
                 if (contrail.checkIfFunction(callbackObj.success)) {
                     callbackObj.success();
@@ -203,7 +203,7 @@ define([
             queryReqObj.autoSort = 'true';
             queryReqObj.autoLimit = 'true';
 
-            delete queryReqObj.formModelAttrs.or_clauses;
+            delete queryReqObj.formModelAttrs.where_or_clauses;
 
             return queryReqObj;
         },
@@ -217,14 +217,14 @@ define([
             this.direction("1");
             this.filter('');
             this.select_data_object().reset(data);
-            this.model().get('or_clauses').reset();
+            this.model().get('where_or_clauses').reset();
         },
 
         addWhereOrClause: function(elementId) {
-            var orClauses = this.model().get('or_clauses'),
+            var whereOrClauses = this.model().get('where_or_clauses'),
                 newOrClause = new QueryOrModel(this);
 
-            orClauses.add([newOrClause]);
+            whereOrClauses.add([newOrClause]);
 
             //TODO: Should not be in Model
             $('#' + elementId).find('.collection').accordion('refresh');

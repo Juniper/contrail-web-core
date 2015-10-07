@@ -30,17 +30,20 @@ define([
                         widgetElement.find('[data-action="widget-collapse"]')
                             .off('click')
                             .on('click', function (event) {
-                                $(this).find('i').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+                                widgetElement.find('.widget-toolbar').find('i')
+                                    .toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
                                 widgetElement.find('.widget-body').toggle()
                             });
 
                         widgetElement.data('widget-action', {
                             collapse: function() {
-                                widgetElement.find('[data-action="widget-collapse"]').find('i').removeClass('icon-chevron-up').addClass('icon-chevron-down');
+                                widgetElement.find('.widget-toolbar').find('i')
+                                    .removeClass('icon-chevron-up').addClass('icon-chevron-down');
                                 widgetElement.find('.widget-body').hide()
                             },
                             expand: function() {
-                                widgetElement.find('[data-action="widget-collapse"]').find('i').removeClass('icon-chevron-down').addClass('icon-chevron-up');
+                                widgetElement.find('.widget-toolbar').find('i')
+                                    .removeClass('icon-chevron-down').addClass('icon-chevron-up');
                                 widgetElement.find('.widget-body').show()
                             }
                         });

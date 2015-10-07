@@ -55,8 +55,9 @@ define([
         },
 
         addWhereAndClause: function() {
-            var andClauses = this.model().attributes.model().get('and_clauses'),
-                newAndClause = new QueryAndModel(this);
+            var model = this.model().attributes.model(),
+                andClauses = model.get('and_clauses'),
+                newAndClause = new QueryAndModel(this.model().attributes);
 
             andClauses.add([newAndClause]);
         },

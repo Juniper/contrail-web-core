@@ -2350,6 +2350,8 @@ td.td-actions a.td-action {
   color: #3182bd;
   text-align: right;
   cursor: pointer;
+  font-size: 15px;
+  font-weight: normal;
 }
 .widget-header h4 .href-link{
 	cursor: pointer;
