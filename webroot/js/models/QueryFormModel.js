@@ -194,7 +194,7 @@ define([
                 showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
                 queryPrefix = this.query_prefix(),
                 options = {
-                    elementId: queryPrefix + '-results', gridHeight: 480, timeOut: 120000,
+                    elementId: queryPrefix + '-results', gridHeight: 480, timeOut: cowc.QE_TIMEOUT,
                     pageSize: 100, queryPrefix: queryPrefix, export: true, showChartToggle: showChartToggle,
                     labelStep: 1, baseUnit: 'mins', fromTime: 0, toTime: 0, interval: 0,
                     btnId: queryPrefix + '-query-submit', refreshChart: true, serverCurrentTime: serverCurrentTime
