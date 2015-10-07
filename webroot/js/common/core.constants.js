@@ -155,6 +155,13 @@ define([
         this.QE_RESULT_CHUNK_SIZE = 10000;
         this.QE_MODAL_CLASS_700 = 'modal-700';
         this.QE_DEFAULT_MODAL_CLASSNAME = 'modal-840';
+        this.QE_FLOW_TABLE_TYPE = "FLOW";
+        this.QE_OBJECT_TABLE_TYPE = "OBJECT";
+        this.QE_STAT_TABLE_TYPE = "STAT";
+        this.QE_LOG_TABLE_TYPE = "LOG";
+
+        this.FLOW_SERIES_TABLE = "FlowSeriesTable";
+        this.FLOW_CLASS = "FlowClass";
     };
     return CoreConstants;
 });

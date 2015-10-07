@@ -23,9 +23,11 @@ define([
 
             this.model().on( "change:table_name", this.onChangeTable, this);
 
-            this.model().on( "change:time_range", this.onChangeTime, this);
-            this.model().on( "change:from_time", this.onChangeTime, this);
-            this.model().on( "change:to_time", this.onChangeTime, this);
+            if(modelData['table_type'] == cowc.QE_OBJECT_TABLE_TYPE) {
+                this.model().on("change:time_range", this.onChangeTime, this);
+                this.model().on("change:from_time", this.onChangeTime, this);
+                this.model().on("change:to_time", this.onChangeTime, this);
+            }
 
             return this;
         },
@@ -65,7 +67,7 @@ define([
                 contentType: "application/json; charset=utf-8",
                 dataType: "json"
             }).done(function (resultJSON) {
-                console.log(resultJSON);
+                //console.log(resultJSON);
             });
 
         },
@@ -100,7 +102,12 @@ define([
                     setEnable4SelectFields(selectFields, contrailViewModel.attributes.select_data_object['enable_map']);
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
-                    self.onChangeTime();
+
+                    if(self.table_type() == cowc.QE_OBJECT_TABLE_TYPE) {
+                        self.onChangeTime();
+                    }
+                }).error(function(xhr) {
+                    console.log(xhr);
                 });
             }
         },
