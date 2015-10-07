@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var cowc, cowu, cowf, cowl, cowch, cowm, cotc;
+var cowc, cowu, cowf, cowl, cowch, cowm, cotc, covdc;
 
 var allTestFiles = [], nmTestKarma = window.__karma__;
 
@@ -14,7 +14,7 @@ for (var file in nmTestKarma.files) {
 
 var depArray = [
     'jquery', 'underscore', 'validation', 'core-constants', 'core-utils',
-    'core-formatters', 'core-messages', 'core-labels', 'knockout', 'core-cache', 'contrail-common',
+    'core-formatters', 'core-messages', 'core-views-default-config', 'core-labels', 'knockout', 'core-cache', 'contrail-common',
 
     'text!/base/contrail-web-core/webroot/templates/core.common.tmpl',
 
@@ -22,7 +22,7 @@ var depArray = [
 
     'layout-handler', 'web-utils', 'handlebars-utils', 'slickgrid-utils', 'contrail-elements',
     'topology_api', 'chart-utils', 'qe-utils', 'nvd3-plugin', 'd3-utils', 'analyzer-utils',
-    'dashboard-utils', 'joint.contrail', 'text', 'contrail-unified-1', 'contrail-unified-2',
+    'dashboard-utils', 'joint.contrail', 'text', 'contrail-unified-1', 'contrail-unified-2', 'nvd3v181'
 
 ];
 
@@ -51,13 +51,13 @@ function setFeaturePkgAndInit(featurePkg) {
             break;
 
         case 'webStorage':
-            featurePkgObj.featurePkg = 'webControllerMockData';
+            featurePkgObj.featurePkg = 'webStorageMockData';
             featurePkgObj.featuresDisabled = 'disabledFeatureMockData';
             featurePkgObj.webServerInfo = 'sWebServerInfoMockData';
             break;
 
         case 'serverManager':
-            featurePkgObj.featurePkg = 'webControllerMockData';
+            featurePkgObj.featurePkg = 'serverManagerMockData';
             featurePkgObj.featuresDisabled = 'disabledFeatureMockData';
             featurePkgObj.webServerInfo = 'smWebServerInfoMockData';
             break;
@@ -80,12 +80,13 @@ function testAppInit(testAppConfig) {
             $('head').append('<base href="/vcenter/" />');
         }
 
-        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages, CoreLabels, Knockout, Cache,
+        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages, CoreViewsDefaultConfig, CoreLabels, Knockout, Cache,
                                     contrailCommon, CoreCommonTmpl, CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
             cowf = new CoreFormatters();
             cowm = new CoreMessages();
+            covdc = new CoreViewsDefaultConfig();
             cowl = new CoreLabels();
             cowch = new Cache();
             cotc = CoreTestConstants;

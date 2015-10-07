@@ -14,7 +14,7 @@ define([
             '/api/admin/webconfig/featurePkg/webController': /\/api\/admin\/webconfig\/featurePkg\/webController\?.*$/,
             '/api/admin/webconfig/features/disabled': /\/api\/admin\/webconfig\/features\/disabled\?.*$/,
             '/api/service/networking/web-server-info': /\/api\/service\/networking\/web-server-info.*$/,
-            '/menu.xml': /\/menu\.xml.*$/
+            '/menu.xml': /\/menu.*$/
         };
 
         return regexUrlMap [url];
@@ -114,6 +114,8 @@ define([
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.responsive.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.custom.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.font.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/fonts/contrailFonts.ttf"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/fonts/contrailFonts.woff"/>');
         return cssList;
     };
 
@@ -173,17 +175,18 @@ define([
     this.createMockData = function (rootViewObj, testConfigObj, deferredObj) {
         var deferredList = [];
         _.each(testConfigObj, function (testConfig) {
-            var primaryMockDataConfig;
+            var defMockDataConfig = {dataGenerator: function(){return;},dataParsers:{}},
+                primaryMockDataConfig;
 
             if (contrail.checkIfExist(testConfig.modelConfig)) {
-                primaryMockDataConfig = testConfig.modelConfig;
+                primaryMockDataConfig = $.extend(true, defMockDataConfig, testConfig.modelConfig);
             }
 
             _.each(testConfig.suites, function (suiteConfig) {
                 var mockDataConfig = primaryMockDataConfig;
 
                 if (contrail.checkIfExist(suiteConfig.modelConfig)) {
-                    mockDataConfig = suiteConfig.modelConfig;
+                    mockDataConfig = $.extend(true, defMockDataConfig, suiteConfig.modelConfig);
                 }
 
                 if (mockDataConfig != null) {
@@ -198,7 +201,14 @@ define([
                         var optionalDefObj = $.Deferred();
                         var onDataCompleteCB = function () {
                             suiteConfig.model = mockDataModel;
-                            var mockData = mockDataModel.getItems();
+                            var mockData;
+                            if (contrail.checkIfExist(mockDataModel.getItems)) {
+                                mockData = mockDataModel.getItems();
+                            } else {
+                                if (contrail.checkIfExist(mockDataModel.attributes)) {
+                                    mockData = mockDataModel.attributes;
+                                }
+                            }
                             if (contrail.checkIfExist(mockDataConfig.dataParsers.mockDataParseFn)) {
                                 mockData = mockDataConfig.dataParsers.mockDataParseFn(mockData);
                             }
@@ -210,6 +220,11 @@ define([
 
                         if (contrail.checkIfExist(mockDataModel.onAllRequestsComplete)) {
                             mockDataModel.onAllRequestsComplete.subscribe(onDataCompleteCB);
+                            /**
+                             * Sometimes the data model is retrieved via model key and
+                             * all the requests are already complete
+                             */
+                            optionalDefObj.done(onDataCompleteCB);
                         } else {
                             optionalDefObj.done(onDataCompleteCB);
                         }

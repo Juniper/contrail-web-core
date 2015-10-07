@@ -15,12 +15,13 @@ define([
         var viewConfig = cotu.getViewConfigObj(viewObj),
             el = viewObj.el,
             gridData = $(el).data('contrailGrid'),
-            gridItems = gridData._dataView.getItems();
+            gridItems = gridData._dataView.getItems(),
+            gridConfig =  $.extend(true, {}, covdc.gridConfig, viewConfig.elementConfig);
 
-        var viewConfigHeader = viewConfig.elementConfig.header,
-            viewConfigColHeader = viewConfig.elementConfig.columnHeader,
-            viewConfigBody = viewConfig.elementConfig.body,
-            viewConfigFooter = viewConfig.elementConfig.footer;
+        var viewConfigHeader = gridConfig.header,
+            viewConfigColHeader = gridConfig.columnHeader,
+            viewConfigBody = gridConfig.body,
+            viewConfigFooter = gridConfig.footer;
 
         module(cotu.formatTestModuleMessage(cotm.TEST_GRIDVIEW_GRID, el.id));
 
@@ -283,6 +284,28 @@ define([
                 equal(domDetailsHtml_id0, detailsHtml_id0,
                     "Details row html content should be equal to the one generated from view config template");
 
+                //check basic view/advanced view if the advanced view is enabled.
+                //default or attr not present is true/enabled.
+                if (viewConfigBody.options.detail.advancedViewOptions) {
+                    //check advanced view icon
+                    equal($(el).find('.slick-row-detail-container .detail-foundation-action-item :last').attr('data-view'),
+                    "advanced-json", "advanced view icon data-view check");
+
+                    //trigger click on advanced view
+                    $(el).find('.slick-row-detail-container .detail-foundation-action-item :last i').trigger("click");
+
+                    equal($(el).find('.slick-row-detail-container .detail-foundation-content-advanced').html(),
+                        contrail.formatJSON2HTML(gridItems[0].rawData, 2),
+                        "advanced view HTML should equal to the generated JSON HTML content");
+
+                    //check basic view icon
+                    equal($(el).find('.slick-row-detail-container .detail-foundation-action-item :first').attr('data-view'),
+                        "basic-list", "basic view icon data-view check");
+
+                    //trigger click on basic view
+                    $(el).find('.slick-row-detail-container .detail-foundation-action-item :first i').trigger("click");
+
+                }
                 //simulate click to toggle the details row.
                 $(el).find('.slick_row_id_0 .toggleDetailIcon').trigger('click');
             }, cotc.SEVERITY_HIGH));
@@ -299,8 +322,12 @@ define([
          */
         bodyTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_ROW_FIXED_HEIGHT, function () {
             expect(1);
-            equal($(el).find('.slick_row_id_0').css('height'), viewConfigBody.options.fixedRowHeight + "px",
-                "Fixed row height should equal to configured.");
+            if (viewConfigBody.options.fixedRowHeight != false && _.isNumber(viewConfigBody.options.fixedRowHeight)) {
+                equal($(el).find('.slick_row_id_0').css('height'), viewConfigBody.options.fixedRowHeight + "px",
+                    "Fixed row height should equal to configured.");
+            } else {
+                ok(true, "Fixed row height is set to false");
+            }
         }, cotc.SEVERITY_HIGH));
 
 
