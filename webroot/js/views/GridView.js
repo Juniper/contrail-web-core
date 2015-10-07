@@ -61,7 +61,7 @@ define([
                 initDataView(gridConfig);
                 dataView.setSearchFilter(searchColumns, searchFilter);
                 initClientSidePagination();
-                initGridFooter(gridDataSource.remote.serverSidePagination);
+                initGridFooter();
                 dataView.setData(dataViewData);
                 performSort(gridSortColumns);
             }
@@ -786,7 +786,7 @@ define([
                 });
             };
 
-            function initGridFooter(serverSidePagination) {
+            function initGridFooter() {
                 if (gridContainer.data('contrailGrid') == null) {
                     return;
                 }
@@ -807,7 +807,7 @@ define([
 
                     if (dataView.getLength() != 0) {
                         gridContainer.find('.grid-footer').removeClass('hide');
-                    } else if (serverSidePagination) {
+                    } else if (contrail.checkIfKeyExistInObject(true, gridDataSource, 'remote.serverSidePagination') && gridDataSource.remote.serverSidePagination) {
                         footerPager = new GridFooterView(dataView, gridContainer, gridConfig.footer.pager.options);
                         footerPager.init();
                         //gridContainer.find('.slick-pager-sizes').hide();
