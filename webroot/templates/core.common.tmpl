@@ -259,6 +259,21 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-infobox-template">
+    <div class='infobox-widget'>
+        <div class='infobox-container'>
+            <div class="control-panel-items pull-right">
+                <div class="control-panel-item refresh" data-action="refresh" title="Refresh">
+                    <i class="icon-repeat"></i>
+                </div>
+            </div>
+        </div>
+        <hr class='hr-8'></hr>
+        <div class='infobox-detail-container'></div>
+        <hr/>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="barchart-info-template">
     <div class="infobox infobox-blue infobox-dynamic">
         <div class="infobox-chart">
@@ -354,7 +369,7 @@
                                 <span class="green"> {{timeStr}} </span>
                             </div>
                         </div>
-                        <div class="text"> {{message}} </div>
+                        <div class="text"> {{#truncate message 200}} {{/truncate}}</div>
                     </div>
                 </div>
         {{else}}
@@ -485,7 +500,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="mon-infra-dashboard">
-    <div id='dashboard-infoboxes' style="height:380px">
+    <div id='dashboard-infoboxes' style="/*height:360px*/">
     </div>
     <div id="dashboard-stats" class="row-fluid">
         <div class="span4">
