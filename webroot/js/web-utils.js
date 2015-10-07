@@ -1142,7 +1142,7 @@ function isCellSelectable(elem) {
 }
 
 function selectTab(tabStrip,tabIdx) {
-    $( '#'+tabStrip ).tabs( "option", "active", tabIdx );
+    $( '#'+tabStrip ).find('#contrail-tabs').tabs( "option", "active", tabIdx );
 }
 
 function displayAjaxError(jQueryElem, xhr, textStatus, errorThrown) {
