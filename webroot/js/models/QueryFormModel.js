@@ -67,7 +67,9 @@ define([
                 contentType: "application/json; charset=utf-8",
                 dataType: "json"
             }).done(function (resultJSON) {
-                //console.log(resultJSON);
+                console.log(resultJSON);
+            }).error(function(xhr) {
+                console.log(xhr);
             });
 
         },
@@ -172,9 +174,9 @@ define([
             }
         },
 
-        getAttributes4Server: function () {
+        getFormModelAttributes: function () {
             var modelAttrs = this.model().attributes,
-                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters'],
+                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object'],
                 attrs4Server = {};
 
             for (var key in modelAttrs) {
@@ -188,7 +190,7 @@ define([
 
         getQueryRequestPostData: function (serverCurrentTime) {
             var queryReqObj = {
-                    formModelAttrs: this.getAttributes4Server()
+                    formModelAttrs: this.getFormModelAttributes()
                 },
                 selectStr = this.select(),
                 showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
@@ -210,7 +212,7 @@ define([
             queryReqObj.autoSort = 'true';
             queryReqObj.autoLimit = 'true';
 
-            delete queryReqObj.formModelAttrs.where_or_clauses;
+            console.log(queryReqObj);
 
             return queryReqObj;
         },

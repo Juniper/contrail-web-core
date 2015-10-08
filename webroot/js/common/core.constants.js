@@ -152,7 +152,7 @@ define([
         this.DATA_REQUEST_STATE_SUCCESS_EMPTY = 'success-empty';
         this.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY = 'success-not-empty';
 
-
+        // QE Constants - Start
         this.QE_TIMEOUT = 12000;
         this.QE_RESULT_CHUNK_SIZE = 10000;
         this.QE_MODAL_CLASS_700 = 'modal-700';
@@ -165,8 +165,50 @@ define([
         this.QE_FORM_SUFFIX = "-form";
         this.QE_RESULTS_SUFFIX = "-results";
 
+        this.QE_FLOW_QUERY_QUEUE = "fqq";
+        this.QE_LOG_QUERY_QUEUE = "lqq";
+        this.QE_STAT_QUERY_QUEUE = "sqq";
+
+        this.FS_QUERY_PREFIX = "fs";
+        this.FC_QUERY_PREFIX = "fc";
+        this.FR_QUERY_PREFIX = "fr";
+        this.STAT_QUERY_PREFIX = "stat";
+        this.OBJECT_LOGS_PREFIX = "ol";
+
+        this.DEFAULT_QUERY_PREFIX = 'query';
+
         this.FLOW_SERIES_TABLE = "FlowSeriesTable";
         this.FLOW_CLASS = "FlowClass";
+
+        this.TIMERANGE_DROPDOWN_VALUES = [
+            {'id': 600, 'text': 'Last 10 Mins'},
+            {'id': 1800, 'text': 'Last 30 Mins'},
+            {'id': 3600, 'text': 'Last 1 Hr'},
+            {'id': 21600, 'text': 'Last 6 Hrs'},
+            {'id': 43200, 'text': 'Last 12 Hrs'},
+            {'id': -1, 'text': 'Custom'}
+        ];
+
+        this.DIRECTION_DROPDOWN_VALUES = [
+            {'id': '1', 'text': 'INGRESS'},
+            {'id': '0', 'text': 'EGRESS'}
+        ];
+
+        this.TIME_GRANULARITY_INTERVAL_VALUES = {
+            secs: 1000,
+            mins: 60 * 1000,
+            hrs: 60 * 60 * 1000,
+            days: 24 * 60 * 60 * 1000
+        };
+
+        this.URL_TABLES = "/api/qe/tables";
+        this.URL_PREFIX_TABLE_SCHEMA = "/api/qe/table/schema/";
+
+        this.UMID_FLOW_SERIES_FORM_MODEL = "qe:fs-form-model";
+        this.UMID_FLOW_SERIES_CHART_MODEL = "qe:fs-chart-model";
+        this.UMID_FLOW_SERIES_LINE_CHART_MODEL = "qe:fs-line-chart-model";
+
+        // QE Constants - End
     };
     return CoreConstants;
 });
