@@ -895,7 +895,7 @@
                     />
                     <span class="add-on input-type-toggle-action"><i class="icon-eye-open"></i></span>
                 {{else}}
-                    <input type="{{type}}" name="{{id}}" placeholder="{{placeHolder}}" class="{{class}}"
+                    <input type="{{type}}" name="{{id}}" placeholder="{{viewConfig.placeholder}}" class="{{class}}"
                         data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                         value: {{viewConfig.dataBindValue}},
                         event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
@@ -909,7 +909,7 @@
 
 <script type="text/x-handlebars-template" id="core-editable-grid-input-view-template">
         <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-            <input type="{{type}}" name="{{name}}" class="{{class}}"
+            <input type="{{type}}" name="{{name}}" class="{{class}}" placeholder="{{viewConfig.placeholder}}"
                 data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
                     value: {{viewConfig.dataBindValue}},
                     event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data)} }"

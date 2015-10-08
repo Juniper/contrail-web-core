@@ -15,7 +15,6 @@ define([
                 app = self.attributes.app,
                 validation = self.attributes.validation,
                 path = viewConfig[cowc.KEY_PATH],
-                placeHolder = (viewConfig['placeHolder'] != null) ? viewConfig['placeHolder'] : null,
                 type = (viewConfig[cowc.KEY_TYPE] != null) ? viewConfig[cowc.KEY_TYPE] : 'text',
                 lockEditingByDefault = self.attributes.lockEditingByDefault,
                 label = viewConfig.label,
@@ -30,7 +29,7 @@ define([
 
             tmplParameters = {
                 id: elId, name: elId, type: type, class: "span12",
-                label: labelValue, placeHolder: placeHolder, viewConfig: viewConfig,
+                label: labelValue, viewConfig: viewConfig,
                 lockAttr: lockEditingByDefault, validation: validation
             };
 
