@@ -68,10 +68,15 @@ define([
                     $(selector).find('svg').bind("refresh", function () {
                         setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
                     });
+                    
                 } else {
                     setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
                 }
-
+                  $(window)
+//                  .off('resize')
+                      .on('resize', function (e) {
+                          setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
+                  });
                 nvd3v181.utils.windowResize(chartModel.update);
 
                 chartModel.dispatch.on('stateChange', function (e) {

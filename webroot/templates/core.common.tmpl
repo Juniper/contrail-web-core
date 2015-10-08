@@ -7,7 +7,7 @@
                         <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');">
                     {{else}}
                         <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');" disabled>
-                    {{/IfCompare}}    
+                    {{/IfCompare}}
                             <i class="{{this.iconClass}} icon-large"></i>
                     </button>
                 {{/each}}
@@ -242,7 +242,7 @@
         </div>
     </div>
     {{/IfCompare}}
- {{/each}}   
+ {{/each}}
 </div>
 </script>
 
@@ -295,7 +295,7 @@
              <span class="key">{{label}}</span>
              <span class="value"> {{value}}</span>
          </div>
-       {{/each}} 
+       {{/each}}
     </div>
 </div>
 </script>
@@ -390,7 +390,7 @@
                         <div class="text break-and-wrap-word">
                     {{/IfCompare}}
                     {{#IfCompare name null operator="=="}}
-                         {{msg}}</div>                        
+                         {{msg}}</div>
                     {{else}}
                         {{#IfCompare link null operator="!="}}
                             <span class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}})>{{name}}</span> , {{type}} , {{msg}}</div>
@@ -426,7 +426,7 @@
      </div>
       <div class="modal-footer">
          <button id="alertsClose" class="btn btn-primary btn-mini" data-dismiss="modal" aria-hidden="true">Close</button>
-      </div> 
+      </div>
      </div>
 </div>
 </script>
@@ -436,7 +436,7 @@
         <div class="infobox-icon">
             <i class="icon-sitemap"></i>
         </div>
-        {{#if totalCntField}} 
+        {{#if totalCntField}}
             <div class="infobox-data">
                 <span class="infobox-data-number" data-bind='text:{{totalCntField}}'>&nbsp;</span>
             </div>
@@ -534,6 +534,11 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="mon-infra-node-details-chart">
+    <div id='infoboxes-container' style="height:380px">
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="infra-dashboard">
     <div class="row-fluid">
         <div class="row-fluid">
@@ -541,8 +546,8 @@
         </div>
         <hr class="hr-8"/>
         <div id="dashboard-charts" class="row-fluid">
-        </div> 
-        
+        </div>
+
         <hr />
 
         <div id="dashboard-stats" class="row-fluid">
@@ -583,7 +588,7 @@
 <script type="text/x-handlebars-template" id="widget-header-template">
         <h4 class="smaller">
             {{#if widgetBoxId}}
-                <i id="{{widgetBoxId}}-loading" class="icon-spinner icon-spin blue bigger-125" style="display:none"></i> 
+                <i id="{{widgetBoxId}}-loading" class="icon-spinner icon-spin blue bigger-125" style="display:none"></i>
             {{/if}}
             <span>{{title}}</span>
         </h4>
@@ -630,7 +635,7 @@
                             {{msg}}
                         {{/IfCompare}}
                     </p>
-                {{/each}}  
+                {{/each}}
                 {{#IfCompare this.result.length this.defaultItems operator='>'}}
                     <span class="hyperlink" onclick="toggleOverallNodeStatus(['#allItems','#defaultItems']);"> {{#ArthematicOps this.result.length this.defaultItems operator='-'}}
                     {{/ArthematicOps}} more</span>
@@ -641,10 +646,10 @@
 </script>
 
 <script type = "text/x-handlebars-template" id = "statusTemplate">
-    {{#IfCompare sevLevel sevLevels.ERROR }} 
+    {{#IfCompare sevLevel sevLevels.ERROR }}
         <span class="status-badge-rounded-small status-inactive"></span>
     {{else}}
-    {{#IfCompare sevLevel sevLevels.WARNING}} 
+    {{#IfCompare sevLevel sevLevels.WARNING}}
         <span class="status-badge-rounded-small status-partially-active"></span>
     {{/IfCompare}}
     {{/IfCompare}}
@@ -665,7 +670,7 @@
                             <li>
                                 <label class="inline row-fluid">
                                     <div class="key span5">{{{this.lbl}}}</div>
-                                    <div class="value span7"> 
+                                    <div class="value span7">
                                         {{#if this.value}}
                                             {{{this.value}}}
                                         {{else}}
@@ -680,7 +685,7 @@
                             </li>
                         {{/if}}
                     {{/each}} <!-- /each d -->
-                </ul>   
+                </ul>
             </div><!--/span-->
             <div id="divStatus" hidden="true" class="row-fluid">
                 <div id="divContrailStatus" class="row-fluid"></div>
@@ -690,7 +695,7 @@
                 <div id="divOpenStackStatus" hidden="true" class="widget-main padding-4" class="row-fluid"></div>
                 -->
             </div>
-    </div><!-- /widget-main --> 
+    </div><!-- /widget-main -->
 </script>
 
 <script type="text/x-handlebars-template" id="checked-multiselect-optgroup-template">
@@ -700,7 +705,7 @@
                 {{#each children}}
                     <option value="{%22parent%22:%22{{../id}}%22,%22value%22:%22{{id}}%22}" {{#IfCompare selected true operator='==' }}selected="true"{{/IfCompare}}>{{text}}</option>
                 {{/each}}
-            </optgroup> 
+            </optgroup>
         {{/each}}
     </select>
 </script>
@@ -729,7 +734,7 @@
     <div class="chart-settings">
         <div class="chart-settings-wrapper hide">
             <div class="chart-settings-expand">
-                 
+
                 <div id="chart-settings-header" class='chart-settings-header'>
                     <label style="display:inline-block">Options</label>
                     <i class="icon-chevron-up"></i>
@@ -761,7 +766,7 @@
                     <div>
                         <label class="chart-settings-label">Bucketize&nbsp;</label><input id="checkbox-bucketize"  type="checkbox" name="bucketize" value="bucketize" style="margin:0;"/>
                         <div id="div-bucket-options" class="chart-sub-settings">
-                            <button class="btnBucketSettingsApply btn btn-primary btn-minier">Apply</button> 
+                            <button class="btnBucketSettingsApply btn btn-primary btn-minier">Apply</button>
                         </div>
                    </div>
                </div>
@@ -779,18 +784,18 @@
                 <div class="bucketize-reset">
                     <label class="chart-settings-label">Bucketize</label>
                     <a href="#" id="chart-settings-bucketization-remove" class="chart-settings-close" tabindex="-1">x</a>
-                </div> 
+                </div>
                 <!--  <div class="dynamic-axis-settings-reset">
                     <label hyperlink-active>Dynamic Axis</label>
                     <a href="#" class="select2-search-choice-close" tabindex="-1"></a>
-                </div> 
+                </div>
                 <div class="all-reset">
                     <label class="chart-settings-label">Reset All</label>
                     <a href="#" class="chart-settings-close" tabindex="-1"></a>
                 </div> -->
             </div>
-            <label class="chart-settings-label hyperlink-active position-right chart-setting-options underline" >Options</label> 
-           <!-- <label class="chart-settings-label hyperlink-active position-right chart-setting-options underline" id="zommout">Zoom Out</label> --> 
+            <label class="chart-settings-label hyperlink-active position-right chart-setting-options underline" >Options</label>
+           <!-- <label class="chart-settings-label hyperlink-active position-right chart-setting-options underline" id="zommout">Zoom Out</label> -->
             <!-- <i class="icon-gear position-right"></i> -->
         </div>
       <!-- <div class="chart-settings-hide">
@@ -1412,8 +1417,9 @@
 <script type="text/x-handlebars-template" id="core-2-column-1-row-2row-content-template">
     <div id="left-column-container" class="span5"></div>
     <div id="right-column-container" class="span7">
-        <div id="top-right-content-container" class="row-fluid margin-0-0-5"></div>
+      <!--  <div id="top-right-content-container" class="row-fluid margin-0-0-5"></div>
         <div id="bottom-right-content-container" class="row-fluid margin-0-0-5"></div>
+        -->
     </div>
 </script>
 
@@ -1634,7 +1640,26 @@
     </div>
 </script>
 
-<!-- TODO make it generic -->
+<script type="text/x-handlebars-template" id="node-details-sparkline-template">
+    <div id="{{prefix}}-sparklines" class="span4 infobox infobox-details infobox-grey  infobox-content  {{prefix}}-chart-link sparklines-box">
+        <p class="infobox-content infobox-details-title">{{title}}</p>
+         <div class="row-fluid infobox-content">
+           <span class="span6">
+                <small>{{sparklineTitle1}}</small>
+           </span>
+           <span class='sparkline1 span6'>
+           </span>
+         </div>
+         <div class="row-fluid infobox-content">
+           <span class="span6">
+                <small>{{sparklineTitle2}}</small>
+           </span>
+           <span class='sparkline2 span6'>
+           </span>
+         </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="query-page-template">
     <div id="qe-{{queryPrefix}}-container">
         <div id='qe-{{queryPrefix}}-form-container'>
@@ -1646,3 +1671,32 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-sparkline-template">
+    <div class="chart-container row-fluid">
+         <!-- <svg style="height:{{height}}px;"></svg> -->
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="node-details-infoboxes-template">
+    <div class="widget-box transparent">
+        <div class="widget-header">
+            <h4 class="smaller">{{widgetTitle}}</h4>
+            <div class="widget-toolbar pull-right">
+                <a data-action="collapse">
+                    <i class="icon-chevron-up">
+                    </i>
+                </a>
+            </div>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main row-fluid">
+                <div class="infobox-widget">
+                    <div class="infobox-container row-fluid">
+                    </div>
+                    <div class="infobox-detail-container row-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
