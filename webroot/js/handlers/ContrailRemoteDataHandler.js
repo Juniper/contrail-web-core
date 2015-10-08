@@ -104,19 +104,12 @@ define([
                 initVLRequests(resultJSON);
             }
 
-            if (response != null && response['more'] != null && response['more']) {
-                setNextUrl(response['lastKey']);
-                fetchPrimaryData();
-            } else if (response != null && response['total'] != null && response['chunk'] != null && ((response['chunk'] * response['chunkSize']) < response['total']) ) {
-                var postData = JSON.parse(pAjaxConfig['data']),
-                    chunk = postData['chunk'] + 1;
-                postData['chunk'] = chunk;
-                pAjaxConfig['data'] = JSON.stringify(postData);
+            if (isFetchMoreData(response)) {
                 fetchPrimaryData();
             } else {
                 pRequestInProgress = false;
                 delete pUrlParams['lastKey'];
-                if(response['total'] != null) {
+                if(contrail.checkIfExist(response) && contrail.checkIfExist(response['serverSideChunking'])) {
                     var postData = JSON.parse(pAjaxConfig['data']);
                     postData['chunk'] = 1;
                     pAjaxConfig['data'] = JSON.stringify(postData);
@@ -132,6 +125,27 @@ define([
         function setNextUrl(lastKey) {
             pUrlParams['lastKey'] = lastKey;
             pAjaxConfig['url'] = pUrl.split('?')[0] + '?' + $.param(pUrlParams);
+        }
+
+        function isFetchMoreData(response) {
+            var fetchMoreData = false,
+                postData, chunk;
+
+            if (contrail.checkIfExist(response) && contrail.checkIfExist(response['more'])) {
+                fetchMoreData = response['more'];
+                if(fetchMoreData) {
+                    setNextUrl(response['lastKey']);
+                }
+            } else if (contrail.checkIfExist(response) && contrail.checkIfExist(response['serverSideChunking'])) {
+                fetchMoreData = (response['total'] != null) && (response['chunk'] != null) && ((response['chunk'] * response['chunkSize']) < response['total']);
+                if(fetchMoreData) {
+                    postData = JSON.parse(pAjaxConfig['data']);
+                    chunk = postData['chunk'] + 1;
+                    postData['chunk'] = chunk;
+                    pAjaxConfig['data'] = JSON.stringify(postData);
+                }
+            }
+            return fetchMoreData;
         }
 
         function pRefreshHandler(response) {

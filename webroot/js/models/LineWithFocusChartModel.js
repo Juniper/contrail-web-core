@@ -1,7 +1,7 @@
 /*
  ##Juniper License
 
- Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ Copyright (c) 2014 Juniper Networks, Inc.
 
  ##nvd3.js License
 
@@ -695,7 +695,8 @@ define([
         nvd3v181.utils.initOptions(chartModel);
 
         //============================================================
-        // Customize NVD3 Chart
+        // Customize NVD3 Chart: Following code has been added by Juniper to
+        // customize LineWithFocusChart.
         //------------------------------------------------------------
 
         chartModel.brushExtent(chartOptions['brushExtent'])

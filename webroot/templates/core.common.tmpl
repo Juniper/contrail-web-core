@@ -1546,12 +1546,12 @@
     <div id="{{elementId}}" class="widget-box transparent">
         {{#IfCompare controls.top false operator='!=='}}
         <div class="widget-header">
-            <h4 class="smaller" {{#IfCompare controls.top.collapseable false operator='!=='}} data-action="widget-collapse"{{/IfCompare}}>
+            <p class="smaller" {{#IfCompare controls.top.collapseable false operator='!=='}} data-action="widget-collapse"{{/IfCompare}}>
                 {{#IfCompare header.iconClass false operator='!=='}}
                     <i class="{{header.iconClass}}"></i>
                 {{/IfCompare}}
                 {{header.title}}
-            </h4>
+            </p>
             <div class="widget-toolbar pull-right">
                 {{#IfCompare controls.top.collapseable false operator='!=='}}
                     <a data-action="widget-collapse">
@@ -1613,6 +1613,7 @@
         <a class="btn btn-mini {{elementConfig.btnClass}}" data-bind="click: {{elementConfig.onClick}}">{{label}}</a>
     </div>
 </script>
+
 <!-- TODO make it generic -->
 <script type="text/x-handlebars-template" id="query-page-template">
     <div id="qe-{{queryPrefix}}-container">

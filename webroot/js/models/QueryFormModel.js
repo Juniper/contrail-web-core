@@ -23,11 +23,60 @@ define([
 
             this.model().on( "change:table_name", this.onChangeTable, this);
 
+            if(modelData['table_type'] == cowc.QE_OBJECT_TABLE_TYPE) {
+                this.model().on("change:time_range", this.onChangeTime, this);
+                this.model().on("change:from_time", this.onChangeTime, this);
+                this.model().on("change:to_time", this.onChangeTime, this);
+            }
+
             return this;
         },
 
-        onChangeTable: function(model) {
-            this.reset(this);
+        onChangeTime: function() {
+            var model = this.model(),
+                timeRange = model.attributes.time_range;
+
+            //TODO: For custom time-range
+            if(timeRange != -1) {
+                this.setTableFieldValues();
+            }
+        },
+
+        setTableFieldValues: function() {
+            var tableName = this.table_name(),
+                timeRange = this.time_range(),
+                nameOptionList = this.where_data_object()['name_option_list'],
+                nameCheckList = [];
+
+            for(var i = 0; i < nameOptionList.length; i++) {
+                nameCheckList.push(tableName + ":" + nameOptionList[i].name);
+            }
+
+            var data =  {
+                fromTimeUTC: 'now-' + timeRange + "s",
+                toTimeUTC: 'now',
+                table_name: 'StatTable.FieldNames.fields',
+                select: ['name', 'fields.value'],
+                where: [[{"name":"name","value":tableName,"op":7}]]
+            };
+
+            $.ajax({
+                url: '/api/qe/table/column/values',
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            }).done(function (resultJSON) {
+                //console.log(resultJSON);
+            });
+
+        },
+
+        onChangeTable: function() {
+            var self = this,
+                model = self.model();
+
+            self.reset(this);
             var tableName = model.attributes.table_name,
                 tableSchemeUrl = '/api/qe/table/schema/' + tableName,
                 ajaxConfig = {
@@ -54,23 +103,28 @@ define([
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
 
+                    if(self.table_type() == cowc.QE_OBJECT_TABLE_TYPE) {
+                        self.onChangeTime();
+                    }
+                }).error(function(xhr) {
+                    console.log(xhr);
                 });
             }
         },
 
         formatModelConfig: function(modelConfig) {
+            var whereOrClauses = [],
+                whereOrClauseModels = [], whereOrClauseModel,
+                whereOrClausesCollectionModel,
+                self = this;
 
-            var orClauses = [],
-                orClauseModels = [], orClauseModel,
-                orClausesCollectionModel;
-
-            $.each(orClauses, function(orClauseKey, orClauseValue) {
-                orClauseModel = new QueryOrModel(orClauseValue);
-                orClauseModels.push(orClauseModel)
+            $.each(whereOrClauses, function(whereOrClauseKey, whereOrClauseValue) {
+                whereOrClauseModel = new QueryOrModel(self, whereOrClauseValue);
+                whereOrClauseModels.push(whereOrClauseModel)
             });
 
-            orClausesCollectionModel = new Backbone.Collection(orClauseModels);
-            modelConfig['or_clauses'] = orClausesCollectionModel;
+            whereOrClausesCollectionModel = new Backbone.Collection(whereOrClauseModels);
+            modelConfig['where_or_clauses'] = whereOrClausesCollectionModel;
 
 
             return modelConfig;
@@ -97,16 +151,16 @@ define([
                 if (contrail.checkIfFunction(callbackObj.init)) {
                     callbackObj.init();
                 }
-                var orClauses = this.model().get('or_clauses'),
-                    orClauseStrArr = [];
+                var whereOrClauses = this.model().get('where_or_clauses'),
+                    whereOrClauseStrArr = [];
 
-                $.each(orClauses.models, function(orClauseKey, orClauseValue) {
-                    if (orClauseValue.attributes.orClauseText !== '') {
-                        orClauseStrArr.push('(' + orClauseValue.attributes.orClauseText + ')')
+                $.each(whereOrClauses.models, function(whereOrClauseKey, whereOrClauseValue) {
+                    if (whereOrClauseValue.attributes.whereOrClauseText !== '') {
+                        whereOrClauseStrArr.push('(' + whereOrClauseValue.attributes.orClauseText + ')')
                     }
                 });
 
-                this.where(orClauseStrArr.join(' OR '));
+                this.where(whereOrClauseStrArr.join(' OR '));
 
                 if (contrail.checkIfFunction(callbackObj.success)) {
                     callbackObj.success();
@@ -140,7 +194,7 @@ define([
                 showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
                 queryPrefix = this.query_prefix(),
                 options = {
-                    elementId: queryPrefix + '-results', gridHeight: 480, timeOut: 120000,
+                    elementId: queryPrefix + '-results', gridHeight: 480, timeOut: cowc.QE_TIMEOUT,
                     pageSize: 100, queryPrefix: queryPrefix, export: true, showChartToggle: showChartToggle,
                     labelStep: 1, baseUnit: 'mins', fromTime: 0, toTime: 0, interval: 0,
                     btnId: queryPrefix + '-query-submit', refreshChart: true, serverCurrentTime: serverCurrentTime
@@ -156,7 +210,7 @@ define([
             queryReqObj.autoSort = 'true';
             queryReqObj.autoLimit = 'true';
 
-            delete queryReqObj.formModelAttrs.or_clauses;
+            delete queryReqObj.formModelAttrs.where_or_clauses;
 
             return queryReqObj;
         },
@@ -170,27 +224,18 @@ define([
             this.direction("1");
             this.filter('');
             this.select_data_object().reset(data);
-            this.model().get('or_clauses').reset();
+            this.model().get('where_or_clauses').reset();
         },
 
         addWhereOrClause: function(elementId) {
-            var orClauses = this.model().get('or_clauses'),
-                newOrClause = new QueryOrModel();
+            var whereOrClauses = this.model().get('where_or_clauses'),
+                newOrClause = new QueryOrModel(this);
 
-            orClauses.add([newOrClause]);
+            whereOrClauses.add([newOrClause]);
 
+            //TODO: Should not be in Model
             $('#' + elementId).find('.collection').accordion('refresh');
             $('#' + elementId).find('.collection').accordion("option", "active", -1);
-        },
-
-        getNameOptionList: function() {
-            var whereDataObject = this.model().get('where_data_object');
-
-            return $.map(whereDataObject['name_option_list'], function(schemaValue, schemaKey) {
-                if(schemaValue.index) {
-                    return {id: schemaValue.name, text: schemaValue.name};
-                }
-            });
         },
 
         isSuffixVisible: function(name) {
@@ -205,22 +250,6 @@ define([
             });
 
             return suffixVisibility;
-        },
-
-        getSuffixNameOptionList: function(name) {
-            var whereDataObject = this.model().get('where_data_object'),
-                suffixNameOptionList = [];
-
-            $.each(whereDataObject['name_option_list'], function(schemaKey, schemaValue) {
-                if(schemaValue.name === name && schemaValue.suffixes !== null) {
-                    suffixNameOptionList = $.map(schemaValue.suffixes, function(suffixValue, suffixKey) {
-                        return {id: suffixValue, text: suffixValue};
-                    });
-                    return false;
-                }
-            });
-
-            return suffixNameOptionList;
         },
 
         getTimeGranularityUnits: function() {
@@ -253,56 +282,6 @@ define([
 
 
             }, this);
-        },
-
-        addWhereOrClause: function(elementId) {
-            var orClauses = this.model().get('or_clauses'),
-                newOrClause = new QueryOrModel();
-
-            orClauses.add([newOrClause]);
-
-            $('#' + elementId).find('.collection').accordion('refresh');
-            $('#' + elementId).find('.collection').accordion("option", "active", -1);
-        },
-
-        getNameOptionList: function() {
-            var whereDataObject = this.model().get('where_data_object');
-
-            return $.map(whereDataObject['name_option_list'], function(schemaValue, schemaKey) {
-                if(schemaValue.index) {
-                    return {id: schemaValue.name, text: schemaValue.name};
-                }
-            });
-        },
-
-        isSuffixVisible: function(name) {
-            var whereDataObject = this.model().get('where_data_object'),
-                suffixVisibility = false;
-
-            $.each(whereDataObject['name_option_list'], function(schemaKey, schemaValue) {
-                if(schemaValue.name === name) {
-                    suffixVisibility = !(schemaValue.suffixes === null);
-                    return false;
-                }
-            });
-
-            return suffixVisibility;
-        },
-
-        getSuffixNameOptionList: function(name) {
-            var whereDataObject = this.model().get('where_data_object'),
-                suffixNameOptionList = [];
-
-            $.each(whereDataObject['name_option_list'], function(schemaKey, schemaValue) {
-                if(schemaValue.name === name && schemaValue.suffixes !== null) {
-                    suffixNameOptionList = $.map(schemaValue.suffixes, function(suffixValue, suffixKey) {
-                        return {id: suffixValue, text: suffixValue};
-                    });
-                    return false;
-                }
-            });
-
-            return suffixNameOptionList;
         },
 
         validations: {}
