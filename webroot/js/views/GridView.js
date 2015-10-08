@@ -10,10 +10,11 @@ define([
 ], function (_, ContrailView, ContrailListModel, GridFooterView) {
     var GridView = ContrailView.extend({
         render: function () {
-            var viewConfig = this.attributes.viewConfig,
+            var self = this,
+                viewConfig = self.attributes.viewConfig,
                 listModelConfig = $.extend(true, {}, viewConfig.elementConfig['body']['dataSource']),
                 contrailListModel, gridConfig, gridContainer,
-                customGridConfig, self = this;
+                customGridConfig;
 
             var grid = null, dataView = null, footerPager = null,
                 gridDataSource, gridColumns, gridSortColumns = [], gridOptions,
