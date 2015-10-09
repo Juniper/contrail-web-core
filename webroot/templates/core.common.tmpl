@@ -1580,10 +1580,10 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-generic-delete-form-template">
-    <div class="alert alert-error" data-bind="visible: errors().{{elementId}}_error">
+    <div class="alert alert-error" data-bind="visible: errors().{{prefixId}}_form_error">
         <button type="button" class="close" data-dismiss="alert"></button>
         <strong>Error: </strong>
-        <span data-bind="text: errors().{{elementId}}_error"></span>
+        <span data-bind="text: errors().{{prefixId}}_form_error"></span>
     </div>
     <div>Are you sure you want to delete {{item}} <b>{{itemId}}</b>?</div>
 </script>
