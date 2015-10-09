@@ -88,6 +88,7 @@ define([
         this.TMPL_WIDGET_VIEW = "core-widget-view-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
         this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
+        this.TMPL_INFOBOXES_VIEW = "core-infobox-template";
 
         //Top boxes in Monitor > Infra > Dashboard that show the summary count of
         //each node type
