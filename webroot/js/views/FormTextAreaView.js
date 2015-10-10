@@ -28,7 +28,7 @@ define([
             this.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId, name: elId, placeHolder: placeHolder, disabled: viewConfig['disabled'],
+                label: labelValue, id: elId, name: elId, placeHolder: placeHolder, viewConfig: viewConfig,
                 dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE], lockAttr: lockEditingByDefault, type: type,
                 class: "span12", path: path, validation: validation, showEditIcon: showEditIcon
             };
@@ -36,7 +36,11 @@ define([
             this.$el.html(textAreaTemplate(tmplParameters));
 
             if(showEditIcon) {
-                this.$el.find(".add-on").on("click", viewConfig['editPopupConfig'].renderEditFn);
+                this.$el.find(".add-on").on("click", function(event) {
+                    if (!$(this).hasClass('disabled')) {
+                        viewConfig['editPopupConfig'].renderEditFn(event)
+                    }
+                });
             }
         }
     });

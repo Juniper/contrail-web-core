@@ -189,30 +189,31 @@ define([
         },
 
         getQueryRequestPostData: function (serverCurrentTime) {
-            var queryReqObj = {
+            var self = this,
+                queryReqObj = {
                     formModelAttrs: this.getFormModelAttributes()
                 },
-                selectStr = this.select(),
+                selectStr = self.select(),
                 showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
-                queryPrefix = this.query_prefix(),
+                queryPrefix = self.query_prefix(),
                 options = {
                     elementId: queryPrefix + '-results', gridHeight: 480, timeOut: cowc.QE_TIMEOUT,
                     pageSize: 100, queryPrefix: queryPrefix, export: true, showChartToggle: showChartToggle,
                     labelStep: 1, baseUnit: 'mins', fromTime: 0, toTime: 0, interval: 0,
                     btnId: queryPrefix + '-query-submit', refreshChart: true, serverCurrentTime: serverCurrentTime
-                };
+                },
+                formModelAttrs = qewu.setUTCTimeObj(this.query_prefix(), queryReqObj['formModelAttrs'], options);
 
-            queryReqObj['formModelAttrs'] = qewu.setUTCTimeObj(this.query_prefix(), queryReqObj['formModelAttrs'], options);
+            self.from_time_utc(formModelAttrs.from_time_utc);
+            self.to_time_utc(formModelAttrs.to_time_utc);
 
+            queryReqObj['formModelAttrs'] = formModelAttrs;
             queryReqObj.queryId = qewu.generateQueryUUID();
-
             queryReqObj.chunk = 1;
             queryReqObj.chunkSize = cowc.QE_RESULT_CHUNK_SIZE;
             queryReqObj.async = 'true';
             queryReqObj.autoSort = 'true';
             queryReqObj.autoLimit = 'true';
-
-            console.log(queryReqObj);
 
             return queryReqObj;
         },
@@ -321,6 +322,9 @@ define([
     };
 
     function getSelectFields4Table(tableSchema, defaultSelectFields) {
+        if ($.isEmptyObject(tableSchema)) {
+           return [];
+        }
         var tableColumns = tableSchema['columns'],
             filteredSelectFields = [];
 
@@ -337,6 +341,9 @@ define([
     };
 
     function getWhereFields4NameDropdown(tableSchema, tableName) {
+        if ($.isEmptyObject(tableSchema)) {
+            return [];
+        }
         var tableSchemaFormatted = [];
 
         $.each(tableSchema.columns, function(schemaKey, schemaValue) {

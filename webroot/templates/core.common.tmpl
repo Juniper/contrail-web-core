@@ -1001,7 +1001,7 @@
     <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
-                {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 {{#if viewConfig.customValue}}customValue: {{viewConfig.customValue}},{{/if}}
                 optionList: {{viewConfig.dataBindOptionList}},
@@ -1026,7 +1026,7 @@
         <div class="row-fluid form-element">
             <input id="{{id}}" name="{{name}}" class="{{class}}"
                 data-bind="
-                    {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                    {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                     value: {{viewConfig.dataBindValue}},
                     optionList: {{viewConfig.dataBindOptionList}},
                     event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
@@ -1041,7 +1041,7 @@
     <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
-                {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
                 event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
@@ -1065,9 +1065,10 @@
         <div class="row-fluid form-element">
             <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}"
                 data-bind="
-                    {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                    {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                     value: {{viewConfig.dataBindValue}},
                     optionList: {{viewConfig.dataBindOptionList}},
+                    event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                     contrailCombobox: {}"
             />
             <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
@@ -1079,9 +1080,10 @@
     <div class="row-fluid"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
-                {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
+                event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailCombobox: {}"
         />
     </div>
@@ -1601,8 +1603,11 @@
     </div>
     <div class="row-fluid form-element"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <div class="input-append inset span12">
-            <textarea name="{{id}}" class="where-textarea span12 {{class}}" value="" placeholder="{{placeHolder}}" rows="1" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }"></textarea>
-            <span class="add-on" data-bind="visible:{{showEditIcon}}"><i class="icon-pencil" onclick=""></i></span>
+            <textarea
+                name="{{id}}" class="where-textarea span12 {{class}}" value="" placeholder="{{placeHolder}}" rows="1"
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
+            </textarea>
+            <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="icon-pencil"></i></span>
         </div>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>

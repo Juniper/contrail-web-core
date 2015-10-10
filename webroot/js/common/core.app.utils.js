@@ -482,13 +482,24 @@ function initCustomKOBindings(Knockout) {
             if (allBindingsAccessor.get('value')) {
                 var valueBindingAccessor = allBindingsAccessor.get('value'),
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);
-                if (contrail.checkIfExist(value)) {
-                    if (contrail.checkIfFunction(value) && value() != '') {
-                        combobox.value(value());
-                    } else if (value != '') {
-                        combobox.value(value);
-                    }
+
+                value = contrail.checkIfFunction(value) ? value() : value;
+
+                if (contrail.checkIfExist(value) && value !== '') {
+                    combobox.value(value);
                 }
+            }
+
+            if (allBindingsAccessor.get('disable')) {
+                var valueBindingAccessor = allBindingsAccessor.get('disable'),
+                    disable = Knockout.utils.unwrapObservable(valueBindingAccessor);
+
+                disable = contrail.checkIfFunction(disable) ? disable() : disable;
+
+                if (contrail.checkIfExist(disable) && disable !== '') {
+                    combobox.enable(!disable)
+                }
+
             }
         }
     };
