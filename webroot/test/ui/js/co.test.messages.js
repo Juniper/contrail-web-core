@@ -37,6 +37,8 @@ define([], function () {
 
         this.DETAILSVIEW_TMPL_HTML = 'Test details view html is same as generated html';
         this.DETAILSVIEW_BASIC_ADVANCED_TOGGLE = 'Test basic and advanced view';
+        this.DETAILSVIEW_ACTIONS_BASIC = 'Test details view actions';
+        this.DETAILSVIEW_ACTIONS_OPTIONLIST = 'Test details view actions options list';
 
         this.TABSVIEW_TAB_TITLE = 'Test tab tiles set to the configured';
         this.TABSVIEW_TAB_ACTIVATE = 'Test activating each tab';

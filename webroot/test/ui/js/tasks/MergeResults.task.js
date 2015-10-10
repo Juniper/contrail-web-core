@@ -43,6 +43,9 @@ module.exports = function (grunt) {
 
     function getAllXmlJsons(file, callback) {
         fs.readFile(file, function (err, content) {
+            if (err!= null) {
+                console.log(err);
+            }
             parser.parseString(content, function (err, content) {
                 callback(err, content);
                 return;
