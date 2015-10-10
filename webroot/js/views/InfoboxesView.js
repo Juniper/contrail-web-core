@@ -9,23 +9,19 @@ define([
     var InfoboxesView = Backbone.View.extend({
         initialize: function() {
             var self = this;
+            self.loadedInfoboxes = [];
 
-            self.$el.append($('<div/>',{
-                class:'infobox-widget'
-            }));
-            self.$el.find('.infobox-widget').append($('<div/>',{
-                class:'infobox-container'
-            }));
-            self.$el.find('.infobox-widget').append($('<hr/>', {
-                class: 'hr-8'
-            }));
-            self.$el.find('.infobox-widget').append($('<div/>',{
-                class:'infobox-detail-container'
-            }));
+            self.$el.append(contrail.getTemplate4Id(cowc.TMPL_INFOBOXES_VIEW)());
+            self.$el.find("[data-action='refresh']").on('click',function() {
+                for(var len=self.loadedInfoboxes.length,i=0;i < len;i++) {
+                    var currInfobox = self.loadedInfoboxes[i];
+                    currInfobox['model'].refreshData();
+                }
+            });
 
             //Add click listener for infoboxes to show/hide the respective container
             self.$el.find('.infobox-container').on('click','.infobox',function() {
-                var tabIdx = $(this).index();
+                var tabIdx = $(this).index('.infobox');
                 //Hide all infobox detail containers and show the one corresponding
                 //to clicked infobox.
                 self.$el.find('.infobox-detail-container').
@@ -43,6 +39,7 @@ define([
 
         add: function(cfg) {
             var self = this;
+            self.loadedInfoboxes.push(cfg);
             var infoboxTemplate = contrail.getTemplate4Id(cowc.TMPL_INFOBOX);
             self.$el.find('.infobox-container').append(infoboxTemplate(cfg));
             self.$el.find('.infobox-detail-container').append($('<div>',{

@@ -259,6 +259,21 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-infobox-template">
+    <div class='infobox-widget'>
+        <div class='infobox-container'>
+            <div class="control-panel-items pull-right">
+                <div class="control-panel-item refresh" data-action="refresh" title="Refresh">
+                    <i class="icon-repeat"></i>
+                </div>
+            </div>
+        </div>
+        <hr class='hr-8'></hr>
+        <div class='infobox-detail-container'></div>
+        <hr/>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="barchart-info-template">
     <div class="infobox infobox-blue infobox-dynamic">
         <div class="infobox-chart">
@@ -354,7 +369,7 @@
                                 <span class="green"> {{timeStr}} </span>
                             </div>
                         </div>
-                        <div class="text"> {{message}} </div>
+                        <div class="text"> {{#truncate message 200}} {{/truncate}}</div>
                     </div>
                 </div>
         {{else}}
@@ -485,7 +500,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="mon-infra-dashboard">
-    <div id='dashboard-infoboxes' style="height:380px">
+    <div id='dashboard-infoboxes' style="/*height:360px*/">
     </div>
     <div id="dashboard-stats" class="row-fluid">
         <div class="span4">
@@ -895,7 +910,7 @@
                     />
                     <span class="add-on input-type-toggle-action"><i class="icon-eye-open"></i></span>
                 {{else}}
-                    <input type="{{type}}" name="{{id}}" placeholder="{{placeHolder}}" class="{{class}}"
+                    <input type="{{type}}" name="{{id}}" placeholder="{{viewConfig.placeholder}}" class="{{class}}"
                         data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                         value: {{viewConfig.dataBindValue}},
                         event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
@@ -909,7 +924,7 @@
 
 <script type="text/x-handlebars-template" id="core-editable-grid-input-view-template">
         <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-            <input type="{{type}}" name="{{name}}" class="{{class}}"
+            <input type="{{type}}" name="{{name}}" class="{{class}}" placeholder="{{viewConfig.placeholder}}"
                 data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
                     value: {{viewConfig.dataBindValue}},
                     event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data)} }"
@@ -1582,10 +1597,10 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-generic-delete-form-template">
-    <div class="alert alert-error" data-bind="visible: errors().{{elementId}}_error">
+    <div class="alert alert-error" data-bind="visible: errors().{{prefixId}}_form_error">
         <button type="button" class="close" data-dismiss="alert"></button>
         <strong>Error: </strong>
-        <span data-bind="text: errors().{{elementId}}_error"></span>
+        <span data-bind="text: errors().{{prefixId}}_form_error"></span>
     </div>
     <div>Are you sure you want to delete {{item}} <b>{{itemId}}</b>?</div>
 </script>
