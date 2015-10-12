@@ -13,10 +13,11 @@ define([
         defaultSelectFields: [],
 
         constructor: function (modelData) {
-            var modelRemoteDataConfig;
+            var self = this,
+                modelRemoteDataConfig;
 
             if (contrail.checkIfExist(modelData.table_name)) {
-                modelRemoteDataConfig = getTableSchemaConfig(modelData.table_name, this.defaultSelectFields);
+                modelRemoteDataConfig = getTableSchemaConfig(self, modelData.table_name, this.defaultSelectFields);
             }
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
@@ -93,15 +94,16 @@ define([
                     var selectFields = getSelectFields4Table(response, defaultSelectFields),
                         whereFields = getWhereFields4NameDropdown(response, tableName);
 
+                    self.select_data_object().requestState((selectFields.length > 0) ? cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY : cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY);
+
                     contrailViewModel.set({
                         'ui_added_parameters': {
                             'table_schema': response
                         }
                     });
 
-                    contrailViewModel.attributes.select_data_object['select_fields'] = selectFields;
-
-                    setEnable4SelectFields(selectFields, contrailViewModel.attributes.select_data_object['enable_map']);
+                    setEnable4SelectFields(selectFields, self.select_data_object().enable_map());
+                    self.select_data_object().select_fields(selectFields);
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
 
@@ -290,7 +292,7 @@ define([
         validations: {}
     });
 
-    function getTableSchemaConfig(tableName, defaultSelectFields) {
+    function getTableSchemaConfig(model, tableName, defaultSelectFields) {
         var tableSchemeUrl = '/api/qe/table/schema/' + tableName,
             modelRemoteDataConfig = {
                 remote: {
@@ -302,16 +304,18 @@ define([
                         var selectFields = getSelectFields4Table(response, defaultSelectFields),
                             whereFields = getWhereFields4NameDropdown(response, tableName);
 
+                        model.select_data_object().requestState((selectFields.length > 0) ? cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY : cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY);
+
                         contrailViewModel.set({
                             'ui_added_parameters': {
                                 'table_schema': response
                             }
                         });
-                        contrailViewModel.attributes.select_data_object['select_fields'] = selectFields;
-                        setEnable4SelectFields(selectFields, contrailViewModel.attributes.select_data_object['enable_map']);
+
+                        setEnable4SelectFields(selectFields, model.select_data_object().enable_map());
+                        model.select_data_object().select_fields(selectFields);
 
                         contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
-
                     }
                 },
                 vlRemoteConfig: {
