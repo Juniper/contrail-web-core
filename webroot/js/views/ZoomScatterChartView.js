@@ -40,11 +40,13 @@ define([
                     self.renderChart(selector, viewConfig, self.model);
                 });
 
+                var resizeFunction = function (e) {
+                    self.renderChart(selector, viewConfig, self.model);
+                };
+
                 $(window)
-                    .off('resize')
-                    .on('resize', function (e) {
-                        self.renderChart(selector, viewConfig, self.model);
-                    });
+                    .off('resize', resizeFunction)
+                    .on('resize', resizeFunction);
             }
 
             if (widgetConfig !== null) {
