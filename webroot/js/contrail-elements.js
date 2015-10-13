@@ -1235,14 +1235,12 @@ function constructSelect2(self, defaultOption, args) {
                 .on("select2-close", closeFunction);
 
             // set default value only if explicitly defined and if not a multiselect
-            if (option.data.length > 0 && contrail.checkIfExist(option.defaultValueId) &&
+            if (option.data.length > 0 && contrail.checkIfExist(option.defaultValueId) && option.defaultValueId >= 0 &&
                 option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple)) {
 
                 var selectedOption = option.data[option.defaultValueId];
-                if(option.data[0].children != undefined &&
-                    option.data[0].children.length > 1) {
-                    selectedOption =
-                        option.data[0].children[option.defaultValueId];
+                if (option.data[0].children != undefined && option.data[0].children.length > 1) {
+                    selectedOption = option.data[0].children[option.defaultValueId];
                 }
                 self.select2('val', selectedOption[option.dataValueField.dsVar], true);
             }
@@ -1321,7 +1319,7 @@ function constructSelect2(self, defaultOption, args) {
                     .off("change", changeFunction)
                     .on("change", changeFunction);
 
-                if (option.data.length != 0 && contrail.checkIfExist(option.defaultValueId) &&
+                if (option.data.length != 0 && contrail.checkIfExist(option.defaultValueId) && option.defaultValueId >= 0 &&
                     option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple)) {
                         self.select2('val', option.data[option.defaultValueId][option.dataValueField.dsVar], (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                 }
