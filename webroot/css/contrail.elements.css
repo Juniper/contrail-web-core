@@ -1422,6 +1422,9 @@ input[type=checkbox].ace-switch.ace-switch-7:checked + .lbl::after {
 	z-index: 2;
 	font-size: 16px;
 }
+.input-append.inset .add-on.disabled {
+    background-color: #eee;
+}
 .input-append.inset input[type="text"], .input-append.inset textarea, .input-append.inset input[type="password"],{
 	padding-right:30px;
 }

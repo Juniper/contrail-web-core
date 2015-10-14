@@ -13,10 +13,11 @@ define([
         defaultSelectFields: [],
 
         constructor: function (modelData) {
-            var modelRemoteDataConfig;
+            var self = this,
+                modelRemoteDataConfig;
 
             if (contrail.checkIfExist(modelData.table_name)) {
-                modelRemoteDataConfig = getTableSchemaConfig(modelData.table_name, this.defaultSelectFields);
+                modelRemoteDataConfig = getTableSchemaConfig(self, modelData.table_name, this.defaultSelectFields);
             }
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
@@ -67,7 +68,9 @@ define([
                 contentType: "application/json; charset=utf-8",
                 dataType: "json"
             }).done(function (resultJSON) {
-                //console.log(resultJSON);
+                console.log(resultJSON);
+            }).error(function(xhr) {
+                console.log(xhr);
             });
 
         },
@@ -91,15 +94,16 @@ define([
                     var selectFields = getSelectFields4Table(response, defaultSelectFields),
                         whereFields = getWhereFields4NameDropdown(response, tableName);
 
+                    self.select_data_object().requestState((selectFields.length > 0) ? cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY : cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY);
+
                     contrailViewModel.set({
                         'ui_added_parameters': {
                             'table_schema': response
                         }
                     });
 
-                    contrailViewModel.attributes.select_data_object['select_fields'] = selectFields;
-
-                    setEnable4SelectFields(selectFields, contrailViewModel.attributes.select_data_object['enable_map']);
+                    setEnable4SelectFields(selectFields, self.select_data_object().enable_map());
+                    self.select_data_object().select_fields(selectFields);
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
 
@@ -172,9 +176,9 @@ define([
             }
         },
 
-        getAttributes4Server: function () {
+        getFormModelAttributes: function () {
             var modelAttrs = this.model().attributes,
-                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters'],
+                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object'],
                 attrs4Server = {};
 
             for (var key in modelAttrs) {
@@ -187,30 +191,31 @@ define([
         },
 
         getQueryRequestPostData: function (serverCurrentTime) {
-            var queryReqObj = {
-                    formModelAttrs: this.getAttributes4Server()
+            var self = this,
+                queryReqObj = {
+                    formModelAttrs: this.getFormModelAttributes()
                 },
-                selectStr = this.select(),
+                selectStr = self.select(),
                 showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
-                queryPrefix = this.query_prefix(),
+                queryPrefix = self.query_prefix(),
                 options = {
                     elementId: queryPrefix + '-results', gridHeight: 480, timeOut: cowc.QE_TIMEOUT,
                     pageSize: 100, queryPrefix: queryPrefix, export: true, showChartToggle: showChartToggle,
                     labelStep: 1, baseUnit: 'mins', fromTime: 0, toTime: 0, interval: 0,
                     btnId: queryPrefix + '-query-submit', refreshChart: true, serverCurrentTime: serverCurrentTime
-                };
+                },
+                formModelAttrs = qewu.setUTCTimeObj(this.query_prefix(), queryReqObj['formModelAttrs'], options);
 
-            queryReqObj['formModelAttrs'] = qewu.setUTCTimeObj(this.query_prefix(), queryReqObj['formModelAttrs'], options);
+            self.from_time_utc(formModelAttrs.from_time_utc);
+            self.to_time_utc(formModelAttrs.to_time_utc);
 
+            queryReqObj['formModelAttrs'] = formModelAttrs;
             queryReqObj.queryId = qewu.generateQueryUUID();
-
             queryReqObj.chunk = 1;
             queryReqObj.chunkSize = cowc.QE_RESULT_CHUNK_SIZE;
             queryReqObj.async = 'true';
             queryReqObj.autoSort = 'true';
             queryReqObj.autoLimit = 'true';
-
-            delete queryReqObj.formModelAttrs.where_or_clauses;
 
             return queryReqObj;
         },
@@ -287,7 +292,7 @@ define([
         validations: {}
     });
 
-    function getTableSchemaConfig(tableName, defaultSelectFields) {
+    function getTableSchemaConfig(model, tableName, defaultSelectFields) {
         var tableSchemeUrl = '/api/qe/table/schema/' + tableName,
             modelRemoteDataConfig = {
                 remote: {
@@ -299,16 +304,18 @@ define([
                         var selectFields = getSelectFields4Table(response, defaultSelectFields),
                             whereFields = getWhereFields4NameDropdown(response, tableName);
 
+                        model.select_data_object().requestState((selectFields.length > 0) ? cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY : cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY);
+
                         contrailViewModel.set({
                             'ui_added_parameters': {
                                 'table_schema': response
                             }
                         });
-                        contrailViewModel.attributes.select_data_object['select_fields'] = selectFields;
-                        setEnable4SelectFields(selectFields, contrailViewModel.attributes.select_data_object['enable_map']);
+
+                        setEnable4SelectFields(selectFields, model.select_data_object().enable_map());
+                        model.select_data_object().select_fields(selectFields);
 
                         contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
-
                     }
                 },
                 vlRemoteConfig: {
@@ -319,6 +326,9 @@ define([
     };
 
     function getSelectFields4Table(tableSchema, defaultSelectFields) {
+        if ($.isEmptyObject(tableSchema)) {
+           return [];
+        }
         var tableColumns = tableSchema['columns'],
             filteredSelectFields = [];
 
@@ -335,6 +345,9 @@ define([
     };
 
     function getWhereFields4NameDropdown(tableSchema, tableName) {
+        if ($.isEmptyObject(tableSchema)) {
+            return [];
+        }
         var tableSchemaFormatted = [];
 
         $.each(tableSchema.columns, function(schemaKey, schemaValue) {
