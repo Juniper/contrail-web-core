@@ -202,6 +202,13 @@ define([
             days: 24 * 60 * 60 * 1000
         };
 
+        this.OPERATOR_CODES = {
+            1: '=',
+            2: '!=',
+            7: 'Starts with',
+            8: 'RegEx='
+        };
+
         this.URL_TABLES = "/api/qe/tables";
         this.URL_PREFIX_TABLE_SCHEMA = "/api/qe/table/schema/";
 
