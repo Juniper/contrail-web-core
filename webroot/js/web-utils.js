@@ -1951,10 +1951,11 @@ function toggleOverallNodeStatus(selector) {
 /**
  * Get the value of a property inside a json object with a given path
  */
-function getValueByJsonPath(obj,pathStr,defValue) {
+function getValueByJsonPath(obj,pathStr,defValue,doClone) {
     try {
     	var currObj = obj;
         var pathArr = pathStr.split(';');
+        var doClone = ifNull(doClone,true);
         var arrLength = pathArr.length;
         for(var i=0;i<arrLength;i++) {
             if(currObj[pathArr[i]] != null) {
@@ -1962,11 +1963,19 @@ function getValueByJsonPath(obj,pathStr,defValue) {
             } else
                 return defValue;
         }
-        if(currObj instanceof Array)
-            return $.extend(true,[],currObj);
-        else if(typeof(currObj) == "object")
-            return $.extend(true,{},currObj);
-        else
+        if(currObj instanceof Array) {
+            if(doClone == false) {
+                return currObj;
+            } else {
+                return $.extend(true,[],currObj);
+            }
+        } else if(typeof(currObj) == "object") {
+            if(doClone == false) { 
+                return currObj;
+            } else {
+                return $.extend(true,{},currObj);
+            }
+        } else
             return currObj;
     } catch(e) {
         return defValue;
