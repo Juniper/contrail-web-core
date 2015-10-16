@@ -155,16 +155,8 @@ define([
                 if (contrail.checkIfFunction(callbackObj.init)) {
                     callbackObj.init();
                 }
-                var whereOrClauses = this.model().get('where_or_clauses'),
-                    whereOrClauseStrArr = [];
 
-                $.each(whereOrClauses.models, function(whereOrClauseKey, whereOrClauseValue) {
-                    if (whereOrClauseValue.attributes.whereOrClauseText !== '') {
-                        whereOrClauseStrArr.push('(' + whereOrClauseValue.attributes.orClauseText + ')')
-                    }
-                });
-
-                this.where(whereOrClauseStrArr.join(' OR '));
+                this.where(qewu.parseWhereCollection2String(this));
 
                 if (contrail.checkIfFunction(callbackObj.success)) {
                     callbackObj.success();
@@ -232,11 +224,20 @@ define([
             this.model().get('where_or_clauses').reset();
         },
 
-        addWhereOrClause: function(elementId) {
-            var whereOrClauses = this.model().get('where_or_clauses'),
-                newOrClause = new QueryOrModel(this);
+        addNewOrClauses: function(orClauseObject) {
+            var self = this,
+                whereOrClauses = this.model().get('where_or_clauses'),
+                newOrClauses = [];
 
-            whereOrClauses.add([newOrClause]);
+            $.each(orClauseObject, function(orClauseKey, orClauseValue) {
+                newOrClauses.push(new QueryOrModel(self, orClauseValue));
+            });
+
+            whereOrClauses.add(newOrClauses);
+        },
+
+        addWhereOrClause: function(elementId) {
+            this.addNewOrClauses([{}]);
 
             //TODO: Should not be in Model
             $('#' + elementId).find('.collection').accordion('refresh');
@@ -244,17 +245,9 @@ define([
         },
 
         isSuffixVisible: function(name) {
-            var whereDataObject = this.model().get('where_data_object'),
-                suffixVisibility = false;
-
-            $.each(whereDataObject['name_option_list'], function(schemaKey, schemaValue) {
-                if(schemaValue.name === name) {
-                    suffixVisibility = !(schemaValue.suffixes === null);
-                    return false;
-                }
-            });
-
-            return suffixVisibility;
+            var whereDataObject = this.model().get('where_data_object');
+            name = contrail.checkIfFunction(name) ? name() : name;
+            return (qewu.getNameSuffixKey(name, whereDataObject['name_option_list']) != -1);
         },
 
         getTimeGranularityUnits: function() {

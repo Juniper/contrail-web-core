@@ -20,8 +20,8 @@ define([
         },
 
         constructor: function (parentModel, modelData) {
-            ContrailModel.prototype.constructor.call(this, modelData);
             this.parentModel = parentModel;
+            ContrailModel.prototype.constructor.call(this, modelData);
             return this;
         },
 
@@ -60,6 +60,8 @@ define([
                 name = viewModel.name(),
                 whereDataObject = rootModel.get('where_data_object'),
                 suffixNameOptionList = [];
+
+            name = contrail.checkIfFunction(name) ? name() : name;
 
             $.each(whereDataObject['name_option_list'], function(schemaKey, schemaValue) {
                 if(schemaValue.name === name && schemaValue.suffixes !== null) {

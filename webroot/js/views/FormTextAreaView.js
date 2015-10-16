@@ -42,6 +42,12 @@ define([
                     }
                 });
             }
+
+            this.$el.find('textarea')
+                .off('input')
+                .on('input', function() {
+                    $(this).height(0).height($(this).get(0).scrollHeight - 5);
+                });
         }
     });
 

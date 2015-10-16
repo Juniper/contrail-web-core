@@ -29,6 +29,12 @@ define([
                             if (contrail.checkIfExist(renderConfig) && contrail.checkIfFunction(renderConfig['callback'])) {
                                 renderConfig['callback']();
                             }
+
+                            //TODO - Quick Fix to adjust the height of where textarea; Can be done in cleaner way
+                            $(self.$el).find('[name="where"]')
+                                .height(0)
+                                .height($(self.$el).find('[name="where"]').get(0).scrollHeight - 5);
+
                             $("#" + modalId).modal('hide');
                         },
                         error: function (error) {
@@ -42,7 +48,7 @@ define([
                 }
             });
 
-            self.renderView4Config($("#" + queryPrefix + "-form"), this.model, getWhereCollectionViewConfig(), null, null, null, function () {
+            self.renderView4Config($("#" + queryPrefix + "-form"), this.model, getWhereCollectionViewConfig(queryPrefix), null, null, null, function () {
                 self.model.showErrorAttr(queryPrefix + cowc.FORM_SUFFIX_ID, false);
                 Knockback.applyBindings(self.model, document.getElementById(modalId));
                 kbValidation.bind(self);
@@ -50,7 +56,7 @@ define([
         }
     });
 
-    function getWhereCollectionViewConfig() {
+    function getWhereCollectionViewConfig(queryPrefix) {
         return {
             elementId: 'or-clause-collection',
             view: "FormCollectionView",
@@ -204,7 +210,7 @@ define([
                     }
                 ],
                 collectionActions: {
-                    add: {onClick: "addWhereOrClause('fs-form')", iconClass: 'icon-plus', buttonTitle: "OR"},
+                    add: {onClick: 'addWhereOrClause("' + queryPrefix + '-form")', iconClass: 'icon-plus', buttonTitle: "OR"},
                     delete: {onClick: "deleteWhereOrClause()", iconClass: 'icon-remove'}
                 }
             }
