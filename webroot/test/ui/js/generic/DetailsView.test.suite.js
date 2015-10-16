@@ -65,6 +65,9 @@ define([
                 //trigger click on basic view
                 $(detailEls[detailElsIndx - 1]).trigger("click");
 
+            } else {
+                // Assertions can not be run.
+                expect(0);
             }
         }, cotc.SEVERITY_LOW));
 
@@ -79,6 +82,9 @@ define([
                         equal($(detailEls[i]).attr('title'), actions[i].title, "actions data title check");
                         equal($(detailEls[i]).find('i').attr('class'), actions[i].iconClass, "actions icon check");
                     }
+                } else {
+                    // Assertions can not be run.
+                    expect(0);
                 }
             }, cotc.SEVERITY_LOW));
 
@@ -108,6 +114,9 @@ define([
                             $(detailEls[i]).trigger("click");
                         }
                     }
+                } else {
+                    // Assertions can not be run.
+                    expect(0);
                 }
             }, cotc.SEVERITY_LOW));
         }
