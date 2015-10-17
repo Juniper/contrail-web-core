@@ -34,6 +34,9 @@ define([], function () {
         this.GRIDVIEW_FOOTER_PAGER_INFO = 'Test pager info shown';
 
         this.CHARTVIEW_AXIS_LABEL = 'Test chart axis labels set to the configured';
+        this.CHARTVIEW_BUBBLE_COUNT = 'Test count of bubbles set to the configured';
+        this.CHARTMODEL_BUBBLE_SIZE = 'Test size of bubbles set to the configured';
+        this.CHARTMODEL_BUBBLE_COLOR = 'Test color of bubbles set to the configured';
 
         this.DETAILSVIEW_TMPL_HTML = 'Test details view html is same as generated html';
         this.DETAILSVIEW_BASIC_ADVANCED_TOGGLE = 'Test basic and advanced view';
