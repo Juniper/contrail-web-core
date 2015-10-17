@@ -8,17 +8,19 @@ define([
 ], function (_, ContrailView) {
     var TabsView = ContrailView.extend({
         render: function () {
-            var tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
-                viewConfig = this.attributes.viewConfig,
-                self = this, tabs = viewConfig['tabs'],
-                validation = this.attributes.validation,
-                lockEditingByDefault = this.attributes.lockEditingByDefault,
-                modelMap = this.modelMap,
+            var self = this,
+                elId = self.attributes.elementId,
+                tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
+                viewConfig = self.attributes.viewConfig,
+                tabs = viewConfig['tabs'],
+                validation = self.attributes.validation,
+                lockEditingByDefault = self.attributes.lockEditingByDefault,
+                modelMap = self.modelMap,
                 childViewObj, childElId, childView;
 
-            self.$el.html(tabsTemplate(tabs));
+            self.$el.html(tabsTemplate({elementId: elId, tabs: tabs}));
 
-            var tabsData = self.$el.find("#contrail-tabs").contrailTabs({
+            var tabsData = $('#' + elId).contrailTabs({
                 active: contrail.handleIfNull(viewConfig.active, 0),
                 activate: viewConfig.activate,
                 theme: viewConfig.theme

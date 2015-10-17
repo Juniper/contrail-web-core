@@ -1013,7 +1013,10 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-dropdown-view-template">
-    <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div data-bind="
+        {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
+        style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }
+        ">
         <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1296,7 +1299,7 @@
         {{#each viewConfig.rows}}
         <tr class="data-row">
             {{#each columns}}
-            <td id="{{elementId}}" class="data-cell" data-bind="style: {width: '{{width}}px' }"></td>
+            <td id="{{elementId}}" class="data-cell" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }"></td>
             {{/each}}
             {{#each rowActions}}
             <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
@@ -1422,13 +1425,13 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-tabs-template">
-    <div id="contrail-tabs" class="row-fluid graph-tabs">
+    <div id="{{elementId}}" class="row-fluid graph-tabs">
         <ul>
-            {{#each this}}
+            {{#each tabs}}
                 <li><a id="{{this.elementId}}-tab-link" class="contrail-tab-link" href="#{{this.elementId}}-tab">{{this.title}}</a></li>
             {{/each}}
         </ul>
-        {{#each this}}
+        {{#each tabs}}
             <div id="{{this.elementId}}-tab">
                 <div id="{{this.elementId}}" class="contrail-tab-content {{this.viewConfig.class}}"></div>
             </div>
@@ -1563,22 +1566,22 @@
     <div id="{{elementId}}" class="widget-box transparent">
         {{#IfCompare controls.top false operator='!=='}}
         <div class="widget-header">
-            <p class="smaller" {{#IfCompare controls.top.collapseable false operator='!=='}} data-action="widget-collapse"{{/IfCompare}}>
+            <p class="smaller" {{#IfCompare controls.top.default.collapseable false operator='!=='}} data-action="widget-collapse"{{/IfCompare}}>
                 {{#IfCompare header.iconClass false operator='!=='}}
                     <i class="{{header.iconClass}}"></i>
                 {{/IfCompare}}
                 {{header.title}}
             </p>
             <div class="widget-toolbar pull-right">
-                {{#IfCompare controls.top.collapseable false operator='!=='}}
+                {{#IfCompare controls.top.default.collapseable false operator='!=='}}
                     <a data-action="widget-collapse">
-                        <i class="icon-chevron-up"></i>
+                        <i class="{{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} icon-chevron-down {{else}} icon-chevron-up {{/IfCompare}}"></i>
                     </a>
                 {{/IfCompare}}
             </div>
         </div>
         {{/IfCompare}}
-        <div class="widget-body">
+        <div class="widget-body" {{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} style="display:none;"{{/IfCompare}}>
             <div class="widget-main padding-4">
                 {{#IfCompare controls.right false operator='!=='}}
                 <div class="widget-main-rightmenu colmask rightmenu">

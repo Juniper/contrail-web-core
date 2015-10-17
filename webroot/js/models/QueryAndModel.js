@@ -37,6 +37,16 @@ define([
             errors.set(attrErrorObj);
         },
 
+        addAndClauseAtIndex: function() {
+            var self = this,
+                andClauses = this.model().collection,
+                andClause = this.model(),
+                andClauseIndex = _.indexOf(andClauses.models, andClause),
+                newAndClause = new QueryAndModel(self.parentModel(), {});
+
+            andClauses.add(newAndClause, {at: andClauseIndex + 1});
+        },
+
         deleteWhereAndClause: function() {
             var andClauses = this.model().collection,
                 andClause = this.model();

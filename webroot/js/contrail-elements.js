@@ -1308,7 +1308,7 @@ function constructSelect2(self, defaultOption, args) {
                     }
                 }
             },
-            setData: function(data, triggerChange) {
+            setData: function(data, value, triggerChange) {
                 self.select2('destroy');
                 option.data = formatData(data,option);
                 if(typeof option.data != "undefined") {
@@ -1320,7 +1320,8 @@ function constructSelect2(self, defaultOption, args) {
                     .on("change", changeFunction);
 
                 if (option.data.length != 0 && contrail.checkIfExist(option.defaultValueId) && option.defaultValueId >= 0 &&
-                    option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple)) {
+                    option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple) &&
+                    (value === '' || !contrail.checkIfExist(option.sourceMap[value]))) {
                         self.select2('val', option.data[option.defaultValueId][option.dataValueField.dsVar], (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                 }
                 //for Hierarchical drpdown

@@ -77,14 +77,15 @@ define([
                                     rows: [
                                         {
                                             rowActions: [
-                                                {onClick: "deleteWhereAndClause()", iconClass: 'icon-remove'}
+                                                {onClick: "deleteWhereAndClause()", iconClass: 'icon-remove'},
+                                                {onClick: "addAndClauseAtIndex()", iconClass: 'icon-plus'}
                                             ],
                                             columns: [
                                                 {
                                                     elementId: 'and-text',
                                                     view: "FormTextView",
-                                                    width: 40,
                                                     viewConfig: {
+                                                        width: 40,
                                                         value: "AND",
                                                         class: "and-clause-text"
                                                     }
@@ -94,14 +95,15 @@ define([
                                                     name: 'Name',
                                                     view: "FormDropdownView",
                                                     class: "",
-                                                    width: 200,
                                                     viewConfig: {
                                                         templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                                         path: "name",
                                                         dataBindValue: "name",
                                                         dataBindOptionList: 'getNameOptionList',
+                                                        width: 200,
                                                         elementConfig: {
-                                                            placeholder: 'Select Name'
+                                                            placeholder: 'Select Name',
+                                                            defaultValueId: 0
                                                         }
                                                     }
                                                 },
@@ -110,11 +112,11 @@ define([
                                                     name: 'operator',
                                                     view: "FormDropdownView",
                                                     class: "",
-                                                    width: 100,
                                                     viewConfig: {
                                                         templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                                         path: "operator",
                                                         dataBindValue: "operator",
+                                                        width: 100,
                                                         elementConfig: {
                                                             data: [{id: '=', text: '='}],
                                                             defaultValueId: 0
@@ -126,11 +128,11 @@ define([
                                                     name: 'value',
                                                     view: "FormComboboxView",
                                                     class: "",
-                                                    width: 200,
                                                     viewConfig: {
                                                         templateId: cowc.TMPL_EDITABLE_GRID_COMBOBOX_VIEW,
                                                         path: "value",
                                                         dataBindValue: "value()",
+                                                        width: 200,
                                                         elementConfig: {
                                                             placeholder: 'Select Value'
                                                         }
@@ -143,8 +145,8 @@ define([
                                                 {
                                                     elementId: 'suffix-and-text',
                                                     view: "FormTextView",
-                                                    width: 40,
                                                     viewConfig: {
+                                                        width: 40,
                                                         value: "",
                                                         class: 'suffix-and-clause-text'
                                                     }
@@ -153,15 +155,16 @@ define([
                                                     name: 'suffix_name',
                                                     view: "FormDropdownView",
                                                     class: "",
-                                                    width: 200,
                                                     viewConfig: {
                                                         templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                                         visible: "$root.isSuffixVisible(name())",
                                                         path: "suffix_name",
                                                         dataBindValue: "suffix_name",
                                                         dataBindOptionList: 'getSuffixNameOptionList',
+                                                        width: 200,
                                                         elementConfig: {
-                                                            placeholder: 'Select Suffix Name'
+                                                            placeholder: 'Select Suffix Name',
+                                                            defaultValueId: 0
                                                         }
                                                     }
                                                 },
@@ -170,12 +173,12 @@ define([
                                                     name: 'suffix_operator',
                                                     view: "FormDropdownView",
                                                     class: "",
-                                                    width: 100,
                                                     viewConfig: {
                                                         templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                                         path: "suffix_operator",
                                                         visible: "$root.isSuffixVisible(name())",
                                                         dataBindValue: "suffix_operator",
+                                                        width: 100,
                                                         elementConfig: {
                                                             data: [{id: '=', text: '='}],
                                                             defaultValueId: 0
@@ -187,12 +190,12 @@ define([
                                                     name: 'suffix_value',
                                                     view: "FormComboboxView",
                                                     class: "",
-                                                    width: 200,
                                                     viewConfig: {
                                                         templateId: cowc.TMPL_EDITABLE_GRID_COMBOBOX_VIEW,
                                                         visible: "$root.isSuffixVisible(name())",
                                                         path: "suffix_value",
                                                         dataBindValue: "suffix_value()",
+                                                        width: 200,
                                                         elementConfig: {
                                                             placeholder: 'Select Suffix Value'
                                                         }
