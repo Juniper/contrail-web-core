@@ -90,6 +90,8 @@ define([
         this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
         this.TMPL_INFOBOXES_VIEW = "core-infobox-template";
 
+        this.TMPL_NODE_DETAIL_SPARKLINE_BOX = 'node-details-sparkline-template';
+        this.TMPL_NODE_DETAIL_INFOBOXES_BOX = 'node-details-infoboxes-template';
         //Top boxes in Monitor > Infra > Dashboard that show the summary count of
         //each node type
         this.TMPL_INFOBOX = "infobox-summary-template";
@@ -102,6 +104,7 @@ define([
         this.DASHBOARD_ALERTS_GRID_ID = "infra-dashboard-alerts-grid";
         this.DASHBOARD_ALERTS_GRID_TITLE = "Alerts";
 
+        this.NODE_DETAILS_CHARTS = 'mon-infra-node-details-chart';
 
         this.TMPL_ELEMENT_TOOLTIP = "element-tooltip-template";
         this.TMPL_ELEMENT_TOOLTIP_TITLE = "element-tooltip-title-template";
