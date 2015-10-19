@@ -311,7 +311,7 @@ div.t-grid td {
   display:none;
 }
 /* End vcon-web.css*/
- 
+
 /* Sidebar*/
 
 #sidebar li.head > a > i{
@@ -366,6 +366,9 @@ div.t-grid td {
 .infobox > .infobox-content{
 	margin: 0 0 0 5px;
 }
+.infobox-details > .infobox-content {
+    margin: 0px;
+}
 /* .nav-list li.head a span{
 	font-size:18px;
 	margin:0 0 0 5px;
@@ -400,7 +403,7 @@ div.t-grid td {
 	width:1120px;
 	margin-left: -560px;
 }
-.modal--500 .modal-body{ 
+.modal--500 .modal-body{
 	max-height: 500px;
 	min-height: 500px;
 }
@@ -536,15 +539,15 @@ filter: alpha(opacity=40);
 }
 /* policy rules */
 .rule-item, .rule-item-header {
-	min-height:20px; 
-	padding: 8px 8px 1px; 
+	min-height:20px;
+	padding: 8px 8px 1px;
 }
 .rule-item:nth-child(even), .rule-item-header {background: #f9f9f9;}
 
 /* Port Map Styles */
 rect.bordered {
     stroke: #E6E6E6;
-    stroke-width:1px;   
+    stroke-width:1px;
 }
 .portMapChart {
     height:100px;
@@ -707,8 +710,8 @@ a.selectAllLink:hover {
     top: 9px;
 }
 
-.infra-node-chart g.nv-scatterChart g.nv-group, 
-.infra-node-chart g.nv-scatterChart g.nv-group .nv-point.hover, 
+.infra-node-chart g.nv-scatterChart g.nv-group,
+.infra-node-chart g.nv-scatterChart g.nv-group .nv-point.hover,
 .infra-node-chart g.nv-scatterChart g.nv-single-point g.nv-group .nv-point,
 .infra-node-chart g.nv-scatterChart g.nv-single-point g.nv-group .nv-point.hover {
 	fill-opacity: 1 !important;
@@ -722,8 +725,8 @@ a.selectAllLink:hover {
 /* Slickgrid Header Styles */
 
 /*For wrapping the header names*/
-.slick-column-name { 
-	white-space: normal; 
+.slick-column-name {
+	white-space: normal;
 }
 
 .slick-header-column.ui-state-default {
@@ -811,10 +814,10 @@ a.selectAllLink:hover {
   	position: relative;
 }
 .slick-sort-indicator-desc:before {
-	content: "\f175"; 
+	content: "\f175";
 }
 .slick-sort-indicator-asc:before {
-  content: "\f176"; 
+  content: "\f176";
 }
 .grid-load-status{
 	padding: 5px;
@@ -1009,7 +1012,7 @@ a.selectAllLink:hover {
 }
 .csg-current-page {
 	float: left;
-	width: 75px; 
+	width: 75px;
 }
 .select2-container.csg-current-page {
 	float: none;
@@ -1312,8 +1315,8 @@ label.jqInvalid{
 	height: 26px;
 }
 .select2-container-multi .select2-choices .select2-search-choice{
-	border-radius: 0px; 
-	-webkit-box-shadow: none; 
+	border-radius: 0px;
+	-webkit-box-shadow: none;
 	box-shadow: none;
 	background: none;
 	padding: 3px 18px 3px 5px;
@@ -1387,7 +1390,7 @@ label.jqInvalid{
 .ui-autocomplete li.ui-menu-item a{
 	padding: 5px;
 	color: #555;
-} 
+}
 .ui-menu .ui-menu-item a.ui-state-focus {
  	background: none;
  	background-color: #c6dbef;
@@ -1428,7 +1431,7 @@ input.datetimepicker{
 	background-color: #eeeeee !important;
 	border-color: #eee !important;
 }
-.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_default, .xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_current, 
+.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_default, .xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_current,
 .xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box >div >div.xdsoft_current {
 	background: none;
 	box-shadow: none;
@@ -1770,7 +1773,7 @@ p.error, p.error-text {
 }
 .topology-visualization svg .link-tools .tool-remove,
 .topology-visualization svg .link-tools .tool-options {
-	display: none 
+	display: none
 }
 .visualization-empty p {
   font-size: 14px;
@@ -2330,7 +2333,7 @@ p.error, p.error-text {
     margin-right:0px !important;
 }
 
-.res-icon  + .select2-offscreen  + input{ 
+.res-icon  + .select2-offscreen  + input{
  width: -moz-calc(100% - 20px);
     width: -webkit-calc(100% - 20px);
     width: calc(100% - 20px);

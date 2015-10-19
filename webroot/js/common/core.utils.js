@@ -335,6 +335,7 @@ define(['underscore'], function (_) {
                         elementView.render();
                     } catch (error) {
                         elementView.error = true;
+                        console.log(error);
                     }
                     if(contrail.checkIfFunction(renderCallback)) {
                         renderCallback(elementView);
