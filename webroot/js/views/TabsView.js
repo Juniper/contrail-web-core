@@ -9,9 +9,9 @@ define([
     var TabsView = ContrailView.extend({
         render: function () {
             var self = this,
+                viewConfig = self.attributes.viewConfig,
                 elId = self.attributes.elementId,
                 tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
-                viewConfig = self.attributes.viewConfig,
                 tabs = viewConfig['tabs'],
                 tabsIdMap = {}, tabRendered = [];
 
@@ -35,7 +35,9 @@ define([
 
                     if (contrail.checkIfFunction(viewConfig.activate)) {
                         viewConfig.activate(event, ui);
-                    } else if (contrail.checkIfExist(tabs[tabKey].tabConfig) && contrail.checkIfFunction(tabs[tabKey].tabConfig.activate)) {
+                    }
+
+                    if (contrail.checkIfExist(tabs[tabKey].tabConfig) && contrail.checkIfFunction(tabs[tabKey].tabConfig.activate)) {
                         tabs[tabKey].tabConfig.activate(event, ui);
                     }
                 },
