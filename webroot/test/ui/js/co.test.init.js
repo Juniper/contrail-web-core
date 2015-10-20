@@ -117,12 +117,61 @@ function testAppInit(testAppConfig) {
 
                     requirejs(['contrail-layout'], function () {
                         //TODO: Timeout is currently required to ensure menu is loaed i.e feature app is initialized
-                        require(allTestFiles, function () {
-                            requirejs.config({
-                                deps: allTestFiles,
-                                callback: window.__karma__.start
+
+                        var logAllTestFiles = "Test files: ";
+                        for (var i = 0; i < allTestFiles.length; i++) {
+                            logAllTestFiles += "\n";
+                            logAllTestFiles +=  i + 1 + ") " + allTestFiles[i];
+                        }
+                        console.log(logAllTestFiles);
+
+                        var testFilesIndex = 0,
+                            loadRunner = true,
+                            testFile = allTestFiles[testFilesIndex],
+                            defObj = $.Deferred();
+
+                        var singleFileLoad = function(testFile, defObj, loadRunner) {
+
+                            var startKarmaCB = function(defObj, loadRunner) {
+                                console.log("Loaded test file: ", testFile);
+                                return window.__karma__.start(defObj, loadRunner);
+                            };
+
+                            require([testFile], function () {
+                                requirejs.config({
+                                    deps: [testFile],
+                                    callback: startKarmaCB(defObj, loadRunner)
+                                });
                             });
-                        });
+
+                        }
+
+                        var loadNextFileOrStartCoverage = function() {
+                            requirejs.undef(testFile);
+                            console.log("Unloaded test file: ", allTestFiles[testFilesIndex]);
+                            window.QUnit.config.current = {semaphore : 1};
+                            window.QUnit.config.blocking = true;
+                            //window.QUnit.stop();
+                            console.log("Test finished");
+                            window.QUnit.init();
+                            testFilesIndex += 1;
+                            loadRunner = false;
+                            if (testFilesIndex < allTestFiles.length) {
+                                var defObj = $.Deferred();
+                                defObj.done(loadNextFileOrStartCoverage);
+                                singleFileLoad(allTestFiles[testFilesIndex], defObj, loadRunner);
+                            }
+                            else if (testFilesIndex == allTestFiles.length) {
+                                console.log("Completed; Starting Coverage: ")
+                                window.__karma__.complete({
+                                    coverage: window.__coverage__
+                                });
+                            }
+                        };
+
+                        defObj.done(loadNextFileOrStartCoverage);
+                        singleFileLoad(testFile, defObj, loadRunner);
+
                     });
             });
         });

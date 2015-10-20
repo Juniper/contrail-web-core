@@ -286,24 +286,31 @@ define([
 
                 //check basic view/advanced view if the advanced view is enabled.
                 //default or attr not present is true/enabled.
+
+                /**
+                 * details elements will always come in this order from left to right
+                 * basic, advanced
+                 */
+                var detailEls = $(el).find('.slick-row-detail-container .detail-foundation-action-item');
+
                 if (viewConfigBody.options.detail.advancedViewOptions) {
                     //check advanced view icon
-                    equal($(el).find('.slick-row-detail-container .detail-foundation-action-item :last').attr('data-view'),
+                    equal($(detailEls[1]).attr('data-view'),
                     "advanced-json", "advanced view icon data-view check");
 
                     //trigger click on advanced view
-                    $(el).find('.slick-row-detail-container .detail-foundation-action-item :last i').trigger("click");
+                    $(detailEls[1]).trigger("click");
 
                     equal($(el).find('.slick-row-detail-container .detail-foundation-content-advanced').html(),
                         contrail.formatJSON2HTML(gridItems[0].rawData, 2),
                         "advanced view HTML should equal to the generated JSON HTML content");
 
                     //check basic view icon
-                    equal($(el).find('.slick-row-detail-container .detail-foundation-action-item :first').attr('data-view'),
+                    equal($(detailEls[0]).attr('data-view'),
                         "basic-list", "basic view icon data-view check");
 
                     //trigger click on basic view
-                    $(el).find('.slick-row-detail-container .detail-foundation-action-item :first i').trigger("click");
+                    $(detailEls[0]).trigger("click");
 
                 }
                 //simulate click to toggle the details row.
