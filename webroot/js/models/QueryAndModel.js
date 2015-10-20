@@ -20,8 +20,8 @@ define([
         },
 
         constructor: function (parentModel, modelData) {
-            ContrailModel.prototype.constructor.call(this, modelData);
             this.parentModel = parentModel;
+            ContrailModel.prototype.constructor.call(this, modelData);
             return this;
         },
 
@@ -35,6 +35,16 @@ define([
 
             attrErrorObj[attr + cowc.ERROR_SUFFIX_ID] = (isValid == true) ? false : isValid;
             errors.set(attrErrorObj);
+        },
+
+        addAndClauseAtIndex: function() {
+            var self = this,
+                andClauses = this.model().collection,
+                andClause = this.model(),
+                andClauseIndex = _.indexOf(andClauses.models, andClause),
+                newAndClause = new QueryAndModel(self.parentModel(), {});
+
+            andClauses.add(newAndClause, {at: andClauseIndex + 1});
         },
 
         deleteWhereAndClause: function() {
@@ -60,6 +70,8 @@ define([
                 name = viewModel.name(),
                 whereDataObject = rootModel.get('where_data_object'),
                 suffixNameOptionList = [];
+
+            name = contrail.checkIfFunction(name) ? name() : name;
 
             $.each(whereDataObject['name_option_list'], function(schemaKey, schemaValue) {
                 if(schemaValue.name === name && schemaValue.suffixes !== null) {

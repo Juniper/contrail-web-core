@@ -363,12 +363,17 @@ function initCustomKOBindings(Knockout) {
             }
 
             if (!contrail.checkIfExist(elementConfig.data) && !contrail.checkIfExist(elementConfig.dataSource) && allBindingsAccessor.get('optionList')) {
-                var optionListBindingAccessor = allBindingsAccessor.get('optionList'),
+                var valueBindingAccessor = allBindingsAccessor.get('value'),
+                    value = Knockout.utils.unwrapObservable(valueBindingAccessor),
+                    optionListBindingAccessor = allBindingsAccessor.get('optionList'),
                     optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
+
+                value = contrail.checkIfFunction(value) ? value() : value;
+
                 if (contrail.checkIfFunction(optionList) && $.isArray(optionList(viewModel))) {
-                    dropdown.setData(optionList(viewModel), true);
+                    dropdown.setData(optionList(viewModel), value, true);
                 } else if ($.isArray(optionList)) {
-                    dropdown.setData(optionList, true);
+                    dropdown.setData(optionList, value, true);
                 }
             }
 
@@ -419,12 +424,17 @@ function initCustomKOBindings(Knockout) {
             }
 
             if (!contrail.checkIfExist(elementConfig.data) && !contrail.checkIfExist(elementConfig.dataSource) && allBindingsAccessor.get('optionList')) {
-                var optionListBindingAccessor = allBindingsAccessor.get('optionList'),
+                var valueBindingAccessor = allBindingsAccessor.get('value'),
+                    value = Knockout.utils.unwrapObservable(valueBindingAccessor),
+                    optionListBindingAccessor = allBindingsAccessor.get('optionList'),
                     optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
-                if (contrail.checkIfFunction(optionList) && $.isArray(optionList())) {
-                    multiselect.setData(optionList(), true);
+
+                value = contrail.checkIfFunction(value) ? value() : value;
+
+                if (contrail.checkIfFunction(optionList) && $.isArray(optionList(viewModel))) {
+                    multiselect.setData(optionList(viewModel), value, true);
                 } else if ($.isArray(optionList)) {
-                    multiselect.setData(optionList, true);
+                    multiselect.setData(optionList, value, true);
                 }
             }
 

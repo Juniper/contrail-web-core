@@ -15,6 +15,7 @@ define([
         },
 
         renderWhere: function (options) {
+            qewu.parseWhereString2Collection(this.model);
             this.renderView4Config(this.$el, this.model, getWhereViewConfig(contrail.checkIfExist(options) ? options : {}));
         },
 
