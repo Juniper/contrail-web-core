@@ -657,6 +657,9 @@ input[type="color"] {
   height:28px;
   padding:3px;
 }
+.textarea-input-append.input-append textarea {
+  min-height: 28px;
+}
 input.login{
 	height:22px;
 	width: 90%;

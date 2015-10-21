@@ -12,13 +12,13 @@ define([
     var QueryOrModel = ContrailModel.extend({
 
         defaultConfig: {
-            "orClauseText": ''
+            orClauseText: '',
+            orClauseJSON: []
         },
 
         constructor: function (parentModel, modelData) {
-            ContrailModel.prototype.constructor.call(this, modelData);
             this.parentModel = parentModel;
-
+            ContrailModel.prototype.constructor.call(this, modelData);
             return this;
         },
 
@@ -35,21 +35,38 @@ define([
         },
 
         formatModelConfig: function(modelConfig) {
-            var andClauses = [],
+            var self = this,
+                parentModel = self.parentModel,
+                whereDataObject = parentModel.model().get('where_data_object'),
+                orClauseJSON = modelConfig.orClauseJSON,
+                orClauseLength = orClauseJSON.length,
                 andClauseModels = [], andClauseModel,
                 andClausesCollectionModel,
-                self = this;
+                andClauseObj = {};
 
-            $.each(andClauses, function(andClauseKey, andClauseValue) {
-                andClauseModel = new QueryAndModel(self, andClauseValue);
-                andClauseModels.push(andClauseModel)
-            });
+            for (var i = 0 ; i < orClauseLength; i += 1) {
+                andClauseObj = {
+                    name: orClauseJSON[i].name,
+                    operator: cowc.OPERATOR_CODES[orClauseJSON[i].op],
+                    value: orClauseJSON[i].value
+                };
 
-            andClauseModels.push(new QueryAndModel(self));
+                if (qewu.getNameSuffixKey(orClauseJSON[i].name, whereDataObject['name_option_list']) !== -1 &&
+                    (i + 1) < orClauseLength && qewu.getNameSuffixKey(orClauseJSON[i+1].name, whereDataObject['name_option_list']) === -1) {
+                    i = i + 1;
+                    andClauseObj.suffix_name = orClauseJSON[i].name;
+                    andClauseObj.suffix_operator = cowc.OPERATOR_CODES[orClauseJSON[i].op];
+                    andClauseObj.suffix_value = orClauseJSON[i].value;
+                }
+
+                andClauseModel = new QueryAndModel(self, andClauseObj);
+                andClauseModels.push(andClauseModel);
+            }
+
+            andClauseModels.push(new QueryAndModel(self, {}));
 
             andClausesCollectionModel = new Backbone.Collection(andClauseModels);
             modelConfig['and_clauses'] = andClausesCollectionModel;
-
 
             return modelConfig;
         },
@@ -77,11 +94,18 @@ define([
             $.each(andClauses, function(andClauseKey, andClauseValue) {
                 var name = andClauseValue.name(),
                     operator = andClauseValue.operator(),
-                    value = andClauseValue.value()(),
+                    value = andClauseValue.value(),
                     suffixName = andClauseValue.suffix_name(),
                     suffixOperator = andClauseValue.suffix_operator(),
                     suffixValue = andClauseValue.suffix_value()(),
                     andClauseStr = '';
+
+                name = contrail.checkIfFunction(name) ? name() : name;
+                suffixName = contrail.checkIfFunction(suffixName) ? suffixName() : suffixName;
+                operator = contrail.checkIfFunction(operator) ? operator() : operator;
+                suffixOperator = contrail.checkIfFunction(suffixOperator) ? suffixOperator() : suffixOperator;
+                value = contrail.checkIfFunction(value) ? value() : value;
+                suffixValue = contrail.checkIfFunction(suffixValue) ? suffixValue() : suffixValue;
 
                 if (name !== '' &&  operator !== '' && value !== '') {
                     andClauseStr = name + ' ' + operator + ' ' + value;

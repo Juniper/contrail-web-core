@@ -53,10 +53,11 @@ define([
         this.TMPL_EDITABLE_GRID_COMBOBOX_VIEW = "core-editable-grid-combobox-view-template";
         this.TMPL_CHECKBOX_VIEW = "core-checkbox-view-template";
         this.TMPL_EDITABLE_GRID_CHECKBOX_VIEW = "core-editable-grid-checkbox-view-template";
+        this.TMPL_TEXTAREA_VIEW = "core-textarea-view-template";
+        this.TMPL_EDITABLE_GRID_TEXTAREA_VIEW = "core-editable-grid-textarea-view-template";
         this.TMPL_DATETIMEPICKER_VIEW = "core-datetimepicker-view-template";
         this.TMPL_NUMERICTEXTBOX_VIEW = "core-numerictextbox-view-template";
         this.TMPL_AUTOCOMPLETETEXTBOX_VIEW = "core-autocompletetextbox-view-template";
-        this.TMPL_TEXTAREA_VIEW = "core-textarea-view-template";
         this.TMPL_BUTTON_VIEW = "core-button-view-template";
         this.TMPL_COMPOSITE_VIEW = "core-composite-view-template";
         this.TMPL_RADIO_BUTTON_VIEW = "core-radio-button-view-template";

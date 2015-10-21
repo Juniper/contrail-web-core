@@ -1018,7 +1018,10 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-dropdown-view-template">
-    <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div data-bind="
+        {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
+        style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }
+        ">
         <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1058,7 +1061,10 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-multiselect-view-template">
-    <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div data-bind="
+        {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
+        style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }
+    ">
         <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1106,6 +1112,41 @@
                 event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailCombobox: {}"
         />
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-textarea-view-template">
+    <div class="row-fluid form-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="span10">
+            <label>{{label}}</label>
+        </div>
+        <div class="span2">
+            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+            </span>
+        </div>
+    </div>
+    <div class="row-fluid form-element"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="textarea-input-append input-append inset span12">
+            <textarea
+                name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}" rows="1"
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
+            </textarea>
+            <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="icon-pencil"></i></span>
+        </div>
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-editable-grid-textarea-view-template">
+    <div class="row-fluid"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="textarea-input-append input-append inset span12">
+            <textarea
+                name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}" rows="1"
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
+            </textarea>
+            <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="icon-pencil"></i></span>
+        </div>
     </div>
 </script>
 
@@ -1268,7 +1309,7 @@
         <thead>
         <tr>
             {{#each columns}}
-            <th class="{{this.class}}" data-bind="style: {width: '{{width}}px' }">{{this.name}}</th>
+            <th class="{{this.class}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }">{{this.name}}</th>
             {{/each}}
         </tr>
         </thead>
@@ -1301,7 +1342,7 @@
         {{#each viewConfig.rows}}
         <tr class="data-row">
             {{#each columns}}
-            <td id="{{elementId}}" class="data-cell" data-bind="style: {width: '{{width}}px' }"></td>
+            <td id="{{elementId}}" class="data-cell" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }"></td>
             {{/each}}
             {{#each rowActions}}
             <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
@@ -1428,13 +1469,13 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-tabs-template">
-    <div id="contrail-tabs" class="row-fluid graph-tabs">
+    <div id="{{elementId}}" class="row-fluid graph-tabs">
         <ul>
-            {{#each this}}
+            {{#each tabs}}
                 <li><a id="{{this.elementId}}-tab-link" class="contrail-tab-link" href="#{{this.elementId}}-tab">{{this.title}}</a></li>
             {{/each}}
         </ul>
-        {{#each this}}
+        {{#each tabs}}
             <div id="{{this.elementId}}-tab">
                 <div id="{{this.elementId}}" class="contrail-tab-content {{this.viewConfig.class}}"></div>
             </div>
@@ -1569,22 +1610,22 @@
     <div id="{{elementId}}" class="widget-box transparent">
         {{#IfCompare controls.top false operator='!=='}}
         <div class="widget-header">
-            <p class="smaller" {{#IfCompare controls.top.collapseable false operator='!=='}} data-action="widget-collapse"{{/IfCompare}}>
+            <p class="smaller" {{#IfCompare controls.top.default.collapseable false operator='!=='}} data-action="widget-collapse"{{/IfCompare}}>
                 {{#IfCompare header.iconClass false operator='!=='}}
                     <i class="{{header.iconClass}}"></i>
                 {{/IfCompare}}
                 {{header.title}}
             </p>
             <div class="widget-toolbar pull-right">
-                {{#IfCompare controls.top.collapseable false operator='!=='}}
+                {{#IfCompare controls.top.default.collapseable false operator='!=='}}
                     <a data-action="widget-collapse">
-                        <i class="icon-chevron-up"></i>
+                        <i class="{{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} icon-chevron-down {{else}} icon-chevron-up {{/IfCompare}}"></i>
                     </a>
                 {{/IfCompare}}
             </div>
         </div>
         {{/IfCompare}}
-        <div class="widget-body">
+        <div class="widget-body" {{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} style="display:none;"{{/IfCompare}}>
             <div class="widget-main padding-4">
                 {{#IfCompare controls.right false operator='!=='}}
                 <div class="widget-main-rightmenu colmask rightmenu">
@@ -1609,29 +1650,6 @@
         <span data-bind="text: errors().{{prefixId}}_form_error"></span>
     </div>
     <div>Are you sure you want to delete {{item}} <b>{{itemId}}</b>?</div>
-</script>
-
-<script type="text/x-handlebars-template" id="core-textarea-view-template">
-    <div class="row-fluid form-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="span10">
-            <label>{{label}}</label>
-        </div>
-        <div class="span2">
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </div>
-    </div>
-    <div class="row-fluid form-element"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="input-append inset span12">
-            <textarea
-                name="{{id}}" class="where-textarea span12 {{class}}" value="" placeholder="{{placeHolder}}" rows="1"
-                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
-            </textarea>
-            <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="icon-pencil"></i></span>
-        </div>
-        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
-    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-button-view-template">
