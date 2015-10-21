@@ -83,7 +83,7 @@ define([
     };
 
     this.createPageTestConfig = function (moduleId, fakeServerConfig, pageConfig, getTestConfigCB, testInitFn) {
-        var pageTestConfig = defaultPageTestConfig;
+        var pageTestConfig = $.extend(true, {}, defaultPageTestConfig);
         if (moduleId != null) {
             pageTestConfig.moduleId = moduleId;
         }
@@ -247,9 +247,9 @@ define([
             }
         });
 
-        asyncTest("Core Tests", function (assert) {
-            expect(0);
-            menuHandler.deferredObj.done(function () {
+        var menuHandlerDoneCB = function () {
+            asyncTest("Core Tests", function (assert) {
+                expect(0);
                 var loadingStartedDefObj = loadFeature(pageTestConfig.page.hashParams);
                 loadingStartedDefObj.done(function () {
                     //additional fake server response setup
@@ -277,11 +277,19 @@ define([
                             //uncomment following line to console all the fake server request/responses
                             //console.log(fakeServer.requests);
                         });
-
                     }, pageLoadTimeOut);
                 });
             });
-        });
+        };
+
+        /**
+         * sometimes menuHandler finishes loading the menu before deferredObj attaches done CB
+         */
+        if (menuHandler.deferredObj.state() == 'resolved') {
+            menuHandlerDoneCB();
+        } else {
+            menuHandler.deferredObj.done(menuHandlerDoneCB);
+        }
 
     };
 

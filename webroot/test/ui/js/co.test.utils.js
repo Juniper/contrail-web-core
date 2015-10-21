@@ -159,7 +159,7 @@ define([
     };
 
     this.getGridDataSourceWithOnlyRemotes = function (viewConfig) {
-        if (contrail.checkIfExist(viewConfig.elementConfig)) {
+        if (viewConfig != null && contrail.checkIfExist(viewConfig.elementConfig)) {
             var dataSource = viewConfig.elementConfig['body']['dataSource'];
             //return everything except dataView, cacheConfig if exist
             if (contrail.checkIfExist(dataSource.cacheConfig)) {
