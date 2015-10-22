@@ -92,7 +92,7 @@ define([
 
                             if(contrail.checkIfFunction(onAllViewsRenderComplete)) {
                                 // Call any callback associated with onViewRenderComplete of child view.
-                                onAllViewsRenderComplete();
+                                onAllViewsRenderComplete(self);
                             }
                         }
                     }

@@ -48,6 +48,9 @@
                 endLoading: function(selectedTabLinkId){
                     $(selectedTabLinkId).find('.contrail-tabs-loading').remove();
                 },
+                refresh: function() {
+                    $(self).tabs('refresh');
+                },
                 /*
                  * This function adds a tab to the existing tabs,which accepts two parameters
                  * id,name.Id is href for anchor tag(div id) and name is the tab name

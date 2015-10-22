@@ -77,6 +77,8 @@ define([
         this.TMPL_NETWORKING_GRAPH_VIEW = "core-networking-graph-template";
         this.TMPL_CONTROL_PANEL = "core-control-panel-template";
         this.TMPL_TABS_VIEW = "core-tabs-template";
+        this.TMPL_TAB_LINK_VIEW = "core-tabs-link-template";
+        this.TMPL_TAB_CONTENT_VIEW = "core-tabs-content-template";
         this.TMPL_CHART_VIEW = "core-pd-chart-template";
         this.TMPL_DETAIL_FOUNDATION = "core-detail-foundation-template";
         this.TMPL_DETAIL_SECTION = "core-detail-section-template";

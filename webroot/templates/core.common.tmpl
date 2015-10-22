@@ -1469,18 +1469,32 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-tabs-template">
-    <div id="{{elementId}}" class="row-fluid graph-tabs">
-        <ul>
+    <div id="{{elementId}}" class="row-fluid contrail-tabs">
+        <ul class="contrail-tab-link-list">
             {{#each tabs}}
                 <li><a id="{{this.elementId}}-tab-link" class="contrail-tab-link" href="#{{this.elementId}}-tab">{{this.title}}</a></li>
             {{/each}}
         </ul>
         {{#each tabs}}
-            <div id="{{this.elementId}}-tab">
-                <div id="{{this.elementId}}" class="contrail-tab-content {{this.viewConfig.class}}"></div>
+            <div id="{{elementId}}-tab">
+                <div id="{{elementId}}" class="contrail-tab-content {{viewConfig.class}}"></div>
             </div>
         {{/each}}
     </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-tabs-link-template">
+    {{#each this}}
+        <li><a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{this.elementId}}-tab">{{this.title}}</a></li>
+    {{/each}}
+</script>
+
+<script type="text/x-handlebars-template" id="core-tabs-content-template">
+    {{#each this}}
+        <div id="{{elementId}}-tab">
+            <div id="{{elementId}}" class="contrail-tab-content {{viewConfig.class}}"></div>
+        </div>
+    {{/each}}
 </script>
 
 <script type="text/x-handlebars-template" id="core-not-found-message-template">
