@@ -14,7 +14,6 @@ define([
 
         var viewConfig = cotu.getViewConfigObj(viewObj),
             el = viewObj.el,
-            chartItems = viewObj.model.getItems(),
             chartOptions = viewConfig.chartOptions,
             chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions);
 
@@ -39,6 +38,36 @@ define([
             }
             equal($(el).find('.nv-lineWithFocusChart .nv-context .nv-x .nv-axislabel').text().trim(), "Time",
                 "X axis title should be set as Time");
+        }, cotc.SEVERITY_LOW));
+
+        /**
+         * Test number of lines
+         *
+         */
+        basicTestGroup.registerTest(CUnit.test(cotm.CHARTVIEW_COUNT_LINES, function () {
+            expect(1);
+            equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-line').length, 2,
+                "Number of lines in chart equal to number of lines set");
+        }, cotc.SEVERITY_LOW));
+
+        /**
+         * Test color of lines
+         *
+         */
+        basicTestGroup.registerTest(CUnit.test(cotm.CHARTVIEW_COLOR_LINES, function () {
+            expect(2);
+            if($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-0 .nv-line').parent().css('fill').indexOf('#') !== -1){
+                console.log('here');
+                equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-0 .nv-line').parent().css('fill'), "#1f77b4",
+                    "Color of lines in chart equal to color of lines set");
+                equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-1 .nv-line').parent().css('fill'), "#6baed6",
+                    "Color of lines in chart equal to color of lines set");
+            } else {
+                equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-0 .nv-line').parent().css('fill'), "rgb(31, 119, 180)",
+                    "Color of lines in chart equal to color of lines set");
+                equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-1 .nv-line').parent().css('fill'), "rgb(107, 174, 214)",
+                    "Color of lines in chart equal to color of lines set");
+            }
         }, cotc.SEVERITY_LOW));
 
         chartViewTestSuite.run(suiteConfig.groups, suiteConfig.severity);
