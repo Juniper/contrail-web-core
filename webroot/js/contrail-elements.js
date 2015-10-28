@@ -1110,7 +1110,7 @@ function findTextInObj(text, data){
     }
     return found;
 };
-function addNewItemMainDataSource(item, data) {
+function appendNewItemMainDataSource(item, data) {
     var newValue = item.value != null ? item.value : item.text;
     for(var i = 0; i < data.length; i++) {
         if(data[i].text === item.groupName) {
@@ -1338,7 +1338,9 @@ function constructSelect2(self, defaultOption, args) {
                     return self.select2('val');
                 }
                 else{
-                    self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
+                    if(self.select2('val') !== value) {
+                        self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
+                    }
                 }
             },
             customValue : function(item) {
@@ -1347,7 +1349,7 @@ function constructSelect2(self, defaultOption, args) {
                     if(data != null && data.length > 0) {
                         var answer = findTextInObj(item.text, data);
                         if(!answer) {
-                            addNewItemMainDataSource(item, data);
+                            appendNewItemMainDataSource(item, data);
                         }
                         answer = findTextInObj(item.text, data);
                         self.select2('val', answer.value, true);
