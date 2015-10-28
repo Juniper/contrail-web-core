@@ -1736,3 +1736,41 @@
 <script type="text/x-handlebars-template" id="core-modal-template">
     <div id="{{prefixId}}_modal"></div>
 </script>
+
+<script type="text/x-handlebars-template" id="core-generic-collection-view-template">
+    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <table class="contrail-editable-grid-table">
+        <tbody data-bind="foreach: {{viewConfig.collection}}">
+            <div class="row-fluid collection-actions collection-actions-add">
+                <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
+                    <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
+                </a>
+            </div>
+        {{#each viewConfig.rows}}
+        <tr class="data-row">
+            {{#each columns}}
+            <th class="{{this.class}}" data-bind="style: {width: '{{width}}px' }">{{viewConfig.label}}</th>
+            {{/each}}
+        </tr>
+        {{/each}}
+        {{#each viewConfig.rows}}
+        <tr class="data-row">
+            {{#each columns}}
+            <td id="{{elementId}}" class="data-cell" data-bind="style: {width: '{{width}}px' }"></td>
+            {{/each}}
+            {{#each rowActions}}
+            <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
+            {{/each}}
+        </tr>
+        {{/each}}
+        <tr class="error-row">
+            {{#each columns}}
+            <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+            {{/each}}
+        </tr>
+        </tbody>
+    </table>
+
+    </div>
+</script>
+

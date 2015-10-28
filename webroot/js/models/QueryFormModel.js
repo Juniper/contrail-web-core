@@ -182,7 +182,7 @@ define([
             return attrs4Server;
         },
 
-        getQueryRequestPostData: function (serverCurrentTime) {
+        getQueryRequestPostData: function (serverCurrentTime, reqObj) {
             var self = this,
                 queryReqObj = {
                     formModelAttrs: this.getFormModelAttributes()
@@ -208,6 +208,7 @@ define([
             queryReqObj.async = 'true';
             queryReqObj.autoSort = 'true';
             queryReqObj.autoLimit = 'true';
+            queryReqObj = $.extend(true, {}, queryReqObj, reqObj);
 
             return queryReqObj;
         },
@@ -345,7 +346,8 @@ define([
 
         $.each(tableSchema.columns, function(schemaKey, schemaValue) {
             if (schemaValue.index){
-                if (tableName === 'FlowSeriesTable') {
+                if (tableName === 'FlowSeriesTable' ||
+                        tableName === 'FlowRecordTable') {
                     if (schemaValue.name === 'protocol') {
                         schemaValue.suffixes = ['sport', 'dport'];
                         tableSchemaFormatted.push(schemaValue);

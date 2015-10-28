@@ -65,6 +65,7 @@ define([
         this.TMPL_TEXT_VIEW = "core-text-view-template";
 
         this.TMPL_COLLECTION_VIEW = "core-collection-view-template";
+        this.TMPL_GEN_COLLECTION_VIEW = "core-generic-collection-view-template";
         this.TMPL_QUERY_OR_COLLECTION_VIEW = "query-or-collection-view-template";
 
         this.TMPL_SECTION_VIEW = "core-section-view-template";

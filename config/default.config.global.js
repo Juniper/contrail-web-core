@@ -264,8 +264,7 @@ config.physicaldevices.interface_delimiters = ['.', ':'];
 * Below are the disabled list of UI features.
 *****************************************************************************/
 config.features = {};
-config.features.disabled = ['config_alarms', 'mon_infra_mx',
-                            'mon_infra_underlay'];
+config.features.disabled = ['config_alarms', 'mon_infra_mx'];
 
 /*****************************************************************************
 * Below are the configurations used only for ui

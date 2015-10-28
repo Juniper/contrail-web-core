@@ -12,8 +12,10 @@ define([
                 graphConfig = viewConfig.graphModelConfig,
                 tooltipConfig, clickEventsConfig, controlPanelConfig,
                 graphControlPanelId = '#'+ ctwl.GRAPH_CONTROL_PANEL_ID;
-
-            self.model = new ContrailGraphModel(graphConfig);
+            self.model = viewConfig.model;
+            if(self.model == null) {
+                self.model = new ContrailGraphModel(graphConfig);
+            } 
             self.viewConfig = viewConfig;
 
             joint.dia.Paper.apply(self, arguments);
@@ -92,7 +94,11 @@ define([
             //Handle clicks and queue extra clicks if performed with the duration for smooth animation
             if (allowZoom == true) {
                 allowZoom = false;
-                $(panzoomTargetId).panzoom("zoom", zoomOut, { focal: focal});
+                if(panzoomConfig['focalZoom']) {
+                    $(panzoomTargetId).panzoom("zoom", zoomOut, { focal: focal});
+                } else {
+                    $(panzoomTargetId).panzoom("zoom", zoomOut);
+                }
                 setTimeout(function(){
                     allowZoom = true;
                 }, panZoomDefaultConfig.duration);
@@ -170,84 +176,7 @@ define([
     };
 
     var initMouseEvents = function(graphSelectorElement, tooltipConfig, graphView) {
-        var timer = null;
-        $('.popover').remove();
-        $.each(tooltipConfig, function (keyConfig, valueConfig) {
-            valueConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_ELEMENT_TOOLTIP, valueConfig);
-            $('g.' + keyConfig).popover('destroy');
-            $('g.' + keyConfig).popover({
-                trigger: 'manual',
-                html: true,
-                animation: false,
-                placement: function (context, src) {
-                    var srcOffset = $(src).offset(),
-                        srcWidth = $(src)[0].getBoundingClientRect().width,
-                        bodyWidth = $('body').width(),
-                        bodyHeight = $('body').height(),
-                        tooltipWidth = valueConfig.dimension.width;
-
-                    $(context).addClass('popover-tooltip');
-                    $(context).css({
-                        'min-width': tooltipWidth + 'px',
-                        'max-width': tooltipWidth + 'px'
-                    });
-                    $(context).addClass('popover-tooltip');
-
-                    if (srcOffset.left > tooltipWidth) {
-                        return 'left';
-                    } else if (bodyWidth - srcOffset.left - srcWidth > tooltipWidth){
-                        return 'right';
-                    } else if (srcOffset.top > bodyHeight / 2){
-                         return 'top';
-                    } else {
-                        return 'bottom';
-                    }
-                },
-                title: function () {
-                    return valueConfig.title($(this), graphView);
-                },
-                content: function () {
-                    return valueConfig.content($(this), graphView);
-                },
-                container: $('body')
-            })
-            .off("mouseenter")
-            .on("mouseenter", function () {
-                var _this = this;
-                    clearTimeout(timer);
-                    timer = setTimeout(function(){
-                        $('g').popover('hide');
-                        $('.popover').remove();
-
-                        $(_this).popover("show");
-
-                        $(".popover").find('.btn')
-                            .off('click')
-                            .on('click', function() {
-                                var actionKey = $(this).data('action'),
-                                    actionsCallback = valueConfig.actionsCallback($(_this), graphView);
-
-                                actionsCallback[actionKey].callback();
-                                $(_this).popover('hide');
-                            }
-                        );
-
-                        $(".popover").find('.popover-remove-icon')
-                            .off('click')
-                            .on('click', function() {
-                                $(_this).popover('hide');
-                                $(this).parents('.popover').remove();
-                            }
-                        );
-
-                    }, contrail.handleIfNull(valueConfig.delay, cowc.TOOLTIP_DELAY))
-            })
-            .off("mouseleave")
-            .on("mouseleave", function () {
-                clearTimeout(timer);
-            });
-        });
-
+        cowu.bindPopoverInTopology(tooltipConfig, graphView);
         $(graphSelectorElement).find("text").on('mousedown touchstart', function (e) {
             e.stopImmediatePropagation();
             if($(this).closest('.no-drag-element').length == 0) {
@@ -298,7 +227,7 @@ define([
         var onTopContainerBankDblClickHandler = function(e) {
             if(!$(e.target).closest('g').length && !$(e.target).closest('.control-panel-items').length) {
                 if(contrail.checkIfFunction(eventConfig['blank:pointerdblclick'])) {
-                    eventConfig['blank:pointerdblclick']();
+                    eventConfig['blank:pointerdblclick'](e);
                 }
             }
         };
@@ -324,6 +253,22 @@ define([
                 .on('cell:pointerdblclick', function(cellView, evt, x, y) {
                     clearTimeout(timer);
                     eventConfig['cell:pointerdblclick'](cellView, evt, x, y);
+                });
+        }
+        if(contrail.checkIfFunction(eventConfig['cell:pointerdown'])) {
+            graphView
+                .off('cell:pointerdown')
+                .on('cell:pointerdown', function(cellView, evt, x, y) {
+                    clearTimeout(timer);
+                    eventConfig['cell:pointerdown'](cellView, evt, x, y);
+                });
+        }
+        if(contrail.checkIfFunction(eventConfig['cell:pointerup'])) {
+            graphView
+                .off('cell:pointerup')
+                .on('cell:pointerup', function(cellView, evt, x, y) {
+                    clearTimeout(timer);
+                    eventConfig['cell:pointerup'](cellView, evt, x, y);
                 });
         }
 

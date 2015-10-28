@@ -64,6 +64,52 @@
                         $(self).append('<div id="'+id+'" style="display:none">'+name+'</div>');
                     }
                     $(self).tabs('refresh');
+                },
+                
+                /*
+                 * This function disables the tab and hides it based on the flag
+                 * accepts either array of tab indexes or single tab index  
+                 */
+                disableTab: function (tabIndex, hide) {
+                    if($.isArray(tabIndex)) {
+                        for (var i = 0; i < tabIndex.length; i++) {
+                            $(self).data('contrailTabs').disableTab(tabIndex[i], hide);
+                        }
+                        return;
+                    }
+                    
+                    // Get the array of disabled tabs, if any
+                    var disabledTabs = self.tabs("option", "disabled");
+
+                    if ($.isArray(disabledTabs)) {
+                        var pos = $.inArray(tabIndex, disabledTabs);
+
+                        if (pos < 0) {
+                            disabledTabs.push(tabIndex);
+                        }
+                    }
+                    else {
+                        disabledTabs = [tabIndex];
+                    }
+                    $(self).tabs("option", "disabled", disabledTabs);
+
+                    if (hide === true) {
+                        $(self).find('li:eq(' + tabIndex + ')').addClass('ui-state-hidden');
+                    }
+                },
+                /*
+                 * This function enables the tab which accepts either array of
+                 * indexes or single tab index  
+                 */
+                enableTab: function (tabIndex) {
+                    if($.isArray(tabIndex)) {
+                        for (var i = 0; i < tabIndex.length; i++) {
+                            $(self).data('contrailTabs').enableTab(tabIndex[i]);
+                        }
+                        return;
+                    }
+                    $(self).find('li:eq(' + tabIndex + ')').removeClass('ui-state-hidden');
+                    $(self).tabs("enable", tabIndex);
                 }
             });
 
@@ -1067,7 +1113,7 @@ function findTextInObj(text, data){
     }
     return found;
 };
-function addNewItemMainDataSource(item, data) {
+function appendNewItemMainDataSource(item, data) {
     var newValue = item.value != null ? item.value : item.text;
     for(var i = 0; i < data.length; i++) {
         if(data[i].text === item.groupName) {
@@ -1295,7 +1341,9 @@ function constructSelect2(self, defaultOption, args) {
                     return self.select2('val');
                 }
                 else{
-                    self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
+                    if(self.select2('val') !== value) {
+                        self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
+                    }
                 }
             },
             customValue : function(item) {
@@ -1304,7 +1352,7 @@ function constructSelect2(self, defaultOption, args) {
                     if(data != null && data.length > 0) {
                         var answer = findTextInObj(item.text, data);
                         if(!answer) {
-                            addNewItemMainDataSource(item, data);
+                            appendNewItemMainDataSource(item, data);
                         }
                         answer = findTextInObj(item.text, data);
                         self.select2('val', answer.value, true);
