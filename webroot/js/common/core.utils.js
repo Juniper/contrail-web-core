@@ -377,8 +377,11 @@ define(['underscore'], function (_) {
                     '{{#IfValidJSONValueByPath "' + configValue.key + '" data ' + configKey + '}}' +
                     '<li>' +
                     '<label class="inline row-fluid">' +
-                    '<span class="key span5 ' + parentConfig.keyClass + ' ' + configValue.keyClass +'"> {{getLabel "' + configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
-                    '<span class="value span7 ' + parentConfig.valueClass +'">{{{getValueByConfig data config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
+                    '<span class="key span5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
+                    ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
+                    configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
+                    '<span class="value span7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
+                    ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">{{{getValueByConfig data config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
 
                 template += '</label>' +
                     '</li>' +
