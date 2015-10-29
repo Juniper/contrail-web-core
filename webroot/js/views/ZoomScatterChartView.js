@@ -505,7 +505,7 @@ define([
                     var controlPanelExpandedTemplateConfig = customControlPanelFilterConfig.viewConfig;
 
                     if (chartControlPanelExpandedSelector.find('.control-panel-filter-container').length == 0) {
-                        var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_FILTER);
+                        var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_CONTROL_PANEL_FILTER);
 
                         chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
                     }

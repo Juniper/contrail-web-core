@@ -1540,27 +1540,7 @@
     </div>
 </script>
 
-<script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-template">
-    <div class="zoom-scatter-chart-container colmask rightmenu">
-        <div class="colleft">
-            <div class="col1wrap">
-                <div class="col1 chart-container">
-                </div>
-            </div>
-            <div class="col2 chart-control-panel-container">
-            </div>
-            <div class="chart-control-panel-expanded-container hide"></div>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-handlebars-template" id="core-chart-template">
-    <div class="chart-container row-fluid">
-        <svg style="height:{{height}}px;"></svg></div>
-    </div>
-</script>
-
-<script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-control-panel-filter-template">
+<script type="text/x-handlebars-template" id="core-control-panel-filter-template">
     <div class="control-panel-filter-container row-fluid">
         <div class="row-fluid">
             <p class="control-panel-filter-title">
@@ -1586,10 +1566,40 @@
                     {{/each}}
                 {{/IfCompare}}
 
+                {{#IfCompare type 'radio' operator='=='}}
+                    {{#each items}}
+                        <div class="control-panel-filter-group-item padding-5-0">
+                            <input type="radio" name="control-panel-filter" class="ace-input" {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}}/>
+                            <span class="ace-lbl {{labelCssClass}}"> {{text}}</span>
+                        </div>
+                    {{/each}}
+                {{/IfCompare}}
+
                 </div>
             </div>
             {{/each}}
         </div>
+    </div>
+</script>
+
+
+<script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-template">
+    <div class="zoom-scatter-chart-container colmask rightmenu">
+        <div class="colleft">
+            <div class="col1wrap">
+                <div class="col1 chart-container">
+                </div>
+            </div>
+            <div class="col2 chart-control-panel-container">
+            </div>
+            <div class="chart-control-panel-expanded-container hide"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-chart-template">
+    <div class="chart-container row-fluid">
+        <svg style="height:{{height}}px;"></svg></div>
     </div>
 </script>
 
@@ -1700,6 +1710,13 @@
         <div id="qe-{{queryPrefix}}-results-container">
             <div id='qe-{{queryPrefix}}-results'></div>
         </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="query-queue-page-template">
+    <div id="qe-{{queryQueueType}}-queue-container">
+        <div id='qe-{{queryQueueType}}-queue-grid'></div>
+        <div id='qe-{{queryQueueType}}-queue-result'></div>
     </div>
 </script>
 

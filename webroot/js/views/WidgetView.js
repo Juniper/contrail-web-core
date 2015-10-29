@@ -57,6 +57,12 @@ define([
                         rightControls = viewConfig.controls.right,
                         controlPanelSelector = widgetElement.find('.control-panel-container');
 
+                    $.each(rightControls.custom, function(configKey, configValue) {
+                        if (configKey === 'filterChart' && configValue.enable === true) {
+                            rightControls.custom.filterChart = getFilterChartConfig(configValue);
+                        }
+                    });
+
                     $(controlPanelSelector).html(controlPanelTemplate(rightControls));
 
                     if (contrail.checkIfKeyExistInObject(true, rightControls, 'default.zoom.enabled') && rightControls.default.zoom.enabled) {
@@ -70,11 +76,11 @@ define([
                             $.each(configValue.events, function(eventKey, eventValue) {
                                 controlPanelElementSelector
                                     .off(eventKey)
-                                    .on(eventKey, function(e) {
+                                    .on(eventKey, function(event) {
                                         if (!$(this).hasClass('disabled') && !$(this).hasClass('refreshing')) {
                                             $(controlPanelSelector).find('.control-panel-item').addClass('disabled');
                                             $(this).removeClass('disabled').addClass('refreshing');
-                                            eventValue(e, this, controlPanelSelector);
+                                            eventValue(event, this, controlPanelSelector);
                                         }
                                     });
                             });
@@ -96,6 +102,56 @@ define([
             controls: {
                 top: false,
                 right: false
+            }
+        }
+    }
+
+    function getFilterChartConfig(filterConfig) {
+        return {
+            iconClass: 'icon-filter',
+            title: 'Filter',
+            events: {
+                click: function (event, self, controlPanelSelector) {
+                    var controlPanelExpandedTemplateConfig = filterConfig.viewConfig,
+                        chartControlPanelExpandedSelector = $(controlPanelSelector).parent().find('.control-panel-expanded-container');
+
+                    if (chartControlPanelExpandedSelector.find('.control-panel-filter-container').length == 0) {
+                        var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_CONTROL_PANEL_FILTER);
+
+                        chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
+                    }
+
+                    $(self).toggleClass('active');
+                    $(self).toggleClass('refreshing');
+
+                    chartControlPanelExpandedSelector.toggle();
+
+                    if (chartControlPanelExpandedSelector.is(':visible')) {
+                        $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
+                            $.each(groupValue.items, function (itemKey, itemValue) {
+                                $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
+                                    .off('click')
+                                    .on('click', function (event) {
+                                        if (contrail.checkIfKeyExistInObject(true, itemValue, 'events.click')) {
+                                            itemValue.events.click(event)
+                                        }
+                                    });
+                            });
+                        });
+
+                        chartControlPanelExpandedSelector.find('.control-panel-filter-close')
+                            .off('click')
+                            .on('click', function() {
+                                chartControlPanelExpandedSelector.hide();
+                                $(self).removeClass('active');
+                                $(self).removeClass('refreshing');
+                                $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
+                            });
+
+                    } else {
+                        $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
+                    }
+                }
             }
         }
     }

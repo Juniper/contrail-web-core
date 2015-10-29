@@ -2105,7 +2105,10 @@ p.error, p.error-text {
 }
 .control-panel-expanded-container {
     position: absolute;
-    height: 224px;
+    right: -10px;
+    top: 5px;
+    width: 280px;
+    height: 245px;
     background-color: #fff;
     border: 1px solid #ccc;
     overflow-y: auto;

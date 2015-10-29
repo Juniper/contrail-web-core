@@ -77,6 +77,7 @@ define([
         this.TMPL_WIZARD_VIEW = "core-wizard-view-template";
         this.TMPL_NETWORKING_GRAPH_VIEW = "core-networking-graph-template";
         this.TMPL_CONTROL_PANEL = "core-control-panel-template";
+        this.TMPL_CONTROL_PANEL_FILTER = "core-control-panel-filter-template";
         this.TMPL_TABS_VIEW = "core-tabs-template";
         this.TMPL_TAB_LINK_VIEW = "core-tabs-link-template";
         this.TMPL_TAB_CONTENT_VIEW = "core-tabs-content-template";
@@ -87,7 +88,6 @@ define([
         this.TMPL_DETAIL_SECTION_ROW = "core-detail-section-row-template";
         this.TMPL_CHART = "core-chart-template";
         this.TMPL_ZOOMED_SCATTER_CHART = "core-zoomed-scatter-chart-template";
-        this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_FILTER = "core-zoomed-scatter-chart-control-panel-filter-template";
         this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_LEGEND = "core-zoomed-scatter-chart-control-panel-legend-template";
         this.TMPL_WIDGET_VIEW = "core-widget-view-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
@@ -172,6 +172,8 @@ define([
         this.QE_HASH_ELEMENT_PREFIX = "#qe-";
         this.QE_FORM_SUFFIX = "-form";
         this.QE_RESULTS_SUFFIX = "-results";
+        this.QE_QUEUE_GRID_SUFFIX = "-queue-grid";
+        this.QE_QUEUE_RESULT_SUFFIX = "-queue-result";
 
         this.QE_FLOW_QUERY_QUEUE = "fqq";
         this.QE_LOG_QUERY_QUEUE = "lqq";
@@ -222,6 +224,13 @@ define([
         this.UMID_FLOW_SERIES_FORM_MODEL = "qe:fs-form-model";
         this.UMID_FLOW_SERIES_CHART_MODEL = "qe:fs-chart-model";
         this.UMID_FLOW_SERIES_LINE_CHART_MODEL = "qe:fs-line-chart-model";
+        this.UMID_STAT_QUERY_FORM_MODEL = "qe:stat-form-model";
+        this.UMID_STAT_QUERY_CHART_MODEL = "qe:stat-chart-model";
+        this.UMID_STAT_QUERY_LINE_CHART_MODEL = "qe:stat-line-chart-model";
+
+        this.MAP_Y_FORMATTER = {
+            "sum(bytes)": "bytes"
+        };
 
         // QE Constants - End
     };

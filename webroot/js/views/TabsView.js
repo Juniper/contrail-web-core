@@ -21,7 +21,7 @@ define([
 
             $.each(self.tabs, function(tabKey, tabValue) {
                 self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'] = tabKey;
-                if (contrail.checkIfKeyExistInObject(true, 'tabValue.tabConfig', 'renderOnActivate') &&  tabValue.tabConfig.renderOnActivate === true) {
+                if (contrail.checkIfKeyExistInObject(true, tabValue, 'tabConfig.renderOnActivate') &&  tabValue.tabConfig.renderOnActivate === true) {
                     self.tabRendered.push(false);
                 } else {
                     self.renderTab(tabValue);
