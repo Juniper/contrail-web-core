@@ -204,7 +204,7 @@ define([
             queryReqObj['formModelAttrs'] = formModelAttrs;
             queryReqObj.queryId = qewu.generateQueryUUID();
             queryReqObj.chunk = 1;
-            queryReqObj.chunkSize = cowc.QE_RESULT_CHUNK_SIZE;
+            queryReqObj.chunkSize = cowc.QE_RESULT_CHUNK_SIZE_10K;
             queryReqObj.async = 'true';
             queryReqObj.autoSort = 'true';
             queryReqObj.autoLimit = 'true';

@@ -162,7 +162,8 @@ define([
 
         // QE Constants - Start
         this.QE_TIMEOUT = 12000;
-        this.QE_RESULT_CHUNK_SIZE = 10000;
+        this.QE_RESULT_CHUNK_SIZE_10K = 10000;
+        this.QE_RESULT_CHUNK_SIZE_1K = 1000;
         this.QE_MODAL_CLASS_700 = 'modal-700';
         this.QE_DEFAULT_MODAL_CLASSNAME = 'modal-840';
         this.QE_FLOW_TABLE_TYPE = "FLOW";
