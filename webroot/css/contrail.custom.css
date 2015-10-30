@@ -2668,6 +2668,7 @@ p.error, p.error-text {
 /* Section View Styles */
 .modal-body > form > .section-content {
     padding: 0 1.5em;
+	height:0px;
 }
 .row-fluid.form-label [class*="span"] {
     min-height: 25px;
