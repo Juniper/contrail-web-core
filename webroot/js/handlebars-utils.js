@@ -229,10 +229,12 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
 
         case 'LinkGenerator':
 
-            var linkTemplate = Handlebars.compile(templateGeneratorConfig.template),
+            var linkTemplate,
                 params = contrail.handleIfNull(templateGeneratorConfig.params, {}),
-                hrefLinkArray = [], hrefLink;
-
+                hrefLinkArray = [], hrefLink = 'javascript:void(0)';
+            if(templateGeneratorConfig.template != null) {
+                linkTemplate = Handlebars.compile(templateGeneratorConfig.template);
+            }
             $.each(params, function(paramKey, paramValue) {
                 if ($.isPlainObject(paramValue)) {
                     if (paramValue.type == 'fixed') {
@@ -247,13 +249,17 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
 
             if ($.isArray(value)) {
                 $.each(value, function(vKey, vValue) {
-                    hrefLink = linkTemplate({key: vValue, params: params});
+                    if(linkTemplate != null) {
+                        hrefLink = linkTemplate({key: vValue, params: params});
+                    }
                     hrefLinkArray.push('<a class="value-link" target="_blank" href="' + hrefLink + '">' + vValue + '</a>');
                 });
 
                 returnValue = hrefLinkArray.join('');
             } else {
-                hrefLink = linkTemplate({key: value, params: params});
+                if(linkTemplate != null) {
+                    hrefLink = linkTemplate({key: value, params: params});
+                }
                 returnValue = '<a class="value-link" target="_blank" href="' + hrefLink + '">' + value + '</a>';
             }
         break;
