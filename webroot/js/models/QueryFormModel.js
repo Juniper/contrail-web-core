@@ -11,13 +11,19 @@ define([
 ], function (_, Backbone, Knockout, ContrailModel, QueryOrModel) {
     var QueryFormModel = ContrailModel.extend({
         defaultSelectFields: [],
+        disableSelectFields: [],
+        disableSubstringInSelectFields: ['CLASS('],
 
         constructor: function (modelData) {
             var self = this,
                 modelRemoteDataConfig;
 
+            var defaultSelectFields = this.defaultSelectFields,
+                disableFieldArray = [].concat(defaultSelectFields).concat(this.disableSelectFields),
+                disableSubstringArray = this.disableSubstringInSelectFields;
+
             if (contrail.checkIfExist(modelData.table_name)) {
-                modelRemoteDataConfig = getTableSchemaConfig(self, modelData.table_name, this.defaultSelectFields);
+                modelRemoteDataConfig = getTableSchemaConfig(self, modelData.table_name, disableFieldArray, disableSubstringArray);
             }
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
@@ -87,11 +93,13 @@ define([
                     type: 'GET'
                 },
                 contrailViewModel = this.model(),
-                defaultSelectFields = this.defaultSelectFields;
+                defaultSelectFields = this.defaultSelectFields,
+                disableFieldArray = [].concat(defaultSelectFields).concat(this.disableSelectFields),
+                disableSubstringArray = this.disableSubstringInSelectFields;
 
             if(tableName != '') {
                 $.ajax(ajaxConfig).success(function(response) {
-                    var selectFields = getSelectFields4Table(response, defaultSelectFields),
+                    var selectFields = getSelectFields4Table(response, disableFieldArray, disableSubstringArray),
                         whereFields = getWhereFields4NameDropdown(response, tableName);
 
                     self.select_data_object().requestState((selectFields.length > 0) ? cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY : cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY);
@@ -204,7 +212,7 @@ define([
             queryReqObj['formModelAttrs'] = formModelAttrs;
             queryReqObj.queryId = qewu.generateQueryUUID();
             queryReqObj.chunk = 1;
-            queryReqObj.chunkSize = cowc.QE_RESULT_CHUNK_SIZE_10K;
+            queryReqObj.chunkSize = cowc.QE_RESULT_CHUNK_SIZE_1K;
             queryReqObj.async = 'true';
             queryReqObj.autoSort = 'true';
             queryReqObj.autoLimit = 'true';
@@ -286,7 +294,7 @@ define([
         validations: {}
     });
 
-    function getTableSchemaConfig(model, tableName, defaultSelectFields) {
+    function getTableSchemaConfig(model, tableName, disableFieldArray, disableSubstringArray) {
         var tableSchemeUrl = '/api/qe/table/schema/' + tableName,
             modelRemoteDataConfig = {
                 remote: {
@@ -295,7 +303,7 @@ define([
                         type: 'GET'
                     },
                     setData2Model: function (contrailViewModel, response) {
-                        var selectFields = getSelectFields4Table(response, defaultSelectFields),
+                        var selectFields = getSelectFields4Table(response, disableFieldArray, disableSubstringArray),
                             whereFields = getWhereFields4NameDropdown(response, tableName);
 
                         model.select_data_object().requestState((selectFields.length > 0) ? cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY : cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY);
@@ -319,7 +327,7 @@ define([
         return modelRemoteDataConfig;
     };
 
-    function getSelectFields4Table(tableSchema, defaultSelectFields) {
+    function getSelectFields4Table(tableSchema, disableFieldArray, disableSubstringArray) {
         if ($.isEmptyObject(tableSchema)) {
            return [];
         }
@@ -327,15 +335,29 @@ define([
             filteredSelectFields = [];
 
         $.each(tableColumns, function (k, v) {
-            if (!(contrail.checkIfExist(v) && (v.name).indexOf('CLASS(') > -1)
-                && !(contrail.checkIfExist(v) && (v.name).indexOf('UUID') > -1)
-                && defaultSelectFields.indexOf(v.name) == -1) {
-
+            if (contrail.checkIfExist(v) && showSelectField(v.name, disableFieldArray, disableSubstringArray)) {
                 filteredSelectFields.push(v);
             }
         });
 
         return filteredSelectFields;
+    };
+
+    function showSelectField(fieldName, disableFieldArray, disableSubstringArray) {
+        var showField = true;
+
+        for (var i = 0; i < disableSubstringArray.length; i++) {
+            if(fieldName.indexOf(disableSubstringArray[i]) != -1) {
+                showField = false;
+                break;
+            }
+        }
+
+        if(disableFieldArray.indexOf(fieldName) != -1) {
+            showField = false;
+        }
+
+        return showField;
     };
 
     function getWhereFields4NameDropdown(tableSchema, tableName) {

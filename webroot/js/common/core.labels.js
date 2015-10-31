@@ -114,10 +114,15 @@ define([
         this.QE_STAT_QUERY_CHART_GRID_ID = "qe-stat-query-chart-grid";
 
         this.QE_OBJECT_LOGS_ID = "qe-object-logs";
-        this.QE_OBJECT_LOGS_SECTION_ID = "qe--object-logs-section";
+        this.QE_OBJECT_LOGS_SECTION_ID = "qe-object-logs-section";
         this.QE_OBJECT_LOGS_TAB_ID = "qe-object-logs-tab";
         this.QE_OBJECT_LOGS_GRID_ID = "qe-object-logs-grid";
         this.QE_SELECT_OBJECT_TABLE = "Select Object Table";
+
+        this.QE_SYSTEM_LOGS_ID = "qe-system-logs";
+        this.QE_SYSTEM_LOGS_SECTION_ID = "qe-system-logs-section";
+        this.QE_SYSTEM_LOGS_TAB_ID = "qe-system-logs-tab";
+        this.QE_SYSTEM_LOGS_GRID_ID = "qe-system-logs-grid";
 
         this.TITLE_QUERY = "Query";
         this.TITLE_RESULTS = "Results";
@@ -126,6 +131,7 @@ define([
         this.TITLE_FLOW_SERIES_RESULTS = "Flow Series Results";
         this.TITLE_STATS_QUERY = "Statistics Query";
         this.TITLE_OBJECT_LOGS = "Object Logs";
+        this.TITLE_SYSTEM_LOGS = "System Logs";
 
         this.QE_SELECT_MODAL_SUFFIX = '-select-modal';
         this.QE_CHART_ID = 'qe-chart';
