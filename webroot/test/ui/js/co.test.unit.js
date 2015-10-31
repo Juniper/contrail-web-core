@@ -77,7 +77,8 @@ define([
         getTestConfig: function () {
             return {};
         },
-        testInitFn: function() {
+        testInitFn: function(defObj) {
+            if (defObj) defObj.resolve();
             return;
         }
     };
@@ -262,21 +263,26 @@ define([
 
                     setTimeout(function () {
                         var testConfig = pageTestConfig.getTestConfig();
-                        var mockDataDefObj = $.Deferred();
+                        var testInitDefObj = $.Deferred();
 
-                        cotu.setViewObjAndViewConfig4All(testConfig.rootView, testConfig.tests);
+                        pageTestConfig.testInitFn(testInitDefObj);
+                        // testInitFn can have async calls. wait for the promise to resolve.
+                        $.when(testInitDefObj).done(function() {
+                            var mockDataDefObj = $.Deferred();
+                            cotu.setViewObjAndViewConfig4All(testConfig.rootView, testConfig.tests);
 
-                        //create and update mock data in test config
-                        cotu.createMockData(testConfig.rootView, testConfig.tests, mockDataDefObj);
+                            //create and update mock data in test config
+                            cotu.createMockData(testConfig.rootView, testConfig.tests, mockDataDefObj);
 
-                        $.when(mockDataDefObj).done(function () {
-                            //run initializations before tests if any
-                            pageTestConfig.testInitFn();
-                            self.executeCommonTests(testConfig.tests);
-                            QUnit.start();
-                            //uncomment following line to console all the fake server request/responses
-                            //console.log(fakeServer.requests);
+                            $.when(mockDataDefObj).done(function () {
+                                //run initializations before tests if any
+                                self.executeCommonTests(testConfig.tests);
+                                QUnit.start();
+                                //uncomment following line to console all the fake server request/responses
+                                //console.log(fakeServer.requests);
+                            });
                         });
+
                     }, pageLoadTimeOut);
                 });
             });
