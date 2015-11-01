@@ -1570,6 +1570,10 @@ d3.custom.barChart = function barChart() {
             height = y.range()[0],
             xaxis_max_value = x.domain()[1];
         logMessage('crossFilterChart','Start');
+         if(group.top(1).length > 0)
+            y.domain([0, group.top(1)[0].value]);
+         else
+            y.domain([0, 1]);
 
         div.each(function () {
             var div = d3.select(this),
@@ -1585,7 +1589,7 @@ d3.custom.barChart = function barChart() {
                 div.select('.title .reset').on('click',function() {
                     chart.filter(null);
                     if(typeof(onBrushEnd) == 'function') {
-                        onBrushEnd();
+                        onBrushEnd(null);
                     }
                 });
 
@@ -1612,7 +1616,7 @@ d3.custom.barChart = function barChart() {
 
                 g.append("g")
                     .attr("class", "axis")
-                    .attr("transform", "translate(0," + height + ")")
+                    .attr("transform", "translate(0," + height + ")")       //To show axis at bottom
                     .call(axis);
                 // Initialize the brush component with pretty resize handles.
                 var gBrush = g.append("g").attr("class", "brush").call(brush);
@@ -1635,7 +1639,6 @@ d3.custom.barChart = function barChart() {
                         .attr("width", x(extent[1]) - x(extent[0]));
                 }
             }
-
             g.selectAll(".bar").attr("d", barPath);
         });
 
@@ -1678,32 +1681,17 @@ d3.custom.barChart = function barChart() {
     brush.on("brush.chart", function () {
         var g = d3.select(this.parentNode),
             extent = brush.extent();
+        console.info("before round",extent);
         if (round) g.select(".brush")
             .call(brush.extent(extent = extent.map(round)))
             .selectAll(".resize")
             .style("display", null);
+        console.info("after round",extent);
         g.select("#clip-" + id + " rect")
             .attr("x", x(extent[0]))
             .attr("width", x(extent[1]) - x(extent[0]));
-        extent[0] = Math.floor(extent[0]);
         dimension.filterAll();
-        if(xScale != null) {
-            var xRangeArr = xScale.range();
-            var beginIdx = Math.max(0,_.sortedIndex(xRangeArr,extent[0])-1);
-            var endIdx = Math.min(_.sortedIndex(xRangeArr,extent[1]),xRangeArr.length-1);
-            //If it falls in the last bucket,need to include the last value also
-            if(_.sortedIndex(xRangeArr,extent[1]) == xRangeArr.length) {
-                dimension.filterFunction(function(d) {
-                    return d >= xRangeArr[beginIdx] && d <= xRangeArr[endIdx];
-                });
-            } else {
-                dimension.filterFunction(function(d) {
-                    return d >= xRangeArr[beginIdx] && d < xRangeArr[endIdx-1];
-                });
-            }
-        } else {
-            dimension.filterFunction(function(d) { return d >= extent[0] && d < extent[1]});
-        }
+        dimension.filterRange(extent);
     });
 
     brush.on("brushend.chart", function () {
@@ -1714,8 +1702,10 @@ d3.custom.barChart = function barChart() {
             dimension.filterAll();
         }
         if(onBrushEnd != null) {
-            onBrushEnd();
+            var extent = brush.extent();
+            onBrushEnd(extent);
         }
+        console.info("brush end",extent);
     });
 
     chart.margin = function (_) {

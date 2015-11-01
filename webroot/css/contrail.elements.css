@@ -3638,6 +3638,19 @@ td.td-actions a.td-action {
 #vrouter-dashboard-chart .zoom-scatter-chart-container.colmask {
     clear:none;
 }
+#vrouter-nodes-chart-widget .widget-header {
+    text-align: left;
+}
+
+.filter-list-container li.filter-criteria {
+    list-style: none;
+    border: 1px solid;
+    line-height: 18px;
+    display:inline-block;
+    padding:0px 3px;
+    border-color:#dadada;
+}
+
 /* scrollbar */
 .slimScrollBar {
   -webkit-border-radius: 0 !important;

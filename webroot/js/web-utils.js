@@ -2284,6 +2284,116 @@ function formatVN(vn){
  * Methods to set and update the cross filters which are linked to the single datasource
 */
 
+function CFDataSource() {
+    var self = this;
+    var cf = null,
+        dimensions={},
+        filters={},
+        callBacks=$.Callbacks("unique"),
+        callBackFns={}
+
+    self.updateData = function(data) {
+        //Let's update crossFilter only once on getting data
+        if(data.length > 0 && cf == null)  {
+            cf = crossfilter(data);
+            //Add the dimensions that exist before updating data
+            for (var key in dimensions) {
+                if (dimensions.hasOwnProperty(key)) {
+                    this.addDimension(key);
+                }
+            }
+        }
+    }
+
+    this.addDimension =  function(dimensionName,dimFn) {
+        var dimension;
+        //Add dimension only if it doesn't exist
+        //Need to add dimension as cross filter might be rebuilt
+        if(cf != null) {
+           if(dimFn == null) {
+                dimFn = function(d) {
+                    return d[dimensionName];
+                }
+           }
+           dimension = cf.dimension(dimFn);
+           dimensions[dimensionName] = dimension;
+           filters[dimensionName] = null;
+        }
+        return dimension;
+    }
+
+    this.getDimension = function(dimensionName){
+        return dimensions[dimensionName];
+    }
+
+    this.applyFilter = function(dimensionName,criteria) {
+        if(dimensions[dimensionName] != null) {
+            var dimension = dimensions[dimensionName];
+            if(criteria == null) {
+                this.removeFilter(dimensionName);
+            } else {
+                dimension.filter(criteria);
+                filters[dimensionName] = criteria;
+            }
+            var thirdDimension = cf.dimension(function(d) { return d[dimensionName]; });
+            var filteredData = thirdDimension.top(Infinity);
+            thirdDimension.remove();
+           // cfObj.callBacks.fire();
+            return filteredData;
+        }
+    }
+
+    this.removeFilter = function(dimensionName) {
+        if(dimensions[dimensionName] != null) {
+            var dimension = dimensions[dimensionName];
+            dimension.filterAll();
+            var currFilter = filters[dimensionName];
+            filters[dimensionName] = null;
+            return currFilter;
+            //cfObj.callBacks.fire();
+        }
+    }
+
+    this.getCurrentFilteredData = function() {
+        if(cf != null ) {
+            var thirdDimension = cf.dimension(function(d) { return d['x']; });
+            var t = thirdDimension.top(Infinity);
+            thirdDimension.remove();
+            //cfObj.callBacks.fire(t);
+            return t;
+        }
+    }
+
+    this.addCallBack = function(callBackName,callBackFn) {
+        //Remove existing callback for the same name
+        callBacks.remove(callBackFns[callBackName]);
+        callBacks.add(callBackFn);
+        callBackFns[callBackName] = callBackFn;
+    }
+
+    this.removeCallBack = function(cfName,callBackName){
+        var callBackFn = this.getCallBackFn(cfName,callBackName);
+        var callBacks = this.getCallBacks(cfName);
+        
+        callBacks.remove(callBackFns['callBackName']);
+        delete callBackFns[callBackName];
+    }
+
+    this.fireCallBacks = function(options){
+        var ret = {};
+        if(callBacks != null){
+            var data = this.getCurrentFilteredData();
+            ret['data'] = data;
+            ret['cfg'] = {};
+            if(options != null && options.source != null){
+                ret['cfg']['source'] = options.source;
+            }
+            callBacks.fire(ret);
+        }
+    }
+
+}
+
 function ManageCrossFilters() {
     this.load = function() {
         var obj = {
@@ -2317,29 +2427,34 @@ function ManageCrossFilters() {
         cfObj.crossfilter = dataCF;
         var dimensions = this.getDimensions(cfName);
         globalObj['crossFilters'][cfName] = cfObj;
+        //Add the dimensions that exist before updating data
         for (var key in dimensions) {
             if (dimensions.hasOwnProperty(key)) {
                 this.addDimension(cfName,key);
             }
         }
+        //Good to add filters??
         //cfObj.callBacks.fire();
     }
     
-    this.addDimension = function(cfName,dimensionName,formatFn){
+    this.addDimension = function(cfName,dimensionName,dimFn) {
         var cfObj = globalObj['crossFilters'][cfName];
         var dataCF = cfObj.crossfilter;
         var dimension;
-        if(dataCF != null){
-           dimension = dataCF.dimension(function(d) { 
-               if(formatFn != null)
-                   return formatFn(d[dimensionName]);
-               else
-                   return d[dimensionName]; 
-           });
+        //Add dimension only if it doesn't exist
+        //Need to add dimension as cross filter might be rebuilt
+        if(dataCF != null) {
+           if(dimFn == null) {
+                dimFn = function(d) {
+                    return d[dimensionName];
+                }
+           }
+           dimension = dataCF.dimension(dimFn);
            cfObj.dimensions[dimensionName] = dimension;
            cfObj.filters[dimensionName] = [];
         }
         globalObj['crossFilters'][cfName] = cfObj;
+        return dimension;
     }
 
     this.getDimensions = function(cfName){
@@ -2377,21 +2492,23 @@ function ManageCrossFilters() {
             if(criteria == null && filterFunc == null) {
                 this.removeFilter(cfName,dimensionName);
             } else {
-                var filterFunc = filterFunc;
+                /*var filterFunc = filterFunc;
                 //If custom filterFunc is not passed
                 if(filterFunc == null) { 
                     filterFunc = function(d) {
                         return d >= criteria[0] && d <= criteria[1]
                     };
                 }
-                var filterByCriteria = dimension.filterFunction(filterFunc);
+                dimension.filterFunction(filterFunc);
+                cfObj['filters'][dimensionName].push([criteria,filterFunc]);*/
+                dimension.filter(criteria);
                 cfObj['filters'][dimensionName].push([criteria,filterFunc]);
             }
             var thirdDimension = cf.dimension(function(d) { return d[dimensionName]; });
-            var t = thirdDimension.top(Infinity);
+            var filteredData = thirdDimension.top(Infinity);
             thirdDimension.remove();
            // cfObj.callBacks.fire();
-            return t;
+            return filteredData;
         }
     }
     
