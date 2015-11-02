@@ -1319,31 +1319,50 @@ function formatVirtualRouterType(type) {
     var formattedType = '';
     if(type === '-') {
          formattedType = type;
-    } else if(typeof type === 'object') {
-        for(var i = 0; i < type.length; i++) {
-            var actText = '';
-            switch(type[i]) {
+    }else if(typeof type === 'object') {
+        if(type.length > 0) {
+            for(var i = 0; i < type.length; i++) {
+                var actText = '';
+                switch(type[i]) {
+                    case 'hypervisor' :
+                        actText = 'Hypervisor';
+                        break;
+                    case 'embedded' :
+                        actText = 'Embedded';
+                        break;
+                    case 'tor-agent' :
+                        actText = 'TOR Agent';
+                        break;
+                    case 'tor-service-node' :
+                        actText = 'TOR Service Node';
+                        break;
+                }
+                if(formattedType === '') {
+                    formattedType = actText
+                } else {
+                    formattedType += ' , ' + actText;
+                }
+            }
+        } else {
+            formattedType = 'Hypervisor';
+        }
+    }else {
+            switch(type) {
                 case 'hypervisor' :
-                    actText = 'Hypervisor';
+                    formattedType = 'Hypervisor';
                     break;
                 case 'embedded' :
-                    actText = 'Embedded';
+                    formattedType = 'Embedded';
                     break;
                 case 'tor-agent' :
-                    actText = 'TOR Agent';
-                    break; 
+                    formattedType = 'TOR Agent';
+                    break;
                 case 'tor-service-node' :
-                    actText = 'TOR Service Node';
-                    break;                 
-            }                
-            if(formattedType === '') {
-                formattedType = actText
-            } else {
-                formattedType += ' , ' + actText;
+                    formattedType = 'TOR Service Node';
+                    break;
             }
-        }
     }
-    return formattedType;         
+    return formattedType;
 }
 function isValidMACAddress(mac) {
     mac = mac.toUpperCase();
