@@ -72,7 +72,7 @@ define([
 
             name = contrail.checkIfFunction(name) ? name() : name;
 
-            return contrail.checkIfKeyExistInObject(true, whereDataObject, 'value_option_list.name') ? whereDataObject['value_option_list'][name] : [];
+            return contrail.checkIfKeyExistInObject(true, whereDataObject, 'value_option_list.' + name) ? whereDataObject['value_option_list'][name] : [];
         },
 
         getSuffixNameOptionList: function(viewModel) {
