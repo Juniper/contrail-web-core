@@ -328,7 +328,8 @@ config.network.router_L3Enable = true;
 /*****************************************************************************
  * The below section specifies the list of allowed ports when requested through
  * proxy.
- *
+ * enabled - if set true, proxy feature will be enabled, else will be disabled, and
+ * all proxy request will be responded back with error.
  * vrouter_node_ports - the allowed port list when the ip/host in proxy URL
  *      used has role as vrouter/agent node
  * control_node_ports - the allowed port list when the ip/host in proxy URL
@@ -340,6 +341,7 @@ config.network.router_L3Enable = true;
  *
  *****************************************************************************/
 config.proxy = {};
+config.proxy.enabled = true;
 config.proxy.vrouter_node_ports = [
     '8085', /* HttpPortAgent */
     '8102', /* HttpPortVRouterNodemgr */
@@ -366,6 +368,17 @@ config.proxy.config_node_ports = [
     '8096', /* HttpPortDeviceManager */
     '8100', /* HttpPortConfigNodemgr */
 ];
+
+/*****************************************************************************
+ *
+ * A string describing the ciphers to use or exclude. Consult
+ *  <http://www.openssl.org/docs/apps/ciphers.html#CIPHER_LIST_FORMAT> for
+ *  details on the format.
+ *
+ *****************************************************************************/
+config.server_options = {};
+config.server_options.ciphers =
+    'ECDHE-RSA-AES256-SHA384:AES256-SHA256:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM';
 
 // Export this as a module.
 module.exports = config;
