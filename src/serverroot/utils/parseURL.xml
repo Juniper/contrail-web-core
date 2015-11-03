@@ -23,13 +23,13 @@
     <item>
         <url>/download</url>
         <method>get</method>
-        <feature>monitoring</feature>
+        <feature>unsupportedFeature</feature>
         <callback>commonUtils.download</callback>
     </item>
     <item>
         <url>/upload/:filename</url>
         <method>get</method>
-        <feature>monitoring</feature>
+        <feature>unsupportedFeature</feature>
         <callback>commonUtils.upload</callback>
     </item>
     <item>
