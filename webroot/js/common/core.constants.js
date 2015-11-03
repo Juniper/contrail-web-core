@@ -198,6 +198,8 @@ define([
         this.OBJECT_LOGS_PREFIX = "ol";
         this.SYSTEM_LOGS_PREFIX = "sl";
 
+        this.CONSOLE_LOGS_PREFIX = "cl";
+
         this.DEFAULT_QUERY_PREFIX = 'query';
 
         this.FLOW_SERIES_TABLE = "FlowSeriesTable";

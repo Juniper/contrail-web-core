@@ -17,8 +17,14 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
     }
 
     require(initDepFiles, function(validation) {
-        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache', 'core-labels', 'core-messages', 'core-views-default-config', 'layout-handler', 'text!templates/core.common.tmpl'],
-            function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, LayoutHandler, CoreCommonTmpls) {
+        require(['core-utils', 'core-constants', 'core-formatters', 'core-cache', 'core-labels', 'core-messages', 'core-views-default-config', 'layout-handler',
+                 'core-basedir/js/common/qe.utils',
+                 'core-basedir/js/common/qe.model.config',
+                 'core-basedir/js/common/qe.grid.config',
+                 'core-basedir/js/common/qe.parsers',
+                 'text!templates/core.common.tmpl'],
+            function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, LayoutHandler,
+                      QEUtils, QEModelConfig, QEGridConfig, QEParsers, CoreCommonTmpls) {
                 cowc = new CoreConstants();
                 cowu = new CoreUtils();
                 cowf = new CoreFormatters();
@@ -27,6 +33,12 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
                 covdc = new CoreViewsDefaultConfig();
                 kbValidation = validation;
                 cowch = new Cache();
+
+                qewu = new QEUtils();
+                qewmc = new QEModelConfig();
+                qewgc = new QEGridConfig();
+                qewp = new QEParsers();
+
                 initBackboneValidation();
                 initCustomKOBindings(Knockout);
                 initDomEvents();
