@@ -203,6 +203,7 @@ define([
         this.DEFAULT_QUERY_PREFIX = 'query';
 
         this.FLOW_SERIES_TABLE = "FlowSeriesTable";
+        this.FLOW_RECORD_TABLE = "FlowRecordTable";
         this.FLOW_CLASS = "FlowClass";
         this.MESSAGE_TABLE = "MessageTable";
 
@@ -240,6 +241,9 @@ define([
         this.UMID_FLOW_SERIES_FORM_MODEL = "qe:fs-form-model";
         this.UMID_FLOW_SERIES_CHART_MODEL = "qe:fs-chart-model";
         this.UMID_FLOW_SERIES_LINE_CHART_MODEL = "qe:fs-line-chart-model";
+
+        this.UMID_FLOW_RECORD_FORM_MODEL = "qe:fr-form-model";
+
         this.UMID_STAT_QUERY_FORM_MODEL = "qe:stat-form-model";
         this.UMID_STAT_QUERY_CHART_MODEL = "qe:stat-chart-model";
         this.UMID_STAT_QUERY_LINE_CHART_MODEL = "qe:stat-line-chart-model";
