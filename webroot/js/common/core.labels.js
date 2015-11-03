@@ -98,12 +98,18 @@ define([
         this.QE_FLOW_SERIES_CHART_PAGE_ID = 'qe-flow-series-chart-page';
         this.QE_FLOW_SERIES_LINE_CHART_ID = "qe-flow-series-line-chart"
         this.QE_FLOW_SERIES_CHART_GRID_ID = "qe-flow-series-chart-grid";
-        this.QE_SELECT_STAT_TABLE = "Select Statistic Table";
+
+        this.QE_FLOW_RECORD_ID = "qe-flow-record";
+        this.QE_FLOW_RECORD_SECTION_ID = "qe-flow-record-section";
+        this.QE_FLOW_RECORD_TAB_ID = "qe-flow-record-tab";
+        this.QE_FLOW_RECORD_GRID_ID = "qe-flow-record-grid";
+
         this.QE_FLOW_QUEUE_GRID_ID = "qe-flow-queue-grid";
         this.QE_FLOW_QUEUE_ID = "qe-flow-queue";
-
         this.TITLE_FLOW_QUERY_QUEUE = "Flow Query Queue";
 
+
+        this.QE_SELECT_STAT_TABLE = "Select Statistic Table";
         this.QE_STAT_QUERY_ID = "qe-stat-query";
         this.QE_STAT_QUERY_SECTION_ID = "qe-stat-query-section";
         this.QE_STAT_QUERY_TAB_ID = "qe-stat-query-tab";
@@ -114,18 +120,25 @@ define([
         this.QE_STAT_QUERY_CHART_GRID_ID = "qe-stat-query-chart-grid";
 
         this.QE_OBJECT_LOGS_ID = "qe-object-logs";
-        this.QE_OBJECT_LOGS_SECTION_ID = "qe--object-logs-section";
+        this.QE_OBJECT_LOGS_SECTION_ID = "qe-object-logs-section";
         this.QE_OBJECT_LOGS_TAB_ID = "qe-object-logs-tab";
         this.QE_OBJECT_LOGS_GRID_ID = "qe-object-logs-grid";
         this.QE_SELECT_OBJECT_TABLE = "Select Object Table";
+
+        this.QE_SYSTEM_LOGS_ID = "qe-system-logs";
+        this.QE_SYSTEM_LOGS_SECTION_ID = "qe-system-logs-section";
+        this.QE_SYSTEM_LOGS_TAB_ID = "qe-system-logs-tab";
+        this.QE_SYSTEM_LOGS_GRID_ID = "qe-system-logs-grid";
 
         this.TITLE_QUERY = "Query";
         this.TITLE_RESULTS = "Results";
         this.TITLE_CHART = "Chart";
         this.TITLE_FLOW_SERIES = "Flow Series";
+        this.TITLE_FLOW_RECORD = "Flow Record";
         this.TITLE_FLOW_SERIES_RESULTS = "Flow Series Results";
         this.TITLE_STATS_QUERY = "Statistics Query";
         this.TITLE_OBJECT_LOGS = "Object Logs";
+        this.TITLE_SYSTEM_LOGS = "System Logs";
 
         this.QE_SELECT_MODAL_SUFFIX = '-select-modal';
         this.QE_CHART_ID = 'qe-chart';

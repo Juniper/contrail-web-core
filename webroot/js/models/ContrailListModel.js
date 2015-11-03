@@ -227,14 +227,14 @@ define([
                 ajaxConfig: primaryRemote.ajaxConfig,
                 dataParser: primaryRemote.dataParser,
                 initCallback: primaryRemote.initCallback,
-                successCallback: function (response, resetDataFlag) {
+                successCallback: function (resultJSON, resetDataFlag, response) {
                     if (resetDataFlag) {
-                        contrailListModel.setData(response);
+                        contrailListModel.setData(resultJSON);
                     } else {
-                        contrailListModel.addData(response);
+                        contrailListModel.addData(resultJSON);
                     }
                     if (contrail.checkIfFunction(primaryRemote.successCallback)) {
-                        primaryRemote.successCallback(response, contrailListModel);
+                        primaryRemote.successCallback(resultJSON, contrailListModel, response);
                     }
                 },
                 refreshSuccessCallback: function () {},
@@ -353,15 +353,15 @@ define([
                 ajaxConfig: primaryRemote.ajaxConfig,
                 dataParser: primaryRemote.dataParser,
                 initCallback: primaryRemote.initCallback,
-                successCallback: function (response, resetDataFlag) {
+                successCallback: function (resultJSON, resetDataFlag, response) {
                     // TODO: refreshData for newContrailListModel will never get fired.
                     if (resetDataFlag) {
-                        newContrailListModel.setData(response);
+                        newContrailListModel.setData(resultJSON);
                     } else {
-                        newContrailListModel.addData(response);
+                        newContrailListModel.addData(resultJSON);
                     }
                     if (contrail.checkIfFunction(primaryRemote.successCallback)) {
-                        primaryRemote.successCallback(response, newContrailListModel);
+                        primaryRemote.successCallback(resultJSON, newContrailListModel, response);
                     }
                 },
                 refreshSuccessCallback: function () {},

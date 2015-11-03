@@ -132,6 +132,7 @@ define([
                                                         templateId: cowc.TMPL_EDITABLE_GRID_COMBOBOX_VIEW,
                                                         path: "value",
                                                         dataBindValue: "value()",
+                                                        dataBindOptionList: 'getValueOptionList',
                                                         width: 200,
                                                         elementConfig: {
                                                             placeholder: 'Select Value'

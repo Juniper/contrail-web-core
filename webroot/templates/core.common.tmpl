@@ -1028,7 +1028,6 @@
                 value: {{viewConfig.dataBindValue}},
                 {{#if viewConfig.customValue}}customValue: {{viewConfig.customValue}},{{/if}}
                 optionList: {{viewConfig.dataBindOptionList}},
-                event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailDropdown: {}"
         />
     </div>
@@ -1070,7 +1069,6 @@
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
-                event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailMultiselect: {}"
         />
     </div>
@@ -1109,7 +1107,6 @@
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
-                event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailCombobox: {}"
         />
     </div>
@@ -1472,18 +1469,32 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-tabs-template">
-    <div id="{{elementId}}" class="row-fluid graph-tabs">
-        <ul>
+    <div id="{{elementId}}" class="row-fluid contrail-tabs">
+        <ul class="contrail-tab-link-list">
             {{#each tabs}}
                 <li><a id="{{this.elementId}}-tab-link" class="contrail-tab-link" href="#{{this.elementId}}-tab">{{this.title}}</a></li>
             {{/each}}
         </ul>
         {{#each tabs}}
-            <div id="{{this.elementId}}-tab">
-                <div id="{{this.elementId}}" class="contrail-tab-content {{this.viewConfig.class}}"></div>
+            <div id="{{elementId}}-tab">
+                <div id="{{elementId}}" class="contrail-tab-content {{viewConfig.class}}"></div>
             </div>
         {{/each}}
     </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-tabs-link-template">
+    {{#each this}}
+        <li><a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{this.elementId}}-tab">{{this.title}}</a></li>
+    {{/each}}
+</script>
+
+<script type="text/x-handlebars-template" id="core-tabs-content-template">
+    {{#each this}}
+        <div id="{{elementId}}-tab">
+            <div id="{{elementId}}" class="contrail-tab-content {{viewConfig.class}}"></div>
+        </div>
+    {{/each}}
 </script>
 
 <script type="text/x-handlebars-template" id="core-not-found-message-template">
@@ -1529,27 +1540,7 @@
     </div>
 </script>
 
-<script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-template">
-    <div class="zoom-scatter-chart-container colmask rightmenu">
-        <div class="colleft">
-            <div class="col1wrap">
-                <div class="col1 chart-container">
-                </div>
-            </div>
-            <div class="col2 chart-control-panel-container">
-            </div>
-            <div class="chart-control-panel-expanded-container hide"></div>
-        </div>
-    </div>
-</script>
-
-<script type="text/x-handlebars-template" id="core-chart-template">
-    <div class="chart-container row-fluid">
-        <svg style="height:{{height}}px;"></svg></div>
-    </div>
-</script>
-
-<script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-control-panel-filter-template">
+<script type="text/x-handlebars-template" id="core-control-panel-filter-template">
     <div class="control-panel-filter-container row-fluid">
         <div class="row-fluid">
             <p class="control-panel-filter-title">
@@ -1575,10 +1566,40 @@
                     {{/each}}
                 {{/IfCompare}}
 
+                {{#IfCompare type 'radio' operator='=='}}
+                    {{#each items}}
+                        <div class="control-panel-filter-group-item padding-5-0">
+                            <input type="radio" name="control-panel-filter" class="ace-input" {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}}/>
+                            <span class="ace-lbl {{labelCssClass}}"> {{text}}</span>
+                        </div>
+                    {{/each}}
+                {{/IfCompare}}
+
                 </div>
             </div>
             {{/each}}
         </div>
+    </div>
+</script>
+
+
+<script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-template">
+    <div class="zoom-scatter-chart-container colmask rightmenu">
+        <div class="colleft">
+            <div class="col1wrap">
+                <div class="col1 chart-container">
+                </div>
+            </div>
+            <div class="col2 chart-control-panel-container">
+            </div>
+            <div class="chart-control-panel-expanded-container hide"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-chart-template">
+    <div class="chart-container row-fluid">
+        <svg style="height:{{height}}px;"></svg></div>
     </div>
 </script>
 
@@ -1689,6 +1710,13 @@
         <div id="qe-{{queryPrefix}}-results-container">
             <div id='qe-{{queryPrefix}}-results'></div>
         </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="query-queue-page-template">
+    <div id="qe-{{queryQueueType}}-queue-container">
+        <div id='qe-{{queryQueueType}}-queue-grid'></div>
+        <div id='qe-{{queryQueueType}}-queue-result'></div>
     </div>
 </script>
 

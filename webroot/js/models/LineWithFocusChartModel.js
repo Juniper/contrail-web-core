@@ -135,7 +135,8 @@ define([
                 var container = d3.select(this),
                     that = this,
                     data = chartDataObj.data,
-                    requestState = chartDataObj.requestState;
+                    requestState = chartDataObj.requestState,
+                    yDataKey = contrail.checkIfExist(chartOptions.chartAxesOptionKey) ? chartOptions.chartAxesOptionKey : 'y';
 
                 nvd3v181.utils.initSVG(container);
                 var availableWidth = nvd3v181.utils.availableWidth(width, container, margin),
@@ -227,6 +228,9 @@ define([
 
                 // Main Chart Component(s)
                 lines
+                    .y(function (d, i) {
+                        return d[yDataKey]
+                    })
                     .width(availableWidth)
                     .height(availableHeight1)
                     .color(
@@ -241,6 +245,9 @@ define([
 
                 lines2
                     .defined(lines.defined())
+                    .y(function (d, i) {
+                        return d[yDataKey]
+                    })
                     .width(availableWidth)
                     .height(availableHeight2)
                     .color(
@@ -259,7 +266,7 @@ define([
                 var contextLinesWrap = g.select('.nv-context .nv-linesWrap')
                     .datum(data.filter(function (d) {
                         return !d.disabled
-                    }))
+                    }));
 
                 d3.transition(contextLinesWrap).call(lines2);
 

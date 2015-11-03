@@ -54,8 +54,8 @@ define([
 
             $.each(chartData, function (idx, chartDataPoint) {
                 chartDataPoint['size'] = contrail.handleIfNaN(d3Scale(chartDataPoint[self.sizeFieldName]), 6);
-                // Add default color for the bubble
-                chartDataPoint['color'] = "default";
+                // Add default color for the bubble if not already set
+                chartDataPoint['color'] = chartDataPoint['color'] ? chartDataPoint['color']: "default";
             });
 
             self.width = chartConfig['width'] - margin.left - margin.right;

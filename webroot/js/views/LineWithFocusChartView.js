@@ -57,6 +57,8 @@ define([
             chartOptions = chartViewConfig['chartOptions'];
             chartModel = new LineWithFocusChartModel(chartOptions);
 
+            chartModel.chartOptions = chartOptions;
+
             this.chartModel = chartModel;
 
             if ($(selector).find("svg") != null) {
@@ -129,9 +131,11 @@ define([
 
     function getChartViewConfig(chartData, viewConfig) {
         var chartViewConfig = {},
-            chartOptions = ifNull(viewConfig['chartOptions'], {});
+            chartOptions = ifNull(viewConfig['chartOptions'], {}),
+            chartAxesOptionKey = contrail.checkIfExist(chartOptions.chartAxesOptionKey) ? chartOptions.chartAxesOptionKey : null,
+            chartAxesOption = (contrail.checkIfExist(chartOptions.chartAxesOptions) && chartAxesOptionKey !== null)? chartOptions.chartAxesOptions[chartAxesOptionKey] : {};
 
-        chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions);
+        chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions, chartAxesOption);
 
         chartOptions['forceY'] = getForceYAxis(chartData, chartOptions['forceY']);
 

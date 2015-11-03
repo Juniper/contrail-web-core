@@ -114,6 +114,16 @@ define([
 
             return ((formattedStr == '') ? '-' : formattedStr);
         };
+
+        this.getYAxisFormatterFunction4Chart = function(formatterKey) {
+            switch (formatterKey) {
+                case 'bytes' :
+                    return function(d) { return cowu.addUnits2Bytes(d, false, false, 1); }
+                    break;
+
+                default: return function(d) { return d; }
+            }
+        };
     };
     return CoreFormatters;
 });

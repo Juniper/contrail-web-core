@@ -77,7 +77,10 @@ define([
         this.TMPL_WIZARD_VIEW = "core-wizard-view-template";
         this.TMPL_NETWORKING_GRAPH_VIEW = "core-networking-graph-template";
         this.TMPL_CONTROL_PANEL = "core-control-panel-template";
+        this.TMPL_CONTROL_PANEL_FILTER = "core-control-panel-filter-template";
         this.TMPL_TABS_VIEW = "core-tabs-template";
+        this.TMPL_TAB_LINK_VIEW = "core-tabs-link-template";
+        this.TMPL_TAB_CONTENT_VIEW = "core-tabs-content-template";
         this.TMPL_CHART_VIEW = "core-pd-chart-template";
         this.TMPL_DETAIL_FOUNDATION = "core-detail-foundation-template";
         this.TMPL_DETAIL_SECTION = "core-detail-section-template";
@@ -85,7 +88,6 @@ define([
         this.TMPL_DETAIL_SECTION_ROW = "core-detail-section-row-template";
         this.TMPL_CHART = "core-chart-template";
         this.TMPL_ZOOMED_SCATTER_CHART = "core-zoomed-scatter-chart-template";
-        this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_FILTER = "core-zoomed-scatter-chart-control-panel-filter-template";
         this.TMPL_ZOOMED_SCATTER_CHART_CONTROL_PANEL_LEGEND = "core-zoomed-scatter-chart-control-panel-legend-template";
         this.TMPL_WIDGET_VIEW = "core-widget-view-template";
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
@@ -160,7 +162,8 @@ define([
 
         // QE Constants - Start
         this.QE_TIMEOUT = 12000;
-        this.QE_RESULT_CHUNK_SIZE = 10000;
+        this.QE_RESULT_CHUNK_SIZE_10K = 10000;
+        this.QE_RESULT_CHUNK_SIZE_1K = 1000;
         this.QE_MODAL_CLASS_700 = 'modal-700';
         this.QE_DEFAULT_MODAL_CLASSNAME = 'modal-840';
         this.QE_FLOW_TABLE_TYPE = "FLOW";
@@ -170,6 +173,19 @@ define([
         this.QE_HASH_ELEMENT_PREFIX = "#qe-";
         this.QE_FORM_SUFFIX = "-form";
         this.QE_RESULTS_SUFFIX = "-results";
+        this.QE_QUEUE_GRID_SUFFIX = "-queue-grid";
+        this.QE_QUEUE_RESULT_SUFFIX = "-queue-result";
+
+        this.QE_LOG_LEVELS = [
+            { value: 0, name: "SYS_EMERG" },
+            { value: 1, name: "SYS_ALERT" },
+            { value: 2, name: "SYS_CRIT" },
+            { value: 3, name: "SYS_ERR" },
+            { value: 4, name: "SYS_WARN" },
+            { value: 5, name: "SYS_NOTICE" },
+            { value: 6, name: "SYS_INFO" },
+            { value: 7, name: "SYS_DEBUG" }
+        ],
 
         this.QE_FLOW_QUERY_QUEUE = "fqq";
         this.QE_LOG_QUERY_QUEUE = "lqq";
@@ -180,11 +196,16 @@ define([
         this.FR_QUERY_PREFIX = "fr";
         this.STAT_QUERY_PREFIX = "stat";
         this.OBJECT_LOGS_PREFIX = "ol";
+        this.SYSTEM_LOGS_PREFIX = "sl";
+
+        this.CONSOLE_LOGS_PREFIX = "cl";
 
         this.DEFAULT_QUERY_PREFIX = 'query';
 
         this.FLOW_SERIES_TABLE = "FlowSeriesTable";
+        this.FLOW_RECORD_TABLE = "FlowRecordTable";
         this.FLOW_CLASS = "FlowClass";
+        this.MESSAGE_TABLE = "MessageTable";
 
         this.TIMERANGE_DROPDOWN_VALUES = [
             {'id': 600, 'text': 'Last 10 Mins'},
@@ -220,6 +241,16 @@ define([
         this.UMID_FLOW_SERIES_FORM_MODEL = "qe:fs-form-model";
         this.UMID_FLOW_SERIES_CHART_MODEL = "qe:fs-chart-model";
         this.UMID_FLOW_SERIES_LINE_CHART_MODEL = "qe:fs-line-chart-model";
+
+        this.UMID_FLOW_RECORD_FORM_MODEL = "qe:fr-form-model";
+
+        this.UMID_STAT_QUERY_FORM_MODEL = "qe:stat-form-model";
+        this.UMID_STAT_QUERY_CHART_MODEL = "qe:stat-chart-model";
+        this.UMID_STAT_QUERY_LINE_CHART_MODEL = "qe:stat-line-chart-model";
+
+        this.MAP_Y_FORMATTER = {
+            "sum(bytes)": "bytes"
+        };
 
         // QE Constants - End
     };

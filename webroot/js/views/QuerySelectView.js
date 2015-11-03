@@ -32,6 +32,12 @@ define([
                             if (contrail.checkIfExist(renderConfig) && contrail.checkIfFunction(renderConfig['callback'])) {
                                 renderConfig['callback']();
                             }
+
+                            //TODO - Quick Fix to adjust the height of where textarea; Can be done in cleaner way
+                            $(self.$el).find('[name="select"]')
+                                .height(0)
+                                .height($(self.$el).find('[name="select"]').get(0).scrollHeight - 5);
+
                             $("#" + modalId).modal('hide');
                         },
                         error: function (error) {
