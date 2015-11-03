@@ -50,7 +50,8 @@ define([
         },
 
         setTableFieldValues: function() {
-            var tableName = this.table_name(),
+            var contrailViewModel = this.model(),
+                tableName = this.table_name(),
                 timeRange = this.time_range(),
                 nameOptionList = this.where_data_object()['name_option_list'],
                 nameCheckList = [];
@@ -74,11 +75,22 @@ define([
                 contentType: "application/json; charset=utf-8",
                 dataType: "json"
             }).done(function (resultJSON) {
-                console.log(resultJSON);
+                var valueOptionList = {};
+                $.each(resultJSON.data, function(dataKey, dataValue) {
+                    var nameOption = dataValue.name.split(':')[1];
+
+                    if (!contrail.checkIfExist(valueOptionList[nameOption])) {
+                        valueOptionList[nameOption] = [];
+                    }
+
+                    valueOptionList[nameOption].push(dataValue['fields.value']);
+                });
+
+                contrailViewModel.attributes.where_data_object['value_option_list'] = valueOptionList;
+
             }).error(function(xhr) {
                 console.log(xhr);
             });
-
         },
 
         onChangeTable: function() {

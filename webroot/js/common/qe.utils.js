@@ -121,7 +121,7 @@ define([
 
         self.formatReRunTime = function(reRunTimeRange) {
             var formattedReRunTime = 'custom', timeInSecs;
-            if(reRunTimeRange != null && reRunTimeRange != '0') {
+            if(reRunTimeRange != null && reRunTimeRange != -1) {
                 timeInSecs = parseInt(reRunTimeRange);
                 if(timeInSecs <= 3600) {
                     formattedReRunTime = 'Last ' + timeInSecs/60 + ' mins';

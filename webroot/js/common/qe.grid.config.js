@@ -36,7 +36,12 @@ define([
             return [
                 { id:"startTime", field:"startTime", name:"Date", width:150, minWidth: 150, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
                 { id:"opsQueryId", field:"opsQueryId", name:"Query Id", width:200, sortable:false },
-                { id:"reRunTimeRange", field:"reRunTimeRange", name:"Time Range", width:100, minWidth: 100, sortable:false, formatter: function(r, c, v, cd, dc) { return qewu.formatReRunTime(dc.reRunTimeRange); } },
+                {
+                    id:"reRunTimeRange", field:"reRunTimeRange", name:"Time Range", width:100, minWidth: 100, sortable:false,
+                    formatter: function(r, c, v, cd, dc) {
+                        return qewu.formatReRunTime(dc.reRunQueryString.formModelAttrs.rerun_time_range);
+                    }
+                },
                 { id:"engQuery", field:"engQueryStr", name: "Query", width: 400, formatter: function(r, c, v, cd, dc) {
                         if(!contrail.checkIfExist(dc.engQueryStr)) {
                             return "";

@@ -65,6 +65,16 @@ define([
             });
         },
 
+        getValueOptionList: function(viewModel) {
+            var rootModel = viewModel.parentModel().parentModel.model(),
+                name = viewModel.name(),
+                whereDataObject = rootModel.get('where_data_object');
+
+            name = contrail.checkIfFunction(name) ? name() : name;
+
+            return contrail.checkIfKeyExistInObject(true, whereDataObject, 'value_option_list.name') ? whereDataObject['value_option_list'][name] : [];
+        },
+
         getSuffixNameOptionList: function(viewModel) {
             var rootModel = viewModel.parentModel().parentModel.model(),
                 name = viewModel.name(),
