@@ -12,7 +12,7 @@ define([
                 "table_name": null,
                 "table_type": null,
                 "query_prefix": cowc.DEFAULT_QUERY_PREFIX,
-                "time_range": 1800,
+                "time_range": 600,
                 "from_time": Date.now() - (10 * 60 * 1000),
                 "from_time_utc": Date.now() - (10 * 60 * 1000),
                 "to_time": Date.now(),

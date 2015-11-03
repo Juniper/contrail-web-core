@@ -234,7 +234,7 @@ define([
         },
 
         reset: function (data, event) {
-            this.time_range(1800);
+            this.time_range(600);
             this.time_granularity(60);
             this.time_granularity_unit('secs');
             this.select('');
