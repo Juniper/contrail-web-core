@@ -222,17 +222,22 @@ function setAllCookies (req, res, appData, cookieObj, callback)
     res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
                   '; expires=' +
                   new Date(new Date().getTime() +
-                           global.MAX_AGE_SESSION_ID).toUTCString());
+                           global.MAX_AGE_SESSION_ID).toUTCString() +
+                  "; secure");
     authApi.getCookieObjs(req, appData, function(cookieObjs) {
         if (null != cookieObjs['domain']) {
             res.setHeader('Set-Cookie', 'domain=' + cookieObjs['domain'] +
-                          '; expires=' + new Date(new Date().getTime() +
-                                                  global.MAX_AGE_SESSION_ID).toUTCString());
+                          '; expires=' +
+                          new Date(new Date().getTime() +
+                                   global.MAX_AGE_SESSION_ID).toUTCString() +
+                          "; secure");
         }
         if (null != cookieObjs['project']) {
             res.setHeader('Set-Cookie', 'project=' + cookieObjs['project'] +
-                          '; expires=' + new Date(new Date().getTime() +
-                                                  global.MAX_AGE_SESSION_ID).toUTCString());
+                          '; expires=' +
+                          new Date(new Date().getTime() +
+                                   global.MAX_AGE_SESSION_ID).toUTCString() +
+                          "; secure");
         }
         callback();
     });

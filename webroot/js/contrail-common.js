@@ -178,7 +178,8 @@ function Contrail() {
     };
 
     this.setCookie = function(name, value) {
-        document.cookie = name + "=" + escape(value) + "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/"
+        document.cookie = name + "=" + escape(value) +
+            "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/; secure"
     };
 
     this.formatJSON2HTML = function(json, formatDepth){
