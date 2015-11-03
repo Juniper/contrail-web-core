@@ -1028,7 +1028,6 @@
                 value: {{viewConfig.dataBindValue}},
                 {{#if viewConfig.customValue}}customValue: {{viewConfig.customValue}},{{/if}}
                 optionList: {{viewConfig.dataBindOptionList}},
-                event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailDropdown: {}"
         />
     </div>
@@ -1070,7 +1069,6 @@
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
-                event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailMultiselect: {}"
         />
     </div>
@@ -1109,7 +1107,6 @@
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
-                event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailCombobox: {}"
         />
     </div>
