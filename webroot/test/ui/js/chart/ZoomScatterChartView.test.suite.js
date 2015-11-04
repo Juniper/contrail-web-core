@@ -32,9 +32,9 @@ define([
          */
         basicTestGroup.registerTest(CUnit.test(cotm.CHARTVIEW_AXIS_LABEL, function () {
             expect(2);
-            equal($(el).find('.zoom-scatter-chart .x.label').text().trim(), chartOptions.xLabel,
+            equal($(el).find('.zoom-scatter-chart .x.label').text().trim(), chartOptions.xLabel.trim(),
                 "X axis title should be equal to the title set");
-            equal($(el).find('.zoom-scatter-chart .y.label').text().trim(), chartOptions.yLabel,
+            equal($(el).find('.zoom-scatter-chart .y.label').text().trim(), chartOptions.yLabel.trim(),
                 "Y axis title should be equal to the title set");
         }, cotc.SEVERITY_LOW));
 

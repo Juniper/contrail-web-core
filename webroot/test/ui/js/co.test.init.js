@@ -126,41 +126,42 @@ function testAppInit(testAppConfig) {
                         console.log(logAllTestFiles);
 
                         var testFilesIndex = 0,
-                            loadRunner = true,
+                            loadTestRunner = true,
                             testFile = allTestFiles[testFilesIndex],
                             defObj = $.Deferred();
 
-                        var singleFileLoad = function(testFile, defObj, loadRunner) {
-
-                            var startKarmaCB = function(defObj, loadRunner) {
-                                console.log("Loaded test file: ", testFile);
-                                return window.__karma__.start(defObj, loadRunner);
+                        function loadSingleFileAndStartKarma(testFile, defObj, loadTestRunner) {
+                            var startKarmaCB = function (defObj, loadTestRunner) {
+                                console.log("Loaded test file: " + testFile.split('/').pop());
+                                return window.__karma__.start(defObj, loadTestRunner);
                             };
 
                             require([testFile], function () {
                                 requirejs.config({
                                     deps: [testFile],
-                                    callback: startKarmaCB(defObj, loadRunner)
+                                    callback: startKarmaCB(defObj, loadTestRunner)
                                 });
                             });
 
                         }
 
-                        var loadNextFileOrStartCoverage = function() {
+                        function loadNextFileOrStartCoverage() {
                             requirejs.undef(testFile);
-                            console.log("Unloaded test file: ", allTestFiles[testFilesIndex]);
-                            window.QUnit.stop();
-                            console.log("Test finished");
-                            window.QUnit.init();
+                            console.log("Execution complete. Unloaded test file: " + allTestFiles[testFilesIndex].split('/').pop());
+                            window.QUnit.config.current = {semaphore: 1};
+                            window.QUnit.config.blocking = true;
+                            //window.QUnit.stop();
                             testFilesIndex += 1;
-                            loadRunner = false;
+                            loadTestRunner = false;
                             if (testFilesIndex < allTestFiles.length) {
+                                console.log("Initializing QUnit and proceeding to next test.");
+                                window.QUnit.init();
                                 var defObj = $.Deferred();
                                 defObj.done(loadNextFileOrStartCoverage);
-                                singleFileLoad(allTestFiles[testFilesIndex], defObj, loadRunner);
+                                loadSingleFileAndStartKarma(allTestFiles[testFilesIndex], defObj, loadTestRunner);
                             }
                             else if (testFilesIndex == allTestFiles.length) {
-                                console.log("Completed; Starting Coverage: ")
+                                console.log("Completed; Starting Coverage.")
                                 window.__karma__.complete({
                                     coverage: window.__coverage__
                                 });
@@ -168,7 +169,7 @@ function testAppInit(testAppConfig) {
                         };
 
                         defObj.done(loadNextFileOrStartCoverage);
-                        singleFileLoad(testFile, defObj, loadRunner);
+                        loadSingleFileAndStartKarma(testFile, defObj, loadTestRunner);
 
                     });
             });
@@ -186,7 +187,7 @@ function testLibApiAppInit(testAppConfig) {
             $('head').append('<base href="/vcenter/" />');
         }
 
-        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages, CoreLabels, Knockout, Cache,
+        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages, CoreViewsDefaultConfig, CoreLabels, Knockout, Cache,
                                     contrailCommon, CoreCommonTmpl, CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
@@ -206,10 +207,10 @@ function testLibApiAppInit(testAppConfig) {
             for (var i = 0; i < cssList.length; i++) {
                 $("body").append(cssList[i]);
             }
-            require(allTestFiles, function () {
+            require([allTestFiles[0]], function () {
                 requirejs.config({
-                    deps: allTestFiles,
-                    callback: window.__karma__.start
+                    deps: [allTestFiles[0]],
+                    callback: window.__karma__.start($.Deferred(), true)
                 });
             });
         });

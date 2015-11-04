@@ -269,19 +269,23 @@ define([
 
             //toggle detail icon, check the details html.
             bodyTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_DETAIL_ROW_TOGGLE, function () {
+                //get the cgrid of the first row
+                var cgrid = $(el).find('.slick-row:first').attr('data-cgrid');
+
                 //simulate click on first row detail toggle icon
-                $(el).find('.slick_row_id_0 .toggleDetailIcon').trigger('click');
+                $(el).find('.slick_row_' + cgrid + ' .toggleDetailIcon').trigger('click');
+
                 //get the details html
-                var domDetailsHtml_id0 = $(el).find('.slick-row-detail .slick-row-detail-template-id_0').html();
+                var domDetailsHtml = $(el).find('.slick-row-detail .slick-row-detail-template-' + cgrid).html();
 
                 //generate one using the template and data from the model
                 //since the data is already present, request state is set to SUCCESS_NOT_EMPTY
-                var detailsHtml_id0 = Handlebars.compile(viewConfigBody.options.detail.template)({
+                var detailsHtml = Handlebars.compile(viewConfigBody.options.detail.template)({
                     data: gridItems[0],
                     requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY
                 });
 
-                equal(domDetailsHtml_id0, detailsHtml_id0,
+                equal(domDetailsHtml, detailsHtml,
                     "Details row html content should be equal to the one generated from view config template");
 
                 //check basic view/advanced view if the advanced view is enabled.
@@ -296,7 +300,7 @@ define([
                 if (viewConfigBody.options.detail.advancedViewOptions) {
                     //check advanced view icon
                     equal($(detailEls[1]).attr('data-view'),
-                    "advanced-json", "advanced view icon data-view check");
+                        "advanced-json", "advanced view icon data-view check");
 
                     //trigger click on advanced view
                     $(detailEls[1]).trigger("click");
@@ -314,7 +318,9 @@ define([
 
                 }
                 //simulate click to toggle the details row.
-                $(el).find('.slick_row_id_0 .toggleDetailIcon').trigger('click');
+                $(el).find('.slick_row_' + cgrid + ' .toggleDetailIcon').trigger('click');
+
+
             }, cotc.SEVERITY_HIGH));
 
         } else {

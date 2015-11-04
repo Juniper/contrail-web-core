@@ -203,7 +203,15 @@ define([
 
             _.each(testConfig.suites, function (suiteConfig) {
                 if (contrail.checkIfExist(suiteConfig.class)) {
-                    suiteConfig.class(testConfig.viewObj, suiteConfig);
+                    var testObj;
+                    if (contrail.checkIfExist(testConfig.viewObj)) {
+                        testObj = testConfig.viewObj;
+                    } else if (contrail.checkIfExist(testConfig.modelObj)) {
+                        testObj = testConfig.modelObj;
+                    } else {
+                        console.log("Missing test object. Check your page test config.");
+                    }
+                    suiteConfig.class(testObj, suiteConfig);
                 }
             });
         });
@@ -249,42 +257,14 @@ define([
         });
 
         var menuHandlerDoneCB = function () {
-            asyncTest("Core Tests", function (assert) {
+            asyncTest("Load and Run Test Suite: ", function (assert) { //TODO Review the test message.
                 expect(0);
-                var loadingStartedDefObj = loadFeature(pageTestConfig.page.hashParams);
-                loadingStartedDefObj.done(function () {
-                    //additional fake server response setup
-                    var responses = pageTestConfig.fakeServer.getResponsesConfig();
-                    _.each(responses, function (response) {
-                        fakeServer.respondWith(response.method, response.url, [response.statusCode, response.headers, response.body]);
-                    });
-
-                    var pageLoadTimeOut = pageTestConfig.page.loadTimeout;
-
-                    setTimeout(function () {
-                        var testConfig = pageTestConfig.getTestConfig();
-                        var testInitDefObj = $.Deferred();
-
-                        pageTestConfig.testInitFn(testInitDefObj);
-                        // testInitFn can have async calls. wait for the promise to resolve.
-                        $.when(testInitDefObj).done(function() {
-                            var mockDataDefObj = $.Deferred();
-                            cotu.setViewObjAndViewConfig4All(testConfig.rootView, testConfig.tests);
-
-                            //create and update mock data in test config
-                            cotu.createMockData(testConfig.rootView, testConfig.tests, mockDataDefObj);
-
-                            $.when(mockDataDefObj).done(function () {
-                                //run initializations before tests if any
-                                self.executeCommonTests(testConfig.tests);
-                                QUnit.start();
-                                //uncomment following line to console all the fake server request/responses
-                                //console.log(fakeServer.requests);
-                            });
-                        });
-
-                    }, pageLoadTimeOut);
-                });
+                var done = assert.async();
+                if (contrail.checkIfExist(pageTestConfig.page) && (pageTestConfig.page.hashParams.p != "")) {
+                    self.startViewTestRunner(pageTestConfig, fakeServer, done);
+                } else {
+                    self.startModelTestRunner(pageTestConfig, fakeServer, done);
+                }
             });
         };
 
@@ -297,6 +277,74 @@ define([
             menuHandler.deferredObj.done(menuHandlerDoneCB);
         }
 
+    };
+
+    this.startViewTestRunner = function(viewTestConfig, fakeServer, done) {
+        if (contrail.checkIfExist(viewTestConfig.page.hashParams)) {
+            var loadingStartedDefObj = loadFeature(viewTestConfig.page.hashParams);
+            loadingStartedDefObj.done(function () {
+                //additional fake server response setup
+                var responses = viewTestConfig.fakeServer.getResponsesConfig();
+                _.each(responses, function (response) {
+                    fakeServer.respondWith(response.method, response.url, [response.statusCode, response.headers, response.body]);
+                });
+
+                var pageLoadTimeOut = viewTestConfig.page.loadTimeout;
+
+                setTimeout(function () {
+                    var testConfig = viewTestConfig.getTestConfig();
+                    var testInitDefObj = $.Deferred();
+
+                    viewTestConfig.testInitFn(testInitDefObj);
+                    // testInitFn can have async calls. wait for the promise to resolve.
+                    $.when(testInitDefObj).done(function() {
+                        var mockDataDefObj = $.Deferred();
+                        cotu.setViewObjAndViewConfig4All(testConfig.rootView, testConfig.tests);
+
+                        //create and update mock data in test config
+                        cotu.createMockData(testConfig.rootView, testConfig.tests, mockDataDefObj);
+
+                        $.when(mockDataDefObj).done(function () {
+                            //run initializations before tests if any
+                            self.executeCommonTests(testConfig.tests);
+                            QUnit.start();
+                            done();
+                            //uncomment following line to console all the fake server request/responses
+                            //console.log(fakeServer.requests);
+                        });
+                    });
+                }, pageLoadTimeOut);
+            });
+        } else {
+            console.log("Requires hash params to load the test page. Update your page test config.");
+        }
+
+    };
+
+    this.startModelTestRunner = function(modelTestConfig, fakeServer, done) {
+
+        //additional fake server response setup
+        var responses = modelTestConfig.fakeServer.getResponsesConfig();
+        _.each(responses, function (response) {
+            fakeServer.respondWith(response.method, response.url, [response.statusCode, response.headers, response.body]);
+        });
+
+        //TODO Remove the page timeout usage
+        var pageLoadTimeOut = modelTestConfig.page.loadTimeout;
+
+        setTimeout(function () {
+            var testConfig = modelTestConfig.getTestConfig();
+            var modelObjDefObj = $.Deferred();
+
+            cotu.setModelObj4All(testConfig, modelObjDefObj);
+
+            $.when(modelObjDefObj).done(function() {
+                modelTestConfig.testInitFn();
+                self.executeCommonTests(testConfig.tests);
+                QUnit.start();
+                done();
+            });
+        }, pageLoadTimeOut);
     };
 
     this.startLibTestRunner = function(libTestConfig) {
@@ -326,6 +374,8 @@ define([
         createTestSuite: createTestSuite,
         startTestRunner: startCommonTestRunner,
         startCommonTestRunner : startCommonTestRunner,
+        startViewTestRunner: startViewTestRunner,
+        startModelTestRunner: startModelTestRunner,
         startLibTestRunner: startLibTestRunner
     };
 });

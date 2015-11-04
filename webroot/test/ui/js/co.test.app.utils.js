@@ -22,6 +22,8 @@ function getCoreTestAppPaths(coreBaseDir) {
         'co-chart-view-line-test-suite'              : coreTestAppBaseDir + '/chart/LineWithFocusChartView.test.suite',
         'co-tabs-view-test-suite'                    : coreTestAppBaseDir + '/generic/TabsView.test.suite',
         'co-details-view-test-suite'                 : coreTestAppBaseDir + '/generic/DetailsView.test.suite',
+
+        'co-form-model-validations-test-suite'       : coreTestAppBaseDir + '/form/ModelValidations.test.suite',
     };
 }
 
