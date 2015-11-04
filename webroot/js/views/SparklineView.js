@@ -58,7 +58,7 @@ define([
                 return a - b
             });
             var graph = d3.select($(selector)[0]).append("svg:svg").attr('class', lineColorClass);
-            var maxY = data[sortedData.length - 1];
+            var maxY = sortedData[sortedData.length - 1];
             var x = d3.scale.linear().domain([0, ifNull(sortedData,[]).length]).range([0, 100]);
             var y = d3.scale.linear().domain([sortedData[0], maxY * 1.2]).range([10, 0]);
             var sparkLine = d3.svg.line()
