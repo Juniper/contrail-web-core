@@ -97,9 +97,7 @@ define([
                                 },
                                 {
                                     elementId: 'log_level', view: "FormDropdownView",
-                                    viewConfig: {
-                                        path: 'log_level', dataBindValue: 'log_level', class: "span3",
-                                        elementConfig: {dataTextField: "text", dataValueField: "id", data: []}}
+                                    viewConfig: { path: 'log_level', dataBindValue: 'log_level', class: "span3", elementConfig: {dataTextField: "name", dataValueField: "value", data: cowc.QE_LOG_LEVELS}}
                                 }
                             ]
                         },

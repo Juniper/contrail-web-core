@@ -13,6 +13,7 @@ define([
         defaultSelectFields: [],
         disableSelectFields: [],
         disableSubstringInSelectFields: ['CLASS('],
+        disableWhereFields: [],
 
         constructor: function (modelData) {
             var self = this,
@@ -23,14 +24,14 @@ define([
                 disableSubstringArray = this.disableSubstringInSelectFields;
 
             if (contrail.checkIfExist(modelData.table_name)) {
-                modelRemoteDataConfig = getTableSchemaConfig(self, modelData.table_name, disableFieldArray, disableSubstringArray);
+                modelRemoteDataConfig = getTableSchemaConfig(self, modelData.table_name, disableFieldArray, disableSubstringArray, this.disableWhereFields);
             }
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
 
             this.model().on( "change:table_name", this.onChangeTable, this);
 
-            if(modelData['table_type'] == cowc.QE_OBJECT_TABLE_TYPE) {
+            if(modelData['table_type'] == cowc.QE_OBJECT_TABLE_TYPE || modelData['table_type'] == cowc.QE_LOG_TABLE_TYPE) {
                 this.model().on("change:time_range", this.onChangeTime, this);
                 this.model().on("change:from_time", this.onChangeTime, this);
                 this.model().on("change:to_time", this.onChangeTime, this);
@@ -60,6 +61,7 @@ define([
                 nameCheckList.push(tableName + ":" + nameOptionList[i].name);
             }
 
+            // TODO: Custom Time-Range
             var data =  {
                 fromTimeUTC: 'now-' + timeRange + "s",
                 toTimeUTC: 'now',
@@ -112,7 +114,7 @@ define([
             if(tableName != '') {
                 $.ajax(ajaxConfig).success(function(response) {
                     var selectFields = getSelectFields4Table(response, disableFieldArray, disableSubstringArray),
-                        whereFields = getWhereFields4NameDropdown(response, tableName);
+                        whereFields = getWhereFields4NameDropdown(response, tableName, self.disableWhereFields);
 
                     self.select_data_object().requestState((selectFields.length > 0) ? cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY : cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY);
 
@@ -306,7 +308,7 @@ define([
         validations: {}
     });
 
-    function getTableSchemaConfig(model, tableName, disableFieldArray, disableSubstringArray) {
+    function getTableSchemaConfig(model, tableName, disableFieldArray, disableSubstringArray, disableWhereFields) {
         var tableSchemeUrl = '/api/qe/table/schema/' + tableName,
             modelRemoteDataConfig = {
                 remote: {
@@ -316,7 +318,7 @@ define([
                     },
                     setData2Model: function (contrailViewModel, response) {
                         var selectFields = getSelectFields4Table(response, disableFieldArray, disableSubstringArray),
-                            whereFields = getWhereFields4NameDropdown(response, tableName);
+                            whereFields = getWhereFields4NameDropdown(response, tableName, disableWhereFields);
 
                         model.select_data_object().requestState((selectFields.length > 0) ? cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY : cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY);
 
@@ -372,16 +374,15 @@ define([
         return showField;
     };
 
-    function getWhereFields4NameDropdown(tableSchema, tableName) {
+    function getWhereFields4NameDropdown(tableSchema, tableName, disableWhereFields) {
         if ($.isEmptyObject(tableSchema)) {
             return [];
         }
         var tableSchemaFormatted = [];
 
         $.each(tableSchema.columns, function(schemaKey, schemaValue) {
-            if (schemaValue.index){
-                if (tableName === 'FlowSeriesTable' ||
-                        tableName === 'FlowRecordTable') {
+            if (schemaValue.index && disableWhereFields.indexOf(schemaValue.name) == -1){
+                if (tableName === 'FlowSeriesTable' || tableName === 'FlowRecordTable') {
                     if (schemaValue.name === 'protocol') {
                         schemaValue.suffixes = ['sport', 'dport'];
                         tableSchemaFormatted.push(schemaValue);
