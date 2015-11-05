@@ -1031,6 +1031,7 @@
                 event: { change: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data); } },
                 contrailDropdown: {}"
         />
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
 
@@ -1073,6 +1074,7 @@
                 event: { change: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data); } },
                 contrailMultiselect: {}"
         />
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
 
@@ -1112,6 +1114,7 @@
                 event: { change: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data); } },
                 contrailCombobox: {}"
         />
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
 
