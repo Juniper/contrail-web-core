@@ -1141,7 +1141,8 @@ input.editor-checkbox.ace-input[type=checkbox] + .ace-lbl::before {
     padding: 5px 5px 0 0;
 }
 .contrail-editable-grid-table tr td .custom-combobox.input-append,
-.contrail-editable-grid-table tr td .textarea-input-append.input-append {
+.contrail-editable-grid-table tr td .textarea-input-append.input-append,
+.contrail-editable-grid-table tr td .editable-grid-input-append.input-append {
     margin-bottom: 0;
     min-height: 28px;
 }
