@@ -7,8 +7,8 @@ define([
     'co-test-utils',
     'co-test-messages',
     'co-test-constants',
-    'co-test-unit'
-], function (_, cotu, cotm, cotc, CUnit) {
+    'co-test-runner'
+], function (_, cotu, cotm, cotc, cotr) {
 
     var testSuiteClass = function (viewObj, suiteConfig){
 
@@ -20,7 +20,7 @@ define([
 
         module(cotu.formatTestModuleMessage(cotm.TEST_TABSVIEW, el.id));
 
-        var tabsViewTestSuite = CUnit.createTestSuite('TabsViewTestSuite');
+        var tabsViewTestSuite = cotr.createTestSuite('TabsViewTestSuite');
 
         /**
          * Tabs basic group test cases
@@ -30,7 +30,7 @@ define([
         /**
          * Test tab titles.
          */
-        basicTestGroup.registerTest(CUnit.test(cotm.TABSVIEW_TAB_TITLE, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.TABSVIEW_TAB_TITLE, function () {
             expect(tabs.length);
             _.each(tabs, function(tab) {
                 equal($(el).find('#' + tab.elementId + '-tab-link').text().trim(), tab.title,
@@ -41,7 +41,7 @@ define([
         /**
          * Load all the tabs
          */
-        //basicTestGroup.registerTest(CUnit.test(cotm.TABSVIEW_TAB_ACTIVATE, function () {
+        //basicTestGroup.registerTest(cotr.test(cotm.TABSVIEW_TAB_ACTIVATE, function () {
         //    expect(tabs.length);
         //    _.each(tabs, function(tab) {
         //

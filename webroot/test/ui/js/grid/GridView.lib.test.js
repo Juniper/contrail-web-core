@@ -2,11 +2,11 @@
  * Copyright (c) 2015 Juniper Networks, Inc. All rights reserved.
  */
 define([
+    'co-test-runner',
     'co-test-constants',
     'co-grid-contrail-list-model-lib-test-suite',
-    'co-grid-view-lib-test-suite',
-    'co-test-unit'
-], function (cotc, ContrailListModelLibTestSuite, GridViewLibTestSuite, CUnit) {
+    'co-grid-view-lib-test-suite'
+], function (cotr, cotc, ContrailListModelLibTestSuite, GridViewLibTestSuite) {
 
     var libTestConfig = {
         libName: "GridView",
@@ -28,6 +28,6 @@ define([
         ]
     };
 
-    CUnit.startLibTestRunner(libTestConfig);
+    cotr.startLibTestRunner(libTestConfig);
 
 });

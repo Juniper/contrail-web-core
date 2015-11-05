@@ -4,8 +4,8 @@
 define([
     'co-test-constants',
     'co-sample-view-lib-test-suite',
-    'co-test-unit'
-], function (cotc, SampleLibTestSuite, CUnit) {
+    'co-test-runner'
+], function (cotc, SampleLibTestSuite, cotr) {
 
     var libTestConfig = {
         libName: "libraryName",
@@ -21,6 +21,6 @@ define([
         ]
     };
 
-    CUnit.startLibTestRunner(libTestConfig);
+    cotr.startLibTestRunner(libTestConfig);
 
 });

@@ -7,8 +7,8 @@ define([
     'co-test-utils',
     'co-test-messages',
     'co-test-constants',
-    'co-test-unit'
-], function (_, cotu, cotm, cotc, CUnit) {
+    'co-test-runner'
+], function (_, cotu, cotm, cotc, cotr) {
 
     var testSuiteClass = function (viewObj, suiteConfig){
 
@@ -19,7 +19,7 @@ define([
 
         module(cotu.formatTestModuleMessage(cotm.TEST_CHARTVIEW_LINE, el.id));
 
-        var chartViewTestSuite = CUnit.createTestSuite('LineWithFocusChartViewTest');
+        var chartViewTestSuite = cotr.createTestSuite('LineWithFocusChartViewTest');
 
         /**
          * Chart basic group test cases
@@ -29,7 +29,7 @@ define([
         /**
          * Test axis labels.
          */
-        basicTestGroup.registerTest(CUnit.test(cotm.CHARTVIEW_AXIS_LABEL, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.CHARTVIEW_AXIS_LABEL, function () {
             equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-y .nv-axislabel').text().trim(), chartOptions.yAxisLabel,
                 "Y1 axis title should be equal to the title set");
             if (chartOptions.y2AxisLabel != "") {
@@ -44,7 +44,7 @@ define([
          * Test number of lines
          *
          */
-        basicTestGroup.registerTest(CUnit.test(cotm.CHARTVIEW_COUNT_LINES, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.CHARTVIEW_COUNT_LINES, function () {
             expect(1);
             equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-line').length, 2,
                 "Number of lines in chart equal to number of lines set");
@@ -54,7 +54,7 @@ define([
          * Test color of lines
          *
          */
-        basicTestGroup.registerTest(CUnit.test(cotm.CHARTVIEW_COLOR_LINES, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.CHARTVIEW_COLOR_LINES, function () {
             expect(2);
             if($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-0 .nv-line').parent().css('fill').indexOf('#') !== -1){
                 console.log('here');

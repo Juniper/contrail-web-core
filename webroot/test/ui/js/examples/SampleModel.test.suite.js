@@ -10,15 +10,9 @@ define([
     'co-test-runner'
 ], function (_, cotu, cotm, cotc, cotr) {
 
-    /**
-     * A test suite for a View always gets, the view object rendered on the DOM and as well
-     * the suite config passed along with the page test config.
-     * @param viewObj
-     * @param suiteConfig
-     */
     var testSuiteClass = function (viewObj, suiteConfig){
 
-        module("sample view test suite");
+        module("sample test suite");
 
         var sampleTestSuite = cotr.createTestSuite('TestSuiteName');
 
