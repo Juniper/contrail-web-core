@@ -8,10 +8,12 @@ define([
 ], function (_, ContrailView) {
     var FormDropdownView = ContrailView.extend({
         render: function () {
-            var viewConfig = this.attributes.viewConfig,
+            var self = this,
+                viewConfig = this.attributes.viewConfig,
                 dropdownTemplate = contrail.getTemplate4Id((viewConfig.templateId) ? viewConfig.templateId: cowc.TMPL_DROPDOWN_VIEW),
-                elId = this.attributes.elementId,
-                app = this.attributes.app,
+                elId = self.attributes.elementId,
+                app = self.attributes.app,
+                validation = self.attributes.validation,
                 elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
                 path = viewConfig[cowc.KEY_PATH],
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
@@ -27,7 +29,7 @@ define([
             }
             tmplParameters = {
                 id: elId + '_dropdown', class: "span12", name: elId, label: labelValue,
-                viewConfig: viewConfig, lockAttr: lockEditingByDefault
+                viewConfig: viewConfig, lockAttr: lockEditingByDefault, validation: validation
             };
 
             /* Save the elementConfig for the dropdown in elementConfigMap in the model

@@ -13,6 +13,7 @@ define([
                 comboboxTemplate = contrail.getTemplate4Id((viewConfig.templateId) ? viewConfig.templateId: cowc.TMPL_COMBOBOX_VIEW),
                 elId = self.attributes.elementId,
                 app = self.attributes.app,
+                validation = self.attributes.validation,
                 elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
                 path = viewConfig[cowc.KEY_PATH],
                 lockEditingByDefault = self.attributes.lockEditingByDefault,
@@ -28,7 +29,7 @@ define([
 
             tmplParameters = {
                 label: labelValue, id: elId + '_combobox', name: elId, class: "span12",
-                viewConfig: viewConfig, lockAttr: lockEditingByDefault
+                viewConfig: viewConfig, lockAttr: lockEditingByDefault, validation: validation
             };
 
             /* Save the elementConfig for the dropdown in elementConfigMap in the model

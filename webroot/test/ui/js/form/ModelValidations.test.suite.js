@@ -8,8 +8,8 @@ define([
     'co-test-utils',
     'co-test-messages',
     'co-test-constants',
-    'co-test-unit'
-], function ($, _, cotu, cotm, cotc, CUnit) {
+    'co-test-runner'
+], function ($, _, cotu, cotm, cotc, cotr) {
 
     var testSuiteClass = function (modelObj, suiteConfig){
 
@@ -18,7 +18,7 @@ define([
 
         //module("sample test suite");
 
-        var formEditModelTestSuite = CUnit.createTestSuite('FormEditModelTestSuite');
+        var formEditModelTestSuite = cotr.createTestSuite('FormEditModelTestSuite');
 
         /**
          * Test group for form validations
@@ -28,7 +28,7 @@ define([
         /**
          * Test each data sample for successful validation.
          */
-        validationTestGroup.registerTest(CUnit.test("Test successful validations", function () {
+        validationTestGroup.registerTest(cotr.test("Test successful validations", function () {
             expect(validationData.success.length);
             _.each(validationData.success, function(data) {
                 var formDataModel = $.extend(true, {}, modelObj);
@@ -40,7 +40,7 @@ define([
         /**
          * Test each data sample for invalid input.
          */
-            //validationTestGroup.registerTest(CUnit.test("Test non-successful validations", function () {
+            //validationTestGroup.registerTest(cotr.test("Test non-successful validations", function () {
             //
             //}, cotc.SEVERITY_HIGH));
 

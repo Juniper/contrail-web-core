@@ -347,6 +347,22 @@ define([
         }, pageLoadTimeOut);
     };
 
+    this.startBasicTestRunner = function(baseTestConfig) {
+        var self = this;
+        var testInitDefObj = $.Deferred();
+
+        asyncTest("Start Basic Unit Tests - " + ifNull(libTestConfig.libName, ""), function (assert) {
+            expect(0);
+            baseTestConfig.testInitFn(testInitDefObj);
+
+            $.when(testInitDefObj).done(function() {
+                self.executeLibTests(baseTestConfig);
+                QUnit.start();
+            });
+
+        });
+    };
+
     this.startLibTestRunner = function(libTestConfig) {
         var self = this;
         asyncTest("Start Library Tests - " + ifNull(libTestConfig.libName, ""), function (assert) {
