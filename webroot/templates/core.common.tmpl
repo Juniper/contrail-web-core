@@ -1026,7 +1026,6 @@
             data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
-                {{#if viewConfig.customValue}}customValue: {{viewConfig.customValue}},{{/if}}
                 optionList: {{viewConfig.dataBindOptionList}},
                 contrailDropdown: {}"
         />

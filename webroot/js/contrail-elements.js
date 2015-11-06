@@ -1113,22 +1113,6 @@ function findTextInObj(text, data){
     }
     return found;
 };
-function appendNewItemMainDataSource(item, data) {
-    var newValue = item.value != null ? item.value : item.text;
-    for(var i = 0; i < data.length; i++) {
-        if(data[i].text === item.groupName) {
-            data[i].children.push(
-                {
-                   text : item.text,
-                   id : newValue,
-                   value : newValue,
-                   parent : item.groupName
-                }
-            );
-            break;
-        }
-    }
-}
 
 function  fetchSourceMapData(index, data){
     var arr = index.split("."),
@@ -1341,22 +1325,7 @@ function constructSelect2(self, defaultOption, args) {
                     return self.select2('val');
                 }
                 else{
-                    if(self.select2('val') !== value) {
-                        self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
-                    }
-                }
-            },
-            customValue : function(item) {
-                if(typeof item !== 'undefined' && !jQuery.isEmptyObject(item)){
-                    var data = self.data('select2').opts.data;
-                    if(data != null && data.length > 0) {
-                        var answer = findTextInObj(item.text, data);
-                        if(!answer) {
-                            appendNewItemMainDataSource(item, data);
-                        }
-                        answer = findTextInObj(item.text, data);
-                        self.select2('val', answer.value, true);
-                    }
+                    self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                 }
             },
             setData: function(data, value, triggerChange) {
