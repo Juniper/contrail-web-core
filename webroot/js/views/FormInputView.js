@@ -19,7 +19,8 @@ define([
                 lockEditingByDefault = self.attributes.lockEditingByDefault,
                 label = viewConfig.label,
                 labelValue = (label != null)? label :((elId != null)? cowl.get(elId, app) : cowl.get(path, app)),
-                tmplParameters;
+                tmplParameters,
+                onBlur = viewConfig.onBlur;
 
             if (!(contrail.checkIfExist(lockEditingByDefault) && lockEditingByDefault)) {
                 lockEditingByDefault = false;
@@ -34,6 +35,9 @@ define([
             };
 
             self.$el.html(inputTemplate(tmplParameters));
+            if (onBlur) {
+                self.$el.find('input').blur(onBlur);
+            }
         }
     });
 
