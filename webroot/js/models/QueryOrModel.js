@@ -57,6 +57,10 @@ define([
                     andClauseObj.suffix_name = orClauseJSON[i].name;
                     andClauseObj.suffix_operator = cowc.OPERATOR_CODES[orClauseJSON[i].op];
                     andClauseObj.suffix_value = orClauseJSON[i].value;
+                } else if (contrail.checkIfExist(orClauseJSON[i].suffix)) {
+                    andClauseObj.suffix_name = orClauseJSON[i].suffix.name;
+                    andClauseObj.suffix_operator = cowc.OPERATOR_CODES[orClauseJSON[i].suffix.op];
+                    andClauseObj.suffix_value = orClauseJSON[i].suffix.value;
                 }
 
                 andClauseModel = new QueryAndModel(self, andClauseObj);
@@ -89,7 +93,9 @@ define([
 
         getOrClauseText: function(data) {
             var andClauses = data.and_clauses()(),
-                andClauseArray = [], orClauseText = '';
+                andClauseArray = [], orClauseText = '',
+                tableType = data.parentModel().model().get('table_type'),
+                suffixAndTerm = { FLOW: ' AND ', STAT: ' & '};
 
             $.each(andClauses, function(andClauseKey, andClauseValue) {
                 var name = andClauseValue.name(),
@@ -111,7 +117,7 @@ define([
                     andClauseStr = name + ' ' + operator + ' ' + value;
 
                     if (suffixName !== '' &&  suffixOperator !== '' && suffixValue !== '') {
-                        andClauseStr += ' AND ' + suffixName + ' ' + suffixOperator + ' ' + suffixValue;
+                        andClauseStr += suffixAndTerm[tableType] + suffixName + ' ' + suffixOperator + ' ' + suffixValue;
                     }
 
                     andClauseArray.push(andClauseStr)

@@ -929,11 +929,23 @@
 
 <script type="text/x-handlebars-template" id="core-editable-grid-input-view-template">
         <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-            <input type="{{type}}" name="{{name}}" class="{{class}}" placeholder="{{viewConfig.placeholder}}"
-                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
-                    value: {{viewConfig.dataBindValue}},
-                    event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data)} }"
-            />
+            <div class="input-append editable-grid-input-append inset span12">
+                {{#IfCompare type 'password' operator='==='}}
+                    <input type="{{type}}" name="{{id}}" class="span12 {{class}}"
+                        data-bind="
+                            {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                            value: {{viewConfig.dataBindValue}},
+                            event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) } }"
+                    />
+                    <span class="add-on input-type-toggle-action"><i class="icon-eye-open"></i></span>
+                {{else}}
+                    <input type="{{type}}" name="{{name}}" class="{{class}}" placeholder="{{viewConfig.placeholder}}"
+                        data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
+                            value: {{viewConfig.dataBindValue}},
+                            event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data)} }"
+                    />
+                {{/IfCompare}}
+            </div>
         </div>
 </script>
 
@@ -1028,6 +1040,7 @@
                 value: {{viewConfig.dataBindValue}},
                 {{#if viewConfig.customValue}}customValue: {{viewConfig.customValue}},{{/if}}
                 optionList: {{viewConfig.dataBindOptionList}},
+                event: { change: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data); } },
                 contrailDropdown: {}"
         />
     </div>
@@ -1069,6 +1082,7 @@
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
+                event: { change: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data); } },
                 contrailMultiselect: {}"
         />
     </div>
@@ -1107,6 +1121,7 @@
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
+                event: { change: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data); } },
                 contrailCombobox: {}"
         />
     </div>
@@ -1309,7 +1324,10 @@
         <thead>
         <tr>
             {{#each columns}}
-            <th class="{{this.class}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }">{{this.name}}</th>
+                <th class="{{this.class}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }">{{this.name}}</th>
+            {{/each}}
+            {{#each rowActions}}
+                <th class="action-cell">&nbsp;</th>
             {{/each}}
         </tr>
         </thead>
@@ -1592,7 +1610,7 @@
             </div>
             <div class="col2 chart-control-panel-container">
             </div>
-            <div class="chart-control-panel-expanded-container hide"></div>
+            <div class="chart-control-panel-expanded-container control-panel-expanded-container hide"></div>
         </div>
     </div>
 </script>

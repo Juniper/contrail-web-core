@@ -20,7 +20,7 @@ define([
                 query_prefix: cowc.CONSOLE_LOGS_PREFIX,
                 log_category: "",
                 log_type: "",
-                log_level: "",
+                log_level: "5",
                 limit: 50,
                 keywords: ""
             });

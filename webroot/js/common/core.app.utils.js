@@ -427,14 +427,23 @@ function initCustomKOBindings(Knockout) {
                 var valueBindingAccessor = allBindingsAccessor.get('value'),
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor),
                     optionListBindingAccessor = allBindingsAccessor.get('optionList'),
-                    optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
+                    optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor),
+                    formattedOptionList = formatData(optionList, elementConfig),
+                    currentOptionList = multiselect.getAllData();
 
-                value = contrail.checkIfFunction(value) ? value() : value;
+                if (JSON.stringify(formattedOptionList) !== JSON.stringify(currentOptionList)) {
+                    value = contrail.checkIfFunction(value) ? value() : value;
+                    if (value !== '') {
+                        value = $.isArray(value) ? value : [value];
+                    } else if (value === '') {
+                        value = [];
+                    }
 
-                if (contrail.checkIfFunction(optionList) && $.isArray(optionList(viewModel))) {
-                    multiselect.setData(optionList(viewModel), value, true);
-                } else if ($.isArray(optionList)) {
-                    multiselect.setData(optionList, value, true);
+                    if (contrail.checkIfFunction(optionList) && $.isArray(optionList(viewModel))) {
+                        multiselect.setData(optionList(viewModel), value, true);
+                    } else if ($.isArray(optionList)) {
+                        multiselect.setData(optionList, value, true);
+                    }
                 }
             }
 
@@ -444,9 +453,13 @@ function initCustomKOBindings(Knockout) {
 
                 value = contrail.checkIfFunction(value) ? value() : value;
 
-                if (contrail.checkIfExist(value) && value !== '') {
-                    value = $.isArray(value) ? value : [value];
-                    multiselect.value(value, true);
+                if (contrail.checkIfExist(value)) {
+                    if (value !== '') {
+                        value = $.isArray(value) ? value : [value];
+                        multiselect.value(value, true);
+                    } else if (value === '') {
+                        multiselect.value([], true);
+                    }
                 }
             }
         }
