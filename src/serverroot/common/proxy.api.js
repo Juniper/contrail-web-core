@@ -147,6 +147,15 @@ function forwardProxyRequest (request, response, appData)
     var reqParams = options.query;
     var errStr = null;
 
+    var isProxyEnabled =
+        ((null != config.proxy) && (null != config.proxy.enabled)) ?
+        config.proxy.enabled : true;
+    if (false == isProxyEnabled) {
+        var error = new appErrors.RESTServerError('Proxy is disabled');
+        commonUtils.handleJSONResponse(error, response, null);
+        return;
+    }
+
     if ((null == reqParams) || (null == reqParams[proxyURLStr])) {
         var error = new appErrors.RESTServerError('proxyURL parameter not ' +
                                                   'found in forward proxy ' +
