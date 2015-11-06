@@ -72,7 +72,7 @@ var express = require('express')
     , discClient = require('./src/serverroot/common/discoveryclient.api')
     , assert = require('assert')
     , jsonPath = require('JSONPath').eval
-    , jsonDiff = require('./src/serverroot/common/jsondiff');
+    , jsonDiff = require('./src/serverroot/common/jsondiff')
     ;
 
 var pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
@@ -93,10 +93,21 @@ var discServEnable = ((null != config.discoveryService) &&
                       config.discoveryService.enable : true;
 
 var sessEvent = new eventEmitter();
+/* Recommended Cipheres */
+var defCiphers =
+    'ECDHE-RSA-AES256-SHA384:AES256-SHA256:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM';
+var serCiphers = ((null != config.server_options) &&
+               (null != config.server_options.ciphers)) ?
+    config.server_options.ciphers : defCiphers;
 
 var options = {
     key:fs.readFileSync('./keys/cs-key.pem'),
-    cert:fs.readFileSync('./keys/cs-cert.pem')
+    cert:fs.readFileSync('./keys/cs-cert.pem'),
+    /* From https://github.com/nodejs/node-v0.x-archive/issues/2727
+       https://github.com/nodejs/node-v0.x-archive/pull/2732/files
+     */
+    ciphers: serCiphers,
+    honorCipherOrder: true
 };
 
 var insecureAccessFlag = false;
@@ -132,7 +143,9 @@ function initializeAppConfig (appObj)
     app.use(express.session({ store:store,
         secret: secretKey,
         cookie:{
-            maxAge:global.MAX_AGE_SESSION_ID
+            maxAge:global.MAX_AGE_SESSION_ID,
+            httpOnly: true,
+            secure: true
         }}));
         app.use(express.compress());
         app.use(express.methodOverride());
