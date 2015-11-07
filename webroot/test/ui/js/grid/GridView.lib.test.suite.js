@@ -7,8 +7,8 @@ define([
     'co-test-utils',
     'co-test-messages',
     'co-test-constants',
-    'co-test-unit'
-], function (_, cotu, cotm, cotc, CUnit) {
+    'co-test-runner'
+], function (_, cotu, cotm, cotc, cotr) {
 
     var libTestSuiteClass = function (suiteConfig){
 
@@ -39,12 +39,12 @@ define([
 
         module(cotu.formatTestModuleMessage(cotm.TEST_GRIDVIEW_GRID, "SlickGrid"));
 
-        var gridViewGridTestSuite = CUnit.createTestSuite('GridViewTest');
+        var gridViewGridTestSuite = cotr.createTestSuite('GridViewTest');
 
         var basicTestGroup = gridViewGridTestSuite.createTestGroup('basic');
 
         /*
-        basicTestGroup.registerTest(CUnit.test("Basic - Test column minWidth is respected", function () {
+        basicTestGroup.registerTest(cotr.test("Basic - Test column minWidth is respected", function () {
             var firstCol = $("#container .slick-header-column:first");
             firstCol.find(".slick-resizable-handle:first").drag({ dx: 100,  dy: 0 });
             firstCol.find(".slick-resizable-handle:first").drag({ dx: -200, dy: 0 });
@@ -52,7 +52,7 @@ define([
         }, cotc.SEVERITY_HIGH));
 
 
-        basicTestGroup.registerTest(CUnit.test("Basic - column resize should fire event onColumnResized", function () {
+        basicTestGroup.registerTest(cotr.test("Basic - column resize should fire event onColumnResized", function () {
             expect(2);
             grid.onColumnsResized.subscribe(function() { ok(true,"onColumnsResized called") });
             var oldWidth = cols[0].width;
@@ -61,7 +61,7 @@ define([
         }, cotc.SEVERITY_MEDIUM));
         */
 
-        basicTestGroup.registerTest(CUnit.test("Basic - getData should return data", function () {
+        basicTestGroup.registerTest(cotr.test("Basic - getData should return data", function () {
             equal(grid.getData(), data);
         }, cotc.SEVERITY_HIGH));
 

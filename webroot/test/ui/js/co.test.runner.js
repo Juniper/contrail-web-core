@@ -72,20 +72,25 @@ define([
 
     var defaultPageTestConfig = {
         moduleId: 'Set moduleId for your Test in pageTestConfig',
+        testType: 'Set type of the test',
         fakeServer: this.getDefaultFakeServerConfig(),
         page: this.getDefaultPageConfig(),
         getTestConfig: function () {
             return {};
         },
-        testInitFn: function() {
+        testInitFn: function(defObj) {
+            if (defObj) defObj.resolve();
             return;
         }
     };
 
-    this.createPageTestConfig = function (moduleId, fakeServerConfig, pageConfig, getTestConfigCB, testInitFn) {
+    this.createPageTestConfig = function (moduleId, testType, fakeServerConfig, pageConfig, getTestConfigCB, testInitFn) {
         var pageTestConfig = $.extend(true, {}, defaultPageTestConfig);
         if (moduleId != null) {
             pageTestConfig.moduleId = moduleId;
+        }
+        if (testType != null) {
+            pageTestConfig.testType = testType;
         }
         if (fakeServerConfig != null) {
             pageTestConfig.fakeServer = $.extend({}, pageTestConfig.fakeServer, fakeServerConfig);
@@ -202,13 +207,21 @@ define([
 
             _.each(testConfig.suites, function (suiteConfig) {
                 if (contrail.checkIfExist(suiteConfig.class)) {
-                    suiteConfig.class(testConfig.viewObj, suiteConfig);
+                    var testObj;
+                    if (contrail.checkIfExist(testConfig.viewObj)) {
+                        testObj = testConfig.viewObj;
+                    } else if (contrail.checkIfExist(testConfig.modelObj)) {
+                        testObj = testConfig.modelObj;
+                    } else {
+                        console.log("Missing test object. Check your page test config.");
+                    }
+                    suiteConfig.class(testObj, suiteConfig);
                 }
             });
         });
     };
 
-    this.executeLibTests = function (testConfig) {
+    this.executeUnitTests = function (testConfig) {
         _.each(testConfig.suites, function(suiteConfig) {
             if (contrail.checkIfExist(suiteConfig.class)) {
                 suiteConfig.class(suiteConfig);
@@ -248,37 +261,27 @@ define([
         });
 
         var menuHandlerDoneCB = function () {
-            asyncTest("Core Tests", function (assert) {
+            asyncTest("Load and Run Test Suite: ", function (assert) {
                 expect(0);
-                var loadingStartedDefObj = loadFeature(pageTestConfig.page.hashParams);
-                loadingStartedDefObj.done(function () {
-                    //additional fake server response setup
-                    var responses = pageTestConfig.fakeServer.getResponsesConfig();
-                    _.each(responses, function (response) {
-                        fakeServer.respondWith(response.method, response.url, [response.statusCode, response.headers, response.body]);
-                    });
+                // commenting out for now. once UT lib update get the async working.
+                //var done = assert.async();
+                var done = null;
 
-                    var pageLoadTimeOut = pageTestConfig.page.loadTimeout;
-
-                    setTimeout(function () {
-                        var testConfig = pageTestConfig.getTestConfig();
-                        var mockDataDefObj = $.Deferred();
-
-                        cotu.setViewObjAndViewConfig4All(testConfig.rootView, testConfig.tests);
-
-                        //create and update mock data in test config
-                        cotu.createMockData(testConfig.rootView, testConfig.tests, mockDataDefObj);
-
-                        $.when(mockDataDefObj).done(function () {
-                            //run initializations before tests if any
-                            pageTestConfig.testInitFn();
-                            self.executeCommonTests(testConfig.tests);
-                            QUnit.start();
-                            //uncomment following line to console all the fake server request/responses
-                            //console.log(fakeServer.requests);
-                        });
-                    }, pageLoadTimeOut);
-                });
+                switch (pageTestConfig.testType) {
+                    case cotc.VIEW_TEST:
+                        self.startViewTestRunner(pageTestConfig, fakeServer, done);
+                        break;
+                    case cotc.MODEL_TEST:
+                        self.startModelTestRunner(pageTestConfig, fakeServer, done);
+                        break;
+                    case cotc.UNIT_TEST:
+                        self.startBasicTestRunner(pageTestConfig, done);
+                        break;
+                    case cotc.LIB_API_TEST:
+                        self.startLibTestRunner(pageTestConfig, done);
+                    default:
+                        console.log("Specify test type in your page test config. eg: cotc.VIEW_TEST or cotc.MODEL_TEST");
+                }
             });
         };
 
@@ -293,14 +296,107 @@ define([
 
     };
 
-    this.startLibTestRunner = function(libTestConfig) {
+    this.startViewTestRunner = function(viewTestConfig, fakeServer, done) {
+        if (contrail.checkIfExist(viewTestConfig.page.hashParams)) {
+            var loadingStartedDefObj = loadFeature(viewTestConfig.page.hashParams);
+            loadingStartedDefObj.done(function () {
+                //additional fake server response setup
+                var responses = viewTestConfig.fakeServer.getResponsesConfig();
+                _.each(responses, function (response) {
+                    fakeServer.respondWith(response.method, response.url, [response.statusCode, response.headers, response.body]);
+                });
+
+                var pageLoadTimeOut = viewTestConfig.page.loadTimeout;
+
+                setTimeout(function () {
+                    var testConfig = viewTestConfig.getTestConfig();
+                    var testInitDefObj = $.Deferred();
+
+                    viewTestConfig.testInitFn(testInitDefObj);
+                    // testInitFn can have async calls. wait for the promise to resolve.
+                    $.when(testInitDefObj).done(function() {
+                        var mockDataDefObj = $.Deferred();
+                        cotu.setViewObjAndViewConfig4All(testConfig.rootView, testConfig.tests);
+
+                        //create and update mock data in test config
+                        cotu.createMockData(testConfig.rootView, testConfig.tests, mockDataDefObj);
+
+                        $.when(mockDataDefObj).done(function () {
+                            //run initializations before tests if any
+                            self.executeCommonTests(testConfig.tests);
+                            QUnit.start();
+                            if (done) done();
+                            //uncomment following line to console all the fake server request/responses
+                            //console.log(fakeServer.requests);
+                        });
+                    });
+                }, pageLoadTimeOut);
+            });
+        } else {
+            console.log("Requires hash params to load the test page. Update your page test config.");
+        }
+
+    };
+
+    this.startModelTestRunner = function(modelTestConfig, fakeServer, done) {
+
+        //additional fake server response setup
+        var responses = modelTestConfig.fakeServer.getResponsesConfig();
+        _.each(responses, function (response) {
+            fakeServer.respondWith(response.method, response.url, [response.statusCode, response.headers, response.body]);
+        });
+
+        //TODO Remove the page timeout usage
+        var pageLoadTimeOut = modelTestConfig.page.loadTimeout;
+
+        setTimeout(function () {
+            var testConfig = modelTestConfig.getTestConfig();
+            var modelObjDefObj = $.Deferred();
+
+            cotu.setModelObj4All(testConfig, modelObjDefObj);
+
+            $.when(modelObjDefObj).done(function() {
+                modelTestConfig.testInitFn();
+                self.executeCommonTests(testConfig.tests);
+                QUnit.start();
+                if (done) done();
+            });
+        }, pageLoadTimeOut);
+    };
+
+    this.startBasicTestRunner = function(baseTestConfig, done) {
         var self = this;
+        var testInitDefObj = $.Deferred();
+
+        module(ifNull(baseTestConfig.moduleId, "Unit Test Module"));
+
+        asyncTest("Load and run Unit Test suite: ", function (assert) {
+            expect(0);
+            baseTestConfig.testInitFn(testInitDefObj);
+            var unitTests = baseTestConfig.getTestConfig();
+            $.when(testInitDefObj).done(function() {
+                self.executeUnitTests(unitTests);
+                QUnit.start();
+                if (done) done();
+            });
+
+        });
+    };
+
+    this.startLibTestRunner = function(libTestConfig, done) {
+        var self = this;
+        var testInitDefObj = $.Deferred();
+
+        module(ifNull(libTestConfig.moduleId, "Library API Test Module"));
+
         asyncTest("Start Library Tests - " + ifNull(libTestConfig.libName, ""), function (assert) {
             expect(0);
-            libTestConfig.testInitFn();
+            libTestConfig.testInitFn(testInitDefObj);
+            var libTests = libTestConfig.getTestConfig();
             setTimeout(function() {
-                self.executeLibTests(libTestConfig);
+                self.executeLibTests(libTests);
                 QUnit.start();
+                if (done) done();
             }, 1000);
 
         });
@@ -314,12 +410,15 @@ define([
         createViewTestConfig: createViewTestConfig,
         createPageTestConfig: createPageTestConfig,
         executeCommonTests: executeCommonTests,
-        executeLibTests: executeLibTests,
+        executeUnitTests: executeUnitTests,
+        executeLibTests: executeUnitTests,
         test: cTest,
         createTestGroup: createTestGroup,
         createTestSuite: createTestSuite,
         startTestRunner: startCommonTestRunner,
         startCommonTestRunner : startCommonTestRunner,
+        startViewTestRunner: startViewTestRunner,
+        startModelTestRunner: startModelTestRunner,
         startLibTestRunner: startLibTestRunner
     };
 });

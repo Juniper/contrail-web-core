@@ -9,6 +9,12 @@ define([], function () {
         this.TYPE_CONTRAIL_TEST_SUITE = 'CONTRAIL_TEST_SUITE';
         this.TYPE_CONTRAIL_TEST_GROUP = 'CONTRAIL_TEST_GROUP';
 
+        this.VIEW_TEST = 'VIEW_TEST';
+        this.MODEL_TEST = 'MODEL_TEST';
+        this.UNIT_TEST = 'UNIT_TEST';
+        this.API_TEST = 'API_TEST';
+        this.LIB_API_TEST = 'LIB_API_TEST';
+
         this.SEVERITY_HIGH = 'high';
         this.SEVERITY_MEDIUM = 'medium';
         this.SEVERITY_LOW = 'low';

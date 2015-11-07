@@ -33,6 +33,8 @@ define([], function () {
         this.GRIDVIEW_FOOTER_PAGER_SIZE = 'Test pager sizes loaded';
         this.GRIDVIEW_FOOTER_PAGER_INFO = 'Test pager info shown';
 
+        this.CHARTVIEW_COLOR_LINES = 'Test color of lines set to the configured';
+        this.CHARTVIEW_COUNT_LINES = 'Test number of lines set to the configured';
         this.CHARTVIEW_AXIS_LABEL = 'Test chart axis labels set to the configured';
         this.CHARTVIEW_BUBBLE_COUNT = 'Test count of bubbles set to the configured';
         this.CHARTMODEL_BUBBLE_SIZE = 'Test size of bubbles set to the configured';
