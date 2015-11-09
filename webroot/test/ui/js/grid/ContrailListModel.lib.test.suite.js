@@ -6,14 +6,14 @@ define([
     'co-test-utils',
     'co-test-messages',
     'co-test-constants',
-    'co-test-unit',
-], function (cotu, cotm, cotc, CUnit) {
+    'co-test-runner',
+], function (cotu, cotm, cotc, cotr) {
 
     var libTestSuiteClass = function (suiteConfig) {
 
         module(cotu.formatTestModuleMessage(cotm.TEST_GRIDVIEW_LIST_MODEL, "ContrailListModel"));
 
-        var gridListModelTestSuite = CUnit.createTestSuite('GridListModelTest');
+        var gridListModelTestSuite = cotr.createTestSuite('GridListModelTest');
 
         /**
          * Basic Test group
@@ -21,12 +21,12 @@ define([
 
         var basicTestGroup = gridListModelTestSuite.createTestGroup('basic');
 
-        basicTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_LIST_MODEL_INITIAL_SETUP, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_LIST_MODEL_INITIAL_SETUP, function () {
             var gridListModel = new Slick.Data.DataView();
             assertEmpty(gridListModel);
         }, cotc.SEVERITY_HIGH));
 
-        basicTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_LIST_MODEL_REFRESH, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_LIST_MODEL_REFRESH, function () {
             var gridListModel = new Slick.Data.DataView();
             gridListModel.refresh();
             assertEmpty(gridListModel);
@@ -37,13 +37,13 @@ define([
          */
         var setItemsTestGroup = gridListModelTestSuite.createTestGroup('setItems');
 
-        setItemsTestGroup.registerTest(CUnit.test("setItems - empty", function() {
+        setItemsTestGroup.registerTest(cotr.test("setItems - empty", function() {
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([]);
             assertEmpty(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        setItemsTestGroup.registerTest(CUnit.test("setItems - basic", function() {
+        setItemsTestGroup.registerTest(cotr.test("setItems - basic", function() {
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0},{cgrid:1}]);
             same(2, gridListModel.getLength(), "rows.length");
@@ -51,13 +51,13 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        setItemsTestGroup.registerTest(CUnit.test("setItems - test alternative idProperty", function() {
+        setItemsTestGroup.registerTest(cotr.test("setItems - test alternative idProperty", function() {
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{uid:0},{uid:1}], "uid");
             assertConsistency(gridListModel,"uid");
         }, cotc.SEVERITY_LOW));
 
-        setItemsTestGroup.registerTest(CUnit.test("setItems - requires cgrid set on objects", function() {
+        setItemsTestGroup.registerTest(cotr.test("setItems - requires cgrid set on objects", function() {
             var gridListModel = new Slick.Data.DataView();
             expect(0);
             try {
@@ -67,7 +67,7 @@ define([
             catch (ex) {}
         }, cotc.SEVERITY_LOW));
 
-        setItemsTestGroup.registerTest(CUnit.test("setItems - requires unique cgrid on obejcts", function() {
+        setItemsTestGroup.registerTest(cotr.test("setItems - requires unique cgrid on obejcts", function() {
             var gridListModel = new Slick.Data.DataView();
             expect(0);
             try {
@@ -78,7 +78,7 @@ define([
 
         }, cotc.SEVERITY_LOW));
 
-        setItemsTestGroup.registerTest(CUnit.test("setItems - requires unique id on objects (alternative idProperty)", function() {
+        setItemsTestGroup.registerTest(cotr.test("setItems - requires unique id on objects (alternative idProperty)", function() {
             var gridListModel = new Slick.Data.DataView();
             expect(0);
             try {
@@ -88,7 +88,7 @@ define([
             catch (ex) {}
         }, cotc.SEVERITY_LOW));
 
-        setItemsTestGroup.registerTest(CUnit.test("setItems - check events fired", function() {
+        setItemsTestGroup.registerTest(cotr.test("setItems - check events fired", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.onRowsChanged.subscribe(function(e,args) {
@@ -113,7 +113,7 @@ define([
             same(3, count, "3 events should have been called");
         }, cotc.SEVERITY_MEDIUM));
 
-        setItemsTestGroup.registerTest(CUnit.test("setItems - no events on empty items set", function() {
+        setItemsTestGroup.registerTest(cotr.test("setItems - no events on empty items set", function() {
             var gridListModel = new Slick.Data.DataView();
             expect(0);
             gridListModel.onRowsChanged.subscribe(function() { ok(false, "onRowsChanged called") });
@@ -123,7 +123,7 @@ define([
             gridListModel.refresh();
         }, cotc.SEVERITY_MEDIUM));
 
-        setItemsTestGroup.registerTest(CUnit.test("setItems - no events followed by refresh", function() {
+        setItemsTestGroup.registerTest(cotr.test("setItems - no events followed by refresh", function() {
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0},{cgrid:1}]);
             expect(0);
@@ -133,7 +133,7 @@ define([
             gridListModel.refresh();
         }, cotc.SEVERITY_MEDIUM));
 
-        setItemsTestGroup.registerTest(CUnit.test("setItems - no refresh while suspended", function() {
+        setItemsTestGroup.registerTest(cotr.test("setItems - no refresh while suspended", function() {
             var gridListModel = new Slick.Data.DataView();
             gridListModel.beginUpdate();
             gridListModel.onRowsChanged.subscribe(function() { ok(false, "onRowsChanged called") });
@@ -145,7 +145,7 @@ define([
             same(gridListModel.getLength(), 0, "rows aren't updated until resumed");
         }, cotc.SEVERITY_MEDIUM));
 
-        setItemsTestGroup.registerTest(CUnit.test("setItems - refresh fires after resume", function() {
+        setItemsTestGroup.registerTest(cotr.test("setItems - refresh fires after resume", function() {
             var gridListModel = new Slick.Data.DataView();
             gridListModel.beginUpdate();
             gridListModel.setItems([{cgrid:0},{cgrid:1}]);
@@ -184,7 +184,7 @@ define([
          */
         var sortTestGroup = gridListModelTestSuite.createTestGroup('sort');
 
-        sortTestGroup.registerTest(CUnit.test("sort - basic", function() {
+        sortTestGroup.registerTest(cotr.test("sort - basic", function() {
             var count = 0;
             var items = [{cgrid:2,val:2},{cgrid:1,val:1},{cgrid:0,val:0}];
             var gridListModel = new Slick.Data.DataView();
@@ -202,7 +202,7 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        sortTestGroup.registerTest(CUnit.test("sort - ascending order by default ", function() {
+        sortTestGroup.registerTest(cotr.test("sort - ascending order by default ", function() {
             var items = [{cgrid:2,val:2},{cgrid:1,val:1},{cgrid:0,val:0}];
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems(items);
@@ -210,7 +210,7 @@ define([
             same(items, [{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}], "sort order");
         }, cotc.SEVERITY_MEDIUM));
 
-        sortTestGroup.registerTest(CUnit.test("sort - descending order by default ", function() {
+        sortTestGroup.registerTest(cotr.test("sort - descending order by default ", function() {
             var items = [{cgrid:0,val:0},{cgrid:2,val:2},{cgrid:1,val:1}];
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems(items);
@@ -218,7 +218,7 @@ define([
             same(items, [{cgrid:2,val:2},{cgrid:1,val:1},{cgrid:0,val:0}], "sort order");
         }, cotc.SEVERITY_LOW));
 
-        sortTestGroup.registerTest(CUnit.test("sort - check stablility", function() {
+        sortTestGroup.registerTest(cotr.test("sort - check stablility", function() {
             var items = [{cgrid:0,val:0},{cgrid:2,val:2},{cgrid:3,val:2},{cgrid:1,val:1}];
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems(items);
@@ -238,7 +238,7 @@ define([
          */
         var filterTestGroup = gridListModelTestSuite.createTestGroup("filter");
 
-        filterTestGroup.registerTest(CUnit.test("filter - should apply immediately", function() {
+        filterTestGroup.registerTest(cotr.test("filter - should apply immediately", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -267,7 +267,7 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        filterTestGroup.registerTest(CUnit.test("filter - filtering re-applied on refresh", function() {
+        filterTestGroup.registerTest(cotr.test("filter - filtering re-applied on refresh", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -302,7 +302,7 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        filterTestGroup.registerTest(CUnit.test("filter - filtering re-applied on sort ", function() {
+        filterTestGroup.registerTest(cotr.test("filter - filtering re-applied on sort ", function() {
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
             gridListModel.setFilter(function(o) { return o.val === 1; });
@@ -317,7 +317,7 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        filterTestGroup.registerTest(CUnit.test("filter - filtering all", function() {
+        filterTestGroup.registerTest(cotr.test("filter - filtering all", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -344,7 +344,7 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        filterTestGroup.registerTest(CUnit.test("filter - filtering all then none", function() {
+        filterTestGroup.registerTest(cotr.test("filter - filtering all then none", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -379,7 +379,7 @@ define([
 
         }, cotc.SEVERITY_LOW));
 
-        filterTestGroup.registerTest(CUnit.test("filter - inlining replaces absolute returns", function() {
+        filterTestGroup.registerTest(cotr.test("filter - inlining replaces absolute returns", function() {
             var gridListModel = new Slick.Data.DataView({ inlineFilters: true });
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
             gridListModel.setFilter(function(o) {
@@ -396,7 +396,7 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        filterTestGroup.registerTest(CUnit.test("filter - inlining replaces evaluated returns", function() {
+        filterTestGroup.registerTest(cotr.test("filter - inlining replaces evaluated returns", function() {
             var gridListModel = new Slick.Data.DataView({ inlineFilters: true });
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
             gridListModel.setFilter(function(o) {
@@ -419,7 +419,7 @@ define([
 
         var updateTestGroup = gridListModelTestSuite.createTestGroup("update");
 
-        updateTestGroup.registerTest(CUnit.test("update - basic", function() {
+        updateTestGroup.registerTest(cotr.test("update - basic", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -442,7 +442,7 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        updateTestGroup.registerTest(CUnit.test("update - updating an item not passing the filter", function() {
+        updateTestGroup.registerTest(cotr.test("update - updating an item not passing the filter", function() {
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2},{cgrid:3,val:1337}]);
             gridListModel.setFilter(function(o) { return o["val"] !== 1337; });
@@ -460,7 +460,7 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        updateTestGroup.registerTest(CUnit.test("update - updating an item to pass the filter", function() {
+        updateTestGroup.registerTest(cotr.test("update - updating an item to pass the filter", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2},{cgrid:3,val:1337}]);
@@ -489,7 +489,7 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        updateTestGroup.registerTest(CUnit.test("update - updating an item to not pass the filter ", function() {
+        updateTestGroup.registerTest(cotr.test("update - updating an item to not pass the filter ", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2},{cgrid:3,val:3}]);
@@ -522,7 +522,7 @@ define([
          */
         var addTestGroup = gridListModelTestSuite.createTestGroup("add");
 
-        addTestGroup.registerTest(CUnit.test("add - must have id set", function() {
+        addTestGroup.registerTest(cotr.test("add - must have id set", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -534,7 +534,7 @@ define([
             catch (ex) {}
         }, cotc.SEVERITY_LOW));
 
-        addTestGroup.registerTest(CUnit.test("add - must have id set (custom)", function() {
+        addTestGroup.registerTest(cotr.test("add - must have id set (custom)", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{uid:0,val:0},{uid:1,val:1},{uid:2,val:2}], "uid");
@@ -546,7 +546,7 @@ define([
             catch (ex) {}
         }, cotc.SEVERITY_LOW));
 
-        addTestGroup.registerTest(CUnit.test("add - basic", function() {
+        addTestGroup.registerTest(cotr.test("add - basic", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -576,7 +576,7 @@ define([
 
         }, cotc.SEVERITY_LOW));
 
-        addTestGroup.registerTest(CUnit.test("add - add item not passing the filter", function() {
+        addTestGroup.registerTest(cotr.test("add - add item not passing the filter", function() {
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
             gridListModel.setFilter(function(o) { return o["val"] !== 1337; });
@@ -599,7 +599,7 @@ define([
          */
         var insertTestGroup = gridListModelTestSuite.createTestGroup("insert");
 
-        insertTestGroup.registerTest(CUnit.test("insert - must have id set ", function() {
+        insertTestGroup.registerTest(cotr.test("insert - must have id set ", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -611,7 +611,7 @@ define([
             catch (ex) {}
         }, cotc.SEVERITY_LOW));
 
-        insertTestGroup.registerTest(CUnit.test("insert - must have id set (custom)", function() {
+        insertTestGroup.registerTest(cotr.test("insert - must have id set (custom)", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{uid:0,val:0},{uid:1,val:1},{uid:2,val:2}], "uid");
@@ -623,7 +623,7 @@ define([
             catch (ex) {}
         }, cotc.SEVERITY_LOW));
 
-        insertTestGroup.registerTest(CUnit.test("insert - insert item at the beginning", function() {
+        insertTestGroup.registerTest(cotr.test("insert - insert item at the beginning", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -653,7 +653,7 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        insertTestGroup.registerTest(CUnit.test("insert - inserting item at the middle ", function() {
+        insertTestGroup.registerTest(cotr.test("insert - inserting item at the middle ", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -684,7 +684,7 @@ define([
 
         }, cotc.SEVERITY_LOW));
 
-        insertTestGroup.registerTest(CUnit.test("insert - inserting item at the end", function() {
+        insertTestGroup.registerTest(cotr.test("insert - inserting item at the end", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -719,7 +719,7 @@ define([
          */
         var deleteTestGroup = gridListModelTestSuite.createTestGroup("delete");
 
-        deleteTestGroup.registerTest(CUnit.test("delete - must have the id set", function() {
+        deleteTestGroup.registerTest(cotr.test("delete - must have the id set", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:0,val:0},{cgrid:1,val:1},{cgrid:2,val:2}]);
@@ -746,7 +746,7 @@ define([
             catch (ex) {}
         }, cotc.SEVERITY_LOW));
 
-        deleteTestGroup.registerTest(CUnit.test("delete - must have the id set (custom)", function() {
+        deleteTestGroup.registerTest(cotr.test("delete - must have the id set (custom)", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{uid:0,id:-1,val:0},{uid:1,id:3,val:1},{uid:2,id:null,val:2}], "uid");
@@ -773,7 +773,7 @@ define([
             catch (ex) {}
         }, cotc.SEVERITY_LOW));
 
-        deleteTestGroup.registerTest(CUnit.test("delete - deleting item at the beginning", function() {
+        deleteTestGroup.registerTest(cotr.test("delete - deleting item at the beginning", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:05,val:0},{cgrid:15,val:1},{cgrid:25,val:2}]);
@@ -803,7 +803,7 @@ define([
 
         }, cotc.SEVERITY_LOW));
 
-        deleteTestGroup.registerTest(CUnit.test("delete - deleting item at the middle", function() {
+        deleteTestGroup.registerTest(cotr.test("delete - deleting item at the middle", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:05,val:0},{cgrid:15,val:1},{cgrid:25,val:2}]);
@@ -832,7 +832,7 @@ define([
             assertConsistency(gridListModel);
         }, cotc.SEVERITY_LOW));
 
-        deleteTestGroup.registerTest(CUnit.test("delete - deleting item at the end", function() {
+        deleteTestGroup.registerTest(cotr.test("delete - deleting item at the end", function() {
             var count = 0;
             var gridListModel = new Slick.Data.DataView();
             gridListModel.setItems([{cgrid:05,val:0},{cgrid:15,val:1},{cgrid:25,val:2}]);

@@ -5,8 +5,8 @@
 define([
     'co-test-utils',
     'co-test-messages',
-    'co-test-unit',
-], function (cotu, cotm, CUnit) {
+    'co-test-runner',
+], function (cotu, cotm, cotr) {
 
     var testSuiteClass = function (viewObj, suiteConfig) {
         var mockData = ifNull(suiteConfig.mockData, []),
@@ -19,11 +19,11 @@ define([
 
         module(cotu.formatTestModuleMessage(cotm.TEST_GRIDVIEW_LIST_MODEL, viewObj.el.id));
 
-        var gridListModelTestSuite = CUnit.createTestSuite('GridListModelTest');
+        var gridListModelTestSuite = cotr.createTestSuite('GridListModelTest');
 
         var basicTestGroup = gridListModelTestSuite.createTestGroup('basic');
 
-        basicTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_LIST_MODEL_INITIAL_SETUP, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_LIST_MODEL_INITIAL_SETUP, function () {
             if (mockData == null) {
                 assertEmpty(gridListModel);
             } else {
@@ -32,7 +32,7 @@ define([
 
         }, cotc.SEVERITY_HIGH));
 
-        basicTestGroup.registerTest(CUnit.test(cotm.GRIDVIEW_LIST_MODEL_REFRESH, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_LIST_MODEL_REFRESH, function () {
             gridListModel.refresh();
             if (mockData == null) {
                 assertEmpty(gridListModel);
@@ -63,11 +63,11 @@ define([
             }
         }
         expect(6);
-        notDeepEqual(0, gridListModel.getLength(), "rows is initialized to an non-empty array");
+        notEqual(0, gridListModel.getLength(), "rows is initialized to an non-empty array");
         deepEqual(gridListModelItems.length, mockData.length, "getItems().length should equal with mockData.length");
-        notDeepEqual(undefined, gridListModel.getIdxById("id_0"), "getIdxById should not be undefined");
-        notDeepEqual(undefined, gridListModel.getRowById("id_0"), "getRowById should not be undefined");
-        notDeepEqual(undefined, gridListModel.getItemById("id_0"), "getItemById should not be undefined");
+        notEqual(undefined, gridListModel.getIdxById("id_0"), "getIdxById should not be undefined");
+        notEqual(undefined, gridListModel.getRowById("id_0"), "getRowById should not be undefined");
+        notEqual(undefined, gridListModel.getItemById("id_0"), "getItemById should not be undefined");
         deepEqual(mockData[0], gridListModelItems[0], "getItemByIdx[0] (listmodel first item) should equal to mockData[0]");
     }
 

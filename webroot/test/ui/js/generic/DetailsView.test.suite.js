@@ -8,8 +8,8 @@ define([
     'co-test-utils',
     'co-test-messages',
     'co-test-constants',
-    'co-test-unit'
-], function ($, _, cotu, cotm, cotc, CUnit) {
+    'co-test-runner'
+], function ($, _, cotu, cotm, cotc, cotr) {
 
     var testSuiteClass = function (viewObj, suiteConfig){
         var viewConfig = cotu.getViewConfigObj(viewObj),
@@ -23,14 +23,14 @@ define([
 
         module(cotu.formatTestModuleMessage(cotm.TEST_DETAILSVIEW, el.id));
 
-        var detailsViewTestSuite = CUnit.createTestSuite('DetailsViewTest');
+        var detailsViewTestSuite = cotr.createTestSuite('DetailsViewTest');
 
         /**
          * Basic test group
          */
         var basicTestGroup = detailsViewTestSuite.createTestGroup('basic');
 
-        //basicTestGroup.registerTest(CUnit.test(cotm.DETAILSVIEW_TMPL_HTML, function () {
+        //basicTestGroup.registerTest(cotr.test(cotm.DETAILSVIEW_TMPL_HTML, function () {
         //    expect(1);
         //    var domHtml = $(el).html(),
         //        templateHtml = detailsTemplate({data: data, requestState: requestState});
@@ -45,7 +45,7 @@ define([
         var detailEls = $(el).find('.detail-foundation-container .detail-foundation-action-item'),
             detailElsIndx = detailEls.length - 1;
 
-        basicTestGroup.registerTest(CUnit.test(cotm.DETAILSVIEW_BASIC_ADVANCED_TOGGLE, function() {
+        basicTestGroup.registerTest(cotr.test(cotm.DETAILSVIEW_BASIC_ADVANCED_TOGGLE, function() {
             if (requestState !== cowc.DATA_REQUEST_STATE_ERROR) {
                 //check advanced view icon
                 equal($(detailEls[detailElsIndx]).attr('data-view'),
@@ -72,7 +72,7 @@ define([
         }, cotc.SEVERITY_LOW));
 
         if (contrail.checkIfExist(templateConfig.actions)) {
-            basicTestGroup.registerTest(CUnit.test(cotm.DETAILSVIEW_ACTIONS_BASIC, function() {
+            basicTestGroup.registerTest(cotr.test(cotm.DETAILSVIEW_ACTIONS_BASIC, function() {
                 if (requestState !== cowc.DATA_REQUEST_STATE_ERROR) {
                     //check type, icon and title for all actions
                     var actions = templateConfig.actions;
@@ -88,7 +88,7 @@ define([
                 }
             }, cotc.SEVERITY_LOW));
 
-            basicTestGroup.registerTest(CUnit.test(cotm.DETAILSVIEW_ACTIONS_OPTIONLIST, function() {
+            basicTestGroup.registerTest(cotr.test(cotm.DETAILSVIEW_ACTIONS_OPTIONLIST, function() {
                 if (requestState !== cowc.DATA_REQUEST_STATE_ERROR) {
                     var actions = templateConfig.actions;
                     var actionLen = actions.length;

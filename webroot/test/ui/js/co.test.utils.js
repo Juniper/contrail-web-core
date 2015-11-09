@@ -148,6 +148,34 @@ define([
         })
     };
 
+    this.setModelObj4All = function(testConfig, done) {
+
+        var deferredList = [];
+
+        _.each(testConfig.tests, function(modelTestConfig) {
+            var modelName = modelTestConfig.model,
+                modelPathPrefix = contrail.checkIfExist(modelTestConfig['modelPathPrefix']) ? modelTestConfig['modelPathPrefix'] : 'core-basedir/js/models/',
+                modelObj,
+                deferredObj = $.Deferred();
+
+            deferredList.push(deferredObj);
+
+            deferredObj.done(function() {
+                modelTestConfig.modelObj = modelObj;
+            });
+
+            require([ modelPathPrefix + modelName ], function(ModelClass) {
+                modelObj = new ModelClass();
+                deferredObj.resolve();
+            });
+        });
+
+        $.when.apply($, deferredList).done(function () {
+            done.resolve();
+        });
+
+    };
+
     this.formatTestModuleMessage = function (message, id) {
         if (message != null && id != null) {
             return message + ":" + id + " - ";
@@ -250,6 +278,7 @@ define([
         getFakeServer: getFakeServer,
         getViewConfigObj: getViewConfigObj,
         setViewObjAndViewConfig4All: setViewObjAndViewConfig4All,
+        setModelObj4All: setModelObj4All,
         formatTestModuleMessage: formatTestModuleMessage,
         getGridDataSourceWithOnlyRemotes: getGridDataSourceWithOnlyRemotes,
         createMockData: createMockData

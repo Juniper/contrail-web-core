@@ -7,8 +7,8 @@ define([
     'co-test-utils',
     'co-test-messages',
     'co-test-constants',
-    'co-test-unit'
-], function (_, cotu, cotm, cotc, CUnit) {
+    'co-test-runner'
+], function (_, cotu, cotm, cotc, cotr) {
 
     var testSuiteClass = function (viewObj, suiteConfig){
 
@@ -20,7 +20,7 @@ define([
 
         module(cotu.formatTestModuleMessage(cotm.TEST_CHARTVIEW_ZOOM_SCATTER, el.id));
 
-        var chartViewTestSuite = CUnit.createTestSuite('ZoomScatterChartViewTest');
+        var chartViewTestSuite = cotr.createTestSuite('ZoomScatterChartViewTest');
 
         /**
          * Chart basic group test cases
@@ -30,21 +30,21 @@ define([
         /**
          * Test axis labels.
          */
-        basicTestGroup.registerTest(CUnit.test(cotm.CHARTVIEW_AXIS_LABEL, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.CHARTVIEW_AXIS_LABEL, function () {
             expect(2);
-            equal($(el).find('.zoom-scatter-chart .x.label').text().trim(), chartOptions.xLabel,
+            equal($(el).find('.zoom-scatter-chart .x.label').text().trim(), chartOptions.xLabel.trim(),
                 "X axis title should be equal to the title set");
-            equal($(el).find('.zoom-scatter-chart .y.label').text().trim(), chartOptions.yLabel,
+            equal($(el).find('.zoom-scatter-chart .y.label').text().trim(), chartOptions.yLabel.trim(),
                 "Y axis title should be equal to the title set");
         }, cotc.SEVERITY_LOW));
 
-        basicTestGroup.registerTest(CUnit.test(cotm.CHARTVIEW_BUBBLE_COUNT, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.CHARTVIEW_BUBBLE_COUNT, function () {
             expect(1);
             equal($(el).find('.zoom-scatter-chart').find('circle').length, chartItems.length,
                 "Number of bubbles in chart should be equal to the chart data");
         }, cotc.SEVERITY_LOW));
 
-        basicTestGroup.registerTest(CUnit.test(cotm.CHARTMODEL_BUBBLE_COLOR, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.CHARTMODEL_BUBBLE_COLOR, function () {
             expect(1);
             var chartData = chartModel.data,
                 expectedColorObj = [], actualColorObj = [];
@@ -63,7 +63,7 @@ define([
                 "Color of bubbles in chart should be equal to the chart data");
         }, cotc.SEVERITY_LOW));
 
-        basicTestGroup.registerTest(CUnit.test(cotm.CHARTMODEL_BUBBLE_SIZE, function () {
+        basicTestGroup.registerTest(cotr.test(cotm.CHARTMODEL_BUBBLE_SIZE, function () {
             expect(1);
             var chartData = chartModel.data,
                 expectedSizeArr = [], actualSizeArr = [];

@@ -12,7 +12,7 @@ function getCoreTestAppPaths(coreBaseDir) {
         'co-test-utils'         : coreTestAppBaseDir + '/co.test.utils',
         'co-test-messages'      : coreTestAppBaseDir + '/co.test.messages',
         'co-test-mockdata'      : coreTestAppBaseDir + '/co.test.mock.data',
-        'co-test-unit'          : coreTestAppBaseDir + '/co.test.unit',
+        'co-test-runner'        : coreTestAppBaseDir + '/co.test.runner',
         'co-grid-contrail-list-model-test-suite'     : coreTestAppBaseDir + '/grid/ContrailListModel.test.suite',
         'co-grid-view-test-suite'                    : coreTestAppBaseDir + '/grid/GridView.test.suite',
         'co-grid-contrail-list-model-lib-test-suite' : coreTestAppBaseDir + '/grid/ContrailListModel.lib.test.suite',
@@ -22,6 +22,8 @@ function getCoreTestAppPaths(coreBaseDir) {
         'co-chart-view-line-test-suite'              : coreTestAppBaseDir + '/chart/LineWithFocusChartView.test.suite',
         'co-tabs-view-test-suite'                    : coreTestAppBaseDir + '/generic/TabsView.test.suite',
         'co-details-view-test-suite'                 : coreTestAppBaseDir + '/generic/DetailsView.test.suite',
+
+        'co-form-model-validations-test-suite'       : coreTestAppBaseDir + '/form/ModelValidations.test.suite',
     };
 }
 
