@@ -97,6 +97,9 @@ $(document).ready(function () {
 
     jQuery.support.cors = true;
 
+    //Get the CSRF token from cookie
+    // globalObj['_csrf'] = getCookie('_csrf');
+    // delete_cookie('_csrf');
     $.ajaxSetup({
         cache: false,
         crossDomain: true,
@@ -106,6 +109,7 @@ $(document).ready(function () {
             if (globalObj['webServerInfo'] != null && globalObj['webServerInfo']['loggedInOrchestrationMode'] != null)
                 xhr.setRequestHeader("x-orchestrationmode", globalObj['webServerInfo']['loggedInOrchestrationMode']);
             xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            xhr.setRequestHeader("X-CSRF-Token", getCookie('_csrf'));
         },
         error: function (xhr, e) {
             //ajaxDefErrorHandler(xhr);
