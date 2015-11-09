@@ -50,13 +50,11 @@ define([
                             engQueryStr = '';
 
                         $.each(engQueryObj, function(key, val){
-                            if(key == 'select' && val != ''){
+                            if(key == 'select' && (!contrail.checkIfExist(val) || val == "")){
                                 engQueryStr += '<div class="row-fluid"><span class="bolder">' + key.toUpperCase() + '</span> &nbsp;*</div>';
-                            }
-                            else if((key == 'where' || key == 'filter') && val == ''){
+                            } else if((key == 'where' || key == 'filter') && (!contrail.checkIfExist(val) || val == "")){
                                 engQueryStr += '';
-                            }
-                            else {
+                            } else {
                                 var formattedKey = key;
                                 if(key == 'from_time' || key == 'to_time'){
                                     formattedKey = key.split('_').join(' ');
@@ -73,13 +71,11 @@ define([
                             var engQueryObj = JSON.parse(dc.engQueryStr),
                                 engQueryStr = '';
                             $.each(engQueryObj, function(key, val){
-                                if(key == 'select' && val != ''){
+                                if(key == 'select' && (!contrail.checkIfExist(val) || val == "")){
                                     engQueryStr += key.toUpperCase() + ' * ';
-                                }
-                                else if((key == 'where' || key == 'filter') && val == ''){
+                                } else if((key == 'where' || key == 'filter') && (!contrail.checkIfExist(val) || val == "")){
                                     engQueryStr += '';
-                                }
-                                else {
+                                } else {
                                     var formattedKey = key;
                                     if(key == 'from_time' || key == 'to_time'){
                                         formattedKey = key.split('_').join(' ');

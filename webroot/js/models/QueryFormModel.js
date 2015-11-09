@@ -230,6 +230,7 @@ define([
             queryReqObj.async = 'true';
             queryReqObj.autoSort = 'true';
             queryReqObj.autoLimit = 'true';
+            queryReqObj.engQueryStr = qewu.getEngQueryStr(queryReqObj['formModelAttrs']);
             queryReqObj = $.extend(true, {}, queryReqObj, reqObj);
 
             return queryReqObj;

@@ -64,7 +64,7 @@ define([
         self.getEngQueryStr = function (reqQueryObj) {
             var engQueryJSON = {
                 select: reqQueryObj.select,
-                from: reqQueryObj.table,
+                from: reqQueryObj.table_name,
                 where: reqQueryObj.where,
                 filter: reqQueryObj.filters
             };
