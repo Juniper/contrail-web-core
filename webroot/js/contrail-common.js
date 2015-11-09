@@ -202,6 +202,37 @@ function Contrail() {
 		return '<pre class="pre-format-JSON2HTML">' + formatJsonObject(json, formatDepth, 0) + '</pre>';
     };
     
+    this.isItemExists = function(value, data){
+        var isThere = false;
+        for(var i = 0; i < data.length; i++) {
+            for(var j = 0; j < data[i].children.length; j++) {
+                if(value === data[i].children[j].value) {
+                    return true;
+                }
+            }
+        }
+        return isThere;
+    };
+
+    this.appendNewItemMainDataSource = function(value, data){
+        var valueArray = value.split('~');
+        if(valueArray.length === 2) {
+            for(var i = 0; i < data.length; i++) {
+                if(data[i].value === valueArray[1]) {
+                    data[i].children.push(
+                        {
+                           text : valueArray[0],
+                           id : value,
+                           value : value ,
+                           parent : valueArray[1]
+                        }
+                    );
+                    break;
+                }
+            }
+        }
+    };
+
     function formatJsonObject(jsonObj, formatDepth, currentDepth) {
     	var output = '',
     		objType = {type: 'object', startTag: '{', endTag: '}'};
