@@ -177,14 +177,14 @@ define([
         this.QE_QUEUE_RESULT_SUFFIX = "-queue-result";
 
         this.QE_LOG_LEVELS = [
-            { value: 0, name: "SYS_EMERG" },
-            { value: 1, name: "SYS_ALERT" },
-            { value: 2, name: "SYS_CRIT" },
-            { value: 3, name: "SYS_ERR" },
-            { value: 4, name: "SYS_WARN" },
-            { value: 5, name: "SYS_NOTICE" },
-            { value: 6, name: "SYS_INFO" },
-            { value: 7, name: "SYS_DEBUG" }
+            { value: "0", name: "SYS_EMERG" },
+            { value: "1", name: "SYS_ALERT" },
+            { value: "2", name: "SYS_CRIT" },
+            { value: "3", name: "SYS_ERR" },
+            { value: "4", name: "SYS_WARN" },
+            { value: "5", name: "SYS_NOTICE" },
+            { value: "6", name: "SYS_INFO" },
+            { value: "7", name: "SYS_DEBUG" }
         ],
 
         this.QE_FLOW_QUERY_QUEUE = "fqq";
