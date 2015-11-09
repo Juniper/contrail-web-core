@@ -343,10 +343,6 @@ function initCustomKOBindings(Knockout) {
             }
 
             dropdown = $(element).contrailDropdown(elementConfig).data('contrailDropdown');
-            //required for hierarchical dropdown
-            if(elementConfig.queryMap) {
-                dropdown.setData(elementConfig.data);
-            }
             Knockout.utils.domNodeDisposal.addDisposeCallback(element, function () {
                 dropdown.destroy();
             });
@@ -382,16 +378,16 @@ function initCustomKOBindings(Knockout) {
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);
 
                 value = contrail.checkIfFunction(value) ? value() : value;
-
-                if (contrail.checkIfExist(value) && value !== '') {
-                    dropdown.value(value);
+                //required for hierarchical dropdown
+                if(elementConfig.queryMap) {
+                    var data = dropdown.getAllData();
+                    if(!contrail.isItemExists(value, data)) {
+                        contrail.appendNewItemMainDataSource(value, data);
+                    }
                 }
-            }
-
-            if (allBindingsAccessor.get('customValue')) {
-                var valueBindingAccessor = allBindingsAccessor.get('customValue'),
-                value = Knockout.utils.unwrapObservable(valueBindingAccessor);
-                dropdown.customValue(value);
+                if (contrail.checkIfExist(value) && value !== '') {
+                    dropdown.value(value, true);
+                }
             }
         }
     };

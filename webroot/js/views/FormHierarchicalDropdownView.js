@@ -24,7 +24,6 @@ define([
                     cowl.get(elId, app) : cowl.get(path, app)),
                 tmplParameters;
                 self.elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG];
-                self.dsSrcDest = self.elementConfig.data;
                 /*Merge hierarchical opts with defaults*/
                  $.extend(self.elementConfig, self.hierarchicalOptions());
             if (!(contrail.checkIfExist(lockEditingByDefault) &&
@@ -80,7 +79,7 @@ define([
             .select2-results-dept-0.select2-result-selectable').
             attr('style','display:block');
             if($(".select2-search") &&  $(".select2-search").length > 0) {
-                self.setSelectedGroupIcon(map[0].grpName);
+                self.setSelectedGroupIcon(map[0].name);
             }
             $('.select2-results').removeAttr('style');
             $('.res-icon').remove();
@@ -104,15 +103,27 @@ define([
         choiceSelection : function(state){
             var map = self.elementConfig.queryMap;
             var fomattedTxt;
-            var txt = state.parent != undefined ? state.parent : state.text
+            var txt = state.parent != undefined ? state.parent :
+                self.getValueFromMap(state.text)
             for(var i=0; i < map.length; i++) {
-                if(txt === map[i].grpName) {
+                if(txt === map[i].value) {
                     fomattedTxt = '<i class="' + map[i].iconClass + '"></i>' +
                         ' ' + state.text;
                     break;
                 }
             }
             return fomattedTxt;
+        },
+        getValueFromMap : function(txt) {
+            var map = self.elementConfig.queryMap;
+            var value = map[0].value;
+            for(var i = 0; i < map.length; i++) {
+                if(map[i].name === txt){
+                    value = map[i].value;
+                    break;
+                }
+            }
+            return value;
         },
         select2ResultFormat : function(state){
             var originalOption = state.element != null ? state.element : state;
@@ -124,27 +135,31 @@ define([
         },
         getSelectedGroupName : function(selector) {
             var map = self.elementConfig.queryMap;
-            var grpName = map[0].grpName;
+            var grpName = map[0].name;
             var element = selector ? selector : $(".res-icon");
             for(var i = 0; i < map.length; i++) {
                  if(element.hasClass(map[i].iconClass)){
-                     grpName = map[i].grpName;
+                     grpName = map[i].name;
                      break;
                  }
             }
             return grpName;
         },
-        setFocusSelectedItem: function(grpName, term, data) {
-            for(var i = 0; i < data.length ; i++) {
-                if(data[i].text === grpName &&  data[i].children.length === 2) {
-                    $($('div:contains('+ term +')').parent()).
-                        addClass('select2-highlighted');
+        addNewTermDataSource : function(grpName, term, data) {
+            var map = self.elementConfig.queryMap;
+            var grpValue;
+            for(var i = 0; i < map.length; i++) {
+                if(map[i].name === grpName) {
+                    grpValue = map[i].value;
                     break;
                 }
             }
-        },
-        addNewTermDataSource : function(grpName, term, data) {
-            var newItem = {id : term, text : term, parent : grpName};
+            var newItem = {
+                id : term + '~' + grpValue,
+                value : term + '~' + grpValue,
+                text : term,
+                parent : grpValue
+            };
             for(var i = 0; i < data.length ; i++) {
                 if(data[i].text === grpName &&  data[i].children.length === 1) {
                     data[i].children.push(newItem);
@@ -156,7 +171,7 @@ define([
             var map = self.elementConfig.queryMap;
             var currentIcon = map[0].iconClass;
             for(var i=0; i < map.length; i++) {
-                if(grpName === map[i].grpName) {
+                if(grpName === map[i].name) {
                     currentIcon = map[i].iconClass;
                     break;
                 }
@@ -172,7 +187,7 @@ define([
                 subEleArry.addClass('hide');
                 var grpName = self.getSelectedGroupName();
                 for(var i = 0; i < map.length; i++) {
-                   if(map[i].grpName === grpName) {
+                   if(map[i].name === grpName) {
                        var subEle = $(subEleArry[i]);
                        subEle.removeClass('hide');
                        break;
@@ -187,22 +202,18 @@ define([
             var grpName = self.getSelectedGroupName();
 
             if(query.term != undefined) {
-                data.results.push(
-                    { id : query.term, text : query.term, parent : grpName}
-                );
-                this.data = [];
                 var filteredResults = [];
-                for(var i = 0; i < self.dsSrcDest.length;i++) {
-                    var children = self.dsSrcDest[i]['children'];
+                for(var i = 0; i < this.data.length;i++) {
+                    var children = this.data[i]['children'];
                     filteredResults[i] = {
-                        text: self.dsSrcDest[i]['text'],
+                        text: this.data[i]['text'],
                         children: []
                     };
                     for(var j = 0; j < children.length; j++) {
                         if(children[j].text.indexOf(query.term) != -1 ||
                             children[j].disabled == true) {
                             filteredResults[i].children.push(
-                                self.dsSrcDest[i].children[j]);
+                                this.data[i].children[j]);
                         }
                     }
                     data.results.push(filteredResults[i]);
@@ -254,18 +265,15 @@ define([
                     }
                 };
                 if(t != ""){
-                    $(self.dsSrcDest).each2(
+                    $(this.data).each2(
                         function(i, datum) {
                             process(datum, filtered.results);
                         }
                     )
                 }
-                data.results = self.dsSrcDest;
-
+                data.results = this.data;
             }
             query.callback(data);
-            //set focus for a searched item
-            self.setFocusSelectedItem(grpName, query.term, data.results);
 
             //hide inbuilt select2 search results for custom term
             $('.select2-results >\
