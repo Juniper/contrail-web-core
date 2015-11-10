@@ -24,7 +24,7 @@ define([
                 "where_json": null,
                 "filter_json": null,
                 "direction": '1',
-                "filter": null,
+                "filters": null,
                 "limit": 150000,
                 "select_data_object": getSelectDataObject(),
                 "where_data_object": {},

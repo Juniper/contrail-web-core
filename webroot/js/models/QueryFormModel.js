@@ -199,7 +199,7 @@ define([
                     callbackObj.init();
                 }
 
-                this.filter(qewu.parseFilterCollection2String(this));
+                this.filters(qewu.parseFilterCollection2String(this));
 
                 if (contrail.checkIfFunction(callbackObj.success)) {
                     callbackObj.success();
@@ -260,7 +260,7 @@ define([
             this.select('');
             this.where('');
             this.direction("1");
-            this.filter('');
+            this.filters('');
             this.select_data_object().reset(data);
             this.model().get('where_or_clauses').reset();
             this.model().get('filter_and_clauses').reset();
@@ -287,7 +287,7 @@ define([
         },
 
         addFilterAndClause: function() {
-                var andClauses = this.model().get('filter_and_clauses'),
+            var andClauses = this.model().get('filter_and_clauses'),
                 newAndClause = new QueryAndModel(this.model().attributes);
             andClauses.add([newAndClause]);
         },

@@ -19,7 +19,7 @@ define([
             this.renderView4Config(this.$el, this.model, getWhereViewConfig(contrail.checkIfExist(options) ? options : {}));
         },
 
-        renderFilter: function (options) {
+        renderFilters: function (options) {
             this.renderView4Config(this.$el, this.model, getFilterViewConfig(contrail.checkIfExist(options) ? options : {}));
         }
     });

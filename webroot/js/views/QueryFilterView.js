@@ -30,9 +30,9 @@ define([
                             }
 
                             //TODO - Quick Fix to adjust the height of filter textarea; Can be done in cleaner way
-                            $(self.$el).find('[name="filter"]')
+                            $(self.$el).find('[name="filters"]')
                                 .height(0)
-                                .height($(self.$el).find('[name="filter"]').get(0).scrollHeight - 5);
+                                .height($(self.$el).find('[name="filters"]').get(0).scrollHeight - 5);
 
                             $("#" + modalId).modal('hide');
                         },
