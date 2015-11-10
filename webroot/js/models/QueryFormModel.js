@@ -15,9 +15,9 @@ define([
         disableSubstringInSelectFields: ['CLASS('],
         disableWhereFields: [],
 
-        constructor: function (modelData) {
-            var self = this,
-                modelRemoteDataConfig;
+        constructor: function (modelData, queryReqConfig) {
+            var self = this, modelRemoteDataConfig,
+                defaultQueryReqConfig = {chunk: 1, autoSort: true, chunkSize: cowc.QE_RESULT_CHUNK_SIZE_10K, async: true};
 
             var defaultSelectFields = this.defaultSelectFields,
                 disableFieldArray = [].concat(defaultSelectFields).concat(this.disableSelectFields),
@@ -26,6 +26,12 @@ define([
             if (contrail.checkIfExist(modelData.table_name)) {
                 modelRemoteDataConfig = getTableSchemaConfig(self, modelData.table_name, disableFieldArray, disableSubstringArray, this.disableWhereFields);
             }
+
+            if(contrail.checkIfExist(queryReqConfig)) {
+                defaultQueryReqConfig = $.extend(true, defaultQueryReqConfig, queryReqConfig);
+            }
+
+            this.defaultQueryReqConfig = defaultQueryReqConfig;
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
 
@@ -206,9 +212,7 @@ define([
 
         getQueryRequestPostData: function (serverCurrentTime, reqObj) {
             var self = this,
-                queryReqObj = {
-                    formModelAttrs: this.getFormModelAttributes()
-                },
+                formModelAttrs = this.getFormModelAttributes(),
                 selectStr = self.select(),
                 showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
                 queryPrefix = self.query_prefix(),
@@ -218,20 +222,18 @@ define([
                     labelStep: 1, baseUnit: 'mins', fromTime: 0, toTime: 0, interval: 0,
                     btnId: queryPrefix + '-query-submit', refreshChart: true, serverCurrentTime: serverCurrentTime
                 },
-                formModelAttrs = qewu.setUTCTimeObj(this.query_prefix(), queryReqObj['formModelAttrs'], options);
+                queryReqObj = {};
+
+            formModelAttrs = qewu.setUTCTimeObj(this.query_prefix(), formModelAttrs, options);
 
             self.from_time_utc(formModelAttrs.from_time_utc);
             self.to_time_utc(formModelAttrs.to_time_utc);
 
             queryReqObj['formModelAttrs'] = formModelAttrs;
             queryReqObj.queryId = qewu.generateQueryUUID();
-            queryReqObj.chunk = 1;
-            queryReqObj.chunkSize = cowc.QE_RESULT_CHUNK_SIZE_1K;
-            queryReqObj.async = 'true';
-            queryReqObj.autoSort = 'true';
-            queryReqObj.autoLimit = 'true';
-            queryReqObj.engQueryStr = qewu.getEngQueryStr(queryReqObj['formModelAttrs']);
-            queryReqObj = $.extend(true, {}, queryReqObj, reqObj);
+            queryReqObj.engQueryStr = qewu.getEngQueryStr(formModelAttrs);
+
+            queryReqObj = $.extend(true, self.defaultQueryReqConfig, queryReqObj, reqObj)
 
             return queryReqObj;
         },

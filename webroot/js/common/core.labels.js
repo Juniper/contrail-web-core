@@ -139,6 +139,7 @@ define([
         this.TITLE_STATS_QUERY = "Statistics Query";
         this.TITLE_OBJECT_LOGS = "Object Logs";
         this.TITLE_SYSTEM_LOGS = "System Logs";
+        this.TITLE_CONSOLE_LOGS = "Console Logs";
 
         this.QE_SELECT_MODAL_SUFFIX = '-select-modal';
         this.QE_CHART_ID = 'qe-chart';
