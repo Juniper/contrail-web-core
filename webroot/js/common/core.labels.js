@@ -87,6 +87,8 @@ define([
         this.TITLE_CHART = "Chart";
         this.TITLE_QE_WHERE = "Where";
 
+        this.TITLE_QE_FILTER = "Filter";
+
         this.BREADCRUMB_ID = "breadcrumb";
 
         // Query Engine labels
@@ -149,6 +151,8 @@ define([
         this.QE_CHART_GRID_ID = 'qe-chart-grid';
         this.QE_CHART_PAGE_ID = 'qe-chart-page';
         this.QE_WHERE_MODAL_SUFFIX = '-where-modal';
+
+        this.QE_FILTER_MODAL_SUFFIX = '-filter-modal';
     };
 
     function capitalizeSentence(sentence) {

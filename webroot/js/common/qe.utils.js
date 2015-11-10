@@ -218,6 +218,25 @@ define([
             return whereOrClauseStrArr.join(' OR ');
         };
 
+        self.parseFilterCollection2String = function(queryFormModel) {
+            var filterAndClauses = queryFormModel.model().attributes['filter_and_clauses'],
+                limit = queryFormModel.model().attributes['limit'],
+                filterAndClausestrArr = [], filterAndClausestr = "filter: ";
+
+            $.each(filterAndClauses.models, function(filterAndClauseKey, filterAndClauseValue) {
+                var name, value, operator;
+                name = filterAndClauseValue.attributes.name;
+                operator = filterAndClauseValue.attributes.operator;
+                value = filterAndClauseValue.attributes.value();
+
+                filterAndClausestrArr.push(name + ' ' + operator + ' ' + value);
+            });
+
+            filterAndClausestr = filterAndClausestr.concat(filterAndClausestrArr.join(' AND '));
+            filterAndClausestr = filterAndClausestr.concat(", limit: " + limit);
+            return filterAndClausestr;
+        };
+
         self.parseWhereCollection2JSON = function(queryFormModel) {
             var whereOrClauses = queryFormModel.model().get('where_or_clauses'),
                 whereOrJSONArr = [];

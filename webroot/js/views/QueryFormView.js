@@ -20,7 +20,7 @@ define([
         },
 
         renderFilter: function (options) {
-            alert('filter');
+            this.renderView4Config(this.$el, this.model, getFilterViewConfig(contrail.checkIfExist(options) ? options : {}));
         }
     });
 
@@ -36,6 +36,15 @@ define([
     function getWhereViewConfig(options) {
         return {
             view: "QueryWhereView",
+            viewConfig: {
+                className: contrail.checkIfExist(options.className) ? options.className : cowc.QE_DEFAULT_MODAL_CLASSNAME
+            }
+        };
+    };
+
+    function getFilterViewConfig(options) {
+        return {
+            view: "QueryFilterView",
             viewConfig: {
                 className: contrail.checkIfExist(options.className) ? options.className : cowc.QE_DEFAULT_MODAL_CLASSNAME
             }

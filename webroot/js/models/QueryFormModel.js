@@ -7,8 +7,9 @@ define([
     'backbone',
     'knockout',
     'contrail-model',
-    'query-or-model'
-], function (_, Backbone, Knockout, ContrailModel, QueryOrModel) {
+    'query-or-model',
+    'query-and-model'
+], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel) {
     var QueryFormModel = ContrailModel.extend({
         defaultSelectFields: [],
         disableSelectFields: [],
@@ -145,19 +146,15 @@ define([
         },
 
         formatModelConfig: function(modelConfig) {
-            var whereOrClauses = [],
-                whereOrClauseModels = [], whereOrClauseModel,
-                whereOrClausesCollectionModel,
+            var whereOrClauseModels = [], whereOrClausesCollectionModel,
+                filterAndClauseModels = [], filterAndClausesCollectionModel,
                 self = this;
-
-            $.each(whereOrClauses, function(whereOrClauseKey, whereOrClauseValue) {
-                whereOrClauseModel = new QueryOrModel(self, whereOrClauseValue);
-                whereOrClauseModels.push(whereOrClauseModel)
-            });
 
             whereOrClausesCollectionModel = new Backbone.Collection(whereOrClauseModels);
             modelConfig['where_or_clauses'] = whereOrClausesCollectionModel;
 
+            filterAndClausesCollectionModel = new Backbone.Collection(filterAndClauseModels);
+            modelConfig['filter_and_clauses'] = filterAndClausesCollectionModel;
 
             return modelConfig;
         },
@@ -196,9 +193,27 @@ define([
             }
         },
 
+        saveFilter: function (callbackObj) {
+            try {
+                if (contrail.checkIfFunction(callbackObj.init)) {
+                    callbackObj.init();
+                }
+
+                this.filter(qewu.parseFilterCollection2String(this));
+
+                if (contrail.checkIfFunction(callbackObj.success)) {
+                    callbackObj.success();
+                }
+            } catch (error) {
+                if (contrail.checkIfFunction(callbackObj.error)) {
+                    callbackObj.error(this.getFormErrorText(this.query_prefix()));
+                }
+            }
+        },
+
         getFormModelAttributes: function () {
             var modelAttrs = this.model().attributes,
-                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object'],
+                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object', 'filter_data_object', 'filter_and_clauses'],
                 attrs4Server = {};
 
             for (var key in modelAttrs) {
@@ -248,6 +263,7 @@ define([
             this.filter('');
             this.select_data_object().reset(data);
             this.model().get('where_or_clauses').reset();
+            this.model().get('filter_and_clauses').reset();
         },
 
         addNewOrClauses: function(orClauseObject) {
@@ -268,6 +284,12 @@ define([
             //TODO: Should not be in Model
             $('#' + elementId).find('.collection').accordion('refresh');
             $('#' + elementId).find('.collection').accordion("option", "active", -1);
+        },
+
+        addFilterAndClause: function() {
+                var andClauses = this.model().get('filter_and_clauses'),
+                newAndClause = new QueryAndModel(this.model().attributes);
+            andClauses.add([newAndClause]);
         },
 
         isSuffixVisible: function(name) {

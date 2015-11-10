@@ -65,6 +65,32 @@ define([
             });
         },
 
+        getFilterNameOptionList: function(viewModel) {
+            var rootModel = viewModel.parentModel(),
+                // use the where_data_object to populate filter for now
+                filterDataObject = rootModel.where_data_object;
+
+            return $.map(filterDataObject['name_option_list'], function(schemaValue, schemaKey) {
+                if(schemaValue.index) {
+                    return {id: schemaValue.name, text: schemaValue.name};
+                }
+            });
+        },
+
+        getFilterValueOptionList: function(viewModel) {
+            var rootModel = viewModel.parentModel(),
+                name = viewModel.name(),
+                // use the where_data_object to populate filter for now
+                filterDataObject = rootModel.where_data_object;
+            return contrail.checkIfKeyExistInObject(true, filterDataObject, 'value_option_list.' + name) ? filterDataObject['value_option_list'][name] : [];
+        },
+
+        deleteFilterAndClause: function() {
+            var andClauses = this.model().collection,
+                andClause = this.model();
+            andClauses.remove(andClause);
+        },
+
         getValueOptionList: function(viewModel) {
             var rootModel = viewModel.parentModel().parentModel.model(),
                 name = viewModel.name(),

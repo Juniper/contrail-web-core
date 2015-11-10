@@ -22,10 +22,13 @@ define([
                 "time_granularity_unit": 'secs',
                 "where": null,
                 "where_json": null,
+                "filter_json": null,
                 "direction": '1',
                 "filter": null,
+                "limit": 15000,
                 "select_data_object": getSelectDataObject(),
-                "where_data_object": {}
+                "where_data_object": {},
+                "filter_data_object": {}
             };
 
             var modelConfig = $.extend(true, {}, defaultModelConfig, customModelConfig);
