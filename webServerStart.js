@@ -100,9 +100,31 @@ var serCiphers = ((null != config.server_options) &&
                (null != config.server_options.ciphers)) ?
     config.server_options.ciphers : defCiphers;
 
+var keyFile = './keys/cs-key.pem';
+var certFile = './keys/cs-cert.pem';
+if (config.server_options) {
+    keyFile = config.server_options.key_file;
+    if (null != keyFile) {
+        keyFile = path.normalize(keyFile);
+        if (false == fs.existsSync(keyFile)) {
+            keyFile = './keys/cs-key.pem';
+        }
+    } else {
+        keyFile = './keys/cs-key.pem';
+    }
+    certFile = config.server_options.cert_file;
+    if (null != certFile) {
+        certFile = path.normalize(certFile);
+        if (false == fs.existsSync(certFile)) {
+            certFile = './keys/cs-cert.pem';
+        }
+    } else {
+        certFile = './keys/cs-cert.pem';
+    }
+}
 var options = {
-    key:fs.readFileSync('./keys/cs-key.pem'),
-    cert:fs.readFileSync('./keys/cs-cert.pem'),
+    key:fs.readFileSync(keyFile),
+    cert:fs.readFileSync(certFile),
     /* From https://github.com/nodejs/node-v0.x-archive/issues/2727
        https://github.com/nodejs/node-v0.x-archive/pull/2732/files
      */
