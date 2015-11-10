@@ -25,7 +25,7 @@ define([
                 "filter_json": null,
                 "direction": '1',
                 "filters": null,
-                "limit": 150000,
+                "limit": cowc.QE_DEFAULT_LIMIT_150K,
                 "select_data_object": getSelectDataObject(),
                 "where_data_object": {},
                 "filter_data_object": {}

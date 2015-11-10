@@ -28,6 +28,7 @@ define([
                 $("#display_logs").on('click', function() {
                     self.renderQueryResult();
                 });
+                self.renderQueryResult();
             });
 
             if (widgetConfig !== null) {
@@ -47,6 +48,7 @@ define([
                     }
                 };
 
+            formatQueryParams(this.model);
             self.renderView4Config($(self.$el).find(queryResultId), this.model, responseViewConfig);
         },
 
@@ -142,6 +144,15 @@ define([
             };
         }
     });
+
+    function formatQueryParams(model) {
+        var limit = model.limit(),
+            filters = "limit:" + limit;
+
+        model.filters(filters);
+
+        //TODO: Add where clause for category, type, and keywords. Add where clause corresponding to node type.
+    };
 
     return NodeConsoleLogsView;
 });

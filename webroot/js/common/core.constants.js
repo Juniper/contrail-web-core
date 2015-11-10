@@ -187,6 +187,9 @@ define([
             { value: "7", name: "SYS_DEBUG" }
         ],
 
+        this.QE_DEFAULT_LIMIT_150K = "150000"
+        this.QE_DEFAULT_LIMIT_50K = "50000"
+
         this.QE_FLOW_QUERY_QUEUE = "fqq";
         this.QE_LOG_QUERY_QUEUE = "lqq";
         this.QE_STAT_QUERY_QUEUE = "sqq";
