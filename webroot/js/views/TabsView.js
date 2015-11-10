@@ -80,7 +80,7 @@ define([
                 tabLinkTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_LINK_VIEW),
                 tabContentTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_CONTENT_VIEW);
 
-            $('#' + elementId).find('ul.contrail-tab-link-list').append(tabLinkTemplate(tabViewConfigs));
+            $('#' + elementId + ' > ul.contrail-tab-link-list').append(tabLinkTemplate(tabViewConfigs));
             $('#' + elementId).append(tabContentTemplate(tabViewConfigs));
             $('#' + elementId).data('contrailTabs').refresh();
 

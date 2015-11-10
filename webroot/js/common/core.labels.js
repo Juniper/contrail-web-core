@@ -104,8 +104,9 @@ define([
         this.QE_FLOW_RECORD_TAB_ID = "qe-flow-record-tab";
         this.QE_FLOW_RECORD_GRID_ID = "qe-flow-record-grid";
 
-        this.QE_FLOW_QUEUE_GRID_ID = "qe-flow-queue-grid";
         this.QE_FLOW_QUEUE_ID = "qe-flow-queue";
+        this.QE_FLOW_QUEUE_GRID_ID = "qe-flow-queue-grid";
+        this.QE_FLOW_QUEUE_TAB_ID = "qe-flow-queue-tab";
         this.TITLE_FLOW_QUERY_QUEUE = "Flow Query Queue";
 
 
@@ -116,7 +117,7 @@ define([
         this.QE_STAT_QUERY_GRID_ID = "qe-stat-query-grid";
         this.QE_STAT_QUERY_CHART_ID = "qe-stat-query-chart";
         this.QE_STAT_QUERY_CHART_PAGE_ID = 'qe-stat-query-chart-page';
-        this.QE_STAT_QUERY_LINE_CHART_ID = "qe-stat-query-line-chart"
+        this.QE_STAT_QUERY_LINE_CHART_ID = "qe-stat-query-line-chart";
         this.QE_STAT_QUERY_CHART_GRID_ID = "qe-stat-query-chart-grid";
 
         this.QE_OBJECT_LOGS_ID = "qe-object-logs";
@@ -134,7 +135,9 @@ define([
         this.TITLE_RESULTS = "Results";
         this.TITLE_CHART = "Chart";
         this.TITLE_FLOW_SERIES = "Flow Series";
+        this.TITLE_FLOW_SERIES_QUERY = "Flow Series Query";
         this.TITLE_FLOW_RECORD = "Flow Record";
+        this.TITLE_FLOW_RECORD_QUERY = "Flow Record Query";
         this.TITLE_FLOW_SERIES_RESULTS = "Flow Series Results";
         this.TITLE_STATS_QUERY = "Statistics Query";
         this.TITLE_OBJECT_LOGS = "Object Logs";
