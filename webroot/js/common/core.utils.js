@@ -657,6 +657,58 @@ define(['underscore'], function (_) {
             });
         };
         
+        this.loadAlertsPopup = function(cfgObj) {
+            var prefixId = 'dashboard-alerts';
+            var cfgObj = ifNull(cfgObj,{});
+            var modalTemplate =
+                contrail.getTemplate4Id('core-modal-template');
+            var modalId = 'dashboard-alerts-modal';
+            var modalLayout = modalTemplate({prefixId: prefixId, modalId: modalId});
+            var formId = prefixId + '_modal';
+            cowu.createModal({
+                'modalId': modalId,
+                'className': 'modal-840',
+                'title': 'Alerts',
+                'body': modalLayout,
+                'onCancel': function() {
+                    $("#" + modalId).modal('hide');
+                }
+            });
+            if(cfgObj.model == null) {
+                require(['mon-infra-node-list-model','monitor-infra-parsers',
+                    'monitor-infra-constants','monitor-infra-utils'],
+                    function(NodeListModel,MonitorInfraParsers,MonitorInfraConstants,
+                        MonitorInfraUtils) {
+                        if(typeof(monitorInfraConstants) == 'undefined') {
+                            monitorInfraConstants = new MonitorInfraConstants();
+                        }
+                        if(typeof(monitorInfraUtils) == 'undefined') {
+                            monitorInfraUtils = new MonitorInfraUtils();
+                        }
+                        if(typeof(monitorInfraParsers) == 'undefined') {
+                            monitorInfraParsers = new MonitorInfraParsers();
+                        }
+                        var nodeListModel = new NodeListModel();
+                        cfgObj.model = nodeListModel.getAlertListModel();
+                        require(['mon-infra-alert-grid-view'], function(AlertGridView) {
+                            var alertGridView = new AlertGridView({
+                                el:$("#" + modalId).find('#' + formId),
+                                model:cfgObj.model
+                            });
+                            alertGridView.render();
+                        });
+                    });
+            } else {
+                require(['mon-infra-alert-grid-view'], function(AlertGridView) {
+                    var alertGridView = new AlertGridView({
+                        el:$("#" + modalId).find('#' + formId),
+                        model:cfgObj.model
+                    });
+                    alertGridView.render();
+                });
+            }
+        };
+
         this.bindPopoverInTopology = function (tooltipConfig, graphView) {
             var timer = null;
             $('.popover').remove();

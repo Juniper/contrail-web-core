@@ -110,9 +110,16 @@ function getCoreAppPaths(coreBaseDir) {
         'contrail-view-model'         : coreBaseDir + '/js/models/ContrailViewModel',
         'contrail-model'              : coreBaseDir + '/js/models/ContrailModel',
         'contrail-list-model'         : coreBaseDir + '/js/models/ContrailListModel',
+        'mon-infra-node-list-model'   : coreBaseDir + '/js/models/NodeListModel',
+        'mon-infra-log-list-model'    : coreBaseDir + '/js/models/LogListModel',
 
         'infoboxes'                   : coreBaseDir + '/js/views/InfoboxesView',
-        'barchart-cf'                 : coreBaseDir + '/js/views/BarChartView'
+        'barchart-cf'                 : coreBaseDir + '/js/views/BarChartView',
+        'mon-infra-alert-list-view'   : coreBaseDir + '/js/views/AlertListView',
+        'mon-infra-alert-grid-view'   : coreBaseDir + '/js/views/AlertGridView',
+        'mon-infra-log-list-view'     : coreBaseDir + '/js/views/LogListView',
+        'mon-infra-sysinfo-view'      : coreBaseDir + '/js/views/SystemInfoView',
+        'mon-infra-dashboard-view'    : coreBaseDir + '/js/views/MonitorInfraDashboardView'
     };
 };
 
