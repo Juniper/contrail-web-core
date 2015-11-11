@@ -154,6 +154,7 @@ define([
 
         this.TAB_THEME_CLASSIC = "classic";
         this.TAB_THEME_OVERCAST = "overcast";
+        this.TAB_THEME_WIDGET_CLASSIC = "widget-classic";
 
         this.DATA_REQUEST_STATE_FETCHING = 'fetching';
         this.DATA_REQUEST_STATE_ERROR = 'error';

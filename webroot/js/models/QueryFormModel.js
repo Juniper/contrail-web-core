@@ -60,13 +60,7 @@ define([
         setTableFieldValues: function() {
             var contrailViewModel = this.model(),
                 tableName = this.table_name(),
-                timeRange = this.time_range(),
-                nameOptionList = this.where_data_object()['name_option_list'],
-                nameCheckList = [];
-
-            for(var i = 0; i < nameOptionList.length; i++) {
-                nameCheckList.push(tableName + ":" + nameOptionList[i].name);
-            }
+                timeRange = this.time_range();
 
             // TODO: Custom Time-Range
             var data =  {

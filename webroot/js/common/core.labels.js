@@ -137,9 +137,7 @@ define([
         this.TITLE_RESULTS = "Results";
         this.TITLE_CHART = "Chart";
         this.TITLE_FLOW_SERIES = "Flow Series";
-        this.TITLE_FLOW_SERIES_QUERY = "Flow Series Query";
         this.TITLE_FLOW_RECORD = "Flow Record";
-        this.TITLE_FLOW_RECORD_QUERY = "Flow Record Query";
         this.TITLE_FLOW_SERIES_RESULTS = "Flow Series Results";
         this.TITLE_STATS_QUERY = "Statistics Query";
         this.TITLE_OBJECT_LOGS = "Object Logs";
