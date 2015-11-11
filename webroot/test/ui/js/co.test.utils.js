@@ -176,6 +176,55 @@ define([
 
     };
 
+    this.setModuleObj4All = function (testConfig, done) {
+        var deferredList = [];
+
+        _.each(testConfig.tests, function (unitTestConfig) {
+            var deferredObj = $.Deferred(),
+                loadModule = false,
+                module, moduleObj;
+
+            unitTestConfig.moduleObj = null;
+
+            if (contrail.checkIfExist(unitTestConfig.moduleId)) {
+                module = unitTestConfig.moduleId;
+                loadModule = true;
+            } else {
+                var moduleName = contrail.checkIfExist(unitTestConfig.moduleName) ? unitTestConfig.moduleName : '',
+                    modulePathPrefix = contrail.checkIfExist(unitTestConfig.modulePathPrefix) ? unitTestConfig.modulePathPrefix : 'core-basedir/js/common/';
+                module = modulePathPrefix + moduleName;
+                loadModule = true;
+            }
+
+            deferredList.push(deferredObj);
+
+            deferredObj.done(function () {
+                unitTestConfig.moduleObj = moduleObj;
+            });
+
+            if (loadModule) {
+                require([module], function (ModuleClass) {
+                    moduleObj = new ModuleClass();
+                    deferredObj.resolve();
+                });
+            } else {
+                deferredObj.resolve();
+            }
+        });
+
+        $.when.apply($, deferredList).done(function () {
+            done.resolve();
+        });
+    };
+
+    this.initFeatureModule = function (initJSFile, deferredObj) {
+        var successCB = function () {
+            deferredObj.resolve();
+        }
+
+        contentHandler.initFeatureModule({parents: [{init: initJSFile}]}, successCB);
+    };
+
     this.formatTestModuleMessage = function (message, id) {
         if (message != null && id != null) {
             return message + ":" + id + " - ";
@@ -279,9 +328,11 @@ define([
         getViewConfigObj: getViewConfigObj,
         setViewObjAndViewConfig4All: setViewObjAndViewConfig4All,
         setModelObj4All: setModelObj4All,
+        setModuleObj4All: setModuleObj4All,
         formatTestModuleMessage: formatTestModuleMessage,
         getGridDataSourceWithOnlyRemotes: getGridDataSourceWithOnlyRemotes,
-        createMockData: createMockData
+        createMockData: createMockData,
+        initFeatureModule: initFeatureModule
     };
 
 });
