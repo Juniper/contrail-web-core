@@ -644,7 +644,8 @@ a.selectAllLink:hover {
     margin-bottom: 5px;
 }
 .or-clause-collection.ui-accordion .ui-accordion-header-active,
-.or-clause-collection.ui-accordion .ui-accordion-content-active {
+.or-clause-collection.ui-accordion .ui-accordion-content-active,
+.and-clause-collection {
     background-color: #eee;
 
 }
@@ -653,16 +654,16 @@ a.selectAllLink:hover {
 }
 .or-clause-collection .or-clause-text,
 .and-clause-collection table {
-    margin: 0 0 0 20px;
+    margin: 5px 0 0 20px;
 }
-.or-clause-collection .and-clause-collection .collection-actions {
+.and-clause-collection .collection-actions {
   padding: 10px 0;
   border-top: 1px solid #FFF;
 }
-.or-clause-collection .and-clause-collection .collection-actions a {
+.and-clause-collection .collection-actions a {
   margin: 10px;
 }
-.or-clause-collection .collection-actions-delete i {
+.collection-actions-delete i {
     color: #777;
     padding: 10px;
 }
@@ -1123,14 +1124,17 @@ input.editor-checkbox.ace-input[type=checkbox] + .ace-lbl::before {
 
 /* Editable Grid */
 
-.contrail-editable-grid-table thead {
+.contrail-editable-grid-table thead,
+.collection-table thead {
     padding: 5px 0;
     line-height: 26px;
 }
-.contrail-editable-grid-table thead tr {
+.contrail-editable-grid-table thead tr,
+.collection-table thead tr {
     border-bottom: 1px solid #DEDEDE;
 }
-.contrail-editable-grid-table tr th {
+.contrail-editable-grid-table tr th,
+.collection-table tr th {
     font-weight: normal;
     color: #3182bd;
     text-align: left;
@@ -1140,20 +1144,30 @@ input.editor-checkbox.ace-input[type=checkbox] + .ace-lbl::before {
     text-align: center;
     padding: 5px 5px 0 0;
 }
+.collection-table tr td {
+  text-align: center;
+  padding: 0 5px 5px;
+}
 .contrail-editable-grid-table tr td .custom-combobox.input-append,
+.collection-table tr td .custom-combobox.input-append,
 .contrail-editable-grid-table tr td .textarea-input-append.input-append,
-.contrail-editable-grid-table tr td .editable-grid-input-append.input-append {
+.collection-table tr td .textarea-input-append.input-append,
+.contrail-editable-grid-table tr td .editable-grid-input-append.input-append,
+.collection-table tr td .editable-grid-input-append.input-append {
     margin-bottom: 0;
     min-height: 28px;
 }
-.contrail-editable-grid-table tr td.error-cell {
+.contrail-editable-grid-table tr td.error-cell,
+.collection-table tr td.error-cell {
     text-align: left;
     padding-left: 5px;
 }
-.contrail-editable-grid-table tr td.action-cell {
+.contrail-editable-grid-table tr td.action-cell,
+.collection-table tr td.action-cell {
     min-width: 30px;
 }
-.contrail-editable-grid-table tr td.error-cell .help-block {
+.contrail-editable-grid-table tr td.error-cell .help-block,
+.collection-table tr td.error-cell .help-block {
     margin-bottom: 5px;
 }
 .editable-grid-add-link {

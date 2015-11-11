@@ -831,7 +831,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-accordian-view-template">
-    <div id="{{elementId}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
+    <div id="{{elementId}}" class="{{class}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
         {{#each viewConfig}}
             {{#if this.title}}
                 <h3>{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="icon-warning-sign red"></i></span></h3>
@@ -1355,7 +1355,7 @@
 
 <script type="text/x-handlebars-template" id="core-collection-view-template">
     <div class="row-fluid">
-        <table class="contrail-editable-grid-table">
+        <table class="collection-table">
             <tbody data-bind="foreach: {{viewConfig.collection}}">
             {{#each viewConfig.rows}}
             <tr class="data-row">
@@ -1490,7 +1490,7 @@
     <div id="{{elementId}}" class="row-fluid contrail-tabs">
         <ul class="contrail-tab-link-list">
             {{#each tabs}}
-                <li><a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}} {{title}}</a></li>
+                <li><a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}}{{title}}</a></li>
             {{/each}}
         </ul>
         {{#each tabs}}
@@ -1503,7 +1503,7 @@
 
 <script type="text/x-handlebars-template" id="core-tabs-link-template">
     {{#each this}}
-        <li><a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}} {{title}} </a></li>
+        <li><a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}}{{title}}</a></li>
     {{/each}}
 </script>
 

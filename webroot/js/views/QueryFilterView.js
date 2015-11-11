@@ -63,6 +63,7 @@ define([
             title: "Filter By",
             view: "FormCollectionView",
             viewConfig: {
+                class: 'and-clause-collection',
                 path: 'filter_and_clauses',
                 collection: 'filter_and_clauses()',
                 rows: [
