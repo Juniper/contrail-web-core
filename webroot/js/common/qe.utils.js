@@ -218,22 +218,29 @@ define([
             return whereOrClauseStrArr.join(' OR ');
         };
 
-        self.parseFilterCollection2String = function(queryFormModel) {
+        self.parseFilterCollection2String = function (queryFormModel) {
             var filterAndClauses = queryFormModel.model().attributes['filter_and_clauses'],
                 limit = queryFormModel.model().attributes['limit'],
-                filterAndClausestrArr = [], filterAndClausestr = "filter: ";
+                filterAndClausestrArr = [], filterAndClausestr = '';
 
-            $.each(filterAndClauses.models, function(filterAndClauseKey, filterAndClauseValue) {
+            $.each(filterAndClauses.models, function (filterAndClauseKey, filterAndClauseValue) {
                 var name, value, operator;
                 name = filterAndClauseValue.attributes.name;
                 operator = filterAndClauseValue.attributes.operator;
                 value = filterAndClauseValue.attributes.value();
 
-                filterAndClausestrArr.push(name + ' ' + operator + ' ' + value);
+                if (name !== '' && operator !== '' && value !== '') {
+                    filterAndClausestrArr.push(name + ' ' + operator + ' ' + value);
+                }
             });
 
-            filterAndClausestr = filterAndClausestr.concat(filterAndClausestrArr.join(' AND '));
-            filterAndClausestr = filterAndClausestr.concat(", limit: " + limit);
+            if (filterAndClausestrArr.length > 0) {
+                filterAndClausestr = filterAndClausestr.concat("filter: ");
+                filterAndClausestr = filterAndClausestr.concat(filterAndClausestrArr.join(' AND '));
+                filterAndClausestr = filterAndClausestr.concat(", limit: " + limit);
+            } else if (contrail.checkIfExist(limit)) {
+                filterAndClausestr = filterAndClausestr.concat("limit: " + limit);
+            }
             return filterAndClausestr;
         };
 
@@ -255,6 +262,11 @@ define([
             qewu.parseWhereJSON2Collection(queryFormModel)
         };
 
+        self.parseFilterString2Collection = function(queryFormModel) {
+            queryFormModel.filter_json(self.parseFilterString2JSON(queryFormModel));
+            qewu.parseFilterJSON2Collection(queryFormModel);
+        };
+
         self.parseWhereJSON2Collection = function(queryFormModel) {
             var whereStr = queryFormModel.model().get('where'),
                 whereOrClauseStrArr = (whereStr == null) ? [] : whereStr.split(' OR '),
@@ -270,6 +282,14 @@ define([
             queryFormModel.addNewOrClauses(wherOrClauseObjects);
         };
 
+        self.parseFilterJSON2Collection = function(queryFormModel) {
+            var filterStr = queryFormModel.model().attributes.filters,
+                filterOrJSON = queryFormModel.model().attributes.filter_json;
+
+            queryFormModel.model().get('filter_and_clauses').reset();
+            queryFormModel.addNewFilterAndClause(filterOrJSON);
+        };
+
         self.parseWhereString2JSON = function(queryFormModel) {
             var whereStr = queryFormModel.model().get('where'),
                 whereOrClauseStrArr = (whereStr == null) ? [] : whereStr.split(' OR '),
@@ -282,6 +302,11 @@ define([
             });
 
             return whereOrJSONArr;
+        };
+
+        self.parseFilterString2JSON = function(queryFormModel) {
+            var filtersStr = queryFormModel.model().attributes.filters;
+            return parseFilterANDClause(filtersStr);
         };
 
         self.getAggregateSelectFields = function(queryFormModel) {
@@ -525,6 +550,75 @@ define([
             minDate: fromDateString ? fromDateString : false,
             minTime: (toDateString == fromDateString) ? timeString : false
         };
+    };
+
+    function parseFilterANDClause(filters, query) {
+        var filtersArray = splitString2Array(filters, ","),
+            filter, filterBy, limitBy,
+            parsedFilterArr = [], parsedLimit, filter_json_obj = {};
+
+        for (var i = 0; i < filtersArray.length; i++) {
+            filter = filtersArray[i];
+            if(filter.indexOf('filter:') != -1) {
+                filterBy = splitString2Array(filter, ":")[1];
+                if(filterBy.length > 0) {
+                    filter_json_obj["filter"] = parseFilterBy(filterBy);
+                }
+            } else if (filter.indexOf('limit:') != -1) {
+                limitBy = splitString2Array(filter, ":")[1];
+                if(limitBy.length > 0) {
+                    filter_json_obj["limit"] = parseLimitBy(limitBy);
+                }
+            }
+        }
+        return filter_json_obj;
+    };
+
+    function parseFilterBy(filterBy) {
+        var filtersArray, filtersLength, filterClause = [], i, filterObj;
+        if (filterBy != null && filterBy.trim() != '') {
+            filtersArray = filterBy.split(' AND ');
+            filtersLength = filtersArray.length;
+            for (i = 0; i < filtersLength; i += 1) {
+                filtersArray[i] = filtersArray[i].trim();
+                filterObj = getFilterObj(filtersArray[i]);
+                filterClause.push(filterObj);
+            }
+            return filterClause;
+        }
+    };
+
+    function getFilterObj(filter) {
+        var filterObj;
+        if (filter.indexOf('!=') != -1) {
+            filterObj = parseFilterObj(filter, '!=');
+        } else if (filter.indexOf(" RegEx= ") != -1) {
+            filterObj = parseFilterObj(filter, 'RegEx=');
+        } else if (filter.indexOf("=") != -1) {
+            filterObj = parseFilterObj(filter, '=');
+        }
+        return filterObj;
+    };
+
+    function parseFilterObj(filter, operator) {
+        var filterObj, filterArray;
+        filterArray = splitString2Array(filter, operator);
+        if (filterArray.length > 1 && filterArray[1] != '') {
+            filterObj = {"name": "", value: "", op: ""};
+            filterObj.name = filterArray[0];
+            filterObj.value = filterArray[1];
+            filterObj.op = getOperatorCode(operator);
+        }
+        return filterObj
+    };
+
+    function parseLimitBy(limitBy) {
+        try {
+            var parsedLimit = parseInt(limitBy);
+            return parsedLimit;
+        } catch (error) {
+            logutils.logger.error(error.stack);
+        }
     };
 
     function parseWhereANDClause(whereANDClause) {

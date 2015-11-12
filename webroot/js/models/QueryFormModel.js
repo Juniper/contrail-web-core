@@ -281,6 +281,28 @@ define([
             $('#' + elementId).find('.collection').accordion("option", "active", -1);
         },
 
+        addNewFilterAndClause: function(andClauseObject) {
+            var self = this,
+                filterObj = andClauseObject.filter,
+                limitObj = andClauseObject.limit,
+                filterAndClauses = this.model().attributes.filter_and_clauses;
+
+            if(contrail.checkIfExist(limitObj)) {
+                this.limit(limitObj);
+            }
+            if(contrail.checkIfExist(filterObj)) {
+                $.each(filterObj, function(filterObjKey, filterObjValue) {
+                    var modelDataObj = {
+                        name    : filterObjValue.name,
+                        operator: filterObjValue.op,
+                        value   : filterObjValue.value
+                    };
+                    var newAndClause = new QueryAndModel(self.model().attributes, modelDataObj);
+                    filterAndClauses.add(newAndClause);
+                });
+            }
+        },
+
         addFilterAndClause: function() {
             var andClauses = this.model().get('filter_and_clauses'),
                 newAndClause = new QueryAndModel(this.model().attributes);

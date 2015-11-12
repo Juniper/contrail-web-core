@@ -20,6 +20,7 @@ define([
         },
 
         renderFilters: function (options) {
+            qewu.parseFilterString2Collection(this.model);
             this.renderView4Config(this.$el, this.model, getFilterViewConfig(contrail.checkIfExist(options) ? options : {}));
         }
     });
