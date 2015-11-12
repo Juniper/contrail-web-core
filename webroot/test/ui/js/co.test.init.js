@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var cowc, cowu, cowf, cowl, cowch, cowm, cotc, covdc;
+var cowc, cowu, cowf, cowl, cowch, cowm, cotu, cotc, covdc;
 
 var allTestFiles = [], nmTestKarma = window.__karma__;
 
@@ -80,8 +80,9 @@ function testAppInit(testAppConfig) {
             $('head').append('<base href="/vcenter/" />');
         }
 
-        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages, CoreViewsDefaultConfig, CoreLabels, Knockout, Cache,
-                                    contrailCommon, CoreCommonTmpl, CoreTestUtils, CoreTestConstants, LayoutHandler) {
+        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages,
+                                    CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, contrailCommon, CoreCommonTmpl,
+                                    CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
             cowf = new CoreFormatters();
@@ -89,6 +90,7 @@ function testAppInit(testAppConfig) {
             covdc = new CoreViewsDefaultConfig();
             cowl = new CoreLabels();
             cowch = new Cache();
+            cotu = CoreTestUtils;
             cotc = CoreTestConstants;
             kbValidation = validation;
             initBackboneValidation(_);
@@ -110,10 +112,14 @@ function testAppInit(testAppConfig) {
             requirejs(['text!menu.xml'], function (menuXML) {
                     var fakeServer = sinon.fakeServer.create();
                     fakeServer.autoRespond = true;
-                    fakeServer.respondWith("GET", CoreTestUtils.getRegExForUrl('/api/admin/webconfig/featurePkg/webController'), [200, {"Content-Type": "application/json"}, testAppConfig.featurePkg]);
-                    fakeServer.respondWith("GET", CoreTestUtils.getRegExForUrl('/api/admin/webconfig/features/disabled'), [200, {"Content-Type": "application/json"}, testAppConfig.featuresDisabled]);
-                    fakeServer.respondWith("GET", CoreTestUtils.getRegExForUrl('/api/service/networking/web-server-info'), [200, {"Content-Type": "application/json"}, testAppConfig.webServerInfo]);
-                    fakeServer.respondWith("GET", CoreTestUtils.getRegExForUrl('/menu.xml'), [200, {"Content-Type": "application/xml"}, menuXML]);
+                    fakeServer.respondWith("GET", cotu.getRegExForUrl('/api/admin/webconfig/featurePkg/webController'),
+                        [200, {"Content-Type": "application/json"}, testAppConfig.featurePkg]);
+                    fakeServer.respondWith("GET", cotu.getRegExForUrl('/api/admin/webconfig/features/disabled'),
+                        [200, {"Content-Type": "application/json"}, testAppConfig.featuresDisabled]);
+                    fakeServer.respondWith("GET", cotu.getRegExForUrl('/api/service/networking/web-server-info'),
+                        [200, {"Content-Type": "application/json"}, testAppConfig.webServerInfo]);
+                    fakeServer.respondWith("GET", cotu.getRegExForUrl('/menu.xml'),
+                        [200, {"Content-Type": "application/xml"}, menuXML]);
 
                     requirejs(['contrail-layout'], function () {
                         //TODO: Timeout is currently required to ensure menu is loaed i.e feature app is initialized
@@ -187,22 +193,24 @@ function testLibApiAppInit(testAppConfig) {
             $('head').append('<base href="/vcenter/" />');
         }
 
-        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages, CoreViewsDefaultConfig, CoreLabels, Knockout, Cache,
-                                    contrailCommon, CoreCommonTmpl, CoreTestUtils, CoreTestConstants, LayoutHandler) {
+        require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages,
+                                    CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, contrailCommon, CoreCommonTmpl,
+                                    CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
             cowf = new CoreFormatters();
             cowm = new CoreMessages();
             cowl = new CoreLabels();
             cowch = new Cache();
+            cotu = CoreTestUtils;
             cotc = CoreTestConstants;
 
             $("body").addClass('navbar-fixed');
-            $("body").append(CoreTestUtils.getPageHeaderHTML());
-            $("body").append(CoreTestUtils.getSidebarHTML());
+            $("body").append(cotu.getPageHeaderHTML());
+            $("body").append(cotu.getSidebarHTML());
             $("body").append(CoreCommonTmpl);
 
-            var cssList = CoreTestUtils.getCSSList();
+            var cssList = cotu.getCSSList();
 
             for (var i = 0; i < cssList.length; i++) {
                 $("body").append(cssList[i]);

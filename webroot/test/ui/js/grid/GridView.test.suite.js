@@ -336,7 +336,9 @@ define([
         bodyTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_ROW_FIXED_HEIGHT, function () {
             expect(1);
             if (viewConfigBody.options.fixedRowHeight != false && _.isNumber(viewConfigBody.options.fixedRowHeight)) {
-                equal($(el).find('.slick_row_id_0').css('height'), viewConfigBody.options.fixedRowHeight + "px",
+                //get the cgrid of the first row
+                var cgrid = $(el).find('.slick-row:first').attr('data-cgrid');
+                equal($(el).find('.slick_row_' + cgrid).css('height'), viewConfigBody.options.fixedRowHeight + "px",
                     "Fixed row height should equal to configured.");
             } else {
                 ok(true, "Fixed row height is set to false");
