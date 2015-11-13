@@ -14,11 +14,11 @@ define([
             var self = this, viewConfig = self.attributes.viewConfig,
                 elementId = self.attributes.elementId,
                 queryPageTmpl = contrail.getTemplate4Id(ctwc.TMPL_QUERY_PAGE),
-                systemLogs = new NodeConsoleLogsModel(),
+                consoleLogsModel = new NodeConsoleLogsModel(),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 queryFormId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.CONSOLE_LOGS_PREFIX + cowc.QE_FORM_SUFFIX;
 
-            self.model = systemLogs;
+            self.model = consoleLogsModel;
             self.$el.append(queryPageTmpl({queryPrefix: cowc.CONSOLE_LOGS_PREFIX }));
 
             self.renderView4Config($(self.$el).find(queryFormId), this.model, self.getViewConfig(), null, null, null, function () {
@@ -28,6 +28,7 @@ define([
                 $("#display_logs").on('click', function() {
                     self.renderQueryResult();
                 });
+                self.renderQueryResult();
             });
 
             if (widgetConfig !== null) {
@@ -39,11 +40,16 @@ define([
             var self = this,
                 queryResultId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.CONSOLE_LOGS_PREFIX + cowc.QE_RESULTS_SUFFIX,
                 responseViewConfig = {
-                    view: "",
-                    viewConfig: {}
+                    view: "SystemLogsResultView",
+                    viewPathPrefix: "reports/qe/ui/js/views/",
+                    app: cowc.APP_CONTRAIL_CONTROLLER,
+                    viewConfig: {
+                        title: cowl.TITLE_CONSOLE_LOGS
+                    }
                 };
 
-            //self.renderView4Config($(self.$el).find(queryResultId), this.model, responseViewConfig);
+            formatQueryParams(this.model);
+            self.renderView4Config($(self.$el).find(queryResultId), this.model, responseViewConfig);
         },
 
         getViewConfig: function () {
@@ -58,14 +64,14 @@ define([
                                 {
                                     elementId: 'time_range', view: "FormDropdownView",
                                     viewConfig: {
-                                        path: 'time_range', dataBindValue: 'time_range', class: "span3",
+                                        path: 'time_range', dataBindValue: 'time_range', class: "span2",
                                         elementConfig: {dataTextField: "text", dataValueField: "id", data: cowc.TIMERANGE_DROPDOWN_VALUES}}
                                 },
                                 {
                                     elementId: 'from_time', view: "FormDateTimePickerView",
                                     viewConfig: {
                                         style: 'display: none;',
-                                        path: 'from_time', dataBindValue: 'from_time', class: "span3",
+                                        path: 'from_time', dataBindValue: 'from_time', class: "span4",
                                         elementConfig: qewu.getFromTimeElementConfig('from_time', 'to_time'),
                                         visible: "time_range() == -1"
                                     }
@@ -74,7 +80,7 @@ define([
                                     elementId: 'to_time', view: "FormDateTimePickerView",
                                     viewConfig: {
                                         style: 'display: none;',
-                                        path: 'to_time', dataBindValue: 'to_time', class: "span3",
+                                        path: 'to_time', dataBindValue: 'to_time', class: "span4",
                                         elementConfig: qewu.getToTimeElementConfig('from_time', 'to_time'),
                                         visible: "time_range() == -1"
                                     }
@@ -86,31 +92,27 @@ define([
                                 {
                                     elementId: 'log_category', view: "FormDropdownView",
                                     viewConfig: {
-                                        path: 'log_category', dataBindValue: 'log_category', class: "span3",
-                                        elementConfig: {dataTextField: "text", dataValueField: "id", data: []}}
+                                        path: 'log_category', dataBindValue: 'log_category', class: "span2",
+                                        elementConfig: {dataTextField: "text", dataValueField: "id", data: [{id: "", text: "All" }]}}
                                 },
                                 {
                                     elementId: 'log_type', view: "FormComboboxView",
                                     viewConfig: {
-                                        path: 'log_type', dataBindValue: 'log_type', class: "span3",
-                                        elementConfig: {dataTextField: "text", dataValueField: "id", data: []}}
+                                        path: 'log_type', dataBindValue: 'log_type', class: "span2",
+                                        elementConfig: {dataTextField: "text", dataValueField: "id", data: [{id: "", text: "Any" }]}}
                                 },
                                 {
                                     elementId: 'log_level', view: "FormDropdownView",
-                                    viewConfig: { path: 'log_level', dataBindValue: 'log_level', class: "span3", elementConfig: {dataTextField: "name", dataValueField: "value", data: cowc.QE_LOG_LEVELS}}
-                                }
-                            ]
-                        },
-                        {
-                            columns: [
+                                    viewConfig: { path: 'log_level', dataBindValue: 'log_level', class: "span2", elementConfig: {dataTextField: "name", dataValueField: "value", data: cowc.QE_LOG_LEVELS}}
+                                },
                                 {
                                     elementId: 'limit', view: "FormDropdownView",
-                                    viewConfig: { path: 'limit', dataBindValue: 'limit', class: "span3", elementConfig: {dataTextField: "text", dataValueField: "id", data: []}}
+                                    viewConfig: { path: 'limit', dataBindValue: 'limit', class: "span2", elementConfig: {dataTextField: "text", dataValueField: "id", data: [{id: "50", text: "50 Messages" }]}}
                                 },
 
                                 {
                                     elementId: 'keywords', view: "FormInputView",
-                                    viewConfig: { path: 'keywords', dataBindValue: 'keywords', class: "span3"}
+                                    viewConfig: { path: 'keywords', dataBindValue: 'keywords', class: "span2", placeholder: "Enter keyword(s)"}
                                 }
                             ]
                         },
@@ -142,6 +144,15 @@ define([
             };
         }
     });
+
+    function formatQueryParams(model) {
+        var limit = model.limit(),
+            filters = "limit:" + limit;
+
+        model.filters(filters);
+
+        //TODO: Add where clause for category, type, and keywords. Add where clause corresponding to node type.
+    };
 
     return NodeConsoleLogsView;
 });

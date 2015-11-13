@@ -87,6 +87,8 @@ define([
         this.TITLE_CHART = "Chart";
         this.TITLE_QE_WHERE = "Where";
 
+        this.TITLE_QE_FILTER = "Filter";
+
         this.BREADCRUMB_ID = "breadcrumb";
 
         // Query Engine labels
@@ -104,8 +106,9 @@ define([
         this.QE_FLOW_RECORD_TAB_ID = "qe-flow-record-tab";
         this.QE_FLOW_RECORD_GRID_ID = "qe-flow-record-grid";
 
-        this.QE_FLOW_QUEUE_GRID_ID = "qe-flow-queue-grid";
         this.QE_FLOW_QUEUE_ID = "qe-flow-queue";
+        this.QE_FLOW_QUEUE_GRID_ID = "qe-flow-queue-grid";
+        this.QE_FLOW_QUEUE_TAB_ID = "qe-flow-queue-tab";
         this.TITLE_FLOW_QUERY_QUEUE = "Flow Query Queue";
 
 
@@ -116,7 +119,7 @@ define([
         this.QE_STAT_QUERY_GRID_ID = "qe-stat-query-grid";
         this.QE_STAT_QUERY_CHART_ID = "qe-stat-query-chart";
         this.QE_STAT_QUERY_CHART_PAGE_ID = 'qe-stat-query-chart-page';
-        this.QE_STAT_QUERY_LINE_CHART_ID = "qe-stat-query-line-chart"
+        this.QE_STAT_QUERY_LINE_CHART_ID = "qe-stat-query-line-chart";
         this.QE_STAT_QUERY_CHART_GRID_ID = "qe-stat-query-chart-grid";
 
         this.QE_OBJECT_LOGS_ID = "qe-object-logs";
@@ -139,12 +142,15 @@ define([
         this.TITLE_STATS_QUERY = "Statistics Query";
         this.TITLE_OBJECT_LOGS = "Object Logs";
         this.TITLE_SYSTEM_LOGS = "System Logs";
+        this.TITLE_CONSOLE_LOGS = "Console Logs";
 
         this.QE_SELECT_MODAL_SUFFIX = '-select-modal';
         this.QE_CHART_ID = 'qe-chart';
         this.QE_CHART_GRID_ID = 'qe-chart-grid';
         this.QE_CHART_PAGE_ID = 'qe-chart-page';
         this.QE_WHERE_MODAL_SUFFIX = '-where-modal';
+
+        this.QE_FILTER_MODAL_SUFFIX = '-filter-modal';
     };
 
     function capitalizeSentence(sentence) {
