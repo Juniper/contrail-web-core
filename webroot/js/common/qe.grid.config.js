@@ -34,6 +34,17 @@ define([
 
         this.getQueueColumnDisplay = function() {
             return [
+                {
+                    id: 'fqq-badge', field: "", name: "", resizable: false, sortable: false,
+                    width: 30, minWidth: 30, searchable: false, exportConfig: {allow: false},
+                    formatter: function (r, c, v, cd, dc) {
+                        var queryId = dc.queryId,
+                            queryPrefix = dc.reRunQueryString.formModelAttrs.query_prefix,
+                            tabElementId, tabLength = 0;
+
+                        return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge" data-color_key="' + ((r === 0) ? 0 : -1) + '"><i class="icon-circle"></i></span>';
+                    },
+                },
                 { id:"startTime", field:"startTime", name:"Date", minWidth: 150, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
                 { id:"opsQueryId", field:"opsQueryId", name:"Query Id", minWidth:200, sortable:false },
                 {

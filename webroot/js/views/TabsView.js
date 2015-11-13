@@ -11,7 +11,8 @@ define([
             var self = this,
                 viewConfig = self.attributes.viewConfig,
                 elId = self.attributes.elementId,
-                tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW);
+                tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
+                tabsUIObj;
 
                 self.tabs = viewConfig['tabs'];
                 self.tabsIdMap = {};
@@ -63,6 +64,32 @@ define([
                 },
                 theme: viewConfig.theme
             });
+
+            tabsUIObj = $('#' + elId).data('contrailTabs')._tabsUIObj;
+
+            tabsUIObj.delegate( ".contrail-tab-link-icon-remove", "click", function() {
+                var tabPanelId = $( this ).closest( "li" ).remove().attr( "aria-controls"),
+                    tabKey = self.tabsIdMap[tabPanelId];
+
+                if(contrail.checkIfExist(self.tabs[tabKey].tabConfig) && self.tabs[tabKey].tabConfig.removable === true) {
+                    $("#" + tabPanelId).remove();
+                    $('#' + elId).data('contrailTabs').refresh();
+
+                    if (contrail.checkIfExist(self.tabs[tabKey].tabConfig) && contrail.checkIfFunction(self.tabs[tabKey].tabConfig.onRemoveTab)) {
+                        self.tabs[tabKey].tabConfig.onRemoveTab();
+                    }
+
+                    $.each(self.tabsIdMap, function (tabsIdKey, tabsIdValue) {
+                        if (tabsIdValue > tabKey) {
+                            tabsIdValue -= 1;
+                        }
+                    });
+
+                    delete self.tabsIdMap[tabPanelId];
+                    self.tabs.splice(tabKey, 1);
+                    self.tabRendered.splice(tabKey, 1);
+                }
+            });
         },
 
         renderTab: function(tabObj) {
@@ -86,7 +113,7 @@ define([
             $('#' + elementId).data('contrailTabs').refresh();
 
             $.each(tabViewConfigs, function(tabKey, tabValue) {
-                self.tabs.push(tabValue)
+                self.tabs.push(tabValue);
                 self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'] = tabLength + tabKey;
                 if (contrail.checkIfKeyExistInObject(true, 'tabValue.tabConfig', 'renderOnActivate') &&  tabValue.tabConfig.renderOnActivate === true) {
                     self.tabRendered.push(false);

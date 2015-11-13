@@ -42,11 +42,15 @@
         self.addClass('contrail-tabs-' + theme)
             .tabs(option)
             .data('contrailTabs', {
+                _tabsUIObj: self.tabs(),
                 startLoading: function(selectedTabLinkId){
                     $(selectedTabLinkId).prepend('<i class="icon-spinner icon-spin contrail-tabs-loading"></i>');
                 },
                 endLoading: function(selectedTabLinkId){
                     $(selectedTabLinkId).find('.contrail-tabs-loading').remove();
+                },
+                destroy: function() {
+                    $(self).tabs('destroy');
                 },
                 refresh: function() {
                     $(self).tabs('refresh');

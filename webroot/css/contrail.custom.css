@@ -1461,6 +1461,19 @@ input.datetimepicker{
 	color: #3182bd;
 	font-weight: 700;
 }
+/* General tabs */
+.contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon {
+  margin-right: 10px;
+  font-weight: normal;
+  font-size: 110%;
+  display: inline-block;
+}
+.contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon-remove {
+  margin-left: 10px;
+  font-weight: normal;
+  font-size: 90%;
+  display: inline-block;
+}
 /* Begin - Jquery UI Tabs  (theme: overcast)*/
 .contrail-tabs-overcast.ui-tabs.ui-widget,
 .ui-tabs.ui-widget {
@@ -1599,12 +1612,6 @@ input.datetimepicker{
   padding: 4px 8px;
   font-size: 13px;
   background-color: #EFEFEF;
-}
-.contrail-tabs-widget-classic.ui-tabs .ui-state-default a i.contrail-tab-link-icon {
-  margin-right: 6px;
-  font-weight: normal;
-  font-size: 110%;
-  display: inline-block;
 }
 .contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a {
   border-bottom: 1px solid #fff;
