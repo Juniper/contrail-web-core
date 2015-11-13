@@ -7,17 +7,18 @@ define([
     'backbone',
     'knockout',
     'contrail-model',
-    'query-or-model'
-], function (_, Backbone, Knockout, ContrailModel, QueryOrModel) {
+    'query-or-model',
+    'query-and-model'
+], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel) {
     var QueryFormModel = ContrailModel.extend({
         defaultSelectFields: [],
         disableSelectFields: [],
         disableSubstringInSelectFields: ['CLASS('],
         disableWhereFields: [],
 
-        constructor: function (modelData) {
-            var self = this,
-                modelRemoteDataConfig;
+        constructor: function (modelData, queryReqConfig) {
+            var self = this, modelRemoteDataConfig,
+                defaultQueryReqConfig = {chunk: 1, autoSort: true, chunkSize: cowc.QE_RESULT_CHUNK_SIZE_10K, async: true};
 
             var defaultSelectFields = this.defaultSelectFields,
                 disableFieldArray = [].concat(defaultSelectFields).concat(this.disableSelectFields),
@@ -26,6 +27,12 @@ define([
             if (contrail.checkIfExist(modelData.table_name)) {
                 modelRemoteDataConfig = getTableSchemaConfig(self, modelData.table_name, disableFieldArray, disableSubstringArray, this.disableWhereFields);
             }
+
+            if(contrail.checkIfExist(queryReqConfig)) {
+                defaultQueryReqConfig = $.extend(true, defaultQueryReqConfig, queryReqConfig);
+            }
+
+            this.defaultQueryReqConfig = defaultQueryReqConfig;
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
 
@@ -53,13 +60,7 @@ define([
         setTableFieldValues: function() {
             var contrailViewModel = this.model(),
                 tableName = this.table_name(),
-                timeRange = this.time_range(),
-                nameOptionList = this.where_data_object()['name_option_list'],
-                nameCheckList = [];
-
-            for(var i = 0; i < nameOptionList.length; i++) {
-                nameCheckList.push(tableName + ":" + nameOptionList[i].name);
-            }
+                timeRange = this.time_range();
 
             // TODO: Custom Time-Range
             var data =  {
@@ -139,19 +140,15 @@ define([
         },
 
         formatModelConfig: function(modelConfig) {
-            var whereOrClauses = [],
-                whereOrClauseModels = [], whereOrClauseModel,
-                whereOrClausesCollectionModel,
+            var whereOrClauseModels = [], whereOrClausesCollectionModel,
+                filterAndClauseModels = [], filterAndClausesCollectionModel,
                 self = this;
-
-            $.each(whereOrClauses, function(whereOrClauseKey, whereOrClauseValue) {
-                whereOrClauseModel = new QueryOrModel(self, whereOrClauseValue);
-                whereOrClauseModels.push(whereOrClauseModel)
-            });
 
             whereOrClausesCollectionModel = new Backbone.Collection(whereOrClauseModels);
             modelConfig['where_or_clauses'] = whereOrClausesCollectionModel;
 
+            filterAndClausesCollectionModel = new Backbone.Collection(filterAndClauseModels);
+            modelConfig['filter_and_clauses'] = filterAndClausesCollectionModel;
 
             return modelConfig;
         },
@@ -190,10 +187,29 @@ define([
             }
         },
 
+        saveFilter: function (callbackObj) {
+            try {
+                if (contrail.checkIfFunction(callbackObj.init)) {
+                    callbackObj.init();
+                }
+
+                this.filters(qewu.parseFilterCollection2String(this));
+
+                if (contrail.checkIfFunction(callbackObj.success)) {
+                    callbackObj.success();
+                }
+            } catch (error) {
+                if (contrail.checkIfFunction(callbackObj.error)) {
+                    callbackObj.error(this.getFormErrorText(this.query_prefix()));
+                }
+            }
+        },
+
         getFormModelAttributes: function () {
             var modelAttrs = this.model().attributes,
-                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object'],
-                attrs4Server = {};
+                attrs4Server = {},
+                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object',
+                                 'filter_data_object', 'filter_and_clauses', 'limit', 'log_category', 'log_type', 'keywords'];
 
             for (var key in modelAttrs) {
                 if(modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) == -1) {
@@ -206,9 +222,7 @@ define([
 
         getQueryRequestPostData: function (serverCurrentTime, reqObj) {
             var self = this,
-                queryReqObj = {
-                    formModelAttrs: this.getFormModelAttributes()
-                },
+                formModelAttrs = this.getFormModelAttributes(),
                 selectStr = self.select(),
                 showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
                 queryPrefix = self.query_prefix(),
@@ -218,19 +232,18 @@ define([
                     labelStep: 1, baseUnit: 'mins', fromTime: 0, toTime: 0, interval: 0,
                     btnId: queryPrefix + '-query-submit', refreshChart: true, serverCurrentTime: serverCurrentTime
                 },
-                formModelAttrs = qewu.setUTCTimeObj(this.query_prefix(), queryReqObj['formModelAttrs'], options);
+                queryReqObj = {};
+
+            formModelAttrs = qewu.setUTCTimeObj(this.query_prefix(), formModelAttrs, options);
 
             self.from_time_utc(formModelAttrs.from_time_utc);
             self.to_time_utc(formModelAttrs.to_time_utc);
 
             queryReqObj['formModelAttrs'] = formModelAttrs;
             queryReqObj.queryId = qewu.generateQueryUUID();
-            queryReqObj.chunk = 1;
-            queryReqObj.chunkSize = cowc.QE_RESULT_CHUNK_SIZE_1K;
-            queryReqObj.async = 'true';
-            queryReqObj.autoSort = 'true';
-            queryReqObj.autoLimit = 'true';
-            queryReqObj = $.extend(true, {}, queryReqObj, reqObj);
+            queryReqObj.engQueryStr = qewu.getEngQueryStr(formModelAttrs);
+
+            queryReqObj = $.extend(true, self.defaultQueryReqConfig, queryReqObj, reqObj)
 
             return queryReqObj;
         },
@@ -242,9 +255,10 @@ define([
             this.select('');
             this.where('');
             this.direction("1");
-            this.filter('');
+            this.filters('');
             this.select_data_object().reset(data);
             this.model().get('where_or_clauses').reset();
+            this.model().get('filter_and_clauses').reset();
         },
 
         addNewOrClauses: function(orClauseObject) {
@@ -265,6 +279,34 @@ define([
             //TODO: Should not be in Model
             $('#' + elementId).find('.collection').accordion('refresh');
             $('#' + elementId).find('.collection').accordion("option", "active", -1);
+        },
+
+        addNewFilterAndClause: function(andClauseObject) {
+            var self = this,
+                filterObj = andClauseObject.filter,
+                limitObj = andClauseObject.limit,
+                filterAndClauses = this.model().attributes.filter_and_clauses;
+
+            if(contrail.checkIfExist(limitObj)) {
+                this.limit(limitObj);
+            }
+            if(contrail.checkIfExist(filterObj)) {
+                $.each(filterObj, function(filterObjKey, filterObjValue) {
+                    var modelDataObj = {
+                        name    : filterObjValue.name,
+                        operator: filterObjValue.op,
+                        value   : filterObjValue.value
+                    };
+                    var newAndClause = new QueryAndModel(self.model().attributes, modelDataObj);
+                    filterAndClauses.add(newAndClause);
+                });
+            }
+        },
+
+        addFilterAndClause: function() {
+            var andClauses = this.model().get('filter_and_clauses'),
+                newAndClause = new QueryAndModel(this.model().attributes);
+            andClauses.add([newAndClause]);
         },
 
         isSuffixVisible: function(name) {

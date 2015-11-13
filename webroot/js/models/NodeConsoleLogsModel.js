@@ -15,18 +15,19 @@ define([
         constructor: function (modelData) {
             var defaultConfig = qewmc.getQueryModelConfig({
                 time_range: -1,
+                select: "MessageTS,Type,Level,Category,Xmlmessage",
                 table_name: cowc.MESSAGE_TABLE,
                 table_type: cowc.QE_LOG_TABLE_TYPE,
                 query_prefix: cowc.CONSOLE_LOGS_PREFIX,
                 log_category: "",
                 log_type: "",
                 log_level: "5",
-                limit: 50,
+                limit: "50",
                 keywords: ""
             });
 
             modelData = $.extend(true, {}, defaultConfig, modelData);
-            QueryFormModel.prototype.constructor.call(this, modelData);
+            QueryFormModel.prototype.constructor.call(this, modelData, {async: false});
             return this;
         },
 

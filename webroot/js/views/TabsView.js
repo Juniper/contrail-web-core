@@ -75,17 +75,17 @@ define([
             self.renderView4Config(this.$el.find("#" + childElId), this.model, tabObj, validation, lockEditingByDefault, modelMap);
         },
 
-        renderNewTab: function(elementId, tabViewConfigs) {
+        renderNewTab: function(elementId, tabViewConfigs, activateTab) {
             var self = this,
                 tabLinkTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_LINK_VIEW),
-                tabContentTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_CONTENT_VIEW);
+                tabContentTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_CONTENT_VIEW),
+                tabLength = self.tabs.length;
 
-            $('#' + elementId).find('ul.contrail-tab-link-list').append(tabLinkTemplate(tabViewConfigs));
+            $('#' + elementId + ' > ul.contrail-tab-link-list').append(tabLinkTemplate(tabViewConfigs));
             $('#' + elementId).append(tabContentTemplate(tabViewConfigs));
             $('#' + elementId).data('contrailTabs').refresh();
 
             $.each(tabViewConfigs, function(tabKey, tabValue) {
-                var tabLength = self.tabs.length;
                 self.tabs.push(tabValue)
                 self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'] = tabLength + tabKey;
                 if (contrail.checkIfKeyExistInObject(true, 'tabValue.tabConfig', 'renderOnActivate') &&  tabValue.tabConfig.renderOnActivate === true) {
@@ -94,7 +94,16 @@ define([
                     self.renderTab(tabValue);
                     self.tabRendered.push(true);
                 }
+
+                tabLength++;
             });
+
+            if (activateTab === true) {
+                $('#' + elementId).data('contrailTabs').activateTab(tabLength - 1);
+            } else if (typeof activateTab === 'number') {
+                $('#' + elementId).data('contrailTabs').activateTab(activateTab);
+            }
+
         }
     });
 

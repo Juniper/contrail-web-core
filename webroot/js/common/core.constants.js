@@ -154,6 +154,7 @@ define([
 
         this.TAB_THEME_CLASSIC = "classic";
         this.TAB_THEME_OVERCAST = "overcast";
+        this.TAB_THEME_WIDGET_CLASSIC = "widget-classic";
 
         this.DATA_REQUEST_STATE_FETCHING = 'fetching';
         this.DATA_REQUEST_STATE_ERROR = 'error';
@@ -186,6 +187,9 @@ define([
             { value: "6", name: "SYS_INFO" },
             { value: "7", name: "SYS_DEBUG" }
         ],
+
+        this.QE_DEFAULT_LIMIT_150K = "150000"
+        this.QE_DEFAULT_LIMIT_50K = "50000"
 
         this.QE_FLOW_QUERY_QUEUE = "fqq";
         this.QE_LOG_QUERY_QUEUE = "lqq";

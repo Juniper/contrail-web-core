@@ -831,7 +831,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-accordian-view-template">
-    <div id="{{elementId}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
+    <div id="{{elementId}}" class="{{class}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
         {{#each viewConfig}}
             {{#if this.title}}
                 <h3>{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="icon-warning-sign red"></i></span></h3>
@@ -1354,26 +1354,27 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-collection-view-template">
-    <table class="contrail-editable-grid-table">
-        <tbody data-bind="foreach: {{viewConfig.collection}}">
-        {{#each viewConfig.rows}}
-        <tr class="data-row">
-            {{#each columns}}
-            <td id="{{elementId}}" class="data-cell" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }"></td>
+    <div class="row-fluid">
+        <table class="collection-table">
+            <tbody data-bind="foreach: {{viewConfig.collection}}">
+            {{#each viewConfig.rows}}
+            <tr class="data-row">
+                {{#each columns}}
+                <td id="{{elementId}}" class="data-cell" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }"></td>
+                {{/each}}
+                {{#each rowActions}}
+                <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
+                {{/each}}
+            </tr>
             {{/each}}
-            {{#each rowActions}}
-            <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
-            {{/each}}
-        </tr>
-        {{/each}}
-        <tr class="error-row">
-            {{#each columns}}
-            <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
-            {{/each}}
-        </tr>
-        </tbody>
-    </table>
-
+            <tr class="error-row">
+                {{#each columns}}
+                <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+                {{/each}}
+            </tr>
+            </tbody>
+        </table>
+    </div>
     <div class="row-fluid collection-actions collection-actions-add">
         <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
             <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
@@ -1489,7 +1490,7 @@
     <div id="{{elementId}}" class="row-fluid contrail-tabs">
         <ul class="contrail-tab-link-list">
             {{#each tabs}}
-                <li><a id="{{this.elementId}}-tab-link" class="contrail-tab-link" href="#{{this.elementId}}-tab">{{this.title}}</a></li>
+                <li><a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}}{{title}}</a></li>
             {{/each}}
         </ul>
         {{#each tabs}}
@@ -1502,7 +1503,7 @@
 
 <script type="text/x-handlebars-template" id="core-tabs-link-template">
     {{#each this}}
-        <li><a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{this.elementId}}-tab">{{this.title}}</a></li>
+        <li><a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}}{{title}}</a></li>
     {{/each}}
 </script>
 
@@ -1652,10 +1653,7 @@
         {{#IfCompare controls.top false operator='!=='}}
         <div class="widget-header">
             <p class="smaller" {{#IfCompare controls.top.default.collapseable false operator='!=='}} data-action="widget-collapse"{{/IfCompare}}>
-                {{#IfCompare header.iconClass false operator='!=='}}
-                    <i class="{{header.iconClass}}"></i>
-                {{/IfCompare}}
-                {{header.title}}
+                {{#IfCompare header.iconClass false operator='!=='}}<i class="{{header.iconClass}}"></i>{{/IfCompare}} {{header.title}}
             </p>
             <div class="widget-toolbar pull-right">
                 {{#IfCompare controls.top.default.collapseable false operator='!=='}}
@@ -1722,10 +1720,10 @@
 <script type="text/x-handlebars-template" id="query-page-template">
     <div id="qe-{{queryPrefix}}-container">
         <div id='qe-{{queryPrefix}}-form-container'>
-            <div id='qe-{{queryPrefix}}-form'></div>
+            <div id='qe-{{queryPrefix}}-form{{formQueryIdSuffix}}'></div>
         </div>
         <div id="qe-{{queryPrefix}}-results-container">
-            <div id='qe-{{queryPrefix}}-results'></div>
+            <div id='qe-{{queryPrefix}}-results{{formQueryIdSuffix}}'></div>
         </div>
     </div>
 </script>

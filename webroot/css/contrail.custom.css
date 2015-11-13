@@ -644,7 +644,8 @@ a.selectAllLink:hover {
     margin-bottom: 5px;
 }
 .or-clause-collection.ui-accordion .ui-accordion-header-active,
-.or-clause-collection.ui-accordion .ui-accordion-content-active {
+.or-clause-collection.ui-accordion .ui-accordion-content-active,
+.and-clause-collection {
     background-color: #eee;
 
 }
@@ -653,16 +654,16 @@ a.selectAllLink:hover {
 }
 .or-clause-collection .or-clause-text,
 .and-clause-collection table {
-    margin: 0 0 0 20px;
+    margin: 5px 0 0 20px;
 }
-.or-clause-collection .and-clause-collection .collection-actions {
+.and-clause-collection .collection-actions {
   padding: 10px 0;
   border-top: 1px solid #FFF;
 }
-.or-clause-collection .and-clause-collection .collection-actions a {
+.and-clause-collection .collection-actions a {
   margin: 10px;
 }
-.or-clause-collection .collection-actions-delete i {
+.collection-actions-delete i {
     color: #777;
     padding: 10px;
 }
@@ -790,7 +791,7 @@ a.selectAllLink:hover {
 /* Sort Icon from font-awesome */
 .contrail-grid{
 	border-bottom: 1px solid #dadada;
-    margin-bottom: 15px;
+    margin-bottom: 6px;
 }
 .contrail-grid > .collapsed {
 	display: none;
@@ -1123,14 +1124,17 @@ input.editor-checkbox.ace-input[type=checkbox] + .ace-lbl::before {
 
 /* Editable Grid */
 
-.contrail-editable-grid-table thead {
+.contrail-editable-grid-table thead,
+.collection-table thead {
     padding: 5px 0;
     line-height: 26px;
 }
-.contrail-editable-grid-table thead tr {
+.contrail-editable-grid-table thead tr,
+.collection-table thead tr {
     border-bottom: 1px solid #DEDEDE;
 }
-.contrail-editable-grid-table tr th {
+.contrail-editable-grid-table tr th,
+.collection-table tr th {
     font-weight: normal;
     color: #3182bd;
     text-align: left;
@@ -1140,20 +1144,30 @@ input.editor-checkbox.ace-input[type=checkbox] + .ace-lbl::before {
     text-align: center;
     padding: 5px 5px 0 0;
 }
+.collection-table tr td {
+  text-align: center;
+  padding: 0 5px 5px;
+}
 .contrail-editable-grid-table tr td .custom-combobox.input-append,
+.collection-table tr td .custom-combobox.input-append,
 .contrail-editable-grid-table tr td .textarea-input-append.input-append,
-.contrail-editable-grid-table tr td .editable-grid-input-append.input-append {
+.collection-table tr td .textarea-input-append.input-append,
+.contrail-editable-grid-table tr td .editable-grid-input-append.input-append,
+.collection-table tr td .editable-grid-input-append.input-append {
     margin-bottom: 0;
     min-height: 28px;
 }
-.contrail-editable-grid-table tr td.error-cell {
+.contrail-editable-grid-table tr td.error-cell,
+.collection-table tr td.error-cell {
     text-align: left;
     padding-left: 5px;
 }
-.contrail-editable-grid-table tr td.action-cell {
+.contrail-editable-grid-table tr td.action-cell,
+.collection-table tr td.action-cell {
     min-width: 30px;
 }
-.contrail-editable-grid-table tr td.error-cell .help-block {
+.contrail-editable-grid-table tr td.error-cell .help-block,
+.collection-table tr td.error-cell .help-block {
     margin-bottom: 5px;
 }
 .editable-grid-add-link {
@@ -1554,71 +1568,66 @@ input.datetimepicker{
 }
 /* End - Jquery UI Tabs with Widget Header (theme: classic) */
 /* Begin - Jquery UI Tabs with Widget Header  (theme: widget-classic) */
-.contrail-tabs-widget-classic.ui-tabs.ui-widget,
-.contrail-widget-tabs.ui-tabs.ui-widget {
+.contrail-tabs-widget-classic.ui-tabs.ui-widget {
   border: none;
   padding: 0;
 }
-.contrail-tabs-widget-classic.ui-tabs .ui-widget-header,
-.contrail-widget-tabs.ui-tabs .ui-widget-header {
+.contrail-tabs-widget-classic.ui-tabs .ui-widget-header {
   border: none;
   background: none;
   border-bottom: 1px solid #ccc;
   line-height: 20px;
   font-size: 12px;
 }
-.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav,
-.contrail-widget-tabs.ui-tabs .ui-tabs-nav {
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav {
   margin: 0 0 5px 0;
   padding: 4px 1px 0 10px;
 }
-.contrail-tabs-widget-classic .ui-tabs-panel.ui-widget-content,
-.contrail-widget-tabs .ui-tabs-panel.ui-widget-content {
-  padding: 1em 1.5em;
+.contrail-tabs-widget-classic .ui-tabs-panel.ui-widget-content {
+  padding: 1em 1.5em ;
 }
 .contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
-.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
-.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-state-hover a,
-.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-state-hover a {
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-state-hover a {
   color: #3182bd;
+  font-size: 15px;
 }
 .contrail-tabs-widget-classic.ui-tabs .ui-state-default a,
-.contrail-widget-tabs.ui-tabs .ui-state-default a,
 .contrail-tabs-widget-classic.ui-tabs .ui-state-default a:link,
-.contrail-widget-tabs.ui-tabs .ui-state-default a:link,
-.contrail-tabs-widget-classic.ui-tabs .ui-state-default a:visited,
-.contrail-widget-tabs.ui-tabs .ui-state-default a:visited {
+.contrail-tabs-widget-classic.ui-tabs .ui-state-default a:visited {
   color: #787878;
   text-decoration: none;
   padding: 4px 8px;
   font-size: 13px;
-
+  background-color: #EFEFEF;
 }
-.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
-.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a{
+.contrail-tabs-widget-classic.ui-tabs .ui-state-default a i.contrail-tab-link-icon {
+  margin-right: 6px;
+  font-weight: normal;
+  font-size: 110%;
+  display: inline-block;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a {
+  border-bottom: 1px solid #fff;
   border-top: 1px solid #ccc;
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
-  border-bottom: 1px solid #fff;
   margin-bottom: -1px;
+  background-color: #fff;
 }
 
-.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice,
-.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice {
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice {
   border: none;
   padding-right: 3px;
 }
 
-.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav .ui-tabs-anchor,
-.contrail-widget-tabs.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
   padding: 2px 6px;
 }
-.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.tabs-toolbar,
-.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.tabs-toolbar {
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.tabs-toolbar {
   float:right;
   font-size: 15px;
 }
-/* End - Jquery UI Tabs with Widget Header (theme: classic) */
+/* End - Jquery UI Tabs with Widget Header (theme: widget-classic) */
 /* Begin - Jquery UI Accordion */
 .ui-accordion-header {
 	border-bottom: 1px solid #eee;

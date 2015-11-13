@@ -110,6 +110,10 @@
                     }
                     $(self).find('li:eq(' + tabIndex + ')').removeClass('ui-state-hidden');
                     $(self).tabs("enable", tabIndex);
+                },
+
+                activateTab: function (tabIndex) {
+                    $(self).tabs({ active: tabIndex });
                 }
             });
 
