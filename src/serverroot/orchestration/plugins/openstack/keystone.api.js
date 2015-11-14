@@ -31,6 +31,7 @@ var authServerPort =
 authAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
                                    server:authServerIP, port:authServerPort});
 
+var adminRoles = ['admin'];
 var authAPIVers = ['v2.0'];
 if ((null != config) && (null != config.identityManager) &&
     (null != config.identityManager.apiVersion)) {
@@ -58,13 +59,22 @@ function getUserRoleByAuthResponse (resRoleList)
     }
     var rolesCount = resRoleList.length;
     var extRoleStr = null;
+    var tmpUIRoleMapList = {};
+    for (key in roleMap.uiRoleMapList) {
+        var tmpKey = key.toUpperCase();
+        tmpUIRoleMapList[tmpKey] = roleMap.uiRoleMapList[key];
+    }
     for (var i = 0; i < rolesCount; i++) {
         extRoleStr = resRoleList[i]['name'];
-        if ((null != roleMap.uiRoleMapList[extRoleStr]) &&
-            (null == tmpRoleObj[roleMap.uiRoleMapList[extRoleStr]])) {
-            uiRoles.push(roleMap.uiRoleMapList[extRoleStr]);
-            tmpRoleObj[roleMap.uiRoleMapList[extRoleStr]] =
-                roleMap.uiRoleMapList[extRoleStr];
+        if (null == extRoleStr) {
+            continue;
+        }
+        extRoleStr = extRoleStr.toUpperCase();
+        if ((null != tmpUIRoleMapList[extRoleStr]) &&
+            (null == tmpRoleObj[tmpUIRoleMapList[extRoleStr]])) {
+            uiRoles.push(tmpUIRoleMapList[extRoleStr]);
+            tmpRoleObj[tmpUIRoleMapList[extRoleStr]] =
+                tmpUIRoleMapList[extRoleStr];
         }
     }
     if (uiRoles.length) {
@@ -1007,16 +1017,21 @@ function makeAuth (req, startIndex, lastErrStr, callback)
     });
 }
 
-var adminRoles = ['admin'];
-
 function isAdminRoleInProjects (userRolesPerProject)
 {
     var adminRolesCnt = adminRoles.length;
     for (key in userRolesPerProject) {
         var roles = userRolesPerProject[key];
         for (var i = 0; i < adminRolesCnt; i++) {
-            if (-1 != userRolesPerProject[key].indexOf(adminRoles[i])) {
-                return true;
+            var userRoles = userRolesPerProject[key];
+            var adminRole = adminRoles[i];
+            adminRole = adminRole.toUpperCase();
+            var userRolesCnt = userRoles.length;
+            for (var j = 0; j < userRolesCnt; j++) {
+                var userRole = userRoles[j].toUpperCase();
+                if (userRole == adminRole) {
+                    return true;
+                }
             }
         }
     }
@@ -1791,7 +1806,6 @@ function formatIdentityMgrProjects (error, request, projectLists, domList,
     }
 }
 
-var adminRoles = ['admin'];
 
 function getAdminProjectList (req, appData, callback)
 {

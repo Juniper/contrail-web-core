@@ -73,6 +73,7 @@ var express = require('express')
     , assert = require('assert')
     , jsonPath = require('JSONPath').eval
     , jsonDiff = require('./src/serverroot/common/jsondiff')
+    , helmet = require('helmet')
     ;
 
 var pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
@@ -140,6 +141,15 @@ function initializeAppConfig (appObj)
                            prefix:global.STR_REDIS_STORE_SESSION_ID_PREFIX,
                            eventEmitter:sessEvent});
 
+    // Implement X-XSS-Protection
+    app.use(helmet.xssFilter());
+    // Implement X-Frame: Deny
+    app.use(helmet.xframe('deny'));
+    // Implement Strict-Transport-Security
+    app.use(helmet.hsts({
+        maxAge: global.MAX_AGE_SESSION_ID,
+        includeSubdomains: true
+    }));
     app.use(express.session({ store:store,
         secret: secretKey,
         cookie:{
