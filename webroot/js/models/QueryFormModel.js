@@ -209,7 +209,7 @@ define([
             var modelAttrs = this.model().attributes,
                 attrs4Server = {},
                 ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object',
-                                 'filter_data_object', 'filter_and_clauses', 'limit', 'log_category', 'log_type', 'keywords'];
+                                 'filter_data_object', 'filter_and_clauses', 'limit', 'log_category', 'log_type', 'keywords', 'is_request_in_progress'];
 
             for (var key in modelAttrs) {
                 if(modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) == -1) {
@@ -226,15 +226,9 @@ define([
                 selectStr = self.select(),
                 showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
                 queryPrefix = self.query_prefix(),
-                options = {
-                    elementId: queryPrefix + '-results', gridHeight: 480, timeOut: cowc.QE_TIMEOUT,
-                    pageSize: 100, queryPrefix: queryPrefix, export: true, showChartToggle: showChartToggle,
-                    labelStep: 1, baseUnit: 'mins', fromTime: 0, toTime: 0, interval: 0,
-                    btnId: queryPrefix + '-query-submit', refreshChart: true, serverCurrentTime: serverCurrentTime
-                },
                 queryReqObj = {};
 
-            formModelAttrs = qewu.setUTCTimeObj(this.query_prefix(), formModelAttrs, options);
+            formModelAttrs = qewu.setUTCTimeObj(this.query_prefix(), formModelAttrs, serverCurrentTime);
 
             self.from_time_utc(formModelAttrs.from_time_utc);
             self.to_time_utc(formModelAttrs.to_time_utc);

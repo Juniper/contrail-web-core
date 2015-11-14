@@ -28,7 +28,8 @@ define([
                 "limit": cowc.QE_DEFAULT_LIMIT_150K,
                 "select_data_object": getSelectDataObject(),
                 "where_data_object": {},
-                "filter_data_object": {}
+                "filter_data_object": {},
+                "is_request_in_progress": false
             };
 
             var modelConfig = $.extend(true, {}, defaultModelConfig, customModelConfig);

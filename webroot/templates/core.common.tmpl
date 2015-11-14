@@ -1703,7 +1703,12 @@
 
 <script type="text/x-handlebars-template" id="core-button-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <a class="btn btn-mini {{elementConfig.btnClass}}" data-bind="click: {{elementConfig.onClick}}">{{#if iconClass}}<i class="{{iconClass}}"/>&nbsp;{{/if}}{{label}}</a>
+        <button class="btn btn-mini {{viewConfig.elementConfig.btnClass}}"
+            data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}},
+            {{/if}}click: {{viewConfig.elementConfig.onClick}}"
+        >
+            {{#if viewConfig.iconClass}}<i class="{{viewConfig.iconClass}}"/>&nbsp;{{/if}}{{viewConfig.label}}
+        </button>
     </div>
 </script>
 

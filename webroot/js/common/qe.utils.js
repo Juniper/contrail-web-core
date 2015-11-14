@@ -23,14 +23,8 @@ define([
             return s.join('');
         };
 
-        self.setUTCTimeObj = function (queryPrefix, formModelAttrs, options, timeRange) {
-            var serverCurrentTime = options ? options['serverCurrentTime'] : null;
+        self.setUTCTimeObj = function (queryPrefix, formModelAttrs, serverCurrentTime, timeRange) {
             timeRange = (timeRange == null) ? getTimeRangeObj(formModelAttrs, serverCurrentTime) : timeRange;
-
-            if (options != null) {
-                options.fromTime = timeRange.fromTimeUTC;
-                options.toTime = timeRange.toTimeUTC;
-            }
 
             formModelAttrs['from_time_utc'] = timeRange.fromTime;
             formModelAttrs['to_time_utc'] = timeRange.toTime;
