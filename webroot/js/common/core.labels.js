@@ -81,14 +81,6 @@ define([
 
         var labelMap = {};
 
-        this.TITLE_DETAILS = "Details";
-        this.TITLE_OVERVIEW = "Overview";
-        this.TITLE_QE_SELECT = "Select";
-        this.TITLE_CHART = "Chart";
-        this.TITLE_QE_WHERE = "Where";
-
-        this.TITLE_QE_FILTER = "Filter";
-
         this.BREADCRUMB_ID = "breadcrumb";
 
         // Query Engine labels
@@ -100,6 +92,10 @@ define([
         this.QE_FLOW_SERIES_CHART_PAGE_ID = 'qe-flow-series-chart-page';
         this.QE_FLOW_SERIES_LINE_CHART_ID = "qe-flow-series-line-chart"
         this.QE_FLOW_SERIES_CHART_GRID_ID = "qe-flow-series-chart-grid";
+
+        this.QE_FLOW_DETAILS_TAB_VIEW__ID = "qe-flow-details-tab-view";
+        this.QE_FLOW_DETAILS_TAB_ID = "qe-flow-details-tab";
+        this.QE_FLOW_DETAILS_GRID_ID = "qe-flow-details-grid";
 
         this.QE_FLOW_RECORD_ID = "qe-flow-record";
         this.QE_FLOW_RECORD_SECTION_ID = "qe-flow-record-section";
@@ -133,11 +129,20 @@ define([
         this.QE_SYSTEM_LOGS_TAB_ID = "qe-system-logs-tab";
         this.QE_SYSTEM_LOGS_GRID_ID = "qe-system-logs-grid";
 
+        this.TITLE_DETAILS = "Details";
+        this.TITLE_OVERVIEW = "Overview";
+        this.TITLE_QE_SELECT = "Select";
+        this.TITLE_CHART = "Chart";
+        this.TITLE_QE_WHERE = "Where";
+        this.TITLE_QE_FILTER = "Filter";
+
         this.TITLE_QUERY = "Query";
         this.TITLE_RESULTS = "Results";
         this.TITLE_CHART = "Chart";
+        this.TITLE_FLOWS = "Flows";
         this.TITLE_FLOW_SERIES = "Flow Series";
         this.TITLE_FLOW_RECORD = "Flow Record";
+        this.TITLE_FLOW_RECORD_DETAILS = "Flow Record Details";
         this.TITLE_FLOW_SERIES_RESULTS = "Flow Series Results";
         this.TITLE_STATS_QUERY = "Statistics Query";
         this.TITLE_OBJECT_LOGS = "Object Logs";
@@ -149,6 +154,8 @@ define([
         this.QE_CHART_GRID_ID = 'qe-chart-grid';
         this.QE_CHART_PAGE_ID = 'qe-chart-page';
         this.QE_WHERE_MODAL_SUFFIX = '-where-modal';
+
+        this.QE_RECORD_DETAILS_MODAL_SUFFIX = '-record-details-modal';
 
         this.QE_FILTER_MODAL_SUFFIX = '-filter-modal';
     };
