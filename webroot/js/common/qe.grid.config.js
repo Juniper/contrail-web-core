@@ -39,7 +39,7 @@ define([
                     width: 30, minWidth: 30, searchable: false, exportConfig: {allow: false},
                     formatter: function (r, c, v, cd, dc) {
                         var queryId = dc.queryId,
-                            queryPrefix = dc.reRunQueryString.formModelAttrs.query_prefix,
+                            queryPrefix = dc.queryReqObj.formModelAttrs.query_prefix,
                             tabElementId, tabLength = 0;
 
                         return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge" data-color_key="' + ((r === 0) ? 0 : -1) + '"><i class="icon-circle"></i></span>';
@@ -50,14 +50,14 @@ define([
                 {
                     id:"reRunTimeRange", field:"reRunTimeRange", name:"Time Range", minWidth: 100, sortable:false,
                     formatter: function(r, c, v, cd, dc) {
-                        return qewu.formatReRunTime(dc.reRunQueryString.formModelAttrs.rerun_time_range);
+                        return qewu.formatReRunTime(dc.queryReqObj.formModelAttrs.rerun_time_range);
                     }
                 },
                 { id:"engQuery", field:"engQueryStr", name: "Query", minWidth: 400, formatter: function(r, c, v, cd, dc) {
-                        if(!contrail.checkIfExist(dc.engQueryStr)) {
+                        if(!contrail.checkIfExist(dc.queryReqObj.engQueryStr)) {
                             return "";
                         }
-                        var engQueryObj = JSON.parse(dc.engQueryStr),
+                        var engQueryObj = JSON.parse(dc.queryReqObj.engQueryStr),
                             engQueryStr = '';
 
                         $.each(engQueryObj, function(key, val){
@@ -79,7 +79,7 @@ define([
                     exportConfig: {
                         allow: true,
                         advFormatter: function(dc) {
-                            var engQueryObj = JSON.parse(dc.engQueryStr),
+                            var engQueryObj = JSON.parse(dc.queryReqObj.engQueryStr),
                                 engQueryStr = '';
                             $.each(engQueryObj, function(key, val){
                                 if(key == 'select' && (!contrail.checkIfExist(val) || val == "")){
