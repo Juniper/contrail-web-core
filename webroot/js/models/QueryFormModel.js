@@ -220,15 +220,14 @@ define([
             return attrs4Server;
         },
 
-        getQueryRequestPostData: function (serverCurrentTime, reqObj) {
+        getQueryRequestPostData: function (serverCurrentTime, customQueryReqObj, useOldTime) {
             var self = this,
                 formModelAttrs = this.getFormModelAttributes(),
-                selectStr = self.select(),
-                showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
-                queryPrefix = self.query_prefix(),
                 queryReqObj = {};
 
-            formModelAttrs = qewu.setUTCTimeObj(this.query_prefix(), formModelAttrs, serverCurrentTime);
+            if(useOldTime != true) {
+                qewu.setUTCTimeObj(this.query_prefix(), formModelAttrs, serverCurrentTime);
+            }
 
             self.from_time_utc(formModelAttrs.from_time_utc);
             self.to_time_utc(formModelAttrs.to_time_utc);
@@ -237,7 +236,7 @@ define([
             queryReqObj.queryId = qewu.generateQueryUUID();
             queryReqObj.engQueryStr = qewu.getEngQueryStr(formModelAttrs);
 
-            queryReqObj = $.extend(true, self.defaultQueryReqConfig, queryReqObj, reqObj)
+            queryReqObj = $.extend(true, self.defaultQueryReqConfig, queryReqObj, customQueryReqObj)
 
             return queryReqObj;
         },

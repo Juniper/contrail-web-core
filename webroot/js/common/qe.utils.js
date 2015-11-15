@@ -28,8 +28,6 @@ define([
 
             formModelAttrs['from_time_utc'] = timeRange.fromTime;
             formModelAttrs['to_time_utc'] = timeRange.toTime;
-            formModelAttrs['rerun_time_range'] = timeRange.reRunTimeRange;
-            return formModelAttrs;
         };
 
         self.getLabelStepUnit = function (tg, tgUnit) {
@@ -63,12 +61,13 @@ define([
                 filter: reqQueryObj.filters
             };
             if (reqQueryObj.toTimeUTC == "now") {
-                engQueryJSON['from_time'] = reqQueryObj.fromTimeUTC;
-                engQueryJSON['to_time'] = reqQueryObj.toTimeUTC;
+                engQueryJSON['from_time'] = reqQueryObj.from_time;
+                engQueryJSON['to_time'] = reqQueryObj.to_time;
             } else {
-                engQueryJSON['from_time'] = moment(reqQueryObj.fromTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
-                engQueryJSON['to_time'] = moment(reqQueryObj.toTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
+                engQueryJSON['from_time'] = moment(reqQueryObj.from_time_utc).format('MMM DD, YYYY hh:mm:ss A');
+                engQueryJSON['to_time'] = moment(reqQueryObj.to_time_utc).format('MMM DD, YYYY hh:mm:ss A');
             }
+
             return JSON.stringify(engQueryJSON);
         };
 
@@ -113,17 +112,17 @@ define([
             }
         };
 
-        self.formatReRunTime = function(reRunTimeRange) {
-            var formattedReRunTime = 'custom', timeInSecs;
-            if(reRunTimeRange != null && reRunTimeRange != -1) {
-                timeInSecs = parseInt(reRunTimeRange);
+        self.formatTimeRange = function(timeRange) {
+            var formattedTime = 'custom', timeInSecs;
+            if(timeRange != null && timeRange != -1) {
+                timeInSecs = parseInt(timeRange);
                 if(timeInSecs <= 3600) {
-                    formattedReRunTime = 'Last ' + timeInSecs/60 + ' mins';
+                    formattedTime = 'Last ' + timeInSecs/60 + ' mins';
                 } else if ( timeInSecs <= 43200) {
-                    formattedReRunTime = 'Last ' + timeInSecs/3600 + ' hrs';
+                    formattedTime = 'Last ' + timeInSecs/3600 + ' hrs';
                 }
             }
-            return formattedReRunTime;
+            return formattedTime;
         };
 
         //TODO- remove this
@@ -467,21 +466,23 @@ define([
                 fromTime = "now-" + timeRange + "s";
             }
         } else {
-            // used for custom time range
+            // Used for custom time range
             fromDate = formModelAttrs['from_time'];
-            fromTimeUTC = new Date(fromDate).getTime();
+            fromTimeUTC = roundDate2Minutes(new Date(fromDate)).getTime();
             fromTime = fromTimeUTC;
             toDate = formModelAttrs['to_time'];
-            toTimeUTC = new Date(toDate).getTime();
+            toTimeUTC = roundDate2Minutes(new Date(toDate)).getTime();
             toTime = toTimeUTC;
         }
 
-        if (typeof fromTimeUTC !== 'undefined' && typeof tgMicroSecs !== 'undefined') {
-            fromTimeUTC = ceilFromTime(fromTimeUTC, tgMicroSecs);
-        }
-
-        return {fromTime: fromTime, toTime: toTime, fromTimeUTC: fromTimeUTC, toTimeUTC: toTimeUTC, reRunTimeRange: timeRange};
+        return {fromTime: fromTime, toTime: toTime};
     };
+
+    function roundDate2Minutes(dateObj) {
+        dateObj.setSeconds(0);
+        dateObj.setMilliseconds(0);
+        return dateObj;
+    }
 
     function getTGMicroSecs(tg, tgUnit) {
         if (tgUnit == 'secs') {

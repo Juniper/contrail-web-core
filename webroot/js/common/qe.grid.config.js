@@ -48,9 +48,9 @@ define([
                 { id:"startTime", field:"startTime", name:"Date", minWidth: 150, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
                 { id:"opsQueryId", field:"opsQueryId", name:"Query Id", minWidth:200, sortable:false },
                 {
-                    id:"reRunTimeRange", field:"reRunTimeRange", name:"Time Range", minWidth: 100, sortable:false,
+                    id:"", field:"", name:"Time Range", minWidth: 100, sortable:false,
                     formatter: function(r, c, v, cd, dc) {
-                        return qewu.formatReRunTime(dc.queryReqObj.formModelAttrs.rerun_time_range);
+                        return qewu.formatTimeRange(dc.queryReqObj.formModelAttrs.time_range);
                     }
                 },
                 { id:"engQuery", field:"engQueryStr", name: "Query", minWidth: 400, formatter: function(r, c, v, cd, dc) {
