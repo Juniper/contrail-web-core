@@ -71,7 +71,7 @@ define([
                 if (contrail.checkIfExist($(self.$el).data('contrailGrid'))) {
                     $(self.$el).data('contrailGrid').removeGridLoading();
                     if (contrailListModel.getItems().length == 0) {
-                        emptyGridHandler();
+                        $(self.$el).data('contrailGrid').showGridMessage('empty')
                     }
                 }
             }
@@ -80,7 +80,7 @@ define([
                 if (contrail.checkIfExist($(self.$el).data('contrailGrid'))) {
                     $(self.$el).data('contrailGrid').removeGridLoading();
                     if (contrailListModel.getItems().length == 0) {
-                        emptyGridHandler();
+                        $(self.$el).data('contrailGrid').showGridMessage('empty')
                     }
                     //TODO: Execute only in refresh case.
                     if (gridConfig.header.defaultControls.refreshable) {

@@ -38,11 +38,15 @@ define([
                     id: 'fqq-badge', field: "", name: "", resizable: false, sortable: false,
                     width: 30, minWidth: 30, searchable: false, exportConfig: {allow: false},
                     formatter: function (r, c, v, cd, dc) {
-                        var queryId = dc.queryId,
-                            queryPrefix = dc.queryReqObj.formModelAttrs.query_prefix,
-                            tabElementId, tabLength = 0;
+                        var queryId = dc.queryReqObj.queryId,
+                            tabLinkId = cowl.QE_FLOW_QUEUE_TAB_ID + '-' + queryId + '-tab-link',
+                            labelIconBadgeClass = '';
 
-                        return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge" data-color_key="' + ((r === 0) ? 0 : -1) + '"><i class="icon-circle"></i></span>';
+                        if ($('#' + tabLinkId).length > 0) {
+                            labelIconBadgeClass = 'icon-badge-color-' + $('#' + tabLinkId).data('badge_color_key');
+                        }
+
+                        return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge ' + labelIconBadgeClass + '"><i class="icon-circle"></i></span>';
                     },
                 },
                 { id:"startTime", field:"startTime", name:"Date", minWidth: 150, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
