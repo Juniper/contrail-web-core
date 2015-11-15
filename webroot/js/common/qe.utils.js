@@ -213,6 +213,8 @@ define([
 
         self.parseFilterCollection2String = function (queryFormModel) {
             var filterAndClauses = queryFormModel.model().attributes['filter_and_clauses'],
+                sort_by = queryFormModel.model().attributes['sort_by'],
+                sort_order = queryFormModel.model().attributes['sort_order'],
                 limit = queryFormModel.model().attributes['limit'],
                 filterAndClausestrArr = [], filterAndClausestr = '';
 
@@ -230,9 +232,27 @@ define([
             if (filterAndClausestrArr.length > 0) {
                 filterAndClausestr = filterAndClausestr.concat("filter: ");
                 filterAndClausestr = filterAndClausestr.concat(filterAndClausestrArr.join(' AND '));
-                filterAndClausestr = filterAndClausestr.concat(", limit: " + limit);
-            } else if (contrail.checkIfExist(limit)) {
-                filterAndClausestr = filterAndClausestr.concat("limit: " + limit);
+            }
+            if (contrail.checkIfExist(limit)) {
+                if(filterAndClausestr !== '') {
+                    filterAndClausestr = filterAndClausestr.concat(" & limit: " + limit);
+                } else {
+                    filterAndClausestr = filterAndClausestr.concat("limit: " + limit);
+                }
+            }
+            if (contrail.checkIfExist(sort_by)) {
+                if(filterAndClausestr !== '') {
+                    filterAndClausestr = filterAndClausestr.concat(" & sort_fields: " + sort_by);
+                } else {
+                    filterAndClausestr = filterAndClausestr.concat("sort_fields: " + sort_by);
+                }
+            }
+            if (contrail.checkIfExist(sort_order)) {
+                if(filterAndClausestr !== '') {
+                    filterAndClausestr = filterAndClausestr.concat(" & sort: " + sort_order);
+                } else {
+                    filterAndClausestr = filterAndClausestr.concat("sort: " + sort_order);
+                }
             }
             return filterAndClausestr;
         };
@@ -548,7 +568,7 @@ define([
     };
 
     function parseFilterANDClause(filters, query) {
-        var filtersArray = splitString2Array(filters, ","),
+        var filtersArray = splitString2Array(filters, "&"),
             filter, filterBy, limitBy,
             parsedFilterArr = [], parsedLimit, filter_json_obj = {};
 
@@ -563,6 +583,16 @@ define([
                 limitBy = splitString2Array(filter, ":")[1];
                 if(limitBy.length > 0) {
                     filter_json_obj["limit"] = parseLimitBy(limitBy);
+                }
+            } else if (filter.indexOf('sort_fields:') != -1) {
+                sort_fields = splitString2Array(filter, ":")[1];
+                if(sort_fields.length > 0) {
+                    filter_json_obj["sort_fields"] = parseSortFields(sort_fields);
+                }
+            } else if (filter.indexOf('sort:') != -1) {
+                sortOrder = splitString2Array(filter, ":")[1];
+                if(sortOrder.length > 0) {
+                    filter_json_obj["sort_order"] = sortOrder;
                 }
             }
         }
@@ -614,6 +644,14 @@ define([
         } catch (error) {
             logutils.logger.error(error.stack);
         }
+    };
+
+    function parseSortFields(sortFields){
+        var sortFieldsArr = sort_fields.split(',');
+        for(var i=0; i< sortFieldsArr.length; i++) {
+            sortFieldsArr[i] = sortFieldsArr[i].trim();
+        }
+        return  sortFieldsArr;
     };
 
     function parseWhereANDClause(whereANDClause) {

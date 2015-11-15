@@ -205,11 +205,24 @@ define([
             }
         },
 
+        getSortByOptionList: function(viewModel) {
+            var validSortFields = this.select_data_object().checked_fields(),
+                invalidSortFieldsArr = ["T=" , "UUID"],
+                resultSortFieldsDataArr = [];
+
+            for(var i=0; i< validSortFields.length; i++){
+                if(invalidSortFieldsArr.indexOf(validSortFields[i]) === -1) {
+                    resultSortFieldsDataArr.push({id: validSortFields[i], text: validSortFields[i]});
+                }
+            }
+            return resultSortFieldsDataArr;
+        },
+
         getFormModelAttributes: function () {
             var modelAttrs = this.model().attributes,
                 attrs4Server = {},
                 ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object',
-                                 'filter_data_object', 'filter_and_clauses', 'limit', 'log_category', 'log_type', 'keywords', 'is_request_in_progress'];
+                                 'filter_data_object', 'filter_and_clauses', 'limit', 'sort_by', 'sort_order', 'log_category', 'log_type', 'keywords', 'is_request_in_progress'];
 
             for (var key in modelAttrs) {
                 if(modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) == -1) {
@@ -278,11 +291,10 @@ define([
             var self = this,
                 filterObj = andClauseObject.filter,
                 limitObj = andClauseObject.limit,
+                sortByArr = andClauseObject.sort_fields,
+                sortOrderStr = andClauseObject.sort_order,
                 filterAndClauses = this.model().attributes.filter_and_clauses;
 
-            if(contrail.checkIfExist(limitObj)) {
-                this.limit(limitObj);
-            }
             if(contrail.checkIfExist(filterObj)) {
                 $.each(filterObj, function(filterObjKey, filterObjValue) {
                     var modelDataObj = {
@@ -293,6 +305,15 @@ define([
                     var newAndClause = new QueryAndModel(self.model().attributes, modelDataObj);
                     filterAndClauses.add(newAndClause);
                 });
+            }
+            if(contrail.checkIfExist(limitObj)) {
+                this.limit(limitObj);
+            }
+            if(contrail.checkIfExist(sortOrderStr)) {
+                this.sort_order(sortOrderStr);
+            }
+            if(contrail.checkIfExist(sortByArr) && sortByArr.length > 0) {
+                this.sort_by(sortByArr);
             }
         },
 

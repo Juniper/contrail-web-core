@@ -26,6 +26,8 @@ define([
                 "direction": '1',
                 "filters": null,
                 "limit": cowc.QE_DEFAULT_LIMIT_150K,
+                "sort_by" : null,
+                "sort_order" : cowc.QE_DEFAULT_SORT_ORDER,
                 "select_data_object": getSelectDataObject(),
                 "where_data_object": {},
                 "filter_data_object": {},
