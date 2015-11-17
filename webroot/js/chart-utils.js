@@ -1553,7 +1553,7 @@ d3.custom.barChart = function barChart() {
     var config = {
         margin : {top:0, right:10, bottom:10, left:10},
     }
-    var margin = config.margin, x,
+    var margin = config.margin, x, xScale,
         y = d3.scale.linear().range([50, 0]),
         id = barChart.id++,
         axis = d3.svg.axis().ticks(5).orient("bottom"),
@@ -1686,8 +1686,24 @@ d3.custom.barChart = function barChart() {
             .attr("x", x(extent[0]))
             .attr("width", x(extent[1]) - x(extent[0]));
         extent[0] = Math.floor(extent[0]);
-        // dimension.filterRange(extent);
-        dimension.filterFunction(function(d) { return d >= extent[0] && d < extent[1]});
+        dimension.filterAll();
+        if(xScale != null) {
+            var xRangeArr = xScale.range();
+            var beginIdx = Math.max(0,_.sortedIndex(xRangeArr,extent[0])-1);
+            var endIdx = Math.min(_.sortedIndex(xRangeArr,extent[1]),xRangeArr.length-1);
+            //If it falls in the last bucket,need to include the last value also
+            if(_.sortedIndex(xRangeArr,extent[1]) == xRangeArr.length) {
+                dimension.filterFunction(function(d) {
+                    return d >= xRangeArr[beginIdx] && d <= xRangeArr[endIdx];
+                });
+            } else {
+                dimension.filterFunction(function(d) {
+                    return d >= xRangeArr[beginIdx] && d < xRangeArr[endIdx-1];
+                });
+            }
+        } else {
+            dimension.filterFunction(function(d) { return d >= extent[0] && d < extent[1]});
+        }
     });
 
     brush.on("brushend.chart", function () {
@@ -1725,6 +1741,12 @@ d3.custom.barChart = function barChart() {
     chart.dimension = function (_) {
         if (!arguments.length) return dimension;
         dimension = _;
+        return chart;
+    };
+
+    chart.xScale = function (_) {
+        if (!arguments.length) return xScale;
+        xScale = _;
         return chart;
     };
 
