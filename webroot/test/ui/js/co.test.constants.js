@@ -4,20 +4,29 @@
 
 define([], function () {
     var COTestConstants = function () {
-
         this.TYPE_CONTRAIL_TEST = 'CONTRAIL_TEST';
         this.TYPE_CONTRAIL_TEST_SUITE = 'CONTRAIL_TEST_SUITE';
         this.TYPE_CONTRAIL_TEST_GROUP = 'CONTRAIL_TEST_GROUP';
 
-        this.VIEW_TEST = 'VIEW_TEST';
-        this.MODEL_TEST = 'MODEL_TEST';
-        this.UNIT_TEST = 'UNIT_TEST';
-        this.API_TEST = 'API_TEST';
-        this.LIB_API_TEST = 'LIB_API_TEST';
+        this.VIEW_TEST = 'VIEW_TEST'; //Tests ContrailView implementations
+        this.MODEL_TEST = 'MODEL_TEST'; //Tests ContrailModel implementations
+        this.UNIT_TEST = 'UNIT_TEST'; //Basic Unit tests
+        this.API_TEST = 'API_TEST'; //Tests the API section of UI
+        this.LIB_API_TEST = 'LIB_API_TEST'; //Tests third party library APIs
 
         this.SEVERITY_HIGH = 'high';
         this.SEVERITY_MEDIUM = 'medium';
         this.SEVERITY_LOW = 'low';
+        /**
+         * Minimum severity to run the tests.
+         * for severity set to low, all the tests set to severity above low will be executed.
+         * if this is set to empty, the severity set in the test config will be used.
+         */
+        this.RUN_SEVERITY = this.SEVERITY_LOW;
+
+        this.PAGE_LOAD_TIMEOUT = 1000;
+        this.PAGE_INIT_TIMEOUT = 50; // keep 50 or more.
+        this.ASSERT_TIMEOUT = 1000;
 
         this.MONITOR_NETWORKING_PAGE_LOADER = 'mnPageLoader';
         this.MONITOR_NETWORKING_ROOT_VIEW = this.MONITOR_NETWORKING_PAGE_LOADER + '.mnView';

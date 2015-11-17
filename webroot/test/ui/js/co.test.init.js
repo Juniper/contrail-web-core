@@ -4,9 +4,9 @@
 
 var cowc, cowu, cowf, cowl, cowch, cowm, cotu, cotc, covdc;
 
-var allTestFiles = [], nmTestKarma = window.__karma__;
+var allTestFiles = [], windowKarma = window.__karma__;
 
-for (var file in nmTestKarma.files) {
+for (var file in windowKarma.files) {
     if (/\.test\.js$/.test(file)) {
         allTestFiles.push(file);
     }
@@ -152,7 +152,7 @@ function testAppInit(testAppConfig) {
                         }
 
                         function loadNextFileOrStartCoverage() {
-                            requirejs.undef(testFile);
+                            requirejs.undef(allTestFiles[testFilesIndex]);
                             console.log("Execution complete. Unloaded test file: " + allTestFiles[testFilesIndex].split('/').pop());
                             window.QUnit.config.current = {semaphore: 1};
                             window.QUnit.config.blocking = true;
@@ -175,6 +175,7 @@ function testAppInit(testAppConfig) {
                         };
 
                         defObj.done(loadNextFileOrStartCoverage);
+
                         loadSingleFileAndStartKarma(testFile, defObj, loadTestRunner);
 
                     });
