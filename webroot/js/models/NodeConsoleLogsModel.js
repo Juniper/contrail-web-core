@@ -12,7 +12,7 @@ define([
         defaultSelectFields: [],
         disableSelectFields: ['Type', 'SequenceNum', 'Context', 'Keyword'],
 
-        constructor: function (modelData) {
+        constructor: function (modelData, queryReqConfig) {
             var defaultConfig = qewmc.getQueryModelConfig({
                 time_range: -1,
                 select: "MessageTS,Type,Level,Category,Xmlmessage",
@@ -27,7 +27,7 @@ define([
             });
 
             modelData = $.extend(true, {}, defaultConfig, modelData);
-            QueryFormModel.prototype.constructor.call(this, modelData, {async: false});
+            QueryFormModel.prototype.constructor.call(this, modelData, $.extend(true, queryReqConfig, {chunkSize: cowc.QE_RESULT_CHUNK_SIZE_1K, async: false}));
             return this;
         },
 

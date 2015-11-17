@@ -129,6 +129,11 @@ define([
         this.QE_SYSTEM_LOGS_TAB_ID = "qe-system-logs-tab";
         this.QE_SYSTEM_LOGS_GRID_ID = "qe-system-logs-grid";
 
+        this.QE_INGRESS_SUFFIX_ID = "-ingress";
+        this.QE_EGRESS_SUFFIX_ID = "-egress";
+        this.QE_REVERSE_INGRESS_SUFFIX_ID = "-reverse-ingress";
+        this.QE_REVERSE_EGRESS_SUFFIX_ID = "-reverse-egress";
+
         this.TITLE_DETAILS = "Details";
         this.TITLE_OVERVIEW = "Overview";
         this.TITLE_QE_SELECT = "Select";
@@ -142,12 +147,17 @@ define([
         this.TITLE_FLOWS = "Flows";
         this.TITLE_FLOW_SERIES = "Flow Series";
         this.TITLE_FLOW_RECORD = "Flow Record";
-        this.TITLE_FLOW_RECORD_DETAILS = "Flow Record Details";
+        this.TITLE_FLOW_DETAILS = "Flow Details";
         this.TITLE_FLOW_SERIES_RESULTS = "Flow Series Results";
         this.TITLE_STATS_QUERY = "Statistics Query";
         this.TITLE_OBJECT_LOGS = "Object Logs";
         this.TITLE_SYSTEM_LOGS = "System Logs";
         this.TITLE_CONSOLE_LOGS = "Console Logs";
+
+        this.TITLE_INGRESS = "Ingress";
+        this.TITLE_EGRESS = "Egress";
+        this.TITLE_REVERSE_INGRESS = "Reverse Ingress";
+        this.TITLE_REVERSE_EGRESS = "Reverse Egress";
 
         this.QE_SELECT_MODAL_SUFFIX = '-select-modal';
         this.QE_CHART_ID = 'qe-chart';
