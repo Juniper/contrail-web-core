@@ -205,6 +205,14 @@ define([
             }
         },
 
+        isSelectTimeChecked: function() {
+            var self = this,
+                selectString = self.select(),
+                selectStringCheckedFields = (selectString !== null) ? selectString.split(', ') : [];
+
+            return selectStringCheckedFields.indexOf("T=") != -1;
+        },
+
         getSortByOptionList: function(viewModel) {
             var validSortFields = this.select_data_object().checked_fields(),
                 invalidSortFieldsArr = ["T=" , "UUID"],

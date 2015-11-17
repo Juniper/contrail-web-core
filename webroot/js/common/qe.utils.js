@@ -73,6 +73,9 @@ define([
 
         self.getFromTimeElementConfig = function(fromTimeId, toTimeId) {
             return {
+                formatTime: 'h:i A',
+                format: 'M d, Y h:i A',
+                displayFormat: 'MMM DD, YYYY hh:mm A',
                 onShow: function(cdt) {
                     this.setOptions(getFromTimeShowOptions(toTimeId, cdt));
                 },
@@ -87,6 +90,9 @@ define([
 
         self.getToTimeElementConfig = function(fromTimeId, toTimeId) {
             return {
+                formatTime: 'h:i A',
+                format: 'M d, Y h:i A',
+                displayFormat: 'MMM DD, YYYY hh:mm A',
                 onShow: function(cdt) {
                     this.setOptions(getToTimeShowOptions(fromTimeId, cdt));
                 },
@@ -268,6 +274,13 @@ define([
             });
 
             return whereOrJSONArr;
+        };
+
+        self.parseSelectString2Array = function(queryFormModel) {
+            var selectString = queryFormModel.select(),
+                selectArray = (selectString == null || selectString.trim() == '') ? [] : selectString.split(', ');
+
+            queryFormModel.select_data_object().checked_fields(selectArray)
         };
 
         self.parseWhereString2Collection = function(queryFormModel) {
