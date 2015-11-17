@@ -1491,6 +1491,27 @@ function createEmptyResourceObj (obj)
     return obj['resources'];
 }
 
+function flattenResourceObjArr (resArr)
+{
+    var tmpResKeyArr = [];
+    var tmpResKeyObjs = {};
+    var len = resArr.length;
+    for (var i = 0; i < len; i++) {
+        tmpResKeyArr = [];
+        for (key in resArr[i]) {
+            tmpResKeyArr.push(key);
+        }
+        tmpResKeyArr.sort();
+        var keysLen = tmpResKeyArr.length;
+        var val = "";
+        for (var j = 0; j < keysLen; j++) {
+            val += resArr[i][tmpResKeyArr[j]].join(':');
+        }
+        tmpResKeyObjs[tmpResKeyArr.join(':')] = {value: val, index: i};
+    }
+    return tmpResKeyObjs;
+}
+
 function mergeResourceObjs (obj1, obj2)
 {
     if (null == obj2['resources']) {
@@ -1499,6 +1520,15 @@ function mergeResourceObjs (obj1, obj2)
     if (null == obj1['resources']) {
         obj1['resources'] = createEmptyResourceObj(obj1);
     }
+    var resObjs1 = flattenResourceObjArr(obj1['resources'][0]['resource']);
+    var resObjs2 = flattenResourceObjArr(obj2['resources'][0]['resource']);
+    for (key in resObjs1) {
+        if ((null != resObjs2[key]) &&
+            (resObjs1[key]['value'] == resObjs2[key]['value'])) {
+            obj2['resources'][0]['resource'].splice(resObjs2[key].index, 1);
+        }
+    }
+
     obj1['resources'][0]['resource'] =
         obj1['resources'][0]['resource'].concat(obj2['resources'][0]['resource']);
     return obj1;
