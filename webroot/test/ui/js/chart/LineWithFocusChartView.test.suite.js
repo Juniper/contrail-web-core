@@ -57,7 +57,6 @@ define([
         basicTestGroup.registerTest(cotr.test(cotm.CHARTVIEW_COLOR_LINES, function () {
             expect(2);
             if($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-0 .nv-line').parent().css('fill').indexOf('#') !== -1){
-                console.log('here');
                 equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-0 .nv-line').parent().css('fill'), "#1f77b4",
                     "Color of lines in chart equal to color of lines set");
                 equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-1 .nv-line').parent().css('fill'), "#6baed6",
