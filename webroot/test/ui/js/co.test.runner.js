@@ -63,7 +63,7 @@ define([
         hashParams: {
             p: ''
         },
-        loadTimeout: 1000
+        loadTimeout: cotc.PAGE_LOAD_TIMEOUT
     };
 
     this.getDefaultPageConfig = function () {
@@ -204,8 +204,8 @@ define([
 
     this.executeCommonTests = function (testConfigObj) {
         _.each(testConfigObj, function (testConfig) {
-
             _.each(testConfig.suites, function (suiteConfig) {
+                suiteConfig.severity = cotc.RUN_SEVERITY;
                 if (contrail.checkIfExist(suiteConfig.class)) {
                     var testObj;
                     if (contrail.checkIfExist(testConfig.viewObj)) {
@@ -226,6 +226,7 @@ define([
     this.executeUnitTests = function (testConfigObj) {
         _.each(testConfigObj, function (testConfig) {
             _.each(testConfig.suites, function(suiteConfig) {
+                suiteConfig.severity = cotc.RUN_SEVERITY;
                 if (contrail.checkIfExist(suiteConfig.class)) {
                     suiteConfig.class(testConfig.moduleObj, suiteConfig);
                 }
@@ -244,7 +245,7 @@ define([
      * testConfig.getTestConfig()
      * @param PageTestConfig
      */
-    this.startCommonTestRunner = function (pageTestConfig) {
+    this.startTestRunner = function (pageTestConfig) {
         var self = this,
             fakeServer = null,
             fakeServerConfig = ifNull(pageTestConfig.fakeServer, self.getDefaultFakeServerConfig());
@@ -269,8 +270,8 @@ define([
             asyncTest("Load and Run Test Suite: ", function (assert) {
                 expect(0);
                 // commenting out for now. once UT lib update get the async working.
-                //var done = assert.async();
-                var done = null;
+                var done = assert.async();
+                //var done = null;
 
                 switch (pageTestConfig.testType) {
                     case cotc.VIEW_TEST:
@@ -426,8 +427,7 @@ define([
         test: cTest,
         createTestGroup: createTestGroup,
         createTestSuite: createTestSuite,
-        startTestRunner: startCommonTestRunner,
-        startCommonTestRunner : startCommonTestRunner,
+        startTestRunner: startTestRunner,
         startViewTestRunner: startViewTestRunner,
         startModelTestRunner: startModelTestRunner,
         startLibTestRunner: startLibTestRunner,
