@@ -271,7 +271,6 @@ define([
                 expect(0);
                 // commenting out for now. once UT lib update get the async working.
                 var done = assert.async();
-                //var done = null;
 
                 switch (pageTestConfig.testType) {
                     case cotc.VIEW_TEST:
