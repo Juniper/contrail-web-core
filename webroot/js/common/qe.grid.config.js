@@ -108,6 +108,25 @@ define([
                 { id:"timeTaken", field:"timeTaken", name:"Time Taken", minWidth:100, sortable:true, formatter: function(r, c, v, cd, dc) { return ((dc.timeTaken == -1) ? '-' : (parseInt(dc.timeTaken) + ' secs')); } }
             ];
         };
+
+        this.getOnClickFlowRecord = function(parentView, queryFormModel) {
+            return function (e, selRowDataItem) {
+                var elementId = parentView.$el,
+                    flowRecordDetailsConfig = {
+                        elementId: cowl.QE_FLOW_DETAILS_TAB_VIEW__ID,
+                        view: "FlowDetailsTabView",
+                        viewPathPrefix: "reports/qe/ui/js/views/",
+                        app: cowc.APP_CONTRAIL_CONTROLLER,
+                        viewConfig: {
+                            className: 'modal-980',
+                            queryFormAttributes: queryFormModel.getFormModelAttributes(),
+                            selectedFlowRecord: selRowDataItem
+                        }
+                    };
+
+                parentView.renderView4Config(elementId, null, flowRecordDetailsConfig);
+            }
+        };
     };
 
     function getColumnDisplay4Query(tableName, tableType) {
@@ -122,8 +141,8 @@ define([
 
     var columnDisplayMap  = {
         "FlowSeriesTable": [
-            {select:"T", display:{id:"T", field:"T", minWidth:180, name:"Time", formatter: function(r, c, v, cd, dc){ return formatMicroDate(dc.T);}, filterable:false, groupable:false}},
-            {select:"T=", display:{id:"T", field:"T", minWidth:180, name:"Time", formatter: function(r, c, v, cd, dc){ return formatMicroDate(dc.T);}, filterable:false, groupable:false}},
+            {select:"T", display:{id:"T", field:"T", minWidth:210, name:"Time", formatter: function(r, c, v, cd, dc){ return formatMicroDate(dc.T);}, filterable:false, groupable:false}},
+            {select:"T=", display:{id:"T", field:"T", minWidth:210, name:"Time", formatter: function(r, c, v, cd, dc){ return formatMicroDate(dc.T);}, filterable:false, groupable:false}},
             {select:"vrouter", display:{id:"vrouter",field:"vrouter", minWidth:150, name:"Virtual Router", groupable:false, formatter: function(r, c, v, cd, dc){ return handleNull4Grid(dc.vrouter);}}},
             {select:"sourcevn", display:{id:"sourcevn",field:"sourcevn", minWidth:250, name:"Source VN", groupable:false, formatter: function(r, c, v, cd, dc){ return handleNull4Grid(dc.sourcevn);}}},
             {select:"destvn", display:{id:"destvn", field:"destvn", minWidth:250, name:"Destination VN", groupable:false, formatter: function(r, c, v, cd, dc){ return handleNull4Grid(dc.destvn);}}},
