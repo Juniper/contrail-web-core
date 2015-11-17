@@ -689,13 +689,22 @@ define(['underscore'], function (_) {
                             monitorInfraParsers = new MonitorInfraParsers();
                         }
                         var nodeListModel = new NodeListModel();
-                        cfgObj.model = nodeListModel.getAlertListModel();
-                        require(['mon-infra-alert-grid-view'], function(AlertGridView) {
-                            var alertGridView = new AlertGridView({
-                                el:$("#" + modalId).find('#' + formId),
-                                model:cfgObj.model
+                        var nodeListModelResources = [];
+                        //Register node List models
+                        if(ctwu != null) 
+                            nodeListModelResources = nodeListModelResources.concat(ctwu.getNodeListModelsForAlerts());
+                        require(nodeListModelResources,function() {
+                            $.each(arguments,function(idx,currListModel) {
+                                nodeListModel.addListModel(new currListModel());
+                                cfgObj.model = nodeListModel.getAlertListModel();
+                                require(['mon-infra-alert-grid-view'], function(AlertGridView) {
+                                    var alertGridView = new AlertGridView({
+                                        el:$("#" + modalId).find('#' + formId),
+                                        model:cfgObj.model
+                                    });
+                                    alertGridView.render();
+                                });
                             });
-                            alertGridView.render();
                         });
                     });
             } else {
