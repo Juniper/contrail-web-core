@@ -144,13 +144,17 @@
     };
 
     $.fn.contrailDateTimePicker = function(option) {
-        var self = this;
+        var self = this,
+            defaultOption = {
+                formatDate: 'M d, Y',
+                formatTime: 'h:i:s A',
+                format: 'M d, Y h:i:s A',
+                step: 10,
+                displayFormat: 'MMM DD, YYYY hh:mm:ss A'
+            };
         option = (typeof option === "undefined") ? {} : option;
 
-        option.formatDate = 'M d, Y';
-        option.formatTime = 'h:i:s A';
-        option.format = 'M d, Y h:i:s A';
-        option.step = 10;
+        option = $.extend(true, defaultOption, option);
 
         this.addClass('datetimepicker')
             .datetimepicker(option);
@@ -171,13 +175,13 @@
             },
             val: function(dateTime) {
                 console.warn('Contrail WebUI Warning: Function val of ContrailDateTimePicker is deprecated. Use value() instead.');
-                self.val(moment(dateTime).format('MMM DD, YYYY hh:mm:ss A'));
+                self.val(moment(dateTime).format(option.displayFormat));
             },
             value: function(dateTime) {
                 if(!contrail.checkIfExist(dateTime)) {
                     return self.val();
                 } else {
-                    var value = moment(dateTime).format('MMM DD, YYYY hh:mm:ss A');
+                    var value = moment(dateTime).format(option.displayFormat);
                     self.val(value);
                     return value;
                 }
