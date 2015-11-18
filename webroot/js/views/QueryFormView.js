@@ -11,6 +11,7 @@ define([
     var QueryFormView = ContrailView.extend({
 
         renderSelect: function (options) {
+            qewu.parseSelectString2Array(this.model);
             this.renderView4Config(this.$el, this.model, getSelectViewConfig(contrail.checkIfExist(options) ? options : {}));
         },
 

@@ -70,7 +70,7 @@ define([
             if (contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
                 if (contrail.checkIfExist($(self.$el).data('contrailGrid'))) {
                     $(self.$el).data('contrailGrid').removeGridLoading();
-                    if (contrailListModel.getItems().length == 0) {
+                    if (gridOptions.defaultDataStatusMessage && contrailListModel.getItems().length == 0) {
                         $(self.$el).data('contrailGrid').showGridMessage('empty')
                     }
                 }
@@ -79,7 +79,7 @@ define([
             contrailListModel.onAllRequestsComplete.subscribe(function () {
                 if (contrail.checkIfExist($(self.$el).data('contrailGrid'))) {
                     $(self.$el).data('contrailGrid').removeGridLoading();
-                    if (contrailListModel.getItems().length == 0) {
+                    if (gridOptions.defaultDataStatusMessage && contrailListModel.getItems().length == 0) {
                         $(self.$el).data('contrailGrid').showGridMessage('empty')
                     }
                     //TODO: Execute only in refresh case.
@@ -909,7 +909,7 @@ define([
                     },
                     removeGridMessage: function () {
                         gridContainer.find('.grid-load-status').html('').addClass('hide');
-                        if (gridOptions.lazyLoading == null || !gridOptions.lazyLoading) {
+                        if (gridOptions.lazyLoading == null || !gridOptions.lazyLoading && gridOptions.defaultDataStatusMessage) {
                             this.removeGridLoading();
                         }
                     },
@@ -1129,8 +1129,8 @@ define([
                     '<i class="' + actionConfig.iconClass + '"></i></a>' +
                     '</div>').appendTo('#' + gridContainer.prop('id') + '-header');
 
-                $(action).on('click', function () {
-                    actionConfig.onClick();
+                $(action).on('click', function (event) {
+                    actionConfig.onClick(event, gridContainer);
                 });
             };
 
@@ -1215,7 +1215,7 @@ define([
             };
 
             function emptyGridHandler() {
-                if (!gridOptions.lazyLoading && gridContainer.data('contrailGrid')) {
+                if (!gridOptions.lazyLoading && gridOptions.gridOptions.defaultDataStatusMessage && gridContainer.data('contrailGrid')) {
                     gridContainer.data('contrailGrid').showGridMessage('empty');
                     if (gridOptions.checkboxSelectable != false) {
                         gridContainer.find('.headerRowCheckbox').attr('disabled', true);

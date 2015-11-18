@@ -26,9 +26,12 @@ define([
                 "direction": '1',
                 "filters": null,
                 "limit": cowc.QE_DEFAULT_LIMIT_150K,
+                "sort_by" : null,
+                "sort_order" : cowc.QE_DEFAULT_SORT_ORDER,
                 "select_data_object": getSelectDataObject(),
                 "where_data_object": {},
-                "filter_data_object": {}
+                "filter_data_object": {},
+                "is_request_in_progress": false
             };
 
             var modelConfig = $.extend(true, {}, defaultModelConfig, customModelConfig);
@@ -44,7 +47,6 @@ define([
         selectDataObject.fields = ko.observableArray([]);
         selectDataObject.enable_map = ko.observable({});
 
-        selectDataObject.select_all_text = ko.observable("Select All");
         selectDataObject.select_fields = ko.observableArray([]);
         selectDataObject.checked_fields = ko.observableArray([]);
 
@@ -116,14 +118,11 @@ define([
 
         selectDataObject.on_select_all = function (data, event) {
             var dataObject = data.select_data_object(),
-                selectAllText = dataObject.select_all_text(),
                 isEnableMap = dataObject.enable_map(),
                 checkedFields = dataObject.checked_fields,
                 key, nonAggKey;
 
-            if (selectAllText == 'Select All') {
-                dataObject.select_all_text('Clear All');
-
+            if (checkedFields().length == 0) {
                 for (key in isEnableMap) {
                     isEnableMap[key](true);
                     checkedFields.remove(key);
@@ -145,7 +144,6 @@ define([
                     }
                 }
             } else {
-                dataObject.select_all_text('Select All');
                 for (key in isEnableMap) {
                     isEnableMap[key](true);
                     checkedFields.remove(key);
@@ -157,8 +155,6 @@ define([
             var dataObject = data.select_data_object(),
                 isEnableMap = dataObject.enable_map(),
                 checkedFields = dataObject.checked_fields;
-
-            dataObject.select_all_text("Select All");
 
             for(var key in isEnableMap) {
                 checkedFields.remove(key);

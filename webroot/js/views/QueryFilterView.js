@@ -173,6 +173,40 @@ define([
                             }
                         ]
                     }
+                },
+                {
+                    elementId: 'sort',
+                    title: 'Sort',
+                    view: "SectionView",
+                    viewConfig:
+                    {
+                        rows: [
+                            {
+                                columns: [
+                                    {
+                                        elementId : 'sort_by', view: "FormMultiselectView",
+                                        viewConfig: {
+                                            path: 'sort_by', dataBindValue: 'sort_by', class: "span9",
+                                            dataBindOptionList: 'getSortByOptionList()',
+                                            elementConfig: {
+                                                placeholder: cowc.QE_TITLE_SORT_BY
+                                            }
+                                        }
+                                    },
+                                    {
+                                        elementId : 'sort_order', view: "FormDropdownView",
+                                        viewConfig: {
+                                            path: 'sort_order', dataBindValue: 'sort_order', class: "span3",
+                                            elementConfig: {
+                                                placeholder: cowc.QE_TITLE_SORT_ORDER,
+                                                data: cowc.QE_SORT_ORDER_DROPDOWN_VALUES
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         }

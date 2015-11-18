@@ -1490,7 +1490,12 @@
     <div id="{{elementId}}" class="row-fluid contrail-tabs">
         <ul class="contrail-tab-link-list">
             {{#each tabs}}
-                <li><a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}}{{title}}</a></li>
+                <li>
+                    <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
+                        {{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}}{{title}}
+                        {{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/IfCompare}}
+                    </a>
+                </li>
             {{/each}}
         </ul>
         {{#each tabs}}
@@ -1503,7 +1508,12 @@
 
 <script type="text/x-handlebars-template" id="core-tabs-link-template">
     {{#each this}}
-        <li><a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}}{{title}}</a></li>
+        <li>
+            <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
+                {{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}}{{title}}
+                {{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/IfCompare}}
+            </a>
+        </li>
     {{/each}}
 </script>
 
@@ -1693,7 +1703,12 @@
 
 <script type="text/x-handlebars-template" id="core-button-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <a class="btn btn-mini {{elementConfig.btnClass}}" data-bind="click: {{elementConfig.onClick}}">{{#if iconClass}}<i class="{{iconClass}}"/>&nbsp;{{/if}}{{label}}</a>
+        <button class="btn btn-mini {{viewConfig.elementConfig.btnClass}}"
+            data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}},
+            {{/if}}click: {{viewConfig.elementConfig.onClick}}"
+        >
+            {{#if viewConfig.iconClass}}<i class="{{viewConfig.iconClass}}"/>&nbsp;{{/if}}{{viewConfig.label}}
+        </button>
     </div>
 </script>
 
