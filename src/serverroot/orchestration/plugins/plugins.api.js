@@ -166,17 +166,27 @@ function formatDomainList (req, tenantList, domainListObjs)
     return domainObjs;
 }
 
-var adminProjects = ['admin'];
+var adminRoleProjects = ['admin'];
 function getAdminProjectList (req)
 {
     var adminProjectList = [];
-    var adminProjectsCnt = adminProjects.length;
+    var adminRoleProjectsCnt = adminRoleProjects.length;
     var userRoles = req.session.userRoles;
     for (key in userRoles) {
-        for (var i = 0; i < adminProjectsCnt; i++) {
-            if (-1 !=
-                req.session.userRoles[key].indexOf(adminProjects[i])) {
-                adminProjectList.push(key);
+        for (var i = 0; i < adminRoleProjectsCnt; i++) {
+            var roles = req.session.userRoles[key];
+            if (null == roles) {
+                logutils.logger.error('req.session.userRoles null for project:' +
+                                      ' ' + key);
+                continue;
+            }
+            var roleCnt = roles.length;
+            var adminRole = adminRoleProjects[i].toUpperCase();
+            for (var j = 0; j < roleCnt; j++) {
+                var userRole = roles[j].toUpperCase();
+                if (userRole == adminRole) {
+                    adminProjectList.push(key);
+                }
             }
         }
     }
