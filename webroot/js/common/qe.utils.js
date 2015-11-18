@@ -581,6 +581,10 @@ define([
     };
 
     function parseFilterANDClause(filters, query) {
+        if (!contrail.checkIfExist(filters)){
+            // make filters empty string to prevent parse error when opened first time
+            filters = "";
+        }
         var filtersArray = splitString2Array(filters, "&"),
             filter, filterBy, limitBy,
             parsedFilterArr = [], parsedLimit, filter_json_obj = {};
