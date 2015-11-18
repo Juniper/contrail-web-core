@@ -34,19 +34,34 @@ define([
 
         this.getQueueColumnDisplay = function() {
             return [
+                {
+                    id: 'fqq-badge', field: "", name: "", resizable: false, sortable: false,
+                    width: 30, minWidth: 30, searchable: false, exportConfig: {allow: false},
+                    formatter: function (r, c, v, cd, dc) {
+                        var queryId = dc.queryReqObj.queryId,
+                            tabLinkId = cowl.QE_FLOW_QUEUE_TAB_ID + '-' + queryId + '-tab-link',
+                            labelIconBadgeClass = '';
+
+                        if ($('#' + tabLinkId).length > 0) {
+                            labelIconBadgeClass = 'icon-badge-color-' + $('#' + tabLinkId).data('badge_color_key');
+                        }
+
+                        return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge ' + labelIconBadgeClass + '"><i class="icon-circle"></i></span>';
+                    },
+                },
                 { id:"startTime", field:"startTime", name:"Date", minWidth: 150, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
                 { id:"opsQueryId", field:"opsQueryId", name:"Query Id", minWidth:200, sortable:false },
                 {
-                    id:"reRunTimeRange", field:"reRunTimeRange", name:"Time Range", minWidth: 100, sortable:false,
+                    id:"", field:"", name:"Time Range", minWidth: 100, sortable:false,
                     formatter: function(r, c, v, cd, dc) {
-                        return qewu.formatReRunTime(dc.reRunQueryString.formModelAttrs.rerun_time_range);
+                        return qewu.formatTimeRange(dc.queryReqObj.formModelAttrs.time_range);
                     }
                 },
                 { id:"engQuery", field:"engQueryStr", name: "Query", minWidth: 400, formatter: function(r, c, v, cd, dc) {
-                        if(!contrail.checkIfExist(dc.engQueryStr)) {
+                        if(!contrail.checkIfExist(dc.queryReqObj.engQueryStr)) {
                             return "";
                         }
-                        var engQueryObj = JSON.parse(dc.engQueryStr),
+                        var engQueryObj = JSON.parse(dc.queryReqObj.engQueryStr),
                             engQueryStr = '';
 
                         $.each(engQueryObj, function(key, val){
@@ -68,7 +83,7 @@ define([
                     exportConfig: {
                         allow: true,
                         advFormatter: function(dc) {
-                            var engQueryObj = JSON.parse(dc.engQueryStr),
+                            var engQueryObj = JSON.parse(dc.queryReqObj.engQueryStr),
                                 engQueryStr = '';
                             $.each(engQueryObj, function(key, val){
                                 if(key == 'select' && (!contrail.checkIfExist(val) || val == "")){
@@ -93,6 +108,25 @@ define([
                 { id:"timeTaken", field:"timeTaken", name:"Time Taken", minWidth:100, sortable:true, formatter: function(r, c, v, cd, dc) { return ((dc.timeTaken == -1) ? '-' : (parseInt(dc.timeTaken) + ' secs')); } }
             ];
         };
+
+        this.getOnClickFlowRecord = function(parentView, queryFormModel) {
+            return function (e, selRowDataItem) {
+                var elementId = parentView.$el,
+                    flowRecordDetailsConfig = {
+                        elementId: cowl.QE_FLOW_DETAILS_TAB_VIEW__ID,
+                        view: "FlowDetailsTabView",
+                        viewPathPrefix: "reports/qe/ui/js/views/",
+                        app: cowc.APP_CONTRAIL_CONTROLLER,
+                        viewConfig: {
+                            className: 'modal-980',
+                            queryFormAttributes: queryFormModel.getFormModelAttributes(),
+                            selectedFlowRecord: selRowDataItem
+                        }
+                    };
+
+                parentView.renderView4Config(elementId, null, flowRecordDetailsConfig);
+            }
+        };
     };
 
     function getColumnDisplay4Query(tableName, tableType) {
@@ -107,8 +141,8 @@ define([
 
     var columnDisplayMap  = {
         "FlowSeriesTable": [
-            {select:"T", display:{id:"T", field:"T", minWidth:180, name:"Time", formatter: function(r, c, v, cd, dc){ return formatMicroDate(dc.T);}, filterable:false, groupable:false}},
-            {select:"T=", display:{id:"T", field:"T", minWidth:180, name:"Time", formatter: function(r, c, v, cd, dc){ return formatMicroDate(dc.T);}, filterable:false, groupable:false}},
+            {select:"T", display:{id:"T", field:"T", minWidth:210, name:"Time", formatter: function(r, c, v, cd, dc){ return formatMicroDate(dc.T);}, filterable:false, groupable:false}},
+            {select:"T=", display:{id:"T", field:"T", minWidth:210, name:"Time", formatter: function(r, c, v, cd, dc){ return formatMicroDate(dc.T);}, filterable:false, groupable:false}},
             {select:"vrouter", display:{id:"vrouter",field:"vrouter", minWidth:150, name:"Virtual Router", groupable:false, formatter: function(r, c, v, cd, dc){ return handleNull4Grid(dc.vrouter);}}},
             {select:"sourcevn", display:{id:"sourcevn",field:"sourcevn", minWidth:250, name:"Source VN", groupable:false, formatter: function(r, c, v, cd, dc){ return handleNull4Grid(dc.sourcevn);}}},
             {select:"destvn", display:{id:"destvn", field:"destvn", minWidth:250, name:"Destination VN", groupable:false, formatter: function(r, c, v, cd, dc){ return handleNull4Grid(dc.destvn);}}},

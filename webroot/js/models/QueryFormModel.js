@@ -205,11 +205,32 @@ define([
             }
         },
 
+        isSelectTimeChecked: function() {
+            var self = this,
+                selectString = self.select(),
+                selectStringCheckedFields = (selectString !== null) ? selectString.split(', ') : [];
+
+            return selectStringCheckedFields.indexOf("T=") != -1;
+        },
+
+        getSortByOptionList: function(viewModel) {
+            var validSortFields = this.select_data_object().checked_fields(),
+                invalidSortFieldsArr = ["T=" , "UUID"],
+                resultSortFieldsDataArr = [];
+
+            for(var i=0; i< validSortFields.length; i++){
+                if(invalidSortFieldsArr.indexOf(validSortFields[i]) === -1) {
+                    resultSortFieldsDataArr.push({id: validSortFields[i], text: validSortFields[i]});
+                }
+            }
+            return resultSortFieldsDataArr;
+        },
+
         getFormModelAttributes: function () {
             var modelAttrs = this.model().attributes,
                 attrs4Server = {},
                 ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object',
-                                 'filter_data_object', 'filter_and_clauses', 'limit', 'log_category', 'log_type', 'keywords'];
+                                 'filter_data_object', 'filter_and_clauses', 'limit', 'sort_by', 'sort_order', 'log_category', 'log_type', 'keywords', 'is_request_in_progress'];
 
             for (var key in modelAttrs) {
                 if(modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) == -1) {
@@ -220,21 +241,14 @@ define([
             return attrs4Server;
         },
 
-        getQueryRequestPostData: function (serverCurrentTime, reqObj) {
+        getQueryRequestPostData: function (serverCurrentTime, customQueryReqObj, useOldTime) {
             var self = this,
                 formModelAttrs = this.getFormModelAttributes(),
-                selectStr = self.select(),
-                showChartToggle = selectStr.indexOf("T=") == -1 ? false : true,
-                queryPrefix = self.query_prefix(),
-                options = {
-                    elementId: queryPrefix + '-results', gridHeight: 480, timeOut: cowc.QE_TIMEOUT,
-                    pageSize: 100, queryPrefix: queryPrefix, export: true, showChartToggle: showChartToggle,
-                    labelStep: 1, baseUnit: 'mins', fromTime: 0, toTime: 0, interval: 0,
-                    btnId: queryPrefix + '-query-submit', refreshChart: true, serverCurrentTime: serverCurrentTime
-                },
                 queryReqObj = {};
 
-            formModelAttrs = qewu.setUTCTimeObj(this.query_prefix(), formModelAttrs, options);
+            if(useOldTime != true) {
+                qewu.setUTCTimeObj(this.query_prefix(), formModelAttrs, serverCurrentTime);
+            }
 
             self.from_time_utc(formModelAttrs.from_time_utc);
             self.to_time_utc(formModelAttrs.to_time_utc);
@@ -243,7 +257,7 @@ define([
             queryReqObj.queryId = qewu.generateQueryUUID();
             queryReqObj.engQueryStr = qewu.getEngQueryStr(formModelAttrs);
 
-            queryReqObj = $.extend(true, self.defaultQueryReqConfig, queryReqObj, reqObj)
+            queryReqObj = $.extend(true, self.defaultQueryReqConfig, queryReqObj, customQueryReqObj)
 
             return queryReqObj;
         },
@@ -285,11 +299,10 @@ define([
             var self = this,
                 filterObj = andClauseObject.filter,
                 limitObj = andClauseObject.limit,
+                sortByArr = andClauseObject.sort_fields,
+                sortOrderStr = andClauseObject.sort_order,
                 filterAndClauses = this.model().attributes.filter_and_clauses;
 
-            if(contrail.checkIfExist(limitObj)) {
-                this.limit(limitObj);
-            }
             if(contrail.checkIfExist(filterObj)) {
                 $.each(filterObj, function(filterObjKey, filterObjValue) {
                     var modelDataObj = {
@@ -300,6 +313,15 @@ define([
                     var newAndClause = new QueryAndModel(self.model().attributes, modelDataObj);
                     filterAndClauses.add(newAndClause);
                 });
+            }
+            if(contrail.checkIfExist(limitObj)) {
+                this.limit(limitObj);
+            }
+            if(contrail.checkIfExist(sortOrderStr)) {
+                this.sort_order(sortOrderStr);
+            }
+            if(contrail.checkIfExist(sortByArr) && sortByArr.length > 0) {
+                this.sort_by(sortByArr);
             }
         },
 

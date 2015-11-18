@@ -23,19 +23,11 @@ define([
             return s.join('');
         };
 
-        self.setUTCTimeObj = function (queryPrefix, formModelAttrs, options, timeRange) {
-            var serverCurrentTime = options ? options['serverCurrentTime'] : null;
+        self.setUTCTimeObj = function (queryPrefix, formModelAttrs, serverCurrentTime, timeRange) {
             timeRange = (timeRange == null) ? getTimeRangeObj(formModelAttrs, serverCurrentTime) : timeRange;
-
-            if (options != null) {
-                options.fromTime = timeRange.fromTimeUTC;
-                options.toTime = timeRange.toTimeUTC;
-            }
 
             formModelAttrs['from_time_utc'] = timeRange.fromTime;
             formModelAttrs['to_time_utc'] = timeRange.toTime;
-            formModelAttrs['rerun_time_range'] = timeRange.reRunTimeRange;
-            return formModelAttrs;
         };
 
         self.getLabelStepUnit = function (tg, tgUnit) {
@@ -69,17 +61,21 @@ define([
                 filter: reqQueryObj.filters
             };
             if (reqQueryObj.toTimeUTC == "now") {
-                engQueryJSON['from_time'] = reqQueryObj.fromTimeUTC;
-                engQueryJSON['to_time'] = reqQueryObj.toTimeUTC;
+                engQueryJSON['from_time'] = reqQueryObj.from_time;
+                engQueryJSON['to_time'] = reqQueryObj.to_time;
             } else {
-                engQueryJSON['from_time'] = moment(reqQueryObj.fromTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
-                engQueryJSON['to_time'] = moment(reqQueryObj.toTimeUTC).format('MMM DD, YYYY hh:mm:ss A');
+                engQueryJSON['from_time'] = moment(reqQueryObj.from_time_utc).format('MMM DD, YYYY hh:mm:ss A');
+                engQueryJSON['to_time'] = moment(reqQueryObj.to_time_utc).format('MMM DD, YYYY hh:mm:ss A');
             }
+
             return JSON.stringify(engQueryJSON);
         };
 
         self.getFromTimeElementConfig = function(fromTimeId, toTimeId) {
             return {
+                formatTime: 'h:i A',
+                format: 'M d, Y h:i A',
+                displayFormat: 'MMM DD, YYYY hh:mm A',
                 onShow: function(cdt) {
                     this.setOptions(getFromTimeShowOptions(toTimeId, cdt));
                 },
@@ -94,6 +90,9 @@ define([
 
         self.getToTimeElementConfig = function(fromTimeId, toTimeId) {
             return {
+                formatTime: 'h:i A',
+                format: 'M d, Y h:i A',
+                displayFormat: 'MMM DD, YYYY hh:mm A',
                 onShow: function(cdt) {
                     this.setOptions(getToTimeShowOptions(fromTimeId, cdt));
                 },
@@ -119,17 +118,17 @@ define([
             }
         };
 
-        self.formatReRunTime = function(reRunTimeRange) {
-            var formattedReRunTime = 'custom', timeInSecs;
-            if(reRunTimeRange != null && reRunTimeRange != -1) {
-                timeInSecs = parseInt(reRunTimeRange);
+        self.formatTimeRange = function(timeRange) {
+            var formattedTime = 'custom', timeInSecs;
+            if(timeRange != null && timeRange != -1) {
+                timeInSecs = parseInt(timeRange);
                 if(timeInSecs <= 3600) {
-                    formattedReRunTime = 'Last ' + timeInSecs/60 + ' mins';
+                    formattedTime = 'Last ' + timeInSecs/60 + ' mins';
                 } else if ( timeInSecs <= 43200) {
-                    formattedReRunTime = 'Last ' + timeInSecs/3600 + ' hrs';
+                    formattedTime = 'Last ' + timeInSecs/3600 + ' hrs';
                 }
             }
-            return formattedReRunTime;
+            return formattedTime;
         };
 
         //TODO- remove this
@@ -220,6 +219,8 @@ define([
 
         self.parseFilterCollection2String = function (queryFormModel) {
             var filterAndClauses = queryFormModel.model().attributes['filter_and_clauses'],
+                sort_by = queryFormModel.model().attributes['sort_by'],
+                sort_order = queryFormModel.model().attributes['sort_order'],
                 limit = queryFormModel.model().attributes['limit'],
                 filterAndClausestrArr = [], filterAndClausestr = '';
 
@@ -237,9 +238,27 @@ define([
             if (filterAndClausestrArr.length > 0) {
                 filterAndClausestr = filterAndClausestr.concat("filter: ");
                 filterAndClausestr = filterAndClausestr.concat(filterAndClausestrArr.join(' AND '));
-                filterAndClausestr = filterAndClausestr.concat(", limit: " + limit);
-            } else if (contrail.checkIfExist(limit)) {
-                filterAndClausestr = filterAndClausestr.concat("limit: " + limit);
+            }
+            if (contrail.checkIfExist(limit)) {
+                if(filterAndClausestr !== '') {
+                    filterAndClausestr = filterAndClausestr.concat(" & limit: " + limit);
+                } else {
+                    filterAndClausestr = filterAndClausestr.concat("limit: " + limit);
+                }
+            }
+            if (contrail.checkIfExist(sort_by)) {
+                if(filterAndClausestr !== '') {
+                    filterAndClausestr = filterAndClausestr.concat(" & sort_fields: " + sort_by);
+                } else {
+                    filterAndClausestr = filterAndClausestr.concat("sort_fields: " + sort_by);
+                }
+            }
+            if (contrail.checkIfExist(sort_order)) {
+                if(filterAndClausestr !== '') {
+                    filterAndClausestr = filterAndClausestr.concat(" & sort: " + sort_order);
+                } else {
+                    filterAndClausestr = filterAndClausestr.concat("sort: " + sort_order);
+                }
             }
             return filterAndClausestr;
         };
@@ -255,6 +274,13 @@ define([
             });
 
             return whereOrJSONArr;
+        };
+
+        self.parseSelectString2Array = function(queryFormModel) {
+            var selectString = queryFormModel.select(),
+                selectArray = (selectString == null || selectString.trim() == '') ? [] : selectString.split(', ');
+
+            queryFormModel.select_data_object().checked_fields(selectArray)
         };
 
         self.parseWhereString2Collection = function(queryFormModel) {
@@ -473,21 +499,23 @@ define([
                 fromTime = "now-" + timeRange + "s";
             }
         } else {
-            // used for custom time range
+            // Used for custom time range
             fromDate = formModelAttrs['from_time'];
-            fromTimeUTC = new Date(fromDate).getTime();
+            fromTimeUTC = roundDate2Minutes(new Date(fromDate)).getTime();
             fromTime = fromTimeUTC;
             toDate = formModelAttrs['to_time'];
-            toTimeUTC = new Date(toDate).getTime();
+            toTimeUTC = roundDate2Minutes(new Date(toDate)).getTime();
             toTime = toTimeUTC;
         }
 
-        if (typeof fromTimeUTC !== 'undefined' && typeof tgMicroSecs !== 'undefined') {
-            fromTimeUTC = ceilFromTime(fromTimeUTC, tgMicroSecs);
-        }
-
-        return {fromTime: fromTime, toTime: toTime, fromTimeUTC: fromTimeUTC, toTimeUTC: toTimeUTC, reRunTimeRange: timeRange};
+        return {fromTime: fromTime, toTime: toTime};
     };
+
+    function roundDate2Minutes(dateObj) {
+        dateObj.setSeconds(0);
+        dateObj.setMilliseconds(0);
+        return dateObj;
+    }
 
     function getTGMicroSecs(tg, tgUnit) {
         if (tgUnit == 'secs') {
@@ -553,7 +581,11 @@ define([
     };
 
     function parseFilterANDClause(filters, query) {
-        var filtersArray = splitString2Array(filters, ","),
+        if (!contrail.checkIfExist(filters)){
+            // make filters empty string to prevent parse error when opened first time
+            filters = "";
+        }
+        var filtersArray = splitString2Array(filters, "&"),
             filter, filterBy, limitBy,
             parsedFilterArr = [], parsedLimit, filter_json_obj = {};
 
@@ -568,6 +600,16 @@ define([
                 limitBy = splitString2Array(filter, ":")[1];
                 if(limitBy.length > 0) {
                     filter_json_obj["limit"] = parseLimitBy(limitBy);
+                }
+            } else if (filter.indexOf('sort_fields:') != -1) {
+                sort_fields = splitString2Array(filter, ":")[1];
+                if(sort_fields.length > 0) {
+                    filter_json_obj["sort_fields"] = parseSortFields(sort_fields);
+                }
+            } else if (filter.indexOf('sort:') != -1) {
+                sortOrder = splitString2Array(filter, ":")[1];
+                if(sortOrder.length > 0) {
+                    filter_json_obj["sort_order"] = sortOrder;
                 }
             }
         }
@@ -619,6 +661,14 @@ define([
         } catch (error) {
             logutils.logger.error(error.stack);
         }
+    };
+
+    function parseSortFields(sortFields){
+        var sortFieldsArr = sort_fields.split(',');
+        for(var i=0; i< sortFieldsArr.length; i++) {
+            sortFieldsArr[i] = sortFieldsArr[i].trim();
+        }
+        return  sortFieldsArr;
     };
 
     function parseWhereANDClause(whereANDClause) {
