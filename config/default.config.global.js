@@ -371,14 +371,24 @@ config.proxy.config_node_ports = [
 
 /*****************************************************************************
  *
- * A string describing the ciphers to use or exclude. Consult
- *  <http://www.openssl.org/docs/apps/ciphers.html#CIPHER_LIST_FORMAT> for
- *  details on the format.
+ * This section describes the various options for server configurations.
+ *
+ * ciphers:
+ *      A string describing the ciphers to use or exclude. Consult
+ *      <http://www.openssl.org/docs/apps/ciphers.html#CIPHER_LIST_FORMAT> for
+ *      details on the format.
+ *
+ *  key_file:
+ *      Private key file path to use for SSL
+ *  cert_file:
+ *      Public x509 certificate file path to use
  *
  *****************************************************************************/
 config.server_options = {};
 config.server_options.ciphers =
     'ECDHE-RSA-AES256-SHA384:AES256-SHA256:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM';
+config.server_options.key_file = '/usr/src/contrail/contrail-web-core/keys/cs-key.pem';
+config.server_options.cert_file = '/usr/src/contrail/contrail-web-core/keys/cs-cert.pem';
 
 // Export this as a module.
 module.exports = config;
