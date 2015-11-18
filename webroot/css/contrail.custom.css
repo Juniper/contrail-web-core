@@ -2680,7 +2680,7 @@ p.error, p.error-text {
 
 /* Section View Styles */
 .modal-body > form > .section-content {
-    padding: 0 1.5em;
+    padding: 0 .5em;
 }
 .row-fluid.form-label [class*="span"] {
     min-height: 25px;
@@ -3187,3 +3187,34 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
 .select2-default {
     width: auto !important;
 }
+
+
+#PolicyRules .contrail-editable-grid-table th, #PolicyRules .contrail-editable-grid-table td{
+    padding:4px 6px 4px 6px;
+    }
+
+#PolicyRules .contrail-editable-grid-table th{
+    white-space: nowrap;
+    color:#787878;
+    }
+    
+#PolicyRules .contrail-editable-grid-table tr:first-child td{
+    padding-top:10px;
+    }
+         
+#PolicyRules table thead{
+    background-color:#f9f9f9;
+    }
+
+#PolicyRules table{
+    margin-top:10px;
+    }
+
+
+.table.detailsSub td{
+border:none;
+padding:5px}
+
+.table.detailsSub td a{
+text-decoration:underline;
+color:#3182bd}
