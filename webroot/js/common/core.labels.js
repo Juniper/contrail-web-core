@@ -105,8 +105,9 @@ define([
         this.QE_FLOW_QUEUE_ID = "qe-flow-queue";
         this.QE_FLOW_QUEUE_GRID_ID = "qe-flow-queue-grid";
         this.QE_FLOW_QUEUE_TAB_ID = "qe-flow-queue-tab";
+        this.QE_DELETE_MULTIPLE_QUERY_QUEUE_CONTROL_ID = "qe-delete-multiple-query-queue-control";
         this.TITLE_FLOW_QUERY_QUEUE = "Flow Query Queue";
-
+        this.TITLE_DELETE_ALL_QUERY_QUEUE = "Delete All Query Queue";
 
         this.QE_SELECT_STAT_TABLE = "Select Statistic Table";
         this.QE_STAT_QUERY_ID = "qe-stat-query";
