@@ -265,6 +265,10 @@ define([
             "sum(bytes)": "bytes"
         };
 
+        this.DEFAULT_FR_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, setup_time, teardown_time, agg-packets, agg-bytes, action";
+        this.DEFAULT_FS_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, T=, sum(packets), sum(bytes)";
+        this.DEFAULT_SL_SELECT_FIELDS = "Source, ModuleId, Category, Level, NodeType, Messagetype, Xmlmessage";
+
         // QE Constants - End
     };
     return CoreConstants;

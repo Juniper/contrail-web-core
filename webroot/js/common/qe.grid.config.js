@@ -49,8 +49,8 @@ define([
                         return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge ' + labelIconBadgeClass + '"><i class="icon-circle"></i></span>';
                     },
                 },
-                { id:"startTime", field:"startTime", name:"Date", minWidth: 150, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
-                { id:"opsQueryId", field:"opsQueryId", name:"Query Id", minWidth:200, sortable:false },
+                { id:"startTime", field:"startTime", name:"Time", minWidth: 150, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
+                { id:"opsQueryId", field:"opsQueryId", name:"Analytics Query Id", minWidth:200, sortable:false },
                 {
                     id:"", field:"", name:"Time Range", minWidth: 100, sortable:false,
                     formatter: function(r, c, v, cd, dc) {
