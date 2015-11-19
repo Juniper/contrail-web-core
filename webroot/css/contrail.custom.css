@@ -3139,3 +3139,10 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
     width: auto !important;
 }
 
+.rule-column-margin .row-fluid [class*="span"] {
+    margin-left:1.9%;
+}
+
+.rule-column-margin .row-fluid [class*="span"]:first-child {
+    margin-left:0;
+}

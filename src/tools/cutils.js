@@ -271,6 +271,9 @@ function formatPolicyRule(rule, domain, project) {
     if (isSet(rule) && !rule.hasOwnProperty("length")) {
         if (isSet(rule["action_list"]) && isSet(rule["action_list"]["simple_action"]))
             rule_display += policyRuleFormat(rule["action_list"]["simple_action"]);
+        if (isSet(rule["action_list"]) && isSet(rule["action_list"]["log"]) &&
+            true === rule["action_list"]["log"])
+            rule_display += policyRuleFormat(", log ");
 
         if (isSet(rule["application"]) && rule["application"].length > 0) {
             rule_display += " application " + policyRuleFormat(rule["application"].toString());
