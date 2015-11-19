@@ -22,11 +22,14 @@ define([
                 .group(dimension.group(Math.floor))
                 .toolTip(false)
                 .x(d3.scale.linear()
-                    .domain([0, xSmplCnt + (xSmplCnt/24)])
+                    .domain([0, xSmplCnt + xSmplCnt/24])      //Let's keep ordinal discrete domain 
+                                                              //To accomodate 1 extra bar
                     .rangeRound([0,10 * 26]))
+                .xScale(chartConfig['xScale'])
                 .y(d3.scale.linear()
                     .domain([0,ifNotNumeric(chartConfig['maxY'],24)])
                     .range([50,0]));
+
             if(typeof(chartConfig['onBrushEnd']) == 'function') {
                 this.chart.onBrushEnd(chartConfig['onBrushEnd']);
             }

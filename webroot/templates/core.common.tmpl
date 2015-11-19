@@ -1491,10 +1491,7 @@
         <ul class="contrail-tab-link-list">
             {{#each tabs}}
                 <li>
-                    <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
-                        {{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}}{{title}}
-                        {{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/IfCompare}}
-                    </a>
+                    <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}{{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/IfCompare}}</a>
                 </li>
             {{/each}}
         </ul>
@@ -1509,10 +1506,7 @@
 <script type="text/x-handlebars-template" id="core-tabs-link-template">
     {{#each this}}
         <li>
-            <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
-                {{#IfCompare iconClass false operator='!=='}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/IfCompare}}{{title}}
-                {{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/IfCompare}}
-            </a>
+            <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}{{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/IfCompare}}</a>
         </li>
     {{/each}}
 </script>

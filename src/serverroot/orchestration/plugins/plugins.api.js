@@ -249,6 +249,10 @@ function setAllCookies (req, res, appData, cookieObj, callback)
                                    global.MAX_AGE_SESSION_ID).toUTCString() +
                           "; secure");
         }
+        res.setHeader('Set-Cookie', '_csrf=' + req.session._csrf +
+                        '; expires=' + new Date(new Date().getTime() +
+                                                global.MAX_AGE_SESSION_ID).toUTCString()
+                        + '; secure');
         callback();
     });
 }

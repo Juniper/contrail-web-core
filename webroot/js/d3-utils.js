@@ -454,7 +454,7 @@ function drawSparkLineBar(selector, data) {
 	    	
             div.transition().duration(10);      
                     
-            div.html('<span class="lbl">' + parseInt(d.value) + '</span> vRouters with <span class="lbl">' + d.name +'</span> ' + data.title)  
+            div.html('<span class="lbl">' + parseInt(d.value) + '</span> ' + data.yLbl + ' with <span class="lbl">' + d.name +'</span> ' + data.xLbl)  
                 .style("left", (d3.event.pageX) + "px")     
                 .style("top", (d3.event.pageY - 28) + "px");    
          })                 

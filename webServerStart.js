@@ -182,8 +182,14 @@ function initializeAppConfig (appObj)
         app.use(express.compress());
         app.use(express.methodOverride());
         app.use(express.bodyParser());
-        app.use(app.router);
-        registerStaticFiles(app);
+    registerStaticFiles(app);
+    var csrf = express.csrf();
+    //Populate the CSRF token in req.session on login request
+    app.get('/login',csrf);
+    app.get('/vcenter/login',csrf);
+    //Enable CSRF token check for all URLs starting with "/api"
+    app.post('/api/*',csrf);
+    app.use(app.router);
     // Catch-all error handler
     app.use(function (err, req, res, next) {
         logutils.logger.error(err.stack);
