@@ -86,6 +86,7 @@ define(
                     body : {
                         options : {
                           forceFitColumns: true,
+                          fixedRowHeight: 30,
                           lazyLoading: false,
                           detail : false,
                           checkboxSelectable : false

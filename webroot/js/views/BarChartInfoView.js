@@ -56,7 +56,8 @@ define([
                 //Draw sparkline
                 drawSparkLineBar(currElem.find('.sparkline')[0], {
                     data: sparkLineData['data'],
-                    title: chartCfg['title']
+                    xLbl: currCfg['title'],
+                    yLbl: currCfg['yLbl']
                 });
             }
         },
