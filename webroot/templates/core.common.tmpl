@@ -1045,6 +1045,37 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-editable-grid-label-left-dropdown-view-template">
+    <div data-bind="
+        {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
+        style:
+        { 
+            {{#if viewConfig.width}}
+                width: '{{viewConfig.width}}px' 
+            {{/if}} 
+        }
+        ">
+        <div class="span2 form-label margin-0-0-5">
+            <label style="margin-top:5px;text-align:left;">{{label}}</label>
+        </div>
+        <input id="{{id}}" name="{{name}}" class="span10 {{class}}"
+            data-bind="
+                {{#if viewConfig.disabled}}
+                    disable: {{viewConfig.disabled}},
+                {{/if}}
+                {{#if lockAttr}}
+                     disable: locks().{{name}}_locked,
+                {{/if}}
+                value: {{viewConfig.dataBindValue}},
+                {{#if viewConfig.customValue}}
+                    customValue: {{viewConfig.customValue}},
+                {{/if}}
+                optionList: {{viewConfig.dataBindOptionList}},
+                contrailDropdown: {}"
+        />
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-multiselect-view-template">
    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <div class="row-fluid form-label">
@@ -1084,6 +1115,39 @@
                 event: { change: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data); } },
                 contrailMultiselect: {}"
         />
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-editable-grid-label-left-multiselect-view-template">
+   <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} 
+                   {{/if}}">
+        <div class="row-fluid">
+            <div class="span2 form-label margin-0-0-5">
+                <label style="margin-top:5px;text-align:left;">{{label}}</label>
+            </div>
+            <div class="form-element span10">
+                <input id="{{id}}" name="{{name}}" class="{{class}}"
+                    data-bind="
+                        {{#if viewConfig.disabled}}
+                            disable: {{viewConfig.disabled}}, 
+                        {{/if}}
+                        {{#if lockAttr}}
+                            disable: locks().{{name}}_locked, 
+                        {{/if}}
+                        value: {{viewConfig.dataBindValue}},
+                        optionList: {{viewConfig.dataBindOptionList}},
+                        event: { 
+                            change: function() {
+                            validateAttr()('{{viewConfig.path}}', '{{validation}}', $data);
+                            } 
+                        },
+                        contrailMultiselect: {}"
+                />
+                <span class="help-block red" 
+                    data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error">
+                </span>
+            </div>
+        </div>
     </div>
 </script>
 
@@ -1381,6 +1445,68 @@
         </a>
     </div>
 </script>
+
+<script type="text/x-handlebars-template" id="core-collection-view-heading-template">
+    {{#IfCompare viewConfig.label null operator='!='}}
+    <label style="margin:0px">{{viewConfig.label}}</label>
+    {{/IfCompare}}
+    <table class="contrail-editable-grid-table">
+        <thead>
+        <tr>
+            {{#each viewConfig.rows.0.columns}}
+            <th class="{{this.class}}" data-bind="style: {width: '{{width}}px' }">
+                {{this.name}}
+            </th>
+            {{/each}}
+        </tr>
+        </thead>
+        <tbody data-bind="foreach: {{viewConfig.collection}}">
+        {{#each viewConfig.rows}}
+        <tr class="data-row">
+            {{#each columns}}
+            <td id="{{elementId}}"
+                {{#IfCompare viewConfig.colSpan null operator='!='}}
+                    colspan="{{viewConfig.colSpan}}"
+                {{/IfCompare}}
+                class="data-cell" data-bind="style: {width: '{{width}}px' }">
+            </td>
+            {{/each}}
+            {{#each rowActions}}
+            <td class="action-cell">
+                <a data-bind='click: {{this.onClick}}'>
+                    <i class="{{this.iconClass}}"></i>
+                </a>
+            </td>
+            {{/each}}
+        </tr>
+        {{/each}}
+        <tr class="error-row">
+            {{#each columns}}
+            <td class="error-cell">
+                <span class="help-block red" 
+                    data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
+                </span>
+            </td>
+            {{/each}}
+        </tr>
+        </tbody>
+    </table>
+    {{#each viewConfig.gridActions}}
+    <div class="row-fluid margin-10-0-0">
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
+            <i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}
+        </a>
+    </div>
+    {{/each}}
+
+    <div class="row-fluid collection-actions collection-actions-add">
+        <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
+            <i class="{{viewConfig.collectionActions.add.iconClass}}"></i>
+            &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
+        </a>
+    </div>
+</script>
+
 
 <script type="text/x-handlebars-template" id="query-or-collection-view-template">
     <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
