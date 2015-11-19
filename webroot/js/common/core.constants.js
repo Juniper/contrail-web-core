@@ -269,6 +269,10 @@ define([
         this.DEFAULT_FS_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, T=, sum(packets), sum(bytes)";
         this.DEFAULT_SL_SELECT_FIELDS = "Source, ModuleId, Category, Level, NodeType, Messagetype, Xmlmessage";
 
+        this.D3_COLOR_CATEGORY2 = [ "#1f77b4", "#2ca02c"];
+        this.D3_COLOR_CATEGORY5 = [ '#1f77b4', '#6baed6' , '#ff7f0e', '#2ca02c', '#9e9ac8'];
+        this.D3_COLOR_CATEGORY7 = [ '#1f77b4' , '#ff7f0e', '#2ca02c', '#a55194', '#9e9ac8', '#6baed6', '#bcbd22'];
+
         // QE Constants - End
     };
     return CoreConstants;
