@@ -1531,7 +1531,11 @@ function buildAdminProjectListByReqObj (req)
         }
         for (var i = 0; i < adminRolesCnt; i++) {
             for (var j = 0; j < rolesCnt; j++) {
-                if (-1 != roles[j]['name'].indexOf(adminRoles[i])) {
+                if (null == roles[j]['name']) {
+                    continue;
+                }
+                if (roles[j]['name'].toUpperCase() ==
+                    adminRoles[i].toUpperCase()) {
                     break;
                 }
             }
@@ -1663,13 +1667,17 @@ function getProjectList (req, appData, callback)
                     var rolesCnt = data[i]['roles'].length;
                     var tmpRoleList = [];
                     for (var j = 0; j < rolesCnt; j++) {
-                        tmpRoleList.push(data[i]['roles'][j]['name']);
+                        if (null == data[i]['roles'][j]['name']) {
+                            continue;
+                        }
+                        tmpRoleList.push(data[i]['roles'][j]['name'].toUpperCase());
                     }
                     var domain =
                         getDomainByTokenObjKey(req.session.tokenObjs[project], req);
                     var adminUserRolesCnt = adminRoles.length;
                     for (var j = 0; j < adminUserRolesCnt; j++) {
-                        if (-1 != tmpRoleList.indexOf(adminRoles[j])) {
+                        if (-1 !=
+                            tmpRoleList.indexOf(adminRoles[j].toUpperCase())) {
                             filtProjects['projects'].push({"fq_name": [domain,
                                                             project],
                                                           "uuid":
@@ -1807,7 +1815,10 @@ function getAdminProjectList (req, appData, callback)
             for (var i = 0 ; i < rolesCnt; i++) {
                 var adminRolesCnt = adminRoles.length;
                 for (var j = 0; j < adminRolesCnt; j++) {
-                    if ( -1 != roles[i]['name'].indexOf(adminRoles[j])) {
+                    if (null == roles[i]['name']) {
+                        continue;
+                    }
+                    if (adminRoles[j].toUpperCase() == roles[i]['name'].toUpperCase()) {
                         if (null == adminProjectObjs[domain]) {
                             adminProjectObjs[domain] = [];
                         }
@@ -1843,8 +1854,15 @@ function isAdminRoleProject (project, req)
             var roles = tokenObjs[key]['user']['roles'];
             var rolesCnt = roles.length;
             for (var i = 0; i < rolesCnt; i++) {
-                if (-1 != adminRoles.indexOf(roles[i]['name'])) {
-                    return true;
+                if (null == roles[i]['name']) {
+                    continue;
+                }
+                var adminRolesCnt = adminRoles.length;
+                for (var k = 0; k < adminRolesCnt; k++) {
+                    if (adminRoles[k].toUpperCase() ==
+                        roles[i]['name'].toUpperCase()) {
+                        return true;
+                    }
                 }
             }
         }
