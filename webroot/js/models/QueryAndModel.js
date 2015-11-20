@@ -67,14 +67,36 @@ define([
 
         getFilterNameOptionList: function(viewModel) {
             var rootModel = viewModel.parentModel(),
-                // use the where_data_object to populate filter for now
-                filterDataObject = rootModel.where_data_object;
+                validFilterFields = rootModel.select_data_object.checked_fields(),
+                resultFilterFieldsDataArr = [], invalidFilterFieldsArr = ["T=", "T", "UUID"];
 
-            return $.map(filterDataObject['name_option_list'], function(schemaValue, schemaKey) {
-                if(schemaValue.index) {
-                    return {id: schemaValue.name, text: schemaValue.name};
+            for (var i = 0; i < validFilterFields.length; i++) {
+                if (invalidFilterFieldsArr.indexOf(validFilterFields[i]) === -1) {
+                    resultFilterFieldsDataArr.push({id: validFilterFields[i], text: validFilterFields[i]});
                 }
-            });
+            }
+            return resultFilterFieldsDataArr;
+        },
+
+        getFilterOperatorOptionList: function (viewModel){
+            var rootModel = viewModel.parentModel(),
+                name = (contrail.checkIfExist(viewModel.name())) ? viewModel.name() : "",
+                tableColumnsMap = viewModel.parentModel().ui_added_parameters.table_schema_column_names_map,
+                matchedColumnObj = tableColumnsMap[name],
+                resultOperatorArr = [{id: '=', text: '='}, {id: '!=', text: '!='}];
+
+            if (!(_.isEmpty(matchedColumnObj))) {
+                // if column type = integer/double      => LEQ, GEQ
+                if(matchedColumnObj.datatype == "int" || matchedColumnObj.dataType == "double"){
+                    resultOperatorArr.push({id: '<=', text: '<='});
+                    resultOperatorArr.push({id: '>=', text: '>='});
+                }
+                // if column type = string              => RegEx allowed
+                if(matchedColumnObj.datatype == "string"){
+                    resultOperatorArr.push({id: 'RegEx=', text: 'RegEx='});
+                }
+            }
+            return resultOperatorArr;
         },
 
         getFilterValueOptionList: function(viewModel) {

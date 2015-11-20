@@ -108,9 +108,9 @@ define([
                                     templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                     path: "operator",
                                     dataBindValue: "operator",
+                                    dataBindOptionList: 'getFilterOperatorOptionList',
                                     width: 100,
                                     elementConfig: {
-                                        data: [{id: '!=', text: '!='}, {id: 'RegEx=', text: 'RegEx='}],
                                         defaultValueId: 0
                                     }
                                 }

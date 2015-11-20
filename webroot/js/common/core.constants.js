@@ -247,6 +247,8 @@ define([
         this.OPERATOR_CODES = {
             1: '=',
             2: '!=',
+            5: '<=',
+            6: '>=',
             7: 'Starts with',
             8: 'RegEx='
         };
