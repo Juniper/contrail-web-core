@@ -2335,6 +2335,40 @@ p.error, p.error-text {
   font-weight: normal;
 }
 /*policy rule styles */
+#simple_action  .select2-chosen,
+#protocol .select2-chosen,
+#src_address .select2-chosen,
+#direction .select2-chosen,
+#dst_address .select2-chosen
+{
+    color: #3182bd;
+}
+
+#simple_action .select2-container-disabled .select2-choice,
+#simple_action .select2-container,
+#protocol .select2-container,
+#src_address .select2-container,
+#direction .select2-container,
+#direction .select2-container-disabled .select2-choice,
+#dst_address .select2-container,
+#dst_ports_text,
+#src_ports_text,
+#PolicyRules input{
+    border: 0px !important;
+    color: #3182bd;
+}
+#PolicyRules .select2-container, #PolicyRules  input {
+    background : transparent;
+}
+
+#simple_action .select2-arrow ,
+#protocol .select2-arrow ,
+#src_address .select2-arrow ,
+#direction .select2-arrow ,
+#dst_address .select2-arrow
+{
+    display: none !important;
+}
 
 #windowCreatePolicy .rule-item .select2-chosen {
 	color: #3182bd;
