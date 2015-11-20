@@ -118,17 +118,10 @@ define([
                         whereFields = getWhereFields4NameDropdown(response, tableName, self.disableWhereFields);
 
                     self.select_data_object().requestState((selectFields.length > 0) ? cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY : cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY);
-                    var tableSchemaColumnMapObj = {},
-                        cols = response.columns;
-                    for(var i = 0; i < cols.length; i++) {
-                        var colName = cols[i]["name"];
-                        tableSchemaColumnMapObj[colName]  = cols[i];
-                    }
-
                     contrailViewModel.set({
                         'ui_added_parameters': {
                             'table_schema': response,
-                            'table_schema_column_names_map' : tableSchemaColumnMapObj
+                            'table_schema_column_names_map' : getTableSchemaColumnMap(response)
                         }
                     });
 
@@ -392,13 +385,12 @@ define([
                             whereFields = getWhereFields4NameDropdown(response, tableName, disableWhereFields);
 
                         model.select_data_object().requestState((selectFields.length > 0) ? cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY : cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY);
-
                         contrailViewModel.set({
                             'ui_added_parameters': {
-                                'table_schema': response
+                                'table_schema': response,
+                                'table_schema_column_names_map' : getTableSchemaColumnMap(response)
                             }
                         });
-
                         setEnable4SelectFields(selectFields, model.select_data_object().enable_map());
                         model.select_data_object().select_fields(selectFields);
 
@@ -410,6 +402,16 @@ define([
                 }
             };
         return modelRemoteDataConfig;
+    };
+
+    function getTableSchemaColumnMap (tableSchema) {
+        var tableSchemaColumnMapObj = {},
+            cols = tableSchema.columns;
+        for(var i = 0; i < cols.length; i++) {
+            var colName = cols[i]["name"];
+            tableSchemaColumnMapObj[colName]  = cols[i];
+        }
+        return tableSchemaColumnMapObj;
     };
 
     function getSelectFields4Table(tableSchema, disableFieldArray, disableSubstringArray) {
