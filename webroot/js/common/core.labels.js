@@ -106,6 +106,10 @@ define([
         this.QE_FLOW_QUEUE_GRID_ID = "qe-flow-queue-grid";
         this.QE_FLOW_QUEUE_TAB_ID = "qe-flow-queue-tab";
         this.QE_DELETE_MULTIPLE_QUERY_QUEUE_CONTROL_ID = "qe-delete-multiple-query-queue-control";
+        this.TITLE_VIEW_QUERY_RESULT = "View Query Result";
+        this.TITLE_VIEW_QUERY_ERROR = "View Query Error";
+        this.TITLE_RERUN_QUERY = "Rerun Query";
+        this.TITLE_DELETE_QUERY = "Delete Query";
         this.TITLE_QUERY_QUEUE = "Query Queue";
         this.TITLE_DELETE_ALL_QUERY_QUEUE = "Delete All Query Queue";
 
@@ -137,6 +141,7 @@ define([
 
         this.TITLE_DETAILS = "Details";
         this.TITLE_OVERVIEW = "Overview";
+        this.TITLE_ERROR = "Error";
         this.TITLE_QE_SELECT = "Select";
         this.TITLE_CHART = "Chart";
         this.TITLE_QE_WHERE = "Where";

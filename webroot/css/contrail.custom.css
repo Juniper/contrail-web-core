@@ -649,25 +649,36 @@ a.selectAllLink:hover {
     background-color: #eee;
 
 }
-.or-clause-collection .or-clause-text {
-    padding: 10px;
+.or-clause-collection .or-clause:first-child .or-text {
+    visibility: hidden;
 }
-.or-clause-collection .or-clause-text,
+.or-clause-collection .or-text {
+    font-size: 14px;
+    color: #000;
+    padding: 10px 0 0;
+    font-weight: normal;
+    float: right;
+}
+.or-clause-collection .or-clause-text {
+    padding: 5px 10px;
+}
+.or-clause-collection .or-clause-text {
+    margin: 0 0 0 20px;
+}
+.or-clause-collection .collection-actions i {
+    color: #999;
+    padding: 10px 10px 10px 0;
+}
 .and-clause-collection table {
-    margin: 5px 0 0 20px;
+    margin: 10px 0 0 20px;
 }
 .and-clause-collection .collection-actions {
-  padding: 10px 0;
-  border-top: 1px solid #FFF;
+    padding: 10px 0;
+    border-top: 1px solid #FFF;
 }
 .and-clause-collection .collection-actions a {
-  margin: 10px;
+    margin: 10px;
 }
-.collection-actions-delete i {
-    color: #777;
-    padding: 10px;
-}
-
 .and-clause-collection table tr:first-child td .and-clause-text {
     display: none;
 }
@@ -1146,7 +1157,7 @@ input.editor-checkbox.ace-input[type=checkbox] + .ace-lbl::before {
 }
 .collection-table tr td {
   text-align: center;
-  padding: 0 5px 5px;
+  padding: 0 5px 10px;
 }
 .contrail-editable-grid-table tr td .custom-combobox.input-append,
 .collection-table tr td .custom-combobox.input-append,
@@ -1162,9 +1173,11 @@ input.editor-checkbox.ace-input[type=checkbox] + .ace-lbl::before {
     text-align: left;
     padding-left: 5px;
 }
-.contrail-editable-grid-table tr td.action-cell,
-.collection-table tr td.action-cell {
+.contrail-editable-grid-table tr td.action-cell {
     min-width: 30px;
+}
+.collection-table tr td.action-cell i {
+    color: #999;
 }
 .contrail-editable-grid-table tr td.error-cell .help-block,
 .collection-table tr td.error-cell .help-block {

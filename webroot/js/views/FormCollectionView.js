@@ -17,9 +17,15 @@ define([
                 columns = null,
                 path = viewConfig[cowc.KEY_PATH],
                 accordionable = viewConfig['accordionable'],
+                accordionConfig = contrail.checkIfExist(viewConfig.accordionable) ? viewConfig.accordionConfig : {},
                 model = self.model,
                 validation = (viewConfig['validation'] != null) ? viewConfig['validation'] : self.attributes.validation,
-                childViewObj, childElId;
+                defaultAccordionConfig  = {
+                    heightStyle: "content",
+                    header: ".header",
+                    collapsible: true,
+                    active: -1
+                }, childViewObj, childElId;
 
             self.$el.html(collectionTmpl({elementId: elementId, viewConfig: viewConfig}));
 
@@ -33,11 +39,8 @@ define([
             }
 
             if (accordionable) {
-                self.$el.find('.collection').accordion({
-                    heightStyle: "content",
-                    collapsible: true,
-                    active: -1
-                });
+                accordionConfig = $.extend(true, defaultAccordionConfig, accordionConfig);
+                self.$el.find('.collection').accordion(accordionConfig);
             }
         }
     });

@@ -46,7 +46,7 @@ define([
                             labelIconBadgeClass = 'icon-badge-color-' + $('#' + tabLinkId).data('badge_color_key');
                         }
 
-                        return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge ' + labelIconBadgeClass + '"><i class="icon-circle"></i></span>';
+                        return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge ' + labelIconBadgeClass + '"><i class="icon-sign-blank"></i></span>';
                     },
                 },
                 { id:"startTime", field:"startTime", name:"Time", minWidth: 150, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },

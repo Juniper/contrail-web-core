@@ -18,11 +18,13 @@ define([
         renderWhere: function (options) {
             qewu.parseWhereString2Collection(this.model);
             this.renderView4Config(this.$el, this.model, getWhereViewConfig(contrail.checkIfExist(options) ? options : {}));
+            this.model.addNewOrClauses([{}]);
         },
 
         renderFilters: function (options) {
             qewu.parseFilterString2Collection(this.model);
             this.renderView4Config(this.$el, this.model, getFilterViewConfig(contrail.checkIfExist(options) ? options : {}));
+            this.model.addFilterAndClause([]);
         }
     });
 

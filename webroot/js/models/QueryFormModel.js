@@ -140,14 +140,12 @@ define([
         },
 
         formatModelConfig: function(modelConfig) {
-            var whereOrClauseModels = [], whereOrClausesCollectionModel,
-                filterAndClauseModels = [], filterAndClausesCollectionModel,
-                self = this;
+            var whereOrClausesCollectionModel, filterAndClausesCollectionModel;
 
-            whereOrClausesCollectionModel = new Backbone.Collection(whereOrClauseModels);
+            whereOrClausesCollectionModel = new Backbone.Collection([]);
             modelConfig['where_or_clauses'] = whereOrClausesCollectionModel;
 
-            filterAndClausesCollectionModel = new Backbone.Collection(filterAndClauseModels);
+            filterAndClausesCollectionModel = new Backbone.Collection([]);
             modelConfig['filter_and_clauses'] = filterAndClausesCollectionModel;
 
             return modelConfig;
@@ -285,14 +283,6 @@ define([
             });
 
             whereOrClauses.add(newOrClauses);
-        },
-
-        addWhereOrClause: function(elementId) {
-            this.addNewOrClauses([{}]);
-
-            //TODO: Should not be in Model
-            $('#' + elementId).find('.collection').accordion('refresh');
-            $('#' + elementId).find('.collection').accordion("option", "active", -1);
         },
 
         addNewFilterAndClause: function(andClauseObject) {
