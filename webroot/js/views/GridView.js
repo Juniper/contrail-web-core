@@ -1099,6 +1099,35 @@ define([
                     </div>';
                 }
 
+                if (headerConfig.defaultControls.columnPickable) {
+                    var columnPickerConfig = {
+                        type: 'checked-multiselect',
+                        iconClass: 'icon-columns',
+                        placeholder: '',
+                        elementConfig: {
+                            elementId: 'columnPicker',
+                            data: gridColumns,
+                            dataTextField: 'text',
+                            dataValueField: 'id',
+                            noneSelectedText: '',
+                            filterConfig: {
+                                placeholder: 'Search Column Name'
+                            },
+                            parse: formatData4ColumnPicker,
+                            minWidth: 150,
+                            height: 250,
+                            emptyOptionText: 'No Columns found.',
+                            click: applyColumnPicker,
+                            optgrouptoggle: applyColumnPicker,
+                            control: false
+                        }
+                    };
+                    if (!headerConfig.advanceControls) {
+                        headerConfig.advanceControls = [];
+                    }
+                    headerConfig.advanceControls.push(columnPickerConfig);
+                }
+
                 if (headerConfig.customControls) {
                     $.each(headerConfig.customControls, function (key, val) {
                         template += '<div class="widget-toolbar pull-right">' + val + '</div>';
@@ -1119,6 +1148,73 @@ define([
                         }
                     });
                 }
+            };
+
+            function applyColumnPicker(event, ui) {
+                var checkedColumns = $('#columnPicker').data('contrailCheckedMultiselect').getChecked();
+                function getColumnIdsPicked(checkedColumns) {
+                    var checkedColumnIds = [];
+                    if (checkedColumns.length != 0) {
+                        $.each(checkedColumns, function (checkedColumnKey, checkedColumnValue) {
+                            var checkedColumnValueObj = $.parseJSON(unescape($(checkedColumnValue).val()));
+                            checkedColumnIds.push(checkedColumnValueObj.value)
+                        });
+                    }
+                    return checkedColumnIds;
+                };
+                var visibleColumnIds = getColumnIdsPicked(checkedColumns);
+                var current = grid.getColumns().slice(0);
+                var ordered = new Array(gridColumns.length);
+                for (var i = 0; i < ordered.length; i++) {
+                    if ( grid.getColumnIndex(gridColumns[i].id) === undefined ) {
+                        // If the column doesn't return a value from getColumnIndex,
+                        // it is hidden. Leave it in this position.
+                        ordered[i] = gridColumns[i];
+                    } else {
+                        // Otherwise, grab the next visible column.
+                        ordered[i] = current.shift();
+                    }
+                }
+                gridColumns = ordered;
+                var visibleColumns = [];
+
+                // Columns which doesn't have a name associated will be by default set to visible.
+                $.each(gridColumns, function(key, column) {
+                    if (column.name === "") {
+                        visibleColumns.push(column);
+                    }
+                });
+
+                $.each(visibleColumnIds, function(key, id) {
+                    $.each(gridColumns, function(key, column) {
+                        //var idOrField = (column.id) ? column.id : column.field;
+                        if (column.id == id) {
+                            visibleColumns.push(column);
+                        }
+                    });
+                });
+                grid.setColumns(visibleColumns);
+            };
+
+            function formatData4ColumnPicker(data) {
+                var pickColumns = [],
+                    childrenData = [];
+                $.each(data, function (key, value) {
+                    var children = value,
+                        selectedFlag = true;
+                    // For columns set hide/hidden to true; should display as unchecked.
+                    if (contrail.checkIfExist(children.hide) && (children.hide)) {
+                          selectedFlag = false;
+                    }
+                    if (contrail.checkIfExist(children.hidden) && (children.hidden)) {
+                        selectedFlag = false;
+                    }
+                    // In some cases id may not be present in the config; construct the id using field and key.
+                    var id = (children.id) ? children.id : children.field + '_' + key;
+                    childrenData.push({'id': id, 'text': children.name, 'selected': selectedFlag});
+                });
+                pickColumns.push({'id': 'columns', 'text': 'Show/Hide Columns', children: childrenData});
+                return pickColumns;
             };
 
             function addGridHeaderAction(key, actionConfig, gridContainer) {
