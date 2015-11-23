@@ -3228,3 +3228,60 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
 .select2-default {
     width: auto !important;
 }
+
+.table.detailsSub td{
+    border:none;
+    padding:5px;
+}
+
+.table.detailsSub td a{
+    text-decoration:underline;
+    color:#3182bd;
+}
+
+.gridLabel{
+    font-weight:600;
+    padding-right:3px; 
+ }
+
+#PolicyRules .contrail-editable-grid-table th, #PolicyRules .contrail-editable-grid-table td{
+    padding:4px 6px 4px 6px;
+}
+
+#PolicyRules .contrail-editable-grid-table th{
+    white-space: nowrap;
+    color:#787878;
+}
+    
+#PolicyRules .contrail-editable-grid-table tr:first-child td{
+    padding-top:10px;
+}
+         
+#PolicyRules table thead{
+    background-color:#f9f9f9;
+}
+
+#PolicyRules table{
+    margin-top:10px;
+}
+
+.ui-accordion #interfaceCollectionAccordian.ui-accordion-content{
+    padding:1px;
+}
+
+#interfaceCollectionAccordian .contrail-editable-grid-table tr td{
+    padding:5px 0px;
+}
+
+#interfaceCollectionAccordian .editable-grid-input-append{
+    padding-right:17px;
+}
+
+#interfaceCollectionAccordian .collection-actions-add{
+    text-align:left;
+    padding:0px 0px 10px 0px;
+}
+
+#static-routes-collection table{
+    margin:0px 10px 10px 30px;
+}
