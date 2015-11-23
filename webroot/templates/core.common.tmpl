@@ -1384,7 +1384,7 @@
     <label style="margin:0px">{{label}}</label>
     {{/IfCompare}}
     <table class="contrail-editable-grid-table">
-        <thead>
+        <thead style="background:#f9f9f9">
         <tr>
             {{#each columns}}
                 <th class="{{this.class}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }">{{this.name}}</th>
@@ -1906,7 +1906,7 @@
 
 <script type="text/x-handlebars-template" id="core-generic-collection-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-    <table class="contrail-editable-grid-table">
+    <table class="contrail-editable-grid-table" >
         <tbody data-bind="foreach: {{viewConfig.collection}}">
             <div class="row-fluid collection-actions collection-actions-add">
                 <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
@@ -1923,7 +1923,12 @@
         {{#each viewConfig.rows}}
         <tr class="data-row">
             {{#each columns}}
-            <td id="{{elementId}}" class="data-cell" data-bind="style: {width: '{{width}}px' }"></td>
+            <td id="{{elementId}}"
+                {{#IfCompare viewConfig.colSpan null operator='!='}}
+                    colspan="{{viewConfig.colSpan}}"
+                {{/IfCompare}}
+                class="data-cell" data-bind="style: {width: '{{width}}px' }">
+            </td>
             {{/each}}
             {{#each rowActions}}
             <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
