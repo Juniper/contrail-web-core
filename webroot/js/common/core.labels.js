@@ -106,7 +106,11 @@ define([
         this.QE_FLOW_QUEUE_GRID_ID = "qe-flow-queue-grid";
         this.QE_FLOW_QUEUE_TAB_ID = "qe-flow-queue-tab";
         this.QE_DELETE_MULTIPLE_QUERY_QUEUE_CONTROL_ID = "qe-delete-multiple-query-queue-control";
-        this.TITLE_FLOW_QUERY_QUEUE = "Flow Query Queue";
+        this.TITLE_VIEW_QUERY_RESULT = "View Query Result";
+        this.TITLE_VIEW_QUERY_ERROR = "View Query Error";
+        this.TITLE_RERUN_QUERY = "Rerun Query";
+        this.TITLE_DELETE_QUERY = "Delete Query";
+        this.TITLE_QUERY_QUEUE = "Query Queue";
         this.TITLE_DELETE_ALL_QUERY_QUEUE = "Delete All Query Queue";
 
         this.QE_SELECT_STAT_TABLE = "Select Statistic Table";
@@ -137,6 +141,7 @@ define([
 
         this.TITLE_DETAILS = "Details";
         this.TITLE_OVERVIEW = "Overview";
+        this.TITLE_ERROR = "Error";
         this.TITLE_QE_SELECT = "Select";
         this.TITLE_CHART = "Chart";
         this.TITLE_QE_WHERE = "Where";
@@ -145,10 +150,10 @@ define([
         this.TITLE_QUERY = "Query";
         this.TITLE_RESULTS = "Results";
         this.TITLE_CHART = "Chart";
-        this.TITLE_FLOWS = "Flows";
+        this.TITLE_FLOW_SERIES = "Flows";
         this.TITLE_FLOW_SERIES = "Flow Series";
         this.TITLE_FLOW_RECORD = "Flow Record";
-        this.TITLE_FLOW_DETAILS = "Flow Details";
+        this.TITLE_SESSION_DETAILS = "Session Details";
         this.TITLE_FLOW_SERIES_RESULTS = "Flow Series Results";
         this.TITLE_STATS_QUERY = "Statistics Query";
         this.TITLE_OBJECT_LOGS = "Object Logs";

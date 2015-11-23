@@ -1422,12 +1422,12 @@
         <table class="collection-table">
             <tbody data-bind="foreach: {{viewConfig.collection}}">
             {{#each viewConfig.rows}}
-            <tr class="data-row">
+            <tr class="data-row" data-bind="{{#if visible}} visible: {{visible}}, {{/if}}">
                 {{#each columns}}
                 <td id="{{elementId}}" class="data-cell" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }"></td>
                 {{/each}}
                 {{#each rowActions}}
-                <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
+                <td class="action-cell"><a data-bind="click: {{this.onClick}}, style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }"><i class="{{this.iconClass}}"></i></a></td>
                 {{/each}}
             </tr>
             {{/each}}
@@ -1439,11 +1439,13 @@
             </tbody>
         </table>
     </div>
+    {{#if viewConfig.collectionActions}}
     <div class="row-fluid collection-actions collection-actions-add">
         <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
             <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
         </a>
     </div>
+    {{/if}}
 </script>
 
 <script type="text/x-handlebars-template" id="core-collection-view-heading-template">
@@ -1510,30 +1512,28 @@
 
 <script type="text/x-handlebars-template" id="query-or-collection-view-template">
     <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
-        <div class="row-fluid">
-            <p class="or-clause-text span10" data-bind="text: getOrClauseText()($data)">OR Text string</p>
-            <a class="collection-actions collection-actions-delete span1 pull-right" data-bind='click: {{viewConfig.collectionActions.delete.onClick}}'>
-                <i class="pull-right {{viewConfig.collectionActions.delete.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.delete.buttonTitle}}
-            </a>
-        </div>
-        <div class="row-fluid">
+        <div class="row-fluid or-clause">
+            <div class="span1">
+                <p class="or-text">OR</p>
+            </div>
+            <div class="span10">
             {{#each viewConfig.rows}}
+                <div class="row-fluid or-clause-header">
+                    <p class="or-clause-text span8" data-bind="text: getOrClauseText()($data)">OR Text string</p>
+                    {{#each rowActions}}
+                        <a class="collection-actions collection-actions-{{@index}} pull-right" data-bind='click: {{onClick}}'>
+                            <i class="pull-right {{iconClass}}"></i>
+                        </a>
+                    {{/each}}
+                </div>
                 <div class="row-fluid">
                     {{#each columns}}
                         <div id="{{elementId}}" class="and-clause-collection" />
                     {{/each}}
-                    {{#each rowActions}}
-                        <div class="span1 pull-right"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></div>
-                    {{/each}}
                 </div>
             {{/each}}
+            </div>
         </div>
-    </div>
-
-    <div class="row-fluid collection-actions collection-actions-add">
-        <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
-            <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
-        </a>
     </div>
 </script>
 

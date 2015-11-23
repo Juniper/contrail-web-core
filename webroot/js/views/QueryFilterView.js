@@ -92,7 +92,7 @@ define([
                                     path: "name",
                                     dataBindValue: "name",
                                     dataBindOptionList: 'getFilterNameOptionList',
-                                    width: 200,
+                                    width: 175,
                                     elementConfig: {
                                         placeholder: 'Select Name',
                                         defaultValueId: 0
@@ -108,9 +108,9 @@ define([
                                     templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                     path: "operator",
                                     dataBindValue: "operator",
+                                    dataBindOptionList: 'getFilterOperatorOptionList',
                                     width: 100,
                                     elementConfig: {
-                                        data: [{id: '!=', text: '!='}, {id: 'RegEx=', text: 'RegEx='}],
                                         defaultValueId: 0
                                     }
                                 }
@@ -125,7 +125,7 @@ define([
                                     path: "value",
                                     dataBindValue: "value()",
                                     dataBindOptionList: 'getFilterValueOptionList',
-                                    width: 200,
+                                    width: 175,
                                     elementConfig: {
                                         placeholder: 'Select Value'
                                     }
@@ -133,10 +133,7 @@ define([
                             }
                         ]
                     }
-                ],
-                collectionActions: {
-                    add: {onClick: "addFilterAndClause()", iconClass: 'icon-plus', buttonTitle: "AND"}
-                }
+                ]
             }
 
         };

@@ -4127,12 +4127,12 @@ td.td-actions a.td-action {
 }
 
 .icon-badge-color-0 {color: #1f77b4;}
-.icon-badge-color-1 {color: #6baed6;}
-.icon-badge-color-2 {color: #ff7f0e;}
-.icon-badge-color-3 {color: #2ca02c;}
+.icon-badge-color-1 {color: #ff7f0e;}
+.icon-badge-color-2 {color: #2ca02c;}
+.icon-badge-color-3 {color: #a55194 ;}
 .icon-badge-color-4 {color: #9e9ac8 ;}
-.icon-badge-color-5 {color: #bcbd22 ;}
-.icon-badge-color-6 {color: #a55194 ;}
+.icon-badge-color-5 {color: #6baed6;}
+.icon-badge-color-6 {color: #bcbd22 ;}
 
 /* status-badge-rounded */
 .status-badge-rounded {

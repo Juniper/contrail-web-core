@@ -469,14 +469,10 @@ define([
     };
 
     function getTimeRangeObj(formModelAttrs, serverCurrentTime) {
-        var queryPrefix = formModelAttrs['query_prefix'],
-            timeRange = formModelAttrs['time_range'],
-            tgUnit = formModelAttrs['tg_unit'],
-            tgValue = formModelAttrs['tg_value'],
+        var timeRange = formModelAttrs['time_range'],
             fromDate, toDate, fromTimeUTC, toTimeUTC, serverDateObj,
-            fromTime, toTime, now, tgMicroSecs = 0;
+            fromTime, toTime, now
 
-        tgMicroSecs = getTGMicroSecs(tgValue, tgUnit);
 
         if (timeRange > 0) {
             if (serverCurrentTime) {
@@ -491,13 +487,8 @@ define([
                 toTimeUTC = now.getTime();
             }
             fromTimeUTC = toTimeUTC - (timeRange * 1000);
-            if (queryPrefix == cowc.FS_QUERY_PREFIX || queryPrefix == cowc.STAT_QUERY_PREFIX) {
-                toTime = toTimeUTC;
-                fromTime = fromTimeUTC;
-            } else {
-                toTime = "now";
-                fromTime = "now-" + timeRange + "s";
-            }
+            toTime = toTimeUTC;
+            fromTime = fromTimeUTC;
         } else {
             // Used for custom time range
             fromDate = formModelAttrs['from_time'];

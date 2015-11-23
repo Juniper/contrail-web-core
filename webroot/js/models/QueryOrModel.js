@@ -75,14 +75,20 @@ define([
             return modelConfig;
         },
 
-        addWhereAndClause: function() {
-            var model = this.model().attributes.model(),
-                andClauses = model.get('and_clauses'),
-                newAndClause = new QueryAndModel(this.model().attributes);
+        addOrClauseAtIndex: function(data, event) {
+            var self = this,
+                orClauses = this.model().collection,
+                orClause = this.model(),
+                orClauseIndex = _.indexOf(orClauses.models, orClause),
+                newOrClause = new QueryOrModel(self.parentModel(), {});
 
-            andClauses.add([newAndClause]);
+            orClauses.add(newOrClause, {at: orClauseIndex + 1});
+
+            $(event.target).parents('.collection').accordion('refresh');
+            $(event.target).parents('.collection').accordion("option", "active", orClauseIndex + 1);
+
+            event.stopImmediatePropagation();
         },
-
 
         deleteWhereOrClause: function() {
             var orClauses = this.model().collection,

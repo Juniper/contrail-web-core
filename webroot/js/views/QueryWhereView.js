@@ -61,24 +61,41 @@ define([
             elementId: 'or-clause-collection',
             view: "FormCollectionView",
             viewConfig: {
-                path: 'where_or_clauses',
                 collection: 'where_or_clauses()',
                 templateId: cowc.TMPL_QUERY_OR_COLLECTION_VIEW,
                 accordionable: true,
+                accordionConfig: {
+                    header: '.or-clause-header'
+                },
                 rows: [
                     {
+                        rowActions: [
+                            {
+                                onClick: 'addOrClauseAtIndex()', iconClass: 'icon-plus',
+                                viewConfig: {width: 20}
+                            },
+                            {
+                                onClick: "deleteWhereOrClause()", iconClass: 'icon-remove',
+                                viewConfig: {width: 20}
+                            },
+                        ],
                         columns: [
                             {
                                 elementId: 'and-clause-collection',
                                 view: "FormCollectionView",
                                 viewConfig: {
-                                    path: 'and_clauses',
                                     collection: 'and_clauses()',
                                     rows: [
                                         {
                                             rowActions: [
-                                                {onClick: "deleteWhereAndClause()", iconClass: 'icon-remove'},
-                                                {onClick: "addAndClauseAtIndex()", iconClass: 'icon-plus'}
+                                                {
+                                                    onClick: "deleteWhereAndClause()", iconClass: 'icon-remove',
+                                                    viewConfig: {width: 20}
+                                                },
+                                                {
+                                                    onClick: "addAndClauseAtIndex()", iconClass: 'icon-plus',
+                                                    viewConfig: {width: 20}
+                                                }
                                             ],
                                             columns: [
                                                 {
@@ -100,7 +117,7 @@ define([
                                                         path: "name",
                                                         dataBindValue: "name",
                                                         dataBindOptionList: 'getNameOptionList',
-                                                        width: 200,
+                                                        width: 140,
                                                         elementConfig: {
                                                             placeholder: 'Select Name',
                                                             defaultValueId: 0
@@ -133,7 +150,7 @@ define([
                                                         path: "value",
                                                         dataBindValue: "value()",
                                                         dataBindOptionList: 'getValueOptionList',
-                                                        width: 200,
+                                                        width: 140,
                                                         elementConfig: {
                                                             placeholder: 'Select Value'
                                                         }
@@ -142,6 +159,7 @@ define([
                                             ]
                                         },
                                         {
+                                            visible: "$root.isSuffixVisible(name())",
                                             columns: [
                                                 {
                                                     elementId: 'suffix-and-text',
@@ -158,11 +176,10 @@ define([
                                                     class: "",
                                                     viewConfig: {
                                                         templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
-                                                        visible: "$root.isSuffixVisible(name())",
                                                         path: "suffix_name",
                                                         dataBindValue: "suffix_name",
                                                         dataBindOptionList: 'getSuffixNameOptionList',
-                                                        width: 200,
+                                                        width: 140,
                                                         elementConfig: {
                                                             placeholder: 'Select Suffix Name',
                                                             defaultValueId: 0
@@ -177,7 +194,6 @@ define([
                                                     viewConfig: {
                                                         templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                                         path: "suffix_operator",
-                                                        visible: "$root.isSuffixVisible(name())",
                                                         dataBindValue: "suffix_operator",
                                                         width: 100,
                                                         elementConfig: {
@@ -193,10 +209,9 @@ define([
                                                     class: "",
                                                     viewConfig: {
                                                         templateId: cowc.TMPL_EDITABLE_GRID_COMBOBOX_VIEW,
-                                                        visible: "$root.isSuffixVisible(name())",
                                                         path: "suffix_value",
                                                         dataBindValue: "suffix_value()",
-                                                        width: 200,
+                                                        width: 140,
                                                         elementConfig: {
                                                             placeholder: 'Select Suffix Value'
                                                         }
@@ -204,19 +219,12 @@ define([
                                                 }
                                             ]
                                         }
-                                    ],
-                                    collectionActions: {
-                                        add: {onClick: "addWhereAndClause()", iconClass: 'icon-plus', buttonTitle: "AND"}
-                                    }
+                                    ]
                                 }
                             }
                         ]
                     }
-                ],
-                collectionActions: {
-                    add: {onClick: 'addWhereOrClause("' + queryPrefix + '-form")', iconClass: 'icon-plus', buttonTitle: "OR"},
-                    delete: {onClick: "deleteWhereOrClause()", iconClass: 'icon-remove'}
-                }
+                ]
             }
 
         };

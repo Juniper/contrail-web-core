@@ -46,11 +46,11 @@ define([
                             labelIconBadgeClass = 'icon-badge-color-' + $('#' + tabLinkId).data('badge_color_key');
                         }
 
-                        return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge ' + labelIconBadgeClass + '"><i class="icon-circle"></i></span>';
+                        return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge ' + labelIconBadgeClass + '"><i class="icon-sign-blank"></i></span>';
                     },
                 },
-                { id:"startTime", field:"startTime", name:"Date", minWidth: 150, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
-                { id:"opsQueryId", field:"opsQueryId", name:"Query Id", minWidth:200, sortable:false },
+                { id:"startTime", field:"startTime", name:"Time", minWidth: 150, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
+                { id:"opsQueryId", field:"opsQueryId", name:"Analytics Query Id", minWidth:200, sortable:false },
                 {
                     id:"", field:"", name:"Time Range", minWidth: 100, sortable:false,
                     formatter: function(r, c, v, cd, dc) {
@@ -1438,11 +1438,11 @@ define([
         ],
         "defaultObjectColumns": [
             {select: "MessageTS", display:{id: "MessageTS", field: "MessageTS", name: "Time", minWidth:210, filterable:false, groupable:false, formatter: function(r, c, v, cd, dc) { return (dc.MessageTS && dc.MessageTS != '')  ? (formatMicroDate(dc.MessageTS)) : ''; }}},
-            {select: "ObjectId", display:{id:"ObjectId", field:"ObjectId", name:"Object Id", minWidth:150, searchable: true, formatter: function(r, c, v, cd, dc) { return handleNull4Grid(dc.ObjectId);}}},
+            {select: "ObjectId", display:{id:"ObjectId", field:"ObjectId", name:"Object Id", minWidth:150, searchable: true, formatter: function(r, c, v, cd, dc) { return handleNull4Grid(dc.ObjectId);}, hide: true}},
             {select: "Source", display:{id:"Source", field:"Source", name:"Source", minWidth:150, searchable: true, formatter: function(r, c, v, cd, dc) { return handleNull4Grid(dc.Source);}}},
             {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", minWidth: 150, searchable:true, formatter: function(r, c, v, cd, dc) { return handleNull4Grid(dc.ModuleId);}}},
             {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", minWidth:300, searchable:true, formatter: function(r, c, v, cd, dc) { return handleNull4Grid(dc.Messagetype); }}},
-            {select: "SystemLog", display:{id:"SystemLog", field:"SystemLog", name:"System Log", minWidth:300, searchable:true, formatter: function(r, c, v, cd, dc) { return contrail.checkIfExist(dc.SystemLog) ? contrail.formatJSON2HTML(dc.SystemLog, 0) : null}}},
+            {select: "SystemLog", display:{id:"SystemLog", field:"SystemLog", name:"System Log", minWidth:300, searchable:true, formatter: function(r, c, v, cd, dc) { return contrail.checkIfExist(dc.SystemLog) ? contrail.formatJSON2HTML(dc.SystemLog, 0) : null}, hide: true}},
             {select: "ObjectLog", display:{id:"ObjectLog", field:"ObjectLog", name:"Object Log", minWidth:300, searchable:true, formatter: function(r, c, v, cd, dc) { return contrail.checkIfExist(dc.ObjectLog) ? contrail.formatJSON2HTML(dc.ObjectLog, 0) : null}}}
         ],
         "MessageTable": [

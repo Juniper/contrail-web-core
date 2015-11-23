@@ -19,7 +19,8 @@ define([
                     collapseable: false,
                     exportable: true,
                     refreshable: true,
-                    searchable: true
+                    searchable: true,
+                    columnPickable: false
                 },
                 customControls: false
             },
