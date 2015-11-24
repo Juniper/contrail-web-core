@@ -68,24 +68,24 @@ define([
             }
 
             if (contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
-                if (contrail.checkIfExist($(self.$el).data('contrailGrid'))) {
-                    $(self.$el).data('contrailGrid').removeGridLoading();
+                if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
+                    gridContainer.data('contrailGrid').removeGridLoading();
                     if (gridOptions.defaultDataStatusMessage && contrailListModel.getItems().length == 0) {
-                        $(self.$el).data('contrailGrid').showGridMessage('empty')
+                        gridContainer.data('contrailGrid').showGridMessage('empty')
                     }
                 }
             }
 
             contrailListModel.onAllRequestsComplete.subscribe(function () {
-                if (contrail.checkIfExist($(self.$el).data('contrailGrid'))) {
-                    $(self.$el).data('contrailGrid').removeGridLoading();
+                if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
+                    gridContainer.data('contrailGrid').removeGridLoading();
                     if (gridOptions.defaultDataStatusMessage && contrailListModel.getItems().length == 0) {
-                        $(self.$el).data('contrailGrid').showGridMessage('empty')
+                        gridContainer.data('contrailGrid').showGridMessage('empty')
                     }
                     //TODO: Execute only in refresh case.
                     if (gridConfig.header.defaultControls.refreshable) {
                         setTimeout(function () {
-                            $(self.$el).find('.link-refreshable i').removeClass('icon-spin icon-spinner').addClass('icon-repeat');
+                            gridContainer.find('.link-refreshable i').removeClass('icon-spin icon-spinner').addClass('icon-repeat');
                         }, 1000);
                     }
                 }
@@ -1311,7 +1311,7 @@ define([
             };
 
             function emptyGridHandler() {
-                if (!gridOptions.lazyLoading && gridOptions.gridOptions.defaultDataStatusMessage && gridContainer.data('contrailGrid')) {
+                if (!gridOptions.lazyLoading && gridOptions.defaultDataStatusMessage && gridContainer.data('contrailGrid')) {
                     gridContainer.data('contrailGrid').showGridMessage('empty');
                     if (gridOptions.checkboxSelectable != false) {
                         gridContainer.find('.headerRowCheckbox').attr('disabled', true);
