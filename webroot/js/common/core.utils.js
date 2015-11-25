@@ -710,6 +710,8 @@ define(['underscore'], function (_) {
                         //Register node List models
                         if(ctwu != null) 
                             nodeListModelResources = nodeListModelResources.concat(ctwu.getNodeListModelsForAlerts());
+                        if(swu != null)
+                            nodeListModelResources = nodeListModelResources.concat(swu.getNodeListModelsForAlerts());
                         require(nodeListModelResources,function() {
                             $.each(arguments,function(idx,currListModel) {
                                 nodeListModel.addListModel(new currListModel());

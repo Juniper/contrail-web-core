@@ -36,6 +36,7 @@ define([
                 }
             });
 
+            self.$el.find('.infobox-container').html('');
             for(var i=0;i<infoChartCfg.length;i++) {
                 var currCfg = infoChartCfg[i];
                 var chartCfg = {
