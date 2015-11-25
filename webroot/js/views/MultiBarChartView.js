@@ -73,7 +73,7 @@ define([
             }
 
             nv.utils.windowResize(function () {
-                updateChartOnResize(selector, chartModel);
+                chUtils.updateChartOnResize(selector, chartModel);
             });
 
             if (chartOptions['deferredObj'] != null)

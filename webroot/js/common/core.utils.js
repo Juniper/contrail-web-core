@@ -219,6 +219,42 @@ define(['underscore'], function (_) {
             return intoObject;
         };
 
+        self.handleNull4Grid = function(value, placeHolder) {
+            if(value == 0) {
+                return 0;
+            } else if (value != null && value != '') {
+                return value;
+            } else if (placeHolder != null) {
+                return placeHolder;
+            } else {
+                return '';
+            }
+        };
+
+        self.formatMicroDate = function(microDateTime) {
+            var microTime, resultString;
+            if(microDateTime == null || microDateTime == 0 || microDateTime == '') {
+                resultString = '';
+            } else {
+                microTime = microDateTime % 1000;
+                resultString = moment(new Date(microDateTime / 1000)).format('YYYY-MM-DD HH:mm:ss:SSS');
+                if (microTime > 0) {
+                    resultString += ':' + microTime;
+                } else {
+                    resultString += ':0';
+                }
+            }
+            return resultString;
+        };
+
+        this.isEmptyObject = function (obj) {
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop))
+                    return false;
+            }
+            return true;
+        };
+
         this.getEditConfigObj = function (configObj, locks) {
             var lock = null,
                 testobj = $.extend(true, {}, configObj);
@@ -303,7 +339,7 @@ define(['underscore'], function (_) {
                 viewAttributes = {viewConfig: viewConfig, elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
                 app = viewObj['app'];
 
-            console.warn(cowc.DEPRECATION_WARNING_PREFIX + 'Function renderView4Config of core-utils is deprecated. Use renderView4Config() of ContrailView instead.');
+            console.warn(cowm.DEPRECATION_WARNING_PREFIX + 'Function renderView4Config of core-utils is deprecated. Use renderView4Config() of ContrailView instead.');
 
             var renderConfig = {
                 parentElement: parentElement,
@@ -739,6 +775,15 @@ define(['underscore'], function (_) {
 
         this.delete_cookie = function(name) {
             document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        };
+
+        this.splitString2Array = function (strValue, delimiter) {
+            var strArray = strValue.split(delimiter),
+                count = strArray.length;
+            for (var i = 0; i < count; i++) {
+                strArray[i] = strArray[i].trim();
+            }
+            return strArray;
         };
 
         this.bindPopoverInTopology = function (tooltipConfig, graphView) {

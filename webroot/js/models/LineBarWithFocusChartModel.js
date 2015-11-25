@@ -61,19 +61,19 @@ define([
         // Public Variables with Default Settings
         //------------------------------------------------------------
 
-        var lines = nvd3v181.models.line()
-            , lines2 = nvd3v181.models.line()
-            , bars = nvd3v181.models.historicalBar()
-            , bars2 = nvd3v181.models.historicalBar()
-            , xAxis = nvd3v181.models.axis()
-            , x2Axis = nvd3v181.models.axis()
-            , y1Axis = nvd3v181.models.axis()
-            , y2Axis = nvd3v181.models.axis()
-            , y3Axis = nvd3v181.models.axis()
-            , y4Axis = nvd3v181.models.axis()
-            , legend = nvd3v181.models.legend()
+        var lines = nv.models.line()
+            , lines2 = nv.models.line()
+            , bars = nv.models.historicalBar()
+            , bars2 = nv.models.historicalBar()
+            , xAxis = nv.models.axis()
+            , x2Axis = nv.models.axis()
+            , y1Axis = nv.models.axis()
+            , y2Axis = nv.models.axis()
+            , y3Axis = nv.models.axis()
+            , y4Axis = nv.models.axis()
+            , legend = nv.models.legend()
             , brush = d3.svg.brush()
-            , tooltip = nvd3v181.models.tooltip()
+            , tooltip = nv.models.tooltip()
             ;
 
         var margin = chartOptions.margin
@@ -82,7 +82,7 @@ define([
             , height = null
             , getX = function(d) { return d.x }
             , getY = function(d) { return d.y }
-            , color = nvd3v181.utils.defaultColor()
+            , color = nv.utils.defaultColor()
             , showLegend = true
             , focusEnable = true
             , focusShowAxisY = false
@@ -99,7 +99,7 @@ define([
             , noData = null
             , dispatch = d3.dispatch('brush', 'stateChange', 'changeState')
             , transitionDuration = 0
-            , state = nvd3v181.utils.state()
+            , state = nv.utils.state()
             , defaultState = null
             , legendLeftAxisHint = ' (left axis)'
             , legendRightAxisHint = ' (right axis)'
@@ -146,9 +146,9 @@ define([
                     data = chartDataObj.data,
                     requestState = chartDataObj.requestState;
 
-                nvd3v181.utils.initSVG(container);
-                var availableWidth = nvd3v181.utils.availableWidth(width, container, margin),
-                    availableHeight1 = nvd3v181.utils.availableHeight(height, container, margin)
+                nv.utils.initSVG(container);
+                var availableWidth = nv.utils.availableWidth(width, container, margin),
+                    availableHeight1 = nv.utils.availableHeight(height, container, margin)
                         - (focusEnable ? focusHeight : 0),
                     availableHeight2 = focusHeight - margin2.top - margin2.bottom;
 
@@ -267,7 +267,7 @@ define([
                     if ( margin.top != legend.height()) {
                         margin.top = legend.height();
                         // FIXME: shouldn't this be "- (focusEnabled ? focusHeight : 0)"?
-                        availableHeight1 = nvd3v181.utils.availableHeight(height, container, margin) - focusHeight;
+                        availableHeight1 = nv.utils.availableHeight(height, container, margin) - focusHeight;
                     }
 
                     g.select('.nv-legendWrap')
@@ -318,7 +318,7 @@ define([
                 // context (focus chart) axis controls
                 if (focusShowAxisX) {
                     x2Axis
-                        ._ticks( nvd3v181.utils.calcTicksX(availableWidth / 100, data))
+                        ._ticks( nv.utils.calcTicksX(availableWidth / 100, data))
                         .tickSize(-availableHeight2, 0);
                     g.select('.nv-context .nv-x.nv-axis')
                         .attr('transform', 'translate(0,' + y3.range()[0] + ')');
@@ -496,7 +496,7 @@ define([
 
                     xAxis
                         .scale(x)
-                        ._ticks( nvd3v181.utils.calcTicksX(availableWidth/100, data) )
+                        ._ticks( nv.utils.calcTicksX(availableWidth/100, data) )
                         .tickSize(-availableHeight1, 0);
 
                     xAxis.domain([Math.ceil(extent[0]), Math.floor(extent[1])]);
@@ -514,11 +514,11 @@ define([
 
                     y1Axis
                         .scale(y1)
-                        ._ticks( nvd3v181.utils.calcTicksY(availableHeight1/36, data) )
+                        ._ticks( nv.utils.calcTicksY(availableHeight1/36, data) )
                         .tickSize(-availableWidth, 0);
                     y2Axis
                         .scale(y2)
-                        ._ticks( nvd3v181.utils.calcTicksY(availableHeight1/36, data) )
+                        ._ticks( nv.utils.calcTicksY(availableHeight1/36, data) )
                         .tickSize(dataBars.length ? 0 : -availableWidth, 0); // Show the y2 rules only if y1 has none
 
                     g.select('.nv-focus .nv-y1.nv-axis')
@@ -602,7 +602,7 @@ define([
         chartModel.y4Axis = y4Axis;
         chartModel.tooltip = tooltip;
 
-        chartModel.options = nvd3v181.utils.optionsFunc.bind(chartModel);
+        chartModel.options = nv.utils.optionsFunc.bind(chartModel);
 
         chartModel._options = Object.create({}, {
             // simple options, just get/set the necessary values
@@ -621,12 +621,12 @@ define([
             // deprecated options
             tooltips:    {get: function(){return tooltip.enabled();}, set: function(_){
                 // deprecated after 1.7.1
-                nvd3v181.deprecated('tooltips', 'use chart.tooltip.enabled() instead');
+                nv.deprecated('tooltips', 'use chart.tooltip.enabled() instead');
                 tooltip.enabled(!!_);
             }},
             tooltipContent:    {get: function(){return tooltip.contentGenerator();}, set: function(_){
                 // deprecated after 1.7.1
-                nvd3v181.deprecated('tooltipContent', 'use chart.tooltip.contentGenerator() instead');
+                nv.deprecated('tooltipContent', 'use chart.tooltip.contentGenerator() instead');
                 tooltip.contentGenerator(_);
             }},
 
@@ -641,7 +641,7 @@ define([
                 transitionDuration = _;
             }},
             color:  {get: function(){return color;}, set: function(_){
-                color = nvd3v181.utils.getColor(_);
+                color = nv.utils.getColor(_);
                 legend.color(color);
             }},
             x: {get: function(){return getX;}, set: function(_){
@@ -660,8 +660,8 @@ define([
             }}
         });
 
-        nvd3v181.utils.inheritOptions(chartModel, lines);
-        nvd3v181.utils.initOptions(chartModel);
+        nv.utils.inheritOptions(chartModel, lines);
+        nv.utils.initOptions(chartModel);
 
         //============================================================
         // Customize NVD3 Chart: Following code has been added by Juniper to
@@ -672,7 +672,7 @@ define([
                   .legendLeftAxisHint('')
                   .brushExtent(chartOptions['brushExtent']);
 
-        chartModel.interpolate(interpolateSankey);
+        chartModel.interpolate(chUtils.interpolateSankey);
         chartModel.bars.padData(false);
 
         if(chartOptions.forceY1) {

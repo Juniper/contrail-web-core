@@ -3,9 +3,8 @@
  */
 
 var initDepFiles = [
-    'validation', 'handlebars-utils', 'contrail-common', 'slickgrid-utils', 'contrail-elements',
-    'topology_api', 'chart-utils', 'qe-utils', 'nvd3-plugin', 'd3-utils', 'analyzer-utils', 'dashboard-utils',
-    'joint.contrail', 'text', 'contrail-unified-1', 'contrail-unified-2', 'nvd3v181'
+    'validation', 'handlebars-utils', 'contrail-common', 'slickgrid-utils', 'contrail-elements', 'contrail-unified-1',
+    'contrail-unified-2', 'analyzer-utils', 'dashboard-utils', 'joint.contrail', 'text', 'nvd3'
 ];
 
 require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
@@ -22,9 +21,10 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
                  'core-basedir/js/common/qe.model.config',
                  'core-basedir/js/common/qe.grid.config',
                  'core-basedir/js/common/qe.parsers',
+                 'core-basedir/js/common/chart.utils',
                  'text!templates/core.common.tmpl'],
             function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, LayoutHandler,
-                      QEUtils, QEModelConfig, QEGridConfig, QEParsers, CoreCommonTmpls) {
+                      QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils, CoreCommonTmpls) {
                 cowc = new CoreConstants();
                 cowu = new CoreUtils();
                 cowf = new CoreFormatters();
@@ -38,6 +38,8 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
                 qewmc = new QEModelConfig();
                 qewgc = new QEGridConfig();
                 qewp = new QEParsers();
+
+                chUtils = new ChartUtils();
 
                 initBackboneValidation();
                 initCustomKOBindings(Knockout);

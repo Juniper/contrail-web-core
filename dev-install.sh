@@ -250,73 +250,6 @@ rm -f webroot/js/contrail-all-7.js
 rm -f webroot/js/common/contrail.unified.1.js
 rm -f webroot/js/common/contrail.unified.2.js
 
-MAINFILE[0]=webroot/assets/jquery/js/jquery-1.8.3.min.js
-MAINFILE[1]=webroot/assets/jquery/js/jquery.xml2json.js
-MAINFILE[2]=webroot/assets/jquery/js/jquery.ba-bbq.min.js
-MAINFILE[3]=webroot/assets/jquery/js/jquery.timer.js
-MAINFILE[4]=webroot/assets/jquery-ui/js/jquery-ui.js
-MAINFILE[5]=webroot/assets/jquery/js/jquery.ui.touch-punch.min.js
-MAINFILE[6]=webroot/assets/bootstrap/js/bootstrap.min.js
-
-MAINFILE[7]=webroot/assets/d3/js/d3.js
-MAINFILE[8]=webroot/assets/nvd3/js/nv.d3.js
-
-MAINFILE[9]=webroot/assets/crossfilter/js/crossfilter.min.js
-MAINFILE[10]=webroot/assets/jsonpath/js/jsonpath-0.8.0.js
-MAINFILE[11]=webroot/assets/xdate/js/xdate.js
-MAINFILE[12]=webroot/assets/jquery/js/jquery.validate.js
-MAINFILE[13]=webroot/assets/handlebars/handlebars-v1.3.0.js
-MAINFILE[14]=webroot/assets/knockout/knockout-3.0.0.js
-MAINFILE[15]=webroot/assets/select2/js/select2.min.js
-
-MAINFILE[16]=webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
-MAINFILE[17]=webroot/assets/slickgrid/js/jquery.json-2.3.min.js
-MAINFILE[18]=webroot/assets/slickgrid/js/jquery.dropkick-1.0.0.js
-MAINFILE[19]=webroot/assets/slickgrid/js/slick.core.js
-MAINFILE[20]=webroot/assets/slickgrid/js/slick.grid.js
-MAINFILE[21]=webroot/assets/slickgrid/js/slick.dataview.js
-MAINFILE[22]=webroot/assets/slickgrid/js/slick.rowselectionmodel.js
-MAINFILE[23]=webroot/assets/slickgrid/js/slick.checkboxselectcolumn.js
-MAINFILE[24]=webroot/assets/slickgrid/js/slick.enhancementpager.js
-MAINFILE[25]=webroot/assets/datetimepicker/js/jquery.datetimepicker.js
-MAINFILE[26]=webroot/assets/moment/moment.js
-MAINFILE[27]=webroot/assets/jquery/js/jquery.tristate.js
-
-MAINFILE[28]=webroot/assets/ip/jsbn-combined.js
-MAINFILE[29]=webroot/assets/ip/sprintf.js
-MAINFILE[30]=webroot/assets/ip/ipv6.js
-
-MAINFILE[31]=webroot/js/contrail-common.js
-MAINFILE[32]=webroot/js/handlebars-utils.js
-MAINFILE[33]=webroot/js/select2-utils.js
-MAINFILE[34]=webroot/js/slickgrid-utils.js
-MAINFILE[35]=webroot/js/contrail-elements.js
-MAINFILE[36]=webroot/js/topology_api.js
-MAINFILE[37]=webroot/js/web-utils.js
-MAINFILE[38]=webroot/js/contrail-layout.js
-MAINFILE[39]=webroot/js/config_global.js
-MAINFILE[40]=webroot/js/protocol.js
-MAINFILE[41]=webroot/js/qe-utils.js
-MAINFILE[42]=webroot/js/nvd3-plugin.js
-MAINFILE[43]=webroot/js/d3-utils.js
-MAINFILE[44]=webroot/js/analyzer-utils.js
-MAINFILE[45]=webroot/js/chart-utils.js
-MAINFILE[46]=webroot/js/dashboard-utils.js
-
-MAINFILE[47]=webroot/assets/jquery-ui/js/jquery.multiselect.js
-MAINFILE[48]=webroot/assets/jquery-ui/js/jquery.multiselect.filter.js
-MAINFILE[49]=webroot/assets/requirejs/require.js
-MAINFILE[50]=webroot/assets/jquery/js/jquery.steps.min.js
-
-MAINFILE[51]=webroot/assets/joint/js/joint.nojquery.js
-MAINFILE[52]=webroot/assets/joint/js/joint.layout.DirectedGraph.js
-MAINFILE[53]=webroot/js/joint.contrail.js
-MAINFILE[54]=webroot/assets/jquery/js/jquery.panzoom.min.js
-MAINFILE[55]=webroot/assets/jquery-contextMenu/js/jquery.ui.position.js
-MAINFILE[56]=webroot/assets/jquery-contextMenu/js/jquery.contextMenu.js
-MAINFILE[57]=webroot/assets/bezierjs/bezier.js
-MAINFILE[58]=webroot/js/uuid.js
-
 MAINFILE[59]=webroot/assets/jquery-ui/js/jquery-ui.js
 MAINFILE[60]=webroot/assets/jquery/js/jquery.xml2json.js
 MAINFILE[61]=webroot/assets/jquery/js/jquery.ba-bbq.min.js
@@ -354,72 +287,6 @@ MAINFILE[91]=webroot/assets/ip/ipv6.js
 MAINFILE[92]=webroot/js/config_global.js
 MAINFILE[93]=webroot/js/protocol.js
 MAINFILE[94]=webroot/js/uuid.js
-
-cat ${MAINFILE[0]} > webroot/js/contrail-all-1.js
-cat ${MAINFILE[1]} >> webroot/js/contrail-all-1.js
-cat ${MAINFILE[2]} >> webroot/js/contrail-all-1.js
-cat ${MAINFILE[3]} >> webroot/js/contrail-all-1.js
-cat ${MAINFILE[4]} >> webroot/js/contrail-all-1.js
-cat ${MAINFILE[5]} >> webroot/js/contrail-all-1.js
-cat ${MAINFILE[6]} >> webroot/js/contrail-all-1.js
-
-cat ${MAINFILE[7]} > webroot/js/contrail-all-2.js
-cat ${MAINFILE[8]} >> webroot/js/contrail-all-2.js
-
-cat ${MAINFILE[9]} > webroot/js/contrail-all-3.js
-cat ${MAINFILE[10]} >> webroot/js/contrail-all-3.js
-cat ${MAINFILE[11]} >> webroot/js/contrail-all-3.js
-cat ${MAINFILE[12]} >> webroot/js/contrail-all-3.js
-cat ${MAINFILE[13]} >> webroot/js/contrail-all-3.js
-cat ${MAINFILE[14]} >> webroot/js/contrail-all-3.js
-cat ${MAINFILE[15]} >> webroot/js/contrail-all-3.js
-
-cat ${MAINFILE[16]} > webroot/js/contrail-all-4.js
-cat ${MAINFILE[17]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[18]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[19]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[20]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[21]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[22]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[23]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[24]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[25]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[26]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[27]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[28]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[29]} >> webroot/js/contrail-all-4.js
-cat ${MAINFILE[30]} >> webroot/js/contrail-all-4.js
-
-cat ${MAINFILE[31]} > webroot/js/contrail-all-5.js
-cat ${MAINFILE[32]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[33]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[34]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[35]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[36]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[45]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[37]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[38]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[39]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[40]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[41]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[42]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[43]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[44]} >> webroot/js/contrail-all-5.js
-cat ${MAINFILE[46]} >> webroot/js/contrail-all-5.js
-
-cat ${MAINFILE[47]} > webroot/js/contrail-all-6.js
-cat ${MAINFILE[48]} >> webroot/js/contrail-all-6.js
-cat ${MAINFILE[49]} >> webroot/js/contrail-all-6.js
-cat ${MAINFILE[50]} >> webroot/js/contrail-all-6.js
-
-cat ${MAINFILE[51]} > webroot/js/contrail-all-7.js
-cat ${MAINFILE[52]} >> webroot/js/contrail-all-7.js
-cat ${MAINFILE[53]} >> webroot/js/contrail-all-7.js
-cat ${MAINFILE[54]} >> webroot/js/contrail-all-7.js
-cat ${MAINFILE[55]} >> webroot/js/contrail-all-7.js
-cat ${MAINFILE[56]} >> webroot/js/contrail-all-7.js
-cat ${MAINFILE[57]} >> webroot/js/contrail-all-7.js
-cat ${MAINFILE[58]} >> webroot/js/contrail-all-7.js
 
 cat ${MAINFILE[59]} > webroot/js/common/contrail.unified.1.js
 cat ${MAINFILE[60]} >> webroot/js/common/contrail.unified.1.js
@@ -468,7 +335,7 @@ MAINCSS[1]=webroot/assets/jquery-ui/css/jquery-ui.css
 MAINCSS[2]=webroot/css/contrail.jquery.ui.css
 
 MAINCSS[3]=webroot/assets/font-awesome/css/font-awesome.min.css
-MAINCSS[4]=webroot/assets/nvd3/css/nv.d3.css
+MAINCSS[4]=webroot/assets/nvd3-v1.8.1/css/nv.d3.css
 MAINCSS[5]=webroot/assets/select2/styles/select2.css
 MAINCSS[6]=webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
 MAINCSS[7]=webroot/assets/slickgrid/styles/slick.grid.css
