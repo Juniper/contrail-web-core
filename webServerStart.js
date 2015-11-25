@@ -182,18 +182,19 @@ function initializeAppConfig (appObj)
         app.use(express.compress());
         app.use(express.methodOverride());
         app.use(express.bodyParser());
-    registerStaticFiles(app);
-    var csrf = express.csrf();
-    //Populate the CSRF token in req.session on login request
-    app.get('/login',csrf);
-    app.get('/vcenter/login',csrf);
-    //Enable CSRF token check for all URLs starting with "/api"
-    app.post('/api/*',csrf);
-    app.use(app.router);
-    // Catch-all error handler
-    app.use(function (err, req, res, next) {
-        logutils.logger.error(err.stack);
-        res.send(500, 'An unexpected error occurred!');
+    registerStaticFiles(app, function() {
+        var csrf = express.csrf();
+        //Populate the CSRF token in req.session on login request
+        app.get('/login',csrf);
+        app.get('/vcenter/login',csrf);
+        //Enable CSRF token check for all URLs starting with "/api"
+        app.post('/api/*',csrf);
+        app.use(app.router);
+        // Catch-all error handler
+        app.use(function (err, req, res, next) {
+            logutils.logger.error(err.stack);
+            res.send(500, 'An unexpected error occurred!');
+        });
     });
 }
 
@@ -212,7 +213,7 @@ function loadStaticFiles (pkgNameObj, callback)
     });
 }
 
-function registerStaticFiles (app)
+function registerStaticFiles (app, callback)
 {
     var pkgDir;
     var staticFileDirLists = [];
@@ -222,6 +223,7 @@ function registerStaticFiles (app)
         staticFileDirLists.push({'app': app, 'pkgDir': pkgDir});
     }
     async.mapSeries(staticFileDirLists, loadStaticFiles, function(err) {
+        callback();
     });
 }
 
