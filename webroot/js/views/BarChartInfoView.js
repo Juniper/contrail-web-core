@@ -68,7 +68,7 @@ define([
             if(self.model.isRequestInProgress() == false) {
                 self.renderInfoboxes();
             }
-            self.model.onAllRequestsComplete.subscribe(function() {
+            self.model.onDataUpdate.subscribe(function() {
                 self.renderInfoboxes();
             });
         }
