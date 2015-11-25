@@ -22,6 +22,8 @@ define([
         },
 
         renderFilters: function (options) {
+            // need to parseSelectString as filter is dependent on select
+            qewu.parseSelectString2Array(this.model);
             qewu.parseFilterString2Collection(this.model);
             this.renderView4Config(this.$el, this.model, getFilterViewConfig(contrail.checkIfExist(options) ? options : {}));
             this.model.addFilterAndClause([]);
