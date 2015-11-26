@@ -59,30 +59,47 @@ define(['underscore'], function (_) {
             });
         };
         this.createModal = function (options) {
-            var modalId = options['modalId'];
+            var modalId = options['modalId'],
+                footer = [];
+
+            if ((contrail.checkIfExist(options['onClose'])) && (contrail.checkIfFunction(options['onClose']))) {
+                footer.push({
+                    id        : 'closeBtn',
+                    className : 'btn-primary',
+                    title     : 'Close',
+                    onclick   : function () {
+                        options['onClose']();
+                    },
+                    onKeyupEsc: true
+                });
+            }
+            if ((contrail.checkIfExist(options['onCancel'])) && (contrail.checkIfFunction(options['onCancel']))) {
+                footer.push({
+                    id        : 'cancelBtn',
+                    title     : 'Cancel',
+                    onclick   : function () {
+                        options['onCancel']();
+                    },
+                    onKeyupEsc: true
+                });
+            }
+            if ((contrail.checkIfExist(options['onSave'])) && (contrail.checkIfFunction(options['onSave']))) {
+                footer.push({
+                    className: 'btn-primary btnSave',
+                    title: (options['btnName']) ? options['btnName'] : 'Save',
+                    onclick: function () {
+                        options['onSave']();
+                    },
+                    onKeyupEnter: true
+                });
+            }
+
             $.contrailBootstrapModal({
                 id: modalId,
                 className: options['className'],
                 title: options['title'],
                 body: options['body'],
-                footer: [
-                    {
-                        id: 'cancelBtn',
-                        title: 'Cancel',
-                        onclick: function () {
-                            options['onCancel']();
-                        },
-                        onKeyupEsc: true
-                    },
-                    {
-                        className: 'btn-primary btnSave',
-                        title: (options['btnName']) ? options['btnName'] : 'Save',
-                        onclick: function () {
-                            options['onSave']();
-                        },
-                        onKeyupEnter: true
-                    }
-                ]
+                footer: footer
             });
         };
 
