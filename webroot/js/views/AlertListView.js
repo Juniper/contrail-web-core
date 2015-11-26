@@ -18,7 +18,7 @@ define([
             self.$el.find('.widget-body .widget-main').
                 html(alertListTmpl(alertList.slice(0,5)));
             self.$el.find('.widget-header').initWidgetHeader({
-                title: 'Alerts'
+                title: 'Alarms'
             });
 
             self.$el.find('#moreAlertsLink').click(function() {

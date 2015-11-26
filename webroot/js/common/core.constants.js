@@ -12,6 +12,13 @@ define([
         this.LOCKED_SUFFIX_ID = "_locked";
         this.FORM_SUFFIX_ID = "_form";
 
+        this.SEV_LEVELS = {
+                ERROR   : 3, //Red
+                WARNING : 4, //Orange
+//                NOTICE  : 2, //Blue
+//                INFO    : 3, //Green
+            }
+
         this.PATTERN_IP_ADDRESS  = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
         this.PATTERN_SUBNET_MASK = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(\d|[1-2]\d|3[0-2]))?$/;
         this.PATTERN_MAC_ADDRESS = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
