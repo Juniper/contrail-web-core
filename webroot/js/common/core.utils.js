@@ -5,6 +5,11 @@
 define(['underscore'], function (_) {
     var CoreUtils = function () {
         var self = this;
+        this.getAlarmsFromAnalytics = true;
+        //Setting the sevLevels used to display the node colors
+        if(this.getAlarmsFromAnalytics) {
+            sevLevels = cowc.SEV_LEVELS;
+        }
         this.renderGrid = function (elementId, gridConfig) {
             $(elementId).contrailGrid($.extend(true, {
                 header: {
@@ -172,7 +177,7 @@ define(['underscore'], function (_) {
             }
 
             if (contrail.checkIfExist(obj)) {
-                obj = $.isArray(obj) ? obj : obj.toString().trim();
+                obj = ($.isArray(obj) || typeof(obj) == "object") ? obj : obj.toString().trim();
                 if (obj !== '' || obj === 0) {
                     return obj;
                 }
@@ -593,7 +598,9 @@ define(['underscore'], function (_) {
         this.generateDetailTemplateHTML = function (config, app, jsonString) {
             var template = contrail.getTemplate4Id(cowc.TMPL_DETAIL_FOUNDATION),
                 templateObj = $(template(config)),
-                jsonValueString ='{{{formatGridJSON2HTML this.data' +  (contrail.checkIfExist(jsonString) ? '.' + jsonString : '') + '}}}';
+                jsonValueString ='{{#if this.data.rawJson}}{{{formatGridJSON2HTML this.data.rawJson' +  (contrail.checkIfExist(jsonString) ? '.' + jsonString : '') + '}}}'+
+                                '{{else}}{{{formatGridJSON2HTML this.data' +  (contrail.checkIfExist(jsonString) ? '.' + jsonString : '') + '}}}' +
+                                '{{/if}}';
 
             templateObj.find('.detail-foundation-content-basic').append(self.generateInnerTemplate(config, app));
             templateObj.find('.detail-foundation-content-advanced').append(jsonValueString);
@@ -726,7 +733,7 @@ define(['underscore'], function (_) {
                 return val;
             });
         };
-
+        
         this.loadAlertsPopup = function(cfgObj) {
             var prefixId = 'dashboard-alerts';
             var cfgObj = ifNull(cfgObj,{});
@@ -735,15 +742,19 @@ define(['underscore'], function (_) {
             var modalId = 'dashboard-alerts-modal';
             var modalLayout = modalTemplate({prefixId: prefixId, modalId: modalId});
             var formId = prefixId + '_modal';
-            cowu.createModal({
-                'modalId': modalId,
-                'className': 'modal-840',
-                'title': 'Alerts',
-                'body': modalLayout,
-                'onCancel': function() {
-                    $("#" + modalId).modal('hide');
+            var modalConfig = {
+                    'modalId': modalId,
+                    'className': 'modal-840',
+                    'body': modalLayout,
+                    'onCancel': function() {
+                        $("#" + modalId).modal('hide');
+                    }
                 }
-            });
+            if(!self.getAlarmsFromAnalytics) {
+                modalConfig['title'] = 'Alerts';
+            }
+            cowu.createModal(modalConfig);
+            
             if(cfgObj.model == null) {
                 require(['mon-infra-node-list-model','monitor-infra-parsers',
                     'monitor-infra-constants','monitor-infra-utils'],
@@ -761,32 +772,52 @@ define(['underscore'], function (_) {
                         var nodeListModel = new NodeListModel();
                         var nodeListModelResources = [];
                         //Register node List models
-                        if(ctwu != null)
+                        if(ctwu != null) 
                             nodeListModelResources = nodeListModelResources.concat(ctwu.getNodeListModelsForAlerts());
                         if(contrail.checkIfExist(globalObj.webServerInfo.featurePkg.webStorage) && globalObj.webServerInfo.featurePkg.webStorage == true)
                             nodeListModelResources = nodeListModelResources.concat(swu.getNodeListModelsForAlerts());
-                        require(nodeListModelResources,function() {
-                            $.each(arguments,function(idx,currListModel) {
-                                nodeListModel.addListModel(new currListModel());
-                                cfgObj.model = nodeListModel.getAlertListModel();
-                                require(['mon-infra-alert-grid-view'], function(AlertGridView) {
-                                    var alertGridView = new AlertGridView({
-                                        el:$("#" + modalId).find('#' + formId),
-                                        model:cfgObj.model
+                        if(self.getAlarmsFromAnalytics) {
+                            require(['monitor/alarms/ui/js/views/AlarmGridView'], function(AlarmGridView) {
+                                var alarmGridView = new AlarmGridView({
+                                    el:$("#" + modalId).find('#' + formId),
+                                    viewConfig:{}
+                                });
+                                alarmGridView.render();
+                            });
+                        } else {
+                            require(nodeListModelResources,function() {
+                                $.each(arguments,function(idx,currListModel) {
+                                    nodeListModel.addListModel(new currListModel());
+                                    cfgObj.model = nodeListModel.getAlertListModel();
+                                    require(['mon-infra-alert-grid-view'], function(AlertGridView) {
+                                        var alertGridView = new AlertGridView({
+                                            el:$("#" + modalId).find('#' + formId),
+                                            model:cfgObj.model
+                                        });
+                                        alertGridView.render();
                                     });
-                                    alertGridView.render();
                                 });
                             });
-                        });
+                        }
                     });
             } else {
-                require(['mon-infra-alert-grid-view'], function(AlertGridView) {
-                    var alertGridView = new AlertGridView({
-                        el:$("#" + modalId).find('#' + formId),
-                        model:cfgObj.model
+                if(self.getAlarmsFromAnalytics) {
+                    require(['monitor/alarms/ui/js/views/AlarmGridView'], function(AlarmGridView) {
+                        var alarmGridView = new AlarmGridView({
+                            el:$("#" + modalId).find('#' + formId),
+                            viewConfig:{}
+                        });
+                        alarmGridView.render();
                     });
-                    alertGridView.render();
-                });
+                } else {
+                    require(['mon-infra-alert-grid-view'], function(AlertGridView) {
+                        var alertGridView = new AlertGridView({
+                            el:$("#" + modalId).find('#' + formId),
+                            model:cfgObj.model
+                        });
+                        alertGridView.render();
+                    });
+                }
             }
         };
 
@@ -882,71 +913,6 @@ define(['underscore'], function (_) {
                 });
             });
         };
-
-        /**
-         * Give a relative this function will retain the absolute time
-         * @param rTime
-         * @returns {XDate}
-         */
-        this.getAbsoluteTimeFromRelativeTime = function (rTime) {
-            var abTime = new XDate();
-            var tParts = rTime.split(' ');
-            var td = 0, th = 0, tm = 0;
-            $.each(tParts, function(i,part){
-                if(part.indexOf('d') != -1) {
-                    td = part.substring(0, part.indexOf('d'));
-                } else if (part.indexOf('h') != -1) {
-                    th = part.substring(0, part.indexOf('h'));
-                } else if (part.indexOf('m') != -1) {
-                    tm = part.substring(0, part.indexOf('m'));
-                }
-             });
-            if(td > 0) {
-                abTime = abTime.addDays(-td);
-            }
-            if(th > 0) {
-                abTime = abTime.addHours(-th);
-            }
-            if(tm > 0) {
-                abTime = abTime.addMinutes(-tm);
-            }
-            return abTime;
-        }
-
-        /**
-         * Function to compare time when given in relative to current time.
-         * @param t1
-         * @param t2
-         * @param sign
-         */
-        this.timeSinceComparator = function (t1,t2,sign) {
-            var t1AbTS = self.getAbsoluteTimeFromRelativeTime(t1).getTime();
-            var t2AbTS = self.getAbsoluteTimeFromRelativeTime(t2).getTime();
-            return (t1AbTS < t2AbTS)? 1 * sign : -1 * sign;
-        }
-
-
-        /**
-         * Function to be used as comparator for sorting the status column for nodes.
-         * If the status is Up or Down split and get the time and use it for sorting.
-         * Else it is an alert leave it to sort based on text.
-         * @param s1
-         * @param s2
-         * @param sign
-         */
-        this.comparatorStatus = function (s1, s2, sign) {
-            if((s1.indexOf('Up') == 0 && s2.indexOf('Up') == 0) ||
-                (s1.indexOf('Down') == 0 && s2.indexOf('Down') == 0)) {
-              //Both Up so use since time to depict the order
-                var startIndex = (s1.indexOf('Up') == 0)? 9 : 11;
-                var t1 = s1.substring(startIndex,s1.length);
-                var t2 = s2.substring(startIndex,s2.length);
-                return self.timeSinceComparator(t1,t2,sign);
-            } else {
-                return (s1.localeCompare(s2) > 0)? 1 * sign : -1 * sign;
-            }
-            return -1;
-        }
     };
     return CoreUtils;
 });

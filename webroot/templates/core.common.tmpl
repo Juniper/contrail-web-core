@@ -1845,6 +1845,15 @@
     <div>Are you sure you want to delete {{item}} <b>{{itemId}}</b>?</div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-ack-alarm-form-template">
+    <div class="alert alert-error" data-bind="visible: errors().{{prefixId}}_form_error">
+        <button type="button" class="close" data-dismiss="alert"></button>
+        <strong>Error: </strong>
+        <span data-bind="text: errors().{{prefixId}}_form_error"></span>
+    </div>
+    <div>Are you sure you want to acknowledge {{item}} <b>{{itemId}}</b>?</div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-button-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <button class="btn btn-mini {{viewConfig.elementConfig.btnClass}}"

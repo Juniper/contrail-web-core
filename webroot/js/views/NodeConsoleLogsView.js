@@ -203,8 +203,8 @@ define([
                                     viewConfig: {
                                         path: 'log_category', dataBindValue: 'log_category', class: "span2",
                                         elementConfig: {
-                                            dataTextField: "text",
-                                            dataValueField: "value",
+                                            dataTextField: "text", 
+                                            dataValueField: "value", 
                                             defaultValueId: 0,
                                             dataSource: {
                                                 type:'remote',

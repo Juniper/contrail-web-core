@@ -263,6 +263,10 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
                 returnValue = '<a class="value-link" target="_blank" href="' + hrefLink + '">' + value + '</a>';
             }
         break;
+
+        case 'json' :
+            return contrail.formatJSON2HTML(value,1);
+        break;
     };
 
     return returnValue;
