@@ -70,7 +70,10 @@ function getCoreAppPaths(coreBaseDir) {
         'mon-infra-alert-grid-view'   : coreBaseDir + '/js/views/AlertGridView',
         'mon-infra-log-list-view'     : coreBaseDir + '/js/views/LogListView',
         'mon-infra-sysinfo-view'      : coreBaseDir + '/js/views/SystemInfoView',
-        'mon-infra-dashboard-view'    : coreBaseDir + '/js/views/MonitorInfraDashboardView'
+        'mon-infra-dashboard-view'    : coreBaseDir + '/js/views/MonitorInfraDashboardView',
+
+        'loginwindow-view'            : coreBaseDir + '/js/views/LoginWindowView',
+        'loginwindow-model'           : coreBaseDir + '/js/models/LoginWindowModel'
     };
 };
 

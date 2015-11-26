@@ -22,9 +22,10 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
                  'core-basedir/js/common/qe.grid.config',
                  'core-basedir/js/common/qe.parsers',
                  'core-basedir/js/common/chart.utils',
+                 'core-basedir/js/common/core.alarms.utils',
                  'text!templates/core.common.tmpl'],
             function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, LayoutHandler,
-                      QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils, CoreCommonTmpls) {
+                      QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils, CoreAlarmUtils, CoreCommonTmpls) {
                 cowc = new CoreConstants();
                 cowu = new CoreUtils();
                 cowf = new CoreFormatters();
@@ -39,6 +40,7 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
                 qewgc = new QEGridConfig();
                 qewp = new QEParsers();
 
+                coreAlarmUtils = new CoreAlarmUtils();
                 chUtils = new ChartUtils();
 
                 initBackboneValidation();
