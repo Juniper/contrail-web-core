@@ -183,7 +183,8 @@ define([
             addStartCols += 1;
         }
         //actionCell adds column at the end.
-        if (typeof(viewConfigBody.options.actionCell) === 'object') {
+        if (typeof(viewConfigBody.options.actionCell) === 'object' ||
+            viewConfigBody.options.actionCell instanceof Function) {
             addEndCols += 1;
         }
         addCols = addStartCols + addEndCols;
@@ -227,45 +228,48 @@ define([
          * Grid Body group test cases
          */
 
-        var pageSize = viewConfigFooter.pager.options.pageSize;
+        var pageSize = viewConfigFooter ? viewConfigFooter.pager.options.pageSize : 0;
         var bodyTestGroup = gridViewTestSuite.createTestGroup('body');
+        if(viewConfigFooter) {
+            /**
+             * Check the loaded rows
+             */
+            bodyTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_ROWS_LOADED, function () {
+                expect(1);
+                equal($(el).find('.slick-row-master').length, (gridItems.length < pageSize) ? gridItems.length : pageSize,
+                    "Loaded rows must be equal to pageSize or size of the data if less");
+            }, cotc.SEVERITY_HIGH));
 
-        /**
-         * Check the loaded rows
-         */
-        bodyTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_ROWS_LOADED, function () {
-            expect(1);
-            equal($(el).find('.slick-row-master').length, (gridItems.length < pageSize) ? gridItems.length : pageSize,
-                "Loaded rows must be equal to pageSize or size of the data if less");
-        }, cotc.SEVERITY_HIGH));
 
-
-        /**
-         * test checkbox selectable config
-         */
-        bodyTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_ROWS_CHECKBOX, function () {
-            expect(1);
-            if (viewConfigBody.options.checkboxSelectable) {
-                equal($(el).find('.slick-row-master .rowCheckbox').length,
-                    (gridItems.length < pageSize) ? gridItems.length : pageSize,
-                    "Loaded rows all must have checkbox enabled");
-            } else {
-                equal($(el).find('.slick-row-master .rowCheckbox').length, 0,
-                    "Loaded rows should not have checkbox enabled");
-            }
-        }, cotc.SEVERITY_MEDIUM));
+            /**
+             * test checkbox selectable config
+             */
+            bodyTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_ROWS_CHECKBOX, function () {
+                expect(1);
+                if (viewConfigBody.options.checkboxSelectable) {
+                    equal($(el).find('.slick-row-master .rowCheckbox').length,
+                        (gridItems.length < pageSize) ? gridItems.length : pageSize,
+                        "Loaded rows all must have checkbox enabled");
+                } else {
+                    equal($(el).find('.slick-row-master .rowCheckbox').length, 0,
+                        "Loaded rows should not have checkbox enabled");
+                }
+            }, cotc.SEVERITY_MEDIUM));
+        }
 
         /**
          * detail rows enabled?
          */
         if (contrail.checkIfExist(viewConfigBody.options.detail)) {
             //count the detail toggle icons. make sure all rows has it
-            bodyTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_DETAIL_ROWS_ICON, function () {
-                expect(1);
-                equal($(el).find('.slick-row-master .toggleDetailIcon').length,
-                    (gridItems.length < pageSize) ? gridItems.length : pageSize,
-                    "All rows should have the detail toggle icon present");
-            }, cotc.SEVERITY_HIGH));
+            if(viewConfigFooter) {
+                bodyTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_DETAIL_ROWS_ICON, function () {
+                    expect(1);
+                    equal($(el).find('.slick-row-master .toggleDetailIcon').length,
+                        (gridItems.length < pageSize) ? gridItems.length : pageSize,
+                        "All rows should have the detail toggle icon present");
+                }, cotc.SEVERITY_HIGH));
+            }
 
             //toggle detail icon, check the details html.
             bodyTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_DETAIL_ROW_TOGGLE, function () {
@@ -351,21 +355,22 @@ define([
          */
         var footerTestGroup = gridViewTestSuite.createTestGroup('footer');
 
-        //Test footer pager info
-        footerTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_FOOTER_PAGER_INFO, function () {
-            expect(1);
-            equal($(el).find('.slick-pager-info').text().trim(), 'Total: ' + gridItems.length + ' records',
-                "pager info should display total records present");
-        }, cotc.SEVERITY_HIGH));
+        if(viewConfigFooter) {
+            //Test footer pager info
+            footerTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_FOOTER_PAGER_INFO, function () {
+                expect(1);
+                equal($(el).find('.slick-pager-info').text().trim(), 'Total: ' + gridItems.length + ' records',
+                    "pager info should display total records present");
+            }, cotc.SEVERITY_HIGH));
 
-        //Footer pager size default should equal page size in config
-        footerTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_FOOTER_PAGER_SIZE, function () {
-            expect(1);
-            equal($(el).find('.slick-pager-sizes .select2-chosen').text().trim(),
-                viewConfigFooter.pager.options.pageSize + ' Records',
-                "page size selection should match default set");
-        }, cotc.SEVERITY_HIGH));
-
+            //Footer pager size default should equal page size in config
+            footerTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_FOOTER_PAGER_SIZE, function () {
+                expect(1);
+                equal($(el).find('.slick-pager-sizes .select2-chosen').text().trim(),
+                    viewConfigFooter.pager.options.pageSize + ' Records',
+                    "page size selection should match default set");
+            }, cotc.SEVERITY_HIGH));
+        }
 
         gridViewTestSuite.run(suiteConfig.groups, suiteConfig.severity);
 
