@@ -163,7 +163,7 @@ function infraMonitorClass() {
                     '&toTimeUTC=now&table=MessageTable&limit=10'
             }).done(function(result) {
                 retArr = $.map(result['data'],function(obj,idx) {
-                    obj['message'] = formatXML2JSON(obj['Xmlmessage']);
+                    obj['message'] = qewu.formatXML2JSON(obj['Xmlmessage']);
                     obj['timeStr'] = diffDates(new XDate(obj['MessageTS']/1000),new XDate());
                     if(obj['Source'] == null)
                         obj['moduleId'] = contrail.format('{0}',obj['ModuleId']);

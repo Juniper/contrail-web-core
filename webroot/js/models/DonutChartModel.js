@@ -60,9 +60,7 @@ define([], function () {
      */
     var DonutChartModel = function (chartOptions) {
 
-        nvd3v181.models.donutChart = function() {
-            var nv = nvd3v181;
-
+        nv.models.donutChart = function() {
             "use strict";
 
             //============================================================
@@ -291,7 +289,7 @@ define([], function () {
             return chart;
         };
 
-        var chartModel = nvd3v181.models.donutChart()
+        var chartModel = nv.models.donutChart()
             .donut(true)
             .x(function(d) { return d.label })
             .y(function(d) { return d.value })

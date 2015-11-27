@@ -12,7 +12,7 @@ define([
      * @returns multiBarChartModel
      */
     var MultiBarChartModel = function (chartOptions) {
-        var chartModel = nvd3v181.models.multiBarChart()
+        var chartModel = nv.models.multiBarChart()
             .duration(chartOptions.transitionDuration)
             .height(chartOptions.height)
             .margin(chartOptions.margin)

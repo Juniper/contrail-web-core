@@ -63,7 +63,7 @@ define([
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartModel);
 
-            nvd3v181.addGraph(function () {
+            nv.addGraph(function () {
                 if (!($(selector).is(':visible'))) {
                     $(selector).find('svg').bind("refresh", function () {
                         setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
@@ -77,10 +77,10 @@ define([
                       .on('resize', function (e) {
                           setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
                   });
-                nvd3v181.utils.windowResize(chartModel.update);
+                nv.utils.windowResize(chartModel.update);
 
                 chartModel.dispatch.on('stateChange', function (e) {
-                    nvd3v181.log('New State:', JSON.stringify(e));
+                    nv.log('New State:', JSON.stringify(e));
                 });
                 return chartModel;
             });
@@ -145,7 +145,7 @@ define([
             if (values.length >= 25) {
                 start = values[values.length - 25];
                 end = values[values.length - 1];
-                chartOptions['brushExtent'] = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
+                chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), chUtils.getViewFinderPoint(end.x)];
             }
         }
 

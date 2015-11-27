@@ -61,21 +61,21 @@ define([
         // Public Variables with Default Settings
         //------------------------------------------------------------
 
-        var lines = nvd3v181.models.line()
-            , lines2 = nvd3v181.models.line()
-            , xAxis = nvd3v181.models.axis()
-            , yAxis = nvd3v181.models.axis()
-            , x2Axis = nvd3v181.models.axis()
-            , y2Axis = nvd3v181.models.axis()
-            , legend = nvd3v181.models.legend()
+        var lines = nv.models.line()
+            , lines2 = nv.models.line()
+            , xAxis = nv.models.axis()
+            , yAxis = nv.models.axis()
+            , x2Axis = nv.models.axis()
+            , y2Axis = nv.models.axis()
+            , legend = nv.models.legend()
             , brush = d3.svg.brush()
-            , tooltip = nvd3v181.models.tooltip()
-            , interactiveLayer = nvd3v181.interactiveGuideline()
+            , tooltip = nv.models.tooltip()
+            , interactiveLayer = nv.interactiveGuideline()
             ;
 
         var margin = chartOptions.margin
             , margin2 = chartOptions.margin2
-            , color = nvd3v181.utils.defaultColor()
+            , color = nv.utils.defaultColor()
             , width = null
             , height = null
             , height2 = 90
@@ -90,7 +90,7 @@ define([
             , noData = null
             , dispatch = d3.dispatch('brush', 'stateChange', 'changeState')
             , transitionDuration = 250
-            , state = nvd3v181.utils.state()
+            , state = nv.utils.state()
             , defaultState = null
             ;
 
@@ -138,9 +138,9 @@ define([
                     requestState = chartDataObj.requestState,
                     yDataKey = contrail.checkIfExist(chartOptions.chartAxesOptionKey) ? chartOptions.chartAxesOptionKey : 'y';
 
-                nvd3v181.utils.initSVG(container);
-                var availableWidth = nvd3v181.utils.availableWidth(width, container, margin),
-                    availableHeight1 = nvd3v181.utils.availableHeight(height, container, margin) - height2,
+                nv.utils.initSVG(container);
+                var availableWidth = nv.utils.availableWidth(width, container, margin),
+                    availableHeight1 = nv.utils.availableHeight(height, container, margin) - height2,
                     availableHeight2 = height2 - margin2.top - margin2.bottom;
 
                 chartModel.update = function () {
@@ -205,7 +205,7 @@ define([
 
                     if (margin.top != legend.height()) {
                         margin.top = legend.height();
-                        availableHeight1 = nvd3v181.utils.availableHeight(height, container, margin) - height2;
+                        availableHeight1 = nv.utils.availableHeight(height, container, margin) - height2;
                     }
 
                     g.select('.nv-legendWrap')
@@ -273,12 +273,12 @@ define([
                 // Setup Main (Focus) Axes
                 xAxis
                     .scale(xScale)
-                    ._ticks(nvd3v181.utils.calcTicksX(availableWidth / 100, data))
+                    ._ticks(nv.utils.calcTicksX(availableWidth / 100, data))
                     .tickSize(-availableHeight1, 0);
 
                 yAxis
                     .scale(yScale)
-                    ._ticks(nvd3v181.utils.calcTicksY(availableHeight1 / 40, data))
+                    ._ticks(nv.utils.calcTicksY(availableHeight1 / 40, data))
                     .tickSize(-availableWidth, 0);
 
                 g.select('.nv-focus .nv-x.nv-axis')
@@ -322,7 +322,7 @@ define([
                 // Setup Secondary (Context) Axes
                 x2Axis
                     .scale(x2)
-                    ._ticks(nvd3v181.utils.calcTicksX(availableWidth / 100, data))
+                    ._ticks(nv.utils.calcTicksX(availableWidth / 100, data))
                     .tickSize(-availableHeight2, 0);
 
                 g.select('.nv-context .nv-x.nv-axis')
@@ -333,7 +333,7 @@ define([
                 if(focusShowAxisY) {
                     y2Axis
                         .scale(y2)
-                        ._ticks(nvd3v181.utils.calcTicksY(availableHeight2 / 36, data))
+                        ._ticks(nv.utils.calcTicksY(availableHeight2 / 36, data))
                         .tickSize(-availableWidth, 0);
 
                     d3.transition(g.select('.nv-context .nv-y.nv-axis'))
@@ -371,7 +371,7 @@ define([
                                     return lines.x()(d, i) >= extent[0] && lines.x()(d, i) <= extent[1];
                                 });
 
-                                pointIndex = nvd3v181.interactiveBisect(currentValues, e.pointXValue, lines.x());
+                                pointIndex = nv.interactiveBisect(currentValues, e.pointXValue, lines.x());
                                 var point = currentValues[pointIndex];
                                 var pointYValue = chartModel.y()(point, pointIndex);
                                 if (pointYValue != null) {
@@ -391,7 +391,7 @@ define([
                             var yValue = chartModel.yScale().invert(e.mouseY);
                             var domainExtent = Math.abs(chartModel.yScale().domain()[0] - chartModel.yScale().domain()[1]);
                             var threshold = 0.03 * domainExtent;
-                            var indexToHighlight = nvd3v181.nearestValueIndex(allData.map(function (d) {
+                            var indexToHighlight = nv.nearestValueIndex(allData.map(function (d) {
                                 return d.value
                             }), yValue, threshold);
                             if (indexToHighlight !== null)
@@ -539,7 +539,7 @@ define([
         chartModel.interactiveLayer = interactiveLayer;
         chartModel.tooltip = tooltip;
 
-        chartModel.options = nvd3v181.utils.optionsFunc.bind(chartModel);
+        chartModel.options = nv.utils.optionsFunc.bind(chartModel);
 
         chartModel._options = Object.create({}, {
             // simple options, just get/set the necessary values
@@ -600,7 +600,7 @@ define([
                     return tooltip.enabled();
                 }, set: function (_) {
                     // deprecated after 1.7.1
-                    nvd3v181.deprecated('tooltips', 'use chart.tooltip.enabled() instead');
+                    nv.deprecated('tooltips', 'use chart.tooltip.enabled() instead');
                     tooltip.enabled(!!_);
                 }
             },
@@ -609,7 +609,7 @@ define([
                     return tooltip.contentGenerator();
                 }, set: function (_) {
                     // deprecated after 1.7.1
-                    nvd3v181.deprecated('tooltipContent', 'use chart.tooltip.contentGenerator() instead');
+                    nv.deprecated('tooltipContent', 'use chart.tooltip.contentGenerator() instead');
                     tooltip.contentGenerator(_);
                 }
             },
@@ -629,7 +629,7 @@ define([
                 get: function () {
                     return color;
                 }, set: function (_) {
-                    color = nvd3v181.utils.getColor(_);
+                    color = nv.utils.getColor(_);
                     legend.color(color);
                     // line color is handled above?
                 }
@@ -698,8 +698,8 @@ define([
             }
         });
 
-        nvd3v181.utils.inheritOptions(chartModel, lines);
-        nvd3v181.utils.initOptions(chartModel);
+        nv.utils.inheritOptions(chartModel, lines);
+        nv.utils.initOptions(chartModel);
 
         //============================================================
         // Customize NVD3 Chart: Following code has been added by Juniper to
@@ -709,7 +709,7 @@ define([
         chartModel.brushExtent(chartOptions['brushExtent'])
                   .useInteractiveGuideline(true);
 
-        chartModel.interpolate(cowu.interpolateSankey);
+        chartModel.interpolate(chUtils.interpolateSankey);
 
         chartModel.xAxis.tickFormat(function (d) {
             return d3.time.format('%H:%M:%S')(new Date(d));

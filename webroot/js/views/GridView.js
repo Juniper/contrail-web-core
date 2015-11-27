@@ -1311,7 +1311,7 @@ define([
             };
 
             function emptyGridHandler() {
-                if (!gridOptions.lazyLoading && gridOptions.gridOptions.defaultDataStatusMessage && gridContainer.data('contrailGrid')) {
+                if (!gridOptions.lazyLoading && gridOptions.defaultDataStatusMessage && gridContainer.data('contrailGrid')) {
                     gridContainer.data('contrailGrid').showGridMessage('empty');
                     if (gridOptions.checkboxSelectable != false) {
                         gridContainer.find('.headerRowCheckbox').attr('disabled', true);

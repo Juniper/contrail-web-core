@@ -288,7 +288,7 @@ define(['underscore'], function (_) {
         function add2SiteMap(item) {
             var searchStrings = item.searchStrings, hash = item.hash, queryParams = item.queryParams;
             if (hash != null && searchStrings != null) {
-                var searchStrArray = splitString2Array(searchStrings, ',');
+                var searchStrArray = cowu.splitString2Array(searchStrings, ',');
                 siteMap[hash] = {searchStrings: searchStrArray, queryParams: queryParams};
                 for (var j = 0; j < searchStrArray.length; j++) {
                     siteMapSearchStrings.push(searchStrArray[j]);

@@ -12,38 +12,12 @@ function getCoreAppPaths(coreBaseDir) {
     return {
         'core-basedir'                : coreBaseDir,
         'jquery'                      : coreBaseDir + '/assets/jquery/js/jquery-1.8.3.min',
-        'jquery.xml2json'             : coreBaseDir + '/assets/jquery/js/jquery.xml2json',
-        'jquery.ba-bbq'               : coreBaseDir + '/assets/jquery/js/jquery.ba-bbq.min',
-        'jquery.timer'                : coreBaseDir + '/assets/jquery/js/jquery.timer',
-        'jquery-ui'                   : coreBaseDir + '/assets/jquery-ui/js/jquery-ui',
-        'jquery.ui.touch-punch'       : coreBaseDir + '/assets/jquery/js/jquery.ui.touch-punch.min',
         'bootstrap'                   : coreBaseDir + '/assets/bootstrap/js/bootstrap.min',
-        'd3'                          : coreBaseDir + '/assets/d3-v3.5.6/js/d3',
-        'nv.d3'                       : coreBaseDir + '/assets/nvd3/js/nv.d3',
-        'nvd3v181'                    : coreBaseDir + '/assets/nvd3-v1.8.1/js/nv.d3',
-        'crossfilter'                 : coreBaseDir + '/assets/crossfilter/js/crossfilter.min',
-        'jsonpath'                    : coreBaseDir + '/assets/jsonpath/js/jsonpath-0.8.0',
+        'd3'                          : coreBaseDir + '/assets/d3-v3.5.6/js/d3.min',
+        'nvd3'                        : coreBaseDir + '/assets/nvd3-v1.8.1/js/nv.d3.min',
         'xdate'                       : coreBaseDir + '/assets/xdate/js/xdate',
-        'jquery.validate'             : coreBaseDir + '/assets/jquery/js/jquery.validate',
         'handlebars'                  : coreBaseDir + '/assets/handlebars/handlebars-v1.3.0',
         'knockout'                    : coreBaseDir + '/assets/knockout/knockout-3.0.0',
-        'select2'                     : coreBaseDir + '/assets/select2/js/select2.min',
-        'jquery.event.drag'           : coreBaseDir + '/assets/slickgrid/js/jquery.event.drag-2.2',
-        'jquery.json'                 : coreBaseDir + '/assets/slickgrid/js/jquery.json-2.3.min',
-        'jquery.droppick'             : coreBaseDir + '/assets/slickgrid/js/jquery.dropkick-1.0.0',
-        'slick.core'                  : coreBaseDir + '/assets/slickgrid/js/slick.core',
-        'slick.grid'                  : coreBaseDir + '/assets/slickgrid/js/slick.grid',
-        'slick.dataview'              : coreBaseDir + '/assets/slickgrid/js/slick.dataview',
-        'slick.enhancementpager'      : coreBaseDir + '/assets/slickgrid/js/slick.enhancementpager',
-        'jquery.datetimepicker'       : coreBaseDir + '/assets/datetimepicker/js/jquery.datetimepicker',
-        'moment'                      : coreBaseDir + '/assets/moment/moment.min',
-        'sprintf'                     : coreBaseDir + '/assets/ip/sprintf',
-        'ipv6'                        : coreBaseDir + '/assets/ip/ipv6',
-        'jsbn-combined'               : coreBaseDir + '/assets/ip/jsbn-combined',
-        'jquery.multiselect'          : coreBaseDir + '/assets/jquery-ui/js/jquery.multiselect',
-        'jquery.multiselect.filter'   : coreBaseDir + '/assets/jquery-ui/js/jquery.multiselect.filter',
-        'jquery.steps.min'            : coreBaseDir + '/assets/jquery/js/jquery.steps.min',
-        'jquery.tristate'             : coreBaseDir + '/assets/jquery/js/jquery.tristate',
         'joint'                       : coreBaseDir + '/assets/joint/js/joint.clean',
         'geometry'                    : coreBaseDir + '/assets/joint/js/geometry',
         'vectorizer'                  : coreBaseDir + '/assets/joint/js/vectorizer',
@@ -51,35 +25,26 @@ function getCoreAppPaths(coreBaseDir) {
         'dagre'                       : coreBaseDir + '/assets/joint/js/dagre',
         'bezier'                      : coreBaseDir + '/assets/bezierjs/bezier',
         'lodash'                      : coreBaseDir + '/assets/joint/js/lodash',
-        'jquery.panzoom'              : coreBaseDir + '/assets/jquery/js/jquery.panzoom.min',
-        'jquery.ui.position'          : coreBaseDir + '/assets/jquery-contextMenu/js/jquery.ui.position',
-        'jquery.contextMenu'          : coreBaseDir + '/assets/jquery-contextMenu/js/jquery.contextMenu',
-        'slick.checkboxselectcolumn'  : coreBaseDir + '/assets/slickgrid/js/slick.checkboxselectcolumn',
-        'slick.rowselectionmodel'     : coreBaseDir + '/assets/slickgrid/js/slick.rowselectionmodel',
         'backbone'                    : coreBaseDir + '/assets/backbone/backbone-min',
         'knockback'                   : coreBaseDir + '/assets/backbone/knockback.min',
         'validation'                  : coreBaseDir + '/assets/backbone/backbone-validation-amd',
         'text'                        : coreBaseDir + '/assets/requirejs/text',
         'underscore'                  : coreBaseDir + '/assets/underscore/underscore-min',
 
-        'select2-utils'               : coreBaseDir + '/js/select2-utils',
         'contrail-common'             : coreBaseDir + '/js/contrail-common',
         'handlebars-utils'            : coreBaseDir + '/js/handlebars-utils',
-        'slickgrid-utils'             : coreBaseDir + '/js/slickgrid-utils',
         'contrail-elements'           : coreBaseDir + '/js/contrail-elements',
-        'topology_api'                : coreBaseDir + '/js/topology_api',
-        'chart-utils'                 : coreBaseDir + '/js/chart-utils',
-        'web-utils'                   : coreBaseDir + '/js/web-utils',
         'contrail-layout'             : coreBaseDir + '/js/contrail-layout',
-        'config_global'               : coreBaseDir + '/js/config_global',
         'protocol'                    : coreBaseDir + '/js/protocol',
-        'qe-utils'                    : coreBaseDir + '/js/qe-utils',
-        'd3-utils'                    : coreBaseDir + '/js/d3-utils',
+        'joint.contrail'              : coreBaseDir + '/js/joint.contrail',
+        'core-utils'                  : coreBaseDir + '/js/common/core.utils',
+
+        // TODO: Following files should not be required. We need to removew these files from inital loading
+        'slickgrid-utils'             : coreBaseDir + '/js/slickgrid-utils',
         'analyzer-utils'              : coreBaseDir + '/js/analyzer-utils',
         'dashboard-utils'             : coreBaseDir + '/js/dashboard-utils',
-        'joint.contrail'              : coreBaseDir + '/js/joint.contrail',
-        'uuid-js'                     : coreBaseDir + '/js/uuid',
-        'core-utils'                  : coreBaseDir + '/js/common/core.utils',
+        'web-utils'                   : coreBaseDir + '/js/web-utils',
+        //END TODO
 
         'core-constants'              : coreBaseDir + '/js/common/core.constants',
         'core-formatters'             : coreBaseDir + '/js/common/core.formatters',
@@ -88,7 +53,6 @@ function getCoreAppPaths(coreBaseDir) {
         'core-cache'                  : coreBaseDir + '/js/common/core.cache',
         'core-views-default-config'   : coreBaseDir + '/js/common/core.views.default.config',
         'core-init'                   : coreBaseDir + '/js/common/core.init',
-        'nvd3-plugin'                 : coreBaseDir + '/js/common/nvd3.plugin',
         'contrail-unified-1'          : coreBaseDir + '/js/common/contrail.unified.1',
         'contrail-unified-2'          : coreBaseDir + '/js/common/contrail.unified.2',
 
@@ -113,6 +77,7 @@ function getCoreAppPaths(coreBaseDir) {
         'mon-infra-node-list-model'   : coreBaseDir + '/js/models/NodeListModel',
         'mon-infra-log-list-model'    : coreBaseDir + '/js/models/LogListModel',
 
+        // TODO: We need to discuss a criteria on which we should add definations to this file.
         'infoboxes'                   : coreBaseDir + '/js/views/InfoboxesView',
         'barchart-cf'                 : coreBaseDir + '/js/views/BarChartView',
         'mon-infra-alert-list-view'   : coreBaseDir + '/js/views/AlertListView',
@@ -130,18 +95,6 @@ var coreAppMap = {
 };
 
 var coreAppShim =  {
-        'jquery.tristate': {
-            deps: ['jquery-ui']
-        },
-        'jquery.multiselect': {
-            deps: ['jquery-ui']
-        },
-        'jquery.multiselect.filter': {
-            deps: ['jquery.multiselect']
-        },
-        'jquery.steps.min': {
-            deps: ['jquery']
-        },
         'bootstrap': {
             deps: ['jquery']
         },
@@ -151,104 +104,26 @@ var coreAppShim =  {
         'nv.d3': {
             deps: ['d3']
         },
-        'nvd3v181': {
+        'nvd3': {
             deps: ['d3']
-        },
-        'crossfilter': {
-            deps: ['d3']
-        },
-        'jquery.xml2json': {
-            deps: ['jquery']
-        },
-        'jquery.ba-bbq': {
-            deps: ['jquery']
-        },
-        'jquery.timer': {
-            deps: ['jquery']
-        },
-        'jquery-ui': {
-            deps: ['jquery']
-        },
-        'jquery.ui.touch-punch': {
-            deps: ['jquery']
-        },
-        'jquery.validate': {
-            deps: ['jquery']
-        },
-        'select2': {
-            deps: ['jquery']
-        },
-        'jquery.event.drag': {
-            deps: ['jquery']
-        },
-        'jquery.json': {
-            deps: ['jquery']
-        },
-        'jquery.droppick': {
-            deps: ['jquery']
-        },
-        'jquery.datetimepicker': {
-            deps: ['jquery']
-        },
-        'slick.core': {
-            deps: ['jquery']
-        },
-        'slick.grid': {
-            deps: ['slick.core', 'jquery.event.drag']
         },
         'contrail-common': {
             deps: ['jquery']
         },
         'contrail-layout': {
-            deps: ['jquery.ba-bbq', 'web-utils', 'contrail-elements']
-        },
-        'slick.enhancementpager': {
-            deps: ['jquery']
+            deps: ['contrail-unified-1', 'web-utils', 'contrail-elements']
         },
         'slickgrid-utils': {
-            deps: ['slick.dataview']
-        },
-        'slick.dataview': {
-            deps: ['slick.grid']
+            deps: ['contrail-unified-2']
         },
         'contrail-elements': {
-            deps: ['jquery-ui']
-        },
-        'chart-utils': {
-            deps: ['d3']
+            deps: ['contrail-unified-1']
         },
         'web-utils': {
             deps: ['knockout', 'xdate']
         },
-        'qe-utils': {
-            deps: ['jquery']
-        },
         'handlebars-utils': {
             deps: ['jquery', 'handlebars', 'contrail-unified-1']
-        },
-        'nvd3-plugin': {
-            deps: ['nv.d3', 'd3']
-        },
-        'd3-utils': {
-            deps: ['d3']
-        },
-        'ipv6': {
-            deps: ['sprintf', 'jsbn-combined']
-        },
-        'jquery.panzoom': {
-            deps: ['jquery']
-        },
-        'jquery.ui.position': {
-            deps: ['jquery']
-        },
-        'jquery.contextMenu': {
-            deps: ['jquery']
-        },
-        'slick.checkboxselectcolumn': {
-            deps: ['slick.dataview']
-        },
-        'slick.rowselectionmodel': {
-            deps: ['slick.dataview']
         },
         'backbone': {
             deps: ['lodash', 'jquery'],
@@ -293,16 +168,16 @@ var coreAppShim =  {
             deps: ['knockback']
         },
         'contrail-view-model': {
-            deps: ['jquery','slick.core']
+            deps: ['jquery']
         },
         'contrail-graph-model': {
-            deps: ['joint.contrail', 'joint.layout.DirectedGraph', 'slick.core']
+            deps: ['joint.contrail', 'joint.layout.DirectedGraph']
         },
         'graph-view': {
             deps: ['joint.contrail']
         },
         'contrail-list-model': {
-            deps: ['contrail-remote-data-handler', 'slick.core']
+            deps: ['contrail-remote-data-handler']
         },
         'contrail-remote-data-handler': {
             deps: ['jquery']

@@ -18,11 +18,16 @@ var depArray = [
 
     'text!/base/contrail-web-core/webroot/templates/core.common.tmpl',
 
+    'core-basedir/js/common/qe.utils',
+    'core-basedir/js/common/qe.model.config',
+    'core-basedir/js/common/qe.grid.config',
+    'core-basedir/js/common/qe.parsers',
+    'core-basedir/js/common/chart.utils',
+
     'co-test-utils', 'co-test-constants',
 
     'layout-handler', 'web-utils', 'handlebars-utils', 'slickgrid-utils', 'contrail-elements',
-    'topology_api', 'chart-utils', 'qe-utils', 'nvd3-plugin', 'd3-utils', 'analyzer-utils',
-    'dashboard-utils', 'joint.contrail', 'text', 'contrail-unified-1', 'contrail-unified-2', 'nvd3v181'
+    'analyzer-utils', 'dashboard-utils', 'joint.contrail', 'text', 'contrail-unified-1', 'contrail-unified-2', 'nvd3'
 
 ];
 
@@ -82,6 +87,7 @@ function testAppInit(testAppConfig) {
 
         require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages,
                                     CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, contrailCommon, CoreCommonTmpl,
+                                    QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils,
                                     CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
@@ -89,10 +95,19 @@ function testAppInit(testAppConfig) {
             cowm = new CoreMessages();
             covdc = new CoreViewsDefaultConfig();
             cowl = new CoreLabels();
+            kbValidation = validation;
             cowch = new Cache();
+
+            qewu = new QEUtils();
+            qewmc = new QEModelConfig();
+            qewgc = new QEGridConfig();
+            qewp = new QEParsers();
+
+            chUtils = new ChartUtils();
+
             cotu = CoreTestUtils;
             cotc = CoreTestConstants;
-            kbValidation = validation;
+
             initBackboneValidation(_);
             initCustomKOBindings(Knockout);
             initDomEvents();
@@ -196,13 +211,24 @@ function testLibApiAppInit(testAppConfig) {
 
         require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages,
                                     CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, contrailCommon, CoreCommonTmpl,
+                                    QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils,
                                     CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
             cowf = new CoreFormatters();
             cowm = new CoreMessages();
+            covdc = new CoreViewsDefaultConfig();
             cowl = new CoreLabels();
+            kbValidation = validation;
             cowch = new Cache();
+
+            qewu = new QEUtils();
+            qewmc = new QEModelConfig();
+            qewgc = new QEGridConfig();
+            qewp = new QEParsers();
+
+            chUtils = new ChartUtils();
+
             cotu = CoreTestUtils;
             cotc = CoreTestConstants;
 
