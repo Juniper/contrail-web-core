@@ -46,8 +46,8 @@ define([
 
                 var radius = Math.min(chartOptions.width, chartOptions.height) / 2;
 
-                var outerTooltip = nvd3v181.models.tooltip(),
-                    innerTooltip = nvd3v181.models.tooltip();
+                var outerTooltip = nv.models.tooltip(),
+                    innerTooltip = nv.models.tooltip();
 
                 var outerArc = d3.svg.arc()
                     .outerRadius(radius)

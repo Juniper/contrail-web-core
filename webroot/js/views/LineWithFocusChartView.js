@@ -79,7 +79,7 @@ define([
             }
 
             nv.utils.windowResize(function () {
-                updateChartOnResize(selector, chartModel);
+                chUtils.updateChartOnResize(selector, chartModel);
             });
             //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
             if (chartOptions['deferredObj'] != null)
@@ -147,12 +147,12 @@ define([
             end = values[values.length - 1];
             if (values.length >= 20) {
                 start = values[values.length - 20];
-                chartOptions['brushExtent'] = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
+                chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), chUtils.getViewFinderPoint(end.x)];
             } else if (chartOptions['defaultSelRange'] != null && 
                   values.length >= parseInt(chartOptions['defaultSelRange'])) {
                 var selectionRange = parseInt(chartOptions['defaultSelRange']);
                 start = values[values.length - selectionRange];
-                chartOptions['brushExtent'] = [getViewFinderPoint(start.x), getViewFinderPoint(end.x)];
+                chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), chUtils.getViewFinderPoint(end.x)];
             }
         }
 

@@ -135,7 +135,7 @@ define([
             }
 
             nv.utils.windowResize(function () {
-                updateChartOnResize(selector, chartModel);
+                chUtils.updateChartOnResize(selector, chartModel);
             });
             //Seems like in d3 chart renders with some delay so this deferred object helps in that situation, which resolves once the chart is rendered
             if (chartOptions['deferredObj'] != null) {

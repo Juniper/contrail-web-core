@@ -5,6 +5,9 @@
 define([
     'underscore'
 ], function (_) {
+    var serializer = new XMLSerializer(),
+        domParser = new DOMParser();
+
     var QEUtils = function () {
         var self = this;
 
@@ -395,18 +398,6 @@ define([
             }
             return logValue;
         };
-
-        self.handleNull4Grid = function(value, placeHolder) {
-            if(value == 0) {
-                return 0;
-            } else if (value != null && value != '') {
-                return value;
-            } else if (placeHolder != null) {
-                return placeHolder;
-            } else {
-                return '';
-            }
-        };
     };
 
     function filterXML(xmlString, is4SystemLogs) {
@@ -427,6 +418,18 @@ define([
         });
         return xmlDoc;
     }
+
+    function parseXML(xmlString) {
+        if (window.DOMParser) {
+            xmlDoc = domParser.parseFromString(xmlString, "text/xml");
+        } else { // Internet Explorer
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(xmlString);
+        }
+        return xmlDoc;
+    };
+
 
     function formatStruct(xmlNode) {
         $(xmlNode).find("list").each(function () {
@@ -576,29 +579,29 @@ define([
             // make filters empty string to prevent parse error when opened first time
             filters = "";
         }
-        var filtersArray = splitString2Array(filters, "&"),
+        var filtersArray = cowu.splitString2Array(filters, "&"),
             filter, filterBy, limitBy,
             parsedFilterArr = [], parsedLimit, filter_json_obj = {};
 
         for (var i = 0; i < filtersArray.length; i++) {
             filter = filtersArray[i];
             if(filter.indexOf('filter:') != -1) {
-                filterBy = splitString2Array(filter, ":")[1];
+                filterBy = cowu.splitString2Array(filter, ":")[1];
                 if(filterBy.length > 0) {
                     filter_json_obj["filter"] = parseFilterBy(filterBy);
                 }
             } else if (filter.indexOf('limit:') != -1) {
-                limitBy = splitString2Array(filter, ":")[1];
+                limitBy = cowu.splitString2Array(filter, ":")[1];
                 if(limitBy.length > 0) {
                     filter_json_obj["limit"] = parseLimitBy(limitBy);
                 }
             } else if (filter.indexOf('sort_fields:') != -1) {
-                sort_fields = splitString2Array(filter, ":")[1];
+                sort_fields = cowu.splitString2Array(filter, ":")[1];
                 if(sort_fields.length > 0) {
                     filter_json_obj["sort_fields"] = parseSortFields(sort_fields);
                 }
             } else if (filter.indexOf('sort:') != -1) {
-                sortOrder = splitString2Array(filter, ":")[1];
+                sortOrder = cowu.splitString2Array(filter, ":")[1];
                 if(sortOrder.length > 0) {
                     filter_json_obj["sort_order"] = sortOrder;
                 }
@@ -635,7 +638,7 @@ define([
 
     function parseFilterObj(filter, operator) {
         var filterObj, filterArray;
-        filterArray = splitString2Array(filter, operator);
+        filterArray = cowu.splitString2Array(filter, operator);
         if (filterArray.length > 1 && filterArray[1] != '') {
             filterObj = {"name": "", value: "", op: ""};
             filterObj.name = filterArray[0];
@@ -718,7 +721,7 @@ define([
             whereANDClause.value = fieldValue.replace('*', '');
             whereANDClause.op = 7;
         } else if (validRangeOPRFields.indexOf(fieldName) != -1 && fieldValue.indexOf('-') != -1) {
-            splitFieldValues = splitString2Array(fieldValue, '-');
+            splitFieldValues = cowu.splitString2Array(fieldValue, '-');
             whereANDClause.value = splitFieldValues[0];
             whereANDClause['value2'] = splitFieldValues[1];
             whereANDClause.op = 3;

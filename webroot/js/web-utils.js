@@ -1114,7 +1114,7 @@ function ajaxDefErrorHandler(xhr) {
 
 function renderSparkLines(cellNode,row,dataContext,colDef) {
     $(cellNode).find('.gridSparkline').each(function() {
-            drawSparkLine4Selector(this, 'blue-grid-sparkline', dataContext['histCpuArr']);
+            chUtils.drawSparkLine4Selector(this, 'blue-grid-sparkline', dataContext['histCpuArr']);
         });
 }
 
