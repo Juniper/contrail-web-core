@@ -1251,6 +1251,10 @@ function constructSelect2(self, defaultOption, args) {
                 if(option.dataSource.timeout) {
                     ajaxConfig['timeout'] = option.dataSource.timeout;
                 }
+                if(option.dataSource.requestType &&  (option.dataSource.requestType).toLowerCase() == 'post') {
+                    ajaxConfig['type'] = 'post';
+                    ajaxConfig['data'] = option.dataSource.postData;
+                }
                 $.ajax(ajaxConfig);
 
             } else if(option.dataSource.type == "local"){
