@@ -154,7 +154,9 @@ define([
                                                         dataBindOptionList: 'getValueOptionList',
                                                         width: 140,
                                                         elementConfig: {
-                                                            placeholder: 'Select Value'
+                                                            placeholder: 'Select Value',
+                                                            dataTextField : "text",
+                                                            dataValueField : "id",
                                                         }
                                                     }
                                                 }
