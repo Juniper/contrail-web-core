@@ -152,7 +152,14 @@ define([
                 if (gridOptions.autoHeight == false) {
                     gridContainer.find('.grid-body').height(gridOptions.gridHeight);
                 }
-                grid = new Slick.Grid(gridContainer.find('.grid-body'), dataObject, gridColumns, gridOptions);
+                var visibleColumns = [];
+                $.each(gridColumns, function(key, column) {
+                    if ((contrail.checkIfExist(column.hide) && !(column.hide)) ||
+                        !contrail.checkIfExist(column.hide)) {
+                        visibleColumns.push(column);
+                    }
+                });
+                grid = new Slick.Grid(gridContainer.find('.grid-body'), dataObject, visibleColumns, gridOptions);
                 grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
                 grid.registerPlugin(checkboxSelector);
                 gridContainer.append('<div class="grid-load-status hide"></div>');
@@ -1285,6 +1292,19 @@ define([
 //            	gridContainer.find('.input-multiselectbox').show();
 //   	        	gridContainer.find('.link-multiselectbox').hide();
 //   	        }
+
+                /*
+                 for column picker we don't need to display selected items on the grid header.
+                 Quick Fix: will find the id and set the css.
+                 */
+                if (actionConfig.elementConfig.elementId == "columnPicker") {
+                    if ($(".input-multiselectbox #columnPicker button span:not(.ui-icon)").is(":visible")) {
+                        $(".input-multiselectbox #columnPicker button span:not(.ui-icon)").css({"display":"none"});
+                        $(".input-multiselectbox #columnPicker button").css({"width":"40"});
+                    }
+
+
+                }
             };
 
             function addGridRowActionDroplist(actionConfig, gridContainer, rowIndex, targetElement) {
