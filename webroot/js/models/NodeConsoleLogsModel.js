@@ -16,6 +16,8 @@ define([
             var defaultConfig = qewmc.getQueryModelConfig({
                 time_range: -1,
                 select: "MessageTS,Type,Level,Category,Xmlmessage",
+                hostname:"",
+                node_type: "",
                 table_name: cowc.MESSAGE_TABLE,
                 table_type: cowc.QE_LOG_TABLE_TYPE,
                 query_prefix: cowc.CONSOLE_LOGS_PREFIX,
@@ -23,7 +25,8 @@ define([
                 log_type: "",
                 log_level: "5",
                 limit: "50",
-                keywords: ""
+                keywords: "",
+                where:""
             });
 
             modelData = $.extend(true, {}, defaultConfig, modelData);
