@@ -72,24 +72,30 @@ define([
                     tabKey = self.tabsIdMap[tabPanelId];
 
                 if(contrail.checkIfExist(self.tabs[tabKey].tabConfig) && self.tabs[tabKey].tabConfig.removable === true) {
-                    $("#" + tabPanelId).remove();
-                    $('#' + elId).data('contrailTabs').refresh();
-
-                    if (contrail.checkIfExist(self.tabs[tabKey].tabConfig) && contrail.checkIfFunction(self.tabs[tabKey].tabConfig.onRemoveTab)) {
-                        self.tabs[tabKey].tabConfig.onRemoveTab();
-                    }
-
-                    $.each(self.tabsIdMap, function (tabsIdKey, tabsIdValue) {
-                        if (tabsIdValue > tabKey) {
-                            tabsIdValue -= 1;
-                        }
-                    });
-
-                    delete self.tabsIdMap[tabPanelId];
-                    self.tabs.splice(tabKey, 1);
-                    self.tabRendered.splice(tabKey, 1);
+                    self.removeTab(tabKey);
                 }
             });
+        },
+
+        removeTab: function (tabIndex) {
+            var self = this;
+            if($.isArray(tabIndex)) {
+                for (var i = 0; i < tabIndex.length; i++) {
+                    self.removeTab(tabIndex[i]);
+                }
+                return;
+            }
+            var elementId = self.attributes.elementId;
+            var tabPanelId = $("#" + elementId).find('li:eq(' + tabIndex + ')').attr( "aria-controls");
+            $("#" + elementId).find('li:eq(' + tabIndex + ')').remove();
+            $("#" + tabPanelId).remove();
+            $('#' + elementId).data('contrailTabs').refresh();
+            if (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) && contrail.checkIfFunction(self.tabs[tabIndex].tabConfig.onRemoveTab)) {
+                self.tabs[tabIndex].tabConfig.onRemoveTab();
+            }
+            delete self.tabsIdMap[tabPanelId];
+            self.tabs.splice(tabIndex, 1);
+            self.tabRendered.splice(tabIndex, 1);
         },
 
         renderTab: function(tabObj) {
@@ -114,8 +120,8 @@ define([
 
             $.each(tabViewConfigs, function(tabKey, tabValue) {
                 self.tabs.push(tabValue);
-                self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'] = tabLength + tabKey;
-                if (contrail.checkIfKeyExistInObject(true, 'tabValue.tabConfig', 'renderOnActivate') &&  tabValue.tabConfig.renderOnActivate === true) {
+                self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'] = tabLength ;
+                if (contrail.checkIfKeyExistInObject(true, tabValue, 'tabConfig.renderOnActivate') &&  tabValue.tabConfig.renderOnActivate === true) {
                     self.tabRendered.push(false);
                 } else {
                     self.renderTab(tabValue);
