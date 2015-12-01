@@ -232,6 +232,15 @@ define([
             {'id': -1, 'text': 'Custom'}
         ];
 
+        this.CONSOLE_LOGS_LIMITS =  [
+            {id: "All", text: "All" },
+            {id: "10", text: "10 Messages" },
+            {id: "50", text: "50 Messages" },
+            {id: "100", text: "100 Messages" },
+            {id: "200", text: "200 Messages" },
+            {id: "500", text: "500 Messages" },
+        ];
+
         this.DIRECTION_DROPDOWN_VALUES = [
             {'id': '1', 'text': 'INGRESS'},
             {'id': '0', 'text': 'EGRESS'}
