@@ -61,23 +61,8 @@ define([
                         if(!contrail.checkIfExist(dc.queryReqObj.engQueryStr)) {
                             return "";
                         }
-                        var engQueryObj = JSON.parse(dc.queryReqObj.engQueryStr),
-                            engQueryStr = '';
 
-                        $.each(engQueryObj, function(key, val){
-                            if(key == 'select' && (!contrail.checkIfExist(val) || val == "")){
-                                engQueryStr += '<div class="row-fluid"><span class="bolder">' + key.toUpperCase() + '</span> &nbsp;*</div>';
-                            } else if((key == 'where' || key == 'filter') && (!contrail.checkIfExist(val) || val == "")){
-                                engQueryStr += '';
-                            } else {
-                                var formattedKey = key;
-                                if(key == 'from_time' || key == 'to_time'){
-                                    formattedKey = key.split('_').join(' ');
-                                }
-                                engQueryStr += '<div class="row-fluid word-break-normal"><span class="bolder">' + formattedKey.toUpperCase() + '</span> &nbsp;' + val + '</div>';
-                            }
-                        });
-                        return engQueryStr;
+                        return qewu.formatEngQuery(dc.queryReqObj.engQueryStr);
                     },
                     sortable:false,
                     exportConfig: {
@@ -109,7 +94,7 @@ define([
             ];
         };
 
-        this.getOnClickFlowRecord = function(parentView, queryFormModel) {
+        this.getOnClickFlowRecord = function(parentView, queryFormAttributes) {
             return function (e, selRowDataItem) {
                 var elementId = parentView.$el,
                     flowRecordDetailsConfig = {
@@ -119,7 +104,7 @@ define([
                         app: cowc.APP_CONTRAIL_CONTROLLER,
                         viewConfig: {
                             className: 'modal-980',
-                            queryFormAttributes: queryFormModel.getFormModelAttributes(),
+                            queryFormAttributes: queryFormAttributes,
                             selectedFlowRecord: selRowDataItem
                         }
                     };

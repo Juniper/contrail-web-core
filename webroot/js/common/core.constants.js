@@ -176,6 +176,7 @@ define([
         this.QE_LOG_TABLE_TYPE = "LOG";
         this.QE_HASH_ELEMENT_PREFIX = "#qe-";
         this.QE_FORM_SUFFIX = "-form";
+        this.QE_TEXT_SUFFIX = "-text-";
         this.QE_RESULTS_SUFFIX = "-results";
         this.QE_QUEUE_GRID_SUFFIX = "-queue-grid";
         this.QE_QUEUE_RESULT_SUFFIX = "-queue-result";
@@ -217,6 +218,9 @@ define([
         this.CONSOLE_LOGS_PREFIX = "cl";
 
         this.DEFAULT_QUERY_PREFIX = 'query';
+
+        this.QUERY_TYPE_MODIFY = 'modify';
+        this.QUERY_TYPE_RERUN = 'rerun';
 
         this.FLOW_SERIES_TABLE = "FlowSeriesTable";
         this.FLOW_RECORD_TABLE = "FlowRecordTable";
@@ -264,6 +268,13 @@ define([
 
         this.URL_TABLES = "/api/qe/tables";
         this.URL_PREFIX_TABLE_SCHEMA = "/api/qe/table/schema/";
+
+        this.URL_QUERY_FLOW_QUEUE = '#p=query_flow_queue';
+
+        this.UMID_QUERY_FORM_MODEL = "qe:query-form-model";
+        this.UMID_QUERY_RESULT_CHART_MODEL = "qe:query-result-chart-model";
+        this.UMID_QUERY_RESULT_LINE_CHART_MODEL = "qe:query-result-line-chart-model";
+        this.UMID_QUERY_RESULT_LIST_MODEL = "qe:query-result-list-model";
 
         this.UMID_FLOW_SERIES_FORM_MODEL = "qe:fs-form-model";
         this.UMID_FLOW_SERIES_CHART_MODEL = "qe:fs-chart-model";

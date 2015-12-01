@@ -457,11 +457,8 @@ function initCustomKOBindings(Knockout) {
                 var valueBindingAccessor = allBindingsAccessor.get('value'),
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor);
 
-                if (contrail.checkIfFunction(value)) {
-                    dateTimePicker.value(value());
-                } else {
-                    dateTimePicker.value(value);
-                }
+                value = contrail.checkIfFunction(value) ? value() : value;
+                dateTimePicker.value(value);
             }
             else {
                 dateTimePicker.value('');

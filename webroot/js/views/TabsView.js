@@ -98,21 +98,23 @@ define([
             self.tabRendered.splice(tabIndex, 1);
         },
 
-        renderTab: function(tabObj) {
+        renderTab: function(tabObj, onAllViewsRenderComplete) {
             var self = this,
                 validation = self.attributes.validation,
                 lockEditingByDefault = self.attributes.lockEditingByDefault,
                 modelMap = self.modelMap,
                 childElId = tabObj[cowc.KEY_ELEMENT_ID];
 
-            self.renderView4Config(this.$el.find("#" + childElId), this.model, tabObj, validation, lockEditingByDefault, modelMap);
+            self.renderView4Config(this.$el.find("#" + childElId), this.model, tabObj, validation, lockEditingByDefault, modelMap, onAllViewsRenderComplete);
         },
 
-        renderNewTab: function(elementId, tabViewConfigs, activateTab) {
+        renderNewTab: function(elementId, tabViewConfigs, activateTab, modelMap, onAllViewsRenderComplete) {
             var self = this,
                 tabLinkTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_LINK_VIEW),
                 tabContentTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_CONTENT_VIEW),
                 tabLength = self.tabs.length;
+
+            self.modelMap = modelMap;
 
             $('#' + elementId + ' > ul.contrail-tab-link-list').append(tabLinkTemplate(tabViewConfigs));
             $('#' + elementId).append(tabContentTemplate(tabViewConfigs));
@@ -124,7 +126,7 @@ define([
                 if (contrail.checkIfKeyExistInObject(true, tabValue, 'tabConfig.renderOnActivate') &&  tabValue.tabConfig.renderOnActivate === true) {
                     self.tabRendered.push(false);
                 } else {
-                    self.renderTab(tabValue);
+                    self.renderTab(tabValue, onAllViewsRenderComplete);
                     self.tabRendered.push(true);
                 }
 
