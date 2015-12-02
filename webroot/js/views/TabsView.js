@@ -125,6 +125,7 @@ define([
                 self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'] = tabLength ;
                 if (contrail.checkIfKeyExistInObject(true, tabValue, 'tabConfig.renderOnActivate') &&  tabValue.tabConfig.renderOnActivate === true) {
                     self.tabRendered.push(false);
+                    //TODO - onAllViewsRenderComplete should be called when rendered
                 } else {
                     self.renderTab(tabValue, onAllViewsRenderComplete);
                     self.tabRendered.push(true);

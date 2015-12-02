@@ -33,6 +33,18 @@ define([
             formModelAttrs['to_time_utc'] = timeRange.toTime;
         };
 
+        self.fetchServerCurrentTime = function(successCB) {
+            var serverCurrentTime;
+
+            $.ajax({
+                url: '/api/service/networking/web-server-info'
+            }).done(function (resultJSON) {
+                serverCurrentTime = resultJSON['serverUTCTime'];
+            }).always(function() {
+                successCB(serverCurrentTime)
+            });
+        };
+
         self.getLabelStepUnit = function (tg, tgUnit) {
             var baseUnit = null, secInterval = 0;
             if (tgUnit == 'secs') {
