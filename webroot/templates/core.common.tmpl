@@ -1407,11 +1407,14 @@
             {{#each columns}}
             <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
             {{/each}}
+            {{#each rowActions}}
+            <td class="error-cell"></td>
+            {{/each}}
         </tr>
         </tbody>
     </table>
     {{#each gridActions}}
-    <div class="row-fluid margin-10-0-0">
+    <div class="row-fluid margin-5-0-0">
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}</a>
     </div>
     {{/each}}
@@ -1460,6 +1463,7 @@
                 {{this.name}}
             </th>
             {{/each}}
+            <th>&nbsp;</th>
         </tr>
         </thead>
         <tbody data-bind="foreach: {{viewConfig.collection}}">
@@ -1494,7 +1498,7 @@
         </tbody>
     </table>
     {{#each viewConfig.gridActions}}
-    <div class="row-fluid margin-10-0-0">
+    <div class="row-fluid margin-5-0-0">
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
             <i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}
         </a>
