@@ -17,7 +17,9 @@ define([
                 path = viewConfig['path'],
                 type = (viewConfig['type'] != null) ? viewConfig['type'] : 'radio',
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
-                labelValue = (elId != null) ? cowl.get(elId, app) : cowl.get(path, app),
+                label = viewConfig.label,
+                labelValue = (label != null)? label :((elId != null)? cowl.get(elId, app) : cowl.get(path, app)),
+                //labelValue = (elId != null) ? cowl.get(elId, app) : cowl.get(path, app),
                 tmplParameters;
 
             if (!(contrail.checkIfExist(lockEditingByDefault) && lockEditingByDefault)) {

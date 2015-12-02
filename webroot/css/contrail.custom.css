@@ -53,6 +53,8 @@
   padding-top: 10px;
   padding-bottom: 10px;
 }
+.no-margin{
+    margin:0px;}
 .no-data .no-data-text {
   text-align: center;
 }
@@ -315,122 +317,122 @@ div.t-grid td {
 /* Sidebar*/
 
 #sidebar li.head > a > i{
-	display:none;
+    display:none;
 }
 #sidebar.menu-min li.head i{
-	display: inline-block;
+    display: inline-block;
 }
 .menu-min .nav-list > li > a > span#sidebar-collapse {
-	display:block;
-	position: absolute;
-	left: 10px;
-	width: 10px;
-	height: 50px;
-	line-height: 38px;
-	background: transparent;
-	z-index: 120;
-	box-shadow: none;
-	border: none;
-	padding-left: 2px;
+    display:block;
+    position: absolute;
+    left: 10px;
+    width: 10px;
+    height: 50px;
+    line-height: 38px;
+    background: transparent;
+    z-index: 120;
+    box-shadow: none;
+    border: none;
+    padding-left: 2px;
 }
 .menu-min #sidebar-collapse > [class*="icon-"] {
-	font-size: 22px;
+    font-size: 22px;
 }
 .menu-min .nav-list > li.item:hover > a > span {
-	display: block;
+    display: block;
 }
 #sidebar-collapse {
-	position: absolute;
-	right: -2px;
-	margin: 1px 0;
+    position: absolute;
+    right: -2px;
+    margin: 1px 0;
 }
 
 .infobox > .stat{
-	font-size:11px;
+    font-size:11px;
 }
 .infobox > .stat-success {
-	right:5px;
+    right:5px;
 }
 .infobox > .stat-important {
-	bottom:5px;
+    bottom:5px;
 }
 .infobox > .stat-success:after {
-	top:-5px;
+    top:-5px;
 }
 .infobox > .stat-important:after {
-	bottom:-5px;
+    bottom:-5px;
 }
 .infobox-grey{
-	color: #565656;
+    color: #565656;
 }
 .infobox > .infobox-content{
-	margin: 0 0 0 5px;
+    margin: 0 0 0 5px;
 }
 .infobox-details > .infobox-content {
     margin: 0px;
 }
 /* .nav-list li.head a span{
-	font-size:18px;
-	margin:0 0 0 5px;
+    font-size:18px;
+    margin:0 0 0 5px;
 } */
 
 /* Bootstrap Modal */
 .modal-280{
-	width:280px;
-	margin-left: -140px;
+    width:280px;
+    margin-left: -140px;
 }
 .modal-420{
-	width:420px;
-	margin-left: -210px;
+    width:420px;
+    margin-left: -210px;
 }
 .modal-560{
-	width:560px;
-	margin-left: -280px;
+    width:560px;
+    margin-left: -280px;
 }
 .modal-700{
-	width:700px;
-	margin-left: -350px;
+    width:700px;
+    margin-left: -350px;
 }
 .modal-840{
-	width:840px;
-	margin-left: -420px;
+    width:840px;
+    margin-left: -420px;
 }
 .modal-980{
-	width:980px;
-	margin-left: -490px;
+    width:980px;
+    margin-left: -490px;
 }
 .modal-1120{
-	width:1120px;
-	margin-left: -560px;
+    width:1120px;
+    margin-left: -560px;
 }
 .modal--500 .modal-body{
-	max-height: 500px;
-	min-height: 500px;
+    max-height: 500px;
+    min-height: 500px;
 }
 .modal{
-	color:#393939;
+    color:#393939;
 }
 .modal-backdrop, .modal-backdrop.fade.in {
 opacity: .4;
 filter: alpha(opacity=40);
 }
 .modal-header {
-	padding: 1px 15px;
+    padding: 1px 15px;
 }
 .modal-header h6{
-	font-size: 15px;
-	color:#393939;
+    font-size: 15px;
+    color:#393939;
 }
 .modal-header i{
-	font-size: 16px;
+    font-size: 16px;
 }
 .modal-header .close {
-	font-size:29px;
-	margin-top:6px;
+    font-size:29px;
+    margin-top:6px;
 }
 .modal-footer {
-	padding: 8px 15px;
-	background-color: #fff;
+    padding: 8px 15px;
+    background-color: #fff;
 }
 
 /* Font Awesome Icons */
@@ -489,32 +491,32 @@ filter: alpha(opacity=40);
 
 /* aligning heights of all input types */
 .row-fluid input[class*="span"], .row-fluid select[class*="span"]{
-	min-height: 26px;
+    min-height: 26px;
 }
 
 /* Chart Classes */
 .stack-chart {
-	zoom: 1;
-  	width: 100%;
-  	height: 300px;
-  	vertical-align: top;
-  	margin: 0 auto;
+    zoom: 1;
+    width: 100%;
+    height: 300px;
+    vertical-align: top;
+    margin: 0 auto;
 }
 .port-distribution-chart {
-	zoom: 1;
-  	width: 100%;
-  	height: 250px;
-  	vertical-align: top;
-  	margin: 0 auto;
+    zoom: 1;
+    width: 100%;
+    height: 250px;
+    vertical-align: top;
+    margin: 0 auto;
 }
 /* End - Chart Classes*/
 /* Flow Chart Classes*/
 .chart-load-status{
-	padding: 5px;
+    padding: 5px;
 }
 .chart-load-status p{
-	margin: 0;
-	color: #3182bd;
+    margin: 0;
+    color: #3182bd;
 }
 /* End Flow Chart Classes*/
 /* Topology */
@@ -524,23 +526,23 @@ filter: alpha(opacity=40);
     overflow: scroll;
 }
 .topology_breadthfirst{
-	height:inherit;
-	width:auto;	
-	font-size:10px;
+    height:inherit;
+    width:auto;
+    font-size:10px;
 }
 
 .topology_grid{
-	height:inherit;
-	width:auto;	
-	font-size:12px;
+    height:inherit;
+    width:auto;
+    font-size:12px;
 }
 #toolTip {
-	z-index: 100;
+    z-index: 100;
 }
 /* policy rules */
 .rule-item, .rule-item-header {
-	min-height:20px;
-	padding: 8px 8px 1px;
+    min-height:20px;
+    padding: 8px 8px 1px;
 }
 .rule-item:nth-child(even), .rule-item-header {background: #f9f9f9;}
 
@@ -564,8 +566,8 @@ rect.bordered {
     color:#3182bd;
 }
 .where-textarea, .filter-textarea {
-	padding-right: 30px;
-	resize: none;
+    padding-right: 30px;
+    resize: none;
 }
 .or-clause-item{background: #fff;}
 .or-clause-item-term{cursor:pointer; }
@@ -595,39 +597,39 @@ rect.bordered {
     visibility: hidden;
 }
 .and-clause-item .and-text{
-	font-size: 14px;
-	text-align: center;
-	color: #555;
-	padding: 5px 10px;
+    font-size: 14px;
+    text-align: center;
+    color: #555;
+    padding: 5px 10px;
 }
 .or-text {
-	font-size: 14px;
-	color: #000;
-	padding: 5px 0;
-	font-weight: 600;
+    font-size: 14px;
+    color: #000;
+    padding: 5px 0;
+    font-weight: 600;
 }
 .and-clause-item.row-fluid [class*="span"] {
-	min-height: 28px !important;
+    min-height: 28px !important;
 }
 .and-clause-item .new-and-text {
-	padding: 0 2px;
+    padding: 0 2px;
 }
 .or-clause-item .new-or-text {
-	padding: 0 5px;
+    padding: 0 5px;
 }
 .or-clause-item .icon-remove{
-	color:#aaa;
+    color:#aaa;
 }
 .and-clause-item .icon-remove{
-	font-size:11px;
+    font-size:11px;
 }
 a.selectAllLink{
-	color:#999;
-	font-size: 11px;
-	padding: 0 0 5px;
+    color:#999;
+    font-size: 11px;
+    padding: 0 0 5px;
 }
 a.selectAllLink:hover {
-	color:#3182bd;
+    color:#3182bd;
 }
 
 /* MVC */
@@ -688,22 +690,22 @@ a.selectAllLink:hover {
 
 /* Dashboard Sparkline */
 #sparkLineStats{
-	width:135px;
+    width:135px;
 }
 
 /* Sparkline boxes on details page*/
 
 .sparklines-box{
-	border: 1px solid #dedede;
-	padding: 5px;
+    border: 1px solid #dedede;
+    padding: 5px;
 }
 .sparklines-box p.sparkline-title{
-	padding: 0 5px 2px;
-	color: #3182bd;
-	margin-bottom: 0;
+    padding: 0 5px 2px;
+    color: #3182bd;
+    margin-bottom: 0;
 }
 .sparklines-box [class*="span"]{
-	min-height: 18px;
+    min-height: 18px;
 }
 
 /* Service Instances page*/
@@ -716,7 +718,7 @@ a.selectAllLink:hover {
 
 /* Last Updated Time & Hard Refresh */
 #breadcrumbs > .hardrefresh {
-	display: inline-block;
+    display: inline-block;
     position: absolute;
     right: 200px;
     top: 9px;
@@ -726,19 +728,19 @@ a.selectAllLink:hover {
 .infra-node-chart g.nv-scatterChart g.nv-group .nv-point.hover,
 .infra-node-chart g.nv-scatterChart g.nv-single-point g.nv-group .nv-point,
 .infra-node-chart g.nv-scatterChart g.nv-single-point g.nv-group .nv-point.hover {
-	fill-opacity: 1 !important;
+    fill-opacity: 1 !important;
 }
 
 /* css to enable to text to wrap by breaking the text if it does not fit in the element */
 .break-and-wrap-word{
-	word-wrap: break-word;
+    word-wrap: break-word;
 }
 
 /* Slickgrid Header Styles */
 
 /*For wrapping the header names*/
 .slick-column-name {
-	white-space: normal;
+    white-space: normal;
 }
 
 .slick-header-column.ui-state-default {
@@ -750,24 +752,24 @@ a.selectAllLink:hover {
 }
 
 .grid-body.ui-widget {
-	width:100%;
-	border: none;
-	border-top: 1px solid #ccc;
-	top:-2px;
+    width:100%;
+    border: none;
+    border-top: 1px solid #ccc;
+    top:-2px;
 }
 .grid-header {
-	margin: 0;
-	cursor: default;
-	display: block;
-	border: none
+    margin: 0;
+    cursor: default;
+    display: block;
+    border: none
 }
 .grid-header .input-grid-search {
-	height: 17px !important;
-	margin-bottom: 4px;
-	border-color: #ddd;
+    height: 17px !important;
+    margin-bottom: 4px;
+    border-color: #ddd;
 }
 .grid-header .select2-container, .widget-header .select2-container, .breadcrumb .select2-container{
-	margin-bottom: 2px;
+    margin-bottom: 2px;
 }
 .grid-header .select2-container.select2-container-active, .widget-header .select2-container.select2-container-active, .breadcrumb .select2-container.select2-container-active{
     -webkit-box-shadow: none;
@@ -775,45 +777,45 @@ a.selectAllLink:hover {
     box-shadow: none;
 }
 .grid-header .ui-multiselect {
-	height: 23px !important;
-	margin-bottom: 4px;
-	border-color: #ddd;
-	padding: 1px 6px 3px 24px;
+    height: 23px !important;
+    margin-bottom: 4px;
+    border-color: #ddd;
+    padding: 1px 6px 3px 24px;
 }
 .grid-header [class*="icon-"]{
-	margin-top: 1px;
-	font-size: 14px;
+    margin-top: 1px;
+    font-size: 14px;
 }
 .grid-header .select2-container{
-	margin-bottom: 2px;
+    margin-bottom: 2px;
 }
 .grid-header .select2-container a.select2-choice, .widget-header .select2-container a.select2-choice, .breadcrumb .select2-container a.select2-choice{
-	border: none;
-	padding: 0 4px;
+    border: none;
+    padding: 0 4px;
 }
 .grid-header .widget-header, .widget-header .widget-toolbar{
-	color: #777;
-	cursor: default;
+    color: #777;
+    cursor: default;
 }
 .grid-header .widget-toolbar .select2-chosen, .widget-header .widget-toolbar .select2-chosen, .breadcrumb li.active .select2-chosen {
-	color: #3182bd;
-	font-weight: 600;
+    color: #3182bd;
+    font-weight: 600;
 }
 /* Sort Icon from font-awesome */
 .contrail-grid{
-	border-bottom: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
     margin-bottom: 6px;
 }
 .contrail-grid > .collapsed {
-	display: none;
+    display: none;
 }
 .slick-sort-indicator{
-	margin-left: 0;	
-	margin-top: 0;
-	float: none;
+    margin-left: 0;
+    margin-top: 0;
+    float: none;
 }
 .slick-sort-indicator:before{
-	font-family: FontAwesome;
+    font-family: FontAwesome;
     font-style: normal;
     font-weight: normal;
     text-decoration: inherit;
@@ -822,59 +824,59 @@ a.selectAllLink:hover {
     padding-left: 0.75em;
 }
 .slick-sort-indicator-desc, .slick-sort-indicator-asc {
-	background: none;
-  	position: relative;
+    background: none;
+    position: relative;
 }
 .slick-sort-indicator-desc:before {
-	content: "\f175";
+    content: "\f175";
 }
 .slick-sort-indicator-asc:before {
   content: "\f176";
 }
 .grid-load-status{
-	padding: 5px;
+    padding: 5px;
 }
 .grid-load-status p{
-	margin: 0;
+    margin: 0;
 }
 .grid-load-status p.status{
-	color: #3182bd;
+    color: #3182bd;
 }
 .grid-load-status p.error{
-	color: #b94a48;
+    color: #b94a48;
 }
 .grid-info {
   margin-bottom: 0;
 }
 .slick-header {
-	border: none;
-	background: none;
+    border: none;
+    background: none;
 }
 .slick-header .slick-header-column {
-	border: none;
-	background: none;
+    border: none;
+    background: none;
 }
 .slick-header-column {
-	min-height: 18px;
-	line-height: 18px;
-	margin: -0.5em -0.6em -0.4em -0.6em;
-	padding: .5em .6em .4em .6em;
-	color: #3182bd;
-	font-size: 13px;
+    min-height: 18px;
+    line-height: 18px;
+    margin: -0.5em -0.6em -0.4em -0.6em;
+    padding: .5em .6em .4em .6em;
+    color: #3182bd;
+    font-size: 13px;
 }
 .slick-viewport {
-	border-top: 1px solid #dadada;
+    border-top: 1px solid #dadada;
 }
 .slick-row {
-	border:none;
+    border:none;
 }
 .slick-row-master.even {
-	background: none;
-	background-color: #f5f5f5;
+    background: none;
+    background-color: #f5f5f5;
 }
 .slick-row.selected_row {
-	background: none;
-	background-color: #c6dbef;
+    background: none;
+    background-color: #c6dbef;
 }
 .slick-row-detail-icon {
     font-size: 16px;
@@ -882,11 +884,11 @@ a.selectAllLink:hover {
     color: #555;
 }
 .slick-row-detail-container .row-fluid, .slick-cell .row-fluid [class*="span"]{
-	min-height: 20px;
-	font-size: 12px;
+    min-height: 20px;
+    font-size: 12px;
 }
 .slick-row-detail-container label {
-	font-size: 12px;
+    font-size: 12px;
 }
 .slick-row.ui-widget-content.slick-row-detail{
     border: none;
@@ -945,17 +947,17 @@ a.selectAllLink:hover {
 }
 
 .slick-cell {
-	border: none;
-	color: #393939;
-	font-size: 13px;
-	padding: 5px;
+    border: none;
+    color: #393939;
+    font-size: 13px;
+    padding: 5px;
     overflow-y: hidden;
-	word-break:break-all;
-	white-space: normal;
+    word-break:break-all;
+    white-space: normal;
 }
 .slick-cell.cell-hyperlink-blue{
-	color: #3182bd;
-	cursor: pointer;
+    color: #3182bd;
+    cursor: pointer;
 }
 
 .slick-cell.cell-text-blue{
@@ -973,11 +975,11 @@ a.selectAllLink:hover {
     white-space: nowrap;
 }
 .grid-footer{
-	width:100%;
-	height:22px;	
-	border-top: 1px solid #dadada;
-	margin-top: -2px;
-	font-size: 11px;
+    width:100%;
+    height:22px;
+    border-top: 1px solid #dadada;
+    margin-top: -2px;
+    font-size: 11px;
 }
 .slick-pager {
   width: 100%;
@@ -1000,78 +1002,78 @@ a.selectAllLink:hover {
   float: right;
 }
 .slick-pager .slick-pager-nav .pager-control{
-	padding:0 5px;
-	color: #555;
-	float: left;
+    padding:0 5px;
+    color: #555;
+    float: left;
 }
 .slick-pager .slick-pager-nav .pager-control .icon-disabled {
-	color: #ccc;
+    color: #ccc;
 }
 .pager-page-info{
-	padding:0 5px;
-	float: left;
-	height: 20px;
+    padding:0 5px;
+    float: left;
+    height: 20px;
 }
 .slick-pager .slick-pager-info, .slick-pager .slick-pager-sizes  {
-  	display: block;
-  	float: left;
-  	height: 20px;
+    display: block;
+    float: left;
+    height: 20px;
 }
 .slick-pager .slick-pager-info {
-	border-right: 1px solid #eee;
-	padding: 0 9px 0 5px;
-	height: 20px;
+    border-right: 1px solid #eee;
+    padding: 0 9px 0 5px;
+    height: 20px;
 }
 .csg-current-page {
-	float: left;
-	width: 75px;
+    float: left;
+    width: 75px;
 }
 .select2-container.csg-current-page {
-	float: none;
-	font-size: 11px;
+    float: none;
+    font-size: 11px;
 }
 .slick-pager .select2-container .select2-choice > .select2-chosen {
 margin-right: 15px;
 }
 .slick-pager .select2-container .select2-choice{
-	height: 20px;
+    height: 20px;
 }
 .slick-pager .select2-container .select2-arrow{
-	width:20px;
+    width:20px;
 }
 .slick-pager .select2-container .select2-chosen, .slick-pager .select2-container .select2-arrow{
-	line-height: 20px;
-	height: 20px;
+    line-height: 20px;
+    height: 20px;
 }
 .csg-pager-sizes {
-	width: 90px;
-	float: left;
+    width: 90px;
+    float: left;
 }
 .csg-pager-sizes-static {
-	margin: 0 5px;
-	float: left;
+    margin: 0 5px;
+    float: left;
 }
 .select2-container.csg-pager-sizes {
-	float: none;	
+    float: none;
 }
 .slick-pager .slick-pager-settings * {
-  vertical-align: middle;
+    vertical-align: middle;
 }
 .slick-pager .slick-pager-settings a {
-  	padding: 2px;
-  	text-decoration: underline;
-  	cursor: pointer;
+    padding: 2px;
+    text-decoration: underline;
+    cursor: pointer;
 }
 .grid-footer-dropdown-item {
-	font-size: 11px;
+    font-size: 11px;
 }
 .action-cog-cell {
-	overflow:visible;
+    overflow:visible;
 }
 .grid-action-menu {
-	left:auto!important;
-	right:10px!important;
-	min-width:170px;
+    left:auto!important;
+    right:10px!important;
+    min-width:170px;
 }
 
 /*
@@ -1191,18 +1193,18 @@ input.editor-checkbox.ace-input[type=checkbox] + .ace-lbl::before {
 }
 /* jQuery Validation CSS*/
 label.jqInvalid{
-	padding: 2px;
-	color: #e6550d;
-	font-family: 'Open Sans';
-	font-size: 13px;
+    padding: 2px;
+    color: #e6550d;
+    font-family: 'Open Sans';
+    font-size: 13px;
 }
 /* Numeric Textbox Custom CSS */
 .ui-spinner-input{
-	border: none;
-	border-radius: 0;
-	color: #787878;
-	background: none;
-	margin: 0.0em 0;
+    border: none;
+    border-radius: 0;
+    color: #787878;
+    background: none;
+    margin: 0.0em 0;
 }
 .ui-spinner.ui-widget.ui-widget-content.ui-corner-all{
     height: 28px;
@@ -1210,14 +1212,14 @@ label.jqInvalid{
     border: none;
 }
 /* .ui-spinner .ui-spinner-button .ui-icon.ui-icon-triangle-1-s, .ui-spinner .ui-spinner-button .ui-icon.ui-icon-triangle-1-n {
-	background: none;
-	position: relative
+    background: none;
+    position: relative
 }
 .ui-spinner .ui-spinner-button .ui-icon {
-	display: inline;
+    display: inline;
 }
 .ui-spinner .ui-spinner-button .ui-icon:before {
-	font-family: FontAwesome;
+    font-family: FontAwesome;
     font-style: normal;
     font-weight: normal;
     text-decoration: inherit;
@@ -1227,46 +1229,46 @@ label.jqInvalid{
     display:inline;
 }
 .ui-spinner .ui-spinner-button .ui-icon.ui-icon-triangle-1-n:before{
-	
-	content: "\f0d8";
+
+    content: "\f0d8";
 }
 .ui-spinner .ui-spinner-button .ui-icon.ui-icon-triangle-1-s:before{
-	content: "\f0d7";
+    content: "\f0d7";
 } */
 
 /* Begin - 2 Way Multiselect Custom CSS */
 .contrail2WayMultiselect ol{
-	list-style-type: none;
-	margin:0;
-	padding:0;
-	border: 1px solid #ccc;
-	overflow-y:scroll;
-	font-size: 12px;
+    list-style-type: none;
+    margin:0;
+    padding:0;
+    border: 1px solid #ccc;
+    overflow-y:scroll;
+    font-size: 12px;
 }
 .contrail2WayMultiselect ol li{
-	border: none;
-	padding: 5px;
-	color: #555;
+    border: none;
+    padding: 5px;
+    color: #555;
 }
 .contrail2WayMultiselect ol li.ui-selected{
-	background: #c6dbef;
+    background: #c6dbef;
 }
 .contrail2WayMultiselect .multiselect-controls {
-	margin-top: 20px;
+    margin-top: 20px;
 }
 .contrail2WayMultiselect .multiselect-controls .multiselect-control {
-	text-align:center;
-	font-size: 20px;
-	margin: 10px 0;
+    text-align:center;
+    font-size: 20px;
+    margin: 10px 0;
 }
 .contrail2WayMultiselect.disabled .multiselect-control i{
-	color: #eee;
-	cursor: default;	
+    color: #eee;
+    cursor: default;
 }
 /* End - 2 Way Multiselect Custom CSS */
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
-	border: none;
-	background: none;
+    border: none;
+    background: none;
 }
 /* Combobox Custom CSS */
 .custom-combobox {
@@ -1276,59 +1278,59 @@ label.jqInvalid{
     margin-left: 0 !important;
 }
 .custom-combobox .ui-autocomplete-input {
-	margin: 0;
-	padding: 0 11px 0 5px;
-	height: 28px;
+    margin: 0;
+    padding: 0 11px 0 5px;
+    height: 28px;
     min-height: 28px;
-	color: #787878;
-	font-size: 13px;
+    color: #787878;
+    font-size: 13px;
 }
 .custom-combobox .add-on{
-	padding: 3px;
-	background-color: #fff;
-	position: absolute;
-	right: 0;
-	z-index: 1049;
-	border: 1px solid #dadada;
-	border-bottom: none;
+    padding: 3px;
+    background-color: #fff;
+    position: absolute;
+    right: 0;
+    z-index: 1049;
+    border: 1px solid #dadada;
+    border-bottom: none;
 }
 /* Select2 Custom CSS */
 .select2-container {
-	background-color:#fff;
+    background-color:#fff;
 }
 .select2-container[class*="span"] {
-	min-height: 26px;
-	border: 1px solid #dadada;
+    min-height: 26px;
+    border: 1px solid #dadada;
 }
 .select2-container .select2-choice > .select2-chosen{
-	margin-right: 17px;
+    margin-right: 17px;
     text-align: left;
 }
  .select2-container .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choice, .select2-container-multi .select2-choices {
-	border: none;
-	border-radius: 0;
-	color: #787878;
-	background: none;
+    border: none;
+    border-radius: 0;
+    color: #787878;
+    background: none;
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices {
     -webkit-box-shadow: none;
-            box-shadow: none;
+    box-shadow: none;
 }
 .select2-container-active {
-	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
-  	-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
-  	box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
 }
 .select2-container .select2-choice .select2-arrow {
-	border-left: 1px solid #fff;
-	background: none;
+    border-left: 1px solid #fff;
+    background: none;
 }
 .select2-container .select2-choice .select2-arrow b {
-	background: none !important;
-  	position: relative;
+    background: none !important;
+    position: relative;
 }
 .select2-container .select2-choice .select2-arrow b:before {
-	font-family: FontAwesome;
+    font-family: FontAwesome;
     font-style: normal;
     font-weight: normal;
     text-decoration: inherit;
@@ -1338,79 +1340,79 @@ label.jqInvalid{
     content: "\f0d7";
 }
 .select2-container.select2-dropdown-open .select2-choice .select2-arrow b:before {
-	content: "\f0d8";
+    content: "\f0d8";
 }
 .select2-container-multi .select2-choices .select2-search-field input {
-	padding: 0px;
-	margin: 0px 0;
-	height: 26px;
+    padding: 0px;
+    margin: 0px 0;
+    height: 26px;
 }
 .select2-container-multi .select2-choices .select2-search-choice{
-	border-radius: 0px;
-	-webkit-box-shadow: none;
-	box-shadow: none;
-	background: none;
-	padding: 3px 18px 3px 5px;
-	line-height: 12px;
+    border-radius: 0px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background: none;
+    padding: 3px 18px 3px 5px;
+    line-height: 12px;
 }
 .select2-container-multi .select2-search-choice-close {
-	left: auto;
-	right: 3px;
+    left: auto;
+    right: 3px;
 }
 .select2-container-multi .select2-choices .select2-search-choice{
-	border-color: #dadada;
+    border-color: #dadada;
 }
 .select2-container-multi .select2-choices .select2-search-choice:hover{
-	background-color: #c6dbef;
-	border-color: #c6dbef;
+    background-color: #c6dbef;
+    border-color: #c6dbef;
 }
 .select2-container-multi .select2-choices .select2-search-field {
-	margin: 0 0 0 5px;
+    margin: 0 0 0 5px;
 }
 .select2-drop-auto-width .select2-search {
-	padding: 4px;
+    padding: 4px;
 }
  .select2-search input {
- 	background: #fff url('select2.png') no-repeat 100% -22px;
+     background: #fff url('select2.png') no-repeat 100% -22px;
 }
 .select2-results {
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 .select2-drop {
-	color: #787878;
-	border-radius: 0;
-	margin-top: -3px;
-	border: 1px solid #dadada;
-	box-shadow: none;
+    color: #787878;
+    border-radius: 0;
+    margin-top: -3px;
+    border: 1px solid #dadada;
+    box-shadow: none;
     z-index: 10000;
 }
 .select2-dropdown-open .select2-choice {
-	-webkit-box-shadow: none;
-	box-shadow: none;
-	background: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background: none;
 }
 .select2-drop-active {
-	border: 1px solid #dadada;
+    border: 1px solid #dadada;
 }
 .select2-results .select2-result-label {
     word-break: break-all;
 }
 .select2-small-width{
-	width: 250px;
+    width: 250px;
 }
 .select2-medium-width{
-	width: 350px;
+    width: 350px;
 }
 .select2-large-width{
-	width: 450px;
+    width: 450px;
 }
 .select2-results .select2-highlighted {
-	background: #c6dbef;
-	color: #555;
+    background: #c6dbef;
+    color: #555;
 }
 .select2-results .select2-disabled.select2-result-label {
-	background: none;
+    background: none;
 }
 /* Autocomplete Custom CSS */
 .ui-autocomplete {
@@ -1419,101 +1421,101 @@ label.jqInvalid{
     z-index: 1050;
 }
 .ui-autocomplete li.ui-menu-item a{
-	padding: 5px;
-	color: #555;
+    padding: 5px;
+    color: #555;
 }
 .ui-menu .ui-menu-item a.ui-state-focus {
- 	background: none;
- 	background-color: #c6dbef;
- 	border-color: #c6dbef;
- 	color: #393939;
- 	border-radius: 0px;
+    background: none;
+    background-color: #c6dbef;
+    border-color: #c6dbef;
+    color: #393939;
+    border-radius: 0px;
  }
 .ui-autocomplete-input{
-	color: #787878;
-	border: 1px solid #dadada;
-	height: 28px;
+    color: #787878;
+    border: 1px solid #dadada;
+    height: 28px;
 }
 /* Datetimepicker Custom CSS */
 input.datetimepicker{
-	font-family: 'Open Sans';
-	font-size: 13px;
-	color: #787878;
-	padding: 3px;
-	border-width:1px;
-	border: 1px solid #dadada;
+    font-family: 'Open Sans';
+    font-size: 13px;
+    color: #787878;
+    padding: 3px;
+    border-width:1px;
+    border: 1px solid #dadada;
 }
 .xdsoft_datetimepicker .xdsoft_timepicker {
-	width: 90px;
+    width: 90px;
 }
 .xdsoft_datetimepicker {
-	box-shadow: none;
+    box-shadow: none;
 }
 .xdsoft_datetimepicker .xdsoft_calendar td, .xdsoft_datetimepicker .xdsoft_calendar th {
-	border: none;
-	background: none;
-	text-align: center;
+    border: none;
+    background: none;
+    text-align: center;
 }
 .xdsoft_datetimepicker .xdsoft_calendar td:hover,
 .xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box >div >div:hover{
-	background: none;
-	box-shadow: none;
-	color: #393939 !important;
-	background-color: #eeeeee !important;
-	border-color: #eee !important;
+    background: none;
+    box-shadow: none;
+    color: #393939 !important;
+    background-color: #eeeeee !important;
+    border-color: #eee !important;
 }
 .xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_default, .xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_current,
 .xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box >div >div.xdsoft_current {
-	background: none;
-	box-shadow: none;
-	color: #393939;
-	background-color: #c6dbef !important;
-    border-color: #c6dbef !important;	
+    background: none;
+    box-shadow: none;
+    color: #393939;
+    background-color: #c6dbef !important;
+    border-color: #c6dbef !important;
 }
 .xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_today {
-	color: #3182bd;
-	font-weight: 700;
+    color: #3182bd;
+    font-weight: 700;
 }
 /* General tabs */
 .contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon {
-  margin-right: 10px;
-  font-weight: normal;
-  font-size: 110%;
-  display: inline-block;
+    margin-right: 10px;
+    font-weight: normal;
+    font-size: 110%;
+    display: inline-block;
 }
 .contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon-remove {
-  margin-left: 10px;
-  font-weight: normal;
-  font-size: 90%;
-  display: inline-block;
+    margin-left: 10px;
+    font-weight: normal;
+    font-size: 90%;
+    display: inline-block;
 }
 /* Begin - Jquery UI Tabs  (theme: overcast)*/
 .contrail-tabs-overcast.ui-tabs.ui-widget,
 .ui-tabs.ui-widget {
-	border: none;
-	padding: 0;
+    border: none;
+    padding: 0;
 }
 .contrail-tabs-overcast.ui-tabs .ui-widget-header,
 .ui-tabs .ui-widget-header{
-	border: none;
-	background: none;
-	background-color:#f9f9f9;
-	border-bottom: 1px solid #eee;
+    border: none;
+    background: none;
+    background-color:#f9f9f9;
+    border-bottom: 1px solid #eee;
 }
 .contrail-tabs-overcast.ui-tabs .ui-tabs-nav,
 .ui-tabs .ui-tabs-nav{
-	margin: -3px -10px 10px -10px;
-	padding: 1px 1px 0 1px;
+    margin: -3px -10px 10px -10px;
+    padding: 1px 1px 0 1px;
 }
 .contrail-tabs-overcast.ui-tabs-panel.ui-widget-content,
 .ui-tabs-panel.ui-widget-content {
-	padding: 0;
+    padding: 0;
 }
 .contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-state-hover a,
 .ui-tabs .ui-tabs-nav li.ui-state-hover a {
-	color: #3182bd;
+    color: #3182bd;
 }
 .contrail-tabs-overcast.ui-tabs .ui-state-default a,
 .ui-tabs .ui-state-default a,
@@ -1521,42 +1523,42 @@ input.datetimepicker{
 .ui-tabs .ui-state-default a:link,
 .contrail-tabs-overcast.ui-tabs .ui-state-default a:visited,
 .ui-tabs .ui-state-default a:visited {
-	color: #787878;
-	text-decoration: none;
+    color: #787878;
+    text-decoration: none;
 }
 .contrail-tabs-overcast.ui-tabs .contrail-tabs-loading,
 .ui-tabs .contrail-tabs-loading {
-	margin-right: 5px;
+    margin-right: 5px;
 }
 /* End - Jquery UI Tabs (theme: overcast) */
 /* Begin - Jquery UI Tabs with Widget Header  (theme: classic) */
 .contrail-tabs-classic.ui-tabs.ui-widget,
 .contrail-widget-tabs.ui-tabs.ui-widget {
-	border: none;
-	padding: 0;
+    border: none;
+    padding: 0;
 }
 .contrail-tabs-classic.ui-tabs .ui-widget-header,
 .contrail-widget-tabs.ui-tabs .ui-widget-header {
-	border: none;
-	background: none;
-	border-bottom: 1px solid #ccc;
-	line-height: 20px;
-	font-size: 12px;
+    border: none;
+    background: none;
+    border-bottom: 1px solid #ccc;
+    line-height: 20px;
+    font-size: 12px;
 }
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav {
-	margin: 0 0 5px 0;
-	padding: 1px 1px 0 10px;
+    margin: 0 0 5px 0;
+    padding: 1px 1px 0 10px;
 }
 .contrail-tabs-classic .ui-tabs-panel.ui-widget-content,
 .contrail-widget-tabs .ui-tabs-panel.ui-widget-content {
-	padding: 1em 1.5em;
+    padding: 1em 1.5em;
 }
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-state-hover a,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-state-hover a {
-	color: #3182bd;
+    color: #3182bd;
 }
 .contrail-tabs-classic.ui-tabs .ui-state-default a,
 .contrail-widget-tabs.ui-tabs .ui-state-default a,
@@ -1564,111 +1566,111 @@ input.datetimepicker{
 .contrail-widget-tabs.ui-tabs .ui-state-default a:link,
 .contrail-tabs-classic.ui-tabs .ui-state-default a:visited,
 .contrail-widget-tabs.ui-tabs .ui-state-default a:visited {
-	color: #787878;
-	text-decoration: none;
-	
+    color: #787878;
+    text-decoration: none;
+
 }
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a{
-	border-top: 1px solid #ccc;
-	border-left: 1px solid #ccc;
-	border-right: 1px solid #ccc;
-	border-bottom: 1px solid #fff;
-	margin-bottom: -1px;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #fff;
+    margin-bottom: -1px;
 }
 
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice {
-	border: none;
-	padding-right: 3px;
+    border: none;
+    padding-right: 3px;
 }
 
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav .ui-tabs-anchor,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
-	padding: 2px 6px;
+    padding: 2px 6px;
 }
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav li.tabs-toolbar,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.tabs-toolbar {
-	float: right;
-	font-size: 15px;
+    float: right;
+    font-size: 15px;
 }
 /* End - Jquery UI Tabs with Widget Header (theme: classic) */
 /* Begin - Jquery UI Tabs with Widget Header  (theme: widget-classic) */
 .contrail-tabs-widget-classic.ui-tabs.ui-widget {
-  border: none;
-  padding: 0;
+    border: none;
+    padding: 0;
 }
 .contrail-tabs-widget-classic.ui-tabs .ui-widget-header {
-  border: none;
-  background: none;
-  border-bottom: 1px solid #ccc;
-  line-height: 20px;
-  font-size: 12px;
+    border: none;
+    background: none;
+    border-bottom: 1px solid #ccc;
+    line-height: 20px;
+    font-size: 12px;
 }
 .contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav {
-  margin: 0 0 5px 0;
-  padding: 4px 1px 0 10px;
+    margin: 0 0 5px 0;
+    padding: 4px 1px 0 10px;
 }
 .contrail-tabs-widget-classic .ui-tabs-panel.ui-widget-content {
-  padding: 1em 1.5em ;
+    padding: 1em 1.5em ;
 }
 .contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-state-hover a {
-  color: #3182bd;
-  font-size: 15px;
+    color: #3182bd;
+    font-size: 15px;
 }
 .contrail-tabs-widget-classic.ui-tabs .ui-state-default a,
 .contrail-tabs-widget-classic.ui-tabs .ui-state-default a:link,
 .contrail-tabs-widget-classic.ui-tabs .ui-state-default a:visited {
-  color: #787878;
-  text-decoration: none;
-  padding: 4px 8px;
-  font-size: 13px;
-  background-color: #EFEFEF;
+    color: #787878;
+    text-decoration: none;
+    padding: 4px 8px;
+    font-size: 13px;
+    background-color: #EFEFEF;
 }
 .contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a {
-  border-bottom: 1px solid #fff;
-  border-top: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  margin-bottom: -1px;
-  background-color: #fff;
+    border-bottom: 1px solid #fff;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    margin-bottom: -1px;
+    background-color: #fff;
 }
 
 .contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice {
-  border: none;
-  padding-right: 3px;
+    border: none;
+    padding-right: 3px;
 }
 
 .contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
-  padding: 2px 6px;
+    padding: 2px 6px;
 }
 .contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.tabs-toolbar {
-  float:right;
-  font-size: 15px;
+    float:right;
+    font-size: 15px;
 }
 /* End - Jquery UI Tabs with Widget Header (theme: widget-classic) */
 /* Begin - Jquery UI Accordion */
 .ui-accordion-header {
-	border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eee;
 }
 .ui-accordion-content.ui-widget-content {
-	border: none;
+    border: none;
 }
 .ui-accordion .ui-accordion-header .ui-accordion-header-icon {
-	left: 0;
+    left: 0;
 }
 .ui-accordion .ui-accordion-icons {
-	padding-left: 1.5em;
+    padding-left: 20px;
 }
 .ui-accordion .ui-accordion-content {
-	padding: 1em 1.5em;
+    padding: 1em 1.5em;
 }
 /* End - Jquery UI Tabs */
 /* a Links */
 a.disabled-link, a.disabled-link:hover, i.disabled-link, i.disabled-link:hover{
-	color: #ccc !important;
-	cursor: initial !important;
+    color: #ccc !important;
+    cursor: initial !important;
 }
 a.disabled-link i {
     cursor: default;
@@ -1702,21 +1704,21 @@ p.error, p.error-text {
     z-index: 1;
 }
 .font-element i {
-	font-size: 35px;
-	color: #555;
+    font-size: 35px;
+    color: #555;
 }
 
 .font-element i.icon-contrail-virtual-network {
     color: #498AB9;
 }
 .font-element i.icon-contrail-service-instance, .font-element i.icn-service-instance {
-	color: #ff7f0e;
+    color: #ff7f0e;
 }
 /*.font-element i.icon-contrail-router {
-	color: #ff7f0e;
+    color: #ff7f0e;
 }*/
 .font-element i.icon-contrail-security-group {
-	color: #875d8d;
+    color: #875d8d;
 }
 .font-element i.icon-contrail-network-policy {
     color: #637939;
@@ -1798,7 +1800,7 @@ p.error, p.error-text {
     opacity: 1 !important;
 }
 .topology-visualization .elementHighlighted.VirtualNetwork i {
-	color: #498AB9;
+    color: #498AB9;
 }
 .topology-visualization svg g.ZoomedElement,
 .topology-visualization svg g.ZoomedElement:hover {
@@ -1806,7 +1808,7 @@ p.error, p.error-text {
 }
 .topology-visualization svg .link-tools .tool-remove,
 .topology-visualization svg .link-tools .tool-options {
-	display: none
+    display: none
 }
 .visualization-empty p {
   font-size: 14px;
@@ -1814,33 +1816,33 @@ p.error, p.error-text {
   text-align: center;
 }
 .topology-visualization.colmask {
-	position:relative;		
+    position:relative;
     clear:both;
     float:left;
-    width:100%;				
-	overflow:hidden;		
+    width:100%;
+    overflow:hidden;
 }
 .topology-visualization.holygrail .colmid {
     float:left;
     width:200%;
-    margin-left:-200px; 	
+    margin-left:-200px;
     position:relative;
     right:100%;
-    background:#fff;    	
+    background:#fff;
 }
 .topology-visualization.holygrail .colleft {
     float:left;
     width:100%;
     margin-left:-50%;
     position:relative;
-    left:400px;         	
+    left:400px;
 }
 .topology-visualization.holygrail .col1wrap {
-	float:left;
+    float:left;
     width:50%;
     position:relative;
-    right:200px;        	
- 	padding-bottom:1em; 	
+    right:200px;
+    padding-bottom:1em;
 }
 .topology-visualization.holygrail .col1 {
     margin:0 100px 0 170px;
@@ -1850,14 +1852,14 @@ p.error, p.error-text {
 }
 .topology-visualization.holygrail .col2 {
     float:left;
-    float:right;			
+    float:right;
     width:150px;
     position:relative;
-    right:40px;         	
+    right:40px;
 }
 .topology-visualization.holygrail .col3 {
     float:left;
-    float:right;			
+    float:right;
     width:50px;
     margin-right:50px;
     position:relative;
@@ -1885,7 +1887,7 @@ p.error, p.error-text {
 .topology-visualization .breadcrumbs .breadcrumb-item .breadcrumb-item-text {
     font-size:10px;
     margin: 0 auto;
-	width: 40px;
+    width: 40px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -1898,27 +1900,27 @@ p.error, p.error-text {
     font-size:30px;
 }
 .topology-visualization .topology-controls {
-	font-size: 15px;
+    font-size: 15px;
     width: 35px;
     background-color: #eee;
 }
 .topology-visualization .topology-controls i {
-	color: #777;
+    color: #777;
 }
 .topology-visualization .topology-controls .topology-control-item {
     padding: 5px 10px;
     width: 25px;
 }
 .topology-visualization .topology-controls .dropdown-menu {
-	right: 2px;
+    right: 2px;
 }
 .topology-visualization .topology-controls .dropdown-menu i {
-	margin-right: 5px;
+    margin-right: 5px;
 }
 
 .topology-visualization-tabs .select2-container .select2-choice {
-	border: none;
-	padding-right: 3px;
+    border: none;
+    padding-right: 3px;
 }
 
 /* Underlay overlay*/
@@ -2122,10 +2124,10 @@ p.error, p.error-text {
     cursor: default;
 }
 .control-panel-items .control-panel-item {
-  padding: 5px 10px;
-  margin: 5px 0 0;
-  background-color: #f9f9f9;
-  border: 1px solid #efefef;
+    padding: 5px 10px;
+    margin: 5px 0 0;
+    background-color: #f9f9f9;
+    border: 1px solid #efefef;
 }
 .control-panel-items .dropdown-menu {
     right: 2px;
@@ -2167,24 +2169,24 @@ p.error, p.error-text {
     background-color: #c6dbef;
 }
 .context-menu-item {
-	padding: 2px 5px;
+    padding: 2px 5px;
 }
 
 /* Bootstrap popovers */
 .popover {
-	width: 800px;
+    width: 800px;
 }
 .popover .arrow {
-	display: none;
+    display: none;
 }
 .popover .popover-title {
-	background-color: #fff;
-	color: #3182bd;
-	padding: 5px;
-	font-size: 12px;
+    background-color: #fff;
+    color: #3182bd;
+    padding: 5px;
+    font-size: 12px;
 }
 .popover .popover-content{
-	padding: 0;
+    padding: 0;
 }
 .popover .popover-content .chart-tooltip {
     border: none;
@@ -2192,11 +2194,11 @@ p.error, p.error-text {
     padding: 5px;
 }
 .popover .popover-content .element-name-text {
-	padding: 5px;
-	color: #555;
-	font-style: italic;
-	font-size: 13px;
-	margin-bottom: 0;
+    padding: 5px;
+    color: #555;
+    font-style: italic;
+    font-size: 13px;
+    margin-bottom: 0;
 }
 
 .popover.popover-tooltip {
@@ -2271,23 +2273,23 @@ p.error, p.error-text {
     padding: 3px 9px !important;
     background-color: #f5f5f5 !important;
     color: #777 !important;
-    border: 1px solid #ccc; !important;
+    border: 1px solid #ccc !important;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-footer .btn:hover {
     color: #3182BD !important;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-row {
-  padding: 1px 0;
-  font-size: 12px;
+    padding: 1px 0;
+    font-size: 12px;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-row .key {
-  color: #555;
-  font-weight: 400;
+    color: #555;
+    font-weight: 400;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-row .value {
-  color: #666;
-  font-weight: 200;
-  margin-left: 5px;
+    color: #666;
+    font-weight: 200;
+    margin-left: 5px;
 }
 .popover-tooltip.popover-tooltip-no-icon .popover-title {
     padding-left: 10px;
@@ -2333,19 +2335,19 @@ p.error, p.error-text {
 
 /* Bootstrap Tooltips*/
 .tooltip, .tooltip.bottom {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 .tooltip .tooltip-arrow {
-  border: none;
+    border: none;
 }
 .tooltip .tooltip-inner {
-  background-color: #FFFFE1;
-  color: #333;
-  text-shadow: none;
-  padding: 5px;
-  border: 1px solid #ccc;
-  font-weight: normal;
+    background-color: #FFFFE1;
+    color: #333;
+    text-shadow: none;
+    padding: 5px;
+    border: 1px solid #ccc;
+    font-weight: normal;
 }
 /*policy rule styles */
 #PolicyRules #simple_action  .select2-chosen,
@@ -2370,6 +2372,8 @@ p.error, p.error-text {
     border: 0px !important;
     color: #3182bd;
 }
+#PolicyRules #simple_action  .select2-container-disabled a{
+    border:red solid 1px;}
 #PolicyRules .select2-container, #PolicyRules  input {
     background : transparent;
 }
@@ -2384,11 +2388,11 @@ p.error, p.error-text {
 }
 
 #windowCreatePolicy .rule-item .select2-chosen {
-	color: #3182bd;
+    color: #3182bd;
 }
 
 #windowCreatePolicy .rule-item .span2 .select2-container, #windowCreatePolicy .rule-item .span1 .select2-container, #windowCreatePolicy .rule-item .select2-container.select2-container-disabled .select2-choice, #windowCreatePolicy .rule-item .span1 .span12{
-	border: 0px !important;
+    border: 0px !important;
 }
 
 #windowCreatePolicy .rule-item .span1 .span12 {
@@ -2396,7 +2400,7 @@ p.error, p.error-text {
 }
 
 #windowCreatePolicy .rule-item .select2-arrow {
-	display: none !important;
+    display: none !important;
 }
 
 #windowCreatePolicy .rule-item .select2-chosen {
@@ -2404,7 +2408,7 @@ p.error, p.error-text {
 }
 
 .res-icon  + .select2-offscreen  + input{
- width: -moz-calc(100% - 20px);
+    width: -moz-calc(100% - 20px);
     width: -webkit-calc(100% - 20px);
     width: calc(100% - 20px);
     margin-left:3px;
@@ -2424,29 +2428,29 @@ p.error, p.error-text {
 }
 
 .image-network:before  {
-  content : url(../img/network.png);
-  vertical-align : middle;
+    content : url(../img/network.png);
+    vertical-align : middle;
 }
 
 .image-policy:before {
-  content : url(../img/policy.png);
-  vertical-align : middle;
+    content : url(../img/policy.png);
+    vertical-align : middle;
 }
 
 .image-subnet:before {
-  content : url(../img/subnet.png);
-  vertical-align : middle;
+    content : url(../img/subnet.png);
+    vertical-align : middle;
 }
 
 /* Chart styles */
 .chart-container text {
-  stroke: none;
-  fill: #777;
-  font-weight: normal;
+    stroke: none;
+    fill: #777;
+    font-weight: normal;
 }
 .chart-container text.nv-requestState {
-  font-size: 16px;
-  fill: #777;
+    font-size: 16px;
+    fill: #777;
 }
 /* Chart Control styles */
 
@@ -2471,11 +2475,11 @@ p.error, p.error-text {
 }
 
 .flow-class-chart .colmask {
-    position:relative;		/* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
+    position:relative;/* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
     clear:both;
     float:left;
-    width:100%;			/* width of whole page */
-    overflow:hidden;	/* This chops off any overhanging divs */
+    width:100%;/* width of whole page */
+    overflow:hidden;/* This chops off any overhanging divs */
 }
 .flow-class-chart .rightmenu {
 
@@ -2508,8 +2512,8 @@ p.error, p.error-text {
     height: 282px;
 }
 .image-Security:before {
-  content : url(../img/policy.png);
-  vertical-align : middle;
+    content : url(../img/policy.png);
+    vertical-align : middle;
 }
 
 /* Jquery Steps style*/
@@ -2670,7 +2674,7 @@ p.error, p.error-text {
 /* Server Manager Page Styles */
 
 .detail-header-row {
-  border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #eee;
 }
 
 .group-detail-action-item {
@@ -2705,9 +2709,9 @@ p.error, p.error-text {
 
 .ui-multiselect-controls {background-color: #eee;}
 .ui-multiselect-controls button{
-	line-height: 18px;
-	margin: 4px 2px;
-	font-size: 11px;
+    line-height: 18px;
+    margin: 4px 2px;
+    font-size: 11px;
 }
 
 .ui-multiselect-menu { display:none; position:absolute; z-index:10000; text-align: left }
@@ -2717,8 +2721,8 @@ p.error, p.error-text {
 .ui-multiselect-checkboxes label input { position:relative !important; top:1px }
 .ui-multiselect-checkboxes input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] + .ace-lbl::before,
 .ui-multiselect-checkboxes input.ace-input-tristate[type=checkbox] + .ace-lbl::before {
-	/*margin-left: -20px;*/
-	margin-right: 8px;
+    /*margin-left: -20px;*/
+    margin-right: 8px;
 }
 .ui-multiselect-checkboxes li { clear:both; font-size:0.9em; padding-right:3px }
 .ui-multiselect-checkboxes li .ace-lbl { color: #555;}
@@ -2747,53 +2751,53 @@ p.error, p.error-text {
     margin-bottom: 0;
 }
 .chart-settings-label {
-	margin-bottom:0px;
-	display:inline-block;
-	font-size:11px;
+    margin-bottom:0px;
+    display:inline-block;
+    font-size:11px;
 }
 
 .chart-sub-settings{
-	margin-left:10px;
+    margin-left:10px;
 }
 
 .chart-settings-close{
-	display: inline-block;
-	width: 12px;
-	height: 13px;
-	position: inherit;
-	right: 3px;
-	top: 4px;
-	font-size: 1px;
-	outline: none;
-	background: url('select2.png') right top no-repeat;
+    display: inline-block;
+    width: 12px;
+    height: 13px;
+    position: inherit;
+    right: 3px;
+    top: 4px;
+    font-size: 1px;
+    outline: none;
+    background: url('select2.png') right top no-repeat;
 }
 
 .chart-settings-header {
-	position:relative;
+    position:relative;
 }
 
 .chart-settings .icon-chevron-up{
-	right:0px;
-	position:absolute;
+    right:0px;
+    position:absolute;
 }
 
 .chart-settings-reset{
-	display:inline;
-	background:none;
+    display:inline;
+    background:none;
 }
 
 .chart-settings-reset label{
-	border-color: #dadada;
-	/* border: 1px solid #aaaaaa;
-	border-radius: 1px; */
-	box-shadow: none;
-	background: none;
-	padding: 3px 3px 3px 5px;
-	line-height: 12px;
+    border-color: #dadada;
+    /* border: 1px solid #aaaaaa;
+    border-radius: 1px; */
+    box-shadow: none;
+    background: none;
+    padding: 3px 3px 3px 5px;
+    line-height: 12px;
 }
 
 .position-right{
-	right:30px;
+    right:30px;
     position:absolute;
     margin-bottom:8px;
     margin-top:8px;
@@ -2887,30 +2891,30 @@ p.error, p.error-text {
 
 /*Joint JS - Parellel connection-wrap*/
 .connection-wrap-up {
-  fill: none;
-  stroke:#85b9dd!important;
-  stroke-width:3;
+    fill: none;
+    stroke:#85b9dd!important;
+    stroke-width:3;
 }
 .connection-wrap-down {
-  fill: none;
-  stroke:#85b9dd!important;
-  stroke-width:3;
+    fill: none;
+    stroke:#85b9dd!important;
+    stroke-width:3;
 }
 .display-nonodes{
-  margin:15%;
-  font-weight:bold;
-  color:#666666;
-  text-align:center;
+    margin:15%;
+    font-weight:bold;
+    color:#666666;
+    text-align:center;
 }
 
 /* Zoomed Scatterchart */
 .widget-main-rightmenu.colmask,
 .zoom-scatter-chart-container.colmask {
-    position:relative;		/* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
+    position:relative;/* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
     clear:both;
     float:left;
-    width:100%;			/* width of whole page */
-    overflow:hidden;	/* This chops off any overhanging divs */
+    width:100%;/* width of whole page */
+    overflow:hidden;/* This chops off any overhanging divs */
 }
 .widget-main-rightmenu.rightmenu .colleft,
 .zoom-scatter-chart-container.rightmenu .colleft {
@@ -3064,46 +3068,46 @@ p.error, p.error-text {
 input.ace-input[type=checkbox] + .ace-lbl.error::before,
 input.ace-input[type=radio] + .ace-lbl.error::before,
 i.error {
-  fill: #d62728;
-  color: #d62728;
+    fill: #d62728;
+    color: #d62728;
 }
 
 .zoom-scatter-chart-container.rightmenu .col1 .warning,
 input.ace-input[type=checkbox] + .ace-lbl.warning::before,
 input.ace-input[type=radio] + .ace-lbl.warning::before,
 i.warning {
-  fill: #ff7f0e;
-  color: #ff7f0e;
+    fill: #ff7f0e;
+    color: #ff7f0e;
 }
 
 .zoom-scatter-chart-container.rightmenu .col1 .medium,
 input.ace-input[type=checkbox] + .ace-lbl.medium::before,
 input.ace-input[type=radio] + .ace-lbl.medium::before,
 i.medium {
-  fill: #6baed6;
-  color: #6baed6;
+    fill: #6baed6;
+    color: #6baed6;
 }
 
 .zoom-scatter-chart-container.rightmenu .col1 .okay,
 input.ace-input[type=checkbox] + .ace-lbl.okay::before,
 input.ace-input[type=radio] + .ace-lbl.okay::before,
 i.okay {
-  fill: #2ca02c;
-  color: #2ca02c;
+    fill: #2ca02c;
+    color: #2ca02c;
 }
 
 .zoom-scatter-chart-container.rightmenu .col1 .default,
 input.ace-input[type=checkbox] + .ace-lbl.default::before,
 input.ace-input[type=radio] + .ace-lbl.default::before,
 i.default {
-  fill: #1f77b4;
-  color: #1f77b4;
+    fill: #1f77b4;
+    color: #1f77b4;
 }
 
 .zoom-scatter-chart-container.rightmenu .col1 .inactive {
-  fill: #9e9ac8;
-  color: #9e9ac8;
-  opacity: 0.15;
+    fill: #9e9ac8;
+    color: #9e9ac8;
+    opacity: 0.15;
 }
 input.ace-input[type=checkbox] + .ace-lbl.inactive::before,
 input.ace-input[type=radio] + .ace-lbl.inactive::before {
@@ -3257,9 +3261,7 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
     padding-right:3px;
  }
 
-#PolicyRules .contrail-editable-grid-table th, #PolicyRules .contrail-editable-grid-table td{
-    padding:4px 6px 4px 6px;
-}
+
 
 #PolicyRules .contrail-editable-grid-table th{
     white-space: nowrap;
@@ -3292,9 +3294,96 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
 
 #interfaceCollectionAccordian .collection-actions-add{
     text-align:left;
-    padding:0px 0px 10px 0px;
-}
+    padding:0px 0px 10px 0px;}
 
 #static-routes-collection table{
-    margin:0px 10px 10px 30px;
+    margin:0px 10px 10px 30px;}
+
+.cell-text-bold{
+    font-weight:600;}
+
+.contrail-editable-grid-table {
+    margin-left:-8px;}
+
+.contrail-editable-grid-table tr th {
+    padding-left: 5px;}
+
+.contrail-editable-grid-table tr th:first-child {
+    padding-left: 8px;}
+
+.contrail-editable-grid-table tr:nth-child(4n+3) td, .contrail-editable-grid-table tr:nth-child(4n+4) td{
+    background:#FCFCFC;}
+
+
+input.ace-input[type=checkbox] + .ace-lbl + input.ace-input[type=checkbox] + .ace-lbl, input.ace-input[type=radio] + .ace-lbl + input.ace-input[type=radio] + .ace-lbl{
+    padding-left:15px;}
+
+input.ace-input[type=checkbox] + .ace-lbl+input.ace-input[type=checkbox], input.ace-input[type=radio] + .ace-lbl+input.ace-input[type=radio]{
+    margin-left:15px;}
+
+.contrail-editable-grid-table tr td{
+    padding:5px 5px 0 5px;}
+
+.contrail-editable-grid-table tr td.action-cell{
+    padding:0px;}
+
+.rule table.contrail-editable-grid-table{
+    margin-top:5px;}
+
+.rule .contrail-editable-grid-table tr th{
+    color:#8c8c8c;}
+
+.editable-grid-add-link{
+    font-size:12px;}
+
+ label, .lbl{
+    font-size:13px;}
+
+ .select2-container .select2-choice .select2-arrow b:before {
+    padding:0px 8px 0px 0px;
+    float:right;}
+
+.ui-accordion .ui-accordion-header{
+    font-size:14px;
+    color:#3182bd;}
+
+#ipFabricSubnets table{
+    width:90%;}
+
+#encapPriorityOrders table{
+    width:60%;}
+
+.contrail-editable-grid-table tr th, .collection-table tr th{
+    min-width:24px;}
+
+.select2-container.select2-container-disabled .select2-choice{
+    background-color:transparent;}
+
+#PolicyRules td#service_instance, #PolicyRules td#mirror {
+    padding:0px 50px 0px 80px;
+    }
+#PolicyRules #simple_action .select2-container-disabled  .select2-chosen, #PolicyRules #direction .select2-container-disabled .select2-chosen{
+color:#ccc!important;
+
 }
+#PolicyRules td#service_instance{
+    padding-top:10px;
+    }
+#PolicyRules .contrail-editable-grid-table tr td{
+    padding-left:0px;
+    padding-right:0px;}
+
+#PolicyRules .contrail-editable-grid-table tr:nth-child(4n+3) td, #PolicyRules .contrail-editable-grid-table tr:nth-child(4n+4) td{
+    background:none;}
+#PolicyRules .contrail-editable-grid-table tr:nth-child(8n+5) td,
+#PolicyRules .contrail-editable-grid-table tr:nth-child(8n+6) td,
+#PolicyRules .contrail-editable-grid-table tr:nth-child(8n+7) td,
+#PolicyRules .contrail-editable-grid-table tr:nth-child(8n+8) td{
+    background: #fdfdfd;
+}
+#PolicyRules #service_instance .select2-choices, #PolicyRules #service_instance .select2-container, #PolicyRules #mirror .select2-choices, #PolicyRules #mirror .select2-container {
+    background:white;}
+#ipFabAddresses table thead{
+    background:transparent!important;}
+    
+    
