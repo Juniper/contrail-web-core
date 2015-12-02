@@ -1659,7 +1659,7 @@ input.datetimepicker{
 	left: 0;
 }
 .ui-accordion .ui-accordion-icons {
-	padding-left: 1.5em;
+	padding-left: 20px;
 }
 .ui-accordion .ui-accordion-content {
 	padding: 1em 1.5em;
@@ -1826,14 +1826,14 @@ p.error, p.error-text {
     margin-left:-200px; 	
     position:relative;
     right:100%;
-    background:#fff;    	
+    background:#fff;	
 }
 .topology-visualization.holygrail .colleft {
     float:left;
     width:100%;
     margin-left:-50%;
     position:relative;
-    left:400px;         	
+    left:400px;	
 }
 .topology-visualization.holygrail .col1wrap {
 	float:left;
@@ -2271,7 +2271,7 @@ p.error, p.error-text {
     padding: 3px 9px !important;
     background-color: #f5f5f5 !important;
     color: #777 !important;
-    border: 1px solid #ccc; !important;
+    border: 1px solid #ccc !important;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-footer .btn:hover {
     color: #3182BD !important;
@@ -3257,9 +3257,7 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
     padding-right:3px;
  }
 
-#PolicyRules .contrail-editable-grid-table th, #PolicyRules .contrail-editable-grid-table td{
-    padding:4px 6px 4px 6px;
-}
+
 
 #PolicyRules .contrail-editable-grid-table th{
     white-space: nowrap;
@@ -3292,9 +3290,65 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
 
 #interfaceCollectionAccordian .collection-actions-add{
     text-align:left;
-    padding:0px 0px 10px 0px;
-}
+    padding:0px 0px 10px 0px;}
 
 #static-routes-collection table{
-    margin:0px 10px 10px 30px;
-}
+    margin:0px 10px 10px 30px;}
+
+.cell-text-bold{
+    font-weight:600;}
+
+.contrail-editable-grid-table {
+    margin-left:-8px;}
+
+.contrail-editable-grid-table tr th {
+    padding-left: 5px;}
+
+.contrail-editable-grid-table tr th:first-child {
+    padding-left: 8px;}
+
+.contrail-editable-grid-table tr:nth-child(4n+3) td, .contrail-editable-grid-table tr:nth-child(4n+4) td{
+    background:#FCFCFC;}
+
+#PolicyRules .contrail-editable-grid-table tr:nth-child(4n+3) td, #PolicyRules .contrail-editable-grid-table tr:nth-child(4n+4) td{
+    background:transparent;}
+
+input.ace-input[type=checkbox] + .ace-lbl + input.ace-input[type=checkbox] + .ace-lbl, input.ace-input[type=radio] + .ace-lbl + input.ace-input[type=radio] + .ace-lbl{
+    padding-left:15px;}
+
+.contrail-editable-grid-table tr td{
+    padding:5px 5px 0 5px;}
+
+.contrail-editable-grid-table tr td.action-cell{
+    padding:0px;}
+
+.rule table.contrail-editable-grid-table{
+    margin-top:5px;}
+
+.rule .contrail-editable-grid-table tr th{
+    color:#8c8c8c;}
+
+.editable-grid-add-link{
+    font-size:12px;}
+
+ label, .lbl{
+    font-size:13px;}
+
+ .select2-container .select2-choice .select2-arrow b:before {
+	padding:0px 8px 0px 0px;
+    float:right;}
+
+.ui-accordion .ui-accordion-header{
+    font-size:14px;
+    color:#3182bd;}
+
+#ipFabricSubnets table{
+    width:90%;}
+
+#encapPriorityOrders table{
+    width:58%;}
+
+.contrail-editable-grid-table tr th, .collection-table tr th{
+    min-width:24px;}
+
+
