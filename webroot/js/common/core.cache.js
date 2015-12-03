@@ -23,6 +23,18 @@ define([
             this.set(key, {});
         };
 
+        this.reset = function() {
+            coCache = {
+                'breadcrumb': {},
+                'server-manager': {},
+                'monitor-networking': {
+                    graphs: {},
+                    charts: {},
+                    lists: {}
+                }
+            };
+        };
+
         this.get = function (key) {
             var keyList = key.split(':'),
                 cache = coCache;
