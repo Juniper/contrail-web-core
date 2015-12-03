@@ -38,6 +38,8 @@ define([
         this.KEY_UI_ADDED_PARAMS = 'ui_added_parameters';
 
         this.KEY_VALIDATION = 'validation';
+        this.OBJECT_TYPE_COLLECTION = 'collection';
+        this.OBJECT_TYPE_MODEL = 'model';
 
         this.TMPL_2ROW_CONTENT_VIEW = "core-2-row-content-template";
         this.TMPL_2COLUMN_1ROW_2ROW_CONTENT_VIEW = "core-2-column-1-row-2row-content-template";

@@ -19,7 +19,7 @@ define([
             return "Please resolve all " + fieldKey + " errors.";
         };
 
-        this.SHOULD_BE_VALID = '{0} should have a valid ';
+        this.SHOULD_BE_VALID = '{0} should have valid ';
 
         this.get = function () {
             var args = arguments;
