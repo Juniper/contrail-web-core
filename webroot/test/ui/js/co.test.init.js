@@ -156,6 +156,17 @@ function testAppInit(testAppConfig) {
                                 console.log("Loaded test file: " + testFile.split('/').pop());
                                 return window.__karma__.start(defObj, loadTestRunner);
                             };
+                            //Clear Cookies if any exist
+                            if (document.cookie != '') {
+                                var cookies = document.cookie.split(";");
+                                for (var i = 0; i < cookies.length; i++){
+                                    var cookie =  cookies[i].split("=");
+                                    document.cookie = cookie[0] + "=;expires=Tue, 02 Dec 1890 00:00:01 UTC;";
+                                }
+                            }
+
+                            //clear the core cache
+                            cowch.reset();
 
                             require([testFile], function () {
                                 requirejs.config({
