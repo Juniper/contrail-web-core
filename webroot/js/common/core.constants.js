@@ -217,6 +217,8 @@ define([
 
         this.FS_HASH_P = 'query_flow_series';
         this.FR_HASH_P = 'query_flow_record';
+        this.SL_HASH_P = 'query_log_system';
+        this.OL_HASH_P = 'query_log_object';
         this.STAT_HASH_P = 'query_stat_query';
 
         this.CONSOLE_LOGS_PREFIX = "cl";
@@ -274,6 +276,7 @@ define([
         this.URL_PREFIX_TABLE_SCHEMA = "/api/qe/table/schema/";
 
         this.URL_QUERY_FLOW_QUEUE = '#p=query_flow_queue';
+        this.URL_QUERY_LOG_QUEUE = '#p=query_log_queue';
         this.URL_QUERY_STAT_QUEUE = '#p=query_stat_queue';
 
         this.UMID_QUERY_FORM_MODEL = "qe:query-form-model";

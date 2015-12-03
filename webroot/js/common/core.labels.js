@@ -164,11 +164,12 @@ define([
         this.TITLE_RESULTS = "Results";
         this.TITLE_CHART = "Chart";
         this.TITLE_FLOW = "Flow";
+        this.TITLE_LOG = "Log";
+        this.TITLE_STATS = "Statistics";
         this.TITLE_FLOW_SERIES = "Flow Series";
         this.TITLE_FLOW_RECORD = "Flow Record";
         this.TITLE_SESSION_DETAILS = "Session Details";
         this.TITLE_FLOW_SERIES_RESULTS = "Flow Series Results";
-        this.TITLE_STATS = "Statistics";
         this.TITLE_STATS_QUERY = "Statistics Query";
         this.TITLE_OBJECT_LOGS = "Object Logs";
         this.TITLE_SYSTEM_LOGS = "System Logs";

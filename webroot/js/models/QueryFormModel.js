@@ -39,9 +39,7 @@ define([
             this.model().on( "change:table_name", this.onChangeTable, this);
 
             if(modelData['table_type'] == cowc.QE_OBJECT_TABLE_TYPE || modelData['table_type'] == cowc.QE_LOG_TABLE_TYPE) {
-                this.model().on("change:time_range", this.onChangeTime, this);
-                this.model().on("change:from_time", this.onChangeTime, this);
-                this.model().on("change:to_time", this.onChangeTime, this);
+                this.model().on("change:time_range change:from_time change:to_time", this.onChangeTime, this);
             }
 
             return this;
@@ -59,41 +57,43 @@ define([
 
         setTableFieldValues: function() {
             var contrailViewModel = this.model(),
-                tableName = this.table_name(),
-                timeRange = this.time_range();
+                tableName = contrailViewModel.attributes.table_name,
+                timeRange = contrailViewModel.attributes.time_range;
 
-            // TODO: Custom Time-Range
-            var data =  {
-                fromTimeUTC: 'now-' + timeRange + "s",
-                toTimeUTC: 'now',
-                table_name: 'StatTable.FieldNames.fields',
-                select: ['name', 'fields.value'],
-                where: [[{"name":"name","value":tableName,"op":7}]]
-            };
+            if (contrail.checkIfExist(tableName)) {
+                // TODO: Custom Time-Range
+                var data =  {
+                    fromTimeUTC: 'now-' + timeRange + "s",
+                    toTimeUTC: 'now',
+                    table_name: 'StatTable.FieldNames.fields',
+                    select: ['name', 'fields.value'],
+                    where: [[{"name":"name","value":tableName,"op":7}]]
+                };
 
-            $.ajax({
-                url: '/api/qe/table/column/values',
-                type: "POST",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json"
-            }).done(function (resultJSON) {
-                var valueOptionList = {};
-                $.each(resultJSON.data, function(dataKey, dataValue) {
-                    var nameOption = dataValue.name.split(':')[1];
+                $.ajax({
+                    url: '/api/qe/table/column/values',
+                    type: "POST",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function (resultJSON) {
+                    var valueOptionList = {};
+                    $.each(resultJSON.data, function(dataKey, dataValue) {
+                        var nameOption = dataValue.name.split(':')[1];
 
-                    if (!contrail.checkIfExist(valueOptionList[nameOption])) {
-                        valueOptionList[nameOption] = [];
-                    }
+                        if (!contrail.checkIfExist(valueOptionList[nameOption])) {
+                            valueOptionList[nameOption] = [];
+                        }
 
-                    valueOptionList[nameOption].push(dataValue['fields.value']);
+                        valueOptionList[nameOption].push(dataValue['fields.value']);
+                    });
+
+                    contrailViewModel.attributes.where_data_object['value_option_list'] = valueOptionList;
+
+                }).error(function(xhr) {
+                    console.log(xhr);
                 });
-
-                contrailViewModel.attributes.where_data_object['value_option_list'] = valueOptionList;
-
-            }).error(function(xhr) {
-                console.log(xhr);
-            });
+            }
         },
 
         onChangeTable: function() {
