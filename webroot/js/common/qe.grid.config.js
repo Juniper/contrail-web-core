@@ -49,47 +49,55 @@ define([
                         return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge ' + labelIconBadgeClass + '"><i class="icon-sign-blank"></i></span>';
                     },
                 },
-                { id:"startTime", field:"startTime", name:"Time", minWidth: 150, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
-                { id:"opsQueryId", field:"opsQueryId", name:"Analytics Query Id", minWidth:200, sortable:false },
+                { id:"startTime", field:"startTime", name:"Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
+                { id:"opsQueryId", field:"opsQueryId", name:"Analytics Query Id", minWidth:280, sortable:false },
                 {
                     id:"", field:"", name:"Time Range", minWidth: 100, sortable:false,
                     formatter: function(r, c, v, cd, dc) {
                         return qewu.formatTimeRange(dc.queryReqObj.formModelAttrs.time_range);
                     }
                 },
-                { id:"engQuery", field:"engQueryStr", name: "Query", minWidth: 400, formatter: function(r, c, v, cd, dc) {
-                        if(!contrail.checkIfExist(dc.queryReqObj.engQueryStr)) {
-                            return "";
-                        }
-
-                        return qewu.formatEngQuery(dc.queryReqObj.engQueryStr);
-                    },
-                    sortable:false,
-                    exportConfig: {
-                        allow: true,
-                        advFormatter: function(dc) {
-                            var engQueryObj = JSON.parse(dc.queryReqObj.engQueryStr),
-                                engQueryStr = '';
-                            $.each(engQueryObj, function(key, val){
-                                if(key == 'select' && (!contrail.checkIfExist(val) || val == "")){
-                                    engQueryStr += key.toUpperCase() + ' * ';
-                                } else if((key == 'where' || key == 'filter') && (!contrail.checkIfExist(val) || val == "")){
-                                    engQueryStr += '';
-                                } else {
-                                    var formattedKey = key;
-                                    if(key == 'from_time' || key == 'to_time'){
-                                        formattedKey = key.split('_').join(' ');
-                                    }
-                                    engQueryStr += formattedKey.toUpperCase() + ' ' + val + ' ';
-                                }
-                            });
-                            return engQueryStr;
-                        }
+                { id:"fromTime", field:"fromTime", name:"From Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.queryReqObj.formModelAttrs.from_time_utc).format('YYYY-MM-DD HH:mm:ss'); } },
+                { id:"toTime", field:"toTime", name:"To Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.queryReqObj.formModelAttrs.to_time_utc).format('YYYY-MM-DD HH:mm:ss'); } },
+                {
+                    id:"table_name", field:"", name:"Table Name", minWidth: 200, sortable:false,
+                    formatter: function(r, c, v, cd, dc) {
+                        return dc.queryReqObj.formModelAttrs.table_name;
                     }
                 },
+                //{ id:"engQuery", field:"engQueryStr", name: "Query", minWidth: 400, formatter: function(r, c, v, cd, dc) {
+                //        if(!contrail.checkIfExist(dc.queryReqObj.engQueryStr)) {
+                //            return "";
+                //        }
+                //
+                //        return qewu.formatEngQuery(dc.queryReqObj.engQueryStr);
+                //    },
+                //    sortable:false,
+                //    exportConfig: {
+                //        allow: true,
+                //        advFormatter: function(dc) {
+                //            var engQueryObj = JSON.parse(dc.queryReqObj.engQueryStr),
+                //                engQueryStr = '';
+                //            $.each(engQueryObj, function(key, val){
+                //                if(key == 'select' && (!contrail.checkIfExist(val) || val == "")){
+                //                    engQueryStr += key.toUpperCase() + ' * ';
+                //                } else if((key == 'where' || key == 'filter') && (!contrail.checkIfExist(val) || val == "")){
+                //                    engQueryStr += '';
+                //                } else {
+                //                    var formattedKey = key;
+                //                    if(key == 'from_time' || key == 'to_time'){
+                //                        formattedKey = key.split('_').join(' ');
+                //                    }
+                //                    engQueryStr += formattedKey.toUpperCase() + ' ' + val + ' ';
+                //                }
+                //            });
+                //            return engQueryStr;
+                //        }
+                //    }
+                //},
                 { id:"progress", field:"progress", name:"Progress", minWidth:75, formatter: function(r, c, v, cd, dc) { return (dc.status != 'error' && dc.progress != '' && parseInt(dc.progress) > 0) ? (dc.progress + '%') : '-'; } },
                 { id:"count", field:"count", name:"Records", minWidth:75 },
-                { id:"status", field:"status", name:"Status", minWidth:100 },
+                { id:"status", field:"status", name:"Status", minWidth:90 },
                 { id:"timeTaken", field:"timeTaken", name:"Time Taken", minWidth:100, sortable:true, formatter: function(r, c, v, cd, dc) { return ((dc.timeTaken == -1) ? '-' : (parseInt(dc.timeTaken) + ' secs')); } }
             ];
         };
@@ -1427,8 +1435,32 @@ define([
             {select: "Source", display:{id:"Source", field:"Source", name:"Source", minWidth:150, searchable: true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Source);}}},
             {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", minWidth: 150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.ModuleId);}}},
             {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", minWidth:300, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Messagetype); }}},
-            {select: "SystemLog", display:{id:"SystemLog", field:"SystemLog", name:"System Log", minWidth:300, searchable:true, formatter: function(r, c, v, cd, dc) { return contrail.checkIfExist(dc.SystemLog) ? contrail.formatJSON2HTML(dc.SystemLog, 0) : null}, hide: true}},
-            {select: "ObjectLog", display:{id:"ObjectLog", field:"ObjectLog", name:"Object Log", minWidth:300, searchable:true, formatter: function(r, c, v, cd, dc) { return contrail.checkIfExist(dc.ObjectLog) ? contrail.formatJSON2HTML(dc.ObjectLog, 0) : null}}}
+            {
+                select: "SystemLog",
+                display:{
+                    id:"SystemLog", field:"SystemLog", name:"System Log", minWidth:300, searchable:true, hide: true,
+                    formatter: function(r, c, v, cd, dc) {
+                        if (contrail.checkIfExist(dc.SystemLog)) {
+                            dc.SystemLog = qewu.formatXML2JSON(dc.SystemLog);
+                            return contrail.formatJSON2HTML(dc.SystemLog, 0);
+                        }
+                        return null;
+                    }
+                }
+            },
+            {
+                select: "ObjectLog",
+                display:{
+                    id:"ObjectLog", field:"ObjectLog", name:"Object Log", minWidth:300, searchable:true,
+                    formatter: function(r, c, v, cd, dc) {
+                        if (contrail.checkIfExist(dc.ObjectLog)) {
+                            dc.ObjectLog = qewu.formatXML2JSON(dc.ObjectLog);
+                            return contrail.formatJSON2HTML(dc.ObjectLog, 0);
+                        }
+                        return null;
+                    }
+                }
+            }
         ],
         "MessageTable": [
             {select: "MessageTS", display:{id: "MessageTS", field: "MessageTS", name: "Time", minWidth:210, filterable:false, groupable:false, formatter: function(r, c, v, cd, dc) { return (dc.MessageTS && dc.MessageTS != '')  ? (cowu.formatMicroDate(dc.MessageTS)) : ''; }}},
