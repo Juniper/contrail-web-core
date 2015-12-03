@@ -37,6 +37,7 @@ define([
                 {
                     id: 'fqq-badge', field: "", name: "", resizable: false, sortable: false,
                     width: 30, minWidth: 30, searchable: false, exportConfig: {allow: false},
+                    allowColumnPickable: false,
                     formatter: function (r, c, v, cd, dc) {
                         var queryId = dc.queryReqObj.queryId,
                             tabLinkId = cowl.QE_FLOW_QUEUE_TAB_ID + '-' + queryId + '-tab-link',
@@ -1441,7 +1442,9 @@ define([
                     id:"SystemLog", field:"SystemLog", name:"System Log", minWidth:300, searchable:true, hide: true,
                     formatter: function(r, c, v, cd, dc) {
                         if (contrail.checkIfExist(dc.SystemLog)) {
-                            dc.SystemLog = qewu.formatXML2JSON(dc.SystemLog);
+                            if (!$.isPlainObject(dc.SystemLog)) {
+                                dc.SystemLog = qewu.formatXML2JSON(dc.SystemLog);
+                            }
                             return contrail.formatJSON2HTML(dc.SystemLog, 0);
                         }
                         return null;
@@ -1454,7 +1457,9 @@ define([
                     id:"ObjectLog", field:"ObjectLog", name:"Object Log", minWidth:300, searchable:true,
                     formatter: function(r, c, v, cd, dc) {
                         if (contrail.checkIfExist(dc.ObjectLog)) {
-                            dc.ObjectLog = qewu.formatXML2JSON(dc.ObjectLog);
+                            if (!$.isPlainObject(dc.ObjectLog)) {
+                                dc.ObjectLog = qewu.formatXML2JSON(dc.ObjectLog);
+                            }
                             return contrail.formatJSON2HTML(dc.ObjectLog, 0);
                         }
                         return null;

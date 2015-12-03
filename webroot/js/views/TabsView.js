@@ -68,7 +68,7 @@ define([
             tabsUIObj = $('#' + elId).data('contrailTabs')._tabsUIObj;
 
             tabsUIObj.delegate( ".contrail-tab-link-icon-remove", "click", function() {
-                var tabPanelId = $( this ).closest( "li" ).remove().attr( "aria-controls"),
+                var tabPanelId = $( this ).closest( "li" ).attr( "aria-controls"),
                     tabKey = self.tabsIdMap[tabPanelId];
 
                 if(contrail.checkIfExist(self.tabs[tabKey].tabConfig) && self.tabs[tabKey].tabConfig.removable === true) {
@@ -78,32 +78,41 @@ define([
         },
 
         removeTab: function (tabIndex) {
-            var self = this;
+            var self = this,
+                elId = self.attributes.elementId, tabPanelId;
             if($.isArray(tabIndex)) {
                 for (var i = 0; i < tabIndex.length; i++) {
                     self.removeTab(tabIndex[i]);
                 }
                 return;
             }
-            var elementId = self.attributes.elementId;
-            var tabPanelId = $("#" + elementId).find('li:eq(' + tabIndex + ')').attr( "aria-controls");
-            $("#" + elementId).find('li:eq(' + tabIndex + ')').remove();
+
+            tabPanelId = $("#" + elId).find('li:eq(' + tabIndex + ')').attr( "aria-controls");
+
+            $("#" + elId).find('li:eq(' + tabIndex + ')').remove();
             $("#" + tabPanelId).remove();
-            $('#' + elementId).data('contrailTabs').refresh();
+            $('#' + elId).data('contrailTabs').refresh();
             if (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) && contrail.checkIfFunction(self.tabs[tabIndex].tabConfig.onRemoveTab)) {
                 self.tabs[tabIndex].tabConfig.onRemoveTab();
             }
             delete self.tabsIdMap[tabPanelId];
             self.tabs.splice(tabIndex, 1);
             self.tabRendered.splice(tabIndex, 1);
+
+            if (self.tabs.length === 0) {
+                $("#" + elId).hide();
+            }
         },
 
         renderTab: function(tabObj, onAllViewsRenderComplete) {
             var self = this,
+                elId = self.attributes.elementId,
                 validation = self.attributes.validation,
                 lockEditingByDefault = self.attributes.lockEditingByDefault,
                 modelMap = self.modelMap,
                 childElId = tabObj[cowc.KEY_ELEMENT_ID];
+
+            $("#" + elId).show();
 
             self.renderView4Config(this.$el.find("#" + childElId), this.model, tabObj, validation, lockEditingByDefault, modelMap, onAllViewsRenderComplete);
         },

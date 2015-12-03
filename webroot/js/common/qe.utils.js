@@ -106,6 +106,16 @@ define([
             return engQueryStr;
         };
 
+        self.adjustHeight4FormTextarea = function(elId) {
+            var texareaNames = ['select', 'where', 'filters'];
+
+            $.each(texareaNames, function(nameKey, nameValue) {
+                $(elId).find('[name="' + nameValue + '"]')
+                    .height(0)
+                    .height($(elId).find('[name="' + nameValue + '"]').get(0).scrollHeight - 5);
+            });
+        };
+
         self.getFromTimeElementConfig = function(fromTimeId, toTimeId) {
             return {
                 formatTime: 'h:i A',

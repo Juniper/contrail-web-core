@@ -49,10 +49,7 @@ define([
             var model = this.model(),
                 timeRange = model.attributes.time_range;
 
-            //TODO: For custom time-range
-            if(timeRange != -1) {
-                this.setTableFieldValues();
-            }
+            this.setTableFieldValues();
         },
 
         setTableFieldValues: function() {
@@ -61,37 +58,46 @@ define([
                 timeRange = contrailViewModel.attributes.time_range;
 
             if (contrail.checkIfExist(tableName)) {
-                // TODO: Custom Time-Range
-                var data =  {
-                    fromTimeUTC: 'now-' + timeRange + "s",
-                    toTimeUTC: 'now',
-                    table_name: 'StatTable.FieldNames.fields',
-                    select: ['name', 'fields.value'],
-                    where: [[{"name":"name","value":tableName,"op":7}]]
-                };
+                qewu.fetchServerCurrentTime(function(serverCurrentTime) {
+                    var fromTimeUTC = serverCurrentTime - (timeRange * 1000),
+                        toTimeUTC = serverCurrentTime
 
-                $.ajax({
-                    url: '/api/qe/table/column/values',
-                    type: "POST",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json"
-                }).done(function (resultJSON) {
-                    var valueOptionList = {};
-                    $.each(resultJSON.data, function(dataKey, dataValue) {
-                        var nameOption = dataValue.name.split(':')[1];
+                    if (timeRange !== -1) {
+                        fromTimeUTC = new Date(contrailViewModel.attributes.from_time).getTime();
+                        toTimeUTC = new Date(contrailViewModel.attributes.to_time).getTime();
+                    }
 
-                        if (!contrail.checkIfExist(valueOptionList[nameOption])) {
-                            valueOptionList[nameOption] = [];
-                        }
+                    var data =  {
+                        fromTimeUTC: fromTimeUTC,
+                        toTimeUTC: toTimeUTC,
+                        table_name: 'StatTable.FieldNames.fields',
+                        select: ['name', 'fields.value'],
+                        where: [[{"name":"name","value":tableName,"op":7}]]
+                    };
 
-                        valueOptionList[nameOption].push(dataValue['fields.value']);
+                    $.ajax({
+                        url: '/api/qe/table/column/values',
+                        type: "POST",
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json"
+                    }).done(function (resultJSON) {
+                        var valueOptionList = {};
+                        $.each(resultJSON.data, function(dataKey, dataValue) {
+                            var nameOption = dataValue.name.split(':')[1];
+
+                            if (!contrail.checkIfExist(valueOptionList[nameOption])) {
+                                valueOptionList[nameOption] = [];
+                            }
+
+                            valueOptionList[nameOption].push(dataValue['fields.value']);
+                        });
+
+                        contrailViewModel.attributes.where_data_object['value_option_list'] = valueOptionList;
+
+                    }).error(function(xhr) {
+                        console.log(xhr);
                     });
-
-                    contrailViewModel.attributes.where_data_object['value_option_list'] = valueOptionList;
-
-                }).error(function(xhr) {
-                    console.log(xhr);
                 });
             }
         },

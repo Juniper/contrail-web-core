@@ -1109,7 +1109,7 @@ define([
                 if (headerConfig.defaultControls.columnPickable) {
                     var columnPickerConfig = {
                         type: 'checked-multiselect',
-                        iconClass: 'icon-columns',
+                        //iconClass: 'icon-columns',
                         placeholder: '',
                         elementConfig: {
                             elementId: 'columnPicker',
@@ -1158,7 +1158,7 @@ define([
             };
 
             function applyColumnPicker(event, ui) {
-                var checkedColumns = $('#columnPicker').data('contrailCheckedMultiselect').getChecked();
+                var checkedColumns = $(gridContainer).find('#columnPicker').data('contrailCheckedMultiselect').getChecked();
                 function getColumnIdsPicked(checkedColumns) {
                     var checkedColumnIds = [];
                     if (checkedColumns.length != 0) {
@@ -1218,7 +1218,9 @@ define([
                     }
                     // In some cases id may not be present in the config; construct the id using field and key.
                     var id = (children.id) ? children.id : children.field + '_' + key;
-                    childrenData.push({'id': id, 'text': children.name, 'selected': selectedFlag});
+                    if (!contrail.checkIfExist(children.allowColumnPickable) || children.allowColumnPickable !== false) {
+                        childrenData.push({'id': id, 'text': children.name, 'selected': selectedFlag});
+                    }
                 });
                 pickColumns.push({'id': 'columns', 'text': 'Show/Hide Columns', children: childrenData});
                 return pickColumns;
@@ -1300,7 +1302,9 @@ define([
                 if (actionConfig.elementConfig.elementId == "columnPicker") {
                     if ($(".input-multiselectbox #columnPicker button span:not(.ui-icon)").is(":visible")) {
                         $(".input-multiselectbox #columnPicker button span:not(.ui-icon)").css({"display":"none"});
-                        $(".input-multiselectbox #columnPicker button").css({"width":"40"});
+                        $(".input-multiselectbox #columnPicker button")
+                            .html('<i class="icon icon-columns"></i>')
+                            .css({'width':'25px', 'padding-left': '10px', 'border': 'none'});
                     }
 
 
