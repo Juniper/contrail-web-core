@@ -1794,7 +1794,11 @@
             </div>
         </div>
         {{/IfCompare}}
-        <div class="widget-body" {{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} style="display:none;"{{/IfCompare}}>
+        <div class="widget-body-collapsed" data-action="widget-collapse"
+            {{#IfCompare controls.top.default.collapsedOnLoad true operator='!=='}} style="display:none;"{{/IfCompare}}>
+            <a>Click here to expand <i class="icon-double-angle-down"></i></a>
+        </div>
+        <div class="widget-body" >
             <div class="widget-main padding-4">
                 {{#IfCompare controls.right false operator='!=='}}
                 <div class="widget-main-rightmenu colmask rightmenu">
@@ -1863,7 +1867,7 @@
                 <div id='qe-{{queryPrefix}}-form{{formQueryIdSuffix}}'></div>
             </div>
         {{/if}}
-        <div id="qe-{{queryPrefix}}-results-container">
+        <div id="qe-{{queryPrefix}}-results-container" class="margin-10-0-0">
             <div id='qe-{{queryPrefix}}-results{{formQueryIdSuffix}}'></div>
         </div>
     </div>
@@ -1876,7 +1880,7 @@
 <script type="text/x-handlebars-template" id="query-queue-page-template">
     <div id="qe-{{queryQueueType}}-queue-container">
         <div id="qe-{{queryQueueType}}-queue-grid"></div>
-        <div id="qe-{{queryQueueType}}-queue-result" class="margin-15-0-0"></div>
+        <div id="qe-{{queryQueueType}}-queue-result" class="margin-10-0-0"></div>
     </div>
 </script>
 

@@ -38,9 +38,8 @@ define([
 
             this.model().on( "change:table_name", this.onChangeTable, this);
 
-            if(modelData['table_type'] == cowc.QE_OBJECT_TABLE_TYPE || modelData['table_type'] == cowc.QE_LOG_TABLE_TYPE) {
-                this.model().on("change:time_range change:from_time change:to_time", this.onChangeTime, this);
-            }
+            //TODO - Needs to be tested for Flow Pages
+            this.model().on("change:time_range change:from_time change:to_time", this.onChangeTime, this);
 
             return this;
         },
