@@ -33,6 +33,18 @@ define([
             formModelAttrs['to_time_utc'] = timeRange.toTime;
         };
 
+        self.fetchServerCurrentTime = function(successCB) {
+            var serverCurrentTime;
+
+            $.ajax({
+                url: '/api/service/networking/web-server-info'
+            }).done(function (resultJSON) {
+                serverCurrentTime = resultJSON['serverUTCTime'];
+            }).always(function() {
+                successCB(serverCurrentTime)
+            });
+        };
+
         self.getLabelStepUnit = function (tg, tgUnit) {
             var baseUnit = null, secInterval = 0;
             if (tgUnit == 'secs') {
@@ -72,6 +84,36 @@ define([
             }
 
             return JSON.stringify(engQueryJSON);
+        };
+
+        self.formatEngQuery = function(enqQueryObjStr) {
+            var engQueryObj = JSON.parse(enqQueryObjStr),
+                engQueryStr = '';
+
+            $.each(engQueryObj, function(key, val){
+                if(key == 'select' && (!contrail.checkIfExist(val) || val == "")){
+                    engQueryStr += '<div class="row-fluid"><span class="bolder">' + key.toUpperCase() + '</span> &nbsp;*</div>';
+                } else if((key == 'where' || key == 'filter') && (!contrail.checkIfExist(val) || val == "")){
+                    engQueryStr += '';
+                } else {
+                    var formattedKey = key;
+                    if(key == 'from_time' || key == 'to_time'){
+                        formattedKey = key.split('_').join(' ');
+                    }
+                    engQueryStr += '<div class="row-fluid word-break-normal"><span class="bolder">' + formattedKey.toUpperCase() + '</span> &nbsp;' + val + '</div>';
+                }
+            });
+            return engQueryStr;
+        };
+
+        self.adjustHeight4FormTextarea = function(elId) {
+            var texareaNames = ['select', 'where', 'filters'];
+
+            $.each(texareaNames, function(nameKey, nameValue) {
+                $(elId).find('[name="' + nameValue + '"]')
+                    .height(0)
+                    .height($(elId).find('[name="' + nameValue + '"]').get(0).scrollHeight - 5);
+            });
         };
 
         self.getFromTimeElementConfig = function(fromTimeId, toTimeId) {
@@ -180,14 +222,14 @@ define([
             return currentTime;
         };
 
-        self.addChartMissingPoints = function(chartDataRow, queryFormModel, plotFields) {
+        self.addChartMissingPoints = function(chartDataRow, queryFormAttributes, plotFields) {
             var chartDataValues = chartDataRow.values,
                 newChartDataValues = {},
                 emptyChartDataValue  = {},
-                toTime = queryFormModel.to_time_utc(),
-                fromTime = queryFormModel.from_time_utc(),
-                timeGranularity = queryFormModel.time_granularity(),
-                timeGranularityUnit = queryFormModel.time_granularity_unit(),
+                toTime = queryFormAttributes.to_time_utc,
+                fromTime = queryFormAttributes.from_time_utc,
+                timeGranularity = queryFormAttributes.time_granularity,
+                timeGranularityUnit = queryFormAttributes.time_granularity_unit,
                 timeInterval = timeGranularity * cowc.TIME_GRANULARITY_INTERVAL_VALUES[timeGranularityUnit];
 
             $.each(plotFields, function(plotFieldKey, plotFieldValue) {
@@ -338,9 +380,8 @@ define([
             return parseFilterANDClause(filtersStr);
         };
 
-        self.getAggregateSelectFields = function(queryFormModel) {
-            var selectArray = queryFormModel.select().replace(/ /g, "").split(","),
-                aggregateSelectArray = [];
+         self.getAggregateSelectFields = function(selectArray) {
+            var aggregateSelectArray = [];
 
             $.each(selectArray, function(selectKey, selectValue) {
                 if (self.isAggregateField(selectValue)) {

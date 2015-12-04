@@ -1854,19 +1854,29 @@
 
 <script type="text/x-handlebars-template" id="query-page-template">
     <div id="qe-{{queryPrefix}}-container">
-        <div id='qe-{{queryPrefix}}-form-container'>
-            <div id='qe-{{queryPrefix}}-form{{formQueryIdSuffix}}'></div>
-        </div>
+        {{#if text}}
+            <div id='qe-{{queryPrefix}}-text-container'>
+                <div id='qe-{{queryPrefix}}-text-{{formQueryIdSuffix}}'></div>
+            </div>
+        {{else}}
+            <div id='qe-{{queryPrefix}}-form-container'>
+                <div id='qe-{{queryPrefix}}-form{{formQueryIdSuffix}}'></div>
+            </div>
+        {{/if}}
         <div id="qe-{{queryPrefix}}-results-container">
             <div id='qe-{{queryPrefix}}-results{{formQueryIdSuffix}}'></div>
         </div>
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="query-text-template">
+    <div class="alert alert-success queryText"></div>
+</script>
+
 <script type="text/x-handlebars-template" id="query-queue-page-template">
     <div id="qe-{{queryQueueType}}-queue-container">
-        <div id='qe-{{queryQueueType}}-queue-grid'></div>
-        <div id='qe-{{queryQueueType}}-queue-result'></div>
+        <div id="qe-{{queryQueueType}}-queue-grid"></div>
+        <div id="qe-{{queryQueueType}}-queue-result" class="margin-15-0-0"></div>
     </div>
 </script>
 

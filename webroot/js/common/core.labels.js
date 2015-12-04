@@ -84,6 +84,18 @@ define([
         this.BREADCRUMB_ID = "breadcrumb";
 
         // Query Engine labels
+        this.QE_QUERY_RESULT_GRID_ID = 'qe-query-result-grid';
+        this.QE_QUERY_RESULT_TEXT_ID = 'qe-query-result-text';
+        this.QE_QUERY_RESULT_CHART_PAGE_ID = 'qe-query-result-chart-page';
+        this.QE_QUERY_RESULT_CHART_ID = 'qe-query-result-chart';
+        this.QE_QUERY_RESULT_CHART_GRID_ID = 'qe-query-result-chart-grid';
+        this.QE_QUERY_RESULT_LINE_CHART_ID = 'qe-query-result-line-chart';
+
+        this.QE_QUERY_QUEUE_TABS_ID = "qe-query-queue-tabs";
+        this.QE_QUERY_QUEUE_RESULT_GRID_TAB_ID = "qe-query-queue-result-grid-tab";
+        this.QE_QUERY_QUEUE_RESULT_CHART_TAB_ID = "qe-query-queue-result-chart-tab";
+        this.QE_QUERY_QUEUE_GRID_ID = "qe-query-queue-grid";
+
         this.QE_FLOW_SERIES_ID = "qe-flow-series";
         this.QE_FLOW_SERIES_SECTION_ID = "qe-flow-series-section";
         this.QE_FLOW_SERIES_TAB_ID = "qe-flow-series-tab";
@@ -107,6 +119,7 @@ define([
         this.QE_FLOW_QUEUE_TAB_ID = "qe-flow-queue-tab";
         this.QE_DELETE_MULTIPLE_QUERY_QUEUE_CONTROL_ID = "qe-delete-multiple-query-queue-control";
         this.TITLE_VIEW_QUERY_RESULT = "View Query Result";
+        this.TITLE_MODIFY_QUERY = "Modify Query";
         this.TITLE_VIEW_QUERY_ERROR = "View Query Error";
         this.TITLE_RERUN_QUERY = "Rerun Query";
         this.TITLE_DELETE_QUERY = "Delete Query";
@@ -150,7 +163,9 @@ define([
         this.TITLE_QUERY = "Query";
         this.TITLE_RESULTS = "Results";
         this.TITLE_CHART = "Chart";
-        this.TITLE_FLOW_SERIES = "Flows";
+        this.TITLE_FLOW = "Flow";
+        this.TITLE_LOG = "Log";
+        this.TITLE_STATS = "Statistics";
         this.TITLE_FLOW_SERIES = "Flow Series";
         this.TITLE_FLOW_RECORD = "Flow Record";
         this.TITLE_SESSION_DETAILS = "Session Details";

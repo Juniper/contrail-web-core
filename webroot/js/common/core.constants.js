@@ -38,6 +38,8 @@ define([
         this.KEY_UI_ADDED_PARAMS = 'ui_added_parameters';
 
         this.KEY_VALIDATION = 'validation';
+        this.OBJECT_TYPE_COLLECTION = 'collection';
+        this.OBJECT_TYPE_MODEL = 'model';
 
         this.TMPL_2ROW_CONTENT_VIEW = "core-2-row-content-template";
         this.TMPL_2COLUMN_1ROW_2ROW_CONTENT_VIEW = "core-2-column-1-row-2row-content-template";
@@ -176,6 +178,7 @@ define([
         this.QE_LOG_TABLE_TYPE = "LOG";
         this.QE_HASH_ELEMENT_PREFIX = "#qe-";
         this.QE_FORM_SUFFIX = "-form";
+        this.QE_TEXT_SUFFIX = "-text-";
         this.QE_RESULTS_SUFFIX = "-results";
         this.QE_QUEUE_GRID_SUFFIX = "-queue-grid";
         this.QE_QUEUE_RESULT_SUFFIX = "-queue-result";
@@ -214,9 +217,18 @@ define([
         this.OBJECT_LOGS_PREFIX = "ol";
         this.SYSTEM_LOGS_PREFIX = "sl";
 
+        this.FS_HASH_P = 'query_flow_series';
+        this.FR_HASH_P = 'query_flow_record';
+        this.SL_HASH_P = 'query_log_system';
+        this.OL_HASH_P = 'query_log_object';
+        this.STAT_HASH_P = 'query_stat_query';
+
         this.CONSOLE_LOGS_PREFIX = "cl";
 
         this.DEFAULT_QUERY_PREFIX = 'query';
+
+        this.QUERY_TYPE_MODIFY = 'modify';
+        this.QUERY_TYPE_RERUN = 'rerun';
 
         this.FLOW_SERIES_TABLE = "FlowSeriesTable";
         this.FLOW_RECORD_TABLE = "FlowRecordTable";
@@ -264,6 +276,15 @@ define([
 
         this.URL_TABLES = "/api/qe/tables";
         this.URL_PREFIX_TABLE_SCHEMA = "/api/qe/table/schema/";
+
+        this.URL_QUERY_FLOW_QUEUE = '#p=query_flow_queue';
+        this.URL_QUERY_LOG_QUEUE = '#p=query_log_queue';
+        this.URL_QUERY_STAT_QUEUE = '#p=query_stat_queue';
+
+        this.UMID_QUERY_FORM_MODEL = "qe:query-form-model";
+        this.UMID_QUERY_RESULT_CHART_MODEL = "qe:query-result-chart-model";
+        this.UMID_QUERY_RESULT_LINE_CHART_MODEL = "qe:query-result-line-chart-model";
+        this.UMID_QUERY_RESULT_LIST_MODEL = "qe:query-result-list-model";
 
         this.UMID_FLOW_SERIES_FORM_MODEL = "qe:fs-form-model";
         this.UMID_FLOW_SERIES_CHART_MODEL = "qe:fs-chart-model";

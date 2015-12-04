@@ -152,7 +152,14 @@ define([
                 if (gridOptions.autoHeight == false) {
                     gridContainer.find('.grid-body').height(gridOptions.gridHeight);
                 }
-                grid = new Slick.Grid(gridContainer.find('.grid-body'), dataObject, gridColumns, gridOptions);
+                var visibleColumns = [];
+                $.each(gridColumns, function(key, column) {
+                    if ((contrail.checkIfExist(column.hide) && !(column.hide)) ||
+                        !contrail.checkIfExist(column.hide)) {
+                        visibleColumns.push(column);
+                    }
+                });
+                grid = new Slick.Grid(gridContainer.find('.grid-body'), dataObject, visibleColumns, gridOptions);
                 grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
                 grid.registerPlugin(checkboxSelector);
                 gridContainer.append('<div class="grid-load-status hide"></div>');
@@ -1102,7 +1109,7 @@ define([
                 if (headerConfig.defaultControls.columnPickable) {
                     var columnPickerConfig = {
                         type: 'checked-multiselect',
-                        iconClass: 'icon-columns',
+                        //iconClass: 'icon-columns',
                         placeholder: '',
                         elementConfig: {
                             elementId: 'columnPicker',
@@ -1151,7 +1158,7 @@ define([
             };
 
             function applyColumnPicker(event, ui) {
-                var checkedColumns = $('#columnPicker').data('contrailCheckedMultiselect').getChecked();
+                var checkedColumns = $(gridContainer).find('#columnPicker').data('contrailCheckedMultiselect').getChecked();
                 function getColumnIdsPicked(checkedColumns) {
                     var checkedColumnIds = [];
                     if (checkedColumns.length != 0) {
@@ -1211,7 +1218,9 @@ define([
                     }
                     // In some cases id may not be present in the config; construct the id using field and key.
                     var id = (children.id) ? children.id : children.field + '_' + key;
-                    childrenData.push({'id': id, 'text': children.name, 'selected': selectedFlag});
+                    if (!contrail.checkIfExist(children.allowColumnPickable) || children.allowColumnPickable !== false) {
+                        childrenData.push({'id': id, 'text': children.name, 'selected': selectedFlag});
+                    }
                 });
                 pickColumns.push({'id': 'columns', 'text': 'Show/Hide Columns', children: childrenData});
                 return pickColumns;
@@ -1285,6 +1294,21 @@ define([
 //            	gridContainer.find('.input-multiselectbox').show();
 //   	        	gridContainer.find('.link-multiselectbox').hide();
 //   	        }
+
+                /*
+                 for column picker we don't need to display selected items on the grid header.
+                 Quick Fix: will find the id and set the css.
+                 */
+                if (actionConfig.elementConfig.elementId == "columnPicker") {
+                    if ($(".input-multiselectbox #columnPicker button span:not(.ui-icon)").is(":visible")) {
+                        $(".input-multiselectbox #columnPicker button span:not(.ui-icon)").css({"display":"none"});
+                        $(".input-multiselectbox #columnPicker button")
+                            .html('<i class="icon icon-columns"></i>')
+                            .css({'width':'25px', 'padding-left': '10px', 'border': 'none'});
+                    }
+
+
+                }
             };
 
             function addGridRowActionDroplist(actionConfig, gridContainer, rowIndex, targetElement) {
