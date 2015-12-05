@@ -225,6 +225,23 @@ define([
         contentHandler.initFeatureModule({parents: [{init: initJSFile}]}, successCB);
     };
 
+    this.initFeatureApp = function (featureApp, deferredObj) {
+        contentHandler.loadFeatureApps([featureApp]);
+        var featureAppDefObj = contentHandler.initFeatureAppDefObjMap[featureApp];
+
+        setTimeout(function() {
+            if(contrail.checkIfExist(featureAppDefObj)) {
+                if (featureAppDefObj.state() == 'resolved') {
+                    deferredObj.resolve();
+                } else {
+                    featureAppDefObj.done(function() {
+                        deferredObj.resolve();
+                    });
+                }
+            }
+        }, 50);
+    };
+
     this.formatTestModuleMessage = function (message, id) {
         if (message != null && id != null) {
             return message + ":" + id + " - ";
@@ -332,7 +349,8 @@ define([
         formatTestModuleMessage: formatTestModuleMessage,
         getGridDataSourceWithOnlyRemotes: getGridDataSourceWithOnlyRemotes,
         createMockData: createMockData,
-        initFeatureModule: initFeatureModule
+        initFeatureModule: initFeatureModule,
+        initFeatureApp: initFeatureApp
     };
 
 });
