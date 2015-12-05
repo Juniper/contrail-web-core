@@ -135,9 +135,9 @@ define([
                                                         templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                                         path: "operator",
                                                         dataBindValue: "operator",
+                                                        dataBindOptionList: 'getWhereOperatorOptionList',
                                                         width: 100,
                                                         elementConfig: {
-                                                            data: [{id: '=', text: '='}],
                                                             defaultValueId: 0
                                                         }
                                                     }

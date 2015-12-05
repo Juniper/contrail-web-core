@@ -776,7 +776,7 @@ define([
         var operatorCode = -1;
 
         $.each(cowc.OPERATOR_CODES, function(operatorCodeKey, operatorCodeValue) {
-            if(operator = operatorCodeValue) {
+            if(operator === operatorCodeValue) {
                 operatorCode = operatorCodeKey;
                 return false;
             }
