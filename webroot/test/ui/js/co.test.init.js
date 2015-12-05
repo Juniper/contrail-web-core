@@ -14,7 +14,7 @@ for (var file in windowKarma.files) {
 
 var depArray = [
     'jquery', 'underscore', 'validation', 'core-constants', 'core-utils',
-    'core-formatters', 'core-messages', 'core-views-default-config', 'core-labels', 'knockout', 'core-cache', 'contrail-common',
+    'core-formatters', 'core-messages', 'core-views-default-config', 'core-labels', 'knockout', 'core-cache',
 
     'text!/base/contrail-web-core/webroot/templates/core.common.tmpl',
 
@@ -26,8 +26,7 @@ var depArray = [
 
     'co-test-utils', 'co-test-constants',
 
-    'layout-handler', 'web-utils', 'handlebars-utils', 'slickgrid-utils', 'contrail-elements',
-    'analyzer-utils', 'dashboard-utils', 'joint.contrail', 'text', 'contrail-unified-1', 'contrail-unified-2', 'nvd3'
+    'layout-handler', 'joint.contrail', 'text', 'contrail-unified-1', 'contrail-unified-2', 'contrail-unified-3',
 
 ];
 
@@ -86,7 +85,7 @@ function testAppInit(testAppConfig) {
         }
 
         require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages,
-                                    CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, contrailCommon, CoreCommonTmpl,
+                                    CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, CoreCommonTmpl,
                                     QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils,
                                     CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
@@ -210,7 +209,7 @@ function testLibApiAppInit(testAppConfig) {
         }
 
         require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages,
-                                    CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, contrailCommon, CoreCommonTmpl,
+                                    CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, CoreCommonTmpl,
                                     QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils,
                                     CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
