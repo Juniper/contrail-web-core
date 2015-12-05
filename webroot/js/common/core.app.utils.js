@@ -12,39 +12,23 @@ function getCoreAppPaths(coreBaseDir) {
     return {
         'core-basedir'                : coreBaseDir,
         'jquery'                      : coreBaseDir + '/assets/jquery/js/jquery-1.8.3.min',
-        'bootstrap'                   : coreBaseDir + '/assets/bootstrap/js/bootstrap.min',
-        'd3'                          : coreBaseDir + '/assets/d3-v3.5.6/js/d3.min',
-        'nvd3'                        : coreBaseDir + '/assets/nvd3-v1.8.1/js/nv.d3.min',
-        'xdate'                       : coreBaseDir + '/assets/xdate/js/xdate',
-        'handlebars'                  : coreBaseDir + '/assets/handlebars/handlebars-v1.3.0',
         'knockout'                    : coreBaseDir + '/assets/knockout/knockout-3.0.0',
         'joint'                       : coreBaseDir + '/assets/joint/js/joint.clean',
         'geometry'                    : coreBaseDir + '/assets/joint/js/geometry',
         'vectorizer'                  : coreBaseDir + '/assets/joint/js/vectorizer',
-        'joint.layout.DirectedGraph'  : coreBaseDir + '/assets/joint/js/joint.layout.DirectedGraph',
-        'dagre'                       : coreBaseDir + '/assets/joint/js/dagre',
+        'joint.layout.DirectedGraph'  : coreBaseDir + '/assets/joint/js/joint.layout.DirectedGraph.min',
+        'dagre'                       : coreBaseDir + '/assets/joint/js/dagre.min',
         'bezier'                      : coreBaseDir + '/assets/bezierjs/bezier',
-        'lodash'                      : coreBaseDir + '/assets/joint/js/lodash',
+        'lodash'                      : coreBaseDir + '/assets/lodash/lodash.min',
         'backbone'                    : coreBaseDir + '/assets/backbone/backbone-min',
         'knockback'                   : coreBaseDir + '/assets/backbone/knockback.min',
         'validation'                  : coreBaseDir + '/assets/backbone/backbone-validation-amd',
         'text'                        : coreBaseDir + '/assets/requirejs/text',
         'underscore'                  : coreBaseDir + '/assets/underscore/underscore-min',
 
-        'contrail-common'             : coreBaseDir + '/js/contrail-common',
-        'handlebars-utils'            : coreBaseDir + '/js/handlebars-utils',
-        'contrail-elements'           : coreBaseDir + '/js/contrail-elements',
         'contrail-layout'             : coreBaseDir + '/js/contrail-layout',
-        'protocol'                    : coreBaseDir + '/js/protocol',
         'joint.contrail'              : coreBaseDir + '/js/joint.contrail',
         'core-utils'                  : coreBaseDir + '/js/common/core.utils',
-
-        // TODO: Following files should not be required. We need to removew these files from inital loading
-        'slickgrid-utils'             : coreBaseDir + '/js/slickgrid-utils',
-        'analyzer-utils'              : coreBaseDir + '/js/analyzer-utils',
-        'dashboard-utils'             : coreBaseDir + '/js/dashboard-utils',
-        'web-utils'                   : coreBaseDir + '/js/web-utils',
-        //END TODO
 
         'core-constants'              : coreBaseDir + '/js/common/core.constants',
         'core-formatters'             : coreBaseDir + '/js/common/core.formatters',
@@ -55,6 +39,7 @@ function getCoreAppPaths(coreBaseDir) {
         'core-init'                   : coreBaseDir + '/js/common/core.init',
         'contrail-unified-1'          : coreBaseDir + '/js/common/contrail.unified.1',
         'contrail-unified-2'          : coreBaseDir + '/js/common/contrail.unified.2',
+        'contrail-unified-3'          : coreBaseDir + '/js/common/contrail.unified.3',
 
         'contrail-remote-data-handler': coreBaseDir + '/js/handlers/ContrailRemoteDataHandler',
         'layout-handler'              : coreBaseDir + '/js/handlers/LayoutHandler',
@@ -95,38 +80,8 @@ var coreAppMap = {
 };
 
 var coreAppShim =  {
-        'bootstrap': {
-            deps: ['jquery']
-        },
-        'd3': {
-            deps: ['jquery']
-        },
-        'nv.d3': {
-            deps: ['d3']
-        },
-        'nvd3': {
-            deps: ['d3']
-        },
-        'contrail-common': {
-            deps: ['jquery']
-        },
-        'contrail-layout': {
-            deps: ['contrail-unified-1', 'web-utils', 'contrail-elements']
-        },
-        'slickgrid-utils': {
-            deps: ['contrail-unified-2']
-        },
-        'contrail-elements': {
-            deps: ['contrail-unified-1']
-        },
-        'web-utils': {
-            deps: ['knockout', 'xdate']
-        },
-        'handlebars-utils': {
-            deps: ['jquery', 'handlebars', 'contrail-unified-1']
-        },
         'backbone': {
-            deps: ['lodash', 'jquery'],
+            deps: ['lodash'],
             exports: 'Backbone'
         },
         'joint': {
@@ -140,14 +95,8 @@ var coreAppShim =  {
         'knockout': {
             deps: ['jquery']
         },
-        'knockback': {
-            deps: ['knockout', 'backbone']
-        },
         'validation': {
             deps: ['backbone']
-        },
-        'lodash': {
-            deps: ['jquery']
         },
         'bezier': {
             deps: ['jquery']
@@ -158,32 +107,11 @@ var coreAppShim =  {
         'joint.contrail': {
             deps: ['joint.layout.DirectedGraph']
         },
-        'dagre': {
-            deps: ['jquery']
-        },
-        'text': {
-            deps: ['jquery']
-        },
         'contrail-model': {
             deps: ['knockback']
         },
-        'contrail-view-model': {
-            deps: ['jquery']
-        },
-        'contrail-graph-model': {
-            deps: ['joint.contrail', 'joint.layout.DirectedGraph']
-        },
-        'graph-view': {
-            deps: ['joint.contrail']
-        },
         'contrail-list-model': {
             deps: ['contrail-remote-data-handler']
-        },
-        'contrail-remote-data-handler': {
-            deps: ['jquery']
-        },
-        'contrail-view' : {
-            deps: ['backbone']
         }
 };
 

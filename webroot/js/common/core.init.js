@@ -3,8 +3,8 @@
  */
 
 var initDepFiles = [
-    'validation', 'handlebars-utils', 'contrail-common', 'slickgrid-utils', 'contrail-elements', 'contrail-unified-1',
-    'contrail-unified-2', 'analyzer-utils', 'dashboard-utils', 'joint.contrail', 'text', 'nvd3'
+    'validation', 'contrail-unified-1', 'contrail-unified-2', 'contrail-unified-3',
+    'joint.contrail', 'text'
 ];
 
 require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {

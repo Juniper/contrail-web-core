@@ -113,6 +113,32 @@ define([
             andClauses.remove(andClause);
         },
 
+        getWhereOperatorOptionList: function (viewModel){
+            var rootModel = viewModel.parentModel(),
+                resultOperatorArr = [{id: '=', text: '='}],
+                name = (contrail.checkIfExist(viewModel.name())) ? viewModel.name() : "",
+                tableType = contrail.checkIfExist (rootModel.parentModel.table_type() ) ? rootModel.parentModel.table_type() : "",
+                tableColumnsMap = rootModel.parentModel.ui_added_parameters().table_schema_column_names_map,
+                matchedColumnObj = tableColumnsMap[name];
+
+            if (tableType == "FLOW") {
+                if (name == "sourcevn" || name == "destvn" || name == "vrouter") {
+                    resultOperatorArr.push({id: 'Starts with', text: 'Starts with'});
+                }
+            } else if (tableType == "OBJECT" && name == "ObjectId") {
+                resultOperatorArr.push({id: 'Starts with', text: 'Starts with'});
+
+            } else if (tableType == "STAT") {
+                if (!(_.isEmpty(matchedColumnObj))) {
+                    // if column type = string         => Starts With allowed
+                    if (matchedColumnObj.datatype == "string") {
+                        resultOperatorArr.push({id: 'Starts with', text: 'Starts with'});
+                    }
+                }
+            }
+            return resultOperatorArr;
+        },
+
         getValueOptionList: function(viewModel) {
             var rootModel = viewModel.parentModel().parentModel.model(),
                 name = viewModel.name(),
