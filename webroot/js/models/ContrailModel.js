@@ -61,6 +61,50 @@ define([
             errors.set(attrErrorObj);
         },
 
+        isDeepValid: function(validations) {
+            var isValid = true, isInternalValid = true,
+                validationObj, validationOption = true,
+                key, keyObject, collectionModel, errors, attrErrorObj,
+                objectType, getValidation, validationName;
+
+            for (var i = 0; i < validations.length; i++) {
+                validationObj = validations[i];
+                key = validationObj['key'];
+                objectType = validationObj['type'];
+                getValidation = validationObj['getValidation'];
+
+                if(contrail.checkIfExist(key)) {
+                    keyObject = this.model().attributes[key];
+                    errors = this.model().get(cowc.KEY_MODEL_ERRORS);
+
+                    if(objectType == cowc.OBJECT_TYPE_COLLECTION) {
+                        for( var j = 0; j < keyObject.size(); j++) {
+                            collectionModel = keyObject.at(j);
+                            validationName = typeof getValidation == 'function' ? getValidation(collectionModel) : getValidation;
+                            isInternalValid = collectionModel.attributes.model().isValid(validationOption, validationName);
+                            attrErrorObj = {};
+                            attrErrorObj[key + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
+                            errors.set(attrErrorObj);
+                            isValid = isValid && isInternalValid;
+                        }
+                    } else if (objectType == cowc.OBJECT_TYPE_MODEL) {
+                        validationName = typeof getValidation == 'function' ? getValidation(this) : getValidation;
+                        isInternalValid = keyObject.model().isValid(validationOption, validationName);
+                        attrErrorObj = {};
+                        attrErrorObj[key + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
+                        errors.set(attrErrorObj);
+                        isValid = isValid && isInternalValid;
+                    }
+
+                } else {
+                    validationName = typeof getValidation == 'function' ? getValidation(this) : getValidation;
+                    isValid = isValid && this.model().isValid(validationOption, validationName);
+                }
+            }
+
+            return isValid;
+        },
+
         initLockAttr: function (attributePath, lockFlag) {
             var attribute = cowu.getAttributeFromPath(attributePath),
                 locks = this.model().get(cowc.KEY_MODEL_LOCKS),
