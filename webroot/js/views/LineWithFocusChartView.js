@@ -137,7 +137,7 @@ define([
 
         chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions, chartAxesOption);
 
-        chartOptions['forceY'] = getForceYAxis(chartData, chartOptions['forceY']);
+        chartOptions['forceY'] = getForceYAxis(chartData, chartOptions);
 
         if (chartData.length > 0) {
             spliceBorderPoints(chartData);
@@ -171,14 +171,16 @@ define([
         }
     };
 
-    function getForceYAxis(chartData, defaultForceY) {
-        var dataAllLines = [], forceY;
+    function getForceYAxis(chartData, chartOptions) {
+        var defaultForceY = chartOptions['forceY'],
+            yAxisDataField = contrail.checkIfExist(chartOptions['yAxisDataField']) ? chartOptions['yAxisDataField'] : 'y',
+            dataAllLines = [], forceY;
 
         for (var j = 0; j < chartData.length; j++) {
             dataAllLines = dataAllLines.concat(chartData[j]['values']);
         }
 
-        forceY = cowu.getForceAxis4Chart(dataAllLines, "y", defaultForceY);
+        forceY = cowu.getForceAxis4Chart(dataAllLines, yAxisDataField, defaultForceY);
         return forceY[1] == defaultForceY[1] ? forceY : null;
     };
 
