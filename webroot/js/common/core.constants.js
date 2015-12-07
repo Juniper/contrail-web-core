@@ -281,23 +281,13 @@ define([
         this.URL_QUERY_LOG_QUEUE = '#p=query_log_queue';
         this.URL_QUERY_STAT_QUEUE = '#p=query_stat_queue';
 
-        this.UMID_QUERY_FORM_MODEL = "qe:query-form-model";
         this.UMID_QUERY_RESULT_CHART_MODEL = "qe:query-result-chart-model";
         this.UMID_QUERY_RESULT_LINE_CHART_MODEL = "qe:query-result-line-chart-model";
         this.UMID_QUERY_RESULT_LIST_MODEL = "qe:query-result-list-model";
 
-        this.UMID_FLOW_SERIES_FORM_MODEL = "qe:fs-form-model";
-        this.UMID_FLOW_SERIES_CHART_MODEL = "qe:fs-chart-model";
-        this.UMID_FLOW_SERIES_LINE_CHART_MODEL = "qe:fs-line-chart-model";
-
-        this.UMID_FLOW_RECORD_FORM_MODEL = "qe:fr-form-model";
-
-        this.UMID_STAT_QUERY_FORM_MODEL = "qe:stat-form-model";
-        this.UMID_STAT_QUERY_CHART_MODEL = "qe:stat-chart-model";
-        this.UMID_STAT_QUERY_LINE_CHART_MODEL = "qe:stat-line-chart-model";
-
         this.MAP_Y_FORMATTER = {
-            "sum(bytes)": "bytes"
+            "sum(bytes)": "bytes",
+            "SUM(cpu_info.mem_virt)": "bytes"
         };
 
         this.DEFAULT_FR_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, setup_time, teardown_time, agg-packets, agg-bytes, action";

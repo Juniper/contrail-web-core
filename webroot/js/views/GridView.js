@@ -1113,6 +1113,7 @@ define([
                         placeholder: '',
                         elementConfig: {
                             elementId: 'columnPicker',
+                            classes: 'columnPicker',
                             data: gridColumns,
                             dataTextField: 'text',
                             dataValueField: 'id',
@@ -1121,7 +1122,7 @@ define([
                                 placeholder: 'Search Column Name'
                             },
                             parse: formatData4ColumnPicker,
-                            minWidth: 150,
+                            minWidth: 200,
                             height: 250,
                             emptyOptionText: 'No Columns found.',
                             click: applyColumnPicker,
@@ -1300,12 +1301,12 @@ define([
                  Quick Fix: will find the id and set the css.
                  */
                 if (actionConfig.elementConfig.elementId == "columnPicker") {
-                    if ($(".input-multiselectbox #columnPicker button span:not(.ui-icon)").is(":visible")) {
-                        $(".input-multiselectbox #columnPicker button span:not(.ui-icon)").css({"display":"none"});
-                        $(".input-multiselectbox #columnPicker button")
+                    //if ($(gridContainer).find(".input-multiselectbox #columnPicker button span:not(.ui-icon)").is(":visible")) {
+                        $(gridContainer).find(".input-multiselectbox #columnPicker button span:not(.ui-icon)").css({"display":"none"});
+                        $(gridContainer).find(".input-multiselectbox #columnPicker button")
                             .html('<i class="icon icon-columns"></i>')
                             .css({'width':'25px', 'padding-left': '10px', 'border': 'none'});
-                    }
+                    //}
 
 
                 }
