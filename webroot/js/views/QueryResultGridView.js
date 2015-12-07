@@ -4,11 +4,11 @@
 
 define([
     'underscore',
-    'query-result-view',
+    'contrail-view',
     'contrail-list-model'
-], function (_, QueryResultView, ContrailListModel) {
+], function (_, ContrailView, ContrailListModel) {
 
-    var QueryResultGridView = QueryResultView.extend({
+    var QueryResultGridView = ContrailView.extend({
         render: function () {
             var self = this,
                 viewConfig = self.attributes.viewConfig,

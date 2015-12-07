@@ -1113,6 +1113,7 @@ define([
                         placeholder: '',
                         elementConfig: {
                             elementId: 'columnPicker',
+                            classes: 'columnPicker',
                             data: gridColumns,
                             dataTextField: 'text',
                             dataValueField: 'id',
@@ -1121,7 +1122,7 @@ define([
                                 placeholder: 'Search Column Name'
                             },
                             parse: formatData4ColumnPicker,
-                            minWidth: 150,
+                            minWidth: 200,
                             height: 250,
                             emptyOptionText: 'No Columns found.',
                             click: applyColumnPicker,
