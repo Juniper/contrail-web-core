@@ -49,28 +49,45 @@ if [ $1 = 'node' ] ; then
     grunt node-qunit
 fi
 
-if [ $2 = 'webController' ] ; then
-    echo    "**************************************************"
-    echo    "*     Networking Monitoring Unit Tests Setup     *"
-    echo -e "**************************************************\n\n"
+IFS=',' read -ra REPOS <<< "$2"
+for REPO in "${REPOS[@]}"; do
+    echo $REPO
+    if [ $REPO = 'webController' ] ; then
+        echo    "**************************************************"
+        echo    "*     Web Controller Unit Tests Setup            *"
+        echo -e "**************************************************\n\n"
 
-    cd ../contrail-web-controller/webroot/test/ui
+        cd ../contrail-web-controller/webroot/test/ui
 
-    echo "Creating link for node_modules....."
-    ln -sf ../../../../contrail-web-core/node_modules/ node_modules
-    echo "DONE"
-fi
+        echo "Creating link for node_modules....."
+        ln -sf ../../../../contrail-web-core/node_modules/ node_modules
+        cd -
+        echo "DONE"
+    fi
 
-if [ $2 = 'serverManager' ] ; then
-    echo    "*******************************************"
-    echo    "*     Server Manager Unit Tests setup     *"
-    echo -e "*******************************************\n\n"
+    if [ $REPO = 'serverManager' ] ; then
+        echo    "*******************************************"
+        echo    "*     Server Manager Unit Tests setup     *"
+        echo -e "*******************************************\n\n"
 
-    cd ../contrail-web-server-manager/webroot/test/ui
+        cd ../contrail-web-server-manager/webroot/test/ui
 
-    echo "Creating link for node_modules....."
-    ln -sf ../../../../contrail-web-core/node_modules/ node_modules
-    echo "DONE"
-fi
+        echo "Creating link for node_modules....."
+        ln -sf ../../../../contrail-web-core/node_modules/ node_modules
+        cd -
+        echo "DONE"
+    fi
 
+    if [ $REPO = 'webStorage' ] ; then
+        echo    "*******************************************"
+        echo    "*     Web Storage Unit Tests setup        *"
+        echo -e "*******************************************\n\n"
 
+        cd ../contrail-web-storage/webroot/test/ui
+
+        echo "Creating link for node_modules....."
+        ln -sf ../../../../contrail-web-core/node_modules/ node_modules
+        cd -
+        echo "DONE"
+    fi
+done
