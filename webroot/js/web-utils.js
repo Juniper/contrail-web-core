@@ -2835,6 +2835,75 @@ function comparatorIP(ip1, ip2, sign){
     }
     return -1;
 }
+
+/**
+ * Function to compare time when given in relative to current time.
+ * @param t1
+ * @param t2
+ * @param sign
+ */
+function timeSinceComparator(t1, t2, sign) {
+    var t1Parts = t1.split(' ');
+    var t2Parts = t2.split(' ');
+    var t1d = 0, t1h = 0, t1m = 0, t2d = 0, t2h = 0, t2m = 0;
+    $.each(t1Parts, function(i,part){
+       if(part.indexOf('d') != -1) {
+           t1d = part.substring(0, part.indexOf('d'));
+       } else if (part.indexOf('h') != -1) {
+           t1h = part.substring(0, part.indexOf('h'));
+       } else if (part.indexOf('m') != -1) {
+           t1m = part.substring(0, part.indexOf('m'));
+       } 
+    });
+    $.each(t2Parts, function(i,part){
+        if(part.indexOf('d') != -1) {
+            t2d = part.substring(0, part.indexOf('d'));
+        } else if (part.indexOf('h') != -1) {
+            t2h = part.substring(0, part.indexOf('h'));
+        } else if (part.indexOf('m') != -1) {
+            t2m = part.substring(0, part.indexOf('m'));
+        } 
+     });
+    if(t1d > t2d) {
+        return 1 * sign;
+    } else if (t1d < t2d){
+        return -1 * sign;
+    } else {
+        if(t1h > t2h) {
+            return 1 * sign;
+        } else if (t1h < t2h) {
+            return -1 * sign;
+        } else {
+            if(t1m > t2m) {
+                return 1 * sign;
+            } else {
+                return -1 * sign;
+            } 
+        }
+    }
+}
+
+/**
+ * Function to be used as comparator for sorting the status column for nodes.
+ * If the status is Up or Down split and get the time and use it for sorting.
+ * Else it is an alert leave it to sort based on text.
+ * @param s1
+ * @param s2
+ * @param sign
+ */
+function comparatorStatus(s1, s2, sign) {
+    if((s1.indexOf('Up') == 0 && s2.indexOf('Up') == 0) ||
+        (s1.indexOf('Down') == 0 && s2.indexOf('Down') == 0)) {
+      //Both Up so use since time to depict the order
+        var startIndex = (s1.indexOf('Up') == 0)? 9 : 11;
+        var t1 = s1.substring(startIndex,s1.length);
+        var t2 = s2.substring(startIndex,s2.length);
+        return timeSinceComparator(t1,t2,sign);
+    } else {
+        return (s1.localeCompare(s2) > 0)? 1 * sign : -1 * sign;
+    }
+    return -1;
+}
 /*
  * This function formats the VN name by discarding the domain name and appending the 
  * project name in the braces 
