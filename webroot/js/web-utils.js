@@ -2835,6 +2835,70 @@ function comparatorIP(ip1, ip2, sign){
     }
     return -1;
 }
+/**
+ * Give a relative this function will retain the absolute time
+ * @param rTime
+ * @returns {XDate}
+ */
+function getAbsoluteTimeFromRelativeTime (rTime) {
+    var abTime = new XDate();
+    var tParts = rTime.split(' ');
+    var td = 0, th = 0, tm = 0;
+    $.each(tParts, function(i,part){
+        if(part.indexOf('d') != -1) {
+            td = part.substring(0, part.indexOf('d'));
+        } else if (part.indexOf('h') != -1) {
+            th = part.substring(0, part.indexOf('h'));
+        } else if (part.indexOf('m') != -1) {
+            tm = part.substring(0, part.indexOf('m'));
+        } 
+     });
+    if(td > 0) {
+        abTime = abTime.addDays(-td);
+    }
+    if(th > 0) {
+        abTime = abTime.addHours(-th);
+    }
+    if(tm > 0) {
+        abTime = abTime.addMinutes(-tm);
+    }
+    return abTime;
+}
+
+/**
+ * Function to compare time when given in relative to current time.
+ * @param t1
+ * @param t2
+ * @param sign
+ */
+function timeSinceComparator(t1,t2,sign) {
+    var t1AbTS = getAbsoluteTimeFromRelativeTime(t1).getTime().toString();
+    var t2AbTS = getAbsoluteTimeFromRelativeTime(t2).getTime().toString();
+    return (t1AbTS.localeCompare(t2AbTS) > 0)? 1 * sign : -1 * sign;
+}
+
+
+/**
+ * Function to be used as comparator for sorting the status column for nodes.
+ * If the status is Up or Down split and get the time and use it for sorting.
+ * Else it is an alert leave it to sort based on text.
+ * @param s1
+ * @param s2
+ * @param sign
+ */
+function comparatorStatus(s1, s2, sign) {
+    if((s1.indexOf('Up') == 0 && s2.indexOf('Up') == 0) ||
+        (s1.indexOf('Down') == 0 && s2.indexOf('Down') == 0)) {
+      //Both Up so use since time to depict the order
+        var startIndex = (s1.indexOf('Up') == 0)? 9 : 11;
+        var t1 = s1.substring(startIndex,s1.length);
+        var t2 = s2.substring(startIndex,s2.length);
+        return timeSinceComparator(t1,t2,sign);
+    } else {
+        return (s1.localeCompare(s2) > 0)? 1 * sign : -1 * sign;
+    }
+    return -1;
+}
 /*
  * This function formats the VN name by discarding the domain name and appending the 
  * project name in the braces 
