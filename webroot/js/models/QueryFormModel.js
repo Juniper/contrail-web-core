@@ -234,7 +234,7 @@ define([
             var modelAttrs = this.model().attributes,
                 attrs4Server = {},
                 ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object',
-                                 'filter_data_object', 'filter_and_clauses', 'limit', 'sort_by', 'sort_order', 'log_category', 'log_type', 'keywords', 'is_request_in_progress'];
+                                 'filter_data_object', 'filter_and_clauses', 'sort_by', 'sort_order', 'log_category', 'log_type', 'keywords', 'is_request_in_progress'];
 
             for (var key in modelAttrs) {
                 if(modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) == -1) {
