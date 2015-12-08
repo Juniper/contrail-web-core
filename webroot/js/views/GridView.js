@@ -64,7 +64,6 @@ define([
                 initClientSidePagination();
                 initGridFooter();
                 dataView.setData(dataViewData);
-                performSort(gridSortColumns);
             }
 
             if (contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
@@ -73,6 +72,7 @@ define([
                     if (gridOptions.defaultDataStatusMessage && contrailListModel.getItems().length == 0) {
                         gridContainer.data('contrailGrid').showGridMessage('empty')
                     }
+                    performSort(gridSortColumns);
                 }
             }
 
@@ -82,6 +82,7 @@ define([
                     if (gridOptions.defaultDataStatusMessage && contrailListModel.getItems().length == 0) {
                         gridContainer.data('contrailGrid').showGridMessage('empty')
                     }
+                    performSort(gridSortColumns);
                     //TODO: Execute only in refresh case.
                     if (gridConfig.header.defaultControls.refreshable) {
                         setTimeout(function () {

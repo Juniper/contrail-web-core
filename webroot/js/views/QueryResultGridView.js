@@ -103,8 +103,7 @@ define([
                         ajaxConfig: queryResultRemoteConfig,
                         dataParser: function(response) {
                             return response['data'];
-                        },
-                        serverSidePagination: true
+                        }
                     }
                 },
                 statusMessages: {
