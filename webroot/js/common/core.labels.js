@@ -161,6 +161,7 @@ define([
         this.TITLE_QE_FILTER = "Filter";
 
         this.TITLE_QUERY = "Query";
+        this.TITLE_QUERY_STATUS = "Query Status";
         this.TITLE_RESULTS = "Results";
         this.TITLE_CHART = "Chart";
         this.TITLE_FLOW = "Flow";

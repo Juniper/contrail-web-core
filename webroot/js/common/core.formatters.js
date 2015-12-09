@@ -36,6 +36,14 @@ define([
                     return value + " %";
                     break;
 
+                case 'date-time' :
+                    return moment(parseInt(value)).format('YYYY-MM-DD HH:mm:ss');
+                    break;
+
+                case 'time-period' :
+                    return parseInt(value) + ' secs';
+                    break;
+
                 case 'fault-state' :
                     if(value === true || value === 'true') {
                         return '<span class="red">' + value + '</span>';
