@@ -1413,11 +1413,15 @@ define([
                     formatter: function(r, c, v, cd, dc) {
                         if (contrail.checkIfExist(dc.ObjectLog)) {
                             if (!$.isPlainObject(dc.ObjectLog)) {
-                                dc.ObjectLog = qewu.formatXML2JSON(dc.ObjectLog);
+                                dc.ObjectLogJSON = qewu.formatXML2JSON(dc.ObjectLog);
                             }
-                            return contrail.formatJSON2HTML(dc.ObjectLog, 0);
+                            return contrail.formatJSON2HTML(dc.ObjectLogJSON, 0);
                         }
                         return null;
+                    },
+                    exportConfig: {
+                        allow: true,
+                        stdFormatter: false
                     }
                 }
             },
@@ -1428,11 +1432,15 @@ define([
                     formatter: function(r, c, v, cd, dc) {
                         if (contrail.checkIfExist(dc.SystemLog)) {
                             if (!$.isPlainObject(dc.SystemLog)) {
-                                dc.SystemLog = qewu.formatXML2JSON(dc.SystemLog);
+                                dc.SystemLogJSON = qewu.formatXML2JSON(dc.SystemLog);
                             }
-                            return contrail.formatJSON2HTML(dc.SystemLog, 0);
+                            return contrail.formatJSON2HTML(dc.SystemLogJSON, 0);
                         }
                         return null;
+                    },
+                    exportConfig: {
+                        allow: true,
+                        stdFormatter: false
                     }
                 }
             }
@@ -1454,13 +1462,16 @@ define([
                     formatter: function(r, c, v, cd, dc) {
                         if (contrail.checkIfExist(dc.Xmlmessage)) {
                             if (!$.isPlainObject(dc.Xmlmessage)) {
-                                dc.Xmlmessage = qewu.formatXML2JSON(dc.Xmlmessage);
+                                dc.XmlmessageJSON = qewu.formatXML2JSON(dc.Xmlmessage);
                             }
-                            return '<span class="word-break-normal">' + cowu.handleNull4Grid(contrail.checkIfExist(dc.Xmlmessage['Message']) ? dc.Xmlmessage['Message'] : dc.Xmlmessage['log_msg']) + '</span>';
+                            return '<span class="word-break-normal">' + cowu.handleNull4Grid(contrail.checkIfExist(dc.XmlmessageJSON['Message']) ? dc.XmlmessageJSON['Message'] : dc.XmlmessageJSON['log_msg']) + '</span>';
                         }
                         return '';
                     },
-                    exportConfig: { allow: true, advFormatter: function(dc) { return dc.Xmlmessage } }
+                    exportConfig: {
+                        allow: true,
+                        stdFormatter: false
+                    }
                 }
             }
         ]

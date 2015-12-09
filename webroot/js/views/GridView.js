@@ -1371,6 +1371,62 @@ define([
         }
     });
 
+    function exportGridData2CSV(gridConfig, gridData) {
+        var csvString = '',
+            columnNameArray = [],
+            columnExportFormatters = [];
+
+        var gridColumns = gridConfig.columnHeader.columns;
+
+        // Populate Header
+        $.each(gridColumns, function(key, val){
+            if(typeof val.exportConfig === 'undefined' || (typeof val.exportConfig.allow !== 'undefined' && val.exportConfig.allow == true)){
+                columnNameArray.push(val.name);
+                if(typeof val.exportConfig !== 'undefined' && typeof val.exportConfig.advFormatter === 'function' && val.exportConfig.advFormatter != false){
+                    columnExportFormatters.push(function(data) { return String(val.exportConfig.advFormatter(data)); });
+                } else if((typeof val.formatter !== 'undefined') && (typeof val.exportConfig === 'undefined' || (typeof val.exportConfig.stdFormatter !== 'undefined' && val.exportConfig.stdFormatter != false))){
+                    columnExportFormatters.push(function(data) { return String(val.formatter(0, 0, 0, 0, data)); });
+                } else {
+                    columnExportFormatters.push(function(data) {
+                        var dataValue = String(data[val.field]);
+                        if(typeof dataValue === 'object') {
+                            return JSON.stringify(dataValue);
+                        } else {
+                            return dataValue;
+                        }
+                    });
+                }
+            }
+        });
+        csvString += columnNameArray.join(',') + '\r\n';
+
+        $.each(gridData, function(key, val){
+            var dataLineArray = [];
+            $.each(columnExportFormatters, function(keyCol, valCol){
+                var dataValue = valCol(val);
+                dataValue = dataValue.replace(/"/g, '');
+                dataLineArray.push('"' + dataValue + '"');
+            });
+            csvString += dataLineArray.join(',') + '\r\n';
+        });
+
+        var blob = new Blob([csvString], {type:'text/csv'});
+        var blobUrl = window.URL.createObjectURL(blob);
+
+        var a = document.createElement('a');
+        a.href = blobUrl;
+        a.target = '_blank';
+        a.download = ((contrail.checkIfExist(gridConfig.header.title.text) && (gridConfig.header.title.text != '' || gridConfig.header.title.text != false)) ? gridConfig.header.title.text.toLowerCase().split(' ').join('-') : 'download') + '.csv';
+
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(function(){
+            a.remove();
+            window.URL.revokeObjectURL(blobUrl);
+        }, 10000);
+
+    };
 
     return GridView;
 });
