@@ -373,7 +373,9 @@
         }
 
         function constructCombobox(dis, givenOptions, formattedData){
-            var wrapper, input, option = getComboboxOption(givenOptions);
+            var wrapper, input,
+                option = getComboboxOption(givenOptions),
+                wasOpen = null;
             option.source = formattedData;
             dis.option = option;
             dis.globalSelect = {};
@@ -393,8 +395,12 @@
                 .attr('placeholder', option.placeholder)
 
                 // update the combobox when the input is updated to keep both in sync
-                .on( "autocompletechange", function( event, ui ) {
-                    dis.val($(this).val());
+                .on( "autocompleteselect", function( event, ui ) {
+                    dis.val(ui.item.value);
+                    dis.trigger('change');
+                })
+                .on('change', function(event){
+                    dis.val($(event.target).val());
                     dis.trigger('change');
                 });
 
