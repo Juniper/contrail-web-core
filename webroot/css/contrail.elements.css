@@ -2579,6 +2579,15 @@ td.td-actions a.td-action {
   border-top: none;
   background-color: #FFF;
 }
+.widget-body-collapsed {
+    background-color: #F7F7F7;
+    padding: 2px 5px;
+    font-size: 10px;
+    font-style: italic;
+    cursor: pointer;
+    border-bottom: 1px solid #DDD;
+    text-align: center;
+}
 .widget-main {
   padding: 10px 0;
 }
@@ -4122,8 +4131,11 @@ td.td-actions a.td-action {
 .badge-color-6 {background-color: #a55194 ;}
 
 .label-icon-badge {
-	font-size: 12px;
+    font-size: 12px;
     color: #ccc;
+}
+.label-icon-badge-queue > i {
+    cursor: default;
 }
 
 .icon-badge-color-0 {color: #1f77b4;}
@@ -4136,9 +4148,9 @@ td.td-actions a.td-action {
 
 .icon-queue-badge-color-0 {color: #17becf;}
 .icon-queue-badge-color-1 {color: #bcbd22;}
-.icon-queue-badge-color-2 {color: #d62728;}
+.icon-queue-badge-color-2 {color: #8c564b;}
 .icon-queue-badge-color-3 {color: #e377c2;}
-.icon-queue-badge-color-4 {color: #8c564b;}
+.icon-queue-badge-color-4 {color: #ff7f0e;}
 
 /* status-badge-rounded */
 .status-badge-rounded {

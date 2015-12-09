@@ -33,6 +33,7 @@ define([
                                 widgetElement.find('.widget-toolbar').find('i')
                                     .toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
                                 widgetElement.find('.widget-body').toggle()
+                                widgetElement.find('.widget-body-collapsed').toggle()
                             });
 
                         widgetElement.data('widget-action', {
@@ -40,11 +41,13 @@ define([
                                 widgetElement.find('.widget-toolbar').find('i')
                                     .removeClass('icon-chevron-up').addClass('icon-chevron-down');
                                 widgetElement.find('.widget-body').hide()
+                                widgetElement.find('.widget-body-collapsed').show()
                             },
                             expand: function() {
                                 widgetElement.find('.widget-toolbar').find('i')
                                     .removeClass('icon-chevron-down').addClass('icon-chevron-up');
                                 widgetElement.find('.widget-body').show()
+                                widgetElement.find('.widget-body-collapsed').hide()
                             }
                         });
                     }

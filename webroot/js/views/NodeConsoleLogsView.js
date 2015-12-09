@@ -11,11 +11,12 @@ define([
     var nodeType,hostname;
     var NodeConsoleLogsView = QueryFormView.extend({
         render: function () {
-            var self = this, viewConfig = self.attributes.viewConfig,
+            var self = this,
+                viewConfig = self.attributes.viewConfig,
+                modelMap = contrail.handleIfNull(self.modelMap, {}),
                 elementId = self.attributes.elementId,
                 queryPageTmpl = contrail.getTemplate4Id(ctwc.TMPL_QUERY_PAGE),
                 consoleLogsModel = new NodeConsoleLogsModel(),
-                widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 queryFormId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.CONSOLE_LOGS_PREFIX + cowc.QE_FORM_SUFFIX;
 
             hostname = viewConfig.hostname;
@@ -26,35 +27,49 @@ define([
 
             self.$el.append(queryPageTmpl({queryPrefix: cowc.CONSOLE_LOGS_PREFIX }));
 
-            self.renderView4Config($(self.$el).find(queryFormId), this.model, self.getViewConfig(), null, null, null, function () {
+            self.renderView4Config($(self.$el).find(queryFormId), this.model, self.getViewConfig(), null, null, modelMap, function () {
                 self.model.showErrorAttr(elementId, false);
                 Knockback.applyBindings(self.model, document.getElementById(elementId));
                 kbValidation.bind(self);
                 $("#display_logs").on('click', function() {
                     self.renderQueryResult();
                 });
+
                 self.renderQueryResult();
             });
-
-            if (widgetConfig !== null) {
-                self.renderView4Config($(self.$el).find(queryFormId), self.model, widgetConfig, null, null, null);
-            }
         },
 
         renderQueryResult: function() {
             var self = this,
+                modelMap = contrail.handleIfNull(self.modelMap, {}),
+                queryFormModel = self.model,
                 queryResultId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.CONSOLE_LOGS_PREFIX + cowc.QE_RESULTS_SUFFIX,
-                responseViewConfig = {
-                    view: "SystemLogsResultView",
-                    viewPathPrefix: "reports/qe/ui/js/views/",
-                    app: cowc.APP_CONTRAIL_CONTROLLER,
-                    viewConfig: {
-                        title: cowl.TITLE_CONSOLE_LOGS
-                    }
-                };
+                queryResultTabId = cowl.QE_SYSTEM_LOGS_TAB_ID;
 
-            formatQueryParams(this.model);
-            self.renderView4Config($(self.$el).find(queryResultId), this.model, responseViewConfig);
+            formatQueryParams(queryFormModel);
+
+            queryFormModel.is_request_in_progress(true);
+            qewu.fetchServerCurrentTime(function(serverCurrentTime) {
+                var timeRange = parseInt(queryFormModel.time_range()),
+                    queryResultPostData;
+
+                if (timeRange !== -1) {
+                    queryFormModel.to_time(serverCurrentTime);
+                    queryFormModel.from_time(serverCurrentTime - (timeRange * 1000));
+                }
+
+                queryResultPostData = queryFormModel.getQueryRequestPostData(serverCurrentTime);
+                queryResultPostData.chunkSize = cowc.QE_RESULT_CHUNK_SIZE_10K;
+                self.renderView4Config($(queryResultId), queryFormModel,
+                    getQueryResultTabViewConfig(queryResultPostData, queryResultTabId), null, null, modelMap,
+                    function() {
+                        var queryResultListModel = modelMap[cowc.UMID_QUERY_RESULT_LIST_MODEL];
+
+                        queryResultListModel.onAllRequestsComplete.subscribe(function () {
+                            queryFormModel.is_request_in_progress(false);
+                        });
+                    });
+            });
         },
 
         getViewConfig: function () {
@@ -201,6 +216,7 @@ define([
                                     elementId: 'display_logs', view: "FormButtonView", label: "Display Logs",
                                     viewConfig: {
                                         class: 'display-inline-block margin-0-10-0-0',
+                                        disabled: 'is_request_in_progress()',
                                         elementConfig: {
                                             btnClass: 'btn-primary'
                                         }
@@ -296,6 +312,37 @@ define([
 
         //TODO: Add where clause for category, type, and keywords. Add where clause corresponding to node type.
     };
+
+    function getQueryResultTabViewConfig(queryResultPostData, queryResultTabId) {
+        return {
+            elementId: queryResultTabId,
+            view: "TabsView",
+            viewConfig: {
+                theme: cowc.TAB_THEME_WIDGET_CLASSIC,
+                tabs: [getQueryResultGridViewConfig(queryResultPostData)]
+            }
+        };
+    }
+
+    function getQueryResultGridViewConfig(queryResultPostData) {
+        return {
+            elementId: cowl.QE_QUERY_RESULT_GRID_ID,
+            title: cowl.TITLE_RESULTS,
+            iconClass: 'icon-table',
+            view: 'QueryResultGridView',
+            tabConfig: {
+                //TODO
+            },
+            viewConfig: {
+                queryResultPostData: queryResultPostData,
+                gridOptions: {
+                    titleText: cowl.TITLE_SYSTEM_LOGS,
+                    queryQueueUrl: cowc.URL_QUERY_LOG_QUEUE,
+                    queryQueueTitle: cowl.TITLE_LOG
+                }
+            }
+        }
+    }
 
     return NodeConsoleLogsView;
 });
