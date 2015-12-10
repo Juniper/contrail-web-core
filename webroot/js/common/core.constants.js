@@ -292,7 +292,7 @@ define([
 
         this.DEFAULT_FR_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, setup_time, teardown_time, agg-packets, agg-bytes, action";
         this.DEFAULT_FS_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, T=, sum(packets), sum(bytes)";
-        this.DEFAULT_SL_SELECT_FIELDS = "Source, ModuleId, Category, Level, NodeType, Messagetype, Xmlmessage";
+        this.DEFAULT_SL_SELECT_FIELDS = "MessageTS, Source, ModuleId, Category, Level, NodeType, Messagetype, Xmlmessage";
 
         this.D3_COLOR_CATEGORY2 = [ "#1f77b4", "#2ca02c"];
         this.D3_COLOR_CATEGORY5 = [ '#1f77b4', '#6baed6' , '#ff7f0e', '#2ca02c', '#9e9ac8'];

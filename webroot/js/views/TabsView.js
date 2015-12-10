@@ -95,6 +95,13 @@ define([
             if (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) && contrail.checkIfFunction(self.tabs[tabIndex].tabConfig.onRemoveTab)) {
                 self.tabs[tabIndex].tabConfig.onRemoveTab();
             }
+
+            $.each(self.tabsIdMap, function (tabsIdKey, tabsIdValue) {
+                if (tabsIdValue > tabIndex) {
+                    self.tabsIdMap[tabsIdKey] = tabsIdValue - 1;
+                }
+            });
+
             delete self.tabsIdMap[tabPanelId];
             self.tabs.splice(tabIndex, 1);
             self.tabRendered.splice(tabIndex, 1);

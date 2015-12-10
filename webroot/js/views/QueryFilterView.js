@@ -49,7 +49,7 @@ define([
                 }
             });
 
-            self.renderView4Config($("#" + queryPrefix + "-form"), this.model, getFilterCollectionViewConfig(queryPrefix), null, null, null, function () {
+            self.renderView4Config($("#" + queryPrefix + "-form"), this.model, getFilterViewConfig(), null, null, null, function () {
                 self.model.showErrorAttr(queryPrefix + cowc.FORM_SUFFIX_ID, false);
                 Knockback.applyBindings(self.model, document.getElementById(modalId));
                 kbValidation.bind(self);
@@ -57,10 +57,81 @@ define([
         }
     });
 
-    function getFilterCollectionViewConfig(queryPrefix) {
+    function getFilterViewConfig() {
+        return {
+            elementId : 'filter-accordian',
+            view      : "AccordianView",
+            viewConfig: [
+                {
+                    elementId: 'filter_by',
+                    title: 'Filter',
+                    view: "SectionView",
+                    viewConfig:
+                    {
+                        rows: [
+                            {
+                                columns: [getFilterCollectionViewConfig()]
+                            }
+                        ]
+                    }
+                },
+                {
+                    elementId: 'limit_by',
+                    title: 'Limit',
+                    view: "SectionView",
+                    viewConfig:
+                    {
+                        rows: [
+                            {
+                                columns: [{
+                                    elementId: 'limit', view: "FormInputView",
+                                    viewConfig: {path: 'limit', dataBindValue: 'limit', class: "span6"}
+                                }]
+                            }
+                        ]
+                    }
+                },
+                {
+                    elementId: 'sort',
+                    title: 'Sort',
+                    view: "SectionView",
+                    viewConfig:
+                    {
+                        rows: [
+                            {
+                                columns: [
+                                    {
+                                        elementId : 'sort_by', view: "FormMultiselectView",
+                                        viewConfig: {
+                                            path: 'sort_by', dataBindValue: 'sort_by', class: "span9",
+                                            dataBindOptionList: 'getSortByOptionList()',
+                                            elementConfig: {
+                                                placeholder: cowc.QE_TITLE_SORT_BY
+                                            }
+                                        }
+                                    },
+                                    {
+                                        elementId : 'sort_order', view: "FormDropdownView",
+                                        viewConfig: {
+                                            path: 'sort_order', dataBindValue: 'sort_order', class: "span3",
+                                            elementConfig: {
+                                                placeholder: cowc.QE_TITLE_SORT_ORDER,
+                                                data: cowc.QE_SORT_ORDER_DROPDOWN_VALUES
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
 
+    };
 
-        var viewConfig = {
+    function getFilterCollectionViewConfig() {
+        return {
             elementId: 'and-clause-collection',
             title: "Filter By",
             view: "FormCollectionView",
@@ -139,78 +210,7 @@ define([
             }
 
         };
-
-        return {
-            elementId : 'filter-accordian',
-            view      : "AccordianView",
-            viewConfig: [
-                {
-                    elementId: 'filter_by',
-                    title: 'Filter',
-                    view: "SectionView",
-                    viewConfig:
-                    {
-                        rows: [
-                            {
-                                columns: [viewConfig]
-                            }
-                        ]
-                    }
-                },
-                {
-                    elementId: 'limit_by',
-                    title: 'Limit',
-                    view: "SectionView",
-                    viewConfig:
-                    {
-                        rows: [
-                            {
-                                columns: [{
-                                    elementId: 'limit', view: "FormInputView",
-                                    viewConfig: {path: 'limit', dataBindValue: 'limit', class: "span6"}
-                                }]
-                            }
-                        ]
-                    }
-                },
-                {
-                    elementId: 'sort',
-                    title: 'Sort',
-                    view: "SectionView",
-                    viewConfig:
-                    {
-                        rows: [
-                            {
-                                columns: [
-                                    {
-                                        elementId : 'sort_by', view: "FormMultiselectView",
-                                        viewConfig: {
-                                            path: 'sort_by', dataBindValue: 'sort_by', class: "span9",
-                                            dataBindOptionList: 'getSortByOptionList()',
-                                            elementConfig: {
-                                                placeholder: cowc.QE_TITLE_SORT_BY
-                                            }
-                                        }
-                                    },
-                                    {
-                                        elementId : 'sort_order', view: "FormDropdownView",
-                                        viewConfig: {
-                                            path: 'sort_order', dataBindValue: 'sort_order', class: "span3",
-                                            elementConfig: {
-                                                placeholder: cowc.QE_TITLE_SORT_ORDER,
-                                                data: cowc.QE_SORT_ORDER_DROPDOWN_VALUES
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        }
-
-    };
+    }
 
     return QueryFilterView;
 });

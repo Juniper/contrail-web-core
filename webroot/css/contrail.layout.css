@@ -2331,6 +2331,13 @@ button.btn:active {
 .font-size-30{font-size:30px !important;}
 
 /* margin framework */
+.margin-0 {margin: 0 !important;}
+.margin-2 {margin:2px !important;}
+.margin-2-0 {margin:2px 0 !important;}
+.margin-2-0-0 {margin:2px 0 0 !important;}
+.margin-0-2 {margin:0 2px !important;}
+.margin-0-0-2 {margin:0 0 2px !important;}
+.margin-0-0-0-2 {margin:0 0 0 2px !important;}
 .margin-5 {margin:5px !important;}
 .margin-5-0 {margin:5px 0 !important;}
 .margin-5-0-0 {margin:5px 0 0 !important;}

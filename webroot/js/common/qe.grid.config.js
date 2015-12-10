@@ -51,21 +51,21 @@ define([
                     },
                 },
                 { id:"startTime", field:"startTime", name:"Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
-                { id:"opsQueryId", field:"opsQueryId", name:"Analytics Query Id", minWidth:280, sortable:false },
-                {
-                    id:"", field:"", name:"Time Range", minWidth: 100, sortable:false,
-                    formatter: function(r, c, v, cd, dc) {
-                        return qewu.formatTimeRange(dc.queryReqObj.formModelAttrs.time_range);
-                    }
-                },
-                { id:"fromTime", field:"fromTime", name:"From Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.queryReqObj.formModelAttrs.from_time_utc).format('YYYY-MM-DD HH:mm:ss'); } },
-                { id:"toTime", field:"toTime", name:"To Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.queryReqObj.formModelAttrs.to_time_utc).format('YYYY-MM-DD HH:mm:ss'); } },
                 {
                     id:"table_name", field:"", name:"Table Name", minWidth: 200, sortable:false,
                     formatter: function(r, c, v, cd, dc) {
                         return dc.queryReqObj.formModelAttrs.table_name;
                     }
                 },
+                {
+                    id:"", field:"", name:"Time Range", minWidth: 100, sortable:false,
+                    formatter: function(r, c, v, cd, dc) {
+                        return qewu.formatTimeRange(dc.queryReqObj.formModelAttrs.time_range);
+                    }
+                },
+                //{ id:"opsQueryId", field:"opsQueryId", name:"Analytics Query Id", minWidth:140, sortable:false },
+                { id:"fromTime", field:"fromTime", name:"From Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.queryReqObj.formModelAttrs.from_time_utc).format('YYYY-MM-DD HH:mm:ss'); } },
+                { id:"toTime", field:"toTime", name:"To Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.queryReqObj.formModelAttrs.to_time_utc).format('YYYY-MM-DD HH:mm:ss'); } },
                 { id:"progress", field:"progress", name:"Progress", minWidth:75, formatter: function(r, c, v, cd, dc) { return (dc.status != 'error' && dc.progress != '' && parseInt(dc.progress) > 0) ? (dc.progress + '%') : '-'; } },
                 { id:"count", field:"count", name:"Records", minWidth:75 },
                 { id:"status", field:"status", name:"Status", minWidth:90 },
@@ -107,44 +107,44 @@ define([
         "FlowSeriesTable": [
             {select:"T", display:{id:"T", field:"T", minWidth:210, name:"Time", formatter: function(r, c, v, cd, dc){ return cowu.formatMicroDate(dc.T);}, filterable:false, groupable:false}},
             {select:"T=", display:{id:"T", field:"T", minWidth:210, name:"Time", formatter: function(r, c, v, cd, dc){ return cowu.formatMicroDate(dc.T);}, filterable:false, groupable:false}},
-            {select:"vrouter", display:{id:"vrouter",field:"vrouter", minWidth:150, name:"Virtual Router", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.vrouter);}}},
-            {select:"sourcevn", display:{id:"sourcevn",field:"sourcevn", minWidth:250, name:"Source VN", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourcevn);}}},
-            {select:"destvn", display:{id:"destvn", field:"destvn", minWidth:250, name:"Destination VN", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destvn);}}},
-            {select:"sourceip", display:{id:"sourceip", field:"sourceip", minWidth:120, name:"Source IP", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourceip);}}},
+            {select:"vrouter", display:{id:"vrouter",field:"vrouter", minWidth:100, name:"Virtual Router", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.vrouter);}}},
+            {select:"sourcevn", display:{id:"sourcevn",field:"sourcevn", minWidth:240, name:"Source VN", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourcevn);}}},
+            {select:"destvn", display:{id:"destvn", field:"destvn", minWidth:240, name:"Destination VN", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destvn);}}},
+            {select:"sourceip", display:{id:"sourceip", field:"sourceip", minWidth:100, name:"Source IP", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourceip);}}},
             {select:"destip", display:{id:"destip", field:"destip", minWidth:120, name:"Destination IP", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destip);}}},
-            {select:"sport", display:{id:"sport", field:"sport", minWidth:120, name:"Source Port", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sport);}}},
+            {select:"sport", display:{id:"sport", field:"sport", minWidth:100, name:"Source Port", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sport);}}},
             {select:"dport", display:{id:"dport", field:"dport", minWidth:130, name:"Destination Port", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.dport);}}},
-            {select:"direction_ing", display:{id:"direction_ing", field:"direction_ing", minWidth:120, name:"Direction", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getDirName(dc.direction_ing));}}},
+            {select:"direction_ing", display:{id:"direction_ing", field:"direction_ing", minWidth:100, name:"Direction", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getDirName(dc.direction_ing));}}},
             {select:"protocol", display:{id:"protocol", field:"protocol", minWidth:100, name:"Protocol", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getProtocolName(dc.protocol));}}},
             {select:"bytes", display:{id:"bytes", field:"bytes", minWidth:120, name:"Bytes", groupable:false}},
             {select:"sum(bytes)", display:{id:"sum(bytes)", field:"sum(bytes)", minWidth:100, name:"SUM (Bytes)", groupable:false}},
             {select:"avg(bytes)", display:{id:"avg(bytes)", field:"avg(bytes)", minWidth:100, name:"AVG (Bytes)", groupable:false}},
             {select:"packets", display:{id:"packets", field:"packets", minWidth:100, name:"Packets", groupable:false}},
-            {select:"sum(packets)", display:{id:"sum(packets)", field:"sum(packets)", minWidth:100, name:"SUM (Packets)", groupable:false}},
-            {select:"avg(packets)", display:{id:"avg(packets)", field:"avg(packets)", minWidth:100, name:"AVG (Packets)", groupable:false}}
+            {select:"sum(packets)", display:{id:"sum(packets)", field:"sum(packets)", minWidth:120, name:"SUM (Packets)", groupable:false}},
+            {select:"avg(packets)", display:{id:"avg(packets)", field:"avg(packets)", minWidth:120, name:"AVG (Packets)", groupable:false}}
         ],
         "FlowRecordTable": [
-            {select:"action", display:{id:"action", field:"action", minWidth:90, name:"Action", groupable:true}},
-            {select:"setup_time", display:{id:"setup_time", field:"setup_time", minWidth:180, name:"Setup Time", formatter: function(r, c, v, cd, dc){ return cowu.formatMicroDate(dc.setup_time); }, filterable:false, groupable:false}},
-            {select:"teardown_time", display:{id:"teardown_time", field:"teardown_time", minWidth:180, name:"Teardown Time", formatter: function(r, c, v, cd, dc){ return cowu.formatMicroDate(dc.teardown_time); }, filterable:false, groupable:false}},
-            {select:"vrouter", display:{id:"vrouter", field:"vrouter", minWidth:150, name:"Virtual Router", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.vrouter);}}},
+            {select:"action", display:{id:"action", field:"action", minWidth:60, name:"Action", groupable:true}},
+            {select:"setup_time", display:{id:"setup_time", field:"setup_time", minWidth:210, name:"Setup Time", formatter: function(r, c, v, cd, dc){ return cowu.formatMicroDate(dc.setup_time); }, filterable:false, groupable:false}},
+            {select:"teardown_time", display:{id:"teardown_time", field:"teardown_time", minWidth:210, name:"Teardown Time", formatter: function(r, c, v, cd, dc){ return cowu.formatMicroDate(dc.teardown_time); }, filterable:false, groupable:false}},
+            {select:"vrouter", display:{id:"vrouter", field:"vrouter", minWidth:100, name:"Virtual Router", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.vrouter);}}},
             {select:"vrouter_ip", display:{id:"vrouter_ip", field:"vrouter_ip", minWidth:120, name:"Virtual Router IP", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.vrouter_ip);}}},
-            {select:"other_vrouter_ip", display:{id:"other_vrouter_ip", field:"other_vrouter_ip", minWidth:120, name:"Other Virtual Router IP", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.other_vrouter_ip);}}},
-            {select:"sourcevn", display:{id:"sourcevn", field:"sourcevn", minWidth:250, name:"Source VN", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourcevn);}}},
-            {select:"destvn", display:{id:"destvn", field:"destvn", minWidth:250, name:"Destination VN", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destvn);}}},
-            {select:"sourceip", display:{id:"sourceip", field:"sourceip", minWidth:120, name:"Source IP", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourceip);}}},
+            {select:"other_vrouter_ip", display:{id:"other_vrouter_ip", field:"other_vrouter_ip", minWidth:170, name:"Other Virtual Router IP", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.other_vrouter_ip);}}},
+            {select:"sourcevn", display:{id:"sourcevn", field:"sourcevn", minWidth:240, name:"Source VN", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourcevn);}}},
+            {select:"destvn", display:{id:"destvn", field:"destvn", minWidth:240, name:"Destination VN", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destvn);}}},
+            {select:"sourceip", display:{id:"sourceip", field:"sourceip", minWidth:100, name:"Source IP", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourceip);}}},
             {select:"destip", display:{id:"destip", field:"destip", minWidth:120, name:"Destination IP", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destip);}}},
-            {select:"sport", display:{id:"sport", field:"sport", minWidth:120, name:"Source Port", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sport);}}},
-            {select:"dport", display:{id:"dport", field:"dport", minWidth:120, name:"Destination Port", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.dport);}}},
-            {select:"direction_ing", display:{id:"direction_ing", field:"direction_ing", minWidth:120, name:"Direction", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getDirName(dc.direction_ing));}}},
-            {select:"protocol", display:{id:"protocol", field:"protocol", minWidth:120, name:"Protocol", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getProtocolName(dc.protocol));}}},
-            {select:"underlay_proto", display:{id:"underlay_proto", field:"underlay_proto", minWidth:120, name:"Underlay Protocol", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.underlay_proto);}}},
-            {select:"underlay_source_port", display:{id:"underlay_source_port", field:"underlay_source_port", minWidth:120, name:"Underlay Source Port", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.underlay_source_port);}}},
+            {select:"sport", display:{id:"sport", field:"sport", minWidth:100, name:"Source Port", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sport);}}},
+            {select:"dport", display:{id:"dport", field:"dport", minWidth:130, name:"Destination Port", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.dport);}}},
+            {select:"direction_ing", display:{id:"direction_ing", field:"direction_ing", minWidth:100, name:"Direction", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getDirName(dc.direction_ing));}}},
+            {select:"protocol", display:{id:"protocol", field:"protocol", minWidth:100, name:"Protocol", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getProtocolName(dc.protocol));}}},
+            {select:"underlay_proto", display:{id:"underlay_proto", field:"underlay_proto", minWidth:150, name:"Underlay Protocol", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.underlay_proto);}}},
+            {select:"underlay_source_port", display:{id:"underlay_source_port", field:"underlay_source_port", minWidth:150, name:"Underlay Source Port", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.underlay_source_port);}}},
             {select:"UuidKey", display:{id:"UuidKey", field:"UuidKey", minWidth:280, name:"UUID", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.UuidKey);}}},
             {select:"sg_rule_uuid", display:{id:"sg_rule_uuid", field:"sg_rule_uuid", minWidth:280, name:"Rule UUID", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sg_rule_uuid);}}},
             {select:"nw_ace_uuid", display:{id:"nw_ace_uuid", field:"nw_ace_uuid", minWidth:280, name:"Network UUID", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.nw_ace_uuid);}}},
             {select:"agg-bytes", display:{id:"agg-bytes", field:"agg-bytes", minWidth:120, name:"Aggregate Bytes",  groupable:false}},
-            {select:"agg-packets", display:{id:"agg-packets", field:"agg-packets", minWidth:120, name:"Aggregate Packets",  groupable:false}}
+            {select:"agg-packets", display:{id:"agg-packets", field:"agg-packets", minWidth:140, name:"Aggregate Packets",  groupable:false}}
         ],
         "FlowClass":[
             {select:"sourcevn", display:{id:"sourcevn", field:"sourcevn", name:"Source VN", minWidth: 250, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourcevn);}}},
@@ -1407,32 +1407,40 @@ define([
             {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", minWidth: 150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.ModuleId);}}},
             {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", minWidth:300, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Messagetype); }}},
             {
-                select: "SystemLog",
-                display:{
-                    id:"SystemLog", field:"SystemLog", name:"System Log", minWidth:300, searchable:true,
-                    formatter: function(r, c, v, cd, dc) {
-                        if (contrail.checkIfExist(dc.SystemLog)) {
-                            if (!$.isPlainObject(dc.SystemLog)) {
-                                dc.SystemLog = qewu.formatXML2JSON(dc.SystemLog);
-                            }
-                            return contrail.formatJSON2HTML(dc.SystemLog, 0);
-                        }
-                        return null;
-                    }
-                }
-            },
-            {
                 select: "ObjectLog",
                 display:{
                     id:"ObjectLog", field:"ObjectLog", name:"Object Log", minWidth:300, searchable:true,
                     formatter: function(r, c, v, cd, dc) {
                         if (contrail.checkIfExist(dc.ObjectLog)) {
                             if (!$.isPlainObject(dc.ObjectLog)) {
-                                dc.ObjectLog = qewu.formatXML2JSON(dc.ObjectLog);
+                                dc.ObjectLogJSON = qewu.formatXML2JSON(dc.ObjectLog);
                             }
-                            return contrail.formatJSON2HTML(dc.ObjectLog, 0);
+                            return contrail.formatJSON2HTML(dc.ObjectLogJSON, 0);
                         }
                         return null;
+                    },
+                    exportConfig: {
+                        allow: true,
+                        stdFormatter: false
+                    }
+                }
+            },
+            {
+                select: "SystemLog",
+                display:{
+                    id:"SystemLog", field:"SystemLog", name:"System Log", minWidth:300, searchable:true,
+                    formatter: function(r, c, v, cd, dc) {
+                        if (contrail.checkIfExist(dc.SystemLog)) {
+                            if (!$.isPlainObject(dc.SystemLog)) {
+                                dc.SystemLogJSON = qewu.formatXML2JSON(dc.SystemLog);
+                            }
+                            return contrail.formatJSON2HTML(dc.SystemLogJSON, 0);
+                        }
+                        return null;
+                    },
+                    exportConfig: {
+                        allow: true,
+                        stdFormatter: false
                     }
                 }
             }
@@ -1440,13 +1448,13 @@ define([
         "MessageTable": [
             {select: "MessageTS", display:{id: "MessageTS", field: "MessageTS", name: "Time", minWidth:210, filterable:false, groupable:false, formatter: function(r, c, v, cd, dc) { return (dc.MessageTS && dc.MessageTS != '')  ? (cowu.formatMicroDate(dc.MessageTS)) : ''; }}},
             {select: "Source", display:{id:"Source", field:"Source", name:"Source", minWidth:150, searchable: true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Source);}}},
-            {select: "NodeType", display:{id:"NodeType", field:"NodeType", name:"Node Type", minWidth:150, searchable: true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.NodeType);}}},
+            {select: "NodeType", display:{id:"NodeType", field:"NodeType", name:"Node Type", minWidth:100, searchable: true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.NodeType);}}},
             {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", minWidth: 150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.ModuleId);}}},
-            {select: "Category", display:{id: "Category", field: "Category", name: "Category", minWidth: 150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Category);}}},
             {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", minWidth:200, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Messagetype); }}},
-            {select: "Level", display:{id:"Level", field:"Level", name:"Level", minWidth:150, searchable:true, formatter: function(r, c, v, cd, dc) { return qewu.getLevelName4Value(dc.Level); }}},
-            {select: "Context", display:{id:"Context", field:"Context", name:"Context", minWidth:150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Context); }}},
             {select: "Keyword", display:{id:"Keyword", field:"Keyword", name:"Keyword", minWidth:150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Keyword); }}},
+            {select: "Level", display:{id:"Level", field:"Level", name:"Level", minWidth:100, searchable:true, formatter: function(r, c, v, cd, dc) { return qewu.getLevelName4Value(dc.Level); }}},
+            {select: "Category", display:{id: "Category", field: "Category", name: "Category", minWidth: 150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Category);}}},
+            {select: "Context", display:{id:"Context", field:"Context", name:"Context", minWidth:150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Context); }}},
             {
                 select: "Xmlmessage",
                 display:{
@@ -1454,15 +1462,18 @@ define([
                     formatter: function(r, c, v, cd, dc) {
                         if (contrail.checkIfExist(dc.Xmlmessage)) {
                             if (!$.isPlainObject(dc.Xmlmessage)) {
-                                dc.Xmlmessage = qewu.formatXML2JSON(dc.Xmlmessage);
+                                dc.XmlmessageJSON = qewu.formatXML2JSON(dc.Xmlmessage);
                             }
-                            return '<span class="word-break-normal">' + cowu.handleNull4Grid(contrail.checkIfExist(dc.Xmlmessage['Message']) ? dc.Xmlmessage['Message'] : dc.Xmlmessage['log_msg']) + '</span>';
+                            return '<span class="word-break-normal">' + cowu.handleNull4Grid(contrail.checkIfExist(dc.XmlmessageJSON['Message']) ? dc.XmlmessageJSON['Message'] : dc.XmlmessageJSON['log_msg']) + '</span>';
                         }
                         return '';
                     },
-                    exportConfig: { allow: true, advFormatter: function(dc) { return dc.Xmlmessage } }
+                    exportConfig: {
+                        allow: true,
+                        stdFormatter: false
+                    }
                 }
-            },
+            }
         ]
     };
 

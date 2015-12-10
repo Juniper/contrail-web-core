@@ -83,8 +83,10 @@ define([
                             validationName = typeof getValidation == 'function' ? getValidation(collectionModel) : getValidation;
                             isInternalValid = collectionModel.attributes.model().isValid(validationOption, validationName);
                             attrErrorObj = {};
-                            attrErrorObj[key + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
-                            errors.set(attrErrorObj);
+                            if(!isInternalValid) {
+                                attrErrorObj[key + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
+                                errors.set(attrErrorObj);
+                            }
                             isValid = isValid && isInternalValid;
                         }
                     } else if (objectType == cowc.OBJECT_TYPE_MODEL) {
