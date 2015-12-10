@@ -229,30 +229,32 @@ function setAllCookies (req, res, appData, cookieObj, callback)
         }
     }
     var defDomainId;
+    var secureCookieStr = (false == config.insecure_access) ? "; secure" : "";
     res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
                   '; expires=' +
                   new Date(new Date().getTime() +
                            global.MAX_AGE_SESSION_ID).toUTCString() +
-                  "; secure");
+                  secureCookieStr);
     authApi.getCookieObjs(req, appData, function(cookieObjs) {
         if (null != cookieObjs['domain']) {
             res.setHeader('Set-Cookie', 'domain=' + cookieObjs['domain'] +
                           '; expires=' +
                           new Date(new Date().getTime() +
                                    global.MAX_AGE_SESSION_ID).toUTCString() +
-                          "; secure");
+                          secureCookieStr);
         }
         if (null != cookieObjs['project']) {
             res.setHeader('Set-Cookie', 'project=' + cookieObjs['project'] +
                           '; expires=' +
                           new Date(new Date().getTime() +
                                    global.MAX_AGE_SESSION_ID).toUTCString() +
-                          "; secure");
+                          secureCookieStr);
         }
         res.setHeader('Set-Cookie', '_csrf=' + req.session._csrf +
-                        '; expires=' + new Date(new Date().getTime() +
-                                                global.MAX_AGE_SESSION_ID).toUTCString()
-                        + '; secure');
+                      '; expires=' +
+                      new Date(new Date().getTime() +
+                               global.MAX_AGE_SESSION_ID).toUTCString()
+                        + secureCookieStr);
         callback();
     });
 }
