@@ -151,13 +151,15 @@ function initializeAppConfig (appObj)
         maxAge: global.MAX_AGE_SESSION_ID,
         includeSubdomains: true
     }));
+    var cookieObj = {maxAge: global.MAX_AGE_SESSION_ID, httpOnly: true};
+    cookieObj
+    if (false == insecureAccessFlag) {
+        cookieObj['secure'] = true;
+    }
     app.use(express.session({ store:store,
         secret: secretKey,
-        cookie:{
-            maxAge:global.MAX_AGE_SESSION_ID,
-            httpOnly: true,
-            secure: true
-        }}));
+        cookie: cookieObj
+        }));
         app.use(express.compress());
         app.use(express.methodOverride());
         app.use(express.bodyParser());
