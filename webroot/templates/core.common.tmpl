@@ -1717,8 +1717,8 @@
                 {{#IfCompare type 'radio' operator='=='}}
                     {{#each items}}
                         <div class="control-panel-filter-group-item padding-5-0">
-                            <input type="radio" name="control-panel-filter" class="ace-input" {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}}/>
-                            <span class="ace-lbl {{labelCssClass}}"> {{text}}</span>
+                            <input type="radio" name="control-panel-filter" {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}} class="margin-0"/>
+                            <span class="margin-2 {{labelCssClass}}"> {{text}}</span>
                         </div>
                     {{/each}}
                 {{/IfCompare}}

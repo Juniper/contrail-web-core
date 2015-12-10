@@ -37,7 +37,7 @@ define([
                                 //TODO - get rid of this
                                 setTimeout(function(){
                                     $('#' + queryResultGridId).data('contrailGrid').showGridMessage('empty')
-                                }, 1000)
+                                }, 1000);
                             }
                         }
                     }
@@ -103,8 +103,7 @@ define([
                         ajaxConfig: queryResultRemoteConfig,
                         dataParser: function(response) {
                             return response['data'];
-                        },
-                        serverSidePagination: true
+                        }
                     }
                 },
                 statusMessages: {
