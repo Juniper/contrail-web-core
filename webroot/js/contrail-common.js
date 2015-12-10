@@ -191,9 +191,17 @@ function Contrail() {
     };
 
     this.setCookie = function(name, value) {
-        var secureFlag = (globalObj['env'] != "test") ? "; secure" : "";
+        var secureCookieStr = "";
+        var insecureAccess =
+            getValueByJsonPath(globalObj, 'webServerInfo;insecureAccess',
+                               false);
+        if ("test" != globalObj['env']) {
+            secureCookieStr = "";
+        } else if (false == insecureAccess) {
+            secureCookieStr = "; secure";
+        }
         document.cookie = name + "=" + escape(value) +
-            "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/" + secureFlag
+            "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/" + secureCookieStr;
     };
 
     this.formatJSON2HTML = function(json, formatDepth){
