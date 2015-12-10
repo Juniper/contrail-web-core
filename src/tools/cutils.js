@@ -22,7 +22,7 @@ function getCookie(name) {
 
 function setCookie(name, value) {
     document.cookie = name + "=" + escape(value) +
-        "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/; secure"
+        "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/";
 }
 
 var class_A = 1;
