@@ -1389,6 +1389,7 @@ function getWebServerInfo (req, res, appData)
     activePkgs = _.uniq(activePkgs);
 
     serverObj['loggedInOrchestrationMode'] = req.session.loggedInOrchestrationMode;
+    serverObj['insecureAccess'] = config.insecure_access;
 
     var pkgCnt = activePkgs.length;
     if (!pkgCnt) {

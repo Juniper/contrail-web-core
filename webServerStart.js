@@ -168,27 +168,27 @@ function initializeAppConfig (appObj)
     // Implement X-Frame: Deny
     app.use(helmet.xframe('deny'));
     // Implement Strict-Transport-Security
+    var maxAgeTime =
+        ((null != config.session) && (null != config.session.timeout)) ?
+        config.session.timeout : global.MAX_AGE_SESSION_ID;
+
     app.use(helmet.hsts({
-        maxAge: global.MAX_AGE_SESSION_ID,
+        maxAge: maxAgeTime,
         includeSubdomains: true
     }));
+    var cookieObj = {maxAge: maxAgeTime, httpOnly: true};
+    cookieObj
+    if (false == insecureAccessFlag) {
+        cookieObj['secure'] = true;
+    }
     app.use(express.session({ store:store,
         secret: secretKey,
-        cookie:{
-            maxAge:global.MAX_AGE_SESSION_ID,
-            httpOnly: true,
-            secure: true
-        }}));
+        cookie: cookieObj
+        }));
         app.use(express.compress());
         app.use(express.methodOverride());
         app.use(express.bodyParser());
     registerStaticFiles(app, function() {
-        var csrf = express.csrf();
-        //Populate the CSRF token in req.session on login request
-        app.get('/login',csrf);
-        app.get('/vcenter/login',csrf);
-        //Enable CSRF token check for all URLs starting with "/api"
-        app.post('/api/*',csrf);
         app.use(app.router);
         // Catch-all error handler
         app.use(function (err, req, res, next) {
@@ -284,6 +284,14 @@ function registerReqToApp ()
     if (true == insecureAccessFlag) {
         myApp = httpApp;
     }
+
+    var csrf = express.csrf();
+    //Populate the CSRF token in req.session on login request
+    myApp.get('/login', csrf);
+    myApp.get('/vcenter/login', csrf);
+    //Enable CSRF token check for all URLs starting with "/api"
+    myApp.post('/api/*', csrf);
+
     loadAllFeatureURLs(myApp);
     var handler = require('./src/serverroot/web/routes/handler')
     handler.addAppReqToAllowedList(myApp.routes);
