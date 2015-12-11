@@ -1060,15 +1060,18 @@
             });
 
             if (contrail.checkIfFunction(keyupAction.onKeyupEnter) || contrail.checkIfFunction(keyupAction.onKeyupEsc)) {
-                modalId.keyup(function(e) {
-                    var code = e.which; // recommended to use e.which, it's normalized across browsers
+                modalId.keyup(function(event) {
+                    var code = event.which; // recommended to use e.which, it's normalized across browsers
                     if (code == 13) {
-                        e.preventDefault();
+                        event.preventDefault();
                     }
-                    if (contrail.checkIfFunction(keyupAction.onKeyupEnter) && code == 13) {
-                        keyupAction.onKeyupEnter();
-                    } else if (contrail.checkIfFunction(keyupAction.onKeyupEsc) && code == 27) {
-                        keyupAction.onKeyupEsc();
+
+                    if (modalId.prop('id') === $(event.target).prop('id')) {
+                        if (contrail.checkIfFunction(keyupAction.onKeyupEnter) && code == 13) {
+                            keyupAction.onKeyupEnter();
+                        } else if (contrail.checkIfFunction(keyupAction.onKeyupEsc) && code == 27) {
+                            keyupAction.onKeyupEsc();
+                        }
                     }
                 });
             }

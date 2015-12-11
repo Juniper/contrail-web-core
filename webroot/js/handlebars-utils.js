@@ -63,8 +63,8 @@ Handlebars.registerHelper('syntaxHighlight', function(rawdata, options) {
     return syntaxHighlight(rawdata);
 });
 
-Handlebars.registerHelper('formatJSON2HTML', function(rawdata, options) {
-    return contrail.formatJSON2HTML(rawdata,2);
+Handlebars.registerHelper('formatJSON2HTML', function(rawdata, ignoreKeys, options) {
+    return contrail.formatJSON2HTML(rawdata, 2, ignoreKeys);
 });
 
 Handlebars.registerHelper('formatGridJSON2HTML', function(rawdata, options) {

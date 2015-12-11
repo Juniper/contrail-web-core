@@ -476,7 +476,7 @@ define([
                     if (contrail.checkIfExist(gridOptions.detail.templateConfig)) {
                         gridContainer.find('.slick-row-detail-template-' + id).html(template({dc: dc, templateConfig: gridOptions.detail.templateConfig}));
                     } else {
-                        gridContainer.find('.slick-row-detail-template-' + id).html(template({data: dc, requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY}));
+                        gridContainer.find('.slick-row-detail-template-' + id).html(template({data: dc, ignoreKeys: ['cgrid'], requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY}));
                     }
                     gridContainer.data('contrailGrid').adjustDetailRowHeight(id);
                 }
