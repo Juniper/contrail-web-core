@@ -311,7 +311,7 @@ config.multi_tenancy.enabled = true;
  * tampering
  *****************************************************************************/
 config.session = {};
-config.session.timeout = 24 * 60 * 60 * 1000;
+config.session.timeout = 1 * 60 * 60 * 1000;
 config.session.secret_key =
 'enterasupbK3xg8qescJK.dUbdgfVq0D70UaLTMGTzO4yx5vVJral2zIhVersecretkey';
 
