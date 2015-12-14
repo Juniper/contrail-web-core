@@ -40,15 +40,15 @@ define([
                     allowColumnPickable: false,
                     formatter: function (r, c, v, cd, dc) {
                         var queryId = dc.queryReqObj.queryId,
-                            tabLinkId = cowl.QE_FLOW_QUEUE_TAB_ID + '-' + queryId + '-tab-link',
+                            tabLinkId = cowl.QE_QUERY_QUEUE_RESULT_GRID_TAB_ID + '-' + queryId + '-tab-link',
                             labelIconBadgeClass = '';
 
                         if ($('#' + tabLinkId).length > 0) {
-                            labelIconBadgeClass = 'icon-badge-color-' + $('#' + tabLinkId).data('badge_color_key');
+                            labelIconBadgeClass = 'icon-queue-badge-color-' + $('#' + tabLinkId).data('badge_color_key');
                         }
 
-                        return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge label-icon-badge-queue' + labelIconBadgeClass + '"><i class="icon-sign-blank"></i></span>';
-                    },
+                        return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge label-icon-badge-queue ' + labelIconBadgeClass + '"><i class="icon-sign-blank"></i></span>';
+                    }
                 },
                 { id:"startTime", field:"startTime", name:"Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
                 {
@@ -63,7 +63,6 @@ define([
                         return qewu.formatTimeRange(dc.queryReqObj.formModelAttrs.time_range);
                     }
                 },
-                //{ id:"opsQueryId", field:"opsQueryId", name:"Analytics Query Id", minWidth:140, sortable:false },
                 { id:"fromTime", field:"fromTime", name:"From Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.queryReqObj.formModelAttrs.from_time_utc).format('YYYY-MM-DD HH:mm:ss'); } },
                 { id:"toTime", field:"toTime", name:"To Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.queryReqObj.formModelAttrs.to_time_utc).format('YYYY-MM-DD HH:mm:ss'); } },
                 { id:"progress", field:"progress", name:"Progress", minWidth:75, formatter: function(r, c, v, cd, dc) { return (dc.status != 'error' && dc.progress != '' && parseInt(dc.progress) > 0) ? (dc.progress + '%') : '-'; } },
