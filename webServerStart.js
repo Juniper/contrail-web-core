@@ -147,11 +147,15 @@ function initializeAppConfig (appObj)
     // Implement X-Frame: Deny
     app.use(helmet.xframe('deny'));
     // Implement Strict-Transport-Security
+    var maxAgeTime =
+        ((null != config.session) && (null != config.session.timeout)) ?
+        config.session.timeout : global.MAX_AGE_SESSION_ID;
+
     app.use(helmet.hsts({
-        maxAge: global.MAX_AGE_SESSION_ID,
+        maxAge: maxAgeTime,
         includeSubdomains: true
     }));
-    var cookieObj = {maxAge: global.MAX_AGE_SESSION_ID, httpOnly: true};
+    var cookieObj = {maxAge: maxAgeTime, httpOnly: true};
     cookieObj
     if (false == insecureAccessFlag) {
         cookieObj['secure'] = true;
