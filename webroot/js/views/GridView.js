@@ -746,8 +746,21 @@ define([
                             }
                             var sign = cols[i].sortAsc ? 1 : -1;
                             var result = 0;
-                            var value1 = (contrail.checkIfExist(cols[i].sortCol.sortable.sortBy) && cols[i].sortCol.sortable.sortBy == 'formattedValue') ? cols[i].sortCol.formatter('', '', '', '', dataRow1) : dataRow1[field],
-                                value2 = (contrail.checkIfExist(cols[i].sortCol.sortable.sortBy) && cols[i].sortCol.sortable.sortBy == 'formattedValue') ? cols[i].sortCol.formatter('', '', '', '', dataRow2) : dataRow2[field];
+                            var sortBy = contrail.checkIfExist(cols[i].sortCol.sortable.sortBy);
+                            var value1,value2;
+                            if(sortBy){
+                                if(cols[i].sortCol.sortable.sortBy == 'formattedValue') {
+                                    value1 = cols[i].sortCol.formatter('', '', '', '', dataRow1);
+                                    value2 = cols[i].sortCol.formatter('', '', '', '', dataRow2);
+                                } else {
+                                    //It must be a function. Use it to get the value
+                                    value1 =  cols[i].sortCol.sortable.sortBy(dataRow1);
+                                    value2 =  cols[i].sortCol.sortable.sortBy(dataRow2);
+                                }
+                            } else {//default
+                                value1 = dataRow1[field];
+                                value2 = dataRow2[field];
+                            }
                             if (cols[i].sortCol.sorter != null) {
                                 result = cols[i].sortCol.sorter(value1, value2, sign); // sorter property from column definition will be called if present
                             } else {
