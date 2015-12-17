@@ -5,9 +5,11 @@ example,
 We can have 3 servers, say  node1 (1.1.1.1), node2 (2.2.2.2) and node3 (3.3.3.3).
 contrail-webui is installed in all the servers. Haproxy (versioned 1.5.4) is running in node1.
 
+Case 1: If only one haproxy node:
+=================================
 Below are the three configurations:
-1. Config for handling http request (Access UI By http://node1:8080)
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+1a. Config for handling http request (Access UI By http://node1:8080)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     haproxy Config(/etc/haproxy/haproxy.cfg) 
     ----------------------------------------
 
@@ -38,8 +40,8 @@ Below are the three configurations:
     // HTTP port for NodeJS Server.
     config.http_port = '19090';
 
-2. Config for handling https request (Access UI by https://node1:8143)
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+1b. Config for handling https request (Access UI by https://node1:8143)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 This will translate the request to http request to all backend webui servers
 
     haproxy Config(/etc/haproxy/haproxy.cfg) for SSL Offloading
@@ -73,8 +75,8 @@ This will translate the request to http request to all backend webui servers
     // HTTPS port for NodeJS Server.
     config.https_port = '19091';
 
-3. Config to redirect UI http request to https (Access by http://node1:8080)
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+1c. Config to redirect UI http request to https (Access by http://node1:8080)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 This will redirect the request to https://node1:8143
 
     haproxy Config(/etc/haproxy/haproxy.cfg) for redirecting http -> https
@@ -111,6 +113,116 @@ This will redirect the request to https://node1:8143
     // HTTPS port for NodeJS Server.
     config.https_port = '19091';
 
+With this configuration, if a UI request comes to node1 from a specific browser,
+then all the subsequest request will go to node1 only. If requested from
+different browser, then it will be served by node2 and so on with round
+robin fashion. This is managed by adding SERVERID cookie object.
+
+Case 2: If multiple haproxy nodes:
+==================================
+Below are the three configurations:
+2a. Config for handling http request (Access UI By http://node1:8080)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    haproxy Config(/etc/haproxy/haproxy.cfg)
+    ----------------------------------------
+
+    frontend unsecured *:8080
+        timeout client 86400000
+        default_backend www_backend
+
+    backend www_backend
+        mode http
+        balance source
+        hash-type consistent
+        server server1 1.1.1.1:19090 check
+        server server2 2.2.2.2:19090 check
+        server server3 3.3.3.3:19090 check
+
+    Web-UI Config (/etc/contrail/config.global.js) changes
+    ------------------------------------------------------
+
+    /* Is insecure access to WebUI?
+     * If set as false, then all http request will be redirected
+     * to https, if set true, then no https request will be processed, but only http
+     * request
+     */
+    config.insecure_access = true;
+
+    // HTTP port for NodeJS Server.
+    config.http_port = '19090';
+
+2b. Config for handling https request (Access UI by https://node1:8143)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+This will translate the request to http request to all backend webui servers
+
+    haproxy Config(/etc/haproxy/haproxy.cfg) for SSL Offloading
+    -----------------------------------------------------------
+
+    frontend www-https
+        bind *:8143 ssl crt /root/<file_name>.pem
+        reqadd X-Forwarded-Proto:\ https
+        default_backend www-backend
+
+    backend www-backend
+        redirect scheme https if !{ ssl_fc }
+        balance source
+        hash-type consistent
+        server server1 1.1.1.1:19090 check
+        server server2 2.2.2.2:19090 check
+        server server3 3.3.3.3:19090 check
+
+    Web-UI Config (/etc/contrail/config.global.js) changes
+    ------------------------------------------------------
+    /* Is insecure access to WebUI?
+     * If set as false, then all http request will be redirected
+     * to https, if set true, then no https request will be processed, but only http
+     * request
+     */
+    config.insecure_access = true;
+
+    // HTTP port for NodeJS Server.
+    config.http_port = '19090';
+
+    // HTTPS port for NodeJS Server.
+    config.https_port = '19091';
+
+2c. Config to redirect UI http request to https (Access by http://node1:8080)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+This will redirect the request to https://node1:8143
+
+    haproxy Config(/etc/haproxy/haproxy.cfg) for redirecting http -> https
+    ----------------------------------------------------------------------
+
+    frontend www-http
+        bind *:8080
+        redirect location https://node1:8143
+
+    frontend www-https
+        bind *:8143 ssl crt /root/<file_name>.pem
+        reqadd X-Forwarded-Proto:\ https
+        default_backend www-backend
+
+    backend www-backend
+        balance source
+        hash-type consistent
+        server server1 1.1.1.1:19090 check
+        server server2 2.2.2.2:19090 check
+        server server3 3.3.3.3:19090 check
+
+    Web-UI Config (/etc/contrail/config.global.js) changes
+    ------------------------------------------------------
+    /* Is insecure access to WebUI?
+     * If set as false, then all http request will be redirected
+     * to https, if set true, then no https request will be processed, but only http
+     * request
+     */
+    config.insecure_access = true;
+
+    // HTTP port for NodeJS Server.
+    config.http_port = '19090';
+
+    // HTTPS port for NodeJS Server.
+    config.https_port = '19091';
 
 For SSL certificate, you can generate the pem file as specified in below:
 You can copy all the 3 files from contrail-web-core repo, 
@@ -119,15 +231,14 @@ And then do the below:
 $cat certrequest.csr cs-cert.pem cs-key.pem > <file_name>.pem
 
 Once the config is done, restart as below:
-In node1 (where haproxy and web-ui running):
+(The nodes where haproxy and web-ui running):
 $service supervisor-webui restart
 $service haproxy restart
 
-In node2 & node3 (Other two web-ui nodes):
+(The nodes where only web-ui is running):
 $service supervisor-webui restart
 
-With this configuration, if a UI request comes to node1 from a specific browser,
-then all the subsequest request will go to node1 only. If requested from
-different browser, then it will be served by node2 and so on with round
-robin fashion. This is managed by adding SERVERID cookie object.
+With this configuration, if a UI request comes from host1 and web-server node1
+handles the request, then next time onwards, all request coming from same source
+is served by the same web-server unless that web-server is down.
 
