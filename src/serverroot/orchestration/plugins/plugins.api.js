@@ -16,6 +16,7 @@ var authApi = require('../../common/auth.api');
 var logutils = require('../../utils/log.utils');
 var orch = require('../orchestration.api');
 var configUtils = require('../../common/configServer.utils');
+var global = require('../../common/global');
 var commonUtils = require('../../utils/common.utils');
 
 var orchModels = orch.getOrchestrationModels();
@@ -229,30 +230,25 @@ function setAllCookies (req, res, appData, cookieObj, callback)
         }
     }
     var defDomainId;
+    var cookieExp =
+        ((null != config.session) && (null != config.session.timeout)) ?
+        config.session.timeout : global.MAX_AGE_SESSION_ID;
+
+    var cookieExpStr = new Date(new Date().getTime() + cookieExp).toUTCString();
+    var secureCookieStr = (false == config.insecure_access) ? "; secure" : "";
     res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
-                  '; expires=' +
-                  new Date(new Date().getTime() +
-                           global.MAX_AGE_SESSION_ID).toUTCString() +
-                  "; secure");
+                  '; expires=' + cookieExpStr + secureCookieStr);
     authApi.getCookieObjs(req, appData, function(cookieObjs) {
         if (null != cookieObjs['domain']) {
             res.setHeader('Set-Cookie', 'domain=' + cookieObjs['domain'] +
-                          '; expires=' +
-                          new Date(new Date().getTime() +
-                                   global.MAX_AGE_SESSION_ID).toUTCString() +
-                          "; secure");
+                          '; expires=' + cookieExpStr + secureCookieStr);
         }
         if (null != cookieObjs['project']) {
             res.setHeader('Set-Cookie', 'project=' + cookieObjs['project'] +
-                          '; expires=' +
-                          new Date(new Date().getTime() +
-                                   global.MAX_AGE_SESSION_ID).toUTCString() +
-                          "; secure");
+                          '; expires=' + cookieExpStr + secureCookieStr);
         }
         res.setHeader('Set-Cookie', '_csrf=' + req.session._csrf +
-                        '; expires=' + new Date(new Date().getTime() +
-                                                global.MAX_AGE_SESSION_ID).toUTCString()
-                        + '; secure');
+                      '; expires=' + cookieExpStr + secureCookieStr);
         callback();
     });
 }
