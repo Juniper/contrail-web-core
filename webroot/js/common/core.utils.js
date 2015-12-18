@@ -746,7 +746,7 @@ define(['underscore'], function (_) {
                         //Register node List models
                         if(ctwu != null)
                             nodeListModelResources = nodeListModelResources.concat(ctwu.getNodeListModelsForAlerts());
-                        if(swu != null)
+                        if(contrail.checkIfExist(globalObj.webServerInfo.featurePkg.webStorage) && globalObj.webServerInfo.featurePkg.webStorage == true)
                             nodeListModelResources = nodeListModelResources.concat(swu.getNodeListModelsForAlerts());
                         require(nodeListModelResources,function() {
                             $.each(arguments,function(idx,currListModel) {
