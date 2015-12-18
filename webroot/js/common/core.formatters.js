@@ -11,6 +11,10 @@ define([
             var formatterKey = templateGeneratorConfig.formatter,
                 value = cowu.getJSONValueByPath(key, obj);
 
+            return self.getFormattedValue(formatterKey, value, templateGeneratorConfig.iconClass);
+        };
+
+        this.getFormattedValue = function (formatterKey, value, iconClass) {
             switch (formatterKey) {
                 case 'byte' :
                     return cowu.addUnits2Bytes(value);
@@ -41,11 +45,35 @@ define([
                     break;
 
                 case 'time-period' :
-                    return parseInt(value) + ' secs';
+                    var timeValue = parseInt(value),
+                        timeStr = '';
+
+                    if (value >= 3600) {
+                        var days = parseInt(timeValue / 3600);
+                        timeStr += days.toString();
+                        timeStr += (days === 1) ? ' day ' : ' days ';
+                        timeValue = timeValue % 3600;
+                    }
+
+                    if (timeValue >= 60) {
+                        var mins = parseInt(timeValue / 60);
+                        timeStr += mins.toString();
+                        timeStr += (mins === 1) ? ' min ' : ' mins ';
+                        timeValue = timeValue % 60;
+                    }
+
+                    if (value > 0) {
+                        var secs = timeValue;
+                        timeStr += secs.toString();
+                        timeStr += (secs === 1) ? ' sec' : ' secs';
+                    }
+
+                    return timeStr;
+
                     break;
 
                 case 'fault-state' :
-                    if(value === true || value === 'true') {
+                    if (value === true || value === 'true') {
                         return '<span class="red">' + value + '</span>';
                     } else {
                         return value
@@ -53,7 +81,7 @@ define([
                     break;
 
                 case 'status-state' :
-                    if(value === 'ok') {
+                    if (value === 'ok') {
                         return '<span class="green">' + value + '</span>';
                     } else {
                         return value
@@ -62,14 +90,14 @@ define([
                     break;
 
                 case 'health-status-state' :
-                    var iconHTML = (contrail.checkIfExist(templateGeneratorConfig.iconClass) ?
-                                    '<i class="' + templateGeneratorConfig.iconClass + ' pull-right padding-3-0"></i>' : '');
+                    var iconHTML = (contrail.checkIfExist(iconClass) ?
+                    '<i class="' + iconClass + ' pull-right padding-3-0"></i>' : '');
 
-                    if(value === 'critical') {
-                        return '<span class="red '+ key + '-value">'
+                    if (value === 'critical') {
+                        return '<span class="red ' + key + '-value">'
                             + value + iconHTML +
                             '</span>';
-                    } else if(value === 'ok') {
+                    } else if (value === 'ok') {
                         return '<span class="green">' + value + '</span>';
                     } else {
                         return value
@@ -92,9 +120,10 @@ define([
                 case 'packet' :
                     return cowu.addUnits2Packets(value);
                     break;
-            
+
                 //run the user defined formatter function
-                default : return eval(formatterKey)(value,obj);
+                default :
+                    return eval(formatterKey)(value, obj);
             };
         };
 

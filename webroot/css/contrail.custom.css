@@ -555,6 +555,9 @@ rect.bordered {
 }
 
 /* Query Pages */
+.select-label {
+    width: 100%; text-overflow: ellipsis; overflow-x: hidden;
+}
 .advanced-options-link{
     font-size:10px;
     color:#999;

@@ -50,7 +50,7 @@ define([
                         return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge label-icon-badge-queue ' + labelIconBadgeClass + '"><i class="icon-sign-blank"></i></span>';
                     }
                 },
-                { id:"startTime", field:"startTime", name:"Time", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
+                { id:"startTime", field:"startTime", name:"Time Issued", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
                 {
                     id:"table_name", field:"", name:"Table Name", minWidth: 200, sortable:false,
                     formatter: function(r, c, v, cd, dc) {
@@ -68,7 +68,12 @@ define([
                 { id:"progress", field:"progress", name:"Progress", minWidth:75, formatter: function(r, c, v, cd, dc) { return (dc.status != 'error' && dc.progress != '' && parseInt(dc.progress) > 0) ? (dc.progress + '%') : '-'; } },
                 { id:"count", field:"count", name:"Records", minWidth:75 },
                 { id:"status", field:"status", name:"Status", minWidth:90 },
-                { id:"timeTaken", field:"timeTaken", name:"Time Taken", minWidth:100, sortable:true, formatter: function(r, c, v, cd, dc) { return ((dc.timeTaken == -1) ? '-' : (parseInt(dc.timeTaken) + ' secs')); } }
+                {
+                    id:"timeTaken", field:"timeTaken", name:"Time Taken", minWidth:100, sortable:true,
+                    formatter: function(r, c, v, cd, dc) {
+                        return (dc.timeTaken == -1) ? '-' : cowf.getFormattedValue('time-period', dc.timeTaken);
+                    }
+                }
             ];
         };
 
