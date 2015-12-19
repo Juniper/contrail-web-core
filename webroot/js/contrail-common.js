@@ -195,7 +195,7 @@ function Contrail() {
         var insecureAccess =
             getValueByJsonPath(globalObj, 'webServerInfo;insecureAccess',
                                false);
-        if ("test" != globalObj['env']) {
+        if ("test" == globalObj['env']) {
             secureCookieStr = "";
         } else if (false == insecureAccess) {
             secureCookieStr = "; secure";
