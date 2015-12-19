@@ -11,10 +11,10 @@ define([
             var formatterKey = templateGeneratorConfig.formatter,
                 value = cowu.getJSONValueByPath(key, obj);
 
-            return self.getFormattedValue(formatterKey, value, templateGeneratorConfig.iconClass);
+            return self.getFormattedValue(formatterKey, value, templateGeneratorConfig.iconClass, obj);
         };
 
-        this.getFormattedValue = function (formatterKey, value, iconClass) {
+        this.getFormattedValue = function (formatterKey, value, iconClass, obj) {
             switch (formatterKey) {
                 case 'byte' :
                     return cowu.addUnits2Bytes(value);
