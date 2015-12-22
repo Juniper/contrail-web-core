@@ -14,7 +14,7 @@ define([
 
         constructor: function (modelData, queryReqConfig) {
             var defaultConfig = qewmc.getQueryModelConfig({
-                time_range: -1,
+                time_range: 600,
                 select: "MessageTS,Type,Level,Category,Xmlmessage",
                 hostname:"",
                 node_type: "",
@@ -34,7 +34,16 @@ define([
             return this;
         },
 
-        validations: {}
+        validations: {},
+
+        reset: function (data, event) {
+            this.time_range(600);
+            this.log_category('');
+            this.log_type('any');
+            this.log_level('5');
+            this.limit("50");
+            this.keywords('');
+        },
     });
 
     return NodeConsoleLogsModel;

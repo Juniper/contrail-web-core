@@ -277,6 +277,8 @@ define([
         this.URL_TABLES = "/api/qe/tables";
         this.URL_PREFIX_TABLE_SCHEMA = "/api/qe/table/schema/";
 
+        this.TENANT_API_URL = "/api/tenant/get-data";
+
         this.URL_QUERY_FLOW_QUEUE = '#p=query_flow_queue';
         this.URL_QUERY_LOG_QUEUE = '#p=query_log_queue';
         this.URL_QUERY_STAT_QUEUE = '#p=query_stat_queue';
