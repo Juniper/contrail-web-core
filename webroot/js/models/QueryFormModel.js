@@ -364,7 +364,34 @@ define([
             }, this);
         },
 
-        validations: {}
+        validations: {
+            runQueryValidation: {
+                'table_name': {
+                    required: true,
+                    msg: ctwm.getRequiredMessage('table name')
+                },
+                'select': {
+                    required: true,
+                    msg: ctwm.getRequiredMessage('select')
+                },
+                from_time: function(value) {
+                    var fromTime = new Date(value).getTime(),
+                        toTime = new Date(this.attributes.to_time).getTime();
+
+                    if(fromTime > toTime) {
+                        return cowm.FROM_TIME_SMALLER_THAN_TO_TIME;
+                    }
+                },
+                to_time: function(value) {
+                    var toTime = new Date(value).getTime(),
+                        fromTime = new Date(this.attributes.from_time).getTime();
+
+                    if (toTime < fromTime) {
+                        return cowm.TO_TIME_GREATER_THAN_FROM_TIME;
+                    }
+                }
+            }
+        }
     });
 
     function getTableSchemaConfig(model, tableName, disableFieldArray, disableSubstringArray, disableWhereFields) {

@@ -1240,7 +1240,10 @@
         </div>
         {{/IfCompare}}
         <div class="row-fluid form-element">
-            <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}},
+            <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="
+            {{#if disabled}}disable: {{disabled}},
+            {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}},
+            event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
             contrailDateTimePicker: {}"/>
             <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
         </div>

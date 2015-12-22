@@ -20,6 +20,8 @@ define([
         };
 
         this.SHOULD_BE_VALID = '{0} should have valid ';
+        this.FROM_TIME_SMALLER_THAN_TO_TIME = 'From Time should be before To Time';
+        this.TO_TIME_GREATER_THAN_FROM_TIME = 'To Time should be later than From Time';
 
         this.get = function () {
             var args = arguments;

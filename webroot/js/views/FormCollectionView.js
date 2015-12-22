@@ -34,13 +34,13 @@ define([
                 for (var j = 0; j < columns.length; j++) {
                     childViewObj = columns[j];
                     childElId = childViewObj[cowc.KEY_ELEMENT_ID];
-                    self.renderView4Config(self.$el.find("#" + childElId), self.model, childViewObj, validation, false);
+                    self.renderView4Config(self.$el.find("#" + childElId), self.model, childViewObj, validation, false, null, function(){
+                        if (accordionable) {
+                            accordionConfig = $.extend(true, defaultAccordionConfig, accordionConfig);
+                            self.$el.find('.collection').accordion(accordionConfig);
+                        }
+                    });
                 }
-            }
-
-            if (accordionable) {
-                accordionConfig = $.extend(true, defaultAccordionConfig, accordionConfig);
-                self.$el.find('.collection').accordion(accordionConfig);
             }
         }
     });

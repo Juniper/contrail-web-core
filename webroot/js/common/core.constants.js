@@ -68,6 +68,8 @@ define([
         this.TMPL_EDITABLE_GRID_VIEW = "core-editable-grid-view-template";
         this.TMPL_TEXT_VIEW = "core-text-view-template";
 
+        this.TMPL_GRID_VIEW = "core-grid-view-template";
+
         this.TMPL_COLLECTION_VIEW = "core-collection-view-template";
         this.TMPL_GEN_COLLECTION_VIEW = "core-generic-collection-view-template";
         this.TMPL_QUERY_OR_COLLECTION_VIEW = "query-or-collection-view-template";
@@ -234,6 +236,8 @@ define([
         this.FLOW_RECORD_TABLE = "FlowRecordTable";
         this.FLOW_CLASS = "FlowClass";
         this.MESSAGE_TABLE = "MessageTable";
+
+        this.KEY_RUN_QUERY_VALIDATION = 'runQueryValidation';
 
         this.TIMERANGE_DROPDOWN_VALUES = [
             {'id': 600, 'text': 'Last 10 Mins'},
