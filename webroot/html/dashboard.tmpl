@@ -49,7 +49,13 @@
     <![endif]-->
 
     <script src="/js/common/core.app.utils.js"></script>
-    <script data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
+    <!-- Start dev_env
+    <script data-env="dev" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
+    End dev_env -->
+
+    <!-- Start prod_env -->
+    <script data-env="prod" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
+    <!-- End prod_env -->
 </head>
 
 <body class="navbar-fixed">
