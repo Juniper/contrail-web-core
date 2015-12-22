@@ -32,7 +32,7 @@ define([
             return newColumnDisplay;
         };
 
-        this.getQueueColumnDisplay = function() {
+        this.getQueueColumnDisplay = function(viewQueryResultCB) {
             return [
                 {
                     id: 'fqq-badge', field: "", name: "", resizable: false, sortable: false,
@@ -48,6 +48,11 @@ define([
                         }
 
                         return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge label-icon-badge-queue ' + labelIconBadgeClass + '"><i class="icon-sign-blank"></i></span>';
+                    },
+                    events: {
+                        onClick: function (e, dc) {
+                            viewQueryResultCB(dc);
+                        }
                     }
                 },
                 { id:"startTime", field:"startTime", name:"Time Issued", minWidth: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },

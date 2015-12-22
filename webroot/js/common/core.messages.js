@@ -48,8 +48,9 @@ define([
         this.DEPRECATION_WARNING_PREFIX = "Contrail WebUI Warning: ";
 
         this.QE_MAX_QUERY_QUEUE_RESULT_VIEW_INFO = "Maximum 5 Query Results can be viewed. Please close the existing query results to view new queries from queue.";
-        this.QE_QUERY_QUEUE_RESULT_ALREADY_LOADED = "Query Result has already been loaded.";
-        this.QE_DELETE_QUERY_CONFIRM = "Are you sure you want to remove this query?";
+        this.QE_QUERY_QUEUE_RESULT_ALREADY_LOADED = "Query Result for this query has already been loaded.";
+        this.QE_DELETE_SINGLE_QUERY_CONFIRM = "Are you sure you want to remove this query?";
+        this.QE_DELETE_MULTIPLE_QUERY_CONFIRM = "Are you sure you want to remove the selected queries?";
         this.getQueryQueuedMessage = function(queueURL, queueType) {
             return 'Your query has been queued. <a class="hyperlink" href="' + queueURL + '">View ' + queueType + ' Queue</a>';
         }
