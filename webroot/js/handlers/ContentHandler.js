@@ -64,7 +64,7 @@ define(['underscore'], function (_) {
             var currPageHash = ifNull(currHash['p'], ''),
                 resourcesDefObj = $.Deferred();
 
-            if(globalObj['env'] == "test" && currPageHash == '') {
+            if(globalObj['test-env'] == globalObj['env'] + "-test" && currPageHash == '') {
                 return;
             }
 

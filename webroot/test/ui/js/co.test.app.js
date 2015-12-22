@@ -2,14 +2,14 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var coreBaseDir = "/base/contrail-web-core/webroot",
+var coreBaseDir = "/base/contrail-web-core/webroot/",
     featurePkg = "testLibApi";
 
 require([
     coreBaseDir + '/js/common/core.app.utils.js',
     coreBaseDir + '/test/ui/js/co.test.app.utils.js'
 ], function () {
-    globalObj['env'] = "test";
+    globalObj['tes-env'] = globalObj["env"] + "-test";
 
 
     requirejs.config({
@@ -27,7 +27,8 @@ require([
 
     function getCoreAppAndCoreTestAppPaths(coreBaseDir) {
         var coreTestAppPathObj = {};
-        var coreAppPaths = getCoreAppPaths(coreBaseDir);
+        var coreAppPaths = getCoreAppPaths(coreBaseDir, '.');
+        console.log(coreAppPaths);
         var coreTestAppPaths = getCoreTestAppPaths(coreBaseDir);
 
         for (var key in coreAppPaths) {

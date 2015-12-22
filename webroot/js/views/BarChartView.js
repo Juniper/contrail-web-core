@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var BarChartView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var BarChartView = ContrailView.View.extend({
         el: ".chart",
         chart: null,
         chartSelection: null,

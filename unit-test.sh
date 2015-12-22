@@ -91,3 +91,17 @@ for REPO in "${REPOS[@]}"; do
         echo "DONE"
     fi
 done
+
+if [ $1 = 'set-env' ] ; then
+    if command -v nodejs > /dev/null; then
+      node_exec=nodejs;
+    elif command -v node > /dev/null; then
+      node_exec=node
+    else
+      echo "error: Failed dependencies: node/nodejs is needed";
+      exit;
+    fi;
+
+    # Set test specific environments.
+    $node_exec webroot/test/ui/js/tasks/setTestConfig.js "$@"
+fi
