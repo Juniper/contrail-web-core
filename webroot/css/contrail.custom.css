@@ -3298,3 +3298,8 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
 #static-routes-collection table{
     margin:0px 10px 10px 30px;
 }
+
+#termCollection tbody tr:nth-child(4n+3) td,
+#termCollection tbody tr:nth-child(4n+4) td{
+    background: #fdfdfd;
+}

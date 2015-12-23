@@ -1217,8 +1217,12 @@
     <div class="row-fluid"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <div class="textarea-input-append input-append inset span12">
             <textarea
-                name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}" rows="1"
-                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
+                name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}"
+                {{#if viewConfig.rows}} rows:'{{viewConfig.rows}}' {{/if}}
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
+                {{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                value: {{dataBindValue}},
+                event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) }}">
             </textarea>
             <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="icon-pencil"></i></span>
         </div>
@@ -1383,7 +1387,7 @@
     {{#IfCompare label null operator='!='}}
     <label style="margin:0px">{{label}}</label>
     {{/IfCompare}}
-    <table class="contrail-editable-grid-table">
+    <table class="contrail-editable-grid-table" {{#if width}} width='{{width}}' {{/if}}>
         <thead style="background:#f9f9f9">
         <tr>
             {{#each columns}}
@@ -1397,15 +1401,29 @@
         <tbody data-bind="foreach: {{collection}}">
         <tr class="data-row">
             {{#each columns}}
-            <td id="{{elementId}}" class="data-cell"></td>
+            <td id="{{elementId}}" class="data-cell"
+                style="{{#if viewConfig.verticalAlign}}
+                            vertical-align:{{viewConfig.verticalAlign}}
+                        {{/if}}"
+            ></td>
             {{/each}}
             {{#each rowActions}}
-            <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
+            <td class="action-cell"
+                style="{{#if verticalAlign}}
+                          vertical-align:{{verticalAlign}}
+                       {{/if}}">
+                <a data-bind='click: {{this.onClick}}'>
+                    <i class="{{this.iconClass}}"></i>
+                </a>
+            </td>
             {{/each}}
         </tr>
         <tr class="error-row">
             {{#each columns}}
             <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+            {{/each}}
+            {{#each rowActions}}
+            <td></td>
             {{/each}}
         </tr>
         </tbody>
@@ -1501,12 +1519,14 @@
     </div>
     {{/each}}
 
+    {{#if viewConfig.collectionActions}}
     <div class="row-fluid collection-actions collection-actions-add">
         <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
             <i class="{{viewConfig.collectionActions.add.iconClass}}"></i>
             &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
         </a>
     </div>
+    {{/if}}
 </script>
 
 
@@ -1717,8 +1737,8 @@
                 {{#IfCompare type 'radio' operator='=='}}
                     {{#each items}}
                         <div class="control-panel-filter-group-item padding-5-0">
-                            <input type="radio" name="control-panel-filter" {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}} class="margin-0"/>
-                            <span class="margin-2 {{labelCssClass}}"> {{text}}</span>
+                            <input type="radio" name="control-panel-filter" class="ace-input" {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}}/>
+                            <span class="ace-lbl {{labelCssClass}}"> {{text}}</span>
                         </div>
                     {{/each}}
                 {{/IfCompare}}
@@ -1794,11 +1814,7 @@
             </div>
         </div>
         {{/IfCompare}}
-        <div class="widget-body-collapsed" data-action="widget-collapse"
-            {{#IfCompare controls.top.default.collapsedOnLoad true operator='!=='}} style="display:none;"{{/IfCompare}}>
-            <a>Click here to expand <i class="icon-double-angle-down"></i></a>
-        </div>
-        <div class="widget-body" >
+        <div class="widget-body" {{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} style="display:none;"{{/IfCompare}}>
             <div class="widget-main padding-4">
                 {{#IfCompare controls.right false operator='!=='}}
                 <div class="widget-main-rightmenu colmask rightmenu">
@@ -1823,6 +1839,15 @@
         <span data-bind="text: errors().{{prefixId}}_form_error"></span>
     </div>
     <div>Are you sure you want to delete {{item}} <b>{{itemId}}</b>?</div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-ack-alarm-form-template">
+    <div class="alert alert-error" data-bind="visible: errors().{{prefixId}}_form_error">
+        <button type="button" class="close" data-dismiss="alert"></button>
+        <strong>Error: </strong>
+        <span data-bind="text: errors().{{prefixId}}_form_error"></span>
+    </div>
+    <div>Are you sure you want to acknowledge {{item}} <b>{{itemId}}</b>?</div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-button-view-template">
@@ -1858,29 +1883,19 @@
 
 <script type="text/x-handlebars-template" id="query-page-template">
     <div id="qe-{{queryPrefix}}-container">
-        {{#if text}}
-            <div id='qe-{{queryPrefix}}-text-container'>
-                <div id='qe-{{queryPrefix}}-text-{{formQueryIdSuffix}}'></div>
-            </div>
-        {{else}}
-            <div id='qe-{{queryPrefix}}-form-container'>
-                <div id='qe-{{queryPrefix}}-form{{formQueryIdSuffix}}'></div>
-            </div>
-        {{/if}}
-        <div id="qe-{{queryPrefix}}-results-container" class="margin-10-0-0">
+        <div id='qe-{{queryPrefix}}-form-container'>
+            <div id='qe-{{queryPrefix}}-form{{formQueryIdSuffix}}'></div>
+        </div>
+        <div id="qe-{{queryPrefix}}-results-container">
             <div id='qe-{{queryPrefix}}-results{{formQueryIdSuffix}}'></div>
         </div>
     </div>
 </script>
 
-<script type="text/x-handlebars-template" id="query-text-template">
-    <div class="alert alert-success queryText"></div>
-</script>
-
 <script type="text/x-handlebars-template" id="query-queue-page-template">
     <div id="qe-{{queryQueueType}}-queue-container">
-        <div id="qe-{{queryQueueType}}-queue-grid"></div>
-        <div id="qe-{{queryQueueType}}-queue-result" class="margin-10-0-0"></div>
+        <div id='qe-{{queryQueueType}}-queue-grid'></div>
+        <div id='qe-{{queryQueueType}}-queue-result'></div>
     </div>
 </script>
 

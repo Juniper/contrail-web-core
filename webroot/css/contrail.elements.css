@@ -660,6 +660,9 @@ input[type="color"] {
 .textarea-input-append.input-append textarea {
   min-height: 28px;
 }
+#termCollection textarea {
+    height:auto !important;
+}
 input.login{
 	height:22px;
 	width: 90%;
