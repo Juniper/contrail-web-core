@@ -13,7 +13,7 @@ define([], function () {
         this.MODEL_TEST = 'MODEL_TEST'; //Tests ContrailModel implementations
         this.UNIT_TEST = 'UNIT_TEST'; //Basic Unit tests
         this.API_TEST = 'API_TEST'; //Tests the API section of UI
-        this.LIB_API_TEST = 'LIB_AP I_TEST'; //Tests third party library APIs
+        this.LIB_API_TEST = 'LIB_API_TEST'; //Tests third party library APIs
 
         this.SEVERITY_HIGH = 'high';
         this.SEVERITY_MEDIUM = 'medium';

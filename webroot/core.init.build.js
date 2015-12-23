@@ -256,5 +256,5 @@
         //instead of just skipping that file throw an error.
         optimize: true
     },
-    fileExclusionRegExp: /^(.*core\.init\.build)\.js$/
+    fileExclusionRegExp: /(.*node_modules|.*api|.*jobs|.*test|.*examples)/
 })

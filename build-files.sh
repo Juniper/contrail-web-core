@@ -11,8 +11,11 @@ else
   echo "error: Failed dependencies: node/nodejs is needed";
   exit;
 fi;
-$node_exec ./node_modules/requirejs/bin/r.js -o webroot/core.init.build.js
-$node_exec ./node_modules/requirejs/bin/r.js -o webroot/core.css.build.js
+
+rjs_bin=./node_modules/requirejs/bin/r.js
+
+$node_exec $rjs_bin -o webroot/core.init.build.js
+$node_exec $rjs_bin -o webroot/core.css.build.js
 
 # Manually moving following views due to error in minification. will use the source file for now.
 mv webroot/built/js/views/GridView.js webroot/built/js/views/GridView.min.js
@@ -27,7 +30,7 @@ for REPO in "${REPOS[@]}"; do
         echo -e "**************************************************\n\n"
 
         cd ../contrail-web-controller/
-        $node_exec ./node_modules/requirejs/bin/r.js -o webroot/controller.build.js
+        $node_exec $rjs_bin -o webroot/controller.build.js
         cd -
         echo "DONE"
     fi
@@ -38,9 +41,7 @@ for REPO in "${REPOS[@]}"; do
         echo -e "*******************************************\n\n"
 
         cd ../contrail-web-server-manager/
-
-        # commenting out till files are checked in
-        #$node_exec ./node_modules/requirejs/bin/r.js -o webroot/sm.build.js
+        $node_exec $rjs_bin -o webroot/sm.build.js
         cd -
         echo "DONE"
     fi
@@ -53,7 +54,7 @@ for REPO in "${REPOS[@]}"; do
         cd ../contrail-web-storage/
 
         # commenting out till files are checked in
-        # $node_exec ./node_modules/requirejs/bin/r.js -o webroot/storage.build.js
+        # $node_exec $rjs_bin -o webroot/storage.build.js
         cd -
         echo "DONE"
     fi
