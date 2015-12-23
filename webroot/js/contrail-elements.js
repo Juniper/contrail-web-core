@@ -1247,7 +1247,7 @@ function constructSelect2(self, defaultOption, args) {
                                 source = formatData(data, option);
                             }
                             if(contrail.checkIfExist(option.dataSource.async) && option.dataSource.async == true ){
-                                self.data('contrailDropdown').setData(parsedData);
+                                self.data('contrailDropdown').setData(parsedData,'',true);
                             }
                         }
                     };
