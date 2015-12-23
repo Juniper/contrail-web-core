@@ -66,7 +66,7 @@ define(['underscore'], function (_) {
         this.createModal = function (options) {
             var modalId = options['modalId'],
                 footer = [];
-
+            if(options['footer'] == null || options['footer'] == undefined) {
             if ((contrail.checkIfExist(options['onClose'])) && (contrail.checkIfFunction(options['onClose']))) {
                 footer.push({
                     id        : 'closeBtn',
@@ -98,7 +98,9 @@ define(['underscore'], function (_) {
                     onKeyupEnter: true
                 });
             }
-
+            } else {
+                footer = options['footer'];
+            }
             $.contrailBootstrapModal({
                 id: modalId,
                 className: options['className'],
