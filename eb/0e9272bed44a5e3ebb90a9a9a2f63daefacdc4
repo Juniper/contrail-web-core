@@ -1,0 +1,8 @@
+Verified+2: Zuul <zuul@lists.opencontrail.org>
+Approved+1: Biswajit Mandal <bmandal@juniper.net>
+Code-Review+2: Biswajit Mandal <bmandal@juniper.net>
+Submitted-by: Zuul <zuul@lists.opencontrail.org>
+Submitted-at: Mon, 28 Dec 2015 02:09:09 -0800
+Reviewed-on: https://review.opencontrail.org/15966
+Project: Juniper/contrail-web-core
+Branch: refs/heads/master
