@@ -40,6 +40,7 @@ function getCoreAppPaths(coreBaseDir) {
         'contrail-unified-1'          : coreBaseDir + '/js/common/contrail.unified.1',
         'contrail-unified-2'          : coreBaseDir + '/js/common/contrail.unified.2',
         'contrail-unified-3'          : coreBaseDir + '/js/common/contrail.unified.3',
+        'cf-datasource'               : coreBaseDir + '/js/common/cf.datasource',
 
         'contrail-remote-data-handler': coreBaseDir + '/js/handlers/ContrailRemoteDataHandler',
         'layout-handler'              : coreBaseDir + '/js/handlers/LayoutHandler',

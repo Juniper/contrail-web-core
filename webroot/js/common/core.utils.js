@@ -304,19 +304,36 @@ define(['underscore'], function (_) {
         this.getForceAxis4Chart = function (chartData, fieldName, forceAxis) {
             var axisMin = 0, axisMax;
 
+            //If all nodes are closer,then adding 10% buffer on edges makes them even closer
             if(chartData.length > 0) {
-                axisMax = Math.ceil(d3.max(chartData, function (d) {
+                axisMax = d3.max(chartData, function (d) {
                         return +d[fieldName];
-                    }) * 1.1);
-
-                if (axisMax <= 0) {
+                    });
+                axisMin = d3.min(chartData, function (d) {
+                        return +d[fieldName];
+                    });
+                var minMaxDiff = axisMax - axisMin;
+                if(minMaxDiff == 0)
+                    minMaxDiff = axisMin
+                if(axisMax == null)
                     axisMax = 1;
-                }
+                else
+                    axisMax += minMaxDiff*0.1;
+                if(axisMin == null)
+                    axisMin = 0;
+                else
+                    axisMin -= minMaxDiff*0.1;
+            
+                // if (axisMax <= 0) {
+                //     axisMax = 1;
+                // }
             } else {
-                axisMax = 0;
+                axisMax = 1;
+                axisMin = 0;
             }
 
             if (forceAxis) {
+                // return forceAxis;
                 if (axisMin > forceAxis[0]) {
                     axisMin = forceAxis[0];
                 }
