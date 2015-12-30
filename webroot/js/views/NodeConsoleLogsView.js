@@ -34,9 +34,99 @@ define([
                 $("#display_logs").on('click', function() {
                     self.renderQueryResult();
                 });
+                self.getLastLogTimeStampAndRenderResults(self,consoleLogsModel);
 
-                self.renderQueryResult();
             });
+        },
+
+        getLastLogTimeStampAndRenderResults : function(self,consoleLogsModel) {
+            var postData = monitorInfraUtils.getPostDataForGeneratorType(
+                                {
+                                    nodeType:nodeType,
+                                    cfilt:"ModuleServerState:msg_stats",
+                                    hostname:hostname
+                                }
+                            );
+            $.ajax({
+                url:cowc.TENANT_API_URL,
+                type:'post',
+                data:postData,
+                dataType:'json'
+            }).done(function (result) {
+                //Update the logtype combobox which is dependent on the same results.
+                self.updateLogTypeDropdown(result);
+                var logLevelStats = [], lastLog, lastMsgLogTime, lastTimeStamp,
+                    allStats = [],defaultTimeRange = 600;
+                try{
+                    allStats =  ifNullOrEmptyObject(jsonPath(result,"$..log_level_stats"),[]);
+                }catch(e){}
+                if(allStats instanceof Array){
+                    for(var i = 0; i < allStats.length;i++){
+                        if(!($.isEmptyObject(allStats[i]))){
+                            if( allStats[i] instanceof Array){
+                                logLevelStats = logLevelStats.concat(allStats[i]);
+                            } else {
+                                logLevelStats.push(allStats[i]);
+                            }
+                        }
+                    }
+                }
+                if(logLevelStats != null){
+                    lastLog = monitorInfraUtils.getMaxGeneratorValueInArray(logLevelStats,"last_msg_timestamp");
+                    if(lastLog != null){
+                        lastTimeStamp = parseInt(lastLog.last_msg_timestamp)/1000 + 1000;
+                        lastLogLevel = lastLog.level;
+                    }
+                }
+                if(lastTimeStamp == null || lastMsgLogTime != lastTimeStamp){
+                    lastMsgLogTime = lastTimeStamp;
+                    if(lastMsgLogTime != null && lastLogLevel != null){
+                        consoleLogsModel.to_time(new Date(lastMsgLogTime));
+                        consoleLogsModel.from_time(moment(new Date(lastMsgLogTime)).subtract('s', defaultTimeRange));
+                        consoleLogsModel.log_level(self.getLogLevelValueFromLogLevel(lastLogLevel));
+                        consoleLogsModel.time_range('-1');
+                    }
+                    self.renderQueryResult();
+                }
+            });
+
+        },
+
+        updateLogTypeDropdown : function(result) {
+
+            var msgTypeStatsList = [{text:'Any',value:'any'}];
+            var msgStats = [];
+            try{
+                msgStats =  ifNullOrEmptyObject(jsonPath(result,"$..msgtype_stats"),[]);
+            }catch(e){}
+            if(msgStats instanceof Array){
+                for(var i = 0; i < msgStats.length;i++){
+                    if(!($.isEmptyObject(msgStats[i]))){
+                        if( msgStats[i] instanceof Array){
+                            $.each(msgStats[i],function(i,msgStat){
+                                var msgType = msgStat['message_type'];
+                                msgTypeStatsList.push({text:msgType,value:msgType});
+                            });
+                        } else {
+                            msgTypeStatsList.push({text:msgStats[i]['message_type'],value:msgStats[i]['message_type']});
+                        }
+                    }
+                }
+            }
+            var logTypeDd = $('#log_type_dropdown').data('contrailDropdown');
+            if(logTypeDd != null) {
+                logTypeDd.setData(msgTypeStatsList);
+                logTypeDd.value('any');
+            }
+        },
+
+        getLogLevelValueFromLogLevel : function (logLevel) {
+            var qeLevels = cowc.QE_LOG_LEVELS;
+            $.each(qeLevels, function(key,levelObj) {
+                if(levelObj.name == logLevel) {
+                    return levelObj.value;
+                }
+            })
         },
 
         renderQueryResult: function() {
@@ -153,44 +243,7 @@ define([
                                             dataValueField: "value",
                                             defaultValueId: 0,
                                             dataSource: {
-                                                type :'remote',
-                                                url : monitorInfraConstants.
-                                                        monitorInfraUrls
-                                                            ['TENANT_API_URL'],
-                                                requestType : 'post',
-                                                postData : function(){
-                                                    return monitorInfraUtils.getPostDataForGeneratorType(
-                                                                {
-                                                                    nodeType:nodeType,
-                                                                    cfilt:"ModuleServerState:msg_stats",
-                                                                    hostname:hostname
-                                                                }
-                                                                );
-                                                            }(),
-                                                dataType : 'json',
-                                                async : true,
-                                                parse : function (result){
-                                                    var msgTypeStatsList = [{text:'Any',value:'any'}];
-                                                    var msgStats = [];
-                                                    try{
-                                                        msgStats =  ifNullOrEmptyObject(jsonPath(result,"$..msgtype_stats"),[]);
-                                                    }catch(e){}
-                                                    if(msgStats instanceof Array){
-                                                        for(var i = 0; i < msgStats.length;i++){
-                                                            if(!($.isEmptyObject(msgStats[i]))){
-                                                                if( msgStats[i] instanceof Array){
-                                                                    $.each(msgStats[i],function(i,msgStat){
-                                                                        var msgType = msgStat['message_type'];
-                                                                        msgTypeStatsList.push({text:msgType,value:msgType});
-                                                                    });
-                                                                } else {
-                                                                    msgTypeStatsList.push({text:msgStats[i]['message_type'],value:msgStats[i]['message_type']});
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                    return msgTypeStatsList;
-                                                }
+                                                data:[{text:'Any',value:'any'}]
                                             }
                                         }
                                     }
