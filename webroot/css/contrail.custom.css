@@ -655,6 +655,12 @@ a.selectAllLink:hover {
 .or-clause-collection .or-clause:first-child .or-text {
     visibility: hidden;
 }
+.or-clause-collection > .or-clause.row-fluid > .span1 {
+    width: 3%;
+}
+.or-clause-collection > .or-clause.row-fluid > .span10 {
+    width: 89.2%;
+}
 .or-clause-collection .or-text {
     font-size: 14px;
     color: #000;
@@ -673,7 +679,7 @@ a.selectAllLink:hover {
     padding: 10px 10px 10px 0;
 }
 .and-clause-collection table {
-    margin: 10px 0 0 20px;
+    margin: 10px 0 0;
 }
 .and-clause-collection .collection-actions {
     padding: 10px 0;
