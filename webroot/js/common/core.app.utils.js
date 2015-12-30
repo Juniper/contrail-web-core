@@ -18,6 +18,7 @@ function getCoreAppPaths(coreBaseDir) {
         'vectorizer'                  : coreBaseDir + '/assets/joint/js/vectorizer',
         'joint.layout.DirectedGraph'  : coreBaseDir + '/assets/joint/js/joint.layout.DirectedGraph.min',
         'dagre'                       : coreBaseDir + '/assets/joint/js/dagre.min',
+        'vis'                         : coreBaseDir + '/assets/vis-v4.9.0/js/vis.min',
         'bezier'                      : coreBaseDir + '/assets/bezierjs/bezier',
         'lodash'                      : coreBaseDir + '/assets/lodash/lodash.min',
         'backbone'                    : coreBaseDir + '/assets/backbone/backbone-min',
@@ -54,6 +55,7 @@ function getCoreAppPaths(coreBaseDir) {
         'query-or-model'              : coreBaseDir + '/js/models/QueryOrModel',
         'query-and-model'             : coreBaseDir + '/js/models/QueryAndModel',
         'contrail-graph-model'        : coreBaseDir + '/js/models/ContrailGraphModel',
+        'contrail-vis-model'          : coreBaseDir + '/js/models/ContrailVisModel',
         'contrail-view-model'         : coreBaseDir + '/js/models/ContrailViewModel',
         'contrail-model'              : coreBaseDir + '/js/models/ContrailModel',
         'contrail-list-model'         : coreBaseDir + '/js/models/ContrailListModel',
@@ -89,6 +91,10 @@ var coreAppShim =  {
                 this.g = geometry;
                 this.V = vectorizer;
             }
+        },
+        'vis': {
+            deps: ['jquery'],
+            exports: 'vis'
         },
         'knockout': {
             deps: ['jquery']

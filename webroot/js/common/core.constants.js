@@ -119,6 +119,7 @@ define([
         this.NODE_DETAILS_CHARTS = 'mon-infra-node-details-chart';
 
         this.TMPL_ELEMENT_TOOLTIP = "element-tooltip-template";
+        this.TMPL_UNDERLAY_ELEMENT_TOOLTIP = "element-underlay-tooltip-template";
         this.TMPL_ELEMENT_TOOLTIP_TITLE = "element-tooltip-title-template";
         this.TMPL_ELEMENT_TOOLTIP_CONTENT = "element-tooltip-content-template";
 
