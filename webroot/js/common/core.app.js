@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
-var defaultBaseDir = (document.location.pathname.indexOf('/vcenter') == 0) ? "./../" : "./";
+var defaultBaseDir = (document.location.pathname.indexOf('/vcenter') == 0) ? "./../" : "";
 
 /**
  * Set the global env with the data-env attr from the core.app script tag.
@@ -10,7 +10,7 @@ var defaultBaseDir = (document.location.pathname.indexOf('/vcenter') == 0) ? "./
  */
 globalObj['env'] = document.querySelector('script[data-main="/js/common/core.app"][data-env]').getAttribute('data-env');
 if (globalObj['env'] == 'prod') {
-    globalObj['buildBaseDir'] = 'built/';
+    globalObj['buildBaseDir'] = 'built';
 } else {
     globalObj['buildBaseDir'] = '';
 }
