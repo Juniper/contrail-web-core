@@ -286,6 +286,7 @@ define([
                 //since the data is already present, request state is set to SUCCESS_NOT_EMPTY
                 var detailsHtml = Handlebars.compile(viewConfigBody.options.detail.template)({
                     data: gridItems[0],
+                    ignoreKeys: ['cgrid'],
                     requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY
                 });
 

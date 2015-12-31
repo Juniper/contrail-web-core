@@ -233,7 +233,7 @@ define([
             var modelAttrs = this.model().attributes,
                 attrs4Server = {},
                 ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object',
-                                 'filter_data_object', 'filter_and_clauses', 'sort_by', 'sort_order', 'log_category', 'log_type', 'keywords', 'is_request_in_progress'];
+                                 'filter_data_object', 'filter_and_clauses', 'sort_by', 'sort_order', 'log_category', 'log_type', 'is_request_in_progress'];
 
             for (var key in modelAttrs) {
                 if(modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) == -1) {
@@ -364,7 +364,34 @@ define([
             }, this);
         },
 
-        validations: {}
+        validations: {
+            runQueryValidation: {
+                'table_name': {
+                    required: true,
+                    msg: ctwm.getRequiredMessage('table name')
+                },
+                'select': {
+                    required: true,
+                    msg: ctwm.getRequiredMessage('select')
+                },
+                from_time: function(value) {
+                    var fromTime = new Date(value).getTime(),
+                        toTime = new Date(this.attributes.to_time).getTime();
+
+                    if(fromTime > toTime) {
+                        return cowm.FROM_TIME_SMALLER_THAN_TO_TIME;
+                    }
+                },
+                to_time: function(value) {
+                    var toTime = new Date(value).getTime(),
+                        fromTime = new Date(this.attributes.from_time).getTime();
+
+                    if (toTime < fromTime) {
+                        return cowm.TO_TIME_GREATER_THAN_FROM_TIME;
+                    }
+                }
+            }
+        }
     });
 
     function getTableSchemaConfig(model, tableName, disableFieldArray, disableSubstringArray, disableWhereFields) {

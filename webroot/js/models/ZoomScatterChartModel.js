@@ -123,8 +123,7 @@ define([
     }
 
     function getBubbleSizeRange(values, sizeFieldName) {
-        var sizeMinMax = [];
-        sizeMinMax = d3.extent(values, function (obj) {
+        var sizeMinMax = d3.extent(values, function (obj) {
             return  contrail.handleIfNaN(obj[sizeFieldName], 0)
         });
         if (sizeMinMax[0] == sizeMinMax[1]) {

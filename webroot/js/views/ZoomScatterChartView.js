@@ -124,16 +124,16 @@ define([
             margin = chartConfig['margin'],
             width = chartModel.width,
             height = chartModel.height,
-            circleRadius = chartConfig.circleRadius;
+            maxCircleRadius = chartConfig.maxCircleRadius;
 
         $(chartSelector).height(height + margin.top + margin.bottom);
         $(chartControlPanelSelector).find('.control-panel-item').removeClass('active');
 
         chartSVG = d3.select($(chartSelector)[0]).append("svg")
             .attr("class", "zoom-scatter-chart")
-            .attr("width", width + margin.left + margin.right + circleRadius)
+            .attr("width", width + margin.left + margin.right + maxCircleRadius)
             .attr("height", height + margin.top + margin.bottom)
-            .attr("viewbox", '0 0 ' + (width + margin.left + margin.right + circleRadius) + ' ' + (height + margin.top + margin.bottom))
+            .attr("viewbox", '0 0 ' + (width + margin.left + margin.right + maxCircleRadius) + ' ' + (height + margin.top + margin.bottom))
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .call(chartView.zm)
@@ -141,14 +141,14 @@ define([
             .on("mousedown", mouseDownCallback);
 
         chartSVG.append("rect")
-            .attr("width", width + circleRadius)
+            .attr("width", width + maxCircleRadius)
             .attr("height", height)
             .append("g")
-            .attr("transform", "translate(" + circleRadius + ",0)")
+            .attr("transform", "translate(" + maxCircleRadius + ",0)")
 
         chartSVG.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(" + circleRadius + "," + height + ")")
+            .attr("transform", "translate(" + maxCircleRadius + "," + height + ")")
             .call(chartModel.xAxis)
             .selectAll("text")
             .attr("x", 0)
@@ -156,7 +156,7 @@ define([
 
         chartSVG.append("g")
             .attr("class", "y axis")
-            .attr("transform", "translate(" + circleRadius + ",0)")
+            .attr("transform", "translate(" + maxCircleRadius + ",0)")
             .call(chartModel.yAxis)
             .selectAll("text")
             .attr("x", -8)
@@ -164,8 +164,8 @@ define([
 
         viewObjects = chartSVG.append("svg")
             .attr("class", "objects")
-            .attr("width", width + circleRadius)
-            .attr("height", height + circleRadius);
+            .attr("width", width + maxCircleRadius)
+            .attr("height", height + maxCircleRadius);
 
         chartSVG.append("text")
             .attr("class", "x label")
@@ -246,7 +246,7 @@ define([
                         .attr("y", 0);
 
                     chartSVG.selectAll("circle").attr("transform", function (d) {
-                        return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                        return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                     });
                 }, true);
             d3.event.stopPropagation();
@@ -281,7 +281,7 @@ define([
             tooltipConfigCB = chartOptions.tooltipConfigCB,
             clickCB = chartOptions.clickCB,
             overlapMap = getOverlapMap(chartData),
-            timer = null, circleRadius = chartConfig.circleRadius;
+            timer = null, maxCircleRadius = chartConfig.maxCircleRadius;
 
         viewObjects.selectAll("circle")
             .data(chartData)
@@ -294,7 +294,7 @@ define([
                 return getBubbleColor(d[chartConfig.colorFilterFields], chartModel.classes, chartModel.maxColorFilterFields);
             })
             .attr("transform", function (d) {
-                return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
             })
             .attr("opacity", "0.6")
             .on("mouseenter", function (d) {
@@ -387,7 +387,7 @@ define([
                 .attr("y", 0);
 
             chartView.svg.selectAll("circle").attr("transform", function (d) {
-                return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
             });
         };
     };
@@ -431,7 +431,7 @@ define([
 
             chartView.svg.selectAll("circle")
                 .attr("transform", function (d) {
-                    return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.circleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                    return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                 });
 
             chartView.zm.scale(1);
@@ -782,7 +782,7 @@ define([
             height = 275;
 
         var chartViewConfig = {
-            circleRadius: 7.0,
+            maxCircleRadius: 10,
             maxScale: 5,
             minScale: 1 / 5,
             yLabel: chartOptions.yLabel,

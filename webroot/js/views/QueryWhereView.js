@@ -119,7 +119,7 @@ define([
                                                         path: "name",
                                                         dataBindValue: "name",
                                                         dataBindOptionList: 'getNameOptionList',
-                                                        width: 140,
+                                                        width: 150,
                                                         elementConfig: {
                                                             placeholder: 'Select Name',
                                                             defaultValueId: 0
@@ -136,7 +136,7 @@ define([
                                                         path: "operator",
                                                         dataBindValue: "operator",
                                                         dataBindOptionList: 'getWhereOperatorOptionList',
-                                                        width: 100,
+                                                        width: 80,
                                                         elementConfig: {
                                                             defaultValueId: 0
                                                         }
@@ -152,7 +152,7 @@ define([
                                                         path: "value",
                                                         dataBindValue: "value()",
                                                         dataBindOptionList: 'getValueOptionList',
-                                                        width: 140,
+                                                        width: 200,
                                                         elementConfig: {
                                                             placeholder: 'Select Value'
                                                         }
@@ -181,7 +181,7 @@ define([
                                                         path: "suffix_name",
                                                         dataBindValue: "suffix_name",
                                                         dataBindOptionList: 'getSuffixNameOptionList',
-                                                        width: 140,
+                                                        width: 150,
                                                         elementConfig: {
                                                             placeholder: 'Select Suffix Name',
                                                             defaultValueId: 0
@@ -197,7 +197,7 @@ define([
                                                         templateId: cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
                                                         path: "suffix_operator",
                                                         dataBindValue: "suffix_operator",
-                                                        width: 100,
+                                                        width: 80,
                                                         elementConfig: {
                                                             data: [{id: '=', text: '='}],
                                                             defaultValueId: 0
@@ -213,7 +213,7 @@ define([
                                                         templateId: cowc.TMPL_EDITABLE_GRID_COMBOBOX_VIEW,
                                                         path: "suffix_value",
                                                         dataBindValue: "suffix_value()",
-                                                        width: 140,
+                                                        width: 200,
                                                         elementConfig: {
                                                             placeholder: 'Select Suffix Value'
                                                         }

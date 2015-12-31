@@ -1240,7 +1240,10 @@
         </div>
         {{/IfCompare}}
         <div class="row-fluid form-element">
-            <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="{{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}},
+            <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="
+            {{#if disabled}}disable: {{disabled}},
+            {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}},
+            event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
             contrailDateTimePicker: {}"/>
             <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
         </div>
@@ -1519,7 +1522,7 @@
             <div class="span10">
             {{#each viewConfig.rows}}
                 <div class="row-fluid or-clause-header">
-                    <p class="or-clause-text span8" data-bind="text: getOrClauseText()($data)">OR Text string</p>
+                    <p class="or-clause-text span10" data-bind="text: getOrClauseText()($data)">OR Text string</p>
                     {{#each rowActions}}
                         <a class="collection-actions collection-actions-{{@index}} pull-right" data-bind='click: {{onClick}}'>
                             <i class="pull-right {{iconClass}}"></i>
@@ -1798,7 +1801,7 @@
             {{#IfCompare controls.top.default.collapsedOnLoad true operator='!=='}} style="display:none;"{{/IfCompare}}>
             <a>Click here to expand <i class="icon-double-angle-down"></i></a>
         </div>
-        <div class="widget-body" >
+        <div class="widget-body" {{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} style="display:none;"{{/IfCompare}}>
             <div class="widget-main padding-4">
                 {{#IfCompare controls.right false operator='!=='}}
                 <div class="widget-main-rightmenu colmask rightmenu">
