@@ -3,7 +3,7 @@ var constants = {};
 /**
  * Build config generator script specific constants.
  */
-constants.defaultBaseDir = "";
+constants.defaultBaseDir = ".";
 constants.defaultVcenterBaseDIr = "./../";
 
 constants.defaultBuildDir = "built/";
@@ -140,9 +140,12 @@ constants.controllerOutDir = constants.coreAppDir + constants.defaultBuildDir;
 constants.controllerBaseUrl = constants.coreBaseUrl;
 constants.controllerCoreRelativePath = "./../../contrail-web-core/webroot/";
 
-constants.controllerInitModuleName = './js/common/controller.init';
+constants.controllerInitModuleName = 'controller-init';
 constants.controllerInitModuleInclude = [];
-constants.controllerInitModuleExclude  = [];
+constants.controllerInitModuleExclude  = [
+    'contrail-view-model',
+    'contrail-list-model'
+];
 constants.controllerFileExclusionRegExp = constants.defaultFileExclusionRegExp;
 
 /**

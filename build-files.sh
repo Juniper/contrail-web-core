@@ -81,10 +81,10 @@ for REPO in "${REPOS[@]}"; do
         echo    "*     Building Web Storage Repo           *"
         echo -e "*******************************************\n"
 
-        cd ../contrail-web-storage/
-
         # commenting out till files are checked in
-        # $node_exec $rjs_bin -o webroot/storage.build.js
+        #$node_exec $build_conf_generator $REPO $storage_build_file
+        cd ../contrail-web-storage/
+        # $node_exec $rjs_bin -o $storage_build_file
         cd -
         echo "DONE"
     fi

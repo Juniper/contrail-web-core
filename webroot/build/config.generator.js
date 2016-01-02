@@ -155,17 +155,30 @@ ControllerConfigGenerator.prototype.overrideBaseConfig = function() {
         this.configJSON.paths[path] = confGenConst.controllerCoreRelativePath + this.configJSON.paths[path];
     }
     // Add controller paths.
-    /*
-    Issue: move controller app paths to util file and make it require-able (avoid ref to core vars)
     var controllerApp = require('./../../../contrail-web-controller/webroot/common/ui/js/controller.app')
-    var controllerAppPaths = controllerApp.getControllerAppPaths(ctBaseDir, '');
+    var controllerAppPaths = controllerApp.getControllerAppPaths(confGenConst.defaultBaseDir, '');
     for (var path in controllerAppPaths) {
         if (controllerAppPaths.hasOwnProperty(path)) {
             this.configJSON.paths[path] = controllerAppPaths[path];
         }
-    }*/
+    }
     // Remove core modules.
     this.configJSON.modules = [];
+};
+
+ControllerConfigGenerator.prototype.addControllerInitModule = function() {
+    var controllerInitModule = {};
+
+    if (confGenConst.controllerInitModuleName)
+        controllerInitModule.name = confGenConst.controllerInitModuleName;
+
+    if (confGenConst.controllerInitModuleInclude)
+        controllerInitModule.include = confGenConst.controllerInitModuleInclude;
+
+    if (confGenConst.controllerInitModuleExclude)
+        controllerInitModule.exclude = confGenConst.controllerInitModuleExclude;
+
+    this.configJSON.modules.push(controllerInitModule);
 };
 
 ControllerConfigGenerator.prototype.updateConfig = function() {
@@ -176,7 +189,7 @@ ControllerConfigGenerator.prototype.updateConfig = function() {
     this.overrideBaseConfig();
 
     // Add modules if any requires unification.
-
+    this.addControllerInitModule();
 };
 
 /**
