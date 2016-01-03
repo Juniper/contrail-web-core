@@ -20,6 +20,8 @@ define([
         };
 
         this.SHOULD_BE_VALID = '{0} should have valid ';
+        this.FROM_TIME_SMALLER_THAN_TO_TIME = 'From Time should be before To Time';
+        this.TO_TIME_GREATER_THAN_FROM_TIME = 'To Time should be later than From Time';
 
         this.get = function () {
             var args = arguments;
@@ -46,8 +48,9 @@ define([
         this.DEPRECATION_WARNING_PREFIX = "Contrail WebUI Warning: ";
 
         this.QE_MAX_QUERY_QUEUE_RESULT_VIEW_INFO = "Maximum 5 Query Results can be viewed. Please close the existing query results to view new queries from queue.";
-        this.QE_QUERY_QUEUE_RESULT_ALREADY_LOADED = "Query Result has already been loaded.";
-        this.QE_DELETE_QUERY_CONFIRM = "Are you sure you want to remove this query?";
+        this.QE_QUERY_QUEUE_RESULT_ALREADY_LOADED = "Query Result for this query has already been loaded.";
+        this.QE_DELETE_SINGLE_QUERY_CONFIRM = "Are you sure you want to remove this query?";
+        this.QE_DELETE_MULTIPLE_QUERY_CONFIRM = "Are you sure you want to remove the selected queries?";
         this.getQueryQueuedMessage = function(queueURL, queueType) {
             return 'Your query has been queued. <a class="hyperlink" href="' + queueURL + '">View ' + queueType + ' Queue</a>';
         }

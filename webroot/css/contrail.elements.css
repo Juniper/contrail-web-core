@@ -1428,10 +1428,9 @@ input[type=checkbox].ace-switch.ace-switch-7:checked + .lbl::after {
 .input-append.inset .add-on.disabled {
     background-color: #eee;
 }
-.input-append.inset input[type="text"], .input-append.inset textarea, .input-append.inset input[type="password"],{
+.input-append.inset input[type="text"], .input-append.inset textarea, .input-append.inset input[type="password"] {
 	padding-right:30px;
 }
-
 .ace-file-input {
   position: relative;
   height: 38px;
@@ -4146,10 +4145,10 @@ td.td-actions a.td-action {
 .icon-badge-color-5 {color: #6baed6;}
 .icon-badge-color-6 {color: #bcbd22 ;}
 
-.icon-queue-badge-color-0 {color: #17becf;}
-.icon-queue-badge-color-1 {color: #bcbd22;}
+.icon-queue-badge-color-0 {color: #3B3C95;}
+.icon-queue-badge-color-1 {color: #D32162;}
 .icon-queue-badge-color-2 {color: #8c564b;}
-.icon-queue-badge-color-3 {color: #e377c2;}
+.icon-queue-badge-color-3 {color: #bcbd22;}
 .icon-queue-badge-color-4 {color: #ff7f0e;}
 
 /* status-badge-rounded */

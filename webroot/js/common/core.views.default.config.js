@@ -35,7 +35,7 @@ define([
                     checkboxSelectable: true,
                     forceFitColumns: true,
                     detail: {
-                        template: '<pre>{{{formatJSON2HTML this.data}}}</pre>'
+                        template: '<pre>{{{formatJSON2HTML this.data this.ignoreKeys}}}</pre>'
                     },
                     enableCellNavigation: true,
                     enableColumnReorder: false,

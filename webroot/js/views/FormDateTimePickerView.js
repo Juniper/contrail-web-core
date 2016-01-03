@@ -13,6 +13,7 @@ define([
                 viewConfig = self.attributes.viewConfig,
                 elId = self.attributes.elementId,
                 app = self.attributes.app,
+                validation = self.attributes.validation,
                 elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
                 path = viewConfig[cowc.KEY_PATH],
                 lockEditingByDefault = self.attributes.lockEditingByDefault,
@@ -26,8 +27,10 @@ define([
             this.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId + '_datetimepicker', name: elId, dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
-                lockAttr: lockEditingByDefault, class: "span12", elementConfig: elementConfig
+                id: elId + '_datetimepicker', name: elId,
+                label: labelValue, dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
+                lockAttr: lockEditingByDefault, class: "span12",
+                viewConfig: viewConfig, elementConfig: elementConfig, validation: validation
             };
 
             self.$el.html(dateTimePickerTemplate(tmplParameters));
