@@ -976,7 +976,7 @@
 
 <script type="text/x-handlebars-template" id="core-editable-grid-checkbox-view-template">
     <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <input type="{{type}}" name="{{name}}" class="{{class}} ace-input" data-bind="checked: {{viewConfig.dataBindValue}}"/>
+        <input type="{{type}}" name="{{name}}" class="{{class}} ace-input" data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}} checked: {{viewConfig.dataBindValue}}"/>
         <span class="ace-lbl" />
     </div>
 </script>
@@ -1473,7 +1473,8 @@
                 {{#IfCompare viewConfig.colSpan null operator='!='}}
                     colspan="{{viewConfig.colSpan}}"
                 {{/IfCompare}}
-                class="data-cell" data-bind="style: {width: '{{width}}px' }">
+                class="data-cell" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                style: {width: '{{width}}px' }">
             </td>
             {{/each}}
             {{#each rowActions}}
@@ -1484,7 +1485,6 @@
             </td>
             {{/each}}
         </tr>
-        {{/each}}
         <tr class="error-row">
             {{#each columns}}
             <td class="error-cell">
@@ -1494,6 +1494,7 @@
             </td>
             {{/each}}
         </tr>
+        {{/each}}
         </tbody>
     </table>
     {{#each viewConfig.gridActions}}
