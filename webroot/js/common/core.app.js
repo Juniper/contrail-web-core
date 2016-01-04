@@ -10,7 +10,7 @@ var defaultBaseDir = (document.location.pathname.indexOf('/vcenter') == 0) ? "./
  */
 globalObj['env'] = document.querySelector('script[data-main="/js/common/core.app"][data-env]').getAttribute('data-env');
 if (globalObj['env'] == 'prod') {
-    defaultBaseDir = ''; 
+    defaultBaseDir = '';
     globalObj['buildBaseDir'] = 'built';
 } else {
     globalObj['buildBaseDir'] = '';

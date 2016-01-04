@@ -16,7 +16,7 @@ require([
         'core-basedir/js/common/qe.grid.config',
         'core-basedir/js/common/qe.parsers',
         'core-basedir/js/common/chart.utils',
-        'text!templates/core.common.tmpl'
+        'text!core-basedir/templates/core.common.tmpl'
     ], function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig,
                  LayoutHandler, QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils, CoreCommonTmpls) {
         cowc = new CoreConstants();

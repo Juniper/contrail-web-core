@@ -141,10 +141,37 @@ constants.controllerBaseUrl = constants.coreBaseUrl;
 constants.controllerCoreRelativePath = "./../../contrail-web-core/webroot/";
 
 constants.controllerInitModuleName = 'controller-init';
-constants.controllerInitModuleInclude = [];
+constants.controllerInitModuleInclude = [
+    'searchflow-model',
+    'traceflow-model',
+    'underlay-graph-model',
+    'monitor-infra-confignode-model',
+    'monitor-infra-analyticsnode-model',
+    'monitor-infra-databasenode-model',
+    'monitor-infra-controlnode-model',
+    'monitor-infra-vrouter-model',
+    'monitor-infra-utils',
+    'confignode-scatterchart-view',
+    'controlnode-scatterchart-view',
+    'dbnode-scatterchart-view',
+    'analyticsnode-scatterchart-view',
+    'vrouter-dashboard-view',
+    'monitor-infra-parsers',
+    'monitor-infra-utils',
+    'monitor-infra-constants',
+    'mon-infra-controller-dashboard',
+    'controller-basedir/monitor/infrastructure/common/ui/js/views/VRouterScatterChartView'
+];
 constants.controllerInitModuleExclude  = [
-    'contrail-view-model',
-    'contrail-list-model'
+    "contrail-view",
+    "contrail-model",
+    "contrail-view-model",
+    "contrail-list-model",
+    "contrail-graph-model",
+    "query-form-model",
+    "query-or-model",
+    "query-and-model",
+    "core-init",
 ];
 constants.controllerFileExclusionRegExp = constants.defaultFileExclusionRegExp;
 
