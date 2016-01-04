@@ -376,17 +376,19 @@ define([
                 },
                 from_time: function(value) {
                     var fromTime = new Date(value).getTime(),
-                        toTime = new Date(this.attributes.to_time).getTime();
+                        toTime = new Date(this.attributes.to_time).getTime(),
+                        timeRange = this.attributes.time_range;
 
-                    if(fromTime > toTime) {
+                    if(fromTime > toTime && timeRange == -1) {
                         return cowm.FROM_TIME_SMALLER_THAN_TO_TIME;
                     }
                 },
                 to_time: function(value) {
                     var toTime = new Date(value).getTime(),
-                        fromTime = new Date(this.attributes.from_time).getTime();
+                        fromTime = new Date(this.attributes.from_time).getTime(),
+                        timeRange = this.attributes.time_range;
 
-                    if (toTime < fromTime) {
+                    if (toTime < fromTime && timeRange == -1) {
                         return cowm.TO_TIME_GREATER_THAN_FROM_TIME;
                     }
                 }

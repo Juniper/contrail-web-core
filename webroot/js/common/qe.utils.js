@@ -615,34 +615,34 @@ define([
         };
     };
 
-    function parseFilterANDClause(filters, query) {
+    function parseFilterANDClause(filters) {
         if (!contrail.checkIfExist(filters)){
             // make filters empty string to prevent parse error when opened first time
             filters = "";
         }
         var filtersArray = cowu.splitString2Array(filters, "&"),
-            filter, filterBy, limitBy,
-            parsedFilterArr = [], parsedLimit, filter_json_obj = {};
+            filter, filterBy, limitBy, sortFields, sortOrder,
+            filter_json_obj = {};
 
         for (var i = 0; i < filtersArray.length; i++) {
             filter = filtersArray[i];
             if(filter.indexOf('filter:') != -1) {
-                filterBy = cowu.splitString2Array(filter, ":")[1];
+                filterBy = cowu.splitString2Array(filter, "filter:")[1];
                 if(filterBy.length > 0) {
                     filter_json_obj["filter"] = parseFilterBy(filterBy);
                 }
             } else if (filter.indexOf('limit:') != -1) {
-                limitBy = cowu.splitString2Array(filter, ":")[1];
+                limitBy = cowu.splitString2Array(filter, "limit:")[1];
                 if(limitBy.length > 0) {
                     filter_json_obj["limit"] = parseLimitBy(limitBy);
                 }
             } else if (filter.indexOf('sort_fields:') != -1) {
-                sort_fields = cowu.splitString2Array(filter, ":")[1];
-                if(sort_fields.length > 0) {
-                    filter_json_obj["sort_fields"] = parseSortFields(sort_fields);
+                sortFields = cowu.splitString2Array(filter, "sort_fields:")[1];
+                if(sortFields.length > 0) {
+                    filter_json_obj["sort_fields"] = parseSortFields(sortFields);
                 }
             } else if (filter.indexOf('sort:') != -1) {
-                sortOrder = cowu.splitString2Array(filter, ":")[1];
+                sortOrder = cowu.splitString2Array(filter, "sort:")[1];
                 if(sortOrder.length > 0) {
                     filter_json_obj["sort_order"] = sortOrder;
                 }
