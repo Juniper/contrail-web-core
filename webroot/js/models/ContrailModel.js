@@ -74,14 +74,44 @@ define([
                 getValidation = validationObj['getValidation'];
 
                 if(contrail.checkIfExist(key)) {
-                    keyObject = this.model().attributes[key];
-                    errors = this.model().get(cowc.KEY_MODEL_ERRORS);
+                    //handling the collection of collection validations
+                    if(objectType === cowc.OBJECT_TYPE_COLLECTION_OF_COLLECTION) {
+                        var primKey = key[0], secKey = key[1];
+                        keyObject = this.model().attributes[primKey];
+                        keyObject = keyObject instanceof Backbone.Collection ? keyObject.toJSON() : [];
+                        for(var primColIndex = 0; primColIndex < keyObject.length; primColIndex++) {
+                            var primColModel = keyObject[primColIndex];
+                            var secKeyObject = primColModel.model().attributes[secKey];
+                            if(secKeyObject) {
+                                for(var secColIndex = 0; secColIndex < secKeyObject.size(); secColIndex++) {
+                                    var secColModel = secKeyObject.at(secColIndex);
+                                    validationName = getValidation instanceof Function ? getValidation(secColModel) : getValidation;
+                                    isInternalValid = secColModel.attributes.model().isValid(validationOption,
+                                        validationName);
+                                    attErrorObj = {};
+                                    attrErrorObj[secKey + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
+                                    errors.set(attrErrorObj);
+                                    isValid = isValid && isInternalValid;
+                                };
+                            }
+                        }
+                    } else {
+                        keyObject = this.model().attributes[key];
+                        errors = this.model().get(cowc.KEY_MODEL_ERRORS);
 
-                    if(objectType == cowc.OBJECT_TYPE_COLLECTION) {
-                        for( var j = 0; j < keyObject.size(); j++) {
-                            collectionModel = keyObject.at(j);
-                            validationName = typeof getValidation == 'function' ? getValidation(collectionModel) : getValidation;
-                            isInternalValid = collectionModel.attributes.model().isValid(validationOption, validationName);
+                        if(objectType == cowc.OBJECT_TYPE_COLLECTION) {
+                            for( var j = 0; j < keyObject.size(); j++) {
+                                collectionModel = keyObject.at(j);
+                                validationName = typeof getValidation == 'function' ? getValidation(collectionModel) : getValidation;
+                                isInternalValid = collectionModel.attributes.model().isValid(validationOption, validationName);
+                                attrErrorObj = {};
+                                attrErrorObj[key + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
+                                errors.set(attrErrorObj);
+                                isValid = isValid && isInternalValid;
+                            }
+                        } else if (objectType == cowc.OBJECT_TYPE_MODEL) {
+                            validationName = typeof getValidation == 'function' ? getValidation(this) : getValidation;
+                            isInternalValid = keyObject.model().isValid(validationOption, validationName);
                             attrErrorObj = {};
                             if(!isInternalValid) {
                                 attrErrorObj[key + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
@@ -89,15 +119,7 @@ define([
                             }
                             isValid = isValid && isInternalValid;
                         }
-                    } else if (objectType == cowc.OBJECT_TYPE_MODEL) {
-                        validationName = typeof getValidation == 'function' ? getValidation(this) : getValidation;
-                        isInternalValid = keyObject.model().isValid(validationOption, validationName);
-                        attrErrorObj = {};
-                        attrErrorObj[key + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
-                        errors.set(attrErrorObj);
-                        isValid = isValid && isInternalValid;
                     }
-
                 } else {
                     validationName = typeof getValidation == 'function' ? getValidation(this) : getValidation;
                     isValid = isValid && this.model().isValid(validationOption, validationName);
