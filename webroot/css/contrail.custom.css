@@ -775,10 +775,14 @@ a.selectAllLink:hover {
 	margin-bottom: 4px;
 	border-color: #ddd;
 }
-.grid-header .select2-container, .widget-header .select2-container, .breadcrumb .select2-container{
+.grid-header .select2-container,
+.widget-header .select2-container,
+.breadcrumb .select2-container{
 	margin-bottom: 2px;
 }
-.grid-header .select2-container.select2-container-active, .widget-header .select2-container.select2-container-active, .breadcrumb .select2-container.select2-container-active{
+.grid-header .select2-container.select2-container-active,
+.widget-header .select2-container.select2-container-active,
+.breadcrumb .select2-container.select2-container-active{
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
@@ -796,7 +800,9 @@ a.selectAllLink:hover {
 .grid-header .select2-container{
 	margin-bottom: 2px;
 }
-.grid-header .select2-container a.select2-choice, .widget-header .select2-container a.select2-choice, .breadcrumb .select2-container a.select2-choice{
+.grid-header .select2-container a.select2-choice,
+.widget-header .select2-container a.select2-choice,
+.breadcrumb .select2-container a.select2-choice{
 	border: none;
 	padding: 0 4px;
 }
@@ -804,10 +810,24 @@ a.selectAllLink:hover {
 	color: #777;
 	cursor: default;
 }
-.grid-header .widget-toolbar .select2-chosen, .widget-header .widget-toolbar .select2-chosen, .breadcrumb li.active .select2-chosen {
+.grid-header .widget-toolbar .select2-chosen,
+.widget-header .widget-toolbar .select2-chosen,
+.breadcrumb li.active .select2-chosen {
 	color: #3182bd;
 	font-weight: 600;
 }
+/* Breadcrumb styles */
+.breadcrumb .breadcrumb-dropdown,
+.breadcrumb .breadcrumb-text {
+    max-width: 180px;
+}
+.breadcrumb .breadcrumb-text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: -6px 0;
+}
+
 /* Sort Icon from font-awesome */
 .contrail-grid{
 	border-bottom: 1px solid #dadada;
