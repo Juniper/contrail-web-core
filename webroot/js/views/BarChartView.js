@@ -11,46 +11,76 @@ define([
         chart: null,
         chartSelection: null,
         initialize: function (options) {
-            var that = this;
+            var self = this;
             var chartConfig = getValueByJsonPath(options, 'viewConfig', {});
             this.chart = barChart();
             var dimension = chartConfig['dimension'];
-            var xSmplCnt = 24;
-            xSmplCnt = Math.max(xSmplCnt,
-                d3.max(dimension.group().all(), function (d) {
-                    return d['key'];
-                }));
+            var field = chartConfig['field'];
+            var scaleCfg = getScaleCfg({
+                dimension: dimension,
+                field: field
+            }); 
+            var barRange = scaleCfg['barRange'],
+                maxXValue = scaleCfg['maxXValue'];
+            // Ensure range is set correctly to number of bars * 10
             this.chart.dimension(dimension)
-                .group(dimension.group(Math.floor))
+                //Find out which bucket it falls in and multiply by barRange
+                .group(dimension.group(function(d) { return Math.floor(d/barRange) * barRange;}))
                 .toolTip(false)
+                .round(function(d) { return Math.floor(d/barRange) * barRange;})
                 .x(d3.scale.linear()
-                    .domain([0, xSmplCnt + xSmplCnt / 24])      //Let's keep ordinal discrete domain
-                    //To accomodate 1 extra bar
-                    .rangeRound([0, 10 * 26]))
+                    .domain([0, maxXValue])      //Let's keep ordinal discrete domain 
+                    .rangeRound([0,10 * 24]))
                 .xScale(chartConfig['xScale'])
-                .y(d3.scale.linear()
-                    .domain([0, ifNotNumeric(chartConfig['maxY'], 24)])
-                    .range([50, 0]));
+                // .y(d3.scale.linear()
+                //     .domain([0,ifNotNumeric(chartConfig['maxY'],24)])
+                //     .range([50,0]));
 
-            if (typeof(chartConfig['onBrushEnd']) == 'function') {
-                this.chart.onBrushEnd(chartConfig['onBrushEnd']);
+            if(typeof(chartConfig['onBrushEnd']) == 'function') {
+                this.chart.onBrushEnd(function(brushLimits) {
+                    chartConfig['onBrushEnd'](brushLimits,field);
+                });
             }
         },
         render: function () {
             this.chartSelection = d3.select(this.el)
                 .call(this.chart);
         },
-        update: function () {
+        update: function (cfg) {
+            if(cfg != null && cfg['dimension'] != null) {
+                var dimension = cfg['dimension'];
+                this.chart.dimension(cfg['dimension'])
+                    .group(dimension.group(function(d) { return Math.floor(d/barRange) * barRange;}));
+            }
             this.chartSelection.call(this.chart);
         }
     });
+
+    //Gives bucket range
+    function getScaleCfg(cfg) { 
+        var barRange = 1,
+            xBarCnt = 24,
+            dimension = cfg['dimension'],
+            field = cfg['field'];
+        var maxXValue = getValueByJsonPath(dimension.top(1)[0],field);
+        if(maxXValue > 24) {
+            barRange = Math.ceil(maxXValue/xBarCnt);
+        }
+        if(maxXValue != null) {
+            maxXValue = barRange * 24;
+        }
+        return {
+            barRange: barRange,
+            maxXValue: maxXValue
+        };
+    }
 
     function barChart() {
         //Serves as a static variable for this function
         if (!barChart.id) barChart.id = 0;
         var toolTip_text = "";
         var config = {
-            margin: {top: 0, right: 10, bottom: 10, left: 10},
+            margin : {top:0, right:10, bottom:10, left:10},
         }
         var margin = config.margin, x, xScale,
             y = d3.scale.linear().range([50, 0]),
@@ -68,7 +98,10 @@ define([
             var width = x.range()[1],
                 height = y.range()[0],
                 xaxis_max_value = x.domain()[1];
-            logMessage('crossFilterChart', 'Start');
+            if(group.top(1).length > 0)
+                y.domain([0, group.top(1)[0].value]);
+            else
+                y.domain([0, 1]);
 
             div.each(function () {
                 var div = d3.select(this),
@@ -81,10 +114,10 @@ define([
                         .attr("class", "reset")
                         .text("reset")
                         .style("display", "none");
-                    div.select('.title .reset').on('click', function () {
+                    div.select('.title .reset').on('click',function() {
                         chart.filter(null);
-                        if (typeof(onBrushEnd) == 'function') {
-                            onBrushEnd();
+                        if(typeof(onBrushEnd) == 'function') {
+                            onBrushEnd(null);
                         }
                     });
 
@@ -105,13 +138,13 @@ define([
                         .attr("class", function (d) {
                             return d + " bar";
                         })
-                        .datum(group.all());
+                        .datum(group.all());        //Data Input to chart
                     g.selectAll(".foreground.bar")
                         .attr("clip-path", "url(#clip-" + id + ")");
 
                     g.append("g")
                         .attr("class", "axis")
-                        .attr("transform", "translate(0," + height + ")")
+                        .attr("transform", "translate(0," + height + ")")       //To show axis at bottom
                         .call(axis);
                     // Initialize the brush component with pretty resize handles.
                     var gBrush = g.append("g").attr("class", "brush").call(brush);
@@ -134,20 +167,20 @@ define([
                             .attr("width", x(extent[1]) - x(extent[0]));
                     }
                 }
-
                 g.selectAll(".bar").attr("d", barPath);
             });
 
             function barPath(groups) {
                 var path = [],
                     i = -1,
+                    groups = group.all(),
                     n = groups.length,
                     d;
                 while (++i < n) {
                     d = groups[i];
                     path.push("M", x(d.key), ",", height, "V", y(d.value), "h9V", height);
                 }
-                if (path.length == 0)
+                if(path.length == 0)
                     return null;
                 else
                     return path.join("");
@@ -184,27 +217,8 @@ define([
             g.select("#clip-" + id + " rect")
                 .attr("x", x(extent[0]))
                 .attr("width", x(extent[1]) - x(extent[0]));
-            extent[0] = Math.floor(extent[0]);
             dimension.filterAll();
-            if (xScale != null) {
-                var xRangeArr = xScale.range();
-                var beginIdx = Math.max(0, _.sortedIndex(xRangeArr, extent[0]) - 1);
-                var endIdx = Math.min(_.sortedIndex(xRangeArr, extent[1]), xRangeArr.length - 1);
-                //If it falls in the last bucket,need to include the last value also
-                if (_.sortedIndex(xRangeArr, extent[1]) == xRangeArr.length) {
-                    dimension.filterFunction(function (d) {
-                        return d >= xRangeArr[beginIdx] && d <= xRangeArr[endIdx];
-                    });
-                } else {
-                    dimension.filterFunction(function (d) {
-                        return d >= xRangeArr[beginIdx] && d < xRangeArr[endIdx - 1];
-                    });
-                }
-            } else {
-                dimension.filterFunction(function (d) {
-                    return d >= extent[0] && d < extent[1]
-                });
-            }
+            dimension.filterRange(extent);
         });
 
         brush.on("brushend.chart", function () {
@@ -214,8 +228,9 @@ define([
                 div.select("#clip-" + id + " rect").attr("x", null).attr("width", "100%");
                 dimension.filterAll();
             }
-            if (onBrushEnd != null) {
-                onBrushEnd();
+            if(onBrushEnd != null) {
+                var extent = brush.extent();
+                onBrushEnd(extent);
             }
         });
 
@@ -279,7 +294,7 @@ define([
             toolTip = _;
             return chart;
         };
-        chart.onBrushEnd = function (_) {
+        chart.onBrushEnd = function(_) {
             if (!arguments.length) return onBrushEnd;
             onBrushEnd = _;
             return onBrushEnd;

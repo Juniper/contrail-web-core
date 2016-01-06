@@ -100,6 +100,10 @@ var coreAppShim =  {
                 this.V = vectorizer;
             }
         },
+        'vis': {
+            deps: ['jquery'],
+            exports: 'vis'
+        },
         'knockout': {
             deps: ['jquery']
         },

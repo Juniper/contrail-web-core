@@ -308,6 +308,14 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="element-underlay-tooltip-template">
+    <div class="popover popover-tooltip{{#IfCompare content.iconClass false operator='=='}} popover-tooltip-no-icon {{/IfCompare}}"
+         style="display: block; min-width: {{dimension.width}}px; max-width: {{dimension.width}}px;">
+        <h3 class="popover-title">{{title}}</h3>
+        <div class="popover-content">{{content}}</div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="element-tooltip-title-template">
     <p class="heading">{{#handleIfNull name '-'}}{{/handleIfNull}}</p>
     <p class="sub-heading">{{type}}</p>
@@ -723,11 +731,19 @@
     </div>
 </script>
 <script type="text/x-handlebars-template" id="color-selection">
-    <div class="color-selection" style="position:absolute;right:20px">
+    <div class="color-selection" style="position:absolute;right:60px">
         <div data-color="red" class="circle red filled"></div>
         <div data-color="orange" class="circle orange filled"></div>
         <div data-color="green" class="circle green filled"></div>
         <div data-color="blue" class="circle blue filled"></div>
+    </div>
+</script>
+<script type="text/x-handlebars-template" id="filter-list">
+    <div class="filter-list-container" style="position:relative;width:400px;left:45px;display:none">
+        <ul class="filter-list">
+            <li class="filter-criteria x"></li>
+            <li class="filter-criteria y"></li>
+        </ul>
     </div>
 </script>
 <script type="text/x-handlebars-template" id="chart-settings">

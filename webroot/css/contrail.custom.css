@@ -3327,6 +3327,7 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
 #static-routes-collection table{
     margin:0px 10px 10px 30px;
 }
+
 #peer_selection>table table{width:100%; padding:0px 10px;}
 #peer_selection>table table th{padding-left:10px;}
 #family_attrs{padding:10px  45px}
@@ -3367,3 +3368,68 @@ background:none;
 #bgp-grid .addressFamily tr td, #bgp-grid .addressFamily tr th{
         padding:0px 5px;}
 #bgp-grid .addressFamily table{border:#CCC solid 1px; height:20px;overflow:scroll;}
+
+
+div.vis-network div.vis-navigation div.vis-button{
+    background-color:#f9f9f9;
+    background-image:none;
+    border: 1px solid #efefef;
+    -moz-border-radius: 0px;
+    border-radius:0px;
+    color: #777;
+    width: 15px;
+    height: 15px;
+    font-family: FontAwesome;
+    font-size:15px;
+    position: absolute;
+    z-index: 1;
+    padding:7px 7px;
+    vertical-align:center;
+    line-height: normal;
+}
+
+div.vis-network div.vis-navigation div.vis-button:hover{
+    box-shadow:none;}
+
+div.vis-network div.vis-navigation div.vis-button.vis-zoomIn{
+    top:10px;
+    right:10px;
+    background-image:none;
+}
+
+div.vis-network div.vis-navigation div.vis-button.vis-zoomIn:before{
+    content: "\f00e";
+    }
+
+div.vis-network div.vis-navigation div.vis-button.vis-zoomOut{
+    top:50px;
+    right:10px;
+    background-image:none;
+}
+
+div.vis-network div.vis-navigation div.vis-button.vis-zoomOut:before{
+    content: "\f010";
+}
+
+div.vis-network div.vis-navigation div.vis-button.vis-zoomExtends{
+    top:90px;
+    right:10px;
+    background-image:none;
+}
+
+div.vis-network div.vis-navigation div.vis-button.vis-zoomExtends:before{
+    content: "\f05c";
+}
+
+div.vis-network div.vis-navigation div.vis-button.vis-up, div.vis-network div.vis-navigation div.vis-button.vis-down,
+div.vis-network div.vis-navigation div.vis-button.vis-right, div.vis-network div.vis-navigation div.vis-button.vis-left{
+    display:none;
+}
+
+div.vis-network canvas{
+    cursor:move;
+}
+
+#mynetwork, .graph-canvas{
+ height:350px !important;
+}

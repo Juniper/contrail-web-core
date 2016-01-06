@@ -35,6 +35,15 @@ rm -rf webroot/assets/jsonpath
 mkdir -p webroot/assets/jsonpath/js
 cp -af ./$THIRD_PARTY/jsonpath-0.8.0.js  webroot/assets/jsonpath/js/jsonpath-0.8.0.js
 
+#Start - Copy vis from web-third-party
+rm -rf webroot/assets/vis-v4.9.0
+mkdir -p webroot/assets/vis-v4.9.0/js
+mkdir -p webroot/assets/vis-v4.9.0/css
+cp -r ./$THIRD_PARTY/vis-v4.9.0/dist/vis.min.js webroot/assets/vis-v4.9.0/js/
+cp -r ./$THIRD_PARTY/vis-v4.9.0/dist/vis.min.css webroot/assets/vis-v4.9.0/css/
+cp -r ./$THIRD_PARTY/vis-v4.9.0/dist/img/ webroot/assets/vis-v4.9.0/css/img/
+#End - Copy vis from web-third-party
+
 rm -rf webroot/assets/nvd3-v1.8.1
 mkdir -p webroot/assets/nvd3-v1.8.1/js
 mkdir -p webroot/assets/nvd3-v1.8.1/css
@@ -288,6 +297,7 @@ MAINFILE[43]=webroot/js/dashboard-utils.js
 MAINFILE[44]=webroot/assets/d3-v3.5.6/js/d3.min.js
 MAINFILE[45]=webroot/assets/nvd3-v1.8.1/js/nv.d3.min.js
 
+
 cat ${MAINFILE[1]} > webroot/js/common/contrail.unified.1.js
 cat ${MAINFILE[2]} >> webroot/js/common/contrail.unified.1.js
 cat ${MAINFILE[3]} >> webroot/js/common/contrail.unified.1.js
@@ -336,7 +346,6 @@ cat ${MAINFILE[43]} >> webroot/js/common/contrail.unified.2.js
 cat ${MAINFILE[44]} > webroot/js/common/contrail.unified.3.js
 cat ${MAINFILE[45]} >> webroot/js/common/contrail.unified.3.js
 
-
 # End - Merging All JS files
 
 #Start - Merging All CSS files
@@ -354,11 +363,12 @@ MAINCSS[9]=webroot/assets/slickgrid/styles/slick.grid.css
 MAINCSS[10]=webroot/assets/jquery/css/jquery.steps.css
 MAINCSS[11]=webroot/assets/joint/css/joint.nojquery.min.css
 MAINCSS[12]=webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css
-MAINCSS[13]=webroot/css/contrail.layout.css
-MAINCSS[14]=webroot/css/contrail.elements.css
-MAINCSS[15]=webroot/css/contrail.responsive.css
-MAINCSS[16]=webroot/css/contrail.custom.css
-MAINCSS[17]=webroot/css/contrail.font.css
+MAINCSS[13]=webroot/assets/vis-v4.9.0/css/vis.min.css
+MAINCSS[14]=webroot/css/contrail.layout.css
+MAINCSS[15]=webroot/css/contrail.elements.css
+MAINCSS[16]=webroot/css/contrail.responsive.css
+MAINCSS[17]=webroot/css/contrail.custom.css
+MAINCSS[18]=webroot/css/contrail.font.css
 
 
 cat ${MAINCSS[1]} > webroot/css/contrail-all.css
@@ -378,4 +388,5 @@ cat ${MAINCSS[14]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[15]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[16]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[17]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[18]} >> webroot/css/contrail-all.css
 #End - Merging ALL CSS files
