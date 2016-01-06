@@ -308,6 +308,14 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="element-underlay-tooltip-template">
+    <div class="popover popover-tooltip{{#IfCompare content.iconClass false operator='=='}} popover-tooltip-no-icon {{/IfCompare}}"
+         style="display: block; min-width: {{dimension.width}}px; max-width: {{dimension.width}}px;">
+        <h3 class="popover-title">{{title}}</h3>
+        <div class="popover-content">{{content}}</div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="element-tooltip-title-template">
     <p class="heading">{{#handleIfNull name '-'}}{{/handleIfNull}}</p>
     <p class="sub-heading">{{type}}</p>
