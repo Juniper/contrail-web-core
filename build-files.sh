@@ -43,7 +43,7 @@ REPO="webCore"
 $node_exec $build_conf_generator $REPO $core_build_file
 $node_exec $rjs_bin -o $core_build_file
 
-$node_exec $rjs_bin -o webroot/core.css.build.js
+#$node_exec $rjs_bin -o $build_path/core.css.build.js
 
 # Manually moving following views due to error in minification. will use the source file for now.
 mv webroot/built/js/views/GridView.js webroot/built/js/views/GridView.min.js
