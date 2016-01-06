@@ -69,9 +69,6 @@ define([
                             nonAggKey = key.substring(key.indexOf('(') + 1, key.indexOf(')'));
                             if(contrail.checkIfFunction(isEnableMap[nonAggKey])) {
                                 isEnableMap[nonAggKey](true);
-                                if(checkedFields.indexOf(nonAggKey) == -1) {
-                                    checkedFields.push(nonAggKey);
-                                }
                             }
                         }
                     }
@@ -90,7 +87,6 @@ define([
                         keyLower = key.toLowerCase();
                         if (qewu.isAggregateField(key)) {
                             isEnableMap[key](true);
-                            checkedFields.push(key);
 
                             nonAggKey = key.substring(key.indexOf('(') + 1, key.indexOf(')'));
                             if(contrail.checkIfFunction(isEnableMap[nonAggKey])) {
@@ -104,7 +100,6 @@ define([
                         keyLower = key.toLowerCase();
                         if (qewu.isAggregateField(key)) {
                             checkedFields.remove(key);
-
                             nonAggKey = key.substring(key.indexOf('(') + 1, key.indexOf(')'));
                             if(contrail.checkIfFunction(isEnableMap[nonAggKey])) {
                                 isEnableMap[nonAggKey](true);

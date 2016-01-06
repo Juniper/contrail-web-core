@@ -44,7 +44,8 @@ define([
         },
 
         renderChart: function (selector, viewConfig, chartViewModel) {
-            var data = chartViewModel.getItems(),
+            var modelData = chartViewModel.getItems(),
+                data = modelData.slice(0),
                 chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 chartViewConfig, chartOptions, chartModel;
@@ -166,8 +167,9 @@ define([
         var lineChart;
         for(var i = 0; i < chartData.length; i++) {
             lineChart = chartData[i];
-            lineChart['values'].splice(0, 1);
-            lineChart['values'].splice((lineChart['values'].length - 1), 1);
+            if (lineChart.length > 2) {
+                lineChart['values'] = lineChart['values'].slice(1, -1);
+            }
         }
     };
 

@@ -7,7 +7,7 @@ define([
 ], function (_) {
     var QEGridConfig = function () {
         this.getColumnDisplay4Grid = function(tableName, tableType, selectArray) {
-            var newColumnDisplay = [],
+            var newColumnDisplay = [], columnDisplaySelect,
                 columnDisplay = getColumnDisplay4Query(tableName, tableType);
 
             $.each(columnDisplay, function(key, val){
@@ -16,17 +16,52 @@ define([
                 }
             });
 
+            columnDisplaySelect = $.map(columnDisplay, function(selectValue, selectKey) {
+                return selectValue.select;
+            });
+
+            $.each(selectArray, function(selectKey, selectValue) {
+                if(columnDisplaySelect.indexOf(selectValue) == -1) {
+                    var columnName = '["' + selectValue + '"]';
+                    newColumnDisplay.push({
+                        id: selectValue, field: selectValue,
+                        name: columnName,
+                        minWidth: columnName.length * 8,  groupable:false,
+                        formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc[selectValue]);}
+                    })
+                }
+
+            });
+
             return newColumnDisplay;
         };
 
         this.getColumnDisplay4ChartGroupGrid = function(tableName, tableType, selectArray) {
-            var newColumnDisplay = [],
+            var newColumnDisplay = [], columnDisplaySelect,
                 columnDisplay = getColumnDisplay4Query(tableName, tableType);
 
             $.each(columnDisplay, function(key, val){
                 if (selectArray.indexOf(val.select) != -1 && !qewu.isAggregateField(val.select) && val.select !== 'T' && val.select !== 'T=' && val.select !== 'UUID') {
                     newColumnDisplay.push(val.display);
                 }
+            });
+
+            columnDisplaySelect = $.map(columnDisplay, function(selectValue, selectKey) {
+                return selectValue.select;
+            });
+
+            $.each(selectArray, function(selectKey, selectValue) {
+                if(columnDisplaySelect.indexOf(selectValue) == -1 && !qewu.isAggregateField(selectValue) &&
+                    selectValue !== 'T' && selectValue !== 'T=' && selectValue !== 'UUID') {
+                    var columnName = '["' + selectValue + '"]';
+                    newColumnDisplay.push({
+                        id: selectValue, field: selectValue,
+                        name: columnName,
+                        minWidth: columnName.length * 8,  groupable:false,
+                        formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc[selectValue]);}
+                    })
+                }
+
             });
 
             return newColumnDisplay;
