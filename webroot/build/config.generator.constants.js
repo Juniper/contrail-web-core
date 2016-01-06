@@ -179,7 +179,11 @@ constants.controllerFileExclusionRegExp = constants.defaultFileExclusionRegExp;
  * constants for contrail-web-server-manager
  */
 constants.smCoreRelativePath = "./../../contrail-web-core/webroot/";
-
+constants.smInitModuleName = 'sm-init';
+constants.smInitModuleInclude = [];
+constants.smInitModuleExclude = [
+    'underscore'
+];
 
 /**
  * Build base config JSON.

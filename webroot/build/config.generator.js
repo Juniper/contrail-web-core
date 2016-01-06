@@ -207,8 +207,31 @@ SMConfigGenerator.prototype.overrideBaseConfig = function() {
     for (var path in this.configJSON.paths) {
         this.configJSON.paths[path] = confGenConst.smCoreRelativePath + this.configJSON.paths[path];
     }
+    //Add SM app paths.
+    var smApp = require('./../../../contrail-web-server-manager/webroot/common/ui/js/sm.app')
+    var smAppPaths = smApp.getSMAppPaths(confGenConst.defaultBaseDir, '');
+    for (var path in smAppPaths) {
+        if (smAppPaths.hasOwnProperty(path)) {
+            this.configJSON.paths[path] = smAppPaths[path];
+        }
+    }
     // Remove core modules.
     this.configJSON.modules = [];
+};
+
+SMConfigGenerator.prototype.addSMInitModule = function() {
+    var smInitModule = {};
+
+    if (confGenConst.smInitModuleName)
+        smInitModule.name = confGenConst.smInitModuleName;
+
+    if (confGenConst.smInitModuleInclude)
+        smInitModule.include = confGenConst.smInitModuleInclude;
+
+    if (confGenConst.smInitModuleExclude)
+        smInitModule.exclude = confGenConst.smInitModuleExclude;
+
+    this.configJSON.modules.push(smInitModule);
 };
 
 SMConfigGenerator.prototype.updateConfig = function() {
@@ -219,6 +242,7 @@ SMConfigGenerator.prototype.updateConfig = function() {
     this.overrideBaseConfig();
 
     // Add modules if any requires unification.
+    this.addSMInitModule();
 };
 
 var repo = args[0],

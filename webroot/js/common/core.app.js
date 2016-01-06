@@ -8,7 +8,7 @@ var defaultBaseDir = (document.location.pathname.indexOf('/vcenter') == 0) ? "./
  * This env will determine the path requirejs will fetch and build the cache.
  * for 'prod' env, files under built dir will be used; else, original source as is(for eg. dev env).
  */
-globalObj['env'] = document.querySelector('script[data-main="/js/common/core.app"][data-env]').getAttribute('data-env');
+globalObj['env'] = document.querySelector('script[data-env]').getAttribute('data-env');
 if (globalObj['env'] == 'prod') {
     defaultBaseDir = '';
     globalObj['buildBaseDir'] = 'built';
