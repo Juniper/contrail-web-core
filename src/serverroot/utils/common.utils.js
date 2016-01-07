@@ -2100,6 +2100,27 @@ function getValueByJsonPath(obj,pathStr,defValue) {
     }
 }
 
+/*
+ * Filter keys in given json object recursively whose value matches with null
+ */
+function filterJsonKeysWithNullValues(obj) {
+    if(typeof(obj) instanceof Array) {
+        for(var i=0,len=obj.length;i<len;i++) {
+            obj[i] = filterJsonKeysWithNullValues(obj[i]);
+        }
+    } else if(typeof(obj) == "object") {
+        for(var key in obj) {
+            if(obj[key] == null) {
+                delete obj[key];
+            } else if(typeof(obj[key]) == "object") {
+                obj[key] = filterJsonKeysWithNullValues(obj[key]);
+            }
+        }
+    }
+    return obj;
+}
+
+exports.filterJsonKeysWithNullValues = filterJsonKeysWithNullValues;
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
