@@ -186,6 +186,17 @@ constants.smInitModuleExclude = [
 ];
 
 /**
+ * constants for contrail-web-storage
+ */
+constants.storageCoreRelativePath = "./../../contrail-web-core/webroot/";
+constants.storageInitModuleName = 'storage-init';
+constants.storageInitModuleInclude = [];
+constants.storageInitModuleExclude = [
+    'underscore',
+    'contrail-view-model'
+];
+
+/**
  * Build base config JSON.
  * will build on top of this base default.
  * non-default values are individually defined as above.

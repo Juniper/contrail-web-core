@@ -22,3 +22,4 @@ webroot/assets/nvd3
 webroot/assets/select2
 webroot/assets/slickgrid
 web-third-party
+webroot/build/core.build.config.js
