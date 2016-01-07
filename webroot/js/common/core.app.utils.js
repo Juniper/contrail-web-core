@@ -80,7 +80,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir) {
         'mon-infra-alert-grid-view'   : coreWebDir + '/js/views/AlertGridView',
         'mon-infra-log-list-view'     : coreWebDir + '/js/views/LogListView',
         'mon-infra-sysinfo-view'      : coreWebDir + '/js/views/SystemInfoView',
-        'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView'
+        'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
+        'loginwindow-view'            : coreWebDir + '/js/views/LoginWindowView',
+        'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel'
     };
 };
 

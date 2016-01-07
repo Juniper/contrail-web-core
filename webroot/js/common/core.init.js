@@ -16,9 +16,10 @@ require([
         'core-basedir/js/common/qe.grid.config',
         'core-basedir/js/common/qe.parsers',
         'core-basedir/js/common/chart.utils',
+        'core-basedir/js/common/core.alarms.utils',
         'text!core-basedir/templates/core.common.tmpl'
     ], function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig,
-                 LayoutHandler, QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils, CoreCommonTmpls) {
+                 LayoutHandler, QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils, CoreAlarmUtils, CoreCommonTmpls) {
         cowc = new CoreConstants();
         cowu = new CoreUtils();
         cowf = new CoreFormatters();
@@ -32,6 +33,7 @@ require([
         qewgc = new QEGridConfig();
         qewp = new QEParsers();
 
+        coreAlarmUtils = new CoreAlarmUtils();
         chUtils = new ChartUtils();
 
         initBackboneValidation();
