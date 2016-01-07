@@ -15,17 +15,13 @@ cp -af node_modules/ipv6/ipv6.js webroot/assets/ip/
 #End - copy javascript-ipv6 node module files for IPv4/v6 address manipulations/validations
 
 #Start - Copy d3/vnd3 files from $THIRD_PARTY
-rm -rf webroot/assets/d3
-mkdir -p webroot/assets/d3/js
-cp -af ./$THIRD_PARTY/d3/d3.js webroot/assets/d3/js/
-
 rm -rf webroot/assets/d3-v3.5.6
 mkdir -p webroot/assets/d3-v3.5.6/js
-cp -af ./$THIRD_PARTY/d3-v3.5.6/d3.*js webroot/assets/d3-v3.5.6/js/
+cp -af ./$THIRD_PARTY/d3-v3.5.6/d3.js webroot/assets/d3-v3.5.6/js/
 
 rm -rf webroot/assets/crossfilter
 mkdir -p webroot/assets/crossfilter/js
-cp -af ./$THIRD_PARTY/crossfilter/crossfilter.min.js webroot/assets/crossfilter/js/
+cp -af ./$THIRD_PARTY/crossfilter/crossfilter.js webroot/assets/crossfilter/js/
 
 rm -rf webroot/assets/xdate
 mkdir -p webroot/assets/xdate/js
@@ -47,7 +43,7 @@ cp -r ./$THIRD_PARTY/vis-v4.9.0/dist/img/ webroot/assets/vis-v4.9.0/css/img/
 rm -rf webroot/assets/nvd3-v1.8.1
 mkdir -p webroot/assets/nvd3-v1.8.1/js
 mkdir -p webroot/assets/nvd3-v1.8.1/css
-cp -af ./$THIRD_PARTY/nvd3-v1.8.1/build/nv.d3.*js webroot/assets/nvd3-v1.8.1/js/
+cp -af ./$THIRD_PARTY/nvd3-v1.8.1/build/nv.d3.js webroot/assets/nvd3-v1.8.1/js/
 cp -af ./$THIRD_PARTY/nvd3-v1.8.1/build/nv.d3.*css webroot/assets/nvd3-v1.8.1/css/
 
 #End - Copy d3/nvd3 files from $THIRD_PARTY
@@ -63,7 +59,7 @@ cp -af ./$THIRD_PARTY/jquery.timer.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.json-2.4.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.dataTables.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-1.8.3.min.js webroot/assets/jquery/js/
-cp -af ./$THIRD_PARTY/jquery-1.9.1.min.js webroot/assets/jquery/js/
+#cp -af ./$THIRD_PARTY/jquery-1.9.1.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/build/jquery.steps.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/demo/css/jquery.steps.css webroot/assets/jquery/css/
@@ -90,8 +86,8 @@ cp -af ./$THIRD_PARTY/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.f
 
 #Start - Copy Bootstrap from $THIRD_PARTY
 rm -rf webroot/assets/bootstrap
-mkdir webroot/assets/bootstrap
-cp -r ./$THIRD_PARTY/bootstrap-v2.3.2/js webroot/assets/bootstrap/js
+mkdir -p webroot/assets/bootstrap/js
+cp -r ./$THIRD_PARTY/bootstrap-v2.3.2/js/bootstrap.js webroot/assets/bootstrap/js/
 cp -r ./$THIRD_PARTY/bootstrap-v2.3.2/css webroot/assets/bootstrap/css
 #End - Copy Bootstrap from $THIRD_PARTY
 
@@ -179,20 +175,19 @@ cp -af ./$THIRD_PARTY/knockout-3.0.0.js webroot/assets/knockout/knockout-3.0.0.j
 #Start - Copy Moment Date-Formatter from $THIRD_PARTY
 rm -rf webroot/assets/moment
 mkdir webroot/assets/moment
-cp -af ./$THIRD_PARTY/moment-v2.6.0/min/moment.min.js webroot/assets/moment/moment.min.js
+cp -af ./$THIRD_PARTY/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
 #End - Copy Moment Date-Formatter from $THIRD_PARTY
 
 #Start - Copy Joint from web-third-party
 rm -rf webroot/assets/joint
 mkdir -p webroot/assets/joint/js
 mkdir -p webroot/assets/joint/css
-cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.clean.min.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.clean.js webroot/assets/joint/js/
 #cp -r ./$THIRD_PARTY/joint-v0.9.3/lib/lodash.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/src/geometry.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/src/vectorizer.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/dagre-v0.7.1/dist/dagre.min.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.layout.DirectedGraph.min.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/dagre-v0.7.1/dist/dagre.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.nojquery.min.css webroot/assets/joint/css/
 #End - Copy Joint from web-third-party
 
@@ -261,8 +256,8 @@ MAINFILE[10]=webroot/assets/jquery/js/jquery.steps.min.js
 MAINFILE[11]=webroot/assets/jquery/js/jquery.panzoom.min.js
 MAINFILE[12]=webroot/assets/jquery-contextMenu/js/jquery.ui.position.js
 MAINFILE[13]=webroot/assets/jquery-contextMenu/js/jquery.contextMenu.js
-MAINFILE[14]=webroot/assets/bootstrap/js/bootstrap.min.js
-MAINFILE[15]=webroot/assets/crossfilter/js/crossfilter.min.js
+MAINFILE[14]=webroot/assets/bootstrap/js/bootstrap.js
+MAINFILE[15]=webroot/assets/crossfilter/js/crossfilter.js
 MAINFILE[16]=webroot/assets/jsonpath/js/jsonpath-0.8.0.js
 MAINFILE[17]=webroot/assets/handlebars/handlebars-v1.3.0.js
 MAINFILE[18]=webroot/js/handlebars-utils.js
@@ -278,7 +273,7 @@ MAINFILE[26]=webroot/assets/slickgrid/js/slick.checkboxselectcolumn.js
 MAINFILE[27]=webroot/assets/slickgrid/js/slick.rowselectionmodel.js
 MAINFILE[28]=webroot/assets/datetimepicker/js/jquery.datetimepicker.js
 MAINFILE[29]=webroot/assets/select2/js/select2.min.js
-MAINFILE[30]=webroot/assets/moment/moment.min.js
+MAINFILE[30]=webroot/assets/moment/moment.js
 MAINFILE[31]=webroot/assets/ip/jsbn-combined.js
 MAINFILE[32]=webroot/assets/ip/sprintf.js
 MAINFILE[33]=webroot/assets/ip/ipv6.js
@@ -294,8 +289,8 @@ MAINFILE[41]=webroot/js/config_global.js
 MAINFILE[42]=webroot/js/analyzer-utils.js
 MAINFILE[43]=webroot/js/dashboard-utils.js
 
-MAINFILE[44]=webroot/assets/d3-v3.5.6/js/d3.min.js
-MAINFILE[45]=webroot/assets/nvd3-v1.8.1/js/nv.d3.min.js
+MAINFILE[44]=webroot/assets/d3-v3.5.6/js/d3.js
+MAINFILE[45]=webroot/assets/nvd3-v1.8.1/js/nv.d3.js
 
 
 cat ${MAINFILE[1]} > webroot/js/common/contrail.unified.1.js

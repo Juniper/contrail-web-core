@@ -8,7 +8,7 @@ constants.defaultVcenterBaseDIr = "./../";
 
 constants.defaultBuildDir = "built/";
 constants.defaultBuildConfigFile = "webroot/build/default.build.config.js";
-constants.defaultFileExclusionRegExp = /(.*node_modules|.*api|.*jobs|.*test|.*examples|.*build)/;
+constants.defaultFileExclusionRegExp = /(.*node_modules|.*api|.*jobs|.*test|.*examples|.*build|.*vis-v4.9.0)/;
 
 /**
  * constants for contrail-web-core.
