@@ -190,7 +190,7 @@ define([
             {select:"agg-bytes", display:{id:"agg-bytes", field:"agg-bytes", minWidth:120, name:"Aggregate Bytes",  groupable:false}},
             {select:"agg-packets", display:{id:"agg-packets", field:"agg-packets", minWidth:140, name:"Aggregate Packets",  groupable:false}}
         ],
-        "FlowClass":[
+        /*"FlowClass":[
             {select:"sourcevn", display:{id:"sourcevn", field:"sourcevn", name:"Source VN", minWidth: 250, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourcevn);}}},
             {select:"destvn", display:{id:"destvn", field:"destvn", name:"Destination VN", minWidth: 250, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destvn);}}},
             {select:"sourceip", display:{id:"sourceip", field:"sourceip", name:"Source IP", minWidth: 120, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourceip);}}},
@@ -198,7 +198,7 @@ define([
             {select:"sport", display:{id:"sport", field:"sport", name:"Source Port", minWidth: 80, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sport);}}},
             {select:"dport", display:{id:"dport", field:"dport", name:"Destination Port", minWidth: 80, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.dport);}}},
             {select:"protocol", display:{id:"protocol", field:"protocol", name:"Protocol", minWidth: 80, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getProtocolName(dc.protocol));}}}
-        ],
+        ],*/
         "StatTable.AnalyticsCpuState.cpu_info" : [
             {select:"cpu_info.module_id", display:{id:'cpu_info.module_id', field:'cpu_info.module_id', minWidth:150, name:"Module Id", groupable:false}},
             {select:"cpu_info.inst_id", display:{id:'cpu_info.inst_id', field:'cpu_info.inst_id', minWidth:150, name:"Instance Id", groupable:false}},

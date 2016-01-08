@@ -113,7 +113,7 @@ define([
     }
 
     function getChartGridViewConfig(queryResultChartGroupUrl, queryFormAttributes, modelMap, parentView) {
-        var selectArray = queryFormAttributes.select.replace(/ /g, "").split(","), columnDisplay,
+        var selectArray = queryFormAttributes.select.replace(/ /g, "").split(","),
             lineWithFocusChartModel = modelMap[cowc.UMID_QUERY_RESULT_LINE_CHART_MODEL],
             chartColorAvailableKeys = ['id_0', null, null, null, null],
             display = [
@@ -145,11 +145,10 @@ define([
                         }
                     }
                 }
-            ];
+            ],
+            columnDisplay = qewgc.getColumnDisplay4ChartGroupGrid(queryFormAttributes.table_name, queryFormAttributes.table_type, selectArray);
 
         if (queryFormAttributes.query_prefix === cowc.FS_QUERY_PREFIX) {
-            columnDisplay = qewgc.getColumnDisplay4Grid(cowc.FLOW_CLASS, cowc.QE_FLOW_TABLE_TYPE, selectArray);
-
             display.push({
                 id: 'fc-details', field:"", name:"", resizable: false, sortable: false, width: 30, minWidth: 30, searchable: false, exportConfig: { allow: false },
                 formatter: function(r, c, v, cd, dc){
@@ -160,8 +159,6 @@ define([
                     onClick: qewgc.getOnClickFlowRecord(parentView, queryFormAttributes)
                 }
             });
-        } else {
-            columnDisplay = qewgc.getColumnDisplay4ChartGroupGrid(queryFormAttributes.table_name, queryFormAttributes.table_type, selectArray);
         }
 
         columnDisplay = display.concat(columnDisplay);
