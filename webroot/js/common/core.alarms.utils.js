@@ -92,14 +92,22 @@ define(
                     var alarm = options.alarm;
                     var nodeType = options.nodeType;
                     var alarmType = alarm.type;
-                    return alarmTypesMap[nodeType][alarmType].split('.')[0];
+                    return (alarmTypesMap != null &&
+                            alarmTypesMap[nodeType] != null &&
+                            alarmTypesMap[nodeType][alarmType] != null) ?
+                                    alarmTypesMap[nodeType][alarmType].split('.')[0] :
+                                    '';
                 }
 
                 self.getFormattedDetailedAlarmMessage = function (options) {
                     var alarm = options.alarm;
                     var nodeType = options.nodeType;
                     var alarmType = alarm.type;
-                    return alarmTypesMap[nodeType][alarmType].split('.')[1];
+                    return (alarmTypesMap != null &&
+                            alarmTypesMap[nodeType] != null &&
+                            alarmTypesMap[nodeType][alarmType] != null) ?
+                                    alarmTypesMap[nodeType][alarmType].split('.')[1] :
+                                    '';
                 }
 
                 self.getAlertsFromAnalytics = function (options) {
@@ -128,7 +136,7 @@ define(
                     var data = options.data;
                     var type = alarm.type;
                     var value = alarm.value;
-                    var alarmText = alarm.rules[0].operand2 + alarm.rules[0].oper + alarm.rules[0].operand1;//TODO need to change this to summary when available
+//                    var alarmText = alarm.rules[0].operand2 + alarm.rules[0].oper + alarm.rules[0].operand1;//TODO need to change this to summary when available
                     var timestamp = alarm.timestamp;
                     var infoObj = {type:data['display_type'],link:data['link']};
                     var alarmMsg = self.getFormattedAlarmMessage ({nodeType:options.nodeType, alarm:alarm});
@@ -160,57 +168,93 @@ define(
                     return false;
                 }
 
-                self.getControlNodeColor = function (d, obj) {
-                    obj= ifNull(obj,{});
-                    var nodeColor = self.getNodeColor(obj);
-                    if(nodeColor != false)
-                        return nodeColor;
-                    //If connected to atleast one XMPP Peer
-                    if(obj['totalXMPPPeerCnt'] - obj['downXMPPPeerCnt'] > 0)
-                        return ctwc.COLOR_SEVERITY_MAP['green'];
-                    else if(obj['downBgpPeerCnt'] == 0 && obj['downXMPPPeerCnt'] == 0)
-                        return ctwc.COLOR_SEVERITY_MAP['blue'];    //Default color
+                self.alarmsSort = function (alarms) {
+                    var sortedAlarms = alarms.sort(alarmsComparator);
+                    return alarms;
+                };
+                //Sort algorithm for Alarms
+                //1. Unacknowleged red ones on top
+                //2. Unacknowleged orange ones
+                //3. Acknowledged reds
+                //4. Acknowleged oranges.
+                //5. Sort by timestamp for each category
+                function alarmsComparator (a,b) {
+                    if(a.ack && !b.ack) {
+                        return 1;
+                    } else if (!a.ack && b.ack){
+                        return -1;
+                    } else {
+                        if(a.severity < b.severity) {
+                            return -1;
+                        } else if (a.severity > b.severity){
+                            return 1;
+                        } else {
+                            if (a.timestamp > b.timestamp) {
+                                return -1;
+                            } else {
+                                return 1;
+                            }
+                        }
+                    }
                 }
 
-                self.getvRouterColor = function(d, obj) {
-                    obj= ifNull(obj,{});
-                    var nodeColor = self.getNodeColor(obj);
-                    if(nodeColor != false)
-                        return nodeColor;
-                    obj = ifNull(obj,{});
-                    var instCnt = obj['instCnt'];
-                    if(instCnt == 0)
-                        return ctwc.COLOR_SEVERITY_MAP['blue'];
-                    else if(instCnt > 0)
-                        return ctwc.COLOR_SEVERITY_MAP['green'];
+                function getDisplayType(nodeType) {
+                    switch(nodeType) {
+                        case 'vrouter' :
+                            return 'Virtual Router';
+
+                        case 'vRouter' :
+                            return 'Virtual Router';
+
+                        case 'control-node' :
+                            return 'Control Node';
+
+                        case 'analytics-node' :
+                            return 'Analytics Node';
+
+                        case 'config-node' :
+                            return 'Config Node';
+
+                        case 'database-node' :
+                            return 'Database Node';
+
+                        default :
+                            return nodeType;
+                    }
+                }
+
+                self.alarmDataParser = function(response) {
+                   var retArr = [];
+                   if(response != null && _.keys(response).length > 0) {
+                        for(var currNodeType in response) {
+                            for(var i = 0; i < response[currNodeType].length; i++) {
+                                var currItem = response[currNodeType][i];
+
+                                if(currItem.value != null && currItem.value.UVEAlarms != null && currItem.value.UVEAlarms.alarms != null
+                                    && currItem.value.UVEAlarms.alarms.length > 0) {
+                                    for(var j=0; j < currItem.value.UVEAlarms.alarms.length; j++) {
+                                        var currObject = {};
+                                        var alarmInfo = currItem.value.UVEAlarms.alarms[j];
+                                        currObject.rawJson = alarmInfo;
+                                        currObject.display_name = currItem.name + ' (' + getDisplayType(currNodeType) + ')';
+                                        currObject.name = currItem.name;
+                                        currObject.table = currNodeType;
+                                        currObject.type = alarmInfo.type;
+                                        currObject.ack = alarmInfo.ack;
+                                        currObject.status = ((alarmInfo.ack == null) || (alarmInfo.ack == false)) ? 'Unacknowledged' : 'Acknowledged';
+                                        currObject.timestamp = getFormattedDate(alarmInfo.timestamp/1000);
+                                        currObject.severity = alarmInfo.severity;
+                                        currObject.alarm_msg = coreAlarmUtils.getFormattedAlarmMessage({alarm:alarmInfo, nodeType:currNodeType});
+                                        currObject.alarm_detailed = coreAlarmUtils.getFormattedDetailedAlarmMessage({alarm:alarmInfo, nodeType:currNodeType});
+                                        currObject.token = alarmInfo.token;
+                                        retArr.push(currObject);
+                                    }
+                                }
+                            }
+                        }
+                   }
+                   return self.alarmsSort(retArr);
                 };
-
-                self.getAnalyticsNodeColor = function (d, obj) {
-                    obj= ifNull(obj,{});
-                    var nodeColor = self.getNodeColor(obj);
-                    if(nodeColor != false)
-                        return nodeColor;
-                    return ctwc.COLOR_SEVERITY_MAP['blue'];
-                };
-
-                self.getConfigNodeColor = function (d, obj) {
-                    obj= ifNull(obj,{});
-                    var nodeColor = self.getNodeColor(obj);
-                    if(nodeColor != false)
-                        return nodeColor;
-                    return ctwc.COLOR_SEVERITY_MAP['blue'];
-                };
-
-                self.getDatabaseNodeColor = function (d, obj) {
-                    obj= ifNull(obj,{});
-                    var nodeColor = self.getNodeColor(obj);
-                    if(nodeColor != false)
-                        return nodeColor;
-                    return ctwc.COLOR_SEVERITY_MAP['blue'];
-                };
-
-                //End Node colors
-
             }
             return CoreAlarmUtils;
        }
