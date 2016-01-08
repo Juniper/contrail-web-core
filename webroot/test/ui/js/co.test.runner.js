@@ -226,6 +226,9 @@ define([
     this.executeUnitTests = function (testConfigObj) {
         _.each(testConfigObj, function (testConfig) {
             _.each(testConfig.suites, function(suiteConfig) {
+                if (cotc.RUN_SEVERITY == undefined) {
+                    console.error("check co.test.config and set the run_severity correctly.");
+                }
                 suiteConfig.severity = cotc.RUN_SEVERITY;
                 if (contrail.checkIfExist(suiteConfig.class)) {
                     suiteConfig.class(testConfig.moduleObj, suiteConfig);

@@ -8,6 +8,7 @@ function getCoreTestAppPaths(coreBaseDir) {
     return {
         'co-test-basedir'       : coreTestAppBaseDir,
         'co-test-init'          : coreTestAppBaseDir + '/co.test.init',
+        'co-test-config'        : coreTestAppBaseDir + '/co.test.config',
         'co-test-constants'     : coreTestAppBaseDir + '/co.test.constants',
         'co-test-utils'         : coreTestAppBaseDir + '/co.test.utils',
         'co-test-messages'      : coreTestAppBaseDir + '/co.test.messages',

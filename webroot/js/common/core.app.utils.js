@@ -3,77 +3,86 @@
  */
 
 
-var globalObj = {'env':"prod"},
+var globalObj = {'env':""},
     FEATURE_PCK_WEB_CONTROLLER = "webController",
     FEATURE_PCK_WEB_STORAGE = "webStorage",
     FEATURE_PCK_WEB_SERVER_MANAGER = "serverManager";
 
-function getCoreAppPaths(coreBaseDir) {
+function getCoreAppPaths(coreBaseDir, coreBuildDir) {
+    /**
+     * coreBaseDir: Apps Root directory.
+     * coreWebDir: Root directory from the contents will be served. Either built or source depending on env.
+     *
+     * core-srcdir: Require path id pointing to root directory for the source files which are delivered.
+     * in a 'prod' env to use the file in source form (i.e not minified version), use path with prefix 'core-srcdir'
+     * eg: use 'core-srcdir/js/views/GridView' as path to access GridView source instead of minified.
+     */
+    var coreWebDir = coreBaseDir + coreBuildDir;
     return {
-        'core-basedir'                : coreBaseDir,
-        'jquery'                      : coreBaseDir + '/assets/jquery/js/jquery-1.8.3.min',
-        'knockout'                    : coreBaseDir + '/assets/knockout/knockout-3.0.0',
-        'joint'                       : coreBaseDir + '/assets/joint/js/joint.clean',
-        'geometry'                    : coreBaseDir + '/assets/joint/js/geometry',
-        'vectorizer'                  : coreBaseDir + '/assets/joint/js/vectorizer',
-        'joint.layout.DirectedGraph'  : coreBaseDir + '/assets/joint/js/joint.layout.DirectedGraph.min',
-        'dagre'                       : coreBaseDir + '/assets/joint/js/dagre.min',
-        'vis'                         : coreBaseDir + '/assets/vis-v4.9.0/js/vis.min',
-        'bezier'                      : coreBaseDir + '/assets/bezierjs/bezier',
-        'lodash'                      : coreBaseDir + '/assets/lodash/lodash.min',
-        'backbone'                    : coreBaseDir + '/assets/backbone/backbone-min',
-        'knockback'                   : coreBaseDir + '/assets/backbone/knockback.min',
-        'validation'                  : coreBaseDir + '/assets/backbone/backbone-validation-amd',
-        'text'                        : coreBaseDir + '/assets/requirejs/text',
-        'underscore'                  : coreBaseDir + '/assets/underscore/underscore-min',
+        'core-srcdir'                 : coreBaseDir,
+        'core-basedir'                : coreWebDir,
+        'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
+        'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
+        'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
+        'geometry'                    : coreWebDir + '/assets/joint/js/geometry',
+        'vectorizer'                  : coreWebDir + '/assets/joint/js/vectorizer',
+        'joint.layout.DirectedGraph'  : coreWebDir + '/assets/joint/js/joint.layout.DirectedGraph',
+        'dagre'                       : coreWebDir + '/assets/joint/js/dagre',
+        'vis'                         : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
+        'bezier'                      : coreWebDir + '/assets/bezierjs/bezier',
+        'lodash'                      : coreWebDir + '/assets/lodash/lodash.min',
+        'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
+        'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
+        'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
+        'text'                        : coreWebDir + '/assets/requirejs/text',
+        'underscore'                  : coreWebDir + '/assets/underscore/underscore-min',
 
-        'contrail-layout'             : coreBaseDir + '/js/contrail-layout',
-        'joint.contrail'              : coreBaseDir + '/js/joint.contrail',
-        'core-utils'                  : coreBaseDir + '/js/common/core.utils',
+        'contrail-layout'             : coreWebDir + '/js/contrail-layout',
+        'joint.contrail'              : coreWebDir + '/js/joint.contrail',
+        'core-utils'                  : coreWebDir + '/js/common/core.utils',
 
-        'core-constants'              : coreBaseDir + '/js/common/core.constants',
-        'core-formatters'             : coreBaseDir + '/js/common/core.formatters',
-        'core-labels'                 : coreBaseDir + '/js/common/core.labels',
-        'core-messages'               : coreBaseDir + '/js/common/core.messages',
-        'core-cache'                  : coreBaseDir + '/js/common/core.cache',
-        'core-views-default-config'   : coreBaseDir + '/js/common/core.views.default.config',
-        'core-init'                   : coreBaseDir + '/js/common/core.init',
-        'contrail-unified-1'          : coreBaseDir + '/js/common/contrail.unified.1',
-        'contrail-unified-2'          : coreBaseDir + '/js/common/contrail.unified.2',
-        'contrail-unified-3'          : coreBaseDir + '/js/common/contrail.unified.3',
-        'cf-datasource'               : coreBaseDir + '/js/common/cf.datasource',
+        'core-constants'              : coreWebDir + '/js/common/core.constants',
+        'core-formatters'             : coreWebDir + '/js/common/core.formatters',
+        'core-labels'                 : coreWebDir + '/js/common/core.labels',
+        'core-messages'               : coreWebDir + '/js/common/core.messages',
+        'core-cache'                  : coreWebDir + '/js/common/core.cache',
+        'core-views-default-config'   : coreWebDir + '/js/common/core.views.default.config',
+        'core-init'                   : coreWebDir + '/js/common/core.init',
+        'contrail-unified-1'          : coreWebDir + '/js/common/contrail.unified.1',
+        'contrail-unified-2'          : coreWebDir + '/js/common/contrail.unified.2',
+        'contrail-unified-3'          : coreWebDir + '/js/common/contrail.unified.3',
+        'cf-datasource'               : coreWebDir + '/js/common/cf.datasource',
 
-        'contrail-remote-data-handler': coreBaseDir + '/js/handlers/ContrailRemoteDataHandler',
-        'layout-handler'              : coreBaseDir + '/js/handlers/LayoutHandler',
-        'menu-handler'                : coreBaseDir + '/js/handlers/MenuHandler',
-        'content-handler'             : coreBaseDir + '/js/handlers/ContentHandler',
+        'contrail-remote-data-handler': coreWebDir + '/js/handlers/ContrailRemoteDataHandler',
+        'layout-handler'              : coreWebDir + '/js/handlers/LayoutHandler',
+        'menu-handler'                : coreWebDir + '/js/handlers/MenuHandler',
+        'content-handler'             : coreWebDir + '/js/handlers/ContentHandler',
 
-        'graph-view'                  : coreBaseDir + '/js/views/GraphView',
-        'contrail-view'               : coreBaseDir + '/js/views/ContrailView',
-        'query-form-view'             : coreBaseDir + '/js/views/QueryFormView',
+        'graph-view'                  : coreWebDir + '/js/views/GraphView',
+        'contrail-view'               : coreWebDir + '/js/views/ContrailView',
+        'query-form-view'             : coreWebDir + '/js/views/QueryFormView',
 
-        'query-form-model'            : coreBaseDir + '/js/models/QueryFormModel',
-        'query-or-model'              : coreBaseDir + '/js/models/QueryOrModel',
-        'query-and-model'             : coreBaseDir + '/js/models/QueryAndModel',
-        'contrail-graph-model'        : coreBaseDir + '/js/models/ContrailGraphModel',
-        'contrail-vis-model'          : coreBaseDir + '/js/models/ContrailVisModel',
-        'contrail-view-model'         : coreBaseDir + '/js/models/ContrailViewModel',
-        'contrail-model'              : coreBaseDir + '/js/models/ContrailModel',
-        'contrail-list-model'         : coreBaseDir + '/js/models/ContrailListModel',
-        'mon-infra-node-list-model'   : coreBaseDir + '/js/models/NodeListModel',
-        'mon-infra-log-list-model'    : coreBaseDir + '/js/models/LogListModel',
+        'query-form-model'            : coreWebDir + '/js/models/QueryFormModel',
+        'query-or-model'              : coreWebDir + '/js/models/QueryOrModel',
+        'query-and-model'             : coreWebDir + '/js/models/QueryAndModel',
+        'contrail-graph-model'        : coreWebDir + '/js/models/ContrailGraphModel',
+        'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
+        'contrail-view-model'         : coreWebDir + '/js/models/ContrailViewModel',
+        'contrail-model'              : coreWebDir + '/js/models/ContrailModel',
+        'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
+        'mon-infra-node-list-model'   : coreWebDir + '/js/models/NodeListModel',
+        'mon-infra-log-list-model'    : coreWebDir + '/js/models/LogListModel',
 
         // TODO: We need to discuss a criteria on which we should add definations to this file.
-        'infoboxes'                   : coreBaseDir + '/js/views/InfoboxesView',
-        'barchart-cf'                 : coreBaseDir + '/js/views/BarChartView',
-        'mon-infra-alert-list-view'   : coreBaseDir + '/js/views/AlertListView',
-        'mon-infra-alert-grid-view'   : coreBaseDir + '/js/views/AlertGridView',
-        'mon-infra-log-list-view'     : coreBaseDir + '/js/views/LogListView',
-        'mon-infra-sysinfo-view'      : coreBaseDir + '/js/views/SystemInfoView',
-        'mon-infra-dashboard-view'    : coreBaseDir + '/js/views/MonitorInfraDashboardView',
-
-        'loginwindow-view'            : coreBaseDir + '/js/views/LoginWindowView',
-        'loginwindow-model'           : coreBaseDir + '/js/models/LoginWindowModel'
+        'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
+        'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
+        'mon-infra-alert-list-view'   : coreWebDir + '/js/views/AlertListView',
+        'mon-infra-alert-grid-view'   : coreWebDir + '/js/views/AlertGridView',
+        'mon-infra-log-list-view'     : coreWebDir + '/js/views/LogListView',
+        'mon-infra-sysinfo-view'      : coreWebDir + '/js/views/SystemInfoView',
+        'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
+        'loginwindow-view'            : coreWebDir + '/js/views/LoginWindowView',
+        'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel'
     };
 };
 
@@ -530,3 +539,10 @@ function initDomEvents() {
             }
         });
 };
+
+if (typeof exports !== 'undefined' && module.exports) {
+    exports = module.exports;
+    exports.getCoreAppPaths = getCoreAppPaths;
+    exports.coreAppMap = coreAppMap;
+    exports.coreAppShim = coreAppShim;
+}

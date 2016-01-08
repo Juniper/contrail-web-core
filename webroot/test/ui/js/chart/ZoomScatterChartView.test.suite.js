@@ -46,7 +46,7 @@ define([
 
         basicTestGroup.registerTest(cotr.test(cotm.CHARTMODEL_BUBBLE_COLOR, function () {
             expect(1);
-            var chartData = chartModel.data,
+            var chartData = chartModel.chartData,
                 expectedColorObj = [], actualColorObj = [];
 
             for(var i=0; i< chartData.length; i++) {
@@ -65,7 +65,7 @@ define([
 
         basicTestGroup.registerTest(cotr.test(cotm.CHARTMODEL_BUBBLE_SIZE, function () {
             expect(1);
-            var chartData = chartModel.data,
+            var chartData = chartModel.chartData,
                 expectedSizeArr = [], actualSizeArr = [];
 
             for(var i=0; i< chartData.length; i++) {
