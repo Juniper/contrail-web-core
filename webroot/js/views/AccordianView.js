@@ -4,9 +4,8 @@
 
 define([
     'underscore',
-    'contrail-view',
-    'knockout'
-], function (_, ContrailView, Knockout) {
+    'contrail-view'
+], function (_, ContrailView) {
     var AccordianView = ContrailView.extend({
         render: function () {
             var accordianTempl = contrail.getTemplate4Id(cowc.TMPL_ACCORDIAN_VIEW),
@@ -37,7 +36,7 @@ define([
 
     var getKOComputedError = function (childViewObj, that) {
         var childElIdArray = getElementIds4Section(childViewObj[cowc.KEY_VIEW_CONFIG]),
-            koComputedFunc = Knockout.computed(function () {
+            koComputedFunc = ko.computed(function () {
                 var value = false;
                 for(var i = 0; i < childElIdArray.length; i ++) {
                     var item = childElIdArray[i],

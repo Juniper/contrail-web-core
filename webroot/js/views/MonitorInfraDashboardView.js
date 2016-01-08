@@ -5,7 +5,7 @@
 define([
     'underscore',
     'backbone',
-    'js/views/InfoboxesView',
+    'core-basedir/js/views/InfoboxesView',
     'mon-infra-log-list-model',
     'mon-infra-node-list-model',
     'mon-infra-alert-list-view',

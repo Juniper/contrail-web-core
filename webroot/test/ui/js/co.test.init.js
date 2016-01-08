@@ -36,16 +36,7 @@ var testAppConfig = {
     webServerInfo: ''
 }
 
-function getTestAppConfig(featureObj) {
-    requirejs(['co-test-mockdata'], function (CoreTestMockData) {
-        testAppConfig.featurePkg = JSON.stringify(CoreTestMockData[featureObj.featurePkg]);
-        testAppConfig.featuresDisabled = JSON.stringify(CoreTestMockData[featureObj.featuresDisabled]);
-        testAppConfig.webServerInfo = JSON.stringify(CoreTestMockData[featureObj.webServerInfo]);
-    });
-    return testAppConfig;
-}
-
-function setFeaturePkgAndInit(featurePkg) {
+function setFeaturePkgAndInit(featurePkg, coreTestMockData) {
     var featurePkgObj = {};
     switch (featurePkg) {
         case 'webController':
@@ -70,8 +61,11 @@ function setFeaturePkgAndInit(featurePkg) {
             return testLibApiAppInit({});
 
     }
+    testAppConfig.featurePkg = JSON.stringify(coreTestMockData[featurePkgObj.featurePkg]);
+    testAppConfig.featuresDisabled = JSON.stringify(coreTestMockData[featurePkgObj.featuresDisabled]);
+    testAppConfig.webServerInfo = JSON.stringify(coreTestMockData[featurePkgObj.webServerInfo]);
 
-    testAppInit(getTestAppConfig(featurePkgObj));
+    testAppInit(testAppConfig);
 }
 
 function testAppInit(testAppConfig) {
