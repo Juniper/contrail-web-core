@@ -28,4 +28,9 @@
     <item>
         <feature>proxy</feature>
     </item>
+    <item>
+        <feature>alarms</feature>
+        <read-access>member</read-access>
+        <write-access>member</write-access>
+    </item>
 </featureLists>
