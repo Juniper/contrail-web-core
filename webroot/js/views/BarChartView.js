@@ -6,7 +6,7 @@ define([
     'underscore',
     'contrail-view'
 ], function (_, ContrailView) {
-    var BarChartView = ContrailView.View.extend({
+    var BarChartView = ContrailView.extend({
         el: ".chart",
         chart: null,
         chartSelection: null,

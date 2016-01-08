@@ -451,6 +451,7 @@ define([
             }
         });
 
+        _.sortBy(filteredSelectFields, 'name');
         return filteredSelectFields;
     };
 
