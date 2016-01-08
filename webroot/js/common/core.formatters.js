@@ -105,6 +105,25 @@ define([
 
                     break;
 
+                case 'storage-health-status-state' :
+                    var iconHTML = (contrail.checkIfExist(iconClass) ?
+                    '<i class="' + iconClass + ' pull-right padding-3-0"></i>' : '');
+
+                    if (value === 'critical') {
+                        return '<span style="font-size: x-large;font-family: serif; color: red;">'
+                            + value + iconHTML +
+                            '</span>';
+                    } else  if (value === 'warn') {
+                        return '<span style="font-size: x-large;font-family: serif;color: orange;">'
+                            + value + iconHTML +
+                            '</span>';
+                    } else if (value === 'ok') {
+                        return '<span class="green" style="font-size: x-large;font-family: serif;">' + value + '</span>';
+                    } else {
+                        return value
+                    }
+
+                    break;
                 case 'alert-percentage' :
                     try {
                         if (value != null && value > 90) {
