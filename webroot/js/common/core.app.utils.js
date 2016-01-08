@@ -74,15 +74,18 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir) {
         'mon-infra-log-list-model'    : coreWebDir + '/js/models/LogListModel',
 
         // TODO: We need to discuss a criteria on which we should add definations to this file.
-        'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
-        'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
-        'mon-infra-alert-list-view'   : coreWebDir + '/js/views/AlertListView',
-        'mon-infra-alert-grid-view'   : coreWebDir + '/js/views/AlertGridView',
-        'mon-infra-log-list-view'     : coreWebDir + '/js/views/LogListView',
-        'mon-infra-sysinfo-view'      : coreWebDir + '/js/views/SystemInfoView',
-        'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
-        'loginwindow-view'            : coreWebDir + '/js/views/LoginWindowView',
-        'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel'
+        'infoboxes'                   : coreBaseDir + '/js/views/InfoboxesView',
+        'barchart-cf'                 : coreBaseDir + '/js/views/BarChartView',
+        'mon-infra-alert-list-view'   : coreBaseDir + '/js/views/AlertListView',
+        'mon-infra-alert-grid-view'   : coreBaseDir + '/js/views/AlertGridView',
+        'mon-infra-log-list-view'     : coreBaseDir + '/js/views/LogListView',
+        'mon-infra-sysinfo-view'      : coreBaseDir + '/js/views/SystemInfoView',
+        'mon-infra-dashboard-view'    : coreBaseDir + '/js/views/MonitorInfraDashboardView',
+
+        'loginwindow-view'            : coreBaseDir + '/js/views/LoginWindowView',
+        'loginwindow-model'           : coreBaseDir + '/js/models/LoginWindowModel',
+
+        'sparkline-view'              : coreBaseDir + '/js/views/SparklineView'
     };
 };
 
