@@ -1233,8 +1233,12 @@
     <div class="row-fluid"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <div class="textarea-input-append input-append inset span12">
             <textarea
-                name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}" rows="1"
-                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
+                name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}"
+                {{#if viewConfig.rows}} rows:'{{viewConfig.rows}}' {{/if}}
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
+                {{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                value: {{dataBindValue}},
+                event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) }}">
             </textarea>
             <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="icon-pencil"></i></span>
         </div>
@@ -1402,7 +1406,7 @@
     {{#IfCompare label null operator='!='}}
     <label style="margin:0px">{{label}}</label>
     {{/IfCompare}}
-    <table class="contrail-editable-grid-table">
+    <table class="contrail-editable-grid-table" {{#if width}} width='{{width}}' {{/if}}>
         <thead style="background:#f9f9f9">
         <tr>
             {{#each columns}}
@@ -1416,15 +1420,29 @@
         <tbody data-bind="foreach: {{collection}}">
         <tr class="data-row">
             {{#each columns}}
-            <td id="{{elementId}}" class="data-cell"></td>
+            <td id="{{elementId}}" class="data-cell"
+                style="{{#if viewConfig.verticalAlign}}
+                            vertical-align:{{viewConfig.verticalAlign}}
+                        {{/if}}"
+            ></td>
             {{/each}}
             {{#each rowActions}}
-            <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
+            <td class="action-cell"
+                style="{{#if verticalAlign}}
+                          vertical-align:{{verticalAlign}}
+                       {{/if}}">
+                <a data-bind='click: {{this.onClick}}'>
+                    <i class="{{this.iconClass}}"></i>
+                </a>
+            </td>
             {{/each}}
         </tr>
         <tr class="error-row">
             {{#each columns}}
             <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+            {{/each}}
+            {{#each rowActions}}
+            <td></td>
             {{/each}}
         </tr>
         </tbody>
@@ -1521,12 +1539,14 @@
     </div>
     {{/each}}
 
+    {{#if viewConfig.collectionActions}}
     <div class="row-fluid collection-actions collection-actions-add">
         <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
             <i class="{{viewConfig.collectionActions.add.iconClass}}"></i>
             &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
         </a>
     </div>
+    {{/if}}
 </script>
 
 
