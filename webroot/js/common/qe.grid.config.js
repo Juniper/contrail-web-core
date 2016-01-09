@@ -1504,13 +1504,21 @@ define([
                 display:{
                     id:"Xmlmessage", field:"Xmlmessage", name:"Log Message", minWidth:500, searchable:true,
                     formatter: function(r, c, v, cd, dc) {
+                        var xmlMessage = [];
                         if (contrail.checkIfExist(dc.Xmlmessage)) {
                             if (!$.isPlainObject(dc.Xmlmessage)) {
                                 dc.XmlmessageJSON = qewu.formatXML2JSON(dc.Xmlmessage);
+
+                                xmlMessage = $.map(dc.XmlmessageJSON, function(messageValue, messageKey) {
+                                    return messageValue;
+                                });
+                                dc.formattedXmlMessage = xmlMessage.join(' ');
                             }
-                            return '<span class="word-break-normal">' + cowu.handleNull4Grid(contrail.checkIfExist(dc.XmlmessageJSON['Message']) ? dc.XmlmessageJSON['Message'] : dc.XmlmessageJSON['log_msg']) + '</span>';
+
+
                         }
-                        return '';
+
+                        return dc.formattedXmlMessage
                     },
                     exportConfig: {
                         allow: true,
