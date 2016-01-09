@@ -72,11 +72,15 @@ define([
                 } else {
                     setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
                 }
-                  $(window)
-//                  .off('resize')
-                      .on('resize', function (e) {
-                          setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
-                  });
+                var resizeFunction = function (e) {
+                    if ($(selector).is(':visible')) {
+                        setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
+                    }
+                };
+                $(window)
+                    .off('resize', resizeFunction)
+                    .on('resize', resizeFunction);
+
                 nv.utils.windowResize(chartModel.update);
 
                 chartModel.dispatch.on('stateChange', function (e) {

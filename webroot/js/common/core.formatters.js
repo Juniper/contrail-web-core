@@ -140,6 +140,14 @@ define([
                     return cowu.addUnits2Packets(value);
                     break;
 
+                case 'query-time-range' :
+                    return qewu.formatTimeRange(value);
+                    break;
+
+                case 'query-direction' :
+                    return (value == 0) ? 'EGRESS' : 'INGRESS';
+                    break;
+
                 //run the user defined formatter function
                 default :
                     return eval(formatterKey)(value, obj);
