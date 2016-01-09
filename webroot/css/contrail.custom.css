@@ -3373,7 +3373,6 @@ background:none;
         padding:0px 5px;}
 #bgp-grid .addressFamily table{border:#CCC solid 1px; height:20px;overflow:scroll;}
 
-
 div.vis-network div.vis-navigation div.vis-button{
     background-color:#f9f9f9;
     background-image:none;
@@ -3436,4 +3435,8 @@ div.vis-network canvas{
 
 #mynetwork, .graph-canvas{
  height:350px !important;
+}
+#termCollection tbody tr:nth-child(4n+3) td,
+#termCollection tbody tr:nth-child(4n+4) td{
+    background: #fdfdfd;
 }
