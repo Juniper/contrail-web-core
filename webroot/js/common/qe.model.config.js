@@ -51,7 +51,8 @@ define([
         selectDataObject.checked_fields = ko.observableArray([]);
 
         selectDataObject.on_select = function (root, data, event) {
-            var fieldName = data.name,
+            var tableType = root.table_type(),
+                fieldName = data.name,
                 dataObject = root.select_data_object(),
                 checkedFields = dataObject.checked_fields,
                 isEnableMap = dataObject.enable_map(),
@@ -64,10 +65,12 @@ define([
                         keyLower = key.toLowerCase();
                         if (qewu.isAggregateField(key)) {
                             checkedFields.remove(key);
-                            isEnableMap[key](false);
+                            if (tableType === cowc.QE_FLOW_TABLE_TYPE) {
+                                isEnableMap[key](false);
+                            }
 
                             nonAggKey = key.substring(key.indexOf('(') + 1, key.indexOf(')'));
-                            if(contrail.checkIfFunction(isEnableMap[nonAggKey])) {
+                            if(contrail.checkIfFunction(isEnableMap[nonAggKey]) && tableType === cowc.QE_FLOW_TABLE_TYPE) {
                                 isEnableMap[nonAggKey](true);
                             }
                         }
@@ -75,7 +78,7 @@ define([
                 } else {
                     for (key in isEnableMap) {
                         keyLower = key.toLowerCase();
-                        if (qewu.isAggregateField(key)) {
+                        if (qewu.isAggregateField(key) && tableType === cowc.QE_FLOW_TABLE_TYPE) {
                             isEnableMap[key](true);
                         }
                     }
@@ -86,12 +89,16 @@ define([
                     for (key in isEnableMap) {
                         keyLower = key.toLowerCase();
                         if (qewu.isAggregateField(key)) {
-                            isEnableMap[key](true);
+                            if (tableType === cowc.QE_FLOW_TABLE_TYPE) {
+                                isEnableMap[key](true);
+                            }
 
                             nonAggKey = key.substring(key.indexOf('(') + 1, key.indexOf(')'));
                             if(contrail.checkIfFunction(isEnableMap[nonAggKey])) {
                                 checkedFields.remove(nonAggKey);
-                                isEnableMap[nonAggKey](false);
+                                if (tableType === cowc.QE_FLOW_TABLE_TYPE) {
+                                    isEnableMap[nonAggKey](false);
+                                }
                             }
                         }
                     }
@@ -101,7 +108,7 @@ define([
                         if (qewu.isAggregateField(key)) {
                             checkedFields.remove(key);
                             nonAggKey = key.substring(key.indexOf('(') + 1, key.indexOf(')'));
-                            if(contrail.checkIfFunction(isEnableMap[nonAggKey])) {
+                            if(contrail.checkIfFunction(isEnableMap[nonAggKey]) && tableType === cowc.QE_FLOW_TABLE_TYPE) {
                                 isEnableMap[nonAggKey](true);
                             }
                         }
@@ -112,14 +119,17 @@ define([
         };
 
         selectDataObject.on_select_all = function (data, event) {
-            var dataObject = data.select_data_object(),
+            var tableType = data.table_type(),
+                dataObject = data.select_data_object(),
                 isEnableMap = dataObject.enable_map(),
                 checkedFields = dataObject.checked_fields,
                 key, nonAggKey;
 
             if (checkedFields().length == 0) {
                 for (key in isEnableMap) {
-                    isEnableMap[key](true);
+                    if (tableType === cowc.QE_FLOW_TABLE_TYPE) {
+                        isEnableMap[key](true);
+                    }
                     checkedFields.remove(key);
                 }
 
@@ -129,7 +139,9 @@ define([
 
                         nonAggKey = key.substring(key.indexOf('(') + 1, key.indexOf(')'));
                         if(contrail.checkIfFunction(isEnableMap[nonAggKey])) {
-                            isEnableMap[nonAggKey](false);
+                            if (tableType === cowc.QE_FLOW_TABLE_TYPE) {
+                                isEnableMap[nonAggKey](false);
+                            }
                             if(checkedFields.indexOf(nonAggKey) != -1) {
                                 checkedFields.remove(nonAggKey);
                             }
@@ -140,20 +152,25 @@ define([
                 }
             } else {
                 for (key in isEnableMap) {
-                    isEnableMap[key](true);
+                    if (tableType === cowc.QE_FLOW_TABLE_TYPE) {
+                        isEnableMap[key](true);
+                    }
                     checkedFields.remove(key);
                 }
             }
         };
 
         selectDataObject.reset = function(data, event) {
-            var dataObject = data.select_data_object(),
+            var tableType = data.table_type(),
+                dataObject = data.select_data_object(),
                 isEnableMap = dataObject.enable_map(),
                 checkedFields = dataObject.checked_fields;
 
             for(var key in isEnableMap) {
                 checkedFields.remove(key);
-                isEnableMap[key](true);
+                if (tableType === cowc.QE_FLOW_TABLE_TYPE) {
+                    isEnableMap[key](true);
+                }
             }
         };
 
