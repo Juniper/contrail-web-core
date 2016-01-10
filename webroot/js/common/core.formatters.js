@@ -11,10 +11,10 @@ define([
             var formatterKey = templateGeneratorConfig.formatter,
                 value = cowu.getJSONValueByPath(key, obj);
 
-            return self.getFormattedValue(formatterKey, value, templateGeneratorConfig.iconClass, obj);
+            return self.getFormattedValue(formatterKey, value, templateGeneratorConfig.iconClass, obj, key);
         };
 
-        this.getFormattedValue = function (formatterKey, value, iconClass, obj) {
+        this.getFormattedValue = function (formatterKey, value, iconClass, obj, key) {
             switch (formatterKey) {
                 case 'byte' :
                     return cowu.addUnits2Bytes(value);
@@ -108,17 +108,16 @@ define([
                 case 'storage-health-status-state' :
                     var iconHTML = (contrail.checkIfExist(iconClass) ?
                     '<i class="' + iconClass + ' pull-right padding-3-0"></i>' : '');
-
                     if (value === 'critical') {
-                        return '<span style="font-size: x-large;font-family: serif; color: red;">'
+                        return '<span class="red ' + key + '-value"> style="font-size: x-large;">'
                             + value + iconHTML +
                             '</span>';
                     } else  if (value === 'warn') {
-                        return '<span style="font-size: x-large;font-family: serif;color: orange;">'
+                        return '<span style="font-size: x-large; color: orange;">'
                             + value + iconHTML +
                             '</span>';
                     } else if (value === 'ok') {
-                        return '<span class="green" style="font-size: x-large;font-family: serif;">' + value + '</span>';
+                        return '<span class="green" style="font-size: x-large">' + value + '</span>';
                     } else {
                         return value
                     }
@@ -142,7 +141,7 @@ define([
 
                 //run the user defined formatter function
                 default :
-                    return eval(formatterKey)(value, obj);
+                    return eval(formatterKey)(value, obj, iconClass, key);
             };
         };
 
