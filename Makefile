@@ -72,10 +72,11 @@ dev-env:
 	./prod-dev.sh webroot/html/dashboard.html dev_env prod_env true
 	./prod-dev.sh webroot/html/login.html dev_env prod_env true
 	./prod-dev.sh webroot/html/login-error.html dev_env prod_env true
+	# For test files, we will setting the env file with current environment.
+	./unit-test.sh set-env "dev"
 	make make-ln
 
 test-env:
-	make dev-env
 	./unit-test.sh init $(REPO)
 
 prod-env:
@@ -85,9 +86,13 @@ prod-env:
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
 	./generate-files.sh "dev-env" $(REPO)
 	./dev-install.sh
+	# build the minified, unified files.
+	./build-files.sh "prod-env" $(REPO)
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login.html prod_env dev_env true
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env true
+	# For test files, we will setting the env file with current environment.
+	./unit-test.sh set-env "prod"
 	make make-ln
 
 clear-cache-dev:

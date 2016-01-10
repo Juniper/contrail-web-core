@@ -64,7 +64,7 @@ define(['underscore'], function (_) {
             var currPageHash = ifNull(currHash['p'], ''),
                 resourcesDefObj = $.Deferred();
 
-            if(globalObj['env'] == "test" && currPageHash == '') {
+            if(globalObj['test-env'] == globalObj['env'] + "-test" && currPageHash == '') {
                 return;
             }
 
@@ -166,7 +166,7 @@ define(['underscore'], function (_) {
 
                     require([initJSPath], function() {});
                 } else if(initStatus['isInProgress']) {
-                    initStatus['defObject'].done(function() {
+                    initStatus['deferredObject'].done(function() {
                         loadContentCB();
                     });
                 } else if (initStatus['isComplete']) {
