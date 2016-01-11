@@ -12,7 +12,8 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
         this.load = function () {
             menuHandler = new MenuHandler();
 
-            getWebServerInfo(function(webServerInfo) {
+            getWebServerInfo(contrail.getCookie('project'),
+                             function(webServerInfo) {
                 menuHandler.loadMenu(webServerInfo);
                 menuHandler.handleSideMenu();
                 /**
@@ -106,10 +107,10 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
     return LayoutHandler;
 });
 
-function getWebServerInfo(callback) {
+function getWebServerInfo(project, callback) {
     //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
     $.ajax({
-        url: '/api/service/networking/web-server-info'
+        url: '/api/service/networking/web-server-info?project=' + project
     }).done(function (webServerInfo) {
         if (webServerInfo['serverUTCTime'] != null) {
             webServerInfo['timeDiffInMillisecs'] = webServerInfo['serverUTCTime'] - new Date().getTime();
