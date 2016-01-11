@@ -166,7 +166,7 @@ define(['underscore'], function (_) {
 
                     require([initJSPath], function() {});
                 } else if(initStatus['isInProgress']) {
-                    initStatus['defObject'].done(function() {
+                    initStatus['deferredObject'].done(function() {
                         loadContentCB();
                     });
                 } else if (initStatus['isComplete']) {
