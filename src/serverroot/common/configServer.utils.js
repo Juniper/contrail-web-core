@@ -96,21 +96,14 @@ function getTenantListAndSyncDomain (request, appData, callback)
             if ((null != domId) && (false == authApi.isDefaultDomain(request, domId))) {
                 domId =
                     commonUtils.convertUUIDToString(tenantList['tenants'][i]['domain_id']);
-                if ((null != domain) && (domId != domain)) {
-                    tenantList['tenants'].splice(i, 1);
-                    i--;
-                    projCnt--;
-                    continue;
-                }
-            }
-            if ((null != domId) && (null == tmpDomainObjs[domId])) {
-                domainObjs['domains'].push({'fq_name': [domId], 'uuid': domId});
-                tmpDomainObjs[domId] = domId;
-                if (false == authApi.isDefaultDomain(request, domId)) {
-                    var domUrl = '/domain/' + domId;
-                    commonUtils.createReqObj(domArr, domUrl,
-                                             global.HTTP_REQUEST_GET, null,
-                                             null, null, appData);
+                if (null == tmpDomainObjs[domId]) {
+                    tmpDomainObjs[domId] = domId;
+                    if (false == authApi.isDefaultDomain(request, domId)) {
+                        var domUrl = '/domain/' + domId;
+                        commonUtils.createReqObj(domArr, domUrl,
+                                                 global.HTTP_REQUEST_GET, null,
+                                                 null, null, appData);
+                    }
                 }
             }
         }
@@ -120,8 +113,42 @@ function getTenantListAndSyncDomain (request, appData, callback)
                   function(err, confData) {
             getDomainsFromApiServer(appData, function(err, domList) {
                 if ((null != err) || (null == domList) || (null == domList['domains'])) {
+                    /* We did not find any domain in API Server */
+                    if ('v3' == request.session.loggedInOrchestrationMode) {
+                        /* In v2, we have default-domain for all projects */
+                        tenantList['tenants'] = [];
+                    }
                     callback(null, domainObjs, tenantList, domList);
                     return;
+                }
+                tmpDomainObjs = {};
+                for (var i = 0; i < projCnt; i++) {
+                    var domId = tenantList['tenants'][i]['domain_id'];
+                    if ((null != domId) &&
+                        (false == authApi.isDefaultDomain(request, domId))) {
+                        domId =
+                            commonUtils.convertUUIDToString(tenantList['tenants'][i]['domain_id']);
+                        var domFqn = authApi.getDomainNameByUUID(request, domId,
+                                                        domList['domains']);
+                        if ((null == tmpDomainObjs[domId]) && (null != domFqn)) {
+                            domainObjs['domains'].push({'fq_name': [domFqn], 'uuid': domId});
+                            tmpDomainObjs[domId] = domId;
+                        }
+                        if ((null != domain) && (domFqn != domain)) {
+                            tenantList['tenants'].splice(i, 1);
+                            i--;
+                            projCnt--;
+                        } else {
+                            tenantList['tenants'][i]['domain_name'] = domFqn;
+                        }
+                    } else {
+                        var defDomain = authApi.getDefaultDomain(request);
+                        if (null == tmpDomainObjs[domId]) {
+                            domainObjs['domains'].push({'fq_name': [defDomain], 'uuid': domId});
+                            tmpDomainObjs[domId] = domId;
+                        }
+                        tenantList['tenants'][i]['domain_name'] = defDomain;
+                    }
                 }
                 var allDomList = domList['domains'];
                 var allDomCnt = allDomList.length;

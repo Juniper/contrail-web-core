@@ -139,9 +139,22 @@ function getServiceCatalog (req, callback)
     });
 }
 
+function getUIUserRoleByTenant (userObj, callback)
+{
+    var req = userObj['req'];
+    return getAuthMethod[req.session.loggedInOrchestrationMode].getUIUserRoleByTenant(userObj,
+                                                                                      callback);
+}
+
 function getUIRolesByExtRoles (req, extRoles)
 {
-    return getAuthMethod[req.session.loggedInOrchestrationMode].getUserRoleByAuthResponse(extRoles);
+    return getAuthMethod[req.session.loggedInOrchestrationMode].getUIRolesByExtRoles(extRoles);
+}
+
+function getExtUserRoleByTenant (userObj, callback)
+{
+    var req = userObj['req'];
+    return getAuthMethod[req.session.loggedInOrchestrationMode].getExtUserRoleByTenant(userObj, callback);
 }
 
 function getCookieObjs (req, appData, callback)
@@ -166,6 +179,13 @@ function getUserAuthDataByConfigAuthObj (loggedInOrchestrationMode, authObj, cal
                                                                             callback);
 }
 
+function getDomainNameByUUID (request, uuid, domList)
+{
+    return getAuthMethod[request.session.loggedInOrchestrationMode].getDomainNameByUUID(request,
+                                                                             uuid,
+                                                                             domList);
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -178,9 +198,12 @@ exports.getDomainList = getDomainList;
 exports.getProjectList = getProjectList;
 exports.isDefaultDomain = isDefaultDomain;
 exports.getNewTokenObjByToken = getNewTokenObjByToken;
-exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getDefaultDomain = getDefaultDomain;
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
+exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
+exports.getDomainNameByUUID = getDomainNameByUUID;
+exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
+exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 
