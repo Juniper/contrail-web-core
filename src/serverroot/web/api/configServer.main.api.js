@@ -41,37 +41,95 @@ function getDefProjectByAppData (appData)
     return defProject;
 }
 
-function getAuthTokenByProject (req, defToken, project)
+function getAuthTokenByProject (req, defTokenObj, project, callback)
 {
     if ((null != req.session.tokenObjs[project]) &&
         (null != req.session.tokenObjs[project]['token']) &&
         (null != req.session.tokenObjs[project]['token']['id'])) {
-        return req.session.tokenObjs[project]['token']['id'];
+        callback(null, {'project': project,
+                 'token': req.session.tokenObjs[project]['token']['id']});
+        return;
     }
-    return defToken;
+    var defProject =
+        commonUtils.getValueByJsonPath(defTokenObj,
+                                       'tenant;name',
+                                       null);
+    var defTokenId =
+        commonUtils.getValueByJsonPath(defTokenObj, 'id', null);
+    var plugins = require('./../../orchestration/plugins/plugins.api');
+    var adminProjList = plugins.getAdminProjectList(req);
+    if ((null == adminProjList) ||(!adminProjList.length)) {
+        callback(null, {'project': defProject, 'token': defTokenId});
+        return;
+    }
+    var tokenObjs = req.session.tokenObjs;
+    var tokenId = null;
+    for (key in tokenObjs) {
+        if (-1 != adminProjList.indexOf(key)) {
+            tokenId =
+                commonUtils.getValueByJsonPath(tokenObjs[key],
+                                               'token;id', null);
+            break;
+        }
+    }
+    if (null == tokenId) {
+        tokenId =
+            commonUtils.getValueByJsonPath(tokenObjs[key],
+                                           'token;id', null);
+        if (null == tokenId) {
+            callback(null, {'project': defProject, 'token': defTokenId});
+            return;
+        }
+    }
+
+    var userObj = {'tokenid': tokenId, 'tenant': project, 'req': req};
+    authApi.getUIUserRoleByTenant(userObj, function(err, roles, data) {
+        if (null == data) {
+            callback(null, {'project': defProject, 'token': defTokenId});
+            return;
+        }
+        var tokenObj = data['tokenObj'];
+        if ((null != err) || (null == tokenObj) ||
+            (null == tokenObj['token']) || (null == tokenObj['token']['id']) ||
+            (null == tokenObj['token']['tenant'])) {
+            callback(null, {'project': defProject, 'token': defTokenId});
+            return;
+        }
+        callback(null, {'project': tokenObj['token']['tenant']['name'],
+                 'token': tokenObj['token']['id']});
+    });
 }
 
-function configAppHeaders (headers, appData)
+function configAppHeaders (headers, appData, callback)
 {
     var defProject = getDefProjectByAppData(appData);
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
-    try {
-        headers['X-Auth-Token'] =
-            getAuthTokenByProject(appData['authObj'].req,
-                                  appData['authObj']['defTokenObj']['id'],
-                                  defProject);
-    } catch(e) {
+    var xAuthTokenObj = null;
+    if ((null == appData) || (null == appData['authObj'].req) ||
+        (null == appData['authObj']['defTokenObj'])) {
         headers['X-Auth-Token'] = null;
+        headers['X_API_ROLE'] = null;
+        callback(headers);
+        return;
     }
-    if (true == multiTenancyEnabled) {
-        try {
-            headers['X_API_ROLE'] =
-                appData['authObj'].req.session.userRoles[defProject].join(',');
-        } catch(e) {
-            headers['X_API_ROLE'] = null;
+    getAuthTokenByProject(appData['authObj'].req,
+                          appData['authObj']['defTokenObj'],
+                          defProject, function(err, xAuthTokenObj) {
+        headers['X-Auth-Token'] = xAuthTokenObj['token'];
+        if (true == multiTenancyEnabled) {
+            try {
+                if (null != xAuthTokenObj['project']) {
+                    headers['X_API_ROLE'] =
+                        appData['authObj'].req.session.userRoles[xAuthTokenObj['project']].join(',');
+                } else {
+                    headers['X_API_ROLE'] = null;
+                }
+            } catch(e) {
+                headers['X_API_ROLE'] = null;
+            }
         }
-    }
-    return headers;
+        callback(headers);
+    });
 }
 
 function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
@@ -81,7 +139,7 @@ function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     var defProject = getDefProjectByAppData(appData);
-    headers = configAppHeaders(headers, appData);
+    configAppHeaders(headers, appData, function(headers) {
     headers = getHeaders(headers, appHeaders);
     configServer.api.get(reqUrl, function(err, data) {
         if (err) {
@@ -97,6 +155,7 @@ function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
             callback(null, data);
         }
     }, headers);
+  });
 }
 
 function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
@@ -106,7 +165,7 @@ function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     var defProject = getDefProjectByAppData(appData);
-    headers = configAppHeaders(headers, appData);
+    configAppHeaders(headers, appData, function(headers) {
     headers = getHeaders(headers, appHeaders);
 
     configServer.api.put(reqUrl, reqData, function(err, data) {
@@ -123,6 +182,7 @@ function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
             callback(null, data);
         }
     }, headers);
+  });
 }
 
 function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
@@ -132,7 +192,7 @@ function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     var defProject = getDefProjectByAppData(appData);
-    headers = configAppHeaders(headers, appData);
+    configAppHeaders(headers, appData, function(headers) {
     headers = getHeaders(headers, appHeaders);
 
     configServer.api.post(reqUrl, reqData, function(err, data) {
@@ -149,6 +209,7 @@ function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
             callback(null, data);
         }
     }, headers);
+  });
 }
 
 function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
@@ -158,7 +219,7 @@ function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
     var defProject = getDefProjectByAppData(appData);
-    headers = configAppHeaders(headers, appData);
+    configAppHeaders(headers, appData, function(headers) {
     headers = getHeaders(headers, appHeaders);
 
     configServer.api.delete(reqUrl, function(err, data) {
@@ -175,6 +236,7 @@ function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
             callback(null, data);
         }
     }, headers);
+  });
 }
 
 exports.apiGet = apiGet;
