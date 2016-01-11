@@ -208,19 +208,6 @@ function setAllCookies (req, res, appData, cookieObj, callback)
             appData['authObj']['defTokenObj'] =
                 req.session.tokenObjs[adminProjectList[0]]['token'];
         } else {
-            /* Check if multi_tenancy enabled */
-            if (true == multiTenancyEnabled) {
-                /* We should not come here, multi_tenancy enabled, why we came
-                 * here still
-                 */
-                logutils.logger.error("No Admin Projects!!!");
-                errStr = "No admin projects";
-                commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                     global.CONTRAIL_LOGIN_ERROR,
-                                                     errStr, function() {
-                });
-                return;
-            }
             var tokenObjs = req.session.tokenObjs;
             for (key in tokenObjs) {
                 appData['authObj']['defTokenObj'] =

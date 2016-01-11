@@ -41,35 +41,43 @@ function getDefProjectByAppData (appData)
     return defProject;
 }
 
-function getAuthTokenByProject (req, defToken, project)
+function getAuthTokenByProject (req, defTokenObj, project)
 {
     if ((null != req.session.tokenObjs[project]) &&
         (null != req.session.tokenObjs[project]['token']) &&
         (null != req.session.tokenObjs[project]['token']['id'])) {
-        return req.session.tokenObjs[project]['token']['id'];
+        return {'project': project,
+            'token': req.session.tokenObjs[project]['token']['id']};
     }
-    return defToken;
+    var defProject =
+        commonUtils.getValueByJsonPath(defTokenObj,
+                                       'tenant;name',
+                                       null);
+    return {'project': defProject, 'token': defTokenObj['id']};
 }
 
 function configAppHeaders (headers, appData)
 {
     var defProject = getDefProjectByAppData(appData);
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
+    var xAuthTokenObj = null;
     try {
-        headers['X-Auth-Token'] =
+        var xAuthTokenObj =
             getAuthTokenByProject(appData['authObj'].req,
-                                  appData['authObj']['defTokenObj']['id'],
+                                  appData['authObj']['defTokenObj'],
                                   defProject);
+        headers['X-Auth-Token'] = xAuthTokenObj['token'];
+        if (true == multiTenancyEnabled) {
+            if (null != xAuthTokenObj['project']) {
+                headers['X_API_ROLE'] =
+                    appData['authObj'].req.session.userRoles[xAuthTokenObj['project']].join(',');
+            } else {
+                headers['X_API_ROLE'] = null;
+            }
+        }
     } catch(e) {
         headers['X-Auth-Token'] = null;
-    }
-    if (true == multiTenancyEnabled) {
-        try {
-            headers['X_API_ROLE'] =
-                appData['authObj'].req.session.userRoles[defProject].join(',');
-        } catch(e) {
-            headers['X_API_ROLE'] = null;
-        }
+        headers['X_API_ROLE'] = null;
     }
     return headers;
 }
