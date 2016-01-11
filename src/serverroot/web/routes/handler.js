@@ -206,24 +206,6 @@ setSessionTimeoutByReq = function(req) {
     }
 }
 
-getUserRoleByAuthResponse = function(resRoleList) {
-    if ((null == resRoleList) || (!resRoleList.length)) {
-        /* Ideally if Role is not associated, then we should not allow user to
-         * login, but we are assigning role as 'Member' to the user to not to
-         * block UI
-//        return null;
-         */
-        return global.STR_ROLE_USER;
-    }
-    var rolesCount = resRoleList.length;
-    for (var i = 0; i < rolesCount; i++) {
-        if (resRoleList[i]['name'] != 'Member') {
-            return global.STR_ROLE_ADMIN;
-        }
-    }
-    return global.STR_ROLE_USER;
-}
-
 exports.authenticate = function (req, res, appData) {
     /* Call module independent API */
     authApi.doAuthenticate(req, res, appData, function(err, data) {
