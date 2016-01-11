@@ -21,8 +21,12 @@ function getCookie(name) {
 }
 
 function setCookie(name, value) {
+    var oldCookie = getCookie(name);
     document.cookie = name + "=" + escape(value) +
         "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/";
+    if (('project' == name) && (oldCookie != value)) {
+        menuHandler.loadMenu();
+    }
 }
 
 var class_A = 1;
