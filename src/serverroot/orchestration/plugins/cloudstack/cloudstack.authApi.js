@@ -51,10 +51,51 @@ function getUserRoleByAuthResponse (cloudStackUserLoginResp)
 {
     var userType = cloudStackUserLoginResp['loginresponse']['type'];
     if (CLOUDSTACK_USER_TYPE_ADMIN == userType) {
-        return global.STR_ROLE_ADMIN;
+        return [global.STR_ROLE_ADMIN];
     } else {
-        global.STR_ROLE_USER;
+        return [global.STR_ROLE_USER];
     }
+}
+
+function getUIUserRoleByTenant (userObj, callback)
+{
+    var userRoles = [global.STR_ROLE_USER];
+    if ((null == userObj) || (null == userObj.req)) {
+        callback(null, userRoles);
+        return;
+    }
+    userRoles =
+         commonUtils.getValueByJsonPath(userObj.req,
+                                        'session;userRole',
+                                        [global.STR_ROLE_USER]);
+    callback(null, userRoles);
+}
+
+function getUIRolesByExtRoles (extRoles)
+{
+    var roles = [];
+    if ((null == extRoles) || (!extRoles.length)) {
+        return [global.STR_ROLE_USER];
+    }
+    var roleCnt = extRoles.length;
+    for (var i = 0; i < roleCnt; i++) {
+        roles.push(extRoles[i]['name']);
+    }
+    if (-1 != roles.indexOf('admin')) {
+        return [global.STR_ROLE_ADMIN];
+    }
+    return [global.STR_ROLE_USER];
+}
+
+function getExtUserRoleByTenant (userObj, callback)
+{
+    getUIUserRoleByTenant(userObj, function(uiRoles) {
+        if (-1 != uiRoles.indexOf(global.STR_ROLE_ADMIN)) {
+            callback(null, {'roles': [{'name': 'admin'}]});
+            return;
+        }
+        callback(null, {'roles': [{'name': 'Member'}]});
+    });
 }
 
 function getUsers (req, callback)
@@ -203,4 +244,7 @@ exports.formatTenantList = formatTenantList;
 exports.getProjectList = getProjectList;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
+exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
+exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
+exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 
