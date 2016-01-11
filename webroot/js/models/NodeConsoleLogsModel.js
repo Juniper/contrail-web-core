@@ -15,7 +15,7 @@ define([
         constructor: function (modelData, queryReqConfig) {
             var defaultConfig = qewmc.getQueryModelConfig({
                 time_range: 600,
-                select: "MessageTS,Type,Level,Category,Xmlmessage",
+                select: "MessageTS,Messagetype,Level,Category,Xmlmessage",
                 hostname:"",
                 node_type: "",
                 table_name: cowc.MESSAGE_TABLE,

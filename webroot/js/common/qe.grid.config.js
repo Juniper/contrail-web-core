@@ -7,7 +7,7 @@ define([
 ], function (_) {
     var QEGridConfig = function () {
         this.getColumnDisplay4Grid = function(tableName, tableType, selectArray) {
-            var newColumnDisplay = [],
+            var newColumnDisplay = [], columnDisplaySelect,
                 columnDisplay = getColumnDisplay4Query(tableName, tableType);
 
             $.each(columnDisplay, function(key, val){
@@ -16,17 +16,52 @@ define([
                 }
             });
 
+            columnDisplaySelect = $.map(columnDisplay, function(selectValue, selectKey) {
+                return selectValue.select;
+            });
+
+            $.each(selectArray, function(selectKey, selectValue) {
+                if(columnDisplaySelect.indexOf(selectValue) == -1) {
+                    var columnName = '["' + selectValue + '"]';
+                    newColumnDisplay.push({
+                        id: selectValue, field: selectValue,
+                        name: columnName,
+                        minWidth: columnName.length * 8,  groupable:false,
+                        formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc[selectValue]);}
+                    })
+                }
+
+            });
+
             return newColumnDisplay;
         };
 
         this.getColumnDisplay4ChartGroupGrid = function(tableName, tableType, selectArray) {
-            var newColumnDisplay = [],
+            var newColumnDisplay = [], columnDisplaySelect,
                 columnDisplay = getColumnDisplay4Query(tableName, tableType);
 
             $.each(columnDisplay, function(key, val){
                 if (selectArray.indexOf(val.select) != -1 && !qewu.isAggregateField(val.select) && val.select !== 'T' && val.select !== 'T=' && val.select !== 'UUID') {
                     newColumnDisplay.push(val.display);
                 }
+            });
+
+            columnDisplaySelect = $.map(columnDisplay, function(selectValue, selectKey) {
+                return selectValue.select;
+            });
+
+            $.each(selectArray, function(selectKey, selectValue) {
+                if(columnDisplaySelect.indexOf(selectValue) == -1 && !qewu.isAggregateField(selectValue) &&
+                    selectValue !== 'T' && selectValue !== 'T=' && selectValue !== 'UUID') {
+                    var columnName = '["' + selectValue + '"]';
+                    newColumnDisplay.push({
+                        id: selectValue, field: selectValue,
+                        name: columnName,
+                        minWidth: columnName.length * 8,  groupable:false,
+                        formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc[selectValue]);}
+                    })
+                }
+
             });
 
             return newColumnDisplay;
@@ -155,7 +190,7 @@ define([
             {select:"agg-bytes", display:{id:"agg-bytes", field:"agg-bytes", minWidth:120, name:"Aggregate Bytes",  groupable:false}},
             {select:"agg-packets", display:{id:"agg-packets", field:"agg-packets", minWidth:140, name:"Aggregate Packets",  groupable:false}}
         ],
-        "FlowClass":[
+        /*"FlowClass":[
             {select:"sourcevn", display:{id:"sourcevn", field:"sourcevn", name:"Source VN", minWidth: 250, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourcevn);}}},
             {select:"destvn", display:{id:"destvn", field:"destvn", name:"Destination VN", minWidth: 250, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destvn);}}},
             {select:"sourceip", display:{id:"sourceip", field:"sourceip", name:"Source IP", minWidth: 120, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourceip);}}},
@@ -163,7 +198,7 @@ define([
             {select:"sport", display:{id:"sport", field:"sport", name:"Source Port", minWidth: 80, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sport);}}},
             {select:"dport", display:{id:"dport", field:"dport", name:"Destination Port", minWidth: 80, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.dport);}}},
             {select:"protocol", display:{id:"protocol", field:"protocol", name:"Protocol", minWidth: 80, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getProtocolName(dc.protocol));}}}
-        ],
+        ],*/
         "StatTable.AnalyticsCpuState.cpu_info" : [
             {select:"cpu_info.module_id", display:{id:'cpu_info.module_id', field:'cpu_info.module_id', minWidth:150, name:"Module Id", groupable:false}},
             {select:"cpu_info.inst_id", display:{id:'cpu_info.inst_id', field:'cpu_info.inst_id', minWidth:150, name:"Instance Id", groupable:false}},
@@ -1469,13 +1504,21 @@ define([
                 display:{
                     id:"Xmlmessage", field:"Xmlmessage", name:"Log Message", minWidth:500, searchable:true,
                     formatter: function(r, c, v, cd, dc) {
+                        var xmlMessage = [];
                         if (contrail.checkIfExist(dc.Xmlmessage)) {
                             if (!$.isPlainObject(dc.Xmlmessage)) {
                                 dc.XmlmessageJSON = qewu.formatXML2JSON(dc.Xmlmessage);
+
+                                xmlMessage = $.map(dc.XmlmessageJSON, function(messageValue, messageKey) {
+                                    return messageValue;
+                                });
+                                dc.formattedXmlMessage = xmlMessage.join(' ');
                             }
-                            return '<span class="word-break-normal">' + cowu.handleNull4Grid(contrail.checkIfExist(dc.XmlmessageJSON['Message']) ? dc.XmlmessageJSON['Message'] : dc.XmlmessageJSON['log_msg']) + '</span>';
+
+
                         }
-                        return '';
+
+                        return dc.formattedXmlMessage
                     },
                     exportConfig: {
                         allow: true,

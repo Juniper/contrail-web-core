@@ -162,6 +162,8 @@ define([
 
         this.TITLE_QUERY = "Query";
         this.TITLE_QUERY_STATUS = "Query Status";
+        this.TITLE_QUERY_PARAMETERS = "Query Parameters";
+        this.TITLE_QUERY_STATISTICS = "Query Statistics";
         this.TITLE_RESULTS = "Results";
         this.TITLE_CHART = "Chart";
         this.TITLE_FLOW = "Flow";

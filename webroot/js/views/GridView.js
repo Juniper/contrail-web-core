@@ -1216,6 +1216,7 @@ define([
                     });
                 });
                 grid.setColumns(visibleColumns);
+                gridContainer.data('contrailGrid').refreshView();
             };
 
             function formatData4ColumnPicker(data) {
