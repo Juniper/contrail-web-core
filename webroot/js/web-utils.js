@@ -973,7 +973,8 @@ var featurePkgToMenuNameMap = {
     this.loadMenu = function () {
         //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
         $.ajax({
-            url:'/api/service/networking/web-server-info'
+            url:'/api/service/networking/web-server-info?project='
+                + getCookie('project')
         }).done(function (response) {
             var mFileName = 'menu.xml';
             var featureMaps = [];

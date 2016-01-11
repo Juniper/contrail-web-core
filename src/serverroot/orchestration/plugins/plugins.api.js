@@ -208,19 +208,6 @@ function setAllCookies (req, res, appData, cookieObj, callback)
             appData['authObj']['defTokenObj'] =
                 req.session.tokenObjs[adminProjectList[0]]['token'];
         } else {
-            /* Check if multi_tenancy enabled */
-            if (true == multiTenancyEnabled) {
-                /* We should not come here, multi_tenancy enabled, why we came
-                 * here still
-                 */
-                logutils.logger.error("No Admin Projects!!!");
-                errStr = "No admin projects";
-                commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                     global.CONTRAIL_LOGIN_ERROR,
-                                                     errStr, function() {
-                });
-                return;
-            }
             var tokenObjs = req.session.tokenObjs;
             for (key in tokenObjs) {
                 appData['authObj']['defTokenObj'] =
@@ -243,7 +230,19 @@ function setAllCookies (req, res, appData, cookieObj, callback)
             res.setHeader('Set-Cookie', 'domain=' + cookieObjs['domain'] +
                           '; expires=' + cookieExpStr + secureCookieStr);
         }
-        if (null != cookieObjs['project']) {
+        /* Do not set cookie if project has member role */
+        var cookieProject = cookieObjs['project'];
+        try {
+            if (null != req.session.userRoles[cookieProject]) {
+                if ((-1 == req.session.userRoles[cookieProject].indexOf('admin')) &&
+                    (null != req.cookies.project)) {
+                    cookieProject = null;
+                }
+            }
+        } catch(e) {
+            logutils.logger.error('setAllCookies parse error' + e);
+        }
+        if (null != cookieProject) {
             res.setHeader('Set-Cookie', 'project=' + cookieObjs['project'] +
                           '; expires=' + cookieExpStr + secureCookieStr);
         }
