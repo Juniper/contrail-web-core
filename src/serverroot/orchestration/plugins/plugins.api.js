@@ -187,11 +187,11 @@ function setAllCookies (req, res, appData, cookieObj, callback)
 {
     var loginErrFile = 'webroot/html/login-error.html';
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
+    var adminProjectList = getAdminProjectList(req);
     if (null == appData['authObj']['defTokenObj']) {
         /* We have not got defTokenObj filled yet while sending to Auth
          * Module, so fill it up here
          */
-        var adminProjectList = getAdminProjectList(req);
         /* adminProjectList must not empty array */
         if (adminProjectList.length) {
             appData['authObj']['defTokenObj'] =
@@ -202,8 +202,8 @@ function setAllCookies (req, res, appData, cookieObj, callback)
                 /* We should not come here, multi_tenancy enabled, why we came
                  * here still
                  */
-                logutils.logger.error("No Admin Projects!!!");
-                errStr = "No admin projects";
+                logutils.logger.error("User with admin only role is allowed!!!");
+                errStr = "User with admin only role is allowed";
                 commonUtils.changeFileContentAndSend(res, loginErrFile,
                                                      global.CONTRAIL_LOGIN_ERROR,
                                                      errStr, function() {
@@ -229,8 +229,13 @@ function setAllCookies (req, res, appData, cookieObj, callback)
                           '; expires=' + new Date(new Date().getTime() +
                                                   global.MAX_AGE_SESSION_ID).toUTCString());
         }
-        if (null != cookieObjs['project']) {
-            res.setHeader('Set-Cookie', 'project=' + cookieObjs['project'] +
+        var cookieProject = cookieObjs['project'];
+        if ((null == cookieProject) ||
+            (-1 == adminProjectList.indexOf(cookieProject))) {
+            cookieProject = adminProjectList[0];
+        }
+        if (null != cookieProject) {
+            res.setHeader('Set-Cookie', 'project=' + cookieProject +
                           '; expires=' + new Date(new Date().getTime() +
                                                   global.MAX_AGE_SESSION_ID).toUTCString());
         }
@@ -244,4 +249,4 @@ exports.setAllCookies = setAllCookies;
 exports.doDomainExist = doDomainExist;
 exports.formatDomainList = formatDomainList;
 exports.getDomainFqnByDomainUUID = getDomainFqnByDomainUUID;
-
+exports.getAdminProjectList = getAdminProjectList;
