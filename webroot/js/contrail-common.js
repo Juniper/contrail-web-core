@@ -178,6 +178,7 @@ function Contrail() {
     };
 
     this.setCookie = function(name, value) {
+        var oldCookie = contrail.getCookie(name);
         var secureCookieStr = "";
         var insecureAccess =
             getValueByJsonPath(globalObj, 'webServerInfo;insecureAccess',
@@ -188,6 +189,9 @@ function Contrail() {
 
         document.cookie = name + "=" + escape(value) +
             "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/" + secureCookieStr;
+        if (('project' == name) && (oldCookie != value)) {
+            menuHandler.loadMenu();
+        }
     };
 
     this.formatJSON2HTML = function(json, formatDepth){

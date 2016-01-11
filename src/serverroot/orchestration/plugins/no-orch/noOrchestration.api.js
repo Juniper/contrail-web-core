@@ -12,6 +12,7 @@ var config = process.mainModule.exports['config'];
 var commonUtils = require('../../../utils/common.utils');
 var messages = require('../../../common/messages');
 var configUtils = require('../../../common/configServer.utils');
+var roleMap = require('../../../web/core/rolemap.api');
 
 function authenticate (req, res, appData, callback)
 {
@@ -114,6 +115,47 @@ function getFlavors (req, callback)
     callback(null, list);
 }
 
+function getUIUserRoleByTenant (userObj, callback)
+{
+    var userRoles = [global.STR_ROLE_USER];
+    if ((null == userObj) || (null == userObj.req)) {
+        callback(null, userRoles);
+        return;
+    }
+    userRoles =
+        commonUtils.getValueByJsonPath(userObj.req,
+                                       'session;userRole',
+                                       [global.STR_ROLE_USER]);
+    callback(null, userRoles);
+}
+
+function getExtUserRoleByTenant (userObj, callback)
+{
+    getUIUserRoleByTenant(userObj, function(uiRoles) {
+        if (-1 != uiRoles.indexOf(global.STR_ROLE_ADMIN)) {
+            callback(null, {'roles': [{'name': 'admin'}]});
+            return;
+        }
+        callback(null, {'roles': [{'name': 'Member'}]});
+    });
+}
+
+function getUIRolesByExtRoles (extRoles)
+{
+    var roles = [];
+    if ((null == extRoles) || (!extRoles.length)) {
+        return [global.STR_ROLE_USER];
+    }
+    var roleCnt = extRoles.length;
+    for (var i = 0; i < roleCnt; i++) {
+        roles.push(extRoles[i]['name']);
+    }
+    if (-1 != roles.indexOf('admin')) {
+        return [global.STR_ROLE_ADMIN];
+    }
+    return [global.STR_ROLE_USER];
+}
+
 function getOSHostList (req, callback)
 {
     var list = {"hosts": []};
@@ -173,4 +215,7 @@ exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.getToken = getToken;
 exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
+exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
+exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
+exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 
