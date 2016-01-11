@@ -455,9 +455,13 @@ function getV3Token (authObj, callback)
                 callback(null,
                         authObj['req']['session']['tokenObjs'][authObj['tenant']]['token']);
             } catch(e) {
-                logutils.logger.error("We do not have the token Obj in " +
-                                      "session yet:" + e);
-                callback(null, token);
+                if (null == authObj['tokenid']) {
+                    var token = getLastIdTokenUsed(authObj['req']);
+                    if (null != token) {
+                        authObj['tokenid'] = token.id;
+                    }
+                }
+                getV3TokenByAuthObj(authObj, callback);
             }
             return;
         }
@@ -593,6 +597,7 @@ function sendV3CurlGetReq (dataObj, callback)
 
     var cmd = 'curl -s -H "X-Auth-Token: ' + token + '" ' +
         authProto + '://' + authIP + ':' + authPort + reqUrl;
+
     exec(cmd, function(err, stdout, stderr) {
         callback(err, JSON.parse(stdout));
     });
@@ -725,15 +730,9 @@ function updateTokenIdForProject (req, tenantId, token)
     if (null == tenantId) {
         return;
     }
-    var projObj = getTokenIdByProject(req, tenantId);
-    if (projObj) {
-        try {
-            projObj['token'] = token.access.token;
-        } catch(e) {
-            logutils.logger.debug("In updateTokenIdForProject(), " +
-                                  "Got JSON parse error:" + e);
-            projObj['token'] = null;
-        }
+    var tokenObj = getTokenIdByProject(req, tenantId);
+    if (tokenObj) {
+        tokenObj = token;
     }
 }
 
@@ -789,12 +788,9 @@ function getV2Token (authObj, callback)
     });
 }
 
-function updateLastTokenUsed (req, data)
+function updateLastTokenUsed (req, token)
 {
-    if ((null != data) && (null != data.access) && 
-        (null != data.access.token)) {
-        req.session.last_token_used = data.access.token;
-    }
+    req.session.last_token_used = token;
 }
 
 function getTokenIdByProject (req, tenantName)
@@ -811,11 +807,8 @@ function getUserAuthData (req, tenantName, callback)
 {
     var token = getTokenIdByProject(req, tenantName);
     if (null == token) {
-        /* We did not get the token available, so redirect to login page */
-        commonUtils.redirectToLogout(req, req.res);
-        return;
+        var token = getLastIdTokenUsed(req);
     }
-    var lastTokenUsed = getLastIdTokenUsed(req);
     var authObj = {};
     authObj['tokenid'] = token.id;
     if (null == tenantName) {
@@ -823,13 +816,15 @@ function getUserAuthData (req, tenantName, callback)
     }
     authObj['tenant'] = tenantName;
     getUserAuthDataByAuthObj (authObj, function(err, data) {
-        if ((null != err) || (null == data)) {
+        if ((null != err) || (null == data) || (null == data.access) ||
+            (null == data.access.token)) {
             callback(err, data);
             return;
         }
-        updateTokenIdForProject(req, tenantName, data);
-        authApi.checkAndUpdateDefTenantToken(req, tenantName, data);
-        updateLastTokenUsed(req, data);
+        var token = data.access.token;
+        updateTokenIdForProject(req, tenantName, token);
+        updateDefTenantToken(req, tenantName, data);
+        updateLastTokenUsed(req, token);
         callback(null, data);
     });
 }
@@ -932,6 +927,10 @@ function getUserRoleByTenant (userObj, callback)
             (null != data['access']['user']['roles'])) {
             userTokenObj['roles'] = data['access']['user']['roles'];
             userTokenObj['tokenObj'] = data['access'];
+            if ((null != userObj['req']) && (null != tenant)) {
+                 updateTokenIdForProject(userObj['req'], tenant,
+                                         data['access']['token']);
+            }
             callback(null, userTokenObj);
         } else {
             callback(null, null);
@@ -950,7 +949,8 @@ function getUserRoleByAllTenants (username, password, tenantlist, callback)
     var tenantCnt = tenantlist.length;
     var userRoles = [global.STR_ROLE_USER];
 
-    for (var i = 0; i < tenantCnt; i++) {
+    /* Do only for the last tenant */
+    for (var i = tenantCnt - 1; i > tenantCnt - 2; i--) {
         if ((null != tenantlist[i]) && (null != tenantlist[i]['name'])) {
             tenantObjArr[i] = {'username': username, 'password': password,
                 'tenant': tenantlist[i]['name']};
@@ -992,7 +992,7 @@ function getUserRoleByAllTenants (username, password, tenantlist, callback)
 var makeAuthCB = {
     'v2.0': doV2Auth,
     'v3': doV3Auth
-}
+};
 
 function makeAuth (req, startIndex, lastErrStr, callback)
 {
@@ -1060,19 +1060,6 @@ function authenticate (req, res, appData, callback)
                 logutils.logger.error("Very much unexpected, we came here!!!");
                 errStr = "Unexpected event happened";
             }
-            commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                 global.CONTRAIL_LOGIN_ERROR,
-                                                 errStr, function() {
-            });
-            return;
-        }
-        var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
-        if ((true == multiTenancyEnabled) &&
-            (false == isAdminRoleInProjects(req.session.userRoles))) {
-            /* Logged in user is not admin in multi_tenancy mode,
-               so redirect to login page
-             */
-            errStr = "Only admin user is allowed to login"
             commonUtils.changeFileContentAndSend(res, loginErrFile,
                                                  global.CONTRAIL_LOGIN_ERROR,
                                                  errStr, function() {
@@ -1164,13 +1151,14 @@ function getUserRoleByProjectList (projects, userObj, callback)
 {
     var resTokenObjs = {};
     var userRole = global.STR_ROLE_USER;
-    getProjectDetails (projects, userObj, function(err, projs, tokenObjs) {
+    getProjectDetails(projects, userObj, function(err, projs, tokenObjs) {
         if ((null != err) || (null == projs)) {
             callback(null, tokenObjs);
             return;
         }
         var projCnt = projs.length;
-        for (var i = 0; i < projCnt; i++) {
+        /* Only the last project- default project */
+        for (var i = projCnt -1; i > projCnt - 2; i--) {
             try {
                 var projName =
                     commonUtils.getValueByJsonPath(projs[i],
@@ -1335,11 +1323,13 @@ function doV2Auth (req, callback)
         /* Now check the tenants attached to this user */
         req.session.last_token_used = data.access.token;
         getTenantListByToken(req, data.access.token, function(err, data) {
-            if ((null == data) || (null == data.tenants)) {
+            if ((null == data) || (null == data.tenants) ||
+                (!data.tenants.length)) {
                 req.session.isAuthenticated = false;
                 callback(messages.error.unauthorized_to_project);
                 return;
             }
+            data.tenants = [data.tenants[data.tenants.length - 1]];
             var projCount = data.tenants.length;
             if (!projCount) {
                 req.session.isAuthenticated = false;
@@ -1382,8 +1372,9 @@ function doV2Auth (req, callback)
                         req.session.userRoles =
                             userRoleListByTokenObjs(tokenObjs);
                         //setSessionTimeoutByReq(req);
-                        updateTokenIdForProject(req, defProject, data);
-                        updateLastTokenUsed(req, data);
+                        updateTokenIdForProject(req, defProject,
+                                                data.access.token);
+                        updateLastTokenUsed(req, data.access.token);
                         logutils.logger.info("Login Successful with tenants.");
                         callback(null);
                     });
@@ -1400,6 +1391,9 @@ function getV3DomainIfNotAvailable (domain)
         if (null == domain) {
             domain = global.KEYSTONE_V3_DEFAULT_DOMAIN;
         }
+    }
+    if (global.KEYSTONE_V2_DEFAULT_DOMAIN == domain) {
+        return global.KEYSTONE_V3_DEFAULT_DOMAIN;
     }
     return domain;
 }
@@ -1607,6 +1601,7 @@ function getDomainByTokenObjKey (tokenObjKey, req)
 
 function filterProjectList (req, projectList)
 {
+    return projectList;
     var filtProjects = {'projects': []};
     var adminProjs = buildAdminProjectListByReqObj(req);
     var projects = projectList['projects'];
@@ -1653,6 +1648,8 @@ function getProjectList (req, appData, callback)
                 return;
             }
             var filtProjects = filterProjectList(req, keystoneProjs);
+            callback(null, filtProjects);
+            return;
             var projects = keystoneProjs['projects'];
             var projCnt = projects.length;
             var tokenObjs = req.session.tokenObjs;
@@ -1667,15 +1664,26 @@ function getProjectList (req, appData, callback)
                         break;
                     }
                 }
-                if (false == found) {
+                if ((false == found) && (filtProjects['projects'].length > 0)) {
                     /* We did not find the project in our tokenObj, so get the
                      * token/role for this and update the tokenObjs
                      */
-                    tenantObjArr.push({'tenant': projects[i]['fq_name'][1],
+
+                    if (null != filtProjects['projects'][0]['fq_name']) {
+                        var tokenObj =
+                            req.session.tokenObjs[filtProjects['projects'][0]['fq_name'][1]];
+                        if (null != tokenObj) {
+                            var tokenId =
+                                commonUtils.getValueByJsonPath(tokenObj,
+                                                               'token;id',
+                                                               null);
+                            if (null != tokenId) {
+                                tenantObjArr.push({'tenant': projects[i]['fq_name'][1],
                                       'domain': projects[i]['fq_name'][0],
-                                      'req': req,
-                                      'tokenid':
-                                      req.session.tokenObjs[filtProjects['projects'][0]['fq_name'][1]].token.id});
+                                      'req': req, 'tokenid': tokenId});
+                            }
+                        }
+                    }
                 }
             }
             if (!tenantObjArr.length) {
@@ -1855,12 +1863,12 @@ function getAdminProjectList (req, appData, callback)
                     if (null == roles[i]['name']) {
                         continue;
                     }
-                    if (adminRoles[j].toUpperCase() == roles[i]['name'].toUpperCase()) {
+                    //if (adminRoles[j].toUpperCase() == roles[i]['name'].toUpperCase()) {
                         if (null == adminProjectObjs[domain]) {
                             adminProjectObjs[domain] = [];
                         }
                         adminProjectObjs[domain].push(key);
-                    }
+                    //}
                 }
             }
         }
@@ -2129,3 +2137,5 @@ exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
 exports.deleteAllTokens = deleteAllTokens;
+exports.getUserRoleByTenant = getUserRoleByTenant;
+exports.getDomainNameByUUID = getDomainNameByUUID;
