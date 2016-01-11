@@ -1400,7 +1400,20 @@ function getWebServerInfo (req, res, appData)
         serverObj['featurePkg'][activePkgs[i]] = true;
     }
 
-    commonUtils.handleJSONResponse(null, res, serverObj);
+    var project = req.param('project');
+    var tokenObjs = req.session.tokenObjs;
+    for (key in tokenObjs) {
+        var tokenId = tokenObjs[key]['token']['id'];
+        break;
+    }
+    var userObj = {'tokenid': tokenId, 'tenant': project, 'req': req};
+    var authApi = require('../common/auth.api');
+    authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
+        if ((null == err) && (null != roles)) {
+            serverObj['role'] = roles;
+        }
+        commonUtils.handleJSONResponse(null, res, serverObj);
+    });
 }
 
 function getUserRoleListPerTenant (req, res, callback)
@@ -1420,22 +1433,43 @@ function getUserRoleListPerTenant (req, res, callback)
         return;
     }
     if (null != project) {
-        try {
-            var roles = tokenObjs[project]['user']['roles'];
-        } catch(e) {
-            logutils.logger.error("Roles not found..Redirecting to login page");
-            redirectToLogout(req, res);
+        var roles =
+            commonUtils.getValueByJsonPath(tokenObjs[project],
+                                           'user;roles', null);
+        if (null != roles) {
+            var uiRoles = authApi.getUIRolesByExtRoles(req, roles);
+            userRolesObj[project] = uiRoles;
+            commonUtils.handleJSONResponse(null, res, userRolesObj);
             return;
         }
-        var uiRoles = authApi.getUIRolesByExtRoles(req, roles);
-        userRolesObj[project] = uiRoles;
-        commonUtils.handleJSONResponse(null, res, userRolesObj);
+        /* We did not find the project, so issue a new call to get the roles
+         */
+        var tokenObjs = req.session.tokenObjs;
+        for (key in tokenObjs) {
+            var tokenId = tokenObjs[key]['token']['id'];
+            break;
+        }
+        var userObj = {'tokenid': tokenId, 'tenant': project, 'req': req};
+        authApi.getExtUserRoleByTenant(userObj, function(error, tokenData) {
+            if ((null != error) || (null == tokenData)) {
+                logutils.logger.error("Roles not found.." +
+                                      "Redirecting to login page");
+                redirectToLogout(req, res);
+                return;
+            }
+            roles = tokenData['roles'];
+            var uiRoles = authApi.getUIRolesByExtRoles(req, roles);
+            userRolesObj[project] = uiRoles;
+            handleJSONResponse(null, res, userRolesObj);
+        });
         return;
     }
+    /* Request for all tokens */
     for (var key in tokenObjs) {
-        try {
-            var roles = tokenObjs[key]['user']['roles'];
-        } catch(e) {
+        var roles =
+            commonUtils.getValueByJsonPath(tokenObjs[key],
+                                           'user;roles', null);
+        if (null == roles) {
             logutils.logger.error("Roles not found for project " +
                                   key + " ..Redirecting to login page");
             redirectToLogout(req, res);
