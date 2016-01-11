@@ -144,6 +144,12 @@ function getUIRolesByExtRoles (req, extRoles)
     return getAuthMethod[req.session.loggedInOrchestrationMode].getUserRoleByAuthResponse(extRoles);
 }
 
+function getUserRoleByTenant (userObj, callback)
+{
+    var req = userObj['req'];
+    return getAuthMethod[req.session.loggedInOrchestrationMode].getUserRoleByTenant(userObj, callback);
+}
+
 function getCookieObjs (req, appData, callback)
 {
     return getAuthMethod[req.session.loggedInOrchestrationMode].getCookieObjs(req, appData, callback);
@@ -195,3 +201,5 @@ exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
 exports.deleteAllTokens = deleteAllTokens;
+exports.getUserRoleByTenant = getUserRoleByTenant;
+
