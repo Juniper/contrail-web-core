@@ -86,13 +86,13 @@ define(['underscore'], function (_) {
                         if(webServerInfo['orchestrationModel'].length == 1)
                             currPageHash = "mon_infra_dashboard";
                         else
-                            currPageHash = 'mon_net_dashboard';
+                            currPageHash = 'mon_networking_dashboard';
                     } else if(webServerInfo['featurePkg']['serverManager'] && !webServerInfo['featurePkg']['webController']) {
                         currPageHash = "setting_sm_clusters";
                     } else if($.inArray(roles['ADMIN'], webServerInfo['role']) > -1) {
                         currPageHash = "mon_infra_dashboard";
                     } else if ($.inArray(roles['TENANT'], webServerInfo['role']) > -1) {
-                        currPageHash = "mon_net_dashboard";
+                        currPageHash = "mon_networking_dashboard";
                     }
                 }
                 var currMenuObj = menuHandler.getMenuObjByHash(currPageHash);
