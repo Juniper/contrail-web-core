@@ -12,6 +12,19 @@ SIX_BACK='../../../../../..'
 GRUNT_DIR=./node_modules/grunt-cli
 GRUNT_BIN=$GRUNT_DIR/bin/grunt
 
+if [ $1 = 'set-env' ] ; then
+    if command -v nodejs > /dev/null; then
+      node_exec=nodejs;
+    elif command -v node > /dev/null; then
+      node_exec=node
+    else
+      echo "error: Failed dependencies: node/nodejs is needed";
+      exit;
+    fi;
+    # Set test specific environments.
+    $node_exec webroot/test/ui/js/tasks/setTestConfig.js "$@"
+fi
+
 if [ -d "$GRUNT_DIR" ]; then
     #List all feature directories from where we need to run the test cases
     featureDirectories=(monitor/infra monitor/tenant_network js config/vn)
@@ -95,23 +108,10 @@ if [ -d "$GRUNT_DIR" ]; then
         fi
     done
 else
-    echo -e "\033[31m<<<<<<<<<<<<<<< Error!! >>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
-    echo "Unable to find local node_modules for Grunt."
+    echo -e "\033[31m<<<<<<<<<<<<<<< Warning! >>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
+    echo "Unable to find local node_modules for Grunt. UT execution requires Grunt modules."
+    echo "To setup UT enviornment: "
     echo "Run make fetch-pkgs-dev from contrail-web-core repo; and do prod-env or dev-env with respective 'REPO=' arg set."
     echo -e "\033[31m<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
-    exit 1
-fi
-
-if [ $1 = 'set-env' ] ; then
-    if command -v nodejs > /dev/null; then
-      node_exec=nodejs;
-    elif command -v node > /dev/null; then
-      node_exec=node
-    else
-      echo "error: Failed dependencies: node/nodejs is needed";
-      exit;
-    fi;
-
-    # Set test specific environments.
-    $node_exec webroot/test/ui/js/tasks/setTestConfig.js "$@"
+    exit 0
 fi

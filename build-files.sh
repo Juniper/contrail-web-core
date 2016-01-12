@@ -13,7 +13,7 @@ else
 fi;
 
 # r.js binary file used for optimization.
-rjs_bin=./node_modules/requirejs/bin/r.js
+rjs_bin=./../contrail-web-core/node_modules/requirejs/bin/r.js
 
 # Path where the build script is located
 build_path=webroot/build/
