@@ -324,16 +324,8 @@ define(['underscore'], function (_) {
                     minMaxDiff = axisMin
                 if(axisMax == null)
                     axisMax = 1;
-                else
-                    axisMax += minMaxDiff*0.1;
                 if(axisMin == null)
                     axisMin = 0;
-                else
-                    axisMin -= minMaxDiff*0.1;
-
-                // if (axisMax <= 0) {
-                //     axisMax = 1;
-                // }
             } else {
                 axisMax = 1;
                 axisMin = 0;
