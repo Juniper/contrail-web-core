@@ -139,9 +139,9 @@ define([
 
         chartSVG = d3.select($(chartSelector)[0]).append("svg")
             .attr("class", "zoom-scatter-chart")
-            .attr("width", width + margin.left + margin.right + maxCircleRadius)
-            .attr("height", height + margin.top + margin.bottom)
-            .attr("viewbox", '0 0 ' + (width + margin.left + margin.right + maxCircleRadius) + ' ' + (height + margin.top + margin.bottom + maxCircleRadius))
+            .attr("width", width + margin.left + margin.right + (2*maxCircleRadius))
+            .attr("height", height + margin.top + margin.bottom + (2*maxCircleRadius))
+            .attr("viewbox", '0 0 ' + (width + margin.left + margin.right + (2*maxCircleRadius)) + ' ' + (height + margin.top + margin.bottom + (2*maxCircleRadius)))
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             .call(chartView.zm)
@@ -163,14 +163,14 @@ define([
         }
 
         chartSVG.append("rect")
-            .attr("width", width + maxCircleRadius)
-            .attr("height", height)
+            .attr("width", width + (2*maxCircleRadius))
+            .attr("height", height + (2*maxCircleRadius))
             .append("g")
-            .attr("transform", "translate(" + maxCircleRadius + ",0)")
+            .attr("transform", "translate(" + maxCircleRadius + "," + maxCircleRadius + ")")
 
         chartSVG.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(" + maxCircleRadius + "," + height + ")")
+            .attr("transform", "translate(" + maxCircleRadius + "," + (height + maxCircleRadius) + ")")
             .call(chartModel.xAxis)
             .selectAll("text")
             .attr("x", 0)
@@ -178,7 +178,7 @@ define([
 
         chartSVG.append("g")
             .attr("class", "y axis")
-            .attr("transform", "translate(" + maxCircleRadius + ",0)")
+            .attr("transform", "translate(" + maxCircleRadius + "," + maxCircleRadius + ")")
             .call(chartModel.yAxis)
             .selectAll("text")
             .attr("x", -8)
@@ -186,8 +186,8 @@ define([
 
         viewObjects = chartSVG.append("svg")
             .attr("class", "objects")
-            .attr("width", width + maxCircleRadius)
-            .attr("height", height + maxCircleRadius);
+            .attr("width", width + (2*maxCircleRadius))
+            .attr("height", height + (2*maxCircleRadius));
 
         chartSVG.append("text")
             .attr("class", "x label")
@@ -268,7 +268,7 @@ define([
                         .attr("y", 0);
 
                     chartSVG.selectAll("circle").attr("transform", function (d) {
-                        return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
+                        return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius) + "," + (chartModel.yScale(d[chartConfig.yField]) + maxCircleRadius) + ")";
                     });
                 }, true);
             d3.event.stopPropagation();
@@ -510,7 +510,7 @@ define([
         if(headerElem != null && cfDataSource != null) {
             var filteredCnt = cfDataSource.getFilteredRecordCnt(),
                 totalCnt = cfDataSource.getRecordCnt();
-            var infoElem = $(headerElem);
+            var infoElem = ifNull($($(headerElem).contents()[1]),$(headerElem));
             var innerText = infoElem.text().split('(')[0].trim();
             if (cfDataSource.getFilter('chartFilter') == null) {
                 //Hide filter container
@@ -1068,7 +1068,7 @@ define([
     function getChartConfig(selector, chartOptions) {
         var margin = $.extend(true, {}, {top: 20, right: 5, bottom: 50, left: 50}, chartOptions['margin']),
             chartSelector = $(selector).find('.chart-container'),
-            width = $(chartSelector).width() - 10,
+            width = $(chartSelector).width() - 20,
             height = 275;
 
         var chartViewConfig = {
