@@ -94,7 +94,9 @@ define([
             var orClauses = this.model().collection,
                 orClause = this.model();
 
-            orClauses.remove(orClause);
+            if (orClauses.length > 1) {
+                orClauses.remove(orClause);
+            }
         },
 
         getOrClauseText: function(data) {
