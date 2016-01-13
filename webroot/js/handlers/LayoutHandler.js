@@ -15,7 +15,14 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
             getWebServerInfo(function(webServerInfo) {
                 menuHandler.loadMenu(webServerInfo);
                 menuHandler.handleSideMenu();
-                contentHandler = new ContentHandler();
+                /**
+                 * If there is existing instance of contentHandler, use it. Else create new instance.
+                 * this will preserve the initFeatureModuleMap and prevent require-ing the same feature modules again
+                 * when layoutHandler is loaded multiple times.
+                 */
+                if (typeof contentHandler === 'undefined') {
+                    contentHandler = new ContentHandler();
+                }
 
                 $.when.apply(window, [menuHandler.deferredObj]).done(function () {
                     self.onHashChange({}, $.bbq.getState());
