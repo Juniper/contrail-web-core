@@ -863,7 +863,7 @@
             <h5 class="margin-0-0-10">{{viewConfig.title}}</h5>
         {{/if}}
         {{#each viewConfig.rows}}
-            <div class="section-content" >
+            <div class="section-content" data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}">
                 <div class="row-fluid margin-0-0-5">
                     {{#each this.columns}}
                         <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" style="{{this.viewConfig.style}}"
@@ -1559,7 +1559,7 @@
             <div class="span10">
             {{#each viewConfig.rows}}
                 <div class="row-fluid or-clause-header">
-                    <p class="or-clause-text span10" data-bind="text: getOrClauseText()($data)">OR Text string</p>
+                    <p class="or-clause-text span10" data-bind="text: getOrClauseText()($data)"></p>
                     {{#each rowActions}}
                         <a class="collection-actions collection-actions-{{@index}} pull-right" data-bind='click: {{onClick}}'>
                             <i class="pull-right {{iconClass}}"></i>
@@ -1578,7 +1578,10 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-text-view-template">
-    <span class="{{viewConfig.class}}">{{viewConfig.value}}</span>
+    <span class="{{viewConfig.class}}"
+          data-bind="{{#if viewConfig.click}}click: {{viewConfig.click}}, {{/if}}{{#if viewConfig.text}}text: {{viewConfig.text}} {{/if}}">
+        {{viewConfig.value}}
+    </span>
 </script>
 
 <script type="text/x-handlebars-template" id="core-detail-foundation-template">

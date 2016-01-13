@@ -51,7 +51,9 @@ define([
             var andClauses = this.model().collection,
                 andClause = this.model();
 
-            andClauses.remove(andClause);
+            if (andClauses.length > 1) {
+                andClauses.remove(andClause);
+            }
         },
 
         getNameOptionList: function(viewModel) {
@@ -110,7 +112,10 @@ define([
         deleteFilterAndClause: function() {
             var andClauses = this.model().collection,
                 andClause = this.model();
-            andClauses.remove(andClause);
+
+            if (andClauses.length > 1) {
+                andClauses.remove(andClause);
+            }
         },
 
         getWhereOperatorOptionList: function (viewModel){

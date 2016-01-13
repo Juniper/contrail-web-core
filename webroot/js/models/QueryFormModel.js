@@ -216,6 +216,21 @@ define([
             return selectStringCheckedFields.indexOf("T=") != -1;
         },
 
+        toggleAdvancedFields: function() {
+            var showAdvancedOptions = this.model().get('show_advanced_options');
+            this.show_advanced_options(!showAdvancedOptions);
+        },
+
+        getAdvancedOptionsText: function() {
+            var showAdvancedOptions = this.show_advanced_options();
+
+            if (!showAdvancedOptions) {
+                return 'Show Advanced Options';
+            } else {
+                return 'Hide Advanced Options';
+            }
+        },
+
         getSortByOptionList: function(viewModel) {
             var validSortFields = this.select_data_object().checked_fields(),
                 invalidSortFieldsArr = ["T=" , "UUID"],
@@ -233,7 +248,8 @@ define([
             var modelAttrs = this.model().attributes,
                 attrs4Server = {},
                 ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object',
-                                 'filter_data_object', 'filter_and_clauses', 'sort_by', 'sort_order', 'log_category', 'log_type', 'is_request_in_progress'];
+                                 'filter_data_object', 'filter_and_clauses', 'sort_by', 'sort_order', 'log_category', 'log_type', 'is_request_in_progress',
+                                 'show_advanced_options'];
 
             for (var key in modelAttrs) {
                 if(modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) == -1) {

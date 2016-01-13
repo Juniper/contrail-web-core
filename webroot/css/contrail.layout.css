@@ -2349,6 +2349,7 @@ button.btn:active {
 .margin-0-10 {margin: 0 10px !important;}
 .margin-10-0-0 {margin:10px 0 0 !important;}
 .margin-0-10-0-0 { margin: 0 10px 0 0 !important; }
+.margin-5-10-0-0 { margin: 5px 10px 0 0 !important; }
 .margin-0-0-10 {margin:0 0 10px !important;}
 .margin-15 {margin:15px !important;}
 .margin-15-0 {margin:15px 0 !important;}
@@ -2418,7 +2419,8 @@ button.btn:active {
 .width-1120 {width:1120px !important;}
 
 /* word-break framework */
-.word-break-normal {word-break: normal !important;}
+.word-break-normal { word-break: normal !important; }
+.word-break-break-word { word-break: break-word !important; }
 
 /* cursor framework */
 .cursor-default {cursor: default !important;}
