@@ -1261,6 +1261,7 @@ function constructSelect2(self, defaultOption, args) {
                 }
                 if(option.dataSource.requestType &&  (option.dataSource.requestType).toLowerCase() == 'post') {
                     ajaxConfig['type'] = 'post';
+                    ajaxConfig['contentType'] = "application/json; charset=utf-8";
                     ajaxConfig['data'] = option.dataSource.postData;
                 }
                 $.ajax(ajaxConfig);
