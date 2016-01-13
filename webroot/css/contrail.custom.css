@@ -910,7 +910,7 @@ a.selectAllLink:hover {
 }
 .slick-row-detail-container .row-fluid, .slick-cell .row-fluid [class*="span"]{
 	min-height: 20px;
-	font-size: 12px;
+	font-size: 11px;
 }
 .slick-row-detail-container label {
 	font-size: 12px;
@@ -924,14 +924,21 @@ a.selectAllLink:hover {
 .slick-row-detail .slick-cell, .slick-row-detail .row-fluid, .slick-row-detail .item-list > li {
     background-color: #FFF
 }
+.slick-row-detail .group-detail-container h6 {
+    font-size: 12px;
+}
+.slick-row-detail .group-detail-container ul.item-list li {
+    padding: 0 5px;
+}
 .slick-row-detail .slick-cell {
     padding: 10px 35px;
 }
-.slick-row-detail  .row-fluid, .slick-row-detail .row-fluid [class*="span"] {
+.slick-row-detail .row-fluid, .slick-row-detail .row-fluid [class*="span"] {
     min-height:20px;
 }
 .slick-row-detail  .row-fluid label {
     margin-bottom:0px;
+    font-size: 12px;
 }
 .group-detail-container h6 {
     padding: 0 0 5px;
@@ -942,7 +949,7 @@ a.selectAllLink:hover {
 .group-detail-container ul.item-list li {
     border: none;
     padding: 5px;
-    border-bottom: 1px solid #EEEEEE;
+    border-bottom: 1px solid #F1F1F1;
 }
 .group-detail-container ul.item-list li:last-child {
     border: none;

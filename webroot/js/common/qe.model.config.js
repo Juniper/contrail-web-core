@@ -31,7 +31,8 @@ define([
                 "select_data_object": getSelectDataObject(),
                 "where_data_object": {},
                 "filter_data_object": {},
-                "is_request_in_progress": false
+                "is_request_in_progress": false,
+                "show_advanced_options": false
             };
 
             var modelConfig = $.extend(true, {}, defaultModelConfig, customModelConfig);
