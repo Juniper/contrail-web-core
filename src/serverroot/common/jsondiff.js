@@ -328,6 +328,12 @@ var arrayDiffpatcher = jsondiffpatch.create({
 
 function getConfigArrayDelta (type, oldArrayJson, newArrayJson)
 {
+    if (null == oldArrayJson) {
+        oldArrayJson = [];
+    }
+    if (null == newArrayJson) {
+        newArrayJson = [];
+    }
     var resultJSON = {'addedList': [], 'deletedList': []};
     var fieldsType = getConfigFieldsByType(type, true);
     if (null != fieldsType) {

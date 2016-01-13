@@ -310,6 +310,9 @@ Handlebars.registerHelper('printJSON', function(jsonObject) {
 });
 
 Handlebars.registerHelper ('truncate', function (str, len) {
+    if (typeof(str) == "object") {
+            str = JSON.stringify(str);
+    }
     if (str.length > len && str.length > 0) {
         var new_str = str + " ";
         new_str = str.substr (0, len);
