@@ -319,28 +319,28 @@ define(['underscore'], function (_) {
                 axisMin = d3.min(chartData, function (d) {
                         return +d[fieldName];
                     });
-                var minMaxDiff = axisMax - axisMin;
-                if(minMaxDiff == 0)
-                    minMaxDiff = axisMin
-                if(axisMax == null)
-                    axisMax = 1;
-                else
-                    axisMax += minMaxDiff*0.1;
-                if(axisMin == null)
-                    axisMin = 0;
-                else
-                    axisMin -= minMaxDiff*0.1;
 
-                // if (axisMax <= 0) {
-                //     axisMax = 1;
-                // }
+                if (axisMax == null) {
+                    axisMax = 1;
+                } else {
+                    axisMax += axisMax * 0.1;
+                }
+
+                if (axisMin == null) {
+                    axisMin = 0;
+                } else {
+                    axisMin -= axisMax * 0.1;
+
+                    if(axisMin <= 0) {
+                        axisMin = 0;
+                    }
+                }
             } else {
                 axisMax = 1;
                 axisMin = 0;
             }
 
             if (forceAxis) {
-                // return forceAxis;
                 if (axisMin > forceAxis[0]) {
                     axisMin = forceAxis[0];
                 }
