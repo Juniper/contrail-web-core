@@ -114,6 +114,11 @@ define([
                     postData['chunk'] = 1;
                     pAjaxConfig['data'] = JSON.stringify(postData);
                 }
+
+                if(contrail.checkIfExist(pUrlParams['firstCount'])) {
+                    pUrlParams['count'] = pUrlParams['firstCount'];
+                }
+
                 pAjaxConfig['url'] = pUrl.split('?')[0] + '?' + $.param(pUrlParams);
                 if (pCompleteCallback != null) {
                     pCompleteCallback(pRequestCompleteResponse);
@@ -124,6 +129,12 @@ define([
 
         function setNextUrl(lastKey) {
             pUrlParams['lastKey'] = lastKey;
+
+            if(contrail.checkIfExist(pUrlParams['nextCount']) && pUrlParams['count'] !== pUrlParams['nextCount']) {
+                pUrlParams['firstCount'] = pUrlParams['count'];
+                pUrlParams['count'] = pUrlParams['nextCount'];
+            }
+
             pAjaxConfig['url'] = pUrl.split('?')[0] + '?' + $.param(pUrlParams);
         }
 
