@@ -15,6 +15,10 @@
         <define>proxyapi</define>
         <path>./proxy.api</path>
     </require>
+    <require>
+        <define>alarmsApi</define>
+        <path>./alarms.api.js</path>
+    </require>
     <item>
         <url>/api/service/networking/device-status/:ip</url>
         <method>post</method>
@@ -29,6 +33,24 @@
         <method>get</method>
         <feature>proxy</feature>
         <callback>proxyapi.forwardProxyRequest</callback>
+    </item>
+    <item>
+        <url>/api/tenant/monitoring/alarms</url>
+        <method>get</method>
+        <feature>alarms</feature>
+        <callback>alarmsApi.getAlarms</callback>
+    </item>
+    <item>
+        <url>/api/tenant/monitoring/alarmtypes</url>
+        <method>get</method>
+        <feature>alarms</feature>
+        <callback>alarmsApi.getAlarmTypes</callback>
+    </item>
+    <item>
+        <url>/api/tenant/monitoring/ackalarms</url>
+        <method>post</method>
+        <feature>alarms</feature>
+        <callback>alarmsApi.ackAlarms</callback>
     </item>
 </urlLists>
 
