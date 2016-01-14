@@ -1107,7 +1107,6 @@ margin-right: 15px;
 	right:10px!important;
 	min-width:170px;
 }
-
 /*
  Editable Slick Grid
 */
@@ -1311,7 +1310,7 @@ label.jqInvalid{
 }
 .custom-combobox .ui-autocomplete-input {
 	margin: 0;
-	padding: 0 11px 0 5px;
+	padding: 0 28px 0 5px;
 	height: 28px;
     min-height: 28px;
 	color: #787878;
@@ -1333,6 +1332,9 @@ label.jqInvalid{
 .select2-container[class*="span"] {
 	min-height: 26px;
 	border: 1px solid #dadada;
+}
+.select2-container .select2-choice {
+    padding: 0 0 0 5px;
 }
 .select2-container .select2-choice > .select2-chosen{
 	margin-right: 17px;
@@ -1356,6 +1358,7 @@ label.jqInvalid{
 .select2-container .select2-choice .select2-arrow {
 	border-left: 1px solid #fff;
 	background: none;
+    width: 14px;
 }
 .select2-container .select2-choice .select2-arrow b {
 	background: none !important;
@@ -1368,7 +1371,7 @@ label.jqInvalid{
     text-decoration: inherit;
     font-size: 14px;
     color: #393939;
-    padding-left: 0.40em;
+    padding-right: 5px;
     content: "\f0d7";
 }
 .select2-container.select2-dropdown-open .select2-choice .select2-arrow b:before {
