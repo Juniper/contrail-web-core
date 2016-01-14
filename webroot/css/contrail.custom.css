@@ -3440,9 +3440,6 @@ div.vis-network canvas{
     cursor:move;
 }
 
-#mynetwork, .graph-canvas{
- height:350px !important;
-}
 #termCollection tbody tr:nth-child(4n+3) td,
 #termCollection tbody tr:nth-child(4n+4) td{
     background: #fdfdfd;
