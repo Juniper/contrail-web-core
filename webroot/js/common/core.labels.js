@@ -192,6 +192,19 @@ define([
         this.QE_RECORD_DETAILS_MODAL_SUFFIX = '-record-details-modal';
 
         this.QE_FILTER_MODAL_SUFFIX = '-filter-modal';
+
+        //Alarms labels
+        this.ALARMS_BREADCRUMB_DROPDOWN = "alarms-breadcrumb-dropdown";
+        this.ALARMS_LIST_ID = 'alarms-list-view';
+        this.MONITOR_ALARMS_PAGE_ID = "monitor-alarms-page";
+        this.ALARMS_GRID_ID = "monitor-alarms-grid";
+        this.TITLE_ALARMS = "Alarms Dashboard";
+        this.TITLE_ALARMS_SUMMARY = "Alarms";
+        this.MONITOR_ALARM_LIST_ID = "monitor-alarm-list";
+        this.MONITOR_ALARM_LIST_VIEW_ID = "monitor-alarm-list-view";
+        this.TITLE_ACKNOWLEDGE = 'Acknowledge';
+        this.TITLE_ALARM_HISTORY = 'Alarm History';
+        this.TITLE_ALARM_DETAILS = 'Alarm Details';
     };
 
     function capitalizeSentence(sentence) {

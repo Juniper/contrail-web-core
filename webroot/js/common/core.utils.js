@@ -783,7 +783,7 @@ define(['underscore'], function (_) {
                         if(contrail.checkIfExist(globalObj.webServerInfo.featurePkg.webStorage) && globalObj.webServerInfo.featurePkg.webStorage == true)
                             nodeListModelResources = nodeListModelResources.concat(swu.getNodeListModelsForAlerts());
                         if(self.getAlarmsFromAnalytics) {
-                            require(['monitor/alarms/ui/js/views/AlarmGridView'], function(AlarmGridView) {
+                            require(['js/views/AlarmGridView'], function(AlarmGridView) {
                                 var alarmGridView = new AlarmGridView({
                                     el:$("#" + modalId).find('#' + formId),
                                     viewConfig:{}
@@ -808,7 +808,7 @@ define(['underscore'], function (_) {
                     });
             } else {
                 if(self.getAlarmsFromAnalytics) {
-                    require(['monitor/alarms/ui/js/views/AlarmGridView'], function(AlarmGridView) {
+                    require(['js/views/AlarmGridView'], function(AlarmGridView) {
                         var alarmGridView = new AlarmGridView({
                             el:$("#" + modalId).find('#' + formId),
                             viewConfig:{}

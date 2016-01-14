@@ -314,6 +314,15 @@ define([
         this.D3_COLOR_CATEGORY7 = [ '#1f77b4' , '#ff7f0e', '#2ca02c', '#a55194', '#9e9ac8', '#6baed6', '#bcbd22'];
 
         // QE Constants - End
+
+        //Alarm constants
+        this.URL_ALARM_DETAILS_IN_CHUNKS =
+            '/api/tenant/monitoring/alarms?count={0}&startAt={1}';
+
+        this.get = function () {
+            var args = arguments;
+            return cowu.getValueFromTemplate(args);
+        };
     };
     return CoreConstants;
 });
