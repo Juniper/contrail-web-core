@@ -987,7 +987,7 @@ a.selectAllLink:hover {
 	word-break:break-all;
 	white-space: normal;
 }
-.slick-cell.cell-hyperlink-blue{
+.slick-cell.cell-hyperlink-blue, .slick-cell .cell-hyperlink-blue{
 	color: #3182bd;
 	cursor: pointer;
 }
