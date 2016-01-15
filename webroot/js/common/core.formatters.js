@@ -168,6 +168,12 @@ define([
                 default: return function(d) { return d; }
             }
         };
+
+        this.formatElementName = function(options) {
+            var elementNameTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_NAME);
+
+            return elementNameTemplate(options);
+        };
     };
     return CoreFormatters;
 });

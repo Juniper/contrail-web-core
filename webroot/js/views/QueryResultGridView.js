@@ -96,6 +96,7 @@ define([
                     checkboxSelectable: false,
                     fixedRowHeight: contrail.checkIfExist(gridOptions.fixedRowHeight) ? gridOptions.fixedRowHeight : 30,
                     lazyLoading: true,
+                    forceFitColumns: false,
                     defaultDataStatusMessage: false
                 },
                 dataSource: {
