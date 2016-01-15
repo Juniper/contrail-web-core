@@ -1,0 +1,9 @@
+Verified+2: opencontrail-admin <ci-admin@opencontrail.org>
+Verified+2: Zuul <zuul@lists.opencontrail.org>
+Approved+1: Rahul <rahuls@juniper.net>
+Code-Review+2: Rahul <rahuls@juniper.net>
+Submitted-by: Zuul <zuul@lists.opencontrail.org>
+Submitted-at: Fri, 15 Jan 2016 07:27:15 -0800
+Reviewed-on: https://review.opencontrail.org/16317
+Project: Juniper/contrail-web-core
+Branch: refs/heads/master
