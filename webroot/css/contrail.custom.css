@@ -866,7 +866,10 @@ a.selectAllLink:hover {
 .grid-load-status p{
 	margin: 0;
 }
-.grid-load-status p.status{
+.grid-load-status p.status {
+    color: #777777;
+}
+.grid-load-status p.status .hyperlink{
 	color: #3182bd;
 }
 .grid-load-status p.error{
