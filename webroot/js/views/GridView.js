@@ -93,34 +93,40 @@ define([
             });
 
             function searchFilter(item, args) {
+                var returnFlag = false;
+
                 if (args.searchString == "") {
-                    return true;
+                    returnFlag = true;
                 } else {
-                    var returnFlag = false;
                     $.each(args.searchColumns, function (key, val) {
                         var queryString = String(item[val.field]);
-                        if (typeof val.formatter !== 'undefined') {
+                        if (contrail.checkIfFunction(val.formatter)) {
                             queryString = String(val.formatter(0, 0, 0, 0, item));
                         }
-                        if (typeof val.searchFn !== 'undefined') {
+                        if (contrail.checkIfFunction(val.searchFn)) {
                             queryString = String(val.searchFn(item));
                         }
+
+                        var argSearchStr = args.searchString.trim().toLowerCase(),
+                            queryStrLower = queryString.toLowerCase();
+
                         //extending search to comma separted input values
-                        if (args.searchString.indexOf(',') === -1) {
-                            if (queryString.toLowerCase().indexOf(args.searchString.trim().toLowerCase()) != -1) {
+                        if (argSearchStr.indexOf(',') === -1) {
+                            if (queryStrLower.indexOf(argSearchStr) != -1) {
                                 returnFlag = true;
                             }
                         } else {
-                            var searchStrArry = args.searchString.split(',');
-                            for (var i = 0; i < searchStrArry.length; i++) {
-                                if (searchStrArry[i] != '' && queryString.toLowerCase().indexOf(searchStrArry[i].trim().toLowerCase()) != -1) {
+                            var searchStrArray = args.searchString.split(',');
+                            for (var i = 0; i < searchStrArray.length; i++) {
+                                var searchStr = searchStrArray[i].trim().toLowerCase();
+                                if (searchStrArray[i] != '' && (queryStrLower.indexOf(searchStr)) != -1) {
                                     returnFlag = true;
                                 }
                             }
                         }
                     });
-                    return returnFlag;
                 }
+                return returnFlag;
             };
 
             function startAutoRefresh(refreshPeriod) {

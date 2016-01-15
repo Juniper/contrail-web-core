@@ -50,9 +50,9 @@ $node_exec $rjs_bin -o $core_build_file
 
 echo "Post Build additional changes: "
 # Manually moving following views due to error in minification. will use the source file for now.
-echo "GridView.js: Replacing minified GridView with original source."
-mv $built_path/js/views/GridView.js $built_path/js/views/GridView.min.js
-cp webroot/js/views/GridView.js $built_path/js/views/GridView.js
+#echo "GridView.js: Replacing minified GridView with original source."
+#mv $built_path/js/views/GridView.js $built_path/js/views/GridView.min.js
+#cp webroot/js/views/GridView.js $built_path/js/views/GridView.js
 # Workaround for vis.min.js taking too much time in r.js.
 echo "vis-v4.9.0: Copying original minified version"
 mkdir -p $built_path/assets/vis-v4.9.0/js
