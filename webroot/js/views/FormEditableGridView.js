@@ -8,8 +8,8 @@ define([
 ], function (_, ContrailView) {
     var FormEditableGridView = ContrailView.extend({
         render: function () {
-            var editableGridTmpl = contrail.getTemplate4Id(cowc.TMPL_EDITABLE_GRID_VIEW),
-                viewConfig = this.attributes.viewConfig,
+            var viewConfig = this.attributes.viewConfig,
+                editableGridTmpl = contrail.getTemplate4Id((viewConfig.templateId) ? viewConfig.templateId: cowc.TMPL_EDITABLE_GRID_VIEW),
                 columns = viewConfig.columns,
                 path = viewConfig[cowc.KEY_PATH],
                 model = this.model,

@@ -921,15 +921,16 @@
             </div>
         </div>
         <div class="row-fluid form-element">
-            <div class="input-append inset span12">
                 {{#IfCompare type 'password' operator='==='}}
-                    <input type="{{type}}" name="{{id}}" class="span12 {{class}}"
-                        data-bind="
-                            {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
-                            value: {{viewConfig.dataBindValue}},
-                            event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
-                    />
-                    <span class="add-on input-type-toggle-action"><i class="icon-eye-open"></i></span>
+            <div class="input-append inset span12">
+                <input type="{{type}}" name="{{id}}" class="span12 {{class}}"
+                            data-bind="
+                                {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                                value: {{viewConfig.dataBindValue}},
+                                event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
+                        />
+                <span class="add-on input-type-toggle-action"><i class="icon-eye-open"></i></span>
+            </div>
                 {{else}}
                     <input type="{{type}}" name="{{id}}" placeholder="{{viewConfig.placeholder}}" class="{{class}}"
                         data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -937,7 +938,6 @@
                         event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
                     />
                 {{/IfCompare}}
-            </div>
             <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
         </div>
     </div>
@@ -945,8 +945,8 @@
 
 <script type="text/x-handlebars-template" id="core-editable-grid-input-view-template">
         <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-            <div class="input-append editable-grid-input-append inset span12">
                 {{#IfCompare type 'password' operator='==='}}
+            <div class="input-append editable-grid-input-append inset span12">
                     <input type="{{type}}" name="{{id}}" class="span12 {{class}}"
                         data-bind="
                             {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -954,6 +954,7 @@
                             event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) } }"
                     />
                     <span class="add-on input-type-toggle-action"><i class="icon-eye-open"></i></span>
+            </div>
                 {{else}}
                     <input type="{{type}}" name="{{name}}" class="{{class}}" placeholder="{{viewConfig.placeholder}}"
                         data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
@@ -961,7 +962,6 @@
                             event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data)} }"
                     />
                 {{/IfCompare}}
-            </div>
         </div>
 </script>
 
@@ -1463,6 +1463,58 @@
     {{/each}}
 </script>
 
+<script type="text/x-handlebars-template" id="core-editable-grid-action-view-template">
+    {{#IfCompare label null operator='!='}}
+    <label style="margin:0px">{{label}}</label>
+    {{/IfCompare}}
+    <table class="contrail-editable-grid-table" {{#if width}} width='{{width}}' {{/if}}>
+        <thead style="background:#eeeeee">
+        <tr>
+            {{#each columns}}
+                <th class="{{this.class}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }">{{this.name}}</th>
+            {{/each}}
+
+                {{#each gridActions}}
+                <th>
+    <div class=" margin-10-0-0 pull-right">
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}</a>
+    </div>
+    </th>
+    {{/each}}
+        </tr>
+        </thead>
+        <tbody data-bind="foreach: {{collection}}">
+        <tr class="data-row">
+            {{#each columns}}
+            <td id="{{elementId}}" class="data-cell"
+                style="{{#if viewConfig.verticalAlign}}
+                            vertical-align:{{viewConfig.verticalAlign}}
+                        {{/if}}"
+            ></td>
+            {{/each}}
+            {{#each rowActions}}
+            <td class="action-cell"
+                style="{{#if verticalAlign}}
+                          vertical-align:{{verticalAlign}}
+                       {{/if}}">
+                <a data-bind='click: {{this.onClick}}'>
+                    <i class="{{this.iconClass}}"></i>
+                </a>
+            </td>
+            {{/each}}
+        </tr>
+        <tr class="error-row">
+            {{#each columns}}
+            <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+            {{/each}}
+            {{#each rowActions}}
+            <td></td>
+            {{/each}}
+        </tr>
+        </tbody>
+    </table>
+
+</script>
 <script type="text/x-handlebars-template" id="core-collection-view-template">
     <div class="row-fluid">
         <table class="collection-table">
@@ -1561,6 +1613,115 @@
     {{/if}}
 </script>
 
+<script type="text/x-handlebars-template" id="core-collection-view-grid-action-heading-template">
+    {{#IfCompare viewConfig.label null operator='!='}}
+    <label style="margin:0px">{{viewConfig.label}}</label>
+    {{/IfCompare}}
+    <table class="contrail-editable-grid-table">
+        <thead>
+        <tr>
+        <th style="min-width:15px">&nbsp;</th>
+            {{#each viewConfig.rows.0.columns}}
+            <th class="{{this.class}}" data-bind="style: {width: '{{width}}px' }">
+                {{this.name}}
+            </th>
+            {{/each}}
+                {{#each viewConfig.gridActions}}
+                <th class="action-cell">
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
+            <i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}
+        </a>
+        </th>
+    {{/each}}
+        </tr>
+        </thead>
+        <tbody data-bind="foreach: {{viewConfig.collection}}">
+
+        <tr class="data-row">
+                    <td style="min-width:15px" onclick="
+
+$(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('icon-caret-down');$(this).children('i').toggleClass('icon-caret-right');"><i class="icon-caret-right toggleDetailIcon " ></i></td>
+            {{#each viewConfig.rows.0.columns}}
+
+            <td id="{{elementId}}"
+                {{#IfCompare viewConfig.colSpan null operator='!='}}
+                    colspan="{{viewConfig.colSpan}}"
+                {{/IfCompare}}
+                class="data-cell" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                style: {width: '{{width}}px' }">
+            </td>
+            {{/each}}
+
+            {{#each viewConfig.rows.0.rowActions}}
+            <td class="action-cell">
+                <a data-bind='click: {{this.onClick}}'>
+                    <i class="{{this.iconClass}}"></i>
+                </a>
+            </td>
+            {{/each}}
+        </tr>
+        <tr class="error-row">
+            {{#each viewConfig.rows.0.columns}}
+            <td class="error-cell">
+                <span class="help-block red"
+                    data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
+                </span>
+            </td>
+            {{/each}}
+        </tr>
+
+<tr class="collapsibleFamilyattributes" style="display:none">
+<td  colspan="{{viewConfig.rows.1.columns.0.viewConfig.colSpan}}">
+
+        <!--Child Control -->
+<table >
+
+
+        <tr class="data-row">
+            {{#each viewConfig.rows.1.columns}}
+            <td id="{{elementId}}"
+                {{#IfCompare viewConfig.colSpan null operator='!='}}
+                    colspan="{{viewConfig.colSpan}}"
+                {{/IfCompare}}
+                class="data-cell" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                style: {width: '{{width}}px' }">
+            </td>
+            {{/each}}
+
+            {{#each viewConfig.rows.1.rowActions}}
+            <td class="action-cell">
+                <a data-bind='click: {{this.onClick}}'>
+                    <i class="{{this.iconClass}}"></i>
+                </a>
+            </td>
+            {{/each}}
+        </tr>
+        <tr class="error-row">
+            {{#each viewConfig.rows.1.columns}}
+            <td class="error-cell">
+                <span class="help-block red"
+                    data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
+                </span>
+            </td>
+            {{/each}}
+        </tr>
+</table>
+</td>
+</tr>
+
+        </tbody>
+    </table>
+
+
+    {{#if viewConfig.collectionActions}}
+    <div class="row-fluid collection-actions collection-actions-add">
+        <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
+            <i class="{{viewConfig.collectionActions.add.iconClass}}"></i>
+            &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
+        </a>
+    </div>
+    {{/if}}
+</script>
 
 <script type="text/x-handlebars-template" id="query-or-collection-view-template">
     <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">

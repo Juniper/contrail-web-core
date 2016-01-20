@@ -55,6 +55,7 @@ define([
         this.TMPL_ACCORDIAN_VIEW = "core-accordian-view-template";
         this.TMPL_INPUT_VIEW = "core-input-view-template";
         this.TMPL_EDITABLE_GRID_INPUT_VIEW = "core-editable-grid-input-view-template";
+        this.TMP_EDITABLE_GRID_ACTION_VIEW = "core-editable-grid-action-view-template";
         this.TMPL_DROPDOWN_VIEW = "core-dropdown-view-template";
         this.TMPL_EDITABLE_GRID_DROPDOWN_VIEW = "core-editable-grid-dropdown-view-template";
         this.TMPL_EDITABLE_GRID_DROPDOWN_LEFT_LABEL_VIEW = "core-editable-grid-label-left-dropdown-view-template";
@@ -84,7 +85,7 @@ define([
         this.TMPL_GEN_COLLECTION_VIEW = "core-generic-collection-view-template";
         this.TMPL_QUERY_OR_COLLECTION_VIEW = "query-or-collection-view-template";
         this.TMPL_COLLECTION_HEADING_VIEW = "core-collection-view-heading-template";
-
+        this.TMPL_COLLECTION_GRIDACTION_HEADING_VIEW = "core-collection-view-grid-action-heading-template";
         this.TMPL_SECTION_VIEW = "core-section-view-template";
         this.TMPL_EDIT_FORM = "core-edit-form-template";
         this.TMPL_GENERIC_EDIT_FORM = "core-generic-edit-form-template";
