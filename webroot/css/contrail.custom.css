@@ -913,7 +913,7 @@ a.selectAllLink:hover {
 }
 .slick-row-detail-container .row-fluid, .slick-cell .row-fluid [class*="span"]{
 	min-height: 20px;
-	font-size: 11px;
+	font-size: 12px;
 }
 .slick-row-detail-container label {
 	font-size: 12px;
@@ -927,21 +927,14 @@ a.selectAllLink:hover {
 .slick-row-detail .slick-cell, .slick-row-detail .row-fluid, .slick-row-detail .item-list > li {
     background-color: #FFF
 }
-.slick-row-detail .group-detail-container h6 {
-    font-size: 12px;
-}
-.slick-row-detail .group-detail-container ul.item-list li {
-    padding: 0 5px;
-}
 .slick-row-detail .slick-cell {
     padding: 10px 35px;
 }
-.slick-row-detail .row-fluid, .slick-row-detail .row-fluid [class*="span"] {
+.slick-row-detail  .row-fluid, .slick-row-detail .row-fluid [class*="span"] {
     min-height:20px;
 }
 .slick-row-detail  .row-fluid label {
     margin-bottom:0px;
-    font-size: 12px;
 }
 .group-detail-container h6 {
     padding: 0 0 5px;
@@ -952,7 +945,8 @@ a.selectAllLink:hover {
 .group-detail-container ul.item-list li {
     border: none;
     padding: 5px;
-    border-bottom: 1px solid #F1F1F1;
+    border-bottom: 1px solid #EEEEEE;
+    margin:0px 10px;
 }
 .group-detail-container ul.item-list li:last-child {
     border: none;
@@ -990,7 +984,7 @@ a.selectAllLink:hover {
 	word-break:break-all;
 	white-space: normal;
 }
-.slick-cell.cell-hyperlink-blue, .slick-cell .cell-hyperlink-blue{
+.slick-cell.cell-hyperlink-blue{
 	color: #3182bd;
 	cursor: pointer;
 }
@@ -1110,6 +1104,7 @@ margin-right: 15px;
 	right:10px!important;
 	min-width:170px;
 }
+
 /*
  Editable Slick Grid
 */
@@ -1313,7 +1308,7 @@ label.jqInvalid{
 }
 .custom-combobox .ui-autocomplete-input {
 	margin: 0;
-	padding: 0 28px 0 5px;
+	padding: 0 11px 0 5px;
 	height: 28px;
     min-height: 28px;
 	color: #787878;
@@ -1335,9 +1330,6 @@ label.jqInvalid{
 .select2-container[class*="span"] {
 	min-height: 26px;
 	border: 1px solid #dadada;
-}
-.select2-container .select2-choice {
-    padding: 0 0 0 5px;
 }
 .select2-container .select2-choice > .select2-chosen{
 	margin-right: 17px;
@@ -1361,7 +1353,6 @@ label.jqInvalid{
 .select2-container .select2-choice .select2-arrow {
 	border-left: 1px solid #fff;
 	background: none;
-    width: 14px;
 }
 .select2-container .select2-choice .select2-arrow b {
 	background: none !important;
@@ -1374,7 +1365,7 @@ label.jqInvalid{
     text-decoration: inherit;
     font-size: 14px;
     color: #393939;
-    padding-right: 5px;
+    padding-left: 0.40em;
     content: "\f0d7";
 }
 .select2-container.select2-dropdown-open .select2-choice .select2-arrow b:before {
@@ -3346,47 +3337,6 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
     margin:0px 10px 10px 30px;
 }
 
-#peer_selection>table table{width:100%; padding:0px 10px;}
-#peer_selection>table table th{padding-left:10px;}
-#family_attrs{padding:10px  45px}
-#family_attrs div a.editable-grid-add-link{
-    float:right;
-    padding:0px 20px;}
-#peer_selection>table>thead>tr>th{
-    line-height:1.4;
-}
-#peer_selection .contrail-editable-grid-table tr:nth-child(4n+3) td, #peer_selection .contrail-editable-grid-table tr:nth-child(4n+4) td{
-background:none;
-}
-#peer_selection>table.contrail-editable-grid-table tr:nth-child(3n+1) td {
-
-        /*border-top:#e9e9e9 solid 1px;*/
-            padding-top:10px;}
-#peer_selection>table.contrail-editable-grid-table table.contrail-editable-grid-table tr:nth-child(3n+1) td, #peer_selection>table.contrail-editable-grid-table tr:nth-child(1) td {
-
-        border-top:none;}
-#peer_selection .item-list table tr:first-child td{
-        background-color:gray;}
-#peer_selection>table table thead{
-    display:none;
-}
-#bgp-grid .value th{
-        font-weight:600;
-            border-bottom:#777 solid 1px;
-                padding-bottom:2px;}
-#bgp-grid .value tr:nth-child(odd) td{
-        border-bottom:#f5f5f5 solid 1px;}
-#bgp-grid .value .addressFamily {
-        padding: 5px 20px 20px 20px;
-}
-
-
-#bgp-grid .value .addressFamily tr td{border:none;}
-#bgp-grid .addressFamily tr th{font-weight:normal; border:none; background:#cccccc; color:white;}
-#bgp-grid .addressFamily tr td, #bgp-grid .addressFamily tr th{
-        padding:0px 5px;}
-#bgp-grid .addressFamily table{border:#CCC solid 1px; height:20px;overflow:scroll;}
-
 div.vis-network div.vis-navigation div.vis-button{
     background-color:#f9f9f9;
     background-image:none;
@@ -3447,7 +3397,101 @@ div.vis-network canvas{
     cursor:move;
 }
 
+#bgp-grid .value tr:last-child td{
+    border-bottom:none;}
+.sec_label{
+    font-weight:500;
+    color:#000;}
+.familyAttr_val{padding-right:10px;}
+.group-detail-container ul.item-list li .key{font-weight:600;}
+ label, .lbl{
+    font-size:13px;}
+
 #termCollection tbody tr:nth-child(4n+3) td,
 #termCollection tbody tr:nth-child(4n+4) td{
     background: #fdfdfd;
 }
+
+.modal-body .ui-accordion .ui-accordion-content{
+    padding: 1em .1em;}
+#peer_selection>table{
+    width:100%;}
+     .select2-container .select2-choice .select2-arrow b:before {
+    padding:0px 8px 0px 0px;
+    float:right;}
+#address_family{
+    padding-right:0px;
+    width:220px;}
+#loop_count{width:204px;}
+#bgp-grid ul.item-list .key{
+    width:23.08% !important;
+    }
+#bgp-grid ul.item-list .value{
+    width:57.26%; !important;
+    }
+
+.modal-backdrop ~ .modal-backdrop{
+    display:none;
+    opacity:0;
+    visibility:hidden;}
+#dashboard-alerts-modal ul.grid-action-menu{
+
+    top:110px!important;}
+
+#peer_selection>table table{width:100%; padding:0px 10px;}
+#peer_selection>table table th{padding-left:10px;}
+#family_attrs{padding:0px 87px 0px 50px}
+#family_attrs div a.editable-grid-add-link{
+    float:left;
+    padding:0px 0px 10px 0px;
+    font-size:12px;}
+#peer_selection>table>thead>tr>th{
+    line-height:1.4;
+}
+#peer_selection .contrail-editable-grid-table tr:nth-child(4n+3) td, #peer_selection .contrail-editable-grid-table tr:nth-child(4n+4) td{
+background:none;
+}
+#peer_selection>table.contrail-editable-grid-table tr th{
+    padding-right:5px;}
+#peer_selection>table.contrail-editable-grid-table table.contrail-editable-grid-table tr:nth-child(1) td {
+    padding-top:6px;}
+#peer_selection>table.contrail-editable-grid-table table.contrail-editable-grid-table tr:nth-child(3n+1) td, #peer_selection>table.contrail-editable-grid-table tr:nth-child(1) td {
+
+        border-top:none;}
+#peer_selection .item-list table tr:first-child td{
+        background-color:gray;}
+#bgp-grid .value th{
+        font-weight:600;
+            border-bottom:#777 solid 1px;
+                padding-bottom:2px;}
+#bgp-grid .value tr td{
+        border-bottom:#f5f5f5 solid 1px;}
+#bgp-grid .value .addressFamily {
+        padding: 5px 20px 20px 20px;
+}
+
+#bgp-grid .value .addressFamily tr td{border:none;}
+#bgp-grid .addressFamily tr th{font-weight:normal; border:none; background:#cccccc; color:white;}
+#bgp-grid .addressFamily tr td, #bgp-grid .addressFamily tr th{
+        padding:0px 5px;}
+#bgp-grid .addressFamily table{border:#CCC solid 1px; height:20px;overflow:scroll;}
+.modal-body .ui-accordion .ui-accordion-content{
+    padding: 1em .1em;}
+#peer_selection>table{
+    width:100%;}
+     .select2-container .select2-choice .select2-arrow b:before {
+    padding:0px 8px 0px 0px;
+    float:right;}
+#address_family{
+    padding-right:0px;
+    width:250px;
+    padding-top:0px;}
+#loop_count{width:213px;}
+#prefix_limit{width:213px}
+#bgp-grid ul.item-list .key{
+    width:23.08% !important;
+    }
+#bgp-grid ul.item-list .value{
+    width:57.26% !important;
+    }
+.no-margin{margin:0px !important;}

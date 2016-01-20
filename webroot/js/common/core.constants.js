@@ -84,7 +84,7 @@ define([
         this.TMPL_GEN_COLLECTION_VIEW = "core-generic-collection-view-template";
         this.TMPL_QUERY_OR_COLLECTION_VIEW = "query-or-collection-view-template";
         this.TMPL_COLLECTION_HEADING_VIEW = "core-collection-view-heading-template";
-
+        this.TMPL_COLLECTION_GRIDACTION_HEADING_VIEW = "core-collection-view-grid-action-heading-template";
         this.TMPL_SECTION_VIEW = "core-section-view-template";
         this.TMPL_EDIT_FORM = "core-edit-form-template";
         this.TMPL_GENERIC_EDIT_FORM = "core-generic-edit-form-template";
