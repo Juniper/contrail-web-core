@@ -66,12 +66,12 @@ define([
                     empty: {
                         type: 'status',
                         iconClasses: '',
-                        text: 'No Records Found.'
+                        text: 'No data available.'
                     },
                     error: {
                         type: 'error',
                         iconClasses: 'icon-warning',
-                        text: 'Error - Please try again later.'
+                        text: 'Error in getting data.'
                     }
                 }
             },
