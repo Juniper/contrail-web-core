@@ -63,8 +63,8 @@ define([
 
         var lines = nv.models.line()
             , lines2 = nv.models.line()
-            , bars = nv.models.historicalBar()
-            , bars2 = nv.models.historicalBar()
+            , bars = nv.models.multiBar()
+            , bars2 = nv.models.multiBar()
             , xAxis = nv.models.axis()
             , x2Axis = nv.models.axis()
             , y1Axis = nv.models.axis()
@@ -421,7 +421,6 @@ define([
                         + 'V' + (2 * y - 8);
                 }
 
-
                 function updateBrushBG() {
                     if (!brush.empty()) brush.extent(brushExtent);
                     brushBG
@@ -523,7 +522,7 @@ define([
 
                     g.select('.nv-focus .nv-y1.nv-axis')
                     g.select('.nv-focus .nv-y2.nv-axis')
-                        .attr('transform', 'translate(' + x.range()[1] + ',0)');
+                        .attr('transform', 'translate(' + x2.range()[1] + ',0)');
 
                     g.select('.nv-focus .nv-y1.nv-axis').transition().duration(transitionDuration)
                         .call(y1Axis);
@@ -673,7 +672,7 @@ define([
                   .brushExtent(chartOptions['brushExtent']);
 
         chartModel.interpolate(chUtils.interpolateSankey);
-        chartModel.bars.padData(false);
+        //chartModel.bars.padData(false);
 
         if(chartOptions.forceY1) {
             chartModel.bars.forceY(chartOptions.forceY1);
