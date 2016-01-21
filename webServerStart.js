@@ -172,6 +172,8 @@ function initializeAppConfig (appObj)
         ((null != config.session) && (null != config.session.timeout)) ?
         config.session.timeout : global.MAX_AGE_SESSION_ID;
 
+    app.use(express.compress());
+    registerStaticFiles(app);
     app.use(helmet.hsts({
         maxAge: maxAgeTime,
         includeSubdomains: true
@@ -185,46 +187,35 @@ function initializeAppConfig (appObj)
         secret: secretKey,
         cookie: cookieObj
         }));
-        app.use(express.compress());
         app.use(express.methodOverride());
         app.use(express.bodyParser());
-    registerStaticFiles(app, function() {
         app.use(app.router);
         // Catch-all error handler
         app.use(function (err, req, res, next) {
             logutils.logger.error(err.stack);
             res.send(500, 'An unexpected error occurred!');
         });
-    });
 }
 
-function loadStaticFiles (pkgNameObj, callback)
+function loadStaticFiles (app, pkgDir)
 {
-    var app     = pkgNameObj['app'];
-
-    /* First register core webroot directory */
-    var dirPath = path.join(pkgNameObj['pkgDir'], 'webroot');
-    fs.exists(dirPath, function(exists) {
-        if (exists) {
-            logutils.logger.debug("Registering Static Directory: " + dirPath);
-            app.use(express.static(dirPath, {maxAge: 3600*24*3*1000}));
-            callback(null);
-        }
-    });
+    var dirPath = path.join(pkgDir, 'webroot');
+    var fsStat = fs.statSync(dirPath);
+    if ((null != fsStat) && (true == fsStat.isDirectory())) {
+        logutils.logger.debug("Registering Static Directory: " + dirPath);
+        app.use(express.static(dirPath, {maxAge: 3600*24*3*1000}));
+    }
 }
 
-function registerStaticFiles (app, callback)
+function registerStaticFiles (app)
 {
     var pkgDir;
     var staticFileDirLists = [];
     var pkgNameListsLen = pkgList.length;
     for (var i = 0; i < pkgNameListsLen; i++) {
         pkgDir = commonUtils.getPkgPathByPkgName(pkgList[i]['pkgName']);
-        staticFileDirLists.push({'app': app, 'pkgDir': pkgDir});
+        loadStaticFiles(app, pkgDir);
     }
-    async.mapSeries(staticFileDirLists, loadStaticFiles, function(err) {
-        callback();
-    });
 }
 
 function initAppConfig ()
