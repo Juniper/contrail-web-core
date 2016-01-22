@@ -74,15 +74,17 @@ define([
                     width: 30, width: 30, searchable: false, exportConfig: {allow: false},
                     allowColumnPickable: false,
                     formatter: function (r, c, v, cd, dc) {
-                        var queryId = dc.queryReqObj.queryId,
-                            tabLinkId = cowl.QE_QUERY_QUEUE_RESULT_GRID_TAB_ID + '-' + queryId + '-tab-link',
-                            labelIconBadgeClass = '';
+                        if(dc.status === 'completed') {
+                            var queryId = dc.queryReqObj.queryId,
+                                tabLinkId = cowl.QE_QUERY_QUEUE_RESULT_GRID_TAB_ID + '-' + queryId + '-tab-link',
+                                labelIconBadgeClass = '';
 
-                        if ($('#' + tabLinkId).length > 0) {
-                            labelIconBadgeClass = 'icon-queue-badge-color-' + $('#' + tabLinkId).data('badge_color_key');
+                            if ($('#' + tabLinkId).length > 0) {
+                                labelIconBadgeClass = 'icon-queue-badge-color-' + $('#' + tabLinkId).data('badge_color_key');
+                            }
+
+                            return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge label-icon-badge-queue ' + labelIconBadgeClass + '"><i class="icon-sign-blank"></i></span>';
                         }
-
-                        return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge label-icon-badge-queue ' + labelIconBadgeClass + '"><i class="icon-sign-blank"></i></span>';
                     },
                     events: {
                         onClick: function (e, dc) {

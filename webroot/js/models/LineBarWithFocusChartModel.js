@@ -63,8 +63,8 @@ define([
 
         var lines = nv.models.line()
             , lines2 = nv.models.line()
-            , bars = nv.models.historicalBar()
-            , bars2 = nv.models.historicalBar()
+            , bars = nv.models.multiBar()
+            , bars2 = nv.models.multiBar()
             , xAxis = nv.models.axis()
             , x2Axis = nv.models.axis()
             , y1Axis = nv.models.axis()
@@ -305,9 +305,7 @@ define([
                         {values: []}
                     ]);
                 var lines2Wrap = g.select('.nv-context .nv-linesWrap')
-                    .datum((dataLines.length > 0 && !dataLines[0].disabled) ? dataLines : [
-                        {values: []}
-                    ]);
+                    .datum(data.filter(function(d) { return !d.disabled }));
 
                 g.select('.nv-context')
                     .attr('transform', 'translate(0,' + ( availableHeight1 + margin.bottom + margin2.top) + ')');
@@ -421,7 +419,6 @@ define([
                         + 'V' + (2 * y - 8);
                 }
 
-
                 function updateBrushBG() {
                     if (!brush.empty()) brush.extent(brushExtent);
                     brushBG
@@ -474,18 +471,18 @@ define([
                     );
 
                     var focusLinesWrap = g.select('.nv-focus .nv-linesWrap')
-                        .datum(dataLines.length && !dataLines[0].disabled ?
-                            dataLines
-                                .map(function(d,i) {
-                                    return {
-                                        area: d.area,
-                                        key: d.key,
-                                        values: d.values.filter(function(d,i) {
-                                            return lines.x()(d,i) >= extent[0] && lines.x()(d,i) <= extent[1];
-                                        })
-                                    }
-                                }) : [{values: []}]
-                    );
+                        .datum(data
+                            .filter(function(d) { return !d.disabled })
+                            .map(function(d,i) {
+                                return {
+                                    area: d.area,
+                                    key: d.key,
+                                    values: d.values.filter(function(d,i) {
+                                        return lines.x()(d,i) >= extent[0] && lines.x()(d,i) <= extent[1];
+                                    })
+                                }
+                            })
+                        );
 
                     // Update Main (Focus) X Axis
                     if (dataBars.length) {
@@ -523,7 +520,7 @@ define([
 
                     g.select('.nv-focus .nv-y1.nv-axis')
                     g.select('.nv-focus .nv-y2.nv-axis')
-                        .attr('transform', 'translate(' + x.range()[1] + ',0)');
+                        .attr('transform', 'translate(' + x2.range()[1] + ',0)');
 
                     g.select('.nv-focus .nv-y1.nv-axis').transition().duration(transitionDuration)
                         .call(y1Axis);
@@ -673,7 +670,7 @@ define([
                   .brushExtent(chartOptions['brushExtent']);
 
         chartModel.interpolate(chUtils.interpolateSankey);
-        chartModel.bars.padData(false);
+        //chartModel.bars.padData(false);
 
         if(chartOptions.forceY1) {
             chartModel.bars.forceY(chartOptions.forceY1);

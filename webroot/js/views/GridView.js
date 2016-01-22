@@ -69,9 +69,7 @@ define([
             if (contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
                     gridContainer.data('contrailGrid').removeGridLoading();
-                    if (gridOptions.defaultDataStatusMessage && contrailListModel.getItems().length == 0) {
-                        gridContainer.data('contrailGrid').showGridMessage('empty')
-                    }
+                    handleGridMessage();
                     performSort(gridSortColumns);
                 }
             }
@@ -79,9 +77,8 @@ define([
             contrailListModel.onAllRequestsComplete.subscribe(function () {
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
                     gridContainer.data('contrailGrid').removeGridLoading();
-                    if (gridOptions.defaultDataStatusMessage && contrailListModel.getItems().length == 0) {
-                        gridContainer.data('contrailGrid').showGridMessage('empty')
-                    }
+                    handleGridMessage();
+
                     performSort(gridSortColumns);
                     //TODO: Execute only in refresh case.
                     if (gridConfig.header.defaultControls.refreshable) {
@@ -91,6 +88,18 @@ define([
                     }
                 }
             });
+
+            function handleGridMessage() {
+                if(contrailListModel.error) {
+                    if(contrailListModel.errorList.length > 0) {
+                        gridContainer.data('contrailGrid').showGridMessage('error', 'Error: ' + contrailListModel.errorList[0].responseText);
+                    } else {
+                        gridContainer.data('contrailGrid').showGridMessage('error');
+                    }
+                } else if (gridOptions.defaultDataStatusMessage && contrailListModel.getItems().length == 0) {
+                    gridContainer.data('contrailGrid').showGridMessage('empty')
+                }
+            };
 
             function searchFilter(item, args) {
                 var returnFlag = false;

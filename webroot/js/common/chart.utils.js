@@ -87,6 +87,8 @@ define([
                 .attr("y", function(d){
                     if(maxValue != 0){
                         d = parseInt(d.value) * maxBarValue / maxValue;
+                    } else {
+                        d = parseInt(d.value);
                     }
                     return h - (d + 2);
                 })
@@ -94,6 +96,8 @@ define([
                 .attr("height", function(d) {
                     if(maxValue != 0){
                         d = parseInt(d.value) * maxBarValue / maxValue;
+                    } else {
+                        d = parseInt(d.value);
                     }
                     return d + 2;
                 })
