@@ -919,6 +919,26 @@ define(['underscore'], function (_) {
                 });
             });
         };
+
+        /*
+        * Filter keys in given json object recursively whose value matches with null
+        */
+        this.filterJsonKeysWithNullValues = function(obj) {
+            if(typeof(obj) instanceof Array) {
+                for(var i=0,len=obj.length;i<len;i++) {
+                    obj[i] = this.filterJsonKeysWithNullValues(obj[i]);
+                }
+            } else if(typeof(obj) == "object") {
+                for(var key in obj) {
+                    if(obj[key] == null) {
+                        delete obj[key];
+                    } else if(typeof(obj[key]) == "object") {
+                        obj[key] = this.filterJsonKeysWithNullValues(obj[key]);
+                    }
+                }
+            }
+            return obj;
+        }
     };
     return CoreUtils;
 });
