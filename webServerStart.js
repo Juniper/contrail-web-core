@@ -94,6 +94,8 @@ var discServEnable = ((null != config.discoveryService) &&
                       config.discoveryService.enable : true;
 
 var sessEvent = new eventEmitter();
+var csrfInvalidEvent = new eventEmitter();
+
 /* Recommended Cipheres */
 var defCiphers =
     'ECDHE-RSA-AES256-SHA384:AES256-SHA256:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM';
@@ -276,7 +278,8 @@ function registerReqToApp ()
         myApp = httpApp;
     }
 
-    var csrf = express.csrf();
+    var csrfOptions = {eventEmitter: csrfInvalidEvent};
+    var csrf = express.csrf(csrfOptions);
     //Populate the CSRF token in req.session on login request
     myApp.get('/login', csrf);
     myApp.get('/vcenter/login', csrf);
@@ -286,6 +289,10 @@ function registerReqToApp ()
     loadAllFeatureURLs(myApp);
     var handler = require('./src/serverroot/web/routes/handler')
     handler.addAppReqToAllowedList(myApp.routes);
+    csrfInvalidEvent.on('csrfInvalidated', function(req, res) {
+        logutils.logger.debug('_csrf token got invalidated');
+        commonUtils.redirectToLogout(req, res);
+    });
 }
 
 function bindProducerSocket ()
