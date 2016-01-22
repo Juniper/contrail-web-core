@@ -23,7 +23,9 @@ define([
             errorAttributes = generateAttributes(modelAttributes, cowc.ERROR_SUFFIX_ID, false);
             editingLockAttrs = generateAttributes(modelAttributes, cowc.LOCKED_SUFFIX_ID, true);
 
-            modelData = cowu.filterJsonKeysWithNullValues(modelData);
+            if(this.defaultConfig != null) {
+                modelData = cowu.filterJsonKeysWithNullValues(modelData);
+            }
             modelData = $.extend(true, {}, this.defaultConfig, modelData, {errors: new Backbone.Model(errorAttributes), locks: new Backbone.Model(editingLockAttrs)});
 
             modelData = this.formatModelConfig(modelData);
