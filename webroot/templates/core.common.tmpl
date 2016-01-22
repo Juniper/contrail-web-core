@@ -1459,6 +1459,9 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-collection-view-template">
+    {{#IfCompare viewConfig.label null operator='!='}}
+        <label style="margin:0px">{{viewConfig.label}}</label>
+    {{/IfCompare}}
     <div class="row-fluid">
         <table class="collection-table">
             <tbody data-bind="foreach: {{viewConfig.collection}}">
@@ -1576,6 +1579,35 @@
                     {{/each}}
                 </div>
             {{/each}}
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="query-routing-policy-terms-template">
+    {{#IfCompare viewConfig.label null operator='!='}}
+        <label style="margin:0">{{viewConfig.label}}</label>
+    {{/IfCompare}}
+    <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
+        <div class="row-fluid or-clause">
+            <div class="row-fluid or-clause-header">
+                <p class="or-clause-text span10" data-bind="text: getOrClauseText()($data)"></p>
+                {{#each viewConfig.rowActions}}
+                <a class="collection-actions collection-actions-{{@index}} pull-right" data-bind='click: {{onClick}}'>
+                    <i class="pull-right {{iconClass}}"></i>
+                </a>
+                {{/each}}
+            </div>
+            <div class="row-fluid">
+                {{#each viewConfig.rows}}
+                    <div style="padding: 5px 5px 0 5px;">
+                        <div class="row-fluid">
+                            {{#each columns}}
+                                <div id="{{elementId}}" class="and-clause-collection" />
+                            {{/each}}
+                        </div>
+                    </div>
+                {{/each}}
             </div>
         </div>
     </div>
