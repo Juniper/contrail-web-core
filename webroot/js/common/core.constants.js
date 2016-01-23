@@ -303,8 +303,199 @@ define([
         this.UMID_QUERY_RESULT_LIST_MODEL = "qe:query-result-list-model";
 
         this.MAP_Y_FORMATTER = {
-            "sum(bytes)": "bytes",
-            "SUM(cpu_info.mem_virt)": "bytes"
+            "sum(bytes)": "byte",
+
+            // cpu_info
+            "SUM(cpu_info.mem_virt)": "byte",
+            "MAX(cpu_info.mem_virt)": "byte",
+            "MIN(cpu_info.mem_virt)": "byte",
+
+            "SUM(cpu_info.mem_res)": "byte",
+            "MAX(cpu_info.mem_res)": "byte",
+            "MIN(cpu_info.mem_res)": "byte",
+
+            "SUM(cpu_info.used_sys_mem)": "byte",
+            "MAX(cpu_info.used_sys_mem)": "byte",
+            "MIN(cpu_info.used_sys_mem)": "byte",
+
+
+            "SUM(cpu_info.cpu_share)": "percentage",
+            "MAX(cpu_info.cpu_share)": "percentage",
+            "MIN(cpu_info.cpu_share)": "percentage",
+
+
+            "SUM(cpu_info.one_min_cpuload)": "percentage",
+            "MAX(cpu_info.one_min_cpuload)": "percentage",
+            "MIN(cpu_info.one_min_cpuload)": "percentage",
+
+            // cpu_stats
+            "SUM(cpu_stats.cpu_one_min_avg)": "percentage",
+            "MAX(cpu_stats.cpu_one_min_avg)": "percentage",
+            "MIN(cpu_stats.cpu_one_min_avg)": "percentage",
+
+            "SUM(cpu_stats.vm_memory_quota)": "byte",
+            "MAX(cpu_stats.vm_memory_quota)": "byte",
+            "MIN(cpu_stats.vm_memory_quota)": "byte",
+
+            "SUM(cpu_stats.virt_memory)": "byte",
+            "MAX(cpu_stats.virt_memory)": "byte",
+            "MIN(cpu_stats.virt_memory)": "byte",
+
+            "SUM(cpu_stats.peak_virt_memory)": "byte",
+            "MAX(cpu_stats.peak_virt_memory)": "byte",
+            "MIN(cpu_stats.peak_virt_memory)": "byte",
+
+
+            // msg_info
+            "SUM(msg_info.bytes)": "byte",
+            "MAX(msg_info.bytes)": "byte",
+            "MIN(msg_info.bytes)": "byte",
+
+
+            // vn_stats
+            "SUM(vn_stats.in_bytes)": "byte",
+            "MAX(vn_stats.in_bytes)": "byte",
+            "MIN(vn_stats.in_bytes)": "byte",
+
+            "SUM(vn_stats.out_bytes)": "byte",
+            "MAX(vn_stats.out_bytes)": "byte",
+            "MIN(vn_stats.out_bytes)": "byte",
+
+            // tx_socket_stats
+            "SUM(tx_socket_stats.bytes)": "byte",
+            "MAX(tx_socket_stats.bytes)": "byte",
+            "MIN(tx_socket_stats.bytes)": "byte",
+
+            "SUM(tx_socket_stats.average_bytes)": "byte",
+            "MAX(tx_socket_stats.average_bytes)": "byte",
+            "MIN(tx_socket_stats.average_bytes)": "byte",
+
+            // rx_socket_stats
+            "SUM(rx_socket_stats.bytes)": "byte",
+            "MAX(rx_socket_stats.bytes)": "byte",
+            "MIN(rx_socket_stats.bytes)": "byte",
+
+            "SUM(rx_socket_stats.average_bytes)": "byte",
+            "MAX(rx_socket_stats.average_bytes)": "byte",
+            "MIN(rx_socket_stats.average_bytes)": "byte",
+
+            // rx_message_stats
+            "SUM(rx_message_stats.bytes)": "byte",
+            "MAX(rx_message_stats.bytes)": "byte",
+            "MIN(rx_message_stats.bytes)": "byte",
+
+            // virtual_ip_stats
+            "SUM(virtual_ip_stats.bytes_in)": "byte",
+            "MAX(virtual_ip_stats.bytes_in)": "byte",
+            "MIN(virtual_ip_stats.bytes_in)": "byte",
+
+            "SUM(virtual_ip_stats.bytes_out)": "byte",
+            "MAX(virtual_ip_stats.bytes_out)": "byte",
+            "MIN(virtual_ip_stats.bytes_out)": "byte",
+
+            // pool_stats
+            "SUM(pool_stats.bytes_in)": "byte",
+            "MAX(pool_stats.bytes_in)": "byte",
+            "MIN(pool_stats.bytes_in)": "byte",
+
+            "SUM(pool_stats.bytes_out)": "byte",
+            "MAX(pool_stats.bytes_out)": "byte",
+            "MIN(pool_stats.bytes_out)": "byte",
+
+            // member_stats
+            "SUM(member_stats.bytes_in)": "byte",
+            "MAX(member_stats.bytes_in)": "byte",
+            "MIN(member_stats.bytes_in)": "byte",
+
+            "SUM(member_stats.bytes_out)": "byte",
+            "MAX(member_stats.bytes_out)": "byte",
+            "MIN(member_stats.bytes_out)": "byte",
+
+            // fip_diff_stats
+            "SUM(fip_diff_stats.in_bytes)": "byte",
+            "MAX(fip_diff_stats.in_bytes)": "byte",
+            "MIN(fip_diff_stats.in_bytes)": "byte",
+
+            "SUM(fip_diff_stats.out_bytes)": "byte",
+            "MAX(fip_diff_stats.out_bytes)": "byte",
+            "MIN(fip_diff_stats.out_bytes)": "byte",
+
+            // if_stats
+            "SUM(if_stats.in_bytes)": "byte",
+            "MAX(if_stats.in_bytes)": "byte",
+            "MIN(if_stats.in_bytes)": "byte",
+
+            "SUM(if_stats.out_bytes)": "byte",
+            "MAX(if_stats.out_bytes)": "byte",
+            "MIN(if_stats.out_bytes)": "byte",
+
+            // info_stats
+            "info_stats.read_kbytes": "kilo-byte",
+            "SUM(info_stats.read_kbytes)": "kilo-byte",
+            "MAX(info_stats.read_kbytes)": "kilo-byte",
+            "MIN(info_stats.read_kbytes)": "kilo-byte",
+
+            "info_stats.write_kbytes": "kilo-byte",
+            "SUM(info_stats.write_kbytes)": "kilo-byte",
+            "MAX(info_stats.write_kbytes)": "kilo-byte",
+            "MIN(info_stats.write_kbytes)": "kilo-byte",
+
+            // resource_info_stats
+            "resource_info_stats.mem_usage_mb": "mega-byte",
+            "SUM(resource_info_stats.mem_usage_mb)": "mega-byte",
+            "MAX(resource_info_stats.mem_usage_mb)": "mega-byte",
+            "MIN(resource_info_stats.mem_usage_mb)": "mega-byte",
+
+            // file_system_view_stats
+            "file_system_view_stats.size_kb": "kilo-byte",
+            "SUM(file_system_view_stats.size_kb)": "kilo-byte",
+            "MAX(file_system_view_stats.size_kb)": "kilo-byte",
+            "MIN(file_system_view_stats.size_kb)": "kilo-byte",
+
+            "file_system_view_stats.used_kb": "kilo-byte",
+            "SUM(file_system_view_stats.used_kb)": "kilo-byte",
+            "MAX(file_system_view_stats.used_kb)": "kilo-byte",
+            "MIN(file_system_view_stats.used_kb)": "kilo-byte",
+
+            "file_system_view_stats.available_kb": "kilo-byte",
+            "SUM(file_system_view_stats.available_kb)": "kilo-byte",
+            "MAX(file_system_view_stats.available_kb)": "kilo-byte",
+            "MIN(file_system_view_stats.available_kb)": "kilo-byte",
+
+            "file_system_view_stats.physical_disks.disk_size_kb": "kilo-byte",
+            "SUM(file_system_view_stats.physical_disks.disk_size_kb)": "kilo-byte",
+            "MAX(file_system_view_stats.physical_disks.disk_size_kb)": "kilo-byte",
+            "MIN(file_system_view_stats.physical_disks.disk_size_kb)": "kilo-byte",
+
+            "file_system_view_stats.physical_disks.disk_used_kb": "kilo-byte",
+            "SUM(file_system_view_stats.physical_disks.disk_used_kb)": "kilo-byte",
+            "MAX(file_system_view_stats.physical_disks.disk_used_kb)": "kilo-byte",
+            "MIN(file_system_view_stats.physical_disks.disk_used_kb)": "kilo-byte",
+
+            "file_system_view_stats.physical_disks.disk_available_kb": "kilo-byte",
+            "SUM(file_system_view_stats.physical_disks.disk_available_kb)": "kilo-byte",
+            "MAX(file_system_view_stats.physical_disks.disk_available_kb)": "kilo-byte",
+            "MIN(file_system_view_stats.physical_disks.disk_available_kb)": "kilo-byte",
+
+            "database_usage.disk_space_used_1k": "kilo-byte",
+            "SUM(database_usage.disk_space_used_1k)": "kilo-byte",
+            "MAX(database_usage.disk_space_used_1k)": "kilo-byte",
+            "MIN(database_usage.disk_space_used_1k)": "kilo-byte",
+
+            "database_usage.disk_space_available_1k": "kilo-byte",
+            "SUM(database_usage.disk_space_available_1k)": "kilo-byte",
+            "MAX(database_usage.disk_space_available_1k)": "kilo-byte",
+            "MIN(database_usage.disk_space_available_1k)": "kilo-byte",
+
+            "database_usage.analytics_db_size_1k": "kilo-byte",
+            "SUM(database_usage.analytics_db_size_1k)": "kilo-byte",
+            "MAX(database_usage.analytics_db_size_1k)": "kilo-byte",
+            "MIN(database_usage.analytics_db_size_1k)": "kilo-byte",
+
+            "disk_usage_info.partition_space_available_1k": "kilo-byte",
+            "SUM(disk_usage_info.partition_space_available_1k)": "kilo-byte",
+            "MAX(disk_usage_info.partition_space_available_1k)": "kilo-byte",
+            "MIN(disk_usage_info.partition_space_available_1k)": "kilo-byte"
         };
 
         this.DEFAULT_FR_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, setup_time, teardown_time, agg-packets, agg-bytes, action";

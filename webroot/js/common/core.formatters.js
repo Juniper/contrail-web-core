@@ -15,123 +15,132 @@ define([
         };
 
         this.getFormattedValue = function (formatterKey, value, iconClass, obj, key) {
-            switch (formatterKey) {
-                case 'byte' :
-                    return cowu.addUnits2Bytes(value);
-                    break;
+            if (contrail.checkIfFunction(formatterKey)) {
+                return formatterKey(value, obj, iconClass, key);
+            } else {
+                switch (formatterKey) {
+                    case 'byte' :
+                        return cowu.addUnits2Bytes(value);
+                        break;
 
-                case 'kilo-byte' :
-                    return cowu.addUnits2Bytes(value * 1024);
-                    break;
+                    case 'kilo-byte' :
+                        return cowu.addUnits2Bytes(value * 1024);
+                        break;
 
-                case 'mega-byte' :
-                    return cowu.addUnits2Bytes(value * 1024 * 1024);
-                    break;
+                    case 'mega-byte' :
+                        return cowu.addUnits2Bytes(value * 1024 * 1024);
+                        break;
 
-                case 'length' :
-                    return value.length;
-                    break;
+                    case 'length' :
+                        return value.length;
+                        break;
 
-                case 'throughput' :
-                    return formatThroughput(value);
-                    break;
+                    case 'throughput' :
+                        return formatThroughput(value);
+                        break;
 
-                case 'percentage' :
-                    return value + " %";
-                    break;
+                    case 'percentage' :
+                        return value + " %";
+                        break;
 
-                case 'date-time' :
-                    return moment(parseInt(value)).format('YYYY-MM-DD HH:mm:ss');
-                    break;
+                    case 'date-time' :
+                        return moment(parseInt(value)).format('YYYY-MM-DD HH:mm:ss');
+                        break;
 
-                case 'time-period' :
-                    var timeValue = parseInt(value),
-                        timeStr = '';
+                    case 'time-period' :
+                        var timeValue = parseInt(value),
+                            timeStr = '';
 
-                    if (value >= 3600) {
-                        var days = parseInt(timeValue / 3600);
-                        timeStr += days.toString();
-                        timeStr += (days === 1) ? ' day ' : ' days ';
-                        timeValue = timeValue % 3600;
-                    }
-
-                    if (timeValue >= 60) {
-                        var mins = parseInt(timeValue / 60);
-                        timeStr += mins.toString();
-                        timeStr += (mins === 1) ? ' min ' : ' mins ';
-                        timeValue = timeValue % 60;
-                    }
-
-                    if (value > 0) {
-                        var secs = timeValue;
-                        timeStr += secs.toString();
-                        timeStr += (secs === 1) ? ' sec' : ' secs';
-                    }
-
-                    return timeStr;
-
-                    break;
-
-                case 'fault-state' :
-                    if (value === true || value === 'true') {
-                        return '<span class="red">' + value + '</span>';
-                    } else {
-                        return value
-                    }
-                    break;
-
-                case 'status-state' :
-                    if (value === 'ok') {
-                        return '<span class="green">' + value + '</span>';
-                    } else {
-                        return value
-                    }
-
-                    break;
-
-                case 'health-status-state' :
-                    var iconHTML = (contrail.checkIfExist(iconClass) ?
-                    '<i class="' + iconClass + ' pull-right padding-3-0"></i>' : '');
-
-                    if (value === 'critical') {
-                        return '<span class="red ' + key + '-value">'
-                            + value + iconHTML +
-                            '</span>';
-                    } else if (value === 'ok') {
-                        return '<span class="green">' + value + '</span>';
-                    } else {
-                        return value
-                    }
-
-                    break;
-                case 'alert-percentage' :
-                    try {
-                        if (value != null && value > 90) {
-                            return '<span class="red">' + value + ' %</span>';
-                        } else {
-                            return value + " %";
+                        if (value >= 3600) {
+                            var days = parseInt(timeValue / 3600);
+                            timeStr += days.toString();
+                            timeStr += (days === 1) ? ' day ' : ' days ';
+                            timeValue = timeValue % 3600;
                         }
-                    } catch (error) {
-                        return value;
-                    }
-                    break;
 
-                case 'packet' :
-                    return cowu.addUnits2Packets(value);
-                    break;
+                        if (timeValue >= 60) {
+                            var mins = parseInt(timeValue / 60);
+                            timeStr += mins.toString();
+                            timeStr += (mins === 1) ? ' min ' : ' mins ';
+                            timeValue = timeValue % 60;
+                        }
 
-                case 'query-time-range' :
-                    return qewu.formatTimeRange(value);
-                    break;
+                        if (value > 0) {
+                            var secs = timeValue;
+                            timeStr += secs.toString();
+                            timeStr += (secs === 1) ? ' sec' : ' secs';
+                        }
 
-                case 'query-direction' :
-                    return (value == 0) ? 'EGRESS' : 'INGRESS';
-                    break;
+                        return timeStr;
 
-                //run the user defined formatter function
-                default :
-                    return eval(formatterKey)(value, obj, iconClass, key);
-            };
+                        break;
+
+                    case 'fault-state' :
+                        if (value === true || value === 'true') {
+                            return '<span class="red">' + value + '</span>';
+                        } else {
+                            return value
+                        }
+                        break;
+
+                    case 'status-state' :
+                        if (value === 'ok') {
+                            return '<span class="green">' + value + '</span>';
+                        } else {
+                            return value
+                        }
+
+                        break;
+
+                    case 'health-status-state' :
+                        var iconHTML = (contrail.checkIfExist(iconClass) ?
+                        '<i class="' + iconClass + ' pull-right padding-3-0"></i>' : '');
+
+                        if (value === 'critical') {
+                            return '<span class="red ' + key + '-value">'
+                                + value + iconHTML +
+                                '</span>';
+                        } else if (value === 'ok') {
+                            return '<span class="green">' + value + '</span>';
+                        } else {
+                            return value
+                        }
+
+                        break;
+                    case 'alert-percentage' :
+                        try {
+                            if (value != null && value > 90) {
+                                return '<span class="red">' + value + ' %</span>';
+                            } else {
+                                return value + " %";
+                            }
+                        } catch (error) {
+                            return value;
+                        }
+                        break;
+
+                    case 'packet' :
+                        return cowu.addUnits2Packets(value);
+                        break;
+
+                    case 'query-time-range' :
+                        return qewu.formatTimeRange(value);
+                        break;
+
+                    case 'query-direction' :
+                        return (value == 0) ? 'EGRESS' : 'INGRESS';
+                        break;
+
+                    //run the user defined formatter function
+                    default :
+                        if (contrail.checkIfFunction(eval(formatterKey))) {
+                            return eval(formatterKey)(value, obj, iconClass, key);
+                        } else {
+                            //Reg Ex to display comma separated numbers
+                            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        }
+                };
+            }
         };
 
         this.formatValueArray4Grid = function (valueArray, entriesToShow) {
@@ -163,6 +172,9 @@ define([
             switch (formatterKey) {
                 case 'bytes' :
                     return function(d) { return cowu.addUnits2Bytes(d, false, false, 1); }
+                    break;
+                case 'percentage' :
+                    return function(d) { return d + ' %'; }
                     break;
 
                 default: return function(d) { return d; }

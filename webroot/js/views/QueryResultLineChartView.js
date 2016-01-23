@@ -39,7 +39,9 @@ define([
                 yAxisLabel: selectFieldValue,
                 yAxisDataField: selectFieldValue,
                 forceY: [0, 100],
-                yFormatter: cowf.getYAxisFormatterFunction4Chart(yFormatterKey)
+                yFormatter: function (d) {
+                    return cowf.getFormattedValue(yFormatterKey, d)
+                }
             };
         });
 
