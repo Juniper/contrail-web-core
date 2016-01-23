@@ -23,7 +23,9 @@ define([
             errorAttributes = generateAttributes(modelAttributes, cowc.ERROR_SUFFIX_ID, false);
             editingLockAttrs = generateAttributes(modelAttributes, cowc.LOCKED_SUFFIX_ID, true);
 
-            modelData = cowu.filterJsonKeysWithNullValues(modelData);
+            if(this.defaultConfig != null) {
+                modelData = cowu.filterJsonKeysWithNullValues(modelData);
+            }
             modelData = $.extend(true, {}, this.defaultConfig, modelData, {errors: new Backbone.Model(errorAttributes), locks: new Backbone.Model(editingLockAttrs)});
 
             modelData = this.formatModelConfig(modelData);
@@ -74,6 +76,8 @@ define([
                 objectType = validationObj['type'];
                 getValidation = validationObj['getValidation'];
 
+                errors = this.model().get(cowc.KEY_MODEL_ERRORS);
+
                 if(contrail.checkIfExist(key)) {
                     //handling the collection of collection validations
                     if(objectType === cowc.OBJECT_TYPE_COLLECTION_OF_COLLECTION) {
@@ -87,9 +91,8 @@ define([
                                 for(var secColIndex = 0; secColIndex < secKeyObject.size(); secColIndex++) {
                                     var secColModel = secKeyObject.at(secColIndex);
                                     validationName = getValidation instanceof Function ? getValidation(secColModel) : getValidation;
-                                    isInternalValid = secColModel.attributes.model().isValid(validationOption,
-                                        validationName);
-                                    attErrorObj = {};
+                                    isInternalValid = secColModel.attributes.model().isValid(validationOption, validationName);
+                                    attrErrorObj = {};
                                     attrErrorObj[secKey + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
                                     errors.set(attrErrorObj);
                                     isValid = isValid && isInternalValid;
@@ -98,7 +101,6 @@ define([
                         }
                     } else {
                         keyObject = this.model().attributes[key];
-                        errors = this.model().get(cowc.KEY_MODEL_ERRORS);
 
                         if(objectType == cowc.OBJECT_TYPE_COLLECTION) {
                             for( var j = 0; j < keyObject.size(); j++) {

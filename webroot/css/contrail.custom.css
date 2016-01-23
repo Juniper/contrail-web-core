@@ -866,7 +866,10 @@ a.selectAllLink:hover {
 .grid-load-status p{
 	margin: 0;
 }
-.grid-load-status p.status{
+.grid-load-status p.status {
+    color: #777777;
+}
+.grid-load-status p.status .hyperlink{
 	color: #3182bd;
 }
 .grid-load-status p.error{
@@ -2747,7 +2750,7 @@ p.error, p.error-text {
 	font-size: 11px;
 }
 
-.ui-multiselect-menu { display:none; position:absolute; z-index:10000; text-align: left }
+.ui-multiselect-menu { display:none; position:absolute; z-index: 12; text-align: left }
 .ui-multiselect-checkboxes { position:relative /* fixes bug in IE6/7 */; overflow-y:scroll }
 .ui-multiselect-checkboxes  input.ace-input[type=checkbox] {  width: 0;  }
 .ui-multiselect-checkboxes label { cursor:default; display:block; border:1px solid transparent; padding:3px 3px 3px 10px }

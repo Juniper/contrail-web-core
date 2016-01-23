@@ -119,7 +119,7 @@ define([
                 columns: queryResultGridColumns
             },
             footer: {
-                pager: contrail.handleIfNull(gridOptions.pagerOptions, { options: { pageSize: 100, pageSizeSelect: [100, 200, 300, 500] } })
+                pager: contrail.handleIfNull(gridOptions.pagerOptions, { options: { pageSize: 100, pageSizeSelect: [100, 200, 500] } })
             }
         };
     };
