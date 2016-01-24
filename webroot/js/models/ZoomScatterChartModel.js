@@ -74,8 +74,13 @@ define([
             self.width = chartConfig['width'] - margin.left - margin.right;
             self.height = chartConfig['height'] - margin.top - margin.bottom;
 
-            forceX = cowu.getForceAxis4Chart(chartData, chartConfig.xField, chartConfig.forceX);
-            forceY = cowu.getForceAxis4Chart(chartData, chartConfig.yField, chartConfig.forceY);
+            if(chartConfig['doBucketize'] == true) {
+                forceX = getAxisMinMaxForBucketization(chartData, chartConfig.xField, chartConfig.forceX);
+                forceY = getAxisMinMaxForBucketization(chartData, chartConfig.yField, chartConfig.forceY);
+            } else {
+                forceX = cowu.getForceAxis4Chart(chartData, chartConfig.xField, chartConfig.forceX);
+                forceY = cowu.getForceAxis4Chart(chartData, chartConfig.yField, chartConfig.forceY);
+            }
 
             self.xMin = forceX[0];
             self.xMax = forceX[1];
@@ -95,12 +100,20 @@ define([
             //Set tickFormat only if specified
             self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(10)
                 .tickSize(-self.height)
-            if(chartConfig.xLabelFormat != null)
+                // .outerTickSize(0)
+            if(chartConfig['doBucketize'] == false) {
                 self.xAxis.tickFormat(chartConfig.xLabelFormat);
+            } else if(chartConfig.xLabelFormat != null) {
+                self.xAxis.tickFormat(chartConfig.xLabelFormat);
+            }
             self.yAxis = d3.svg.axis().scale(self.yScale).orient("left").ticks(5)
                 .tickSize(-self.width)
-            if(chartConfig.yLabelFormat)
+                // .outerTickSize(0)
+            if(chartConfig['doBucketize'] == false) {
                 self.yAxis.tickFormat(chartConfig.yLabelFormat)
+            } else if(chartConfig.yLabelFormat != null) {
+                self.yAxis.tickFormat(chartConfig.yLabelFormat)
+            }
 
             self.xMed = median(_.map(chartData, function (d) {
                 return d[chartConfig.xField];
@@ -119,6 +132,44 @@ define([
     /*
      * Start: Bucketization functions
      */
+
+    function getAxisMinMaxForBucketization(chartData, fieldName, forceAxis) {
+        var axisMin = 0, axisMax;
+
+        //If all nodes are closer,then adding 10% buffer on edges makes them even closer
+        if(chartData.length > 0) {
+            axisMax = d3.max(chartData, function (d) {
+                    return +d[fieldName];
+                });
+            axisMin = d3.min(chartData, function (d) {
+                    return +d[fieldName];
+                });
+
+            if (axisMax == null) {
+                axisMax = 1;
+            }
+
+            if (axisMin == null) {
+                axisMin = 0;
+            } 
+
+        } else {
+            axisMax = 1;
+            axisMin = 0;
+        }
+
+        if (forceAxis) {
+            if (axisMin > forceAxis[0]) {
+                axisMin = forceAxis[0];
+            }
+
+            if (axisMax < forceAxis[1]) {
+                axisMax = forceAxis[1];
+            }
+        }
+
+        return [axisMin, axisMax];
+    };
 
     function doBucketization(data,chartOptions){
         var data = $.extend(true,[],data);
