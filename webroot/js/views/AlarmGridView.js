@@ -17,100 +17,26 @@ define([
         render: function () {
             var self = this;
             var viewConfig = (this.attributes)? this.attributes.viewConfig : null;
-
-//            var alarmURL = getAlarmURL(viewConfig);
-//            var alarmRemoteConfig = {
-//                url: alarmURL,
-//                type: 'GET'
-//            };
-
-            var remoteAjaxConfig = {
-                    remote: {//TODO need to verify if the pagination is actually working
-                        ajaxConfig: {
-                            url: getAlarmURL(viewConfig),
-                            type: "GET",
+            var contrailListModel;
+            if(self.model == null) {
+                var remoteAjaxConfig = {
+                        remote: {
+                            ajaxConfig: {
+                                url: cowc.get(cowc.URL_ALARM_DETAILS_IN_CHUNKS, 50, $.now()),
+                                type: "GET",
+                            },
+                            dataParser: coreAlarmUtils.alarmDataParser
                         },
-                        dataParser: function(response) {
-                            if(viewConfig == null || viewConfig.nodeType == null) {
-                                return coreAlarmUtils.alarmDataParser(response);
-                            }
-                            return parseAlarmInfo(response,viewConfig);
+                        cacheConfig: {
                         }
-                    },
-                    cacheConfig: {
-                    }
+                }
+                contrailListModel = new ContrailListModel(remoteAjaxConfig);
+            } else {
+                contrailListModel = self.model;
             }
-            var contrailListModel = new ContrailListModel(remoteAjaxConfig);
-
-            // TODO: Handle multi-tenancy
-            //var ucid = projectFQN != null ? (cowc.UCID_PREFIX_MN_LISTS + projectFQN + ":virtual-networks") : cowc.UCID_ALL_VN_LIST;
-
-           /* self.renderView4Config(self.$el, contrailListModel, getAlarmGridViewConfig(),
-                                    null,null,null,
-                                    function() {
-                                        //inialize the severity dropdown
-//                                         $('#ddSeverity').contrailDropdown({
-//                                             dataTextField: 'text',
-//                                             dataValueField: 'value',
-//                                             change: onSeverityChanged
-//                                         });
-//                                         var ddSeverity = $('#ddSeverity').data('contrailDropdown');
-//                                         ddSeverity.setData([{text: 'All', value: 'all'}, {text: 'Major', value: '3'}, {text: 'Minor', value: '4'}]);
-//                                         ddSeverity.value('all');
-//                                        GridDS = $('#' + cowl.ALARMS_GRID_ID).data('contrailGrid')._dataView.getItems()
-                                    });*/
             self.renderView4Config(self.$el, contrailListModel, getAlarmGridViewConfig());
         }
     });
-
-    function parseAlarmInfo (response, viewConfig) {
-      //TODO check why monitorInfraConstants is not intialized
-        try {
-            if(monitorInfraConstants == undefined || monitorInfraConstants == null) {
-                return coreAlarmUtils.alarmDataParser(response);
-            }
-        } catch (e) {
-            return coreAlarmUtils.alarmDataParser(response);
-        }
-        var nodeType = viewConfig['nodeType'],
-            hostname = viewConfig['hostname'];
-        var alarmsObj = {};
-        switch (nodeType) {
-
-            case monitorInfraConstants.CONTROL_NODE:
-                if(response.UVEAlarms != null){
-                    alarmsObj =  wrapUVEAlarms('control-node',hostname,response.UVEAlarms);
-                }
-                break;
-
-            case monitorInfraConstants.COMPUTE_NODE:
-                if(response != null && response.UVEAlarms != null) {
-                    alarmsObj =  wrapUVEAlarms('vrouter',hostname,response.UVEAlarms);
-                }
-                break;
-
-            case monitorInfraConstants.ANALYTICS_NODE:
-                if(response != null && response.UVEAlarms != null) {
-                    alarmsObj =  wrapUVEAlarms('analytics-node',hostname,response.UVEAlarms);
-                }
-                break;
-
-            case monitorInfraConstants.CONFIG_NODE:
-                if(response != null && response.configNode != null && response.configNode.UVEAlarms != null) {
-                    alarmsObj =  wrapUVEAlarms('config-node',hostname,response.configNode.UVEAlarms);
-                }
-                break;
-
-            case monitorInfraConstants.DATABASE_NODE:
-                if(response != null && response.databaseNode != null && response.databaseNode.UVEAlarms != null) {
-                    alarmsObj =  wrapUVEAlarms('database-node',hostname,response.databaseNode.UVEAlarms);
-                }
-                break;
-
-        }
-
-        return coreAlarmUtils.alarmDataParser (alarmsObj);
-    }
 
     function wrapUVEAlarms (nodeType,hostname,UVEAlarms) {
         var obj = {}
@@ -121,49 +47,6 @@ define([
         alarm['value']['UVEAlarms'] = UVEAlarms;
         obj[nodeType].push(alarm);
         return obj;
-    }
-
-    function getAlarmURL(viewConfig){
-        try {
-            if(viewConfig == null || monitorInfraConstants == undefined || monitorInfraConstants == null) {
-                return cowc.get(cowc.URL_ALARM_DETAILS_IN_CHUNKS, 50, $.now());
-            }
-        } catch (e) {
-            return cowc.get(cowc.URL_ALARM_DETAILS_IN_CHUNKS, 50, $.now());
-        }
-        var nodeType = viewConfig['nodeType'],
-            hostname = viewConfig['hostname'];
-        switch (nodeType) {
-
-            case monitorInfraConstants.CONTROL_NODE:
-                return contrail.format(
-                        monitorInfraConstants.
-                        monitorInfraUrls['CONTROLNODE_DETAILS'],
-                    hostname);
-
-            case monitorInfraConstants.COMPUTE_NODE:
-                return contrail.format(monitorInfraConstants.
-                        monitorInfraUrls['VROUTER_DETAILS'],
-                        hostname,true);
-
-            case monitorInfraConstants.ANALYTICS_NODE:
-                return contrail.format(
-                        monitorInfraConstants.
-                        monitorInfraUrls['ANALYTICS_DETAILS'], hostname);
-
-            case monitorInfraConstants.CONFIG_NODE:
-                return contrail.format(
-                        monitorInfraConstants.
-                        monitorInfraUrls['CONFIG_DETAILS'], hostname);
-
-            case monitorInfraConstants.DATABASE_NODE:
-                return contrail.format(
-                        monitorInfraConstants.
-                        monitorInfraUrls['DATABASE_DETAILS'], hostname);
-
-            default :
-                return cowc.get(cowc.URL_ALARM_DETAILS_IN_CHUNKS, 50, $.now());
-        }
     }
 
     function onSeverityChanged(e) {
@@ -239,7 +122,10 @@ define([
                               {
                                   field: 'timestamp',
                                   name: 'Time',
-                                  minWidth: 50
+                                  minWidth: 50,
+                                  formatter : function (r,c,v,cd,dc) {
+                                      return getFormattedDate(v/1000);
+                                  }
                               },
                               {
                                   field: 'alarm_msg',
