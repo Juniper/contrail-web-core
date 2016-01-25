@@ -3645,12 +3645,24 @@ td.td-actions a.td-action {
 }
 
 .filter-list-container li.filter-criteria {
+    display:inline-block;
+}
+.filter-list-container li.filter-criteria:not(:empty) {
     list-style: none;
     border: 1px solid;
-    line-height: 18px;
+    line-height: 12px;
+    margin: 3px 0 3px 5px;
     display:inline-block;
-    padding:0px 3px;
-    border-color:#dadada;
+    /* padding:0px 3px; */
+    padding:3px 3px 3px 5px;
+    border-color:#aaaaaa;
+}
+.filter-list-container li.filter-criteria:hover {
+    border-color:#c6dbef;
+    background-color:#c6dbef
+}
+.zs-chart-settings {
+    height: 30px;
 }
 
 /* scrollbar */

@@ -2914,14 +2914,17 @@ p.error, p.error-text {
     margin-top: 4px;
     opacity:1;
 }
-.chart-settings .color-selection .circle {
+.zs-chart-settings .color-selection .circle {
     display:inline-block;
     margin:0 5px;
     cursor:pointer;
     opacity:1;
 }
-.chart-settings .color-selection label {
+.zs-chart-settings .color-selection label {
     display:inline-block;
+}
+.zs-chart-settings .ace-lbl {
+    margin-bottom: 5px!important;
 }
 
 /* General Styles */

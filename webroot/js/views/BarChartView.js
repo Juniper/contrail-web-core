@@ -71,7 +71,7 @@ define([
         }
         return {
             barRange: barRange,
-            maxXValue: maxXValue
+            maxXValue: ifNull(maxXValue,24)
         };
     }
 
