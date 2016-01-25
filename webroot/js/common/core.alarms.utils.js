@@ -226,7 +226,7 @@ define(
                                         currObject.type = alarmInfo.type;
                                         currObject.ack = alarmInfo.ack;
                                         currObject.status = ((alarmInfo.ack == null) || (alarmInfo.ack == false)) ? 'Unacknowledged' : 'Acknowledged';
-                                        currObject.timestamp = getFormattedDate(alarmInfo.timestamp/1000);
+                                        currObject.timestamp = alarmInfo.timestamp;
                                         currObject.severity = alarmInfo.severity;
                                         currObject.alarm_msg = coreAlarmUtils.getFormattedAlarmMessage({alarm:alarmInfo, nodeType:currNodeType});
                                         currObject.alarm_detailed = coreAlarmUtils.getFormattedAlarmMessage({alarm:alarmInfo, nodeType:currNodeType, detailed:true});
@@ -239,6 +239,17 @@ define(
                    }
                    return self.alarmsSort(retArr);
                 };
+
+                self.wrapUVEAlarms = function (nodeType,hostname,UVEAlarms) {
+                    var obj = {}
+                    var alarm = {};
+                    obj[nodeType] = [];
+                    alarm['name'] = hostname;
+                    alarm['value'] = {};
+                    alarm['value']['UVEAlarms'] = UVEAlarms;
+                    obj[nodeType].push(alarm);
+                    return obj;
+                }
             }
             return CoreAlarmUtils;
        }

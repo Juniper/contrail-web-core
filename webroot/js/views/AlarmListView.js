@@ -12,8 +12,19 @@ define([
 
         render: function () {
             var self = this, viewConfig = this.attributes.viewConfig;
-
-            self.renderView4Config(this.$el, null, getAlarmsListViewConfig());
+            var remoteAjaxConfig = {
+                    remote: {
+                        ajaxConfig: {
+                            url: cowc.get(cowc.URL_ALARM_DETAILS_IN_CHUNKS, 50, $.now()),
+                            type: "GET",
+                        },
+                        dataParser: coreAlarmUtils.alarmDataParser
+                    },
+                    cacheConfig: {
+                    }
+            }
+            var contrailListModel = new ContrailListModel(remoteAjaxConfig);
+            self.renderView4Config(this.$el, contrailListModel, getAlarmsListViewConfig());
         }
     });
 
