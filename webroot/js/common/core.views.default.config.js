@@ -86,8 +86,8 @@ define([
         };
 
         this.lineWithFocusChartConfig = {
-            margin: {top: 20, right: 70, bottom: 50, left: 70},
-            margin2: {top: 0, right: 70, bottom: 40, left: 70},
+            margin: {top: 10, right: 30, bottom: 50, left: 65},
+            margin2: {top: 0, right: 30, bottom: 40, left: 65},
             axisLabelDistance: 5,
                 height: 300,
             yAxisLabel: 'Traffic',
