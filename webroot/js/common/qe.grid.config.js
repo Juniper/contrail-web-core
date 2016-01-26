@@ -167,7 +167,8 @@ define([
             {select:"avg(bytes)", display:{id:"avg(bytes)", field:"avg(bytes)", width:100, name:"AVG (Bytes)", groupable:false}},
             {select:"packets", display:{id:"packets", field:"packets", width:100, name:"Packets", groupable:false}},
             {select:"sum(packets)", display:{id:"sum(packets)", field:"sum(packets)", width:120, name:"SUM (Packets)", groupable:false}},
-            {select:"avg(packets)", display:{id:"avg(packets)", field:"avg(packets)", width:120, name:"AVG (Packets)", groupable:false}}
+            {select:"avg(packets)", display:{id:"avg(packets)", field:"avg(packets)", width:120, name:"AVG (Packets)", groupable:false}},
+            {select:"flow_count", display:{id:"flow_count", field:"flow_count", width:120, name:"Flow Count", groupable:false}}
         ],
         "FlowRecordTable": [
             {select:"action", display:{id:"action", field:"action", width:60, name:"Action", groupable:true}},
@@ -190,7 +191,9 @@ define([
             {select:"sg_rule_uuid", display:{id:"sg_rule_uuid", field:"sg_rule_uuid", width:280, name:"Rule UUID", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sg_rule_uuid);}}},
             {select:"nw_ace_uuid", display:{id:"nw_ace_uuid", field:"nw_ace_uuid", width:280, name:"Network UUID", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.nw_ace_uuid);}}},
             {select:"agg-bytes", display:{id:"agg-bytes", field:"agg-bytes", width:120, name:"Aggregate Bytes",  groupable:false}},
-            {select:"agg-packets", display:{id:"agg-packets", field:"agg-packets", width:140, name:"Aggregate Packets",  groupable:false}}
+            {select:"agg-packets", display:{id:"agg-packets", field:"agg-packets", width:140, name:"Aggregate Packets",  groupable:false}},
+            {select:"vmi_uuid", display:{id:"vmi_uuid", field:"vmi_uuid", width:140, name:"VMI UUID",  groupable:false}},
+            {select:"drop_reason", display:{id:"drop_reason", field:"drop_reason", width:140, name:"Drop Reason",  groupable:false}}
         ],
         "StatTable.AnalyticsCpuState.cpu_info" : [
             {select:"cpu_info.module_id", display:{id:'cpu_info.module_id', field:'cpu_info.module_id', width:150, name:"Module Id", groupable:false}},
@@ -1800,7 +1803,7 @@ define([
             {select:"T=", display:{id: 'T=', field:'["T="]', width:210, name:"Time", formatter: function(r, c, v, cd, dc) { return cowu.formatMicroDate(dc['T=']); }, filterable:false, groupable:false}},
             {select:"UUID", display:{id:"UUID", field:"UUID", name:"UUID",  width:150, groupable:true}},
             {select:"name", display:{id:'name', field:'name', width:150, name:"Name", groupable:false}},
-            {select:"Source", display:{id:'Source', field:'Source', width:50, name:"Source", groupable:false}}
+            {select:"Source", display:{id:'Source', field:'Source', width:70, name:"Source", groupable:false}}
         ],
         "defaultObjectColumns": [
             {select: "MessageTS", display:{id: "MessageTS", field: "MessageTS", name: "Time", width:210, filterable:false, groupable:false, formatter: function(r, c, v, cd, dc) { return (dc.MessageTS && dc.MessageTS != '')  ? (cowu.formatMicroDate(dc.MessageTS)) : ''; }}},
