@@ -381,7 +381,7 @@ define([
                                 if (singlePoint === undefined) singlePoint = point;
                                 if (pointXLocation === undefined) pointXLocation = chartModel.xScale()(chartModel.x()(point, pointIndex));
                                 allData.push({
-                                    key: series.key,
+                                    key: (yDataKey != 'y') ? yDataKey : series.key,
                                     value: chartModel.y()(point, pointIndex),
                                     color: color(series, series.seriesIndex)
                                 });
