@@ -65,10 +65,9 @@ define([
         },
 
         isDeepValid: function(validations) {
-            var isValid = true, isInternalValid = true,
-                validationObj, validationOption = true,
-                key, keyObject, collectionModel, errors, attrErrorObj,
-                objectType, getValidation, validationName;
+            var isValid = true, validationOption = true,
+                validationObj, key, keyObject, collectionModel, errors, attrErrorObj,
+                objectType, getValidation, validationName, isInternalValid;
 
             for (var i = 0; i < validations.length; i++) {
                 validationObj = validations[i];
@@ -79,11 +78,14 @@ define([
                 errors = this.model().get(cowc.KEY_MODEL_ERRORS);
 
                 if(contrail.checkIfExist(key)) {
+                    isInternalValid = true;
+
                     //handling the collection of collection validations
                     if(objectType === cowc.OBJECT_TYPE_COLLECTION_OF_COLLECTION) {
                         var primKey = key[0], secKey = key[1];
                         keyObject = this.model().attributes[primKey];
                         keyObject = keyObject instanceof Backbone.Collection ? keyObject.toJSON() : [];
+
                         for(var primColIndex = 0; primColIndex < keyObject.length; primColIndex++) {
                             var primColModel = keyObject[primColIndex];
                             var secKeyObject = primColModel.model().attributes[secKey];
@@ -91,12 +93,10 @@ define([
                                 for(var secColIndex = 0; secColIndex < secKeyObject.size(); secColIndex++) {
                                     var secColModel = secKeyObject.at(secColIndex);
                                     validationName = getValidation instanceof Function ? getValidation(secColModel) : getValidation;
-                                    isInternalValid = secColModel.attributes.model().isValid(validationOption, validationName);
-                                    attrErrorObj = {};
-                                    attrErrorObj[secKey + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
-                                    errors.set(attrErrorObj);
+                                    isInternalValid = isInternalValid && secColModel.attributes.model().isValid(validationOption, validationName);
                                     isValid = isValid && isInternalValid;
-                                };
+                                }
+                                setError4Key(errors, secKey, isInternalValid);
                             }
                         }
                     } else {
@@ -106,23 +106,18 @@ define([
                             for( var j = 0; j < keyObject.size(); j++) {
                                 collectionModel = keyObject.at(j);
                                 validationName = typeof getValidation == 'function' ? getValidation(collectionModel) : getValidation;
-                                isInternalValid = collectionModel.attributes.model().isValid(validationOption, validationName);
-                                attrErrorObj = {};
-                                attrErrorObj[key + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
-                                errors.set(attrErrorObj);
+                                isInternalValid = isInternalValid && collectionModel.attributes.model().isValid(validationOption, validationName);
                                 isValid = isValid && isInternalValid;
                             }
+
                         } else if (objectType == cowc.OBJECT_TYPE_MODEL) {
                             validationName = typeof getValidation == 'function' ? getValidation(this) : getValidation;
                             isInternalValid = keyObject.model().isValid(validationOption, validationName);
-                            attrErrorObj = {};
-                            if(!isInternalValid) {
-                                attrErrorObj[key + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
-                                errors.set(attrErrorObj);
-                            }
                             isValid = isValid && isInternalValid;
                         }
                     }
+
+                    setError4Key(errors, key, isInternalValid);
                 } else {
                     validationName = typeof getValidation == 'function' ? getValidation(this) : getValidation;
                     isValid = isValid && this.model().isValid(validationOption, validationName);
@@ -186,6 +181,14 @@ define([
             return {responseText: errorText};
         }
     });
+
+    function setError4Key(errors, key, isInternalValid) {
+        var attrErrorObj = {};
+        if(!isInternalValid) {
+            attrErrorObj[key + cowc.ERROR_SUFFIX_ID] = !isInternalValid;
+            errors.set(attrErrorObj);
+        }
+    };
 
     function generateAttributes(attributes, suffix, defaultValue) {
         var flattenAttributes = cowu.flattenObject(attributes),
