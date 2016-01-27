@@ -25,7 +25,7 @@ define([
                                 url: cowc.get(cowc.URL_ALARM_DETAILS_IN_CHUNKS, 50, $.now()),
                                 type: "GET",
                             },
-                            dataParser: coreAlarmUtils.alarmDataParser
+                            dataParser: coreAlarmParsers.alarmDataParser
                         },
                         cacheConfig: {
                         }
@@ -101,6 +101,7 @@ define([
                                       return d['severity'];
                                   },
                                   searchable: true,
+                                  sortField: 'severity',
                                   formatter : function (r, c, v, cd, dc) {
                                       var formattedDiv;
                                       if(dc['ack']) {
@@ -143,7 +144,7 @@ define([
                                   formatter : function (r,c,v,cd,dc) {
                                       var formattedDiv = '';
                                       if(!dc['ack']) {
-                                          formattedDiv = '<span title="Acknowledge"><i class="icon-check-sign"></i></span>';
+                                          formattedDiv = '<span title="Acknowledge"><i class="icon-ok-circle"></i></span>';
                                       }
                                       return formattedDiv;
                                   },
@@ -215,7 +216,7 @@ define([
                 "type": "link",
                 "title": 'Acknowledge',
                 "linkElementId": "btnAcknowledge",
-                "iconClass": "icon-check-sign",
+                "iconClass": "icon-ok-circle",
                 "onClick": function () {
                     var gridElId = '#' + cowl.ALARMS_GRID_ID;
                     var checkedRows = $(gridElId).data("contrailGrid").getCheckedRows();
@@ -283,7 +284,7 @@ define([
     function getAcknowledgeAction (onClickFunction, divider) {
         return {
             title: cowl.TITLE_ACKNOWLEDGE,
-            iconClass: 'icon-check-sign',
+            iconClass: 'icon-ok-circle',
             width: 80,
             disabled:true,
             divider: contrail.checkIfExist(divider) ? divider : false,
