@@ -17,6 +17,7 @@ define([
                 label = this.attributes.label,
                 elId = this.attributes.elementId,
                 app = this.attributes.app,
+                validation = this.attributes.validation,
                 visible =  this.attributes.visible,
                 path = viewConfig[cowc.KEY_PATH],
                 lockEditingByDefault = this.attributes.lockEditingByDefault,
@@ -36,7 +37,8 @@ define([
                 label: labelValue, id: elId + '_dropdown', name: elId,
                 viewConfig: viewConfig,
                 lockAttr: lockEditingByDefault,
-                class: "span12"
+                class: "span12",
+                validation: validation
             };
 
             /* Save the elementConfig for the dropdown in elementConfigMap in

@@ -1082,6 +1082,11 @@
                 {{#if lockAttr}}
                      disable: locks().{{name}}_locked,
                 {{/if}}
+                event: { 
+                    change: function() {
+                    validateAttr()('{{viewConfig.path}}', '{{validation}}', $data);
+                    } 
+                },
                 value: {{viewConfig.dataBindValue}},
                 {{#if viewConfig.customValue}}
                     customValue: {{viewConfig.customValue}},
@@ -1528,7 +1533,10 @@
         </tr>
         <tr class="error-row">
             {{#each columns}}
-            <td class="error-cell">
+            <td class="error-cell"
+                {{#IfCompare viewConfig.colSpan null operator='!='}}
+                    colspan="{{viewConfig.colSpan}}"
+                {{/IfCompare}}>
                 <span class="help-block red" 
                     data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
                 </span>

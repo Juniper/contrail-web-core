@@ -511,13 +511,31 @@ function createNetwork(userData,appData,callback) {
                                             return;
                                         }
                                         createIpPool(userData,appData,callback).done(function(response) {
+                                            //If creation of ip-pool fails,delete the portGroup also
+                                            if(response['Fault'] != null) {
+                                                destroyTask(appData,'DistributedVirtualPortgroup',userData['name']).done(function(data) {
+                                                    if(data['Fault'] != null) {
+                                                        callback(null,response);
+                                                        return;
+                                                    }
+                                                });
+                                            }
                                             callback(null,response);
                                         });
                                     });
                                 } else {
-                                        createIpPool(userData,appData,callback).done(function(response) {
-                                            callback(null,response);
-                                        });
+                                    createIpPool(userData,appData,callback).done(function(response) {
+                                        //If creation of ip-pool fails,delete the portGroup also
+                                        if(response['Fault'] != null) {
+                                            destroyTask(appData,'DistributedVirtualPortgroup',userData['name']).done(function(data) {
+                                                if(data['Fault'] != null) {
+                                                    callback(null,response);
+                                                    return;
+                                                }
+                                            });
+                                        }
+                                        callback(null,response);
+                                    });
                                 }
                             });
                         });
