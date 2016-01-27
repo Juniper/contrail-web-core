@@ -3559,3 +3559,26 @@ tr.collapsibleChildContainer{
 .max-z-index {
     z-index: 30000;
 }
+.tick line{
+    opacity: 0.1;
+  }
+
+.axis {
+  opacity: 0.7;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 100px;
+    height: 32px;
+    padding: 2px;
+    opacity:0.7;
+    font: 12px sans-serif;
+    background: white; 
+    border: 1px;
+    border-color: #e6e6e6;
+    border-style: solid;
+    border-radius: 0px;
+    pointer-events: none;
+}

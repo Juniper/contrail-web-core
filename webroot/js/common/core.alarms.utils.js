@@ -5,10 +5,14 @@
 define(
        [ 'underscore' ],
        function(_) {
+           var sevColorMap = {
+                   '3': '#dc6660',
+                   '4': '#ffbf87'
+           };
             var CoreAlarmUtils = function() {
                 var self = this;
                 var alarmTypesMap = {};
-
+                self.BUCKET_DURATION = 300000000;//5 MINS
                 // If required fetch the alarmtypes .
                 self.fetchAlarmTypes = function () {
                     $.ajax({
@@ -249,6 +253,68 @@ define(
                     alarm['value']['UVEAlarms'] = UVEAlarms;
                     obj[nodeType].push(alarm);
                     return obj;
+                }
+                
+                self.parseAlarmsDataForStackChart = function(alarms) {
+                    var minMaxTS = d3.extent(alarms,function(obj){
+                        return obj['timestamp'];
+                    });
+                    /* Bucketizes timestamp every 5 minutes */
+                    var xBucketScale = d3.scale.quantize().domain(minMaxTS).range(d3.range(minMaxTS[0],minMaxTS[1],self.BUCKET_DURATION));//5mins
+                    var buckets = {};
+                    //Group nodes into buckets
+                    $.each(alarms,function(idx,obj) {
+                        var xBucket = xBucketScale(obj['timestamp']);
+                        if(buckets[xBucket] == null) {
+                            var timestampExtent = xBucketScale.invertExtent(xBucket);
+                            buckets[xBucket] = {timestampExtent:timestampExtent, 
+                                                data:[]};
+                        }
+                        
+                        buckets[xBucket]['data'].push(obj);
+                    });
+
+                  //Now parse this data to be usable in the chart
+                    var parsedData = [];
+                    for(var timestampTick in buckets) {
+                        parsedData.push(self.parseDataForChart(timestampTick,buckets[timestampTick]));
+                    }
+                    return parsedData
+                }
+
+                self.parseDataForChart = function (timestamp,options) {
+                    var data = options.data;
+                    var value = { date: new Date(timestamp/1000) }; // turn the date string into a date object
+                    // adding calculated data to each count in preparation for stacking
+                    var severityBuckets = {};
+                    $.each(data,function(i,d){
+                        var sev = d.severity;
+                        if(severityBuckets[sev] == null) {
+                            severityBuckets[sev] = [];
+                        }
+                        severityBuckets[sev].push(d);
+                    });
+                    var counts = [];
+                    var overviewColor = sevColorMap['4'];//default yellow
+                    var y0 = 0;
+                    for(var sevkey in severityBuckets) {
+
+                        counts.push({
+                            name : 'severity_' + sevkey,
+                            color : sevColorMap[sevkey],
+                            y0: y0,
+                            y1: y0 += +severityBuckets[sevkey].length,
+                            items: severityBuckets[sevkey]
+                        });
+                        if(sevkey <= 3) {
+                            overviewColor = sevColorMap[sevkey];
+                        }
+                    }
+                    value.timestampExtent = options.timestampExtent;
+                    value.counts = counts;
+                    value.total = data.length;
+                    value.overviewColor = overviewColor;
+                    return value;
                 }
             }
             return CoreAlarmUtils;
