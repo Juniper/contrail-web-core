@@ -3607,3 +3607,11 @@ tr.collapsibleChildContainer{
 #securityGroupValue .form-label{
     display:none;}
 
+.alarms-circle-display-flex {
+	display: inline-flex;
+}
+
+.alarms-display-inline {
+	display: inline;
+}
+

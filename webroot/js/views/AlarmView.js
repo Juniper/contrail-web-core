@@ -18,7 +18,6 @@ define([
             elementId: cowu.formatElementId([cowl.MONITOR_ALARMS_PAGE_ID]),
             view: "AlarmListView",
             viewPathPrefix: "js/views/",
-            app: cowc.APP_CONTRAIL_CONTROLLER,
             viewConfig: {}
         }
     };
