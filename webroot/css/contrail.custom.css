@@ -3603,3 +3603,11 @@ tr.collapsibleChildContainer{
     font-family: FontAwesome;
     color: #858585;
 }
+
+.alarms-circle-display-flex {
+	display: inline-flex;
+}
+
+.alarms-display-inline {
+	display: inline;
+}

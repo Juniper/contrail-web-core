@@ -25,7 +25,7 @@ define([
                                 url: cowc.get(cowc.URL_ALARM_DETAILS_IN_CHUNKS, 50, $.now()),
                                 type: "GET",
                             },
-                            dataParser: coreAlarmUtils.alarmDataParser
+                            dataParser: coreAlarmParsers.alarmDataParser
                         },
                         cacheConfig: {
                         }
@@ -34,7 +34,7 @@ define([
             } else {
                 contrailListModel = self.model;
             }
-            self.renderView4Config(self.$el, contrailListModel, getAlarmGridViewConfig());
+            self.renderView4Config(self.$el, contrailListModel, getAlarmGridViewConfig(viewConfig));
         }
     });
 
@@ -68,7 +68,7 @@ define([
         gridAlarms._dataView.setData(filterdDS)
     }
 
-    var getAlarmGridViewConfig = function () {
+    var getAlarmGridViewConfig = function (viewConfig) {
         return {
             elementId: cowu.formatElementId([cowl.MONITOR_ALARM_LIST_VIEW_ID]),
             view: "SectionView",
@@ -81,7 +81,7 @@ define([
                                 title: cowl.TITLE_ALARMS,
                                 view: "GridView",
                                 viewConfig: {
-                                    elementConfig: getConfiguration()
+                                    elementConfig: getConfiguration(viewConfig)
                                 }
                             }
                         ]
@@ -91,7 +91,7 @@ define([
         }
     };
 
-    var getConfiguration = function () {
+    var getConfiguration = function (viewConfig) {
         var alarmColumns = [
                               {
                                   field: 'severity',
@@ -101,6 +101,7 @@ define([
                                       return d['severity'];
                                   },
                                   searchable: true,
+                                  sortField: 'severity',
                                   formatter : function (r, c, v, cd, dc) {
                                       var formattedDiv;
                                       if(dc['ack']) {
@@ -143,7 +144,7 @@ define([
                                   formatter : function (r,c,v,cd,dc) {
                                       var formattedDiv = '';
                                       if(!dc['ack']) {
-                                          formattedDiv = '<span title="Acknowledge"><i class="icon-check-sign"></i></span>';
+                                          formattedDiv = '<span title="Acknowledge"><i class="icon-ok-circle"></i></span>';
                                       }
                                       return formattedDiv;
                                   },
@@ -184,6 +185,19 @@ define([
                 dataSource : {
                     data : []
                 },
+                statusMessages: {
+                    loading: {
+                       text: 'Loading Alarms..',
+                    },
+                    empty: {
+                       text: 'No Alarms to display'
+                    }, 
+                    errorGettingData: {
+                       type: 'error',
+                       iconClasses: 'icon-warning',
+                       text: 'Error in getting Data.'
+                    }
+                 }
             },
             columnHeader: {
                 columns: alarmColumns
@@ -215,7 +229,7 @@ define([
                 "type": "link",
                 "title": 'Acknowledge',
                 "linkElementId": "btnAcknowledge",
-                "iconClass": "icon-check-sign",
+                "iconClass": "icon-ok-circle",
                 "onClick": function () {
                     var gridElId = '#' + cowl.ALARMS_GRID_ID;
                     var checkedRows = $(gridElId).data("contrailGrid").getCheckedRows();
@@ -233,6 +247,7 @@ define([
                     elementId: 'alarmsFilterMultiselect',
                     dataTextField: 'text',
                     dataValueField: 'id',
+                    selectedList: 1,
                     noneSelectedText: 'Filter Alarms',
                     filterConfig: {
                         placeholder: 'Search Filter'
@@ -283,7 +298,7 @@ define([
     function getAcknowledgeAction (onClickFunction, divider) {
         return {
             title: cowl.TITLE_ACKNOWLEDGE,
-            iconClass: 'icon-check-sign',
+            iconClass: 'icon-ok-circle',
             width: 80,
             disabled:true,
             divider: contrail.checkIfExist(divider) ? divider : false,
@@ -400,9 +415,11 @@ define([
     this.alarmSeverityFormatter = function (v, dc) {
         var cirle;
         if(v == 3) {
-            circle = '<div data-color="red" class="circle red filled alarms-circle-grid-style"></div>';
+            circle = '<div data-color="red" class="circle red filled alarms-circle-grid-style alarms-circle-display-flex"></div>\
+                <div class="alarms-display-inline">&nbsp;Major</div>';
         } else if (v == 4) {
-            circle = '<div data-color="orange" class="circle orange filled alarms-circle-grid-style"></div>';
+            circle = '<div data-color="orange" class="circle orange filled alarms-circle-grid-style alarms-circle-display-flex"></div>\
+                <div class="alarms-display-inline">&nbsp;Minor</div>';
         }
         return circle;
     }
