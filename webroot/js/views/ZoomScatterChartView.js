@@ -346,7 +346,7 @@ define([
         var selectedColorElems = $(selector).find('.circle.filled');
         var selColors = [];
         $.each(selectedColorElems,function(idx,obj) {
-            $.each(ctwc.COLOR_SEVERITY_MAP,function(currColorName,currColorCode) {
+            $.each(cowc.COLOR_SEVERITY_MAP,function(currColorName,currColorCode) {
                 if($(obj).hasClass(currColorName)) {
                     if(selColors.indexOf(currColorName) == -1)
                         selColors.push(currColorCode);

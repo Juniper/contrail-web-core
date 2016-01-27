@@ -321,7 +321,7 @@ var dashboardUtils = {
     },
     getDownNodeCnt : function(data) {
         var downNodes = $.grep(data,function(obj,idx) {
-                           return obj['color'] == ctwc.COLOR_SEVERITY_MAP['red'];
+                           return obj['color'] == cowc.COLOR_SEVERITY_MAP['red'];
                         });
         return downNodes.length;
     },

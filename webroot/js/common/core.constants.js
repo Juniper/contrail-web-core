@@ -18,7 +18,12 @@ define([
 //                NOTICE  : 2, //Blue
 //                INFO    : 3, //Green
             }
-
+       this.COLOR_SEVERITY_MAP = {
+                red : 'error',
+                orange : 'warning',
+                blue : 'default',
+                green : 'okay'
+           };
         this.PATTERN_IP_ADDRESS  = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
         this.PATTERN_SUBNET_MASK = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(\d|[1-2]\d|3[0-2]))?$/;
         this.PATTERN_MAC_ADDRESS = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
@@ -610,6 +615,8 @@ define([
         //Alarm constants
         this.URL_ALARM_DETAILS_IN_CHUNKS =
             '/api/tenant/monitoring/alarms?count={0}&startAt={1}';
+        this.ALARM_REFRESH_DURATION = 300000;//5 MINUTES
+        this.ALARM_BUCKET_DURATION = 300000000;//5 MINUTES
 
         this.get = function () {
             var args = arguments;
