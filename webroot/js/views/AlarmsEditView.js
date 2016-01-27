@@ -7,10 +7,11 @@ define([
     'contrail-view',
     'knockback'
 ], function (_, ContrailView, Knockback) {
-    var prefixId = cowl.ALARM_PREFIX_ID;
-    var modalId = 'acknowledge-' + prefixId;
+    var gridElId = '#' + cowl.ALARMS_GRID_ID;
+    var prefixId = cowl.ALARMS_PREFIX_ID;
+    var modalId = 'monitor-' + prefixId;
 
-    var AlarmsEditView = ContrailView.extend({
+    var alarmsEditView = ContrailView.extend({
 
         renderAckAlarms: function(options) {
             var ackTemplate =
@@ -52,5 +53,5 @@ define([
             kbValidation.bind(self);
         }
     });
-    return AlarmsEditView;
+    return alarmsEditView;
 });
