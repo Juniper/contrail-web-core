@@ -610,6 +610,8 @@ define([
         //Alarm constants
         this.URL_ALARM_DETAILS_IN_CHUNKS =
             '/api/tenant/monitoring/alarms?count={0}&startAt={1}';
+        this.ALARM_REFRESH_DURATION = 300000;//5 MINUTES
+        this.ALARM_BUCKET_DURATION = 300000000;//5 MINUTES
 
         this.get = function () {
             var args = arguments;
