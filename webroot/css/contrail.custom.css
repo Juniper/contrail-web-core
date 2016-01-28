@@ -742,6 +742,9 @@ a.selectAllLink:hover {
 .break-and-wrap-word{
 	word-wrap: break-word;
 }
+.word-break-all {
+	word-break: break-all;
+}
 
 /* Slickgrid Header Styles */
 
