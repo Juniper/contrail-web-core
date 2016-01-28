@@ -305,7 +305,7 @@ define([
                         {values: []}
                     ]);
                 var lines2Wrap = g.select('.nv-context .nv-linesWrap')
-                    .datum(data.filter(function(d) { return !d.disabled }));
+                    .datum(data.filter(function(d) { return !d.disabled && !d.bar; }));
 
                 g.select('.nv-context')
                     .attr('transform', 'translate(0,' + ( availableHeight1 + margin.bottom + margin2.top) + ')');
@@ -472,7 +472,7 @@ define([
 
                     var focusLinesWrap = g.select('.nv-focus .nv-linesWrap')
                         .datum(data
-                            .filter(function(d) { return !d.disabled })
+                            .filter(function(d) { return !d.disabled && !d.bar })
                             .map(function(d,i) {
                                 return {
                                     area: d.area,

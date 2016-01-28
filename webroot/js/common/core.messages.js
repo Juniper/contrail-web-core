@@ -35,6 +35,9 @@ define([
         this.DATA_ERROR = "Error in getting data.";
         this.DATA_SUCCESS_EMPTY = "No data available.";
 
+        this.DATA_ERROR_REQUIRED = "Required";
+        this.DATA_ERROR_INVALID = "Invalid";
+
         this.getRequestMessage = function(requestState) {
             if (requestState === cowc.DATA_REQUEST_STATE_FETCHING) {
                 return cowm.DATA_FETCHING;

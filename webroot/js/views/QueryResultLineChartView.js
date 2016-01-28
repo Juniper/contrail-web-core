@@ -38,8 +38,10 @@ define([
                 axisLabelDistance: 5,
                 yAxisLabel: selectFieldValue,
                 yAxisDataField: selectFieldValue,
-                forceY: [0, 100],
-                yFormatter: cowf.getYAxisFormatterFunction4Chart(yFormatterKey)
+                forceY: [0, 10],
+                yFormatter: function (d) {
+                    return cowf.getFormattedValue(yFormatterKey, d)
+                }
             };
         });
 
@@ -234,7 +236,7 @@ define([
                 var chartDataRow = chartListModel.getItemById(colorValue),
                     chartDataValue = {
                         cgrid: 'id_' + colorKey,
-                        key: '#' + colorKey + ' Sum(Bytes)',
+                        key: colorKey,
                         values: [],
                         color: cowc.D3_COLOR_CATEGORY7[colorKey]
                     };
@@ -263,7 +265,7 @@ define([
         var filterConfig = {
             groups: [
                 {
-                    id: 'by-node-color',
+                    id: 'by-node-color-' + queryId,
                     title: false,
                     type: 'radio',
                     items: []
@@ -285,8 +287,11 @@ define([
                             .tickFormat(chartAxesOption['yFormatter'])
                             .showMaxMin(false);
 
-                        $('#' + queryResultLineChartId).data('chart').chartOptions.chartAxesOptionKey = selectFieldValue;
-                        $('#' + queryResultLineChartId).data('chart').update();
+                        chartModel.lines.forceY(chartAxesOption.forceY);
+                        chartModel.lines2.forceY(chartAxesOption.forceY);
+
+                        chartModel.chartOptions.chartAxesOptionKey = selectFieldValue;
+                        chartModel.update();
                     }
                 }
             })

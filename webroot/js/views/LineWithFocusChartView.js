@@ -87,7 +87,9 @@ define([
                 chartOptions['deferredObj'].resolve();
 
             if (widgetConfig !== null) {
-                this.renderView4Config(selector.find('.chart-container'), chartViewModel, widgetConfig, null, null, null);
+                this.renderView4Config(selector.find('.chart-container'), chartViewModel, widgetConfig, null, null, null, function(){
+                    chUtils.updateChartOnResize(selector, chartModel);
+                });
             }
         }
     });
@@ -174,16 +176,27 @@ define([
     };
 
     function getForceYAxis(chartData, chartOptions) {
-        var defaultForceY = chartOptions['forceY'],
-            yAxisDataField = contrail.checkIfExist(chartOptions['yAxisDataField']) ? chartOptions['yAxisDataField'] : 'y',
-            dataAllLines = [], forceY;
+        var dataAllLines = [];
 
         for (var j = 0; j < chartData.length; j++) {
             dataAllLines = dataAllLines.concat(chartData[j]['values']);
         }
 
+        if (contrail.checkIfExist(chartOptions.chartAxesOptions)) {
+            $.each(chartOptions.chartAxesOptions, function(axisKey, axisValue) {
+                var defaultForceY = axisValue['forceY'],
+                    yAxisDataField = axisValue['yAxisDataField'];
+
+                axisValue.forceY = cowu.getForceAxis4Chart(dataAllLines, yAxisDataField, defaultForceY);
+            });
+        }
+
+        var defaultForceY = chartOptions['forceY'],
+            yAxisDataField = contrail.checkIfExist(chartOptions['yAxisDataField']) ? chartOptions['yAxisDataField'] : 'y',
+            forceY;
+
         forceY = cowu.getForceAxis4Chart(dataAllLines, yAxisDataField, defaultForceY);
-        return forceY[1] == defaultForceY[1] ? forceY : null;
+        return forceY;
     };
 
     return LineWithFocusChartView;
