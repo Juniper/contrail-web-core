@@ -87,7 +87,9 @@ define([
                 chartOptions['deferredObj'].resolve();
 
             if (widgetConfig !== null) {
-                this.renderView4Config(selector.find('.chart-container'), chartViewModel, widgetConfig, null, null, null);
+                this.renderView4Config(selector.find('.chart-container'), chartViewModel, widgetConfig, null, null, null, function(){
+                    chUtils.updateChartOnResize(selector, chartModel);
+                });
             }
         }
     });

@@ -265,7 +265,7 @@ define([
         var filterConfig = {
             groups: [
                 {
-                    id: 'by-node-color',
+                    id: 'by-node-color-' + queryId,
                     title: false,
                     type: 'radio',
                     items: []
