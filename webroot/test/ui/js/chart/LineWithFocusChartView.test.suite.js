@@ -15,7 +15,18 @@ define([
         var viewConfig = cotu.getViewConfigObj(viewObj),
             el = viewObj.el,
             chartOptions = viewConfig.chartOptions,
-            chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions);
+            chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions),
+            color = nv.utils.defaultColor();
+
+        var chartData = (viewObj.mockData || viewObj.model.getItems());
+        if (contrail.checkIfExist(viewConfig.parseFn)) {
+            chartData = viewConfig.parseFn(chartData);
+        }
+
+        /**
+         * To access the chart data on the DOM which is used to plot the graph.
+         */
+        //var domChartData = d3.select(viewObj.$el.find('svg')[0]).data()['data'];
 
         module(cotu.formatTestModuleMessage(cotm.TEST_CHARTVIEW_LINE, el.id));
 
@@ -55,18 +66,21 @@ define([
          *
          */
         basicTestGroup.registerTest(cotr.test(cotm.CHARTVIEW_COLOR_LINES, function () {
-            expect(2);
-            if($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-0 .nv-line').parent().css('fill').indexOf('#') !== -1){
-                equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-0 .nv-line').parent().css('fill'), "#1f77b4",
-                    "Color of lines in chart equal to color of lines set");
-                equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-1 .nv-line').parent().css('fill'), "#6baed6",
-                    "Color of lines in chart equal to color of lines set");
-            } else {
-                equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-0 .nv-line').parent().css('fill'), "rgb(31, 119, 180)",
-                    "Color of lines in chart equal to color of lines set");
-                equal($(el).find('.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-1 .nv-line').parent().css('fill'), "rgb(107, 174, 214)",
-                    "Color of lines in chart equal to color of lines set");
-            }
+            expect(chartData.length);
+            _.each(chartData, function(series, idx) {
+                var cssId = '.nv-lineWithFocusChart .nv-focus .nv-groups .nv-series-'+ idx +' .nv-line';
+                if(contrail.checkIfExist(series.color)) {
+                    equal(
+                        d3.rgb($(el).find(cssId).parent().css('fill')).toString(), d3.rgb(series.color).toString(),
+                        "Color of lines in chart equal to color of lines set"
+                    );
+                } else {
+                    equal(
+                        d3.rgb($(el).find(cssId).parent().css('fill')).toString(), color(series, idx),
+                        "Color of lines in chart equal to color of lines set"
+                    );
+                }
+            });
         }, cotc.SEVERITY_LOW));
 
         chartViewTestSuite.run(suiteConfig.groups, suiteConfig.severity);
