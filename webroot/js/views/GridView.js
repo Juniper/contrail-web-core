@@ -178,7 +178,7 @@ define([
                 grid = new Slick.Grid(gridContainer.find('.grid-body'), dataObject, visibleColumns, gridOptions);
                 grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
                 grid.registerPlugin(checkboxSelector);
-                gridContainer.append('<div class="grid-load-status hide"></div>');
+                gridContainer.find('.grid-canvas').prepend('<div class="grid-load-status hide"></div>');
                 initGridEvents();
                 setDataObject4ContrailGrid();
                 gridContainer.data('contrailGrid').showGridMessage('loading');
