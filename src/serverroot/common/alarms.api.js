@@ -48,7 +48,6 @@ function ackAlarms(req, res, appData)
     var alarmsLength = alarms.length;
     var reqUrl = '/analytics/alarms/acknowledge';
     var dataObjArr = [];
-    console.log('inside ack');
 
     for(i = 0; i < alarmsLength; i++) {
         commonUtils.createReqObj(dataObjArr, reqUrl, global.HTTP_REQUEST_POST,
@@ -64,7 +63,10 @@ function ackAlarms(req, res, appData)
                    commonUtils.handleJSONResponse(error, res, null);
                    return;
                 }
-                commonUtils.handleJSONResponse(error, res, results);
+                //Adding a timeout since analytics is taking time to acknowledge
+                setTimeout(function() {
+                    commonUtils.handleJSONResponse(error, res, results);
+                }, 2000);
             }
         );
     } else {
