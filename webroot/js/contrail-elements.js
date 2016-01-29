@@ -1300,7 +1300,10 @@ function constructSelect2(self, defaultOption, args) {
                 if (option.data[0].children != undefined && option.data[0].children.length > 1) {
                     selectedOption = option.data[0].children[option.defaultValueId];
                 }
-                self.select2('val', selectedOption[option.dataValueField.dsVar], true);
+                var currSelectedVal = self.select2('val');
+                if(currSelectedVal == null || currSelectedVal == '') {
+                    self.select2('val', selectedOption[option.dataValueField.dsVar], true);
+                }
             }
         }
 
