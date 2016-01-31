@@ -3500,7 +3500,7 @@ background:none;
 div#peer_selection_section {
     padding-left: 10px;
 }
-tr.collapsibleFamilyattributes> td{
+tr.collapsibleChildContainer> td{
     padding-left:30px!important;
     padding-bottom:10px;
 }
@@ -3511,7 +3511,7 @@ tr.collapsibleFamilyattributes> td{
     padding-right:12px;}
 #peer_selection>table table, #peer_selection>table table input{
     font-size:12px;}
-tr.collapsibleFamilyattributes{
+tr.collapsibleChildContainer{
     border-bottom:#d7d7d7 solid 1px;}
 .bgp-peer-text-center{text-align:center!important;}
 #peer_selection .contrail-editable-grid-table thead,#peer_selection  .collection-table thead{
@@ -3519,3 +3519,28 @@ tr.collapsibleFamilyattributes{
 
 #peer_selection>table tr.data-row>td{
     padding-top:10px!important;}
+#interfaces-collection #interfaceType,#static-routes-collection #prefix{
+    padding-right: 17px;
+}
+.no-margin{
+    margin:0px!important;}
+#PolicyRules .contrail-editable-grid-table th, #PolicyRules .contrail-editable-grid-table td {
+    padding: 4px 3px 4px 3px;
+}
+#PolicyRules .contrail-editable-grid-table th:first-child, #PolicyRules .contrail-editable-grid-table td:first-child {
+    padding-left: 6px;
+}
+.collapsibleChildContainer table{
+    width:100%;}
+#port_tuples_vmi_collection th{
+    padding-left:5px;}
+#port_tuples_vmi_collection td{
+    padding-left:2px;}
+#port-tuples-collection th:first-child{
+    min-width:20px!important;}
+#port-tuples-collection th.action-cell, #port-tuples-collection td.action-cell{
+    text-align:right;
+}
+#port-tuples-collection td.action-cell{
+    padding-right:7px;
+}
