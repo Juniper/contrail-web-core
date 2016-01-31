@@ -3519,3 +3519,15 @@ tr.collapsibleFamilyattributes{
 
 #peer_selection>table tr.data-row>td{
     padding-top:10px!important;}
+#interfaces-collection #interfaceType{
+    padding-right: 17px;
+}
+
+.no-margin{
+    margin:0px!important;}
+#PolicyRules .contrail-editable-grid-table th, #PolicyRules .contrail-editable-grid-table td {
+    padding: 4px 3px 4px 3px;
+}
+#PolicyRules .contrail-editable-grid-table th:first-child, #PolicyRules .contrail-editable-grid-table td:first-child {
+    padding-left: 6px;
+}
