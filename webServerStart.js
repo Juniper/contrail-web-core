@@ -2,26 +2,25 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 var assert = require('assert');
-var logutils = require('./src/serverroot/utils/log.utils');
 var args = process.argv.slice(2);
 var argsCnt = args.length;
 var configFile = null;
 for (var i = 0; i < argsCnt; i++) {
     if (('--c' == args[i]) || ('--conf_file' == args[i])) {
         if (null == args[i + 1]) {
-            logutils.logger.error('Config file not provided');
+            console.error('Config file not provided');
             assert(0);
         } else {
             configFile = args[i + 1];
             try {
                 var tmpConfig = require(configFile);
                 if ((null == tmpConfig) || (typeof tmpConfig !== 'object')) {
-                    logutils.logger.error('Config file ' + configFile + ' is not valid');
+                    console.error('Config file ' + configFile + ' is not valid');
                     assert(0);
                 }
                 break;
             } catch(e) {
-                logutils.logger.error('Config file ' + configFile + ' not found');
+                console.error('Config file ' + configFile + ' not found');
                 assert(0);
             }
         }
@@ -74,6 +73,7 @@ var express = require('express')
     , jsonPath = require('JSONPath').eval
     , jsonDiff = require('./src/serverroot/common/jsondiff')
     , helmet = require('helmet')
+    , logutils = require('./src/serverroot/utils/log.utils')
     ;
 
 var pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
@@ -312,7 +312,7 @@ function bindProducerSocket ()
 function sendRequestToJobServer (msg)
 {
     var timer = setInterval(function () {
-        console.log("SENDING to jobServer:", msg);
+        logutils.logger.debug("SENDING to jobServer:" + msg.reqData);
         producerSock.send(msg.reqData);
         clearTimeout(timer);
     }, 1000);
@@ -338,7 +338,7 @@ var timeouts = [];
 function addClusterEventListener ()
 {
     cluster.on('fork', function (worker) {
-        logutils.logger.info('Forking worker #', worker.id);
+        logutils.logger.info('Forking worker #' + worker.id);
         cluster.workers[worker.id].on('message', messageHandler);
         timeouts[worker.id] = setTimeout(function () {
             logutils.logger.error(['Worker taking too long to start.']);
@@ -535,12 +535,12 @@ function startWebUIService (webUIIP, callback)
     });
 
     httpServer.on('clientError', function(exception, socket) {
-        logutils.logger.error("httpServer Exception: on clientError:", 
-                               exception, socket);
+        logutils.logger.error("httpServer Exception: on clientError:" +
+                               exception);
     });
     httpsServer.on('clientError', function(exception, socket) {
-        logutils.logger.error("httpsServer Exception: on clientError:", 
-                              exception, socket);
+        logutils.logger.error("httpsServer Exception: on clientError:" +
+                              exception);
     });
     
     if (false == insecureAccessFlag) {
