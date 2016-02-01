@@ -1347,7 +1347,13 @@ define([
                 if (gridOptions.actionCellPosition == 'start') {
                     menuClass = 'dropdown-menu pull-left dropdown-caret grid-action-menu';
                 }
-                var gridActionId = $('<ul id="' + gridContainer.prop('id') + '-action-menu-' + rowIndex + '" class="' + menuClass + '"></ul>').appendTo('body');
+                var gridActionId = $('<ul id="' + gridContainer.prop('id') + '-action-menu-' + rowIndex + '" class="' + menuClass + '"></ul>');
+                 if (!$('.modal').is(':visible')) {
+                     gridActionId.appendTo('body');
+                 } else { 
+                     //find the visible modal and append to it
+                     gridActionId.appendTo('.modal-body:visible');
+                 }
                 $.each(actionConfig, function (key, actionItemConfig) {
                     if (actionItemConfig.divider) {
                         $('<li class="divider"></li>').appendTo('#' + gridContainer.prop('id') + '-action-menu-' + rowIndex);
