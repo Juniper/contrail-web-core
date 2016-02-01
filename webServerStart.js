@@ -2,26 +2,25 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 var assert = require('assert');
-var logutils = require('./src/serverroot/utils/log.utils');
 var args = process.argv.slice(2);
 var argsCnt = args.length;
 var configFile = null;
 for (var i = 0; i < argsCnt; i++) {
     if (('--c' == args[i]) || ('--conf_file' == args[i])) {
         if (null == args[i + 1]) {
-            logutils.logger.error('Config file not provided');
+            console.log('Config file not provided.');
             assert(0);
         } else {
             configFile = args[i + 1];
             try {
                 var tmpConfig = require(configFile);
                 if ((null == tmpConfig) || (typeof tmpConfig !== 'object')) {
-                    logutils.logger.error('Config file ' + configFile + ' is not valid');
+                    console.log('Config file ' + configFile + ' is not valid');
                     assert(0);
                 }
                 break;
             } catch(e) {
-                logutils.logger.error('Config file ' + configFile + ' not found');
+                console.log('Config file ' + configFile + ' not found');
                 assert(0);
             }
         }
@@ -30,11 +29,12 @@ for (var i = 0; i < argsCnt; i++) {
 
 /* Set corePath before loading any other module */
 var corePath = process.cwd();
-var config =
-    require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig(configFile);
+var config = require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig(configFile);
 
 exports.corePath = corePath;
 exports.config = config;
+
+var logutils = require('./src/serverroot/utils/log.utils');
 
 var redisUtils = require('./src/serverroot/utils/redis.utils');
 var global = require('./src/serverroot/common/global');
@@ -297,22 +297,21 @@ function registerReqToApp ()
 
 function bindProducerSocket ()
 {
-    var hostName = config.jobServer.server_ip
-        , port = config.jobServer.server_port
-        ;
+    var hostName = config.jobServer.server_ip,
+        port = config.jobServer.server_port;
 
     var connectURL = 'tcp://' + hostName + ":" + port;
     /* Master of this nodeJS Server should connect to the worker
        Server of other nodeJS server
      */
     producerSock.bind(connectURL);
-    console.log('nodeJS Server bound to port %s to Job Server ', port);
+    logutils.logger.info('NodeJS Server bound to port %s to Job Server ', port);
 }
 
 function sendRequestToJobServer (msg)
 {
     var timer = setInterval(function () {
-        console.log("SENDING to jobServer:", msg);
+        logutils.logger.info("SENDING to jobServer:", msg);
         producerSock.send(msg.reqData);
         clearTimeout(timer);
     }, 1000);
@@ -321,7 +320,7 @@ function sendRequestToJobServer (msg)
 function addProducerSockListener ()
 {
     producerSock.on('message', function (msg) {
-        console.log("Got A message, [%s]", msg);
+        logutils.logger.info("Got A message, [%s]", msg);
     });
 }
 
