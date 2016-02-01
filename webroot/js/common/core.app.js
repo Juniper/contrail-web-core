@@ -42,6 +42,10 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
         $('head').append('<base href="/vcenter/" />');
     }
 
+    SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(toElement) {
+        return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM());
+    };
+
     require(initDepFiles, function (validation) {
         kbValidation = validation;
         require(['core-init'], function () {

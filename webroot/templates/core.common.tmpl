@@ -1664,6 +1664,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
             {{/each}}
         </tr>
         <tr class="error-row">
+        <td></td>
             {{#each viewConfig.rows.0.columns}}
             <td class="error-cell">
                 <span class="help-block red"
@@ -1673,7 +1674,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
             {{/each}}
         </tr>
 
-<tr class="collapsibleFamilyattributes" style="display:none">
+<tr class="collapsibleChildContainer" style="display:none">
 <td  colspan="{{viewConfig.rows.1.columns.0.viewConfig.colSpan}}">
 
         <!--Child Control -->
