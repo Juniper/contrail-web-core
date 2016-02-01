@@ -7,9 +7,8 @@ define([
     'contrail-view',
     'knockback'
 ], function (_, ContrailView, Knockback) {
-    var gridElId = '#' + ctwl.CFG_IPAM_GRID_ID;
-    var prefixId = ctwl.CFG_IPAM_PREFIX_ID;
-    var modalId = 'configure-' + prefixId;
+    var prefixId = cowl.ALARM_PREFIX_ID;
+    var modalId = 'acknowledge-' + prefixId;
 
     var AlarmsEditView = ContrailView.extend({
 
@@ -20,7 +19,7 @@ define([
             var self = this;
 
             var ackLayout = ackTemplate({prefixId: prefixId});
-            cowu.createModal({'modalId': modalId, 'className': 'modal-480',
+            cowu.createModal({'modalId': modalId, 'className': 'modal-480 max-z-index',
                              'title': options['title'], 'btnName': 'Confirm',
                              'body': ackLayout,
                'onSave': function () {

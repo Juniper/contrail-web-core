@@ -84,6 +84,7 @@ define([
                         self.alertListModel.addItem(alerts[i]);
                     }
                 });
+                self.alertListModel.sort(dashboardUtils.sortInfraAlerts);
                 self.nodeListModel.endUpdate();
                 self.alertListModel.endUpdate();
             }
