@@ -3,6 +3,7 @@
  */
 
 var config = process.mainModule.exports['config'];
+var logutils = require('../utils/log.utils');
 
 function getOrchestrationModels ()
 {
@@ -28,7 +29,7 @@ function getOrchestrationModelsByReqURL (reqURL)
 {
     var model = 'openstack';
     var orchModels = getOrchestrationModels();
-    console.log("orchModels as:", orchModels);
+    logutils.logger.debug("Orchestration models as:", orchModels);
     if (!orchModels.length) {
         logutils.logger.error("Specify the orchestration model in config file");
         assert(0);

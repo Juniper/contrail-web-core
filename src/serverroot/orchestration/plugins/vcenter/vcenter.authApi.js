@@ -59,13 +59,12 @@ function authenticate (req, res, appData, callback)
             password: password
         }
     }
-    console.log("getting urlPath as:", urlPath, urlHash);
+    logutils.logger.debug("Getting urlPath as: ", urlPath, urlHash);
     vcenterApi.doCall(userData, appData, function(err, data, resHeaders) {
         /* Once authenticated, then store the vmware_soap_session in session,
          * and pass this in header for next calls to vcenter server 
          */
-            console.log("getting err as:", err, JSON.stringify(data), 
-                        JSON.stringify(resHeaders));
+        logutils.logger.error("Getting err as:", err, JSON.stringify(data), JSON.stringify(resHeaders));
         if (null != err) {
             var loginErrFile = 'webroot/html/login-error.html';
             commonUtils.changeFileContentAndSend(res, loginErrFile,
@@ -78,7 +77,7 @@ function authenticate (req, res, appData, callback)
         }
         req.session.isAuthenticated = true;
         req.session.userRole = [global.STR_ROLE_ADMIN];
-        console.log("Getting urlPath as:", urlPath, urlHash);
+        logutils.logger.debug("Getting urlPath as: ", urlPath, urlHash);
         req.session['vmware_soap_session'] =
             resHeaders['set-cookie'][0];
             //res.redirect('/');
@@ -95,7 +94,7 @@ function authenticate (req, res, appData, callback)
 
 function getTenantList(req,appData,callback) {
     vCenterPluginApi.getProjectList(req,appData,function(err,projectList){
-        console.log("Projects are "+JSON.stringify(projectList));
+        logutils.logger.debug("Projects are " + JSON.stringify(projectList));
         if (err || (null == projectList)){
             callback(err,null);
             return;
