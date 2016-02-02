@@ -219,6 +219,9 @@ define([
                 "onClick": function () {
                     var gridElId = '#' + cowl.ALARMS_GRID_ID;
                     var checkedRows = $(gridElId).data("contrailGrid").getCheckedRows();
+                    if(checkedRows.length == 0) {
+                        return;
+                    }
                     onAcknowledge (checkedRows);
                 }
             },
@@ -234,14 +237,8 @@ define([
                     filterConfig: {
                         placeholder: 'Search Filter'
                     },
-//                    parse: formatData4Ajax,
                     minWidth: 150,
                     height: 205,
-//                    emptyOptionText: 'No Tags found.',
-//                    dataSource: {
-//                        type: 'GET',
-//                        url: smwu.getTagsUrl(queryString)
-//                    },
                      data : [
                             {
                                 id:"severity",
@@ -353,10 +350,29 @@ define([
                                             templateGeneratorConfig: [
                                                 {
                                                     key: 'severity',
-                                                    templateGenerator: 'TextGenerator'
+                                                    templateGenerator: 'TextGenerator',
+                                                    templateGeneratorConfig: {
+                                                        formatter: 'alarmSeverityFormatter'
+                                                    }
                                                 },
                                                 {
                                                     key: 'timestamp',
+                                                    templateGenerator: 'TextGenerator',
+                                                    templateGeneratorConfig: {
+                                                        formatter: 'timestampFormatter'
+                                                    }
+                                                },
+                                                {
+                                                    key: 'type',
+                                                    templateGenerator: 'TextGenerator'
+                                                },
+                                                {
+                                                    key: 'display_name',
+                                                    label:'Source',
+                                                    templateGenerator: 'TextGenerator'
+                                                },
+                                                {
+                                                    key: 'status',
                                                     templateGenerator: 'TextGenerator'
                                                 },
                                                 {
@@ -368,28 +384,7 @@ define([
                                                     key: 'rawJson.any_of',
                                                     label:'',
                                                     templateGenerator: 'json'
-                                                },
-                                                {
-                                                    key: 'type',
-                                                    templateGenerator: 'TextGenerator'
-                                                },
-                                                {
-                                                    key: 'name',
-                                                    templateGenerator: 'TextGenerator'
-                                                },
-                                                {
-                                                    key: 'status',
-                                                    templateGenerator: 'TextGenerator'
                                                 }
-//                                                {
-//                                                    key: 'ack',
-//                                                    label:'Acknowledged'
-//                                                    templateGenerator: 'TextGenerator'
-//                                                },
-                                                // {
-                                                // key: 'description',
-                                                // templateGenerator: 'TextGenerator'
-                                                // }
                                             ]
                                         }
                                     ]
@@ -402,5 +397,18 @@ define([
         };
     };
 
+    this.alarmSeverityFormatter = function (v, dc) {
+        var cirle;
+        if(v == 3) {
+            circle = '<div data-color="red" class="circle red filled alarms-circle-grid-style"></div>';
+        } else if (v == 4) {
+            circle = '<div data-color="orange" class="circle orange filled alarms-circle-grid-style"></div>';
+        }
+        return circle;
+    }
+
+    this.timestampFormatter = function (v, dc) {
+        return getFormattedDate(v/1000);
+    }
     return AlarmGridView;
 });
