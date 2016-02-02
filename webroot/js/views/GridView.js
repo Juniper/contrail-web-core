@@ -271,22 +271,36 @@ define([
                     });
                 }
 
-                $.each(gridColumns, function (key, val) {
+                $.each(gridColumns, function (columnKey, columnValue) {
                     // Setting sortable:true for columns wherever necessary
                     if (gridOptions.sortable != false) {
-                        if (!contrail.checkIfExist(val.sortable)) {
-                            gridColumns[key].sortable = true;
+                        if (!contrail.checkIfExist(columnValue.sortable)) {
+                            gridColumns[columnKey].sortable = true;
                         }
-                        if (contrail.checkIfExist(gridOptions.sortable.defaultSortCols) && contrail.checkIfExist(gridOptions.sortable.defaultSortCols[val.field])) {
-                            gridOptions.sortable.defaultSortCols[val.field].sortCol = val;
+                        if (contrail.checkIfExist(gridOptions.sortable.defaultSortCols) && contrail.checkIfExist(gridOptions.sortable.defaultSortCols[columnValue.field])) {
+                            gridOptions.sortable.defaultSortCols[columnValue.field].sortCol = columnValue;
                         }
                     }
                     else {
-                        gridColumns[key].sortable = false;
+                        gridColumns[columnKey].sortable = false;
                     }
 
-                    if (!contrail.checkIfExist(gridColumns[key].id)) {
-                        gridColumns[key].id = val.field + '_' + key;
+                    if ($.isPlainObject(columnValue.formatter)) {
+                        columnValue.formatterObj = _.clone(columnValue.formatter)
+                        columnValue.formatter = function (r, c, v, cd, dc) {
+                            var formatterObj = columnValue.formatterObj,
+                                fieldValue = dc[columnValue.field];
+
+                            if (contrail.checkIfExist(formatterObj.path)) {
+                                fieldValue = contrail.getObjectValueByPath(dc, formatterObj.path);
+                            }
+
+                            return cowf.getFormattedValue(formatterObj.format, fieldValue, formatterObj.options);
+                        };
+                    }
+
+                    if (!contrail.checkIfExist(gridColumns[columnKey].id)) {
+                        gridColumns[columnKey].id = columnValue.field + '_' + columnKey;
                     }
                 });
             };

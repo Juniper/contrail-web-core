@@ -10,9 +10,14 @@ define([
             var newColumnDisplay = [], columnDisplaySelect,
                 columnDisplay = getColumnDisplay4Query(tableName, tableType);
 
-            $.each(columnDisplay, function(key, val){
-                if (selectArray.indexOf(val.select) != -1) {
-                    newColumnDisplay.push(val.display);
+            $.each(columnDisplay, function(columnKey, columnValue){
+                if (selectArray.indexOf(columnValue.select) != -1) {
+                    if (_.isUndefined(columnValue.display.formatter)) {
+                        columnValue.display.formatter = {
+                            format: cowc.QUERY_COLUMN_FORMATTER[columnValue.select]
+                        };
+                    }
+                    newColumnDisplay.push(columnValue.display);
                 }
             });
 
@@ -27,7 +32,9 @@ define([
                         id: selectValue, field: selectValue,
                         name: columnName,
                         width: columnName.length * 8,  groupable:false,
-                        formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc[selectValue]);}
+                        formatter: {
+                            format: cowc.QUERY_COLUMN_FORMATTER[selectValue]
+                        }
                     })
                 }
 
@@ -40,9 +47,14 @@ define([
             var newColumnDisplay = [], columnDisplaySelect,
                 columnDisplay = getColumnDisplay4Query(tableName, tableType);
 
-            $.each(columnDisplay, function(key, val){
-                if (selectArray.indexOf(val.select) != -1 && !qewu.isAggregateField(val.select) && val.select !== 'T' && val.select !== 'T=' && val.select !== 'UUID') {
-                    newColumnDisplay.push(val.display);
+            $.each(columnDisplay, function(columnKey, columnValue){
+                if (selectArray.indexOf(columnValue.select) != -1 && !qewu.isAggregateField(columnValue.select) && columnValue.select !== 'T' && columnValue.select !== 'T=' && columnValue.select !== 'UUID') {
+                    if (_.isUndefined(columnValue.display.formatter)) {
+                        columnValue.display.formatter = {
+                            format: cowc.QUERY_COLUMN_FORMATTER[columnValue.select]
+                        };
+                    }
+                    newColumnDisplay.push(columnValue.display);
                 }
             });
 
@@ -58,7 +70,9 @@ define([
                         id: selectValue, field: selectValue,
                         name: columnName,
                         width: columnName.length * 8,  groupable:false,
-                        formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc[selectValue]);}
+                        formatter: {
+                            format: cowc.QUERY_COLUMN_FORMATTER[selectValue]
+                        }
                     })
                 }
 
@@ -92,7 +106,13 @@ define([
                         }
                     }
                 },
-                { id:"startTime", field:"startTime", name:"Time Issued", width: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.startTime).format('YYYY-MM-DD HH:mm:ss'); } },
+                {
+                    id:"startTime", field:"startTime", name:"Time Issued", width: 140,
+                    formatter: {
+                        format: 'date',
+                        options: {formatSpecifier: 'llll'}
+                    }
+                },
                 {
                     id:"table_name", field:"", name:"Table Name", width: 200, sortable:false,
                     formatter: function(r, c, v, cd, dc) {
@@ -100,20 +120,43 @@ define([
                     }
                 },
                 {
-                    id:"", field:"", name:"Time Range", width: 100, sortable:false,
-                    formatter: function(r, c, v, cd, dc) {
-                        return qewu.formatTimeRange(dc.queryReqObj.formModelAttrs.time_range);
+                    id:"time_range", field:"time_range", name:"Time Range", width: 100, sortable:false,
+                    formatter: {
+                        format: 'query-time-range',
+                        path: 'queryReqObj.formModelAttrs.time_range'
                     }
                 },
-                { id:"fromTime", field:"fromTime", name:"From Time", width: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.queryReqObj.formModelAttrs.from_time_utc).format('YYYY-MM-DD HH:mm:ss'); } },
-                { id:"toTime", field:"toTime", name:"To Time", width: 140, formatter: function(r, c, v, cd, dc) { return moment(dc.queryReqObj.formModelAttrs.to_time_utc).format('YYYY-MM-DD HH:mm:ss'); } },
+                {
+                    id:"fromTime", field:"fromTime", name:"From Time", width: 140,
+                    formatter: {
+                        format: 'date',
+                        path: 'queryReqObj.formModelAttrs.from_time_utc',
+                        options: {
+                            formatSpecifier: 'lll'
+                        }
+                    }
+                },
+                {
+                    id:"toTime", field:"toTime", name:"To Time", width: 140,
+                    formatter: {
+                        format: 'date',
+                        path: 'queryReqObj.formModelAttrs.to_time_utc',
+                        options: {
+                            formatSpecifier: 'lll'
+                        }
+                    }
+                },
                 { id:"progress", field:"progress", name:"Progress", width:75, formatter: function(r, c, v, cd, dc) { return (dc.status != 'error' && dc.progress != '' && parseInt(dc.progress) > 0) ? (dc.progress + '%') : '-'; } },
-                { id:"count", field:"count", name:"Records", width:75 },
+                {   id:"count", field:"count", name:"Records", width:75,
+                    formatter: {
+                        format: 'number'
+                    }
+                },
                 { id:"status", field:"status", name:"Status", width:90 },
                 {
                     id:"timeTaken", field:"timeTaken", name:"Time Taken", width:100, sortable:true,
-                    formatter: function(r, c, v, cd, dc) {
-                        return (dc.timeTaken == -1) ? '-' : cowf.getFormattedValue('time-period', dc.timeTaken);
+                    formatter: {
+                        format:'time-period'
                     }
                 }
             ];
@@ -151,17 +194,17 @@ define([
 
     var columnDisplayMap  = {
         "FlowSeriesTable": [
-            {select:"T", display:{id:"T", field:"T", width:210, name:"Time", formatter: function(r, c, v, cd, dc){ return cowu.formatMicroDate(dc.T);}, filterable:false, groupable:false}},
-            {select:"T=", display:{id:"T", field:"T", width:210, name:"Time", formatter: function(r, c, v, cd, dc){ return cowu.formatMicroDate(dc.T);}, filterable:false, groupable:false}},
-            {select:"vrouter", display:{id:"vrouter",field:"vrouter", width:100, name:"Virtual Router", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.vrouter);}}},
-            {select:"sourcevn", display:{id:"sourcevn",field:"sourcevn", width:240, name:"Source VN", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourcevn);}}},
-            {select:"destvn", display:{id:"destvn", field:"destvn", width:240, name:"Destination VN", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destvn);}}},
-            {select:"sourceip", display:{id:"sourceip", field:"sourceip", width:100, name:"Source IP", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourceip);}}},
-            {select:"destip", display:{id:"destip", field:"destip", width:120, name:"Destination IP", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destip);}}},
-            {select:"sport", display:{id:"sport", field:"sport", width:100, name:"Source Port", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sport);}}},
-            {select:"dport", display:{id:"dport", field:"dport", width:130, name:"Destination Port", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.dport);}}},
-            {select:"direction_ing", display:{id:"direction_ing", field:"direction_ing", width:100, name:"Direction", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getDirName(dc.direction_ing));}}},
-            {select:"protocol", display:{id:"protocol", field:"protocol", width:100, name:"Protocol", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getProtocolName(dc.protocol));}}},
+            {select:"T", display:{id:"T", field:"T", width:210, name:"Time", filterable:false, groupable:false}},
+            {select:"T=", display:{id:"T", field:"T", width:210, name:"Time", filterable:false, groupable:false}},
+            {select:"vrouter", display:{id:"vrouter",field:"vrouter", width:100, name:"Virtual Router", groupable:false}},
+            {select:"sourcevn", display:{id:"sourcevn",field:"sourcevn", width:240, name:"Source VN", groupable:false}},
+            {select:"destvn", display:{id:"destvn", field:"destvn", width:240, name:"Destination VN", groupable:false}},
+            {select:"sourceip", display:{id:"sourceip", field:"sourceip", width:100, name:"Source IP", groupable:false}},
+            {select:"destip", display:{id:"destip", field:"destip", width:120, name:"Destination IP", groupable:false}},
+            {select:"sport", display:{id:"sport", field:"sport", width:100, name:"Source Port", groupable:false}},
+            {select:"dport", display:{id:"dport", field:"dport", width:130, name:"Destination Port", groupable:false}},
+            {select:"direction_ing", display:{id:"direction_ing", field:"direction_ing", width:100, name:"Direction", groupable:true}},
+            {select:"protocol", display:{id:"protocol", field:"protocol", width:100, name:"Protocol", groupable:true}},
             {select:"bytes", display:{id:"bytes", field:"bytes", width:120, name:"Bytes", groupable:false}},
             {select:"sum(bytes)", display:{id:"sum(bytes)", field:"sum(bytes)", width:100, name:"SUM (Bytes)", groupable:false}},
             {select:"avg(bytes)", display:{id:"avg(bytes)", field:"avg(bytes)", width:100, name:"AVG (Bytes)", groupable:false}},
@@ -172,24 +215,24 @@ define([
         ],
         "FlowRecordTable": [
             {select:"action", display:{id:"action", field:"action", width:60, name:"Action", groupable:true}},
-            {select:"setup_time", display:{id:"setup_time", field:"setup_time", width:210, name:"Setup Time", formatter: function(r, c, v, cd, dc){ return cowu.formatMicroDate(dc.setup_time); }, filterable:false, groupable:false}},
-            {select:"teardown_time", display:{id:"teardown_time", field:"teardown_time", width:210, name:"Teardown Time", formatter: function(r, c, v, cd, dc){ return cowu.formatMicroDate(dc.teardown_time); }, filterable:false, groupable:false}},
-            {select:"vrouter", display:{id:"vrouter", field:"vrouter", width:100, name:"Virtual Router", groupable:false, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.vrouter);}}},
-            {select:"vrouter_ip", display:{id:"vrouter_ip", field:"vrouter_ip", width:120, name:"Virtual Router IP", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.vrouter_ip);}}},
-            {select:"other_vrouter_ip", display:{id:"other_vrouter_ip", field:"other_vrouter_ip", width:170, name:"Other Virtual Router IP", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.other_vrouter_ip);}}},
-            {select:"sourcevn", display:{id:"sourcevn", field:"sourcevn", width:240, name:"Source VN", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourcevn);}}},
-            {select:"destvn", display:{id:"destvn", field:"destvn", width:240, name:"Destination VN", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destvn);}}},
-            {select:"sourceip", display:{id:"sourceip", field:"sourceip", width:100, name:"Source IP", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sourceip);}}},
-            {select:"destip", display:{id:"destip", field:"destip", width:120, name:"Destination IP", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.destip);}}},
-            {select:"sport", display:{id:"sport", field:"sport", width:100, name:"Source Port", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sport);}}},
-            {select:"dport", display:{id:"dport", field:"dport", width:130, name:"Destination Port", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.dport);}}},
-            {select:"direction_ing", display:{id:"direction_ing", field:"direction_ing", width:100, name:"Direction", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getDirName(dc.direction_ing));}}},
-            {select:"protocol", display:{id:"protocol", field:"protocol", width:100, name:"Protocol", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(getProtocolName(dc.protocol));}}},
-            {select:"underlay_proto", display:{id:"underlay_proto", field:"underlay_proto", width:150, name:"Underlay Protocol", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.underlay_proto);}}},
-            {select:"underlay_source_port", display:{id:"underlay_source_port", field:"underlay_source_port", width:150, name:"Underlay Source Port", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.underlay_source_port);}}},
-            {select:"UuidKey", display:{id:"UuidKey", field:"UuidKey", width:280, name:"UUID", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.UuidKey);}}},
-            {select:"sg_rule_uuid", display:{id:"sg_rule_uuid", field:"sg_rule_uuid", width:280, name:"Rule UUID", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.sg_rule_uuid);}}},
-            {select:"nw_ace_uuid", display:{id:"nw_ace_uuid", field:"nw_ace_uuid", width:280, name:"Network UUID", groupable:true, formatter: function(r, c, v, cd, dc){ return cowu.handleNull4Grid(dc.nw_ace_uuid);}}},
+            {select:"setup_time", display:{id:"setup_time", field:"setup_time", width:210, name:"Setup Time", filterable:false, groupable:false}},
+            {select:"teardown_time", display:{id:"teardown_time", field:"teardown_time", width:210, name:"Teardown Time", filterable:false, groupable:false}},
+            {select:"vrouter", display:{id:"vrouter", field:"vrouter", width:100, name:"Virtual Router", groupable:false}},
+            {select:"vrouter_ip", display:{id:"vrouter_ip", field:"vrouter_ip", width:120, name:"Virtual Router IP", groupable:true}},
+            {select:"other_vrouter_ip", display:{id:"other_vrouter_ip", field:"other_vrouter_ip", width:170, name:"Other Virtual Router IP", groupable:true}},
+            {select:"sourcevn", display:{id:"sourcevn", field:"sourcevn", width:240, name:"Source VN", groupable:true}},
+            {select:"destvn", display:{id:"destvn", field:"destvn", width:240, name:"Destination VN", groupable:true}},
+            {select:"sourceip", display:{id:"sourceip", field:"sourceip", width:100, name:"Source IP", groupable:true}},
+            {select:"destip", display:{id:"destip", field:"destip", width:120, name:"Destination IP", groupable:true}},
+            {select:"sport", display:{id:"sport", field:"sport", width:100, name:"Source Port", groupable:true}},
+            {select:"dport", display:{id:"dport", field:"dport", width:130, name:"Destination Port", groupable:true}},
+            {select:"direction_ing", display:{id:"direction_ing", field:"direction_ing", width:100, name:"Direction", groupable:true}},
+            {select:"protocol", display:{id:"protocol", field:"protocol", width:100, name:"Protocol", groupable:true}},
+            {select:"underlay_proto", display:{id:"underlay_proto", field:"underlay_proto", width:150, name:"Underlay Protocol", groupable:true}},
+            {select:"underlay_source_port", display:{id:"underlay_source_port", field:"underlay_source_port", width:150, name:"Underlay Source Port", groupable:true}},
+            {select:"UuidKey", display:{id:"UuidKey", field:"UuidKey", width:280, name:"UUID", groupable:true}},
+            {select:"sg_rule_uuid", display:{id:"sg_rule_uuid", field:"sg_rule_uuid", width:280, name:"Rule UUID", groupable:true}},
+            {select:"nw_ace_uuid", display:{id:"nw_ace_uuid", field:"nw_ace_uuid", width:280, name:"Network UUID", groupable:true}},
             {select:"agg-bytes", display:{id:"agg-bytes", field:"agg-bytes", width:120, name:"Aggregate Bytes",  groupable:false}},
             {select:"agg-packets", display:{id:"agg-packets", field:"agg-packets", width:140, name:"Aggregate Packets",  groupable:false}},
             {select:"vmi_uuid", display:{id:"vmi_uuid", field:"vmi_uuid", width:140, name:"VMI UUID",  groupable:false}},
@@ -1799,18 +1842,18 @@ define([
             {select:"MAX(egressRqeQueue.rqeBufferCount)", display:{id:'MAX(egressRqeQueue.rqeBufferCount)', field:'MAX(egressRqeQueue.rqeBufferCount)', width:200, name:"MAX (Rqe Buffer Count)", groupable:false}},
         ],
         "defaultStatColumns": [
-            {select:"T", display:{id:"T", field:"T", width:210, name:"Time", formatter: function(r, c, v, cd, dc) { return cowu.formatMicroDate(dc.T); }, filterable:false, groupable:false}},
-            {select:"T=", display:{id: 'T=', field:'["T="]', width:210, name:"Time", formatter: function(r, c, v, cd, dc) { return cowu.formatMicroDate(dc['T=']); }, filterable:false, groupable:false}},
+            {select:"T", display:{id:"T", field:"T", width:210, name:"Time", filterable:false, groupable:false}},
+            {select:"T=", display:{id: 'T=', field:'["T="]', width:210, name:"Time", filterable:false, groupable:false}},
             {select:"UUID", display:{id:"UUID", field:"UUID", name:"UUID",  width:150, groupable:true}},
             {select:"name", display:{id:'name', field:'name', width:150, name:"Name", groupable:false}},
             {select:"Source", display:{id:'Source', field:'Source', width:70, name:"Source", groupable:false}}
         ],
         "defaultObjectColumns": [
-            {select: "MessageTS", display:{id: "MessageTS", field: "MessageTS", name: "Time", width:210, filterable:false, groupable:false, formatter: function(r, c, v, cd, dc) { return (dc.MessageTS && dc.MessageTS != '')  ? (cowu.formatMicroDate(dc.MessageTS)) : ''; }}},
-            {select: "ObjectId", display:{id:"ObjectId", field:"ObjectId", name:"Object Id", width:150, searchable: true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.ObjectId);}, hide: true}},
-            {select: "Source", display:{id:"Source", field:"Source", name:"Source", width:150, searchable: true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Source);}}},
-            {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", width: 150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.ModuleId);}}},
-            {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", width:300, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Messagetype); }}},
+            {select: "MessageTS", display:{id: "MessageTS", field: "MessageTS", name: "Time", width:210, filterable:false, groupable:false}},
+            {select: "ObjectId", display:{id:"ObjectId", field:"ObjectId", name:"Object Id", width:150, searchable: true, hide: true}},
+            {select: "Source", display:{id:"Source", field:"Source", name:"Source", width:150, searchable: true}},
+            {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", width: 150, searchable:true}},
+            {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", width:300, searchable:true}},
             {
                 select: "ObjectLog",
                 display:{
@@ -1851,15 +1894,15 @@ define([
             }
         ],
         "MessageTable": [
-            {select: "MessageTS", display:{id: "MessageTS", field: "MessageTS", name: "Time", width:210, filterable:false, groupable:false, formatter: function(r, c, v, cd, dc) { return (dc.MessageTS && dc.MessageTS != '')  ? (cowu.formatMicroDate(dc.MessageTS)) : ''; }}},
-            {select: "Source", display:{id:"Source", field:"Source", name:"Source", width:150, searchable: true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Source);}}},
-            {select: "NodeType", display:{id:"NodeType", field:"NodeType", name:"Node Type", width:100, searchable: true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.NodeType);}}},
-            {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", width: 150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.ModuleId);}}},
-            {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", width:200, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Messagetype); }}},
-            {select: "Keyword", display:{id:"Keyword", field:"Keyword", name:"Keyword", width:150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Keyword); }}},
+            {select: "MessageTS", display:{id: "MessageTS", field: "MessageTS", name: "Time", width:210, filterable:false, groupable:false}},
+            {select: "Source", display:{id:"Source", field:"Source", name:"Source", width:150, searchable: true}},
+            {select: "NodeType", display:{id:"NodeType", field:"NodeType", name:"Node Type", width:100, searchable: true}},
+            {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", width: 150, searchable:true}},
+            {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", width:200, searchable:true}},
+            {select: "Keyword", display:{id:"Keyword", field:"Keyword", name:"Keyword", width:150, searchable:true}},
             {select: "Level", display:{id:"Level", field:"Level", name:"Level", width:100, searchable:true, formatter: function(r, c, v, cd, dc) { return qewu.getLevelName4Value(dc.Level); }}},
-            {select: "Category", display:{id: "Category", field: "Category", name: "Category", width: 150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Category);}}},
-            {select: "Context", display:{id:"Context", field:"Context", name:"Context", width:150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.Context); }}},
+            {select: "Category", display:{id: "Category", field: "Category", name: "Category", width: 150, searchable:true}},
+            {select: "Context", display:{id:"Context", field:"Context", name:"Context", width:150, searchable:true}},
             {
                 select: "Xmlmessage",
                 display:{
@@ -1887,7 +1930,7 @@ define([
                     }
                 }
             },
-            {select: "InstanceId", display:{id: "InstanceId", field: "InstanceId", name: "Instance Id", width: 150, searchable:true, formatter: function(r, c, v, cd, dc) { return cowu.handleNull4Grid(dc.InstanceId);}}}
+            {select: "InstanceId", display:{id: "InstanceId", field: "InstanceId", name: "Instance Id", width: 150, searchable:true}}
         ]
     };
 

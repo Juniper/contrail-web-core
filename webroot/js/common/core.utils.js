@@ -636,7 +636,7 @@ define(['underscore'], function (_) {
         };
 
         this.addUnits2Bytes = function (traffic, noDecimal, maxPrecision, precision, timeInterval) {
-            var trafficPrefixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'],
+            var trafficPrefixes = cowc.BYTE_PREFIX,
                 formatStr = '', decimalDigits = 2, size = 1024;
 
             if (!$.isNumeric(traffic)) {
