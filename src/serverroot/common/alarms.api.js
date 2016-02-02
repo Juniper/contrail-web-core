@@ -54,24 +54,19 @@ function ackAlarms(req, res, appData)
                                 alarms[i], null, null, appData);
     }
 
-    if(dataObjArr.length > 0) {
-        async.map(dataObjArr,
-            commonUtils.getAPIServerResponse(opApiServer.apiPost, true),
-            function(error, results) {
-            console.log('got results');
-                if (error) {
-                   commonUtils.handleJSONResponse(error, res, null);
-                   return;
-                }
-                //Adding a timeout since analytics is taking time to acknowledge
-                setTimeout(function() {
-                    commonUtils.handleJSONResponse(error, res, results);
-                }, 2000);
+    async.map(dataObjArr,
+        commonUtils.getAPIServerResponse(opApiServer.apiPost, true),
+        function(error, results) {
+            if (error) {
+               commonUtils.handleJSONResponse(error, res, null);
+               return;
             }
-        );
-    } else {
-        commonUtils.handleJSONResponse(error, res, []);
-    }
+            //Adding a timeout since analytics is taking time to acknowledge
+            setTimeout(function() {
+                commonUtils.handleJSONResponse(error, res, results);
+            }, 3000);
+        }
+    );
 }
 
 exports.getAlarms = getAlarms;
