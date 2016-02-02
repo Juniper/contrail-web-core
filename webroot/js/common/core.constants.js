@@ -338,22 +338,22 @@ define([
             "MIN(cpu_info.used_sys_mem)": "byte",
 
 
-            "cpu_info.cpu_share": "percentage",
-            "SUM(cpu_info.cpu_share)": "percentage",
-            "MAX(cpu_info.cpu_share)": "percentage",
-            "MIN(cpu_info.cpu_share)": "percentage",
+            "cpu_info.cpu_share": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(cpu_info.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(cpu_info.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(cpu_info.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
 
 
-            "cpu_info.one_min_cpuload": "percentage",
-            "SUM(cpu_info.one_min_cpuload)": "percentage",
-            "MAX(cpu_info.one_min_cpuload)": "percentage",
-            "MIN(cpu_info.one_min_cpuload)": "percentage",
+            "cpu_info.one_min_cpuload": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(cpu_info.one_min_cpuload)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(cpu_info.one_min_cpuload)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(cpu_info.one_min_cpuload)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
 
             // cpu_stats
-            "cpu_stats.cpu_one_min_avg": "percentage",
-            "SUM(cpu_stats.cpu_one_min_avg)": "percentage",
-            "MAX(cpu_stats.cpu_one_min_avg)": "percentage",
-            "MIN(cpu_stats.cpu_one_min_avg)": "percentage",
+            "cpu_stats.cpu_one_min_avg": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(cpu_stats.cpu_one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(cpu_stats.cpu_one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(cpu_stats.cpu_one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
 
             "cpu_stats.vm_memory_quota": "byte",
             "SUM(cpu_stats.vm_memory_quota)": "byte",

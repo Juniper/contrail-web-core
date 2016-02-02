@@ -99,6 +99,12 @@ define([
                 return '';
             } else if (contrail.checkIfFunction(formatterKey)) {
                 return formatterKey(value, options);
+            } else if (_.isArray(formatterKey)) {
+                var formattedValue = value;
+                $.each(formatterKey, function(formatIndex, formatObj){
+                    formattedValue = self.getFormattedValue(formatObj.format, formattedValue, formatObj.options);
+                });
+                return formattedValue;
             } else if (contrail.checkIfExist(this.format[formatterKey])) {
                 return this.format[formatterKey](value, options);
             } else {
