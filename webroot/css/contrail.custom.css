@@ -898,6 +898,12 @@ a.selectAllLink:hover {
 .slick-viewport {
 	border-top: 1px solid #dadada;
 }
+.grid-state-fetching .slick-row,
+.grid-state-fetching .widget-toolbar {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+    filter: alpha(opacity=60);
+    opacity: 0.6;
+}
 .slick-row {
 	border:none;
 }

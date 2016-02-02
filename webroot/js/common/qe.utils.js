@@ -226,17 +226,17 @@ define([
             var chartDataValues = chartDataRow.values,
                 newChartDataValues = {},
                 emptyChartDataValue  = {},
-                toTime = queryFormAttributes.to_time_utc,
-                fromTime = queryFormAttributes.from_time_utc,
                 timeGranularity = queryFormAttributes.time_granularity,
                 timeGranularityUnit = queryFormAttributes.time_granularity_unit,
-                timeInterval = timeGranularity * cowc.TIME_GRANULARITY_INTERVAL_VALUES[timeGranularityUnit];
+                timeInterval = timeGranularity * cowc.TIME_GRANULARITY_INTERVAL_VALUES[timeGranularityUnit],
+                toTime = queryFormAttributes.to_time_utc,
+                fromTime = queryFormAttributes.from_time_utc;
 
             $.each(plotFields, function(plotFieldKey, plotFieldValue) {
                 emptyChartDataValue[plotFieldValue] = 0;
             });
 
-            for (var i = fromTime; i <= toTime; i += timeInterval) {
+            for (var i = fromTime; i < toTime; i += timeInterval) {
                 if (!contrail.checkIfExist(chartDataValues[i])) {
                     newChartDataValues[i] = emptyChartDataValue
                 } else {
