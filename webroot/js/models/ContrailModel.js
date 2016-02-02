@@ -20,13 +20,14 @@ define([
                 editingLockAttrs, _this = this,
                 modelAttributes = (modelData == null) ? this.defaultConfig : modelData;
 
-            errorAttributes = generateAttributes(modelAttributes, cowc.ERROR_SUFFIX_ID, false);
             editingLockAttrs = generateAttributes(modelAttributes, cowc.LOCKED_SUFFIX_ID, true);
 
             if(this.defaultConfig != null) {
                 modelData = cowu.filterJsonKeysWithNullValues(modelData);
             }
-            modelData = $.extend(true, {}, this.defaultConfig, modelData, {errors: new Backbone.Model(errorAttributes), locks: new Backbone.Model(editingLockAttrs)});
+            modelData = $.extend(true, {}, this.defaultConfig, modelData);
+            errorAttributes = generateAttributes(modelData, cowc.ERROR_SUFFIX_ID, false);
+            modelData = $.extend(true, {}, modelData, {errors: new Backbone.Model(errorAttributes), locks: new Backbone.Model(editingLockAttrs)});
 
             modelData = this.formatModelConfig(modelData);
             model = new ContrailViewModel($.extend(true, {data: modelData}, modelRemoteDataConfig));
