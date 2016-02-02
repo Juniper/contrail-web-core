@@ -219,6 +219,11 @@ function resetServicesByParams (params, apiName)
     return params;
 }
 
+function getDiscServiceRespDataList (req, res, appData)
+{
+    commonUtils.handleJSONResponse(null, res, getServiceRespDataList());
+}
+
 exports.resetServicesByParams = resetServicesByParams;
 exports.storeServiceRespData = storeServiceRespData;
 exports.getServiceRespDataList = getServiceRespDataList;
@@ -227,4 +232,5 @@ exports.getDiscServiceByServiceType = getDiscServiceByServiceType;
 exports.processDiscoveryServiceResponseMsg = processDiscoveryServiceResponseMsg;
 exports.sendWebServerReadyMessage = sendWebServerReadyMessage;
 exports.sendDiscSubMessageOnDemand = sendDiscSubMessageOnDemand;
+exports.getDiscServiceRespDataList = getDiscServiceRespDataList;
 

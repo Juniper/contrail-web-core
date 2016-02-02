@@ -1377,6 +1377,15 @@ function getWebServerInfo (req, res, appData)
     serverObj['role'] = req.session.userRole;
     serverObj['featurePkg'] = {};
     serverObj['uiConfig'] = ui; 
+    serverObj['discoveryEnabled'] = getValueByJsonPath(config,
+                                                       'discoveryService;enable',
+                                                       true);
+    serverObj['configServerPort'] = getValueByJsonPath(config,
+                                                    'cnfg;server_port',
+                                                     null);
+    serverObj['configServerIP'] = getValueByJsonPath(config,
+            'cnfg;server_ip',
+             null);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
@@ -2078,16 +2087,20 @@ function findAllPathsInEdgeGraph (graph, source, dest)
 /**
  * Get the value of a property inside a json object with a given path
  */
-function getValueByJsonPath(obj,pathStr,defValue) {
+function getValueByJsonPath(obj,pathStr,defValue,doClone) {
     try {
         var currObj = obj;
         var pathArr = pathStr.split(';');
+        var doClone = (doClone == null)? true : doClone;
         var arrLength = pathArr.length;
         for(var i=0;i<arrLength;i++) {
             if(currObj[pathArr[i]] != null) {
                 currObj = currObj[pathArr[i]];
             } else
                 return defValue;
+        }
+        if(!doClone) {
+            return currObj;
         }
         if(currObj instanceof Array)
             return cloneObj(currObj);
