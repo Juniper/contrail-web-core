@@ -20,6 +20,7 @@ var opApiServer = require('./opServer.api');
 var jsonPath    = require('JSONPath').eval;
 var _           = require('underscore');
 var redisUtils  = require('../utils/redis.utils');
+var configServerApi = require('./configServer.api');
 
 var nodeList     = {'hosts': {}, 'ips': {}};
 var timeOutId    = null;
@@ -52,6 +53,8 @@ var defConfigNodePorts      = [
     '8100', /* HttpPortConfigNodemgr */
 ];
 
+var apiServerPort = '8082'
+
 function getAllowedProxyPortListByNodeType (nodeType)
 {
     if (global.label.VROUTER == nodeType) {
@@ -76,10 +79,15 @@ function getAllowedProxyPortListByNodeType (nodeType)
 function sendProxyRequest (request, response, appData, options)
 {
     var reqParams = options.query;
+    var proxyURL = reqParams.proxyURL;
+    var isConfigPort = false;
     var isIndexedPage = (null != reqParams['indexPage']) ? true : false;
     logutils.logger.debug("Proxy Forwarder: Original: " + request.url +
                           " Forwarded TO: " + JSON.stringify(options));
     var protocol = ((options.protocol == 'http:') ? http : https);
+    if(null != options.port) {
+        isConfigPort = (options.port == apiServerPort)? true: false;
+    }
     var rqst = protocol.request(options, function(res) {
         var body = '';
         res.on('end', function() {
@@ -88,6 +96,12 @@ function sendProxyRequest (request, response, appData, options)
                 body =
                     body.replace(/a href="/g, 'a href="proxy?proxyURL=' +
                                  reqParams[proxyURLStr] + '/');
+            } else if (true == isConfigPort) {
+                /* ApiServerPort needs to be handled differently */
+                body = body.replace(/"href": "/g, '"href":"' + request.protocol
+                        +'://'+ request.headers.host +'/proxy?proxyURL=');
+                body = body.replace(/"parent_href": "/g, '"parent_href":"' + request.protocol
+                        +'://'+ request.headers.host +'/proxy?proxyURL=');
             }
             response.end(body);
         });
@@ -189,6 +203,10 @@ function forwardProxyRequest (request, response, appData)
         accept: '*/*',
         'content-length': 0
     };
+    if (proxy.port == apiServerPort) {
+        options.headers = configServerApi.configAppHeaders(options.headers,
+                                                            appData);
+    }
     options.path = proxy.path + pathStr;
     options.hostname = proxy.hostname;
     options.port = proxy.port;
