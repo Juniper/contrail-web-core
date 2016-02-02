@@ -272,7 +272,7 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
         break;
 
         case 'json' :
-            return contrail.formatJSON2HTML(value,1);
+            return contrail.formatJSON2HTML(value,7);
         break;
     };
 

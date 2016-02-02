@@ -742,6 +742,9 @@ a.selectAllLink:hover {
 .break-and-wrap-word{
 	word-wrap: break-word;
 }
+.word-break-all {
+	word-break: break-all;
+}
 
 /* Slickgrid Header Styles */
 
@@ -2888,7 +2891,10 @@ p.error, p.error-text {
 .circle.orange.filled {
     background-color: #ffbf87;
 }
-
+.alarms-circle-grid-style {
+    margin-top: 4px;
+    opacity:1;
+}
 .chart-settings .color-selection .circle {
     display:inline-block;
     margin:0 5px;
@@ -3543,4 +3549,13 @@ tr.collapsibleChildContainer{
 }
 #port-tuples-collection td.action-cell{
     padding-right:7px;
+}
+
+#dashboard-alerts-modal ul.grid-action-menu{
+    margin-top:-95px;
+    margin-right:3px;
+}
+
+.max-z-index {
+    z-index: 30000;
 }

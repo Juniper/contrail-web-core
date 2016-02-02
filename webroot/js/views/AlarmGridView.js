@@ -96,7 +96,7 @@ define([
                               {
                                   field: 'severity',
                                   name: '',
-                                  minWidth: 30,
+                                  width: 1,
                                   searchFn: function (d) {
                                       return d['severity'];
                                   },
@@ -105,15 +105,15 @@ define([
                                       var formattedDiv;
                                       if(dc['ack']) {
                                           if(dc['severity'] === 4) {
-                                              formattedDiv = '<div data-color="orange" class="circle orange" style="opacity:1"></div>';
+                                              formattedDiv = '<div data-color="orange" class="circle orange alarms-circle-grid-style"></div>';
                                           } else if (dc['severity'] === 3) {
-                                              formattedDiv = '<div data-color="red" class="circle red" style="opacity:1"></div>';
+                                              formattedDiv = '<div data-color="red" class="circle red alarms-circle-grid-style"></div>';
                                           }
                                       } else {
                                           if(dc['severity'] === 3) {
-                                              formattedDiv = '<div data-color="red" class="circle red filled" style="opacity:1"></div>';
+                                              formattedDiv = '<div data-color="red" class="circle red filled alarms-circle-grid-style"></div>';
                                           } else if (dc['severity'] === 4) {
-                                              formattedDiv = '<div data-color="orange" class="circle orange filled" style="opacity:1"></div>';
+                                              formattedDiv = '<div data-color="orange" class="circle orange filled alarms-circle-grid-style"></div>';
                                           }
                                       }
                                       return formattedDiv;
@@ -130,15 +130,27 @@ define([
                               {
                                   field: 'alarm_msg',
                                   name: 'Alarm',
-                                  minWidth: 250,
-//                                  formatter : function (r, c, v, cd, dc) {
-//                                      return dc.description[0].rule;
-//                                  }
+                                  minWidth: 200,
                               },
                               {
                                   field: 'display_name',
                                   name: 'Source',
                                   minWidth: 100
+                              },
+                              {
+                                  field: 'acknowledge',
+                                  name:'',
+                                  formatter : function (r,c,v,cd,dc) {
+                                      var formattedDiv = '';
+                                      if(!dc['ack']) {
+                                          formattedDiv = '<span title="Acknowledge"><i class="icon-check-sign"></i></span>';
+                                      }
+                                      return formattedDiv;
+                                  },
+                                  events: {
+                                      onClick: onAcknowledgeActionClicked
+                                  },
+                                  width:1
                               }
                           ];
         var gridElementConfig = {
@@ -152,11 +164,6 @@ define([
                     refreshable: true,
                     searchable: true
                 },
-//                customControls: ['<a id="btnAcknowledge" class="disabled-link" title="Acknowledge"><i class="  icon-check-sign"></i></a>', 
-//                                 '<div data-color="red" class="circle red" style="opacity:1" onclick=""></div>',
-//                                 '<div data-color="orange" class="circle orange" style="opacity:1"></div>',
-//                                 '<div data-color="red" class="circle red filled" style="opacity:1"></div>',
-//                                 '<div data-color="orange" class="circle orange filled" style="opacity:1"></div>']
                 advanceControls: getHeaderActionConfig()
             },
             body: {
@@ -170,7 +177,6 @@ define([
                             $('#btnAcknowledge').removeClass('disabled-link');
                         }
                     },
-                    actionCell: getRowActionConfig,
                     detail: {
                         template: cowu.generateDetailTemplateHTML(getAlarmDetailsTemplateConfig(), cowc.APP_CONTRAIL_CONTROLLER)
                     }
@@ -186,25 +192,22 @@ define([
         return gridElementConfig;
     };
 
-    function getRowActionConfig(rowData) {
-        var ret = [];
-        var dataView = $('#' + cowl.ALARMS_GRID_ID).data("contrailGrid")._dataView;
-        if(!rowData.ack) {
-            ret.push(getAcknowledgeAction(function (rowIndex) {
-                alarmsEditView.model = new AlarmsModel();
-                alarmsEditView.renderAckAlarms  ({
-                                      "title": 'Acknowledge Alarms',
-                                      checkedRows: [dataView.getItem(rowIndex)],
-                                      callback: function () {
-                                          dataView.refreshData();
-                                          $('#' + cowl.ALARMS_GRID_ID).data("contrailGrid").refreshView();
-                                      }
-                    });
-                })
-            );
-        }
-        return ret;
-    };
+    function onAcknowledge (checkedRows) {
+        alarmsEditView.model = new AlarmsModel();
+        alarmsEditView.renderAckAlarms  ({
+                              "title": 'Acknowledge Alarms',
+                              checkedRows:checkedRows,
+                              callback: function () {
+                                  var alarmGrid = $('#' + cowl.ALARMS_GRID_ID).data("contrailGrid");
+                                  alarmGrid.refreshData();
+                                  alarmGrid.setCheckedRows([]);//Clear the selected items
+                              }
+            });
+    }
+
+    function onAcknowledgeActionClicked (e,rowData) {
+        onAcknowledge ([rowData]);
+    }
 
     function getHeaderActionConfig() {
         var headerActionConfig = [
@@ -216,14 +219,10 @@ define([
                 "onClick": function () {
                     var gridElId = '#' + cowl.ALARMS_GRID_ID;
                     var checkedRows = $(gridElId).data("contrailGrid").getCheckedRows();
-                    alarmsEditView.model = new AlarmsModel();
-                    alarmsEditView.renderAckAlarms  ({
-                                          "title": 'Acknowledge Alarms',
-                                          checkedRows:checkedRows,
-                                          callback: function () {
-                                              $('#' + cowl.ALARMS_GRID_ID).data("contrailGrid").refreshData();
-                                          }
-                        });
+                    if(checkedRows.length == 0) {
+                        return;
+                    }
+                    onAcknowledge (checkedRows);
                 }
             },
             {
@@ -238,14 +237,8 @@ define([
                     filterConfig: {
                         placeholder: 'Search Filter'
                     },
-//                    parse: formatData4Ajax,
                     minWidth: 150,
                     height: 205,
-//                    emptyOptionText: 'No Tags found.',
-//                    dataSource: {
-//                        type: 'GET',
-//                        url: smwu.getTagsUrl(queryString)
-//                    },
                      data : [
                             {
                                 id:"severity",
@@ -357,10 +350,29 @@ define([
                                             templateGeneratorConfig: [
                                                 {
                                                     key: 'severity',
-                                                    templateGenerator: 'TextGenerator'
+                                                    templateGenerator: 'TextGenerator',
+                                                    templateGeneratorConfig: {
+                                                        formatter: 'alarmSeverityFormatter'
+                                                    }
                                                 },
                                                 {
                                                     key: 'timestamp',
+                                                    templateGenerator: 'TextGenerator',
+                                                    templateGeneratorConfig: {
+                                                        formatter: 'timestampFormatter'
+                                                    }
+                                                },
+                                                {
+                                                    key: 'type',
+                                                    templateGenerator: 'TextGenerator'
+                                                },
+                                                {
+                                                    key: 'display_name',
+                                                    label:'Source',
+                                                    templateGenerator: 'TextGenerator'
+                                                },
+                                                {
+                                                    key: 'status',
                                                     templateGenerator: 'TextGenerator'
                                                 },
                                                 {
@@ -372,28 +384,7 @@ define([
                                                     key: 'rawJson.any_of',
                                                     label:'',
                                                     templateGenerator: 'json'
-                                                },
-                                                {
-                                                    key: 'type',
-                                                    templateGenerator: 'TextGenerator'
-                                                },
-                                                {
-                                                    key: 'name',
-                                                    templateGenerator: 'TextGenerator'
-                                                },
-                                                {
-                                                    key: 'status',
-                                                    templateGenerator: 'TextGenerator'
                                                 }
-//                                                {
-//                                                    key: 'ack',
-//                                                    label:'Acknowledged'
-//                                                    templateGenerator: 'TextGenerator'
-//                                                },
-                                                // {
-                                                // key: 'description',
-                                                // templateGenerator: 'TextGenerator'
-                                                // }
                                             ]
                                         }
                                     ]
@@ -406,5 +397,18 @@ define([
         };
     };
 
+    this.alarmSeverityFormatter = function (v, dc) {
+        var cirle;
+        if(v == 3) {
+            circle = '<div data-color="red" class="circle red filled alarms-circle-grid-style"></div>';
+        } else if (v == 4) {
+            circle = '<div data-color="orange" class="circle orange filled alarms-circle-grid-style"></div>';
+        }
+        return circle;
+    }
+
+    this.timestampFormatter = function (v, dc) {
+        return getFormattedDate(v/1000);
+    }
     return AlarmGridView;
 });

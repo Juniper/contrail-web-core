@@ -1128,7 +1128,7 @@ define([
                 if (headerConfig.defaultControls.searchable) {
                     template += '\
                 <div class="widget-toolbar pull-right"> \
-                    <a class="widget-toolbar-icon link-searchbox" data-action="search"> \
+                    <a class="widget-toolbar-icon link-searchbox" title="Search" data-action="search"> \
                         <i class="icon-search"></i> \
                     </a> \
                     <span class="input-searchbox hide"> \

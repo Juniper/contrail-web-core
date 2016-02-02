@@ -194,6 +194,7 @@ define([
         this.QE_FILTER_MODAL_SUFFIX = '-filter-modal';
 
         //Alarms labels
+        this.ALARM_PREFIX_ID = 'alarms';
         this.ALARMS_BREADCRUMB_DROPDOWN = "alarms-breadcrumb-dropdown";
         this.ALARMS_LIST_ID = 'alarms-list-view';
         this.MONITOR_ALARMS_PAGE_ID = "monitor-alarms-page";
