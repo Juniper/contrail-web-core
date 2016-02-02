@@ -134,12 +134,16 @@ define([
             empty: false,
             errorList: [],
             sortConfig: sortConfig,
-            setData: function (data) {
+            setData: function (data,cfg) {
                 // Setting id for each data-item; Required to instantiate data-view.
                 setId4Idx(data, this);
-                this.beginUpdate();
-                this.setItems(data);
-                this.endUpdate();
+                if(cfg != null && cfg['slient'] == true) {
+                    this.setItems(data);
+                } else {
+                    this.beginUpdate();
+                    this.setItems(data);
+                    this.endUpdate();
+                }
             },
             setSearchFilter: function (searchColumns, searchFilter) {
                 this.setFilterArgs({
@@ -148,22 +152,34 @@ define([
                 });
                 this.setFilter(searchFilter);
             },
-            addData: function (data) {
+            addData: function (data,cfg) {
                 var dis = this;
                 setId4Idx(data, this);
-                this.beginUpdate();
-                $.each(data, function (key, val) {
-                    dis.addItem(val);
-                });
-                this.endUpdate();
+                if(cfg != null && cfg['silent'] == true) {
+                    $.each(data, function (key, val) {
+                        dis.addItem(val);
+                    });
+                } else {
+                    this.beginUpdate();
+                    $.each(data, function (key, val) {
+                        dis.addItem(val);
+                    });
+                    this.endUpdate();
+                }
             },
-            updateData: function (data) {
-                this.beginUpdate();
+            updateData: function (data,cfg) {
                 var dis = this;
-                $.each(data, function (key, val) {
-                    dis.updateItem(val.cgrid, val);
-                });
-                this.endUpdate();
+                if(cfg != null && cfg['silent'] == true) {
+                    $.each(data, function (key, val) {
+                        dis.updateItem(val.cgrid, val);
+                    });
+                } else {
+                    this.beginUpdate();
+                    $.each(data, function (key, val) {
+                        dis.updateItem(val.cgrid, val);
+                    });
+                    this.endUpdate();
+                }
             },
             deleteDataByIds: function (ids) {
                 this.beginUpdate();
@@ -229,9 +245,19 @@ define([
                 initCallback: primaryRemote.initCallback,
                 successCallback: function (resultJSON, resetDataFlag, response) {
                     if (resetDataFlag) {
-                        contrailListModel.setData(resultJSON);
+                        if(listModelConfig.silentUpdate == true) {
+                            contrailListModel.beginUpdate();
+                            contrailListModel.setData(resultJSON,{silent:true});
+                        } else {
+                            contrailListModel.setData(resultJSON);
+                        }
                     } else {
-                        contrailListModel.addData(resultJSON);
+                        if(listModelConfig.silentUpdate == true) {
+                            contrailListModel.beginUpdate();
+                            contrailListModel.addData(resultJSON,{silent:true});
+                        } else {
+                            contrailListModel.addData(resultJSON);
+                        }
                     }
                     if (contrail.checkIfFunction(primaryRemote.successCallback)) {
                         primaryRemote.successCallback(resultJSON, contrailListModel, response);
@@ -273,6 +299,9 @@ define([
         remoteHandlerConfig['primaryRemoteConfig'] = primaryRemoteConfig;
         remoteHandlerConfig['onAllRequestsCompleteCallback'] = function() {
             if(!contrailListModel.isRequestInProgress()) {
+                if(listModelConfig.silentUpdate == true) {
+                    contrailListModel.endUpdate();
+                }
                 contrailListModel.onAllRequestsComplete.notify();
             }
             if (parentModelList != null && parentModelList.length > 0) {
