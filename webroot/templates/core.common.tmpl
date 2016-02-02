@@ -369,7 +369,7 @@
             <div class="itemdiv commentdiv infobox-blue">
                 <div class="body">
                     <div class="row-fluid">
-                        <div class="name span9 break-and-wrap-word">
+                        <div class="name span9 word-break-all">
                             <span class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}})> {{moduleId}} </span>
                             </div>
                             <div class="time span3">
@@ -392,10 +392,10 @@
             <div class="itemdiv commentdiv infobox-blue">
                 <div class="body">
                     {{#typeof timeStamp "string"}}
-                        <div class="text break-and-wrap-word" style="width:75%">
+                        <div class="text word-break-all" style="width:75%">
                     {{/typeof}}
                     {{#IfCompare timeStamp null operator="=="}}
-                        <div class="text break-and-wrap-word">
+                        <div class="text word-break-all">
                     {{/IfCompare}}
                     {{#IfCompare name null operator="=="}}
                          {{msg}}</div>
