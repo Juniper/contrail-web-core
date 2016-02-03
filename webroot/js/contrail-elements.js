@@ -836,7 +836,11 @@
                 control: false,
                 selectedList: 3,
                 tristate: false,
-                emptyOptionText: 'No option found.'
+                emptyOptionText: 'No option found.',
+                position: {
+                    my: 'left top',
+                    at: 'left bottom'
+                }
             },
             defaultFilterConfig = {
                 label: false
@@ -904,6 +908,19 @@
 
                 multiSelectMenu.append(msControls);
             }
+
+            var closeFn = function(event) {
+                var positionTop = multiSelectMenu.position().top,
+                    scrollTop = $(this).scrollTop();
+
+                if (self.find('select').multiselect('isOpen') && (positionTop - scrollTop) < 40) {
+                    self.find('select').multiselect('close');
+                }
+            };
+
+            $(window)
+                .off('scroll', closeFn)
+                .on('scroll', closeFn);
 
             self.data('contrailCheckedMultiselect', $.extend(true, getDefaultMultiselectMethods(), {
                 getPreChecked: function () {
