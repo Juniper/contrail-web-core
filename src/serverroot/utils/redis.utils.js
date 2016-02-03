@@ -46,7 +46,16 @@ function selectRedisDB (uiDB, redisClient, callback)
 
 function redisLog(type) {
     return function() {
-        logutils.logger.debug("Redis: " + type, arguments);
+        if ('error' == type) {
+            for (key in arguments) {
+                var dispStr = arguments[key];
+                /* Display first one */
+                break;
+            }
+            logutils.logger.error('Redis: ' + type + ' String: ' + dispStr);
+        } else {
+            logutils.logger.debug('Redis: ' + type);
+        }
     }
 }
 
