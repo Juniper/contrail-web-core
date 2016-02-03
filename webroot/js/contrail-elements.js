@@ -913,7 +913,7 @@
                 var positionTop = multiSelectMenu.position().top,
                     scrollTop = $(this).scrollTop();
 
-                if (self.find('select').multiselect('isOpen') && (positionTop - scrollTop) < 40) {
+                if (multiSelectMenu.is(':visible') && (positionTop - scrollTop) < 40) {
                     self.find('select').multiselect('close');
                 }
             };

@@ -66,9 +66,12 @@ define([
                 dataView.setData(dataViewData);
             }
 
-            //if (contrailListModel.isRequestInProgress()) {
-            //    gridContainer.addClass('grid-state-fetching');
-            //}
+            if (contrailListModel.isRequestInProgress()) {
+                gridContainer.addClass('grid-state-fetching');
+                if (gridOptions.disableRowsOnLoading) {
+                    gridContainer.addClass('grid-state-fetching-rows');
+                }
+            }
 
             if (contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
@@ -194,7 +197,7 @@ define([
                     generateGridHeaderTemplate(gridConfig.header);
 
                     gridContainer.find('.grid-widget-header .widget-toolbar-icon').on('click', function (e) {
-                        if (/*!contrailListModel.isRequestInProgress() && */!$(this).hasClass('disabled-link')) {
+                        if (!$(this).hasClass('disabled-link')) {
                             var command = $(this).attr('data-action'),
                                 gridHeader = $(this).parents(".grid-header");
 
@@ -221,28 +224,32 @@ define([
                                     e.stopPropagation();
                                     break;
                                 case 'refresh':
-                                    gridContainer.find('.link-refreshable i').removeClass('icon-repeat').addClass('icon-spin icon-spinner');
-                                    gridContainer.data('contrailGrid').refreshData();
+                                    if (!contrailListModel.isRequestInProgress()) {
+                                        gridContainer.find('.link-refreshable i').removeClass('icon-repeat').addClass('icon-spin icon-spinner');
+                                        gridContainer.data('contrailGrid').refreshData();
+                                    }
                                     break;
                                 case 'export':
-                                    var gridDSConfig = gridDataSource,
-                                        gridData = [], dv;
+                                    if (!contrailListModel.isRequestInProgress()) {
+                                        var gridDSConfig = gridDataSource,
+                                            gridData = [], dv;
 
-                                    gridContainer.find('a[data-action="export"] i').removeClass('icon-download-alt').addClass('icon-spin icon-spinner');
-                                    gridContainer.find('a[data-action="export"]').prop('title', 'Exporting...').data('action', 'exporting').addClass('blue');
-                                    if (contrail.checkIfExist(gridDSConfig.remote) && gridDSConfig.remote.serverSidePagination) {
-                                        var exportCB = gridDSConfig.remote.exportFunction;
-                                        if (exportCB != null) {
-                                            exportCB(gridConfig, gridContainer);
+                                        gridContainer.find('a[data-action="export"] i').removeClass('icon-download-alt').addClass('icon-spin icon-spinner');
+                                        gridContainer.find('a[data-action="export"]').prop('title', 'Exporting...').data('action', 'exporting').addClass('blue');
+                                        if (contrail.checkIfExist(gridDSConfig.remote) && gridDSConfig.remote.serverSidePagination) {
+                                            var exportCB = gridDSConfig.remote.exportFunction;
+                                            if (exportCB != null) {
+                                                exportCB(gridConfig, gridContainer);
+                                            }
+                                        } else {
+                                            dv = gridContainer.data('contrailGrid')._dataView;
+                                            gridData = dv.getItems();
+                                            exportGridData2CSV(gridConfig, gridData);
+                                            setTimeout(function () {
+                                                gridContainer.find('a[data-action="export"] i').addClass('icon-download-alt').removeClass('icon-spin icon-spinner');
+                                                gridContainer.find('a[data-action="export"]').prop('title', 'Export as CSV').data('action', 'export').removeClass('blue');
+                                            }, 500);
                                         }
-                                    } else {
-                                        dv = gridContainer.data('contrailGrid')._dataView;
-                                        gridData = dv.getItems();
-                                        exportGridData2CSV(gridConfig, gridData);
-                                        setTimeout(function () {
-                                            gridContainer.find('a[data-action="export"] i').addClass('icon-download-alt').removeClass('icon-spin icon-spinner');
-                                            gridContainer.find('a[data-action="export"]').prop('title', 'Export as CSV').data('action', 'export').removeClass('blue');
-                                        }, 500);
                                     }
                                     break;
                                 case 'collapse':
@@ -361,22 +368,24 @@ define([
                                     var target = e.target;
                                     if ($(target).hasClass('icon-caret-right')) {
 
-                                        if (!$(target).parents('.slick-row-master').next().hasClass('slick-row-detail')) {
+                                        if (!$(target).parents('.slick-row-master').next().hasClass('slick-row-detail') || $(target).parents('.slick-row-master').next().hasClass('slick-row-detail-state-fetching')) {
+                                            $(target).parents('.slick-row-master').next('.slick-row-detail').remove();
                                             var cellSpaceColumn = 0,
-                                                cellSpaceRow = gridColumns.length - 1;
+                                                cellSpaceRow = gridColumns.length - 1,
+                                                fetchingCSSClass = (contrailListModel.isRequestInProgress() ? ' slick-row slick-row-detail-state-fetching' : '');
 
                                             //if (gridOptions.checkboxSelectable != false) {
                                             //    cellSpaceColumn++;
                                             //}
 
                                             $(target).parents('.slick-row-master').after(' \
-	            	            				<div class="ui-widget-content slick-row slick-row-detail" data-cgrid="' + $(target).parents('.slick-row-master').data('cgrid') + '"> \
-	            	            					<div class="slick-cell l' + cellSpaceColumn + ' r' + cellSpaceRow + '"> \
-	            		            					<div class="slick-row-detail-container"> \
-	            		            						<div class="slick-row-detail-template-' + $(target).parents('.slick-row-master').data('cgrid') + '"></div> \
-	            	            						</div> \
-	            	            					</div> \
-	            	            				</div>');
+                                                <div class="ui-widget-content slick-row slick-row-detail' + fetchingCSSClass + '" data-cgrid="' + $(target).parents('.slick-row-master').data('cgrid') + '"> \
+                                                    <div class="slick-cell l' + cellSpaceColumn + ' r' + cellSpaceRow + '"> \
+                                                        <div class="slick-row-detail-container"> \
+                                                            <div class="slick-row-detail-template-' + $(target).parents('.slick-row-master').data('cgrid') + '"></div> \
+                                                        </div> \
+                                                    </div> \
+                                                </div>');
 
                                             $(target).parents('.slick-row-master').next('.slick-row-detail').find('.slick-row-detail-container').show();
 
@@ -386,6 +395,7 @@ define([
                                                 gridOptions.detail.onInit(e, dc);
                                             }
                                             refreshDetailTemplateById($(target).parents('.slick-row-master').data('cgrid'));
+
                                         }
                                         else {
                                             $(target).parents('.slick-row-master').next('.slick-row-detail').show();
@@ -607,7 +617,7 @@ define([
                 grid['onHeaderClick'].subscribe(eventHandlerMap.grid['onHeaderClick']);
 
                 eventHandlerMap.grid['onClick'] = function (e, args) {
-                    //if (!contrailListModel.isRequestInProgress()) {
+                    if (!gridOptions.disableRowsOnLoading || (gridOptions.disableRowsOnLoading && !contrailListModel.isRequestInProgress())) {
                         var column = grid.getColumns()[args.cell],
                             rowData = grid.getDataItem(args.row);
                         gridContainer.data('contrailGrid').selectedRow = args.row;
@@ -681,7 +691,7 @@ define([
                                 gridOptions.actionCell.onclick(e, args);
                             }
                         }
-                    //}
+                    }
                 };
 
                 grid['onClick'].subscribe(eventHandlerMap.grid['onClick']);
@@ -971,7 +981,8 @@ define([
                     },
                     removeGridLoading: function () {
                         gridContainer.find('.grid-header-icon-loading').hide();
-                        //gridContainer.removeClass('grid-state-fetching');
+                        gridContainer.removeClass('grid-state-fetching');
+                        gridContainer.removeClass('grid-state-fetching-rows');
                     },
 
                     adjustAllRowHeight: function () {
