@@ -98,7 +98,7 @@ function Contrail() {
 
                 return returnFlag;
             } else {
-                return contrail.checkIfExist(value[pathString]);
+                return contrail.checkIfExist(valueObject[pathString]);
             }
         }
     };
