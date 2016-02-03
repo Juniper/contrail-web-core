@@ -102,8 +102,13 @@ define([
                     selectedValueData = (selectedValueData == null) ? dropdownData[0] : selectedValueData;
 
                     dropdownElement.data('contrailDropdown').text(selectedValueData.name);
-
-                    onBreadcrumbDropdownChange(selectedValueData, dropdownOptions, 'init')
+                    if(dropdownOptions.preSelectCB != null && typeof(dropdownOptions.preSelectCB) == 'function') {
+                        $.when(dropdownOptions.preSelectCB(selectedValueData)).always(function() {
+                            onBreadcrumbDropdownChange(selectedValueData, dropdownOptions, 'init')
+                        });
+                    } else {
+                            onBreadcrumbDropdownChange(selectedValueData, dropdownOptions, 'init')
+                    }
                 }
 
 
@@ -136,12 +141,25 @@ define([
                     value: e.object['value']
                 };
 
-                if(contrail.checkIfFunction(dropdownOptions.changeCB)) {
-                    dropdownOptions.changeCB(selectedValueData)
-                }
+                if(dropdownOptions.preSelectCB != null && typeof(dropdownOptions.preSelectCB) == 'function') {
+                    //Wrapping the return value inside $.when to handle the case if the function doesn't return a deferred object
+                    $.when(dropdownOptions.preSelectCB(selectedValueData)).done(function() {
+                        if(contrail.checkIfFunction(dropdownOptions.changeCB)) {
+                            dropdownOptions.changeCB(selectedValueData)
+                        }
 
-                destroyNextAllBreadcrumbDropdown (breadcrumbDropdownId);
-                onBreadcrumbDropdownChange(selectedValueData, dropdownOptions, 'change');
+                        destroyNextAllBreadcrumbDropdown (breadcrumbDropdownId);
+                        onBreadcrumbDropdownChange(selectedValueData, dropdownOptions, 'change');
+
+                    });
+                } else {
+                    if(contrail.checkIfFunction(dropdownOptions.changeCB)) {
+                        dropdownOptions.changeCB(selectedValueData)
+                    }
+
+                    destroyNextAllBreadcrumbDropdown (breadcrumbDropdownId);
+                    onBreadcrumbDropdownChange(selectedValueData, dropdownOptions, 'change');
+                }
 
             }
         });
