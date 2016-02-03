@@ -66,9 +66,9 @@ define([
                 dataView.setData(dataViewData);
             }
 
-            if (contrailListModel.isRequestInProgress()) {
-                gridContainer.addClass('grid-state-fetching');
-            }
+            //if (contrailListModel.isRequestInProgress()) {
+            //    gridContainer.addClass('grid-state-fetching');
+            //}
 
             if (contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
@@ -194,7 +194,7 @@ define([
                     generateGridHeaderTemplate(gridConfig.header);
 
                     gridContainer.find('.grid-widget-header .widget-toolbar-icon').on('click', function (e) {
-                        if (!contrailListModel.isRequestInProgress() && !$(this).hasClass('disabled-link')) {
+                        if (/*!contrailListModel.isRequestInProgress() && */!$(this).hasClass('disabled-link')) {
                             var command = $(this).attr('data-action'),
                                 gridHeader = $(this).parents(".grid-header");
 
@@ -607,7 +607,7 @@ define([
                 grid['onHeaderClick'].subscribe(eventHandlerMap.grid['onHeaderClick']);
 
                 eventHandlerMap.grid['onClick'] = function (e, args) {
-                    if (!contrailListModel.isRequestInProgress()) {
+                    //if (!contrailListModel.isRequestInProgress()) {
                         var column = grid.getColumns()[args.cell],
                             rowData = grid.getDataItem(args.row);
                         gridContainer.data('contrailGrid').selectedRow = args.row;
@@ -681,7 +681,7 @@ define([
                                 gridOptions.actionCell.onclick(e, args);
                             }
                         }
-                    }
+                    //}
                 };
 
                 grid['onClick'].subscribe(eventHandlerMap.grid['onClick']);
@@ -971,7 +971,7 @@ define([
                     },
                     removeGridLoading: function () {
                         gridContainer.find('.grid-header-icon-loading').hide();
-                        gridContainer.removeClass('grid-state-fetching');
+                        //gridContainer.removeClass('grid-state-fetching');
                     },
 
                     adjustAllRowHeight: function () {
