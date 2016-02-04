@@ -1986,7 +1986,7 @@ define([
             {select:"sum(packets)", display:{}},
             {select:"avg(packets)", display:{}},
             {select:"flow_count", display:{}}
-        ],
+        ]
     };
 
     return QEGridConfig;

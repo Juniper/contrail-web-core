@@ -359,7 +359,6 @@ define([
             }
         };
 
-
         this.QUERY_COLUMN_FORMATTER = {
             "T": "micro-date",
             "T=": "micro-date",
