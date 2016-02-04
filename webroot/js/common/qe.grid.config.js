@@ -1843,7 +1843,7 @@ define([
         ],
         "defaultStatColumns": [
             {select:"T", display:{id:"T", field:"T", width:210, name:"Time", filterable:false, groupable:false}},
-            {select:"T=", display:{id: 'T=', field:'["T="]', width:210, name:"Time", filterable:false, groupable:false}},
+            {select:"T=", display:{id: 'T=', field:'T=', width:210, name:"Time", filterable:false, groupable:false}},
             {select:"UUID", display:{id:"UUID", field:"UUID", name:"UUID",  width:150, groupable:true}},
             {select:"name", display:{id:'name', field:'name', width:150, name:"Name", groupable:false}},
             {select:"Source", display:{id:'Source', field:'Source', width:70, name:"Source", groupable:false}}
