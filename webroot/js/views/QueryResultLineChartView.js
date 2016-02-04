@@ -32,7 +32,7 @@ define([
             chartAxesOptions = {};
 
         $.each(aggregateSelectFields, function(selectFieldKey, selectFieldValue) {
-            var yFormatterKey = cowc.MAP_Y_FORMATTER[selectFieldValue];
+            var yFormatterKey = cowc.QUERY_COLUMN_FORMATTER[selectFieldValue];
 
             chartAxesOptions[selectFieldValue] = {
                 axisLabelDistance: 5,

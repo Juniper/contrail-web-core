@@ -66,6 +66,13 @@ define([
                 dataView.setData(dataViewData);
             }
 
+            if (contrailListModel.isRequestInProgress()) {
+                gridContainer.addClass('grid-state-fetching');
+                if (gridOptions.disableRowsOnLoading) {
+                    gridContainer.addClass('grid-state-fetching-rows');
+                }
+            }
+
             if (contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
                     gridContainer.data('contrailGrid').removeGridLoading();
@@ -217,28 +224,32 @@ define([
                                     e.stopPropagation();
                                     break;
                                 case 'refresh':
-                                    gridContainer.find('.link-refreshable i').removeClass('icon-repeat').addClass('icon-spin icon-spinner');
-                                    gridContainer.data('contrailGrid').refreshData();
+                                    if (!contrailListModel.isRequestInProgress()) {
+                                        gridContainer.find('.link-refreshable i').removeClass('icon-repeat').addClass('icon-spin icon-spinner');
+                                        gridContainer.data('contrailGrid').refreshData();
+                                    }
                                     break;
                                 case 'export':
-                                    var gridDSConfig = gridDataSource,
-                                        gridData = [], dv;
+                                    if (!contrailListModel.isRequestInProgress()) {
+                                        var gridDSConfig = gridDataSource,
+                                            gridData = [], dv;
 
-                                    gridContainer.find('a[data-action="export"] i').removeClass('icon-download-alt').addClass('icon-spin icon-spinner');
-                                    gridContainer.find('a[data-action="export"]').prop('title', 'Exporting...').data('action', 'exporting').addClass('blue');
-                                    if (contrail.checkIfExist(gridDSConfig.remote) && gridDSConfig.remote.serverSidePagination) {
-                                        var exportCB = gridDSConfig.remote.exportFunction;
-                                        if (exportCB != null) {
-                                            exportCB(gridConfig, gridContainer);
+                                        gridContainer.find('a[data-action="export"] i').removeClass('icon-download-alt').addClass('icon-spin icon-spinner');
+                                        gridContainer.find('a[data-action="export"]').prop('title', 'Exporting...').data('action', 'exporting').addClass('blue');
+                                        if (contrail.checkIfExist(gridDSConfig.remote) && gridDSConfig.remote.serverSidePagination) {
+                                            var exportCB = gridDSConfig.remote.exportFunction;
+                                            if (exportCB != null) {
+                                                exportCB(gridConfig, gridContainer);
+                                            }
+                                        } else {
+                                            dv = gridContainer.data('contrailGrid')._dataView;
+                                            gridData = dv.getItems();
+                                            exportGridData2CSV(gridConfig, gridData);
+                                            setTimeout(function () {
+                                                gridContainer.find('a[data-action="export"] i').addClass('icon-download-alt').removeClass('icon-spin icon-spinner');
+                                                gridContainer.find('a[data-action="export"]').prop('title', 'Export as CSV').data('action', 'export').removeClass('blue');
+                                            }, 500);
                                         }
-                                    } else {
-                                        dv = gridContainer.data('contrailGrid')._dataView;
-                                        gridData = dv.getItems();
-                                        exportGridData2CSV(gridConfig, gridData);
-                                        setTimeout(function () {
-                                            gridContainer.find('a[data-action="export"] i').addClass('icon-download-alt').removeClass('icon-spin icon-spinner');
-                                            gridContainer.find('a[data-action="export"]').prop('title', 'Export as CSV').data('action', 'export').removeClass('blue');
-                                        }, 500);
                                     }
                                     break;
                                 case 'collapse':
@@ -271,22 +282,36 @@ define([
                     });
                 }
 
-                $.each(gridColumns, function (key, val) {
+                $.each(gridColumns, function (columnKey, columnValue) {
                     // Setting sortable:true for columns wherever necessary
                     if (gridOptions.sortable != false) {
-                        if (!contrail.checkIfExist(val.sortable)) {
-                            gridColumns[key].sortable = true;
+                        if (!contrail.checkIfExist(columnValue.sortable)) {
+                            gridColumns[columnKey].sortable = true;
                         }
-                        if (contrail.checkIfExist(gridOptions.sortable.defaultSortCols) && contrail.checkIfExist(gridOptions.sortable.defaultSortCols[val.field])) {
-                            gridOptions.sortable.defaultSortCols[val.field].sortCol = val;
+                        if (contrail.checkIfExist(gridOptions.sortable.defaultSortCols) && contrail.checkIfExist(gridOptions.sortable.defaultSortCols[columnValue.field])) {
+                            gridOptions.sortable.defaultSortCols[columnValue.field].sortCol = columnValue;
                         }
                     }
                     else {
-                        gridColumns[key].sortable = false;
+                        gridColumns[columnKey].sortable = false;
                     }
 
-                    if (!contrail.checkIfExist(gridColumns[key].id)) {
-                        gridColumns[key].id = val.field + '_' + key;
+                    if ($.isPlainObject(columnValue.formatter)) {
+                        columnValue.formatterObj = _.clone(columnValue.formatter)
+                        columnValue.formatter = function (r, c, v, cd, dc) {
+                            var formatterObj = columnValue.formatterObj,
+                                fieldValue = dc[columnValue.field];
+
+                            if (contrail.checkIfExist(formatterObj.path)) {
+                                fieldValue = contrail.getObjectValueByPath(dc, formatterObj.path);
+                            }
+
+                            return cowf.getFormattedValue(formatterObj.format, fieldValue, formatterObj.options);
+                        };
+                    }
+
+                    if (!contrail.checkIfExist(gridColumns[columnKey].id)) {
+                        gridColumns[columnKey].id = columnValue.field + '_' + columnKey;
                     }
                 });
             };
@@ -343,22 +368,24 @@ define([
                                     var target = e.target;
                                     if ($(target).hasClass('icon-caret-right')) {
 
-                                        if (!$(target).parents('.slick-row-master').next().hasClass('slick-row-detail')) {
+                                        if (!$(target).parents('.slick-row-master').next().hasClass('slick-row-detail') || $(target).parents('.slick-row-master').next().hasClass('slick-row-detail-state-fetching')) {
+                                            $(target).parents('.slick-row-master').next('.slick-row-detail').remove();
                                             var cellSpaceColumn = 0,
-                                                cellSpaceRow = gridColumns.length - 1;
+                                                cellSpaceRow = gridColumns.length - 1,
+                                                fetchingCSSClass = (contrailListModel.isRequestInProgress() ? ' slick-row slick-row-detail-state-fetching' : '');
 
                                             //if (gridOptions.checkboxSelectable != false) {
                                             //    cellSpaceColumn++;
                                             //}
 
                                             $(target).parents('.slick-row-master').after(' \
-	            	            				<div class="ui-widget-content slick-row slick-row-detail" data-cgrid="' + $(target).parents('.slick-row-master').data('cgrid') + '"> \
-	            	            					<div class="slick-cell l' + cellSpaceColumn + ' r' + cellSpaceRow + '"> \
-	            		            					<div class="slick-row-detail-container"> \
-	            		            						<div class="slick-row-detail-template-' + $(target).parents('.slick-row-master').data('cgrid') + '"></div> \
-	            	            						</div> \
-	            	            					</div> \
-	            	            				</div>');
+                                                <div class="ui-widget-content slick-row slick-row-detail' + fetchingCSSClass + '" data-cgrid="' + $(target).parents('.slick-row-master').data('cgrid') + '"> \
+                                                    <div class="slick-cell l' + cellSpaceColumn + ' r' + cellSpaceRow + '"> \
+                                                        <div class="slick-row-detail-container"> \
+                                                            <div class="slick-row-detail-template-' + $(target).parents('.slick-row-master').data('cgrid') + '"></div> \
+                                                        </div> \
+                                                    </div> \
+                                                </div>');
 
                                             $(target).parents('.slick-row-master').next('.slick-row-detail').find('.slick-row-detail-container').show();
 
@@ -368,6 +395,7 @@ define([
                                                 gridOptions.detail.onInit(e, dc);
                                             }
                                             refreshDetailTemplateById($(target).parents('.slick-row-master').data('cgrid'));
+
                                         }
                                         else {
                                             $(target).parents('.slick-row-master').next('.slick-row-detail').show();
@@ -589,77 +617,79 @@ define([
                 grid['onHeaderClick'].subscribe(eventHandlerMap.grid['onHeaderClick']);
 
                 eventHandlerMap.grid['onClick'] = function (e, args) {
-                    var column = grid.getColumns()[args.cell],
-                        rowData = grid.getDataItem(args.row);
-                    gridContainer.data('contrailGrid').selectedRow = args.row;
-                    gridContainer.data('contrailGrid').selectedCell = args.cell;
+                    if (!gridOptions.disableRowsOnLoading || (gridOptions.disableRowsOnLoading && !contrailListModel.isRequestInProgress())) {
+                        var column = grid.getColumns()[args.cell],
+                            rowData = grid.getDataItem(args.row);
+                        gridContainer.data('contrailGrid').selectedRow = args.row;
+                        gridContainer.data('contrailGrid').selectedCell = args.cell;
 
-                    if (contrail.checkIfExist(gridConfig.body.events) && contrail.checkIfFunction(gridConfig.body.events.onClick)) {
-                        gridConfig.body.events.onClick(e, rowData);
-                    }
-
-                    if (contrail.checkIfExist(column.events) && contrail.checkIfFunction(column.events.onClick)) {
-                        column.events.onClick(e, rowData);
-                    }
-
-                    if (gridOptions.rowSelectable) {
-                        if (!gridContainer.find('.slick_row_' + rowData.cgrid).hasClass('selected_row')) {
-                            gridContainer.find('.selected_row').removeClass('selected_row');
-                            gridContainer.find('.slick_row_' + rowData.cgrid).addClass('selected_row');
+                        if (contrail.checkIfExist(gridConfig.body.events) && contrail.checkIfFunction(gridConfig.body.events.onClick)) {
+                            gridConfig.body.events.onClick(e, rowData);
                         }
-                    }
 
-                    setTimeout(function () {
-                        if (gridContainer.data('contrailGrid') != null)
-                            gridContainer.data('contrailGrid').adjustRowHeight(rowData.cgrid);
-                    }, 50);
+                        if (contrail.checkIfExist(column.events) && contrail.checkIfFunction(column.events.onClick)) {
+                            column.events.onClick(e, rowData);
+                        }
 
-                    if ($(e.target).hasClass("grid-action-dropdown")) {
-                        if ($('#' + gridContainer.prop('id') + '-action-menu-' + args.row).is(':visible')) {
-                            $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).remove();
-                        } else {
-                            $('.grid-action-menu').remove();
-                            var actionCellArray = [];
-                            if (contrail.checkIfFunction(gridOptions.actionCell.optionList)) {
-                                actionCellArray = gridOptions.actionCell.optionList(rowData);
-                            } else {
-                                actionCellArray = gridOptions.actionCell.optionList;
+                        if (gridOptions.rowSelectable) {
+                            if (!gridContainer.find('.slick_row_' + rowData.cgrid).hasClass('selected_row')) {
+                                gridContainer.find('.selected_row').removeClass('selected_row');
+                                gridContainer.find('.slick_row_' + rowData.cgrid).addClass('selected_row');
                             }
+                        }
 
-                            //$('#' + gridContainer.prop('id') + '-action-menu').remove();
-                            addGridRowActionDroplist(actionCellArray, gridContainer, args.row, $(e.target));
-                            var offset = $(e.target).offset(), actionCellStyle = '';
-                            if (gridOptions.actionCellPosition == 'start') {
-                                actionCellStyle = 'top:' + (offset.top + 20) + 'px' + ';right:auto !important;left:' + offset.left + 'px !important;';
+                        setTimeout(function () {
+                            if (gridContainer.data('contrailGrid') != null)
+                                gridContainer.data('contrailGrid').adjustRowHeight(rowData.cgrid);
+                        }, 50);
+
+                        if ($(e.target).hasClass("grid-action-dropdown")) {
+                            if ($('#' + gridContainer.prop('id') + '-action-menu-' + args.row).is(':visible')) {
+                                $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).remove();
                             } else {
-                                actionCellStyle = 'top:' + (offset.top + 20) + 'px' + ';left:' + (offset.left - 155) + 'px;';
-                            }
-                            $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).attr('style', function (idx, obj) {
-                                if (obj != null) {
-                                    return obj + actionCellStyle;
+                                $('.grid-action-menu').remove();
+                                var actionCellArray = [];
+                                if (contrail.checkIfFunction(gridOptions.actionCell.optionList)) {
+                                    actionCellArray = gridOptions.actionCell.optionList(rowData);
                                 } else {
-                                    return actionCellStyle;
+                                    actionCellArray = gridOptions.actionCell.optionList;
                                 }
-                            }).show(function () {
-                                var dropdownHeight = $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).height(),
-                                    windowHeight = $(window).height(),
-                                    currentScrollPosition = $(window).scrollTop(),
-                                    actionScrollPosition = offset.top + 20 - currentScrollPosition;
 
-                                if ((actionScrollPosition + dropdownHeight) > windowHeight) {
-                                    window.scrollTo(0, (actionScrollPosition + dropdownHeight) - windowHeight + currentScrollPosition);
+                                //$('#' + gridContainer.prop('id') + '-action-menu').remove();
+                                addGridRowActionDroplist(actionCellArray, gridContainer, args.row, $(e.target));
+                                var offset = $(e.target).offset(), actionCellStyle = '';
+                                if (gridOptions.actionCellPosition == 'start') {
+                                    actionCellStyle = 'top:' + (offset.top + 20) + 'px' + ';right:auto !important;left:' + offset.left + 'px !important;';
+                                } else {
+                                    actionCellStyle = 'top:' + (offset.top + 20) + 'px' + ';left:' + (offset.left - 155) + 'px;';
                                 }
-                            });
-                            e.stopPropagation();
-                            initOnClickDocument('#' + gridContainer.prop('id') + '-action-menu-' + args.row, function () {
-                                $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).hide();
-                            });
+                                $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).attr('style', function (idx, obj) {
+                                    if (obj != null) {
+                                        return obj + actionCellStyle;
+                                    } else {
+                                        return actionCellStyle;
+                                    }
+                                }).show(function () {
+                                    var dropdownHeight = $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).height(),
+                                        windowHeight = $(window).height(),
+                                        currentScrollPosition = $(window).scrollTop(),
+                                        actionScrollPosition = offset.top + 20 - currentScrollPosition;
+
+                                    if ((actionScrollPosition + dropdownHeight) > windowHeight) {
+                                        window.scrollTo(0, (actionScrollPosition + dropdownHeight) - windowHeight + currentScrollPosition);
+                                    }
+                                });
+                                e.stopPropagation();
+                                initOnClickDocument('#' + gridContainer.prop('id') + '-action-menu-' + args.row, function () {
+                                    $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).hide();
+                                });
+                            }
                         }
-                    }
 
-                    if ($(e.target).hasClass("grid-action-link")) {
-                        if (gridOptions.actionCell.type == 'link') {
-                            gridOptions.actionCell.onclick(e, args);
+                        if ($(e.target).hasClass("grid-action-link")) {
+                            if (gridOptions.actionCell.type == 'link') {
+                                gridOptions.actionCell.onclick(e, args);
+                            }
                         }
                     }
                 };
@@ -951,6 +981,8 @@ define([
                     },
                     removeGridLoading: function () {
                         gridContainer.find('.grid-header-icon-loading').hide();
+                        gridContainer.removeClass('grid-state-fetching');
+                        gridContainer.removeClass('grid-state-fetching-rows');
                     },
 
                     adjustAllRowHeight: function () {

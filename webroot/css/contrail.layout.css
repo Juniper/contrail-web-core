@@ -541,23 +541,23 @@ li [class*=" icon-"],
 .nav-list > li.open {
   border-bottom-color: #e5e5e5;
 }
-.nav-list > li.active.open > .submenu > li.active > a:after {
-	display: inline-block;
-	content: "";
-	position: absolute !important;
-	right: -8px;
-	top: 9px;
-	width: 15px;
-	height: 15px;
-	border: 1px solid #ccc;
-	border-width: 1px 0 0 1px;
-	background-color: #FFF;
-	-webkit-transform: rotate(-45deg);
-	-moz-transform: rotate(-45deg);
-	-ms-transform: rotate(-45deg);
-	-o-transform: rotate(-45deg);
-	transform: rotate(-45deg);
-}
+/*.nav-list > li.active.open > .submenu > li.active > a:after {*/
+	/*display: inline-block;*/
+	/*content: "";*/
+	/*position: absolute !important;*/
+	/*right: -8px;*/
+	/*top: 9px;*/
+	/*width: 15px;*/
+	/*height: 15px;*/
+	/*border: 1px solid #ccc;*/
+	/*border-width: 1px 0 0 1px;*/
+	/*background-color: #FFF;*/
+	/*!*-webkit-transform: rotate(-45deg);*!*/
+  /*-moz-transform: rotate(-45deg);*/
+  /*-ms-transform: rotate(-45deg);*/
+  /*-o-transform: rotate(-45deg);*/
+  /*transform: rotate(-45deg);*/
+/*}*/
 
 .nav-list > li.active .submenu {
   display: block;
@@ -572,17 +572,12 @@ li [class*=" icon-"],
   border-top: 1px solid #e5e5e5;
 }
 .nav-list > li .submenu > li {
-  margin-left: 0;
-  position: relative;
-  /* tree like menu */
-
-  /* the horizontal dashed line */
-
-  /* the vertical dashed line */
-
-  /* optional icon before each item */
-
+    margin-left: 0;
+    position: relative;
 }
+/*.nav-list > li .submenu > li.active {*/
+    /*border-right: 3px solid #555555;*/
+/*}*/
 .nav-list > li .submenu > li > a {
 	display: block;
 	position: relative;
