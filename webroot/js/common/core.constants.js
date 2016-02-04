@@ -179,6 +179,7 @@ define([
         this.DATA_REQUEST_STATE_ERROR = 'error';
         this.DATA_REQUEST_STATE_SUCCESS_EMPTY = 'success-empty';
         this.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY = 'success-not-empty';
+        this.DATA_REQUEST_STATE_INITIAL_EMPTY = 'inital-empty';
 
         // QE Constants - Start
         this.QE_TIMEOUT = 12000;
@@ -227,6 +228,7 @@ define([
         this.FS_QUERY_PREFIX = "fs";
         this.FC_QUERY_PREFIX = "fc";
         this.FR_QUERY_PREFIX = "fr";
+        this.SA_QUERY_PREFIX = "sa";
         this.STAT_QUERY_PREFIX = "stat";
         this.OBJECT_LOGS_PREFIX = "ol";
         this.SYSTEM_LOGS_PREFIX = "sl";
@@ -243,11 +245,13 @@ define([
 
         this.QUERY_TYPE_MODIFY = 'modify';
         this.QUERY_TYPE_RERUN = 'rerun';
+        this.QUERY_TYPE_ANALYZE = 'analyze';
 
         this.FLOW_SERIES_TABLE = "FlowSeriesTable";
         this.FLOW_RECORD_TABLE = "FlowRecordTable";
         this.FLOW_CLASS = "FlowClass";
         this.MESSAGE_TABLE = "MessageTable";
+        this.SESSION_ANALYZER_TABLE = "SessionAnalyzerTable";
 
         this.KEY_RUN_QUERY_VALIDATION = 'runQueryValidation';
 
@@ -304,6 +308,57 @@ define([
         this.UMID_QUERY_RESULT_CHART_MODEL = "qe:query-result-chart-model";
         this.UMID_QUERY_RESULT_LINE_CHART_MODEL = "qe:query-result-line-chart-model";
         this.UMID_QUERY_RESULT_LIST_MODEL = "qe:query-result-list-model";
+
+        this.SESSION_ANALYZER_KEY = "summary";
+        this.SESSION_ANALYZER_INGRESS_KEY = "ingress";
+        this.SESSION_ANALYZER_REVERSE_INGRESS_KEY = "reverse_ingress";
+        this.SESSION_ANALYZER_EGRESS_KEY = "egress";
+        this.SESSION_ANALYZER_REVERSE_EGRESS_KEY = "reverse_egress";
+
+        this.UMID_SA_SUMMARY_LIST_MODEL = "qe:sa:" + this.SESSION_ANALYZER_KEY + "-list-model";
+        this.UMID_SA_SUMMARY_LINE_CHART_MODEL = "qe:sa:" + this.SESSION_ANALYZER_KEY + "-line-chart-model";
+        this.UMID_SA_INGRESS_LIST_MODEL = "qe:sa:" + this.SESSION_ANALYZER_INGRESS_KEY + "-list-model";
+        this.UMID_SA_EGRESS_LIST_MODEL = "qe:sa:" + this.SESSION_ANALYZER_EGRESS_KEY + "-list-model";
+        this.UMID_SA_REVERSE_INGRESS_LIST_MODEL = "qe:sa:" + this.SESSION_ANALYZER_REVERSE_INGRESS_KEY + "-list-model";
+        this.UMID_SA_REVERSE_EGRESS_LIST_MODEL = "qe:sa:" + this.SESSION_ANALYZER_REVERSE_EGRESS_KEY + "-list-model";
+
+        this.SESSION_ANALYZER_CHART_DATA_KEY = ["ingress", "egress", "reverse_ingress", "reverse_egress"];
+
+        //order of the key matters. should match with the above chart data key.
+        this.MAP_SESSION_ANALYZER_DATA_KEY = {
+            summary: {
+                label: "Summary"
+            },
+            ingress: {
+                label: "Ingress",
+                query: {
+                    type: 'ingress',
+                    reverse : false
+                }
+            },
+            egress: {
+                label: "Egress",
+                query: {
+                    type: 'egress',
+                    reverse : false
+                }
+            },
+            reverse_ingress: {
+                label: "Reverse Ingress",
+                query: {
+                    type: 'ingress',
+                    reverse : true
+                }
+            },
+            reverse_egress: {
+                label: "Reverse Egress",
+                query: {
+                    type: 'egress',
+                    reverse : true
+                }
+            }
+        };
+
 
         this.QUERY_COLUMN_FORMATTER = {
             "T": "micro-date",

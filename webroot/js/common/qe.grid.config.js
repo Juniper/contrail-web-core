@@ -180,6 +180,41 @@ define([
                 parentView.renderView4Config(elementId, null, flowRecordDetailsConfig);
             }
         };
+
+        this.getOnClickSessionAnalyzer = function(clickOutView, queryFormAttributes, elementId) {
+            return function (e, selRowDataItem) {
+                var elementId = $(elementId),
+                    queryId = qewu.generateQueryUUID(),
+                    sessionAnalyzerConfig = {
+                        elementId: cowl.QE_SESSION_ANALYZER_VIEW_ID + '-' + queryId,
+                        title: cowl.TITLE_SESSION_ANALYZER,
+                        iconClass: 'icon-lightbulb',
+                        app: cowc.APP_CONTRAIL_CONTROLLER,
+                        viewPathPrefix: "controller-basedir/reports/qe/ui/js/views/",
+                        view: "SessionAnalyzerView",
+                        tabConfig: {},
+                        viewConfig: {
+                            queryType: cowc.QUERY_TYPE_ANALYZE,
+                            queryId: queryId,
+                            queryFormAttributes: queryFormAttributes,
+                            selectedFlowRecord: selRowDataItem
+                        }
+                    };
+                clickOutView.renderSessionAnalyzer(elementId, sessionAnalyzerConfig);
+            }
+        };
+
+        this.setAnalyzerIconFormatter = function(r, c, v, cd, dc) {
+            return '<i class="icon-external-link-sign" title="Analyze Session"></i>';
+        };
+
+        this.setSessionAnalyzerOnClick = function(parentView, queryFormAttributes, elementId) {
+            return function(e, selRowDataItem) {
+                if (qewu.enableSessionAnalyzer(selRowDataItem)) {
+                    this.getOnClickSessionAnalyzer(parentView, queryFormAttributes, elementId)(e, selRowDataItem);
+                }
+            };
+        };
     };
 
     function getColumnDisplay4Query(tableName, tableType) {
@@ -1931,7 +1966,27 @@ define([
                 }
             },
             {select: "InstanceId", display:{id: "InstanceId", field: "InstanceId", name: "Instance Id", width: 150, searchable:true}}
-        ]
+        ],
+        "SessionAnalyzerTable": [
+            {select:"vrouter", display:{id:"vrouter",field:"vrouter", width:100, name:"Virtual Router", groupable:false}},
+            {select:"sourcevn", display:{id:"sourcevn",field:"sourcevn", width:240, name:"Source VN", groupable:false}},
+            {select:"destvn", display:{id:"destvn", field:"destvn", width:240, name:"Destination VN", groupable:false}},
+            {select:"sourceip", display:{id:"sourceip", field:"sourceip", width:100, name:"Source IP", groupable:false}},
+            {select:"destip", display:{id:"destip", field:"destip", width:120, name:"Destination IP", groupable:false}},
+            {select:"sport", display:{id:"sport", field:"sport", width:100, name:"Source Port", groupable:false}},
+            {select:"dport", display:{id:"dport", field:"dport", width:130, name:"Destination Port", groupable:false}},
+            {select:"direction_ing", display:{id:"direction_ing", field:"direction_ing", width:100, name:"Direction", groupable:true}},
+            {select:"protocol", display:{id:"protocol", field:"protocol", width:100, name:"Protocol", groupable:true}},
+            {select:"T=", display:{}},
+            {select:"T", display:{}},
+            {select:"bytes", display:{}},
+            {select:"sum(bytes)", display:{}},
+            {select:"avg(bytes)", display:{}},
+            {select:"packets", display:{}},
+            {select:"sum(packets)", display:{}},
+            {select:"avg(packets)", display:{}},
+            {select:"flow_count", display:{}}
+        ],
     };
 
     return QEGridConfig;

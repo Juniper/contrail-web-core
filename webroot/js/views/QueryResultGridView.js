@@ -12,18 +12,35 @@ define([
         render: function () {
             var self = this,
                 viewConfig = self.attributes.viewConfig,
-                queryResultPostData = viewConfig.queryResultPostData,
-                queryFormAttributes = contrail.checkIfExist(viewConfig.queryFormAttributes) ? viewConfig.queryFormAttributes.formModelAttrs : queryResultPostData.formModelAttrs,
+                queryRequestPostData = viewConfig.queryRequestPostData,
+                queryFormAttributes = contrail.checkIfExist(viewConfig.queryFormAttributes) ? viewConfig.queryFormAttributes.formModelAttrs : queryRequestPostData.formModelAttrs,
                 formQueryIdSuffix = contrail.checkIfKeyExistInObject(true, viewConfig.queryFormAttributes, 'queryId') ? '-' + viewConfig.queryFormAttributes.queryId : '',
                 queryResultGridId = contrail.checkIfExist(viewConfig.queryResultGridId) ? viewConfig.queryResultGridId : cowl.QE_QUERY_RESULT_GRID_ID + formQueryIdSuffix,
                 modelMap = contrail.handleIfNull(self.modelMap, {}),
                 gridOptions = viewConfig['gridOptions'],
-                contrailListModel,
+                queryGridListModel = null,
+                queryResultRemoteConfig,
+                listModelConfig;
+
+            //self.model here is QueryFormModel. for rendering Grid we will use the list model from model map or create new one.
+            if (contrail.checkIfExist(viewConfig.modelKey) && contrail.checkIfExist(modelMap[viewConfig.modelKey])) {
+                queryGridListModel = modelMap[viewConfig.modelKey]
+            }
+
+            if (queryGridListModel === null && contrail.checkIfExist(viewConfig.modelConfig)) {
+                listModelConfig = viewConfig['modelConfig'];
+                queryResultRemoteConfig = listModelConfig['remote'].ajaxConfig;
+                queryGridListModel = new ContrailListModel(listModelConfig);
+            }
+
+            //Create listModel config using the viewConfig parameters.
+            if (queryGridListModel === null && !contrail.checkIfExist(viewConfig.modelConfig)) {
                 queryResultRemoteConfig = {
                     url: "/api/qe/query",
                     type: 'POST',
-                    data: JSON.stringify(queryResultPostData)
-                },
+                    data: JSON.stringify(queryRequestPostData)
+                };
+
                 listModelConfig = {
                     remote: {
                         ajaxConfig: queryResultRemoteConfig,
@@ -43,10 +60,12 @@ define([
                     }
                 };
 
-            contrailListModel = new ContrailListModel(listModelConfig);
-            modelMap[cowc.UMID_QUERY_RESULT_LIST_MODEL] = contrailListModel;
+                queryGridListModel = new ContrailListModel(listModelConfig);
+            }
 
-            self.renderView4Config(self.$el, contrailListModel, getQueryResultGridViewConfig(queryResultRemoteConfig, queryResultGridId, queryFormAttributes, gridOptions), null, null, modelMap);
+            modelMap[cowc.UMID_QUERY_RESULT_LIST_MODEL] = queryGridListModel;
+
+            self.renderView4Config(self.$el, queryGridListModel, getQueryResultGridViewConfig(queryResultRemoteConfig, queryResultGridId, queryFormAttributes, gridOptions), null, null, modelMap);
         }
     });
 

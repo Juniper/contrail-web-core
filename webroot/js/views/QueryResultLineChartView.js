@@ -17,9 +17,11 @@ define([
                 queryResultChartGridId = viewConfig.queryResultChartGridId,
                 modelMap = contrail.handleIfNull(self.modelMap, {});
 
+            var clickOutView = (contrail.checkIfExist(viewConfig.clickOutElementId)) ? self.rootView.viewMap[viewConfig.clickOutElementId] : self;
+
             modelMap[cowc.UMID_QUERY_RESULT_LINE_CHART_MODEL] = new ContrailListModel({data: []});
             modelMap[cowc.UMID_QUERY_RESULT_CHART_MODEL] = getChartDataModel(queryId, queryFormAttributes, modelMap);
-            self.renderView4Config(self.$el, null, getQueryChartViewConfig(queryId, queryFormAttributes, modelMap, self, queryResultChartGridId), null, null, modelMap);
+            self.renderView4Config(self.$el, null, getQueryChartViewConfig(queryId, queryFormAttributes, modelMap, clickOutView, queryResultChartGridId), null, null, modelMap);
         }
     });
 
@@ -151,16 +153,17 @@ define([
             columnDisplay = qewgc.getColumnDisplay4ChartGroupGrid(queryFormAttributes.table_name, queryFormAttributes.table_type, selectArray);
 
         if (queryFormAttributes.query_prefix === cowc.FS_QUERY_PREFIX) {
-            display.push({
-                id: 'fc-details', field:"", name:"", resizable: false, sortable: false, width: 30, minWidth: 30, searchable: false, exportConfig: { allow: false },
-                formatter: function(r, c, v, cd, dc){
-                    return '<i class="icon-external-link-sign" title="Analyze Session"></i>';
-                },
-                cssClass: 'cell-hyperlink-blue',
-                events: {
-                    onClick: qewgc.getOnClickFlowRecord(parentView, queryFormAttributes)
-                }
-            });
+
+            if (qewu.enableSessionAnalyzer(null, queryFormAttributes)) {
+                display.push({
+                    id: 'fc-details', field:"", name:"", resizable: false, sortable: false, width: 30, minWidth: 30, searchable: false, exportConfig: { allow: false },
+                    formatter: qewgc.setAnalyzerIconFormatter,
+                    cssClass: 'cell-hyperlink-blue',
+                    events: {
+                        onClick: qewgc.getOnClickSessionAnalyzer(parentView, queryFormAttributes)
+                    }
+                });
+            }
         }
 
         columnDisplay = display.concat(columnDisplay);

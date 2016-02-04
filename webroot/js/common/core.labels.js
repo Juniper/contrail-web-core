@@ -114,6 +114,13 @@ define([
         this.QE_FLOW_RECORD_TAB_ID = "qe-flow-record-tab";
         this.QE_FLOW_RECORD_GRID_ID = "qe-flow-record-grid";
 
+        this.QE_SESSION_ANALYZER_VIEW_ID = "qe-sa-view";
+        this.QE_SESSION_ANALYZER_RESULT_TAB_ID = "qe-sa-result-tab";
+        this.QE_SESSION_ANALYZER_RESULT_CHART_ID = "qe-sa-result-chart";
+        this.QE_SESSION_ANALYZER_RESULT_GRID_TAB_ID = "qe-sa-result-grid-tab";
+        this.QE_SESSION_ANALYZER_RESULT_GRID_ID = "qe-sa-result-grid";
+        this.QE_SESSION_ANALYZER_RESULT_TEXT_ID = "qe-sa-result-text";
+
         this.QE_FLOW_QUEUE_ID = "qe-flow-queue";
         this.QE_FLOW_QUEUE_GRID_ID = "qe-flow-queue-grid";
         this.QE_FLOW_QUEUE_TAB_ID = "qe-flow-queue-tab";
@@ -147,6 +154,7 @@ define([
         this.QE_SYSTEM_LOGS_TAB_ID = "qe-system-logs-tab";
         this.QE_SYSTEM_LOGS_GRID_ID = "qe-system-logs-grid";
 
+        this.QE_SESSION_ANALYZER_SUMMARY_SUFFIX_ID = "-sa-summary";
         this.QE_INGRESS_SUFFIX_ID = "-ingress";
         this.QE_EGRESS_SUFFIX_ID = "-egress";
         this.QE_REVERSE_INGRESS_SUFFIX_ID = "-reverse-ingress";
@@ -171,6 +179,8 @@ define([
         this.TITLE_STATS = "Statistics";
         this.TITLE_FLOW_SERIES = "Flow Series";
         this.TITLE_FLOW_RECORD = "Flow Record";
+        this.TITLE_SESSION_ANALYZER = "Session Analyzer";
+        this.TITLE_SESSION_ANALYZER_SUMMARY = "Session Summary";
         this.TITLE_SESSION_DETAILS = "Session Details";
         this.TITLE_FLOW_SERIES_RESULTS = "Flow Series Results";
         this.TITLE_STATS_QUERY = "Statistics Query";
