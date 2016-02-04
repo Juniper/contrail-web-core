@@ -266,7 +266,7 @@ define([
             {id: "50", text: "50 Messages" },
             {id: "100", text: "100 Messages" },
             {id: "200", text: "200 Messages" },
-            {id: "500", text: "500 Messages" },
+            {id: "500", text: "500 Messages" }
         ];
 
         this.DIRECTION_DROPDOWN_VALUES = [
@@ -290,6 +290,8 @@ define([
             8: 'RegEx='
         };
 
+        this.BYTE_PREFIX = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
         this.URL_TABLES = "/api/qe/tables";
         this.URL_PREFIX_TABLE_SCHEMA = "/api/qe/table/schema/";
 
@@ -303,129 +305,168 @@ define([
         this.UMID_QUERY_RESULT_LINE_CHART_MODEL = "qe:query-result-line-chart-model";
         this.UMID_QUERY_RESULT_LIST_MODEL = "qe:query-result-list-model";
 
-        this.MAP_Y_FORMATTER = {
+        this.QUERY_COLUMN_FORMATTER = {
+            "T": "micro-date",
+            "T=": "micro-date",
+            "MessageTS": "micro-date",
+            "protocol": "protocol",
+            "direction_ing": "query-direction",
+
+            "bytes": "byte",
             "sum(bytes)": "byte",
+            "packets": "number",
+            "sum(packets)": "number",
+            "flow_count": "number",
+
+            "agg-bytes": "byte",
+            "agg-packets": "number",
 
             // cpu_info
+            "cpu_info.mem_virt": "byte",
             "SUM(cpu_info.mem_virt)": "byte",
             "MAX(cpu_info.mem_virt)": "byte",
             "MIN(cpu_info.mem_virt)": "byte",
 
+            "cpu_info.mem_res": "byte",
             "SUM(cpu_info.mem_res)": "byte",
             "MAX(cpu_info.mem_res)": "byte",
             "MIN(cpu_info.mem_res)": "byte",
 
+            "cpu_info.used_sys_mem": "byte",
             "SUM(cpu_info.used_sys_mem)": "byte",
             "MAX(cpu_info.used_sys_mem)": "byte",
             "MIN(cpu_info.used_sys_mem)": "byte",
 
 
-            "SUM(cpu_info.cpu_share)": "percentage",
-            "MAX(cpu_info.cpu_share)": "percentage",
-            "MIN(cpu_info.cpu_share)": "percentage",
+            "cpu_info.cpu_share": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(cpu_info.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(cpu_info.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(cpu_info.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
 
 
-            "SUM(cpu_info.one_min_cpuload)": "percentage",
-            "MAX(cpu_info.one_min_cpuload)": "percentage",
-            "MIN(cpu_info.one_min_cpuload)": "percentage",
+            "cpu_info.one_min_cpuload": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(cpu_info.one_min_cpuload)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(cpu_info.one_min_cpuload)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(cpu_info.one_min_cpuload)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
 
             // cpu_stats
-            "SUM(cpu_stats.cpu_one_min_avg)": "percentage",
-            "MAX(cpu_stats.cpu_one_min_avg)": "percentage",
-            "MIN(cpu_stats.cpu_one_min_avg)": "percentage",
+            "cpu_stats.cpu_one_min_avg": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(cpu_stats.cpu_one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(cpu_stats.cpu_one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(cpu_stats.cpu_one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
 
+            "cpu_stats.vm_memory_quota": "byte",
             "SUM(cpu_stats.vm_memory_quota)": "byte",
             "MAX(cpu_stats.vm_memory_quota)": "byte",
             "MIN(cpu_stats.vm_memory_quota)": "byte",
 
+            "cpu_stats.virt_memory": "byte",
             "SUM(cpu_stats.virt_memory)": "byte",
             "MAX(cpu_stats.virt_memory)": "byte",
             "MIN(cpu_stats.virt_memory)": "byte",
 
+            "cpu_stats.peak_virt_memory": "byte",
             "SUM(cpu_stats.peak_virt_memory)": "byte",
             "MAX(cpu_stats.peak_virt_memory)": "byte",
             "MIN(cpu_stats.peak_virt_memory)": "byte",
 
-
             // msg_info
+            "msg_info.bytes": "byte",
             "SUM(msg_info.bytes)": "byte",
             "MAX(msg_info.bytes)": "byte",
             "MIN(msg_info.bytes)": "byte",
 
 
             // vn_stats
+            "vn_stats.in_bytes": "byte",
             "SUM(vn_stats.in_bytes)": "byte",
             "MAX(vn_stats.in_bytes)": "byte",
             "MIN(vn_stats.in_bytes)": "byte",
 
+            "vn_stats.out_bytes": "byte",
             "SUM(vn_stats.out_bytes)": "byte",
             "MAX(vn_stats.out_bytes)": "byte",
             "MIN(vn_stats.out_bytes)": "byte",
 
             // tx_socket_stats
+            "tx_socket_stats.bytes": "byte",
             "SUM(tx_socket_stats.bytes)": "byte",
             "MAX(tx_socket_stats.bytes)": "byte",
             "MIN(tx_socket_stats.bytes)": "byte",
 
+            "tx_socket_stats.average_bytes": "byte",
             "SUM(tx_socket_stats.average_bytes)": "byte",
             "MAX(tx_socket_stats.average_bytes)": "byte",
             "MIN(tx_socket_stats.average_bytes)": "byte",
 
             // rx_socket_stats
+            "rx_socket_stats.bytes": "byte",
             "SUM(rx_socket_stats.bytes)": "byte",
             "MAX(rx_socket_stats.bytes)": "byte",
             "MIN(rx_socket_stats.bytes)": "byte",
 
+            "rx_socket_stats.average_bytes": "byte",
             "SUM(rx_socket_stats.average_bytes)": "byte",
             "MAX(rx_socket_stats.average_bytes)": "byte",
             "MIN(rx_socket_stats.average_bytes)": "byte",
 
             // rx_message_stats
+            "rx_message_stats.bytes": "byte",
             "SUM(rx_message_stats.bytes)": "byte",
             "MAX(rx_message_stats.bytes)": "byte",
             "MIN(rx_message_stats.bytes)": "byte",
 
             // virtual_ip_stats
+            "virtual_ip_stats.bytes_in": "byte",
             "SUM(virtual_ip_stats.bytes_in)": "byte",
             "MAX(virtual_ip_stats.bytes_in)": "byte",
             "MIN(virtual_ip_stats.bytes_in)": "byte",
 
+            "virtual_ip_stats.bytes_out": "byte",
             "SUM(virtual_ip_stats.bytes_out)": "byte",
             "MAX(virtual_ip_stats.bytes_out)": "byte",
             "MIN(virtual_ip_stats.bytes_out)": "byte",
 
             // pool_stats
+            "pool_stats.bytes_in": "byte",
             "SUM(pool_stats.bytes_in)": "byte",
             "MAX(pool_stats.bytes_in)": "byte",
             "MIN(pool_stats.bytes_in)": "byte",
 
+            "pool_stats.bytes_out": "byte",
             "SUM(pool_stats.bytes_out)": "byte",
             "MAX(pool_stats.bytes_out)": "byte",
             "MIN(pool_stats.bytes_out)": "byte",
 
             // member_stats
+            "member_stats.bytes_in": "byte",
             "SUM(member_stats.bytes_in)": "byte",
             "MAX(member_stats.bytes_in)": "byte",
             "MIN(member_stats.bytes_in)": "byte",
 
+            "member_stats.bytes_out": "byte",
             "SUM(member_stats.bytes_out)": "byte",
             "MAX(member_stats.bytes_out)": "byte",
             "MIN(member_stats.bytes_out)": "byte",
 
             // fip_diff_stats
+            "fip_diff_stats.in_bytes": "byte",
             "SUM(fip_diff_stats.in_bytes)": "byte",
             "MAX(fip_diff_stats.in_bytes)": "byte",
             "MIN(fip_diff_stats.in_bytes)": "byte",
 
+            "fip_diff_stats.out_bytes": "byte",
             "SUM(fip_diff_stats.out_bytes)": "byte",
             "MAX(fip_diff_stats.out_bytes)": "byte",
             "MIN(fip_diff_stats.out_bytes)": "byte",
 
             // if_stats
+            "if_stats.in_bytes": "byte",
             "SUM(if_stats.in_bytes)": "byte",
             "MAX(if_stats.in_bytes)": "byte",
             "MIN(if_stats.in_bytes)": "byte",
 
+            "if_stats.out_bytes": "byte",
             "SUM(if_stats.out_bytes)": "byte",
             "MAX(if_stats.out_bytes)": "byte",
             "MIN(if_stats.out_bytes)": "byte",

@@ -102,6 +102,21 @@ function Contrail() {
             }
         }
     };
+    this.getObjectValueByPath = function(valueObject, pathString) {
+        var pathArray = pathString.split('.'),
+            returnValue = valueObject;
+
+        $.each(pathArray, function (pathKey, pathValue) {
+            if (contrail.checkIfExist(returnValue[pathValue])) {
+                returnValue = returnValue[pathValue];
+            } else {
+                returnValue = null;
+                return;
+            }
+        });
+
+        return returnValue
+    };
     this.parseErrorMsgFromXHR = function(xhr) {
         var errorMsg = '';
         if(contrail.checkIfExist(xhr.errorThrown)) {
