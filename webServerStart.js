@@ -29,7 +29,8 @@ for (var i = 0; i < argsCnt; i++) {
 
 /* Set corePath before loading any other module */
 var corePath = process.cwd();
-var config = require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig(configFile);
+var config =
+    require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig(configFile);
 
 exports.corePath = corePath;
 exports.config = config;
