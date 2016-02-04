@@ -8,19 +8,19 @@ var configFile = null;
 for (var i = 0; i < argsCnt; i++) {
     if (('--c' == args[i]) || ('--conf_file' == args[i])) {
         if (null == args[i + 1]) {
-            console.log('Config file not provided');
+            console.error('Config file not provided');
             assert(0);
         } else {
             configFile = args[i + 1];
             try {
                 var tmpConfig = require(configFile);
                 if ((null == tmpConfig) || (typeof tmpConfig !== 'object')) {
-                    console.log('Config file ' + configFile + ' is not valid');
+                    console.error('Config file ' + configFile + ' is not valid');
                     assert(0);
                 }
                 break;
             } catch(e) {
-                console.log('Config file ' + configFile + ' not found');
+                console.error('Config file ' + configFile + ' not found');
                 assert(0);
             }
         }

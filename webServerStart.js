@@ -8,19 +8,19 @@ var configFile = null;
 for (var i = 0; i < argsCnt; i++) {
     if (('--c' == args[i]) || ('--conf_file' == args[i])) {
         if (null == args[i + 1]) {
-            console.log('Config file not provided.');
+            console.error('Config file not provided');
             assert(0);
         } else {
             configFile = args[i + 1];
             try {
                 var tmpConfig = require(configFile);
                 if ((null == tmpConfig) || (typeof tmpConfig !== 'object')) {
-                    console.log('Config file ' + configFile + ' is not valid');
+                    console.error('Config file ' + configFile + ' is not valid');
                     assert(0);
                 }
                 break;
             } catch(e) {
-                console.log('Config file ' + configFile + ' not found');
+                console.error('Config file ' + configFile + ' not found');
                 assert(0);
             }
         }
@@ -33,8 +33,6 @@ var config = require('./src/serverroot/common/config.utils').compareAndMergeDefa
 
 exports.corePath = corePath;
 exports.config = config;
-
-var logutils = require('./src/serverroot/utils/log.utils');
 
 var redisUtils = require('./src/serverroot/utils/redis.utils');
 var global = require('./src/serverroot/common/global');
@@ -74,6 +72,7 @@ var express = require('express')
     , jsonPath = require('JSONPath').eval
     , jsonDiff = require('./src/serverroot/common/jsondiff')
     , helmet = require('helmet')
+    , logutils = require('./src/serverroot/utils/log.utils')
     ;
 
 var pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
@@ -297,21 +296,22 @@ function registerReqToApp ()
 
 function bindProducerSocket ()
 {
-    var hostName = config.jobServer.server_ip,
-        port = config.jobServer.server_port;
+    var hostName = config.jobServer.server_ip
+        , port = config.jobServer.server_port
+        ;
 
     var connectURL = 'tcp://' + hostName + ":" + port;
     /* Master of this nodeJS Server should connect to the worker
        Server of other nodeJS server
      */
     producerSock.bind(connectURL);
-    logutils.logger.info('NodeJS Server bound to port %s to Job Server ', port);
+    console.log('nodeJS Server bound to port %s to Job Server ', port);
 }
 
 function sendRequestToJobServer (msg)
 {
     var timer = setInterval(function () {
-        logutils.logger.info("SENDING to jobServer:", msg);
+        logutils.logger.debug("SENDING to jobServer:" + msg.reqData);
         producerSock.send(msg.reqData);
         clearTimeout(timer);
     }, 1000);
@@ -320,7 +320,7 @@ function sendRequestToJobServer (msg)
 function addProducerSockListener ()
 {
     producerSock.on('message', function (msg) {
-        logutils.logger.info("Got A message, [%s]", msg);
+        console.log("Got A message, [%s]", msg);
     });
 }
 
@@ -337,7 +337,7 @@ var timeouts = [];
 function addClusterEventListener ()
 {
     cluster.on('fork', function (worker) {
-        logutils.logger.info('Forking worker #', worker.id);
+        logutils.logger.info('Forking worker #' + worker.id);
         cluster.workers[worker.id].on('message', messageHandler);
         timeouts[worker.id] = setTimeout(function () {
             logutils.logger.error(['Worker taking too long to start.']);
@@ -534,12 +534,12 @@ function startWebUIService (webUIIP, callback)
     });
 
     httpServer.on('clientError', function(exception, socket) {
-        logutils.logger.error("httpServer Exception: on clientError:", 
-                               exception, socket);
+        logutils.logger.error("httpServer Exception: on clientError:" +
+                               exception);
     });
     httpsServer.on('clientError', function(exception, socket) {
-        logutils.logger.error("httpsServer Exception: on clientError:", 
-                              exception, socket);
+        logutils.logger.error("httpsServer Exception: on clientError:" +
+                              exception);
     });
     
     if (false == insecureAccessFlag) {
