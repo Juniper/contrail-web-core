@@ -2296,14 +2296,14 @@ button.btn:active {
     -webkit-appearance: none;
 }
 ::-webkit-scrollbar:vertical {
-    width: 9px;
+    width: 6px;
 }
 ::-webkit-scrollbar:horizontal {
-    height: 11px;
+    height: 6px;
 }
 ::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-    border: 2px solid white; /* should match background, can't be transparent */
+    border-radius: 3px;
+    border: 1px solid white; /* should match background, can't be transparent */
     background-color: rgba(0, 0, 0, .2);
 }
 
