@@ -15,7 +15,7 @@ define([
             var logListTmpl = contrail.getTemplate4Id('logList-template');
             //Display only recent 3 log messages
             self.$el.find('.widget-body .widget-main').
-                html(logListTmpl(logList.reverse().slice(0,3)));
+                html(logListTmpl(logList.slice(0,3)));
         },
         render: function() {
             var self = this;
