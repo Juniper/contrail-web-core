@@ -188,11 +188,13 @@ define([
                     sessionAnalyzerConfig = {
                         elementId: cowl.QE_SESSION_ANALYZER_VIEW_ID + '-' + queryId,
                         title: cowl.TITLE_SESSION_ANALYZER,
-                        iconClass: 'icon-lightbulb',
+                        iconClass: 'icon-bar-chart',
                         app: cowc.APP_CONTRAIL_CONTROLLER,
                         viewPathPrefix: "controller-basedir/reports/qe/ui/js/views/",
                         view: "SessionAnalyzerView",
-                        tabConfig: {},
+                        tabConfig: {
+                            removable: true,
+                        },
                         viewConfig: {
                             queryType: cowc.QUERY_TYPE_ANALYZE,
                             queryId: queryId,
