@@ -989,7 +989,20 @@
         </div>
     </div>
 </script>
-
+<script type="text/x-handlebars-template" id="core-checkbox-label-right-view-template">
+    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="row-fluid form-element" >
+            <input type="{{type}}" name="{{id}}" class="{{class}} ace-input"
+                data-bind="
+                    {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                    checked: {{viewConfig.dataBindValue}},
+                    event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
+            />
+            <label class="ace-lbl">{{label}}</label>
+            <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+        </div>
+    </div>
+</script>
 <script type="text/x-handlebars-template" id="core-editable-grid-checkbox-view-template">
     <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <input type="{{type}}" name="{{name}}" class="{{class}} ace-input" data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}} checked: {{viewConfig.dataBindValue}}"/>
@@ -1468,7 +1481,7 @@
     <label style="margin:0px">{{label}}</label>
     {{/IfCompare}}
     <table class="contrail-editable-grid-table" {{#if width}} width='{{width}}' {{/if}}>
-        <thead style="background:#eeeeee">
+        <thead style="background:#fafafa">
         <tr>
             {{#each columns}}
                 <th class="{{this.class}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }">{{this.name}}</th>
@@ -1476,7 +1489,7 @@
 
                 {{#each gridActions}}
                 <th>
-    <div class=" margin-10-0-0 pull-right">
+    <div class=" margin-10-0-0  headerRowAction">
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}</a>
     </div>
     </th>
@@ -1492,16 +1505,17 @@
                         {{/if}}"
             ></td>
             {{/each}}
-            {{#each rowActions}}
             <td class="action-cell"
                 style="{{#if verticalAlign}}
                           vertical-align:{{verticalAlign}}
                        {{/if}}">
+                {{#each rowActions}}
                 <a data-bind='click: {{this.onClick}}'>
                     <i class="{{this.iconClass}}"></i>
                 </a>
+                {{/each}}
             </td>
-            {{/each}}
+
         </tr>
         <tr class="error-row">
             {{#each columns}}
