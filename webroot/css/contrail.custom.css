@@ -898,13 +898,6 @@ a.selectAllLink:hover {
 .slick-viewport {
 	border-top: 1px solid #dadada;
 }
-.grid-state-fetching-rows .slick-row,
-.grid-state-fetching .widget-toolbar .widget-toolbar-icon[data-action="export"],
-.grid-state-fetching .widget-toolbar .widget-toolbar-icon[data-action="refresh"] {
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
-    filter: alpha(opacity=60);
-    opacity: 0.6;
-}
 .slick-row {
 	border:none;
 }
@@ -2761,7 +2754,7 @@ p.error, p.error-text {
 	font-size: 11px;
 }
 
-.ui-multiselect-menu { display:none; position:absolute; z-index: 1051; text-align: left }
+.ui-multiselect-menu { display:none; position:absolute; z-index: 12; text-align: left }
 .ui-multiselect-checkboxes { position:relative /* fixes bug in IE6/7 */; overflow-y:scroll }
 .ui-multiselect-checkboxes  input.ace-input[type=checkbox] {  width: 0;  }
 .ui-multiselect-checkboxes label { cursor:default; display:block; border:1px solid transparent; padding:3px 3px 3px 10px }
@@ -3566,3 +3559,18 @@ tr.collapsibleChildContainer{
 .max-z-index {
     z-index: 30000;
 }
+
+#configure-network input.ace-input[type=checkbox] + .ace-lbl::before, #configure-network input.ace-input[type=radio] + .ace-lbl::before{
+    margin-right:10px;}
+#configure-Ports-form .contrail-editable-grid-table{
+    margin-bottom:10px;}
+#network_ipam_refs th, #user_created_host_routes th, #user_created_dns_servers th, #floating_ip_pools th, #user_created_route_targets th, #user_created_export_route_targets th, #user_created_import_route_targets th,#configure-Ports th, #configure-service_instance-form th{
+    padding-left:5px;}
+#network_ipam_refs td, #user_created_host_routes td, #user_created_dns_servers td, #floating_ip_pools td, #user_created_route_targets td, #user_created_export_route_targets td, #user_created_import_route_targets td, #configure-Ports td, #configure-service_instance-form td{
+    padding-left:2px;}
+#network-form .contrail-editable-grid-table thead,#network-form .collection-table thead, #advanced_options .contrail-editable-grid-table thead, #advanced_options .collection-table thead {
+    line-height:1;}
+ .headerRowAction{
+    padding-bottom:8px;}
+.action-cell a+a{padding-left:5px;}
+.headerRowAction{padding-left:2px;}
