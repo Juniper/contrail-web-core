@@ -13,6 +13,7 @@ define([
             var self = this,
                 viewConfig = self.attributes.viewConfig,
                 listModelConfig = $.extend(true, {}, viewConfig.elementConfig['body']['dataSource']),
+                modelMap = contrail.handleIfNull(self.modelMap, {}),
                 contrailListModel, gridConfig, gridContainer,
                 customGridConfig;
 
@@ -23,6 +24,10 @@ define([
                 dvConfig = null, eventHandlerMap = {grid: {}, dataView: {}},
                 scrolledStatus = {scrollLeft: 0, scrollTop: 0},
                 adjustAllRowHeightTimer = null;
+
+            if (contrail.checkIfExist(viewConfig.modelKey) && contrail.checkIfExist(modelMap[viewConfig.modelKey])) {
+                self.model = modelMap[viewConfig.modelKey]
+            }
 
             contrailListModel = (self.model != null) ? self.model : new ContrailListModel(listModelConfig);
 

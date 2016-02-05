@@ -96,47 +96,7 @@ define([
             queryResultGridColumns = gridOptions.gridColumns.concat(queryResultGridColumns)
         }
 
-        return {
-            header: {
-                title: {
-                    text: gridOptions.titleText
-                },
-                defaultControls: {
-                    collapseable: true,
-                    refreshable: false,
-                    columnPickable: true
-                }
-            },
-            body: {
-                options: {
-                    checkboxSelectable: false,
-                    fixedRowHeight: contrail.checkIfExist(gridOptions.fixedRowHeight) ? gridOptions.fixedRowHeight : 30,
-                    forceFitColumns: false,
-                    defaultDataStatusMessage: false
-                },
-                dataSource: {
-                    remote: {
-                        ajaxConfig: queryResultRemoteConfig,
-                        dataParser: function(response) {
-                            return response['data'];
-                        }
-                    }
-                },
-                statusMessages: {
-                    queued: {
-                        type: 'status',
-                        iconClasses: '',
-                        text: cowm.getQueryQueuedMessage(gridOptions.queryQueueUrl, gridOptions.queryQueueTitle)
-                    }
-                }
-            },
-            columnHeader: {
-                columns: queryResultGridColumns
-            },
-            footer: {
-                pager: contrail.handleIfNull(gridOptions.pagerOptions, { options: { pageSize: 100, pageSizeSelect: [100, 200, 500] } })
-            }
-        };
+        return qewgc.getQueryGridConfig(queryResultRemoteConfig, queryResultGridColumns, gridOptions);
     };
 
     return QueryResultGridView;

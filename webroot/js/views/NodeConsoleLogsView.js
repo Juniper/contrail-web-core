@@ -141,17 +141,17 @@ define([
             queryFormModel.is_request_in_progress(true);
             qewu.fetchServerCurrentTime(function(serverCurrentTime) {
                 var timeRange = parseInt(queryFormModel.time_range()),
-                    queryResultPostData;
+                    queryRequestPostData;
 
                 if (timeRange !== -1) {
                     queryFormModel.to_time(serverCurrentTime);
                     queryFormModel.from_time(serverCurrentTime - (timeRange * 1000));
                 }
 
-                queryResultPostData = queryFormModel.getQueryRequestPostData(serverCurrentTime);
-                queryResultPostData.chunkSize = cowc.QE_RESULT_CHUNK_SIZE_10K;
+                queryRequestPostData = queryFormModel.getQueryRequestPostData(serverCurrentTime);
+                queryRequestPostData.chunkSize = cowc.QE_RESULT_CHUNK_SIZE_10K;
                 self.renderView4Config($(queryResultId), queryFormModel,
-                    getQueryResultTabViewConfig(queryResultPostData, queryResultTabId), null, null, modelMap,
+                    getQueryResultTabViewConfig(queryRequestPostData, queryResultTabId), null, null, modelMap,
                     function() {
                         var queryResultListModel = modelMap[cowc.UMID_QUERY_RESULT_LIST_MODEL];
 
@@ -366,18 +366,18 @@ define([
         //TODO: Add where clause for category, type, and keywords. Add where clause corresponding to node type.
     };
 
-    function getQueryResultTabViewConfig(queryResultPostData, queryResultTabId) {
+    function getQueryResultTabViewConfig(queryRequestPostData, queryResultTabId) {
         return {
             elementId: queryResultTabId,
             view: "TabsView",
             viewConfig: {
                 theme: cowc.TAB_THEME_WIDGET_CLASSIC,
-                tabs: [getQueryResultGridViewConfig(queryResultPostData)]
+                tabs: [getQueryResultGridViewConfig(queryRequestPostData)]
             }
         };
     }
 
-    function getQueryResultGridViewConfig(queryResultPostData) {
+    function getQueryResultGridViewConfig(queryRequestPostData) {
         return {
             elementId: cowl.QE_QUERY_RESULT_GRID_ID,
             title: cowl.TITLE_RESULTS,
@@ -387,7 +387,7 @@ define([
                 //TODO
             },
             viewConfig: {
-                queryResultPostData: queryResultPostData,
+                queryRequestPostData: queryRequestPostData,
                 gridOptions: {
                     titleText: cowl.TITLE_SYSTEM_LOGS,
                     queryQueueUrl: cowc.URL_QUERY_LOG_QUEUE,

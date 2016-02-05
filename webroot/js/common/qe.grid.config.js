@@ -215,6 +215,55 @@ define([
                 }
             };
         };
+
+        this.getQueryGridConfig = function(remoteConfig, gridColumns, gridOptions) {
+            return {
+                header: {
+                    title: {
+                        text: gridOptions.titleText
+                    },
+                    defaultControls: {
+                        collapseable: true,
+                        refreshable: false,
+                        columnPickable: true
+                    }
+                },
+                body: {
+                    options: {
+                        checkboxSelectable: false,
+                        fixedRowHeight: contrail.checkIfExist(gridOptions.fixedRowHeight) ? gridOptions.fixedRowHeight : 30,
+                        forceFitColumns: false,
+                        defaultDataStatusMessage: false
+                    },
+                    dataSource: {
+                        remote: {
+                            ajaxConfig: remoteConfig,
+                            dataParser: function (response) {
+                                return response['data'];
+                            }
+                        }
+                    },
+                    statusMessages: {
+                        queued: {
+                            type: 'status',
+                            iconClasses: '',
+                            text: cowm.getQueryQueuedMessage(gridOptions.queryQueueUrl, gridOptions.queryQueueTitle)
+                        }
+                    }
+                },
+                columnHeader: {
+                    columns: gridColumns
+                },
+                footer: {
+                    pager: contrail.handleIfNull(gridOptions.pagerOptions, {
+                        options: {
+                            pageSize: 100,
+                            pageSizeSelect: [100, 200, 500]
+                        }
+                    })
+                }
+            };
+        }
     };
 
     function getColumnDisplay4Query(tableName, tableType) {
@@ -1966,27 +2015,12 @@ define([
             },
             {select: "InstanceId", display:{id: "InstanceId", field: "InstanceId", name: "Instance Id", width: 150, searchable:true}}
         ],
-        "SessionAnalyzerTable": [
-            {select:"vrouter", display:{id:"vrouter",field:"vrouter", width:100, name:"Virtual Router", groupable:false}},
-            {select:"sourcevn", display:{id:"sourcevn",field:"sourcevn", width:240, name:"Source VN", groupable:false}},
-            {select:"destvn", display:{id:"destvn", field:"destvn", width:240, name:"Destination VN", groupable:false}},
-            {select:"sourceip", display:{id:"sourceip", field:"sourceip", width:100, name:"Source IP", groupable:false}},
-            {select:"destip", display:{id:"destip", field:"destip", width:120, name:"Destination IP", groupable:false}},
-            {select:"sport", display:{id:"sport", field:"sport", width:100, name:"Source Port", groupable:false}},
-            {select:"dport", display:{id:"dport", field:"dport", width:130, name:"Destination Port", groupable:false}},
-            {select:"direction_ing", display:{id:"direction_ing", field:"direction_ing", width:100, name:"Direction", groupable:true}},
-            {select:"protocol", display:{id:"protocol", field:"protocol", width:100, name:"Protocol", groupable:true}},
-            {select:"T=", display:{}},
-            {select:"T", display:{}},
-            {select:"bytes", display:{}},
-            {select:"sum(bytes)", display:{}},
-            {select:"avg(bytes)", display:{}},
-            {select:"packets", display:{}},
-            {select:"sum(packets)", display:{}},
-            {select:"avg(packets)", display:{}},
-            {select:"flow_count", display:{}}
-        ]
-    };
+        init: function() {
+            this.SessionAnalyzerTable = this.FlowSeriesTable;
+            delete this.init;
+            return this;
+        }
+    }.init();
 
     return QEGridConfig;
 });
