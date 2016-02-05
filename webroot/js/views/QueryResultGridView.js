@@ -103,18 +103,14 @@ define([
                 },
                 defaultControls: {
                     collapseable: true,
-                    exportable: true,
                     refreshable: false,
-                    searchable: true,
                     columnPickable: true
                 }
             },
             body: {
                 options: {
-                    autoRefresh: false,
                     checkboxSelectable: false,
                     fixedRowHeight: contrail.checkIfExist(gridOptions.fixedRowHeight) ? gridOptions.fixedRowHeight : 30,
-                    lazyLoading: true,
                     forceFitColumns: false,
                     defaultDataStatusMessage: false
                 },

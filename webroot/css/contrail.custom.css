@@ -375,6 +375,12 @@ div.t-grid td {
 } */
 
 /* Bootstrap Modal */
+.modal.contrail-modal {
+    margin-left: 0 !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
 .modal-280{
 	width:280px;
 	margin-left: -140px;

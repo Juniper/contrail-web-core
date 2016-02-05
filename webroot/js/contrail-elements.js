@@ -1006,7 +1006,7 @@
             options.id = options.id != undefined ? options.id : '';
             var className = (options.className == null) ? '' : options.className;
 
-            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal hide" tabindex="-1" role="dialog" aria-hidden="true"> \
+            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal contrail-modal hide" tabindex="-1" role="dialog" aria-hidden="true"> \
         		<div class="modal-header"> \
         	    	<button id="modal-header-close" type="button" class="close"><i class="icon-remove"></i></button> \
         			<h6 class="modal-header-title"></h6> \
@@ -1069,11 +1069,15 @@
             }
             modalId.modal({backdrop:'static', keyboard:false});
 
-            modalId.draggable({
-                handle: ".modal-header",
-                containment: 'body',
-                cursor: 'move'
-            });
+            modalId.offset({left: ($(document).width() - modalId.width()) / 2, top: $(document).scrollTop() + 50});
+
+            modalId
+                .draggable({
+                    handle: ".modal-header",
+                    containment: 'body',
+                    cursor: 'move'
+                });
+
 
             if (contrail.checkIfFunction(keyupAction.onKeyupEnter) || contrail.checkIfFunction(keyupAction.onKeyupEsc)) {
                 modalId.keyup(function(event) {

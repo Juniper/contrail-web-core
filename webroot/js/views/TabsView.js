@@ -79,7 +79,8 @@ define([
 
         removeTab: function (tabIndex) {
             var self = this,
-                elId = self.attributes.elementId, tabPanelId;
+                elId = self.attributes.elementId, tabPanelId,
+                tabConfig = (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) ? self.tabs[tabIndex].tabConfig : null);
             if($.isArray(tabIndex)) {
                 for (var i = 0; i < tabIndex.length; i++) {
                     self.removeTab(tabIndex[i]);
@@ -92,9 +93,6 @@ define([
             $("#" + elId).find('li:eq(' + tabIndex + ')').remove();
             $("#" + tabPanelId).remove();
             $('#' + elId).data('contrailTabs').refresh();
-            if (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) && contrail.checkIfFunction(self.tabs[tabIndex].tabConfig.onRemoveTab)) {
-                self.tabs[tabIndex].tabConfig.onRemoveTab();
-            }
 
             $.each(self.tabsIdMap, function (tabsIdKey, tabsIdValue) {
                 if (tabsIdValue > tabIndex) {
@@ -108,6 +106,10 @@ define([
 
             if (self.tabs.length === 0) {
                 $("#" + elId).hide();
+            }
+
+            if (tabConfig !== null && contrail.checkIfFunction(tabConfig.onRemoveTab)) {
+                tabConfig.onRemoveTab();
             }
         },
 
