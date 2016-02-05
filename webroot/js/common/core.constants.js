@@ -65,6 +65,7 @@ define([
         this.TMPL_COMBOBOX_VIEW = "core-combobox-view-template";
         this.TMPL_EDITABLE_GRID_COMBOBOX_VIEW = "core-editable-grid-combobox-view-template";
         this.TMPL_CHECKBOX_VIEW = "core-checkbox-view-template";
+        this.TMPL_CHECKBOX_LABEL_RIGHT_VIEW = "core-checkbox-label-right-view-template";
         this.TMPL_EDITABLE_GRID_CHECKBOX_VIEW = "core-editable-grid-checkbox-view-template";
         this.TMPL_TEXTAREA_VIEW = "core-textarea-view-template";
         this.TMPL_EDITABLE_GRID_TEXTAREA_VIEW = "core-editable-grid-textarea-view-template";

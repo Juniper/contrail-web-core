@@ -3578,3 +3578,28 @@ tr.collapsibleChildContainer{
 .max-z-index {
     z-index: 30000;
 }
+
+#configure-network input.ace-input[type=checkbox] + .ace-lbl::before, #configure-network input.ace-input[type=radio] + .ace-lbl::before{
+    margin-right:10px;}
+#configure-Ports-form .contrail-editable-grid-table{
+    margin-bottom:10px;}
+#network_ipam_refs th, #user_created_host_routes th, #user_created_dns_servers th, #floating_ip_pools th, #user_created_route_targets th, #user_created_export_route_targets th, #user_created_import_route_targets th,#configure-Ports th, #configure-service_instance-form th{
+    padding-left:5px;}
+#network_ipam_refs td, #user_created_host_routes td, #user_created_dns_servers td, #floating_ip_pools td, #user_created_route_targets td, #user_created_export_route_targets td, #user_created_import_route_targets td, #configure-Ports td, #configure-service_instance-form td{
+    padding-left:2px;}
+#network-form .contrail-editable-grid-table thead,#network-form .collection-table thead, #advanced_options .contrail-editable-grid-table thead, #advanced_options .collection-table thead, #svcInstPropV2 thead {
+    line-height:1;}
+ .headerRowAction{
+    padding-bottom:8px;}
+.action-cell a+a{padding-left:5px;}
+.headerRowAction{padding-left:2px;}
+.underlay-container:before {
+    content: "\f141";
+    text-decoration: inherit;
+    speak: none;
+    position: absolute;
+    margin-left: 49.5%;
+    bottom: -9px;
+    font-family: FontAwesome;
+    color: #858585;
+}
