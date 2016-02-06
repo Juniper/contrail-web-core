@@ -73,7 +73,8 @@ define([
                 select: reqQueryObj.select,
                 from: reqQueryObj.table_name,
                 where: reqQueryObj.where,
-                filter: reqQueryObj.filters
+                filter: reqQueryObj.filters,
+                direction: reqQueryObj.direction
             };
             if (reqQueryObj.toTimeUTC == "now") {
                 engQueryJSON['from_time'] = reqQueryObj.from_time;
@@ -438,6 +439,33 @@ define([
                 }
             }
             return logValue;
+        };
+
+        /**
+         * Pass either selectedFlowRecord or formModel attribute to check if session analyzer can be enabled.
+         * @param selectedFlowRecord
+         * @param formModelAttr
+         * @returns {boolean}
+         */
+        self.enableSessionAnalyzer = function(selectedFlowRecord, formModelAttr) {
+            var enable = true, disable = !enable,
+                keys = ['vrouter', 'sourcevn', 'sourceip', 'destvn', 'destip', 'sport', 'dport'];
+            if (contrail.checkIfExist(selectedFlowRecord)) {
+                for (var i = 0; i < keys.length; i++) {
+                    if (!(selectedFlowRecord.hasOwnProperty(keys[i]) && (selectedFlowRecord[keys[i]] != null))) {
+                        return disable;
+                    }
+                }
+            }
+            if (contrail.checkIfExist(formModelAttr)) {
+                var selectArray = formModelAttr.select.split(', ');
+                for (var i = 0; i < keys.length; i++) {
+                    if (selectArray.indexOf(keys[i]) == -1) {
+                        return disable;
+                    }
+                }
+            }
+            return enable;
         };
     };
 

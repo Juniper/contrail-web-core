@@ -180,6 +180,93 @@ define([
                 parentView.renderView4Config(elementId, null, flowRecordDetailsConfig);
             }
         };
+
+        this.getOnClickSessionAnalyzer = function(clickOutView, queryId, queryFormAttributes, elementId) {
+            return function (e, selRowDataItem) {
+                var elementId = $(elementId),
+                    saElementId = cowl.QE_SESSION_ANALYZER_VIEW_ID + '-' + queryId + '-' + selRowDataItem.cgrid,
+                    sessionAnalyzerConfig = {
+                        elementId: saElementId,
+                        title: cowl.TITLE_SESSION_ANALYZER,
+                        iconClass: 'icon-bar-chart',
+                        app: cowc.APP_CONTRAIL_CONTROLLER,
+                        viewPathPrefix: "controller-basedir/reports/qe/ui/js/views/",
+                        view: "SessionAnalyzerView",
+                        tabConfig: {
+                            removable: true,
+                        },
+                        viewConfig: {
+                            queryType: cowc.QUERY_TYPE_ANALYZE,
+                            flowRecordQueryId: queryId,
+                            queryFormAttributes: queryFormAttributes,
+                            selectedFlowRecord: selRowDataItem
+                        }
+                    };
+                clickOutView.renderSessionAnalyzer(elementId, sessionAnalyzerConfig);
+            }
+        };
+
+        this.setAnalyzerIconFormatter = function(r, c, v, cd, dc) {
+            return '<i class="icon-external-link-sign" title="Analyze Session"></i>';
+        };
+
+        this.setSessionAnalyzerOnClick = function(parentView, queryFormAttributes, elementId) {
+            return function(e, selRowDataItem) {
+                if (qewu.enableSessionAnalyzer(selRowDataItem)) {
+                    this.getOnClickSessionAnalyzer(parentView, queryFormAttributes, elementId)(e, selRowDataItem);
+                }
+            };
+        };
+
+        this.getQueryGridConfig = function(remoteConfig, gridColumns, gridOptions) {
+            return {
+                header: {
+                    title: {
+                        text: gridOptions.titleText
+                    },
+                    defaultControls: {
+                        collapseable: true,
+                        refreshable: false,
+                        columnPickable: true
+                    }
+                },
+                body: {
+                    options: {
+                        checkboxSelectable: false,
+                        fixedRowHeight: contrail.checkIfExist(gridOptions.fixedRowHeight) ? gridOptions.fixedRowHeight : 30,
+                        forceFitColumns: false,
+                        defaultDataStatusMessage: false,
+                        actionCell: contrail.checkIfExist(gridOptions.actionCell) ? gridOptions.actionCell : false
+                    },
+                    dataSource: {
+                        remote: {
+                            ajaxConfig: remoteConfig,
+                            dataParser: function (response) {
+                                return response['data'];
+                            }
+                        }
+                    },
+                    statusMessages: {
+                        queued: {
+                            type: 'status',
+                            iconClasses: '',
+                            text: cowm.getQueryQueuedMessage(gridOptions.queryQueueUrl, gridOptions.queryQueueTitle)
+                        }
+                    }
+                },
+                columnHeader: {
+                    columns: gridColumns
+                },
+                footer: {
+                    pager: contrail.handleIfNull(gridOptions.pagerOptions, {
+                        options: {
+                            pageSize: 100,
+                            pageSizeSelect: [100, 200, 500]
+                        }
+                    })
+                }
+            };
+        }
     };
 
     function getColumnDisplay4Query(tableName, tableType) {
@@ -1272,7 +1359,6 @@ define([
             {select:"MAX(counters.updates)", display:{id:'MAX(counters.updates)', field:'MAX(counters.updates)', width:150, name:"MAX (Updates)", groupable:false}}
         ],
 
-
         "StatTable.UveLoadbalancer.virtual_ip_stats" : [
             {select:"COUNT(virtual_ip_stats)", display:{id:'COUNT(virtual_ip_stats)', field:'COUNT(virtual_ip_stats)', width:170, name:"Count (Virtual IP Stats)", groupable:false}},
             {select:"virtual_ip_stats.obj_name", display:{id:'virtual_ip_stats.obj_name', field:'virtual_ip_stats.obj_name', width:150, name:"Object Name", groupable:false}},
@@ -1931,8 +2017,13 @@ define([
                 }
             },
             {select: "InstanceId", display:{id: "InstanceId", field: "InstanceId", name: "Instance Id", width: 150, searchable:true}}
-        ]
-    };
+        ],
+        init: function() {
+            this.SessionAnalyzerTable = this.FlowSeriesTable;
+            delete this.init;
+            return this;
+        }
+    }.init();
 
     return QEGridConfig;
 });

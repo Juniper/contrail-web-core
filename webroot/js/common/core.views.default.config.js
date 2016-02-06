@@ -94,6 +94,8 @@ define([
             yAxisLabel: 'Traffic',
             y2AxisLabel: '',
             forceY: [0, 60],
+            defaultDataStatusMessage: true,
+            statusMessageHandler: cowm.getRequestMessage,
             yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); },
             y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }
         };
@@ -107,6 +109,8 @@ define([
             y2AxisLabel: 'Memory Usage',
             forceY1: [0, 5],
             forceY2: [0, 5],
+            defaultDataStatusMessage: true,
+            statusMessageHandler: cowm.getRequestMessage,
             y2Formatter: function (y2Value) {
                 var formattedValue = formatBytes(y2Value * 1024, true);
                 return formattedValue;
