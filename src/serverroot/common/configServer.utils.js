@@ -40,29 +40,18 @@ function getProjectsFromApiServer (request, appData, callback)
 
     var domain = request.param('domain');
     if ((null != domain) && (0 != domain.length)) {
-        reqURL = '/domain/' + domain;
+        reqURL = '/projects?parent_fq_name_str=' + domain +
+            '&parent_type=domain';
     } else {
         reqURL = '/projects';
     }
     configApiServer.apiGet(reqURL, appData, function(err, data) {
-        if ((null != err) || (null == data) || ((null != domain) &&
-            (0 != domain.length) && ((null == data['domain']) ||
-                                     (null == data['domain']['projects'])))) {
-            callback(err, projectList);
+        if ((null != err) || (null == data) ||
+            (null == data['projects'])) {
+            callback(null, projectList);
             return;
         }
-        if ((null == domain) || (0 == domain.length)) {
-            callback(err, data);
-            return;
-        }
-        var list = data['domain']['projects'];
-        var projCnt = list.length;
-        for (var i = 0; i < projCnt; i++) {
-            projectList['projects'][i] = {};
-            projectList['projects'][i]['uuid'] = list[i]['uuid'];
-            projectList['projects'][i]['fq_name'] = list[i]['to'];
-        }
-        callback(null, projectList);
+        callback(null, data);
     });
 }
 
