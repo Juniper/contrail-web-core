@@ -375,6 +375,12 @@ div.t-grid td {
 } */
 
 /* Bootstrap Modal */
+.modal.contrail-modal {
+    margin-left: 0 !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
 .modal-280{
 	width:280px;
 	margin-left: -140px;
@@ -555,6 +561,9 @@ rect.bordered {
 }
 
 /* Query Pages */
+textarea[name="select"] {
+    max-height: 100px !important;
+}
 .select-label {
     width: 100%; text-overflow: ellipsis; overflow-x: hidden;
 }
@@ -2796,6 +2805,9 @@ p.error, p.error-text {
 .form-element .input-append,
 .form-element .help-block{
     margin-bottom: 0;
+}
+.textarea-input-append.input-append.inset .add-on {
+   padding-right: 0;
 }
 .chart-settings-label {
 	margin-bottom:0px;

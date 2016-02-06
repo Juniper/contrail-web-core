@@ -365,6 +365,7 @@ define([
             "T": "micro-date",
             "T=": "micro-date",
             "MessageTS": "micro-date",
+            "setup_time": "micro-date",
             "protocol": "protocol",
             "direction_ing": "query-direction",
 
