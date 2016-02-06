@@ -44,7 +44,8 @@ define([
         },
 
         renderChart: function (selector, viewConfig, chartViewModel) {
-            var modelData = chartViewModel.getItems(),
+            var self = this,
+                modelData = chartViewModel.getItems(),
                 data = modelData.slice(0),
                 chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
@@ -60,7 +61,7 @@ define([
 
             chartModel.chartOptions = chartOptions;
 
-            this.chartModel = chartModel;
+            self.chartModel = chartModel;
 
             if ($(selector).find("svg") != null) {
                 $(selector).empty();
@@ -73,10 +74,10 @@ define([
 
             if (!($(selector).is(':visible'))) {
                 $(selector).find('svg').bind("refresh", function () {
-                    setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
+                    setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
                 });
             } else {
-                setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
+                setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
             }
 
             nv.utils.windowResize(function () {
@@ -91,28 +92,15 @@ define([
                     chUtils.updateChartOnResize(selector, chartModel);
                 });
             }
-        }
-    });
+        },
 
-    function setData2Chart(selector, chartViewConfig, chartViewModel, chartModel) {
-
-        var chartData = chartViewConfig.chartData,
-            checkEmptyDataCB = function (data) {
-                return (!data || data.length === 0 || !data.filter(function (d) { return d.values.length; }).length);
-            },
-            chartDataRequestState = cowu.getRequestState4Model(chartViewModel, chartData, checkEmptyDataCB),
-            chartDataObj = {
-                data: chartData,
-                requestState: chartDataRequestState
-            },
-            chartOptions = chartViewConfig['chartOptions'];
-
-        d3.select($(selector)[0]).select('svg').datum(chartDataObj).call(chartModel);
-
-        if (chartDataRequestState !== cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY) {
-
-            var container = d3.select($(selector).find("svg")[0]),
-                requestStateText = container.selectAll('.nv-requestState').data([cowm.getRequestMessage(chartDataRequestState)]),
+        renderMessage: function(message, selector, chartOptions) {
+            var self = this,
+                message = contrail.handleIfNull(message, ""),
+                selector = contrail.handleIfNull(selector, $(self.$el)),
+                chartOptions = contrail.handleIfNull(chartOptions, self.chartModel.chartOptions),
+                container = d3.select($(selector).find("svg")[0]),
+                requestStateText = container.selectAll('.nv-requestState').data([message]),
                 textPositionX = $(selector).width() / 2,
                 textPositionY = chartOptions.margin.top + $(selector).find('.nv-focus').heightSVG() / 2 + 10;
 
@@ -127,8 +115,37 @@ define([
                 .attr('y', textPositionY)
                 .text(function(t){ return t; });
 
-        } else {
+        },
+
+        removeMessage: function(selector) {
+            var self = this,
+                selector = contrail.handleIfNull(selector, $(self.$el));
+
             $(selector).find('.nv-requestState').remove();
+        }
+    });
+
+    function setData2Chart(self, chartViewConfig, chartViewModel, chartModel) {
+
+        var chartData = chartViewConfig.chartData,
+            checkEmptyDataCB = function (data) {
+                return (!data || data.length === 0 || !data.filter(function (d) { return d.values.length; }).length);
+            },
+            chartDataRequestState = cowu.getRequestState4Model(chartViewModel, chartData, checkEmptyDataCB),
+            chartDataObj = {
+                data: chartData,
+                requestState: chartDataRequestState
+            },
+            chartOptions = chartViewConfig['chartOptions'];
+
+        d3.select($(self.$el)[0]).select('svg').datum(chartDataObj).call(chartModel);
+
+        if (chartOptions.defaultDataStatusMessage) {
+            var messageHandler = chartOptions.statusMessageHandler;
+            self.renderMessage(messageHandler(chartDataRequestState));
+
+        } else {
+            self.removeMessage();
         }
     }
 

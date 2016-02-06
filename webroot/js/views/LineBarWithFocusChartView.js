@@ -13,7 +13,12 @@ define([
             var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 self = this, deferredObj = $.Deferred(),
-                selector = $(self.$el);
+                selector = $(self.$el),
+                modelMap = contrail.handleIfNull(self.modelMap, {});
+
+            if (contrail.checkIfExist(viewConfig.modelKey) && contrail.checkIfExist(modelMap[viewConfig.modelKey])) {
+                self.model = modelMap[viewConfig.modelKey]
+            }
 
             if (self.model === null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
@@ -39,7 +44,8 @@ define([
         },
 
         renderChart: function (selector, viewConfig, chartViewModel) {
-            var data = chartViewModel.getItems(),
+            var self = this,
+                data = chartViewModel.getItems(),
                 chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 chartViewConfig, chartOptions, chartModel;
@@ -52,7 +58,9 @@ define([
             chartOptions = chartViewConfig['chartOptions'];
             //viewConfig.chartOptions = chartOptions;
             chartModel = new LineBarWithFocusChartModel(chartOptions);
-            this.chartModel = chartModel;
+            chartModel.chartOptions = chartOptions;
+
+            self.chartModel = chartModel;
 
             if ($(selector).find("svg") != null) {
                 $(selector).empty();
@@ -66,15 +74,15 @@ define([
             nv.addGraph(function () {
                 if (!($(selector).is(':visible'))) {
                     $(selector).find('svg').bind("refresh", function () {
-                        setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
+                        setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
                     });
                     
                 } else {
-                    setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
+                    setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
                 }
                 var resizeFunction = function (e) {
                     if ($(selector).is(':visible')) {
-                        setData2Chart(selector, chartViewConfig, chartViewModel, chartModel);
+                        setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
                     }
                 };
                 $(window)
@@ -92,28 +100,15 @@ define([
             if (widgetConfig !== null) {
                 this.renderView4Config(selector.find('.chart-container'), chartViewModel, widgetConfig, null, null, null);
             }
-        }
-    });
+        },
 
-    function setData2Chart(selector, chartViewConfig, chartViewModel, chartModel) {
-
-        var chartData = chartViewConfig.chartData,
-            checkEmptyDataCB = function (data) {
-                return (!data || data.length === 0 || !data.filter(function (d) { return d.values.length; }).length);
-            },
-            chartDataRequestState = cowu.getRequestState4Model(chartViewModel, chartData, checkEmptyDataCB),
-            chartDataObj = {
-                data: chartData,
-                requestState: chartDataRequestState
-            },
-            chartOptions = chartViewConfig['chartOptions'];
-
-        d3.select($(selector)[0]).select('svg').datum(chartDataObj).call(chartModel);
-
-        if (chartDataRequestState !== cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY) {
-
-            var container = d3.select($(selector).find("svg")[0]),
-                requestStateText = container.selectAll('.nv-requestState').data([cowm.getRequestMessage(chartDataRequestState)]),
+        renderMessage: function(message, selector, chartOptions) {
+            var self = this,
+                message = contrail.handleIfNull(message, ""),
+                selector = contrail.handleIfNull(selector, $(self.$el)),
+                chartOptions = contrail.handleIfNull(chartOptions, self.chartModel.chartOptions),
+                container = d3.select($(selector).find("svg")[0]),
+                requestStateText = container.selectAll('.nv-requestState').data([message]),
                 textPositionX = $(selector).width() / 2,
                 textPositionY = chartOptions.margin.top + $(selector).find('.nv-focus').heightSVG() / 2 + 10;
 
@@ -127,9 +122,36 @@ define([
                 .attr('x', textPositionX)
                 .attr('y', textPositionY)
                 .text(function(t){ return t; });
+        },
 
-        } else {
+        removeMessage: function(selector) {
+            var self = this,
+                selector = contrail.handleIfNull(selector, $(self.$el));
+
             $(selector).find('.nv-requestState').remove();
+        }
+    });
+
+    function setData2Chart(self, chartViewConfig, chartViewModel, chartModel) {
+
+        var chartData = chartViewConfig.chartData,
+            checkEmptyDataCB = function (data) {
+                return (!data || data.length === 0 || !data.filter(function (d) { return d.values.length; }).length);
+            },
+            chartDataRequestState = cowu.getRequestState4Model(chartViewModel, chartData, checkEmptyDataCB),
+            chartDataObj = {
+                data: chartData,
+                requestState: chartDataRequestState
+            },
+            chartOptions = chartViewConfig['chartOptions'];
+
+        d3.select($(self.$el)[0]).select('svg').datum(chartDataObj).call(chartModel);
+
+        if (chartOptions.defaultDataStatusMessage) {
+            var messageHandler = chartOptions.statusMessageHandler;
+            self.renderMessage(messageHandler(chartDataRequestState));
+        } else {
+            self.removeMessage();
         }
     }
 

@@ -93,6 +93,38 @@ define([
             }
 
             renderZoomScatterChart(self, chartConfig, chartOptions, selector);
+        },
+
+        renderMessage: function(message, selector) {
+            var self = this,
+                message = contrail.handleIfNull(message, ""),
+                selector = contrail.handleIfNull(selector, $(self.$el)),
+                chartSVG = d3.select($(selector).find("svg")[0]),
+                chartModel = self.chartModel,
+                margin = chartModel.margin,
+                chartMessageText = chartSVG.selectAll('.nv-noData').data([message]);
+
+            chartMessageText.enter().append('text')
+                .attr('class', 'nvd3 nv-noData')
+                .attr('dy', '-.7em')
+                .style('text-anchor', 'middle');
+
+            chartMessageText.attr('x', chartModel.width / 2)
+                .attr('y', margin.top + (chartModel.height / 2))
+                .text(function (d) {
+                    return d
+                });
+
+            if (chartModel.isRequestInProgress()) {
+                chartMessageText.style('fill', '#000');
+            }
+        },
+
+        removeMessage: function(selector) {
+            var self = this,
+                selector = contrail.handleIfNull(selector, $(self.$el));
+
+            $(selector).find('.nv-noData').remove();
         }
     });
 
@@ -110,18 +142,23 @@ define([
     };
 
     function renderZoomScatterChart(chartView, chartConfig, chartOptions, selector) {
-        var chartModel = chartView.chartModel;
+        var chartModel = chartView.chartModel,
+            checkEmptyDataCB = function (data) {
+                return (!data || data.length === 0);
+            },
+            chartDataRequestState = cowu.getRequestState4Model(chartModel, chartModel.data, checkEmptyDataCB);
+
 
         plotZoomScatterChart(chartView, chartConfig, chartOptions, selector);
 
         if (chartModel.isPrimaryRequestInProgress() && !chartModel.loadedFromCache) {
-            dataLoadingHandler(chartView, chartConfig, chartOptions)
+            dataLoadingHandler(chartView, chartConfig, chartOptions, chartDataRequestState)
         } else if (chartModel.isError() === true) {
-            dataErrorHandler(chartView);
+            dataErrorHandler(chartView, chartDataRequestState);
         } else if(chartModel.isEmpty() === true) {
-            dataEmptyHandler(chartView, chartConfig)
+            dataEmptyHandler(chartView, chartConfig, chartDataRequestState)
         } else {
-            dataSuccessHandler(chartView, chartConfig, chartOptions)
+            dataSuccessHandler(chartView, chartConfig, chartOptions, chartDataRequestState)
         }
 
         chartView.isMyRenderInProgress = false;
@@ -483,26 +520,29 @@ define([
             cfDataSource.fireCallBacks({source:'chart'});
         }
     }
-    function dataLoadingHandler(chartView, chartConfig, chartOptions) {
-        var noDataMessage = cowm.DATA_FETCHING;
+    function dataLoadingHandler(chartView, chartConfig, chartOptions, chartDataRequestState) {
+        var chartMessage = chartConfig.statusMessageHandler(chartDataRequestState);
         plotZoomScatterChartData(chartView, chartConfig, chartOptions);
         chartView.svg.attr('opacity', '0.8');
-        renderChartMessage(chartView, noDataMessage);
+        if (chartConfig.defaultDataStatusMessage) {
+            chartView.renderMessage(chartMessage);
+        }
     }
 
-    function dataEmptyHandler(chartView, chartConfig) {
-        var noDataMessage = contrail.checkIfExist(chartConfig.noDataMessage) ? chartConfig.noDataMessage : cowm.DATA_SUCCESS_EMPTY;
-        renderChartMessage(chartView, noDataMessage);
+    function dataEmptyHandler(chartView, chartConfig, chartDataRequestState) {
+        var chartMessage = contrail.checkIfExist(chartConfig.noDataMessage) ? chartConfig.noDataMessage : chartConfig.statusMessageHandler(chartDataRequestState);
+
+        chartView.renderMessage(chartMessage);
         updateFilteredCntInHeader(chartView);
     }
 
-    function dataErrorHandler(chartView) {
-        var noDataMessage = cowm.DATA_ERROR;
-        renderChartMessage(chartView, noDataMessage);
+    function dataErrorHandler(chartView, chartDataRequestState) {
+        var chartMessage = chartConfig.statusMessageHandler(chartDataRequestState);
+        chartView.renderMessage(chartMessage);
         updateFilteredCntInHeader(chartView);
     }
 
-    function dataSuccessHandler(chartView, chartConfig, chartOptions) {
+    function dataSuccessHandler(chartView, chartConfig, chartOptions, chartDataRequestState) {
         plotZoomScatterChartData(chartView, chartConfig, chartOptions);
     }
 
@@ -1095,7 +1135,9 @@ define([
             dataParser: chartOptions['dataParser'],
             sizeFieldName: chartOptions['sizeFieldName'],
             noDataMessage: chartOptions['noDataMessage'],
-            doBucketize : chartOptions['doBucketize']
+            doBucketize : chartOptions['doBucketize'],
+            defaultDataStatusMessage: true,
+            statusMessageHandler: cowm.getRequestMessage
         };
 
         return chartViewConfig;
