@@ -181,12 +181,12 @@ define([
             }
         };
 
-        this.getOnClickSessionAnalyzer = function(clickOutView, queryFormAttributes, elementId) {
+        this.getOnClickSessionAnalyzer = function(clickOutView, queryId, queryFormAttributes, elementId) {
             return function (e, selRowDataItem) {
                 var elementId = $(elementId),
-                    queryId = qewu.generateQueryUUID(),
+                    saElementId = cowl.QE_SESSION_ANALYZER_VIEW_ID + '-' + queryId + '-' + selRowDataItem.cgrid,
                     sessionAnalyzerConfig = {
-                        elementId: cowl.QE_SESSION_ANALYZER_VIEW_ID + '-' + queryId,
+                        elementId: saElementId,
                         title: cowl.TITLE_SESSION_ANALYZER,
                         iconClass: 'icon-bar-chart',
                         app: cowc.APP_CONTRAIL_CONTROLLER,
@@ -197,7 +197,7 @@ define([
                         },
                         viewConfig: {
                             queryType: cowc.QUERY_TYPE_ANALYZE,
-                            queryId: queryId,
+                            flowRecordQueryId: queryId,
                             queryFormAttributes: queryFormAttributes,
                             selectedFlowRecord: selRowDataItem
                         }
@@ -235,7 +235,8 @@ define([
                         checkboxSelectable: false,
                         fixedRowHeight: contrail.checkIfExist(gridOptions.fixedRowHeight) ? gridOptions.fixedRowHeight : 30,
                         forceFitColumns: false,
-                        defaultDataStatusMessage: false
+                        defaultDataStatusMessage: false,
+                        actionCell: contrail.checkIfExist(gridOptions.actionCell) ? gridOptions.actionCell : false
                     },
                     dataSource: {
                         remote: {

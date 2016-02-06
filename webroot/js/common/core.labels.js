@@ -179,7 +179,8 @@ define([
         this.TITLE_STATS = "Statistics";
         this.TITLE_FLOW_SERIES = "Flow Series";
         this.TITLE_FLOW_RECORD = "Flow Record";
-        this.TITLE_SESSION_ANALYZER = "Session Analyzer";
+        this.TITLE_SESSION_ANALYZER = "Session Analysis";
+        this.TITLE_ACTION_SESSION_ANALYZER = "Analyze Session";
         this.TITLE_SESSION_ANALYZER_SUMMARY = "Session Summary";
         this.TITLE_SESSION_DETAILS = "Session Details";
         this.TITLE_FLOW_SERIES_RESULTS = "Flow Series Results";

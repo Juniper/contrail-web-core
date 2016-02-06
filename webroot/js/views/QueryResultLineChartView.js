@@ -93,7 +93,7 @@ define([
                                 elementId: queryResultChartGridId,
                                 view: "GridView",
                                 viewConfig: {
-                                    elementConfig: getChartGridViewConfig(queryResultChartGroupUrl, queryFormAttributes, modelMap, parentView)
+                                    elementConfig: getChartGridViewConfig(queryId, queryResultChartGroupUrl, queryFormAttributes, modelMap, parentView)
                                 }
                             }
                         ]
@@ -116,7 +116,7 @@ define([
         return badgeColorKey
     }
 
-    function getChartGridViewConfig(queryResultChartGroupUrl, queryFormAttributes, modelMap, parentView) {
+    function getChartGridViewConfig(queryId, queryResultChartGroupUrl, queryFormAttributes, modelMap, parentView) {
         var selectArray = queryFormAttributes.select.replace(/ /g, "").split(","),
             lineWithFocusChartModel = modelMap[cowc.UMID_QUERY_RESULT_LINE_CHART_MODEL],
             chartColorAvailableKeys = ['id_0', null, null, null, null],
@@ -160,7 +160,7 @@ define([
                     formatter: qewgc.setAnalyzerIconFormatter,
                     cssClass: 'cell-hyperlink-blue',
                     events: {
-                        onClick: qewgc.getOnClickSessionAnalyzer(parentView, queryFormAttributes)
+                        onClick: qewgc.getOnClickSessionAnalyzer(parentView, queryId, queryFormAttributes)
                     }
                 });
             }
