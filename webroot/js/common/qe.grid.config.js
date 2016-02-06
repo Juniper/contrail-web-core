@@ -1272,7 +1272,6 @@ define([
             {select:"MAX(counters.updates)", display:{id:'MAX(counters.updates)', field:'MAX(counters.updates)', width:150, name:"MAX (Updates)", groupable:false}}
         ],
 
-
         "StatTable.UveLoadbalancer.virtual_ip_stats" : [
             {select:"COUNT(virtual_ip_stats)", display:{id:'COUNT(virtual_ip_stats)', field:'COUNT(virtual_ip_stats)', width:170, name:"Count (Virtual IP Stats)", groupable:false}},
             {select:"virtual_ip_stats.obj_name", display:{id:'virtual_ip_stats.obj_name', field:'virtual_ip_stats.obj_name', width:150, name:"Object Name", groupable:false}},
@@ -1852,8 +1851,8 @@ define([
             {select: "MessageTS", display:{id: "MessageTS", field: "MessageTS", name: "Time", width:210, filterable:false, groupable:false}},
             {select: "ObjectId", display:{id:"ObjectId", field:"ObjectId", name:"Object Id", width:150, searchable: true, hide: true}},
             {select: "Source", display:{id:"Source", field:"Source", name:"Source", width:150, searchable: true}},
-            {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", width: 150, searchable:true}},
-            {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", width:300, searchable:true}},
+            {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", width: 200, searchable:true}},
+            {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", width:150, searchable:true}},
             {
                 select: "ObjectLog",
                 display:{
@@ -1897,8 +1896,8 @@ define([
             {select: "MessageTS", display:{id: "MessageTS", field: "MessageTS", name: "Time", width:210, filterable:false, groupable:false}},
             {select: "Source", display:{id:"Source", field:"Source", name:"Source", width:150, searchable: true}},
             {select: "NodeType", display:{id:"NodeType", field:"NodeType", name:"Node Type", width:100, searchable: true}},
-            {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", width: 150, searchable:true}},
-            {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", width:200, searchable:true}},
+            {select: "ModuleId", display:{id: "ModuleId", field: "ModuleId", name: "Module Id", width: 200, searchable:true}},
+            {select: "Messagetype", display:{id:"Messagetype", field:"Messagetype", name:"Message Type", width:150, searchable:true}},
             {select: "Keyword", display:{id:"Keyword", field:"Keyword", name:"Keyword", width:150, searchable:true}},
             {select: "Level", display:{id:"Level", field:"Level", name:"Level", width:100, searchable:true, formatter: function(r, c, v, cd, dc) { return qewu.getLevelName4Value(dc.Level); }}},
             {select: "Category", display:{id: "Category", field: "Category", name: "Category", width: 150, searchable:true}},
