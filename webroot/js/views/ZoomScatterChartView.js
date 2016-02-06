@@ -524,7 +524,7 @@ define([
         var chartMessage = chartConfig.statusMessageHandler(chartDataRequestState);
         plotZoomScatterChartData(chartView, chartConfig, chartOptions);
         chartView.svg.attr('opacity', '0.8');
-        if (chartOptions.defaultDataStatusMessage) {
+        if (chartConfig.defaultDataStatusMessage) {
             chartView.renderMessage(chartMessage);
         }
     }
