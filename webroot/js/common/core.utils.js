@@ -3,6 +3,9 @@
  */
 
 define(['underscore'], function (_) {
+    var serializer = new XMLSerializer(),
+        domParser = new DOMParser();
+
     var CoreUtils = function () {
         var self = this;
         this.getAlarmsFromAnalytics = true;
@@ -188,6 +191,15 @@ define(['underscore'], function (_) {
             return '-';
         };
 
+        this.formatXML2JSON = function(xmlString, is4SystemLogs) {
+            if (xmlString && xmlString != '') {
+                var xmlDoc = filterXML(xmlString, is4SystemLogs);
+                return $.xml2json(serializer.serializeToString(xmlDoc))
+            } else {
+                return '';
+            }
+        };
+
         this.getRequestState4Model = function(model, data, checkEmptyDataCB) {
             if (model.isRequestInProgress()) {
                 return cowc.DATA_REQUEST_STATE_FETCHING;
@@ -351,6 +363,43 @@ define(['underscore'], function (_) {
             }
 
             return [axisMin, axisMax];
+        };
+
+        this.constructJsonHtmlViewer = function (jsonValue, formatDepth, currentDepth, ignoreKeys) {
+            var htmlValue = '',
+                objType = {type: 'object', startTag: '{', endTag: '}'};
+
+            if(jsonValue instanceof Array){
+                objType = {type: 'array', startTag: '[', endTag: ']'};
+            }
+
+            if(formatDepth == 0){
+                htmlValue += '<i class="node-' + currentDepth + ' icon-plus expander"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node hide raw">' +
+                    JSON.stringify(jsonValue) + '</ul><span class="node-' + currentDepth + ' collapsed expander"> ... </span>' + objType.endTag;
+            }
+            else {
+                htmlValue += '<i class="node-' + currentDepth + ' icon-minus collapser"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node">';
+                $.each(jsonValue, function(key, val){
+                    if (!contrail.checkIfExist(ignoreKeys) || (contrail.checkIfExist(ignoreKeys) && ignoreKeys.indexOf(key) === -1)) {
+                        if (objType['type'] == 'object') {
+                            htmlValue += '<li class="key-value"><span class="key">' + key + '</span>: ';
+                        }
+                        else {
+                            htmlValue += '<li class="key-value">';
+                        }
+
+                        if (val != null && typeof val == 'object') {
+                            htmlValue += '<span class="value">' + cowu.constructJsonHtmlViewer(val, formatDepth - 1, currentDepth + 1) + '</span>';
+                        }
+                        else {
+                            htmlValue += '<span class="value ' + typeof val + '">' + val + '</span>';
+                        }
+                        htmlValue += '</li>';
+                    }
+                });
+                htmlValue += '</ul><span class="node-' + currentDepth + ' collapsed hide expander"> ... </span>' + objType.endTag;
+            }
+            return htmlValue;
         };
 
         // Deprecated: We should use renderView4Config of ContrailView instead of following function.
@@ -940,5 +989,73 @@ define(['underscore'], function (_) {
             return obj;
         }
     };
+
+    function filterXML(xmlString, is4SystemLogs) {
+        var xmlDoc = parseXML(xmlString);
+        $(xmlDoc).find("[type='struct']").each(function () {
+            formatStruct(this);
+        });
+        if(!is4SystemLogs) {
+            $(xmlDoc).find("[type='sandesh']").each(function () {
+                formatSandesh(this, is4SystemLogs);
+            });
+        }
+        $(xmlDoc).find("[type]").each(function () {
+            removeAttributes(this, ['type', 'size', 'identifier', 'aggtype', 'key']);
+        });
+        $(xmlDoc).find("data").each(function () {
+            $(this).children().unwrap();
+        });
+        return xmlDoc;
+    }
+
+    function parseXML(xmlString) {
+        if (window.DOMParser) {
+            xmlDoc = domParser.parseFromString(xmlString, "text/xml");
+        } else { // Internet Explorer
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(xmlString);
+        }
+        return xmlDoc;
+    };
+
+
+    function formatStruct(xmlNode) {
+        $(xmlNode).find("list").each(function () {
+            $(this).children().unwrap();
+        });
+        //$(xmlNode).children().unwrap();
+    };
+
+    function formatSandesh(xmlNode, is4SystemLogs) {
+        var messageString = '', nodeCount, i;
+        $(xmlNode).find("file").each(function () {
+            $(this).remove();
+        });
+        $(xmlNode).find("line").each(function () {
+            $(this).remove();
+        });
+        if(is4SystemLogs != null && is4SystemLogs) {
+            nodeCount = $(xmlNode).find("[identifier]").length;
+            for (i = 1; i < (nodeCount + 1); i++) {
+                $(xmlNode).find("[identifier='" + i + "']").each(function () {
+                    messageString += $(this).text() + ' ';
+                    $(this).remove();
+                });
+            }
+            if (messageString != '') {
+                $(xmlNode).text(messageString);
+            }
+            removeAttributes(xmlNode, ['type']);
+        }
+    };
+
+    function removeAttributes(xmlNode, attrArray) {
+        for (var i = 0; i < attrArray.length; i++) {
+            xmlNode.removeAttribute(attrArray[i]);
+        }
+    };
+
     return CoreUtils;
 });

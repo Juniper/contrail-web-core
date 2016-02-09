@@ -2074,7 +2074,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
                             <div class="col1"></div>
                         </div>
                         <div class="col2 control-panel-container"></div>
-                        <div class="control-panel-expanded-container hide"></div>
+                        <div class="control-panel-expanded-container hide" style="{{#if controls.right.expandedContainerWidth}}width: {{controls.right.expandedContainerWidth}}px;{{/if}}"></div>
                     </div>
                 </div>
                 {{/IfCompare}}

@@ -303,14 +303,14 @@ function Contrail() {
 			jsonObj = JSON.parse(selfParent.children('ul.node').text());
 			selfParent.empty().append(formatJsonObject(jsonObj, 2, parseInt(selfParent.children('.node').data('depth')) + 1));
 		}
-		selfParent.children('.node').show('fast');
-		selfParent.children('.collapsed').hide('fast');
+		selfParent.children('.node').show();
+		selfParent.children('.collapsed').hide();
     });
     $('.pre-format-JSON2HTML .collapser').live('click', function(){
     	var selfParent = $(this).parent();
     	selfParent.children('i').removeClass('icon-minus').removeClass('collapser').addClass('icon-plus').addClass('expander');
-		selfParent.children('.collapsed').show('fast');
-		selfParent.children('.node').hide('fast');
+		selfParent.children('.collapsed').show();
+		selfParent.children('.node').hide();
 	});
     
 };
