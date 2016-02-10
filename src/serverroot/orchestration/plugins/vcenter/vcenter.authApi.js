@@ -134,6 +134,22 @@ function getProjectList (req, appData, callback)
     });
 }
 
+function getUIUserRoleByTenant (userObj, callback)
+{
+    var roles = [global.STR_ROLE_ADMIN];
+    callback(null, roles);
+}
+
+function getExtUserRoleByTenant (userObj, callback)
+{
+    callback(null, {'roles': [{'name': 'admin'}]});
+}
+
+function getUIRolesByExtRoles (extRoles)
+{
+    return [global.STR_ROLE_ADMIN];
+}
+
 function getImageList (req, callback)
 {
     var imgList = {"images": []};
@@ -221,4 +237,7 @@ exports.getServiceInstanceVMStatus = getServiceInstanceVMStatus;
 exports.getVMStatsByProject = getVMStatsByProject;
 exports.getUserAuthDataByConfigAuthObj = getUserAuthDataByConfigAuthObj;
 exports.deleteAllTokens = deleteAllTokens;
+exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
+exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
+exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 
