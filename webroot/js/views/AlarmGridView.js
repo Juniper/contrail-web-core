@@ -35,6 +35,9 @@ define([
             } else {
                 contrailListModel = self.model;
             }
+            contrailListModel.onDataUpdate.subscribe(function (){
+                coreAlarmUtils.fetchAndUpdateAlarmBell();
+            });
             self.renderView4Config(self.$el, contrailListModel, getAlarmGridViewConfig(viewConfig));
         }
     });

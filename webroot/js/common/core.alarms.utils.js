@@ -21,7 +21,58 @@ define(
                     }).fail(function(result) {
                     });
                 };
+
+                self.fetchAlarms = function (deferredObj) {
+                    $.ajax({
+                        url:'/api/tenant/monitoring/alarms',
+                        type:'GET'
+                    }).done(function(result) {
+                        deferredObj.resolve(coreAlarmParsers.alarmDataParser(result));
+                    }).fail(function(err) {
+                        deferredObj.resolve(null);
+                    });
+                };
+
+                self.fetchAndUpdateAlarmBell = function () {
+                    var alarmDeferredObj = $.Deferred();
+
+                    alarmDeferredObj.done( function(alarms) {
+                        if(alarms != null) {
+                            self.updateAlarmBell(alarms);
+                            self.startUpdateBellTimer();
+                        }
+                    });
+                    self.fetchAlarms(alarmDeferredObj);
+                };
+
+                self.updateAlarmBell = function (alarms) {
+                    var cnt = alarms.length;
+                    var alarmFound = false;
+                    var unackedAlarmCnt = 0;
+                    for(var i = 0 ; i < cnt; i++) {
+                        //If there is an unacknowledged alarm change the bell to red
+                        if(!alarms[i].ack) {
+                            alarmFound = true;
+                            unackedAlarmCnt++;
+                        }
+                    }
+                    if (alarmFound) {
+                        //update the icon
+                        $('#pageHeader').find('.icon-bell-alt').addClass('red');
+                        $('#pageHeader').find('#alert_info').text('Alarms ('+ unackedAlarmCnt +')');
+                    } else {
+                        $('#pageHeader').find('.icon-bell-alt').removeClass('red');
+                        $('#pageHeader').find('#alert_info').text('Alarms');
+                    }
+                };
+
+                self.startUpdateBellTimer = function () {
+                    setTimeout(self.fetchAndUpdateAlarmBell,cowc.ALARM_REFRESH_DURATION);
+                };
+                //Fetch the alarm types to be used to ge the alarm msg
                 self.fetchAlarmTypes ();
+                //Call the update alarm bell
+                self.fetchAndUpdateAlarmBell();
 
                 self.mapSeverityToColor = function (severity) {
                     if (severity != -1) {
