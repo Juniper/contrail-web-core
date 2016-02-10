@@ -88,6 +88,22 @@ define([
                                     });
                             });
                         });
+
+                        var closeFn = function(event) {
+                            var chartControlPanelExpandedSelector = $(controlPanelSelector).parent().find('.control-panel-expanded-container');
+
+                            if (chartControlPanelExpandedSelector.is(':visible') && $(event.target).closest(chartControlPanelExpandedSelector).length == 0) {
+                                chartControlPanelExpandedSelector.hide();
+                                controlPanelSelector.find('.control-panel-item')
+                                    .removeClass('active')
+                                    .removeClass('refreshing')
+                                    .removeClass('disabled');
+                            }
+                        };
+
+                        $(document)
+                            .off('click', closeFn)
+                            .on('click', closeFn);
                     }
 
                     widgetContentContainer = widgetElement.find('.widget-main').find('.col1');
@@ -154,6 +170,8 @@ define([
                     } else {
                         $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
                     }
+
+                    event.stopPropagation();
                 }
             }
         }
