@@ -722,53 +722,60 @@ define([
         var zoomFn = getChartZoomFn(chartView, chartConfig);
 
         $(controlPanelSelector).find('.zoom-in').on('click', function (event) {
-            event.preventDefault();
-            if (chartView.zm.scale() < chartConfig.maxScale) {
-                chartView.zm.scale(chartView.zm.scale() * (1.25));
-                zoomFn();
+            if (!$(this).hasClass('disabled')) {
+                event.preventDefault();
+                if (chartView.zm.scale() < chartConfig.maxScale) {
+                    chartView.zm.scale(chartView.zm.scale() * (1.25));
+                    zoomFn();
+                }
+
             }
         });
 
         $(controlPanelSelector).find('.zoom-out').on('click', function (event) {
-            event.preventDefault();
-            if (chartView.zm.scale() > chartConfig.minScale) {
-                chartView.zm.scale(chartView.zm.scale() * (100 / 125));
-                zoomFn();
+            if (!$(this).hasClass('disabled')) {
+                event.preventDefault();
+                if (chartView.zm.scale() > chartConfig.minScale) {
+                    chartView.zm.scale(chartView.zm.scale() * (100 / 125));
+                    zoomFn();
+                }
             }
         });
 
         $(controlPanelSelector).find('.zoom-reset').on('click', function (event) {
-            event.preventDefault();
-            if(chartConfig.doBucketize == true) {
-                zoomOut({
-                    cfDataSource:chartView.attributes.viewConfig.cfDataSource
-                })
-                return;
+            if (!$(this).hasClass('disabled')) {
+                event.preventDefault();
+                if (chartConfig.doBucketize == true) {
+                    zoomOut({
+                        cfDataSource: chartView.attributes.viewConfig.cfDataSource
+                    })
+                    return;
+                }
+                var chartModel = chartView.chartModel;
+                chartModel.zoomBehavior
+                    .x(chartModel.xScale.domain([chartModel.xMin, chartModel.xMax]).range([0, chartModel.width]))
+                    .y(chartModel.yScale.domain([chartModel.yMin, chartModel.yMax]).range([chartModel.height, 0]));
+
+                chartView.svg.select(".x.axis")
+                    .call(chartModel.xAxis)
+                    .selectAll("text")
+                    .attr("x", 0)
+                    .attr("y", 8);
+                chartView.svg.select(".y.axis")
+                    .call(chartModel.yAxis)
+                    .selectAll("text")
+                    .attr("x", -8)
+                    .attr("y", 0);
+
+                chartView.svg.selectAll("circle")
+                    .attr("transform", function (d) {
+                        return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius) + "," +
+                            (chartModel.yScale(d[chartConfig.yField]) + chartConfig.maxCircleRadius) + ")";
+                    });
+
+                chartView.zm.scale(1);
+                chartView.zm.translate([0, 0]);
             }
-            var chartModel = chartView.chartModel;
-            chartModel.zoomBehavior
-                .x(chartModel.xScale.domain([chartModel.xMin, chartModel.xMax]).range([0, chartModel.width]))
-                .y(chartModel.yScale.domain([chartModel.yMin, chartModel.yMax]).range([chartModel.height, 0]));
-
-            chartView.svg.select(".x.axis")
-                .call(chartModel.xAxis)
-                .selectAll("text")
-                .attr("x", 0)
-                .attr("y", 8);
-            chartView.svg.select(".y.axis")
-                .call(chartModel.yAxis)
-                .selectAll("text")
-                .attr("x", -8)
-                .attr("y", 0);
-
-            chartView.svg.selectAll("circle")
-                .attr("transform", function (d) {
-                    return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius) + "," + 
-                        (chartModel.yScale(d[chartConfig.yField]) + chartConfig.maxCircleRadius) + ")";
-                });
-
-            chartView.zm.scale(1);
-            chartView.zm.translate([0, 0]);
         });
 
         function translateChart(xy, constant) {
@@ -898,6 +905,8 @@ define([
                     } else {
                         $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
                     }
+
+                    event.stopPropagation();
                 }
             }
         };
@@ -935,6 +944,8 @@ define([
 
                             });
                     }
+
+                    event.stopPropagation();
                 }
             }
         };

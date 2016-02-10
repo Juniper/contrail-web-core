@@ -988,17 +988,22 @@ define([
                             statusMsg = contrail.checkIfExist(customMsg) ? customMsg : (contrail.checkIfExist(gridStatusMsgConfig[status]) ? gridStatusMsgConfig[status].text : ''),
                             messageHtml;
                         this.removeGridMessage();
+
                         if (status == 'loading' || status == 'loadingNextPage') {
                             gridContainer.find('.grid-header-icon-loading').show();
                         }
-                        if (status != 'loadingNextPage') {
-                            messageHtml = (contrail.checkIfExist(gridStatusMsgConfig[status])) ? '<p class="' + gridStatusMsgConfig[status].type + '"><i class="' + gridStatusMsgConfig[status].iconClasses + '"></i> ' + statusMsg + '</p>' : status;
+                        if (status == 'error') {
+                            messageHtml = '<i class="' + gridStatusMsgConfig[status].iconClasses + '"></i> &nbsp;' + statusMsg;
+                            gridContainer.find('.grid-load-status').addClass('alert alert-error').html(messageHtml).removeClass('hide');
+                        } else if (status != 'loadingNextPage') {
+                            messageHtml = (contrail.checkIfExist(gridStatusMsgConfig[status])) ?
+                            '<p class="' + gridStatusMsgConfig[status].type + '"><i class="' + gridStatusMsgConfig[status].iconClasses + '"></i> ' + statusMsg + '</p>' : status;
                             gridContainer.find('.grid-load-status').html(messageHtml).removeClass('hide');
                         }
 
                     },
                     removeGridMessage: function () {
-                        gridContainer.find('.grid-load-status').html('').addClass('hide');
+                        gridContainer.find('.grid-load-status').html('').addClass('hide').removeClass('alert alert-error');
                         if (gridOptions.lazyLoading == null || !gridOptions.lazyLoading && gridOptions.defaultDataStatusMessage) {
                             this.removeGridLoading();
                         }
