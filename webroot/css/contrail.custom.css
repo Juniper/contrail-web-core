@@ -3567,10 +3567,11 @@ tr.collapsibleChildContainer{
 #port-tuples-collection th:first-child{
     min-width:20px!important;}
 #port-tuples-collection th.action-cell, #port-tuples-collection td.action-cell{
-    text-align:right;
+    text-align:left;
 }
 #port-tuples-collection td.action-cell{
     padding-right:7px;
+    padding-left:5px;
 }
 
 #dashboard-alerts-modal ul.grid-action-menu{
@@ -3590,7 +3591,7 @@ tr.collapsibleChildContainer{
     padding-left:5px;}
 #network_ipam_refs td, #user_created_host_routes td, #user_created_dns_servers td, #floating_ip_pools td, #user_created_route_targets td, #user_created_export_route_targets td, #user_created_import_route_targets td, #configure-Ports td, #configure-service_instance-form td{
     padding-left:2px;}
-#network-form .contrail-editable-grid-table thead,#network-form .collection-table thead, #advanced_options .contrail-editable-grid-table thead, #advanced_options .collection-table thead, #svcInstPropV2 thead {
+#network-form .contrail-editable-grid-table thead,#network-form .collection-table thead, #advanced_options .contrail-editable-grid-table thead, #advanced_options .collection-table thead,#configure-service_instance #svcInstV1PropAccordian thead,#configure-Ports #dhcpOptionCollection thead,#configure-Ports #fatFlowCollection thead {
     line-height:1;}
  .headerRowAction{
     padding-bottom:8px;}
@@ -3606,3 +3607,6 @@ tr.collapsibleChildContainer{
     font-family: FontAwesome;
     color: #858585;
 }
+#securityGroupValue .form-label{
+    display:none;}
+
