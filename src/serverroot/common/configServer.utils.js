@@ -182,8 +182,40 @@ function getTenantListAndSyncDomain (request, appData, callback)
     });
 }
 
+function getProjectRole (req, res, appData)
+{
+    var projUrl = '/project/' + req.param('id') + '?exclude_back_refs=true' +
+        '&exclude_childer=true';
+    configApiServer.apiGet(projUrl, appData, function(error, data) {
+        if ((null == error) || (null == data)) {
+            commonUtils.handleJSONResponse(error, res, data);
+            return;
+        }
+        var projName = data['name'];
+        var tokenObjs = req.session.tokenObjs;
+        var tokenId = null;
+        var plugins = require('./../orchestration/plugins/plugins.api');
+        var adminProjList = plugins.getAdminProjectList(req);
+
+        for (key in tokenObjs) {
+            if (-1 != adminProjList.indexOf(key)) {
+                tokenId = tokenObjs[key]['token']['id'];
+                break;
+            }
+        }
+        if (null == tokenId) {
+            tokenId = tokenObjs[key]['token']['id'];
+        }
+        var userObj = {'tokenid': tokenId, 'tenant': projName, 'req': req};
+        authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
+            commonUtils.handleJSONResponse(err, res, roles);
+        });
+    });
+}
+
 exports.listProjectsAPIServer = listProjectsAPIServer;
 exports.getProjectsFromApiServer = getProjectsFromApiServer;
 exports.getTenantListAndSyncDomain = getTenantListAndSyncDomain;
 exports.getDomainsFromApiServer = getDomainsFromApiServer;
+exports.getProjectRole = getProjectRole;
 

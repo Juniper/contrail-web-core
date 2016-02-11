@@ -934,7 +934,7 @@ function getUIUserRoleByTenant (userObj, callback)
             return;
         }
         roles = getUIRolesByExtRoles(data['roles']);
-        callback(null, roles);
+        callback(null, roles, data);
     });
 }
 
@@ -1091,6 +1091,20 @@ function authenticate (req, res, appData, callback)
             });
             return;
         }
+        var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
+        if ((true == multiTenancyEnabled) &&
+            (false == isAdminRoleInProjects(req.session.userRoles))) {
+            /* Logged in user is not admin in multi_tenancy mode,
+               so redirect to login page
+             */
+            errStr = "Only admin user is allowed to login"
+            commonUtils.changeFileContentAndSend(res, loginErrFile,
+                                                 global.CONTRAIL_LOGIN_ERROR,
+                                                 errStr, function() {
+            });
+            return;
+        }
+
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
             if(urlPath != '') 
                 res.redirect(urlPath + urlHash);
