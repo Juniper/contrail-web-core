@@ -235,7 +235,7 @@ config.qe.enable_stat_queries = false;
  debug, info, notice, warning, error, crit, alert, emerg
  */
 config.logs = {};
-config.logs.level = 'error';
+config.logs.level = 'debug';
 
 /******************************************************************************
  * Boolean flag getDomainProjectsFromApiServer indicates wheather the project

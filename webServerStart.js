@@ -312,7 +312,7 @@ function bindProducerSocket ()
 function sendRequestToJobServer (msg)
 {
     var timer = setInterval(function () {
-        logutils.logger.debug("SENDING to jobServer:" + msg.reqData);
+        //logutils.logger.debug("SENDING to jobServer:" + msg.reqData);
         producerSock.send(msg.reqData);
         clearTimeout(timer);
     }, 1000);
