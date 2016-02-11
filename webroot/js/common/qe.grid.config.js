@@ -1944,14 +1944,11 @@ define([
                 select: "ObjectLog",
                 display:{
                     id:"ObjectLog", field:"ObjectLog", name:"Object Log", width:300, searchable:true,
-                    formatter: function(r, c, v, cd, dc) {
-                        if (contrail.checkIfExist(dc.ObjectLog)) {
-                            if (!$.isPlainObject(dc.ObjectLog)) {
-                                dc.ObjectLogJSON = qewu.formatXML2JSON(dc.ObjectLog);
-                            }
-                            return contrail.formatJSON2HTML(dc.ObjectLogJSON, 0);
-                        }
-                        return null;
+                    formatter: {
+                        format: [
+                            {format: 'xml2json', options: {jsonValuePath: 'ObjectLogJSON'}},
+                            {format: 'json2html', options: {jsonValuePath: 'ObjectLogJSON', htmlValuePath: 'ObjectLogHTML', expandLevel: 0}}
+                        ]
                     },
                     exportConfig: {
                         allow: true,
@@ -1963,14 +1960,11 @@ define([
                 select: "SystemLog",
                 display:{
                     id:"SystemLog", field:"SystemLog", name:"System Log", width:300, searchable:true,
-                    formatter: function(r, c, v, cd, dc) {
-                        if (contrail.checkIfExist(dc.SystemLog)) {
-                            if (!$.isPlainObject(dc.SystemLog)) {
-                                dc.SystemLogJSON = qewu.formatXML2JSON(dc.SystemLog);
-                            }
-                            return contrail.formatJSON2HTML(dc.SystemLogJSON, 0);
-                        }
-                        return null;
+                    formatter: {
+                        format: [
+                            {format: 'xml2json', options: {jsonValuePath: 'SystemLogJSON'}},
+                            {format: 'json2html', options: {jsonValuePath: 'SystemLogJSON', htmlValuePath: 'SystemLogHTML', expandLevel: 0}}
+                        ]
                     },
                     exportConfig: {
                         allow: true,
@@ -1997,7 +1991,7 @@ define([
                         var xmlMessage = [];
                         if (contrail.checkIfExist(dc.Xmlmessage)) {
                             if (!$.isPlainObject(dc.Xmlmessage)) {
-                                dc.XmlmessageJSON = qewu.formatXML2JSON(dc.Xmlmessage);
+                                dc.XmlmessageJSON = cowu.formatXML2JSON(dc.Xmlmessage);
 
                                 xmlMessage = $.map(dc.XmlmessageJSON, function(messageValue, messageKey) {
                                     return messageValue;

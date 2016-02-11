@@ -91,6 +91,43 @@ define([
             },
             'protocol': function (value, options) {
                 return getProtocolName(value)
+            },
+            'xml2json': function (value, options) {
+                var jsonValue = null;
+                if (contrail.checkIfExist(options['dataObject']) && contrail.checkIfExist(options['jsonValuePath'])) {
+                    var dataObject = options['dataObject'],
+                        jsonValuePath = options['jsonValuePath'];
+
+                    jsonValue = dataObject[jsonValuePath];
+                }
+
+                if (_.isString(value) && !$.isPlainObject(jsonValue)) {
+                     return cowu.formatXML2JSON(value);
+                }
+
+                return jsonValue;
+            },
+            'json2html': function (value, options) {
+                var htmlValue = null, jsonValue = null,
+                    expandLevel = contrail.checkIfExist(options.expandLevel) ? options.expandLevel : 1;
+
+                if (contrail.checkIfExist(options['dataObject']) && contrail.checkIfExist(options['htmlValuePath'])) {
+                    var dataObject = options['dataObject'],
+                        htmlValuePath = options['htmlValuePath'],
+                        jsonValuePath = options['jsonValuePath'];
+
+                    if (contrail.checkIfExist(jsonValuePath)) {
+                        value = dataObject[jsonValuePath];
+                    }
+
+                    htmlValue = dataObject[htmlValuePath];
+                }
+
+                if ($.isPlainObject(value) && !_.isString(htmlValue)) {
+                    return '<pre class="json-html-viewer">' + cowu.constructJsonHtmlViewer(value, expandLevel, 0, options.ignoreKeys)+ '</pre>'
+                }
+
+                return htmlValue;
             }
         };
 
