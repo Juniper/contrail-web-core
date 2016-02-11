@@ -72,7 +72,8 @@ define([
                                                             enable: true,
                                                             viewConfig: getFilterConfig(queryId, aggregateSelectFields, queryResultLineChartId)
                                                         }
-                                                    }
+                                                    },
+                                                    expandedContainerWidth: (queryFormAttributes.query_prefix === cowc.FS_QUERY_PREFIX) ? 200 : 245
                                                 }
                                             }
                                         }

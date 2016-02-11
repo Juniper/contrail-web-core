@@ -422,7 +422,10 @@ define([
             return isAggregate;
         };
 
+        //TODO - Delete this
         self.formatXML2JSON = function(xmlString, is4SystemLogs) {
+            console.warn(cowm.DEPRECATION_WARNING_PREFIX + 'Function formatXML2JSON of qe-utils is deprecated. Use formatXML2JSON() of core-utils instead.');
+
             if (xmlString && xmlString != '') {
                 var xmlDoc = filterXML(xmlString, is4SystemLogs);
                 return convertXML2JSON(serializer.serializeToString(xmlDoc));

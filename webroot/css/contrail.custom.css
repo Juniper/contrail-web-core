@@ -887,6 +887,9 @@ a.selectAllLink:hover {
 .grid-load-status p.error{
 	color: #b94a48;
 }
+.grid-load-status.alert-error {
+    margin-bottom: 0;
+}
 .grid-info {
   margin-bottom: 0;
 }

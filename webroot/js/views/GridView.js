@@ -305,13 +305,16 @@ define([
                         columnValue.formatterObj = _.clone(columnValue.formatter)
                         columnValue.formatter = function (r, c, v, cd, dc) {
                             var formatterObj = columnValue.formatterObj,
-                                fieldValue = dc[columnValue.field];
+                                fieldValue = dc[columnValue.field],
+                                options = contrail.checkIfExist(formatterObj.options) ? formatterObj.options : {};
+
+                            options.dataObject = dc;
 
                             if (contrail.checkIfExist(formatterObj.path)) {
                                 fieldValue = contrail.getObjectValueByPath(dc, formatterObj.path);
                             }
 
-                            return cowf.getFormattedValue(formatterObj.format, fieldValue, formatterObj.options);
+                            return cowf.getFormattedValue(formatterObj.format, fieldValue, options);
                         };
                     }
 
@@ -434,10 +437,10 @@ define([
 
                         gridContainer.find('.slick-row-detail').live('click', function () {
                             var rowId = $(this).data('cgrid');
-                            setTimeout(function () {
-                                if (gridContainer.data('contrailGrid') != null)
-                                    gridContainer.data('contrailGrid').adjustDetailRowHeight(rowId);
-                            }, 100);
+
+                            if (gridContainer.data('contrailGrid') != null) {
+                                gridContainer.data('contrailGrid').adjustDetailRowHeight(rowId);
+                            }
                         });
                     }
 
@@ -643,10 +646,22 @@ define([
                             }
                         }
 
-                        setTimeout(function () {
-                            if (gridContainer.data('contrailGrid') != null)
-                                gridContainer.data('contrailGrid').adjustRowHeight(rowData.cgrid);
-                        }, 50);
+                        if ($(e.target).hasClass("expander")) {
+                            var selfParent = $(e.target).parent(),
+                                jsonObj = {};
+                            if(selfParent.children('.node').hasClass('raw')){
+                                jsonObj = JSON.parse(selfParent.children('ul.node').text());
+                                selfParent.empty().append(cowu.constructJsonHtmlViewer(jsonObj, 2, parseInt(selfParent.children('.node').data('depth')) + 1));
+                            }
+                            selfParent.children('.node').show();
+                            selfParent.children('.collapsed').hide();
+                            selfParent.children('i').removeClass('icon-plus').removeClass('expander').addClass('icon-minus').addClass('collapser');
+                        } else if ($(e.target).hasClass("collapser")) {
+                            var selfParent = $(e.target).parent();
+                            selfParent.children('.collapsed').show();
+                            selfParent.children('.node').hide();
+                            selfParent.children('i').removeClass('icon-minus').removeClass('collapser').addClass('icon-plus').addClass('expander');
+                        }
 
                         if ($(e.target).hasClass("grid-action-dropdown")) {
                             if ($('#' + gridContainer.prop('id') + '-action-menu-' + args.row).is(':visible')) {
@@ -695,6 +710,10 @@ define([
                             if (gridOptions.actionCell.type == 'link') {
                                 gridOptions.actionCell.onclick(e, args);
                             }
+                        }
+
+                        if (gridContainer.data('contrailGrid') != null) {
+                            gridContainer.data('contrailGrid').adjustRowHeight(rowData.cgrid);
                         }
                     }
                 };
@@ -969,17 +988,22 @@ define([
                             statusMsg = contrail.checkIfExist(customMsg) ? customMsg : (contrail.checkIfExist(gridStatusMsgConfig[status]) ? gridStatusMsgConfig[status].text : ''),
                             messageHtml;
                         this.removeGridMessage();
+
                         if (status == 'loading' || status == 'loadingNextPage') {
                             gridContainer.find('.grid-header-icon-loading').show();
                         }
-                        if (status != 'loadingNextPage') {
-                            messageHtml = (contrail.checkIfExist(gridStatusMsgConfig[status])) ? '<p class="' + gridStatusMsgConfig[status].type + '"><i class="' + gridStatusMsgConfig[status].iconClasses + '"></i> ' + statusMsg + '</p>' : status;
+                        if (status == 'error') {
+                            messageHtml = '<i class="' + gridStatusMsgConfig[status].iconClasses + '"></i> &nbsp;' + statusMsg;
+                            gridContainer.find('.grid-load-status').addClass('alert alert-error').html(messageHtml).removeClass('hide');
+                        } else if (status != 'loadingNextPage') {
+                            messageHtml = (contrail.checkIfExist(gridStatusMsgConfig[status])) ?
+                            '<p class="' + gridStatusMsgConfig[status].type + '"><i class="' + gridStatusMsgConfig[status].iconClasses + '"></i> ' + statusMsg + '</p>' : status;
                             gridContainer.find('.grid-load-status').html(messageHtml).removeClass('hide');
                         }
 
                     },
                     removeGridMessage: function () {
-                        gridContainer.find('.grid-load-status').html('').addClass('hide');
+                        gridContainer.find('.grid-load-status').html('').addClass('hide').removeClass('alert alert-error');
                         if (gridOptions.lazyLoading == null || !gridOptions.lazyLoading && gridOptions.defaultDataStatusMessage) {
                             this.removeGridLoading();
                         }
