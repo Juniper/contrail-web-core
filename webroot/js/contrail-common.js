@@ -208,17 +208,14 @@ function Contrail() {
     this.setCookie = function(name, value) {
         var oldCookie = contrail.getCookie(name);
         var secureCookieStr = "";
-        var insecureAccess =
-            getValueByJsonPath(globalObj, 'webServerInfo;insecureAccess',
-                               false);
+        var insecureAccess = getValueByJsonPath(globalObj, 'webServerInfo;insecureAccess', false);
         if (globalObj['test-env'] == globalObj['env'] + '-test') {
             secureCookieStr = "";
         } else if (false == insecureAccess) {
             secureCookieStr = "; secure";
         }
-        document.cookie = name + "=" + escape(value) +
-            "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/" + secureCookieStr;
-        if (('project' == name) && (oldCookie != value)) {
+        document.cookie = name + "=" + escape(value) + "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/" + secureCookieStr;
+        if ((globalObj['test-env'] !== (globalObj['env'] + '-test')) && ('project' == name) && (oldCookie != value)) {
             layoutHandler.load();
         }
     };
