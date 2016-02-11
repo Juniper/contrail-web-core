@@ -190,10 +190,13 @@ constants.smInitModuleExclude = [
  */
 constants.storageCoreRelativePath = "./../../contrail-web-core/webroot/";
 constants.storageInitModuleName = 'storage-init';
-constants.storageInitModuleInclude = [];
+constants.storageInitModuleInclude = [
+    'mon-infra-storage-dashboard'
+];
 constants.storageInitModuleExclude = [
     'underscore',
     'contrail-view-model'
+
 ];
 
 /**
