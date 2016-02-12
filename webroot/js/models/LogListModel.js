@@ -7,12 +7,12 @@ define(['contrail-list-model'], function(ContrailListModel) {
         var listModelConfig = {
             remote : {
                 ajaxConfig : {
-                    url : ctwl.DASHBOARD_LOGS_URL
+                    url : cowl.DASHBOARD_LOGS_URL
                 },
                 dataParser : parseDashboardLogs,
             },
             cacheConfig : {
-                ucid : ctwl.CACHE_DASHBORAD_LOGS
+                ucid : cowl.CACHE_DASHBORAD_LOGS
             }
         };
 
