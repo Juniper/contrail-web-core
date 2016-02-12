@@ -92,6 +92,11 @@ define([
     };
 
     var getConfiguration = function (viewConfig) {
+        var gridTitle = cowl.TITLE_ALARMS_SUMMARY;
+        if (viewConfig != null && viewConfig['isUnderlayPage'] == true ) {
+            gridTitle = contrail.format('{0} ({1})',
+                cowl.TITLE_ALARMS_SUMMARY, ifNull(viewConfig['hostname'],'-'));
+        }
         var alarmColumns = [
                               {
                                   field: 'severity',
@@ -157,7 +162,7 @@ define([
         var gridElementConfig = {
             header: {
                 title: {
-                    text: cowl.TITLE_ALARMS_SUMMARY
+                    text: gridTitle
                 },
                 defaultControls: {
                     collapseable: false,
