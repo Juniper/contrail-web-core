@@ -28,9 +28,9 @@ define(
                 self.mapSeverityToColor = function (severity) {
                     if (severity != -1) {
                         if (severity == 4) {
-                            return ctwc.COLOR_SEVERITY_MAP['orange'];
+                            return cowc.COLOR_SEVERITY_MAP['orange'];
                         } else if (severity ==3) {
-                            return ctwc.COLOR_SEVERITY_MAP['red'];
+                            return cowc.COLOR_SEVERITY_MAP['red'];
                         }
                     } else {
                         return false;

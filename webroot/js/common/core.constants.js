@@ -361,6 +361,13 @@ define([
             }
         };
 
+        this.COLOR_SEVERITY_MAP = {
+            red : 'error',
+            orange : 'warning',
+            blue : 'default',
+            green : 'okay'
+        };
+
         this.QUERY_COLUMN_FORMATTER = {
             "T": "micro-date",
             "T=": "micro-date",

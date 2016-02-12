@@ -159,7 +159,6 @@ constants.controllerInitModuleInclude = [
     'monitor-infra-parsers',
     'monitor-infra-utils',
     'monitor-infra-constants',
-    'mon-infra-controller-dashboard',
     'controller-basedir/monitor/infrastructure/common/ui/js/views/VRouterScatterChartView'
 ];
 constants.controllerInitModuleExclude  = [
