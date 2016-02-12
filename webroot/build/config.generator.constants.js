@@ -38,7 +38,6 @@ constants.coreInitModuleInclude = [
     'layout-handler',
     'menu-handler',
     'content-handler',
-    //'contrail-layout',
 
     'contrail-view',
     'graph-view',
@@ -64,10 +63,7 @@ constants.coreInitModuleInclude = [
     'mon-infra-dashboard-view',
 
     'core-basedir/js/views/AccordianView',
-    //'core-basedir/js/views/AlertGridView',
-    //'core-basedir/js/views/AlertListView',
     'core-basedir/js/views/BarChartInfoView',
-    //'core-basedir/js/views/BarChartView',
     'core-basedir/js/views/BreadcrumbDropdownView',
     'core-basedir/js/views/BreadcrumbTextView',
     'core-basedir/js/views/ChartView',
@@ -91,22 +87,17 @@ constants.coreInitModuleInclude = [
     'core-basedir/js/views/FormRadioButtonView',
     'core-basedir/js/views/FormTextAreaView',
     'core-basedir/js/views/FormTextView',
-    //'core-basedir/js/views/GraphView',
     'core-basedir/js/views/GridFooterView',
-    //'core-basedir/js/views/GridView',
     'core-basedir/js/views/HeatChartView',
     'core-basedir/js/views/HorizontalBarChartView',
     'core-basedir/js/views/InfoboxesView',
     'core-basedir/js/views/LineBarWithFocusChartView',
     'core-basedir/js/views/LineWithFocusChartView',
-    //'core-basedir/js/views/LogListView',
     'core-basedir/js/views/LoginWindowView',
-    //'core-basedir/js/views/MonitorInfraDashboardView',
     'core-basedir/js/views/MultiBarChartView',
     'core-basedir/js/views/MultiDonutChartView',
     'core-basedir/js/views/NodeConsoleLogsView',
     'core-basedir/js/views/QueryFilterView',
-    //'core-basedir/js/views/QueryFormView',
     'core-basedir/js/views/QueryResultGridView',
     'core-basedir/js/views/QueryResultLineChartView',
     'core-basedir/js/views/QuerySelectView',
@@ -114,7 +105,6 @@ constants.coreInitModuleInclude = [
     'core-basedir/js/views/ScatterChartView',
     'core-basedir/js/views/SectionView',
     'core-basedir/js/views/SparklineView',
-    //'core-basedir/js/views/SystemInfoView',
     'core-basedir/js/views/TabsView',
     'core-basedir/js/views/WidgetView',
     'core-basedir/js/views/WizardView',
@@ -157,7 +147,6 @@ constants.controllerInitModuleInclude = [
     'analyticsnode-scatterchart-view',
     'vrouter-dashboard-view',
     'monitor-infra-parsers',
-    'monitor-infra-utils',
     'monitor-infra-constants',
     'controller-basedir/monitor/infrastructure/common/ui/js/views/VRouterScatterChartView'
 ];
@@ -171,6 +160,7 @@ constants.controllerInitModuleExclude  = [
     "query-or-model",
     "query-and-model",
     "core-init",
+    "core-basedir/js/views/LoginWindowView"
 ];
 constants.controllerFileExclusionRegExp = constants.defaultFileExclusionRegExp;
 
