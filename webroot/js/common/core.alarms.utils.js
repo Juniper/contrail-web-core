@@ -8,7 +8,7 @@ define(
             var CoreAlarmUtils = function() {
                 var self = this;
                 var alarmTypesMap = {};
-
+                self.BUCKET_DURATION = 300000000;//5 MINS
                 // If required fetch the alarmtypes .
                 self.fetchAlarmTypes = function () {
                     $.ajax({
@@ -18,9 +18,7 @@ define(
                         if(result != null){
                             alarmTypesMap = result;
                         }
-//                        deferredObj.resolve(res);
                     }).fail(function(result) {
-//                        deferredObj.resolve(res);
                     });
                 };
                 self.fetchAlarmTypes ();
@@ -62,30 +60,6 @@ define(
                         'SPACE_USAGE_WARNING'   : '{0} space usage warning',
                         'NTP_UNSYNCED_ERROR'    : 'NTP state unsynchronized'
                     };
-
-                //Given an alarmType and other params fetch the correct message to be displayed.
-//                self.getFormattedAlarmMessage = function (options, alarm) {
-//                    var msg = '';
-//                    var nodeType = alarm['nodeType'];
-//                    var alarmType = alarm['alarmType'];
-//                    //Two ways create our own mesg as below or use the messages from the types.
-//                    /*switch (nodeType) {
-//
-//                        case 'ProcessConnectivity' :
-//                            if (value.indexOf('NTP state unsynchronized') != -1) {
-//                                msg = infraAlertMsgs['NTP_UNSYNCED_ERROR'];
-//                            } else {
-//                                msg = infraAlertMsgs['PROCESS_STATES_MISSING'];
-//                            }
-//                            break;
-//
-//                        case 'BgpConnectivity' :
-//
-//                    }*/
-//                    return alarmTypesMap[nodeType][alarmType];
-////                    return contrail.format(alarmTypesMap[nodeType][alarmType],value);//TODO
-//
-//                };
 
                 //Given an alarmType and other params fetch the correct message to be displayed.
                 self.getFormattedAlarmMessage = function (options) {
@@ -182,64 +156,6 @@ define(
                     }
                 }
 
-                function getDisplayType(nodeType) {
-                    switch(nodeType) {
-                        case 'vrouter' :
-                            return 'Virtual Router';
-
-                        case 'vRouter' :
-                            return 'Virtual Router';
-
-                        case 'control-node' :
-                            return 'Control Node';
-
-                        case 'analytics-node' :
-                            return 'Analytics Node';
-
-                        case 'config-node' :
-                            return 'Config Node';
-
-                        case 'database-node' :
-                            return 'Database Node';
-
-                        default :
-                            return nodeType;
-                    }
-                }
-
-                self.alarmDataParser = function(response) {
-                   var retArr = [];
-                   if(response != null && _.keys(response).length > 0) {
-                        for(var currNodeType in response) {
-                            for(var i = 0; i < response[currNodeType].length; i++) {
-                                var currItem = response[currNodeType][i];
-
-                                if(currItem.value != null && currItem.value.UVEAlarms != null && currItem.value.UVEAlarms.alarms != null
-                                    && currItem.value.UVEAlarms.alarms.length > 0) {
-                                    for(var j=0; j < currItem.value.UVEAlarms.alarms.length; j++) {
-                                        var currObject = {};
-                                        var alarmInfo = currItem.value.UVEAlarms.alarms[j];
-                                        currObject.rawJson = alarmInfo;
-                                        currObject.display_name = currItem.name + ' (' + getDisplayType(currNodeType) + ')';
-                                        currObject.name = currItem.name;
-                                        currObject.table = currNodeType;
-                                        currObject.type = alarmInfo.type;
-                                        currObject.ack = alarmInfo.ack;
-                                        currObject.status = ((alarmInfo.ack == null) || (alarmInfo.ack == false)) ? 'Unacknowledged' : 'Acknowledged';
-                                        currObject.timestamp = alarmInfo.timestamp;
-                                        currObject.severity = alarmInfo.severity;
-                                        currObject.alarm_msg = coreAlarmUtils.getFormattedAlarmMessage({alarm:alarmInfo, nodeType:currNodeType});
-                                        currObject.alarm_detailed = coreAlarmUtils.getFormattedAlarmMessage({alarm:alarmInfo, nodeType:currNodeType, detailed:true});
-                                        currObject.token = alarmInfo.token;
-                                        retArr.push(currObject);
-                                    }
-                                }
-                            }
-                        }
-                   }
-                   return self.alarmsSort(retArr);
-                };
-
                 self.wrapUVEAlarms = function (nodeType,hostname,UVEAlarms) {
                     var obj = {}
                     var alarm = {};
@@ -250,6 +166,7 @@ define(
                     obj[nodeType].push(alarm);
                     return obj;
                 }
+
             }
             return CoreAlarmUtils;
        }
