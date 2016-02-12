@@ -47,14 +47,14 @@ global.STR_JOB_TYPE_CACHE = 'cache';
 global.STR_SEND_TO_JOB_SERVER = 'sendToJobServer';
 global.STR_DISCOVERY_SERVICE_RESPONSE = 'discoveryServiceResponse';
 global.DISC_SERVICE_TYPE_OP_SERVER = 'OpServer';
-global.DISC_SERVICE_MAX_INST_COUNT_OP_SERVER = 20;
+global.DISC_SERVICE_MAX_INST_COUNT_OP_SERVER = 0;
 global.DISC_SERVICE_TYPE_API_SERVER = 'ApiServer';
-global.DISC_SERVICE_MAX_INST_COUNT_API_SERVER = 20;
+global.DISC_SERVICE_MAX_INST_COUNT_API_SERVER = 0;
 global.DISC_SERVICE_TYPE_DNS_SERVER = 'dns-server';
-global.DISC_SERVICE_MAX_INST_COUNT_DNS_SERVER = 2;
+global.DISC_SERVICE_MAX_INST_COUNT_DNS_SERVER = 0;
 global.DISC_SERVER_SUB_CLINET = 'discoveryServiceSubscribeClient';
 global.DISC_SERVER_SUB_CLIENT_RESPONSE = 'discoveryServiceSubscribeClientResp';
-global.DISC_SERVICE_MAX_INST_COUNT = 20;
+global.DISC_SERVICE_MAX_INST_COUNT = 0;
 
 /* Topology tree caching */
 global.STR_GET_PROJECTS_TREE = 'getProjectsTree';
