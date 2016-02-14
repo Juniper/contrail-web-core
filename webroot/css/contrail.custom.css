@@ -3547,7 +3547,7 @@ tr.collapsibleChildContainer{
 
 #peer_selection>table tr.data-row>td{
     padding-top:10px!important;}
-#interfaces-collection #interfaceType,#static-routes-collection #prefix{
+#interfaces-collection #interfaceType,#static-routes-collection #prefix, #static-routes-collection #next_hop{
     padding-right: 17px;
 }
 .no-margin{
