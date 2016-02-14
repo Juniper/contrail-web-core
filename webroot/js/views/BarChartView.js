@@ -19,7 +19,7 @@ define([
             var scaleCfg = getScaleCfg({
                 dimension: dimension,
                 field: field
-            }); 
+            });
             var barRange = scaleCfg['barRange'],
                 maxXValue = scaleCfg['maxXValue'];
             // Ensure range is set correctly to number of bars * 10
@@ -29,7 +29,7 @@ define([
                 .toolTip(false)
                 .round(function(d) { return Math.floor(d/barRange) * barRange;})
                 .x(d3.scale.linear()
-                    .domain([0, maxXValue])      //Let's keep ordinal discrete domain 
+                    .domain([0, maxXValue])      //Let's keep ordinal discrete domain
                     .rangeRound([0,10 * 24]))
                 .xScale(chartConfig['xScale'])
                 // .y(d3.scale.linear()
@@ -57,7 +57,7 @@ define([
     });
 
     //Gives bucket range
-    function getScaleCfg(cfg) { 
+    function getScaleCfg(cfg) {
         var barRange = 1,
             xBarCnt = 24,
             dimension = cfg['dimension'],
@@ -71,7 +71,7 @@ define([
         }
         return {
             barRange: barRange,
-            maxXValue: maxXValue
+            maxXValue: ifNull(maxXValue,24)
         };
     }
 

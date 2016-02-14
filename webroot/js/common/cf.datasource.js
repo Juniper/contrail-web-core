@@ -12,6 +12,7 @@ define([], function() {
         var cf = null,recordCnt = 0,
             dimensions={},
             filters={},
+            filterValues = {};
             callBacks=$.Callbacks("unique"),
             callBackFns={}
 
@@ -66,7 +67,11 @@ define([], function() {
             return filters[dimensionName];
         }
 
-        this.applyFilter = function(dimensionName,criteria) {
+        this.getFilterValues = function(dimensionName) {
+            return filterValues[dimensionName];
+        }
+
+        this.applyFilter = function(dimensionName,criteria,filterRange) {
             if(dimensions[dimensionName] != null) {
                 var dimension = dimensions[dimensionName];
                 if(criteria == null) {
@@ -74,6 +79,7 @@ define([], function() {
                 } else {
                     dimension.filter(criteria);
                     filters[dimensionName] = criteria;
+                    filterValues[dimensionName] = filterRange;
                 }
                 var filteredData = dimension.top(Infinity);
                 return filteredData;
@@ -86,6 +92,7 @@ define([], function() {
                 dimension.filterAll();
                 var currFilter = filters[dimensionName];
                 filters[dimensionName] = null;
+                filterValues[dimensionName] = null;
                 return currFilter;
             }
         }
