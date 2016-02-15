@@ -2106,12 +2106,14 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="core-generic-delete-form-template">
-    <div class="alert alert-error" data-bind="visible: errors().{{prefixId}}_form_error">
+    <div class="generic-delete-form alert alert-error" data-bind="visible: errors().{{prefixId}}_form_error">
         <button type="button" class="close" data-dismiss="alert"></button>
         <strong>Error: </strong>
         <span data-bind="text: errors().{{prefixId}}_form_error"></span>
     </div>
-    <div>Are you sure you want to delete {{item}} <b>{{itemId}}</b>?</div>
+    <div class="generic-delete-message" data-bind="visible: !(errors().{{prefixId}}_form_error())">
+        Are you sure you want to delete {{item}} <b>{{itemId}}</b>?
+    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-ack-alarm-form-template">
