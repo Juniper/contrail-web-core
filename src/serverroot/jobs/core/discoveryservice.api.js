@@ -14,8 +14,8 @@ var config = process.mainModule.exports.config,
 var discServiceRetryList = [];
 var serviceTimers = {};
 
-var server_ip = ((null != config) && (null != config.cnfg) && 
-                 (null != config.cnfg.server_ip)) ? config.cnfg.server_ip :
+var server_ip = ((null != config) && (null != config.discoveryService) && 
+                 (null != config.discoveryService.server_ip)) ? config.discoveryService.server_ip:
                   global.DFLT_SERVER_IP;
 
 var server_port = (( null != config) && (null != config.discoveryService) &&
