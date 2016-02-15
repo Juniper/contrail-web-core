@@ -109,8 +109,8 @@ define([
                 .attr('dy', '-.7em')
                 .style('text-anchor', 'middle');
 
-            chartMessageText.attr('x', chartModel.width / 2)
-                .attr('y', margin.top + (chartModel.height / 2))
+            chartMessageText.attr('x', margin.left + chartModel.width / 2)
+                .attr('y', (chartModel.height + margin.top + margin.bottom) / 2)
                 .text(function (d) {
                     return d
                 });
@@ -520,6 +520,7 @@ define([
             cfDataSource.fireCallBacks({source:'chart'});
         }
     }
+
     function dataLoadingHandler(chartView, chartConfig, chartOptions, chartDataRequestState) {
         var chartMessage = chartConfig.statusMessageHandler(chartDataRequestState);
         plotZoomScatterChartData(chartView, chartConfig, chartOptions);
