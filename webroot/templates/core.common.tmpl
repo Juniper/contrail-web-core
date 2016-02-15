@@ -739,11 +739,35 @@
     </div>
 </script>
 <script type="text/x-handlebars-template" id="filter-list">
-    <div class="filter-list-container" style="position:relative;width:400px;left:45px;display:none">
+    <div class="filter-list-container" style="position:relative;width:400px;left:45px">
         <ul class="filter-list">
             <li class="filter-criteria x"></li>
             <li class="filter-criteria y"></li>
         </ul>
+    </div>
+</script>
+<script type="text/x-handlebars-template" id="zs-show-filter-range">
+    <span>{{lbl}}:&nbsp;{{minValue}}&nbsp;-&nbsp;{{maxValue}}</span>&nbsp;
+    <i class="icon-remove"></i>
+</script>
+<script type="text/x-handlebars-template" id="zs-chart-settings">
+    <div class='zs-chart-settings'>
+        <div class="bucket-selection" style="position:absolute;right:170px;display:none">
+            <input type="checkbox" class="zs-bucketize ace-input" checked="checked"></input>
+            <label class="ace-lbl">Bucketize</label>
+        </div>
+        <div class="color-selection" style="position:absolute;right:60px">
+            <div data-color="red" class="circle red filled"></div>
+            <div data-color="orange" class="circle orange filled"></div>
+            <div data-color="green" class="circle green filled"></div>
+            <div data-color="blue" class="circle blue filled"></div>
+        </div>
+        <div class="filter-list-container" style="position:relative;width:400px;left:45px;display:none">
+            <ul class="filter-list">
+                <li class="filter-criteria x"></li>
+                <li class="filter-criteria y"></li>
+            </ul>
+        </div>
     </div>
 </script>
 <script type="text/x-handlebars-template" id="chart-settings">
@@ -1767,7 +1791,6 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         </div>
     </div>
 </script>
-
 <script type="text/x-handlebars-template" id="query-routing-policy-terms-template">
     {{#IfCompare viewConfig.label null operator='!='}}
         <label style="margin:0">{{viewConfig.label}}</label>
@@ -1796,7 +1819,6 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         </div>
     </div>
 </script>
-
 <script type="text/x-handlebars-template" id="core-text-view-template">
     <span class="{{viewConfig.class}}"
           data-bind="{{#if viewConfig.click}}click: {{viewConfig.click}}, {{/if}}{{#if viewConfig.text}}text: {{viewConfig.text}} {{/if}}">
@@ -2241,4 +2263,3 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 
     </div>
 </script>
-

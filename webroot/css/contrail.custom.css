@@ -2925,14 +2925,17 @@ p.error, p.error-text {
     margin-top: 4px;
     opacity:1;
 }
-.chart-settings .color-selection .circle {
+.zs-chart-settings .color-selection .circle {
     display:inline-block;
     margin:0 5px;
     cursor:pointer;
     opacity:1;
 }
-.chart-settings .color-selection label {
+.zs-chart-settings .color-selection label {
     display:inline-block;
+}
+.zs-chart-settings .ace-lbl {
+    margin-bottom: 5px!important;
 }
 
 /* General Styles */
@@ -3555,7 +3558,7 @@ tr.collapsibleChildContainer{
 
 #peer_selection>table tr.data-row>td{
     padding-top:10px!important;}
-#interfaces-collection #interfaceType,#static-routes-collection #prefix{
+#interfaces-collection #interfaceType,#static-routes-collection #prefix, #static-routes-collection #next_hop{
     padding-right: 17px;
 }
 .no-margin{

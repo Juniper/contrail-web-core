@@ -33,7 +33,11 @@ define([
 
                 if(cfDataSource != null) {
                     cfDataSource.addCallBack('updateChart',function(data) {
+                        viewConfig['cfg'] = {};
+                        viewConfig['cfg']['source'] = data['cfg']['source'];
+                        $(selector).find('.filter-list-container .filter-criteria').hide();
                         self.renderChart(selector, viewConfig, self.model);
+                        viewConfig['cfg'] = {};
                     });
                 } else {
                     self.model.onAllRequestsComplete.subscribe(function () {
@@ -172,45 +176,93 @@ define([
             margin = chartConfig['margin'],
             width = chartModel.width,
             height = chartModel.height,
+            cfDataSource = chartView.attributes.viewConfig.cfDataSource,
             maxCircleRadius = chartConfig.maxCircleRadius;
 
         $(chartSelector).height(height + margin.top + margin.bottom);
+        //What if we want an icon to be active by default
         $(chartControlPanelSelector).find('.control-panel-item').removeClass('active');
 
-        chartSVG = d3.select($(chartSelector)[0]).append("svg")
-            .attr("class", "zoom-scatter-chart")
-            .attr("width", width + margin.left + margin.right + (2*maxCircleRadius))
-            .attr("height", height + margin.top + margin.bottom + (2*maxCircleRadius))
-            .attr("viewbox", '0 0 ' + (width + margin.left + margin.right + (2*maxCircleRadius)) + ' ' + (height + margin.top + margin.bottom + (2*maxCircleRadius)))
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .call(chartView.zm)
-            .append("g")
-            .on("mousedown", mouseDownCallback);
+        if(chartOptions['doBucketize'] != true) {
+            chartSVG = d3.select($(chartSelector)[0]).append("svg")
+                .attr("class", "zoom-scatter-chart")
+            .attr("width", width + margin.left + margin.right + maxCircleRadius)
+            .attr("height", height + margin.top + margin.bottom)
+            .attr("viewbox", '0 0 ' + (width + margin.left + margin.right + maxCircleRadius) + ' ' + (height + margin.top + margin.bottom))
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .call(chartView.zm)
+                .append("g")
+                .on("mousedown", mouseDownCallback);
+        } else {
+            chartSVG = d3.select($(chartSelector)[0]).append("svg")
+                .attr("class", "zoom-scatter-chart")
+                .attr("width", width + margin.left + margin.right + maxCircleRadius)
+                .attr("height", height + margin.top + margin.bottom)
+                .attr("viewbox", '0 0 ' + (width + margin.left + margin.right + maxCircleRadius) + ' ' + (height + margin.top + margin.bottom))
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .call(chartView.zm)
+                .on('dblclick.zoom',function() {
+                    zoomOut({cfDataSource:cfDataSource});
+                }).on('mousedown.zoom',null)
+                .append("g")
+        }
 
         //Add color filter
+        //Don't show CPU/Mem filters
         if(chartOptions['doBucketize'] == true) {
-            if($(selector).find('.color-selection').length == 0) {
-                $(selector).prepend($('<div/>', {
-                        class: 'chart-settings',
-                        style: 'height:20px'
+            if($(selector).find('.zs-chart-settings').length == 0) {
+                var zsChartSettingsTmpl = contrail.getTemplate4Id('zs-chart-settings');
+                $(selector).prepend(zsChartSettingsTmpl());
+            }
+
+            /*
+            $(selector).find('.filter-list-container .filter-criteria').hide();
+            //Show filters
+            var d3Format = d3.format('.2f');
+            var showFilterTemplate = contrail.getTemplate4Id('zs-show-filter-range');
+            if(cfDataSource.getFilter('x') != null) {
+                $(selector).find('.filter-list-container').show();
+                $(selector).find('.filter-list-container .filter-criteria.x').show();
+                var minMaxX = cfDataSource.getFilterValues('x');
+                $(selector).find('.filter-criteria.x').html(showFilterTemplate({
+                        lbl: 'CPU (%)',
+                        minValue: d3Format(minMaxX[0]),
+                        maxValue: d3Format(minMaxX[1])
                     }));
-                $(selector).find('.chart-settings').append(contrail.getTemplate4Id('color-selection'));
+                $(selector).find('.filter-criteria.x').find('.icon-remove').on('click',function() {
+                    $(this).parents('.filter-criteria').hide();
+                    cfDataSource.removeFilter('x');
+                    cfDataSource.fireCallBacks({source:'chartFilterRemoved'});
+                });
             }
-            if($(selector).find('.filter-list').length == 0) {
-                $(selector).find('.chart-settings').append(contrail.getTemplate4Id('filter-list'));
-            }
+            if(cfDataSource.getFilter('y') != null) {
+                $(selector).find('.filter-list-container').show();
+                $(selector).find('.filter-list-container .filter-criteria.y').show();
+                var minMaxY = cfDataSource.getFilterValues('y');
+                $(selector).find('.filter-criteria.y').html(showFilterTemplate({
+                        lbl: 'Mem (MB)',
+                        minValue: d3Format(minMaxY[0]),
+                        maxValue: d3Format(minMaxY[1])
+                }));
+                $(selector).find('.filter-criteria.y').find('.icon-remove').on('click',function() {
+                    $(this).parents('.filter-criteria').hide();
+                    cfDataSource.removeFilter('y');
+                    cfDataSource.fireCallBacks({source:'chartFilterRemoved'});
+                });
+            }*/
         }
 
         chartSVG.append("rect")
-            .attr("width", width + (2*maxCircleRadius))
-            .attr("height", height + (2*maxCircleRadius))
+            .attr("width", width + maxCircleRadius)
+            .attr("height", height)
             .append("g")
-            .attr("transform", "translate(" + maxCircleRadius + "," + maxCircleRadius + ")")
+            .attr("transform", "translate(" + maxCircleRadius + ",0)")
 
         chartSVG.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(" + maxCircleRadius + "," + (height + maxCircleRadius) + ")")
+            .attr("transform", "translate(" + maxCircleRadius + "," + height + ")")
             .call(chartModel.xAxis)
             .selectAll("text")
             .attr("x", 0)
@@ -218,7 +270,7 @@ define([
 
         chartSVG.append("g")
             .attr("class", "y axis")
-            .attr("transform", "translate(" + maxCircleRadius + "," + maxCircleRadius + ")")
+            .attr("transform", "translate(" + maxCircleRadius + ",0)")
             .call(chartModel.yAxis)
             .selectAll("text")
             .attr("x", -8)
@@ -226,8 +278,8 @@ define([
 
         viewObjects = chartSVG.append("svg")
             .attr("class", "objects")
-            .attr("width", width + (2*maxCircleRadius))
-            .attr("height", height + (2*maxCircleRadius));
+            .attr("width", width + maxCircleRadius)
+            .attr("height", height + maxCircleRadius);
 
         chartSVG.append("text")
             .attr("class", "x label")
@@ -308,13 +360,14 @@ define([
                         .attr("y", 0);
 
                     chartSVG.selectAll("circle").attr("transform", function (d) {
-                        return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius) + "," + (chartModel.yScale(d[chartConfig.yField]) + maxCircleRadius) + ")";
+                        return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
                     });
                 }, true);
             d3.event.stopPropagation();
         };
         if(chartOptions['doBucketize'] == true) {
             addScatterChartDragHandler({
+                viewConfig: chartView.attributes.viewConfig,
                 selector: chartView.$el,
                 chartModel: chartView.chartModel,
                 cfDataSource: chartView.attributes.viewConfig.cfDataSource
@@ -336,19 +389,22 @@ define([
         // $(selector).find('.color-selection .circle').addClass('filled');
         if(obj['cfDataSource'] != null) {
             var cfDataSource = obj['cfDataSource'];
-            cfDataSource.removeFilter('chartFilter');
-            cfDataSource.fireCallBacks({source:'chart'});
+            // cfDataSource.removeFilter('chartFilter');
+            cfDataSource.removeFilter('x');
+            cfDataSource.removeFilter('y');
+            cfDataSource.fireCallBacks({source:'chartFilterRemoved'});
         }
     }
 
     function getColorFilterFn(selector) {
         //Add color filter
         var selectedColorElems = $(selector).find('.circle.filled');
+        // selectedColorElems = $(selector).parents('.control-panel-filter-group').find('input:checked').siblings('span');
         var selColors = [];
         $.each(selectedColorElems,function(idx,obj) {
             $.each(cowc.COLOR_SEVERITY_MAP,function(currColorName,currColorCode) {
                 if($(obj).hasClass(currColorName)) {
-                    if(selColors.indexOf(currColorName) == -1)
+                    // if(selColors.indexOf(currColorName) == -1)
                         selColors.push(currColorCode);
                 }
             });
@@ -360,15 +416,10 @@ define([
     }
 
     function addSelectorClickHandlers(obj) {
-        // d3.select($(selector).find('svg')[0]).on('dblclick',
-        // function() {
-        //     chartOptions['elementDblClickFunction']();
-        // });
-
         /****
         * Selection handler for color filter in chart settings panel
         ****/
-        $(obj['selector']).on('click','.chart-settings .color-selection .circle',function() {
+        $(obj['selector']).on('click','.zs-chart-settings .color-selection .circle',function() {
             var currElem = $(this);
             $(this).toggleClass('filled');
 
@@ -432,8 +483,8 @@ define([
                     }
                     $(selector).find('#rect1').remove();
                     //As x-axis is transformated 50px and again 7px with circle radius
-                    //y-axis is transformed 20px from svg
-                    var xOffset = 50+7,yOffset = 20;
+                    //y-axis is transformed 10px from svg
+                    var xOffset = 50+10,yOffset = 10;
                     var minMaxX = [];
                     var xValue1 = chartModel.xScale.invert(this.__origin__.x - xOffset);
                     var xValue2 = chartModel.xScale.invert(this.__origin__.x + this.__origin__.dx - xOffset);
@@ -449,6 +500,7 @@ define([
                         yRange: minMaxY,
                         d     : d,
                         selector: selector,
+                        viewConfig: obj['viewConfig'],
                         cfDataSource : obj['cfDataSource']
                     });
                     delete this.__origin__;
@@ -466,6 +518,7 @@ define([
     function zoomIn(obj) {
         var minMaxX = obj['xRange'],
             minMaxY = obj['yRange'],
+            viewConfig = obj.viewConfig,
             cfDataSource = obj['cfDataSource'],
             selector = obj['selector'],
             d = obj['d'];
@@ -485,38 +538,60 @@ define([
             minMaxY = d['minMaxY'];
             combinedValues = [d];
         }
+        var minMaxXs = [],minMaxYs = [];
 
         //If there is no node within dragged selection,ignore
         if(combinedValues.length == 0) {
             return;
         }
-        var selectedNames = [];
+        var selectedNodes = [];
         $.each(combinedValues,function(idx,obj) {
-            if(obj['isBucket']) {
-                $.each(obj['children'],function(idx,children) {
-                    selectedNames.push(children['name']);
+            if(obj['isBucket'] || obj['children']) {
+                $.each(obj['children'],function(idx,currNode) {
+                    selectedNodes.push(currNode);
                 });
             } else {
-                selectedNames.push(obj['name']);
+                selectedNodes.push(obj);
             }
+        });
+        minMaxX = d3.extent(selectedNodes,function(d) { return d.x;});
+        minMaxY = d3.extent(selectedNodes,function(d) { return d.y;});
+        var selNames = $.map(selectedNodes,function(obj,idx) {
+           return obj['name'];
         });
 
         //Zoomin on the selected region
         if(obj['cfDataSource'] != null) {
             var cfDataSource = obj['cfDataSource'];
+            if(cfDataSource.getDimension('x') == null) {
+                cfDataSource.addDimension('x',function(d) {
+                    return d['x'];
+                });
+            }
+            if(cfDataSource.getDimension('y') == null) {
+                cfDataSource.addDimension('y',function(d) {
+                    return d['y'];
+                });
+            }
             if(cfDataSource.getDimension('chartFilter') == null) {
                 cfDataSource.addDimension('chartFilter',function(d) {
                     return d['name'];
                 });
             }
-            //As we are maintaining single filter based on name for both x/y axis
-            //Can't clear one filter alone
-            cfDataSource.applyFilter('chartFilter',function(d) {
-                return $.inArray(d,selectedNames) > -1;
-            });
-            var d3Format = d3.format('.2f');
-            $(selector).find('.filter-criteria.x').html('<span>CPU (%):&nbsp;</span>' + d3Format(minMaxX[0]) + ' - ' + d3Format(minMaxX[1]));
-            $(selector).find('.filter-criteria.y').html('<span>Mem (MB):&nbsp;</span>' + d3Format(minMaxY[0]) + ' - ' + d3Format(minMaxY[1]));
+            var dataMinMaxX = d3.extent(cfDataSource.getFilteredData(),function(d) { return d.x;});
+            var dataMinMaxY = d3.extent(cfDataSource.getFilteredData(),function(d) { return d.y;});
+            //Apply the filter only if there are nodes less than the select min and greater than the selected max
+            if(dataMinMaxX[0] < minMaxX[0] || dataMinMaxX[1] > minMaxX[1]) {
+                cfDataSource.applyFilter('x',function(d) {
+                    return d >= minMaxX[0] && d <= minMaxX[1];
+                },minMaxX);
+            }
+            if(dataMinMaxY[0] < minMaxY[0] || dataMinMaxY[1] > minMaxY[1]) {
+                cfDataSource.applyFilter('y',function(d) {
+                    return d >= minMaxY[0] && d <= minMaxY[1];
+                },minMaxY);
+            }
+
             cfDataSource.fireCallBacks({source:'chart'});
         }
     }
@@ -556,12 +631,9 @@ define([
                 totalCnt = cfDataSource.getRecordCnt();
             var infoElem = ifNull($($(headerElem).contents()[1]),$(headerElem));
             var innerText = infoElem.text().split('(')[0].trim();
-            if (cfDataSource.getFilter('chartFilter') == null) {
-                //Hide filter container
-                $(chartView.$el).find('.filter-list-container').hide();
+            if (filteredCnt == totalCnt) {
                 innerText += ' (' + totalCnt + ')';
             } else {
-                $(chartView.$el).find('.filter-list-container').show();
                 innerText += ' (' + filteredCnt + ' of ' + totalCnt + ')';
             }
             infoElem.text(innerText);
@@ -579,10 +651,6 @@ define([
             timer = null, maxCircleRadius = chartConfig.maxCircleRadius;
 
 
-        if(chartOptions['doBucketize'] == true) {
-            chartModel.refresh(chartConfig);
-        }
-
         //Bind data to chart
         d3.select($(chartView.$el).find('svg')[0]).data([chartModel.data]);
 
@@ -599,12 +667,12 @@ define([
             })
             .attr("transform", function (d) {
                 var xTranslate = chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius,
-                    yTranslate = chartModel.yScale(d[chartConfig.yField]) + maxCircleRadius;
+                    yTranslate = chartModel.yScale(d[chartConfig.yField]);
                 //Position the non x/y nodes at axis start
                 if(!$.isNumeric(xTranslate))
                     xTranslate = chartModel.xScale.range()[0] + maxCircleRadius;
                 if(!$.isNumeric(yTranslate))
-                    yTranslate = chartModel.yScale.range()[0] + maxCircleRadius;
+                    yTranslate = chartModel.yScale.range()[0];
                 return "translate(" + xTranslate + "," + yTranslate + ")";
             })
             .attr("opacity", "0.6")
@@ -618,7 +686,7 @@ define([
 
                 clearTimeout(timer);
                 timer = setTimeout(function () {
-                    constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData);
+                    constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData,chartView);
                 }, contrail.handleIfNull(tooltipConfig.delay, cowc.TOOLTIP_DELAY));
             })
             .on("mouseleave", function (d) {
@@ -626,14 +694,18 @@ define([
             })
             .on("click", function (d) {
                 clearTimeout(timer);
-                if(chartOptions['doBucketize'] == true) {
+                if(chartOptions['doBucketize'] == true && getValueByJsonPath(d,'children',[]).length > 1) {
                     zoomIn({
                         d : d,
+                        viewConfig : chartView.attributes.viewConfig,
                         cfDataSource : chartView.attributes.viewConfig.cfDataSource,
                         selector: chartView.$el
                     });
                 } else {
-                clickCB(d);
+                    if(getValueByJsonPath(d,'children',[]).length == 1) {
+                        d = d['children'][0];
+                    }
+                    clickCB(d);
                 }
             });
     }
@@ -662,10 +734,6 @@ define([
 
     function getChartZoomFn(chartView, chartConfig) {
         return function () {
-            //As region selector for drill-down conflicting with zoom
-            if(chartConfig['doBucketize'] == true) {
-                return;
-            }
             var chartModel = chartView.chartModel;
 
             //Restrict translation to 0 value
@@ -713,8 +781,8 @@ define([
                 .attr("y", 0);
 
             chartView.svg.selectAll("circle").attr("transform", function (d) {
-                return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius) + "," + 
-                    (chartModel.yScale(d[chartConfig.yField]) + chartConfig.maxCircleRadius) + ")";
+                return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius) + "," +
+                    (chartModel.yScale(d[chartConfig.yField])) + ")";
             });
         };
     };
@@ -746,9 +814,9 @@ define([
         $(controlPanelSelector).find('.zoom-reset').on('click', function (event) {
             if (!$(this).hasClass('disabled')) {
                 event.preventDefault();
-                if (chartConfig.doBucketize == true) {
+                if(chartConfig.doBucketize == true) {
                     zoomOut({
-                        cfDataSource: chartView.attributes.viewConfig.cfDataSource
+                        cfDataSource:chartView.attributes.viewConfig.cfDataSource
                     })
                     return;
                 }
@@ -771,9 +839,8 @@ define([
                 chartView.svg.selectAll("circle")
                     .attr("transform", function (d) {
                         return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius) + "," +
-                            (chartModel.yScale(d[chartConfig.yField]) + chartConfig.maxCircleRadius) + ")";
+                            (chartModel.yScale(d[chartConfig.yField])) + ")";
                     });
-
                 chartView.zm.scale(1);
                 chartView.zm.translate([0, 0]);
             }
@@ -785,18 +852,26 @@ define([
     };
 
     function getControlPanelConfig(chartView, chartConfig, chartOptions, selector) {
+        var zoomEnabled = true;
+        if(chartConfig['doBucketize'] == true) {
+            zoomEnabled = false;
+        }
         var chartControlPanelExpandedSelector = $(selector).find('.chart-control-panel-expanded-container'),
             controlPanelConfig = {
                 default: {
                     zoom: {
-                        enabled: true,
+                        enabled: zoomEnabled,
+                        doBucketize: chartConfig['doBucketize'],
                         events: function (controlPanelSelector) {
                             initZoomEvents(controlPanelSelector, chartView, chartConfig)
                         }
                     }
                 },
                 custom: {
-                    zoomBySelectedArea: {
+                }
+            };
+            if(chartConfig['doBucketize'] != true) {
+                controlPanelConfig.custom.zoomBySelectedArea = {
                         iconClass: 'icon-crop',
                         title: 'Zoom By Selection',
                         events: {
@@ -813,11 +888,48 @@ define([
                             }
                         }
                     }
-                }
-            };
+            }
 
+        //Don't show Bucketize icon
+        if(chartConfig['doBucketize'] == true) {
+            controlPanelConfig.custom.zoomReset = {
+                iconClass: 'icon-remove-circle active',
+                    title: 'Reset',
+                events: {
+                    click: function (event, self, controlPanelSelector) {
+                        $(self).toggleClass('active');
+                        $(self).removeClass('refreshing');
+                        zoomOut({cfDataSource:chartView.attributes.viewConfig.cfDataSource});
+                        $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
+                    }
+                }
+            }
+        }
+        /*
+        if(chartConfig['doBucketize'] == true) {
+            controlPanelConfig.custom.bucketize = {
+                iconClass: 'icon-align-left active',
+                    title: 'Bucketize',
+                events: {
+                    click: function (event, self, controlPanelSelector) {
+                        $(self).toggleClass('active');
+                        $(self).toggleClass('bucketize');
+                        var viewConfig = chartView.attributes.viewConfig;
+                        if($(self).hasClass('bucketize')) {
+                            viewConfig['chartOptions']['doBucketize'] = true;
+                        } else {
+                            viewConfig['chartOptions']['doBucketize'] = false;
+                        }
+                        $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
+                        $(self).removeClass('refreshing');
+                        chartView.renderChart(selector,viewConfig,chartView.model);
+                    }
+                }
+            }
+        }*/
         if(contrail.checkIfKeyExistInObject(true, chartOptions, 'controlPanelConfig.filter.enable') && chartOptions.controlPanelConfig.filter.enable) {
-            controlPanelConfig.custom.filter = getControlPanelFilterConfig(chartOptions.controlPanelConfig.filter, chartControlPanelExpandedSelector, chartView.model)
+            controlPanelConfig.custom.filter = getControlPanelFilterConfig(chartOptions.controlPanelConfig.filter, chartControlPanelExpandedSelector, chartView.model,{
+                cfDataSource:chartView.attributes.viewConfig.cfDataSource})
         }
 
         if(contrail.checkIfKeyExistInObject(true, chartOptions, 'controlPanelConfig.legend.enable') && chartOptions.controlPanelConfig.legend.enable) {
@@ -827,7 +939,9 @@ define([
         return controlPanelConfig;
     };
 
-    var getControlPanelFilterConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector, listModel) {
+    var getControlPanelFilterConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector, listModel,filterCfg) {
+        var filterCfg = ifNull(filterCfg,{});
+        var cfDataSource = filterCfg['cfDataSource'];
         var scatterFilterFn = function(item, args) {
             if (args.itemCheckedLength == 0) {
                 return true;
@@ -862,24 +976,36 @@ define([
                                 $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
                                     .off('click')
                                     .on('click', function (event) {
-                                        var itemChecked = $(this).is(':checked'),
-                                            itemCheckedLength = $('#control-panel-filter-group-items-' + groupValue.id).find('input:checked').length,
-                                            scatterFilterArgs = {
-                                                itemChecked: itemChecked,
-                                                itemCheckedLength: itemCheckedLength,
-                                                itemValue: itemValue
-                                            };
+                                        if(cfDataSource == null) {
+                                            var itemChecked = $(this).is(':checked'),
+                                                itemCheckedLength = $('#control-panel-filter-group-items-' + groupValue.id).find('input:checked').length,
+                                                scatterFilterArgs = {
+                                                    itemChecked: itemChecked,
+                                                    itemCheckedLength: itemCheckedLength,
+                                                    itemValue: itemValue
+                                                };
 
 
-                                        if (itemCheckedLength == 0) {
-                                            $('#control-panel-filter-group-items-' + groupValue.id).find('input').prop('checked', true);
-                                        }
+                                            if (itemCheckedLength == 0) {
+                                                $('#control-panel-filter-group-items-' + groupValue.id).find('input').prop('checked', true);
+                                            }
 
-                                        listModel.setFilterArgs(scatterFilterArgs);
-                                        listModel.setFilter(scatterFilterFn);
+                                            listModel.setFilterArgs(scatterFilterArgs);
+                                            listModel.setFilter(scatterFilterFn);
 
-                                        if (contrail.checkIfKeyExistInObject(true, itemValue, 'events.click')) {
-                                            itemValue.events.click(event)
+                                            if (contrail.checkIfKeyExistInObject(true, itemValue, 'events.click')) {
+                                                itemValue.events.click(event)
+                                            }
+                                        } else {
+                                            var itemCheckedLength = $('#control-panel-filter-group-items-' + groupValue.id).find('input:checked').length;
+                                            if (itemCheckedLength == 0) {
+                                                $('#control-panel-filter-group-items-' + groupValue.id).find('input').prop('checked', true);
+                                            }
+                                            var colorFilterFunc = getColorFilterFn($(this));
+                                            if(cfDataSource != null) {
+                                                cfDataSource.applyFilter('colorFilter',colorFilterFunc);
+                                                cfDataSource.fireCallBacks({source:'chart'});
+                                            }
                                         }
                                     });
                             });
@@ -1010,7 +1136,7 @@ define([
 
     };
 
-    function constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData) {
+    function constructTooltip(selfOffset, tooltipData, tooltipConfigCB, overlapMap, chartData,chartView) {
         var tooltipConfig = tooltipConfigCB(tooltipData),
             tooltipElementObj = generateTooltipHTML(tooltipConfig),
             tooltipElementKey = tooltipData['x'] + ',' + tooltipData['y'],
@@ -1080,7 +1206,17 @@ define([
                     actionCallback = tooltipConfig.content.actions[actionKey].callback;
 
                 destroyTooltip(tooltipElementObj, overlappedElementsDropdownElement);
-                actionCallback(tooltipData);
+                //Drill-down only if it's a bucket comprising of multiple nodes
+                if(tooltipData['isBucket'] == true && getValueByJsonPath(tooltipData,'children',[]).length > 1) {
+                    zoomIn({
+                        d : tooltipData,
+                        viewConfig : chartView.attributes.viewConfig,
+                        cfDataSource : chartView.attributes.viewConfig.cfDataSource,
+                        selector: chartView.$el
+                    });
+                } else {
+                    actionCallback(tooltipData);
+                }
             });
 
         $(tooltipElementObj).find('.popover-remove')
@@ -1123,7 +1259,7 @@ define([
     function getChartConfig(selector, chartOptions) {
         var margin = $.extend(true, {}, {top: 20, right: 5, bottom: 50, left: 50}, chartOptions['margin']),
             chartSelector = $(selector).find('.chart-container'),
-            width = $(chartSelector).width() - 20,
+            width = $(chartSelector).width() - 10,
             height = 275;
 
         var chartViewConfig = {
@@ -1148,6 +1284,7 @@ define([
             sizeFieldName: chartOptions['sizeFieldName'],
             noDataMessage: chartOptions['noDataMessage'],
             doBucketize : chartOptions['doBucketize'],
+            bubbleSizeFn: chartOptions['bubbleSizeFn'],
             defaultDataStatusMessage: true,
             statusMessageHandler: cowm.getRequestMessage
         };
