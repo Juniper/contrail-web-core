@@ -19,6 +19,10 @@
         <define>alarmsApi</define>
         <path>./alarms.api.js</path>
     </require>
+    <require>
+        <define>configServerUtils</define>
+        <path>./configServer.utils.js</path>
+    </require>
     <item>
         <url>/api/service/networking/device-status/:ip</url>
         <method>post</method>
@@ -51,6 +55,12 @@
         <method>post</method>
         <feature>alarms</feature>
         <callback>alarmsApi.ackAlarms</callback>
+    </item>
+    <item>
+        <url>/api/tenants/get-project-role</url>
+        <method>get</method>
+        <feature>orchestration</feature>
+        <callback>configServerUtils.getProjectRole</callback>
     </item>
 </urlLists>
 

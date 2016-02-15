@@ -16,37 +16,37 @@ function getApiServerRequestedByData (appData, reqBy)
     return plugins.getApiServerRequestedByData(appData, reqBy);
 }
 
-function apiGet (url, appData, callback)
+function apiGet (url, appData, callback, appHeaders)
 {
     var service = getApiServerRequestedByData(appData, global.label.API_SERVER);
     service.apiGet(url, appData, function(err, data) {
         callback(err, data);
-    });
+    }, appHeaders);
 }
 
-function apiPut (url, putData, appData, callback)
+function apiPut (url, putData, appData, callback, appHeaders)
 {
     var service = getApiServerRequestedByData(appData, global.label.API_SERVER);
     service.apiPut(url, putData, appData, function(err, data) {
         callback(err, data);
-    });
+    }, appHeaders);
 }
 
 
-function apiPost (url, postData, appData, callback) 
+function apiPost (url, postData, appData, callback, appHeaders)
 {
     var service = getApiServerRequestedByData(appData, global.label.API_SERVER);
     service.apiPost(url, postData, appData, function(err, data) {
         callback(err, data);
-    });
+    }, appHeaders);
 }
 
-function apiDelete (url, appData, callback) 
+function apiDelete (url, appData, callback, appHeaders)
 {
     var service = getApiServerRequestedByData(appData, global.label.API_SERVER);
     service.apiDelete(url, appData, function(err, data) {
         callback(err, data);
-    });
+    }, appHeaders);
 }
 
 exports.apiGet = apiGet;
