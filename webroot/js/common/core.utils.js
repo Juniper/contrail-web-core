@@ -97,6 +97,9 @@ define(['underscore'], function (_) {
                     title: (options['btnName']) ? options['btnName'] : 'Save',
                     onclick: function () {
                         options['onSave']();
+                        if ($('#' + modalId).find('.generic-delete-form').length > 0) {
+                            $('#' + modalId).find('.btn-primary.btnSave').hide();
+                        }
                     },
                     onKeyupEnter: true
                 });
