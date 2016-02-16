@@ -121,6 +121,7 @@ define([
         var selectArray = queryFormAttributes.select.replace(/ /g, "").split(","),
             lineWithFocusChartModel = modelMap[cowc.UMID_QUERY_RESULT_LINE_CHART_MODEL],
             chartColorAvailableKeys = ['id_0', null, null, null, null],
+            actionCell = [],
             display = [
                 {
                     id: 'fc-badge', field:"", name:"", resizable: false, sortable: false, width: 30, minWidth: 30, searchable: false, exportConfig: { allow: false },
@@ -156,14 +157,13 @@ define([
         if (queryFormAttributes.query_prefix === cowc.FS_QUERY_PREFIX) {
 
             if (qewu.enableSessionAnalyzer(null, queryFormAttributes)) {
-                display.push({
-                    id: 'fc-details', field:"", name:"", resizable: false, sortable: false, width: 30, minWidth: 30, searchable: false, exportConfig: { allow: false },
-                    formatter: qewgc.setAnalyzerIconFormatter,
-                    cssClass: 'cell-hyperlink-blue',
-                    events: {
+                actionCell = [
+                    {
+                        title: 'Analyze Session',
+                        iconClass: 'icon-external-link-sign',
                         onClick: qewgc.getOnClickSessionAnalyzer(parentView, queryId, queryFormAttributes)
                     }
-                });
+                ]
             }
         }
 
@@ -178,7 +178,8 @@ define([
                 options: {
                     autoRefresh: false,
                     checkboxSelectable: false,
-                    fixedRowHeight: 30
+                    fixedRowHeight: 30,
+                    actionCell: actionCell
                 },
                 dataSource:{
                     remote: {

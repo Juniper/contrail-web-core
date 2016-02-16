@@ -134,30 +134,34 @@ define([
 
             self.modelMap = modelMap;
 
-            $('#' + elementId + ' > ul.contrail-tab-link-list').append(tabLinkTemplate(tabViewConfigs));
-            $('#' + elementId).append(tabContentTemplate(tabViewConfigs));
-            $('#' + elementId).data('contrailTabs').refresh();
-
             $.each(tabViewConfigs, function(tabKey, tabValue) {
-                self.tabs.push(tabValue);
-                self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'] = tabLength ;
-                if (contrail.checkIfKeyExistInObject(true, tabValue, 'tabConfig.renderOnActivate') &&  tabValue.tabConfig.renderOnActivate === true) {
-                    self.tabRendered.push(false);
-                    //TODO - onAllViewsRenderComplete should be called when rendered
+                if (!contrail.checkIfExist(self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'])) {
+                    $('#' + elementId + ' > ul.contrail-tab-link-list').append(tabLinkTemplate([tabValue]));
+                    $('#' + elementId).append(tabContentTemplate([tabValue]));
+                    $('#' + elementId).data('contrailTabs').refresh();
+
+                    self.tabs.push(tabValue);
+                    self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'] = tabLength;
+                    if (contrail.checkIfKeyExistInObject(true, tabValue, 'tabConfig.renderOnActivate') && tabValue.tabConfig.renderOnActivate === true) {
+                        self.tabRendered.push(false);
+                        //TODO - onAllViewsRenderComplete should be called when rendered
+                    } else {
+                        self.renderTab(tabValue, onAllViewsRenderComplete);
+                        self.tabRendered.push(true);
+                    }
+
+                    tabLength++;
+
+                    if (activateTab === true) {
+                        $('#' + elementId).data('contrailTabs').activateTab(tabLength - 1);
+                    } else if (typeof activateTab === 'number') {
+                        $('#' + elementId).data('contrailTabs').activateTab(activateTab);
+                    }
+
                 } else {
-                    self.renderTab(tabValue, onAllViewsRenderComplete);
-                    self.tabRendered.push(true);
+                    $('#' + elementId).data('contrailTabs').activateTab(self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'])
                 }
-
-                tabLength++;
             });
-
-            if (activateTab === true) {
-                $('#' + elementId).data('contrailTabs').activateTab(tabLength - 1);
-            } else if (typeof activateTab === 'number') {
-                $('#' + elementId).data('contrailTabs').activateTab(activateTab);
-            }
-
         }
     });
 

@@ -682,7 +682,7 @@ define([
                                 }
 
                                 //$('#' + gridContainer.prop('id') + '-action-menu').remove();
-                                addGridRowActionDroplist(actionCellArray, gridContainer, args.row, $(e.target));
+                                addGridRowActionDroplist(actionCellArray, gridContainer, args.row, $(e.target), rowData);
                                 var offset = $(e.target).offset(), actionCellStyle = '';
                                 if (gridOptions.actionCellPosition == 'start') {
                                     actionCellStyle = 'top:' + (offset.top + 20) + 'px' + ';right:auto !important;left:' + offset.left + 'px !important;';
@@ -1410,7 +1410,7 @@ define([
                 }
             };
 
-            function addGridRowActionDroplist(actionConfig, gridContainer, rowIndex, targetElement) {
+            function addGridRowActionDroplist(actionConfig, gridContainer, rowIndex, targetElement, rowData) {
                 var menuClass = 'dropdown-menu pull-right dropdown-caret grid-action-menu';
                 if (gridOptions.actionCellPosition == 'start') {
                     menuClass = 'dropdown-menu pull-left dropdown-caret grid-action-menu';
@@ -1427,7 +1427,7 @@ define([
                     </li>').appendTo('#' + gridContainer.prop('id') + '-action-menu-' + rowIndex);
 
                     $(actionItem).on('click', function () {
-                        actionItemConfig.onClick(rowIndex, targetElement);
+                        actionItemConfig.onClick(rowIndex, targetElement, rowData);
                         gridActionId.remove();
                     });
                 });
