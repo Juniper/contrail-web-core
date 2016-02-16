@@ -86,14 +86,16 @@ define([
                 chartConfig = getChartConfig(selector, chartOptions);
                 self.chartModel = new ZoomScatterChartModel(dataListModel, chartConfig);
                 self.zm = self.chartModel.zoomBehavior.on("zoom", getChartZoomFn(self, chartConfig));
-                self.zoomBySelection = false;
+                if(typeof(self.zoomBySelection) == "undefined")
+                    self.zoomBySelection = false;
                 renderControlPanel(self, chartConfig, chartOptions, selector);
             } else {
                 $(selector).find('.chart-container').empty();
                 chartConfig = getChartConfig(selector, chartOptions);
                 self.chartModel.refresh(chartConfig);
                 self.zm = self.chartModel.zoomBehavior.on("zoom", getChartZoomFn(self, chartConfig));
-                self.zoomBySelection = false;
+                if(typeof(self.zoomBySelection) == "undefined")
+                    self.zoomBySelection = false;
             }
 
             renderZoomScatterChart(self, chartConfig, chartOptions, selector);
@@ -182,6 +184,8 @@ define([
         $(chartSelector).height(height + margin.top + margin.bottom);
         //What if we want an icon to be active by default
         $(chartControlPanelSelector).find('.control-panel-item').removeClass('active');
+        if(chartOptions['doBucketize'] == true && chartView.zoomBySelection == true)
+            $(chartControlPanelSelector).find('.control-panel-item.zoomBySelectedArea').addClass('active');
 
         if(chartOptions['doBucketize'] != true) {
             chartSVG = d3.select($(chartSelector)[0]).append("svg")
@@ -205,8 +209,9 @@ define([
                 .call(chartView.zm)
                 .on('dblclick.zoom',function() {
                     zoomOut({cfDataSource:cfDataSource});
-                }).on('mousedown.zoom',null)
+                })
                 .append("g")
+                .on('mousedown.zoom',mouseDownCallback);
         }
 
         //Add color filter
@@ -255,6 +260,7 @@ define([
         }
 
         chartSVG.append("rect")
+            .attr('class','zs-rect')
             .attr("width", width + maxCircleRadius)
             .attr("height", height)
             .append("g")
@@ -333,45 +339,84 @@ define([
                     var m = d3.mouse(e);
                     m[0] = Math.max(0, Math.min(width, m[0]));
                     m[1] = Math.max(0, Math.min(height, m[1]));
-                    if (m[0] !== origin[0] && m[1] !== origin[1]) {
-                        chartModel.zoomBehavior.x(
-                            chartModel.xScale.domain([origin[0], m[0]].map(chartModel.xScale.invert).sort(function (a, b) {
-                                return a - b;
-                            }))
-                        )
-                            .y(
-                            chartModel.yScale.domain([origin[1], m[1]].map(chartModel.yScale.invert).sort(function (a, b) {
-                                return a - b;
-                            }))
-                        );
-                    }
+
                     rect.remove();
+                    if(chartOptions['doBucketize'] != true) {
+                        if (m[0] !== origin[0] && m[1] !== origin[1]) {
+                            chartModel.zoomBehavior.x(
+                                chartModel.xScale.domain([origin[0], m[0]].map(chartModel.xScale.invert).sort(function (a, b) {
+                                    return a - b;
+                                }))
+                            )
+                                .y(
+                                chartModel.yScale.domain([origin[1], m[1]].map(chartModel.yScale.invert).sort(function (a, b) {
+                                    return a - b;
+                                }))
+                            );
+                        }
 
-                    chartSVG.select(".x.axis")
-                        .call(chartModel.xAxis)
-                        .selectAll("text")
-                        .attr("x", 0)
-                        .attr("y", 8);
+                        chartSVG.select(".x.axis")
+                            .call(chartModel.xAxis)
+                            .selectAll("text")
+                            .attr("x", 0)
+                            .attr("y", 8);
 
-                    chartSVG.select(".y.axis")
-                        .call(chartModel.yAxis)
-                        .selectAll("text")
-                        .attr("x", -8)
-                        .attr("y", 0);
+                        chartSVG.select(".y.axis")
+                            .call(chartModel.yAxis)
+                            .selectAll("text")
+                            .attr("x", -8)
+                            .attr("y", 0);
 
-                    chartSVG.selectAll("circle").attr("transform", function (d) {
-                        return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius) + "," + chartModel.yScale(d[chartConfig.yField]) + ")";
-                    });
+                        chartSVG.selectAll("circle").attr("transform", function (d) {
+                            var xTranslate = chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius,
+                                yTranslate = chartModel.yScale(d[chartConfig.yField]);
+                            //Position the non x/y nodes at axis start
+                            if(!$.isNumeric(xTranslate))
+                                xTranslate = chartModel.xScale.range()[0] + maxCircleRadius;
+                            if(!$.isNumeric(yTranslate))
+                                yTranslate = chartModel.yScale.range()[0];
+                            return "translate(" + xTranslate + "," + yTranslate + ")";
+                        });
+                    } else {
+                        //Bucketize the dragged selection
+                        //As x-axis is transformated 50px and again 7px with circle radius
+                        //y-axis is transformed 0px from svg
+                        var xOffset = 10,yOffset = 0;
+                        var minMaxX = [];
+                        var xValue1 = chartModel.xScale.invert(origin[0] - xOffset);
+                        var xValue2 = chartModel.xScale.invert(m[0] - xOffset);
+                        minMaxX[0] = Math.min(xValue1, xValue2);
+                        minMaxX[1] = Math.max(xValue1, xValue2);
+                        var minMaxY = [];
+                        var yValue1 = chartModel.yScale.invert(origin[1] - yOffset);
+                        var yValue2 = chartModel.yScale.invert(m[1] - yOffset);
+                        minMaxY[0] = Math.min(yValue1, yValue2);
+                        minMaxY[1] = Math.max(yValue1, yValue2);
+                        //Get the data associated with the chart
+                        var d = d3.select($(chartView.$el).find('svg rect.zs-rect')[0]).data()[0];
+                        zoomIn({
+                            xRange: minMaxX,
+                            yRange: minMaxY,
+                            d     : d,
+                            selector: selector,
+                            viewConfig: chartView.attributes.viewConfig,
+                            cfDataSource : cfDataSource
+                        });
+                    }
                 }, true);
             d3.event.stopPropagation();
         };
         if(chartOptions['doBucketize'] == true) {
+            if(chartView.zoomBySelection == true) {
+                $('svg.zoom-scatter-chart').find('rect').addClassSVG('cursor-crosshair');
+            }
+            /*
             addScatterChartDragHandler({
                 viewConfig: chartView.attributes.viewConfig,
                 selector: chartView.$el,
                 chartModel: chartView.chartModel,
                 cfDataSource: chartView.attributes.viewConfig.cfDataSource
-            });
+            });*/
             //Bind drag event once scatterChart initialized
             if(chartView.bindListeners == null) {
                 chartView.bindListeners = true;
@@ -438,7 +483,7 @@ define([
 
         var dragSrc = d3.behavior.drag();
         //drag support
-        d3.select($(selector)[0]).select('svg').call(dragSrc
+        d3.select($(selector)[0]).select('svg rect.zs-rect').call(dragSrc
             .on('dragstart',function(d,i) {
                 var p = d3.mouse(this);
                 this.__origin__ = {};
@@ -652,7 +697,7 @@ define([
 
 
         //Bind data to chart
-        d3.select($(chartView.$el).find('svg')[0]).data([chartModel.data]);
+        d3.select($(chartView.$el).find('svg rect.zs-rect')[0]).data([chartModel.data]);
 
         updateFilteredCntInHeader(chartView);
         viewObjects.selectAll("circle")
@@ -781,8 +826,14 @@ define([
                 .attr("y", 0);
 
             chartView.svg.selectAll("circle").attr("transform", function (d) {
-                return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius) + "," +
-                    (chartModel.yScale(d[chartConfig.yField])) + ")";
+                var xTranslate = chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius,
+                    yTranslate = chartModel.yScale(d[chartConfig.yField]);
+                //Position the non x/y nodes at axis start
+                if(!$.isNumeric(xTranslate))
+                    xTranslate = chartModel.xScale.range()[0] + chartConfig.maxCircleRadius;
+                if(!$.isNumeric(yTranslate))
+                    yTranslate = chartModel.yScale.range()[0];
+                return "translate(" + xTranslate + "," + yTranslate + ")";
             });
         };
     };
@@ -838,8 +889,14 @@ define([
 
                 chartView.svg.selectAll("circle")
                     .attr("transform", function (d) {
-                        return "translate(" + (chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius) + "," +
-                            (chartModel.yScale(d[chartConfig.yField])) + ")";
+                        var xTranslate = chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius,
+                            yTranslate = chartModel.yScale(d[chartConfig.yField]);
+                        //Position the non x/y nodes at axis start
+                        if(!$.isNumeric(xTranslate))
+                            xTranslate = chartModel.xScale.range()[0] + chartConfig.maxCircleRadius;
+                        if(!$.isNumeric(yTranslate))
+                            yTranslate = chartModel.yScale.range()[0];
+                        return "translate(" + xTranslate + "," + yTranslate + ")";
                     });
                 chartView.zm.scale(1);
                 chartView.zm.translate([0, 0]);
@@ -853,9 +910,6 @@ define([
 
     function getControlPanelConfig(chartView, chartConfig, chartOptions, selector) {
         var zoomEnabled = true;
-        if(chartConfig['doBucketize'] == true) {
-            zoomEnabled = false;
-        }
         var chartControlPanelExpandedSelector = $(selector).find('.chart-control-panel-expanded-container'),
             controlPanelConfig = {
                 default: {
@@ -870,27 +924,26 @@ define([
                 custom: {
                 }
             };
-            if(chartConfig['doBucketize'] != true) {
-                controlPanelConfig.custom.zoomBySelectedArea = {
-                        iconClass: 'icon-crop',
-                        title: 'Zoom By Selection',
-                        events: {
-                            click: function (event, self, controlPanelSelector) {
-                                chartView.zoomBySelection = !chartView.zoomBySelection;
-                                $(self).toggleClass('active');
-                                $(self).removeClass('refreshing');
-                                if ($(self).hasClass('active')) {
-                                    $('svg.zoom-scatter-chart').find('rect').addClassSVG('cursor-crosshair');
-                                } else {
-                                    $('svg.zoom-scatter-chart').find('rect').removeClassSVG('cursor-crosshair');
-                                    $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
-                                }
+            controlPanelConfig.custom.zoomBySelectedArea = {
+                    iconClass: 'icon-crop',
+                    title: 'Zoom By Selection',
+                    events: {
+                        click: function (event, self, controlPanelSelector) {
+                            chartView.zoomBySelection = !chartView.zoomBySelection;
+                            $(self).toggleClass('active');
+                            $(self).removeClass('refreshing');
+                            if ($(self).hasClass('active')) {
+                                $('svg.zoom-scatter-chart').find('rect').addClassSVG('cursor-crosshair');
+                            } else {
+                                $('svg.zoom-scatter-chart').find('rect').removeClassSVG('cursor-crosshair');
+                                $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
                             }
                         }
                     }
-            }
+                }
 
         //Don't show Bucketize icon
+        /*
         if(chartConfig['doBucketize'] == true) {
             controlPanelConfig.custom.zoomReset = {
                 iconClass: 'icon-remove-circle active',
@@ -904,7 +957,7 @@ define([
                     }
                 }
             }
-        }
+        }*/
         /*
         if(chartConfig['doBucketize'] == true) {
             controlPanelConfig.custom.bucketize = {
