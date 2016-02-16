@@ -7,6 +7,7 @@ var config = process.mainModule.exports.config;
 var commonUtils = require('../utils/common.utils');
 var async = require('async');
 var configApiServer = require('./configServer.api');
+var logutils = require('./../utils/log.utils');
 
 /**
  * @listProjectsAPIServer
@@ -182,8 +183,59 @@ function getTenantListAndSyncDomain (request, appData, callback)
     });
 }
 
+function getProjectRole (req, res, appData)
+{
+    var defRoles = ['member'];
+    var projUrl = '/project/' + req.param('id') + '?exclude_back_refs=true' +
+        '&exclude_children=true';
+    var plugins = require('./../orchestration/plugins/plugins.api');
+    var adminProjList = plugins.getAdminProjectList(req);
+    var headers = {};
+    var tokenId = null;
+    if ((null != adminProjList) && (adminProjList.length > 0)) {
+        var tokenObjs = req.session.tokenObjs;
+        for (project in tokenObjs) {
+            if (-1 != adminProjList.indexOf(project)) {
+                tokenId =
+                    commonUtils.getValueByJsonPath(tokenObjs[project],
+                                                   'token;id', null);
+                break;
+            }
+        }
+    }
+
+    if (null != tokenId) {
+        headers['X-Auth-Token'] = tokenId;
+        try {
+            headers['X_API_ROLE'] = req.session.userRoles[project].join(',');
+        } catch(e) {
+            headers['X_API_ROLE'] = null;
+        }
+    }
+    configApiServer.apiGet(projUrl, appData, function(error, data) {
+        if ((null != error) || (null == data)) {
+            logutils.logger.error('Project GET failed ' + req.param('id'));
+            commonUtils.handleJSONResponse(null, res, defRoles);
+            return;
+        }
+        var projName =
+            commonUtils.getValueByJsonPath(data, 'project;name',
+                                         null);
+        var userObj = {'tokenid': tokenId, 'tenant': projName, 'req': req};
+        authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
+            if ((null != err) || (null == roles)) {
+                logutils.logger.error('Did not find the roles for project ' +
+                                      projName);
+                roles = defRoles;
+            }
+            commonUtils.handleJSONResponse(null, res, roles);
+        });
+    }, headers);
+}
+
 exports.listProjectsAPIServer = listProjectsAPIServer;
 exports.getProjectsFromApiServer = getProjectsFromApiServer;
 exports.getTenantListAndSyncDomain = getTenantListAndSyncDomain;
 exports.getDomainsFromApiServer = getDomainsFromApiServer;
+exports.getProjectRole = getProjectRole;
 

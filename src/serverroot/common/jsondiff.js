@@ -322,7 +322,7 @@ var arrayDiffpatcher = jsondiffpatch.create({
         return JSON.stringify(obj);
     },
     arrays: {
-        detectMove: false
+        detectMove:true
     }
 });
 
