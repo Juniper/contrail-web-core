@@ -384,10 +384,6 @@ function Contrail() {
      */
     $.fn.heightSVG = function(){
         return ($(this).get(0)) ? $(this).get(0).getBBox().height : null;
-        //var self = $(this).get(0),
-        //    rect = self.getBoundingClientRect();
-        //
-        //return (self) ? rect.height : null;
     };
 
     /*
