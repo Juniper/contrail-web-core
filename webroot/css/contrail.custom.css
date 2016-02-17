@@ -3621,3 +3621,6 @@ tr.collapsibleChildContainer{
 	display: inline;
 }
 
+#interfaces-collection tr:first-child td{
+        padding-top:17px;}
+
