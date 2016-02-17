@@ -10,6 +10,7 @@ var global = require('./global');
 var assert = require('assert');
 var config = process.mainModule.exports.config;
 var plugins = require('../orchestration/plugins/plugins.api');
+var commonUtils = require('../utils/common.utils');
 
 function getApiServerRequestedByData (appData, reqBy)
 {
@@ -49,8 +50,55 @@ function apiDelete (url, appData, callback, appHeaders)
     }, appHeaders);
 }
 
+function getDefProjectByAppData (appData)
+{
+    return commonUtils.getValueByJsonPath(appData,
+                         'authObj;req;cookies;project',
+                         commonUtils.getValueByJsonPath(appData,
+                                 'authObj;defTokenObj;tenant;name',
+                                 null));
+}
+
+function getAuthTokenByProject (req, defTokenObj, project)
+{
+    var defProject =
+        commonUtils.getValueByJsonPath(defTokenObj, 'tenant;name', null);
+    var defToken = commonUtils.getValueByJsonPath(defTokenObj, 'id', null);
+    var requestedToken =
+        commonUtils.getValueByJsonPath(req,'session;tokenObjs;' + project +
+                ';token;id', null);
+    if (null != requestedToken) {
+        return {'project': project, 'token': requestedToken};
+    }
+    return {'project': defProject, 'token': defToken};
+}
+
+function configAppHeaders (headers, appData)
+{
+    var defProject = getDefProjectByAppData(appData);
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
+    var xAuthTokenObj =
+        getAuthTokenByProject(commonUtils.getValueByJsonPath(appData, 'authObj;req',
+                                                             null,false),
+                              commonUtils.getValueByJsonPath(appData,
+                                                             'authObj;defTokenObj',
+                                                             null),
+                              defProject);
+    headers['X-Auth-Token'] = xAuthTokenObj['token'];
+    if (true == multiTenancyEnabled) {
+        var userRole = commonUtils.getValueByJsonPath(appData,
+                'authObj;req;session;userRoles;' + xAuthTokenObj['project'], null);
+        headers['X_API_ROLE'] = (null != userRole)? userRole.join(',') : null;
+    }
+    return headers;
+}
+
 exports.apiGet = apiGet;
 exports.apiPut = apiPut;
 exports.apiPost = apiPost;
 exports.apiDelete = apiDelete;
+exports.getDefProjectByAppData = getDefProjectByAppData;
+exports.getAuthTokenByProject = getAuthTokenByProject;
+exports.configAppHeaders = configAppHeaders;
+
 

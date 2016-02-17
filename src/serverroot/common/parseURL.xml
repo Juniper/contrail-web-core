@@ -23,6 +23,10 @@
         <define>configServerUtils</define>
         <path>./configServer.utils.js</path>
     </require>
+    <require>
+        <define>discoveryClientApi</define>
+        <path>./discoveryclient.api.js</path>
+    </require>
     <item>
         <url>/api/service/networking/device-status/:ip</url>
         <method>post</method>
@@ -61,6 +65,12 @@
         <method>get</method>
         <feature>orchestration</feature>
         <callback>configServerUtils.getProjectRole</callback>
+    </item>
+    <item>
+        <url>/api/tenant/monitoring/discovery-service-list</url>
+        <method>get</method>
+        <feature>discoveryclient</feature>
+        <callback>discoveryClientApi.getDiscServiceRespDataList</callback>
     </item>
 </urlLists>
 
