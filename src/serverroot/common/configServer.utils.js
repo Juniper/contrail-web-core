@@ -188,8 +188,8 @@ function getProjectRole (req, res, appData)
     var defRoles = ['member'];
     var projUrl = '/project/' + req.param('id') + '?exclude_back_refs=true' +
         '&exclude_children=true';
-    var plugins = require('./../orchestration/plugins/plugins.api');
-    var adminProjList = plugins.getAdminProjectList(req);
+    var authApi = require('./auth.api');
+    var adminProjList = authApi.getAdminProjectList(req);
     var headers = {};
     var tokenId = null;
     if ((null != adminProjList) && (adminProjList.length > 0)) {

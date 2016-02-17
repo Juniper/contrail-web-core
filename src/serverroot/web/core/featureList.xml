@@ -33,4 +33,7 @@
         <read-access>member</read-access>
         <write-access>member</write-access>
     </item>
+    <item>
+        <feature>discoveryclient</feature>
+    </item>
 </featureLists>

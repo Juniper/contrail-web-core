@@ -6,7 +6,8 @@ var rest = require('../../common/rest.api'),
     config = process.mainModule.exports.config,
     authApi = require('../../common/auth.api'),
     commonUtils = require('../../utils/common.utils'),
-    configServer;
+    configServer,
+    configServerApi = require('../../common/configServer.api')
 
 configServer = rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,
                                  server: config.cnfg.server_ip, port:
@@ -88,8 +89,8 @@ function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
     var headers = {};
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
-    var defProject = getDefProjectByAppData(appData);
-    headers = configAppHeaders(headers, appData);
+    var defProject = configServerApi.getDefProjectByAppData(appData);
+    headers = configServerApi.configAppHeaders(headers, appData);
     headers = getHeaders(headers, appHeaders);
     configServer.api.get(reqUrl, function(err, data) {
         if (err) {
@@ -110,11 +111,11 @@ function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
 function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 {
     var defProject = null;
-    var headers = {}; 
+    var headers = {};
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
-    var defProject = getDefProjectByAppData(appData);
-    headers = configAppHeaders(headers, appData);
+    var defProject = configServerApi.getDefProjectByAppData(appData);
+    headers = configServerApi.configAppHeaders(headers, appData);
     headers = getHeaders(headers, appHeaders);
 
     configServer.api.put(reqUrl, reqData, function(err, data) {
@@ -136,11 +137,11 @@ function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 {
     var defProject = null;
-    var headers = {}; 
+    var headers = {};
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
-    var defProject = getDefProjectByAppData(appData);
-    headers = configAppHeaders(headers, appData);
+    var defProject = configServerApi.getDefProjectByAppData(appData);
+    headers = configServerApi.configAppHeaders(headers, appData);
     headers = getHeaders(headers, appHeaders);
 
     configServer.api.post(reqUrl, reqData, function(err, data) {
@@ -162,11 +163,11 @@ function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
 {
     var defProject = null;
-    var headers = {}; 
+    var headers = {};
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
 
-    var defProject = getDefProjectByAppData(appData);
-    headers = configAppHeaders(headers, appData);
+    var defProject = configServerApi.getDefProjectByAppData(appData);
+    headers = configServerApi.configAppHeaders(headers, appData);
     headers = getHeaders(headers, appHeaders);
 
     configServer.api.delete(reqUrl, function(err, data) {

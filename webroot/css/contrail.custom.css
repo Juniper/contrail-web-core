@@ -3485,7 +3485,6 @@ div.vis-network canvas{
 #family_attrs{padding:0px 87px 0px 15px}
 #family_attrs div a.editable-grid-add-link{
     float:left;
-    padding:0px 0px 10px 0px;
     font-size:12px;}
 #family_attrs th:first-child, #family_attrs td:first-child{
     padding-left:50px;}
@@ -3550,11 +3549,12 @@ tr.collapsibleChildContainer> td{
     padding-right:12px;}
 #peer_selection>table table, #peer_selection>table table input{
     font-size:12px;}
+
 tr.collapsibleChildContainer{
     border-bottom:#d7d7d7 solid 1px;}
 .bgp-peer-text-center{text-align:center!important;}
-#peer_selection .contrail-editable-grid-table thead,#peer_selection  .collection-table thead{
-    line-height:1;}
+/*#peer_selection .contrail-editable-grid-table thead,#peer_selection  .collection-table thead{
+    line-height:1;}*/
 
 #peer_selection>table tr.data-row>td{
     padding-top:10px!important;}
@@ -3602,10 +3602,15 @@ tr.collapsibleChildContainer{
     padding-left:5px;}
 #network_ipam_refs td, #user_created_host_routes td, #user_created_dns_servers td, #floating_ip_pools td, #user_created_route_targets td, #user_created_export_route_targets td, #user_created_import_route_targets td, #configure-Ports td, #configure-service_instance-form td{
     padding-left:2px;}
+
+/*
 #network-form .contrail-editable-grid-table thead,#network-form .collection-table thead, #advanced_options .contrail-editable-grid-table thead, #advanced_options .collection-table thead,#configure-service_instance #svcInstV1PropAccordian thead,#configure-Ports #dhcpOptionCollection thead,#configure-Ports #fatFlowCollection thead {
-    line-height:1;}
+    line-height:1;}*/
  .headerRowAction{
-    padding-bottom:8px;}
+    margin-top:0px!important;
+    margin-bottom:0px!important;
+    padding-bottom:0px;
+    max-width:17px;}
 .action-cell a+a{padding-left:5px;}
 .headerRowAction{padding-left:2px;}
 .underlay-container:before {
@@ -3629,3 +3634,12 @@ tr.collapsibleChildContainer{
 	display: inline;
 }
 
+#configure-service_template #interfaces>table{
+    width:100%;}
+td.action-cell a{color:#787878;}
+input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] + .ace-lbl::before{
+    margin-right:8px;}
+.headerRowAction:parent{
+    width:40px;}
+#ipFabAddresses{
+    padding-top:24px;}
