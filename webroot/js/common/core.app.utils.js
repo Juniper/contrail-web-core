@@ -249,11 +249,16 @@ function initCustomKOBindings(Knockout) {
                 var valueBindingAccessor = allBindingsAccessor.get('value'),
                     value = Knockout.utils.unwrapObservable(valueBindingAccessor),
                     optionListBindingAccessor = allBindingsAccessor.get('optionList'),
-                    optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor),
-                    formattedOptionList = formatData(optionList, elementConfig),
+                    optionList = Knockout.utils.unwrapObservable(optionListBindingAccessor);
+
+                if (contrail.checkIfFunction(optionList)) {
+                    optionList = optionList(viewModel);
+                }
+
+                var formattedOptionList = formatData(optionList, elementConfig),
                     currentOptionList = multiselect.getAllData();
 
-                if (JSON.stringify(formattedOptionList) !== JSON.stringify(currentOptionList)) {
+               if (JSON.stringify(formattedOptionList) !== JSON.stringify(currentOptionList)) {
                     value = contrail.checkIfFunction(value) ? value() : value;
                     if (value !== '') {
                         value = $.isArray(value) ? value : [value];
@@ -261,11 +266,7 @@ function initCustomKOBindings(Knockout) {
                         value = [];
                     }
 
-                    if (contrail.checkIfFunction(optionList) && $.isArray(optionList(viewModel))) {
-                        multiselect.setData(optionList(viewModel), value, true);
-                    } else if ($.isArray(optionList)) {
-                        multiselect.setData(optionList, value, true);
-                    }
+                   multiselect.setData(optionList, value, true);
                 }
             }
 

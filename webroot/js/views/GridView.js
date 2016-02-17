@@ -201,7 +201,7 @@ define([
                 if (gridConfig.header) {
                     generateGridHeaderTemplate(gridConfig.header);
 
-                    gridContainer.find('.grid-widget-header .widget-toolbar-icon').on('click', function (e) {
+                    gridContainer.find('.grid-widget-header .widget-toolbar-icon, .grid-widget-header .grid-header-text').on('click', function (e) {
                         if (!$(this).hasClass('disabled-link')) {
                             var command = $(this).attr('data-action'),
                                 gridHeader = $(this).parents(".grid-header");
@@ -270,6 +270,12 @@ define([
                             }
                         }
                     });
+
+                    gridContainer.find('[data-action="widget-collapse"]')
+                        .off('click')
+                        .on('click', function (event) {
+                            gridContainer.data('contrailGrid').expand();
+                        });
 
                     $.each(gridColumns, function (key, val) {
                         // Setting searchable:true for columns wherever necessary
@@ -676,7 +682,7 @@ define([
                                 }
 
                                 //$('#' + gridContainer.prop('id') + '-action-menu').remove();
-                                addGridRowActionDroplist(actionCellArray, gridContainer, args.row, $(e.target));
+                                addGridRowActionDroplist(actionCellArray, gridContainer, args.row, $(e.target), rowData);
                                 var offset = $(e.target).offset(), actionCellStyle = '';
                                 if (gridOptions.actionCellPosition == 'start') {
                                     actionCellStyle = 'top:' + (offset.top + 20) + 'px' + ';right:auto !important;left:' + offset.left + 'px !important;';
@@ -1148,7 +1154,7 @@ define([
 
             function generateGridHeaderTemplate(headerConfig) {
                 var template = ' \
-                <h4 class="grid-header-text smaller {{this.cssClass}}"> \
+                <h4 class="grid-header-text smaller {{this.cssClass}}" data-action="collapse"> \
             		<i class="grid-header-icon-loading icon-spinner icon-spin"></i> \
                     <i class="grid-header-icon {{this.icon}} {{this.iconCssClass}} hide"></i> {{this.text}} \
                 </h4>',
@@ -1232,7 +1238,8 @@ define([
                     });
                 }
 
-                headerTemplate = '<div class="grid-header"><div id="' + gridContainer.prop('id') + '-header' + '"class="widget-header grid-widget-header">' + template + '</div></div>';
+                headerTemplate = '<div class="grid-header"><div id="' + gridContainer.prop('id') + '-header' + '" class="widget-header grid-widget-header">' + template + '</div></div>';
+                headerTemplate += '<div class="widget-body-collapsed" data-action="widget-collapse"><a>Click here to expand <i class="icon-double-angle-down"></i></a> </div>';
                 gridContainer.append(Handlebars.compile(headerTemplate)(gridConfig.header.title));
 
                 if (headerConfig.advanceControls) {
@@ -1403,7 +1410,7 @@ define([
                 }
             };
 
-            function addGridRowActionDroplist(actionConfig, gridContainer, rowIndex, targetElement) {
+            function addGridRowActionDroplist(actionConfig, gridContainer, rowIndex, targetElement, rowData) {
                 var menuClass = 'dropdown-menu pull-right dropdown-caret grid-action-menu';
                 if (gridOptions.actionCellPosition == 'start') {
                     menuClass = 'dropdown-menu pull-left dropdown-caret grid-action-menu';
@@ -1420,7 +1427,7 @@ define([
                     </li>').appendTo('#' + gridContainer.prop('id') + '-action-menu-' + rowIndex);
 
                     $(actionItem).on('click', function () {
-                        actionItemConfig.onClick(rowIndex, targetElement);
+                        actionItemConfig.onClick(rowIndex, targetElement, rowData);
                         gridActionId.remove();
                     });
                 });

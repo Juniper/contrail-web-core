@@ -182,7 +182,7 @@ define([
         };
 
         this.getOnClickSessionAnalyzer = function(clickOutView, queryId, queryFormAttributes, elementId) {
-            return function (e, selRowDataItem) {
+            return function (e, targetElement, selRowDataItem) {
                 var elementId = $(elementId),
                     saElementId = cowl.QE_SESSION_ANALYZER_VIEW_ID + '-' + queryId + '-' + selRowDataItem.cgrid,
                     sessionAnalyzerConfig = {
@@ -210,13 +210,13 @@ define([
             return '<i class="icon-external-link-sign" title="Analyze Session"></i>';
         };
 
-        this.setSessionAnalyzerOnClick = function(parentView, queryFormAttributes, elementId) {
-            return function(e, selRowDataItem) {
-                if (qewu.enableSessionAnalyzer(selRowDataItem)) {
-                    this.getOnClickSessionAnalyzer(parentView, queryFormAttributes, elementId)(e, selRowDataItem);
-                }
-            };
-        };
+        //this.setSessionAnalyzerOnClick = function(parentView, queryFormAttributes, elementId) {
+        //    return function(e, selRowDataItem) {
+        //        if (qewu.enableSessionAnalyzer(selRowDataItem)) {
+        //            this.getOnClickSessionAnalyzer(parentView, queryFormAttributes, elementId)(e, selRowDataItem);
+        //        }
+        //    };
+        //};
 
         this.getQueryGridConfig = function(remoteConfig, gridColumns, gridOptions) {
             return {
@@ -236,7 +236,8 @@ define([
                         fixedRowHeight: contrail.checkIfExist(gridOptions.fixedRowHeight) ? gridOptions.fixedRowHeight : 30,
                         forceFitColumns: false,
                         defaultDataStatusMessage: false,
-                        actionCell: contrail.checkIfExist(gridOptions.actionCell) ? gridOptions.actionCell : false
+                        actionCell: contrail.checkIfExist(gridOptions.actionCell) ? gridOptions.actionCell : false,
+                        actionCellPosition: contrail.checkIfExist(gridOptions.actionCellPosition) ? gridOptions.actionCellPosition : 'end'
                     },
                     dataSource: {
                         remote: {

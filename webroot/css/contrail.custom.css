@@ -848,6 +848,14 @@ a.selectAllLink:hover {
 .contrail-grid > .collapsed {
 	display: none;
 }
+.contrail-grid .widget-body-collapsed {
+    display: none;
+}
+.contrail-grid .widget-body-collapsed.collapsed {
+    border-top: 1px solid #DDD;
+    border-bottom: none;
+    display: block;
+}
 .slick-sort-indicator{
 	margin-left: 0;	
 	margin-top: 0;
