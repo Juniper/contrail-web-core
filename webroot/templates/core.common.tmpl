@@ -2222,6 +2222,19 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
     <div id="{{prefixId}}_modal"></div>
 </script>
 
+<script type="text/x-handlebars-template" id="cdb-delete-template">
+    <div class="alert alert-error" data-bind="visible: errors().{{elementId}}_error">
+        <button type="button" class="close" data-dismiss="alert"></button>
+        <strong>Error: </strong>
+        <span data-bind="text: errors().{{elementId}}_error"></span>
+    </div>
+    {{#IfCompare checkedRows.keyvalue null operator="!="}}
+    <div>Are you sure you want to delete <b>{{checkedRows.keyvalue}}</b>?</div>
+    {{else}}
+    <div>Are you sure you want to delete <b>{{checkedRows.key}}</b>?</div>
+    {{/IfCompare}}
+</script>
+
 <script type="text/x-handlebars-template" id="core-generic-collection-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
     <table class="contrail-editable-grid-table" >
