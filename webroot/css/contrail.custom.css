@@ -3466,7 +3466,7 @@ div.vis-network canvas{
 #address_family{
     padding-right:0px;
     width:220px;}
-#loop_count{width:204px;}
+#configure-bgp_router #loop_count{width:204px;}
 #bgp-grid ul.item-list .key{
     width:23.08% !important;
     }
@@ -3527,7 +3527,6 @@ background:none;
     padding-right:0px;
     width:250px;
     padding-top:0px;}
-#loop_count{width:213px;}
 #prefix_limit{width:213px}
 #bgp-grid ul.item-list .key{
     width:23.08% !important;
@@ -3637,8 +3636,8 @@ tr.collapsibleChildContainer{
 #configure-service_template #interfaces>table{
     width:100%;}
 td.action-cell a{color:#787878;}
-input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] + .ace-lbl::before{
-    margin-right:8px;}
+#configure-service_template input.ace-input[type=checkbox] + .ace-lbl::before, #configure-service_template input.ace-input[type=radio] + .ace-lbl::before{
+        margin-right:8px;}
 .headerRowAction:parent{
     width:40px;}
 #ipFabAddresses{
