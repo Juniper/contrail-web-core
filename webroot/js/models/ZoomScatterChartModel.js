@@ -90,7 +90,7 @@ define([
                     xMin = forceX[0] * .9;
                     xMax = forceX[0] * 1.1;
                 }
-                if(forceX[0] > 0 && xMin < 0)
+                if(forceX[0] >= 0 && xMin < 0)
                     xMin = 0;
                 forceX = [xMin,xMax];
 
@@ -104,7 +104,7 @@ define([
                     yMin = forceY[0] * .9;
                     yMax = forceY[0] * 1.1;
                 }
-                if(forceY[0] > 0 && yMin < 0)
+                if(forceY[0] >= 0 && yMin < 0)
                     yMin = 0;
                 forceY = [yMin,yMax];
             } else {

@@ -3643,3 +3643,7 @@ input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] +
     width:40px;}
 #ipFabAddresses{
     padding-top:24px;}
+
+#interfaces-collection tr:first-child td{
+        padding-top:17px;}
+

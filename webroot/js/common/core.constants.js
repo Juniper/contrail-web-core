@@ -89,6 +89,7 @@ define([
 
         this.TMPL_COLLECTION_VIEW = "core-collection-view-template";
         this.TMPL_GEN_COLLECTION_VIEW = "core-generic-collection-view-template";
+        this.TMPL_COLLECTION_COMMON_HEADING_VIEW="core-collection-common-heading-view-template"
         this.TMPL_QUERY_OR_COLLECTION_VIEW = "query-or-collection-view-template";
         this.TMPL_COLLECTION_HEADING_VIEW = "core-collection-view-heading-template";
         this.TMPL_COLLECTION_GRIDACTION_HEADING_VIEW = "core-collection-view-grid-action-heading-template";

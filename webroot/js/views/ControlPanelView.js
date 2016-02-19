@@ -15,8 +15,7 @@ define([
 
             $(controlPanelSelector).html(controlPanelTemplate(viewConfig));
 
-            if ((contrail.checkIfKeyExistInObject(true, viewConfig, 'default.zoom.enabled') && viewConfig.default.zoom.enabled) ||
-                    (viewConfig.default.zoom.doBucketize != null && viewConfig.default.zoom.doBucketize == true)) {
+            if (contrail.checkIfKeyExistInObject(true, viewConfig, 'default.zoom.enabled') && viewConfig.default.zoom.enabled) {
                 viewConfig.default.zoom.events(controlPanelSelector);
             }
 
