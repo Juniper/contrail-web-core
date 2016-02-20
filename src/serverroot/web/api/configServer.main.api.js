@@ -56,8 +56,8 @@ function getAuthTokenByProject (req, defTokenObj, project, callback)
                                        null);
     var defTokenId =
         commonUtils.getValueByJsonPath(defTokenObj, 'id', null);
-    var plugins = require('./../../orchestration/plugins/plugins.api');
-    var adminProjList = plugins.getAdminProjectList(req);
+    var authApi = require('./../../common/auth.api');
+    var adminProjList = authApi.getAdminProjectList(req);
     if ((null == adminProjList) ||(!adminProjList.length)) {
         callback(null, {'project': defProject, 'token': defTokenId});
         return;

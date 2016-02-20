@@ -186,6 +186,33 @@ function getDomainNameByUUID (request, uuid, domList)
                                                                              domList);
 }
 
+var adminRoleProjects = ['admin'];
+function getAdminProjectList (req)
+{
+    var adminProjectList = [];
+    var adminRoleProjectsCnt = adminRoleProjects.length;
+    var userRoles = req.session.userRoles;
+    for (key in userRoles) {
+        for (var i = 0; i < adminRoleProjectsCnt; i++) {
+            var roles = req.session.userRoles[key];
+            if (null == roles) {
+                logutils.logger.error('req.session.userRoles null for project:' +
+                                      ' ' + key);
+                continue;
+            }
+            var roleCnt = roles.length;
+            var adminRole = adminRoleProjects[i].toUpperCase();
+            for (var j = 0; j < roleCnt; j++) {
+                var userRole = roles[j].toUpperCase();
+                if (userRole == adminRole) {
+                    adminProjectList.push(key);
+                }
+            }
+        }
+    }
+    return adminProjectList;
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -206,4 +233,5 @@ exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
 exports.getDomainNameByUUID = getDomainNameByUUID;
 exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
+exports.getAdminProjectList = getAdminProjectList;
 

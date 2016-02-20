@@ -166,38 +166,11 @@ function formatDomainList (req, tenantList, domainListObjs)
     return domainObjs;
 }
 
-var adminRoleProjects = ['admin'];
-function getAdminProjectList (req)
-{
-    var adminProjectList = [];
-    var adminRoleProjectsCnt = adminRoleProjects.length;
-    var userRoles = req.session.userRoles;
-    for (key in userRoles) {
-        for (var i = 0; i < adminRoleProjectsCnt; i++) {
-            var roles = req.session.userRoles[key];
-            if (null == roles) {
-                logutils.logger.error('req.session.userRoles null for project:' +
-                                      ' ' + key);
-                continue;
-            }
-            var roleCnt = roles.length;
-            var adminRole = adminRoleProjects[i].toUpperCase();
-            for (var j = 0; j < roleCnt; j++) {
-                var userRole = roles[j].toUpperCase();
-                if (userRole == adminRole) {
-                    adminProjectList.push(key);
-                }
-            }
-        }
-    }
-    return adminProjectList;
-}
-
 function setAllCookies (req, res, appData, cookieObj, callback)
 {
     var loginErrFile = 'webroot/html/login-error.html';
     var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
-    var adminProjectList = getAdminProjectList(req);
+    var adminProjectList = authApi.getAdminProjectList(req);
     if (null == appData['authObj']['defTokenObj']) {
         /* We have not got defTokenObj filled yet while sending to Auth
          * Module, so fill it up here
@@ -259,4 +232,3 @@ exports.setAllCookies = setAllCookies;
 exports.doDomainExist = doDomainExist;
 exports.formatDomainList = formatDomainList;
 exports.getDomainFqnByDomainUUID = getDomainFqnByDomainUUID;
-exports.getAdminProjectList = getAdminProjectList;
