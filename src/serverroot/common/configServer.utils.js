@@ -185,8 +185,8 @@ function getTenantListAndSyncDomain (request, appData, callback)
 
 function getProjectRole (req, res, appData)
 {
-    var defRoles = ['member'];
-    var projUrl = '/project/' + req.param('id') + '?exclude_back_refs=true' +
+    var projId = req.param('id');
+    var projUrl = '/project/' + projId + '?exclude_back_refs=true' +
         '&exclude_children=true';
     var authApi = require('./auth.api');
     var adminProjList = authApi.getAdminProjectList(req);
@@ -204,6 +204,25 @@ function getProjectRole (req, res, appData)
         }
     }
 
+    var syncedProj =
+        commonUtils.getValueByJsonPath(req,
+                                       'session;syncedProjects;' + projId +
+                                       ';name', null);
+    var uiRoles = null;
+    if (null != syncedProj) {
+        /* We do not do anything currently with role, so comment it, will enable
+         * it when RBAC is supported in API Server
+         */
+        /*
+        var userRoles = req.session.userRoles;
+        uiRoles = [global.STR_ROLE_ADMIN];
+        if (null != userRoles) {
+            uiRoles = authApi.getUIRolesByExtRoles(req, userRoles[syncedProj]);
+        }
+        */
+        commonUtils.handleJSONResponse(null, res, uiRoles);
+        return;
+    }
     if (null != tokenId) {
         headers['X-Auth-Token'] = tokenId;
         try {
@@ -215,20 +234,37 @@ function getProjectRole (req, res, appData)
     configApiServer.apiGet(projUrl, appData, function(error, data) {
         if ((null != error) || (null == data)) {
             logutils.logger.error('Project GET failed ' + req.param('id'));
-            commonUtils.handleJSONResponse(null, res, defRoles);
+            commonUtils.handleJSONResponse(null, res, uiRoles);
             return;
         }
         var projName =
             commonUtils.getValueByJsonPath(data, 'project;name',
                                          null);
+        if (null != projName) {
+            if (null == req.session.syncedProjects) {
+                req.session.syncedProjects = {};
+            }
+            req.session.syncedProjects[projId] = {};
+            req.session.syncedProjects[projId]['name'] = projName;
+        }
+        var userRoles = req.session.userRoles;
+        if ((null != tokenObjs) && (null != tokenObjs[projName]) &&
+            (null != userRoles) && (null != userRoles[projName])) {
+            //var uiRoles = authApi.getUIRolesByExtRoles(req, userRoles[projName]);
+            /* We got, no need to deduce uiRoles now, will do once RBAC is
+             * supported */
+            commonUtils.handleJSONResponse(null, res, uiRoles);
+            return;
+        }
         var userObj = {'tokenid': tokenId, 'tenant': projName, 'req': req};
         authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
             if ((null != err) || (null == roles)) {
                 logutils.logger.error('Did not find the roles for project ' +
                                       projName);
-                roles = defRoles;
+                commonUtils.redirectToLogout(req, res);
+                return;
             }
-            commonUtils.handleJSONResponse(null, res, roles);
+            commonUtils.handleJSONResponse(null, res, uiRoles);
         });
     }, headers);
 }

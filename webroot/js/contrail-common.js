@@ -213,8 +213,12 @@ function Contrail() {
         } else if (false == insecureAccess) {
             secureCookieStr = "; secure";
         }
+        var cookieExpTime =
+            getValueByJsonPath(globalObj,
+                               'webServerInfo;sessionExpiresAt',
+                               'Sun, 17 Jan 2038 00:00:00 UTC');
         document.cookie = name + "=" + escape(value) +
-            "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/" + secureCookieStr;
+            "; expires=" + cookieExpTime + "; path=/" + secureCookieStr;
     };
 
     this.formatJSON2HTML = function(json, formatDepth, ignoreKeys){

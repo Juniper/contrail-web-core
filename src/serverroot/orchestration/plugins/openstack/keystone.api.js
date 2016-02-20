@@ -930,7 +930,7 @@ function getUIUserRoleByTenant (userObj, callback)
     getExtUserRoleByTenant(userObj, function(err, data) {
         if ((null != err) || (null == data) ||
             (null == data['roles'])) {
-            callback(null, [global.STR_ROLE_USER]);
+            callback(null, null);
             return;
         }
         roles = getUIRolesByExtRoles(data['roles']);
@@ -941,8 +941,6 @@ function getUIUserRoleByTenant (userObj, callback)
 function getExtUserRoleByTenant (userObj, callback)
 {
     var userTokenObj = {};
-    var username = userObj['username'];
-    var password = userObj['password'];
     var tenant   = userObj['tenant'];
     doAuth(userObj, function(data) {
         if ((null != data) && (null != data['access']) &&
