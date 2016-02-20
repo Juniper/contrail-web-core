@@ -1412,16 +1412,44 @@ function getWebServerInfo (req, res, appData)
 
     var project = req.param('project');
     var tokenObjs = req.session.tokenObjs;
-    for (key in tokenObjs) {
-        var tokenId = tokenObjs[key]['token']['id'];
-        break;
+    if ((null != tokenObjs) && (null != tokenObjs[project])) {
+        /* We already fetched */
+        commonUtils.handleJSONResponse(null, res, serverObj);
+        return;
     }
+    var adminProjList = authApi.getAdminProjectList(req);
+    var tokenId = null;
+    if ((null != adminProjList) && (adminProjList.length > 0)) {
+        var adminProjCnt = adminProjList.length;
+        for (var i = 0; i < adminProjCnt; i++) {
+            if ((null != tokenObjs) && (null != tokenObjs[adminProjList[i]])) {
+                tokenId = getValueByJsonPath(tokenObjs[adminProjList[i]],
+                                             'token;id', null);
+                if (null != tokenId) {
+                    break;
+                }
+            }
+        }
+    }
+
     var userObj = {'tokenid': tokenId, 'tenant': project, 'req': req};
     var authApi = require('../common/auth.api');
     authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
+        if (null == roles) {
+            /* We did not find the project role, so redirect to login */
+            logutils.logger.error('We did not get the project in keystone or role' +
+                                  ' not assigned, redirecting to login.');
+            redirectToLogout(req, res);
+            return;
+        }
+        /* Do not update the role, we will enable it when RBAC is supported in
+         * API Server
+         */
+        /*
         if ((null == err) && (null != roles)) {
             serverObj['role'] = roles;
         }
+        */
         commonUtils.handleJSONResponse(null, res, serverObj);
     });
 }
