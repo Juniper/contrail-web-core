@@ -211,6 +211,7 @@ function setAllCookies (req, res, appData, cookieObj, callback)
     var secureCookieStr = (false == config.insecure_access) ? "; secure" : "";
     res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
                   '; expires=' + cookieExpStr + secureCookieStr);
+    req.session.sessionExpiresAt = cookieExpStr;
     authApi.getCookieObjs(req, appData, function(cookieObjs) {
         if (null != cookieObjs['domain']) {
             res.setHeader('Set-Cookie', 'domain=' + cookieObjs['domain'] +
