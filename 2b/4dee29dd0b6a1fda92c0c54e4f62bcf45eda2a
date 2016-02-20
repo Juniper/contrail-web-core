@@ -1,0 +1,10 @@
+Verified+2: opencontrail-admin <ci-admin@opencontrail.org>
+Verified+2: Zuul <zuul@lists.opencontrail.org>
+Approved+1: Ashish Ranjan <aranjan@juniper.net>
+Approved+1: Rahul <rahuls@juniper.net>
+Code-Review+2: Rahul <rahuls@juniper.net>
+Submitted-by: Zuul <zuul@lists.opencontrail.org>
+Submitted-at: Fri, 19 Feb 2016 21:29:49 -0800
+Reviewed-on: https://review.opencontrail.org/17474
+Project: Juniper/contrail-web-core
+Branch: refs/heads/R3.0
