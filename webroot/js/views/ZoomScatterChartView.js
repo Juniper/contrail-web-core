@@ -708,7 +708,11 @@ define([
                 return d['size'];
             })
             .attr("class", function (d) {
-                return getBubbleColor(d[chartConfig.colorFilterFields], chartModel.classes, chartModel.maxColorFilterFields);
+                var bubbleClass = getBubbleColor(d[chartConfig.colorFilterFields], chartModel.classes, chartModel.maxColorFilterFields);
+                if(chartOptions['doBucketize'] == true && d.children instanceof Array && d.children.length > 1) {
+                    bubbleClass += " " + bubbleClass + "-overlap";
+                }
+                return bubbleClass;
             })
             .attr("transform", function (d) {
                 var xTranslate = chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius,
@@ -720,7 +724,20 @@ define([
                     yTranslate = chartModel.yScale.range()[0];
                 return "translate(" + xTranslate + "," + yTranslate + ")";
             })
-            .attr("opacity", "0.6")
+            .attr("opacity", function(d) {
+                if(chartOptions['doBucketize'] == true && d.children instanceof Array && d.children.length > 1) {
+                    return null;
+                } else {
+                    return "0.6";
+                }
+            })
+            .attr("fill-opacity", function(d) {
+                if(d.children instanceof Array && d.children.length > 1) {
+                    return "0.6";
+                } else {
+                    return null;
+                }
+            })
             .on("mouseenter", function (d) {
                 var tooltipData = d;
                 if(tooltipData['isBucket'] == true) {
