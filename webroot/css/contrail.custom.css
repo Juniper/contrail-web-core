@@ -3154,12 +3154,22 @@ i.error {
   color: #d62728;
 }
 
+.zoom-scatter-chart-container.rightmenu .col1 .error-overlap {
+    stroke-width: 2px;
+    stroke: #d62728;
+}
+
 .zoom-scatter-chart-container.rightmenu .col1 .warning,
 input.ace-input[type=checkbox] + .ace-lbl.warning::before,
 input.ace-input[type=radio] + .ace-lbl.warning::before,
 i.warning {
   fill: #ff7f0e;
   color: #ff7f0e;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .warning-overlap {
+    stroke-width: 2px;
+    stroke: #ff7f0e;
 }
 
 .zoom-scatter-chart-container.rightmenu .col1 .medium,
@@ -3170,6 +3180,11 @@ i.medium {
   color: #6baed6;
 }
 
+.zoom-scatter-chart-container.rightmenu .col1 .medium-overlap {
+    stroke-width: 2px;
+    stroke: #6baed6;
+}
+
 .zoom-scatter-chart-container.rightmenu .col1 .okay,
 input.ace-input[type=checkbox] + .ace-lbl.okay::before,
 input.ace-input[type=radio] + .ace-lbl.okay::before,
@@ -3178,12 +3193,22 @@ i.okay {
   color: #2ca02c;
 }
 
+.zoom-scatter-chart-container.rightmenu .col1 .okay-overlap {
+    stroke-width: 2px;
+    stroke: #2ca02c;
+}
+
 .zoom-scatter-chart-container.rightmenu .col1 .default,
 input.ace-input[type=checkbox] + .ace-lbl.default::before,
 input.ace-input[type=radio] + .ace-lbl.default::before,
 i.default {
   fill: #1f77b4;
   color: #1f77b4;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .default-overlap {
+    stroke-width: 2px;
+    stroke: #1f77b4;
 }
 
 .zoom-scatter-chart-container.rightmenu .col1 .inactive {
