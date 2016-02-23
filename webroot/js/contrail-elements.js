@@ -1231,6 +1231,37 @@ function constructSelect2(self, defaultOption, args) {
             },
             source = [];
 
+        //To add newly entered text to the option of multiselect.
+        if (defaultOption.multiple == true && defaultOption.tags != null && defaultOption.tags == true) {
+            option['createSearchChoice'] = function (term,data) {
+                return {
+                    id: $.trim(term),
+                    text: $.trim(term)
+                };
+            }
+            option['tags'] = true;
+            option['tokenSeparators'] = [","];
+            option['initSelection'] = function (element, callback) {
+                var data = [];
+
+                function splitVal(string, separator) {
+                    var val, i, l;
+                    if (string === null || string.length < 1) return [];
+                    val = string.split(separator);
+                    for (i = 0, l = val.length; i < l; i = i + 1) val[i] = $.trim(val[i]);
+                    return val;
+                }
+
+                $(splitVal(element.val(), ",")).each(function () {
+                    data.push({
+                        id: this,
+                        text: this
+                    });
+                });
+
+                callback(data);
+            };
+        }
         $.extend(true, option, defaultOption);
         option.dataTextField = {dsVar: option.dataTextField, apiVar: 'text'};
         option.dataValueField = {dsVar: option.dataValueField, apiVar: 'id'};
