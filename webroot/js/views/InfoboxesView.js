@@ -11,6 +11,8 @@ define([
             var self = this;
             self.loadedInfoboxes = [];
 
+            //Clean-up if there already exists .infobox-container
+            self.$el.find('.infobox-container').remove();
             self.$el.append(contrail.getTemplate4Id(cowc.TMPL_INFOBOXES_VIEW)());
             self.$el.find("[data-action='refresh']").on('click',function() {
                 for(var len=self.loadedInfoboxes.length,i=0;i < len;i++) {
