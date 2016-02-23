@@ -683,11 +683,13 @@ define([
 
                                 //$('#' + gridContainer.prop('id') + '-action-menu').remove();
                                 addGridRowActionDroplist(actionCellArray, gridContainer, args.row, $(e.target), rowData);
-                                var offset = $(e.target).offset(), actionCellStyle = '';
+                                var windowWidth = $(window).width(),
+                                    offset = $(e.target).offset(),
+                                    actionCellStyle = '';
                                 if (gridOptions.actionCellPosition == 'start') {
                                     actionCellStyle = 'top:' + (offset.top + 20) + 'px' + ';right:auto !important;left:' + offset.left + 'px !important;';
                                 } else {
-                                    actionCellStyle = 'top:' + (offset.top + 20) + 'px' + ';left:' + (offset.left - 155) + 'px;';
+                                    actionCellStyle = 'top:' + (offset.top + 20) + 'px' + '; right: ' + (windowWidth - offset.left - 22) + 'px !important;';
                                 }
                                 $('#' + gridContainer.prop('id') + '-action-menu-' + args.row).attr('style', function (idx, obj) {
                                     if (obj != null) {
@@ -1334,7 +1336,9 @@ define([
                     '</div>').appendTo('#' + gridContainer.prop('id') + '-header');
 
                 $(action).on('click', function (event) {
-                    actionConfig.onClick(event, gridContainer);
+                    if (!$(this).find('a').hasClass('disabled-link')) {
+                        actionConfig.onClick(event, gridContainer);
+                    }
                 });
             };
 
