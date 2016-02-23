@@ -202,7 +202,7 @@ constants.buildBaseConfJson = {
     skipModuleInsertion: true,
     keepAmdefine: true,
     modules: [],
-    optimize: 'uglify2',
+    optimize: 'none',
     uglify2: {
         output: {
             beautify: false

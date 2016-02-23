@@ -158,7 +158,7 @@ define([
         if (chartModel.isPrimaryRequestInProgress() && !chartModel.loadedFromCache) {
             dataLoadingHandler(chartView, chartConfig, chartOptions, chartDataRequestState)
         } else if (chartModel.isError() === true) {
-            dataErrorHandler(chartView, chartDataRequestState);
+            dataErrorHandler(chartView, chartConfig, chartDataRequestState);
         } else if(chartModel.isEmpty() === true) {
             dataEmptyHandler(chartView, chartConfig, chartDataRequestState)
         } else {
@@ -612,7 +612,7 @@ define([
         updateFilteredCntInHeader(chartView);
     }
 
-    function dataErrorHandler(chartView, chartDataRequestState) {
+    function dataErrorHandler(chartView, chartConfig, chartDataRequestState) {
         var chartMessage = chartConfig.statusMessageHandler(chartDataRequestState);
         chartView.renderMessage(chartMessage);
         updateFilteredCntInHeader(chartView);
