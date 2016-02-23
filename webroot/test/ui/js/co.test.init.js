@@ -78,6 +78,11 @@ function testAppInit(testAppConfig) {
             $('head').append('<base href="/vcenter/" />');
         }
 
+        //fix issue in Chrome for jointJS graphs.
+        SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(toElement) {
+                return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM());
+            };
+
         require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages,
                                     CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, CoreCommonTmpl,
                                     QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils,
