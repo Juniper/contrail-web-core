@@ -418,6 +418,11 @@
                 }
             };
 
+            input.data("ui-autocomplete")._resizeMenu = function () {
+                var ul = this.menu.element;
+                ul.outerWidth(this.element.outerWidth());
+            };
+
             $("<span>")
                 .addClass('add-on')
                 .appendTo( wrapper )
@@ -1262,6 +1267,7 @@ function constructSelect2(self, defaultOption, args) {
                 callback(data);
             };
         }
+
         $.extend(true, option, defaultOption);
         option.dataTextField = {dsVar: option.dataTextField, apiVar: 'text'};
         option.dataValueField = {dsVar: option.dataValueField, apiVar: 'id'};
