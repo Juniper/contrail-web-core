@@ -3385,18 +3385,18 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
     background-color:#f9f9f9;
 }
 
-#PolicyRules table{
+#PolicyRules table, #static_routes_collection>div>table{
     margin-top:10px;
 }
 
 .ui-accordion #interfaceCollectionAccordian.ui-accordion-content{
     padding:1px;
 }
-
+/*
 #interfaceCollectionAccordian .contrail-editable-grid-table tr td{
     padding:5px 0px;
 }
-
+*/
 #interfaceCollectionAccordian .editable-grid-input-append{
     padding-right:17px;
 }
@@ -3511,7 +3511,7 @@ div.vis-network canvas{
 #family_attrs div a.editable-grid-add-link{
     float:left;
     font-size:12px;}
-#family_attrs th:first-child, #family_attrs td:first-child{
+#family_attrs th:first-child, #family_attrs td:first-child, #static_routes_collection th:first-child, #family_attrs td:first-child{
     padding-left:50px;}
 #peer_selection>table>thead>tr>th{
     line-height:1.4;
@@ -3680,4 +3680,8 @@ td.action-cell a{color:#787878;}
 
 #interfaces-collection tr:first-child td{
         padding-top:17px;}
-
+#interfaces-collection>table>thead{
+    background-color:#f9f9f9;}
+#interface_type, td#interfaceType{padding-right:16px;}
+/*#interfaces-collection tr.collapsibleChildContainer> td{padding-bottom:0px;}*/
+#interfaces-collection tr.collapsibleChildContainer .data-row td, #interfaces-collection tr.collapsibleChildContainer .error-row td{height:0px;}
