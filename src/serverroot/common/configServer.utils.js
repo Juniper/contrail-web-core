@@ -188,6 +188,7 @@ function getProjectRole (req, res, appData)
     var projId = req.param('id');
     var projUrl = '/project/' + projId + '?exclude_back_refs=true' +
         '&exclude_children=true';
+    var isConfig = req.param('isConfig');
     var authApi = require('./auth.api');
     var adminProjList = authApi.getAdminProjectList(req);
     var headers = {};
@@ -262,8 +263,13 @@ function getProjectRole (req, res, appData)
             if ((null != err) || (null == roles)) {
                 logutils.logger.error('Did not find the roles for project ' +
                                       projName);
-                commonUtils.redirectToLogout(req, res);
-                return;
+                if ((true == isConfig) || ('true' == isConfig)) {
+                    /* If the request comes from Config Pages, then redirect to
+                     * login page
+                     */
+                    commonUtils.redirectToLogout(req, res);
+                    return;
+                }
             }
             commonUtils.handleJSONResponse(null, res, uiRoles);
         });

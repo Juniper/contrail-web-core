@@ -1435,13 +1435,15 @@ function getWebServerInfo (req, res, appData)
 
     var userObj = {'tokenid': tokenId, 'tenant': project, 'req': req};
     authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
+        /*
         if (null == roles) {
-            /* We did not find the project role, so redirect to login */
+            // We did not find the project role, so redirect to login
             logutils.logger.error('We did not get the project in keystone or role' +
                                   ' not assigned, redirecting to login.');
             redirectToLogout(req, res);
             return;
         }
+        */
         /* Do not update the role, we will enable it when RBAC is supported in
          * API Server
          */
