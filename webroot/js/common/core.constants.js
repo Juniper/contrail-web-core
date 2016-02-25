@@ -151,10 +151,10 @@ define([
         this.THEME_DETAIL_WIDGET = 'widget-box';
         this.THEME_DETAIL_DEFAULT = 'default';
 
-        this.GRAPH_MARGIN_LEFT = 1050;
-        this.GRAPH_MARGIN_RIGHT = 1050;
-        this.GRAPH_MARGIN_TOP = 1075;
-        this.GRAPH_MARGIN_BOTTOM = 1050;
+        this.GRAPH_MARGIN_LEFT = 4000;
+        this.GRAPH_MARGIN_RIGHT = 4000;
+        this.GRAPH_MARGIN_TOP = 4000;
+        this.GRAPH_MARGIN_BOTTOM = 4000;
 
         this.TOOLTIP_DELAY = 1000;
 
