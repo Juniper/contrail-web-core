@@ -3537,12 +3537,18 @@ background:none;
         border-top:none;}
 #peer_selection .item-list table tr:first-child td{
         background-color:gray;}
-#bgp-grid .value th{
+#bgp-grid .value th, #config-vn-list .value th, #service-instances-grid .value th{
         font-weight:600;
             border-bottom:#777 solid 1px;
                 padding-bottom:2px;}
 #bgp-grid .value tr td{
-        border-bottom:#f5f5f5 solid 1px;}
+        border-bottom:#f5f5f5 solid 1px;
+        vertical-align:top;}
+#config-vn-list .value td, #service-instances-grid .value td{
+        vertical-align:top;}
+#service-instances-grid .value td a{
+    color:#3182bd;
+    text-decoration:underline;}
 #bgp-grid .value .addressFamily {
         padding: 5px 20px 20px 20px;
 }
@@ -3562,12 +3568,16 @@ background:none;
     width:250px;
     padding-top:0px;}
 #prefix_limit{width:213px}
-#bgp-grid ul.item-list .key{
+#bgp-grid ul.item-list .key, #config-vn-list ul.item-list .key, #service-instances-grid ul.item-list .key{
     width:23.08% !important;
     }
-#bgp-grid ul.item-list .value{
+#bgp-grid ul.item-list .value, #service-instances-grid ul.item-list .value{
     width:57.26% !important;
+    vertical-align:top;
     }
+#config-vn-list ul.item-list .value{
+    width:76.26%!important;
+    vertical-align:top;}
 div#peer_selection_section {
     padding-left: 10px;
 }
