@@ -107,8 +107,10 @@ function configAppHeaders (headers, appData, callback)
     var xAuthTokenObj = null;
     if ((null == appData) || (null == appData['authObj'].req) ||
         (null == appData['authObj']['defTokenObj'])) {
-        headers['X-Auth-Token'] = null;
-        headers['X_API_ROLE'] = null;
+        if (true == multiTenancyEnabled) {
+            headers['X-Auth-Token'] = null;
+            headers['X_API_ROLE'] = null;
+        }
         callback(headers);
         return;
     }
