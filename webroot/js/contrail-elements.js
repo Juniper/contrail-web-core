@@ -1173,63 +1173,58 @@ function constructSelect2(self, defaultOption, args) {
     if(typeof args !== 'undefined') {
         self.select2(defaultOption, args);
     } else{
-        var dataObject = {
-                cachedValue: null,
-                isRequestInProgress: false
-            },
-            option = {
-                minimumResultsForSearch : 7,
-                dropdownAutoWidth : true,
-                dataTextField: 'text',
-                dataValueField: 'id',
-                data: [],
-                query: function (q) {
-                    if(q.term != null){
-                        var pageSize = 50;
-                        var results = _.filter(this.data,
+        var option = {
+            minimumResultsForSearch : 7,
+            dropdownAutoWidth : true,
+            dataTextField: 'text',
+            dataValueField: 'id',
+            data: [],
+            query: function (q) {
+                if(q.term != null){
+                    var pageSize = 50;
+                    var results = _.filter(this.data,
                             function(e) {
-                                return (q.term == ""  || e.text.toUpperCase().indexOf(q.term.toUpperCase()) >= 0 );
+                              return (q.term == ""  || e.text.toUpperCase().indexOf(q.term.toUpperCase()) >= 0 );
                             });
-                        q.callback({results:results.slice((q.page-1)*pageSize, q.page*pageSize),
-                            more:results.length >= q.page*pageSize });
-                    } else {
-                        var t = q.term,filtered = { results: [] }, process;
-                        process = function(datum, collection) {
-                            var group, attr;
-                            datum = datum[0];
-                            if (datum.children) {
-                                group = {};
-                                for (attr in datum) {
-                                    if (datum.hasOwnProperty(attr)) group[attr]=datum[attr];
-                                }
-                                group.children=[];
-                                $(datum.children).each2(function(i, childDatum) { process(childDatum, group.children); });
-                                if (group.children.length || query.matcher(t, '', datum)) {
-                                    collection.push(group);
-                                }
-                            } else {
-                                if (q.matcher(t, '', datum)) {
-                                    collection.push(datum);
-                                }
+                    q.callback({results:results.slice((q.page-1)*pageSize, q.page*pageSize),
+                                more:results.length >= q.page*pageSize });
+                } else {
+                    var t = q.term,filtered = { results: [] }, process;
+                    process = function(datum, collection) {
+                        var group, attr;
+                        datum = datum[0];
+                        if (datum.children) {
+                            group = {};
+                            for (attr in datum) {
+                                if (datum.hasOwnProperty(attr)) group[attr]=datum[attr];
                             }
-                        };
-                        if(t != ""){
-                            $(this.data).each2(function(i, datum) { process(datum, filtered.results); })
+                            group.children=[];
+                            $(datum.children).each2(function(i, childDatum) { process(childDatum, group.children); });
+                            if (group.children.length || query.matcher(t, '', datum)) {
+                                collection.push(group);
+                            }
+                        } else {
+                            if (q.matcher(t, '', datum)) {
+                                collection.push(datum);
+                            }
                         }
-                        q.callback({results:this.data});
+                    };
+                    if(t != ""){
+                        $(this.data).each2(function(i, datum) { process(datum, filtered.results); })
                     }
-                },
-                formatResultCssClass: function(obj){
-                    if(obj.label && 'children' in obj){
-                        return 'select2-result-label';
-                    }
+                    q.callback({results:this.data});
                 }
+           },
+            formatResultCssClass: function(obj){
+            	if(obj.label && 'children' in obj){
+            		return 'select2-result-label';
+            	}
+            }
 
-                // Use dropdownCssClass : 'select2-large-width' when initialzing ContrailDropDown
-                // to specify width of dropdown for Contrail Dropdown
-                // Adding a custom CSS class is also possible. Just add a custom class to the contrail.custom.css file
-            },
-            source = [];
+            // Use dropdownCssClass : 'select2-large-width' when initialzing ContrailDropDown
+            // to specify width of dropdown for Contrail Dropdown
+            // Adding a custom CSS class is also possible. Just add a custom class to the contrail.custom.css file
+        }, source = [];
 
         //To add newly entered text to the option of multiselect.
         if (defaultOption.multiple == true && defaultOption.tags != null && defaultOption.tags == true) {
@@ -1290,13 +1285,54 @@ function constructSelect2(self, defaultOption, args) {
             }
         };
 
-        function initSelect2(option, value, triggerChange) {
-            var triggerChange = contrail.checkIfExist(triggerChange) ? triggerChange : false;
+        if(!$.isEmptyObject(option) && typeof option.dataSource !== 'undefined') {
+            if(option.dataSource.type == "remote"){
+                var asyncVal = false;
+                asyncVal = (option.dataSource.async && option.dataSource.async == true)? true : false;
+                var ajaxConfig = {
+                        url: option.dataSource.url,
+                        async: asyncVal,
+                        dataType:'json',
+                        success: function(data) {
+                            var parsedData = {};
+                            if(typeof option.dataSource.parse !== "undefined"){
+                                parsedData = option.dataSource.parse(data);
+                                source = formatData(parsedData, option);
+                            } else{
+                                source = formatData(data, option);
+                            }
+                            if(contrail.checkIfExist(option.dataSource.async) && option.dataSource.async == true ){
+                                self.data('contrailDropdown').setData(parsedData,'',true);
+                            }
+                        }
+                    };
+                if(option.dataSource.dataType) {
+                    ajaxConfig['dataType'] = option.dataSource.dataType;
+                }
+                if(option.dataSource.timeout) {
+                    ajaxConfig['timeout'] = option.dataSource.timeout;
+                }
+                if(option.dataSource.requestType &&  (option.dataSource.requestType).toLowerCase() == 'post') {
+                    ajaxConfig['type'] = 'post';
+                    ajaxConfig['contentType'] = "application/json; charset=utf-8";
+                    ajaxConfig['data'] = option.dataSource.postData;
+                }
+                $.ajax(ajaxConfig);
 
-            option.data = formatData(option.data, option);
+            } else if(option.dataSource.type == "local"){
+                source = formatData(option, option.dataSource.data);
+            }
+            option.data = source;
+        }
+        if(typeof option.data != "undefined") {
+            option.data = formatData(option.data,option);
 
-            if (contrail.checkIfExist(self.data('select2'))) {
-                self.select2('destroy');
+            if (contrail.checkIfExist(self.data('contrailDropdown'))) {
+                self.data('contrailDropdown').destroy();
+            }
+
+            if (contrail.checkIfExist(self.data('contrailMultiselect'))) {
+                self.data('contrailMultiselect').destroy();
             }
 
             self.select2(option)
@@ -1309,76 +1345,26 @@ function constructSelect2(self, defaultOption, args) {
                 .off("select2-close", closeFunction)
                 .on("select2-close", closeFunction);
 
+            // set default value only if explicitly defined and if not a multiselect
+            if (option.data.length > 0 && contrail.checkIfExist(option.defaultValueId) && option.defaultValueId >= 0 &&
+                option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple)) {
+
+                var selectedOption = option.data[option.defaultValueId];
+                if (option.data[0].children != undefined && option.data[0].children.length > 1) {
+                    selectedOption = option.data[0].children[option.defaultValueId];
+                }
+                var currSelectedVal = self.select2('val');
+                if(currSelectedVal == null || currSelectedVal == '') {
+                    self.select2('val', selectedOption[option.dataValueField.dsVar], true);
+                }
+            }
+        }
+
+        if(typeof option.data != "undefined") {
             option.sourceMap = constructSourceMap(option.data, 'id');
-
-            if (option.data.length > 0) {
-                if (contrail.checkIfExist(option.multiple)) {
-
-                    // set value for Multiselect
-                    if (contrail.checkIfExist(value)){
-                        self.select2('val', value, triggerChange);
-                    }
-                } else {
-
-                    // set value for Dropdown
-                    if (contrail.checkIfExist(value) && value !== '' && contrail.checkIfExist(option.sourceMap[value])) {
-                        self.select2('val', value, triggerChange);
-                    } else if (contrail.checkIfExist(option.defaultValueId) &&
-                        option.defaultValueId >= 0 && option.data.length > option.defaultValueId) {
-
-                        // set default value
-                        var selectedOption = option.data[option.defaultValueId];
-                        if (contrail.checkIfExist(option.data[0].children) && option.data[0].children.length > 1) {
-                            selectedOption = option.data[0].children[option.defaultValueId];
-                        }
-
-                        self.select2('val', selectedOption[option.dataValueField.dsVar], triggerChange);
-                    }
-                }
-            }
-
         }
 
-        if(!$.isEmptyObject(option) && contrail.checkIfExist(option.dataSource)) {
-            var dataSourceOption = option.dataSource;
-            if(dataSourceOption.type == "remote"){
-                var ajaxConfig = {
-                    url: dataSourceOption.url,
-                    //async: contrail.checkIfExist(dataSourceOption.async) ? dataSourceOption.async : false,
-                    dataType: contrail.checkIfExist(dataSourceOption.dataType) ? dataSourceOption.dataType : 'json'
-                };
-
-                if(dataSourceOption.timeout) {
-                    ajaxConfig['timeout'] = dataSourceOption.timeout;
-                }
-                if(dataSourceOption.requestType && (dataSourceOption.requestType).toLowerCase() == 'post') {
-                    ajaxConfig['type'] = 'POST';
-                    ajaxConfig['contentType'] = "application/json; charset=utf-8";
-                    ajaxConfig['data'] = dataSourceOption.postData;
-                }
-
-                contrail.ajaxHandler(ajaxConfig, function(){
-                    dataObject.isRequestInProgress = true
-                }, function(data) {
-                    dataObject.isRequestInProgress = false;
-
-                    if(typeof dataSourceOption.parse !== "undefined"){
-                        data = dataSourceOption.parse(data);
-                    }
-
-                    dataObject.setData(data, dataObject.cachedValue, true);
-                });
-
-            } else if(dataSourceOption.type == "local"){
-                source = formatData(dataSourceOption.data, option);
-            }
-            option.data = source;
-        }
-        if (contrail.checkIfExist(option.data)) {
-            initSelect2(option);
-        }
-
-        $.extend(true, dataObject, {
+        return {
             getAllData: function(){
                 if(self.data('select2') != null)
                     return self.data('select2').opts.data;
@@ -1416,22 +1402,38 @@ function constructSelect2(self, defaultOption, args) {
                 }
             },
             value: function(value, triggerChange) {
-                if (contrail.checkIfExist(value)) {
-                    if (dataObject.isRequestInProgress == true) {
-                        dataObject.cachedValue = value;
-                    }
-                    self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
-                } else {
+                if(typeof value === 'undefined'){
                     return self.select2('val');
+                }
+                else{
+                    self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
                 }
             },
             setData: function(data, value, triggerChange) {
-                if(dataObject.isRequestInProgress == true && contrail.checkIfExist(value)) {
-                    dataObject.cachedValue = value;
+                self.select2('destroy');
+                option.data = formatData(data,option);
+                if(typeof option.data != "undefined") {
+                    option.sourceMap = constructSourceMap(option.data, 'id');
                 }
 
-                option.data = data;
-                initSelect2(option, value, triggerChange)
+                self.select2(option)
+                    .off("change", changeFunction)
+                    .on("change", changeFunction);
+
+                if (option.data.length != 0 && contrail.checkIfExist(option.defaultValueId) && option.defaultValueId >= 0 &&
+                    option.data.length > option.defaultValueId && !contrail.checkIfExist(option.multiple) &&
+                    (value === '' || !contrail.checkIfExist(option.sourceMap[value]))) {
+                        self.select2('val', option.data[option.defaultValueId][option.dataValueField.dsVar], (contrail.checkIfExist(triggerChange) ? triggerChange : false));
+                }
+                //for Hierarchical drpdown
+                if(option.data.length != 0 &&
+                    option.data[0].children != undefined &&
+                    option.data[0].children.length > 1) {
+                    self.select2('val',
+                        option.data[0].children[1][option.dataValueField.dsVar],
+                        (contrail.checkIfExist(triggerChange) ?
+                        triggerChange : false));
+                }
             },
             enableOptionList: function (flag, disableItemList) {
                 for (var j = 0; j < disableItemList.length; j++) {
@@ -1443,7 +1445,7 @@ function constructSelect2(self, defaultOption, args) {
                         } else {
                             for(var k = 0;k < option.data[i].children.length; k++) {
                                 if(disableItemList[j] === option.data[i].children[k][option.dataValueField.dsVar]) {
-                                    option.data[i].children[k].disabled = !flag;
+                                     option.data[i].children[k].disabled = !flag;
                                 }
                             }
                         }
@@ -1483,9 +1485,7 @@ function constructSelect2(self, defaultOption, args) {
             show: function() {
                 self.select2("container").show();
             }
-        });
-
-        return dataObject;
+        };
     }
 }
 
