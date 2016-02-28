@@ -1387,9 +1387,6 @@ function getWebServerInfo (req, res, appData)
     serverObj['configServer']['ip'] = getValueByJsonPath(config,
             'cnfg;server_ip',
              null);
-
-    serverObj['disabledFeatures'] = getValueByJsonPath(config,'features;disabled',[]);
-    serverObj['featurePkgsInfo'] = getValueByJsonPath(config,'featurePkg',[]);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
