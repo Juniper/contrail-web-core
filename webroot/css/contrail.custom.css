@@ -1383,7 +1383,7 @@ label.jqInvalid{
     -webkit-box-shadow: none;
             box-shadow: none;
 }
-.select2-container-active {
+.select2-container-active, #PolicyRules .custom-combobox-input:focus {
 	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
   	-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
   	box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
@@ -2438,8 +2438,7 @@ p.error, p.error-text {
 
 #PolicyRules #simple_action .select2-container-disabled .select2-choice,
 #PolicyRules #simple_action .select2-container,
-#PolicyRules #protocol .select2-container-disabled .select2-choice,
-#PolicyRules #protocol .select2-container,
+#PolicyRules #protocol .custom-combobox .add-on,
 #PolicyRules #src_address .select2-container,
 #PolicyRules #direction .select2-container,
 #PolicyRules #direction .select2-container-disabled .select2-choice,
@@ -2453,16 +2452,16 @@ p.error, p.error-text {
 #PolicyRules .select2-container, #PolicyRules  input {
     background : transparent;
 }
-
+#PolicyRules .select2-container:disabled, #PolicyRules input:disabled{
+    background-color:#f4f4f4;
+}
 #PolicyRules #simple_action .select2-arrow ,
-#PolicyRules #protocol .select2-arrow ,
 #PolicyRules #src_address .select2-arrow ,
 #PolicyRules #direction .select2-arrow ,
 #PolicyRules #dst_address .select2-arrow
 {
     display: none !important;
 }
-
 #windowCreatePolicy .rule-item .select2-chosen {
 	color: #3182bd;
 }
@@ -3696,3 +3695,18 @@ td.action-cell a{color:#787878;}
 #interfaces-collection tr.collapsibleChildContainer .data-row td, #interfaces-collection tr.collapsibleChildContainer .error-row td{height:0px;}
 #interfaces th.text-center{
     text-align:center!important}
+#PolicyRules .custom-combobox>span.add-on{
+    background:transparent;
+    border:transparent solid 1px;
+    position:absolute;
+    top:3px;
+}
+#PolicyRules .custom-combobox-input:focus{
+    outline:none;
+}
+#PolicyRules .custom-combobox-input+span i.icon-caret-down{
+    display:none;
+}
+#PolicyRules .custom-combobox-input:focus +span i.icon-caret-down{
+    display:block;
+}
