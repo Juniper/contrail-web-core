@@ -1542,9 +1542,11 @@
 
         </tr>
         <tr class="error-row">
+            <td class="error-cell">
             {{#each columns}}
-            <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+            <span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span>
             {{/each}}
+            </td>
             {{#each rowActions}}
             <td></td>
             {{/each}}
@@ -1670,23 +1672,22 @@
                 {{this.name}}
             </th>
             {{/each}}
-                <th class="action-cell">
-                {{#each viewConfig.gridActions}}
+        {{#unless viewConfig.hideAdd}}
+        <th class="action-cell">
+            {{#each viewConfig.gridActions}}
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
             <i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}
         </a>
     {{/each}}
         </th>
+        {{/unless}}
         </tr>
         </thead>
         <tbody data-bind="foreach: {{viewConfig.collection}}">
-
         <tr class="data-row">
-                    <td style="min-width:15px" onclick="
-
-$(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('icon-caret-down');$(this).children('i').toggleClass('icon-caret-right');"><i class="icon-caret-right toggleDetailIcon " ></i></td>
+                    <td style="min-width:15px" {{#IfCompare viewConfig.rows.1.columns.length 0 operator='>'}}onclick="
+$(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('icon-caret-down');$(this).children('i').toggleClass('icon-caret-right');"><i class="icon-caret-right toggleDetailIcon " ></i>{{/IfCompare}}</td>
             {{#each viewConfig.rows.0.columns}}
-
             <td id="{{elementId}}"
                 {{#IfCompare viewConfig.colSpan null operator='!='}}
                     colspan="{{viewConfig.colSpan}}"
@@ -1695,6 +1696,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
                 style: {width: '{{width}}px' }">
             </td>
             {{/each}}
+            {{#unless viewConfig.hideAdd}}
             <td class="action-cell">
             {{#each viewConfig.rows.0.rowActions}}
                 <a data-bind='click: {{this.onClick}}'>
@@ -1702,6 +1704,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
                 </a>
             {{/each}}
             </td>
+            {{/unless}}
         </tr>
         <tr class="error-row">
         <td></td>
@@ -1714,13 +1717,11 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
             {{/each}}
         </tr>
 
-<tr class="collapsibleChildContainer" style="display:none">
+<tr class="collapsibleChildContainer" style="display:none" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}} {{/if}}">
 <td  colspan="{{viewConfig.rows.1.columns.0.viewConfig.colSpan}}">
 
         <!--Child Control -->
 <table >
-
-
         <tr class="data-row">
             {{#each viewConfig.rows.1.columns}}
             <td id="{{elementId}}"
@@ -1752,11 +1753,8 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </table>
 </td>
 </tr>
-
         </tbody>
     </table>
-
-
     {{#if viewConfig.collectionActions}}
     <div class="row-fluid collection-actions collection-actions-add">
         <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
@@ -2281,6 +2279,9 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 
 <script type="text/x-handlebars-template" id="core-collection-common-heading-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    {{#IfCompare viewConfig.label null operator='!='}}
+    <label style="margin:0px" class="text-left">{{viewConfig.label}}</label>
+    {{/IfCompare}}
     <table class="contrail-editable-grid-table" >
         <thead style="background:#fafafa">
           <tr class="data-row">
@@ -2308,9 +2309,11 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
                 class="data-cell" data-bind="style: {width: '{{width}}px' }">
             </td>
             {{/each}}
+            <td class="action-cell">
             {{#each rowActions}}
-            <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
+            <a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a>
             {{/each}}
+            </td>
         </tr>
         {{/each}}
         <tr class="error-row">

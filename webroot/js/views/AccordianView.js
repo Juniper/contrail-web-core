@@ -17,20 +17,28 @@ define([
                 childViewObj, childElId, childElIdArray;
 
             this.$el.html(accordianTempl({viewConfig: viewConfig, elementId: elId}));
-
+            var isActive;
             for (var i = 0; i < viewConfig.length; i++) {
                 childViewObj = viewConfig[i];
                 childElId = childViewObj[cowc.KEY_ELEMENT_ID];
-
+                isActive = childViewObj.active;
                 this.model.showErrorAttr(childElId, getKOComputedError(viewConfig[i], this));
 
                 this.renderView4Config(this.$el.find("#" + childElId), this.model, childViewObj, validation, lockEditingByDefault);
             }
 
-            this.$el.find("#" + elId).accordion({
-                heightStyle: "content",
-                collapsible: true
-            });
+             var accordianOptions = {
+                   heightStyle: "content",
+                    collapsible: true
+                };
+            if(isActive != null) {
+                if (isActive === false) {
+                    accordianOptions['active'] = false;
+                } else {
+                    accordianOptions['active'] = isActive;
+                }
+            }
+            this.$el.find("#" + elId).accordion(accordianOptions);
         }
     });
 

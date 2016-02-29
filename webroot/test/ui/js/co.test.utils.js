@@ -11,8 +11,6 @@ define([
 
     this.getRegExForUrl = function (url) {
         var regexUrlMap = {
-            '/api/admin/webconfig/featurePkg/webController': /\/api\/admin\/webconfig\/featurePkg\/webController\?.*$/,
-            '/api/admin/webconfig/features/disabled': /\/api\/admin\/webconfig\/features\/disabled\?.*$/,
             '/api/service/networking/web-server-info': /\/api\/service\/networking\/web-server-info.*$/,
             '/menu.xml': /\/menu.*$/
         };

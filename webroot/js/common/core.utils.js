@@ -813,7 +813,7 @@ define(['underscore'], function (_) {
             }
             cowu.createModal(modalConfig);
 
-            if(cfgObj.model == null) {
+            if(cfgObj.model == null && !self.getAlarmsFromAnalytics) {
                 require(['mon-infra-node-list-model','monitor-infra-parsers',
                     'monitor-infra-constants','monitor-infra-utils'],
                     function(NodeListModel,MonitorInfraParsers,MonitorInfraConstants,
