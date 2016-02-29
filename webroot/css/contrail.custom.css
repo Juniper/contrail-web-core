@@ -3707,3 +3707,5 @@ td.action-cell a{color:#787878;}
 #PolicyRules .custom-combobox-input:focus +span i.icon-caret-down{
     display:block;
 }
+#interfaces th.text-center{
+    text-align:center!important}
