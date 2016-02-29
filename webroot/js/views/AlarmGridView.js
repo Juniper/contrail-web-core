@@ -149,7 +149,7 @@ define([
                                   formatter : function (r,c,v,cd,dc) {
                                       var formattedDiv = '';
                                       if(!dc['ack']) {
-                                          formattedDiv = '<span title="Acknowledge"><i class="icon-ok-circle"></i></span>';
+                                          formattedDiv = '<span title="Acknowledge" style="float:right"><i class="icon-ok-circle"></i></span>';
                                       }
                                       return formattedDiv;
                                   },
