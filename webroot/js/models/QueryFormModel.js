@@ -135,7 +135,7 @@ define([
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
 
-                    if(self.table_type() == cowc.QE_OBJECT_TABLE_TYPE) {
+                    if(self.table_type() == cowc.QE_OBJECT_TABLE_TYPE || self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
                         self.onChangeTime();
                     }
                 }).error(function(xhr) {

@@ -208,7 +208,7 @@ define([
                         })
                     });
 
-                x = bars.xScale();
+                x = lines.xScale();
                 x2 = x2Axis.scale();
                 y1 = bars.yScale();
                 y2 = lines.yScale();
@@ -485,10 +485,10 @@ define([
                         );
 
                     // Update Main (Focus) X Axis
-                    if (dataBars.length) {
-                        x = bars.xScale();
-                    } else {
+                    if (dataLines.length) {
                         x = lines.xScale();
+                    } else {
+                        x = bars.xScale();
                     }
 
                     xAxis
@@ -683,11 +683,11 @@ define([
         }
 
         chartModel.xAxis.tickFormat(function (d) {
-            return d3.time.format('%H:%M')(new Date(d));
+            return d3.time.format('%H:%M:%S')(new Date(d));
         });
 
         chartModel.x2Axis.axisLabel("Time").tickFormat(function (d) {
-            return d3.time.format('%H:%M')(new Date(d));
+            return d3.time.format('%H:%M:%S')(new Date(d));
         });
 
         chartModel.y1Axis.axisLabel(chartOptions.y1AxisLabel)
