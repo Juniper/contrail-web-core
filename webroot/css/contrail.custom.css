@@ -3694,3 +3694,5 @@ td.action-cell a{color:#787878;}
 #interface_type, td#interfaceType{padding-right:16px;}
 /*#interfaces-collection tr.collapsibleChildContainer> td{padding-bottom:0px;}*/
 #interfaces-collection tr.collapsibleChildContainer .data-row td, #interfaces-collection tr.collapsibleChildContainer .error-row td{height:0px;}
+#interfaces th.text-center{
+    text-align:center!important}
