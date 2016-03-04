@@ -101,11 +101,11 @@ define([
                 onUpdateAlarmsListModel();
             }
             self.renderView4Config(this.$el, alarmsUIListModel,
-                    getAlarmsListViewConfig(self));
+                    getAlarmsListViewConfig(self,alarmsListModel));
         }
     });
 
-    var getAlarmsListViewConfig = function (self) {
+    var getAlarmsListViewConfig = function (self,parentModel) {
         return {
             elementId: cowu.formatElementId([cowl.ALARMS_LIST_ID]),
             view: "SectionView",
@@ -151,7 +151,11 @@ define([
                                 title: cowl.TITLE_ALARMS,
                                 view: "AlarmGridView",
                                 viewPathPrefix: "js/views/",
-                                viewConfig: {projectFQN: null, parentType: 'project', pagerOptions: {options: {pageSize: 10, pageSizeSelect: [10, 50, 100]}}}
+                                viewConfig: {
+                                    projectFQN: null, 
+                                    parentType: 'project',
+                                    parentModel:parentModel
+                                }
                             }
                         ]
                     }

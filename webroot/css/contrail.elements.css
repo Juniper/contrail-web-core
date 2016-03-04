@@ -4305,6 +4305,10 @@ td.td-actions a.td-action {
   opacity: 0.7;
 }
 
+.stacked-bar-chart-container .axis-label {
+  opacity: 0.7;
+}
+
 .stacked-bar-chart-container .nv-noData {
 	opacity: 0.7;
 }

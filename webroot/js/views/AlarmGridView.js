@@ -10,13 +10,14 @@ define([
     'js/models/AlarmsModel'
 ], function (_, ContrailView, ContrailListModel, AlarmsEditView, AlarmsModel) {
     var alarmsEditView = new AlarmsEditView();
-    var GridDS;
+    var GridDS, parentModel;
     var AlarmGridView = ContrailView.extend({
         el: $(contentContainer),
 
         render: function () {
             var self = this;
             var viewConfig = (this.attributes)? this.attributes.viewConfig : null;
+            parentModel = getValueByJsonPath(viewConfig,'parentModel',null);
             var contrailListModel;
             if(self.model == null) {
                 var remoteAjaxConfig = {
@@ -167,7 +168,7 @@ define([
                 defaultControls: {
                     collapseable: false,
                     exportable: true,
-                    refreshable: true,
+//                    refreshable: true,
                     searchable: true
                 },
                 advanceControls: getHeaderActionConfig()
@@ -187,9 +188,7 @@ define([
                         template: cowu.generateDetailTemplateHTML(getAlarmDetailsTemplateConfig(), cowc.APP_CONTRAIL_CONTROLLER)
                     }
                 },
-                dataSource : {
-                    data : []
-                },
+                dataSource : {data: []},
                 statusMessages: {
                     loading: {
                        text: 'Loading Alarms..',
@@ -213,13 +212,17 @@ define([
 
     function onAcknowledge (checkedRows) {
         alarmsEditView.model = new AlarmsModel();
+        var alarmGrid = $('#' + cowl.ALARMS_GRID_ID).data("contrailGrid");
         alarmsEditView.renderAckAlarms  ({
                               "title": 'Acknowledge Alarms',
                               checkedRows:checkedRows,
                               callback: function () {
-                                  var alarmGrid = $('#' + cowl.ALARMS_GRID_ID).data("contrailGrid");
-                                  alarmGrid.refreshData();
-                                  alarmGrid.setCheckedRows([]);//Clear the selected items
+                                  if(parentModel != null){
+                                      parentModel.refreshData();
+                                  } else if(alarmGrid != null) {
+                                      alarmGrid._dataView.refreshData();
+                                      alarmGrid.setCheckedRows([]);//Clear the selected items
+                                  }
                               }
             });
     }
