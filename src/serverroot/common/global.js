@@ -159,7 +159,7 @@ global.FLOW_TIME_SLICE_FOR_1_HR = 10000;
 global.FLOW_TIME_SLICE_FOR_24_HRS = 86400000;
 global.FLOW_TIME_SLICE_FOR_1_HR = 3600000;
 global.FLOW_TIME_SLICE_FOR_60_MIN = 60000;
-global.MAX_AGE_SESSION_ID = 365 * 24 * 60 * 60 * 1000;
+global.MAX_AGE_SESSION_ID = 2 * 60 * 60 * 1000;
 /* 24 Hrs, In Milliseconds */
 global.STR_REDIS_STORE_SESSION_ID_PREFIX = 'mySession:';
 global.STR_SESSION_AUTHENTICATED = 'sessAuthenticated';
