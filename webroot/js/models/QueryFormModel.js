@@ -61,7 +61,7 @@ define([
                     var fromTimeUTC = serverCurrentTime - (timeRange * 1000),
                         toTimeUTC = serverCurrentTime
 
-                    if (timeRange !== -1) {
+                    if (timeRange == -1) {
                         fromTimeUTC = new Date(contrailViewModel.attributes.from_time).getTime();
                         toTimeUTC = new Date(contrailViewModel.attributes.to_time).getTime();
                     }
