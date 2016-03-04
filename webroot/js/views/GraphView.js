@@ -73,8 +73,8 @@ define([
         var graphControlPanelElement = $(controlPanelSelector),
             panzoomTargetId = controlPanelConfig.default.zoom.selectorId,
             panZoomDefaultConfig = {
-                increment: 0.2,
-                minScale: 0.2,
+                increment: 0.1,
+                minScale: 0.5,
                 maxScale: 2,
                 duration: 200,
                 easing: "ease-out",
@@ -95,6 +95,7 @@ define([
             if (allowZoom == true) {
                 allowZoom = false;
                 if(panzoomConfig['focalZoom']) {
+                    focal = getZoomFocal(graphSelectorElement, panzoomTargetId);
                     $(panzoomTargetId).panzoom("zoom", zoomOut, { focal: focal});
                 } else {
                     $(panzoomTargetId).panzoom("zoom", zoomOut);

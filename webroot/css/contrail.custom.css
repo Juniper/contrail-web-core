@@ -1491,6 +1491,7 @@ label.jqInvalid{
 .ui-autocomplete li.ui-menu-item a{
 	padding: 5px;
 	color: #555;
+    word-break: break-all;
 }
 .ui-menu .ui-menu-item a.ui-state-focus {
  	background: none;
@@ -2268,14 +2269,18 @@ p.error, p.error-text {
 	font-size: 13px;
 	margin-bottom: 0;
 }
-
 .popover.popover-tooltip {
     min-width: 340px;
     max-width: 340px;
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     box-shadow: none;
-    opacity: 1;
     z-index: 1050;
+
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
+    filter: alpha(opacity=90);
+    -moz-opacity: 0.90;
+    -khtml-opacity: 0.90;
+    opacity: 0.90;
 }
 .popover.popover-tooltip .arrow {
     display: block;
@@ -2347,8 +2352,12 @@ p.error, p.error-text {
     color: #3182BD !important;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-row {
-  padding: 1px 0;
-  font-size: 12px;
+    padding: 1px 0;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 20px;
+    white-space: nowrap;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-row .key {
   color: #555;

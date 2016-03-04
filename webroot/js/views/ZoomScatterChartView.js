@@ -289,16 +289,16 @@ define([
 
         chartSVG.append("text")
             .attr("class", "x label")
-            .attr("text-anchor", "end")
-            .attr("x", width)
+            .attr("text-anchor", "middle")
+            .attr("x", width / 2)
             .attr("y", height + margin.bottom - 10)
             .text(chartConfig.xLabel);
 
         chartSVG.append("text")
             .attr("class", "y label")
-            .attr("text-anchor", "end")
+            .attr("text-anchor", "middle")
+            .attr("x", -1 * (height / 2))
             .attr("y", -margin.left)
-            .attr("x", 0)
             .attr("dy", ".75em")
             .attr("transform", "rotate(-90)")
             .text(chartConfig.yLabel);

@@ -151,10 +151,10 @@ define([
         this.THEME_DETAIL_WIDGET = 'widget-box';
         this.THEME_DETAIL_DEFAULT = 'default';
 
-        this.GRAPH_MARGIN_LEFT = 1050;
-        this.GRAPH_MARGIN_RIGHT = 1050;
-        this.GRAPH_MARGIN_TOP = 1075;
-        this.GRAPH_MARGIN_BOTTOM = 1050;
+        this.GRAPH_MARGIN_LEFT = 4000;
+        this.GRAPH_MARGIN_RIGHT = 4000;
+        this.GRAPH_MARGIN_TOP = 4000;
+        this.GRAPH_MARGIN_BOTTOM = 4000;
 
         this.TOOLTIP_DELAY = 1000;
 
@@ -603,7 +603,7 @@ define([
             "MIN(disk_usage_info.partition_space_available_1k)": "kilo-byte"
         };
 
-        this.DEFAULT_FR_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, setup_time, teardown_time, agg-packets, agg-bytes, action";
+        this.DEFAULT_FR_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, setup_time, agg-packets, agg-bytes, action";
         this.DEFAULT_FS_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, T=, sum(packets), sum(bytes)";
         this.DEFAULT_SL_SELECT_FIELDS = "MessageTS, Source, ModuleId, Category, Level, NodeType, Messagetype, Xmlmessage";
 
