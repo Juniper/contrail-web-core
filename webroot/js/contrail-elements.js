@@ -1358,8 +1358,7 @@ function constructSelect2(self, defaultOption, args) {
                     ajaxConfig['timeout'] = dataSourceOption.timeout;
                 }
                 if(dataSourceOption.requestType && (dataSourceOption.requestType).toLowerCase() == 'post') {
-                    ajaxConfig['type'] = 'post';
-                    ajaxConfig['contentType'] = "application/json; charset=utf-8";
+                    ajaxConfig['type'] = 'POST';
                     ajaxConfig['data'] = dataSourceOption.postData;
                 }
 
