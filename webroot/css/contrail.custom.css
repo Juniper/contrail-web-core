@@ -873,7 +873,7 @@ a.selectAllLink:hover {
 .grid-header .select2-container, .widget-header .select2-container, .breadcrumb .select2-container{
 	margin-bottom: 2px;
 }
-.grid-header .select2-container.select2-container-active, .widget-header .select2-container.select2-container-active, .breadcrumb .select2-container.select2-container-active{
+.grid-header .select2-container.select2-container-active, .widget-header .select2-container.select2-container-active, .breadcrumb .select2-container.select2-container-active, #windowCreatePolicy .custom-combobox-input:focus{
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
@@ -2312,11 +2312,13 @@ color: #b94a48;
 }
 /*policy rule styles */
 
-#windowCreatePolicy .rule-item .select2-chosen {
+#windowCreatePolicy .rule-item .select2-chosen ,
+#windowCreatePolicy .rule-item .custom-combobox-input{
 	color: #3182bd;
 }
 
-#windowCreatePolicy .rule-item .span2 .select2-container, #windowCreatePolicy .rule-item .span1 .select2-container, #windowCreatePolicy .rule-item .select2-container.select2-container-disabled .select2-choice, #windowCreatePolicy .rule-item .span1 .span12{
+#windowCreatePolicy .rule-item .span2 .select2-container, #windowCreatePolicy .rule-item .span1 .select2-container, #windowCreatePolicy .rule-item .select2-container.select2-container-disabled .select2-choice, #windowCreatePolicy .rule-item .span1 .span12,
+#windowCreatePolicy .rule-item .custom-combobox-input{
 	border: 0px !important;
 }
 
@@ -3145,4 +3147,22 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
 
 .rule-column-margin .row-fluid [class*="span"]:first-child {
     margin-left:0;
+}
+#windowCreatePolicy .select2-container:disabled, #PolicyRules input:disabled{
+    background-color:#f4f4f4;
+}
+#windowCreatePolicy .custom-combobox>span.add-on{
+    background:transparent;
+    border:transparent solid 1px;
+    position:absolute;
+    top:3px;
+}
+#windowCreatePolicy .custom-combobox-input:focus{
+    outline:none;
+}
+#windowCreatePolicy .custom-combobox-input+span i.icon-caret-down{
+    display:none;
+}
+#windowCreatePolicy .custom-combobox-input:focus +span i.icon-caret-down{
+    display:block;
 }
