@@ -108,7 +108,7 @@ define([
                     var fromTimeUTC = serverCurrentTime - (timeRange * 1000),
                         toTimeUTC = serverCurrentTime
 
-                    if (timeRange !== -1) {
+                    if (timeRange == -1) {
                         fromTimeUTC = new Date(contrailViewModel.attributes.from_time).getTime();
                         toTimeUTC = new Date(contrailViewModel.attributes.to_time).getTime();
                     }
@@ -152,8 +152,12 @@ define([
             var self = this,
                 model = self.model();
 
-            // reset everything except time range and table name
-            self.reset(this, null, false, false);
+            if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE) {
+                self.reset(this, null, true, false);
+            } else if (self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
+                // reset everything except time range and table name
+                self.reset(this, null, false, false);
+            }
 
             var tableName = model.attributes.table_name,
                 tableSchemeUrl = '/api/qe/table/schema/' + tableName,
@@ -184,8 +188,9 @@ define([
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
 
-                    if(self.table_type() == cowc.QE_OBJECT_TABLE_TYPE || self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
+                    if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE) {
                         self.onChangeTime();
+                    } else if (self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
                         self.setTableFieldValues();
                     }
                 }).error(function(xhr) {
