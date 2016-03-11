@@ -11,6 +11,7 @@ define([
             var defaultModelConfig = {
                 "table_name": null,
                 "table_type": null,
+                "table_name_data_object": [],
                 "query_prefix": cowc.DEFAULT_QUERY_PREFIX,
                 "time_range": 600,
                 "from_time": Date.now() - (10 * 60 * 1000),
