@@ -17,7 +17,7 @@ function startPacketCapture4Interface(interfaceUUID, vnFQN, vmName) {
         return;
     }
     var closePostData = {'interfaceUUID': interfaceUUID, 'action': 'stop'};
-    createPCAPModal('stopPacketCapture4Interface', closePostData, 'Interface Packet Capture');
+    /*createPCAPModal('stopPacketCapture4Interface', closePostData, 'Interface Packet Capture');*/
     doAjaxCall("/api/tenants/config/interface/packet-capture", "POST", JSON.stringify(postData), "getAnalyzerVNCUrl", "startPCAP4InterfaceFailureCB", null, postData);
 };
 
@@ -74,7 +74,9 @@ function getFlowAnalyzerVNCUrl(response, cbParams) {
 
 function getAnalyzerVNCUrlSuccessCB(result, cbParams) {
     var href = jsonPath(result, "$.console.url")[0];
-    var modalBody = '<div class="row-fluid">' +
+    window.open(href);
+    return;
+    /*var modalBody = '<div class="row-fluid">' +
         '<div class="span10"><p>If console is not responding to keyboard input: click the grey status bar below.&nbsp;&nbsp;<a href="' + href + '" style="text-decoration: underline" target=_blank>Click here to show only console</a></p></div>' +
         '<div id="pcap-direction" class="span2 pull-right"></div>' +
         '<i id="pcap-direction-loading" class="icon-spinner icon-spin blue bigger-150 pull-right hide"></i>' +
@@ -102,7 +104,7 @@ function getAnalyzerVNCUrlSuccessCB(result, cbParams) {
         }
     }).data("contrailDropdown");
 
-    dropdownlist.value(cbParams['direction']);
+    dropdownlist.value(cbParams['direction']);*/
 }
 
 function getDirectionText(direction) {
