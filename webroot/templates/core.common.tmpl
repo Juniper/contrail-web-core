@@ -2325,3 +2325,93 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
     </table>
     </div>
 </script>
+
+<script type="text/x-handlebars-template" id="network-policy-rule-template">
+    <div class= "network-policy-rule row-fluid detail-section-content" style="padding-bottom:20px">
+        <div class="row-fluid" style="background:none;background-color:#f5f5f5;padding:5px 0px">
+            <label class="inline span6" style="margin-left:5px">
+                <span class="key span2"> UUID </span>
+                <span class="value">{{data.rule_uuid}}</span>
+            </label>
+        </div>
+        <div class="row-fluid" style="padding:5px">
+            <div class="network-policy-source span5 detail-section-column-content">
+                <div class="detail-block-list-content row-fluid">
+                    <h6>Source</h6>
+                    <ul class="item-list network-policy-src-address">
+                        {{#each data.src_addresses}}
+                        <li><label class="inline row-fluid">
+                            {{#if this.network_policy}}
+                            <span> class="key span5"> Network Policy </span><span class="value span7"> {{this.network_policy}}</span>
+                            {{/if}}
+                            {{#if this.security_group}}
+                            <span class="key span5"> Security Group </span><span class="value span7"> {{this.security_group}}</span>
+                            {{/if}}
+                            {{#if this.subnet}}
+                            <span class="key span5"> Subnet </span><span class="value span7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
+                            {{/if}}
+                            {{#if this.virtual_network}}
+                            <span class="key span5"> Virtual Network </span><span class="value span7"> {{{this.virtual_network_tmpl}}}</span>
+                            {{/if}}
+                        </label></li>
+                        {{/each}}
+                        <li><label class="inline row-fluid">
+                            <span class="key span5"> Port Range </span>
+                            <span class="value span7">
+                                {{#each data.src_ports}}
+                                    <span class="row-fluid"> {{this.start_port}} to {{this.end_port}}</span>
+                                {{/each}}
+                            </span>
+                        </label></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="span2 detail-section-column-content">
+                <div class="detail-block-list-content row-fluid">
+                    <h6 class="inline row-fluid network-policy-direction" style="text-align:center">{{data.direction}}</h6>
+                    <ul class="item-list">
+                        {{#if data.action_list}}
+                        <li class="network-policy-actions"><label class="inline row-fluid">
+                            <span class="key span6"> Action </span> <span class="value bold">{{toUpperCase data.action_list.simple_action}} </span>
+                        </label></li>
+                        {{/if}}
+                        <li class="network-policy-protocol"><label class="inline row-fluid">
+                            <span class="key span6"> Protocol </span><span class="value bold">{{toUpperCase data.protocol}} </span>
+                        </label></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="span5 network-policy-destination detail-section-column-content">
+            <div class="detail-block-list-content row-fluid">
+                <h6>Destination</h6>
+                <ul class="item-list network-policy-dst-address">
+                    {{#each data.dst_addresses}}
+                    <li><label class="inline row-fluid">
+                        {{#if this.network_policy}}
+                        <span> class="key span5"> Network Policy </span><span class="value span7"> {{this.network_policy}}</span>
+                        {{/if}}
+                        {{#if this.security_group}}
+                        <span class="key span5"> Security Group </span><span class="value span7"> {{this.security_group}}</span>
+                        {{/if}}
+                        {{#if this.subnet}}
+                        <span class="key span5"> Subnet </span><span class="value span7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
+                        {{/if}}
+                        {{#if this.virtual_network}}
+                        <span class="key span5"> Virtual Network </span><span class="value span7"> {{{this.virtual_network_tmpl}}}</span>
+                        {{/if}}
+                    </label></li>
+                    {{/each}}
+                    <li><label class="inline row-fluid">
+                        <span class="key span5"> Port Range </span>
+                        <span class="value span7">
+                            {{#each data.dst_ports}}
+                                <span class="row-fluid"> {{this.start_port}} to {{this.end_port}}</span>
+                            {{/each}}
+                        </span>
+                    </label></li>
+                </ul>
+            </div>
+        </div>
+        </div>
+    </div>
+</script>

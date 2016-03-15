@@ -140,6 +140,8 @@ define([
         this.TMPL_ELEMENT_TOOLTIP_TITLE = "element-tooltip-title-template";
         this.TMPL_ELEMENT_TOOLTIP_CONTENT = "element-tooltip-content-template";
 
+        this.TMPL_NETWORK_POLICY_RULE = "network-policy-rule-template";
+
         this.APP_CONTRAIL_CONTROLLER = "contrail-controller";
         this.APP_CONTRAIL_SM = "contrail-sm";
         this.APP_CONTRAIL_STORAGE = "contrail-storage";

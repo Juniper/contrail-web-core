@@ -128,6 +128,94 @@ define([
                 }
 
                 return htmlValue;
+            },
+            'nameFromFQName': function (value, options) {
+                var name = "-";
+                if (value.length >= 3) {
+                    name = value[2];
+                }
+                return name;
+            },
+            'policyRules': function (value, options) {
+                var policyRule = getValueByJsonPath(value,
+                    "network_policy_entries;policy_rule", []);
+                return policyRule;
+
+            },
+            'associatedNetworks': function (value, options) {
+                var returnArray = [], returnString = "";
+                if (options && !contrail.checkIfExist(options.linkGenerator)) {
+                    options = {};
+                    options['linkGenerator'] = false;
+                }
+                if (value.length > 0) {
+                    var vnLen = value.length;
+                    for (var i = 0; i < vnLen; i++) {
+                        var network_to = getValueByJsonPath(value[i], "to", []);
+                        if (network_to.length >= 2) {
+                            if (options.linkGenerator) {
+                                returnArray.push(network_to.join(':'))
+                            } else {
+                                returnString += network_to.join(':');
+                                if (i != vnLen - 1) {
+                                    returnString += ', ';
+                                }
+                            }
+                        }
+                    }
+                }
+                return (options.linkGenerator) ? returnArray : returnString;
+            },
+            'dnsMethod': function (value, option) {
+                var retValue = "",
+                    ipamDNS = option.obj.network_ipam_mgmt.ipam_dns_server;
+                if (value == "tenant-dns-server") {
+                    retValue += "Tenant Managed DNS: ";
+                    var ipAddress = (contrail.checkIfExist(ipamDNS.tenant_dns_server_address.ip_address)) ? ipamDNS.tenant_dns_server_address.ip_address : [];
+                    if (ipAddress.length > 0) {
+                        $.each(ipAddress, function (idx, ip) {
+                            retValue += ip;
+                            if (idx != ipAddress.length - 1) {
+                                retValue += ', ';
+                            }
+                        });
+                    }
+                } else if (value == "virtual-dns-server") {
+                    retValue += "Virtual DNS: " + ipamDNS.virtual_dns_server_name;
+                } else {
+                    retValue = value;
+                }
+                return retValue;
+            },
+            'NTPServerIPFromDHCPOption': function (value, options) {
+                var retValue = "",
+                    dhcpOption = (contrail.checkIfExist(value.dhcp_option)) ? value.dhcp_option : [];
+                if (dhcpOption.length > 0) {
+                    $.each(dhcpOption, function (idx, dhcp) {
+                        if (dhcp.dhcp_option_name == "4") {
+                            if (retValue != "") retValue += ", ";
+                            retValue += dhcp.dhcp_option_value;
+                        }
+                    });
+                } else {
+                    retValue = "-";
+                }
+                return retValue;
+            },
+            'domainNameFromDHCPOption': function (value, options) {
+                var retValue = "",
+                    dhcpOption = (contrail.checkIfExist(value.dhcp_option)) ? value.dhcp_option : [];
+                if (dhcpOption.length > 0) {
+                    $.each(dhcpOption, function (idx, dhcp) {
+                        if (dhcp.dhcp_option_name == "15") {
+                            if (retValue != "") retValue += ", ";
+                            retValue += dhcp.dhcp_option_value;
+                        }
+                    });
+                } else {
+                    retValue = "-";
+                }
+                return retValue;
             }
         };
 

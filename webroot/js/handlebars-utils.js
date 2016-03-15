@@ -236,7 +236,7 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
 
         case 'LinkGenerator':
 
-            var linkTemplate,
+            var linkTemplate, formatterKey, formatterOptions = {},
                 params = contrail.handleIfNull(templateGeneratorConfig.params, {}),
                 hrefLinkArray = [], hrefLink = 'javascript:void(0)';
             if(templateGeneratorConfig.template != null) {
@@ -253,6 +253,15 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
                     params[paramKey] = cowu.getJSONValueByPath(paramValue, obj)
                 }
             });
+
+            if (contrail.checkIfExist(templateGeneratorConfig.formatter)) {
+                formatterKey = templateGeneratorConfig.formatter;
+                formatterOptions['linkGenerator'] = true;
+            }
+
+            if (formatterKey != null) {
+                value = cowf.getFormattedValue(formatterKey, value, formatterOptions);
+            }
 
             if ($.isArray(value)) {
                 $.each(value, function(vKey, vValue) {
@@ -274,6 +283,59 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
         case 'json' :
             return contrail.formatJSON2HTML(value,7);
         break;
+
+        case 'PolicyRuleGenerator':
+            var policyRuleArray = [],
+                policyRuleTemplate = contrail.checkIfExist(templateGeneratorConfig.template) ?
+                    Handlebars.compile(templateGeneratorConfig.template) : contrail.getTemplate4Id(cowc.TMPL_NETWORK_POLICY_RULE),
+                templateOptions = contrail.checkIfExist(templateGeneratorConfig.templateOptions) ?
+                    templateGeneratorConfig.templateOptions : {};
+            formatterKey = contrail.checkIfExist(templateGeneratorConfig.formatter) ?
+                    templateGeneratorConfig.formatter : null,
+                formatterOptions = contrail.checkIfExist(templateGeneratorConfig.formatterOptions) ?
+                    templateGeneratorConfig.formatterOptions : {};
+
+            if (formatterKey != null) {
+                value = cowf.getFormattedValue(formatterKey, value, formatterOptions);
+            }
+
+            if ($.isArray(value)) {
+                $.each(value, function (vKey, vValue) {
+                    $.each(vValue.src_addresses, function(idx, srcAddr) {
+                        if (srcAddr.virtual_network) {
+                            var linkTemplate = Handlebars.compile(ctwc.URL_NETWORK),
+                                vn = srcAddr.virtual_network;
+                            if (vn === 'any') {
+                                srcAddr.virtual_network_tmpl = vn.toUpperCase();
+                            } else {
+                                srcAddr.virtual_network_tmpl = '<a class="value-link" target="_blank" href="' + linkTemplate({
+                                        key: vn,
+                                        params:{}
+                                    }) + '">' + vn + '</a>';
+                            }
+                        }
+                    });
+                    $.each(vValue.dst_addresses, function(idx, dstAddr) {
+                        if (dstAddr.virtual_network) {
+                            var linkTemplate = Handlebars.compile(ctwc.URL_NETWORK),
+                                vn = dstAddr.virtual_network;
+                            if (vn === 'any') {
+                                dstAddr.virtual_network_tmpl = vn.toUpperCase();
+                            } else {
+                                dstAddr.virtual_network_tmpl = '<a class="value-link" target="_blank" href="' + linkTemplate({
+                                        key: vn,
+                                        params: {}
+                                    }) + '">' + vn + '</a>';
+                            }
+                        }
+                    });
+                    policyRuleArray.push(policyRuleTemplate({data: vValue, options: templateOptions}));
+                });
+                returnValue = policyRuleArray.join('');
+            } else {
+                returnValue = policyRuleTemplate({data: value, options: templateOptions});
+            }
+            break;
     };
 
     return returnValue;
@@ -329,4 +391,8 @@ Handlebars.registerHelper ('truncate', function (str, len) {
         return new Handlebars.SafeString ( new_str +'...' ); 
     }
     return str;
+});
+
+Handlebars.registerHelper('toUpperCase', function(str) {
+    return str.toUpperCase();
 });

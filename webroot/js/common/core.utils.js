@@ -506,14 +506,22 @@ define(['underscore'], function (_) {
                     '<ul class="item-list">';
 
             $.each(config, function (configKey, configValue) {
+                var showKey = (contrail.checkIfExist(configValue.showKey)) ? configValue.showKey: true;
                 template += '' +
                     '{{#IfValidJSONValueByPath "' + configValue.key + '" data ' + configKey + '}}' +
                     '<li>' +
-                    '<label class="inline row-fluid">' +
-                    '<span class="key span5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
-                    ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
-                    configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
-                    '<span class="value span7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
+                    '<label class="inline row-fluid">';
+                if (showKey) {
+                    template += '<span class="key span5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
+                        ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
+                        configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>';
+
+                    //when Key is displayed will use span7 for values else use the full width.
+                    template += '<span class="value span7 ';
+                } else {
+                    template += '<span class="value span12 ';
+                }
+                template += (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
                     ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">{{{getValueByConfig data config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
 
                 template += '</label>' +
