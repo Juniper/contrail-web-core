@@ -54,13 +54,6 @@ define(['underscore'], function (_) {
             });
 
             $.when.apply(window, [initMenuDefObj]).done(function () {
-                //Intialize the alarm flag
-                var disabledFeatures = ifNull(globalObj['webServerInfo']['disabledFeatures']['disabled'],[]);
-                $.each(disabledFeatures, function (i,d) {
-                   if(d == 'monitor_alarms') {
-                       cowu.getAlarmsFromAnalytics = false;
-                   }
-                });
                 self.deferredObj.resolve();
             });
         }
