@@ -60,18 +60,15 @@ var express = require('express')
     , cluster = require('cluster')
     , axon = require('axon')
     , producerSock = axon.socket('push')
-    , redisSub = require('./src/serverroot/web/core/redisSub')
     , global = require('./src/serverroot/common/global')
     , redis = require("redis")
     , eventEmitter = require('events').EventEmitter
     , async = require('async')
-    , authApi = require('./src/serverroot/common/auth.api')
     , os = require('os')
     , commonUtils = require('./src/serverroot/utils/common.utils')
     , discClient = require('./src/serverroot/common/discoveryclient.api')
     , assert = require('assert')
     , jsonPath = require('JSONPath').eval
-    , jsonDiff = require('./src/serverroot/common/jsondiff')
     , helmet = require('helmet')
     , logutils = require('./src/serverroot/utils/log.utils')
     ;
@@ -447,6 +444,8 @@ function startWebCluster ()
     } else {
         clusterWorkerInit(function(error) {
             initAppConfig();
+            var jsonDiff = require('./src/serverroot/common/jsondiff');
+            var redisSub = require('./src/serverroot/web/core/redisSub');
             jsonDiff.doFeatureJsonDiffParamsInit();
             registerSessionDeleteEvent();
             registerReqToApp();
@@ -629,11 +628,27 @@ function startServer ()
  */
 function clusterMasterInit (callback)
 {
+    var parseXMLList = require('./src/tools/parseXMLList');
     var mergePath = path.join(__dirname, 'webroot');
-    commonUtils.mergeAllMenuXMLFiles(pkgList, mergePath, function() {
-        checkAndDeleteRedisRDB(function() {
-            callback();
-        });
+    async.parallel([
+        function(CB) {
+            commonUtils.mergeAllMenuXMLFiles(pkgList, mergePath, function() {
+                CB(null, null);
+            });
+        },
+        function(CB) {
+            parseXMLList.readAndParseRoleListFile(function() {
+                CB(null, null);
+            });
+        },
+        function(CB) {
+            checkAndDeleteRedisRDB(function() {
+                CB(null, null);
+            });
+        }
+    ],
+    function(error, results) {
+        callback();
     });
 }
 

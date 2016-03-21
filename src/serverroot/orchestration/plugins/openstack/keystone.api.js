@@ -48,12 +48,15 @@ function getUIRolesByExtRoles (resRoleList)
 {
     var uiRoles = [];
     var tmpRoleObj = {};
+    var extRoleList = [];
     if ((null == resRoleList) || (!resRoleList.length)) {
         /* Ideally if Role is not associated, then we should not allow user to
          * login, but we are assigning role as 'Member' to the user to not to
          * block UI
         return null;
          */
+        logutils.logger.error('User does not have role associated, so UI ' +
+                              'assigning to member role');
         return [global.STR_ROLE_USER];
     }
     var rolesCount = resRoleList.length;
@@ -68,6 +71,7 @@ function getUIRolesByExtRoles (resRoleList)
         if (null == extRoleStr) {
             continue;
         }
+        extRoleList.push(extRoleStr);
         extRoleStr = extRoleStr.toUpperCase();
         if ((null != tmpUIRoleMapList[extRoleStr]) &&
             (null == tmpRoleObj[tmpUIRoleMapList[extRoleStr]])) {
@@ -79,6 +83,9 @@ function getUIRolesByExtRoles (resRoleList)
     if (uiRoles.length) {
         return uiRoles;
     }
+    logutils.logger.error('Keystone roles <' + extRoleList.join(',') +
+                          '> not mapped with UI Role, so UI ' +
+                          'assigning to member role');
     return [global.STR_ROLE_USER];
 }
 

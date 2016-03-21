@@ -62,7 +62,6 @@ function readAndProcessPkgXMLFiles (pkgDir, pkgName, callback)
     fileListArr.push({'pkgDir': pkgDir, 'match': /parseURL.xml/});
     fileListArr.push({'pkgDir': pkgDir, 'match': /jobProcess.xml/});
     fileListArr.push({'pkgDir': pkgDir, 'match': /featureList.xml/});
-    fileListArr.push({'pkgDir': pkgDir, 'match': /roleList.xml/});
     var str = "var pkgList = {};\n";
     str += "exports.pkgList = pkgList;\n";
     if (null == pkgName) {
@@ -103,11 +102,40 @@ function writeToPkgFile (pkgDir, isAppend, str, callback)
     });
 }
 
+function readAndParseRoleListFile (callback)
+{
+    var corePath = process.mainModule.exports['corePath'];
+    var roleDir = '/etc/contrail';
+    var actRoleDir = '/src/serverroot/web/core/';
+    var roleXmlFile = 'roleList.xml';
+    var roleFilePath = roleDir + '/contrail-webui-rolelist.xml';
+    var actRoleFilePath = corePath + actRoleDir + roleXmlFile;
+    var match = /roleList.xml/;
+    if (true == fs.existsSync(roleFilePath)) {
+        var str = "";
+        str += "pkgList['roleList.xml'] = [];\n";
+        var autoGenFile = getAutoGenFileByXMLFilePath(actRoleFilePath, match);
+        autoGenFile = autoGenFile.replace(corePath, "");
+        str += "pkgList['roleList.xml'].push('" + autoGenFile + "');\n";
+        writeToPkgFile(corePath, true, str, function() {
+            var content = fs.readFileSync(roleFilePath);
+            parseXMLAndWriteFile(content, actRoleFilePath, match, function() {
+                callback();
+            });
+        });
+    } else {
+        processXMLFiles({pkgDir: corePath, match: /roleList.xml/,
+                         isExact: true}, function() {
+            callback();
+        });
+    }
+}
+
 function processXMLFiles (fileObj, callback)
 {
     var pkgDir = fileObj['pkgDir'];
     var match = fileObj['match'];
-    var pkgName = fileObj['pkgName'];
+    var isExact = fileObj['isExact'];
 
     var arrStr = match.toString().split('/');
     var str = "";
@@ -128,7 +156,11 @@ function processXMLFiles (fileObj, callback)
                 str = "pkgList['" + arrStr[1] + "'].push('" + autoGenFile + "');\n";
                 writeToPkgFile(pkgDir, true, str, function() {
                     parseXMLAndWriteFile(content, filename, match, function() {
-                        next();
+                        if (true == isExact) {
+                            callback();
+                        } else {
+                            next();
+                        }
                     });
                 });
             }
@@ -211,4 +243,5 @@ function deleteAutoGenFiles (pkgDirObj, callback)
 
 exports.readAndProcessPkgXMLFiles = readAndProcessPkgXMLFiles;
 exports.deleteAllAutoGenFiles = deleteAllAutoGenFiles;
+exports.readAndParseRoleListFile = readAndParseRoleListFile;
 
