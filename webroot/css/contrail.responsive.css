@@ -1,7 +1,8 @@
 /*
- * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2016 Juniper Networks, Inc.
+ * All rights reserved.
  */
- 
+
 @media only screen and (max-width: 480px) {
 	.hidden-480{
 		 display:none !important;
