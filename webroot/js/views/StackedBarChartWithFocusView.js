@@ -72,6 +72,8 @@ define([
             var chartViewConfig, chartOptions, chartModel;
             var cfDataSource = viewConfig.cfDataSource;
             var addOverviewChart = getValueByJsonPath(viewConfig,'chartOptions;addOverviewChart',true);
+            var xAxisLabel = getValueByJsonPath(viewConfig,'chartOptions;xAxisLabel',"Time");
+            var yAxisLabel = getValueByJsonPath(viewConfig,'chartOptions;yAxisLabel',"Count");
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
             }
@@ -90,11 +92,11 @@ define([
              */
 
             // sizing information, including margins so there is space for labels, etc
-            var totalWidth = $(selector).find('.stacked-bar-chart-container').width(), totalHeight = 250;
+            var totalWidth = $(selector).find('.stacked-bar-chart-container').width(), totalHeight = 300;
             var totalOverviewHeight = totalWidth * 0.1;
             var margin =  { top: 20, right: 20, bottom: totalOverviewHeight, left: 20 };
             if(!addOverviewChart) {
-                margin =  { top: 20, right: 20, bottom: 20, left: 20 };
+                margin =  { top: 20, right: 20, bottom: 40, left: 50 };
             }
             var customTimeFormat = d3.time.format.multi([
 //                                                         [".%L", function(d) { return d.getMilliseconds(); }],
@@ -154,6 +156,22 @@ define([
             var main = svg.append("g")
                             .attr("class", "main")
                             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            //Add the axis labels
+            var xaxisLabel = main.append("text")
+                                .attr("class", "axis-label")
+                                .attr("text-anchor", "end")
+                                .attr("x", width/2)
+                                .attr("y", height + 40)
+                                .text(xAxisLabel);
+            var yaxisLabel = main.append("text")
+                                .attr("class", "axis-label")
+                                .attr("text-anchor", "end")
+                                .attr("y", -margin.left)
+                                .attr("x", -height/2)
+                                .attr("dy", ".75em")
+                                .attr("dx", ".75em")
+                                .attr("transform", "rotate(-90)")
+                                .text(yAxisLabel);
             var tooltipDiv = d3.select("body").append("div")
                             .attr("class", "stack-bar-chart-tooltip")
                             .style("opacity", 0);
