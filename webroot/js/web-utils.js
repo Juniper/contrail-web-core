@@ -1088,7 +1088,7 @@ function cellTemplateLinks(options) {
     }
     if(options['statusBubble'] == true)
         statusBubble = getNodeStatusForSummaryPages(rowData,'summary');
-    return contrail.format("<div class='{1}' {0} {2} {4}>{5}{3}</div>", nameStr, tooltipCls, titleStr, cellText, onclickAction, statusBubble);
+    return contrail.format("{5}<span class='{1}' {0} {2} {4}>{3}</span>", nameStr, tooltipCls, titleStr, cellText, onclickAction, statusBubble);
 }
 
 /**
