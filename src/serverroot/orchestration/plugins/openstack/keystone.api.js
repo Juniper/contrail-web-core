@@ -16,7 +16,6 @@ var config = process.mainModule.exports['config'],
     appErrors = require('../../../errors/app.errors.js'),
     commonUtils = require('../../../utils/common.utils'),
     async = require('async'),
-    roleMap = require('../../../web/core/rolemap.api'),
     exec = require('child_process').exec,
     configUtils = require('../../../common/configServer.utils'),
     plugins = require('../plugins.api'),
@@ -62,6 +61,7 @@ function getUIRolesByExtRoles (resRoleList)
     var rolesCount = resRoleList.length;
     var extRoleStr = null;
     var tmpUIRoleMapList = {};
+    var roleMap = require('../../../web/core/rolemap.api');
     for (key in roleMap.uiRoleMapList) {
         var tmpKey = key.toUpperCase();
         tmpUIRoleMapList[tmpKey] = roleMap.uiRoleMapList[key];

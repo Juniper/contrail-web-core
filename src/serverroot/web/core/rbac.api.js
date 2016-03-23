@@ -5,7 +5,6 @@
 var commonUtils = require('../../utils/common.utils')
   , logutils = require('../../utils/log.utils')
   , util = require('util')
-  , roleMap = require('./rolemap.api')
   , messages = require('../../common/messages')
 
 if (!module.parent) {
@@ -32,6 +31,7 @@ String.prototype.trim=function() {
  */
 function getRoleValueByString (roleStr)
 {
+  var roleMap = require('./rolemap.api');
   var roleListObjs = {};
   if (null == roleStr) {
     return null;
