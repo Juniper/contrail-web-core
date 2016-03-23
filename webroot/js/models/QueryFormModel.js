@@ -45,12 +45,59 @@ define([
         },
 
         onChangeTime: function() {
-            var model = this.model(),
-                timeRange = model.attributes.time_range;
-
+            if(this.table_type() === 'STAT') {
+                // reset everything except time range
+                this.reset(this, null, false, true);
+                this.setTableValues();
+            }
             this.setTableFieldValues();
         },
 
+        setTableValues: function() {
+            var self = this,
+                contrailViewModel = this.model(),
+                timeRange = contrailViewModel.attributes.time_range;
+
+            function fetchTableValues(fromTimeUTC, toTimeUTC) {
+                var data = {
+                    fromTimeUTC: fromTimeUTC,
+                    toTimeUTC  : toTimeUTC,
+                    table_name : 'StatTable.FieldNames.fields',
+                    select     : ['name', 'fields.value'],
+                    where      : [[{"name": "name", "value": "STAT", "op": 7}]]
+                };
+                $.ajax({
+                    url: '/api/qe/table/column/values',
+                    type: "POST",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function (resultJSON) {
+                    var resultArr = [];
+                    $.each(resultJSON.data, function(dataKey, dataValue) {
+                        var nameOption = dataValue.name.split(':')[1];
+                        resultArr.push(nameOption);
+                    });
+                    self.table_name_data_object(resultArr);
+                }).error(function(xhr) {
+                    console.log(xhr);
+                });
+            };
+
+            if (timeRange == -1) {
+                var fromTimeUTC = new Date(contrailViewModel.attributes.from_time).getTime(),
+                    toTimeUTC = new Date(contrailViewModel.attributes.to_time).getTime();
+
+                fetchTableValues(fromTimeUTC, toTimeUTC);
+            } else {
+                qewu.fetchServerCurrentTime(function (serverCurrentTime) {
+                    var fromTimeUTC = serverCurrentTime - (timeRange * 1000),
+                        toTimeUTC = serverCurrentTime;
+
+                    fetchTableValues(fromTimeUTC, toTimeUTC);
+                });
+            }
+        },
         setTableFieldValues: function() {
             var contrailViewModel = this.model(),
                 tableName = contrailViewModel.attributes.table_name,
@@ -105,7 +152,13 @@ define([
             var self = this,
                 model = self.model();
 
-            self.reset(this);
+            if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE) {
+                self.reset(this, null, true, false);
+            } else if (self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
+                // reset everything except time range and table name
+                self.reset(this, null, false, false);
+            }
+
             var tableName = model.attributes.table_name,
                 tableSchemeUrl = '/api/qe/table/schema/' + tableName,
                 ajaxConfig = {
@@ -135,8 +188,10 @@ define([
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
 
-                    if(self.table_type() == cowc.QE_OBJECT_TABLE_TYPE || self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
+                    if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE) {
                         self.onChangeTime();
+                    } else if (self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
+                        self.setTableFieldValues();
                     }
                 }).error(function(xhr) {
                     console.log(xhr);
@@ -281,8 +336,16 @@ define([
             return queryReqObj;
         },
 
-        reset: function (data, event) {
-            this.time_range(600);
+        reset: function (data, event, resetTR, resetTable) {
+            var resetTR = contrail.checkIfExist(resetTR) ? resetTR : true,
+                resetTable = contrail.checkIfExist(resetTable) ? resetTable : true;
+
+            if(resetTR) {
+                this.time_range(600);
+            }
+            if(resetTable) {
+                this.table_name('');
+            }
             this.time_granularity(60);
             this.time_granularity_unit('secs');
             this.select('');
