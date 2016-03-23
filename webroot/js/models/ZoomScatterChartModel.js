@@ -385,6 +385,9 @@ define([
             sizeMinMax = [sizeMinMax[0] * .9, sizeMinMax[0] * 1.1];
         } else {
             sizeMinMax = [sizeMinMax[0], sizeMinMax[1]];
+            //Ensure that Max is atleast 4 times Min
+            if(sizeMinMax[0] * 4 > sizeMinMax[1])
+                sizeMinMax[1] = sizeMinMax[1] * 4;
         }
         return sizeMinMax;
     }
