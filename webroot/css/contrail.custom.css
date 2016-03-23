@@ -3689,7 +3689,7 @@ td.action-cell a{color:#787878;}
         padding-top:17px;}
 #interfaces-collection>table>thead{
     background-color:#f9f9f9;}
-#interface_type, td#interfaceType{padding-right:16px;}
+#interface_type, td#interfaceType, td#user_created_ip, td#prefix{padding-right:16px;}
 /*#interfaces-collection tr.collapsibleChildContainer> td{padding-bottom:0px;}*/
 #interfaces-collection tr.collapsibleChildContainer .data-row td, #interfaces-collection tr.collapsibleChildContainer .error-row td{height:0px;}
 #PolicyRules .custom-combobox>span.add-on{
