@@ -52,7 +52,7 @@ define([
             chartData = JSON.parse(JSON.stringify(self.data));
             self.chartData = chartData;
             self.sizeFieldName = contrail.handleIfNull(chartConfig['sizeFieldName'], 'size');
-            self.sizeMinMax = getSizeMinMax(self.data, self.sizeFieldName);
+            self.sizeMinMax = getSizeMinMax(self.data, self.sizeFieldName,chartConfig);
 
             d3Scale = d3.scale.linear().range([6, 10]).domain(self.sizeMinMax);
             if(chartConfig['doBucketize'] == true) {
@@ -64,7 +64,8 @@ define([
 
             $.each(chartData, function (idx, chartDataPoint) {
                 if(chartConfig['doBucketize'] == true) {
-                    chartDataPoint['size'] = (chartDataPoint['size'] == 0) ? 6 : d3SizeScale(chartDataPoint[self.sizeFieldName]);
+                    //In case of single-node,plot with default size (radius 6)
+                    chartDataPoint['size'] = ((chartDataPoint['size'] == 0) || (self.chartData.length == 1)) ? 6 : d3SizeScale(chartDataPoint[self.sizeFieldName]);
                 } else {
                     chartDataPoint['size'] = contrail.handleIfNaN(d3Scale(chartDataPoint[self.sizeFieldName]), 6);
                 }
@@ -367,17 +368,17 @@ define([
             return (parseFloat(values[half - 1]) + parseFloat(values[half])) / 2.0;
     };
 
-    function getSizeMinMax(chartData, sizeFieldName) {
+    function getSizeMinMax(chartData, sizeFieldName,chartConfig) {
         //Merge the data values array if there are multiple categories plotted in chart, to get min/max values
         var sizeMinMax, dValues;
 
         dValues = flattenList(chartData);
 
-        sizeMinMax = getBubbleSizeRange(dValues, sizeFieldName);
+        sizeMinMax = getBubbleSizeRange(dValues, sizeFieldName,chartConfig);
         return sizeMinMax;
     }
 
-    function getBubbleSizeRange(values, sizeFieldName) {
+    function getBubbleSizeRange(values, sizeFieldName,chartConfig) {
         var sizeMinMax = d3.extent(values, function (obj) {
             return  contrail.handleIfNaN(obj[sizeFieldName], 0)
         });
@@ -385,6 +386,11 @@ define([
             sizeMinMax = [sizeMinMax[0] * .9, sizeMinMax[0] * 1.1];
         } else {
             sizeMinMax = [sizeMinMax[0], sizeMinMax[1]];
+            if(chartConfig['doBucketize'] == true) {
+                //Ensure that Max is atleast 4 times Min
+                if(sizeMinMax[0] * 4 > sizeMinMax[1])
+                    sizeMinMax[1] = sizeMinMax[1] * 4;
+            }
         }
         return sizeMinMax;
     }
