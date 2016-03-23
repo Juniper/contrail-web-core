@@ -4224,6 +4224,8 @@ td.td-actions a.td-action {
     white-space: nowrap;
     overflow:hidden !important;
     text-overflow: ellipsis;
+	width:100%;
+	display:inline-block;
 }
 
 #charts-box .widget-body {
