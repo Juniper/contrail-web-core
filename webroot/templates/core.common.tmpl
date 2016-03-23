@@ -1542,11 +1542,11 @@
 
         </tr>
         <tr class="error-row">
-            <td class="error-cell">
             {{#each columns}}
+            <td class="error-cell">
             <span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span>
-            {{/each}}
             </td>
+            {{/each}}
             {{#each rowActions}}
             <td></td>
             {{/each}}
