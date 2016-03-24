@@ -89,7 +89,7 @@ define([
 
         this.TMPL_COLLECTION_VIEW = "core-collection-view-template";
         this.TMPL_GEN_COLLECTION_VIEW = "core-generic-collection-view-template";
-        this.TMPL_COLLECTION_COMMON_HEADING_VIEW="core-collection-common-heading-view-template"
+        this.TMPL_COLLECTION_COMMON_HEADING_VIEW="core-collection-common-heading-view-template";
         this.TMPL_QUERY_OR_COLLECTION_VIEW = "query-or-collection-view-template";
         this.TMPL_COLLECTION_HEADING_VIEW = "core-collection-view-heading-template";
         this.TMPL_COLLECTION_GRIDACTION_HEADING_VIEW = "core-collection-view-grid-action-heading-template";
@@ -97,8 +97,8 @@ define([
         this.TMPL_EDIT_FORM = "core-edit-form-template";
         this.TMPL_GENERIC_EDIT_FORM = "core-generic-edit-form-template";
         this.TMPL_2ROW_GROUP_DETAIL = "core-grid-2-row-group-detail-template";
-        this.TMPL_DETAIL_PAGE = "core-detail-page-template";
-        this.TMPL_DETAIL_PAGE_ACTION = "core-detail-page-action-template";
+        // this.TMPL_DETAIL_PAGE = "core-detail-page-template";
+        // this.TMPL_DETAIL_PAGE_ACTION = "core-detail-page-action-template";
         this.TMPL_WIZARD_VIEW = "core-wizard-view-template";
         this.TMPL_NETWORKING_GRAPH_VIEW = "core-networking-graph-template";
         this.TMPL_CONTROL_PANEL = "core-control-panel-template";
