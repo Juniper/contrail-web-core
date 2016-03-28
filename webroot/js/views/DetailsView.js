@@ -63,14 +63,14 @@ define([
             self.$el.html(detailsTemplate(detailDataObj));
 
             if (detailDataObj.requestState !== cowc.DATA_REQUEST_STATE_ERROR) {
-                initClickEvents(self.$el, templateConfig, detailDataObj.data);
+                initClickEvents(self.$el, templateConfig, detailDataObj.data, self);
             }
         }
     });
 
-    function initClickEvents(detailEl, templateConfig, data) {
+    function initClickEvents(detailEl, templateConfig, data, self) {
         initActionClickEvents(detailEl, templateConfig, data);
-        initWidgetViewEvents(detailEl);
+        initWidgetViewEvents(detailEl, self);
         initDetailDataClickEvents(detailEl, templateConfig, data);
 
     };
@@ -93,7 +93,7 @@ define([
         }
     };
 
-    function initWidgetViewEvents(detailEl) {
+    function initWidgetViewEvents(detailEl, self) {
         $(detailEl).find('[data-action="list-view"]')
             .off('click')
             .on('click', function (event) {
@@ -105,11 +105,39 @@ define([
         $(detailEl).find('[data-action="advanced-view"]')
             .off('click')
             .on('click', function (event) {
+                var ele = this;
+                if (getValueByJsonPath(self,'attributes;viewConfig;advancedViewConfig') != null) {
+                    var deferredObj = $.Deferred();
+                    getDetailsAdvancedData 
+                                            (getValueByJsonPath(self,
+                                                'attributes;viewConfig;advancedViewConfig'),
+                                             deferredObj);
+                    deferredObj.done(function(advancedTemplate){
+                        var advancedDiv = $(ele).parents('.widget-box').find('.advanced-view');
+                        advancedDiv.empty();
+                        advancedDiv.append(advancedTemplate);
+                    })
+                }
                 $(this).parents('.widget-box').find('.advanced-view').show();
                 $(this).parents('.widget-box').find('.list-view').hide();
                 $(this).parents('.widget-box').find('.contrail-status-view').hide();
             })
     };
+
+    function getDetailsAdvancedData (advancedViewConfig, deferredObj) {
+        if (advancedViewConfig !== null && advancedViewConfig.ajaxConfig !== false) {
+            var ajaxConfig = advancedViewConfig.ajaxConfig;
+            var dataParser = advancedViewConfig.dataParser;
+            contrail.ajaxHandler(ajaxConfig, null, function (response) {
+                var parsedData = (dataParser != null)? dataParser(response) : response;
+                var template = contrail.formatJSON2HTML(parsedData,2);
+                deferredObj.resolve(template);
+                return template;
+            }, function (error) {
+                //Nothing to do the default json will still remain shown
+            });
+        }
+    }
 
     function initDetailDataClickEvents (detailEl, templateConfig, data) {
         if (templateConfig.templateGenerator === 'ColumnSectionTemplateGenerator') {
