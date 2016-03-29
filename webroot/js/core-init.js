@@ -12,6 +12,11 @@ require(['jquery', 'knockout', 'bezier'], function ($, Knockout, Bezier) {
     window.ko = Knockout;
     window.Bezier = Bezier;
     loadCommonTemplates();
+
+    SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(toElement) {
+        return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM());
+    };
+
     require(initDepFiles, function(underscore, validation) {
         require(['core-utils', 'core-constants', 'core-formatters', 'core-cache'], function (CoreUtils, CoreConstants, CoreFormatters, Cache) {
             cowc = new CoreConstants();
