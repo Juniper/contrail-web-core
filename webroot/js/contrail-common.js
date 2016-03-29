@@ -83,23 +83,34 @@ function Contrail() {
         if (!contrail.checkIfExist(valueObject)) {
             return false;
         } else {
-            if (deep) {
-                var pathArray = pathString.split('.'),
-                    traversedValue = valueObject,
-                    returnFlag = true;
-                $.each(pathArray, function (pathKey, pathValue) {
-                    if (contrail.checkIfExist(traversedValue[pathValue])) {
-                        traversedValue = traversedValue[pathValue];
-                    } else {
-                        returnFlag = false;
-                        return;
-                    }
-                });
-
-                return returnFlag;
-            } else {
-                return contrail.checkIfExist(valueObject[pathString]);
+            if (!$.isArray(pathString)) {
+                pathString = [pathString];
             }
+            var returnFlag = true;
+            for (var i = 0; i < pathString.length; i++) {
+                var keyToSearch = pathString[i];
+                if (deep) {
+                    var pathArray = keyToSearch.split('.'),
+                        traversedValue = valueObject;
+                    $.each(pathArray, function (pathKey, pathValue) {
+                        if (contrail.checkIfExist(traversedValue[pathValue])) {
+                            traversedValue = traversedValue[pathValue];
+                        } else {
+                            returnFlag = false;
+                            return false;
+                        }
+                    });
+                    if (!returnFlag) {
+                        return returnFlag;
+                    }
+                } else {
+                    if (!contrail.checkIfExist(valueObject[keyToSearch])) {
+                        returnFlag  = false;
+                        return returnFlag;
+                    }
+                }
+            }
+            return returnFlag;
         }
     };
     this.getObjectValueByPath = function(valueObject, pathString) {
