@@ -33,6 +33,24 @@
 }
 
 /*
+ * Details styles
+ */
+.group-detail-action-item {
+    margin: 0 8px;
+    color: #777;
+}
+.group-detail-action-item:hover {
+    color: #333;
+}
+.group-detail-action-item.selected, .group-detail-action-item.selected:hover {
+    color: #3182bd;
+}
+.group-detail-action-item-dropdown-menu {
+    top: 24px;
+    right: -3px !important;
+}
+
+/*
  * Styles moved from vcon-web.css
  * TODO Cleanup requireed to remove unused styles
  */
