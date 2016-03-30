@@ -78,8 +78,9 @@ define([
         getTestConfig: function () {
             return {};
         },
-        testInitFn: function(defObj) {
+        testInitFn: function(defObj, event) {
             if (defObj) defObj.resolve();
+            if (event) event.notify();
             return;
         }
     };
@@ -277,7 +278,7 @@ define([
 
                 switch (pageTestConfig.testType) {
                     case cotc.VIEW_TEST:
-                        self.startViewTestRunner(pageTestConfig, fakeServer, done);
+                        self.startViewTestRunner(pageTestConfig, fakeServer, assert, done);
                         break;
                     case cotc.MODEL_TEST:
                         self.startModelTestRunner(pageTestConfig, fakeServer, done);
@@ -304,7 +305,7 @@ define([
 
     };
 
-    this.startViewTestRunner = function(viewTestConfig, fakeServer, done) {
+    this.startViewTestRunner = function(viewTestConfig, fakeServer, assert, done) {
         if (contrail.checkIfExist(viewTestConfig.page.hashParams)) {
             var loadingStartedDefObj = loadFeature(viewTestConfig.page.hashParams);
             loadingStartedDefObj.done(function () {
@@ -314,31 +315,108 @@ define([
                     fakeServer.respondWith(response.method, response.url, [response.statusCode, response.headers, response.body]);
                 });
 
-                var pageLoadTimeOut = viewTestConfig.page.loadTimeout;
+                var pageLoadTimeOut = viewTestConfig.page.loadTimeout,
+                    pageLoadSetTimeoutId, pageLoadStart = new Date();
 
+                //Safety timeout until the root view is created. will be fixed in next release.
                 setTimeout(function () {
-                    var testConfig = viewTestConfig.getTestConfig();
-                    var testInitDefObj = $.Deferred();
+                    var testConfig = viewTestConfig.getTestConfig(),
+                        testInitDefObj = $.Deferred(),
+                        testStarted = false, testStartTime,
+                        qunitStarted = false, qunitStartTime;
 
-                    viewTestConfig.testInitFn(testInitDefObj);
-                    // testInitFn can have async calls. wait for the promise to resolve.
-                    $.when(testInitDefObj).done(function() {
-                        var mockDataDefObj = $.Deferred();
-                        cotu.setViewObjAndViewConfig4All(testConfig.rootView, testConfig.tests);
+                    console.log("Configured Page Load Timeout (Max): " + pageLoadTimeOut / 1000 + "s");
+                    console.log("Page Load Started: " + pageLoadStart.toString());
 
-                        //create and update mock data in test config
-                        cotu.createMockData(testConfig.rootView, testConfig.tests, mockDataDefObj);
+                    //start timer and make sure the startTest is invoked before pageLoadTimeOut.
+                    //This is the max time page should wait for loading. Exit.
+                    clearTimeout(pageLoadSetTimeoutId);
 
-                        $.when(mockDataDefObj).done(function () {
-                            //run initializations before tests if any
-                            self.executeCommonTests(testConfig.tests);
-                            QUnit.start();
+                    pageLoadSetTimeoutId = window.setTimeout(function () {
+                        if (!testStarted && !qunitStarted) {
+                            testConfig.rootView.onAllViewsRenderComplete.unsubscribe(startTest);
+                            testConfig.rootView.onAllViewsRenderComplete.unsubscribe(initQUnit);
+                            assert.ok(false, "Page should load completely within configured page load timeout");
                             if (done) done();
-                            //uncomment following line to console all the fake server request/responses
-                            //console.log(fakeServer.requests);
-                        });
-                    });
-                }, pageLoadTimeOut);
+                        }
+                    }, pageLoadTimeOut);
+
+                    /**
+                     * Run this once testInitFn is executed and onAllViewsRenderComplete is notified.
+                     * before starting QUnit, wait for the promise passed in the testInitFn to be resolved.
+                     * waiting on promise adds additional control on test start if there is more user actions
+                     * needs to be done. (even after the all views render is complete.)
+                     */
+                    function initQUnit() {
+                        testConfig.rootView.onAllViewsRenderComplete.unsubscribe(initQUnit);
+                        /**
+                         * function to start the QUnit execution.
+                         * This will be invoked once the page loading is complete and test initialization is complete.
+                         */
+                        function startQUnit() {
+                            qunitStarted = true;
+                            qunitStartTime = new Date();
+                            console.log("Starting QUnit: " + qunitStartTime.toString());
+                            console.log("Time taken to completely load the page: " +
+                                ((qunitStartTime.getTime() - pageLoadStart.getTime()) / 1000).toFixed(2) + "s");
+
+                            if (pageLoadSetTimeoutId) {
+                                window.clearTimeout(pageLoadSetTimeoutId);
+                                pageLoadSetTimeoutId = undefined;
+                            }
+
+                            var mockDataDefObj = $.Deferred();
+                            cotu.setViewObjAndViewConfig4All(testConfig.rootView, testConfig.tests);
+
+                            //create and update mock data in test config
+                            cotu.createMockData(testConfig.rootView, testConfig.tests, mockDataDefObj);
+
+                            $.when(mockDataDefObj).done(function () {
+                                self.executeCommonTests(testConfig.tests);
+                                QUnit.start();
+                                if (done) done();
+                                //uncomment following line to console all the fake server request/responses
+                                //console.log(fakeServer.requests);
+                            });
+                        }
+
+                        if (testInitDefObj.state() == 'resolved') {
+                            startQUnit();
+                        } else {
+                            $.when(testInitDefObj).done(startQUnit);
+                        }
+                    }
+
+                    /**
+                     * function to start the Test.
+                     * invoked once the page load is complete. Test initialization can also trigger more loading.
+                     * call initQUnit once render complete.
+                     */
+                    function startTest() {
+                        testStarted = true;
+                        testStartTime = new Date();
+                        console.log("Starting Test Execution: " + testStartTime.toString());
+
+                        //Remove the startTest from firing again on views renderComplete.
+                        testConfig.rootView.onAllViewsRenderComplete.unsubscribe(startTest);
+
+                        /**
+                         * testInitFn can have async calls and multiple view rendering.
+                         * For pages that implement testInitFn; and all the views are already rendered,
+                         * manually call the notify on the onAllViewsRenderComplete event.
+                         * testInitDefObj promise should be resolved inside the testInitFn once the user actions are done.
+                         * subscribe to onAllViewsRenderComplete to start the QUnit init steps.
+                         */
+                        testConfig.rootView.onAllViewsRenderComplete.subscribe(initQUnit);
+                        console.log("Starting Test Page init actions (User): " + new Date().toString());
+                        viewTestConfig.testInitFn(testInitDefObj, testConfig.rootView.onAllViewsRenderComplete);
+                    }
+
+                    //Initial Page loading.
+                    //Check if render is active or any active ajax request. Subscribe to onAllViewsRenderComplete
+                    testConfig.rootView.onAllViewsRenderComplete.subscribe(startTest);
+
+                }, 100);
             });
         } else {
             console.log("Requires hash params to load the test page. Update your page test config.");
