@@ -3,9 +3,9 @@
  */
 
 define([
-    'underscore',
+    'jquery',
     'backbone'
-], function (_, Backbone) {
+], function ($, Backbone) {
     var ContrailView = Backbone.View.extend({
         constructor: function () {
             var self = this;
@@ -76,6 +76,8 @@ define([
             self.childViewMap[elementId] = null;
 
             var rootView = contrail.checkIfExist(this.rootView) ? this.rootView : this,
+                viewNotifyTimer = contrail.checkIfExist(globalObj.viewNotifyTimer) ? globalObj.viewNotifyTimer : null,
+                ajaxNotifyTimer = contrail.checkIfExist(globalObj.ajaxNotifyTimer) ? globalObj.ajaxNotifyTimer : null,
                 renderConfig = {
                     parentElement: parentElement,
                     viewName: viewName,
@@ -86,14 +88,56 @@ define([
                     app: app,
                     rootView: rootView,
                     onAllViewsRenderCompleteCB: function() {
-                        if(!self.isAnyViewRenderInProgress()) {
-                            // Notify parent the one of child's rendering is complete.
-                            self.onAllViewsRenderComplete.notify();
-
-                            if(contrail.checkIfFunction(onAllViewsRenderComplete)) {
-                                // Call any callback associated with onViewRenderComplete of child view.
-                                onAllViewsRenderComplete(self);
+                        function wait4AjaxAndNotify() {
+                            if ($.active > 0) {
+                                //Clear existing Timer and check until the requests are done.
+                                if (ajaxNotifyTimer != null) clearInterval(ajaxNotifyTimer);
+                                ajaxNotifyTimer = setInterval(function () {
+                                    if ($.active == 0) {
+                                        clearInterval(ajaxNotifyTimer);
+                                        waitAndNotify();
+                                    }
+                                }, 1000);
+                            } else {
+                                waitAndNotify();
                             }
+                        }
+
+                        function waitAndNotify() {
+                            if (!self.isAnyViewRenderInProgress() && ($.active == 0)) {
+                                if (viewNotifyTimer != null) clearInterval(viewNotifyTimer);
+
+                                viewNotifyTimer = setInterval(function () {
+                                    if (!self.isAnyViewRenderInProgress() && ($.active == 0)) {
+                                        //clear timers.
+                                        clearInterval(viewNotifyTimer);
+                                        if (ajaxNotifyTimer != null) clearInterval(ajaxNotifyTimer);
+                                        // Notify parent the one of child's rendering is complete.
+                                        self.onAllViewsRenderComplete.notify();
+
+                                        if (contrail.checkIfFunction(onAllViewsRenderComplete)) {
+                                            // Call any callback associated with onViewRenderComplete of child view.
+                                            onAllViewsRenderComplete(self);
+                                        }
+                                    }
+                                }, 5);
+
+                                globalObj.viewNotifyTimer = viewNotifyTimer;
+                            } else if ($.active > 0) {
+                                wait4AjaxAndNotify();
+                            } else {
+                            }
+                        }
+                        /**
+                         * before we notify the event, wait sometime for render complete and no active ajax requests.
+                         */
+                        if (!self.isAnyViewRenderInProgress() && ($.active == 0)) {
+                            waitAndNotify();
+                        } else if ($.active > 0) {
+                            wait4AjaxAndNotify();
+                        } else {
+                            if (viewNotifyTimer != null) clearInterval(viewNotifyTimer);
+                            if (ajaxNotifyTimer != null) clearInterval(ajaxNotifyTimer);
                         }
                     }
                     /*
