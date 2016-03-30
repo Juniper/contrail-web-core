@@ -178,13 +178,14 @@ function testAppInit(testAppConfig) {
                         function loadNextFileOrStartCoverage() {
                             requirejs.undef(allTestFiles[testFilesIndex]);
                             console.log("Execution complete. Unloaded test file: " + allTestFiles[testFilesIndex].split('/').pop());
+                            console.log("----------------------------------------------------------------------------");
                             window.QUnit.config.current = {semaphore: 1};
                             window.QUnit.config.blocking = true;
                             //window.QUnit.stop();
                             testFilesIndex += 1;
                             loadTestRunner = false;
                             if (testFilesIndex < allTestFiles.length) {
-                                console.log("Initializing QUnit and proceeding to next test.");
+                                //console.log("Initializing QUnit and proceeding to next test.");
                                 window.QUnit.init();
                                 var defObj = $.Deferred();
                                 defObj.done(loadNextFileOrStartCoverage);
