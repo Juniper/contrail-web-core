@@ -27,7 +27,7 @@ define([], function () {
      */
 
     //timeout for the test page to load
-    testConfig.page_load_timeout = 2000;
+    testConfig.page_load_timeout = 20000;
 
     //timeout for page initialization actions to complete before test execution.
     testConfig.page_init_timeout = 50;

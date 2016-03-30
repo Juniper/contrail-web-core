@@ -325,7 +325,7 @@ define([
                         testStarted = false, testStartTime,
                         qunitStarted = false, qunitStartTime;
 
-                    console.log("Configured Page Load Timeout: " + pageLoadTimeOut / 1000 + "s");
+                    console.log("Configured Page Load Timeout (Max): " + pageLoadTimeOut / 1000 + "s");
                     console.log("Page Load Started: " + pageLoadStart.toString());
 
                     //start timer and make sure the startTest is invoked before pageLoadTimeOut.
