@@ -128,6 +128,8 @@
     min-height: 100px;
     position:relative;
     right:40px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 .graph.holygrail .col3 {
     float: left;

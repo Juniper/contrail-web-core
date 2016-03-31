@@ -262,6 +262,7 @@ define([
 
                                     if (gridHeader.find('i.collapse-icon').hasClass('icon-chevron-up')) {
                                         gridContainer.children().removeClass('collapsed');
+                                        gridContainer.data('contrailGrid').refreshView();
                                     } else if (gridHeader.find('i.collapse-icon').hasClass('icon-chevron-down')) {
                                         gridContainer.children().addClass('collapsed');
                                         gridHeader.show();
@@ -932,6 +933,7 @@ define([
                     expand: function () {
                         gridContainer.find('i.collapse-icon').addClass('icon-chevron-up').removeClass('icon-chevron-down');
                         gridContainer.children().removeClass('collapsed');
+                        gridContainer.data('contrailGrid').refreshView();
                     },
                     collapse: function () {
                         gridContainer.find('i.collapse-icon').removeClass('icon-chevron-up').addClass('icon-chevron-down');
