@@ -76,8 +76,6 @@ define([
             self.childViewMap[elementId] = null;
 
             var rootView = contrail.checkIfExist(this.rootView) ? this.rootView : this,
-                viewNotifyTimer = contrail.checkIfExist(globalObj.viewNotifyTimer) ? globalObj.viewNotifyTimer : null,
-                ajaxNotifyTimer = contrail.checkIfExist(globalObj.ajaxNotifyTimer) ? globalObj.ajaxNotifyTimer : null,
                 renderConfig = {
                     parentElement: parentElement,
                     viewName: viewName,
@@ -87,59 +85,7 @@ define([
                     modelMap: modelMap,
                     app: app,
                     rootView: rootView,
-                    onAllViewsRenderCompleteCB: function() {
-                        function wait4AjaxAndNotify() {
-                            if ($.active > 0) {
-                                //Clear existing Timer and check until the requests are done.
-                                if (ajaxNotifyTimer != null) clearInterval(ajaxNotifyTimer);
-                                ajaxNotifyTimer = setInterval(function () {
-                                    if ($.active == 0) {
-                                        clearInterval(ajaxNotifyTimer);
-                                        waitAndNotify();
-                                    }
-                                }, 1000);
-                            } else {
-                                waitAndNotify();
-                            }
-                        }
-
-                        function waitAndNotify() {
-                            if (!self.isAnyViewRenderInProgress() && ($.active == 0)) {
-                                if (viewNotifyTimer != null) clearInterval(viewNotifyTimer);
-
-                                viewNotifyTimer = setInterval(function () {
-                                    if (!self.isAnyViewRenderInProgress() && ($.active == 0)) {
-                                        //clear timers.
-                                        clearInterval(viewNotifyTimer);
-                                        if (ajaxNotifyTimer != null) clearInterval(ajaxNotifyTimer);
-                                        // Notify parent the one of child's rendering is complete.
-                                        self.onAllViewsRenderComplete.notify();
-
-                                        if (contrail.checkIfFunction(onAllViewsRenderComplete)) {
-                                            // Call any callback associated with onViewRenderComplete of child view.
-                                            onAllViewsRenderComplete(self);
-                                        }
-                                    }
-                                }, 5);
-
-                                globalObj.viewNotifyTimer = viewNotifyTimer;
-                            } else if ($.active > 0) {
-                                wait4AjaxAndNotify();
-                            } else {
-                            }
-                        }
-                        /**
-                         * before we notify the event, wait sometime for render complete and no active ajax requests.
-                         */
-                        if (!self.isAnyViewRenderInProgress() && ($.active == 0)) {
-                            waitAndNotify();
-                        } else if ($.active > 0) {
-                            wait4AjaxAndNotify();
-                        } else {
-                            if (viewNotifyTimer != null) clearInterval(viewNotifyTimer);
-                            if (ajaxNotifyTimer != null) clearInterval(ajaxNotifyTimer);
-                        }
-                    }
+                    onAllViewsRenderCompleteCB: function() {return;}
                     /*
                     onAllRenderCompleteCB: function() {
                         if(!self.isAnyViewRenderInProgress()) {
@@ -153,6 +99,13 @@ define([
                         }
                     }*/
                 };
+
+            //Currently we're enabling this event only in test env.
+            if(globalObj['test-env'] == globalObj['env'] + "-test") {
+                renderConfig.onAllViewsRenderCompleteCB = function() {
+                    viewsRenderCompleteEventNotifier(self, viewName, onAllViewsRenderComplete);
+                }
+             }
 
             cowu.renderView(renderConfig, function(renderedView) {
                 // Adding child view to a map in rootView
@@ -208,6 +161,51 @@ define([
 
     function add2ChildViewMap (childElId, chRenderedView, self) {
         self.childViewMap[childElId] = chRenderedView;
+    }
+
+    function viewsRenderCompleteEventNotifier(self, viewName, onAllViewsRenderComplete) {
+        var notifyTimer = contrail.checkIfExist(globalObj.notifyTimer) ? globalObj.notifyTimer : null,
+            viewNotifyTimeout = 200,
+            ajaxNotifyTimeout = 200;
+
+        function waitAndNotify(timeout) {
+            if (notifyTimer != null) clearTimeout(notifyTimer);
+
+            notifyTimer = setTimeout(function () {
+                if (!self.isAnyViewRenderInProgress() && ($.active == 0)) {
+                    //clear timeout.
+                    clearTimeout(notifyTimer);
+
+                    //For debugging.
+                    //console.log("Render Complete: " + viewName);
+
+                    // Notify parent the one of child's rendering is complete.
+                    self.onAllViewsRenderComplete.notify();
+
+                    if (contrail.checkIfFunction(onAllViewsRenderComplete)) {
+                        // Call any callback associated with onViewRenderComplete of child view.
+                        onAllViewsRenderComplete(self);
+                    }
+                } else if ($.active > 0) {
+                    waitAndNotify(ajaxNotifyTimeout);
+                } else {
+                    if (notifyTimer != null) clearInterval(notifyTimer);
+                }
+            }, timeout);
+
+            globalObj.notifyTimer = notifyTimer;
+        }
+
+        /**
+         * before we notify the event, wait sometime for render complete and no active ajax request exist.
+         */
+        if (!self.isAnyViewRenderInProgress() && ($.active == 0)) {
+            waitAndNotify(viewNotifyTimeout);
+        } else if ($.active > 0) {
+            waitAndNotify(ajaxNotifyTimeout);
+        } else {
+            if (notifyTimer != null) clearInterval(notifyTimer);
+        }
     }
 
     return ContrailView;
