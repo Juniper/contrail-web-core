@@ -110,7 +110,8 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
 function getWebServerInfo(project, callback) {
     //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
     $.ajax({
-        url: '/api/service/networking/web-server-info?project=' + project
+        url: '/api/service/networking/web-server-info?project=' +
+            encodeURIComponent(project)
     }).done(function (webServerInfo) {
         if (webServerInfo['serverUTCTime'] != null) {
             webServerInfo['timeDiffInMillisecs'] = webServerInfo['serverUTCTime'] - new Date().getTime();
