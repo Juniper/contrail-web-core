@@ -2325,3 +2325,10 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
     </table>
     </div>
 </script>
+
+<script type="text/x-handlebars-template" id="grid-grouping-heading-template">
+    <span class='slick-grid-grouping-heading'>{{{mainText}}}</span>
+    {{#if rowsCount}}
+        <span>({{{rowsCount}}} {{{rowsCountSuffix}}})</span>
+    {{/if}}
+</script>
