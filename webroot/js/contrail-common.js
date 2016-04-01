@@ -133,7 +133,7 @@ function Contrail() {
     };
     this.ajaxHandler = function (config, initHandler, successHandler,
         failureHandler, cbparam) {
-        var contentType = null, dataType = config['dataType'],
+        var contentType = config['contentType'], dataType = config['dataType'],
             methodType = config['type'], cacheEnabled = config['cache'],
             reqTimeOut = config['timeout'], dataUrl = config['url'],
             postData = config['data'], ajaxConfig = {};
@@ -151,14 +151,13 @@ function Contrail() {
                 if (!isSet(postData)) {
                     postData = "{}";
                 }
-                contentType = "application/json; charset=utf-8";
-                ajaxConfig.dataType = (dataType == null)? "json" : dataType;
-                ajaxConfig.contentType = contentType;
+                ajaxConfig.contentType = (contentType == null)? "application/json; charset=utf-8" :
+                    contentType;
             }
         } else {
             methodType == "GET";
         }
-
+        ajaxConfig.dataType = (dataType == null)? "json" : dataType;
         ajaxConfig.type = methodType;
         ajaxConfig.cache = cacheEnabled;
         ajaxConfig.url = dataUrl;
