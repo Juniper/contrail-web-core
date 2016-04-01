@@ -3,9 +3,9 @@
  */
 
 define([
-    'underscore',
+    'jquery',
     'backbone'
-], function (_, Backbone) {
+], function ($, Backbone) {
     var ContrailView = Backbone.View.extend({
         constructor: function () {
             var self = this;
@@ -85,17 +85,7 @@ define([
                     modelMap: modelMap,
                     app: app,
                     rootView: rootView,
-                    onAllViewsRenderCompleteCB: function() {
-                        if(!self.isAnyViewRenderInProgress()) {
-                            // Notify parent the one of child's rendering is complete.
-                            self.onAllViewsRenderComplete.notify();
-
-                            if(contrail.checkIfFunction(onAllViewsRenderComplete)) {
-                                // Call any callback associated with onViewRenderComplete of child view.
-                                onAllViewsRenderComplete(self);
-                            }
-                        }
-                    }
+                    onAllViewsRenderCompleteCB: function() {return;}
                     /*
                     onAllRenderCompleteCB: function() {
                         if(!self.isAnyViewRenderInProgress()) {
@@ -109,6 +99,13 @@ define([
                         }
                     }*/
                 };
+
+            //Currently we're enabling this event only in test env.
+            if(globalObj['test-env'] == globalObj['env'] + "-test") {
+                renderConfig.onAllViewsRenderCompleteCB = function() {
+                    viewsRenderCompleteEventNotifier(self, viewName, onAllViewsRenderComplete);
+                }
+             }
 
             cowu.renderView(renderConfig, function(renderedView) {
                 // Adding child view to a map in rootView
@@ -164,6 +161,51 @@ define([
 
     function add2ChildViewMap (childElId, chRenderedView, self) {
         self.childViewMap[childElId] = chRenderedView;
+    }
+
+    function viewsRenderCompleteEventNotifier(self, viewName, onAllViewsRenderComplete) {
+        var notifyTimer = contrail.checkIfExist(globalObj.notifyTimer) ? globalObj.notifyTimer : null,
+            viewNotifyTimeout = 200,
+            ajaxNotifyTimeout = 200;
+
+        function waitAndNotify(timeout) {
+            if (notifyTimer != null) clearTimeout(notifyTimer);
+
+            notifyTimer = setTimeout(function () {
+                if (!self.isAnyViewRenderInProgress() && ($.active == 0)) {
+                    //clear timeout.
+                    clearTimeout(notifyTimer);
+
+                    //For debugging.
+                    //console.log("Render Complete: " + viewName);
+
+                    // Notify parent the one of child's rendering is complete.
+                    self.onAllViewsRenderComplete.notify();
+
+                    if (contrail.checkIfFunction(onAllViewsRenderComplete)) {
+                        // Call any callback associated with onViewRenderComplete of child view.
+                        onAllViewsRenderComplete(self);
+                    }
+                } else if ($.active > 0) {
+                    waitAndNotify(ajaxNotifyTimeout);
+                } else {
+                    if (notifyTimer != null) clearInterval(notifyTimer);
+                }
+            }, timeout);
+
+            globalObj.notifyTimer = notifyTimer;
+        }
+
+        /**
+         * before we notify the event, wait sometime for render complete and no active ajax request exist.
+         */
+        if (!self.isAnyViewRenderInProgress() && ($.active == 0)) {
+            waitAndNotify(viewNotifyTimeout);
+        } else if ($.active > 0) {
+            waitAndNotify(ajaxNotifyTimeout);
+        } else {
+            if (notifyTimer != null) clearInterval(notifyTimer);
+        }
     }
 
     return ContrailView;
