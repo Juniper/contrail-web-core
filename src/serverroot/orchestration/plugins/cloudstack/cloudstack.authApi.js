@@ -242,6 +242,11 @@ function deleteAllTokens (req, callback)
     callback(null, null);
 }
 
+function getServiceAPIVersionByReqObj (req, svcType, callback)
+{
+    callback(null);
+}
+
 exports.getAPIServerAuthParamsByReq = getAPIServerAuthParamsByReq;
 exports.authenticate = authenticate;
 exports.getTenantList = getTenantList;
@@ -253,4 +258,6 @@ exports.deleteAllTokens = deleteAllTokens;
 exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
 exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
+exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
+
 

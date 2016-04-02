@@ -76,6 +76,7 @@ function getOrchModuleByAPIType (apiType)
         orchModule = 'cnfg';
         break;
     case global.label.OPS_API_SERVER:
+    case global.label.OPSERVER:
         orchModule = 'analytics';
         break;
     case global.label.DISCOVERY_SERVER:

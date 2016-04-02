@@ -1390,6 +1390,12 @@ function getWebServerInfo (req, res, appData)
 
     serverObj['disabledFeatures'] = getValueByJsonPath(config,'features;disabled',[]);
     serverObj['featurePkgsInfo'] = getValueByJsonPath(config,'featurePkg',[]);
+    serverObj['serviceEndPointFromConfig'] =
+        (null != config.serviceEndPointFromConfig) ?
+        config.serviceEndPointFromConfig : true;
+    serverObj['regionList'] = req.session.regionList;
+    var authApi = require('../common/auth.api');
+    serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
