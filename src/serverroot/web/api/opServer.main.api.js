@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
 var rest = require('../../common/rest.api'),
@@ -7,38 +7,30 @@ var rest = require('../../common/rest.api'),
     authApi = require('../../common/auth.api'),
     commonUtils = require('../../utils/common.utils'),
     async = require('async'),
-    configServer,
-    configServerApi = require('../../common/configServer.api'),
+    opServer,
     appErrors = require('../../errors/app.errors');
+var opServerIP = ((config.analytics) && (config.analytics.server_ip)) ?
+    config.analytics.server_ip : global.DFLT_SERVER_IP;
+var opServerPort = ((config.analytics) && (config.analytics.server_port)) ?
+    config.analytics.server_port : '8081';
 
-var configServerIP = ((config.cnfg) && (config.cnfg.server_ip)) ?
-    config.cnfg.server_ip : global.DFLT_SERVER_IP;
-var configServerPort = ((config.cnfg) && (config.cnfg.server_port)) ?
-    config.cnfg.server_port : '8082';
-configServer = rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,
-                                 server: configServerIP,
-                                 port: configServerPort});
+opServer = rest.getAPIServer({apiName: global.label.OPSERVER,
+                              server: opServerIP, port: opServerPort});
 
 function getHeaders(dataObj, callback)
 {
-    var headers = {};
+    var headers =
+        (null != dataObj['appHeaders']) ? dataObj['appHeaders'] : {};
     var appData = dataObj['appData'];
-    headers = configServerApi.configAppHeaders(headers, appData);
-    var appHeaders = dataObj['appHeaders'];
-    for (key in appHeaders) {
-        /* App Header overrides default header */
-        headers[key] = appHeaders[key];
-    }
     var req = commonUtils.getValueByJsonPath(appData, 'authObj;req', null,
                                              false);
-    dataObj['headers'] = headers;
-    dataObj['apiRestApi'] = configServer;
+    dataObj['apiRestApi'] = opServer;
     if (null == req) {
         callback(null, dataObj);
         return;
     }
-    var apiServiceType = authApi.getEndpointServiceType('apiServer');
-    authApi.getServiceAPIVersionByReqObj(req, apiServiceType,
+    var opServiceType = authApi.getEndpointServiceType('opServer');
+    authApi.getServiceAPIVersionByReqObj(req, opServiceType,
                                          function(verObjs) {
         var verObj = null;
         if (null != verObjs) {
@@ -50,30 +42,18 @@ function getHeaders(dataObj, callback)
             return;
         }
         headers['protocol'] = verObj['protocol'];
-        var configServerRestInst =
-            rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,
+        var opServerRestInst =
+            rest.getAPIServer({apiName: global.label.OPSERVER,
                                server: verObj['ip'], port: verObj['port']});
         dataObj['headers'] = headers;
-        dataObj['apiRestApi'] = configServerRestInst;
+        dataObj['apiRestApi'] = opServerRestInst;
         callback(null, dataObj);
     });
 }
 
 function doSendApiServerRespToApp (error, data, appData, callback)
 {
-    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
-    if (null != error) {
-        if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
-            error.responseCode) {
-            if (true == multiTenancyEnabled) {
-                commonUtils.redirectToLogoutByAppData(appData);
-                return;
-            }
-        }
-        callback(error, data);
-        return;
-    }
-    callback(null, data);
+    callback(error, data);
 }
 
 function serveAPIRequestCB (obj, callback)
@@ -104,40 +84,6 @@ function serveAPIRequestCB (obj, callback)
                                                   ' not allowed.');
         callback(error, null);
     }
-}
-
-function getDefProjectByAppData (appData)
-{
-    var defProject = null;
-
-    try {
-        defProject = appData['authObj']['req']['cookies']['project'];
-        if (null == defProject) {
-            defProject = appData['authObj']['defTokenObj']['tenant']['name'];
-        }
-    } catch(e) {
-        if ((null != appData) && (null != appData['authObj']) &&
-            (null != appData['authObj']['defTokenObj']) &&
-            (null != appData['authObj']['defTokenObj']['tenant'])) {
-            defProject = appData['authObj']['defTokenObj']['tenant']['name'];
-        }
-    }
-    return defProject;
-}
-
-function getAuthTokenByProject (req, defTokenObj, project)
-{
-    if ((null != req.session.tokenObjs[project]) &&
-        (null != req.session.tokenObjs[project]['token']) &&
-        (null != req.session.tokenObjs[project]['token']['id'])) {
-        return {'project': project,
-            'token': req.session.tokenObjs[project]['token']['id']};
-    }
-    var defProject =
-        commonUtils.getValueByJsonPath(defTokenObj,
-                                       'tenant;name',
-                                       null);
-    return {'project': defProject, 'token': defTokenObj['id']};
 }
 
 function serveAPIRequest (reqUrl, reqData, appData, appHeaders, reqType,

@@ -321,6 +321,9 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
         token: req.session.def_token_used,
         sessionId: req.session.id
     };
+    var tokenid =
+        commonUtils.getValueByJsonPath(req, 'session;def_token_used;id',
+                                       null, false);
 	var curTime = commonUtils.getCurrentTimestamp();
 	var reqId = longPoll.lastRequestId;
 	var pubChannel = redisSub.createPubChannelKey();
@@ -345,6 +348,10 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 			reqBy: reqBy,
 			userRoles: req.session.userRoles,
             tokenObjs: req.session.tokenObjs,
+            serviceCatalog: req.session.serviceCatalog,
+            region: req.session.region,
+            session: req.session,
+            tokenid: tokenid,
             cookies: {
                 domain: req.cookies.domain,
                 project: req.cookies.project,

@@ -32,6 +32,39 @@ config.orchestration.Manager = 'openstack'
 config.serviceEndPointFromConfig = true;
 
 /****************************************************************************
+ * This boolean flag specifies wheather multi region is supported or not.
+ * true  - If set as true, then keystone endpoint is taken from
+ *         config.regions
+ * false - If set as false, then keystone endpoint is taken from
+ *         config.imageManager
+ *
+ ****************************************************************************/
+config.multiRegionSupported = false;
+
+/****************************************************************************
+ * Below are the configs for Api Server and analytics Service type & name as
+ * provisioned in keystone
+ *
+ * apiServiceType - Service Type for apiServer, default value is apiServer
+ * opServiceType  - Service Type for analytics, default value is opServer
+ *
+ ****************************************************************************/
+config.endpoints = {};
+config.endpoints.apiServiceType = 'apiServer';
+config.endpoints.opServiceType = 'opServer';
+
+/****************************************************************************
+ * Mapping to region name with keystone endpoint
+ *
+ * For example:
+ * config.regions.RegionOne = 'http://nodeIp:5000/v2.0';
+ * config.regions.RegionTwo = 'http://nodeIp:5000/v3';
+ *
+ ****************************************************************************/
+config.regions = {};
+config.regions.RegionOne = 'http://127.0.0.1:5000/v2.0';
+
+/****************************************************************************
  * This boolean flag indicates if serviceEndPointFromConfig is set as false,
  * then to take IP/Port/Protocol/Version information from auth catalog,
  * should publicURL OR internalURL will be used.

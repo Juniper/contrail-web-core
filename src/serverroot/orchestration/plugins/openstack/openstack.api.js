@@ -10,6 +10,7 @@ var authApi = require('../../../common/auth.api');
 var config = process.mainModule.exports['config'];
 var httpsOp = require('../../../common/httpsoptions.api');
 var logutils = require('../../../utils/log.utils');
+var commonUtils = require('../../../utils/common.utils');
 
 /* Function: getIpProtoByServCatPubUrl
     This function is used to parse the publicURL/internalURL got from keystone catalog,
@@ -49,6 +50,81 @@ function getIpProtoByServCatPubUrl (pubUrl)
         }
     }
     return {'ipAddr': ipAddr, 'port': port, 'protocol': reqProto};
+}
+
+function getServiceApiVersionObjByPubUrl (pubUrl, type)
+{
+    if (null == pubUrl) {
+        return null;
+    }
+    var ipProtoObj = getIpProtoByServCatPubUrl(pubUrl);
+    var reqProto = ipProtoObj['protocol'];
+    var ipAddr = ipProtoObj['ipAddr'];
+    var port = ipProtoObj['port'];
+    var version = null;
+
+    switch (type) {
+    case 'compute':
+    case 'volume':
+        try {
+            var idx = pubUrl.lastIndexOf('/');
+            if (-1 == idx) {
+                return null;
+            }
+            var str = pubUrl.substr(0, idx);
+            idx = str.lastIndexOf('/');
+            if (-1 == idx) {
+                return null;
+            }
+            version = str.slice(idx + 1);
+        } catch(e) {
+            logutils.logger.error('volume|compute pubUrl parse error' + e);
+        }
+        break;
+    case 'image':
+    case 'identity':
+    case 'api-server':
+    case 'opserver':
+        try {
+            var defVer = getDfltEndPointValueByType(type, 'version');
+            var protoIdx = pubUrl.indexOf('://');
+            if (protoIdx >= 0) {
+                pubUrl = pubUrl.slice(protoIdx + '://'.length);
+            }
+            var idx = pubUrl.indexOf('/');
+            if (idx >= 0) {
+                pubUrl = pubUrl.slice(idx + 1);
+                idx = pubUrl.indexOf('/');
+                if (idx >= 0) {
+                    /* Format: http://localhost:9292/v1/ or
+                     * localhost:9292/v1/
+                     */
+                    version = pubUrl.substr(0, idx);
+                } else {
+                    if (!pubUrl.length) {
+                        /* Format: http://localhost:9292/ or
+                         * localhost:9292/
+                         */
+                        version = defVer;
+                    } else {
+                        /* Format: http://localhost:9292/v1 or
+                         * localhost:9292/v1
+                         */
+                        version = pubUrl;
+                    }
+                }
+            } else {
+                /* Format: http://localhost:9292 or localhost:9292 */
+                version = defVer;
+            }
+        } catch(e) {
+            logutils.logger.error(type +' pubUrl parse error' + e);
+        }
+        break;
+    default:
+        break;
+    }
+    return {version: version, ip: ipAddr, protocol: reqProto, port: port};
 }
 
 /* Function: getApiTypeByServiceType
@@ -108,6 +184,11 @@ function getDfltEndPointValueByType (module, type)
             return 'v1.1';
         }
         break;
+    case 'identity':
+        if ('version' == type) {
+            return 'v2.0';
+        }
+        break;
     default:
         break;
     }
@@ -152,6 +233,26 @@ function getServiceAPIVersionByReqObj (req, type, callback)
             dataObjArr.sort(function(a, b) {return (b['version'] - a['version'])});
             callback(dataObjArr);
         }
+        return;
+    }
+    var serviceCatalog =
+        commonUtils.getValueByJsonPath(req, 'session;serviceCatalog', null);
+    if (null != serviceCatalog) {
+        mappedObj = null;
+        try {
+            mappedObjs = serviceCatalog[type].maps;
+        } catch(e) {
+            mappedObjs = null;
+        }
+        if ((null != mappedObjs) && (null != mappedObjs[0])) {
+            callback(mappedObjs);
+            return;
+        }
+    }
+    var opApiServiceType = authApi.getEndpointServiceType(type);
+    if (null != opApiServiceType) {
+        /* apiServer or opServer */
+        callback(null);
         return;
     }
     authApi.getServiceCatalog(req, function(servCat) {
@@ -208,67 +309,14 @@ function getServiceAPIVersionByReqObj (req, type, callback)
                 } else {
                     pubUrl = endPtList[i]['internalURL'];
                 }
-                var ipProtoObj = getIpProtoByServCatPubUrl(pubUrl);
-                var reqProto = ipProtoObj['protocol'];
-                var ipAddr = ipProtoObj['ipAddr'];
-                var port = ipProtoObj['port'];
 
-                switch (type) {
-                case 'compute':
-                case 'volume':
-                    var idx = pubUrl.lastIndexOf('/');
-                    if (-1 == idx) {
-                        continue;
-                    }
-                    var str = pubUrl.substr(0, idx);
-                    idx = str.lastIndexOf('/');
-                    if (-1 == idx) {
-                        continue;
-                    }
-                    dataObjArr.push({'version': str.slice(idx + 1),
-                                    'protocol': reqProto, 'ip': ipAddr,
-                                    'port': port});
-                    break;
-                case 'image':
-                    var defVer = getDfltEndPointValueByType('image', 'version');
-                    var version = null;
-                    var protoIdx = pubUrl.indexOf('://');
-                    if (protoIdx >= 0) {
-                        pubUrl = pubUrl.slice(protoIdx + '://'.length);
-                    }
-                    var idx = pubUrl.indexOf('/');
-                    if (idx >= 0) {
-                        pubUrl = pubUrl.slice(idx + 1);
-                        idx = pubUrl.indexOf('/');
-                        if (idx >= 0) {
-                            /* Format: http://localhost:9292/v1/ or
-                             * localhost:9292/v1/
-                             */
-                            version = pubUrl.substr(0, idx);
-                        } else {
-                            if (!pubUrl.length) {
-                                /* Format: http://localhost:9292/ or
-                                 * localhost:9292/
-                                 */
-                                version = defVer;
-                            } else {
-                                /* Format: http://localhost:9292/v1 or
-                                 * localhost:9292/v1
-                                 */
-                                version = pubUrl;
-                            }
-                        }
-                    } else {
-                        /* Format: http://localhost:9292 or localhost:9292 */
-                        version = defVer;
-                    }
-                    dataObjArr.push({'version': version,
-                                    'protocol': reqProto, 'ip': ipAddr,
-                                    'port': port});
-                    break;
-                default:
-                    break;
+                var dataObj = getServiceApiVersionObjByPubUrl(pubUrl, type);
+                if (null == dataObj) {
+                    continue;
                 }
+                dataObjArr.push({'version': dataObj.version,
+                                 'protocol': dataObj.protocol,
+                                 'ip': dataObj.ip, 'port': dataObj.port});
             } catch(e) {
                 continue;
             }
@@ -335,6 +383,22 @@ function getApiVersion (suppVerList, verList, index, fallbackIndex, apiType)
     return null;
 }
 
+function getPublicUrlByRegionName (regionname)
+{
+    var pubUrl = null;
+    if (null == config.regions) {
+        return null;
+    }
+    for (var region in config.regions) {
+        if (regionname == region) {
+            return config.regions[region];
+        }
+    }
+    return null;
+}
+
 exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 exports.getApiVersion = getApiVersion;
 exports.getIpProtoByServCatPubUrl = getIpProtoByServCatPubUrl;
+exports.getServiceApiVersionObjByPubUrl = getServiceApiVersionObjByPubUrl;
+exports.getPublicUrlByRegionName = getPublicUrlByRegionName;

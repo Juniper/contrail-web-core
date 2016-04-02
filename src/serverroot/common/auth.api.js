@@ -197,6 +197,14 @@ function getDomainNameByUUID (request, uuid, domList)
                                                                              domList);
 }
 
+function getServiceAPIVersionByReqObj (request, svcType, callback)
+{
+    var orchMode = request.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].getServiceAPIVersionByReqObj(request,
+                                                                svcType,
+                                                                callback);
+}
+
 var adminRoleProjects = ['admin'];
 function getAdminProjectList (req)
 {
@@ -224,6 +232,34 @@ function getAdminProjectList (req)
     return adminProjectList;
 }
 
+function getEndpointServiceType (type)
+{
+    var svcType = null;
+    switch (type) {
+    case 'opServer':
+        svcType =
+            commonUtils.getValueByJsonPath(config,
+                                           'endpoints;opServiceType',
+                                           'opServer');
+        break;
+    case 'apiServer':
+        svcType =
+            commonUtils.getValueByJsonPath(config,
+                                           'endpoints;apiServiceType',
+                                           'apiServer');
+        break;
+    default:
+        break;
+    }
+    return svcType;
+}
+
+function isMultiRegionSupported ()
+{
+    return ((true == config.multiRegionSupported) &&
+            (false == config.serviceEndPointFromConfig));
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -246,4 +282,7 @@ exports.getDomainNameByUUID = getDomainNameByUUID;
 exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getAdminProjectList = getAdminProjectList;
+exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
+exports.getEndpointServiceType = getEndpointServiceType;
+exports.isMultiRegionSupported = isMultiRegionSupported;
 

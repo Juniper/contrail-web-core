@@ -88,6 +88,8 @@ global.SERVICE_ENDPT_TYPE_IMAGE = 'image';
 global.SERVICE_ENDPT_TYPE_VOLUME = 'volume';
 global.SERVICE_ENDPT_TYPE_EC2 = 'ec2';
 global.SERVICE_ENDPT_TYPE_IDENTITY = 'identity';
+global.SERVICE_ENDPT_TYPE_APISERVER = 'apiServer';
+global.SERVICE_ENDPT_TYPE_OPSERVER = 'opServer';
 
 /* http status codes
  */
@@ -206,6 +208,7 @@ global.label.STORAGE_SERVER = 'storage-server';
 global.label.COMPUTE_SERVER = 'compute-server';
 global.label.DISCOVERY_SERVER = 'discovery-server';
 global.label.API_SERVER = 'api-server'
+global.label.OPSERVER = 'opserver';
 global.label.DNS_SERVER = 'dns-server'
 global.label.VCENTER_SERVER = 'vCenter-server'
 global.label.VROUTER = 'vrouter';

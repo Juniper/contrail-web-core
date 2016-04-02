@@ -104,13 +104,23 @@ APIServer.prototype.cb = function (cb)
  */
 APIServer.prototype.updateDiscoveryServiceParams = function (params)
 {
-    var opS = require('./opServer.api');
-    var configS = require('./configServer.api');
     var server = null;
     var self = this;
     var apiServerType = self.name;
     var discService = null;
 
+    if ((true == config.multiRegionSupported) &&
+        (false == config.serviceEndPointFromConfig)) {
+        switch(apiServerType) {
+        case global.label.VNCONFIG_API_SERVER:
+        case global.label.OPS_API_SERVER:
+        case global.label.API_SERVER:
+        case global.label.OPSERVER:
+            return params;
+        default:
+            break;
+        }
+    }
     discService = discClient.getDiscServiceByApiServerType(apiServerType);
     if (discService) {
         /* We are sending only the first IP */
@@ -272,6 +282,9 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         return;
     }
     reqUrl = global.HTTP_URL + params.url + ':' + params.port + params.path;
+    if (null != options['headers']) {
+        delete options['headers']['protocol'];
+    }
     restApi(reqUrl, options).on('complete', function(data, response) {
         if (data instanceof Error ||
             parseInt(response.statusCode) >= 400) {
