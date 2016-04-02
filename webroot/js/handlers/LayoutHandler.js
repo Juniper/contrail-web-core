@@ -113,12 +113,38 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
     return LayoutHandler;
 });
 
+function changeRegion (e)
+{
+    var oldRegion = contrail.getCookie('region');
+    var region = e.added.text;
+    if ((null != region) && (oldRegion != region) &&
+        ('null' != region) && ('undefined' != region)) {
+        contrail.setCookie('region', region);
+        /* And issue logout request */
+        window.location.href = '/logout';
+    }
+}
+
 function getWebServerInfo(project, callback) {
     //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
     $.ajax({
         url: '/api/service/networking/web-server-info?project=' +
             encodeURIComponent(project)
     }).done(function (webServerInfo) {
+        var regionList = webServerInfo['regionList'];
+        var cnt = regionList.length;
+        var ddRegionList = [];
+        for (var i = 0; i < cnt; i++) {
+            ddRegionList.push({'value': regionList[i], text: regionList[i]});
+        }
+        if (false == webServerInfo.serviceEndPointFromConfig) {
+            $('#regionDD').contrailDropdown({dataTextField:"text",
+                                             dataValueField:"value",
+                                             width: '100px',
+                                             change: changeRegion});
+            $('#regionDD').data("contrailDropdown").setData(ddRegionList);
+            $("#regionDD").data("contrailDropdown").value(contrail.getCookie('region'));
+        }
         if (webServerInfo['serverUTCTime'] != null) {
             webServerInfo['timeDiffInMillisecs'] = webServerInfo['serverUTCTime'] - new Date().getTime();
             if (Math.abs(webServerInfo['timeDiffInMillisecs']) > timeStampTolearence) {
