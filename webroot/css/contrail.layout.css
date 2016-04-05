@@ -2435,6 +2435,7 @@ button.btn:active {
     stroke-width: 1;
     fill: none;
     height: 15px;
+    width:inherit;
 }
 
 .green-sparkline {
