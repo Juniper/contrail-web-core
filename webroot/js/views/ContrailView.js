@@ -85,7 +85,18 @@ define([
                     modelMap: modelMap,
                     app: app,
                     rootView: rootView,
-                    onAllViewsRenderCompleteCB: function() {return;}
+                    onAllViewsRenderCompleteCB: function() {
+                        if(!self.isAnyViewRenderInProgress()) {
+                            // Notify parent the one of child's rendering is complete.
+                            self.onAllViewsRenderComplete.notify();
+
+                            if(contrail.checkIfFunction(onAllViewsRenderComplete)) {
+                                // Call any callback associated with onViewRenderComplete of child view.
+                                onAllViewsRenderComplete(self);
+                            }
+                        }
+
+                    }
                     /*
                     onAllRenderCompleteCB: function() {
                         if(!self.isAnyViewRenderInProgress()) {
