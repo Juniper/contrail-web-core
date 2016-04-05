@@ -1354,7 +1354,9 @@ function constructSelect2(self, customConfig, args) {
                     //async: contrail.checkIfExist(dataSourceOption.async) ? dataSourceOption.async : false,
                     dataType: contrail.checkIfExist(dataSourceOption.dataType) ? dataSourceOption.dataType : 'json'
                 };
-
+                if(dataSourceOption.contentType) {
+                    ajaxConfig['contentType'] = dataSourceOption.contentType;
+                }
                 if(dataSourceOption.timeout) {
                     ajaxConfig['timeout'] = dataSourceOption.timeout;
                 }
