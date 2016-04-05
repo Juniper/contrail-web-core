@@ -19,7 +19,11 @@ define([
                             url: cowc.get(cowc.URL_ALARM_DETAILS_IN_CHUNKS, 50, $.now()),
                             type: "GET",
                         },
-                        dataParser: coreAlarmParsers.alarmDataParser
+                        dataParser: function(response) {
+                            var alarms = coreAlarmParsers.alarmDataParser(response);
+                            coreAlarmUtils.checkAndAddAnalyticsDownOrAlarmProcessDownAlarms(null,alarms);
+                            return alarms;
+                        }
                     },
                     cacheConfig: {
                     }
