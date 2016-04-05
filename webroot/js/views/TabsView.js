@@ -12,15 +12,23 @@ define([
                 viewConfig = self.attributes.viewConfig,
                 elId = self.attributes.elementId,
                 tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
-                tabsUIObj;
+                tabHashUrlObj = layoutHandler.getURLHashParams()['tab'],
+                tabsUIObj, activeTab = contrail.handleIfNull(viewConfig.active, 0);
 
-                self.tabs = viewConfig['tabs'];
-                self.tabsIdMap = {};
-                self.tabRendered = [];
+            self.tabs = viewConfig['tabs'];
+            self.tabsIdMap = {};
+            self.tabRendered = [];
 
             self.$el.html(tabsTemplate({elementId: elId, tabs: self.tabs}));
 
             $.each(self.tabs, function(tabKey, tabValue) {
+                /*
+                 * Setting activeTab if set in the URL params
+                 */
+                if (contrail.checkIfExist(tabHashUrlObj) && contrail.checkIfExist(tabHashUrlObj[elId]) && tabHashUrlObj[elId] === tabValue[cowc.KEY_ELEMENT_ID]) {
+                    activeTab = tabKey
+                }
+
                 self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'] = tabKey;
                 if (contrail.checkIfKeyExistInObject(true, tabValue, 'tabConfig.renderOnActivate') &&  tabValue.tabConfig.renderOnActivate === true) {
                     self.tabRendered.push(false);
@@ -31,11 +39,15 @@ define([
             });
 
             $('#' + elId).contrailTabs({
-                active: contrail.handleIfNull(viewConfig.active, 0),
+                active: activeTab,
                 activate: function( event, ui ) {
                     var tabId = ($(ui.newPanel[0]).attr('id')),
-                        tabKey = self.tabsIdMap[tabId];
+                        tabKey = self.tabsIdMap[tabId],
+                        tabHashUrlObj = {};
 
+                    /*
+                     * Execute activate if defined in viewConfig or tabConfigcd contr
+                     */
                     if (contrail.checkIfFunction(viewConfig.activate)) {
                         viewConfig.activate(event, ui);
                     }
@@ -43,6 +55,12 @@ define([
                     if (contrail.checkIfExist(self.tabs[tabKey].tabConfig) && contrail.checkIfFunction(self.tabs[tabKey].tabConfig.activate)) {
                         self.tabs[tabKey].tabConfig.activate(event, ui);
                     }
+
+                    /*
+                     * Setting activeTab to the url on activate
+                     */
+                    tabHashUrlObj[elId] = self.tabs[tabKey]['elementId'];
+                    layoutHandler.setURLHashParams({tab: tabHashUrlObj}, {triggerHashChange: false});
                 },
                 beforeActivate: function( event, ui ) {
                     var tabId = ($(ui.newPanel[0]).attr('id')),
