@@ -805,7 +805,17 @@ define([
         this.TMPL_ALARM_SEVERITY = 'alarm-severity-template';
 
         this.BYTES_PER_SECOND_PREFIXES = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s', 'PB/s', 'EB/s', 'ZB/s'];
+        this.DROPDOWN_VALUE_SEPARATOR = ";";
+        this.ALARMGEN_PROCESS = 'contrail-alarm-gen';
+        this.ANALYTICS_API_PROCESS = 'contrail-analytics-api';
+        this.ANALYTICS_DOWN_ALARM_TEXT = 'Alarms Generator Down. Alarms may not be reported correctly.';
 
+        this.ALARMGEN_PROCESS = 'contrail-alarm-gen';
+        this.ANALYTICS_API_PROCESS = 'contrail-analytics-api';
+        this.ALARM_GEN_DOWN_ALARM_TEXT = 'Alarms Generator Down. Alarms may not be reported correctly.';
+        this.ANALYTICS_API_DOWN_ALARM_TEXT = 'Analytics API Down. Alarms may not be reported correctly.';
+        this.ANALYTICS_PROCESSES_DOWN_ALARM_TEXT = 'Analytics Processes Down. Alarms may not be reported correctly.';
+        this.USER_GENERATED_ALARM = 'userGeneratedAlarm';
         this.get = function () {
             var args = arguments;
             return cowu.getValueFromTemplate(args);

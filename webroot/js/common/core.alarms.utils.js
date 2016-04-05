@@ -63,6 +63,10 @@ define(
 
                 //Given an alarmType and other params fetch the correct message to be displayed.
                 self.getFormattedAlarmMessage = function (options) {
+                    var alarmInfo = options.alarm;
+                    if (alarmInfo.alarmText != null && alarmInfo.alarmText != '') {
+                        return alarmInfo.alarmText;
+                    }
                     var alarmType = getValueByJsonPath(options, 'alarm;type','');
                     var nodeType = options.nodeType;
                     var n = 0;
@@ -101,13 +105,103 @@ define(
                 self.getAlarmObjectFromAnalyticsAlarm = function (options, alarm) {
                     var data = options.data;
                     var infoObj = {type:data['display_type'],link:data['link']};
-                    var alarmMsg = self.getFormattedAlarmMessage ({nodeType:options.nodeType, alarm:alarm});
+                    var alarmMsg = (alarm.alarm_msg) ? alarm.alarm_msg: 
+                                    self.getFormattedAlarmMessage ({nodeType:options.nodeType, alarm:alarm});
                     return $.extend({
                         sevLevel: alarm.severity,
                         name: data['name'],
                         pName: data['display_type'],
                         msg: alarmMsg,
                     }, infoObj);
+                };
+
+                self.checkAndAddAnalyticsDownOrAlarmProcessDownAlarms = function (uve,alarmUVE) {
+                    if(uve == null) {
+                        //Fetch analytics node uve
+                        var ajaxConfig = {
+                            url : ctwl.ANALYTICSNODE_SUMMARY_URL,
+                            async : false
+                        };
+                        contrail.ajaxHandler(ajaxConfig,
+                                function(response) {
+                                    uve = response;
+                                },
+                                function(error) {
+                                    //req failed
+                                });
+                    }
+                    var processStatus = getValueByJsonPath(uve,'value;NodeStatus;process_status');
+                    var isAnalyticsApiDown = isAlarmGenDown = true;
+                   // var alarmObjs = [];
+                    if (processStatus != null) {
+                        $.each (processStatus, function (i, proc) {
+                            if (proc.module_id == cowc.ANALYTICS_API_PROCESS) {
+                                if(proc.state == 'Functional') {
+                                    isAnalyticsApiDown = false;
+                                }
+                            } else if (proc.module_id == cowc.ALARMGEN_PROCESS) {
+                                if(proc.state == 'Functional') {
+                                    isAlarmGenDown = false;
+                                }
+                            }
+                        });
+                        if (isAnalyticsApiDown) {
+                            alarmUVE.push(self.createUserGeneratedAlarm({
+                                severity:3,
+                                alarmText: cowc.ANALYTICS_API_DOWN_ALARM_TEXT,
+                            }));
+                        }
+                        if (isAlarmGenDown) {
+                            alarmUVE.push(self.createUserGeneratedAlarm({
+                                severity:3,
+                                alarmText: cowc.ALARM_GEN_DOWN_ALARM_TEXT,
+                            }));
+                        }
+                    }
+                    if (processStatus == null) {
+                        alarmUVE.push(self.createUserGeneratedAlarm({
+                            severity:3,
+                            alarmText: cowc.ANALYTICS_PROCESSES_DOWN_ALARM_TEXT,
+                        }));
+                    }
+
+/*                    if (isAnalyticsApiDown || isAlarmGenDown || processInfo == null) {
+                        var alarmObjs = [{
+                            severity:3,
+                            type:'userGeneratedAlarms',
+                            alarmText: cowc.ANALYTICS_DOWN_ALARM_TEXT
+                        }]
+                        return self.addAdditionalAlarms(alarmObjs, alarmUVE)
+                    }*/
+                    return self.alarmsSort(alarmUVE);
+                };
+
+                self.createUserGeneratedAlarm = function (options) {
+                    return {
+                        severity: options['severity'] ? options['severity'] : 3,
+                        type: cowc.USER_GENERATED_ALARM,
+                        timestamp: new Date().getTime() * 1000,
+                        alarm_msg: options['alarmText']
+                    }
+                };
+
+                //Use this function to add alarms which are not coming from analytics.
+                //E.g if analytics-gen itself is down we need to manually add them to the list
+                //which can be done using this function
+                self.addAdditionalAlarms = function (alarmObjs, alarmUVE) {
+                    $.each (alarmObjs, function (i, newAlarmObj) {
+                        if(alarmUVE == null) {
+                            alarmUVE = [];
+                        }
+                        var newAlarm = {
+                                severity : newAlarmObj.severity,
+                                ackable : false,
+                                type : newAlarmObj.type,
+                                alarmText : newAlarmObj.alarmText
+                        }
+                        alarmUVE.push (newAlarm);
+                    });
+                    return alarmUVE;
                 };
 
                 //Node colors

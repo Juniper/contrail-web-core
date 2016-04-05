@@ -26,7 +26,11 @@ define([
                                 url: cowc.get(cowc.URL_ALARM_DETAILS_IN_CHUNKS, 50, $.now()),
                                 type: "GET",
                             },
-                            dataParser: coreAlarmParsers.alarmDataParser
+                            dataParser: function(response) {
+                                var alarms = coreAlarmParsers.alarmDataParser(response);
+                                coreAlarmUtils.checkAndAddAnalyticsDownOrAlarmProcessDownAlarms(null,alarms);
+                                return alarms;
+                            }
                         },
                         cacheConfig: {
                         }
@@ -135,7 +139,7 @@ define([
                                   name:'',
                                   formatter : function (r,c,v,cd,dc) {
                                       var formattedDiv = '';
-                                      if(!dc['ack']) {
+                                      if(!dc['ack'] && dc['type'] != cowc.USER_GENERATED_ALARM) {
                                           formattedDiv = '<span title="Acknowledge" style="float:right"><i class="icon-ok-circle"></i></span>';
                                       }
                                       return formattedDiv;
@@ -413,7 +417,7 @@ define([
         return template({
             showText : showText,
             color : color,
-            ack : dc['ack']
+            ack : (dc['ack'] == null)? false : dc['ack']
         });
     }
 
