@@ -72,6 +72,9 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
                 merge = ifNull(obj['merge'], true);
                 triggerHashChange = ifNull(obj['triggerHashChange'], true);
             }
+            //Adding triggerHashChange as part of the URL itself.
+            hashParams['reload'] = triggerHashChange; 
+                
             //Update Hash only if it differs from current hash
             var currHashParams = self.getURLHashParams();
             //If merge is true, merge the parameters before comparing current hash with the new hash going to be pushed

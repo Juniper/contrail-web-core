@@ -124,7 +124,8 @@ $(document).ready(function () {
         //Don't trigger hashChange if URL hash is updated from code
         //As the corresponding view has already been loaded from the place where hash is updated
         //Ideally,whenever to load a view,just update the hash let it trigger the handler,instead calling it manually
-        if (globalObj.hashUpdated == 1) {
+        //if the URL already has reload set to false, view should not reload
+        if (globalObj.hashUpdated == 1 || (currHash.q.reload && currHash.q.reload == "false")) {
             globalObj.hashUpdated = 0;
             lastHash = currHash;
             return;
