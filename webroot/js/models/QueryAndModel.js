@@ -130,7 +130,10 @@ define([
                 if (name == "sourcevn" || name == "destvn" || name == "vrouter") {
                     resultOperatorArr.push({id: 'Starts with', text: 'Starts with'});
                 }
-            } else if (tableType == "OBJECT" && name == "ObjectId") {
+            } else if (tableType == "OBJECT") {
+                resultOperatorArr.push({id: 'Starts with', text: 'Starts with'});
+
+            } else if (tableType == "LOG") {
                 resultOperatorArr.push({id: 'Starts with', text: 'Starts with'});
 
             } else if (tableType == "STAT") {
