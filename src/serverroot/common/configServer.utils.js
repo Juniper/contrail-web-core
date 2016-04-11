@@ -185,6 +185,7 @@ function getTenantListAndSyncDomain (request, appData, callback)
 
 function getProjectRole (req, res, appData)
 {
+    var uiRoles = null;
     var projId = req.param('id');
     var projUrl = '/project/' + projId + '?exclude_back_refs=true' +
         '&exclude_children=true';
@@ -193,6 +194,11 @@ function getProjectRole (req, res, appData)
     var headers = {};
     var tokenId = null;
 
+    if (global.ALL_PROJECT_UUID == projId) {
+        /* 'all' project request, so do not do anything now */
+        commonUtils.handleJSONResponse(null, res, uiRoles);
+        return;
+    }
     var tokenObjs = req.session.tokenObjs;
     if ((null != adminProjList) && (adminProjList.length > 0)) {
         for (project in tokenObjs) {
@@ -209,7 +215,6 @@ function getProjectRole (req, res, appData)
         commonUtils.getValueByJsonPath(req,
                                        'session;syncedProjects;' + projId +
                                        ';name', null);
-    var uiRoles = null;
     if (null != syncedProj) {
         /* We do not do anything currently with role, so comment it, will enable
          * it when RBAC is supported in API Server

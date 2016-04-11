@@ -199,6 +199,8 @@ global.TOKEN_URL = '/v2.0/tokens';
 global.PKI_ASN1_PREFIX = 'MII';
 global.PKIZ_PREFIX = 'PKIZ_';
 
+global.ALL_PROJECT_UUID = 'all';
+
 global.label = {};
 global.label.VNCONFIG_API_SERVER = 'vnconfig-api-server';
 global.label.OPS_API_SERVER = 'ops-api-server';

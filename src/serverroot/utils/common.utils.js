@@ -1411,6 +1411,12 @@ function getWebServerInfo (req, res, appData)
         serverObj['featurePkg'][activePkgs[i]] = true;
     }
 
+    /* Return from here, we will get project token stored in
+     * req.session.tokenObjs by get-project-role API
+     */
+    commonUtils.handleJSONResponse(null, res, serverObj);
+    return;
+
     var project = req.param('project');
     var tokenObjs = req.session.tokenObjs;
     if ((null != tokenObjs) && (null != tokenObjs[project])) {
@@ -2256,3 +2262,4 @@ exports.getIPRangeLen = getIPRangeLen;
 exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
 exports.isSubArray = isSubArray;
 exports.getValueByJsonPath = getValueByJsonPath;
+

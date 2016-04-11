@@ -20,6 +20,7 @@ var config = process.mainModule.exports['config'],
     exec = require('child_process').exec,
     configUtils = require('../../../common/configServer.utils'),
     plugins = require('../plugins.api'),
+    _ = require('underscore'),
     rest = require('../../../common/rest.api');
 
 var authServerIP = ((config.identityManager) && (config.identityManager.ip)) ? 
@@ -192,6 +193,25 @@ function getAuthDataByReqUrl (req, token, authUrl, callback)
     }
   });
 }
+
+/* Function: getEnabledProjects
+   This function is used to filter out disabled projects from project-list got
+   from keystone
+ */
+getEnabledProjects = function(projectList)
+{
+    var projects = [];
+    if ((null == projectList) || (!projectList.length)) {
+        return projects;
+    }
+    return _.filter(projectList, function(project) {
+        if ('enabled' in project) {
+            return (true == project['enabled']);
+        }
+        return false;
+    });
+}
+
 /*
 var getTenantListCB = {
     'v2.0': getV2TenantList,
@@ -213,11 +233,13 @@ function getTenantList (req, appData, callback)
     }
     getAuthRetryData(token, req, reqUrl, function(err, data) {
         if ((null != err) || (null == data) || (null == data['projects'])) {
+            data['tenants'] = getEnabledProjects(data['tenants']);
             callback(err, data);
             return;
         }
         data['tenants'] = data['projects'];
         delete data['projects'];
+        data['tenants'] = getEnabledProjects(data['tenants']);
         callback(err, data);
     });
 }
@@ -1364,6 +1386,7 @@ function doV3Auth (req, callback)
                     callback(messages.error.unauthorized_to_project);
                     return;
                 }
+                projects['projects'] = getEnabledProjects(projects['projects']);
                 var projectCookie =
                     commonUtils.getValueByJsonPath(req,
                                                    'cookies;project',
@@ -1385,7 +1408,23 @@ function doV3Auth (req, callback)
                 }
                 getUserRoleByProjectList(projects['projects'], userObj,
                                          function(roleStr, tokenObjs) {
-                    req.session.def_token_used = tokenObjs[defProject]['token'];
+                    var defToken =
+                        commonUtils.getValueByJsonPath(tokenObjs,
+                                                       defProject + ';token',
+                                                       null);
+                    if (null == defToken) {
+                        for (var key in tokenObjs) {
+                            defToken =
+                                commonUtils.getValueByJsonPath(tokenObjs[key],
+                                                               'token', null);
+                            if (null == defToken) {
+                                continue;
+                            }
+                            defProject = key;
+                            break;
+                        }
+                    }
+                    req.session.def_token_used = defToken;
                     req.session.authApiVersion = 'v3';
                     req.session.tokenObjs = tokenObjs;
                     req.session.userRoles =
@@ -1456,6 +1495,7 @@ function doV2Auth (req, callback)
                 callback(messages.error.unauthorized_to_project);
                 return;
             }
+            data.tenants = getEnabledProjects(data.tenants);
             var projectCookie =
                 commonUtils.getValueByJsonPath(req,
                                                'cookies;project',
