@@ -657,3 +657,10 @@
 	top: 65px;
  }
 }
+
+@media (max-width: 767px) {
+	.input-prepend input, .input-append input, .input-prepend input[class*="span"], .input-append input[class*="span"] {
+		display: inline-block;
+		width: inherit;
+	}
+}

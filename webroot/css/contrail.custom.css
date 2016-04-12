@@ -1491,6 +1491,7 @@ label.jqInvalid{
 .ui-autocomplete li.ui-menu-item a{
 	padding: 5px;
 	color: #555;
+    word-break: break-all;
 }
 .ui-menu .ui-menu-item a.ui-state-focus {
  	background: none;
@@ -2128,6 +2129,8 @@ p.error, p.error-text {
     min-height: 100px;
     position:relative;
     right:40px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 .graph.holygrail .col3 {
     float: left;
@@ -2764,6 +2767,43 @@ p.error, p.error-text {
 .group-detail-action-item-dropdown-menu {
     top: 24px;
     right: -3px !important;
+}
+.detail-block-array-list {
+    margin: 0 10px 10px;
+    width: 97%;
+}
+.detail-block-array-list-item {
+    margin-top: 5px;
+    padding: 5px;
+    /*border: 1px solid #DEDEDE;*/
+}
+.detail-block-array-list-item .title {
+    border-bottom: 1px solid #CCCCCC;
+
+}
+.detail-block-grid {
+    display: table;
+    margin: 0 5px 5px;
+    width: 98%;
+}
+.detail-block-grid-header {
+    display: table-header-group;
+    color: #777;
+    font-weight: bold;
+}
+.detail-block-grid-header .detail-block-grid-cell {
+    border-bottom: 1px solid #CCCCCC;
+}
+.detail-block-grid-body {
+    display: table-row-group;
+}
+.detail-block-grid-row {
+    display: table-row;
+    padding: 2px 0;
+}
+.detail-block-grid-cell {
+    display: table-cell;
+    padding: 0 10px 0 0;
 }
 
 /* Checked Multiselect styles */
