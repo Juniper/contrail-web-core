@@ -4334,3 +4334,8 @@ div.stack-bar-chart-tooltip {
     border-radius: 0px;
     pointer-events: none;
 }
+
+.slick-grid-grouping-heading {
+    font-weight:600;
+    padding-left:3px
+}

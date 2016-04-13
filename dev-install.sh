@@ -150,6 +150,7 @@ cp -af ./$THIRD_PARTY/jnpr_slickgrid/slick.dataview.js webroot/assets/slickgrid/
 cp -af ./$THIRD_PARTY/jnpr_slickgrid/plugins/slick.checkboxselectcolumn.js webroot/assets/slickgrid/js/slick.checkboxselectcolumn.js
 cp -af ./$THIRD_PARTY/jnpr_slickgrid/plugins/slick.rowselectionmodel.js webroot/assets/slickgrid/js/slick.rowselectionmodel.js
 cp -af ./$THIRD_PARTY/jnpr_slickgrid/lib/jquery.event.drag-2.2.js webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
+cp -af ./$THIRD_PARTY/jnpr_slickgrid/slick.groupitemmetadataprovider.js webroot/assets/slickgrid/js/slick.groupitemmetadataprovider.js
 
 cp -af ./$THIRD_PARTY/slickgrid.enhancement.pager/slick.enhancementpager.js webroot/assets/slickgrid/js/slick.enhancementpager.js
 cp -af ./$THIRD_PARTY/slickgrid.enhancement.pager/libs/jquery.json-2.3.min.js webroot/assets/slickgrid/js/jquery.json-2.3.min.js
@@ -292,6 +293,7 @@ MAINFILE[43]=webroot/js/dashboard-utils.js
 MAINFILE[44]=webroot/assets/d3-v3.5.6/js/d3.js
 MAINFILE[45]=webroot/assets/nvd3-v1.8.1/js/nv.d3.js
 
+MAINFILE[46]=webroot/assets/slickgrid/js/slick.groupitemmetadataprovider.js
 
 cat ${MAINFILE[1]} > webroot/js/common/contrail.unified.1.js
 cat ${MAINFILE[2]} >> webroot/js/common/contrail.unified.1.js
@@ -321,6 +323,7 @@ cat ${MAINFILE[24]} >> webroot/js/common/contrail.unified.2.js
 cat ${MAINFILE[25]} >> webroot/js/common/contrail.unified.2.js
 cat ${MAINFILE[26]} >> webroot/js/common/contrail.unified.2.js
 cat ${MAINFILE[27]} >> webroot/js/common/contrail.unified.2.js
+cat ${MAINFILE[46]} >> webroot/js/common/contrail.unified.2.js
 cat ${MAINFILE[28]} >> webroot/js/common/contrail.unified.2.js
 cat ${MAINFILE[29]} >> webroot/js/common/contrail.unified.2.js
 cat ${MAINFILE[30]} >> webroot/js/common/contrail.unified.2.js

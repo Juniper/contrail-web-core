@@ -1026,6 +1026,28 @@ define(['underscore'], function (_) {
             }
             return query_string;
         };
+
+        //Function to add grouping feature to a grid.
+        this.addGridGrouping = function (gridId,options) {
+            var groupingField = options['groupingField'];
+            var groupHeadingPrefix = options['groupHeadingPrefix'];
+            var rowCountSuffix = getValueByJsonPath(options,'rowCountSuffix',[]);
+            var dv = $('#' + gridId).data('contrailGrid')._dataView;
+            dv.setGrouping({
+                getter: groupingField,
+                formatter: function (g) {
+                    var headingTemplate = contrail.getTemplate4Id('grid-grouping-heading-template'),
+                    headingHTML = headingTemplate({mainText: ((groupHeadingPrefix)?
+                                                        groupHeadingPrefix :'') + g.value,
+                                           rowsCount: g.rows.length,
+                                           rowsCountSuffix: (g.rows.length > 1)?
+                                                   ((rowCountSuffix[1]) ? rowCountSuffix[1] : '') :
+                                                   ((rowCountSuffix[0]) ? rowCountSuffix[0] : '')
+                                  });
+                    return headingHTML;
+                },
+              });
+        };
     };
 
     function filterXML(xmlString, is4SystemLogs) {
