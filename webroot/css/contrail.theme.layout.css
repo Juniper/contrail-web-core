@@ -142,6 +142,9 @@ body.navbar-fixed {
   text-shadow: none;
   color: #ffffff;
 }
+.navbar .nav > li {
+    float: right
+}
 /* ace-nav */
 .ace-nav {
   height: 100%;

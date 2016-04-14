@@ -490,7 +490,7 @@ define(['underscore'], function (_) {
 
         /* Detail Template Generator*/
 
-        this.generateBlockListKeyValueTemplate = function (config, app, parentConfig) {
+        this.generateBlockListTemplate = function (config, app, parentConfig) {
             var template = '' +
                 '{{#IfCompare requestState "' + cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY + '" operator="!==" }}' +
                     '{{#IfCompare requestState "' + cowc.DATA_REQUEST_STATE_FETCHING + '" operator="===" }}' +
@@ -503,41 +503,89 @@ define(['underscore'], function (_) {
                         '<p>' + cowm.DATA_SUCCESS_EMPTY + '</p>' +
                     '{{/IfCompare}} ' +
                 '{{else}}' +
-                    '<ul class="item-list">';
-
-            $.each(config, function (configKey, configValue) {
-                var showKey = (contrail.checkIfExist(configValue.showKey)) ? configValue.showKey: true;
-                template += '' +
-                    '{{#IfValidJSONValueByPath "' + configValue.key + '" data ' + configKey + '}}' +
-                    '<li>' +
-                    '<label class="inline row-fluid">';
-                if (showKey) {
-                    template += '<span class="key span5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
-                        ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
-                        configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>';
-
-                    //when Key is displayed will use span7 for values else use the full width.
-                    template += '<span class="value span7 ';
-                } else {
-                    template += '<span class="value span12 ';
-                }
-                template += (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
-                    ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">{{{getValueByConfig data config=\'' + JSON.stringify(configValue) + '\'}}}</span>';
-
-                template += '</label>' +
-                    '</li>' +
-                    '{{/IfValidJSONValueByPath}}';
-            });
-
-            template += '</ul>' +
+                 self.generateBlockListKeyValueTemplate(config, app, parentConfig, 'data') +
                 '{{/IfCompare}}';
 
             return template;
         };
 
-        this.generateInnerTemplate = function (config, app) {
+        this.generateBlockListKeyValueTemplate = function (config, app, parentConfig, objectAccessor) {
+            var template = '<ul class="item-list">';
+
+            $.each(config, function (configKey, configValue) {
+                template += '' +
+                    '{{#IfValidJSONValueByPath "' + configValue.key + '" ' + objectAccessor + ' ' + configKey + '}}' +
+                    '<li>' +
+                    '<label class="inline row-fluid">' +
+                    '<span class="key span5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
+                    ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
+                    configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
+                    '<span class="value span7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
+                    ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">' + self.getValueByConfig(configValue, app, objectAccessor) + '</span>'+
+                    '</label>' +
+                    '</li>' +
+                    '{{/IfValidJSONValueByPath}}';
+            });
+
+            template += '</ul>';
+
+            return template;
+        };
+
+        this.getValueByConfig = function(configValue, app, objectAccessor) {
+            var templateGenerator = configValue.templateGenerator;
+            if (templateGenerator === 'TextGenerator' || templateGenerator === 'LinkGenerator' || templateGenerator === 'json') {
+                return '{{{getValueByConfig ' + objectAccessor + ' config=\'' + encodeURIComponent(JSON.stringify(configValue)) + '\'}}}';
+            } else {
+                return self.generateInnerTemplate(configValue, app, objectAccessor);
+            }
+
+        };
+
+        this.generateBlockGridHeaderTemplate = function (config, app, parentConfig) {
+            var template = '<div class="detail-block-grid-header"><div class="detail-block-grid-row">';
+
+            $.each(config, function (configKey, configValue) {
+                template += '<div class="detail-block-grid-cell"' +
+                    (contrail.checkIfKeyExistInObject(true, configValue, 'templateGeneratorConfig.width') ?
+                    'style="width: ' + configValue.templateGeneratorConfig.width + 'px;"' : '') + '>' +
+                    '<div style="width: inherit; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; height: 20px;">' + cowl.get(configValue.key, app) + '</div></div>';
+            });
+
+            template += '</div></div>';
+
+            return template;
+        };
+
+        this.generateBlockGridBodyTemplate = function (config, app, objectAccessor) {
+            var objectAccessor = contrail.checkIfExist(objectAccessor) ? objectAccessor : 'data',
+                template = '<div class="detail-block-grid-body">' +
+                '{{#each ' + objectAccessor + '.' + config.key + '}} ' +
+                '<div class="detail-block-grid-row">' +
+                '';
+
+            $.each(config.templateGeneratorConfig.dataColumn, function (configKey, configValue) {
+                template += '<div class="detail-block-grid-cell" ' +
+                    (contrail.checkIfKeyExistInObject(true, configValue, 'templateGeneratorConfig.width') ?
+                    'style="width: ' + configValue.templateGeneratorConfig.width + 'px;"' : '') + '>' +
+                    '<div style="width: inherit; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; height: 20px;" ' +
+                    'title="{{{getValueByConfig this config=\'' + encodeURIComponent(JSON.stringify(configValue)) + '\'}}}">' +
+                    '{{{getValueByConfig this config=\'' + encodeURIComponent(JSON.stringify(configValue)) + '\'}}}</div>' +
+                    '</div>';
+            });
+
+            template += '' +
+                '</div> ' +
+                '{{/each}}' +
+                '</div>';
+
+            return template;
+        };
+
+        this.generateInnerTemplate = function (config, app, objectAccessor) {
             var template, templateObj,
-                templateGenerator = config.templateGenerator, templateGeneratorConfig = config.templateGeneratorConfig;
+                templateGenerator = config.templateGenerator, templateGeneratorConfig = config.templateGeneratorConfig,
+                objectAccessor = contrail.checkIfExist(objectAccessor) ? objectAccessor : 'data';
 
             switch (templateGenerator) {
                 case 'RowSectionTemplateGenerator':
@@ -572,7 +620,6 @@ define(['underscore'], function (_) {
 
                 case 'BlockListTemplateGenerator':
                     var template = '';
-
                     if (config.theme == cowc.THEME_DETAIL_WIDGET) {
                         template = '' +
                             '<div class="detail-block-list-content widget-box transparent">' +
@@ -596,7 +643,7 @@ define(['underscore'], function (_) {
                                 '<div class="widget-body">' +
                                     '<div class="widget-main row-fluid">' +
                                         '<div class="list-view">' +
-                                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app, config) +
+                                            self.generateBlockListTemplate(config.templateGeneratorConfig, app, config) +
                                         '</div>' +
                                         '<div class="advanced-view hide">' +
                                             '{{{formatGridJSON2HTML this.data' +
@@ -611,35 +658,51 @@ define(['underscore'], function (_) {
                     } else {
                         template = '<div class="detail-block-list-content row-fluid">' +
                             '<h6>' + config.title + '</h6>' +
-                            self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig, app, config) +
+                             self.generateBlockListTemplate(config.templateGeneratorConfig, app, config) +
                             '<br/></div>';
                     }
 
                     templateObj = $(template);
                     break;
 
-                case 'BlockGridTemplateGenerator':
+                case 'BlockArrayListTemplateGenerator':
                     var template = '<div>' +
-                        '{{#IfValidJSONValueByPathLength "' + config.key + '" this}} ' +
-                        '<div class="detail-block-grid-content row-fluid">' +
+                        '{{#IfValidJSONValueByPathLength "' + objectAccessor + '.' + config.key + '" this}} ' +
+                        '<div class="detail-block-array-list-content row-fluid">' +
                         (contrail.checkIfExist(config.title) ? '<h6>' + config.title + '</h6>' : '') +
-                        '<div class="row-fluid">' +
-                        '{{#each ' + config.key + '}} ' +
+                        '<div class="row-fluid detail-block-array-list">' +
+                        '{{#each ' + objectAccessor + '.' + config.key + '}} ' +
                         '{{#IfCompare @index 0 operator="%2"}} ' +
                         '{{#IfCompare @index 0 operator="!="}}' +
                         '</div>' +
-                        '<div class="row-fluid block-grid-row">' +
+                        '<div class="row-fluid">' +
                         '{{else}}' +
-                        '<div class="row-fluid block-grid-row">' +
+                        '<div class="row-fluid">' +
                         '{{/IfCompare}}' +
                         '{{/IfCompare}}' +
                         '<div class="span6">' +
+                        '<div class="row-fluid detail-block-array-list-item"> ' +
+                        '<div class="row-fluid title">' + cowl.get(config.templateGeneratorConfig.titleColumn.key, app) + ': {{{getValueByConfig this config=\'' + encodeURIComponent(JSON.stringify(config.templateGeneratorConfig.titleColumn)) + '\'}}}</div>' +
+                        '<div class="row-fluid data">' + self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app, config, 'this') + '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '{{/each}}' +
+                        '</div> {{/IfValidJSONValueByPathLength}} </div>';
+
+                    templateObj = $(template);
+                    break;
+
+                case 'BlockGridTemplateGenerator':
+                    var template = '<div>' +
+                        '{{#IfValidJSONValueByPathLength "' + config.key + '" ' + objectAccessor + '}} ' +
                         '<div class="row-fluid">' +
-                        self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app, config) +
+                        (contrail.checkIfExist(config.title) ? '<h6>' + config.title + '</h6>' : '') +
+                        '<div class="row-fluid">' +
+                        '<div class="detail-block-grid">' +
+                        self.generateBlockGridHeaderTemplate(config.templateGeneratorConfig.dataColumn, app, config) +
+                        self.generateBlockGridBodyTemplate(config, app, objectAccessor) +
                         '</div>' +
-                        '</div>' +
-                        '{{/each}} </div>' +
-                        '</div></div> {{/IfValidJSONValueByPathLength}} </div>';
+                        '</div></div>{{/IfValidJSONValueByPathLength}} </div>';
 
                     templateObj = $(template);
                     break;

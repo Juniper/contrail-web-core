@@ -284,11 +284,12 @@ define([
 
                 //generate one using the template and data from the model
                 //since the data is already present, request state is set to SUCCESS_NOT_EMPTY
-                var detailsHtml = Handlebars.compile(viewConfigBody.options.detail.template)({
-                    data: gridItems[0],
-                    ignoreKeys: ['cgrid'],
-                    requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY
-                });
+                var detailsHtmlObj = $(Handlebars.compile(viewConfigBody.options.detail.template)({
+                        data: gridItems[0],
+                        ignoreKeys: ['cgrid'],
+                        requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY
+                    })),
+                    detailsHtml = detailsHtmlObj.prop('outerHTML');
 
                 equal(domDetailsHtml, detailsHtml,
                     "Details row html content should be equal to the one generated from view config template");

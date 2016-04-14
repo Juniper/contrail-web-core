@@ -49,7 +49,46 @@
     top: 24px;
     right: -3px !important;
 }
-
+.detail-block-array-list {
+    margin: 0 10px 10px;
+    width: 97%;
+}
+.detail-block-array-list-item {
+    padding: 5px 0;
+}
+.detail-block-array-list-item ul.item-list li {
+    padding: 0 !important;
+}
+.detail-block-array-list-item .title {
+    border-bottom: 1px solid #CCCCCC;
+    font-weight: bold;
+    color: #777;
+    margin-bottom: 5px;
+}
+.detail-block-grid {
+    display: table;
+    margin: 0 5px 5px;
+    width: 98%;
+}
+.detail-block-grid-header {
+    display: table-header-group;
+    color: #777;
+    font-weight: bold;
+}
+.detail-block-grid-header .detail-block-grid-cell {
+    border-bottom: 1px solid #CCCCCC;
+}
+.detail-block-grid-body {
+    display: table-row-group;
+}
+.detail-block-grid-row {
+    display: table-row;
+    padding: 2px 0;
+}
+.detail-block-grid-cell {
+    display: table-cell;
+    padding: 0 10px 0 0;
+}
 /*
  * Styles moved from vcon-web.css
  * TODO Cleanup requireed to remove unused styles
