@@ -252,7 +252,13 @@ define([
                             type: 'status',
                             iconClasses: '',
                             text: cowm.getQueryQueuedMessage(gridOptions.queryQueueUrl, gridOptions.queryQueueTitle)
-                        }
+                        },
+                        loading: {
+                             text: 'Loading Results..',
+                         },
+                         empty: {
+                             text: 'No Results Found.'
+                         }
                     }
                 },
                 columnHeader: {
