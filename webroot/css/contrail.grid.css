@@ -1,0 +1,379 @@
+/*
+ * Copyright (c) 2016 Juniper Networks, Inc.
+ * All rights reserved.
+ */
+
+.slick-column-name {
+    white-space: normal;
+}
+.slick-header-column.ui-state-default {
+    height: 100%;
+}
+
+.slick-header-column.hide {
+    display: none !important;
+}
+
+.grid-body.ui-widget {
+    width:100%;
+    border: none;
+    border-top: 1px solid #ccc;
+    top:-2px;
+}
+.grid-header {
+    margin: 0;
+    cursor: default;
+    display: block;
+    border: none
+}
+.grid-header .input-grid-search {
+    height: 17px !important;
+    margin-bottom: 4px;
+    border-color: #ddd;
+}
+.grid-header .select2-container,
+.widget-header .select2-container,
+.breadcrumb .select2-container{
+    margin-bottom: 2px;
+}
+.grid-header .select2-container.select2-container-active,
+.widget-header .select2-container.select2-container-active,
+.breadcrumb .select2-container.select2-container-active{
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+.grid-header .ui-multiselect {
+    height: 23px !important;
+    margin-bottom: 4px;
+    border-color: #ddd;
+    padding: 1px 6px 3px 24px;
+}
+.grid-header [class*="icon-"]{
+    margin-top: 1px;
+    font-size: 14px;
+}
+.grid-header .select2-container{
+    margin-bottom: 2px;
+}
+.grid-header .select2-container a.select2-choice,
+.widget-header .select2-container a.select2-choice,
+.breadcrumb .select2-container a.select2-choice{
+    border: none;
+    padding: 0 4px;
+}
+.grid-header .widget-header, .widget-header .widget-toolbar{
+    color: #777;
+    cursor: default;
+}
+.grid-header .widget-toolbar .select2-chosen,
+.widget-header .widget-toolbar .select2-chosen,
+.breadcrumb li.active .select2-chosen {
+    color: #3182bd;
+    font-weight: 600;
+}
+
+/* Sort Icon from font-awesome */
+.contrail-grid{
+    border-bottom: 1px solid #dadada;
+    margin-bottom: 6px;
+}
+.contrail-grid > .collapsed {
+    display: none;
+}
+.contrail-grid .widget-body-collapsed {
+    display: none;
+}
+.contrail-grid .widget-body-collapsed.collapsed {
+    border-top: 1px solid #DDD;
+    border-bottom: none;
+    display: block;
+}
+.slick-sort-indicator{
+    margin-left: 0;
+    margin-top: 0;
+    float: none;
+}
+.slick-sort-indicator:before{
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    color: #3182bd;
+    font-size: 11px;
+    padding-left: 0.75em;
+}
+.slick-sort-indicator-desc, .slick-sort-indicator-asc {
+    background: none;
+    position: relative;
+}
+.slick-sort-indicator-desc:before {
+    content: "\f175";
+}
+.slick-sort-indicator-asc:before {
+    content: "\f176";
+}
+.grid-load-status{
+    padding: 5px;
+}
+.grid-load-status p{
+    margin: 0;
+}
+.grid-load-status p.status {
+    color: #777777;
+}
+.grid-load-status p.status .hyperlink{
+    color: #3182bd;
+}
+.grid-load-status p.error{
+    color: #b94a48;
+}
+.grid-load-status.alert-error {
+    margin-bottom: 0;
+}
+.grid-info {
+    margin-bottom: 0;
+}
+.slick-header {
+    border: none;
+    background: none;
+}
+.slick-header .slick-header-column {
+    border: none;
+    background: none;
+}
+.slick-header-column.ui-state-default {
+    min-height: 18px;
+    line-height: 18px;
+    color: #3182bd;
+    font-size: 13px;
+}
+.slick-viewport {
+    border-top: 1px solid #dadada;
+}
+.grid-state-fetching-rows .slick-row,
+.grid-state-fetching .widget-toolbar .widget-toolbar-icon[data-action="export"],
+.grid-state-fetching .widget-toolbar .widget-toolbar-icon[data-action="refresh"] {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+    filter: alpha(opacity=60);
+    opacity: 0.6;
+}
+.slick-row {
+    border:none;
+}
+.slick-row-master.even {
+    background: none;
+    background-color: #f5f5f5;
+}
+.slick-row.selected_row {
+    background: none;
+    background-color: #c6dbef;
+}
+.slick-row-detail-icon {
+    font-size: 16px;
+    margin: 0 5px;
+    color: #555;
+}
+.slick-row-detail-container .row-fluid, .slick-cell .row-fluid [class*="span"]{
+    min-height: 20px;
+    font-size: 11px;
+}
+.slick-row-detail-container label {
+    font-size: 12px;
+}
+.slick-row.ui-widget-content.slick-row-detail{
+    border: none;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #ccc;
+    padding: 0 0 10px;
+}
+.slick-row-detail .slick-cell, .slick-row-detail .row-fluid, .slick-row-detail .item-list > li {
+    background-color: #FFF
+}
+.slick-row-detail .group-detail-container h6 {
+    font-size: 12px;
+}
+.slick-row-detail .group-detail-container ul.item-list li {
+    padding: 0 5px;
+}
+.slick-row-detail .slick-cell {
+    padding: 10px 35px;
+}
+.slick-row-detail .row-fluid, .slick-row-detail .row-fluid [class*="span"] {
+    min-height:20px;
+}
+.slick-row-detail  .row-fluid label {
+    margin-bottom:0px;
+    font-size: 12px;
+}
+.group-detail-container h6 {
+    padding: 0 0 5px;
+    margin: 0 5px 5px;
+    color: #3182bd;
+    border-bottom: 1px solid #ccc;
+}
+.group-detail-container ul.item-list li {
+    border: none;
+    padding: 5px;
+    border-bottom: 1px solid #F1F1F1;
+}
+.group-detail-container ul.item-list li:last-child {
+    border: none;
+}
+.group-detail-container ul.item-list li .key {
+    color:#666;
+}
+.group-detail-container ul.item-list li .key.label-blue{
+    color:#3182bd;
+}
+.group-detail-container ul.item-list li .key.label-blue.indent-right{
+    padding-left:15px;
+}
+.group-detail-container ul.item-list li .value {
+    color:#777;
+}
+.block-grid-row {
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
+.value-link {
+    color: #3182BD !important;
+    display: block;
+}
+.value-link:hover {
+    text-decoration: underline;
+}
+
+.slick-cell {
+    border: none;
+    color: #393939;
+    font-size: 13px;
+    padding: 5px;
+    overflow-y: hidden;
+    word-break:break-all;
+    white-space: normal;
+}
+.slick-cell.cell-hyperlink-blue, .slick-cell .cell-hyperlink-blue{
+    color: #3182bd;
+    cursor: pointer;
+}
+
+.slick-cell.cell-text-blue{
+    color: #3182bd;
+}
+
+.slick-cell .cell-no-link{
+    color: #393939;
+    cursor: default;
+}
+.slick-cell.fixed-row-height {
+    overflow-y: hidden;
+    word-break: normal;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.grid-footer{
+    width:100%;
+    height:22px;
+    border-top: 1px solid #dadada;
+    margin-top: -2px;
+    font-size: 11px;
+}
+.slick-pager {
+    width: 100%;
+    height: 20px;
+    vertical-align: middle;
+}
+.slick-pager .slick-pager-status {
+    display: inline-block;
+    padding: 6px;
+}
+
+.slick-pager .ui-icon-container {
+    display: inline-block;
+    margin: 2px;
+    border-color: gray;
+}
+
+.slick-pager .slick-pager-nav {
+    display: inline-block;
+    float: right;
+}
+.slick-pager .slick-pager-nav .pager-control{
+    padding:0 5px;
+    color: #555;
+    float: left;
+}
+.slick-pager .slick-pager-nav .pager-control .icon-disabled {
+    color: #ccc;
+}
+.pager-page-info{
+    padding:0 5px;
+    float: left;
+    height: 20px;
+}
+.slick-pager .slick-pager-info, .slick-pager .slick-pager-sizes  {
+    display: block;
+    float: left;
+    height: 20px;
+}
+.slick-pager .slick-pager-info {
+    border-right: 1px solid #eee;
+    padding: 0 9px 0 5px;
+    height: 20px;
+}
+.csg-current-page {
+    float: left;
+    width: 75px;
+}
+.select2-container.csg-current-page {
+    float: none;
+    font-size: 11px;
+}
+.slick-pager .select2-container .select2-choice > .select2-chosen {
+    margin-right: 15px;
+}
+.slick-pager .select2-container .select2-choice{
+    height: 20px;
+}
+.slick-pager .select2-container .select2-arrow{
+    width:20px;
+}
+.slick-pager .select2-container .select2-chosen, .slick-pager .select2-container .select2-arrow{
+    line-height: 20px;
+    height: 20px;
+}
+.csg-pager-sizes {
+    width: 90px;
+    float: left;
+}
+.csg-pager-sizes-static {
+    margin: 0 5px;
+    float: left;
+}
+.select2-container.csg-pager-sizes {
+    float: none;
+}
+.slick-pager .slick-pager-settings * {
+    vertical-align: middle;
+}
+.slick-pager .slick-pager-settings a {
+    padding: 2px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.grid-footer-dropdown-item {
+    font-size: 11px;
+}
+.action-cog-cell {
+    overflow:visible;
+}
+.grid-action-menu {
+    left:auto!important;
+    right:10px!important;
+    min-width:170px;
+}
+.slick-grid-grouping-heading {
+    font-weight:600;
+    padding-left:3px
+}

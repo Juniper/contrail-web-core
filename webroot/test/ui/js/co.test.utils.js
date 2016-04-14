@@ -107,9 +107,14 @@ define([
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/slickgrid/styles/slick.grid.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/jquery/css/jquery.steps.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css"/>');
-        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/contrail.layout.test.css"/>');
-        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.elements.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/contrail.theme.layout.test.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.theme.elements.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.responsive.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.grid.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.form.elements.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.components.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.chart.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.graph.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.custom.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.font.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/fonts/contrailFonts.ttf"/>');

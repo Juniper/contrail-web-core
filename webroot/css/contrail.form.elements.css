@@ -1,0 +1,312 @@
+/*
+ * Copyright (c) 2016 Juniper Networks, Inc.
+ * All rights reserved.
+ */
+
+/* Contrail Combobox
+ * Extends Jquery UI Autocomplete.
+ */
+.custom-combobox {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    margin-left: 0 !important;
+}
+.custom-combobox .ui-autocomplete-input {
+    margin: 0;
+    padding: 0 28px 0 5px;
+    height: 28px;
+    min-height: 28px;
+    color: #787878;
+    font-size: 13px;
+}
+.custom-combobox .add-on{
+    padding: 3px;
+    background-color: #fff;
+    position: absolute;
+    right: 0;
+    z-index: 1049;
+    border: 1px solid #dadada;
+    border-bottom: none;
+}
+
+/* Contrail Dropdown & Multiselect
+ * Extends select2
+ */
+.select2-container {
+    background-color:#fff;
+}
+.select2-container[class*="span"] {
+    min-height: 26px;
+    border: 1px solid #dadada;
+}
+.select2-container .select2-choice {
+    padding: 0 0 0 5px;
+}
+.select2-container .select2-choice > .select2-chosen{
+    margin-right: 17px;
+    text-align: left;
+}
+.select2-container .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choice, .select2-container-multi .select2-choices {
+    border: none;
+    border-radius: 0;
+    color: #787878;
+    background: none;
+}
+.select2-container-active .select2-choice, .select2-container-active .select2-choices {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.select2-container-active {
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6);
+}
+.select2-container .select2-choice .select2-arrow {
+    border-left: 1px solid #fff;
+    background: none;
+    width:14px;
+}
+.select2-container .select2-choice .select2-arrow b {
+    background: none !important;
+    position: relative;
+}
+.select2-container .select2-choice .select2-arrow b:before {
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    font-size: 14px;
+    color: #393939;
+    padding-right: 5px;
+    content: "\f0d7";
+}
+.select2-container.select2-dropdown-open .select2-choice .select2-arrow b:before {
+    content: "\f0d8";
+}
+.select2-container-multi .select2-choices .select2-search-field input {
+    padding: 0px;
+    margin: 0px 0;
+    height: 26px;
+}
+.select2-container-multi .select2-choices .select2-search-choice{
+    border-radius: 0px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background: none;
+    padding: 3px 18px 3px 5px;
+    line-height: 12px;
+}
+.select2-container-multi .select2-search-choice-close {
+    left: auto;
+    right: 3px;
+}
+.select2-container-multi .select2-choices .select2-search-choice{
+    border-color: #dadada;
+}
+.select2-container-multi .select2-choices .select2-search-choice:hover{
+    background-color: #c6dbef;
+    border-color: #c6dbef;
+}
+.select2-container-multi .select2-choices .select2-search-field {
+    margin: 0 0 0 5px;
+}
+.select2-drop-auto-width .select2-search {
+    padding: 4px;
+}
+.select2-search input {
+    background: #fff url('select2.png') no-repeat 100% -22px;
+}
+.select2-results {
+    margin: 0;
+    padding: 0;
+}
+.select2-drop {
+    color: #787878;
+    border-radius: 0;
+    margin-top: -3px;
+    border: 1px solid #dadada;
+    box-shadow: none;
+    z-index: 10000;
+}
+.select2-dropdown-open .select2-choice {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background: none;
+}
+.select2-drop-active {
+    border: 1px solid #dadada;
+}
+.select2-results .select2-result-label {
+    word-break: break-all;
+}
+.select2-small-width{
+    width: 250px;
+}
+.select2-medium-width{
+    width: 350px;
+}
+.select2-large-width{
+    width: 450px;
+}
+.select2-results .select2-highlighted {
+    background: #c6dbef;
+    color: #555;
+}
+.select2-results .select2-disabled.select2-result-label {
+    background: none;
+}
+
+/*
+ * Contrail 2 Way Multiselect
+ */
+.contrail2WayMultiselect ol{
+    list-style-type: none;
+    margin:0;
+    padding:0;
+    border: 1px solid #ccc;
+    overflow-y:scroll;
+    font-size: 12px;
+}
+.contrail2WayMultiselect ol li{
+    border: none;
+    padding: 5px;
+    color: #555;
+}
+.contrail2WayMultiselect ol li.ui-selected{
+    background: #c6dbef;
+}
+.contrail2WayMultiselect .multiselect-controls {
+    margin-top: 20px;
+}
+.contrail2WayMultiselect .multiselect-controls .multiselect-control {
+    text-align:center;
+    font-size: 20px;
+    margin: 10px 0;
+}
+.contrail2WayMultiselect.disabled .multiselect-control i{
+    color: #eee;
+    cursor: default;
+}
+
+/* Contrail Autocomplete
+ * Extends Jquery UI Autocomplete.
+ */
+.ui-autocomplete {
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1050;
+}
+.ui-autocomplete li.ui-menu-item a{
+    padding: 5px;
+    color: #555;
+    word-break: break-all;
+}
+.ui-menu .ui-menu-item a.ui-state-focus {
+    background: none;
+    background-color: #c6dbef;
+    border-color: #c6dbef;
+    color: #393939;
+    border-radius: 0px;
+}
+.ui-autocomplete-input{
+    color: #787878;
+    border: 1px solid #dadada;
+    height: 28px;
+}
+
+/*
+ * Contrail Datetimepicker
+ */
+input.datetimepicker{
+    font-family: 'Open Sans';
+    font-size: 13px;
+    color: #787878;
+    padding: 3px;
+    border-width:1px;
+    border: 1px solid #dadada;
+}
+.xdsoft_datetimepicker .xdsoft_timepicker {
+    width: 90px;
+}
+.xdsoft_datetimepicker {
+    box-shadow: none;
+}
+.xdsoft_datetimepicker .xdsoft_calendar td, .xdsoft_datetimepicker .xdsoft_calendar th {
+    border: none;
+    background: none;
+    text-align: center;
+}
+.xdsoft_datetimepicker .xdsoft_calendar td:hover,
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box >div >div:hover{
+    background: none;
+    box-shadow: none;
+    color: #393939 !important;
+    background-color: #eeeeee !important;
+    border-color: #eee !important;
+}
+.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_default, .xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_current,
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_time_box >div >div.xdsoft_current {
+    background: none;
+    box-shadow: none;
+    color: #393939;
+    background-color: #c6dbef !important;
+    border-color: #c6dbef !important;
+}
+.xdsoft_datetimepicker .xdsoft_calendar td.xdsoft_today {
+    color: #3182bd;
+    font-weight: 700;
+}
+
+/*
+ * Contrail Numeric Textbox
+ * Extends Jquery UI Spinner
+ */
+.ui-spinner-input{
+    border: none;
+    border-radius: 0;
+    color: #787878;
+    background: none;
+    margin: 0.0em 0;
+}
+.ui-spinner.ui-widget.ui-widget-content.ui-corner-all{
+    height: 28px;
+    width: 100%;
+    border: none;
+}
+
+/*
+ * Contrail Checked Multiselect
+ */
+.ui-multiselect { padding:3px 0 3px 4px; text-align:left; border: 1px solid #dadada; color: #777; }
+.ui-multiselect span.ui-icon { float:right }
+.ui-multiselect-single .ui-multiselect-checkboxes input { position:absolute !important; top: auto !important; left:-9999px; }
+.ui-multiselect-single .ui-multiselect-checkboxes label { padding:5px !important }
+.ui-multiselect-header { margin-bottom:3px; padding:0; border: none; background-color: #eee; border-bottom: 2px solid #eee;}
+.ui-multiselect-header ul { display: none;}
+.ui-multiselect-header ul li { float:left; padding:0 10px 0 0 }
+.ui-multiselect-header a { text-decoration:none }
+.ui-multiselect-header a:hover { text-decoration:underline }
+.ui-multiselect-header span.ui-icon { float:left }
+.ui-multiselect-header li.ui-multiselect-close { float:right; text-align:right; padding-right:0 }
+.ui-multiselect-controls {background-color: #eee;}
+.ui-multiselect-controls button{
+    line-height: 18px;
+    margin: 4px 2px;
+    font-size: 11px;
+}
+.ui-multiselect-menu { display:none; position:absolute; z-index: 1051; text-align: left }
+.ui-multiselect-checkboxes { position:relative /* fixes bug in IE6/7 */; overflow-y:scroll }
+.ui-multiselect-checkboxes  input.ace-input[type=checkbox] {  width: 0;  }
+.ui-multiselect-checkboxes label { cursor:default; display:block; border:1px solid transparent; padding:3px 3px 3px 10px }
+.ui-multiselect-checkboxes label input { position:relative !important; top:1px }
+.ui-multiselect-checkboxes input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] + .ace-lbl::before,
+.ui-multiselect-checkboxes input.ace-input-tristate[type=checkbox] + .ace-lbl::before { margin-right: 8px; }
+.ui-multiselect-checkboxes li { clear:both; font-size:0.9em; padding-right:3px }
+.ui-multiselect-checkboxes li .ace-lbl { color: #555;}
+.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label { font-weight:bold; border-bottom:1px solid #eee; margin-left: 3px;}
+.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label a { display:block; padding:3px; margin:1px 0; text-decoration:none }
+* html .ui-multiselect-checkboxes label { border:none /* remove label borders in IE6 because IE6 does not support transparency */}
+.ui-multiselect-hasfilter ul { position:relative; top:2px }
+.ui-multiselect-filter { float:left; font-size:11px; margin: 2px; width: 94%;}
+.ui-multiselect-filter input { width:100%; font-size:10px; height:15px; padding:2px; border:1px solid #dadada; -webkit-appearance:textfield; -webkit-box-sizing:content-box; }

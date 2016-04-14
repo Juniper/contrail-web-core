@@ -1,0 +1,362 @@
+/*
+ * Copyright (c) 2016 Juniper Networks, Inc.
+ * All rights reserved.
+ */
+
+
+/*
+ * NVD3 Styles
+ */
+.nvd3 .nv-axis path {
+    stroke: #ccc;
+}
+.nvd3 .nv-axis.nv-x path.domain {
+    stroke-opacity: 0.75;
+}
+.nvd3 .nv-axis .nv-axisMaxMin text {
+    font-weight: normal;
+}
+.nvtooltip {
+    font-family: 'Open Sans';
+    border-radius: 0;
+    border: 1px solid rgba(0,0,0,.2);
+    color: #393939;
+    font-size: 11px;
+}
+.nvd3 text {
+    font: normal 10px "Open Sans";
+}
+.nvd3 .title {
+    font: normal 12px "Open Sans";
+}
+.nvd3.nv-noData {
+    font-size: 16px;
+    font-weight: normal;
+}
+.nvd3.nv-bullet { font: 10px "Open Sans"; }
+.nvd3.nv-bullet .nv-title { font-size: 14px; font-weight: normal; }
+.nvd3 .nv-brushBackground rect {
+    stroke: #CCC;
+    stroke-width: .1;
+}
+.nvd3 .nv-discretebar .nv-groups text,
+.nvd3 .nv-multibarHorizontal .nv-groups text {
+    font-weight: normal;
+}
+.nvd3.nv-scatter .nv-groups .nv-point.hover,
+.nvd3 .nv-groups .nv-point.hover {
+    stroke-width: 3px;
+    fill-opacity: .5 !important;
+    stroke-opacity: .5 !important;
+}
+.nvd3.nv-sparklineplus .nv-currentValue {
+    font-weight: normal;
+}
+.nvtooltip table td.value {
+    font-weight: normal;
+}
+.nvtooltip.nvtooltip-popover{
+    padding: 0;
+    -webkit-user-select: initial;
+    -khtml-user-select: initial;
+    -moz-user-select: initial;
+    -ms-user-select: initial;
+    user-select: initial;
+}
+.nvtooltip .popover.popover-tooltip span {
+    margin: 0;
+}
+.nvtooltip .popover.popover-tooltip{
+    position: static;
+    border: none;
+}
+.nvtooltip .popover.popover-tooltip p {
+    margin: 0;
+    padding: 0;
+}
+
+/*
+ * Chart Classes
+ */
+.stack-chart {
+    zoom: 1;
+    width: 100%;
+    height: 300px;
+    vertical-align: top;
+    margin: 0 auto;
+}
+.port-distribution-chart {
+    zoom: 1;
+    width: 100%;
+    height: 250px;
+    vertical-align: top;
+    margin: 0 auto;
+}
+
+/*
+ * Flow Chart Classes
+ */
+.chart-load-status{
+    padding: 5px;
+}
+.chart-load-status p{
+    margin: 0;
+    color: #3182bd;
+}
+
+/*
+ * Zoomed Scatterchart
+ * TODO - Separate widget from zoom scatterchart
+ */
+.widget-main-rightmenu.colmask,
+.zoom-scatter-chart-container.colmask {
+    position:relative;		/* This fixes the IE7 overflow hidden bug and stops the layout jumping out of place */
+    clear:both;
+    float:left;
+    width:100%;			/* width of whole page */
+    overflow:hidden;	/* This chops off any overhanging divs */
+}
+.widget-main-rightmenu.rightmenu .colleft,
+.zoom-scatter-chart-container.rightmenu .colleft {
+    float:left;
+    width:200%;
+    margin-left:-45px;
+    position:relative;
+    right:100%;
+    background:#fff;
+}
+.widget-main-rightmenu.rightmenu .col1wrap,
+.zoom-scatter-chart-container.rightmenu .col1wrap {
+    float:left;
+    width:50%;
+    position:relative;
+    left:50%;
+    padding-bottom:1em;
+}
+.widget-main-rightmenu.rightmenu .col1,
+.zoom-scatter-chart-container.rightmenu .col1 {
+    margin:0 0 0 60px;
+    overflow:hidden;
+    position: relative;
+}
+.widget-main-rightmenu.rightmenu .col2,
+.zoom-scatter-chart-container.rightmenu .col2 {
+    float:right;
+    width:35px;
+    position:relative;
+    left:45px;
+}
+.control-panel-filter-container,
+.control-panel-legend-container {
+    width: 280px;
+}
+.control-panel-filter-title,
+.control-panel-legend-title {
+    background-color: #F5F5F5;
+    padding: 5px 10px;
+    margin: 0;
+    color: #3182bd;
+    font-size: 15px;
+    font-weight: 400;
+    height: 22px;
+}
+.control-panel-filter-body,
+.control-panel-legend-body {
+    overflow-y: scroll;
+    height: 214px;
+}
+.control-panel-filter-title-text,
+.control-panel-legend-title-text {
+    margin: 0 10px;
+}
+.control-panel-filter-close,
+.control-panel-legend-close {
+    color: #777777;
+}
+.control-panel-group-filter-title,
+.control-panel-group-legend-title {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin: 3px 0;
+    color: #787878;
+    cursor:pointer;
+}
+.control-panel-filter-group-item,
+.control-panel-legend-group-item {
+    color: #777;
+}
+.control-panel-filter-group-item input.ace-input[type=checkbox] + .ace-lbl,
+.control-panel-filter-group-item input.ace-input[type=radio] + .ace-lbl,
+.control-panel-legend-group-item input.ace-input[type=checkbox] + .ace-lbl,
+.control-panel-legend-group-item input.ace-input[type=radio] + .ace-lbl {
+    font-size: 12px;
+}
+
+.control-panel-filter-group-item input.ace-input[type=checkbox] + .ace-lbl.checkbox-circle::before {
+    font-size: 15px;
+    content: "\f10c";
+    border: none;
+    box-shadow: none;
+}
+.control-panel-filter-group-item input.ace-input[type=checkbox]:checked + .ace-lbl.checkbox-circle::before {
+    content: "\f111";
+}
+.control-panel-filter-text {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.control-panel-legend-group-item i {
+    cursor: default;
+}
+.chartContainer.value {
+    border-bottom:1px solid #888;
+    font-size:24px;
+    padding-right:10px;
+}
+.zoom-scatter-chart-container.rightmenu .col1 svg {
+    position:relative;
+}
+.zoom-scatter-chart-container.rightmenu .col1 rect {
+    fill: transparent;
+    shape-rendering: crispEdges;
+}
+.zoom-scatter-chart-container.rightmenu .col1 .axis {
+}
+.zoom-scatter-chart-container.rightmenu .col1 .axis path,
+.zoom-scatter-chart-container.rightmenu .col1 .axis line {
+    fill: none;
+    stroke: rgba(200, 200, 200, 0.3);
+    shape-rendering: crispEdges;
+}
+.zoom-scatter-chart-container.rightmenu .col1 .axis text {
+    font-size: 11px;
+    fill: #777;
+}
+.zoom-scatter-chart-container.rightmenu .col1 rect {
+    cursor: move;
+}
+.zoom-scatter-chart-container.rightmenu .col1 rect.zoomBySelection {
+    cursor: crosshair;
+}
+.zoom-scatter-chart-container.rightmenu .col1 .axisLine {
+    shape-rendering: crispEdges;
+    stroke:rgba(0,0,0,0.2);
+    stroke-width:2px;
+    fill:none;
+}
+.zoom-scatter-chart-container.rightmenu .col1 .annotationsOn .medianLine {
+    shape-rendering: crispEdges;
+    stroke:rgba(1,71,87,0.4);
+    stroke-width:2px;
+    stroke-dasharray:10,7;
+    fill:none;
+}
+.zoom-scatter-chart-container.rightmenu .col1 .annotationsOn .med {
+    -moz-transition: fill linear 0.2s;
+    -webkit-transition: fill linear 0.2s;
+    -o-transition: fill linear 0.2s;
+    transition: fill linear 0.2s;
+}
+.zoom-scatter-chart-container.rightmenu .col1 .annotationsOn .med:hover {
+    fill:rgba(1,71,87,0.1);
+}
+.zoom-scatter-chart-container.rightmenu .col1 circle {
+    -moz-transition:fill linear 0.5s;
+    -webkit-transition:fill linear 0.5s;
+    -o-transition:fill linear 0.5s;
+    transition:fill linear 0.5s;
+    cursor:default;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .error,
+input.ace-input[type=checkbox] + .ace-lbl.error::before,
+input.ace-input[type=radio] + .ace-lbl.error::before,
+i.error {
+    fill: #d62728;
+    color: #d62728;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .error-overlap {
+    stroke-width: 2px;
+    stroke: #d62728;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .warning,
+input.ace-input[type=checkbox] + .ace-lbl.warning::before,
+input.ace-input[type=radio] + .ace-lbl.warning::before,
+i.warning {
+    fill: #ff7f0e;
+    color: #ff7f0e;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .warning-overlap {
+    stroke-width: 2px;
+    stroke: #ff7f0e;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .medium,
+input.ace-input[type=checkbox] + .ace-lbl.medium::before,
+input.ace-input[type=radio] + .ace-lbl.medium::before,
+i.medium {
+    fill: #6baed6;
+    color: #6baed6;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .medium-overlap {
+    stroke-width: 2px;
+    stroke: #6baed6;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .okay,
+input.ace-input[type=checkbox] + .ace-lbl.okay::before,
+input.ace-input[type=radio] + .ace-lbl.okay::before,
+i.okay {
+    fill: #2ca02c;
+    color: #2ca02c;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .okay-overlap {
+    stroke-width: 2px;
+    stroke: #2ca02c;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .default,
+input.ace-input[type=checkbox] + .ace-lbl.default::before,
+input.ace-input[type=radio] + .ace-lbl.default::before,
+i.default {
+    fill: #1f77b4;
+    color: #1f77b4;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .default-overlap {
+    stroke-width: 2px;
+    stroke: #1f77b4;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .inactive {
+    fill: #9e9ac8;
+    color: #9e9ac8;
+    opacity: 0.15;
+}
+input.ace-input[type=checkbox] + .ace-lbl.inactive::before,
+input.ace-input[type=radio] + .ace-lbl.inactive::before {
+    color: #9e9ac8;
+    opacity: 1;
+}
+
+.zoom-scatter-chart-container.rightmenu .col1 .label {
+    font-size:11px;
+    font-weight: normal;
+    fill: #555;
+}
+.zoom-scatter-chart-container.rightmenu .col1 rect.zoom {
+    stroke: #9ecae1;
+    fill-opacity: 0.5;
+}
+.zoom-scatter-chart-container text {
+    stroke: none;
+    fill: #777;
+    font-weight: normal;
+}

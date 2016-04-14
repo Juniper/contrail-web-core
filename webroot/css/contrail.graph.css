@@ -1,0 +1,191 @@
+/*
+ * Copyright (c) 2016 Juniper Networks, Inc.
+ * All rights reserved.
+ */
+
+.graph-loading {
+    position:absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.7;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+    filter: alpha(opacity=70);
+    background-color: #FFF;
+    z-index: 2;
+}
+.graph-loading .loading-message {
+    font-size: 18px;
+    color: #000;
+    text-align:center;
+    position: relative;
+    top: 50%;
+}
+.graph svg {
+    height: auto !important;
+    width: auto !important;
+}
+.graph svg text {
+    font-size: 10px;
+    font-weight:200;
+}
+
+.graph svg g.ZoomedElement text {
+    font-size: 13px;
+    font-weight:400;
+}
+
+.graph-config-elements svg g text {
+    font-size: 9px;
+    font-weight:200;
+}
+
+.graph svg g.element {
+    opacity: 1;
+}
+.graph svg g image{
+    opacity: 0.7;
+}
+.graph svg g.link {
+    opacity: 0.6;
+}
+.graph svg g.element:hover,
+.graph svg g.link:hover {
+    opacity: 1;
+}
+.graph svg g.element:hover text{
+    font-weight:600;
+}
+.graph g.link.fainted {
+    opacity: 0.3 !important;
+}
+.graph .fainted {
+    opacity: 0.5 !important;
+}
+.graph g.element.highlighted, .graph div.font-element.highlighted {
+    outline: none;
+    opacity: 1 !important;
+}
+.graph g.link.highlighted {
+    outline: none;
+    opacity: 0.6 !important;
+}
+.graph .highlighted.VirtualNetwork i {
+    color: #498AB9;
+}
+.graph svg g.ZoomedElement,
+.graph svg g.ZoomedElement:hover {
+    opacity: 1;
+}
+.graph svg .link-tools .tool-remove,
+.graph svg .link-tools .tool-options {
+    display: none
+}
+.visualization-empty p {
+    font-size: 14px;
+    margin: 30px auto;
+    text-align: center;
+}
+.graph.colmask {
+    position:relative;
+    clear:both;
+    float:left;
+    width:100%;
+    height: 100%;
+    overflow:hidden;
+}
+.graph.holygrail .colmid {
+    float:left;
+    width:200%;
+    margin-left:-200px;
+    position:relative;
+    right:100%;
+    background:#fff;
+}
+.graph.holygrail .colleft {
+    float:left;
+    width:100%;
+    margin-left:-50%;
+    position:relative;
+    left:400px;
+}
+.graph.holygrail .col1wrap {
+    float:left;
+    width:50%;
+    position:relative;
+    right:200px;
+    padding-bottom:1em;
+}
+.graph.holygrail .col1 {
+    margin:0 70px 0 170px;
+    position:relative;
+    left:200%;
+    overflow:hidden;
+}
+.graph.holygrail .col2 {
+    float:left;
+    float:right;
+    width:150px;
+    min-height: 100px;
+    position:relative;
+    right:40px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.graph.holygrail .col3 {
+    float: left;
+    float: right;
+    width: 50px;
+    margin-right:50px;
+    position:relative;
+    left:50%;
+}
+
+.graph .breadcrumbs {
+    color:#3182bd;
+    font-family:Open Sans;
+    position: absolute;
+    bottom: -4px;
+    right: 5px;
+}
+.graph .breadcrumbs .breadcrumb-item {
+    margin: 5px 0;
+    width: 50px;
+    float: right;
+    padding: 2px 0;
+    text-align:center;
+    background-color:#fff;
+    border-radius:5px;
+    border:1px solid #ddd;
+    cursor: pointer;
+}
+.graph .breadcrumbs .breadcrumb-item .breadcrumb-item-text {
+    font-size:10px;
+    margin: 0 auto;
+    width: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 16px;     /* fallback */
+    max-height: 32px;      /* fallback */
+    -webkit-line-clamp: 1; /* number of lines to show */
+    -webkit-box-orient: vertical;
+}
+.graph .breadcrumbs .breadcrumb-item .breadcrumb-item-icon {
+    font-size:30px;
+}
+.graph-tabs .select2-container .select2-choice {
+    border: none;
+    padding-right: 3px;
+}
+
+/* graph control panel */
+.graph-search-control-panel-expanded-container {
+    right: 33px;
+    width: 200px;
+    top: 190px;
+    height: 30px;
+}
+.graph-control-panel-search-dropdown {
+    width: 100%;
+    padding: 1px 2px;
+}

@@ -1,0 +1,693 @@
+/*
+ * Copyright (c) 2016 Juniper Networks, Inc.
+ * All rights reserved.
+ */
+
+/*
+ * Contrail Editable Grid
+ */
+
+.contrail-editable-grid-table thead,
+.collection-table thead {
+    padding: 5px 0;
+    line-height: 26px;
+}
+.contrail-editable-grid-table thead tr,
+.collection-table thead tr {
+    border-bottom: 1px solid #DEDEDE;
+}
+.contrail-editable-grid-table tr th,
+.collection-table tr th {
+    font-weight: normal;
+    color: #3182bd;
+    text-align: left;
+    min-width: 40px;
+}
+.contrail-editable-grid-table tr td {
+    text-align: center;
+    padding: 5px 5px 0 0;
+}
+.collection-table tr td {
+    text-align: center;
+    padding: 0 5px 10px;
+}
+.contrail-editable-grid-table tr td .custom-combobox.input-append,
+.collection-table tr td .custom-combobox.input-append,
+.contrail-editable-grid-table tr td .textarea-input-append.input-append,
+.collection-table tr td .textarea-input-append.input-append,
+.contrail-editable-grid-table tr td .editable-grid-input-append.input-append,
+.collection-table tr td .editable-grid-input-append.input-append {
+    margin-bottom: 0;
+    min-height: 28px;
+}
+.contrail-editable-grid-table tr td.error-cell,
+.collection-table tr td.error-cell {
+    text-align: left;
+    padding-left: 5px;
+}
+.contrail-editable-grid-table tr td.action-cell {
+    min-width: 30px;
+}
+.collection-table tr td.action-cell i {
+    color: #999;
+}
+.contrail-editable-grid-table tr td.error-cell .help-block,
+.collection-table tr td.error-cell .help-block {
+    margin-bottom: 5px;
+}
+.editable-grid-add-link {
+    text-decoration: none;
+    color: #3182bd !important;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+/*
+ * Contrail Modal
+ * Extends Bootstrap Modal
+ */
+.modal.contrail-modal {
+    margin-left: 0 !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.modal-280{
+    width:280px;
+    margin-left: -140px;
+}
+.modal-420{
+    width:420px;
+    margin-left: -210px;
+}
+.modal-560{
+    width:560px;
+    margin-left: -280px;
+}
+.modal-700{
+    width:700px;
+    margin-left: -350px;
+}
+.modal-840{
+    width:840px;
+    margin-left: -420px;
+}
+.modal-980{
+    width:980px;
+    margin-left: -490px;
+}
+.modal-1120{
+    width:1120px;
+    margin-left: -560px;
+}
+.modal--500 .modal-body{
+    max-height: 500px;
+    min-height: 500px;
+}
+.modal{
+    color:#393939;
+}
+.modal-backdrop, .modal-backdrop.fade.in {
+    opacity: .4;
+    filter: alpha(opacity=40);
+}
+.modal-header {
+    padding: 1px 15px;
+}
+.modal-header h6{
+    font-size: 15px;
+    color:#393939;
+}
+.modal-header i{
+    font-size: 16px;
+}
+.modal-header .close {
+    font-size:29px;
+    margin-top:6px;
+}
+.modal-footer {
+    padding: 8px 15px;
+    background-color: #fff;
+}
+
+/*
+ * Contrail Tabs
+ * Extends Jquery UI Tabs
+ */
+.contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon {
+    margin-right: 10px;
+    font-weight: normal;
+    font-size: 110%;
+    display: inline-block;
+}
+.contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon-remove {
+    margin-left: 10px;
+    font-weight: normal;
+    font-size: 90%;
+    display: inline-block;
+}
+
+/*
+ * Contrail Tabs Overcast Theme
+ * Extends Jquery UI Tabs
+ */
+.contrail-tabs-overcast.ui-tabs.ui-widget,
+.ui-tabs.ui-widget {
+    border: none;
+    padding: 0;
+}
+.contrail-tabs-overcast.ui-tabs .ui-widget-header,
+.ui-tabs .ui-widget-header{
+    border: none;
+    background: none;
+    background-color:#f9f9f9;
+    border-bottom: 1px solid #eee;
+}
+.contrail-tabs-overcast.ui-tabs .ui-tabs-nav,
+.ui-tabs .ui-tabs-nav{
+    margin: -3px -10px 10px -10px;
+    padding: 1px 1px 0 1px;
+}
+.contrail-tabs-overcast.ui-tabs-panel.ui-widget-content,
+.ui-tabs-panel.ui-widget-content {
+    padding: 0;
+}
+.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-state-hover a,
+.ui-tabs .ui-tabs-nav li.ui-state-hover a {
+    color: #3182bd;
+}
+.contrail-tabs-overcast.ui-tabs .ui-state-default a,
+.ui-tabs .ui-state-default a,
+.contrail-tabs-overcast.ui-tabs .ui-state-default a:link,
+.ui-tabs .ui-state-default a:link,
+.contrail-tabs-overcast.ui-tabs .ui-state-default a:visited,
+.ui-tabs .ui-state-default a:visited {
+    color: #787878;
+    text-decoration: none;
+}
+.contrail-tabs-overcast.ui-tabs .contrail-tabs-loading,
+.ui-tabs .contrail-tabs-loading {
+    margin-right: 5px;
+}
+
+/*
+ * Contrail Tabs Classic Theme
+ * Extends Jquery UI Tabs
+ */
+.contrail-tabs-classic.ui-tabs.ui-widget,
+.contrail-widget-tabs.ui-tabs.ui-widget {
+    border: none;
+    padding: 0;
+}
+.contrail-tabs-classic.ui-tabs .ui-widget-header,
+.contrail-widget-tabs.ui-tabs .ui-widget-header {
+    border: none;
+    background: none;
+    border-bottom: 1px solid #ccc;
+    line-height: 20px;
+    font-size: 12px;
+}
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav {
+    margin: 0 0 5px 0;
+    padding: 1px 1px 0 10px;
+}
+.contrail-tabs-classic .ui-tabs-panel.ui-widget-content,
+.contrail-widget-tabs .ui-tabs-panel.ui-widget-content {
+    padding: 1em 1.5em;
+}
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-state-hover a,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-state-hover a {
+    color: #3182bd;
+}
+.contrail-tabs-classic.ui-tabs .ui-state-default a,
+.contrail-widget-tabs.ui-tabs .ui-state-default a,
+.contrail-tabs-classic.ui-tabs .ui-state-default a:link,
+.contrail-widget-tabs.ui-tabs .ui-state-default a:link,
+.contrail-tabs-classic.ui-tabs .ui-state-default a:visited,
+.contrail-widget-tabs.ui-tabs .ui-state-default a:visited {
+    color: #787878;
+    text-decoration: none;
+
+}
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a{
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #fff;
+    margin-bottom: -1px;
+}
+
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice {
+    border: none;
+    padding-right: 3px;
+}
+
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav .ui-tabs-anchor,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+    padding: 2px 6px;
+}
+.contrail-tabs-classic.ui-tabs .ui-tabs-nav li.tabs-toolbar,
+.contrail-widget-tabs.ui-tabs .ui-tabs-nav li.tabs-toolbar {
+    float: right;
+    font-size: 15px;
+}
+
+/*
+ * Contrail Tabs Widget Classic Theme
+ * Extends Jquery UI Tabs
+ */
+.contrail-tabs-widget-classic.ui-tabs.ui-widget {
+    border: none;
+    padding: 0;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-widget-header {
+    border: none;
+    background: none;
+    border-bottom: 1px solid #ccc;
+    line-height: 20px;
+    font-size: 12px;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav {
+    margin: 0 0 5px 0;
+    padding: 4px 1px 0 10px;
+}
+.contrail-tabs-widget-classic .ui-tabs-panel.ui-widget-content {
+    padding: 1em 1.5em ;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-state-hover a {
+    color: #3182bd;
+    font-size: 15px;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-state-default a,
+.contrail-tabs-widget-classic.ui-tabs .ui-state-default a:link,
+.contrail-tabs-widget-classic.ui-tabs .ui-state-default a:visited {
+    color: #787878;
+    text-decoration: none;
+    padding: 4px 8px;
+    font-size: 13px;
+    background-color: #EFEFEF;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a {
+    border-bottom: 1px solid #fff;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    margin-bottom: -1px;
+    background-color: #fff;
+}
+
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active .select2-container .select2-choice {
+    border: none;
+    padding-right: 3px;
+}
+
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+    padding: 2px 6px;
+}
+.contrail-tabs-widget-classic.ui-tabs .ui-tabs-nav li.tabs-toolbar {
+    float:right;
+    font-size: 15px;
+}
+
+/* Contrail Accordion
+ * Extends Jquery UI Accordion
+ */
+.ui-accordion-header {
+    border-bottom: 1px solid #eee;
+}
+.ui-accordion-content.ui-widget-content {
+    border: none;
+}
+.ui-accordion .ui-accordion-header .ui-accordion-header-icon {
+    left: 0;
+}
+.ui-accordion .ui-accordion-icons {
+    padding-left: 1.5em;
+}
+.ui-accordion .ui-accordion-content {
+    padding: 1em 1.5em;
+}
+
+/* Bootstrap popovers */
+.popover {
+    width: 800px;
+}
+.popover .arrow {
+    display: none;
+}
+.popover .popover-title {
+    background-color: #fff;
+    color: #3182bd;
+    padding: 5px;
+    font-size: 12px;
+}
+.popover .popover-content{
+    padding: 0;
+}
+.popover .popover-content .chart-tooltip {
+    border: none;
+    box-shadow: none;
+    padding: 5px;
+}
+.popover .popover-content .element-name-text {
+    padding: 5px;
+    color: #555;
+    font-style: italic;
+    font-size: 13px;
+    margin-bottom: 0;
+}
+.popover.popover-tooltip {
+    min-width: 340px;
+    max-width: 340px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    box-shadow: none;
+    z-index: 1050;
+
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
+    filter: alpha(opacity=90);
+    -moz-opacity: 0.90;
+    -khtml-opacity: 0.90;
+    opacity: 0.90;
+}
+.popover.popover-tooltip .arrow {
+    display: block;
+}
+.popover.popover-tooltip .popover-remove {
+    position: relative;
+    top: 22px;
+    right: 8px;
+    color: #999999;
+}
+.popover.popover-tooltip .popover-title {
+    background-color: #F5F5F5;
+    padding: 5px 5px 3px 75px;
+    border: none;
+
+}
+.popover.popover-tooltip .popover-title .heading {
+    margin: 0 0 2px;
+    color: #3182bd;
+    font-size: 14px;
+    font-weight: 400;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-right: 20px;
+    white-space: nowrap;
+}
+
+.popover.popover-tooltip .popover-title .sub-heading {
+    margin: 4px 0 1px;
+    color: #555;
+    font-size: 13px;
+    font-weight: 200;
+}
+.popover.popover-tooltip .popover-tooltip-icon {
+    font-size: 38px;
+    border: 1px solid #ccc;
+    padding: 7px;
+    width: 34px;
+    height: 34px;
+    position: relative;
+    left: 9px;
+    top: 23px;
+    background-color: #fff;
+}
+.popover.popover-tooltip .popover-content {
+    border: none;
+    box-shadow: none;
+    margin-top: -65px;
+}
+.popover.popover-tooltip .popover-content .popover-info {
+    padding: 25px 5px 7px;
+    margin-left: 70px;
+}
+
+.popover.popover-tooltip .popover-content .popover-tooltip-footer {
+    border-top: 1px solid #DEDEDE;
+}
+.popover.popover-tooltip .popover-content .popover-tooltip-footer .btn {
+    margin: 5px 6px 5px 0;
+    line-height: 14px;
+    font-size:  11px;
+    padding: 3px 9px !important;
+    background-color: #f5f5f5 !important;
+    color: #777 !important;
+    border: 1px solid #ccc; !important;
+}
+.popover.popover-tooltip .popover-content .popover-tooltip-footer .btn:hover {
+    color: #3182BD !important;
+}
+.popover.popover-tooltip .popover-content .popover-tooltip-row {
+    padding: 1px 0;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 20px;
+    white-space: nowrap;
+}
+.popover.popover-tooltip .popover-content .popover-tooltip-row .key {
+    color: #555;
+    font-weight: 400;
+}
+.popover.popover-tooltip .popover-content .popover-tooltip-row .value {
+    color: #666;
+    font-weight: 200;
+    margin-left: 5px;
+}
+.popover-tooltip.popover-tooltip-no-icon .popover-title {
+    padding-left: 10px;
+}
+.popover-tooltip.popover-tooltip-no-icon .popover-tooltip-icon {
+    visibility: hidden;
+}
+.popover-tooltip.popover-tooltip-no-icon .popover-content .popover-info {
+    margin-left: 5px;
+}
+.popover.popover-tooltip .overlapped-elements-dropdown {
+    margin: 3px;
+}
+.popover.popover-tooltip .overlapped-elements-dropdown .select2-chosen{
+    font-size: 11px;
+}
+.popover.popover-tooltip .overlapped-elements-dropdown.select2-container-active {
+    box-shadow: none;
+}
+.popover.popover-tooltip .overlapped-elements-dropdown.select2-container .select2-choice .select2-arrow {
+    display: none;
+}
+
+/*
+ * Contrail Wizard
+ */
+.wizard > .steps {
+    padding: 2px 0 5px;
+    background-color: #eee;
+}
+.wizard > .steps ul {
+    list-style: none;
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 6px 0 0;
+    position: relative;
+}
+.wizard > .steps ul li {
+    display: block;
+    text-align: center;
+    float: left;
+}
+.wizard > .steps > ul > li {
+    width: 50%;
+}
+.wizard > .steps a, .wizard > .steps a:hover, .wizard > .steps a:active,
+.wizard > .steps .disabled a, .wizard > .steps .disabled a:hover, .wizard > .steps .disabled a:active,
+.wizard > .steps .done a, .wizard > .steps .done a:hover, .wizard > .steps .done a:active {
+    background-color: #eee;
+    color: #555;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+.wizard > .steps .current a, .wizard > .steps .current a:hover, .wizard > .steps .current a:active {
+    background-color: #eee;
+    color: #3182bd;
+}
+.wizard > .steps ul li .number {
+    text-align: center;
+    border: 3px solid #CED1D6;
+    color: #546474;
+    font-size: 15px;
+    border-radius: 18px;
+    line-height: 12px;
+    padding: 2px 7px;
+    background-color: #FFF;
+    position: relative;
+    z-index: 2;
+    display: inline;
+}
+
+.wizard > .steps ul li.subStep .number {
+    border: 6px solid #CED1D6;
+    color: #546474;
+    font-size: 0px;
+    border-radius: 15px;
+    line-height: 1px;
+    padding: 1px 1px;
+    top: -6px;
+}
+
+.wizard > .steps ul li:before {
+    /* the line running through each step*/
+    display: block;
+    content: "";
+    width: 100%;
+    height: 1px;
+    font-size: 0;
+    overflow: hidden;
+    border-top: 4px solid #CED1D6;
+    position: relative;
+    top: 12px;
+    z-index: 1;
+}
+.wizard > .steps ul li:last-child:before {
+    max-width: 50%;
+    width: 50%;
+}
+.wizard > .steps ul li:first-child:before {
+    max-width: 50%;
+    left: 50%;
+}
+.wizard > .steps ul li.current:before,
+.wizard > .steps ul li.done:before,
+.wizard > .steps ul li.current .number,
+.wizard > .steps ul li.done .number {
+    border-color: #5293C4;
+}
+.wizard > .steps ul li.done .number:before {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    padding: 8px 0px;
+    border-radius: 32px;
+    background-color: #FFF;
+    z-index: 103;
+}
+.wizard > .steps ul li.completed .number:before {
+    content: "\f00c";
+    font-family: FontAwesome;
+    font-size: 17px;
+    color: #87BA21;
+}
+.wizard > .steps ul li.subStep.done .number:before {
+    display: none;
+}
+
+.wizard > .steps ul li .title {
+    display: block;
+    margin-top: 5px;
+    max-width: 100%;
+    color: #949EA7;
+    font-size: 13px;
+    z-index: 104;
+    text-align: center;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+.wizard > .steps ul li.done .title,
+.wizard > .steps ul li.current .title {
+    color: #2B3D53;
+}
+.wizard > .content {
+    min-height: 277px;
+    margin: 0;
+    overflow-y: auto;
+    background-color: #fff;
+}
+.wizard > .content > .body {
+    height: auto;
+    width: 96%;
+    padding: 7px 2%;
+}
+.wizard > .actions {
+    margin-top: 15px;
+    padding: 8px 0 5px;
+    border-top: 1px solid #eee;
+}
+.wizard > .actions a, .wizard > .actions a:hover, .wizard > .actions a:active {
+    border-radius: 0;
+    padding: 0 5px;
+}
+.wizard .stepInfo p {
+    color: #888;
+    margin: 10px 10px 0;
+}
+.wizard .stepInfo p .selectedServerCount{
+    color: #3182bd;
+}
+.wizard > .content > .body input {
+    display: inline;
+}
+
+/*
+ * Widget Control Panel
+ */
+.control-panel-items {
+    font-size: 15px;
+    width: 35px;
+}
+.control-panel-items .control-panel-item i {
+    color: #777;
+}
+.control-panel-items .control-panel-item.active i,
+.control-panel-items .control-panel-item.refreshing i {
+    color: #3182BD;
+}
+.control-panel-items .control-panel-item.disabled i {
+    color: #CCC;
+    cursor: default;
+}
+.control-panel-items .control-panel-item {
+    padding: 5px 10px;
+    margin: 5px 0 0;
+    background-color: #f9f9f9;
+    border: 1px solid #efefef;
+}
+.control-panel-items .dropdown-menu {
+    right: 2px;
+}
+.control-panel-items .dropdown-menu i {
+    margin-right: 5px;
+}
+.control-panel-expanded-container {
+    position: absolute;
+    right: -10px;
+    top: 5px;
+    width: 280px;
+    height: 245px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+/*
+ * jQuery Validation
+ */
+label.jqInvalid {
+    padding: 2px;
+    color: #e6550d;
+    font-family: 'Open Sans';
+    font-size: 13px;
+}

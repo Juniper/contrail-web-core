@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2016 Juniper Networks, Inc.
+ * All rights reserved.
  */
 
 /* elements */
@@ -4332,9 +4333,4 @@ div.stack-bar-chart-tooltip {
     border-style: solid;
     border-radius: 0px;
     pointer-events: none;
-}
-
-.slick-grid-grouping-heading {
-    font-weight:600;
-    padding-left:3px
 }
