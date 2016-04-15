@@ -631,6 +631,68 @@ function formatV3AuthDataToV2AuthData (v3AuthData, authObj, callback)
     });
 }
 
+/*
+ * Determine if a token appears to be PKI
+ *
+ */
+function is_asn1_token (token)
+{
+    if (null == token) {
+        return false;
+    }
+    return (0 == token.indexOf(global.PKI_ASN1_PREFIX));
+}
+
+/*
+ * Determine if a token a cmsz token
+ *
+ * Checks if the string has the prefix that indicates it is a
+ * Crypto Message Syntax, Z compressed token
+ *
+ */
+function is_pkiz (token)
+{
+    if (null == token) {
+        return false;
+    }
+    return (0 == token.indexOf(global.PKIZ_PREFIX));
+}
+
+/*
+ * Determines if this is a pki-based token (pki or pkiz)
+ *
+ */
+function isPKIToken (token)
+{
+    /* For details, please go through
+     * https://github.com/openstack/python-keystoneclient/blob/master/keystoneclient/common/cms.py
+     */
+    if (null == token) {
+        return false;
+    }
+    return is_asn1_token(token) || is_pkiz(token);
+}
+
+function updateTokenIdWithMD5 (accessData)
+{
+    if ((null != accessData) && (null != accessData['token']) &&
+        (null != accessData['token']['id'])) {
+        var pkiTokenHash =
+            commonUtils.getValueByJsonPath(config,
+                                           'identityManager;pkiTokenHashAlgorithm',
+                                           'md5');
+        if (('md5' != pkiTokenHash) ||
+            (false == isPKIToken(accessData['token']['id']))) {
+            return;
+        }
+        var oldToken = accessData['token']['id'];
+        accessData['token']['id'] =
+            crypto.createHash('md5').update(oldToken).digest('hex');
+        logutils.logger.debug('We are changing the old token: <' + oldToken +
+                              '> to MD5 hash: ' + accessData['token']['id']);
+    }
+}
+
 /** Function: doAuth
  *  1. Authenticate and get user and token. Call the callback function on
  *     successful authentication.
@@ -678,10 +740,14 @@ function doAuth (authObj, callback)
             (null == data['error'])) {
             formatV3AuthDataToV2AuthData(data, authObj,
                                          function(err, data) {
+                updateTokenIdWithMD5(data.access);
                 callback(data);
             });
         } else {
             if (null == err) {
+                if ((null != data) && (null != data.access)) {
+                    updateTokenIdWithMD5(data.access);
+                }
                 callback(data);
             } else {
                 callback(null);

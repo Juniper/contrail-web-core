@@ -194,6 +194,9 @@ global.EMPTY_BGP_PEER_ATTR_JSON = {"session": [
 ]};
 global.TOKEN_URL = '/v2.0/tokens';
 
+global.PKI_ASN1_PREFIX = 'MII';
+global.PKIZ_PREFIX = 'PKIZ_';
+
 global.label = {};
 global.label.VNCONFIG_API_SERVER = 'vnconfig-api-server';
 global.label.OPS_API_SERVER = 'ops-api-server';
