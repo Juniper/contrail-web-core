@@ -226,6 +226,10 @@ div.t-grid td {
   color: #62839a;
   cursor: pointer;
 }
+.hyperlink-inactive {
+  color: #62839a;
+  cursor: initial;
+}
 .cell-menu {
   overflow: visible;
 }
