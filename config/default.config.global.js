@@ -110,6 +110,15 @@ config.identityManager.authProtocol = 'http';
 config.identityManager.apiVersion = ['v2.0'];
 config.identityManager.strictSSL = false;
 config.identityManager.ca = '';
+/******************************************************************************
+ * The hash algorithm to use for PKI tokens. This can be set to any algorithm
+ * that keystone hashlib supports, this should match with value of
+ * hash_algorithm in keystone.conf.
+ *
+ * default: 'md5'
+ *
+******************************************************************************/
+config.identityManager.pkiTokenHashAlgorithm = 'md5';
 
 config.storageManager = {};
 config.storageManager.ip = '127.0.0.1';
