@@ -183,6 +183,7 @@ define(['underscore'], function (_) {
         this.toggleMenuButton = function (menuButton, currPageHash, lastPageHash) {
             var currentBCTemplate = contrail.getTemplate4Id('current-breadcrumb');
             var currPageHashArray, subMenuId, reloadMenu, linkId;
+            var hostname = window.location.hostname;
             if (menuButton == null) {
                 currPageHashArray = currPageHash.split('_');
                 //Looks scalable only till 2nd level menu
@@ -205,6 +206,8 @@ define(['underscore'], function (_) {
                 }
                 this.selectMenuButton("#btn-" + menuButton);
             }
+            $('#tabTitle').text(hostname.substring(0,15)+'... | Contrail ' +
+                menuButton.charAt(0).toUpperCase() + menuButton.slice(1));
             if (subMenuId == null) {
                 subMenuId = $('.item:first').find('ul:first');
                 var href = $('.item:first').find('ul:first').find('li:first a').attr("href");
