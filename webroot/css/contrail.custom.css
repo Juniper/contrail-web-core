@@ -226,6 +226,10 @@ div.t-grid td {
   color: #62839a;
   cursor: pointer;
 }
+.hyperlink-inactive {
+  color: #62839a;
+  cursor: initial;
+}
 .cell-menu {
   overflow: visible;
 }
@@ -448,6 +452,47 @@ rect.bordered {
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
 	border: none;
 	background: none;
+}
+
+/* a Links */
+a.disabled-link, a.disabled-link:hover, i.disabled-link, i.disabled-link:hover{
+	color: #ccc !important;
+	cursor: initial !important;
+}
+a.disabled-link i {
+    cursor: default;
+}
+.disabledBtn, .disabledBtn:hover {
+    background-color: #898989 !important;
+    border-color: #898989;
+    border-top: #fff 0px solid !important;
+    cursor: default;
+}
+
+.disabledBtn i {
+    cursor: default;
+}
+
+.separator-top {
+  /*  border-top : 1px solid #ddd;*/
+  background-color:#f6f9fa;
+}
+p.error, p.error-text {
+    color: #b94a48;
+}
+
+/*Style for the underlay topology svg elements*/
+.topology-visualization svg {
+    cursor:move;
+    height: auto !important;
+    width: auto !important;
+}
+
+.topology-visualization svg g.element {
+    cursor:default;
+    cursor:grab;
+    cursor:-webkit-grab;
+    cursor:-moz-grab;
 }
 
 /* a Links */

@@ -370,8 +370,7 @@
                 <div class="body">
                     <div class="row-fluid">
                         <div class="name span9 word-break-all">
-                            <span class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}})> {{moduleId}} </span>
-                            </div>
+                            <span {{#if link}}class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}}){{else}}class="hyperlink-inactive"{{/if}}> {{moduleId}} </span></div>
                             <div class="time span3">
                                 <i class="icon-time" style="cursor:default"></i>
                                 <span class="green"> {{timeStr}} </span>

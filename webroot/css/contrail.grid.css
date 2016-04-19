@@ -373,3 +373,7 @@
     right:10px!important;
     min-width:170px;
 }
+.slick-grid-grouping-heading {
+    font-weight:600;
+    padding-left:3px
+}

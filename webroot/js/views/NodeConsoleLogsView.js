@@ -171,6 +171,17 @@ define([
                         {
                             columns: [
                                 {
+                                    elementId: 'keywords', view: "FormInputView",
+                                    viewConfig: { path: 'keywords', dataBindValue: 'keywords', class: "span6", placeholder: "Enter keyword(s)"}
+                                }
+                            ]
+                        },
+                        {
+                            viewConfig: {
+                                visible: 'show_advanced_options()'
+                            },
+                            columns: [
+                                {
                                     elementId: 'time_range', view: "FormDropdownView",
                                     viewConfig: {
                                         path: 'time_range', dataBindValue: 'time_range', class: "span2",
@@ -197,6 +208,9 @@ define([
                             ]
                         },
                         {
+                            viewConfig: {
+                                visible: 'show_advanced_options()'
+                            },
                             columns: [
                                 {
                                     elementId: 'log_category', view: "FormDropdownView",
@@ -255,11 +269,18 @@ define([
                                 {
                                     elementId: 'limit', view: "FormDropdownView",
                                     viewConfig: { path: 'limit', dataBindValue: 'limit', class: "span2", elementConfig: {dataTextField: "text", dataValueField: "id", data:cowc.CONSOLE_LOGS_LIMITS}}
-                                },
-
+                                }
+                            ]
+                        },
+                        {
+                            columns: [
                                 {
-                                    elementId: 'keywords', view: "FormInputView",
-                                    viewConfig: { path: 'keywords', dataBindValue: 'keywords', class: "span2", placeholder: "Enter keyword(s)"}
+                                    elementId: 'advanced_options', view: "FormTextView",
+                                    viewConfig: {
+                                        text: 'getAdvancedOptionsText()',
+                                        class: "advanced-options-link",
+                                        click: 'toggleAdvancedFields'
+                                    }
                                 }
                             ]
                         },
