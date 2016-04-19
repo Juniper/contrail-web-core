@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" content="">
-    <title>Contrail</title>
+    <title id="tabTitle"></title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Contrail Systems">
@@ -14,49 +14,52 @@
     <link rel="shortcut icon" href="/img/sdn-favicon.ico" type="image/x-icon">
     <link rel="icon" href="/img/sdn-favicon.ico" type="image/x-icon">
 
-    <!-- Start dev_env
-    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css?built_at=" rel="stylesheet"/>
-    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap-responsive.min.css?built_at=" rel="stylesheet"/>
+    <!-- Start dev_env -->
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css?built_at=1460973406" rel="stylesheet"/>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap-responsive.min.css?built_at=1460973406" rel="stylesheet"/>
 
-    <link rel="stylesheet" href="/assets/jquery-ui/css/jquery-ui.min.css?built_at=" rel="stylesheet"/>
-    <link rel="stylesheet" href="/css/contrail.jquery.ui.css?built_at=" rel="stylesheet"/>
-    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css?built_at=" rel="stylesheet" />
-    <link rel="stylesheet" href="/assets/nvd3-v1.8.1/css/nv.d3.min.css?built_at=" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/select2/styles/select2.css?built_at=" />
-    <link rel="stylesheet" href="/assets/datetimepicker/styles/jquery.datetimepicker.css?built_at=" />
-    <link rel="stylesheet" href="/assets/slickgrid/styles/slick.grid.css?built_at=">
-    <link rel="stylesheet" href="/assets/jquery/css/jquery.steps.css?built_at=" rel="stylesheet" />
-    <link rel="stylesheet" href="/assets/joint/css/joint.nojquery.min.css?built_at=" rel="stylesheet"/>
-    <link rel="stylesheet" href="/assets/jquery-contextMenu/css/jquery.contextMenu.css?built_at=" />
-    <link rel="stylesheet" href="/assets/vis-v4.9.0/css/vis.min.css?built_at=" />
+    <link rel="stylesheet" href="/assets/jquery-ui/css/jquery-ui.min.css?built_at=1460973406" rel="stylesheet"/>
+    <link rel="stylesheet" href="/css/contrail.jquery.ui.css?built_at=1460973406" rel="stylesheet"/>
+    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css?built_at=1460973406" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/nvd3-v1.8.1/css/nv.d3.min.css?built_at=1460973406" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/select2/styles/select2.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/assets/datetimepicker/styles/jquery.datetimepicker.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/assets/slickgrid/styles/slick.grid.css?built_at=1460973406">
+    <link rel="stylesheet" href="/assets/jquery/css/jquery.steps.css?built_at=1460973406" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/joint/css/joint.nojquery.min.css?built_at=1460973406" rel="stylesheet"/>
+    <link rel="stylesheet" href="/assets/jquery-contextMenu/css/jquery.contextMenu.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/assets/vis-v4.9.0/css/vis.min.css?built_at=1460973406" />
 
-    <link rel="stylesheet" href="/css/contrail.theme.layout.css?built_at=" />
-    <link rel="stylesheet" href="/css/contrail.theme.elements.css?built_at=" />
-    <link rel="stylesheet" href="/css/contrail.responsive.css?built_at=" />
-    <link rel="stylesheet" href="/css/contrail.grid.css?built_at=" />
-    <link rel="stylesheet" href="/css/contrail.form.elements.css?built_at=" />
-    <link rel="stylesheet" href="/css/contrail.components.css?built_at=" />
-    <link rel="stylesheet" href="/css/contrail.chart.css?built_at=" />
-    <link rel="stylesheet" href="/css/contrail.graph.css?built_at=" />
-    <link rel="stylesheet" href="/css/contrail.custom.css?built_at=" />
-    <link rel="stylesheet" href="/css/contrail.font.css?built_at=" />
-    End dev_env -->
+    <link rel="stylesheet" href="/css/contrail.theme.layout.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/css/contrail.theme.elements.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/css/contrail.responsive.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/css/contrail.grid.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/css/contrail.form.elements.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/css/contrail.components.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/css/contrail.chart.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/css/contrail.graph.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/css/contrail.custom.css?built_at=1460973406" />
+    <link rel="stylesheet" href="/css/contrail.font.css?built_at=1460973406" />
+    <!-- End dev_env -->
 
-    <!-- Start prod_env -->
-    <link rel="stylesheet" href="/css/contrail-all.css?built_at="/>
-    <!-- End prod_env -->
+    <!-- Start prod_env
+    <link rel="stylesheet" href="/css/contrail-all.css?built_at=1460973406"/>
+    End prod_env -->
 
     <!--[if lte IE 8]>
-    <link rel="stylesheet" href="/css/contrail-ie.min.css?built_at="/>
+    <link rel="stylesheet" href="/css/contrail-ie.min.css?built_at=1460973406"/>
     <![endif]-->
 
     <!--[if IE 7]>
-    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome-ie7.min.css?built_at="/>
+    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome-ie7.min.css?built_at=1460973406"/>
     <![endif]-->
 
     <script src="/assets/requirejs/require.js"></script>
     <script src="/js/common/core.app.utils.js"></script>
-
+    <script type="text/javascript">
+        var hostname = window.location.hostname;
+        document.getElementById('tabTitle').innerHTML = hostname.substring(0,15)+'... | Contrail';
+    </script>
 </head>
 
 <body class="navbar-fixed">
@@ -139,13 +142,13 @@
 <script src="/js/"></script>
 <![endif]-->
 <script type="text/javascript">
-    var built_at="";
+    var built_at=1460973406;
 </script>
-<!-- Start dev_env
+<!-- Start dev_env -->
 <script data-env="dev" src="/js/common/core.app.js"></script>
-End dev_env -->
-<!-- Start prod_env -->
+<!-- End dev_env -->
+<!-- Start prod_env
 <script data-env="prod" src="/js/common/core.app.js"></script>
-<!-- End prod_env -->
+End prod_env -->
 </body>
 </html>
