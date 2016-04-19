@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <title>Contrail Login</title>
+    <title id="tabTitle"></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Contrail Systems">
 
@@ -25,7 +25,10 @@
     <link rel="stylesheet" href="/css/contrail.responsive.css?built_at=" />
     <link rel="stylesheet" href="/css/contrail.custom.css?built_at=" />
     <link rel="stylesheet" href="/css/login.css?built_at=">
-    
+    <script type="text/javascript">
+        var hostname = window.location.hostname;
+        document.getElementById('tabTitle').innerHTML = hostname.substring(0,15)+'... | Contrail';
+    </script>
 </head>
 
 <body>
