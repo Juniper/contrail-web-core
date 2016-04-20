@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" content="">
-    <title>Contrail</title>
+    <title id="tabTitle"></title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Contrail Systems">
@@ -56,7 +56,10 @@
 
     <script src="/assets/requirejs/require.js"></script>
     <script src="/js/common/core.app.utils.js"></script>
-
+    <script type="text/javascript">
+        var hostname = window.location.hostname;
+        document.getElementById('tabTitle').innerHTML = hostname.substring(0,15)+'... | Contrail';
+    </script>
 </head>
 
 <body class="navbar-fixed">
