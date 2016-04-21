@@ -1373,7 +1373,7 @@ function formatVirtualRouterType(type) {
 }
 function isValidMACAddress(mac) {
     mac = mac.toUpperCase();
-    var mac_address_regex = /^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$/;
+    var mac_address_regex = /^(([0-9A-F]{1,2}[:-]){5}[0-9A-F]{1,2}?)+$/;
     return mac_address_regex.test(mac);
 }
 
