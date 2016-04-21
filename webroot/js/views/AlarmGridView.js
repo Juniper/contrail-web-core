@@ -194,12 +194,7 @@ define([
                        text: 'Loading Alarms..',
                     },
                     empty: {
-                       text: 'No Alarms to display'
-                    }, 
-                    errorGettingData: {
-                       type: 'error',
-                       iconClasses: 'icon-warning',
-                       text: 'Error in getting Data.'
+                       text: 'No Alarms Found.'
                     }
                  }
             },
