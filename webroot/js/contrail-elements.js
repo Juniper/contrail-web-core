@@ -201,8 +201,7 @@
 
     $.fn.contrailCombobox = function(customOption) {
         var option = $.extend(true, {}, customOption),
-            self = this, formattedData = [],
-            asyncVal = false;
+            self = this, formattedData = [];
 
         self.globalSelect = {};
         self.globalDisableList = [];
@@ -224,23 +223,15 @@
             option.dataValueField = {dsVar: option.dataValueField, apiVar: 'id'};
             if(!$.isEmptyObject(option) && typeof option.dataSource !== 'undefined') {
                 if(option.dataSource.type == "remote"){
-                    if(contrail.checkIfExist(option.dataSource.async)){
-                        asyncVal =  option.dataSource.async;
-                    }
                     $.ajax({
                         url: option.dataSource.url,
                         dataType: "json",
-                        async: asyncVal,
-                        success: function( data ) {
+                        success: function(data) {
+                            var parsedData = data;
                             if(typeof option.dataSource.parse !== "undefined"){
-                                var parsedData = option.dataSource.parse(data);
-                                formattedData = formatData(parsedData, option);
-                            }else {
-                                formattedData = formatData(data, option);
+                                parsedData = option.dataSource.parse(data);
                             }
-                            if(contrail.checkIfExist(option.dataSource.async) && option.dataSource.async == true ){
-                                self.data('contrailCombobox').setData(parsedData);
-                            }
+                            self.data('contrailCombobox').setData(parsedData);
                         }
                     });
                 } else if(option.dataSource.type == "local"){
@@ -253,6 +244,7 @@
                         value: val.innerHTML });
                 });
             }
+
             constructCombobox(self, option, formattedData);
 
             self.data('contrailCombobox', {
@@ -357,7 +349,7 @@
         }
         return self;
 
-        function getComboboxOption(givenOptions) {
+        function getComboboxConfig(customConfig) {
             var option = {
                 delay: 500,
                 minLength: 0,
@@ -368,16 +360,17 @@
                     self.globalSelect = ui.item;
                 }
             };
-            $.extend(true, option, givenOptions);
+            $.extend(true, option, customConfig);
             return option;
         }
 
-        function constructCombobox(dis, givenOptions, formattedData){
+        function constructCombobox(dis, customConfig, formattedData){
             var wrapper, input,
-                option = getComboboxOption(givenOptions),
+                config = getComboboxConfig(customConfig),
                 wasOpen = null;
-            option.source = formattedData;
-            dis.option = option;
+
+            config.source = formattedData;
+            dis.option = config;
             dis.globalSelect = {};
             dis.globalDisableList = [];
             dis.hide();
@@ -391,8 +384,8 @@
             input = $( "<input>" )
                 .addClass('custom-combobox-input span12')
                 .appendTo( wrapper )
-                .autocomplete(option)
-                .attr('placeholder', option.placeholder)
+                .autocomplete(config)
+                .attr('placeholder', config.placeholder)
 
                 // update the combobox when the input is updated to keep both in sync
                 .on( "autocompleteselect", function( event, ui ) {
@@ -404,8 +397,8 @@
                     dis.trigger('change');
                 });
 
-            if(contrail.checkIfExist(option.defaultValue)){
-                    input.val(option.defaultValue);
+            if(contrail.checkIfExist(config.defaultValue)){
+                    input.val(config.defaultValue);
             }
 
             input.data("ui-autocomplete")._renderItem = function (ul, item) {
@@ -415,6 +408,15 @@
                     return $("<li>")
                         .append("<a>" + item.label + "</a>")
                         .appendTo(ul);
+                }
+            };
+
+            input.data("ui-autocomplete")._resizeMenu = function () {
+                var ul = this.menu.element;
+                if (config.dropdownCssClass) {
+                    ul.addClass(config.dropdownCssClass)
+                } else {
+                    ul.outerWidth(this.element.outerWidth());
                 }
             };
 
@@ -1169,17 +1171,18 @@ function  fetchSourceMapData(index, data){
     return returnVal;
 };
 
-function constructSelect2(self, defaultOption, args) {
+function constructSelect2(self, customConfig, args) {
     if(typeof args !== 'undefined') {
-        self.select2(defaultOption, args);
+        self.select2(customConfig, args);
     } else{
         var dataObject = {
                 cachedValue: null,
                 isRequestInProgress: false
             },
-            option = {
+            config = {},
+            defaultConfig = {
                 minimumResultsForSearch : 7,
-                dropdownAutoWidth : true,
+                dropdownAutoWidth : false,
                 dataTextField: 'text',
                 dataValueField: 'id',
                 data: [],
@@ -1232,16 +1235,16 @@ function constructSelect2(self, defaultOption, args) {
             source = [];
 
         //To add newly entered text to the option of multiselect.
-        if (defaultOption.multiple == true && defaultOption.tags != null && defaultOption.tags == true) {
-            option['createSearchChoice'] = function (term,data) {
+        if (customConfig.multiple == true && customConfig.tags != null && customConfig.tags == true) {
+            customConfig['createSearchChoice'] = function (term,data) {
                 return {
                     id: $.trim(term),
                     text: $.trim(term)
                 };
             }
-            option['tags'] = true;
-            option['tokenSeparators'] = [","];
-            option['initSelection'] = function (element, callback) {
+            customConfig['tags'] = true;
+            customConfig['tokenSeparators'] = [","];
+            customConfig['initSelection'] = function (element, callback) {
                 var data = [];
 
                 function splitVal(string, separator) {
@@ -1263,31 +1266,35 @@ function constructSelect2(self, defaultOption, args) {
             };
         }
 
-        $.extend(true, option, defaultOption);
-        option.dataTextField = {dsVar: option.dataTextField, apiVar: 'text'};
-        option.dataValueField = {dsVar: option.dataValueField, apiVar: 'id'};
+        if (contrail.checkIfExist(customConfig.dropdownCssClass)) {
+            customConfig.dropdownAutoWidth = true;
+        }
+
+        $.extend(true, config, defaultConfig, customConfig);
+        config.dataTextField = {dsVar: config.dataTextField, apiVar: 'text'};
+        config.dataValueField = {dsVar: config.dataValueField, apiVar: 'id'};
 
         var changeFunction = function(e) {
-            if (contrail.checkIfFunction(option.change)) {
-                option.change(e);
+            if (contrail.checkIfFunction(config.change)) {
+                config.change(e);
             }
         };
         //subcribe to popup open and close events
         var openFunction = function() {
-            if (contrail.checkIfFunction(option.open)) {
-                option.open();
+            if (contrail.checkIfFunction(config.open)) {
+                config.open();
             }
         };
 
         var closeFunction = function() {
-            if (contrail.checkIfFunction(option.close)) {
-                option.close();
+            if (contrail.checkIfFunction(config.close)) {
+                config.close();
             }
         };
 
         var selectingFunction = function(e) {
-            if (contrail.checkIfFunction(option.selecting)) {
-                option.selecting(e);
+            if (contrail.checkIfFunction(config.selecting)) {
+                config.selecting(e);
             }
         };
 
@@ -1314,7 +1321,6 @@ function constructSelect2(self, defaultOption, args) {
 
             if (option.data.length > 0) {
                 if (contrail.checkIfExist(option.multiple)) {
-
                     // set value for Multiselect
                     if (contrail.checkIfExist(value)){
                         self.select2('val', value, triggerChange);
@@ -1340,8 +1346,8 @@ function constructSelect2(self, defaultOption, args) {
 
         }
 
-        if(!$.isEmptyObject(option) && contrail.checkIfExist(option.dataSource)) {
-            var dataSourceOption = option.dataSource;
+        if(!$.isEmptyObject(config) && contrail.checkIfExist(config.dataSource)) {
+            var dataSourceOption = config.dataSource;
             if(dataSourceOption.type == "remote"){
                 var ajaxConfig = {
                     url: dataSourceOption.url,
@@ -1372,12 +1378,12 @@ function constructSelect2(self, defaultOption, args) {
                 });
 
             } else if(dataSourceOption.type == "local"){
-                source = formatData(dataSourceOption.data, option);
+                source = formatData(dataSourceOption.data, config);
             }
-            option.data = source;
+            config.data = source;
         }
-        if (contrail.checkIfExist(option.data)) {
-            initSelect2(option);
+        if (contrail.checkIfExist(config.data)) {
+            initSelect2(config);
         }
 
         $.extend(true, dataObject, {
@@ -1394,8 +1400,8 @@ function constructSelect2(self, defaultOption, args) {
                     selectedValue = [selectedValue];
                 }
                 for(var i = 0; i < selectedValue.length; i++) {
-                    index = option.sourceMap[selectedValue[i]];
-                    selectedObjects.push(fetchSourceMapData(index, option.data));
+                    index = config.sourceMap[selectedValue[i]];
+                    selectedObjects.push(fetchSourceMapData(index, config.data));
                 }
                 return selectedObjects;
             },
@@ -1432,27 +1438,27 @@ function constructSelect2(self, defaultOption, args) {
                     dataObject.cachedValue = value;
                 }
 
-                option.data = data;
-                initSelect2(option, value, triggerChange)
+                config.data = data;
+                initSelect2(config, value, triggerChange)
             },
             enableOptionList: function (flag, disableItemList) {
                 for (var j = 0; j < disableItemList.length; j++) {
-                    for (var i = 0; i < option.data.length; i++) {
-                        if(option.data[i].children === undefined) {
-                            if (disableItemList[j] === option.data[i][option.dataValueField.dsVar]) {
-                                option.data[i].disabled = !flag;
+                    for (var i = 0; i < config.data.length; i++) {
+                        if(config.data[i].children === undefined) {
+                            if (disableItemList[j] === config.data[i][config.dataValueField.dsVar]) {
+                                config.data[i].disabled = !flag;
                             }
                         } else {
-                            for(var k = 0;k < option.data[i].children.length; k++) {
-                                if(disableItemList[j] === option.data[i].children[k][option.dataValueField.dsVar]) {
-                                    option.data[i].children[k].disabled = !flag;
+                            for(var k = 0;k < config.data[i].children.length; k++) {
+                                if(disableItemList[j] === config.data[i].children[k][config.dataValueField.dsVar]) {
+                                    config.data[i].children[k].disabled = !flag;
                                 }
                             }
                         }
                     }
                 }
                 self.select2('destroy');
-                self.select2(option);
+                self.select2(config);
                 self.select2('val', "");
             },
             enable: function(flag){
@@ -1466,9 +1472,9 @@ function constructSelect2(self, defaultOption, args) {
                 }
             },
             isEnabledOption: function (optionText) {
-                for (var i = 0; i < option.data.length; i++) {
-                    if (option.data[i].text === optionText) {
-                        if (option.data[i].disabled) {
+                for (var i = 0; i < config.data.length; i++) {
+                    if (config.data[i].text === optionText) {
+                        if (config.data[i].disabled) {
                             return false;
                         }
                     }

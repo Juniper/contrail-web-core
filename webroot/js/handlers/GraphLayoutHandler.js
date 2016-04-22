@@ -29,7 +29,6 @@ define([
             dagreGraph.nodes().forEach(function(id) {
                 var value = dagreGraph.node(id),
                     cell = graph.get('cells').get(id),
-                    type = cell.attributes.type,
                     rankDir = options['rankDir'];
 
                 cell.set('position', {

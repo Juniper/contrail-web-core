@@ -1027,6 +1027,7 @@ function flattenArr(arr) {
 }
 
 $.deparamURLArgs = function (query) {
+    console.warn('Contrail WebUI Warning: Function deparamURLArgs of web-utils is deprecated. Use deparamURLArgs() of core-utils instead.');
     var query_string = {};
     var query = ifNull(query,'');
     if (query.indexOf('?') > -1) {
