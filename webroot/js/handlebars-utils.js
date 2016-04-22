@@ -207,7 +207,7 @@ Handlebars.registerHelper('getJSONValueByPath', function (path, obj) {
 });
 
 Handlebars.registerHelper('getValueByConfig', function (obj, options) {
-    var config = $.parseJSON(options.hash.config),
+    var config = $.parseJSON(decodeURIComponent(options.hash.config)),
         key = config.key,
         value = cowu.getJSONValueByPath(key, obj),
         templateGenerator = config.templateGenerator,
@@ -259,7 +259,7 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
                     if(linkTemplate != null) {
                         hrefLink = linkTemplate({key: vValue, params: params});
                     }
-                    hrefLinkArray.push('<a class="value-link" target="_blank" href="' + hrefLink + '">' + vValue + '</a>');
+                    hrefLinkArray.push('<a class="value-link" target="_blank" href="' + encodeURI(hrefLink) + '">' + vValue + '</a>');
                 });
 
                 returnValue = hrefLinkArray.join('');
@@ -267,7 +267,7 @@ Handlebars.registerHelper('getValueByConfig', function (obj, options) {
                 if(linkTemplate != null) {
                     hrefLink = linkTemplate({key: value, params: params});
                 }
-                returnValue = '<a class="value-link" target="_blank" href="' + hrefLink + '">' + value + '</a>';
+                returnValue = '<a class="value-link" target="_blank" href="' + encodeURI(hrefLink) + '">' + value + '</a>';
             }
         break;
 
