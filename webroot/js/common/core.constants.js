@@ -385,20 +385,20 @@ define([
             "agg-packets": "number",
 
             // cpu_info
-            "cpu_info.mem_virt": "byte",
-            "SUM(cpu_info.mem_virt)": "byte",
-            "MAX(cpu_info.mem_virt)": "byte",
-            "MIN(cpu_info.mem_virt)": "byte",
+            "cpu_info.mem_virt": "kilo-byte",
+            "SUM(cpu_info.mem_virt)": "kilo-byte",
+            "MAX(cpu_info.mem_virt)": "kilo-byte",
+            "MIN(cpu_info.mem_virt)": "kilo-byte",
 
-            "cpu_info.mem_res": "byte",
-            "SUM(cpu_info.mem_res)": "byte",
-            "MAX(cpu_info.mem_res)": "byte",
-            "MIN(cpu_info.mem_res)": "byte",
+            "cpu_info.mem_res": "kilo-byte",
+            "SUM(cpu_info.mem_res)": "kilo-byte",
+            "MAX(cpu_info.mem_res)": "kilo-byte",
+            "MIN(cpu_info.mem_res)": "kilo-byte",
 
-            "cpu_info.used_sys_mem": "byte",
-            "SUM(cpu_info.used_sys_mem)": "byte",
-            "MAX(cpu_info.used_sys_mem)": "byte",
-            "MIN(cpu_info.used_sys_mem)": "byte",
+            "cpu_info.used_sys_mem": "kilo-byte",
+            "SUM(cpu_info.used_sys_mem)": "kilo-byte",
+            "MAX(cpu_info.used_sys_mem)": "kilo-byte",
+            "MIN(cpu_info.used_sys_mem)": "kilo-byte",
 
 
             "cpu_info.cpu_share": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
