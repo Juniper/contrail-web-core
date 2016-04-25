@@ -257,14 +257,6 @@ define([
                 },
                 columnHeader: {
                     columns: gridColumns
-                },
-                footer: {
-                    pager: contrail.handleIfNull(gridOptions.pagerOptions, {
-                        options: {
-                            pageSize: 100,
-                            pageSizeSelect: [100, 200, 500]
-                        }
-                    })
                 }
             };
         }
