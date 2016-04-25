@@ -109,21 +109,7 @@ define([
                                   searchable: true,
                                   sortField: 'severity',
                                   formatter : function (r, c, v, cd, dc) {
-                                      var formattedDiv;
-                                      if(dc['ack']) {
-                                          if(dc['severity'] === 4) {
-                                              formattedDiv = '<div data-color="orange" class="circle orange alarms-circle-grid-style"></div>';
-                                          } else if (dc['severity'] === 3) {
-                                              formattedDiv = '<div data-color="red" class="circle red alarms-circle-grid-style"></div>';
-                                          }
-                                      } else {
-                                          if(dc['severity'] === 3) {
-                                              formattedDiv = '<div data-color="red" class="circle red filled alarms-circle-grid-style"></div>';
-                                          } else if (dc['severity'] === 4) {
-                                              formattedDiv = '<div data-color="orange" class="circle orange filled alarms-circle-grid-style"></div>';
-                                          }
-                                      }
-                                      return formattedDiv;
+                                      return alarmSeverityFormatter(v,dc,false);
                                   }
                               },
                               {
@@ -415,16 +401,35 @@ define([
         };
     };
 
-    this.alarmSeverityFormatter = function (v, dc) {
-        var cirle;
-        if(v == 3) {
-            circle = '<div data-color="red" class="circle red filled alarms-circle-grid-style alarms-circle-display-flex"></div>\
-                <div class="alarms-display-inline">&nbsp;Major</div>';
-        } else if (v == 4) {
-            circle = '<div data-color="orange" class="circle orange filled alarms-circle-grid-style alarms-circle-display-flex"></div>\
-                <div class="alarms-display-inline">&nbsp;Minor</div>';
+    this.alarmSeverityFormatter = function (v, dc, showTextFlag) {
+        var formattedDiv;
+        var showText = (showTextFlag != null && showTextFlag == false)? false: true;
+        if(dc['ack']) {
+            if(v == 4) {
+                formattedDiv = '<div data-color="orange" class="circle orange alarms-circle-grid-style alarms-circle-display-flex"></div>';
+                if(showText) {
+                    formattedDiv += '<div class="alarms-display-inline">&nbsp;Minor</div>';
+                }
+            } else if (v == 3) {
+                formattedDiv = '<div data-color="red" class="circle red alarms-circle-grid-style alarms-circle-display-flex"></div>';
+                if(showText) {
+                    formattedDiv += '<div class="alarms-display-inline">&nbsp;Major</div>';
+                }
+            }
+        } else {
+            if(v == 3) {
+                formattedDiv = '<div data-color="red" class="circle red filled alarms-circle-grid-style alarms-circle-display-flex"></div>';
+                if(showText) {
+                    formattedDiv += '<div class="alarms-display-inline">&nbsp;Major</div>';
+                }
+            } else if (v == 4) {
+                formattedDiv = '<div data-color="orange" class="circle orange filled alarms-circle-grid-style alarms-circle-display-flex"></div>';
+                if(showText) {
+                    formattedDiv += '<div class="alarms-display-inline">&nbsp;Minor</div>';
+                }
+            }
         }
-        return circle;
+        return formattedDiv;
     }
 
     this.timestampFormatter = function (v, dc) {
