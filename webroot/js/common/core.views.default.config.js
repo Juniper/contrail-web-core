@@ -116,7 +116,10 @@ define([
                 return formattedValue;
             },
             y1Formatter: d3.format(".01f"),
-            showLegend: true
+            showLegend: true,
+            xAccessor: 'x',
+            y1Accessor: 'y1',
+            y2Accessor: 'y2'
         };
     };
 

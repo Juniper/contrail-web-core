@@ -73,6 +73,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir) {
         'mon-infra-node-list-model'   : coreWebDir + '/js/models/NodeListModel',
         'mon-infra-log-list-model'    : coreWebDir + '/js/models/LogListModel',
 
+        'contrailD3'                  : coreWebDir + '/js/models/chart/contrailD3',
+        
         // TODO: We need to discuss a criteria on which we should add definations to this file.
         'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
         'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',

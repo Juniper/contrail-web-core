@@ -1,51 +1,65 @@
-/**
- * Tooltip class.
+/*
+ * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
-contrailD3.components.Tooltip = function() {
+
+define([], function () {
+
+    /**
+     * Tooltip class.
+     */
+    var Tooltip = function () {
 
 
-    this._content = undefined;
-    this._container = undefined;
-    this._offset = 15;
-}
-
-
-contrailD3.components.Tooltip.prototype.setContent = function(content) {
-
-    this._content = content;
-    return this;
-};
-
-
-contrailD3.components.Tooltip.prototype.show = function(x, y) {
-
-    this._container = d3.select(document.body)
-        .append("div")
-        .attr("class", "contrail-tooltip");
-
-    this._container.html(this._content)
-        .style('visibility', 'hidden');
-
-    var dimension = this._container.node().getBoundingClientRect();
-
-    y = y - (dimension.height / 2);
-
-    if (x + dimension.width > document.body.clientWidth) {
-        x -= this._offset + dimension.width;
-    } else {
-        x += this._offset;
+        this._content = undefined;
+        this._container = d3.select(document.body);
+        this._contentContainer = undefined;
+        this._offset = 15;
     }
 
-    this._container.style('visibility', 'visible')
-        .style('top', y + 'px')
-        .style('left', x + 'px');
-};
+
+    Tooltip.prototype.setContent = function (content) {
+
+        this._content = content;
+        return this;
+    };
+    
+    Tooltip.prototype.setContainer = function (container) {
+        this._container = container._container;
+    };
 
 
-contrailD3.components.Tooltip.prototype.hide = function() {
+    Tooltip.prototype.show = function (x, y) {
 
-    if (this._container) {
-        this._container.remove();
-        this._container = undefined;
-    }
-};
+        this._contentContainer = this._container.append("div")
+            .attr("class", "contrailD3-tooltip");
+
+        this._contentContainer.html(this._content)
+            .style('visibility', 'hidden');
+
+        var svgDimension = this._container.node().getBoundingClientRect(),
+            dimension = this._contentContainer.node().getBoundingClientRect();
+        
+        y = y - (dimension.height / 2) - (svgDimension.height / 2);
+        
+        if (x + dimension.width > document.body.clientWidth) {
+            x -= this._offset + (2 * dimension.width);
+        } else {
+            x += this._offset - (dimension.width / 2);
+        }
+
+        this._contentContainer.style('visibility', 'visible')
+            .style('top', y + 'px')
+            .style('left', x + 'px');
+    };
+
+
+    Tooltip.prototype.hide = function () {
+
+        if (this._contentContainer) {
+            this._contentContainer.remove();
+            this._contentContainer = undefined;
+        }
+    };
+    
+    return Tooltip;
+});

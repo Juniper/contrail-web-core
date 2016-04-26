@@ -1,99 +1,108 @@
-/**
- * Classes utility.
- * @public
- * @constructor
+/*
+ * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
-contrailD3.utils.ClassUtil = function() {
 
-}
+define([], function () {
 
+    /**
+     * Classes utility.
+     * @public
+     * @constructor
+     */
+    var ClassUtil = function () {
 
-/**
- * Is component?
- * @public
- * @param {Object} obj
- * @returns {Boolean}
- */
-contrailD3.utils.ClassUtil.prototype.isComponent = function(obj) {
-
-    return obj.getClassName().split(".").slice(0, 2).join(".") == "contrailD3.components";
-};
-
-
-/**
- * Get option setter method [name].
- * If second parameter is provided function will returned.
- * Otherwise will return string - name of the setter function.
- * @public
- * @param {String} option
- * @param {Object} obj
- * @returns {String|Function}
- */
-contrailD3.utils.ClassUtil.prototype.getSetter = function(option, obj) {
-
-    var setter = "set" + option;
-
-    if (obj) {
-        return obj[setter];
-    } else {
-        return setter;
-    }
-};
-
-
-/**
- * Get class by chart short name.
- * For instance will return "contrailD3.chart.BarChart" function
- * for type "bar" and namespace "charts".
- * @public
- * @param {String} type
- * @param {String} namespace
- * @returns {Function}
- */
-contrailD3.utils.ClassUtil.prototype.getClassByType = function(type, namespace) {
-
-    var type = type.slice(0, 1).toUpperCase() + type.slice(1).toLowerCase();
-
-    var className;
-    if (namespace == "charts") {
-        className = "contrailD3." + namespace + "." + type + "Chart";
-    } else if (namespace == "components") {
-        className = "contrailD3." + namespace + "." + type;
-    } else {
-        throw new Error("Unexpected namespace");
     }
 
-    return this.getClassByName(className);
-};
+
+    /**
+     * Is component?
+     * @public
+     * @param {Object} obj
+     * @returns {Boolean}
+     */
+    ClassUtil.prototype.isComponent = function (obj) {
+
+        return obj.getClassName().split(".").slice(0, 2).join(".") == "contrailD3.components";
+    };
 
 
-/**
- * Get class by name.
- * @public
- * @param {String} className
- * @returns {Function}
- */
-contrailD3.utils.ClassUtil.prototype.getClassByName = function(className) {
-    /*
-     * Split className string by period and remove first "contrailD3" element.
+    /**
+     * Get option setter method [name].
+     * If second parameter is provided function will returned.
+     * Otherwise will return string - name of the setter function.
+     * @public
+     * @param {String} option
+     * @param {Object} obj
+     * @returns {String|Function}
      */
-    var parts = className.split(".").slice(1);
-    /*
-     * Set up namespace container.
-     */
-    var namespace = contrailD3;
-    /*
-     * Loop over namespace chain.
-     */
-    for (var i = 0; i < parts.length; i ++) {
+    ClassUtil.prototype.getSetter = function (option, obj) {
 
-        var part = parts[i];
-        if (part in namespace) {
-            namespace = namespace[part];
+        var setter = "set" + option;
+
+        if (obj) {
+            return obj[setter];
+        } else {
+            return setter;
         }
-    }
-    /*
-     * Return class function.
+    };
+
+
+    /**
+     * Get class by chart short name.
+     * For instance will return "contrailD3.chart.BarChart" function
+     * for type "bar" and namespace "charts".
+     * @public
+     * @param {String} type
+     * @param {String} namespace
+     * @returns {Function}
      */
-    return namespace;
-};
+    ClassUtil.prototype.getClassByType = function (type, namespace) {
+
+        var type = type.slice(0, 1).toUpperCase() + type.slice(1).toLowerCase();
+
+        var className;
+        if (namespace == "charts") {
+            className = "contrailD3." + namespace + "." + type + "Chart";
+        } else if (namespace == "components") {
+            className = "contrailD3." + namespace + "." + type;
+        } else {
+            throw new Error("Unexpected namespace");
+        }
+
+        return this.getClassByName(className);
+    };
+
+
+    /**
+     * Get class by name.
+     * @public
+     * @param {String} className
+     * @returns {Function}
+     */
+    ClassUtil.prototype.getClassByName = function (className) {
+        /*
+         * Split className string by period and remove first "contrailD3" element.
+         */
+        var parts = className.split(".").slice(1);
+        /*
+         * Set up namespace container.
+         */
+        var namespace = contrailD3;
+        /*
+         * Loop over namespace chain.
+         */
+        for (var i = 0; i < parts.length; i++) {
+
+            var part = parts[i];
+            if (part in namespace) {
+                namespace = namespace[part];
+            }
+        }
+        /*
+         * Return class function.
+         */
+        return namespace;
+    };
+    
+    return ClassUtil;
+});

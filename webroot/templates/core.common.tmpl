@@ -2421,3 +2421,22 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         <span>({{{rowsCount}}} {{{rowsCountSuffix}}})</span>
     {{/if}}
 </script>
+
+<script type="text/x-handlebars-template" id="contrailD3-chart-template">
+    <div id="contrailD3-{{chartId}}" class="contrailD3-container row-fluid" style="height:{{height}}px;"></div>
+</script>
+
+<script type="text/x-handlebars-template" id="d3-linebar-chart-controls">
+    <div class="controls-left-side">
+        <div><div class="controls-button" data-x-axis="1" data-chart="contrailD3.charts.LineChart">to lines</div></div>
+        <div><div class="controls-button" data-x-axis="1" data-chart="contrailD3.charts.BarChart" data-type="stacked">to stacked bars</div></div>
+        <div><div class="controls-button" data-x-axis="1" data-chart="contrailD3.charts.BarChart" data-type="grouped">to grouped bars</div></div>
+        <div class="field-select"></div>
+    </div>
+    <div class="controls-right-side">
+        <div><div class="controls-button" data-x-axis="2" data-chart="contrailD3.charts.LineChart">to lines</div></div>
+        <div><div class="controls-button" data-x-axis="2" data-chart="contrailD3.charts.BarChart" data-type="stacked">to stacked bars</div></div>
+        <div><div class="controls-button" data-x-axis="2" data-chart="contrailD3.charts.BarChart" data-type="grouped">to grouped bars</div></div>
+        <div class="field-select"></div>
+    </div>
+</script>

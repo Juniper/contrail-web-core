@@ -1137,3 +1137,67 @@ p.error, p.error-text {
     font-weight:600;
     padding-right:3px;
  }
+
+.contrailD3-container .axis path, .contrail .axis line {
+    fill: none;
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.contrailD3-container .line-chart .line {
+    fill: none;
+}
+
+.contrailD3-container .axis-label {
+    text-anchor: middle;
+}
+
+.contrailD3-container text {
+    font: normal 12px Arial;
+}
+
+.contrailD3-container .brush {
+    fill-opacity: 0.2;
+}
+
+.contrailD3-container .contrailD3-tooltip {
+    border: 1px solid #000;
+    border-radius: 3px;
+    opacity: 0.8;
+    background-color: #fff;
+    position: absolute;
+}
+
+.contrailD3-container .contrailD3-tooltip-row td {
+    padding: 0 10px;
+}
+
+.contrailD3-container .contrailD3-tooltip-color {
+    width: 15px;
+    height: 15px;
+}
+
+.contrailD3-container .control-panel, .control-panel select {
+    height: 30px;
+}
+
+.contrailD3-container .controls-left-side > div {
+    float: left;
+    text-align: center;
+    margin-left: 2px;
+}
+
+.contrailD3-container .controls-right-side > div {
+    float: right;
+    text-align: center;
+    margin-left: 2px;
+}
+
+.contrailD3-container .controls-button {
+    border: 1px solid #a6c9e2;
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
+    cursor: pointer;
+    padding: 0 10px;
+}
