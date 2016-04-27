@@ -26,8 +26,6 @@ define([
      * @constructor
      */
     var LineBarChart = function(options, data) {
-
-        var chartObj = this._createConfigAndData(options, data);
         
         /**
          * Chart controls container.
@@ -36,7 +34,7 @@ define([
          */
         this._controlsContainer = undefined;
 
-        contrailD3.NavigationChart.call(this, chartObj.config, chartObj.chartData);
+        contrailD3.NavigationChart.call(this, options, data);
     }
 
 
@@ -203,57 +201,6 @@ define([
             return d.id;
         })
     };
-    
-    LineBarChart.prototype._createConfigAndData = function(options, data) {
-
-        var config = {
-            metaData : {},
-            charts: [],
-            components: [{
-                type: "crosshair"
-            }],
-            options: {
-                container : {
-                    "mainChartHeight": 300,
-                    "navChartHeight": 80,
-                },
-                axes: {},
-                showLegend: true
-            }
-        }
-
-        var dataSeries = [];
-        data.forEach(function(series) {
-            dataSeries.push(series.values);
-            config.charts.push({
-                type: function(bar){return (bar) ? 'bar': 'line';}(series.bar),
-                color: series.color,
-                y: function(bar){return (bar) ? 1 : 2;}(series.bar)
-            });
-        });
-
-        if (options.height) {
-            config.options.container.mainChartHeight =  options.height - config.options.container.navChartHeight;
-        }
-        
-        config.metaData = options.metaData;
-
-        config.options.axes = {
-            y1Label: options.y1AxisLabel,
-            y2Label: options.y2AxisLabel,
-            xAccessor: options.xAccessor,
-            y1Accessor: options.y1Accessor,
-            y2Accessor: options.y2Accessor
-        };
-
-        config.options.showLegend = options.showLegend;
-
-        return {
-            config: config,
-            chartData: dataSeries
-        };
-        
-    }
     
     return LineBarChart;
 });
