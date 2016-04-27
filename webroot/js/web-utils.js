@@ -768,7 +768,7 @@ function formatThroughput(bytes,noDecimal,maxPrecision) {
         return '-';
 }
 
-function formatBytes(bytes, noDecimal, maxPrecision, precision) {
+function formatBytes(bytes, noDecimal, maxPrecision, precision, bytePrefixes) {
     if (!$.isNumeric(bytes))
         return '-';
     if (bytes == 0)
@@ -785,7 +785,9 @@ function formatBytes(bytes, noDecimal, maxPrecision, precision) {
     //Ensure that bytes is always positive
     bytes = parseInt(bytes);
     bytes = makePositive(bytes);
-    var bytePrefixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB']
+    if(bytePrefixes == null) {
+        bytePrefixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'];
+    } 
     $.each(bytePrefixes, function (idx, prefix) {
         if (bytes < 1024) {
             formatStr = contrail.format('{0} {1}', parseFloat(bytes.toFixed(decimalDigits)), prefix);
