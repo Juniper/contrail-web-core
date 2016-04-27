@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/chart/Container'
+    'core-basedir/js/chart/base/Container'
 ], function (Container) {
 
     /**
