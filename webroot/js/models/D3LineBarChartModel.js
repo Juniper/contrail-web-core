@@ -8,7 +8,7 @@
  */
 define([
     'contrailD3',
-    'core-basedir/js/models/chart/NavigationChart'
+    'core-basedir/js/chart/NavigationChart'
 ], function(contrailD3, NavigationChart) {
 
     //Add NavigationChart part of namespace.
