@@ -617,6 +617,8 @@ define([
         this.ALARM_REFRESH_DURATION = 300000;//5 MINUTES
         this.ALARM_BUCKET_DURATION = 300000000;//5 MINUTES
 
+        this.BYTES_PER_SECOND_PREFIXES = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s', 'PB/s', 'EB/s', 'ZB/s'];
+
         this.get = function () {
             var args = arguments;
             return cowu.getValueFromTemplate(args);
