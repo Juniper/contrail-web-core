@@ -187,7 +187,6 @@ define([
 
         var config = {
             metaData : {},
-            charts: [],
             components: [{
                 type: "crosshair"
             }],
@@ -195,19 +194,22 @@ define([
                 container : {
                     "mainChartHeight": 300,
                     "navChartHeight": 80,
+                    "showControls": true
                 },
                 axes: {},
-                showLegend: true
+                brush: {
+                    "size": 45
+                }
             }
         }
 
         var dataSeries = [];
         data.forEach(function(series) {
-            dataSeries.push(series.values);
-            config.charts.push({
+            dataSeries.push({
                 type: function(bar){return (bar) ? 'bar': 'line';}(series.bar),
                 color: series.color,
-                y: function(bar){return (bar) ? 1 : 2;}(series.bar)
+                y: function(bar){return (bar) ? 1 : 2;}(series.bar),
+                data: series.values
             });
         });
 
@@ -225,7 +227,8 @@ define([
             y2Accessor: options.y2Accessor
         };
 
-        config.options.showLegend = options.showLegend;
+        config.options.container.showContainer = options.showLegend;
+        config.options.brush.extent = options.brushExtent;
 
         return {
             config: config,

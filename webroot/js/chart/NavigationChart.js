@@ -12,7 +12,13 @@ define([
      * @param {Object} config
      * @param {Object[][]} data
      */
-    var NavigationChart = function (config, data) {
+    var NavigationChart = function (config, charts) {
+        /*
+         * Extract data from each chart config.
+         */
+        var data = charts.map(function(chart) {
+            return chart.data;
+        });
 
         contrailD3.Container.call(this, config, data);
         /**
@@ -64,11 +70,11 @@ define([
         /*
          * Fetch required charts list.
          */
-        config.charts.forEach(function (chartConfig) {
+        charts.forEach(function(chartConfig) {
             var clazz = this._classUtil.getClassByType(chartConfig.type, "charts");
             var chart = new clazz();
 
-            !chartConfig.color || chart.setColor(chartConfig.color);
+            ! chartConfig.color || chart.setColor(chartConfig.color);
 
             this.add(chart, chartConfig.x ? chartConfig.x : 1, chartConfig.y ? chartConfig.y : 1);
         }, this);
@@ -122,6 +128,7 @@ define([
     /**
      * Render chart.
      * @param {String} selector - chart's container CSS selector
+     * @returns {contrailD3.NavigationChart}
      */
     NavigationChart.prototype.render = function (selector) {
         /*
@@ -140,53 +147,116 @@ define([
          * Render navigation chart.
          */
         this._navigationChart = this._renderNavigationChart();
-
-        var mainChart = this._mainChart;
-        var canvas = this._navigationChart.getCanvas();
-        var currentData = this._mainChart.getData();
         /*
          * Create brush and set corresponding event handler.
          * See https://github.com/mbostock/d3/wiki/SVG-Controls
+         * First let's calculate brush default extent.
          */
-        var brush = d3.svg.brush()
+        var domain = this._navigationChart.getXScale().domain();
+
+        var extent = [domain[1], domain[1]];
+
+        if (this._config.has("options.brush.size")) {
+            extent[0] = domain[1].getTime() - this._config.get("options.brush.size") * 1000 * 60;
+        }
+        /*
+         * Create brush.
+         */
+        var self = this;
+        this._brush = d3.svg.brush()
             .x(this._navigationChart.getXScale())
-            .on("brush", function () {
-                if (!brush.empty()) {
-                    /*
-                     * Get brush extent.
-                     */
-                    var extent = brush.extent();
-                    var left = extent[0];
-                    var right = extent[1]
-                    var accessor = mainChart.getXAccessor();
-                    /*
-                     * Create data subset depending on extent.
-                     */
-                    var newData = [];
-                    for (var i = 0; i < currentData.length; i++) {
-                        newData.push(currentData[i].filter(function (d) {
-                            var x = accessor(d);
-                            if (x >= left && x <= right) {
-                                return true;
-                            }
-                        }));
-                    }
-                    /*
-                     * Update main chart.
-                     */
-                    mainChart.update(newData);
-                }
+            .extent(extent)
+            .on("brush", function() {
+                self._brushEventHandler();
             });
         /*
          * Append brush to the navigation chart.
          */
-        canvas.append("g")
+        this._navigationChart.getCanvas().append("g")
             .attr("class", "brush")
-            .call(brush)
+            .call(this._brush)
             .selectAll("rect")
             .attr("height", this._navigationChart.getHeight());
+        /*
+         * Call brush event handler to apply extent.
+         */
+        this._brushEventHandler();
+
+        return this;
     };
 
+    /**
+     * Brush event handler.
+     * @private
+     */
+    NavigationChart.prototype._brushEventHandler = function() {
+        /*
+         * Do nothing with empty selection.
+         */
+        if (this._brush.empty()) {
+            return;
+        }
+        /*
+         * Filter data by brush boundaries.
+         */
+        var data = this._applyBrush(this._navigationChart.getData());
+        /*
+         * Update main chart.
+         */
+        this._mainChart.update(data);
+    };
+
+
+    /**
+     * @override
+     */
+    NavigationChart.prototype._registerResizeHandler = function() {
+
+    };
+
+
+    /**
+     * Filter input data according with brush boundaries.
+     */
+    NavigationChart.prototype._applyBrush = function(data) {
+        /*
+         * Do nothing with empty selection.
+         */
+        if (this._brush.empty()) {
+            data;
+        }
+        /*
+         * Get brush extent.
+         */
+        var extent = this._brush.extent();
+        var left = extent[0];
+        var right = extent[1]
+        var accessor = this._mainChart.getXAccessor();
+        /*
+         * Filter data.
+         */
+        return data.map(function(series) {
+            return series.filter(function(d) {
+                var x = accessor(d);
+                return x >= left && x <= right;
+            });
+        });
+    };
+
+
+    /**
+     * @override
+     */
+    NavigationChart.prototype.update = function(data) {
+        /*
+         * Update main chart with brush-filtered data.
+         */
+        this._mainChart.update(this._applyBrush(data));
+        /*
+         * Update navigation chart with full data set.
+         */
+        this._navigationChart.update(data);
+    };
 
     /**
      * Render chart markdown.

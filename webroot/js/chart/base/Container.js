@@ -88,11 +88,23 @@ define([], function () {
         /*
          * Register window resize event handler.
          */
+        this._registerResizeHandler();
+    };
+
+    /**
+     * Register resize handler.
+     * A lot of child containers inherit this class functionality but
+     * they should escape registering their own resize handlers.
+     * So override this method in child classes with empty body.
+     * @protected
+     */
+    Container.prototype._registerResizeHandler = function() {
+
         var self = this;
-        d3.select(window).on('resize.' + this._chartId, function () {
+        d3.select(window).on('resize.' + this._chartId, function() {
             self.resize();
         });
-    }
+    };
 
 
     /**
@@ -313,8 +325,6 @@ define([], function () {
          */
         if (data) {
             this._data = data;
-        } else {
-            data = this._data;
         }
         /*
          * Order rendering queue.
@@ -327,7 +337,7 @@ define([], function () {
         /*
          * Loop through child charts.
          */
-        this._charts.forEach(function (chartContext, i) {
+        this._charts.forEach(function(chartContext, i) {
             /*
              * Copy main properties to the updated chart.
              * This is necessary if one chart rendered in several
@@ -338,7 +348,7 @@ define([], function () {
             /*
              * Update child chart.
              */
-            chartContext.chart._update(chartContext.container, data[i], true);
+            chartContext.chart._update(chartContext.container, this._data[i], true);
         }, this);
     };
 

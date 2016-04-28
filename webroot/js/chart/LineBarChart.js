@@ -44,17 +44,27 @@ define([
     /**
      * @override
      */
+    LineBarChart.prototype._registerResizeHandler = function() {
+
+    };
+    
+    /**
+     * @override
+     */
     LineBarChart.prototype._renderInnerMarkdown = function() {
-        
+
         /*
-         * Append controls container before.
+         * Check control panel required.
          */
-        this._controlsContainer = this._container.append("div")
-            .attr("class", "control-panel");
-        /*
-         * Render controls in appended container.
-         */
-        if (this._config.getOptions().options.showLegend) {
+        if (this._config.get("options.container.showControls", false)) {
+            /*
+             * Append controls container.
+             */
+            this._controlsContainer = this._container.append("div")
+                .attr("class", "control-panel");
+            /*
+             * Render controls in appended container.
+             */
             this._renderControls();
         }
         /*
