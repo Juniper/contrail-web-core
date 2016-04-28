@@ -11,7 +11,8 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
 
         this.load = function () {
             menuHandler = new MenuHandler();
-
+            //reset the cache
+            cowch.reset();
             getWebServerInfo(contrail.getCookie('project'),
                              function(webServerInfo) {
                 menuHandler.loadMenu(webServerInfo);
