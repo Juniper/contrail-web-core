@@ -15,6 +15,11 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
             cowch.reset();
             getWebServerInfo(contrail.getCookie('project'),
                              function(webServerInfo) {
+                //Get drop down value separator from configuration
+                cowc.DROPDOWN_VALUE_SEPARATOR = getValueByJsonPath(globalObj,
+                    "webServerInfo;uiConfig;dropdown_value_separator",
+                    cowc.DROPDOWN_VALUE_SEPARATOR);
+
                 menuHandler.loadMenu(webServerInfo);
                 menuHandler.handleSideMenu();
                 /**
