@@ -149,7 +149,7 @@ define([
         },
         addNewTermDataSource : function(grpName, term, data) {
             var map = self.elementConfig.queryMap;
-            var grpValue;
+            var grpValue, separator = cowc.DROPDOWN_VALUE_SEPARATOR;
             for(var i = 0; i < map.length; i++) {
                 if(map[i].name === grpName) {
                     grpValue = map[i].value;
@@ -157,8 +157,8 @@ define([
                 }
             }
             var newItem = {
-                id : term + '~' + grpValue,
-                value : term + '~' + grpValue,
+                id : term + separator + grpValue,
+                value : term + separator + grpValue,
                 text : term,
                 parent : grpValue
             };
