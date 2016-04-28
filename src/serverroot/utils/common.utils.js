@@ -1390,6 +1390,7 @@ function getWebServerInfo (req, res, appData)
 
     serverObj['disabledFeatures'] = getValueByJsonPath(config,'features;disabled',[]);
     serverObj['featurePkgsInfo'] = getValueByJsonPath(config,'featurePkg',[]);
+    serverObj['sessionTimeout'] = getValueByJsonPath(config,'session;timeout', 3600000);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
