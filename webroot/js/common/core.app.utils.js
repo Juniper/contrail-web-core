@@ -61,6 +61,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir) {
         'graph-view'                  : coreWebDir + '/js/views/GraphView',
         'contrail-view'               : coreWebDir + '/js/views/ContrailView',
         'query-form-view'             : coreWebDir + '/js/views/QueryFormView',
+        'contrail-vis-view'           : coreWebDir + '/js/views/ContrailVisView',
 
         'query-form-model'            : coreWebDir + '/js/models/QueryFormModel',
         'query-or-model'              : coreWebDir + '/js/models/QueryOrModel',
@@ -72,6 +73,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir) {
         'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
         'mon-infra-node-list-model'   : coreWebDir + '/js/models/NodeListModel',
         'mon-infra-log-list-model'    : coreWebDir + '/js/models/LogListModel',
+        'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
+        'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
+        'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
 
         'contrailD3'                  : coreWebDir + '/js/chart/contrailD3',
         
