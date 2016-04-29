@@ -57,7 +57,8 @@ define([
          * @member {Object}
          */
         this._mainChartOptions = {
-            height: this._config.get("options.container.mainChartHeight", 300)
+            height: this._config.get("options.container.mainChartHeight", 300),
+            margin: this._config.get("options.container.mainChartMargin", {top: 20, right: 70, bottom: 50, left: 70})
         };
         /**
          * Navigation chart options with default values.
@@ -65,7 +66,8 @@ define([
          * @member {Object}
          */
         this._navChartOptions = {
-            height: this._config.get("options.container.navChartHeight", 80)
+            height: this._config.get("options.container.navChartHeight", 80),
+            margin: this._config.get("options.container.navChartMargin", {top: 0, right: 70, bottom: 40, left: 70})
         };
         /*
          * Fetch required charts list.
@@ -152,13 +154,18 @@ define([
          * See https://github.com/mbostock/d3/wiki/SVG-Controls
          * First let's calculate brush default extent.
          */
-        var domain = this._navigationChart.getXScale().domain();
+        var domain = this._navigationChart.getXScale().domain(),
+            extent;
 
-        var extent = [domain[1], domain[1]];
-
-        if (this._config.has("options.brush.size")) {
-            extent[0] = domain[1].getTime() - this._config.get("options.brush.size") * 1000 * 60;
+        if (this._config.has("options.brush.extent")) {
+            extent = this._config.get("options.brush.extent");
+        } else {
+            extent = [domain[1], domain[1]];
+            if (this._config.has("options.brush.size")) {
+                extent[0] = domain[1].getTime() - this._config.get("options.brush.size") * 1000 * 60;
+            }
         }
+
         /*
          * Create brush.
          */
@@ -308,12 +315,7 @@ define([
          * Create and configure main chart.
          */
         var container = new contrailD3.Container(this._config.getOptions(), this._data);
-        container.setMargin({
-            top: 20,
-            right: 110,
-            bottom: 20,
-            left: 70
-        }).setXScale(xScale)
+        container.setMargin(options.margin).setXScale(xScale)
             .setXAxis(xAxis)
             .setY1Axis(y1Axis)
             .setY2Axis(y2Axis)

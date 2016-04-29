@@ -216,6 +216,8 @@ define([
         if (options.height) {
             config.options.container.mainChartHeight =  options.height - config.options.container.navChartHeight;
         }
+        config.options.container.mainChartMargin = (options.margin) ? options.margin: {top: 20, right: 70, bottom: 50, left: 70};
+        config.options.container.navChartMargin = (options.margin2) ? options.margin2: {top: 0, right: 70, bottom: 20, left: 70};
 
         config.metaData = options.metaData;
 
