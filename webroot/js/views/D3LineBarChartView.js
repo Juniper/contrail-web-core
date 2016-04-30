@@ -201,18 +201,39 @@ define([
                     "size": 45
                 }
             }
-        }
+        };
 
-        var dataSeries = [];
-        data.forEach(function(series) {
-            dataSeries.push({
-                type: function(bar){return (bar) ? 'bar': 'line';}(series.bar),
-                color: series.color,
-                y: function(bar){return (bar) ? 1 : 2;}(series.bar),
-                data: series.values
+        var dataSeries = [],
+            metaKeyData = {};
+        data.forEach(function(series, idx) {
+            series.values.forEach(function(valueObj) {
+                _.each(valueObj, function(value, key) {
+                    var chartDataObj = {};
+                    if (key !== options.xAccessor) {
+                        chartDataObj[options.xAccessor] = valueObj[options.xAccessor];
+                        chartDataObj[key] = value;
+                        if (metaKeyData[key] == undefined) {
+                            metaKeyData[key] = {
+                                type: function(bar){return (bar) ? 'bar': 'line';}(series.bar),
+                                color: options.metaData[key] && options.metaData[key].color || cowc.D3_COLOR_CATEGORY5[idx],
+                                y: function(bar){return (bar) ? 1 : 2;}(series.bar),
+                                data: []
+                            };
+                        }
+                        metaKeyData[key].data.push(chartDataObj);
+                    }
+                });
             });
         });
-
+        /**
+         * only need chart data series for the field defined in metaData.
+         */
+        for (var key in options.metaData) {
+            if (options.metaData.hasOwnProperty(key) && key !== options.xAccessor) {
+                dataSeries.push(metaKeyData[key]);
+            }
+        }
+        
         if (options.height) {
             config.options.container.mainChartHeight =  options.height - config.options.container.navChartHeight;
         }
@@ -226,7 +247,9 @@ define([
             y2Label: options.y2AxisLabel,
             xAccessor: options.xAccessor,
             y1Accessor: options.y1Accessor,
-            y2Accessor: options.y2Accessor
+            y2Accessor: options.y2Accessor,
+            forceY1: options.forceY1,
+            forceY2: options.forceY2
         };
 
         config.options.container.showContainer = options.showLegend;

@@ -44,7 +44,7 @@ define([
          * @private
          * @member {String}
          */
-        this._color = "red";
+        this._color = "#0b1d28";
         /*
          * Create tooltip.
          */

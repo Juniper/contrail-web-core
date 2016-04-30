@@ -1322,6 +1322,11 @@ define([], function () {
         var extent = this._getExtent(axis, number);
         var min = extent[0];
         var max = extent[1];
+        /**
+         * Check if global axis boundaries are specified
+         */
+        var forceAxis = this._config.get("options.axes.force"+axis.toUpperCase()+number);
+
         /*
          * Evaluate domain.
          */
@@ -1335,7 +1340,10 @@ define([], function () {
                 domain = [min, d3.max(axisData, accessor)];
             } else if (max != undefined) {
                 domain = [d3.min(axisData, accessor), max];
-            } else {
+            } else if(forceAxis != undefined){
+                domain = forceAxis;
+            }
+            else {
                 domain = d3.extent(axisData, accessor);
             }
         }
