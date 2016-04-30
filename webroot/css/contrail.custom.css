@@ -1170,6 +1170,7 @@ p.error, p.error-text {
 
 .contrailD3-container .contrailD3-tooltip-row td {
     padding: 0 10px;
+    white-space: nowrap;
 }
 
 .contrailD3-container .contrailD3-tooltip-color {

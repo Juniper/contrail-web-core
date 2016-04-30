@@ -55,10 +55,12 @@ define([
 
     Crosshair.prototype = Object.create(Component.prototype);
 
+
     /**
      * @override
      */
     Crosshair.prototype.setContainer = function (container) {
+
         this._container = container;
 
         //Also set the tooltip container
@@ -182,13 +184,14 @@ define([
             };
         }, this);
 
-        var dimension = this._container.getSvg().node().getBoundingClientRect();
+        var svg = this._container.getSvg().node();
+        var poistion = jQuery(svg.parentNode).position();
 
-        x =  x + dimension.left + this._container._margin.left;
-        var y = dimension.top / 2 + this._container._margin.top + this._container._height / 2;
+        var tooltipX = poistion.left + this._container._margin.left + x;
+        var tooltipY = poistion.top + this._container._margin.top + this._container._height / 2;
 
         this._tooltip.setContent(this._getTooltipContent(points))
-            .show(x, y);
+            .show(tooltipX, tooltipY);
     };
 
 
