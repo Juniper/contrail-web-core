@@ -37,7 +37,7 @@ function selectRedisDB (uiDB, redisClient, callback)
             if (err) {
                 logutils.logger.error('Redis DB ' + uiDB + ' SELECT error:' + err);
             } else {
-                logutils.logger.debug('Redis DB ' + uiDB + ' SELECT suuccess:');
+                logutils.logger.debug('Redis DB ' + uiDB + ' SELECT success:');
                 callback(redisClient);
             }
         });

@@ -6,10 +6,14 @@ node_modules
 *~
 *.swp
 *.swo
+web-third-party
 webroot/assets/*
 webroot/font/*
 webroot/js/common/contrail.unified.*
-web-third-party
 webroot/build/core.build.config.js
 webroot/css/contrail-all.css
+webroot/js/config_global.js
+webroot/js/uuid.js
+webroot/css/select2*
 dump.rdb
+config/config.global.js
