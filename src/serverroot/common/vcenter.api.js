@@ -14,6 +14,7 @@ var soap = require('./soap.api');
 var fs = require('fs');
 var easySoap = require('easysoap');
 var logutils = require('../utils/log.utils');
+var orchApi = require('../orchestration/orchestration.api');
 
 function getApiServerRequestedByData (appData, reqBy)
 {
@@ -31,6 +32,10 @@ function doCall (userData, appData, callback)
 
 function createvCenterSoapApi (serverType)
 {
+    var orchMods = orchApi.getOrchestrationModels();
+    if (-1 == orchMods.indexOf('vcenter')) {
+        return null;
+    }
     if (config.vcenter) {
         if (config.vcenter.server_ip) {
             serverIp = config.vcenter.server_ip;
