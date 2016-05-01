@@ -3,26 +3,25 @@
  */
 
 define([
-    'core-basedir/js/models/chart/utils/ClassUtil',
-    'core-basedir/js/models/chart/utils/StringUtil',
-    'core-basedir/js/models/chart/Config',
-    'core-basedir/js/models/chart/Component',
-    'core-basedir/js/models/chart/Container',
-    'core-basedir/js/models/chart/Chart',
+    'core-basedir/js/chart/base/utils/ClassUtil',
+    'core-basedir/js/chart/base/utils/StringUtil',
+    'core-basedir/js/chart/base/Config',
+    'core-basedir/js/chart/base/Component',
+    'core-basedir/js/chart/base/Container',
+    'core-basedir/js/chart/base/Chart',
+    'core-basedir/js/chart/base/BarChartStrategy',
     
-    'core-basedir/js/models/chart/components/Tooltip',
-    'core-basedir/js/models/chart/components/Crosshair',
-    'core-basedir/js/models/chart/charts/BarChart',
-    'core-basedir/js/models/chart/charts/LineChart',
-
-    'core-basedir/js/models/chart/BarChartStrategy',
-    'core-basedir/js/models/chart/BarChartGroupedStrategy',
-    'core-basedir/js/models/chart/BarChartStackedStrategy',
-    'core-basedir/js/models/chart/BarChartManager'
+    'core-basedir/js/chart/BarChart',
+    'core-basedir/js/chart/LineChart',
+    'core-basedir/js/chart/BarChartManager',
+    'core-basedir/js/chart/components/Tooltip',
+    'core-basedir/js/chart/components/Crosshair',
+    'core-basedir/js/chart/strategy/BarChartGroupedStrategy',
+    'core-basedir/js/chart/strategy/BarChartStackedStrategy'
     
-], function (ClassUtil, StringUtil, Config, Component, Container, Chart, 
-             Tooltip, Crosshair, BarChart, LineChart,
-             BarChartStrategy, BarChartGroupedStrategy, BarChartStackedStrategy, BarChartManager) {
+], function (ClassUtil, StringUtil, Config, Component, Container, Chart, BarChartStrategy,
+             BarChart, LineChart, BarChartManager, Tooltip, Crosshair,
+             BarChartGroupedStrategy, BarChartStackedStrategy) {
     
     /**
      * Define library namespace.

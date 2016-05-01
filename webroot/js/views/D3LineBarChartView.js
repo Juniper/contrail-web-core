@@ -5,7 +5,7 @@
 define([
     'underscore',
     'contrail-view',
-    'core-basedir/js/models/D3LineBarChartModel', //New Chart Container.
+    'core-basedir/js/chart/LineBarChart',
     'contrail-list-model'
 ], function (_, ContrailView, LineBarWithFocusChartContainer, ContrailListModel) {
     var LineBarWithFocusChartView = ContrailView.extend({
@@ -104,22 +104,22 @@ define([
                 return (!data || data.length === 0 || !data.filter(function (d) { return d.values.length; }).length);
             },
             chartDataRequestState = cowu.getRequestState4Model(chartViewModel, chartData, checkEmptyDataCB),
-            chartDataObj = {
-                data: chartData,
-                requestState: chartDataRequestState
-            },
             chartOptions = chartViewConfig['chartOptions'];
 
-        self.chartContainer = new ChartContainer(chartOptions, chartData);
-        self.chartContainer.chartOptions = chartOptions;
+        self.chartContainer = contrail.handleIfNull(self.chartContainer, {}); //Initialize chart container with empty obj.
 
         if (chartOptions.defaultDataStatusMessage && !(chartData.length > 0 && chartData[0].values.length > 0)) {
             var messageHandler = chartOptions.statusMessageHandler;
-            self.renderMessage(messageHandler(chartDataRequestState));
+            self.renderMessage(messageHandler(chartDataRequestState), selector, chartOptions);
         } else {
             self.removeMessage();
             $(selector).find(".contrailD3-container").remove();
             $(selector).append(chartTemplate(chartOptions));
+
+            var configDataObj  = createConfigAndData4ContrailD3(chartOptions, chartData);
+            
+            self.chartContainer = new ChartContainer(configDataObj.config, configDataObj.chartData);
+            self.chartContainer.chartOptions = chartOptions;
 
             self.chartContainer.render($(selector).find(".contrailD3-container")[0]);
 
@@ -182,6 +182,85 @@ define([
         forceY2 = cowu.getForceAxis4Chart(dataAllLines, "y", defaultForceY2);
         return forceY2;
     };
+    
+    function createConfigAndData4ContrailD3(options, data) {
+
+        var config = {
+            metaData : {},
+            components: [{
+                type: "crosshair"
+            }],
+            options: {
+                container : {
+                    "mainChartHeight": 300,
+                    "navChartHeight": 80,
+                    "showControls": true
+                },
+                axes: {},
+                brush: {
+                    "size": 45
+                }
+            }
+        };
+
+        var dataSeries = [],
+            metaKeyData = {};
+        data.forEach(function(series, idx) {
+            series.values.forEach(function(valueObj) {
+                _.each(valueObj, function(value, key) {
+                    var chartDataObj = {};
+                    if (key !== options.xAccessor) {
+                        chartDataObj[options.xAccessor] = valueObj[options.xAccessor];
+                        chartDataObj[key] = value;
+                        if (metaKeyData[key] == undefined) {
+                            metaKeyData[key] = {
+                                type: function(bar){return (bar) ? 'bar': 'line';}(series.bar),
+                                color: options.metaData[key] && options.metaData[key].color || cowc.D3_COLOR_CATEGORY5[idx],
+                                y: function(bar){return (bar) ? 1 : 2;}(series.bar),
+                                data: []
+                            };
+                        }
+                        metaKeyData[key].data.push(chartDataObj);
+                    }
+                });
+            });
+        });
+        /**
+         * only need chart data series for the field defined in metaData.
+         */
+        for (var key in options.metaData) {
+            if (options.metaData.hasOwnProperty(key) && key !== options.xAccessor) {
+                dataSeries.push(metaKeyData[key]);
+            }
+        }
+        
+        if (options.height) {
+            config.options.container.mainChartHeight =  options.height - config.options.container.navChartHeight;
+        }
+        config.options.container.mainChartMargin = (options.margin) ? options.margin: {top: 20, right: 70, bottom: 50, left: 70};
+        config.options.container.navChartMargin = (options.margin2) ? options.margin2: {top: 0, right: 70, bottom: 20, left: 70};
+
+        config.metaData = options.metaData;
+
+        config.options.axes = {
+            y1Label: options.y1AxisLabel,
+            y2Label: options.y2AxisLabel,
+            xAccessor: options.xAccessor,
+            y1Accessor: options.y1Accessor,
+            y2Accessor: options.y2Accessor,
+            forceY1: options.forceY1,
+            forceY2: options.forceY2
+        };
+
+        config.options.container.showContainer = options.showLegend;
+        config.options.brush.extent = options.brushExtent;
+
+        return {
+            config: config,
+            chartData: dataSeries
+        };
+
+    }
 
     return LineBarWithFocusChartView;
 });

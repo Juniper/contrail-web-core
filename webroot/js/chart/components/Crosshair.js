@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/models/chart/Component'
+    'core-basedir/js/chart/base/Component'
 ], function (Component) {
 
     /**
@@ -44,7 +44,7 @@ define([
          * @private
          * @member {String}
          */
-        this._color = "red";
+        this._color = "#0b1d28";
         /*
          * Create tooltip.
          */

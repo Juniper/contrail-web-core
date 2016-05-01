@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/models/chart/Component'
+    'core-basedir/js/chart/base/Component'
 ], function (Component) {
 
     /**
