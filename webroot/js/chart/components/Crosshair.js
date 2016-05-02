@@ -88,7 +88,7 @@ define([
      */
     Crosshair.prototype._render = function () {
 
-        this._values = this._container.getValues("x", 1);
+        this._values = this._container.getAxisValues("x", 1);
 
         this._surface = this._container._canvas.append("g")
             .attr("class", "crosshair");
@@ -167,8 +167,8 @@ define([
 
             var chartData = chartContext.chart.getData();
 
-            var xAccessor = this._container._getProperty("x", chartContext.x, "Accessor");
-            var yAccessor = this._container._getProperty("y", chartContext.y, "Accessor");
+            var xAccessor = this._container.getAccessor(chartContext, "x");
+            var yAccessor = this._container.getAccessor(chartContext, "y");
 
             var xValues = chartData.map(xAccessor);
 
@@ -178,7 +178,7 @@ define([
             var value = yAccessor.call(undefined, dataPoint);
 
             return {
-                name: this._container._config.get("options.axes.y" + chartContext.y + "Accessor"),
+                name: this._container._config.get("options.axes.y" + chartContext.y + "Accessor", chartContext.yField),
                 value: value,
                 color: chartContext.chart.getColor()
             };
@@ -188,7 +188,7 @@ define([
         var poistion = jQuery(svg.parentNode).position();
 
         var tooltipX = poistion.left + this._container._margin.left + x;
-        var tooltipY = poistion.top + this._container._margin.top + this._container._height / 2;
+        var tooltipY = poistion.top + this._container._height / 2;
 
         this._tooltip.setContent(this._getTooltipContent(points))
             .show(tooltipX, tooltipY);

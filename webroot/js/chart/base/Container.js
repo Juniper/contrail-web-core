@@ -400,13 +400,12 @@ define([], function () {
     /**
      * Add component to the canvas.
      * @param {contrailD3.Component} component
-     * @param {String} [x]
-     * @param {String} [y]
+     * @param {String} [context]
      * @param {Integer} [index]
      * @param {Selection} [container]
      * @returns {contrailD3.Chart}
      */
-    Container.prototype.add = function (component, x, y, index, container) {
+    Container.prototype.add = function (component, options, index, container) {
         /*
          * 
          */
@@ -419,10 +418,18 @@ define([], function () {
          */
         var context = {
             chart: component,
-            x: x,
-            y: y,
+            x: options.x || 1,
+            y: options.y || 1,
             container: container
         };
+        /*
+         * Copy other options.
+         */
+        for (var i in options) {
+            if (["chart", "x", "y", "container"].indexOf(i) < 0) {
+                context[i] = options[i];
+            }
+        }
         /*
          * Try to find chart with index in the current set and replace it.
          * Add new one if not found.
@@ -531,7 +538,7 @@ define([], function () {
         /*
          * Add new chart to the pool.
          */
-        this.add(toChart, context.x, context.y, index, context.container);
+        this.add(toChart, context, index, context.container);
         /*
          * Return new chart context.
          */
@@ -579,21 +586,10 @@ define([], function () {
 
         chart._width = this._width;
         chart._height = this._height;
-        chart._xAccessor = this._getProperty("x", context.x, "Accessor");
-        chart._yAccessor = this._getProperty("y", context.y, "Accessor");
+        chart._xAccessor = this.getAccessor(context, "x");
+        chart._yAccessor = this.getAccessor(context, "y");
         chart._xScale = this._getProperty("x", context.x, "Scale");
         chart._yScale = this._getProperty("y", context.y, "Scale");
-    };
-
-
-    /**
-     * Set data x accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setXAccessor = function (accessor) {
-
-        return this.setX1Accessor(accessor);
     };
 
 
@@ -601,68 +597,11 @@ define([], function () {
      * Get x accessor.
      * @returns {Function}
      */
-    Container.prototype.getXAccessor = function () {
+    Container.prototype.getXAccessor = function() {
 
-        return this._getProperty("x", 1, "Accessor");
-    };
-
-
-    /**
-     * Set data x1 accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setX1Accessor = function (accessor) {
-
-        this._x1Accessor = accessor;
-        return this;
-    };
-
-
-    /**
-     * Set data x2 accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setX2Accessor = function (accessor) {
-
-        this._x2Accessor = accessor;
-        return this;
-    };
-
-
-    /**
-     * Set data y accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setYAccessor = function (accessor) {
-
-        return this.setY1Accessor(accessor);
-    };
-
-
-    /**
-     * Set data y1 accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setY1Accessor = function (accessor) {
-
-        this._y1Accessor = accessor;
-        return this;
-    };
-
-
-    /**
-     * Set data y2 accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setY2Accessor = function (accessor) {
-
-        this._y2Accessor = accessor;
-        return this;
+        return function(d) {
+            return d["x"];
+        }
     };
 
 
@@ -1027,23 +966,25 @@ define([], function () {
 
 
     /**
-     * Get x extent.
+     * Get axis values.
      * @public
      * @param {String} axis
      * @param {Number} number
      * @return {Mixed[]}
      */
-    Container.prototype.getValues = function (axis, number) {
-
-        var accessor = this._getProperty(axis, number, "Accessor");
+    Container.prototype.getAxisValues = function(axis, number) {
 
         var values = [];
 
-        this._data.forEach(function (series) {
-            var x = series.forEach(function (d) {
-                values.push(accessor.call(undefined, d));
-            });
-        });
+        this._data.forEach(function(series, i) {
+            var context = this._charts[i];
+            if (context[axis] === number) {
+                var accessor = this.getAccessor(context, axis);
+                series.forEach(function(d) {
+                    values.push(accessor.call(undefined, d));
+                });
+            }
+        }, this);
 
         return values;
     };
@@ -1254,24 +1195,6 @@ define([], function () {
 
 
     /**
-     * Get axis limitations/extent.
-     * @param {String} name - axis name
-     * @param {Integer} number - axis number
-     * @private
-     */
-    Container.prototype._getExtent = function (name, number) {
-        /*
-         * Get field meta config.
-         */
-        var fieldConfig = this._getFieldConfigByAxis(name, number);
-        /*
-         * Return defined boundaries.
-         */
-        return [fieldConfig.min, fieldConfig.max];
-    };
-
-
-    /**
      * Get axis option.
      * Method try to find any configuration within "options.axes" config section.
      * @private
@@ -1289,6 +1212,22 @@ define([], function () {
 
 
     /**
+     * Get chart y accessor.
+     * @private
+     * @param {Object} context
+     * @param {String} axis
+     * @returns {Function}
+     */
+    Container.prototype.getAccessor = function(context, axis) {
+
+        var field = context[axis + "Field"];
+        return function(d) {
+            return d[field];
+        };
+    };
+
+
+    /**
      * Get domain for the scale function.
      * Method returns two dimensional array of input domain
      * depending on predefined scale boundaries, if any was provided.
@@ -1299,15 +1238,24 @@ define([], function () {
      */
     Container.prototype._getDomain = function (axis, number) {
         /*
+         * Check force option first.
+         */
+        var extent = this._config.get("options.axes.force" + axis.toUpperCase() + number, false);
+        if (extent !== false && extent[0] !== undefined && extent[1] !== undefined) {
+            return extent;
+        }
+        /*
          * Declare axis data.
          */
         var axisData = [];
         /*
          * Acquire axis data.
          */
-        this._charts.forEach(function (chartData, i) {
-            if (chartData[axis] == number) {
-                axisData = axisData.concat(this._data[i]);
+        this._charts.forEach(function(context, i) {
+            if (context[axis] == number) {
+                axisData = axisData.concat(
+                    this._data[i].map(this.getAccessor(context, axis))
+                );
             }
         }, this);
         /*
@@ -1319,33 +1267,20 @@ define([], function () {
         /*
          * Check if domain boundaries are specified.
          */
-        var extent = this._getExtent(axis, number);
         var min = extent[0];
         var max = extent[1];
-        /**
-         * Check if global axis boundaries are specified
-         */
-        var forceAxis = this._config.get("options.axes.force"+axis.toUpperCase()+number);
-
         /*
          * Evaluate domain.
          */
         var domain;
         if (min != undefined && max != undefined) {
             domain = [min, max];
+        } else if (min != undefined) {
+            domain = [min, d3.max(axisData)];
+        } else if (max != undefined) {
+            domain = [d3.min(axisData), max];
         } else {
-            var accessor = this._getProperty(axis, number, "Accessor");
-
-            if (min != undefined) {
-                domain = [min, d3.max(axisData, accessor)];
-            } else if (max != undefined) {
-                domain = [d3.min(axisData, accessor), max];
-            } else if(forceAxis != undefined){
-                domain = forceAxis;
-            }
-            else {
-                domain = d3.extent(axisData, accessor);
-            }
+            domain = d3.extent(axisData);
         }
 
         return domain;
@@ -1412,13 +1347,9 @@ define([], function () {
      */
     Container.prototype._getFieldFormatterByAxis = function (name, number) {
 
-        var fieldConfig = this._getFieldConfigByAxis(name, number);
-
-        if (fieldConfig.axisFormatter) {
-            return fieldConfig.axisFormatter;
-        } else {
-            return null;
-        }
+        return this._config.get("options.axes." + name + number + "Formatter", function(d) {
+            return d;
+        });
     };
 
 

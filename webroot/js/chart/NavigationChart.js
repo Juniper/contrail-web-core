@@ -72,13 +72,13 @@ define([
         /*
          * Fetch required charts list.
          */
-        charts.forEach(function(chartConfig) {
-            var clazz = this._classUtil.getClassByType(chartConfig.type, "charts");
+        charts.forEach(function(context) {
+            var clazz = this._classUtil.getClassByType(context.type, "charts");
             var chart = new clazz();
 
-            ! chartConfig.color || chart.setColor(chartConfig.color);
+            context.color && chart.setColor(context.color);
 
-            this.add(chart, chartConfig.x ? chartConfig.x : 1, chartConfig.y ? chartConfig.y : 1);
+            this.add(chart, context);
         }, this);
         /*
          * Fetch required components list.
@@ -236,8 +236,8 @@ define([
          * Get brush extent.
          */
         var extent = this._brush.extent();
-        var left = extent[0];
-        var right = extent[1]
+        var left = extent[0].getTime();
+        var right = extent[1].getTime();
         var accessor = this._mainChart.getXAccessor();
         /*
          * Filter data.
@@ -245,7 +245,11 @@ define([
         return data.map(function(series) {
             return series.filter(function(d) {
                 var x = accessor(d);
-                return x >= left && x <= right;
+                if (left == right) {
+                    return x;
+                } else {
+                    return x >= left && x <= right;
+                }
             });
         });
     };
@@ -327,8 +331,8 @@ define([
             method.call(container, options[i])
         }
 
-        this._charts.forEach(function (chartData) {
-            container.add(chartData.chart, chartData.x, chartData.y);
+        this._charts.forEach(function(context) {
+            container.add(context.chart, context);
         });
 
         if (!hideTicks) {
@@ -372,29 +376,25 @@ define([
     /**
      * Add chart to the canvas.
      * @param {Component} component
-     * @param {String} x
-     * @param {String} y
+     * @param {Object} context
      * @returns {CpuVsMemoryChart}
      */
-    NavigationChart.prototype.add = function (component, x, y) {
+    NavigationChart.prototype.add = function (component, context) {
 
         if (this._classUtil.isComponent(component)) {
             this._addComponent(component);
         } else {
-            this._addChart(component, x, y);
+            this._addChart(component, context);
         }
 
         return this;
     };
 
 
-    NavigationChart.prototype._addChart = function (chart, x, y) {
+    NavigationChart.prototype._addChart = function (chart, context) {
 
-        this._charts.push({
-            chart: chart,
-            x: x,
-            y: y
-        });
+        context.chart = chart
+        this._charts.push(context);
     };
 
 
