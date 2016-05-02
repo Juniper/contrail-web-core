@@ -117,9 +117,9 @@ define([
             },
             y1Formatter: d3.format(".01f"),
             showLegend: true,
-            xAccessor: 'x',
-            y1Accessor: 'y1',
-            y2Accessor: 'y2'
+            xFormatter: function(value) {
+                return d3.time.format("%H:%M")(value);
+            }
         };
     };
 

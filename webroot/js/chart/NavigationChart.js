@@ -160,9 +160,9 @@ define([
         if (this._config.has("options.brush.extent")) {
             extent = this._config.get("options.brush.extent");
         } else {
-            extent = [domain[1], domain[1]];
+            extent = [domain[0].getTime(), domain[1].getTime()];
             if (this._config.has("options.brush.size")) {
-                extent[0] = domain[1].getTime() - this._config.get("options.brush.size") * 1000 * 60;
+                extent[0] = domain[1] - this._config.get("options.brush.size") * 1000 * 60;
             }
         }
 
@@ -236,8 +236,8 @@ define([
          * Get brush extent.
          */
         var extent = this._brush.extent();
-        var left = extent[0].getTime();
-        var right = extent[1].getTime();
+        var left = extent[0];
+        var right = extent[1];
         var accessor = this._mainChart.getXAccessor();
         /*
          * Filter data.
