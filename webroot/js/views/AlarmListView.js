@@ -30,29 +30,29 @@ define([
             var alarmsUIListModel = new ContrailListModel({data:[]});
             var cfDataSource = new CFDataSource();
             self.cfDataSource = cfDataSource;
+            if(cfDataSource.getDimension('gridFilter') == null) {
+                cfDataSource.addDimension('gridFilter',function(d) {
+                    return d['token'];//token is used as unique key
+                });
+            }
+            if(cfDataSource.getDimension('timeFilter') == null) {
+                cfDataSource.addDimension('timeFilter',function(d) {
+                    return d['timestamp'];
+                });
+            }
+            if(cfDataSource.getDimension('severityFilter') == null) {
+                cfDataSource.addDimension('severityFilter',function(d) {
+                    return d['severity'];
+                });
+            }
+            if(cfDataSource.getDimension('statusFilter') == null) {
+                cfDataSource.addDimension('statusFilter',function(d) {
+                    return d['status'];
+                });
+            }
 
             function onUpdateAlarmsListModel() {
                 cfDataSource.updateData(alarmsListModel.getItems());
-                if(cfDataSource.getDimension('gridFilter') == null) {
-                    cfDataSource.addDimension('gridFilter',function(d) {
-                        return d['token'];//token is used as unique key
-                    });
-                }
-                if(cfDataSource.getDimension('timeFilter') == null) {
-                    cfDataSource.addDimension('timeFilter',function(d) {
-                        return d['timestamp'];
-                    });
-                }
-                if(cfDataSource.getDimension('severityFilter') == null) {
-                    cfDataSource.addDimension('severityFilter',function(d) {
-                        return d['severity'];
-                    });
-                }
-                if(cfDataSource.getDimension('statusFilter') == null) {
-                    cfDataSource.addDimension('statusFilter',function(d) {
-                        return d['status'];
-                    });
-                }
                 cfDataSource.fireCallBacks({source:'fetch'});
             }
 

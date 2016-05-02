@@ -621,6 +621,8 @@ define([
         this.ALARM_REFRESH_DURATION = 300000;//5 MINUTES
         this.ALARM_BUCKET_DURATION = 300000000;//5 MINUTES
 
+        this.DROPDOWN_VALUE_SEPARATOR = ";";
+
         this.get = function () {
             var args = arguments;
             return cowu.getValueFromTemplate(args);

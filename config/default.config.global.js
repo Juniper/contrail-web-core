@@ -286,6 +286,14 @@ config.ui = {};
 config.ui.nodemanager = {};
 config.ui.nodemanager.installed = true;
 
+/*****************************************************************************
+* Below is the delimiter for contrail dropdown.
+* By using this able to store more information in dropdown value,
+* later used this information in post payload.
+* Default value : [';']
+*****************************************************************************/
+config.ui.dropdown_value_separator = ";";
+
 // vcenter related parameters
 config.vcenter = {};
 config.vcenter.server_ip = '127.0.0.1';      //vCenter IP

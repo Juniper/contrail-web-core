@@ -9,7 +9,7 @@ define([], function() {
 
     var CFDataSource = function() {
         var self = this;
-        var cf = null,recordCnt = 0,
+        var cf = crossfilter([]),recordCnt = 0,
             dimensions={},
             filters={},
             filterValues = {};
