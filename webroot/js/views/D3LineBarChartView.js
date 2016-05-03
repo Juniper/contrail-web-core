@@ -194,7 +194,7 @@ define([
                 container : {
                     "mainChartHeight": 300,
                     "navChartHeight": 80,
-                    "showControls": true
+                    "showControls": false
                 },
                 axes: {},
                 brush: {
