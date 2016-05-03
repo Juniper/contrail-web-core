@@ -13,6 +13,7 @@ global.service = {};
 global.service.MAINSEREVR = 'mainServer';
 global.service.MIDDLEWARE = 'middleware';
 
+global.MSG_CMD_KILLALL = 'killAll';
 global.STR_MAIN_WEB_SERVER_READY = 'mainWebServerReady';
 
 /* JOB */
