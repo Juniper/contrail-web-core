@@ -2773,18 +2773,29 @@ p.error, p.error-text {
     width: 97%;
 }
 .detail-block-array-list-item {
-    margin-top: 5px;
-    padding: 5px;
-    /*border: 1px solid #DEDEDE;*/
+    padding: 5px 0;
+}
+.detail-block-array-list-item ul.item-list li {
+    padding: 0 !important;
 }
 .detail-block-array-list-item .title {
     border-bottom: 1px solid #CCCCCC;
-
+    font-weight: bold;
+    color: #777;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+.detail-block-array-list-item .title {
+    border-bottom: 1px solid #CCCCCC;
 }
 .detail-block-grid {
     display: table;
     margin: 0 5px 5px;
     width: 98%;
+}
+.detail-block-array-list .detail-block-grid,
+.detail-block-list-content .detail-block-grid {
+    margin-left: 0;
 }
 .detail-block-grid-header {
     display: table-header-group;
