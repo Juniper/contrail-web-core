@@ -14,13 +14,14 @@ define([
     'core-basedir/js/chart/BarChart',
     'core-basedir/js/chart/LineChart',
     'core-basedir/js/chart/BarChartManager',
+    'core-basedir/js/chart/components/BrushMask',
     'core-basedir/js/chart/components/Tooltip',
     'core-basedir/js/chart/components/Crosshair',
     'core-basedir/js/chart/strategy/BarChartGroupedStrategy',
     'core-basedir/js/chart/strategy/BarChartStackedStrategy'
     
 ], function (ClassUtil, StringUtil, Config, Component, Container, Chart, BarChartStrategy,
-             BarChart, LineChart, BarChartManager, Tooltip, Crosshair,
+             BarChart, LineChart, BarChartManager, BrushMask, Tooltip, Crosshair,
              BarChartGroupedStrategy, BarChartStackedStrategy) {
     
     /**
@@ -41,6 +42,7 @@ define([
     contrailD3.Container = Container;
     contrailD3.Chart = Chart;
     
+    contrailD3.components.BrushMask = BrushMask;
     contrailD3.components.Tooltip = Tooltip;
     contrailD3.components.Crosshair = Crosshair;
     

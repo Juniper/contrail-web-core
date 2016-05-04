@@ -179,11 +179,16 @@ define([
         /*
          * Append brush to the navigation chart.
          */
-        this._navigationChart.getCanvas().append("g")
+        var brushContainer = this._navigationChart.getCanvas().append("g")
             .attr("class", "brush")
-            .call(this._brush)
+            .style("fill", "transparent");
+        brushContainer.call(this._brush)
             .selectAll("rect")
             .attr("height", this._navigationChart.getHeight());
+        /*
+         * Initialize brush mask.
+         */
+        this._brushMask = new contrailD3.components.BrushMask(this._brush, brushContainer);
         /*
          * Call brush event handler to apply extent.
          */
@@ -198,11 +203,9 @@ define([
      */
     NavigationChart.prototype._brushEventHandler = function() {
         /*
-         * Do nothing with empty selection.
+         * Update brush mask.
          */
-        if (this._brush.empty()) {
-            return;
-        }
+        this._brushMask.update();
         /*
          * Filter data by brush boundaries.
          */
@@ -230,7 +233,7 @@ define([
          * Do nothing with empty selection.
          */
         if (this._brush.empty()) {
-            data;
+            return data;
         }
         /*
          * Get brush extent.
