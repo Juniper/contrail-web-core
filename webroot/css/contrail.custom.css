@@ -64,11 +64,16 @@
     font-weight: bold;
     color: #777;
     margin-bottom: 5px;
+    margin-top: 5px;
 }
 .detail-block-grid {
     display: table;
     margin: 0 5px 5px;
     width: 98%;
+}
+.detail-block-array-list .detail-block-grid,
+.detail-block-list-content .detail-block-grid {
+     margin-left: 0;
 }
 .detail-block-grid-header {
     display: table-header-group;
