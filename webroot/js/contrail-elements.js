@@ -201,7 +201,12 @@
 
     $.fn.contrailCombobox = function(customOption) {
         var option = $.extend(true, {}, customOption),
-            self = this, formattedData = [];
+            self = this,
+            dataObject = {
+                cachedValue: null,
+                isRequestInProgress: false
+            },
+            formattedData = [];
 
         self.globalSelect = {};
         self.globalDisableList = [];
@@ -223,17 +228,23 @@
             option.dataValueField = {dsVar: option.dataValueField, apiVar: 'id'};
             if(!$.isEmptyObject(option) && typeof option.dataSource !== 'undefined') {
                 if(option.dataSource.type == "remote"){
-                    $.ajax({
+
+                    contrail.ajaxHandler({
                         url: option.dataSource.url,
-                        dataType: "json",
-                        success: function(data) {
-                            var parsedData = data;
-                            if(typeof option.dataSource.parse !== "undefined"){
-                                parsedData = option.dataSource.parse(data);
-                            }
-                            self.data('contrailCombobox').setData(parsedData);
+                        dataType: "json"
+                    }, function(){
+                        dataObject.isRequestInProgress = true
+                    }, function(data) {
+                        dataObject.isRequestInProgress = false;
+
+                        var parsedData = data;
+                        if(typeof option.dataSource.parse !== "undefined"){
+                            parsedData = option.dataSource.parse(data);
                         }
+                        self.data('contrailCombobox').setData(parsedData);
+                        self.data('contrailCombobox').value(dataObject.cachedValue);
                     });
+
                 } else if(option.dataSource.type == "local"){
                     formattedData = formatData(option.dataSource.data, option);
                 }
@@ -247,26 +258,30 @@
 
             constructCombobox(self, option, formattedData);
 
-            self.data('contrailCombobox', {
+            $.extend(true, dataObject, {
                 value: function (value) {
-                    var text, sourceValue, item4Value;
-                    if (typeof value === 'undefined') {
-                        var visibleValue = self.next().find('.custom-combobox-input').val();
-                        if(contrail.checkIfExist(self.option.sourceMap[visibleValue])) {
-                            sourceValue = self.option.sourceMap[visibleValue];
-                            return self.option.source[sourceValue][self.option.dataValueField.apiVar];
-                        } else {
-                            // User entered a value not present in droplist. So just return the text itself.
-                            return visibleValue;
-                        }
+                    if (dataObject.isRequestInProgress == true) {
+                        dataObject.cachedValue = value;
                     } else {
-                        item4Value = this.getItem4Value(value);
-                        if(typeof item4Value === 'object') {
-                            text = item4Value['value'];
+                        var text, sourceValue, item4Value;
+                        if (!contrail.checkIfExist(value)) {
+                            var visibleValue = self.next().find('.custom-combobox-input').val();
+                            if(contrail.checkIfExist(self.option.sourceMap[visibleValue])) {
+                                sourceValue = self.option.sourceMap[visibleValue];
+                                return self.option.source[sourceValue][self.option.dataValueField.apiVar];
+                            } else {
+                                // User entered a value not present in droplist. So just return the text itself.
+                                return visibleValue;
+                            }
                         } else {
-                            text = item4Value;
+                            item4Value = this.getItem4Value(value);
+                            if(typeof item4Value === 'object') {
+                                text = item4Value['value'];
+                            } else {
+                                text = item4Value;
+                            }
+                            self.next().find('.custom-combobox-input').val(text);
                         }
-                        self.next().find('.custom-combobox-input').val(text);
                     }
                 },
                 text: function (text) {
@@ -346,6 +361,9 @@
                     self.next('.custom-combobox').show();
                 }
             });
+
+            self.data('contrailCombobox', dataObject);
+
         }
         return self;
 
