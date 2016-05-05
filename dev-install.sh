@@ -244,8 +244,9 @@ cp -af ./$THIRD_PARTY/uuid.js webroot/js/uuid.js
 rm -rf webroot/assets/gridstack
 mkdir -p webroot/assets/gridstack/js
 mkdir -p webroot/assets/gridstack/styles
-cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack.min.js webroot/assets/gridstack/js/gridstack.min.js
+cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack.js webroot/assets/gridstack/js/gridstack.js
 cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack.css webroot/assets/gridstack/styles/gridstack.css
+cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack-extra.css webroot/assets/gridstack/styles/gridstack-extra.css
 #End - Copy Gridstack from $THIRD_PARTY
 
 find webroot/js/common/contrail.unified.*.js -delete
@@ -303,7 +304,6 @@ js/dashboard-utils.js
 MAINJS3=(
 assets/d3-v3.5.6/js/d3.js
 assets/nvd3-v1.8.1/js/nv.d3.js
-assets/gridstack/js/gridstack.min.js
 )
 
 unified_js_path=webroot/js/common/contrail.unified.part.js
@@ -347,6 +347,7 @@ css/contrail.graph.css
 css/contrail.custom.css
 css/contrail.font.css
 assets/gridstack/styles/gridstack.css
+assets/gridstack/styles/gridstack-extra.css
 )
 for i in "${MAINCSS[@]}"
 do
