@@ -321,36 +321,6 @@ done
 #Start - Merging All CSS files
 rm -f webroot/css/contrail-all.css
 
-# use path relative to webroot/ folder
-MAINCSS=(
-assets/bootstrap/css/bootstrap.min.css
-assets/bootstrap/css/bootstrap-responsive.min.css
-assets/jquery-ui/css/jquery-ui.min.css
-css/contrail.jquery.ui.css
-assets/font-awesome/css/font-awesome.min.css
-assets/nvd3-v1.8.1/css/nv.d3.min.css
-assets/select2/styles/select2.css
-assets/datetimepicker/styles/jquery.datetimepicker.css
-assets/slickgrid/styles/slick.grid.css
-assets/jquery/css/jquery.steps.css
-assets/joint/css/joint.nojquery.min.css
-assets/jquery-contextMenu/css/jquery.contextMenu.css
-assets/vis-v4.9.0/css/vis.min.css
-css/contrail.theme.layout.css
-css/contrail.theme.elements.css
-css/contrail.responsive.css
-css/contrail.grid.css
-css/contrail.form.elements.css
-css/contrail.components.css
-css/contrail.chart.css
-css/contrail.graph.css
-css/contrail.custom.css
-css/contrail.font.css
-assets/gridstack/styles/gridstack.css
-assets/gridstack/styles/gridstack-extra.css
-)
-for i in "${MAINCSS[@]}"
-do
-	cat "webroot/$i" >> webroot/css/contrail-all.css
-done
+# compile sass
+./node_modules/node-sass/bin/node-sass webroot/scss/index.scss > webroot/css/contrail-all.css
 #End - Merging ALL CSS files
