@@ -1318,6 +1318,13 @@ define([], function () {
         axis.scale(scale)
             .orient(orientation)
             .tickFormat(this._getFieldFormatterByAxis(name, number));
+        /**
+         * Configure ticks
+         */
+        if (name == 'y') {
+            axis.ticks(this._config.get("options.axes." + name + "Ticks"));
+        }
+
         /*
          * Append axis to the canvas.
          */
