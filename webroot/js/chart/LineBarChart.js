@@ -88,7 +88,7 @@ define([
          * charts initialized with his barChartManager instance, not main.
          */
         if (manager) {
-            var name = this._stringUtil.ucFirst(manager);
+            var name = this._stringUtil.ucFirst(manager),
             managerClass = this._classUtil.getClassByName("contrailD3.BarChart" + name + "Strategy");
             this._navigationChart.setBarChartStrategy(managerClass);
         }

@@ -134,8 +134,10 @@ define([
         var chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
 
         chartOptions['chartId'] = 'linebar-chart';
-        chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1']);
-        chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2']);
+        chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1'], chartOptions['metaData']);
+        chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2'], chartOptions['metaData']);
+        chartOptions['margin']['right'] += 40;
+        chartOptions['margin2']['right'] += 40;
 
         if (chartData.length > 0) {
             var values = chartData[0].values,
@@ -155,28 +157,40 @@ define([
         return chartViewConfig;
     };
 
-    function getForceY1Axis(chartData, defaultForceY1) {
+    function getForceY1Axis(chartData, defaultForceY1, metaData) {
         var dataBars = chartData.filter(function (d) {
                 return !d.disabled && d.bar
             }),
             dataAllBars = [], forceY1;
 
         for (var j = 0; j < dataBars.length; j++) {
-            dataAllBars = dataAllBars.concat(dataBars[j]['values']);
+            for (var key in metaData) {
+                if (metaData[key].y == 1) {
+                    _.each(dataBars[j].values, function(valObj) {
+                        dataAllBars.push({y: valObj[key]});
+                    });
+                }
+            }
         }
 
         forceY1 = cowu.getForceAxis4Chart(dataAllBars, "y", defaultForceY1);
         return forceY1;
     };
 
-    function getForceY2Axis(chartData, defaultForceY2) {
+    function getForceY2Axis(chartData, defaultForceY2, metaData) {
         var dataLines = chartData.filter(function (d) {
                 return !d.bar
             }),
             dataAllLines = [], forceY2;
 
         for (var i = 0; i < dataLines.length; i++) {
-            dataAllLines = dataAllLines.concat(dataLines[i]['values']);
+            for (var key in metaData) {
+                if (metaData[key].y == 2) {
+                    _.each(dataLines[i].values, function(valObj) {
+                        dataAllLines.push({y: valObj[key]});
+                    });
+                }
+            }
         }
 
         forceY2 = cowu.getForceAxis4Chart(dataAllLines, "y", defaultForceY2);
@@ -218,7 +232,7 @@ define([
                                 color: options.metaData[key] && options.metaData[key].color || cowc.D3_COLOR_CATEGORY5[idx],
                                 xField: options.xAccessor,
                                 yField: key,
-                                y: function(bar){return (bar) ? 1 : 2;}(series.bar),
+                                y: series.y || function(bar){return (bar) ? 1 : 2;}(series.bar),
                                 data: []
                             };
                         }
@@ -239,8 +253,8 @@ define([
         if (options.height) {
             config.options.container.mainChartHeight =  options.height - config.options.container.navChartHeight;
         }
-        config.options.container.mainChartMargin = (options.margin) ? options.margin: {top: 20, right: 70, bottom: 50, left: 70};
-        config.options.container.navChartMargin = (options.margin2) ? options.margin2: {top: 0, right: 70, bottom: 20, left: 70};
+        config.options.container.mainChartMargin = (options.margin) ? options.margin: {top: 20, right: 110, bottom: 50, left: 70};
+        config.options.container.navChartMargin = (options.margin2) ? options.margin2: {top: 0, right: 110, bottom: 20, left: 70};
 
         config.metaData = options.metaData;
 
@@ -251,8 +265,11 @@ define([
             forceY2: options.forceY2,
             x1Formatter: options.xFormatter,
             y1Formatter: options.y1Formatter,
-            y2Formatter: options.y2Formatter
+            y2Formatter: options.y2Formatter,
+            yTicks: (options.yTicks != undefined) ? options.yTicks : 4
         };
+
+
 
         config.options.container.showContainer = options.showLegend;
         config.options.brush.extent = options.brushExtent;
