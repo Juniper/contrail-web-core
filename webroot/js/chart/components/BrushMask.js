@@ -12,10 +12,37 @@ define([], function () {
      * @param {Selection} container - SVG <g/> element
      */
     var BrushMask = function(brush, container) {
-
+        /*
+         * Stash input values.
+         */
         this._brush = brush;
         this._container = container;
+        /*
+         * Find brush background rectangle. Will use it as width/height template.
+         */
         this._template = this._container.select('.background');
+        /*
+         * Get brush height.
+         */
+        var height = this._template.attr('height');
+        /*
+         * Create handles.
+         */
+        var arc = d3.svg.arc()
+            .outerRadius(height / 4.5)
+            .startAngle(0)
+            .endAngle(function(d, i) {
+                return i ? -Math.PI : Math.PI;
+            });
+        /*
+         * Append handles to the brush.
+         */
+        this._container.selectAll('.resize')
+            .append('path')
+            .attr('transform', 'translate(0,' +  height / 2 + ')')
+            .style('fill', 'lightgrey')
+            .style('fill-opacity', 1)
+            .attr('d', arc);
     }
 
 
