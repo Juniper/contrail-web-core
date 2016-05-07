@@ -113,6 +113,7 @@ constants.coreModules  = [
             'core-basedir/js/views/WidgetView',
             'core-basedir/js/views/WizardView',
             'core-basedir/js/views/ZoomScatterChartView',
+            'core-basedir/js/views/MonitorInfraDashboardView',
         ],
         exclude: [
             './js/common/core.app',
@@ -157,7 +158,6 @@ constants.controllerModules = [
             'vrouter-dashboard-view',
             'monitor-infra-parsers',
             'monitor-infra-constants',
-            'controller-basedir/monitor/infrastructure/common/ui/js/views/VRouterScatterChartView'
         ],
         exclude: [
             "contrail-view",
@@ -176,7 +176,8 @@ constants.controllerModules = [
         enabled: true,
         name: 'monitor-infra-module',
         include: [
-            //'mon-infra-controller-dashboard'
+            'mon-infra-controller-dashboard',
+            'controller-basedir/monitor/infrastructure/common/ui/js/views/VRouterScatterChartView',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/ConfigNodeScatterChartView',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/ControlNodeScatterChartView',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/DatabaseNodeScatterChartView',
@@ -194,7 +195,8 @@ constants.controllerModules = [
             'contrail-view',
             'controller-init',
             'contrail-model',
-            // 'mon-infra-dashboard-view',
+            'mon-infra-dashboard-view',
+            "core-basedir/js/views/LoginWindowView"
         ]
     },
     {
