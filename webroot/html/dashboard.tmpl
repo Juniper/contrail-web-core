@@ -55,11 +55,18 @@
     <![endif]-->
 
     <script src="/assets/requirejs/require.js"></script>
-    <script src="/js/common/core.app.utils.js"></script>
+    <!-- <script src="/js/common/core.app.utils.js"></script>-->
     <script type="text/javascript">
+        var built_at="";
         var hostname = window.location.hostname;
         document.getElementById('tabTitle').innerHTML = hostname.substring(0,15)+'... | Contrail';
     </script>
+    <!-- Start dev_env
+    <script data-env="dev" src="/js/common/core.app.js"></script>
+    End dev_env -->
+    <!-- Start prod_env -->
+    <script data-env="prod" src="/js/common/core.app.js"></script>
+    <!-- End prod_env -->
 </head>
 
 <body class="navbar-fixed">
@@ -141,14 +148,5 @@
 <!--[if lte IE 8]>
 <script src="/js/"></script>
 <![endif]-->
-<script type="text/javascript">
-    var built_at="";
-</script>
-<!-- Start dev_env
-<script data-env="dev" src="/js/common/core.app.js"></script>
-End dev_env -->
-<!-- Start prod_env -->
-<script data-env="prod" src="/js/common/core.app.js"></script>
-<!-- End prod_env -->
 </body>
 </html>

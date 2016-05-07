@@ -9,7 +9,7 @@ var args = process.argv.slice(2),
     path = require('path');
 
 var confGenConst = require('./config.generator.constants'),
-    coAppUtils = require('../js/common/core.app.utils');
+    coApp = require('../js/common/core.app');
 
 /**
  * Base Config Generator Class.
@@ -87,6 +87,19 @@ ConfigGenerator.prototype.getStringifiedConfig = function() {
     return configStrArr.join("");
 };
 
+ConfigGenerator.prototype.addModules = function(modules) {
+    if (modules.length > 0) {
+        for (var i=0; i<modules.length; i++) {
+            var module = {};
+            if (modules[i].enabled) {
+                module.name = modules[i].name;
+                module.include = modules[i].include;
+                module.exclude = modules[i].exclude;
+            }
+            this.configJSON.modules.push(module);
+        }
+    }
+};
 
 /**
  * Core Config Generator Class. Extends base class ConfigGenerator.
@@ -99,9 +112,9 @@ var CoreConfigGenerator = function(type, configFile) {
 CoreConfigGenerator.prototype = new ConfigGenerator();
 
 CoreConfigGenerator.prototype.updateBaseConfig = function() {
-    var coreAppPaths = coAppUtils.getCoreAppPaths(confGenConst.defaultBaseDir, ''),
-        coreAppMap = coAppUtils.coreAppMap,
-        coreAppShim = coAppUtils.coreAppShim;
+    var coreAppPaths = coApp.getCoreAppPaths(confGenConst.defaultBaseDir, ''),
+        coreAppMap = coApp.coreAppMap,
+        coreAppShim = coApp.coreAppShim;
 
     this.configJSON.paths = coreAppPaths;
     this.configJSON.map = coreAppMap;
@@ -114,27 +127,19 @@ CoreConfigGenerator.prototype.updateBaseConfig = function() {
     if (confGenConst.coreFileExclusionRegExp) this.configJSON.fileExclusionRegExp =  unescape(confGenConst.coreFileExclusionRegExp);
 }
 
-CoreConfigGenerator.prototype.addCoreInitModule = function () {
-    var coreInitModule = {};
-
-    if (confGenConst.coreInitModuleName)
-        coreInitModule.name = confGenConst.coreInitModuleName;
-
-    if (confGenConst.coreInitModuleInclude)
-        coreInitModule.include = confGenConst.coreInitModuleInclude;
-
-    if (confGenConst.coreInitModuleExclude)
-        coreInitModule.exclude = confGenConst.coreInitModuleExclude;
-
-    this.configJSON.modules.push(coreInitModule);
+CoreConfigGenerator.prototype.addCoreModules = function() {
+    if (confGenConst.coreModules) {
+        this.addModules(confGenConst.coreModules);
+    }
 };
+
 
 CoreConfigGenerator.prototype.updateConfig = function () {
     // Add the basic stuff to config.
     this.updateBaseConfig();
 
-    // Currently we're doing only core.init
-    this.addCoreInitModule();
+    // Add core modules enabled for unification
+    this.addCoreModules();
 };
 
 
@@ -166,19 +171,10 @@ ControllerConfigGenerator.prototype.overrideBaseConfig = function() {
     this.configJSON.modules = [];
 };
 
-ControllerConfigGenerator.prototype.addControllerInitModule = function() {
-    var controllerInitModule = {};
-
-    if (confGenConst.controllerInitModuleName)
-        controllerInitModule.name = confGenConst.controllerInitModuleName;
-
-    if (confGenConst.controllerInitModuleInclude)
-        controllerInitModule.include = confGenConst.controllerInitModuleInclude;
-
-    if (confGenConst.controllerInitModuleExclude)
-        controllerInitModule.exclude = confGenConst.controllerInitModuleExclude;
-
-    this.configJSON.modules.push(controllerInitModule);
+ControllerConfigGenerator.prototype.addControllerModules = function() {
+    if (confGenConst.controllerModules) {
+        this.addModules(confGenConst.controllerModules);
+    }
 };
 
 ControllerConfigGenerator.prototype.updateConfig = function() {
@@ -188,8 +184,8 @@ ControllerConfigGenerator.prototype.updateConfig = function() {
     //override with controller specific values.
     this.overrideBaseConfig();
 
-    // Add modules if any requires unification.
-    this.addControllerInitModule();
+    // Add modules enabled for unification.
+    this.addControllerModules();
 };
 
 /**
@@ -219,19 +215,10 @@ SMConfigGenerator.prototype.overrideBaseConfig = function() {
     this.configJSON.modules = [];
 };
 
-SMConfigGenerator.prototype.addSMInitModule = function() {
-    var smInitModule = {};
-
-    if (confGenConst.smInitModuleName)
-        smInitModule.name = confGenConst.smInitModuleName;
-
-    if (confGenConst.smInitModuleInclude)
-        smInitModule.include = confGenConst.smInitModuleInclude;
-
-    if (confGenConst.smInitModuleExclude)
-        smInitModule.exclude = confGenConst.smInitModuleExclude;
-
-    this.configJSON.modules.push(smInitModule);
+SMConfigGenerator.prototype.addSMModules = function() {
+    if (confGenConst.smModules) {
+        this.addModules(confGenConst.smModules);
+    }
 };
 
 SMConfigGenerator.prototype.updateConfig = function() {
@@ -241,8 +228,8 @@ SMConfigGenerator.prototype.updateConfig = function() {
     //override with sm specific values.
     this.overrideBaseConfig();
 
-    // Add modules if any requires unification.
-    this.addSMInitModule();
+    // Add modules enabled for unification.
+    this.addSMModules();
 };
 
 /**
@@ -272,19 +259,10 @@ StorageConfigGenerator.prototype.overrideBaseConfig = function() {
     this.configJSON.modules = [];
 };
 
-StorageConfigGenerator.prototype.addStorageInitModule = function() {
-    var storageInitModule = {};
-
-    if (confGenConst.storageInitModuleName)
-        storageInitModule.name = confGenConst.storageInitModuleName;
-
-    if (confGenConst.storageInitModuleInclude)
-        storageInitModule.include = confGenConst.storageInitModuleInclude;
-
-    if (confGenConst.storageInitModuleExclude)
-        storageInitModule.exclude = confGenConst.storageInitModuleExclude;
-
-    this.configJSON.modules.push(storageInitModule);
+StorageConfigGenerator.prototype.addStorageModules = function() {
+    if (confGenConst.storageModules) {
+        this.addModules(confGenConst.storageModules);
+    }
 };
 
 StorageConfigGenerator.prototype.updateConfig = function() {
@@ -294,8 +272,8 @@ StorageConfigGenerator.prototype.updateConfig = function() {
     //override with storage specific values.
     this.overrideBaseConfig();
 
-    // Add modules if any requires unification.
-    this.addStorageInitModule();
+    // Add modules enabled for unification.
+    this.addStorageModules();
 };
 
 var repo = args[0],
