@@ -1142,16 +1142,16 @@ define([], function () {
         /*
          * Append x axes.
          */
-        this._renderAxis([0, this._width], "x", 1, "bottom", [0, this._height]);
+        this._renderAxis([0, this._width], "x", 1, "bottom", [0, this._height], -this._height);
         if (this._x2Scale) {
-            this._renderAxis([0, this._width], "x", 2, "top", [0, 0]);
+            this._renderAxis([0, this._width], "x", 2, "top", [0, 0], -this._height);
         }
         /*
          * Append y axes.
          */
-        this._renderAxis([this._height, 0], "y", 1, "left", [0, 0]);
+        this._renderAxis([this._height, 0], "y", 1, "left", [0, 0], -this._width);
         if (this._y2Scale) {
-            this._renderAxis([this._height, 0], "y", 2, "right", [this._width, 0]);
+            this._renderAxis([this._height, 0], "y", 2, "right", [this._width, 0], -this._width);
         }
     };
 
@@ -1300,8 +1300,9 @@ define([], function () {
      * @param {Integer} number - axis number
      * @param {String} orientation - axis orientation
      * @param {Number[]} translate - axis translate offset
+     * @param {Number} tickSize - outer tick size
      */
-    Container.prototype._renderAxis = function (range, name, number, orientation, translate) {
+    Container.prototype._renderAxis = function (range, name, number, orientation, translate, tickSize) {
         /*
          * Get chart axis.
          */
@@ -1322,6 +1323,12 @@ define([], function () {
         axis.scale(scale)
             .orient(orientation)
             .tickFormat(this._getFieldFormatterByAxis(name, number));
+        /*
+         * Show axis grid if required.
+         */
+        if (this._config.get("options.axes.grid", false)) {
+            axis.innerTickSize(tickSize);
+        }
         /**
          * Configure ticks
          */
