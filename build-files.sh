@@ -19,7 +19,7 @@ rjs_bin=./../contrail-web-core/node_modules/requirejs/bin/r.js
 build_path=webroot/build/
 
 # Path where the built modules and minified files are located.
-built_path=webroot/built/
+dist_path=webroot/dist/
 
 # Build config generator script
 build_conf_generator=$build_path"config.generator.js"
@@ -51,12 +51,12 @@ $node_exec $rjs_bin -o $core_build_file
 echo "Post Build additional changes: "
 # Manually moving following views due to error in minification. will use the source file for now.
 #echo "GridView.js: Replacing minified GridView with original source."
-#mv $built_path/js/views/GridView.js $built_path/js/views/GridView.min.js
-#cp webroot/js/views/GridView.js $built_path/js/views/GridView.js
+#mv $dist_path/js/views/GridView.js $dist_path/js/views/GridView.min.js
+#cp webroot/js/views/GridView.js $dist_path/js/views/GridView.js
 # Workaround for vis.min.js taking too much time in r.js.
 echo "vis-v4.9.0: Copying original minified version"
-mkdir -p $built_path/assets/vis-v4.9.0/js
-cp webroot/assets/vis-v4.9.0/js/vis.min.js $built_path/assets/vis-v4.9.0/js/
+mkdir -p $dist_path/assets/vis-v4.9.0/js
+cp webroot/assets/vis-v4.9.0/js/vis.min.js $dist_path/assets/vis-v4.9.0/js/
 
 IFS=',' read -ra REPOS <<< "$2"
 for REPO in "${REPOS[@]}"; do
