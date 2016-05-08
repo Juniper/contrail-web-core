@@ -21,19 +21,9 @@ define([
     /**
      * @override
      */
-    BarChartGroupedStrategy.prototype.getGap = function (chart) {
-
-        return chart.getWidth() / chart.getData().length / this._charts.length / 5;
-    };
-
-
-    /**
-     * @override
-     */
     BarChartGroupedStrategy.prototype.getWidth = function (chart) {
 
-        return (chart.getWidth() / chart.getData().length / this._charts.length) -
-            (this.getGap(chart) / this._charts.length);
+        return (chart.getWidth() / chart.getData().length - this.getGap(chart)) / this._charts.length;
     };
 
 
@@ -57,7 +47,8 @@ define([
         /*
          * Calculate and return bar x position.
          */
-        return barWidth * i + barWidth * (this._charts.length - 1) * i + barWidth * j + this.getGap(chart) * i;
+        var delimeter = chart.getData().length > 1 ? 1 : 0;
+        return chart._xScale(chart._xAccessor(d)) - barWidth * this._charts.length / (chart.getData().length - delimeter) * i + barWidth * j;
     };
 
 

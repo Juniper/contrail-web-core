@@ -23,7 +23,7 @@ define([], function () {
      */
     BarChartStrategy.prototype.getGap = function (chart) {
 
-        throw new Error("Not implemented");
+        return chart.getWidth() / chart.getData().length / 20;
     };
 
 

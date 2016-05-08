@@ -21,15 +21,6 @@ define([
     /**
      * @override
      */
-    BarChartStackedStrategy.prototype.getGap = function (chart) {
-
-        return chart.getWidth() / chart.getData().length / 20;
-    };
-
-
-    /**
-     * @override
-     */
     BarChartStackedStrategy.prototype.getWidth = function (chart) {
 
         return chart.getWidth() / chart.getData().length - this.getGap(chart);
