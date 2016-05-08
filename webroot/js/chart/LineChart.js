@@ -86,6 +86,8 @@ define([
      */
     LineChart.prototype._appendLine = function (container) {
 
+        this._lineGenerator.interpolate(this._interpolate || "basis");
+
         container.selectAll(".line")
             .data([this._data])
             .enter()

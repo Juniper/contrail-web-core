@@ -233,7 +233,8 @@ define([
                                 xField: options.xAccessor,
                                 yField: key,
                                 y: series.y || function(bar){return (bar) ? 1 : 2;}(series.bar),
-                                data: []
+                                data: [],
+                                interpolate: "step-before"
                             };
                         }
                         metaKeyData[key].data.push(chartDataObj);
@@ -261,8 +262,8 @@ define([
         config.options.axes = {
             y1Label: options.y1AxisLabel,
             y2Label: options.y2AxisLabel,
-            forceY1: options.forceY1,
-            forceY2: options.forceY2,
+//            forceY1: options.forceY1,
+//            forceY2: options.forceY2,
             x1Formatter: options.xFormatter,
             y1Formatter: options.y1Formatter,
             y2Formatter: options.y2Formatter,

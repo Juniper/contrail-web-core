@@ -432,6 +432,7 @@ define([], function () {
         for (var i in options) {
             if (["chart", "x", "y", "container"].indexOf(i) < 0) {
                 context[i] = options[i];
+                component["_" + i] = options[i];
             }
         }
         /*
