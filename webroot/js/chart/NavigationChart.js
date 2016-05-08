@@ -222,6 +222,34 @@ define([
 
 
     /**
+     * Disable inner chart.
+     * @public
+     * @param {Integer} number
+     */
+    NavigationChart.prototype.disable = function(number) {
+        /*
+         * Redraw charts.
+         */
+        this._mainChart.disable(number);
+        this._navigationChart.disable(number);
+    };
+
+
+    /**
+     * Enable inner chart.
+     * @public
+     * @param {Integer} number
+     */
+    NavigationChart.prototype.enable = function(number) {
+        /*
+         * Redraw charts.
+         */
+        this._mainChart.enable(number);
+        this._navigationChart.enable(number);
+    };
+
+
+    /**
      * @override
      */
     NavigationChart.prototype.resize = function() {
@@ -247,6 +275,7 @@ define([
 
     /**
      * Filter input data according with brush boundaries.
+     * @param {Object[]}
      */
     NavigationChart.prototype._applyBrush = function(data) {
         /*
@@ -282,6 +311,10 @@ define([
      * @override
      */
     NavigationChart.prototype.update = function(data) {
+        /*
+         * Use current data if not provided.
+         */
+        data = data || this._data;
         /*
          * Update main chart with brush-filtered data.
          */

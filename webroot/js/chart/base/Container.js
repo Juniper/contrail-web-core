@@ -341,18 +341,18 @@ define([], function () {
         /*
          * Loop through child charts.
          */
-        this._charts.forEach(function(chartContext, i) {
+        this._charts.forEach(function(context, i) {
             /*
              * Copy main properties to the updated chart.
              * This is necessary if one chart rendered in several
              * containers and each of them has its own set of
              * settings, main of which is scale functions.
              */
-            this._copyChart(this, chartContext.chart);
+            this._copyChart(this, context.chart);
             /*
              * Update child chart.
              */
-            chartContext.chart._update(chartContext.container, this._data[i], true);
+            context.chart._update(context.container, this._data[i], context.isEnabled);
         }, this);
     };
 
@@ -424,7 +424,8 @@ define([], function () {
             chart: component,
             x: options.x || 1,
             y: options.y || 1,
-            container: container
+            container: container,
+            isEnabled: true
         };
         /*
          * Copy other options.
@@ -967,6 +968,40 @@ define([], function () {
         this._renderAxesLabels();
 
         return this;
+    };
+
+
+    /**
+     * Disable inner chart.
+     * @public
+     * @param {Integer} number - chart number
+     */
+    Container.prototype.disable = function(number) {
+        /*
+         * Reset isEnabled flag.
+         */
+        this._charts[number].isEnabled = false;
+        /*
+         * Update container.
+         */
+        this.update();
+    };
+
+
+    /**
+     * Enable inner chart.
+     * @public
+     * @param {Integer} number - chart number
+     */
+    Container.prototype.enable = function(number) {
+        /*
+         * Reset isEnabled flag.
+         */
+        this._charts[number].isEnabled = true;
+        /*
+         * Update container.
+         */
+        this.update();
     };
 
 
