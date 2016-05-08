@@ -44,13 +44,6 @@ define([
     /**
      * @override
      */
-    LineBarChart.prototype._registerResizeHandler = function() {
-
-    };
-    
-    /**
-     * @override
-     */
     LineBarChart.prototype._renderInnerMarkdown = function() {
 
         /*

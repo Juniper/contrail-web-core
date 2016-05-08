@@ -142,13 +142,16 @@ define([
          */
         this._renderInnerMarkdown();
         /*
-         * Render main chart.
+         * Render main and navigation charts.
          */
         this._mainChart = this._renderMainChart();
-        /*
-         * Render navigation chart.
-         */
         this._navigationChart = this._renderNavigationChart();
+        /*
+         * Replace their resize event handler with empty function.
+         * We will use our own resize handler.
+         */
+        this._mainChart.setResizeEventHandler(new Function());
+        this._navigationChart.setResizeEventHandler(new Function());
         /*
          * Create brush and set corresponding event handler.
          * See https://github.com/mbostock/d3/wiki/SVG-Controls
@@ -179,16 +182,17 @@ define([
         /*
          * Append brush to the navigation chart.
          */
-        var brushContainer = this._navigationChart.getCanvas().append("g")
+        this._brushContainer = this._navigationChart.getCanvas()
+            .append("g")
             .attr("class", "brush")
             .style("fill", "transparent");
-        brushContainer.call(this._brush)
+        this._brushContainer.call(this._brush)
             .selectAll("rect")
             .attr("height", this._navigationChart.getHeight());
         /*
          * Initialize brush mask.
          */
-        this._brushMask = new contrailD3.components.BrushMask(this._brush, brushContainer);
+        this._brushMask = new contrailD3.components.BrushMask(this._brush, this._brushContainer);
         /*
          * Call brush event handler to apply extent.
          */
@@ -220,8 +224,24 @@ define([
     /**
      * @override
      */
-    NavigationChart.prototype._registerResizeHandler = function() {
-
+    NavigationChart.prototype.resize = function() {
+        /*
+         * Get brush extent before we redraw charts.
+         */
+        var extent = this._brush.extent();
+        /*
+         * Redraw charts.
+         */
+        this._mainChart.resize();
+        this._navigationChart.resize();
+        /*
+         * Update brush using previously saved extent.
+         */
+        this._brushContainer.call(this._brush.extent(extent));
+        /*
+         * Move brush mask corresponding with it's new position.
+         */
+        this._brushMask.update();
     };
 
 

@@ -88,7 +88,7 @@ define([], function () {
         /*
          * Register window resize event handler.
          */
-        this._registerResizeHandler();
+        this.setResizeEventHandler();
     };
 
     /**
@@ -96,14 +96,18 @@ define([], function () {
      * A lot of child containers inherit this class functionality but
      * they should escape registering their own resize handlers.
      * So override this method in child classes with empty body.
-     * @protected
+     * @public
+     * @param {Function} handler
      */
-    Container.prototype._registerResizeHandler = function() {
+    Container.prototype.setResizeEventHandler = function(handler) {
 
         var self = this;
-        d3.select(window).on('resize.' + this._chartId, function() {
+
+        handler = handler || function() {
             self.resize();
-        });
+        };
+
+        d3.select(window).on('resize.' + this._chartId, handler);
     };
 
 
