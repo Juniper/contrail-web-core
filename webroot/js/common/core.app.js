@@ -546,12 +546,10 @@ function initDomEvents() {
 };
 
 /**
- * NOT GOOD to have following condition. Todo: find alternative
- * following condition will check if the app is loaded using dashboard.html
- * used to differentiate the Karma UT initial load.
- * variable built_at is getting set in dashboard.html
+ * This file is also require-d during build script.
+ * Run following only when its loaded in client side.
  */
-if (typeof built_at !== 'undefined' && built_at) {
+if (typeof document !== 'undefined' && document) {
     var defaultBaseDir = (document.location.pathname.indexOf('/vcenter') == 0) ? "./../" : "./";
 
     /**
