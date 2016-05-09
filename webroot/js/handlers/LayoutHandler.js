@@ -20,6 +20,25 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
                     "webServerInfo;uiConfig;dropdown_value_separator",
                     cowc.DROPDOWN_VALUE_SEPARATOR);
 
+                /* Set the region drop downs in dashboard */
+                var regionList = webServerInfo['regionList'];
+                var cnt = 0;
+                if (null != regionList) {
+                    cnt = regionList.length;
+                }
+                var ddRegionList = [];
+                for (var i = 0; i < cnt; i++) {
+                    ddRegionList.push({'value': regionList[i], text: regionList[i]});
+                }
+                if ((cnt > 0) && (false == webServerInfo.serviceEndPointFromConfig)) {
+                    $('#regionDD').contrailDropdown({dataTextField:"text",
+                                                    dataValueField:"value",
+                                                    width: '100px',
+                                                    change: changeRegion});
+                    $('#regionDD').data("contrailDropdown").setData(ddRegionList);
+                    $("#regionDD").data("contrailDropdown").value(contrail.getCookie('region'));
+                }
+
                 menuHandler.loadMenu(webServerInfo);
                 menuHandler.handleSideMenu();
                 /**
@@ -112,6 +131,18 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
 
     return LayoutHandler;
 });
+
+function changeRegion (e)
+{
+    var oldRegion = contrail.getCookie('region');
+    var region = e.added.text;
+    if ((null != region) && (oldRegion != region) &&
+        ('null' != region) && ('undefined' != region)) {
+        contrail.setCookie('region', region);
+        /* And issue logout request */
+        window.location.href = '/logout';
+    }
+}
 
 function getWebServerInfo(project, callback) {
     //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
