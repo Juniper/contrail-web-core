@@ -1387,6 +1387,7 @@ function getWebServerInfo (req, res, appData)
     serverObj['configServer']['ip'] = getValueByJsonPath(config,
             'cnfg;server_ip',
              null);
+    serverObj['sessionTimeout'] = getValueByJsonPath(config,'session;timeout', 3600000);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
