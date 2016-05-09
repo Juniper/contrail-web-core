@@ -223,6 +223,11 @@ function deleteAllTokens (req, callback)
     callback(null, null);
 }
 
+function getServiceAPIVersionByReqObj (req, svcType, callback)
+{
+    callback(null);
+}
+
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.authenticate = authenticate;
@@ -241,4 +246,5 @@ exports.deleteAllTokens = deleteAllTokens;
 exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
 exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
+exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 
