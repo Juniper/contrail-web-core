@@ -1401,6 +1401,15 @@ function getWebServerInfo (req, res, appData)
     serverObj['featurePkgsInfo'] = getValueByJsonPath(config,'featurePkg',[]);
     serverObj['sessionTimeout'] = getValueByJsonPath(config,'session;timeout', 3600000);
     serverObj['_csrf'] = req.session._csrf;
+    serverObj['serviceEndPointFromConfig'] =
+        (null != config.serviceEndPointFromConfig) ?
+        config.serviceEndPointFromConfig : true;
+    serverObj['regionList'] = req.session.regionList;
+    serverObj['isRegionListFromConfig'] = config.regionsFromConfig;
+    serverObj['configRegionList'] = config.regions;
+
+    var authApi = require('../common/auth.api');
+    serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
