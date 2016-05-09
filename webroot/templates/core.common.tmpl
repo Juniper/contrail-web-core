@@ -2503,3 +2503,8 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         <div class="field-select"></div>
     </div>
 </script>
+
+<script type="text/x-handlebars-template" id="alarm-severity-template">
+    <div data-color={{{color}}} class="circle {{{color}}} {{#IfCompare ack false}}filled{{/IfCompare}} alarms-circle-grid-style alarms-circle-display-flex"></div>
+    {{#if showText}}<div class="alarms-display-inline">&nbsp;Minor</div>{{/if}}
+ </script>
