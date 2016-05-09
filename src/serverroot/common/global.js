@@ -88,6 +88,8 @@ global.SERVICE_ENDPT_TYPE_IMAGE = 'image';
 global.SERVICE_ENDPT_TYPE_VOLUME = 'volume';
 global.SERVICE_ENDPT_TYPE_EC2 = 'ec2';
 global.SERVICE_ENDPT_TYPE_IDENTITY = 'identity';
+global.SERVICE_ENDPT_TYPE_APISERVER = 'apiServer';
+global.SERVICE_ENDPT_TYPE_OPSERVER = 'opServer';
 
 /* http status codes
  */
@@ -209,6 +211,7 @@ global.label.STORAGE_SERVER = 'storage-server';
 global.label.COMPUTE_SERVER = 'compute-server';
 global.label.DISCOVERY_SERVER = 'discovery-server';
 global.label.API_SERVER = 'api-server'
+global.label.OPSERVER = 'opserver';
 global.label.DNS_SERVER = 'dns-server'
 global.label.VCENTER_SERVER = 'vCenter-server'
 global.label.VROUTER = 'vrouter';
@@ -221,6 +224,8 @@ global.PROTOCOL_HTTP = 'http';
 global.PROTOCOL_HTTPS = 'https';
 global.HTTP_URL = 'http://';
 global.HTTPS_URL = 'https://';
+global.DEFAULT_CONTRAIL_API_IDENTIFIER = 'ApiServer';
+global.DEFAULT_CONTRAIL_ANALYTICS_IDENTIFIER = 'OpServer';
 
 global.RESP_DATA_NOT_AVAILABLE = '-';
 global.GET_VROUTERS_LIST = 'getVRoutersList';
@@ -355,6 +360,7 @@ global.CONTRAIL_LOGIN_ERROR = 'ContrailLoginError';
 global.KEYSTONE_V3_DEFAULT_DOMAIN = 'default';
 global.KEYSTONE_V2_DEFAULT_DOMAIN = 'default-domain';
 global.KEYSTONE_V3_TOKEN_URL = '/v3/auth/tokens';
+global.keystoneServiceListByProject = ['compute'];
 
 /* vCenter Config */
 global.VCENTER_SDK_PATH = '/sdk';
