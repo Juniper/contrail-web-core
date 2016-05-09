@@ -89,7 +89,12 @@ exports.isAuthenticated = function(req,res) {
         // commonUtils.getWebServerInfo(req,res)
         // var featurePkgs = commonUtils.getValueByJsonPath(config,'featurePkg',[]);
         var featurePkg = commonUtils.getFeaturePkgs();
-        retData = {isAuthenticated:false,featurePkg:featurePkg};
+        retData = {
+            isAuthenticated: false,
+            featurePkg: featurePkg,
+            isRegionListFromConfig: config.regionsFromConfig,
+            configRegionList: config.regions
+        };
         commonUtils.handleJSONResponse(null,res,retData);
     }
 }
@@ -313,7 +318,11 @@ function logout (req, res)
          */
         req.session.isAuthenticated = false;
         req.session.destroy();
-        commonUtils.handleJSONResponse(null,res,{});
+        var retData = {
+            isRegionListFromConfig: config.regionsFromConfig,
+            configRegionList: config.regions
+        };
+        commonUtils.handleJSONResponse(null, res, retData);
     });
 };
 

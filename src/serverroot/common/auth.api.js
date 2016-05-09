@@ -197,6 +197,14 @@ function getDomainNameByUUID (request, uuid, domList)
                                                                              domList);
 }
 
+function getServiceAPIVersionByReqObj (request, svcType, callback, reqBy)
+{
+    var orchMode = request.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].getServiceAPIVersionByReqObj(request,
+                                                                svcType,
+                                                                callback, reqBy);
+}
+
 var adminRoleProjects = ['admin'];
 function getAdminProjectList (req)
 {
@@ -224,6 +232,66 @@ function getAdminProjectList (req)
     return adminProjectList;
 }
 
+function getEndpointServiceType (type)
+{
+    var svcType = null;
+    switch (type) {
+    case 'OpServer':
+        svcType =
+            commonUtils.getValueByJsonPath(config,
+                                           'endpoints;opServiceType',
+                                           'OpServer');
+        break;
+    case 'ApiServer':
+        svcType =
+            commonUtils.getValueByJsonPath(config,
+                                           'endpoints;apiServiceType',
+                                           'ApiServer');
+        break;
+    default:
+        break;
+    }
+    return svcType;
+}
+
+function isRegionListFromConfig ()
+{
+    return ((false == config.serviceEndPointFromConfig) &&
+            (true == config.regionsFromConfig));
+}
+
+function isRegionListFromIdentity ()
+{
+    return ((false == config.serviceEndPointFromConfig) &&
+            (false == config.regionsFromConfig));
+}
+
+function isMultiRegionSupported ()
+{
+    return isRegionListFromConfig() || isRegionListFromIdentity();
+}
+
+function getRegionList (req, res, appData)
+{
+    commonUtils.handleJSONResponse(null, res, req.session.regionList);
+}
+
+function getCurrentRegion (req)
+{
+    var sessionRegion =
+        commonUtils.getValueByJsonPath(req, 'session;regionname', null, false);
+    return commonUtils.getValueByJsonPath(req, 'cookies;region', sessionRegion,
+                                          false);
+}
+
+function shiftServiceEndpointList (req, serviceType, regionName)
+{
+    var orchMode = req.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].shiftServiceEndpointList(req,
+                                                            serviceType,
+                                                            regionName);
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -246,4 +314,11 @@ exports.getDomainNameByUUID = getDomainNameByUUID;
 exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getAdminProjectList = getAdminProjectList;
-
+exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
+exports.getEndpointServiceType = getEndpointServiceType;
+exports.isRegionListFromConfig = isRegionListFromConfig;
+exports.isRegionListFromIdentity = isRegionListFromIdentity;
+exports.isMultiRegionSupported = isMultiRegionSupported;
+exports.getRegionList = getRegionList;
+exports.getCurrentRegion = getCurrentRegion;
+exports.shiftServiceEndpointList = shiftServiceEndpointList;

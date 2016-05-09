@@ -104,13 +104,23 @@ APIServer.prototype.cb = function (cb)
  */
 APIServer.prototype.updateDiscoveryServiceParams = function (params)
 {
-    var opS = require('./opServer.api');
-    var configS = require('./configServer.api');
     var server = null;
     var self = this;
     var apiServerType = self.name;
     var discService = null;
 
+    if (false == config.serviceEndPointFromConfig) {
+        /* Do not update through Discovery */
+        switch(apiServerType) {
+        case global.label.VNCONFIG_API_SERVER:
+        case global.label.OPS_API_SERVER:
+        case global.label.API_SERVER:
+        case global.label.OPSERVER:
+            return params;
+        default:
+            break;
+        }
+    }
     discService = discClient.getDiscServiceByApiServerType(apiServerType);
     if (discService) {
         /* We are sending only the first IP */
@@ -151,12 +161,12 @@ APIServer.prototype.retryMakeCall = function(err, restApi, params,
                                              response, callback, isRetry)
 {
     var self = this;
-    /* Check if the error code is ECONNREFUSED or ETIMEOUT, if yes then
+    /* Check if the error code is ECONNREFUSED or ETIMEDOUT, if yes then
      * issue once again discovery subscribe request, the remote server
      * may be down, so discovery server should send the Up Servers now
      */
     if ((true == process.mainModule.exports['discServEnable']) &&
-        (('ECONNREFUSED' == err.code) || ('ETIMEOUT' == err.code))) {
+        (('ECONNREFUSED' == err.code) || ('ETIMEDOUT' == err.code))) {
         if (false == isRetry) {
             /* Only one time send a retry */
             discClient.sendDiscSubMessageOnDemand(self.name);
@@ -272,6 +282,10 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         return;
     }
     reqUrl = global.HTTP_URL + params.url + ':' + params.port + params.path;
+    if (null != options['headers']) {
+        delete options['headers']['protocol'];
+        delete options['headers']['noRedirectToLogout'];
+    }
     restApi(reqUrl, options).on('complete', function(data, response) {
         if (data instanceof Error ||
             parseInt(response.statusCode) >= 400) {

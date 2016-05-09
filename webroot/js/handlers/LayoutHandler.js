@@ -18,7 +18,6 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
 
             menuHandler.loadMenu(menuObj);
             menuHandler.handleSideMenu();
-
             self.onHashChange({}, $.bbq.getState());
         };
 
