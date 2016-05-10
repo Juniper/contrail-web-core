@@ -23,6 +23,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir) {
         'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
         'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
         'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
+        'joint-v096'                  : coreWebDir + '/assets/joint/js/joint.min',
         'geometry'                    : coreWebDir + '/assets/joint/js/geometry',
         'vectorizer'                  : coreWebDir + '/assets/joint/js/vectorizer',
         'joint.layout.DirectedGraph'  : coreWebDir + '/assets/joint/js/joint.layout.DirectedGraph',
@@ -38,6 +39,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir) {
 
         'contrail-layout'             : coreWebDir + '/js/contrail-layout',
         'joint.contrail'              : coreWebDir + '/js/joint.contrail',
+        'joint.contrail.new'          : coreWebDir + '/js/joint.contrail.new',
         'core-utils'                  : coreWebDir + '/js/common/core.utils',
 
         'core-constants'              : coreWebDir + '/js/common/core.constants',
@@ -600,6 +602,18 @@ if (typeof document !== 'undefined' && document) {
             require(['core-init'], function () {
             });
         });
+
+        //Uncomment and comment above for new jointjs.
+        // var newInitDepFiles = [
+        //     'validation', 'joint.contrail.new', 'contrail-unified-1', 'contrail-unified-2', 'contrail-unified-3',
+        //     'text'
+        // ];
+        // require(newInitDepFiles, function (validation, joint) {
+        //     kbValidation = validation;
+        //     window.joint = joint;
+        //     require(['core-init'], function () {
+        //     });
+        // });
     });
 }
 

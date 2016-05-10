@@ -11,6 +11,50 @@ constants.defaultBuildConfigFile = "webroot/build/default.build.config.js";
 constants.defaultFileExclusionRegExp = /(.*node_modules|.*api|.*jobs|.*test|.*examples|.*build|.*vis-v4.9.0)/;
 
 /**
+ * Third Party library modules
+ */
+constants.thirdPartyModules  = [
+    {
+        enabled: true,
+        name: './js/common/contrail.unified.1',
+        include: [
+            'core-basedir/assets/jquery-ui/js/jquery-ui.js',
+            'core-basedir/assets/jquery/js/jquery.xml2json.js',
+            'core-basedir/assets/jquery/js/jquery.ba-bbq.min.js',
+            'core-basedir/assets/jquery/js/jquery.timer.js',
+            'core-basedir/assets/jquery/js/jquery.ui.touch-punch.min.js',
+            'core-basedir/assets/jquery/js/jquery.validate.js',
+            'core-basedir/assets/jquery/js/jquery.tristate.js',
+            'core-basedir/assets/jquery-ui/js/jquery.multiselect.js',
+            'core-basedir/assets/jquery-ui/js/jquery.multiselect.filter.js',
+            'core-basedir/assets/jquery/js/jquery.steps.min.js',
+            'core-basedir/assets/jquery/js/jquery.panzoom.min.js',
+            'core-basedir/assets/jquery-contextMenu/js/jquery.ui.position.js',
+            'core-basedir/assets/jquery-contextMenu/js/jquery.contextMenu.js',
+            'core-basedir/assets/bootstrap/js/bootstrap.js',
+            'core-basedir/assets/crossfilter/js/crossfilter.js',
+            'core-basedir/assets/jsonpath/js/jsonpath-0.8.0.js',
+            'core-basedir/assets/handlebars/handlebars-v1.3.0.js',
+            'core-basedir/js/handlebars-utils.js',
+            'core-basedir/js/contrail-elements.js',
+        ],
+        exclude: []
+    },
+    // {
+    //     enabled: true,
+    //     name: './js/common/contrail.unified.2',
+    //     include: [],
+    //     exclude: []
+    // },
+    // {
+    //     enabled: true,
+    //     name: './js/common/contrail.unified.3',
+    //     include: [],
+    //     exclude: []
+    // }
+];
+
+/**
  * constants for contrail-web-core.
  */
 constants.coreAppDir = "./../"
