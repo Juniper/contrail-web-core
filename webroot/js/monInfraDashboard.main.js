@@ -12,7 +12,7 @@ function MonInfraDashboardLoader() {
             renderFn = paramObject['function'];
 
         if (self.monInfraDashboardView == null) {
-            requirejs(['mon-infra-dashboard-view'], function (MonitorInfraDashboardView) {
+            require(['mon-infra-dashboard-view'], function (MonitorInfraDashboardView) {
                 var monitorInfraDashboardView = MonitorInfraDashboardView;
                 monitorInfraDashboardView.render({
                     el:$(contentContainer)

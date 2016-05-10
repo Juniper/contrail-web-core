@@ -43,7 +43,7 @@ define([
             var self = this;
             self.loadedInfoboxes.push(cfg);
             var infoboxTemplate = contrail.getTemplate4Id(cowc.TMPL_INFOBOX);
-            self.$el.find('.infobox-container').append(infoboxTemplate(cfg));
+            self.$el.find('.infobox-container:first').append(infoboxTemplate(cfg));
             self.$el.find('.infobox-detail-container').append($('<div>',{
                     class:'infobox-detail-item',
                 }));
@@ -54,14 +54,8 @@ define([
             $(self.$el.find('.infobox')[0]).removeClass('infobox-grey').
                 addClass('infobox-blue infobox-dark active');
 
-            //Initialize view
-            var chartView = new cfg['view']({
-                model: cfg['model'],
-                el: self.$el.find('.infobox-detail-container .infobox-detail-item:last')
-            });
-            var currInfobox = self.$el.find('.infobox-container .infobox:last');
-            var renderFn = ifNull(cfg['renderfn'],'render');
-            chartView[renderFn]();
+            //make infobox part of config itself. during update use it
+            cfg['infobox'] = self.$el.find('.infobox-container:first .infobox:last');
 
             //Listen for changes on model to show/hide down count
             if(cfg['model'].loadedFromCache) {
@@ -70,19 +64,29 @@ define([
             cfg['model'].onDataUpdate.subscribe(function() {
                 updateCnt();
             });
+
+            //Initialize view
+            var chartView = new cfg['view']({
+                model: cfg['model'],
+                el: self.$el.find('.infobox-detail-container .infobox-detail-item:last')
+            });
+
+            var renderFn = ifNull(cfg['renderfn'],'render');
+            chartView[renderFn]();
+
             function updateCnt() {
                 var rowCnt = cfg['model'].getItems().length;
                 var downCnt = 0;
                 if(typeof(cfg['downCntFn']) == 'function') {
                     downCnt = cfg['downCntFn'](cfg['model'].getItems());
                 }
-                currInfobox.find(".stat.stat-important").text(downCnt);
+                cfg.infobox.find(".stat.stat-important").text(downCnt);
                 if(downCnt == 0) {
-                    currInfobox.find(".stat.stat-important").hide();
+                    cfg.infobox.find(".stat.stat-important").hide();
                 } else {
-                    currInfobox.find(".stat.stat-important").show();
+                    cfg.infobox.find(".stat.stat-important").show();
                 }
-                currInfobox.find(".infobox-data-number").text(rowCnt);
+                cfg.infobox.find(".infobox-data-number").text(rowCnt);
             }
         },
     });
