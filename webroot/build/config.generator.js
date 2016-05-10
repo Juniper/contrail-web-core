@@ -90,13 +90,13 @@ ConfigGenerator.prototype.getStringifiedConfig = function() {
 ConfigGenerator.prototype.addModules = function(modules) {
     if (modules.length > 0) {
         for (var i=0; i<modules.length; i++) {
-            var module = {};
             if (modules[i].enabled) {
+                var module = {};
                 module.name = modules[i].name;
                 module.include = modules[i].include;
                 module.exclude = modules[i].exclude;
+                this.configJSON.modules.push(module);
             }
-            this.configJSON.modules.push(module);
         }
     }
 };
