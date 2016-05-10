@@ -144,6 +144,8 @@ define([
                 return formattedValue;
             } else if (contrail.checkIfExist(this.format[formatterKey])) {
                 return this.format[formatterKey](value, options);
+            } else if (_.isObject(value)) {
+                return JSON.stringify(value);
             } else {
                 var obj = contrail.checkIfExist(options) ? options.obj : null,
                     iconClass = contrail.checkIfExist(options) ? options.iconClass : null,
@@ -205,14 +207,11 @@ define([
                         return cowu.addUnits2Packets(value);
                         break;
 
-
-
                     //run the user defined formatter function
                     default :
                         if (contrail.checkIfFunction(eval(formatterKey))) {
                             return eval(formatterKey)(value, obj, iconClass, key);
                         } else {
-                            //Reg Ex to display comma separated numbers
                             return value;
                         }
                 };
