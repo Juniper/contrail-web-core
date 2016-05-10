@@ -83,6 +83,7 @@ function authenticate (req, res, appData, callback)
             resHeaders['set-cookie'][0];
             //res.redirect('/');
             //return;
+        req.session.tokenObjs = {};
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
             if ('' != urlPath) {
                 res.redirect(urlPath + urlHash);
