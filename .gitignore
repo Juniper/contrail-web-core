@@ -7,6 +7,10 @@ node_modules
 *.swp
 *.swo
 web-third-party
+
+# webroot/js/handlers/MenuHander generates those
+webroot/menu_*
+
 webroot/assets/*
 webroot/font/*
 webroot/js/common/contrail.unified.*
