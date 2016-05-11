@@ -2,6 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 var assert = require('assert');
+var clusterUtils = require('./src/serverroot/utils/cluster.utils');
 var args = process.argv.slice(2);
 var argsCnt = args.length;
 var configFile = null;
@@ -42,15 +43,7 @@ var server_port = (config.redis_server_port) ?
     config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
 var server_ip = (config.redis_server_ip) ?
     config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
-redisUtils.createRedisClientAndWait(server_port, server_ip,
-                                    global.WEBUI_DFLT_REDIS_DB,
-                                    function(redisClient) {
-    exports.redisClient = redisClient;
-    loadWebServer();
-});
 
-function loadWebServer ()
-{
 var express = require('express')
     , path = require('path')
     , fs = require("fs")
@@ -178,7 +171,6 @@ function initializeAppConfig (appObj)
         includeSubdomains: true
     }));
     var cookieObj = {maxAge: maxAgeTime, httpOnly: true};
-    cookieObj
     if (false == insecureAccessFlag) {
         cookieObj['secure'] = true;
     }
@@ -303,13 +295,16 @@ function bindProducerSocket ()
        Server of other nodeJS server
      */
     producerSock.bind(connectURL);
-    console.log('nodeJS Server bound to port %s to Job Server ', port);
+    logutils.logger.debug('Web Server bound to port ' + port +
+                          ' to Job Server');
+    return;
 }
 
 function sendRequestToJobServer (msg)
 {
     var timer = setInterval(function () {
         //logutils.logger.debug("SENDING to jobServer:" + msg.reqData);
+        //console.log("Getting producerSock as:", producerSock);
         producerSock.send(msg.reqData);
         clearTimeout(timer);
     }, 1000);
@@ -324,47 +319,20 @@ function addProducerSockListener ()
 
 function messageHandler (msg)
 {
-    if (msg.cmd && msg.cmd == global.STR_SEND_TO_JOB_SERVER) {
-        sendRequestToJobServer(msg);
+    console.log("Got from worker process:", msg);
+    if ((null != msg) && (null != msg.cmd)) {
+        switch (msg.cmd) {
+        case global.STR_SEND_TO_JOB_SERVER:
+            sendRequestToJobServer(msg);
+            break;
+        default:
+            logutils.logger.error('Unknown cmd: ' + msg.cmd);
+            break;
+        }
     }
 }
 
 var workers = [];
-var timeouts = [];
-
-function addClusterEventListener ()
-{
-    cluster.on('fork', function (worker) {
-        logutils.logger.info('Forking worker #' + worker.id);
-        cluster.workers[worker.id].on('message', messageHandler);
-        timeouts[worker.id] = setTimeout(function () {
-            logutils.logger.error(['Worker taking too long to start.']);
-        }, 2000);
-    });
-    cluster.on('listening', function (worker, address) {
-        logutils.logger.info('Worker #' + worker.id + ' listening on port: '
-                             + address.port);
-        clearTimeout(timeouts[worker.id]);
-    });
-    cluster.on('online', function (worker) {
-        logutils.logger.info('Worker #' + worker.id + ' is online.');
-    });
-    cluster.on('exit', function (worker, code, signal) {
-        logutils.logger.error(['The worker #' + worker.id +
-                              ' has exited with exit code ' +
-                              worker.process.exitCode]);
-        clearTimeout(timeouts[worker.id]);
-        // Don't try to restart the workers when disconnect or destroy has been called
-        if (worker.suicide !== true) {
-            logutils.logger.debug('Worker #' + worker.id + ' did not commit suicide.');
-            workers[worker.id] = cluster.fork();
-        }
-    });
-    cluster.on('disconnect', function (worker) {
-        logutils.logger.debug('The worker #' + worker.id + ' has disconnected.');
-    });
-}
-
 function registerFeatureLists ()
 {
     var pkgDir;
@@ -418,14 +386,12 @@ function startWebCluster ()
             logutils.logger.info("Starting Contrail UI in clustered mode.");
             bindProducerSocket();
             addProducerSockListener();
-
-            var i;
-            for (i = 0; i < nodeWorkerCount; i += 1) {
+            for (var i = 0; i < nodeWorkerCount; i += 1) {
                 var worker = cluster.fork();
                 workers[i] = worker;
             }
 
-            addClusterEventListener();
+            clusterUtils.addClusterEventListener(messageHandler);
 
             // Trick by Ian Young to make cluster and supervisor play nicely together.
             // https://github.com/isaacs/node-supervisor/issues/40#issuecomment-4330946
@@ -657,7 +623,12 @@ function clusterMasterInit (callback)
  */
 function clusterWorkerInit (callback)
 {
-    callback();
+    redisUtils.createRedisClientAndWait(server_port, server_ip,
+                                    global.WEBUI_DFLT_REDIS_DB,
+                                    function(redisClient) {
+        exports.redisClient = redisClient;
+        callback();
+    });
 }
 
 /* Start Main Server */
@@ -666,5 +637,4 @@ startWebCluster();
 exports.myIdentity = myIdentity;
 exports.discServEnable = discServEnable;
 exports.pkgList = pkgList;
-}
 
