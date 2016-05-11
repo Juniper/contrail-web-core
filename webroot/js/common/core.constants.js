@@ -625,6 +625,26 @@ define([
 
         this.DROPDOWN_VALUE_SEPARATOR = ";";
 
+        this.GRAPH_IMAGE_MAP = {
+            'physical-router': 'prouter',
+            'virtual-router': 'vrouter',
+            'virtual-network': 'vpn',
+            'network-policy': 'policy',
+            'service-instance-l2': 'l2',
+            'service-instance-analyzer': 'analyzer',
+            'service-instance-firewall': 'firewall',
+            'service-instance-nat': 'nat',
+            'service-instance-lb': 'lb',
+            'service-instance': 'nat',
+            'security-group': 'sg',
+            'floating-ip': 'fip',
+            'network-ipam': 'ipam',
+            'router': 'router',
+            'virtual-machine': 'vm'
+        };
+
+        this.GRAPH_MARGIN = 35;
+
         this.get = function () {
             var args = arguments;
             return cowu.getValueFromTemplate(args);

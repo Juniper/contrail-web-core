@@ -113,7 +113,7 @@ constants.coreModules  = [
             'core-basedir/js/views/WidgetView',
             'core-basedir/js/views/WizardView',
             'core-basedir/js/views/ZoomScatterChartView',
-            'core-basedir/js/views/MonitorInfraDashboardView',
+            'core-basedir/js/views/MonitorInfraDashboardView'
         ],
         exclude: [
             './js/common/core.app',
@@ -157,7 +157,7 @@ constants.controllerModules = [
             'analyticsnode-scatterchart-view',
             'vrouter-dashboard-view',
             'monitor-infra-parsers',
-            'monitor-infra-constants',
+            'monitor-infra-constants'
         ],
         exclude: [
             "contrail-view",
