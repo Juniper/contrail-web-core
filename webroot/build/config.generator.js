@@ -8,7 +8,7 @@ var args = process.argv.slice(2),
     fs = require('fs'),
     path = require('path');
 
-var confGenConst = require('./config'),
+var confGenConst = require('./config.generator.constants'),
     coApp = require('../js/common/core.app');
 
 /**
@@ -21,9 +21,9 @@ var ConfigGenerator = function(type, configFile) {
     this.configJSON = confGenConst.buildBaseConfJson;
 };
 
-ConfigGenerator.prototype.generate = function(env) {
+ConfigGenerator.prototype.generate = function() {
     // update the config with all the custom updates
-    this.updateConfig(env);
+    this.updateConfig();
     // write to config file.
     this.writeConfigFile();
 };
@@ -111,7 +111,7 @@ var CoreConfigGenerator = function(type, configFile) {
 
 CoreConfigGenerator.prototype = new ConfigGenerator();
 
-CoreConfigGenerator.prototype.updateBaseConfig = function(env) {
+CoreConfigGenerator.prototype.updateBaseConfig = function() {
     var coreAppPaths = coApp.getCoreAppPaths(confGenConst.defaultBaseDir, ''),
         coreAppMap = coApp.coreAppMap,
         coreAppShim = coApp.coreAppShim;
@@ -120,10 +120,6 @@ CoreConfigGenerator.prototype.updateBaseConfig = function(env) {
     this.configJSON.map = coreAppMap;
     this.configJSON.shim = coreAppShim;
 
-    if (env && env == 'dev-env') {
-        confGenConst.coreOutDir = confGenConst.coreAppDir;;
-    }
-    
     if (confGenConst.coreAppDir) this.configJSON.appDir = confGenConst.coreAppDir;
     if (confGenConst.coreOutDir) this.configJSON.dir = confGenConst.coreOutDir;
     if (confGenConst.coreBaseUrl) this.configJSON.baseUrl = confGenConst.coreBaseUrl;
@@ -131,22 +127,19 @@ CoreConfigGenerator.prototype.updateBaseConfig = function(env) {
     if (confGenConst.coreFileExclusionRegExp) this.configJSON.fileExclusionRegExp =  unescape(confGenConst.coreFileExclusionRegExp);
 }
 
-CoreConfigGenerator.prototype.addCoreModules = function(env) {
-
-    this.addModules(confGenConst.thirdPartyModules);
-    
-    if (env == 'prod-env') {
+CoreConfigGenerator.prototype.addCoreModules = function() {
+    if (confGenConst.coreModules) {
         this.addModules(confGenConst.coreModules);
     }
 };
 
 
-CoreConfigGenerator.prototype.updateConfig = function (env) {
+CoreConfigGenerator.prototype.updateConfig = function () {
     // Add the basic stuff to config.
-    this.updateBaseConfig(env);
+    this.updateBaseConfig();
 
     // Add core modules enabled for unification
-    this.addCoreModules(env);
+    this.addCoreModules();
 };
 
 
@@ -184,15 +177,15 @@ ControllerConfigGenerator.prototype.addControllerModules = function() {
     }
 };
 
-ControllerConfigGenerator.prototype.updateConfig = function(env) {
+ControllerConfigGenerator.prototype.updateConfig = function() {
     // Call parent class method to update the basic configs.
-    this.updateBaseConfig(env);
+    this.updateBaseConfig();
 
     //override with controller specific values.
     this.overrideBaseConfig();
 
     // Add modules enabled for unification.
-    this.addControllerModules(env);
+    this.addControllerModules();
 };
 
 /**
@@ -284,20 +277,18 @@ StorageConfigGenerator.prototype.updateConfig = function() {
 };
 
 var repo = args[0],
-    file = args[1],
-    env = args[2];
+    file = args[1];
 
 if (repo == 'webCore') {
     var coreConfigGenerator = new CoreConfigGenerator(repo, file);
-    coreConfigGenerator.generate(env);
+    coreConfigGenerator.generate();
 } else if(repo == 'webController') {
     var controllerConfigGenerator = new ControllerConfigGenerator(repo, file);
-    controllerConfigGenerator.generate(env);
+    controllerConfigGenerator.generate();
 } else if(repo == 'serverManager') {
     var smConfigGenerator = new SMConfigGenerator(repo, file);
-    smConfigGenerator.generate(env);
+    smConfigGenerator.generate();
 } else if(repo == 'webStorage') {
     var storageConfigGenerator = new StorageConfigGenerator(repo, file);
-    storageConfigGenerator.generate(env);
+    storageConfigGenerator.generate();
 } else {}
-
