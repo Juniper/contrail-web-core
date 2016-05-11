@@ -1171,9 +1171,10 @@ function getProjectDetails (projects, userObj, callback)
     var projCnt = projects.length;
     for (var i = 0; i < projCnt; i++) {
         userObj['tenant'] = projects[i]['name'];
+        userObj['data'] = formatV3AuthTokenData(userObj, false);
         userObjList[i] = commonUtils.cloneObj(userObj);
         postDataArr[i] = {};
-        postDataArr[i]['data'] = formatV3AuthTokenData(userObj, false);
+        postDataArr[i]['data'] = userObj['data'];
         postDataArr[i]['reqUrl'] = global.KEYSTONE_V3_TOKEN_URL;
         postDataArr[i]['withHeaderResp'] = false;
     }
