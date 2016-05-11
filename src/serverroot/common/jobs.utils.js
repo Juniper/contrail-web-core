@@ -4,6 +4,9 @@
 
 var jobTaskDataChanges = {};
 var jobTaskDataRequiresFields = {};
+var eventEmitter = require('events').EventEmitter;
+var jobKueEventEmitter = new eventEmitter();
+
 function registerForJobTaskDataChange (jobData, field)
 {
     if ((null == field) || (null == jobData)) {
@@ -67,4 +70,4 @@ exports.getChangedJobTaskData = getChangedJobTaskData;
 exports.deleteChangedJobTaskData = deleteChangedJobTaskData;
 exports.getAndUpdateChangedJobTaskData = getAndUpdateChangedJobTaskData;
 exports.updateJobDataRequiresField = updateJobDataRequiresField;
-
+exports.jobKueEventEmitter = jobKueEventEmitter;

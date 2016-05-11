@@ -10,6 +10,7 @@ var redisSub = require('./redisSub')
 	, commonUtils = require('../../utils/common.utils')
 	, logutils = require('../../utils/log.utils')
 	, util = require('util')
+    , redisUtils = require('../../utils/redis.utils')
 	, messages = require('../../common/messages');
 
 if (!module.parent) 
@@ -21,9 +22,7 @@ if (!module.parent)
 
 cacheApi = module.exports;
 
-commonUtils.createRedisClient(function(client) {
-    cacheApi.redisClient = client;
-});
+cacheApi.redisClient = redisUtils.createRedisClient();
 
 var cachePendingQueue = {};
 
