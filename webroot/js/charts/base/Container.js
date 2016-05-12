@@ -20,9 +20,9 @@ define([], function () {
         /**
          * Chart config.
          * @protected
-         * @member {coCharts.Config}
+         * @member {coCharts.utils.ConfigUtil}
          */
-        this._config = new coCharts.Config(config);
+        this._config = new coCharts.utils.ConfigUtil(config);
         /**
          * Chart height;
          * @member {Number}

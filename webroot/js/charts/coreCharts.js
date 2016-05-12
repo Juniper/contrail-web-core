@@ -5,7 +5,7 @@
 define([
     'core-basedir/js/charts/base/utils/ClassUtil',
     'core-basedir/js/charts/base/utils/StringUtil',
-    'core-basedir/js/charts/base/Config',
+    'core-basedir/js/charts/base/utils/ConfigUtil',
     'core-basedir/js/charts/base/Component',
     'core-basedir/js/charts/base/Container',
     'core-basedir/js/charts/base/Chart',
@@ -20,7 +20,7 @@ define([
     'core-basedir/js/charts/strategy/BarChartGroupedStrategy',
     'core-basedir/js/charts/strategy/BarChartStackedStrategy'
     
-], function (ClassUtil, StringUtil, Config, Component, Container, Chart, BarChartStrategy,
+], function (ClassUtil, StringUtil, ConfigUtil, Component, Container, Chart, BarChartStrategy,
              BarChart, LineChart, BarChartManager, BrushMask, Tooltip, Crosshair,
              BarChartGroupedStrategy, BarChartStackedStrategy) {
     
@@ -36,8 +36,8 @@ define([
     
     coCharts.utils.ClassUtil = ClassUtil;
     coCharts.utils.StringUtil = StringUtil;
+    coCharts.utils.ConfigUtil = ConfigUtil;
     
-    coCharts.Config = Config;
     coCharts.Component = Component;
     coCharts.Container = Container;
     coCharts.Chart = Chart;

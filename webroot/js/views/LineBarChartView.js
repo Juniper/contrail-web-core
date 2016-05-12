@@ -134,8 +134,12 @@ define([
         var chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
 
         chartOptions['chartId'] = 'linebar-chart';
-        chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1'], chartOptions['metaData']);
-        chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2'], chartOptions['metaData']);
+        if (chartOptions['forceY1']) {
+            chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1'], chartOptions['metaData']);
+        }
+        if (chartOptions['forceY2']) {
+            chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2'], chartOptions['metaData']);
+        }
         chartOptions['margin']['right'] += 40;
         chartOptions['margin2']['right'] += 40;
 
@@ -234,7 +238,7 @@ define([
                                 yField: key,
                                 y: series.y || function(bar){return (bar) ? 1 : 2;}(series.bar),
                                 data: [],
-                                interpolate: "step-before"
+                                interpolate: options.metaData[key] && options.metaData[key].interpolate || "step-before",
                             };
                         }
                         metaKeyData[key].data.push(chartDataObj);
@@ -262,19 +266,17 @@ define([
         config.options.axes = {
             y1Label: options.y1AxisLabel,
             y2Label: options.y2AxisLabel,
-//            forceY1: options.forceY1,
-//            forceY2: options.forceY2,
+            forceY1: options.forceY1,
+            forceY2: options.forceY2,
             x1Formatter: options.xFormatter,
             y1Formatter: options.y1Formatter,
             y2Formatter: options.y2Formatter,
             yTicks: (options.yTicks != undefined) ? options.yTicks : 4
         };
 
-
-
         config.options.container.showContainer = options.showLegend;
         config.options.brush.extent = options.brushExtent;
-
+        
         return {
             config: config,
             charts: chartSeries
