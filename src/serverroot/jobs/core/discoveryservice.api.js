@@ -8,6 +8,7 @@ var config = process.mainModule.exports.config,
     logutils = require('../../utils/log.utils'),
     discClient = require('../../common/discoveryclient.api'),
     commonUtils = require('../../utils/common.utils'),
+    redisUtils = require('../../utils/redis.utils'),
     os = require('os')
     ;
 
@@ -36,14 +37,10 @@ var discServiceSubsStarted = false;
 function createRedisClientAndStartSubscribeToDiscoveryService (reqFrom)
 {
     if (null == redisSubClient) {
-        commonUtils.createRedisClient(function(client) {
-            redisSubClient = client;
-            redisSubClient.subscribe(global.DISC_SERVER_SUB_CLIENT_RESPONSE);
-            startSubscribeToDiscoveryServiceOrSendData(reqFrom);
-        });
-        commonUtils.createRedisClient(function(client) {
-            redisPubClient = client;
-        });
+        redisSubClient = redisUtils.createRedisClient();
+        redisSubClient.subscribe(global.DISC_SERVER_SUB_CLIENT_RESPONSE);
+        startSubscribeToDiscoveryServiceOrSendData(reqFrom);
+        redisPubClient = redisUtils.createRedisClient();
     } else {
         startSubscribeToDiscoveryServiceOrSendData(reqFrom);
     }
