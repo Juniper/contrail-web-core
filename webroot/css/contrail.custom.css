@@ -1149,6 +1149,10 @@ p.error, p.error-text {
     shape-rendering: crispEdges;
 }
 
+.coCharts-container .tick:first-child line {
+    visibility: hidden;
+}
+
 .coCharts-container .axis path, .contrail .axis line {
     fill: none;
     stroke: black;

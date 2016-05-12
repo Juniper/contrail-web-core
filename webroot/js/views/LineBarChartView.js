@@ -264,7 +264,9 @@ define([
         config.metaData = options.metaData;
 
         config.options.axes = {
-            grid: true,
+            grid: {
+                ticksAmount: 5,
+            },
             y1Label: options.y1AxisLabel,
             y2Label: options.y2AxisLabel,
             forceY1: options.forceY1,

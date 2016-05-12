@@ -1358,14 +1358,15 @@ define([], function () {
          */
         axis.scale(scale)
             .orient(orientation)
-            .tickFormat(this._getFieldFormatterByAxis(name, number));
+            .tickFormat(this._getFieldFormatterByAxis(name, number))
+            .outerTickSize(0);
         if (name === "y" && axis.tickValues() === null) {
             axis.tickValues(this._getTickValues(scale, name, number));
         }
         /*
          * Show axis grid if required.
          */
-        if (this._config.get("options.axes.grid", false)) {
+        if (this._config.has("options.axes.grid")) {
             axis.innerTickSize(tickSize);
         }
         /**
@@ -1406,12 +1407,12 @@ define([], function () {
     Container.prototype._getTickValues = function(scale, name, number) {
 
         var height = scale.range()[0];
-        var amount = height / 25;
+        var amount = this._config.get("options.axes.grid.ticksAmount", height / 25);
 
         var domain = scale.domain();
         var min = domain[0];
         var max = domain[1];
-        var step = (max - min) / amount;
+        var step = (max - min) / (amount - 1);
         var formatter = this._getFieldFormatterByAxis(name, number);
 
         var ticks = [];
