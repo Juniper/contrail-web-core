@@ -1365,7 +1365,6 @@ define([], function () {
         /*
          * Show axis grid if required.
          */
-        console.log(this._config.get("options.axes.grid"));
         if (this._config.get("options.axes.grid", false)) {
             axis.innerTickSize(tickSize);
         }
@@ -1420,7 +1419,7 @@ define([], function () {
         for (var i = min; i <= max; i += step ) {
             ticks.push(i);
         }
-console.log(ticks);
+
         return ticks;
     };
 
