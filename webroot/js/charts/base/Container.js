@@ -1359,9 +1359,13 @@ define([], function () {
         axis.scale(scale)
             .orient(orientation)
             .tickFormat(this._getFieldFormatterByAxis(name, number));
+        if (name === "y" && axis.tickValues() === null) {
+            axis.tickValues(this._getTickValues(scale, name, number));
+        }
         /*
          * Show axis grid if required.
          */
+        console.log(this._config.get("options.axes.grid"));
         if (this._config.get("options.axes.grid", false)) {
             axis.innerTickSize(tickSize);
         }
@@ -1389,6 +1393,35 @@ define([], function () {
          * Assign axis as property.
          */
         this["_" + name + number + "Axis"] = axis;
+    };
+
+
+    /**
+     * Get axis ticks.
+     * @private
+     * @param {Function} scale
+     * @param {String} name
+     * @param {Integer} number
+     * @returns {Number[]}
+     */
+    Container.prototype._getTickValues = function(scale, name, number) {
+
+        var height = scale.range()[0];
+        var amount = height / 25;
+
+        var domain = scale.domain();
+        var min = domain[0];
+        var max = domain[1];
+        var step = (max - min) / amount;
+        var formatter = this._getFieldFormatterByAxis(name, number);
+
+        var ticks = [];
+
+        for (var i = min; i <= max; i += step ) {
+            ticks.push(i);
+        }
+console.log(ticks);
+        return ticks;
     };
 
 

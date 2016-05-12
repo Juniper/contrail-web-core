@@ -1143,6 +1143,12 @@ p.error, p.error-text {
     padding-right:3px;
  }
 
+.coCharts-container .tick line {
+    stroke: lightgrey !important;
+    stroke-width: 1 !important;
+    shape-rendering: crispEdges;
+}
+
 .coCharts-container .axis path, .contrail .axis line {
     fill: none;
     stroke: black;
