@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/chart/base/Chart'
+    'core-basedir/js/charts/base/Chart'
 ], function (Chart) {
 
     /**
@@ -15,7 +15,7 @@ define([
         /**
          * Bar chart manager.
          * @private
-         * @member {contrailD3.BarChartManager}
+         * @member {coCharts.BarChartManager}
          */
         this._manager = undefined;
     }
@@ -29,13 +29,13 @@ define([
      */
     BarChart.prototype.getClassName = function () {
 
-        return "contrailD3.charts.BarChart";
+        return "coCharts.BarChart";
     };
 
 
     /**
      * Set chart manager.
-     * @param {contrailD3.BarChartManager} manager
+     * @param {coCharts.BarChartManager} manager
      */
     BarChart.prototype.setManager = function (manager) {
 

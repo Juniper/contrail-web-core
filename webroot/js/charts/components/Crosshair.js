@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/chart/base/Component'
+    'core-basedir/js/charts/base/Component'
 ], function (Component) {
 
     /**
@@ -48,7 +48,7 @@ define([
         /*
          * Create tooltip.
          */
-        this._tooltip = new contrailD3.components.Tooltip();
+        this._tooltip = new coCharts.components.Tooltip();
 
     }
 
@@ -72,7 +72,7 @@ define([
      */
     Crosshair.prototype.getClassName = function () {
 
-        return "contrailD3.components.Crosshair";
+        return "coCharts.components.Crosshair";
     };
 
 
@@ -241,8 +241,8 @@ define([
         var content = '<table>';
 
         points.forEach(function (point) {
-            content += '<tr class="contrailD3-tooltip-row">' +
-                '<td><div class="contrailD3-tooltip-color" style="background-color:' + point.color + '"></div></td>' +
+            content += '<tr class="coCharts-tooltip-row">' +
+                '<td><div class="coCharts-tooltip-color" style="background-color:' + point.color + '"></div></td>' +
                 '<td>' + this._getFieldName(point.name) + '</td>' +
                 '<td>' + this._getFieldValue(point.name, point.value) + '</td>' +
                 '</tr>';

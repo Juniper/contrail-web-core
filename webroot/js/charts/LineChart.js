@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/chart/base/Chart'
+    'core-basedir/js/charts/base/Chart'
 ], function (Chart) {
 
     /**
@@ -15,7 +15,7 @@ define([
         /*
          * Call parent class constructor.
          */
-        contrailD3.Chart.call(this);
+        coCharts.Chart.call(this);
         /*
          * Stash reference to this object.
          */
@@ -42,7 +42,7 @@ define([
      */
     LineChart.prototype.getClassName = function () {
 
-        return "contrailD3.charts.LineChart";
+        return "coCharts.LineChart";
     };
 
 

@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/chart/base/BarChartStrategy'
+    'core-basedir/js/charts/base/BarChartStrategy'
 ], function (BarChartStrategy) {
 
     /**
@@ -11,7 +11,7 @@ define([
      */
     var BarChartStackedStrategy = function (charts) {
 
-        contrailD3.BarChartStrategy.call(this, charts);
+        coCharts.BarChartStrategy.call(this, charts);
     }
 
 

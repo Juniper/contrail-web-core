@@ -20,9 +20,9 @@ define([], function () {
         /**
          * Chart config.
          * @protected
-         * @member {contrailD3.Config}
+         * @member {coCharts.Config}
          */
-        this._config = new contrailD3.Config(config);
+        this._config = new coCharts.Config(config);
         /**
          * Chart height;
          * @member {Number}
@@ -45,12 +45,12 @@ define([], function () {
         this._chartsContainer = undefined;
         /**
          * Inner charts set.
-         * @member {contrailD3.Chart[]}
+         * @member {coCharts.Chart[]}
          */
         this._charts = [];
         /**
          * Container components set.
-         * @member {contrailD3.Component[]}
+         * @member {coCharts.Component[]}
          */
         this._components = {};
         /**
@@ -71,14 +71,14 @@ define([], function () {
         };
         /**
          * @private
-         * @member {contrailD3.utils.ClassUtil}
+         * @member {coCharts.utils.ClassUtil}
          */
-        this._classUtil = new contrailD3.utils.ClassUtil();
+        this._classUtil = new coCharts.utils.ClassUtil();
         /**
          * @protected
-         * @member {contrailD3.utils.StringUtil}
+         * @member {coCharts.utils.StringUtil}
          */
-        this._stringUtil = new contrailD3.utils.StringUtil();
+        this._stringUtil = new coCharts.utils.StringUtil();
         /**
          * Chart unique id.
          * @private
@@ -192,7 +192,7 @@ define([], function () {
      * Set x axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setXLabel = function (label) {
 
@@ -204,7 +204,7 @@ define([], function () {
      * Set x1 axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX1Label = function (label) {
 
@@ -217,7 +217,7 @@ define([], function () {
      * Set x2 axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX2Label = function (label) {
 
@@ -230,7 +230,7 @@ define([], function () {
      * Set y axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setYLabel = function (label) {
 
@@ -242,7 +242,7 @@ define([], function () {
      * Set y1 axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY1Label = function (label) {
 
@@ -255,7 +255,7 @@ define([], function () {
      * Set y2 axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY2Label = function (label) {
 
@@ -268,7 +268,7 @@ define([], function () {
      * Set chart height.
      * @public
      * @param {Number} width
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setWidth = function (width) {
 
@@ -281,7 +281,7 @@ define([], function () {
      * Set chart width.
      * @public
      * @param {Number} height
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setHeight = function (height) {
 
@@ -305,7 +305,7 @@ define([], function () {
      * Set chart margins.
      * @public
      * @param {Object} margin
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setMargin = function (margin) {
 
@@ -321,7 +321,7 @@ define([], function () {
      * Update chart with new data set.
      * @public
      * @param {Object[]} data
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.update = function (data) {
         /*
@@ -379,14 +379,14 @@ define([], function () {
     /**
      * Update bar charts manager.
      * @private
-     * @returns {contrailD3.BarChartManager}
+     * @returns {coCharts.BarChartManager}
      */
     Container.prototype._updateBarChartManager = function () {
         /*
          * Create bar chart manager if not yet.
          */
         if (!this._barChartManager) {
-            this._barChartManager = new contrailD3.BarChartManager(this);
+            this._barChartManager = new coCharts.BarChartManager(this);
         }
         /*
          * Add all charts to the manager. It will reject unnecessary automatically.
@@ -403,11 +403,11 @@ define([], function () {
 
     /**
      * Add component to the canvas.
-     * @param {contrailD3.Component} component
+     * @param {coCharts.Component} component
      * @param {String} [context]
      * @param {Integer} [index]
      * @param {Selection} [container]
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.add = function (component, options, index, container) {
         /*
@@ -454,7 +454,7 @@ define([], function () {
         /*
          * Set a manager if this bar chart.
          */
-        if (component.getClassName() == "contrailD3.charts.BarChart") {
+        if (component.getClassName() == "coCharts.BarChart") {
             var manager = this._updateBarChartManager();
             component.setManager(manager);
         }
@@ -465,7 +465,7 @@ define([], function () {
 
     /**
      * Remove child chart from the canvas.
-     * @param {contrailD3.Chart} chart
+     * @param {coCharts.Chart} chart
      * @param {Boolean} keepData
      *
      */
@@ -496,7 +496,7 @@ define([], function () {
      * Get chart index.
      * Returns chart index in the charts pool.
      * @private
-     * @param {contrailD3.Chart} chart
+     * @param {coCharts.Chart} chart
      * @returns {Integer}
      */
     Container.prototype._getChartIndex = function (chart) {
@@ -512,7 +512,7 @@ define([], function () {
     /**
      * Get chart context.
      * @private
-     * @param {contrailD3.Chart} chart
+     * @param {coCharts.Chart} chart
      * @returns {Object}
      */
     Container.prototype._getChartContext = function (chart) {
@@ -523,8 +523,8 @@ define([], function () {
 
     /**
      * Replace one chart to another.
-     * @param {contrailD3.Chart} fromChart
-     * @param {contrailD3.Chart} toChart
+     * @param {coCharts.Chart} fromChart
+     * @param {coCharts.Chart} toChart
      * @returns {Object}
      */
     Container.prototype.replace = function (fromChart, toChart) {
@@ -554,10 +554,10 @@ define([], function () {
 
     /**
      * Copy one chart main properties to another.
-     * fromChart parameter may be as contrailD3.Chart as contrailD3.Component.
+     * fromChart parameter may be as coCharts.Chart as coCharts.Component.
      * In second case it has no context and toChart context will be used.
      * @param {Mixed} fromChart
-     * @param {contrailD3.Chart} toChart
+     * @param {coCharts.Chart} toChart
      */
     Container.prototype._copyChart = function (fromChart, toChart) {
         /*
@@ -585,7 +585,7 @@ define([], function () {
     /**
      * Copy set of main properties from one chart to another.
      * @private
-     * @param {contrailD3.Chart} chart
+     * @param {coCharts.Chart} chart
      * @param {Object} context
      */
     Container.prototype._copyChartProperties = function (chart, context) {
@@ -624,7 +624,7 @@ define([], function () {
     /**
      * Set x scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setXScale = function (scale) {
 
@@ -635,7 +635,7 @@ define([], function () {
     /**
      * Set x1 scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX1Scale = function (scale) {
 
@@ -663,7 +663,7 @@ define([], function () {
     /**
      * Set x scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX2Scale = function (scale) {
 
@@ -701,7 +701,7 @@ define([], function () {
     /**
      * Set y scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setYScale = function (scale) {
 
@@ -728,7 +728,7 @@ define([], function () {
     /**
      * Set y1 scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY1Scale = function (scale) {
 
@@ -756,7 +756,7 @@ define([], function () {
     /**
      * Set y2 scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY2Scale = function (scale) {
 
@@ -768,7 +768,7 @@ define([], function () {
     /**
      * Set x axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setXAxis = function (axis) {
 
@@ -779,7 +779,7 @@ define([], function () {
     /**
      * Set x1 axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX1Axis = function (axis) {
 
@@ -791,7 +791,7 @@ define([], function () {
     /**
      * Set x2 axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX2Axis = function (axis) {
 
@@ -803,7 +803,7 @@ define([], function () {
     /**
      * Set y axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setYAxis = function (axis) {
 
@@ -814,7 +814,7 @@ define([], function () {
     /**
      * Set y1 axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY1Axis = function (axis) {
 
@@ -826,7 +826,7 @@ define([], function () {
     /**
      * Set y2 axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY2Axis = function (axis) {
 
@@ -858,7 +858,7 @@ define([], function () {
          */
         var self = this;
         list = list.sort(function (a, b) {
-            if (a.chartData.chart.getClassName() == "contrailD3.charts.BarChart") {
+            if (a.chartData.chart.getClassName() == "coCharts.BarChart") {
                 return -1;
             } else if (a.chartData.chart.getClassName() == b.chartData.chart.getClassName()) {
                 return 0;
@@ -891,7 +891,7 @@ define([], function () {
     /**
      * Render chart
      * @param {String} container - chart's container CSS selector or HTMLElement
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.render = function (selector) {
         /*
@@ -1146,7 +1146,7 @@ define([], function () {
             }).attr("width", this._width + this._margin.left + this._margin.right)
             .enter()
             .append("svg")
-            .attr("class", "contrailD3-svg")
+            .attr("class", "coCharts-svg")
             .attr("width", this._width + this._margin.left + this._margin.right)
             .attr("height", this._height + this._margin.top + this._margin.bottom);
         if (svg.size() == 1) {

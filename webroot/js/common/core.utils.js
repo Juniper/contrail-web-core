@@ -376,8 +376,6 @@ define(['underscore'], function (_) {
                         templateId = (controlPanelExpandedTemplateConfig.viewConfig.groupType === '2-cols') ?
                             cowc.TMPL_CONTROL_PANEL_FILTER_2_COL : cowc.TMPL_CONTROL_PANEL_FILTER;
 
-                    console.log(controlPanelExpandedTemplateConfig)
-
                     if (chartControlPanelExpandedSelector.find('.control-panel-filter-container').length == 0) {
                         var controlPanelExpandedTemplate = contrail.getTemplate4Id(templateId);
 

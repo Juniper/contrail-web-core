@@ -1143,29 +1143,29 @@ p.error, p.error-text {
     padding-right:3px;
  }
 
-.contrailD3-container .axis path, .contrail .axis line {
+.coCharts-container .axis path, .contrail .axis line {
     fill: none;
     stroke: black;
     stroke-width: 1px;
 }
 
-.contrailD3-container .line-chart .line {
+.coCharts-container .line-chart .line {
     fill: none;
 }
 
-.contrailD3-container .axis-label {
+.coCharts-container .axis-label {
     text-anchor: middle;
 }
 
-.contrailD3-container text {
+.coCharts-container text {
     font: normal 12px Arial;
 }
 
-.contrailD3-container .brush {
+.coCharts-container .brush {
     fill-opacity: 0.2;
 }
 
-.contrailD3-container .contrailD3-tooltip {
+.coCharts-container .coCharts-tooltip {
     border: 1px solid #000;
     border-radius: 3px;
     opacity: 0.9;
@@ -1174,33 +1174,33 @@ p.error, p.error-text {
     position: absolute;
 }
 
-.contrailD3-container .contrailD3-tooltip-row td {
+.coCharts-container .coCharts-tooltip-row td {
     padding: 0 10px;
     white-space: nowrap;
 }
 
-.contrailD3-container .contrailD3-tooltip-color {
+.coCharts-container .coCharts-tooltip-color {
     width: 15px;
     height: 15px;
 }
 
-.contrailD3-container .control-panel, .control-panel select {
+.coCharts-container .control-panel, .control-panel select {
     height: 30px;
 }
 
-.contrailD3-container .controls-left-side > div {
+.coCharts-container .controls-left-side > div {
     float: left;
     text-align: center;
     margin-left: 2px;
 }
 
-.contrailD3-container .controls-right-side > div {
+.coCharts-container .controls-right-side > div {
     float: right;
     text-align: center;
     margin-left: 2px;
 }
 
-.contrailD3-container .controls-button {
+.coCharts-container .controls-button {
     border: 1px solid #a6c9e2;
     height: 30px;
     line-height: 30px;

@@ -18,7 +18,7 @@ define([], function () {
      * Get gap value.
      * Method calculate necessary gap value between bars or bars groups.
      * @public
-     * @param {contrailD3.charts.BarChart} chart
+     * @param {coCharts.BarChart} chart
      * @returns {Number}
      */
     BarChartStrategy.prototype.getGap = function (chart) {
@@ -30,7 +30,7 @@ define([], function () {
     /**
      * Get bar width.
      * @public
-     * @param {contrailD3.charts.BarChart} chart
+     * @param {coCharts.BarChart} chart
      * @returns {Number}
      */
     BarChartStrategy.prototype.getWidth = function (chart) {
@@ -42,7 +42,7 @@ define([], function () {
     /**
      * Get bar x position.
      * @public
-     * @param {contrailD3.charts.BarChart} chart
+     * @param {coCharts.BarChart} chart
      * @param {Mixed} d
      * @param {Integer} i
      * @returns {Number}
@@ -56,7 +56,7 @@ define([], function () {
     /**
      * Get bar y position.
      * @public
-     * @param {contrailD3.charts.BarChart} chart
+     * @param {coCharts.BarChart} chart
      * @param {Mixed} d
      * @param {Integer} i
      * @returns {Number}
@@ -70,7 +70,7 @@ define([], function () {
     /**
      * Get bar y height.
      * @public
-     * @param {contrailD3.charts.BarChart} chart
+     * @param {coCharts.BarChart} chart
      * @param {Integer} i
      * @param {Mixed} d
      * @returns {Number}

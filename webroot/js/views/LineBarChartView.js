@@ -5,10 +5,10 @@
 define([
     'underscore',
     'contrail-view',
-    'core-basedir/js/chart/LineBarChart',
+    'core-basedir/js/charts/LineBarChart',
     'contrail-list-model'
-], function (_, ContrailView, LineBarWithFocusChartContainer, ContrailListModel) {
-    var LineBarWithFocusChartView = ContrailView.extend({
+], function (_, ContrailView, LineBarChartContainer, ContrailListModel) {
+    var LineBarChartView = ContrailView.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
@@ -56,10 +56,10 @@ define([
 
             chartViewConfig = getChartViewConfig(data, viewConfig.chartOptions);
 
-            setData2ChartAndRender(self, selector, chartViewConfig, chartViewModel, LineBarWithFocusChartContainer);
+            setData2ChartAndRender(self, selector, chartViewConfig, chartViewModel, LineBarChartContainer);
 
             if (widgetConfig !== null) {
-                this.renderView4Config(selector.find('.contrailD3-container'), chartViewModel, widgetConfig, null, null, null);
+                this.renderView4Config(selector.find('.coCharts-container'), chartViewModel, widgetConfig, null, null, null);
             }
         },
 
@@ -98,7 +98,7 @@ define([
     });
 
     function setData2ChartAndRender(self, selector, chartViewConfig, chartViewModel, ChartContainer) {
-        var chartTemplate = contrail.getTemplate4Id("contrailD3-chart-template"),
+        var chartTemplate = contrail.getTemplate4Id("coCharts-chart-template"),
             chartData = chartViewConfig.chartData,
             checkEmptyDataCB = function (data) {
                 return (!data || data.length === 0 || !data.filter(function (d) { return d.values.length; }).length);
@@ -113,7 +113,7 @@ define([
             self.renderMessage(messageHandler(chartDataRequestState), selector, chartOptions);
         } else {
             self.removeMessage();
-            $(selector).find(".contrailD3-container").remove();
+            $(selector).find(".coCharts-container").remove();
             $(selector).append(chartTemplate(chartOptions));
 
             var configDataObj  = createConfigAndData4ContrailD3(chartOptions, chartData);
@@ -121,10 +121,10 @@ define([
             self.chartContainer = new ChartContainer(configDataObj.config, configDataObj.charts);
             self.chartContainer.chartOptions = chartOptions;
 
-            self.chartContainer.render($(selector).find(".contrailD3-container")[0]);
+            self.chartContainer.render($(selector).find(".coCharts-container")[0]);
 
             //Store the chart object as a data attribute so that the chart can be updated dynamically
-            $(selector).find(".contrailD3-container").data('chart', self.chartContainer);
+            $(selector).find(".coCharts-container").data('chart', self.chartContainer);
         }
     }
 
@@ -282,5 +282,5 @@ define([
 
     }
 
-    return LineBarWithFocusChartView;
+    return LineBarChartView;
 });

@@ -77,8 +77,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir) {
         'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
         'contrail-element'            : coreWebDir + '/js/models/ContrailElement',
 
+        'coCharts'                    : coreWebDir + '/js/charts/coreCharts',
+        
         // TODO: We need to discuss a criteria on which we should add definations to this file.
-        'contrailD3'                  : coreWebDir + '/js/chart/contrailD3',
         'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
         'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
         'mon-infra-alert-list-view'   : coreWebDir + '/js/views/AlertListView',

@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/chart/base/Container'
+    'core-basedir/js/charts/base/Container'
 ], function (Container) {
 
     /**
@@ -20,17 +20,17 @@ define([
             return chart.data;
         });
 
-        contrailD3.Container.call(this, config, data);
+        coCharts.Container.call(this, config, data);
         /**
          * Main chart.
          * @protected
-         * @member {contrailD3.Chart}
+         * @member {coCharts.Chart}
          */
         this._mainChart = undefined;
         /**
          * Navigation chart.
          * @protected
-         * @member {contrailD3.Chart}
+         * @member {coCharts.Chart}
          */
         this._navigationChart = undefined;
         /**
@@ -48,7 +48,7 @@ define([
         /**
          * Main chart components.
          * @protected
-         * @member {contrailD3.Components[]}
+         * @member {coCharts.Components[]}
          */
         this._components = [];
         /**
@@ -109,7 +109,7 @@ define([
 
     /**
      * Render navigation chart.
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     NavigationChart.prototype._renderNavigationChart = function () {
 
@@ -119,7 +119,7 @@ define([
 
     /**
      * Render main chart.
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     NavigationChart.prototype._renderMainChart = function () {
 
@@ -130,7 +130,7 @@ define([
     /**
      * Render chart.
      * @param {String} selector - chart's container CSS selector
-     * @returns {contrailD3.NavigationChart}
+     * @returns {coCharts.NavigationChart}
      */
     NavigationChart.prototype.render = function (selector) {
         /*
@@ -192,7 +192,7 @@ define([
         /*
          * Initialize brush mask.
          */
-        this._brushMask = new contrailD3.components.BrushMask(this._brush, this._brushContainer);
+        this._brushMask = new coCharts.components.BrushMask(this._brush, this._brushContainer);
         /*
          * Call brush event handler to apply extent.
          */
@@ -336,8 +336,8 @@ define([
      */
     NavigationChart.prototype._renderInnerMarkdown = function () {
 
-        this._mainContainer = this._container.append("div").attr("class", "contrailD3-main-container row-fluid");
-        this._navigationContainer = this._container.append("div").attr("class", "contrailD3-nav-container row-fluid");
+        this._mainContainer = this._container.append("div").attr("class", "coCharts-main-container row-fluid");
+        this._navigationContainer = this._container.append("div").attr("class", "coCharts-nav-container row-fluid");
     };
 
 
@@ -374,7 +374,7 @@ define([
         /*
          * Create and configure main chart.
          */
-        var container = new contrailD3.Container(this._config.getOptions(), this._data);
+        var container = new coCharts.Container(this._config.getOptions(), this._data);
         container.setMargin(options.margin).setXScale(xScale)
             .setXAxis(xAxis)
             .setY1Axis(y1Axis)

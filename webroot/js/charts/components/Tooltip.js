@@ -40,7 +40,7 @@ define([], function () {
          * Append hidden tooltip element.
          */
         this._contentContainer = this._container.append("div")
-            .attr("class", "contrailD3-tooltip")
+            .attr("class", "coCharts-tooltip")
             .style('visibility', 'hidden')
             .html(this._content);
         /*

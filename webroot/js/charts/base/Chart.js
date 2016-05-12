@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/chart/base/Component'
+    'core-basedir/js/charts/base/Component'
 ], function (Component) {
 
     /**
@@ -31,7 +31,7 @@ define([
      */
     Chart.prototype._update = function (container, data) {
 
-        throw new Error("contrailD3.Chart._update() not implemented");
+        throw new Error("coCharts.Chart._update() not implemented");
     };
 
 

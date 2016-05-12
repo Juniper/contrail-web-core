@@ -7,19 +7,19 @@
  * Following the current naming of model as this is part of models directory. 
  */
 define([
-    'contrailD3',
-    'core-basedir/js/chart/NavigationChart'
-], function(contrailD3, NavigationChart) {
+    'coCharts',
+    'core-basedir/js/charts/NavigationChart'
+], function(coCharts, NavigationChart) {
 
     //Add NavigationChart part of namespace.
-    contrailD3.NavigationChart = NavigationChart;
+    coCharts.NavigationChart = NavigationChart;
 
     /**
      * Hack for now. When a class is extended, dependencies to extend required during declaration are 'require'-d within
      * each file. But some of the function definition directly access the class from Namespace.
-     * This forces to put contrailD3 in global scope.
+     * This forces to put coCharts in global scope.
      */
-    window.contrailD3 = contrailD3;
+    window.coCharts = coCharts;
 
     /**
      * @public
@@ -34,7 +34,7 @@ define([
          */
         this._controlsContainer = undefined;
 
-        contrailD3.NavigationChart.call(this, options, data);
+        coCharts.NavigationChart.call(this, options, data);
     }
 
 
@@ -63,7 +63,7 @@ define([
         /*
          * Call parent class method.
          */
-        contrailD3.NavigationChart.prototype._renderInnerMarkdown.call(this);
+        coCharts.NavigationChart.prototype._renderInnerMarkdown.call(this);
     };
 
 
@@ -82,7 +82,7 @@ define([
          */
         if (manager) {
             var name = this._stringUtil.ucFirst(manager),
-            managerClass = this._classUtil.getClassByName("contrailD3.BarChart" + name + "Strategy");
+            managerClass = this._classUtil.getClassByName("coCharts.BarChart" + name + "Strategy");
             this._navigationChart.setBarChartStrategy(managerClass);
         }
         /*
