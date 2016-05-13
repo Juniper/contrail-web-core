@@ -1096,3 +1096,13 @@ p.error, p.error-text {
     font-weight:600;
     padding-right:3px;
  }
+.headerRowAction{
+    padding-left:5px;
+}
+.contrail-editable-grid-table tr th, .collection-table tr th{
+    padding-left:5px;
+    }
+    .contrail-editable-grid-table{
+    margin-bottom:10px;}
+.ui-accordion .contrail-editable-grid-table{
+    margin-bottom:0px;}
