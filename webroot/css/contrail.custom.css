@@ -1149,7 +1149,7 @@ p.error, p.error-text {
     shape-rendering: crispEdges;
 }
 
-.coCharts-container .tick:first-child line {
+.coCharts-container .tick:first-child line, .coCharts-container .tick:last-child line {
     visibility: hidden;
 }
 

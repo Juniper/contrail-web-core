@@ -147,6 +147,12 @@ define([
         this._mainChart = this._renderMainChart();
         this._navigationChart = this._renderNavigationChart();
         /*
+         * Hide navigation chart x axes grid/ticks.
+         */
+        this._navigationChart.getCanvas()
+            .selectAll(".y-axis line, .y-axis text")
+            .style("visibility", "hidden");
+        /*
          * Replace their resize event handler with empty function.
          * We will use our own resize handler.
          */

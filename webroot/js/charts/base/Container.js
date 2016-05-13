@@ -1237,6 +1237,12 @@ define([], function () {
                 var axis = this["_" + name + number + "Axis"]
                     .tickFormat(this._getFieldFormatterByAxis(name, number));
                 /*
+                 * Align axes ticks if grid required.
+                 */
+                if (this._config.has("options.axes.grid")) {
+                    axis.tickValues(this._getTickValues(scale, name, number));
+                }
+                /*
                  * Rescale axis.
                  */
                 axisContainer.call(axis);
@@ -1371,22 +1377,10 @@ define([], function () {
             .orient(orientation)
             .tickFormat(this._getFieldFormatterByAxis(name, number))
             .outerTickSize(0);
-        if (name === "y" && axis.tickValues() === null) {
-            axis.tickValues(this._getTickValues(scale, name, number));
-        }
-        /*
-         * Show axis grid if required.
-         */
         if (this._config.has("options.axes.grid")) {
-            axis.innerTickSize(tickSize);
+            axis.innerTickSize(tickSize)
+                .tickValues(this._getTickValues(scale, name, number));
         }
-        /**
-         * Configure ticks
-         */
-        if (name == 'y') {
-            axis.ticks(this._config.get("options.axes." + name + "Ticks"));
-        }
-
         /*
          * Append axis to the canvas.
          */
@@ -1417,19 +1411,16 @@ define([], function () {
      */
     Container.prototype._getTickValues = function(scale, name, number) {
 
-        var height = scale.range()[0];
-        var amount = this._config.get("options.axes.grid.ticksAmount", height / 25);
+        var min = d3.min(scale.range());
+        var max = d3.max(scale.range());
 
-        var domain = scale.domain();
-        var min = domain[0];
-        var max = domain[1];
+        var amount = this._config.get("options.axes.grid." + name + "Ticks", max / 25);
         var step = (max - min) / (amount - 1);
-        var formatter = this._getFieldFormatterByAxis(name, number);
 
         var ticks = [];
 
         for (var i = min; i <= max; i += step ) {
-            ticks.push(i);
+            ticks.push(scale.invert(i));
         }
 
         return ticks;

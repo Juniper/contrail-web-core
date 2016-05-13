@@ -265,7 +265,8 @@ define([
 
         config.options.axes = {
             grid: {
-                ticksAmount: 5,
+                xTicks: 10,
+                yTicks: 5
             },
             y1Label: options.y1AxisLabel,
             y2Label: options.y2AxisLabel,
