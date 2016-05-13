@@ -36,6 +36,17 @@ define([
 
 
     /**
+     * Check chart is bar chart.
+     * @public
+     * @returns {Boolean}
+     */
+    Chart.prototype.isBarChart = function() {
+    
+        return this.getClassName() === "coCharts.BarChart";
+    };
+
+
+    /**
      * Set chart data.
      * @public
      * @param {Object[]} data

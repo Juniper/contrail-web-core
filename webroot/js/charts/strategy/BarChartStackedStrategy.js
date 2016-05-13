@@ -43,13 +43,18 @@ define([
     BarChartStackedStrategy.prototype.getY = function (chart, d, i) {
 
         var y = chart._height - this.getHeight(chart, d, i);
+        var charts = this.getCharts();
 
-        for (var j = 0; j < this._charts.length; j++) {
-            if (chart == this._charts[j]) {
-                break;
-            } else {
-                y -= this.getHeight(this._charts[j], this._charts[j].getData()[i], i);
+        for (var j = 0; j < charts.length; j ++) {
+            if (! this._charts[j].isEnabled) {
+                continue;
             }
+
+            if (chart == charts[j].chart) {
+                break;
+            }
+
+            y -= this.getHeight(charts[j].chart, charts[j].chart.getData()[i], i);
         }
 
         return y;
@@ -61,7 +66,7 @@ define([
      */
     BarChartStackedStrategy.prototype.getHeight = function (chart, d, i) {
 
-        return (chart._height - chart._yScale(chart._yAccessor(d))) / this._charts.length;
+        return (chart._height - chart._yScale(chart._yAccessor(d))) / this.getSize();
     };
     
     return BarChartStackedStrategy;

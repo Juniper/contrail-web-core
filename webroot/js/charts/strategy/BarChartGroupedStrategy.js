@@ -23,7 +23,7 @@ define([
      */
     BarChartGroupedStrategy.prototype.getWidth = function (chart) {
 
-        return (chart.getWidth() / chart.getData().length - this.getGap(chart)) / this._charts.length;
+        return (chart.getWidth() / chart.getData().length - this.getGap(chart)) / this.getSize();
     };
 
 
@@ -31,12 +31,14 @@ define([
      * @override
      */
     BarChartGroupedStrategy.prototype.getX = function (chart, d, i) {
+
+        var charts = this.getCharts();
         /*
          * Get chart number.
          */
         var j;
-        for (j = 0; j < this._charts.length; j++) {
-            if (chart == this._charts[j]) {
+        for (j = 0; j < charts.length; j ++) {
+            if (chart == charts[j].chart) {
                 break;
             }
         }
@@ -48,7 +50,7 @@ define([
          * Calculate and return bar x position.
          */
         var delimeter = chart.getData().length > 1 ? 1 : 0;
-        return chart._xScale(chart._xAccessor(d)) - barWidth * this._charts.length / (chart.getData().length - delimeter) * i + barWidth * j;
+        return chart._xScale(chart._xAccessor(d)) - barWidth * charts.length / (chart.getData().length - delimeter) * i + barWidth * j;
     };
 
 

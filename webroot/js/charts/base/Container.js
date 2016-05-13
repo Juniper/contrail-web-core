@@ -80,6 +80,11 @@ define([], function () {
          */
         this._stringUtil = new coCharts.utils.StringUtil();
         /**
+         * @private
+         * @member {contrailD3.BarChartManager}
+         */
+        this._barChartManager = new coCharts.BarChartManager(this);
+        /**
          * Chart unique id.
          * @private
          * @member {String}
@@ -377,31 +382,6 @@ define([], function () {
 
 
     /**
-     * Update bar charts manager.
-     * @private
-     * @returns {coCharts.BarChartManager}
-     */
-    Container.prototype._updateBarChartManager = function () {
-        /*
-         * Create bar chart manager if not yet.
-         */
-        if (!this._barChartManager) {
-            this._barChartManager = new coCharts.BarChartManager(this);
-        }
-        /*
-         * Add all charts to the manager. It will reject unnecessary automatically.
-         */
-        this._charts.forEach(function (chartData) {
-            this._barChartManager.add(chartData.chart);
-        }, this);
-        /*
-         * Return manager.
-         */
-        return this._barChartManager;
-    };
-
-
-    /**
      * Add component to the canvas.
      * @param {coCharts.Component} component
      * @param {String} [context]
@@ -454,9 +434,8 @@ define([], function () {
         /*
          * Set a manager if this bar chart.
          */
-        if (component.getClassName() == "coCharts.BarChart") {
-            var manager = this._updateBarChartManager();
-            component.setManager(manager);
+        if (component.isBarChart()) {
+            component.setManager(this._barChartManager);
         }
 
         return this;
@@ -972,15 +951,24 @@ define([], function () {
 
 
     /**
-     * Disable inner chart.
+     * Disable inner charts.
      * @public
-     * @param {Integer} number - chart number
+     * @param {String} field - x field
+     * @param {Integer} number - y axis number
      */
-    Container.prototype.disable = function(number) {
+    Container.prototype.disable = function(field, number) {
         /*
          * Reset isEnabled flag.
          */
-        this._charts[number].isEnabled = false;
+        this._charts.forEach(function(context) {
+            if (context.yField === field && context.y === number) {
+                context.isEnabled = false;
+            }
+        }, this);
+        /*
+         * Update bar chart's manager.
+         */
+        this._setBarChartManager();
         /*
          * Update container.
          */
@@ -989,19 +977,42 @@ define([], function () {
 
 
     /**
-     * Enable inner chart.
+     * Enable inner charts.
      * @public
-     * @param {Integer} number - chart number
+     * @param {String} field - x field
+     * @param {Integer} number - y axis number
      */
-    Container.prototype.enable = function(number) {
+    Container.prototype.enable = function(field, number) {
         /*
-         * Reset isEnabled flag.
+         * Set isEnabled flag.
          */
-        this._charts[number].isEnabled = true;
+        this._charts.forEach(function(context) {
+            if (context.yField === field && context.y === number) {
+                context.isEnabled = true;
+            }
+        }, this);
+        /*
+         * Update bar chart's manager.
+         */
+        this._setBarChartManager();
         /*
          * Update container.
          */
         this.update();
+    };
+
+
+    /**
+     * Set current bar chart manager to the charts set.
+     * @private
+     */
+    Container.prototype._setBarChartManager = function() {
+
+        this._charts.forEach(function(context) {
+            if (context.chart.isBarChart()) {
+                context.chart.setManager(this._barChartManager);
+            }
+        }, this);
     };
 
 

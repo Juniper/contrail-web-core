@@ -222,30 +222,32 @@ define([
 
 
     /**
-     * Disable inner chart.
+     * Disable inner charts.
      * @public
-     * @param {Integer} number
+     * @param {String} field - x field
+     * @param {Integer} number - y axis number
      */
-    NavigationChart.prototype.disable = function(number) {
+    NavigationChart.prototype.disable = function(field, number) {
         /*
          * Redraw charts.
          */
-        this._mainChart.disable(number);
-        this._navigationChart.disable(number);
+        this._mainChart.disable(field, number);
+        this._navigationChart.disable(field, number);
     };
 
 
     /**
-     * Enable inner chart.
+     * Enable inner charts.
      * @public
-     * @param {Integer} number
+     * @param {String} field - x field
+     * @param {Integer} number - y axis number
      */
-    NavigationChart.prototype.enable = function(number) {
+    NavigationChart.prototype.enable = function(field, number) {
         /*
          * Redraw charts.
          */
-        this._mainChart.enable(number);
-        this._navigationChart.enable(number);
+        this._mainChart.enable(field, number);
+        this._navigationChart.enable(field, number);
     };
 
 

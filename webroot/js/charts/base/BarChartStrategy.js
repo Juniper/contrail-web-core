@@ -15,6 +15,36 @@ define([], function () {
 
 
     /**
+     * Get bar chart's context list.
+     * @public
+     * @returns {Object[]}
+     */
+    BarChartStrategy.prototype.getCharts = function() {
+
+        return this._charts.filter(function(context) {
+            return context.chart.isBarChart();
+        });
+    };
+
+
+    /**
+     * Get managed bar charts amount.
+     * @public
+     * @returns {Integer}
+     */
+    BarChartStrategy.prototype.getSize = function() {
+
+        return this._charts.reduce(function(number, context) {
+            if (context.chart.isBarChart()) {
+                return ++ number;
+            } else {
+                return number;
+            }
+        }, 0);
+    };
+
+
+    /**
      * Get gap value.
      * Method calculate necessary gap value between bars or bars groups.
      * @public

@@ -15,7 +15,7 @@ define([], function () {
          * @private
          * @member {coCharts.BarChart[]}
          */
-        this._charts = [];
+        this._charts = chart._charts;
         /**
          * Reference to the main chart.
          * @private
@@ -51,7 +51,7 @@ define([], function () {
         /*
          * Check chart class.
          */
-        if (chart.getClassName() != "coCharts.BarChart") {
+        if (! chart.isBarChart()) {
             return;
         }
         /*
@@ -75,7 +75,7 @@ define([], function () {
         /*
          * Check chart class.
          */
-        if (chart.getClassName() != "coCharts.BarChart") {
+        if (! chart.isBarChart()) {
             return;
         }
         /*
