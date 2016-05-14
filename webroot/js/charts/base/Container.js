@@ -1175,17 +1175,8 @@ define([], function () {
             .attr("transform", "translate(" + this._margin.left + ", " + this._margin.top + ")");
         if (canvas.size() == 1) {
             this._canvas = canvas;
-        } 
-
-        var chartsContainer = this._canvas.selectAll("g.charts-container")
-            .data([0], function (d) {
-                return d;
-            }).enter()
-            .append("g")
-            .attr("class", "charts-container");
-        if (chartsContainer.size() == 1) {
-            this._chartsContainer = chartsContainer;
         }
+
         /*
          * Append x axes.
          */
@@ -1199,6 +1190,16 @@ define([], function () {
         this._renderAxis([this._height, 0], "y", 1, "left", [0, 0], -this._width);
         if (this._y2Scale) {
             this._renderAxis([this._height, 0], "y", 2, "right", [this._width, 0], -this._width);
+        }
+
+        var chartsContainer = this._canvas.selectAll("g.charts-container")
+            .data([0], function (d) {
+                return d;
+            }).enter()
+            .append("g")
+            .attr("class", "charts-container");
+        if (chartsContainer.size() == 1) {
+            this._chartsContainer = chartsContainer;
         }
     };
 

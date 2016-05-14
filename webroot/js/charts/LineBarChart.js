@@ -181,7 +181,7 @@ define([
 
         var self = this;
 
-        var options = this._config.find("metaData", "isAvailable", function(d) {
+        var options = this._config.find("metaData", "enable", function(d) {
             return d === true;
         }, "id");
 
