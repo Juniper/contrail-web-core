@@ -232,6 +232,11 @@ define([
                 return formattedValue;
             } else if (contrail.checkIfExist(this.format[formatterKey])) {
                 return this.format[formatterKey](value, options);
+            }
+            // if formatterKey is not defined then return stringified object
+            // else we will eval the formatterKey
+            else if ((_.isObject(value)) && (formatterKey === undefined)) {
+                return JSON.stringify(value);
             } else {
                 var obj = contrail.checkIfExist(options) ? options.obj : null,
                     iconClass = contrail.checkIfExist(options) ? options.iconClass : null,
@@ -353,3 +358,4 @@ define([
     };
     return CoreFormatters;
 });
+
