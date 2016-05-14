@@ -46,7 +46,6 @@ define([
         renderChart: function (selector, viewConfig, chartViewModel) {
             var self = this,
                 data = chartViewModel.getItems(),
-
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 chartViewConfig;
 
@@ -56,11 +55,7 @@ define([
 
             chartViewConfig = getChartViewConfig(data, viewConfig.chartOptions);
 
-            setData2ChartAndRender(self, selector, chartViewConfig, chartViewModel, LineBarChartContainer);
-
-            if (widgetConfig !== null) {
-                this.renderView4Config(selector.find('.coCharts-container'), chartViewModel, widgetConfig, null, null, null);
-            }
+            setData2ChartAndRender(self, selector, chartViewConfig, chartViewModel, LineBarChartContainer, widgetConfig);
         },
 
         renderMessage: function(message, selector, chartOptions) {
@@ -97,7 +92,7 @@ define([
         }
     });
 
-    function setData2ChartAndRender(self, selector, chartViewConfig, chartViewModel, ChartContainer) {
+    function setData2ChartAndRender(self, selector, chartViewConfig, chartViewModel, ChartContainer, widgetConfig) {
         var chartTemplate = contrail.getTemplate4Id("coCharts-chart-template"),
             chartData = chartViewConfig.chartData,
             checkEmptyDataCB = function (data) {
@@ -116,8 +111,8 @@ define([
             $(selector).find(".coCharts-container").remove();
             $(selector).append(chartTemplate(chartOptions));
 
-            var configDataObj  = createConfigAndData4ContrailD3(chartOptions, chartData);
-            
+            var configDataObj  = createConfigAndData4coChart(chartOptions, chartData);
+
             self.chartContainer = new ChartContainer(configDataObj.config, configDataObj.charts);
             self.chartContainer.chartOptions = chartOptions;
 
@@ -125,6 +120,24 @@ define([
 
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).find(".coCharts-container").data('chart', self.chartContainer);
+
+            if (widgetConfig !== null) {
+                if (contrail.checkIfExist(widgetConfig.viewConfig.controls.right.custom.filterY) &&
+                    widgetConfig.viewConfig.controls.right.custom.filterY.enable) {
+                    /**
+                     * extend the filterY configuration.
+                     */
+                    widgetConfig.viewConfig.controls.right.custom.filterY = $.extend(true,
+                        {
+                            iconClass: 'icon-filter',
+                            title: 'Filter Y Axis',
+                            events: cowu.getFilterEvent(),
+                            viewConfig: getWidgetFilterViewConfig(selector, configDataObj)
+                        }, widgetConfig.viewConfig.controls.right.custom.filterY);
+                }
+                self.renderView4Config(selector.find('.coCharts-container'), chartViewModel, widgetConfig, null, null, null);
+            }
+
         }
     }
 
@@ -201,7 +214,7 @@ define([
         return forceY2;
     };
     
-    function createConfigAndData4ContrailD3(options, data) {
+    function createConfigAndData4coChart(options, data) {
 
         var config = {
             metaData : {},
@@ -231,14 +244,15 @@ define([
                         chartDataObj[options.xAccessor] = valueObj[options.xAccessor];
                         chartDataObj[key] = value;
                         if (metaKeyData[key] == undefined) {
+                            var optionsMetaData = options.metaData[key];
                             metaKeyData[key] = {
                                 type: function(bar){return (bar) ? 'bar': 'line';}(series.bar),
-                                color: options.metaData[key] && options.metaData[key].color || cowc.D3_COLOR_CATEGORY5[idx],
+                                color: optionsMetaData && optionsMetaData.color || cowc.D3_COLOR_CATEGORY5[idx],
                                 xField: options.xAccessor,
                                 yField: key,
-                                y: series.y || function(bar){return (bar) ? 1 : 2;}(series.bar),
+                                y: optionsMetaData && optionsMetaData.y || function(bar){return (bar) ? 1 : 2;}(series.bar),
                                 data: [],
-                                interpolate: options.metaData[key] && options.metaData[key].interpolate || "step-before",
+                                interpolate: optionsMetaData && optionsMetaData.interpolate || "step-before",
                             };
                         }
                         metaKeyData[key].data.push(chartDataObj);
@@ -265,8 +279,8 @@ define([
 
         config.options.axes = {
             grid: {
-                xTicks: 10,
-                yTicks: 5
+                xTicks: (options.xTicks != undefined) ? options.xTicks : 12,
+                yTicks: (options.yTicks != undefined) ? options.yTicks : 4
             },
             y1Label: options.y1AxisLabel,
             y2Label: options.y2AxisLabel,
@@ -274,8 +288,7 @@ define([
             forceY2: options.forceY2,
             x1Formatter: options.xFormatter,
             y1Formatter: options.y1Formatter,
-            y2Formatter: options.y2Formatter,
-            yTicks: (options.yTicks != undefined) ? options.yTicks : 4
+            y2Formatter: options.y2Formatter
         };
 
         config.options.container.showContainer = options.showLegend;
@@ -287,6 +300,142 @@ define([
         };
 
     }
+
+    function getWidgetFilterViewConfig(selector, configDataObj) {
+        var metaData = configDataObj.config.metaData,
+            charts = configDataObj.charts;
+
+        function convertToLineChart(axis) {
+            var chartContainer = $(selector).find(".coCharts-container").data('chart');
+            chartContainer._convertTo('coCharts.LineChart', axis, null);
+        };
+
+        function convertToBarChart(axis, type) {
+            var chartContainer = $(selector).find(".coCharts-container").data('chart');
+            chartContainer._convertTo('coCharts.BarChart', axis, type || 'grouped');
+        };
+
+        function getYAxisFieldItems(axis) {
+            var items = [];
+            _.each(metaData, function (metaVal, metaKey) {
+                if (metaVal.y == axis) {
+                    items.push({
+                        text: metaVal.label || metaKey,
+                        checked: metaVal.enable,
+                        events: {
+                            click: function (event) {
+                            }
+                        }
+                    });
+                }
+            });
+            return items;
+        };
+
+        function radioSelector(axis, valueType) {
+            return $(selector).find('input:radio[name="control-panel-filter-' + getYAxisId(axis, "type") + '"][value="' + valueType + '"]');
+        };
+
+        function updateFilterOptionsLineClick(axis) {
+            var updateAxis = (axis == 1) ? 2 : 1;
+
+            if ($(radioSelector(updateAxis, "Stacked Bars")).prop('disabled')) {
+                $(radioSelector(updateAxis, "Stacked Bars")).prop('disabled', false);
+            }
+            if ($(radioSelector(updateAxis, "Grouped Bars")).prop('disabled')) {
+                $(radioSelector(updateAxis, "Grouped Bars")).prop('disabled', false);
+            }
+        };
+
+        function updateFilterOptionsBarClick(axis) {
+            var updateAxis = (axis == 1) ? 2 : 1;
+
+            if (!$(radioSelector(updateAxis, "Stacked Bars")).prop('disabled')) {
+                $(radioSelector(updateAxis, "Stacked Bars")).prop('disabled', true);
+            }
+            if (!$(radioSelector(updateAxis, "Grouped Bars")).prop('disabled')) {
+                $(radioSelector(updateAxis, "Grouped Bars")).prop('disabled', true);
+            }
+            if ($(radioSelector(updateAxis, "Line")).prop('disabled')) {
+                $(radioSelector(updateAxis, "Line")).prop('disabled', false);
+            }
+        };
+
+        function lineBarSwitcherItems(axis) {
+            var axisType;
+            _.each(charts, function (chart) {
+                if (chart.y == axis) {
+                    axisType = chart.type;
+                }
+            });
+
+            return [
+                {
+                    text: 'Line',
+                    selected: (axisType == 'line'),
+                    events: {
+                        change: function (event) {
+                            convertToLineChart(axis);
+                            updateFilterOptionsLineClick(axis);
+                        }
+                    }
+                },
+                {
+                    text: 'Stacked Bars',
+                    selected: (axisType == 'bar'),
+                    disabled: (axisType == 'line'),
+                    events: {
+                        change: function (event) {
+                            convertToBarChart(axis, 'stacked');
+                            updateFilterOptionsBarClick(axis);
+                        }
+                    }
+                },
+                {
+                    text: 'Grouped Bars',
+                    disabled: (axisType == 'line'),
+                    events: {
+                        change: function (event) {
+                            convertToBarChart(axis);
+                            updateFilterOptionsBarClick(axis);
+                        }
+                    }
+                }
+            ];
+        };
+
+        function getYAxisId(axis, name) {
+            return 'by-y' + axis + '-' + name;
+        };
+        
+        return {
+            groupType: '2-cols',
+            groups: [
+                [{
+                    id: getYAxisId(1, 'type'),
+                    title: 'Y1 Axis Type',
+                    type: 'radio',
+                    items: lineBarSwitcherItems(1)
+                }, {
+                    id: getYAxisId(1, 'field'),
+                    title: 'Y1 Axis Field',
+                    type: 'checkbox',
+                    items: getYAxisFieldItems(1)
+                }],
+                [{
+                    id: getYAxisId(2, 'type'),
+                    title: 'Y2 Axis Type',
+                    type: 'radio',
+                    items: lineBarSwitcherItems(2)
+                }, {
+                    id: getYAxisId(2, 'field'),
+                    title: 'Y2 Axis Field',
+                    type: 'checkbox',
+                    items: getYAxisFieldItems(2)
+                }]
+            ]
+        };
+    };
 
     return LineBarChartView;
 });

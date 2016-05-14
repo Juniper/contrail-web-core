@@ -1144,7 +1144,7 @@ p.error, p.error-text {
  }
 
 .coCharts-container .tick line {
-    stroke: lightgrey !important;
+    stroke: #e5e5e5 !important;
     stroke-width: 1 !important;
     shape-rendering: crispEdges;
 }
@@ -1157,6 +1157,10 @@ p.error, p.error-text {
     fill: none;
     stroke: black;
     stroke-width: 1px;
+}
+
+.coCharts-container .bar-chart .bar {
+    fill-opacity: .75;
 }
 
 .coCharts-container .line-chart .line {
