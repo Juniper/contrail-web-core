@@ -433,12 +433,26 @@ define([
             "MAX(cpu_stats.peak_virt_memory)": "byte",
             "MIN(cpu_stats.peak_virt_memory)": "byte",
 
+            "cpu_stats.disk_allocated_bytes": "byte",
+            "SUM(cpu_stats.disk_allocated_bytes)": "byte",
+            "MAX(cpu_stats.disk_allocated_bytes)": "byte",
+            "MIN(cpu_stats.disk_allocated_bytes)": "byte",
+
+            "cpu_stats.disk_used_bytes": "byte",
+            "SUM(cpu_stats.disk_used_bytes)": "byte",
+            "MAX(cpu_stats.disk_used_bytes)": "byte",
+            "MIN(cpu_stats.disk_used_bytes)": "byte",
+
             // msg_info
             "msg_info.bytes": "byte",
             "SUM(msg_info.bytes)": "byte",
             "MAX(msg_info.bytes)": "byte",
             "MIN(msg_info.bytes)": "byte",
 
+            "msg_info.messages": "number",
+            "SUM(msg_info.messages)": "number",
+            "MAX(msg_info.messages)": "number",
+            "MIN(msg_info.messages)": "number",
 
             // vn_stats
             "vn_stats.in_bytes": "byte",
@@ -450,6 +464,14 @@ define([
             "SUM(vn_stats.out_bytes)": "byte",
             "MAX(vn_stats.out_bytes)": "byte",
             "MIN(vn_stats.out_bytes)": "byte",
+
+            "SUM(vn_stats.in_tpkts)": "number",
+            "MAX(vn_stats.in_tpkts)": "number",
+            "MIN(vn_stats.in_tpkts)": "number",
+
+            "SUM(vn_stats.out_tpkts)": "number",
+            "MAX(vn_stats.out_tpkts)": "number",
+            "MIN(vn_stats.out_tpkts)": "number",
 
             // tx_socket_stats
             "tx_socket_stats.bytes": "byte",
@@ -472,6 +494,126 @@ define([
             "SUM(rx_socket_stats.average_bytes)": "byte",
             "MAX(rx_socket_stats.average_bytes)": "byte",
             "MIN(rx_socket_stats.average_bytes)": "byte",
+
+            //counters
+            "counters": "number",
+            "COUNT(counters)": "number",
+
+            "SUM(counters.keys)": "number",
+            "MAX(counters.keys)": "number",
+            "MIN(counters.keys)": "number",
+
+            "updates": "number",
+            "SUM(counters.updates)": "number",
+            "MAX(counters.updates)": "number",
+            "MIN(counters.updates)": "number",
+
+            "partitions": "number",
+            "SUM(counters.partitions)": "number",
+            "MAX(counters.partitions)": "number",
+            "MIN(counters.partitions)": "number",
+
+            //cql stats
+            "cql_stats.stats": "number",
+
+            "cql_stats.stats.total_connections": "number",
+            "SUM(cql_stats.stats.total_connections)": "number",
+            "MAX(cql_stats.stats.total_connections)": "number",
+            "MIN(cql_stats.stats.total_connections)": "number",
+
+            "cql_stats.stats.available_connections": "number",
+            "SUM(cql_stats.stats.available_connections)": "number",
+            "MAX(cql_stats.stats.available_connections)": "number",
+            "MIN(cql_stats.stats.available_connections)": "number",
+
+            "cql_stats.stats.exceeded_pending_requests_water_mark": "number",
+            "SUM(cql_stats.stats.exceeded_pending_requests_water_mark)": "number",
+            "MAX(cql_stats.stats.exceeded_pending_requests_water_mark)": "number",
+            "MIN(cql_stats.stats.exceeded_pending_requests_water_mark)": "number",
+
+            "cql_stats.stats.exceeded_write_bytes_water_mark": "number",
+            "SUM(cql_stats.stats.exceeded_write_bytes_water_mark)": "number",
+            "MAX(cql_stats.stats.exceeded_write_bytes_water_mark)": "number",
+            "MIN(cql_stats.stats.exceeded_write_bytes_water_mark)": "number",
+
+            // CollectorDbStats table_info
+            "table_info.reads": "number",
+            "SUM(table_info.reads)": "number",
+            "MAX(table_info.reads)": "number",
+            "MIN(table_info.reads)": "number",
+
+            "table_info.read_fails": "number",
+            "SUM(table_info.read_fails)": "number",
+            "MAX(table_info.read_fails)": "number",
+            "MIN(table_info.read_fails)": "number",
+
+            "table_info.writes": "number",
+            "SUM(table_info.writes)": "number",
+            "MAX(table_info.writes)": "number",
+            "MIN(table_info.writes)": "number",
+
+            "table_info.write_fails": "number",
+            "SUM(table_info.write_fails)": "number",
+            "MAX(table_info.write_fails)": "number",
+            "MIN(table_info.write_fails)": "number",
+
+            "flow_rate": "number",
+            "SUM(flow_rate.added_flows)": "number",
+            "MAX(flow_rate.added_flows)": "number",
+            "MIN(flow_rate.added_flows)": "number",
+
+            "SUM(flow_rate.max_flow_adds_per_second)": "number",
+            "MAX(flow_rate.max_flow_adds_per_second)": "number",
+            "MIN(flow_rate.max_flow_adds_per_second)": "number",
+
+            "SUM(flow_rate.min_flow_adds_per_second)": "number",
+            "MAX(flow_rate.min_flow_adds_per_second)": "number",
+            "MIN(flow_rate.min_flow_adds_per_second)": "number",
+
+            "SUM(flow_rate.deleted_flows)": "number",
+            "MAX(flow_rate.deleted_flows)": "number",
+            "MIN(flow_rate.deleted_flows)": "number",
+
+            "SUM(flow_rate.max_flow_deletes_per_second)": "number",
+            "MAX(flow_rate.max_flow_deletes_per_second)": "number",
+            "MIN(flow_rate.max_flow_deletes_per_second)": "number",
+
+            "SUM(flow_rate.min_flow_deletes_per_second)": "number",
+            "MAX(flow_rate.min_flow_deletes_per_second)": "number",
+            "MIN(flow_rate.min_flow_deletes_per_second)": "number",
+
+            "SUM(flow_rate.active_flows)": "number",
+            "MAX(flow_rate.active_flows)": "number",
+            "MIN(flow_rate.active_flows)": "number",
+
+            // errors
+            "SUM(errors.write_tablespace_fails)": "number",
+            "MAX(errors.write_tablespace_fails)": "number",
+            "MIN(errors.write_tablespace_fails)": "number",
+
+            "SUM(errors.read_tablespace_fails)": "number",
+            "MAX(errors.read_tablespace_fails)": "number",
+            "MIN(errors.read_tablespace_fails)": "number",
+
+            "SUM(errors.write_table_fails)": "number",
+            "MAX(errors.write_table_fails)": "number",
+            "MIN(errors.write_table_fails)": "number",
+
+            "SUM(errors.read_table_fails)": "number",
+            "MAX(errors.read_table_fails)": "number",
+            "MIN(errors.read_table_fails)": "number",
+
+            "SUM(errors.write_column_fails)": "number",
+            "MAX(errors.write_column_fails)": "number",
+            "MIN(errors.write_column_fails)": "number",
+
+            "SUM(errors.write_batch_column_fails)": "number",
+            "MAX(errors.write_batch_column_fails)": "number",
+            "MIN(errors.write_batch_column_fails)": "number",
+
+            "SUM(errors.read_column_fails)": "number",
+            "MAX(errors.read_column_fails)": "number",
+            "MIN(errors.read_column_fails)": "number",
 
             // rx_message_stats
             "rx_message_stats.bytes": "byte",
@@ -533,6 +675,48 @@ define([
             "SUM(if_stats.out_bytes)": "byte",
             "MAX(if_stats.out_bytes)": "byte",
             "MIN(if_stats.out_bytes)": "byte",
+
+            "if_stats.in_pkts": "number",
+            "SUM(if_stats.in_pkts)": "number",
+            "MAX(if_stats.in_pkts)": "number",
+            "MIN(if_stats.in_pkts)": "number",
+
+            "if_stats.out_pkts": "number",
+            "SUM(if_stats.out_pkts)": "number",
+            "MAX(if_stats.out_pkts)": "number",
+            "MIN(if_stats.out_pkts)": "number",
+
+            // statistics_table_info
+            "statistics_table_info.reads": "number",
+            "SUM(statistics_table_info.reads)": "number",
+            "MAX(statistics_table_info.reads)": "number",
+            "MIN(statistics_table_info.reads)": "number",
+
+            "statistics_table_info.read_fails": "number",
+            "SUM(statistics_table_info.read_fails)": "number",
+            "MAX(statistics_table_info.read_fails)": "number",
+            "MIN(statistics_table_info.read_fails)": "number",
+
+            "statistics_table_info.writes": "number",
+            "SUM(statistics_table_info.writes)": "number",
+            "MAX(statistics_table_info.writes)": "number",
+            "MIN(statistics_table_info.writes)": "number",
+
+            "statistics_table_info.write_fails": "number",
+            "SUM(statistics_table_info.write_fails)": "number",
+            "MAX(statistics_table_info.write_fails)": "number",
+            "MIN(statistics_table_info.write_fails)": "number",
+
+            //phy_if_band
+            "phy_if_band.in_bandwidth_usage": "byte",
+            "SUM(phy_if_band.in_bandwidth_usage)": "byte",
+            "MAX(phy_if_band.in_bandwidth_usage)": "byte",
+            "MIN(phy_if_band.in_bandwidth_usage)": "byte",
+
+            "phy_if_band.out_bandwidth_usage": "byte",
+            "SUM(phy_if_band.out_bandwidth_usage)": "byte",
+            "MAX(phy_if_band.out_bandwidth_usage)": "byte",
+            "MIN(phy_if_band.out_bandwidth_usage)": "byte",
 
             // info_stats
             "info_stats.read_kbytes": "kilo-byte",

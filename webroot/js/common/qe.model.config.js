@@ -148,7 +148,13 @@ define([
                                 checkedFields.remove(nonAggKey);
                             }
                         }
-                    } else if (key != "T" && isEnableMap[key]) {
+                    }
+                    // don't select percentiles, uuid, T and source (only for stats) when we do a select all
+                    else if((key.indexOf("PERCENTILES(") > -1) && (tableType == cowc.QE_STAT_TABLE_TYPE)) {
+                        checkedFields.remove(key);
+                    } else if (key == 'Source' && tableType != cowc.QE_STAT_TABLE_TYPE) {
+                        checkedFields.push(key);
+                    } else if (['T', 'Source', 'UUID'].indexOf(key) == -1 && isEnableMap[key]) {
                         checkedFields.push(key);
                     }
                 }
