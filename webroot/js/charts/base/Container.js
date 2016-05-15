@@ -454,10 +454,6 @@ define([], function () {
          */
         var index = this._getChartIndex(chart);
         /*
-         * Remove chart from manager.
-         */
-        this._barChartManager.remove(chart);
-        /*
          * Remove chart.
          */
         chart._remove(d3.select(this._canvas.selectAll(".chart")[0][index]));

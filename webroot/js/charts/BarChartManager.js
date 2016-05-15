@@ -43,57 +43,6 @@ define([], function () {
 
 
     /**
-     * Remove bar chart.
-     * @public
-     * @param {coCharts.BarChart} chart
-     */
-    BarChartManager.prototype.remove = function (chart) {
-        /*
-         * Check chart class.
-         */
-        if (! chart.isBarChart()) {
-            return;
-        }
-        /*
-         * Find and remove chart.
-         */
-        for (var i = 0; i < this._charts.length; i++) {
-            if (chart == this._charts[i]) {
-                this._charts.splice(i, 1);
-                break;
-            }
-        }
-    };
-
-
-    /**
-     * Add bar chart.
-     * @public
-     * @param {coCharts.BarChart} chart
-     */
-    BarChartManager.prototype.add = function (chart) {
-        /*
-         * Check chart class.
-         */
-        if (! chart.isBarChart()) {
-            return;
-        }
-        /*
-         * Check chart already registered.
-         */
-        for (var i = 0; i < this._charts.length; i++) {
-            if (chart == this._charts[i]) {
-                return;
-            }
-        }
-        /*
-         * Add chart.
-         */
-        this._charts.push(chart);
-    };
-
-
-    /**
      * Get gap value.
      * Method calculate necessary gap value between bars or bars groups.
      * @public
