@@ -92,10 +92,6 @@ define([
         var charts = this.getCharts();
 
         for (var j = 0; j < charts.length; j ++) {
-            if (! charts[j].isEnabled) {
-                continue;
-            }
-
             if (chart == charts[j].chart) {
                 break;
             }

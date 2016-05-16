@@ -46,7 +46,7 @@ define([
     /**
      * @override
      */
-    BarChart.prototype._update = function (container, data, isEnabled) {
+    BarChart.prototype._update = function (container, data, enable) {
         /*
          * Update data.
          */
@@ -58,7 +58,7 @@ define([
         /*
          * Append bars.
          */
-        if (isEnabled !== false) {
+        if (enable !== false) {
             this._render(container);
         }
     };

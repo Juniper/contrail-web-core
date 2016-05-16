@@ -383,7 +383,7 @@ define([], function () {
             /*
              * Update child chart.
              */
-            context.chart._update(context.container, this._data[i], context.isEnabled);
+            context.chart._update(context.container, this._data[i], context.enable);
         }, this);
     };
 
@@ -431,7 +431,7 @@ define([], function () {
             x: options.x || 1,
             y: options.y || 1,
             container: container,
-            isEnabled: true
+            enable: true
         };
         /*
          * Copy other options.
@@ -975,7 +975,9 @@ define([], function () {
             /*
              * Render chart.
              */
-            context.chart._render(context.container);
+            if (context.enable) {
+                context.chart._render(context.container);
+            }
         }, this);
         /*
          * Render components.
@@ -1001,11 +1003,11 @@ define([], function () {
      */
     Container.prototype.disable = function(field, number) {
         /*
-         * Reset isEnabled flag.
+         * Reset enable flag.
          */
         this._charts.forEach(function(context) {
             if (context.yField === field && context.y === number) {
-                context.isEnabled = false;
+                context.enable = false;
             }
         }, this);
         /*
@@ -1027,11 +1029,11 @@ define([], function () {
      */
     Container.prototype.enable = function(field, number) {
         /*
-         * Set isEnabled flag.
+         * Set enable flag.
          */
         this._charts.forEach(function(context) {
             if (context.yField === field && context.y === number) {
-                context.isEnabled = true;
+                context.enable = true;
             }
         }, this);
         /*

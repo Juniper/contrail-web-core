@@ -49,7 +49,7 @@ define([
     /**
      * @override
      */
-    LineChart.prototype._update = function (container, data, isEnabled) {
+    LineChart.prototype._update = function (container, data, enable) {
         /*
          * Update data.
          */
@@ -61,7 +61,7 @@ define([
         /*
          * Append line.
          */
-        if (isEnabled !== false) {
+        if (enable !== false) {
             this._render(container);
         }
     };

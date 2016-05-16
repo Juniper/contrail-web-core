@@ -36,7 +36,7 @@ define([], function () {
     BarChartStrategy.prototype.getCharts = function() {
 
         return this._charts.filter(function(context) {
-            return context.chart.isBarChart();
+            return context.chart.isBarChart() && context.enable;
         });
     };
 
@@ -48,7 +48,7 @@ define([], function () {
      */
     BarChartStrategy.prototype.getSize = function() {
 
-        return this._charts.reduce(function(number, context) {
+        return this.getCharts().reduce(function(number, context) {
             if (context.chart.isBarChart()) {
                 return ++ number;
             } else {
