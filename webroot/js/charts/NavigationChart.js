@@ -360,9 +360,7 @@ define([
         /*
          * Configure y1 axis.
          */
-        var y1Scale = d3.scale.linear();
         var y1Axis = d3.svg.axis();
-
         if (hideTicks) {
             y1Axis.tickValues([])
                 .tickSize(0, 0);
@@ -371,9 +369,7 @@ define([
         /*
          * Configure y2 axis.
          */
-        var y2Scale = d3.scale.linear();
         var y2Axis = d3.svg.axis();
-
         if (hideTicks) {
             y2Axis.tickValues([])
                 .tickSize(0, 0);

@@ -83,6 +83,7 @@ define([
         if (manager) {
             var name = this._stringUtil.ucFirst(manager),
             managerClass = this._classUtil.getClassByName("coCharts.BarChart" + name + "Strategy");
+            this._mainChart.setBarChartStrategy(managerClass);
             this._navigationChart.setBarChartStrategy(managerClass);
         }
         /*

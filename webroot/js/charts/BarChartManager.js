@@ -43,6 +43,18 @@ define([], function () {
 
 
     /**
+     * Get y-axis extent.
+     * @public
+     * @param {String} axis
+     * @param {Integer} number
+     */
+    BarChartManager.prototype.getYDomain = function(axis, number) {
+
+        return this._strategy.getYDomain(axis, number);
+    };
+
+
+    /**
      * Get gap value.
      * Method calculate necessary gap value between bars or bars groups.
      * @public

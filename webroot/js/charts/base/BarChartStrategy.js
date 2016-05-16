@@ -15,6 +15,20 @@ define([], function () {
 
 
     /**
+     * Get axis domain.
+     * This method returns sensible domain if strategy has it's own
+     * algorithm to calculate axis domain like stacked strategy.
+     * @public
+     * @param {String} axis
+     * @param {number} number
+     */
+    BarChartStrategy.prototype.getYDomain = function(axis, number) {
+
+        return [undefined, undefined];
+    };
+
+
+    /**
      * Get bar chart's context list.
      * @public
      * @returns {Object[]}
@@ -107,7 +121,7 @@ define([], function () {
      */
     BarChartStrategy.prototype.getHeight = function (chart, d, i) {
 
-        throw new Error("Not implemented");
+        return chart._height - chart._yScale(chart._yAccessor(d));
     };
     
     return BarChartStrategy;

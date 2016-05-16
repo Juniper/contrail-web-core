@@ -62,14 +62,5 @@ define([
         return chart._yScale(chart._yAccessor(d));
     };
 
-
-    /**
-     * @override
-     */
-    BarChartGroupedStrategy.prototype.getHeight = function (chart, d, i) {
-
-        return chart._height - chart._yScale(chart._yAccessor(d));
-    };
-    
     return BarChartGroupedStrategy;
 });

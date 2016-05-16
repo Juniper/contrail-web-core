@@ -90,6 +90,15 @@ define([], function () {
          * @member {String}
          */
         this._chartId = this._stringUtil.getUniqueId();
+        /**
+         * Axes enable/disable flags set.
+         */
+        this._axes = {
+            x1: true,
+            y1: true,
+            x2: false,
+            y2: false
+        };
         /*
          * Register window resize event handler.
          */
@@ -214,6 +223,8 @@ define([], function () {
     Container.prototype.setX1Label = function (label) {
 
         this._x1Label = label;
+        this._axes.x1 = true;
+
         return this;
     };
 
@@ -227,6 +238,8 @@ define([], function () {
     Container.prototype.setX2Label = function (label) {
 
         this._x2Label = label;
+        this._axes.x2 = true;
+
         return this;
     };
 
@@ -252,6 +265,8 @@ define([], function () {
     Container.prototype.setY1Label = function (label) {
 
         this._y1Label = label;
+        this._axes.y1 = true;
+
         return this;
     };
 
@@ -265,6 +280,8 @@ define([], function () {
     Container.prototype.setY2Label = function (label) {
 
         this._y2Label = label;
+        this._axes.y2 = true;
+
         return this;
     };
 
@@ -340,10 +357,6 @@ define([], function () {
          */
         this._sortChartsByType();
         /*
-         * Update axis.
-         */
-        this._updateAxes();
-        /*
          * Loop through child charts.
          */
         this._charts.forEach(function(context, i) {
@@ -354,6 +367,19 @@ define([], function () {
              * settings, main of which is scale functions.
              */
             this._copyChart(this, context.chart);
+            /*
+             * Update child chart.
+             */
+            context.chart.setData(this._data[i]);
+        }, this);
+        /*
+         * Update axis.
+         */
+        this._updateAxes();
+        /*
+         * Loop through child charts.
+         */
+        this._charts.forEach(function(context, i) {
             /*
              * Update child chart.
              */
@@ -615,6 +641,8 @@ define([], function () {
     Container.prototype.setX1Scale = function (scale) {
 
         this._x1Scale = scale;
+        this._axes.x1 = true;
+
         return this;
     };
 
@@ -643,6 +671,8 @@ define([], function () {
     Container.prototype.setX2Scale = function (scale) {
 
         this._x2Scale = scale;
+        this._axes.x2 = true;
+
         return this;
     };
 
@@ -708,6 +738,8 @@ define([], function () {
     Container.prototype.setY1Scale = function (scale) {
 
         this._y1Scale = scale;
+        this._axes.y1 = true;
+
         return this;
     };
 
@@ -736,6 +768,8 @@ define([], function () {
     Container.prototype.setY2Scale = function (scale) {
 
         this._y2Scale = scale;
+        this._axes.y2 = true;
+
         return this;
     };
 
@@ -759,6 +793,8 @@ define([], function () {
     Container.prototype.setX1Axis = function (axis) {
 
         this._x1Axis = axis;
+        this._axes.x1 = true;
+
         return this;
     };
 
@@ -771,6 +807,8 @@ define([], function () {
     Container.prototype.setX2Axis = function (axis) {
 
         this._x2Axis = axis;
+        this._axes.x2 = true;
+
         return this;
     };
 
@@ -794,6 +832,8 @@ define([], function () {
     Container.prototype.setY1Axis = function (axis) {
 
         this._y1Axis = axis;
+        this._axes.y1 = true;
+
         return this;
     };
 
@@ -806,6 +846,8 @@ define([], function () {
     Container.prototype.setY2Axis = function (axis) {
 
         this._y2Axis = axis;
+        this._axes.y2 = true;
+
         return this;
     };
 
@@ -896,45 +938,50 @@ define([], function () {
          */
         this._sortChartsByType();
         /*
-         * Create scales functions.
+         * Set up scales functions.
          */
-        this._prepareScales();
+        this._setUpScales();
+        /*
+         * Loop through child charts and set up properties.
+         */
+        this._charts.forEach(function(context, i) {
+            /*
+             * Set data if necessary.
+             */
+            if (! context.chart.hasData()) {
+                context.chart.setData(this.getData()[i]);
+            }
+            /*
+             * Copy main properties.
+             */
+            this._copyChartProperties(context.chart, context);
+        }, this);
+        /*
+         * Set up charts axes.
+         */
+        this._updateAxes();
         /*
          * Render axes.
          */
         this._updateBaseChart();
         /*
-         * Loop through child charts set.
+         * Loop through child charts set and render.
          */
-        this._charts.forEach(function (chartContext, i) {
+        this._charts.forEach(function(context, i) {
             /*
              * Create chart container.
              */
-            chartContext["container"] = this._chartsContainer.append("g").attr("class", "chart");
-            /*
-             * Get chart from its context.
-             */
-            var chart = chartContext.chart;
-            /*
-             * Set data if necessary.
-             */
-            if (!chart.hasData()) {
-                chart.setData(this.getData()[i]);
-            }
-            /*
-             * Copy main properties.
-             */
-            this._copyChartProperties(chart, chartContext);
+            context["container"] = this._chartsContainer.append("g").attr("class", "chart");
             /*
              * Render chart.
              */
-            chart._render(chartContext.container);
+            context.chart._render(context.container);
         }, this);
         /*
          * Render components.
          */
         for (var i in this._components) {
-            this._components[i].setContainer(this); //Todo confusing as this sets the ._container of component.
+            this._components[i].setContainer(this);
             this._components[i]._render(this._canvas);
         }
         /*
@@ -1038,28 +1085,16 @@ define([], function () {
 
 
     /**
-     * Prepare chart scale functions,
-     * Create axis scales function depending on input data.
+     * Set up chart scale functions.
+     * @private
      */
-    Container.prototype._prepareScales = function () {
+    Container.prototype._setUpScales = function () {
 
         ["x", "y"].forEach(function (axis) {
             [1, 2].forEach(function (number) {
-                /*
-                 * Get input domain.
-                 */
-                var domain = this._getDomain(axis, number);
-                if (domain === null) {
-                    return;
+                if (this["_" + axis + number + "Scale"] === undefined) {
+                    this["get" + axis.toUpperCase() + number + "Scale"]();
                 }
-                /*
-                 * Get axis scale.
-                 */
-                var scale = this["_" + axis + number + "Scale"] || this["get" + axis.toUpperCase() + number + "Scale"]();
-                /*
-                 * Set scale input domain.
-                 */
-                scale.domain(domain);
             }, this);
         }, this);
     };
@@ -1172,22 +1207,9 @@ define([], function () {
         if (canvas.size() == 1) {
             this._canvas = canvas;
         }
-
         /*
-         * Append x axes.
+         * Append sub charts container.
          */
-        this._renderAxis([0, this._width], "x", 1, "bottom", [0, this._height], -this._height);
-        if (this._x2Scale) {
-            this._renderAxis([0, this._width], "x", 2, "top", [0, 0], -this._height);
-        }
-        /*
-         * Append y axes.
-         */
-        this._renderAxis([this._height, 0], "y", 1, "left", [0, 0], -this._width);
-        if (this._y2Scale) {
-            this._renderAxis([this._height, 0], "y", 2, "right", [this._width, 0], -this._width);
-        }
-
         var chartsContainer = this._canvas.selectAll("g.charts-container")
             .data([0], function (d) {
                 return d;
@@ -1197,6 +1219,13 @@ define([], function () {
         if (chartsContainer.size() == 1) {
             this._chartsContainer = chartsContainer;
         }
+        /*
+         * Append axes.
+         */
+        this._axes.x1 && this._renderAxis([0, this._width], "x", 1, "bottom", [0, this._height], -this._height);
+        this._axes.x2 && this._renderAxis([0, this._width], "x", 2, "top", [0, 0], -this._height);
+        this._axes.y1 && this._renderAxis([this._height, 0], "y", 1, "left", [0, 0], -this._width);
+        this._axes.y2 && this._renderAxis([this._height, 0], "y", 2, "right", [this._width, 0], -this._width);
     };
 
 
@@ -1282,6 +1311,23 @@ define([], function () {
 
 
     /**
+     * Get first chart which pertains to the axis.
+     * @private
+     * @param {String} axis
+     * @param {Integer} number
+     * @returns {Chart}
+     */
+    Container.prototype._getAxisChart = function(axis, number) {
+
+        for (var i = 0; i < this._charts.length; i ++) {
+            if (this._charts[i][axis] === number) {
+                return this._charts[i].chart;
+            }
+        }
+    };
+
+
+    /**
      * Get domain for the scale function.
      * Method returns two dimensional array of input domain
      * depending on predefined scale boundaries, if any was provided.
@@ -1319,22 +1365,31 @@ define([], function () {
             return null;
         }
         /*
-         * Check if domain boundaries are specified.
+         * Get min and max of defalt data extent.
          */
         var min = extent[0];
         var max = extent[1];
         /*
-         * Evaluate domain.
+         * Define domain.
          */
-        var domain;
+        var domain = [undefined, undefined];
+        /*
+         * Get bar chart manager specific domain if current axis is y and it contains bar charts.
+         */
+        if (axis === "y" && this._getAxisChart(axis, number).isBarChart()) {
+            domain = this._barChartManager.getYDomain(axis, number);
+        }
+        /*
+         * Get domain final calculations.
+         */
         if (min != undefined && max != undefined) {
             domain = [min, max];
         } else if (min != undefined) {
-            domain = [min, d3.max(axisData)];
+            domain = [min, domain[1] || d3.max(axisData)];
         } else if (max != undefined) {
-            domain = [d3.min(axisData), max];
+            domain = [domain[0] || d3.min(axisData), max];
         } else {
-            domain = d3.extent(axisData);
+            domain = [domain[0] || d3.min(axisData), domain[1] || d3.max(axisData)];
         }
 
         return domain;
