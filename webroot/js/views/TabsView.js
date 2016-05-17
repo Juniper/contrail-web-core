@@ -18,6 +18,7 @@ define([
             self.tabs = viewConfig['tabs'];
             self.tabsIdMap = {};
             self.tabRendered = [];
+            self.activateTimeout = null;
 
             self.$el.html(tabsTemplate({elementId: elId, tabs: self.tabs}));
 
@@ -46,7 +47,7 @@ define([
                         tabHashUrlObj = {};
 
                     /*
-                     * Execute activate if defined in viewConfig or tabConfigcd contr
+                     * Execute activate if defined in viewConfig or tabConfig
                      */
                     if (contrail.checkIfFunction(viewConfig.activate)) {
                         viewConfig.activate(event, ui);
@@ -59,8 +60,18 @@ define([
                     /*
                      * Setting activeTab to the url on activate
                      */
-                    tabHashUrlObj[elId] = self.tabs[tabKey]['elementId'];
-                    layoutHandler.setURLHashParams({tab: tabHashUrlObj}, {triggerHashChange: false});
+
+                    if (self.activateTimeout !== null) {
+                        clearTimeout(self.activateTimeout);
+                    }
+
+                    self.activateTimeout = setTimeout(function() {
+                        if (contrail.checkIfExist(self.tabs[tabKey]) && contrail.checkIfExist(self.tabs[tabKey]['elementId']))
+                        tabHashUrlObj[elId] = self.tabs[tabKey]['elementId'];
+                        layoutHandler.setURLHashParams({tab: tabHashUrlObj}, {triggerHashChange: false});
+
+                        self.activateTimeout = null;
+                    }, 300);
                 },
                 beforeActivate: function( event, ui ) {
                     var tabId = ($(ui.newPanel[0]).attr('id')),
@@ -85,7 +96,7 @@ define([
 
             tabsUIObj = $('#' + elId).data('contrailTabs')._tabsUIObj;
 
-            tabsUIObj.delegate( ".contrail-tab-link-icon-remove", "click", function() {
+            tabsUIObj.delegate( ".contrail-tab-link-icon-remove", "click", function(event) {
                 var tabPanelId = $( this ).closest( "li" ).attr( "aria-controls"),
                     tabKey = self.tabsIdMap[tabPanelId];
 
@@ -110,7 +121,6 @@ define([
 
             $("#" + elId).find('li:eq(' + tabIndex + ')').remove();
             $("#" + tabPanelId).remove();
-            $('#' + elId).data('contrailTabs').refresh();
 
             $.each(self.tabsIdMap, function (tabsIdKey, tabsIdValue) {
                 if (tabsIdValue > tabIndex) {
@@ -121,6 +131,8 @@ define([
             delete self.tabsIdMap[tabPanelId];
             self.tabs.splice(tabIndex, 1);
             self.tabRendered.splice(tabIndex, 1);
+
+            $('#' + elId).data('contrailTabs').refresh();
 
             if (self.tabs.length === 0) {
                 $("#" + elId).hide();

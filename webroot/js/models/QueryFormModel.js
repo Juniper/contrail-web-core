@@ -45,15 +45,25 @@ define([
         },
 
         onChangeTime: function() {
-            if(this.table_type() === 'STAT') {
-                // reset everything except time range
-                this.reset(this, null, false, true);
-                this.setTableValues();
+            if(this.table_type() === cowc.QE_STAT_TABLE_TYPE) {
+                var setTableValuesCallbackFn = function (self, resultArr){
+                    var currentSelectedTable = self.model().attributes.table_name;
+                    if (currentSelectedTable != null)
+                    {
+                        // If time_range is changed then Fetch active tables and check if selected table
+                        // is present in the response; if not then reset, else don't reset
+                        if (_.indexOf(resultArr, currentSelectedTable) == -1) {
+                            // reset everything except time range
+                            self.reset(self, null, false, true);
+                        }
+                    }
+                }
+                this.setTableValues(setTableValuesCallbackFn);
             }
             this.setTableFieldValues();
         },
 
-        setTableValues: function() {
+        setTableValues: function(setTableValuesCallbackFn) {
             var self = this,
                 contrailViewModel = this.model(),
                 timeRange = contrailViewModel.attributes.time_range;
@@ -79,6 +89,9 @@ define([
                         resultArr.push(nameOption);
                     });
                     self.table_name_data_object(resultArr);
+                    if(setTableValuesCallbackFn !== null){
+                        setTableValuesCallbackFn(self, resultArr);
+                    }
                 }).error(function(xhr) {
                     console.log(xhr);
                 });

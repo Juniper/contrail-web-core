@@ -27,7 +27,7 @@ define([
 
             $.each(selectArray, function(selectKey, selectValue) {
                 if(columnDisplaySelect.indexOf(selectValue) == -1) {
-                    var columnName = '["' + selectValue + '"]';
+                    var columnName = selectValue;
                     newColumnDisplay.push({
                         id: selectValue, field: selectValue,
                         name: columnName,
@@ -64,8 +64,9 @@ define([
 
             $.each(selectArray, function(selectKey, selectValue) {
                 if(columnDisplaySelect.indexOf(selectValue) == -1 && !qewu.isAggregateField(selectValue) &&
-                    selectValue !== 'T' && selectValue !== 'T=' && selectValue !== 'UUID') {
-                    var columnName = '["' + selectValue + '"]';
+                    selectValue !== 'T' && selectValue !== 'T=' && selectValue !== 'UUID' &&
+                    (selectValue.indexOf("PERCENTILES(") == -1)) {
+                    var columnName = selectValue;
                     newColumnDisplay.push({
                         id: selectValue, field: selectValue,
                         name: columnName,
