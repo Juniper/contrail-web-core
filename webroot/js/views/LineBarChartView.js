@@ -144,15 +144,18 @@ define([
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
 
-        var chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
+        var chartOptions = $.extend(true, {}, covdc.lineBarChartConfig, chartOptions);
 
         chartOptions['chartId'] = 'linebar-chart';
-        if (chartOptions['forceY1']) {
-            chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1'], chartOptions['metaData']);
-        }
-        if (chartOptions['forceY2']) {
-            chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2'], chartOptions['metaData']);
-        }
+
+        //Will use the force options from config as is.
+        // if (chartOptions['forceY1']) {
+        //     chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1'], chartOptions['metaData']);
+        // }
+        // if (chartOptions['forceY2']) {
+        //     chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2'], chartOptions['metaData']);
+        // }
+
         chartOptions['margin']['right'] += 40;
         chartOptions['margin2']['right'] += 40;
 
@@ -250,7 +253,8 @@ define([
                                 color: optionsMetaData && optionsMetaData.color || cowc.D3_COLOR_CATEGORY5[idx],
                                 xField: options.xAccessor,
                                 yField: key,
-                                y: optionsMetaData && optionsMetaData.y || function(bar){return (bar) ? 1 : 2;}(series.bar),
+                                y: optionsMetaData && optionsMetaData.y || function(bar){return (bar) ? 1 : 2;}(series.bar), //Y Axis
+                                enable: optionsMetaData && optionsMetaData.enable || true, //Will enable the chart by default
                                 data: [],
                                 interpolate: optionsMetaData && optionsMetaData.interpolate || "step-before",
                             };
@@ -303,33 +307,19 @@ define([
 
     function getWidgetFilterViewConfig(selector, configDataObj) {
         var metaData = configDataObj.config.metaData,
-            charts = configDataObj.charts;
+            charts = configDataObj.charts,
+            chartContainer = $(selector).find(".coCharts-container").data('chart');
 
+        /**
+         * Chart Type selection code block.
+         * radio button allows to switch between line or bar(stacked/grouped).
+         */
         function convertToLineChart(axis) {
-            var chartContainer = $(selector).find(".coCharts-container").data('chart');
             chartContainer._convertTo('coCharts.LineChart', axis, null);
         };
 
         function convertToBarChart(axis, type) {
-            var chartContainer = $(selector).find(".coCharts-container").data('chart');
             chartContainer._convertTo('coCharts.BarChart', axis, type || 'grouped');
-        };
-
-        function getYAxisFieldItems(axis) {
-            var items = [];
-            _.each(metaData, function (metaVal, metaKey) {
-                if (metaVal.y == axis) {
-                    items.push({
-                        text: metaVal.label || metaKey,
-                        checked: metaVal.enable,
-                        events: {
-                            click: function (event) {
-                            }
-                        }
-                    });
-                }
-            });
-            return items;
         };
 
         function radioSelector(axis, valueType) {
@@ -403,6 +393,44 @@ define([
                 }
             ];
         };
+        //End charts type selection
+
+        /**
+         * Chart selection by using the fields.
+         * each y axis has checkbox selectors for all the fields.
+         * use checkbox to enable/disable particular chart.
+         */
+        function checkboxSelector(axis, key) {
+            return $(selector).find('input:checkbox[name="control-panel-filter-' + getYAxisId(axis, "field") + "-" + key + '"]');
+        };
+
+        function toggleChart(axis, key) {
+            if ($(checkboxSelector(axis, key)).prop('checked')) {
+                chartContainer.enable(key, axis);
+            } else {
+                chartContainer.disable(key, axis);
+            }
+        }
+
+        function getYAxisFieldItems(axis) {
+            var items = [];
+            _.each(metaData, function (metaVal, metaKey) {
+                if (metaVal.y == axis) {
+                    items.push({
+                        id: metaKey,
+                        text: metaVal.label || metaKey,
+                        checked: metaVal.enable,
+                        events: {
+                            click: function (event) {
+                                toggleChart(axis, metaKey);
+                            }
+                        }
+                    });
+                }
+            });
+            return items;
+        };
+        //End of chart selection
 
         function getYAxisId(axis, name) {
             return 'by-y' + axis + '-' + name;

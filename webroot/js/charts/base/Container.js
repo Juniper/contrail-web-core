@@ -1210,6 +1210,13 @@ define([], function () {
             this._canvas = canvas;
         }
         /*
+         * Append axes.
+         */
+        this._axes.x1 && this._renderAxis([0, this._width], "x", 1, "bottom", [0, this._height], -this._height);
+        this._axes.x2 && this._renderAxis([0, this._width], "x", 2, "top", [0, 0], -this._height);
+        this._axes.y1 && this._renderAxis([this._height, 0], "y", 1, "left", [0, 0], -this._width);
+        this._axes.y2 && this._renderAxis([this._height, 0], "y", 2, "right", [this._width, 0], -this._width);
+        /*
          * Append sub charts container.
          */
         var chartsContainer = this._canvas.selectAll("g.charts-container")
@@ -1221,13 +1228,6 @@ define([], function () {
         if (chartsContainer.size() == 1) {
             this._chartsContainer = chartsContainer;
         }
-        /*
-         * Append axes.
-         */
-        this._axes.x1 && this._renderAxis([0, this._width], "x", 1, "bottom", [0, this._height], -this._height);
-        this._axes.x2 && this._renderAxis([0, this._width], "x", 2, "top", [0, 0], -this._height);
-        this._axes.y1 && this._renderAxis([this._height, 0], "y", 1, "left", [0, 0], -this._width);
-        this._axes.y2 && this._renderAxis([this._height, 0], "y", 2, "right", [this._width, 0], -this._width);
     };
 
 

@@ -2062,7 +2062,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
                             {{#each items}}
                             <div class="control-panel-filter-group-item row-fluid">
                                 <div class="span1">
-                                    <input type="checkbox" name="control-panel-filter-{{../id}}" value="{{text}}" {{#IfCompare checked true operator='=='}} checked {{/IfCompare}} class="margin-0"/>
+                                    <input type="checkbox" name="control-panel-filter-{{../id}}-{{id}}" value="{{text}}" {{#IfCompare checked true operator='=='}} checked {{/IfCompare}} class="margin-0"/>
                                 </div>
                                 <div class="span11 control-panel-filter-text">
                                     <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
