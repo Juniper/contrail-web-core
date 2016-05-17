@@ -36,7 +36,7 @@ define([
          * Call parent method if arrays empty.
          */
         if (dataSet.length === 0) {
-            return contrailD3.BarChartStrategy.prototype.getYDomain.call(this, axis, number);
+            return coCharts.BarChartStrategy.prototype.getYDomain.call(this, axis, number);
         }
         /*
          * Get very max value.
