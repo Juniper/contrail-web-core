@@ -362,8 +362,7 @@ define([
          */
         var y1Axis = d3.svg.axis();
         if (hideTicks) {
-            y1Axis.tickValues([])
-                .tickSize(0, 0);
+            y1Axis.tickValues([]);
         }
 
         /*
@@ -371,8 +370,7 @@ define([
          */
         var y2Axis = d3.svg.axis();
         if (hideTicks) {
-            y2Axis.tickValues([])
-                .tickSize(0, 0);
+            y2Axis.tickValues([]);
         }
 
         /*
@@ -404,32 +402,6 @@ define([
          * Render and return container.
          */
         return container.render(selector);
-    };
-
-
-    /**
-     * Set main/top chart height.
-     * @public
-     * @param {Number} height
-     * @returns {CpuVsMemoryChart}
-     */
-    NavigationChart.prototype.setMainChartHeight = function (height) {
-
-        this._navChartOptions.height = height;
-        return this;
-    };
-
-
-    /**
-     * Set navigation/bottom chart height.
-     * @public
-     * @param {Number} height
-     * @returns {CpuVsMemoryChart}
-     */
-    NavigationChart.prototype.setNavigationChartHeight = function (height) {
-
-        this._mainChartOptions.height = height;
-        return this;
     };
 
 

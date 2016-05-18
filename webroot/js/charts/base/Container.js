@@ -1267,7 +1267,7 @@ define([], function () {
                 /*
                  * Align axes ticks if grid required.
                  */
-                if (this._config.has("options.axes.grid")) {
+                if (this._config.has("options.axes.grid") && ! (axis.tickValues() !== null && axis.tickValues().length === 0)) {
                     axis.tickValues(this._getTickValues(scale, name, number));
                 }
                 /*
@@ -1431,7 +1431,7 @@ define([], function () {
             .orient(orientation)
             .tickFormat(this._getFieldFormatterByAxis(name, number))
             .outerTickSize(0);
-        if (this._config.has("options.axes.grid")) {
+        if (this._config.has("options.axes.grid") && ! (axis.tickValues() !== null && axis.tickValues().length === 0)) {
             axis.innerTickSize(tickSize)
                 .tickValues(this._getTickValues(scale, name, number));
         }
@@ -1465,13 +1465,17 @@ define([], function () {
      */
     Container.prototype._getTickValues = function(scale, name, number) {
 
-        var min = d3.min(scale.range());
-        var max = d3.max(scale.range());
-
         var amount = this._config.get("options.axes.grid." + name + "Ticks", max / 25);
-        var step = (max - min) / (amount - 1);
 
         var ticks = [];
+
+        if (! amount) {
+            return ticks;
+        }
+
+        var min = d3.min(scale.range());
+        var max = d3.max(scale.range());
+        var step = (max - min) / (amount - 1);
 
         for (var i = min; i <= max; i += step ) {
             ticks.push(scale.invert(i));
