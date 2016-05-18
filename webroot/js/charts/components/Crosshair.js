@@ -86,6 +86,15 @@ define([
     /**
      * @override
      */
+    Crosshair.prototype._update = function() {
+
+        this._values = this._container.getAxisValues("x", 1);
+    };
+
+
+    /**
+     * @override
+     */
     Crosshair.prototype._render = function () {
 
         this._values = this._container.getAxisValues("x", 1);
@@ -153,6 +162,9 @@ define([
          * Get x coordinate of the element.
          */
         var x = this._container._x1Scale(this._values[i]);
+            if (isNaN(x)) {
+            return;
+        }
         /*
          * Move line.
          */

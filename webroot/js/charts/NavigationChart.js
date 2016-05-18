@@ -147,11 +147,11 @@ define([
         this._mainChart = this._renderMainChart();
         this._navigationChart = this._renderNavigationChart();
         /*
-         * Hide navigation chart x axes grid/ticks.
+         * Hide navigation chart if no data provided.
          */
-        this._navigationChart.getCanvas()
-            .selectAll(".y-axis line, .y-axis text")
-            .style("visibility", "hidden");
+        if (this._data[0].length == 0) {
+            this._navigationChart.getSvg().style("visibility", "hidden");
+        }
         /*
          * Replace their resize event handler with empty function.
          * We will use our own resize handler.
@@ -166,7 +166,9 @@ define([
         var domain = this._navigationChart.getXScale().domain(),
             extent;
 
-        if (this._config.has("options.brush.extent")) {
+        if (domain[0].getTime() == 0 && domain[1].getTime() == 1) {
+            extent[0] = 1;
+        } else if (this._config.has("options.brush.extent")) {
             extent = this._config.get("options.brush.extent");
         } else {
             extent = [domain[0].getTime(), domain[1].getTime()];
@@ -327,6 +329,12 @@ define([
          * Update main chart with brush-filtered data.
          */
         this._mainChart.update(this._applyBrush(data));
+        /*
+         * Show navigation chart on updated if was hidden.
+         */
+        if (data[0].length != 0 && this._navigationChart.getSvg().style("visibility") == "hidden") {
+            this._navigationChart.getSvg().style("visibility", "visible");
+        }
         /*
          * Update navigation chart with full data set.
          */

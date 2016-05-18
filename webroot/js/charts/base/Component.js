@@ -52,6 +52,18 @@ define([], function () {
 
 
     /**
+     * Update component.
+     * @private
+     * @param {Selection} container
+     * @param {Object[]} data
+     */
+    Component.prototype._update = function(container, data) {
+
+        throw new Error("coCharts.Component._update() not implemented");
+    };
+
+
+    /**
      * Render component.
      * @protected
      * @param {Selection} container

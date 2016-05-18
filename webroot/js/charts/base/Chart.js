@@ -24,18 +24,6 @@ define([
 
 
     /**
-     * Update chart.
-     * @private
-     * @param {Selection} container
-     * @param {Object[]} data
-     */
-    Chart.prototype._update = function (container, data) {
-
-        throw new Error("coCharts.Chart._update() not implemented");
-    };
-
-
-    /**
      * Check chart is bar chart.
      * @public
      * @returns {Boolean}

@@ -385,6 +385,12 @@ define([], function () {
              */
             context.chart._update(context.container, this._data[i], context.enable);
         }, this);
+        /*
+         * Update components.
+         */
+        for (var i in this._components) {
+            this._components[i]._update();
+        }
     };
 
 
