@@ -307,18 +307,19 @@ define([
 
     function getWidgetFilterViewConfig(selector, configDataObj) {
         var metaData = configDataObj.config.metaData,
-            charts = configDataObj.charts,
-            chartContainer = $(selector).find(".coCharts-container").data('chart');
+            charts = configDataObj.charts;
 
         /**
          * Chart Type selection code block.
          * radio button allows to switch between line or bar(stacked/grouped).
          */
         function convertToLineChart(axis) {
+            var chartContainer = $(selector).find(".coCharts-container").data('chart');
             chartContainer._convertTo('coCharts.LineChart', axis, null);
         };
 
         function convertToBarChart(axis, type) {
+            var chartContainer = $(selector).find(".coCharts-container").data('chart');
             chartContainer._convertTo('coCharts.BarChart', axis, type || 'grouped');
         };
 
@@ -405,6 +406,7 @@ define([
         };
 
         function toggleChart(axis, key) {
+            var chartContainer = $(selector).find(".coCharts-container").data('chart');
             if ($(checkboxSelector(axis, key)).prop('checked')) {
                 chartContainer.enable(key, axis);
             } else {
