@@ -183,9 +183,64 @@ function getTenantListAndSyncDomain (request, appData, callback)
     });
 }
 
+function getAllProjectRoles (req, res, appData)
+{
+    var uiRoles = null;
+    var projObjList = [];
+    authApi.getProjectList(req, appData, function(error, projList) {
+        var projs = commonUtils.getValueByJsonPath(projList, 'projects', []);
+        var projsCnt = projs.length;
+        for (var i = 0; i < projsCnt; i++) {
+            projObjList.push({req: req, projId: projs[i]['uuid'],
+                              appData: appData});
+        }
+        async.map(projObjList, getProjectRoleCB, function(error, data) {
+            if ((null != error) || (null == data)) {
+                commonUtils.handleJSONResponse(null, res, uiRoles);
+                return;
+            }
+            var dataLen = data.length;
+            for (var i = 0; i < dataLen; i++) {
+                if (true == data[i]['redirectToLogout']) {
+                    commonUtils.redirectToLogout(req, res);
+                    return;
+                }
+            }
+            commonUtils.handleJSONResponse(null, res, uiRoles);
+        });
+    });
+}
+
 function getProjectRole (req, res, appData)
 {
     var projId = req.param('id');
+    if ('all' == projId) {
+        /* All project request, UUID can not be 'all' */
+        getAllProjectRoles(req, res, appData);
+        return;
+    }
+    var dataObj = {
+        req: req,
+        projId: projId,
+        appData: appData
+    };
+
+    getProjectRoleCB(dataObj, function(error, response) {
+        if (true == response['redirectToLogout']) {
+            commonUtils.redirectToLogout(req, res);
+            return;
+        }
+        commonUtils.handleJSONResponse(null, res, response['uiRoles']);
+    });
+}
+
+function getProjectRoleCB (dataObj, callback)
+{
+    var req = dataObj['req'];
+    var projId = dataObj['projId'];
+    var appData = dataObj['appData'];
+    var redirectToLogout = true;
+
     var projUrl = '/project/' + projId + '?exclude_back_refs=true' +
         '&exclude_children=true';
     var authApi = require('./auth.api');
@@ -221,7 +276,7 @@ function getProjectRole (req, res, appData)
             uiRoles = authApi.getUIRolesByExtRoles(req, userRoles[syncedProj]);
         }
         */
-        commonUtils.handleJSONResponse(null, res, uiRoles);
+        callback(null, {uiRoles: uiRoles});
         return;
     }
     if (null != tokenId) {
@@ -235,7 +290,7 @@ function getProjectRole (req, res, appData)
     configApiServer.apiGet(projUrl, appData, function(error, data) {
         if ((null != error) || (null == data)) {
             logutils.logger.error('Project GET failed ' + req.param('id'));
-            commonUtils.handleJSONResponse(null, res, uiRoles);
+            callback(null, {uiRoles: uiRoles});
             return;
         }
         var projName =
@@ -254,7 +309,7 @@ function getProjectRole (req, res, appData)
             //var uiRoles = authApi.getUIRolesByExtRoles(req, userRoles[projName]);
             /* We got, no need to deduce uiRoles now, will do once RBAC is
              * supported */
-            commonUtils.handleJSONResponse(null, res, uiRoles);
+            callback(null, {uiRoles: uiRoles});
             return;
         }
         var userObj = {'tokenid': tokenId, 'tenant': projName, 'req': req};
@@ -262,10 +317,10 @@ function getProjectRole (req, res, appData)
             if ((null != err) || (null == roles)) {
                 logutils.logger.error('Did not find the roles for project ' +
                                       projName);
-                commonUtils.redirectToLogout(req, res);
+                callback(null, {uiRoles: uiRoles, redirectToLogout: true});
                 return;
             }
-            commonUtils.handleJSONResponse(null, res, uiRoles);
+            callback(null, {uiRoles: uiRoles});
         });
     }, headers);
 }
