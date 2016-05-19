@@ -72,8 +72,25 @@ define([
             var chartViewConfig, chartOptions, chartModel;
             var cfDataSource = viewConfig.cfDataSource;
             var addOverviewChart = getValueByJsonPath(viewConfig,'chartOptions;addOverviewChart',true);
+            var brush = getValueByJsonPath(viewConfig,'chartOptions;brush',true);
             var xAxisLabel = getValueByJsonPath(viewConfig,'chartOptions;xAxisLabel',"Time");
             var yAxisLabel = getValueByJsonPath(viewConfig,'chartOptions;yAxisLabel',"Count");
+            var totalHeight = getValueByJsonPath(viewConfig,'chartOptions;height',300);
+            var customMargin = getValueByJsonPath(viewConfig,'chartOptions;margin',{});
+            var xAxisOffset = getValueByJsonPath(viewConfig,'chartOptions;xAxisOffset',0); // in minutes
+            var yAxisOffset = getValueByJsonPath(viewConfig,'chartOptions;yAxisOffset',0); //Percentage
+            var barWidth = getValueByJsonPath(viewConfig,'chartOptions;barWidth',null);
+            var bucketSize = getValueByJsonPath(viewConfig,'chartOptions;bucketSize',10); // in minutes
+            var axisLabelFontSize = getValueByJsonPath(viewConfig,'chartOptions;axisLabelFontSize',13);
+            var tickPadding = getValueByJsonPath(viewConfig,'chartOptions;tickPadding',10);
+            var showLegend = getValueByJsonPath(viewConfig,'chartOptions;showLegend',false);
+            var legendFn = getValueByJsonPath(viewConfig,'chartOptions;legendFn',null);
+            var sliceTooltipFn = null;
+
+            //sliceTooltipFn is for portion of bar in stacked bar.
+            if (contrail.checkIfFunction(viewConfig['chartOptions']['sliceTooltipFn'])) {
+                sliceTooltipFn = viewConfig['chartOptions']['sliceTooltipFn'];
+            }
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
             }
@@ -92,9 +109,10 @@ define([
              */
 
             // sizing information, including margins so there is space for labels, etc
-            var totalWidth = $(selector).find('.stacked-bar-chart-container').width(), totalHeight = 300;
+            var totalWidth = $(selector).find('.stacked-bar-chart-container').width();
             var totalOverviewHeight = totalWidth * 0.1;
             var margin =  { top: 20, right: 20, bottom: totalOverviewHeight, left: 20 };
+            margin = $.extend(margin, customMargin);
             if(!addOverviewChart) {
                 margin =  { top: 20, right: 20, bottom: 40, left: 50 };
             }
@@ -134,7 +152,7 @@ define([
                             .orient("bottom")
                             .innerTickSize(-height)
                             .outerTickSize(0)
-                            .tickPadding(10)
+                            .tickPadding(tickPadding)
                             .tickFormat(customTimeFormat)
             var yAxis = d3.svg.axis()
                             .scale(y)
@@ -143,7 +161,7 @@ define([
                             .tickFormat(d3.format("d"))
                             .innerTickSize(-width)
                             .outerTickSize(0)
-                            .tickPadding(10);
+                            .tickPadding(tickPadding);
             var xAxisOverview = d3.svg.axis()
                             .scale(xOverview)
                             .orient("bottom");
@@ -153,6 +171,9 @@ define([
                             .append("svg") // the overall space
                                 .attr("width", width + margin.left + margin.right)
                                 .attr("height", height + margin.top + margin.bottom);
+            if (showLegend && legendFn != null && typeof legendFn == 'function') {
+                legendFn(data, selector);
+            }
             var main = svg.append("g")
                             .attr("class", "main")
                             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -162,6 +183,7 @@ define([
                                 .attr("text-anchor", "end")
                                 .attr("x", width/2)
                                 .attr("y", height + 40)
+                                .attr("font-size", axisLabelFontSize)
                                 .text(xAxisLabel);
             var yaxisLabel = main.append("text")
                                 .attr("class", "axis-label")
@@ -171,12 +193,13 @@ define([
                                 .attr("dy", ".75em")
                                 .attr("dx", ".75em")
                                 .attr("transform", "rotate(-90)")
+                                .attr("font-size", axisLabelFontSize)
                                 .text(yAxisLabel);
             var tooltipDiv = d3.select("body").append("div")
                             .attr("class", "stack-bar-chart-tooltip")
                             .style("opacity", 0);
             var formatTime = d3.time.format("%e %b %X");
-            if(addOverviewChart) {
+            if(brush && addOverviewChart) {
                 overview = svg.append("g")
                                     .attr("class", "overview")
                                     .attr("transform", "translate(" + marginOverview.left + "," + marginOverview.top + ")");
@@ -185,24 +208,26 @@ define([
                 brush = d3.svg.brush()
                                     .x(xOverview)
                                     .on("brushend", brushed);
-            } else {
+            } else if (brush) {
                 brush2Main = d3.svg.brush()
                                     .x(x)
                                     .on("brushend", brushed2Main);
             }
             var dateExtent;
-            var yExtent = [0, d3.max(data, function(d) { return d.total; })];
-            var filter = cfDataSource.getFilter('timeFilter');
+            var yAxisMaxValue = d3.max(data, function(d) { return d.total; });
+            yAxisMaxValue = yAxisMaxValue + (yAxisOffset/100) * yAxisMaxValue;
+            var yExtent = [0, yAxisMaxValue];
+            var filter = cfDataSource != null ? cfDataSource.getFilter('timeFilter') : null;
             if(filter != null && filter.length > 0) {
                 dateExtent = [new Date(filter[0]/1000), new Date(filter[1]/1000)]
             } else{
                 if(data == null || data.length == 0) {
-                    dateExtent = [d3.time.minute.offset(new Date(), -30), new Date()];
+                    dateExtent = [d3.time.minute.offset(new Date(), -xAxisOffset), new Date()];
                 } else {
                     dateExtent = d3.extent(data, function(d) { return d.date; });
                     //extend the range after to plot the x axis
-                    dateExtent = [d3.time.minute.offset(dateExtent[0], -30),
-                                  d3.time.minute.offset(dateExtent[1], 30)];
+                    dateExtent = [d3.time.minute.offset(dateExtent[0], - xAxisOffset),
+                                  d3.time.minute.offset(dateExtent[1], xAxisOffset)];
                 }
             }
             if(data == null || data.length == 0) {
@@ -215,6 +240,10 @@ define([
                 yExtent = [0,1];//Default y extent
             }
             x.domain(dateExtent);
+            if (barWidth == null && bucketSize != null) {
+                bucketSize = bucketSize * 60 * 1000;
+                barWidth = d3.scale.ordinal().domain(d3.range(dateExtent[0].getTime(), dateExtent[1].getTime(), bucketSize)).rangeRoundBands(x.range(),0.08).rangeBand();
+            }
             y.domain(yExtent);
             xOverview.domain(x.domain());
             yOverview.domain(y.domain());
@@ -228,7 +257,7 @@ define([
                 .attr("class", "y axis")
                 .call(yAxis);
             //Create the brush
-            if(addOverviewChart) {
+            if(brush && addOverviewChart) {
                 overview.append("g")
                         .attr("class", "x axis")
                         .attr("transform", "translate(0," + heightOverview + ")")
@@ -258,7 +287,7 @@ define([
                                 // no y scale, i.e. we should see the extent being marked
                                 // over the full height of the overview chart
                                 .attr("height", heightOverview + 7);  // +7 is magic number for styling
-            } else {
+            } else if (brush) {
                 main.append("g")
                     .attr("class", "x brush")
                     .call(brush2Main)
@@ -281,13 +310,15 @@ define([
                     .attr("transform", function(d) { return "translate(" + x(d.date) + ",0)"; })
                     .on('click',onclickBar)
                     .on("mouseover", function(d) {
-                        tooltipDiv.transition()
+                        if (sliceTooltipFn == null) {
+                            tooltipDiv.transition()
                                 .duration(200)
                                 .style("opacity", .9);
-                        tooltipDiv.html(formatTime(d.date) + "<br/>"  + d.total + " Alarm(s)")
-                            .style("left", getToolTipXPos(d3.event.pageX) + "px")
-                            .style("top", (d3.event.pageY - 28) + "px");
-                        })
+                            tooltipDiv.html(formatTime(d.date) + "<br/>"  + d.total + " Alarm(s)")
+                                .style("left", getToolTipXPos(d3.event.pageX) + "px")
+                                .style("top", (d3.event.pageY - 28) + "px");
+                        }
+                    })
                     .on("mouseout", function(d) {
                             clearToolTip(true);
                         })
@@ -298,10 +329,31 @@ define([
                 .data(function(d) { return d.counts; })
                 .enter().append("rect")
                     .attr("class", "bar")
-                    .attr("width", 6)
+                    .attr("width", barWidth)
                     .attr("y", function(d) { return y(d.y1); })
                     .attr("height", function(d) { return y(d.y0) - y(d.y1); })
-                    .style("fill", function(d) { return d.color; });
+                    .style("fill", function(d) { return d.color; })
+                    .on("mouseover", function(d) {
+                        if (sliceTooltipFn != null &&
+                            typeof sliceTooltipFn == 'function') {
+                            var event = d3.event;
+                            //TODO parent div adjust need to be removed
+                            //$(tooltipDiv).css({'width': '0px','height': '0px'});
+                            tooltipDiv.transition()
+                                .duration(200)
+                                .style("opacity", 1);
+                            tooltipDiv.html(function () {
+                                return sliceTooltipFn(d);
+                            })
+                            .style("left", getToolTipXPos(event.pageX) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+                        }
+                     })
+                    .on("mouseout", function(d) {
+                            //setTimeout(function () {
+                            clearToolTip(true);
+                            //}, 1000);
+                     });
 
             //Need to wait until the widget is rendered.
             setTimeout(updateFilteredCntInHeader,200);

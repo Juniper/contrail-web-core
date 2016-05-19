@@ -136,7 +136,9 @@ define([
                                         }
                                     },
                                     chartOptions:{
-                                        addOverviewChart:false
+                                        addOverviewChart:false,
+                                        xAxisOffset: 30,
+                                        barWidth: 6,
                                     },
                                     parseFn : coreAlarmParsers.parseAlarmsDataForStackChart,
                                     cfDataSource : self.cfDataSource
