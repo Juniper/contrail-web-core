@@ -147,9 +147,15 @@ define([
         this._mainChart = this._renderMainChart();
         this._navigationChart = this._renderNavigationChart();
         /*
+         * Calculate input data size.
+         */
+        var dataSize = this._data.reduce(function(amount, series) {
+            return amount + series.length;
+        }, 0);
+        /*
          * Hide navigation chart if no data provided.
          */
-        if (this._data[0].length == 0) {
+        if (dataSize == 0) {
             this._navigationChart.getSvg().style("visibility", "hidden");
         }
         /*
@@ -163,8 +169,8 @@ define([
          * See https://github.com/mbostock/d3/wiki/SVG-Controls
          * First let's calculate brush default extent.
          */
-        var domain = this._navigationChart.getXScale().domain(),
-            extent;
+        var domain = this._navigationChart.getXScale().domain();
+        var extent = [domain[1], domain[1]];
 
         if (domain[0].getTime() == 0 && domain[1].getTime() == 1) {
             extent[0] = 1;
