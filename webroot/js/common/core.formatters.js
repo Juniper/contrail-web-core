@@ -298,14 +298,11 @@ define([
                         return cowu.addUnits2Packets(value);
                         break;
 
-
-
                     //run the user defined formatter function
                     default :
                         if (contrail.checkIfFunction(eval(formatterKey))) {
                             return eval(formatterKey)(value, obj, iconClass, key);
                         } else {
-                            //Reg Ex to display comma separated numbers
                             return value;
                         }
                 };

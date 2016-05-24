@@ -151,7 +151,7 @@ constants.controllerModules = [
             'monitor-infra-controlnode-model',
             'monitor-infra-vrouter-model',
             'monitor-infra-utils',
-            'confignode-scatterchart-view',
+            'confignode-chart-view',
             'controlnode-scatterchart-view',
             'dbnode-scatterchart-view',
             'analyticsnode-scatterchart-view',
@@ -178,7 +178,7 @@ constants.controllerModules = [
         include: [
             'mon-infra-controller-dashboard',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/VRouterScatterChartView',
-            'controller-basedir/monitor/infrastructure/common/ui/js/views/ConfigNodeScatterChartView',
+            'confignode-chart-view',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/ControlNodeScatterChartView',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/DatabaseNodeScatterChartView',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/AnalyticsNodeScatterChartView',

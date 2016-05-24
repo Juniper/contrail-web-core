@@ -23,10 +23,11 @@ var depArray = [
     'core-basedir/js/common/qe.grid.config',
     'core-basedir/js/common/qe.parsers',
     'core-basedir/js/common/chart.utils',
+    'core-basedir/js/common/graph.utils',
 
     'co-test-utils', 'co-test-constants',
 
-    'layout-handler', 'joint.contrail', 'text', 'contrail-unified-1', 'contrail-unified-2', 'contrail-unified-3',
+    'layout-handler', 'text', 'contrail-unified-1', 'contrail-unified-2', 'contrail-unified-3',
 
 ];
 
@@ -85,7 +86,7 @@ function testAppInit(testAppConfig) {
 
         require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages,
                                     CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, CoreCommonTmpl,
-                                    QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils,
+                                    QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils, GraphUtils,
                                     CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
@@ -102,6 +103,7 @@ function testAppInit(testAppConfig) {
             qewp = new QEParsers();
 
             chUtils = new ChartUtils();
+            grUtils = new GraphUtils();
 
             cotu = CoreTestUtils;
             cotc = CoreTestConstants;
