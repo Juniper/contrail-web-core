@@ -379,7 +379,7 @@ define([], function () {
             /*
              * Update child chart.
              */
-            context.chart._update(context.container, context.isEnabled);
+            context.chart._update(context.container, context.enable);
         }, this);
         /*
          * Update components.
@@ -868,7 +868,7 @@ define([], function () {
          */
         var self = this;
         list = list.sort(function(a, b) {
-            if (a.context.chart.getClassName() == "contrailD3.charts.BarChart") {
+            if (a.context.chart.isBarChart()) {
                 return -1;
             } else if (a.context.chart.getClassName() == b.context.chart.getClassName()) {
                 return 0;
