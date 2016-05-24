@@ -37,7 +37,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir) {
         'underscore'                  : coreWebDir + '/assets/underscore/underscore-min',
 
         'contrail-layout'             : coreWebDir + '/js/contrail-layout',
-        'joint.contrail'              : coreWebDir + '/js/joint.contrail',
+        'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
         'core-utils'                  : coreWebDir + '/js/common/core.utils',
 
         'core-constants'              : coreWebDir + '/js/common/core.constants',
@@ -75,8 +75,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir) {
         'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
         'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
         'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
-
-        'contrailD3'                  : coreWebDir + '/js/chart/contrailD3',
+        'contrail-element'            : coreWebDir + '/js/models/ContrailElement',
 
         // TODO: We need to discuss a criteria on which we should add definations to this file.
         'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
