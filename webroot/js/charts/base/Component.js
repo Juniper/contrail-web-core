@@ -21,7 +21,7 @@ define([], function () {
      * May carry different meanings depends on component type.
      * @public
      * @param {String} height
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Component.prototype.setColor = function (color) {
 
@@ -47,7 +47,19 @@ define([], function () {
      */
     Component.prototype._resize = function (container) {
 
-        throw new Error("contrailD3.Component._resize() not implemented");
+        throw new Error("coCharts.Component._resize() not implemented");
+    };
+
+
+    /**
+     * Update component.
+     * @private
+     * @param {Selection} container
+     * @param {Object[]} data
+     */
+    Component.prototype._update = function(container, data) {
+
+        throw new Error("coCharts.Component._update() not implemented");
     };
 
 
@@ -58,7 +70,7 @@ define([], function () {
      */
     Component.prototype._render = function (container) {
 
-        throw new Error("contrailD3.Component._render() not implemented");
+        throw new Error("coCharts.Component._render() not implemented");
     };
 
 
@@ -86,7 +98,7 @@ define([], function () {
      */
     Component.prototype.getClassName = function () {
 
-        throw new Error("contrailD3.Chart.getClassName() not implemented.")
+        throw new Error("coCharts.Chart.getClassName() not implemented.")
     };
     
     return Component;

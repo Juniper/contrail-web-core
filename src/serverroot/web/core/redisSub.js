@@ -15,6 +15,7 @@ var redis = require('redis')
   , longPolling = require('./longPolling.api')
   , commonUtils = require('../../utils/common.utils')
   , discClient = require('../../common/discoveryclient.api')
+  , redisUtils = require('../../utils/redis.utils')
   ;
 
 if (!module.parent) {
@@ -24,18 +25,15 @@ if (!module.parent) {
 }
 function createRedisClientAndSubscribeMsg (callback)
 {
-    commonUtils.createRedisClient(function(client) {
-        redisSub.redisSubClient = client;
-        addRedisSubMsgListener(redisSub.redisSubClient);
-        subsToRedis(global.MSG_REDIRECT_TO_LOGOUT);
-        subsToRedis(global.DISC_SERVER_SUB_CLINET);
-        callback();
-    });
+    redisSub.redisSubClient = redisUtils.createRedisClient();
+    redisSub.redisMsgClient = redisUtils.createRedisClient();
+    addRedisSubMsgListener(redisSub.redisSubClient);
+    subsToRedis(global.MSG_REDIRECT_TO_LOGOUT);
+    subsToRedis(global.DISC_SERVER_SUB_CLINET);
+    callback();
 }
 
-commonUtils.createRedisClient(global.WEBUI_SESSION_REDIS_DB, function(client) {
-    redisSub.redisPerClient = client;
-});
+redisSub.redisPerClient = redisUtils.createRedisClient();
 
 /* Function: subsToRedis
     This function is used to subscribe to a apecific channel to redis

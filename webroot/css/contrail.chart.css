@@ -146,10 +146,6 @@
     position:relative;
     left:45px;
 }
-.control-panel-filter-container,
-.control-panel-legend-container {
-    width: 280px;
-}
 .control-panel-filter-title,
 .control-panel-legend-title {
     background-color: #F5F5F5;
@@ -163,7 +159,7 @@
 .control-panel-filter-body,
 .control-panel-legend-body {
     overflow-y: scroll;
-    height: 214px;
+    padding: 10px;
 }
 .control-panel-filter-title-text,
 .control-panel-legend-title-text {

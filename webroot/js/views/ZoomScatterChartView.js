@@ -1027,7 +1027,7 @@ define([
                 title: 'Filter',
             events: {
                 click: function (event, self, controlPanelSelector) {
-                    var controlPanelExpandedTemplateConfig = customControlPanelFilterConfig.viewConfig;
+                    var controlPanelExpandedTemplateConfig = customControlPanelFilterConfig;
 
                     if (chartControlPanelExpandedSelector.find('.control-panel-filter-container').length == 0) {
                         var controlPanelExpandedTemplate = contrail.getTemplate4Id(cowc.TMPL_CONTROL_PANEL_FILTER);
@@ -1041,7 +1041,7 @@ define([
                     chartControlPanelExpandedSelector.toggle();
 
                     if (chartControlPanelExpandedSelector.is(':visible')) {
-                        $.each(controlPanelExpandedTemplateConfig.groups, function (groupKey, groupValue) {
+                        $.each(controlPanelExpandedTemplateConfig.viewConfig.groups, function (groupKey, groupValue) {
                             $.each(groupValue.items, function (itemKey, itemValue) {
                                 $($('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey])
                                     .off('click')

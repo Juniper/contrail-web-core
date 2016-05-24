@@ -13,7 +13,7 @@ var ControllerConfigGenerator = require('./config.generator.controller'),
     StorageConfigGenerator = require('./config.generator.storage'),
     SMConfigGenerator = require('./config.generator.sm'),
     confGenConst = require('./config.generator.constants'),
-    coAppUtils = require('../js/common/core.app.utils');
+    coApp = require('../js/common/core.app');
 
 /**
  * Base Config Generator Class.
@@ -91,6 +91,20 @@ ConfigGenerator.prototype.getStringifiedConfig = function() {
     return configStrArr.join("");
 };
 
+ConfigGenerator.prototype.addModules = function(modules) {
+    if (modules.length > 0) {
+        for (var i=0; i<modules.length; i++) {
+            if (modules[i].enabled) {
+                var module = {};
+                module.name = modules[i].name;
+                module.include = modules[i].include;
+                module.exclude = modules[i].exclude;
+                this.configJSON.modules.push(module);
+            }
+        }
+    }
+};
+
 var repo = args[0],
     file = args[1];
 
@@ -107,4 +121,3 @@ if (repo == 'webCore') {
     var storageConfigGenerator = new StorageConfigGenerator(repo, file);
     storageConfigGenerator.generate();
 } else {}
-

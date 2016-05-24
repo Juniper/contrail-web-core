@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/models/chart/Chart'
+    'core-basedir/js/charts/base/Chart'
 ], function (Chart) {
 
     /**
@@ -15,7 +15,7 @@ define([
         /*
          * Call parent class constructor.
          */
-        contrailD3.Chart.call(this);
+        coCharts.Chart.call(this);
         /*
          * Stash reference to this object.
          */
@@ -42,14 +42,14 @@ define([
      */
     LineChart.prototype.getClassName = function () {
 
-        return "contrailD3.charts.LineChart";
+        return "coCharts.LineChart";
     };
 
 
     /**
      * @override
      */
-    LineChart.prototype._update = function (container, data) {
+    LineChart.prototype._update = function (container, data, enable) {
         /*
          * Update data.
          */
@@ -61,7 +61,9 @@ define([
         /*
          * Append line.
          */
-        this._render(container);
+        if (enable !== false) {
+            this._render(container);
+        }
     };
 
 
@@ -85,6 +87,8 @@ define([
      * @private
      */
     LineChart.prototype._appendLine = function (container) {
+
+        this._lineGenerator.interpolate(this._interpolate || "basis");
 
         container.selectAll(".line")
             .data([this._data])

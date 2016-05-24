@@ -64,11 +64,16 @@
     font-weight: bold;
     color: #777;
     margin-bottom: 5px;
+    margin-top: 5px;
 }
 .detail-block-grid {
     display: table;
     margin: 0 5px 5px;
     width: 98%;
+}
+.detail-block-array-list .detail-block-grid,
+.detail-block-list-content .detail-block-grid {
+     margin-left: 0;
 }
 .detail-block-grid-header {
     display: table-header-group;
@@ -1138,66 +1143,111 @@ p.error, p.error-text {
     padding-right:3px;
  }
 
-.contrailD3-container .axis path, .contrail .axis line {
+.coCharts-container .tick line {
+    stroke: #e5e5e5 !important;
+    stroke-width: 1 !important;
+    shape-rendering: crispEdges;
+}
+
+.coCharts-container .tick:first-child line, .coCharts-container .tick:last-child line {
+    visibility: hidden;
+}
+
+.coCharts-container .axis path, .contrail .axis line {
     fill: none;
     stroke: black;
     stroke-width: 1px;
 }
 
-.contrailD3-container .line-chart .line {
+.coCharts-container .bar-chart .bar {
+    fill-opacity: .75;
+}
+
+.coCharts-container .line-chart .line {
     fill: none;
 }
 
-.contrailD3-container .axis-label {
+.coCharts-container .axis-label {
     text-anchor: middle;
 }
 
-.contrailD3-container text {
+.coCharts-container text {
     font: normal 12px Arial;
 }
 
-.contrailD3-container .brush {
+.coCharts-container .brush {
     fill-opacity: 0.2;
 }
 
-.contrailD3-container .contrailD3-tooltip {
+.coCharts-container .coCharts-tooltip {
     border: 1px solid #000;
     border-radius: 3px;
-    opacity: 0.8;
+    opacity: 0.9;
+    padding: 5px;
     background-color: #fff;
     position: absolute;
 }
 
-.contrailD3-container .contrailD3-tooltip-row td {
+.coCharts-container .coCharts-tooltip-row td {
     padding: 0 10px;
+    white-space: nowrap;
 }
 
-.contrailD3-container .contrailD3-tooltip-color {
+.coCharts-container .coCharts-tooltip-color {
     width: 15px;
     height: 15px;
 }
 
-.contrailD3-container .control-panel, .control-panel select {
+.coCharts-container .control-panel, .control-panel select {
     height: 30px;
 }
 
-.contrailD3-container .controls-left-side > div {
+.coCharts-container .controls-left-side > div {
     float: left;
     text-align: center;
     margin-left: 2px;
 }
 
-.contrailD3-container .controls-right-side > div {
+.coCharts-container .controls-right-side > div {
     float: right;
     text-align: center;
     margin-left: 2px;
 }
 
-.contrailD3-container .controls-button {
+.coCharts-container .controls-button {
     border: 1px solid #a6c9e2;
     height: 30px;
     line-height: 30px;
     vertical-align: middle;
     cursor: pointer;
     padding: 0 10px;
+}
+.confignode-chart .widget-box .widget-header {
+    border-bottom: none;
+    font-size: 13px;
+    height: 23px;
+    cursor: auto;
+    padding: 3px 0px;
+}
+.confignode-chart .widget-box .widget-header > :first-child {
+    line-height: 23px;
+}
+.confignode-chart .widget-box .widget-main {  
+    padding: 0px;
+}
+.confignode-chart .contrail-legend rect{
+    width: 8px;
+    height: 8px;
+}
+.confignode-chart g.nv-barsWrap g.nv-group {
+    fill-opacity: 1 !important;
+}
+.confignode-chart .contrail-legend text {
+    font: normal 10px Open Sans;
+}
+.confignode-chart .widget-box {
+    margin: 0px;
+}
+.confignode-chart .contrail-chart-title text {
+    font-size: 11px;
 }

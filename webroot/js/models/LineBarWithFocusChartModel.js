@@ -79,12 +79,13 @@ define([
         var margin = chartOptions.margin
             , margin2 = chartOptions.margin2
             , width = null
-            , height = null
+            , height = chartOptions.height
             , getX = function(d) { return d.x }
             , getY = function(d) { return d.y }
             , color = nv.utils.defaultColor()
-            , showLegend = true
-            , focusEnable = true
+            , showLegend = chartOptions.showLegend != null ? chartOptions.showLegend : true
+            , legendFn = chartOptions.legendFn
+            , focusEnable = chartOptions.focusEnable != null ? chartOptions.focusEnable : true
             , focusShowAxisY = false
             , focusShowAxisX = true
             , focusHeight = 90
@@ -251,27 +252,31 @@ define([
                 //------------------------------------------------------------
 
                 if (requestState === cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY && showLegend) {
-                    var legendWidth = availableWidth,
+                    if (legendFn != null) {
+                        legendFn (data, that, chartModel);
+                    } else {
+                        var legendWidth = availableWidth,
                         legendXPosition = 0;
 
-                    legend.width(legendWidth);
+                        legend.width(legendWidth);
 
-                    g.select('.nv-legendWrap')
-                        .datum(data.map(function(series) {
-                            series.originalKey = series.originalKey === undefined ? series.key : series.originalKey;
-                            series.key = series.originalKey + (series.bar ? legendLeftAxisHint : legendRightAxisHint);
-                            return series;
-                        }))
-                        .call(legend);
+                        g.select('.nv-legendWrap')
+                            .datum(data.map(function(series) {
+                                series.originalKey = series.originalKey === undefined ? series.key : series.originalKey;
+                                series.key = series.originalKey + (series.bar ? legendLeftAxisHint : legendRightAxisHint);
+                                return series;
+                            }))
+                            .call(legend);
 
-                    if ( margin.top != legend.height()) {
-                        margin.top = legend.height();
-                        // FIXME: shouldn't this be "- (focusEnabled ? focusHeight : 0)"?
-                        availableHeight1 = nv.utils.availableHeight(height, container, margin) - focusHeight;
-                    }
+                        if ( margin.top != legend.height()) {
+                            margin.top = legend.height();
+                            // FIXME: shouldn't this be "- (focusEnabled ? focusHeight : 0)"?
+                            availableHeight1 = nv.utils.availableHeight(height, container, margin) - focusHeight;
+                        }
 
-                    g.select('.nv-legendWrap')
-                        .attr('transform', 'translate(' + legendXPosition + ',' + (-margin.top) +')');
+                        g.select('.nv-legendWrap')
+                            .attr('transform', 'translate(' + legendXPosition + ',' + (-margin.top) +')');
+                        }
                 }
 
                 wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -685,6 +690,16 @@ define([
         chartModel.xAxis.tickFormat(function (d) {
             return d3.time.format('%H:%M:%S')(new Date(d));
         });
+        if (chartOptions['xFormatter'] != null) {
+            chartModel.xAxis.tickFormat(chartOptions['xFormatter']);
+        }
+        chartModel.xAxis.axisLabelDistance(chartOptions.axisLabelDistance);
+        if (chartOptions['xAxisLabel'] != null) {
+            chartModel.xAxis.axisLabel(chartOptions['xAxisLabel']);
+        }
+        if (chartOptions['xAxisTicksCnt'] != null) {
+            chartModel.xAxis.ticks(parseInt(chartOptions['xAxisTicksCnt']));
+        }
 
         chartModel.x2Axis.axisLabel("Time").tickFormat(function (d) {
             return d3.time.format('%H:%M:%S')(new Date(d));

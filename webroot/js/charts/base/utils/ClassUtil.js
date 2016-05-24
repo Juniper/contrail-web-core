@@ -22,7 +22,7 @@ define([], function () {
      */
     ClassUtil.prototype.isComponent = function (obj) {
 
-        return obj.getClassName().split(".").slice(0, 2).join(".") == "contrailD3.components";
+        return obj.getClassName().split(".").slice(0, 2).join(".") == "coCharts.components";
     };
 
 
@@ -49,7 +49,7 @@ define([], function () {
 
     /**
      * Get class by chart short name.
-     * For instance will return "contrailD3.chart.BarChart" function
+     * For instance will return "coCharts.chart.BarChart" function
      * for type "bar" and namespace "charts".
      * @public
      * @param {String} type
@@ -62,9 +62,9 @@ define([], function () {
 
         var className;
         if (namespace == "charts") {
-            className = "contrailD3." + namespace + "." + type + "Chart";
+            className = "coCharts." + type + "Chart";
         } else if (namespace == "components") {
-            className = "contrailD3." + namespace + "." + type;
+            className = "coCharts." + namespace + "." + type;
         } else {
             throw new Error("Unexpected namespace");
         }
@@ -81,13 +81,13 @@ define([], function () {
      */
     ClassUtil.prototype.getClassByName = function (className) {
         /*
-         * Split className string by period and remove first "contrailD3" element.
+         * Split className string by period and remove first "coCharts" element.
          */
         var parts = className.split(".").slice(1);
         /*
          * Set up namespace container.
          */
-        var namespace = contrailD3;
+        var namespace = coCharts;
         /*
          * Loop over namespace chain.
          */

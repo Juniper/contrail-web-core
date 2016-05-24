@@ -13,21 +13,21 @@ define([], function () {
         /**
          * List of managed bar charts.
          * @private
-         * @member {contrailD3.charts.BarChart[]}
+         * @member {coCharts.BarChart[]}
          */
-        this._charts = [];
+        this._charts = chart._charts;
         /**
          * Reference to the main chart.
          * @private
-         * @member {contrailD3.Chart}
+         * @member {coCharts.Chart}
          */
         this._chart = chart;
         /**
          * Manager strategy.
          * @private
-         * @member {contrailD3.BarChartManagerStrategy}
+         * @member {coCharts.BarChartManagerStrategy}
          */
-        this._strategy = new contrailD3.BarChartStackedStrategy(this._charts);
+        this._strategy = new coCharts.BarChartStackedStrategy(this._charts);
     }
 
 
@@ -43,53 +43,14 @@ define([], function () {
 
 
     /**
-     * Remove bar chart.
+     * Get y-axis extent.
      * @public
-     * @param {contrailD3.charts.BarChart} chart
+     * @param {String} axis
+     * @param {Integer} number
      */
-    BarChartManager.prototype.remove = function (chart) {
-        /*
-         * Check chart class.
-         */
-        if (chart.getClassName() != "contrailD3.charts.BarChart") {
-            return;
-        }
-        /*
-         * Find and remove chart.
-         */
-        for (var i = 0; i < this._charts.length; i++) {
-            if (chart == this._charts[i]) {
-                this._charts.splice(i, 1);
-                break;
-            }
-        }
-    };
+    BarChartManager.prototype.getYDomain = function(axis, number) {
 
-
-    /**
-     * Add bar chart.
-     * @public
-     * @param {contrailD3.charts.BarChart} chart
-     */
-    BarChartManager.prototype.add = function (chart) {
-        /*
-         * Check chart class.
-         */
-        if (chart.getClassName() != "contrailD3.charts.BarChart") {
-            return;
-        }
-        /*
-         * Check chart already registered.
-         */
-        for (var i = 0; i < this._charts.length; i++) {
-            if (chart == this._charts[i]) {
-                return;
-            }
-        }
-        /*
-         * Add chart.
-         */
-        this._charts.push(chart);
+        return this._strategy.getYDomain(axis, number);
     };
 
 
@@ -97,7 +58,7 @@ define([], function () {
      * Get gap value.
      * Method calculate necessary gap value between bars or bars groups.
      * @public
-     * @param {contrailD3.charts.BarChart} chart
+     * @param {coCharts.BarChart} chart
      * @returns {Number}
      */
     BarChartManager.prototype.getGap = function (chart) {
@@ -109,7 +70,7 @@ define([], function () {
     /**
      * Get bar width.
      * @public
-     * @param {contrailD3.charts.BarChart} chart
+     * @param {coCharts.BarChart} chart
      * @returns {Number}
      */
     BarChartManager.prototype.getWidth = function (chart) {
@@ -121,7 +82,7 @@ define([], function () {
     /**
      * Get bar x position.
      * @public
-     * @param {contrailD3.charts.BarChart} chart
+     * @param {coCharts.BarChart} chart
      * @param {Integer} i
      * @param {Mixed} d
      * @returns {Number}
@@ -135,7 +96,7 @@ define([], function () {
     /**
      * Get bar y position.
      * @public
-     * @param {contrailD3.charts.BarChart} chart
+     * @param {coCharts.BarChart} chart
      * @param {Integer} i
      * @param {Mixed} d
      * @returns {Number}
@@ -149,7 +110,7 @@ define([], function () {
     /**
      * Get bar y height.
      * @public
-     * @param {contrailD3.charts.BarChart} chart
+     * @param {coCharts.BarChart} chart
      * @param {Integer} i
      * @param {Mixed} d
      * @returns {Number}

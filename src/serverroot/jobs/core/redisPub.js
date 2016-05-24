@@ -8,6 +8,7 @@ var redis = require('redis')
 	, messages = require('../../common/messages')
     , jobsApi = require('./jobs.api')
     , commonUtils = require('../../utils/common.utils')
+    , redisUtils = require('../../utils/redis.utils')
 	, util = require('util');
 
 if (!module.parent) {
@@ -19,15 +20,14 @@ if (!module.parent) {
 redisPub = module.exports;
 function createRedisPubClient (callback)
 {
-    commonUtils.createRedisClient(function(client) {
-        redisPub.redisPubClient = client;
-        callback();
-    });
+    redisPub.redisPubClient = redisUtils.createRedisClient(-1);
+    redisPub.redisSetClient = redisUtils.createRedisClient();
+    callback();
 }
 
 function doSetToRedis (key, data)
 {
-	redisPub.redisPubClient.set(channel, data, function (err) {
+	redisPub.redisSetClient.set(channel, data, function (err) {
 		if (err) {
 			logutils.logger.error("Redis SET error [key#]" + key + ", [value#]" + data);
 		}
@@ -88,8 +88,8 @@ function publishDataToRedis (pubChannel, saveChannelKey, errCode, pubData,
 	 save the data by calling this API, set doSave = 1
 	 */
 	if (doSave) {
-		//redisPub.redisPubClient.setex(saveChannelKey, expiryTime, saveData,
-		redisPub.redisPubClient.set(saveChannelKey, saveData,
+		//redisPub.redisSetClient.setex(saveChannelKey, expiryTime, saveData,
+		redisPub.redisSetClient.set(saveChannelKey, saveData,
 			function (err) {
 				if (err) {
 					logutils.logger.error("redis SET error for pubData [err#] " +

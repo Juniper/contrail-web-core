@@ -237,7 +237,7 @@ function Contrail() {
     };
 
     this.appendNewItemMainDataSource = function(value, data){
-        var valueArray = value.split('~');
+        var valueArray = value.split(cowc.DROPDOWN_VALUE_SEPARATOR);
         if(valueArray.length === 2) {
             for(var i = 0; i < data.length; i++) {
                 if(data[i].value === valueArray[1]) {

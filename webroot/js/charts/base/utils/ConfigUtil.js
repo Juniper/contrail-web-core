@@ -9,7 +9,7 @@ define([], function () {
      * @public
      * @constructor
      */
-    var Config = function (options) {
+    var ConfigUtil = function (options) {
         /**
          * @private
          * @member {Object}
@@ -23,7 +23,7 @@ define([], function () {
      * @public
      * @return {Object}
      */
-    Config.prototype.getOptions = function () {
+    ConfigUtil.prototype.getOptions = function () {
 
         return this._options;
     };
@@ -37,7 +37,7 @@ define([], function () {
      * @param {Funcion} filter - filter function
      * @param {String} [appendAs] - add option set key as
      */
-    Config.prototype.find = function (where, what, filter, appendAs) {
+    ConfigUtil.prototype.find = function (where, what, filter, appendAs) {
 
         var result = [];
 
@@ -68,7 +68,7 @@ define([], function () {
      * @param {String} option
      * @returns {Boolean}
      */
-    Config.prototype.isAccessor = function (option) {
+    ConfigUtil.prototype.isAccessor = function (option) {
 
         return option.endsWith("Accessor");
     };
@@ -79,13 +79,13 @@ define([], function () {
      * @param {String} option
      * @returns {Boolean}
      */
-    Config.prototype.isLabel = function (option) {
+    ConfigUtil.prototype.isLabel = function (option) {
 
         return option.endsWith("Label");
     };
 
 
-    Config.prototype.set = function (option, optionValue) {
+    ConfigUtil.prototype.set = function (option, optionValue) {
 
         var parts = option.split(".");
         var options = this._options;
@@ -110,7 +110,7 @@ define([], function () {
      * @param {Mixed} defaultValue
      * @returns {Mixed}
      */
-    Config.prototype.get = function (option, defaultValue) {
+    ConfigUtil.prototype.get = function (option, defaultValue) {
 
         var value = this._options;
         var parts = option.split(".");
@@ -134,7 +134,7 @@ define([], function () {
      * @param {String} option
      * @returns {Boolean}
      */
-    Config.prototype.has = function (option) {
+    ConfigUtil.prototype.has = function (option) {
 
         var value = this._options;
         var parts = option.split(".");
@@ -152,5 +152,5 @@ define([], function () {
         return true;
     };
     
-    return Config;
+    return ConfigUtil;
 });

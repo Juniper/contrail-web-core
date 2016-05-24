@@ -1072,22 +1072,6 @@ function getWebUIRedisDBIndex ()
     return dbIndex;
 }
 
-function createRedisClient (redisDBIndex, callback)
-{
-    var uiDB;
-    var server_port = (config.redis_server_port) ?
-        config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
-    var server_ip = (config.redis_server_ip) ?
-        config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
-    if (typeof redisDBIndex === 'function') {
-        uiDB = getWebUIRedisDBIndex();
-        callback = redisDBIndex;
-    } else {
-        uiDB = redisDBIndex;
-    }
-    redisUtils.createRedisClientAndWait(server_port, server_ip, uiDB, callback);
-}
-
 /* Function: flushRedisDB
     Used to flush the Redis DB
  */
@@ -1097,8 +1081,9 @@ function flushRedisDB (redisDB, callback)
         config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
     var server_ip = (config.redis_server_ip) ?
         config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
-    var redisClient = redis.createClient(server_port,
-        server_ip);
+    var redisClient = redis.createClient(server_port, server_ip);
+    var redisUtils = require('./redis.utils');
+    redisUtils.subscribeToRedisEvents(redisClient);
     redisClient.select(redisDB, function(err, res) {
         if (null != err) {
             logutils.logger.error("Redis DB " + redisDB + " SELECT failed");
@@ -1387,6 +1372,7 @@ function getWebServerInfo (req, res, appData)
 
     serverObj['disabledFeatures'] = getValueByJsonPath(config,'features;disabled',[]);
     serverObj['featurePkgsInfo'] = getValueByJsonPath(config,'featurePkg',[]);
+    serverObj['sessionTimeout'] = getValueByJsonPath(config,'session;timeout', 3600000);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
@@ -2202,7 +2188,6 @@ exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
 exports.createJSONByUVEResponseArr = createJSONByUVEResponseArr;
 exports.getRestAPIServer = getRestAPIServer;
-exports.createRedisClient = createRedisClient;
 exports.flushRedisDB = flushRedisDB;
 exports.redisClientCreateEvent = redisClientCreateEvent;
 exports.getWebUIRedisDBIndex = getWebUIRedisDBIndex;

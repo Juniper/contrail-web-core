@@ -7,27 +7,25 @@
  * Following the current naming of model as this is part of models directory. 
  */
 define([
-    'contrailD3',
-    'core-basedir/js/models/chart/NavigationChart'
-], function(contrailD3, NavigationChart) {
+    'coCharts',
+    'core-basedir/js/charts/NavigationChart'
+], function(coCharts, NavigationChart) {
 
     //Add NavigationChart part of namespace.
-    contrailD3.NavigationChart = NavigationChart;
+    coCharts.NavigationChart = NavigationChart;
 
     /**
      * Hack for now. When a class is extended, dependencies to extend required during declaration are 'require'-d within
      * each file. But some of the function definition directly access the class from Namespace.
-     * This forces to put contrailD3 in global scope.
+     * This forces to put coCharts in global scope.
      */
-    window.contrailD3 = contrailD3;
+    window.coCharts = coCharts;
 
     /**
      * @public
      * @constructor
      */
     var LineBarChart = function(options, data) {
-
-        var chartObj = this._createConfigAndData(options, data);
         
         /**
          * Chart controls container.
@@ -36,7 +34,7 @@ define([
          */
         this._controlsContainer = undefined;
 
-        contrailD3.NavigationChart.call(this, chartObj.config, chartObj.chartData);
+        coCharts.NavigationChart.call(this, options, data);
     }
 
 
@@ -47,22 +45,25 @@ define([
      * @override
      */
     LineBarChart.prototype._renderInnerMarkdown = function() {
-        
+
         /*
-         * Append controls container before.
+         * Check control panel required.
          */
-        this._controlsContainer = this._container.append("div")
-            .attr("class", "control-panel");
-        /*
-         * Render controls in appended container.
-         */
-        if (this._config.getOptions().options.showLegend) {
+        if (this._config.get("options.container.showControls", false)) {
+            /*
+             * Append controls container.
+             */
+            this._controlsContainer = this._container.append("div")
+                .attr("class", "control-panel");
+            /*
+             * Render controls in appended container.
+             */
             this._renderControls();
         }
         /*
          * Call parent class method.
          */
-        contrailD3.NavigationChart.prototype._renderInnerMarkdown.call(this);
+        coCharts.NavigationChart.prototype._renderInnerMarkdown.call(this);
     };
 
 
@@ -80,8 +81,9 @@ define([
          * charts initialized with his barChartManager instance, not main.
          */
         if (manager) {
-            var name = this._stringUtil.ucFirst(manager);
-            managerClass = this._classUtil.getClassByName("contrailD3.BarChart" + name + "Strategy");
+            var name = this._stringUtil.ucFirst(manager),
+            managerClass = this._classUtil.getClassByName("coCharts.BarChart" + name + "Strategy");
+            this._mainChart.setBarChartStrategy(managerClass);
             this._navigationChart.setBarChartStrategy(managerClass);
         }
         /*
@@ -180,7 +182,7 @@ define([
 
         var self = this;
 
-        var options = this._config.find("metaData", "isAvailable", function(d) {
+        var options = this._config.find("metaData", "enable", function(d) {
             return d === true;
         }, "id");
 
@@ -203,57 +205,6 @@ define([
             return d.id;
         })
     };
-    
-    LineBarChart.prototype._createConfigAndData = function(options, data) {
-
-        var config = {
-            metaData : {},
-            charts: [],
-            components: [{
-                type: "crosshair"
-            }],
-            options: {
-                container : {
-                    "mainChartHeight": 300,
-                    "navChartHeight": 80,
-                },
-                axes: {},
-                showLegend: true
-            }
-        }
-
-        var dataSeries = [];
-        data.forEach(function(series) {
-            dataSeries.push(series.values);
-            config.charts.push({
-                type: function(bar){return (bar) ? 'bar': 'line';}(series.bar),
-                color: series.color,
-                y: function(bar){return (bar) ? 1 : 2;}(series.bar)
-            });
-        });
-
-        if (options.height) {
-            config.options.container.mainChartHeight =  options.height - config.options.container.navChartHeight;
-        }
-        
-        config.metaData = options.metaData;
-
-        config.options.axes = {
-            y1Label: options.y1AxisLabel,
-            y2Label: options.y2AxisLabel,
-            xAccessor: options.xAccessor,
-            y1Accessor: options.y1Accessor,
-            y2Accessor: options.y2Accessor
-        };
-
-        config.options.showLegend = options.showLegend;
-
-        return {
-            config: config,
-            chartData: dataSeries
-        };
-        
-    }
     
     return LineBarChart;
 });

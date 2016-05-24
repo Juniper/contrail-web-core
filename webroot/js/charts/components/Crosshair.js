@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/models/chart/Component'
+    'core-basedir/js/charts/base/Component'
 ], function (Component) {
 
     /**
@@ -44,21 +44,23 @@ define([
          * @private
          * @member {String}
          */
-        this._color = "red";
+        this._color = "#808080";
         /*
          * Create tooltip.
          */
-        this._tooltip = new contrailD3.components.Tooltip();
+        this._tooltip = new coCharts.components.Tooltip();
 
     }
 
 
     Crosshair.prototype = Object.create(Component.prototype);
 
+
     /**
      * @override
      */
     Crosshair.prototype.setContainer = function (container) {
+
         this._container = container;
 
         //Also set the tooltip container
@@ -70,7 +72,7 @@ define([
      */
     Crosshair.prototype.getClassName = function () {
 
-        return "contrailD3.components.Crosshair";
+        return "coCharts.components.Crosshair";
     };
 
 
@@ -84,9 +86,18 @@ define([
     /**
      * @override
      */
+    Crosshair.prototype._update = function() {
+
+        this._values = this._container.getAxisValues("x", 1);
+    };
+
+
+    /**
+     * @override
+     */
     Crosshair.prototype._render = function () {
 
-        this._values = this._container.getValues("x", 1);
+        this._values = this._container.getAxisValues("x", 1);
 
         this._surface = this._container._canvas.append("g")
             .attr("class", "crosshair");
@@ -151,6 +162,9 @@ define([
          * Get x coordinate of the element.
          */
         var x = this._container._x1Scale(this._values[i]);
+            if (isNaN(x)) {
+            return;
+        }
         /*
          * Move line.
          */
@@ -165,8 +179,8 @@ define([
 
             var chartData = chartContext.chart.getData();
 
-            var xAccessor = this._container._getProperty("x", chartContext.x, "Accessor");
-            var yAccessor = this._container._getProperty("y", chartContext.y, "Accessor");
+            var xAccessor = this._container.getAccessor(chartContext, "x");
+            var yAccessor = this._container.getAccessor(chartContext, "y");
 
             var xValues = chartData.map(xAccessor);
 
@@ -176,19 +190,20 @@ define([
             var value = yAccessor.call(undefined, dataPoint);
 
             return {
-                name: this._container._config.get("options.axes.y" + chartContext.y + "Accessor"),
+                name: this._container._config.get("options.axes.y" + chartContext.y + "Accessor", chartContext.yField),
                 value: value,
                 color: chartContext.chart.getColor()
             };
         }, this);
 
-        var dimension = this._container.getSvg().node().getBoundingClientRect();
+        var svg = this._container.getSvg().node();
+        var poistion = jQuery(svg.parentNode).position();
 
-        x =  x + dimension.left + this._container._margin.left;
-        var y = dimension.top / 2 + this._container._margin.top + this._container._height / 2;
+        var tooltipX = poistion.left + this._container._margin.left + x;
+        var tooltipY = poistion.top + this._container._height / 2;
 
         this._tooltip.setContent(this._getTooltipContent(points))
-            .show(x, y);
+            .show(tooltipX, tooltipY);
     };
 
 
@@ -238,8 +253,8 @@ define([
         var content = '<table>';
 
         points.forEach(function (point) {
-            content += '<tr class="contrailD3-tooltip-row">' +
-                '<td><div class="contrailD3-tooltip-color" style="background-color:' + point.color + '"></div></td>' +
+            content += '<tr class="coCharts-tooltip-row">' +
+                '<td><div class="coCharts-tooltip-color" style="background-color:' + point.color + '"></div></td>' +
                 '<td>' + this._getFieldName(point.name) + '</td>' +
                 '<td>' + this._getFieldValue(point.name, point.value) + '</td>' +
                 '</tr>';

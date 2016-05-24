@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/models/chart/Component'
+    'core-basedir/js/charts/base/Component'
 ], function (Component) {
 
     /**
@@ -24,14 +24,13 @@ define([
 
 
     /**
-     * Update chart.
-     * @private
-     * @param {Selection} container
-     * @param {Object[]} data
+     * Check chart is bar chart.
+     * @public
+     * @returns {Boolean}
      */
-    Chart.prototype._update = function (container, data) {
-
-        throw new Error("contrailD3.Chart._update() not implemented");
+    Chart.prototype.isBarChart = function() {
+    
+        return this.getClassName() === "coCharts.BarChart";
     };
 
 

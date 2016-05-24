@@ -3,7 +3,7 @@
  */
 
 define([
-    'core-basedir/js/models/chart/BarChartStrategy'
+    'core-basedir/js/charts/base/BarChartStrategy'
 ], function (BarChartStrategy) {
 
     /**
@@ -11,7 +11,7 @@ define([
      */
     var BarChartGroupedStrategy = function (charts) {
 
-        contrailD3.BarChartStrategy.call(this, charts);
+        coCharts.BarChartStrategy.call(this, charts);
     }
 
 
@@ -21,19 +21,9 @@ define([
     /**
      * @override
      */
-    BarChartGroupedStrategy.prototype.getGap = function (chart) {
-
-        return chart.getWidth() / chart.getData().length / this._charts.length / 5;
-    };
-
-
-    /**
-     * @override
-     */
     BarChartGroupedStrategy.prototype.getWidth = function (chart) {
 
-        return (chart.getWidth() / chart.getData().length / this._charts.length) -
-            (this.getGap(chart) / this._charts.length);
+        return (chart.getWidth() / chart.getData().length - this.getGap(chart)) / this.getSize();
     };
 
 
@@ -41,12 +31,14 @@ define([
      * @override
      */
     BarChartGroupedStrategy.prototype.getX = function (chart, d, i) {
+
+        var charts = this.getCharts();
         /*
          * Get chart number.
          */
         var j;
-        for (j = 0; j < this._charts.length; j++) {
-            if (chart == this._charts[j]) {
+        for (j = 0; j < charts.length; j ++) {
+            if (chart == charts[j].chart) {
                 break;
             }
         }
@@ -57,7 +49,8 @@ define([
         /*
          * Calculate and return bar x position.
          */
-        return barWidth * i + barWidth * (this._charts.length - 1) * i + barWidth * j + this.getGap(chart) * i;
+        var delimeter = chart.getData().length > 1 ? 1 : 0;
+        return chart._xScale(chart._xAccessor(d)) - barWidth * charts.length / (chart.getData().length - delimeter) * i + barWidth * j;
     };
 
 
@@ -69,14 +62,5 @@ define([
         return chart._yScale(chart._yAccessor(d));
     };
 
-
-    /**
-     * @override
-     */
-    BarChartGroupedStrategy.prototype.getHeight = function (chart, d, i) {
-
-        return chart._height - chart._yScale(chart._yAccessor(d));
-    };
-    
     return BarChartGroupedStrategy;
 });

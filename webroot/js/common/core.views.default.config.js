@@ -117,9 +117,28 @@ define([
             },
             y1Formatter: d3.format(".01f"),
             showLegend: true,
-            xAccessor: 'x',
-            y1Accessor: 'y1',
-            y2Accessor: 'y2'
+            xFormatter: function(value) {
+                return d3.time.format("%H:%M")(value);
+            }
+        };
+
+        this.lineBarChartConfig = {
+            margin: {top: 20, right: 70, bottom: 50, left: 70},
+            margin2: {top: 0, right: 70, bottom: 40, left: 70},
+            height: 300,
+            axisLabelDistance: 5,
+            y1AxisLabel: 'CPU Utilization (%)',
+            y2AxisLabel: 'Memory Usage',
+            defaultDataStatusMessage: true,
+            statusMessageHandler: cowm.getRequestMessage,
+            y2Formatter: function (y2Value) {
+                var formattedValue = formatBytes(y2Value * 1024, true);
+                return formattedValue;
+            },
+            y1Formatter: d3.format(".01f"),
+            xFormatter: function(value) {
+                return d3.time.format("%H:%M")(value);
+            }
         };
     };
 

@@ -20,9 +20,9 @@ define([], function () {
         /**
          * Chart config.
          * @protected
-         * @member {contrailD3.Config}
+         * @member {coCharts.utils.ConfigUtil}
          */
-        this._config = new contrailD3.Config(config);
+        this._config = new coCharts.utils.ConfigUtil(config);
         /**
          * Chart height;
          * @member {Number}
@@ -45,12 +45,12 @@ define([], function () {
         this._chartsContainer = undefined;
         /**
          * Inner charts set.
-         * @member {contrailD3.Chart[]}
+         * @member {coCharts.Chart[]}
          */
         this._charts = [];
         /**
          * Container components set.
-         * @member {contrailD3.Component[]}
+         * @member {coCharts.Component[]}
          */
         this._components = {};
         /**
@@ -71,28 +71,58 @@ define([], function () {
         };
         /**
          * @private
-         * @member {contrailD3.utils.ClassUtil}
+         * @member {coCharts.utils.ClassUtil}
          */
-        this._classUtil = new contrailD3.utils.ClassUtil();
+        this._classUtil = new coCharts.utils.ClassUtil();
         /**
          * @protected
-         * @member {contrailD3.utils.StringUtil}
+         * @member {coCharts.utils.StringUtil}
          */
-        this._stringUtil = new contrailD3.utils.StringUtil();
+        this._stringUtil = new coCharts.utils.StringUtil();
+        /**
+         * @private
+         * @member {contrailD3.BarChartManager}
+         */
+        this._barChartManager = new coCharts.BarChartManager(this);
         /**
          * Chart unique id.
          * @private
          * @member {String}
          */
         this._chartId = this._stringUtil.getUniqueId();
+        /**
+         * Axes enable/disable flags set.
+         */
+        this._axes = {
+            x1: true,
+            y1: true,
+            x2: false,
+            y2: false
+        };
         /*
          * Register window resize event handler.
          */
+        this.setResizeEventHandler();
+    };
+
+    /**
+     * Register resize handler.
+     * A lot of child containers inherit this class functionality but
+     * they should escape registering their own resize handlers.
+     * So override this method in child classes with empty body.
+     * @public
+     * @param {Function} handler
+     */
+    Container.prototype.setResizeEventHandler = function(handler) {
+
         var self = this;
-        d3.select(window).on('resize.' + this._chartId, function () {
+
+        handler = handler || function() {
             self.resize();
-        });
-    }
+        };
+
+        d3.select(window).on('resize.' + this._chartId, handler);
+    };
 
 
     /**
@@ -176,7 +206,7 @@ define([], function () {
      * Set x axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setXLabel = function (label) {
 
@@ -188,11 +218,13 @@ define([], function () {
      * Set x1 axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX1Label = function (label) {
 
         this._x1Label = label;
+        this._axes.x1 = true;
+
         return this;
     };
 
@@ -201,11 +233,13 @@ define([], function () {
      * Set x2 axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX2Label = function (label) {
 
         this._x2Label = label;
+        this._axes.x2 = true;
+
         return this;
     };
 
@@ -214,7 +248,7 @@ define([], function () {
      * Set y axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setYLabel = function (label) {
 
@@ -226,11 +260,13 @@ define([], function () {
      * Set y1 axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY1Label = function (label) {
 
         this._y1Label = label;
+        this._axes.y1 = true;
+
         return this;
     };
 
@@ -239,11 +275,13 @@ define([], function () {
      * Set y2 axis label.
      * @public
      * @param {String} label
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY2Label = function (label) {
 
         this._y2Label = label;
+        this._axes.y2 = true;
+
         return this;
     };
 
@@ -252,7 +290,7 @@ define([], function () {
      * Set chart height.
      * @public
      * @param {Number} width
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setWidth = function (width) {
 
@@ -265,7 +303,7 @@ define([], function () {
      * Set chart width.
      * @public
      * @param {Number} height
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setHeight = function (height) {
 
@@ -289,7 +327,7 @@ define([], function () {
      * Set chart margins.
      * @public
      * @param {Object} margin
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setMargin = function (margin) {
 
@@ -305,7 +343,7 @@ define([], function () {
      * Update chart with new data set.
      * @public
      * @param {Object[]} data
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.update = function (data) {
         /*
@@ -313,13 +351,27 @@ define([], function () {
          */
         if (data) {
             this._data = data;
-        } else {
-            data = this._data;
         }
         /*
          * Order rendering queue.
          */
         this._sortChartsByType();
+        /*
+         * Loop through child charts.
+         */
+        this._charts.forEach(function(context, i) {
+            /*
+             * Copy main properties to the updated chart.
+             * This is necessary if one chart rendered in several
+             * containers and each of them has its own set of
+             * settings, main of which is scale functions.
+             */
+            this._copyChart(this, context.chart);
+            /*
+             * Update child chart.
+             */
+            context.chart.setData(this._data[i]);
+        }, this);
         /*
          * Update axis.
          */
@@ -327,19 +379,18 @@ define([], function () {
         /*
          * Loop through child charts.
          */
-        this._charts.forEach(function (chartContext, i) {
-            /*
-             * Copy main properties to the updated chart.
-             * This is necessary if one chart rendered in several
-             * containers and each of them has its own set of
-             * settings, main of which is scale functions.
-             */
-            this._copyChart(this, chartContext.chart);
+        this._charts.forEach(function(context, i) {
             /*
              * Update child chart.
              */
-            chartContext.chart._update(chartContext.container, data[i], true);
+            context.chart._update(context.container, this._data[i], context.enable);
         }, this);
+        /*
+         * Update components.
+         */
+        for (var i in this._components) {
+            this._components[i]._update();
+        }
     };
 
 
@@ -363,40 +414,14 @@ define([], function () {
 
 
     /**
-     * Update bar charts manager.
-     * @private
-     * @returns {contrailD3.BarChartManager}
-     */
-    Container.prototype._updateBarChartManager = function () {
-        /*
-         * Create bar chart manager if not yet.
-         */
-        if (!this._barChartManager) {
-            this._barChartManager = new contrailD3.BarChartManager(this);
-        }
-        /*
-         * Add all charts to the manager. It will reject unnecessary automatically.
-         */
-        this._charts.forEach(function (chartData) {
-            this._barChartManager.add(chartData.chart);
-        }, this);
-        /*
-         * Return manager.
-         */
-        return this._barChartManager;
-    };
-
-
-    /**
      * Add component to the canvas.
-     * @param {contrailD3.Component} component
-     * @param {String} [x]
-     * @param {String} [y]
+     * @param {coCharts.Component} component
+     * @param {String} [context]
      * @param {Integer} [index]
      * @param {Selection} [container]
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
-    Container.prototype.add = function (component, x, y, index, container) {
+    Container.prototype.add = function (component, options, index, container) {
         /*
          * 
          */
@@ -409,10 +434,20 @@ define([], function () {
          */
         var context = {
             chart: component,
-            x: x,
-            y: y,
-            container: container
+            x: options.x || 1,
+            y: options.y || 1,
+            container: container,
+            enable: true
         };
+        /*
+         * Copy other options.
+         */
+        for (var i in options) {
+            if (["chart", "x", "y", "container"].indexOf(i) < 0) {
+                context[i] = options[i];
+                component["_" + i] = options[i];
+            }
+        }
         /*
          * Try to find chart with index in the current set and replace it.
          * Add new one if not found.
@@ -431,9 +466,8 @@ define([], function () {
         /*
          * Set a manager if this bar chart.
          */
-        if (component.getClassName() == "contrailD3.charts.BarChart") {
-            var manager = this._updateBarChartManager();
-            component.setManager(manager);
+        if (component.isBarChart()) {
+            component.setManager(this._barChartManager);
         }
 
         return this;
@@ -442,7 +476,7 @@ define([], function () {
 
     /**
      * Remove child chart from the canvas.
-     * @param {contrailD3.Chart} chart
+     * @param {coCharts.Chart} chart
      * @param {Boolean} keepData
      *
      */
@@ -451,10 +485,6 @@ define([], function () {
          * Find chart index within charts pool.
          */
         var index = this._getChartIndex(chart);
-        /*
-         * Remove chart from manager.
-         */
-        this._barChartManager.remove(chart);
         /*
          * Remove chart.
          */
@@ -473,7 +503,7 @@ define([], function () {
      * Get chart index.
      * Returns chart index in the charts pool.
      * @private
-     * @param {contrailD3.Chart} chart
+     * @param {coCharts.Chart} chart
      * @returns {Integer}
      */
     Container.prototype._getChartIndex = function (chart) {
@@ -489,7 +519,7 @@ define([], function () {
     /**
      * Get chart context.
      * @private
-     * @param {contrailD3.Chart} chart
+     * @param {coCharts.Chart} chart
      * @returns {Object}
      */
     Container.prototype._getChartContext = function (chart) {
@@ -500,8 +530,8 @@ define([], function () {
 
     /**
      * Replace one chart to another.
-     * @param {contrailD3.Chart} fromChart
-     * @param {contrailD3.Chart} toChart
+     * @param {coCharts.Chart} fromChart
+     * @param {coCharts.Chart} toChart
      * @returns {Object}
      */
     Container.prototype.replace = function (fromChart, toChart) {
@@ -521,7 +551,7 @@ define([], function () {
         /*
          * Add new chart to the pool.
          */
-        this.add(toChart, context.x, context.y, index, context.container);
+        this.add(toChart, context, index, context.container);
         /*
          * Return new chart context.
          */
@@ -531,10 +561,10 @@ define([], function () {
 
     /**
      * Copy one chart main properties to another.
-     * fromChart parameter may be as contrailD3.Chart as contrailD3.Component.
+     * fromChart parameter may be as coCharts.Chart as coCharts.Component.
      * In second case it has no context and toChart context will be used.
      * @param {Mixed} fromChart
-     * @param {contrailD3.Chart} toChart
+     * @param {coCharts.Chart} toChart
      */
     Container.prototype._copyChart = function (fromChart, toChart) {
         /*
@@ -562,28 +592,17 @@ define([], function () {
     /**
      * Copy set of main properties from one chart to another.
      * @private
-     * @param {contrailD3.Chart} chart
+     * @param {coCharts.Chart} chart
      * @param {Object} context
      */
     Container.prototype._copyChartProperties = function (chart, context) {
 
         chart._width = this._width;
         chart._height = this._height;
-        chart._xAccessor = this._getProperty("x", context.x, "Accessor");
-        chart._yAccessor = this._getProperty("y", context.y, "Accessor");
+        chart._xAccessor = this.getAccessor(context, "x");
+        chart._yAccessor = this.getAccessor(context, "y");
         chart._xScale = this._getProperty("x", context.x, "Scale");
         chart._yScale = this._getProperty("y", context.y, "Scale");
-    };
-
-
-    /**
-     * Set data x accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setXAccessor = function (accessor) {
-
-        return this.setX1Accessor(accessor);
     };
 
 
@@ -591,68 +610,11 @@ define([], function () {
      * Get x accessor.
      * @returns {Function}
      */
-    Container.prototype.getXAccessor = function () {
+    Container.prototype.getXAccessor = function() {
 
-        return this._getProperty("x", 1, "Accessor");
-    };
-
-
-    /**
-     * Set data x1 accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setX1Accessor = function (accessor) {
-
-        this._x1Accessor = accessor;
-        return this;
-    };
-
-
-    /**
-     * Set data x2 accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setX2Accessor = function (accessor) {
-
-        this._x2Accessor = accessor;
-        return this;
-    };
-
-
-    /**
-     * Set data y accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setYAccessor = function (accessor) {
-
-        return this.setY1Accessor(accessor);
-    };
-
-
-    /**
-     * Set data y1 accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setY1Accessor = function (accessor) {
-
-        this._y1Accessor = accessor;
-        return this;
-    };
-
-
-    /**
-     * Set data y2 accessor.
-     * @param {Function} accessor
-     * @returns {contrailD3.Chart}
-     */
-    Container.prototype.setY2Accessor = function (accessor) {
-
-        this._y2Accessor = accessor;
-        return this;
+        return function(d) {
+            return d["x"];
+        }
     };
 
 
@@ -669,7 +631,7 @@ define([], function () {
     /**
      * Set x scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setXScale = function (scale) {
 
@@ -680,11 +642,13 @@ define([], function () {
     /**
      * Set x1 scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX1Scale = function (scale) {
 
         this._x1Scale = scale;
+        this._axes.x1 = true;
+
         return this;
     };
 
@@ -708,11 +672,13 @@ define([], function () {
     /**
      * Set x scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX2Scale = function (scale) {
 
         this._x2Scale = scale;
+        this._axes.x2 = true;
+
         return this;
     };
 
@@ -746,7 +712,7 @@ define([], function () {
     /**
      * Set y scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setYScale = function (scale) {
 
@@ -773,11 +739,13 @@ define([], function () {
     /**
      * Set y1 scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY1Scale = function (scale) {
 
         this._y1Scale = scale;
+        this._axes.y1 = true;
+
         return this;
     };
 
@@ -801,11 +769,13 @@ define([], function () {
     /**
      * Set y2 scale function.
      * @param {Function} scale
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY2Scale = function (scale) {
 
         this._y2Scale = scale;
+        this._axes.y2 = true;
+
         return this;
     };
 
@@ -813,7 +783,7 @@ define([], function () {
     /**
      * Set x axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setXAxis = function (axis) {
 
@@ -824,11 +794,13 @@ define([], function () {
     /**
      * Set x1 axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX1Axis = function (axis) {
 
         this._x1Axis = axis;
+        this._axes.x1 = true;
+
         return this;
     };
 
@@ -836,11 +808,13 @@ define([], function () {
     /**
      * Set x2 axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setX2Axis = function (axis) {
 
         this._x2Axis = axis;
+        this._axes.x2 = true;
+
         return this;
     };
 
@@ -848,7 +822,7 @@ define([], function () {
     /**
      * Set y axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setYAxis = function (axis) {
 
@@ -859,11 +833,13 @@ define([], function () {
     /**
      * Set y1 axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY1Axis = function (axis) {
 
         this._y1Axis = axis;
+        this._axes.y1 = true;
+
         return this;
     };
 
@@ -871,11 +847,13 @@ define([], function () {
     /**
      * Set y2 axis.
      * @param {Fuction} axis
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.setY2Axis = function (axis) {
 
         this._y2Axis = axis;
+        this._axes.y2 = true;
+
         return this;
     };
 
@@ -903,7 +881,7 @@ define([], function () {
          */
         var self = this;
         list = list.sort(function (a, b) {
-            if (a.chartData.chart.getClassName() == "contrailD3.charts.BarChart") {
+            if (a.chartData.chart.getClassName() == "coCharts.BarChart") {
                 return -1;
             } else if (a.chartData.chart.getClassName() == b.chartData.chart.getClassName()) {
                 return 0;
@@ -936,7 +914,7 @@ define([], function () {
     /**
      * Render chart
      * @param {String} container - chart's container CSS selector or HTMLElement
-     * @returns {contrailD3.Chart}
+     * @returns {coCharts.Chart}
      */
     Container.prototype.render = function (selector) {
         /*
@@ -966,45 +944,52 @@ define([], function () {
          */
         this._sortChartsByType();
         /*
-         * Create scales functions.
+         * Set up scales functions.
          */
-        this._prepareScales();
+        this._setUpScales();
+        /*
+         * Loop through child charts and set up properties.
+         */
+        this._charts.forEach(function(context, i) {
+            /*
+             * Set data if necessary.
+             */
+            if (! context.chart.hasData()) {
+                context.chart.setData(this.getData()[i]);
+            }
+            /*
+             * Copy main properties.
+             */
+            this._copyChartProperties(context.chart, context);
+        }, this);
+        /*
+         * Set up charts axes.
+         */
+        this._updateAxes();
         /*
          * Render axes.
          */
         this._updateBaseChart();
         /*
-         * Loop through child charts set.
+         * Loop through child charts set and render.
          */
-        this._charts.forEach(function (chartContext, i) {
+        this._charts.forEach(function(context, i) {
             /*
              * Create chart container.
              */
-            chartContext["container"] = this._chartsContainer.append("g").attr("class", "chart");
-            /*
-             * Get chart from its context.
-             */
-            var chart = chartContext.chart;
-            /*
-             * Set data if necessary.
-             */
-            if (!chart.hasData()) {
-                chart.setData(this.getData()[i]);
-            }
-            /*
-             * Copy main properties.
-             */
-            this._copyChartProperties(chart, chartContext);
+            context["container"] = this._chartsContainer.append("g").attr("class", "chart");
             /*
              * Render chart.
              */
-            chart._render(chartContext.container);
+            if (context.enable) {
+                context.chart._render(context.container);
+            }
         }, this);
         /*
          * Render components.
          */
         for (var i in this._components) {
-            this._components[i].setContainer(this); //Todo confusing as this sets the ._container of component.
+            this._components[i].setContainer(this);
             this._components[i]._render(this._canvas);
         }
         /*
@@ -1017,51 +1002,107 @@ define([], function () {
 
 
     /**
-     * Get x extent.
+     * Disable inner charts.
+     * @public
+     * @param {String} field - x field
+     * @param {Integer} number - y axis number
+     */
+    Container.prototype.disable = function(field, number) {
+        /*
+         * Reset enable flag.
+         */
+        this._charts.forEach(function(context) {
+            if (context.yField === field && context.y === number) {
+                context.enable = false;
+            }
+        }, this);
+        /*
+         * Update bar chart's manager.
+         */
+        this._setBarChartManager();
+        /*
+         * Update container.
+         */
+        this.update();
+    };
+
+
+    /**
+     * Enable inner charts.
+     * @public
+     * @param {String} field - x field
+     * @param {Integer} number - y axis number
+     */
+    Container.prototype.enable = function(field, number) {
+        /*
+         * Set enable flag.
+         */
+        this._charts.forEach(function(context) {
+            if (context.yField === field && context.y === number) {
+                context.enable = true;
+            }
+        }, this);
+        /*
+         * Update bar chart's manager.
+         */
+        this._setBarChartManager();
+        /*
+         * Update container.
+         */
+        this.update();
+    };
+
+
+    /**
+     * Set current bar chart manager to the charts set.
+     * @private
+     */
+    Container.prototype._setBarChartManager = function() {
+
+        this._charts.forEach(function(context) {
+            if (context.chart.isBarChart()) {
+                context.chart.setManager(this._barChartManager);
+            }
+        }, this);
+    };
+
+
+    /**
+     * Get axis values.
      * @public
      * @param {String} axis
      * @param {Number} number
      * @return {Mixed[]}
      */
-    Container.prototype.getValues = function (axis, number) {
-
-        var accessor = this._getProperty(axis, number, "Accessor");
+    Container.prototype.getAxisValues = function(axis, number) {
 
         var values = [];
 
-        this._data.forEach(function (series) {
-            var x = series.forEach(function (d) {
-                values.push(accessor.call(undefined, d));
-            });
-        });
+        this._data.forEach(function(series, i) {
+            var context = this._charts[i];
+            if (context[axis] === number) {
+                var accessor = this.getAccessor(context, axis);
+                series.forEach(function(d) {
+                    values.push(accessor.call(undefined, d));
+                });
+            }
+        }, this);
 
         return values;
     };
 
 
     /**
-     * Prepare chart scale functions,
-     * Create axis scales function depending on input data.
+     * Set up chart scale functions.
+     * @private
      */
-    Container.prototype._prepareScales = function () {
+    Container.prototype._setUpScales = function () {
 
         ["x", "y"].forEach(function (axis) {
             [1, 2].forEach(function (number) {
-                /*
-                 * Get input domain.
-                 */
-                var domain = this._getDomain(axis, number);
-                if (domain === null) {
-                    return;
+                if (this["_" + axis + number + "Scale"] === undefined) {
+                    this["get" + axis.toUpperCase() + number + "Scale"]();
                 }
-                /*
-                 * Get axis scale.
-                 */
-                var scale = this["_" + axis + number + "Scale"] || this["get" + axis.toUpperCase() + number + "Scale"]();
-                /*
-                 * Set scale input domain.
-                 */
-                scale.domain(domain);
             }, this);
         }, this);
     };
@@ -1155,7 +1196,7 @@ define([], function () {
             }).attr("width", this._width + this._margin.left + this._margin.right)
             .enter()
             .append("svg")
-            .attr("class", "contrailD3-svg")
+            .attr("class", "coCharts-svg")
             .attr("width", this._width + this._margin.left + this._margin.right)
             .attr("height", this._height + this._margin.top + this._margin.bottom);
         if (svg.size() == 1) {
@@ -1173,8 +1214,17 @@ define([], function () {
             .attr("transform", "translate(" + this._margin.left + ", " + this._margin.top + ")");
         if (canvas.size() == 1) {
             this._canvas = canvas;
-        } 
-
+        }
+        /*
+         * Append axes.
+         */
+        this._axes.x1 && this._renderAxis([0, this._width], "x", 1, "bottom", [0, this._height], -this._height);
+        this._axes.x2 && this._renderAxis([0, this._width], "x", 2, "top", [0, 0], -this._height);
+        this._axes.y1 && this._renderAxis([this._height, 0], "y", 1, "left", [0, 0], -this._width);
+        this._axes.y2 && this._renderAxis([this._height, 0], "y", 2, "right", [this._width, 0], -this._width);
+        /*
+         * Append sub charts container.
+         */
         var chartsContainer = this._canvas.selectAll("g.charts-container")
             .data([0], function (d) {
                 return d;
@@ -1183,20 +1233,6 @@ define([], function () {
             .attr("class", "charts-container");
         if (chartsContainer.size() == 1) {
             this._chartsContainer = chartsContainer;
-        }
-        /*
-         * Append x axes.
-         */
-        this._renderAxis([0, this._width], "x", 1, "bottom", [0, this._height]);
-        if (this._x2Scale) {
-            this._renderAxis([0, this._width], "x", 2, "top", [0, 0]);
-        }
-        /*
-         * Append y axes.
-         */
-        this._renderAxis([this._height, 0], "y", 1, "left", [0, 0]);
-        if (this._y2Scale) {
-            this._renderAxis([this._height, 0], "y", 2, "right", [this._width, 0]);
         }
     };
 
@@ -1235,29 +1271,17 @@ define([], function () {
                 var axis = this["_" + name + number + "Axis"]
                     .tickFormat(this._getFieldFormatterByAxis(name, number));
                 /*
+                 * Align axes ticks if grid required.
+                 */
+                if (this._config.has("options.axes.grid") && ! (axis.tickValues() !== null && axis.tickValues().length === 0)) {
+                    axis.tickValues(this._getTickValues(scale, name, number));
+                }
+                /*
                  * Rescale axis.
                  */
                 axisContainer.call(axis);
             }, this);
         }, this);
-    };
-
-
-    /**
-     * Get axis limitations/extent.
-     * @param {String} name - axis name
-     * @param {Integer} number - axis number
-     * @private
-     */
-    Container.prototype._getExtent = function (name, number) {
-        /*
-         * Get field meta config.
-         */
-        var fieldConfig = this._getFieldConfigByAxis(name, number);
-        /*
-         * Return defined boundaries.
-         */
-        return [fieldConfig.min, fieldConfig.max];
     };
 
 
@@ -1279,6 +1303,39 @@ define([], function () {
 
 
     /**
+     * Get chart y accessor.
+     * @private
+     * @param {Object} context
+     * @param {String} axis
+     * @returns {Function}
+     */
+    Container.prototype.getAccessor = function(context, axis) {
+
+        var field = context[axis + "Field"];
+        return function(d) {
+            return d[field];
+        };
+    };
+
+
+    /**
+     * Get first chart which pertains to the axis.
+     * @private
+     * @param {String} axis
+     * @param {Integer} number
+     * @returns {Chart}
+     */
+    Container.prototype._getAxisChart = function(axis, number) {
+
+        for (var i = 0; i < this._charts.length; i ++) {
+            if (this._charts[i][axis] === number) {
+                return this._charts[i].chart;
+            }
+        }
+    };
+
+
+    /**
      * Get domain for the scale function.
      * Method returns two dimensional array of input domain
      * depending on predefined scale boundaries, if any was provided.
@@ -1289,15 +1346,24 @@ define([], function () {
      */
     Container.prototype._getDomain = function (axis, number) {
         /*
+         * Check force option first.
+         */
+        var extent = this._config.get("options.axes.force" + axis.toUpperCase() + number, false);
+        if (extent !== false && extent[0] !== undefined && extent[1] !== undefined) {
+            return extent;
+        }
+        /*
          * Declare axis data.
          */
         var axisData = [];
         /*
          * Acquire axis data.
          */
-        this._charts.forEach(function (chartData, i) {
-            if (chartData[axis] == number) {
-                axisData = axisData.concat(this._data[i]);
+        this._charts.forEach(function(context, i) {
+            if (context[axis] == number) {
+                axisData = axisData.concat(
+                    this._data[i].map(this.getAccessor(context, axis))
+                );
             }
         }, this);
         /*
@@ -1307,27 +1373,31 @@ define([], function () {
             return null;
         }
         /*
-         * Check if domain boundaries are specified.
+         * Get min and max of defalt data extent.
          */
-        var extent = this._getExtent(axis, number);
         var min = extent[0];
         var max = extent[1];
         /*
-         * Evaluate domain.
+         * Define domain.
          */
-        var domain;
+        var domain = [undefined, undefined];
+        /*
+         * Get bar chart manager specific domain if current axis is y and it contains bar charts.
+         */
+        if (axis === "y" && this._getAxisChart(axis, number).isBarChart()) {
+            domain = this._barChartManager.getYDomain(axis, number);
+        }
+        /*
+         * Get domain final calculations.
+         */
         if (min != undefined && max != undefined) {
             domain = [min, max];
+        } else if (min != undefined) {
+            domain = [min, domain[1] || d3.max(axisData)];
+        } else if (max != undefined) {
+            domain = [domain[0] || d3.min(axisData), max];
         } else {
-            var accessor = this._getProperty(axis, number, "Accessor");
-
-            if (min != undefined) {
-                domain = [min, d3.max(axisData, accessor)];
-            } else if (max != undefined) {
-                domain = [d3.min(axisData, accessor), max];
-            } else {
-                domain = d3.extent(axisData, accessor);
-            }
+            domain = [domain[0] || d3.min(axisData), domain[1] || d3.max(axisData)];
         }
 
         return domain;
@@ -1343,8 +1413,9 @@ define([], function () {
      * @param {Integer} number - axis number
      * @param {String} orientation - axis orientation
      * @param {Number[]} translate - axis translate offset
+     * @param {Number} tickSize - outer tick size
      */
-    Container.prototype._renderAxis = function (range, name, number, orientation, translate) {
+    Container.prototype._renderAxis = function (range, name, number, orientation, translate, tickSize) {
         /*
          * Get chart axis.
          */
@@ -1364,7 +1435,12 @@ define([], function () {
          */
         axis.scale(scale)
             .orient(orientation)
-            .tickFormat(this._getFieldFormatterByAxis(name, number));
+            .tickFormat(this._getFieldFormatterByAxis(name, number))
+            .outerTickSize(0);
+        if (this._config.has("options.axes.grid") && ! (axis.tickValues() !== null && axis.tickValues().length === 0)) {
+            axis.innerTickSize(tickSize)
+                .tickValues(this._getTickValues(scale, name, number));
+        }
         /*
          * Append axis to the canvas.
          */
@@ -1386,6 +1462,36 @@ define([], function () {
 
 
     /**
+     * Get axis ticks.
+     * @private
+     * @param {Function} scale
+     * @param {String} name
+     * @param {Integer} number
+     * @returns {Number[]}
+     */
+    Container.prototype._getTickValues = function(scale, name, number) {
+
+        var amount = this._config.get("options.axes.grid." + name + "Ticks", max / 25);
+
+        var ticks = [];
+
+        if (! amount) {
+            return ticks;
+        }
+
+        var min = d3.min(scale.range());
+        var max = d3.max(scale.range());
+        var step = (max - min) / (amount - 1);
+
+        for (var i = min; i <= max; i += step ) {
+            ticks.push(scale.invert(i));
+        }
+
+        return ticks;
+    };
+
+
+    /**
      * Get field format function related with axis.
      * @private
      * @param {String} name - axis name
@@ -1394,13 +1500,9 @@ define([], function () {
      */
     Container.prototype._getFieldFormatterByAxis = function (name, number) {
 
-        var fieldConfig = this._getFieldConfigByAxis(name, number);
-
-        if (fieldConfig.axisFormatter) {
-            return fieldConfig.axisFormatter;
-        } else {
-            return null;
-        }
+        return this._config.get("options.axes." + name + number + "Formatter", function(d) {
+            return d;
+        });
     };
 
 

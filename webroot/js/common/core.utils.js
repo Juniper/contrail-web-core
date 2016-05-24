@@ -368,6 +368,78 @@ define(['underscore'], function (_) {
             return [axisMin, axisMax];
         };
 
+        this.getFilterEvent = function() {
+            return {
+                click: function (event, self, controlPanelSelector, configValue) {
+                    var controlPanelExpandedTemplateConfig = configValue,
+                        chartControlPanelExpandedSelector = $(controlPanelSelector).parent().find('.control-panel-expanded-container'),
+                        templateId = (controlPanelExpandedTemplateConfig.viewConfig.groupType === '2-cols') ?
+                            cowc.TMPL_CONTROL_PANEL_FILTER_2_COL : cowc.TMPL_CONTROL_PANEL_FILTER;
+
+                    if (chartControlPanelExpandedSelector.find('.control-panel-filter-container').length == 0) {
+                        var controlPanelExpandedTemplate = contrail.getTemplate4Id(templateId);
+
+                        chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
+                    }
+
+                    $(self).toggleClass('active');
+                    $(self).toggleClass('refreshing');
+
+                    chartControlPanelExpandedSelector.toggle();
+
+                    if (chartControlPanelExpandedSelector.is(':visible')) {
+                        chartControlPanelExpandedSelector.find('.control-panel-filter-body').height(chartControlPanelExpandedSelector.height() - 30);
+                        if (controlPanelExpandedTemplateConfig.viewConfig.groupType === '2-cols') {
+                            $.each(controlPanelExpandedTemplateConfig.viewConfig.groups, function (groupColumnKey, groupColumnValue) {
+                                $.each(groupColumnValue, function (groupKey, groupValue) {
+                                    $.each(groupValue.items, function (itemKey, itemValue) {
+                                        var controlPanelFilterGroupElement = $('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey];
+
+                                        _.each(itemValue.events, function (eventValue, eventKey) {
+                                            $(controlPanelFilterGroupElement)
+                                                .off(eventKey)
+                                                .on(eventKey, function (event) {
+                                                    eventValue(event)
+                                                });
+                                        });
+                                    });
+                                });
+                            });
+                        } else {
+                            console.log(controlPanelExpandedTemplateConfig.viewConfig.groups)
+                            $.each(controlPanelExpandedTemplateConfig.viewConfig.groups, function (groupKey, groupValue) {
+                                $.each(groupValue.items, function (itemKey, itemValue) {
+                                    var controlPanelFilterGroupElement = $('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey];
+
+                                    _.each(itemValue.events, function (eventValue, eventKey) {
+                                        $(controlPanelFilterGroupElement)
+                                            .off(eventKey)
+                                            .on(eventKey, function (event) {
+                                                eventValue(event)
+                                            });
+                                    });
+                                });
+                            });
+                        }
+
+                        chartControlPanelExpandedSelector.find('.control-panel-filter-close')
+                            .off('click')
+                            .on('click', function() {
+                                chartControlPanelExpandedSelector.hide();
+                                $(self).removeClass('active');
+                                $(self).removeClass('refreshing');
+                                $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
+                            });
+
+                    } else {
+                        $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
+                    }
+
+                    event.stopPropagation();
+                }
+            }
+        };
+        
         this.constructJsonHtmlViewer = function (jsonValue, formatDepth, currentDepth, ignoreKeys) {
             var htmlValue = '',
                 objType = {type: 'object', startTag: '{', endTag: '}'};

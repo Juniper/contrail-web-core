@@ -43,19 +43,16 @@ kue.redis.createClient = function ()
         config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
     var server_ip = (config.redis_server_ip) ?
         config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
-    var client = redis.createClient(server_port, server_ip);
+    var redisUtils = require('../../utils/redis.utils');
     var uiDB = commonUtils.getWebUIRedisDBIndex();
-    client.select(uiDB);
+    var client = redisUtils.createRedisClient(server_port, server_ip, uiDB);
     return client;
 }
 
 kue.redis.createClient();
-commonUtils.createRedisClient(function(client) {
-    jobsApi.redisClient = client;
-    jobsApi.jobs = kue.createQueue();
-    jobsApi.jobs.promote();
-    jobListenerReadyQEvent.emit('kueReady');
-});
+jobsApi.jobs = kue.createQueue();
+jobsApi.jobs.promote();
+jobUtils.jobKueEventEmitter.emit('kueReady');
 
 /* kue UI listening port */
 var kuePort = config.kue.ui_port || 3002;
@@ -189,6 +186,7 @@ function createJob (jobName, jobTitle, jobPriority, delayInMS, runCount, taskDat
                 });
               }
             });
+            return;
         }
 	    var jobTitleStr = (jobTitle == null) ? jobName : jobTitle;
         /* Update any jobData parameters if any changed in last iteration of job
@@ -415,6 +413,7 @@ function createJobByMsgObj (msg)
             /* The main webServer is ready now, now start discovery service 
              * subscription
              */
+            console.log("WEB Server Ready! Send DISC ");
             discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MAINSEREVR);
         }
         break;
@@ -538,4 +537,3 @@ exports.createJobByMsgObj = createJobByMsgObj;
 exports.doCheckJobsProcess = doCheckJobsProcess;
 exports.getDataFromStoreQ = getDataFromStoreQ;
 exports.createJobAtInit = createJobAtInit;
-

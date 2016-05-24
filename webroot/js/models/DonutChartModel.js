@@ -74,6 +74,7 @@ define([], function () {
                 , width = null
                 , height = null
                 , showLegend = true
+                , legendFn = null 
                 , legendPosition = "right"
                 , color = d3.scale.category20()
                 , state = nv.utils.state()
@@ -81,6 +82,7 @@ define([], function () {
                 , noData = null
                 , duration = 250
                 , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState','renderEnd')
+                , title = null
                 ;
 
             tooltip
@@ -172,7 +174,9 @@ define([], function () {
 
                     // Legend
                     if (showLegend) {
-                        if (legendPosition === "top") {
+                        if (legendFn != null) {
+                            legendFn (data, that, chart);
+                        } else if (legendPosition === "top") {
                             legend.width( availableWidth ).key(pie.x());
 
                             wrap.select('.nv-legendWrap')
@@ -204,6 +208,18 @@ define([], function () {
                         }
                     }
                     wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+                    if (title != null) {
+                        //Remove any existing title
+                        container.select('g.contrail-chart-title').remove();
+                        //Default title is placed at bottom of chart
+                        container.append('g')
+                            .attr('transform', 'translate('+parseInt(container.style('width'))/2+', '+(parseInt(container.style('height')) - 5)+')')
+                            .attr('class', 'contrail-chart-title')
+                            .append('text')
+                            .attr('text-anchor', 'middle')
+                            .text(title);
+                    }
 
                     // Main Chart Component(s)
                     pie.width(availableWidth).height(availableHeight);
@@ -282,7 +298,9 @@ define([], function () {
                     margin.right  = _.right  !== undefined ? _.right  : margin.right;
                     margin.bottom = _.bottom !== undefined ? _.bottom : margin.bottom;
                     margin.left   = _.left   !== undefined ? _.left   : margin.left;
-                }}
+                }},
+                legendFn: {get: function(){return legendFn;},   set: function(_){legendFn=_;}},
+                title: {get: function(){return title;},   set: function(_){title=_;}},
             });
             nv.utils.inheritOptions(chart, pie);
             nv.utils.initOptions(chart);
@@ -299,13 +317,18 @@ define([], function () {
             .showLegend(chartOptions.showLegend)
             .legendPosition(chartOptions.legendPosition)
             .showLabels(chartOptions.showLabels)
-            .noData(chartOptions.noDataMessage);
-
+            .noData(chartOptions.noDataMessage)
+            .legendFn(chartOptions.legendFn)
+            .title(chartOptions.title);
+        var growOnHover = chartOptions.growOnHover != null ? chartOptions.growOnHover : false
         chartModel.tooltip.enabled(chartOptions.showTooltips);
         chartModel.pie.valueFormat(chartOptions.valueFormat);
+        chartModel.pie.growOnHover(growOnHover);
         chartModel.legend.rightAlign(chartOptions.legendRightAlign)
             .padding(chartOptions.legendPadding);
-
+        if (chartOptions.color != null) {
+            chartModel.color(chartOptions.color);
+        }
         return chartModel;
     }
     return DonutChartModel;

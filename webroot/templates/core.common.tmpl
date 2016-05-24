@@ -1976,13 +1976,13 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
     <div class="control-panel-filter-container row-fluid">
         <div class="row-fluid">
             <p class="control-panel-filter-title">
-                <span class="pull-left control-panel-filter-title-icon"><i class="icon-filter"></i></span>
-                <span class="pull-left control-panel-filter-title-text">Filter</span>
+                <span class="pull-left control-panel-filter-title-icon"><i class="{{iconClass}}"></i></span>
+                <span class="pull-left control-panel-filter-title-text">{{title}}</span>
                 <span class="pull-right control-panel-filter-close"><i class="icon-remove"></i></span>
             </p>
         </div>
-        <div class="row-fluid control-panel-filter-body">
-            {{#each groups}}
+        <div class="row-fluid control-panel-filter-body" >
+            {{#each viewConfig.groups}}
             <div class="control-panel-filter-group margin-10">
                 {{#IfCompare title false operator='!='}}
                     <h6 class="control-panel-group-filter-title">{{title}}</h6>
@@ -2018,6 +2018,67 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-control-panel-filter-2-col-template">
+<div class="control-panel-filter-container row-fluid">
+    <div class="row-fluid">
+        <p class="control-panel-filter-title">
+            <span class="pull-left control-panel-filter-title-icon"><i class="icon-filter"></i></span>
+            <span class="pull-left control-panel-filter-title-text">Filter</span>
+            <span class="pull-right control-panel-filter-close"><i class="icon-remove"></i></span>
+        </p>
+    </div>
+    <div class="row-fluid control-panel-filter-body">
+        {{#each viewConfig.groups}}
+            <div class="span6">
+            {{#each this}}
+                    <div class="control-panel-filter-group row-fluid">
+                        {{#IfCompare title false operator='!='}}
+                        <h6 class="control-panel-group-filter-title">{{title}}</h6>
+                        {{/IfCompare}}
+                        <div id="control-panel-filter-group-items-{{id}}" class="row-fluid control-panel-filter-group-items padding-5-0;">
+                            {{#IfCompare type 'checkbox-circle' operator='=='}}
+                            {{#each items}}
+                                <div class="control-panel-filter-group-item">
+                                    <input type="checkbox" name="control-panel-filter-{{../id}}" class="ace-input checkbox-circle" checked/>
+                                    <span class="ace-lbl checkbox-circle {{labelCssClass}}"> {{text}}</span>
+                                </div>
+                            {{/each}}
+                            {{/IfCompare}}
+
+                            {{#IfCompare type 'radio' operator='=='}}
+                            {{#each items}}
+                                <div class="control-panel-filter-group-item row-fluid">
+                                    <div class="span1">
+                                        <input type="radio" name="control-panel-filter-{{../id}}" value="{{text}}" {{#IfCompare disabled true operator='=='}} disabled {{/IfCompare}} {{#IfCompare selected true operator='=='}} checked {{else}} {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}} {{/IfCompare}} class="margin-0"/>
+                                    </div>
+                                    <div class="span11 control-panel-filter-text">
+                                        <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
+                                    </div>
+                                </div>
+                            {{/each}}
+                            {{/IfCompare}}
+
+                            {{#IfCompare type 'checkbox' operator='=='}}
+                            {{#each items}}
+                            <div class="control-panel-filter-group-item row-fluid">
+                                <div class="span1">
+                                    <input type="checkbox" name="control-panel-filter-{{../id}}-{{id}}" value="{{text}}" {{#IfCompare checked true operator='=='}} checked {{/IfCompare}} class="margin-0"/>
+                                </div>
+                                <div class="span11 control-panel-filter-text">
+                                    <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
+                                </div>
+                            </div>
+                            {{/each}}
+                            {{/IfCompare}}
+
+                        </div>
+                    </div>
+            {{/each}}
+            </div>
+        {{/each}}
+    </div>
+</div>
+</script>
 
 <script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-template">
     <div class="zoom-scatter-chart-container colmask rightmenu">
@@ -2095,7 +2156,9 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
                             <div class="col1"></div>
                         </div>
                         <div class="col2 control-panel-container"></div>
-                        <div class="control-panel-expanded-container hide" style="{{#if controls.right.expandedContainerWidth}}width: {{controls.right.expandedContainerWidth}}px;{{/if}}"></div>
+                        <div class="control-panel-expanded-container hide"
+                             style="{{#if controls.right.expandedContainerWidth}}width: {{controls.right.expandedContainerWidth}}px; {{/if}}
+                                    {{#if controls.right.expandedContainerHeight}}height: {{controls.right.expandedContainerHeight}}px;{{/if}}"></div>
                     </div>
                 </div>
                 {{/IfCompare}}
@@ -2422,21 +2485,26 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
     {{/if}}
 </script>
 
-<script type="text/x-handlebars-template" id="contrailD3-chart-template">
-    <div id="contrailD3-{{chartId}}" class="contrailD3-container row-fluid" style="height:{{height}}px;"></div>
+<script type="text/x-handlebars-template" id="coCharts-chart-template">
+    <div id="coCharts-{{chartId}}" class="coCharts-container row-fluid" style="height:{{height}}px;"></div>
 </script>
 
 <script type="text/x-handlebars-template" id="d3-linebar-chart-controls">
     <div class="controls-left-side">
-        <div><div class="controls-button" data-x-axis="1" data-chart="contrailD3.charts.LineChart">to lines</div></div>
-        <div><div class="controls-button" data-x-axis="1" data-chart="contrailD3.charts.BarChart" data-type="stacked">to stacked bars</div></div>
-        <div><div class="controls-button" data-x-axis="1" data-chart="contrailD3.charts.BarChart" data-type="grouped">to grouped bars</div></div>
+        <div><div class="controls-button" data-x-axis="1" data-chart="coCharts.charts.LineChart">to lines</div></div>
+        <div><div class="controls-button" data-x-axis="1" data-chart="coCharts.charts.BarChart" data-type="stacked">to stacked bars</div></div>
+        <div><div class="controls-button" data-x-axis="1" data-chart="coCharts.charts.BarChart" data-type="grouped">to grouped bars</div></div>
         <div class="field-select"></div>
     </div>
     <div class="controls-right-side">
-        <div><div class="controls-button" data-x-axis="2" data-chart="contrailD3.charts.LineChart">to lines</div></div>
-        <div><div class="controls-button" data-x-axis="2" data-chart="contrailD3.charts.BarChart" data-type="stacked">to stacked bars</div></div>
-        <div><div class="controls-button" data-x-axis="2" data-chart="contrailD3.charts.BarChart" data-type="grouped">to grouped bars</div></div>
+        <div><div class="controls-button" data-x-axis="2" data-chart="coCharts.charts.LineChart">to lines</div></div>
+        <div><div class="controls-button" data-x-axis="2" data-chart="coCharts.charts.BarChart" data-type="stacked">to stacked bars</div></div>
+        <div><div class="controls-button" data-x-axis="2" data-chart="coCharts.charts.BarChart" data-type="grouped">to grouped bars</div></div>
         <div class="field-select"></div>
     </div>
 </script>
+
+<script type="text/x-handlebars-template" id="alarm-severity-template">
+    <div data-color={{{color}}} class="circle {{{color}}} {{#IfCompare ack false}}filled{{/IfCompare}} alarms-circle-grid-style alarms-circle-display-flex"></div>
+    {{#if showText}}<div class="alarms-display-inline">&nbsp;Minor</div>{{/if}}
+ </script>
