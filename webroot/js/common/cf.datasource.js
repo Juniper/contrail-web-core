@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Juniper Networks, Inc. All rights reserved.
  */
 
-define([], function() {
+define(['crossfilter'], function(crossfilter) {
     /*
     * Methods to set and update the cross filters which are linked to the single datasource
     */

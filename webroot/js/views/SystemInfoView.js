@@ -4,8 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-],function(_,Backbone) {
+    'backbone',
+    'crossfilter',
+],function(_,Backbone,crossfilter) {
     var SysInfoView = Backbone.View.extend({
         initialize: function(options) {
         },

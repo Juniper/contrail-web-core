@@ -83,8 +83,11 @@ Handlebars.registerHelper('makeItValidDOMId', function(id, options) {
     return id.replace(/:/g,'-');
 });
 
-Handlebars.registerPartial('scatterTooltip',$('#title-lblval-tooltip-template').html());
-Handlebars.registerPartial('scatterTooltipNew',$('#title-lblval-tooltip-template-new').html());
+//core.common.tmpl is loaded via core-bundle
+require(['core-bundle'],function() {
+    Handlebars.registerPartial('scatterTooltip',$('#title-lblval-tooltip-template').html());
+    Handlebars.registerPartial('scatterTooltipNew',$('#title-lblval-tooltip-template-new').html());
+});
 
 
 //Handlebar register helper for formatting json in details template

@@ -45,10 +45,34 @@
         <callback>handler.login</callback>
     </item>
     <item>
+        <url>/menu</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.getMenuXML</callback>
+    </item>
+    <item>
+        <url>/vcenter/menu</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.getMenuXML</callback>
+    </item>
+    <item>
         <url>/vcenter/login</url>
         <method>get</method>
         <feature>monitoring</feature>
         <callback>handler.vcenter_login</callback>
+    </item>
+    <item>
+        <url>/isauthenticated</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.isAuthenticated</callback>
+    </item>
+    <item>
+        <url>/vcenter/isauthenticated</url>
+        <method>get</method>
+        <feature>monitoring</feature>
+        <callback>handler.isAuthenticated</callback>
     </item>
     <item>
         <url>/authenticate</url>

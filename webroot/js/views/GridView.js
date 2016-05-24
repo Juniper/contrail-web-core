@@ -6,7 +6,12 @@ define([
     'underscore',
     'contrail-view',
     'contrail-list-model',
-    'core-basedir/js/views/GridFooterView'
+    'core-basedir/js/views/GridFooterView',
+    'slick.checkboxselectcolumn',
+    'slick.grid','slick.rowselectionmodel',
+    'jquery-ui',
+    'jquery.multiselect',
+    'jquery.multiselect.filter'
 ], function (_, ContrailView, ContrailListModel, GridFooterView) {
     var GridView = ContrailView.extend({
         render: function () {
@@ -38,6 +43,7 @@ define([
 
             gridConfig = $.extend(true, {}, covdc.gridConfig, viewConfig.elementConfig);
             gridContainer = $(this.$el);
+            // gridContainer = $(contentContainer);
             customGridConfig = $.extend(true, {}, gridConfig);
 
             if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {

@@ -4,7 +4,8 @@
 
 define([
     'contrail-graph-model',
-    'core-basedir/js/views/ControlPanelView'
+    'core-basedir/js/views/ControlPanelView',
+    'jquery.panzoom'
 ], function (ContrailGraphModel, ControlPanelView) {
     var GraphView = joint.dia.Paper.extend({
         constructor: function (viewConfig) {

@@ -18,6 +18,7 @@ var orch = require('../orchestration.api');
 var configUtils = require('../../common/configServer.utils');
 var global = require('../../common/global');
 var commonUtils = require('../../utils/common.utils');
+var crypto = require('crypto');
 
 var orchModels = orch.getOrchestrationModels();
 
@@ -225,6 +226,10 @@ function setAllCookies (req, res, appData, cookieObj, callback)
             res.setHeader('Set-Cookie', 'project=' + cookieProject +
                           '; expires=' + cookieExpStr + secureCookieStr);
         }
+        if(req.session._csrf == null)
+            req.session._csrf = crypto.randomBytes(Math.ceil(24 * 3 / 4))
+                .toString('base64')
+                    .slice(0, 24);
         res.setHeader('Set-Cookie', '_csrf=' + req.session._csrf +
                       '; expires=' + cookieExpStr + secureCookieStr);
         callback();

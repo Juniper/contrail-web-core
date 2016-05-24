@@ -4,7 +4,8 @@
 
 define([
     'underscore',
-    'contrail-view'
+    'contrail-view',
+    'select2'
 ], function (_, ContrailView) {
     var FormDropdownView = ContrailView.extend({
         render: function () {

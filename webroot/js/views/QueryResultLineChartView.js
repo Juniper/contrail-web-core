@@ -5,8 +5,10 @@
 define([
     'underscore',
     'contrail-view',
-    'contrail-list-model'
-], function (_, ContrailView, ContrailListModel) {
+    'contrail-list-model',
+    'core-basedir/js/common/qe.parsers',
+    'core-basedir/js/common/qe.utils'
+], function (_, ContrailView, ContrailListModel,qewp,qewu) {
 
     var QueryResultLineChartView = ContrailView.extend({
         render: function() {

@@ -6,6 +6,7 @@ define([
     'underscore'
 ], function (_) {
     var serializer = new XMLSerializer(),
+        qewu,
         domParser = new DOMParser();
 
     var QEUtils = function () {
@@ -162,19 +163,6 @@ define([
                 default:
                     return cowc.QE_DEFAULT_MODAL_CLASSNAME;
             }
-        };
-
-        self.formatTimeRange = function(timeRange) {
-            var formattedTime = 'custom', timeInSecs;
-            if(timeRange != null && timeRange != -1) {
-                timeInSecs = parseInt(timeRange);
-                if(timeInSecs <= 3600) {
-                    formattedTime = 'Last ' + timeInSecs/60 + ' mins';
-                } else if ( timeInSecs <= 43200) {
-                    formattedTime = 'Last ' + timeInSecs/3600 + ' hrs';
-                }
-            }
-            return formattedTime;
         };
 
         //TODO- remove this
@@ -816,5 +804,6 @@ define([
         return operatorCode;
     };
 
-    return QEUtils;
+    qewu = new QEUtils();
+    return qewu;
 });

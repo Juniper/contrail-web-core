@@ -1073,6 +1073,7 @@ function getUserRoleByAllTenants (username, password, tenantlist, callback)
         }
     }
     if (!tenantObjArr.length) {
+        callback(null);
         return userRoles;
     }
 
@@ -1167,7 +1168,6 @@ function authenticate (req, res, appData, callback)
     if (post.urlPath != null) {
         urlPath = post.urlPath;
     }
-    var loginErrFile = 'webroot/html/login-error.html';
     var identityApiVerList = config.identityManager.apiVersion;
     var verCnt = identityApiVerList.length;
 
@@ -1178,10 +1178,7 @@ function authenticate (req, res, appData, callback)
                 logutils.logger.error("Very much unexpected, we came here!!!");
                 errStr = "Unexpected event happened";
             }
-            commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                 global.CONTRAIL_LOGIN_ERROR,
-                                                 errStr, function() {
-            });
+            callback(errStr);
             return;
         }
         var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
@@ -1191,18 +1188,12 @@ function authenticate (req, res, appData, callback)
                so redirect to login page
              */
             errStr = "User with admin only role is allowed";
-            commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                 global.CONTRAIL_LOGIN_ERROR,
-                                                 errStr, function() {
-            });
+            callback(errStr);
             return;
         }
 
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
-            if(urlPath != '') 
-                res.redirect(urlPath + urlHash);
-            else
-                res.redirect('/' + urlHash);
+            callback(null, null);
         });
     });
 
@@ -1347,7 +1338,6 @@ function doV3Auth (req, callback)
     var passwdCipher = null
     var userEncrypted = null;
     var passwdEncrypted = null;
-    var loginErrFile = 'webroot/html/login-error.html';
     var isUnscoped = true;
 
     req.session.authApiVersion = 'v3';

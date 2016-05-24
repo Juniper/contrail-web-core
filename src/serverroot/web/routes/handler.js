@@ -37,9 +37,66 @@ exports.admin = function (req, res) {
     checkAndRedirect(req, res, 'html/admin.html');
 };
 
+exports.getMenuXML = function(req,res) {
+//construct the name of menu xml file to be returned based on enabled packages
+    var featurePkgToMenuNameMap = {
+        'webController': 'wc',
+        'webStorage': 'ws',
+        'serverManager': 'sm'
+    },featureMaps = [];
+    var webServerInfo = {featurePkg:{}};
+
+    var pkgList = process.mainModule.exports['pkgList'];
+    var pkgLen = pkgList.length;
+    var activePkgs = [];
+    for (var i = 1; i < pkgLen; i++) {
+        activePkgs.push(pkgList[i]['pkgName']);
+    }
+    /* It may happen that user has written same config multiple times in config
+     * file
+     */
+    activePkgs = _.uniq(activePkgs);
+    var pkgCnt = activePkgs.length;
+    for (var i = 0; i < pkgCnt; i++) {
+        webServerInfo['featurePkg'][activePkgs[i]] = true;
+    }
+
+    if (null != webServerInfo['featurePkg']) {
+        var pkgList = webServerInfo['featurePkg'];
+        for (var key in pkgList) {
+            if (null != featurePkgToMenuNameMap[key]) {
+                featureMaps.push(featurePkgToMenuNameMap[key]);
+            } else {
+                console.log('featurePkgToMenuNameMap key is null: ' + key);
+            }
+        }
+        if (featureMaps.length > 0) {
+            featureMaps.sort();
+            var mFileName = 'menu_' + featureMaps.join('_') + '.xml';
+            res.sendfile('webroot/' + mFileName);
+        } else {
+            //Add error case
+        }
+    }
+}
+
+exports.isAuthenticated = function(req,res) {
+    var retData = {}
+    if(req.session.isAuthenticated == true) {
+        commonUtils.getWebServerInfo(req,res)
+        return;
+    } else {
+        // commonUtils.getWebServerInfo(req,res)
+        // var featurePkgs = commonUtils.getValueByJsonPath(config,'featurePkg',[]);
+        var featurePkg = commonUtils.getFeaturePkgs();
+        retData = {isAuthenticated:false,featurePkg:featurePkg};
+        commonUtils.handleJSONResponse(null,res,retData);
+    }
+}
+
 function login (req, res)
 {
-    res.sendfile('webroot/html/login.html');
+    res.redirect("/");
 }
 
 function vcenter_login (req, res, appData)
@@ -174,6 +231,9 @@ exports.isSessionAuthenticated = function(req) {
    if so, then redirect to the last page, user visited
  */
 checkAndRedirect = function(req, res, sendFile) {
+    //As we have a single html file,return it always
+    res.sendfile(sendFile);
+    return;
     var data = exports.checkURLInAllowedList(req);
     var loginErrFile = 'webroot/html/login-error.html';
     if (null == data) {
@@ -208,16 +268,38 @@ setSessionTimeoutByReq = function(req) {
 
 exports.authenticate = function (req, res, appData) {
     /* Call module independent API */
-    authApi.doAuthenticate(req, res, appData, function(err, data) {
+    var pkgList = process.mainModule.exports['pkgList'];
+    var errorObj = {status: 'failure'};
+    if (pkgList.length <= 1) {
+        errorObj['msg'] = "Install feature package";
+        commonUtils.handleJSONResponse(null, res, errorObj);
+        return;
+    }
+    authApi.doAuthenticate(req, res, appData, function(errorMsg, redirectURL) {
         /* Already logged */
-        logutils.logger.debug('Getting err ' + err);
+        if (null != errorMsg) {
+            errorObj['msg'] = errorMsg;
+            commonUtils.handleJSONResponse(null, res, errorObj);
+            return;
+        }
+        if (null != redirectURL) {
+            res.redirect(redirectURL);
+            return;
+        }
+        commonUtils.getWebServerInfo(req, res);
     });
 }
 exports.vcenter_authenticate = function (req, res, appData) {
+    var errorObj = {status: 'failure'};
     /* Call module independent API */
-    authApi.doAuthenticate(req, res, appData, function(err, data) {
+    authApi.doAuthenticate(req, res, appData, function(errorMsg) {
         /* Already logged */
-        logutils.logger.debug('Getting err ' + err);
+        if (null != errorMsg) {
+            errorObj['msg'] = errorMsg;
+            commonUtils.handleJSONResponse(null, res, errorObj);
+            return;
+        }
+        commonUtils.getWebServerInfo(req, res);
     });
 }
 
@@ -226,12 +308,12 @@ function logout (req, res)
     authApi.deleteAllTokens(req, function(err) {
         res.header('Cache-Control', 
                'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-        commonUtils.redirectToLogin(req, res);
         /* Need to destroy the session after redirectToLogin as login page depends
            on orchestrationModel
          */
         req.session.isAuthenticated = false;
         req.session.destroy();
+        commonUtils.handleJSONResponse(null,res,{});
     });
 };
 
@@ -351,4 +433,3 @@ exports.vcenter_login = vcenter_login;
 exports.vcenter_logout = vcenter_logout;
 exports.doAuthenticate = doAuthenticate;
 exports.doVcenterAuthenticate = doVcenterAuthenticate;
-

@@ -24,7 +24,7 @@ define([
             var self = this;
             self.isRendered = true;
             var dashboardTmpl = contrail.getTemplate4Id(cowc.TMPL_INFRA_DASHBOARD);
-            self.$el.html(dashboardTmpl);
+            $(contentContainer).html(dashboardTmpl);
             this.infoBoxView = new InfoboxesView({
                 el: $(contentContainer).
                     find('#dashboard-infoboxes')
@@ -36,16 +36,19 @@ define([
                 model: self.nodeListModel.getAlertListModel()
             });
             alertListView.render();
-            var logListView = new LogListView({
-                el: $(contentContainer).find('#logs-box'),
-                model: new LogListModel()
-            });
-            logListView.render();
             var sysInfoView = new SystemInfoView({
                 el: $(contentContainer).find('#sysinfo-box'),
                 model: self.nodeListModel.getNodeListModel()
             });
             sysInfoView.render();
+            //Delay the logs ajax request such that node-model's ajax requests are issued first
+            setTimeout(function() {
+                var logListView = new LogListView({
+                    el: $(contentContainer).find('#logs-box'),
+                    model: new LogListModel()
+                });
+                logListView.render();
+            },100);
         },
         addInfoboxes: function(infoBoxesCfg) {
             var self = this

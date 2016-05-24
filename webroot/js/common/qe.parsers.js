@@ -20,5 +20,5 @@ define([
         };
     };
 
-    return QEParsers;
+    return new QEParsers();
 });

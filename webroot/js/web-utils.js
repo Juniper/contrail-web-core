@@ -3,11 +3,14 @@
  */
 
 var contentContainer = "#content-container";
+if(typeof(globalObj) == "undefined")
+    globalObj = {};
 globalObj['loadedScripts'] = [];
 globalObj['loadedCSS'] = [];
 globalObj['orchModel'] = 'openstack';
 globalObj.NUM_FLOW_DATA_POINTS = 1000;
-var globalAlerts = [],timeStampTolearence = 5 * 60 * 1000;//To check the mismatch between the browser time and the webserver time
+var globalAlerts = [];
+globalObj['timeStampTolerance'] = 5 * 60 * 1000;//To check the mismatch between the browser time and the webserver time
 var enableHardRefresh = false;  //Set to true if "Hard Refresh" provision need to be shown in UI
 //Set to true if we want to discard ongoing requests while refreshing the dataSource and start fetching from beginnging
 //Ajax calls shouldn't be aborted if we don't want to discard ongoing update
@@ -16,7 +19,7 @@ var DEFAULT_TIME_SLICE = 3600000,
     pageContainer = "#content-container",
     dblClick = 0;
 var CONTRAIL_STATUS_USER = [];
-var roles = {TENANT : "member",ADMIN : "superAdmin"};
+globalObj['roles'] = {TENANT : "member",ADMIN : "superAdmin"};
 var CONTRAIL_STATUS_PWD = [];
 var flowKeyStack = [];
 var aclIterKeyStack = [];
@@ -145,8 +148,8 @@ function collapseElement(e,collapseDivID) {
 }
 
 
-var siteMap = {};
-var siteMapSearchStrings = [];
+globalObj['siteMap'] = {};
+globalObj['siteMapSearchStrings'] = [];
 
 function keys(obj) {
     var count = 0;
@@ -160,530 +163,6 @@ function keys(obj) {
 
 var defaultSeriesColors = [ "#70b5dd", "#1083c7", "#1c638d" ];
 var defColors = ['#1c638d', '#4DA3D5'];
-
-(function ($) {
-    $.extend($.fn, {
-        initWidgetHeader:function (data) {
-            var widgetHdrTemplate = contrail.getTemplate4Id("widget-header-template");
-            $(this).html(widgetHdrTemplate(data));
-            if(data['widgetBoxId'] != undefined){
-                startWidgetLoading(data['widgetBoxId']);
-            }
-            if (data['link'] != null)
-                $(this).find('span').addClass('href-link');
-            $(this).find('span').on('click', function () {
-                if ((data['link'] != null) && (data['link']['hashParams'] != null))
-                    layoutHandler.setURLHashObj(data['link']['hashParams']);
-            });
-        },
-        initPortDistributionCharts:function (data) {
-            var chartsTemplate = contrail.getTemplate4Id('port-distribution-charts-template');
-            var networkChart, chartSelector;
-            if ((data['chartType'] == null) && ($.inArray(ifNull(data['context'], ''), ['domain', 'network', 'connected-nw', 'project', 'instance']) > -1)) {
-                networkChart = true;
-                chartSelector = '.port-distribution-chart';
-            } else {
-                networkChart = false;
-                //chartSelector = '.d3-chart';
-                chartSelector = '.port-distribution-chart';
-            }
-            $(this).html(chartsTemplate(data));
-            if (networkChart == true) {
-                //Add durationStr
-                $.each(data['d'], function (idx, obj) {
-                    if (ifNull(obj['duration'], true)) {
-                        if (obj['title'].indexOf('(') < 0)
-                            obj['title'] += durationStr;
-                    }
-                });
-                //Set the chart height to parent height - title height
-            }
-            //$(this).find('.stack-chart').setAvblSize();
-            var charts = $(this).find(chartSelector);
-            $.each(charts, function (idx, chart) {
-                //Bind the function to pass on the context of url & objectType to schema parse function
-                var chartData = data['d'][idx];
-                var chartType = ifNull(chartData['chartType'], '');
-                var fields;
-                var objectType = chartData['objectType'];
-                //Load asynchronously
-                initDeferred($.extend({},chartData,{selector:$(this),renderFn:'initScatterChart'}));
-                //If title is clickable
-            });
-        },
-        initCharts:function (data) {
-            var chartsTemplate = contrail.getTemplate4Id('charts-template');
-            var networkChart, chartSelector;
-            if ((data['chartType'] == null) && ($.inArray(ifNull(data['context'], ''), ['domain', 'network', 'connected-nw', 'project', 'instance']) > -1)) {
-                networkChart = true;
-                chartSelector = '.stack-chart';
-            } else {
-                networkChart = false;
-                //chartSelector = '.d3-chart';
-                chartSelector = '.stack-chart';
-            }
-            $(this).html(chartsTemplate(data));
-            if (networkChart == true) {
-                //Add durationStr
-                $.each(data['d'], function (idx, obj) {
-                    if (ifNull(obj['duration'], true)) {
-                        if (obj['title'].indexOf('(') < 0)
-                            obj['title'] += durationStr;
-                    }
-                });
-                //Set the chart height to parent height - title height
-            }
-            //$(this).find('.stack-chart').setAvblSize();
-            var charts = $(this).find(chartSelector);
-            $.each(charts, function (idx, chart) {
-                //Bind the function to pass on the context of url & objectType to schema parse function
-                var chartData = data['d'][idx];
-                var chartType = ifNull(chartData['chartType'], '');
-                var fields;
-                var objectType = chartData['objectType'];
-                //Load asynchronously
-                initDeferred($.extend({},chartData,{selector:$(this),renderFn:'initScatterChart'}));
-                //If title is clickable
-                if (chartData['link'] != null) {
-                    var titleElem;
-                    if ($(this).siblings('.example-title').length > 0)
-                        titleElem = $(this).siblings('.example-title');
-                    else
-                        titleElem = $(this).parents('.widget-body').siblings('.widget-header').find('h4.smaller');
-                    //titleElem.addClass('chart-title-link');
-                    titleElem.on('click', function () {
-                        if (chartData['link']['hashParams'] == null) {
-                            var viewObj = tenantNetworkMonitorView;
-                            var detailObj = chartData['link'];
-                            //console.info(data['context']);
-                            if (chartData['link']['context'] == 'instance') {
-                                //Get the instance ip from drop-down
-                                var instObj = getSelInstanceFromDropDown();
-                                $.extend(detailObj, 
-                                        {
-                                            ip:instObj['ip_address'],
-                                            vnName:instObj['virtual_network']
-                                        }
-                                );
-                            }
-                            if (chartData['class'] != null)
-                                viewObj = chartData['class'];
-                            viewObj.loadSubView(detailObj);
-                        } else {
-                            //layoutHandler.setURLHashObj(chartData['link']['hashParams']);
-                            layoutHandler.setURLHashParams(chartData['link']['hashParams']['q'], chartData['link']['conf']);
-                        }
-                    });
-                }
-            });
-        },
-        initSummaryStats:function (data) {
-            var statsRowTemplate = Handlebars.compile($('#summary-stats-template').html());
-            //If data['url'] == null,implies that populating the data will be handled by respective screen
-            $(this).html(statsRowTemplate(data['list']));
-            var self = $(this);
-            var statsElem = $(this);
-            var statsDatasource;
-            if (data['url'] != null) {
-                statsDatasource = new ContrailDataView({
-                    remote:{
-                        ajaxConfig:{
-                            url:data['url']
-                        },
-                        dataParser:function (response) {
-                            if (data['parseFn'] != null)
-                                return data['parseFn'](response);
-                            else
-                                return [response];
-                        },successCallback:function(response) {
-                            statsDatasource.setData(response);
-                            var statViewModel = new (function() {
-                                var self = this;
-                                self.toNetwork = ko.observable('');
-                                self.fromNetwork = ko.observable('');
-                            })();
-                            statViewModel.toNetwork(response[0]['toNetwork']);
-                            statViewModel.fromNetwork(response[0]['fromNetwork']);
-                            ko.applyBindings(statViewModel, statsElem[0]);
-                        }
-                    },
-                });
-            } else {
-                ko.applyBindings(data['viewModel'], statsElem[0]);
-            }
-        },
-        initTemplates:function (data) {
-            
-            var statsLen = $(this).find('.summary-stats').length;
-            if (!(data['stats'] instanceof Array))
-                data['stats'] = [data['stats']];
-            if (!(data['grids'] instanceof Array))
-                data['grids'] = [data['grids']];
-            if (!(data['charts'] instanceof Array))
-                data['charts'] = [data['charts']];
-            $(this).find('.summary-stats').each(function (idx) {
-                $(this).initSummaryStats(data['stats'][idx]);
-            });
-            //Assuming that all summary charts will be displayed at the bottom
-            //console.info($(this).find('.summary-charts').parent().height());
-            //$(this).find('.summary-charts').setAvblSize();
-            $(this).find('.summary-charts').each(function (idx) {
-                var contextObj = getContextObj(data);
-                $(this).initCharts($.extend({}, data['charts'][idx], {context:data['context']}, contextObj));
-            });
-            $(this).find('.port-distribution-charts').each(function (idx) {
-                var contextObj = getContextObj(data);
-                $(this).initPortDistributionCharts($.extend({}, data['charts'][idx], {context:data['context']}, contextObj));
-            });
-            $(this).find('.z-grid').each(function (idx) {
-                //If grid height is set pass height as 100%
-                if ($(this).height() > 0) {
-                    if (data['grids'][idx]['config'] == null)
-                        data['grids'][idx]['config'] = {};
-                    $.extend(data['grids'][idx]['config'], {height:$(this).height()});
-                }
-                startWidgetLoading('charts');
-                $(this).initGrid(data['grids'][idx]);
-                endWidgetLoading('charts');
-            });
-            $(this).find('.ts-chart').each(function (idx) {
-                $(this).initD3TSChart(data['ts-chart']);
-            });
-            if (data['topology'] != null && (typeof data['topology']['renderFn'] == 'function')) {
-                data['topology']['renderFn']();
-                //loadGraph();
-            }
-        },
-        initHeatMap:function (response) {
-        	var data=response['res'];
-            var selector = $(this);
-            var deferredObj = $.Deferred();
-            var margin = { top:20, right:0, bottom:100, left:20 },
-                width = 960 - margin.left - margin.right,
-                height = 230 - margin.top - margin.bottom,
-                gridSize = Math.floor(width / 64),
-                legendElementWidth = gridSize * 2,
-                buckets = 9,
-                colors = ["#ffffd9", "#edf8b1", "#c7e9b4", "#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#253494", "#081d58"], // alternatively colorbrewer.YlGnBu[9]
-                colors = ["white", "#599AC9"]; // alternatively colorbrewer.YlGnBu[9]
-            var maxValue = d3.max(data, function (d) {
-                return d.value;
-            });
-            if (maxValue == 0)
-                colors = ['white'];
-            var colorScale = d3.scale.quantile()
-                .domain([0, buckets - 1, maxValue])
-                .range(colors);
-
-            var svg = d3.select($(selector)[0]).append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            var xValues = [], yValues = [];
-            for (var i = 0; i < 64; i++) {
-                xValues.push(i);
-            }
-            for (var i = 0; i < 4; i++) {
-                yValues.push(i);
-            }
-            var yLabels = svg.selectAll(".xLabel")
-                .data(yValues)
-                .enter().append("text")
-                //.text(function (d) { return d; })
-                .attr("x", 0)
-                .attr("y", function (d, i) {
-                    return i * gridSize;
-                })
-                .style("text-anchor", "end")
-                .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
-                .attr("class", function (d, i) {
-                    return ((i >= 0 && i <= 4) ? "xLabel mono axis axis-workweek" : "xLabel mono axis");
-                });
-
-            var xLabels = svg.selectAll(".xLabel")
-                .data(xValues)
-                .enter().append("text")
-                //.text(function(d) { return d; })
-                .attr("x", function (d, i) {
-                    return i * gridSize;
-                })
-                .attr("y", 0)
-                .style("text-anchor", "middle")
-                .attr("transform", "translate(" + gridSize / 2 + ", -6)")
-                .attr("class", function (d, i) {
-                    return ((i >= 7 && i <= 16) ? "xLabel mono axis axis-worktime" : "xLabel mono axis");
-                });
-
-            var heatMap = svg.selectAll(".hour")
-                .data(data)
-                .enter().append("rect")
-                .attr("x", function (d) {
-                    return (d.x - 1) * gridSize;
-                })
-                .attr("y", function (d) {
-                    return (d.y - 1) * gridSize;
-                })
-                //.attr("rx", 4)
-                //.attr("ry", 4)
-                .attr("class", "hour bordered")
-                .attr("width", gridSize)
-                .attr("height", gridSize)
-                .style("fill", colors[0]);
-            heatMap.transition().duration(1000)
-            .style("fill", function (d) {
-                return colorScale(d.value);
-            });
-            heatMap.on('click',function(d){
-               		var currHashObj = layoutHandler.getURLHashObj();
-               		var startRange = ((64*d.y)+d.x)*256;
-                	var endRange = startRange+255;
-                	var params = {};
-                	var protocolMap={'icmp':1,'tcp':6,'udp':17};
-                	var divId = $($(selector)[0]).attr('id');
-                	params['fqName'] = currHashObj['q']['fqName'];
-                	params['port'] = startRange+"-"+endRange;
-                	params['startTime'] = new XDate().addMinutes(-10).getTime();
-                	params['endTime'] = new XDate().getTime();
-               		params['portType'] = response['type'];
-               		params['protocol'] = protocolMap[response['pType']];
-               		layoutHandler.setURLHashParams(params,{p:'mon_networking_networks'});
-               	 });
-            heatMap.on('mouseover',function(){
-            	d3.select(this).style('cursor','pointer');
-            });
-            heatMap.append("title").text(function (d) {
-                var startRange = ((64 * d.y) + d.x) * 256;
-                //return 'Hello' + d.value;
-                return startRange + ' - ' + (startRange + 255);
-            });
-
-            var legend = svg.selectAll(".legend")
-                .data([0].concat(colorScale.quantiles()), function (d) {
-                    return d;
-                })
-                .enter().append("g")
-                .attr("class", "legend");
-            /*
-             legend.append("rect")
-             .attr("x", function(d, i) { return legendElementWidth * i; })
-             .attr("y", height)
-             .attr("width", legendElementWidth)
-             .attr("height", gridSize / 2)
-             .style("fill", function(d, i) { return colors[i]; });
-
-             legend.append("text")
-             .attr("class", "mono")
-             .text(function(d) { return "� " + Math.round(d); })
-             .attr("x", function(d, i) { return legendElementWidth * i; })
-             .attr("y", height + gridSize);
-             */
-            //});
-        },
-        initSummaryTemplate:function (data) {
-            //Check for optional elements('ts-chart');
-            $(this).find('.summary-stats').initSummaryStats(data['stats']);
-            //$(this).find('.summary-charts').setAvblSize();
-            $(this).find('.summary-charts').initCharts(data['charts']);
-        },
-        //Requires url & columns
-        initGrid:function (data) {
-            var gridDetailConfig = { };
-            if (data['detailParseFn'] != null)
-                gridDetailConfig = {
-                    template:$('#gridDetailTemplate').html(),
-                    onInit:function (e,dc) {
-                        var detailTemplate = contrail.getTemplate4Id('detailTemplate');
-                        var rowData = e.data;
-                        var grid = $(e['target']).closest('div.contrail-grid');
-                        var dataItem = dc;
-                        //Issue a call for fetching the details
-                        if(dataItem['url'] != null) {
-                            $.ajax({
-                                url:dataItem['url']
-                            }).done(function(result) {
-                                //There will be only one entry in response,look at 0th element as we are requesting for specific VN/VM
-                                var response = result;
-                                if(result['value'] != null && result['value'][0] != null) {
-                                    response = result['value'][0];
-                                    e.detailRow.find('.row-fluid.advancedDetails').html('<div><pre style="background-color:white">' + syntaxHighlight(response) + '</pre></div>');
-                                    //DataItem consists of row data,passing it as a parameter to the parsefunction
-                                    e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response,dataItem)));
-                                    $(grid).data('contrailGrid').adjustDetailRowHeight(dataItem['cgrid']);
-                                } else if(!isEmptyObject(response)) {
-                                    e.detailRow.find('.row-fluid.advancedDetails').html('<div><pre style="background-color:white">' + syntaxHighlight(response) + '</pre></div>');
-                                    e.detailRow.find('.row-fluid.basicDetails').html(detailTemplate(data['detailParseFn'](response,dataItem)));
-                                    $(grid).data('contrailGrid').adjustDetailRowHeight(dataItem['cgrid']);
-                                } else {
-                                    $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Information unavailable</p>');
-                                }
-                                if(data['rowExpansionCB'] != null && typeof(data['rowExpansionCB'] == 'function')) {
-                                    data['rowExpansionCB'](response,dataItem,grid);
-                                }
-                            }).fail(function(){
-                                $(e.detailRow).html('<p class="error"><i class="icon-warning"></i>Error in fetching the details</p>'); 
-                            });
-                        } 
-                    },
-                    onCollapse:function (e,dc) {
-                    }
-                }
-            var transportCfg = {};
-            if(data['timeout'] != null)
-                transportCfg = {timeout:data['timeout']};
-            if(data['transportCfg'] != null)
-                transportCfg = data['transportCfg'];
-            var dataSource = {
-                        remote:{
-                            ajaxConfig: $.extend({
-                                url:typeof data['url'] == 'function' ? data['url']() : data['url']
-                            },transportCfg),
-                            
-                            dataParser: function(response){
-                                if (data['parseFn'] != null) {
-                                    if(transportCfg['url'] == '/api/tenant/get-data')
-                                        return data['parseFn'](response[0]);
-                                    else
-                                        return data['parseFn'](response);
-                                } else
-                                    return response;
-                            }
-                        }
-            };
-            if(data['dataSource'] != null)
-                dataSource = {dataView: data['dataSource']};
-            if(data['isAsyncLoad']) 
-                data['config']['showLoading'] = true;
-            if (data != null) {
-                var kGrid = $(this).contrailGrid($.extend({
-                    header : {
-                        title: {
-                            text: data['config']['widgetGridTitle']
-                        },
-                        customControls:ifNull(data['config']['widgetGridActions'],[])
-                    },
-                    body: {
-                        options: {
-                            forceFitColumns:true,
-                            enableColumnReorder:true,
-                            detail: !$.isEmptyObject(gridDetailConfig) ? gridDetailConfig : false,
-                            sortable:true,
-                            lazyLoading: data['isAsyncLoad'] != null ? data['isAsyncLoad'] : false,
-                            actionCell: data['config']['actionCell']
-                        },
-                        dataSource: dataSource,
-                        statusMessages: {
-                            loading: {
-                                text: 'Loading..',
-                            },
-                            empty: {
-                                text: ifNull(data['config']['noMsg'],'No data to display') 
-                            }, 
-                            errorGettingData: {
-                                type: 'error',
-                                iconClasses: 'icon-warning',
-                                text: 'Error in fetching the details'
-                            }
-                        }
-                    },
-                    columnHeader: {
-                        columns:data['columns'],
-                    },
-                    /*dataBound:function (e) {
-                        var sender = e.sender;
-                        $(sender.element).data('loaded', true);
-                        addExtraStylingToGrid(sender);
-                    },
-                    searchToolbar:(data['config'] != null && data['config']['widgetGridTitle'] != null) ? true : false*/
-                }, data['config']));
-                var cGrid = $(this).data('contrailGrid');
-                //If deferredObj is pending and record count is empty..then show loading icon implies that first set of records are not fetched yet
-                if((data['deferredObj'] != null && data['deferredObj'].state() == 'pending' && data['dataSource'].getItems().length == 0)
-                        || data['url'] != null) {
-                    cGrid.showGridMessage('loading'); 
-                }
-                //As events will not be triggered on cached dataSource,fire events manually
-                //widget loading icon will be hidden when the deferredobj resolves or rejects
-                if(data['deferredObj'] != null) {
-                    if(data['deferredObj'].state() != 'pending' && data['error'] == null)
-                        triggerDatasourceEvents(data['dataSource']);
-                    else if(data['deferredObj'].state() != 'pending' && data['error'] != null && data['errTxt'] != 'abort')
-                        cGrid.showGridMessage('error','Error in fetching the details');
-                    data['deferredObj'].fail(function(errObj){
-                        if(cGrid != null) {
-                            if(errObj['errTxt'] != null && errObj['errTxt'] != 'abort')
-                                cGrid.showGridMessage('error','Error in fetching the details');
-                        } 
-                    });
-                    if(data['isAsyncLoad'] == true)
-                        data['deferredObj'].always(function(){
-                            if(cGrid != null) {
-                                cGrid.removeGridLoading();
-                            }
-                        })
-                }    
-                //Bind deferred Obj
-                if(data['loadedDeferredObj'] != null)
-                    $(this).data('loadedDeferredObj',data['loadedDeferredObj']);
-                //calling refreshview, because sometimes the grid seems cluttered with data in the datasource
-                if(cGrid != null) {
-                cGrid.refreshView();
-                }
-            } else {
-                $(this).contrailGrid();
-            }
-        },
-        initListTemplate:function (data) {
-            $(this).find('.z-grid').initGrid(data);
-        },
-        getUnusedSize:function (sizingProperty) {
-            sizingProperty = ifNull(sizingProperty, 'height');
-            var innerSizingFn, sizingFn, outerSizingFn;
-            if (sizingProperty == 'height') {
-                innerSizingFn = 'innerHeight';
-                sizingFn = 'height';
-                outerSizingFn = 'outerHeight';
-            } else {
-                innerSizingFn = 'innerWidth';
-                sizingFn = 'width';
-                outerSizingFn = 'outerWidth';
-            }
-            //With box-sizing:border-box, innerHeight is more than height!!
-            var parentSize = Math.min($(this).parent()[innerSizingFn](), $(this).parent()[sizingFn]());
-            //console.info('parentSize:',parentSize);
-            //if($(this).parent()[0].style.height == 'auto')
-            if (parentSize < 1)
-                parentSize = $(this).parent().parent()[innerSizingFn]();
-            var siblingsSize = 0;
-            //Handle vertical margin collapse scenario
-            $(this).siblings().each(function () {
-                //Exclude hidden siblings;
-                if ($(this).is(':visible') == false)
-                    return;
-                siblingsSize += $(this)[outerSizingFn](true);
-                //console.info($(this),$(this).outerHeight(true));
-            });
-            //console.info(parentSize,parentSize-siblingsSize);
-            return parentSize - siblingsSize;
-        },
-        setAvblSize:function (sizingProperty, buffer) {
-            sizingProperty = ifNull(sizingProperty, 'height');
-            var sizingFn;
-            buffer = ifNull(buffer, 0);
-            if (sizingProperty == 'height')
-                sizingFn = 'height';
-            else
-                sizingFn = 'width';
-            //To work for an array of elements
-            $(this).each(function () {
-                var unusedSize = $(this).getUnusedSize(sizingProperty);
-                //logMessage('Setting Height:',$(this),unusedHeight);
-                $(this)[sizingFn](unusedSize - buffer);
-            });
-        }
-    });
-})(jQuery);
 
 function formatLblValueTooltip(infoObj) {
     var tooltipTemplateSel = 'title-lblval-tooltip-template';
@@ -960,7 +439,7 @@ function pushBreadcrumbDropdown(id){
 	$('#breadcrumb').append('<li class="active"><div id="' + id + '"></div></li>');
 }
 
-var menuAccessFns = {
+globalObj['menuAccessFns'] = {
      hideInFederatedvCenter : function() {
         //Hide in case of multiple orchestration modes along with vCenter and loggedInOrchestrationMode is vCenter
         if(globalObj['webServerInfo']['loggedInOrchestrationMode'] == 'vcenter' &&
@@ -1027,34 +506,6 @@ function flattenArr(arr) {
     });
     return retArr;
 }
-
-$.deparamURLArgs = function (query) {
-    console.warn('Contrail WebUI Warning: Function deparamURLArgs of web-utils is deprecated. Use deparamURLArgs() of core-utils instead.');
-    var query_string = {};
-    var query = ifNull(query,'');
-    if (query.indexOf('?') > -1) {
-        query = query.substr(query.indexOf('?') + 1);
-        var vars = query.split("&");
-        for (var i = 0; i < vars.length; i++) {
-            var pair = vars[i].split("=");
-            pair[0] = decodeURIComponent(pair[0]);
-            pair[1] = decodeURIComponent(pair[1]);
-            // If first entry with this name
-            if (typeof query_string[pair[0]] === "undefined") {
-                query_string[pair[0]] = pair[1];
-                // If second entry with this name
-            } else if (typeof query_string[pair[0]] === "string") {
-                var arr = [ query_string[pair[0]], pair[1] ];
-                query_string[pair[0]] = arr;
-                // If third or later entry with this name
-            } else {
-                query_string[pair[0]].push(pair[1]);
-            }
-        }
-    }
-    return query_string;
-};
-
 
 function reloadGrid(grid){
 	grid.refreshData();
@@ -1258,30 +709,6 @@ function getKeyCnt(obj) {
     return len;
 }
 
-/*
-function diffDateString(startDt, endDt,rounded) {
-    //If either startDt/endDt is null, return '-'
-    var dayCnt = 0, hrCnt = 0, minCnt = 0;
-    //No of days
-    dayCnt = startDt.diffDays(endDt);
-    var timeDiff = Math.abs(startDt.getTime() - endDt.getTime());
-    var timeMultiplier = [1,1000,1000*60,1000*60*60,1000*60*60*24,1000*60*60*24*30];
-    var timeMultiplierStrings = ['ms','s','m','h']
-    var timeStrArray = "",localTimeDiff = 0;
-    var i = 0;
-    do {
-        localTimeDiff = Math.floor(timeDiff/timeMultiplier[i]);
-        i++;
-    } while(timeDiff/timeMultiplier[i] > 1)
-    timeStrArray.push(localTimeDiff + ' ' + timeMultiplierStrings[i]);
-
-    if(rounded == true) {
-    } else {
-        timeStr.push(diffDateString(timeDiff - localTimeDiff*timeMultiplier[i]));
-    }
-    return timeStrArray.join(' ');
-}*/
-
 function diffDates(startDt, endDt, type) {
     //If either startDt/endDt is null, return '-'
     var dayCnt = 0, hrCnt = 0, minCnt = 0;
@@ -1342,40 +769,6 @@ function get32binary(int) {
         })// hehe: inverts each char
         .padleft(32, "1");
 };
-
-/**
- * Delay execution of UI widgets, until the given deferred object is resolved,
- * which gives the data for UI widgets
- */
-function initDeferred(data) {
-    var deferredObj = $.Deferred();
-    //To load asynchronously
-    if (data['deferredObj'] != null) {
-        deferredObj = data['deferredObj'];
-    } else if (data['url'] != null) {
-        $.ajax({
-            url:data['url'],
-        }).done(function (result) {
-                deferredObj.resolve(result);
-            });
-    } else {
-        deferredObj.resolve(data);
-    }
-    deferredObj.done(function (response) {
-        if (data['parseFn'] != null && typeof(data['parseFn']) == 'function') {
-            response = data['parseFn'](response);
-        }
-        $(data['selector'])[data['renderFn']](response);
-    });
-    //Show error message on deferred object reject
-    deferredObj.fail(function(errObj) {
-        if(errObj['errTxt'] != null && errObj['errTxt'] != 'abort') {
-            if(data['renderFn'] == 'initScatterChart') {
-                showMessageInChart({selector:$(data['selector']),msg:'Error in fetching Details',type:'bubblechart'});
-            }
-        }
-    });
-}
 
 //DNS TTL Validations
 function validateTTLRange(v){
@@ -1603,341 +996,6 @@ function loadAlertsContent(deferredObj){
     globalObj.showAlertsPopup = false;
 }
 
-
-
-/**
-* deferredObj 
-* The above deferredObj is passed to populateFn which will resolved this once all data is fetched
-* dataSource will be incrementally populated in case of pagination
-* ongoing will be true until we fetch all the records
-* lastUpdate will be set when all records are fetched
-*/
-function ManageDataSource() {
-    //Setting the resetTime to 0 as want to show the latest data always
-    var resettime = 0;//In minutes
-    //As cache resetTime is 0 minutes,don't show the hard refresh for now 
-    var lastupdatedTimeViewModel = ko.observable({
-        timeObj : {
-            time:new XDate().getTime(),
-            timeStr:function() {return " "+diffDates(new XDate(this.get("time")),new XDate());}
-        }
-    });
-    var timerId;
-    this.load = function() {
-        var obj = {
-                //Virtual Networks Data
-                'networkDS':{
-                    name:'networkDS',
-                    ongoing:false,
-                    populateFn:'networkPopulateFns.getVirtualNetworksData',
-                    onChange:'networkPopulateFns.networkDSChangeHandler',
-                    updateStartTime:null,   //Time at which update started
-                    lastUpdated:null,
-                    deferredObj:null,
-                    data:null,
-                    dataSource:null,
-                    error:null
-                },
-                //Instances Data
-                'instDS':{
-                    name:'instDS',
-                    ongoing:false,
-                    lastUpdated:null,
-                    populateFn:'instancePopulateFns.getAllInstances',
-                    onChange:'instancePopulateFns.instanceDSChangeHandler',
-                    deferredObj:null,
-                    dataSource:null,
-                    error:null
-                },
-                //PortRange data for Port Distribution drill-down
-                'portRangeData':{
-                },
-                //type flag added to differentiate infra dashboard datasource with other datasources
-                'controlNodeDS':{
-                    ongoing:false,
-                    lastUpdated:null,
-                    populateFn:['getAllControlNodes','getGeneratorsForInfraNodes','fetchCPUStats'],
-                    deferredObj:null,
-                    dataSource:null
-                },
-                'computeNodeDS':{
-                    ongoing:false,
-                    lastUpdated:null,
-                    populateFn:['getAllvRouters','getGeneratorsForInfraNodes','fetchCPUStats'],
-                    deferredObj:null,
-                    dataSource:null,
-                    cachedData:true//whether we maintain backend cache
-                },
-                'analyticsNodeDS':{
-                    ongoing:false,
-                    lastUpdated:null,
-                    populateFn:['getAllAnalyticsNodes','getGeneratorsForInfraNodes','startFetchingCollectorStateGenInfos','fetchCPUStats'],
-                    deferredObj:null,
-                    dataSource:null
-                },
-                'configNodeDS':{
-                    ongoing:false,
-                    lastUpdated:null,
-                    populateFn:['getAllConfigNodes','getGeneratorsForInfraNodes','fetchCPUStats'],
-                    deferredObj:null,
-                    dataSource:null
-                },
-                'dbNodeDS':{
-                    ongoing:false,
-                    lastUpdated:null,
-                    populateFn:['getAllDbNodes'],
-                    deferredObj:null,
-                    dataSource:null
-                },
-                'projectDS':{
-                        data:null,
-                        dataSource:null
-                }
-            };
-        globalObj['dataSources'] = obj;
-        //ko.applyBindings(lastupdatedTimeViewModel,$('div.hardrefresh'));
-        $("#breadcrumbs").find('span.refresh').live('click',onHardRefresh);
-    }
-
-    //Given a DataSource name, it will return the deferredObj
-    //    1. If data is already fetched, the returned deferredObj will be resolved immediately
-    //    2. If data is not fetched / ongoing,that deferredObj will be resolved once entire data is fetched
-    this.getDataSource = function(dsName) {
-        var dsObj = globalObj['dataSources'][dsName];
-        //If it's ongoing for first time then lastUpdated won't be available
-        //Check if cache need to be updated
-        if((dsObj['lastUpdated'] == null && dsObj['ongoing'] == false) ||
-            (dsObj['ongoing'] == false && dsObj['lastUpdated'] != null && (dsObj['lastUpdated'] + resettime*60*1000 <= new Date().getTime())) ||
-             (dsObj['ongoing'] == true && discardOngoingUpdate == true))  {
-                return manageDataSource.refreshDataSource(dsName);
-        } else {
-            if(dsObj['ongoing'] == true) {
-                manageDataSource.setLastupdatedTime(dsObj,{status:'inprogress'});
-            } else if(dsObj['lastUpdated'] != null) { //Not on-going and cache is valid
-                manageDataSource.setLastupdatedTime(dsObj,{status:'done'});
-            }
-            return dsObj;
-        }
-    }
-    
-    /*
-     * Reloads the given dataSource by fetching data from backend
-     */
-    this.refreshDataSource = function(dsName) {
-        var dsObj = globalObj['dataSources'][dsName];
-        var deferredObj = $.Deferred();
-        dsObj['deferredObj'] = deferredObj.promise();
-        var dataSource = new ContrailDataView();
-        if(dsObj['dataSource'] != null) 
-            dataSource = dsObj['dataSource'];
-        else
-            dsObj['dataSource'] = dataSource;
-            
-        //Set updateStartTime before calling populateFn
-        dsObj['updateStartTime'] = new XDate().getTime();
-        //Set ongoing to true before issuing the calls for refreshing the dataSource
-        dsObj['ongoing'] = true;
-        if(dsObj['populateFn'] instanceof Array) {
-            var defObjArr = [];
-                defObjArr.push(deferredObj);
-                if(dsObj['populateFn'][0].indexOf('.') > -1) {
-                    var fnArr = dsObj['populateFn'][0].split('.');
-                    window[fnArr[0]][fnArr[1]](defObjArr[0],dataSource,dsObj,dsName);
-                } else
-                    window[dsObj['populateFn'][0]](defObjArr[0],dataSource,dsObj,dsName);  
-              for(var i = 0; i < dsObj['populateFn'].length; i++) {
-                  var loopDefObj = $.Deferred();
-                  defObjArr.push(loopDefObj);
-                  defObjArr[i].done(function(i){
-                      return function(arguments){
-                          if(window[dsObj['populateFn'][i + 1]] != null && dsObj['populateFn'][i + 1].indexOf('.') == -1)
-                              window[dsObj['populateFn'][i + 1]](defObjArr[i + 1],arguments['dataSource'],dsName);
-                          else if(window[dsObj['populateFn'][i + 1]] != null && dsObj['populateFn'][i + 1].indexOf('.') > -1) {
-                              var fnArr = dsObj['populateFn'][i + 1].split('.');
-                              window[fnArr[0]][fnArr[1]](defObjArr[i + 1],arguments['dataSource'],dsName);
-                          } else
-                              dataSource.setData(arguments['dataSource'].getItems());
-                      };
-                  }(i));
-              }
-        } else {
-            if(dsObj['populateFn'].indexOf('.') > -1) {
-                var fnArr = dsObj['populateFn'].split('.');
-                window[fnArr[0]][fnArr[1]](deferredObj,dataSource,dsObj,dsName);
-            } else
-                window[dsObj['populateFn']](deferredObj,dataSource,dsObj,dsName);
-        }
-        manageDataSource.setLastupdatedTime(dsObj,{status:'inprogess'});
-        deferredObj.fail(function(errObj){
-            dsObj['ongoing'] = false;
-            dsObj['lastUpdated'] = new Date().getTime();
-            dsObj['error'] = errObj;
-            //Update last updated time even in case of error
-            manageDataSource.setLastupdatedTime(dsObj,{status:'done'});
-        });
-        deferredObj.done(function(response){
-            if(dsObj['data'] != null)
-                dsObj['data'] = response;
-            dsObj['ongoing'] = false;
-            dsObj['lastUpdated'] = new Date().getTime();
-            dsObj['error'] = null;
-            dsObj['clean'] = true;
-            manageDataSource.setLastupdatedTime(dsObj,{status:'done'});
-        });
-        return dsObj;
-    }
-    /**
-     * This function returns the state of the Datasource, whether it is populated or in progress based on the deferred object state
-     */
-    this.isLoading = function(dsObj) {
-        if(dsObj['deferredObj'] != null) {
-            var defObj = dsObj['deferredObj'],state = defObj.state();
-            if(state == 'pending')
-                return true;
-            else(state == 'resolved' || state == 'rejected')
-                return false;
-        }
-        return null;
-    }
-    
-    /**
-     * Cache the portRange data retrieved at 2nd level (Port Range) in Port Distribution drill-down to use at 3rd level (Specific Port)
-     */
-    this.setPortRangeData = function(fqName,data) {
-        globalObj['dataSources']['portRangeData'][fqName] = data;
-    }
-    
-    this.getPortRangeData = function(fqName) {
-        return ifNull(globalObj['dataSources']['portRangeData'][fqName],[]);
-    }
-    
-    this.setLastupdatedTime = function(obj,cfg) {
-       /*Need to revisit changing lastupdatedTimeViewModel to knockout
-        if(cfg['status'] == 'done') {
-			if(obj['lastUpdated'] != null){
-	            lastupdatedTimeViewModel.set('timeObj.time',obj['lastUpdated']);
-	            manageDataSource.setlastupdatedTimeViewModel();
-			}
-            if(enableHardRefresh) {
-                $("#breadcrumbs").find('span.refresh').show();
-                $("#breadcrumbs").find('span.loading').hide();
-            }
-        } else if(cfg['status'] == 'inprogess') {
-            if(enableHardRefresh) {
-                $("#breadcrumbs").find('div.hardrefresh').css('display','inline-block');
-                $("#breadcrumbs").find('span.loading').show();
-                $("#breadcrumbs").find('span.refresh').hide();
-            }
-        }*/ 
-    }
-    
-    this.triggerTimer = function() {
-        //setting time for the first time when the timer triggers to avoid the wrong display of time
-        manageDataSource.setlastupdatedTimeViewModel();
-        if(timerId != null)
-            clearInterval(timerId);
-        timerId = setInterval(function(){
-            manageDataSource.setlastupdatedTimeViewModel();
-        },60 * 1000);
-    }
-
-    this.setlastupdatedTimeViewModel = function() {
-        var time = lastupdatedTimeViewModel.get('timeObj.time');
-        lastupdatedTimeViewModel.set('timeObj.timeStr'," "+diffDates(new XDate(time),new XDate()));
-    }
-    this.stopTimer = function() {
-    	clearInterval(timerId);
-    }
-}
-var manageDataSource = new ManageDataSource();
-manageDataSource.load();
-
-/**
- * Whenever a feature need to refer to a singleDataSource, need to create an instance of SingleDataSource by passing the dataSourceName as an argument
- * It will maintain an list of listeners for each singleDataSource and triggers the change event on all of them whenever singleDataSource updates
- */
-function SingleDataSource(dsName) {
-    var instances = SingleDataSource.instances;
-    var subscribeFns = SingleDataSource.subscribeFns;
-    if(instances[dsName] == null) {
-        instances[dsName] = [];
-    }
-    if(subscribeFns[dsName] == null) {
-       subscribeFns[dsName] = [];
-    }
-    //At any point of time,there should be only one instance of a dataSource to be active
-    instances[dsName] = [];
-    instances[dsName].push(this);
-    var singleDSObj = manageDataSource.getDataSource(dsName);
-    //singleDSObj['dataSource'].onPagingInfoChanged.unsubscribeAll();
-    var subscribeFn = function (e,arguments) {
-        var dataViewEventArgs = arguments;
-           $.each(instances[dsName],function(idx,obj) {
-               if(singleDSObj['onChange'] != null) {
-                   $(obj).trigger('startLoading');
-                   var deferredObj = $.Deferred();
-                   if(singleDSObj['onChange'].indexOf('.') > -1) {
-                       var fnArr = singleDSObj['onChange'].split('.');
-                       window[fnArr[0]][fnArr[1]](singleDSObj['dataSource'],dataViewEventArgs,deferredObj);
-                   } else
-                       window[singleDSObj['onChange']](singleDSObj['dataSource'],dataViewEventArgs,deferredObj);
-                   deferredObj.always(function(){
-                       $(obj).trigger('endLoading'); 
-                   });
-               }
-               $(obj).trigger('change');
-           });
-       };
-    //Unsubscribe old listeners for this dataSource
-    $.each(subscribeFns[dsName],function(idx,fn) {
-       singleDSObj['dataSource'].onDataUpdate.unsubscribe(fn);
-    });
-    subscribeFns[dsName] = [];
-    subscribeFns[dsName].push(subscribeFn);
-    singleDSObj['dataSource'].onDataUpdate.subscribe(subscribeFn);
-
-    this.getDataSourceObj = function() {
-        return singleDSObj;
-    }
-
-    this.destroy = function() {
-        $.each(instances[dsName],function(idx,obj) {
-            if(obj == this) {
-                instances[dsName].splice(idx,1);
-            }
-        });
-    }
-}
-//Maintain an array of instances referring to each dataSource
-SingleDataSource.instances = {};
-//Maintain an array of subscribeFns for each dataSource which is required as we need to pass on 
-//those function pointers to unsubscribe from onPagingInfoChanged event
-SingleDataSource.subscribeFns = {};
-
-/**
-* This method checks the current class from globalobj 
-* and invokes hardrefresh method of that class
-*/
-function onHardRefresh() {
-    var hashObj = layoutHandler.getURLHashObj();
-    if(window[globalObj['currMenuObj']['class']] != null && window[globalObj['currMenuObj']['class']]['onHardRefresh'] != null)
-        window[globalObj['currMenuObj']['class']]['onHardRefresh'](hashObj);
-}
-
-function showHardRefresh() {
-    if(enableHardRefresh) {
-        $("#breadcrumbs").find('div.hardrefresh').show();
-        manageDataSource.triggerTimer();
-    }
-}
-
-function hideHardRefresh() {
-    if(enableHardRefresh) {
-        $("#breadcrumbs").find('div.hardrefresh').hide();
-        manageDataSource.stopTimer();
-    }
-}
-
 /**
  * Function is event handler for the more and hide link in the overall node status of infra details page
  * accepts parameters of type array or single element but need to send with '#' or '.'
@@ -2093,21 +1151,6 @@ function uniqueArray(arr) {
             retArr.push(value);
     });
     return retArr;
-}
-
-function showAdvancedDetails(){
-    $('#divBasic').hide();
-    $('#divStatus').hide();
-    $('#divAdvanced').show();
-    $('#divAdvanced').parents('.widget-box').find('.widget-header h4 .subtitle').remove();
-    $('#divAdvanced').parents('.widget-box').find('.widget-header h4').append('<span class="subtitle">(Advanced)</span>')
-}
-
-function showBasicDetails(){
-    $('#divAdvanced').hide();
-    $('#divStatus').hide();
-    $('#divBasic').show();
-    $('#divAdvanced').parents('.widget-box').find('.widget-header h4 .subtitle').remove();
 }
 
 function getFormattedDate(timeStamp){
@@ -2283,339 +1326,10 @@ function formatVN(vn){
                               });
     return formattedValue;
 }
- /*
- * Methods to set and update the cross filters which are linked to the single datasource
-*/
-
-function ManageCrossFilters() {
-    this.load = function() {
-        var obj = {
-                //vRouters Cross Filter
-                'vRoutersCF':{
-                    name:'vRoutersCF',
-                    crossfilter:null,
-                    dimensions:{},
-                    filters:{},
-                    callBacks:$.Callbacks("unique"),
-                    callBackFns:{}
-                }
-            };
-        globalObj['crossFilters'] = obj;
-    }
-    
-    this.getCrossFilterObj = function(cfName) {
-        return globalObj['crossFilters'][cfName];
-    }
-    
-    this.getCrossFilter = function(cfName) {
-        var cfObj = globalObj['crossFilters'][cfName];
-        if(cfObj != null)
-            return cfObj.crossfilter;
-        return null;
-    }
-    
-    this.updateCrossFilter = function(cfName,data) {
-        var cfObj = globalObj['crossFilters'][cfName];
-        var dataCF = crossfilter(data);
-        cfObj.crossfilter = dataCF;
-        var dimensions = this.getDimensions(cfName);
-        globalObj['crossFilters'][cfName] = cfObj;
-        for (var key in dimensions) {
-            if (dimensions.hasOwnProperty(key)) {
-                this.addDimension(cfName,key);
-            }
-        }
-        //cfObj.callBacks.fire();
-    }
-    
-    this.addDimension = function(cfName,dimensionName,formatFn){
-        var cfObj = globalObj['crossFilters'][cfName];
-        var dataCF = cfObj.crossfilter;
-        var dimension;
-        if(dataCF != null){
-           dimension = dataCF.dimension(function(d) { 
-               if(formatFn != null)
-                   return formatFn(d[dimensionName]);
-               else
-                   return d[dimensionName]; 
-           });
-           cfObj.dimensions[dimensionName] = dimension;
-           cfObj.filters[dimensionName] = [];
-        }
-        globalObj['crossFilters'][cfName] = cfObj;
-    }
-
-    this.getDimensions = function(cfName){
-        var cfObj = globalObj['crossFilters'][cfName];
-        if(cfObj != null && cfObj.dimensions != null){
-            return cfObj.dimensions;
-        }
-        return null;
-    }
-
-    this.getDimension = function(cfName,dimensionName){
-        var cfObj = globalObj['crossFilters'][cfName];
-        if(cfObj != null && cfObj.dimensions != null && cfObj.dimensions[dimensionName] != null){
-            return cfObj.dimensions[dimensionName];
-        }
-        return null;
-    }
-    
-    this.removeDimension = function(cfName,dimensionName){
-        var cfObj = globalObj['crossFilters'][cfName];
-        if(cfObj != null && cfObj.dimensions != null && cfObj.dimensions[dimensionName] != null){
-            var dimension = cfObj.dimensions[dimensionName];
-            dimension.dispose();
-            delete globalObj['crossFilters'][cfName]['dimensions'][dimensionName];
-            cfObj.callBacks.fire();
-        }
-    }
-    
-    this.applyFilter = function(cfName,dimensionName,criteria,filterFunc){
-        var cfObj = globalObj['crossFilters'][cfName];
-        var cf = this.getCrossFilter(cfName);
-        
-        if(cfObj != null && cfObj.dimensions != null && cfObj.dimensions[dimensionName] != null){
-            var dimension = cfObj.dimensions[dimensionName];
-            if(criteria == null && filterFunc == null) {
-                this.removeFilter(cfName,dimensionName);
-            } else {
-                var filterFunc = filterFunc;
-                //If custom filterFunc is not passed
-                if(filterFunc == null) { 
-                    filterFunc = function(d) {
-                        return d >= criteria[0] && d <= criteria[1]
-                    };
-                }
-                var filterByCriteria = dimension.filterFunction(filterFunc);
-                cfObj['filters'][dimensionName].push([criteria,filterFunc]);
-            }
-            var thirdDimension = cf.dimension(function(d) { return d[dimensionName]; });
-            var t = thirdDimension.top(Infinity);
-            thirdDimension.remove();
-           // cfObj.callBacks.fire();
-            return t;
-        }
-    }
-    
-    this.removeFilter = function(cfName,dimensionName){
-        var cfObj = globalObj['crossFilters'][cfName];
-        if(cfObj != null && cfObj.dimensions != null && cfObj.dimensions[dimensionName] != null){
-            var dimension = cfObj.dimensions[dimensionName];
-            dimension.filterAll();
-            cfObj['filters'][dimensionName] = [];
-            //cfObj.callBacks.fire();
-        }
-    }
-    
-    this.getCurrentFilteredData = function(cfName){
-        var cfObj = globalObj['crossFilters'][cfName];
-        if(cfObj != null && cfObj['crossfilter'] != null){
-            var cf = cfObj['crossfilter'];
-            var thirdDimension = cf.dimension(function(d) { return d['x']; });
-            var t = thirdDimension.top(Infinity);
-            thirdDimension.remove();
-            //cfObj.callBacks.fire(t);
-            return t;
-        }
-    }
-    /** CallBacks related */
-    this.getCallBacks = function(cfName) {
-        if(globalObj['crossFilters'] != null && globalObj['crossFilters'][cfName] != null){
-            return globalObj['crossFilters'][cfName]['callBacks'];
-        }
-        return null;
-    }
-    
-    this.setCallBacks = function(cfName){
-        if(globalObj['crossFilters'] != null && globalObj['crossFilters'][cfName] != null 
-                && globalObj['crossFilters'][cfName]['callBacks'] == null){
-            globalObj['crossFilters'][cfName]['callBacks'] = $.Callbacks("unique");
-        }
-    }
-    
-    this.getCallBackFns = function(cfName){
-        if(globalObj['crossFilters'] != null && globalObj['crossFilters'][cfName] != null){
-            return globalObj['crossFilters'][cfName]['callBackFns'];
-        }
-        return null;
-    }
-    
-    this.getCallBackFn = function(cfName,callBackName){
-        if(globalObj['crossFilters'] != null && globalObj['crossFilters'][cfName] != null
-                && globalObj['crossFilters'][cfName]['callBackFns'] != null){
-            return globalObj['crossFilters'][cfName]['callBackFns'][callBackName];
-        }
-        return null;
-    }
-    
-    this.addCallBack = function(cfName,callBackName,callBackFn){
-        var callBacks = this.getCallBacks(cfName);
-        if(callBacks == null){
-            this.setCallBacks(cfName);
-        }
-        var cfObj = this.getCrossFilterObj(cfName);
-        if(cfObj != null && cfObj['callBackFns'] != null){
-            callBacks.remove(cfObj['callBackFns'][callBackName]);
-        }
-        callBacks.add(callBackFn);
-       
-        if(cfObj != null && cfObj['callBackFns'] != null){
-            cfObj['callBackFns'][callBackName] = callBackFn;
-            globalObj['crossFilters'][cfName] = cfObj;
-        }
-    }
-    
-    this.disableCallBacks = function(cfName){
-        var callBacks = this.getCallBacks(cfName);
-        callBacks.disable();
-    }
-    /* Enabling it by adding back the call back function to the callbacks*/
-    this.enableCallBacks = function(cfName){
-        var callBacks = this.getCallBacks(cfName);
-        var callBackFns = this.getCallBackFns(cfName);
-        for (var callBackName in callBackFns) {
-            if (callBackFns.hasOwnProperty(callBackName)) {
-                callBacks.add(callBackFns[callBackName]);
-            }
-        }
-    }
-    
-    this.removeCallBack = function(cfName,callBackName){
-        var callBackFn = this.getCallBackFn(cfName,callBackName);
-        var callBacks = this.getCallBacks(cfName);
-        
-        callBacks.remove(callBackFn);
-        delete globalObj['crossFilters'][cfName]['callBackFns'][callBackName];
-    }
-
-    this.removeAllCallBacks = function(cfName) {
-        var callBacks = this.getCallBackFns(cfName);
-        for(var currCallback in callBacks) {
-            this.removeCallBack(cfName,currCallback);
-        }
-    }
-    
-    this.fireCallBacks = function(cfName,options){
-        var callBacks = this.getCallBacks(cfName);
-        var ret = {};
-        if(callBacks != null){
-            var data = this.getCurrentFilteredData(cfName);
-            ret['data'] = data;
-            ret['cfg'] = {};
-            if(options != null && options.source != null){
-                ret['cfg']['source'] = options.source;
-            }
-            callBacks.fire(ret);
-        }
-    }
-}
-
-var manageCrossFilters = new ManageCrossFilters();
-manageCrossFilters.load();
 
 /**
  * Cross filter management methods ENDS
 */
-/*
- * This function adds/subtract the buffer to the min and max values array provided and if "isPositive"
- * is true it will return only positive values 
- */
-function addBufferToRange(obj) {
-    var value = obj['values'];
-    var buffer = obj['buffer']/100;
-    var minValue = value[0];
-    var formatFn = obj['formatFn'];
-    value[0] = value[0] - value[0] * buffer;
-    value[1] = value[1] + value[1] * buffer;
-    if(obj['isPositive'] && value[0] < 0){
-        value[0] = minValue;
-    }
-    if(formatFn != null) {
-        value[0] = formatFn(value[0]);
-        value[1] = formatFn(value[1]);
-    }
-    return value;
-}
-
-/*
- * Returns a random value within the range of min and max (parameters)
- */
-function getRandomValue(min,max){
-    return Math.random() * (max - min) + min;
-}
-
-//Below functions need to move it to controller.utils.js file soon
-/*
- * Onclick event handler for links within the grid cell
- */
- function onClickGridLink(e,selRowDataItem){
-    var name = $(e.target).attr('name');
-    var reqObj = {};
-    if ($.inArray(name, ['project']) > -1) {
-        layoutHandler.setURLHashParams({fqName:selRowDataItem['name']},{merge:false});
-    } else if($.inArray(name,['network']) > -1) {
-        layoutHandler.setURLHashParams({fqName:selRowDataItem['name']},{merge:false,p:'mon_networking_networks'});
-    } else if($.inArray(name,['instance']) > -1) {
-        layoutHandler.setURLHashParams({vmName:selRowDataItem['vmName'],fqName:selRowDataItem['name'],srcVN:selRowDataItem['vn'][0]},{merge:false,p:'mon_networking_instances'});
-    } else if($.inArray(name,['vRouter']) > -1) {
-        layoutHandler.setURLHashParams({node: selRowDataItem['vRouter'], tab:''}, {p:'mon_infra_vrouter',merge:false});
-    }
-}
-
-function setProjectURLHashParams(hashParams, projectFQN, triggerHashChange) {
-    var hashObj = {
-        type: "project",
-        view: "details",
-        focusedElement: {
-            fqName: projectFQN,
-            type: 'project'
-        }
-    };
-
-    if(contrail.checkIfKeyExistInObject(true, hashParams, 'clickedElement')) {
-        hashObj.clickedElement = hashParams.clickedElement;
-    }
-
-    layoutHandler.setURLHashParams(hashObj, {p: "mon_networking_projects", merge: false, triggerHashChange: triggerHashChange});
-
-};
-
-function setNetworkURLHashParams(hashParams, networkFQN, triggerHashChange) {
-    var hashObj = {
-        type: "network",
-        view: "details",
-        focusedElement: {
-            fqName: networkFQN,
-            type: 'virtual-network'
-        }
-    };
-
-    if(contrail.checkIfKeyExistInObject(true, hashParams, 'clickedElement')) {
-        hashObj.clickedElement = hashParams.clickedElement;
-    }
-
-    layoutHandler.setURLHashParams(hashObj, {p: "mon_networking_networks", merge: false, triggerHashChange: triggerHashChange});
-
-};
-
-function setInstanceURLHashParams(hashParams, networkFQN, instanceUUID, triggerHashChange) {
-    var hashObj = {
-        type: "instance",
-        view: "details",
-        focusedElement: {
-            fqName: networkFQN,
-            type: 'virtual-network',
-            uuid: instanceUUID
-        }
-    };
-
-    if(contrail.checkIfKeyExistInObject(true, hashParams, 'clickedElement')) {
-        hashObj.clickedElement = hashParams.clickedElement;
-    }
-
-    layoutHandler.setURLHashParams(hashObj, {p: "mon_networking_instances", merge: false, triggerHashChange: triggerHashChange});
-};
 
 function checkIfDuplicates(arr){
     
@@ -2648,3 +1362,74 @@ function check4StorageInit(callback) {
         callback();
     }
 };
+
+function generateQueryUUID() {
+    var s = [], itoh = '0123456789ABCDEF';
+    for (var i = 0; i < 36; i++) {
+        s[i] = Math.floor(Math.random() * 0x10);
+    }
+    s[14] = 4;
+    s[19] = (s[19] & 0x3) | 0x8;
+    for (var i = 0; i < 36; i++) {
+        s[i] = itoh[s[i]];
+    }
+    s[8] = s[13] = s[18] = s[23] = s[s.length] = '-';
+    s[s.length] = (new Date()).getTime();
+    return s.join('');
+};
+/**
+ * This function takes parsed nodeData from the infra parse functions and returns object with all alerts displaying in dashboard tooltip,
+ * and tooltip messages array
+ */
+function getNodeStatusForSummaryPages(data,page) {
+    var result = {},msgs = [],tooltipAlerts = [];
+    for(var i = 0;i < ifNull(data['alerts'],[]).length; i++) {
+        if(data['alerts'][i]['tooltipAlert'] != false) {
+            tooltipAlerts.push(data['alerts'][i]);
+            msgs.push(data['alerts'][i]['msg']);
+        }
+    }
+    //Status is pushed to messages array only if the status is "UP" and tooltip alerts(which are displaying in tooltip) are zero
+    if(ifNull(data['status'],"").indexOf('Up') > -1 && tooltipAlerts.length == 0) {
+        msgs.push(data['status']);
+        tooltipAlerts.push({msg:data['status'],sevLevel:sevLevels['INFO']});
+    } else if(ifNull(data['status'],"").indexOf('Down') > -1) {
+        //Need to discuss and add the down status
+        //msgs.push(data['status']);
+        //tooltipAlerts.push({msg:data['status'],sevLevel:sevLevels['ERROR']})
+    }
+    result['alerts'] = tooltipAlerts;
+    result['nodeSeverity'] = data['alerts'][0] != null ? data['alerts'][0]['sevLevel'] : sevLevels['INFO'];
+    result['messages'] = msgs;
+     var statusTemplate = contrail.getTemplate4Id('statusTemplate');
+    if(page == 'summary')
+        return statusTemplate({sevLevel:result['nodeSeverity'],sevLevels:sevLevels});
+    return result;
+}
+var dashboardUtils = {
+    sortNodesByColor: function(a,b) {
+        // var colorPriorities = [d3Colors['green'],d3Colors['blue'],d3Colors['orange'],d3Colors['red']];
+        var colorPriorities = [d3Colors['blue'],d3Colors['green'],d3Colors['orange'],d3Colors['red']];
+        var aColor = $.inArray(a['color'],colorPriorities);
+        var bColor = $.inArray(b['color'],colorPriorities);
+        return aColor-bColor;
+    },
+    getDownNodeCnt : function(data) {
+        var downNodes = $.grep(data,function(obj,idx) {
+                           return obj['color'] == cowc.COLOR_SEVERITY_MAP['red'];
+                        });
+        return downNodes.length;
+    },
+    /**
+     * Sort alerts first by severity and with in same severity,sort by timestamp if available
+     */
+    sortInfraAlerts: function(a,b) {
+        if(a['sevLevel'] != b['sevLevel'])
+            return a['sevLevel'] - b['sevLevel'];
+        if(a['sevLevel'] == b['sevLevel']) {
+            if(a['timeStamp'] != null && b['timeStamp'] != null)
+                return b['timeStamp'] - a['timeStamp'];
+        }
+        return 0;
+    },
+}
