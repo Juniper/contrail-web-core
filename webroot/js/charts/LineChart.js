@@ -49,11 +49,7 @@ define([
     /**
      * @override
      */
-    LineChart.prototype._update = function (container, data, enable) {
-        /*
-         * Update data.
-         */
-        this._data = data;
+    LineChart.prototype._update = function (container, enable) {
         /*
          * Remove line.
          */

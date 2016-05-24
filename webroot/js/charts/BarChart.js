@@ -46,11 +46,7 @@ define([
     /**
      * @override
      */
-    BarChart.prototype._update = function (container, data, enable) {
-        /*
-         * Update data.
-         */
-        this._data = data;
+    BarChart.prototype._update = function (container, enable) {
         /*
          * Remove all bars.
          */

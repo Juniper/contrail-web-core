@@ -355,11 +355,11 @@ define([], function () {
         /*
          * Order rendering queue.
          */
-        this._sortChartsByType();
+        var charts = this._sortChartsByType();
         /*
          * Loop through child charts.
          */
-        this._charts.forEach(function(context, i) {
+        charts.forEach(function(context, i) {
             /*
              * Copy main properties to the updated chart.
              * This is necessary if one chart rendered in several
@@ -367,10 +367,6 @@ define([], function () {
              * settings, main of which is scale functions.
              */
             this._copyChart(this, context.chart);
-            /*
-             * Update child chart.
-             */
-            context.chart.setData(this._data[i]);
         }, this);
         /*
          * Update axis.
@@ -379,11 +375,11 @@ define([], function () {
         /*
          * Loop through child charts.
          */
-        this._charts.forEach(function(context, i) {
+        charts.forEach(function(context, i) {
             /*
              * Update child chart.
              */
-            context.chart._update(context.container, this._data[i], context.enable);
+            context.chart._update(context.container, context.isEnabled);
         }, this);
         /*
          * Update components.
@@ -477,25 +473,16 @@ define([], function () {
     /**
      * Remove child chart from the canvas.
      * @param {coCharts.Chart} chart
-     * @param {Boolean} keepData
-     *
      */
-    Container.prototype.remove = function (chart, keepData) {
+    Container.prototype.remove = function (chart) {
         /*
          * Find chart index within charts pool.
          */
-        var index = this._getChartIndex(chart);
+        var context = this._getChartContext(chart);
         /*
          * Remove chart.
          */
-        chart._remove(d3.select(this._canvas.selectAll(".chart")[0][index]));
-        /*
-         * Rarefy data and charts pool if required.
-         */
-        if (keepData !== true) {
-            this._data.splice(i, 1);
-            this._charts.splice(i, 1);
-        }
+        chart._remove(context.container);
     };
 
 
@@ -870,9 +857,9 @@ define([], function () {
         /*
          * Merge charts and its data into single array of objects.
          */
-        var list = this._charts.map(function (chartData, i) {
+        var list = this._charts.map(function(context, i) {
             return {
-                chartData: chartData,
+                context: context,
                 data: this._data[i]
             }
         }, this);
@@ -880,10 +867,10 @@ define([], function () {
          * Sort list depending on charts class name.
          */
         var self = this;
-        list = list.sort(function (a, b) {
-            if (a.chartData.chart.getClassName() == "coCharts.BarChart") {
+        list = list.sort(function(a, b) {
+            if (a.context.chart.getClassName() == "contrailD3.charts.BarChart") {
                 return -1;
-            } else if (a.chartData.chart.getClassName() == b.chartData.chart.getClassName()) {
+            } else if (a.context.chart.getClassName() == b.context.chart.getClassName()) {
                 return 0;
             } else {
                 /*
@@ -893,21 +880,21 @@ define([], function () {
                  * the sequence of elements. So here we first remove container and 
                  * then add it again. 
                  */
-                if (a.chartData.container) {
-                    a.chartData.container.remove();
-                    a.chartData.container = self._chartsContainer.append("g").attr("class", a.chartData.container.attr("class"));
+                if (a.context.container) {
+                    a.context.container.remove();
+                    a.context.container = self._chartsContainer.append("g").attr("class", a.context.container.attr("class"));
                 }
 
                 return 1;
             }
         });
         /*
-         * Modify initial data and charts arrays.
+         * Return sorted and properly initialized copy of chart's contexts list.
          */
-        for (var i = 0; i < list.length; i++) {
-            this._data[i] = list[i].data;
-            this._charts[i] = list[i].chartData;
-        }
+        return list.map(function(item) {
+            item.context.chart.setData(item.data);
+            return item.context;
+        });
     };
 
 
@@ -942,7 +929,7 @@ define([], function () {
         /*
          * Order rendering queue.
          */
-        this._sortChartsByType();
+        var charts = this._sortChartsByType();
         /*
          * Set up scales functions.
          */
@@ -950,13 +937,7 @@ define([], function () {
         /*
          * Loop through child charts and set up properties.
          */
-        this._charts.forEach(function(context, i) {
-            /*
-             * Set data if necessary.
-             */
-            if (! context.chart.hasData()) {
-                context.chart.setData(this.getData()[i]);
-            }
+        charts.forEach(function(context, i) {
             /*
              * Copy main properties.
              */
@@ -973,7 +954,7 @@ define([], function () {
         /*
          * Loop through child charts set and render.
          */
-        this._charts.forEach(function(context, i) {
+        charts.forEach(function(context, i) {
             /*
              * Create chart container.
              */
