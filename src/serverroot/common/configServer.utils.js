@@ -8,7 +8,6 @@ var commonUtils = require('../utils/common.utils');
 var async = require('async');
 var configApiServer = require('./configServer.api');
 var logutils = require('./../utils/log.utils');
-var global = require('./../common/global');
 
 /**
  * @listProjectsAPIServer
@@ -184,78 +183,10 @@ function getTenantListAndSyncDomain (request, appData, callback)
     });
 }
 
-function getAllProjectRoles (req, res, appData)
-{
-    var uiRoles = null;
-    var projObjList = [];
-    authApi.getProjectList(req, appData, function(error, projList) {
-        var projs = commonUtils.getValueByJsonPath(projList, 'projects', []);
-        var projsCnt = projs.length;
-        var syncedProjs =
-            commonUtils.getValueByJsonPath(req, 'session;syncedProjects',
-                                           {}, false);
-        for (var i = 0; i < projsCnt; i++) {
-            /* First check if we have any projects already in
-             * req.session.syncedProjects, skip those
-             */
-            var projId = projs[i]['uuid'];
-            if (null == syncedProjs[projId]) {
-                projObjList.push({req: req, projId: projId,
-                                  appData: appData, noProjectRole: true});
-            }
-        }
-        if (!projObjList.length) {
-            commonUtils.handleJSONResponse(null, res, uiRoles);
-            return;
-        }
-        async.map(projObjList, getProjectRoleCB, function(error, data) {
-            if ((null != error) || (null == data)) {
-                commonUtils.handleJSONResponse(null, res, uiRoles);
-                return;
-            }
-            var dataLen = data.length;
-            for (var i = 0; i < dataLen; i++) {
-                if (true == data[i]['redirectToLogout']) {
-                    commonUtils.redirectToLogout(req, res);
-                    return;
-                }
-            }
-            commonUtils.handleJSONResponse(null, res, uiRoles);
-        });
-    });
-}
-
 function getProjectRole (req, res, appData)
 {
+    var uiRoles = null;
     var projId = req.param('id');
-    if (global.ALL_PROJECT_UUID == projId) {
-        /* All project request, UUID can not be 'all' */
-        getAllProjectRoles(req, res, appData);
-        return;
-    }
-    var dataObj = {
-        req: req,
-        projId: projId,
-        appData: appData
-    };
-
-    getProjectRoleCB(dataObj, function(error, response) {
-        if (true == response['redirectToLogout']) {
-            commonUtils.redirectToLogout(req, res);
-            return;
-        }
-        commonUtils.handleJSONResponse(null, res, response['uiRoles']);
-    });
-}
-
-function getProjectRoleCB (dataObj, callback)
-{
-    var req = dataObj['req'];
-    var projId = dataObj['projId'];
-    var appData = dataObj['appData'];
-    var noProjectRole = dataObj['noProjectRole'];
-    var redirectToLogout = true;
-
     var projUrl = '/project/' + projId + '?exclude_back_refs=true' +
         '&exclude_children=true';
     var authApi = require('./auth.api');
@@ -263,6 +194,11 @@ function getProjectRoleCB (dataObj, callback)
     var headers = {};
     var tokenId = null;
 
+    if (global.ALL_PROJECT_UUID == projId) {
+        /* 'all' project request, so do not do anything now */
+        commonUtils.handleJSONResponse(null, res, uiRoles);
+        return;
+    }
     var tokenObjs = req.session.tokenObjs;
     if ((null != adminProjList) && (adminProjList.length > 0)) {
         for (project in tokenObjs) {
@@ -279,7 +215,6 @@ function getProjectRoleCB (dataObj, callback)
         commonUtils.getValueByJsonPath(req,
                                        'session;syncedProjects;' + projId +
                                        ';name', null);
-    var uiRoles = null;
     if (null != syncedProj) {
         /* We do not do anything currently with role, so comment it, will enable
          * it when RBAC is supported in API Server
@@ -291,11 +226,7 @@ function getProjectRoleCB (dataObj, callback)
             uiRoles = authApi.getUIRolesByExtRoles(req, userRoles[syncedProj]);
         }
         */
-        if (true == noProjectRole) {
-            callback(null, {uiRoles: uiRoles});
-            return;
-        }
-        getUIUserRole(req, tokenId, syncedProj, callback);
+        commonUtils.handleJSONResponse(null, res, uiRoles);
         return;
     }
     if (null != tokenId) {
@@ -309,7 +240,7 @@ function getProjectRoleCB (dataObj, callback)
     configApiServer.apiGet(projUrl, appData, function(error, data) {
         if ((null != error) || (null == data)) {
             logutils.logger.error('Project GET failed ' + req.param('id'));
-            callback(null, {uiRoles: uiRoles});
+            commonUtils.handleJSONResponse(null, res, uiRoles);
             return;
         }
         var projName =
@@ -322,41 +253,26 @@ function getProjectRoleCB (dataObj, callback)
             req.session.syncedProjects[projId] = {};
             req.session.syncedProjects[projId]['name'] = projName;
         }
-        if (true == noProjectRole) {
-            /* For all project list, do not fetch the role information from
-             * keystone here, that will be retrieved at individual project role
-             * request
-             */
-            callback(null, {uiRoles: uiRoles});
+        var userRoles = req.session.userRoles;
+        if ((null != tokenObjs) && (null != tokenObjs[projName]) &&
+            (null != userRoles) && (null != userRoles[projName])) {
+            //var uiRoles = authApi.getUIRolesByExtRoles(req, userRoles[projName]);
+            /* We got, no need to deduce uiRoles now, will do once RBAC is
+             * supported */
+            commonUtils.handleJSONResponse(null, res, uiRoles);
             return;
         }
-        getUIUserRole(req, tokenId, projName, callback)
+        var userObj = {'tokenid': tokenId, 'tenant': projName, 'req': req};
+        authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
+            if ((null != err) || (null == roles)) {
+                logutils.logger.error('Did not find the roles for project ' +
+                                      projName);
+                commonUtils.redirectToLogout(req, res);
+                return;
+            }
+            commonUtils.handleJSONResponse(null, res, uiRoles);
+        });
     }, headers);
-}
-
-function getUIUserRole (req, tokenId, projName, callback)
-{
-    var uiRoles = null;
-    var userRoles = req.session.userRoles;
-    var tokenObjs = req.session.tokenObjs;
-    if ((null != tokenObjs) && (null != tokenObjs[projName]) &&
-        (null != userRoles) && (null != userRoles[projName])) {
-        //var uiRoles = authApi.getUIRolesByExtRoles(req, userRoles[projName]);
-        /* We got, no need to deduce uiRoles now, will do once RBAC is
-         * supported */
-        callback(null, {uiRoles: uiRoles});
-        return;
-    }
-    var userObj = {'tokenid': tokenId, 'tenant': projName, 'req': req};
-    authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
-    if ((null != err) || (null == roles)) {
-            logutils.logger.error('Did not find the roles for project ' +
-                                  projName);
-            callback(null, {uiRoles: uiRoles, redirectToLogout: true});
-            return;
-        }
-        callback(null, {uiRoles: uiRoles});
-    });
 }
 
 exports.listProjectsAPIServer = listProjectsAPIServer;
