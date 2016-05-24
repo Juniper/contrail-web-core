@@ -13,7 +13,9 @@ define([
                 var defaultOptions = {formatSpecifier: ',d'},
                     options = _.extend(defaultOptions, options);
 
-                return d3.format(options.formatSpecifier)(value)
+                // As we lazyload d3 don't use d3 for simple formatting
+                // return d3.format(options.formatSpecifier)(value)
+                return value.toLocaleString();
             },
             'date': function (value, options) {
                 var defaultOptions = {formatSpecifier: 'llll'},
@@ -84,7 +86,9 @@ define([
                 return timeStr;
             },
             'query-time-range': function (value, options) {
-                return qewu.formatTimeRange(value);
+                //Need to avoid referring qewu alias globally
+                //Move formatTimeRange to cowu
+                return cowu.formatTimeRange(value);
             },
             'query-direction': function (value, options) {
                 return (value == 0) ? 'EGRESS' : 'INGRESS';

@@ -5,8 +5,9 @@
 define([
     'underscore',
     'contrail-view',
-    'knockback'
-], function (_, ContrailView, Knockback) {
+    'knockback',
+    'core-basedir/js/common/qe.utils'
+], function (_, ContrailView, Knockback,qewu) {
 
     var QueryFormView = ContrailView.extend({
 

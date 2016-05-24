@@ -67,13 +67,7 @@ function authenticate (req, res, appData, callback)
             console.log("getting err as:", err, JSON.stringify(data), 
                         JSON.stringify(resHeaders));
         if (null != err) {
-            var loginErrFile = 'webroot/html/login-error.html';
-            commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                 global.CONTRAIL_LOGIN_ERROR,
-                                                 err.message,
-                                                 //messages.error.invalid_user_pass,
-                                             function() {
-            });
+            callback(err.message);
             return;
         }
         req.session.isAuthenticated = true;
@@ -84,11 +78,7 @@ function authenticate (req, res, appData, callback)
             //res.redirect('/');
             //return;
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
-            if ('' != urlPath) {
-                res.redirect(urlPath + urlHash);
-            } else {
-                res.redirect('/' + urlHash);
-            }
+            callback(null);
         });
     });
 }

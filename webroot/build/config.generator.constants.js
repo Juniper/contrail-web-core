@@ -122,6 +122,198 @@ constants.coreModules  = [
             'knockout',
             'knockback'
         ]
+    },{
+        enabled: true,
+        name: 'core-bundle',
+        include: [
+            'chart-utils',
+            'core-constants',
+            'core-formatters',
+            'core-cache',
+            'core-alarm-utils',
+            'core-labels',
+            'core-messages',
+            'core-views-default-config',
+            // 'core.app.utils',
+            'contrail-remote-data-handler',
+            'cf-datasource',
+            'contrail-view',
+            'contrail-model',
+            'contrail-view-model',
+            'contrail-list-model',
+            'lodash',
+            // 'slick.core',
+            // 'slick.dataview',
+            // 'bezier',
+            // 'underscore',
+            'crossfilter',
+            'backbone',
+            'text',
+            'knockout',
+            'moment',
+            'layout-handler',
+            'menu-handler',
+            'content-handler',
+            'core-utils',
+            'validation',
+            'text!templates/core.common.tmpl',
+            'core-basedir/js/views/BarChartInfoView',
+            'core-basedir/js/views/BreadcrumbDropdownView',
+            'core-basedir/js/views/BreadcrumbTextView',
+            'core-basedir/js/views/ChartView',
+            'core-basedir/js/views/ControlPanelView',
+            'core-basedir/js/views/InfoboxesView',
+            'core-basedir/js/views/SectionView',
+            'core-basedir/js/views/WidgetView',
+            'core-basedir/js/views/ZoomScatterChartView',
+            //Dashboard
+            'mon-infra-node-list-model',
+            'mon-infra-log-list-model',    
+            'mon-infra-alert-list-view',   
+            'mon-infra-alert-grid-view',   
+            'mon-infra-log-list-view',     
+            'mon-infra-sysinfo-view',      
+            'mon-infra-dashboard-view'    
+        ],
+        exclude: [
+            'jquery','jquery-ui'
+        ]
+    },{
+        enabled: true,
+        name: './js/common/contrail.core.views',
+        include: [
+            'core-basedir/js/views/GridView',
+            'core-basedir/js/views/AccordianView',
+            'core-basedir/js/views/DetailsView',
+            'core-basedir/js/views/DonutChartView',
+            'core-basedir/js/views/FormAutoCompleteTextBoxView',
+            'core-basedir/js/views/FormButtonView',
+            'core-basedir/js/views/FormCheckboxView',
+            'core-basedir/js/views/FormCollectionView',
+            'core-basedir/js/views/FormComboboxView',
+            'core-basedir/js/views/FormCompositeView',
+            'core-basedir/js/views/FormDateTimePickerView',
+            'core-basedir/js/views/FormDropdownView',
+            'core-basedir/js/views/FormEditableGridView',
+            'core-basedir/js/views/FormGridView',
+            'core-basedir/js/views/FormHierarchicalDropdownView',
+            'core-basedir/js/views/FormInputView',
+            'core-basedir/js/views/FormMultiselectView',
+            'core-basedir/js/views/FormNumericTextboxView',
+            'core-basedir/js/views/FormRadioButtonView',
+            'core-basedir/js/views/FormTextAreaView',
+            'core-basedir/js/views/FormTextView',
+            'core-basedir/js/views/GridFooterView',
+            'core-basedir/js/views/HeatChartView',
+            'core-basedir/js/views/HorizontalBarChartView',
+            'core-basedir/js/views/LineBarWithFocusChartView',
+            'core-basedir/js/views/LineWithFocusChartView',
+            'core-basedir/js/views/LoginWindowView',
+            'core-basedir/js/views/MultiBarChartView',
+            'core-basedir/js/views/BarChartView',
+            'core-basedir/js/views/MultiDonutChartView',
+            'core-basedir/js/views/NodeConsoleLogsView',
+            'core-basedir/js/views/QueryFilterView',
+            'core-basedir/js/views/QueryResultGridView',
+            'core-basedir/js/views/QueryResultLineChartView',
+            'core-basedir/js/views/QuerySelectView',
+            'core-basedir/js/views/QueryWhereView',
+            'core-basedir/js/views/SparklineView',
+            'core-basedir/js/views/TabsView',
+            'core-basedir/js/views/WizardView',
+        ],
+        exclude: [
+            'lodash','jquery','backbone','knockback','knockout','contrail-remote-data-handler','contrail-view',
+            'contrail-list-model','contrail-model','contrail-view-model','d3','nv.d3','slick.checkboxselectcolumn','jquery.event.drag',
+            'slick.grid','slick.rowselectionmodel','select2','jquery-ui','jquery.multiselect','jquery.multiselect.filter'
+        ]
+    },{
+        enabled: true,
+        name: './js/common/chart.libs',
+        include: [
+            'd3',
+            'nv.d3',
+        ],
+        exclude: [
+            'jquery','lodash','backbone'
+        ]
+    },{
+        enabled: true,
+        name: './js/common/thirdparty.libs',
+        include: [
+            'slick.grid',
+            'slick.checkboxselectcolumn',
+            'slick.rowselectionmodel',
+            'slick.enhancementpager',
+            'select2',
+            'jsbn-combined',
+            'sprintf',
+            'ipv6',
+            'xdate',
+            // 'bezier',
+            'knockback',
+            'validation',
+            'text',
+        ],
+        exclude: [
+            'jquery','jquery.event.drag','knockout','backbone','knockback','validation'
+        ]
+    },{
+        enabled: true,
+        name: './js/common/jquery.dep.libs',
+        include: [
+            'jquery.xml2json',
+            'jquery.ba-bbq',
+            'jquery.json',
+            'bootstrap',
+            'select2',
+            'slick.core',
+            'slick.dataview',
+            'jquery-ui',
+            'contrail-elements',
+            //From jquery-libs
+            'jquery.timer',
+            'jquery.ui.touch-punch',
+            'jquery.validate',
+            'jquery.tristate',
+            'jquery.multiselect',
+            'jquery.multiselect.filter',
+            'jquery.steps.min',
+            'jquery.panzoom',
+            'jquery-contextmenu',
+            'jquery.event.drag',
+            'jquery.droppick',
+            'jquery.datetimepicker',
+        ],
+        exclude: [
+            'jquery'
+        ],
+        override: {
+            wrapShim: false
+        }
+    },{
+        enabled: true,
+        name: './js/common/nonamd.libs',
+        include: [
+            'web-utils',
+            'config_global',
+            'contrail-layout',
+            'handlebars-utils',          
+            'contrail-common',           
+            'uuid',
+            'protocol',
+            'xdate',
+            'ipv6',
+            'handlebars',
+            'jsonpath',
+        ],
+        exclude: [
+            'jquery','jquery-ui','knockout','bootstrap','jquery.xml2json',
+            'jquery.ba-bbq','jquery.json','d3','backbone','validation'
+        ],
+        override: {
+            wrapShim: false
+        }
     }
 ];
 constants.coreFileExclusionRegExp = constants.defaultFileExclusionRegExp;
@@ -142,24 +334,33 @@ constants.controllerModules = [
         enabled: true,
         name: 'controller-init',
         include: [
-            'searchflow-model',
-            'traceflow-model',
-            'underlay-graph-model',
-            'monitor-infra-confignode-model',
-            'monitor-infra-analyticsnode-model',
-            'monitor-infra-databasenode-model',
-            'monitor-infra-controlnode-model',
-            'monitor-infra-vrouter-model',
-            'monitor-infra-utils',
-            'confignode-chart-view',
-            'controlnode-scatterchart-view',
-            'dbnode-scatterchart-view',
-            'analyticsnode-scatterchart-view',
-            'vrouter-dashboard-view',
-            'monitor-infra-parsers',
-            'monitor-infra-constants',
+            'controller-constants',
+            'controller-labels',
+            'controller-utils',
+            'controller-messages',
+            'controller-grid-config',
+            'controller-graph-config',
+            'controller-parsers',
+            'controller-view-config'
+            // 'searchflow-model',
+            // 'traceflow-model',
+            // 'underlay-graph-model',
+            // 'monitor-infra-confignode-model',
+            // 'monitor-infra-analyticsnode-model',
+            // 'monitor-infra-databasenode-model',
+            // 'monitor-infra-controlnode-model',
+            // 'monitor-infra-vrouter-model',
+            // 'monitor-infra-utils',
+            // 'confignode-scatterchart-view',
+            // 'controlnode-scatterchart-view',
+            // 'dbnode-scatterchart-view',
+            // 'analyticsnode-scatterchart-view',
+            // 'vrouter-dashboard-view',
+            // 'monitor-infra-parsers',
+            // 'monitor-infra-constants',
         ],
         exclude: [
+            "underscore",
             "contrail-view",
             "contrail-model",
             "contrail-view-model",
@@ -168,7 +369,7 @@ constants.controllerModules = [
             "query-form-model",
             "query-or-model",
             "query-and-model",
-            "core-init",
+            // "core-init",
             "core-basedir/js/views/LoginWindowView"
         ]
     },
@@ -177,21 +378,28 @@ constants.controllerModules = [
         name: 'monitor-infra-module',
         include: [
             'mon-infra-controller-dashboard',
+
             'controller-basedir/monitor/infrastructure/common/ui/js/views/VRouterScatterChartView',
-            'confignode-chart-view',
+            'controller-basedir/monitor/infrastructure/common/ui/js/views/ConfigNodeChartsView',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/ControlNodeScatterChartView',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/DatabaseNodeScatterChartView',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/AnalyticsNodeScatterChartView',
             'vrouter-dashboard-view',
+
             'monitor-infra-analyticsnode-model',
             'monitor-infra-databasenode-model',
             'monitor-infra-confignode-model',
             'monitor-infra-controlnode-model',
             'monitor-infra-vrouter-model',
-            'cf-datasource'
+
+            'monitor-infra-parsers',
+            'monitor-infra-utils',
+            'monitor-infra-constants'
         ],
         exclude: [
-            'core-init',
+            'underscore',
+            'cf-datasource',
+            // 'core-init',
             'contrail-view',
             'controller-init',
             'contrail-model',
@@ -228,7 +436,9 @@ constants.controllerModules = [
         exclude: [
             'underscore',
             'dagre',
-            'core-init',
+            'joint',
+            'joint.contrail',
+            // 'core-init',
             'contrail-view',
             'contrail-view-model',
             'core-basedir/js/views/ZoomScatterChartView',
@@ -260,7 +470,7 @@ constants.controllerModules = [
         ],
         exclude: [
             'underscore',
-            'core-init',
+            // 'core-init',
             'contrail-view',
             'contrail-model',
             'core-basedir/js/views/ZoomScatterChartView',
@@ -316,7 +526,7 @@ constants.buildBaseConfJson = {
     shim: {},
     waitSeconds: 0,
     optimizeCss: 'default',
-    skipModuleInsertion: true,
+    // skipModuleInsertion: true,
     keepAmdefine: true,
     modules: [],
     optimize: 'none',

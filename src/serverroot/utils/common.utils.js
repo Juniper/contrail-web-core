@@ -1209,13 +1209,13 @@ function redirectToLogout (req, res, callback)
     //If URL has '/vcenter',then redirect to /vcenter/logout
     //x-orchestrationmode is set only for ajax requests,so if user changes browser URL then we need to check for loggedInOrchestrationMode
     if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'vcenter') {
-        redURL = '/vcenter/logout';
+        redURL = '/vcenter/';
     } else if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'none') {
-        redURL = '/logout';
+        redURL = '/';
     } else if(req['originalUrl'].indexOf('/vcenter') > -1) {
-        redURL = '/vcenter/logout';
+        redURL = '/vcenter/';
     } else {
-        redURL = '/logout';
+        redURL = '/';
     }
     redirectToURL(req, res, redURL);
     if (null != callback) {
@@ -1226,13 +1226,13 @@ function redirectToLogout (req, res, callback)
 function redirectToLogin (req, res)
 {
     if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'vcenter') {
-        redURL = '/vcenter/login';
+        redURL = '/vcenter/';
     } else if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'none') {
-        redURL = '/login';
+        redURL = '/';
     } else if(req['originalUrl'].indexOf('/vcenter') > -1) {
-        redURL = '/vcenter/login';
+        redURL = '/vcenter/';
     } else {
-        redURL = '/login';
+        redURL = '/';
     }
     redirectToURL(req, res, redURL);
 }
@@ -1259,6 +1259,10 @@ function redirectToURL(req, res, redURL)
            res.send(307, '');
        }
     } else {
+       if(redURL = "/") {
+            res.sendfile('webroot/html/dashboard.html');
+            return;
+       } 
        res.redirect(redURL);
     }
 }
@@ -1341,6 +1345,25 @@ function getOrchestrationPluginModel (req, res, appData)
     commonUtils.handleJSONResponse(null, res, modelObj);
 }
 
+/**
+ * Returns a dict of enabled feature pkgs
+ */
+function getFeaturePkgs() {
+    var featurePkg={};
+    var pkgList = process.mainModule.exports['pkgList'];
+    var pkgLen = pkgList.length;
+    var activePkgs = [];
+    for (var i = 1; i < pkgLen; i++) {
+        activePkgs.push(pkgList[i]['pkgName']);
+    }
+    activePkgs = _.uniq(activePkgs);
+    var pkgCnt = activePkgs.length;
+    for (var i = 0; i < pkgCnt; i++) {
+        featurePkg[activePkgs[i]] = true;
+    }
+    return featurePkg;
+}
+
 /* Function: getWebServerInfo
    Req URL: /api/service/networking/web-server-info
    Send basic information about Web Server
@@ -1357,11 +1380,12 @@ function getWebServerInfo (req, res, appData)
         logutils.logger.error("We did not get Orchestration Model");
         assert(0);
     }
-    serverObj ['serverUTCTime'] = commonUtils.getCurrentUTCTime();
+    serverObj['serverUTCTime'] = commonUtils.getCurrentUTCTime();
     serverObj['hostName'] = os.hostname();
     serverObj['role'] = req.session.userRole;
     serverObj['featurePkg'] = {};
     serverObj['uiConfig'] = ui;
+    serverObj['isAuthenticated'] = req.session.isAuthenticated;
     serverObj['discoveryEnabled'] = getValueByJsonPath(config,
                                                        'discoveryService;enable',
                                                        true);
@@ -1376,6 +1400,7 @@ function getWebServerInfo (req, res, appData)
     serverObj['disabledFeatures'] = getValueByJsonPath(config,'features;disabled',[]);
     serverObj['featurePkgsInfo'] = getValueByJsonPath(config,'featurePkg',[]);
     serverObj['sessionTimeout'] = getValueByJsonPath(config,'session;timeout', 3600000);
+    serverObj['_csrf'] = req.session._csrf;
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
@@ -2249,4 +2274,4 @@ exports.getIPRangeLen = getIPRangeLen;
 exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
 exports.isSubArray = isSubArray;
 exports.getValueByJsonPath = getValueByJsonPath;
-
+exports.getFeaturePkgs = getFeaturePkgs;
