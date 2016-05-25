@@ -118,7 +118,7 @@ define([
             y1Formatter: d3.format(".01f"),
             showLegend: true,
             xFormatter: function(value) {
-                return d3.time.format("%H:%M")(value);
+                return d3.time.format('%H:%M:%S')(new Date(value));;
             }
         };
 
