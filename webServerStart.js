@@ -386,8 +386,20 @@ function startWebCluster ()
             logutils.logger.info("Starting Contrail UI in clustered mode.");
             bindProducerSocket();
             addProducerSockListener();
+            /**
+             * Debug logic fix from https://github.com/nodejs/node-v0.x-archive/issues/5318
+             * To enable server side debug, start the server by: node --debug webServerStart.js
+             * attach node-inspector --web-port=8090 --debug-port=5859
+             * access http://localhost:8090
+             */
+            var debug = process.execArgv.indexOf('--debug') !== -1;
+            cluster.setupMaster({
+                execArgv: process.execArgv.filter(function(s) { return s !== '--debug' })
+            });
             for (var i = 0; i < nodeWorkerCount; i += 1) {
+                if (debug) cluster.settings.execArgv.push('--debug=' + (5859 + i));
                 var worker = cluster.fork();
+                if (debug) cluster.settings.execArgv.pop();
                 workers[i] = worker;
             }
 
