@@ -86,8 +86,6 @@ define([
                 return timeStr;
             },
             'query-time-range': function (value, options) {
-                //Need to avoid referring qewu alias globally
-                //Move formatTimeRange to cowu
                 return cowu.formatTimeRange(value);
             },
             'query-direction': function (value, options) {

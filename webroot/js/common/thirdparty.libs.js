@@ -4,6 +4,7 @@
 define([
         'slick.grid',
         'slick.checkboxselectcolumn',
+        'slick.groupmetadata',
         'slick.rowselectionmodel',
         'slick.enhancementpager',
         'select2',

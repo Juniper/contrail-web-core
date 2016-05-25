@@ -130,7 +130,7 @@ constants.coreModules  = [
             'core-constants',
             'core-formatters',
             'core-cache',
-            'core-alarm-utils',
+            // 'core-alarm-utils',
             'core-labels',
             'core-messages',
             'core-views-default-config',
@@ -243,6 +243,7 @@ constants.coreModules  = [
         include: [
             'slick.grid',
             'slick.checkboxselectcolumn',
+            'slick.groupmetadata',
             'slick.rowselectionmodel',
             'slick.enhancementpager',
             'select2',
@@ -296,6 +297,7 @@ constants.coreModules  = [
         name: './js/common/nonamd.libs',
         include: [
             'web-utils',
+            'analyzer-utils',
             'config_global',
             'contrail-layout',
             'handlebars-utils',          
