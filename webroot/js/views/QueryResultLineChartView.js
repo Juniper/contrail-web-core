@@ -19,6 +19,7 @@ define([
 
             var clickOutView = (contrail.checkIfExist(viewConfig.clickOutElementId)) ? self.rootView.viewMap[viewConfig.clickOutElementId] : self;
 
+            //TODO - Merge UMID_QUERY_RESULT_LINE_CHART_MODEL and UMID_QUERY_RESULT_CHART_MODEL 
             modelMap[cowc.UMID_QUERY_RESULT_LINE_CHART_MODEL] = new ContrailListModel({data: []});
             modelMap[cowc.UMID_QUERY_RESULT_CHART_MODEL] = getChartDataModel(queryId, queryFormAttributes, modelMap);
             self.renderView4Config(self.$el, null, getQueryChartViewConfig(queryId, queryFormAttributes, modelMap, clickOutView, queryResultChartGridId), null, null, modelMap);
@@ -207,23 +208,29 @@ define([
         var lineWithFocusChartModel = modelMap[cowc.UMID_QUERY_RESULT_LINE_CHART_MODEL],
             chartUrl = '/api/admin/reports/query/chart-data?queryId=' + queryId,
             chartListModel = new ContrailListModel({
-            remote: {
-                ajaxConfig: {
-                    url: chartUrl,
-                    type: 'GET'
-                },
-                dataParser: qewp.fsQueryDataParser
-            }
-        });
+                remote: {
+                    ajaxConfig: {
+                        url: chartUrl,
+                        type: 'GET'
+                    },
+                    dataParser: qewp.fsQueryDataParser
+                }
+            });
+
+        lineWithFocusChartModel.isRequestInProgress = chartListModel.isRequestInProgress;
 
         chartListModel.onAllRequestsComplete.subscribe(function() {
-            if (chartListModel.getLength() > 0) {
-                var chartColorAvailableKeys = ['id_0', null, null, null, null];
-                lineWithFocusChartModel.setData(formatChartData(modelMap, queryFormAttributes, chartColorAvailableKeys));
+            if (chartListModel.error === true) {
+                lineWithFocusChartModel.error = chartListModel.error;
+                lineWithFocusChartModel.setData([]);
             } else {
-                lineWithFocusChartModel.setData([])
+                if (chartListModel.getLength() > 0) {
+                    var chartColorAvailableKeys = ['id_0', null, null, null, null];
+                    lineWithFocusChartModel.setData(formatChartData(modelMap, queryFormAttributes, chartColorAvailableKeys));
+                } else {
+                    lineWithFocusChartModel.setData([]);
+                }
             }
-
         });
 
         return chartListModel;
