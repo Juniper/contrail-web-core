@@ -11,6 +11,7 @@ define([
         'core-views-default-config',
         'chart-utils',
         'text!core-basedir/templates/core.common.tmpl',
+        'core-basedir/js/common/graph.utils',
         // 'core-alarm-utils',
         // 'core.app.utils',
         'contrail-remote-data-handler',
@@ -50,7 +51,7 @@ define([
         'mon-infra-log-list-view',     
         'mon-infra-sysinfo-view',      
         'mon-infra-dashboard-view',
-        ],function(CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig,ChartUtils,CoreCommonTmpls) {
+        ],function(CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig,ChartUtils,CoreCommonTmpls, GraphUtils) {
             cowc = new CoreConstants();
             cowf = new CoreFormatters();
             cowl = new CoreLabels();
@@ -58,6 +59,7 @@ define([
             covdc = new CoreViewsDefaultConfig();
             cowch = new Cache();
             chUtils = new ChartUtils();
+            grUtils = new GraphUtils()
             webServerInfoDefObj.done(function() {
                 require(['nonamd-libs'],function() {
                     cowc.DROPDOWN_VALUE_SEPARATOR = getValueByJsonPath(globalObj,

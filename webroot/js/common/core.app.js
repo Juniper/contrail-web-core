@@ -97,7 +97,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'nv.d3'                     : coreWebDir + '/assets/nvd3-v1.8.1/js/nv.d3',
 
             'contrail-layout'             : coreWebDir + '/js/contrail-layout',
-            'joint.contrail'              : coreWebDir + '/js/joint.contrail',
+            'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
             'core-utils'                  : coreWebDir + '/js/common/core.utils',
 
             'core-alarm-utils'           :  coreWebDir + '/js/common/core.alarms.utils',
@@ -152,13 +152,14 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'chart-utils'                 : coreWebDir + "/js/common/chart.utils",
             'storage-init'                : 'empty:',
 
-            'thirdparty-libs'       : coreWebDir + '/js/common/thirdparty.libs',
-            'contrail-core-views'   : coreWebDir + '/js/common/contrail.core.views',
-            'chart-libs'            : coreWebDir + '/js/common/chart.libs',
-            'core-bundle'           : coreWebDir + '/js/common/core.bundle',
-            'global-libs'           : coreWebDir + '/js/common/global-libs',
-            'jquery-dep-libs'       : coreWebDir + '/js/common/jquery.dep.libs',
-            'nonamd-libs'           : coreWebDir + '/js/common/nonamd.libs',
+            'thirdparty-libs'             : coreWebDir + '/js/common/thirdparty.libs',
+            'contrail-core-views'         : coreWebDir + '/js/common/contrail.core.views',
+            'chart-libs'                  : coreWebDir + '/js/common/chart.libs',
+            'core-bundle'                 : coreWebDir + '/js/common/core.bundle',
+            'global-libs'                 : coreWebDir + '/js/common/global-libs',
+            'jquery-dep-libs'             : coreWebDir + '/js/common/jquery.dep.libs',
+            'nonamd-libs'                 : coreWebDir + '/js/common/nonamd.libs',
+            'contrail-element'            : coreWebDir + '/js/models/ContrailElement'
         };
     } else if(env == "prod") {
         return {
@@ -186,9 +187,10 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'vectorizer'                  : coreWebDir + '/assets/joint/js/vectorizer',
             'joint.layout.DirectedGraph'  : coreWebDir + '/assets/joint/js/joint.layout.DirectedGraph',
             'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
-            'joint.contrail'              : coreWebDir + '/js/joint.contrail',
+            'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
 
-            'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers'
+            'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers',
+            'contrail-element'            : coreWebDir + '/js/models/ContrailElement'
         }
 
     }
