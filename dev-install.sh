@@ -375,6 +375,7 @@ MAINCSS[20]=webroot/css/contrail.chart.css
 MAINCSS[21]=webroot/css/contrail.graph.css
 MAINCSS[22]=webroot/css/contrail.custom.css
 MAINCSS[23]=webroot/css/contrail.font.css
+MAINCSS[24]=webroot/css/login.css
 
 
 cat ${MAINCSS[1]} > webroot/css/contrail-all.css
@@ -400,4 +401,5 @@ cat ${MAINCSS[20]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[21]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[22]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[23]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[24]} >> webroot/css/contrail-all.css
 #End - Merging ALL CSS files

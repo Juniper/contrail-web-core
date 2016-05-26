@@ -6,7 +6,8 @@ define([
     'underscore',
     'contrail-view',
     'core-basedir/js/models/LineBarWithFocusChartModel',
-    'contrail-list-model'
+    'contrail-list-model',
+    'nv.d3'
 ], function (_, ContrailView, LineBarWithFocusChartModel, ContrailListModel) {
     var LineBarWithFocusChartView = ContrailView.extend({
         render: function () {

@@ -7,8 +7,9 @@ define([
     'contrail-view',
     'contrail-list-model',
     'js/views/AlarmsEditView',
-    'js/models/AlarmsModel'
-], function (_, ContrailView, ContrailListModel, AlarmsEditView, AlarmsModel) {
+    'js/models/AlarmsModel',
+    'core-alarm-parsers'
+], function (_, ContrailView, ContrailListModel, AlarmsEditView, AlarmsModel,coreAlarmParsers) {
     var alarmsEditView = new AlarmsEditView();
     var GridDS, parentModel;
     var AlarmGridView = ContrailView.extend({

@@ -13,6 +13,7 @@ define(
                 self.fetchAlarmTypes = function () {
                     $.ajax({
                         url:'/api/tenant/monitoring/alarmtypes',
+                        // async:false,
                         type:'GET'
                     }).done(function(result) {
                         if(result != null){
@@ -168,6 +169,6 @@ define(
                 }
 
             }
-            return CoreAlarmUtils;
+            return new CoreAlarmUtils();
        }
 );

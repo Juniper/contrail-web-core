@@ -294,15 +294,7 @@ define([
             });
         };
 
-        /**
-         * sometimes menuHandler finishes loading the menu before deferredObj attaches done CB
-         */
-        if (menuHandler.deferredObj.state() == 'resolved') {
-            menuHandlerDoneCB();
-        } else {
-            menuHandler.deferredObj.done(menuHandlerDoneCB);
-        }
-
+        menuHandlerDoneCB();
     };
 
     this.startViewTestRunner = function(viewTestConfig, fakeServer, assert, done) {

@@ -11,16 +11,12 @@ function MonInfraDashboardLoader() {
             rootDir = currMenuObj['resources']['resource'][0]['rootDir'],
             renderFn = paramObject['function'];
 
-        if (self.monInfraDashboardView == null) {
-            require(['mon-infra-dashboard-view'], function (MonitorInfraDashboardView) {
-                var monitorInfraDashboardView = MonitorInfraDashboardView;
-                monitorInfraDashboardView.render({
-                    el:$(contentContainer)
-                });
+        require(['mon-infra-dashboard-view'], function (MonitorInfraDashboardView) {
+            var monitorInfraDashboardView = MonitorInfraDashboardView;
+            monitorInfraDashboardView.render({
+                el:$(contentContainer)
             });
-        } else {
-            self.renderView(renderFn, hashParams);
-        }
+        });
     };
 
     this.destroy = function()  {

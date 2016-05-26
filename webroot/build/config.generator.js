@@ -90,13 +90,14 @@ ConfigGenerator.prototype.getStringifiedConfig = function() {
 ConfigGenerator.prototype.addModules = function(modules) {
     if (modules.length > 0) {
         for (var i=0; i<modules.length; i++) {
+            var module = {};
             if (modules[i].enabled) {
-                var module = {};
                 module.name = modules[i].name;
                 module.include = modules[i].include;
                 module.exclude = modules[i].exclude;
-                this.configJSON.modules.push(module);
+                module.override = modules[i].override;
             }
+            this.configJSON.modules.push(module);
         }
     }
 };
@@ -112,7 +113,7 @@ var CoreConfigGenerator = function(type, configFile) {
 CoreConfigGenerator.prototype = new ConfigGenerator();
 
 CoreConfigGenerator.prototype.updateBaseConfig = function() {
-    var coreAppPaths = coApp.getCoreAppPaths(confGenConst.defaultBaseDir, ''),
+    var coreAppPaths = coApp.getCoreAppPaths(confGenConst.defaultBaseDir, '','dev'),
         coreAppMap = coApp.coreAppMap,
         coreAppShim = coApp.coreAppShim;
 
@@ -161,7 +162,7 @@ ControllerConfigGenerator.prototype.overrideBaseConfig = function() {
     }
     // Add controller paths.
     var controllerApp = require('./../../../contrail-web-controller/webroot/common/ui/js/controller.app')
-    var controllerAppPaths = controllerApp.getControllerAppPaths(confGenConst.defaultBaseDir, '');
+    var controllerAppPaths = controllerApp.getControllerAppPaths(confGenConst.defaultBaseDir, '',"dev");
     for (var path in controllerAppPaths) {
         if (controllerAppPaths.hasOwnProperty(path)) {
             this.configJSON.paths[path] = controllerAppPaths[path];
@@ -292,3 +293,4 @@ if (repo == 'webCore') {
     var storageConfigGenerator = new StorageConfigGenerator(repo, file);
     storageConfigGenerator.generate();
 } else {}
+

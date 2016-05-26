@@ -135,18 +135,13 @@ function authenticate (req, res, appData, callback)
     var passwdCipher = null
     var userEncrypted = null;
     var passwdEncrypted = null;
-    var loginErrFile = 'webroot/html/login-error.html';
     if(post.urlHash != null)
         urlHash = post.urlHash;
 
     doAuth(username, password, function (err, data, response) {
         if ((err) || (null == data)) {
             req.session.isAuthenticated = false;
-            commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                 global.CONTRAIL_LOGIN_ERROR,
-                                                 messages.error.invalid_user_pass,
-                                                 function() { 
-            });
+            callback(messages.error.invalid_user_pass);
             return;
         }
         req.session.isAuthenticated = true;
@@ -162,7 +157,7 @@ function authenticate (req, res, appData, callback)
                           '; expires=' +
                           new Date(new Date().getTime() +
                                    global.MAX_AGE_SESSION_ID).toUTCString());
-            res.redirect('/' + urlHash);
+            callback(null, '/' + urlHash);
         });
     });
 }

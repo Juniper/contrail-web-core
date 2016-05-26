@@ -8,8 +8,9 @@ define([
     'knockout',
     'contrail-model',
     'query-or-model',
-    'query-and-model'
-], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel) {
+    'query-and-model',
+    'core-basedir/js/common/qe.utils'
+], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel,qewu) {
     var QueryFormModel = ContrailModel.extend({
         defaultSelectFields: [],
         disableSelectFields: [],

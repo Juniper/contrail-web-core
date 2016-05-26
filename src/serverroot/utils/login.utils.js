@@ -17,7 +17,7 @@ if (!module.parent) {
  */
 exports.checkAuth = function (req, res, next) {
 	if (config.require_auth && !req.session.userid) {
-		res.redirect('/login');
+		res.redirect('/');
 	} else {
 		next();
 	}

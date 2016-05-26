@@ -5,8 +5,7 @@
 define(['underscore'], function (_) {
     var MenuHandler = function () {
         var self = this, menuObj,
-            initMenuDefObj = $.Deferred(),
-            webServerInfoDefObj = $.Deferred();
+            initMenuDefObj = $.Deferred();  //Will be resolved once menu is loaded and filtered
         //onHashChange is triggered once it is resolved
         self.deferredObj = $.Deferred();
 
@@ -16,36 +15,16 @@ define(['underscore'], function (_) {
             'serverManager': 'sm'
         };
 
-        this.loadMenu = function (webServerInfo) {
-            var mFileName = 'menu.xml';
-            var featureMaps = [];
-            if (null != webServerInfo['featurePkg']) {
-                var pkgList = webServerInfo['featurePkg'];
-                for (var key in pkgList) {
-                    if (null != featurePkgToMenuNameMap[key]) {
-                        featureMaps.push(featurePkgToMenuNameMap[key]);
-                    } else {
-                        console.log('featurePkgToMenuNameMap key is null: ' + key);
-                    }
-                }
-                if (featureMaps.length > 0) {
-                    featureMaps.sort();
-                    mFileName = 'menu_' + featureMaps.join('_') + '.xml';
-                }
-            }
-            $.get('/' + mFileName+ '?built_at=' + built_at, function (xml) {
-                menuObj = $.xml2json(xml);
-                var disabledFeatures = {disabled: globalObj['webServerInfo']['disabledFeatures']};
-                var featurePkgsInfo = globalObj['webServerInfo']['featurePkgsInfo'];
-                processXMLJSON(menuObj, disabledFeatures);
-                var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', featurePkgsInfo));
-                $("#sidebar-shortcuts").html(menuShortcuts);
-                ['items']['item'] = menuHandler.filterMenuItems(menuObj['items']['item']);
-                initMenuDefObj.resolve();
-            });
+        this.loadMenu = function (xml) {
+            menuObj = $.xml2json(xml);
+            var disabledFeatures = {disabled:globalObj['webServerInfo']['disabledFeatures']};
+            var featurePkgsInfo = globalObj['webServerInfo']['featurePkgsInfo'];
+            processXMLJSON(menuObj, disabledFeatures);
+            var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', featurePkgsInfo));
+            $("#sidebar-shortcuts").html(menuShortcuts);
 
             //Add an event listener for clicking on menu items
-            $('#menu').on('click', 'ul > li > a', function (e) {
+            $('#menu').off('click').on('click', 'ul > li > a', function (e) {
                 var href = $(this).attr('href');
                 loadFeature($.deparam.fragment(href));
                 if (!e.ctrlKey) {
@@ -53,15 +32,12 @@ define(['underscore'], function (_) {
                 }
             });
 
-            $.when.apply(window, [initMenuDefObj]).done(function () {
-                //Intialize the alarm flag
-                var disabledFeatures = ifNull(globalObj['webServerInfo']['disabledFeatures']['disabled'],[]);
-                $.each(disabledFeatures, function (i,d) {
-                   if(d == 'monitor_alarms') {
-                       cowu.getAlarmsFromAnalytics = false;
-                   }
-                });
-                self.deferredObj.resolve();
+            //Intialize the alarm flag
+            var disabledFeatures = ifNull(globalObj['webServerInfo']['disabledFeatures']['disabled'],[]);
+            $.each(disabledFeatures, function (i,d) {
+                if(d == 'monitor_alarms') {
+                    cowu.getAlarmsFromAnalytics = false;
+                }
             });
         }
 
@@ -139,7 +115,7 @@ define(['underscore'], function (_) {
                     var allowedRolesList = [];
 
                     //If logged-in user has superAdmin role,then allow all features
-                    if ($.inArray(roles['ADMIN'], loggedInUserRoles) > -1) {
+                    if ($.inArray(globalObj['roles']['ADMIN'], loggedInUserRoles) > -1) {
                         roleExists = true;
                     } else {
                         //If any one of userRole is in allowedRolesList
@@ -154,8 +130,8 @@ define(['underscore'], function (_) {
                     roleExists = true;
 
                 if (value.access.accessFn != null) {
-                    if (typeof(menuAccessFns[value.access.accessFn]) == 'function')
-                        accessFnRetVal = menuAccessFns[value.access.accessFn]();
+                    if (typeof(globalObj['menuAccessFns'][value.access.accessFn]) == 'function')
+                        accessFnRetVal = globalObj['menuAccessFns'][value.access.accessFn]();
                 } else
                     accessFnRetVal = true;
 
@@ -258,7 +234,6 @@ define(['underscore'], function (_) {
                 return true;
             else
                 return false;
-
         }
 
         /*
@@ -297,9 +272,9 @@ define(['underscore'], function (_) {
             var searchStrings = item.searchStrings, hash = item.hash, queryParams = item.queryParams;
             if (hash != null && searchStrings != null) {
                 var searchStrArray = cowu.splitString2Array(searchStrings, ',');
-                siteMap[hash] = {searchStrings: searchStrArray, queryParams: queryParams};
+                globalObj['siteMap'][hash] = {searchStrings: searchStrArray, queryParams: queryParams};
                 for (var j = 0; j < searchStrArray.length; j++) {
-                    siteMapSearchStrings.push(searchStrArray[j]);
+                    globalObj['siteMapSearchStrings'].push(searchStrArray[j]);
                 }
             }
         }
@@ -429,25 +404,25 @@ define(['underscore'], function (_) {
             }
         }
     };
+    function toggleSubMenu(subMenu, linkId) {
+        //if we are opening this submenu, close all other submenus except the ".active" one
+        if (!$(subMenu).is(':visible')) {//ie, we are about to open it and make it visible
+            $('.open > .submenu').each(function () {
+                if (this != subMenu) {
+                    $(this).slideUp(200).parent().removeClass('open').removeClass('active');
+                }
+            });
+            $(subMenu).slideToggle(200).parent().toggleClass('open').toggleClass('active');
+        }
+        if (linkId != null) {
+            $('.submenu > li').each(function () {
+                $(this).removeClass('active');
+            });
+            $(linkId).addClass('active');
+        }
+    };
 
     return MenuHandler;
 });
 
-function toggleSubMenu(subMenu, linkId) {
-    //if we are opening this submenu, close all other submenus except the ".active" one
-    if (!$(subMenu).is(':visible')) {//ie, we are about to open it and make it visible
-        $('.open > .submenu').each(function () {
-            if (this != subMenu) {
-                $(this).slideUp(200).parent().removeClass('open').removeClass('active');
-            }
-        });
-        $(subMenu).slideToggle(200).parent().toggleClass('open').toggleClass('active');
-    }
-    if (linkId != null) {
-        $('.submenu > li').each(function () {
-            $(this).removeClass('active');
-        });
-        $(linkId).addClass('active');
-    }
-};
 
