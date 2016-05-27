@@ -1056,11 +1056,13 @@ function getExtUserRoleByTenant (userObj, callback)
 
 function getUserRoleByAllTenants (username, password, tenantlist, callback)
 {
+    var tokenObjs = {};
     var uiRoles = [];
     var tmpUIRoleObjs = {};
     var tenantObjArr = [];
-    if (null == tenantlist) {
-        return null;
+    if ((null == tenantlist) || (!tenantlist.length)) {
+        callback(null, tokenObjs);
+        return;
     }
     var tenantCnt = tenantlist.length;
     var userRoles = [global.STR_ROLE_USER];
@@ -1073,15 +1075,14 @@ function getUserRoleByAllTenants (username, password, tenantlist, callback)
         }
     }
     if (!tenantObjArr.length) {
-        callback(null);
-        return userRoles;
+        callback(null, tokenObjs);
+        return;
     }
 
     async.map(tenantObjArr, getExtUserRoleByTenant, function(err, data) {
         if (data) {
             var roleList = [];
             var dataLen = data.length;
-            var tokenObjs = {};
             for (var i = 0; i < dataLen; i++) {
                 var project =
                     commonUtils.getValueByJsonPath(data[i],
@@ -1537,14 +1538,39 @@ function doV2Auth (req, callback)
                                           JSON.stringify(data.access));
                     req.session.def_token_used = data.access.token;
                     var uiRoles = null;
+                    /* We got already the last one from tenantList, so remove
+                       * this from tenantList now
+                       */
+                    var userRolesToDefProject =
+                        commonUtils.getValueByJsonPath(data,
+                                                       'access;user;roles', []);
+                    var uiRolesToDefProject =
+                        getUIRolesByExtRoles(userRolesToDefProject);
+                    tenantList.splice(projCount - 1, 1);
                     getUserRoleByAllTenants(username, password,
                                             tenantList, 
                                             function(uiRoles, tokenObjs) {
-                        if ((null == uiRoles) || (!uiRoles.length)) {
+                        if ((tenantList.length > 0) && ((null == uiRoles) ||
+                            (!uiRoles.length))) {
                             req.session.isAuthenticated = false;
                             callback(messages.error.unauthenticate_to_project);
                             return;
                         }
+                        var uiRolesCnt = 0;
+                        if ((null == uiRoles) || (!uiRoles.length)) {
+                            uiRoles = [];
+                            /* Take from default project one */
+                            var userRoles = uiRolesToDefProject;
+                            var userRolesCnt = userRoles.length;
+                            var tmpUIRoleObjs = {};
+                            for (var i = 0; i < userRolesCnt; i++) {
+                                if (null == tmpUIRoleObjs[userRoles[i]]) {
+                                    uiRoles.push(userRoles[i]);
+                                    tmpUIRoleObjs[userRoles[i]] = userRoles[i];
+                                }
+                            }
+                        }
+
                         /* Save the user-id/password in Redis in encrypted format.
                          */
                         req.session.isAuthenticated = true;
