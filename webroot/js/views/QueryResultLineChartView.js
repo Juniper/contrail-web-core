@@ -7,8 +7,9 @@ define([
     'contrail-view',
     'contrail-list-model',
     'core-basedir/js/common/qe.parsers',
-    'core-basedir/js/common/qe.utils'
-], function (_, ContrailView, ContrailListModel,qewp,qewu) {
+    'core-basedir/js/common/qe.utils',
+    'core-basedir/js/common/qe.grid.config',
+], function (_, ContrailView, ContrailListModel, qewp, qewu, qewgc) {
 
     var QueryResultLineChartView = ContrailView.extend({
         render: function() {
