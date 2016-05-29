@@ -34,7 +34,13 @@ var testAppConfig = {
     featurePkg: '',
     featuresDisabled: '',
     webServerInfo: ''
-}
+};
+
+var bundles = (globalObj['env'] == 'prod') ? coreBundles :  {};
+
+requirejs.config({
+    bundles: bundles
+});
 
 function setFeaturePkgAndInit(featurePkg, coreTestMockData) {
     var featurePkgObj = {};
@@ -67,54 +73,57 @@ function setFeaturePkgAndInit(featurePkg, coreTestMockData) {
 
     testAppInit(testAppConfig);
 }
+/**
+ * For base unit tests, since modules are not loaded via menu hash we will call this
+ * manually to load the feature level packages.
+ * @param featurePackages
+ */
+var loadFeatureApps = function (featurePackages) {
+    var featureAppDefObjList= [],
+        initAppDefObj, url;
 
-function testAppInit(testAppConfig) {
-
-    //featurePkgs is required to pre-load feature bundles
-    var loadFeatureApps = function (featurePackages) {
-        var featureAppDefObjList= [],
-            initAppDefObj, url;
-        
-        for (var key in featurePackages) {
-            if(featurePackages[key] && key == FEATURE_PCK_WEB_CONTROLLER) {
-                url = ctBaseDir + '/common/ui/js/controller.app.js';
-                if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                    initAppDefObj = $.Deferred();
-                    featureAppDefObjList.push(initAppDefObj);
-                    globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
-                    featureAppDefObjList.push(loadUtils.getScript(url));
-                }
-            } else if (featurePackages[key] && key == FEATURE_PCK_WEB_SERVER_MANAGER) {
-                url = smBaseDir + '/common/ui/js/sm.app.js';
-                if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                    initAppDefObj = $.Deferred();
-                    featureAppDefObjList.push(initAppDefObj);
-                    globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
-                    featureAppDefObjList.push(loadUtils.getScript(url));
-                }
-            }  else if (featurePackages[key] && key == FEATURE_PCK_WEB_STORAGE) {
-                url = strgBaseDir + '/common/ui/js/storage.app.js';
-                if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                    initAppDefObj = $.Deferred();
-                    featureAppDefObjList.push(initAppDefObj);
-                    globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
-                    featureAppDefObjList.push(loadUtils.getScript(url));
-                }
+    for (var key in featurePackages) {
+        if(featurePackages[key] && key == FEATURE_PCK_WEB_CONTROLLER) {
+            url = ctBaseDir + '/common/ui/js/controller.app.js';
+            if(globalObj['loadedScripts'].indexOf(url) == -1) {
+                initAppDefObj = $.Deferred();
+                featureAppDefObjList.push(initAppDefObj);
+                globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
+                featureAppDefObjList.push(loadUtils.getScript(url));
+            }
+        } else if (featurePackages[key] && key == FEATURE_PCK_WEB_SERVER_MANAGER) {
+            url = smBaseDir + '/common/ui/js/sm.app.js';
+            if(globalObj['loadedScripts'].indexOf(url) == -1) {
+                initAppDefObj = $.Deferred();
+                featureAppDefObjList.push(initAppDefObj);
+                globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
+                featureAppDefObjList.push(loadUtils.getScript(url));
+            }
+        }  else if (featurePackages[key] && key == FEATURE_PCK_WEB_STORAGE) {
+            url = strgBaseDir + '/common/ui/js/storage.app.js';
+            if(globalObj['loadedScripts'].indexOf(url) == -1) {
+                initAppDefObj = $.Deferred();
+                featureAppDefObjList.push(initAppDefObj);
+                globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
+                featureAppDefObjList.push(loadUtils.getScript(url));
             }
         }
+    }
 
-        //Where isInitFeatureAppInProgress used
-        if(featureAppDefObjList.length > 0) {
-            globalObj['isInitFeatureAppInProgress'] = true;
-        }
+    //Where isInitFeatureAppInProgress used
+    if(featureAppDefObjList.length > 0) {
+        globalObj['isInitFeatureAppInProgress'] = true;
+    }
 
-        $.when.apply(window, featureAppDefObjList).done(function () {
-            globalObj['isInitFeatureAppInProgress'] = false;
-            globalObj['isInitFeatureAppComplete'] = true;
-            globalObj['featureAppDefObj'].resolve();
-            // self.featureAppDefObj.resolve();
-        });
-    };
+    $.when.apply(window, featureAppDefObjList).done(function () {
+        globalObj['isInitFeatureAppInProgress'] = false;
+        globalObj['isInitFeatureAppComplete'] = true;
+        globalObj['featureAppDefObj'].resolve();
+        // self.featureAppDefObj.resolve();
+    });
+};
+
+function testAppInit(testAppConfig) {
 
     function loadAjaxRequest(ajaxCfg,callback) {
         var xhr = new XMLHttpRequest();
