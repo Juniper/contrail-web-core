@@ -47,6 +47,13 @@ function getOrchestrationModelsByReqURL (reqURL)
     return model;
 }
 
+function getLoggedInOrchestrationMode (req)
+{
+    var commonUtils = require('../utils/common.utils');
+    return commonUtils.getValueByJsonPath(req, 'session;loggedInOrchestrationMode',
+                                          'openstack', false);
+}
+
 exports.getOrchestrationModels = getOrchestrationModels;
 exports.getOrchestrationModelsByReqURL = getOrchestrationModelsByReqURL;
-
+exports.getLoggedInOrchestrationMode = getLoggedInOrchestrationMode;

@@ -11,22 +11,33 @@ var orch = require('../orchestration/orchestration.api');
 
 var orchModels = orch.getOrchestrationModels();
 
-if (orchModels.indexOf('openstack') != -1) {
-    var imageApi = require('../orchestration/plugins/openstack/glance.api');
-} else if (orchModels.indexOf('none') != -1) {
-    imageApi = require('../orchestration/plugins/no-orch/noOrchestration.api');
+var openstackImageApi = require('../orchestration/plugins/openstack/glance.api');
+var cloudstackImageApi  =
+    require('../orchestration/plugins/cloudstack/cloudstack.api');
+var noOrchestrationImageApi  =
+    require('../orchestration/plugins/no-orch/noOrchestration.api');
+var vCenterImageApi =
+    require('../orchestration/plugins/vcenter/vcenter.common');
+
+var getImageMethod = {
+    'vcenter': vCenterImageApi,
+    'openstack': openstackImageApi,
+    'cloudstack' : cloudstackImageApi,
+    'none'       : noOrchestrationImageApi
 }
 
 function apiGet (reqUrl, req, callback)
 {
-    imageApi.get(reqUrl, req, function(err, data) {
+    var loggedInOrchMode = orch.getLoggedInOrchestrationMode(req);
+    getImageMethod[loggedInOrchMode].get(reqUrl, req, function(err, data) {
         callback(err, data);
     });
 }
 
 function getImageList (req, callback)
 {
-    imageApi.getImageList(req, function(err, data) {
+    var loggedInOrchMode = orch.getLoggedInOrchestrationMode(req);
+    getImageMethod[loggedInOrchMode].getImageList(req, function(err, data) {
         callback(err, data);
     });
 }
