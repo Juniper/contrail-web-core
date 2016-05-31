@@ -3,8 +3,9 @@
  */
 
 define([
-    'underscore'
-], function (_) {
+    'underscore',
+    'core-basedir/js/common/qe.utils',
+], function (_, qewu) {
     var QEGridConfig = function () {
         this.getColumnDisplay4Grid = function(tableName, tableType, selectArray) {
             var newColumnDisplay = [], columnDisplaySelect,
