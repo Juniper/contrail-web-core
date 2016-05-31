@@ -212,7 +212,8 @@ define([
                         children: []
                     };
                     for(var j = 0; j < children.length; j++) {
-                        if(children[j].text.indexOf(query.term) != -1 ||
+                        if((children[j].text && children[j].text.toLowerCase().
+                            indexOf(query.term.toLowerCase()) != -1) ||
                             children[j].disabled == true) {
                             filteredResults[i].children.push(
                                 this.data[i].children[j]);
