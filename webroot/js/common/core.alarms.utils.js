@@ -91,10 +91,10 @@ define(
                     if (UVEAlarms != null && UVEAlarms.length > 0){
                         $.each(UVEAlarms, function (i, alarm) {
                             //If we need now show the acknowledged alarms keep this if block
-//                            if(!alarm.ack) {
+                              if(!alarm.ack) {
                                 var alarmObj = self.getAlarmObjectFromAnalyticsAlarm (options,alarm);
                                 alarms.push(alarmObj);
-//                            }
+                              }
                         })
 
                     } else {
