@@ -53,9 +53,10 @@ function subscribeToDiscoveryService (serviceObj, callback)
     var instCnt     = serviceObj['instCnt'];
 
     var clientID  = os.hostname() + ':' + clientType;
+    var ips = commonUtils.getUINetworkIPs();
     var postJson =  
         { "service": serviceName, "instances": 0, "min-instances": instCnt,
-          "client": clientID, "client-type": clientType};
+          "client": clientID, "remote-addr": ips[0], "client-type": clientType};
     var url = '/subscribe';
 
     discServer.api.post(url, postJson, function(err, data) {
