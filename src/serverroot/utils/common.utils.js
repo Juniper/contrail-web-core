@@ -2203,6 +2203,64 @@ function filterJsonKeysWithNullValues(obj) {
     return obj;
 }
 
+/* @getUINetworkIPs
+ *  This function is used to get the network IPs where web-ui is running.
+ *  If config.webui_addresses is mentioned as IPADDR_ANY, then all IPs will be
+ *  returned based on takeOnlyIPv4Addr, skipLocalIp values.
+ *  If config.webui_addresses does not contain IPADDR_ANY, then all matching
+ *  interface IPs will be retuned, if no matching ip found, then hostname alone
+ *  in array will be returned, this way this API will make sure to return non
+ *  empty array in any case
+ */
+function getUINetworkIPs (takeOnlyIPv4Addr, skipLocalIp)
+{
+    takeOnlyIPv4Addr = (null != takeOnlyIPv4Addr) ? takeOnlyIPv4Addr : true;
+    skipLocalIp = (null != skipLocalIp) ? skipLocalIp : true;
+
+    var uiIpList = [];
+    var allIpList = [];
+    var ipList = config.webui_addresses;
+    if (null == ipList) {
+        ipList = [global.IPADDR_ANY];
+    }
+    var ifaces = os.networkInterfaces();
+    if (null == ifaces) {
+        logutils.logger.error('Network Interfaces can not be retrieved');
+        return [os.hostname()];
+    }
+
+    for (var dev in ifaces) {
+        var len = ifaces[dev].length;
+        for (var i = 0; i < len; i++) {
+            var details = ifaces[dev][i];
+            if ((true == skipLocalIp) && (true == details['internal'])) {
+                continue;
+            }
+            allIpList.push(details['address']);
+            if ((true == takeOnlyIPv4Addr) && ('IPv4' != details['family'])) {
+                continue;
+            }
+            uiIpList.push(details['address']);
+        }
+    }
+    if (!uiIpList.length) {
+        return [os.hostname()];
+    }
+    /* Now check which IPs are inside config.webui_addresses */
+    if (-1 != ipList.indexOf(global.IPADDR_ANY)) {
+        return uiIpList;
+    }
+    var ips = _.filter(allIpList, function(ip) {
+        return (-1 != ipList.indexOf(ip));
+    });
+    if (!ips.length) {
+        logutils.logger.error('We did not get any interface ip matching ' +
+                              'config.webui_addresses');
+        return [os.hostname()];
+    }
+    return ips;
+}
+
 exports.filterJsonKeysWithNullValues = filterJsonKeysWithNullValues;
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
@@ -2262,4 +2320,5 @@ exports.getIPRangeLen = getIPRangeLen;
 exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
 exports.isSubArray = isSubArray;
 exports.getValueByJsonPath = getValueByJsonPath;
+exports.getUINetworkIPs = getUINetworkIPs;
 
