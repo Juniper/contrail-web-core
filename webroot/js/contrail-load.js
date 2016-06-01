@@ -301,7 +301,7 @@ $('.pre-format-JSON2HTML .collapser').live('click', function(){
 	 */
 	$.fn.addClassSVG = function(className){
 		$(this).attr('class', function(index, existingClassNames) {
-		    return existingClassNames + ' ' + className;
+            return ((existingClassNames !== undefined) ? (existingClassNames + ' ') : '') + className;
 		});
 		return this;
 	};
@@ -312,7 +312,7 @@ $('.pre-format-JSON2HTML .collapser').live('click', function(){
 	 */
 	$.fn.removeClassSVG = function(className){
 		$(this).attr('class', function(index, existingClassNames) {
-    		var re = new RegExp(className, 'g');
+    		var re = new RegExp('\\b' + className + '\\b', 'g');
     		return existingClassNames.replace(re, '');
     	});
 		return this;
