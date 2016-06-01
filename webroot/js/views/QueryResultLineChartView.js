@@ -210,21 +210,28 @@ define([
         var lineWithFocusChartModel = modelMap[cowc.UMID_QUERY_RESULT_LINE_CHART_MODEL],
             chartUrl = '/api/admin/reports/query/chart-data?queryId=' + queryId,
             chartListModel = new ContrailListModel({
-            remote: {
-                ajaxConfig: {
-                    url: chartUrl,
-                    type: 'GET'
-                },
-                dataParser: qewp.fsQueryDataParser
-            }
-        });
+                remote: {
+                    ajaxConfig: {
+                        url: chartUrl,
+                        type: 'GET'
+                    },
+                    dataParser: qewp.fsQueryDataParser
+                }
+            });
+
+        lineWithFocusChartModel.isRequestInProgress = chartListModel.isRequestInProgress;
 
         chartListModel.onAllRequestsComplete.subscribe(function() {
-            if (chartListModel.getLength() > 0) {
-                var chartColorAvailableKeys = ['id_0', null, null, null, null];
-                lineWithFocusChartModel.setData(formatChartData(modelMap, queryFormAttributes, chartColorAvailableKeys));
+            if (chartListModel.error === true) {
+                lineWithFocusChartModel.error = chartListModel.error;
+                lineWithFocusChartModel.setData([]);
             } else {
-                lineWithFocusChartModel.setData([])
+                if (chartListModel.getLength() > 0) {
+                    var chartColorAvailableKeys = ['id_0', null, null, null, null];
+                    lineWithFocusChartModel.setData(formatChartData(modelMap, queryFormAttributes, chartColorAvailableKeys));
+                } else {
+                    lineWithFocusChartModel.setData([]);
+                }
             }
 
         });

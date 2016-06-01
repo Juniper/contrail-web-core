@@ -111,6 +111,13 @@ define([
 
                 return jsonValue;
             },
+            'status-boolean': function (value, options) {
+                if (value === true || value === 'true') {
+                    return '<span><i class="icon-circle green"></i> &nbsp;' + value + '</span>';
+                } else {
+                    return '<span><i class="icon-circle red"/> &nbsp;' + value + '</span>';
+                }
+            },
             'json2html': function (value, options) {
                 var htmlValue = null, jsonValue = null,
                     expandLevel = contrail.checkIfExist(options.expandLevel) ? options.expandLevel : 1;
