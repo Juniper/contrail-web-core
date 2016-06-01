@@ -1418,34 +1418,6 @@
     </div>
 </script>
 
-<!--<script type="text/x-handlebars-template" id="core-detail-page-template">-->
-    <!--<div id="{{prefix}}-header" class="row-fluid margin-0-0-15">-->
-        <!--<div class="row-fluid detail-header-row">-->
-            <!--<h4 class="margin-0-5 pull-left padding-5-0">{{prefixId}}</h4>-->
-            <!--<div id="{{prefix}}-actions" class="pull-right">-->
-                <!--<div class="dropdown pull-right margin-5-0">-->
-                    <!--<a class="dropdown-toggle margin-10 font-size-14" data-toggle="dropdown"><i class="icon-cog grey"></i></a>-->
-                    <!--<ul class="dropdown-menu dropdown-caret pull-right" role="menu" aria-labelledby="dLabel">-->
-                    <!--</ul>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<div id="{{prefix}}-details"></div>-->
-    <!--<div id="{{prefix}}-server-list"></div>-->
-    <!--<div id="{{prefix}}-ipmi-info"></div>-->
-<!--</script>-->
-
-<!--<script type="text/x-handlebars-template" id="core-detail-page-action-template">-->
-    <!--{{#IfCompare divider true operator='=='}}-->
-    <!--<li class="divider"></li>-->
-    <!--{{/IfCompare}}-->
-    <!--<li>-->
-        <!--<a class="tooltip-success" data-rel="tooltip" data-placement="left" data-original-title={{title}}">-->
-            <!--<i class="{{iconClass}} margin-right-10"></i> {{title}}-->
-        <!--</a>-->
-    <!--</li>-->
-<!--</script>-->
 
 <script type="text/x-handlebars-template" id="core-editable-grid-view-template">
     {{#IfCompare label null operator='!='}}
@@ -2487,5 +2459,5 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 
 <script type="text/x-handlebars-template" id="alarm-severity-template">
     <div data-color={{{color}}} class="circle {{{color}}} {{#IfCompare ack false}}filled{{/IfCompare}} alarms-circle-grid-style alarms-circle-display-flex"></div>
-    {{#if showText}}<div class="alarms-display-inline">&nbsp;Minor</div>{{/if}}
- </script>
+    {{#if showText}}<div class="alarms-display-inline">&nbsp;{{{text}}}</div>{{/if}}
+</script>

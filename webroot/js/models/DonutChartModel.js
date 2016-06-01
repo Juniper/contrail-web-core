@@ -326,9 +326,6 @@ define([], function () {
         chartModel.pie.growOnHover(growOnHover);
         chartModel.legend.rightAlign(chartOptions.legendRightAlign)
             .padding(chartOptions.legendPadding);
-        if (chartOptions.color != null) {
-            chartModel.color(chartOptions.color);
-        }
         return chartModel;
     }
     return DonutChartModel;

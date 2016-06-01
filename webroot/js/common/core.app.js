@@ -71,11 +71,12 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'xdate'                     : coreWebDir + "/assets/xdate/js/xdate",
             'contrail-common'           : coreWebDir + "/js/contrail-common",
             'slick.enhancementpager'    : coreWebDir + "/assets/slickgrid/js/slick.enhancementpager",
+            'slick.groupmetadata'       : coreWebDir + "/assets/slickgrid/js/slick.groupitemmetadataprovider",
             // 'slickgrid-utils'          coreWebDir +  : "js/slickgrid-utils",
             'web-utils'                 : coreWebDir + "/js/web-utils",
             'config_global'             : coreWebDir + "/js/config_global",
             'contrail-load'             : coreWebDir + '/js/contrail-load',
-            // 'analyzer-utils'            : "js/analyzer-utils",
+            'analyzer-utils'            : coreWebDir + "/js/analyzer-utils",
             // 'dashboard-utils'           : "js/dashboard-utils",
 
             'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
@@ -189,6 +190,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
             'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
 
+            'core-alarm-utils'           :  coreWebDir + '/js/common/core.alarms.utils',
             'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers',
             'contrail-element'            : coreWebDir + '/js/models/ContrailElement'
         }
@@ -298,7 +300,7 @@ var coreAppShim =  {
         deps: ['jquery']
     },
     'slick.dataview': {
-        deps: ['jquery']
+        deps: ['jquery','slick.groupmetadata']
     },
     // 'slickgrid-utils': {
     //     deps: ['jquery','slick.grid','slick.dataview']
@@ -380,6 +382,7 @@ var coreBundles = {
         'thirdparty-libs'   : [
                 'slick.checkboxselectcolumn',
                 'slick.rowselectionmodel',
+                'slick.groupmetadata',
                 'select2',
                 'slick.grid'],
         'core-bundle'       : [
@@ -389,7 +392,7 @@ var coreBundles = {
                 'knockout',
                 'validation',
                 'underscore',
-                'core-alarm-utils',
+                // 'core-alarm-utils',
                 'lodash'],
         'contrail-core-views': [
             'core-basedir/js/views/GridView',
@@ -1001,6 +1004,8 @@ if (typeof document !== 'undefined' && document) {
                         $('#app-container').removeClass('hide');
                     } else 
                         $('#app-container').removeClass('hide');
+                        //Reset content-container
+                        $('#content-container').html('');
                     $.ajaxSetup({
                         beforeSend: function (xhr, settings) {
                             if (globalObj['webServerInfo'] != null && globalObj['webServerInfo']['loggedInOrchestrationMode'] != null)
@@ -1071,7 +1076,7 @@ if (typeof document !== 'undefined' && document) {
                 document.getElementById('signin').onclick = loadUtils.authenticate;
                 // $('#signin').click(authenticate);
                 require(['jquery'],function() {
-                    $('body').on('keypress', '.login-container', function(args) {
+                    $('body').off('keypress.signInEnter').on('keypress.signInEnter', '.login-container', function(args) {
                         if (args.keyCode == 13) {
                             $('#signin').click();
                             return false;
