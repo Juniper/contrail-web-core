@@ -1209,11 +1209,11 @@ function redirectToLogout (req, res, callback)
     //If URL has '/vcenter',then redirect to /vcenter/logout
     //x-orchestrationmode is set only for ajax requests,so if user changes browser URL then we need to check for loggedInOrchestrationMode
     if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'vcenter') {
-        redURL = '/vcenter/';
+        redURL = '/vcenter';
     } else if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'none') {
         redURL = '/';
     } else if(req['originalUrl'].indexOf('/vcenter') > -1) {
-        redURL = '/vcenter/';
+        redURL = '/vcenter';
     } else {
         redURL = '/';
     }
@@ -1226,11 +1226,11 @@ function redirectToLogout (req, res, callback)
 function redirectToLogin (req, res)
 {
     if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'vcenter') {
-        redURL = '/vcenter/';
+        redURL = '/vcenter';
     } else if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'none') {
         redURL = '/';
     } else if(req['originalUrl'].indexOf('/vcenter') > -1) {
-        redURL = '/vcenter/';
+        redURL = '/vcenter';
     } else {
         redURL = '/';
     }
