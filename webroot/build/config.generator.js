@@ -43,11 +43,14 @@ ConfigGenerator.prototype.writeConfigFile = function(file, content) {
         file = self.configFile;
     if (!content)
         content = self.getStringifiedConfig();
-
-    fs.stat(file, function(a) {
-        console.log("Writing Build Config file for " + self.type + " : " + file);
-        fs.writeFile(file, content, function(err) {
-            if (err) throw err;
+    var dirName = path.dirname(file);
+    var createDirCmd = 'mkdir -p -m 0777 ' + dirName;
+    exec(createDirCmd, function(error, stdout, stderr) {
+        fs.stat(file, function(a) {
+            console.log("Writing Build Config file for " + self.type + " : " + file);
+            fs.writeFile(file, content, function(err) {
+                if (err) throw err;
+            });
         });
     });
 };
