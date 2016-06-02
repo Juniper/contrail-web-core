@@ -56,18 +56,25 @@ var defConfigNodePorts      = [
 
 function getAllowedProxyPortListByNodeType (nodeType)
 {
-    if (global.label.VROUTER == nodeType) {
+    switch (nodeType) {
+    case global.label.VROUTER:
         nodePortsLabel = 'vrouter_node_ports';
         defPorts = defVirtualRouterPorts;
-    } else if (global.label.CONTROL_NODE == nodeType) {
+        break;
+    case global.label.CONTROL_NODE:
         nodePortsLabel = 'control_node_ports';
         defPorts = defControlNodePorts;
-    } else if (global.label.OPS_API_SERVER == nodeType) {
+        break;
+    case global.label.OPS_API_SERVER:
+    case global.label.OPSERVER:
         nodePortsLabel = 'analytics_node_ports';
         defPorts = defAnalyticsNodePorts;
-    } else if (global.label.API_SERVER == nodeType) {
+        break;
+    case global.label.API_SERVER:
+    case global.label.VNCONFIG_API_SERVER:
         nodePortsLabel = 'config_node_ports';
         defPorts = defConfigNodePorts;
+        break;
     }
     return ((null != config.proxy) &&
             (null != config.proxy[nodePortsLabel]) &&
