@@ -25,5 +25,5 @@ define([
     'jquery.droppick',
     'jquery.datetimepicker',
 ], function() {
-    console.info("loaded jquery.dep.libs");
+    // console.info("loaded jquery.dep.libs");
 });

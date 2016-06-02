@@ -1141,87 +1141,8 @@ p.error, p.error-text {
 .gridLabel{
     font-weight:600;
     padding-right:3px;
- }
-
-.coCharts-container .tick line {
-    stroke: #e5e5e5 !important;
-    stroke-width: 1 !important;
-    shape-rendering: crispEdges;
 }
 
-.coCharts-container .tick:first-child line, .coCharts-container .tick:last-child line {
-    visibility: hidden;
-}
-
-.coCharts-container .axis path, .contrail .axis line {
-    fill: none;
-    stroke: black;
-    stroke-width: 1px;
-}
-
-.coCharts-container .bar-chart .bar {
-    fill-opacity: .75;
-}
-
-.coCharts-container .line-chart .line {
-    fill: none;
-}
-
-.coCharts-container .axis-label {
-    text-anchor: middle;
-}
-
-.coCharts-container text {
-    font: normal 12px Arial;
-}
-
-.coCharts-container .brush {
-    fill-opacity: 0.2;
-}
-
-.coCharts-container .coCharts-tooltip {
-    border: 1px solid #000;
-    border-radius: 3px;
-    opacity: 0.9;
-    padding: 5px;
-    background-color: #fff;
-    position: absolute;
-}
-
-.coCharts-container .coCharts-tooltip-row td {
-    padding: 0 10px;
-    white-space: nowrap;
-}
-
-.coCharts-container .coCharts-tooltip-color {
-    width: 15px;
-    height: 15px;
-}
-
-.coCharts-container .control-panel, .control-panel select {
-    height: 30px;
-}
-
-.coCharts-container .controls-left-side > div {
-    float: left;
-    text-align: center;
-    margin-left: 2px;
-}
-
-.coCharts-container .controls-right-side > div {
-    float: right;
-    text-align: center;
-    margin-left: 2px;
-}
-
-.coCharts-container .controls-button {
-    border: 1px solid #a6c9e2;
-    height: 30px;
-    line-height: 30px;
-    vertical-align: middle;
-    cursor: pointer;
-    padding: 0 10px;
-}
 .confignode-chart .widget-box .widget-header {
     border-bottom: none;
     font-size: 13px;

@@ -7,7 +7,6 @@ define(['underscore'], function (_) {
         var self = this;
         self.featureAppDefObj = $.Deferred();
         self.initFeatureAppDefObjMap = {};
-        //When we have multiple feature apps (contrail-web-controller,contrail-web-storage)??
         self.isInitFeatureAppComplete = false;
         self.isInitFeatureAppInProgress = false;
         self.initFeatureModuleMap = {};
