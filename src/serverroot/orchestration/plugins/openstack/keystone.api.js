@@ -382,6 +382,12 @@ function formatV3AuthTokenData (authObj, isUnscoped)
     var password = authObj['password'];
     var tenant = authObj['tenant'];
     var tokenId = authObj['tokenid'];
+    if ((null == authObj['domain']) &&
+        (null != authObj['req'])) {
+        authObj['domain'] =
+            commonUtils.getValueByJsonPath(authObj['req'], 'session;domain',
+                                           null, false);
+    }
     var domain = getV3DomainIfNotAvailable(authObj['domain']);
     var v3data = {};
 
@@ -1149,6 +1155,19 @@ function isAdminRoleInProjects (userRolesPerProject)
     return false;
 }
 
+function setDomainToReqObj (req, domain)
+{
+    if ('v2.0' == req.session.authApiVersion) {
+        req.session.domain = global.KEYSTONE_V2_DEFAULT_DOMAIN;
+        return;
+    }
+    if ((null == domain) || (isDefaultDomain(req, domain))) {
+        req.session.domain = getDefaultDomain(req);
+        return;
+    }
+    req.session.domain = domain;
+}
+
 function authenticate (req, res, appData, callback)
 {
     var urlHash = '',urlPath = '';
@@ -1191,6 +1210,7 @@ function authenticate (req, res, appData, callback)
             return;
         }
 
+        setDomainToReqObj(req, post.domain);
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
             if(urlPath != '') 
                 res.redirect(urlPath + urlHash);
@@ -1433,7 +1453,6 @@ function doV3Auth (req, callback)
                                             tokenObjs[defProject]);
                     req.session.isAuthenticated = true;
                     req.session.userRole = roleStr;
-                    req.session.domain = domain;
                     req.session.last_token_used = req.session.def_token_used;
                     callback(null);
                 });
@@ -2024,20 +2043,23 @@ function getAdminProjectList (req, appData, callback)
         var tokenObjs = req.session.tokenObjs;
         for (key in tokenObjs) {
             try {
-                var domain = tokenObjs[key]['token']['tenant']['domain'];
+                var domainObj = tokenObjs[key]['token']['tenant']['domain'];
             } catch(e) {
                 logutils.logger.error("In getAdminProjectList(): " +
                                       "JSON parse error:" + e);
             }
-            if (null == domain) {
+            if (null == domainObj) {
                 domain = global.KEYSTONE_V2_DEFAULT_DOMAIN;
             } else {
-                domain = domain['id'];
+                domain = domainObj['id'];
                 /* Check if it is default domain */
                 if (authApi.isDefaultDomain(req, domain)) {
                     domain = getDefaultDomain(req);
                 } else {
-                    domain = plugins.getDomainFqnByDomainUUID(domain, domainObjs);
+                    domain = (null != domainObj['name']) ?
+                        domainObj['name']:
+                        plugins.getDomainFqnByDomainUUID(commonUtils.convertUUIDToString(domain),
+                                                         domainObjs);
                 }
             }
             var roles = tokenObjs[key]['user']['roles'];
