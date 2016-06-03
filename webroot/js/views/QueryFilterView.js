@@ -142,8 +142,8 @@ define([
                 rows: [
                     {
                         rowActions: [
-                            {onClick: "deleteFilterAndClause()", iconClass: 'icon-remove'},
-                            {onClick: "addAndClauseAtIndex()", iconClass: 'icon-plus'}
+                            {onClick: "deleteFilterAndClause()", iconClass: 'fa fa-remove'},
+                            {onClick: "addAndClauseAtIndex()", iconClass: 'fa fa-plus'}
                         ],
                         columns: [
                             {

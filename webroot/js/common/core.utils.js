@@ -142,8 +142,8 @@ define(['underscore'], function (_) {
         };
 
         this.enableModalLoading = function (modalId) {
-            $('#' + modalId).find('.modal-header h6').prepend('<i class="icon-spinner icon-spin margin-right-10 modal-loading-icon">');
-            $('#' + modalId).find('.modal-header .icon-remove').addClass('icon-muted');
+            $('#' + modalId).find('.modal-header h6').prepend('<i class="fa fa-spinner fa-spin margin-right-10 modal-loading-icon">');
+            $('#' + modalId).find('.modal-header .fa-remove').addClass('icon-muted');
 
             $('#' + modalId).find('.modal-footer .btn').attr('disabled', true);
             $('#' + modalId).find('.modal-header button').attr('disabled', true);
@@ -155,7 +155,7 @@ define(['underscore'], function (_) {
                 $('#' + modalId).find('.modal-body').animate({scrollTop: 0});
 
                 $('#' + modalId).find('.modal-header h6 .modal-loading-icon').remove();
-                $('#' + modalId).find('.modal-header .icon-remove').removeClass('icon-muted');
+                $('#' + modalId).find('.modal-header .fa-remove').removeClass('icon-muted');
 
                 $('#' + modalId).find('.modal-footer .btn').attr('disabled', false);
                 $('#' + modalId).find('.modal-header button').attr('disabled', false);
@@ -455,11 +455,11 @@ define(['underscore'], function (_) {
             }
 
             if(formatDepth == 0){
-                htmlValue += '<i class="node-' + currentDepth + ' icon-plus expander"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node hide raw">' +
+                htmlValue += '<i class="node-' + currentDepth + ' fa fa-plus expander"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node hide raw">' +
                     JSON.stringify(jsonValue) + '</ul><span class="node-' + currentDepth + ' collapsed expander"> ... </span>' + objType.endTag;
             }
             else {
-                htmlValue += '<i class="node-' + currentDepth + ' icon-minus collapser"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node">';
+                htmlValue += '<i class="node-' + currentDepth + ' fa fa-minus collapser"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node">';
                 $.each(jsonValue, function(key, val){
                     if (!contrail.checkIfExist(ignoreKeys) || (contrail.checkIfExist(ignoreKeys) && ignoreKeys.indexOf(key) === -1)) {
                         if (objType['type'] == 'object') {
@@ -703,18 +703,18 @@ define(['underscore'], function (_) {
                             '<div class="detail-block-list-content widget-box transparent">' +
                                 '<div class="widget-header">' +
                                     '<h4 class="smaller">' +
-                                        '{{#IfCompare requestState "fetching" operator="==" }}' + '<i class="icon-spin icon-spinner"></i>' + '{{/IfCompare}}' +
+                                        '{{#IfCompare requestState "fetching" operator="==" }}' + '<i class="fa fa-spin fa-spinner"></i>' + '{{/IfCompare}}' +
                                         config.title +
                                     '</h4>' +
                                     '<div class="widget-toolbar pull-right">' +
-                                        '<a data-action="collapse"><i class="icon-chevron-up"></i></a>' +
+                                        '<a data-action="collapse"><i class="fa fa-chevron-up"></i></a>' +
                                     '</div>' +
                                     ((config.advancedViewOptions !== false) ? '' +
                                         '<div class="widget-toolbar pull-right">' +
-                                            '<a data-action="settings" data-toggle="dropdown" style="display: inline-block;"><i class="icon-cog"></i></a>' +
+                                            '<a data-action="settings" data-toggle="dropdown" style="display: inline-block;"><i class="fa fa-cog"></i></a>' +
                                             '<ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">' +
-                                                '<li><a data-action="list-view"><i class="icon-list"></i> &nbsp; Basic view </a></li>' +
-                                                '<li><a data-action="advanced-view"><i class="icon-code"></i> &nbsp; Advanced view </a></li>' +
+                                                '<li><a data-action="list-view"><i class="fa fa-list"></i> &nbsp; Basic view </a></li>' +
+                                                '<li><a data-action="advanced-view"><i class="fa fa-code"></i> &nbsp; Advanced view </a></li>' +
                                             '</ul>' +
                                         '</div>' : '') +
                                 '</div>' +

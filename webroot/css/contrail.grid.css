@@ -49,7 +49,7 @@
     border-color: #ddd;
     padding: 1px 6px 3px 24px;
 }
-.grid-header [class*="icon-"]{
+.grid-header [class*="fa-"]{
     margin-top: 1px;
     font-size: 14px;
 }

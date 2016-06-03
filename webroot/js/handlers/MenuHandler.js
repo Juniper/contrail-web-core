@@ -175,7 +175,7 @@ define(['underscore'], function (_) {
                 $('#menu').html('');
                 $('#menu').html(contrail.getTemplate4Id('menu-template')(menu));
                 if ($('#sidebar').hasClass('menu-min')) {
-                    $('#sidebar-collapse').find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
+                    $('#sidebar-collapse').find('i').toggleClass('fa-chevron-left').toggleClass('fa-chevron-right');
                 }
                 this.selectMenuButton("#btn-" + menuButton);
             }
@@ -400,7 +400,7 @@ define(['underscore'], function (_) {
             var sidebarState = getCookie('sidebar');
             if (sidebarState == 'close') {
                 $('#sidebar').addClass('menu-min');
-                $('#sidebar-collapse').find('i').removeClass('icon-chevron-left').addClass('icon-chevron-right');
+                $('#sidebar-collapse').find('i').removeClass('fa-chevron-left').addClass('fa fa-chevron-right');
             }
         }
     };

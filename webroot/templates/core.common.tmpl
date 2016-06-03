@@ -8,7 +8,7 @@
                     {{else}}
                         <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');" disabled>
                     {{/IfCompare}}
-                            <i class="{{this.iconClass}} icon-large"></i>
+                            <i class="{{this.iconClass}} fa fa-lg"></i>
                     </button>
                 {{/each}}
             </div>
@@ -25,7 +25,7 @@
         <a data-link='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
             <span>{{this.label}}</span>
             <span id="sidebar-collapse" class="pull-right" onclick="onClickSidebarCollapse();">
-                <i class="icon-chevron-left"></i>
+                <i class="fa fa-chevron-left"></i>
             </span>
         </a>
     </li>
@@ -65,7 +65,7 @@
    {{else}}
       <li>
           <a href={{href}}>{{link}}</a>
-          <span class="divider"><i class="icon-angle-right"></i></span>
+          <span class="divider"><i class="fa fa-angle-right"></i></span>
       </li>
    {{/if}}
  {{/each}}
@@ -78,7 +78,7 @@
                 <div class="widget-header">
                     <h4 class="smaller">
                         {{#if widgetBoxId}}
-                            <i id="{{widgetBoxId}}-loading" class="icon-spinner icon-spin blue bigger-125" style="display:none"></i>
+                            <i id="{{widgetBoxId}}-loading" class="fa fa-spinner fa fa-spin blue bigger-125" style="display:none"></i>
                         {{/if}}
                         {{#if title}}
                             {{title}}
@@ -88,23 +88,23 @@
                     </h4>
                     <div class="widget-toolbar pull-right">
                         <a  data-action="collapse">
-                            <i class="icon-chevron-up"></i>
+                            <i class="fa fa-chevron-up"></i>
                         </a>
                     </div>
                     {{#if showSettings}}
                         <div class="widget-toolbar pull-right">
                             <a data-action="settings" data-toggle="dropdown">
-                                <i class="icon-cog"></i>
+                                <i class="fa fa-cog"></i>
                             </a>
                             <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">
                                 <li>
                                     <a onclick="showBasicDetails();">
-                                        <i class="icon-list"></i> &nbsp; Basic view
+                                        <i class="fa fa-list"></i> &nbsp; Basic view
                                     </a>
                                 </li>
                                 <li>
                                     <a onclick="showAdvancedDetails();">
-                                        <i class="icon-code"></i> &nbsp; Advanced view
+                                        <i class="fa fa-code"></i> &nbsp; Advanced view
                                     </a>
                                 </li>
                             </ul>
@@ -173,7 +173,7 @@
      <div class="row-fluid" >
         <div class="left-arrow-wrapper">
             <div class="left-arrow">
-                <i class="icon-chevron-left" style="font-size: 20px;"></i>
+                <i class="fa fa-chevron-left" style="font-size: 20px;"></i>
             </div>
         </div>
         <div class="tooltip-wrapper">
@@ -183,10 +183,10 @@
         </div>
         <div class="right-arrow-wrapper">
             <div class="close-button">
-                <button type="button" id="overlapClosebutton" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+                <button type="button" id="overlapClosebutton" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
             </div>
             <div class="right-arrow">
-                <i class="icon-chevron-right" style="font-size: 20px;"></i>
+                <i class="fa fa-chevron-right" style="font-size: 20px;"></i>
             </div>
         </div>
      </div>
@@ -201,7 +201,7 @@
         <div class="row-fluid" >
             <div class="left-arrow-wrapper">
                 <div class="left-arrow">
-                    <i class="icon-chevron-left" style="font-size: 20px;"></i>
+                    <i class="fa fa-chevron-left" style="font-size: 20px;"></i>
                 </div>
             </div>
             <div class="tooltip-wrapper">
@@ -211,10 +211,10 @@
             </div>
             <div class="right-arrow-wrapper">
                 <div class="close-button">
-                    <button type="button" id="overlapClosebutton" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+                    <button type="button" id="overlapClosebutton" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
                 </div>
                 <div class="right-arrow">
-                    <i class="icon-chevron-right" style="font-size: 20px;"></i>
+                    <i class="fa fa-chevron-right" style="font-size: 20px;"></i>
                 </div>
             </div>
         </div>
@@ -264,7 +264,7 @@
         <div class='infobox-container'>
             <div class="control-panel-items pull-right">
                 <div class="control-panel-item refresh" data-action="refresh" title="Refresh">
-                    <i class="icon-repeat"></i>
+                    <i class="fa fa-repeat"></i>
                 </div>
             </div>
         </div>
@@ -323,7 +323,7 @@
 
 <script type="text/x-handlebars-template" id="element-tooltip-content-template">
     <div class="popover-remove">
-        <i class="icon-remove pull-right popover-remove-icon"></i>
+        <i class="fa fa-remove pull-right popover-remove-icon"></i>
     </div>
     <div class="popover-tooltip-icon font-element">
         <i class="{{iconClass}}"></i>
@@ -372,7 +372,7 @@
                         <div class="name span9 word-break-all">
                             <span {{#if link}}class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}}){{else}}class="hyperlink-inactive"{{/if}}> {{moduleId}} </span></div>
                             <div class="time span3">
-                                <i class="icon-time" style="cursor:default"></i>
+                                <i class="fa fa-clock-o" style="cursor:default"></i>
                                 <span class="green"> {{timeStr}} </span>
                             </div>
                         </div>
@@ -407,7 +407,7 @@
                     {{/IfCompare}}
                     {{#typeof timeStamp "string"}}
                         <div class="time" style="width:90px">
-                            <i class="icon-time"></i>
+                            <i class="fa fa-clock-o"></i>
                             <span> {{#getRelativeTime timeStamp}}{{/getRelativeTime}} </span>
                         </div>
                     {{/typeof}}
@@ -425,7 +425,7 @@
 <script type="text/x-handlebars-template" id="moreAlerts-template">
 <div id="moreAlerts" class="modal modal-840 hide">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
         <h6 class="modal-header-title">Alerts</h6>
      </div>
      <div class="modal-body">
@@ -441,7 +441,7 @@
 <script type="text/x-handlebars-template" id="infobox-template">
     <div id="{{id}}" class="infobox infobox-grey">
         <div class="infobox-icon">
-            <i class="icon-sitemap"></i>
+            <i class="fa fa-sitemap"></i>
         </div>
         {{#if totalCntField}}
             <div class="infobox-data">
@@ -463,7 +463,7 @@
 <script type="text/x-handlebars-template" id="infobox-summary-template">
     <div class="infobox infobox-grey">
         <div class="infobox-icon">
-            <i class="icon-sitemap"></i>
+            <i class="fa fa-sitemap"></i>
         </div>
         <div class="infobox-data">
             <span class="infobox-data-number"></span>
@@ -595,14 +595,14 @@
 <script type="text/x-handlebars-template" id="widget-header-template">
         <h4 class="smaller">
             {{#if widgetBoxId}}
-                <i id="{{widgetBoxId}}-loading" class="icon-spinner icon-spin blue bigger-125" style="display:none"></i>
+                <i id="{{widgetBoxId}}-loading" class="fa fa-spinner fa fa-spin blue bigger-125" style="display:none"></i>
             {{/if}}
             <span>{{title}}</span>
         </h4>
 
         <div class="widget-toolbar pull-right">
             <a data-action="collapse">
-                <i class="icon-chevron-up"></i>
+                <i class="fa fa-chevron-up"></i>
             </a>
         </div>
 </script>
@@ -666,7 +666,7 @@
     <div class="widget-main row-fluid">
             {{#IfCompare showSettings true options='=='}}
                 <div id="divAdvanced" class="row-fluid hide">
-                    <div id="divAdvanced-loading" class="icon-spinner icon-spin blue bigger-125" style="display: none;"></div>
+                    <div id="divAdvanced-loading" class="fa fa-spinner fa fa-spin blue bigger-125" style="display: none;"></div>
                     <div><pre>{{{displayJson nodeData}}}</pre></div>
                 </div>
             {{/IfCompare}}
@@ -697,7 +697,7 @@
             <div id="divStatus" hidden="true" class="row-fluid">
                 <div id="divContrailStatus" class="row-fluid"></div>
                 <!-- <div class="row-fluid">
-                    <label class="span3">Opentstack Status</label><i id="icon_divOpenStackStatus" class="icon-expand-alt" onclick="toggleDetails('divOpenStackStatus');"></i>
+                    <label class="span3">Opentstack Status</label><i id="icon_divOpenStackStatus" class="fa fa-expand-alt" onclick="toggleDetails('divOpenStackStatus');"></i>
                 </div>
                 <div id="divOpenStackStatus" hidden="true" class="widget-main padding-4" class="row-fluid"></div>
                 -->
@@ -747,7 +747,7 @@
 </script>
 <script type="text/x-handlebars-template" id="zs-show-filter-range">
     <span>{{lbl}}:&nbsp;{{minValue}}&nbsp;-&nbsp;{{maxValue}}</span>&nbsp;
-    <i class="icon-remove"></i>
+    <i class="fa fa-remove"></i>
 </script>
 <script type="text/x-handlebars-template" id="zs-chart-settings">
     <div class='zs-chart-settings'>
@@ -776,7 +776,7 @@
 
                 <div id="chart-settings-header" class='chart-settings-header'>
                     <label style="display:inline-block">Options</label>
-                    <i class="icon-chevron-up"></i>
+                    <i class="fa fa-chevron-up"></i>
                 </div>
                 <div style="margin-left:10px;">
                     <div class="color-selection">
@@ -835,7 +835,7 @@
             </div>
             <label class="chart-settings-label hyperlink-active position-right chart-setting-options underline" >Options</label>
            <!-- <label class="chart-settings-label hyperlink-active position-right chart-setting-options underline" id="zommout">Zoom Out</label> -->
-            <!-- <i class="icon-gear position-right"></i> -->
+            <!-- <i class="fa fa-gear position-right"></i> -->
         </div>
       <!-- <div class="chart-settings-hide">
             <img src="/img/downArrow.png"></img>
@@ -873,7 +873,7 @@
     <div id="{{elementId}}" class="{{class}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
         {{#each viewConfig}}
             {{#if this.title}}
-                <h3>{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="icon-warning-sign red"></i></span></h3>
+                <h3>{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="fa fa-exclamation-triangle red"></i></span></h3>
             {{/if}}
             <div id="{{this.elementId}}"> </div>
         {{/each}}
@@ -939,7 +939,7 @@
             </div>
             <div class="span2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
@@ -952,7 +952,7 @@
                                 value: {{viewConfig.dataBindValue}},
                                 event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
                         />
-                <span class="add-on input-type-toggle-action"><i class="icon-eye-open"></i></span>
+                <span class="add-on input-type-toggle-action"><i class="fa fa-eye"></i></span>
             </div>
                 {{else}}
                     <input type="{{type}}" name="{{id}}" placeholder="{{viewConfig.placeholder}}" class="{{class}}"
@@ -976,7 +976,7 @@
                             value: {{viewConfig.dataBindValue}},
                             event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) } }"
                     />
-                    <span class="add-on input-type-toggle-action"><i class="icon-eye-open"></i></span>
+                    <span class="add-on input-type-toggle-action"><i class="fa fa-eye-open"></i></span>
             </div>
                 {{else}}
                     <input type="{{type}}" name="{{name}}" class="{{class}}" placeholder="{{viewConfig.placeholder}}"
@@ -996,7 +996,7 @@
             </div>
             <div class="span2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
@@ -1040,7 +1040,7 @@
         </div>
         <div class="span2">
             <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
             </span>
         </div>
     </div>
@@ -1062,7 +1062,7 @@
             </div>
             <div class="span2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
@@ -1141,7 +1141,7 @@
             </div>
             <div class="span2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
@@ -1216,7 +1216,7 @@
             </div>
             <div class="span2">
                 <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
@@ -1254,7 +1254,7 @@
         </div>
         <div class="span2">
             <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
             </span>
         </div>
     </div>
@@ -1264,7 +1264,7 @@
                 name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}" rows="1"
                 data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
             </textarea>
-            <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="icon-pencil"></i></span>
+            <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
         </div>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
@@ -1281,7 +1281,7 @@
                 value: {{dataBindValue}},
                 event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) }}">
             </textarea>
-            <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="icon-pencil"></i></span>
+            <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
         </div>
     </div>
 </script>
@@ -1295,7 +1295,7 @@
             </div>
             <div class="span2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
@@ -1320,7 +1320,7 @@
             </div>
             <div class="span2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
@@ -1346,7 +1346,7 @@
             </div>
             <div class="span2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="icon-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
@@ -1369,7 +1369,7 @@
 
 <script type="text/x-handlebars-template" id="core-actions-template">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="icon-cog"></i>
+        <i class="fa fa-cog"></i>
     </a>
     <ul class="pull-right dropdown-menu dropdown-caret">
         {{#each actions}}
@@ -1386,8 +1386,8 @@
     <div class="group-detail-container">
         {{#IfCompare advancedViewOptions false operator='!=' }}
         <div class="row-fluid group-detail-action">
-            <a class="group-detail-action-item pull-right selected" title="Basic List View" data-view="basic-list"><i class="icon-list"></i></a>
-            <a class="group-detail-action-item pull-right" title="Advanced JSON View" data-view="advanced-json"><i class="icon-code"></i></a>
+            <a class="group-detail-action-item pull-right selected" title="Basic List View" data-view="basic-list"><i class="fa fa-list"></i></a>
+            <a class="group-detail-action-item pull-right" title="Advanced JSON View" data-view="advanced-json"><i class="fa fa-code"></i></a>
         </div>
         {{/IfCompare}}
         <div class="row-fluid group-detail-basic-list group-detail-item">
@@ -1466,7 +1466,7 @@
     </table>
     {{#each gridActions}}
     <div class="row-fluid margin-10-0-0">
-        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}</a>
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="fa fa-plus"></i> &nbsp;{{this.buttonTitle}}</a>
     </div>
     {{/each}}
 </script>
@@ -1485,7 +1485,7 @@
                 {{#each gridActions}}
                 <th>
     <div class=" margin-10-0-0  headerRowAction">
-        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}</a>
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="fa fa-plus"></i> &nbsp;{{this.buttonTitle}}</a>
     </div>
     </th>
     {{/each}}
@@ -1575,7 +1575,7 @@
             <th>
                 {{#each viewConfig.gridActions}}
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
-            <i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}
+            <i class="fa fa-plus"></i> &nbsp;{{this.buttonTitle}}
         </a>
     {{/each}}
     </th>
@@ -1647,7 +1647,7 @@
         <th class="action-cell">
             {{#each viewConfig.gridActions}}
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
-            <i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}
+            <i class="fa fa-plus"></i> &nbsp;{{this.buttonTitle}}
         </a>
     {{/each}}
         </th>
@@ -1657,7 +1657,7 @@
         <tbody data-bind="foreach: {{viewConfig.collection}}">
         <tr class="data-row">
                     <td style="min-width:15px" {{#IfCompare viewConfig.rows.1.columns.length 0 operator='>'}}onclick="
-$(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('icon-caret-down');$(this).children('i').toggleClass('icon-caret-right');"><i class="icon-caret-right toggleDetailIcon " ></i>{{/IfCompare}}</td>
+$(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('fa fa-caret-down');$(this).children('i').toggleClass('fa-caret-right');"><i class="fa fa-caret-right toggleDetailIcon " ></i>{{/IfCompare}}</td>
             {{#each viewConfig.rows.0.columns}}
             <td id="{{elementId}}"
                 {{#IfCompare viewConfig.colSpan null operator='!='}}
@@ -1826,10 +1826,10 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         {{/each}}
         {{#IfCompare advancedViewOptions false operator='!=' }}
             <a class="detail-foundation-action-item group-detail-action-item group-detail-advanced-action-item pull-right selected" title="Basic List View" data-view="basic-list">
-                <i class="icon-list"></i>
+                <i class="fa fa-list"></i>
             </a>
             <a class="detail-foundation-action-item group-detail-action-item group-detail-advanced-action-item pull-right" title="Advanced JSON View" data-view="advanced-json">
-                <i class="icon-code"></i>
+                <i class="fa fa-code"></i>
             </a>
         {{/IfCompare}}
         </div>
@@ -1865,7 +1865,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="core-loading-spinner-template">
-    <div class="loading-spinner"><i class="icon-refresh icon-spin"></i></div>
+    <div class="loading-spinner"><i class="fa fa-refresh fa fa-spin"></i></div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-tabs-template">
@@ -1873,7 +1873,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         <ul class="contrail-tab-link-list">
             {{#each tabs}}
                 <li>
-                    <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}{{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/IfCompare}}</a>
+                    <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}{{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove fa fa-remove"></i>{{/IfCompare}}</a>
                 </li>
             {{/each}}
         </ul>
@@ -1888,7 +1888,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 <script type="text/x-handlebars-template" id="core-tabs-link-template">
     {{#each this}}
         <li>
-            <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}{{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/IfCompare}}</a>
+            <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}{{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove fa fa-remove"></i>{{/IfCompare}}</a>
         </li>
     {{/each}}
 </script>
@@ -1934,9 +1934,9 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 <script type="text/x-handlebars-template" id="core-control-panel-template">
     <div id="control-panel-items" class="control-panel-items pull-right">
         {{#IfCompare default.zoom.enabled true}}
-            <div class="control-panel-item zoom-in" title="Zoom In"><i class="icon-zoom-in"></i></div>
-            <div class="control-panel-item zoom-out" title="Zoom Out"><i class="icon-zoom-out"></i></div>
-            <div class="control-panel-item zoom-reset" title="Zoom Reset"><i class="icon-remove-circle"></i></div>
+            <div class="control-panel-item zoom-in" title="Zoom In"><i class="fa fa-search-plus"></i></div>
+            <div class="control-panel-item zoom-out" title="Zoom Out"><i class="fa fa-search-minus"></i></div>
+            <div class="control-panel-item zoom-reset" title="Zoom Reset"><i class="fa fa-times-circle-o"></i></div>
         {{/IfCompare}}
         {{#each custom}}
             <div class="control-panel-item {{@key}}" title="{{title}}"><i class="{{iconClass}}"></i></div>
@@ -1950,7 +1950,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
             <p class="control-panel-filter-title">
                 <span class="pull-left control-panel-filter-title-icon"><i class="{{iconClass}}"></i></span>
                 <span class="pull-left control-panel-filter-title-text">{{title}}</span>
-                <span class="pull-right control-panel-filter-close"><i class="icon-remove"></i></span>
+                <span class="pull-right control-panel-filter-close"><i class="fa fa-remove"></i></span>
             </p>
         </div>
         <div class="row-fluid control-panel-filter-body" >
@@ -1994,9 +1994,9 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 <div class="control-panel-filter-container row-fluid">
     <div class="row-fluid">
         <p class="control-panel-filter-title">
-            <span class="pull-left control-panel-filter-title-icon"><i class="icon-filter"></i></span>
+            <span class="pull-left control-panel-filter-title-icon"><i class="fa fa-filter"></i></span>
             <span class="pull-left control-panel-filter-title-text">Filter</span>
-            <span class="pull-right control-panel-filter-close"><i class="icon-remove"></i></span>
+            <span class="pull-right control-panel-filter-close"><i class="fa fa-remove"></i></span>
         </p>
     </div>
     <div class="row-fluid control-panel-filter-body">
@@ -2076,9 +2076,9 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
     <div class="control-panel-legend-container row-fluid">
         <div class="row-fluid">
             <p class="control-panel-legend-title">
-                <span class="pull-left control-panel-legend-title-icon"><i class="icon-info-sign"></i></span>
+                <span class="pull-left control-panel-legend-title-icon"><i class="fa fa-info-circle"></i></span>
                 <span class="pull-left control-panel-legend-title-text">Information</span>
-                <span class="pull-right control-panel-legend-close"><i class="icon-remove"></i></span>
+                <span class="pull-right control-panel-legend-close"><i class="fa fa-remove"></i></span>
             </p>
         </div>
         <div class="row-fluid control-panel-legend-body">
@@ -2109,7 +2109,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
             <div class="widget-toolbar pull-right">
                 {{#IfCompare controls.top.default.collapseable false operator='!=='}}
                     <a data-action="widget-collapse">
-                        <i class="{{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} icon-chevron-down {{else}} icon-chevron-up {{/IfCompare}}"></i>
+                        <i class="{{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} fa fa-chevron-down {{else}} fa fa-chevron-up {{/IfCompare}}"></i>
                     </a>
                 {{/IfCompare}}
             </div>
@@ -2117,7 +2117,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         {{/IfCompare}}
         <div class="widget-body-collapsed" data-action="widget-collapse"
             {{#IfCompare controls.top.default.collapsedOnLoad true operator='!=='}} style="display:none;"{{/IfCompare}}>
-            <a>Click here to expand <i class="icon-double-angle-down"></i></a>
+            <a>Click here to expand <i class="fa fa-angle-double-down"></i></a>
         </div>
         <div class="widget-body" {{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} style="display:none;"{{/IfCompare}}>
             <div class="widget-main padding-4">
@@ -2234,7 +2234,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
             <h4 class="smaller">{{widgetTitle}}</h4>
             <div class="widget-toolbar pull-right">
                 <a data-action="collapse">
-                    <i class="icon-chevron-up">
+                    <i class="fa fa-chevron-up">
                     </i>
                 </a>
             </div>

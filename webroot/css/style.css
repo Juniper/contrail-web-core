@@ -64,7 +64,7 @@ pre {
           box-shadow: inset 1px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.1);
 }
 
-.sidenav .icon-chevron-right {
+.sidenav .fa-chevron-right {
   float: right;
   margin-top: 2px;
   margin-right: -6px;
@@ -75,12 +75,12 @@ pre {
   background-color: #f5f5f5;
 }
 
-.sidenav a:hover .icon-chevron-right {
+.sidenav a:hover .fa-chevron-right {
   opacity: .5;
 }
 
-.sidenav .active .icon-chevron-right,
-.sidenav .active a:hover .icon-chevron-right {
+.sidenav .active .fa-chevron-right,
+.sidenav .active a:hover .fa-chevron-right {
   opacity: 1;
 }
 .sidenav.affix {

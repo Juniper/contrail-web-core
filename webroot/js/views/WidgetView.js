@@ -30,7 +30,7 @@ define([
                             .off('click')
                             .on('click', function (event) {
                                 widgetElement.find('.widget-toolbar').find('i')
-                                    .toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+                                    .toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
                                 widgetElement.find('.widget-body').toggle();
                                 widgetElement.find('.widget-body-collapsed').toggle()
                             });
@@ -38,13 +38,13 @@ define([
                         widgetElement.data('widget-action', {
                             collapse: function() {
                                 widgetElement.find('.widget-toolbar').find('i')
-                                    .removeClass('icon-chevron-up').addClass('icon-chevron-down');
+                                    .removeClass('fa-chevron-up').addClass('fa fa-chevron-down');
                                 widgetElement.find('.widget-body').hide();
                                 widgetElement.find('.widget-body-collapsed').show()
                             },
                             expand: function() {
                                 widgetElement.find('.widget-toolbar').find('i')
-                                    .removeClass('icon-chevron-down').addClass('icon-chevron-up');
+                                    .removeClass('fa-chevron-down').addClass('fa fa-chevron-up');
                                 widgetElement.find('.widget-body').show();
                                 widgetElement.find('.widget-body-collapsed').hide()
                             }

@@ -101,7 +101,7 @@ define([
                     //TODO: Execute only in refresh case.
                     if (gridConfig.header.defaultControls.refreshable) {
                         setTimeout(function () {
-                            gridContainer.find('.link-refreshable i').removeClass('icon-spin icon-spinner').addClass('icon-repeat');
+                            gridContainer.find('.link-refreshable i').removeClass('fa-spin fa-spinner').addClass('fa fa-repeat');
                         }, 1000);
                     }
                 }
@@ -236,7 +236,7 @@ define([
                                     break;
                                 case 'refresh':
                                     if (!contrailListModel.isRequestInProgress()) {
-                                        gridContainer.find('.link-refreshable i').removeClass('icon-repeat').addClass('icon-spin icon-spinner');
+                                        gridContainer.find('.link-refreshable i').removeClass('fa-repeat').addClass('fa fa-spin fa-spinner');
                                         gridContainer.data('contrailGrid').refreshData();
                                     }
                                     break;
@@ -245,7 +245,7 @@ define([
                                         var gridDSConfig = gridDataSource,
                                             gridData = [], dv;
 
-                                        gridContainer.find('a[data-action="export"] i').removeClass('icon-download-alt').addClass('icon-spin icon-spinner');
+                                        gridContainer.find('a[data-action="export"] i').removeClass('fa-download').addClass('fa fa-spin fa-spinner');
                                         gridContainer.find('a[data-action="export"]').prop('title', 'Exporting...').data('action', 'exporting').addClass('blue');
                                         if (contrail.checkIfExist(gridDSConfig.remote) && gridDSConfig.remote.serverSidePagination) {
                                             var exportCB = gridDSConfig.remote.exportFunction;
@@ -257,19 +257,19 @@ define([
                                             gridData = dv.getItems();
                                             exportGridData2CSV(gridConfig, gridData);
                                             setTimeout(function () {
-                                                gridContainer.find('a[data-action="export"] i').addClass('icon-download-alt').removeClass('icon-spin icon-spinner');
+                                                gridContainer.find('a[data-action="export"] i').addClass('fa fa-download').removeClass('fa-spin fa-spinner');
                                                 gridContainer.find('a[data-action="export"]').prop('title', 'Export as CSV').data('action', 'export').removeClass('blue');
                                             }, 500);
                                         }
                                     }
                                     break;
                                 case 'collapse':
-                                    gridHeader.find('i.collapse-icon').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+                                    gridHeader.find('i.collapse-icon').toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
 
-                                    if (gridHeader.find('i.collapse-icon').hasClass('icon-chevron-up')) {
+                                    if (gridHeader.find('i.collapse-icon').hasClass('fa-chevron-up')) {
                                         gridContainer.children().removeClass('collapsed');
                                         gridContainer.data('contrailGrid').refreshView();
-                                    } else if (gridHeader.find('i.collapse-icon').hasClass('icon-chevron-down')) {
+                                    } else if (gridHeader.find('i.collapse-icon').hasClass('fa-chevron-down')) {
                                         gridContainer.children().addClass('collapsed');
                                         gridHeader.show();
                                     }
@@ -372,7 +372,7 @@ define([
                         columns.push({
                             focusable: true,
                             formatter: function (r, c, v, cd, dc) {
-                                return '<i class="icon-caret-right toggleDetailIcon slick-row-detail-icon"></i>';
+                                return '<i class="fa fa-caret-right toggleDetailIcon slick-row-detail-icon"></i>';
                             },
                             id: "_detail_row_icon",
                             rerenderOnResize: false,
@@ -387,7 +387,7 @@ define([
                             events: {
                                 onClick: function (e, dc) {
                                     var target = e.target;
-                                    if ($(target).hasClass('icon-caret-right')) {
+                                    if ($(target).hasClass('fa-caret-right')) {
 
                                         if (!$(target).parents('.slick-row-master').next().hasClass('slick-row-detail') || $(target).parents('.slick-row-master').next().hasClass('slick-row-detail-state-fetching')) {
                                             $(target).parents('.slick-row-master').next('.slick-row-detail').remove();
@@ -425,7 +425,7 @@ define([
                                         if (contrail.checkIfFunction(gridOptions.detail.onExpand)) {
                                             gridOptions.detail.onExpand(e, dc);
                                         }
-                                        $(target).removeClass('icon-caret-right').addClass('icon-caret-down');
+                                        $(target).removeClass('fa-caret-right').addClass('fa fa-caret-down');
 
                                         var slickRowDetail = $(target).parents('.slick-row-master').next('.slick-row-detail'),
                                             slickRowDetailHeight = slickRowDetail.height(),
@@ -434,13 +434,13 @@ define([
                                         if (Math.abs(slickRowDetailHeight - detailContainerHeight) > 10) {
                                             gridContainer.data('contrailGrid').adjustDetailRowHeight(slickRowDetail.data('cgrid'))
                                         }
-                                    } else if ($(target).hasClass('icon-caret-down')) {
+                                    } else if ($(target).hasClass('fa-caret-down')) {
                                         $(target).parents('.slick-row-master').next('.slick-row-detail').hide();
 
                                         if (contrail.checkIfFunction(gridOptions.detail.onCollapse)) {
                                             gridOptions.detail.onCollapse(e, dc);
                                         }
-                                        $(target).removeClass('icon-caret-down').addClass('icon-caret-right');
+                                        $(target).removeClass('fa-caret-down').addClass('fa fa-caret-right');
                                     }
                                 }
                             }
@@ -484,7 +484,7 @@ define([
                                         actionCellArray = gridOptions.actionCell.optionList;
                                     }
 
-                                    return (actionCellArray.length > 0) ? '<i class="icon-cog icon-only bigger-110 grid-action-dropdown"></i>' : '';
+                                    return (actionCellArray.length > 0) ? '<i class="fa fa-cog icon-only bigger-110 grid-action-dropdown"></i>' : '';
                                 },
                                 searchable: false,
                                 sortable: false,
@@ -668,12 +668,12 @@ define([
                             }
                             selfParent.children('.node').show();
                             selfParent.children('.collapsed').hide();
-                            selfParent.children('i').removeClass('icon-plus').removeClass('expander').addClass('icon-minus').addClass('collapser');
+                            selfParent.children('i').removeClass('fa-plus').removeClass('expander').addClass('fa fa-minus').addClass('collapser');
                         } else if ($(e.target).hasClass("collapser")) {
                             var selfParent = $(e.target).parent();
                             selfParent.children('.collapsed').show();
                             selfParent.children('.node').hide();
-                            selfParent.children('i').removeClass('icon-minus').removeClass('collapser').addClass('icon-plus').addClass('expander');
+                            selfParent.children('i').removeClass('fa-minus').removeClass('collapser').addClass('fa fa-plus').addClass('expander');
                         }
 
                         if ($(e.target).hasClass("grid-action-dropdown")) {
@@ -901,11 +901,11 @@ define([
 
                     gridContainer.find('.grid-footer').append('<div class="slick-pager"> \
                 		<span class="slick-pager-nav"> \
-                			<span class="pager-control"><i class="icon-step-backward icon-disabled pager-control-first"></i></span>\
-                			<span class="pager-control"> <i class="icon-backward icon-disabled pager-control-prev"></i></span> \
+                			<span class="pager-control"><i class="fa fa-step-backward icon-disabled pager-control-first"></i></span>\
+                			<span class="pager-control"> <i class="fa fa-backward icon-disabled pager-control-prev"></i></span> \
                 			<span class="pager-page-info"><div class="csg-current-page"></div> of <span class="csg-total-page-count"></span></span> \
-                			<span class="pager-control"> <i class="icon-forward icon-disabled pager-control-next"></i></span> \
-                			<span class="pager-control"> <i class="icon-step-forward icon-disabled pager-control-last"></i></span> \
+                			<span class="pager-control"> <i class="fa fa-forward icon-disabled pager-control-next"></i></span> \
+                			<span class="pager-control"> <i class="fa fa-step-forward icon-disabled pager-control-last"></i></span> \
                 		</span> \
                 		<span class="slick-pager-info"></span>\
                 		<span class="slick-pager-sizes"><div class="csg-pager-sizes"></div></span>\
@@ -937,12 +937,12 @@ define([
                         currentPageDataChecked: false
                     },
                     expand: function () {
-                        gridContainer.find('i.collapse-icon').addClass('icon-chevron-up').removeClass('icon-chevron-down');
+                        gridContainer.find('i.collapse-icon').addClass('fa fa-chevron-up').removeClass('fa-chevron-down');
                         gridContainer.children().removeClass('collapsed');
                         gridContainer.data('contrailGrid').refreshView();
                     },
                     collapse: function () {
-                        gridContainer.find('i.collapse-icon').removeClass('icon-chevron-up').addClass('icon-chevron-down');
+                        gridContainer.find('i.collapse-icon').removeClass('fa-chevron-up').addClass('fa fa-chevron-down');
                         gridContainer.children().addClass('collapsed');
                         gridContainer.find('.grid-header').show();
                     },
@@ -1140,7 +1140,7 @@ define([
                             if (gridContainer.find('.slick_row_' + $(this).data('cgrid')).is(':visible')) {
                                 gridContainer.find('.slick_row_' + $(this).data('cgrid')).after($(this));
                                 if ($(this).is(':visible')) {
-                                    gridContainer.find('.slick_row_' + $(this).data('cgrid')).find('.toggleDetailIcon').addClass('icon-caret-down').removeClass('icon-caret-right');
+                                    gridContainer.find('.slick_row_' + $(this).data('cgrid')).find('.toggleDetailIcon').addClass('fa fa-caret-down').removeClass('fa-caret-right');
                                 }
                                 if (refreshDetailTemplateFlag) {
                                     refreshDetailTemplateById($(this).data('cgrid'));
@@ -1165,7 +1165,7 @@ define([
             function generateGridHeaderTemplate(headerConfig) {
                 var template = ' \
                 <h4 class="grid-header-text smaller {{this.cssClass}}" data-action="collapse"> \
-            		<i class="grid-header-icon-loading icon-spinner icon-spin"></i> \
+            		<i class="grid-header-icon-loading fa fa-spinner fa-spin"></i> \
                     <i class="grid-header-icon {{this.icon}} {{this.iconCssClass}} hide"></i> {{this.text}} \
                 </h4>',
                     headerTemplate;
@@ -1174,7 +1174,7 @@ define([
                     template += '\
                 <div class="widget-toolbar pull-right"> \
                     <a class="widget-toolbar-icon" data-action="collapse"> \
-                        <i class="collapse-icon icon-chevron-up"></i> \
+                        <i class="collapse-icon fa fa-chevron-up"></i> \
                     </a> \
                 </div>';
                 }
@@ -1183,7 +1183,7 @@ define([
                     template += '\
                 <div class="widget-toolbar pull-right"> \
                     <a class="widget-toolbar-icon link-refreshable" title="Refresh" data-action="refresh"> \
-                        <i class="icon-repeat"></i> \
+                        <i class="fa fa-repeat"></i> \
                     </a> \
                 </div>';
                 }
@@ -1192,12 +1192,12 @@ define([
                     template += '\
                 <div class="widget-toolbar pull-right"> \
                     <a class="widget-toolbar-icon link-searchbox" title="Search" data-action="search"> \
-                        <i class="icon-search"></i> \
+                        <i class="fa fa-search"></i> \
                     </a> \
                     <span class="input-searchbox hide"> \
                         <span class="input-icon"> \
                             <input type="text" placeholder="Search {{this.text}}" class="input-medium input-grid-search"> \
-                            <i class="widget-toolbar-icon icon-search"></i> \
+                            <i class="widget-toolbar-icon fa fa-search"></i> \
                         </span> \
                     </span> \
                 </div>';
@@ -1207,7 +1207,7 @@ define([
                     template += '\
                     <div class="widget-toolbar pull-right"> \
                         <a class="widget-toolbar-icon" title="Export as CSV" data-action="export"> \
-                            <i class="icon-download-alt"></i> \
+                            <i class="fa fa-download"></i> \
                         </a> \
                     </div>';
                 }
@@ -1249,7 +1249,7 @@ define([
                 }
 
                 headerTemplate = '<div class="grid-header"><div id="' + gridContainer.prop('id') + '-header' + '" class="widget-header grid-widget-header">' + template + '</div></div>';
-                headerTemplate += '<div class="widget-body-collapsed" data-action="widget-collapse"><a>Click here to expand <i class="icon-double-angle-down"></i></a> </div>';
+                headerTemplate += '<div class="widget-body-collapsed" data-action="widget-collapse"><a>Click here to expand <i class="fa fa-angle-double-down"></i></a> </div>';
                 gridContainer.append(Handlebars.compile(headerTemplate)(gridConfig.header.title));
 
                 if (headerConfig.advanceControls) {
@@ -1414,7 +1414,7 @@ define([
                     //if ($(gridContainer).find(".input-multiselectbox #columnPicker button span:not(.ui-icon)").is(":visible")) {
                         $(gridContainer).find(".input-multiselectbox #columnPicker button span:not(.ui-icon)").css({"display":"none"});
                         $(gridContainer).find(".input-multiselectbox #columnPicker button")
-                            .html('<i class="icon icon-columns"></i>')
+                            .html('<i class="fa fa-columns"></i>')
                             .css({'width':'25px', 'padding-left': '10px', 'border': 'none'});
                     //}
 

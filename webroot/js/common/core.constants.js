@@ -170,13 +170,13 @@ define([
 
         this.DEFAULT_CONFIG_NOT_FOUND_PAGE = {
             title: 'Page not found.',
-            iconClass: 'icon-warning-sign',
+            iconClass: 'fa fa-exclamation-triangle',
             defaultNavLinks: false,
         };
 
         this.DEFAULT_CONFIG_ERROR_PAGE = {
             title: "Error in getting data.",
-            iconClass: 'icon-warning-sign',
+            iconClass: 'fa fa-exclamation-triangle',
             defaultErrorMessage: false,
             defaultNavLinks: false
         };

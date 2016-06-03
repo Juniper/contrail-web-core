@@ -99,7 +99,7 @@ define([
                                 labelIconBadgeClass = 'icon-queue-badge-color-' + $('#' + tabLinkId).data('badge_color_key');
                             }
 
-                            return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge label-icon-badge-queue ' + labelIconBadgeClass + '"><i class="icon-sign-blank"></i></span>';
+                            return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge label-icon-badge-queue ' + labelIconBadgeClass + '"><i class="fa fa-square"></i></span>';
                         }
                     },
                     events: {
@@ -190,7 +190,7 @@ define([
                     sessionAnalyzerConfig = {
                         elementId: saElementId,
                         title: cowl.TITLE_SESSION_ANALYZER,
-                        iconClass: 'icon-bar-chart',
+                        iconClass: 'fa fa-bar-chart-o',
                         app: cowc.APP_CONTRAIL_CONTROLLER,
                         viewPathPrefix: "controller-basedir/reports/qe/ui/js/views/",
                         view: "SessionAnalyzerView",
@@ -209,7 +209,7 @@ define([
         };
 
         this.setAnalyzerIconFormatter = function(r, c, v, cd, dc) {
-            return '<i class="icon-external-link-sign" title="Analyze Session"></i>';
+            return '<i class="fa fa-external-link-square" title="Analyze Session"></i>';
         };
 
         //this.setSessionAnalyzerOnClick = function(parentView, queryFormAttributes, elementId) {

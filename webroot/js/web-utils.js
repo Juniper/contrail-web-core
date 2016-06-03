@@ -132,9 +132,9 @@ function initializePrototypes() {
 
 function collapseElement(e,collapseDivID) {
     if($(e).prop("tagName").toUpperCase() == "I"){
-        $(e).toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+        $(e).toggleClass('fa-caret-right').toggleClass('fa-caret-down');
     } else {
-        $(e).find("i.icon-caret-right,i.icon-caret-down").toggleClass('icon-caret-right').toggleClass('icon-caret-down');
+        $(e).find("i.fa-caret-right,i.fa-caret-down").toggleClass('fa-caret-right').toggleClass('fa-caret-down');
     }
     //var widgetBodyElem = $(e).parents('div.widget-box').find('div.widget-body');
     var widgetBoxElem;
@@ -416,12 +416,12 @@ function pushBreadcrumb(breadcrumbsArr) {
         $('#breadcrumb').children('li').removeClass('active');
         if (i == 0) {
             //Add divider icon for previous breadcrumb
-            $('#breadcrumb').children('li:last').append('<span class="divider"><i class="icon-angle-right"></i></span>')
+            $('#breadcrumb').children('li:last').append('<span class="divider"><i class="fa fa-angle-right"></i></span>')
         }
         if (i == breadcrumbsArr.length - 1) {
             $('#breadcrumb').append('<li class="active"><a>' + breadcrumbsArr[i] + '</a></li>');
         } else {
-            $('#breadcrumb').append('<li><a>' + breadcrumbsArr[i] + '</a><span class="divider"><i class="icon-angle-right"></i></span></li>');
+            $('#breadcrumb').append('<li><a>' + breadcrumbsArr[i] + '</a><span class="divider"><i class="fa fa-angle-right"></i></span></li>');
         }
     }
 }
@@ -435,7 +435,7 @@ function removeActiveBreadcrumb(breadcrumbsArr) {
 
 function pushBreadcrumbDropdown(id){
 	$('#breadcrumb').children('li').removeClass('active');
-	$('#breadcrumb').children('li:last').append('<span class="divider"><i class="icon-angle-right"></i></span>');
+	$('#breadcrumb').children('li:last').append('<span class="divider"><i class="fa fa-angle-right"></i></span>');
 	$('#breadcrumb').append('<li class="active"><div id="' + id + '"></div></li>');
 }
 
@@ -939,7 +939,7 @@ function loadAlertsContent(deferredObj){
                     }, 
                     errorGettingData: {
                         type: 'error',
-                        iconClasses: 'icon-warning',
+                        iconClasses: 'fa fa-warning',
                         text: 'Error in getting Data.'
                     }
                 }

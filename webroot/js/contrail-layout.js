@@ -28,7 +28,7 @@ Object.identical = function (a, b, sortArrays) {
 function onClickSidebarCollapse() {
     var $minimized = false;
     $('#sidebar').toggleClass('menu-min');
-    $('#sidebar-collapse').find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
+    $('#sidebar-collapse').find('i').toggleClass('fa-chevron-left').toggleClass('fa-chevron-right');
 
     $minimized = $('#sidebar').hasClass('menu-min');
     if ($minimized) {
@@ -84,10 +84,10 @@ function openWidget(id) {
     var $this = $(id).find('.widget-toolbar > a[data-action]');
     var $box = $this.closest('.widget-box');
     var $body = $box.find('.widget-body');
-    var $icon = $this.find('[class*=icon-]').eq(0);
+    var $icon = $this.find('[class*=fa-]').eq(0);
     var $match = $icon.attr('class').match(/icon\-(.*)\-(up|down)/);
-    var $icon_down = 'icon-' + $match[1] + '-down';
-    var $icon_up = 'icon-' + $match[1] + '-up';
+    var $icon_down = 'fa-' + $match[1] + '-down';
+    var $icon_up = 'fa-' + $match[1] + '-up';
     $body = $body.find(':first-child').eq(0);
     if ($box.hasClass('collapsed')) {
         if ($icon) $icon.addClass($icon_up).removeClass($icon_down);
@@ -101,10 +101,10 @@ function collapseWidget(id) {
     var $this = $(id).find('.widget-toolbar > a[data-action]');
     var $box = $this.closest('.widget-box');
     var $body = $box.find('.widget-body');
-    var $icon = $this.find('[class*=icon-]').eq(0);
+    var $icon = $this.find('[class*=fa-]').eq(0);
     var $match = $icon.attr('class').match(/icon\-(.*)\-(up|down)/);
-    var $icon_down = 'icon-' + $match[1] + '-down';
-    var $icon_up = 'icon-' + $match[1] + '-up';
+    var $icon_down = 'fa-' + $match[1] + '-down';
+    var $icon_up = 'fa fa-' + $match[1] + '-up';
     $body = $body.find(':first-child').eq(0);
     if (!($box.hasClass('collapsed'))) {
         if ($icon) $icon.addClass($icon_down).removeClass($icon_up);
@@ -118,10 +118,10 @@ function toggleWidget(id) {
     var $this = $(id);
     var $box = $this.closest('.widget-box');
     var $body = $box.find('.widget-body');
-    var $icon = $this.find('[class*=icon-]').eq(0);
+    var $icon = $this.find('[class*=fa-]').eq(0);
     var $match = $icon.attr('class').match(/icon\-(.*)\-(up|down)/);
-    var $icon_down = 'icon-' + $match[1] + '-down';
-    var $icon_up = 'icon-' + $match[1] + '-up';
+    var $icon_down = 'fa fa-' + $match[1] + '-down';
+    var $icon_up = 'fa fa-' + $match[1] + '-up';
     $body = $body.wrapInner('<div class="widget-body-inner"></div>').find(':first-child').eq(0);
     if ($box.hasClass('collapsed')) {
         if ($icon) $icon.addClass($icon_up).removeClass($icon_down);
@@ -207,7 +207,7 @@ function initWidget(widget) {
                 $remove = true;
                 $box.addClass('position-relative');
             }
-            $box.append('<div class="widget-box-layer"><i class="icon-spinner icon-spin icon-2x white"></i></div>');
+            $box.append('<div class="widget-box-layer"><i class="fa fa-spinner fa-spin fa-2x white"></i></div>');
             setTimeout(function () {
                 $box.find('> div:last-child').remove();
                 if ($remove) $box.removeClass('position-relative');
@@ -353,10 +353,10 @@ function syntaxHighlight(json) {
     });
 
     syntaxedJson = syntaxedJson.replace(/\]/g, ']</span></span>');
-    syntaxedJson = syntaxedJson.replace(/\[/g, '<span class="preBlock"><i class="icon-minus"></i><span class="collapsed hide"> [...]</span><span class="expanded"> [');
+    syntaxedJson = syntaxedJson.replace(/\[/g, '<span class="preBlock"><i class="fa fa-minus"></i><span class="collapsed hide"> [...]</span><span class="expanded"> [');
 
     syntaxedJson = syntaxedJson.replace(/\}/g, '}</span></span>');
-    syntaxedJson = syntaxedJson.replace(/\{/g, '<span class="preBlock"><i class="icon-minus"></i><span class="collapsed hide"> {...}</span><span class="expanded"> {');
+    syntaxedJson = syntaxedJson.replace(/\{/g, '<span class="preBlock"><i class="fa fa-minus"></i><span class="collapsed hide"> {...}</span><span class="expanded"> {');
 
     return syntaxedJson;
 }

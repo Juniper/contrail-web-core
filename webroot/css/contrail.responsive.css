@@ -646,7 +646,7 @@
   display:inline-block;
   vertical-align:sub;
  }
- .ace-spinner .spinner-buttons > .btn > [class*="icon-"]{
+ .ace-spinner .spinner-buttons > .btn > [class*="fa-"]{
   vertical-align:middle;
   display:inline-block;
  }

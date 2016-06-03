@@ -109,16 +109,16 @@ define([
             var state = getNavState();
             footerContainer.find(".slick-pager-nav i").addClass("icon-disabled");
             if (state.canGotoFirst) {
-                footerContainer.find(".icon-step-backward").removeClass("icon-disabled");
+                footerContainer.find(".fa-step-backward").removeClass("icon-disabled");
             }
             if (state.canGotoLast) {
-                footerContainer.find(".icon-step-forward").removeClass("icon-disabled");
+                footerContainer.find(".fa-step-forward").removeClass("icon-disabled");
             }
             if (state.canGotoNext) {
-                footerContainer.find(".icon-forward").removeClass("icon-disabled");
+                footerContainer.find(".fa-forward").removeClass("icon-disabled");
             }
             if (state.canGotoPrev) {
-                footerContainer.find(".icon-backward").removeClass("icon-disabled");
+                footerContainer.find(".fa-backward").removeClass("icon-disabled");
             }
 
             footerContainer.find(".slick-pager-info").text("Total: " + pagingInfo.totalRows + " records");

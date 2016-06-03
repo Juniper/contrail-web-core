@@ -73,11 +73,11 @@ define([
                     {
                         rowActions: [
                             {
-                                onClick: 'addOrClauseAtIndex()', iconClass: 'icon-plus',
+                                onClick: 'addOrClauseAtIndex()', iconClass: 'fa fa-plus',
                                 viewConfig: {width: 20}
                             },
                             {
-                                onClick: "deleteWhereOrClause()", iconClass: 'icon-remove',
+                                onClick: "deleteWhereOrClause()", iconClass: 'fa fa-remove',
                                 viewConfig: {width: 20}
                             },
                         ],
@@ -91,11 +91,11 @@ define([
                                         {
                                             rowActions: [
                                                 {
-                                                    onClick: "deleteWhereAndClause()", iconClass: 'icon-remove',
+                                                    onClick: "deleteWhereAndClause()", iconClass: 'fa fa-remove',
                                                     viewConfig: {width: 20}
                                                 },
                                                 {
-                                                    onClick: "addAndClauseAtIndex()", iconClass: 'icon-plus',
+                                                    onClick: "addAndClauseAtIndex()", iconClass: 'fa fa-plus',
                                                     viewConfig: {width: 20}
                                                 }
                                             ],

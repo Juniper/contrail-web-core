@@ -6,7 +6,7 @@ $(document).ready(function () {
 
     //Listener to expand/collapse widget based on toggleButton in widget header
     $("#content-container").find('div.widget-box div.widget-header div.widget-toolbar a[data-action="collapse"]').live('click', function () {
-        $(this).find('i').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+        $(this).find('i').toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
         var widgetBodyElem = $(this).parents('div.widget-box').find('div.widget-body');
         var widgetBoxElem = $(this).parents('div.widget-box');
         $(widgetBoxElem).toggleClass('collapsed');
@@ -14,28 +14,28 @@ $(document).ready(function () {
 
     // expand/collapse widget on click of widget header
     $("#content-container").find('div.widget-box div.widget-header h4').live('click', function () {
-        $(this).parents('div.widget-header').find('a[data-action="collapse"] i').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+        $(this).parents('div.widget-header').find('a[data-action="collapse"] i').toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
         var widgetBodyElem = $(this).parents('div.widget-box').find('div.widget-body');
         var widgetBoxElem = $(this).parents('div.widget-box');
         $(widgetBoxElem).toggleClass('collapsed');
     });
 
     $('.preBlock i').live('click', function () {
-        $(this).toggleClass('icon-minus').toggleClass('icon-plus');
-        if ($(this).hasClass('icon-minus')) {
+        $(this).toggleClass('fa-minus').toggleClass('fa-plus');
+        if ($(this).hasClass('fa-minus')) {
             $(this).parent('.preBlock').find('.collapsed').hide();
             $(this).parent('.preBlock').find('.expanded').show();
             $(this).parent('.preBlock').find('.preBlock').show();
             if ($(this).parent('.preBlock').find('.preBlock').find('.expanded').is(':visible')) {
                 $(this).parent('.preBlock').find('.preBlock').find('.collapsed').hide();
-                $(this).parent('.preBlock').find('.preBlock').find('i').removeClass('icon-plus').addClass('icon-minus');
+                $(this).parent('.preBlock').find('.preBlock').find('i').removeClass('fa-plus').addClass('fa fa-minus');
             }
             else {
                 $(this).parent('.preBlock').find('.preBlock').find('.collapsed').show();
-                $(this).parent('.preBlock').find('.preBlock').find('i').removeClass('icon-minus').addClass('icon-plus');
+                $(this).parent('.preBlock').find('.preBlock').find('i').removeClass('fa-minus').addClass('fa fa-plus');
             }
         }
-        else if ($(this).hasClass('icon-plus')) {
+        else if ($(this).hasClass('fa-plus')) {
             $(this).parent('.preBlock').find('.collapsed').show();
             $(this).parent('.preBlock').find('.expanded').hide();
         }
@@ -262,7 +262,7 @@ $.allajax = (function ($) {
 $('.pre-format-JSON2HTML .expander').live('click', function(){
     var selfParent = $(this).parent(),
         jsonObj = {};
-    selfParent.children('i').removeClass('icon-plus').removeClass('expander').addClass('icon-minus').addClass('collapser');
+    selfParent.children('i').removeClass('fa-plus').removeClass('expander').addClass('fa fa-minus').addClass('collapser');
     if(selfParent.children('.node').hasClass('raw')){
         jsonObj = JSON.parse(selfParent.children('ul.node').text());
         selfParent.empty().append(formatJsonObject(jsonObj, 2, parseInt(selfParent.children('.node').data('depth')) + 1));
@@ -272,7 +272,7 @@ $('.pre-format-JSON2HTML .expander').live('click', function(){
 });
 $('.pre-format-JSON2HTML .collapser').live('click', function(){
     var selfParent = $(this).parent();
-    selfParent.children('i').removeClass('icon-minus').removeClass('collapser').addClass('icon-plus').addClass('expander');
+    selfParent.children('i').removeClass('fa-minus').removeClass('collapser').addClass('fa fa-plus').addClass('expander');
     selfParent.children('.collapsed').show();
     selfParent.children('.node').hide();
 });

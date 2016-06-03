@@ -942,7 +942,7 @@ define([
                 }
             };
             controlPanelConfig.custom.zoomBySelectedArea = {
-                    iconClass: 'icon-crop',
+                    iconClass: 'fa fa-crop',
                     title: 'Zoom By Selection',
                     events: {
                         click: function (event, self, controlPanelSelector) {
@@ -1023,7 +1023,7 @@ define([
         };
 
         return {
-            iconClass: 'icon-filter',
+            iconClass: 'fa fa-filter',
                 title: 'Filter',
             events: {
                 click: function (event, self, controlPanelSelector) {
@@ -1111,7 +1111,7 @@ define([
 
     var getControlPanelLegendConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector) {
         return {
-            iconClass: 'icon-info-sign',
+            iconClass: 'fa fa-info-circle',
             title: 'Information',
             events: {
                 click: function (event, self, controlPanelSelector) {

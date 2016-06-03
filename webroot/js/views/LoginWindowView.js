@@ -76,7 +76,7 @@ define([
                                 viewConfig: {
                                     path: 'user_name',
                                     class: 'span12',
-                                    icon:'icon-cog',
+                                    icon:'fa fa-cog',
                                     dataBindValue: 'user_name'
                                 }
                             }
@@ -91,7 +91,7 @@ define([
                                     path: 'password',
                                     type: 'password',
                                     class: 'span12',
-                                    icon: 'icon-cog',
+                                    icon: 'fa fa-cog',
                                     dataBindValue: 'password',
                                 }
                             }

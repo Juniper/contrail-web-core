@@ -28,8 +28,8 @@
     height: 22px;
 
 }
-#signin-container .login-container .input-prepend .add-on [class^="icon-"], 
-#signin-container [class*=" icon-"] {
+#signin-container .login-container .input-prepend .add-on [class^="fa-"],
+#signin-container [class*=" fa-"] {
     font-size: 18px;
     color: #777;
     margin-top:2px;

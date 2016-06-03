@@ -44,7 +44,7 @@
             .data('contrailTabs', {
                 _tabsUIObj: self.tabs(),
                 startLoading: function(selectedTabLinkId){
-                    $(selectedTabLinkId).prepend('<i class="icon-spinner icon-spin contrail-tabs-loading"></i>');
+                    $(selectedTabLinkId).prepend('<i class="fa fa-spinner fa-spin contrail-tabs-loading"></i>');
                 },
                 endLoading: function(selectedTabLinkId){
                     $(selectedTabLinkId).find('.contrail-tabs-loading').remove();
@@ -454,7 +454,7 @@
 
                     input.autocomplete( "search", "" );
                 })
-                .append('<i class="icon-caret-down"></i>');
+                .append('<i class="fa fa-caret-down"></i>');
             dis.option.sourceMap = constructSourceMap(formattedData, 'value');
         };
     };
@@ -636,10 +636,10 @@
                     <ol class="row-fluid multiselect-left multiselect-list" style="height:'+(options.sizeLeft * 30).toString()+'px;"></ol>\
                 </div>\
                 <div class="span2 multiselect-controls">\
-                    ' + ((options.controls.single) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-selected icon-angle-right"></i></div>\
-                    <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-selected icon-angle-left"></i></div>' : '') + '\
-                    ' + ((options.controls.all) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-all icon-double-angle-right"></i></div>\
-                    <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-all icon-double-angle-left"></i></div>' : '') + '\
+                    ' + ((options.controls.single) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-selected fa fa-angle-right"></i></div>\
+                    <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-selected fa fa-angle-left"></i></div>' : '') + '\
+                    ' + ((options.controls.all) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-all fa fa-angle-double-right"></i></div>\
+                    <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-all fa fa-angle-double-left"></i></div>' : '') + '\
                 </div>\
                 <div class="span5">\
                      <label>'+options.rightTitle+'</label>\
@@ -1028,7 +1028,7 @@
 
             var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal contrail-modal hide" tabindex="-1" role="dialog" aria-hidden="true"> \
         		<div class="modal-header"> \
-        	    	<button id="modal-header-close" type="button" class="close"><i class="icon-remove"></i></button> \
+        	    	<button id="modal-header-close" type="button" class="close"><i class="fa fa-remove"></i></button> \
         			<h6 class="modal-header-title"></h6> \
         		</div> \
 	        	<div class="modal-body"></div> \

@@ -111,9 +111,9 @@ define([
             },
             'status-boolean': function (value, options) {
                 if (value === true || value === 'true') {
-                    return '<span><i class="icon-circle green"></i> &nbsp;' + value + '</span>';
+                    return '<span><i class="fa fa-circle green"></i> &nbsp;' + value + '</span>';
                 } else {
-                    return '<span><i class="icon-circle red"/> &nbsp;' + value + '</span>';
+                    return '<span><i class="fa fa-circle red"/> &nbsp;' + value + '</span>';
                 }
             },
             'json2html': function (value, options) {

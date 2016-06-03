@@ -619,7 +619,7 @@ var disableDblClick = false;
                     clearTimeout(tooltipTimeoutId);
             }
             if(initResponse['hideLoadingIcon'] != false)
-                $(this).parents('.widget-box').find('.icon-spinner').hide();
+                $(this).parents('.widget-box').find('.fa-spinner').hide();
             chartOptions['useVoronoi'] = false;
 
             //Does all tweaks related to bubble size
@@ -1889,7 +1889,7 @@ var updateCharts = new updateChartsClass();
  */
 function updateChartsClass() {
     this.getResponse = function(obj) {
-        $(obj['selector']).closest('div.widget-box').find('i.icon-spinner').show();
+        $(obj['selector']).closest('div.widget-box').find('i.fa-spinner').show();
         $.ajax({
             url:obj['url'],
         }).done(function(response) {
@@ -1902,7 +1902,7 @@ function updateChartsClass() {
             $.extend(result,obj);
             updateCharts.updateView(result);
         }).always(function(){
-            $(obj['selector']).closest('div.widget-box').find('i.icon-spinner').hide();
+            $(obj['selector']).closest('div.widget-box').find('i.fa-spinner').hide();
         }).error(function(){
             var chart;
             if(obj['type'] == 'bubblechart')

@@ -22,7 +22,7 @@ function startPacketCapture4Interface(interfaceUUID, vnFQN, vmName) {
 };
 
 function createPCAPModal(closeClickAction, closePostData, title) {
-    var modalLoadingBody = '<i id="pcap-loading" class="icon-spinner icon-spin blue bigger-125 offset4"></i> &nbsp; Starting Packet Capture ...';
+    var modalLoadingBody = '<i id="pcap-loading" class="fa fa-spinner fa-spin blue bigger-125 offset4"></i> &nbsp; Starting Packet Capture ...';
     $.contrailBootstrapModal({
         id: 'pcapModal',
         title: title,

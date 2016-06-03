@@ -1147,7 +1147,7 @@ function createSuccessDialog() {
 	$(btnClose).attr("aria-hidden", "true");
 
 	var iconRemove = document.createElement("i");
-	$(iconRemove).addClass("icon-remove");
+	$(iconRemove).addClass("fa fa-remove");
 	btnClose.appendChild(iconRemove);
 	
 	var hdrTitle = document.createElement("h6");

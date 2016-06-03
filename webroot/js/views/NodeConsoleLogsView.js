@@ -403,7 +403,7 @@ define([
         return {
             elementId: cowl.QE_QUERY_RESULT_GRID_ID,
             title: cowl.TITLE_RESULTS,
-            iconClass: 'icon-table',
+            iconClass: 'fa fa-table',
             view: 'QueryResultGridView',
             tabConfig: {
                 //TODO
