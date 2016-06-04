@@ -397,9 +397,13 @@ body.navbar-fixed {
 }
 li [class^="fa-"],
 li [class*=" fa-"],
+li [class^="icon-"],
+li [class*=" icon-"],
 .nav-list li [class^="fa-"],
-.nav-list li [class*=" fa-"] {
-  width: auto;
+.nav-list li [class*=" fa-"],
+.nav-list li [class^="icon-"],
+.nav-list li [class*=" icon-"] {
+    width: auto;
 }
 .nav-list {
     margin: 0;
@@ -437,7 +441,8 @@ li [class*=" fa-"],
   font-weight: normal;
   text-decoration: none;
 }
-.nav-list > li > a > [class*="fa-"]:first-child {
+.nav-list > li > a > [class*="fa-"]:first-child,
+.nav-list > li > a > [class*="icon-"]:first-child {
   display: inline-block;
   vertical-align: middle;
   min-width: 30px;
@@ -682,7 +687,7 @@ li [class*=" fa-"],
   padding-bottom: 4px;
 }
 #sidebar-shortcuts-large > .btn > [class*="fa-"] {
-  font-size: 140%;
+  font-size: 130%;
   line-height: 1.4em;
 }
 #sidebar-shortcuts-mini {
@@ -856,7 +861,6 @@ li [class*=" fa-"],
   right: 5px;
 }
 .menu-min #sidebar-collapse > [class*="fa-"] {
-  font-size: 13px;
   padding: 0 4px;
   line-height: 15px;
   border-width: 1px;
@@ -1690,6 +1694,8 @@ button.btn:active {
 .nav-pills > .active > a > [class*=" fa-"],
 .nav-list > .active > a > [class^="fa-"],
 .nav-list > .active > a > [class*=" fa-"],
+.nav-list > .active > a > [class^="icon-"],
+.nav-list > .active > a > [class*="icon-"],
 .navbar-inverse .nav > .active > a > [class^="fa-"],
 .navbar-inverse .nav > .active > a > [class*=" fa-"],
 .dropdown-menu > li > a:hover > [class^="fa-"],

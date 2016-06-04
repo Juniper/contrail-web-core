@@ -32,7 +32,8 @@ pre {
 .boolean { color: #3182bd; }
 .null { color: #9467bd; }
 .key { color: #393939; }
-pre i{
+pre i[class*=" fa-"],
+pre i[class^="fa-"] {
 	font-size: 8px;
 }
 .key-value {
