@@ -5,8 +5,9 @@
 define([
     'underscore',
     'knockout',
-    'query-form-model'
-], function (_, Knockout, QueryFormModel) {
+    'query-form-model',
+    'core-basedir/js/common/qe.model.config'
+], function (_, Knockout, QueryFormModel,qewmc) {
     var NodeConsoleLogsModel = QueryFormModel.extend({
 
         defaultSelectFields: [],

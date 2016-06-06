@@ -158,7 +158,13 @@ ControllerConfigGenerator.prototype = new CoreConfigGenerator();
 ControllerConfigGenerator.prototype.overrideBaseConfig = function() {
     // Update core app paths with relative paths.
     for (var path in this.configJSON.paths) {
-        this.configJSON.paths[path] = confGenConst.controllerCoreRelativePath + this.configJSON.paths[path];
+        //text plugin need to be loaded by the loader to process text! dependencies
+        if(path == "text") {
+            this.configJSON.paths[path] = confGenConst.controllerCoreRelativePath + this.configJSON.paths[path];
+        } else {
+            //To avoid core repo files from being bundled into controller bundles
+            this.configJSON.paths[path] = "empty:";
+        }
     }
     // Add controller paths.
     var controllerApp = require('./../../../contrail-web-controller/webroot/common/ui/js/controller.app')
