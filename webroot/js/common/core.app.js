@@ -300,6 +300,12 @@ var coreAppShim =  {
     'slick.dataview': {
         deps: ['jquery','slick.groupmetadata']
     },
+    'slick.groupmetadata': {
+        deps: ['jquery']
+    },
+    'jquery-dep-libs' : {
+        deps: ['jquery']
+    },
     // 'slickgrid-utils': {
     //     deps: ['jquery','slick.grid','slick.dataview']
     // },

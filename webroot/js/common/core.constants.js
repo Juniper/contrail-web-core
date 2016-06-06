@@ -821,5 +821,5 @@ define([
             return cowu.getValueFromTemplate(args);
         };
     };
-    return CoreConstants;
+    return new CoreConstants();
 });
