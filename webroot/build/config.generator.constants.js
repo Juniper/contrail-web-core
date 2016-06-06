@@ -394,6 +394,7 @@ constants.controllerModules = [
             'monitor-infra-confignode-model',
             'monitor-infra-controlnode-model',
             'monitor-infra-vrouter-model',
+            'monitor-infra-confignode-charts-model',
 
             'monitor-infra-parsers',
             'monitor-infra-utils',
