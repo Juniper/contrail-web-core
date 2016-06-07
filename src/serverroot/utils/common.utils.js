@@ -1401,6 +1401,15 @@ function getWebServerInfo (req, res, appData)
     serverObj['featurePkgsInfo'] = getValueByJsonPath(config,'featurePkg',[]);
     serverObj['sessionTimeout'] = getValueByJsonPath(config,'session;timeout', 3600000);
     serverObj['_csrf'] = req.session._csrf;
+    serverObj['serviceEndPointFromConfig'] =
+        (null != config.serviceEndPointFromConfig) ?
+        config.serviceEndPointFromConfig : true;
+    serverObj['regionList'] = req.session.regionList;
+    serverObj['isRegionListFromConfig'] = config.regionsFromConfig;
+    serverObj['configRegionList'] = config.regions;
+
+    var authApi = require('../common/auth.api');
+    serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
@@ -2216,6 +2225,35 @@ function filterJsonKeysWithNullValues(obj) {
     return obj;
 }
 
+function doDeepSort (object)
+{
+    if (null == object) {
+        return object;
+    }
+    var sortedObj = {};
+    var keys = Object.keys(object);
+
+    keys.sort(function(key1, key2){
+        if (key1 > key2) {
+            return 1;
+        } else if (key1 < key2) {
+            return -1;
+        }
+        return 0;
+    });
+
+    for (var index in keys) {
+        var key = keys[index];
+        if ((typeof object[key] == 'object') &&
+            (!(object[key] instanceof Array))) {
+            sortedObj[key] = doDeepSort(object[key]);
+        } else {
+            sortedObj[key] = object[key];
+        }
+    }
+    return sortedObj;
+}
+
 exports.filterJsonKeysWithNullValues = filterJsonKeysWithNullValues;
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
@@ -2275,3 +2313,5 @@ exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
 exports.isSubArray = isSubArray;
 exports.getValueByJsonPath = getValueByJsonPath;
 exports.getFeaturePkgs = getFeaturePkgs;
+exports.doDeepSort = doDeepSort;
+
