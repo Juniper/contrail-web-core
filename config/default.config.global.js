@@ -5,7 +5,7 @@
 var config = {};
 
 config.orchestration = {};
-config.orchestration.Manager = 'openstack'
+config.orchestration.Manager = 'openstack';
 
 /****************************************************************************
  * This boolean flag indicates to communicate with Orchestration
@@ -22,6 +22,45 @@ config.orchestration.Manager = 'openstack'
  *
 *****************************************************************************/
 config.serviceEndPointFromConfig = true;
+
+/****************************************************************************
+ * This boolean flag specifies wheather region list should be taken from config
+ * file or from keystone endpoint
+ * true  - If set as true, then keystone endpoint is taken from
+ *         config.regions
+ * false - If set as false, then keystone endpoint is taken from
+ *         config.identityManager
+ *
+ ****************************************************************************/
+config.regionsFromConfig = false;
+
+/****************************************************************************
+ * Below are the configs for Api Server and analytics Service type & name as
+ * provisioned in keystone
+ *
+ * apiServiceType - Service Type for apiServer, default value is apiServer
+ * opServiceType  - Service Type for analytics, default value is opServer
+ *
+ * Note: If there are multiple api server or analytices nodes in a specific
+ *       region, then provision service type/name as ApiServer0, ApiServer1,
+ *       ApiServer2 etc, similarly for analytics node: OpServer0, OpServer1,
+ *       OpServer2 etc.
+ *
+ ****************************************************************************/
+config.endpoints = {};
+config.endpoints.apiServiceType = 'ApiServer';
+config.endpoints.opServiceType = 'OpServer';
+
+/****************************************************************************
+ * Mapping to region name with keystone endpoint
+ *
+ * For example:
+ * config.regions.RegionOne = 'http://nodeIp:5000/v2.0';
+ * config.regions.RegionTwo = 'http://nodeIp:5000/v3';
+ *
+ ****************************************************************************/
+config.regions = {};
+config.regions.RegionOne = 'http://127.0.0.1:5000/v2.0';
 
 /****************************************************************************
  * This boolean flag indicates if serviceEndPointFromConfig is set as false,
