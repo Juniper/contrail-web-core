@@ -1026,27 +1026,27 @@ if (typeof document !== 'undefined' && document) {
                         }
                     });
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
-                    require(['select2', 'jquery', 'contrail-elements'], function() {
-                    var regionList =
-                        globalObj.webServerInfo.regionList;
-                    var cnt = 0;
-                    if (null != regionList) {
-                        cnt = regionList.length;
-                    }
-                    var ddRegionList = [];
-                    for (var i = 0; i < cnt; i++) {
-                        ddRegionList.push({id: regionList[i], text: regionList[i]});
-                    }
-                    var isServiceEndPointFromConfig =
-                        globalObj.webServerInfo.serviceEndPointFromConfig;
-                    if ((cnt > 0) && (false == isServiceEndPointFromConfig)) {
-                        $('#regionDD').contrailDropdown({dataTextField:"text",
-                                                        dataValueField:"id",
-                                                        width: '100px',
-                                                        change: changeRegion});
-                        $('#regionDD').data("contrailDropdown").setData(ddRegionList);
-                        $("#regionDD").data("contrailDropdown").value(contrail.getCookie('region'));
-                    }
+                    require(['jquery', 'jquery-dep-libs'], function() {
+                        var regionList =
+                            globalObj.webServerInfo.regionList;
+                        var cnt = 0;
+                        if (null != regionList) {
+                            cnt = regionList.length;
+                        }
+                        var ddRegionList = [];
+                        for (var i = 0; i < cnt; i++) {
+                            ddRegionList.push({id: regionList[i], text: regionList[i]});
+                        }
+                        var isServiceEndPointFromConfig =
+                            globalObj.webServerInfo.serviceEndPointFromConfig;
+                        if ((cnt > 0) && (false == isServiceEndPointFromConfig)) {
+                            $('#regionDD').contrailDropdown({dataTextField:"text",
+                                                            dataValueField:"id",
+                                                            width: '100px',
+                                                            change: changeRegion});
+                            $('#regionDD').data("contrailDropdown").setData(ddRegionList);
+                            $("#regionDD").data("contrailDropdown").value(contrail.getCookie('region'));
+                        }
                     });
                     webServerInfoDefObj.resolve();
 
@@ -1066,7 +1066,7 @@ if (typeof document !== 'undefined' && document) {
             },
             onAuthenticationReq: function(loadCfg) {
                 document.getElementById('signin-container').innerHTML = document.getElementById('signin-container-tmpl').innerHTML;
-                require(['jquery', 'select2', 'contrail-elements'], function() {
+                require(['jquery','jquery-dep-libs'], function() {
                     var isRegionsFromConfig = false;
                     if (null != loadCfg) {
                         isRegionsFromConfig = loadCfg.isRegionListFromConfig;
