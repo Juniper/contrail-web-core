@@ -1145,7 +1145,7 @@ p.error, p.error-text {
 
 .confignode-chart .widget-box .widget-header {
     border-bottom: none;
-    font-size: 13px;
+    font-size: 14px;
     height: 23px;
     cursor: auto;
     padding: 3px 0px;
@@ -1164,7 +1164,8 @@ p.error, p.error-text {
     fill-opacity: 1 !important;
 }
 .confignode-chart .contrail-legend text {
-    font: normal 10px Open Sans;
+    font: normal 11px Open Sans;
+    opacity: 1;
 }
 .confignode-chart .widget-box {
     margin: 0px;

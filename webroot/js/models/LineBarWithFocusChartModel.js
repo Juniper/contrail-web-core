@@ -114,7 +114,12 @@ define([
         x2Axis.orient('bottom').tickPadding(5);
         y3Axis.orient('left');
         y4Axis.orient('right');
-
+        // Default y2Axis width is more, compared to y1Axis
+        // because assuming max width for tick values of y2Axis which is not required
+        // often.So if it is option we can set where ever it is required.
+        if (chartOptions.y2AxisWidth != null) {
+            y2Axis.width(chartOptions.y2AxisWidth);
+        }
         tooltip.headerEnabled(true).headerFormatter(function(d, i) {
             return xAxis.tickFormat()(d, i);
         });
@@ -687,11 +692,15 @@ define([
             chartModel.lines2.forceY(chartOptions.forceY2);
         }
 
-        chartModel.xAxis.tickFormat(function (d) {
-            return d3.time.format('%H:%M:%S')(new Date(d));
-        });
         if (chartOptions['xFormatter'] != null) {
             chartModel.xAxis.tickFormat(chartOptions['xFormatter']);
+        } else {
+            chartModel.xAxis.tickFormat(function (d) {
+                return d3.time.format('%H:%M:%S')(new Date(d));
+            });
+        }
+        if (chartOptions['xAxisMaxMin'] != null) {
+            chartModel.xAxis.showMaxMin(chartOptions['xAxisMaxMin']);
         }
         chartModel.xAxis.axisLabelDistance(chartOptions.axisLabelDistance);
         if (chartOptions['xAxisLabel'] != null) {
