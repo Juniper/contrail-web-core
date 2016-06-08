@@ -34,13 +34,13 @@ function getHeaders (dataObj, callback)
     var appHeaders = dataObj['appHeaders'];
 
     var req = buildDummyReqObjByJobData(jobData);
-    dataObj['headers'] = headers;
     dataObj['apiRestApi'] = configServer;
 
     for (key in appHeaders) {
         /* App Header overrides default header */
         headers[key] = appHeaders[key];
     }
+    dataObj['headers'] = headers;
     if (null == req) {
         callback(null, dataObj);
         return;
