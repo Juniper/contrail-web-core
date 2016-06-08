@@ -1097,33 +1097,3 @@ p.error, p.error-text {
     padding-right:3px;
  }
 
-.confignode-chart .widget-box .widget-header {
-    border-bottom: none;
-    font-size: 14px;
-    height: 23px;
-    cursor: auto;
-    padding: 3px 0px;
-}
-.confignode-chart .widget-box .widget-header > :first-child {
-    line-height: 23px;
-}
-.confignode-chart .widget-box .widget-main {  
-    padding: 0px;
-}
-.confignode-chart .contrail-legend rect{
-    width: 8px;
-    height: 8px;
-}
-.confignode-chart g.nv-barsWrap g.nv-group {
-    fill-opacity: 1 !important;
-}
-.confignode-chart .contrail-legend text {
-    font: normal 11px Open Sans;
-    opacity: 1;
-}
-.confignode-chart .widget-box {
-    margin: 0px;
-}
-.confignode-chart .contrail-chart-title text {
-    font-size: 11px;
-}
