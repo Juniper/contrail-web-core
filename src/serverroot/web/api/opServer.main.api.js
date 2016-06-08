@@ -21,6 +21,7 @@ function getHeaders(dataObj, callback)
 {
     var headers =
         (null != dataObj['appHeaders']) ? dataObj['appHeaders'] : {};
+    dataObj['headers'] = headers;
     var appData = dataObj['appData'];
     var req = commonUtils.getValueByJsonPath(appData, 'authObj;req', null,
                                              false);
