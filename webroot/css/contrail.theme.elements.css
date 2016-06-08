@@ -4299,15 +4299,11 @@ td.td-actions a.td-action {
     vertical-align: middle;
 }
 
-.stacked-bar-chart-container .tick line{
-    opacity: 0.1;
-  }
-
-.stacked-bar-chart-container .axis {
-  opacity: 0.7;
+.stacked-bar-chart-container .axis line, .stacked-bar-chart-container .axis path{
+    stroke: #e5e5e5;
 }
 
-.stacked-bar-chart-container .axis-label {
+.stacked-bar-chart-container .axis {
   opacity: 0.7;
 }
 

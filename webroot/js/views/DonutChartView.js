@@ -104,10 +104,12 @@ define([
                 requestState: chartDataRequestState
             },
             chartOptions = chartViewConfig['chartOptions'];
-
+        var defaultDataStatusMessage =
+            chartOptions['defaultDataStatusMessage'] != null ?
+                chartOptions['defaultDataStatusMessage'] : true;
         d3.select($(selector)[0]).select('svg').datum(chartDataObj).call(chartModel);
 
-        if (chartDataRequestState !== cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY) {
+        if (defaultDataStatusMessage && chartDataRequestState !== cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY) {
             var container = d3.select($(selector).find("svg")[0]),
                 requestStateText = container.selectAll('.nv-requestState').data([cowm.getRequestMessage(chartDataRequestState)]),
                 textPositionX = $(selector).width() / 2,

@@ -334,6 +334,8 @@ function getConfigArrayDelta (type, oldArrayJson, newArrayJson)
     if (null == newArrayJson) {
         newArrayJson = [];
     }
+    oldArrayJson = commonUtils.doDeepSort(oldArrayJson);
+    newArrayJson = commonUtils.doDeepSort(newArrayJson);
     var resultJSON = {'addedList': [], 'deletedList': []};
     var fieldsType = getConfigFieldsByType(type, true);
     if (null != fieldsType) {

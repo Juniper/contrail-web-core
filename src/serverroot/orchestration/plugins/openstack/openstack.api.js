@@ -10,6 +10,7 @@ var authApi = require('../../../common/auth.api');
 var config = process.mainModule.exports['config'];
 var httpsOp = require('../../../common/httpsoptions.api');
 var logutils = require('../../../utils/log.utils');
+var commonUtils = require('../../../utils/common.utils');
 
 /* Function: getIpProtoByServCatPubUrl
     This function is used to parse the publicURL/internalURL got from keystone catalog,
@@ -49,6 +50,79 @@ function getIpProtoByServCatPubUrl (pubUrl)
         }
     }
     return {'ipAddr': ipAddr, 'port': port, 'protocol': reqProto};
+}
+
+function getServiceApiVersionObjByPubUrl (pubUrl, type)
+{
+    if (null == pubUrl) {
+        return null;
+    }
+    var ipProtoObj = getIpProtoByServCatPubUrl(pubUrl);
+    var reqProto = ipProtoObj['protocol'];
+    var ipAddr = ipProtoObj['ipAddr'];
+    var port = ipProtoObj['port'];
+    var version = null;
+
+    switch (type) {
+    case 'compute':
+    case 'volume':
+        try {
+            var idx = pubUrl.lastIndexOf('/');
+            if (-1 == idx) {
+                return null;
+            }
+            var str = pubUrl.substr(0, idx);
+            idx = str.lastIndexOf('/');
+            if (-1 == idx) {
+                return null;
+            }
+            version = str.slice(idx + 1);
+        } catch(e) {
+            logutils.logger.error('volume|compute pubUrl parse error' + e);
+        }
+        break;
+    case 'image':
+    case 'identity':
+        try {
+            var defVer = getDfltEndPointValueByType(type, 'version');
+            var protoIdx = pubUrl.indexOf('://');
+            if (protoIdx >= 0) {
+                pubUrl = pubUrl.slice(protoIdx + '://'.length);
+            }
+            var idx = pubUrl.indexOf('/');
+            if (idx >= 0) {
+                pubUrl = pubUrl.slice(idx + 1);
+                idx = pubUrl.indexOf('/');
+                if (idx >= 0) {
+                    /* Format: http://localhost:9292/v1/ or
+                     * localhost:9292/v1/
+                     */
+                    version = pubUrl.substr(0, idx);
+                } else {
+                    if (!pubUrl.length) {
+                        /* Format: http://localhost:9292/ or
+                         * localhost:9292/
+                         */
+                        version = defVer;
+                    } else {
+                        /* Format: http://localhost:9292/v1 or
+                         * localhost:9292/v1
+                         */
+                        version = pubUrl;
+                    }
+                }
+            } else {
+                /* Format: http://localhost:9292 or localhost:9292 */
+                version = defVer;
+            }
+        } catch(e) {
+            logutils.logger.error(type +' pubUrl parse error' + e);
+        }
+        break;
+    default:
+        break;
+    }
+    return {version: version, ip: ipAddr, protocol: reqProto, port: port};
 }
 
 /* Function: getApiTypeByServiceType
@@ -108,6 +182,11 @@ function getDfltEndPointValueByType (module, type)
             return 'v1.1';
         }
         break;
+    case 'identity':
+        if ('version' == type) {
+            return 'v2.0';
+        }
+        break;
     default:
         break;
     }
@@ -118,8 +197,9 @@ function getDfltEndPointValueByType (module, type)
     Get openStack Module API Version, IP, Port, Protocol from
     publicURL/internalURL in keystone catalog response
  */
-function getServiceAPIVersionByReqObj (req, type, callback)
+function getServiceAPIVersionByReqObj (req, type, callback, reqBy)
 {
+    var redirectToLogout = true;
     var dataObjArr = [];
     var endPtList = [];
 
@@ -128,6 +208,16 @@ function getServiceAPIVersionByReqObj (req, type, callback)
         endPtFromConfig = true;
     }
     if (true == endPtFromConfig) {
+        if ((type ==
+             authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_API_IDENTIFIER)) ||
+            (type ==
+             authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_ANALYTICS_IDENTIFIER))) {
+            /* for opServer and apiServer, we will be getting directly from
+             * apiRestApi
+             */
+            callback(null);
+            return;
+        }
         var apiType = getApiTypeByServiceType(type);
         ip = httpsOp.getHttpsOptionsByAPIType(apiType, 'ip');
         port = httpsOp.getHttpsOptionsByAPIType(apiType, 'port');
@@ -154,132 +244,82 @@ function getServiceAPIVersionByReqObj (req, type, callback)
         }
         return;
     }
-    authApi.getServiceCatalog(req, function(servCat) {
-        if (null == servCat) {
-            callback(null);
-            return;
-        }
-        try {
-            var servCatCnt = servCat.length;
-        } catch(e) {
-            callback(null);
-            return;
-        }
-        for (var i = 0; i < servCatCnt; i++) {
-            try {
-                if (type == servCat[i]['type']) {
-                    try {
-                        var endPt = servCat[i]['endpoints'];
-                        var endPtCnt = endPt.length;
-                    } catch(e) {
-                        continue;
-                    }
-                    for (var j = 0; j < endPtCnt; j++) {
-                        var endPtLen = endPtList.length;
-                        endPtList[endPtLen] = {};
-                        endPtList[endPtLen] = servCat[i]['endpoints'][j];
-                    }
-                }
-            } catch(e) {
-                continue;
+    var regionCookie =
+        commonUtils.getValueByJsonPath(req, 'cookies;region', null, false);
+    if (null == regionCookie) {
+        callback(null, null, redirectToLogout);
+        return;
+    }
+    var regionName = authApi.getCurrentRegion(req);
+    if ((null != regionName) && ('undefined' != regionName)) {
+        serviceCatalog =
+            commonUtils.getValueByJsonPath(req, 'session;serviceCatalog;' +
+                                           regionName, null, false);
+    } else {
+        serviceCatalog = commonUtils.getValueByJsonPath(req,
+                                                        'session;serviceCatalog',
+                                                        null, false);
+        if (null != serviceCatalog) {
+            for (var key in serviceCatalog) {
+                regionName = key;
+                req.session.regionname = regionName;
+                serviceCatalog = serviceCatalog[key];
+                break;
             }
         }
-
-        if (0 == endPtList.length) {
-            callback(null);
-            return;
-        }
+    }
+    if (null != serviceCatalog) {
+        mappedObj = null;
         try {
-            var endPtCnt = endPtList.length;
+            mappedObjs = serviceCatalog[type].maps;
         } catch(e) {
-            callback(null);
+            mappedObjs = null;
+        }
+        if ((null != mappedObjs) && (null != mappedObjs[0])) {
+            callback(mappedObjs, regionName);
             return;
         }
-
-        var takePubURL = true;
-        var pubUrl = null;
-        if (null != config.serviceEndPointTakePublicURL) {
-            takePubURL = config.serviceEndPointTakePublicURL;
+    }
+    authApi.getServiceCatalog(req, function(accessData) {
+        if ((null == accessData) || (null == accessData.serviceCatalog)) {
+            callback(null, null, redirectToLogout);
+            return;
         }
-        for (i = 0; i < endPtCnt; i++) {
-            try {
-                if (true == takePubURL) {
-                    pubUrl = endPtList[i]['publicURL'];
-                } else {
-                    pubUrl = endPtList[i]['internalURL'];
+        var keySt = require('./keystone.api');
+        var svcCatalog =
+            keySt.getServiceCatalogByRegion(req, regionName, accessData);
+        var firstRegion = null;
+        if (null != svcCatalog) {
+            for (var key in svcCatalog) {
+                if (null == firstRegion) {
+                    firstRegion = key;
                 }
-                var ipProtoObj = getIpProtoByServCatPubUrl(pubUrl);
-                var reqProto = ipProtoObj['protocol'];
-                var ipAddr = ipProtoObj['ipAddr'];
-                var port = ipProtoObj['port'];
-
-                switch (type) {
-                case 'compute':
-                case 'volume':
-                    var idx = pubUrl.lastIndexOf('/');
-                    if (-1 == idx) {
-                        continue;
-                    }
-                    var str = pubUrl.substr(0, idx);
-                    idx = str.lastIndexOf('/');
-                    if (-1 == idx) {
-                        continue;
-                    }
-                    dataObjArr.push({'version': str.slice(idx + 1),
-                                    'protocol': reqProto, 'ip': ipAddr,
-                                    'port': port});
-                    break;
-                case 'image':
-                    var defVer = getDfltEndPointValueByType('image', 'version');
-                    var version = null;
-                    var protoIdx = pubUrl.indexOf('://');
-                    if (protoIdx >= 0) {
-                        pubUrl = pubUrl.slice(protoIdx + '://'.length);
-                    }
-                    var idx = pubUrl.indexOf('/');
-                    if (idx >= 0) {
-                        pubUrl = pubUrl.slice(idx + 1);
-                        idx = pubUrl.indexOf('/');
-                        if (idx >= 0) {
-                            /* Format: http://localhost:9292/v1/ or
-                             * localhost:9292/v1/
-                             */
-                            version = pubUrl.substr(0, idx);
-                        } else {
-                            if (!pubUrl.length) {
-                                /* Format: http://localhost:9292/ or
-                                 * localhost:9292/
-                                 */
-                                version = defVer;
-                            } else {
-                                /* Format: http://localhost:9292/v1 or
-                                 * localhost:9292/v1
-                                 */
-                                version = pubUrl;
-                            }
-                        }
-                    } else {
-                        /* Format: http://localhost:9292 or localhost:9292 */
-                        version = defVer;
-                    }
-                    dataObjArr.push({'version': version,
-                                    'protocol': reqProto, 'ip': ipAddr,
-                                    'port': port});
-                    break;
-                default:
-                    break;
-                }
-            } catch(e) {
-                continue;
+                req.session.serviceCatalog[key] = svcCatalog[key];
             }
         }
-        if (!dataObjArr.length) {
-            logutils.logger.error('apiVersion for ' + type + ' is NULL');
-            callback(null);
+        var mappedObjs = null;
+        if (-1 != global.keystoneServiceListByProject.indexOf(type)) {
+            var domProject = req.cookies.domain + ':' + req.cookies.project;
+            mappedObjs =
+                commonUtils.getValueByJsonPath(svcCatalog, regionName + ';' +
+                                               domProject + ';' + type +
+                                               ';maps', null);
         } else {
-            dataObjArr.sort(function(a, b) {return (b['version'] - a['version'])});
-            callback(dataObjArr);
+            mappedObjs =
+                commonUtils.getValueByJsonPath(svcCatalog, regionName + ';' + type +
+                                               ';maps', null);
         }
+        if ((null == mappedObjs) && (global.service.MAINSEREVR == reqBy)) {
+            /* We did not find this region in the service catalog */
+            var secureCookieStr = (false == config.insecure_access) ? "; secure"
+                : "";
+            req.res.setHeader('Set-Cookie', 'region=' +  firstRegion +
+                              '; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/'
+                              + secureCookieStr);
+            callback(null, null, redirectToLogout);
+            return;
+        }
+        callback(mappedObjs, regionName);
     });
 }
 
@@ -335,6 +375,56 @@ function getApiVersion (suppVerList, verList, index, fallbackIndex, apiType)
     return null;
 }
 
+function getPublicUrlByRegionName (regionname, req)
+{
+    if (false == authApi.isMultiRegionSupported()) {
+        return null;
+    }
+    if (true == authApi.isRegionListFromConfig()) {
+        var pubUrl = null;
+        if (null == config.regions) {
+            return null;
+        }
+        for (var region in config.regions) {
+            if (regionname == region) {
+                return config.regions[region];
+            }
+        }
+    } else if (true == authApi.isRegionListFromIdentity()) {
+        var takeUrlStr = (true == config.serviceEndPointTakePublicURL) ?
+            'publicURL': 'internalURL';
+        var pubUrl =
+            commonUtils.getValueByJsonPath(req, 'session;serviceCatalog;' +
+                                           regionname + ';identity;values;0;' +
+                                           takeUrlStr, null, false);
+        return pubUrl;
+    }
+    return null;
+}
+
+function shiftServiceEndpointList (req, serviceType, regionName)
+{
+    if (false == authApi.isMultiRegionSupported()) {
+        return;
+    }
+    var mappedObjs =
+        commonUtils.getValueByJsonPath(req,
+                                       'session;serviceCatalog;' +
+                                       regionName + ';' + serviceType +
+                                       ';maps', null, false);
+    if (null == mappedObjs) {
+        logutils.logger.error('We did not get the mapped values for Service: ' +
+                              serviceType);
+        return;
+    }
+    var mapObj = mappedObjs.shift();
+    mappedObjs.push(mapObj);
+    req['session']['serviceCatalog'][regionName][serviceType]['maps'] = mappedObjs;
+}
+
 exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 exports.getApiVersion = getApiVersion;
 exports.getIpProtoByServCatPubUrl = getIpProtoByServCatPubUrl;
+exports.getServiceApiVersionObjByPubUrl = getServiceApiVersionObjByPubUrl;
+exports.getPublicUrlByRegionName = getPublicUrlByRegionName;
+exports.shiftServiceEndpointList = shiftServiceEndpointList;

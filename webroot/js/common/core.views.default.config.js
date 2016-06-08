@@ -119,7 +119,8 @@ define([
             y1Formatter: function(number) {
                 number.toFixed(1);
             },
-            showLegend: true
+            showLegend: true,
+            focusEnable: true
         };
     };
 

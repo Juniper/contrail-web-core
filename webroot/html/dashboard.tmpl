@@ -124,6 +124,12 @@
                     <span class="add-on"><i class="fa fa-key"></i></span>
                     <input class="span2" type="password" name="password" placeholder="Password">
                 </div>
+                <div id="region_id_cont" class="input-prepend row-fluid" style="display:none;">
+                    <div class="span2" style="width:34px;margin-left:0px;">
+                        <span class="add-on"><i class="icon-globe"></i></span>
+                    </div>
+                    <input id="region_id" style="margin-left:0px; min-height:32px; font-size: 14px; font-family: Helvetica Neue;" class="span10" name="regionname"/>
+                </div>
                 <div class="input-prepend">
                     <span class="add-on"><i class="fa fa-globe"></i></span>
                     <input class="span2" type="text" name="domain" placeholder="Domain">
@@ -143,7 +149,7 @@
                 <a href="#" class="brand">
                     <img class="logo" src="/img/sdn-logo.png"/>
                 </a>
-                <ul style="width:280px" class="nav ace-nav pull-right">
+                <ul style="width:330px" class="nav ace-nav pull-right">
                     <li id="user-profile" class="hide">
                         <a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle">
                             <i class="fa fa-user icon-only fa-2"></i>
@@ -158,6 +164,9 @@
                                 </a>
                             </li>
                         </ul>
+                    </li>
+                    <li id="region-profile">
+                        <div id="regionDD" style="padding-bottom:6px"></div>
                     </li>
                     <li onclick="cowu.loadAlertsPopup();">
                         <a href="javascript:void(0);">

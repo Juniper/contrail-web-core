@@ -630,6 +630,12 @@ function clusterMasterInit (callback)
             checkAndDeleteRedisRDB(function() {
                 CB(null, null);
             });
+        },
+        function(CB) {
+            var regionJs = require('./src/tools/parseRegion');
+            regionJs.createRegionFile(function() {
+                CB(null, null);
+            });
         }
     ],
     function(error, results) {

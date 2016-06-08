@@ -385,6 +385,7 @@ var coreBundles = {
                 'slick.groupmetadata',
                 'select2',
                 'slick.grid'],
+        'jquery-dep-libs': ['contrail-elements'],
         'core-bundle'       : [
                 'controller-view-model',
                 'crossfilter',
@@ -829,6 +830,18 @@ function initCustomKOBindings(Knockout) {
     });
 };
 
+function changeRegion (e)
+{
+    var oldRegion = contrail.getCookie('region');
+    var region = e.added.text;
+    if ((null != region) && (oldRegion != region) &&
+        ('null' != region) && ('undefined' != region)) {
+        contrail.setCookie('region', region);
+        /* And issue logout request */
+        loadUtils.logout()
+    }
+}
+
 function initDomEvents() {
     $(document)
         .off('click', '.group-detail-advanced-action-item')
@@ -1013,6 +1026,28 @@ if (typeof document !== 'undefined' && document) {
                         }
                     });
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
+                    require(['select2', 'jquery', 'contrail-elements'], function() {
+                    var regionList =
+                        globalObj.webServerInfo.regionList;
+                    var cnt = 0;
+                    if (null != regionList) {
+                        cnt = regionList.length;
+                    }
+                    var ddRegionList = [];
+                    for (var i = 0; i < cnt; i++) {
+                        ddRegionList.push({id: regionList[i], text: regionList[i]});
+                    }
+                    var isServiceEndPointFromConfig =
+                        globalObj.webServerInfo.serviceEndPointFromConfig;
+                    if ((cnt > 0) && (false == isServiceEndPointFromConfig)) {
+                        $('#regionDD').contrailDropdown({dataTextField:"text",
+                                                        dataValueField:"id",
+                                                        width: '100px',
+                                                        change: changeRegion});
+                        $('#regionDD').data("contrailDropdown").setData(ddRegionList);
+                        $("#regionDD").data("contrailDropdown").value(contrail.getCookie('region'));
+                    }
+                    });
                     webServerInfoDefObj.resolve();
 
                     if (loadUtils.getCookie('username') != null) {
@@ -1029,8 +1064,32 @@ if (typeof document !== 'undefined' && document) {
                     });
                 });
             },
-            onAuthenticationReq: function() {
+            onAuthenticationReq: function(loadCfg) {
                 document.getElementById('signin-container').innerHTML = document.getElementById('signin-container-tmpl').innerHTML;
+                require(['jquery', 'select2', 'contrail-elements'], function() {
+                    var isRegionsFromConfig = false;
+                    if (null != loadCfg) {
+                        isRegionsFromConfig = loadCfg.isRegionListFromConfig;
+                        configRegionList = loadCfg.configRegionList;
+                    }
+                    var regionList = [];
+                    if (true == isRegionsFromConfig) {
+                        for (var key in configRegionList) {
+                            regionList.push({id: key, text: key});
+                        }
+                        $('#region_id_cont').show();
+                        $("#region_id").select2({placeholder: "Select the Region",
+                                                data: regionList,
+                                                width: "283px"})
+                        var cookieRegion = contrail.getCookie('region');
+                        if (regionList.length > 0) {
+                            if (null == cookieRegion) {
+                                cookieRegion = regionList[0]['key'];
+                            }
+                            $("#region_id").select2("val", cookieRegion);
+                        }
+                    }
+                });
                 var appContEl = document.getElementById('app-container');
                 if(appContEl.classList) {
                     appContEl.classList.add('hide');
@@ -1052,7 +1111,7 @@ if (typeof document !== 'undefined' && document) {
                     menuXMLLoadDefObj.resolve(menuXML);
                 }).fail(function(response) {
                     console.info(response);
-                    loadUtils.onAuthenticationReq();
+                    loadUtils.onAuthenticationReq(null);
                 });
             },
             isAuthenticated: function(successCB) {
@@ -1091,13 +1150,18 @@ if (typeof document !== 'undefined' && document) {
             authenticate: function() {
                 require(['jquery'],function() {
                     //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
+                    var postData = {
+                        username: $("[name='username']").val(),
+                        password: $("[name='password']").val()
+                    };
+                    var regionName = $("[name='regionname']").val();
+                    if ((null != regionName) && (regionName.length > 0)) {
+                        postData['regionname'] = regionName;
+                    }
                     $.ajax({
                         url: orchPrefix + '/authenticate',
                         type: "POST",
-                        data: JSON.stringify({
-                            username: $("[name='username']").val(),
-                            password: $("[name='password']").val()
-                        }),
+                        data: JSON.stringify(postData),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json"
                     }).done(function (response) {
@@ -1119,7 +1183,7 @@ if (typeof document !== 'undefined' && document) {
                     type: "GET",
                     dataType: "json"
                 }).done(function (response) {
-                    loadUtils.onAuthenticationReq();
+                    loadUtils.onAuthenticationReq(response);
                 });
             },
             parseWebServerInfo: function(webServerInfo) {

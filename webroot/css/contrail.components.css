@@ -320,7 +320,7 @@
 /* Contrail Accordion
  * Extends Jquery UI Accordion
  */
-.ui-accordion-header {
+.ui-state-default.ui-accordion-header {
     border-bottom: 1px solid #eee;
 }
 .ui-accordion-content.ui-widget-content {
