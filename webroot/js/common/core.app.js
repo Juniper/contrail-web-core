@@ -93,6 +93,10 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
             'text'                        : coreWebDir + '/assets/requirejs/text',
             'underscore'                  : coreWebDir + '/assets/underscore/underscore-min',
+            'json-editor'                 : coreWebDir + '/assets/jsoneditor/dist/jsoneditor.min',
+            'ajv'                         : coreWebDir + '/assets/ajv/ajv.min',
+            'server-schema'             : coreWebDir + '/schemas/server.schema',
+            'cluster-schema'             : coreWebDir + '/schemas/cluster.schema',
 
             'd3'                        : coreWebDir + '/assets/d3-v3.5.6/js/d3',
             'nv.d3'                     : coreWebDir + '/assets/nvd3-v1.8.1/js/nv.d3',
@@ -138,6 +142,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
             'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
             'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
+            'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
+            'json-model'                  : coreWebDir + "/js/models/JsonModel",
 
             // TODO: We need to discuss a criteria on which we should add definations to this file.
             'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
@@ -148,6 +154,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'mon-infra-sysinfo-view'      : coreWebDir + '/js/views/SystemInfoView',
             'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
             'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
+            'json-editor-view'              : coreWebDir + '/js/views/JsonEditorView',
 
             'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
             'chart-utils'                 : coreWebDir + "/js/common/chart.utils",
