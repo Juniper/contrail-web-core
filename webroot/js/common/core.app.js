@@ -180,8 +180,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
             'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
             'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
-            // 'graph-view'                  : coreWebDir + '/js/views/GraphView',
-            // 'contrail-graph-model'        : coreWebDir + '/js/models/ContrailGraphModel',
+            'graph-view'                  : coreWebDir + '/js/views/GraphView',
+            'contrail-graph-model'        : coreWebDir + '/js/models/ContrailGraphModel',
             'dagre'                       : coreWebDir + '/assets/joint/js/dagre',
             'geometry'                    : coreWebDir + '/assets/joint/js/geometry',
             'vectorizer'                  : coreWebDir + '/assets/joint/js/vectorizer',
@@ -376,23 +376,90 @@ var coreAppShim =  {
 
 var coreBundles = {
         //chart-libs,thirdparty-libs,contrail-core-views are loaded lazily
-        'chart-libs'        : ['d3','nv.d3'],
+        'chart-libs'        : [
+            'd3',
+            'nv.d3'
+        ],
         'thirdparty-libs'   : [
-                'slick.checkboxselectcolumn',
-                'slick.rowselectionmodel',
-                'slick.groupmetadata',
-                'select2',
-                'slick.grid'],
-        'jquery-dep-libs': ['contrail-elements'],
+            'slick.grid',
+            'slick.checkboxselectcolumn',
+            'slick.groupmetadata',
+            'slick.rowselectionmodel',
+            'slick.enhancementpager',
+            'jsbn-combined',
+            'sprintf',
+            'ipv6',
+            'xdate',
+            'knockback',
+            'validation',
+        ],
+        'jquery-dep-libs': [
+            'jquery.xml2json',
+            'jquery.ba-bbq',
+            'jquery.json',
+            'bootstrap',
+            'select2',
+            'slick.core',
+            'slick.dataview',
+            'jquery-ui',
+            'contrail-elements',
+            'jquery.timer',
+            'jquery.ui.touch-punch',
+            'jquery.validate',
+            'jquery.tristate',
+            'jquery.multiselect',
+            'jquery.multiselect.filter',
+            'jquery.steps.min',
+            'jquery.panzoom',
+            'jquery-contextmenu',
+            'jquery.event.drag',
+            'jquery.droppick',
+            'jquery.datetimepicker'
+        ],
         'core-bundle'       : [
-                'controller-view-model',
-                'crossfilter',
-                'backbone',
-                'knockout',
-                'validation',
-                'underscore',
-                // 'core-alarm-utils',
-                'lodash'],
+            'core-utils',
+            'core-constants',
+            'core-formatters',
+            'core-cache',
+            'core-labels',
+            'core-messages',
+            'core-views-default-config',
+            'chart-utils',
+            'text!core-basedir/templates/core.common.tmpl',
+            'contrail-remote-data-handler',
+            'cf-datasource',
+            'contrail-view',
+            'contrail-model',
+            'contrail-view-model',
+            'contrail-list-model',
+            'lodash',
+            'crossfilter',
+            'backbone',
+            'text',
+            'knockout',
+            'moment',
+            'layout-handler',
+            'menu-handler',
+            'content-handler',
+            'validation',
+            'core-basedir/js/views/BarChartInfoView',
+            'core-basedir/js/views/BreadcrumbDropdownView',
+            'core-basedir/js/views/BreadcrumbTextView',
+            'core-basedir/js/views/ChartView',
+            'core-basedir/js/views/ControlPanelView',
+            'core-basedir/js/views/InfoboxesView',
+            'core-basedir/js/views/SectionView',
+            'core-basedir/js/views/WidgetView',
+            'core-basedir/js/views/ZoomScatterChartView',
+            //Dashboard
+            'mon-infra-node-list-model',
+            'mon-infra-log-list-model',    
+            'mon-infra-alert-list-view',   
+            'mon-infra-alert-grid-view',   
+            'mon-infra-log-list-view',     
+            'mon-infra-sysinfo-view',      
+            'mon-infra-dashboard-view'   
+        ],
         'contrail-core-views': [
             'core-basedir/js/views/GridView',
             'core-basedir/js/views/AccordianView',
@@ -432,21 +499,8 @@ var coreBundles = {
             'core-basedir/js/views/QueryWhereView',
             'core-basedir/js/views/SparklineView',
             'core-basedir/js/views/TabsView',
-            'core-basedir/js/views/WizardView'],
-        'jquery-dep-libs'      : [
-                'jquery-ui',
-                'jquery.timer',
-                'jquery.ui.touch-punch',
-                'jquery.validate',
-                'jquery.tristate',
-                'jquery.multiselect',
-                'jquery.multiselect.filter',
-                'jquery.steps.min',
-                'jquery.panzoom',
-                'jquery-contextmenu',
-                'jquery.event.drag',
-                'jquery.droppick',
-                'jquery.datetimepicker']
+            'core-basedir/js/views/WizardView'
+        ]
     };
 
 
@@ -1241,8 +1295,7 @@ if (typeof document !== 'undefined' && document) {
                     window.kbValidation = validation;
                     // window.ko = ko;
                 });
-                require(['core-utils'],function(
-                    CoreUtils,CoreConstants,CoreFormatters,CoreLabels,CoreMessages,Cache,CoreViewsDefaultConfig,ChartUtils) {
+                require(['core-utils'],function(CoreUtils) {
                     cowu = new CoreUtils();
                     require(['underscore'],function(_) {
                         _.noConflict();
