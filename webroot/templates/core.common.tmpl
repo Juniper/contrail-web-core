@@ -860,6 +860,19 @@
     <form name="{{prefixId}}Form" id="{{prefixId}}-form" onsubmit="return false;" class=""></form>
 </script>
 
+<script type="text/x-handlebars-template" id="core-edit-json-template">
+    <div class="alert alert-error" style="display:none;" data-bind="visible: errors().{{prefixId}}_form_error">
+        <strong>Error: </strong>
+        <span data-bind="text: errors().{{prefixId}}_form_error"></span>
+    </div>
+    <form name="{{prefixId}}Form" id="{{prefixId}}-form" onsubmit="return false;" class="">
+</script>
+
+<script type="text/x-handlebars-template" id="core-json-editor-view-template">
+    <!--<div id="tree-editor" class="" style="width: 400px; height: 400px;"></div>-->
+    <div id="json-editor" class="" style="width: 950px; height: 400px;"></div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-generic-edit-form-template">
     <div class="alert alert-error" style="display:none;" data-bind="visible: errors().{{prefixId}}_form_error">
         <strong>Error: </strong>
