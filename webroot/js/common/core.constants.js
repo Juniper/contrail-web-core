@@ -49,6 +49,10 @@ define([
         this.KEY_TYPE = 'type';
         this.KEY_UI_ADDED_PARAMS = 'ui_added_parameters';
 
+        this.TYPE_NUMBER = 'number';
+        this.TYPE_INTEGER = 'integer';
+        this.TYPE_BOOLEAN = 'boolean';
+
         this.KEY_VALIDATION = 'validation';
         this.OBJECT_TYPE_COLLECTION = 'collection';
         this.OBJECT_TYPE_MODEL = 'model';
