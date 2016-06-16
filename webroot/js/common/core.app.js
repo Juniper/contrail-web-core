@@ -956,6 +956,7 @@ if (typeof document !== 'undefined' && document) {
         smBaseDir = defaultBaseDir, strgBaseDir = defaultBaseDir,
         pkgBaseDir = defaultBaseDir;
 
+    var webServerInfoDefObj;
     requirejs.config({
         bundles:bundles,
         baseUrl: coreBaseDir,
@@ -977,26 +978,29 @@ if (typeof document !== 'undefined' && document) {
         
         for (var key in featurePackages) {
             if(globalObj['initFeatureAppDefObjMap'][key] == null) {
-                globalObj['initFeatureAppDefObjMap'][key] = $.Deferred();
-                featureAppDefObjList.push(globalObj['initFeatureAppDefObjMap'][key]);
+                if(featurePackages[key] && 
+                        [FEATURE_PCK_WEB_CONTROLLER,FEATURE_PCK_WEB_SERVER_MANAGER,FEATURE_PCK_WEB_STORAGE].indexOf(key) > -1) {
+                    globalObj['initFeatureAppDefObjMap'][key] = $.Deferred();
+                    featureAppDefObjList.push(globalObj['initFeatureAppDefObjMap'][key]);
+                }
             }
             if(featurePackages[key] && key == FEATURE_PCK_WEB_CONTROLLER) {
-                url = ctBaseDir + '/common/ui/js/controller.app.js';
-                if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                    loadUtils.getScript(url);
+                var ctrlUrl = ctBaseDir + '/common/ui/js/controller.app.js';
+                if(globalObj['loadedScripts'].indexOf(ctrlUrl) == -1) {
+                    loadUtils.getScript(ctrlUrl);
                 }
             } else if (featurePackages[key] && key == FEATURE_PCK_WEB_SERVER_MANAGER) {
-                url = smBaseDir + '/common/ui/js/sm.app.js';
-                if(globalObj['loadedScripts'].indexOf(url) == -1) {
+                var smUrl = smBaseDir + '/common/ui/js/sm.app.js';
+                if(globalObj['loadedScripts'].indexOf(smUrl) == -1) {
                     //Post-Authentication
                     webServerInfoDefObj.done(function() {
-                        loadUtils.getScript(url);
+                        loadUtils.getScript(smUrl);
                     });
                 }
             }  else if (featurePackages[key] && key == FEATURE_PCK_WEB_STORAGE) {
-                url = strgBaseDir + '/common/ui/js/storage.app.js';
-                if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                    loadUtils.getScript(url);
+                var strgUrl = strgBaseDir + '/common/ui/js/storage.app.js';
+                if(globalObj['loadedScripts'].indexOf(strgUrl) == -1) {
+                    loadUtils.getScript(strgUrl);
                 }
             }
         }
@@ -1169,6 +1173,8 @@ if (typeof document !== 'undefined' && document) {
                     require(['jquery'],function() {
                         if(globalObj['featureAppDefObj'] == null)
                             globalObj['featureAppDefObj'] = $.Deferred();
+                        if(webServerInfoDefObj == null) 
+                            webServerInfoDefObj = $.Deferred();
                         loadFeatureApps(featurePkgs);
                     });
                 });
@@ -1253,7 +1259,8 @@ if (typeof document !== 'undefined' && document) {
         require(['jquery'],function() {
             menuXMLLoadDefObj = $.Deferred();
             layoutHandlerLoadDefObj = $.Deferred();
-            webServerInfoDefObj = $.Deferred();
+            if(webServerInfoDefObj == null) 
+                webServerInfoDefObj = $.Deferred();
             $.ajaxSetup({
                 cache: false,
                 crossDomain: true,
