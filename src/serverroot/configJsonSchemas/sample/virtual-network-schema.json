@@ -1,0 +1,317 @@
+{
+    "type": "object", 
+    "properties": {
+        "virtual-network": {
+            "type": "object", 
+            "properties": {
+                "virtual_network_properties": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "forwarding_mode": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Packet forwarding mode for this virtual network"
+                        }, 
+                        "allow_transit": {
+                            "required": "optional", 
+                            "type": "boolean"
+                        }, 
+                        "network_id": {
+                            "required": "system-only", 
+                            "type": "number", 
+                            "description": "Not currently in used"
+                        }, 
+                        "mirror_destination": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "Flag to mark the virtual network as mirror destination network"
+                        }, 
+                        "vxlan_network_identifier": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "VxLAN VNI value for this network"
+                        }, 
+                        "rpf": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Flag used to diable Reverse Path Forwarding(RPF) check for this network"
+                        }
+                    }, 
+                    "description": "Virtual network miscelenious configurations."
+                }, 
+                "ecmp_hashing_include_fields": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "destination_ip": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use destination ip in the ECMP hash calculation"
+                        }, 
+                        "ip_protocol": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use ip protocol in the ECMP hash calculation"
+                        }, 
+                        "source_ip": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use source ip in the ECMP hash calculation"
+                        }, 
+                        "hashing_configured": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When True, Packet header fields used in calculating ECMP hash is decided by following flags"
+                        }, 
+                        "source_port": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use source port in the ECMP hash calculation"
+                        }, 
+                        "destination_port": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use destination port in the ECMP hash calculation"
+                        }
+                    }, 
+                    "description": "ECMP hashing config at global level."
+                }, 
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "virtual_network_network_id": {
+                    "required": "system-only", 
+                    "type": "number", 
+                    "description": "System assigned unique 32 bit ID for every virtual network."
+                }, 
+                "address_allocation_mode": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Address allocation mode for virtual network.", 
+                    "enum": [
+                        "user-defined-subnet-preferred", 
+                        "user-defined-subnet-only", 
+                        "flat-subnet-preferred", 
+                        "flat-subnet-only"
+                    ]
+                }, 
+                "network_policy_refs": {
+                    "url": "/network-policys", 
+                    "type": "array"
+                }, 
+                "router_external": {
+                    "required": "optional", 
+                    "type": "boolean", 
+                    "description": "When true, this virtual network is openstack router external network."
+                }, 
+                "import_route_target_list": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "route_target": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "List of route targets that are used as export for this virtual network."
+                }, 
+                "qos_config_refs": {
+                    "url": "/qos-configs", 
+                    "type": "array"
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "project"
+                    ]
+                }, 
+                "provider_properties": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "segmentation_id": {
+                            "type": "number"
+                        }, 
+                        "physical_network": {
+                            "type": "string"
+                        }
+                    }, 
+                    "description": "Virtual network is provider network. Specifies VLAN tag and physical network name."
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }, 
+                "route_target_list": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "route_target": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "List of route targets that are used as export for this virtual network."
+                }, 
+                "route_table_refs": {
+                    "url": "/route-tables", 
+                    "type": "array"
+                }, 
+                "export_route_target_list": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "route_target": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "List of route targets that are used as export for this virtual network."
+                }, 
+                "flood_unknown_unicast": {
+                    "required": "optional", 
+                    "type": "boolean", 
+                    "description": "When true, packets with unknown unicast MAC addres are flooded within the network. Default they are dropped."
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "external_ipam": {
+                    "required": "optional", 
+                    "type": "boolean", 
+                    "description": "IP address assignment to VM is done statically, outside of (external to) Contrail Ipam. vCenter only feature."
+                }, 
+                "network_ipam_refs": {
+                    "url": "/network-ipams", 
+                    "type": "array"
+                }, 
+                "multi_policy_service_chains_enabled": {
+                    "required": "optional", 
+                    "type": "boolean"
+                }, 
+                "is_shared": {
+                    "required": "optional", 
+                    "type": "boolean", 
+                    "description": "When true, this virtual network is shared with all tenants."
+                }
+            }
+        }
+    }
+}

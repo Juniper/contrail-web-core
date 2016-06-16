@@ -1,0 +1,249 @@
+{
+    "type": "object", 
+    "properties": {
+        "bgp-router": {
+            "type": "object", 
+            "properties": {
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "routing-instance"
+                    ]
+                }, 
+                "bgp_router_parameters": {
+                    "required": "required", 
+                    "type": "object", 
+                    "properties": {
+                        "gateway_address": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "gateway-address field is used only for router-type bgpaas-client. It holds the ipv4 gateway address for the ipv4 subnet from which the client has IP address. The value is used as nexthop when advertising routes to the client via bgp."
+                        }, 
+                        "vendor": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Vendor name for this BGP router, contrail, juniper or cisco etc."
+                        }, 
+                        "admin_down": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "Administratively up or down."
+                        }, 
+                        "ipv6_gateway_address": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "The ipv6-gateway-addreess field is used only for router-type bgpaas-client. It holds ipv6 gateway address for ipv6 subnet from which the client has IP address. The value is used as nexthop when advertising routes to the client via bgp.  Note that the ipv6-gateway-address can be a regular ipv6 address or a ipv4-mapped-ipv6 adddress."
+                        }, 
+                        "local_autonomous_system": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Only for contrail control nodes, Autonomus System number if different then global AS number. Used when clusters of control nodes in same contrail system are in differnt locations. Currently only 16 bit AS number is supported."
+                        }, 
+                        "autonomous_system": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Autonomus System number for this BGP router. Currently only 16 bit AS number is supported. For contrail control nodes this has to be equal to global AS number."
+                        }, 
+                        "auth_data": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "key_type": {
+                                    "required": "true", 
+                                    "type": "string", 
+                                    "description": "Authentication type for this session. Currently only MD5 is supported."
+                                }, 
+                                "key_items": {
+                                    "items": {
+                                        "type": "object", 
+                                        "properties": {
+                                            "key_id": {
+                                                "type": "number"
+                                            }, 
+                                            "key": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }, 
+                                    "required": "true", 
+                                    "type": "array", 
+                                    "description": "Upto two keys can be specified. Currently only one key is supported."
+                                }
+                            }, 
+                            "description": "Authentication related configuration like type, keys etc."
+                        }, 
+                        "address": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Ip addres used to reach this BGP router by the system."
+                        }, 
+                        "source_port": {
+                            "required": "system-only", 
+                            "type": "number", 
+                            "description": "For system internal use in BGPaaS service."
+                        }, 
+                        "router_type": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "BGP router type."
+                        }, 
+                        "identifier": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Router ID for this BGP router. Dotted ip notation. For contrail control-nodes System will automatically assign value of address field."
+                        }, 
+                        "hold_time": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "BGP hold time in seconds [0-65535], Max time to detect liveliness to peer. Value 0 will result in default value of 90 seconds"
+                        }, 
+                        "port": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "TCP port number on which BGP protocol connections are accepted. default is based on standareds."
+                        }, 
+                        "address_families": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "family": {
+                                    "items": {
+                                        "type": "string"
+                                    }, 
+                                    "type": "array", 
+                                    "description": "BGP address families supported by contrail."
+                                }
+                            }, 
+                            "description": "BGP address families supported by BGP router"
+                        }
+                    }, 
+                    "description": "BGP router configuration parameters like ip address, AS number, hold time etc."
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "bgp_router_refs": {
+                    "url": "/bgp-routers", 
+                    "type": "array"
+                }
+            }
+        }
+    }
+}
