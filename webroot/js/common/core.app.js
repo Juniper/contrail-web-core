@@ -978,43 +978,33 @@ if (typeof document !== 'undefined' && document) {
             initAppDefObj, url;
         
         for (var key in featurePackages) {
+            if(globalObj['initFeatureAppDefObjMap'][key] == null) {
+                globalObj['initFeatureAppDefObjMap'][key] = $.Deferred();
+                featureAppDefObjList.push(globalObj['initFeatureAppDefObjMap'][key]);
+            }
             if(featurePackages[key] && key == FEATURE_PCK_WEB_CONTROLLER) {
                 url = ctBaseDir + '/common/ui/js/controller.app.js';
                 if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                    initAppDefObj = $.Deferred();
-                    featureAppDefObjList.push(initAppDefObj);
-                    globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
-                    featureAppDefObjList.push(loadUtils.getScript(url));
+                    loadUtils.getScript(url);
                 }
             } else if (featurePackages[key] && key == FEATURE_PCK_WEB_SERVER_MANAGER) {
                 url = smBaseDir + '/common/ui/js/sm.app.js';
                 if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                    initAppDefObj = $.Deferred();
-                    featureAppDefObjList.push(initAppDefObj);
-                    globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
-                    featureAppDefObjList.push(loadUtils.getScript(url));
+                    //Post-Authentication
+                    webServerInfoDefObj.done(function() {
+                        loadUtils.getScript(url);
+                    });
                 }
             }  else if (featurePackages[key] && key == FEATURE_PCK_WEB_STORAGE) {
                 url = strgBaseDir + '/common/ui/js/storage.app.js';
                 if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                    initAppDefObj = $.Deferred();
-                    featureAppDefObjList.push(initAppDefObj);
-                    globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
-                    featureAppDefObjList.push(loadUtils.getScript(url));
+                    loadUtils.getScript(url);
                 }
             }
         }
 
-        //Where isInitFeatureAppInProgress used
-        if(featureAppDefObjList.length > 0) {
-            globalObj['isInitFeatureAppInProgress'] = true;
-        }
-
         $.when.apply(window, featureAppDefObjList).done(function () {
-            globalObj['isInitFeatureAppInProgress'] = false;
-            globalObj['isInitFeatureAppComplete'] = true;
             globalObj['featureAppDefObj'].resolve();
-            // self.featureAppDefObj.resolve();
         });
     };
 
@@ -1083,6 +1073,8 @@ if (typeof document !== 'undefined' && document) {
                         }
                     });
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
+
+                    //For Region drop-down
                     require(['jquery', 'jquery-dep-libs'], function() {
                         var regionList =
                             globalObj.webServerInfo.regionList;
@@ -1153,9 +1145,6 @@ if (typeof document !== 'undefined' && document) {
                 } else {
                     appContEl.className += ' ' + className;
                 }
-                // $('#signin-container').html($('#signin-container-tmpl').text());
-                // $('#app-container').addClass('hide');
-                // $('#app-container').empty();
                 loadUtils.bindSignInListeners();
             },
             fetchMenu: function(menuXMLLoadDefObj) {
