@@ -1,0 +1,127 @@
+{
+    "type": "object",
+    "properties": {"instance-ip": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:InstanceIp",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 328,
+                "type": "object"
+            },
+            "virtual_network": {
+                "propertyOrder": 329,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "address": {
+                "propertyOrder": 330,
+                "type": "string"
+            },
+            "subnet_uuid": {
+                "propertyOrder": 331,
+                "type": "string"
+            },
+            "object_type": {
+                "propertyOrder": 332,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 333,
+                "type": "string"
+            },
+            "secondary_ip_tracking_ip": {
+                "propertyOrder": 334,
+                "type": "object"
+            },
+            "virtual_machine_interface": {
+                "propertyOrder": 335,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 336,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 337,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 338,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 339,
+                "type": "string"
+            },
+            "mode": {
+                "propertyOrder": 340,
+                "type": "string"
+            },
+            "secondary": {
+                "propertyOrder": 341,
+                "type": "boolean"
+            },
+            "physical_router": {
+                "propertyOrder": 342,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "service_health_check_ip": {
+                "propertyOrder": 343,
+                "type": "boolean"
+            },
+            "parent_uuid": {
+                "propertyOrder": 344,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 345,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "service_instance_back_refs": {
+                "propertyOrder": 346,
+                "type": "array",
+                "items": {
+                    "id": "urn:jsonschema:net:juniper:contrail:api:ObjectReference<net:juniper:contrail:api:types:ServiceInterfaceTag>",
+                    "type": "object",
+                    "properties": {
+                        "referred_name": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "href": {"type": "string"},
+                        "attr": {
+                            "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceInterfaceTag",
+                            "type": "object",
+                            "properties": {"interface_type": {"type": "string"}}
+                        },
+                        "uuid": {"type": "string"}
+                    }
+                }
+            },
+            "service_instance_ip": {
+                "propertyOrder": 347,
+                "type": "boolean"
+            },
+            "name": {
+                "propertyOrder": 348,
+                "type": "string"
+            },
+            "family": {
+                "propertyOrder": 349,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 350,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 351,
+                "type": "object"
+            }
+        }
+    }}
+}

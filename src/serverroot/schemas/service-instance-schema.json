@@ -1,0 +1,170 @@
+{
+    "type": "object",
+    "properties": {"service-instance": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceInstance",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 798,
+                "type": "object"
+            },
+            "interface_route_table_back_refs": {
+                "propertyOrder": 799,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "port_tuples": {
+                "propertyOrder": 800,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "bindings": {
+                "propertyOrder": 801,
+                "type": "object"
+            },
+            "default_parent_type": {
+                "propertyOrder": 802,
+                "type": "string"
+            },
+            "service_health_check_back_refs": {
+                "propertyOrder": 803,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "route_aggregate_back_refs": {
+                "propertyOrder": 804,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "type": {
+                "propertyOrder": 805,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 806,
+                "type": "string"
+            },
+            "loadbalancer_pool_back_refs": {
+                "propertyOrder": 807,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "logical_router_back_refs": {
+                "propertyOrder": 808,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "id_perms": {
+                "propertyOrder": 809,
+                "type": "object"
+            },
+            "service_template": {
+                "propertyOrder": 810,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "object_type": {
+                "propertyOrder": 811,
+                "type": "string"
+            },
+            "instance_ip": {
+                "propertyOrder": 812,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 813,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 814,
+                "type": "object"
+            },
+            "loadbalancer_back_refs": {
+                "propertyOrder": 815,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "virtual_machine_back_refs": {
+                "propertyOrder": 816,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "routing_policy_back_refs": {
+                "propertyOrder": 817,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "parent_uuid": {
+                "propertyOrder": 818,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 819,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 820,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 821,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "properties": {
+                "propertyOrder": 822,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceInstanceType",
+                "type": "object",
+                "properties": {
+                    "right_ip_address": {"type": "string"},
+                    "availability_zone": {"type": "string"},
+                    "right_virtual_network": {"type": "string"},
+                    "virtual_router_id": {"type": "string"},
+                    "ha_mode": {"type": "string"},
+                    "management_virtual_network": {"type": "string"},
+                    "left_virtual_network": {"type": "string"},
+                    "auto_policy": {"type": "boolean"},
+                    "interface_list": {
+                        "type": "array",
+                        "items": {
+                            "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceInstanceType:ServiceInstanceInterfaceType",
+                            "type": "object",
+                            "properties": {
+                                "static_routes": {"type": "object"},
+                                "virtual_network": {"type": "string"},
+                                "allowed_address_pairs": {
+                                    "id": "urn:jsonschema:net:juniper:contrail:api:types:AllowedAddressPairs",
+                                    "type": "object",
+                                    "properties": {"allowed_address_pair": {
+                                        "type": "array",
+                                        "items": {
+                                            "id": "urn:jsonschema:net:juniper:contrail:api:types:AllowedAddressPairs:AllowedAddressPair",
+                                            "type": "object",
+                                            "properties": {
+                                                "address_mode": {"type": "string"},
+                                                "ip": {"type": "object"},
+                                                "mac": {"type": "string"}
+                                            }
+                                        }
+                                    }}
+                                },
+                                "ip_address": {"type": "string"}
+                            }
+                        }
+                    },
+                    "left_ip_address": {"type": "string"},
+                    "scale_out": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceInstanceType:ServiceScaleOutType",
+                        "type": "object",
+                        "properties": {
+                            "max_instances": {"type": "integer"},
+                            "auto_scale": {"type": "boolean"}
+                        }
+                    }
+                }
+            }
+        }
+    }}
+}

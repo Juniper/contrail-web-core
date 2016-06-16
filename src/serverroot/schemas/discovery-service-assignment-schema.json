@@ -1,0 +1,64 @@
+{
+    "type": "object",
+    "properties": {"discovery-service-assignment": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:DiscoveryServiceAssignment",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 170,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 171,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 172,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 173,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 174,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 175,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 176,
+                "type": "string"
+            },
+            "dsa_rules": {
+                "propertyOrder": 177,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "parent_uuid": {
+                "propertyOrder": 178,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 179,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 180,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 181,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 182,
+                "type": "object"
+            }
+        }
+    }}
+}

@@ -1,0 +1,198 @@
+{
+    "type": "object",
+    "properties": {"network-policy": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:NetworkPolicy",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 509,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 510,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 511,
+                "type": "string"
+            },
+            "virtual_network_back_refs": {
+                "propertyOrder": 512,
+                "type": "array",
+                "items": {
+                    "id": "urn:jsonschema:net:juniper:contrail:api:ObjectReference<net:juniper:contrail:api:types:VirtualNetworkPolicyType>",
+                    "type": "object",
+                    "properties": {
+                        "referred_name": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "href": {"type": "string"},
+                        "attr": {
+                            "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualNetworkPolicyType",
+                            "type": "object",
+                            "properties": {
+                                "sequence": {
+                                    "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualNetworkPolicyType:SequenceType",
+                                    "type": "object",
+                                    "properties": {
+                                        "major": {"type": "integer"},
+                                        "minor": {"type": "integer"}
+                                    }
+                                },
+                                "timer": {
+                                    "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualNetworkPolicyType:TimerType",
+                                    "type": "object",
+                                    "properties": {
+                                        "start_time": {
+                                            "format": "utc-millisec",
+                                            "type": "integer"
+                                        },
+                                        "end_time": {
+                                            "format": "utc-millisec",
+                                            "type": "integer"
+                                        },
+                                        "on_interval": {"type": "integer"},
+                                        "off_interval": {"type": "integer"}
+                                    }
+                                }
+                            }
+                        },
+                        "uuid": {"type": "string"}
+                    }
+                }
+            },
+            "display_name": {
+                "propertyOrder": 513,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 514,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 515,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 516,
+                "type": "string"
+            },
+            "entries": {
+                "propertyOrder": 517,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:PolicyEntriesType",
+                "type": "object",
+                "properties": {"policy_rule": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:PolicyEntriesType:PolicyRuleType",
+                        "type": "object",
+                        "properties": {
+                            "src_ports": {
+                                "type": "array",
+                                "items": {
+                                    "id": "urn:jsonschema:net:juniper:contrail:api:types:PolicyEntriesType:PolicyRuleType:PortType",
+                                    "type": "object",
+                                    "properties": {
+                                        "start_port": {"type": "integer"},
+                                        "end_port": {"type": "integer"}
+                                    }
+                                }
+                            },
+                            "rule_sequence": {
+                                "id": "urn:jsonschema:net:juniper:contrail:api:types:PolicyEntriesType:PolicyRuleType:SequenceType",
+                                "type": "object",
+                                "properties": {
+                                    "major": {"type": "integer"},
+                                    "minor": {"type": "integer"}
+                                }
+                            },
+                            "rule_uuid": {"type": "string"},
+                            "protocol": {"type": "string"},
+                            "application": {
+                                "type": "array",
+                                "items": {"type": "string"}
+                            },
+                            "action_list": {
+                                "id": "urn:jsonschema:net:juniper:contrail:api:types:PolicyEntriesType:PolicyRuleType:ActionListType",
+                                "type": "object",
+                                "properties": {
+                                    "log": {"type": "boolean"},
+                                    "alert": {"type": "boolean"},
+                                    "mirror_to": {
+                                        "id": "urn:jsonschema:net:juniper:contrail:api:types:PolicyEntriesType:PolicyRuleType:ActionListType:MirrorActionType",
+                                        "type": "object",
+                                        "properties": {
+                                            "encapsulation": {"type": "string"},
+                                            "routing_instance": {"type": "string"},
+                                            "analyzer_name": {"type": "string"},
+                                            "udp_port": {"type": "integer"},
+                                            "analyzer_ip_address": {"type": "string"}
+                                        }
+                                    },
+                                    "assign_routing_instance": {"type": "string"},
+                                    "apply_service": {
+                                        "type": "array",
+                                        "items": {"type": "string"}
+                                    },
+                                    "simple_action": {"type": "string"},
+                                    "qos_action": {"type": "string"},
+                                    "gateway_name": {"type": "string"}
+                                }
+                            },
+                            "ethertype": {"type": "string"},
+                            "dst_addresses": {
+                                "type": "array",
+                                "items": {"type": "object"}
+                            },
+                            "dst_ports": {
+                                "type": "array",
+                                "items": {"type": "object"}
+                            },
+                            "src_addresses": {
+                                "type": "array",
+                                "items": {
+                                    "id": "urn:jsonschema:net:juniper:contrail:api:types:PolicyEntriesType:PolicyRuleType:AddressType",
+                                    "type": "object",
+                                    "properties": {
+                                        "subnet": {"type": "object"},
+                                        "virtual_network": {"type": "string"},
+                                        "subnet_list": {
+                                            "type": "array",
+                                            "items": {"type": "object"}
+                                        },
+                                        "security_group": {"type": "string"},
+                                        "network_policy": {"type": "string"}
+                                    }
+                                }
+                            },
+                            "direction": {"type": "string"}
+                        }
+                    }
+                }}
+            },
+            "parent_uuid": {
+                "propertyOrder": 518,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 519,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 520,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 521,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 522,
+                "type": "object"
+            }
+        }
+    }}
+}

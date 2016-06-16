@@ -1,0 +1,85 @@
+{
+    "type": "object",
+    "properties": {"service-health-check": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceHealthCheck",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 783,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 784,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 785,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 786,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 787,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 788,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 789,
+                "type": "string"
+            },
+            "virtual_machine_interface_back_refs": {
+                "propertyOrder": 790,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "parent_uuid": {
+                "propertyOrder": 791,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 792,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 793,
+                "type": "string"
+            },
+            "service_instance": {
+                "propertyOrder": 794,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 795,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "properties": {
+                "propertyOrder": 796,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceHealthCheckType",
+                "type": "object",
+                "properties": {
+                    "health_check_type": {"type": "string"},
+                    "delay": {"type": "integer"},
+                    "http_method": {"type": "string"},
+                    "max_retries": {"type": "integer"},
+                    "monitor_type": {"type": "string"},
+                    "enabled": {"type": "boolean"},
+                    "timeout": {"type": "integer"},
+                    "expected_codes": {"type": "string"},
+                    "url_path": {"type": "string"}
+                }
+            },
+            "id_perms": {
+                "propertyOrder": 797,
+                "type": "object"
+            }
+        }
+    }}
+}

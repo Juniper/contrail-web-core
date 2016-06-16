@@ -1,0 +1,64 @@
+{
+    "type": "object",
+    "properties": {"port-tuple": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:PortTuple",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 566,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 567,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 568,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 569,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 570,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 571,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 572,
+                "type": "string"
+            },
+            "virtual_machine_interface_back_refs": {
+                "propertyOrder": 573,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "parent_uuid": {
+                "propertyOrder": 574,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 575,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 576,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 577,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 578,
+                "type": "object"
+            }
+        }
+    }}
+}

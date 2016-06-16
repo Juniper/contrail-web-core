@@ -1,0 +1,79 @@
+{
+    "type": "object",
+    "properties": {"loadbalancer-healthmonitor": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:LoadbalancerHealthmonitor",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 384,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 385,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 386,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 387,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 388,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 389,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 390,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 391,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 392,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "loadbalancer_pool_back_refs": {
+                "propertyOrder": 393,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "name": {
+                "propertyOrder": 394,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 395,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "properties": {
+                "propertyOrder": 396,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:LoadbalancerHealthmonitorType",
+                "type": "object",
+                "properties": {
+                    "delay": {"type": "integer"},
+                    "http_method": {"type": "string"},
+                    "max_retries": {"type": "integer"},
+                    "admin_state": {"type": "boolean"},
+                    "monitor_type": {"type": "string"},
+                    "timeout": {"type": "integer"},
+                    "expected_codes": {"type": "string"},
+                    "url_path": {"type": "string"}
+                }
+            },
+            "id_perms": {
+                "propertyOrder": 397,
+                "type": "object"
+            }
+        }
+    }}
+}

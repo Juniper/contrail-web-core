@@ -1,0 +1,80 @@
+{
+    "type": "object",
+    "properties": {"dsa-rule": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:DsaRule",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 201,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 202,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 203,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 204,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 205,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 206,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 207,
+                "type": "string"
+            },
+            "entry": {
+                "propertyOrder": 208,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:DiscoveryServiceAssignmentType",
+                "type": "object",
+                "properties": {
+                    "subscriber": {
+                        "type": "array",
+                        "items": {"type": "object"}
+                    },
+                    "publisher": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:DiscoveryServiceAssignmentType:DiscoveryPubSubEndPointType",
+                        "type": "object",
+                        "properties": {
+                            "ep_version": {"type": "string"},
+                            "ep_type": {"type": "string"},
+                            "ep_id": {"type": "string"},
+                            "ep_prefix": {"type": "object"}
+                        }
+                    }
+                }
+            },
+            "parent_uuid": {
+                "propertyOrder": 209,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 210,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 211,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 212,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 213,
+                "type": "object"
+            }
+        }
+    }}
+}

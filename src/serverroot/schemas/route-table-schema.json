@@ -1,0 +1,73 @@
+{
+    "type": "object",
+    "properties": {"route-table": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:RouteTable",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 678,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 679,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 680,
+                "type": "string"
+            },
+            "virtual_network_back_refs": {
+                "propertyOrder": 681,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 682,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 683,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 684,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 685,
+                "type": "string"
+            },
+            "routes": {
+                "propertyOrder": 686,
+                "type": "object"
+            },
+            "parent_uuid": {
+                "propertyOrder": 687,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 688,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 689,
+                "type": "string"
+            },
+            "logical_router_back_refs": {
+                "propertyOrder": 690,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 691,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 692,
+                "type": "object"
+            }
+        }
+    }}
+}

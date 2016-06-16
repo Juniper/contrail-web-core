@@ -1,0 +1,100 @@
+{
+    "type": "object",
+    "properties": {"physical-interface": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:PhysicalInterface",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 523,
+                "type": "object"
+            },
+            "logical_interfaces": {
+                "propertyOrder": 524,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "object_type": {
+                "propertyOrder": 525,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 526,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 527,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 528,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 529,
+                "type": "string"
+            },
+            "physical_interface": {
+                "propertyOrder": 530,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "uuid": {
+                "propertyOrder": 531,
+                "type": "string"
+            },
+            "virtual_machine_interface_back_refs": {
+                "propertyOrder": 532,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "service_appliance_back_refs": {
+                "propertyOrder": 533,
+                "type": "array",
+                "items": {
+                    "id": "urn:jsonschema:net:juniper:contrail:api:ObjectReference<net:juniper:contrail:api:types:ServiceApplianceInterfaceType>",
+                    "type": "object",
+                    "properties": {
+                        "referred_name": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "href": {"type": "string"},
+                        "attr": {
+                            "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceApplianceInterfaceType",
+                            "type": "object",
+                            "properties": {"interface_type": {"type": "string"}}
+                        },
+                        "uuid": {"type": "string"}
+                    }
+                }
+            },
+            "parent_uuid": {
+                "propertyOrder": 534,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 535,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 536,
+                "type": "string"
+            },
+            "physical_interface_back_refs": {
+                "propertyOrder": 537,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 538,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 539,
+                "type": "object"
+            }
+        }
+    }}
+}

@@ -1,0 +1,211 @@
+{
+    "type": "object",
+    "properties": {"access-control-list": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:AccessControlList",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 0,
+                "id": "urn:jsonschema:net:juniper:contrail:api:ApiObjectBase",
+                "type": "object",
+                "properties": {
+                    "parent": {"type": "object"},
+                    "parent_uuid": {"type": "string"},
+                    "qualified_name": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    },
+                    "default_parent_type": {"type": "string"},
+                    "name": {"type": "string"},
+                    "type": {"type": "string"},
+                    "uuid": {"type": "string"},
+                    "default_parent": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    }
+                }
+            },
+            "object_type": {
+                "propertyOrder": 1,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 2,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 3,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 4,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:PermType2",
+                "type": "object",
+                "properties": {
+                    "owner": {"type": "string"},
+                    "owner_access": {"type": "integer"},
+                    "global_access": {"type": "integer"},
+                    "share": {
+                        "type": "array",
+                        "items": {
+                            "id": "urn:jsonschema:net:juniper:contrail:api:types:PermType2:ShareType",
+                            "type": "object",
+                            "properties": {
+                                "tenant_access": {"type": "integer"},
+                                "tenant": {"type": "string"}
+                            }
+                        }
+                    }
+                }
+            },
+            "type": {
+                "propertyOrder": 5,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 6,
+                "type": "string"
+            },
+            "entries": {
+                "propertyOrder": 7,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:AclEntriesType",
+                "type": "object",
+                "properties": {
+                    "acl_rule": {
+                        "type": "array",
+                        "items": {
+                            "id": "urn:jsonschema:net:juniper:contrail:api:types:AclEntriesType:AclRuleType",
+                            "type": "object",
+                            "properties": {
+                                "rule_uuid": {"type": "string"},
+                                "action_list": {
+                                    "id": "urn:jsonschema:net:juniper:contrail:api:types:AclEntriesType:AclRuleType:ActionListType",
+                                    "type": "object",
+                                    "properties": {
+                                        "log": {"type": "boolean"},
+                                        "alert": {"type": "boolean"},
+                                        "mirror_to": {
+                                            "id": "urn:jsonschema:net:juniper:contrail:api:types:AclEntriesType:AclRuleType:ActionListType:MirrorActionType",
+                                            "type": "object",
+                                            "properties": {
+                                                "encapsulation": {"type": "string"},
+                                                "routing_instance": {"type": "string"},
+                                                "analyzer_name": {"type": "string"},
+                                                "udp_port": {"type": "integer"},
+                                                "analyzer_ip_address": {"type": "string"}
+                                            }
+                                        },
+                                        "assign_routing_instance": {"type": "string"},
+                                        "apply_service": {
+                                            "type": "array",
+                                            "items": {"type": "string"}
+                                        },
+                                        "simple_action": {"type": "string"},
+                                        "qos_action": {"type": "string"},
+                                        "gateway_name": {"type": "string"}
+                                    }
+                                },
+                                "match_condition": {
+                                    "id": "urn:jsonschema:net:juniper:contrail:api:types:AclEntriesType:AclRuleType:MatchConditionType",
+                                    "type": "object",
+                                    "properties": {
+                                        "src_port": {
+                                            "id": "urn:jsonschema:net:juniper:contrail:api:types:AclEntriesType:AclRuleType:MatchConditionType:PortType",
+                                            "type": "object",
+                                            "properties": {
+                                                "start_port": {"type": "integer"},
+                                                "end_port": {"type": "integer"}
+                                            }
+                                        },
+                                        "protocol": {"type": "string"},
+                                        "ethertype": {"type": "string"},
+                                        "dst_address": {"type": "object"},
+                                        "src_address": {
+                                            "id": "urn:jsonschema:net:juniper:contrail:api:types:AclEntriesType:AclRuleType:MatchConditionType:AddressType",
+                                            "type": "object",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "urn:jsonschema:net:juniper:contrail:api:types:SubnetType",
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "ip_prefix": {"type": "string"},
+                                                        "ip_prefix_len": {"type": "integer"}
+                                                    }
+                                                },
+                                                "virtual_network": {"type": "string"},
+                                                "subnet_list": {
+                                                    "type": "array",
+                                                    "items": {"type": "object"}
+                                                },
+                                                "security_group": {"type": "string"},
+                                                "network_policy": {"type": "string"}
+                                            }
+                                        },
+                                        "dst_port": {"type": "object"}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "dynamic": {"type": "boolean"}
+                }
+            },
+            "parent_uuid": {
+                "propertyOrder": 8,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 9,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 10,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 11,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 12,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:IdPermsType",
+                "type": "object",
+                "properties": {
+                    "creator": {"type": "string"},
+                    "permissions": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:IdPermsType:PermType",
+                        "type": "object",
+                        "properties": {
+                            "owner": {"type": "string"},
+                            "owner_access": {"type": "integer"},
+                            "other_access": {"type": "integer"},
+                            "group_access": {"type": "integer"},
+                            "group": {"type": "string"}
+                        }
+                    },
+                    "enable": {"type": "boolean"},
+                    "created": {
+                        "format": "utc-millisec",
+                        "type": "integer"
+                    },
+                    "description": {"type": "string"},
+                    "last_modified": {
+                        "format": "utc-millisec",
+                        "type": "integer"
+                    },
+                    "uuid": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:IdPermsType:UuidType",
+                        "type": "object",
+                        "properties": {
+                            "uuid_mslong": {"type": "integer"},
+                            "uuid_lslong": {"type": "integer"}
+                        }
+                    },
+                    "user_visible": {"type": "boolean"}
+                }
+            }
+        }
+    }}
+}

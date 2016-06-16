@@ -1,0 +1,94 @@
+{
+    "type": "object",
+    "properties": {"domain": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:Domain",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 183,
+                "type": "object"
+            },
+            "projects": {
+                "propertyOrder": 184,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "object_type": {
+                "propertyOrder": 185,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 186,
+                "type": "string"
+            },
+            "api_access_lists": {
+                "propertyOrder": 187,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 188,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 189,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 190,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 191,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 192,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 193,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 194,
+                "type": "string"
+            },
+            "service_templates": {
+                "propertyOrder": 195,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 196,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "limits": {
+                "propertyOrder": 197,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:DomainLimitsType",
+                "type": "object",
+                "properties": {
+                    "virtual_network_limit": {"type": "integer"},
+                    "security_group_limit": {"type": "integer"},
+                    "project_limit": {"type": "integer"}
+                }
+            },
+            "id_perms": {
+                "propertyOrder": 198,
+                "type": "object"
+            },
+            "virtual_dnss": {
+                "propertyOrder": 199,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "namespaces": {
+                "propertyOrder": 200,
+                "type": "array",
+                "items": {"type": "object"}
+            }
+        }
+    }}
+}

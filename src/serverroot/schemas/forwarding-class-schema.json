@@ -1,0 +1,80 @@
+{
+    "type": "object",
+    "properties": {"forwarding-class": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:ForwardingClass",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 248,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 249,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 250,
+                "type": "string"
+            },
+            "qos_queue": {
+                "propertyOrder": 251,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 252,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 253,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 254,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 255,
+                "type": "string"
+            },
+            "mpls_exp": {
+                "propertyOrder": 256,
+                "type": "integer"
+            },
+            "parent_uuid": {
+                "propertyOrder": 257,
+                "type": "string"
+            },
+            "dscp": {
+                "propertyOrder": 258,
+                "type": "integer"
+            },
+            "qualified_name": {
+                "propertyOrder": 259,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 260,
+                "type": "string"
+            },
+            "vlan_priority": {
+                "propertyOrder": 261,
+                "type": "integer"
+            },
+            "id": {
+                "propertyOrder": 262,
+                "type": "integer"
+            },
+            "default_parent": {
+                "propertyOrder": 263,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 264,
+                "type": "object"
+            }
+        }
+    }}
+}

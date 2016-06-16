@@ -1,0 +1,88 @@
+{
+    "type": "object",
+    "properties": {"alarm": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:Alarm",
+        "type": "object",
+        "properties": {
+            "severity": {
+                "propertyOrder": 13,
+                "type": "integer"
+            },
+            "uve_keys": {
+                "propertyOrder": 14,
+                "type": "string"
+            },
+            "parent": {
+                "propertyOrder": 15,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 16,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 17,
+                "type": "string"
+            },
+            "rules": {
+                "propertyOrder": 18,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:AlarmRule",
+                "type": "object",
+                "properties": {"rule": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:AlarmRule:AlarmElement",
+                        "type": "object",
+                        "properties": {
+                            "operand1": {"type": "string"},
+                            "operand2": {"type": "string"},
+                            "vars": {
+                                "type": "array",
+                                "items": {"type": "string"}
+                            },
+                            "operation": {"type": "string"}
+                        }
+                    }
+                }}
+            },
+            "display_name": {
+                "propertyOrder": 19,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 20,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 21,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 22,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 23,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 24,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 25,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 26,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 27,
+                "type": "object"
+            }
+        }
+    }}
+}

@@ -1,0 +1,80 @@
+{
+    "type": "object",
+    "properties": {"namespace": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:Namespace",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 480,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 481,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 482,
+                "type": "string"
+            },
+            "project_back_refs": {
+                "propertyOrder": 483,
+                "type": "array",
+                "items": {
+                    "id": "urn:jsonschema:net:juniper:contrail:api:ObjectReference<net:juniper:contrail:api:types:SubnetType>",
+                    "type": "object",
+                    "properties": {
+                        "referred_name": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "href": {"type": "string"},
+                        "attr": {"type": "object"},
+                        "uuid": {"type": "string"}
+                    }
+                }
+            },
+            "display_name": {
+                "propertyOrder": 484,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 485,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 486,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 487,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 488,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 489,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 490,
+                "type": "string"
+            },
+            "cidr": {
+                "propertyOrder": 491,
+                "type": "object"
+            },
+            "default_parent": {
+                "propertyOrder": 492,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 493,
+                "type": "object"
+            }
+        }
+    }}
+}

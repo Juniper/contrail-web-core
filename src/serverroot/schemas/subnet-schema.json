@@ -1,0 +1,68 @@
+{
+    "type": "object",
+    "properties": {"subnet": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:Subnet",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 838,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 839,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 840,
+                "type": "string"
+            },
+            "virtual_machine_interface": {
+                "propertyOrder": 841,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 842,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 843,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 844,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 845,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 846,
+                "type": "string"
+            },
+            "ip_prefix": {
+                "propertyOrder": 847,
+                "type": "object"
+            },
+            "qualified_name": {
+                "propertyOrder": 848,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 849,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 850,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 851,
+                "type": "object"
+            }
+        }
+    }}
+}

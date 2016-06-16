@@ -1,0 +1,86 @@
+{
+    "type": "object",
+    "properties": {"virtual-ip": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualIp",
+        "type": "object",
+        "properties": {
+            "loadbalancer_pool": {
+                "propertyOrder": 880,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "parent": {
+                "propertyOrder": 881,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 882,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 883,
+                "type": "string"
+            },
+            "virtual_machine_interface": {
+                "propertyOrder": 884,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 885,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 886,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 887,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 888,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 889,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 890,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 891,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 892,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "properties": {
+                "propertyOrder": 893,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualIpType",
+                "type": "object",
+                "properties": {
+                    "protocol": {"type": "string"},
+                    "status_description": {"type": "string"},
+                    "address": {"type": "string"},
+                    "protocol_port": {"type": "integer"},
+                    "subnet_id": {"type": "string"},
+                    "admin_state": {"type": "boolean"},
+                    "persistence_type": {"type": "string"},
+                    "connection_limit": {"type": "integer"},
+                    "persistence_cookie_name": {"type": "string"},
+                    "status": {"type": "string"}
+                }
+            },
+            "id_perms": {
+                "propertyOrder": 894,
+                "type": "object"
+            }
+        }
+    }}
+}

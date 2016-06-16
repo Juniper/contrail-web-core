@@ -1,0 +1,72 @@
+{
+    "type": "object",
+    "properties": {"virtual-dns-record": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualDnsRecord",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 867,
+                "type": "object"
+            },
+            "data": {
+                "propertyOrder": 868,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualDnsRecordType",
+                "type": "object",
+                "properties": {
+                    "record_ttl_seconds": {"type": "integer"},
+                    "record_data": {"type": "string"},
+                    "record_name": {"type": "string"},
+                    "record_class": {"type": "string"},
+                    "record_type": {"type": "string"},
+                    "record_mx_preference": {"type": "integer"}
+                }
+            },
+            "object_type": {
+                "propertyOrder": 869,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 870,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 871,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 872,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 873,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 874,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 875,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 876,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 877,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 878,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 879,
+                "type": "object"
+            }
+        }
+    }}
+}

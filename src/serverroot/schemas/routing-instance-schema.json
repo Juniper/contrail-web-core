@@ -1,0 +1,89 @@
+{
+    "type": "object",
+    "properties": {"routing-instance": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:RoutingInstance",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 706,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 707,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 708,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 709,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 710,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 711,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 712,
+                "type": "string"
+            },
+            "virtual_machine_interface_back_refs": {
+                "propertyOrder": 713,
+                "type": "array",
+                "items": {
+                    "id": "urn:jsonschema:net:juniper:contrail:api:ObjectReference<net:juniper:contrail:api:types:PolicyBasedForwardingRuleType>",
+                    "type": "object",
+                    "properties": {
+                        "referred_name": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "href": {"type": "string"},
+                        "attr": {
+                            "id": "urn:jsonschema:net:juniper:contrail:api:types:PolicyBasedForwardingRuleType",
+                            "type": "object",
+                            "properties": {
+                                "src_mac": {"type": "string"},
+                                "protocol": {"type": "string"},
+                                "vlan_tag": {"type": "integer"},
+                                "service_chain_address": {"type": "string"},
+                                "mpls_label": {"type": "integer"},
+                                "ipv6service_chain_address": {"type": "string"},
+                                "dst_mac": {"type": "string"},
+                                "direction": {"type": "string"}
+                            }
+                        },
+                        "uuid": {"type": "string"}
+                    }
+                }
+            },
+            "parent_uuid": {
+                "propertyOrder": 714,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 715,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 716,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 717,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 718,
+                "type": "object"
+            }
+        }
+    }}
+}

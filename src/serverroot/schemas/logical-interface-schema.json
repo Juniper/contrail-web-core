@@ -1,0 +1,68 @@
+{
+    "type": "object",
+    "properties": {"logical-interface": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:LogicalInterface",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 448,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 449,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 450,
+                "type": "string"
+            },
+            "virtual_machine_interface": {
+                "propertyOrder": 451,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 452,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 453,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 454,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 455,
+                "type": "string"
+            },
+            "vlan_tag": {
+                "propertyOrder": 456,
+                "type": "integer"
+            },
+            "parent_uuid": {
+                "propertyOrder": 457,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 458,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 459,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 460,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 461,
+                "type": "object"
+            }
+        }
+    }}
+}

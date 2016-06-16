@@ -1,0 +1,69 @@
+{
+    "type": "object",
+    "properties": {"alias-ip-pool": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:AliasIpPool",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 44,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 45,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 46,
+                "type": "string"
+            },
+            "project_back_refs": {
+                "propertyOrder": 47,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 48,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 49,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 50,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 51,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 52,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 53,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 54,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 55,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 56,
+                "type": "object"
+            },
+            "alias_ips": {
+                "propertyOrder": 57,
+                "type": "array",
+                "items": {"type": "object"}
+            }
+        }
+    }}
+}

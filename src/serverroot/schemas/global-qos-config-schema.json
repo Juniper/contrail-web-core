@@ -1,0 +1,74 @@
+{
+    "type": "object",
+    "properties": {"global-qos-config": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:GlobalQosConfig",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 265,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 266,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 267,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 268,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 269,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 270,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 271,
+                "type": "string"
+            },
+            "qos_queues": {
+                "propertyOrder": 272,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "qos_configs": {
+                "propertyOrder": 273,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "forwarding_classs": {
+                "propertyOrder": 274,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "parent_uuid": {
+                "propertyOrder": 275,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 276,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 277,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 278,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 279,
+                "type": "object"
+            }
+        }
+    }}
+}

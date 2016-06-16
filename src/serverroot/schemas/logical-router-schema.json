@@ -1,0 +1,93 @@
+{
+    "type": "object",
+    "properties": {"logical-router": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:LogicalRouter",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 462,
+                "type": "object"
+            },
+            "virtual_network": {
+                "propertyOrder": 463,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "object_type": {
+                "propertyOrder": 464,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 465,
+                "type": "string"
+            },
+            "virtual_machine_interface": {
+                "propertyOrder": 466,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 467,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 468,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 469,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 470,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 471,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 472,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "configured_route_target_list": {
+                "propertyOrder": 473,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:RouteTargetList",
+                "type": "object",
+                "properties": {"route_target": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                }}
+            },
+            "route_table": {
+                "propertyOrder": 474,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "name": {
+                "propertyOrder": 475,
+                "type": "string"
+            },
+            "route_target": {
+                "propertyOrder": 476,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "service_instance": {
+                "propertyOrder": 477,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 478,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 479,
+                "type": "object"
+            }
+        }
+    }}
+}

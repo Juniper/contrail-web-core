@@ -1,0 +1,82 @@
+{
+    "type": "object",
+    "properties": {"virtual-router": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualRouter",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 992,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 993,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 994,
+                "type": "string"
+            },
+            "dpdk_enabled": {
+                "propertyOrder": 995,
+                "type": "boolean"
+            },
+            "ip_address": {
+                "propertyOrder": 996,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 997,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 998,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 999,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 1000,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 1001,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 1002,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "provider_attachment_back_refs": {
+                "propertyOrder": 1003,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "virtual_machine": {
+                "propertyOrder": 1004,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "name": {
+                "propertyOrder": 1005,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 1006,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 1007,
+                "type": "object"
+            },
+            "physical_router_back_refs": {
+                "propertyOrder": 1008,
+                "type": "array",
+                "items": {"type": "object"}
+            }
+        }
+    }}
+}

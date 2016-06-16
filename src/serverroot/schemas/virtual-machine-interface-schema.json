@@ -1,0 +1,299 @@
+{
+    "type": "object",
+    "properties": {"virtual-machine-interface": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualMachineInterface",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 911,
+                "type": "object"
+            },
+            "interface_route_table": {
+                "propertyOrder": 912,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "qos_config": {
+                "propertyOrder": 913,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "instance_ip_back_refs": {
+                "propertyOrder": 914,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "bindings": {
+                "propertyOrder": 915,
+                "type": "object"
+            },
+            "default_parent_type": {
+                "propertyOrder": 916,
+                "type": "string"
+            },
+            "allowed_address_pairs": {
+                "propertyOrder": 917,
+                "type": "object"
+            },
+            "service_health_check": {
+                "propertyOrder": 918,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "type": {
+                "propertyOrder": 919,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 920,
+                "type": "string"
+            },
+            "vrf_assign_table": {
+                "propertyOrder": 921,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:VrfAssignTableType",
+                "type": "object",
+                "properties": {"vrf_assign_rule": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:VrfAssignTableType:VrfAssignRuleType",
+                        "type": "object",
+                        "properties": {
+                            "vlan_tag": {"type": "integer"},
+                            "routing_instance": {"type": "string"},
+                            "match_condition": {
+                                "id": "urn:jsonschema:net:juniper:contrail:api:types:VrfAssignTableType:VrfAssignRuleType:MatchConditionType",
+                                "type": "object",
+                                "properties": {
+                                    "src_port": {
+                                        "id": "urn:jsonschema:net:juniper:contrail:api:types:VrfAssignTableType:VrfAssignRuleType:MatchConditionType:PortType",
+                                        "type": "object",
+                                        "properties": {
+                                            "start_port": {"type": "integer"},
+                                            "end_port": {"type": "integer"}
+                                        }
+                                    },
+                                    "protocol": {"type": "string"},
+                                    "ethertype": {"type": "string"},
+                                    "dst_address": {"type": "object"},
+                                    "src_address": {
+                                        "id": "urn:jsonschema:net:juniper:contrail:api:types:VrfAssignTableType:VrfAssignRuleType:MatchConditionType:AddressType",
+                                        "type": "object",
+                                        "properties": {
+                                            "subnet": {"type": "object"},
+                                            "virtual_network": {"type": "string"},
+                                            "subnet_list": {
+                                                "type": "array",
+                                                "items": {"type": "object"}
+                                            },
+                                            "security_group": {"type": "string"},
+                                            "network_policy": {"type": "string"}
+                                        }
+                                    },
+                                    "dst_port": {"type": "object"}
+                                }
+                            },
+                            "ignore_acl": {"type": "boolean"}
+                        }
+                    }
+                }}
+            },
+            "virtual_machine_interface_back_refs": {
+                "propertyOrder": 922,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "routing_instance": {
+                "propertyOrder": 923,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "host_routes": {
+                "propertyOrder": 924,
+                "type": "object"
+            },
+            "loadbalancer_pool_back_refs": {
+                "propertyOrder": 925,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "floating_ip_back_refs": {
+                "propertyOrder": 926,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "port_tuple": {
+                "propertyOrder": 927,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "dhcp_option_list": {
+                "propertyOrder": 928,
+                "type": "object"
+            },
+            "virtual_ip_back_refs": {
+                "propertyOrder": 929,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "logical_router_back_refs": {
+                "propertyOrder": 930,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "mac_addresses": {
+                "propertyOrder": 931,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:MacAddressesType",
+                "type": "object",
+                "properties": {"mac_address": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                }}
+            },
+            "logical_interface_back_refs": {
+                "propertyOrder": 932,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "id_perms": {
+                "propertyOrder": 933,
+                "type": "object"
+            },
+            "bgp_as_aservice_back_refs": {
+                "propertyOrder": 934,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "virtual_network": {
+                "propertyOrder": 935,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "object_type": {
+                "propertyOrder": 936,
+                "type": "string"
+            },
+            "ecmp_hashing_include_fields": {
+                "propertyOrder": 937,
+                "type": "object"
+            },
+            "alias_ip_back_refs": {
+                "propertyOrder": 938,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "virtual_machine_interface": {
+                "propertyOrder": 939,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "security_group": {
+                "propertyOrder": 940,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 941,
+                "type": "string"
+            },
+            "disable_policy": {
+                "propertyOrder": 942,
+                "type": "boolean"
+            },
+            "perms2": {
+                "propertyOrder": 943,
+                "type": "object"
+            },
+            "physical_interface": {
+                "propertyOrder": 944,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "device_owner": {
+                "propertyOrder": 945,
+                "type": "string"
+            },
+            "loadbalancer_back_refs": {
+                "propertyOrder": 946,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "parent_uuid": {
+                "propertyOrder": 947,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 948,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "fat_flow_protocols": {
+                "propertyOrder": 949,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:FatFlowProtocols",
+                "type": "object",
+                "properties": {"fat_flow_protocol": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:FatFlowProtocols:ProtocolType",
+                        "type": "object",
+                        "properties": {
+                            "protocol": {"type": "string"},
+                            "port": {"type": "integer"}
+                        }
+                    }
+                }}
+            },
+            "subnet_back_refs": {
+                "propertyOrder": 950,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "virtual_machine": {
+                "propertyOrder": 951,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "name": {
+                "propertyOrder": 952,
+                "type": "string"
+            },
+            "customer_attachment_back_refs": {
+                "propertyOrder": 953,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 954,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "properties": {
+                "propertyOrder": 955,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualMachineInterfacePropertiesType",
+                "type": "object",
+                "properties": {
+                    "interface_mirror": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualMachineInterfacePropertiesType:InterfaceMirrorType",
+                        "type": "object",
+                        "properties": {
+                            "mirror_to": {
+                                "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualMachineInterfacePropertiesType:InterfaceMirrorType:MirrorActionType",
+                                "type": "object",
+                                "properties": {
+                                    "encapsulation": {"type": "string"},
+                                    "routing_instance": {"type": "string"},
+                                    "analyzer_name": {"type": "string"},
+                                    "udp_port": {"type": "integer"},
+                                    "analyzer_ip_address": {"type": "string"}
+                                }
+                            },
+                            "traffic_direction": {"type": "string"}
+                        }
+                    },
+                    "sub_interface_vlan_tag": {"type": "integer"},
+                    "service_interface_type": {"type": "string"},
+                    "local_preference": {"type": "integer"}
+                }
+            }
+        }
+    }}
+}

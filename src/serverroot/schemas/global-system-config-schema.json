@@ -1,0 +1,166 @@
+{
+    "type": "object",
+    "properties": {"global-system-config": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:GlobalSystemConfig",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 280,
+                "type": "object"
+            },
+            "default_parent_type": {
+                "propertyOrder": 281,
+                "type": "string"
+            },
+            "virtual_routers": {
+                "propertyOrder": 282,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "bgp_router": {
+                "propertyOrder": 283,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "type": {
+                "propertyOrder": 284,
+                "type": "string"
+            },
+            "alarm_enable": {
+                "propertyOrder": 285,
+                "type": "boolean"
+            },
+            "uuid": {
+                "propertyOrder": 286,
+                "type": "string"
+            },
+            "service_appliance_sets": {
+                "propertyOrder": 287,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "global_vrouter_configs": {
+                "propertyOrder": 288,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "id_perms": {
+                "propertyOrder": 289,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 290,
+                "type": "string"
+            },
+            "alarms": {
+                "propertyOrder": 291,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "ibgp_auto_mesh": {
+                "propertyOrder": 292,
+                "type": "boolean"
+            },
+            "display_name": {
+                "propertyOrder": 293,
+                "type": "string"
+            },
+            "ip_fabric_subnets": {
+                "propertyOrder": 294,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:SubnetListType",
+                "type": "object",
+                "properties": {"subnet": {
+                    "type": "array",
+                    "items": {"type": "object"}
+                }}
+            },
+            "perms2": {
+                "propertyOrder": 295,
+                "type": "object"
+            },
+            "config_version": {
+                "propertyOrder": 296,
+                "type": "string"
+            },
+            "physical_routers": {
+                "propertyOrder": 297,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "user_defined_counter": {
+                "propertyOrder": 298,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:UserDefinedCounterList",
+                "type": "object",
+                "properties": {"counter": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:UserDefinedCounterList:UserDefinedCounter",
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "pattern": {"type": "string"}
+                        }
+                    }
+                }}
+            },
+            "analytics_nodes": {
+                "propertyOrder": 299,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "plugin_tuning": {
+                "propertyOrder": 300,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:PluginProperties",
+                "type": "object",
+                "properties": {"plugin_property": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:PluginProperties:PluginProperty",
+                        "type": "object",
+                        "properties": {
+                            "property": {"type": "string"},
+                            "value": {"type": "string"}
+                        }
+                    }
+                }}
+            },
+            "parent_uuid": {
+                "propertyOrder": 301,
+                "type": "string"
+            },
+            "global_qos_configs": {
+                "propertyOrder": 302,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "qualified_name": {
+                "propertyOrder": 303,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "database_nodes": {
+                "propertyOrder": 304,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "name": {
+                "propertyOrder": 305,
+                "type": "string"
+            },
+            "autonomous_system": {
+                "propertyOrder": 306,
+                "type": "integer"
+            },
+            "config_nodes": {
+                "propertyOrder": 307,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 308,
+                "type": "array",
+                "items": {"type": "string"}
+            }
+        }
+    }}
+}

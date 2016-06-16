@@ -1,0 +1,85 @@
+{
+    "type": "object",
+    "properties": {"loadbalancer-listener": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:LoadbalancerListener",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 398,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 399,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 400,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 401,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 402,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 403,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 404,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 405,
+                "type": "string"
+            },
+            "loadbalancer": {
+                "propertyOrder": 406,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "qualified_name": {
+                "propertyOrder": 407,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "loadbalancer_pool_back_refs": {
+                "propertyOrder": 408,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "name": {
+                "propertyOrder": 409,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 410,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "properties": {
+                "propertyOrder": 411,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:LoadbalancerListenerType",
+                "type": "object",
+                "properties": {
+                    "protocol": {"type": "string"},
+                    "sni_containers": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    },
+                    "protocol_port": {"type": "integer"},
+                    "default_tls_container": {"type": "string"},
+                    "admin_state": {"type": "boolean"},
+                    "connection_limit": {"type": "integer"}
+                }
+            },
+            "id_perms": {
+                "propertyOrder": 412,
+                "type": "object"
+            }
+        }
+    }}
+}

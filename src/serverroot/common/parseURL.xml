@@ -20,6 +20,10 @@
         <path>./alarms.api.js</path>
     </require>
     <require>
+        <define>configschemaapi</define>
+        <path>./configschema.api</path>
+    </require>
+    <require>
         <define>configServerUtils</define>
         <path>./configServer.utils.js</path>
     </require>
@@ -81,6 +85,24 @@
         <method>get</method>
         <feature>orchestration</feature>
         <callback>authApi.getRegionList</callback>
+    </item>
+        <item>
+        <url>/api/tenants/config/get-json-schema/:id</url>
+        <method>get</method>
+        <feature>configschema</feature>
+        <callback>configschemaapi.getJsonSchema</callback>
+    </item>
+    <item>
+        <url>/api/tenants/config/get-object-list</url>
+        <method>get</method>
+        <feature>configschema</feature>
+        <callback>configschemaapi.getObjectList</callback>
+    </item>
+    <item>
+        <url>/api/tenants/config/get-object-properties/:id</url>
+        <method>get</method>
+        <feature>configschema</feature>
+        <callback>configschemaapi.getPropertiesForObject</callback>
     </item>
 
 </urlLists>

@@ -1,0 +1,64 @@
+{
+    "type": "object",
+    "properties": {"route-target": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:RouteTarget",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 693,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 694,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 695,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 696,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 697,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 698,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 699,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 700,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 701,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 702,
+                "type": "string"
+            },
+            "logical_router_back_refs": {
+                "propertyOrder": 703,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 704,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 705,
+                "type": "object"
+            }
+        }
+    }}
+}

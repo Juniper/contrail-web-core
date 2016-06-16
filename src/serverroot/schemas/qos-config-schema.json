@@ -1,0 +1,97 @@
+{
+    "type": "object",
+    "properties": {"qos-config": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:QosConfig",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 632,
+                "type": "object"
+            },
+            "mpls_exp_entries": {
+                "propertyOrder": 633,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 634,
+                "type": "string"
+            },
+            "vlan_priority_entries": {
+                "propertyOrder": 635,
+                "type": "object"
+            },
+            "default_parent_type": {
+                "propertyOrder": 636,
+                "type": "string"
+            },
+            "dscp_entries": {
+                "propertyOrder": 637,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:QosIdForwardingClassPairs",
+                "type": "object",
+                "properties": {"qos_id_forwarding_class_pair": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:QosIdForwardingClassPairs:QosIdForwardingClassPair",
+                        "type": "object",
+                        "properties": {
+                            "forwarding_class_id": {"type": "integer"},
+                            "key": {"type": "integer"}
+                        }
+                    }
+                }}
+            },
+            "virtual_network_back_refs": {
+                "propertyOrder": 638,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 639,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 640,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 641,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 642,
+                "type": "string"
+            },
+            "virtual_machine_interface_back_refs": {
+                "propertyOrder": 643,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "parent_uuid": {
+                "propertyOrder": 644,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 645,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "trusted": {
+                "propertyOrder": 646,
+                "type": "boolean"
+            },
+            "name": {
+                "propertyOrder": 647,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 648,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 649,
+                "type": "object"
+            }
+        }
+    }}
+}

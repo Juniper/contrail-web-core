@@ -1,0 +1,133 @@
+{
+    "type": "object",
+    "properties": {"global-vrouter-config": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:GlobalVrouterConfig",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 309,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 310,
+                "type": "string"
+            },
+            "ecmp_hashing_include_fields": {
+                "propertyOrder": 311,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:EcmpHashingIncludeFields",
+                "type": "object",
+                "properties": {
+                    "destination_ip": {"type": "boolean"},
+                    "destination_port": {"type": "boolean"},
+                    "source_port": {"type": "boolean"},
+                    "ip_protocol": {"type": "boolean"},
+                    "source_ip": {"type": "boolean"},
+                    "hashing_configured": {"type": "boolean"}
+                }
+            },
+            "default_parent_type": {
+                "propertyOrder": 312,
+                "type": "string"
+            },
+            "linklocal_services": {
+                "propertyOrder": 313,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:LinklocalServicesTypes",
+                "type": "object",
+                "properties": {"linklocal_service_entry": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:LinklocalServicesTypes:LinklocalServiceEntryType",
+                        "type": "object",
+                        "properties": {
+                            "linklocal_service_port": {"type": "integer"},
+                            "ip_fabric_service_ip": {
+                                "type": "array",
+                                "items": {"type": "string"}
+                            },
+                            "linklocal_service_name": {"type": "string"},
+                            "ip_fabric_service_port": {"type": "integer"},
+                            "ip_fabric_dns_service_name": {"type": "string"},
+                            "linklocal_service_ip": {"type": "string"}
+                        }
+                    }
+                }}
+            },
+            "flow_aging_timeout_list": {
+                "propertyOrder": 314,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:FlowAgingTimeoutList",
+                "type": "object",
+                "properties": {"flow_aging_timeout": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:FlowAgingTimeoutList:FlowAgingTimeout",
+                        "type": "object",
+                        "properties": {
+                            "protocol": {"type": "string"},
+                            "timeout_in_seconds": {"type": "integer"},
+                            "port": {"type": "integer"}
+                        }
+                    }
+                }}
+            },
+            "flow_export_rate": {
+                "propertyOrder": 315,
+                "type": "integer"
+            },
+            "display_name": {
+                "propertyOrder": 316,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 317,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 318,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 319,
+                "type": "string"
+            },
+            "encapsulation_priorities": {
+                "propertyOrder": 320,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:EncapsulationPrioritiesType",
+                "type": "object",
+                "properties": {"encapsulation": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                }}
+            },
+            "forwarding_mode": {
+                "propertyOrder": 321,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 322,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 323,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "vxlan_network_identifier_mode": {
+                "propertyOrder": 324,
+                "type": "string"
+            },
+            "name": {
+                "propertyOrder": 325,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 326,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 327,
+                "type": "object"
+            }
+        }
+    }}
+}

@@ -1,0 +1,64 @@
+{
+    "type": "object",
+    "properties": {"route-aggregate": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:RouteAggregate",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 665,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 666,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 667,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 668,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 669,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 670,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 671,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 672,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 673,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 674,
+                "type": "string"
+            },
+            "service_instance": {
+                "propertyOrder": 675,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 676,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 677,
+                "type": "object"
+            }
+        }
+    }}
+}

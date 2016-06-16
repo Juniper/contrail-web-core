@@ -1,0 +1,84 @@
+{
+    "type": "object",
+    "properties": {"bgp-as-aservice": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:BgpAsAService",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 84,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 85,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 86,
+                "type": "string"
+            },
+            "bgpaas_ipv4mapped_ipv6nexthop": {
+                "propertyOrder": 87,
+                "type": "boolean"
+            },
+            "virtual_machine_interface": {
+                "propertyOrder": 88,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 89,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 90,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 91,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 92,
+                "type": "string"
+            },
+            "bgpaas_suppress_route_advertisement": {
+                "propertyOrder": 93,
+                "type": "boolean"
+            },
+            "parent_uuid": {
+                "propertyOrder": 94,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 95,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "bgpaas_ip_address": {
+                "propertyOrder": 96,
+                "type": "string"
+            },
+            "name": {
+                "propertyOrder": 97,
+                "type": "string"
+            },
+            "autonomous_system": {
+                "propertyOrder": 98,
+                "type": "integer"
+            },
+            "bgpaas_session_attributes": {
+                "propertyOrder": 99,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 100,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 101,
+                "type": "object"
+            }
+        }
+    }}
+}

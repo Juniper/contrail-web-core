@@ -1,0 +1,78 @@
+{
+    "type": "object",
+    "properties": {"floating-ip-pool": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:FloatingIpPool",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 233,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 234,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 235,
+                "type": "string"
+            },
+            "project_back_refs": {
+                "propertyOrder": 236,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 237,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 238,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 239,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 240,
+                "type": "string"
+            },
+            "prefixes": {
+                "propertyOrder": 241,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:FloatingIpPoolType",
+                "type": "object",
+                "properties": {"subnet": {
+                    "type": "array",
+                    "items": {"type": "object"}
+                }}
+            },
+            "parent_uuid": {
+                "propertyOrder": 242,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 243,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 244,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 245,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "floating_ips": {
+                "propertyOrder": 246,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "id_perms": {
+                "propertyOrder": 247,
+                "type": "object"
+            }
+        }
+    }}
+}

@@ -1,0 +1,94 @@
+{
+    "type": "object",
+    "properties": {"interface-route-table": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:InterfaceRouteTable",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 352,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 353,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 354,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 355,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 356,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 357,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 358,
+                "type": "string"
+            },
+            "virtual_machine_interface_back_refs": {
+                "propertyOrder": 359,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "routes": {
+                "propertyOrder": 360,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:RouteTableType",
+                "type": "object",
+                "properties": {"route": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:RouteTableType:RouteType",
+                        "type": "object",
+                        "properties": {
+                            "next_hop": {"type": "string"},
+                            "prefix": {"type": "string"},
+                            "next_hop_type": {"type": "string"},
+                            "community_attributes": {
+                                "id": "urn:jsonschema:net:juniper:contrail:api:types:RouteTableType:RouteType:CommunityAttributes",
+                                "type": "object",
+                                "properties": {"community_attribute": {
+                                    "type": "array",
+                                    "items": {"type": "string"}
+                                }}
+                            }
+                        }
+                    }
+                }}
+            },
+            "parent_uuid": {
+                "propertyOrder": 361,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 362,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 363,
+                "type": "string"
+            },
+            "service_instance": {
+                "propertyOrder": 364,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 365,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 366,
+                "type": "object"
+            }
+        }
+    }}
+}

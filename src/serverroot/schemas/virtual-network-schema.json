@@ -1,0 +1,180 @@
+{
+    "type": "object",
+    "properties": {"virtual-network": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualNetwork",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 956,
+                "type": "object"
+            },
+            "qos_config": {
+                "propertyOrder": 957,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "instance_ip_back_refs": {
+                "propertyOrder": 958,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "external_ipam": {
+                "propertyOrder": 959,
+                "type": "boolean"
+            },
+            "default_parent_type": {
+                "propertyOrder": 960,
+                "type": "string"
+            },
+            "alias_ip_pools": {
+                "propertyOrder": 961,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "type": {
+                "propertyOrder": 962,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 963,
+                "type": "string"
+            },
+            "multi_policy_service_chains_enabled": {
+                "propertyOrder": 964,
+                "type": "boolean"
+            },
+            "router_external": {
+                "propertyOrder": 965,
+                "type": "boolean"
+            },
+            "virtual_machine_interface_back_refs": {
+                "propertyOrder": 966,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "flood_unknown_unicast": {
+                "propertyOrder": 967,
+                "type": "boolean"
+            },
+            "route_target_list": {
+                "propertyOrder": 968,
+                "type": "object"
+            },
+            "export_route_target_list": {
+                "propertyOrder": 969,
+                "type": "object"
+            },
+            "network_ipam": {
+                "propertyOrder": 970,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "is_shared": {
+                "propertyOrder": 971,
+                "type": "boolean"
+            },
+            "route_table": {
+                "propertyOrder": 972,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "access_control_lists": {
+                "propertyOrder": 973,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "logical_router_back_refs": {
+                "propertyOrder": 974,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "id_perms": {
+                "propertyOrder": 975,
+                "type": "object"
+            },
+            "physical_router_back_refs": {
+                "propertyOrder": 976,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "object_type": {
+                "propertyOrder": 977,
+                "type": "string"
+            },
+            "ecmp_hashing_include_fields": {
+                "propertyOrder": 978,
+                "type": "object"
+            },
+            "display_name": {
+                "propertyOrder": 979,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 980,
+                "type": "object"
+            },
+            "network_id": {
+                "propertyOrder": 981,
+                "type": "integer"
+            },
+            "parent_uuid": {
+                "propertyOrder": 982,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 983,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 984,
+                "type": "string"
+            },
+            "network_policy": {
+                "propertyOrder": 985,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "routing_instances": {
+                "propertyOrder": 986,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "provider_properties": {
+                "propertyOrder": 987,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:ProviderDetails",
+                "type": "object",
+                "properties": {
+                    "physical_network": {"type": "string"},
+                    "segmentation_id": {"type": "integer"}
+                }
+            },
+            "default_parent": {
+                "propertyOrder": 988,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "floating_ip_pools": {
+                "propertyOrder": 989,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "properties": {
+                "propertyOrder": 990,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:VirtualNetworkType",
+                "type": "object",
+                "properties": {
+                    "forwarding_mode": {"type": "string"},
+                    "allow_transit": {"type": "boolean"},
+                    "network_id": {"type": "integer"},
+                    "vxlan_network_identifier": {"type": "integer"},
+                    "rpf": {"type": "string"}
+                }
+            },
+            "import_route_target_list": {
+                "propertyOrder": 991,
+                "type": "object"
+            }
+        }
+    }}
+}

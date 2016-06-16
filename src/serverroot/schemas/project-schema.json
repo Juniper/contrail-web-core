@@ -1,0 +1,224 @@
+{
+    "type": "object",
+    "properties": {"project": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:Project",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 579,
+                "type": "object"
+            },
+            "network_ipams": {
+                "propertyOrder": 580,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "alias_ip_pool": {
+                "propertyOrder": 581,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent_type": {
+                "propertyOrder": 582,
+                "type": "string"
+            },
+            "service_instances": {
+                "propertyOrder": 583,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "type": {
+                "propertyOrder": 584,
+                "type": "string"
+            },
+            "alarm_enable": {
+                "propertyOrder": 585,
+                "type": "boolean"
+            },
+            "uuid": {
+                "propertyOrder": 586,
+                "type": "string"
+            },
+            "route_tables": {
+                "propertyOrder": 587,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "logical_routers": {
+                "propertyOrder": 588,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "qos_configs": {
+                "propertyOrder": 589,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "bgp_as_aservices": {
+                "propertyOrder": 590,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "virtual_ips": {
+                "propertyOrder": 591,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "floating_ip_pool": {
+                "propertyOrder": 592,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "floating_ip_back_refs": {
+                "propertyOrder": 593,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "quota": {
+                "propertyOrder": 594,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:QuotaType",
+                "type": "object",
+                "properties": {
+                    "loadbalancer_pool": {"type": "integer"},
+                    "subnet": {"type": "integer"},
+                    "loadbalancer_member": {"type": "integer"},
+                    "virtual_network": {"type": "integer"},
+                    "virtual_router": {"type": "integer"},
+                    "service_template": {"type": "integer"},
+                    "global_vrouter_config": {"type": "integer"},
+                    "instance_ip": {"type": "integer"},
+                    "bgp_router": {"type": "integer"},
+                    "virtual_dns_record": {"type": "integer"},
+                    "virtual_machine_interface": {"type": "integer"},
+                    "security_group": {"type": "integer"},
+                    "virtual_ip": {"type": "integer"},
+                    "access_control_list": {"type": "integer"},
+                    "defaults": {"type": "integer"},
+                    "network_ipam": {"type": "integer"},
+                    "floating_ip_pool": {"type": "integer"},
+                    "floating_ip": {"type": "integer"},
+                    "logical_router": {"type": "integer"},
+                    "network_policy": {"type": "integer"},
+                    "virtual_dns": {"type": "integer"},
+                    "service_instance": {"type": "integer"},
+                    "security_group_rule": {"type": "integer"},
+                    "loadbalancer_healthmonitor": {"type": "integer"}
+                }
+            },
+            "virtual_networks": {
+                "propertyOrder": 595,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "id_perms": {
+                "propertyOrder": 596,
+                "type": "object"
+            },
+            "loadbalancer_pools": {
+                "propertyOrder": 597,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "object_type": {
+                "propertyOrder": 598,
+                "type": "string"
+            },
+            "alias_ip_back_refs": {
+                "propertyOrder": 599,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "alarms": {
+                "propertyOrder": 600,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "loadbalancer_healthmonitors": {
+                "propertyOrder": 601,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "api_access_lists": {
+                "propertyOrder": 602,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 603,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 604,
+                "type": "object"
+            },
+            "security_groups": {
+                "propertyOrder": 605,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "routing_policys": {
+                "propertyOrder": 606,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "parent_uuid": {
+                "propertyOrder": 607,
+                "type": "string"
+            },
+            "virtual_machine_interfaces": {
+                "propertyOrder": 608,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "qualified_name": {
+                "propertyOrder": 609,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 610,
+                "type": "string"
+            },
+            "namespace": {
+                "propertyOrder": 611,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "network_policys": {
+                "propertyOrder": 612,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "interface_route_tables": {
+                "propertyOrder": 613,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "loadbalancers": {
+                "propertyOrder": 614,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "route_aggregates": {
+                "propertyOrder": 615,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "loadbalancer_listeners": {
+                "propertyOrder": 616,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "service_health_checks": {
+                "propertyOrder": 617,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 618,
+                "type": "array",
+                "items": {"type": "string"}
+            }
+        }
+    }}
+}

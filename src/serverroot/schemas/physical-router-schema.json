@@ -1,0 +1,151 @@
+{
+    "type": "object",
+    "properties": {"physical-router": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:PhysicalRouter",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 540,
+                "type": "object"
+            },
+            "vnc_managed": {
+                "propertyOrder": 541,
+                "type": "boolean"
+            },
+            "virtual_router": {
+                "propertyOrder": 542,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "logical_interfaces": {
+                "propertyOrder": 543,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "instance_ip_back_refs": {
+                "propertyOrder": 544,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent_type": {
+                "propertyOrder": 545,
+                "type": "string"
+            },
+            "bgp_router": {
+                "propertyOrder": 546,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "type": {
+                "propertyOrder": 547,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 548,
+                "type": "string"
+            },
+            "snmp_credentials": {
+                "propertyOrder": 549,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:SNMPCredentials",
+                "type": "object",
+                "properties": {
+                    "v3authentication_password": {"type": "string"},
+                    "v3engine_id": {"type": "string"},
+                    "v3engine_time": {"type": "integer"},
+                    "v3authentication_protocol": {"type": "string"},
+                    "local_port": {"type": "integer"},
+                    "v2community": {"type": "string"},
+                    "v3context": {"type": "string"},
+                    "version": {"type": "integer"},
+                    "timeout": {"type": "integer"},
+                    "retries": {"type": "integer"},
+                    "v3privacy_password": {"type": "string"},
+                    "v3privacy_protocol": {"type": "string"},
+                    "v3security_engine_id": {"type": "string"},
+                    "v3security_name": {"type": "string"},
+                    "v3engine_boots": {"type": "integer"},
+                    "v3context_engine_id": {"type": "string"},
+                    "v3security_level": {"type": "string"}
+                }
+            },
+            "physical_interfaces": {
+                "propertyOrder": 550,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "management_ip": {
+                "propertyOrder": 551,
+                "type": "string"
+            },
+            "junos_service_ports": {
+                "propertyOrder": 552,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:JunosServicePorts",
+                "type": "object",
+                "properties": {"service_port": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                }}
+            },
+            "id_perms": {
+                "propertyOrder": 553,
+                "type": "object"
+            },
+            "virtual_network": {
+                "propertyOrder": 554,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "object_type": {
+                "propertyOrder": 555,
+                "type": "string"
+            },
+            "vendor_name": {
+                "propertyOrder": 556,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 557,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 558,
+                "type": "object"
+            },
+            "product_name": {
+                "propertyOrder": 559,
+                "type": "string"
+            },
+            "user_credentials": {
+                "propertyOrder": 560,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:UserCredentials",
+                "type": "object",
+                "properties": {
+                    "password": {"type": "string"},
+                    "username": {"type": "string"}
+                }
+            },
+            "parent_uuid": {
+                "propertyOrder": 561,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 562,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 563,
+                "type": "string"
+            },
+            "dataplane_ip": {
+                "propertyOrder": 564,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 565,
+                "type": "array",
+                "items": {"type": "string"}
+            }
+        }
+    }}
+}

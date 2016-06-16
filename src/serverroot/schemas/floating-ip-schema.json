@@ -1,0 +1,90 @@
+{
+    "type": "object",
+    "properties": {"floating-ip": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:FloatingIp",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 214,
+                "type": "object"
+            },
+            "address": {
+                "propertyOrder": 215,
+                "type": "string"
+            },
+            "object_type": {
+                "propertyOrder": 216,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 217,
+                "type": "string"
+            },
+            "virtual_machine_interface": {
+                "propertyOrder": 218,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "project": {
+                "propertyOrder": 219,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 220,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 221,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 222,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 223,
+                "type": "string"
+            },
+            "is_virtual_ip": {
+                "propertyOrder": 224,
+                "type": "boolean"
+            },
+            "parent_uuid": {
+                "propertyOrder": 225,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 226,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "address_family": {
+                "propertyOrder": 227,
+                "type": "string"
+            },
+            "name": {
+                "propertyOrder": 228,
+                "type": "string"
+            },
+            "fixed_ip_address": {
+                "propertyOrder": 229,
+                "type": "string"
+            },
+            "customer_attachment_back_refs": {
+                "propertyOrder": 230,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 231,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 232,
+                "type": "object"
+            }
+        }
+    }}
+}

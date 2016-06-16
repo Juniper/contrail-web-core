@@ -1,0 +1,64 @@
+{
+    "type": "object",
+    "properties": {"provider-attachment": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:ProviderAttachment",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 619,
+                "type": "object"
+            },
+            "virtual_router": {
+                "propertyOrder": 620,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "object_type": {
+                "propertyOrder": 621,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 622,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 623,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 624,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 625,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 626,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 627,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 628,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 629,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 630,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 631,
+                "type": "object"
+            }
+        }
+    }}
+}

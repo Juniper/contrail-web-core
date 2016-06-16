@@ -1,0 +1,63 @@
+{
+    "type": "object",
+    "properties": {"config-node": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:ConfigNode",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 116,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 117,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 118,
+                "type": "string"
+            },
+            "ip_address": {
+                "propertyOrder": 119,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 120,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 121,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 122,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 123,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 124,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 125,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 126,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 127,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 128,
+                "type": "object"
+            }
+        }
+    }}
+}

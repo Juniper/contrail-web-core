@@ -1,0 +1,86 @@
+{
+    "type": "object",
+    "properties": {"api-access-list": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:ApiAccessList",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 71,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 72,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 73,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 74,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 75,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 76,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 77,
+                "type": "string"
+            },
+            "entries": {
+                "propertyOrder": 78,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:RbacRuleEntriesType",
+                "type": "object",
+                "properties": {"rbac_rule": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:RbacRuleEntriesType:RbacRuleType",
+                        "type": "object",
+                        "properties": {
+                            "rule_perms": {
+                                "type": "array",
+                                "items": {
+                                    "id": "urn:jsonschema:net:juniper:contrail:api:types:RbacRuleEntriesType:RbacRuleType:RbacPermType",
+                                    "type": "object",
+                                    "properties": {
+                                        "role_name": {"type": "string"},
+                                        "role_crud": {"type": "string"}
+                                    }
+                                }
+                            },
+                            "rule_object": {"type": "string"},
+                            "rule_field": {"type": "string"}
+                        }
+                    }
+                }}
+            },
+            "parent_uuid": {
+                "propertyOrder": 79,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 80,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 81,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 82,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 83,
+                "type": "object"
+            }
+        }
+    }}
+}

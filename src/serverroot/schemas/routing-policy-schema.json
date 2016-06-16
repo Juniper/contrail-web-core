@@ -1,0 +1,83 @@
+{
+    "type": "object",
+    "properties": {"routing-policy": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:RoutingPolicy",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 719,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 720,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 721,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 722,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 723,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 724,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 725,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 726,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 727,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 728,
+                "type": "string"
+            },
+            "service_instance": {
+                "propertyOrder": 729,
+                "type": "array",
+                "items": {
+                    "id": "urn:jsonschema:net:juniper:contrail:api:ObjectReference<net:juniper:contrail:api:types:RoutingPolicyServiceInstanceType>",
+                    "type": "object",
+                    "properties": {
+                        "referred_name": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "href": {"type": "string"},
+                        "attr": {
+                            "id": "urn:jsonschema:net:juniper:contrail:api:types:RoutingPolicyServiceInstanceType",
+                            "type": "object",
+                            "properties": {
+                                "left_sequence": {"type": "string"},
+                                "right_sequence": {"type": "string"}
+                            }
+                        },
+                        "uuid": {"type": "string"}
+                    }
+                }
+            },
+            "default_parent": {
+                "propertyOrder": 730,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 731,
+                "type": "object"
+            }
+        }
+    }}
+}

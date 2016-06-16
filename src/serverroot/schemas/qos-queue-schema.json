@@ -1,0 +1,72 @@
+{
+    "type": "object",
+    "properties": {"qos-queue": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:QosQueue",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 650,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 651,
+                "type": "string"
+            },
+            "min_bandwidth": {
+                "propertyOrder": 652,
+                "type": "integer"
+            },
+            "default_parent_type": {
+                "propertyOrder": 653,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 654,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 655,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 656,
+                "type": "string"
+            },
+            "forwarding_class_back_refs": {
+                "propertyOrder": 657,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "uuid": {
+                "propertyOrder": 658,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 659,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 660,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "max_bandwidth": {
+                "propertyOrder": 661,
+                "type": "integer"
+            },
+            "name": {
+                "propertyOrder": 662,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 663,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 664,
+                "type": "object"
+            }
+        }
+    }}
+}

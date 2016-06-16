@@ -1,0 +1,99 @@
+{
+    "type": "object",
+    "properties": {"service-template": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceTemplate",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 823,
+                "type": "object"
+            },
+            "service_appliance_set": {
+                "propertyOrder": 824,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "object_type": {
+                "propertyOrder": 825,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 826,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 827,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 828,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 829,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 830,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 831,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 832,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "service_instance_back_refs": {
+                "propertyOrder": 833,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "name": {
+                "propertyOrder": 834,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 835,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "properties": {
+                "propertyOrder": 836,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceTemplateType",
+                "type": "object",
+                "properties": {
+                    "flavor": {"type": "string"},
+                    "image_name": {"type": "string"},
+                    "service_type": {"type": "string"},
+                    "availability_zone_enable": {"type": "boolean"},
+                    "service_virtualization_type": {"type": "string"},
+                    "vrouter_instance_type": {"type": "string"},
+                    "instance_data": {"type": "string"},
+                    "service_scaling": {"type": "boolean"},
+                    "interface_type": {
+                        "type": "array",
+                        "items": {
+                            "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceTemplateType:ServiceTemplateInterfaceType",
+                            "type": "object",
+                            "properties": {
+                                "shared_ip": {"type": "boolean"},
+                                "static_route_enable": {"type": "boolean"},
+                                "service_interface_type": {"type": "string"}
+                            }
+                        }
+                    },
+                    "version": {"type": "integer"},
+                    "service_mode": {"type": "string"},
+                    "ordered_interfaces": {"type": "boolean"}
+                }
+            },
+            "id_perms": {
+                "propertyOrder": 837,
+                "type": "object"
+            }
+        }
+    }}
+}

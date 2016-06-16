@@ -1,0 +1,72 @@
+{
+    "type": "object",
+    "properties": {"loadbalancer-member": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:LoadbalancerMember",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 413,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 414,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 415,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 416,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 417,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 418,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 419,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 420,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 421,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 422,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 423,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "properties": {
+                "propertyOrder": 424,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:LoadbalancerMemberType",
+                "type": "object",
+                "properties": {
+                    "status_description": {"type": "string"},
+                    "address": {"type": "string"},
+                    "protocol_port": {"type": "integer"},
+                    "weight": {"type": "integer"},
+                    "admin_state": {"type": "boolean"},
+                    "status": {"type": "string"}
+                }
+            },
+            "id_perms": {
+                "propertyOrder": 425,
+                "type": "object"
+            }
+        }
+    }}
+}

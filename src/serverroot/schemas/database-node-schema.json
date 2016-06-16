@@ -1,0 +1,63 @@
+{
+    "type": "object",
+    "properties": {"database-node": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:DatabaseNode",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 157,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 158,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 159,
+                "type": "string"
+            },
+            "ip_address": {
+                "propertyOrder": 160,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 161,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 162,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 163,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 164,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 165,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 166,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 167,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 168,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 169,
+                "type": "object"
+            }
+        }
+    }}
+}

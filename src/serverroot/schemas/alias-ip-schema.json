@@ -1,0 +1,89 @@
+{
+    "type": "object",
+    "properties": {"alias-ip": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:AliasIp",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 28,
+                "type": "object"
+            },
+            "address": {
+                "propertyOrder": 29,
+                "type": "string"
+            },
+            "object_type": {
+                "propertyOrder": 30,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 31,
+                "type": "string"
+            },
+            "virtual_machine_interface": {
+                "propertyOrder": 32,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "project": {
+                "propertyOrder": 33,
+                "type": "array",
+                "items": {
+                    "id": "urn:jsonschema:net:juniper:contrail:api:ObjectReference<net:juniper:contrail:api:ApiPropertyBase>",
+                    "type": "object",
+                    "properties": {
+                        "referred_name": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "href": {"type": "string"},
+                        "attr": {"type": "any"},
+                        "uuid": {"type": "string"}
+                    }
+                }
+            },
+            "display_name": {
+                "propertyOrder": 34,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 35,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 36,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 37,
+                "type": "string"
+            },
+            "parent_uuid": {
+                "propertyOrder": 38,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 39,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "address_family": {
+                "propertyOrder": 40,
+                "type": "string"
+            },
+            "name": {
+                "propertyOrder": 41,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 42,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "id_perms": {
+                "propertyOrder": 43,
+                "type": "object"
+            }
+        }
+    }}
+}

@@ -1,0 +1,129 @@
+{
+    "type": "object",
+    "properties": {"loadbalancer-pool": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:LoadbalancerPool",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 426,
+                "type": "object"
+            },
+            "loadbalancer_listener": {
+                "propertyOrder": 427,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "service_appliance_set": {
+                "propertyOrder": 428,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "object_type": {
+                "propertyOrder": 429,
+                "type": "string"
+            },
+            "loadbalancer_members": {
+                "propertyOrder": 430,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent_type": {
+                "propertyOrder": 431,
+                "type": "string"
+            },
+            "virtual_machine_interface": {
+                "propertyOrder": 432,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 433,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 434,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 435,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 436,
+                "type": "string"
+            },
+            "custom_attributes": {
+                "propertyOrder": 437,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:KeyValuePairs",
+                "type": "object",
+                "properties": {"key_value_pair": {
+                    "type": "array",
+                    "items": {
+                        "id": "urn:jsonschema:net:juniper:contrail:api:types:KeyValuePairs:KeyValuePair",
+                        "type": "object",
+                        "properties": {
+                            "value": {"type": "string"},
+                            "key": {"type": "string"}
+                        }
+                    }
+                }}
+            },
+            "parent_uuid": {
+                "propertyOrder": 438,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 439,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "provider": {
+                "propertyOrder": 440,
+                "type": "string"
+            },
+            "name": {
+                "propertyOrder": 441,
+                "type": "string"
+            },
+            "virtual_ip_back_refs": {
+                "propertyOrder": 442,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "service_instance": {
+                "propertyOrder": 443,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 444,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "properties": {
+                "propertyOrder": 445,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:LoadbalancerPoolType",
+                "type": "object",
+                "properties": {
+                    "protocol": {"type": "string"},
+                    "status_description": {"type": "string"},
+                    "session_persistence": {"type": "string"},
+                    "subnet_id": {"type": "string"},
+                    "admin_state": {"type": "boolean"},
+                    "loadbalancer_method": {"type": "string"},
+                    "persistence_cookie_name": {"type": "string"},
+                    "status": {"type": "string"}
+                }
+            },
+            "id_perms": {
+                "propertyOrder": 446,
+                "type": "object"
+            },
+            "loadbalancer_healthmonitor": {
+                "propertyOrder": 447,
+                "type": "array",
+                "items": {"type": "object"}
+            }
+        }
+    }}
+}

@@ -1,0 +1,76 @@
+{
+    "type": "object",
+    "properties": {"service-appliance": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:ServiceAppliance",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 749,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 750,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 751,
+                "type": "string"
+            },
+            "ip_address": {
+                "propertyOrder": 752,
+                "type": "string"
+            },
+            "display_name": {
+                "propertyOrder": 753,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 754,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 755,
+                "type": "string"
+            },
+            "physical_interface": {
+                "propertyOrder": 756,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "uuid": {
+                "propertyOrder": 757,
+                "type": "string"
+            },
+            "user_credentials": {
+                "propertyOrder": 758,
+                "type": "object"
+            },
+            "parent_uuid": {
+                "propertyOrder": 759,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 760,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "name": {
+                "propertyOrder": 761,
+                "type": "string"
+            },
+            "default_parent": {
+                "propertyOrder": 762,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "properties": {
+                "propertyOrder": 763,
+                "type": "object"
+            },
+            "id_perms": {
+                "propertyOrder": 764,
+                "type": "object"
+            }
+        }
+    }}
+}

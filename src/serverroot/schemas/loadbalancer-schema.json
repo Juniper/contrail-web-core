@@ -1,0 +1,91 @@
+{
+    "type": "object",
+    "properties": {"loadbalancer": {
+        "id": "urn:jsonschema:net:juniper:contrail:api:types:Loadbalancer",
+        "type": "object",
+        "properties": {
+            "parent": {
+                "propertyOrder": 367,
+                "type": "object"
+            },
+            "object_type": {
+                "propertyOrder": 368,
+                "type": "string"
+            },
+            "default_parent_type": {
+                "propertyOrder": 369,
+                "type": "string"
+            },
+            "virtual_machine_interface": {
+                "propertyOrder": 370,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "display_name": {
+                "propertyOrder": 371,
+                "type": "string"
+            },
+            "perms2": {
+                "propertyOrder": 372,
+                "type": "object"
+            },
+            "type": {
+                "propertyOrder": 373,
+                "type": "string"
+            },
+            "uuid": {
+                "propertyOrder": 374,
+                "type": "string"
+            },
+            "loadbalancer_listener_back_refs": {
+                "propertyOrder": 375,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "parent_uuid": {
+                "propertyOrder": 376,
+                "type": "string"
+            },
+            "qualified_name": {
+                "propertyOrder": 377,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "provider": {
+                "propertyOrder": 378,
+                "type": "string"
+            },
+            "name": {
+                "propertyOrder": 379,
+                "type": "string"
+            },
+            "service_instance": {
+                "propertyOrder": 380,
+                "type": "array",
+                "items": {"type": "object"}
+            },
+            "default_parent": {
+                "propertyOrder": 381,
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "properties": {
+                "propertyOrder": 382,
+                "id": "urn:jsonschema:net:juniper:contrail:api:types:LoadbalancerType",
+                "type": "object",
+                "properties": {
+                    "vip_address": {"type": "string"},
+                    "operating_status": {"type": "string"},
+                    "provisioning_status": {"type": "string"},
+                    "admin_state": {"type": "boolean"},
+                    "vip_subnet_id": {"type": "string"},
+                    "status": {"type": "string"}
+                }
+            },
+            "id_perms": {
+                "propertyOrder": 383,
+                "type": "object"
+            }
+        }
+    }}
+}
