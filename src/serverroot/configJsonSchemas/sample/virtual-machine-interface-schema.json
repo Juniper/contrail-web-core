@@ -1,0 +1,656 @@
+{
+    "type": "object", 
+    "properties": {
+        "virtual-machine-interface": {
+            "type": "object", 
+            "properties": {
+                "physical_interface_refs": {
+                    "url": "/physical-interfaces", 
+                    "type": "array"
+                }, 
+                "routing_instance_refs": {
+                    "url": "/routing-instances", 
+                    "type": "array"
+                }, 
+                "virtual_machine_interface_mac_addresses": {
+                    "required": "required", 
+                    "type": "object", 
+                    "properties": {
+                        "mac_address": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "MAC address of the virtual machine interface, automatically assigned by system if not provided."
+                }, 
+                "virtual_machine_interface_bindings": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "key_value_pair": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "value": {
+                                        "type": "string"
+                                    }, 
+                                    "key": {
+                                        "type": "string"
+                                    }
+                                }
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "Dictionary of arbitrary (key, value) for this interface. Neutron port bindings use this."
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "virtual-machine", 
+                        "project"
+                    ]
+                }, 
+                "interface_route_table_refs": {
+                    "url": "/interface-route-tables", 
+                    "type": "array"
+                }, 
+                "qos_config_refs": {
+                    "url": "/qos-configs", 
+                    "type": "array"
+                }, 
+                "virtual_machine_interface_device_owner": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "For openstack compatibility, not used by system."
+                }, 
+                "service_health_check_refs": {
+                    "url": "/service-health-checks", 
+                    "type": "array"
+                }, 
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "security_group_refs": {
+                    "url": "/security-groups", 
+                    "type": "array"
+                }, 
+                "virtual_machine_interface_disable_policy": {
+                    "required": "optional", 
+                    "type": "boolean", 
+                    "description": "When True all policy checks for ingress and egress traffic from this interface are disabled. Flow table entries are not created."
+                }, 
+                "port_tuple_refs": {
+                    "url": "/port-tuples", 
+                    "type": "array"
+                }, 
+                "virtual_network_refs": {
+                    "url": "/virtual-networks", 
+                    "type": "array"
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "virtual_machine_interface_properties": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "sub_interface_vlan_tag": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "802.1Q VLAN tag to be used if this interface is sub-interface for some other interface."
+                        }, 
+                        "local_preference": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "BGP route local preference for routes representing this interface, higher value is higher preference"
+                        }, 
+                        "interface_mirror": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "traffic_direction": {
+                                    "required": "true", 
+                                    "type": "string", 
+                                    "description": "Specifies direction of traffic to mirror, Ingress, Egress or both"
+                                }, 
+                                "mirror_to": {
+                                    "required": "true", 
+                                    "type": "object", 
+                                    "properties": {
+                                        "analyzer_name": {
+                                            "required": "optional", 
+                                            "type": "string", 
+                                            "description": "Name of service instance used as analyzer"
+                                        }, 
+                                        "nh_mode": {
+                                            "required": "optional", 
+                                            "type": "string", 
+                                            "description": "This mode used to determine static or dynamic nh "
+                                        }, 
+                                        "juniper_header": {
+                                            "required": "optional", 
+                                            "type": "boolean", 
+                                            "description": "This flag is used to determine with/without juniper-header"
+                                        }, 
+                                        "udp_port": {
+                                            "required": "optional", 
+                                            "type": "number", 
+                                            "description": "ip udp port used in contrail default encapsulation for mirroring"
+                                        }, 
+                                        "routing_instance": {
+                                            "required": "true", 
+                                            "type": "string", 
+                                            "description": "Internal use only, should be set to -1"
+                                        }, 
+                                        "static_nh_header": {
+                                            "required": "optional", 
+                                            "type": "object", 
+                                            "properties": {
+                                                "vtep_dst_ip_address": {
+                                                    "required": "true", 
+                                                    "type": "string", 
+                                                    "description": "ip address of destination vtep"
+                                                }, 
+                                                "vtep_dst_mac_address": {
+                                                    "required": "optional", 
+                                                    "type": "string", 
+                                                    "description": "mac address of destination vtep"
+                                                }, 
+                                                "vni": {
+                                                    "required": "true", 
+                                                    "type": "number", 
+                                                    "description": "Vni of vtep"
+                                                }
+                                            }, 
+                                            "description": "vtep details required if static nh enabled"
+                                        }, 
+                                        "analyzer_ip_address": {
+                                            "required": "true", 
+                                            "type": "string", 
+                                            "description": "ip address of interface to which mirrored packets are sent"
+                                        }, 
+                                        "encapsulation": {
+                                            "required": "optional", 
+                                            "type": "string", 
+                                            "description": "Encapsulation for Mirrored packet, not used currently"
+                                        }, 
+                                        "analyzer_mac_address": {
+                                            "required": "optional", 
+                                            "type": "string", 
+                                            "description": "mac address of interface to which mirrored packets are sent "
+                                        }
+                                    }, 
+                                    "description": "Mirror destination configuration"
+                                }
+                            }, 
+                            "description": "Interface Mirror configuration"
+                        }, 
+                        "service_interface_type": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "This interface belongs to Service Instance and is tagged as left, right or other"
+                        }
+                    }, 
+                    "description": "Virtual Machine Interface miscelenious configurations."
+                }, 
+                "ecmp_hashing_include_fields": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "destination_ip": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use destination ip in the ECMP hash calculation"
+                        }, 
+                        "ip_protocol": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use ip protocol in the ECMP hash calculation"
+                        }, 
+                        "source_ip": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use source ip in the ECMP hash calculation"
+                        }, 
+                        "hashing_configured": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When True, Packet header fields used in calculating ECMP hash is decided by following flags"
+                        }, 
+                        "source_port": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use source port in the ECMP hash calculation"
+                        }, 
+                        "destination_port": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use destination port in the ECMP hash calculation"
+                        }
+                    }, 
+                    "description": "ECMP hashing config at global level."
+                }, 
+                "virtual_machine_interface_host_routes": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "route": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "prefix": {
+                                        "type": "string", 
+                                        "description": "Ip prefix/len format prefix"
+                                    }, 
+                                    "next_hop": {
+                                        "type": "string", 
+                                        "description": "Ip address or service instance name."
+                                    }, 
+                                    "community_attributes": {
+                                        "type": "object", 
+                                        "properties": {
+                                            "community_attribute": {
+                                                "items": {
+                                                    "type": "string"
+                                                }, 
+                                                "type": "array"
+                                            }
+                                        }
+                                    }, 
+                                    "next_hop_type": {
+                                        "type": "string"
+                                    }
+                                }
+                            }, 
+                            "type": "array", 
+                            "description": "List of ip routes with following fields."
+                        }
+                    }, 
+                    "description": "List of host routes(prefixes, nexthop) that are passed to VM via DHCP."
+                }, 
+                "virtual_machine_interface_allowed_address_pairs": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "allowed_address_pair": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "ip": {
+                                        "type": "object", 
+                                        "properties": {
+                                            "ip_prefix": {
+                                                "type": "string"
+                                            }, 
+                                            "ip_prefix_len": {
+                                                "type": "number"
+                                            }
+                                        }
+                                    }, 
+                                    "mac": {
+                                        "required": "optional", 
+                                        "type": "string"
+                                    }, 
+                                    "address_mode": {
+                                        "required": "optional", 
+                                        "type": "string", 
+                                        "description": "Address-mode active-backup is used for VRRP address.                           Address-mode active-active is used for ECMP."
+                                    }
+                                }
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "List of (IP address, MAC) other than instance ip on this interface."
+                }, 
+                "virtual_machine_interface_fat_flow_protocols": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "fat_flow_protocol": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "protocol": {
+                                        "type": "string"
+                                    }, 
+                                    "port": {
+                                        "type": "number"
+                                    }
+                                }
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "List of (protocol, port number), for flows to interface with (protocol, destination port number), vrouter will ignore source port while setting up flow and ignore it as source port in reverse flow. Hence many flows will map to single flow."
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }, 
+                "virtual_machine_refs": {
+                    "url": "/virtual-machines", 
+                    "type": "array"
+                }, 
+                "vrf_assign_table": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "vrf_assign_rule": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "routing_instance": {
+                                        "type": "string"
+                                    }, 
+                                    "match_condition": {
+                                        "type": "object", 
+                                        "properties": {
+                                            "src_port": {
+                                                "required": "true", 
+                                                "type": "object", 
+                                                "properties": {
+                                                    "end_port": {
+                                                        "required": "true", 
+                                                        "type": "number"
+                                                    }, 
+                                                    "start_port": {
+                                                        "required": "true", 
+                                                        "type": "number"
+                                                    }
+                                                }, 
+                                                "description": "Range of source port for layer 4 protocol"
+                                            }, 
+                                            "src_address": {
+                                                "required": "true", 
+                                                "type": "object", 
+                                                "properties": {
+                                                    "security_group": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any address that belongs to interface with this security-group"
+                                                    }, 
+                                                    "subnet": {
+                                                        "required": "exclusive", 
+                                                        "type": "object", 
+                                                        "properties": {
+                                                            "ip_prefix": {
+                                                                "type": "string"
+                                                            }, 
+                                                            "ip_prefix_len": {
+                                                                "type": "number"
+                                                            }
+                                                        }, 
+                                                        "description": "Any address that belongs to this subnet"
+                                                    }, 
+                                                    "network_policy": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any adddress that belongs to virtul network which has this policy attached"
+                                                    }, 
+                                                    "subnet_list": {
+                                                        "items": {
+                                                            "type": "object", 
+                                                            "properties": {
+                                                                "ip_prefix": {
+                                                                    "type": "string"
+                                                                }, 
+                                                                "ip_prefix_len": {
+                                                                    "type": "number"
+                                                                }
+                                                            }
+                                                        }, 
+                                                        "required": "exclusive", 
+                                                        "type": "array", 
+                                                        "description": "Any adddress that belongs to any one of subnet in this list"
+                                                    }, 
+                                                    "virtual_network": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any address that belongs to this virtul network "
+                                                    }
+                                                }, 
+                                                "description": "Source ip matching criteria"
+                                            }, 
+                                            "ethertype": {
+                                                "required": "true", 
+                                                "type": "string"
+                                            }, 
+                                            "dst_address": {
+                                                "required": "true", 
+                                                "type": "object", 
+                                                "properties": {
+                                                    "security_group": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any address that belongs to interface with this security-group"
+                                                    }, 
+                                                    "subnet": {
+                                                        "required": "exclusive", 
+                                                        "type": "object", 
+                                                        "properties": {
+                                                            "ip_prefix": {
+                                                                "type": "string"
+                                                            }, 
+                                                            "ip_prefix_len": {
+                                                                "type": "number"
+                                                            }
+                                                        }, 
+                                                        "description": "Any address that belongs to this subnet"
+                                                    }, 
+                                                    "network_policy": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any adddress that belongs to virtul network which has this policy attached"
+                                                    }, 
+                                                    "subnet_list": {
+                                                        "items": {
+                                                            "type": "object", 
+                                                            "properties": {
+                                                                "ip_prefix": {
+                                                                    "type": "string"
+                                                                }, 
+                                                                "ip_prefix_len": {
+                                                                    "type": "number"
+                                                                }
+                                                            }
+                                                        }, 
+                                                        "required": "exclusive", 
+                                                        "type": "array", 
+                                                        "description": "Any adddress that belongs to any one of subnet in this list"
+                                                    }, 
+                                                    "virtual_network": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any address that belongs to this virtul network "
+                                                    }
+                                                }, 
+                                                "description": "Destination ip matching criteria"
+                                            }, 
+                                            "dst_port": {
+                                                "required": "true", 
+                                                "type": "object", 
+                                                "properties": {
+                                                    "end_port": {
+                                                        "required": "true", 
+                                                        "type": "number"
+                                                    }, 
+                                                    "start_port": {
+                                                        "required": "true", 
+                                                        "type": "number"
+                                                    }
+                                                }, 
+                                                "description": "Range of destination  port for layer 4 protocol"
+                                            }, 
+                                            "protocol": {
+                                                "required": "true", 
+                                                "type": "string", 
+                                                "description": "Layer 4 protocol in ip packet"
+                                            }
+                                        }
+                                    }, 
+                                    "vlan_tag": {
+                                        "type": "number"
+                                    }, 
+                                    "ignore_acl": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "VRF assignment policy for this interface, automatically generated by system."
+                }, 
+                "virtual_machine_interface_dhcp_option_list": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "dhcp_option": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "dhcp_option_value": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Encoded DHCP option value (decimal)"
+                                    }, 
+                                    "dhcp_option_value_bytes": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Value of the DHCP option to be copied byte by byte"
+                                    }, 
+                                    "dhcp_option_name": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of the DHCP option"
+                                    }
+                                }
+                            }, 
+                            "type": "array", 
+                            "description": "List of DHCP options"
+                        }
+                    }, 
+                    "description": "DHCP options configuration specific to this interface."
+                }, 
+                "virtual_machine_interface_refs": {
+                    "url": "/virtual-machine-interfaces", 
+                    "type": "array"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,244 @@
+{
+    "type": "object", 
+    "properties": {
+        "global-system-config": {
+            "type": "object", 
+            "properties": {
+                "config_version": {
+                    "required": "system-only", 
+                    "type": "string", 
+                    "description": "Version of OpenContrail software that generated this config."
+                }, 
+                "alarm_enable": {
+                    "required": "optional", 
+                    "type": "boolean", 
+                    "description": "Flag to enable/disable alarms configured under global-system-config. True, if not set."
+                }, 
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "graceful_restart_params": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "long_lived_graceful_restart_time": {
+                            "type": "number"
+                        }, 
+                        "graceful_restart_time": {
+                            "type": "number"
+                        }
+                    }, 
+                    "description": "Graceful Restart parameters"
+                }, 
+                "plugin_tuning": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "plugin_property": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "property": {
+                                        "type": "string"
+                                    }, 
+                                    "value": {
+                                        "type": "string"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "List of plugin specific properties (property, value)"
+                        }
+                    }, 
+                    "description": "Various Orchestration system plugin(interface) parameters, like Openstack Neutron plugin."
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "config-root"
+                    ]
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }, 
+                "ibgp_auto_mesh": {
+                    "required": "optional", 
+                    "type": "boolean", 
+                    "description": "When true, system will automatically create BGP peering mesh with all control-nodes that have same BGP AS number as global AS number."
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "user_defined_log_statistics": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "statlist": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "pattern": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Perl type regular expression pattern to match"
+                                    }, 
+                                    "name": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of the stat"
+                                    }
+                                }
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "stats name and patterns"
+                }, 
+                "ip_fabric_subnets": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "subnet": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "ip_prefix": {
+                                        "type": "string"
+                                    }, 
+                                    "ip_prefix_len": {
+                                        "type": "number"
+                                    }
+                                }
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "List of all subnets in which vrouter ip address exist. Used by Device manager to configure dynamic GRE tunnels on the SDN gateway."
+                }, 
+                "autonomous_system": {
+                    "minimum": 1, 
+                    "required": "required", 
+                    "type": "number", 
+                    "maximum": 65534, 
+                    "description": "16 bit BGP Autonomous System number for the cluster."
+                }, 
+                "bgp_router_refs": {
+                    "url": "/bgp-routers", 
+                    "type": "array"
+                }
+            }
+        }
+    }
+}

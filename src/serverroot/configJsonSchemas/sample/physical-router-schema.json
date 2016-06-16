@@ -1,0 +1,257 @@
+{
+    "type": "object", 
+    "properties": {
+        "physical-router": {
+            "type": "object", 
+            "properties": {
+                "physical_router_management_ip": {
+                    "required": "required", 
+                    "type": "string", 
+                    "description": "Management ip for this physical router. It is used by the device manager to perform netconf and by SNMP collector if enabled."
+                }, 
+                "physical_router_snmp_credentials": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "v3_privacy_protocol": {
+                            "type": "string"
+                        }, 
+                        "retries": {
+                            "type": "number"
+                        }, 
+                        "v3_authentication_password": {
+                            "type": "string"
+                        }, 
+                        "v3_engine_time": {
+                            "type": "number"
+                        }, 
+                        "v3_engine_id": {
+                            "type": "string"
+                        }, 
+                        "local_port": {
+                            "type": "number"
+                        }, 
+                        "v3_security_level": {
+                            "type": "string"
+                        }, 
+                        "v3_context": {
+                            "type": "string"
+                        }, 
+                        "v3_security_name": {
+                            "type": "string"
+                        }, 
+                        "v3_authentication_protocol": {
+                            "type": "string"
+                        }, 
+                        "v2_community": {
+                            "type": "string"
+                        }, 
+                        "v3_security_engine_id": {
+                            "type": "string"
+                        }, 
+                        "v3_context_engine_id": {
+                            "type": "string"
+                        }, 
+                        "version": {
+                            "type": "number"
+                        }, 
+                        "timeout": {
+                            "type": "number"
+                        }, 
+                        "v3_privacy_password": {
+                            "type": "string"
+                        }, 
+                        "v3_engine_boots": {
+                            "type": "number"
+                        }
+                    }, 
+                    "description": "SNMP credentials for the physical router used by SNMP colloctor."
+                }, 
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "physical_router_vendor_name": {
+                    "required": "required", 
+                    "type": "string", 
+                    "description": "Vendor name of the physical router (e.g juniper). Used by the device manager to select driver."
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "global-system-config"
+                    ]
+                }, 
+                "physical_router_product_name": {
+                    "required": "required", 
+                    "type": "string", 
+                    "description": "Model name of the physical router (e.g juniper). Used by the device manager to select driver."
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }, 
+                "virtual_network_refs": {
+                    "url": "/virtual-networks", 
+                    "type": "array"
+                }, 
+                "virtual_router_refs": {
+                    "url": "/virtual-routers", 
+                    "type": "array"
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "bgp_router_refs": {
+                    "url": "/bgp-routers", 
+                    "type": "array"
+                }, 
+                "physical_router_user_credentials": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "username": {
+                            "type": "string"
+                        }, 
+                        "password": {
+                            "type": "string"
+                        }
+                    }, 
+                    "description": "Username and password for netconf to the physical router by device manager."
+                }, 
+                "physical_router_vnc_managed": {
+                    "required": "optional", 
+                    "type": "boolean", 
+                    "description": "This physical router is enabled to be configured by device manager."
+                }, 
+                "physical_router_dataplane_ip": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "This is ip address in the ip-fabric(underlay) network that can be used in data palne by physical router. Usually it is the VTEP address in VxLAN for the TOR switch."
+                }, 
+                "physical_router_junos_service_ports": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "service_port": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "Juniper JUNOS specific sevice interfaces name  to perform services like NAT."
+                }
+            }
+        }
+    }
+}
