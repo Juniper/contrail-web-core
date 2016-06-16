@@ -1,0 +1,426 @@
+{
+    "type": "object", 
+    "properties": {
+        "access-control-list": {
+            "type": "object", 
+            "properties": {
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "virtual-network", 
+                        "security-group"
+                    ]
+                }, 
+                "access_control_list_entries": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "dynamic": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "For Internal use only"
+                        }, 
+                        "acl_rule": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "rule_uuid": {
+                                        "required": "optional", 
+                                        "type": "string", 
+                                        "description": "Rule UUID is identifier used in flow records to identify rule"
+                                    }, 
+                                    "match_condition": {
+                                        "required": "true", 
+                                        "type": "object", 
+                                        "properties": {
+                                            "src_port": {
+                                                "required": "true", 
+                                                "type": "object", 
+                                                "properties": {
+                                                    "end_port": {
+                                                        "required": "true", 
+                                                        "type": "number"
+                                                    }, 
+                                                    "start_port": {
+                                                        "required": "true", 
+                                                        "type": "number"
+                                                    }
+                                                }, 
+                                                "description": "Range of source port for layer 4 protocol"
+                                            }, 
+                                            "src_address": {
+                                                "required": "true", 
+                                                "type": "object", 
+                                                "properties": {
+                                                    "security_group": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any address that belongs to interface with this security-group"
+                                                    }, 
+                                                    "subnet": {
+                                                        "required": "exclusive", 
+                                                        "type": "object", 
+                                                        "properties": {
+                                                            "ip_prefix": {
+                                                                "type": "string"
+                                                            }, 
+                                                            "ip_prefix_len": {
+                                                                "type": "number"
+                                                            }
+                                                        }, 
+                                                        "description": "Any address that belongs to this subnet"
+                                                    }, 
+                                                    "network_policy": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any adddress that belongs to virtul network which has this policy attached"
+                                                    }, 
+                                                    "subnet_list": {
+                                                        "items": {
+                                                            "type": "object", 
+                                                            "properties": {
+                                                                "ip_prefix": {
+                                                                    "type": "string"
+                                                                }, 
+                                                                "ip_prefix_len": {
+                                                                    "type": "number"
+                                                                }
+                                                            }
+                                                        }, 
+                                                        "required": "exclusive", 
+                                                        "type": "array", 
+                                                        "description": "Any adddress that belongs to any one of subnet in this list"
+                                                    }, 
+                                                    "virtual_network": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any address that belongs to this virtul network "
+                                                    }
+                                                }, 
+                                                "description": "Source ip matching criteria"
+                                            }, 
+                                            "ethertype": {
+                                                "required": "true", 
+                                                "type": "string"
+                                            }, 
+                                            "dst_address": {
+                                                "required": "true", 
+                                                "type": "object", 
+                                                "properties": {
+                                                    "security_group": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any address that belongs to interface with this security-group"
+                                                    }, 
+                                                    "subnet": {
+                                                        "required": "exclusive", 
+                                                        "type": "object", 
+                                                        "properties": {
+                                                            "ip_prefix": {
+                                                                "type": "string"
+                                                            }, 
+                                                            "ip_prefix_len": {
+                                                                "type": "number"
+                                                            }
+                                                        }, 
+                                                        "description": "Any address that belongs to this subnet"
+                                                    }, 
+                                                    "network_policy": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any adddress that belongs to virtul network which has this policy attached"
+                                                    }, 
+                                                    "subnet_list": {
+                                                        "items": {
+                                                            "type": "object", 
+                                                            "properties": {
+                                                                "ip_prefix": {
+                                                                    "type": "string"
+                                                                }, 
+                                                                "ip_prefix_len": {
+                                                                    "type": "number"
+                                                                }
+                                                            }
+                                                        }, 
+                                                        "required": "exclusive", 
+                                                        "type": "array", 
+                                                        "description": "Any adddress that belongs to any one of subnet in this list"
+                                                    }, 
+                                                    "virtual_network": {
+                                                        "required": "exclusive", 
+                                                        "type": "string", 
+                                                        "description": "Any address that belongs to this virtul network "
+                                                    }
+                                                }, 
+                                                "description": "Destination ip matching criteria"
+                                            }, 
+                                            "dst_port": {
+                                                "required": "true", 
+                                                "type": "object", 
+                                                "properties": {
+                                                    "end_port": {
+                                                        "required": "true", 
+                                                        "type": "number"
+                                                    }, 
+                                                    "start_port": {
+                                                        "required": "true", 
+                                                        "type": "number"
+                                                    }
+                                                }, 
+                                                "description": "Range of destination  port for layer 4 protocol"
+                                            }, 
+                                            "protocol": {
+                                                "required": "true", 
+                                                "type": "string", 
+                                                "description": "Layer 4 protocol in ip packet"
+                                            }
+                                        }, 
+                                        "description": "Match condition for packets"
+                                    }, 
+                                    "action_list": {
+                                        "required": "true", 
+                                        "type": "object", 
+                                        "properties": {
+                                            "gateway_name": {
+                                                "required": "optional", 
+                                                "type": "string", 
+                                                "description": "For internal use only"
+                                            }, 
+                                            "log": {
+                                                "required": "optional", 
+                                                "type": "boolean", 
+                                                "description": "Flow records for traffic matching this rule are sent at higher priority"
+                                            }, 
+                                            "alert": {
+                                                "required": "optional", 
+                                                "type": "boolean", 
+                                                "description": "For internal use only"
+                                            }, 
+                                            "qos_action": {
+                                                "required": "optional", 
+                                                "type": "string", 
+                                                "description": "FQN of Qos configuration object for QoS marking"
+                                            }, 
+                                            "assign_routing_instance": {
+                                                "required": "optional", 
+                                                "type": "string", 
+                                                "description": "For internal use only"
+                                            }, 
+                                            "mirror_to": {
+                                                "required": "optional", 
+                                                "type": "object", 
+                                                "properties": {
+                                                    "analyzer_name": {
+                                                        "required": "optional", 
+                                                        "type": "string", 
+                                                        "description": "Name of service instance used as analyzer"
+                                                    }, 
+                                                    "nh_mode": {
+                                                        "required": "optional", 
+                                                        "type": "string", 
+                                                        "description": "This mode used to determine static or dynamic nh "
+                                                    }, 
+                                                    "juniper_header": {
+                                                        "required": "optional", 
+                                                        "type": "boolean", 
+                                                        "description": "This flag is used to determine with/without juniper-header"
+                                                    }, 
+                                                    "udp_port": {
+                                                        "required": "optional", 
+                                                        "type": "number", 
+                                                        "description": "ip udp port used in contrail default encapsulation for mirroring"
+                                                    }, 
+                                                    "routing_instance": {
+                                                        "required": "true", 
+                                                        "type": "string", 
+                                                        "description": "Internal use only, should be set to -1"
+                                                    }, 
+                                                    "static_nh_header": {
+                                                        "required": "optional", 
+                                                        "type": "object", 
+                                                        "properties": {
+                                                            "vtep_dst_ip_address": {
+                                                                "required": "true", 
+                                                                "type": "string", 
+                                                                "description": "ip address of destination vtep"
+                                                            }, 
+                                                            "vtep_dst_mac_address": {
+                                                                "required": "optional", 
+                                                                "type": "string", 
+                                                                "description": "mac address of destination vtep"
+                                                            }, 
+                                                            "vni": {
+                                                                "required": "true", 
+                                                                "type": "number", 
+                                                                "description": "Vni of vtep"
+                                                            }
+                                                        }, 
+                                                        "description": "vtep details required if static nh enabled"
+                                                    }, 
+                                                    "analyzer_ip_address": {
+                                                        "required": "true", 
+                                                        "type": "string", 
+                                                        "description": "ip address of interface to which mirrored packets are sent"
+                                                    }, 
+                                                    "encapsulation": {
+                                                        "required": "optional", 
+                                                        "type": "string", 
+                                                        "description": "Encapsulation for Mirrored packet, not used currently"
+                                                    }, 
+                                                    "analyzer_mac_address": {
+                                                        "required": "optional", 
+                                                        "type": "string", 
+                                                        "description": "mac address of interface to which mirrored packets are sent "
+                                                    }
+                                                }, 
+                                                "description": "Mirror traffic matching this rule"
+                                            }, 
+                                            "simple_action": {
+                                                "required": "true", 
+                                                "type": "string", 
+                                                "description": "Simple allow(pass) or deny action for traffic matching this rule"
+                                            }, 
+                                            "apply_service": {
+                                                "items": {
+                                                    "type": "string"
+                                                }, 
+                                                "required": "optional", 
+                                                "type": "array", 
+                                                "description": "Ordered list of service instances in service chain applied to traffic matching the rule"
+                                            }
+                                        }, 
+                                        "description": "Actions to be performed if packets match condition"
+                                    }
+                                }
+                            }, 
+                            "required": "true", 
+                            "type": "array", 
+                            "description": "For Internal use only"
+                        }
+                    }, 
+                    "description": "Automatically generated by system based on security groups or network policies."
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }
+            }
+        }
+    }
+}

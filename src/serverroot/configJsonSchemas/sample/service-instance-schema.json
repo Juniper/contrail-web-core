@@ -1,0 +1,327 @@
+{
+    "type": "object", 
+    "properties": {
+        "service-instance": {
+            "type": "object", 
+            "properties": {
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "project"
+                    ]
+                }, 
+                "service_instance_bindings": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "key_value_pair": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "value": {
+                                        "type": "string"
+                                    }, 
+                                    "key": {
+                                        "type": "string"
+                                    }
+                                }
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "Opaque key value pair for generating config for the service instance."
+                }, 
+                "service_instance_properties": {
+                    "required": "required", 
+                    "type": "object", 
+                    "properties": {
+                        "right_virtual_network": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Deprecated"
+                        }, 
+                        "right_ip_address": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Deprecated"
+                        }, 
+                        "availability_zone": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Availability zone used to spawn VM(s) for this service instance, used in version 1 (V1) only"
+                        }, 
+                        "management_virtual_network": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Deprecated"
+                        }, 
+                        "scale_out": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "auto_scale": {
+                                    "required": "true", 
+                                    "type": "boolean", 
+                                    "description": "Automatically change the number of virtual machines. Not implemented"
+                                }, 
+                                "max_instances": {
+                                    "required": "true", 
+                                    "type": "number", 
+                                    "description": "Maximum number of scale out factor(virtual machines). can be changed dynamically"
+                                }
+                            }, 
+                            "description": "Number of virtual machines in this service instance, used in version 1 (V1) only"
+                        }, 
+                        "ha_mode": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "When scale-out is greater than one, decides if active-active or active-backup, used in version 1 (V1) only"
+                        }, 
+                        "virtual_router_id": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "UUID of a virtual-router on which this service instance need to spwan. Used to spawn services on CPE device when Nova is not present"
+                        }, 
+                        "interface_list": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "virtual_network": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Interface belongs to this virtual network."
+                                    }, 
+                                    "ip_address": {
+                                        "required": "optional", 
+                                        "type": "string", 
+                                        "description": "Shared ip for this interface (Only V1)"
+                                    }, 
+                                    "allowed_address_pairs": {
+                                        "required": "optional", 
+                                        "type": "object", 
+                                        "properties": {
+                                            "allowed_address_pair": {
+                                                "items": {
+                                                    "type": "object", 
+                                                    "properties": {
+                                                        "ip": {
+                                                            "type": "object", 
+                                                            "properties": {
+                                                                "ip_prefix": {
+                                                                    "type": "string"
+                                                                }, 
+                                                                "ip_prefix_len": {
+                                                                    "type": "number"
+                                                                }
+                                                            }
+                                                        }, 
+                                                        "mac": {
+                                                            "required": "optional", 
+                                                            "type": "string"
+                                                        }, 
+                                                        "address_mode": {
+                                                            "required": "optional", 
+                                                            "type": "string", 
+                                                            "description": "Address-mode active-backup is used for VRRP address.                           Address-mode active-active is used for ECMP."
+                                                        }
+                                                    }
+                                                }, 
+                                                "type": "array"
+                                            }
+                                        }, 
+                                        "description": "Allowed address pairs, list of (IP address, MAC) for this interface"
+                                    }, 
+                                    "static_routes": {
+                                        "required": "optional", 
+                                        "type": "object", 
+                                        "properties": {
+                                            "route": {
+                                                "items": {
+                                                    "type": "object", 
+                                                    "properties": {
+                                                        "prefix": {
+                                                            "type": "string", 
+                                                            "description": "Ip prefix/len format prefix"
+                                                        }, 
+                                                        "next_hop": {
+                                                            "type": "string", 
+                                                            "description": "Ip address or service instance name."
+                                                        }, 
+                                                        "community_attributes": {
+                                                            "type": "object", 
+                                                            "properties": {
+                                                                "community_attribute": {
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }, 
+                                                                    "type": "array"
+                                                                }
+                                                            }
+                                                        }, 
+                                                        "next_hop_type": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }, 
+                                                "type": "array", 
+                                                "description": "List of ip routes with following fields."
+                                            }
+                                        }, 
+                                        "description": "Static routes for this interface (Only V1)"
+                                    }
+                                }
+                            }, 
+                            "required": "true", 
+                            "type": "array", 
+                            "description": "List of service instance interface properties. Ordered list as per service template"
+                        }, 
+                        "left_ip_address": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Deprecated"
+                        }, 
+                        "left_virtual_network": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Deprecated"
+                        }, 
+                        "auto_policy": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "Set when system creates internal service chains, example SNAT with router external flag in logical router"
+                        }
+                    }, 
+                    "description": "Service instance configuration parameters."
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "instance_ip_refs": {
+                    "url": "/instance-ips", 
+                    "type": "array"
+                }, 
+                "service_template_refs": {
+                    "url": "/service-templates", 
+                    "type": "array"
+                }
+            }
+        }
+    }
+}
