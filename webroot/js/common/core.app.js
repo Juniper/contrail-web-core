@@ -977,8 +977,11 @@ if (typeof document !== 'undefined' && document) {
         
         for (var key in featurePackages) {
             if(globalObj['initFeatureAppDefObjMap'][key] == null) {
-                globalObj['initFeatureAppDefObjMap'][key] = $.Deferred();
-                featureAppDefObjList.push(globalObj['initFeatureAppDefObjMap'][key]);
+                if(featurePackages[key] && 
+                    [FEATURE_PCK_WEB_CONTROLLER,FEATURE_PCK_WEB_SERVER_MANAGER,FEATURE_PCK_WEB_STORAGE].indexOf(key) > -1) {
+                    globalObj['initFeatureAppDefObjMap'][key] = $.Deferred();
+                    featureAppDefObjList.push(globalObj['initFeatureAppDefObjMap'][key]);
+                }
             }
             if(featurePackages[key] && key == FEATURE_PCK_WEB_CONTROLLER) {
                 url = ctBaseDir + '/common/ui/js/controller.app.js';
