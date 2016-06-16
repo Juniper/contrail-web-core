@@ -1,0 +1,280 @@
+{
+    "type": "object", 
+    "properties": {
+        "project": {
+            "type": "object", 
+            "properties": {
+                "alias_ip_pool_refs": {
+                    "url": "/alias-ip-pools", 
+                    "type": "array"
+                }, 
+                "floating_ip_pool_refs": {
+                    "url": "/floating-ip-pools", 
+                    "type": "array"
+                }, 
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "domain"
+                    ]
+                }, 
+                "quota": {
+                    "required": "required", 
+                    "type": "object", 
+                    "properties": {
+                        "virtual_router": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of logical routers"
+                        }, 
+                        "network_policy": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of network policies"
+                        }, 
+                        "loadbalancer_pool": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of loadbalancer pools"
+                        }, 
+                        "subnet": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of subnets"
+                        }, 
+                        "network_ipam": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of network IPAMs"
+                        }, 
+                        "virtual_DNS_record": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of virtual DNS records"
+                        }, 
+                        "logical_router": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of logical routers"
+                        }, 
+                        "security_group_rule": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of security group rules"
+                        }, 
+                        "virtual_DNS": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of virtual DNS servers"
+                        }, 
+                        "service_instance": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of service instances"
+                        }, 
+                        "service_template": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of service templates"
+                        }, 
+                        "bgp_router": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of bgp routers"
+                        }, 
+                        "floating_ip": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of floating ips"
+                        }, 
+                        "floating_ip_pool": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of floating ip pools"
+                        }, 
+                        "loadbalancer_member": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of loadbalancer member"
+                        }, 
+                        "access_control_list": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of access control lists"
+                        }, 
+                        "virtual_machine_interface": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of virtual machine interfaces"
+                        }, 
+                        "instance_ip": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of instance ips"
+                        }, 
+                        "global_vrouter_config": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of global vrouter configs"
+                        }, 
+                        "loadbalancer_healthmonitor": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of loadbalancer health monitors"
+                        }, 
+                        "virtual_ip": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of virtual ips"
+                        }, 
+                        "defaults": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Need to clarify"
+                        }, 
+                        "security_group": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of security groups"
+                        }, 
+                        "virtual_network": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Maximum number of virtual networks"
+                        }
+                    }, 
+                    "description": "Max instances limits for various objects under project."
+                }, 
+                "namespace_refs": {
+                    "url": "/namespaces", 
+                    "type": "array"
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "alarm_enable": {
+                    "required": "optional", 
+                    "type": "boolean", 
+                    "description": "Flag to enable/disable alarms configured under global-system-config. True, if not set."
+                }
+            }
+        }
+    }
+}

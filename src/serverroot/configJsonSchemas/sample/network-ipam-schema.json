@@ -1,0 +1,424 @@
+{
+    "type": "object", 
+    "properties": {
+        "network-ipam": {
+            "type": "object", 
+            "properties": {
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "ipam_subnet_method": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Subnet method configuration for ipam, user can configure user-defined, flat or auto.", 
+                    "enum": [
+                        "user-defined-subnet", 
+                        "flat-subnet", 
+                        "auto-subnet"
+                    ]
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "project"
+                    ]
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }, 
+                "network_ipam_mgmt": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "ipam_method": {
+                            "required": "optional", 
+                            "type": "string"
+                        }, 
+                        "ipam_dns_method": {
+                            "required": "optional", 
+                            "type": "string"
+                        }, 
+                        "ipam_dns_server": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "tenant_dns_server_address": {
+                                    "required": "optional", 
+                                    "type": "object", 
+                                    "properties": {
+                                        "ip_address": {
+                                            "items": {
+                                                "type": "string"
+                                            }, 
+                                            "type": "array"
+                                        }
+                                    }, 
+                                    "description": "In case of tenant DNS server method, Ip address of DNS server. This will be given in DHCP"
+                                }, 
+                                "virtual_dns_server_name": {
+                                    "required": "optional", 
+                                    "type": "string", 
+                                    "description": "In case of virtual DNS server, name of virtual DNS server"
+                                }
+                            }
+                        }, 
+                        "dhcp_option_list": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "dhcp_option": {
+                                    "items": {
+                                        "type": "object", 
+                                        "properties": {
+                                            "dhcp_option_value": {
+                                                "required": "true", 
+                                                "type": "string", 
+                                                "description": "Encoded DHCP option value (decimal)"
+                                            }, 
+                                            "dhcp_option_value_bytes": {
+                                                "required": "true", 
+                                                "type": "string", 
+                                                "description": "Value of the DHCP option to be copied byte by byte"
+                                            }, 
+                                            "dhcp_option_name": {
+                                                "required": "true", 
+                                                "type": "string", 
+                                                "description": "Name of the DHCP option"
+                                            }
+                                        }
+                                    }, 
+                                    "type": "array", 
+                                    "description": "List of DHCP options"
+                                }
+                            }
+                        }, 
+                        "host_routes": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "route": {
+                                    "items": {
+                                        "type": "object", 
+                                        "properties": {
+                                            "prefix": {
+                                                "type": "string", 
+                                                "description": "Ip prefix/len format prefix"
+                                            }, 
+                                            "next_hop": {
+                                                "type": "string", 
+                                                "description": "Ip address or service instance name."
+                                            }, 
+                                            "community_attributes": {
+                                                "type": "object", 
+                                                "properties": {
+                                                    "community_attribute": {
+                                                        "items": {
+                                                            "type": "string"
+                                                        }, 
+                                                        "type": "array"
+                                                    }
+                                                }
+                                            }, 
+                                            "next_hop_type": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }, 
+                                    "type": "array", 
+                                    "description": "List of ip routes with following fields."
+                                }
+                            }
+                        }, 
+                        "cidr_block": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "ip_prefix": {
+                                    "type": "string"
+                                }, 
+                                "ip_prefix_len": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }, 
+                    "description": "Network IP Address Management configuration."
+                }, 
+                "ipam_subnets": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "subnets": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "subnet": {
+                                        "required": "true", 
+                                        "type": "object", 
+                                        "properties": {
+                                            "ip_prefix": {
+                                                "type": "string"
+                                            }, 
+                                            "ip_prefix_len": {
+                                                "type": "number"
+                                            }
+                                        }, 
+                                        "description": "ip prefix and length for the subnet"
+                                    }, 
+                                    "addr_from_start": {
+                                        "required": "optional", 
+                                        "type": "boolean", 
+                                        "description": "Start address allocation from start or from end of address range."
+                                    }, 
+                                    "enable_dhcp": {
+                                        "required": "optional", 
+                                        "type": "boolean", 
+                                        "description": "Enable DHCP for the VM(s) in this subnet"
+                                    }, 
+                                    "default_gateway": {
+                                        "required": "optional", 
+                                        "type": "string", 
+                                        "description": "default-gateway ip address in the subnet, if not provided one is auto generated by the system."
+                                    }, 
+                                    "alloc_unit": {
+                                        "required": "optional", 
+                                        "type": "number", 
+                                        "description": "allocation unit for this subnet to allocate bulk ip addresses"
+                                    }, 
+                                    "dns_nameservers": {
+                                        "items": {
+                                            "type": "string"
+                                        }, 
+                                        "required": "optional", 
+                                        "type": "array", 
+                                        "description": "Tenant DNS servers ip address in tenant DNS method"
+                                    }, 
+                                    "dhcp_option_list": {
+                                        "required": "optional", 
+                                        "type": "object", 
+                                        "properties": {
+                                            "dhcp_option": {
+                                                "items": {
+                                                    "type": "object", 
+                                                    "properties": {
+                                                        "dhcp_option_value": {
+                                                            "required": "true", 
+                                                            "type": "string", 
+                                                            "description": "Encoded DHCP option value (decimal)"
+                                                        }, 
+                                                        "dhcp_option_value_bytes": {
+                                                            "required": "true", 
+                                                            "type": "string", 
+                                                            "description": "Value of the DHCP option to be copied byte by byte"
+                                                        }, 
+                                                        "dhcp_option_name": {
+                                                            "required": "true", 
+                                                            "type": "string", 
+                                                            "description": "Name of the DHCP option"
+                                                        }
+                                                    }
+                                                }, 
+                                                "type": "array", 
+                                                "description": "List of DHCP options"
+                                            }
+                                        }, 
+                                        "description": "DHCP options configuration specific to this interface."
+                                    }, 
+                                    "subnet_uuid": {
+                                        "required": "system-only", 
+                                        "type": "string", 
+                                        "description": "Subnet UUID is auto generated by the system"
+                                    }, 
+                                    "allocation_pools": {
+                                        "items": {
+                                            "type": "object", 
+                                            "properties": {
+                                                "start": {
+                                                    "type": "string"
+                                                }, 
+                                                "end": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }, 
+                                        "required": "optional", 
+                                        "type": "array", 
+                                        "description": "List of ranges of ip address within the subnet from which to allocate ip address. default is entire prefix"
+                                    }, 
+                                    "host_routes": {
+                                        "required": "optional", 
+                                        "type": "object", 
+                                        "properties": {
+                                            "route": {
+                                                "items": {
+                                                    "type": "object", 
+                                                    "properties": {
+                                                        "prefix": {
+                                                            "type": "string", 
+                                                            "description": "Ip prefix/len format prefix"
+                                                        }, 
+                                                        "next_hop": {
+                                                            "type": "string", 
+                                                            "description": "Ip address or service instance name."
+                                                        }, 
+                                                        "community_attributes": {
+                                                            "type": "object", 
+                                                            "properties": {
+                                                                "community_attribute": {
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }, 
+                                                                    "type": "array"
+                                                                }
+                                                            }
+                                                        }, 
+                                                        "next_hop_type": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }, 
+                                                "type": "array", 
+                                                "description": "List of ip routes with following fields."
+                                            }
+                                        }, 
+                                        "description": "List of host routes(prefixes, nexthop) that are passed to VM via DHCP."
+                                    }, 
+                                    "dns_server_address": {
+                                        "required": "optional", 
+                                        "type": "string", 
+                                        "description": "DNS server ip address in the subnet, if not provided one is auto generated by the system."
+                                    }, 
+                                    "subnet_name": {
+                                        "required": "optional", 
+                                        "type": "string", 
+                                        "description": "User provided name for this subnet"
+                                    }
+                                }
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "List of subnets for this ipam."
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "virtual_DNS_refs": {
+                    "url": "/virtual-DNSs", 
+                    "type": "array"
+                }
+            }
+        }
+    }
+}
