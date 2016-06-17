@@ -34,6 +34,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
             'jquery-ui'                 : coreWebDir + '/assets/jquery-ui/js/jquery-ui',
             'jquery.xml2json'           : coreWebDir + '/assets/jquery/js/jquery.xml2json',
+            'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json',
             'jquery.ba-bbq'             : coreWebDir + '/assets/jquery/js/jquery.ba-bbq.min',
             'jquery.timer'              : coreWebDir + '/assets/jquery/js/jquery.timer',
             'jquery.ui.touch-punch'     : coreWebDir + '/assets/jquery/js/jquery.ui.touch-punch.min',
@@ -247,6 +248,9 @@ var coreAppShim =  {
     'jquery.xml2json' : {
         deps: ["jquery"]
     },
+    'xml2json' : {
+        deps: ["jquery"]
+    },
     "jquery.ba-bbq" : {
         deps: ['jquery']
     },
@@ -397,6 +401,7 @@ var coreBundles = {
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
+            'xml2json',
             'jquery.ba-bbq',
             'jquery.json',
             'bootstrap',

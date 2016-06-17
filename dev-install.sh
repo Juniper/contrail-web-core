@@ -53,6 +53,7 @@ rm -rf webroot/assets/jquery
 mkdir -p webroot/assets/jquery/js
 mkdir -p webroot/assets/jquery/css
 cp -af ./$THIRD_PARTY/jquery.xml2json.js webroot/assets/jquery/js/
+cp -af ./$THIRD_PARTY/x2js-1.2.0/xml2json.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.ui.touch-punch.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.ba-bbq.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.timer.js webroot/assets/jquery/js/
