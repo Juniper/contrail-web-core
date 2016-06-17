@@ -21,6 +21,7 @@ var config = process.mainModule.exports['config'],
     plugins = require('../plugins.api'),
     oStack = require('./openstack.api'),
     _ = require('underscore'),
+    roleMap = require('../../../web/core/rolemap.api'),
     rest = require('../../../common/rest.api');
 
 var authServerIP = ((config.identityManager) && (config.identityManager.ip)) ? 
@@ -33,7 +34,7 @@ authAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
                                    server:authServerIP, port:authServerPort});
 
 var mandatoryEndpointList = ['compute', 'image'];
-var adminRoles = ['admin'];
+var adminRoles = roleMap.extRoleMapList['superAdmin'];
 var authAPIVers = ['v2.0'];
 if ((null != config) && (null != config.identityManager) &&
     (null != config.identityManager.apiVersion)) {
