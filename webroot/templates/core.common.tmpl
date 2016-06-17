@@ -2206,12 +2206,19 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="introspect-page-template">
-    <div id="introspect-{{introspectPrefix}}-container">
-        <div id='introspect-{{introspectPrefix}}-form-container'>
-            <div id='introspect-{{introspectPrefix}}-form'></div>
+    <div id="introspect-{{feature}}-{{type}}-container">
+        <div id="introspect-{{feature}}-{{type}}-form-container">
+            <div id='introspect-{{feature}}-{{type}}-form'>
+                <div id='introspect-{{feature}}-{{type}}-primary-container'>
+                    <div id='introspect-{{feature}}-{{type}}-primary-form'></div>
+                </div>
+                <div id='introspect-{{feature}}-{{type}}-secondary-container'>
+                    <div id='introspect-{{feature}}-{{type}}-secondary-form'></div>
+                </div>
+            </div>
         </div>
-        <div id="introspect-{{introspectPrefix}}-results-container" class="margin-10-0-0">
-            <div id='introspect-{{introspectPrefix}}-results'></div>
+        <div id="introspect-{{feature}}-{{type}}-results-container" class="margin-10-0-0">
+            <div id='introspect-{{feature}}-{{type}}-results'></div>
         </div>
     </div>
 </script>
