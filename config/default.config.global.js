@@ -285,7 +285,7 @@ config.getDomainProjectsFromApiServer = false;
  *
  * username - This username required while login.
  * password - This password required while login.
- * roles    - User role, options are 'superAdmin' and 'member';
+ * roles    - User role, options are 'cloudAdmin' and 'member';
  *
  * NOTE: This username and password is not used to authenticate using some
  *       identity manager.
@@ -297,9 +297,24 @@ config.staticAuth = [];
 config.staticAuth[0] = {};
 config.staticAuth[0].username = 'admin';
 config.staticAuth[0].password = 'contrail123';
-config.staticAuth[0].roles = ['superAdmin'];
+config.staticAuth[0].roles = ['cloudAdmin'];
 
-
+/*****************************************************************************
+ * Below are the mappings from external roles provided by identity manager
+ * to UI roles. Currently from UI, we have only cloudAdmin role.
+ *
+ * If any of the external role matches with the list as mapped with cloudAdmin,
+ * the user is treated as cloudAdmin, else if any of the external member role
+ * matches with the UI member role, user is treated as member.
+ *
+ * Please note that for orchestration model, no-orch, vcenter and cloudstack, we
+ * assume UI role as cloudAdmin
+ *
+ *****************************************************************************/
+config.roleMaps = {};
+config.roleMaps.cloudAdmin = ['admin', 'KeystoneAdmin',
+    'KeystoneServiceAdmin', 'netadmin', 'sysadmin'];
+config.roleMaps.member = ['Member', '_member_'];
 
 /*****************************************************************************
 * Below are the delimiter list for physical/logical interface creation.
