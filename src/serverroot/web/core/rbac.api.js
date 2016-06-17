@@ -31,13 +31,13 @@ String.prototype.trim=function() {
  */
 function getRoleValueByString (roleStr)
 {
-  var roleMap = require('./rolemap.api');
+  var config = process.mainModule.exports.config;
   var roleListObjs = {};
   if (null == roleStr) {
     return null;
   }
   var index = 0;
-  for (key in roleMap.extRoleMapList) {
+  for (key in config.extRoleToUIRoleMaps) {
       roleListObjs[key] = index++;
   }
 

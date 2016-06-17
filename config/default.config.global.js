@@ -299,7 +299,22 @@ config.staticAuth[0].username = 'admin';
 config.staticAuth[0].password = 'contrail123';
 config.staticAuth[0].roles = ['superAdmin'];
 
-
+/*****************************************************************************
+ * Below are the mappings from external roles provided by identity manager
+ * to UI roles. Currently from UI, we have two roles superAdmin and member.
+ *
+ * If any of the external role matches with the list as mapped with superAdmin,
+ * the user is treated as superAdmin, else if any of the external member role
+ * matches with the UI member role, user is treated as member.
+ *
+ * Please note that for orchestration model, no-orch, vcenter and cloudstack, we
+ * assume UI role as superAdmin
+ *
+ *****************************************************************************/
+config.extRoleToUIRoleMaps = {};
+config.extRoleToUIRoleMaps.superAdmin = ['admin', 'KeystoneAdmin',
+    'KeystoneServiceAdmin', 'netadmin', 'sysadmin'];
+config.extRoleToUIRoleMaps.member = ['Member', '_member_'];
 
 /*****************************************************************************
 * Below are the delimiter list for physical/logical interface creation.
