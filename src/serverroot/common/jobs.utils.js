@@ -65,9 +65,24 @@ function deleteChangedJobTaskData (jobName)
     delete jobTaskDataChanges[jobName];
 }
 
+function createJobServerRedisClient ()
+{
+    var config = process.mainModule.exports.config;
+    var redisUtils = require('../utils/redis.utils');
+    var commonUtils = require('../utils/common.utils');
+
+    var server_port = (config.redis_server_port) ?
+        config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
+    var server_ip = (config.redis_server_ip) ?
+        config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
+    var uiDB = commonUtils.getWebUIRedisDBIndex();
+    return redisUtils.createRedisClient(server_port, server_ip, uiDB);
+}
+
 exports.registerForJobTaskDataChange = registerForJobTaskDataChange;
 exports.getChangedJobTaskData = getChangedJobTaskData;
 exports.deleteChangedJobTaskData = deleteChangedJobTaskData;
 exports.getAndUpdateChangedJobTaskData = getAndUpdateChangedJobTaskData;
 exports.updateJobDataRequiresField = updateJobDataRequiresField;
 exports.jobKueEventEmitter = jobKueEventEmitter;
+exports.createJobServerRedisClient = createJobServerRedisClient;
