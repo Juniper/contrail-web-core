@@ -108,8 +108,9 @@ define([
             return engQueryStr;
         };
 
-        self.adjustHeight4FormTextarea = function(elId) {
-            var texareaNames = ['select', 'where', 'filters'];
+        self.adjustHeight4FormTextarea = function(queryPrefix) {
+            var elId = '#qe-' + queryPrefix + '-form',
+                texareaNames = ['select', 'where', 'filters'];
 
             $.each(texareaNames, function(nameKey, nameValue) {
                 $(elId).find('[name="' + nameValue + '"]')
