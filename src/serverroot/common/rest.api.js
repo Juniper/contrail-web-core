@@ -232,11 +232,9 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
     var self = this;
     var reqUrl = null;
     var options = {};
-    var data = commonUtils.getApiPostData(params['path'], params['data']);
     var method = params['method'];
     var xml2jsSettings = params['xml2jsSettings'];     
     options['headers'] = params['headers'] || {};
-    options['data'] = data || {};
     options['method'] = method;
     options['headers']['Content-Length'] = (data) ? data.toString().length : 0;
     
@@ -245,8 +243,12 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
            we need to specify the Content-Type as App/JSON with JSON.stringify
            of the data, otherwise, restler treats it as
            application/x-www-form-urlencoded as Content-Type and encodes
-           the data accordingly
+           the data accordingly. Restler also changes Content-Type when
+           an empty data object is passed for GET queries, so make sure
+           we are don't pass it.
          */
+        var data = commonUtils.getApiPostData(params['path'], params['data']);
+        options['data'] = data || {};
         options['headers']['Content-Type'] = 'application/json';
     }
     params = self.updateDiscoveryServiceParams(params);
