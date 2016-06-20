@@ -116,7 +116,7 @@ constants.coreModules  = [
             'core-basedir/js/views/WidgetView',
             'core-basedir/js/views/WizardView',
             'core-basedir/js/views/ZoomScatterChartView',
-            'core-basedir/js/views/MonitorInfraDashboardView'
+            'core-basedir/js/views/MonitorInfraDashboardView',
         ],
         exclude: [
             './js/common/core.app',
@@ -125,6 +125,52 @@ constants.coreModules  = [
             'knockout',
             'knockback'
         ]
+    },{
+        enabled: true,
+        name: 'core-bundle',
+        exclude: [
+            'jquery','jquery-ui'
+        ]
+    },{
+        enabled: true,
+        name: './js/common/contrail.core.views',
+        exclude: [
+            'lodash','jquery','backbone','knockback','knockout','contrail-remote-data-handler','contrail-view',
+            'contrail-list-model','contrail-model','contrail-view-model','d3','nv.d3','slick.checkboxselectcolumn','jquery.event.drag',
+            'slick.grid','slick.rowselectionmodel','select2','jquery-ui','jquery.multiselect','jquery.multiselect.filter'
+        ]
+    },{
+        enabled: true,
+        name: './js/common/chart.libs',
+        exclude: [
+            'jquery','lodash','backbone'
+        ]
+    },{
+        enabled: true,
+        name: './js/common/thirdparty.libs',
+        exclude: [
+            'jquery','jquery.event.drag','knockout','backbone','knockback','validation'
+        ]
+    },{
+        enabled: true,
+        name: './js/common/jquery.dep.libs',
+        exclude: [
+            'jquery'
+        ],
+        override: {
+            wrapShim: false
+        }
+    },{
+        enabled: true,
+        name: './js/common/nonamd.libs',
+        exclude: [
+            'jquery','jquery-ui','knockout','bootstrap','jquery.xml2json',
+            'jquery.ba-bbq','jquery.json','d3','backbone','validation',
+            'core-bundle'
+        ],
+        override: {
+            wrapShim: false
+        }
     }
 ];
 constants.coreFileExclusionRegExp = constants.defaultFileExclusionRegExp;
@@ -144,25 +190,8 @@ constants.controllerModules = [
     {
         enabled: true,
         name: 'controller-init',
-        include: [
-            'searchflow-model',
-            'traceflow-model',
-            'underlay-graph-model',
-            'monitor-infra-confignode-model',
-            'monitor-infra-analyticsnode-model',
-            'monitor-infra-databasenode-model',
-            'monitor-infra-controlnode-model',
-            'monitor-infra-vrouter-model',
-            'monitor-infra-utils',
-            'confignode-scatterchart-view',
-            'controlnode-scatterchart-view',
-            'dbnode-scatterchart-view',
-            'analyticsnode-scatterchart-view',
-            'vrouter-dashboard-view',
-            'monitor-infra-parsers',
-            'monitor-infra-constants'
-        ],
         exclude: [
+            "underscore",
             "contrail-view",
             "contrail-model",
             "contrail-view-model",
@@ -171,7 +200,7 @@ constants.controllerModules = [
             "query-form-model",
             "query-or-model",
             "query-and-model",
-            "core-init",
+            // "core-init",
             "core-basedir/js/views/LoginWindowView"
         ]
     },
@@ -180,21 +209,29 @@ constants.controllerModules = [
         name: 'monitor-infra-module',
         include: [
             'mon-infra-controller-dashboard',
+
             'controller-basedir/monitor/infrastructure/common/ui/js/views/VRouterScatterChartView',
-            'controller-basedir/monitor/infrastructure/common/ui/js/views/ConfigNodeScatterChartView',
+            'controller-basedir/monitor/infrastructure/common/ui/js/views/ConfigNodeChartsView',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/ControlNodeScatterChartView',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/DatabaseNodeScatterChartView',
             'controller-basedir/monitor/infrastructure/common/ui/js/views/AnalyticsNodeScatterChartView',
             'vrouter-dashboard-view',
+
             'monitor-infra-analyticsnode-model',
             'monitor-infra-databasenode-model',
             'monitor-infra-confignode-model',
             'monitor-infra-controlnode-model',
             'monitor-infra-vrouter-model',
-            'cf-datasource'
+            'monitor-infra-confignode-charts-model',
+
+            'monitor-infra-parsers',
+            'monitor-infra-utils',
+            'monitor-infra-constants'
         ],
         exclude: [
-            'core-init',
+            'underscore',
+            'cf-datasource',
+            // 'core-init',
             'contrail-view',
             'controller-init',
             'contrail-model',
@@ -226,13 +263,14 @@ constants.controllerModules = [
             'controller-basedir/monitor/networking/ui/js/views/ConnectedNetworkTrafficStatsView',
             'controller-basedir/monitor/networking/ui/js/views/FlowGridView',
             'controller-basedir/monitor/networking/ui/js/views/FlowListView',
-            'controller-basedir/monitor/networking/ui/js/views/InterfaceGridView',
-            'controller-basedir/monitor/networking/ui/js/views/InterfaceListView',
+            'controller-basedir/monitor/networking/ui/js/views/InterfaceGridView'
         ],
         exclude: [
             'underscore',
             'dagre',
-            'core-init',
+            'joint',
+            'joint.contrail',
+            // 'core-init',
             'contrail-view',
             'contrail-view-model',
             'core-basedir/js/views/ZoomScatterChartView',
@@ -264,7 +302,7 @@ constants.controllerModules = [
         ],
         exclude: [
             'underscore',
-            'core-init',
+            // 'core-init',
             'contrail-view',
             'contrail-model',
             'core-basedir/js/views/ZoomScatterChartView',
@@ -286,7 +324,7 @@ constants.smModules = [
         include:[],
         exclude: [
             'underscore'
-        ]
+        ] 
     }
 ];
 
@@ -320,7 +358,7 @@ constants.buildBaseConfJson = {
     shim: {},
     waitSeconds: 0,
     optimizeCss: 'default',
-    skipModuleInsertion: true,
+    // skipModuleInsertion: true,
     keepAmdefine: true,
     modules: [],
     optimize: 'none',

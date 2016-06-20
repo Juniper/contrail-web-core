@@ -2,8 +2,10 @@
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
-define([ 'underscore' ],
-       function(_) {
+define([ 'underscore' ,
+        'core-alarm-utils',
+        ],
+       function(_,coreAlarmUtils) {
             var sevColorMap = {
                     '3': '#dc6660',
                     '4': '#ffbf87'
@@ -139,6 +141,6 @@ define([ 'underscore' ],
                      }
                  }
             }
-            return CoreAlarmParsers;
+            return new CoreAlarmParsers();
        }
 );

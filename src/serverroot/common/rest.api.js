@@ -104,13 +104,23 @@ APIServer.prototype.cb = function (cb)
  */
 APIServer.prototype.updateDiscoveryServiceParams = function (params)
 {
-    var opS = require('./opServer.api');
-    var configS = require('./configServer.api');
     var server = null;
     var self = this;
     var apiServerType = self.name;
     var discService = null;
 
+    if (false == config.serviceEndPointFromConfig) {
+        /* Do not update through Discovery */
+        switch(apiServerType) {
+        case global.label.VNCONFIG_API_SERVER:
+        case global.label.OPS_API_SERVER:
+        case global.label.API_SERVER:
+        case global.label.OPSERVER:
+            return params;
+        default:
+            break;
+        }
+    }
     discService = discClient.getDiscServiceByApiServerType(apiServerType);
     if (discService) {
         /* We are sending only the first IP */
@@ -151,12 +161,12 @@ APIServer.prototype.retryMakeCall = function(err, restApi, params,
                                              response, callback, isRetry)
 {
     var self = this;
-    /* Check if the error code is ECONNREFUSED or ETIMEOUT, if yes then
+    /* Check if the error code is ECONNREFUSED or ETIMEDOUT, if yes then
      * issue once again discovery subscribe request, the remote server
      * may be down, so discovery server should send the Up Servers now
      */
     if ((true == process.mainModule.exports['discServEnable']) &&
-        (('ECONNREFUSED' == err.code) || ('ETIMEOUT' == err.code))) {
+        (('ECONNREFUSED' == err.code) || ('ETIMEDOUT' == err.code))) {
         if (false == isRetry) {
             /* Only one time send a retry */
             discClient.sendDiscSubMessageOnDemand(self.name);
@@ -222,11 +232,9 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
     var self = this;
     var reqUrl = null;
     var options = {};
-    var data = commonUtils.getApiPostData(params['path'], params['data']);
     var method = params['method'];
     var xml2jsSettings = params['xml2jsSettings'];     
     options['headers'] = params['headers'] || {};
-    options['data'] = data || {};
     options['method'] = method;
     options['headers']['Content-Length'] = (data) ? data.toString().length : 0;
     
@@ -235,8 +243,12 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
            we need to specify the Content-Type as App/JSON with JSON.stringify
            of the data, otherwise, restler treats it as
            application/x-www-form-urlencoded as Content-Type and encodes
-           the data accordingly
+           the data accordingly. Restler also changes Content-Type when
+           an empty data object is passed for GET queries, so make sure
+           we are don't pass it.
          */
+        var data = commonUtils.getApiPostData(params['path'], params['data']);
+        options['data'] = data || {};
         options['headers']['Content-Type'] = 'application/json';
     }
     params = self.updateDiscoveryServiceParams(params);
@@ -272,6 +284,10 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         return;
     }
     reqUrl = global.HTTP_URL + params.url + ':' + params.port + params.path;
+    if (null != options['headers']) {
+        delete options['headers']['protocol'];
+        delete options['headers']['noRedirectToLogout'];
+    }
     restApi(reqUrl, options).on('complete', function(data, response) {
         if (data instanceof Error ||
             parseInt(response.statusCode) >= 400) {

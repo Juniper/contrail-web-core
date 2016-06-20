@@ -221,7 +221,7 @@ function Contrail() {
             json = JSON.parse(json);
         }
 
-        return '<pre class="pre-format-JSON2HTML">' + formatJsonObject(json, formatDepth, 0, ignoreKeys) + '</pre>';
+        return '<pre class="pre-format-JSON2HTML">' + this.formatJsonObject(json, formatDepth, 0, ignoreKeys) + '</pre>';
     };
     
     this.isItemExists = function(value, data){
@@ -255,8 +255,8 @@ function Contrail() {
         }
     };
 
-    function formatJsonObject(jsonObj, formatDepth, currentDepth, ignoreKeys) {
-    	var output = '',
+    this.formatJsonObject = function(jsonObj, formatDepth, currentDepth, ignoreKeys) {
+    	var output = '', self = this;
     		objType = {type: 'object', startTag: '{', endTag: '}'};
     	
     	if(jsonObj instanceof Array){
@@ -279,7 +279,7 @@ function Contrail() {
                     }
 
                     if (val != null && typeof val == 'object') {
-                        output += '<span class="value">' + formatJsonObject(val, formatDepth - 1, currentDepth + 1) + '</span>';
+                        output += '<span class="value">' + self.formatJsonObject(val, formatDepth - 1, currentDepth + 1) + '</span>';
                     }
                     else {
                         output += '<span class="value ' + typeof val + '">' + val + '</span>';
@@ -291,116 +291,5 @@ function Contrail() {
 		}
 		return output;
     };
-
-    $('.pre-format-JSON2HTML .expander').live('click', function(){
-		var selfParent = $(this).parent(),
-			jsonObj = {};
-		selfParent.children('i').removeClass('icon-plus').removeClass('expander').addClass('icon-minus').addClass('collapser');
-		if(selfParent.children('.node').hasClass('raw')){
-			jsonObj = JSON.parse(selfParent.children('ul.node').text());
-			selfParent.empty().append(formatJsonObject(jsonObj, 2, parseInt(selfParent.children('.node').data('depth')) + 1));
-		}
-		selfParent.children('.node').show();
-		selfParent.children('.collapsed').hide();
-    });
-    $('.pre-format-JSON2HTML .collapser').live('click', function(){
-    	var selfParent = $(this).parent();
-    	selfParent.children('i').removeClass('icon-minus').removeClass('collapser').addClass('icon-plus').addClass('expander');
-		selfParent.children('.collapsed').show();
-		selfParent.children('.node').hide();
-	});
-    
 };
 
-(function($) {
-	//Plugin to serializeObject similar to serializeArray.
-	$.fn.serializeObject = function() {
-	   var o = {};
-	   var a = this.serializeArray();
-	   $.each(a, function() {
-	       if (o[this.name]) {
-	           if (!o[this.name].push) {
-	               o[this.name] = [o[this.name]];
-	           }
-	           o[this.name].push(this.value || '');
-	       } else {
-	           o[this.name] = this.value || '';
-	       }
-	   });
-	   return o;
-	};
-	
-	/*
-	 * .addClassSVG(className)
-	 * Adds the specified class(es) to each of the set of matched SVG elements.
-	 */
-	$.fn.addClassSVG = function(className){
-		$(this).attr('class', function(index, existingClassNames) {
-		    return existingClassNames + ' ' + className;
-		});
-		return this;
-	};
-	
-	/*
-	 * .removeClassSVG(className)
-	 * Removes the specified class to each of the set of matched SVG elements.
-	 */
-	$.fn.removeClassSVG = function(className){
-		$(this).attr('class', function(index, existingClassNames) {
-    		var re = new RegExp(className, 'g');
-    		return existingClassNames.replace(re, '');
-    	});
-		return this;
-	};
-	
-	/*
-	 * .hasClassSVG(className)
-	 * Determine whether any of the matched SVG elements are assigned the given class.
-	 */
-	$.fn.hasClassSVG = function(className){
-		var existingClassNames = $(this).attr('class').split(' ');
-		return (existingClassNames.indexOf(className) > -1 ? true : false);
-	};
-	
-	/*
-	 * .parentsSVG(className)
-	 * Get the ancestors of each element in the current set of matched elements or SVG elements, optionally filtered by a selector
-	 */
-	$.fn.parentsSVG = function(selector){
-		var parents = $(this).parents(),
-			outputParents = [];
-		$.each(parents, function(keyParents, valueParents){
-			if($(valueParents).is(selector)){
-				outputParents.push(valueParents);
-			}
-		});
-		return outputParents;
-	};
-
-    /*
-     * .heightSVG(className)
-     * Get the current computed height for the first element in the set of matched SVG elements.
-     */
-    $.fn.heightSVG = function(){
-        return ($(this).get(0)) ? $(this).get(0).getBBox().height : null;
-    };
-
-    /*
-     * .widthSVG(className)
-     * Get the current computed width for the first element in the set of matched SVG elements.
-     */
-    $.fn.widthSVG = function(){
-        return ($(this).get(0)) ? $(this).get(0).getBBox().width : null;
-    };
-
-    /*
-     * .redraw()
-     * Redraw or refresh the DOM to reflect the styles configured (Safari hack to render svg elements)
-     * */
-    $.fn.redraw = function() {
-        this.css('display', 'none');
-        var temp = this[0].offsetHeight;
-        this.css('display', '');
-    };
-	
-})(jQuery);

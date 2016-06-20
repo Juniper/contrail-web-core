@@ -53,6 +53,7 @@ rm -rf webroot/assets/jquery
 mkdir -p webroot/assets/jquery/js
 mkdir -p webroot/assets/jquery/css
 cp -af ./$THIRD_PARTY/jquery.xml2json.js webroot/assets/jquery/js/
+cp -af ./$THIRD_PARTY/x2js-1.2.0/xml2json.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.ui.touch-punch.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.ba-bbq.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.timer.js webroot/assets/jquery/js/
@@ -191,8 +192,8 @@ cp -r ./$THIRD_PARTY/dagre-v0.7.1/dist/dagre.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.nojquery.min.css webroot/assets/joint/css/
 #new V0.9.6
-cp -r ./$THIRD_PARTY/joint-v0.9.6/dist/joint.min.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.6/dist/joint.min.css webroot/assets/joint/css/
+cp -r ./$THIRD_PARTY/joint-v0.9.6/js/joint.min.js webroot/assets/joint/js/
+cp -r ./$THIRD_PARTY/joint-v0.9.6/css/joint.min.css webroot/assets/joint/css/
 #End - Copy Joint from web-third-party
 
 #Start - Copy jquery-contextMenu from web-third-party
@@ -252,77 +253,59 @@ cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack.css webroot/assets/gridsta
 cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack-extra.css webroot/assets/gridstack/styles/gridstack-extra.css
 #End - Copy Gridstack from $THIRD_PARTY
 
-find webroot/js/common/contrail.unified.*.js -delete
-
-# use path relative to webroot/ folder
-MAINJS1=(
-assets/jquery-ui/js/jquery-ui.js
-assets/jquery/js/jquery.xml2json.js
-assets/jquery/js/jquery.ba-bbq.min.js
-assets/jquery/js/jquery.timer.js
-assets/jquery/js/jquery.ui.touch-punch.min.js
-assets/jquery/js/jquery.validate.js
-assets/jquery/js/jquery.tristate.js
-assets/jquery-ui/js/jquery.multiselect.js
-assets/jquery-ui/js/jquery.multiselect.filter.js
-assets/jquery/js/jquery.steps.min.js
-assets/jquery/js/jquery.panzoom.min.js
-assets/jquery-contextMenu/js/jquery.ui.position.js
-assets/jquery-contextMenu/js/jquery.contextMenu.js
-assets/bootstrap/js/bootstrap.js
-assets/crossfilter/js/crossfilter.js
-assets/jsonpath/js/jsonpath-0.8.0.js
-assets/handlebars/handlebars-v1.3.0.js
-js/handlebars-utils.js
-js/contrail-elements.js
-)
-MAINJS2=(
-assets/slickgrid/js/jquery.event.drag-2.2.js
-assets/slickgrid/js/jquery.json-2.3.min.js
-assets/slickgrid/js/jquery.dropkick-1.0.0.js
-assets/slickgrid/js/slick.core.js
-assets/slickgrid/js/slick.grid.js
-assets/slickgrid/js/slick.dataview.js
-assets/slickgrid/js/slick.checkboxselectcolumn.js
-assets/slickgrid/js/slick.rowselectionmodel.js
-assets/slickgrid/js/slick.groupitemmetadataprovider.js
-assets/datetimepicker/js/jquery.datetimepicker.js
-assets/select2/js/select2.min.js
-assets/moment/moment.js
-assets/ip/jsbn-combined.js
-assets/ip/sprintf.js
-assets/ip/ipv6.js
-js/protocol.js
-js/uuid.js
-assets/xdate/js/xdate.js
-js/contrail-common.js
-# TODO delete this
-assets/slickgrid/js/slick.enhancementpager.js
-js/slickgrid-utils.js
-js/web-utils.js
-js/config_global.js
-js/analyzer-utils.js
-js/dashboard-utils.js
-)
-MAINJS3=(
-assets/d3-v3.5.6/js/d3.js
-assets/nvd3-v1.8.1/js/nv.d3.js
-)
-
-unified_js_path=webroot/js/common/contrail.unified.part.js
-for i in "${!MAINJS1[@]}"; do
-	cat "webroot/${MAINJS1[$i]}" >> ${unified_js_path/part/1}
-done
-for i in "${!MAINJS2[@]}"; do
-	cat "webroot/${MAINJS2[$i]}" >> ${unified_js_path/part/2}
-done
-for i in "${!MAINJS3[@]}"; do
-	cat "webroot/${MAINJS3[$i]}" >> ${unified_js_path/part/3}
-done
-# End - Merging All JS files
-
 #Start - Merging All CSS files
 rm -f webroot/css/contrail-all.css
+
+MAINCSS[1]=webroot/assets/bootstrap/css/bootstrap.min.css
+MAINCSS[2]=webroot/assets/bootstrap/css/bootstrap-responsive.min.css
+MAINCSS[3]=webroot/assets/jquery-ui/css/jquery-ui.min.css
+MAINCSS[4]=webroot/css/contrail.jquery.ui.css
+MAINCSS[5]=webroot/assets/font-awesome/css/font-awesome.min.css
+MAINCSS[6]=webroot/assets/nvd3-v1.8.1/css/nv.d3.min.css
+MAINCSS[7]=webroot/assets/select2/styles/select2.css
+MAINCSS[8]=webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
+MAINCSS[9]=webroot/assets/slickgrid/styles/slick.grid.css
+MAINCSS[10]=webroot/assets/jquery/css/jquery.steps.css
+MAINCSS[11]=webroot/assets/joint/css/joint.nojquery.min.css
+MAINCSS[12]=webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css
+MAINCSS[13]=webroot/assets/vis-v4.9.0/css/vis.min.css
+MAINCSS[14]=webroot/css/contrail.theme.layout.css
+MAINCSS[15]=webroot/css/contrail.theme.elements.css
+MAINCSS[16]=webroot/css/contrail.responsive.css
+MAINCSS[17]=webroot/css/contrail.grid.css
+MAINCSS[18]=webroot/css/contrail.form.elements.css
+MAINCSS[19]=webroot/css/contrail.components.css
+MAINCSS[20]=webroot/css/contrail.chart.css
+MAINCSS[21]=webroot/css/contrail.graph.css
+MAINCSS[22]=webroot/css/contrail.custom.css
+MAINCSS[23]=webroot/css/contrail.font.css
+MAINCSS[24]=webroot/css/login.css
+
+
+cat ${MAINCSS[1]} > webroot/css/contrail-all.css
+cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[3]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[4]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[5]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[6]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[7]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[8]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[9]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[10]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[11]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[12]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[13]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[14]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[15]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[16]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[17]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[18]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[19]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[20]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[21]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[22]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[23]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[24]} >> webroot/css/contrail-all.css
 
 # compile sass
 ./node_modules/node-sass/bin/node-sass webroot/scss/index.scss > webroot/css/contrail-all.css

@@ -23,17 +23,12 @@ function authenticate (req, res, appData, callback)
     var userList = config.staticAuth;
     if ((null == userList) || (!userList.length)) {
         req.session.isAuthenticated = false;
-        commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                             global.CONTRAIL_LOGIN_ERROR,
-                                             messages.error.invalid_user_pass,
-                                             function() {
-        });
+        callback(messages.error.invalid_user_pass);
         return;
     }
     if (post.urlHash != null) {
         urlHash = post.urlHash;
     }
-    var loginErrFile = 'webroot/html/login-error.html';
     var userListCnt = userList.length;
     for (var i = 0; i < userListCnt; i++) {
         if (null == userList[i]) {
@@ -47,17 +42,13 @@ function authenticate (req, res, appData, callback)
     if (i == userListCnt) {
         /* Not matched */
         req.session.isAuthenticated = false;
-        commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                             global.CONTRAIL_LOGIN_ERROR,
-                                             messages.error.invalid_user_pass,
-                                             function() {
-        });
+        callback(messages.error.invalid_user_pass);
         return;
     }
     req.session.isAuthenticated = true;
     req.session.userRole = userList[i]['roles'];
     plugins.setAllCookies(req, res, appData, {'username': username}, function() {
-        res.redirect('/' + urlHash);
+        callback(null);
     });
 }
 
@@ -204,6 +195,16 @@ function deleteAllTokens (req, callback)
     callback(null, null);
 }
 
+function getServiceAPIVersionByReqObj (req, svcType, callback)
+{
+    callback(null);
+}
+
+function shiftServiceEndpointList (req, serviceType, regionName)
+{
+    return;
+}
+
 exports.authenticate = authenticate;
 exports.getServiceCatalog = getServiceCatalog;
 exports.getAPIServerAuthParamsByReq = getAPIServerAuthParamsByReq;
@@ -223,4 +224,6 @@ exports.deleteAllTokens = deleteAllTokens;
 exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
 exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
+exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
+exports.shiftServiceEndpointList = shiftServiceEndpointList;
 

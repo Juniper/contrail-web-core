@@ -507,7 +507,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="mon-infra-dashboard">
-    <div id='dashboard-infoboxes' style="/*height:360px*/">
+    <div id='dashboard-infoboxes' style="/*height:430px*/">
     </div>
     <div id="dashboard-stats" class="row-fluid">
         <div class="span4">
@@ -1418,34 +1418,6 @@
     </div>
 </script>
 
-<!--<script type="text/x-handlebars-template" id="core-detail-page-template">-->
-    <!--<div id="{{prefix}}-header" class="row-fluid margin-0-0-15">-->
-        <!--<div class="row-fluid detail-header-row">-->
-            <!--<h4 class="margin-0-5 pull-left padding-5-0">{{prefixId}}</h4>-->
-            <!--<div id="{{prefix}}-actions" class="pull-right">-->
-                <!--<div class="dropdown pull-right margin-5-0">-->
-                    <!--<a class="dropdown-toggle margin-10 font-size-14" data-toggle="dropdown"><i class="icon-cog grey"></i></a>-->
-                    <!--<ul class="dropdown-menu dropdown-caret pull-right" role="menu" aria-labelledby="dLabel">-->
-                    <!--</ul>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<div id="{{prefix}}-details"></div>-->
-    <!--<div id="{{prefix}}-server-list"></div>-->
-    <!--<div id="{{prefix}}-ipmi-info"></div>-->
-<!--</script>-->
-
-<!--<script type="text/x-handlebars-template" id="core-detail-page-action-template">-->
-    <!--{{#IfCompare divider true operator='=='}}-->
-    <!--<li class="divider"></li>-->
-    <!--{{/IfCompare}}-->
-    <!--<li>-->
-        <!--<a class="tooltip-success" data-rel="tooltip" data-placement="left" data-original-title={{title}}">-->
-            <!--<i class="{{iconClass}} margin-right-10"></i> {{title}}-->
-        <!--</a>-->
-    <!--</li>-->
-<!--</script>-->
 
 <script type="text/x-handlebars-template" id="core-editable-grid-view-template">
     {{#IfCompare label null operator='!='}}
@@ -2233,6 +2205,24 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="introspect-page-template">
+    <div id="introspect-{{feature}}-{{type}}-container">
+        <div id="introspect-{{feature}}-{{type}}-form-container">
+            <div id='introspect-{{feature}}-{{type}}-form'>
+                <div id='introspect-{{feature}}-{{type}}-primary-container'>
+                    <div id='introspect-{{feature}}-{{type}}-primary-form'></div>
+                </div>
+                <div id='introspect-{{feature}}-{{type}}-secondary-container'>
+                    <div id='introspect-{{feature}}-{{type}}-secondary-form'></div>
+                </div>
+            </div>
+        </div>
+        <div id="introspect-{{feature}}-{{type}}-results-container" class="margin-10-0-0">
+            <div id='introspect-{{feature}}-{{type}}-results'></div>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="query-text-template">
     <div class="alert alert-success queryText"></div>
 </script>
@@ -2251,7 +2241,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="core-stacked-bar-chart-template">
-    <div class="stacked-bar-chart-container row-fluid">
+    <div class="stacked-bar-chart-container chart-container row-fluid">
          <!-- <svg style="height:{{height}}px;"></svg> -->
     </div>
 </script>
@@ -2485,26 +2475,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
     {{/if}}
 </script>
 
-<script type="text/x-handlebars-template" id="coCharts-chart-template">
-    <div id="coCharts-{{chartId}}" class="coCharts-container row-fluid" style="height:{{height}}px;"></div>
-</script>
-
-<script type="text/x-handlebars-template" id="d3-linebar-chart-controls">
-    <div class="controls-left-side">
-        <div><div class="controls-button" data-x-axis="1" data-chart="coCharts.charts.LineChart">to lines</div></div>
-        <div><div class="controls-button" data-x-axis="1" data-chart="coCharts.charts.BarChart" data-type="stacked">to stacked bars</div></div>
-        <div><div class="controls-button" data-x-axis="1" data-chart="coCharts.charts.BarChart" data-type="grouped">to grouped bars</div></div>
-        <div class="field-select"></div>
-    </div>
-    <div class="controls-right-side">
-        <div><div class="controls-button" data-x-axis="2" data-chart="coCharts.charts.LineChart">to lines</div></div>
-        <div><div class="controls-button" data-x-axis="2" data-chart="coCharts.charts.BarChart" data-type="stacked">to stacked bars</div></div>
-        <div><div class="controls-button" data-x-axis="2" data-chart="coCharts.charts.BarChart" data-type="grouped">to grouped bars</div></div>
-        <div class="field-select"></div>
-    </div>
-</script>
-
 <script type="text/x-handlebars-template" id="alarm-severity-template">
     <div data-color={{{color}}} class="circle {{{color}}} {{#IfCompare ack false}}filled{{/IfCompare}} alarms-circle-grid-style alarms-circle-display-flex"></div>
-    {{#if showText}}<div class="alarms-display-inline">&nbsp;Minor</div>{{/if}}
- </script>
+    {{#if showText}}<div class="alarms-display-inline">&nbsp;{{{text}}}</div>{{/if}}
+</script>

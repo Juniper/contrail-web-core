@@ -1206,13 +1206,13 @@ function redirectToLogout (req, res, callback)
     //If URL has '/vcenter',then redirect to /vcenter/logout
     //x-orchestrationmode is set only for ajax requests,so if user changes browser URL then we need to check for loggedInOrchestrationMode
     if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'vcenter') {
-        redURL = '/vcenter/logout';
+        redURL = '/vcenter';
     } else if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'none') {
-        redURL = '/logout';
+        redURL = '/';
     } else if(req['originalUrl'].indexOf('/vcenter') > -1) {
-        redURL = '/vcenter/logout';
+        redURL = '/vcenter';
     } else {
-        redURL = '/logout';
+        redURL = '/';
     }
     redirectToURL(req, res, redURL);
     if (null != callback) {
@@ -1223,13 +1223,13 @@ function redirectToLogout (req, res, callback)
 function redirectToLogin (req, res)
 {
     if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'vcenter') {
-        redURL = '/vcenter/login';
+        redURL = '/vcenter';
     } else if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'none') {
-        redURL = '/login';
+        redURL = '/';
     } else if(req['originalUrl'].indexOf('/vcenter') > -1) {
-        redURL = '/vcenter/login';
+        redURL = '/vcenter';
     } else {
-        redURL = '/login';
+        redURL = '/';
     }
     redirectToURL(req, res, redURL);
 }
@@ -1256,6 +1256,10 @@ function redirectToURL(req, res, redURL)
            res.send(307, '');
        }
     } else {
+       if(redURL = "/") {
+            res.sendfile('webroot/html/dashboard.html');
+            return;
+       } 
        res.redirect(redURL);
     }
 }
@@ -1338,6 +1342,25 @@ function getOrchestrationPluginModel (req, res, appData)
     commonUtils.handleJSONResponse(null, res, modelObj);
 }
 
+/**
+ * Returns a dict of enabled feature pkgs
+ */
+function getFeaturePkgs() {
+    var featurePkg={};
+    var pkgList = process.mainModule.exports['pkgList'];
+    var pkgLen = pkgList.length;
+    var activePkgs = [];
+    for (var i = 1; i < pkgLen; i++) {
+        activePkgs.push(pkgList[i]['pkgName']);
+    }
+    activePkgs = _.uniq(activePkgs);
+    var pkgCnt = activePkgs.length;
+    for (var i = 0; i < pkgCnt; i++) {
+        featurePkg[activePkgs[i]] = true;
+    }
+    return featurePkg;
+}
+
 /* Function: getWebServerInfo
    Req URL: /api/service/networking/web-server-info
    Send basic information about Web Server
@@ -1354,11 +1377,12 @@ function getWebServerInfo (req, res, appData)
         logutils.logger.error("We did not get Orchestration Model");
         assert(0);
     }
-    serverObj ['serverUTCTime'] = commonUtils.getCurrentUTCTime();
+    serverObj['serverUTCTime'] = commonUtils.getCurrentUTCTime();
     serverObj['hostName'] = os.hostname();
     serverObj['role'] = req.session.userRole;
     serverObj['featurePkg'] = {};
     serverObj['uiConfig'] = ui;
+    serverObj['isAuthenticated'] = req.session.isAuthenticated;
     serverObj['discoveryEnabled'] = getValueByJsonPath(config,
                                                        'discoveryService;enable',
                                                        true);
@@ -1373,6 +1397,16 @@ function getWebServerInfo (req, res, appData)
     serverObj['disabledFeatures'] = getValueByJsonPath(config,'features;disabled',[]);
     serverObj['featurePkgsInfo'] = getValueByJsonPath(config,'featurePkg',[]);
     serverObj['sessionTimeout'] = getValueByJsonPath(config,'session;timeout', 3600000);
+    serverObj['_csrf'] = req.session._csrf;
+    serverObj['serviceEndPointFromConfig'] =
+        (null != config.serviceEndPointFromConfig) ?
+        config.serviceEndPointFromConfig : true;
+    serverObj['regionList'] = req.session.regionList;
+    serverObj['isRegionListFromConfig'] = config.regionsFromConfig;
+    serverObj['configRegionList'] = config.regions;
+
+    var authApi = require('../common/auth.api');
+    serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
@@ -1395,6 +1429,12 @@ function getWebServerInfo (req, res, appData)
     for (var i = 0; i < pkgCnt; i++) {
         serverObj['featurePkg'][activePkgs[i]] = true;
     }
+
+    /* Return from here, we will get project token stored in
+     * req.session.tokenObjs by get-project-role API
+     */
+    commonUtils.handleJSONResponse(null, res, serverObj);
+    return;
 
     var project = req.param('project');
     var tokenObjs = req.session.tokenObjs;
@@ -2182,6 +2222,35 @@ function filterJsonKeysWithNullValues(obj) {
     return obj;
 }
 
+function doDeepSort (object)
+{
+    if (null == object) {
+        return object;
+    }
+    var sortedObj = {};
+    var keys = Object.keys(object);
+
+    keys.sort(function(key1, key2){
+        if (key1 > key2) {
+            return 1;
+        } else if (key1 < key2) {
+            return -1;
+        }
+        return 0;
+    });
+
+    for (var index in keys) {
+        var key = keys[index];
+        if ((typeof object[key] == 'object') &&
+            (!(object[key] instanceof Array))) {
+            sortedObj[key] = doDeepSort(object[key]);
+        } else {
+            sortedObj[key] = object[key];
+        }
+    }
+    return sortedObj;
+}
+
 exports.filterJsonKeysWithNullValues = filterJsonKeysWithNullValues;
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
@@ -2240,3 +2309,6 @@ exports.getIPRangeLen = getIPRangeLen;
 exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
 exports.isSubArray = isSubArray;
 exports.getValueByJsonPath = getValueByJsonPath;
+exports.getFeaturePkgs = getFeaturePkgs;
+exports.doDeepSort = doDeepSort;
+

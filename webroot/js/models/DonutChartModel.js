@@ -214,7 +214,7 @@ define([], function () {
                         container.select('g.contrail-chart-title').remove();
                         //Default title is placed at bottom of chart
                         container.append('g')
-                            .attr('transform', 'translate('+parseInt(container.style('width'))/2+', '+(parseInt(container.style('height')) - 5)+')')
+                            .attr('transform', 'translate('+parseInt(container.style('width'))/2+', '+(parseInt(container.style('height')))+')')
                             .attr('class', 'contrail-chart-title')
                             .append('text')
                             .attr('text-anchor', 'middle')
@@ -326,9 +326,6 @@ define([], function () {
         chartModel.pie.growOnHover(growOnHover);
         chartModel.legend.rightAlign(chartOptions.legendRightAlign)
             .padding(chartOptions.legendPadding);
-        if (chartOptions.color != null) {
-            chartModel.color(chartOptions.color);
-        }
         return chartModel;
     }
     return DonutChartModel;

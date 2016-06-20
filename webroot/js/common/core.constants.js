@@ -49,6 +49,10 @@ define([
         this.KEY_TYPE = 'type';
         this.KEY_UI_ADDED_PARAMS = 'ui_added_parameters';
 
+        this.TYPE_NUMBER = 'number';
+        this.TYPE_INTEGER = 'integer';
+        this.TYPE_BOOLEAN = 'boolean';
+
         this.KEY_VALIDATION = 'validation';
         this.OBJECT_TYPE_COLLECTION = 'collection';
         this.OBJECT_TYPE_MODEL = 'model';
@@ -829,7 +833,17 @@ define([
         this.GRAPH_MARGIN = 35;
 
         this.BYTES_PER_SECOND_PREFIXES = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s', 'PB/s', 'EB/s', 'ZB/s'];
+        this.DROPDOWN_VALUE_SEPARATOR = ";";
+        this.ALARMGEN_PROCESS = 'contrail-alarm-gen';
+        this.ANALYTICS_API_PROCESS = 'contrail-analytics-api';
+        this.ANALYTICS_DOWN_ALARM_TEXT = 'Alarms Generator Down. Alarms may not be reported correctly.';
 
+        this.ALARMGEN_PROCESS = 'contrail-alarm-gen';
+        this.ANALYTICS_API_PROCESS = 'contrail-analytics-api';
+        this.ALARM_GEN_DOWN_ALARM_TEXT = 'Alarms Generator Down. Alarms may not be reported correctly.';
+        this.ANALYTICS_API_DOWN_ALARM_TEXT = 'Analytics API Down. Alarms may not be reported correctly.';
+        this.ANALYTICS_PROCESSES_DOWN_ALARM_TEXT = 'Analytics Processes Down. Alarms may not be reported correctly.';
+        this.USER_GENERATED_ALARM = 'UserGeneratedAlarm';
         this.get = function () {
             var args = arguments;
             return cowu.getValueFromTemplate(args);

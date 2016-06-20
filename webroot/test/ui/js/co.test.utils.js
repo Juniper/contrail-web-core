@@ -129,7 +129,7 @@ define([
         fakeServer.xhr.useFilters = true;
 
         fakeServer.xhr.addFilter(function (method, url) {
-            var searchResult = url.search(/.*\.tmpl.*/);
+            var searchResult = url.search(/(.*\.tmpl.*)|(.*\.js.*)/);
             return searchResult == -1 ? false : true;
         });
 
@@ -229,8 +229,8 @@ define([
     };
 
     this.initFeatureApp = function (featureApp, deferredObj) {
-        contentHandler.loadFeatureApps([featureApp]);
-        var featureAppDefObj = contentHandler.initFeatureAppDefObjMap[featureApp];
+        loadFeatureApps([featureApp]);
+        var featureAppDefObj = globalObj['initFeatureAppDefObjMap'][featureApp];
 
         setTimeout(function() {
             if(contrail.checkIfExist(featureAppDefObj)) {

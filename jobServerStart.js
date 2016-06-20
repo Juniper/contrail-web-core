@@ -150,6 +150,11 @@ function createVRouterGeneratorsJob ()
 
 function createJobsAtInit ()
 {
+    var authApi = require('./src/serverroot/common/auth.api');
+    if (true == authApi.isMultiRegionSupported()) {
+        /* Do not cache if multi region is supported */
+        return;
+    }
     createVRouterSummaryJob();
     createVRouterGeneratorsJob();
 }

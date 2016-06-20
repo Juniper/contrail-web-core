@@ -3,10 +3,11 @@
  */
 
 define([
+    'co-test-constants',
     'co-test-utils',
     'co-test-messages',
     'co-test-runner',
-], function (cotu, cotm, cotr) {
+], function (cotc,cotu, cotm, cotr) {
 
     var testSuiteClass = function (viewObj, suiteConfig) {
         var mockData = ifNull(suiteConfig.mockData, []),

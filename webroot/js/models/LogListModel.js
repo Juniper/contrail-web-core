@@ -19,7 +19,7 @@ define(['contrail-list-model'], function(ContrailListModel) {
         function parseDashboardLogs(result) {
             var UVEModuleIds = monitorInfraConstants.UVEModuleIds;
             retArr = $.map(result['data'],function(obj,idx) {
-                obj['message'] = qewu.formatXML2JSON(obj['Xmlmessage']);
+                obj['message'] = cowu.formatXML2JSON(obj['Xmlmessage']);
                 obj['timeStr'] = diffDates(new XDate(obj['MessageTS']/1000),new XDate());
                 if(obj['Source'] == null)
                     obj['moduleId'] = contrail.format('{0}',obj['ModuleId']);

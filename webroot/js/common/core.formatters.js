@@ -13,7 +13,9 @@ define([
                 var defaultOptions = {formatSpecifier: ',d'},
                     options = _.extend(defaultOptions, options);
 
-                return d3.format(options.formatSpecifier)(value)
+                // As we lazyload d3 don't use d3 for simple formatting
+                // return d3.format(options.formatSpecifier)(value)
+                return value.toLocaleString();
             },
             'date': function (value, options) {
                 var defaultOptions = {formatSpecifier: 'llll'},
@@ -84,7 +86,7 @@ define([
                 return timeStr;
             },
             'query-time-range': function (value, options) {
-                return qewu.formatTimeRange(value);
+                return cowu.formatTimeRange(value);
             },
             'query-direction': function (value, options) {
                 return (value == 0) ? 'EGRESS' : 'INGRESS';
@@ -106,6 +108,13 @@ define([
                 }
 
                 return jsonValue;
+            },
+            'status-boolean': function (value, options) {
+                if (value === true || value === 'true') {
+                    return '<span><i class="icon-circle green"></i> &nbsp;' + value + '</span>';
+                } else {
+                    return '<span><i class="icon-circle red"/> &nbsp;' + value + '</span>';
+                }
             },
             'json2html': function (value, options) {
                 var htmlValue = null, jsonValue = null,
@@ -298,14 +307,11 @@ define([
                         return cowu.addUnits2Packets(value);
                         break;
 
-
-
                     //run the user defined formatter function
                     default :
                         if (contrail.checkIfFunction(eval(formatterKey))) {
                             return eval(formatterKey)(value, obj, iconClass, key);
                         } else {
-                            //Reg Ex to display comma separated numbers
                             return value;
                         }
                 };

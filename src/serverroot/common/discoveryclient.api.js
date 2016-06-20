@@ -92,10 +92,12 @@ function getDiscServiceByApiServerType (apiServerType)
 
     switch (apiServerType) {
     case global.label.OPS_API_SERVER:
+    case global.label.OPSERVER:
         serviceType = global.DISC_SERVICE_TYPE_OP_SERVER;
         break;
 
     case global.label.VNCONFIG_API_SERVER:
+    case global.label.API_SERVER:
         serviceType = global.DISC_SERVICE_TYPE_API_SERVER;
         break;
 

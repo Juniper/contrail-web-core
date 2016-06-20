@@ -6,8 +6,9 @@ define([
     'underscore',
     'contrail-view',
     'core-basedir/js/models/MultiBarChartModel',
-    'contrail-list-model'
-], function (_, ContrailView, MultiBarChartModel, ContrailListModel) {
+    'contrail-list-model',
+    'nv.d3'
+], function (_, ContrailView, MultiBarChartModel, ContrailListModel,nv) {
     var MultiBarChartView = ContrailView.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),

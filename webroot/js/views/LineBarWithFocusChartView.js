@@ -6,7 +6,8 @@ define([
     'underscore',
     'contrail-view',
     'core-basedir/js/models/LineBarWithFocusChartModel',
-    'contrail-list-model'
+    'contrail-list-model',
+    'nv.d3'
 ], function (_, ContrailView, LineBarWithFocusChartModel, ContrailListModel) {
     var LineBarWithFocusChartView = ContrailView.extend({
         render: function () {
@@ -162,8 +163,7 @@ define([
 
         chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1']);
         chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2']);
-
-        if (chartData.length > 0) {
+        if (chartData.length > 0 && chartOptions['focusEnable']) {
             var values = chartData[0].values,
                 brushExtent = null,
                 start, end;

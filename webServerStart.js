@@ -165,7 +165,14 @@ function initializeAppConfig (appObj)
         ((null != config.session) && (null != config.session.timeout)) ?
         config.session.timeout : global.MAX_AGE_SESSION_ID;
 
-    app.use(express.compress());
+    var compressOptions = {
+        filter: function(req, res) {
+            //To enable gzip compression for xml,tmpl,...files
+            return /json|text|xml|javascript|tmpl/.test(res.getHeader('Content-Type'))
+        }
+    };
+    app.use(express.compress(compressOptions));
+    express.static.mime.define({'text/tmpl': ['tmpl']});
     registerStaticFiles(app);
     app.use(helmet.hsts({
         maxAge: maxAgeTime,
@@ -271,8 +278,8 @@ function registerReqToApp ()
     var csrfOptions = {eventEmitter: csrfInvalidEvent};
     var csrf = express.csrf(csrfOptions);
     //Populate the CSRF token in req.session on login request
-    myApp.get('/login', csrf);
-    myApp.get('/vcenter/login', csrf);
+    myApp.get('/', csrf);
+    myApp.get('/vcenter', csrf);
     //Enable CSRF token check for all URLs starting with "/api"
     myApp.post('/api/*', csrf);
 
@@ -387,8 +394,20 @@ function startWebCluster ()
             logutils.logger.info("Starting Contrail UI in clustered mode.");
             bindProducerSocket();
             addProducerSockListener();
+            /**
+             * Debug logic fix from https://github.com/nodejs/node-v0.x-archive/issues/5318
+             * To enable server side debug, start the server by: node --debug webServerStart.js
+             * attach node-inspector --web-port=8090 --debug-port=5859
+             * access http://localhost:8090
+             */
+            var debug = process.execArgv.indexOf('--debug') !== -1;
+            cluster.setupMaster({
+                execArgv: process.execArgv.filter(function(s) { return s !== '--debug' })
+            });
             for (var i = 0; i < nodeWorkerCount; i += 1) {
+                if (debug) cluster.settings.execArgv.push('--debug=' + (5859 + i));
                 var worker = cluster.fork();
+                if (debug) cluster.settings.execArgv.pop();
                 workers[i] = worker;
             }
 
@@ -610,6 +629,12 @@ function clusterMasterInit (callback)
         },
         function(CB) {
             checkAndDeleteRedisRDB(function() {
+                CB(null, null);
+            });
+        },
+        function(CB) {
+            var regionJs = require('./src/tools/parseRegion');
+            regionJs.createRegionFile(function() {
                 CB(null, null);
             });
         }

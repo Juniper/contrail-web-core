@@ -11,7 +11,13 @@ define(['underscore'], function (_) {
         this.getAlarmsFromAnalytics = true;
         //Setting the sevLevels used to display the node colors
         if(this.getAlarmsFromAnalytics) {
-            sevLevels = cowc.SEV_LEVELS;
+            // sevLevels = cowc.SEV_LEVELS;
+            sevLevels = {
+                ERROR   : 3, //Red
+                WARNING : 4, //Orange
+                // NOTICE  : 2, //Blue
+                // INFO    : 3, //Green
+            };
         }
         this.renderGrid = function (elementId, gridConfig) {
             $(elementId).contrailGrid($.extend(true, {
@@ -277,7 +283,7 @@ define(['underscore'], function (_) {
             return true;
         };
 
-        this.getEditConfigObj = function (configObj, locks) {
+        this.getEditConfigObj = function (configObj, locks, schema, path) {
             var lock = null,
                 testobj = $.extend(true, {}, configObj);
 
@@ -298,7 +304,7 @@ define(['underscore'], function (_) {
                 // check if value is a key or object
                 // if object make a recursive call on value
                 else if (_.isObject(value)) {
-                    testobj[attribute] = cowu.getEditConfigObj(value, locks);
+                    testobj[attribute] = cowu.getEditConfigObj(value, locks, schema, path+'.properties.'+attribute);
                     if ($.isEmptyObject(testobj[attribute])) {
                         delete testobj[attribute];
                     }
@@ -310,6 +316,20 @@ define(['underscore'], function (_) {
                     if (contrail.checkIfExist(value) && (typeof value == 'string')) {
                         testobj[attribute] = value.trim();
                     }
+
+                    var currentAttr = testobj[attribute],
+                        currentAttrPath = (path+'.properties.'+attribute).substring(1),
+                        currentAttrSchemaObject = jsonPath(schema, currentAttrPath)[0];
+
+                    if(contrail.checkIfExist(currentAttrSchemaObject)) {
+                        if((currentAttrSchemaObject.type === cowc.TYPE_NUMBER) || (currentAttrSchemaObject.type === cowc.TYPE_INTEGER)) {
+                            testobj[attribute] = parseInt(currentAttr, 10);
+                        } else if(currentAttrSchemaObject.type === cowc.boolean) {
+                            // return boolean true or false if string 'true' or 'false' respectively
+                            testobj[attribute] = (currentAttr == "true");
+                        }
+                    }
+
                     if (contrail.checkIfExist(locks[attribute + cowc.LOCKED_SUFFIX_ID])) {
                         lock = locks[attribute + cowc.LOCKED_SUFFIX_ID];
                         if (lock === true) {
@@ -1183,6 +1203,52 @@ define(['underscore'], function (_) {
                 },
               });
         };
+        this.ifNull = function(value, defValue) {
+            if (value == null)
+                return defValue;
+            else
+                return value;
+        };
+        this.formatTimeRange = function(timeRange) {
+            var formattedTime = 'custom', timeInSecs;
+            if(timeRange != null && timeRange != -1) {
+                timeInSecs = parseInt(timeRange);
+                if(timeInSecs <= 3600) {
+                    formattedTime = 'Last ' + timeInSecs/60 + ' mins';
+                } else if ( timeInSecs <= 43200) {
+                    formattedTime = 'Last ' + timeInSecs/3600 + ' hrs';
+                }
+            }
+            return formattedTime;
+        };
+        this.filterJsonKeysWithCfgOptions = function(obj,cfg) {
+            var cfg = self.ifNull(cfg,{});
+            var filterEmptyArrays = self.ifNull(cfg['filterEmptyArrays'],true);
+            var filterEmptyObjects = self.ifNull(cfg['filterEmptyObjects'],false);
+            var filterNullValues = self.ifNull(cfg['filterNullValues'],true);
+            if(obj instanceof Array) {
+                for(var i=0,len=obj.length;i<len;i++) {
+                    obj[i] = this.filterJsonKeysWithCfgOptions(obj[i],cfg);
+                }
+            } else if(typeof(obj) == "object") {
+                for(var key in obj) {
+                    if(filterNullValues && (obj[key] == null)) {
+                        delete obj[key];
+                    } else if(obj[key] instanceof Array) {
+                        if(filterEmptyArrays && obj[key].length == 0) {
+                            delete obj[key];
+                        }
+                    } else if(typeof(obj[key]) == "object") {
+                        if(filterEmptyObjects && _.keys(obj[key]).length == 0) {
+                            delete obj[key];
+                        } else {
+                            obj[key] = this.filterJsonKeysWithCfgOptions(obj[key],cfg);
+                        }
+                    }
+                }
+            }
+            return obj;
+        }
     };
 
     function filterXML(xmlString, is4SystemLogs) {

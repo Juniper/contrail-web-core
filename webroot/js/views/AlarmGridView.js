@@ -7,8 +7,10 @@ define([
     'contrail-view',
     'contrail-list-model',
     'js/views/AlarmsEditView',
-    'js/models/AlarmsModel'
-], function (_, ContrailView, ContrailListModel, AlarmsEditView, AlarmsModel) {
+    'js/models/AlarmsModel',
+    'core-alarm-parsers',
+    'core-alarm-utils'
+], function (_, ContrailView, ContrailListModel, AlarmsEditView, AlarmsModel,coreAlarmParsers,coreAlarmUtils) {
     var alarmsEditView = new AlarmsEditView();
     var GridDS, parentModel;
     var AlarmGridView = ContrailView.extend({
@@ -27,6 +29,21 @@ define([
                                 type: "GET",
                             },
                             dataParser: coreAlarmParsers.alarmDataParser
+                        },
+                        vlRemoteConfig : {
+                            vlRemoteList : [{
+                                getAjaxConfig : function() {
+                                    return {
+                                        url:ctwl.ANALYTICSNODE_SUMMARY_URL
+                                    };
+                                },
+                                successCallback : function(response, contrailListModel) {
+                                    coreAlarmUtils
+                                        .parseAndAddDerivedAnalyticsAlarms(
+                                            response, contrailListModel);
+                                }
+                            }
+                            ]
                         },
                         cacheConfig: {
                         }
@@ -135,7 +152,7 @@ define([
                                   name:'',
                                   formatter : function (r,c,v,cd,dc) {
                                       var formattedDiv = '';
-                                      if(!dc['ack']) {
+                                      if(!dc['ack'] && dc['type'] != cowc.USER_GENERATED_ALARM) {
                                           formattedDiv = '<span title="Acknowledge" style="float:right"><i class="icon-ok-circle"></i></span>';
                                       }
                                       return formattedDiv;
@@ -408,7 +425,8 @@ define([
         return template({
             showText : showText,
             color : color,
-            ack : dc['ack']
+            text : (v == 3) ? 'Major' : 'Minor',
+            ack : (dc['ack'] == null)? false : dc['ack']
         });
     }
 
