@@ -96,6 +96,13 @@ function getDomainList (req, callback)
     });
 }
 
+function getRoleList (req, callback)
+{
+    getAuthMethod[req.session.loggedInOrchestrationMode].getRoleList(req, function(err, data) {
+        callback(err, data);
+    });
+}
+
 function getNewTokenObjByToken (authObj, callback) {
     var req = authObj.req 
     getAuthMethod[req.session.loggedInOrchestrationMode].getUserAuthDataByAuthObj(authObj,
@@ -246,4 +253,4 @@ exports.getDomainNameByUUID = getDomainNameByUUID;
 exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getAdminProjectList = getAdminProjectList;
-
+exports.getRoleList = getRoleList;
