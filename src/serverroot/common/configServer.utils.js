@@ -183,6 +183,14 @@ function getTenantListAndSyncDomain (request, appData, callback)
     });
 }
 
+function getRoles (req, res, appData)
+{
+    var authApi = require('./auth.api');
+    return authApi.getRoleList(req, function(error, roles){
+        commonUtils.handleJSONResponse(error, res, roles);
+    });
+};
+
 function getProjectRole (req, res, appData)
 {
     var uiRoles = null;
@@ -280,4 +288,5 @@ exports.getProjectsFromApiServer = getProjectsFromApiServer;
 exports.getTenantListAndSyncDomain = getTenantListAndSyncDomain;
 exports.getDomainsFromApiServer = getDomainsFromApiServer;
 exports.getProjectRole = getProjectRole;
+exports.getRoles = getRoles;
 
