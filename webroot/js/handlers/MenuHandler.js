@@ -22,6 +22,7 @@ define(['underscore'], function (_) {
             processXMLJSON(menuObj, disabledFeatures);
             var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', featurePkgsInfo));
             $("#sidebar-shortcuts").html(menuShortcuts);
+            menuHandler.filterMenuItems(menuObj['items']['item']);
 
             //Add an event listener for clicking on menu items
             $('#menu').off('click').on('click', 'ul > li > a', function (e) {
