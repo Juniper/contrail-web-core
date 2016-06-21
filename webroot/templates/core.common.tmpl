@@ -1876,6 +1876,11 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
                     <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}{{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/IfCompare}}</a>
                 </li>
             {{/each}}
+            {{#each extraLinks}}
+                <li class="pull-right hide">
+                    <a id="{{elementId}}-tab-extra-link" class="contrail-tab-extra-link ">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}</a>
+                </li>
+            {{/each}}
         </ul>
         {{#each tabs}}
             <div id="{{elementId}}-tab">
