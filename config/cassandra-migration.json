@@ -1,0 +1,14 @@
+{
+  "migrationsDir": "cassandra",
+  "quiet": false,
+  "cassandra": {
+    "contactPoints": [ "127.0.0.1" ],
+    "keyspace": "widgets",
+    "protocolOptions": {
+      "port": 9042
+    },
+    "socketOptions": {
+      "connectTimeout": 15000
+    }
+  }
+}
