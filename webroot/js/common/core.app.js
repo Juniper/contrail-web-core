@@ -34,6 +34,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
             'jquery-ui'                 : coreWebDir + '/assets/jquery-ui/js/jquery-ui',
             'jquery.xml2json'           : coreWebDir + '/assets/jquery/js/jquery.xml2json',
+            'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json',
             'jquery.ba-bbq'             : coreWebDir + '/assets/jquery/js/jquery.ba-bbq.min',
             'jquery.timer'              : coreWebDir + '/assets/jquery/js/jquery.timer',
             'jquery.ui.touch-punch'     : coreWebDir + '/assets/jquery/js/jquery.ui.touch-punch.min',
@@ -247,6 +248,9 @@ var coreAppShim =  {
     'jquery.xml2json' : {
         deps: ["jquery"]
     },
+    'xml2json' : {
+        deps: ["jquery"]
+    },
     "jquery.ba-bbq" : {
         deps: ['jquery']
     },
@@ -397,6 +401,7 @@ var coreBundles = {
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
+            'xml2json',
             'jquery.ba-bbq',
             'jquery.json',
             'bootstrap',
@@ -958,6 +963,7 @@ if (typeof document !== 'undefined' && document) {
         smBaseDir = defaultBaseDir, strgBaseDir = defaultBaseDir,
         pkgBaseDir = defaultBaseDir;
 
+    var webServerInfoDefObj;
     requirejs.config({
         bundles:bundles,
         baseUrl: coreBaseDir,
@@ -978,43 +984,36 @@ if (typeof document !== 'undefined' && document) {
             initAppDefObj, url;
         
         for (var key in featurePackages) {
+            if(globalObj['initFeatureAppDefObjMap'][key] == null) {
+                if(featurePackages[key] && 
+                        [FEATURE_PCK_WEB_CONTROLLER,FEATURE_PCK_WEB_SERVER_MANAGER,FEATURE_PCK_WEB_STORAGE].indexOf(key) > -1) {
+                    globalObj['initFeatureAppDefObjMap'][key] = $.Deferred();
+                    featureAppDefObjList.push(globalObj['initFeatureAppDefObjMap'][key]);
+                }
+            }
             if(featurePackages[key] && key == FEATURE_PCK_WEB_CONTROLLER) {
-                url = ctBaseDir + '/common/ui/js/controller.app.js';
-                if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                    initAppDefObj = $.Deferred();
-                    featureAppDefObjList.push(initAppDefObj);
-                    globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
-                    featureAppDefObjList.push(loadUtils.getScript(url));
+                var ctrlUrl = ctBaseDir + '/common/ui/js/controller.app.js';
+                if(globalObj['loadedScripts'].indexOf(ctrlUrl) == -1) {
+                    loadUtils.getScript(ctrlUrl);
                 }
             } else if (featurePackages[key] && key == FEATURE_PCK_WEB_SERVER_MANAGER) {
-                url = smBaseDir + '/common/ui/js/sm.app.js';
-                if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                    initAppDefObj = $.Deferred();
-                    featureAppDefObjList.push(initAppDefObj);
-                    globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
-                    featureAppDefObjList.push(loadUtils.getScript(url));
+                var smUrl = smBaseDir + '/common/ui/js/sm.app.js';
+                if(globalObj['loadedScripts'].indexOf(smUrl) == -1) {
+                    //Post-Authentication
+                    webServerInfoDefObj.done(function() {
+                        loadUtils.getScript(smUrl);
+                    });
                 }
             }  else if (featurePackages[key] && key == FEATURE_PCK_WEB_STORAGE) {
-                url = strgBaseDir + '/common/ui/js/storage.app.js';
-                if(globalObj['loadedScripts'].indexOf(url) == -1) {
-                    initAppDefObj = $.Deferred();
-                    featureAppDefObjList.push(initAppDefObj);
-                    globalObj['initFeatureAppDefObjMap'][key] = initAppDefObj;
-                    featureAppDefObjList.push(loadUtils.getScript(url));
+                var strgUrl = strgBaseDir + '/common/ui/js/storage.app.js';
+                if(globalObj['loadedScripts'].indexOf(strgUrl) == -1) {
+                    loadUtils.getScript(strgUrl);
                 }
             }
         }
 
-        //Where isInitFeatureAppInProgress used
-        if(featureAppDefObjList.length > 0) {
-            globalObj['isInitFeatureAppInProgress'] = true;
-        }
-
         $.when.apply(window, featureAppDefObjList).done(function () {
-            globalObj['isInitFeatureAppInProgress'] = false;
-            globalObj['isInitFeatureAppComplete'] = true;
             globalObj['featureAppDefObj'].resolve();
-            // self.featureAppDefObj.resolve();
         });
     };
 
@@ -1083,6 +1082,8 @@ if (typeof document !== 'undefined' && document) {
                         }
                     });
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
+
+                    //For Region drop-down
                     require(['jquery', 'jquery-dep-libs'], function() {
                         var regionList =
                             globalObj.webServerInfo.regionList;
@@ -1153,9 +1154,6 @@ if (typeof document !== 'undefined' && document) {
                 } else {
                     appContEl.className += ' ' + className;
                 }
-                // $('#signin-container').html($('#signin-container-tmpl').text());
-                // $('#app-container').addClass('hide');
-                // $('#app-container').empty();
                 loadUtils.bindSignInListeners();
             },
             fetchMenu: function(menuXMLLoadDefObj) {
@@ -1182,6 +1180,8 @@ if (typeof document !== 'undefined' && document) {
                     require(['jquery'],function() {
                         if(globalObj['featureAppDefObj'] == null)
                             globalObj['featureAppDefObj'] = $.Deferred();
+                        if(webServerInfoDefObj == null) 
+                            webServerInfoDefObj = $.Deferred();
                         loadFeatureApps(featurePkgs);
                     });
                 });
@@ -1266,7 +1266,8 @@ if (typeof document !== 'undefined' && document) {
         require(['jquery'],function() {
             menuXMLLoadDefObj = $.Deferred();
             layoutHandlerLoadDefObj = $.Deferred();
-            webServerInfoDefObj = $.Deferred();
+            if(webServerInfoDefObj == null) 
+                webServerInfoDefObj = $.Deferred();
             $.ajaxSetup({
                 cache: false,
                 crossDomain: true,

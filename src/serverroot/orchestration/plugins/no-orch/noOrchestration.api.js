@@ -48,7 +48,7 @@ function authenticate (req, res, appData, callback)
     req.session.isAuthenticated = true;
     req.session.userRole = userList[i]['roles'];
     plugins.setAllCookies(req, res, appData, {'username': username}, function() {
-        callback(null, '/' + urlHash);
+        callback(null);
     });
 }
 

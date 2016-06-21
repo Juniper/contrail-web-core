@@ -23,7 +23,7 @@ define([
                 customGridConfig;
 
             var grid = null, dataView = null, footerPager = null,
-                gridDataSource, gridColumns, gridSortColumns = [], gridOptions,
+                gridDataSource, gridColumns = [], gridSortColumns = [], gridOptions,
                 autoRefreshInterval = false, searchColumns = [],
                 currentSelectedRows = [],
                 dvConfig = null, eventHandlerMap = {grid: {}, dataView: {}},
@@ -62,6 +62,13 @@ define([
 
             if (gridOptions.fixedRowHeight != false && _.isNumber(gridOptions.fixedRowHeight)) {
                 gridOptions.rowHeight = gridOptions.fixedRowHeight;
+            }
+
+            if (gridColumns.length === 0) {
+                initGridHeader();
+                gridContainer.append('<div class="grid-body ui-widget"><div class="grid-load-status">No Columns found.</div></div>');
+                gridContainer.find('.grid-header-icon-loading').hide();
+                return;
             }
 
             if (contrail.checkIfExist(gridDataSource.dataView)) {

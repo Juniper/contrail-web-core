@@ -58,7 +58,7 @@ define([
             if(chartConfig['doBucketize'] == true) {
                 //All nodes have same size
                 if(self.sizeMinMax[0] != self.sizeMinMax[1]) {
-                    d3SizeScale = d3.scale.quantize().domain(self.sizeMinMax).range([6,7,9,10,11,12]);
+                    d3SizeScale = d3.scale.quantize().domain(self.sizeMinMax).range([6,7,8,9,10,11]);
                 }
             }
 
@@ -392,8 +392,14 @@ define([
             sizeMinMax = [sizeMinMax[0], sizeMinMax[1]];
             if(chartConfig['doBucketize'] == true) {
                 //Ensure that Max is atleast 4 times Min
-                if((sizeMinMax[0] * 4) > sizeMinMax[1])
-                    sizeMinMax[1] = sizeMinMax[0] * 4;
+                // && Min value should not be 0 for this calculation.
+                var validMinSize = sizeMinMax[0];
+                if (validMinSize == 0) {
+                    sortedValues = _.sortBy(values, 'size').filter(function (obj) {return obj[sizeFieldName] > 0});
+                    validMinSize = sortedValues[0] != null ? (sortedValues[0]['size'] != null ? sortedValues[0]['size'] : 0) :0;
+                }
+                if((validMinSize * 4) > sizeMinMax[1])
+                    sizeMinMax[1] = validMinSize * 4;
             }
         }
         return sizeMinMax;
