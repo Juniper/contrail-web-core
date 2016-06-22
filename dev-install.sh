@@ -191,9 +191,6 @@ cp -r ./$THIRD_PARTY/joint-v0.9.3/src/vectorizer.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/dagre-v0.7.1/dist/dagre.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.nojquery.min.css webroot/assets/joint/css/
-#new V0.9.6
-cp -r ./$THIRD_PARTY/joint-v0.9.6/js/joint.min.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.6/css/joint.min.css webroot/assets/joint/css/
 #End - Copy Joint from web-third-party
 
 #Start - Copy jquery-contextMenu from web-third-party
