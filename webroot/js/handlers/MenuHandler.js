@@ -338,6 +338,13 @@ define(['underscore'], function (_) {
                     //window[currResourceObj['class']] = null;
                 });
             }
+            if (!_.isEmpty(currMenuObj['loader'])) {
+                try {
+                    window[currMenuObj.loader.class].destroy()
+                } catch (error) {
+                    console.log(error.stack);
+                }
+            }
         }
 
         /**
