@@ -11,7 +11,6 @@ var configMainServer = require('../../web/api/configServer.main.api');
 var opMainServer = require('../../web/api/opServer.main.api');
 var configJobServer = require('../../jobs/api/configServer.jobs.api');
 var opJobServer = require('../../jobs/api/opServer.jobs.api');
-var vCenterMainServer = require('../../web/api/vCenterServer.main.api');
 //var vCenterJobServer = require('../../web/api/vCenterServer.jobs.api');
 var assert = require('assert');
 var authApi = require('../../common/auth.api');
@@ -118,6 +117,7 @@ function getApiServerRequestedByvCenter (loggedInOrchestrationMode, appData)
             genBy = appData['taskData']['genBy'];
         }
         if (global.service.MAINSEREVR == genBy) {
+            var vCenterMainServer = require('../../web/api/vCenterServer.main.api');
             return vCenterMainServer;
         } else {
             return vCenterJobServer;
