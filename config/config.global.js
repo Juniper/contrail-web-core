@@ -213,7 +213,7 @@ config.files.download_path = '/tmp';
 /* Cassandra Server */
 config.cassandra = {};
 config.cassandra.server_ips = ['127.0.0.1'];
-config.cassandra.server_port = '9160';
+config.cassandra.server_port = '9042';
 config.cassandra.enable_edit = false;
 
 /* KUE Job Scheduler */
