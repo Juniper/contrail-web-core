@@ -279,7 +279,7 @@ function Contrail() {
                     }
 
                     if (val != null && typeof val == 'object') {
-                        output += '<span class="value">' + self.formatJsonObject(val, formatDepth - 1, currentDepth + 1) + '</span>';
+                        output += '<span class="value">' + self.formatJsonObject(val, formatDepth - 1, currentDepth + 1, ignoreKeys) + '</span>';
                     }
                     else {
                         output += '<span class="value ' + typeof val + '">' + val + '</span>';

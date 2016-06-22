@@ -300,7 +300,7 @@
 					<xsl:choose>
 						<xsl:when test="$valuex != ''">
 							<div class="td-cell">
-								<a href="#" class="inline-link" data-link="{$linkx}" x="{$valuex}" >
+								<a class="introspect-link" data-link="{$linkx}" x="{$valuex}" >
 									<xsl:choose>
 										<xsl:when test="$link_title != ''">
 											<xsl:value-of select="$link_title"/>

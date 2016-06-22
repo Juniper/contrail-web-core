@@ -184,6 +184,7 @@ define([
                 disableFieldArray = [].concat(defaultSelectFields).concat(this.disableSelectFields),
                 disableSubstringArray = this.disableSubstringInSelectFields;
 
+            qewu.adjustHeight4FormTextarea(model.attributes.query_prefix);
             if(tableName != '') {
                 $.ajax(ajaxConfig).success(function(response) {
                     var selectFields = getSelectFields4Table(response, disableFieldArray, disableSubstringArray),
