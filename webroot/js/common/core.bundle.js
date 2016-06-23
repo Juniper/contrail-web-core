@@ -45,7 +45,7 @@ define([
         'mon-infra-sysinfo-view',      
         'mon-infra-dashboard-view',
         ],function(CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig,ChartUtils,CoreCommonTmpls) {
-            cowc = new CoreConstants();
+            cowc = CoreConstants;
             cowf = new CoreFormatters();
             cowl = new CoreLabels();
             cowm = new CoreMessages();
