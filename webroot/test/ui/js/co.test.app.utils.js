@@ -27,11 +27,42 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
     var coreWebDir = coreBaseDir + coreBuildDir;
     if(env == null)
         env = globalObj['env'];
-    if(env == "dev") {
-        return {
-            'core-srcdir'                 : coreBaseDir,
-            'core-basedir'                : coreWebDir,
+    //RequireJS alias mapping
+    //Aliases that are needed for both prod & dev environment
+    var aliasMap = {
+        'core-srcdir'                 : coreBaseDir,
+        'core-basedir'                : coreWebDir,
+        //Bundles
+        'thirdparty-libs'       : coreWebDir + '/js/common/thirdparty.libs',
+        'contrail-core-views'   : coreWebDir + '/js/common/contrail.core.views',
+        'chart-libs'            : coreWebDir + '/js/common/chart.libs',
+        'core-bundle'           : coreWebDir + '/js/common/core.bundle',
+        'global-libs'           : coreWebDir + '/js/common/global-libs',
+        'jquery-dep-libs'       : coreWebDir + '/js/common/jquery.dep.libs',
+        'nonamd-libs'           : coreWebDir + '/js/common/nonamd.libs',
+        //Files not in bundles
             'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
+        'contrail-load'         : coreWebDir + '/js/contrail-load',
+        'vis'                   : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
+        'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
+        'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
+        'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
+        'graph-view'                  : coreWebDir + '/js/views/GraphView',
+        'contrail-graph-model'        : coreWebDir + '/js/models/ContrailGraphModel',
+        'dagre'                       : coreWebDir + '/assets/joint/js/dagre',
+        'geometry'                    : coreWebDir + '/assets/joint/js/geometry',
+        'vectorizer'                  : coreWebDir + '/assets/joint/js/vectorizer',
+        'joint.layout.DirectedGraph'  : coreWebDir + '/assets/joint/js/joint.layout.DirectedGraph',
+        'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
+        'joint.contrail'              : coreWebDir + '/js/joint.contrail',
+
+        'core-alarm-utils'           :  coreWebDir + '/js/common/core.alarms.utils',
+        'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers'
+    };
+
+    //Separate out aliases that need to be there for both prod & dev environments
+    if(env == "dev") {
+        var devAliasMap = {
             'jquery-ui'                 : coreWebDir + '/assets/jquery-ui/js/jquery-ui',
             'jquery.xml2json'           : coreWebDir + '/assets/jquery/js/jquery.xml2json',
             'jquery.ba-bbq'             : coreWebDir + '/assets/jquery/js/jquery.ba-bbq.min',
@@ -72,21 +103,11 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'contrail-common'           : coreWebDir + "/js/contrail-common",
             'slick.enhancementpager'    : coreWebDir + "/assets/slickgrid/js/slick.enhancementpager",
             'slick.groupmetadata'       : coreWebDir + "/assets/slickgrid/js/slick.groupitemmetadataprovider",
-            // 'slickgrid-utils'          coreWebDir +  : "js/slickgrid-utils",
             'web-utils'                 : coreWebDir + "/js/web-utils",
             'config_global'             : coreWebDir + "/js/config_global",
-            'contrail-load'             : coreWebDir + '/js/contrail-load',
             'analyzer-utils'            : coreWebDir + "/js/analyzer-utils",
-            // 'dashboard-utils'           : "js/dashboard-utils",
 
             'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
-            'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
-            'geometry'                    : coreWebDir + '/assets/joint/js/geometry',
-            'vectorizer'                  : coreWebDir + '/assets/joint/js/vectorizer',
-            'joint.layout.DirectedGraph'  : coreWebDir + '/assets/joint/js/joint.layout.DirectedGraph',
-            'dagre'                       : coreWebDir + '/assets/joint/js/dagre',
-            'vis'                         : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
-            // 'bezier'                      : coreWebDir + '/assets/bezierjs/bezier',
             'lodash'                      : coreWebDir + '/assets/lodash/lodash.min',
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
             'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
@@ -98,21 +119,14 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'nv.d3'                     : coreWebDir + '/assets/nvd3-v1.8.1/js/nv.d3',
 
             'contrail-layout'             : coreWebDir + '/js/contrail-layout',
-            'joint.contrail'              : coreWebDir + '/js/joint.contrail',
             'core-utils'                  : coreWebDir + '/js/common/core.utils',
 
-            'core-alarm-utils'           :  coreWebDir + '/js/common/core.alarms.utils',
-            'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers',
             'core-constants'              : coreWebDir + '/js/common/core.constants',
             'core-formatters'             : coreWebDir + '/js/common/core.formatters',
             'core-labels'                 : coreWebDir + '/js/common/core.labels',
             'core-messages'               : coreWebDir + '/js/common/core.messages',
             'core-cache'                  : coreWebDir + '/js/common/core.cache',
             'core-views-default-config'   : coreWebDir + '/js/common/core.views.default.config',
-            // 'core-init'                   : coreWebDir + '/js/common/core.init',
-            // 'contrail-unified-1'          : coreWebDir + '/js/common/contrail.unified.1',
-            // 'contrail-unified-2'          : coreWebDir + '/js/common/contrail.unified.2',
-            // 'contrail-unified-3'          : coreWebDir + '/js/common/contrail.unified.3',
             'cf-datasource'               : coreWebDir + '/js/common/cf.datasource',
 
             'contrail-remote-data-handler': coreWebDir + '/js/handlers/ContrailRemoteDataHandler',
@@ -120,7 +134,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'menu-handler'                : coreWebDir + '/js/handlers/MenuHandler',
             'content-handler'             : coreWebDir + '/js/handlers/ContentHandler',
 
-            'graph-view'                  : coreWebDir + '/js/views/GraphView',
             'contrail-view'               : coreWebDir + '/js/views/ContrailView',
             'query-form-view'             : coreWebDir + '/js/views/QueryFormView',
             'contrail-vis-view'           : coreWebDir + '/js/views/ContrailVisView',
@@ -128,16 +141,12 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'query-form-model'            : coreWebDir + '/js/models/QueryFormModel',
             'query-or-model'              : coreWebDir + '/js/models/QueryOrModel',
             'query-and-model'             : coreWebDir + '/js/models/QueryAndModel',
-            'contrail-graph-model'        : coreWebDir + '/js/models/ContrailGraphModel',
             'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
             'contrail-view-model'         : coreWebDir + '/js/models/ContrailViewModel',
             'contrail-model'              : coreWebDir + '/js/models/ContrailModel',
             'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
             'mon-infra-node-list-model'   : coreWebDir + '/js/models/NodeListModel',
             'mon-infra-log-list-model'    : coreWebDir + '/js/models/LogListModel',
-            'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
-            'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
-            'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
 
             // TODO: We need to discuss a criteria on which we should add definations to this file.
             'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
@@ -151,49 +160,22 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
 
             'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
             'chart-utils'                 : coreWebDir + "/js/common/chart.utils",
-            'storage-init'                : 'empty:',
+            'storage-init'                : 'empty:'
 
-            'thirdparty-libs'       : coreWebDir + '/js/common/thirdparty.libs',
-            'contrail-core-views'   : coreWebDir + '/js/common/contrail.core.views',
-            'chart-libs'            : coreWebDir + '/js/common/chart.libs',
-            'core-bundle'           : coreWebDir + '/js/common/core.bundle',
-            'global-libs'           : coreWebDir + '/js/common/global-libs',
-            'jquery-dep-libs'       : coreWebDir + '/js/common/jquery.dep.libs',
-            'nonamd-libs'           : coreWebDir + '/js/common/nonamd.libs',
         };
+        //Merge common (for both prod & dev) alias 
+        for(var currAlias in devAliasMap)
+            aliasMap[currAlias] = devAliasMap[currAlias]
+
     } else if(env == "prod") {
-        return {
-            'core-srcdir'                 : coreBaseDir,
-            'core-basedir'                : coreBaseDir,
+        var prodAliasMap = {
             'controller-basedir'          : coreBaseDir,
-            'jquery'                : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
-            'thirdparty-libs'       : coreWebDir + '/js/common/thirdparty.libs',
-            'contrail-core-views'   : coreWebDir + '/js/common/contrail.core.views',
-            'chart-libs'            : coreWebDir + '/js/common/chart.libs',
-            'core-bundle'           : coreWebDir + '/js/common/core.bundle',
-            'global-libs'           : coreWebDir + '/js/common/global-libs',
-            'jquery-dep-libs'       : coreWebDir + '/js/common/jquery.dep.libs',
-            'nonamd-libs'           : coreWebDir + '/js/common/nonamd.libs',
-            'contrail-load'         : coreWebDir + '/js/contrail-load',
-            //File to load on demand
-            'vis'                   : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
-            'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
-            'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
-            'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
-            'graph-view'                  : coreWebDir + '/js/views/GraphView',
-            'contrail-graph-model'        : coreWebDir + '/js/models/ContrailGraphModel',
-            'dagre'                       : coreWebDir + '/assets/joint/js/dagre',
-            'geometry'                    : coreWebDir + '/assets/joint/js/geometry',
-            'vectorizer'                  : coreWebDir + '/assets/joint/js/vectorizer',
-            'joint.layout.DirectedGraph'  : coreWebDir + '/assets/joint/js/joint.layout.DirectedGraph',
-            'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
-            'joint.contrail'              : coreWebDir + '/js/joint.contrail',
-
-            'core-alarm-utils'           :  coreWebDir + '/js/common/core.alarms.utils',
-            'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers'
         }
-
+        //Merge common (for both prod & dev) alias 
+        for(var currAlias in prodAliasMap)
+            aliasMap[currAlias] = prodAliasMap[currAlias]
     }
+    return aliasMap;
 };
 
 var coreAppMap = {
@@ -301,6 +283,9 @@ var coreAppShim =  {
         deps: ['jquery','slick.groupmetadata']
     },
     'slick.groupmetadata': {
+        deps: ['jquery']
+    },
+    'jquery-dep-libs' : {
         deps: ['jquery']
     },
     // 'slickgrid-utils': {
