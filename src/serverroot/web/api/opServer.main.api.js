@@ -7,6 +7,7 @@ var rest = require('../../common/rest.api'),
     authApi = require('../../common/auth.api'),
     commonUtils = require('../../utils/common.utils'),
     async = require('async'),
+    configServerApi = require('../../common/configServer.api'),
     opServer,
     appErrors = require('../../errors/app.errors');
 var opServerIP = ((config.analytics) && (config.analytics.server_ip)) ?
@@ -19,12 +20,17 @@ opServer = rest.getAPIServer({apiName: global.label.OPS_API_SERVER,
 
 function getHeaders(dataObj, callback)
 {
-    var headers =
-        (null != dataObj['appHeaders']) ? dataObj['appHeaders'] : {};
-    dataObj['headers'] = headers;
+    var headers = {};
     var appData = dataObj['appData'];
+    headers = configServerApi.configAppHeaders(headers, appData);
+    var appHeaders = dataObj['appHeaders'];
+    for (key in appHeaders) {
+        /* App Header overrides default header */
+        headers[key] = appHeaders[key];
+    }
     var req = commonUtils.getValueByJsonPath(appData, 'authObj;req', null,
                                              false);
+    dataObj['headers'] = headers;
     dataObj['apiRestApi'] = opServer;
     if (null == req) {
         callback(null, dataObj);
