@@ -1058,8 +1058,7 @@ function createJSONByUVEResponseArr (resultArr, responseArr, lastIndex)
  *    which ignores all XML attributes and only creates text nodes
  */
 function getRestAPIServer (ip, port, apiName) {
-    var api = apiName || global.label.API_SERVER;
-    return rest.getAPIServer({apiName: api, server:ip, port: port,
+    return rest.getAPIServer({apiName: apiName, server:ip, port: port,
                              xml2jsSettings:
                                 {ignoreAttrs: true,
                                  explicitArray: false
