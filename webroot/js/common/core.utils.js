@@ -324,7 +324,7 @@ define(['underscore'], function (_) {
                     if(contrail.checkIfExist(currentAttrSchemaObject)) {
                         if((currentAttrSchemaObject.type === cowc.TYPE_NUMBER) || (currentAttrSchemaObject.type === cowc.TYPE_INTEGER)) {
                             testobj[attribute] = parseInt(currentAttr, 10);
-                        } else if(currentAttrSchemaObject.type === cowc.boolean) {
+                        } else if(currentAttrSchemaObject.type === cowc.TYPE_BOOLEAN) {
                             // return boolean true or false if string 'true' or 'false' respectively
                             testobj[attribute] = (currentAttr == "true");
                         }
