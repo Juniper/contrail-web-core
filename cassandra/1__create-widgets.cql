@@ -12,11 +12,15 @@ CREATE TYPE widget_view (
   "viewConfig" text
 );
 ---
-CREATE TABLE userwidgets (
+CREATE TABLE user_widgets (
   id uuid,
-  user_id text,
+  "userId" text,
+  "dashboardId" text,
+  "tabId" text,
   config frozen <config>,
   "contentConfig" map<text, frozen <widget_view>>,
 
-  PRIMARY KEY(id, user_id)
+  PRIMARY KEY(id)
 );
+---
+CREATE INDEX ON user_widgets ("userId");
