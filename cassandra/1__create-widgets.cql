@@ -1,4 +1,4 @@
-CREATE TYPE widgets.config (
+CREATE TYPE config (
   title text,
   x int,
   y int,
@@ -6,7 +6,7 @@ CREATE TYPE widgets.config (
   height int
 );
 ---
-CREATE TYPE widgets.widget_view (
+CREATE TYPE widget_view (
   "view" text,
   "viewPathPrefix" text,
   "viewConfig" text

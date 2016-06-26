@@ -3,7 +3,7 @@
   "quiet": false,
   "cassandra": {
     "contactPoints": [ "127.0.0.1" ],
-    "keyspace": "widgets",
+    "keyspace": "config_webui",
     "protocolOptions": {
       "port": 9042
     },
