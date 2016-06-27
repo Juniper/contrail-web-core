@@ -14,7 +14,6 @@ var redis = require("redis")
     , commonUtils = require('../../utils/common.utils')
     , eventEmitter = require('events').EventEmitter
     , async = require('async')
-    , discServ = require('./discoveryservice.api')
     , UUID = require('uuid-js')
     , jobUtils = require('../../common/jobs.utils')
 	, messages = require('../../common/messages');
@@ -401,36 +400,6 @@ function createJobAtInit (jobObj)
     createJob(jobName, jobName, 'normal', firstRunDelay, runCount, msgObj['data']);
 }
 
-/* Function: createJobByMsgObj
- This function is used to create a job by message coming from mainServer
- */
-function createJobByMsgObj (msg)
-{
-    var msgJSON = JSON.parse(msg.toString());
-    switch (msgJSON['jobType']) {
-    case global.STR_MAIN_WEB_SERVER_READY:
-        if (true == process.mainModule.exports['discServEnable']) {
-            /* The main webServer is ready now, now start discovery service 
-             * subscription
-             */
-            console.log("WEB Server Ready! Send DISC ");
-            discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MAINSEREVR);
-        }
-        break;
-
-    case global.STR_DISC_SUBSCRIBE_MSG:
-        logutils.logger.debug("We got on-demand discovery SUB message for " +
-                              "serverType " + msgJSON['serverType']);
-        discServ.subscribeDiscoveryServiceOnDemand(msgJSON['serverType']);
-        break;
-
-    default:
-        createJob(msgJSON.jobName, msgJSON.jobName, msgJSON.jobPriority,
-                  msgJSON.firstRunDelay, msgJSON.runCount, msgJSON.data);
-        break;
-    }
-}
-
 function getChannelkeyByHashUrl (lookupHash, myHash, url)
 {
     var channelObj = {};
@@ -533,7 +502,7 @@ jobListenerReadyQEvent.on('dataPublished', function(pubChannel, pubData) {
 
 exports.jobListenerReadyQEvent = jobListenerReadyQEvent;
 exports.createJobListener = createJobListener;
-exports.createJobByMsgObj = createJobByMsgObj;
 exports.doCheckJobsProcess = doCheckJobsProcess;
 exports.getDataFromStoreQ = getDataFromStoreQ;
 exports.createJobAtInit = createJobAtInit;
+exports.createJob = createJob;

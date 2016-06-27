@@ -162,6 +162,7 @@ function getHeaders (dataObj, callback)
             return;
         }
         headers['protocol'] = verObj['protocol'];
+        var rest = require('./rest.api');
         var configServerRestInst =
             rest.getAPIServer({apiName: dataObj['apiName'],
                                server: verObj['ip'], port: verObj['port']});
@@ -206,6 +207,43 @@ function updateJobDataAuthObjToken (jobData, token)
     registerForJobTaskDataChange(jobData, 'tokenid');
 }
 
+/* Function: createJobByMsgObj
+ This function is used to create a job by message coming from mainServer
+ */
+function createJobByMsgObj (msg)
+{
+    var discServ = require('../jobs/core/discoveryservice.api');
+    var jobsApi = require('../jobs/core/jobs.api');
+    var msgJSON = JSON.parse(msg.toString());
+    switch (msgJSON['jobType']) {
+    case global.STR_MAIN_WEB_SERVER_READY:
+        if (true == process.mainModule.exports['discServEnable']) {
+            /* The main webServer is ready now, now start discovery service
+             * subscription
+             */
+            discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MAINSEREVR);
+        }
+        break;
+
+    case global.UPDATE_REGION_CONFIG:
+        if (true == process.mainModule.exports['discServEnable']) {
+            discServ.updateRegionConfigAndStartDiscoveryService(msgJSON);
+        }
+        break;
+
+    case global.STR_DISC_SUBSCRIBE_MSG:
+        logutils.logger.debug("We got on-demand discovery SUB message for " +
+                              "serverType " + msgJSON['serverType']);
+        discServ.subscribeDiscoveryServiceOnDemand(msgJSON['serverType']);
+        break;
+
+    default:
+        jobsApi.createJob(msgJSON.jobName, msgJSON.jobName, msgJSON.jobPriority,
+                          msgJSON.firstRunDelay, msgJSON.runCount, msgJSON.data);
+        break;
+    }
+}
+
 exports.registerForJobTaskDataChange = registerForJobTaskDataChange;
 exports.getChangedJobTaskData = getChangedJobTaskData;
 exports.deleteChangedJobTaskData = deleteChangedJobTaskData;
@@ -216,3 +254,5 @@ exports.buildAuthObjByJobData = buildAuthObjByJobData;
 exports.buildDummyReqObjByJobData = buildDummyReqObjByJobData;
 exports.updateJobDataAuthObjToken = updateJobDataAuthObjToken;
 exports.getHeaders = getHeaders;
+exports.createJobByMsgObj = createJobByMsgObj;
+

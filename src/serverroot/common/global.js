@@ -15,6 +15,7 @@ global.service.MIDDLEWARE = 'middleware';
 
 global.MSG_CMD_KILLALL = 'killAll';
 global.STR_MAIN_WEB_SERVER_READY = 'mainWebServerReady';
+global.UPDATE_REGION_CONFIG = 'updateRegionConfig';
 
 /* JOB */
 global.FLOW_CACHE_DATA_SORT = 'flowCacheSortJSONData';

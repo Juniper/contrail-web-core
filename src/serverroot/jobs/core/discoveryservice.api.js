@@ -48,6 +48,44 @@ function checkIfDiscoveryServerReachable (callback)
     });
 }
 
+function updateRegionConfigAndStartDiscoveryService (regionData)
+{
+    var serviceCatalog =
+        commonUtils.getValueByJsonPath(regionData, 'data;serviceCatalog', {});
+    var regionName =
+        commonUtils.getValueByJsonPath(regionData, 'data;regionName', null);
+    var apiIp = server_ip;
+    if (null == serviceCatalog[regionName]) {
+        logutils.logger.error('We did not find service catalog in job ' +
+                              'discovery region data');
+        return;
+    }
+    var authApi = require('../../common/auth.api');
+    var apiServerType = authApi.getEndpointServiceType('ApiServer');
+    var apiSvrMaps =
+        commonUtils.getValueByJsonPath(serviceCatalog,
+                                       regionName + ';' + apiServerType +
+                                       ';maps;0', null);
+    apiIp = commonUtils.getValueByJsonPath(apiSvrMaps, 'ip', null);
+    var apiPort = commonUtils.getValueByJsonPath(apiSvrMaps, 'port', null);
+    if (null == apiIp) {
+        logutils.logger.error('We did not find the API Server IP in discovery' +
+                              ' region data');
+        return;
+    }
+    var cnfgServerIP =
+        commonUtils.getValueByJsonPath(process.mainModule.exports.config,
+                                       'cnfg;server_ip', null);
+    if (null == cnfgServerIP) {
+        process.mainModule.exports.config.cnfg = {};
+        process.mainModule.exports.config.cnfg.server_port = apiPort;
+    }
+    process.mainModule.exports.config.cnfg.server_ip = apiIp;
+    discServer = rest.getAPIServer({apiName: global.label.DISCOVERY_SERVER,
+                                   server: apiIp, port: server_port});
+    createRedisClientAndStartSubscribeToDiscoveryService();
+}
+
 function createRedisClientAndStartSubscribeToDiscoveryService (reqFrom,
                                                                retryCount)
 {
@@ -146,6 +184,8 @@ function startSubscribeToDiscoveryServiceOrSendData (reqFrom)
              * Server
              */
             lookupDBAndSendDiscServerResponseToMainServer();
+        } else {
+            startSubscribeToDiscoveryService();
         }
     }
 }
@@ -344,4 +384,5 @@ exports.createRedisClientAndStartSubscribeToDiscoveryService =
     createRedisClientAndStartSubscribeToDiscoveryService;
 exports.startWatchDiscServiceRetryList = startWatchDiscServiceRetryList;
 exports.subscribeDiscoveryServiceOnDemand = subscribeDiscoveryServiceOnDemand;
-
+exports.updateRegionConfigAndStartDiscoveryService =
+updateRegionConfigAndStartDiscoveryService;

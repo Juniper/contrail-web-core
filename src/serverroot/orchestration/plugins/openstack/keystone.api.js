@@ -1604,6 +1604,7 @@ function authenticate (req, res, appData, callback)
          */
         req.session.isAuthenticated = true;
         setDomainToReqObj(req, post.domain);
+        plugins.doPostRegionSetConfig(req); 
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
             callback(null, null);
         });

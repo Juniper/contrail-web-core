@@ -262,9 +262,29 @@ function setAllCookies (req, res, appData, cookieObj, callback)
     });
 }
 
+function doPostRegionSetConfig (req)
+{
+    if (false == authApi.isMultiRegionSupported()) {
+        return;
+    }
+    /* Update the middleware about the region information */
+    var clUtils = require('../../utils/cluster.utils');
+    var cmd = global.STR_SEND_TO_JOB_SERVER;
+    var reqData = {
+        jobType: global.UPDATE_REGION_CONFIG,
+        data: {
+            serviceCatalog: req.session.serviceCatalog,
+            regionName: req.session.regionname
+        }
+    };
+    clUtils.sendMsgToMiddleware(cmd, JSON.stringify(reqData));
+}
+
 exports.getApiServerRequestedByData = getApiServerRequestedByData;
 exports.getOrchestrationPluginModel = getOrchestrationPluginModel;
 exports.setAllCookies = setAllCookies;
 exports.doDomainExist = doDomainExist;
 exports.formatDomainList = formatDomainList;
 exports.getDomainFqnByDomainUUID = getDomainFqnByDomainUUID;
+exports.doPostRegionSetConfig = doPostRegionSetConfig;
+

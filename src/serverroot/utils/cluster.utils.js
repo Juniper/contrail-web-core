@@ -68,6 +68,17 @@ function addClusterEventListener (messageHandler)
     });
 }
 
+function sendMsgToMiddleware (cmd, reqData)
+{
+    var msg = {
+        cmd: cmd,
+        reqData: reqData
+    };
+    process.send(msg);
+}
+
 exports.addClusterEventListener = addClusterEventListener;
 exports.forkWorkers = forkWorkers;
 exports.killAllWorkers = killAllWorkers;
+exports.sendMsgToMiddleware = sendMsgToMiddleware;
+

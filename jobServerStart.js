@@ -90,7 +90,7 @@ exports.pkgList = pkgList;
  Handler for message processing for messages coming from main Server
  */
 processMsg = function (msg) {
-    jobsApi.createJobByMsgObj(msg);
+    jobsUtils.createJobByMsgObj(msg);
 }
 
 /* Function: connectToMainServer
