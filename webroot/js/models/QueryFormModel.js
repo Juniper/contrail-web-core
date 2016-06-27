@@ -19,7 +19,7 @@ define([
 
         constructor: function (modelData, queryReqConfig) {
             var self = this, modelRemoteDataConfig,
-                defaultQueryReqConfig = {chunk: 1, autoSort: true, chunkSize: cowc.QE_RESULT_CHUNK_SIZE_10K, async: true}gi;
+                defaultQueryReqConfig = {chunk: 1, autoSort: true, chunkSize: cowc.QE_RESULT_CHUNK_SIZE_10K, async: true};
 
             var defaultSelectFields = this.defaultSelectFields,
                 disableFieldArray = [].concat(defaultSelectFields).concat(this.disableSelectFields),
