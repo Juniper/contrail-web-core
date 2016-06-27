@@ -41,6 +41,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-dep-libs'       : coreWebDir + '/js/common/jquery.dep.libs',
         'nonamd-libs'           : coreWebDir + '/js/common/nonamd.libs',
         //Files not in bundles
+        'slickgrid-utils'       : coreWebDir + "/js/slickgrid-utils",
             'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
         'contrail-load'         : coreWebDir + '/js/contrail-load',
         'vis'                   : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
@@ -289,9 +290,9 @@ var coreAppShim =  {
     'jquery-dep-libs' : {
         deps: ['jquery']
     },
-    // 'slickgrid-utils': {
-    //     deps: ['jquery','slick.grid','slick.dataview']
-    // },
+    'slickgrid-utils': {
+        deps: ['jquery','slick.grid','slick.dataview']
+    },
     'contrail-elements': {
         deps: ['jquery-ui']
     },
