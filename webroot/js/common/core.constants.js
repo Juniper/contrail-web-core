@@ -18,12 +18,12 @@ define([
 //                NOTICE  : 2, //Blue
 //                INFO    : 3, //Green
             }
-       this.COLOR_SEVERITY_MAP = {
-                red : 'error',
-                orange : 'warning',
-                blue : 'default',
-                green : 'okay'
-           };
+        this.COLOR_SEVERITY_MAP = {
+            red : 'error',
+            orange : 'warning',
+            blue : 'default',
+            green : 'okay'
+        };
         this.PATTERN_IP_ADDRESS  = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
         this.PATTERN_SUBNET_MASK = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(\d|[1-2]\d|3[0-2]))?$/;
         this.PATTERN_MAC_ADDRESS = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
@@ -175,7 +175,7 @@ define([
         this.DEFAULT_CONFIG_NOT_FOUND_PAGE = {
             title: 'Page not found.',
             iconClass: 'icon-warning-sign',
-            defaultNavLinks: false,
+            defaultNavLinks: false
         };
 
         this.DEFAULT_CONFIG_ERROR_PAGE = {
@@ -230,6 +230,12 @@ define([
 
         this.QE_DEFAULT_LIMIT_150K = "150000";
         this.QE_DEFAULT_LIMIT_50K = "50000";
+
+        this.DEFAULT_FR_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, setup_time, agg-packets, agg-bytes, action";
+        this.DEFAULT_FS_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, T=, sum(packets), sum(bytes)";
+        this.DEFAULT_SL_SELECT_FIELDS = "MessageTS, Source, ModuleId, Category, Level, NodeType, Messagetype, Xmlmessage";
+
+        this.QE_DEFAULT_FILTER = "limit: 150000 & sort_fields:  & sort: asc";
 
         this.QE_DEFAULT_SORT_ORDER = "asc";
         this.QE_TITLE_SORT_ORDER = "Sort Order";
@@ -793,10 +799,6 @@ define([
             "MAX(disk_usage_info.partition_space_available_1k)": "kilo-byte",
             "MIN(disk_usage_info.partition_space_available_1k)": "kilo-byte"
         };
-
-        this.DEFAULT_FR_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, setup_time, agg-packets, agg-bytes, action";
-        this.DEFAULT_FS_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, T=, sum(packets), sum(bytes)";
-        this.DEFAULT_SL_SELECT_FIELDS = "MessageTS, Source, ModuleId, Category, Level, NodeType, Messagetype, Xmlmessage";
 
         this.D3_COLOR_CATEGORY2 = [ "#1f77b4", "#2ca02c"];
         this.D3_COLOR_CATEGORY5 = [ '#1f77b4', '#6baed6' , '#ff7f0e', '#2ca02c', '#9e9ac8'];
