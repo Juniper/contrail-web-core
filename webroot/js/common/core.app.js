@@ -70,6 +70,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
 
         'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
+        'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -233,6 +234,9 @@ var coreAppShim =  {
     'jquery.xml2json' : {
         deps: ["jquery"]
     },
+    'xml2json' : {
+        deps: ["jquery"]
+    },
     "jquery.ba-bbq" : {
         deps: ['jquery']
     },
@@ -389,6 +393,7 @@ var coreBundles = {
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
+            'xml2json',
             'jquery.ba-bbq',
             'jquery.json',
             'bootstrap',
