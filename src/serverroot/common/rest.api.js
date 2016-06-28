@@ -266,6 +266,11 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
             delete options['body'];
         }
         self.makeHttpsRestCall(options, function(err, data, response) {
+            var localIp =
+                commonUtils.getValueByJsonPath(response,
+                                               'connection;localAddress',
+                                               null, false);
+            discClient.setWebUINodeIP(localIp);
             if (null != err) {
                 try {
                     logutils.logger.error('URL [' + reqUrl + ']' + 
@@ -289,6 +294,11 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         delete options['headers']['noRedirectToLogout'];
     }
     restApi(reqUrl, options).on('complete', function(data, response) {
+        var localIp =
+            commonUtils.getValueByJsonPath(response,
+                                           'connection;localAddress',
+                                           null, false);
+        discClient.setWebUINodeIP(localIp);
         if (data instanceof Error ||
             parseInt(response.statusCode) >= 400) {
             try {
