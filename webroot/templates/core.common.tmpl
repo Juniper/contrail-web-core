@@ -1435,13 +1435,11 @@
         </tr>
         </thead>
         <tbody data-bind="foreach: {{collection}}">
-        <tr class="data-row">
+        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
             {{#each columns}}
-            <td id="{{elementId}}" class="data-cell"
-                style="{{#if viewConfig.verticalAlign}}
-                            vertical-align:{{viewConfig.verticalAlign}}
-                        {{/if}}"
-            ></td>
+                <td class="data-cell data-cell-{{elementId}}" style="{{#if viewConfig.verticalAlign}}
+                                vertical-align:{{viewConfig.verticalAlign}}
+                            {{/if}}"></td>
             {{/each}}
             {{#each rowActions}}
             <td class="action-cell"
@@ -1492,9 +1490,9 @@
         </tr>
         </thead>
         <tbody data-bind="foreach: {{collection}}">
-        <tr class="data-row">
+        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
             {{#each columns}}
-            <td id="{{elementId}}" class="data-cell"
+            <td class="data-cell data-cell-{{elementId}}"
                 style="{{#if viewConfig.verticalAlign}}
                             vertical-align:{{viewConfig.verticalAlign}}
                         {{/if}}"
@@ -1534,9 +1532,9 @@
         <table class="collection-table">
             <tbody data-bind="foreach: {{viewConfig.collection}}">
             {{#each viewConfig.rows}}
-            <tr class="data-row" data-bind="{{#if visible}} visible: {{visible}}, {{/if}}">
+            <tr class="data-row" data-bind="css: 'data-row-' + $index(), {{#if visible}} visible: {{visible}}, {{/if}}">
                 {{#each columns}}
-                <td id="{{elementId}}" class="data-cell" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }"></td>
+                <td class="data-cell data-cell-{{elementId}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }"></td>
                 {{/each}}
                 {{#each rowActions}}
                 <td class="action-cell"><a data-bind="click: {{this.onClick}}, style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }"><i class="{{this.iconClass}}"></i></a></td>
@@ -1583,13 +1581,13 @@
         </thead>
         <tbody data-bind="foreach: {{viewConfig.collection}}">
         {{#each viewConfig.rows}}
-        <tr class="data-row">
+        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
             {{#each columns}}
-            <td id="{{elementId}}"
+            <td class="data-cell data-cell-{{elementId}}"
                 {{#IfCompare viewConfig.colSpan null operator='!='}}
                     colspan="{{viewConfig.colSpan}}"
                 {{/IfCompare}}
-                class="data-cell" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
                 style: {width: '{{width}}px' }">
             </td>
             {{/each}}
@@ -1655,15 +1653,15 @@
         </tr>
         </thead>
         <tbody data-bind="foreach: {{viewConfig.collection}}">
-        <tr class="data-row">
+        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
                     <td style="min-width:15px" {{#IfCompare viewConfig.rows.1.columns.length 0 operator='>'}}onclick="
 $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('icon-caret-down');$(this).children('i').toggleClass('icon-caret-right');"><i class="icon-caret-right toggleDetailIcon " ></i>{{/IfCompare}}</td>
             {{#each viewConfig.rows.0.columns}}
-            <td id="{{elementId}}"
+            <td class="data-cell data-cell-{{elementId}}"
                 {{#IfCompare viewConfig.colSpan null operator='!='}}
                     colspan="{{viewConfig.colSpan}}"
                 {{/IfCompare}}
-                class="data-cell" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
                 style: {width: '{{width}}px' }">
             </td>
             {{/each}}
@@ -1738,7 +1736,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 
 <script type="text/x-handlebars-template" id="query-or-collection-view-template">
     <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
-        <div class="row-fluid or-clause">
+        <div class="row-fluid or-clause" data-bind="css: 'or-clause-' + $index()">
             <div class="span1">
                 <p class="or-text">OR</p>
             </div>
@@ -1754,7 +1752,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
                 </div>
                 <div class="row-fluid">
                     {{#each columns}}
-                        <div id="{{elementId}}" class="and-clause-collection" />
+                        <div class="and-clause-collection data-cell-{{elementId}}" />
                     {{/each}}
                 </div>
             {{/each}}
@@ -1767,7 +1765,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         <label style="margin:0">{{viewConfig.label}}</label>
     {{/IfCompare}}
     <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
-        <div class="row-fluid or-clause">
+        <div class="row-fluid or-clause" data-bind="css: 'or-clause-' + $index()">
             <div class="row-fluid or-clause-header">
                 <p class="or-clause-text span10" data-bind="text: getOrClauseText()($data)"></p>
                 {{#each viewConfig.rowActions}}
@@ -1781,7 +1779,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
                     <div style="padding: 5px 5px 0 5px;">
                         <div class="row-fluid">
                             {{#each columns}}
-                                <div id="{{elementId}}" class="and-clause-collection" />
+                                <div class="and-clause-collection data-cell{{elementId}}" />
                             {{/each}}
                         </div>
                     </div>
@@ -2309,33 +2307,33 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
                     <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
                 </a>
             </div>
-        {{#each viewConfig.rows}}
-        <tr class="data-row">
-            {{#each columns}}
-            <th class="{{this.class}}" data-bind="style: {width: '{{width}}px' }">{{viewConfig.label}}</th>
+            {{#each viewConfig.rows}}
+            <tr class="data-row">
+                {{#each columns}}
+                <th class="{{this.class}}" data-bind="style: {width: '{{width}}px' }">{{viewConfig.label}}</th>
+                {{/each}}
+            </tr>
             {{/each}}
-        </tr>
-        {{/each}}
-        {{#each viewConfig.rows}}
-        <tr class="data-row">
-            {{#each columns}}
-            <td id="{{elementId}}"
-                {{#IfCompare viewConfig.colSpan null operator='!='}}
-                    colspan="{{viewConfig.colSpan}}"
-                {{/IfCompare}}
-                class="data-cell" data-bind="style: {width: '{{width}}px' }">
-            </td>
+            {{#each viewConfig.rows}}
+            <tr class="data-row" data-bind="css: 'data-row-' + $index()">
+                {{#each columns}}
+                <td class="data-cell data-cell-{{elementId}}"
+                    {{#IfCompare viewConfig.colSpan null operator='!='}}
+                        colspan="{{viewConfig.colSpan}}"
+                    {{/IfCompare}}
+                    class="data-cell" data-bind="style: {width: '{{width}}px' }">
+                </td>
+                {{/each}}
+                {{#each rowActions}}
+                <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
+                {{/each}}
+            </tr>
             {{/each}}
-            {{#each rowActions}}
-            <td class="action-cell"><a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a></td>
-            {{/each}}
-        </tr>
-        {{/each}}
-        <tr class="error-row">
-            {{#each columns}}
-            <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
-            {{/each}}
-        </tr>
+            <tr class="error-row">
+                {{#each columns}}
+                <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+                {{/each}}
+            </tr>
         </tbody>
     </table>
 
@@ -2363,29 +2361,28 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         </tr>
         </thead>
         <tbody data-bind="foreach: {{viewConfig.collection}}">
-
-        {{#each viewConfig.rows}}
-        <tr class="data-row">
-            {{#each columns}}
-            <td id="{{elementId}}"
-                {{#IfCompare viewConfig.colSpan null operator='!='}}
-                    colspan="{{viewConfig.colSpan}}"
-                {{/IfCompare}}
-                class="data-cell" data-bind="style: {width: '{{width}}px' }">
-            </td>
+            {{#each viewConfig.rows}}
+            <tr class="data-row" data-bind="css: 'data-row-' + $index()">
+                {{#each columns}}
+                <td class="data-cell data-cell-{{elementId}}"
+                    {{#IfCompare viewConfig.colSpan null operator='!='}}
+                        colspan="{{viewConfig.colSpan}}"
+                    {{/IfCompare}}
+                    data-bind="style: {width: '{{width}}px' }">
+                </td>
+                {{/each}}
+                <td class="action-cell">
+                {{#each rowActions}}
+                <a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a>
+                {{/each}}
+                </td>
+            </tr>
             {{/each}}
-            <td class="action-cell">
-            {{#each rowActions}}
-            <a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a>
-            {{/each}}
-            </td>
-        </tr>
-        {{/each}}
-        <tr class="error-row">
-            {{#each columns}}
-            <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
-            {{/each}}
-        </tr>
+            <tr class="error-row">
+                {{#each columns}}
+                <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+                {{/each}}
+            </tr>
         </tbody>
     </table>
     </div>

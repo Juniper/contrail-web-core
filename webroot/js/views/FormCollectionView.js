@@ -8,7 +8,6 @@ define([
 ], function (_, ContrailView) {
     var FormCollectionView = ContrailView.extend({
         render: function () {
-
             var self = this,
                 elementId = self.attributes.elementId,
                 viewConfig = self.attributes.viewConfig,
@@ -34,7 +33,7 @@ define([
                 for (var j = 0; j < columns.length; j++) {
                     childViewObj = columns[j];
                     childElId = childViewObj[cowc.KEY_ELEMENT_ID];
-                    self.renderView4Config(self.$el.find("#" + childElId), self.model, childViewObj, validation, false, null, function(){
+                    self.renderView4Config(self.$el.find(".data-cell-" + childElId), self.model, childViewObj, validation, false, null, function(){
                         if (accordionable) {
                             accordionConfig = $.extend(true, defaultAccordionConfig, accordionConfig);
                             self.$el.find('.collection').accordion(accordionConfig);
