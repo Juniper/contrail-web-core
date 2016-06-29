@@ -70,6 +70,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
 
         'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
+        'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -177,7 +178,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
 
     } else if(env == "prod") {
         var prodAliasMap = {
-            'controller-basedir'          : coreBaseDir
+            'controller-basedir'          : coreBaseDir,
+            'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
+            'contrail-element'            : coreWebDir + '/js/models/ContrailElement'
         }
         //Merge common (for both prod & dev) alias 
         for(var currAlias in prodAliasMap)
@@ -233,6 +236,9 @@ var coreAppShim =  {
         exports:'crossfilter'
     },
     'jquery.xml2json' : {
+        deps: ["jquery"]
+    },
+    'xml2json' : {
         deps: ["jquery"]
     },
     "jquery.ba-bbq" : {
@@ -391,6 +397,7 @@ var coreBundles = {
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
+            'xml2json',
             'jquery.ba-bbq',
             'jquery.json',
             'bootstrap',

@@ -60,7 +60,17 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
 
         'core-alarm-utils'           :  coreWebDir + '/js/common/core.alarms.utils',
         'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers',
-        'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json',
+
+        'query-form-view'             : coreWebDir + '/js/views/QueryFormView',
+        'contrail-vis-view'           : coreWebDir + '/js/views/ContrailVisView',
+
+        'query-form-model'            : coreWebDir + '/js/models/QueryFormModel',
+        'query-or-model'              : coreWebDir + '/js/models/QueryOrModel',
+        'query-and-model'             : coreWebDir + '/js/models/QueryAndModel',
+        'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
+
+        'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
+        'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
