@@ -20,7 +20,7 @@ define([
             self.tabRendered = [];
             self.activateTimeout = null;
 
-            self.$el.html(tabsTemplate({elementId: elId, tabs: self.tabs}));
+            self.$el.html(tabsTemplate({elementId: elId, tabs: self.tabs, extraLinks: viewConfig['extra_links']}));
 
             $.each(self.tabs, function(tabKey, tabValue) {
                 /*

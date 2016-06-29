@@ -146,7 +146,14 @@
     font-size: 90%;
     display: inline-block;
 }
-
+.contrail-tabs.ui-tabs .ui-tabs-nav li.pull-right {
+    float:right;
+    margin-top: 5px;
+}
+.contrail-tabs.ui-tabs .ui-tabs-nav li a.contrail-tab-extra-link {
+    font-weight: normal;
+    font-size: 11px;
+}
 /*
  * Contrail Tabs Overcast Theme
  * Extends Jquery UI Tabs
@@ -320,7 +327,7 @@
 /* Contrail Accordion
  * Extends Jquery UI Accordion
  */
-.ui-accordion-header {
+.ui-state-default.ui-accordion-header {
     border-bottom: 1px solid #eee;
 }
 .ui-accordion-content.ui-widget-content {

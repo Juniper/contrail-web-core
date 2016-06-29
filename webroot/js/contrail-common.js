@@ -256,8 +256,8 @@ function Contrail() {
     };
 
     this.formatJsonObject = function(jsonObj, formatDepth, currentDepth, ignoreKeys) {
-    	var output = '', self = this,
-    		objType = {type: 'object', startTag: '{', endTag: '}'};
+    	var self = this, output = '',
+            objType = {type: 'object', startTag: '{', endTag: '}'};
     	
     	if(jsonObj instanceof Array){
     		objType = {type: 'array', startTag: '[', endTag: ']'};
@@ -279,7 +279,7 @@ function Contrail() {
                     }
 
                     if (val != null && typeof val == 'object') {
-                        output += '<span class="value">' + self.formatJsonObject(val, formatDepth - 1, currentDepth + 1) + '</span>';
+                        output += '<span class="value">' + self.formatJsonObject(val, formatDepth - 1, currentDepth + 1, ignoreKeys) + '</span>';
                     }
                     else {
                         output += '<span class="value ' + typeof val + '">' + val + '</span>';
