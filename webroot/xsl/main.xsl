@@ -45,16 +45,22 @@
 					<xsl:when test="@type = 'sandesh'">
 						<tr>
 							<td>
-								<div class="widget-header grid-widget-header">
-									<h4 class="grid-header-text smaller blue" data-action="collapse">
-										<xsl:value-of select="name()"/>
-									</h4>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<xsl:apply-templates select="@type[.='sandesh']"/>
+								<table>
+									<tr>
+										<th>
+											<div class="widget-header grid-widget-header">
+												<h4 class="grid-header-text smaller blue" data-action="collapse">
+													<xsl:value-of select="name()"/>
+												</h4>
+											</div>
+										</th>
+									</tr>
+									<tr>
+										<td>
+											<xsl:apply-templates select="@type[.='sandesh']"/>
+										</td>
+									</tr>
+								</table>
 							</td>
 						</tr>
 					</xsl:when>
