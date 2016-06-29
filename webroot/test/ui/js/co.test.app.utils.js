@@ -41,6 +41,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-dep-libs'       : coreWebDir + '/js/common/jquery.dep.libs',
         'nonamd-libs'           : coreWebDir + '/js/common/nonamd.libs',
         //Files not in bundles
+        'underscore'            : coreWebDir + '/assets/underscore/underscore-min',
         'slickgrid-utils'       : coreWebDir + "/js/slickgrid-utils",
             'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
         'contrail-load'         : coreWebDir + '/js/contrail-load',
@@ -58,15 +59,65 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'joint.contrail'              : coreWebDir + '/js/joint.contrail',
 
         'core-alarm-utils'           :  coreWebDir + '/js/common/core.alarms.utils',
-        'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers'
+        'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers',
+
+        'query-form-view'             : coreWebDir + '/js/views/QueryFormView',
+        'contrail-vis-view'           : coreWebDir + '/js/views/ContrailVisView',
+
+        'query-form-model'            : coreWebDir + '/js/models/QueryFormModel',
+        'query-or-model'              : coreWebDir + '/js/models/QueryOrModel',
+        'query-and-model'             : coreWebDir + '/js/models/QueryAndModel',
+        'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
+
+        'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
     if(env == "dev") {
         var devAliasMap = {
-            'jquery-ui'                 : coreWebDir + '/assets/jquery-ui/js/jquery-ui',
+            //Start - Core-bundle aliases
+            'core-utils'                  : coreWebDir + '/js/common/core.utils',
+            'core-constants'              : coreWebDir + '/js/common/core.constants',
+            'core-formatters'             : coreWebDir + '/js/common/core.formatters',
+            'core-cache'                  : coreWebDir + '/js/common/core.cache',
+            'core-labels'                 : coreWebDir + '/js/common/core.labels',
+            'core-messages'               : coreWebDir + '/js/common/core.messages',
+            'core-views-default-config'   : coreWebDir + '/js/common/core.views.default.config',
+            'chart-utils'                 : coreWebDir + "/js/common/chart.utils",
+            'contrail-remote-data-handler': coreWebDir + '/js/handlers/ContrailRemoteDataHandler',
+            'cf-datasource'               : coreWebDir + '/js/common/cf.datasource',
+            'contrail-view'               : coreWebDir + '/js/views/ContrailView',
+            'contrail-model'              : coreWebDir + '/js/models/ContrailModel',
+            'contrail-view-model'         : coreWebDir + '/js/models/ContrailViewModel',
+            'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
+            'lodash'                      : coreWebDir + '/assets/lodash/lodash.min',
+            'crossfilter'               : coreWebDir + '/assets/crossfilter/js/crossfilter',
+            'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
+            'text'                        : coreWebDir + '/assets/requirejs/text',
+            'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
+            'moment'                    : coreWebDir + "/assets/moment/moment",
+            'layout-handler'              : coreWebDir + '/js/handlers/LayoutHandler',
+            'menu-handler'                : coreWebDir + '/js/handlers/MenuHandler',
+            'content-handler'             : coreWebDir + '/js/handlers/ContentHandler',
+            'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
+            'mon-infra-node-list-model'   : coreWebDir + '/js/models/NodeListModel',
+            'mon-infra-log-list-model'    : coreWebDir + '/js/models/LogListModel',
+            'mon-infra-alert-list-view'   : coreWebDir + '/js/views/AlertListView',
+            'mon-infra-alert-grid-view'   : coreWebDir + '/js/views/AlertGridView',
+            'mon-infra-log-list-view'     : coreWebDir + '/js/views/LogListView',
+            'mon-infra-sysinfo-view'      : coreWebDir + '/js/views/SystemInfoView',
+            'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
+            //End - core-bundle aliases
+            //Start - jquery.dep.libs aliases
             'jquery.xml2json'           : coreWebDir + '/assets/jquery/js/jquery.xml2json',
             'jquery.ba-bbq'             : coreWebDir + '/assets/jquery/js/jquery.ba-bbq.min',
+            'jquery.json'               : coreWebDir + "/assets/slickgrid/js/jquery.json-2.3.min",
+            'bootstrap'                 : coreWebDir + '/assets/bootstrap/js/bootstrap',
+            'select2'                   : coreWebDir + "/assets/select2/js/select2.min",
+            'slick.core'                : coreWebDir + "/assets/slickgrid/js/slick.core",
+            'slick.dataview'            : coreWebDir + "/assets/slickgrid/js/slick.dataview",
+            'jquery-ui'                 : coreWebDir + '/assets/jquery-ui/js/jquery-ui',
+            'contrail-elements'         : coreWebDir + "/js/contrail-elements",
             'jquery.timer'              : coreWebDir + '/assets/jquery/js/jquery.timer',
             'jquery.ui.touch-punch'     : coreWebDir + '/assets/jquery/js/jquery.ui.touch-punch.min',
             'jquery.validate'           : coreWebDir + "/assets/jquery/js/jquery.validate",
@@ -77,91 +128,46 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'jquery.panzoom'            : coreWebDir + "/assets/jquery/js/jquery.panzoom.min",
             'jquery.ui.position'        : coreWebDir + "/assets/jquery-contextMenu/js/jquery.ui.position",
             'jquery-contextmenu'        : coreWebDir + "/assets/jquery-contextMenu/js/jquery.contextMenu",
-            'bootstrap'                 : coreWebDir + '/assets/bootstrap/js/bootstrap',
-            'crossfilter'               : coreWebDir + '/assets/crossfilter/js/crossfilter',
-            'jsonpath'                  : coreWebDir + '/assets/jsonpath/js/jsonpath-0.8.0',
+            'jquery.event.drag'         : coreWebDir + "/assets/slickgrid/js/jquery.event.drag-2.2",
+            'jquery.droppick'           : coreWebDir + "/assets/slickgrid/js/jquery.dropkick-1.0.0",
+            'jquery.datetimepicker'     : coreWebDir + "/assets/datetimepicker/js/jquery.datetimepicker",
+            //End - jquery.dep.libs aliases
+            //Start - thirdparty-libs aliases
             'handlebars'                : coreWebDir + "/assets/handlebars/handlebars-v1.3.0",
             'handlebars-utils'          : coreWebDir + "/js/handlebars-utils",
-            'contrail-elements'         : coreWebDir + "/js/contrail-elements",
 
-            'jquery.event.drag'         : coreWebDir + "/assets/slickgrid/js/jquery.event.drag-2.2",
-            'jquery.json'               : coreWebDir + "/assets/slickgrid/js/jquery.json-2.3.min",
-            'jquery.droppick'           : coreWebDir + "/assets/slickgrid/js/jquery.dropkick-1.0.0",
-            'slick.core'                : coreWebDir + "/assets/slickgrid/js/slick.core",
             'slick.grid'                : coreWebDir + "/assets/slickgrid/js/slick.grid",
-            'slick.dataview'            : coreWebDir + "/assets/slickgrid/js/slick.dataview",
             'slick.checkboxselectcolumn': coreWebDir + '/assets/slickgrid/js/slick.checkboxselectcolumn',
-            'slick.rowselectionmodel'   : coreWebDir + '/assets/slickgrid/js/slick.rowselectionmodel',
-            'jquery.datetimepicker'     : coreWebDir + "/assets/datetimepicker/js/jquery.datetimepicker",
-            'select2'                   : coreWebDir + "/assets/select2/js/select2.min",
-            'moment'                    : coreWebDir + "/assets/moment/moment",
-            'jsbn-combined'             : coreWebDir + "/assets/ip/jsbn-combined",
-            'sprintf'                   : coreWebDir + "/assets/ip/sprintf",
-            'ipv6'                      : coreWebDir + "/assets/ip/ipv6",
-            'protocol'                  : coreWebDir + "/js/protocol",
-            'uuid'                      : coreWebDir + "/js/uuid",
-            'xdate'                     : coreWebDir + "/assets/xdate/js/xdate",
-            'contrail-common'           : coreWebDir + "/js/contrail-common",
-            'slick.enhancementpager'    : coreWebDir + "/assets/slickgrid/js/slick.enhancementpager",
             'slick.groupmetadata'       : coreWebDir + "/assets/slickgrid/js/slick.groupitemmetadataprovider",
-            'web-utils'                 : coreWebDir + "/js/web-utils",
-            'config_global'             : coreWebDir + "/js/config_global",
-            'analyzer-utils'            : coreWebDir + "/js/analyzer-utils",
-
-            'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
-            'lodash'                      : coreWebDir + '/assets/lodash/lodash.min',
-            'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
+            'slick.rowselectionmodel'   : coreWebDir + '/assets/slickgrid/js/slick.rowselectionmodel',
+            'slick.enhancementpager'    : coreWebDir + "/assets/slickgrid/js/slick.enhancementpager",
             'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
-            'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
-            'text'                        : coreWebDir + '/assets/requirejs/text',
-            'underscore'                  : coreWebDir + '/assets/underscore/underscore-min',
-
+            //End - thirdparty-libs aliases
+            //Start - chart-libs aliases
             'd3'                        : coreWebDir + '/assets/d3-v3.5.6/js/d3',
             'nv.d3'                     : coreWebDir + '/assets/nvd3-v1.8.1/js/nv.d3',
-
+            //End - chart-libs aliases
+            //Start - nonamd-libs aliases
+            'web-utils'                 : coreWebDir + "/js/web-utils",
+            'analyzer-utils'            : coreWebDir + "/js/analyzer-utils",
+            'config_global'             : coreWebDir + "/js/config_global",
             'contrail-layout'             : coreWebDir + '/js/contrail-layout',
+
             'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
-            'core-utils'                  : coreWebDir + '/js/common/core.utils',
+            'contrail-common'           : coreWebDir + "/js/contrail-common",
+            'uuid'                      : coreWebDir + "/js/uuid",
+            'protocol'                  : coreWebDir + "/js/protocol",
+            'jsbn-combined'             : coreWebDir + "/assets/ip/jsbn-combined",
+            'xdate'                     : coreWebDir + "/assets/xdate/js/xdate",
+            'sprintf'                   : coreWebDir + "/assets/ip/sprintf",
+            'ipv6'                      : coreWebDir + "/assets/ip/ipv6",
+            'jsonpath'                  : coreWebDir + '/assets/jsonpath/js/jsonpath-0.8.0',
+            //End - nonamd-libs aliases
 
-            'core-constants'              : coreWebDir + '/js/common/core.constants',
-            'core-formatters'             : coreWebDir + '/js/common/core.formatters',
-            'core-labels'                 : coreWebDir + '/js/common/core.labels',
-            'core-messages'               : coreWebDir + '/js/common/core.messages',
-            'core-cache'                  : coreWebDir + '/js/common/core.cache',
-            'core-views-default-config'   : coreWebDir + '/js/common/core.views.default.config',
-            'cf-datasource'               : coreWebDir + '/js/common/cf.datasource',
-
-            'contrail-remote-data-handler': coreWebDir + '/js/handlers/ContrailRemoteDataHandler',
-            'layout-handler'              : coreWebDir + '/js/handlers/LayoutHandler',
-            'menu-handler'                : coreWebDir + '/js/handlers/MenuHandler',
-            'content-handler'             : coreWebDir + '/js/handlers/ContentHandler',
-
-            'contrail-view'               : coreWebDir + '/js/views/ContrailView',
-            'query-form-view'             : coreWebDir + '/js/views/QueryFormView',
-            'contrail-vis-view'           : coreWebDir + '/js/views/ContrailVisView',
-
-            'query-form-model'            : coreWebDir + '/js/models/QueryFormModel',
-            'query-or-model'              : coreWebDir + '/js/models/QueryOrModel',
-            'query-and-model'             : coreWebDir + '/js/models/QueryAndModel',
-            'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
-            'contrail-view-model'         : coreWebDir + '/js/models/ContrailViewModel',
-            'contrail-model'              : coreWebDir + '/js/models/ContrailModel',
-            'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
-            'mon-infra-node-list-model'   : coreWebDir + '/js/models/NodeListModel',
-            'mon-infra-log-list-model'    : coreWebDir + '/js/models/LogListModel',
-
-            // TODO: We need to discuss a criteria on which we should add definations to this file.
             'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
             'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
-            'mon-infra-alert-list-view'   : coreWebDir + '/js/views/AlertListView',
-            'mon-infra-alert-grid-view'   : coreWebDir + '/js/views/AlertGridView',
-            'mon-infra-log-list-view'     : coreWebDir + '/js/views/LogListView',
-            'mon-infra-sysinfo-view'      : coreWebDir + '/js/views/SystemInfoView',
-            'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
-            'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
 
-            'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
-            'chart-utils'                 : coreWebDir + "/js/common/chart.utils",
+             //'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
             'storage-init'                : 'empty:',
             'contrail-element'            : coreWebDir + '/js/models/ContrailElement'
         };
