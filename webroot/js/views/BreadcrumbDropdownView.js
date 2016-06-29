@@ -43,7 +43,8 @@ define([
                 dropdownOptions = viewConfig.dropdownOptions,
                 parentSelectedValueData = contrail.checkIfExist(dropdownOptions.parentSelectedValueData) ? dropdownOptions.parentSelectedValueData : null,
                 dropdownData = (self.model === null) ? [] : self.model.getItems(),
-                dropdownElementId = self.attributes.elementId;
+                dropdownElementId = self.attributes.elementId,
+                defaultValueIndex = ((contrail.checkIfExist(dropdownOptions.defaultValueIndex) && dropdownData.length > 0) ? dropdownOptions.defaultValueIndex : 0);
 
             if (contrail.checkIfExist(dropdownOptions.allDropdownOption)) {
                 dropdownData = dropdownOptions.allDropdownOption.concat(dropdownData);
@@ -99,7 +100,7 @@ define([
 
                     selectedValueData = (selectedValueData == null && urlDataKey != null) ? dropdownData[urlDataKey] : selectedValueData;
                     selectedValueData = (selectedValueData == null && cookieDataKey != null) ? dropdownData[cookieDataKey] : selectedValueData;
-                    selectedValueData = (selectedValueData == null) ? dropdownData[0] : selectedValueData;
+                    selectedValueData = (selectedValueData == null) ? dropdownData[defaultValueIndex] : selectedValueData;
 
                     dropdownElement.data('contrailDropdown').text(selectedValueData.name);
                     if(dropdownOptions.preSelectCB != null && typeof(dropdownOptions.preSelectCB) == 'function') {
