@@ -1873,14 +1873,32 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         <ul class="contrail-tab-link-list">
             {{#each tabs}}
                 <li>
-                    <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}{{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/IfCompare}}</a>
+                    <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
+                        {{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>
+                        {{/if}}
+                        {{title}}
+                        {{#if tabConfig.removable}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/if}}
+                    </a>
                 </li>
             {{/each}}
             {{#each extraLinks}}
-                <li class="pull-right hide">
-                    <a id="{{elementId}}-tab-extra-link" class="contrail-tab-extra-link ">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}</a>
+                <li class="pull-right">
+                    <a id="{{elementId}}-tab-extra-link" class="contrail-tab-extra-link ">
+                      {{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}
+                      {{title}}
+                    </a>
                 </li>
             {{/each}}
+            {{#if extendable }}
+                <li class="tab-add pull-right">
+                    <span class="edit-title pull-right hide">
+                        <input type="text"/>
+                    </span>
+                    <a class="link">
+                        <i class="icon-plus"></i>
+                    </a>
+                </li>
+            {{/if}}
         </ul>
         {{#each tabs}}
             <div id="{{elementId}}-tab">
@@ -1893,7 +1911,11 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 <script type="text/x-handlebars-template" id="core-tabs-link-template">
     {{#each this}}
         <li>
-            <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}{{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/IfCompare}}</a>
+            <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
+                {{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}
+                {{title}}
+                {{#if tabConfig.removable}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/if}}
+            </a>
         </li>
     {{/each}}
 </script>

@@ -146,6 +146,13 @@
     font-size: 90%;
     display: inline-block;
 }
+.ui-tabs .contrail-tabs .contrail-tab-link-list .tab-add .link .icon-plus {
+    line-height: 24px;
+    margin-left: 6px;
+}
+.ui-tabs .contrail-tabs .contrail-tab-link-list .tab-add .edit-title > input {
+    height: 16px;
+}
 .contrail-tabs.ui-tabs .ui-tabs-nav li.pull-right {
     float:right;
     margin-top: 5px;
