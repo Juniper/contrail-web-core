@@ -1208,6 +1208,10 @@ if (typeof document !== 'undefined' && document) {
                     if ((null != regionName) && (regionName.length > 0)) {
                         postData['regionname'] = regionName;
                     }
+                    var domain = $("[name='domain']").val();
+                    if ((null != domain) && (domain.length > 0)) {
+                        postData['domain'] = domain;
+                    }
                     $.ajax({
                         url: orchPrefix + '/authenticate',
                         type: "POST",
