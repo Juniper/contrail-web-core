@@ -338,9 +338,11 @@ define(['underscore'], function (_) {
                     //window[currResourceObj['class']] = null;
                 });
             }
-            if (!_.isEmpty(currMenuObj['loader'])) {
+                    
+            if (!_.isEmpty(currMenuObj['loader']) && currMenuObj.loader.class &&
+                _.isFunction(currMenuObj.loader.class.destroy)) {
                 try {
-                    window[currMenuObj.loader.class].destroy()
+                    currMenuObj.loader.class.destroy()
                 } catch (error) {
                     console.log(error.stack);
                 }
