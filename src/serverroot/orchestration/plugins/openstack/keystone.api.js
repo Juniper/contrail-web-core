@@ -32,6 +32,9 @@ var authServerPort =
 authAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
                                    server:authServerIP, port:authServerPort});
 
+var svcAuthAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
+    server:authServerIP, port:"35357"});
+
 var mandatoryEndpointList = ['compute', 'image'];
 var adminRoles = ['admin'];
 var authAPIVers = ['v2.0'];
@@ -102,7 +105,7 @@ function getAuthRespondData (error, data)
 
 var authPostReqCB = {
     'v2.0': authPostV2Req,
-    'v3': sendV3CurlPostReq
+    'v3': sendV3PostReq
 };
 
 function isTokenGetURL (reqUrl)
@@ -113,8 +116,9 @@ function isTokenGetURL (reqUrl)
     return false;
 }
 
-function getAuthRestApiInst (req, reqUrl)
+function getAuthRestApiInst (req, reqUrl, isSvcPortReq)
 {
+    var idPort = null;
     var region =
         commonUtils.getValueByJsonPath(req, 'req;session;region', null, false);
     var ip = commonUtils.getValueByJsonPath(region, 'ip', null);
@@ -127,17 +131,22 @@ function getAuthRestApiInst (req, reqUrl)
             if (null != verObj) {
                 req.session.region = verObj;
                 req.session.regionname = regionName;
+                idPort = (true == isSvcPortReq) ? '35357': verObj.port;
                 var tmpAPIServerInst =
                     rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
-                                      server: verObj.ip, port: verObj.port});
+                                      server: verObj.ip, port: idPort});
                 return {authRestAPI: tmpAPIServerInst, mapped: verObj};
             }
         }
+        if (true === isSvcPortReq){
+            return {authRestAPI: svcAuthAPIServer, mapped: null};
+        }
         return {authRestAPI: authAPIServer, mapped: null};
     }
+    idPort = (true == isSvcPortReq) ? '35357': port;
     var tmpAPIServerInst =
         rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
-                           server:ip, port:port});
+                           server:ip, port:idPort});
     return {authRestAPI: tmpAPIServerInst, mapped: region};
 }
 
@@ -182,10 +191,10 @@ function makeAuthPostReq (dataObj, callback)
 
 var authGetCB = {
     'v2.0': getV2AuthResponse,
-    'v3': sendV3CurlGetReq
+    'v3': sendV3GetReq
 };
 
-function getV2AuthResponse (dataObj, callback)
+function getV2AuthResponse (dataObj, callback, isSvcPortReq)
 {
     var reqUrl = dataObj['reqUrl'];
     var headers = dataObj['headers'];
@@ -193,7 +202,7 @@ function getV2AuthResponse (dataObj, callback)
     if (null == headers) {
         headers = {};
     }
-    var tmpAuthRestObj = getAuthRestApiInst(dataObj.req, reqUrl);
+    var tmpAuthRestObj = getAuthRestApiInst(dataObj.req, reqUrl, isSvcPortReq);
     if (null != tmpAuthRestObj.mapped) {
         headers['protocol'] = tmpAuthRestObj.mapped.protocol;
     }
@@ -204,9 +213,10 @@ function getV2AuthResponse (dataObj, callback)
         }
         callback(error, data);
     }, headers);
+
 }
 
-function makeAuthGetReq (dataObj, callback)
+function makeAuthGetReq (dataObj, callback, isSvcPortReq)
 {
     var req = dataObj['req'];
     var authApiVer = req.session.authApiVersion;
@@ -214,7 +224,7 @@ function makeAuthGetReq (dataObj, callback)
 
     authCB(dataObj, function(err, data) {
         callback(err, data);
-    });
+    }, isSvcPortReq);
 }
 
 /** Function: getTenantListByToken
@@ -227,7 +237,7 @@ function getTenantListByToken (req, token, callback)
     getAuthDataByReqUrl(req, token, reqUrl, callback);
 }
 
-function getAuthDataByReqUrl (req, token, authUrl, callback)
+function getAuthDataByReqUrl (req, token, authUrl, callback, isSvcPortReq)
 {
   var headers = {};
   var dataObjArr = [];
@@ -262,7 +272,7 @@ function getAuthDataByReqUrl (req, token, authUrl, callback)
     } else {
         callback(err, null);
     }
-  });
+  }, isSvcPortReq);
 }
 
 /* Function: getEnabledProjects
@@ -328,7 +338,22 @@ function getDomainList (req, callback)
     });
 }
 
-function getAuthRetryData (token, req, reqUrl, callback)
+function getRoleList (req, callback)
+{
+    var lastAuthVerUsed = req.session.authApiVersion;
+    var reqUrl;
+    if ('v2.0' == lastAuthVerUsed) {
+        reqUrl = "/OS-KSADM/roles"
+    } else {
+        reqUrl = "/roles"
+    }
+    var token = req.session.last_token_used;;
+    getAuthRetryData(token, req, reqUrl, function(err, data) {
+        callback(err, data);
+    }, true);
+}
+
+function getAuthRetryData (token, req, reqUrl, callback, isSvcPortReq)
 {
     getAuthDataByReqUrl(req, token, reqUrl, function(err, data) {
         if ((err) &&
@@ -349,12 +374,12 @@ function getAuthRetryData (token, req, reqUrl, callback)
                 }
                 getAuthDataByReqUrl(req, token, reqUrl, function(err, newData) {
                     callback(err, newData);
-                });
+                }, isSvcPortReq);
             });
         } else {
             callback(null, data);
         }
-    });
+    }, isSvcPortReq);
 }
 
 function formatTenantList (req, keyStoneProjects, apiProjects, callback) 
@@ -399,7 +424,7 @@ function getKeystoneAPIVersions ()
     return authAPIVers;
 }
 
-function getAuthData (error, reqArr, index, authCB, callback)
+function getAuthData (error, reqArr, index, authCB, callback, isSvcPortReq)
 {
     var authApiVerList = getKeystoneAPIVersions();
     var len = reqArr.length;
@@ -425,7 +450,7 @@ function getAuthData (error, reqArr, index, authCB, callback)
             }
             getAuthData(err, reqArr, index + 1, authCB, callback);
         }
-    });
+    }, isSvcPortReq);
 }
 
 function formatV2AuthTokenData (authObj)
@@ -593,35 +618,28 @@ function getV3TokenByAuthObj (authObj, callback)
     var reqUrl = '/v3/auth/tokens';
 
     var tmpAuthRestObj = getAuthRestApiInst(authObj.req, reqUrl);
-    if (null != tmpAuthRestObj.mapped) {
-        authProto = tmpAuthRestObj.mapped.protocol;
-        authIP = tmpAuthRestObj.mapped.ip;
-        authPort = tmpAuthRestObj.mapped.port;
-    } else {
-        authProto =
-            commonUtils.getValueByJsonPath(config,
-                                           'identityManager;authProtocol',
-                                           global.PROTOCOL_HTTP);
-    }
 
     var postData = authObj['data'];
     if (null == postData) {
         postData = formatV3AuthTokenData(authObj, false);
     }
-    var cmd = 'curl -si -d ' + "'" + JSON.stringify(postData) + "'" +
-        ' -H "Content-type: application/json" ' +
-        authProto + '://' + authIP + ':' + authPort + reqUrl + "| awk " +
-        "'/X-Subject-Token/ {print $2}'";
-    exec(cmd, function(err, token, stderr) {
-        if ((null == err) && (null != token)) {
-            tokenObj['id'] = removeSpecialChars(token);
+    tmpAuthRestObj.authRestAPI.api.post(reqUrl, postData,
+                                        function(err, data, response) {
+        if (null == err) {
+            var token =
+                commonUtils.getValueByJsonPath(response,
+                                               'headers;x-subject-token',
+                                               null, false);
+            if (null != token) {
+                tokenObj['id'] = removeSpecialChars(token);
+            }
         }
         if (null != authObj['tenant']) {
             postData = formatV3AuthTokenData(authObj, false);
-            sendV3CurlPostReq({'data': postData,
-                              'reqUrl': global.KEYSTONE_V3_TOKEN_URL,
-                              'req': authObj['req']},
-                              function(err, data) {
+            sendV3PostReq({'data': postData,
+                          'reqUrl': global.KEYSTONE_V3_TOKEN_URL,
+                          'req': authObj['req']},
+                          function(err, data) {
                 if ((null == err) && (null != data) && (null != data['token'])
                     && (null != data['token']['project'])) {
                     tokenObj['tenant'] = data['token']['project'];
@@ -636,40 +654,12 @@ function getV3TokenByAuthObj (authObj, callback)
     });
 }
 
-function executeAsyncCmd (cmd, callback)
-{
-    exec(cmd, function(err, stdout, stderr) {
-        var respObj = {};
-        respObj['err'] = err;
-        respObj['resp'] = stdout;
-        respObj['stderr'] = stderr;
-        callback(null, respObj);
-    });
-}
-
 function removeSpecialChars (str)
 {
     return str.replace(/(\n|\t|\r)/g, '');
 }
 
-function getCurlRespDataByType (curlResp, types, callback)
-{
-    var cmd = null;
-    var cmdArr = [];
-    var cnt = types.length;
-
-    for (var i = 0; i < cnt; i++) {
-        cmd = "echo " + "'" + removeSpecialChars(curlResp) + "'" + " | awk " +
-            "'/" + types[i]['name'] + "/ {print $" + types[i]['pos'] + "}'";
-        cmdArr.push(cmd);
-    }
-    async.map(cmdArr, executeAsyncCmd, function(err, respObj) {
-        callback(null, respObj);
-    });
-
-}
-
-function sendV3CurlPostReq (authObj, callback)
+function sendV3PostReq (authObj, callback)
 {
     var postData    = authObj['data'];
     var reqUrl      = authObj['reqUrl'];
@@ -677,90 +667,28 @@ function sendV3CurlPostReq (authObj, callback)
     var authPort    = authServerPort;
     var authProto   = null;
     var tmpAuthRestObj = getAuthRestApiInst(authObj.req, reqUrl);
-    if (null != tmpAuthRestObj.mapped) {
-        authProto = tmpAuthRestObj.mapped.protocol;
-        authIP = tmpAuthRestObj.mapped.ip;
-        authPort = tmpAuthRestObj.mapped.port;
-    } else {
-        authProto =
-            commonUtils.getValueByJsonPath(config,
-                                           'identityManager;authProtocol',
-                                           global.PROTOCOL_HTTP);
-    }
-    var cmd = 'curl -d ' + "'" + JSON.stringify(postData) + "'" +
-        ' -H "Content-type: application/json" ' + authProto + '://' + authIP +
-        ':' + authPort + reqUrl;
-    exec(cmd, function(err, stdout, stderr) {
+    tmpAuthRestObj.authRestAPI.api.post(reqUrl, postData, function(err, data) {
         if (null != err) {
             callback(err, null);
         } else {
-            callback(err, JSON.parse(stdout));
+            callback(err, data);
         }
     });
 }
 
-function sendV3CurlGetReq (dataObj, callback)
+function sendV3GetReq (dataObj, callback)
 {
     var token       = dataObj['token'];
     var reqUrl      = dataObj['reqUrl'];
     var authIP      = authServerIP;
     var authPort    = authServerPort;
     var authProto   = null;
+    var headers     = {'X-Auth-Token': token};
 
     var tmpAuthRestObj = getAuthRestApiInst(dataObj.req, reqUrl);
-    if (null != tmpAuthRestObj.mapped) {
-        authProto = tmpAuthRestObj.mapped.protocol;
-        authIP = tmpAuthRestObj.mapped.ip;
-        authPort = tmpAuthRestObj.mapped.port;
-    } else {
-        authProto =
-            commonUtils.getValueByJsonPath(config,
-                                           'identityManager;authProtocol',
-                                           global.PROTOCOL_HTTP);
-    }
-
-    var cmd = 'curl -s -H "X-Auth-Token: ' + token + '" ' +
-        authProto + '://' + authIP + ':' + authPort + reqUrl;
-
-    exec(cmd, function(err, stdout, stderr) {
-        callback(err, JSON.parse(stdout));
-    });
-}
-
-function sendV3CurlDelReq (authObj, callback)
-{
-    var reqUrl      = authObj['reqUrl'];
-    var headers     = authObj['headers'];
-    var authIP      = authServerIP;
-    var authPort    = authServerPort;
-    var authProto   = null;
-    try {
-        authProto = config.identityManager.authProtocol;
-        if (null == authProto) {
-            authProto = global.PROTOCOL_HTTP;
-        }
-    } catch(e) {
-        authProto = global.PROTOCOL_HTTP;
-    }
-
-    var headersStr = "";
-    for (key in headers) {
-        headersStr += ' -H "' + key + ": " + headers[key] + '"';
-    }
-    headersStr += " ";
-    var cmd = 'curl -i -X DELETE ';
-    if (null != headers) {
-        cmd += headersStr;
-    }
-
-    cmd += authProto + '://' + authIP + ':' + authPort + reqUrl;
-    exec(cmd, function(err, stdout, stderr) {
-        if (null != err) {
-            callback(err, null);
-        } else {
-            callback(err, JSON.parse(stdout));
-        }
-    });
+    tmpAuthRestObj.authRestAPI.api.get(reqUrl, function(err, data) {
+        callback(err, data);
+    }, headers);
 }
 
 function formatV3AuthDataToV2AuthData (v3AuthData, authObj, callback)
@@ -1711,21 +1639,21 @@ function authenticate (req, res, appData, callback)
 function getV3ProjectListByToken (req, tokenId, callback)
 {
     var reqUrl = '/v3/users/' + req.session.userid + '/projects';
-    sendV3CurlGetReq({'reqUrl': reqUrl, 'token': tokenId, req: req},
-                     function(err, projects) {
+    sendV3GetReq({'reqUrl': reqUrl, 'token': tokenId, req: req},
+                 function(err, projects) {
         callback(err, projects);
     });
 }
 
-function sendV3CurlPostAsyncReq (dataObj, callback)
+function sendV3PostAsyncReq (dataObj, callback)
 {
     var postData = dataObj['data'];
     var reqUrl = dataObj['reqUrl'];
     var withHeaderResp = dataObj['withHeaderResp'];
 
-    sendV3CurlPostReq({'data': postData, 'reqUrl': reqUrl,
-                       'req': dataObj['req']},
-                      function(err, data) {
+    sendV3PostReq({'data': postData, 'reqUrl': reqUrl,
+                  'req': dataObj['req']},
+                  function(err, data) {
         callback(err, data);
     });
 }
@@ -1749,7 +1677,7 @@ function getProjectDetails (projects, userObj, callback)
         postDataArr[i]['reqUrl'] = global.KEYSTONE_V3_TOKEN_URL;
         postDataArr[i]['withHeaderResp'] = false;
     }
-    async.map(postDataArr, sendV3CurlPostAsyncReq, function(err, data) {
+    async.map(postDataArr, sendV3PostAsyncReq, function(err, data) {
         if (err || (null == data)) {
             callback(err, data);
             return;
@@ -1880,9 +1808,9 @@ function doV3Auth (req, callback)
         req.session.last_token_used = {};
         tokenObj.id = removeSpecialChars(tokenObj.id);
         req.session.last_token_used = tokenObj;
-        sendV3CurlPostReq({'data': userPostData, 'reqUrl':
-                          global.KEYSTONE_V3_TOKEN_URL, 'req': req},
-                          function(err, data) {
+        sendV3PostReq({'data': userPostData, 'reqUrl':
+                      global.KEYSTONE_V3_TOKEN_URL, 'req': req},
+                      function(err, data) {
             if ((null != err) || (null == data) || (null == data['token']) ||
                 (null == data['token']['user']) ||
                 (null == data['token']['user']['id'])) {
@@ -2914,4 +2842,4 @@ exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 exports.getServiceCatalogByRegion = getServiceCatalogByRegion;
 exports.shiftServiceEndpointList = shiftServiceEndpointList;
-
+exports.getRoleList = getRoleList;

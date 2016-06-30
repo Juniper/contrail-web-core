@@ -39,16 +39,31 @@
     
     <!-- Handling of slist -->
     <xsl:template name="output_slist_formatting">
-        <div class="grid-body">
-            <table>
-                <tbody>
-                    <tr>
-                        <td>
-                            <xsl:apply-templates select="attribute::type[.='slist']"/>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="contrail-grid contrail-introspect-grid">
+            <div class="grid-header">
+                <div class="widget-header grid-widget-header">
+                    <h4 class="grid-header-text smaller blue" data-action="collapse">
+                        <xsl:value-of select="name()"/>
+                    </h4>
+                    <div class="widget-toolbar pull-right">
+                        <a class="widget-toolbar-icon selected" data-action="wrap">Wrap</a>
+                    </div>
+                    <div class="widget-toolbar pull-right">
+                        <a class="widget-toolbar-icon" data-action="no-wrap">NoWrap</a>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-body ui-widget">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <xsl:apply-templates select="attribute::type[.='slist']"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </xsl:template>
     

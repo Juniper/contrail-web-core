@@ -7,6 +7,7 @@ var rest = require('../../common/rest.api'),
     authApi = require('../../common/auth.api'),
     logutils = require('../../utils/log.utils'),
     commonUtils = require('../../utils/common.utils'),
+    jobsUtils = require('../../common/jobs.utils'),
     async = require('async'),
     opServer;
 
@@ -18,69 +19,65 @@ var opServerPort = ((config.analytics) && (config.analytics.server_port)) ?
 opServer = rest.getAPIServer({apiName: global.label.OPSERVER,
                               server: opServerIP, port: opServerPort});
 
-function buildDummyReqObjByJobData (jobData)
+function callApiByReqType (obj, reqType, stopRetry, callback)
 {
-    var session = commonUtils.getValueByJsonPath(jobData, 'taskData;session',
-                                                 null);
-    var cookies = commonUtils.getValueByJsonPath(jobData, 'taskData;cookies',
-                                                 null);
-    var req = null;
-    if (null != session) {
-        req = {
-            session: session
-        };
-        if (null != cookies) {
-            req['cookies'] = cookies;
-        }
+    var jobData = obj.jobData;
+    var appHeaders = obj.appHeaders;
+    var reqUrl = obj.reqUrl;
+    var reqData = obj.reqData;
+
+    if (global.HTTP_REQUEST_GET == reqType) {
+        apiGet(reqUrl, jobData, callback, appHeaders, true);
+    } else if (global.HTTP_REQUEST_POST == reqType) {
+        apiPost(reqUrl, reqData, jobData, callback, appHeaders, true);
+    } else if (global.HTTP_REQUEST_PUT == reqType) {
+        apiPut(reqUrl, reqData, jobData, callback, appHeaders, true);
+    } else if (global.HTTP_REQUEST_DEL == reqType) {
+        apiDelete(reqUrl, jobData, callback, appHeaders, true);
+    } else {
+        var error = new appErrors.RESTServerError('reqType: ' + reqType +
+                                                  ' not allowed.');
+        callback(error, null);
     }
-    return req;
 }
 
-function getHeaders(dataObj, callback)
+function doSendOpServerRespToApp (err, data, obj, callback)
 {
-    var headers = {};
-    var jobData = dataObj['jobData'];
-    var appHeaders = dataObj['appHeaders'];
-    for (key in appHeaders) {
-        /* App Header overrides default header */
-        headers[key] = appHeaders[key];
-    }
-    var svcCat = commonUtils.getValueByJsonPath(jobData, 'taskData;serviceCatalog',
-                                                null);
-    dataObj['headers'] = headers;
-    dataObj['apiRestApi'] = opServer;
-    if (null == svcCat) {
-        callback(null, dataObj);
-        return;
-    }
-    /* Create dummy req Object */
-    var req = buildDummyReqObjByJobData(jobData);
-    var opServiceType =
-        authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_ANALYTICS_IDENTIFIER);
-    authApi.getServiceAPIVersionByReqObj(req, opServiceType,
-                                         function(verObjs) {
-        var verObj = null;
-        if (null != verObjs) {
-            verObj = verObjs[0];
-        }
-        if ((null == verObj) || (null == verObj['protocol']) ||
-            (null == verObj['ip']) || (null == verObj['port'])) {
-            callback(null, dataObj);
-            return;
-        }
-        headers['protocol'] = verObj['protocol'];
-        var opServerRestInst =
-            rest.getAPIServer({apiName: global.label.OPSERVER,
-                               server: verObj['ip'], port: verObj['port']});
-        dataObj['headers'] = headers;
-        dataObj['apiRestApi'] = opServerRestInst;
-        callback(null, dataObj);
-    }, global.service.MIDDLEWARE);
-}
+    var jobData = obj.jobData;
+    var appHeaders = obj.appHeaders;
+    var reqUrl = obj.reqUrl;
+    var reqType = obj.reqType;
+    var reqData = obj.reqData;
+    var stopRetry = obj.stopRetry;
 
-function doSendOpServerRespToApp (error, data, callback)
-{
-    callback(error, data);
+    var authObj = jobsUtils.buildAuthObjByJobData(jobData);
+    if (null != err) {
+        if (stopRetry) {
+            callback(err, data);
+        } else {
+            if (err.responseCode ==
+                 global.HTTP_STATUS_AUTHORIZATION_FAILURE) {
+                /* Retry once again */
+                authApi.getUserAuthDataByConfigAuthObj(jobData.taskData.loggedInOrchestrationMode,
+                                                       authObj,
+                                                       function(error, data) {
+                    if ((null != error) || (null == data) ||
+                        (null == data.access) ||
+                        (null == data.access.token)) {
+                        callback(error, data);
+                        return;
+                    }
+                    jobsUtils.updateJobDataAuthObjToken(jobData, data.access.token);
+                    obj.jobData = jobData;
+                    callApiByReqType(obj, reqType, true, callback);
+                });
+            } else {
+                callback(err, data);
+            }
+        }
+    } else {
+        callback(null, data);
+    }
 }
 
 function serveAPIRequestCB (obj, callback)
@@ -91,19 +88,19 @@ function serveAPIRequestCB (obj, callback)
 
     if (global.HTTP_REQUEST_GET == reqType) {
         obj.apiRestApi.api.get(reqUrl, function(error, data) {
-            doSendOpServerRespToApp(error, data, callback);
+            doSendOpServerRespToApp(error, data, obj, callback);
         }, obj.headers);
     } else if (global.HTTP_REQUEST_PUT == reqType) {
         obj.apiRestApi.api.put(reqUrl, reqData, function(error, data) {
-            doSendOpServerRespToApp(error, data, callback);
+            doSendOpServerRespToApp(error, data, obj, callback);
         }, obj.headers);
     } else if (global.HTTP_REQUEST_POST == reqType) {
         obj.apiRestApi.api.post(reqUrl, reqData, function(error, data) {
-            doSendOpServerRespToApp(error, data, callback);
+            doSendOpServerRespToApp(error, data, obj, callback);
         }, obj.headers);
     } else if (global.HTTP_REQUEST_DEL == reqType) {
         obj.apiRestApi.api.delete(reqUrl, function(error, data) {
-            doSendOpServerRespToApp(error, data, callback);
+            doSendOpServerRespToApp(error, data, obj, callback);
         }, obj.headers);
     } else {
         var error = new appErrors.RESTServerError('reqType: ' + reqType +
@@ -114,17 +111,20 @@ function serveAPIRequestCB (obj, callback)
 }
 
 function serveAPIRequest (reqUrl, reqData, jobData, appHeaders, reqType,
-                          callback)
+                          stopRetry, callback)
 {
     var dataObj = {
+        apiName: global.label.OPSERVER,
         reqUrl: reqUrl,
         appHeaders: appHeaders,
         jobData: jobData,
         reqType: reqType,
-        reqData: reqData
+        stopRetry: stopRetry,
+        reqData: reqData,
+        apiRestApi: opServer
     };
     async.waterfall([
-        async.apply(getHeaders, dataObj),
+        async.apply(jobsUtils.getHeaders, dataObj),
         serveAPIRequestCB
     ],
     function(error, data) {
@@ -135,25 +135,25 @@ function serveAPIRequest (reqUrl, reqData, jobData, appHeaders, reqType,
 function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, null, jobData, appHeaders,
-                    global.HTTP_REQUEST_GET, callback);
+                    global.HTTP_REQUEST_GET, stopRetry, callback);
 }
 
 function apiPut (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, reqData, jobData, appHeaders,
-                    global.HTTP_REQUEST_PUT, callback);
+                    global.HTTP_REQUEST_PUT, stopRetry, callback);
 }
 
 function apiPost (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, reqData, jobData, appHeaders,
-                    global.HTTP_REQUEST_POST, callback);
+                    global.HTTP_REQUEST_POST, stopRetry, callback);
 }
 
 function apiDelete (reqUrl, jobData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, null, jobData, appHeaders,
-                    global.HTTP_REQUEST_DEL, callback);
+                    global.HTTP_REQUEST_DEL, stopRetry, callback);
 }
 
 exports.apiGet = apiGet;

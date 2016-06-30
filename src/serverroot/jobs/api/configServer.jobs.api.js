@@ -19,132 +19,6 @@ var configServerPort = ((config.cnfg) && (config.cnfg.server_port)) ?
 configServer = rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,
                                  server: configServerIP,
                                  port: configServerPort});
-var authParams = null;
-try {
-    authParams = require('../../../../config/userAuth');
-} catch(e) {
-    authParams = null;
-}
-
-function getHeaders (dataObj, callback)
-{
-    var jobData = dataObj['jobData'];
-    var headers = {};
-    headers = configAppHeaders(headers, jobData);
-    var appHeaders = dataObj['appHeaders'];
-
-    var req = buildDummyReqObjByJobData(jobData);
-    dataObj['apiRestApi'] = configServer;
-
-    for (key in appHeaders) {
-        /* App Header overrides default header */
-        headers[key] = appHeaders[key];
-    }
-    dataObj['headers'] = headers;
-    if (null == req) {
-        callback(null, dataObj);
-        return;
-    }
-    var apiServiceType =
-        authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_API_IDENTIFIER);
-    authApi.getServiceAPIVersionByReqObj(req, apiServiceType,
-                                         function(verObjs) {
-        var verObj = null;
-        if ((null != verObjs) && (null != verObjs[0])) {
-            verObj = verObjs[0];
-        }
-        if ((null == verObj) || (null == verObj['protocol']) ||
-            (null == verObj['ip']) || (null == verObj['port'])) {
-            callback(null, dataObj);
-            return;
-        }
-        headers['protocol'] = verObj['protocol'];
-        var configServerRestInst =
-            rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,
-                               server: verObj['ip'], port: verObj['port']});
-        dataObj['headers'] = headers;
-        dataObj['apiRestApi'] = configServerRestInst;
-        callback(null, dataObj);
-    }, global.service.MIDDLEWARE);
-}
-
-function getAuthTokenByJobData (jobData)
-{
-    if ((null != jobData) && (null != jobData['taskData']) &&
-        (null != jobData['taskData']['tokenid'])) {
-        return jobData['taskData']['tokenid'];
-    }
-
-    if (true == commonUtils.isMultiTenancyEnabled()) {
-        /* If multi-tenancy is disabled, then this is not error, so do not log
-         */
-        logutils.logger.error("We did not get tokenid in taskData");
-    }
-    return null;
-}
-
-function configAppHeaders (headers, jobData)
-{
-    try {
-        headers['X-Auth-Token'] = getAuthTokenByJobData(jobData);
-    } catch(e) {
-        headers['X-Auth-Token'] = null;
-    }
-    if (true == commonUtils.isMultiTenancyEnabled()) {
-        /* As we are sending with admin_user, so set the role as 'admin' */
-        headers['X_API_ROLE'] = 'admin';
-    }
-    return headers;
-}
-
-function updateJobDataAuthObjToken (jobData, token)
-{
-    jobData['taskData']['tokenid'] = token.id;
-    jobsUtils.registerForJobTaskDataChange(jobData, 'tokenid');
-}
-
-function buildDummyReqObjByJobData (jobData)
-{
-    var session = commonUtils.getValueByJsonPath(jobData, 'taskData;session',
-                                                 null);
-    var cookies = commonUtils.getValueByJsonPath(jobData, 'taskData;cookies',
-                                                 null);
-    var req = null;
-    if (null != session) {
-        req = {
-            session: session
-        };
-        if (null != cookies) {
-            req['cookies'] = cookies;
-        }
-    }
-    return req;
-}
-
-function buildAuthObjByJobData (jobData)
-{
-    var userAuthObj = {};
-
-    if (null != authParams) {
-        if ((null != authParams.admin_user) &&
-            (null != authParams.admin_password)) {
-            userAuthObj['username'] = authParams.admin_user;
-            userAuthObj['password'] = authParams.admin_password;
-        }
-        if (null != authParams.admin_tenant_name) {
-            userAuthObj['tenant'] = authParams.admin_tenant_name;
-        }
-    }
-    if (null != jobData.taskData.reqBy) {
-        userAuthObj['reqBy'] = jobData.taskData.reqBy;
-    }
-    /* Create a dummy req object and encapsulate region inside it */
-    var req = buildDummyReqObjByJobData(jobData);
-    if (null != req) {
-        userAuthObj['req'] = req;
-    }
-    return userAuthObj;
-}
 
 function callApiByReqType (obj, reqType, stopRetry, callback)
 {
@@ -177,7 +51,7 @@ function doSendApiServerRespToApp (err, data, obj, callback)
     var reqData = obj.reqData;
     var stopRetry = obj.stopRetry;
 
-    var authObj = buildAuthObjByJobData(jobData);
+    var authObj = jobsUtils.buildAuthObjByJobData(jobData);
     if (null != err) {
         if (stopRetry) {
             callback(err, data);
@@ -194,7 +68,7 @@ function doSendApiServerRespToApp (err, data, obj, callback)
                         callback(error, data);
                         return;
                     }
-                    updateJobDataAuthObjToken(jobData, data.access.token);
+                    jobsUtils.updateJobDataAuthObjToken(jobData, data.access.token);
                     obj.jobData = jobData;
                     callApiByReqType(obj, reqType, true, callback);
                 });
@@ -241,15 +115,17 @@ function serveAPIRequest (reqUrl, reqData, jobData, appHeaders, reqType,
                           stopRetry, callback)
 {
     var dataObj = {
+        apiName: global.label.VNCONFIG_API_SERVER,
         reqUrl: reqUrl,
         appHeaders: appHeaders,
         jobData: jobData,
         reqType: reqType,
         stopRetry: stopRetry,
-        reqData: reqData
+        reqData: reqData,
+        apiRestApi: configServer
     };
     async.waterfall([
-        async.apply(getHeaders, dataObj),
+        async.apply(jobsUtils.getHeaders, dataObj),
         serveAPIRequestCB
     ],
     function(error, data) {

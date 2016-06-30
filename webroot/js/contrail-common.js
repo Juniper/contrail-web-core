@@ -256,8 +256,8 @@ function Contrail() {
     };
 
     this.formatJsonObject = function(jsonObj, formatDepth, currentDepth, ignoreKeys) {
-    	var output = '', self = this;
-    		objType = {type: 'object', startTag: '{', endTag: '}'};
+    	var output = '', self = this,
+            objType = {type: 'object', startTag: '{', endTag: '}'};
     	
     	if(jsonObj instanceof Array){
     		objType = {type: 'array', startTag: '[', endTag: ']'};
