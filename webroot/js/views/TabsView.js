@@ -57,7 +57,7 @@ define([
                 }
             });
 
-            self.$el.contrailTabs({
+            self.$('#'+elId).contrailTabs({
                 active: activeTab,
                 activate: function( event, ui ) {
                     var tabId = ($(ui.newPanel[0]).attr('id')),
@@ -114,13 +114,14 @@ define([
                 theme: viewConfig.theme
             });
 
-            tabsUIObj = self.$el.data('contrailTabs')._tabsUIObj;
+            tabsUIObj = self.$('#'+elId).data('contrailTabs')._tabsUIObj;
             // TODO config condition?
             //tabsUIObj.sortable()
         },
 
         removeTab: function (tabIndex) {
             var self = this,
+                elId = self.attributes.elementId,
                 tabPanelId,
                 tabConfig = (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) ? self.tabs[tabIndex].tabConfig : null);
             if($.isArray(tabIndex)) {
@@ -130,9 +131,9 @@ define([
                 return;
             }
 
-            tabPanelId = self.$('li:eq(' + tabIndex + ')').attr( "aria-controls");
+            tabPanelId = self.$('#'+elId+' li:eq(' + tabIndex + ')').attr( "aria-controls");
 
-            self.$('li:eq(' + tabIndex + ')').remove();
+            self.$('#'+elId+' li:eq(' + tabIndex + ')').remove();
             $("#" + tabPanelId).remove();
 
             $.each(self.tabsIdMap, function (tabsIdKey, tabsIdValue) {
@@ -145,10 +146,10 @@ define([
             self.tabs.splice(tabIndex, 1);
             self.tabRendered.splice(tabIndex, 1);
 
-            self.$el.data('contrailTabs').refresh();
+            self.$('#'+elId).data('contrailTabs').refresh();
 
             if (self.tabs.length === 0 && !self.attributes.viewConfig['extendable']) {
-                self.$el.hide();
+                self.$('#'+elId).hide();
             }
 
             if (tabConfig !== null && contrail.checkIfFunction(tabConfig.onRemoveTab)) {
@@ -158,29 +159,31 @@ define([
 
         renderTab: function(tabObj, onAllViewsRenderComplete) {
             var self = this,
+                elId = self.attributes.elementId,
                 validation = self.attributes.validation,
                 lockEditingByDefault = self.attributes.lockEditingByDefault,
                 modelMap = self.modelMap,
                 childElId = tabObj[cowc.KEY_ELEMENT_ID];
 
-            self.$el.show();
+            self.$('#'+elId).show();
 
-            self.renderView4Config(self.$el.find("#" + childElId), tabObj.model || self.model, tabObj, validation, lockEditingByDefault, modelMap, onAllViewsRenderComplete);
+            self.renderView4Config(self.$("#" + childElId), tabObj.model || self.model, tabObj, validation, lockEditingByDefault, modelMap, onAllViewsRenderComplete);
         },
 
-        renderNewTab: function(elementId, tabViewConfigs, activateTab, modelMap, onAllViewsRenderComplete) {
+        renderNewTab: function(elId, tabViewConfigs, activateTab, modelMap, onAllViewsRenderComplete) {
             var self = this,
                 tabLinkTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_LINK_VIEW),
                 tabContentTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_CONTENT_VIEW),
-                tabLength = self.tabs.length;
+                tabLength = self.tabs.length,
+                activateTabNumber;
 
             self.modelMap = modelMap;
 
             $.each(tabViewConfigs, function(tabKey, tabValue) {
                 if (!contrail.checkIfExist(self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'])) {
                     self.$(self.selectors.linkList).append(tabLinkTemplate([tabValue]));
-                    self.$el.append(tabContentTemplate([tabValue]));
-                    self.$el.data('contrailTabs').refresh();
+                    self.$('#'+elId).append(tabContentTemplate([tabValue]));
+                    self.$('#'+elId).data('contrailTabs').refresh();
 
                     self.tabs.push(tabValue);
                     self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'] = tabLength;
@@ -195,13 +198,15 @@ define([
                     tabLength++;
 
                     if (activateTab === true) {
-                        self.$el.data('contrailTabs').activateTab(tabLength - 1);
+                        activateTabNumber = tabLength - 1
                     } else if (typeof activateTab === 'number') {
-                        self.$el.data('contrailTabs').activateTab(activateTab);
+                        activateTabNumber = activateTab
                     }
+                    if (activateTabNumber) self.$('#'+elId).data('contrailTabs').activateTab(activateTabNumber)
 
                 } else {
-                    self.$el.data('contrailTabs').activateTab(self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'])
+                    activateTabNumber = self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab']
+                    self.$('#'+elId).data('contrailTabs').activateTab(activateTabNumber)
                 }
             });
         },

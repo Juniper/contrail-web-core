@@ -1874,8 +1874,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
             {{#each tabs}}
                 <li>
                     <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
-                        {{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>
-                        {{/if}}
+                        {{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}
                         {{title}}
                         {{#if tabConfig.removable}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/if}}
                     </a>
@@ -1890,7 +1889,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
                 </li>
             {{/each}}
             {{#if extendable }}
-                <li class="tab-add pull-right">
+                <li class="tab-add">
                     <span class="edit-title pull-right hide">
                         <input type="text"/>
                     </span>
@@ -1913,7 +1912,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         <li>
             <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
                 {{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}
-                {{title}}
+                    {{title}}
                 {{#if tabConfig.removable}}<i class="contrail-tab-link-icon-remove icon-remove"></i>{{/if}}
             </a>
         </li>
