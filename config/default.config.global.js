@@ -309,10 +309,14 @@ config.physicaldevices = {};
 config.physicaldevices.interface_delimiters = ['.', ':'];
 
 /*****************************************************************************
-* Below are the disabled list of UI features.
+* Below are the optional feature list which can be enabled/disabled from
+* UI Menu.
+*
 *****************************************************************************/
-config.features = {};
-config.features.disabled = ['mon_infra_underlay','mon_infra_mx'];
+config.optFeatureList = {};
+config.optFeatureList.mon_infra_underlay = false;
+config.optFeatureList.mon_infra_mx = false;
+config.optFeatureList.monitor_alarms = false;
 
 /*****************************************************************************
 * Below are the configurations used only for ui
