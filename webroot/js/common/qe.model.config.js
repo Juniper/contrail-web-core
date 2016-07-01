@@ -26,7 +26,7 @@ define([
                 "where_json": null,
                 "filter_json": null,
                 "direction": '1',
-                "filters": null,
+                "filters": cowc.QE_DEFAULT_FILTER,
                 "limit": cowc.QE_DEFAULT_LIMIT_150K,
                 "sort_by" : null,
                 "sort_order" : cowc.QE_DEFAULT_SORT_ORDER,

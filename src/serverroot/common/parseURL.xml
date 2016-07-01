@@ -82,6 +82,11 @@
         <feature>orchestration</feature>
         <callback>authApi.getRegionList</callback>
     </item>
-
+    <item>
+        <url>/api/getRoles</url>
+        <method>get</method>
+        <feature>orchestration</feature>
+        <callback>configServerUtils.getRoles</callback>
+    </item>
 </urlLists>
 

@@ -34,7 +34,7 @@ define([
                 self.model = modelMap[viewConfig.modelKey]
             }
 
-            contrailListModel = (self.model != null) ? self.model : new ContrailListModel(listModelConfig);
+            contrailListModel = (self.model != null && self.model['_type'] === 'contrailListModel') ? self.model : new ContrailListModel(listModelConfig);
 
             //delete viewConfig.elementConfig['body']['dataSource']['remote'];
             //viewConfig.elementConfig['body']['dataSource'] = {dataView: contrailListModel};
@@ -1102,17 +1102,17 @@ define([
                         gridContainer.data('contrailGrid', null);
                         gridContainer.html('').removeClass('contrail-grid');
                     },
-                    setRemoteAjaxConfig: function (ajaxConfig) {
-                        if (contrail.checkIfExist(gridDataSource.remote.ajaxConfig)) {
-                            dataView.setRemoteAjaxConfig(ajaxConfig);
-                            dvConfig.remote.ajaxConfig = ajaxConfig;
-                            gridDataSource.remote.ajaxConfig = ajaxConfig;
-                            customGridConfig.body.dataSource.remote.ajaxConfig = ajaxConfig;
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    },
+                    // setRemoteAjaxConfig: function (ajaxConfig) {
+                    //     if (contrail.checkIfExist(gridDataSource.remote.ajaxConfig)) {
+                    //         dataView.setRemoteAjaxConfig(ajaxConfig);
+                    //         dvConfig.remote.ajaxConfig = ajaxConfig;
+                    //         gridDataSource.remote.ajaxConfig = ajaxConfig;
+                    //         customGridConfig.body.dataSource.remote.ajaxConfig = ajaxConfig;
+                    //         return true;
+                    //     } else {
+                    //         return false;
+                    //     }
+                    // },
                     // Refreshes the grid if the grid data is fetched via ajax call
                     refreshGrid: function () {
                         if (contrail.checkIfExist(gridDataSource.remote) && contrail.checkIfExist(gridDataSource.remote.ajaxConfig.url)) {

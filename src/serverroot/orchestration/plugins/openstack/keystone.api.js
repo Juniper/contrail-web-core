@@ -32,6 +32,9 @@ var authServerPort =
 authAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
                                    server:authServerIP, port:authServerPort});
 
+var svcAuthAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
+    server:authServerIP, port:"35357"});
+
 var mandatoryEndpointList = ['compute', 'image'];
 var adminRoles = ['admin'];
 var authAPIVers = ['v2.0'];
@@ -113,8 +116,9 @@ function isTokenGetURL (reqUrl)
     return false;
 }
 
-function getAuthRestApiInst (req, reqUrl)
+function getAuthRestApiInst (req, reqUrl, isSvcPortReq)
 {
+    var idPort = null;
     var region =
         commonUtils.getValueByJsonPath(req, 'req;session;region', null, false);
     var ip = commonUtils.getValueByJsonPath(region, 'ip', null);
@@ -127,17 +131,22 @@ function getAuthRestApiInst (req, reqUrl)
             if (null != verObj) {
                 req.session.region = verObj;
                 req.session.regionname = regionName;
+                idPort = (true == isSvcPortReq) ? '35357': verObj.port;
                 var tmpAPIServerInst =
                     rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
-                                      server: verObj.ip, port: verObj.port});
+                                      server: verObj.ip, port: idPort});
                 return {authRestAPI: tmpAPIServerInst, mapped: verObj};
             }
         }
+        if (true === isSvcPortReq){
+            return {authRestAPI: svcAuthAPIServer, mapped: null};
+        }
         return {authRestAPI: authAPIServer, mapped: null};
     }
+    idPort = (true == isSvcPortReq) ? '35357': port;
     var tmpAPIServerInst =
         rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
-                           server:ip, port:port});
+                           server:ip, port:idPort});
     return {authRestAPI: tmpAPIServerInst, mapped: region};
 }
 
@@ -185,7 +194,7 @@ var authGetCB = {
     'v3': sendV3GetReq
 };
 
-function getV2AuthResponse (dataObj, callback)
+function getV2AuthResponse (dataObj, callback, isSvcPortReq)
 {
     var reqUrl = dataObj['reqUrl'];
     var headers = dataObj['headers'];
@@ -193,7 +202,7 @@ function getV2AuthResponse (dataObj, callback)
     if (null == headers) {
         headers = {};
     }
-    var tmpAuthRestObj = getAuthRestApiInst(dataObj.req, reqUrl);
+    var tmpAuthRestObj = getAuthRestApiInst(dataObj.req, reqUrl, isSvcPortReq);
     if (null != tmpAuthRestObj.mapped) {
         headers['protocol'] = tmpAuthRestObj.mapped.protocol;
     }
@@ -204,9 +213,10 @@ function getV2AuthResponse (dataObj, callback)
         }
         callback(error, data);
     }, headers);
+
 }
 
-function makeAuthGetReq (dataObj, callback)
+function makeAuthGetReq (dataObj, callback, isSvcPortReq)
 {
     var req = dataObj['req'];
     var authApiVer = req.session.authApiVersion;
@@ -214,7 +224,7 @@ function makeAuthGetReq (dataObj, callback)
 
     authCB(dataObj, function(err, data) {
         callback(err, data);
-    });
+    }, isSvcPortReq);
 }
 
 /** Function: getTenantListByToken
@@ -227,7 +237,7 @@ function getTenantListByToken (req, token, callback)
     getAuthDataByReqUrl(req, token, reqUrl, callback);
 }
 
-function getAuthDataByReqUrl (req, token, authUrl, callback)
+function getAuthDataByReqUrl (req, token, authUrl, callback, isSvcPortReq)
 {
   var headers = {};
   var dataObjArr = [];
@@ -262,7 +272,7 @@ function getAuthDataByReqUrl (req, token, authUrl, callback)
     } else {
         callback(err, null);
     }
-  });
+  }, isSvcPortReq);
 }
 
 /* Function: getEnabledProjects
@@ -328,7 +338,22 @@ function getDomainList (req, callback)
     });
 }
 
-function getAuthRetryData (token, req, reqUrl, callback)
+function getRoleList (req, callback)
+{
+    var lastAuthVerUsed = req.session.authApiVersion;
+    var reqUrl;
+    if ('v2.0' == lastAuthVerUsed) {
+        reqUrl = "/OS-KSADM/roles"
+    } else {
+        reqUrl = "/roles"
+    }
+    var token = req.session.last_token_used;;
+    getAuthRetryData(token, req, reqUrl, function(err, data) {
+        callback(err, data);
+    }, true);
+}
+
+function getAuthRetryData (token, req, reqUrl, callback, isSvcPortReq)
 {
     getAuthDataByReqUrl(req, token, reqUrl, function(err, data) {
         if ((err) &&
@@ -349,12 +374,12 @@ function getAuthRetryData (token, req, reqUrl, callback)
                 }
                 getAuthDataByReqUrl(req, token, reqUrl, function(err, newData) {
                     callback(err, newData);
-                });
+                }, isSvcPortReq);
             });
         } else {
             callback(null, data);
         }
-    });
+    }, isSvcPortReq);
 }
 
 function formatTenantList (req, keyStoneProjects, apiProjects, callback) 
@@ -399,7 +424,7 @@ function getKeystoneAPIVersions ()
     return authAPIVers;
 }
 
-function getAuthData (error, reqArr, index, authCB, callback)
+function getAuthData (error, reqArr, index, authCB, callback, isSvcPortReq)
 {
     var authApiVerList = getKeystoneAPIVersions();
     var len = reqArr.length;
@@ -425,7 +450,7 @@ function getAuthData (error, reqArr, index, authCB, callback)
             }
             getAuthData(err, reqArr, index + 1, authCB, callback);
         }
-    });
+    }, isSvcPortReq);
 }
 
 function formatV2AuthTokenData (authObj)
@@ -2817,4 +2842,4 @@ exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 exports.getServiceCatalogByRegion = getServiceCatalogByRegion;
 exports.shiftServiceEndpointList = shiftServiceEndpointList;
-
+exports.getRoleList = getRoleList;
