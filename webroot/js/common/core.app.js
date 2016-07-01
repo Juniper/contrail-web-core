@@ -397,7 +397,6 @@ var coreBundles = {
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
-            'xml2json',
             'jquery.ba-bbq',
             'jquery.json',
             'bootstrap',
