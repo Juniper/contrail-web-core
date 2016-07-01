@@ -53,7 +53,30 @@ function searchSiteMap() {
     var siteMap = globalObj['siteMap'];
     for (hash in siteMap) {
         if (siteMap[hash]['searchStrings'].indexOf(searchString.trim()) != -1) {
-            lastHash = $.bbq.getState();
+            //lastHash = $.bbq.getState();
+            lastHash = $.getState();
+            /*var temp1 = location.hash;
+            var temp1 = href;
+            var temp2 = temp1.split('&');
+            var temp3 = temp2[1];
+            var temp4 = decodeURIComponent(temp3);
+            var temp = {}
+            if (temp4 != "undefined") {
+                var vals = temp4.split('=');
+                var temp5 = vals[0].split('[')[1];
+                var key = temp5.split(']')[0];
+                temp[key] = vals[1];
+            }
+            var obj = {}
+            obj['p'] = temp2[0].split('#')[1];
+            obj['q'] = temp;
+            lastHash = obj;*/
+            //var test = $.String.deparam();
+            /*var temp = search?JSON.parse('{"' + search.replace(/%/g, '","').replace(/=/g,'":"') + '"}',
+             function(key, value) { return key===""?value:decodeURIComponent(value) }):{}*/
+            //return temp;
+            //var urlHash = $.bbq.getState('q');
+            //return ifNull(temp, {});
             queryParams = siteMap[hash]['queryParams'];
             currHash = {p: hash, q: queryParams};
             layoutHandler.onHashChange(lastHash, currHash);

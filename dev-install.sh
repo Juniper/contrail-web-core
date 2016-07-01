@@ -55,12 +55,14 @@ mkdir -p webroot/assets/jquery/css
 cp -af ./$THIRD_PARTY/jquery.xml2json.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/x2js-1.2.0/xml2json.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.ui.touch-punch.min.js webroot/assets/jquery/js/
-cp -af ./$THIRD_PARTY/jquery.ba-bbq.min.js webroot/assets/jquery/js/
+#cp -af ./$THIRD_PARTY/jquery.ba-bbq.min.js webroot/assets/jquery/js/
+cp -af ./$THIRD_PARTY/jquery.ba-bbq-v1.2.2/jquery.ba-bbq.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.timer.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.json-2.4.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.dataTables.min.js webroot/assets/jquery/js/
-cp -af ./$THIRD_PARTY/jquery-1.8.3.min.js webroot/assets/jquery/js/
+#cp -af ./$THIRD_PARTY/jquery-1.8.3.min.js webroot/assets/jquery/js/
 #cp -af ./$THIRD_PARTY/jquery-1.9.1.min.js webroot/assets/jquery/js/
+cp -af ./$THIRD_PARTY/jquery-2.2.4/dist/jquery.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/build/jquery.steps.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/demo/css/jquery.steps.css webroot/assets/jquery/css/
@@ -75,9 +77,9 @@ cp -af ./$THIRD_PARTY/tristate/jquery.tristate.js webroot/assets/jquery/js/jquer
 rm -rf webroot/assets/jquery-ui
 mkdir -p webroot/assets/jquery-ui/js
 mkdir -p webroot/assets/jquery-ui/css
-cp -af ./$THIRD_PARTY/jquery-ui-1.10.4/ui/minified/jquery-ui.min.js webroot/assets/jquery-ui/js/jquery-ui.js
-cp -af ./$THIRD_PARTY/jquery-ui-1.10.4/themes/base/minified/jquery-ui.min.css webroot/assets/jquery-ui/css/jquery-ui.min.css
-cp -af ./$THIRD_PARTY/jquery-ui-1.10.4/themes/base/images webroot/assets/jquery-ui/css/
+cp -af ./$THIRD_PARTY/jquery-ui-1.11.4/jquery-ui.min.js webroot/assets/jquery-ui/js/jquery-ui.js
+cp -af ./$THIRD_PARTY/jquery-ui-1.11.4/jquery-ui.min.css webroot/assets/jquery-ui/css/jquery-ui.min.css
+cp -af ./$THIRD_PARTY/jquery-ui-1.11.4/images webroot/assets/jquery-ui/css/
 #End - Copy jquery-ui files from $THIRD_PARTY
 
 #Start - Copy jquery-ui-multiselect files from $THIRD_PARTY
@@ -85,11 +87,18 @@ cp -af ./$THIRD_PARTY/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.j
 cp -af ./$THIRD_PARTY/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.filter.js webroot/assets/jquery-ui/js/jquery.multiselect.filter.js
 #End - Copy jquery-ui-multiselect files from $THIRD_PARTY
 
-#Start - Copy Bootstrap from $THIRD_PARTY
+#Start - Copy Bootstrap from $THIRD_PART
+#rm -rf webroot/assets/bootstrap
+#mkdir -p webroot/assets/bootstrap/js
+#cp -r ./$THIRD_PARTY/bootstrap-v2.3.2/js/bootstrap.js webroot/assets/bootstrap/js/
+#cp -r ./$THIRD_PARTY/bootstrap-v2.3.2/css webroot/assets/bootstrap/css
+#End - Copy Bootstrap from $THIRD_PARTY
+
+#Start - Copy Bootstrap3 from $THIRD_PARTY
 rm -rf webroot/assets/bootstrap
 mkdir -p webroot/assets/bootstrap/js
-cp -r ./$THIRD_PARTY/bootstrap-v2.3.2/js/bootstrap.js webroot/assets/bootstrap/js/
-cp -r ./$THIRD_PARTY/bootstrap-v2.3.2/css webroot/assets/bootstrap/css
+cp -r ./$THIRD_PARTY/bootstrap-v3.3.6/dist/js/bootstrap.js webroot/assets/bootstrap/js/
+cp -r ./$THIRD_PARTY/bootstrap-v3.3.6/dist/css webroot/assets/bootstrap/css
 #End - Copy Bootstrap from $THIRD_PARTY
 
 #Start - Copy Font-Awesome from $THIRD_PARTY
@@ -151,9 +160,9 @@ cp -af ./$THIRD_PARTY/jnpr_slickgrid/plugins/slick.rowselectionmodel.js webroot/
 cp -af ./$THIRD_PARTY/jnpr_slickgrid/lib/jquery.event.drag-2.2.js webroot/assets/slickgrid/js/jquery.event.drag-2.2.js
 cp -af ./$THIRD_PARTY/jnpr_slickgrid/slick.groupitemmetadataprovider.js webroot/assets/slickgrid/js/slick.groupitemmetadataprovider.js
 
-cp -af ./$THIRD_PARTY/slickgrid.enhancement.pager/slick.enhancementpager.js webroot/assets/slickgrid/js/slick.enhancementpager.js
+#cp -af ./$THIRD_PARTY/slickgrid.enhancement.pager/slick.enhancementpager.js webroot/assets/slickgrid/js/slick.enhancementpager.js
 cp -af ./$THIRD_PARTY/slickgrid.enhancement.pager/libs/jquery.json-2.3.min.js webroot/assets/slickgrid/js/jquery.json-2.3.min.js
-cp -af ./$THIRD_PARTY/slickgrid.enhancement.pager/libs/jquery.dropkick-1.0.0.js webroot/assets/slickgrid/js/jquery.dropkick-1.0.0.js
+#cp -af ./$THIRD_PARTY/slickgrid.enhancement.pager/libs/jquery.dropkick-1.0.0.js webroot/assets/slickgrid/js/jquery.dropkick-1.0.0.js
 
 cp -af ./$THIRD_PARTY/jnpr_slickgrid/slick.grid.css webroot/assets/slickgrid/styles/slick.grid.css
 #End - Copy Slickgrid from $THIRD_PARTY
@@ -190,6 +199,15 @@ cp -r ./$THIRD_PARTY/dagre-v0.7.1/dist/dagre.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.nojquery.min.css webroot/assets/joint/css/
 #End - Copy Joint from web-third-party
+
+#Start - Copy jquery from web-third-party
+rm -rf webroot/assets/jquery-contextMenu
+mkdir -p webroot/assets/jquery-contextMenu/js
+mkdir -p webroot/assets/jquery-contextMenu/css
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.contextMenu.js webroot/assets/jquery-contextMenu/js/
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.ui.position.js webroot/assets/jquery-contextMenu/js/
+cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.contextMenu.css webroot/assets/jquery-contextMenu/css
+#End - Copy jquery from web-third-party
 
 #Start - Copy jquery-contextMenu from web-third-party
 rm -rf webroot/assets/jquery-contextMenu
@@ -243,6 +261,7 @@ cp -af ./$THIRD_PARTY/uuid.js webroot/js/uuid.js
 rm -f webroot/css/contrail-all.css
 
 MAINCSS[1]=webroot/assets/bootstrap/css/bootstrap.min.css
+#MAINCSS[1]=webroot/css/output.css
 MAINCSS[2]=webroot/assets/bootstrap/css/bootstrap-responsive.min.css
 MAINCSS[3]=webroot/assets/jquery-ui/css/jquery-ui.min.css
 MAINCSS[4]=webroot/css/contrail.jquery.ui.css
@@ -266,9 +285,11 @@ MAINCSS[21]=webroot/css/contrail.graph.css
 MAINCSS[22]=webroot/css/contrail.custom.css
 MAINCSS[23]=webroot/css/contrail.font.css
 MAINCSS[24]=webroot/css/login.css
+#the new custom file deveoped using ace theme as base
+MAINCSS[25]=webroot/css/ace.theme.css
 
 
-cat ${MAINCSS[1]} > webroot/css/contrail-all.css
+cat ${MAINCSS[1]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[3]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[4]} >> webroot/css/contrail-all.css
@@ -290,6 +311,7 @@ cat ${MAINCSS[19]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[20]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[21]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[22]} >> webroot/css/contrail-all.css
+#cat ${MAINCSS[25]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[23]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[24]} >> webroot/css/contrail-all.css
 #End - Merging ALL CSS files

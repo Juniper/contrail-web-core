@@ -455,7 +455,10 @@ define([
                         columns = columns.concat(gridColumns);
                         gridColumns = columns;
 
-                        gridContainer.find('.slick-row-detail').live('click', function () {
+                        //gridContainer.find('.slick-row-detail').live('click', function () {
+                        var x = gridContainer.find('.slick-row-detail');
+                        $(document).on(x, 'click', function () {
+
                             var rowId = $(this).data('cgrid');
 
                             if (gridContainer.data('contrailGrid') != null) {

@@ -20,7 +20,9 @@
                 <link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
                 <link href="/dtbootstrap/css/DT_bootstrap.css" rel="stylesheet" type="text/css"/>
                 <link href="css/style.css" rel="stylesheet" type="text/css"/>
-                <script src="/assets/jquery/js/jquery-1.8.3.min.js"></script>
+                <!--<script src="/assets/jquery/js/jquery-1.8.3.min.js"></script> -->
+                <!-- <script src="/assets/jquery/js/jquery-1.9.1.min.js"></script> -->
+                <script src="/assets/jquery/js/jquery.min.js"></script>
                 <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
                 <script src="/assets/jquery/js/jquery.dataTables.min.js"></script>
                 <script src="/dtbootstrap/js/DT_bootstrap.js"></script>

@@ -49,9 +49,10 @@
     <script data-env="prod" data-main="js/common/core.app" src="/assets/requirejs/require.js"></script>
     <!-- End prod_env -->
 
-    <!-- Start dev_env
+    <!-- Start dev_env -->
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css?built_at=" rel="stylesheet"/>
-    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap-responsive.min.css?built_at=" rel="stylesheet"/>
+    <!-- <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap-responsive.min.css?built_at=" rel="stylesheet"/> -->
+    <!-- <link rel="stylesheet" href="/css/output.css" /> -->
 
     <link rel="stylesheet" href="/assets/jquery-ui/css/jquery-ui.min.css?built_at=" rel="stylesheet"/>
     <link rel="stylesheet" href="/css/contrail.jquery.ui.css?built_at=" rel="stylesheet"/>
@@ -143,14 +144,30 @@
 
 </script>
 <script type="text/x-handlebars-template" id="app-container-tmpl">
-    <div id="pageHeader" class="navbar navbar-inverse navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container-fluid">
-                <a href="#" class="brand">
+
+    <div id="navbar" class="navbar navbar-default          ace-save-state">
+        <div class="navbar-container ace-save-state" id="navbar-container">
+
+
+            <!-- #section:basics/sidebar.mobile.toggle -->
+            <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+                <span class="sr-only">Toggle sidebar</span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+            </button>
+
+    <!--<div id="pageHeader" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner"> -->
+            <!-- <div class="main-container ace-save-state container-fluid"> -->
+                <a href="#" class="col-xs-8 brand">
                     <img class="logo" src="/img/sdn-logo.png"/>
                 </a>
                 <ul style="width:330px" class="nav ace-nav pull-right">
-                    <li id="user-profile" class="hide">
+                    <li id="user-profile" class="customHide">
                         <a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle">
                             <i class="fa fa-user icon-only fa-2"></i>
                             <span id="user_info"></span>
@@ -180,25 +197,24 @@
                 <div id="nav-search">
                     <form id="search-form" onsubmit="searchSiteMap();">
                         <span class="input-icon">
-                            <input type="text" placeholder="Search Sitemap" class="input-small search-query" id="nav-search-input" autocomplete="off">
+                            <input type="text" placeholder="Search Sitemap" class="input-medium search-query" id="nav-search-input" autocomplete="off">
                             <i class="fa fa-search" id="nav-search-icon"></i>
                         </span>
                     </form>
                 </div>
             </div>
             <!--/.container-fluid-->
-        </div>
+        <!--</div> third div -->
         <!--/.navbar-inner-->
     </div>
     <!-- /.navbar #header -->
 
-    <div class="container-fluid" id="main-container">
-        <a id="menu-toggler" href="#">
-            <span></span>
-        </a>
 
-        <div id="sidebar">
-            <div id="sidebar-shortcuts">
+
+    <div class="main-container ace-save-state" id="main-container">
+
+        <div id="sidebar" class="sidebar responsive ace-save-state" data-sidebar=true" data-sidebar-scroll="true" data-sidebar-hover="true">
+            <div class="sidebar-shortcuts" id="sidebar-shortcuts">
 
             </div>  <!--#sidebar-shortcuts-->
             <ul id="menu" class="nav nav-list"></ul>

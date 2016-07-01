@@ -1,7 +1,7 @@
 <!-- Copyright (c) 2014 Juniper Networks, Inc. All rights reserved. -->
 
 <script type="text/x-handlebars-template" id="menu-shortcuts">
-            <div id="sidebar-shortcuts-large">
+            <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
                 {{#each this}}
                     {{#IfCompare this.cssClass 'disabledBtn' operator='!='}}
                         <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');">
@@ -13,7 +13,7 @@
                 {{/each}}
             </div>
 
-            <div id="sidebar-shortcuts-mini">
+            <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
                 {{#each this}}
                     <span class="btn btn-{{this.id}}"></span>
                 {{/each}}
@@ -1259,7 +1259,7 @@
         </div>
     </div>
     <div class="row-fluid form-element"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="textarea-input-append input-append inset span12">
+        <div class="textarea-input-append input-append inset col-xs-12">
             <textarea
                 name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}" rows="1"
                 data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
@@ -1272,7 +1272,7 @@
 
 <script type="text/x-handlebars-template" id="core-editable-grid-textarea-view-template">
     <div class="row-fluid"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="textarea-input-append input-append inset span12">
+        <div class="textarea-input-append input-append inset col-xs-12">
             <textarea
                 name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}"
                 {{#if viewConfig.rows}} rows:'{{viewConfig.rows}}' {{/if}}

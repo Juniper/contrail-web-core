@@ -3756,7 +3756,7 @@ td.td-actions a.td-action {
 }
 
 #alerts-box-content > .item-list > .itemdiv > .body > .text:after {
-  border-top: 0px;	
+  border-top: 0px;
 }
 #alerts-box-content > .item-list > .itemdiv > .body > .text {
   display:inline-block;
@@ -3934,12 +3934,12 @@ td.td-actions a.td-action {
   position: relative;
 }
 .item-list > li .key {
-	font-weight: normal;	
+	font-weight: normal;
 	color: #3182bd;
 }
 .item-list > li .value {
 	color: #555;
-	margin: 0 0 0 5px;	
+	margin: 0 0 0 5px;
 }
 .item-list > li.selected {
   color: #8090A0;
@@ -4036,7 +4036,7 @@ td.td-actions a.td-action {
 .chart-tooltip > .chart-tooltip-body > .chart-tooltip-row.row-fluid{
 	margin: 0;
 	line-height: 18px;
-	
+
 }
 .chart-tooltip > .chart-tooltip-body > .chart-tooltip-row > .key{
 	font-size: 11px;
@@ -4185,7 +4185,7 @@ td.td-actions a.td-action {
 .status-badge-rounded {
 	border-radius: 10px;
 	width: 10px;
-	height: 10px;	
+	height: 10px;
 	display:inline-block;
 	margin-right: 5px;
 }
@@ -4217,7 +4217,7 @@ td.td-actions a.td-action {
 /* Wrapped Label Values */
 .label-value-text {
 	font-weight: normal;
-	margin: 0 12px 0 0;	
+	margin: 0 12px 0 0;
 }
 .label-value-text .value {
 	color: #3182bd;
@@ -4269,7 +4269,7 @@ td.td-actions a.td-action {
 }
 .line-separator{
 	height:1px;
-	
+
 	border-bottom:1px solid #eee;
 }
 
@@ -4281,13 +4281,13 @@ td.td-actions a.td-action {
 .menuHeading ~div{
 	margin-top: 5px;
     margin-bottom: 3px;
-	
+
 }
 .details-group-heading{
 	height:0px;
 	font-weight:bold;
 	margin-top:3px;
-	margin-bottom:0px;	
+	margin-bottom:0px;
 }
 .selected-slick-row {
 	background: none;
@@ -4321,10 +4321,69 @@ div.stack-bar-chart-tooltip {
     max-width: 400px;
     padding: 2px;
     font: 12px sans-serif;
-    background: white; 
+    background: white;
     border: 1px;
     border-color: #e6e6e6;
     border-style: solid;
     border-radius: 0px;
     pointer-events: none;
+}
+
+input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] + .ace-lbl::before {
+  font-family: fontAwesome;
+  font-weight: normal;
+  font-size: 11px;
+  color: #3182bd;
+  content: "\a0";
+  background-color: #FAFAFA;
+  border: 1px solid #CCC;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 0;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  height: 13px;
+  line-height: 13px;
+  min-width: 13px;
+  margin: -2px 3px 0 0;
+}
+
+input.ace-input[type=checkbox]:checked + .ace-lbl::before, input.ace-input[type=radio]:checked + .ace-lbl::before {
+  display: inline-block;
+  content: '\f00c';
+  background-color: #F5F8FC;
+  border-color: #adb8c0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05), inset 15px 10px -12px rgba(255, 255, 255, 0.1);
+}
+
+.ui-multiselect-checkboxes input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] + .ace-lbl::before, .ui-multiselect-checkboxes input.ace-input-tristate[type=checkbox] + .ace-lbl::before {
+  margin-right: 8px;
+}
+
+.input-icon > [class*="fa-"] {
+  padding: 0 3px;
+  z-index: 2;
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  left: 3px;
+  line-height: 35px;
+  display: inline-block;
+  color: #909090;
+  font-size: 16px;
+}
+
+[class*=" fa-"], [class^="fa-"] {
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+}
+
+.fa-angle-right:before {
+  display: none;
+}
+
+[class*=" col-xs"] {
+  padding-left: 0px;
+  padding-right: 0px;
 }
