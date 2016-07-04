@@ -1388,14 +1388,8 @@ function getWebServerInfo (req, res, appData)
     serverObj['discoveryEnabled'] = getValueByJsonPath(config,
                                                        'discoveryService;enable',
                                                        true);
-    serverObj['configServer'] = {};
-    serverObj['configServer']['port'] = getValueByJsonPath(config,
-                                                    'cnfg;server_port',
-                                                     null);
-    serverObj['configServer']['ip'] = getValueByJsonPath(config,
-            'cnfg;server_ip',
-             null);
-
+    serverObj['apiServer'] = getValueByJsonPath(config,'cnfg',null);
+    serverObj['opServer'] = getValueByJsonPath(config,'analytics',null);;
     serverObj['disabledFeatures'] = getValueByJsonPath(config,'features;disabled',[]);
     serverObj['featurePkgsInfo'] = getValueByJsonPath(config,'featurePkg',[]);
     serverObj['sessionTimeout'] = getValueByJsonPath(config,'session;timeout', 3600000);
