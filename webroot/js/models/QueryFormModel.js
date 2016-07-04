@@ -9,8 +9,9 @@ define([
     'contrail-model',
     'query-or-model',
     'query-and-model',
-    'core-basedir/js/common/qe.utils'
-], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel,qewu) {
+    'core-basedir/js/common/qe.utils',
+    'contrail-list-model',
+], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel, qewu, ContrailListModel) {
     var QueryFormModel = ContrailModel.extend({
         defaultSelectFields: [],
         disableSelectFields: [],
@@ -184,7 +185,7 @@ define([
                 disableFieldArray = [].concat(defaultSelectFields).concat(this.disableSelectFields),
                 disableSubstringArray = this.disableSubstringInSelectFields;
 
-            qewu.adjustHeight4FormTextarea(model.attributes.query_prefix);
+            //qewu.adjustHeight4FormTextarea(model.attributes.query_prefix);
             if(tableName != '') {
                 $.ajax(ajaxConfig).success(function(response) {
                     var selectFields = getSelectFields4Table(response, disableFieldArray, disableSubstringArray),
@@ -487,6 +488,38 @@ define([
                     }
                 }
             }
+        },
+
+        getDataModel: function (p) {
+            var self = this
+            if (_.isUndefined(self.loader)) {
+                self.loader = new ContrailListModel({
+                    remote: {
+                        ajaxConfig: {
+                            url: "/api/qe/query",
+                            type: 'POST',
+                            data: JSON.stringify(self.getQueryRequestPostData(+ new Date))
+                        },
+                        dataParser: function (response) {
+                            if (p.parserName && self[p.parserName]) return self[p.parserName](response['data'], p)
+                            else return response['data']
+                        }
+                    }
+                })
+            }
+            return self.loader
+        },
+        // outputs data in time series format
+        timeSeriesParser: function (data, p) {
+            if (data.length == 0) return []
+            var seriesA = {values: []}
+            var series = [seriesA]
+
+            for (var i = 0; i < data.length; i++) {
+                var timeStamp = Math.floor(data[i]["T="] / 1000)
+                seriesA.values.push({x: timeStamp, y: data[i][p.yAxixDataField]})
+            }
+            return series
         }
     });
 
