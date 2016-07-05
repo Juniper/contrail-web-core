@@ -159,7 +159,9 @@ define([
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
 
-        var chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
+        chartOptions.y1AxisLabel = chartOptions.yAxisLabels[0]
+        chartOptions.y2AxisLabel = chartOptions.yAxisLabels[1]
+        chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
 
         chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1']);
         chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2']);
@@ -174,6 +176,13 @@ define([
                 chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), chUtils.getViewFinderPoint(end.x)];
             }
         }
+        _.each(chartData, function (series, i) {
+            // assume first series should be rendered as bars
+            if (i == 0) chartData[0].bar = true
+
+            series.color = chartOptions.colors[i]
+            series.key = chartOptions.yAxisLabels[i]
+        })
 
         chartViewConfig['chartData'] = chartData;
         chartViewConfig['chartOptions'] = chartOptions;

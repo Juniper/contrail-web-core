@@ -511,15 +511,30 @@ define([
         },
         // outputs data in time series format
         timeSeriesParser: function (data, p) {
-            if (data.length == 0) return []
-            var seriesA = {values: []}
-            var series = [seriesA]
+            if (_.isEmpty(data)) return []
+            if (p && p.dataField) p.dataFields = [p.dataField]
 
+            var series = []
             for (var i = 0; i < data.length; i++) {
-                var timeStamp = Math.floor(data[i]["T="] / 1000)
-                seriesA.values.push({x: timeStamp, y: data[i][p.yAxixDataField]})
+                var timeStamp = Math.floor(data[i]['T='] / 1000)
+                _.each(p.dataFields, function (dataField, seriesIndex) {
+                    if (i == 0) series[seriesIndex] = {values: []}
+                    series[seriesIndex].values.push({x: timeStamp, y: data[i][dataField]})
+                })
             }
+            console.log(series)
             return series
+        },
+
+        toJSON: function () {
+            var self = this
+            return {
+                table_name: self.table_name(),
+                select: self.select(),
+                time_range: self.time_range(),
+                where: self.where(),
+                filters: self.filters(),
+            }
         }
     });
 
