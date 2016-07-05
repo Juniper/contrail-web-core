@@ -530,21 +530,29 @@ define(['underscore'], function (_) {
         };
 
         this.generateBlockListKeyValueTemplate = function (config, app, parentConfig, objectAccessor) {
-            var template = '<ul class="item-list">';
+            var template = '<ul class="item-list">',
+                showAllFields = contrail.checkIfExist(parentConfig.showAllFields) ? parentConfig.showAllFields : false;
 
             $.each(config, function (configKey, configValue) {
-                template += '' +
-                    '{{#IfValidJSONValueByPath "' + configValue.key + '" ' + objectAccessor + ' ' + configKey + '}}' +
+                var keyValueTemplate = '' +
                     '<li>' +
-                    '<label class="inline row-fluid">' +
-                    '<span class="key span5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
-                    ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
-                    configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
-                    '<span class="value span7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
-                    ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">' + self.getValueByConfig(configValue, app, objectAccessor) + '</span>'+
-                    '</label>' +
-                    '</li>' +
-                    '{{/IfValidJSONValueByPath}}';
+                        '<label class="inline row-fluid">' +
+                            '<span class="key span5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
+                            ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
+                            configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
+                            '<span class="value span7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
+                            ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">' + self.getValueByConfig(configValue, app, objectAccessor) + '</span>'+
+                        '</label>' +
+                    '</li>';
+
+                if (!showAllFields) {
+                    template += '' +
+                        '{{#IfValidJSONValueByPath "' + configValue.key + '" ' + objectAccessor + ' ' + configKey + '}}' +
+                            keyValueTemplate +
+                        '{{/IfValidJSONValueByPath}}';
+                } else {
+                    template += keyValueTemplate;
+                }
             });
 
             template += '</ul>';
