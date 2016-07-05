@@ -38,8 +38,6 @@ if (!module.parent) {
     process.exit(1);
 }
 
-var parser = new xml2js.Parser();
-
 var redisClientCreateEvent = new eventEmitter();
 
 function putJsonViaInternalApi (api, ignoreError,
@@ -1396,7 +1394,7 @@ function getWebServerInfo (req, res, appData)
             'cnfg;server_ip',
              null);
 
-    serverObj['disabledFeatures'] = getValueByJsonPath(config,'features;disabled',[]);
+    serverObj['optFeatureList'] = getValueByJsonPath(config,'optFeatureList',{});
     serverObj['featurePkgsInfo'] = getValueByJsonPath(config,'featurePkg',[]);
     serverObj['sessionTimeout'] = getValueByJsonPath(config,'session;timeout', 3600000);
     serverObj['_csrf'] = req.session._csrf;
@@ -1572,6 +1570,8 @@ function mergeAllPackageList (serverType)
 
 function getAllJsons (menuDir, callback)
 {
+    var options = {attrkey: 'menuAttr'};
+    var parser = new xml2js.Parser(options);
     var fileName = menuDir + '/menu.xml';
     fs.readFile(fileName, function(err, content) {
         parser.parseString(content, function(err, content) {
