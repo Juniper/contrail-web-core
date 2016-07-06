@@ -31,9 +31,10 @@ define(['underscore'], function (_) {
         webControllerMockData = {"webController": true},
         webStorageMockData = {"webStorage": true},
         serverManagerMockData = {"serverManager": true},
-        ctWebServerInfoMockData = _.extend({}, webServerInfoMockData, {"featurePkg": { "webController": true }},{"featurePkgsInfo": { "webController": true },disabledFeatures:["config_alarms","mon_infra_mx"]}),
-        smWebServerInfoMockData = _.extend({}, webServerInfoMockData, {"featurePkg": { "serverManager": true }},{"featurePkgsInfo": { "serverManager": true },disabledFeatures:["config_alarms","mon_infra_mx"]}),
-        sWebServerInfoMockData = _.extend({}, webServerInfoMockData, {"featurePkg": { "webStorage": true }},{"featurePkgsInfo": { "webStorage": true },disabledFeatures:["config_alarms","mon_infra_mx"]});
+        ctWebServerInfoMockData =
+             _.extend({}, webServerInfoMockData, {"featurePkg": { "webController": true }},{"featurePkgsInfo": { "webController": true },optFeatureList:{"config_alarms": true,"mon_infra_mx": true}}),
+        smWebServerInfoMockData = _.extend({}, webServerInfoMockData, {"featurePkg": { "serverManager": true }},{"featurePkgsInfo": { "serverManager": true },optFeatureList:{"config_alarms": true,"mon_infra_mx": true}}),
+        sWebServerInfoMockData = _.extend({}, webServerInfoMockData, {"featurePkg": { "webStorage": true }},{"featurePkgsInfo": { "webStorage": true },optFeatureList:{"config_alarms": true,"mon_infra_mx": true}});
 
     return {
         ctWebServerInfoMockData: ctWebServerInfoMockData,
