@@ -6,9 +6,8 @@ var monInfraDashboardLoader = new MonInfraDashboardLoader();
 
 function MonInfraDashboardLoader() {
     this.load = function (paramObject) {
-        var self = this, currMenuObj = globalObj.currMenuObj,
+        var self = this, 
             hashParams = paramObject['hashParams'],
-            rootDir = currMenuObj['resources']['resource'][0]['rootDir'],
             renderFn = paramObject['function'];
 
         require(['mon-infra-dashboard-view'], function (MonitorInfraDashboardView) {
