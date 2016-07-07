@@ -427,15 +427,21 @@ function waitForTask(appData,taskId,currDef,retryCnt) {
     }
     retryCnt++;
     retrievePropertiesExForObj(appData,'Task',taskId).done(function(response) {
-    var currState = response['RetrievePropertiesExResponse']['returnval']['objects']['propSet']['val'][0]['_value']['state'];
-    if(currState == 'success')
-        currDef.resolve('complete');
-    else if(currState == 'error') {
-        currDef.resolve('');
-    } else 
-        setTimeout(function() {
-            waitForTask(appData,taskId,currDef);
-        },200);
+        var currState = response['RetrievePropertiesExResponse']['returnval']['objects']['propSet']['val'][0]['_value']['state'];
+        if(currState == 'success')
+            currDef.resolve('complete');
+        else if(currState == 'error') {
+            currDef.resolve({
+                'Fault': {
+                    'faultstring': commonUtils.getValueByJsonPath(response,
+                        'RetrievePropertiesExResponse;returnval;objects;propSet;val;0;_value;error;fault;0;_value;faultMessage;message', 'Unknown error')
+                    }
+                });
+        } else {
+            setTimeout(function() {
+                waitForTask(appData,taskId,currDef);
+            },200);
+        }
     });
 }
 

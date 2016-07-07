@@ -202,7 +202,6 @@ exports.checkURLInAllowedList = function(req) {
  */
 exports.isSessionAuthenticated = function(req) {
     //If url contains "/vcenter" and not loginReq and session doesn't contain vmware_soap_session
-    // console.info('isSessionAuthenticated',req.url);
     //If loggedInOrchestrationMode doesn't match on client and server
     if(!longPoll.checkLoginReq(req) && req.session.loggedInOrchestrationMode != null && req.headers['x-orchestrationmode'] != null) {
         if(req.headers['x-orchestrationmode'] != req.session.loggedInOrchestrationMode) {
@@ -213,14 +212,17 @@ exports.isSessionAuthenticated = function(req) {
     }
     //If not login request and not /api request
     //Requests that are same across vCenter and openStack
-    if(!longPoll.checkLoginReq(req) && !longPoll.checkOrchestrationAgnosticReq(req)) {
-        if(req.url.indexOf('/vcenter') > -1 && req.session.vmware_soap_session == null) {
+    var refererURL = req.headers.referer;
+    //As we differentiate between orchestration models based on browserURL like for vcenter mode, we suffix with "/vcenter"
+    //If user deletes the "/vcenter" suffix and reloads the page,we need to take to login page and vice-versa
+    if(refererURL != null) {
+        if(refererURL.indexOf('/vcenter') > -1 && req.session.vmware_soap_session == null) {
             //Moving none to vcenter orchestration mode 
             req.session.isAuthenticated = false;
             // console.log(commonUtils.FgGreen,'vcenter not authenticated',req.url,req.session.vmware_soap_session);
             return false;
         }
-        if(req.url.indexOf('/vcenter') == -1 && req.session.vmware_soap_session != null) {
+        if(refererURL.indexOf('/vcenter') == -1 && req.session.vmware_soap_session != null) {
             //Moving from vCenter orchestration mode to none
             // console.log(commonUtils.FgGreen,'none not authenticated',req.url,req.session.vmware_soap_session);
             delete req.session.vmware_soap_session;
