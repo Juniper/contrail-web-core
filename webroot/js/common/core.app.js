@@ -399,7 +399,6 @@ var coreBundles = {
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
-            'xml2json',
             'jquery.ba-bbq',
             'jquery.json',
             'bootstrap',
@@ -1030,9 +1029,10 @@ if (typeof document !== 'undefined' && document) {
 
     }
     var orchPrefix = window.location.pathname;
-    //Even with URL as <https://localhost:8143>,pahtname is returning as "/"
-    if(orchPrefix == "/")
-        orchPrefix = "";
+    //Even with URL as <https://localhost:8143>,pathname is returning as "/"
+    //Strip-offf the trailing /
+    if(orchPrefix.endsWith("/") == true)
+        orchPrefix = orchPrefix.replace(/\/$/,'');
 
     (function() {
         var menuXMLLoadDefObj,layoutHandlerLoadDefObj,featurePkgs;
@@ -1153,8 +1153,13 @@ if (typeof document !== 'undefined' && document) {
                 if(appContEl.classList) {
                     appContEl.classList.add('hide');
                 } else {
-                    appContEl.className += ' ' + className;
+                    appContEl.className += ' hide';
                 }
+                //Remove modal dialogs
+                require(['jquery'],function() {
+                    $('.modal').remove();
+                    $('.modal-backdrop').remove();
+                });
                 loadUtils.bindSignInListeners();
             },
             fetchMenu: function(menuXMLLoadDefObj) {
@@ -1213,6 +1218,10 @@ if (typeof document !== 'undefined' && document) {
                     var regionName = $("[name='regionname']").val();
                     if ((null != regionName) && (regionName.length > 0)) {
                         postData['regionname'] = regionName;
+                    }
+                    var domain = $("[name='domain']").val();
+                    if ((null != domain) && (domain.length > 0)) {
+                        postData['domain'] = domain;
                     }
                     $.ajax({
                         url: orchPrefix + '/authenticate',
