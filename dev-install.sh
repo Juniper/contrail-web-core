@@ -171,7 +171,7 @@ cp -af ./$THIRD_PARTY/datetimepicker-v2.4.5/jquery.datetimepicker.css webroot/as
 #Start - Copy Knockout from $THIRD_PARTY
 rm -rf webroot/assets/knockout
 mkdir webroot/assets/knockout
-cp -af ./$THIRD_PARTY/knockout-3.0.0.js webroot/assets/knockout/knockout-3.0.0.js
+cp -af ./$THIRD_PARTY/knockout-v3.0.0/build/output/knockout-latest.debug.js webroot/assets/knockout/knockout.js
 #End - Copy Knockout from $THIRD_PARTY
 
 #Start - Copy Moment Date-Formatter from $THIRD_PARTY
@@ -205,16 +205,15 @@ cp -r ./$THIRD_PARTY/jquery-contextMenu-v1.6.5/src/jquery.contextMenu.css webroo
 #Start - Copy Backbone from $THIRD_PARTY
 rm -rf webroot/assets/backbone
 mkdir webroot/assets/backbone
-cp -af ./$THIRD_PARTY/backbone-min.js webroot/assets/backbone/backbone-min.js
-cp -af ./$THIRD_PARTY/backbone-min.map webroot/assets/backbone/backbone-min.map
-cp -af ./$THIRD_PARTY/knockback.min.js webroot/assets/backbone/knockback.min.js
+cp -af ./$THIRD_PARTY/backbone.js webroot/assets/backbone/backbone.js
+cp -af ./$THIRD_PARTY/knockback.js webroot/assets/backbone/knockback.js
 cp -af ./$THIRD_PARTY/backbone-validation-amd.js webroot/assets/backbone/backbone-validation-amd.js
 #End - Copy Backbone from $THIRD_PARTY
 
 #Start - Copy Requirejs & Textjs from $THIRD_PARTY
 rm -rf webroot/assets/requirejs
 mkdir webroot/assets/requirejs
-cp -af ./$THIRD_PARTY/require.js webroot/assets/requirejs/require.js
+cp -af ./$THIRD_PARTY/node_modules/requirejs/require.js webroot/assets/requirejs/require.js
 cp -af ./$THIRD_PARTY/text.js webroot/assets/requirejs/text.js
 #End - Copy Requirejs & Textjs  from $THIRD_PARTY
 
