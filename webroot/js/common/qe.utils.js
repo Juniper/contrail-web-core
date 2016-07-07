@@ -320,12 +320,12 @@ define([
 
         self.parseWhereString2Collection = function(queryFormModel) {
             queryFormModel.where_json(self.parseWhereString2JSON(queryFormModel));
-            qewu.parseWhereJSON2Collection(queryFormModel)
+            self.parseWhereJSON2Collection(queryFormModel)
         };
 
         self.parseFilterString2Collection = function(queryFormModel) {
             queryFormModel.filter_json(self.parseFilterString2JSON(queryFormModel));
-            qewu.parseFilterJSON2Collection(queryFormModel);
+            self.parseFilterJSON2Collection(queryFormModel);
         };
 
         self.parseWhereJSON2Collection = function(queryFormModel) {
