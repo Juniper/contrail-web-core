@@ -18,7 +18,6 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
 
             menuHandler.loadMenu(menuObj);
             menuHandler.handleSideMenu();
-
             self.onHashChange({}, $.bbq.getState());
         };
 
@@ -83,17 +82,9 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
         };
 
         this.onHashChange = function(lastHash, currHash, loadingStartedDefObj) {
-            if(globalObj['isInitFeatureAppComplete']) {
+            globalObj['featureAppDefObj'].done(function () {
                 contentHandler.loadContent(lastHash, currHash, loadingStartedDefObj);
-            } else if (globalObj['isInitFeatureAppInProgress']) {
-                globalObj['featureAppDefObj'].done(function () {
-                    contentHandler.loadContent(lastHash, currHash, loadingStartedDefObj);
-                });
-            } else {
-                globalObj['featureAppDefObj'].done(function () {
-                    contentHandler.loadContent(lastHash, currHash, loadingStartedDefObj);
-                });
-            }
+            });
         }
     };
 

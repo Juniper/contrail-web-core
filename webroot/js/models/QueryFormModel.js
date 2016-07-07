@@ -46,7 +46,7 @@ define([
         },
 
         onChangeTime: function() {
-            if(this.table_type() === cowc.QE_STAT_TABLE_TYPE) {
+            if(this.table_type() === cowc.QE_STAT_TABLE_TYPE || this.table_type() === cowc.QE_OBJECT_TABLE_TYPE) {
                 var setTableValuesCallbackFn = function (self, resultArr){
                     var currentSelectedTable = self.model().attributes.table_name;
                     if (currentSelectedTable != null)
@@ -59,12 +59,12 @@ define([
                         }
                     }
                 }
-                this.setTableValues(setTableValuesCallbackFn);
+                this.setTableValues(setTableValuesCallbackFn, this.table_type());
             }
             this.setTableFieldValues();
         },
 
-        setTableValues: function(setTableValuesCallbackFn) {
+        setTableValues: function(setTableValuesCallbackFn, tabletype) {
             var self = this,
                 contrailViewModel = this.model(),
                 timeRange = contrailViewModel.attributes.time_range;
@@ -75,7 +75,7 @@ define([
                     toTimeUTC  : toTimeUTC,
                     table_name : 'StatTable.FieldNames.fields',
                     select     : ['name', 'fields.value'],
-                    where      : [[{"name": "name", "value": "STAT", "op": 7}]]
+                    where      : [[{"name": "name", "value": tabletype, "op": 7}]]
                 };
                 $.ajax({
                     url: '/api/qe/table/column/values',
@@ -184,6 +184,7 @@ define([
                 disableFieldArray = [].concat(defaultSelectFields).concat(this.disableSelectFields),
                 disableSubstringArray = this.disableSubstringInSelectFields;
 
+            qewu.adjustHeight4FormTextarea(model.attributes.query_prefix);
             if(tableName != '') {
                 $.ajax(ajaxConfig).success(function(response) {
                     var selectFields = getSelectFields4Table(response, disableFieldArray, disableSubstringArray),

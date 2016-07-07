@@ -283,7 +283,7 @@ define(['underscore'], function (_) {
             return true;
         };
 
-        this.getEditConfigObj = function (configObj, locks) {
+        this.getEditConfigObj = function (configObj, locks, schema, path) {
             var lock = null,
                 testobj = $.extend(true, {}, configObj);
 
@@ -304,7 +304,7 @@ define(['underscore'], function (_) {
                 // check if value is a key or object
                 // if object make a recursive call on value
                 else if (_.isObject(value)) {
-                    testobj[attribute] = cowu.getEditConfigObj(value, locks);
+                    testobj[attribute] = cowu.getEditConfigObj(value, locks, schema, path+'.properties.'+attribute);
                     if ($.isEmptyObject(testobj[attribute])) {
                         delete testobj[attribute];
                     }
@@ -316,6 +316,20 @@ define(['underscore'], function (_) {
                     if (contrail.checkIfExist(value) && (typeof value == 'string')) {
                         testobj[attribute] = value.trim();
                     }
+
+                    var currentAttr = testobj[attribute],
+                        currentAttrPath = (path+'.properties.'+attribute).substring(1),
+                        currentAttrSchemaObject = jsonPath(schema, currentAttrPath)[0];
+
+                    if(contrail.checkIfExist(currentAttrSchemaObject)) {
+                        if((currentAttrSchemaObject.type === cowc.TYPE_NUMBER) || (currentAttrSchemaObject.type === cowc.TYPE_INTEGER)) {
+                            testobj[attribute] = parseInt(currentAttr, 10);
+                        } else if(currentAttrSchemaObject.type === cowc.TYPE_BOOLEAN) {
+                            // return boolean true or false if string 'true' or 'false' respectively
+                            testobj[attribute] = (currentAttr == "true");
+                        }
+                    }
+
                     if (contrail.checkIfExist(locks[attribute + cowc.LOCKED_SUFFIX_ID])) {
                         lock = locks[attribute + cowc.LOCKED_SUFFIX_ID];
                         if (lock === true) {
@@ -588,21 +602,29 @@ define(['underscore'], function (_) {
         };
 
         this.generateBlockListKeyValueTemplate = function (config, app, parentConfig, objectAccessor) {
-            var template = '<ul class="item-list">';
+            var template = '<ul class="item-list">',
+                showAllFields = contrail.checkIfExist(parentConfig.showAllFields) ? parentConfig.showAllFields : false;
 
             $.each(config, function (configKey, configValue) {
-                template += '' +
-                    '{{#IfValidJSONValueByPath "' + configValue.key + '" ' + objectAccessor + ' ' + configKey + '}}' +
+                var keyValueTemplate = '' +
                     '<li>' +
-                    '<label class="inline row-fluid">' +
-                    '<span class="key span5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
-                    ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
-                    configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
-                    '<span class="value span7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
-                    ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">' + self.getValueByConfig(configValue, app, objectAccessor) + '</span>'+
-                    '</label>' +
-                    '</li>' +
-                    '{{/IfValidJSONValueByPath}}';
+                        '<label class="inline row-fluid">' +
+                            '<span class="key span5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
+                            ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
+                            configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
+                            '<span class="value span7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
+                            ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">' + self.getValueByConfig(configValue, app, objectAccessor) + '</span>'+
+                        '</label>' +
+                    '</li>';
+
+                if (!showAllFields) {
+                    template += '' +
+                        '{{#IfValidJSONValueByPath "' + configValue.key + '" ' + objectAccessor + ' ' + configKey + '}}' +
+                            keyValueTemplate +
+                        '{{/IfValidJSONValueByPath}}';
+                } else {
+                    template += keyValueTemplate;
+                }
             });
 
             template += '</ul>';

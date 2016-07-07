@@ -10,6 +10,7 @@ define([
 ], function (_, ContrailView, JSONEditor, Ajv) {
     var JSONEditorView = ContrailView.extend({
         render: function () {
+
             var self = this;
             var onError = false;
             var ajv = Ajv({ allErrors: true, verbose: true, removeAdditional: true  });

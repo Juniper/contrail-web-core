@@ -38,8 +38,6 @@ if (!module.parent) {
     process.exit(1);
 }
 
-var parser = new xml2js.Parser();
-
 var redisClientCreateEvent = new eventEmitter();
 
 function putJsonViaInternalApi (api, ignoreError,
@@ -1058,8 +1056,7 @@ function createJSONByUVEResponseArr (resultArr, responseArr, lastIndex)
  *    which ignores all XML attributes and only creates text nodes
  */
 function getRestAPIServer (ip, port, apiName) {
-    var api = apiName || global.label.API_SERVER;
-    return rest.getAPIServer({apiName: api, server:ip, port: port,
+    return rest.getAPIServer({apiName: apiName, server:ip, port: port,
                              xml2jsSettings:
                                 {ignoreAttrs: true,
                                  explicitArray: false
@@ -1397,10 +1394,19 @@ function getWebServerInfo (req, res, appData)
             'cnfg;server_ip',
              null);
 
-    serverObj['disabledFeatures'] = getValueByJsonPath(config,'features;disabled',[]);
+    serverObj['optFeatureList'] = getValueByJsonPath(config,'optFeatureList',{});
     serverObj['featurePkgsInfo'] = getValueByJsonPath(config,'featurePkg',[]);
     serverObj['sessionTimeout'] = getValueByJsonPath(config,'session;timeout', 3600000);
     serverObj['_csrf'] = req.session._csrf;
+    serverObj['serviceEndPointFromConfig'] =
+        (null != config.serviceEndPointFromConfig) ?
+        config.serviceEndPointFromConfig : true;
+    serverObj['regionList'] = req.session.regionList;
+    serverObj['isRegionListFromConfig'] = config.regionsFromConfig;
+    serverObj['configRegionList'] = config.regions;
+
+    var authApi = require('../common/auth.api');
+    serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
@@ -1564,6 +1570,8 @@ function mergeAllPackageList (serverType)
 
 function getAllJsons (menuDir, callback)
 {
+    var options = {attrkey: 'menuAttr'};
+    var parser = new xml2js.Parser(options);
     var fileName = menuDir + '/menu.xml';
     fs.readFile(fileName, function(err, content) {
         parser.parseString(content, function(err, content) {
@@ -2216,6 +2224,35 @@ function filterJsonKeysWithNullValues(obj) {
     return obj;
 }
 
+function doDeepSort (object)
+{
+    if (null == object) {
+        return object;
+    }
+    var sortedObj = {};
+    var keys = Object.keys(object);
+
+    keys.sort(function(key1, key2){
+        if (key1 > key2) {
+            return 1;
+        } else if (key1 < key2) {
+            return -1;
+        }
+        return 0;
+    });
+
+    for (var index in keys) {
+        var key = keys[index];
+        if ((typeof object[key] == 'object') &&
+            (!(object[key] instanceof Array))) {
+            sortedObj[key] = doDeepSort(object[key]);
+        } else {
+            sortedObj[key] = object[key];
+        }
+    }
+    return sortedObj;
+}
+
 exports.filterJsonKeysWithNullValues = filterJsonKeysWithNullValues;
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
@@ -2275,3 +2312,5 @@ exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
 exports.isSubArray = isSubArray;
 exports.getValueByJsonPath = getValueByJsonPath;
 exports.getFeaturePkgs = getFeaturePkgs;
+exports.doDeepSort = doDeepSort;
+

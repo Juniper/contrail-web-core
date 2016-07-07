@@ -280,7 +280,7 @@ function registerReqToApp ()
     myApp.get('/', csrf);
     myApp.get('/vcenter', csrf);
     //Enable CSRF token check for all URLs starting with "/api"
-    myApp.post('/api/*', csrf);
+    myApp.all('/api/*', csrf);
 
     loadAllFeatureURLs(myApp);
     var handler = require('./src/serverroot/web/routes/handler')
@@ -628,6 +628,12 @@ function clusterMasterInit (callback)
         },
         function(CB) {
             checkAndDeleteRedisRDB(function() {
+                CB(null, null);
+            });
+        },
+        function(CB) {
+            var regionJs = require('./src/tools/parseRegion');
+            regionJs.createRegionFile(function() {
                 CB(null, null);
             });
         }

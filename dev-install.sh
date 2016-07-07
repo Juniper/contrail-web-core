@@ -53,6 +53,7 @@ rm -rf webroot/assets/jquery
 mkdir -p webroot/assets/jquery/js
 mkdir -p webroot/assets/jquery/css
 cp -af ./$THIRD_PARTY/jquery.xml2json.js webroot/assets/jquery/js/
+cp -af ./$THIRD_PARTY/x2js-1.2.0/xml2json.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.ui.touch-punch.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.ba-bbq.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.timer.js webroot/assets/jquery/js/
@@ -190,9 +191,6 @@ cp -r ./$THIRD_PARTY/joint-v0.9.3/src/vectorizer.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/dagre-v0.7.1/dist/dagre.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.layout.DirectedGraph.js webroot/assets/joint/js/
 cp -r ./$THIRD_PARTY/joint-v0.9.3/dist/joint.nojquery.min.css webroot/assets/joint/css/
-#new V0.9.6
-cp -r ./$THIRD_PARTY/joint-v0.9.6/js/joint.min.js webroot/assets/joint/js/
-cp -r ./$THIRD_PARTY/joint-v0.9.6/css/joint.min.css webroot/assets/joint/css/
 #End - Copy Joint from web-third-party
 
 #Start - Copy jquery-contextMenu from web-third-party
@@ -242,6 +240,16 @@ cp -af ./$THIRD_PARTY/bezierjs-gh-pages/lib/bezier.js webroot/assets/bezierjs/be
 #Start - Copy uuid.js from $THIRD_PARTY
 cp -af ./$THIRD_PARTY/uuid.js webroot/js/uuid.js
 #End - Copy uuid.js from $THIRD_PARTY
+
+#Start - Copy ajv.min.js from $THIRD_PARTY
+mkdir webroot/assets/ajv
+cp -af ./$THIRD_PARTY/ajv.min.js webroot/assets/ajv/ajv.min.js
+#End - Copy ajv.min.js from $THIRD_PARTY
+
+#Start - Copy jsoneditor.js from $THIRD_PARTY
+mkdir webroot/assets/jsoneditor
+cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.min.js webroot/assets/jsoneditor/jsoneditor.min.js
+#End - Copy jsoneditor.js from $THIRD_PARTY
 
 #Start - Merging All CSS files
 rm -f webroot/css/contrail-all.css

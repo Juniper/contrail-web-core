@@ -108,8 +108,9 @@ define([
             return engQueryStr;
         };
 
-        self.adjustHeight4FormTextarea = function(elId) {
-            var texareaNames = ['select', 'where', 'filters'];
+        self.adjustHeight4FormTextarea = function(queryPrefix) {
+            var elId = '#qe-' + queryPrefix + '-form',
+                texareaNames = ['select', 'where', 'filters'];
 
             $.each(texareaNames, function(nameKey, nameValue) {
                 $(elId).find('[name="' + nameValue + '"]')
@@ -319,12 +320,12 @@ define([
 
         self.parseWhereString2Collection = function(queryFormModel) {
             queryFormModel.where_json(self.parseWhereString2JSON(queryFormModel));
-            qewu.parseWhereJSON2Collection(queryFormModel)
+            self.parseWhereJSON2Collection(queryFormModel)
         };
 
         self.parseFilterString2Collection = function(queryFormModel) {
             queryFormModel.filter_json(self.parseFilterString2JSON(queryFormModel));
-            qewu.parseFilterJSON2Collection(queryFormModel);
+            self.parseFilterJSON2Collection(queryFormModel);
         };
 
         self.parseWhereJSON2Collection = function(queryFormModel) {
@@ -718,7 +719,7 @@ define([
     };
 
     function parseSortFields(sortFields){
-        var sortFieldsArr = sort_fields.split(',');
+        var sortFieldsArr = sortFields.split(',');
         for(var i=0; i< sortFieldsArr.length; i++) {
             sortFieldsArr[i] = sortFieldsArr[i].trim();
         }

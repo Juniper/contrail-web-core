@@ -31,6 +31,7 @@ define([
     'core-basedir/js/views/LineWithFocusChartView',
     'core-basedir/js/views/LoginWindowView',
     'core-basedir/js/views/MultiBarChartView',
+    'core-basedir/js/views/BarChartView',
     'core-basedir/js/views/MultiDonutChartView',
     'core-basedir/js/views/NodeConsoleLogsView',
     'core-basedir/js/views/QueryFilterView',

@@ -17,11 +17,16 @@ define(['underscore'], function (_) {
 
         this.loadMenu = function (xml) {
             menuObj = $.xml2json(xml);
-            var disabledFeatures = {disabled:globalObj['webServerInfo']['disabledFeatures']};
-            var featurePkgsInfo = globalObj['webServerInfo']['featurePkgsInfo'];
-            processXMLJSON(menuObj, disabledFeatures);
+            var optFeatureList =
+                getValueByJsonPath(globalObj, 'webServerInfo;optFeatureList',
+                                   null);
+            var featurePkgsInfo =
+                getValueByJsonPath(globalObj, 'webServerInfo;featurePkgsInfo',
+                                   null);
+            processXMLJSON(menuObj, optFeatureList);
             var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', featurePkgsInfo));
             $("#sidebar-shortcuts").html(menuShortcuts);
+            menuHandler.filterMenuItems(menuObj['items']['item']);
 
             //Add an event listener for clicking on menu items
             $('#menu').off('click').on('click', 'ul > li > a', function (e) {
@@ -33,12 +38,11 @@ define(['underscore'], function (_) {
             });
 
             //Intialize the alarm flag
-            var disabledFeatures = ifNull(globalObj['webServerInfo']['disabledFeatures']['disabled'],[]);
-            $.each(disabledFeatures, function (i,d) {
-                if(d == 'monitor_alarms') {
-                    cowu.getAlarmsFromAnalytics = false;
-                }
-            });
+            var isMonAlarmsEnabled =
+                getValueByJsonPath(optFeatureList, 'mon_alarms', true);
+            if (false == isMonAlarmsEnabled) {
+                cowu.getAlarmsFromAnalytics = false;
+            }
         }
 
         //Filter the menu items based
@@ -240,7 +244,7 @@ define(['underscore'], function (_) {
          * post-processing of menu XML JSON
          * JSON expectes item to be an array,but xml2json make item as an object if there is only one instance
          */
-        function processXMLJSON(json, disabledFeatures) {
+        function processXMLJSON(json, optFeatureList) {
             if ((json['resources'] != null) && json['resources']['resource'] != null) {
                 if (!(json['resources']['resource'] instanceof Array))
                     json['resources']['resource'] = [json['resources']['resource']];
@@ -250,18 +254,25 @@ define(['underscore'], function (_) {
                     var currItem = json['items']['item'];
                     for (var i = (currItem.length - 1); i > -1; i--) {
                         //remove diabled features from the menu obeject
-                        if (currItem[i]['hash'] != undefined
-                            && disabledFeatures.disabled != null && disabledFeatures.disabled.indexOf(currItem[i]['hash']) !== -1) {
+                        var isOptional =
+                            getValueByJsonPath(currItem, i +
+                                               ';menuAttr;optional', false);
+                        var hash =
+                            getValueByJsonPath(currItem, i + ';hash', null);
+                        var ifFeatureEnabled =
+                            getValueByJsonPath(optFeatureList, hash, false);
+                        if (("true" == isOptional) &&
+                            (false == ifFeatureEnabled)) {
                             currItem.splice(i, 1);
                         } else {
                             if (currItem[i] != undefined) {
-                                processXMLJSON(currItem[i], disabledFeatures);
+                                processXMLJSON(currItem[i], optFeatureList);
                                 add2SiteMap(currItem[i]);
                             }
                         }
                     }
                 } else {
-                    processXMLJSON(json['items']['item'], disabledFeatures);
+                    processXMLJSON(json['items']['item'], optFeatureList);
                     add2SiteMap(json['items']['item']);
                     json['items']['item'] = [json['items']['item']];
                 }

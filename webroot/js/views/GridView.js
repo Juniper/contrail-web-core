@@ -23,7 +23,7 @@ define([
                 customGridConfig;
 
             var grid = null, dataView = null, footerPager = null,
-                gridDataSource, gridColumns, gridSortColumns = [], gridOptions,
+                gridDataSource, gridColumns = [], gridSortColumns = [], gridOptions,
                 autoRefreshInterval = false, searchColumns = [],
                 currentSelectedRows = [],
                 dvConfig = null, eventHandlerMap = {grid: {}, dataView: {}},
@@ -34,7 +34,7 @@ define([
                 self.model = modelMap[viewConfig.modelKey]
             }
 
-            contrailListModel = (self.model != null) ? self.model : new ContrailListModel(listModelConfig);
+            contrailListModel = (self.model != null && self.model['_type'] === 'contrailListModel') ? self.model : new ContrailListModel(listModelConfig);
 
             //delete viewConfig.elementConfig['body']['dataSource']['remote'];
             //viewConfig.elementConfig['body']['dataSource'] = {dataView: contrailListModel};
@@ -62,6 +62,13 @@ define([
 
             if (gridOptions.fixedRowHeight != false && _.isNumber(gridOptions.fixedRowHeight)) {
                 gridOptions.rowHeight = gridOptions.fixedRowHeight;
+            }
+
+            if (gridColumns.length === 0) {
+                initGridHeader();
+                gridContainer.append('<div class="grid-body ui-widget"><div class="grid-load-status">No Columns found.</div></div>');
+                gridContainer.find('.grid-header-icon-loading').hide();
+                return;
             }
 
             if (contrail.checkIfExist(gridDataSource.dataView)) {
@@ -1095,17 +1102,17 @@ define([
                         gridContainer.data('contrailGrid', null);
                         gridContainer.html('').removeClass('contrail-grid');
                     },
-                    setRemoteAjaxConfig: function (ajaxConfig) {
-                        if (contrail.checkIfExist(gridDataSource.remote.ajaxConfig)) {
-                            dataView.setRemoteAjaxConfig(ajaxConfig);
-                            dvConfig.remote.ajaxConfig = ajaxConfig;
-                            gridDataSource.remote.ajaxConfig = ajaxConfig;
-                            customGridConfig.body.dataSource.remote.ajaxConfig = ajaxConfig;
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    },
+                    // setRemoteAjaxConfig: function (ajaxConfig) {
+                    //     if (contrail.checkIfExist(gridDataSource.remote.ajaxConfig)) {
+                    //         dataView.setRemoteAjaxConfig(ajaxConfig);
+                    //         dvConfig.remote.ajaxConfig = ajaxConfig;
+                    //         gridDataSource.remote.ajaxConfig = ajaxConfig;
+                    //         customGridConfig.body.dataSource.remote.ajaxConfig = ajaxConfig;
+                    //         return true;
+                    //     } else {
+                    //         return false;
+                    //     }
+                    // },
                     // Refreshes the grid if the grid data is fetched via ajax call
                     refreshGrid: function () {
                         if (contrail.checkIfExist(gridDataSource.remote) && contrail.checkIfExist(gridDataSource.remote.ajaxConfig.url)) {

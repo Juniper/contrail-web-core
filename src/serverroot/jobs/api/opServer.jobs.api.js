@@ -1,24 +1,23 @@
 /*
- * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
 var rest = require('../../common/rest.api'),
     config = process.mainModule.exports.config,
     authApi = require('../../common/auth.api'),
-    redisPub = require('../core/redisPub'),
     logutils = require('../../utils/log.utils'),
     commonUtils = require('../../utils/common.utils'),
     jobsUtils = require('../../common/jobs.utils'),
     async = require('async'),
-    configServer;
+    opServer;
 
-var configServerIP = ((config.cnfg) && (config.cnfg.server_ip)) ?
-    config.cnfg.server_ip : global.DFLT_SERVER_IP;
-var configServerPort = ((config.cnfg) && (config.cnfg.server_port)) ?
-    config.cnfg.server_port : '8082';
-configServer = rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,
-                                 server: configServerIP,
-                                 port: configServerPort});
+var opServerIP = ((config.analytics) && (config.analytics.server_ip)) ?
+    config.analytics.server_ip : global.DFLT_SERVER_IP;
+var opServerPort = ((config.analytics) && (config.analytics.server_port)) ?
+    config.analytics.server_port : '8081';
+
+opServer = rest.getAPIServer({apiName: global.label.OPSERVER,
+                              server: opServerIP, port: opServerPort});
 
 function callApiByReqType (obj, reqType, stopRetry, callback)
 {
@@ -42,7 +41,7 @@ function callApiByReqType (obj, reqType, stopRetry, callback)
     }
 }
 
-function doSendApiServerRespToApp (err, data, obj, callback)
+function doSendOpServerRespToApp (err, data, obj, callback)
 {
     var jobData = obj.jobData;
     var appHeaders = obj.appHeaders;
@@ -86,27 +85,27 @@ function serveAPIRequestCB (obj, callback)
     var reqUrl = obj.reqUrl;
     var reqData = obj.reqData;
     var reqType = obj.reqType;
-    var jobData = obj.jobData;
 
     if (global.HTTP_REQUEST_GET == reqType) {
         obj.apiRestApi.api.get(reqUrl, function(error, data) {
-            doSendApiServerRespToApp(error, data, obj, callback);
+            doSendOpServerRespToApp(error, data, obj, callback);
         }, obj.headers);
     } else if (global.HTTP_REQUEST_PUT == reqType) {
         obj.apiRestApi.api.put(reqUrl, reqData, function(error, data) {
-            doSendApiServerRespToApp(error, data, obj, callback);
+            doSendOpServerRespToApp(error, data, obj, callback);
         }, obj.headers);
     } else if (global.HTTP_REQUEST_POST == reqType) {
         obj.apiRestApi.api.post(reqUrl, reqData, function(error, data) {
-            doSendApiServerRespToApp(error, data, obj, callback);
+            doSendOpServerRespToApp(error, data, obj, callback);
         }, obj.headers);
     } else if (global.HTTP_REQUEST_DEL == reqType) {
         obj.apiRestApi.api.delete(reqUrl, function(error, data) {
-            doSendApiServerRespToApp(error, data, obj, callback);
+            doSendOpServerRespToApp(error, data, obj, callback);
         }, obj.headers);
     } else {
         var error = new appErrors.RESTServerError('reqType: ' + reqType +
                                                   ' not allowed.');
+        logutils.logger.error('reqType: ' + reqType + ' not allowed.');
         callback(error, null);
     }
 }
@@ -115,14 +114,14 @@ function serveAPIRequest (reqUrl, reqData, jobData, appHeaders, reqType,
                           stopRetry, callback)
 {
     var dataObj = {
-        apiName: global.label.VNCONFIG_API_SERVER,
+        apiName: global.label.OPSERVER,
         reqUrl: reqUrl,
         appHeaders: appHeaders,
         jobData: jobData,
         reqType: reqType,
         stopRetry: stopRetry,
         reqData: reqData,
-        apiRestApi: configServer
+        apiRestApi: opServer
     };
     async.waterfall([
         async.apply(jobsUtils.getHeaders, dataObj),

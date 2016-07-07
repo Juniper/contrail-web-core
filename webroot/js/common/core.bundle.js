@@ -21,10 +21,6 @@ define([
         'contrail-view-model',
         'contrail-list-model',
         'lodash',
-        // 'slick.core',
-        // 'slick.dataview',
-        // 'bezier',
-        // 'underscore',
         'crossfilter',
         'backbone',
         'text',
@@ -52,7 +48,7 @@ define([
         'mon-infra-sysinfo-view',      
         'mon-infra-dashboard-view',
         ],function(CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig,ChartUtils,CoreCommonTmpls, GraphUtils) {
-            cowc = new CoreConstants();
+            cowc = CoreConstants;
             cowf = new CoreFormatters();
             cowl = new CoreLabels();
             cowm = new CoreMessages();

@@ -265,7 +265,7 @@ $('.pre-format-JSON2HTML .expander').live('click', function(){
     selfParent.children('i').removeClass('icon-plus').removeClass('expander').addClass('icon-minus').addClass('collapser');
     if(selfParent.children('.node').hasClass('raw')){
         jsonObj = JSON.parse(selfParent.children('ul.node').text());
-        selfParent.empty().append(formatJsonObject(jsonObj, 2, parseInt(selfParent.children('.node').data('depth')) + 1));
+        selfParent.empty().append(contrail.formatJsonObject(jsonObj, 2, parseInt(selfParent.children('.node').data('depth')) + 1));
     }
     selfParent.children('.node').show();
     selfParent.children('.collapsed').hide();

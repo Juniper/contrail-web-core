@@ -27,6 +27,10 @@
         <define>discoveryClientApi</define>
         <path>./discoveryclient.api.js</path>
     </require>
+    <require>
+        <define>authApi</define>
+        <path>./auth.api.js</path>
+    </require>
     <item>
         <url>/api/service/networking/device-status/:ip</url>
         <method>post</method>
@@ -71,6 +75,18 @@
         <method>get</method>
         <feature>discoveryclient</feature>
         <callback>discoveryClientApi.getDiscServiceRespDataList</callback>
+    </item>
+    <item>
+        <url>/api/tenant/get-region-list</url>
+        <method>get</method>
+        <feature>orchestration</feature>
+        <callback>authApi.getRegionList</callback>
+    </item>
+    <item>
+        <url>/api/getRoles</url>
+        <method>get</method>
+        <feature>orchestration</feature>
+        <callback>configServerUtils.getRoles</callback>
     </item>
 </urlLists>
 

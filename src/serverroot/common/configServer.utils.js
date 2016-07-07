@@ -58,6 +58,12 @@ function getProjectsFromApiServer (request, appData, callback)
 
 function getDomainsFromApiServer (appData, callback)
 {
+    var headers = {'noRedirectToLogout': true}
+    /* This request is for login itself, it may happen we did not find the
+     * region in cookie, or invalid cookie, so by default API Server plugin in
+     * this scenario, redirects to logout page, but we should not do redirect in
+     * this case
+     */
     var domainsURL = '/domains';
     configApiServer.apiGet(domainsURL, appData, function(error, data) {
         if ((null != error) || (null == data)) {
@@ -65,7 +71,7 @@ function getDomainsFromApiServer (appData, callback)
         } else {
             callback(error, data);
         }
-    });
+    }, headers);
 }
 
 function getTenantListAndSyncDomain (request, appData, callback)
@@ -183,6 +189,14 @@ function getTenantListAndSyncDomain (request, appData, callback)
     });
 }
 
+function getRoles (req, res, appData)
+{
+    var authApi = require('./auth.api');
+    return authApi.getRoleList(req, function(error, roles){
+        commonUtils.handleJSONResponse(error, res, roles);
+    });
+};
+
 function getProjectRole (req, res, appData)
 {
     var uiRoles = null;
@@ -280,4 +294,5 @@ exports.getProjectsFromApiServer = getProjectsFromApiServer;
 exports.getTenantListAndSyncDomain = getTenantListAndSyncDomain;
 exports.getDomainsFromApiServer = getDomainsFromApiServer;
 exports.getProjectRole = getProjectRole;
+exports.getRoles = getRoles;
 

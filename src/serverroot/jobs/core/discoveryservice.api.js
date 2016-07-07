@@ -14,6 +14,8 @@ var config = process.mainModule.exports.config,
 
 var discServiceRetryList = [];
 var serviceTimers = {};
+var maxRetryCount = 12;
+var discCheckTimer = 10000; /* 10 Seconds */
 
 var server_ip = ((null != config) && (null != config.cnfg) && 
                  (null != config.cnfg.server_ip)) ? config.cnfg.server_ip :
@@ -34,7 +36,54 @@ var redisSubClient;
 var clientID = null;
 var discServiceSubsStarted = false;
 
-function createRedisClientAndStartSubscribeToDiscoveryService (reqFrom)
+function checkIfDiscoveryServerReachable (callback)
+{
+    var reqUrl = '/';
+    discServer.api.get(reqUrl, function(error, data) {
+        if (null !== error) {
+            callback(false);
+            return;
+        }
+        callback(true);
+    });
+}
+
+function createRedisClientAndStartSubscribeToDiscoveryService (reqFrom,
+                                                               retryCount)
+{
+    if (null == retryCount) {
+        retryCount = 0;
+    }
+    var webuiIP = discClient.getWebUINodeIP();
+    if (null == webuiIP) {
+        /* Then create a connection to discovery client and then update the
+         * localAddress
+         */
+        checkIfDiscoveryServerReachable(function(isActive) {
+            if (true == isActive) {
+                createRedisClientAndStartSubscribeToDiscoveryServiceCB(reqFrom);
+                return;
+            }
+            var timer = setTimeout(function() {
+                checkIfDiscoveryServerReachable(function(isActive) {
+                    if ((false == isActive) && (retryCount <= maxRetryCount)) {
+                        retryCount++;
+                        createRedisClientAndStartSubscribeToDiscoveryService(reqFrom,
+                                                                             retryCount);
+                        return;
+                    } else {
+                        clearTimeout(timer);
+                        createRedisClientAndStartSubscribeToDiscoveryServiceCB(reqFrom);
+                    }
+                });
+            }, discCheckTimer);
+        });
+    } else {
+        createRedisClientAndStartSubscribeToDiscoveryServiceCB(reqFrom);
+    }
+}
+
+function createRedisClientAndStartSubscribeToDiscoveryServiceCB(reqFrom)
 {
     if (null == redisSubClient) {
         redisSubClient = redisUtils.createRedisClient();
@@ -53,9 +102,13 @@ function subscribeToDiscoveryService (serviceObj, callback)
     var instCnt     = serviceObj['instCnt'];
 
     var clientID  = os.hostname() + ':' + clientType;
+    var webuiIP = discClient.getWebUINodeIP();
     var postJson =  
         { "service": serviceName, "instances": 0, "min-instances": instCnt,
           "client": clientID, "client-type": clientType};
+    if (null != webuiIP) {
+        postJson['remote-addr'] = webuiIP;
+    }
     var url = '/subscribe';
 
     discServer.api.post(url, postJson, function(err, data) {

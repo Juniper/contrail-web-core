@@ -39,6 +39,7 @@ define([
                         newKey = keyArray[keyArray.length - 1];
 
                     label = capitalizeSentence(cowu.replaceAll("_", " ", newKey));
+                    label = capitalizeSentence(cowu.replaceAll("-", " ", label));
                 }
             }
 
