@@ -93,9 +93,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
             'lodash'                      : coreWebDir + '/assets/lodash/lodash.min',
             'crossfilter'               : coreWebDir + '/assets/crossfilter/js/crossfilter',
-            'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
+            'backbone'                    : coreWebDir + '/assets/backbone/backbone',
             'text'                        : coreWebDir + '/assets/requirejs/text',
-            'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
+            'knockout'                    : coreWebDir + '/assets/knockout/knockout',
             'moment'                    : coreWebDir + "/assets/moment/moment",
             'layout-handler'              : coreWebDir + '/js/handlers/LayoutHandler',
             'menu-handler'                : coreWebDir + '/js/handlers/MenuHandler',
@@ -142,7 +142,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'slick.groupmetadata'       : coreWebDir + "/assets/slickgrid/js/slick.groupitemmetadataprovider",
             'slick.rowselectionmodel'   : coreWebDir + '/assets/slickgrid/js/slick.rowselectionmodel',
             'slick.enhancementpager'    : coreWebDir + "/assets/slickgrid/js/slick.enhancementpager",
-            'knockback'                 : coreWebDir + '/assets/backbone/knockback.min',
+            'knockback'                 : coreWebDir + '/assets/backbone/knockback',
             //End - thirdparty-libs aliases
             //Start - chart-libs aliases
             'd3'                        : coreWebDir + '/assets/d3-v3.5.6/js/d3',

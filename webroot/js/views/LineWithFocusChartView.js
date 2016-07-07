@@ -123,6 +123,11 @@ define([
                 selector = contrail.handleIfNull(selector, $(self.$el));
 
             $(selector).find('.nv-requestState').remove();
+        },
+
+        resize: function () {
+            var self = this
+            self.chartModel.update()
         }
     });
 
@@ -176,6 +181,9 @@ define([
                 chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), chUtils.getViewFinderPoint(end.x)];
             }
         }
+        _.each(chartData, function (series, i) {
+            series.color = chartOptions.colors[i]
+        })
 
         chartViewConfig['chartData'] = chartData;
         chartViewConfig['chartOptions'] = chartOptions;

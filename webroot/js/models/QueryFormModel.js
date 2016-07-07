@@ -9,8 +9,9 @@ define([
     'contrail-model',
     'query-or-model',
     'query-and-model',
-    'core-basedir/js/common/qe.utils'
-], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel,qewu) {
+    'core-basedir/js/common/qe.utils',
+    'contrail-list-model',
+], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel, qewu, ContrailListModel) {
     var QueryFormModel = ContrailModel.extend({
         defaultSelectFields: [],
         disableSelectFields: [],
@@ -184,7 +185,7 @@ define([
                 disableFieldArray = [].concat(defaultSelectFields).concat(this.disableSelectFields),
                 disableSubstringArray = this.disableSubstringInSelectFields;
 
-            qewu.adjustHeight4FormTextarea(model.attributes.query_prefix);
+            //qewu.adjustHeight4FormTextarea(model.attributes.query_prefix);
             if(tableName != '') {
                 $.ajax(ajaxConfig).success(function(response) {
                     var selectFields = getSelectFields4Table(response, disableFieldArray, disableSubstringArray),
@@ -486,6 +487,53 @@ define([
                         return cowm.TO_TIME_GREATER_THAN_FROM_TIME;
                     }
                 }
+            }
+        },
+
+        getDataModel: function (p) {
+            var self = this
+            if (_.isUndefined(self.loader)) {
+                self.loader = new ContrailListModel({
+                    remote: {
+                        ajaxConfig: {
+                            url: "/api/qe/query",
+                            type: 'POST',
+                            data: JSON.stringify(self.getQueryRequestPostData(+ new Date))
+                        },
+                        dataParser: function (response) {
+                            if (p.parserName && self[p.parserName]) return self[p.parserName](response['data'], p)
+                            else return response['data']
+                        }
+                    }
+                })
+            }
+            return self.loader
+        },
+        // outputs data in time series format
+        timeSeriesParser: function (data, p) {
+            if (_.isEmpty(data)) return []
+            if (p && p.dataField) p.dataFields = [p.dataField]
+
+            var series = []
+            for (var i = 0; i < data.length; i++) {
+                var timeStamp = Math.floor(data[i]['T='] / 1000)
+                _.each(p.dataFields, function (dataField, seriesIndex) {
+                    if (i == 0) series[seriesIndex] = {values: []}
+                    series[seriesIndex].values.push({x: timeStamp, y: data[i][dataField]})
+                })
+            }
+            console.log(series)
+            return series
+        },
+
+        toJSON: function () {
+            var self = this
+            return {
+                table_name: self.table_name(),
+                select: self.select(),
+                time_range: self.time_range(),
+                where: self.where(),
+                filters: self.filters(),
             }
         }
     });
