@@ -31,26 +31,17 @@ define([
                     self.model.model().attributes = jsonEditor.get();
 
                     //display error message if keys are not valid and error message is not already displayed
-                    if((keysValid(self.model.model().attributes, self.model.schema()) == false) && (onError == false))
-                    {
+                    if((keysValid(self.model.model().attributes, self.model.schema()) == false) && (onError == false)) {
                         onError = true;
                         $(".modal-body").prepend("<div class='alert alert-error edit-json-error'><strong>Error: </strong><span>Please remove new key:value pairs added to the json data.</span></div>");
-                    }
-                    else if((keysValid(self.model.model().attributes, self.model.schema()) == true) && (onError == true))
-                    {
+                    } else if((keysValid(self.model.model().attributes, self.model.schema()) == true) && (onError == true)) {
                         onError = false;
                         $(".edit-json-error").remove();
                     }
 
                     //if error button on UI is on, disable save button
-                    if(!(validate(jsonEditor.get())) || !(keysValid(self.model.model().attributes, self.model.schema())))
-                    {
-                        $(".btnSave").prop('disabled', true);
-                    }
-                    else
-                    {
-                        $(".btnSave").removeAttr('disabled');
-                    }
+                    var isValidJSON = validate(jsonEditor.get()) && keysValid(self.model.model().attributes, self.model.schema());
+                    toggleSaveButton(isValidJSON);
 
                 }
             };
@@ -59,15 +50,8 @@ define([
             jsonEditor.setMode(cowc.JSON_EDITOR_MODE_TREE);
             jsonEditor.set(self.model.model().attributes);
 
-            var valid = validate(jsonEditor.get());
-            if(!valid)
-            {
-                $(".btnSave").prop('disabled', true);
-            }
-            else
-            {
-                $(".btnSave").removeAttr('disabled');
-            }
+            var isValidJSON = validate(jsonEditor.get());
+            toggleSaveButton(isValidJSON);
         }
     });
 
@@ -79,7 +63,7 @@ define([
     *   json : json data
     *   schema : json schema
     * */
-    var keysValid = function (json, schema) {
+    function keysValid(json, schema) {
         var jsonKeys = Object.keys(json);
         var schemaKeys = Object.keys(schema["properties"]);
         var tempSchemaKeys = Object.keys(schema["properties"]);
@@ -105,7 +89,7 @@ define([
      *   array1 : first array
      *   array2 : second array
      * */
-    var arraysItemsEqual = function (array1, array2) {
+    function arraysItemsEqual(array1, array2) {
         if(array1.length != array2.length)
         {
             return false;
@@ -123,5 +107,18 @@ define([
         }
         return true;
     };
+
+    /*
+     * @Params
+     *   isValidJSON : Boolean
+     * */
+    function toggleSaveButton(isValidJSON) {
+        if(!isValidJSON) {
+            $(".btnSave").prop('disabled', true);
+        } else {
+            $(".btnSave").removeAttr('disabled');
+        }
+    };
+
     return JSONEditorView;
 });
