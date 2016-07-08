@@ -10,7 +10,7 @@ define([], function () {
      * set the env at which test scripts should execute.
      * will be set from make targets 'dev-env' or 'prod-env'
      */
-    testConfig.env = 'dev';
+    testConfig.env = 'prod';
 
     /**
      * Minimum severity to run the tests.

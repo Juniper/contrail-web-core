@@ -3,9 +3,6 @@
  */
 
 var config = {};
-//var contrail_ip = '10.1.1.169';
-//var contrail_ip = '10.84.11.2';
-var contrail_ip = '10.84.30.250';
 
 config.orchestration = {};
 /****************************************************************************
@@ -32,7 +29,7 @@ config.orchestration.Manager = 'openstack';
  * false - These values should be taken from auth catalog list
  *
  *****************************************************************************/
-//config.serviceEndPointFromConfig = true;
+config.serviceEndPointFromConfig = true;
 
 /****************************************************************************
  * This boolean flag specifies wheather region list should be taken from config
@@ -87,7 +84,7 @@ config.regions.RegionOne = 'http://127.0.0.1:5000/v2.0';
  *       does not have any effect.
  *
  *****************************************************************************/
-//config.serviceEndPointTakePublicURL = true;
+config.serviceEndPointTakePublicURL = true;
 
 /****************************************************************************
  * Below are the config options for all Orchestration Modules below:
@@ -123,7 +120,7 @@ config.regions.RegionOne = 'http://127.0.0.1:5000/v2.0';
  *      if you do not want to specify then use ''
  *****************************************************************************/
 config.networkManager = {};
-config.networkManager.ip = contrail_ip;
+config.networkManager.ip = '127.0.0.1';
 config.networkManager.port = '9696'
 config.networkManager.authProtocol = 'http';
 config.networkManager.apiVersion = [];
@@ -131,7 +128,7 @@ config.networkManager.strictSSL = false;
 config.networkManager.ca = '';
 
 config.imageManager = {};
-config.imageManager.ip = contrail_ip;
+config.imageManager.ip = '127.0.0.1';
 config.imageManager.port = '9292';
 config.imageManager.authProtocol = 'http';
 config.imageManager.apiVersion = ['v1', 'v2'];
@@ -139,7 +136,7 @@ config.imageManager.strictSSL = false;
 config.imageManager.ca = '';
 
 config.computeManager = {};
-config.computeManager.ip = contrail_ip;
+config.computeManager.ip = '127.0.0.1';
 config.computeManager.port = '8774';
 config.computeManager.authProtocol = 'http';
 config.computeManager.apiVersion = ['v1.1', 'v2'];
@@ -147,7 +144,7 @@ config.computeManager.strictSSL = false;
 config.computeManager.ca = '';
 
 config.identityManager = {};
-config.identityManager.ip = contrail_ip;
+config.identityManager.ip = '127.0.0.1';
 config.identityManager.port = '5000';
 config.identityManager.authProtocol = 'http';
 /******************************************************************************
@@ -162,7 +159,7 @@ config.identityManager.strictSSL = false;
 config.identityManager.ca = '';
 
 config.storageManager = {};
-config.storageManager.ip = contrail_ip;
+config.storageManager.ip = '127.0.0.1';
 config.storageManager.port = '8776';
 config.storageManager.authProtocol = 'http';
 config.storageManager.apiVersion = ['v1'];
@@ -171,7 +168,7 @@ config.storageManager.ca = '';
 
 // VNConfig API server and port.
 config.cnfg = {};
-config.cnfg.server_ip = contrail_ip;
+config.cnfg.server_ip = '127.0.0.1';
 config.cnfg.server_port = '8082';
 config.cnfg.authProtocol = 'http';
 config.cnfg.strictSSL = false;
@@ -179,7 +176,7 @@ config.cnfg.ca = '';
 
 // Analytics API server and port.
 config.analytics = {};
-config.analytics.server_ip = contrail_ip;
+config.analytics.server_ip = '127.0.0.1';
 config.analytics.server_port = '8081';
 config.analytics.authProtocol = 'http';
 config.analytics.strictSSL = false;
@@ -187,14 +184,14 @@ config.analytics.ca = '';
 
 // vcenter related parameters
 config.vcenter = {};
-config.vcenter.server_ip = contrail_ip;         //vCenter IP
+config.vcenter.server_ip = '127.0.0.1';         //vCenter IP
 config.vcenter.server_port = '443';             //Port
 config.vcenter.authProtocol = 'https';          //http or https
 config.vcenter.datacenter = 'vcenter';          //datacenter name
 config.vcenter.dvsswitch = 'vswitch';           //dvsswitch name
 config.vcenter.strictSSL = false;               //Validate the certificate or ignore
 config.vcenter.ca = '';                         //specify the certificate key file
-config.vcenter.wsdl = '/home/daniel/git/contrail-web-core/webroot/js/vim.wsdl';
+config.vcenter.wsdl = '/usr/src/contrail/contrail-web-core/webroot/js/vim.wsdl';
 
 /* Discovery Service */
 config.discoveryService = {};
@@ -202,7 +199,7 @@ config.discoveryService.server_port = '5998';
 /* Specifiy true if subscription to discovery server should be enabled, else
  * specify false. Other than true/false value here is treated as true
  */
-config.discoveryService.enable = false;
+config.discoveryService.enable = true;
 
 /* Job Server */
 config.jobServer = {};
@@ -215,7 +212,7 @@ config.files.download_path = '/tmp';
 
 /* Cassandra Server */
 config.cassandra = {};
-config.cassandra.server_ips = [contrail_ip];
+config.cassandra.server_ips = ['127.0.0.1'];
 config.cassandra.server_port = '9042';
 config.cassandra.enable_edit = false;
 
@@ -231,7 +228,7 @@ config.webui_addresses = ['0.0.0.0'];
  * to https, if set true, then no https request will be processed, but only http
  * request
  */
-config.insecure_access = true;
+config.insecure_access = false;
 
 // HTTP port for NodeJS Server.
 config.http_port = '8080';
@@ -258,20 +255,16 @@ config.redis_dump_file = '/var/lib/redis/dump-webui.rdb';
 config.redis_password = '';
 
 /* Logo File: Use complete path of logo file location */
-config.logo_file = '/home/daniel/git/contrail-web-core/webroot/img/opencontrail-logo.png';
+config.logo_file = '/usr/src/contrail/contrail-web-core/webroot/img/opencontrail-logo.png';
 
 /* Favicon File: Use complete path of favicon file location */
-config.favicon_file = '/home/daniel/git/contrail-web-core/webroot/img/opencontrail-favicon.ico';
+config.favicon_file = '/usr/src/contrail/contrail-web-core/webroot/img/opencontrail-favicon.ico';
 
 config.featurePkg = {};
 /* Add new feature Package Config details below */
 config.featurePkg.webController = {};
-config.featurePkg.webController.path = '/Users/chinmay/work/test-fork/contrail-web-controller';
+config.featurePkg.webController.path = '/usr/src/contrail/contrail-web-controller';
 config.featurePkg.webController.enable = true;
-
-config.featurePkg.serverManager = {};
-config.featurePkg.serverManager.path = '/Users/chinmay/work/test-fork/contrail-web-server-manager';
-config.featurePkg.serverManager.enable = true;
 
 /* Enable/disable Stat Query Links in Sidebar*/
 config.qe = {};
