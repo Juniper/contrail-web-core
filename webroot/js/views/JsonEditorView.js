@@ -5,61 +5,123 @@
 define([
     'underscore',
     'contrail-view',
-    'knockback'
-], function (_, ContrailView, Knockback) {
+    'json-editor',
+    'ajv'
+], function (_, ContrailView, JSONEditor, Ajv) {
+    var JSONEditorView = ContrailView.extend({
+        render: function () {
 
-    var prefixId = smwc.SERVER_PREFIX_ID,
-        modalId = 'configure-' + prefixId,
-        editJSONTemplate = contrail.getTemplate4Id(cowc.TMPL_EDIT_JSON);
+            var self = this;
+            var onError = false;
+            var ajv = Ajv({ allErrors: true, verbose: true, removeAdditional: true  });
+            var validate = ajv.compile(self.model.schema());
 
-    var JsonEditView = ContrailView.extend({
+            var editorTempl = contrail.getTemplate4Id(cowc.TMPL_JSON_EDITOR_VIEW),
+                viewConfig = this.attributes.viewConfig,
+                elId = this.attributes.elementId;
 
-        renderEditor: function (options) {
-            var editLayout = editJSONTemplate({prefixId: prefixId}),
-                disableId, modelAttr, self = this;
-            self.model.model().attributes = options['checkedRows'][0];
-            cowu.createModal({
-                modalId: modalId,
-                className: 'modal-980',
-                title: options['title'],
-                body: editLayout,
-                onSave: function () {
-                    var callbackObj = {
-                        init: function () {
-                            cowu.enableModalLoading(modalId);
-                        },
-                        success: function () {
-                            options['callback']();
-                            $("#" + modalId).modal('hide');
-                        },
-                        error: function (error) {
-                            cowu.disableModalLoading(modalId, function () {
-                                self.model.showErrorAttr(prefixId + cowc.FORM_SUFFIX_ID, error.responseText);
-                            });
-                        }
-                    };
-                    self.model.configure(options['checkedRows'], callbackObj, options['type']);
-                },
-                onCancel: function () {
-                    Knockback.release(self.model, document.getElementById(modalId));
-                    kbValidation.unbind(self);
-                    $("#" + modalId).modal('hide');
+            this.$el.html(editorTempl({viewConfig: viewConfig, elementId: elId}));
+            var jsonContainer = document.getElementById(cowc.ID_JSON_EDITOR);
+            var jsonOptions = {
+                schema : self.model.schema(),
+                ajv : ajv,
+                modes: [ cowc.JSON_EDITOR_MODE_TREE,cowc.JSON_EDITOR_MODE_CODE,cowc.JSON_EDITOR_MODE_TEXT,cowc.JSON_EDITOR_MODE_FORM ],
+                onChange: function () {
+                    var valid = validate(jsonEditor.get());
+                    self.model.model().attributes = jsonEditor.get();
+
+                    //display error message if keys are not valid and error message is not already displayed
+                    if((keysValid(self.model.model().attributes, self.model.schema()) == false) && (onError == false))
+                    {
+                        onError = true;
+                        $(".modal-body").prepend("<div class='alert alert-error edit-json-error'><strong>Error: </strong><span>Please remove new key:value pairs added to the json data.</span></div>");
+                    }
+                    else if((keysValid(self.model.model().attributes, self.model.schema()) == true) && (onError == true))
+                    {
+                        onError = false;
+                        $(".edit-json-error").remove();
+                    }
+
+                    //if error button on UI is on, disable save button
+                    if(!(validate(jsonEditor.get())) || !(keysValid(self.model.model().attributes, self.model.schema())))
+                    {
+                        $(".btnSave").prop('disabled', true);
+                    }
+                    else
+                    {
+                        $(".btnSave").removeAttr('disabled');
+                    }
+
                 }
-            });
+            };
+            var jsonEditor = new JSONEditor(jsonContainer, jsonOptions);
 
-            modelAttr = this.model.model().get('id');
-            disableId = (modelAttr == null || modelAttr == '') ? false : true;
+            jsonEditor.setMode(cowc.JSON_EDITOR_MODE_TREE);
+            jsonEditor.set(self.model.model().attributes);
 
-            self.renderView4Config($("#" + modalId).find("#" + prefixId + "-form"), this.model, JsonEditViewConfig, smwc.KEY_CONFIGURE_VALIDATION, null, null, function() {
-                Knockback.applyBindings(self.model, document.getElementById(modalId));
-            });
+            var valid = validate(jsonEditor.get());
+            if(!valid)
+            {
+                $(".btnSave").prop('disabled', true);
+            }
+            else
+            {
+                $(".btnSave").removeAttr('disabled');
+            }
         }
     });
 
-    var JsonEditViewConfig = {
-        elementId: prefixId,
-        view: "JsonEditor",
-        viewConfig: []
+    /*
+    * @Return
+    *   True : if keys of the json matchs the keys specified by the json schema
+    *   False: if not
+    * @Params
+    *   json : json data
+    *   schema : json schema
+    * */
+    var keysValid = function (json, schema) {
+        var jsonKeys = Object.keys(json);
+        var schemaKeys = Object.keys(schema["properties"]);
+        var tempSchemaKeys = Object.keys(schema["properties"]);
+        var valid;
+        if(!arraysItemsEqual(jsonKeys, tempSchemaKeys))
+        {
+            return false;
+        }
+        schemaKeys.forEach(function (key, i) {
+            if(schema["properties"][key]["type"] == "object")
+            {
+                keysValid(json[key], schema["properties"][key]);
+            }
+        });
+        return true;
     };
-    return JsonEditView;
+
+    /*
+     * @Return
+     *   True : if items in array1 equals items array2
+     *   False: if not
+     * @Params
+     *   array1 : first array
+     *   array2 : second array
+     * */
+    var arraysItemsEqual = function (array1, array2) {
+        if(array1.length != array2.length)
+        {
+            return false;
+        }
+        for(var i = 0; i < array1.length; i++)
+        {
+            if(array2.indexOf(array1[i]) != -1)
+            {
+                array2.splice(array2.indexOf(array1[i]), 1);
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+    };
+    return JSONEditorView;
 });
