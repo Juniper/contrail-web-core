@@ -774,8 +774,18 @@ table.jsoneditor-search button.jsoneditor-refresh,
 table.jsoneditor-search button.jsoneditor-previous,
 table.jsoneditor-search button.jsoneditor-next,
 .jsoneditor-text-errors button.jsoneditor-schema-error,
-div.jsoneditor-tree button.jsoneditor-schema-error {
+div.jsoneditor-tree button.jsoneditor-schema-error,
+div.jsoneditor-tree button.jsoneditor-contextmenu,
+div.jsoneditor-tree button.jsoneditor-dragarea,
+div.jsoneditor-tree button.jsoneditor-expanded,
+div.jsoneditor-tree button.jsoneditor-collapsed {
     background: none;
+}
+div.jsoneditor-tree button.jsoneditor-contextmenu,
+div.jsoneditor-tree button.jsoneditor-dragarea,
+div.jsoneditor-tree button.jsoneditor-expanded,
+div.jsoneditor-tree button.jsoneditor-collapsed {
+    color: #777777;
 }
 div.jsoneditor-menu>button.jsoneditor-expand-all:before {
     content: "\F152";
@@ -806,9 +816,20 @@ table.jsoneditor-search button.jsoneditor-next:before {
 }
 .jsoneditor-text-errors button.jsoneditor-schema-error:before,
 div.jsoneditor-tree button.jsoneditor-schema-error:before {
-    content: "\F071"
+    content: "\F071";
 }
-
+div.jsoneditor-tree button.jsoneditor-contextmenu:before {
+    content: "\F013";
+}
+div.jsoneditor-tree button.jsoneditor-dragarea:before {
+    content: "\F047";
+}
+div.jsoneditor-tree button.jsoneditor-expanded:before {
+    content: "\F0D7";
+}
+div.jsoneditor-tree button.jsoneditor-collapsed:before {
+    content: "\F0DA";
+}
 .jsoneditor .jsoneditor-text-errors {
     color: #b94a48;
     background-color: #f2dede;
