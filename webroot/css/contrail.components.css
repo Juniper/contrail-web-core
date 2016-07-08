@@ -690,6 +690,147 @@
 }
 
 /*
+ * JSON Editor
+ */
+
+div.jsoneditor-menu a,
+table.jsoneditor-search input,
+table.jsoneditor-search div.jsoneditor-results,
+div.jsoneditor-field,
+div.jsoneditor-value,
+div.jsoneditor td,
+div.jsoneditor th,
+div.jsoneditor textarea,
+.jsoneditor-schema-error,
+div.jsoneditor-contextmenu ul li button {
+    font-family: 'Open Sans';
+}
+div.jsoneditor {
+    line-height: 18px;
+    border: none;
+}
+div.jsoneditor-menu {
+    background-color: #FFF;
+    border-bottom: 1px solid #CCCCCC;
+}
+div.jsoneditor-outer {
+    margin: 0;
+    padding: 0;
+}
+div.jsoneditor-contextmenu ul li button.jsoneditor-selected, div.jsoneditor-contextmenu ul li button.jsoneditor-selected:focus, div.jsoneditor-contextmenu ul li button.jsoneditor-selected:hover {
+    color: #393939;
+    background-color: #c6dbef;
+}
+div.jsoneditor-menu>div.jsoneditor-modes {
+    display: inline-block;
+    background-color: #fff;
+}
+div.jsoneditor-menu>div.jsoneditor-modes>button.jsoneditor-separator {
+    margin: 3px 5px;
+    border: 1px solid #CCCCCC;
+}
+div.jsoneditor-menu>button,
+div.jsoneditor-menu>div.jsoneditor-modes>button {
+    background: none;
+    color: #393939;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+div.jsoneditor-menu > button,
+table.jsoneditor-search button,
+div.jsoneditor-tree button,
+.jsoneditor-text-errors button {
+    background: none;
+    font-family: FontAwesome;
+    color: #777;
+}
+table.jsoneditor-search div.jsoneditor-frame {
+    border: 1px solid #DDDDDD;
+}
+table.jsoneditor-search div.jsoneditor-results {
+    color: #393939;
+    padding-left: 5px;
+}
+div.jsoneditor-menu > button {
+    font-size: 15px;
+}
+table.jsoneditor-search button,
+.jsoneditor-text-errors button {
+    font-size: 13px;
+}
+div.jsoneditor-menu>button.jsoneditor-expand-all,
+div.jsoneditor-menu>button.jsoneditor-collapse-all,
+div.jsoneditor-menu>button.jsoneditor-undo, div.jsoneditor-menu>button.jsoneditor-undo:disabled,
+div.jsoneditor-menu>button.jsoneditor-redo, div.jsoneditor-menu>button.jsoneditor-redo:disabled,
+div.jsoneditor-menu>button.jsoneditor-format,
+div.jsoneditor-menu>button.jsoneditor-compact {
+    background: none;
+    background-color: #f9f9f9;
+    border: 1px solid #efefef;
+    padding: 3px 5px;
+}
+table.jsoneditor-search button.jsoneditor-refresh,
+table.jsoneditor-search button.jsoneditor-previous,
+table.jsoneditor-search button.jsoneditor-next,
+.jsoneditor-text-errors button.jsoneditor-schema-error,
+div.jsoneditor-tree button.jsoneditor-schema-error {
+    background: none;
+}
+div.jsoneditor-menu>button.jsoneditor-expand-all:before {
+    content: "\F152";
+}
+div.jsoneditor-menu>button.jsoneditor-collapse-all:before {
+    content: "\F150";
+}
+div.jsoneditor-menu>button.jsoneditor-undo:before {
+    content: "\F0E2";
+}
+div.jsoneditor-menu>button.jsoneditor-redo:before {
+    content: "\F01E";
+}
+div.jsoneditor-menu>button.jsoneditor-format:before {
+    content: "\F036";
+}
+div.jsoneditor-menu>button.jsoneditor-compact:before {
+    content: "\F039";
+}
+table.jsoneditor-search button.jsoneditor-refresh:before {
+    content: "\F002";
+}
+table.jsoneditor-search button.jsoneditor-previous:before {
+    content: "\F062";
+}
+table.jsoneditor-search button.jsoneditor-next:before {
+    content: "\F063";
+}
+.jsoneditor-text-errors button.jsoneditor-schema-error:before,
+div.jsoneditor-tree button.jsoneditor-schema-error:before {
+    content: "\F071"
+}
+
+.jsoneditor .jsoneditor-text-errors {
+    color: #b94a48;
+    background-color: #f2dede;
+    border-color: #eed3d7;
+}
+.jsoneditor-text-errors button.jsoneditor-schema-error,
+.jsoneditor .jsoneditor-text-errors td,
+.jsoneditor .jsoneditor-text-errors td pre {
+    color: #b94a48;
+}
+div.jsoneditor-tree button.jsoneditor-schema-error {
+    color: #e6550d;
+    padding-top: 3px;
+}
+.jsoneditor-schema-error .jsoneditor-popover {
+    font-family: "Open Sans";
+    border-radius: 0;
+    font-size: 12px;
+    padding: 5px;
+
+}
+/*
  * jQuery Validation
  */
 label.jqInvalid {
