@@ -72,12 +72,12 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
         'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json',
 
-        'json-editor'                 : coreWebDir + '/assets/jsoneditor/jsoneditor.min',
+        'json-editor'                 : coreWebDir + '/assets/jsoneditor/js/jsoneditor.min',
         'ajv'                         : coreWebDir + '/assets/ajv/ajv.min',
         'server-schema'               : coreWebDir + '/schemas/server.schema',
         'cluster-schema'              : coreWebDir + '/schemas/cluster.schema',
         'json-model'                  : coreWebDir + "/js/models/JsonModel",
-        'json-editor-view'            : coreWebDir + '/js/views/JsonEditorView'
+        'json-edit-view'              : coreWebDir + '/js/views/JsonEditView'
 
     };
 
