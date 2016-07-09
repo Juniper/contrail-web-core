@@ -49,7 +49,8 @@ define([
 
             jsonEditor.setMode(cowc.JSON_EDITOR_MODE_TREE);
             jsonEditor.set(self.model.model()._originalAttributes.json);
-
+            jsonEditor.expandAll();
+            
             var isValidJSON = validate(jsonEditor.get());
             toggleSaveButton(isValidJSON);
         }
