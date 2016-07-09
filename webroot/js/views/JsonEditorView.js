@@ -27,21 +27,25 @@ define([
                 ajv : ajv,
                 modes: [ cowc.JSON_EDITOR_MODE_TREE,cowc.JSON_EDITOR_MODE_CODE,cowc.JSON_EDITOR_MODE_TEXT,cowc.JSON_EDITOR_MODE_FORM ],
                 onChange: function () {
-                    var valid = validate(jsonEditor.get());
-                    self.model.model().attributes = jsonEditor.get();
+                    try{
+                        var valid = validate(jsonEditor.get());
+                        self.model.model().attributes = jsonEditor.get();
 
-                    //display error message if keys are not valid and error message is not already displayed
-                    if((keysValid(self.model.model().attributes, self.model.schema()) == false) && (onError == false)) {
-                        onError = true;
-                        $(".modal-body").prepend("<div class='alert alert-error edit-json-error'><strong>Error: </strong><span>Please remove new key:value pairs added to the json data.</span></div>");
-                    } else if((keysValid(self.model.model().attributes, self.model.schema()) == true) && (onError == true)) {
-                        onError = false;
-                        $(".edit-json-error").remove();
+                        //display error message if keys are not valid and error message is not already displayed
+                        if((keysValid(self.model.model().attributes, self.model.schema()) == false) && (onError == false)) {
+                            onError = true;
+                            $(".modal-body").prepend("<div class='alert alert-error edit-json-error'><strong>Error: </strong><span>Please remove new key:value pairs added to the json data.</span></div>");
+                        } else if((keysValid(self.model.model().attributes, self.model.schema()) == true) && (onError == true)) {
+                            onError = false;
+                            $(".edit-json-error").remove();
+                        }
+
+                        //if error button on UI is on, disable save button
+                        var isValidJSON = validate(jsonEditor.get()) && keysValid(self.model.model().attributes, self.model.schema());
+                        toggleSaveButton(isValidJSON);
+                    }catch(e){
+                        toggleSaveButton(false);
                     }
-
-                    //if error button on UI is on, disable save button
-                    var isValidJSON = validate(jsonEditor.get()) && keysValid(self.model.model().attributes, self.model.schema());
-                    toggleSaveButton(isValidJSON);
 
                 }
             };
