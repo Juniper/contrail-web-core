@@ -158,9 +158,10 @@ define([
 
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
-
-        chartOptions.y1AxisLabel = chartOptions.yAxisLabels[0]
-        chartOptions.y2AxisLabel = chartOptions.yAxisLabels[1]
+        if (chartOptions.yAxisLabels) {
+            chartOptions.y1AxisLabel = chartOptions.yAxisLabels[0]
+            chartOptions.y2AxisLabel = chartOptions.yAxisLabels[1]
+        }
         chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
 
         chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1']);
@@ -180,8 +181,8 @@ define([
             // assume first series should be rendered as bars
             if (i == 0) chartData[0].bar = true
 
-            series.color = chartOptions.colors[i]
-            series.key = chartOptions.yAxisLabels[i]
+            if (chartOptions.colors) series.color = chartOptions.colors[i]
+            if (chartOptions.yAxisLabels) series.key = chartOptions.yAxisLabels[i]
         })
 
         chartViewConfig['chartData'] = chartData;

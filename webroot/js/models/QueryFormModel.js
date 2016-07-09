@@ -522,7 +522,6 @@ define([
                     series[seriesIndex].values.push({x: timeStamp, y: data[i][dataField]})
                 })
             }
-            console.log(series)
             return series
         },
 

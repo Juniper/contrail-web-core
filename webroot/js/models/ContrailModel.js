@@ -7,8 +7,11 @@ define([
     'backbone',
     'contrail-view-model',
     'knockout',
-    'knockback'
+    'knockback',
+    'validation'
 ], function (_, Backbone, ContrailViewModel, Knockout, Knockback) {
+    _.extend(ContrailViewModel.prototype, Backbone.Validation.mixin)
+
     var ContrailModel = Knockback.ViewModel.extend({
 
         formatModelConfig: function(modelConfig) {

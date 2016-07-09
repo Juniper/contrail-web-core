@@ -9,7 +9,8 @@ CREATE TYPE config (
 CREATE TYPE widget_view (
   "view" text,
   "viewPathPrefix" text,
-  "viewConfig" text
+  "model" text,
+  "modelConfig" text
 );
 ---
 CREATE TABLE user_widgets (

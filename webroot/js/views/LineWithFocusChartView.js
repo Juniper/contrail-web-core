@@ -182,7 +182,7 @@ define([
             }
         }
         _.each(chartData, function (series, i) {
-            series.color = chartOptions.colors[i]
+            if (chartOptions.colors) series.color = chartOptions.colors[i]
         })
 
         chartViewConfig['chartData'] = chartData;
