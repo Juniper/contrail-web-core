@@ -138,7 +138,10 @@ function getAuthRestApiInst (req, reqUrl, isSvcPortReq)
     if ((null == ip) || (null == port) || (false == isTokenGetURL(reqUrl))) {
         if (true == authApi.isMultiRegionSupported()) {
             var regionName = authApi.getCurrentRegion(req);
-            var pubUrl = oStack.getPublicUrlByRegionName(regionName, req);
+            var pubUrl =
+                oStack.getPublicUrlByRegionName(regionName,
+                                                global.SERVICE_ENDPT_TYPE_IDENTITY,
+                                                req);
             var verObj = oStack.getServiceApiVersionObjByPubUrl(pubUrl, 'identity');
             if (null != verObj) {
                 req.session.region = verObj;
@@ -804,7 +807,10 @@ function fillAndGetReqArrToGetAuthData (authObj)
             commonUtils.getValueByJsonPath(req,
                                            'cookies;region', sessionRegion, false);
         if (null != cookieRegion) {
-            var pubUrl = oStack.getPublicUrlByRegionName(cookieRegion, req);
+            var pubUrl =
+                oStack.getPublicUrlByRegionName(cookieRegion,
+                                                global.SERVICE_ENDPT_TYPE_IDENTITY,
+                                                req);
             var verObj = oStack.getServiceApiVersionObjByPubUrl(pubUrl, 'identity');
             if (null != verObj) {
                 req.session.region = verObj;
@@ -1151,6 +1157,7 @@ function updateTokenIdForProject (req, tenantId, accessData)
             req.session.serviceCatalog = svcCatalog;
         }
     }
+    console.log("Getting req.session as:", JSON.stringify(req.session));
     delete accessData['serviceCatalog'];
     if (null == req.session.tokenObjs) {
         req.session.tokenObjs = {};
@@ -1183,8 +1190,8 @@ function getToken (authObj, callback)
         callback(err, null);
         return;
     }
-    tokenCB(authObj, function(err, data) {
-        callback(err, data);
+    tokenCB(authObj, function(err, token, tokenObj) {
+        callback(err, token, tokenObj);
     });
 }
 
@@ -1210,14 +1217,19 @@ function getV2Token (authObj, callback)
         if ((null != err) || (null == data) || (null == data.access)) {
             callback(err, null);
         } else {
-            callback(null, data.access.token);
+            callback(null, data.access.token, data);
         }
     });
 }
 
-function updateLastTokenUsed (req, token)
+function updateLastTokenUsed (req, tokenObj)
 {
-    req.session.last_token_used = token;
+    var lastTokenUsed =
+        commonUtils.getValueByJsonPath(tokenObj, 'token', null);
+    if (null != lastTokenUsed) {
+        req.session.last_token_used = lastTokenUsed;
+        req.session.last_token_Obj_used = tokenObj;
+    }
 }
 
 function getTokenIdByProject (req, tenantName)
@@ -1254,7 +1266,7 @@ function getUserAuthData (req, tenantName, callback)
         var dataAccess = commonUtils.cloneObj(data);
         updateTokenIdForProject(req, tenantName, data.access);
         updateDefTenantToken(req, tenantName, data);
-        updateLastTokenUsed(req, token);
+        updateLastTokenUsed(req, data.access);
         callback(null, dataAccess);
     });
 }
@@ -1560,7 +1572,10 @@ function authenticate (req, res, appData, callback)
             callback(errStr);
             return;
         }
-        var pubUrl = oStack.getPublicUrlByRegionName(regionname, req);
+        var pubUrl =
+            oStack.getPublicUrlByRegionName(regionname,
+                                            global.SERVICE_ENDPT_TYPE_IDENTITY,
+                                            req);
         var verObj = oStack.getServiceApiVersionObjByPubUrl(pubUrl, 'identity');
         if (null != verObj) {
             req.session.region = verObj;
@@ -2055,7 +2070,7 @@ function doV2Auth (req, callback)
                         //setSessionTimeoutByReq(req);
                         updateTokenIdForProject(userObj.req, defProject,
                                                 data.access);
-                        updateLastTokenUsed(req, data.access.token);
+                        updateLastTokenUsed(req, data.access);
                         logutils.logger.info("Login Successful with tenants.");
                         callback(null);
                     });
@@ -2855,3 +2870,5 @@ exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 exports.getServiceCatalogByRegion = getServiceCatalogByRegion;
 exports.shiftServiceEndpointList = shiftServiceEndpointList;
 exports.getRoleList = getRoleList;
+exports.getAuthRetryData = getAuthRetryData;
+
