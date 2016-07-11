@@ -31,15 +31,6 @@ define([
                         var valid = validate(jsonEditor.get());
                         self.model.model().attributes = jsonEditor.get();
 
-                        //display error message if keys are not valid and error message is not already displayed
-                        if((keysValid(self.model.model().attributes, self.model.schema()) == false) && (onError == false)) {
-                            onError = true;
-                            $(".modal-body").prepend("<div class='alert alert-error edit-json-error'><strong>Error: </strong><span>Please remove new key:value pairs added to the json data.</span></div>");
-                        } else if((keysValid(self.model.model().attributes, self.model.schema()) == true) && (onError == true)) {
-                            onError = false;
-                            $(".edit-json-error").remove();
-                        }
-
                         //if error button on UI is on, disable save button
                         var isValidJSON = validate(jsonEditor.get()) && keysValid(self.model.model().attributes, self.model.schema());
                         toggleSaveButton(isValidJSON);
@@ -54,7 +45,7 @@ define([
             jsonEditor.setMode(cowc.JSON_EDITOR_MODE_TREE);
             jsonEditor.set(self.model.model()._originalAttributes.json);
             jsonEditor.expandAll();
-            
+
             var isValidJSON = validate(jsonEditor.get());
             toggleSaveButton(isValidJSON);
         }
