@@ -80,6 +80,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         var devAliasMap = {
             //Start - Core-bundle aliases
             'core-utils'                  : coreWebDir + '/js/common/core.utils',
+            'core-hash-utils'             : coreWebDir + '/js/common/core.hash.utils',
             'core-constants'              : coreWebDir + '/js/common/core.constants',
             'core-formatters'             : coreWebDir + '/js/common/core.formatters',
             'core-cache'                  : coreWebDir + '/js/common/core.cache',
@@ -94,11 +95,11 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'contrail-view-model'         : coreWebDir + '/js/models/ContrailViewModel',
             'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
             'lodash'                      : coreWebDir + '/assets/lodash/lodash.min',
-            'crossfilter'               : coreWebDir + '/assets/crossfilter/js/crossfilter',
+            'crossfilter'                 : coreWebDir + '/assets/crossfilter/js/crossfilter',
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
             'text'                        : coreWebDir + '/assets/requirejs/text',
             'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
-            'moment'                    : coreWebDir + "/assets/moment/moment",
+            'moment'                      : coreWebDir + "/assets/moment/moment",
             'layout-handler'              : coreWebDir + '/js/handlers/LayoutHandler',
             'menu-handler'                : coreWebDir + '/js/handlers/MenuHandler',
             'content-handler'             : coreWebDir + '/js/handlers/ContentHandler',
@@ -423,6 +424,7 @@ var coreBundles = {
         'core-bundle'       : [
             'underscore',
             'core-utils',
+            'core-hash-utils',
             'core-constants',
             'core-formatters',
             'core-cache',
@@ -1309,8 +1311,9 @@ if (typeof document !== 'undefined' && document) {
                     window.kbValidation = validation;
                     // window.ko = ko;
                 });
-                require(['core-utils'],function(CoreUtils) {
+                require(['core-utils', 'core-hash-utils'],function(CoreUtils, CoreHashUtils) {
                     cowu = new CoreUtils();
+                    cowhu = new CoreHashUtils();
                     require(['underscore'],function(_) {
                         _.noConflict();
                     });

@@ -62,7 +62,6 @@ define(['underscore'], function (_) {
         };
 
         this.loadContent = function(lastHash, currHash, loadingStartedDefObj) {
-            //console.log(currHash)
             var currPageHash = ifNull(currHash['p'], ''),
                 resourcesDefObj = $.Deferred();
 
@@ -79,12 +78,7 @@ define(['underscore'], function (_) {
                 lastPageQueryStr = ifNull(lastHash['q'], {}),
                 webServerInfo = globalObj['webServerInfo'];
 
-            // try {
-
-            console.log(currPageHash);
-
-            //currPageHash = "query_flow_series";
-
+            try {
                 if (currPageHash == '') {
                     if(webServerInfo['loggedInOrchestrationMode'] == 'vcenter') {
                         //If vCenter is the only orchestration model
@@ -141,9 +135,9 @@ define(['underscore'], function (_) {
 
                     contentHandler.loadViewFromMenuObj(currMenuObj, resourcesDefObj, loadingStartedDefObj);
                 }
-            // } catch (error) {
-            //     console.log(error.stack);
-            // }
+            } catch (error) {
+                console.log(error.stack);
+            }
         };
 
         this.initFeatureModule = function (currMenuObj, loadContentCB) {

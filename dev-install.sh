@@ -56,7 +56,7 @@ cp -af ./$THIRD_PARTY/jquery.xml2json.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/x2js-1.2.0/xml2json.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.ui.touch-punch.min.js webroot/assets/jquery/js/
 #cp -af ./$THIRD_PARTY/jquery.ba-bbq.min.js webroot/assets/jquery/js/
-cp -af ./$THIRD_PARTY/jquery.ba-bbq-v1.2.2/jquery.ba-bbq.min.js webroot/assets/jquery/js/
+#cp -af ./$THIRD_PARTY/jquery.ba-bbq-v1.2.2/jquery.ba-bbq.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.timer.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.json-2.4.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.dataTables.min.js webroot/assets/jquery/js/
@@ -262,7 +262,7 @@ rm -f webroot/css/contrail-all.css
 
 MAINCSS[1]=webroot/assets/bootstrap/css/bootstrap.min.css
 #MAINCSS[1]=webroot/css/output.css
-MAINCSS[2]=webroot/assets/bootstrap/css/bootstrap-responsive.min.css
+#MAINCSS[2]=webroot/assets/bootstrap/css/bootstrap-responsive.min.css
 MAINCSS[3]=webroot/assets/jquery-ui/css/jquery-ui.min.css
 MAINCSS[4]=webroot/css/contrail.jquery.ui.css
 MAINCSS[5]=webroot/assets/font-awesome/css/font-awesome.min.css
@@ -292,7 +292,7 @@ MAINCSS[26]=webroot/css/contrail.theme.css
 
 
 cat ${MAINCSS[1]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
+#cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[3]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[4]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[5]} >> webroot/css/contrail-all.css

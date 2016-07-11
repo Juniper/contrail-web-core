@@ -150,11 +150,7 @@ Handlebars.registerHelper('getHashFromMenuItem',function(menuItem){
             params[key] = value
         });
         result['q'] = params;
-        // console.log(location.href);
-        // console.log(result);
-        // console.log($.param(result));
-        return location.href + '#' + $.param(result);
-        // return $.param.fragment(location.href,result,2);
+        return $.param.fragment(location.href,result,2);
     } else {
         if(menuItem['hash'] != null)
             result['p'] = menuItem['hash'];
@@ -164,9 +160,7 @@ Handlebars.registerHelper('getHashFromMenuItem',function(menuItem){
             });
             result['q'] = params;
         }
-        // console.log(location.href);
-        return location.href + '#' + $.param(result);
-        // return $.param.fragment(location.href,result,2)
+        return $.param.fragment(location.href,result,2)
     }
 });
 

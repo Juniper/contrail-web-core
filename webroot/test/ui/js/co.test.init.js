@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var cowc, cowu, cowf, cowl, cowch, cowm, cotu, cotc, covdc;
+var cowc, cowu, cowhu, cowf, cowl, cowch, cowm, cotu, cotc, covdc;
 
 var allTestFiles = [], windowKarma = window.__karma__;
 
@@ -306,8 +306,9 @@ function testAppInit(testAppConfig) {
                 // Before we load the feature apps, Core app skeleton and helpers must be loaded.
                 function loadCoreAndFeatureApps(featurePkgs) {
                     require(['core-bundle'], function () {
-                        require(['core-utils'], function (CoreUtils) {
+                        require(['core-utils', 'core-hash-utils'], function (CoreUtils, CoreHashUtils) {
                             cowu = new CoreUtils();
+                            cowhu = new CoreHashUtils();
                             //Proceed with loading layout.
                             require([
                                 'layout-handler', 'content-handler', 'contrail-load', 'lodash'
