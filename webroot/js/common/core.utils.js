@@ -1258,15 +1258,14 @@ define(['underscore'], function (_) {
             return obj;
         };
 
-        this.getOriginalAttributes = function(attributes) {
-            var uiFieldArray = ['ui_added_parameters', 'cgrid'];
+        this.getAttributes4Schema = function(attributes, schema) {
             var json = $.extend(true, {}, attributes);
-            for (var i = 0; i < uiFieldArray.length; i++) {
-                if(contrail.checkIfExist(json[uiFieldArray[i]])) {
-                    delete json[uiFieldArray[i]];
+
+            for(var key in json){
+                if(!contrail.checkIfExist(schema['properties'][key])) {
+                    delete json[key];
                 }
             }
-
             return json;
         };
     };
