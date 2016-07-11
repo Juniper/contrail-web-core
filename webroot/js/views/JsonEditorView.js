@@ -32,7 +32,7 @@ define([
                         self.model.model().attributes = jsonEditor.get();
 
                         //if error button on UI is on, disable save button
-                        var isValidJSON = validate(jsonEditor.get()) && keysValid(self.model.model().attributes, self.model.schema());
+                        var isValidJSON = validate(jsonEditor.get());
                         toggleSaveButton(isValidJSON);
                     }catch(e){
                         toggleSaveButton(false);
@@ -50,32 +50,6 @@ define([
             toggleSaveButton(isValidJSON);
         }
     });
-
-    /*
-    * @Return
-    *   True : if keys of the json matchs the keys specified by the json schema
-    *   False: if not
-    * @Params
-    *   json : json data
-    *   schema : json schema
-    * */
-    function keysValid(json, schema) {
-        var jsonKeys = Object.keys(json);
-        var schemaKeys = Object.keys(schema["properties"]);
-        var tempSchemaKeys = Object.keys(schema["properties"]);
-        var valid;
-        if(!arraysItemsEqual(jsonKeys, tempSchemaKeys))
-        {
-            return false;
-        }
-        schemaKeys.forEach(function (key, i) {
-            if(schema["properties"][key]["type"] == "object")
-            {
-                keysValid(json[key], schema["properties"][key]);
-            }
-        });
-        return true;
-    };
 
     /*
      * @Return
