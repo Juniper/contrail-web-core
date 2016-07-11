@@ -223,7 +223,7 @@ config.kue.ui_port = '3002'
 /* IP List to listen on */
 config.webui_addresses = ['0.0.0.0'];
 
-/* Is insecure access to WebUI?
+/* Is insecure access to WebUI? 
  * If set as false, then all http request will be redirected
  * to https, if set true, then no https request will be processed, but only http
  * request
