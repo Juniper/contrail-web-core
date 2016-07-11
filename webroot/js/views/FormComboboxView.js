@@ -28,7 +28,7 @@ define([
             self.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId + '_combobox', name: elId, class: "span12",
+                label: labelValue, id: elId + '_combobox', name: elId, class: "col-xs-12",
                 viewConfig: viewConfig, lockAttr: lockEditingByDefault, validation: validation
             };
 

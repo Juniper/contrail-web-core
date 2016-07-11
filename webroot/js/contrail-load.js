@@ -9,6 +9,15 @@ $(document).ready(function () {
     var temp = $("#content-container").find('div.widget-box div.widget-header div.widget-toolbar a[data-action="collapse"]');
     $(document).on('click', temp, function () {
         $(this).find('i').toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
+        /*var ele = $(this).find('i');
+        if (ele.hasClass('fa-chevron-up')) {
+            ele.addClass('fa-chevron-down');
+            ele.removeClass('fa-chevron-up');
+        }
+        else if (ele.hasClass('fa-chevron-down')) {
+            ele.addClass('fa-chevron-up');
+            ele.removeClass('fa-chevron-down');
+        }*/
         var widgetBodyElem = $(this).parents('div.widget-box').find('div.widget-body');
         var widgetBoxElem = $(this).parents('div.widget-box');
         $(widgetBoxElem).toggleClass('collapsed');

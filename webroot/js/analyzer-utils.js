@@ -77,13 +77,13 @@ function getAnalyzerVNCUrlSuccessCB(result, cbParams) {
     window.open(href);
     return;
     /*var modalBody = '<div class="row-fluid">' +
-        '<div class="span10"><p>If console is not responding to keyboard input: click the grey status bar below.&nbsp;&nbsp;<a href="' + href + '" style="text-decoration: underline" target=_blank>Click here to show only console</a></p></div>' +
-        '<div id="pcap-direction" class="span2 pull-right"></div>' +
+        '<div class="col-xs-10"><p>If console is not responding to keyboard input: click the grey status bar below.&nbsp;&nbsp;<a href="' + href + '" style="text-decoration: underline" target=_blank>Click here to show only console</a></p></div>' +
+        '<div id="pcap-direction" class="col-xs-2 pull-right"></div>' +
         '<i id="pcap-direction-loading" class="icon-spinner icon-spin blue bigger-150 pull-right hide"></i>' +
         '</div>' +
         '<br>' +
         '<div class="row-fluid">' +
-        '<iframe id="vnc-console-frame" src="" class="span12 height-840"></iframe>' +
+        '<iframe id="vnc-console-frame" src="" class="col-xs-12 height-840"></iframe>' +
         '</div>';
     $('#pcapModal .modal-body').html(modalBody);
     $("#vnc-console-frame").attr("src", href);

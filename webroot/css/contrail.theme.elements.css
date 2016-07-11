@@ -1361,26 +1361,26 @@ input[type=checkbox].ace-switch.ace-switch-7:checked + .lbl::after {
   color: #FFF;
 }
 /* addon */
-.input-prepend .add-on,
-.input-append .add-on {
+.input-prepend .input-group-addon,
+.input-append .input-group-addon {
   -webkit-border-radius: 0 !important;
   -moz-border-radius: 0 !important;
   border-radius: 0 !important;
 }
-.control-group.success .input-prepend .add-on,
-.control-group.success .input-append .add-on {
+.control-group.success .input-prepend .input-group-addon,
+.control-group.success .input-append .input-group-addon {
   border-color: #92bf65;
 }
-.control-group.error .input-prepend .add-on,
-.control-group.error .input-append .add-on {
+.control-group.error .input-prepend .input-group-addon,
+.control-group.error .input-append .input-group-addon {
   border-color: #f09784;
 }
-.control-group.warning .input-prepend .add-on,
-.control-group.warning .input-append .add-on {
+.control-group.warning .input-prepend .input-group-addon,
+.control-group.warning .input-append .input-group-addon {
   border-color: #e0c43a;
 }
-.control-group.info .input-prepend .add-on,
-.control-group.info .input-append .add-on {
+.control-group.info .input-prepend .input-group-addon,
+.control-group.info .input-append .input-group-addon {
   border-color: #64a6bc;
 }
 .input-prepend > .btn,
@@ -1417,7 +1417,7 @@ input[type=checkbox].ace-switch.ace-switch-7:checked + .lbl::after {
 .input-append > .btn-group > .btn.btn-small > .caret {
   margin-top: 10px;
 }
-.input-append.inset .add-on{
+.input-append.inset .input-group-addon{
 	position: relative;
 	margin-left: -28px;
 	right: 0;
@@ -1429,12 +1429,14 @@ input[type=checkbox].ace-switch.ace-switch-7:checked + .lbl::after {
 	height: 18px;
 	z-index: 2;
 	font-size: 16px;
+    padding: 4px 5px;
 }
-.input-append.inset .add-on.disabled {
+.input-append.inset .input-group-addon.disabled {
     background-color: #eee;
 }
 .input-append.inset input[type="text"], .input-append.inset textarea, .input-append.inset input[type="password"] {
 	padding-right:30px;
+    padding-left: 3px;
 }
 .ace-file-input {
   position: relative;
@@ -3345,8 +3347,8 @@ td.td-actions a.td-action {
 	color : #3182bd;
 }
 .infobox {
-  width: 135px;
-  height: 52px;
+  width: 147px;
+  height: 68px;
   color: #555;
   background-color: #FFF;
   box-shadow: none;
@@ -3446,11 +3448,12 @@ td.td-actions a.td-action {
   font-size: 13px;
   text-align: left;
   line-height: 21px;
- /*  min-width: 130px; */
+ min-width: 0px;
   padding-left: 8px;
   position: relative;
   top: 0;
 }
+
 .infobox-content .infobox-details-title {
     color : #3182bd !important;
     font-weight: initial !important;

@@ -22,13 +22,13 @@
     width: 272px;
     margin: 0;
 }
-#signin-container .login-container .input-prepend .add-on {
+#signin-container .login-container .input-prepend .input-group-addon {
     display: inline-block;
     width: 22px;
     height: 22px;
 
 }
-#signin-container .login-container .input-prepend .add-on [class^="fa-"],
+#signin-container .login-container .input-prepend .input-group-addon [class^="fa-"],
 #signin-container [class*=" fa-"] {
     font-size: 18px;
     color: #777;

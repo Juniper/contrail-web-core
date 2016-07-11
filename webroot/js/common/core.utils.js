@@ -609,10 +609,10 @@ define(['underscore'], function (_) {
                 var keyValueTemplate = '' +
                     '<li>' +
                         '<label class="inline row-fluid">' +
-                            '<span class="key span5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
+                            '<span class="key col-xs-5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
                             ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
                             configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
-                            '<span class="value span7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
+                            '<span class="value col-xs-7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
                             ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">' + self.getValueByConfig(configValue, app, objectAccessor) + '</span>'+
                         '</label>' +
                     '</li>';
@@ -780,7 +780,7 @@ define(['underscore'], function (_) {
                         '<div class="row-fluid">' +
                         '{{/IfCompare}}' +
                         '{{/IfCompare}}' +
-                        '<div class="span6">' +
+                        '<div class="col-xs-6">' +
                         '<div class="row-fluid detail-block-array-list-item"> ' +
                         '<div class="row-fluid title">' + cowl.get(config.templateGeneratorConfig.titleColumn.key, app) + ': {{{getValueByConfig this config=\'' + encodeURIComponent(JSON.stringify(config.templateGeneratorConfig.titleColumn)) + '\'}}}</div>' +
                         '<div class="row-fluid data">' + self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app, config, 'this') + '</div>' +

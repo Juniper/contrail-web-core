@@ -75,7 +75,7 @@ define([
                                 view: 'FormInputView',
                                 viewConfig: {
                                     path: 'user_name',
-                                    class: 'span12',
+                                    class: 'col-xs-12',
                                     icon:'fa fa-cog',
                                     dataBindValue: 'user_name'
                                 }
@@ -90,7 +90,7 @@ define([
                                 viewConfig: {
                                     path: 'password',
                                     type: 'password',
-                                    class: 'span12',
+                                    class: 'col-xs-12',
                                     icon: 'fa fa-cog',
                                     dataBindValue: 'password',
                                 }

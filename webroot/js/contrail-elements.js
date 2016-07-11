@@ -400,7 +400,7 @@
                 .insertAfter( dis );
 
             input = $( "<input>" )
-                .addClass('custom-combobox-input span12')
+                .addClass('custom-combobox-input col-xs-12')
                 .appendTo( wrapper )
                 .autocomplete(config)
                 .attr('placeholder', config.placeholder)
@@ -439,7 +439,7 @@
             };
 
             $("<span>")
-                .addClass('add-on')
+                .addClass('input-group-addon')
                 .appendTo( wrapper )
                 .mousedown(function() {
                     wasOpen = input.autocomplete( "widget" ).is( ":visible" );
@@ -631,17 +631,17 @@
         });
         function constructContrail2WayMultiselect(self, options){
         	self.html('<div class="contrail2WayMultiselect row-fluid">\
-                <div class="span5">\
+                <div class="col-xs-5">\
                     <label>'+options.leftTitle+'</label>\
                     <ol class="row-fluid multiselect-left multiselect-list" style="height:'+(options.sizeLeft * 30).toString()+'px;"></ol>\
                 </div>\
-                <div class="span2 multiselect-controls">\
+                <div class="col-xs-2 multiselect-controls">\
                     ' + ((options.controls.single) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-selected fa fa-angle-right"></i></div>\
                     <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-selected fa fa-angle-left"></i></div>' : '') + '\
                     ' + ((options.controls.all) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-all fa fa-angle-double-right"></i></div>\
                     <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-all fa fa-angle-double-left"></i></div>' : '') + '\
                 </div>\
-                <div class="span5">\
+                <div class="col-xs-5">\
                      <label>'+options.rightTitle+'</label>\
                      <ol class="row-fluid multiselect-right multiselect-list" style="height:'+(options.sizeRight * 30).toString()+'px;"></ol>\
                 </div>\

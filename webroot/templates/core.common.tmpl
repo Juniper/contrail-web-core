@@ -72,7 +72,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="dashboard-template">
-    <div class="row-fluid">
+    <div class="row">
         <div id="dashboard-box" class="widget-box transparent">
             {{#IfCompare noTitle null operator="=="}}
                 <div class="widget-header">
@@ -123,23 +123,23 @@
 </script>
 
 <script type="text/x-handlebars-template" id="title-lblval-tooltip-template">
-    <div class="row-fluid chart-tooltip" style="width:250px;">
+    <div class="row chart-tooltip" style="width:250px;">
         {{#each this}}
             {{#IfCompare @index 0}}
-                <div class="row-fluid chart-tooltip-title">
+                <div class="row chart-tooltip-title">
                     <p>{{value}}</p>
                 </div>
-            <div class="row-fluid chart-tooltip-body ">
+            <div class="row chart-tooltip-body ">
             {{else}}
                 {{#IfCompare true options.noLabelColon}}
-                    <div class="row-fluid chart-tooltip-row" >
-                        <span class="key span4" style="min-height:20px;">{{label}}</span>
-                        <span class="value span8" style="min-height:20px;">{{value}}</span>
+                    <div class="row chart-tooltip-row" >
+                        <span class="key col-xs-4" style="min-height:20px;">{{label}}</span>
+                        <span class="value col-xs-8" style="min-height:20px;">{{value}}</span>
                     </div>
                 {{else}}
-                    <div class="row-fluid chart-tooltip-row" >
-                        <span class="key span4" style="min-height:20px;">{{label}}:</span>
-                        <span class="value span8" style="min-height:20px;">{{value}}</span>
+                    <div class="row chart-tooltip-row" >
+                        <span class="key col-xs-4" style="min-height:20px;">{{label}}:</span>
+                        <span class="value col-xs-8" style="min-height:20px;">{{value}}</span>
                     </div>
                 {{/IfCompare}}
             {{/IfCompare}}
@@ -150,15 +150,15 @@
 
 <!-- To be removed later-->
 <script type="text/x-handlebars-template" id="title-lblval-tooltip-template-new">
-    <div class="row-fluid chart-tooltip" style="width:250px;">
+    <div class="row chart-tooltip" style="width:250px;">
         {{#each this}}
             {{#IfCompare @index 0}}
-                <div class="row-fluid chart-tooltip-title">
+                <div class="row chart-tooltip-title">
                     <p>{{value}}</p>
                 </div>
-            <div class="row-fluid chart-tooltip-body ">
+            <div class="row chart-tooltip-body ">
             {{else}}
-                <div class="row-fluid chart-tooltip-row" >
+                <div class="row chart-tooltip-row" >
                     <span class="key {{keyClass}}" style="min-height:20px;">{{label}}:</span>
                     <span class="value {{valueClass}}" style="min-height:20px;">{{value}}</span>
                 </div>
@@ -170,7 +170,7 @@
 
 <script type="text/x-handlebars-template" id="overlapped-bubble-tooltip">
 <div id="overlapped-bubble-wrapper" class="enabledPointer">
-     <div class="row-fluid" >
+     <div class="row" >
         <div class="left-arrow-wrapper">
             <div class="left-arrow">
                 <i class="fa fa-chevron-left" style="font-size: 20px;"></i>
@@ -190,7 +190,7 @@
             </div>
         </div>
      </div>
-     <div class="row-fluid pagecount">
+     <div class="row pagecount">
         <span class="pull-right">{{pagestr}}</span>
     </div>
 </div>
@@ -198,7 +198,7 @@
 
 <script type="text/x-handlebars-template" id="overlapped-bubble-tooltip-new">
     <div id="overlapped-bubble-wrapper" class="enabledPointer">
-        <div class="row-fluid" >
+        <div class="row" >
             <div class="left-arrow-wrapper">
                 <div class="left-arrow">
                     <i class="fa fa-chevron-left" style="font-size: 20px;"></i>
@@ -218,23 +218,23 @@
                 </div>
             </div>
         </div>
-        <div class="row-fluid pagecount">
+        <div class="row pagecount">
             <span class="pull-right">{{pagestr}}</span>
         </div>
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="title-lblval-tooltip-template_new">
-<div class="row-fluid chart-tooltip">
+<div class="row chart-tooltip">
  {{#each this}}
     {{#IfCompare @index 0 }}
-        <div class="row-fluid chart-tooltip-title">
+        <div class="row chart-tooltip-title">
             <p>{{value}}</p>
         </div>
     {{/IfCompare}}
     {{#IfCompare @index 0 operator='!='}}
-    <div class="row-fluid chart-tooltip-body ">
-        <div class="row-fluid chart-tooltip-row">
+    <div class="row chart-tooltip-body ">
+        <div class="row chart-tooltip-row">
             {{#IfCompare label '' operator='!='}}
             <span class="key">{{label}}:</span>
             {{/IfCompare}}
@@ -261,7 +261,7 @@
 
 <script type="text/x-handlebars-template" id="core-infobox-template">
     <div class='infobox-widget'>
-        <div class='infobox-container'>
+        <div class='infobox-container row'>
             <div class="control-panel-items pull-right">
                 <div class="control-panel-item refresh" data-action="refresh" title="Refresh">
                     <i class="fa fa-repeat"></i>
@@ -288,10 +288,10 @@
 </script>
 
 <script type="text/x-handlebars-template" id="lblval-tooltip-template">
-<div class="row-fluid chart-tooltip">
-    <div class="row-fluid chart-tooltip-body ">
+<div class="row chart-tooltip">
+    <div class="row chart-tooltip-body ">
      {{#each this}}
-         <div class="row-fluid chart-tooltip-row">
+         <div class="row chart-tooltip-row">
              <span class="key">{{label}}</span>
              <span class="value"> {{value}}</span>
          </div>
@@ -329,9 +329,9 @@
         <i class="{{iconClass}}"></i>
     </div>
     <div class="popover-info">
-        <div class="row-fluid">
+        <div class="row">
         {{#each info}}
-            <div class="row-fluid popover-tooltip-row {{#if dividerClass}} {{dividerClass}} {{/if}}" title="{{value}}">
+            <div class="row popover-tooltip-row {{#if dividerClass}} {{dividerClass}} {{/if}}" title="{{value}}">
                 <span class="key">{{label}} </span>
                 <span class="value">{{value}}</span>
              </div>
@@ -339,7 +339,7 @@
         </div>
     </div>
     {{#if actions}}
-    <div class="row-fluid popover-tooltip-footer">
+    <div class="row popover-tooltip-footer">
         {{#each actions}}
         <button class="btn btn-mini pull-right" data-action="{{@index}}"><i class="{{iconClass}}"></i> {{text}} </button>
         {{/each}}
@@ -368,10 +368,10 @@
         {{#each this}}
             <div class="itemdiv commentdiv infobox-blue">
                 <div class="body">
-                    <div class="row-fluid">
-                        <div class="name span9 word-break-all">
+                    <div class="row">
+                        <div class="name col-xs-9 word-break-all">
                             <span {{#if link}}class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}}){{else}}class="hyperlink-inactive"{{/if}}> {{moduleId}} </span></div>
-                            <div class="time span3">
+                            <div class="time col-xs-3">
                                 <i class="fa fa-clock-o" style="cursor:default"></i>
                                 <span class="green"> {{timeStr}} </span>
                             </div>
@@ -440,7 +440,7 @@
 
 <script type="text/x-handlebars-template" id="infobox-template">
     <div id="{{id}}" class="infobox infobox-grey">
-        <div class="infobox-icon">
+        <div class="infobox-icon pull-left">
             <i class="fa fa-sitemap"></i>
         </div>
         {{#if totalCntField}}
@@ -461,7 +461,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="infobox-summary-template">
-    <div class="infobox infobox-grey">
+    <div class="infobox infobox-grey pull-left">
         <div class="infobox-icon">
             <i class="fa fa-sitemap"></i>
         </div>
@@ -474,8 +474,8 @@
 </script>
 
 <script type="text/x-handlebars-template" id="dashboard-stats">
-    <div id="dashboard-stats" class="row-fluid">
-        <div class="span4">
+    <div id="dashboard-stats" class="row">
+        <div class="col-xs-4">
             <div id="logs-box" class="widget-box transparent">
                 <div class="widget-header"></div>
                 <div class="widget-body">
@@ -484,7 +484,7 @@
                 </div>
             </div>
         </div>
-        <div class="span4">
+        <div class="col-xs-4">
             <div id="sysinfo-box" class="widget-box transparent">
                 <div class="widget-header"></div>
                 <div class="widget-body">
@@ -494,7 +494,7 @@
                 </div>
             </div>
         </div>
-        <div class="span4">
+        <div class="col-xs-4">
             <div id="alerts-box" class="widget-box transparent">
                 <div class="widget-header"></div>
                 <div class="widget-body">
@@ -509,8 +509,8 @@
 <script type="text/x-handlebars-template" id="mon-infra-dashboard">
     <div id='dashboard-infoboxes' style="/*height:430px*/">
     </div>
-    <div id="dashboard-stats" class="row-fluid">
-        <div class="span4">
+    <div id="dashboard-stats" class="row">
+        <div class="col-xs-4">
             <div id="logs-box" class="widget-box transparent">
                 <div class="widget-header"></div>
                 <div class="widget-body">
@@ -519,7 +519,7 @@
                 </div>
             </div>
         </div>
-        <div class="span4">
+        <div class="col-xs-4">
             <div id="sysinfo-box" class="widget-box transparent">
                 <div class="widget-header"></div>
                 <div class="widget-body">
@@ -529,7 +529,7 @@
                 </div>
             </div>
         </div>
-        <div class="span4">
+        <div class="col-xs-4">
             <div id="alerts-box" class="widget-box transparent">
                 <div class="widget-header"></div>
                 <div class="widget-body">
@@ -547,18 +547,18 @@
 </script>
 
 <script type="text/x-handlebars-template" id="infra-dashboard">
-    <div class="row-fluid">
-        <div class="row-fluid">
-            <div id='topStats' class="span12 infobox-container"></div>
+    <div class="row">
+        <div class="row">
+            <div id='topStats' class="col-xs-12 infobox-container"></div>
         </div>
         <hr class="hr-8"/>
-        <div id="dashboard-charts" class="row-fluid">
+        <div id="dashboard-charts" class="row">
         </div>
 
         <hr />
 
-        <div id="dashboard-stats" class="row-fluid">
-            <div class="span4">
+        <div id="dashboard-stats" class="row">
+            <div class="col-xs-4">
                 <div id="logs-box" class="widget-box transparent">
                     <div class="widget-header"></div>
                     <div class="widget-body">
@@ -567,7 +567,7 @@
                     </div>
                 </div>
             </div>
-            <div class="span4">
+            <div class="col-xs-4">
                 <div id="sysinfo-box" class="widget-box transparent">
                     <div class="widget-header"></div>
                     <div class="widget-body">
@@ -576,7 +576,7 @@
                     </div>
                 </div>
             </div>
-            <div class="span4">
+            <div class="col-xs-4">
                 <div id="alerts-box" class="widget-box transparent">
                     <div class="widget-header"></div>
                     <div class="widget-body">
@@ -608,11 +608,11 @@
 </script>
 <script type="text/x-handlebars-template" id="gridsTemplateJSONDetails">
     <div>
-        <div class="row-fluid">
-            <div class="row-fluid">
+        <div class="row">
+            <div class="row">
                 <label>Details :</label>
             </div>
-            <div class="row-fluid">
+            <div class="row">
                 <div><pre>{{{displayJson raw_json}}}</pre></div>
             </div>
         </div>
@@ -663,21 +663,21 @@
 </script>
 
 <script type="text/x-handlebars-template" id="dashboard-body-template">
-    <div class="widget-main row-fluid">
+    <div class="widget-main row">
             {{#IfCompare showSettings true options='=='}}
-                <div id="divAdvanced" class="row-fluid hide">
+                <div id="divAdvanced" class="row hide">
                     <div id="divAdvanced-loading" class="fa fa-spinner fa fa-spin blue bigger-125" style="display: none;"></div>
                     <div><pre>{{{displayJson nodeData}}}</pre></div>
                 </div>
             {{/IfCompare}}
-            <div id="divBasic" class="row-fluid">
+            <div id="divBasic" class="row">
                 <ul id="detail-columns" class="item-list">
                     {{#each d}}
                         {{#if this}}
                             <li>
-                                <label class="inline row-fluid">
-                                    <div class="key span5">{{{this.lbl}}}</div>
-                                    <div class="value span7">
+                                <label class="inline row">
+                                    <div class="key col-xs-5">{{{this.lbl}}}</div>
+                                    <div class="value col-xs-7">
                                         {{#if this.value}}
                                             {{{this.value}}}
                                         {{else}}
@@ -694,19 +694,19 @@
                     {{/each}} <!-- /each d -->
                 </ul>
             </div><!--/span-->
-            <div id="divStatus" hidden="true" class="row-fluid">
-                <div id="divContrailStatus" class="row-fluid"></div>
-                <!-- <div class="row-fluid">
-                    <label class="span3">Opentstack Status</label><i id="icon_divOpenStackStatus" class="fa fa-expand-alt" onclick="toggleDetails('divOpenStackStatus');"></i>
+            <div id="divStatus" hidden="true" class="row">
+                <div id="divContrailStatus" class="row"></div>
+                <!-- <div class="row">
+                    <label class="col-xs-3">Opentstack Status</label><i id="icon_divOpenStackStatus" class="fa fa-expand-alt" onclick="toggleDetails('divOpenStackStatus');"></i>
                 </div>
-                <div id="divOpenStackStatus" hidden="true" class="widget-main padding-4" class="row-fluid"></div>
+                <div id="divOpenStackStatus" hidden="true" class="widget-main padding-4" class="row"></div>
                 -->
             </div>
     </div><!-- /widget-main -->
 </script>
 
 <script type="text/x-handlebars-template" id="checked-multiselect-optgroup-template">
-    <select multiple="multiple" size="5" class="row-fluid">
+    <select multiple="multiple" size="5" class="row">
         {{#each data}}
             <optgroup label="{{text}}" data-value={{id}}>
                 {{#each children}}
@@ -718,12 +718,12 @@
 </script>
 
 <script type="text/x-handlebars-template" id="tooltip-content-template">
-    <div class="row-fluid chart-tooltip">
-        <div class="row-fluid chart-tooltip-body ">
+    <div class="row chart-tooltip">
+        <div class="row chart-tooltip-body ">
             {{#each this}}
-                <div class="row-fluid chart-tooltip-row">
-                    <span class="key span4" style="min-height:20px;">{{lbl}}:</span>
-                    <span class="value span8" style="min-height:20px;">{{value}}</span>
+                <div class="row chart-tooltip-row">
+                    <span class="key col-xs-4" style="min-height:20px;">{{lbl}}:</span>
+                    <span class="value col-xs-8" style="min-height:20px;">{{value}}</span>
                 </div>
             {{/each}}
         </div>
@@ -887,7 +887,7 @@
         {{/if}}
         {{#each viewConfig.rows}}
             <div class="section-content" data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}">
-                <div class="row-fluid margin-0-0-5">
+                <div class="row margin-0-0-5">
                     {{#each this.columns}}
                         <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" style="{{this.viewConfig.style}}"
                         data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}">
@@ -910,8 +910,8 @@
                     <span data-bind="text: errors().{{this.elementId}}_form_error"></span>
                 </div>
                 <div id="{{this.elementId}}"></div>
-                <div class="stepInfo row-fluid hide">
-                    <p class="span12">Selected Servers: <span class="selectedServerCount">None</span></p>
+                <div class="stepInfo row hide">
+                    <p class="col-xs-12">Selected Servers: <span class="selectedServerCount">None</span></p>
                 </div>
             </section>
         {{/each}}
@@ -919,12 +919,12 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-composite-view-template">
-     <div class="row-fluid form-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="span10">
+     <div class="row form-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="col-xs-10">
             <label>{{label}}</label>
         </div>
     </div>
-    <div class="row-fluid"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div class="row"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         {{#each this.childView}}
             <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}"></div>
         {{/each}}
@@ -933,26 +933,26 @@
 
 <script type="text/x-handlebars-template" id="core-input-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="row-fluid form-label">
-            <div class="span10">
+        <div class="row form-label">
+            <div class="col-xs-10">
                 <label>{{label}}</label>
             </div>
-            <div class="span2">
+            <div class="col-xs-2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                     <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
-        <div class="row-fluid form-element">
+        <div class="row col-xs-12 form-element">
                 {{#IfCompare type 'password' operator='==='}}
-            <div class="input-append inset span12">
-                <input type="{{type}}" name="{{id}}" class="span12 {{class}}"
+            <div class="input-append inset col-xs-12">
+                <input type="{{type}}" name="{{id}}" class="col-xs-12 {{class}}"
                             data-bind="
                                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                                 value: {{viewConfig.dataBindValue}},
                                 event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
                         />
-                <span class="add-on input-type-toggle-action"><i class="fa fa-eye"></i></span>
+                <span class="input-group-addon input-type-toggle-action"><i class="fa fa-eye"></i></span>
             </div>
                 {{else}}
                     <input type="{{type}}" name="{{id}}" placeholder="{{viewConfig.placeholder}}" class="{{class}}"
@@ -967,16 +967,16 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-input-view-template">
-        <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="row" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
                 {{#IfCompare type 'password' operator='==='}}
-            <div class="input-append editable-grid-input-append inset span12">
-                    <input type="{{type}}" name="{{id}}" class="span12 {{class}}"
+            <div class="input-append editable-grid-input-append inset col-xs-12">
+                    <input type="{{type}}" name="{{id}}" class="col-xs-12 {{class}}"
                         data-bind="
                             {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                             value: {{viewConfig.dataBindValue}},
                             event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) } }"
                     />
-                    <span class="add-on input-type-toggle-action"><i class="fa fa-eye-open"></i></span>
+                    <span class="input-group-addon input-type-toggle-action"><i class="fa fa-eye-open"></i></span>
             </div>
                 {{else}}
                     <input type="{{type}}" name="{{name}}" class="{{class}}" placeholder="{{viewConfig.placeholder}}"
@@ -990,17 +990,17 @@
 
 <script type="text/x-handlebars-template" id="core-checkbox-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="row-fluid form-label">
-            <div class="span10">
+        <div class="row form-label">
+            <div class="col-xs-10">
                 <label>{{label}}</label>
             </div>
-            <div class="span2">
+            <div class="col-xs-2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                     <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
-        <div class="row-fluid form-element">
+        <div class="row col-xs-12 form-element">
             <input type="{{type}}" name="{{id}}" class="{{class}} ace-input"
                 data-bind="
                     {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1014,7 +1014,7 @@
 </script>
 <script type="text/x-handlebars-template" id="core-checkbox-label-right-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="row-fluid form-element" >
+        <div class="row col-xs-12 form-element" >
             <input type="{{type}}" name="{{id}}" class="{{class}} ace-input"
                 data-bind="
                     {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1027,24 +1027,24 @@
     </div>
 </script>
 <script type="text/x-handlebars-template" id="core-editable-grid-checkbox-view-template">
-    <div class="row-fluid" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div class="row" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <input type="{{type}}" name="{{name}}" class="{{class}} ace-input" data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}} checked: {{viewConfig.dataBindValue}}"/>
         <span class="ace-lbl" />
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-radio-button-view-template">
-    <div class="row-fluid form-radio-button-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="span10">
+    <div class="row form-radio-button-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="col-xs-10">
             <label>{{label}}</label>
         </div>
-        <div class="span2">
+        <div class="col-xs-2">
             <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                 <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
             </span>
         </div>
     </div>
-    <div class="row-fluid form-element" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div class="row col-xs-12 form-element" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         {{#each elementConfig.dataObj}}
         <input type="radio" name="{{../id}}" value="{{value}}" class="{{../class}} ace-input"  data-bind="{{#if ../lockAttr}}disable: locks().{{name}}_locked, {{/if}} checked: {{../dataBindValue}},event: { focusout: function() { validateAttr('{{../path}}', '{{../validation}}') } }" />
         <span class="ace-lbl">{{label}}</span>
@@ -1056,18 +1056,18 @@
 <script type="text/x-handlebars-template" id="core-dropdown-view-template">
    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         {{#IfCompare label false operator='!=' }}
-        <div class="row-fluid form-label">
-            <div class="span10">
+        <div class="row form-label">
+            <div class="col-xs-10">
                 <label>{{label}}</label>
             </div>
-            <div class="span2">
+            <div class="col-xs-2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                     <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
         {{/IfCompare}}
-        <div class="row-fluid form-element">
+        <div class="row col-xs-12 form-element">
             <input id="{{id}}" name="{{name}}" class="{{class}}"
                 data-bind="
                     {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1107,10 +1107,10 @@
             {{/if}} 
         }
         ">
-        <div class="span2 form-label margin-0-0-5">
+        <div class="col-xs-2 form-label margin-0-0-5">
             <label style="margin-top:5px;text-align:left;">{{label}}</label>
         </div>
-        <input id="{{id}}" name="{{name}}" class="span10 {{class}}"
+        <input id="{{id}}" name="{{name}}" class="col-xs-10 {{class}}"
             data-bind="
                 {{#if viewConfig.disabled}}
                     disable: {{viewConfig.disabled}},
@@ -1135,17 +1135,17 @@
 
 <script type="text/x-handlebars-template" id="core-multiselect-view-template">
    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="row-fluid form-label">
-            <div class="span10">
+        <div class="row form-label">
+            <div class="col-xs-10">
                 <label>{{label}}</label>
             </div>
-            <div class="span2">
+            <div class="col-xs-2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                     <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
-        <div class="row-fluid form-element">
+        <div class="row col-xs-12 form-element">
             <input id="{{id}}" name="{{name}}" class="{{class}}"
                 data-bind="
                     {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1178,11 +1178,11 @@
 <script type="text/x-handlebars-template" id="core-editable-grid-label-left-multiselect-view-template">
    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} 
                    {{/if}}">
-        <div class="row-fluid">
-            <div class="span2 form-label margin-0-0-5">
+        <div class="row">
+            <div class="col-xs-2 form-label margin-0-0-5">
                 <label style="margin-top:5px;text-align:left;">{{label}}</label>
             </div>
-            <div class="form-element span10">
+            <div class="form-element col-xs-10">
                 <input id="{{id}}" name="{{name}}" class="{{class}}"
                     data-bind="
                         {{#if viewConfig.disabled}}
@@ -1210,17 +1210,17 @@
 
 <script type="text/x-handlebars-template" id="core-combobox-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="row-fluid form-label">
-            <div class="span10">
+        <div class="row form-label">
+            <div class="col-xs-10">
                 <label>{{label}}</label>
             </div>
-            <div class="span2">
+            <div class="col-xs-2">
                 <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                     <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
-        <div class="row-fluid form-element">
+        <div class="row col-xs-12 form-element">
             <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}"
                 data-bind="
                     {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1235,7 +1235,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-combobox-view-template">
-    <div class="row-fluid"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div class="row"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1248,30 +1248,30 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-textarea-view-template">
-    <div class="row-fluid form-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="span10">
+    <div class="row form-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        <div class="col-xs-10">
             <label>{{label}}</label>
         </div>
-        <div class="span2">
+        <div class="col-xs-2">
             <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                 <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
             </span>
         </div>
     </div>
-    <div class="row-fluid form-element"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div class="row col-xs-12 form-element"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <div class="textarea-input-append input-append inset col-xs-12">
             <textarea
                 name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}" rows="1"
                 data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
             </textarea>
-            <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
+            <span class="input-group-addon" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
         </div>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-textarea-view-template">
-    <div class="row-fluid"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div class="row"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <div class="textarea-input-append input-append inset col-xs-12">
             <textarea
                 name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}"
@@ -1281,7 +1281,7 @@
                 value: {{dataBindValue}},
                 event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) }}">
             </textarea>
-            <span class="add-on" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
+            <span class="input-group-addon" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
         </div>
     </div>
 </script>
@@ -1289,18 +1289,18 @@
 <script type="text/x-handlebars-template" id="core-datetimepicker-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         {{#IfCompare label false operator='!=' }}
-        <div class="row-fluid form-label">
-            <div class="span10">
+        <div class="row form-label">
+            <div class="col-xs-10">
                 <label>{{label}}</label>
             </div>
-            <div class="span2">
+            <div class="col-xs-2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                     <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
         {{/IfCompare}}
-        <div class="row-fluid form-element">
+        <div class="row col-xs-12 form-element">
             <input id="{{id}}" name="{{name}}" class="{{class}}" data-bind="
             {{#if disabled}}disable: {{disabled}},
             {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}},
@@ -1314,18 +1314,18 @@
 <script type="text/x-handlebars-template" id="core-numerictextbox-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         {{#IfCompare label false operator='!=' }}
-        <div class="row-fluid form-label">
-            <div class="span10">
+        <div class="row form-label">
+            <div class="col-xs-10">
                 <label>{{label}}</label>
             </div>
-            <div class="span2">
+            <div class="col-xs-2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                     <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
         {{/IfCompare}}
-        <div class="row-fluid form-element">
+        <div class="row col-xs-12 form-element">
             <input id="{{id}}" name="{{name}}" class="{{class}}" type="text"
                 data-bind="
                     {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1340,18 +1340,18 @@
 <script type="text/x-handlebars-template" id="core-autocompletetextbox-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         {{#IfCompare label false operator='!=' }}
-        <div class="row-fluid form-label">
-            <div class="span10">
+        <div class="row form-label">
+            <div class="col-xs-10">
                 <label>{{label}}</label>
             </div>
-            <div class="span2">
+            <div class="col-xs-2">
                 <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                     <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             </div>
         </div>
         {{/IfCompare}}
-        <div class="row-fluid form-element">
+        <div class="row col-xs-12 form-element">
             <input id="{{id}}" name="{{name}}" class="{{class}}" type="text"
                 data-bind="
                     {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1385,14 +1385,14 @@
 <script type="text/x-handlebars-template" id="core-grid-2-row-group-detail-template">
     <div class="group-detail-container">
         {{#IfCompare advancedViewOptions false operator='!=' }}
-        <div class="row-fluid group-detail-action">
+        <div class="row group-detail-action">
             <a class="group-detail-action-item pull-right selected" title="Basic List View" data-view="basic-list"><i class="fa fa-list"></i></a>
             <a class="group-detail-action-item pull-right" title="Advanced JSON View" data-view="advanced-json"><i class="fa fa-code"></i></a>
         </div>
         {{/IfCompare}}
-        <div class="row-fluid group-detail-basic-list group-detail-item">
+        <div class="row group-detail-basic-list group-detail-item">
             {{#each templateConfig}}
-            <div class="span6">
+            <div class="col-xs-6">
                 {{#each this}}
                 <h6>{{title}}</h6>
                 <ul class="item-list">
@@ -1412,7 +1412,7 @@
             </div>
             {{/each}}
         </div>
-        <div class="row-fluid group-detail-advanced-json group-detail-item hide">
+        <div class="row group-detail-advanced-json group-detail-item hide">
             {{{formatGridJSON2HTML dc}}}
         </div>
     </div>
@@ -1463,7 +1463,7 @@
         </tbody>
     </table>
     {{#each gridActions}}
-    <div class="row-fluid margin-10-0-0">
+    <div class="row margin-10-0-0">
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="fa fa-plus"></i> &nbsp;{{this.buttonTitle}}</a>
     </div>
     {{/each}}
@@ -1528,7 +1528,7 @@
     {{#IfCompare viewConfig.label null operator='!='}}
         <label style="margin:0px">{{viewConfig.label}}</label>
     {{/IfCompare}}
-    <div class="row-fluid">
+    <div class="row">
         <table class="collection-table">
             <tbody data-bind="foreach: {{viewConfig.collection}}">
             {{#each viewConfig.rows}}
@@ -1550,7 +1550,7 @@
         </table>
     </div>
     {{#if viewConfig.collectionActions}}
-    <div class="row-fluid collection-actions collection-actions-add">
+    <div class="row collection-actions collection-actions-add">
         <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
             <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
         </a>
@@ -1619,7 +1619,7 @@
 
 
     {{#if viewConfig.collectionActions}}
-    <div class="row-fluid collection-actions collection-actions-add">
+    <div class="row collection-actions collection-actions-add">
         <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
             <i class="{{viewConfig.collectionActions.add.iconClass}}"></i>
             &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
@@ -1725,7 +1725,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
         </tbody>
     </table>
     {{#if viewConfig.collectionActions}}
-    <div class="row-fluid collection-actions collection-actions-add">
+    <div class="row collection-actions collection-actions-add">
         <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
             <i class="{{viewConfig.collectionActions.add.iconClass}}"></i>
             &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
@@ -1735,22 +1735,22 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="query-or-collection-view-template">
-    <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
-        <div class="row-fluid or-clause" data-bind="css: 'or-clause-' + $index()">
-            <div class="span1">
+    <div id="{{elementId}}" class="collection or-clause-collection row" data-bind="foreach: {{viewConfig.collection}}">
+        <div class="row or-clause" data-bind="css: 'or-clause-' + $index()">
+            <div class="col-xs-1">
                 <p class="or-text">OR</p>
             </div>
-            <div class="span10">
+            <div class="col-xs-10">
             {{#each viewConfig.rows}}
-                <div class="row-fluid or-clause-header">
-                    <p class="or-clause-text span10" data-bind="text: getOrClauseText()($data)"></p>
+                <div class="row or-clause-header">
+                    <p class="or-clause-text col-xs-10" data-bind="text: getOrClauseText()($data)"></p>
                     {{#each rowActions}}
                         <a class="collection-actions collection-actions-{{@index}} pull-right" data-bind='click: {{onClick}}'>
                             <i class="pull-right {{iconClass}}"></i>
                         </a>
                     {{/each}}
                 </div>
-                <div class="row-fluid">
+                <div class="row">
                     {{#each columns}}
                         <div class="and-clause-collection data-cell-{{elementId}}" />
                     {{/each}}
@@ -1764,20 +1764,20 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
     {{#IfCompare viewConfig.label null operator='!='}}
         <label style="margin:0">{{viewConfig.label}}</label>
     {{/IfCompare}}
-    <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
-        <div class="row-fluid or-clause" data-bind="css: 'or-clause-' + $index()">
-            <div class="row-fluid or-clause-header">
-                <p class="or-clause-text span10" data-bind="text: getOrClauseText()($data)"></p>
+    <div id="{{elementId}}" class="collection or-clause-collection row" data-bind="foreach: {{viewConfig.collection}}">
+        <div class="row or-clause" data-bind="css: 'or-clause-' + $index()">
+            <div class="row or-clause-header">
+                <p class="or-clause-text col-xs-10" data-bind="text: getOrClauseText()($data)"></p>
                 {{#each viewConfig.rowActions}}
                 <a class="collection-actions collection-actions-{{@index}} pull-right" data-bind='click: {{onClick}}'>
                     <i class="pull-right {{iconClass}}"></i>
                 </a>
                 {{/each}}
             </div>
-            <div class="row-fluid">
+            <div class="row">
                 {{#each viewConfig.rows}}
                     <div style="padding: 5px 5px 0 5px;">
-                        <div class="row-fluid">
+                        <div class="row">
                             {{#each columns}}
                                 <div class="and-clause-collection data-cell{{elementId}}" />
                             {{/each}}
@@ -1796,8 +1796,8 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="core-detail-foundation-template">
-    <div class="row-fluid detail-foundation-container group-detail-container">
-        <div class="row-fluid detail-foundation-action">
+    <div class="row detail-foundation-container group-detail-container">
+        <div class="row detail-foundation-action">
         {{#each actions}}
             {{#IfCompare type 'link' operator='==' }}
                 <a class="detail-foundation-action-item group-detail-action-item pull-right" title="{{title}}"><i class="{{iconClass}}"></i></a>
@@ -1831,13 +1831,13 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
             </a>
         {{/IfCompare}}
         </div>
-        <div class="row-fluid detail-foundation-content-basic group-detail-basic-list group-detail-item"></div>
-        <div class="row-fluid detail-foundation-content-advanced group-detail-advanced-json group-detail-item hide"></div>
+        <div class="row detail-foundation-content-basic group-detail-basic-list group-detail-item"></div>
+        <div class="row detail-foundation-content-advanced group-detail-advanced-json group-detail-item hide"></div>
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-detail-section-template">
-    <div class="row-fluid detail-section-content"></div>
+    <div class="row detail-section-content"></div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-detail-section-column-template">
@@ -1845,19 +1845,19 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="core-detail-section-row-template">
-    <div class="row-fluid detail-section-row-content"></div>
+    <div class="row detail-section-row-content"></div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-2-row-content-template">
-    <div id="top-content-container" class="row-fluid margin-0-0-5"></div>
-    <div id="bottom-content-container" class="row-fluid margin-0-0-5"></div>
+    <div id="top-content-container" class="row margin-0-0-5"></div>
+    <div id="bottom-content-container" class="row margin-0-0-5"></div>
 </script>
 <!-- 2 columns with first column having 1 row and second columnn 2 rows -->
 <script type="text/x-handlebars-template" id="core-2-column-1-row-2row-content-template">
-    <div id="left-column-container" class="span5"></div>
-    <div id="right-column-container" class="span7">
-      <!--  <div id="top-right-content-container" class="row-fluid margin-0-0-5"></div>
-        <div id="bottom-right-content-container" class="row-fluid margin-0-0-5"></div>
+    <div id="left-column-container" class="col-xs-5"></div>
+    <div id="right-column-container" class="col-xs-7">
+      <!--  <div id="top-right-content-container" class="row margin-0-0-5"></div>
+        <div id="bottom-right-content-container" class="row margin-0-0-5"></div>
         -->
     </div>
 </script>
@@ -1867,7 +1867,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="core-tabs-template">
-    <div id="{{elementId}}" class="row-fluid contrail-tabs">
+    <div id="{{elementId}}" class="row contrail-tabs">
         <ul class="contrail-tab-link-list">
             {{#each tabs}}
                 <li>
@@ -1905,16 +1905,16 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="core-not-found-message-template">
-    <div class="row-fluid content-container-not-found">
-        <div class="row-fluid">
+    <div class="row content-container-not-found">
+        <div class="row">
             <h4>{{title}}</h4>
         </div>
         {{#if iconClass}}
-            <div class="row-fluid">
+            <div class="row">
                 <h2 class="not-found-icon"><i class="{{iconClass}}"></i></h2>
             </div>
         {{/if}}
-        <div class="row-fluid not-found-text">
+        <div class="row not-found-text">
             {{#if errorMessage}}
                 <h6 >{{errorMessage}}</h6>
             {{/if}}
@@ -1948,21 +1948,21 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="core-control-panel-filter-template">
-    <div class="control-panel-filter-container row-fluid">
-        <div class="row-fluid">
+    <div class="control-panel-filter-container row">
+        <div class="row">
             <p class="control-panel-filter-title">
                 <span class="pull-left control-panel-filter-title-icon"><i class="{{iconClass}}"></i></span>
                 <span class="pull-left control-panel-filter-title-text">{{title}}</span>
                 <span class="pull-right control-panel-filter-close"><i class="fa fa-remove"></i></span>
             </p>
         </div>
-        <div class="row-fluid control-panel-filter-body" >
+        <div class="row control-panel-filter-body" >
             {{#each viewConfig.groups}}
             <div class="control-panel-filter-group margin-10">
                 {{#IfCompare title false operator='!='}}
                     <h6 class="control-panel-group-filter-title">{{title}}</h6>
                 {{/IfCompare}}
-                <div id="control-panel-filter-group-items-{{id}}" class="row-fluid control-panel-filter-group-items padding-5-0;">
+                <div id="control-panel-filter-group-items-{{id}}" class="row control-panel-filter-group-items padding-5-0;">
 
                 {{#IfCompare type 'checkbox-circle' operator='=='}}
                     {{#each items}}
@@ -1975,11 +1975,11 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 
                 {{#IfCompare type 'radio' operator='=='}}
                     {{#each items}}
-                        <div class="control-panel-filter-group-item row-fluid">
-                            <div class="span1">
+                        <div class="control-panel-filter-group-item row">
+                            <div class="col-xs-1">
                                 <input type="radio" name="control-panel-filter" {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}} class="margin-0"/>
                             </div>
-                            <div class="span11 control-panel-filter-text">
+                            <div class="col-xs-11 control-panel-filter-text">
                                 <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
                             </div>
                         </div>
@@ -1994,23 +1994,23 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="core-control-panel-filter-2-col-template">
-<div class="control-panel-filter-container row-fluid">
-    <div class="row-fluid">
+<div class="control-panel-filter-container row">
+    <div class="row">
         <p class="control-panel-filter-title">
             <span class="pull-left control-panel-filter-title-icon"><i class="fa fa-filter"></i></span>
             <span class="pull-left control-panel-filter-title-text">Filter</span>
             <span class="pull-right control-panel-filter-close"><i class="fa fa-remove"></i></span>
         </p>
     </div>
-    <div class="row-fluid control-panel-filter-body">
+    <div class="row control-panel-filter-body">
         {{#each viewConfig.groups}}
-            <div class="span6">
+            <div class="col-xs-6">
             {{#each this}}
-                    <div class="control-panel-filter-group row-fluid">
+                    <div class="control-panel-filter-group row">
                         {{#IfCompare title false operator='!='}}
                         <h6 class="control-panel-group-filter-title">{{title}}</h6>
                         {{/IfCompare}}
-                        <div id="control-panel-filter-group-items-{{id}}" class="row-fluid control-panel-filter-group-items padding-5-0;">
+                        <div id="control-panel-filter-group-items-{{id}}" class="row control-panel-filter-group-items padding-5-0;">
                             {{#IfCompare type 'checkbox-circle' operator='=='}}
                             {{#each items}}
                                 <div class="control-panel-filter-group-item">
@@ -2022,11 +2022,11 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 
                             {{#IfCompare type 'radio' operator='=='}}
                             {{#each items}}
-                                <div class="control-panel-filter-group-item row-fluid">
-                                    <div class="span1">
+                                <div class="control-panel-filter-group-item row">
+                                    <div class="col-xs-1">
                                         <input type="radio" name="control-panel-filter-{{../id}}" value="{{text}}" {{#IfCompare disabled true operator='=='}} disabled {{/IfCompare}} {{#IfCompare selected true operator='=='}} checked {{else}} {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}} {{/IfCompare}} class="margin-0"/>
                                     </div>
-                                    <div class="span11 control-panel-filter-text">
+                                    <div class="col-xs-11 control-panel-filter-text">
                                         <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
                                     </div>
                                 </div>
@@ -2035,11 +2035,11 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 
                             {{#IfCompare type 'checkbox' operator='=='}}
                             {{#each items}}
-                            <div class="control-panel-filter-group-item row-fluid">
-                                <div class="span1">
+                            <div class="control-panel-filter-group-item row">
+                                <div class="col-xs-1">
                                     <input type="checkbox" name="control-panel-filter-{{../id}}-{{id}}" value="{{text}}" {{#IfCompare checked true operator='=='}} checked {{/IfCompare}} class="margin-0"/>
                                 </div>
-                                <div class="span11 control-panel-filter-text">
+                                <div class="col-xs-11 control-panel-filter-text">
                                     <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
                                 </div>
                             </div>
@@ -2070,25 +2070,25 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="core-chart-template">
-    <div class="chart-container row-fluid">
+    <div class="chart-container row">
         <svg style="height:{{height}}px;"></svg></div>
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-control-panel-legend-template">
-    <div class="control-panel-legend-container row-fluid">
-        <div class="row-fluid">
+    <div class="control-panel-legend-container row">
+        <div class="row">
             <p class="control-panel-legend-title">
                 <span class="pull-left control-panel-legend-title-icon"><i class="fa fa-info-circle"></i></span>
                 <span class="pull-left control-panel-legend-title-text">Information</span>
                 <span class="pull-right control-panel-legend-close"><i class="fa fa-remove"></i></span>
             </p>
         </div>
-        <div class="row-fluid control-panel-legend-body">
+        <div class="row control-panel-legend-body">
             {{#each groups}}
             <div class="control-panel-legend-group padding-10">
                 <h6 class="control-panel-group-legend-title">{{title}}</h6>
-                <div id="control-panel-legend-group-items-{{id}}" class="row-fluid control-panel-legend-group-items padding-5-0;">
+                <div id="control-panel-legend-group-items-{{id}}" class="row control-panel-legend-group-items padding-5-0;">
 
                 {{#each items}}
                     <div class="control-panel-legend-group-item padding-5-0">
@@ -2172,20 +2172,20 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="node-details-sparkline-template">
-    <div id="{{prefix}}-sparklines" class="span4 infobox infobox-details infobox-grey  infobox-content  {{prefix}}-chart-link sparklines-box">
+    <div id="{{prefix}}-sparklines" class="col-xs-4 infobox infobox-details infobox-grey  infobox-content  {{prefix}}-chart-link sparklines-box">
         <p class="infobox-content infobox-details-title">{{title}}</p>
-         <div class="row-fluid infobox-content">
-           <span class="span6">
+         <div class="row infobox-content">
+           <span class="col-xs-6">
                 <small>{{sparklineTitle1}}</small>
            </span>
-           <span class='sparkline1 span6'>
+           <span class='sparkline1 col-xs-6'>
            </span>
          </div>
-         <div class="row-fluid infobox-content">
-           <span class="span6">
+         <div class="row infobox-content">
+           <span class="col-xs-6">
                 <small>{{sparklineTitle2}}</small>
            </span>
-           <span class='sparkline2 span6'>
+           <span class='sparkline2 col-xs-6'>
            </span>
          </div>
     </div>
@@ -2246,13 +2246,13 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="core-sparkline-template">
-    <div class="chart-container row-fluid">
+    <div class="chart-container row">
          <!-- <svg style="height:{{height}}px;"></svg> -->
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-stacked-bar-chart-template">
-    <div class="stacked-bar-chart-container chart-container row-fluid">
+    <div class="stacked-bar-chart-container chart-container row">
          <!-- <svg style="height:{{height}}px;"></svg> -->
     </div>
 </script>
@@ -2269,11 +2269,11 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
             </div>
         </div>
         <div class="widget-body">
-            <div class="widget-main row-fluid">
+            <div class="widget-main row">
                 <div class="infobox-widget">
-                    <div class="infobox-container row-fluid">
+                    <div class="infobox-container row">
                     </div>
-                    <div class="infobox-detail-container row-fluid">
+                    <div class="infobox-detail-container row">
                     </div>
                 </div>
             </div>
@@ -2302,7 +2302,7 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
     <table class="contrail-editable-grid-table" >
         <tbody data-bind="foreach: {{viewConfig.collection}}">
-            <div class="row-fluid collection-actions collection-actions-add">
+            <div class="row collection-actions collection-actions-add">
                 <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
                     <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
                 </a>
@@ -2389,85 +2389,85 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="network-policy-rule-template">
-    <div class= "network-policy-rule row-fluid detail-section-content" style="padding-bottom:20px">
-        <div class="row-fluid" style="background:none;background-color:#f5f5f5;padding:5px 0px">
-            <label class="inline span6" style="margin-left:5px">
-                <span class="key span2"> UUID </span>
+    <div class= "network-policy-rule row detail-section-content" style="padding-bottom:20px">
+        <div class="row" style="background:none;background-color:#f5f5f5;padding:5px 0px">
+            <label class="inline col-xs-6" style="margin-left:5px">
+                <span class="key col-xs-2"> UUID </span>
                 <span class="value">{{data.rule_uuid}}</span>
             </label>
         </div>
-        <div class="row-fluid" style="padding:5px">
-            <div class="network-policy-source span5 detail-section-column-content">
-                <div class="detail-block-list-content row-fluid">
+        <div class="row" style="padding:5px">
+            <div class="network-policy-source col-xs-5 detail-section-column-content">
+                <div class="detail-block-list-content row">
                     <h6>Source</h6>
                     <ul class="item-list network-policy-src-address">
                         {{#each data.src_addresses}}
-                        <li><label class="inline row-fluid">
+                        <li><label class="inline row">
                             {{#if this.network_policy}}
-                            <span> class="key span5"> Network Policy </span><span class="value span7"> {{this.network_policy}}</span>
+                            <span> class="key col-xs-5"> Network Policy </span><span class="value col-xs-7"> {{this.network_policy}}</span>
                             {{/if}}
                             {{#if this.security_group}}
-                            <span class="key span5"> Security Group </span><span class="value span7"> {{this.security_group}}</span>
+                            <span class="key col-xs-5"> Security Group </span><span class="value col-xs-7"> {{this.security_group}}</span>
                             {{/if}}
                             {{#if this.subnet}}
-                            <span class="key span5"> Subnet </span><span class="value span7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
+                            <span class="key col-xs-5"> Subnet </span><span class="value col-xs-7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
                             {{/if}}
                             {{#if this.virtual_network}}
-                            <span class="key span5"> Virtual Network </span><span class="value span7"> {{{this.virtual_network_tmpl}}}</span>
+                            <span class="key col-xs-5"> Virtual Network </span><span class="value col-xs-7"> {{{this.virtual_network_tmpl}}}</span>
                             {{/if}}
                         </label></li>
                         {{/each}}
-                        <li><label class="inline row-fluid">
-                            <span class="key span5"> Port Range </span>
-                            <span class="value span7">
+                        <li><label class="inline row">
+                            <span class="key col-xs-5"> Port Range </span>
+                            <span class="value col-xs-7">
                                 {{#each data.src_ports}}
-                                    <span class="row-fluid"> {{this.start_port}} to {{this.end_port}}</span>
+                                    <span class="row"> {{this.start_port}} to {{this.end_port}}</span>
                                 {{/each}}
                             </span>
                         </label></li>
                     </ul>
                 </div>
             </div>
-            <div class="span2 detail-section-column-content">
-                <div class="detail-block-list-content row-fluid">
-                    <h6 class="inline row-fluid network-policy-direction" style="text-align:center">{{data.direction}}</h6>
+            <div class="col-xs-2 detail-section-column-content">
+                <div class="detail-block-list-content row">
+                    <h6 class="inline row network-policy-direction" style="text-align:center">{{data.direction}}</h6>
                     <ul class="item-list">
                         {{#if data.action_list}}
-                        <li class="network-policy-actions"><label class="inline row-fluid">
-                            <span class="key span6"> Action </span> <span class="value bold">{{toUpperCase data.action_list.simple_action}} </span>
+                        <li class="network-policy-actions"><label class="inline row">
+                            <span class="key col-xs-6"> Action </span> <span class="value bold">{{toUpperCase data.action_list.simple_action}} </span>
                         </label></li>
                         {{/if}}
-                        <li class="network-policy-protocol"><label class="inline row-fluid">
-                            <span class="key span6"> Protocol </span><span class="value bold">{{toUpperCase data.protocol}} </span>
+                        <li class="network-policy-protocol"><label class="inline row">
+                            <span class="key col-xs-6"> Protocol </span><span class="value bold">{{toUpperCase data.protocol}} </span>
                         </label></li>
                     </ul>
                 </div>
             </div>
-            <div class="span5 network-policy-destination detail-section-column-content">
-            <div class="detail-block-list-content row-fluid">
+            <div class="col-xs-5 network-policy-destination detail-section-column-content">
+            <div class="detail-block-list-content row">
                 <h6>Destination</h6>
                 <ul class="item-list network-policy-dst-address">
                     {{#each data.dst_addresses}}
-                    <li><label class="inline row-fluid">
+                    <li><label class="inline row">
                         {{#if this.network_policy}}
-                        <span> class="key span5"> Network Policy </span><span class="value span7"> {{this.network_policy}}</span>
+                        <span> class="key col-xs-5"> Network Policy </span><span class="value col-xs-7"> {{this.network_policy}}</span>
                         {{/if}}
                         {{#if this.security_group}}
-                        <span class="key span5"> Security Group </span><span class="value span7"> {{this.security_group}}</span>
+                        <span class="key col-xs-5"> Security Group </span><span class="value col-xs-7"> {{this.security_group}}</span>
                         {{/if}}
                         {{#if this.subnet}}
-                        <span class="key span5"> Subnet </span><span class="value span7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
+                        <span class="key col-xs-5"> Subnet </span><span class="value col-xs-7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
                         {{/if}}
                         {{#if this.virtual_network}}
-                        <span class="key span5"> Virtual Network </span><span class="value span7"> {{{this.virtual_network_tmpl}}}</span>
+                        <span class="key col-xs-5"> Virtual Network </span><span class="value col-xs-7"> {{{this.virtual_network_tmpl}}}</span>
                         {{/if}}
                     </label></li>
                     {{/each}}
-                    <li><label class="inline row-fluid">
-                        <span class="key span5"> Port Range </span>
-                        <span class="value span7">
+                    <li><label class="inline row">
+                        <span class="key col-xs-5"> Port Range </span>
+                        <span class="value col-xs-7">
                             {{#each data.dst_ports}}
-                                <span class="row-fluid"> {{this.start_port}} to {{this.end_port}}</span>
+                                <span class="row"> {{this.start_port}} to {{this.end_port}}</span>
                             {{/each}}
                         </span>
                     </label></li>

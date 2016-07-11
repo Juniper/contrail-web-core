@@ -655,7 +655,7 @@ th.fc-widget-header {
 .external-event.ui-draggable-dragging {
   cursor: move;
 }
-.external-event > [class*="icon-"]:first-child {
+.external-event > [class*="fa-"]:first-child {
   /* the move & drag icon */
 
   display: inline-block;
@@ -941,7 +941,7 @@ th.fc-widget-header {
   background: #FFF none !important;
   text-align: center;
 }
-#cboxLoadingGraphic > [class*="icon-"] {
+#cboxLoadingGraphic > [class*="fa-"] {
   display: inline-block;
   background-color: #FFF;
   border-radius: 8px;
@@ -979,7 +979,7 @@ th.fc-widget-header {
 .ace-spinner .spinner-buttons > .btn:first-child {
   margin-top: 0;
 }
-.ace-spinner .spinner-buttons > .btn > [class*="icon-"] {
+.ace-spinner .spinner-buttons > .btn > [class*="fa-"] {
   font-size: 10px;
   margin: 0;
   padding: 0;
@@ -1126,8 +1126,8 @@ th.fc-widget-header {
   display: inline;
   z-index: 2;
 }
-.tree .tree-folder .tree-folder-header > [class*="icon-"]:first-child,
-.tree .tree-item > [class*="icon-"]:first-child {
+.tree .tree-folder .tree-folder-header > [class*="fa-"]:first-child,
+.tree .tree-item > [class*="fa-"]:first-child {
   display: inline-block;
   position: relative;
   z-index: 2;
@@ -1136,7 +1136,7 @@ th.fc-widget-header {
 .tree .tree-folder .tree-folder-header .tree-folder-name {
   margin-left: 2px;
 }
-.tree .tree-folder .tree-folder-header > [class*="icon-"]:first-child {
+.tree .tree-folder .tree-folder-header > [class*="fa-"]:first-child {
   margin: -2px 0 0 -2px;
 }
 .tree .tree-folder:last-child:after {
@@ -1175,7 +1175,7 @@ th.fc-widget-header {
 .tree .tree-item .tree-item-name {
   margin-left: 3px;
 }
-.tree .tree-item > [class*="icon-"]:first-child {
+.tree .tree-item > [class*="fa-"]:first-child {
   margin-top: -1px;
 }
 .tree .tree-folder,
@@ -1214,7 +1214,7 @@ th.fc-widget-header {
   padding: 5px;
   color: #4D6878;
 }
-.tree .tree-item > [class*="icon-"]:first-child {
+.tree .tree-item > [class*="fa-"]:first-child {
   color: #F9E8CE;
   width: 13px;
   height: 13px;
@@ -1226,13 +1226,13 @@ th.fc-widget-header {
   border: 1px solid #CCC;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.tree .tree-selected > [class*="icon-"]:first-child {
+.tree .tree-selected > [class*="fa-"]:first-child {
   background-color: #F9A021;
   border-color: #F9A021;
   color: #FFF;
 }
-.tree .icon-plus[class*="icon-"]:first-child,
-.tree .icon-minus[class*="icon-"]:first-child {
+.tree .fa-plus[class*="fa-"]:first-child,
+.tree .fa-minus[class*="fa-"]:first-child {
   border: 1px solid #DDD;
   vertical-align: middle;
   height: 11px;
@@ -1244,14 +1244,14 @@ th.fc-widget-header {
   position: relative;
   z-index: 1;
 }
-.tree .icon-plus[class*="icon-"]:first-child:before {
+.tree .fa-plus[class*="fa-"]:first-child:before {
   content: "+";
   font-family: "Open Sans";
   font-size: 16px;
   position: relative;
   z-index: 1;
 }
-.tree .icon-minus[class*="icon-"]:first-child:before {
+.tree .fa-minus[class*="fa-"]:first-child:before {
   content: "\2012";
   font-family: "Open Sans";
   font-size: 16px;
@@ -1259,7 +1259,7 @@ th.fc-widget-header {
   top: -1px;
   z-index: 1;
 }
-.tree .tree-unselectable .tree-item > [class*="icon-"]:first-child {
+.tree .tree-unselectable .tree-item > [class*="fa-"]:first-child {
   color: #5084A0;
   width: 13px;
   height: 13px;
@@ -1271,10 +1271,10 @@ th.fc-widget-header {
   border: none;
   box-shadow: none;
 }
-.tree [class*="icon-"][class*="-down"] {
+.tree [class*="fa-"][class*="-down"] {
   transform: rotate(-45deg);
 }
-.tree .icon-spin {
+.tree .fa-spin {
   height: auto;
 }
 .tree img {
@@ -1282,7 +1282,7 @@ th.fc-widget-header {
   veritcal-align: middle;
 }
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
-  .tree .icon-minus[class*="icon-"]:first-child:before {
+  .tree .fa-minus[class*="fa-"]:first-child:before {
     font-size: 18px;
   }
 }
@@ -1531,14 +1531,14 @@ th.fc-widget-header {
   padding-right: 0;
   text-align: center;
 }
-.wysiwyg-toolbar .btn-group > .btn > [class*="icon-"]:first-child {
+.wysiwyg-toolbar .btn-group > .btn > [class*="fa-"]:first-child {
   font-size: 14px;
   width: 25px;
   max-width: 25px;
   display: inline-block;
   border-width: 1px !important;
 }
-.wysiwyg-toolbar .btn-group > .btn > [class*="icon-"]:last-child {
+.wysiwyg-toolbar .btn-group > .btn > [class*="fa-"]:last-child {
   margin-right: 4px;
 }
 .wysiwyg-toolbar .btn-group > .btn.active:after {
@@ -1709,7 +1709,7 @@ th.fc-widget-header {
   padding-right: 0;
   border-width: 1px !important;
 }
-.widget-body .md-header .btn > [class*="icon-"] {
+.widget-body .md-header .btn > [class*="fa-"] {
   font-size: 14px;
   width: 25px;
   max-width: 25px;

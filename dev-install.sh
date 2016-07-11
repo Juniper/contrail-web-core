@@ -287,6 +287,8 @@ MAINCSS[23]=webroot/css/contrail.font.css
 MAINCSS[24]=webroot/css/login.css
 #the new custom file deveoped using ace theme as base
 MAINCSS[25]=webroot/css/ace.theme.css
+#ace theme wit modified changes, has few more changes than no.25
+MAINCSS[26]=webroot/css/contrail.theme.css
 
 
 cat ${MAINCSS[1]} >> webroot/css/contrail-all.css
@@ -314,4 +316,5 @@ cat ${MAINCSS[22]} >> webroot/css/contrail-all.css
 #cat ${MAINCSS[25]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[23]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[24]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[26]} >> webroot/css/contrail-all.css
 #End - Merging ALL CSS files

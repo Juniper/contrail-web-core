@@ -17,7 +17,7 @@ define([
 
             viewConfig.label = (viewConfig.label != null)? viewConfig.label : ((elId != null)? cowl.get(elId, app) : cowl.get(path, app));
 
-            tmplParameters = { id: elId, name: elId, class: "span3", viewConfig: viewConfig };
+            tmplParameters = { id: elId, name: elId, class: "col-xs-3", viewConfig: viewConfig };
 
             self.$el.html(buttonTemplate(tmplParameters));
         }
