@@ -653,12 +653,14 @@
 </script>
 
 <script type = "text/x-handlebars-template" id = "statusTemplate">
-    {{#IfCompare sevLevel sevLevels.ERROR }}
-        <span class="status-badge-rounded-small status-inactive"></span>
-    {{else}}
-    {{#IfCompare sevLevel sevLevels.WARNING}}
-        <span class="status-badge-rounded-small status-partially-active"></span>
+    {{#IfCompare sevLevel sevLevels.CRITICAL options='=='}}
+        <span> <span class="status-badge-rounded-small status-inactive"></span> {{msg}}</span>
     {{/IfCompare}}
+    {{#IfCompare sevLevel sevLevels.ERROR options='=='}}
+        <span> <span class="status-badge-rounded-small status-inactive"></span> {{msg}}</span>
+    {{/IfCompare}}
+    {{#IfCompare sevLevel sevLevels.WARNING options='=='}}
+        <span> <span class="status-badge-rounded-small status-partially-active"></span> {{msg}}</span>
     {{/IfCompare}}
 </script>
 
@@ -1735,6 +1737,9 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="query-or-collection-view-template">
+    {{#IfCompare viewConfig.label null operator='!='}}
+        <label style="margin:0">{{viewConfig.label}}</label>
+    {{/IfCompare}}
     <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
         <div class="row-fluid or-clause" data-bind="css: 'or-clause-' + $index()">
             <div class="span1">

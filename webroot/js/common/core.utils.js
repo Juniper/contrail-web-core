@@ -13,6 +13,7 @@ define(['underscore'], function (_) {
         if(this.getAlarmsFromAnalytics) {
             // sevLevels = cowc.SEV_LEVELS;
             sevLevels = {
+                CRITICAL: 2,
                 ERROR   : 3, //Red
                 WARNING : 4, //Orange
                 // NOTICE  : 2, //Blue

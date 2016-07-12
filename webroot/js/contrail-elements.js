@@ -1122,6 +1122,9 @@
 //Formatting data as an array of strings.
 function formatData(data, option) {
     var formattedData = [];
+    if (typeof data == 'function') {
+        data = data();
+    }
     if (typeof data[0] === 'object') {
         if (typeof option.dataValueField !== 'undefined' && typeof option.dataTextField !== 'undefined') {
             $.each(data, function (key, val) {
