@@ -695,7 +695,10 @@
 /*
  * JSON Editor
  */
-
+.contrail-jsoneditor {
+    width: 950px;
+    height: 440px;
+}
 div.jsoneditor-menu a,
 table.jsoneditor-search input,
 table.jsoneditor-search div.jsoneditor-results,
@@ -715,10 +718,6 @@ div.jsoneditor {
 div.jsoneditor-menu {
     background-color: #FFF;
     border-bottom: 1px solid #CCCCCC;
-}
-div.jsoneditor-outer {
-    margin: 0;
-    padding: 0;
 }
 div.jsoneditor-contextmenu ul li button.jsoneditor-selected, div.jsoneditor-contextmenu ul li button.jsoneditor-selected:focus, div.jsoneditor-contextmenu ul li button.jsoneditor-selected:hover {
     color: #393939;
