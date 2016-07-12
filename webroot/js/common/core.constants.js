@@ -825,5 +825,7 @@ define([
             return cowu.getValueFromTemplate(args);
         };
     };
-    return new CoreConstants();
+    //Export to global scope
+    cowc = new CoreConstants();
+    return cowc;
 });
