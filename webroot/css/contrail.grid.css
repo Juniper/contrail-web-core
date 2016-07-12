@@ -118,6 +118,7 @@
 }
 .grid-load-status{
     padding: 5px;
+    border-right: 1px dotted #DDDDDD;
 }
 .grid-load-status p{
     margin: 0;
@@ -151,7 +152,7 @@
     line-height: 18px;
     color: #3182bd;
     font-size: 13px;
-    border-right: 1px dotted #EEEEEE;
+    border-right: 1px dotted #DDDDDD;
 }
 .slick-viewport {
     border-top: 1px solid #dadada;
@@ -254,10 +255,12 @@
     color: #393939;
     font-size: 13px;
     padding: 5px;
+    height: inherit;
+    box-sizing: border-box;
     overflow-y: hidden;
     word-break:break-all;
     white-space: normal;
-    border-right: 1px dotted #EEEEEE;
+    border-right: 1px dotted #DDDDDD;
 }
 .slick-cell.cell-hyperlink-blue, .slick-cell .cell-hyperlink-blue{
     color: #3182bd;
@@ -284,8 +287,8 @@
     border-top: 1px solid #dadada;
     margin-top: -2px;
     font-size: 11px;
-    border-left: 1px dotted #EEEEEE;
-    border-right: 1px dotted #EEEEEE;
+    border-left: 1px dotted #DDDDDD;
+    border-right: 1px dotted #DDDDDD;
 }
 .slick-pager {
     width: 100%;

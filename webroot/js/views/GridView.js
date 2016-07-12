@@ -302,7 +302,7 @@ define([
                         }
                         if (gridOptions.fixedRowHeight != false && _.isNumber(gridOptions.fixedRowHeight)) {
                             val.cssClass = (contrail.checkIfExist(val.cssClass) ? val.cssClass + ' ' : '') +
-                                'fixed-row-height height-' + (gridOptions.fixedRowHeight - 10);
+                                'fixed-row-height height-' + (gridOptions.fixedRowHeight);
                         }
                     });
                 }
@@ -1069,9 +1069,11 @@ define([
                     adjustRowHeight: function (rowId) {
                         if (!(gridOptions.fixedRowHeight != false && _.isNumber(gridOptions.fixedRowHeight))) {
                             var maxHeight = 20;
+                            gridContainer.find('.slick_row_' + rowId).find('.slick-cell').css('height', 'initial');
                             gridContainer.find('.slick_row_' + rowId).find('.slick-cell').each(function () {
                                 maxHeight = ($(this).height() > maxHeight) ? $(this).height() : maxHeight;
                             });
+                            gridContainer.find('.slick_row_' + rowId).find('.slick-cell').css('height', 'inherit');
                             maxHeight = maxHeight + 10;
 
                             gridContainer.find('.slick_row_' + rowId).height(maxHeight);
