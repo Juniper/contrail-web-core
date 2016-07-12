@@ -38,7 +38,11 @@ define([
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
 
-            this.model().on( "change:table_name", this.onChangeTable, this);
+            this.model().on("change:table_name", this.onChangeTable, this);
+            this.model().on('change:select change:table_name change:time_range change:where change:filter change:time_granularity change:time_granularity_unit', function () {
+                // TODO ContrailListModel should have reload function instead of whole model recreation just to get new data
+                self.loader = undefined
+            })
 
             //TODO - Needs to be tested for Flow Pages
             this.model().on("change:time_range change:from_time change:to_time", this.onChangeTime, this);
