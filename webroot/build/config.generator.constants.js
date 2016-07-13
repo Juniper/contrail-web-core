@@ -65,11 +65,6 @@ constants.coreModules  = [
             'mon-infra-sysinfo-view',
             'mon-infra-dashboard-view',
 
-            'server-schema',
-            'cluster-schema',
-            'json-model',
-            'json-editor-view',
-
             'core-basedir/js/views/AccordianView',
             'core-basedir/js/views/BarChartInfoView',
             'core-basedir/js/views/BreadcrumbDropdownView',

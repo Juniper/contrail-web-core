@@ -272,17 +272,18 @@ MAINCSS[10]=webroot/assets/jquery/css/jquery.steps.css
 MAINCSS[11]=webroot/assets/joint/css/joint.nojquery.min.css
 MAINCSS[12]=webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css
 MAINCSS[13]=webroot/assets/vis-v4.9.0/css/vis.min.css
-MAINCSS[14]=webroot/css/contrail.theme.layout.css
-MAINCSS[15]=webroot/css/contrail.theme.elements.css
-MAINCSS[16]=webroot/css/contrail.responsive.css
-MAINCSS[17]=webroot/css/contrail.grid.css
-MAINCSS[18]=webroot/css/contrail.form.elements.css
-MAINCSS[19]=webroot/css/contrail.components.css
-MAINCSS[20]=webroot/css/contrail.chart.css
-MAINCSS[21]=webroot/css/contrail.graph.css
-MAINCSS[22]=webroot/css/contrail.custom.css
-MAINCSS[23]=webroot/css/contrail.font.css
-MAINCSS[24]=webroot/css/login.css
+MAINCSS[14]=webroot/assets/jsoneditor/css/jsoneditor.min.css
+MAINCSS[15]=webroot/css/contrail.theme.layout.css
+MAINCSS[16]=webroot/css/contrail.theme.elements.css
+MAINCSS[17]=webroot/css/contrail.responsive.css
+MAINCSS[18]=webroot/css/contrail.grid.css
+MAINCSS[19]=webroot/css/contrail.form.elements.css
+MAINCSS[20]=webroot/css/contrail.components.css
+MAINCSS[21]=webroot/css/contrail.chart.css
+MAINCSS[22]=webroot/css/contrail.graph.css
+MAINCSS[23]=webroot/css/contrail.custom.css
+MAINCSS[24]=webroot/css/contrail.font.css
+MAINCSS[25]=webroot/css/login.css
 
 
 cat ${MAINCSS[1]} > webroot/css/contrail-all.css
@@ -298,6 +299,7 @@ cat ${MAINCSS[10]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[11]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[12]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[13]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[25]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[14]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[15]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[16]} >> webroot/css/contrail-all.css
@@ -309,4 +311,5 @@ cat ${MAINCSS[21]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[22]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[23]} >> webroot/css/contrail-all.css
 cat ${MAINCSS[24]} >> webroot/css/contrail-all.css
+cat ${MAINCSS[25]} >> webroot/css/contrail-all.css
 #End - Merging ALL CSS files

@@ -402,8 +402,6 @@ var coreBundles = {
             'xdate',
             'knockback',
             'validation',
-            'ajv',
-            'jsoneditor'
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',

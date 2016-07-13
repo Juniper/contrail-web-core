@@ -26,7 +26,6 @@ define([
     'core-basedir/js/views/GridFooterView',
     'core-basedir/js/views/HeatChartView',
     'core-basedir/js/views/HorizontalBarChartView',
-    'core-basedir/js/views/JsonEditor',
     'core-basedir/js/views/LineBarWithFocusChartView',
     'core-basedir/js/views/LineWithFocusChartView',
     'core-basedir/js/views/LoginWindowView',
