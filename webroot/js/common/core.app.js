@@ -70,7 +70,15 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
 
         'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
-        'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json'
+        'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json',
+
+        'json-editor'                 : coreWebDir + '/assets/jsoneditor/js/jsoneditor.min',
+        'ajv'                         : coreWebDir + '/assets/ajv/ajv.min',
+        'server-schema'               : coreWebDir + '/schemas/server.schema',
+        'cluster-schema'              : coreWebDir + '/schemas/cluster.schema',
+        'json-model'                  : coreWebDir + "/js/models/JsonModel",
+        'json-edit-view'              : coreWebDir + '/js/views/JsonEditView'
+
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -456,12 +464,12 @@ var coreBundles = {
             'core-basedir/js/views/ZoomScatterChartView',
             //Dashboard
             'mon-infra-node-list-model',
-            'mon-infra-log-list-model',    
-            'mon-infra-alert-list-view',   
-            'mon-infra-alert-grid-view',   
-            'mon-infra-log-list-view',     
-            'mon-infra-sysinfo-view',      
-            'mon-infra-dashboard-view'   
+            'mon-infra-log-list-model',
+            'mon-infra-alert-list-view',
+            'mon-infra-alert-grid-view',
+            'mon-infra-log-list-view',
+            'mon-infra-sysinfo-view',
+            'mon-infra-dashboard-view'
         ],
         'contrail-core-views': [
             'core-basedir/js/views/GridView',
@@ -980,7 +988,7 @@ if (typeof document !== 'undefined' && document) {
         
         for (var key in featurePackages) {
             if(globalObj['initFeatureAppDefObjMap'][key] == null) {
-                if(featurePackages[key] && 
+                if(featurePackages[key] &&
                         [FEATURE_PCK_WEB_CONTROLLER,FEATURE_PCK_WEB_SERVER_MANAGER,FEATURE_PCK_WEB_STORAGE].indexOf(key) > -1) {
                     globalObj['initFeatureAppDefObjMap'][key] = $.Deferred();
                     featureAppDefObjList.push(globalObj['initFeatureAppDefObjMap'][key]);
@@ -1184,7 +1192,7 @@ if (typeof document !== 'undefined' && document) {
                     require(['jquery'],function() {
                         if(globalObj['featureAppDefObj'] == null)
                             globalObj['featureAppDefObj'] = $.Deferred();
-                        if(webServerInfoDefObj == null) 
+                        if(webServerInfoDefObj == null)
                             webServerInfoDefObj = $.Deferred();
                         loadFeatureApps(featurePkgs);
                     });
@@ -1274,7 +1282,7 @@ if (typeof document !== 'undefined' && document) {
         require(['jquery'],function() {
             menuXMLLoadDefObj = $.Deferred();
             layoutHandlerLoadDefObj = $.Deferred();
-            if(webServerInfoDefObj == null) 
+            if(webServerInfoDefObj == null)
                 webServerInfoDefObj = $.Deferred();
             $.ajaxSetup({
                 cache: false,

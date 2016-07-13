@@ -11,6 +11,7 @@ define([
         this.ERROR_SUFFIX_ID = "_error";
         this.LOCKED_SUFFIX_ID = "_locked";
         this.FORM_SUFFIX_ID = "_form";
+        this.JSON_SUFFIX_ID = "_json";
 
         this.SEV_LEVELS = {
                 ERROR   : 3, //Red
@@ -58,10 +59,17 @@ define([
         this.OBJECT_TYPE_MODEL = 'model';
         this.OBJECT_TYPE_COLLECTION_OF_COLLECTION = "collection_of_collection";
 
+        this.ID_JSON_EDITOR = "json-editor";
+        this.JSON_EDITOR_MODE_TREE = "tree";
+        this.JSON_EDITOR_MODE_CODE = "code";
+        this.JSON_EDITOR_MODE_FORM = "form";
+        this.JSON_EDITOR_MODE_TEXT = "text";
+
         this.TMPL_2ROW_CONTENT_VIEW = "core-2-row-content-template";
         this.TMPL_2COLUMN_1ROW_2ROW_CONTENT_VIEW = "core-2-column-1-row-2row-content-template";
 
         this.TMPL_ACCORDIAN_VIEW = "core-accordian-view-template";
+        this.TMPL_JSON_EDITOR_VIEW = "core-json-editor-view-template";
         this.TMPL_INPUT_VIEW = "core-input-view-template";
         this.TMPL_EDITABLE_GRID_INPUT_VIEW = "core-editable-grid-input-view-template";
         this.TMP_EDITABLE_GRID_ACTION_VIEW = "core-editable-grid-action-view-template";
@@ -99,6 +107,7 @@ define([
         this.TMPL_COLLECTION_GRIDACTION_HEADING_VIEW = "core-collection-view-grid-action-heading-template";
         this.TMPL_SECTION_VIEW = "core-section-view-template";
         this.TMPL_EDIT_FORM = "core-edit-form-template";
+        this.TMPL_EDIT_JSON = "core-edit-json-template";
         this.TMPL_GENERIC_EDIT_FORM = "core-generic-edit-form-template";
         this.TMPL_2ROW_GROUP_DETAIL = "core-grid-2-row-group-detail-template";
         // this.TMPL_DETAIL_PAGE = "core-detail-page-template";
@@ -851,5 +860,7 @@ define([
             return cowu.getValueFromTemplate(args);
         };
     };
-    return new CoreConstants();
+    //Export to global scope
+    cowc = new CoreConstants();
+    return cowc;
 });

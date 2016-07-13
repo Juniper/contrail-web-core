@@ -580,8 +580,21 @@ define(['underscore'], function (_) {
             return attribute;
         };
 
-        /* Detail Template Generator*/
+        this.checkAndRefreshContrailGrids = function(elements) {
+            if (_.isArray(elements)) {
+                _.each(elements, function(elementKey, elementValue) {
+                    if (contrail.checkIfExist($(elementValue).data('contrailGrid'))) {
+                        $(elementValue).data('contrailGrid').refreshView();
+                    }
+                });
+            } else {
+                if (contrail.checkIfExist($(elements).data('contrailGrid'))) {
+                    $(elements).data('contrailGrid').refreshView();
+                }
+            }
+        };
 
+        /* Detail Template Generator*/
         this.generateBlockListTemplate = function (config, app, parentConfig) {
             var template = '' +
                 '{{#IfCompare requestState "' + cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY + '" operator="!==" }}' +
@@ -1256,7 +1269,18 @@ define(['underscore'], function (_) {
                 }
             }
             return obj;
-        }
+        };
+
+        this.getAttributes4Schema = function(attributes, schema) {
+            var json = $.extend(true, {}, attributes);
+
+            for(var key in json){
+                if(!contrail.checkIfExist(schema['properties'][key])) {
+                    delete json[key];
+                }
+            }
+            return json;
+        };
     };
 
     function filterXML(xmlString, is4SystemLogs) {

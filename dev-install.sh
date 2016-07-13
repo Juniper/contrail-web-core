@@ -249,6 +249,21 @@ cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack.css webroot/assets/gridsta
 cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack-extra.css webroot/assets/gridstack/styles/gridstack-extra.css
 #End - Copy Gridstack from $THIRD_PARTY
 
+#Start - Copy ajv.min.js from $THIRD_PARTY
+mkdir webroot/assets/ajv
+cp -af ./$THIRD_PARTY/ajv.min.js webroot/assets/ajv/ajv.min.js
+#End - Copy ajv.min.js from $THIRD_PARTY
+
+#Start - Copy jsoneditor.js from $THIRD_PARTY
+mkdir -p webroot/assets/jsoneditor/js
+mkdir -p webroot/assets/jsoneditor/css/img
+cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.min.js webroot/assets/jsoneditor/js/jsoneditor.min.js
+cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.js webroot/assets/jsoneditor/js/jsoneditor.js
+cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.min.css webroot/assets/jsoneditor/css/jsoneditor.min.css
+cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.css webroot/assets/jsoneditor/css/jsoneditor.css
+cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/src/css/img/jsoneditor-icons.svg webroot/assets/jsoneditor/css/img/jsoneditor-icons.svg
+#End - Copy jsoneditor.js from $THIRD_PARTY
+
 #Start - Merging All CSS files
 rm -f webroot/css/contrail-all.css
 
