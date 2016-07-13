@@ -260,6 +260,11 @@ cp -af ./$THIRD_PARTY/uuid.js webroot/js/uuid.js
 #Start - Merging All CSS files
 rm -f webroot/css/contrail-all.css
 
+# compile sass
+#./node_modules/node-sass/bin/node-sass webroot/scss/contrail.unified.scss > webroot/css/contrail.unified.css
+#End - Merging ALL CSS files
+
+
 MAINCSS[1]=webroot/assets/bootstrap/css/bootstrap.min.css
 #MAINCSS[1]=webroot/css/output.css
 #MAINCSS[2]=webroot/assets/bootstrap/css/bootstrap-responsive.min.css

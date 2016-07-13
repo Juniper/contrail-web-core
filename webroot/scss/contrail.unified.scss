@@ -1,0 +1,33 @@
+@import 'webroot/assets/bootstrap/css/bootstrap.min';
+@import 'webroot/assets/jquery-ui/css/jquery-ui.min';
+@import 'webroot/css/contrail.jquery.ui';
+@import 'webroot/assets/font-awesome/css/font-awesome.min';
+@import 'webroot/assets/nvd3-v1.8.1/css/nv.d3.min';
+@import 'webroot/assets/select2/styles/select2';
+@import 'webroot/assets/datetimepicker/styles/jquery.datetimepicker';
+@import 'webroot/assets/slickgrid/styles/slick.grid';
+@import 'webroot/assets/jquery/css/jquery.steps';
+@import 'webroot/assets/joint/css/joint.nojquery.min';
+@import 'webroot/assets/jquery-contextMenu/css/jquery.contextMenu';
+@import 'webroot/assets/vis-v4.9.0/css/vis.min';
+
+@import 'webroot/css/contrail.theme.layout';
+@import 'webroot/css/contrail.theme.elements';
+@import 'webroot/css/contrail.responsive';
+@import 'webroot/css/contrail.grid';
+@import 'webroot/css/contrail.form.elements';
+@import 'webroot/css/contrail.components';
+@import 'webroot/css/contrail.chart';
+@import 'webroot/css/contrail.graph';
+@import 'webroot/css/contrail.custom';
+@import 'webroot/css/contrail.font';
+@import 'webroot/css/login';
+@import 'webroot/css/ace.theme.css';
+@import 'webroot/css/contrail.theme.css';
+#content-container {
+  @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables';
+  @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_mixins';
+  @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_panels';
+}
+
+
