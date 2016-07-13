@@ -40,6 +40,7 @@ function onClickSidebarCollapse() {
 }
 
 function enableSearchAhead() {
+    $('#nav-search-input').val('');
     $('#nav-search-input').contrailAutoComplete({
         source: globalObj['siteMapSearchStrings'],
         select: function (event, ui) {
@@ -56,6 +57,7 @@ function searchSiteMap() {
             lastHash = $.bbq.getState();
             queryParams = siteMap[hash]['queryParams'];
             currHash = {p: hash, q: queryParams};
+            globalObj['menuClicked'] = true;
             layoutHandler.onHashChange(lastHash, currHash);
             lastHash = currHash;
             return false;
