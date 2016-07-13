@@ -621,7 +621,7 @@ define(['underscore'], function (_) {
             $.each(config, function (configKey, configValue) {
                 var keyValueTemplate = '' +
                     '<li>' +
-                        '<label class="inline row-fluid">' +
+                        '<label class="row">' +
                             '<span class="key col-xs-5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
                             ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
                             configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +

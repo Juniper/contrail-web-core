@@ -22,23 +22,30 @@
     width: 272px;
     margin: 0;
 }
-#signin-container .login-container .input-prepend .input-group-addon {
-    display: inline-block;
+#signin-container .login-container .input-group .input-group-addon {
+    /*display: inline-block;*/
     width: 22px;
     height: 22px;
+    padding: 0px 5px;
 
 }
-#signin-container .login-container .input-prepend .input-group-addon [class^="fa-"],
+#signin-container .login-container .input-group .input-group-addon [class^="fa-"],
 #signin-container [class*=" fa-"] {
     font-size: 18px;
     color: #777;
     margin-top:2px;
+    width: 18px;
 }
 
-#signin-container .input-append, .input-prepend {
-    margin:10px 0;
+#signin-container .input-append, .input-group {
+    margin:20px 0;
 }
 
 #login-error .alert{
 	margin: 15px 0 0;
 }
+
+.form-control::-webkit-input-placeholder { color: #787878; }
+.form-control:-moz-placeholder { color: #787878; }
+.form-control::-moz-placeholder { color: #787878; }
+.form-control:-ms-input-placeholder { color: #787878; }

@@ -167,7 +167,7 @@
 .ui-tabs .ui-widget-header{
     border: none;
     background: none;
-    background-color:#f9f9f9;
+    /*background-color:#f9f9f9;*/
     border-bottom: 1px solid #eee;
 }
 .contrail-tabs-overcast.ui-tabs .ui-tabs-nav,
