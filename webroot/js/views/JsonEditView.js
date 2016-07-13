@@ -35,7 +35,7 @@ define([
                         },
                         error: function (error) {
                             cowu.disableModalLoading(modalId, function () {
-                                self.model.showErrorAttr(prefixId + cowc.FORM_SUFFIX_ID, error.responseText);
+                                showError(error.responseText);
                             });
                         }
                     };
@@ -56,6 +56,11 @@ define([
             });
         }
     });
+
+    var showError = function(message){
+        $(".edit-json-error").remove();
+        $(".modal-body").prepend("<div class='alert alert-error edit-json-error'><strong>Error: </strong><span>" + message + "</span></div>");
+    }
 
     return JSONEditView;
 });
