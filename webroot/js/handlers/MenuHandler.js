@@ -23,7 +23,11 @@ define(['underscore'], function (_) {
             var featurePkgsInfo =
                 getValueByJsonPath(globalObj, 'webServerInfo;featurePkgsInfo',
                                    null);
+            //processXMLJSON populates siteMapsearchStrings
+            globalObj['siteMapSearchStrings'] = [];
             processXMLJSON(menuObj, optFeatureList);
+            //populate the autocomplete dropdown for siteMap
+            enableSearchAhead();
             var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', featurePkgsInfo));
             $("#sidebar-shortcuts").html(menuShortcuts);
             menuHandler.filterMenuItems(menuObj['items']['item']);
@@ -246,6 +250,16 @@ define(['underscore'], function (_) {
                 return true;
             else
                 return false;
+        }
+
+        this.getRenderFnFromMenuObj = function(currMenuObj) {
+            var renderFn;
+            $.each(getValueByJsonPath(currMenuObj, 'resources;resource', []), function (idx, currResourceObj) {
+                if (currResourceObj['class'] != null && window[currResourceObj['class']] != null) {
+                    renderFn = currResourceObj['function'];
+                }
+            });
+            return renderFn;
         }
 
         /*
