@@ -8,14 +8,14 @@ define([
     'knockback'
 ], function (_, ContrailView, Knockback) {
 
-    var prefixId = smwc.SERVER_PREFIX_ID,
-        modalId = 'configure-' + prefixId,
-        editJSONTemplate = contrail.getTemplate4Id(cowc.TMPL_EDIT_JSON),
-        jsonEditViewConfig = { elementId: prefixId, view: "JsonEditorView", viewConfig: [] };
-
     var JSONEditView = ContrailView.extend({
 
         renderEditor: function (options) {
+            var prefixId = options['type'],
+                modalId = 'configure-' + prefixId,
+                editJSONTemplate = contrail.getTemplate4Id(cowc.TMPL_EDIT_JSON),
+                jsonEditViewConfig = { elementId: prefixId, view: "JsonEditorView", viewConfig: [] };
+
             var editLayout = editJSONTemplate({prefixId: prefixId}),
                 disableId, modelAttr, self = this;
             self.model.model().attributes = options['checkedRows'][0];
