@@ -133,6 +133,11 @@ define([
             return isValid;
         },
 
+        isAttrAvailable: function (name) {
+            var self = this
+            return !(!_.isFunction(self[name]) || self[name]() === null || self[name]() === '')
+        },
+
         initLockAttr: function (attributePath, lockFlag) {
             var attribute = cowu.getAttributeFromPath(attributePath),
                 locks = this.model().get(cowc.KEY_MODEL_LOCKS),

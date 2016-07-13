@@ -45,13 +45,15 @@ define([
             })
 
             //TODO - Needs to be tested for Flow Pages
-            this.model().on("change:time_range change:from_time change:to_time", this.onChangeTime, this);
+            this.model().on("change:time_range change:from_time change:to_time change:table_type", this.onChangeTime, this);
 
             return this;
         },
 
         onChangeTime: function() {
-            if(this.table_type() === cowc.QE_STAT_TABLE_TYPE || this.table_type() === cowc.QE_OBJECT_TABLE_TYPE) {
+            var self = this,
+                table_type = self.model().get('table_type')
+            if (table_type === cowc.QE_STAT_TABLE_TYPE || table_type === cowc.QE_OBJECT_TABLE_TYPE) {
                 var setTableValuesCallbackFn = function (self, resultArr){
                     var currentSelectedTable = self.model().attributes.table_name;
                     if (currentSelectedTable != null)
@@ -64,9 +66,9 @@ define([
                         }
                     }
                 }
-                this.setTableValues(setTableValuesCallbackFn, this.table_type());
+                this.setTableValues(setTableValuesCallbackFn, table_type)
             }
-            this.setTableFieldValues();
+            else this.setTableFieldValues()
         },
 
         setTableValues: function(setTableValuesCallbackFn, tabletype) {
