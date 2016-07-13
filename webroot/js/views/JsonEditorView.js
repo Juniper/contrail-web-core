@@ -33,11 +33,10 @@ define([
 
                         //if error button on UI is on, disable save button
                         var isValidJSON = validate(jsonEditor.get());
-                        toggleSaveButton(isValidJSON);
+                        toggleButtons(isValidJSON);
                     }catch(e){
-                        toggleSaveButton(false);
+                        toggleButtons(false);
                     }
-
                 }
             };
             var jsonEditor = new JSONEditor(jsonContainer, jsonOptions);
@@ -47,19 +46,22 @@ define([
             jsonEditor.expandAll();
 
             var isValidJSON = validate(jsonEditor.get());
-            toggleSaveButton(isValidJSON);
+            toggleButtons(isValidJSON);
         }
     });
 
     /*
+    * toggle dropdown and save buttons
      * @Params
      *   isValidJSON : Boolean
      * */
-    function toggleSaveButton(isValidJSON) {
+    function toggleButtons(isValidJSON) {
         if(!isValidJSON) {
             $(".btnSave").prop('disabled', true);
+            $(".jsoneditor-modes").prop('disabled', true);
         } else {
             $(".btnSave").removeAttr('disabled');
+            $(".jsoneditor-modes").removeAttr('disabled');
         }
     };
 
