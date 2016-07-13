@@ -52,33 +52,6 @@ define([
     });
 
     /*
-     * @Return
-     *   True : if items in array1 equals items array2
-     *   False: if not
-     * @Params
-     *   array1 : first array
-     *   array2 : second array
-     * */
-    function arraysItemsEqual(array1, array2) {
-        if(array1.length != array2.length)
-        {
-            return false;
-        }
-        for(var i = 0; i < array1.length; i++)
-        {
-            if(array2.indexOf(array1[i]) != -1)
-            {
-                array2.splice(array2.indexOf(array1[i]), 1);
-            }
-            else
-            {
-                return false;
-            }
-        }
-        return true;
-    };
-
-    /*
      * @Params
      *   isValidJSON : Boolean
      * */
