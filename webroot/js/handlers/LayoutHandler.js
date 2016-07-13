@@ -33,6 +33,8 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
 
         /** Returns the entire hash object */
         this.getURLHashObj = function () {
+            // Clear the Error Popup
+            contrail.hideErrorPopup();
             return $.bbq.getState();
         };
 
