@@ -34,10 +34,11 @@ define([
                         //if error button on UI is on, disable save button
                         var isValidJSON = validate(jsonEditor.get());
                         toggleSaveButton(isValidJSON);
+                        toggleModesButton(true);
                     }catch(e){
                         toggleSaveButton(false);
+                        toggleModesButton(false);
                     }
-
                 }
             };
             var jsonEditor = new JSONEditor(jsonContainer, jsonOptions);
@@ -60,6 +61,18 @@ define([
             $(".btnSave").prop('disabled', true);
         } else {
             $(".btnSave").removeAttr('disabled');
+        }
+    };
+
+    /*
+     * @Params
+     *   isValidJSON : Boolean
+     * */
+    function toggleModesButton(isValidJSON){
+        if(!isValidJSON) {
+            $(".jsoneditor-modes").prop('disabled', true);
+        } else {
+            $(".jsoneditor-modes").removeAttr('disabled');
         }
     };
 
