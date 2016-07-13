@@ -21,7 +21,7 @@
     border: none;
     border-top: 1px solid #ccc;
     top:-2px;
-    border-left: 1px dotted #EEEEEE;
+    /*border-left: 1px dotted #EEEEEE;*/
 }
 .grid-header {
     margin: 0;
@@ -152,7 +152,7 @@
     line-height: 18px;
     color: #3182bd;
     font-size: 13px;
-    border-right: 1px dotted #DDDDDD;
+    /*border-right: 1px dotted #DDDDDD;*/
 }
 .slick-viewport {
     border-top: 1px solid #dadada;
@@ -180,7 +180,7 @@
     margin: 0 5px;
     color: #555;
 }
-.slick-row-detail-container .row-fluid, .slick-cell .row-fluid [class*="span"]{
+.slick-row-detail-container .row-fluid, .slick-cell .row [class*="col-xs-"]{
     min-height: 20px;
     font-size: 11px;
 }
@@ -208,9 +208,11 @@
 .slick-row-detail .row-fluid, .slick-row-detail .row-fluid [class*="span"] {
     min-height:20px;
 }
-.slick-row-detail  .row-fluid label {
+.slick-row-detail  .row label {
     margin-bottom:0px;
     font-size: 12px;
+    margin-left: 0px;
+    display: block;
 }
 .group-detail-container h6 {
     padding: 0 0 5px;

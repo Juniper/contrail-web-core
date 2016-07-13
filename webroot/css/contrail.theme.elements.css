@@ -751,7 +751,7 @@ input[type="color"]:focus {
   	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(89, 154, 201, 0.3);
   	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(89, 154, 201, 0.3);
   	color: #393939;
-  	/*border-color: #f59942;*/
+  	border-color: rgba(82,168,236,0.8);
   	background-color: #ffffff;
 }
 input[disabled] {
@@ -856,17 +856,17 @@ span.input-icon {
   margin-right: 3px;
 }
 .form-search .input-append .search-query:focus,
-.form-search .input-prepend .search-query:focus {
+.form-search .input-group .search-query:focus {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
 }
 .input-append input,
-.input-prepend input,
+.input-group input,
 .input-append select,
-.input-prepend select,
+.input-group select,
 .input-append .uneditable-input,
-.input-prepend .uneditable-input {
+.input-group .uneditable-input {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
@@ -1361,29 +1361,29 @@ input[type=checkbox].ace-switch.ace-switch-7:checked + .lbl::after {
   color: #FFF;
 }
 /* addon */
-.input-prepend .input-group-addon,
+.input-group .input-group-addon,
 .input-append .input-group-addon {
   -webkit-border-radius: 0 !important;
   -moz-border-radius: 0 !important;
   border-radius: 0 !important;
 }
-.control-group.success .input-prepend .input-group-addon,
+.control-group.success .input-group .input-group-addon,
 .control-group.success .input-append .input-group-addon {
   border-color: #92bf65;
 }
-.control-group.error .input-prepend .input-group-addon,
+.control-group.error .input-group .input-group-addon,
 .control-group.error .input-append .input-group-addon {
   border-color: #f09784;
 }
-.control-group.warning .input-prepend .input-group-addon,
+.control-group.warning .input-group .input-group-addon,
 .control-group.warning .input-append .input-group-addon {
   border-color: #e0c43a;
 }
-.control-group.info .input-prepend .input-group-addon,
+.control-group.info .input-group .input-group-addon,
 .control-group.info .input-append .input-group-addon {
   border-color: #64a6bc;
 }
-.input-prepend > .btn,
+.input-group > .btn,
 .input-append > .btn {
   line-height: 20px;
   padding: 0 6px;
@@ -1391,29 +1391,29 @@ input[type=checkbox].ace-switch.ace-switch-7:checked + .lbl::after {
   -moz-border-radius: 0 !important;
   border-radius: 0 !important;
 }
-.input-prepend > .btn.btn-small,
+.input-group > .btn.btn-small,
 .input-append > .btn.btn-small {
   line-height: 22px;
 }
-.input-prepend > .btn + .btn,
+.input-group > .btn + .btn,
 .input-append > .btn + .btn {
   margin-left: 1px;
 }
-.input-prepend > .btn-group > .btn,
+.input-group > .btn-group > .btn,
 .input-append > .btn-group > .btn {
   line-height: 23px;
 }
-.input-prepend > .btn-group > .btn.btn-small,
+.input-group > .btn-group > .btn.btn-small,
 .input-append > .btn-group > .btn.btn-small {
   line-height: 26px;
 }
-.input-prepend > .btn > .caret,
+.input-group > .btn > .caret,
 .input-append > .btn > .caret,
-.input-prepend > .btn-group > .btn > .caret,
+.input-group > .btn-group > .btn > .caret,
 .input-append > .btn-group > .btn > .caret,
-.input-prepend > .btn.btn-small > .caret,
+.input-group > .btn.btn-small > .caret,
 .input-append > .btn.btn-small > .caret,
-.input-prepend > .btn-group > .btn.btn-small > .caret,
+.input-group > .btn-group > .btn.btn-small > .caret,
 .input-append > .btn-group > .btn.btn-small > .caret {
   margin-top: 10px;
 }
@@ -2981,7 +2981,7 @@ td.td-actions a.td-action {
   margin-bottom: 0;
 }
 .widget-main > form .input-append,
-.widget-main > form .input-prepend {
+.widget-main > form .input-group {
   margin-bottom: 0;
 }
 .widget-main.no-padding > form > fieldset,

@@ -167,6 +167,13 @@ img.logo {
   border-right: 1px solid #cccccc;
 }
 
+.ace-nav > li {
+  line-height: 45px;
+  max-height: 45px;
+  padding: 0 0 0 15px;
+  position: relative;
+}
+
 .ace-nav > li > a > [class*="fa-"] {
   font-size: 16px;
   color: #555;
@@ -231,9 +238,9 @@ input[type="text"]:focus {
   border-color: #D5D5D5;
 }
 
-.input-group-addon {
+/*.input-group-addon {
   background-color: #FFF;
-}
+}*/
 
 #nav-search-icon {
   color: #599AC9;
