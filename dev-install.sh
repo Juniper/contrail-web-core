@@ -103,12 +103,13 @@ cp -r ./$THIRD_PARTY/bootstrap-v3.3.6/dist/css webroot/assets/bootstrap/css
 
 #Start - Copy Font-Awesome from $THIRD_PARTY
 rm -rf webroot/assets/font-awesome
-mkdir -p webroot/assets/font-awesome
-cp -r ./$THIRD_PARTY/font-awesome-v4.6.3/fonts webroot/assets/font-awesome/fonts
-cp -r ./$THIRD_PARTY/font-awesome-v4.6.3/css webroot/assets/font-awesome/css
+rm -rf webroot/fonts
 
-rm -rf webroot/font
-cp -r ./$THIRD_PARTY/font-awesome-v3.2.1/font webroot/font
+mkdir -p webroot/assets/font-awesome
+mkdir -p webroot/fonts
+
+cp -r ./$THIRD_PARTY/font-awesome-v4.6.3/css webroot/assets/font-awesome/css
+cp -r ./$THIRD_PARTY/font-awesome-v4.6.3/fonts/* webroot/fonts/
 #End - Copy Font-Awesome from $THIRD_PARTY
 
 #Start - Copy Font-Opensans from $THIRD_PARTY
@@ -258,68 +259,8 @@ cp -af ./$THIRD_PARTY/uuid.js webroot/js/uuid.js
 #End - Copy uuid.js from $THIRD_PARTY
 
 #Start - Merging All CSS files
-rm -f webroot/css/contrail-all.css
+rm -f webroot/css/contrail.unified.css
 
 # compile sass
-#./node_modules/node-sass/bin/node-sass webroot/scss/contrail.unified.scss > webroot/css/contrail.unified.css
-#End - Merging ALL CSS files
-
-
-MAINCSS[1]=webroot/assets/bootstrap/css/bootstrap.min.css
-#MAINCSS[1]=webroot/css/output.css
-#MAINCSS[2]=webroot/assets/bootstrap/css/bootstrap-responsive.min.css
-MAINCSS[3]=webroot/assets/jquery-ui/css/jquery-ui.min.css
-MAINCSS[4]=webroot/css/contrail.jquery.ui.css
-MAINCSS[5]=webroot/assets/font-awesome/css/font-awesome.min.css
-MAINCSS[6]=webroot/assets/nvd3-v1.8.1/css/nv.d3.min.css
-MAINCSS[7]=webroot/assets/select2/styles/select2.css
-MAINCSS[8]=webroot/assets/datetimepicker/styles/jquery.datetimepicker.css
-MAINCSS[9]=webroot/assets/slickgrid/styles/slick.grid.css
-MAINCSS[10]=webroot/assets/jquery/css/jquery.steps.css
-MAINCSS[11]=webroot/assets/joint/css/joint.nojquery.min.css
-MAINCSS[12]=webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css
-MAINCSS[13]=webroot/assets/vis-v4.9.0/css/vis.min.css
-MAINCSS[14]=webroot/css/contrail.theme.layout.css
-MAINCSS[15]=webroot/css/contrail.theme.elements.css
-MAINCSS[16]=webroot/css/contrail.responsive.css
-MAINCSS[17]=webroot/css/contrail.grid.css
-MAINCSS[18]=webroot/css/contrail.form.elements.css
-MAINCSS[19]=webroot/css/contrail.components.css
-MAINCSS[20]=webroot/css/contrail.chart.css
-MAINCSS[21]=webroot/css/contrail.graph.css
-MAINCSS[22]=webroot/css/contrail.custom.css
-MAINCSS[23]=webroot/css/contrail.font.css
-MAINCSS[24]=webroot/css/login.css
-#the new custom file deveoped using ace theme as base
-MAINCSS[25]=webroot/css/ace.theme.css
-#ace theme wit modified changes, has few more changes than no.25
-MAINCSS[26]=webroot/css/contrail.theme.css
-
-
-cat ${MAINCSS[1]} >> webroot/css/contrail-all.css
-#cat ${MAINCSS[2]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[3]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[4]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[5]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[6]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[7]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[8]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[9]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[10]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[11]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[12]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[13]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[14]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[15]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[16]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[17]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[18]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[19]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[20]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[21]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[22]} >> webroot/css/contrail-all.css
-#cat ${MAINCSS[25]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[23]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[24]} >> webroot/css/contrail-all.css
-cat ${MAINCSS[26]} >> webroot/css/contrail-all.css
+./node_modules/node-sass/bin/node-sass webroot/scss/contrail.unified.scss > webroot/css/contrail.unified.css
 #End - Merging ALL CSS files

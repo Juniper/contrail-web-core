@@ -11,6 +11,7 @@
 @import 'webroot/assets/jquery-contextMenu/css/jquery.contextMenu';
 @import 'webroot/assets/vis-v4.9.0/css/vis.min';
 
+@import 'webroot/css/contrail.theme';
 @import 'webroot/css/contrail.theme.layout';
 @import 'webroot/css/contrail.theme.elements';
 @import 'webroot/css/contrail.responsive';
@@ -22,8 +23,7 @@
 @import 'webroot/css/contrail.custom';
 @import 'webroot/css/contrail.font';
 @import 'webroot/css/login';
-@import 'webroot/css/ace.theme.css';
-@import 'webroot/css/contrail.theme.css';
+
 #content-container {
   @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables';
   @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_mixins';
