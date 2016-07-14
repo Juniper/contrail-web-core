@@ -90,6 +90,8 @@ define([
             'destvn': 'Destination VN',
             'sourceip': 'Source IP',
             'destip': 'Destination IP',
+            'sport': 'Source Port',
+            'dport': 'Destination Port',
             'direction_ingdirection_ing': 'Direction',
             
 
@@ -121,6 +123,7 @@ define([
             
 
             /* Stat Column Label Map */
+            'cpu_info': 'CPU Info',
             'mem_virt': 'Virtual Memory',
             'mem_res': 'CPU Resident Memory',
             'cpu_share': 'CPU Share',
@@ -147,10 +150,8 @@ define([
             'time': 'Time Taken',
             'rows': 'Rows Returned',
             'pifindex': 'PIF Index',
-            'sport': 'Src Port',
-            'dport': 'Dest Port',
-            'sip': 'Src IP',
-            'dip': 'Dest IP',
+            'sip': 'Source IP',
+            'dip': 'Destination IP',
             'vlan': 'Virtual LAN',
             'flowtype': 'Flow Type',
             'otherinfo': 'Other Info',

@@ -4,55 +4,54 @@
 
 define([
     'underscore',
-    'core-basedir/js/common/qe.utils',
+    'core-basedir/js/common/qe.utils'
 ], function (_, qewu) {
     var QEGridConfig = function () {
         this.getColumnDisplay4Grid = function(tableName, tableType, selectArray) {
-            
-            var self = this,
-                newColumnDisplay = [],
-                columnDisplay = getColumnDisplay4Query(tableName, tableType);
+            var self = this, columnDisplay = [],
+                defaultColumnDisplayMap = [];
+
+            if(tableType == cowc.QE_STAT_TABLE_TYPE){
+                $.each(columnDisplayMap["defaultStatColumns"], function(key, value) {
+                    defaultColumnDisplayMap[value.select] = value.display
+                });
+            } else if (tableType == cowc.QE_OBJECT_TABLE_TYPE) {
+                $.each(columnDisplayMap["defaultObjectColumns"], function(key, value) {
+                    defaultColumnDisplayMap[value.select] = value.display
+                });
+            }
 
             $.each(selectArray, function(selectKey, selectValue) {
+                var columnName = self.formatNameForGrid(selectValue),
+                    columnConfig = {
+                        id: selectValue, field: selectValue,
+                        name: columnName,
+                        width: columnName.length * 8,
+                        formatter: {
+                            format: cowc.QUERY_COLUMN_FORMATTER[selectValue]
+                        }
+                    };
 
-                var columnName = self.formatNameForGrid(selectValue);
-                newColumnDisplay.push({
-                    id: selectValue, field: selectValue,
-                    name: columnName,
-                    width: columnName.length * 8,
-                    formatter: {
-                        format: cowc.QUERY_COLUMN_FORMATTER[selectValue]
+                if(tableType == cowc.QE_STAT_TABLE_TYPE || tableType == cowc.QE_OBJECT_TABLE_TYPE){
+                    if (contrail.checkIfExist(defaultColumnDisplayMap[selectValue])) {
+                        $.extend(columnConfig, defaultColumnDisplayMap[selectValue]);
                     }
-                });
-
-                if(tableType == "STAT"){
-                    $.each(columnDisplayMap["defaultStatColumns"], function(statKey, statValue) {
-                        if(statValue.select == selectValue) {
-                            $.extend(newColumnDisplay[newColumnDisplay.length-1], statValue.display);
-                        }
-                    });
-                }
-                else if(tableType == "OBJECT"){
-                    $.each(columnDisplayMap["defaultObjectColumns"], function(statKey, statValue) {
-                        if(statValue.select == selectValue) {
-                            $.extend(newColumnDisplay[newColumnDisplay.length-1], statValue.display);
-                        }
-                    });
                 }
                 
-                if(contrail.checkIfExist(columnDisplayMap[tableName])) {
+                if (contrail.checkIfExist(columnDisplayMap[tableName])) {
                     $.each(columnDisplayMap[tableName], function (fieldIndex, fieldValue) {
                         if (fieldValue.select == selectValue) {
-                            $.extend(newColumnDisplay[newColumnDisplay.length - 1], fieldValue.display);
+                            $.extend(columnConfig, fieldValue.display);
                         }
 
                     });
                 }
+
+                columnDisplay.push(columnConfig);
             });
 
-            return newColumnDisplay;
+            return columnDisplay;
         };
-
 
         this.formatNameForGrid = function(columnName) {
             var firstIndex = columnName.indexOf('('),
@@ -61,7 +60,7 @@ define([
                 aggregateColumnName = columnName.substr(firstIndex + 1,lastIndex - firstIndex - 1);
 
             if(qewu.isAggregateField(columnName) || aggregateType == "AVG" || aggregateType == "PERCENTILES") {
-                return aggregateType + " (" + cowl.get(aggregateColumnName) + ")";
+                return aggregateType.toUpperCase() + " (" + cowl.get(aggregateColumnName) + ")";
             } else {
                 return cowl.get(columnName).replace(')', '');
             }
@@ -307,7 +306,7 @@ define([
     var columnDisplayMap  = {
         "FlowSeriesTable": [
             {select:"T", display:{width:210, filterable:false}},
-            {select:"T=", display:{width:210, filterable:false}},
+            {select:"T=", display:{id: 'T', field: 'T', width:210, filterable:false}}, // Data received has key : 'T'
             {select:"vrouter", display:{width:100}},
             {select:"sourcevn", display:{width:240}},
             {select:"destvn", display:{width:240}},
@@ -411,7 +410,7 @@ define([
 
         ],
         "StatTable.PRouterEntry.ifStats" : [
-            {select:"COUNT(ifStats)", display:{width:120,}},
+            {select:"COUNT(ifStats)", display:{width:120}},
             {select:"ifStats.ifInUcastPkts", display:{ width:120}},
             {select:"SUM(ifStats.ifInUcastPkts)", display:{width:160}},
             {select:"MAX(ifStats.ifInUcastPkts)", display:{width:160}},
@@ -522,7 +521,7 @@ define([
             {select:"cpu_stats.peak_virt_memory", display:{width:170}},
             {select:"SUM(cpu_stats.peak_virt_memory)", display:{width:170}},
             {select:"MAX(cpu_stats.peak_virt_memory)", display:{width:170}},
-            {select:"MIN(cpu_stats.peak_virt_memory)", display:{width:170}},
+            {select:"MIN(cpu_stats.peak_virt_memory)", display:{width:170}}
         ],
         "StatTable.ComputeStoragePool.info_stats" : [
             {select:"COUNT(info_stats)", display:{width:150}},
@@ -545,7 +544,7 @@ define([
             {select:"info_stats.write_kbytes", display:{width:150}},
             {select:"SUM(info_stats.write_kbytes)", display:{width:150}},
             {select:"MAX(info_stats.write_kbytes)", display:{width:150}},
-            {select:"MIN(info_stats.write_kbytes)", display:{width:150}},
+            {select:"MIN(info_stats.write_kbytes)", display:{width:150}}
 
         ],
         "StatTable.ComputeStorageOsd.info_stats" : [
@@ -650,7 +649,7 @@ define([
             {select:"disk_usage_stats.write_bytes", display:{width:150}},
             {select:"SUM(disk_usage_stats.write_bytes)", display:{width:150}},
             {select:"MAX(disk_usage_stats.write_bytes)", display:{width:150}},
-            {select:"MIN(disk_usage_stats.write_bytes)", display:{width:150}},
+            {select:"MIN(disk_usage_stats.write_bytes)", display:{width:150}}
         ],
         "StatTable.ServerMonitoringSummary.network_info_stats" : [
             {select:"COUNT(network_info_stats)", display:{width:170}},
@@ -674,7 +673,7 @@ define([
             {select:"network_info.rx_packets", display:{width:150}},
             {select:"SUM(network_info.rx_packets)", display:{width:150}},
             {select:"MIN(network_info.rx_packets)", display:{width:150}},
-            {select:"MAX(network_info.rx_packets)", display:{width:150}},
+            {select:"MAX(network_info.rx_packets)", display:{width:150}}
         ],
         "StatTable.ServerMonitoringSummary.resource_info_stats" : [
             {select:"COUNT(resource_info_stats)", display:{width:150}},
@@ -692,7 +691,7 @@ define([
             {select:"resource_info_stats.mem_usage_percent", display:{width:150}},
             {select:"SUM(resource_info_stats.mem_usage_percent)", display:{width:150}},
             {select:"MIN(resource_info_stats.mem_usage_percent)", display:{width:150}},
-            {select:"MAX(resource_info_stats.mem_usage_percent)", display:{width:150}},
+            {select:"MAX(resource_info_stats.mem_usage_percent)", display:{width:150}}
         ],
         "StatTable.ServerMonitoringInfo.file_system_view_stats.physical_disks" : [
             {select:"COUNT(file_system_view_stats.physical_disks)", display:{width:150}},
@@ -741,7 +740,7 @@ define([
             {select:"file_system_view_stats.physical_disks.disk_used_percentage", display:{width:190}},
             {select:"SUM(file_system_view_stats.physical_disks.disk_used_percentage)", display:{width:190}},
             {select:"MIN(file_system_view_stats.physical_disks.disk_used_percentage)", display:{width:190}},
-            {select:"MAX(file_system_view_stats.physical_disks.disk_used_percentage)", display:{width:190}},
+            {select:"MAX(file_system_view_stats.physical_disks.disk_used_percentage)", display:{width:190}}
         ],
 
         "StatTable.SandeshMessageStat.msg_info" : [
@@ -1076,7 +1075,7 @@ define([
             {select:"db_table_info.write_fails", display:{width:150}},
             {select:"SUM(db_table_info.write_fails)", display:{width:180}},
             {select:"MIN(db_table_info.write_fails)", display:{width:180}},
-            {select:"MAX(db_table_info.write_fails)", display:{width:180}},
+            {select:"MAX(db_table_info.write_fails)", display:{width:180}}
 
         ],
         "StatTable.ProtobufCollectorStats.db_statistics_table_info" : [
@@ -1101,7 +1100,7 @@ define([
             {select:"db_statistics_table_info.write_fails", display:{width:180}},
             {select:"SUM(db_statistics_table_info.write_fails)", display:{width:180}},
             {select:"MIN(db_statistics_table_info.write_fails)", display:{width:180}},
-            {select:"MAX(db_statistics_table_info.write_fails)", display:{width:180}},
+            {select:"MAX(db_statistics_table_info.write_fails)", display:{width:180}}
 
         ],
         "StatTable.ProtobufCollectorStats.db_errors" : [
@@ -1142,8 +1141,6 @@ define([
             {select:"MIN(db_errors.read_column_fails)", display:{width:190}},
             {select:"MAX(db_errors.read_column_fails)", display:{width:190}},
         ],
-
-
         "StatTable.PFEHeapInfo.heap_info" : [
             {select:"heap_info.name", display:{width:150}},
             {select:"COUNT(heap_info)", display:{width:120}},
@@ -1251,7 +1248,7 @@ define([
             {select:"edges.class_stats.transmit_counts.q_depth_max", display:{width:150}},
             {select:"SUM(edges.class_stats.transmit_counts.q_depth_max)", display:{width:150}},
             {select:"MIN(edges.class_stats.transmit_counts.q_depth_max)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.q_depth_max)", display:{width:150}},
+            {select:"MAX(edges.class_stats.transmit_counts.q_depth_max)", display:{width:150}}
 
         ],
         "StatTable.g_lsp_stats.lsp_records" : [
@@ -1343,7 +1340,7 @@ define([
             {select:"o.count", display:{width:150}},
             {select:"SUM(o.count)", display:{width:150}},
             {select:"MIN(o.count)", display:{width:150}},
-            {select:"MAX(o.count)", display:{width:150}},
+            {select:"MAX(o.count)", display:{width:150}}
         ],
         "StatTable.AlarmgenUpdate.i" : [
             {select:"COUNT(i)", display:{width:120}},
@@ -1434,7 +1431,7 @@ define([
             {select:"virtual_ip_stats.reponse_errors", display:{width:180}},
             {select:"SUM(virtual_ip_stats.reponse_errors)", display:{width:180}},
             {select:"MIN(virtual_ip_stats.reponse_errors)", display:{width:180}},
-            {select:"MAX(virtual_ip_stats.reponse_errors)", display:{width:180}},
+            {select:"MAX(virtual_ip_stats.reponse_errors)", display:{width:180}}
         ],
         "StatTable.UveLoadbalancer.listener_stats": [
             {select:"COUNT(listener_stats)", display:{width:170}},
@@ -1538,7 +1535,7 @@ define([
             {select:"pool_stats.reponse_errors", display:{width:180}},
             {select:"SUM(pool_stats.reponse_errors)", display:{width:180}},
             {select:"MIN(pool_stats.reponse_errors)", display:{width:180}},
-            {select:"MAX(pool_stats.reponse_errors)", display:{width:180}},
+            {select:"MAX(pool_stats.reponse_errors)", display:{width:180}}
         ],
         "StatTable.UveLoadbalancer.member_stats": [
             {select:"COUNT(member_stats)", display:{width:170}},
@@ -1590,7 +1587,7 @@ define([
             {select:"member_stats.reponse_errors", display:{width:180}},
             {select:"SUM(member_stats.reponse_errors)", display:{width:180}},
             {select:"MIN(member_stats.reponse_errors)", display:{width:180}},
-            {select:"MAX(member_stats.reponse_errors)", display:{width:180}},
+            {select:"MAX(member_stats.reponse_errors)", display:{width:180}}
         ],
         "StatTable.NodeStatus.disk_usage_info": [
             {select:"COUNT(disk_usage_info)", display:{width:180}},
@@ -1605,7 +1602,7 @@ define([
             {select:"disk_usage_info.partition_space_available_1k", display:{width:260}},
             {select:"SUM(disk_usage_info.partition_space_available_1k)", display:{width:260}},
             {select:"MIN(disk_usage_info.partition_space_available_1k)", display:{width:260}},
-            {select:"MAX(disk_usage_info.partition_space_available_1k)", display:{width:260}},
+            {select:"MAX(disk_usage_info.partition_space_available_1k)", display:{width:260}}
         ],
         "StatTable.UveVMInterfaceAgent.fip_diff_stats": [
             {select:"COUNT(fip_diff_stats)", display:{width:150}},
@@ -1631,7 +1628,7 @@ define([
             {select:"fip_diff_stats.out_bytes", display:{width:150}},
             {select:"SUM(fip_diff_stats.out_bytes)", display:{width:150}},
             {select:"MIN(fip_diff_stats.out_bytes)", display:{width:150}},
-            {select:"MAX(fip_diff_stats.out_bytes)", display:{width:150}},
+            {select:"MAX(fip_diff_stats.out_bytes)", display:{width:150}}
         ],
         "StatTable.UveVMInterfaceAgent.if_stats" : [
             {select:"COUNT(if_stats)", display:{width:180}},
@@ -1704,7 +1701,7 @@ define([
             {select:"flow_rate.min_flow_deletes_per_second", display:{width:200}},
             {select:"SUM(flow_rate.min_flow_deletes_per_second)", display:{width:220}},
             {select:"MIN(flow_rate.min_flow_deletes_per_second)", display:{width:220}},
-            {select:"MAX(flow_rate.min_flow_deletes_per_second)", display:{width:220}},
+            {select:"MAX(flow_rate.min_flow_deletes_per_second)", display:{width:220}}
         ],
 
         "StatTable.AnalyticsApiStats.api_stats" : [
@@ -1786,7 +1783,7 @@ define([
             {select:"ingressPortPriorityGroup.umHeadroomBufferCount", display:{width:220}},
             {select:"SUM(ingressPortPriorityGroup.umHeadroomBufferCount)", display:{width:240}},
             {select:"MIN(ingressPortPriorityGroup.umHeadroomBufferCount)", display:{width:240}},
-            {select:"MAX(ingressPortPriorityGroup.umHeadroomBufferCount)", display:{width:240}},
+            {select:"MAX(ingressPortPriorityGroup.umHeadroomBufferCount)", display:{width:240}}
         ],
 
         "StatTable.PRouterBroadViewInfo.ingressPortServicePool" : [
@@ -1850,7 +1847,6 @@ define([
             {select:"MIN(egressPortServicePool.mcShareQueueEntries)", display:{width:220}},
             {select:"MAX(egressPortServicePool.mcShareQueueEntries)", display:{width:220}}
         ],
-
         "StatTable.PRouterBroadViewInfo.egressServicePool" : [
             {select:"COUNT(egressServicePool)", display:{width:220}},
             {select:"asic_id", display:{width:100}},
@@ -1876,7 +1872,6 @@ define([
             {select:"MIN(egressServicePool.mcShareQueueEntries)", display:{width:220}},
             {select:"MAX(egressServicePool.mcShareQueueEntries)", display:{width:220}}
         ],
-
         "StatTable.PRouterBroadViewInfo.egressUcQueue" : [
             {select:"COUNT(egressUcQueue)", display:{width:220}},
             {select:"asic_id", display:{width:100}},
@@ -1889,7 +1884,7 @@ define([
             {select:"egressUcQueue.queue", display:{width:180}},
             {select:"SUM(egressUcQueue.ucBufferCount)", display:{width:200}},
             {select:"MIN(egressUcQueue.ucBufferCount)", display:{width:200}},
-            {select:"MAX(egressUcQueue.ucBufferCount)", display:{width:200}},
+            {select:"MAX(egressUcQueue.ucBufferCount)", display:{width:200}}
         ],
         "StatTable.PRouterBroadViewInfo.egressUcQueueGroup" : [
             {select:"COUNT(egressUcQueueGroup)", display:{width:220}},
@@ -1922,7 +1917,7 @@ define([
             {select:"egressMcQueue.mcQueueEntries", display:{width:180}},
             {select:"SUM(egressMcQueue.mcQueueEntries)", display:{width:200}},
             {select:"MIN(egressMcQueue.mcQueueEntries)", display:{width:200}},
-            {select:"MAX(egressMcQueue.mcQueueEntries)", display:{width:200}},
+            {select:"MAX(egressMcQueue.mcQueueEntries)", display:{width:200}}
         ],
         "StatTable.PRouterBroadViewInfo.egressCpuQueue" : [
             {select:"COUNT(egressCpuQueue)", display:{width:220}},
@@ -1936,7 +1931,7 @@ define([
             {select:"egressCpuQueue.cpuBufferCount", display:{width:180}},
             {select:"SUM(egressCpuQueue.cpuBufferCount)", display:{width:200}},
             {select:"MIN(egressCpuQueue.cpuBufferCount)", display:{width:200}},
-            {select:"MAX(egressCpuQueue.cpuBufferCount)", display:{width:200}},
+            {select:"MAX(egressCpuQueue.cpuBufferCount)", display:{width:200}}
         ],
         "StatTable.PRouterBroadViewInfo.egressRqeQueue" : [
             {select:"COUNT(egressRqeQueue)", display:{width:220}},
@@ -1950,7 +1945,7 @@ define([
             {select:"egressRqeQueue.rqeBufferCount", display:{width:180}},
             {select:"SUM(egressRqeQueue.rqeBufferCount)", display:{width:200}},
             {select:"MIN(egressRqeQueue.rqeBufferCount)", display:{width:200}},
-            {select:"MAX(egressRqeQueue.rqeBufferCount)", display:{width:200}},
+            {select:"MAX(egressRqeQueue.rqeBufferCount)", display:{width:200}}
         ],
         "defaultStatColumns": [
             {select:"T", display:{width:210, filterable:false}},
@@ -1964,7 +1959,7 @@ define([
             {select: "ObjectId", display:{width:150, searchable: true, hide: true}},
             {select: "Source", display:{width:150, searchable: true}},
             {select: "ModuleId", display:{width: 200, searchable:true}},
-            {select: "Messagetype", display:{width:150, searchable:true}},
+            {select: "Messagetype", display:{width:230, searchable:true}},
             {
                 select: "ObjectLog",
                 display:{
@@ -1991,10 +1986,7 @@ define([
                             {format: 'json2html', options: {jsonValuePath: 'SystemLogJSON', htmlValuePath: 'SystemLogHTML', expandLevel: 0}}
                         ]
                     },
-                    exportConfig: {
-                        allow: true,
-                        stdFormatter: false
-                    }
+                    exportConfig: {allow: true, stdFormatter: false}
                 }
             }
         ],
@@ -2003,7 +1995,7 @@ define([
             {select: "Source", display:{width:150, searchable: true}},
             {select: "NodeType", display:{width:100, searchable: true}},
             {select: "ModuleId", display:{width: 200, searchable:true}},
-            {select: "Messagetype", display:{width:150, searchable:true}},
+            {select: "Messagetype", display:{width:230, searchable:true}},
             {select: "Keyword", display:{width:150, searchable:true}},
             {select: "Level", display:{width:100, searchable:true, formatter: function(r, c, v, cd, dc) { return qewu.getLevelName4Value(dc.Level); }}},
             {select: "Category", display:{width: 150, searchable:true}},
@@ -2023,16 +2015,11 @@ define([
                                 });
                                 dc.formattedXmlMessage = xmlMessage.join(' ');
                             }
-
-
                         }
 
                         return dc.formattedXmlMessage
                     },
-                    exportConfig: {
-                        allow: true,
-                        stdFormatter: false
-                    }
+                    exportConfig: {allow: true, stdFormatter: false}
                 }
             },
             {select: "InstanceId", display:{width: 150, searchable:true}}
