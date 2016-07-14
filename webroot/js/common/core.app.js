@@ -70,7 +70,15 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
 
         'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
-        'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json'
+        'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json',
+
+        'json-editor'                 : coreWebDir + '/assets/jsoneditor/js/jsoneditor.min',
+        'ajv'                         : coreWebDir + '/assets/ajv/ajv.min',
+        'server-schema'               : coreWebDir + '/schemas/server.schema',
+        'cluster-schema'              : coreWebDir + '/schemas/cluster.schema',
+        'json-model'                  : coreWebDir + "/js/models/JsonModel",
+        'json-edit-view'              : coreWebDir + '/js/views/JsonEditView'
+
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
