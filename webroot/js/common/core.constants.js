@@ -253,6 +253,11 @@ define([
         this.OBJECT_LOGS_PREFIX = "ol";
         this.SYSTEM_LOGS_PREFIX = "sl";
 
+        this.TABLE_TYPES = [
+            this.QE_STAT_TABLE_TYPE,
+            this.QE_LOG_TABLE_TYPE,
+        ]
+
         this.FS_HASH_P = 'query_flow_series';
         this.FR_HASH_P = 'query_flow_record';
         this.SL_HASH_P = 'query_log_system';
