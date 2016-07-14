@@ -502,15 +502,15 @@ define([
                 self.loader = new ContrailListModel({
                     remote: {
                         ajaxConfig: {
-                            url: "/api/qe/query",
+                            url: '/api/qe/query',
                             type: 'POST',
-                            data: JSON.stringify(self.getQueryRequestPostData(+ new Date))
+                            data: JSON.stringify(self.getQueryRequestPostData(+new Date)),
                         },
                         dataParser: function (response) {
-                            if (p.parserName && self[p.parserName]) return self[p.parserName](response['data'], p)
-                            else return response['data']
-                        }
-                    }
+                            if (p.parserName && self[p.parserName]) return self[p.parserName](response.data, p)
+                            return response.data
+                        },
+                    },
                 })
             }
             return self.loader
@@ -524,7 +524,7 @@ define([
             for (var i = 0; i < data.length; i++) {
                 var timeStamp = Math.floor(data[i]['T='] / 1000)
                 _.each(p.dataFields, function (dataField, seriesIndex) {
-                    if (i == 0) series[seriesIndex] = {values: []}
+                    if (i === 0) series[seriesIndex] = {values: []}
                     series[seriesIndex].values.push({x: timeStamp, y: data[i][dataField]})
                 })
             }
@@ -534,13 +534,14 @@ define([
         toJSON: function () {
             var self = this
             return {
+                table_type: self.table_type(),
                 table_name: self.table_name(),
                 select: self.select(),
                 time_range: self.time_range(),
                 where: self.where(),
                 filters: self.filters(),
             }
-        }
+        },
     });
 
     function getTableSchemaConfig(model, tableName, disableFieldArray, disableSubstringArray, disableWhereFields) {

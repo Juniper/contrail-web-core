@@ -3,14 +3,15 @@ CREATE TYPE config (
   x int,
   y int,
   width int,
-  height int
+  height int,
 );
 ---
 CREATE TYPE widget_view (
   "view" text,
   "viewPathPrefix" text,
   "model" text,
-  "modelConfig" text
+  "modelConfig" text,
+  "modelPathPrefix" text,
 );
 ---
 CREATE TABLE user_widgets (
