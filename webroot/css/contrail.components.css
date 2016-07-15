@@ -141,14 +141,16 @@
     display: inline-block;
 }
 .contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon-remove {
-    margin-left: 10px;
+    margin-left: 4px;
     font-weight: normal;
     font-size: 90%;
     display: inline-block;
+    padding: 4px;
 }
 .contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .link .icon-plus {
     line-height: 24px;
-    margin-left: 6px;
+    margin-left: 4px;
+    padding: 4px;
 }
 .contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .edit-title > input {
     height: 16px;

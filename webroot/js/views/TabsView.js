@@ -3,8 +3,8 @@
  */
 
 define([
-    'underscore',
-    'contrail-view'
+    'lodash',
+    'contrail-view',
 ], function (_, ContrailView) {
     var TabsView = ContrailView.extend({
         selectors: {
@@ -15,7 +15,7 @@ define([
             addLink:        '.contrail-tab-link-list .tab-add .link',
         },
         events: {
-            'click .contrail-tab-link-list .tab-add .link': 'onClickAdd', 
+            'click .contrail-tab-link-list .tab-add .link': 'onClickAdd',
             'click .contrail-tab-link-list .icon-remove': 'onClickRemove',
             'blur .contrail-tab-link-list .tab-add .edit-title > input': 'onAdd',
         },
@@ -175,7 +175,7 @@ define([
                 tabLinkTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_LINK_VIEW),
                 tabContentTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_CONTENT_VIEW),
                 tabLength = self.tabs.length,
-                activateTabNumber;
+                activateTabIndex;
 
             self.modelMap = modelMap;
 
@@ -189,7 +189,7 @@ define([
                     self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab'] = tabLength;
                     if (contrail.checkIfKeyExistInObject(true, tabValue, 'tabConfig.renderOnActivate') && tabValue.tabConfig.renderOnActivate === true) {
                         self.tabRendered.push(false);
-                        //TODO - onAllViewsRenderComplete should be called when rendered
+                        // TODO - onAllViewsRenderComplete should be called when rendered
                     } else {
                         self.renderTab(tabValue, onAllViewsRenderComplete);
                         self.tabRendered.push(true);
@@ -198,15 +198,17 @@ define([
                     tabLength++;
 
                     if (activateTab === true) {
-                        activateTabNumber = tabLength - 1
-                    } else if (typeof activateTab === 'number') {
-                        activateTabNumber = activateTab
+                        activateTabIndex = tabLength - 1
+                    } else if (_.isNumber(activateTab)) {
+                        activateTabIndex = activateTab
                     }
-                    if (activateTabNumber) self.$('#'+elId).data('contrailTabs').activateTab(activateTabNumber)
+                    if (!_.isUndefined(activateTabIndex)) {
+                        self.$('#' + elId).data('contrailTabs').activateTab(activateTabIndex)
+                    }
 
                 } else {
-                    activateTabNumber = self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab']
-                    self.$('#'+elId).data('contrailTabs').activateTab(activateTabNumber)
+                    activateTabIndex = self.tabsIdMap[tabValue[cowc.KEY_ELEMENT_ID] + '-tab']
+                    self.$('#'+elId).data('contrailTabs').activateTab(activateTabIndex)
                 }
             });
         },
