@@ -299,6 +299,12 @@ input.datetimepicker{
 .ui-multiselect-checkboxes { position:relative /* fixes bug in IE6/7 */; overflow-y:scroll }
 .ui-multiselect-checkboxes  input.ace-input[type=checkbox] {  width: 0;  }
 .ui-multiselect-checkboxes label { cursor:default; display:block; border:1px solid transparent; padding:3px 3px 3px 10px }
+.ui-multiselect-checkboxes label input.ace-input[type=checkbox] + .ace-lbl {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+}
 .ui-multiselect-checkboxes label input { position:relative !important; top:1px }
 .ui-multiselect-checkboxes input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] + .ace-lbl::before,
 .ui-multiselect-checkboxes input.ace-input-tristate[type=checkbox] + .ace-lbl::before { margin-right: 8px; }
