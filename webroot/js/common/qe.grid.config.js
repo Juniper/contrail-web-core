@@ -67,39 +67,14 @@ define([
         };
 
         this.getColumnDisplay4ChartGroupGrid = function(tableName, tableType, selectArray) {
-            var newColumnDisplay = [], columnDisplaySelect,
-                columnDisplay = getColumnDisplay4Query(tableName, tableType);
+            var self = this,
+                newColumnDisplay = [], columnDisplaySelect,
+                columnDisplay = self.getColumnDisplay4Grid(tableName, tableType, selectArray);
 
             $.each(columnDisplay, function(columnKey, columnValue){
-                if (selectArray.indexOf(columnValue.select) != -1 && !qewu.isAggregateField(columnValue.select) && columnValue.select !== 'T' && columnValue.select !== 'T=' && columnValue.select !== 'UUID') {
-                    if (_.isUndefined(columnValue.display.formatter)) {
-                        columnValue.display.formatter = {
-                            format: cowc.QUERY_COLUMN_FORMATTER[columnValue.select]
-                        };
-                    }
-                    newColumnDisplay.push(columnValue.display);
+                if (!qewu.isAggregateField(columnValue.id) && columnValue.id !== 'T' && columnValue.id !== 'T=' && columnValue.id !== 'UUID' && columnValue['id'].indexOf("PERCENTILES(") == -1) {
+                    newColumnDisplay.push(columnValue);
                 }
-            });
-
-            columnDisplaySelect = $.map(columnDisplay, function(selectValue, selectKey) {
-                return selectValue.select;
-            });
-
-            $.each(selectArray, function(selectKey, selectValue) {
-                if(columnDisplaySelect.indexOf(selectValue) == -1 && !qewu.isAggregateField(selectValue) &&
-                    selectValue !== 'T' && selectValue !== 'T=' && selectValue !== 'UUID' &&
-                    (selectValue.indexOf("PERCENTILES(") == -1)) {
-                    var columnName = selectValue;
-                    newColumnDisplay.push({
-                        id: selectValue, field: selectValue,
-                        name: columnName,
-                        width: columnName.length * 8,  groupable:false,
-                        formatter: {
-                            format: cowc.QUERY_COLUMN_FORMATTER[selectValue]
-                        }
-                    })
-                }
-
             });
 
             return newColumnDisplay;
