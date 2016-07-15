@@ -22,7 +22,7 @@ define([
             }
 
             $.each(selectArray, function(selectKey, selectValue) {
-                var columnName = self.formatNameForGrid(selectValue),
+                var columnName = qewu.formatNameForGrid(selectValue),
                     columnConfig = {
                         id: selectValue, field: selectValue,
                         name: columnName,
@@ -51,19 +51,6 @@ define([
             });
 
             return columnDisplay;
-        };
-
-        this.formatNameForGrid = function(columnName) {
-            var firstIndex = columnName.indexOf('('),
-                lastIndex = columnName.indexOf(')'),
-                aggregateType = columnName.substr(0,firstIndex),
-                aggregateColumnName = columnName.substr(firstIndex + 1,lastIndex - firstIndex - 1);
-
-            if(qewu.isAggregateField(columnName) || aggregateType == "AVG" || aggregateType == "PERCENTILES") {
-                return aggregateType.toUpperCase() + " (" + cowl.get(aggregateColumnName) + ")";
-            } else {
-                return cowl.get(columnName).replace(')', '');
-            }
         };
 
         this.getColumnDisplay4ChartGroupGrid = function(tableName, tableType, selectArray) {

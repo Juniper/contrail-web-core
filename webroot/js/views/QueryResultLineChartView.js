@@ -38,11 +38,10 @@ define([
 
         $.each(aggregateSelectFields, function(selectFieldKey, selectFieldValue) {
             var yFormatterKey = cowc.QUERY_COLUMN_FORMATTER[selectFieldValue];
-
             chartAxesOptions[selectFieldValue] = {
                 axisLabelDistance: 5,
-                yAxisLabel: selectFieldValue,
-                yAxisDataField: selectFieldValue,
+                yAxisLabel: qewu.formatNameForGrid(selectFieldValue),
+                yAxisDataField: qewu.formatNameForGrid(selectFieldValue),
                 forceY: [0, 10],
                 yFormatter: function (d) {
                     return cowf.getFormattedValue(yFormatterKey, d)
@@ -296,7 +295,7 @@ define([
 
         $.each(aggregateSelectFields, function(selectFieldKey, selectFieldValue) {
             filterConfig.groups[0].items.push({
-                text: selectFieldValue,
+                text: qewu.formatNameForGrid(selectFieldValue),
                 events: {
                     click: function(event) {
                         var chartModel = $('#' + queryResultLineChartId).data('chart'),
@@ -311,7 +310,7 @@ define([
                         chartModel.lines.forceY(chartAxesOption.forceY);
                         chartModel.lines2.forceY(chartAxesOption.forceY);
 
-                        chartModel.chartOptions.chartAxesOptionKey = selectFieldValue;
+                        chartModel.chartOptions.chartAxesOptionKey = qewu.formatNameForGrid(selectFieldValue);
                         chartModel.update();
                     }
                 }
