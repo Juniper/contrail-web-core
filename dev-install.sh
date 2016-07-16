@@ -242,18 +242,24 @@ cp -af ./$THIRD_PARTY/uuid.js webroot/js/uuid.js
 #End - Copy uuid.js from $THIRD_PARTY
 
 #Start - Copy ajv.min.js from $THIRD_PARTY
+rm -rf webroot/assets/ajv
 mkdir webroot/assets/ajv
-cp -af ./$THIRD_PARTY/ajv.min.js webroot/assets/ajv/ajv.min.js
+cp -af ./$THIRD_PARTY/ajv-4.1.0/ajv.min.js webroot/assets/ajv/ajv.min.js
 #End - Copy ajv.min.js from $THIRD_PARTY
 
 #Start - Copy jsoneditor.js from $THIRD_PARTY
+rm -rf webroot/assets/jsoneditor
 mkdir -p webroot/assets/jsoneditor/js
 mkdir -p webroot/assets/jsoneditor/css/img
+
 cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.min.js webroot/assets/jsoneditor/js/jsoneditor.min.js
 cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.js webroot/assets/jsoneditor/js/jsoneditor.js
 cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.min.css webroot/assets/jsoneditor/css/jsoneditor.min.css
 cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.css webroot/assets/jsoneditor/css/jsoneditor.css
 cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/src/css/img/jsoneditor-icons.svg webroot/assets/jsoneditor/css/img/jsoneditor-icons.svg
+
+mkdir -p webroot/css/img
+cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/src/css/img/jsoneditor-icons.svg webroot/css/img/jsoneditor-icons.svg
 #End - Copy jsoneditor.js from $THIRD_PARTY
 
 #Start - Merging All CSS files

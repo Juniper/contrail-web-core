@@ -11,33 +11,33 @@ define([
     var JsonModel = ContrailModel.extend({
 
         defaultConfig: smwmc.getJSONModel(),
-        
+
         configure: function (checkedRows, callbackObj, type) {
-                        var ajaxConfig = {};
-                        var putData = {},
-                            attributes = this.model().attributes;
-                        putData[type] = [attributes];
+            var ajaxConfig = {};
+            var putData = {},
+                attributes = this.model().attributes;
+            putData[type] = [attributes];
 
-                        ajaxConfig.type = "PUT";
-                        ajaxConfig.data = JSON.stringify(putData);
-                        ajaxConfig.url = smwu.getObjectUrl(type);
+            ajaxConfig.type = "PUT";
+            ajaxConfig.data = JSON.stringify(putData);
+            ajaxConfig.url = smwu.getObjectUrl(type);
 
-                        contrail.ajaxHandler(ajaxConfig, function () {
-                            if (contrail.checkIfFunction(callbackObj.init)) {
-                                callbackObj.init();
-                            }
-                        }, function (response) {
-                            callbackObj.success();
-                            if (contrail.checkIfFunction(callbackObj.success)) {
-                                callbackObj.success();
-                            }
-                        }, function (error) {
-                            if (contrail.checkIfFunction(callbackObj.error)) {
-                                callbackObj.error(error);
-                            }
-                        });
-            }
-        });
+            contrail.ajaxHandler(ajaxConfig, function () {
+                if (contrail.checkIfFunction(callbackObj.init)) {
+                    callbackObj.init();
+                }
+            }, function (response) {
+                callbackObj.success();
+                if (contrail.checkIfFunction(callbackObj.success)) {
+                    callbackObj.success();
+                }
+            }, function (error) {
+                if (contrail.checkIfFunction(callbackObj.error)) {
+                    callbackObj.error(error);
+                }
+            });
+        }
+    });
 
     return JsonModel;
 });
