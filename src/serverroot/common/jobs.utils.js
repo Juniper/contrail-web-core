@@ -162,6 +162,7 @@ function getHeaders (dataObj, callback)
             return;
         }
         headers['protocol'] = verObj['protocol'];
+        var rest = require('./rest.api');
         var configServerRestInst =
             rest.getAPIServer({apiName: dataObj['apiName'],
                                server: verObj['ip'], port: verObj['port']});
