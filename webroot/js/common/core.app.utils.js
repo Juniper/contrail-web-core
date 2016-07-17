@@ -61,7 +61,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir) {
         'graph-view'                  : coreWebDir + '/js/views/GraphView',
         'contrail-view'               : coreWebDir + '/js/views/ContrailView',
         'query-form-view'             : coreWebDir + '/js/views/QueryFormView',
-
+        'contrail-config-model'       : coreWebDir + '/js/models/ContrailConfigModel',
         'query-form-model'            : coreWebDir + '/js/models/QueryFormModel',
         'query-or-model'              : coreWebDir + '/js/models/QueryOrModel',
         'query-and-model'             : coreWebDir + '/js/models/QueryAndModel',
