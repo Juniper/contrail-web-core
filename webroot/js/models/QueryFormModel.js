@@ -321,15 +321,16 @@ define([
             return resultSortFieldsDataArr;
         },
 
-        getFormModelAttributes: function () {
-            var modelAttrs = this.model().attributes,
-                attrs4Server = {},
-                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object',
-                                 'filter_data_object', 'filter_and_clauses', 'sort_by', 'sort_order', 'log_category', 'log_type', 'is_request_in_progress',
-                                 'show_advanced_options'];
+        toJSON: function () {
+            var modelAttrs = this.model().attributes
+            var attrs4Server = {}
+            var ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses',
+                    'select_data_object', 'where_data_object', 'filter_data_object', 'filter_and_clauses', 'sort_by',
+                    'sort_order', 'log_category', 'log_type', 'is_request_in_progress', 'show_advanced_options',
+                    'table_name_data_object']
 
             for (var key in modelAttrs) {
-                if(modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) == -1) {
+                if (modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) === -1) {
                     attrs4Server[key] = modelAttrs[key];
                 }
             }
@@ -339,7 +340,7 @@ define([
 
         getQueryRequestPostData: function (serverCurrentTime, customQueryReqObj, useOldTime) {
             var self = this,
-                formModelAttrs = this.getFormModelAttributes(),
+                formModelAttrs = this.toJSON(),
                 queryReqObj = {};
 
             if(useOldTime != true) {
@@ -372,9 +373,9 @@ define([
             this.time_granularity_unit('secs');
             this.select('');
             this.where('');
-            this.direction("1");
+            this.direction('1');
             this.filters('');
-            this.select_data_object().reset(data);
+            this.select_data_object().reset(this);
             this.model().get('where_or_clauses').reset();
             this.model().get('filter_and_clauses').reset();
         },
@@ -499,6 +500,7 @@ define([
         getDataModel: function (p) {
             var self = this
             if (_.isUndefined(self.loader)) {
+                if (p && p.parserName && !self[p.parserName]) return undefined
                 self.loader = new ContrailListModel({
                     remote: {
                         ajaxConfig: {
@@ -522,6 +524,7 @@ define([
 
             var series = []
             for (var i = 0; i < data.length; i++) {
+                if (_.isUndefined(data[i]['T='])) return []
                 var timeStamp = Math.floor(data[i]['T='] / 1000)
                 _.each(p.dataFields, function (dataField, seriesIndex) {
                     if (i === 0) series[seriesIndex] = {values: []}
@@ -529,18 +532,6 @@ define([
                 })
             }
             return series
-        },
-
-        toJSON: function () {
-            var self = this
-            return {
-                table_type: self.table_type(),
-                table_name: self.table_name(),
-                select: self.select(),
-                time_range: self.time_range(),
-                where: self.where(),
-                filters: self.filters(),
-            }
         },
     });
 
