@@ -199,7 +199,14 @@ define([
                 json[attr] = self[attr]()
             })
             return json
-        }
+        },
+
+        reset: function () {
+            var self = this
+            _.each(self._modelAttributes, function (value, attr) {
+                self[attr](null)
+            })
+        },
     });
 
     function setError4Key(errors, key, isInternalValid) {

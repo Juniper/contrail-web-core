@@ -171,7 +171,7 @@ cp -af ./$THIRD_PARTY/datetimepicker-v2.4.5/jquery.datetimepicker.css webroot/as
 #Start - Copy Knockout from $THIRD_PARTY
 rm -rf webroot/assets/knockout
 mkdir webroot/assets/knockout
-cp -af ./$THIRD_PARTY/knockout-v3.0.0/build/output/knockout-latest.debug.js webroot/assets/knockout/knockout.js
+cp -af ./$THIRD_PARTY/knockout-3.0.0.js webroot/assets/knockout/knockout.js
 #End - Copy Knockout from $THIRD_PARTY
 
 #Start - Copy Moment Date-Formatter from $THIRD_PARTY
