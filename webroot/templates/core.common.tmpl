@@ -30,13 +30,13 @@
         </a>
     </li>
     {{#each this.items.item}}
-        <li class="item">
+        <li class="item mainMenu" {{#if this.hash}}id="{{this.hash}}"{{/if}}>
             <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}' data-link='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
                 <i class="{{this.iconClass}}"></i>
                 <span>{{this.label}}</span>
             </a>
-            <ul class="submenu">
-                {{#IfCompare this.items null operator='!='}}
+            {{#IfCompare this.items null operator='!='}}
+                <ul class="submenu">
                     {{#each this.items.item}}
                         <li id="{{this.hash}}">
                             <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
@@ -44,15 +44,8 @@
                             </a>
                         </li>
                    {{/each}}
-                {{/IfCompare}}
-                {{#IfCompare this.items null operator='=='}}
-                    <li id="{{this.hash}}">
-                        <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
-                             {{this.label}}
-                        </a>
-                    </li>
-                {{/IfCompare}}
-            </ul>
+               </ul>
+            {{/IfCompare}}
         </li>
     {{/each}}
 </script>
@@ -1747,6 +1740,9 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="query-or-collection-view-template">
+    {{#IfCompare viewConfig.label null operator='!='}}
+        <label class="margin-0">{{viewConfig.label}}</label>
+    {{/IfCompare}}
     <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
         <div class="row-fluid or-clause" data-bind="css: 'or-clause-' + $index()">
             <div class="span1">

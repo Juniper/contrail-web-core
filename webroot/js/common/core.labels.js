@@ -80,7 +80,107 @@ define([
             return label;
         };
 
-        var labelMap = {};
+        var labelMap = {
+
+            'T=': 'Time',
+            'T': 'Time',
+            /*Flow Series Column Label Map */
+            'vrouter': 'Virtual Router',
+            'sourcevn': 'Source VN',
+            'destvn': 'Destination VN',
+            'sourceip': 'Source IP',
+            'destip': 'Destination IP',
+            'sport': 'Source Port',
+            'dport': 'Destination Port',
+            'direction_ingdirection_ing': 'Direction',
+            
+
+            /*Flow Record Column Label map */
+            'vrouter': 'Virtual Router',
+            'vrouter_ip': 'Virtual Router IP',
+            'other_vrouter_ip': 'Other Virtual Router IP',
+            'sourcevn': 'Source VN',
+            'destvn': 'Destination VN',
+            'underlay_proto': 'Underlay Protocol',
+            'UuidKey': 'UUID',
+            'sg_rule_uuid': 'Rule UUID',
+            'nw_ace_uuid': 'Network UUID',
+            'agg-bytes': 'Aggregate Bytes',
+            'agg-packets': 'Aggregate Packets',
+            'vmi_uuid': 'VMI UUID',
+
+            //Object log
+            'ObjectLog': 'Object Log',
+            'MessageTS': 'Time',
+            'ObjectId': 'Object ID',
+            'ModuleId': 'Module ID',
+            'Messagetype': 'Message Type',
+            'SystemLog': 'System Log',
+            
+            //Message table
+            'NodeType': 'Node Type',
+            'Xmlmessage': 'Log Message',
+            
+
+            /* Stat Column Label Map */
+            'cpu_info': 'CPU Info',
+            'mem_virt': 'Virtual Memory',
+            'mem_res': 'CPU Resident Memory',
+            'cpu_share': 'CPU Share',
+            'used_sys_mem':'CPU Sys Mem Used',
+            'ifInUcastPkts':'In Unicast Pkts',
+            'ifInMulticastPkts':'In Multicast Pkts',
+            'ifInBroadcastPkts':'In Broadcast Pkts',
+            'ifInDiscards':'Intf In Discards',
+            'ifInErrors': 'Intf In Errors',
+            'ifOutUcastPkts': 'Out Unicast Pkts',
+            'ifOutMulticastPkts': 'Out Multicast Pkts',
+            'ifOutBroadcastPkts': 'Out Broadcast Pkts',
+            'ifOutDiscards': 'Intf Out Discards',
+            'ifOutErrors': 'Intf Out Errors',
+            'ifIndex': 'Intf Index',
+            'used_sys_mem': 'CPU Sys Mem Used',
+            'one_min_cpuload': 'CPU 1 Min Load',
+            'virt_memory': 'Virtual Mem',
+            'peak_virt_memory': 'Peak Virtual Mem',
+            'iops':'IOPS',
+            'bw':'Bandwidth',
+            'op_r_latency': 'Op Read Latency',
+            'op_w_latency': 'Op Write Latency',
+            'time': 'Time Taken',
+            'rows': 'Rows Returned',
+            'pifindex': 'PIF Index',
+            'sip': 'Source IP',
+            'dip': 'Destination IP',
+            'vlan': 'Virtual LAN',
+            'flowtype': 'Flow Type',
+            'otherinfo': 'Other Info',
+            'obj_name': 'Object Name',
+            'uuid': 'UUID',
+            'partition_space_used_1k': 'Partition Space Used (1k)',
+            'if_stats': 'Interface Stats',
+            'in_bw_usage': 'In BW Usage',
+            'out_bw_usage': 'Out BW Usage',
+            'remote_ip': 'Remote IP',
+            'priorityGroup': 'Priority Group',
+            'umShareBufferCount': 'um Shared Buffer Count',
+            'umHeadroomBufferCount': 'um Headroom Buffer Count',
+            'mcShareBufferCount': 'mc Share Buffer Count',
+            'mcShareQueueEntries': 'mc Share Queue Entries',
+            'rqeBufferCount': 'Rqe Buffer Count',
+            'cpuBufferCount': 'CPU Buffer Count',
+            'mcQueueEntries': 'mc Queue Entries',
+            'mcBufferCount': 'mc Buffer Count',
+            'ucBufferCount': 'uc Buffer Count',
+            'servicePool': 'Service Pool',
+            'in_pkts': 'In Packets',
+            'out_pkts': 'Out Packets',
+            'cpu_usage_percentage': 'CPU Usage %',
+            'mem_usage_percent': 'Mem Usage %',
+            'disk_used_percentage': 'Physical Disk Used %',
+            'inst_id': 'Instance Id'
+ 
+        };
 
         this.BREADCRUMB_ID = "breadcrumb";
 

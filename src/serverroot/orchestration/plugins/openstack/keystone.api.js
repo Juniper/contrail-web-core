@@ -36,7 +36,7 @@ var svcAuthAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
     server:authServerIP, port:"35357"});
 
 var mandatoryEndpointList = ['compute', 'image'];
-var adminRoles = ['admin'];
+var adminRoles = config.roleMaps['cloudAdmin'];
 var authAPIVers = ['v2.0'];
 if ((null != config) && (null != config.identityManager) &&
     (null != config.identityManager.apiVersion)) {
@@ -67,11 +67,23 @@ function getUIRolesByExtRoles (resRoleList)
     var rolesCount = resRoleList.length;
     var extRoleStr = null;
     var tmpUIRoleMapList = {};
-    var roleMap = require('../../../web/core/rolemap.api');
-    for (key in roleMap.uiRoleMapList) {
-        var tmpKey = key.toUpperCase();
-        tmpUIRoleMapList[tmpKey] = roleMap.uiRoleMapList[key];
+    var uiRoleMaps = {};
+    var extRoleToUIRoleMaps = config.roleMaps;
+    for (key in extRoleToUIRoleMaps) {
+        var len = extRoleToUIRoleMaps[key].length;
+        for (var i = 0; i < len; i++) {
+            var extRole = extRoleToUIRoleMaps[key][i].toUpperCase();
+            var extRole =
+                commonUtils.getValueByJsonPath(extRoleToUIRoleMaps, key + ';' +
+                                               i, null);
+            if ((null == extRole) || (!extRole.length)) {
+                continue;
+            }
+            extRole = extRole.toUpperCase();
+            tmpUIRoleMapList[extRole] = key;
+        }
     }
+
     for (var i = 0; i < rolesCount; i++) {
         extRoleStr = resRoleList[i]['name'];
         if (null == extRoleStr) {
