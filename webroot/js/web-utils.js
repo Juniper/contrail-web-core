@@ -19,7 +19,7 @@ var DEFAULT_TIME_SLICE = 3600000,
     pageContainer = "#content-container",
     dblClick = 0;
 var CONTRAIL_STATUS_USER = [];
-globalObj['roles'] = {TENANT : "member",ADMIN : "superAdmin"};
+globalObj['roles'] = {TENANT : "member",ADMIN : "cloudAdmin"};
 var CONTRAIL_STATUS_PWD = [];
 var flowKeyStack = [];
 var aclIterKeyStack = [];
@@ -413,18 +413,35 @@ function long2ip(ipl) {
 function pushBreadcrumb(breadcrumbsArr) {
     for (var i = 0; i < breadcrumbsArr.length; i++) {
         //Remove active class
+        var breadcrumb = breadcrumbsArr[i];
+        var label,href;
+        if (typeof breadcrumb == 'object') {
+            label = breadcrumb['label'];
+            href = breadcrumb['href'];
+        } else {
+            label = breadcrumb;
+            href = '';
+        }
         $('#breadcrumb').children('li').removeClass('active');
         if (i == 0) {
             //Add divider icon for previous breadcrumb
             $('#breadcrumb').children('li:last').append('<span class="divider"><i class="icon-angle-right"></i></span>')
         }
-        if (i == breadcrumbsArr.length - 1) {
-            $('#breadcrumb').append('<li class="active"><a>' + breadcrumbsArr[i] + '</a></li>');
-        } else {
-            $('#breadcrumb').append('<li><a>' + breadcrumbsArr[i] + '</a><span class="divider"><i class="icon-angle-right"></i></span></li>');
+        if(href != null && href != ''){
+            if (i == breadcrumbsArr.length - 1) {
+                $('#breadcrumb').append('<li class="active"><a href=' + href +' >' + label + '</a></li>');
+            } else {
+                $('#breadcrumb').append('<li><a href=' + href + '>' + label + '</a><span class="divider"><i class="icon-angle-right"></i></span></li>');
+            }
+        }else{
+            if (i == breadcrumbsArr.length - 1) {
+                $('#breadcrumb').append('<li class="active"><a>' + label + '</a></li>');
+            } else {
+                $('#breadcrumb').append('<li><a>' + label + '</a><span class="divider"><i class="icon-angle-right"></i></span></li>');
+            }
         }
     }
-}
+ }
 
 function removeActiveBreadcrumb(breadcrumbsArr) {
     if($('#breadcrumb').children('li.active:last')) {

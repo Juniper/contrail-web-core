@@ -212,9 +212,9 @@ function getServiceAPIVersionByReqObj (request, svcType, callback, reqBy)
                                                                 callback, reqBy);
 }
 
-var adminRoleProjects = ['admin'];
 function getAdminProjectList (req)
 {
+    var adminRoleProjects = config.roleMaps['cloudAdmin'];
     var adminProjectList = [];
     var adminRoleProjectsCnt = adminRoleProjects.length;
     var userRoles = req.session.userRoles;

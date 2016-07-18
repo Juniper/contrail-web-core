@@ -623,11 +623,6 @@ function clusterMasterInit (callback)
             });
         },
         function(CB) {
-            parseXMLList.readAndParseRoleListFile(function() {
-                CB(null, null);
-            });
-        },
-        function(CB) {
             checkAndDeleteRedisRDB(function() {
                 CB(null, null);
             });

@@ -7,6 +7,7 @@ var jobTaskDataRequiresFields = {};
 var eventEmitter = require('events').EventEmitter;
 var jobKueEventEmitter = new eventEmitter();
 var commonUtils = require('./../utils/common.utils');
+var rest = require('../common/rest.api');
 
 var authParams = null;
 try {
