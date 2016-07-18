@@ -30,13 +30,13 @@
         </a>
     </li>
     {{#each this.items.item}}
-        <li class="item">
+        <li class="item mainMenu" {{#if this.hash}}id="{{this.hash}}"{{/if}}>
             <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}' data-link='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
                 <i class="{{this.iconClass}}"></i>
                 <span>{{this.label}}</span>
             </a>
-            <ul class="submenu">
-                {{#IfCompare this.items null operator='!='}}
+            {{#IfCompare this.items null operator='!='}}
+                <ul class="submenu">
                     {{#each this.items.item}}
                         <li id="{{this.hash}}">
                             <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
@@ -44,15 +44,8 @@
                             </a>
                         </li>
                    {{/each}}
-                {{/IfCompare}}
-                {{#IfCompare this.items null operator='=='}}
-                    <li id="{{this.hash}}">
-                        <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
-                             {{this.label}}
-                        </a>
-                    </li>
-                {{/IfCompare}}
-            </ul>
+               </ul>
+            {{/IfCompare}}
         </li>
     {{/each}}
 </script>
@@ -860,6 +853,18 @@
     <form name="{{prefixId}}Form" id="{{prefixId}}-form" onsubmit="return false;" class=""></form>
 </script>
 
+<script type="text/x-handlebars-template" id="core-edit-json-template">
+    <div class="alert alert-error" style="display:none;" data-bind="visible: errors().{{prefixId}}_form_error">
+        <strong>Error: </strong>
+        <span data-bind="text: errors().{{prefixId}}_form_error"></span>
+    </div>
+    <form name="{{prefixId}}Form" id="{{prefixId}}-form" onsubmit="return false;" class=""></form>
+</script>
+
+<script type="text/x-handlebars-template" id="core-json-editor-view-template">
+    <div id="json-editor" class="contrail-jsoneditor"></div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-generic-edit-form-template">
     <div class="alert alert-error" style="display:none;" data-bind="visible: errors().{{prefixId}}_form_error">
         <strong>Error: </strong>
@@ -1653,75 +1658,74 @@
         </tr>
         </thead>
         <tbody data-bind="foreach: {{viewConfig.collection}}">
-        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
-                    <td style="min-width:15px" {{#IfCompare viewConfig.rows.1.columns.length 0 operator='>'}}onclick="
-$(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('fa fa-caret-down');$(this).children('i').toggleClass('fa-caret-right');"><i class="fa fa-caret-right toggleDetailIcon " ></i>{{/IfCompare}}</td>
-            {{#each viewConfig.rows.0.columns}}
-            <td class="data-cell data-cell-{{elementId}}"
-                {{#IfCompare viewConfig.colSpan null operator='!='}}
-                    colspan="{{viewConfig.colSpan}}"
-                {{/IfCompare}}
-                data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
-                style: {width: '{{width}}px' }">
-            </td>
-            {{/each}}
-            {{#unless viewConfig.hideAdd}}
-            <td class="action-cell">
-            {{#each viewConfig.rows.0.rowActions}}
-                <a data-bind='click: {{this.onClick}}'>
-                    <i class="{{this.iconClass}}"></i>
-                </a>
-            {{/each}}
-            </td>
-            {{/unless}}
-        </tr>
-        <tr class="error-row">
-        <td></td>
-            {{#each viewConfig.rows.0.columns}}
-            <td class="error-cell">
-                <span class="help-block red"
-                    data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
-                </span>
-            </td>
-            {{/each}}
-        </tr>
+            <tr class="data-row" data-bind="css: 'data-row-' + $index()">
+                        <td style="min-width:15px" {{#IfCompare viewConfig.rows.1.columns.length 0 operator='>'}}onclick="
+    $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('fa-caret-down');$(this).children('i').toggleClass('fa-caret-right');"><i class="icon-caret-right toggleDetailIcon " ></i>{{/IfCompare}}</td>
+                {{#each viewConfig.rows.0.columns}}
+                <td class="data-cell data-cell-{{elementId}}"
+                    {{#IfCompare viewConfig.colSpan null operator='!='}}
+                        colspan="{{viewConfig.colSpan}}"
+                    {{/IfCompare}}
+                    data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                    style: {width: '{{width}}px' }">
+                </td>
+                {{/each}}
+                {{#unless viewConfig.hideAdd}}
+                <td class="action-cell">
+                {{#each viewConfig.rows.0.rowActions}}
+                    <a data-bind='click: {{this.onClick}}'>
+                        <i class="{{this.iconClass}}"></i>
+                    </a>
+                {{/each}}
+                </td>
+                {{/unless}}
+            </tr>
+            <tr class="error-row">
+            <td></td>
+                {{#each viewConfig.rows.0.columns}}
+                <td class="error-cell">
+                    <span class="help-block red"
+                        data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
+                    </span>
+                </td>
+                {{/each}}
+            </tr>
 
-<tr class="collapsibleChildContainer" style="display:none" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}} {{/if}}">
-<td  colspan="{{viewConfig.rows.1.columns.0.viewConfig.colSpan}}">
+            <tr class="collapsibleChildContainer" style="display:none" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}} {{/if}}">
+                <td  colspan="{{viewConfig.rows.1.columns.0.viewConfig.colSpan}}">
+                    <!--Child Control -->
+                    <table >
+                        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
+                            {{#each viewConfig.rows.1.columns}}
+                            <td class="data-cell data-cell-{{elementId}}"
+                                {{#IfCompare viewConfig.colSpan null operator='!='}}
+                                    colspan="{{viewConfig.colSpan}}"
+                                {{/IfCompare}}
+                                class="data-cell" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                                style: {width: '{{width}}px' }">
+                            </td>
+                            {{/each}}
 
-        <!--Child Control -->
-<table >
-        <tr class="data-row">
-            {{#each viewConfig.rows.1.columns}}
-            <td id="{{elementId}}"
-                {{#IfCompare viewConfig.colSpan null operator='!='}}
-                    colspan="{{viewConfig.colSpan}}"
-                {{/IfCompare}}
-                class="data-cell" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
-                style: {width: '{{width}}px' }">
-            </td>
-            {{/each}}
-
-            {{#each viewConfig.rows.1.rowActions}}
-            <td class="action-cell">
-                <a data-bind='click: {{this.onClick}}'>
-                    <i class="{{this.iconClass}}"></i>
-                </a>
-            </td>
-            {{/each}}
-        </tr>
-        <tr class="error-row">
-            {{#each viewConfig.rows.1.columns}}
-            <td class="error-cell">
-                <span class="help-block red"
-                    data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
-                </span>
-            </td>
-            {{/each}}
-        </tr>
-</table>
-</td>
-</tr>
+                            {{#each viewConfig.rows.1.rowActions}}
+                            <td class="action-cell">
+                                <a data-bind='click: {{this.onClick}}'>
+                                    <i class="{{this.iconClass}}"></i>
+                                </a>
+                            </td>
+                            {{/each}}
+                        </tr>
+                        <tr class="error-row">
+                            {{#each viewConfig.rows.1.columns}}
+                            <td class="error-cell">
+                                <span class="help-block red"
+                                    data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
+                                </span>
+                            </td>
+                            {{/each}}
+                        </tr>
+                    </table>
+                </td>
+            </tr>
         </tbody>
     </table>
     {{#if viewConfig.collectionActions}}
@@ -1735,9 +1739,18 @@ $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(thi
 </script>
 
 <script type="text/x-handlebars-template" id="query-or-collection-view-template">
+<<<<<<< HEAD
     <div id="{{elementId}}" class="collection or-clause-collection row" data-bind="foreach: {{viewConfig.collection}}">
         <div class="row or-clause" data-bind="css: 'or-clause-' + $index()">
             <div class="col-xs-1">
+=======
+    {{#IfCompare viewConfig.label null operator='!='}}
+        <label class="margin-0">{{viewConfig.label}}</label>
+    {{/IfCompare}}
+    <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
+        <div class="row-fluid or-clause" data-bind="css: 'or-clause-' + $index()">
+            <div class="span1">
+>>>>>>> 66d41c4deae492b116cc7e46300f38d1e990e017
                 <p class="or-text">OR</p>
             </div>
             <div class="col-xs-10">

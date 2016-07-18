@@ -1269,7 +1269,18 @@ define(['underscore'], function (_) {
                 }
             }
             return obj;
-        }
+        };
+
+        this.getAttributes4Schema = function(attributes, schema) {
+            var json = $.extend(true, {}, attributes);
+
+            for(var key in json){
+                if(!contrail.checkIfExist(schema['properties'][key])) {
+                    delete json[key];
+                }
+            }
+            return json;
+        };
     };
 
     function filterXML(xmlString, is4SystemLogs) {

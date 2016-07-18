@@ -38,11 +38,10 @@ define([
 
         $.each(aggregateSelectFields, function(selectFieldKey, selectFieldValue) {
             var yFormatterKey = cowc.QUERY_COLUMN_FORMATTER[selectFieldValue];
-
             chartAxesOptions[selectFieldValue] = {
                 axisLabelDistance: 5,
-                yAxisLabel: selectFieldValue,
-                yAxisDataField: selectFieldValue,
+                yAxisLabel: qewu.formatNameForGrid(selectFieldValue),
+                yAxisDataField: qewu.formatNameForGrid(selectFieldValue),
                 forceY: [0, 10],
                 yFormatter: function (d) {
                     return cowf.getFormattedValue(yFormatterKey, d)
@@ -130,7 +129,9 @@ define([
             actionCell = [],
             display = [
                 {
-                    id: 'fc-badge', field:"", name:"", resizable: false, sortable: false, width: 30, minWidth: 30, searchable: false, exportConfig: { allow: false },
+                    id: 'fc-badge', field:"", name:"",
+                    cssClass: 'center',
+                    resizable: false, sortable: false, width: 30, minWidth: 30, searchable: false, exportConfig: { allow: false },
                     formatter: function(r, c, v, cd, dc){
                         return '<span class="label-icon-badge label-icon-badge-' + dc.cgrid + ((r === 0) ? ' icon-badge-color-0' : '') + '" data-color_key="' + ((r === 0) ? 0 : -1) + '"><i class="fa fa-square"></i></span>';
                     },
@@ -294,7 +295,7 @@ define([
 
         $.each(aggregateSelectFields, function(selectFieldKey, selectFieldValue) {
             filterConfig.groups[0].items.push({
-                text: selectFieldValue,
+                text: qewu.formatNameForGrid(selectFieldValue),
                 events: {
                     click: function(event) {
                         var chartModel = $('#' + queryResultLineChartId).data('chart'),
