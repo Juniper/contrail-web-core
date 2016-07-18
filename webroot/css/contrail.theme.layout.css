@@ -59,6 +59,10 @@
   src: local('Open Sans Extrabold Italic'), local('OpenSans-ExtraboldItalic'), url(../../assets/fonts-opensans/PRmiXeptR36kaC0GEAetxsBo4hlZyBvkZICS3KpNonM.woff) format('woff');
 }
 
+body.navbar-fixed {
+  padding-top: 52px;
+}
+
 .navbar-header {
   padding: 5px;
   height: 45px;
@@ -370,4 +374,8 @@ input[type="text"]:focus {
   fill: none;
   height: 15px;
   width: inherit;
+}
+
+.detail-block-list-content .row {
+  margin-left: 0px;
 }

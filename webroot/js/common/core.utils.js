@@ -622,7 +622,7 @@ define(['underscore'], function (_) {
                 var keyValueTemplate = '' +
                     '<li>' +
                         '<label class="row">' +
-                            '<span class="key col-xs-5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
+                            '<span class="key col-xs-4 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
                             ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
                             configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
                             '<span class="value col-xs-7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
@@ -754,7 +754,7 @@ define(['underscore'], function (_) {
                                         '</div>' : '') +
                                 '</div>' +
                                 '<div class="widget-body">' +
-                                    '<div class="widget-main row-fluid">' +
+                                    '<div class="widget-main">' +
                                         '<div class="list-view">' +
                                             self.generateBlockListTemplate(config.templateGeneratorConfig, app, config) +
                                         '</div>' +
