@@ -244,7 +244,7 @@ cp -af ./$THIRD_PARTY/uuid.js webroot/js/uuid.js
 #Start - Copy ajv.min.js from $THIRD_PARTY
 rm -rf webroot/assets/ajv
 mkdir webroot/assets/ajv
-cp -af ./$THIRD_PARTY/ajv.min.js webroot/assets/ajv/ajv.min.js
+cp -af ./$THIRD_PARTY/ajv-4.1.0/ajv.min.js webroot/assets/ajv/ajv.min.js
 #End - Copy ajv.min.js from $THIRD_PARTY
 
 #Start - Copy jsoneditor.js from $THIRD_PARTY
