@@ -89,6 +89,7 @@ define([
                     id: 'fqq-badge', field: "", name: "", resizable: false, sortable: false,
                     width: 30, width: 30, searchable: false, exportConfig: {allow: false},
                     allowColumnPickable: false,
+                    cssClass: 'center',
                     formatter: function (r, c, v, cd, dc) {
                         if(dc.status === 'completed') {
                             var queryId = dc.queryReqObj.queryId,

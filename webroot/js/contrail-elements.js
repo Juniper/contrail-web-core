@@ -901,6 +901,11 @@
                 multiSelectMenu.find('input[type="checkbox"]').addClass('ace-input');
             }
             multiSelectMenu.find('input[type="checkbox"]').next('span').addClass('ace-lbl');
+
+            multiSelectMenu.find('input[type="checkbox"]').each(function(){
+                $(this).next('span').attr('title', $(this).attr('title'));
+            });
+
             /*
              * Appending controls and related events
              */
