@@ -4390,3 +4390,25 @@ input.ace-input[type=checkbox]:checked + .ace-lbl::before, input.ace-input[type=
   padding-left: 0px;
   padding-right: 0px;
 }
+
+.textarea-input-append .where-textarea {
+  border-right: none;
+  padding-left: 3px;
+}
+
+.textarea-input-append .input-group-addon {
+  background-color: white;
+}
+
+#time-granularity-section .form-label {
+  margin-left: -15px;
+}
+
+#time_granularity, #time_granularity_unit {
+  padding-left: 0px;
+  padding-right: 10px;
+}
+
+.section-content .textarea-input-append {
+  margin: 0px;
+}

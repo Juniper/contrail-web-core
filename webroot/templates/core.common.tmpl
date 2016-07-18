@@ -669,7 +669,7 @@
                         {{#if this}}
                             <li>
                                 <label class="inline row">
-                                    <div class="key col-xs-5">{{{this.lbl}}}</div>
+                                    <div class="key col-xs-4">{{{this.lbl}}}</div>
                                     <div class="value col-xs-7">
                                         {{#if this.value}}
                                             {{{this.value}}}
@@ -1264,12 +1264,12 @@
         </div>
     </div>
     <div class="row col-xs-12 form-element"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="textarea-input-append input-append inset col-xs-12">
+        <div class="textarea-input-append input-group inset col-xs-12 theme-addon">
             <textarea
                 name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}" rows="1"
                 data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
             </textarea>
-            <span class="input-group-addon" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
+            <span class="input-group-addon theme-addon" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
         </div>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
@@ -1277,7 +1277,7 @@
 
 <script type="text/x-handlebars-template" id="core-editable-grid-textarea-view-template">
     <div class="row"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="textarea-input-append input-append inset col-xs-12">
+        <div class="textarea-input-append input-group inset col-xs-12">
             <textarea
                 name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}"
                 {{#if viewConfig.rows}} rows:'{{viewConfig.rows}}' {{/if}}
@@ -1330,7 +1330,7 @@
             </div>
         </div>
         {{/IfCompare}}
-        <div class="row col-xs-12 form-element">
+        <div class="col-xs-12 form-element">
             <input id="{{id}}" name="{{name}}" class="{{class}}" type="text"
                 data-bind="
                     {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1417,7 +1417,7 @@
             </div>
             {{/each}}
         </div>
-        <div class="row group-detail-advanced-json group-detail-item hide">
+        <div class="row group-detail-advanced-json group-detail-item customHide">
             {{{formatGridJSON2HTML dc}}}
         </div>
     </div>
@@ -1810,7 +1810,7 @@
 
 <script type="text/x-handlebars-template" id="core-detail-foundation-template">
     <div class="row detail-foundation-container group-detail-container">
-        <div class="row detail-foundation-action">
+        <div class="detail-foundation-action">
         {{#each actions}}
             {{#IfCompare type 'link' operator='==' }}
                 <a class="detail-foundation-action-item group-detail-action-item pull-right" title="{{title}}"><i class="{{iconClass}}"></i></a>
@@ -1845,7 +1845,7 @@
         {{/IfCompare}}
         </div>
         <div class="detail-foundation-content-basic group-detail-basic-list group-detail-item"></div>
-        <div class="row detail-foundation-content-advanced group-detail-advanced-json group-detail-item hide"></div>
+        <div class="row detail-foundation-content-advanced group-detail-advanced-json group-detail-item customHide"></div>
     </div>
 </script>
 
@@ -2417,21 +2417,21 @@
                         {{#each data.src_addresses}}
                         <li><label class="inline row">
                             {{#if this.network_policy}}
-                            <span> class="key col-xs-5"> Network Policy </span><span class="value col-xs-7"> {{this.network_policy}}</span>
+                            <span> class="key col-xs-4"> Network Policy </span><span class="value col-xs-7"> {{this.network_policy}}</span>
                             {{/if}}
                             {{#if this.security_group}}
-                            <span class="key col-xs-5"> Security Group </span><span class="value col-xs-7"> {{this.security_group}}</span>
+                            <span class="key col-xs-4"> Security Group </span><span class="value col-xs-7"> {{this.security_group}}</span>
                             {{/if}}
                             {{#if this.subnet}}
-                            <span class="key col-xs-5"> Subnet </span><span class="value col-xs-7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
+                            <span class="key col-xs-4"> Subnet </span><span class="value col-xs-7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
                             {{/if}}
                             {{#if this.virtual_network}}
-                            <span class="key col-xs-5"> Virtual Network </span><span class="value col-xs-7"> {{{this.virtual_network_tmpl}}}</span>
+                            <span class="key col-xs-4"> Virtual Network </span><span class="value col-xs-7"> {{{this.virtual_network_tmpl}}}</span>
                             {{/if}}
                         </label></li>
                         {{/each}}
                         <li><label class="inline row">
-                            <span class="key col-xs-5"> Port Range </span>
+                            <span class="key col-xs-4"> Port Range </span>
                             <span class="value col-xs-7">
                                 {{#each data.src_ports}}
                                     <span class="row"> {{this.start_port}} to {{this.end_port}}</span>
@@ -2463,21 +2463,21 @@
                     {{#each data.dst_addresses}}
                     <li><label class="inline row">
                         {{#if this.network_policy}}
-                        <span> class="key col-xs-5"> Network Policy </span><span class="value col-xs-7"> {{this.network_policy}}</span>
+                        <span> class="key col-xs-4"> Network Policy </span><span class="value col-xs-7"> {{this.network_policy}}</span>
                         {{/if}}
                         {{#if this.security_group}}
-                        <span class="key col-xs-5"> Security Group </span><span class="value col-xs-7"> {{this.security_group}}</span>
+                        <span class="key col-xs-4"> Security Group </span><span class="value col-xs-7"> {{this.security_group}}</span>
                         {{/if}}
                         {{#if this.subnet}}
-                        <span class="key col-xs-5"> Subnet </span><span class="value col-xs-7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
+                        <span class="key col-xs-4"> Subnet </span><span class="value col-xs-7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
                         {{/if}}
                         {{#if this.virtual_network}}
-                        <span class="key col-xs-5"> Virtual Network </span><span class="value col-xs-7"> {{{this.virtual_network_tmpl}}}</span>
+                        <span class="key col-xs-4"> Virtual Network </span><span class="value col-xs-7"> {{{this.virtual_network_tmpl}}}</span>
                         {{/if}}
                     </label></li>
                     {{/each}}
                     <li><label class="inline row">
-                        <span class="key col-xs-5"> Port Range </span>
+                        <span class="key col-xs-4"> Port Range </span>
                         <span class="value col-xs-7">
                             {{#each data.dst_ports}}
                                 <span class="row"> {{this.start_port}} to {{this.end_port}}</span>

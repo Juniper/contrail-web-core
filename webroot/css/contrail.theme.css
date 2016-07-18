@@ -1123,7 +1123,8 @@ pre.prettyprint {
     transform: scale(1.2); }
 
 .navbar {
-    margin: 0;
+    margin-top: -50px;
+    margin-bottom: 0px;
     padding-left: 0;
     padding-right: 0;
     border-width: 0;
@@ -8735,21 +8736,22 @@ input[type="color"]:focus {
 
 input::-webkit-input-placeholder,
 .form-control::-webkit-input-placeholder {
-    color: #C0C0C0; }
+    color: #999;
+}
 
 input:-moz-placeholder,
 .form-control:-moz-placeholder {
-    color: #C0C0C0;
+    color: #999;
     opacity: 1; }
 
 input::-moz-placeholder,
 .form-control::-moz-placeholder {
-    color: #C0C0C0;
+    color: #999;
     opacity: 1; }
 
 input:-ms-input-placeholder,
 .form-control:-ms-input-placeholder {
-    color: #C0C0C0; }
+    color: #999; }
 
 .form-control,
 select {
@@ -15036,7 +15038,7 @@ div.dataTables_processing {
 .select2-container .select2-choice {
     border-radius: 0;
     height: 32px;
-    line-height: 28px; }
+    line-height: 24px; }
 
 .select2-container.select2-drop-above .select2-choice {
     border-radius: 0; }
@@ -17114,7 +17116,6 @@ img.editable-click:hover {
 .ui-spinner-input {
     margin-top: 0;
     padding: 5px;
-    max-width: 100px;
     font-size: 14px; }
 
 .ui-tooltip {

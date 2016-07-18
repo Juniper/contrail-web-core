@@ -3,6 +3,10 @@
  * All rights reserved.
  */
 
+body.navbar-fixed {
+  padding-top: 52px;
+}
+
 .navbar-header {
   padding: 5px;
   height: 45px;
@@ -314,4 +318,8 @@ input[type="text"]:focus {
   fill: none;
   height: 15px;
   width: inherit;
+}
+
+.detail-block-list-content .row {
+  margin-left: 0px;
 }

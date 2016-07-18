@@ -183,7 +183,7 @@
     margin: 0 5px;
     color: #555;
 }
-.slick-row-detail-container .row-fluid, .slick-cell .row [class*="col-xs-"]{
+.slick-row-detail-container .row, .slick-cell .row [class*="col-xs-"]{
     min-height: 20px;
     font-size: 11px;
 }
@@ -196,7 +196,7 @@
     border-bottom: 1px solid #ccc;
     padding: 0 0 10px;
 }
-.slick-row-detail .slick-cell, .slick-row-detail .row-fluid, .slick-row-detail .item-list > li {
+.slick-row-detail .slick-cell, .slick-row-detail .row, .slick-row-detail .item-list > li {
     background-color: #FFF
 }
 .slick-row-detail .group-detail-container h6 {
@@ -208,7 +208,7 @@
 .slick-row-detail .slick-cell {
     padding: 10px 35px;
 }
-.slick-row-detail .row-fluid, .slick-row-detail .row-fluid [class*="span"] {
+.slick-row-detail .row, .slick-row-detail .row [class*="col-xs-"] {
     min-height:20px;
 }
 .slick-row-detail  .row label {
@@ -226,7 +226,7 @@
 .group-detail-container ul.item-list li {
     border: none;
     padding: 5px;
-    border-bottom: 1px solid #F1F1F1;
+    border-bottom: 2px solid #F1F1F1;
 }
 .group-detail-container ul.item-list li:last-child {
     border: none;
@@ -265,7 +265,6 @@
     overflow-y: hidden;
     word-break:break-all;
     white-space: normal;
-    border-right: 1px dotted #DDDDDD;
 }
 .slick-cell:last-child {
     border-right: hidden;
@@ -398,4 +397,8 @@
 .slick-grid-grouping-heading {
     font-weight:600;
     padding-left:3px
+}
+
+.group-detail-action-item  a {
+    font-size: 11px;
 }
