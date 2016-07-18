@@ -262,5 +262,6 @@ cp -af ./$THIRD_PARTY/uuid.js webroot/js/uuid.js
 rm -f webroot/css/contrail.unified.css
 
 # compile sass
+./node_modules/node-sass/bin/node-sass webroot/scss/contrail.thirdparty.unified.scss > webroot/css/contrail.thirdparty.unified.css
 ./node_modules/node-sass/bin/node-sass webroot/scss/contrail.unified.scss > webroot/css/contrail.unified.css
 #End - Merging ALL CSS files

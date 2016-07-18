@@ -1,0 +1,18 @@
+@import 'webroot/assets/bootstrap/css/bootstrap.min';
+@import 'webroot/assets/jquery-ui/css/jquery-ui.min';
+@import 'webroot/css/contrail.jquery.ui';
+@import 'webroot/assets/font-awesome/css/font-awesome.min';
+@import 'webroot/assets/nvd3-v1.8.1/css/nv.d3.min';
+@import 'webroot/assets/select2/styles/select2';
+@import 'webroot/assets/datetimepicker/styles/jquery.datetimepicker';
+@import 'webroot/assets/slickgrid/styles/slick.grid';
+@import 'webroot/assets/jquery/css/jquery.steps';
+@import 'webroot/assets/joint/css/joint.nojquery.min';
+@import 'webroot/assets/jquery-contextMenu/css/jquery.contextMenu';
+@import 'webroot/assets/vis-v4.9.0/css/vis.min';
+
+#content-container {
+    @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables';
+    @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_mixins';
+    @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_panels';
+}
