@@ -258,6 +258,7 @@ cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.min.css webroot/assets/js
 cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.css webroot/assets/jsoneditor/css/jsoneditor.css
 cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/src/css/img/jsoneditor-icons.svg webroot/assets/jsoneditor/css/img/jsoneditor-icons.svg
 
+rm -rf webroot/css/img
 mkdir -p webroot/css/img
 cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/src/css/img/jsoneditor-icons.svg webroot/css/img/jsoneditor-icons.svg
 #End - Copy jsoneditor.js from $THIRD_PARTY
