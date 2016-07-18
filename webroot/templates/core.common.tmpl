@@ -1658,75 +1658,74 @@
         </tr>
         </thead>
         <tbody data-bind="foreach: {{viewConfig.collection}}">
-        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
-                    <td style="min-width:15px" {{#IfCompare viewConfig.rows.1.columns.length 0 operator='>'}}onclick="
-$(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('icon-caret-down');$(this).children('i').toggleClass('icon-caret-right');"><i class="icon-caret-right toggleDetailIcon " ></i>{{/IfCompare}}</td>
-            {{#each viewConfig.rows.0.columns}}
-            <td class="data-cell data-cell-{{elementId}}"
-                {{#IfCompare viewConfig.colSpan null operator='!='}}
-                    colspan="{{viewConfig.colSpan}}"
-                {{/IfCompare}}
-                data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
-                style: {width: '{{width}}px' }">
-            </td>
-            {{/each}}
-            {{#unless viewConfig.hideAdd}}
-            <td class="action-cell">
-            {{#each viewConfig.rows.0.rowActions}}
-                <a data-bind='click: {{this.onClick}}'>
-                    <i class="{{this.iconClass}}"></i>
-                </a>
-            {{/each}}
-            </td>
-            {{/unless}}
-        </tr>
-        <tr class="error-row">
-        <td></td>
-            {{#each viewConfig.rows.0.columns}}
-            <td class="error-cell">
-                <span class="help-block red"
-                    data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
-                </span>
-            </td>
-            {{/each}}
-        </tr>
+            <tr class="data-row" data-bind="css: 'data-row-' + $index()">
+                        <td style="min-width:15px" {{#IfCompare viewConfig.rows.1.columns.length 0 operator='>'}}onclick="
+    $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('icon-caret-down');$(this).children('i').toggleClass('icon-caret-right');"><i class="icon-caret-right toggleDetailIcon " ></i>{{/IfCompare}}</td>
+                {{#each viewConfig.rows.0.columns}}
+                <td class="data-cell data-cell-{{elementId}}"
+                    {{#IfCompare viewConfig.colSpan null operator='!='}}
+                        colspan="{{viewConfig.colSpan}}"
+                    {{/IfCompare}}
+                    data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                    style: {width: '{{width}}px' }">
+                </td>
+                {{/each}}
+                {{#unless viewConfig.hideAdd}}
+                <td class="action-cell">
+                {{#each viewConfig.rows.0.rowActions}}
+                    <a data-bind='click: {{this.onClick}}'>
+                        <i class="{{this.iconClass}}"></i>
+                    </a>
+                {{/each}}
+                </td>
+                {{/unless}}
+            </tr>
+            <tr class="error-row">
+            <td></td>
+                {{#each viewConfig.rows.0.columns}}
+                <td class="error-cell">
+                    <span class="help-block red"
+                        data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
+                    </span>
+                </td>
+                {{/each}}
+            </tr>
 
-<tr class="collapsibleChildContainer" style="display:none" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}} {{/if}}">
-<td  colspan="{{viewConfig.rows.1.columns.0.viewConfig.colSpan}}">
+            <tr class="collapsibleChildContainer" style="display:none" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}} {{/if}}">
+                <td  colspan="{{viewConfig.rows.1.columns.0.viewConfig.colSpan}}">
+                    <!--Child Control -->
+                    <table >
+                        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
+                            {{#each viewConfig.rows.1.columns}}
+                            <td class="data-cell data-cell-{{elementId}}"
+                                {{#IfCompare viewConfig.colSpan null operator='!='}}
+                                    colspan="{{viewConfig.colSpan}}"
+                                {{/IfCompare}}
+                                class="data-cell" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                                style: {width: '{{width}}px' }">
+                            </td>
+                            {{/each}}
 
-        <!--Child Control -->
-<table >
-        <tr class="data-row">
-            {{#each viewConfig.rows.1.columns}}
-            <td id="{{elementId}}"
-                {{#IfCompare viewConfig.colSpan null operator='!='}}
-                    colspan="{{viewConfig.colSpan}}"
-                {{/IfCompare}}
-                class="data-cell" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
-                style: {width: '{{width}}px' }">
-            </td>
-            {{/each}}
-
-            {{#each viewConfig.rows.1.rowActions}}
-            <td class="action-cell">
-                <a data-bind='click: {{this.onClick}}'>
-                    <i class="{{this.iconClass}}"></i>
-                </a>
-            </td>
-            {{/each}}
-        </tr>
-        <tr class="error-row">
-            {{#each viewConfig.rows.1.columns}}
-            <td class="error-cell">
-                <span class="help-block red"
-                    data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
-                </span>
-            </td>
-            {{/each}}
-        </tr>
-</table>
-</td>
-</tr>
+                            {{#each viewConfig.rows.1.rowActions}}
+                            <td class="action-cell">
+                                <a data-bind='click: {{this.onClick}}'>
+                                    <i class="{{this.iconClass}}"></i>
+                                </a>
+                            </td>
+                            {{/each}}
+                        </tr>
+                        <tr class="error-row">
+                            {{#each viewConfig.rows.1.columns}}
+                            <td class="error-cell">
+                                <span class="help-block red"
+                                    data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
+                                </span>
+                            </td>
+                            {{/each}}
+                        </tr>
+                    </table>
+                </td>
+            </tr>
         </tbody>
     </table>
     {{#if viewConfig.collectionActions}}
