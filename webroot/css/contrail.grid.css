@@ -389,3 +389,7 @@
     font-weight:600;
     padding-left:3px
 }
+
+.group-detail-action-item  a {
+    font-size: 11px;
+}
