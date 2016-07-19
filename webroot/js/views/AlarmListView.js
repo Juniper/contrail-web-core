@@ -18,7 +18,7 @@ define([
             var remoteAjaxConfig = {
                     remote: {
                         ajaxConfig: {
-                            url: cowc.get(cowc.URL_ALARM_DETAILS_IN_CHUNKS, 50, $.now()),
+                            url: cowc.get(cowc.URL_ALARM_DETAILS),
                             type: "GET",
                         },
                         dataParser:coreAlarmParsers.alarmDataParser

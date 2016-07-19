@@ -7,22 +7,7 @@ define(
        function(_) {
             var CoreAlarmUtils = function() {
                 var self = this;
-                var alarmTypesMap = {};
                 self.BUCKET_DURATION = 300000000;//5 MINS
-                // If required fetch the alarmtypes .
-                self.fetchAlarmTypes = function () {
-                    $.ajax({
-                        url:'/api/tenant/monitoring/alarmtypes',
-                        // async:false,
-                        type:'GET'
-                    }).done(function(result) {
-                        if(result != null){
-                            alarmTypesMap = result;
-                        }
-                    }).fail(function(result) {
-                    });
-                };
-                self.fetchAlarmTypes ();
 
                 self.mapSeverityToColor = function (severity) {
                     if (severity != -1) {
@@ -65,19 +50,14 @@ define(
                 //Given an alarmType and other params fetch the correct message to be displayed.
                 self.getFormattedAlarmMessage = function (options) {
                     var alarmInfo = options.alarm;
-                    if (alarmInfo.alarmText != null && alarmInfo.alarmText != '') {
-                        return alarmInfo.alarmText;
-                    }
                     var alarmType = getValueByJsonPath(options, 'alarm;type','');
-                    var nodeType = options.nodeType;
                     var n = 0;
                     if(getValueByJsonPath(options, 'detailed', false)) {
                         n = 1;
                     }
-                    var alarmTxt = getValueByJsonPath(alarmTypesMap, nodeType + ';' + alarmType,'');
-                    if(alarmTxt != null && alarmTxt != '' && alarmTxt.split('.').length > 1){
-                        return alarmTxt.split('.')[n];
-                    }
+                    var alarmMsgs = getValueByJsonPath(alarmInfo,'description','').split('.');
+                    var alarmTxt = (alarmMsgs.length > 0 && alarmMsgs[n])?
+                                        alarmMsgs[n] : alarmMsgs[0];
                     return alarmTxt;
                 }
 
@@ -176,7 +156,7 @@ define(
                 self.createUserGeneratedAlarm = function (options) {
                     return {
                         severity: options['severity'] ? options['severity'] : 3,
-                        type: cowc.USER_GENERATED_ALARM,
+                        type: cowc.UI_GENERATED_ALARM,
                         timestamp: new Date().getTime() * 1000,
                         alarm_msg: options['alarmText'],
                         display_name: options['display_name']
