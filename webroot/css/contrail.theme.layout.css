@@ -322,4 +322,18 @@ input[type="text"]:focus {
 
 .detail-block-list-content .row {
   margin-left: 0px;
+  width: 100%;
+}
+
+.footer-links {
+  padding: 8px 0;
+  background-color: #fff;
+  position: fixed;
+  bottom: 0;
+}
+
+.footer-links a {
+  margin-right: 10px;
+  color: #898989;
+  font-size: 11px;
 }

@@ -2,7 +2,13 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var config = {};
+var config = {},
+//ipAddress = '10.204.217.65';
+// ipAddress = '10.84.7.42';
+    //ipAddress = '10.84.11.2';
+//ipAddress = '10.84.30.249';
+ipAddress = '10.84.30.250';
+//ipAddress = '10.84.13.40';
 
 config.orchestration = {};
 /****************************************************************************
@@ -120,7 +126,7 @@ config.serviceEndPointTakePublicURL = true;
  *      if you do not want to specify then use ''
  *****************************************************************************/
 config.networkManager = {};
-config.networkManager.ip = '127.0.0.1';
+config.networkManager.ip = ipAddress;
 config.networkManager.port = '9696'
 config.networkManager.authProtocol = 'http';
 config.networkManager.apiVersion = [];
@@ -128,7 +134,7 @@ config.networkManager.strictSSL = false;
 config.networkManager.ca = '';
 
 config.imageManager = {};
-config.imageManager.ip = '127.0.0.1';
+config.imageManager.ip = ipAddress;
 config.imageManager.port = '9292';
 config.imageManager.authProtocol = 'http';
 config.imageManager.apiVersion = ['v1', 'v2'];
@@ -136,7 +142,7 @@ config.imageManager.strictSSL = false;
 config.imageManager.ca = '';
 
 config.computeManager = {};
-config.computeManager.ip = '127.0.0.1';
+config.computeManager.ip = ipAddress;
 config.computeManager.port = '8774';
 config.computeManager.authProtocol = 'http';
 config.computeManager.apiVersion = ['v1.1', 'v2'];
@@ -144,7 +150,7 @@ config.computeManager.strictSSL = false;
 config.computeManager.ca = '';
 
 config.identityManager = {};
-config.identityManager.ip = '127.0.0.1';
+config.identityManager.ip = ipAddress;
 config.identityManager.port = '5000';
 config.identityManager.authProtocol = 'http';
 /******************************************************************************
@@ -159,7 +165,7 @@ config.identityManager.strictSSL = false;
 config.identityManager.ca = '';
 
 config.storageManager = {};
-config.storageManager.ip = '127.0.0.1';
+config.storageManager.ip = ipAddress;
 config.storageManager.port = '8776';
 config.storageManager.authProtocol = 'http';
 config.storageManager.apiVersion = ['v1'];
@@ -168,7 +174,7 @@ config.storageManager.ca = '';
 
 // VNConfig API server and port.
 config.cnfg = {};
-config.cnfg.server_ip = '127.0.0.1';
+config.cnfg.server_ip = ipAddress;
 config.cnfg.server_port = '8082';
 config.cnfg.authProtocol = 'http';
 config.cnfg.strictSSL = false;
@@ -176,7 +182,7 @@ config.cnfg.ca = '';
 
 // Analytics API server and port.
 config.analytics = {};
-config.analytics.server_ip = '127.0.0.1';
+config.analytics.server_ip = ipAddress;
 config.analytics.server_port = '8081';
 config.analytics.authProtocol = 'http';
 config.analytics.strictSSL = false;
@@ -199,7 +205,7 @@ config.discoveryService.server_port = '5998';
 /* Specifiy true if subscription to discovery server should be enabled, else
  * specify false. Other than true/false value here is treated as true
  */
-config.discoveryService.enable = true;
+config.discoveryService.enable = false;
 
 /* Job Server */
 config.jobServer = {};
@@ -212,7 +218,7 @@ config.files.download_path = '/tmp';
 
 /* Cassandra Server */
 config.cassandra = {};
-config.cassandra.server_ips = ['127.0.0.1'];
+config.cassandra.server_ips = [ipAddress];
 config.cassandra.server_port = '9042';
 config.cassandra.enable_edit = false;
 
@@ -221,7 +227,7 @@ config.kue = {};
 config.kue.ui_port = '3002'
 
 /* IP List to listen on */
-config.webui_addresses = ['0.0.0.0'];
+config.webui_addresses = [ipAddress];
 
 /* Is insecure access to WebUI? 
  * If set as false, then all http request will be redirected
@@ -263,8 +269,16 @@ config.favicon_file = '/usr/src/contrail/contrail-web-core/webroot/img/opencontr
 config.featurePkg = {};
 /* Add new feature Package Config details below */
 config.featurePkg.webController = {};
-config.featurePkg.webController.path = '/usr/src/contrail/contrail-web-controller';
+config.featurePkg.webController.path = '/Users/sadhanar/code/absingla/bootstrap4/contrail-web-controller';
 config.featurePkg.webController.enable = true;
+
+config.featurePkg.serverManager = {};
+config.featurePkg.serverManager.path = '/Users/sadhanar/code/absingla/bootstrap4/contrail-web-server-manager';
+config.featurePkg.serverManager.enable = true;
+
+config.featurePkg.webStorage = {};
+config.featurePkg.webStorage.path = '/Users/sadhanar/code/absingla/bootstrap4/contrail-web-storage';
+config.featurePkg.webStorage.enable = true;
 
 /* Enable/disable Stat Query Links in Sidebar*/
 config.qe = {};

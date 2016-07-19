@@ -3347,7 +3347,7 @@ td.td-actions a.td-action {
 	color : #3182bd;
 }
 .infobox {
-  width: 147px;
+  width: 135px;
   height: 68px;
   color: #555;
   background-color: #FFF;
@@ -4411,4 +4411,24 @@ input.ace-input[type=checkbox]:checked + .ace-lbl::before, input.ace-input[type=
 
 .section-content .textarea-input-append {
   margin: 0px;
+}
+
+.infobox-content [class^="col-xs-"] {
+  padding: 0px;
+}
+
+.blue-sparkline {
+  stroke: steelblue;
+  stroke-width: 1.3;
+  fill: none;
+  margin-top: 2px;
+  height: 15px;
+}
+
+.green-sparkline {
+  stroke: green;
+  stroke-width: 1.3;
+  fill: none;
+  margin-top: 2px;
+  height: 15px;
 }

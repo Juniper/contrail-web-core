@@ -892,7 +892,7 @@
         {{/if}}
         {{#each viewConfig.rows}}
             <div class="section-content" data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}">
-                <div class="row margin-0-0-5">
+                <div class="row margin-0-0-5 col-xs-12">
                     {{#each this.columns}}
                         <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" style="{{this.viewConfig.style}}"
                         data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}">
@@ -2282,7 +2282,7 @@
             </div>
         </div>
         <div class="widget-body">
-            <div class="widget-main row">
+            <div class="widget-main">
                 <div class="infobox-widget">
                     <div class="infobox-container row">
                     </div>

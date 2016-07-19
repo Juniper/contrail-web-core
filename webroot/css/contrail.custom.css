@@ -421,7 +421,14 @@ rect.bordered {
 .sparklines-box{
 	border: 1px solid #dedede;
 	padding: 5px;
+    width: 31.8%;
+    margin-left: 10px;
 }
+
+#vrouterAgent-sparklines {
+    margin-left: 0px;
+}
+
 .sparklines-box p.sparkline-title{
 	padding: 0 5px 2px;
 	color: #3182bd;

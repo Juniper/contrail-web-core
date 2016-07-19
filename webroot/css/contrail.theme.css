@@ -2335,18 +2335,18 @@ body.mob-safari .sidebar.sidebar-fixed {
     top: 13px; }
 
 .sidebar .sidebar-shortcuts {
+    background-color: #fafafa;
+    border-bottom: 1px solid #dddddd;
     text-align: center;
-    min-height: 38px;
-    margin-bottom: 0;
-    overflow: hidden;
-    position: relative;
-    border: 0 solid; }
+    line-height: 39px;
+    max-height: 40px;
+    margin-bottom: 0; }
 
 .sidebar .sidebar-shortcuts:empty {
     display: none; }
 
 .sidebar .sidebar-shortcuts-large {
-    line-height: 37px; }
+    line-height: 39px; }
 
 .sidebar .sidebar-shortcuts-large > .btn {
     text-align: center;
@@ -11883,8 +11883,7 @@ tr.detail-row > td {
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.14); }
 
 .infobox .infobox-content {
-    color: #555;
-    max-width: 140px; }
+    color: #555;}
 
 .infobox .infobox-content:first-child {
     font-weight: bold; }
