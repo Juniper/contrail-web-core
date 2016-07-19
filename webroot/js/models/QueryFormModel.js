@@ -41,7 +41,6 @@ define([
             this.model().on("change:table_name", this.onChangeTable, this);
             this.model().on('change:select change:table_name change:time_range change:where change:filter change:time_granularity change:time_granularity_unit', function () {
                 // TODO ContrailListModel should have reload function instead of whole model recreation just to get new data
-                debugger
                 self.loader = undefined
             })
 
@@ -504,7 +503,9 @@ define([
 
         getDataModel: function (p) {
             var self = this
-            if (_.isUndefined(self.loader)) {
+            // reset data model on requested parser change
+            // TODO there is no need to reload data on parser change
+            if (_.isUndefined(self.loader) || (p && p.parserName !== self._parserName)) {
                 if (p && p.parserName && !self[p.parserName]) return undefined
                 self.loader = new ContrailListModel({
                     remote: {
@@ -519,6 +520,7 @@ define([
                         },
                     },
                 })
+                self._parserName = p.parserName
             }
             return self.loader
         },

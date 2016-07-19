@@ -7,9 +7,9 @@ CREATE TYPE config (
 );
 ---
 CREATE TYPE widget_view (
-  "view" text,
+  view text,
   "viewPathPrefix" text,
-  "model" text,
+  model text,
   "modelConfig" text,
   "modelPathPrefix" text,
 );
