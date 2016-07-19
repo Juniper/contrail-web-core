@@ -372,7 +372,7 @@ config.vcenter.ca = '';                         //specify the certificate key fi
  * Default:  true
  */
 config.multi_tenancy = {};
-config.multi_tenancy.enabled = false;
+config.multi_tenancy.enabled = true;
 
 /*****************************************************************************
  * timeout - Contrail UI Session timeout value in milli seconds
