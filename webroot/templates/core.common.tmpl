@@ -373,7 +373,11 @@
                     </div>
                 </div>
         {{else}}
-            <p>No Logs found.</p>
+            {{#if this}}
+                <p>{{this}}</p>
+            {{else}}
+                <p>No Logs found.</p>
+            {{/if}}
         {{/each}}
     </ul>
 </script>
