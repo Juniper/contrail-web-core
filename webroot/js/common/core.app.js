@@ -1003,8 +1003,10 @@ if (typeof document !== 'undefined' && document) {
                     //Post-Authentication
                     webServerInfoDefObj.done(function() {
                         //Need to remove "slickgrid-utils" once all grids are moved to GridView
-                        require(['slickgrid-utils'],function() {
-                            loadUtils.getScript(smUrl);
+                        require(['core-bundle','jquery-dep-libs','nonamd-libs'],function() {
+                            require(['slickgrid-utils'],function() {
+                                loadUtils.getScript(smUrl);
+                            });
                         });
                     });
                 }
