@@ -119,7 +119,6 @@ define(['underscore'], function (_) {
         };
 
         self.pushState = jq_bbq_pushState = function( params, merge_mode ) {
-            console.log(params)
             if ( is_string( params ) && /^#/.test( params ) && merge_mode === undefined ) {
                 // Params string begins with # and merge_mode not specified, so completely
                 // overwrite window.location.hash.
