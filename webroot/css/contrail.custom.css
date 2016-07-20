@@ -1096,7 +1096,6 @@ p.error, p.error-text {
     font-weight:600;
     padding-right:3px;
  }
-###################### config browser css starts
 .jsonSchema{
     color:#3182bd;
     padding-top:6px;
@@ -1432,5 +1431,22 @@ button#close-error-popup{
 .config-text{
   color: #3182bd;
 }
-############## config browser css ends
+#analytics-nodes-chart{
+    margin-top:15px !important;
+}
+.marginLeft{
+    //width:50% important;
+    margin-left:20px !important;
+}
+.marginLeftSeparator{
+    margin-left:110px !important;
+}
 
+#analytics-chart-queries-stackedbarchart-id .chart-container g.main text.axis-label, #analytics-chart-database-read-stackedbarchart-id .chart-container g.main text.axis-label,  #analytics-chart-database-write-stackedbarchart-id .chart-container g.main text.axis-label{
+    text-anchor:middle;
+    font-weight:600;
+    font-size:11px !important;
+}
+.chartMargin{
+    margin:0 10px 0 10px !important;
+}
