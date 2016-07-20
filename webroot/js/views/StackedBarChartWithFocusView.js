@@ -9,7 +9,6 @@ define([
     'contrail-list-model'
 ], function (_, ContrailView,  ContrailListModel) {
     var cfDataSource;
-    var selector;
     var stackedBarChartWithFocusChartView = ContrailView.extend({
 
         render: function () {
@@ -18,8 +17,6 @@ define([
                 self = this, deferredObj = $.Deferred(),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null;
 
-            selector = $(self.$el);
-
             cfDataSource = viewConfig.cfDataSource;
             if (self.model === null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
@@ -27,39 +24,39 @@ define([
 
             if (self.model !== null) {
                 if(cfDataSource == null) {
-                    self.renderChart(selector, viewConfig, self.model);
+                    self.renderChart($(self.$el), viewConfig, self.model);
                 } else if(self.model.loadedFromCache == true) {
-                    self.renderChart(selector, viewConfig, self.model);
+                    self.renderChart($(self.$el), viewConfig, self.model);
                 }
 
                 if(cfDataSource != null) {
                     cfDataSource.addCallBack('updateChart',function(data) {
-                        self.renderChart(selector, viewConfig, self.model);
+                        self.renderChart($(self.$el), viewConfig, self.model);
                     });
                 } else {
                     self.model.onAllRequestsComplete.subscribe(function () {
-                        self.renderChart(selector, viewConfig, self.model);
+                        self.renderChart($(self.$el), viewConfig, self.model);
                     });
                 }
 
                 if (viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function () {
-                        self.renderChart(selector, viewConfig, self.model);
+                        self.renderChart($(self.$el), viewConfig, self.model);
                     });
                 }
 
-                $(selector).bind("refresh", function () {
-                    self.renderChart(selector, viewConfig, self.model);
+                $($(self.$el)).bind("refresh", function () {
+                    self.renderChart($(self.$el), viewConfig, self.model);
                 });
 
                 var resizeFunction = function (e) {
-                    self.renderChart(selector, viewConfig, self.model);
+                    self.renderChart($(self.$el), viewConfig, self.model);
                 };
 
                 $(window)
                     .off('resize', resizeFunction)
                     .on('resize', resizeFunction);
-                self.renderChart(selector, viewConfig, self.model);
+                self.renderChart($(self.$el), viewConfig, self.model);
             }
         },
 
@@ -103,7 +100,7 @@ define([
                     this.renderView4Config($(selector).find('.stacked-bar-chart-container'), chartViewModel, widgetConfig, null, null, null);
                 }
             }
-            clearToolTip(false);//clear any tooltips from previous if any
+            //clearToolTip(false);//clear any tooltips from previous if any
             /**
              * Actual chart code starts
              */
@@ -315,7 +312,7 @@ define([
                                 .duration(200)
                                 .style("opacity", .9);
                             tooltipDiv.html(formatTime(d.date) + "<br/>"  + d.total + " Alarm(s)")
-                                .style("left", getToolTipXPos(d3.event.pageX) + "px")
+                                .style("left", getToolTipXPos(d3.event.pageX, $($(tooltipDiv)[0]).width()) + "px")
                                 .style("top", (d3.event.pageY - 28) + "px");
                         }
                     })
@@ -337,16 +334,16 @@ define([
                         if (sliceTooltipFn != null &&
                             typeof sliceTooltipFn == 'function') {
                             var event = d3.event;
-                            //TODO parent div adjust need to be removed
-                            //$(tooltipDiv).css({'width': '0px','height': '0px'});
                             tooltipDiv.transition()
                                 .duration(200)
                                 .style("opacity", 1);
                             tooltipDiv.html(function () {
                                 return sliceTooltipFn(d);
                             })
-                            .style("left", getToolTipXPos(event.pageX) + "px")
-                            .style("top", (event.pageY - 28) + "px");
+                            .style("border","none")
+                            .style("left", getToolTipXPos(event.pageX, $($(tooltipDiv)[0]).width()) + "px")
+                            .style("top", (event.pageY - 28) + "px")
+                            .style("position","absolute");
                         }
                      })
                     .on("mouseout", function(d) {
@@ -357,12 +354,10 @@ define([
 
             //Need to wait until the widget is rendered.
             setTimeout(updateFilteredCntInHeader,200);
-
-            function getToolTipXPos (currPos) {
+            function getToolTipXPos (currPos,tooltipWidth) {
                 var windowWidth = $(document).width();
-                var tooltipWidth = $($(tooltipDiv)[0]).width()
-                var tooltipPositionLeft = currPos;
-                if ((windowWidth - currPos) < tooltipWidth) {
+                var tooltipPositionLeft = currPos + 10;
+                if ((windowWidth - currPos) < tooltipWidth + 10) {
                     tooltipPositionLeft = currPos - tooltipWidth - 10;
                 }
                 return tooltipPositionLeft;
@@ -378,8 +373,10 @@ define([
                     xExtent[0] = avg - cowc.ALARM_BUCKET_DURATION / 2 ;
                     xExtent[1] = avg + cowc.ALARM_BUCKET_DURATION / 2 ;
                 }
-                cfDataSource.applyFilter('timeFilter',xExtent);
-                cfDataSource.fireCallBacks({source:'crossfilter'});
+                if (cfDataSource != null) {
+                    cfDataSource.applyFilter('timeFilter',xExtent);
+                    cfDataSource.fireCallBacks({source:'crossfilter'});
+                }
             }
 
             function clearToolTip(fade) {
@@ -388,9 +385,7 @@ define([
                         .duration(500)
                         .style("opacity", 0);
                 } else {
-                    $('.stack-bar-chart-tooltip').remove();
-//                    tooltipDiv.transition()
-//                    .style("opacity", 0);
+                   $('.stack-bar-chart-tooltip').remove();
                 }
             }
             // zooming/panning behaviour for overview chart
@@ -409,6 +404,7 @@ define([
             }
 
             function brushed2Main() {
+                clearToolTip(false);
                 if(brush2Main.empty()){
                     cfDataSource.removeFilter('timeFilter');
                 } else {

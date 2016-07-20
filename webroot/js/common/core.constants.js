@@ -67,6 +67,9 @@ define([
 
         this.TMPL_2ROW_CONTENT_VIEW = "core-2-row-content-template";
         this.TMPL_2COLUMN_1ROW_2ROW_CONTENT_VIEW = "core-2-column-1-row-2row-content-template";
+        //anlytics node template
+        //core-2-row-4-column-template
+        this.TMPL_4COLUMN__2ROW_CONTENT_VIEW = "core-2-row-4-column-template";
 
         this.TMPL_ACCORDIAN_VIEW = "core-accordian-view-template";
         this.TMPL_JSON_EDITOR_VIEW = "core-json-editor-view-template";

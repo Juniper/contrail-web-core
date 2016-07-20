@@ -1096,7 +1096,6 @@ p.error, p.error-text {
     font-weight:600;
     padding-right:3px;
  }
-###################### config browser css starts
 .jsonSchema{
     color:#3182bd;
     padding-top:6px;
@@ -1432,5 +1431,4 @@ button#close-error-popup{
 .config-text{
   color: #3182bd;
 }
-############## config browser css ends
 
