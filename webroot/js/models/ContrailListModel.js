@@ -245,6 +245,7 @@ define([
                     if (parentModelList != null && parentModelList.length > 0) {
                         for (var i = 0; i < 1; i++) {
                             parentModelList[i].error = true;
+                            parentModelList[i].errorList.push(xhr);
                         }
                     }
                     if (contrail.checkIfFunction(primaryRemote.failureCallback)) {
@@ -373,6 +374,7 @@ define([
                     if (parentModelList != null && parentModelList.length > 0) {
                         for (var i = 0; i < 1; i++) {
                             parentModelList[i].error = true;
+                            parentModelList[i].errorList.push(xhr);
                         }
                     }
 
