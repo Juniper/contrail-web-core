@@ -11,6 +11,8 @@ globalObj['env'] = "";
 globalObj['loadedScripts'] = [];
 //Maintains a deferredObj for each feature pkg and are resolved when the global modules for that feature pkg are available
 globalObj['initFeatureAppDefObjMap'] = {};
+globalObj['siteMap'] = {};
+globalObj['siteMapSearchStrings'] = [];
 var FEATURE_PCK_WEB_CONTROLLER = "webController",
     FEATURE_PCK_WEB_STORAGE = "webStorage",
     FEATURE_PCK_WEB_SERVER_MANAGER = "serverManager";
@@ -70,12 +72,15 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
 
         'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
+        'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json',
+
         'json-editor'                 : coreWebDir + '/assets/jsoneditor/js/jsoneditor.min',
         'ajv'                         : coreWebDir + '/assets/ajv/ajv.min',
         'server-schema'               : coreWebDir + '/schemas/server.schema',
         'cluster-schema'              : coreWebDir + '/schemas/cluster.schema',
         'json-model'                  : coreWebDir + "/js/models/JsonModel",
         'json-edit-view'              : coreWebDir + '/js/views/JsonEditView'
+
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -237,6 +242,9 @@ var coreAppShim =  {
         exports:'crossfilter'
     },
     'jquery.xml2json' : {
+        deps: ["jquery"]
+    },
+    'xml2json' : {
         deps: ["jquery"]
     },
     "jquery.ba-bbq" : {

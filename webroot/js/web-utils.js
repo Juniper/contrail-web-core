@@ -147,10 +147,6 @@ function collapseElement(e,collapseDivID) {
     $(widgetBoxElem).toggleClass('collapsed');	
 }
 
-
-globalObj['siteMap'] = {};
-globalObj['siteMapSearchStrings'] = [];
-
 function keys(obj) {
     var count = 0;
     for (var i in obj) {
