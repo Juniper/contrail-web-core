@@ -9,7 +9,6 @@ define([
     'contrail-list-model'
 ], function (_, ContrailView,  ContrailListModel) {
     var cfDataSource;
-    var selector;
     var stackedBarChartWithFocusChartView = ContrailView.extend({
 
         render: function () {
@@ -18,8 +17,6 @@ define([
                 self = this, deferredObj = $.Deferred(),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null;
 
-            selector = $(self.$el);
-
             cfDataSource = viewConfig.cfDataSource;
             if (self.model === null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
@@ -27,39 +24,39 @@ define([
 
             if (self.model !== null) {
                 if(cfDataSource == null) {
-                    self.renderChart(selector, viewConfig, self.model);
+                    self.renderChart($(self.$el), viewConfig, self.model);
                 } else if(self.model.loadedFromCache == true) {
-                    self.renderChart(selector, viewConfig, self.model);
+                    self.renderChart($(self.$el), viewConfig, self.model);
                 }
 
                 if(cfDataSource != null) {
                     cfDataSource.addCallBack('updateChart',function(data) {
-                        self.renderChart(selector, viewConfig, self.model);
+                        self.renderChart($(self.$el), viewConfig, self.model);
                     });
                 } else {
                     self.model.onAllRequestsComplete.subscribe(function () {
-                        self.renderChart(selector, viewConfig, self.model);
+                        self.renderChart($(self.$el), viewConfig, self.model);
                     });
                 }
 
                 if (viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function () {
-                        self.renderChart(selector, viewConfig, self.model);
+                        self.renderChart($(self.$el), viewConfig, self.model);
                     });
                 }
 
-                $(selector).bind("refresh", function () {
-                    self.renderChart(selector, viewConfig, self.model);
+                $($(self.$el)).bind("refresh", function () {
+                    self.renderChart($(self.$el), viewConfig, self.model);
                 });
 
                 var resizeFunction = function (e) {
-                    self.renderChart(selector, viewConfig, self.model);
+                    self.renderChart($(self.$el), viewConfig, self.model);
                 };
 
                 $(window)
                     .off('resize', resizeFunction)
                     .on('resize', resizeFunction);
-                self.renderChart(selector, viewConfig, self.model);
+                self.renderChart($(self.$el), viewConfig, self.model);
             }
         },
 
@@ -103,7 +100,7 @@ define([
                     this.renderView4Config($(selector).find('.stacked-bar-chart-container'), chartViewModel, widgetConfig, null, null, null);
                 }
             }
-            clearToolTip(false);//clear any tooltips from previous if any
+            //clearToolTip(false);//clear any tooltips from previous if any
             /**
              * Actual chart code starts
              */
@@ -388,9 +385,14 @@ define([
                         .duration(500)
                         .style("opacity", 0);
                 } else {
-                    $('.stack-bar-chart-tooltip').remove();
+                   $('.stack-bar-chart-tooltip').remove();
+//                    $('.stack-bar-chart-tooltip').css("visibility", 'hidden');
+                  /*  if(tooltipDiv)
+                    tooltipDiv.html('');
+                    tooltipDiv.remoce();
+                    $('.stack-bar-chart-tooltip').css("visibility", 'hidden');
 //                    tooltipDiv.transition()
-//                    .style("opacity", 0);
+//                    .style("opacity", 0);*/
                 }
             }
             // zooming/panning behaviour for overview chart
@@ -409,6 +411,7 @@ define([
             }
 
             function brushed2Main() {
+                clearToolTip(false);
                 if(brush2Main.empty()){
                     cfDataSource.removeFilter('timeFilter');
                 } else {
