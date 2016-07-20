@@ -1031,14 +1031,16 @@
             options.id = options.id != undefined ? options.id : '';
             var className = (options.className == null) ? '' : options.className;
 
-            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal contrail-modal hide" tabindex="-1" role="dialog" aria-hidden="true"> \
+            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal fade contrail-modal" tabindex="-1" role="dialog" aria-hidden="true"> \
+                <div class="modal-content">\
         		<div class="modal-header"> \
         	    	<button id="modal-header-close" type="button" class="close"><i class="fa fa-remove"></i></button> \
         			<h6 class="modal-header-title"></h6> \
         		</div> \
 	        	<div class="modal-body"></div> \
 	        	<div class="modal-footer"></div> \
-        	</div>';
+        	</div> \
+        	</div> ';
 
             $('#' + options.id).remove();
             $('body').prepend(modalHTML);

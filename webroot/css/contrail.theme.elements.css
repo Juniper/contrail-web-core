@@ -166,6 +166,19 @@ blockquote.pull-right {
 .modal {
   border-radius: 0;
 }
+
+.modal-body .section-content [class*="col-xs-"] {
+  float: none;
+}
+
+.modal-body #fs-select-popup-form .row {
+  margin-right: 0px;
+}
+
+.modal-body #fs-select-popup-form [class*="col-xs-"] {
+  padding-right: 0px;
+}
+
 .modal-footer {
   border-top-color: #e4e9ee;
   -webkit-box-shadow: none;
@@ -4431,4 +4444,8 @@ input.ace-input[type=checkbox]:checked + .ace-lbl::before, input.ace-input[type=
   fill: none;
   margin-top: 2px;
   height: 15px;
+}
+
+.tooltip-success .fa {
+  padding-right: 5px;
 }

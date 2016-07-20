@@ -8,13 +8,12 @@ html {
     position: relative; }
 
 body {
-    /*background-color: #E4E6E9;*/
-    min-height: 100%;
     padding-bottom: 0;
+    min-height: 100%;
     font-family: 'Open Sans';
     font-size: 13px;
     color: #393939;
-    /*line-height: 1.5;*/ }
+    overflow-y: scroll; }
 
 .main-container:before {
     display: block;
@@ -2364,7 +2363,9 @@ body.mob-safari .sidebar.sidebar-fixed {
     font-size: 0;
     width: 42px;
     padding-top: 2px;
-    padding-bottom: 2px; }
+    padding-bottom: 2px;
+    line-height: 18px;
+    background-color: #ffffff; }
 
 .sidebar .sidebar-shortcuts-mini > .btn {
     border-width: 0;
@@ -2733,16 +2734,18 @@ body.mob-safari .sidebar.sidebar-fixed {
     display: none; }
 
 .sidebar.menu-min .nav-list > li > .submenu {
+    background: #ffffff;
     position: absolute;
-    z-index: 1026;
+    z-index: 120;
     left: 42px;
-    top: -1px;
-    margin-top: 40px;
+    top: -2px;
+    width: 175px;
+    border: 1px solid #cccccc;
+    box-shadow: 2px 1px 2px 0 rgba(0,0,0,0.2);
+    padding-top: 40px;
     padding-bottom: 2px;
-    width: 176px;
     display: none !important;
-    height: auto !important;
-    visibility: visible !important; }
+}
 
 .sidebar.menu-min .nav-list > li > .submenu:before {
     display: none; }
