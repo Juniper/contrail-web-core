@@ -13,7 +13,6 @@ var xml2js      = require('xml2js');
 var config      = require('../../config/config.global');
 var assert      = require('assert');
 var featurePr   = require('./parseFeature');
-var parseRole   = require('./parseRoleMap');
 var fileListObj = {};
 
 var parser = new xml2js.Parser();
@@ -26,10 +25,8 @@ function getAutoGenFileByFileMatch (filePath, match)
         return filePath + '/jobsCb.api.js';
     } else if ('/featureList.xml/' == match) {
         return filePath + '/feature.list.js';
-    } else if ('/roleList.xml/' == match) {
-        return filePath + '/rolemap.api.js';
     }
-    assert(0);
+    console.log('We do not parse this type:' + match);
 }
 
 function getAutoGenFileByXMLFilePath (xmlFilePath, match)
@@ -50,8 +47,6 @@ function parseXMLAndWriteFile (content, filePath, match, callback)
             jobPr.parseJobListFile(content, filename, callback);
         } else if ('/featureList.xml/' == match) {
             featurePr.parseFeatureFile(content, filename, callback);
-        } else if ('/roleList.xml/' == match) {
-            parseRole.parseRoleMapFile(content, filename, callback);
         }
     });
 }
@@ -100,35 +95,6 @@ function writeToPkgFile (pkgDir, isAppend, str, callback)
             callback();
         }
     });
-}
-
-function readAndParseRoleListFile (callback)
-{
-    var corePath = process.mainModule.exports['corePath'];
-    var roleDir = '/etc/contrail';
-    var actRoleDir = '/src/serverroot/web/core/';
-    var roleXmlFile = 'roleList.xml';
-    var roleFilePath = roleDir + '/contrail-webui-rolelist.xml';
-    var actRoleFilePath = corePath + actRoleDir + roleXmlFile;
-    var match = /roleList.xml/;
-    if (true == fs.existsSync(roleFilePath)) {
-        var str = "";
-        str += "pkgList['roleList.xml'] = [];\n";
-        var autoGenFile = getAutoGenFileByXMLFilePath(actRoleFilePath, match);
-        autoGenFile = autoGenFile.replace(corePath, "");
-        str += "pkgList['roleList.xml'].push('" + autoGenFile + "');\n";
-        writeToPkgFile(corePath, true, str, function() {
-            var content = fs.readFileSync(roleFilePath);
-            parseXMLAndWriteFile(content, actRoleFilePath, match, function() {
-                callback();
-            });
-        });
-    } else {
-        processXMLFiles({pkgDir: corePath, match: /roleList.xml/,
-                         isExact: true}, function() {
-            callback();
-        });
-    }
 }
 
 function processXMLFiles (fileObj, callback)
@@ -243,5 +209,4 @@ function deleteAutoGenFiles (pkgDirObj, callback)
 
 exports.readAndProcessPkgXMLFiles = readAndProcessPkgXMLFiles;
 exports.deleteAllAutoGenFiles = deleteAllAutoGenFiles;
-exports.readAndParseRoleListFile = readAndParseRoleListFile;
 

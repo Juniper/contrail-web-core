@@ -174,7 +174,7 @@ global.DEMO_USER_MAX_AGE_SESSION = 2 * 60 * 60 * 1000;
 
 /* UI Roles */
 global.STR_ROLE_USER = 'member';
-global.STR_ROLE_ADMIN = 'superAdmin';
+global.STR_ROLE_ADMIN = 'cloudAdmin';
 
 global.DFLT_REDIS_SERVER_PORT = '6379';
 global.DFLT_REDIS_SERVER_IP = '127.0.0.1';
