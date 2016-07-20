@@ -4,7 +4,9 @@
  */
 
 .slick-column-name {
-    white-space: normal;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 .slick-header-column.ui-state-default {
     height: 100%;
@@ -19,6 +21,8 @@
     border: none;
     border-top: 1px solid #ccc;
     top:-2px;
+    border-left: 1px dotted #DDDDDD;
+    border-right: 1px dotted #DDDDDD;
 }
 .grid-header {
     margin: 0;
@@ -137,16 +141,21 @@
 .slick-header {
     border: none;
     background: none;
+    height: 26px;
 }
 .slick-header .slick-header-column {
     border: none;
     background: none;
 }
-.slick-header-column.ui-state-default {
+.slick-header .slick-header-column.ui-state-default {
     min-height: 18px;
     line-height: 18px;
     color: #3182bd;
     font-size: 13px;
+    border-right: 1px dotted #DDDDDD;
+}
+.slick-header .slick-header-column.ui-state-default:last-child {
+    border-right: 1px dotted #FFF;
 }
 .slick-viewport {
     border-top: 1px solid #dadada;
@@ -159,7 +168,7 @@
     opacity: 0.6;
 }
 .slick-row {
-    border:none;
+    border: none;
 }
 .slick-row-master.even {
     background: none;
@@ -249,9 +258,18 @@
     color: #393939;
     font-size: 13px;
     padding: 5px;
+    height: inherit;
+    box-sizing: border-box;
     overflow-y: hidden;
     word-break:break-all;
     white-space: normal;
+    border-right: 1px dotted #DDDDDD;
+}
+.slick-cell:last-child {
+    border-right: hidden;
+}
+.slick-cell.l0.r0 {
+    border-right: 1px dotted #DDDDDD;
 }
 .slick-cell.cell-hyperlink-blue, .slick-cell .cell-hyperlink-blue{
     color: #3182bd;
@@ -278,6 +296,8 @@
     border-top: 1px solid #dadada;
     margin-top: -2px;
     font-size: 11px;
+    border-left: 1px dotted #DDDDDD;
+    border-right: 1px dotted #DDDDDD;
 }
 .slick-pager {
     width: 100%;

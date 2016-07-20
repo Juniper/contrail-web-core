@@ -34,7 +34,7 @@ define([
                 self.model = modelMap[viewConfig.modelKey]
             }
 
-            contrailListModel = (self.model != null) ? self.model : new ContrailListModel(listModelConfig);
+            contrailListModel = (self.model != null && self.model['_type'] === 'contrailListModel') ? self.model : new ContrailListModel(listModelConfig);
 
             //delete viewConfig.elementConfig['body']['dataSource']['remote'];
             //viewConfig.elementConfig['body']['dataSource'] = {dataView: contrailListModel};
@@ -302,7 +302,7 @@ define([
                         }
                         if (gridOptions.fixedRowHeight != false && _.isNumber(gridOptions.fixedRowHeight)) {
                             val.cssClass = (contrail.checkIfExist(val.cssClass) ? val.cssClass + ' ' : '') +
-                                'fixed-row-height height-' + (gridOptions.fixedRowHeight - 10);
+                                'fixed-row-height height-' + (gridOptions.fixedRowHeight);
                         }
                     });
                 }
@@ -351,6 +351,8 @@ define([
                     if (gridOptions.checkboxSelectable != false) {
                         columns = [];
                         columns.push($.extend(true, {}, checkboxSelector.getColumnDefinition(), {
+                            headerCssClass: 'center',
+                            cssClass: 'center',
                             formatter: function (r, c, v, cd, dc) {
                                 var selectedRows = (contrail.checkIfExist(grid)) ? grid.getSelectedRows() : [];
                                 var enabled = true;
@@ -365,7 +367,7 @@ define([
                                 }
                                 else {
                                     return '<input type="checkbox" class="ace-input rowCheckbox" value="' + r + '" disabled=true/> <span class="ace-lbl"></span>';
-                                }
+                                  }
                             },
                             name: '<input type="checkbox" class="ace-input headerRowCheckbox" disabled=true/> <span class="ace-lbl"></span>'
                         }));
@@ -386,6 +388,7 @@ define([
                             resizable: false,
                             selectable: true,
                             sortable: false,
+                            cssClass: 'center',
                             width: 30,
                             searchable: false,
                             exportConfig: {
@@ -479,7 +482,7 @@ define([
                             columns.push({
                                 id: 'slick_action_cog',
                                 field: "",
-                                cssClass: 'action-cog-cell',
+                                cssClass: 'action-cog-cell center',
                                 rerenderOnResize: false,
                                 width: 20,
                                 resizable: false,
@@ -1069,9 +1072,11 @@ define([
                     adjustRowHeight: function (rowId) {
                         if (!(gridOptions.fixedRowHeight != false && _.isNumber(gridOptions.fixedRowHeight))) {
                             var maxHeight = 20;
+                            gridContainer.find('.slick_row_' + rowId).find('.slick-cell').css('height', 'initial');
                             gridContainer.find('.slick_row_' + rowId).find('.slick-cell').each(function () {
                                 maxHeight = ($(this).height() > maxHeight) ? $(this).height() : maxHeight;
                             });
+                            gridContainer.find('.slick_row_' + rowId).find('.slick-cell').css('height', 'inherit');
                             maxHeight = maxHeight + 10;
 
                             gridContainer.find('.slick_row_' + rowId).height(maxHeight);
