@@ -809,8 +809,7 @@ define([
         // QE Constants - End
 
         //Alarm constants
-        this.URL_ALARM_DETAILS_IN_CHUNKS =
-            '/api/tenant/monitoring/alarms?count={0}&startAt={1}';
+        this.URL_ALARM_DETAILS = '/api/tenant/monitoring/alarms';
         this.ALARM_REFRESH_DURATION = 300000;//5 MINUTES
         this.ALARM_BUCKET_DURATION = 300000000;//5 MINUTES
         this.TMPL_ALARM_SEVERITY = 'alarm-severity-template';
@@ -828,7 +827,7 @@ define([
         this.ALARM_GEN_DOWN_ALARM_TEXT = 'Alarms Generator Down. Alarms may not be reported correctly.';
         this.ANALYTICS_API_DOWN_ALARM_TEXT = 'Analytics API Down. Alarms may not be reported correctly.';
         this.ANALYTICS_PROCESSES_DOWN_ALARM_TEXT = 'Analytics Processes Down. Alarms may not be reported correctly.';
-        this.USER_GENERATED_ALARM = 'UserGeneratedAlarm';
+        this.UI_GENERATED_ALARM = 'UIGeneratedAlarm';
         this.get = function () {
             var args = arguments;
             return cowu.getValueFromTemplate(args);
