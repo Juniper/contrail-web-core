@@ -16929,23 +16929,6 @@ img.editable-click:hover {
 .ui-jqdialog .widget-header .ui-jqdialog-titlebar-close {
     right: 10px !important; }
 
-/* accordion */
-.ui-accordion .ui-accordion-header {
-    color: #478FCA;
-    font-weight: normal;
-    background-color: #F9F9F9;
-    border: 1px solid #CDD8E3;
-    padding: 8px 8px 9px 24px; }
-
-.ui-accordion .ui-accordion-header:hover {
-    color: #6EA6CC;
-    background-color: #F1F8FD; }
-
-.ui-accordion .ui-accordion-header.ui-state-active {
-    color: #4C8FBD;
-    background-color: #EEF4F9;
-    position: relative;
-    font-weight: bold; }
 
 .ui-accordion .ui-accordion-header .ui-accordion-header-icon {
     text-indent: 0;

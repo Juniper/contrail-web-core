@@ -168,7 +168,7 @@ blockquote.pull-right {
 }
 
 .modal-body .section-content [class*="col-xs-"] {
-  float: none;
+  /*float: none;*/
 }
 
 .modal-body #fs-select-popup-form .row {
@@ -217,6 +217,12 @@ blockquote.pull-right {
 .alert .text { word-break: break-all}
 .alert-block p + p {
   margin-top: 10px;
+}
+
+.alert-danger, .alert-error {
+  color: #b94a48;
+  background-color: #f2dede;
+  border-color: #eed3d7;
 }
 /* pagination */
 .pagination ul > li > a,
@@ -3462,7 +3468,7 @@ td.td-actions a.td-action {
   text-align: left;
   line-height: 21px;
  min-width: 0px;
-  padding-left: 8px;
+  padding-left: 6px;
   position: relative;
   top: 0;
 }

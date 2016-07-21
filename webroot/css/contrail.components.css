@@ -67,7 +67,10 @@
  * Extends Bootstrap Modal
  */
 .modal-body {
-    max-height: 500px;
+    position: relative;
+    max-height: 400px;
+    padding: 15px;
+    overflow-y: auto;
 }
 .modal.contrail-modal {
     margin-left: 0 !important;

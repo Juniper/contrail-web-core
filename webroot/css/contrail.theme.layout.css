@@ -375,4 +375,32 @@ input[type="text"]:focus {
   color: #3182bd;
 }
 
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+  border: none;
+  background: none;
+}
+
+.ui-accordion .ui-accordion-header {
+  display: block;
+  cursor: pointer;
+  position: relative;
+  margin-top: 2px;
+  padding: .5em .5em .5em .7em;
+  min-height: 0;
+  outline: none;
+}
+
+.ui-accordion .ui-accordion-icons {
+  padding-left: 2.2em;
+}
+
+.ui-state-default.ui-accordion-header {
+  border-bottom: 1px solid #eee;
+}
+
+.ui-accordion .ui-accordion-icons {
+  padding-left: 1.5em;
+}
+
+
 
