@@ -68,8 +68,8 @@ define([
             diGraph.eachNode(function (u, value) {
                 if (!value.dummy) {
                     graph.get('cells').get(u).set('position', {
-                        x: value.x + GRAPH_MARGIN - value.width / 2,
-                        y: value.y + GRAPH_MARGIN - value.height / 2
+                        x: value.x + cowc.GRAPH_MARGIN - value.width / 2,
+                        y: value.y + cowc.GRAPH_MARGIN - value.height / 2
                     });
                 }
             });

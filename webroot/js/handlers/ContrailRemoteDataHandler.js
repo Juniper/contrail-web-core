@@ -25,7 +25,7 @@ define([
 
         pAjaxConfig = primaryRemoteConfig.ajaxConfig;
         pUrl = pAjaxConfig['url'];
-        pUrlParams = $.deparamURLArgs(pUrl);
+        pUrlParams = cowu.deparamURLArgs(pUrl);
 
         pDataParser = primaryRemoteConfig.dataParser;
         pCompleteCallback = primaryRemoteConfig.completeCallback;
