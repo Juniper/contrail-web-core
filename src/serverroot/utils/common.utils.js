@@ -1247,8 +1247,9 @@ function redirectToURL(req, res, redURL)
            return;
        }
        if ((-1 != userAgent.indexOf('MSIE')) ||
-           (-1 != userAgent.indexOf('Trident'))) {
-           /* In IE Browser, response code 307, does not lead the browser to
+           (-1 != userAgent.indexOf('Trident')) ||
+           (-1 != userAgent.indexOf('Edge'))) {
+           /* In IE/Edge Browser, response code 307, does not lead the browser to
             * redirect to certain URL, so sending 200 responseCode
             */
            res.send(200, '');
@@ -1256,11 +1257,11 @@ function redirectToURL(req, res, redURL)
            res.send(307, '');
        }
     } else {
-       if(redURL = "/") {
+       if ("/" == redURL) {
             res.sendfile('webroot/html/dashboard.html');
             return;
        } 
-       res.redirect(redURL);
+       res.redirect(302, redURL);
     }
 }
 
@@ -2251,6 +2252,13 @@ function doDeepSort (object)
         } else {
             sortedObj[key] = object[key];
         }
+    }
+    if (object instanceof Array) {
+        var resultArr = [];
+        for (var key in sortedObj) {
+            resultArr.push(sortedObj[key]);
+        }
+        return resultArr;
     }
     return sortedObj;
 }
