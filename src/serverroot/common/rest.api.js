@@ -234,6 +234,7 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
     var options = {};
     var method = params['method'];
     var xml2jsSettings = params['xml2jsSettings'];     
+    var data = commonUtils.getApiPostData(params['path'], params['data']);
     options['headers'] = params['headers'] || {};
     options['method'] = method;
     options['headers']['Content-Length'] = (data) ? data.toString().length : 0;
@@ -247,7 +248,6 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
            an empty data object is passed for GET queries, so make sure
            we are don't pass it.
          */
-        var data = commonUtils.getApiPostData(params['path'], params['data']);
         options['data'] = data || {};
         options['headers']['Content-Type'] = 'application/json';
     }
