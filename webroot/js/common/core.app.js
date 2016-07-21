@@ -11,6 +11,8 @@ globalObj['env'] = "";
 globalObj['loadedScripts'] = [];
 //Maintains a deferredObj for each feature pkg and are resolved when the global modules for that feature pkg are available
 globalObj['initFeatureAppDefObjMap'] = {};
+globalObj['siteMap'] = {};
+globalObj['siteMapSearchStrings'] = [];
 var FEATURE_PCK_WEB_CONTROLLER = "webController",
     FEATURE_PCK_WEB_STORAGE = "webStorage",
     FEATURE_PCK_WEB_SERVER_MANAGER = "serverManager";
@@ -1005,8 +1007,10 @@ if (typeof document !== 'undefined' && document) {
                     //Post-Authentication
                     webServerInfoDefObj.done(function() {
                         //Need to remove "slickgrid-utils" once all grids are moved to GridView
-                        require(['slickgrid-utils'],function() {
-                            loadUtils.getScript(smUrl);
+                        require(['core-bundle','jquery-dep-libs','nonamd-libs'],function() {
+                            require(['slickgrid-utils'],function() {
+                                loadUtils.getScript(smUrl);
+                            });
                         });
                     });
                 }
@@ -1037,8 +1041,7 @@ if (typeof document !== 'undefined' && document) {
     var orchPrefix = window.location.pathname;
     //Even with URL as <https://localhost:8143>,pathname is returning as "/"
     //Strip-offf the trailing /
-    if(orchPrefix.endsWith("/") == true)
-        orchPrefix = orchPrefix.replace(/\/$/,'');
+    orchPrefix = orchPrefix.replace(/\/$/,'');
 
     (function() {
         var menuXMLLoadDefObj,layoutHandlerLoadDefObj,featurePkgs;
