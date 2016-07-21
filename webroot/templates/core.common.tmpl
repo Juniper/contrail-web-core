@@ -1701,7 +1701,7 @@
                                 {{#IfCompare viewConfig.colSpan null operator='!='}}
                                     colspan="{{viewConfig.colSpan}}"
                                 {{/IfCompare}}
-                                class="data-cell" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                                data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
                                 style: {width: '{{width}}px' }">
                             </td>
                             {{/each}}

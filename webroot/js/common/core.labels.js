@@ -93,7 +93,7 @@ define([
             'sport': 'Source Port',
             'dport': 'Destination Port',
             'direction_ingdirection_ing': 'Direction',
-            
+
 
             /*Flow Record Column Label map */
             'vrouter': 'Virtual Router',
@@ -116,11 +116,11 @@ define([
             'ModuleId': 'Module ID',
             'Messagetype': 'Message Type',
             'SystemLog': 'System Log',
-            
+
             //Message table
             'NodeType': 'Node Type',
             'Xmlmessage': 'Log Message',
-            
+
 
             /* Stat Column Label Map */
             'cpu_info': 'CPU Info',
@@ -179,7 +179,7 @@ define([
             'mem_usage_percent': 'Mem Usage %',
             'disk_used_percentage': 'Physical Disk Used %',
             'inst_id': 'Instance Id'
- 
+
         };
 
         this.BREADCRUMB_ID = "breadcrumb";
