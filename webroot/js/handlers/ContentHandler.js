@@ -64,7 +64,8 @@ define(['underscore'], function (_) {
         this.loadContent = function(lastHash, currHash, loadingStartedDefObj) {
             var currPageHash = ifNull(currHash['p'], ''),
                 resourcesDefObj = $.Deferred();
-
+            // Clear the Error Popup
+            contrail.hideErrorPopup();
             if(globalObj['test-env'] == globalObj['env'] + "-test" && currPageHash == '') {
                 return;
             }

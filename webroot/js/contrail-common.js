@@ -49,7 +49,29 @@ function Contrail() {
             return value;
         }
     };
-
+    this.showErrorMsg = function(msg){
+        var errorHolder = $("#error-msg-container");
+        errorHolder.empty();
+        errorHolder.text(msg);
+        var errorContainer = $("#error-container");
+        errorContainer.fadeIn(500);
+        $("#close-error-popup").on('click',function(){
+            $("#error-container").css('display','none');
+        });
+    };
+    this.hideErrorPopup = function(){
+        $("#error-container").css('display','none');
+    };
+    this.successMsg = function(msg){
+        var msgHolder = $("#success-text-container");
+        msgHolder.empty();
+        msgHolder.text(msg);
+        $("#success-msg-container").fadeIn(750, function() {
+            setTimeout(function() {
+               $("#success-msg-container").fadeOut(750);
+               }, 900);
+        });
+    };
     this.handleIfNaN = function(value, defaultValue) {
         if(isNaN(value)) {
             return defaultValue;
