@@ -109,6 +109,7 @@ mkdir -p webroot/assets/font-awesome
 mkdir -p webroot/fonts
 
 cp -r ./$THIRD_PARTY/font-awesome-v4.6.3/css webroot/assets/font-awesome/css
+cp -r ./$THIRD_PARTY/font-awesome-v4.6.3/fonts webroot/assets/font-awesome/fonts
 cp -r ./$THIRD_PARTY/font-awesome-v4.6.3/fonts/* webroot/fonts/
 #End - Copy Font-Awesome from $THIRD_PARTY
 
