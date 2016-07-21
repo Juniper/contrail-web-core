@@ -20,6 +20,36 @@
             </div>
 </script>
 
+<!-- main-container-template renders the content below page header -->
+<script type="text/x-handlebars-template" id="main-container-template">
+        <a id="menu-toggler" href="#">
+            <span></span>
+        </a>
+
+        <div id="sidebar">
+            <div id="sidebar-shortcuts">
+            </div>  
+            <ul id="menu" class="nav nav-list"></ul>
+        </div> 
+
+        <div id="main-content" class="clearfix">
+            <div id="breadcrumbs" class="fixed">
+                <ul id="breadcrumb" class="breadcrumb">
+                </ul> 
+                <div class="hardrefresh breadcrumb" style="display:none">
+                    <span> <i class="icon-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span>
+                    <span class="loading"><i class="icon-spinner icon-spin"></i></span>
+                    <span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span>
+                </div>
+            </div>
+            <div id="page-content" class="clearfix">
+                <div id='content-container'></div>
+            </div>
+        </div> 
+</script>
+<script type="text/x-handlebars-template" id="iframe-template">
+    <iframe class="iframe-view" src={{this.url}}></iframe>
+</script>
 <script type="text/x-handlebars-template" id="menu-template">
     <li class="head">
         <a data-link='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>

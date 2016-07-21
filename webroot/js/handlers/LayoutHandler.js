@@ -16,6 +16,7 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
             if(typeof(cowch) != "undefined")
                 cowch.reset();
 
+            $('#main-container').html($('#main-container-template').text());
             menuHandler.loadMenu(menuObj);
             menuHandler.handleSideMenu();
             self.onHashChange({}, $.bbq.getState());

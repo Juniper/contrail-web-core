@@ -1401,7 +1401,8 @@ function getWebServerInfo (req, res, appData)
     serverObj['serviceEndPointFromConfig'] =
         (null != config.serviceEndPointFromConfig) ?
         config.serviceEndPointFromConfig : true;
-    serverObj['regionList'] = req.session.regionList;
+    serverObj['regionList'] = getValueByJsonPath(req.session,'regionList');
+    serverObj['regionList'].unshift("All Regions");
     serverObj['isRegionListFromConfig'] = config.regionsFromConfig;
     serverObj['configRegionList'] = config.regions;
 

@@ -158,8 +158,8 @@ function initializeAppConfig (appObj)
 
     // Implement X-XSS-Protection
     app.use(helmet.xssFilter());
-    // Implement X-Frame: Deny
-    app.use(helmet.xframe('deny'));
+    // Implement X-Frame: SameOrigin
+    app.use(helmet.xframe('sameorigin'));
     // Implement Strict-Transport-Security
     var maxAgeTime =
         ((null != config.session) && (null != config.session.timeout)) ?

@@ -1,0 +1,15 @@
+{
+    "authUrl": "/gohan_contrail_auth",
+    "gohan": {
+        "schema": "/gohan/v0.1/schemas",
+        "url": "/gohan_contrail"
+
+    },
+    "routes": [
+        {
+            "path": "#/",
+            "viewClass": "sampleview",
+            "name": "sample"
+        }
+    ]
+}
