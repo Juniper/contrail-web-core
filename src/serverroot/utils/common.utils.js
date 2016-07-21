@@ -1908,6 +1908,7 @@ function mergeFeatureMenuXMLFiles (pkgList, mergePath, mFileName, callback)
         callback();
         return;
     }
+    /*
     if (2 == pkgLen) {
         pkgDir = config.featurePkg[pkgList[1]['pkgName']].path;
         cmd = 'cp -af ' + pkgDir + '/webroot/menu.xml' + ' ' +
@@ -1919,6 +1920,7 @@ function mergeFeatureMenuXMLFiles (pkgList, mergePath, mFileName, callback)
         });
         return;
     }
+    */
     for (var i = 1; i < pkgLen; i++) {
         pkgDir = config.featurePkg[pkgList[i]['pkgName']].path;
         menuDirs.push(pkgDir + '/webroot/');

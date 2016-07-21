@@ -94,9 +94,6 @@ $(document).ready(function () {
         layoutHandler.onHashChange(lastHash, currHash);
         lastHash = currHash;
     });
-    // require(['contrail-elements'],function() {
-    //     enableSearchAhead();
-    // });
     addBrowserDetection(jQuery);
     generalInit();
 

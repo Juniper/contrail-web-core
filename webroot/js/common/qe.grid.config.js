@@ -37,7 +37,7 @@ define([
                         $.extend(columnConfig, defaultColumnDisplayMap[selectValue]);
                     }
                 }
-                
+
                 if (contrail.checkIfExist(columnDisplayMap[tableName])) {
                     $.each(columnDisplayMap[tableName], function (fieldIndex, fieldValue) {
                         if (fieldValue.select == selectValue) {

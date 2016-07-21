@@ -33,6 +33,7 @@ define([ 'underscore' ,
                                          currObject.status = ((alarmInfo.ack == null) || (alarmInfo.ack == false)) ? 'Unacknowledged' : 'Acknowledged';
                                          currObject.timestamp = alarmInfo.timestamp;
                                          currObject.severity = alarmInfo.severity;
+                                         currObject.description = alarmInfo.description;
                                          currObject.alarm_msg = coreAlarmUtils.getFormattedAlarmMessage({alarm:alarmInfo, nodeType:currNodeType});
                                          currObject.alarm_detailed = coreAlarmUtils.getFormattedAlarmMessage({alarm:alarmInfo, nodeType:currNodeType, detailed:true});
                                          currObject.token = alarmInfo.token;

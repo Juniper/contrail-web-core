@@ -11,6 +11,8 @@ globalObj['env'] = "";
 globalObj['loadedScripts'] = [];
 //Maintains a deferredObj for each feature pkg and are resolved when the global modules for that feature pkg are available
 globalObj['initFeatureAppDefObjMap'] = {};
+globalObj['siteMap'] = {};
+globalObj['siteMapSearchStrings'] = [];
 var FEATURE_PCK_WEB_CONTROLLER = "webController",
     FEATURE_PCK_WEB_STORAGE = "webStorage",
     FEATURE_PCK_WEB_SERVER_MANAGER = "serverManager";
