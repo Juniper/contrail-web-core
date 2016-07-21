@@ -187,6 +187,10 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
     } else if(env == "prod") {
         var prodAliasMap = {
             'controller-basedir'          : coreBaseDir,
+            'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
+            'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
+            'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
+            'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd'
         }
         //Merge common (for both prod & dev) alias 
         for(var currAlias in prodAliasMap)
@@ -398,8 +402,6 @@ var coreBundles = {
             'sprintf',
             'ipv6',
             'xdate',
-            'knockback',
-            'validation',
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
@@ -443,9 +445,7 @@ var coreBundles = {
             'contrail-list-model',
             'lodash',
             'crossfilter',
-            'backbone',
             'text',
-            'knockout',
             'moment',
             'layout-handler',
             'menu-handler',
