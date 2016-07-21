@@ -192,7 +192,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
             'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
             'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
-            'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd'
+            'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
             'joint.contrail': coreWebDir + '/js/common/joint.contrail',
             'contrail-element': coreWebDir + '/js/models/ContrailElement'
         }
