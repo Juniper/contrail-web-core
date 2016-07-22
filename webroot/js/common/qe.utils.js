@@ -719,7 +719,7 @@ define([
     };
 
     function parseSortFields(sortFields){
-        var sortFieldsArr = sort_fields.split(',');
+        var sortFieldsArr = sortFields.split(',');
         for(var i=0; i< sortFieldsArr.length; i++) {
             sortFieldsArr[i] = sortFieldsArr[i].trim();
         }
