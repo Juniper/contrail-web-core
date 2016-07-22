@@ -187,6 +187,10 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
     } else if(env == "prod") {
         var prodAliasMap = {
             'controller-basedir'          : coreBaseDir,
+            'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
+            'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
+            'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
+            'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd'
         }
         //Merge common (for both prod & dev) alias 
         for(var currAlias in prodAliasMap)
@@ -398,8 +402,6 @@ var coreBundles = {
             'sprintf',
             'ipv6',
             'xdate',
-            'knockback',
-            'validation',
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
@@ -443,9 +445,7 @@ var coreBundles = {
             'contrail-list-model',
             'lodash',
             'crossfilter',
-            'backbone',
             'text',
-            'knockout',
             'moment',
             'layout-handler',
             'menu-handler',
@@ -1023,8 +1023,6 @@ if (typeof document !== 'undefined' && document) {
         });
     };
 
-    require(['core-bundle','nonamd-libs'],function() {
-    });
     function loadAjaxRequest(ajaxCfg,callback) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET',ajaxCfg['url']);
@@ -1279,6 +1277,8 @@ if (typeof document !== 'undefined' && document) {
         //Check if the session is authenticated
         loadUtils.isAuthenticated();
         require(['jquery'],function() {
+            require(['core-bundle','nonamd-libs'],function() {
+            });
             menuXMLLoadDefObj = $.Deferred();
             layoutHandlerLoadDefObj = $.Deferred();
             if(webServerInfoDefObj == null) 
@@ -1309,24 +1309,26 @@ if (typeof document !== 'undefined' && document) {
             };
 
             //nonamd-libs   #no dependency on jquery
-            require(['core-bundle','jquery-dep-libs','nonamd-libs'],function() {
-                require(['validation','knockout','backbone'],function(validation,ko) {
-                    window.kbValidation = validation;
-                    // window.ko = ko;
-                });
-                require(['core-utils'],function(CoreUtils) {
-                    cowu = new CoreUtils();
-                    require(['underscore'],function(_) {
-                        _.noConflict();
+            require(['backbone','validation','knockout','knockback'],function() {
+                require(['core-bundle','jquery-dep-libs','nonamd-libs'],function() {
+                    require(['validation','knockout','backbone'],function(validation,ko) {
+                        window.kbValidation = validation;
+                        // window.ko = ko;
                     });
-                    require(['layout-handler','content-handler','contrail-load','lodash'],function(LayoutHandler,ContentHandler,ChartUtils,_) {
-                        window._ = _;
-                        contentHandler = new ContentHandler();
-                        initBackboneValidation();
-                        initCustomKOBindings(window.ko);
-                        initDomEvents();
-                        layoutHandler = new LayoutHandler();
-                        layoutHandlerLoadDefObj.resolve();
+                    require(['core-utils'],function(CoreUtils) {
+                        cowu = new CoreUtils();
+                        require(['underscore'],function(_) {
+                            _.noConflict();
+                        });
+                        require(['layout-handler','content-handler','contrail-load','lodash'],function(LayoutHandler,ContentHandler,ChartUtils,_) {
+                            window._ = _;
+                            contentHandler = new ContentHandler();
+                            initBackboneValidation();
+                            initCustomKOBindings(window.ko);
+                            initDomEvents();
+                            layoutHandler = new LayoutHandler();
+                            layoutHandlerLoadDefObj.resolve();
+                        });
                     });
                 });
             });
