@@ -3,35 +3,54 @@
  * All rights reserved.
  */
 
-body.navbar-fixed {
-  padding-top: 52px;
-}
+/* Page Header*/
 
-.navbar-header {
-  padding: 5px;
-  height: 45px;
+.navbar {
+    margin-bottom: 0px;
+    padding-left: 0;
+    padding-right: 0;
+    border-width: 0;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    min-height: 45px;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc
 }
-img.logo {
+.navbar .navbar-brand {
+    color: #FFF;
+    font-size: 24px;
+    text-shadow: none;
+    padding: 0 15px;
+    height: auto;
+}
+.navbar .navbar-brand img.logo {
   height: 40px;
 }
-#user_info, #alert_info {
-  max-width: 100px;
-  display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  vertical-align: top;
-  line-height: 15px;
-  position: relative;
-  padding: 13px 0;
-  color:#555;
-}
+
+/*.navbar-header {*/
+  /*padding: 5px;*/
+  /*height: 45px;*/
+/*}*/
+
+/*#user_info, #alert_info {*/
+  /*max-width: 100px;*/
+  /*display: inline-block;*/
+  /*overflow: hidden;*/
+  /*text-overflow: ellipsis;*/
+  /*white-space: nowrap;*/
+  /*vertical-align: top;*/
+  /*line-height: 15px;*/
+  /*position: relative;*/
+  /*padding: 13px 0;*/
+  /*color:#555;*/
+/*}*/
+
 #sidebar-shortcuts-large .btn:hover {
   margin-top: 2px;
 }
 #sidebar-shortcuts-large .btn.active {
   border-bottom: 3px solid #333;
-  margin-top: 2px;
 }
 #sidebar-shortcuts-large .btn:focus {
   outline: none;
@@ -263,9 +282,7 @@ input[type="text"]:focus {
 }
 
 #page-content {
-  /*background: #ffffff;
-  margin: 0;
-  padding: 43px 10px 27px;*/
+    padding: 3px 10px 27px;
 }
 
 .margin-0-0-5 {

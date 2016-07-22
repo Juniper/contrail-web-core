@@ -173,13 +173,13 @@
 .ui-tabs .ui-widget-header{
     border: none;
     background: none;
-    /*background-color:#f9f9f9;*/
+    background-color:#f9f9f9;
     border-bottom: 1px solid #eee;
 }
 .contrail-tabs-overcast.ui-tabs .ui-tabs-nav,
 .ui-tabs .ui-tabs-nav{
     margin: -3px -10px 10px -10px;
-    padding: 1px 1px 0 1px;
+    padding: 1px;
 }
 .contrail-tabs-overcast.ui-tabs-panel.ui-widget-content,
 .ui-tabs-panel.ui-widget-content {
@@ -249,6 +249,7 @@
 }
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a{
+    box-sizing: content-box;
     border-top: 1px solid #ccc;
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;

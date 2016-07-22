@@ -44,7 +44,9 @@
 #login-error .alert{
 	margin: 15px 0 0;
 }
-
+#signin {
+    margin-right: 5px;
+}
 .form-control::-webkit-input-placeholder { color: #787878; }
 .form-control:-moz-placeholder { color: #787878; }
 .form-control::-moz-placeholder { color: #787878; }

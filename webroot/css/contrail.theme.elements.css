@@ -659,24 +659,25 @@ input[type="url"],
 input[type="search"],
 input[type="tel"],
 input[type="color"] {
-  -webkit-border-radius: 0 !important;
-  -moz-border-radius: 0 !important;
-  border-radius: 0 !important;
-  border-width: 1px;
-  color: #787878;
-  font-size: 13px;
-  background-color: #ffffff;
-  border-color: #d5d5d5;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-  -webkit-transition-duration: 0.1s;
-  -moz-transition-duration: 0.1s;
-  -o-transition-duration: 0.1s;
-  transition-duration: 0.1s;
-  margin-bottom:0;
-  height:28px;
-  padding:3px;
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+    border-width: 1px;
+    color: #787878;
+    font-size: 13px;
+    background-color: #ffffff;
+    border-color: #d5d5d5;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    -webkit-transition-duration: 0.1s;
+    -moz-transition-duration: 0.1s;
+    -o-transition-duration: 0.1s;
+    transition-duration: 0.1s;
+    margin-bottom: 0;
+    box-sizing: content-box;
+    height: 28px;
+    padding: 3px;
 }
 .textarea-input-append.input-append textarea {
   min-height: 28px;

@@ -1121,30 +1121,11 @@ pre.prettyprint {
     -ms-transform: scale(1.2);
     transform: scale(1.2); }
 
-.navbar {
-    margin-top: -50px;
-    margin-bottom: 0px;
-    padding-left: 0;
-    padding-right: 0;
-    border-width: 0;
-    border-radius: 0;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    min-height: 45px;
-    background-color: #fff;
-    border-bottom: 1px solid #ccc}
-
 .navbar .navbar-text,
 .navbar .navbar-link {
     color: #FFF; }
 
-.navbar .navbar-brand {
-    color: #FFF;
-    font-size: 24px;
-    text-shadow: none;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    height: auto; }
+
 
 .navbar .navbar-brand:hover,
 .navbar .navbar-brand:focus {
@@ -2350,7 +2331,7 @@ body.mob-safari .sidebar.sidebar-fixed {
 .sidebar .sidebar-shortcuts-large > .btn {
     text-align: center;
     width: 41px;
-    line-height: 30px;
+    line-height: 35px;
     padding: 0;
     margin-bottom: 2px;
     border-width: 0; }
@@ -4696,7 +4677,9 @@ body.mob-safari .sidebar.sidebar-fixed {
 .breadcrumbs .nav-search {
     top: 5px;
 }
-
+#nav-search-input {
+    box-sizing: border-box;
+}
 .breadcrumb > li,
 .breadcrumb > li.active {
     color: #555;
@@ -16958,16 +16941,12 @@ img.editable-click:hover {
     border-bottom: 1px solid #C5D0DC; }
 
 .ui-tabs .ui-tabs-nav li.ui-state-default > a {
-    /*background-color: #F9F9F9;
-    border: 1px solid #C5D0DC;*/
     border-bottom-width: 0;
-    /*color: #999;*/
-    line-height: 16px;
     margin-right: -1px;
     z-index: 11;
     padding: 8px 12px;
     position: relative;
-    top: 2px; }
+}
 
 .ui-tabs .ui-tabs-nav li > a:focus {
     outline: none; }

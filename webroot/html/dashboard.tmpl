@@ -50,7 +50,20 @@
     <!-- End prod_env -->
 
     <link rel="stylesheet" href="/css/contrail.thirdparty.unified.css"/>
-    <link rel="stylesheet" href="/css/contrail.unified.css"/>
+    <!--<link rel="stylesheet" href="/css/contrail.unified.css"/>-->
+    <link rel="stylesheet" href="/css/contrail.init.css"/>
+    <link rel="stylesheet" href="/css/contrail.theme.css"/>
+    <link rel="stylesheet" href="/css/contrail.theme.layout.css"/>
+    <link rel="stylesheet" href="/css/contrail.theme.elements.css"/>
+    <link rel="stylesheet" href="/css/contrail.responsive.css"/>
+    <link rel="stylesheet" href="/css/contrail.grid.css"/>
+    <link rel="stylesheet" href="/css/contrail.form.elements.css"/>
+    <link rel="stylesheet" href="/css/contrail.components.css"/>
+    <link rel="stylesheet" href="/css/contrail.chart.css"/>
+    <link rel="stylesheet" href="/css/contrail.graph.css"/>
+    <link rel="stylesheet" href="/css/contrail.custom.css"/>
+    <link rel="stylesheet" href="/css/contrail.font.css"/>
+    <link rel="stylesheet" href="/css/login.css"/>
 
     <!--[if lte IE 8]>
     <link rel="stylesheet" href="/css/contrail-ie.min.css?built_at="/>
@@ -105,7 +118,9 @@
                     <input class="col-xs-2" type="text" name="domain" placeholder="Domain">
                 </div>
                 <div class="row margin-10-0">
-                    <button id="signin" class="btn btn-primary btn-mini pull-right" type="submit">Sign in</button>
+                    <div class="col-xs-12">
+                        <button id="signin" class="btn btn-primary btn-mini pull-right" type="submit">Sign in</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -114,10 +129,8 @@
 </script>
 <script type="text/x-handlebars-template" id="app-container-tmpl">
 
-    <div id="navbar" class="navbar navbar-default          ace-save-state">
-        <div class="navbar-container ace-save-state" id="navbar-container">
-
-
+    <div id="pageHeader" class="navbar navbar-default ace-save-state">
+        <div id="navbar-container" class="navbar-container ace-save-state">
             <!-- #section:basics/sidebar.mobile.toggle -->
             <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
                 <span class="sr-only">Toggle sidebar</span>
@@ -137,7 +150,7 @@
         <div id="success-msg-container"><div id="success-text-container"></div></div>
         <div class="navbar-inner"> -->
             <!-- <div class="main-container ace-save-state container-fluid"> -->
-                <a href="#" class="col-xs-8 brand">
+                <a href="#" class="navbar-brand">
                     <img class="logo" src="/img/sdn-logo.png"/>
                 </a>
                 <ul style="width:330px" class="nav ace-nav pull-right">
@@ -168,14 +181,6 @@
 
                     </li>
                 </ul>
-                <!-- <div id="nav-search">
-                    <form id="search-form" onsubmit="searchSiteMap();">
-                        <span class="input-icon">
-                            <input type="text" placeholder="Search Sitemap" class="input-medium search-query" id="nav-search-input" autocomplete="off">
-                            <i class="fa fa-search" id="nav-search-icon"></i>
-                        </span>
-                    </form>
-                </div> -->
             </div>
             <!--/.container-fluid-->
         <!--</div> third div -->
@@ -205,13 +210,13 @@
                     <span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span>
                 </div> -->
                 <div id="nav-search" class="nav-search">
-                                    <form id="search-form" onsubmit="searchSiteMap();">
-                                        <span class="input-icon">
-                                            <input type="text" placeholder="Search Sitemap" class="input-medium search-query" id="nav-search-input" autocomplete="off">
-                                            <i class="fa fa-search" id="nav-search-icon"></i>
-                                        </span>
-                                    </form>
-                                </div>
+                    <form id="search-form" onsubmit="searchSiteMap();">
+                        <span class="input-icon">
+                            <input type="text" placeholder="Search Sitemap" class="input-medium search-query" id="nav-search-input" autocomplete="off">
+                            <i class="fa fa-search" id="nav-search-icon"></i>
+                        </span>
+                    </form>
+                </div>
             </div>
             <div id="page-content" class="page-content">
                 <div id='content-container'></div>
