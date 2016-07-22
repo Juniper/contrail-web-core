@@ -11,6 +11,8 @@ globalObj['env'] = "";
 globalObj['loadedScripts'] = [];
 //Maintains a deferredObj for each feature pkg and are resolved when the global modules for that feature pkg are available
 globalObj['initFeatureAppDefObjMap'] = {};
+globalObj['siteMap'] = {};
+globalObj['siteMapSearchStrings'] = [];
 var FEATURE_PCK_WEB_CONTROLLER = "webController",
     FEATURE_PCK_WEB_STORAGE = "webStorage",
     FEATURE_PCK_WEB_SERVER_MANAGER = "serverManager";
@@ -185,6 +187,10 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
     } else if(env == "prod") {
         var prodAliasMap = {
             'controller-basedir'          : coreBaseDir,
+            'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
+            'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
+            'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
+            'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
             'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
             'contrail-element'            : coreWebDir + '/js/models/ContrailElement'
         }
@@ -398,8 +404,6 @@ var coreBundles = {
             'sprintf',
             'ipv6',
             'xdate',
-            'knockback',
-            'validation',
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
@@ -444,9 +448,7 @@ var coreBundles = {
             'contrail-list-model',
             'lodash',
             'crossfilter',
-            'backbone',
             'text',
-            'knockout',
             'moment',
             'layout-handler',
             'menu-handler',

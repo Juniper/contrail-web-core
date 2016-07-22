@@ -310,7 +310,7 @@ define([
                         chartModel.lines.forceY(chartAxesOption.forceY);
                         chartModel.lines2.forceY(chartAxesOption.forceY);
 
-                        chartModel.chartOptions.chartAxesOptionKey = qewu.formatNameForGrid(selectFieldValue);
+                        chartModel.chartOptions.chartAxesOptionKey = selectFieldValue;
                         chartModel.update();
                     }
                 }
