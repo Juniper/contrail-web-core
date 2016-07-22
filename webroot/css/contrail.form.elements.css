@@ -36,8 +36,8 @@
 .select2-container {
     background-color:#fff;
 }
-.select2-container[class*="span"] {
-    min-height: 26px;
+.select2-container[class*="col-xs-"] {
+    height: 28px;
     border: 1px solid #dadada;
 }
 .select2-container .select2-choice {
@@ -273,12 +273,6 @@ input.datetimepicker{
     height: 28px;
     width: 100%;
     border: none;
-}
-
-.select2-container[class*="col-xs-"] {
-    min-height: 26px;
-    border: 1px solid #dadada;
-    max-height: 26px;
 }
 
 /*

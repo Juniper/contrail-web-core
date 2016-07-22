@@ -47,7 +47,8 @@ define([
             self.$el.find('textarea')
                 .off('input')
                 .on('input', function() {
-                    $(this).height(0).height($(this).get(0).scrollHeight - 5);
+                    var scrollHeight = $(this).get(0).scrollHeight;
+                    $(this).height(((scrollHeight < 26) ? 26 : scrollHeight) - 6);
                 });
         }
     });

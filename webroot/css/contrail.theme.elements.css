@@ -675,7 +675,7 @@ input[type="color"] {
     -o-transition-duration: 0.1s;
     transition-duration: 0.1s;
     margin-bottom: 0;
-    box-sizing: content-box;
+    box-sizing: border-box;
     height: 28px;
     padding: 3px;
 }

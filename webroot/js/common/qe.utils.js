@@ -113,9 +113,9 @@ define([
                 texareaNames = ['select', 'where', 'filters'];
 
             $.each(texareaNames, function(nameKey, nameValue) {
+                var scrollHeight = $(elId).find('[name="' + nameValue + '"]').get(0).scrollHeight;
                 $(elId).find('[name="' + nameValue + '"]')
-                    .height(0)
-                    .height($(elId).find('[name="' + nameValue + '"]').get(0).scrollHeight - 5);
+                    .height(((scrollHeight < 26) ? 26 : scrollHeight)- 6);
             });
         };
 
