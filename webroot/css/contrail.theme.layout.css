@@ -51,6 +51,7 @@
 }
 #sidebar-shortcuts-large .btn.active {
   border-bottom: 3px solid #333;
+  margin-top: 2px;
 }
 #sidebar-shortcuts-large .btn:focus {
   outline: none;
@@ -234,7 +235,6 @@ input[type="text"]:focus {
   padding: 0;
   margin: 0;
   border: none;
-  border-top: 1px solid #FCFCFC;
   border-bottom: 1px solid #E5E5E5;
   position: relative;
   background-color: #fff;
@@ -272,7 +272,6 @@ input[type="text"]:focus {
 
 #breadcrumbs {
   position: relative;
-  z-index: 13;
   border-bottom: 1px solid #e5e5e5;
   background-color: #fff;
   min-height: 40px;
@@ -359,13 +358,14 @@ input[type="text"]:focus {
   display: none;
   position: absolute;
   left: 42px;
-  top: -2px;
-  width: 163px;
+  top: 0px;
+  width: 175px;
   height: 35px;
   line-height: 35px;
   background-color: #f5f5f5;
   z-index: 121;
   border: 1px solid #cccccc;
+  border-top: none;
   padding-left: 12px;
 }
 
@@ -380,6 +380,10 @@ input[type="text"]:focus {
 
 .main-menu > .submenu > .nav-list > li.active > ul.submenu {
   border-left-color: #1963aa;
+}
+
+.menu-min #sidebar-shortcuts:hover #sidebar-shortcuts-large {
+  display: block;
 }
 
 .nav .open > a, .nav .open > a:focus, .nav .open > a:hover {
@@ -420,4 +424,15 @@ input[type="text"]:focus {
 }
 
 
+.textarea-input-append textarea {
+  min-height: 28px;
+}
+
+#direction .form-element {
+  padding-left: 15px;
+}
+
+#direction .form-label {
+  margin-left: -15px;
+}
 

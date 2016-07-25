@@ -2667,7 +2667,6 @@ body.mob-safari .sidebar.sidebar-fixed {
 
 .sidebar.menu-min .nav-list > li > a {
     position: relative;
-    height: 39px;
     line-height: 37px;
     padding: 0; }
 
@@ -2719,7 +2718,7 @@ body.mob-safari .sidebar.sidebar-fixed {
     position: absolute;
     z-index: 120;
     left: 42px;
-    top: -2px;
+    top: -1px;
     width: 175px;
     border: 1px solid #cccccc;
     box-shadow: 2px 1px 2px 0 rgba(0,0,0,0.2);
@@ -2791,12 +2790,13 @@ body.mob-safari .sidebar.sidebar-fixed {
 .sidebar.menu-min .sidebar-shortcuts-large {
     display: none;
     position: absolute;
-    top: 0;
+    top: -1px;
     left: 42px;
     width: 182px;
     padding: 0 2px 3px;
-    border: 1px solid;
-    border-top-width: 0; }
+    background-color: #ffffff;
+    box-shadow: 2px 1px 2px 0 rgba(0,0,0,0.2);
+    border: 1px solid #cccccc;}
 
 .sidebar.menu-min .sidebar-shortcuts:hover .sidebar-shortcuts-large,
 .sidebar.menu-min .sidebar-shortcuts.hover-show .sidebar-shortcuts-large {
@@ -15022,7 +15022,6 @@ div.dataTables_processing {
 
 .select2-container .select2-choice {
     border-radius: 0;
-    height: 32px;
     line-height: 24px; }
 
 .select2-container.select2-drop-above .select2-choice {
