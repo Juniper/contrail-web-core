@@ -105,58 +105,64 @@
 	<xsl:template match="@type[.='struct']">
 		<xsl:choose>
 			<xsl:when test="name(..) = 'list'">
-				<thead>
-					<xsl:for-each select="../*[position() =1]">
-						<tr>
-							<xsl:for-each select="*">
-								<th>
-									<xsl:value-of select="name()"/>
-									<xsl:if test="$snhreq = 'rlist'">(<xsl:value-of select="@type"/>) </xsl:if>
-								</th>
+				<xsl:choose>
+					<xsl:when test="../*">
+						<thead>
+							<xsl:for-each select="../*[position() =1]">
+								<tr>
+									<xsl:for-each select="*">
+										<th>
+											<xsl:value-of select="name()"/>
+											<xsl:if test="$snhreq = 'rlist'">(<xsl:value-of select="@type"/>) </xsl:if>
+										</th>
+									</xsl:for-each>
+								</tr>
 							</xsl:for-each>
-						</tr>
-					</xsl:for-each>
-				</thead>
-				<tbody>
-					<xsl:for-each select="../*">
-						<tr>
-							<xsl:for-each select="*">
-
-								<xsl:choose>
-									<xsl:when test="@type[.='struct'] | @type[.='list']">
+						</thead>
+						<tbody>
+							<xsl:for-each select="../*">
+								<tr>
+									<xsl:for-each select="*">
 										<xsl:choose>
-											<xsl:when test="$snhreq = 'rlist'">
-												<td>
-													<table class="{concat('table_', count(./ancestor-or-self::*[@type[.='struct'] | @type[.='list']]))}">
-														<xsl:apply-templates select="@type"/>
-													</table>
-												</td>
+											<xsl:when test="@type[.='struct'] | @type[.='list']">
+												<xsl:choose>
+													<xsl:when test="$snhreq = 'rlist'">
+														<td>
+															<table class="{concat('table_', count(./ancestor-or-self::*[@type[.='struct'] | @type[.='list']]))}">
+																<xsl:apply-templates select="@type"/>
+															</table>
+														</td>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:variable name="accordionID" select="generate-id(.)"/>
+														<xsl:variable name="tbname" select="name()"/>
+														<xsl:variable name="count" select="position()"/>
+														<xsl:variable name="num">
+															<xsl:number/>
+														</xsl:variable>
+														<td>
+															<div class="td-cell">
+																<table class="{concat('table_', count(./ancestor-or-self::*[@type[.='struct'] | @type[.='list']]))}">
+																	<xsl:apply-templates select="@type"/>
+																</table>
+															</div>
+														</td>
+													</xsl:otherwise>
+												</xsl:choose>
 											</xsl:when>
 											<xsl:otherwise>
-												<xsl:variable name="accordionID" select="generate-id(.)"/>
-												<xsl:variable name="tbname" select="name()"/>
-												<xsl:variable name="count" select="position()"/>
-												<xsl:variable name="num">
-													<xsl:number/>
-												</xsl:variable>
-												<td>
-                                                    <div class="td-cell">
-                                                        <table class="{concat('table_', count(./ancestor-or-self::*[@type[.='struct'] | @type[.='list']]))}">
-                                                            <xsl:apply-templates select="@type"/>
-                                                        </table>
-                                                    </div>
-												</td>
+												<xsl:apply-templates select="@type"/>
 											</xsl:otherwise>
 										</xsl:choose>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:apply-templates select="@type"/>
-									</xsl:otherwise>
-								</xsl:choose>
+									</xsl:for-each>
+								</tr>
 							</xsl:for-each>
-						</tr>
-					</xsl:for-each>
-				</tbody>
+						</tbody>
+					</xsl:when>
+					<xsl:otherwise>
+						<p class="no-data-text">No Data Found.</p>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:when>
 			<xsl:otherwise>
 				<tbody>
