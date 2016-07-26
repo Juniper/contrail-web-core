@@ -75,7 +75,7 @@ define([
             panzoomTargetId = controlPanelConfig.default.zoom.selectorId,
             panZoomDefaultConfig = {
                 increment: 0.1,
-                minScale: 0.5,
+                minScale: 0.4,
                 maxScale: 2,
                 duration: 200,
                 easing: "ease-out",
