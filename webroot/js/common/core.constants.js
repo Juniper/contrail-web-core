@@ -19,12 +19,17 @@ define([
 //          NOTICE  : 2, //Blue
 //          INFO    : 3, //Green
         };
-        this.COLOR_SEVERITY_MAP = {
-            red : 'error',
-            orange : 'warning',
-            blue : 'default',
-            green : 'okay'
-        };
+       this.SEVERITY_TO_TEXT_MAP = {
+               2 : "Critical",
+               3 : "Major",
+               4 : "Minor"
+       };
+       this.COLOR_SEVERITY_MAP = {
+                red : 'error',
+                orange : 'warning',
+                blue : 'default',
+                green : 'okay'
+           };
         this.PATTERN_IP_ADDRESS  = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
         this.PATTERN_SUBNET_MASK = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(\d|[1-2]\d|3[0-2]))?$/;
         this.PATTERN_MAC_ADDRESS = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
