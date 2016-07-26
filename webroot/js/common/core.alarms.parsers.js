@@ -95,7 +95,7 @@ define([ 'underscore' ],
 
                          counts.push({
                              name : 'severity_' + sevkey,
-                             color : sevColorMap[sevkey],
+                             color : (sevkey <= 3) ? sevColorMap['3'] : sevColorMap['4'],
                              y0: y0,
                              y1: y0 += +severityBuckets[sevkey].length,
                              items: severityBuckets[sevkey]
