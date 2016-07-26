@@ -394,20 +394,6 @@ define([
 
             return nameSuffixKey;
         };
-        
-        //format aggregate field names for grids
-        self.formatNameForGrid = function(columnName) {
-            var firstIndex = columnName.indexOf('('),
-                lastIndex = columnName.indexOf(')'),
-                aggregateType = columnName.substr(0,firstIndex),
-                aggregateColumnName = columnName.substr(firstIndex + 1,lastIndex - firstIndex - 1);
-
-            if(qewu.isAggregateField(columnName) || aggregateType == "AVG" || aggregateType == "PERCENTILES") {
-                return aggregateType.toUpperCase() + " (" + cowl.get(aggregateColumnName) + ")";
-            } else {
-                return cowl.get(columnName).replace(')', '');
-            }
-        };
 
         //format aggregate field names for grids
         self.formatNameForGrid = function(columnName) {

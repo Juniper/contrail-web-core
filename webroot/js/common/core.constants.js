@@ -14,11 +14,11 @@ define([
         this.JSON_SUFFIX_ID = "_json";
 
         this.SEV_LEVELS = {
-                ERROR   : 3, //Red
-                WARNING : 4, //Orange
-//                NOTICE  : 2, //Blue
-//                INFO    : 3, //Green
-            }
+            ERROR   : 3, //Red
+            WARNING : 4, //Orange
+//          NOTICE  : 2, //Blue
+//          INFO    : 3, //Green
+        };
         this.COLOR_SEVERITY_MAP = {
             red : 'error',
             orange : 'warning',
