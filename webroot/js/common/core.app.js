@@ -1323,8 +1323,9 @@ if (typeof document !== 'undefined' && document) {
                         window.kbValidation = validation;
                         // window.ko = ko;
                     });
-                    require(['core-utils'],function(CoreUtils) {
+                    require(['core-utils', 'core-hash-utils'],function(CoreUtils, CoreHashUtils) {
                         cowu = new CoreUtils();
+                        cowhu = new CoreHashUtils();
                         require(['underscore'],function(_) {
                             _.noConflict();
                         });
