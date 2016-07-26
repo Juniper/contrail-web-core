@@ -1352,7 +1352,8 @@ pre.prettyprint {
     border-width: 0 !important; }
 
 .ace-nav > li .dropdown-menu {
-    z-index: 1031; }
+    z-index: 1031;
+    left: auto;}
 
 .ace-nav .nav-user-photo {
     margin: -4px 8px 0 0;
@@ -1913,7 +1914,7 @@ pre.prettyprint {
 .sidebar {
     width: 190px;
     float: left;
-    position: static;
+    position: fixed;
     padding-left: 0;
     padding-right: 0; }
 
@@ -2342,7 +2343,7 @@ body.mob-safari .sidebar.sidebar-fixed {
 .sidebar .sidebar-shortcuts-mini {
     display: none;
     font-size: 0;
-    width: 42px;
+    width: 41px;
     padding-top: 2px;
     padding-bottom: 2px;
     line-height: 18px;
@@ -2796,7 +2797,8 @@ body.mob-safari .sidebar.sidebar-fixed {
     padding: 0 2px 3px;
     background-color: #ffffff;
     box-shadow: 2px 1px 2px 0 rgba(0,0,0,0.2);
-    border: 1px solid #cccccc;}
+    border: 1px solid #cccccc;
+    z-index: 20; }
 
 .sidebar.menu-min .sidebar-shortcuts:hover .sidebar-shortcuts-large,
 .sidebar.menu-min .sidebar-shortcuts.hover-show .sidebar-shortcuts-large {
@@ -12129,7 +12131,7 @@ tr.detail-row > td {
     display: inline-block;
     position: absolute;
     right: 20px;
-    top: 11px;
+    top: 36px;
     text-shadow: none;
     color: #ABBAC3;
     font-size: 13px;
@@ -12844,7 +12846,7 @@ tr.detail-row > td {
     position: relative;
     margin-top: 2px;
     padding-bottom: 19px;
-    padding-left: 7px;
+    /*padding-left: 7px;*/
     font-size: 13px; }
 
 .itemdiv > .body > .text:after {

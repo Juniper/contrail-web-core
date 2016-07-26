@@ -46,6 +46,12 @@
   /*color:#555;*/
 /*}*/
 
+#breadcrumbs.fixed {
+  position: fixed;
+  left: 183px;
+  right: 0;
+}
+
 #sidebar-shortcuts-large .btn:hover {
   margin-top: 2px;
 }
@@ -55,6 +61,12 @@
 }
 #sidebar-shortcuts-large .btn:focus {
   outline: none;
+}
+
+.scrolled {
+  top: 0 !important;
+  -webkit-box-shadow: 0 2px 4px 0 rgba(0,0,0,.15);
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.15);
 }
 
 .btn-monitor, .btn-monitor:hover {
@@ -132,7 +144,32 @@
 }
 
 #sidebar {
+  width: 182px;
+  position: fixed;
+  bottom: 0px;
+  top: 45px;
+  margin-left: 0;
+  margin-top: 0;
   border-right: 1px solid #cccccc;
+}
+
+#sidebar-shortcuts {
+   background-color: #fafafa;
+   border-bottom: 1px solid #dddddd;
+   /* border-top: 1px solid #ddd; */
+   text-align: center;
+   line-height: 37px;
+   max-height: 40px;
+   margin-bottom: 0;
+ }
+
+#sidebar.menu-min {
+  width: 42px;
+  z-index: 14;
+}
+
+#sidebar.menu-min + #main-content #breadcrumbs.fixed {
+  left: 42px;
 }
 
 .ace-nav > li {
@@ -266,7 +303,7 @@ input[type="text"]:focus {
 
 #breadcrumbs.fixed {
   position: fixed;
-  left: 183px;
+  left: 182px;
   right: 0;
 }
 
@@ -278,10 +315,13 @@ input[type="text"]:focus {
   line-height: 39px;
   padding: 0 12px 0 0;
   display: block;
+  z-index: 13;
 }
 
 #page-content {
-    padding: 3px 10px 27px;
+  background: #ffffff;
+  margin: 0;
+  padding: 43px 10px 27px;
 }
 
 .margin-0-0-5 {

@@ -3367,8 +3367,8 @@ td.td-actions a.td-action {
 	color : #3182bd;
 }
 .infobox {
-  width: 135px;
-  height: 68px;
+  width: 155px;
+  height: 66px;
   color: #555;
   background-color: #FFF;
   box-shadow: none;
@@ -3526,7 +3526,7 @@ td.td-actions a.td-action {
   font-size: 13px;
   font-weight: bold;
   padding-right: 18px;
-  padding-top: 3px;
+  padding-top: 5px;
 }
 .infobox > .stat:before {
   display: inline-block;
@@ -3732,6 +3732,7 @@ td.td-actions a.td-action {
   padding-right: 3px;
   min-height: 30px;
   position: relative;
+  overflow-wrap: break-word;
 }
 /*
 .itemdiv > .infobox-icon {
@@ -3771,7 +3772,11 @@ td.td-actions a.td-action {
   padding-left: 0;
   width: auto;
   position: relative;
-  margin-left:5px;
+  margin-left:0px;
+}
+
+.widget-main .itemdiv .row {
+  margin-left: 0px;
 }
 
 #alerts-box-content > .item-list > .itemdiv > .body {
