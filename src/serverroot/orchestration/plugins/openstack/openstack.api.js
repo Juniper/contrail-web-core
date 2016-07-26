@@ -239,7 +239,15 @@ function getServiceAPIVersionByReqObj (req, type, callback, reqBy)
             logutils.logger.error('apiVersion for ' + type + ' is NULL');
             callback(null);
         } else {
-            dataObjArr.sort(function(a, b) {return (b['version'] - a['version'])});
+            dataObjArr.sort(function(a, b) {
+                if (b['version'] > a['version']) {
+                    return 1;
+                } else if (b['version'] < a['version']) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
             callback(dataObjArr);
         }
         return;
