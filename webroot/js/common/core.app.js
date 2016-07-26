@@ -509,6 +509,20 @@ var coreBundles = {
             'core-basedir/js/views/SparklineView',
             'core-basedir/js/views/TabsView',
             'core-basedir/js/views/WizardView'
+        ],
+        'nonamd-libs': [
+            'web-utils',
+            'analyzer-utils',
+            'config_global',
+            'contrail-layout',
+            'handlebars-utils',
+            'contrail-common',
+            'uuid',
+            'protocol',
+            'xdate',
+            'ipv6',
+            'handlebars',
+            'jsonpath'
         ]
     };
 
@@ -1019,7 +1033,11 @@ if (typeof document !== 'undefined' && document) {
         }
 
         $.when.apply(window, featureAppDefObjList).done(function () {
-            globalObj['featureAppDefObj'].resolve();
+            //Ensure d3 and nv.d3 are available before loading any particular feature
+            //d3 and nv.d3 are not necessary for loading menu and layout
+            require(['chart-utils'],function() {
+                globalObj['featureAppDefObj'].resolve();
+            });
         });
     };
 
@@ -1191,7 +1209,11 @@ if (typeof document !== 'undefined' && document) {
                             globalObj['featureAppDefObj'] = $.Deferred();
                         if(webServerInfoDefObj == null) 
                             webServerInfoDefObj = $.Deferred();
-                        loadFeatureApps(featurePkgs);
+                        //Ensure the global aliases (like contrail,functions in web-utils) are available before loading
+                        //feature packages as they are used in the callback of feature init modules without requring them
+                        require(['nonamd-libs'],function() {
+                            loadFeatureApps(featurePkgs);
+                        });
                     });
                 });
             },
