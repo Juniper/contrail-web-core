@@ -375,7 +375,7 @@ function getApiVersion (suppVerList, verList, index, fallbackIndex, apiType)
     return null;
 }
 
-function getPublicUrlByRegionName (regionname, req)
+function getPublicUrlByRegionName (regionname, serviceName, req)
 {
     if (false == authApi.isMultiRegionSupported()) {
         return null;
@@ -395,8 +395,9 @@ function getPublicUrlByRegionName (regionname, req)
             'publicURL': 'internalURL';
         var pubUrl =
             commonUtils.getValueByJsonPath(req, 'session;serviceCatalog;' +
-                                           regionname + ';identity;values;0;' +
-                                           takeUrlStr, null, false);
+                                           regionname + ';' + serviceName +
+                                           ';values;0;' + takeUrlStr, null,
+                                           false);
         return pubUrl;
     }
     return null;

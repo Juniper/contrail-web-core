@@ -29,6 +29,7 @@ define(['underscore'], function (_) {
             //populate the autocomplete dropdown for siteMap
             enableSearchAhead();
             var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', featurePkgsInfo));
+            //Load top-level menu buttons (Configure,Monitor,Settings,Query)
             $("#sidebar-shortcuts").html(menuShortcuts);
             menuHandler.filterMenuItems(menuObj['items']['item']);
 

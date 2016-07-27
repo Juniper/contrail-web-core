@@ -904,6 +904,16 @@ define(['underscore'], function (_) {
             });
         };
 
+        this.loadGohanUI = function() {
+            require(['iframe-view'],function(IframeView) {
+                var iframeView = new IframeView({
+                    el:$("#main-container"),
+                    elementId: "gohan_allregions"
+                });
+                iframeView.render();
+            });
+        };
+
         this.loadAlertsPopup = function(cfgObj) {
             var prefixId = 'dashboard-alerts';
             var cfgObj = ifNull(cfgObj,{});
