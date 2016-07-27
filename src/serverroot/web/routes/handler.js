@@ -312,13 +312,15 @@ exports.vcenter_authenticate = function (req, res, appData) {
 
 function logout (req, res)
 {
+    req.session.isAuthenticated = false;
+    res.clearCookie('_csrf');
+    res.clearCookie('connect.sid');
     authApi.deleteAllTokens(req, function(err) {
         res.header('Cache-Control', 
                'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
         /* Need to destroy the session after redirectToLogin as login page depends
            on orchestrationModel
          */
-        req.session.isAuthenticated = false;
         req.session.destroy();
         var retData = {
             isRegionListFromConfig: config.regionsFromConfig,
