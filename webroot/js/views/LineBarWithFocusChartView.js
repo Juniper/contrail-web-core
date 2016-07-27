@@ -45,11 +45,11 @@ define([
         },
 
         renderChart: function (selector, viewConfig, chartViewModel) {
-            var self = this,
-                data = chartViewModel.getItems(),
-                chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
-                widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
-                chartViewConfig, chartOptions, chartModel;
+            var self = this
+            var data = chartViewModel.getItems()
+            var chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART)
+            var widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null
+            var chartViewConfig, chartOptions, chartModel
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
@@ -135,18 +135,25 @@ define([
 
     function setData2Chart(self, chartViewConfig, chartViewModel, chartModel) {
 
-        var chartData = chartViewConfig.chartData,
-            checkEmptyDataCB = function (data) {
-                return (!data || data.length === 0 || !data.filter(function (d) { return d.values.length; }).length);
-            },
-            chartDataRequestState = cowu.getRequestState4Model(chartViewModel, chartData, checkEmptyDataCB),
-            chartDataObj = {
-                data: chartData,
-                requestState: chartDataRequestState
-            },
-            chartOptions = chartViewConfig['chartOptions'];
+        var chartData = chartViewConfig.chartData
+        if (_.isEmpty(chartData)) {
+            chartData = [
+                {bar: true, key: '', values: []},
+                {key: '', values: []},
+            ]
+        }
 
-        d3.select($(self.$el)[0]).select('svg').datum(chartDataObj).call(chartModel);
+        var checkEmptyDataCB = function (data) {
+            return (!data || data.length === 0 || !data.filter(function (d) { return d.values.length; }).length);
+        }
+        var chartDataRequestState = cowu.getRequestState4Model(chartViewModel, chartData, checkEmptyDataCB)
+        var chartDataObj = {
+            data: chartData,
+            requestState: chartDataRequestState,
+        }
+        var chartOptions = chartViewConfig.chartOptions
+
+        d3.select($(self.$el)[0]).select('svg').datum(chartDataObj).call(chartModel)
 
         if (chartOptions.defaultDataStatusMessage) {
             var messageHandler = chartOptions.statusMessageHandler;
