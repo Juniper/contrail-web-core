@@ -1,0 +1,20 @@
+{
+    "authUrl": "http://10.204.216.40:5000/v2.0",
+    "gohan": {
+        "schema": "/gohan/v0.1/schemas",
+        "url": "http://10.204.216.40:9050"
+    },
+    "ui" : {
+        "mainContainer" : "#main_body",
+        "headerContainer" : "#header",
+        "sidebarContainer" : "#sidebar",
+        "breadcrumbContainer" : "#bread-crumb"
+    },
+    "routes": [
+        {
+            "path": "#/",
+            "viewClass": "sampleview",
+            "name": "sample"
+        }
+    ]
+}
