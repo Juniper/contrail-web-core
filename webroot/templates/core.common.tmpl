@@ -322,9 +322,9 @@
         <i class="{{iconClass}}"></i>
     </div>
     <div class="popover-info">
-        <div class="row">
+        <div class="">
         {{#each info}}
-            <div class="row popover-tooltip-row {{#if dividerClass}} {{dividerClass}} {{/if}}" title="{{value}}">
+            <div class="popover-tooltip-row {{#if dividerClass}} {{dividerClass}} {{/if}}" title="{{value}}">
                 <span class="key">{{label}} </span>
                 <span class="value">{{value}}</span>
              </div>
@@ -332,7 +332,7 @@
         </div>
     </div>
     {{#if actions}}
-    <div class="row popover-tooltip-footer">
+    <div class="popover-tooltip-footer">
         {{#each actions}}
         <button class="btn btn-mini pull-right" data-action="{{@index}}"><i class="{{iconClass}}"></i> {{text}} </button>
         {{/each}}
@@ -1244,7 +1244,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-combobox-view-template">
-    <div class="row"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div class=""  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1743,18 +1743,12 @@
 </script>
 
 <script type="text/x-handlebars-template" id="query-or-collection-view-template">
-<<<<<<< HEAD
-    <div id="{{elementId}}" class="collection or-clause-collection row" data-bind="foreach: {{viewConfig.collection}}">
-        <div class="row or-clause" data-bind="css: 'or-clause-' + $index()">
-            <div class="col-xs-1">
-=======
     {{#IfCompare viewConfig.label null operator='!='}}
         <label class="margin-0">{{viewConfig.label}}</label>
     {{/IfCompare}}
     <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
-        <div class="row-fluid or-clause" data-bind="css: 'or-clause-' + $index()">
-            <div class="span1">
->>>>>>> 66d41c4deae492b116cc7e46300f38d1e990e017
+        <div class="row or-clause" data-bind="css: 'or-clause-' + $index()">
+            <div class="col-xs-1">
                 <p class="or-text">OR</p>
             </div>
             <div class="col-xs-10">

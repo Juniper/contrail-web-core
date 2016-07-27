@@ -179,6 +179,10 @@ blockquote.pull-right {
   padding-right: 0px;
 }
 
+.modal-body .row-3n [class*="col-xs-"] {
+  min-height: 30px;
+}
+
 .modal-footer {
   border-top-color: #e4e9ee;
   -webkit-box-shadow: none;
@@ -4460,4 +4464,21 @@ input.ace-input[type=checkbox]:checked + .ace-lbl::before, input.ace-input[type=
 
 .tooltip-success .fa {
   padding-right: 5px;
+}
+
+.and-clause-collection .row {
+  margin-left: 0px;
+}
+
+#sort_by, #sort_order {
+  padding-right: 0px;
+}
+
+#or-clause-collection .row [class^="col-xs-"] {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+div.jsoneditor td, div.jsoneditor td.jsoneditor-tree {
+  vertical-align: inherit;
 }

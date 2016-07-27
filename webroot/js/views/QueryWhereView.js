@@ -36,7 +36,6 @@ define([
                                 .height($(self.$el).find('[name="where"]').get(0).scrollHeight - 5);
 
                             $("#" + modalId).modal('hide');
-                            $("#" + modalId).remove();
                         },
                         error: function (error) {
                             cowu.disableModalLoading(modalId, function () {
@@ -46,7 +45,6 @@ define([
                     }); // TODO: Release binding on successful configure
                 }, 'onCancel': function () {
                     $("#" + modalId).modal('hide');
-                    $("#" + modalId).remove();
                 }
             });
 
