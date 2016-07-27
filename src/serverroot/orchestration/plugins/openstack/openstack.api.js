@@ -321,9 +321,11 @@ function getServiceAPIVersionByReqObj (req, type, callback, reqBy)
             /* We did not find this region in the service catalog */
             var secureCookieStr = (false == config.insecure_access) ? "; secure"
                 : "";
-            req.res.setHeader('Set-Cookie', 'region=' +  firstRegion +
-                              '; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/'
-                              + secureCookieStr);
+            if (global.REGION_ALL != regionCookie) {
+                req.res.setHeader('Set-Cookie', 'region=' +  firstRegion +
+                                '; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/'
+                                + secureCookieStr);
+            }
             callback(null, null, redirectToLogout);
             return;
         }
@@ -383,7 +385,7 @@ function getApiVersion (suppVerList, verList, index, fallbackIndex, apiType)
     return null;
 }
 
-function getPublicUrlByRegionName (regionname, req)
+function getPublicUrlByRegionName (regionname, serviceName, req)
 {
     if (false == authApi.isMultiRegionSupported()) {
         return null;
@@ -395,19 +397,23 @@ function getPublicUrlByRegionName (regionname, req)
         }
         for (var region in config.regions) {
             if (regionname == region) {
-                return config.regions[region];
+                switch (serviceName) {
+                case global.SERVICE_ENDPT_TYPE_IDENTITY:
+                    return config.regions[region];
+                default:
+                    break;
+                }
             }
         }
-    } else if (true == authApi.isRegionListFromIdentity()) {
-        var takeUrlStr = (true == config.serviceEndPointTakePublicURL) ?
-            'publicURL': 'internalURL';
-        var pubUrl =
-            commonUtils.getValueByJsonPath(req, 'session;serviceCatalog;' +
-                                           regionname + ';identity;values;0;' +
-                                           takeUrlStr, null, false);
-        return pubUrl;
     }
-    return null;
+    var takeUrlStr = (true == config.serviceEndPointTakePublicURL) ?
+        'publicURL': 'internalURL';
+    var pubUrl =
+        commonUtils.getValueByJsonPath(req, 'session;serviceCatalog;' +
+                                       regionname + ';' + serviceName +
+                                       ';values;0;' + takeUrlStr, null,
+                                       false);
+    return pubUrl;
 }
 
 function shiftServiceEndpointList (req, serviceType, regionName)
@@ -422,7 +428,7 @@ function shiftServiceEndpointList (req, serviceType, regionName)
                                        ';maps', null, false);
     if (null == mappedObjs) {
         logutils.logger.error('We did not get the mapped values for Service: ' +
-                              serviceType);
+                              serviceType + ' for region:' + regionName);
         return;
     }
     var mapObj = mappedObjs.shift();

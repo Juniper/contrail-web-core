@@ -70,9 +70,8 @@ function doAuthenticate (req, res, appData, callback) {
 function getTokenObj (authObj, callback)
 {
     var req = authObj.req 
-    getAuthMethod[req.session.loggedInOrchestrationMode].getToken(authObj, function(err, data) { 
-        callback(err, data);
-    });
+    getAuthMethod[req.session.loggedInOrchestrationMode].getToken(authObj,
+                                                                  callback);
 }
 
 function getTenantList (req, appData, callback)
@@ -299,6 +298,13 @@ function shiftServiceEndpointList (req, serviceType, regionName)
                                                             regionName);
 }
 
+function getAuthRetryData (token, req, reqUrl, callback)
+{
+    var orchMode = req.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].getAuthRetryData(token, req, reqUrl,
+                                                    callback);
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -330,3 +336,5 @@ exports.getRegionList = getRegionList;
 exports.getCurrentRegion = getCurrentRegion;
 exports.shiftServiceEndpointList = shiftServiceEndpointList;
 exports.getRoleList = getRoleList;
+exports.getAuthRetryData = getAuthRetryData;
+

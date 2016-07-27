@@ -80,8 +80,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'server-schema'               : coreWebDir + '/schemas/server.schema',
         'cluster-schema'              : coreWebDir + '/schemas/cluster.schema',
         'json-model'                  : coreWebDir + "/js/models/JsonModel",
-        'json-edit-view'              : coreWebDir + '/js/views/JsonEditView'
-
+        'json-edit-view'              : coreWebDir + '/js/views/JsonEditView',
+        'iframe-view'                 : coreWebDir + '/js/views/IframeView'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -103,11 +103,11 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'contrail-view-model'         : coreWebDir + '/js/models/ContrailViewModel',
             'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
             'lodash'                      : coreWebDir + '/assets/lodash/lodash.min',
-            'crossfilter'               : coreWebDir + '/assets/crossfilter/js/crossfilter',
+            'crossfilter'                 : coreWebDir + '/assets/crossfilter/js/crossfilter',
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
             'text'                        : coreWebDir + '/assets/requirejs/text',
             'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
-            'moment'                    : coreWebDir + "/assets/moment/moment",
+            'moment'                      : coreWebDir + "/assets/moment/moment",
             'layout-handler'              : coreWebDir + '/js/handlers/LayoutHandler',
             'menu-handler'                : coreWebDir + '/js/handlers/MenuHandler',
             'content-handler'             : coreWebDir + '/js/handlers/ContentHandler',
@@ -190,7 +190,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'controller-basedir'          : coreBaseDir,
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
             'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
-            'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
+            'knockback'                 : coreWebDir + '/assets/backbone/knockback.min',
             'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd'
         }
         //Merge common (for both prod & dev) alias 
@@ -906,6 +906,19 @@ function initCustomKOBindings(Knockout) {
     });
 };
 
+function loadGohanUI() {
+    sessionStorage.setItem('gohan_contrail',true);
+    sessionStorage.setItem('tenant',JSON.stringify(loadUtils.getCookie('project')));
+    $('#alarms-popup-link').hide();
+    require(['iframe-view'],function(IframeView) {
+        var iframeView = new IframeView({
+            el:$("#main-container"),
+            url:"./gohan.html"
+        });
+        iframeView.render();
+    });
+};
+
 function changeRegion (e)
 {
     var oldRegion = contrail.getCookie('region');
@@ -913,6 +926,12 @@ function changeRegion (e)
     if ((null != region) && (oldRegion != region) &&
         ('null' != region) && ('undefined' != region)) {
         contrail.setCookie('region', region);
+        if(region == "All Regions") {
+            //To indicate that gohanUI is being embedded in contrailUI
+            sessionStorage.setItem('gohan_contrail',true);
+            loadGohanUI();
+            return;
+        }
         /* And issue logout request */
         loadUtils.logout()
     }
@@ -1107,7 +1126,7 @@ if (typeof document !== 'undefined' && document) {
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
 
                     //For Region drop-down
-                    require(['jquery', 'jquery-dep-libs'], function() {
+                    require(['jquery', 'jquery-dep-libs','nonamd-libs'], function() {
                         var regionList =
                             globalObj.webServerInfo.regionList;
                         var cnt = 0;
@@ -1126,7 +1145,23 @@ if (typeof document !== 'undefined' && document) {
                                                             width: '100px',
                                                             change: changeRegion});
                             $('#regionDD').data("contrailDropdown").setData(ddRegionList);
-                            $("#regionDD").data("contrailDropdown").value(contrail.getCookie('region'));
+                            // if(loadUtils.getCookie('region') != "All Regions")
+                            $("#regionDD").data("contrailDropdown").value(loadUtils.getCookie('region'));
+                            if(globalObj['webServerInfo']['cgcEnabled'] == true) {
+                                //Fetch tokens for gohanUI
+                                $.ajax({
+                                    type: "POST",
+                                    url: '/gohan_contrail_auth/tokens'
+                                }).done(function(response,textStatus,xhr) {
+                                    var jsonObj = {};
+                                    jsonObj[loadUtils.getCookie('project')] = response;
+                                    sessionStorage.setItem('scopedToken',JSON.stringify(jsonObj));
+                                });
+                            }
+                            //Trigger change handler while setting default value
+                            if(loadUtils.getCookie('region') == "All Regions") {
+                                loadGohanUI();
+                            }
                         }
                     });
                     webServerInfoDefObj.resolve();
@@ -1136,11 +1171,13 @@ if (typeof document !== 'undefined' && document) {
                     }
                     $('#user-profile').show();
                     loadUtils.bindAppListeners();
+
                     $.when.apply(window,[menuXMLLoadDefObj,layoutHandlerLoadDefObj]).done(function(menuXML) {
                         if(globalObj['featureAppDefObj'] == null)
                             globalObj['featureAppDefObj'] = $.Deferred();
                         require(['core-bundle'],function() {
-                            layoutHandler.load(menuXML);
+                            if(loadUtils.getCookie('region') != "All Regions")
+                                layoutHandler.load(menuXML);
                         });
                     });
                 });
@@ -1162,7 +1199,7 @@ if (typeof document !== 'undefined' && document) {
                         $("#region_id").select2({placeholder: "Select the Region",
                                                 data: regionList,
                                                 width: "283px"})
-                        var cookieRegion = contrail.getCookie('region');
+                        var cookieRegion = loadUtils.getCookie('region');
                         if (regionList.length > 0) {
                             if (null == cookieRegion) {
                                 cookieRegion = regionList[0]['key'];
@@ -1267,6 +1304,8 @@ if (typeof document !== 'undefined' && document) {
                 });
             },
             logout: function() {
+                //Clear iframes
+                $('.iframe-view').remove();
                 //Clear All Pending Ajax calls
                 $.allajax.abort();
                 $.ajax({
