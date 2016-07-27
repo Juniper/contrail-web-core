@@ -107,7 +107,7 @@ define([
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/slickgrid/styles/slick.grid.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/jquery/css/jquery.steps.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css"/>');
-        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/contrail.theme.init.test.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/contrail.init.test.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.theme.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.theme.layout.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.theme.elements.css"/>');
