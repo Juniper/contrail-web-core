@@ -196,41 +196,48 @@ novaApi.delete = function (reqUrl, apiProtoIP, req, callback, stopRetry,
     });
 }
 
-var novaAPIVerList = ['v1.1', 'v2'];
+var novaAPIVerList = ['v1.1', 'v2', 'v2.1'];
 
 var getVMStatsByProjectCB = {
     'v1.1': getVMStatsByProjectV11,
-    'v2': getVMStatsByProjectV11
+    'v2': getVMStatsByProjectV11,
+    'v2.1': getVMStatsByProjectV11
 };
 
 var getServiceInstanceVMStatusCB = {
     'v1.1': getServiceInstanceVMStatusV11,
-    'v2': getServiceInstanceVMStatusV11
+    'v2': getServiceInstanceVMStatusV11,
+    'v2.1': getServiceInstanceVMStatusV11
 }
 
 var getFlavorsCB = {
     'v1.1': getFlavorsV11,
-    'v2': getFlavorsV11
+    'v2': getFlavorsV11,
+    'v2.1': getFlavorsV11
 };
 
 var launchVNCCB = {
     'v1.1' : launchVNCV11,
-    'v2': launchVNCV11
+    'v2': launchVNCV11,
+    'v2.1': launchVNCV11
 };
 
 var getOSHostListCB = {
     'v1.1': getOSHostV11,
-    'v2': getOSHostV11
+    'v2': getOSHostV11,
+    'v2.1': getOSHostV11
 };
 
 var availabilityZoneCB = {
     'v1.1': getAvailabilityZoneV11,
-    'v2': getAvailabilityZoneV11
+    'v2': getAvailabilityZoneV11,
+    'v2.1': getAvailabilityZoneV11
 };
 
 var portAttachSendRespCB = {
     'v1.1': portAttachSendRespV11,
-    'v2': portAttachSendRespV11
+    'v2': portAttachSendRespV11,
+    'v2.1': portAttachSendRespV11
 };
 
 function getOSHostV11 (err, data, callback){
