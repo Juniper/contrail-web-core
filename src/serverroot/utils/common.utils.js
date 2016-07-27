@@ -1401,9 +1401,26 @@ function getWebServerInfo (req, res, appData)
     serverObj['serviceEndPointFromConfig'] =
         (null != config.serviceEndPointFromConfig) ?
         config.serviceEndPointFromConfig : true;
-    serverObj['regionList'] = req.session.regionList;
+    serverObj['regionList'] = getValueByJsonPath(req.session,'regionList');
     serverObj['isRegionListFromConfig'] = config.regionsFromConfig;
+    var cgcData =
+        commonUtils.getValueByJsonPath(req,
+                                       'session;serviceCatalog;' +
+                                       global.REGION_ALL + ';' +
+                                       global.SERVICE_ENDPT_TYPE_CGC + ';maps;'
+                                       + 0, null, false);
+    var cgcIP =
+        commonUtils.getValueByJsonPath(cgcData, 'ip', null);
+    var cgcPort =
+        commonUtils.getValueByJsonPath(cgcData, 'port', null);
+    if ((null != cgcIP) && (null != cgcPort)) {
+        serverObj['cgcEnabled'] = true;
+    } else {
+        serverObj['cgcEnabled'] = false;
+    }
     serverObj['configRegionList'] = config.regions;
+    if(serverObj['cgcEnabled'] == true)
+        serverObj['regionList'].unshift("All Regions");
 
     var authApi = require('../common/auth.api');
     serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
