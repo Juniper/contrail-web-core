@@ -45,7 +45,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         //Files not in bundles
         'underscore'            : coreWebDir + '/assets/underscore/underscore-min',
         'slickgrid-utils'       : coreWebDir + "/js/slickgrid-utils",
-            'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
+        'jquery'                : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
         'contrail-load'         : coreWebDir + '/js/contrail-load',
         'vis'                   : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
         'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
@@ -72,7 +72,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
 
         'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
-        'xml2json'                    : coreWebDir + '/assets/jquery/js/xml2json',
+        'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json',
+
         'json-editor'                 : coreWebDir + '/assets/jsoneditor/js/jsoneditor.min',
         'ajv'                         : coreWebDir + '/assets/ajv/ajv.min',
         'server-schema'               : coreWebDir + '/schemas/server.schema',
@@ -150,7 +151,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'slick.groupmetadata'       : coreWebDir + "/assets/slickgrid/js/slick.groupitemmetadataprovider",
             'slick.rowselectionmodel'   : coreWebDir + '/assets/slickgrid/js/slick.rowselectionmodel',
             'slick.enhancementpager'    : coreWebDir + "/assets/slickgrid/js/slick.enhancementpager",
-            'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
+            'knockback'                 : coreWebDir + '/assets/backbone/knockback.min',
             //End - thirdparty-libs aliases
             //Start - chart-libs aliases
             'd3'                        : coreWebDir + '/assets/d3-v3.5.6/js/d3',
@@ -160,8 +161,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'web-utils'                 : coreWebDir + "/js/web-utils",
             'analyzer-utils'            : coreWebDir + "/js/analyzer-utils",
             'config_global'             : coreWebDir + "/js/config_global",
-            'contrail-layout'             : coreWebDir + '/js/contrail-layout',
-
+            'contrail-layout'           : coreWebDir + '/js/contrail-layout',
             'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
             'contrail-common'           : coreWebDir + "/js/contrail-common",
             'uuid'                      : coreWebDir + "/js/uuid",
@@ -176,7 +176,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
             'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
 
-             //'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
+            //'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
             'storage-init'                : 'empty:',
             'contrail-element'            : coreWebDir + '/js/models/ContrailElement'
         };
@@ -407,7 +407,6 @@ var coreBundles = {
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
-            'xml2json',
             'jquery.ba-bbq',
             'jquery.json',
             'bootstrap',
@@ -465,12 +464,12 @@ var coreBundles = {
             'core-basedir/js/views/ZoomScatterChartView',
             //Dashboard
             'mon-infra-node-list-model',
-            'mon-infra-log-list-model',    
-            'mon-infra-alert-list-view',   
-            'mon-infra-alert-grid-view',   
-            'mon-infra-log-list-view',     
-            'mon-infra-sysinfo-view',      
-            'mon-infra-dashboard-view'   
+            'mon-infra-log-list-model',
+            'mon-infra-alert-list-view',
+            'mon-infra-alert-grid-view',
+            'mon-infra-log-list-view',
+            'mon-infra-sysinfo-view',
+            'mon-infra-dashboard-view'
         ],
         'contrail-core-views': [
             'core-basedir/js/views/GridView',
