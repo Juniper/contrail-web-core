@@ -144,12 +144,11 @@ function updateHttpsSecureOptions (apiType, options)
                 logutils.logger.error('readFileSync error for ca file' + e);
             }
         }
-        /* If strictSSL is set to false, then if response.client.authorized
-         * is set as false, a secure connection is established.
-         */
+        /* https://github.com/mscdex/node-imap/issues/181 */
+        options['rejectUnauthorized'] = false;
         var strictSSL = getHttpsOptionsByAPIType(apiType, 'strictSSL');
         if (null != strictSSL) {
-            options['strictSSL'] = strictSSL;
+            options['rejectUnauthorized'] = strictSSL;
         }
     }
     return options;
