@@ -1914,7 +1914,6 @@ pre.prettyprint {
 .sidebar {
     width: 190px;
     float: left;
-    position: fixed;
     padding-left: 0;
     padding-right: 0; }
 

@@ -43,10 +43,10 @@ $(document).ready(function () {
     });
 
     $(window).on('scroll', function () {
-        scrollHeight = $(document).height() - $(window).height();
-        var current_scroll = $(this).scrollTop();
+        var scrollHeight = $(document).height() - $(window).height(),
+            previousScroll = 0, currentScroll = $(this).scrollTop();
 
-        if (current_scroll < 50 || previous_scroll - current_scroll > 40) {
+        if (currentScroll < 50 || previousScroll - currentScroll > 40) {
             $("#pageHeader").show();
             $('#sidebar').removeClass('scrolled');
             $('#breadcrumbs').removeClass('scrolled');
@@ -58,8 +58,8 @@ $(document).ready(function () {
             $('#breadcrumbs').addClass('scrolled');
             $('#back-to-top').fadeIn();
         }
-        if (current_scroll < scrollHeight) {
-            previous_scroll = $(window).scrollTop();
+        if (currentScroll < scrollHeight) {
+            previousScroll = $(window).scrollTop();
         }
     });
 
