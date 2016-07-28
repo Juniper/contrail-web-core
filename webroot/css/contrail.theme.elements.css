@@ -697,6 +697,12 @@ input.block {
   display: block;
   margin-bottom: 9px;
 }
+
+.login-fields .input-group input[type="text"],
+.login-fields .input-groupinput[type="password"] {
+  height: 32px;
+}
+
 textarea.autosize-transition {
   -webkit-transition-duration: "height 0.2s";
   -moz-transition-duration: "height 0.2s";
@@ -4429,6 +4435,18 @@ input.ace-input[type=checkbox]:checked + .ace-lbl::before, input.ace-input[type=
   background-color: white;
 }
 
+.textarea-input-append .where-textarea #inner-editor {
+  height: 20px;
+}
+
+#select .textarea-input-append {
+  height: 30px;
+}
+
+#select .textarea-input-append .where-textarea {
+  height: 30px !important;
+}
+
 #time-granularity-section .form-label {
   margin-left: -15px;
 }
@@ -4436,6 +4454,10 @@ input.ace-input[type=checkbox]:checked + .ace-lbl::before, input.ace-input[type=
 #time_granularity, #time_granularity_unit {
   padding-left: 0px;
   padding-right: 10px;
+}
+
+.margin-0-0-5 .form-element .input-append {
+  height: 30px;
 }
 
 .section-content .textarea-input-append {

@@ -334,6 +334,7 @@ input[type="text"]:focus {
 
 .form-label {
   margin-left: -30px;
+  height: 25px;
 }
 
 .display-inline-block {
