@@ -92,11 +92,18 @@
 	<xsl:template match="@type[.='list']">
 		<xsl:for-each select="../*">
 			<xsl:choose>
-				<xsl:when test="@type = 'struct'">
-					<xsl:apply-templates select="@type[.='struct']"/>
+				<xsl:when test="@size = 0">
+					<p class="no-data-text">No Data Found.</p>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:apply-templates select="element"/>
+					<xsl:choose>
+						<xsl:when test="@type = 'struct'">
+							<xsl:apply-templates select="@type[.='struct']"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:apply-templates select="element"/>
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:for-each>
@@ -289,7 +296,7 @@
 						</xsl:for-each>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:call-template name="output_no_data_found"/>
+						<p class="no-data-text">No Data Found.</p>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:otherwise>
