@@ -66,6 +66,7 @@ var express = require('express')
     , logutils = require('./src/serverroot/utils/log.utils')
     ;
 
+    var cgcApi = require('./src/serverroot/common/globalcontroller.api');
 var pkgList = commonUtils.mergeAllPackageList(global.service.MAINSEREVR);
 assert(pkgList);
 var nodeWorkerCount = config.node_worker_count;
@@ -281,6 +282,8 @@ function registerReqToApp ()
     myApp.get('/vcenter', csrf);
     //Enable CSRF token check for all URLs starting with "/api"
     myApp.all('/api/*', csrf);
+    myApp.all('/gohan_contrail/*', cgcApi.getCGCAllReq);
+    myApp.all('/gohan_contrail_auth/*', cgcApi.getCGCAuthReq);
 
     loadAllFeatureURLs(myApp);
     var handler = require('./src/serverroot/web/routes/handler')

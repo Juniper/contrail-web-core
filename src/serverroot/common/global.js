@@ -91,6 +91,7 @@ global.SERVICE_ENDPT_TYPE_EC2 = 'ec2';
 global.SERVICE_ENDPT_TYPE_IDENTITY = 'identity';
 global.SERVICE_ENDPT_TYPE_APISERVER = 'apiServer';
 global.SERVICE_ENDPT_TYPE_OPSERVER = 'opServer';
+global.SERVICE_ENDPT_TYPE_CGC = 'cgc';
 
 /* http status codes
  */
@@ -219,6 +220,7 @@ global.label.DNS_SERVER = 'dns-server'
 global.label.VCENTER_SERVER = 'vCenter-server'
 global.label.VROUTER = 'vrouter';
 global.label.CONTROL_NODE = 'control-node';
+global.label.CGC = 'contrail-global-controller';
 global.SANDESH_CONTROL_NODE_PORT = '8083';
 global.SANDESH_COMPUTE_NODE_PORT = '8085';
 global.SANDESH_DNS_AGENT_PORT = '8092';
