@@ -92,7 +92,7 @@ define([
                 sliceTooltipFn = viewConfig['chartOptions']['sliceTooltipFn'];
             }
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                data = viewConfig['parseFn'](data);
+                data = viewConfig['parseFn'](data, chartViewModel);
             }
             if ($(selector).find('.stacked-bar-chart-container').find("svg") != null &&
                     $(selector).find('.stacked-bar-chart-container').find("svg").length > 0) {
@@ -215,6 +215,17 @@ define([
             }
             var dateExtent;
             var yAxisMaxValue = d3.max(data, function(d) { return d.total; });
+            //inserting the dummy values where the no data in the given bucket
+            $.each(data, function (idx, obj) {
+                if (obj.total == 0) {
+                    ifNull(obj['counts'], []).push({
+                        tooltip: false,
+                        color: obj.colorCodes[0],
+                        y0: 0,
+                        y1: yAxisMaxValue * 0.01
+                    })
+                }
+            });
             yAxisMaxValue = yAxisMaxValue + (yAxisOffset/100) * yAxisMaxValue;
             var yExtent = [0, yAxisMaxValue];
             var filter = cfDataSource != null ? cfDataSource.getFilter('timeFilter') : null;
@@ -335,7 +346,7 @@ define([
                     .style("fill", function(d) { return d.color; })
                     .on("mouseover", function(d) {
                         if (sliceTooltipFn != null &&
-                            typeof sliceTooltipFn == 'function') {
+                            typeof sliceTooltipFn == 'function' && d.tooltip != false) {
                             var event = d3.event;
                             //TODO parent div adjust need to be removed
                             //$(tooltipDiv).css({'width': '0px','height': '0px'});
