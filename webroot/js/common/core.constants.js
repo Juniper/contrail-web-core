@@ -836,6 +836,17 @@ define([
         this.ANALYTICS_API_DOWN_ALARM_TEXT = 'Analytics API Down. Alarms may not be reported correctly.';
         this.ANALYTICS_PROCESSES_DOWN_ALARM_TEXT = 'Analytics Processes Down. Alarms may not be reported correctly.';
         this.UI_GENERATED_ALARM = 'UIGeneratedAlarm';
+
+        //RBAC constants
+        this.RBAC_ACCESS_TYPE_LIST = [{text: "Read", value: "4"},
+                                      {text: "Write", value: "2"},
+                                      {text: "Refer", value: "1"}];
+        this.PERMISSIONS_TITLE = 'Permissions';
+        this.PERMISSIONS_TAB_ID = 'permission_tab';
+        this.PERMISSIONS_SECTION_ID = 'permissions_config_tab';
+        this.RBAC_PERMISSIONS_ID = 'rbac_permissions';
+        this.TAB_FORM_TYPE = 'form';
+
         this.get = function () {
             var args = arguments;
             return cowu.getValueFromTemplate(args);
