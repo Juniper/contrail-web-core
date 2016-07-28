@@ -40,7 +40,7 @@ define([
                     var chartControlPanelExpandedSelector = $(controlPanelSelector).parent().find('.control-panel-expanded-container');
 
                     if (chartControlPanelExpandedSelector.is(':visible') && $(event.target).closest(chartControlPanelExpandedSelector).length == 0) {
-                        chartControlPanelExpandedSelector.hide();
+                        chartControlPanelExpandedSelector.hideElement();
 
                         $(controlPanelSelector).find('.control-panel-item')
                             .removeClass('active')

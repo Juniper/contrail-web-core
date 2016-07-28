@@ -29,8 +29,7 @@
     border: none
 }
 .grid-header .input-grid-search {
-    height: 17px !important;
-    margin-bottom: 4px;
+    height: 23px !important;
     border-color: #ddd;
 }
 .grid-header .select2-container,
@@ -52,7 +51,7 @@
     padding: 1px 6px 3px 24px;
 }
 .grid-header [class*="fa-"]{
-    margin-top: 1px;
+    /*margin-top: 1px;*/
     font-size: 14px;
 }
 .grid-header .select2-container{

@@ -221,8 +221,8 @@ define([
 
                             switch (command) {
                                 case 'search':
-                                    gridHeader.find('.link-searchbox').toggle();
-                                    gridHeader.find('.input-searchbox').toggle();
+                                    gridHeader.find('.link-searchbox').toggleElement();
+                                    gridHeader.find('.input-searchbox').toggleElement();
                                     if (gridHeader.find('.input-searchbox').is(':visible')) {
                                         gridHeader.find('.input-searchbox input').focus();
                                     } else {
@@ -896,8 +896,8 @@ define([
 
                 initOnClickDocument('.input-searchbox', function (e) {
                     if (gridContainer.find('.input-searchbox').is(":visible") && gridContainer.find('.input-searchbox').find('input').val() == '') {
-                        gridContainer.find('.input-searchbox').hide();
-                        gridContainer.find('.link-searchbox').show();
+                        gridContainer.find('.input-searchbox').hideElement();
+                        gridContainer.find('.link-searchbox').showElement();
                     }
                 });
             };
@@ -1206,7 +1206,7 @@ define([
                     <a class="widget-toolbar-icon link-searchbox" title="Search" data-action="search"> \
                         <i class="fa fa-search"></i> \
                     </a> \
-                    <span class="input-searchbox hide"> \
+                    <span class="input-searchbox hidden"> \
                         <span class="input-icon"> \
                             <input type="text" placeholder="Search {{this.text}}" class="input-medium input-grid-search"> \
                             <i class="widget-toolbar-icon fa fa-search"></i> \

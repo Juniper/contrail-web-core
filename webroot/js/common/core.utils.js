@@ -405,7 +405,7 @@ define(['underscore'], function (_) {
                     $(self).toggleClass('active');
                     $(self).toggleClass('refreshing');
 
-                    chartControlPanelExpandedSelector.toggle();
+                    chartControlPanelExpandedSelector.toggleElement();
 
                     if (chartControlPanelExpandedSelector.is(':visible')) {
                         chartControlPanelExpandedSelector.find('.control-panel-filter-body').height(chartControlPanelExpandedSelector.height() - 30);
@@ -426,7 +426,6 @@ define(['underscore'], function (_) {
                                 });
                             });
                         } else {
-                            console.log(controlPanelExpandedTemplateConfig.viewConfig.groups)
                             $.each(controlPanelExpandedTemplateConfig.viewConfig.groups, function (groupKey, groupValue) {
                                 $.each(groupValue.items, function (itemKey, itemValue) {
                                     var controlPanelFilterGroupElement = $('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey];
@@ -445,7 +444,7 @@ define(['underscore'], function (_) {
                         chartControlPanelExpandedSelector.find('.control-panel-filter-close')
                             .off('click')
                             .on('click', function() {
-                                chartControlPanelExpandedSelector.hide();
+                                chartControlPanelExpandedSelector.hideElement();
                                 $(self).removeClass('active');
                                 $(self).removeClass('refreshing');
                                 $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');

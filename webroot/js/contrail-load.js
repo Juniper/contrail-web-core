@@ -292,7 +292,34 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
 	   });
 	   return o;
 	};
-	
+
+    /*
+     * .hideElement()
+     * Hide the matched elements. 
+     */
+    $.fn.hideElement = function(){
+        $(this).addClass('hidden');
+        return this;
+    };
+
+    /*
+     * .showElement()
+     * Show the matched elements.
+     */
+    $.fn.showElement = function(){
+        $(this).removeClass('hidden');
+        return this;
+    };
+
+    /*
+     * .toggleElement()
+     * Toggle the matched elements.
+     */
+    $.fn.toggleElement = function(){
+        $(this).toggleClass('hidden');
+        return this;
+    };
+
 	/*
 	 * .addClassSVG(className)
 	 * Adds the specified class(es) to each of the set of matched SVG elements.
