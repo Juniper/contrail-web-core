@@ -635,7 +635,7 @@
 }
 .wizard > .content > .body {
     height: auto;
-    width: 96%;
+    width: 100%;
     padding: 7px 2%;
 }
 .wizard > .actions {

@@ -283,21 +283,16 @@ input[type="text"]:focus {
 }
 
 #main-content {
- /* margin-left: 183px;
-  margin-right: 0;
-  margin-top: 0;
-  min-height: 100%;
-  /* border-top: 1px solid #e5e5e5;
-  padding: 0;*/
+  margin-right: 7px;
 }
 
 .sidebar + .main-content {
-  margin-left: 190px;
+  margin-left: 182px;
 }
 
 .main-content {
   margin-left: 0;
-  min-height: 100%;
+  min-height: 96%;
   padding: 0;
 }
 
