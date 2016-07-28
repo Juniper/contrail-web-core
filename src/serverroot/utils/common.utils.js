@@ -2252,6 +2252,13 @@ function doDeepSort (object)
             sortedObj[key] = object[key];
         }
     }
+    if (object instanceof Array) {
+        var resultArr = [];
+        for (var key in sortedObj) {
+            resultArr.push(sortedObj[key]);
+        }
+        return resultArr;
+    }
     return sortedObj;
 }
 
