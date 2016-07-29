@@ -171,18 +171,6 @@ blockquote.pull-right {
   /*float: none;*/
 }
 
-.modal-body #fs-select-popup-form .row {
-  margin-right: 0px;
-}
-
-.modal-body #fs-select-popup-form [class*="col-xs-"] {
-  padding-right: 0px;
-}
-
-.modal-body .row-3n [class*="col-xs-"] {
-  min-height: 30px;
-}
-
 .modal-footer {
   border-top-color: #e4e9ee;
   -webkit-box-shadow: none;
@@ -1447,13 +1435,12 @@ input[type=checkbox].ace-switch.ace-switch-7:checked + .lbl::after {
 .input-append > .btn-group > .btn.btn-small > .caret {
   margin-top: 10px;
 }
-.input-append.inset .input-group-addon{
+.input-group.inset .input-group-addon{
 	position: relative;
 	margin-left: -28px;
 	right: 0;
 	cursor: pointer;
 	background-color: #fff;
-	border: none;
 	margin-top: 1px;
 	color: #777;
 	height: 18px;
@@ -1461,6 +1448,16 @@ input[type=checkbox].ace-switch.ace-switch-7:checked + .lbl::after {
 	font-size: 16px;
     padding: 4px 5px;
 }
+
+.input-group.inset {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.input-group.inset input[type="password"] {
+  border-right: none;
+}
+
 .input-append.inset .input-group-addon.disabled {
     background-color: #eee;
 }
@@ -4503,4 +4500,8 @@ input.ace-input[type=checkbox]:checked + .ace-lbl::before, input.ace-input[type=
 
 div.jsoneditor td, div.jsoneditor td.jsoneditor-tree {
   vertical-align: inherit;
+}
+
+.detail-foundation-action {
+  margin-right: 15px;
 }

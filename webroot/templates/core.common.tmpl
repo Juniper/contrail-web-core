@@ -954,7 +954,7 @@
         </div>
         <div class="row col-xs-12 form-element">
                 {{#IfCompare type 'password' operator='==='}}
-            <div class="input-append inset col-xs-12">
+            <div class="input-group inset col-xs-12">
                 <input type="{{type}}" name="{{id}}" class="col-xs-12 {{class}}"
                             data-bind="
                                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1808,7 +1808,7 @@
 
 <script type="text/x-handlebars-template" id="core-detail-foundation-template">
     <div class="row detail-foundation-container group-detail-container">
-        <div class="detail-foundation-action">
+        <div class="row detail-foundation-action">
         {{#each actions}}
             {{#IfCompare type 'link' operator='==' }}
                 <a class="detail-foundation-action-item group-detail-action-item pull-right" title="{{title}}"><i class="{{iconClass}}"></i></a>

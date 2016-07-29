@@ -136,6 +136,18 @@
     background-color: #fff;
 }
 
+.modal-body [id*="select-popup-form"] .row {
+    margin-right: 0px;
+}
+
+.modal-body [id*="select-popup-form"] [class*="col-xs-"] {
+    padding-right: 0px;
+}
+
+.modal-body .row-3n [class*="col-xs-"] {
+    min-height: 30px;
+}
+
 /*
  * Contrail Tabs
  * Extends Jquery UI Tabs
@@ -915,4 +927,16 @@ label.jqInvalid {
     color: #e6550d;
     font-family: 'Open Sans';
     font-size: 13px;
+}
+
+li {
+    line-height: 20px;
+}
+
+.margin-right-10 {
+    margin-right: 10px;
+}
+
+.margin-10-0-0 {
+    margin: 10px 0 0 !important;
 }
