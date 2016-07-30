@@ -163,7 +163,9 @@ define([], function () {
                     //} else {
                     //    container.selectAll('.nv-noData').remove();
                     //}
-
+                    if ((!data || !data.length) && chartOptions.showEmptyDonut) {
+                        data = [{color:"#E1E2E3",value:1,noData:true}];
+                    }
                     // Setup containers and skeleton of chart
                     var wrap = container.selectAll('g.nv-wrap.nv-pieChart').data([data]);
                     var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-pieChart').append('g');
@@ -236,20 +238,29 @@ define([], function () {
             //------------------------------------------------------------
 
             pie.dispatch.on('elementMouseover.tooltip', function(evt) {
-                evt['series'] = {
-                    key: chart.x()(evt.data),
-                    value: chart.y()(evt.data),
-                    color: evt.color
-                };
-                tooltip.data(evt).hidden(false);
+                if(!(chartOptions.showEmptyDonut && evt != null &&
+                        evt.data != null && evt.data.noData)) {
+                    evt['series'] = {
+                        key: chart.x()(evt.data),
+                        value: chart.y()(evt.data),
+                        color: evt.color
+                    };
+                    tooltip.data(evt).hidden(false);
+                }
             });
 
             pie.dispatch.on('elementMouseout.tooltip', function(evt) {
-                tooltip.hidden(true);
+                if(!(chartOptions.showEmptyDonut && evt != null &&
+                        evt.data != null && evt.data.noData)) {
+                    tooltip.hidden(true);
+                }
             });
 
             pie.dispatch.on('elementMousemove.tooltip', function(evt) {
-                tooltip.position({top: d3.event.pageY, left: d3.event.pageX})();
+                if(!(chartOptions.showEmptyDonut && evt != null &&
+                        evt.data != null && evt.data.noData)) {
+                    tooltip.position({top: d3.event.pageY, left: d3.event.pageX})();
+                }
             });
 
             //============================================================
