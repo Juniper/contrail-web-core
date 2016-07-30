@@ -146,7 +146,8 @@ define([
                 },
                 donutRatio: 0.5,
                 color: d3.scale.category10(),
-                noDataMessage: "Unable to get data"
+                noDataMessage: "Unable to get data",
+                showEmptyDonut: false
             };
 
         chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
