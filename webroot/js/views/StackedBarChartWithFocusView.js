@@ -156,7 +156,7 @@ define([
                             .scale(y)
                             .orient("left")
                             .ticks(3)
-                            .tickFormat(d3.format("d"))
+                            .tickFormat(cowu.numberFormatter)
                             .innerTickSize(-width)
                             .outerTickSize(0)
                             .tickPadding(tickPadding);
