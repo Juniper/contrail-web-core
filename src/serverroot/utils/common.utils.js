@@ -1265,8 +1265,9 @@ function redirectToURL(req, res, redURL)
            return;
        }
        if ((-1 != userAgent.indexOf('MSIE')) ||
-           (-1 != userAgent.indexOf('Trident'))) {
-           /* In IE Browser, response code 307, does not lead the browser to
+           (-1 != userAgent.indexOf('Trident')) ||
+           (-1 != userAgent.indexOf('Edge'))) {
+           /* In IE/Edge Browser, response code 307, does not lead the browser to
             * redirect to certain URL, so sending 200 responseCode
             */
            res.send(200, '');
