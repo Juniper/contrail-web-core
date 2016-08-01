@@ -31,6 +31,11 @@
     text-align: center;
     padding: 0 5px 10px;
 }
+
+.contrail-editable-grid-table .data-row .data-cell .row {
+    margin-left: 0px;
+    margin-right: 0px;
+}
 .contrail-editable-grid-table tr td .custom-combobox.input-append,
 .collection-table tr td .custom-combobox.input-append,
 .contrail-editable-grid-table tr td .textarea-input-append.input-append,
@@ -711,6 +716,10 @@
     overflow-x: hidden;
 }
 
+.control-panel-filter-container .control-panel-filter-body .control-panel-filter-group .control-panel-filter-group-item {
+    display: inline-flex;;
+}
+
 /*
  * JSON Editor
  */
@@ -954,6 +963,10 @@ li {
 
 .margin-0 {
     margin: 0 !important;
+}
+
+.padding-10 {
+    padding: 10px !important;
 }
 
 .group-detail-advanced-json {
