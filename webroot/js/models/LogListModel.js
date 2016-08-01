@@ -18,7 +18,7 @@ define(['contrail-list-model'], function(ContrailListModel) {
 
         function parseDashboardLogs(result) {
             var UVEModuleIds = monitorInfraConstants.UVEModuleIds;
-            retArr = $.map(result['data'],function(obj,idx) {
+            retArr = $.map(getValueByJsonPath(result,'data',[]),function(obj,idx) {
                 obj['message'] = cowu.formatXML2JSON(obj['Xmlmessage']);
                 obj['timeStr'] = diffDates(new XDate(obj['MessageTS']/1000),new XDate());
                 if(obj['Source'] == null)

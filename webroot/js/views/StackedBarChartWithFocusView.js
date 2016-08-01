@@ -83,6 +83,7 @@ define([
             var showLegend = getValueByJsonPath(viewConfig,'chartOptions;showLegend',false);
             var legendFn = getValueByJsonPath(viewConfig,'chartOptions;legendFn',null);
             var colorMap = getValueByJsonPath(viewConfig,'chartOptions;colorMap',{});
+            var yAxisFormatter = getValueByJsonPath(viewConfig,'chartOptions;yAxisFormatter',cowu.numberFormatter);
             var sliceTooltipFn = null;
 
             //sliceTooltipFn is for portion of bar in stacked bar.
@@ -156,7 +157,7 @@ define([
                             .scale(y)
                             .orient("left")
                             .ticks(3)
-                            .tickFormat(cowu.numberFormatter)
+                            .tickFormat(yAxisFormatter)
                             .innerTickSize(-width)
                             .outerTickSize(0)
                             .tickPadding(tickPadding);
@@ -221,7 +222,7 @@ define([
                 if (obj.total == 0) {
                     ifNull(obj['counts'], []).push({
                         tooltip: false,
-                        color: obj.colorCodes[0],
+                        color: getValueByJsonPath(obj, 'colorCodes;0', cowc.DEFAULT_COLOR),
                         y0: 0,
                         y1: yAxisMaxValue * 0.01
                     })
@@ -254,7 +255,10 @@ define([
             x.domain(dateExtent);
             if (barWidth == null && bucketSize != null) {
                 bucketSize = bucketSize * 60 * 1000;
-                barWidth = d3.scale.ordinal().domain(d3.range(dateExtent[0].getTime(), dateExtent[1].getTime(), bucketSize)).rangeRoundBands(x.range(),0.08).rangeBand();
+                var maxValue = dateExtent[1].getTime() + bucketSize;
+                //need to remove constant 12 (barwidth) and make it dynamic
+                x.range([0, width - 12]);
+                barWidth = d3.scale.ordinal().domain(d3.range(dateExtent[0].getTime(), dateExtent[1].getTime(), bucketSize)).rangeRoundBands(x.range(), 0.08).rangeBand();
             }
             y.domain(yExtent);
             xOverview.domain(x.domain());
