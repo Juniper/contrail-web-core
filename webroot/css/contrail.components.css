@@ -352,6 +352,7 @@
  */
 .ui-state-default.ui-accordion-header {
     border-bottom: 1px solid #eee;
+    outline: none;
 }
 .ui-accordion-content.ui-widget-content {
     border: none;

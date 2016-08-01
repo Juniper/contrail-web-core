@@ -10,12 +10,12 @@ define([
         render: function () {
             var self = this,
                 viewConfig = self.attributes.viewConfig,
-                cssClass = self.attributes.class,
+                elementConfig = viewConfig.elementConfig,
                 textTemplate = contrail.getTemplate4Id((viewConfig.templateId) ? viewConfig.templateId: cowc.TMPL_TEXT_VIEW),
                 tmplParameters;
 
             tmplParameters = {
-                class: cssClass, viewConfig: viewConfig
+                viewConfig: viewConfig
             };
 
             self.$el.html(textTemplate(tmplParameters));
