@@ -3,6 +3,20 @@
  * All rights reserved.
  */
 
+/*
+ * Contrail Textarea
+ */
+textarea {
+    resize: none;
+    width: 100%;
+    border: none;
+}
+.textarea-input-group.input-group {
+    border: 1px solid #D5D5D5;
+}
+.textarea-input-group .input-group-addon {
+    border: none;
+}
 /* Contrail Combobox
  * Extends Jquery UI Autocomplete.
  */
@@ -35,10 +49,9 @@
  */
 .select2-container {
     background-color:#fff;
-}
-.select2-container[class*="col-xs-"] {
-    height: 28px;
+    min-height: 28px;
     border: 1px solid #dadada;
+    width: 100%;
 }
 .select2-container .select2-choice {
     padding: 0 0 0 5px;

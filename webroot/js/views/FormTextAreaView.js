@@ -31,7 +31,7 @@ define([
             tmplParameters = {
                 label: labelValue, id: elId, name: elId, placeHolder: placeHolder, viewConfig: viewConfig,
                 dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE], lockAttr: lockEditingByDefault, type: type,
-                class: "col-xs-12", path: path, validation: validation, showEditIcon: showEditIcon
+                path: path, validation: validation, showEditIcon: showEditIcon
             };
 
             self.$el.html(textAreaTemplate(tmplParameters));
@@ -48,7 +48,7 @@ define([
                 .off('input')
                 .on('input', function() {
                     var scrollHeight = $(this).get(0).scrollHeight;
-                    $(this).height(((scrollHeight < 26) ? 26 : scrollHeight) - 6);
+                    $(this).height(((scrollHeight < 26) ? 26 : scrollHeight) - 4);
                 });
         }
     });

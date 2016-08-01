@@ -28,7 +28,7 @@ define([
             self.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                label: labelValue, id: elId + '_dropdown', name: elId, class: "col-xs-12",
+                label: labelValue, id: elId + '_dropdown', name: elId,
                 viewConfig: viewConfig, lockAttr: lockEditingByDefault, validation: validation
             };
 

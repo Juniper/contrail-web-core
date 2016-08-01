@@ -4418,49 +4418,6 @@ input.ace-input[type=checkbox]:checked + .ace-lbl::before, input.ace-input[type=
   display: none;
 }
 
-[class*=" col-xs"] {
-  padding-left: 0px;
-  padding-right: 0px;
-}
-
-.textarea-input-append .where-textarea {
-  border-right: none;
-  padding-left: 3px;
-}
-
-.textarea-input-append .input-group-addon {
-  background-color: white;
-}
-
-.textarea-input-append .where-textarea #inner-editor {
-  height: 20px;
-}
-
-#select .textarea-input-append {
-  height: 30px;
-}
-
-#select .textarea-input-append .where-textarea {
-  height: 30px !important;
-}
-
-#time-granularity-section .form-label {
-  margin-left: -15px;
-}
-
-#time_granularity, #time_granularity_unit {
-  padding-left: 0px;
-  padding-right: 10px;
-}
-
-.margin-0-0-5 .form-element .input-append {
-  height: 30px;
-}
-
-.section-content .textarea-input-append {
-  margin: 0px;
-}
-
 .infobox-content [class^="col-xs-"] {
   padding: 0px;
 }

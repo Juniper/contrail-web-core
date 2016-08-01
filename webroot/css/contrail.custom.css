@@ -23,7 +23,8 @@
  */
 .breadcrumb .breadcrumb-dropdown,
 .breadcrumb .breadcrumb-text {
-    max-width: 180px;
+    width: 120px;
+    border: none;
 }
 .breadcrumb .breadcrumb-text {
     text-overflow: ellipsis;

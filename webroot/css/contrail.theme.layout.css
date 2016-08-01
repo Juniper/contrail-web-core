@@ -279,10 +279,10 @@ input[type="text"]:focus {
   margin: 5px 10px 0 0 !important;
 }
 
-.form-label {
-  margin-left: -30px;
-  height: 25px;
-}
+/*.form-label {*/
+  /*margin-left: -30px;*/
+  /*height: 25px;*/
+/*}*/
 
 .display-inline-block {
   display: inline-block;
@@ -409,18 +409,5 @@ input[type="text"]:focus {
 
 .ui-accordion .ui-accordion-icons {
   padding-left: 1.5em;
-}
-
-
-.textarea-input-append textarea {
-  min-height: 28px;
-}
-
-#direction .form-element {
-  padding-left: 15px;
-}
-
-#direction .form-label {
-  margin-left: -15px;
 }
 

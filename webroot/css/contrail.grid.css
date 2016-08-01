@@ -338,6 +338,9 @@
 .select2-container.csg-current-page {
     float: none;
     font-size: 11px;
+    border: none;
+    width: 72px;
+    min-height: 20px !important;
 }
 .slick-pager .select2-container .select2-choice > .select2-chosen {
     margin-right: 15px;
@@ -362,6 +365,9 @@
 }
 .select2-container.csg-pager-sizes {
     float: none;
+    border: none;
+    width: 90px;
+    min-height: 20px !important;
 }
 .slick-pager .slick-pager-settings * {
     vertical-align: middle;
