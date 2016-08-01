@@ -1281,7 +1281,7 @@
 
 <script type="text/x-handlebars-template" id="core-editable-grid-textarea-view-template">
     <div class="row"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="textarea-input-append input-group inset col-xs-12">
+        <div class="textarea-input-append input-group inset">
             <textarea
                 name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}"
                 {{#if viewConfig.rows}} rows:'{{viewConfig.rows}}' {{/if}}
@@ -1664,7 +1664,7 @@
         <tbody data-bind="foreach: {{viewConfig.collection}}">
             <tr class="data-row" data-bind="css: 'data-row-' + $index()">
                         <td style="min-width:15px" {{#IfCompare viewConfig.rows.1.columns.length 0 operator='>'}}onclick="
-    $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('fa-caret-down');$(this).children('i').toggleClass('fa-caret-right');"><i class="icon-caret-right toggleDetailIcon " ></i>{{/IfCompare}}</td>
+    $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('fa-caret-down');$(this).children('i').toggleClass('fa-caret-right');"><i class="fa fa-caret-right toggleDetailIcon " ></i>{{/IfCompare}}</td>
                 {{#each viewConfig.rows.0.columns}}
                 <td class="data-cell data-cell-{{elementId}}"
                     {{#IfCompare viewConfig.colSpan null operator='!='}}
