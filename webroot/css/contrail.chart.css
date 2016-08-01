@@ -154,12 +154,11 @@
     color: #3182bd;
     font-size: 15px;
     font-weight: 400;
-    height: 22px;
+    height: 32px;
 }
 .control-panel-filter-body,
 .control-panel-legend-body {
     overflow-y: scroll;
-    padding: 10px;
 }
 .control-panel-filter-title-text,
 .control-panel-legend-title-text {

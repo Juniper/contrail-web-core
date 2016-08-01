@@ -1959,25 +1959,25 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-control-panel-filter-template">
-    <div class="control-panel-filter-container row">
-        <div class="row">
+    <div class="control-panel-filter-container">
+        <div class="">
             <p class="control-panel-filter-title">
                 <span class="pull-left control-panel-filter-title-icon"><i class="{{iconClass}}"></i></span>
                 <span class="pull-left control-panel-filter-title-text">{{title}}</span>
                 <span class="pull-right control-panel-filter-close"><i class="fa fa-remove"></i></span>
             </p>
         </div>
-        <div class="row control-panel-filter-body" >
+        <div class="control-panel-filter-body" >
             {{#each viewConfig.groups}}
             <div class="control-panel-filter-group margin-10">
                 {{#IfCompare title false operator='!='}}
                     <h6 class="control-panel-group-filter-title">{{title}}</h6>
                 {{/IfCompare}}
-                <div id="control-panel-filter-group-items-{{id}}" class="row control-panel-filter-group-items padding-5-0;">
+                <div id="control-panel-filter-group-items-{{id}}" class="control-panel-filter-group-items padding-5-0;">
 
                 {{#IfCompare type 'checkbox-circle' operator='=='}}
                     {{#each items}}
-                        <div class="control-panel-filter-group-item padding-5-0">
+                        <div class="control-panel-filter-group-item padding-5-0 col-xs-12">
                             <input type="checkbox" name="control-panel-filter" class="ace-input checkbox-circle" checked/>
                             <span class="ace-lbl checkbox-circle {{labelCssClass}}"> {{text}}</span>
                         </div>
@@ -2005,7 +2005,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-control-panel-filter-2-col-template">
-<div class="control-panel-filter-container row">
+<div class="control-panel-filter-container">
     <div class="row">
         <p class="control-panel-filter-title">
             <span class="pull-left control-panel-filter-title-icon"><i class="fa fa-filter"></i></span>
@@ -2081,7 +2081,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-chart-template">
-    <div class="chart-container row">
+    <div class="chart-container">
         <svg style="height:{{height}}px;"></svg></div>
     </div>
 </script>
@@ -2262,7 +2262,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-stacked-bar-chart-template">
-    <div class="stacked-bar-chart-container chart-container row">
+    <div class="stacked-bar-chart-container chart-container">
          <!-- <svg style="height:{{height}}px;"></svg> -->
     </div>
 </script>
@@ -2283,7 +2283,7 @@
                 <div class="infobox-widget">
                     <div class="infobox-container row">
                     </div>
-                    <div class="infobox-detail-container row">
+                    <div class="infobox-detail-container">
                     </div>
                 </div>
             </div>

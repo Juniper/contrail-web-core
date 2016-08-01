@@ -423,7 +423,6 @@ rect.bordered {
 	border: 1px solid #dedede;
 	padding: 5px;
     width: 31.8%;
-    margin-left: 10px;
 }
 
 #vrouterAgent-sparklines {

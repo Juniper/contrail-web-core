@@ -10956,7 +10956,6 @@ tr.detail-row > td {
 .widget-toolbar > .dropup {
     display: inline-block; }
 
-.widget-box > .widget-header > .widget-toolbar > [data-action="settings"],
 .widget-color-dark > .widget-header > .widget-toolbar > [data-action="settings"],
 .widget-box > .widget-header > .widget-toolbar > .widget-menu > [data-action="settings"],
 .widget-color-dark > .widget-header > .widget-toolbar > .widget-menu > [data-action="settings"] {

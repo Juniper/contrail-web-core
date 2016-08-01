@@ -129,7 +129,6 @@
 }
 .modal-header .close {
     font-size:29px;
-    margin-top:6px;
 }
 .modal-footer {
     padding: 8px 15px;
@@ -939,4 +938,24 @@ li {
 
 .margin-10-0-0 {
     margin: 10px 0 0 !important;
+}
+
+.margin-10 {
+    margin-left: 10px !important;
+}
+
+.padding-5-0 {
+    padding: 5px 0 !important;
+}
+
+.margin-2 {
+    margin: 2px !important;
+}
+
+.margin-0 {
+    margin: 0 !important;
+}
+
+.group-detail-advanced-json {
+    padding-left: 30px;
 }
