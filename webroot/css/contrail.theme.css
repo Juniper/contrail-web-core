@@ -1992,7 +1992,7 @@ pre.prettyprint {
     top: -1px;
     left: 0;
     z-index: 1;
-    height: 41px;
+    height: 36px;
     width: 3px;
     max-width: 3px;
     overflow: hidden;
@@ -2090,7 +2090,7 @@ pre.prettyprint {
     width: 7px;
     position: absolute;
     z-index: 1;
-    left: 20px;
+    left: 24px;
     top: 17px;
     border: 1px dotted;
     border-width: 1px 0 0; }
@@ -2100,7 +2100,7 @@ pre.prettyprint {
     display: block;
     position: absolute;
     z-index: 1;
-    left: 18px;
+    left: 22px;
     top: 0;
     bottom: 0;
     border: 1px dotted;
@@ -2326,16 +2326,16 @@ body.mob-safari .sidebar.sidebar-fixed {
     display: none; }
 
 .sidebar .sidebar-shortcuts-large {
-    line-height: 39px; }
+    line-height: 37px; }
 
 .sidebar .sidebar-shortcuts-large > .btn {
     text-align: center;
     width: 41px;
-    line-height: 35px;
+    line-height: 33px;
     padding: 0;
     margin-bottom: 2px;
-    border-width: 0; }
-
+    border-width: 0;
+}
 .sidebar .sidebar-shortcuts-large > .btn > .ace-icon {
     margin: 0; }
 
@@ -2344,10 +2344,11 @@ body.mob-safari .sidebar.sidebar-fixed {
     font-size: 0;
     width: 41px;
     padding-top: 2px;
-    padding-bottom: 2px;
+    padding-bottom: 1px;
     line-height: 18px;
-    background-color: #ffffff; }
-
+    background-color: #ffffff;
+    border-bottom: 1px solid #dddddd;
+}
 .sidebar .sidebar-shortcuts-mini > .btn {
     border-width: 0;
     font-size: 0;
@@ -2675,7 +2676,7 @@ body.mob-safari .sidebar.sidebar-fixed {
     height: auto;
     line-height: inherit;
     display: inline-block;
-    vertical-align: sub;
+    vertical-align: initial;
     margin-right: 0;
     width: 44px; }
 
@@ -2791,13 +2792,12 @@ body.mob-safari .sidebar.sidebar-fixed {
     display: none;
     position: absolute;
     top: -1px;
-    left: 42px;
+    left: 41px;
     width: 182px;
-    padding: 0 2px 3px;
+    padding: 0 2px;
     background-color: #ffffff;
-    box-shadow: 2px 1px 2px 0 rgba(0,0,0,0.2);
     border: 1px solid #cccccc;
-    z-index: 20; }
+}
 
 .sidebar.menu-min .sidebar-shortcuts:hover .sidebar-shortcuts-large,
 .sidebar.menu-min .sidebar-shortcuts.hover-show .sidebar-shortcuts-large {
