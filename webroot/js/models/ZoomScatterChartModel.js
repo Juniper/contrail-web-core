@@ -207,7 +207,7 @@ define([
                     return +d[fieldName];
                 });
 
-            if (axisMax == null) {
+            if (axisMax == null || axisMax === 0) {
                 axisMax = 1;
             }
 
