@@ -82,6 +82,7 @@ define([
             var tickPadding = getValueByJsonPath(viewConfig,'chartOptions;tickPadding',10);
             var showLegend = getValueByJsonPath(viewConfig,'chartOptions;showLegend',false);
             var legendFn = getValueByJsonPath(viewConfig,'chartOptions;legendFn',null);
+            var colorMap = getValueByJsonPath(viewConfig,'chartOptions;colorMap',{});
             var sliceTooltipFn = null;
 
             //sliceTooltipFn is for portion of bar in stacked bar.
@@ -155,7 +156,7 @@ define([
                             .scale(y)
                             .orient("left")
                             .ticks(3)
-                            .tickFormat(d3.format("d"))
+                            .tickFormat(cowu.numberFormatter)
                             .innerTickSize(-width)
                             .outerTickSize(0)
                             .tickPadding(tickPadding);
@@ -343,7 +344,8 @@ define([
                     .attr("width", barWidth)
                     .attr("y", function(d) { return y(d.y1); })
                     .attr("height", function(d) { return y(d.y0) - y(d.y1); })
-                    .style("fill", function(d) { return d.color; })
+                    .style("fill", function(d) {
+                        return colorMap[d.name] != null ? colorMap[d.name] : d.color; })
                     .on("mouseover", function(d) {
                         if (sliceTooltipFn != null &&
                             typeof sliceTooltipFn == 'function' && d.tooltip != false) {
