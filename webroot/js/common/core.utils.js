@@ -496,6 +496,25 @@ define(['underscore'], function (_) {
             return htmlValue;
         };
 
+        this.expandJsonHtml = function(element) {
+            var selfParent = element.parent(),
+                jsonObj = {};
+            selfParent.children('i').removeClass('fa-plus').removeClass('expander').addClass('fa fa-minus').addClass('collapser');
+            if(selfParent.children('.node').hasClass('raw')){
+                jsonObj = JSON.parse(selfParent.children('ul.node').text());
+                selfParent.empty().append(contrail.formatJsonObject(jsonObj, 2, parseInt(selfParent.children('.node').data('depth')) + 1));
+            }
+            selfParent.children('.node').showElement();
+            selfParent.children('.collapsed').hideElement();
+        };
+
+        this.collapseJsonHtml = function(element) {
+            var selfParent = element.parent();
+            selfParent.children('i').removeClass('fa-minus').removeClass('collapser').addClass('fa fa-plus').addClass('expander');
+            selfParent.children('.collapsed').showElement();
+            selfParent.children('.node').hideElement();
+        };
+
         // Deprecated: We should use renderView4Config of ContrailView instead of following function.
         this.renderView4Config = function (parentElement, model, viewObj, validation, lockEditingByDefault, modelMap) {
             var viewName = viewObj['view'],

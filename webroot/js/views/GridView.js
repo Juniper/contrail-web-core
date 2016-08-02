@@ -458,8 +458,16 @@ define([
                         columns = columns.concat(gridColumns);
                         gridColumns = columns;
 
-                        gridContainer.on('.slick-row-detail', 'click', function () {
+                        gridContainer.on('click', '.slick-row-detail', function (event) {
                             var rowId = $(this).data('cgrid');
+
+                            if ($(event.target).hasClass('expander')) {
+                                cowu.expandJsonHtml($(event.target));
+                                event.stopPropagation();
+                            } else if ($(event.target).hasClass('collapser')) {
+                                cowu.collapseJsonHtml($(event.target));
+                                event.stopPropagation();
+                            }
 
                             if (gridContainer.data('contrailGrid') != null) {
                                 gridContainer.data('contrailGrid').adjustDetailRowHeight(rowId);
@@ -471,7 +479,7 @@ define([
                         columns = [];
 
                         if (gridOptions.actionCell instanceof Array || contrail.checkIfFunction(gridOptions.actionCell)) {
-                            var optionList = gridOptions.actionCell
+                            var optionList = gridOptions.actionCell;
                             gridOptions.actionCell = {
                                 type: 'dropdown',
                                 optionList: optionList

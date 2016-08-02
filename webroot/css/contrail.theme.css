@@ -2797,6 +2797,7 @@ body.mob-safari .sidebar.sidebar-fixed {
     padding: 0 2px;
     background-color: #ffffff;
     border: 1px solid #cccccc;
+    z-index: 13;
 }
 
 .sidebar.menu-min .sidebar-shortcuts:hover .sidebar-shortcuts-large,
