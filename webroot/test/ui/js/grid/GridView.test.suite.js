@@ -111,36 +111,36 @@ define([
                 expect(4);
                 //refreshable
                 if (viewConfigHeader.defaultControls.refreshable) {
-                    equal($(el).find('.grid-header .widget-toolbar-icon .icon-repeat').length, 1,
+                    equal($(el).find('.grid-header .widget-toolbar-icon .fa-repeat').length, 1,
                         "grid should have refresh icon present");
                 } else {
-                    equal($(el).find('.grid-header .widget-toolbar-icon .icon-repeat').length, 0,
+                    equal($(el).find('.grid-header .widget-toolbar-icon .fa-repeat').length, 0,
                         "grid should not have refresh icon present");
                 }
                 //searchable
                 if (viewConfigHeader.defaultControls.searchable) {
-                    equal($(el).find('.grid-header .widget-toolbar-icon .icon-search').length, 1,
+                    equal($(el).find('.grid-header .widget-toolbar-icon .fa-search').length, 1,
                         "grid should have search icon present");
                 } else {
-                    equal($(el).find('.grid-header .widget-toolbar-icon .icon-search').length, 0,
+                    equal($(el).find('.grid-header .widget-toolbar-icon .fa-search').length, 0,
                         "grid should not have search icon present");
                 }
                 //collapseable
                 if (viewConfigHeader.defaultControls.collapseable) {
-                    equal($(el).find('.grid-header .widget-toolbar-icon .icon-chevron-up').length, 1,
+                    equal($(el).find('.grid-header .widget-toolbar-icon .fa-chevron-up').length, 1,
                         "grid should have collapse icon present");
 
                 } else {
-                    equal($(el).find('.grid-header .widget-toolbar-icon .icon-chevron-up').length, 0,
+                    equal($(el).find('.grid-header .widget-toolbar-icon .fa-chevron-up').length, 0,
                         "grid should not have collapse icon present");
                 }
                 //exportable
                 if (viewConfigHeader.defaultControls.exportable) {
-                    equal($(el).find('.grid-header .widget-toolbar-icon .icon-download-alt').length, 1,
+                    equal($(el).find('.grid-header .widget-toolbar-icon .fa-download').length, 1,
                         "grid should have export icon present");
 
                 } else {
-                    equal($(el).find('.grid-header .widget-toolbar-icon .icon-download-alt').length, 0,
+                    equal($(el).find('.grid-header .widget-toolbar-icon .fa-download').length, 0,
                         "grid should not have export icon present");
                 }
             } else {
@@ -150,16 +150,16 @@ define([
                  */
                 expect(4);
                 //refreshable
-                equal($(el).find('.grid-header .widget-toolbar-icon .icon-repeat').length, 1,
+                equal($(el).find('.grid-header .widget-toolbar-icon .fa-repeat').length, 1,
                     "grid should have refresh icon present");
                 //searchable
-                equal($(el).find('.grid-header .widget-toolbar-icon .icon-search').length, 1,
+                equal($(el).find('.grid-header .widget-toolbar-icon .fa-search').length, 1,
                     "grid should have search icon present");
                 //collapseable
-                equal($(el).find('.grid-header .widget-toolbar-icon .icon-chevron-up').length, 0,
+                equal($(el).find('.grid-header .widget-toolbar-icon .fa-chevron-up').length, 0,
                     "grid should have collapse icon present");
                 //exportable
-                equal($(el).find('.grid-header .widget-toolbar-icon .icon-download-alt').length, 1,
+                equal($(el).find('.grid-header .widget-toolbar-icon .fa-download').length, 1,
                     "grid should have export icon present");
             }
 

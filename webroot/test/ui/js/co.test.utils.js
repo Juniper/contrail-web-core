@@ -46,24 +46,24 @@ define([
             '<ul style="width:270px" class="nav ace-nav pull-right"> ' +
             '<li id="user-profile" class="hide"> ' +
             '<a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle"> ' +
-            '<i class="icon-user icon-only icon-2"></i> ' +
+            '<i class="fa fa-user icon-only fa-2"></i> ' +
             '<span id="user_info"></span> ' +
-            '<i class="icon-caret-down"></i> ' +
+            '<i class="fa fa-caret-down"></i> ' +
             '</a> ' +
             '<ul class="pull-right dropdown-menu dropdown-caret dropdown-closer" id="user_menu"> ' +
             '<li> ' +
             '<a href="logout"> ' +
-            '<i class="icon-off"></i>' +
+            '<i class="fa fa-power-off"></i>' +
             'Logout </a>' +
             ' </li> ' +
             '</ul> ' +
             '</li> <li onclick="showMoreAlerts();"> ' +
             '<a href="javascript:void(0);"> ' +
-            '<i class="icon-bell-alt icon-only icon-2"></i> <span id="alert_info">Alerts</span> <!-- <i class="icon-caret-down"></i> --> ' +
+            '<i class="fa fa-bell icon-only fa-2"></i> <span id="alert_info">Alerts</span> <!-- <i class="fa-caret-down"></i> --> ' +
             '</a> </li> </ul> <div id="nav-search"> ' +
             '<form id="search-form" onsubmit="searchSiteMap();"> <span class="input-icon"> ' +
             '<input type="text" placeholder="Search Sitemap" class="input-small search-query" id="nav-search-input" autocomplete="off"> ' +
-            '<i class="icon-search" id="nav-search-icon"></i> </span> ' +
+            '<i class="fa fa-search" id="nav-search-icon"></i> </span> ' +
             '</form> </div> </div> <!--/.container-fluid-->' +
             '</div> <!--/.navbar-inner--> </div>';
     };
@@ -83,8 +83,8 @@ define([
             '<ul id="breadcrumb" class="breadcrumb"> ' +
             '</ul> ' +
             '<div class="hardrefresh breadcrumb" style="display:none"> ' +
-            '<span> <i class="icon-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span> ' +
-            '<span class="loading"><i class="icon-spinner icon-spin"></i></span> ' +
+            '<span> <i class="fa fa-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span> ' +
+            '<span class="loading"><i class="fa fa-spinner fa-spin"></i></span> ' +
             '<span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span> ' +
             '</div> ' +
             '</div> ' +
@@ -97,7 +97,7 @@ define([
     this.getCSSList = function () {
         var cssList = [];
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap.min.css"/>');
-        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap-responsive.min.css"/>');
+        //cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap-responsive.min.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/jquery-ui.test.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.jquery.ui.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/font-awesome.test.css"/>');
@@ -107,7 +107,9 @@ define([
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/slickgrid/styles/slick.grid.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/jquery/css/jquery.steps.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css"/>');
-        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/contrail.theme.layout.test.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/contrail.init.test.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.theme.css"/>');
+        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.theme.layout.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.theme.elements.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.responsive.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.grid.css"/>');

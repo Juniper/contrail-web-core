@@ -31,7 +31,7 @@ define([
             tmplParameters = {
                 label: labelValue, id: elId + '_autocompletetextbox',
                     name: elId, dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
-                lockAttr: lockEditingByDefault, class: "span12",
+                lockAttr: lockEditingByDefault, class: "col-xs-12",
                     elementConfig: elementConfig
             };
 

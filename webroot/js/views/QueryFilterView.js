@@ -35,7 +35,6 @@ define([
                                 .height($(self.$el).find('[name="filters"]').get(0).scrollHeight - 5);
 
                             $("#" + modalId).modal('hide');
-                            $("#" + modalId).remove();
                         },
                         error: function (error) {
                             cowu.disableModalLoading(modalId, function () {
@@ -45,7 +44,6 @@ define([
                     }); // TODO: Release binding on successful configure
                 }, 'onCancel': function () {
                     $("#" + modalId).modal('hide');
-                    $("#" + modalId).remove();
                 }
             });
 
@@ -85,7 +83,7 @@ define([
                             {
                                 columns: [{
                                     elementId: 'limit', view: "FormInputView",
-                                    viewConfig: {path: 'limit', dataBindValue: 'limit', class: "span6"}
+                                    viewConfig: {path: 'limit', dataBindValue: 'limit', class: "col-xs-6"}
                                 }]
                             }
                         ]
@@ -103,7 +101,7 @@ define([
                                     {
                                         elementId : 'sort_by', view: "FormMultiselectView",
                                         viewConfig: {
-                                            path: 'sort_by', dataBindValue: 'sort_by', class: "span9",
+                                            path: 'sort_by', dataBindValue: 'sort_by', class: "col-xs-9",
                                             dataBindOptionList: 'getSortByOptionList()',
                                             elementConfig: {
                                                 placeholder: cowc.QE_TITLE_SORT_BY
@@ -113,7 +111,7 @@ define([
                                     {
                                         elementId : 'sort_order', view: "FormDropdownView",
                                         viewConfig: {
-                                            path: 'sort_order', dataBindValue: 'sort_order', class: "span3",
+                                            path: 'sort_order', dataBindValue: 'sort_order', class: "col-xs-3",
                                             elementConfig: {
                                                 placeholder: cowc.QE_TITLE_SORT_ORDER,
                                                 data: cowc.QE_SORT_ORDER_DROPDOWN_VALUES
@@ -142,15 +140,15 @@ define([
                 rows: [
                     {
                         rowActions: [
-                            {onClick: "deleteFilterAndClause()", iconClass: 'icon-remove'},
-                            {onClick: "addAndClauseAtIndex()", iconClass: 'icon-plus'}
+                            {onClick: "deleteFilterAndClause()", iconClass: 'fa fa-remove'},
+                            {onClick: "addAndClauseAtIndex()", iconClass: 'fa fa-plus'}
                         ],
                         columns: [
                             {
                                 elementId: 'and-text',
                                 view: "FormTextView",
                                 viewConfig: {
-                                    width: 40,
+                                    width: 50,
                                     value: "AND",
                                     class: "and-clause-text"
                                 }

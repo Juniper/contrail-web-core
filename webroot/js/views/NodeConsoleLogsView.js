@@ -173,7 +173,7 @@ define([
                             columns: [
                                 {
                                     elementId: 'keywords', view: "FormInputView",
-                                    viewConfig: { path: 'keywords', dataBindValue: 'keywords', class: "span6", placeholder: "Enter keyword(s)"}
+                                    viewConfig: { path: 'keywords', dataBindValue: 'keywords', class: "col-xs-6", placeholder: "Enter keyword(s)"}
                                 }
                             ]
                         },
@@ -185,14 +185,14 @@ define([
                                 {
                                     elementId: 'time_range', view: "FormDropdownView",
                                     viewConfig: {
-                                        path: 'time_range', dataBindValue: 'time_range', class: "span2",
+                                        path: 'time_range', dataBindValue: 'time_range', class: "col-xs-2",
                                         elementConfig: {dataTextField: "text", dataValueField: "id", data: cowc.TIMERANGE_DROPDOWN_VALUES}}
                                 },
                                 {
                                     elementId: 'from_time', view: "FormDateTimePickerView",
                                     viewConfig: {
                                         style: 'display: none;',
-                                        path: 'from_time', dataBindValue: 'from_time', class: "span4",
+                                        path: 'from_time', dataBindValue: 'from_time', class: "col-xs-4",
                                         elementConfig: qewu.getFromTimeElementConfig('from_time', 'to_time'),
                                         visible: "time_range() == -1"
                                     }
@@ -201,7 +201,7 @@ define([
                                     elementId: 'to_time', view: "FormDateTimePickerView",
                                     viewConfig: {
                                         style: 'display: none;',
-                                        path: 'to_time', dataBindValue: 'to_time', class: "span4",
+                                        path: 'to_time', dataBindValue: 'to_time', class: "col-xs-4",
                                         elementConfig: qewu.getToTimeElementConfig('from_time', 'to_time'),
                                         visible: "time_range() == -1"
                                     }
@@ -216,7 +216,7 @@ define([
                                 {
                                     elementId: 'log_category', view: "FormDropdownView",
                                     viewConfig: {
-                                        path: 'log_category', dataBindValue: 'log_category', class: "span2",
+                                        path: 'log_category', dataBindValue: 'log_category', class: "col-xs-2",
                                         elementConfig: {
                                             dataTextField: "text",
                                             dataValueField: "value",
@@ -252,7 +252,7 @@ define([
                                 {
                                     elementId: 'log_type', view: "FormDropdownView",
                                     viewConfig: {
-                                        path: 'log_type', dataBindValue: 'log_type', class: "span2",
+                                        path: 'log_type', dataBindValue: 'log_type', class: "col-xs-2",
                                         elementConfig: {
                                             dataTextField: "text",
                                             dataValueField: "value",
@@ -265,11 +265,11 @@ define([
                                 },
                                 {
                                     elementId: 'log_level', view: "FormDropdownView",
-                                    viewConfig: { path: 'log_level', dataBindValue: 'log_level', class: "span2", elementConfig: {dataTextField: "name", dataValueField: "value", data: cowc.QE_LOG_LEVELS}}
+                                    viewConfig: { path: 'log_level', dataBindValue: 'log_level', class: "col-xs-2", elementConfig: {dataTextField: "name", dataValueField: "value", data: cowc.QE_LOG_LEVELS}}
                                 },
                                 {
                                     elementId: 'limit', view: "FormDropdownView",
-                                    viewConfig: { path: 'limit', dataBindValue: 'limit', class: "span2", elementConfig: {dataTextField: "text", dataValueField: "id", data:cowc.CONSOLE_LOGS_LIMITS}}
+                                    viewConfig: { path: 'limit', dataBindValue: 'limit', class: "col-xs-2", elementConfig: {dataTextField: "text", dataValueField: "id", data:cowc.CONSOLE_LOGS_LIMITS}}
                                 }
                             ]
                         },
@@ -279,7 +279,10 @@ define([
                                     elementId: 'advanced_options', view: "FormTextView",
                                     viewConfig: {
                                         text: 'getAdvancedOptionsText()',
-                                        class: "advanced-options-link",
+                                        class: "col-xs-6 margin-0-0-10",
+                                        elementConfig : {
+                                            class: "advanced-options-link"
+                                        },
                                         click: 'toggleAdvancedFields'
                                     }
                                 }
@@ -290,7 +293,7 @@ define([
                                 {
                                     elementId: 'display_logs', view: "FormButtonView", label: "Display Logs",
                                     viewConfig: {
-                                        class: 'display-inline-block margin-0-10-0-0',
+                                        class: 'display-inline-block margin-0-0-0-15',
                                         disabled: 'is_request_in_progress()',
                                         elementConfig: {
                                             btnClass: 'btn-primary'
@@ -301,7 +304,7 @@ define([
                                     elementId: 'reset_query', view: "FormButtonView", label: "Reset",
                                     viewConfig: {
                                         label: "Reset",
-                                        class: 'display-inline-block margin-0-10-0-0',
+                                        class: 'display-inline-block margin-0-0-0-15',
                                         elementConfig: {
                                             onClick: "reset"
                                         }
@@ -403,7 +406,7 @@ define([
         return {
             elementId: cowl.QE_QUERY_RESULT_GRID_ID,
             title: cowl.TITLE_RESULTS,
-            iconClass: 'icon-table',
+            iconClass: 'fa fa-table',
             view: 'QueryResultGridView',
             tabConfig: {
                 //TODO

@@ -3,6 +3,20 @@
  * All rights reserved.
  */
 
+/*
+ * Contrail Textarea
+ */
+textarea {
+    resize: none;
+    width: 100%;
+    border: none;
+}
+.textarea-input-group.input-group {
+    border: 1px solid #D5D5D5;
+}
+.textarea-input-group .input-group-addon {
+    border: none;
+}
 /* Contrail Combobox
  * Extends Jquery UI Autocomplete.
  */
@@ -20,14 +34,14 @@
     color: #787878;
     font-size: 13px;
 }
-.custom-combobox .add-on{
-    padding: 3px;
+.custom-combobox .input-group-addon{
+    padding-left: 7px;
+    padding-right: 15px;
     background-color: #fff;
     position: absolute;
     right: 0;
     z-index: 1049;
     border: 1px solid #dadada;
-    border-bottom: none;
 }
 
 /* Contrail Dropdown & Multiselect
@@ -35,10 +49,9 @@
  */
 .select2-container {
     background-color:#fff;
-}
-.select2-container[class*="span"] {
-    min-height: 26px;
+    min-height: 28px;
     border: 1px solid #dadada;
+    width: 100%;
 }
 .select2-container .select2-choice {
     padding: 0 0 0 5px;

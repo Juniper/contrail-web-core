@@ -942,7 +942,7 @@ define([
                 }
             };
             controlPanelConfig.custom.zoomBySelectedArea = {
-                    iconClass: 'icon-crop',
+                    iconClass: 'fa fa-crop',
                     title: 'Zoom By Selection',
                     events: {
                         click: function (event, self, controlPanelSelector) {
@@ -1023,7 +1023,7 @@ define([
         };
 
         return {
-            iconClass: 'icon-filter',
+            iconClass: 'fa fa-filter',
                 title: 'Filter',
             events: {
                 click: function (event, self, controlPanelSelector) {
@@ -1038,7 +1038,7 @@ define([
                     $(self).toggleClass('active');
                     $(self).toggleClass('refreshing');
 
-                    chartControlPanelExpandedSelector.toggle();
+                    chartControlPanelExpandedSelector.toggleElement();
 
                     if (chartControlPanelExpandedSelector.is(':visible')) {
                         $.each(controlPanelExpandedTemplateConfig.viewConfig.groups, function (groupKey, groupValue) {
@@ -1084,7 +1084,7 @@ define([
                         chartControlPanelExpandedSelector.find('.control-panel-filter-close')
                             .off('click')
                             .on('click', function() {
-                                chartControlPanelExpandedSelector.hide();
+                                chartControlPanelExpandedSelector.hideElement();
                                 $(self).removeClass('active');
                                 $(self).removeClass('refreshing');
                                 $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
@@ -1111,7 +1111,7 @@ define([
 
     var getControlPanelLegendConfig = function(customControlPanelFilterConfig, chartControlPanelExpandedSelector) {
         return {
-            iconClass: 'icon-info-sign',
+            iconClass: 'fa fa-info-circle',
             title: 'Information',
             events: {
                 click: function (event, self, controlPanelSelector) {
@@ -1119,7 +1119,7 @@ define([
                         controlPanelExpandedTemplateConfig = customControlPanelFilterConfig.viewConfig;
 
                     $(self).toggleClass('active');
-                    chartControlPanelExpandedSelector.toggle();
+                    chartControlPanelExpandedSelector.toggleElement();
 
                     if (chartControlPanelExpandedSelector.is(':visible')) {
                         chartControlPanelExpandedSelector.html(controlPanelExpandedTemplate(controlPanelExpandedTemplateConfig));
@@ -1134,7 +1134,7 @@ define([
                         chartControlPanelExpandedSelector.find('.control-panel-legend-close')
                             .off('click')
                             .on('click', function() {
-                                chartControlPanelExpandedSelector.hide();
+                                chartControlPanelExpandedSelector.hideElement();
                                 $(self).removeClass('active');
                                 $(self).removeClass('refreshing');
                                 $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');

@@ -29,7 +29,7 @@ define([
             self.model.initLockAttr(path, lockEditingByDefault);
 
             tmplParameters = {
-                id: elId, name: elId, type: type, class: "span12",
+                id: elId, name: elId, type: type,
                 label: labelValue, viewConfig: viewConfig,
                 lockAttr: lockEditingByDefault, validation: validation
             };

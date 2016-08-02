@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var cowc, cowu, cowf, cowl, cowch, cowm, cotu, cotc, covdc;
+var cowc, cowu, cowhu, cowf, cowl, cowch, cowm, cotu, cotc, covdc;
 
 var allTestFiles = [], windowKarma = window.__karma__;
 
@@ -317,8 +317,9 @@ function testAppInit(testAppConfig) {
                         window.kbValidation = validation;
                         // window.ko = ko;
                     });
-                    require(['core-utils'], function (CoreUtils) {
+                    require(['core-utils', 'core-hash-utils'], function (CoreUtils, CoreHashUtils) {
                         cowu = new CoreUtils();
+                        cowhu = new CoreHashUtils();
                         require(['underscore'], function (_) {
                             _.noConflict();
                         });
