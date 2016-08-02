@@ -6695,7 +6695,6 @@ fieldset[disabled] .btn-white.btn-grey.active {
     display: inline-block;
     content: "";
     position: absolute;
-    border-bottom: 1px solid #EFE5B5;
     left: -4px;
     right: -4px;
     bottom: -4px; }

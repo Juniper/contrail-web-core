@@ -95,9 +95,18 @@
     display: table-cell;
     padding: 0 10px 0 0;
 }
+
+.advanced-options-link{
+    font-size:10px;
+    color:#999;
+    cursor:pointer;
+}
+.advanced-options-link:hover{
+    color:#3182bd;
+}
 /*
  * Styles moved from vcon-web.css
- * TODO Cleanup requireed to remove unused styles
+ * TODO Cleanup required to remove unused styles
  */
 .folder {
   background-position: 0 -16px;
@@ -119,9 +128,6 @@
 }
 .sub-title.main {
   padding-bottom: 16px;
-}
-.margin-auto {
-  margin: auto;
 }
 .example-subtitle {
   margin-bottom: 0;

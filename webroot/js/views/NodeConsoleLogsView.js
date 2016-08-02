@@ -279,7 +279,10 @@ define([
                                     elementId: 'advanced_options', view: "FormTextView",
                                     viewConfig: {
                                         text: 'getAdvancedOptionsText()',
-                                        class: "advanced-options-link",
+                                        class: "col-xs-6 margin-0-0-10",
+                                        elementConfig : {
+                                            class: "advanced-options-link"
+                                        },
                                         click: 'toggleAdvancedFields'
                                     }
                                 }
@@ -290,7 +293,7 @@ define([
                                 {
                                     elementId: 'display_logs', view: "FormButtonView", label: "Display Logs",
                                     viewConfig: {
-                                        class: 'display-inline-block margin-0-10-0-0',
+                                        class: 'display-inline-block margin-0-0-0-15',
                                         disabled: 'is_request_in_progress()',
                                         elementConfig: {
                                             btnClass: 'btn-primary'
@@ -301,7 +304,7 @@ define([
                                     elementId: 'reset_query', view: "FormButtonView", label: "Reset",
                                     viewConfig: {
                                         label: "Reset",
-                                        class: 'display-inline-block margin-0-10-0-0',
+                                        class: 'display-inline-block margin-0-0-0-15',
                                         elementConfig: {
                                             onClick: "reset"
                                         }

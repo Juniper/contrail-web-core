@@ -958,12 +958,12 @@
                         />
                 <span class="input-group-addon input-type-toggle-action"><i class="fa fa-eye"></i></span>
             </div>
-                {{else}}
-                    <input type="{{type}}" name="{{id}}" placeholder="{{viewConfig.placeholder}}" class="{{class}}"
-                        data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
-                        value: {{viewConfig.dataBindValue}},
-                        event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
-                    />
+        {{else}}
+            <input type="{{type}}" name="{{id}}" placeholder="{{viewConfig.placeholder}}" class="form-control"
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                value: {{viewConfig.dataBindValue}},
+                event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
+            />
         {{/IfCompare}}
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
@@ -982,7 +982,7 @@
                     <span class="input-group-addon input-type-toggle-action"><i class="fa fa-eye-open"></i></span>
                 </div>
             {{else}}
-                <input type="{{type}}" name="{{name}}" class="{{class}}" placeholder="{{viewConfig.placeholder}}"
+                <input type="{{type}}" name="{{name}}" class="form-control" placeholder="{{viewConfig.placeholder}}"
                     data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
                         value: {{viewConfig.dataBindValue}},
                         event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data)} }"
@@ -1242,7 +1242,7 @@
         </label>
         <div class="textarea-input-group input-group inset theme-addon">
             <textarea
-                name="{{id}}" class="{{class}}" value="" placeholder="{{placeHolder}}" rows="1"
+                name="{{id}}" value="" placeholder="{{placeHolder}}" rows="1"
                 data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
             </textarea>
             <span class="input-group-addon theme-addon" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>

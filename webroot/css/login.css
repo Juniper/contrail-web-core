@@ -37,7 +37,8 @@
     width: 18px;
 }
 
-#signin-container .input-append, .input-group {
+#signin-container .input-append,
+#signin-container .input-group {
     margin:20px 0;
 }
 

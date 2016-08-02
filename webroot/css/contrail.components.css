@@ -27,11 +27,13 @@
     text-align: center;
     padding: 5px 5px 0 0;
 }
+.contrail-editable-grid-table tr td .form-group {
+    margin-bottom: 0;
+}
 .collection-table tr td {
     text-align: center;
     padding: 0 5px 10px;
 }
-
 .contrail-editable-grid-table .data-row .data-cell .row {
     margin-left: 0px;
     margin-right: 0px;
