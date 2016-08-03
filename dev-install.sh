@@ -77,7 +77,8 @@ cp -af ./$THIRD_PARTY/tristate/jquery.tristate.js webroot/assets/jquery/js/jquer
 rm -rf webroot/assets/jquery-ui
 mkdir -p webroot/assets/jquery-ui/js
 mkdir -p webroot/assets/jquery-ui/css
-cp -af ./$THIRD_PARTY/jquery-ui-1.11.4/jquery-ui.min.js webroot/assets/jquery-ui/js/jquery-ui.js
+cp -af ./$THIRD_PARTY/jquery-ui-1.11.4/jquery-ui.min.js webroot/assets/jquery-ui/js/jquery-ui.min.js
+cp -af ./$THIRD_PARTY/jquery-ui-1.11.4/jquery-ui.js webroot/assets/jquery-ui/js/jquery-ui.js
 cp -af ./$THIRD_PARTY/jquery-ui-1.11.4/jquery-ui.min.css webroot/assets/jquery-ui/css/jquery-ui.min.css
 cp -af ./$THIRD_PARTY/jquery-ui-1.11.4/images webroot/assets/jquery-ui/css/
 #End - Copy jquery-ui files from $THIRD_PARTY
