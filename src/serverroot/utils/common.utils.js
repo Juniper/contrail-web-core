@@ -1257,11 +1257,11 @@ function redirectToURL(req, res, redURL)
            res.send(307, '');
        }
     } else {
-       if(redURL = "/") {
+       if ("/" == redURL) {
             res.sendfile('webroot/html/dashboard.html');
             return;
        } 
-       res.redirect(redURL);
+       res.redirect(302, redURL);
     }
 }
 
