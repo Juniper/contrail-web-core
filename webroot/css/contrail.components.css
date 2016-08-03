@@ -4,6 +4,114 @@
  */
 
 /*
+ * Details
+ */
+.group-detail-container h6 {
+    padding: 0 0 5px;
+    margin: 0 5px 5px;
+    color: #3182bd;
+    border-bottom: 1px solid #ccc;
+}
+.group-detail-container ul.item-list li {
+    border: none;
+    padding: 5px;
+    border-bottom: 1px solid #F1F1F1;
+}
+.group-detail-container ul.item-list li:last-child {
+    border: none;
+}
+.group-detail-container ul.item-list li .key {
+    color:#666;
+}
+.group-detail-container ul.item-list li .key.label-blue{
+    color:#3182bd;
+}
+.group-detail-container ul.item-list li .key.label-blue.indent-right{
+    padding-left:15px;
+}
+.group-detail-container ul.item-list li .value {
+    color:#777;
+}
+.block-grid-row {
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
+.value-link {
+    color: #3182BD !important;
+    display: block;
+}
+.value-link:hover {
+    text-decoration: underline;
+}
+.group-detail-action-item {
+    margin: 0 8px;
+    color: #777;
+}
+.group-detail-action-item:hover {
+    color: #333;
+}
+.group-detail-action-item.selected, .group-detail-action-item.selected:hover {
+    color: #3182bd;
+}
+.group-detail-action-item-dropdown-menu {
+    top: 24px;
+    right: -3px !important;
+}
+.detail-block-array-list {
+    margin: 0 10px 10px;
+    width: 97%;
+}
+.detail-block-array-list-item {
+    padding: 5px 0;
+}
+.detail-block-array-list-item ul.item-list li {
+    padding: 0 !important;
+}
+.detail-block-array-list-item .title {
+    border-bottom: 1px solid #CCCCCC;
+    font-weight: bold;
+    color: #777;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+.detail-block-grid {
+    display: table;
+    margin: 0 5px 5px;
+    width: 98%;
+}
+.detail-block-array-list .detail-block-grid,
+.detail-block-list-content .detail-block-grid {
+    margin-left: 0;
+}
+.detail-block-grid-header {
+    display: table-header-group;
+    color: #777;
+    font-weight: bold;
+}
+.detail-block-grid-header .detail-block-grid-cell {
+    border-bottom: 1px solid #CCCCCC;
+}
+.detail-block-grid-body {
+    display: table-row-group;
+}
+.detail-block-grid-row {
+    display: table-row;
+    padding: 2px 0;
+}
+.detail-block-grid-cell {
+    display: table-cell;
+    padding: 0 10px 0 0;
+}
+
+.advanced-options-link{
+    font-size:10px;
+    color:#999;
+    cursor:pointer;
+}
+.advanced-options-link:hover{
+    color:#3182bd;
+}
+/*
  * Contrail Editable Grid
  */
 
@@ -196,7 +304,7 @@
 }
 .contrail-tabs-overcast.ui-tabs .ui-tabs-nav,
 .ui-tabs .ui-tabs-nav{
-    margin: -3px -10px 10px -10px;
+    margin: -4px -10px 10px -10px;
     padding: 1px;
 }
 .contrail-tabs-overcast.ui-tabs-panel.ui-widget-content,

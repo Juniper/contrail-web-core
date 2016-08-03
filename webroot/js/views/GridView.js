@@ -1407,36 +1407,30 @@ define([
                 var actions = actionConfig.actions,
                     actionId = (contrail.checkIfExist(actionConfig.actionId)) ? actionConfig.actionId : gridContainer.prop('id') + '-header-action-' + key;
                 var actionsTemplate = '<div id="' + actionId + '" class="widget-toolbar pull-right"> \
-		        <span class="input-multiselectbox"> \
-		            <span class="input-icon"> \
+		        <div class="input-multiselectbox width-15"> \
+		            <div class="input-icon"> \
 		            	<i class="widget-toolbar-icon ' + actionConfig.iconClass + (contrail.checkIfExist(actionConfig.disabledLink) ? ' disabled-link' : '') + '"></i> \
-		            </span> \
-		        </span> \
+		            </div> \
+		        </div> \
 		    </div>';
 
                 $(actionsTemplate).appendTo('#' + gridContainer.prop('id') + '-header');
                 $('#' + actionId).find('.input-icon').contrailCheckedMultiselect(actionConfig.elementConfig);
+                $('#' + actionId).find('.input-multiselectbox').removeClass('width-15');
 
                 if (actionConfig.disabledLink) {
                     $('#' + actionId).find('.input-icon').data('contrailCheckedMultiselect').disable();
                 }
-
-//            if($('#' + actionId).find('.input-icon').data('contrailCheckedMultiselect').getChecked().length > 0){
-//            	gridContainer.find('.input-multiselectbox').show();
-//   	        	gridContainer.find('.link-multiselectbox').hide();
-//   	        }
 
                 /*
                  for column picker we don't need to display selected items on the grid header.
                  Quick Fix: will find the id and set the css.
                  */
                 if (actionConfig.elementConfig.elementId == "columnPicker") {
-                    //if ($(gridContainer).find(".input-multiselectbox #columnPicker button span:not(.ui-icon)").is(":visible")) {
-                        $(gridContainer).find(".input-multiselectbox #columnPicker button span:not(.ui-icon)").css({"display":"none"});
-                        $(gridContainer).find(".input-multiselectbox #columnPicker button")
-                            .html('<i class="fa fa-columns"></i>')
-                            .css({'width':'25px', 'padding-left': '10px', 'border': 'none'});
-                    //}
+                    $(gridContainer).find(".input-multiselectbox #columnPicker button span:not(.ui-icon)").css({"display":"none"});
+                    $(gridContainer).find(".input-multiselectbox #columnPicker button")
+                        .html('<i class="fa fa-columns"></i>')
+                        .css({'width':'25px', 'padding-left': '10px', 'border': 'none'});
 
 
                 }

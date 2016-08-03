@@ -153,6 +153,17 @@
     z-index: 12;
     width: 100%;
 }
+.breadcrumb .breadcrumb-dropdown,
+.breadcrumb .breadcrumb-text {
+    width: 120px;
+    border: none;
+}
+.breadcrumb .breadcrumb-text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: -6px 0;
+}
 
 /* Main Content */
 
@@ -272,7 +283,6 @@ input[type="text"]:focus {
 }
 
 .detail-block-list-content .row {
-    margin-left: 0px;
     width: 100%;
 }
 
@@ -700,6 +710,10 @@ input[type="text"]:focus {
 
 .min-width-250 {
     min-width: 250px !important;
+}
+
+.width-15 {
+    width: 15px !important;
 }
 
 .width-150 {

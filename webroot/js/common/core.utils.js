@@ -639,13 +639,13 @@ define(['underscore'], function (_) {
             $.each(config, function (configKey, configValue) {
                 var keyValueTemplate = '' +
                     '<li>' +
-                        '<label class="row">' +
-                            '<span class="key col-xs-4 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
+                        '<div class="row">' +
+                            '<div class="key col-xs-4 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
                             ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
-                            configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
-                            '<span class="value col-xs-7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
-                            ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">' + self.getValueByConfig(configValue, app, objectAccessor) + '</span>'+
-                        '</label>' +
+                            configValue.label + '" "' + configValue.key + '" "' + app + '"}} </div>' +
+                            '<div class="value col-xs-7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
+                            ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">' + self.getValueByConfig(configValue, app, objectAccessor) + '</div>'+
+                        '</div>' +
                     '</li>';
 
                 if (!showAllFields) {

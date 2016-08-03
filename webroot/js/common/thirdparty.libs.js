@@ -6,9 +6,8 @@ define([
         'slick.checkboxselectcolumn',
         'slick.groupmetadata',
         'slick.rowselectionmodel',
-        'slick.enhancementpager',
         'knockback',
-        'validation',
+        'validation'
         ],function() {});
 
 
