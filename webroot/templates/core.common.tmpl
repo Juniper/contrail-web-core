@@ -1499,7 +1499,7 @@
     </table>
     {{#each gridActions}}
     <div class="row-fluid margin-10-0-0">
-        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}</a>
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i>{{this.buttonTitle}}</a>
     </div>
     {{/each}}
 </script>
@@ -1518,7 +1518,7 @@
                 {{#each gridActions}}
                 <th>
     <div class=" margin-10-0-0  headerRowAction">
-        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}</a>
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i>{{this.buttonTitle}}</a>
     </div>
     </th>
     {{/each}}
@@ -1608,7 +1608,7 @@
             <th>
                 {{#each viewConfig.gridActions}}
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
-            <i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}
+            <i class="icon-plus"></i>{{this.buttonTitle}}
         </a>
     {{/each}}
     </th>
@@ -1626,13 +1626,15 @@
                 style: {width: '{{width}}px' }">
             </td>
             {{/each}}
-            <td class="action-cell">
+            {{#if rowActions}}
+            <td class="action-cell" >
             {{#each rowActions}}
                 <a data-bind='click: {{this.onClick}}'>
                     <i class="{{this.iconClass}}"></i>
                 </a>
             {{/each}}
             </td>
+            {{/if}}
         </tr>
         <tr class="error-row">
             {{#each columns}}
@@ -1680,7 +1682,7 @@
         <th class="action-cell">
             {{#each viewConfig.gridActions}}
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
-            <i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}
+            <i class="icon-plus"></i>{{this.buttonTitle}}
         </a>
     {{/each}}
         </th>
