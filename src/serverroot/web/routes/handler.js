@@ -99,9 +99,12 @@ exports.isAuthenticated = function(req,res) {
     }
 }
 
-function login (req, res)
+function login (req, res, appData, redirectURL)
 {
-    res.redirect("/");
+    if (null == redirectURL) {
+        redirectURL = "/";
+    }
+    res.redirect(302, redirectURL);
 }
 
 function vcenter_login (req, res, appData)
@@ -113,7 +116,7 @@ function vcenter_login (req, res, appData)
     if (-1 == models.indexOf('vcenter')) {
         commonUtils.redirectToURL(req, res, '/login');
     } else {
-       return login(req, res);
+       return login(req, res, appData, '/vcenter');
     }
 }
 
