@@ -35,21 +35,21 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'core-srcdir'                 : coreBaseDir,
         'core-basedir'                : coreWebDir,
         //Bundles
-        'thirdparty-libs'       : coreWebDir + '/js/common/thirdparty.libs',
-        'contrail-core-views'   : coreWebDir + '/js/common/contrail.core.views',
-        'chart-libs'            : coreWebDir + '/js/common/chart.libs',
-        'core-bundle'           : coreWebDir + '/js/common/core.bundle',
-        'global-libs'           : coreWebDir + '/js/common/global-libs',
-        'jquery-dep-libs'       : coreWebDir + '/js/common/jquery.dep.libs',
-        'nonamd-libs'           : coreWebDir + '/js/common/nonamd.libs',
+        'thirdparty-libs'             : coreWebDir + '/js/common/thirdparty.libs',
+        'contrail-core-views'         : coreWebDir + '/js/common/contrail.core.views',
+        'chart-libs'                  : coreWebDir + '/js/common/chart.libs',
+        'core-bundle'                 : coreWebDir + '/js/common/core.bundle',
+        'global-libs'                 : coreWebDir + '/js/common/global-libs',
+        'jquery-dep-libs'             : coreWebDir + '/js/common/jquery.dep.libs',
+        'nonamd-libs'                 : coreWebDir + '/js/common/nonamd.libs',
         //Files not in bundles
-        'underscore'            : coreWebDir + '/assets/underscore/underscore-min',
-        'slickgrid-utils'       : coreWebDir + "/js/slickgrid-utils",
+        'underscore'                  : coreWebDir + '/assets/underscore/underscore-min',
+        'slickgrid-utils'             : coreWebDir + "/js/slickgrid-utils",
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.9.1.min',
         'jquery'                      : coreWebDir + '/assets/jquery/js/jquery.min',
-        'contrail-load'         : coreWebDir + '/js/contrail-load',
-        'vis'                   : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
+        'contrail-load'               : coreWebDir + '/js/contrail-load',
+        'vis'                         : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
         'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
         'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
         'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
@@ -62,8 +62,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
         'joint.contrail'              : coreWebDir + '/js/joint.contrail',
 
-        'core-alarm-utils'           :  coreWebDir + '/js/common/core.alarms.utils',
-        'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers',
+        'core-alarm-utils'            :  coreWebDir + '/js/common/core.alarms.utils',
+        'core-alarm-parsers'          :  coreWebDir + '/js/common/core.alarms.parsers',
 
         'query-form-view'             : coreWebDir + '/js/views/QueryFormView',
         'contrail-vis-view'           : coreWebDir + '/js/views/ContrailVisView',
@@ -74,14 +74,15 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
 
         'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
-        'xml2json'                  : coreWebDir + '/assets/jquery/js/xml2json',
+        'xml2json'                    : coreWebDir + '/assets/jquery/js/xml2json',
 
         'json-editor'                 : coreWebDir + '/assets/jsoneditor/js/jsoneditor.min',
         'ajv'                         : coreWebDir + '/assets/ajv/ajv.min',
         'server-schema'               : coreWebDir + '/schemas/server.schema',
         'cluster-schema'              : coreWebDir + '/schemas/cluster.schema',
         'json-model'                  : coreWebDir + "/js/models/JsonModel",
-        'json-edit-view'              : coreWebDir + '/js/views/JsonEditView'
+        'json-edit-view'              : coreWebDir + '/js/views/JsonEditView',
+        'jquery-ui'                   : coreWebDir + '/assets/jquery-ui/js/jquery-ui.min'
 
     };
 
@@ -124,13 +125,11 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             //End - core-bundle aliases
             //Start - jquery.dep.libs aliases
             'jquery.xml2json'           : coreWebDir + '/assets/jquery/js/jquery.xml2json',
-            //'jquery.ba-bbq'             : coreWebDir + '/assets/jquery/js/jquery.ba-bbq.min',
             'jquery.json'               : coreWebDir + "/assets/slickgrid/js/jquery.json-2.3.min",
             'bootstrap'                 : coreWebDir + '/assets/bootstrap/js/bootstrap',
             'select2'                   : coreWebDir + "/assets/select2/js/select2.min",
             'slick.core'                : coreWebDir + "/assets/slickgrid/js/slick.core",
             'slick.dataview'            : coreWebDir + "/assets/slickgrid/js/slick.dataview",
-            'jquery-ui'                 : coreWebDir + '/assets/jquery-ui/js/jquery-ui',
             'contrail-elements'         : coreWebDir + "/js/contrail-elements",
             'jquery.timer'              : coreWebDir + '/assets/jquery/js/jquery.timer',
             'jquery.ui.touch-punch'     : coreWebDir + '/assets/jquery/js/jquery.ui.touch-punch.min',
@@ -258,9 +257,6 @@ var coreAppShim =  {
     'xml2json' : {
         deps: ["jquery"]
     },
-    "jquery.ba-bbq" : {
-        deps: ['jquery']
-    },
     "jquery.timer" : {
         deps: ['jquery']
     },
@@ -298,12 +294,6 @@ var coreAppShim =  {
     'contrail-common': {
         deps: ['jquery']
     },
-    // 'contrail-layout': {
-    //     deps:['jquery.ba-bbq']
-    // },
-    'slick.enhancementpager': {
-        deps: ['jquery']
-    },
     'slick.rowselectionmodel': {
         deps: ['jquery']
     },        
@@ -317,7 +307,7 @@ var coreAppShim =  {
         deps: ['jquery']
     },
     'jquery-dep-libs' : {
-        deps: ['jquery']
+        deps: ['jquery-ui']
     },
     'slickgrid-utils': {
         deps: ['jquery','slick.grid','slick.dataview']
@@ -412,13 +402,11 @@ var coreBundles = {
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
-            'jquery.ba-bbq',
             'jquery.json',
             'bootstrap',
             'select2',
             'slick.core',
             'slick.dataview',
-            'jquery-ui',
             'contrail-elements',
             'jquery.timer',
             'jquery.ui.touch-punch',
@@ -1096,7 +1084,7 @@ if (typeof document !== 'undefined' && document) {
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
 
                     //For Region drop-down
-                    require(['jquery', 'jquery-dep-libs'], function() {
+                    require(['jquery-dep-libs'], function() {
                         var regionList =
                             globalObj.webServerInfo.regionList;
                         var cnt = 0;
