@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2015 Juniper Networks, Inc. All rights reserved.
+ */
 var constants = {};
 
 /**
@@ -162,7 +165,8 @@ constants.coreModules  = [
         name: './js/common/nonamd.libs',
         exclude: [
             'jquery','jquery-ui','knockout','bootstrap','jquery.xml2json',
-            'jquery.ba-bbq','jquery.json','d3','backbone','validation',
+            //'jquery.ba-bbq',
+            'jquery.json','d3','backbone','validation',
             'core-bundle'
         ],
         override: {

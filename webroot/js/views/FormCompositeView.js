@@ -23,7 +23,7 @@ define([
                 childView = viewConfig[cowc.KEY_CHILD_VIEW],
                 tmplParameters, childViewObj, childViewElId;
 
-            tmplParameters = { label: labelValue, id: elId, name: elId, class: "span3", elementConfig: elementConfig, childView: childView };
+            tmplParameters = { label: labelValue, id: elId, name: elId, class: "col-xs-3", elementConfig: elementConfig, childView: childView };
 
             self.$el.html(buttonTemplate(tmplParameters));
 

@@ -31,13 +31,13 @@ define([
             tmplParameters = {
                 label: labelValue, id: elId, name: elId, placeHolder: placeHolder, viewConfig: viewConfig,
                 dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE], lockAttr: lockEditingByDefault, type: type,
-                class: "span12", path: path, validation: validation, showEditIcon: showEditIcon
+                path: path, validation: validation, showEditIcon: showEditIcon
             };
 
             self.$el.html(textAreaTemplate(tmplParameters));
 
             if(showEditIcon) {
-                self.$el.find(".add-on").on("click", function(event) {
+                self.$el.find(".input-group-addon").on("click", function(event) {
                     if (!$(this).hasClass('disabled')) {
                         viewConfig['editPopupConfig'].renderEditFn(event)
                     }
@@ -47,7 +47,8 @@ define([
             self.$el.find('textarea')
                 .off('input')
                 .on('input', function() {
-                    $(this).height(0).height($(this).get(0).scrollHeight - 5);
+                    var scrollHeight = $(this).get(0).scrollHeight;
+                    $(this).outerHeight((scrollHeight < 34) ? 24 : (scrollHeight - 10));
                 });
         }
     });

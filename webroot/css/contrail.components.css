@@ -27,9 +27,16 @@
     text-align: center;
     padding: 5px 5px 0 0;
 }
+.contrail-editable-grid-table tr td .form-group {
+    margin-bottom: 0;
+}
 .collection-table tr td {
     text-align: center;
     padding: 0 5px 10px;
+}
+.contrail-editable-grid-table .data-row .data-cell .row {
+    margin-left: 0px;
+    margin-right: 0px;
 }
 .contrail-editable-grid-table tr td .custom-combobox.input-append,
 .collection-table tr td .custom-combobox.input-append,
@@ -67,7 +74,10 @@
  * Extends Bootstrap Modal
  */
 .modal-body {
-    max-height: 500px;
+    position: relative;
+    max-height: 400px;
+    padding: 15px;
+    overflow-y: auto;
 }
 .modal.contrail-modal {
     margin-left: 0 !important;
@@ -126,11 +136,22 @@
 }
 .modal-header .close {
     font-size:29px;
-    margin-top:6px;
 }
 .modal-footer {
     padding: 8px 15px;
     background-color: #fff;
+}
+
+.modal-body [id*="select-popup-form"] .row {
+    margin-right: 0px;
+}
+
+.modal-body [id*="select-popup-form"] [class*="col-xs-"] {
+    padding-right: 0px;
+}
+
+.modal-body .row-3n [class*="col-xs-"] {
+    min-height: 30px;
 }
 
 /*
@@ -144,10 +165,19 @@
     display: inline-block;
 }
 .contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon-remove {
-    margin-left: 10px;
+    margin-left: 4px;
     font-weight: normal;
     font-size: 90%;
     display: inline-block;
+    padding: 4px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .link .icon-plus {
+    line-height: 24px;
+    margin-left: 4px;
+    padding: 4px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .edit-title > input {
+    height: 16px;
 }
 .contrail-tabs.ui-tabs .ui-tabs-nav li.pull-right {
     float:right;
@@ -176,7 +206,7 @@
 .contrail-tabs-overcast.ui-tabs .ui-tabs-nav,
 .ui-tabs .ui-tabs-nav{
     margin: -3px -10px 10px -10px;
-    padding: 1px 1px 0 1px;
+    padding: 1px;
 }
 .contrail-tabs-overcast.ui-tabs-panel.ui-widget-content,
 .ui-tabs-panel.ui-widget-content {
@@ -246,6 +276,7 @@
 }
 .contrail-tabs-classic.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-widget-tabs.ui-tabs .ui-tabs-nav li.ui-tabs-active a{
+    box-sizing: content-box;
     border-top: 1px solid #ccc;
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
@@ -332,6 +363,7 @@
  */
 .ui-state-default.ui-accordion-header {
     border-bottom: 1px solid #eee;
+    outline: none;
 }
 .ui-accordion-content.ui-widget-content {
     border: none;
@@ -343,7 +375,7 @@
     padding-left: 1.5em;
 }
 .ui-accordion .ui-accordion-content {
-    padding: 1em 1.5em;
+    padding: 1em 0.5em;
 }
 
 /* Bootstrap popovers */
@@ -415,7 +447,7 @@
 }
 
 .popover.popover-tooltip .popover-title .sub-heading {
-    margin: 4px 0 1px;
+    margin: 6px 0 1px;
     color: #555;
     font-size: 13px;
     font-weight: 200;
@@ -423,7 +455,11 @@
 .popover.popover-tooltip .popover-tooltip-icon {
     font-size: 38px;
     border: 1px solid #ccc;
-    padding: 7px;
+    padding-left: 5px;
+    padding-right: 40px;
+    padding-top: 0px;
+    padding-bottom: 47px;
+    margin-top: 5px;
     width: 34px;
     height: 34px;
     position: relative;
@@ -451,7 +487,7 @@
     padding: 3px 9px !important;
     background-color: #f5f5f5 !important;
     color: #777 !important;
-    border: 1px solid #ccc; !important;
+    border: 1px solid #ccc !important;
 }
 .popover.popover-tooltip .popover-content .popover-tooltip-footer .btn:hover {
     color: #3182BD !important;
@@ -627,7 +663,7 @@
 }
 .wizard > .content > .body {
     height: auto;
-    width: 96%;
+    width: 100%;
     padding: 7px 2%;
 }
 .wizard > .actions {
@@ -690,6 +726,10 @@
     border: 1px solid #ccc;
     overflow-y: hidden;
     overflow-x: hidden;
+}
+
+.control-panel-filter-container .control-panel-filter-body .control-panel-filter-group .control-panel-filter-group-item {
+    display: inline-flex;;
 }
 
 /*
@@ -907,4 +947,40 @@ label.jqInvalid {
     color: #e6550d;
     font-family: 'Open Sans';
     font-size: 13px;
+}
+
+li {
+    line-height: 20px;
+}
+
+.margin-right-10 {
+    margin-right: 10px;
+}
+
+.margin-10-0-0 {
+    margin: 10px 0 0 !important;
+}
+
+.margin-10 {
+    margin-left: 10px !important;
+}
+
+.padding-5-0 {
+    padding: 5px 0 !important;
+}
+
+.margin-2 {
+    margin: 2px !important;
+}
+
+.margin-0 {
+    margin: 0 !important;
+}
+
+.padding-10 {
+    padding: 10px !important;
+}
+
+.group-detail-advanced-json {
+    padding-left: 30px;
 }

@@ -30,14 +30,14 @@ Verify Node.JS installation.
 b) Any version of **Redis Server**.
     
     http://redis.io/download
-    
+
    or
     
     wget http://download.redis.io/releases/redis-2.8.9.tar.gz
     tar xzf redis-2.8.9.tar.gz
     cd redis-2.8.9
     make
-    
+
 2) Get the `contrail-web-core` repo
 
 SSH clone URL:
@@ -54,7 +54,7 @@ HTTPS clone URL:
     make repos
 
 'make repos' downloads two more repos contrail-web-controller and contrail-webui-third-party in parent directory.
-    
+
 
 4) Execute the following commands under `contrail-web-core` directory to setup development environment. It downloads all the third-party libraries and generates the files required for Contrail Web UI.
 
@@ -164,5 +164,3 @@ Note: All the files/directories under 'webroot' directory of [Contrail Web Contr
 ---
 * Sign the [CLA](https://secure.echosign.com/public/hostedForm?formid=6G36BHPX974EXY)
 * Submit change requests via gerrit at <http://review.opencontrail.org>.
-
-

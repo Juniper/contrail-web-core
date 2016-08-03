@@ -72,7 +72,7 @@ define([
                                                     custom: {
                                                         filterY: {
                                                             enable: true,
-                                                            iconClass: 'icon-filter',
+                                                            iconClass: 'fa fa-filter',
                                                             title: 'Filter',
                                                             events: cowu.getFilterEvent(),
                                                             viewConfig: getFilterConfig(queryId, aggregateSelectFields, queryResultLineChartId)
@@ -133,7 +133,7 @@ define([
                     cssClass: 'center',
                     resizable: false, sortable: false, width: 30, minWidth: 30, searchable: false, exportConfig: { allow: false },
                     formatter: function(r, c, v, cd, dc){
-                        return '<span class="label-icon-badge label-icon-badge-' + dc.cgrid + ((r === 0) ? ' icon-badge-color-0' : '') + '" data-color_key="' + ((r === 0) ? 0 : -1) + '"><i class="icon-sign-blank"></i></span>';
+                        return '<span class="label-icon-badge label-icon-badge-' + dc.cgrid + ((r === 0) ? ' icon-badge-color-0' : '') + '" data-color_key="' + ((r === 0) ? 0 : -1) + '"><i class="fa fa-square"></i></span>';
                     },
                     events: {
                         onClick: function(e, dc) {
@@ -167,7 +167,7 @@ define([
                 actionCell = [
                     {
                         title: 'Analyze Session',
-                        iconClass: 'icon-external-link-sign',
+                        iconClass: 'fa fa-external-link-square',
                         onClick: qewgc.getOnClickSessionAnalyzer(parentView, queryId, queryFormAttributes)
                     }
                 ]

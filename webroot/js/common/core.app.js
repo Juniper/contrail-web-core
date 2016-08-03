@@ -45,7 +45,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         //Files not in bundles
         'underscore'            : coreWebDir + '/assets/underscore/underscore-min',
         'slickgrid-utils'       : coreWebDir + "/js/slickgrid-utils",
-        'jquery'                : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
+        //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
+        //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.9.1.min',
+        'jquery'                      : coreWebDir + '/assets/jquery/js/jquery.min',
         'contrail-load'         : coreWebDir + '/js/contrail-load',
         'vis'                   : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
         'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
@@ -88,6 +90,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         var devAliasMap = {
             //Start - Core-bundle aliases
             'core-utils'                  : coreWebDir + '/js/common/core.utils',
+            'core-hash-utils'             : coreWebDir + '/js/common/core.hash.utils',
             'core-constants'              : coreWebDir + '/js/common/core.constants',
             'core-formatters'             : coreWebDir + '/js/common/core.formatters',
             'core-cache'                  : coreWebDir + '/js/common/core.cache',
@@ -102,11 +105,11 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'contrail-view-model'         : coreWebDir + '/js/models/ContrailViewModel',
             'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
             'lodash'                      : coreWebDir + '/assets/lodash/lodash.min',
-            'crossfilter'               : coreWebDir + '/assets/crossfilter/js/crossfilter',
+            'crossfilter'                 : coreWebDir + '/assets/crossfilter/js/crossfilter',
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
             'text'                        : coreWebDir + '/assets/requirejs/text',
             'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
-            'moment'                    : coreWebDir + "/assets/moment/moment",
+            'moment'                      : coreWebDir + "/assets/moment/moment",
             'layout-handler'              : coreWebDir + '/js/handlers/LayoutHandler',
             'menu-handler'                : coreWebDir + '/js/handlers/MenuHandler',
             'content-handler'             : coreWebDir + '/js/handlers/ContentHandler',
@@ -121,7 +124,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             //End - core-bundle aliases
             //Start - jquery.dep.libs aliases
             'jquery.xml2json'           : coreWebDir + '/assets/jquery/js/jquery.xml2json',
-            'jquery.ba-bbq'             : coreWebDir + '/assets/jquery/js/jquery.ba-bbq.min',
+            //'jquery.ba-bbq'             : coreWebDir + '/assets/jquery/js/jquery.ba-bbq.min',
             'jquery.json'               : coreWebDir + "/assets/slickgrid/js/jquery.json-2.3.min",
             'bootstrap'                 : coreWebDir + '/assets/bootstrap/js/bootstrap',
             'select2'                   : coreWebDir + "/assets/select2/js/select2.min",
@@ -140,7 +143,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'jquery.ui.position'        : coreWebDir + "/assets/jquery-contextMenu/js/jquery.ui.position",
             'jquery-contextmenu'        : coreWebDir + "/assets/jquery-contextMenu/js/jquery.contextMenu",
             'jquery.event.drag'         : coreWebDir + "/assets/slickgrid/js/jquery.event.drag-2.2",
-            'jquery.droppick'           : coreWebDir + "/assets/slickgrid/js/jquery.dropkick-1.0.0",
+            //cd 'jquery.droppick'           : coreWebDir + "/assets/slickgrid/js/jquery.dropkick-1.0.0",
             'jquery.datetimepicker'     : coreWebDir + "/assets/datetimepicker/js/jquery.datetimepicker",
             //End - jquery.dep.libs aliases
             //Start - thirdparty-libs aliases
@@ -433,6 +436,7 @@ var coreBundles = {
         'core-bundle'       : [
             'underscore',
             'core-utils',
+            'core-hash-utils',
             'core-constants',
             'core-formatters',
             'core-cache',
@@ -1319,8 +1323,9 @@ if (typeof document !== 'undefined' && document) {
                         window.kbValidation = validation;
                         // window.ko = ko;
                     });
-                    require(['core-utils'],function(CoreUtils) {
+                    require(['core-utils', 'core-hash-utils'],function(CoreUtils, CoreHashUtils) {
                         cowu = new CoreUtils();
+                        cowhu = new CoreHashUtils();
                         require(['underscore'],function(_) {
                             _.noConflict();
                         });

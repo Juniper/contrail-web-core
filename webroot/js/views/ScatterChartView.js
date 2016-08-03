@@ -292,7 +292,7 @@ define([
                 clearTimeout(tooltipTimeoutId);
         }
         if (initResponse['hideLoadingIcon'] != false)
-            $(this).parents('.widget-box').find('.icon-spinner').hide();
+            $(this).parents('.widget-box').find('.fa-spinner').hide();
         chartOptions['useVoronoi'] = false;
 
         //All tweaks related to bubble sizes

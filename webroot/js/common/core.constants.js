@@ -183,13 +183,13 @@ define([
 
         this.DEFAULT_CONFIG_NOT_FOUND_PAGE = {
             title: 'Page not found.',
-            iconClass: 'icon-warning-sign',
+            iconClass: 'fa fa-exclamation-triangle',
             defaultNavLinks: false
         };
 
         this.DEFAULT_CONFIG_ERROR_PAGE = {
             title: "Error in getting data.",
-            iconClass: 'icon-warning-sign',
+            iconClass: 'fa fa-exclamation-triangle',
             defaultErrorMessage: false,
             defaultNavLinks: false
         };
@@ -261,6 +261,11 @@ define([
         this.STAT_QUERY_PREFIX = "stat";
         this.OBJECT_LOGS_PREFIX = "ol";
         this.SYSTEM_LOGS_PREFIX = "sl";
+
+        this.TABLE_TYPES = [
+            this.QE_STAT_TABLE_TYPE,
+            this.QE_LOG_TABLE_TYPE,
+        ]
 
         this.FS_HASH_P = 'query_flow_series';
         this.FR_HASH_P = 'query_flow_record';

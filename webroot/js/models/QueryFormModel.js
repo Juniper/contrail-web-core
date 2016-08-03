@@ -9,8 +9,9 @@ define([
     'contrail-model',
     'query-or-model',
     'query-and-model',
-    'core-basedir/js/common/qe.utils'
-], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel,qewu) {
+    'core-basedir/js/common/qe.utils',
+    'contrail-list-model',
+], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel, qewu, ContrailListModel) {
     var QueryFormModel = ContrailModel.extend({
         defaultSelectFields: [],
         disableSelectFields: [],
@@ -37,16 +38,22 @@ define([
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
 
-            this.model().on( "change:table_name", this.onChangeTable, this);
+            this.model().on("change:table_name", this.onChangeTable, this);
+            this.model().on('change:select change:table_name change:time_range change:where change:filter change:time_granularity change:time_granularity_unit', function () {
+                // TODO ContrailListModel should have reload function instead of whole model recreation just to get new data
+                self.loader = undefined
+            })
 
             //TODO - Needs to be tested for Flow Pages
-            this.model().on("change:time_range change:from_time change:to_time", this.onChangeTime, this);
+            this.model().on("change:time_range change:from_time change:to_time change:table_type", this.onChangeTime, this);
 
             return this;
         },
 
         onChangeTime: function() {
-            if(this.table_type() === cowc.QE_STAT_TABLE_TYPE || this.table_type() === cowc.QE_OBJECT_TABLE_TYPE) {
+            var self = this,
+                table_type = self.model().get('table_type')
+            if (table_type === cowc.QE_STAT_TABLE_TYPE || table_type === cowc.QE_OBJECT_TABLE_TYPE) {
                 var setTableValuesCallbackFn = function (self, resultArr){
                     var currentSelectedTable = self.model().attributes.table_name;
                     if (currentSelectedTable != null)
@@ -59,9 +66,9 @@ define([
                         }
                     }
                 }
-                this.setTableValues(setTableValuesCallbackFn, this.table_type());
+                this.setTableValues(setTableValuesCallbackFn, table_type)
             }
-            this.setTableFieldValues();
+            else this.setTableFieldValues()
         },
 
         setTableValues: function(setTableValuesCallbackFn, tabletype) {
@@ -184,7 +191,7 @@ define([
                 disableFieldArray = [].concat(defaultSelectFields).concat(this.disableSelectFields),
                 disableSubstringArray = this.disableSubstringInSelectFields;
 
-            qewu.adjustHeight4FormTextarea(model.attributes.query_prefix);
+            //qewu.adjustHeight4FormTextarea(model.attributes.query_prefix);
             if(tableName != '') {
                 $.ajax(ajaxConfig).success(function(response) {
                     var selectFields = getSelectFields4Table(response, disableFieldArray, disableSubstringArray),
@@ -314,15 +321,16 @@ define([
             return resultSortFieldsDataArr;
         },
 
-        getFormModelAttributes: function () {
-            var modelAttrs = this.model().attributes,
-                attrs4Server = {},
-                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object',
-                                 'filter_data_object', 'filter_and_clauses', 'sort_by', 'sort_order', 'log_category', 'log_type', 'is_request_in_progress',
-                                 'show_advanced_options'];
+        toJSON: function () {
+            var modelAttrs = this.model().attributes
+            var attrs4Server = {}
+            var ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses',
+                    'select_data_object', 'where_data_object', 'filter_data_object', 'filter_and_clauses', 'sort_by',
+                    'sort_order', 'log_category', 'log_type', 'is_request_in_progress', 'show_advanced_options',
+                    'table_name_data_object']
 
             for (var key in modelAttrs) {
-                if(modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) == -1) {
+                if (modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) === -1) {
                     attrs4Server[key] = modelAttrs[key];
                 }
             }
@@ -332,7 +340,7 @@ define([
 
         getQueryRequestPostData: function (serverCurrentTime, customQueryReqObj, useOldTime) {
             var self = this,
-                formModelAttrs = this.getFormModelAttributes(),
+                formModelAttrs = this.toJSON(),
                 queryReqObj = {};
 
             if(useOldTime != true) {
@@ -365,9 +373,9 @@ define([
             this.time_granularity_unit('secs');
             this.select('');
             this.where('');
-            this.direction("1");
+            this.direction('1');
             this.filters('');
-            this.select_data_object().reset(data);
+            this.select_data_object().reset(this);
             this.model().get('where_or_clauses').reset();
             this.model().get('filter_and_clauses').reset();
         },
@@ -460,13 +468,17 @@ define([
 
         validations: {
             runQueryValidation: {
-                'table_name': {
+                table_type: {
                     required: true,
-                    msg: ctwm.getRequiredMessage('table name')
+                    msg: ctwm.getRequiredMessage('table type'),
                 },
-                'select': {
+                table_name: {
                     required: true,
-                    msg: ctwm.getRequiredMessage('select')
+                    msg: ctwm.getRequiredMessage('table name'),
+                },
+                select: {
+                    required: true,
+                    msg: ctwm.getRequiredMessage('select'),
                 },
                 from_time: function(value) {
                     var fromTime = new Date(value).getTime(),
@@ -487,7 +499,47 @@ define([
                     }
                 }
             }
-        }
+        },
+
+        getDataModel: function (p) {
+            var self = this
+            // reset data model on requested parser change
+            // TODO there is no need to reload data on parser change
+            if (_.isUndefined(self.loader) || (p && p.parserName !== self._parserName)) {
+                if (p && p.parserName && !self[p.parserName]) return undefined
+                self.loader = new ContrailListModel({
+                    remote: {
+                        ajaxConfig: {
+                            url: '/api/qe/query',
+                            type: 'POST',
+                            data: JSON.stringify(self.getQueryRequestPostData(+new Date)),
+                        },
+                        dataParser: function (response) {
+                            if (p.parserName && self[p.parserName]) return self[p.parserName](response.data, p)
+                            return response.data
+                        },
+                    },
+                })
+                self._parserName = p.parserName
+            }
+            return self.loader
+        },
+        // outputs data in time series format
+        timeSeriesParser: function (data, p) {
+            if (_.isEmpty(data)) return []
+            if (p && p.dataField) p.dataFields = [p.dataField]
+
+            var series = []
+            for (var i = 0; i < data.length; i++) {
+                if (_.isUndefined(data[i]['T='])) return []
+                var timeStamp = Math.floor(data[i]['T='] / 1000)
+                _.each(p.dataFields, function (dataField, seriesIndex) {
+                    if (i === 0) series[seriesIndex] = {values: []}
+                    series[seriesIndex].values.push({x: timeStamp, y: data[i][dataField]})
+                })
+            }
+            return series
+        },
     });
 
     function getTableSchemaConfig(model, tableName, disableFieldArray, disableSubstringArray, disableWhereFields) {

@@ -45,7 +45,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         //Files not in bundles
         'underscore'            : coreWebDir + '/assets/underscore/underscore-min',
         'slickgrid-utils'       : coreWebDir + "/js/slickgrid-utils",
-        'jquery'                : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
+        'jquery'                : coreWebDir + '/assets/jquery/js/jquery.min',
         'contrail-load'         : coreWebDir + '/js/contrail-load',
         'vis'                   : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
         'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
@@ -87,6 +87,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         var devAliasMap = {
             //Start - Core-bundle aliases
             'core-utils'                  : coreWebDir + '/js/common/core.utils',
+            'core-hash-utils'             : coreWebDir + '/js/common/core.hash.utils',
             'core-constants'              : coreWebDir + '/js/common/core.constants',
             'core-formatters'             : coreWebDir + '/js/common/core.formatters',
             'core-cache'                  : coreWebDir + '/js/common/core.cache',
@@ -431,6 +432,7 @@ var coreBundles = {
         'core-bundle'       : [
             'underscore',
             'core-utils',
+            'core-hash-utils',
             'core-constants',
             'core-formatters',
             'core-cache',

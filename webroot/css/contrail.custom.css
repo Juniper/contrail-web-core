@@ -23,7 +23,8 @@
  */
 .breadcrumb .breadcrumb-dropdown,
 .breadcrumb .breadcrumb-text {
-    max-width: 180px;
+    width: 120px;
+    border: none;
 }
 .breadcrumb .breadcrumb-text {
     text-overflow: ellipsis;
@@ -94,9 +95,18 @@
     display: table-cell;
     padding: 0 10px 0 0;
 }
+
+.advanced-options-link{
+    font-size:10px;
+    color:#999;
+    cursor:pointer;
+}
+.advanced-options-link:hover{
+    color:#3182bd;
+}
 /*
  * Styles moved from vcon-web.css
- * TODO Cleanup requireed to remove unused styles
+ * TODO Cleanup required to remove unused styles
  */
 .folder {
   background-position: 0 -16px;
@@ -118,9 +128,6 @@
 }
 .sub-title.main {
   padding-bottom: 16px;
-}
-.margin-auto {
-  margin: auto;
 }
 .example-subtitle {
   margin-bottom: 0;
@@ -363,6 +370,7 @@ div.t-grid td {
 }
 .infobox > .infobox-content{
 	margin: 0 0 0 5px;
+    margin-top: 5px;
 }
 .infobox-details > .infobox-content {
     margin: 0px;
@@ -421,7 +429,13 @@ rect.bordered {
 .sparklines-box{
 	border: 1px solid #dedede;
 	padding: 5px;
+    width: 31.8%;
 }
+
+#vrouterAgent-sparklines {
+    margin-left: 0px;
+}
+
 .sparklines-box p.sparkline-title{
 	padding: 0 5px 2px;
 	color: #3182bd;
@@ -845,7 +859,7 @@ p.error, p.error-text {
 .form-element .help-block{
     margin-bottom: 0;
 }
-.textarea-input-append.input-append.inset .add-on {
+.textarea-input-append.input-append.inset .input-group-addon {
    padding-right: 0;
 }
 .chart-settings-label {

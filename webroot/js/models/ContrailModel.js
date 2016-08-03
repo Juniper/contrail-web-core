@@ -7,8 +7,11 @@ define([
     'backbone',
     'contrail-view-model',
     'knockout',
-    'knockback'
+    'knockback',
+    'validation'
 ], function (_, Backbone, ContrailViewModel, Knockout, Knockback) {
+    _.extend(ContrailViewModel.prototype, Backbone.Validation.mixin)
+
     var ContrailModel = Knockback.ViewModel.extend({
 
         formatModelConfig: function(modelConfig) {
@@ -16,27 +19,29 @@ define([
         },
 
         constructor: function (modelData, modelRemoteDataConfig) {
-            var model, errorAttributes,
-                editingLockAttrs, _this = this,
-                modelAttributes = (modelData == null) ? this.defaultConfig : modelData;
+            var self = this,
+              model,
+              errorAttributes,
+              editingLockAttrs;
 
-            editingLockAttrs = generateAttributes(modelAttributes, cowc.LOCKED_SUFFIX_ID, true);
+            self._modelAttributes = (modelData == null) ? self.defaultConfig : modelData
+            editingLockAttrs = generateAttributes(self._modelAttributes, cowc.LOCKED_SUFFIX_ID, true);
 
-            if(this.defaultConfig != null) {
+            if(self.defaultConfig != null) {
                 modelData = cowu.filterJsonKeysWithNullValues(modelData);
             }
-            modelData = $.extend(true, {}, this.defaultConfig, modelData);
+            modelData = $.extend(true, {}, self.defaultConfig, modelData);
             errorAttributes = generateAttributes(modelData, cowc.ERROR_SUFFIX_ID, false);
             modelData = $.extend(true, {}, modelData, {errors: new Backbone.Model(errorAttributes), locks: new Backbone.Model(editingLockAttrs)});
 
-            modelData = this.formatModelConfig(modelData);
+            modelData = self.formatModelConfig(modelData);
             model = new ContrailViewModel($.extend(true, {data: modelData}, modelRemoteDataConfig));
-            model = _.extend(model, this.validations, {_originalAttributes: modelAttributes});
+            model = _.extend(model, self.validations, {_originalAttributes: self._modelAttributes});
 
-            Knockback.ViewModel.prototype.constructor.call(this, model);
+            Knockback.ViewModel.prototype.constructor.call(self, model);
 
-            delete this.validations;
-            return this;
+            delete self.validations;
+            return self;
         },
 
         getValueByPath: function (path) {
@@ -128,6 +133,11 @@ define([
             return isValid;
         },
 
+        isAttrAvailable: function (name) {
+            var self = this
+            return !(!_.isFunction(self[name]) || self[name]() === null || self[name]() === '')
+        },
+
         initLockAttr: function (attributePath, lockFlag) {
             var attribute = cowu.getAttributeFromPath(attributePath),
                 locks = this.model().get(cowc.KEY_MODEL_LOCKS),
@@ -180,7 +190,23 @@ define([
             // Replace last comma by a dot
             errorText = errorText.slice(0, -2) + ".";
             return {responseText: errorText};
-        }
+        },
+
+        toJSON: function () {
+            var self = this
+            var json = {}
+            _.each(self._modelAttributes, function (value, attr) {
+                json[attr] = self[attr]()
+            })
+            return json
+        },
+
+        reset: function () {
+            var self = this
+            _.each(self._modelAttributes, function (value, attr) {
+                self[attr](null)
+            })
+        },
     });
 
     function setError4Key(errors, key, isInternalValid) {

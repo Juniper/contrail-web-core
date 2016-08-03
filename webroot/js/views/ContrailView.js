@@ -27,7 +27,9 @@ define([
 
                 if (contrail.checkIfFunction(onAllViewsRenderCompleteCB)) {
                     self.onAllViewsRenderComplete.subscribe(function() {
-                        onAllViewsRenderCompleteCB();
+                        if(!self.isAnyViewRenderInProgress()) {
+                            onAllViewsRenderCompleteCB();
+                        }
                     });
                 } else if (contrail.checkIfFunction(onAllRenderCompleteCB)) {
                     self.onAllRenderComplete.subscribe(function() {
@@ -86,16 +88,13 @@ define([
                     app: app,
                     rootView: rootView,
                     onAllViewsRenderCompleteCB: function() {
-                        if(!self.isAnyViewRenderInProgress()) {
-                            // Notify parent the one of child's rendering is complete.
-                            self.onAllViewsRenderComplete.notify();
+                        // Notify parent the one of child's rendering is complete.
+                        self.onAllViewsRenderComplete.notify();
 
-                            if(contrail.checkIfFunction(onAllViewsRenderComplete)) {
-                                // Call any callback associated with onViewRenderComplete of child view.
-                                onAllViewsRenderComplete(self);
-                            }
+                        if(contrail.checkIfFunction(onAllViewsRenderComplete)) {
+                            // Call any callback associated with onViewRenderComplete of child view.
+                            onAllViewsRenderComplete(self);
                         }
-
                     }
                     /*
                     onAllRenderCompleteCB: function() {
