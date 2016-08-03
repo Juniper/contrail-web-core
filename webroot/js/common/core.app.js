@@ -124,7 +124,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             //End - core-bundle aliases
             //Start - jquery.dep.libs aliases
             'jquery.xml2json'           : coreWebDir + '/assets/jquery/js/jquery.xml2json',
-            //'jquery.ba-bbq'             : coreWebDir + '/assets/jquery/js/jquery.ba-bbq.min',
             'jquery.json'               : coreWebDir + "/assets/slickgrid/js/jquery.json-2.3.min",
             'bootstrap'                 : coreWebDir + '/assets/bootstrap/js/bootstrap',
             'select2'                   : coreWebDir + "/assets/select2/js/select2.min",
@@ -258,9 +257,6 @@ var coreAppShim =  {
     'xml2json' : {
         deps: ["jquery"]
     },
-    "jquery.ba-bbq" : {
-        deps: ['jquery']
-    },
     "jquery.timer" : {
         deps: ['jquery']
     },
@@ -296,12 +292,6 @@ var coreAppShim =  {
         deps:['jquery.event.drag']
     },
     'contrail-common': {
-        deps: ['jquery']
-    },
-    // 'contrail-layout': {
-    //     deps:['jquery.ba-bbq']
-    // },
-    'slick.enhancementpager': {
         deps: ['jquery']
     },
     'slick.rowselectionmodel': {
@@ -412,7 +402,6 @@ var coreBundles = {
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
-            'jquery.ba-bbq',
             'jquery.json',
             'bootstrap',
             'select2',
