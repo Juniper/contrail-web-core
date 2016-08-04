@@ -156,6 +156,8 @@ define([
                                         addOverviewChart:false,
                                         xAxisOffset: 30,
                                         barWidth: 6,
+                                        onClickBar : true,
+                                        yAxisFormatter: d3.format("d")
                                     },
                                     parseFn : coreAlarmParsers.parseAlarmsDataForStackChart,
                                     cfDataSource : self.cfDataSource
