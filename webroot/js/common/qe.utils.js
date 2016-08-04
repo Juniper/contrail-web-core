@@ -115,7 +115,7 @@ define([
             $.each(texareaNames, function(nameKey, nameValue) {
                 var scrollHeight = $(elId).find('[name="' + nameValue + '"]').get(0).scrollHeight;
                 $(elId).find('[name="' + nameValue + '"]')
-                    .outerHeight(((scrollHeight < 34) ? 24 : (scrollHeight- 10)));
+                    .outerHeight(((scrollHeight < 36) ? 26 : (scrollHeight- 10)));
             });
         };
 

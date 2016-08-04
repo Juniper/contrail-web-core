@@ -6,15 +6,17 @@
 /*
  * Contrail Textarea
  */
-textarea {
+textarea.form-control {
     resize: none;
     width: 100%;
     border: none;
+    padding: 3px 5px;
 }
 .textarea-input-group.input-group {
     border: 1px solid #D5D5D5;
 }
-.textarea-input-group .input-group-addon {
+.textarea-input-group .input-group-addon,
+.textarea-input-group .form-control {
     border: none;
 }
 /* Contrail Combobox

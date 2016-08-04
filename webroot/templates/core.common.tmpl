@@ -1242,7 +1242,7 @@
         </label>
         <div class="textarea-input-group input-group inset theme-addon">
             <textarea
-                name="{{id}}" value="" placeholder="{{placeHolder}}" rows="1"
+                name="{{id}}" value="" placeholder="{{placeHolder}}" rows="1" class="form-control"
                 data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
             </textarea>
             <span class="input-group-addon theme-addon" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
@@ -1452,7 +1452,7 @@
                 {{#each gridActions}}
                 <th>
     <div class=" margin-10-0-0  headerRowAction">
-        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="fa fa-plus"></i> &nbsp;{{this.buttonTitle}}</a>
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="fa fa-plus"></i>{{this.buttonTitle}}</a>
     </div>
     </th>
     {{/each}}
