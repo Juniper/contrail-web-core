@@ -133,6 +133,9 @@ function vcenter_logout (req, res, appData)
         //Issue logout on vCenter only if vmware session exists
         if(req.session.vmware_soap_session != null)
             vCenterApi.logout(appData);
+        if (-1 != req.url.indexOf('/vcenter/logout')) {
+            return login(req, res, appData, '/vcenter');
+        }
         return logout(req, res);
     }
 }
@@ -332,7 +335,12 @@ function logout (req, res)
             isRegionListFromConfig: config.regionsFromConfig,
             configRegionList: config.regions
         };
-        commonUtils.handleJSONResponse(null, res, retData);
+        var xReqWith = req.headers['X-Requested-With'];
+        if ('XMLHttpRequest' == xReqWith) {
+            commonUtils.handleJSONResponse(null, res, retData);
+        } else {
+            login(req, res);
+        }
     });
 };
 
