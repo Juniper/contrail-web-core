@@ -117,7 +117,7 @@ function processPendingReq (ctx, next, callback)
   //If loggedInOrchestrationMode doesn't exist in session
   if (checkLoginReq(ctx.req)) {
     ctx.req.session.loggedInOrchestrationMode =
-        orch.getOrchestrationModelsByReqURL(ctx.req.url);
+        orch.getOrchestrationModelsByReqURL(ctx.req.url, ctx.req);
     logutils.logger.info("Getting Logged In Orchestration Mode:",
                           ctx.req.session.loggedInOrchestrationMode);
   }
@@ -182,7 +182,7 @@ function routeAll (req, res, next)
   req.socket.setTimeout(global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME);
   if (checkLoginReq(req)) {
     req.session.loggedInOrchestrationMode =
-        orch.getOrchestrationModelsByReqURL(req.url);
+        orch.getOrchestrationModelsByReqURL(req.url, req);
   }
   if (null == req.session.sessionExpSyncToIdentityToken) {
       if (null != authApi.getSessionExpiryTime) {
