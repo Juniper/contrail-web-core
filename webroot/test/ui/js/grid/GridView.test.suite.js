@@ -47,59 +47,39 @@ define([
          */
         headerTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_DEFAULT_CONTROLS_DATA_ACTION,
             function () {
-            //by default the defaultControls are all set to true. custom viewConfig may not have it.
-            if (contrail.checkIfExist(viewConfigHeader.defaultControls)) {
-                expect(2);
-                //refreshable
-                if (viewConfigHeader.defaultControls.refreshable) {
+                //by default the defaultControls are all set to true. custom viewConfig may not have it.
+                if (contrail.checkIfExist(viewConfigHeader.defaultControls)) {
+                    expect(2);
+                    //refreshable
+                    if (viewConfigHeader.defaultControls.refreshable) {
+                        equal($(el).find('.grid-header .link-refreshable').attr('data-action'), 'refresh',
+                            "grid should have refresh control present");
+                    } else {
+                        equal($(el).find('.grid-header .link-refreshable').attr('data-action'), undefined,
+                            "grid should not have refresh control present");
+                    }
+                    //searchable
+                    if (viewConfigHeader.defaultControls.searchable) {
+                        equal($(el).find('.grid-header .link-searchbox').attr('data-action'), 'search',
+                            "grid should have search control present");
+                    } else {
+                        equal($(el).find('.grid-header .link-searchbox').attr('data-action'), undefined,
+                            "grid should not have search control present");
+                    }
+
+                } else {
+                    /**
+                     * defaultControls are not present in viewConfig. which means grid will use the
+                     * default defaultControls; which all the actions are set to true.
+                     */
+                    //refreshable
                     equal($(el).find('.grid-header .link-refreshable').attr('data-action'), 'refresh',
                         "grid should have refresh control present");
-                } else {
-                    equal($(el).find('.grid-header .link-refreshable').attr('data-action'), undefined,
-                        "grid should not have refresh control present");
-                }
-                //searchable
-                if (viewConfigHeader.defaultControls.searchable) {
+                    //searchable
                     equal($(el).find('.grid-header .link-searchbox').attr('data-action'), 'search',
                         "grid should have search control present");
-                } else {
-                    equal($(el).find('.grid-header .link-searchbox').attr('data-action'), undefined,
-                        "grid should not have search control present");
                 }
-                //TODO class for collapseable, exportable
-                /*
-                 //collapseable
-                 if (viewConfigHeader.defaultControls.collapseable) {
-                 equal($(el).find('.grid-header').attr('data-action'), 'collapse',
-                 "grid should have collapse control present");
-
-                 } else {
-                 equal($(el).find('.grid-header').attr('data-action'), undefined,
-                 "grid should not have collapse control present");
-                 }
-                 //exportable
-                 if (viewConfigHeader.defaultControls.exportable) {
-                 equal($(el).find('.grid-header').attr('data-action'), 'export',
-                 "grid should have export control present");
-
-                 } else {
-                 equal($(el).find('.grid-header').attr('data-action'), undefined,
-                 "grid should not have export control present");
-                 }
-                 */
-            } else {
-                /**
-                 * defaultControls are not present in viewConfig. which means grid will use the
-                 * default defaultControls; which all the actions are set to true.
-                 */
-                //refreshable
-                equal($(el).find('.grid-header .link-refreshable').attr('data-action'), 'refresh',
-                    "grid should have refresh control present");
-                //searchable
-                equal($(el).find('.grid-header .link-searchbox').attr('data-action'), 'search',
-                    "grid should have search control present");
-            }
-        }, cotr.SEVERITY_MEDIUM));
+            }, cotr.SEVERITY_MEDIUM));
 
 
         /**
@@ -127,8 +107,11 @@ define([
                 }
                 //collapseable
                 if (viewConfigHeader.defaultControls.collapseable) {
-                    equal($(el).find('.grid-header .widget-toolbar-icon .icon-chevron-up').length, 1,
-                        "grid should have collapse icon present");
+                    // either up or down collapseable should be present.
+                    var collapseable = $(el).find('.grid-header .widget-toolbar-icon .icon-chevron-up').length |
+                        $(el).find('.grid-header .widget-toolbar-icon .icon-chevron-down').length;
+                    
+                    equal(collapseable, 1, "grid should have collapse icon present");
 
                 } else {
                     equal($(el).find('.grid-header .widget-toolbar-icon .icon-chevron-up').length, 0,
@@ -224,6 +207,18 @@ define([
             }
         }, cotc.SEVERITY_MEDIUM));
 
+
+        /**
+         * Config validation test case
+         */
+
+        headerTestGroup.registerTest(cotr.test("Test if the columns are present", function () {
+            expect(2);
+            notEqual(viewConfigColHeader.columns.length ,undefined, "Columns should always be present");
+            notEqual(viewConfigColHeader.columns.length,0,"Columns header cannot be empty");
+
+        }, cotc.SEVERITY_HIGH));
+
         /**
          * Grid Body group test cases
          */
@@ -256,6 +251,44 @@ define([
                 }
             }, cotc.SEVERITY_MEDIUM));
         }
+
+        /**
+         * Config validation check test cases
+         */
+
+        bodyTestGroup.registerTest(cotr.test("Test if the data source is present", function () {
+            expect(1);
+            notEqual(viewConfigBody.dataSource ,undefined, "Data source should always be present");
+
+        }, cotc.SEVERITY_HIGH));
+
+
+        if(viewConfigBody.dataSource.remote!=null) {
+            bodyTestGroup.registerTest(cotr.test("Test if the ajax config is valid", function () {
+                expect(3);
+                notEqual(viewConfigBody.dataSource.remote.ajaxConfig.url, undefined, "datasource url should not be undefined");
+                notEqual(viewConfigBody.dataSource.remote.ajaxConfig.url, "",  "datasource url should not be empty");
+                notEqual(viewConfigBody.dataSource.remote.ajaxConfig.type, "",  "datasource type cannot be empty");
+
+            }, cotc.SEVERITY_HIGH));
+        }
+
+        bodyTestGroup.registerTest(cotr.test("Test if only boolean values are present ", function () {
+            var boolValues = {};
+            boolValues['true'] = true;
+            boolValues['false'] = true;
+            equal(boolValues[viewConfigBody.options.autoRefresh] ,true, "Autorefresh values cannot be non-boolean");
+
+        }, cotc.SEVERITY_HIGH));
+
+        bodyTestGroup.registerTest(cotr.test("Test if the details contains template ", function () {
+            expect(3);
+            notEqual(viewConfigBody.options.detail.template ,undefined, "Template cannot be undefined");
+            notEqual(viewConfigBody.options.detail.template ," ", "Template cannot be empty");
+            equal(isNaN(viewConfigBody.options.detail.template), true, "Template cannot be a numeric value");
+
+
+        }, cotc.SEVERITY_HIGH));
 
         /**
          * detail rows enabled?
@@ -351,6 +384,17 @@ define([
             }
         }, cotc.SEVERITY_HIGH));
 
+        bodyTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_ROW_FIXED_HEIGHT, function () {
+            expect(1);
+            if (viewConfigBody.options.fixedRowHeight != false && _.isNumber(viewConfigBody.options.fixedRowHeight)) {
+                //get the cgrid of the first row
+                var cgrid = $(el).find('.slick-row:first').attr('data-cgrid');
+                equal($(el).find('.slick_row_' + cgrid).css('height'), viewConfigBody.options.fixedRowHeight + "px",
+                    "Fixed row height should equal to configured.");
+            } else {
+                ok(true, "Fixed row height is set to false");
+            }
+        }, cotc.SEVERITY_HIGH));
 
         /**
          * Grid Footer group test cases
@@ -372,8 +416,27 @@ define([
                     viewConfigFooter.pager.options.pageSize + ' Records',
                     "page size selection should match default set");
             }, cotc.SEVERITY_HIGH));
-        }
 
+            //Landing page should always have minumum of 1 Page in the dropdown.
+            footerTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_FOOTER_NAVIGATION_PAGE_NUMBER, function () {
+                expect(1);
+                equal($(el).find('.slick-pager-nav .select2-chosen').text().trim(),
+                    'Page 1',
+                    "Navigation should have minumum 1 Page in the dropdown");
+            }, cotc.SEVERITY_HIGH));
+
+            /**
+             * Footer should have correct number of pages for a given Page size, based on the number of rows.
+             */
+            footerTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_FOOTER_TOTAL_PAGES, function () {
+                expect(1);
+                var expectedCount = Math.floor(gridItems.length/viewConfigFooter.pager.options.pageSize +1);
+                equal($(el).find('.csg-total-page-count').text().trim(),
+                    expectedCount,
+                    "The total number of pages should be according to page size");
+            }, cotc.SEVERITY_HIGH));
+
+        }
         gridViewTestSuite.run(suiteConfig.groups, suiteConfig.severity);
 
     };
