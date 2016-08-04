@@ -30,7 +30,7 @@
         <url>/vcenter</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.dashboard</callback>
+        <callback>handler.vcenter_login</callback>
     </item>
     <item>
         <url>/</url>
