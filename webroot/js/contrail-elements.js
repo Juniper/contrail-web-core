@@ -1230,7 +1230,7 @@ function constructSelect2(self, customConfig, args) {
                                 }
                                 group.children=[];
                                 $(datum.children).each2(function(i, childDatum) { process(childDatum, group.children); });
-                                if (group.children.length || query.matcher(t, '', datum)) {
+                                if (group.children.length || q.matcher(t, '', datum)) {
                                     collection.push(group);
                                 }
                             } else {
@@ -1287,6 +1287,28 @@ function constructSelect2(self, customConfig, args) {
 
                 callback(data);
             };
+        }
+
+        if (customConfig.showParentInSelection){
+            customConfig['formatSelection'] = function (object) {
+                var allData = this.data;
+                var parent = '';
+                //find the parent
+                for (var i = 0 ; i < allData.length; i++) {
+                    if (allData[i].children && allData[i].children.length > 0){
+                        var children = allData[i]['children'];
+                        if (object['parent'] != null && object['parent'] == children[0]['parent']) {
+                            for (var j = 0 ;j < children.length; j++) {
+                                if (object[this.dataValueField.dsVar] == children[j][this.dataValueField.dsVar]) {
+                                    parent = allData[i][this.dataTextField.dsVar];
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return (parent != '')?'<span style="font-weight:600">'+ parent + '</span>' + ' : '  + object.text : object.text;
+            }
         }
 
         if (contrail.checkIfExist(customConfig.dropdownCssClass)) {
