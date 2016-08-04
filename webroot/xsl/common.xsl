@@ -66,20 +66,4 @@
             </div>
         </div>
     </xsl:template>
-    
-    <xsl:template name="output_no_data_found">
-        <table class="table_1">
-            <tbody>
-                <tr>
-                    <td>
-                        <div align="center" class="introspect_no_data_found">
-                            <b>
-                                <xsl:value-of select="$no-data-found-text"/>
-                            </b>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>			
-    </xsl:template>
 </xsl:stylesheet>
