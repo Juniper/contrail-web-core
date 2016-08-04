@@ -26,7 +26,7 @@ var depArray = [
 
     'co-test-utils', 'co-test-constants',
 
-    'layout-handler', 'joint.contrail', 'text', 
+    'layout-handler', 'joint.contrail', 'text',
 
 ];
 
@@ -178,7 +178,7 @@ function testAppInit(testAppConfig) {
                     if($('#content-container').length == 0) {
                         $('#app-container').html($('#app-container-tmpl').text());
                         $('#app-container').removeClass('hide');
-                    } else 
+                    } else
                         $('#app-container').removeClass('hide');
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
                     webServerInfoDefObj.resolve();
@@ -276,7 +276,7 @@ function testAppInit(testAppConfig) {
             // fakeServer.respondWith("GET", cotu.getRegExForUrl('/menu'),
             //     [200, {"Content-Type": "application/xml"}, menuXML]);
 
-            
+
             //Load feature apps
             if(globalObj['featureAppDefObj'] == null)
                 globalObj['featureAppDefObj'] = $.Deferred();
@@ -300,118 +300,120 @@ function testAppInit(testAppConfig) {
             globalObj['webServerInfo'] = JSON.parse(testAppConfig.webServerInfo);
             webServerInfoDefObj.resolve();
 
+            loadFeatureApps(globalObj['webServerInfo']['featurePkg']);
+
             require(['chart-libs'],function() {});
             require(['jquery-dep-libs'],function() {});
             globalObj['layoutDefObj'] = $.Deferred();
 
             SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(toElement) {
-                return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM());
-            };
+                    return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM());
+                };
 
             //nonamd-libs   #no dependency on jquery
-            require(['core-bundle','jquery-dep-libs','nonamd-libs'],function() {
-                loadFeatureApps(globalObj['webServerInfo']['featurePkg']);
-                require(['validation','knockout','backbone'],function(validation,ko) {
-                    window.kbValidation = validation;
-                    // window.ko = ko;
-                });
-                require(['core-utils'],function(
-                    CoreUtils,CoreConstants,CoreFormatters,CoreLabels,CoreMessages,Cache,CoreViewsDefaultConfig,ChartUtils) {
-                    cowu = new CoreUtils();
-                    require(['underscore'],function(_) {
-                        _.noConflict();
+            require(['backbone', 'validation', 'knockout', 'knockback'], function () {
+                require(['core-bundle', 'jquery-dep-libs', 'nonamd-libs'], function () {
+                    require(['validation', 'knockout', 'backbone'], function (validation, ko) {
+                        window.kbValidation = validation;
+                        // window.ko = ko;
                     });
-                    require(['layout-handler','content-handler','contrail-load','lodash'],function(LayoutHandler,ContentHandler,ChartUtils,_) {
-                        window._ = _;
-                        contentHandler = new ContentHandler();
-                        initBackboneValidation();
-                        initCustomKOBindings(window.ko);
-                        initDomEvents();
+                    require(['core-utils'], function (CoreUtils) {
+                        cowu = new CoreUtils();
+                        require(['underscore'], function (_) {
+                            _.noConflict();
+                        });
+                        require(['layout-handler', 'content-handler', 'contrail-load', 'lodash'], function (LayoutHandler, ContentHandler, ChartUtils, _) {
+                            window._ = _;
+                            contentHandler = new ContentHandler();
+                            initBackboneValidation();
+                            initCustomKOBindings(window.ko);
+                            initDomEvents();
 
-                        $("body").addClass('navbar-fixed');
-                        $("body").append(cotu.getPageHeaderHTML());
-                        $("body").append(cotu.getSidebarHTML());
-                        $("body").append(CoreCommonTmpl);
+                            $("body").addClass('navbar-fixed');
+                            $("body").append(cotu.getPageHeaderHTML());
+                            $("body").append(cotu.getSidebarHTML());
+                            $("body").append(CoreCommonTmpl);
 
-                        layoutHandler = new LayoutHandler();
-                        layoutHandlerLoadDefObj.resolve();
-                        layoutHandler.load(menuXML);
+                            layoutHandler = new LayoutHandler();
+                            layoutHandlerLoadDefObj.resolve();
+                            layoutHandler.load(menuXML);
 
 
-                        var cssList = cotu.getCSSList();
+                            var cssList = cotu.getCSSList();
 
-                        for (var i = 0; i < cssList.length; i++) {
-                            $("body").append(cssList[i]);
-                        }
-                        requirejs(['contrail-layout'], function () {
-                            //TODO: Timeout is currently required to ensure menu is loaed i.e feature app is initialized
-
-                            var logAllTestFiles = "Test files: ";
-                            for (var i = 0; i < allTestFiles.length; i++) {
-                                logAllTestFiles += "\n";
-                                logAllTestFiles +=  i + 1 + ") " + allTestFiles[i];
+                            for (var i = 0; i < cssList.length; i++) {
+                                $("body").append(cssList[i]);
                             }
-                            console.log(logAllTestFiles);
+                            requirejs(['contrail-layout'], function () {
+                                //TODO: Timeout is currently required to ensure menu is loaed i.e feature app is initialized
 
-                            var testFilesIndex = 0,
-                                loadTestRunner = true,
-                                testFile = allTestFiles[testFilesIndex],
-                                defObj = $.Deferred();
+                                var logAllTestFiles = "Test files: ";
+                                for (var i = 0; i < allTestFiles.length; i++) {
+                                    logAllTestFiles += "\n";
+                                    logAllTestFiles += i + 1 + ") " + allTestFiles[i];
+                                }
+                                console.log(logAllTestFiles);
 
-                            function loadSingleFileAndStartKarma(testFile, defObj, loadTestRunner) {
-                                var startKarmaCB = function (defObj, loadTestRunner) {
-                                    console.log("Loaded test file: " + testFile.split('/').pop());
-                                    return window.__karma__.start(defObj, loadTestRunner);
-                                };
-                                //Clear Cookies if any exist
-                                if (document.cookie != '') {
-                                    var cookies = document.cookie.split(";");
-                                    for (var i = 0; i < cookies.length; i++){
-                                        var cookie =  cookies[i].split("=");
-                                        document.cookie = cookie[0] + "=;expires=Tue, 02 Dec 1890 00:00:01 UTC;";
+                                var testFilesIndex = 0,
+                                    loadTestRunner = true,
+                                    testFile = allTestFiles[testFilesIndex],
+                                    defObj = $.Deferred();
+
+                                function loadSingleFileAndStartKarma(testFile, defObj, loadTestRunner) {
+                                    var startKarmaCB = function (defObj, loadTestRunner) {
+                                        console.log("Loaded test file: " + testFile.split('/').pop());
+                                        return window.__karma__.start(defObj, loadTestRunner);
+                                    };
+                                    //Clear Cookies if any exist
+                                    if (document.cookie != '') {
+                                        var cookies = document.cookie.split(";");
+                                        for (var i = 0; i < cookies.length; i++) {
+                                            var cookie = cookies[i].split("=");
+                                            document.cookie = cookie[0] + "=;expires=Tue, 02 Dec 1890 00:00:01 UTC;";
+                                        }
                                     }
-                                }
 
-                                //clear the core cache
-                                cowch.reset();
+                                    //clear the core cache
+                                    cowch.reset();
 
-                                require([testFile], function () {
-                                    requirejs.config({
-                                        deps: [testFile],
-                                        callback: startKarmaCB(defObj, loadTestRunner)
+                                    require([testFile], function () {
+                                        requirejs.config({
+                                            deps: [testFile],
+                                            callback: startKarmaCB(defObj, loadTestRunner)
+                                        });
                                     });
-                                });
 
-                            }
-
-                            function loadNextFileOrStartCoverage() {
-                                requirejs.undef(allTestFiles[testFilesIndex]);
-                                console.log("Execution complete. Unloaded test file: " + allTestFiles[testFilesIndex].split('/').pop());
-                                console.log("----------------------------------------------------------------------------");
-                                window.QUnit.config.current = {semaphore: 1};
-                                window.QUnit.config.blocking = true;
-                                //window.QUnit.stop();
-                                testFilesIndex += 1;
-                                loadTestRunner = false;
-                                if (testFilesIndex < allTestFiles.length) {
-                                    //console.log("Initializing QUnit and proceeding to next test.");
-                                    window.QUnit.init();
-                                    var defObj = $.Deferred();
-                                    defObj.done(loadNextFileOrStartCoverage);
-                                    loadSingleFileAndStartKarma(allTestFiles[testFilesIndex], defObj, loadTestRunner);
                                 }
-                                else if (testFilesIndex == allTestFiles.length) {
-                                    console.log("Completed; Starting Coverage.")
-                                    window.__karma__.complete({
-                                        coverage: window.__coverage__
-                                    });
-                                }
-                            };
 
-                            defObj.done(loadNextFileOrStartCoverage);
+                                function loadNextFileOrStartCoverage() {
+                                    requirejs.undef(allTestFiles[testFilesIndex]);
+                                    console.log("Execution complete. Unloaded test file: " + allTestFiles[testFilesIndex].split('/').pop());
+                                    console.log("----------------------------------------------------------------------------");
+                                    window.QUnit.config.current = {semaphore: 1};
+                                    window.QUnit.config.blocking = true;
+                                    //window.QUnit.stop();
+                                    testFilesIndex += 1;
+                                    loadTestRunner = false;
+                                    if (testFilesIndex < allTestFiles.length) {
+                                        //console.log("Initializing QUnit and proceeding to next test.");
+                                        window.QUnit.init();
+                                        var defObj = $.Deferred();
+                                        defObj.done(loadNextFileOrStartCoverage);
+                                        loadSingleFileAndStartKarma(allTestFiles[testFilesIndex], defObj, loadTestRunner);
+                                    }
+                                    else if (testFilesIndex == allTestFiles.length) {
+                                        console.log("Completed; Starting Coverage.")
+                                        window.__karma__.complete({
+                                            coverage: window.__coverage__
+                                        });
+                                    }
+                                };
 
-                            loadSingleFileAndStartKarma(testFile, defObj, loadTestRunner);
+                                defObj.done(loadNextFileOrStartCoverage);
 
+                                loadSingleFileAndStartKarma(testFile, defObj, loadTestRunner);
+
+                            });
                         });
                     });
                 });
