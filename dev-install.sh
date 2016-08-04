@@ -55,13 +55,9 @@ mkdir -p webroot/assets/jquery/css
 cp -af ./$THIRD_PARTY/jquery.xml2json.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/x2js-1.2.0/xml2json.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.ui.touch-punch.min.js webroot/assets/jquery/js/
-#cp -af ./$THIRD_PARTY/jquery.ba-bbq.min.js webroot/assets/jquery/js/
-#cp -af ./$THIRD_PARTY/jquery.ba-bbq-v1.2.2/jquery.ba-bbq.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.timer.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.json-2.4.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery.dataTables.min.js webroot/assets/jquery/js/
-#cp -af ./$THIRD_PARTY/jquery-1.8.3.min.js webroot/assets/jquery/js/
-#cp -af ./$THIRD_PARTY/jquery-1.9.1.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-2.2.4/dist/jquery.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/build/jquery.steps.min.js webroot/assets/jquery/js/
@@ -84,8 +80,8 @@ cp -af ./$THIRD_PARTY/jquery-ui-1.11.4/images webroot/assets/jquery-ui/css/
 #End - Copy jquery-ui files from $THIRD_PARTY
 
 #Start - Copy jquery-ui-multiselect files from $THIRD_PARTY
-cp -af ./$THIRD_PARTY/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.js webroot/assets/jquery-ui/js/jquery.multiselect.js
-cp -af ./$THIRD_PARTY/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.filter.js webroot/assets/jquery-ui/js/jquery.multiselect.filter.js
+cp -af ./$THIRD_PARTY/jquery-ui-multiselect-widget-1.15/src/jquery.multiselect.js webroot/assets/jquery-ui/js/jquery.multiselect.js
+cp -af ./$THIRD_PARTY/jquery-ui-multiselect-widget-1.15/src/jquery.multiselect.filter.js webroot/assets/jquery-ui/js/jquery.multiselect.filter.js
 #End - Copy jquery-ui-multiselect files from $THIRD_PARTY
 
 #Start - Copy Bootstrap from $THIRD_PART

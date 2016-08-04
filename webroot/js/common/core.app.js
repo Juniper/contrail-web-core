@@ -139,8 +139,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'jquery.multiselect.filter' : coreWebDir + "/assets/jquery-ui/js/jquery.multiselect.filter",
             'jquery.steps.min'          : coreWebDir + "/assets/jquery/js/jquery.steps.min",
             'jquery.panzoom'            : coreWebDir + "/assets/jquery/js/jquery.panzoom.min",
-            'jquery.ui.position'        : coreWebDir + "/assets/jquery-contextMenu/js/jquery.ui.position",
-            'jquery-contextmenu'        : coreWebDir + "/assets/jquery-contextMenu/js/jquery.contextMenu",
+            // 'jquery.ui.position'        : coreWebDir + "/assets/jquery-contextMenu/js/jquery.ui.position",
+            // 'jquery-contextmenu'        : coreWebDir + "/assets/jquery-contextMenu/js/jquery.contextMenu",
             'jquery.event.drag'         : coreWebDir + "/assets/slickgrid/js/jquery.event.drag-2.2",
             //cd 'jquery.droppick'           : coreWebDir + "/assets/slickgrid/js/jquery.dropkick-1.0.0",
             'jquery.datetimepicker'     : coreWebDir + "/assets/datetimepicker/js/jquery.datetimepicker",
@@ -224,12 +224,12 @@ var coreAppShim =  {
     'jquery.tristate' : {
         deps: ['jquery-ui']
     },
-    'jquery.ui.position' : {
-        deps: ['jquery']
-    },
-    'jquery-contextmenu' : {
-        deps: ['jquery']
-    },
+    // 'jquery.ui.position' : {
+    //     deps: ['jquery']
+    // },
+    // 'jquery-contextmenu' : {
+    //     deps: ['jquery']
+    // },
     'jquery.multiselect.filter' : {
         deps: ['jquery-ui']
     },
@@ -416,7 +416,7 @@ var coreBundles = {
             'jquery.multiselect.filter',
             'jquery.steps.min',
             'jquery.panzoom',
-            'jquery-contextmenu',
+            // 'jquery-contextmenu',
             'jquery.event.drag',
             'jquery.droppick',
             'jquery.datetimepicker'
