@@ -117,7 +117,7 @@ function processPendingReq (ctx, next, callback)
   //If loggedInOrchestrationMode doesn't exist in session
   if (checkLoginReq(ctx.req)) {
     ctx.req.session.loggedInOrchestrationMode =
-        orch.getOrchestrationModelsByReqURL(ctx.req.url);
+        orch.getOrchestrationModelsByReqURL(ctx.req.url, ctx.req);
     logutils.logger.info("Getting Logged In Orchestration Mode:",
                           ctx.req.session.loggedInOrchestrationMode);
   }
@@ -158,7 +158,7 @@ function registerRestrictedURL ()
 function checkLoginReq (req)
 {
   //Now,as authenticate request is issued via Ajax call and we get the _ argument to avoid cache and need to match url only with the beginning
-  return req.url.match(/^((\/isauthenticated)|(\/vcenter\/menu)|(\/menu)|(\/authenticate)|(\/vcenter\/authenticate)|(\/vcenter\/isauthenticated)|(\/logout)|(\/vcenter\/login)|(\/vcenter\/logout))/);
+  return req.url.match(/^((\/isauthenticated)|(\/vcenter\/menu)|(\/menu)|(\/authenticate)|(\/vcenter\/authenticate)|(\/vcenter\/isauthenticated)|(\/logout)|(\/vcenter\/login)|(\/vcenter\/logout)|(\/login)|(\/vcenter))/);
 }
 
 /*
@@ -182,7 +182,7 @@ function routeAll (req, res, next)
   req.socket.setTimeout(global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME);
   if (checkLoginReq(req)) {
     req.session.loggedInOrchestrationMode =
-        orch.getOrchestrationModelsByReqURL(req.url);
+        orch.getOrchestrationModelsByReqURL(req.url, req);
   }
   if (null == req.session.sessionExpSyncToIdentityToken) {
       if (null != authApi.getSessionExpiryTime) {

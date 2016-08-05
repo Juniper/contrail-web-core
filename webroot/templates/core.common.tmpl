@@ -407,7 +407,7 @@
                 </div>
             </div>
             {{else}}
-                <p>No Alerts found.</p>
+                <p>No Alarms found.</p>
         {{/each}}
         {{#IfCompare this.length 0 operator=">"}}
             <div id="moreAlertsLink" style="cursor:pointer;margin-left:5px"><a>More</a></div>
@@ -1469,7 +1469,7 @@
     </table>
     {{#each gridActions}}
     <div class="row-fluid margin-10-0-0">
-        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}</a>
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i>{{this.buttonTitle}}</a>
     </div>
     {{/each}}
 </script>
@@ -1488,7 +1488,7 @@
                 {{#each gridActions}}
                 <th>
     <div class=" margin-10-0-0  headerRowAction">
-        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}</a>
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="icon-plus"></i>{{this.buttonTitle}}</a>
     </div>
     </th>
     {{/each}}
@@ -1578,7 +1578,7 @@
             <th>
                 {{#each viewConfig.gridActions}}
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
-            <i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}
+            <i class="icon-plus"></i>{{this.buttonTitle}}
         </a>
     {{/each}}
     </th>
@@ -1596,13 +1596,15 @@
                 style: {width: '{{width}}px' }">
             </td>
             {{/each}}
-            <td class="action-cell">
+            {{#if rowActions}}
+            <td class="action-cell" >
             {{#each rowActions}}
                 <a data-bind='click: {{this.onClick}}'>
                     <i class="{{this.iconClass}}"></i>
                 </a>
             {{/each}}
             </td>
+            {{/if}}
         </tr>
         <tr class="error-row">
             {{#each columns}}
@@ -1650,7 +1652,7 @@
         <th class="action-cell">
             {{#each viewConfig.gridActions}}
         <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
-            <i class="icon-plus"></i> &nbsp;{{this.buttonTitle}}
+            <i class="icon-plus"></i>{{this.buttonTitle}}
         </a>
     {{/each}}
         </th>
@@ -1786,7 +1788,7 @@
                     <div style="padding: 5px 5px 0 5px;">
                         <div class="row-fluid">
                             {{#each columns}}
-                                <div class="and-clause-collection data-cell{{elementId}}" />
+                                <div class="and-clause-collection data-cell-{{elementId}}" />
                             {{/each}}
                         </div>
                     </div>
@@ -2495,4 +2497,16 @@
 <script type="text/x-handlebars-template" id="alarm-severity-template">
     <div data-color={{{color}}} class="circle {{{color}}} {{#IfCompare ack false}}filled{{/IfCompare}} alarms-circle-grid-style alarms-circle-display-flex"></div>
     {{#if showText}}<div class="alarms-display-inline">&nbsp;{{{text}}}</div>{{/if}}
+</script>
+
+<script type="text/x-handlebars-template" id="core-2-row-4-column-template">
+    <div class="row-fluid margin-0-0-5 top-container">
+        <div class="span6 left-column"></div>
+        <div class="span6 right-column"></div>
+    </div>
+    <div style='clear:both'></div>
+    <div class="row-fluid margin-0-0-5 bottom-container">
+        <div class="span6 left-column"></div>
+        <div class="span6 right-column"></div>
+    </div>
 </script>

@@ -420,12 +420,12 @@ define([
 
     this.alarmSeverityFormatter = function (v, dc, showTextFlag) {
         var showText = (showTextFlag != null && showTextFlag == false)? false: true;
-        var color = (v == 3) ? 'red' : 'orange';
+        var color = (v <= 3) ? 'red' : 'orange';
         var template = contrail.getTemplate4Id(cowc.TMPL_ALARM_SEVERITY);
         return template({
             showText : showText,
             color : color,
-            text : (v == 3) ? 'Major' : 'Minor',
+            text : coreAlarmUtils.getAlarmSeverityText(v),
             ack : (dc['ack'] == null)? false : dc['ack']
         });
     }

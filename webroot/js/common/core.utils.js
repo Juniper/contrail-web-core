@@ -1281,6 +1281,30 @@ define(['underscore'], function (_) {
             }
             return json;
         };
+
+        this.numberFormatter = function(number, decimals) {
+            var units = ['', 'K', 'M', 'B', 'T'],
+            unit = units.length - 1,
+            kilo = 1000,
+            decimals = isNaN(decimals) ? 2 : Math.abs(decimals),
+            decPoint = '.';
+            for (var i=0; i < units.length; i++) {
+              if (number < Math.pow(kilo, i+1)) {
+                unit = i;
+                break;
+              }
+            }
+            number = number / Math.pow(kilo, unit);
+            var suffix = units[unit] ;
+            var sign = number < 0 ? '-' : '';
+            number = Math.abs(+number || 0);
+            var intPart = parseInt(number.toFixed(decimals), 10) + '';
+            if (Math.abs(number - intPart) > 0)
+                return sign + intPart + (decimals ? decPoint + Math.abs(number - intPart).toFixed(decimals).slice(2) : '') + " "+suffix;
+            else
+                return sign + intPart +" "+suffix;
+        };
+
     };
 
     function filterXML(xmlString, is4SystemLogs) {
