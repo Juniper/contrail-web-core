@@ -30,8 +30,11 @@
 					<!-- Suppress rlist as it has been handled already and using to create first page. i.e ToC page -->
 					<xsl:when test="attribute::type[.='rlist']"/>
 					<!-- Handling of slist -->
-					<xsl:otherwise>
+					<xsl:when test="attribute::type[.='slist']">
 						<xsl:call-template name="output_slist_formatting"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:call-template name="output_element_formatting"/>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:for-each>
