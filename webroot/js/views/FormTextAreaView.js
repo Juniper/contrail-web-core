@@ -48,7 +48,7 @@ define([
                 .off('input')
                 .on('input', function() {
                     var scrollHeight = $(this).get(0).scrollHeight;
-                    $(this).outerHeight((scrollHeight < 34) ? 24 : (scrollHeight - 10));
+                    $(this).outerHeight((scrollHeight < 36) ? 26 : (scrollHeight - 10));
                 });
         }
     });

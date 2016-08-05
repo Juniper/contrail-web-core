@@ -19,7 +19,7 @@ define([
     'jquery.multiselect.filter',
     'jquery.steps.min',
     'jquery.panzoom',
-    'jquery-contextmenu',
+    // 'jquery-contextmenu',
     'jquery.event.drag',
     // 'jquery.droppick',
     'jquery.datetimepicker'

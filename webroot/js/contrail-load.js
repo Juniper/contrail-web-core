@@ -44,16 +44,19 @@ $(document).ready(function () {
 
     $(window).on('scroll', function () {
         var scrollHeight = $(document).height() - $(window).height(),
-            previousScroll = 0, currentScroll = $(this).scrollTop();
+            previousScroll = 0,
+            currentScroll = $(this).scrollTop();
 
-        if (currentScroll < 50 || previousScroll - currentScroll > 40) {
+        if (currentScroll < 45 || previousScroll - currentScroll > 40) {
             $("#pageHeader").show();
+            $('#page-content').removeClass('scrolled');
             $('#sidebar').removeClass('scrolled');
             $('#breadcrumbs').removeClass('scrolled');
             $('#back-to-top').fadeOut();
         }
         else {
             $("#pageHeader").hide();
+            $('#page-content').addClass('scrolled');
             $('#sidebar').addClass('scrolled');
             $('#breadcrumbs').addClass('scrolled');
             $('#back-to-top').fadeIn();
@@ -257,22 +260,11 @@ $.allajax = (function ($) {
 })($);
 
 $(document).on('click', '.pre-format-JSON2HTML .expander', function(){
-    var selfParent = $(this).parent(),
-        jsonObj = {};
-    selfParent.children('i').removeClass('fa-plus').removeClass('expander').addClass('fa fa-minus').addClass('collapser');
-    if(selfParent.children('.node').hasClass('raw')){
-        jsonObj = JSON.parse(selfParent.children('ul.node').text());
-        selfParent.empty().append(contrail.formatJsonObject(jsonObj, 2, parseInt(selfParent.children('.node').data('depth')) + 1));
-    }
-    selfParent.children('.node').show();
-    selfParent.children('.collapsed').hide();
+    cowu.expandJsonHtml($(this))
 });
 
 $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
-    var selfParent = $(this).parent();
-    selfParent.children('i').removeClass('fa-minus').removeClass('collapser').addClass('fa fa-plus').addClass('expander');
-    selfParent.children('.collapsed').show();
-    selfParent.children('.node').hide();
+    cowu.collapseJsonHtml($(this));
 });
 
 (function($) {

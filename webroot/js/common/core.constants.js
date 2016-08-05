@@ -298,6 +298,14 @@ define([
             {'id': -1, 'text': 'Custom'}
         ];
 
+        this.TIMERANGE_DROPDOWN_VALUES_WO_CUSTOM = [
+            {'id': 600, 'text': 'Last 10 Mins'},
+            {'id': 1800, 'text': 'Last 30 Mins'},
+            {'id': 3600, 'text': 'Last 1 Hr'},
+            {'id': 21600, 'text': 'Last 6 Hrs'},
+            {'id': 43200, 'text': 'Last 12 Hrs'}
+        ];
+
         this.CONSOLE_LOGS_LIMITS =  [
             {id: "All", text: "All" },
             {id: "10", text: "10 Messages" },
