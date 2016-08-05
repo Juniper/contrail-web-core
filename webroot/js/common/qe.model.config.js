@@ -49,9 +49,9 @@ define([
         selectDataObject.requestState = ko.observable(cowc.DATA_REQUEST_STATE_FETCHING);
         selectDataObject.fields = ko.observableArray([]);
         selectDataObject.enable_map = ko.observable({});
-
         selectDataObject.select_fields = ko.observableArray([]);
         selectDataObject.checked_fields = ko.observableArray([]);
+        selectDataObject.aggTypes = ko.observableArray([]);
 
         selectDataObject.on_select = function (root, data, event) {
             var tableType = root.table_type(),

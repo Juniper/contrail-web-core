@@ -189,6 +189,7 @@ define([
                 $.ajax(ajaxConfig).success(function(response) {
                     var selectFields = getSelectFields4Table(response, disableFieldArray, disableSubstringArray),
                         whereFields = getWhereFields4NameDropdown(response, tableName, self.disableWhereFields);
+                    var selectFields_Aggtype = [];
 
                     self.select_data_object().requestState((selectFields.length > 0) ? cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY : cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY);
                     contrailViewModel.set({
@@ -198,8 +199,28 @@ define([
                         }
                     });
 
+                    var allAggregateTypes = [];
+
+                    for(i = 0; i < selectFields.length; i++) {
+
+                        var key = selectFields[i].name,
+                            aggregateType =  key.substring(0, key.indexOf('('));
+
+                        if(aggregateType == ''){
+                            aggregateType = cowl.getFirstCharUpperCase("DEFAULT");
+                        }
+                        allAggregateTypes.push(cowl.getFirstCharUpperCase(aggregateType));
+
+                        var aggregateObject = {
+                            aggType: cowl.getFirstCharUpperCase(aggregateType)
+                        };
+
+                        $.extend(selectFields[i],aggregateObject);
+                    }
+
                     setEnable4SelectFields(selectFields, self.select_data_object().enable_map());
                     self.select_data_object().select_fields(selectFields);
+                    self.select_data_object().aggTypes(self.prepareUniqueAggregateArray(allAggregateTypes));
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
 
@@ -212,6 +233,16 @@ define([
                     console.log(xhr);
                 });
             }
+        },
+        
+        prepareUniqueAggregateArray: function(allAggregateTypes){
+            var uniqueAggregateTypes = [];
+            $.each(allAggregateTypes, function(i, el) {
+                if($.inArray(el, uniqueAggregateTypes) === -1) {
+                    uniqueAggregateTypes.push(el);
+                }
+            });
+            return uniqueAggregateTypes;
         },
 
         formatModelConfig: function(modelConfig) {

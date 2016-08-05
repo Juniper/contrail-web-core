@@ -18,7 +18,7 @@ define([
                 className = viewConfig['className'];
 
             var selectDataObject = self.model.select_data_object(),
-                selectTmplData = {queryPrefix: self.model.query_prefix(), fields: $.makeArray(selectDataObject.select_fields)},
+                selectTmplData = {queryPrefix: self.model.query_prefix(), fields: $.makeArray(self.model.select_data_object().select_fields()), aggregateTypes: self.model.select_data_object().aggTypes()},
                 selectTmplHtml = selectTemplate(selectTmplData);
 
             cowu.createModal({
