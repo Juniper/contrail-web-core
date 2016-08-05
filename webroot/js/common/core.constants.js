@@ -20,9 +20,9 @@ define([
 //                INFO    : 3, //Green
             };
        this.SEVERITY_TO_TEXT_MAP = {
-               2 : "Critical",
-               3 : "Major",
-               4 : "Minor"
+               0 : "Critical",
+               1 : "Major",
+               2 : "Minor"
        };
        this.COLOR_SEVERITY_MAP = {
                 red : 'error',

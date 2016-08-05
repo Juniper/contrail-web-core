@@ -7,8 +7,9 @@ define([ 'underscore' ,
         ],
        function(_,coreAlarmUtils) {
             var sevColorMap = {
-                    '3': '#dc6660',
-                    '4': '#ffbf87'
+                    '0': '#dc6660',//Critical Red
+                    '1': '#dc6660',//Major Red
+                    '2': '#ffbf87'//Minor Orange
             };
             var CoreAlarmParsers = function() {
                 var self = this;
@@ -92,20 +93,18 @@ define([ 'underscore' ,
                          severityBuckets[sev].push(d);
                      });
                      var counts = [];
-                     var overviewColor = sevColorMap['4'];//default yellow
+                     var overviewColor = sevColorMap['2'];//default yellow
                      var y0 = 0;
                      for(var sevkey in severityBuckets) {
 
                          counts.push({
                              name : 'severity_' + sevkey,
-                             color : (sevkey <= 3) ? sevColorMap['3'] : sevColorMap['4'],
+                             color : (sevkey <= 1) ? sevColorMap['1'] : sevColorMap['2'],
                              y0: y0,
                              y1: y0 += +severityBuckets[sevkey].length,
                              items: severityBuckets[sevkey]
                          });
-                         if(sevkey <= 3) {
-                             overviewColor = sevColorMap[sevkey];
-                         }
+                         overviewColor = sevColorMap[sevkey];
                      }
                      value.timestampExtent = options.timestampExtent;
                      value.counts = counts;
