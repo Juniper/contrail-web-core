@@ -68,7 +68,11 @@ define([
                     self.activateTimeout = setTimeout(function() {
                         if (contrail.checkIfExist(self.tabs[tabKey]) && contrail.checkIfExist(self.tabs[tabKey]['elementId']))
                         tabHashUrlObj[elId] = self.tabs[tabKey]['elementId'];
-                        layoutHandler.setURLHashParams({tab: tabHashUrlObj}, {triggerHashChange: false});
+                        /* below check is required to not update
+                          url hash params when tab used inside form */
+                        if(viewConfig.type !== cowc.TAB_FORM_TYPE) {
+                            layoutHandler.setURLHashParams({tab: tabHashUrlObj}, {triggerHashChange: false});
+                        }
 
                         self.activateTimeout = null;
                     }, 300);
