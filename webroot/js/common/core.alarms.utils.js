@@ -161,6 +161,7 @@ define(
                 self.getNodeColor = function (data) {
                     var maxSeverity = -1;
                     var alarms = data['alerts'];
+                    var status = data['status'];
                     if(alarms != null && alarms.length > 0) {
                         $.each(alarms, function (i, alarm) {
                             if(maxSeverity == -1 || maxSeverity > alarm.sevLevel) {
@@ -168,6 +169,8 @@ define(
                             }
                         });
                         return self.mapSeverityToColor(maxSeverity);
+                    } else if(status != null && status.toString().toLowerCase().indexOf('down') != -1) {
+                        return self.mapSeverityToColor(1);
                     }
                     return false;
                 }
