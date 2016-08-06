@@ -14,8 +14,8 @@ webroot/menu_*
 webroot/assets/*
 webroot/font/*
 webroot/js/common/contrail.unified.*
+webroot/css/*.unified.css
 webroot/build/core.build.config.js
-webroot/css/contrail-all.css
 webroot/js/config_global.js
 webroot/js/uuid.js
 webroot/css/select2*
