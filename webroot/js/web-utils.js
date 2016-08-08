@@ -35,11 +35,10 @@ var NETWORKS_PAGINATION_CNT = 25;
 var ctInitComplete = false;
 var sInitComplete = false;
 var sevLevels = {
-    ERROR   : 0, //Red
-    WARNING : 1, //Orange
-    NOTICE  : 2, //Blue
-    INFO    : 3, //Green
-}
+    CRITICAL : 0, //Red
+    ERROR    : 1, //Red
+    WARNING  : 2 //Orange
+};
 var infraAlertMsgs = {
         'UVE_MISSING'           : "System Information unavailable", 
         'PARTIAL_UVE_MISSING'   : "Partial System Information",
@@ -553,8 +552,12 @@ function cellTemplateLinks(options) {
     if (options['onclick'] != null) {
         onclickAction = 'onclick="' + options['onclick'] + '"';
     }
-    if(options['statusBubble'] == true)
-        statusBubble = getNodeStatusForSummaryPages(rowData,'summary');
+    if(options['statusBubble'] == true) {
+        var statusTemplate = contrail.getTemplate4Id('statusTemplate');
+//      statusBubble = getNodeStatusForSummaryPages(rowData,'summary');
+        statusBubble = statusTemplate({color:rowData['color'], colorSevMap:cowc.COLOR_SEVERITY_MAP});
+    }
+
     return contrail.format("{5}<span class='{1}' {0} {2} {4}>{3}</span>", nameStr, tooltipCls, titleStr, cellText, onclickAction, statusBubble);
 }
 
@@ -962,13 +965,7 @@ function loadAlertsContent(deferredObj){
                     {
                         field:'name',
                         name:'Node',
-                        minWidth:150,
-                        formatter: function(r,c,v,cd,dc){
-                            if(typeof(dc['sevLevel']) != "undefined" && typeof(dc['name']) != "undefined")
-                                return "<span>"+statusTemplate({sevLevel:dc['sevLevel'],sevLevels:sevLevels})+dc['name']+"</span>";
-                            else
-                                return dc['name'];
-                        }
+                        minWidth:150
                     },{
                         field:'type',
                         name:'Node Type / Process',
@@ -1414,9 +1411,6 @@ function getNodeStatusForSummaryPages(data,page) {
     result['alerts'] = tooltipAlerts;
     result['nodeSeverity'] = data['alerts'][0] != null ? data['alerts'][0]['sevLevel'] : sevLevels['INFO'];
     result['messages'] = msgs;
-     var statusTemplate = contrail.getTemplate4Id('statusTemplate');
-    if(page == 'summary')
-        return statusTemplate({sevLevel:result['nodeSeverity'],sevLevels:sevLevels});
     return result;
 }
 var dashboardUtils = {

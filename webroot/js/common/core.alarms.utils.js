@@ -91,7 +91,7 @@ define(
                             });
                         if (isAnalyticsApiDown) {
                             alarmUVE.push(self.createUserGeneratedAlarm({
-                                severity : 3,
+                                severity : 1,
                                 alarmText : cowc.ANALYTICS_API_DOWN_ALARM_TEXT,
                                 display_name: getValueByJsonPath(uve,'name') +
                                                 ' (Analytics Node)'
@@ -99,7 +99,7 @@ define(
                         }
                         if (isAlarmGenDown) {
                             alarmUVE.push(self.createUserGeneratedAlarm({
-                                severity : 3,
+                                severity : 1,
                                 alarmText : cowc.ALARM_GEN_DOWN_ALARM_TEXT,
                                 display_name: getValueByJsonPath(uve,'name') +
                                                 ' (Analytics Node)'
@@ -108,7 +108,7 @@ define(
                     }
                     if (processStatus == null) {
                         alarmUVE.push(self.createUserGeneratedAlarm({
-                            severity : 3,
+                            severity : 1,
                             alarmText : cowc.ANALYTICS_PROCESSES_DOWN_ALARM_TEXT,
                             display_name: getValueByJsonPath(uve,'name') +
                                             ' (Analytics Node)'
@@ -129,7 +129,7 @@ define(
 
                 self.createUserGeneratedAlarm = function (options) {
                     return {
-                        severity: options['severity'] ? options['severity'] : 3,
+                        severity: options['severity'] ? options['severity'] : 1,
                         type: cowc.UI_GENERATED_ALARM,
                         timestamp: new Date().getTime() * 1000,
                         alarm_msg: options['alarmText'],

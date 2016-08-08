@@ -305,9 +305,6 @@ function getNodeStatusForSummaryPages(data,page) {
     result['alerts'] = tooltipAlerts;
     result['nodeSeverity'] = data['alerts'][0] != null ? data['alerts'][0]['sevLevel'] : sevLevels['INFO'];
     result['messages'] = msgs;
-     var statusTemplate = contrail.getTemplate4Id('statusTemplate');
-    if(page == 'summary')
-        return statusTemplate({sevLevel:result['nodeSeverity'],sevLevels:sevLevels});
     return result;
 }
 

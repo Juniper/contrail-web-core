@@ -35,23 +35,11 @@ define(
             }
 
             function getDashboardAlertGridConfig() {
-                var statusTemplate = contrail.getTemplate4Id('statusTemplate');
                 var columns = [
                     {
                         field:'name',
                         name:'Node',
-                        minWidth:150,
-                        formatter: function(r,c,v,cd,dc) {
-                            if(typeof(dc['sevLevel']) != "undefined"
-                                && typeof(dc['name']) != "undefined") {
-                                return "<span>" + statusTemplate({
-                                        sevLevel: dc['sevLevel'],
-                                        sevLevels: sevLevels
-                                    }) + dc['name'] + "</span>";
-                            } else {
-                                return dc['name'];
-                            }
-                        }
+                        minWidth:150
                     },{
                         field:'type',
                         name:'Node Type / Process',
