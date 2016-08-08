@@ -956,6 +956,7 @@ function getCoreTestAppPaths(coreBaseDir) {
         'co-test-runner'        : coreTestAppBaseDir + '/co.test.runner',
         'co-grid-contrail-list-model-test-suite'     : coreTestAppBaseDir + '/grid/ContrailListModel.test.suite',
         'co-grid-view-test-suite'                    : coreTestAppBaseDir + '/grid/GridView.test.suite',
+        'co-grid-view-error-test-suite'              : coreTestAppBaseDir +'/grid/GridViewError.test.suite',
         'co-grid-contrail-list-model-lib-test-suite' : coreTestAppBaseDir + '/grid/ContrailListModel.lib.test.suite',
         'co-grid-view-lib-test-suite'                : coreTestAppBaseDir + '/grid/GridView.lib.test.suite',
         'co-chart-view-zoom-scatter-test-suite'      : coreTestAppBaseDir + '/chart/ZoomScatterChartView.test.suite',
