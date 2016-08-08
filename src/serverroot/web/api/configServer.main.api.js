@@ -95,7 +95,11 @@ function doSendApiServerRespToApp (error, data, obj, appData, callback)
         if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
             error.responseCode) {
             if (true == multiTenancyEnabled) {
-                commonUtils.redirectToLogoutByAppData(appData);
+                try {
+                    commonUtils.redirectToLogoutByAppData(appData);
+                } catch(e) {
+                    console.log("APIServer: redirectToLogout failed:" + e);
+                }
                 return;
             }
         }
