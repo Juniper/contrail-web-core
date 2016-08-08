@@ -1851,10 +1851,12 @@
                             <i class="contrail-tab-link-icon {{iconClass}}"></i>
                         {{/if}}
                         {{title}}
-                        {{#if tabConfig.removable}}
-                            <i class="contrail-tab-link-icon-remove fa fa-remove"></i>
-                        {{/if}}
                     </a>
+                    {{#if tabConfig.editable}}
+                        <a class="tab-edit" data-toggle="popover">
+                            <i class="fa fa-ellipsis-v"></i>
+                        </a>
+                    {{/if}}
                 </li>
             {{/each}}
             {{#each extraLinks}}
@@ -1867,11 +1869,11 @@
             {{/each}}
             {{#if extendable }}
                 <li class="tab-add">
-                    <span class="edit-title pull-right hide">
+                    <span class="title-edit pull-right">
                         <input type="text"/>
                     </span>
                     <a class="link">
-                        <i class="icon-plus"></i>
+                        <i class="fa fa-plus"></i>
                     </a>
                 </li>
             {{/if}}
@@ -1884,6 +1886,13 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-tabs-menu-template">
+    <div class="tab-menu">
+        <input class="title-updated" value="{{this}}"/>
+        <button class="title-save btn btn-primary">Save</button>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-tabs-link-template">
     {{#each this}}
         <li>
@@ -1892,10 +1901,12 @@
                     <i class="contrail-tab-link-icon {{iconClass}}"></i>
                 {{/if}}
                 {{title}}
-                {{#if tabConfig.removable}}
-                    <i class="contrail-tab-link-icon-remove fa fa-remove"></i>
-                {{/if}}
             </a>
+            {{#if tabConfig.editable}}
+                <a class="tab-edit" data-toggle="popover">
+                    <i class="fa fa-ellipsis-v"></i>
+                </a>
+            {{/if}}
         </li>
     {{/each}}
 </script>
@@ -1920,7 +1931,7 @@
         {{/if}}
         <div class="row not-found-text">
             {{#if errorMessage}}
-                <h6 >{{errorMessage}}</h6>
+                <h6>{{errorMessage}}</h6>
             {{/if}}
             {{#IfCompare defaultErrorMessage false operator='!=='}}
                 <h6>The link you followed may be broken, or there must be some change in the configuration for this page.</h6>
