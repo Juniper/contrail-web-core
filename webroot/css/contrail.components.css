@@ -272,24 +272,33 @@
     font-size: 110%;
     display: inline-block;
 }
-.contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon-remove {
-    margin-left: 4px;
-    font-weight: normal;
-    font-size: 90%;
+.contrail-tabs.ui-tabs .ui-state-default i.fa-ellipsis-v {
+    display: none;
+    font-size: 1.5em;
+    padding: 9px 4px 5px 4px;
+}
+.contrail-tabs.ui-tabs li.ui-tabs-active i.fa-ellipsis-v {
     display: inline-block;
-    padding: 4px;
 }
-.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .link .icon-plus {
-    line-height: 24px;
-    margin-left: 4px;
-    padding: 4px;
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .link {
+    position: absolute;
+    padding: 8px;
 }
-.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .edit-title > input {
-    height: 16px;
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .title-edit {
+    display: none;
+    padding-top: 4px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .title-edit > input {
 }
 .contrail-tabs.ui-tabs .ui-tabs-nav li.pull-right {
-    float:right;
+    float: right;
     margin-top: 5px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-menu {
+    padding: 8px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-menu .title-save {
+    margin-left: 16px;
 }
 .contrail-tabs.ui-tabs .ui-tabs-nav li a.contrail-tab-extra-link {
     font-weight: normal;
