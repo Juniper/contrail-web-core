@@ -222,7 +222,7 @@ define([
                 if (obj.total == 0) {
                     ifNull(obj['counts'], []).push({
                         tooltip: false,
-                        color: obj.colorCodes[0],
+                        color: getValueByJsonPath(obj, 'colorCodes;0', cowc.DEFAULT_COLOR),
                         y0: 0,
                         y1: yAxisMaxValue * 0.01
                     })
