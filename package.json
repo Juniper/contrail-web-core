@@ -32,6 +32,7 @@
     "request-timeout": "0.0.2"
   },
   "devDependencies": {
+    "eslint": "2.13.1",
     "grunt": "0.4.2",
     "grunt-contrib-qunit": "0.3.0",
     "grunt-contrib-jshint": "0.7.2",
