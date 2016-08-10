@@ -42,12 +42,6 @@
         var hostname = window.location.hostname;
         document.getElementById('tabTitle').innerHTML = hostname.substring(0,15)+'... | Contrail';
     </script>
-    <!-- Start dev_env
-    <script data-env="dev" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
-    End dev_env -->
-    <!-- Start prod_env -->
-    <script data-env="prod" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
-    <!-- End prod_env -->
 
     <!-- Start dev_env
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css?built_at=" rel="stylesheet"/>
@@ -174,7 +168,7 @@
                     <li id="region-profile">
                         <div id="regionDD" style="padding-bottom:6px"></div>
                     </li>
-                    <li onclick="cowu.loadAlertsPopup();">
+                    <li id="alarms-popup-link" onclick="cowu.loadAlertsPopup();">
                         <a href="javascript:void(0);">
                             <i class="icon-bell-alt icon-only icon-2"></i>
                             <span id="alert_info">Alarms</span>
@@ -227,6 +221,13 @@
 
     <div id="app-container">
     </div>
+
+<!-- Start dev_env
+<script data-env="dev" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
+End dev_env -->
+<!-- Start prod_env -->
+<script data-env="prod" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
+<!-- End prod_env -->
 
 <!--[if lte IE 8]>
 <script src="/js/"></script>
