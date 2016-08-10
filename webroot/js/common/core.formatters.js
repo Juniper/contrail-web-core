@@ -85,6 +85,31 @@ define([
 
                 return timeStr;
             },
+            'micro-second': function(value, options) {
+                // var timeValue = parseInt(value),
+                //     timeStr = "";
+                //
+                // if (timeValue === -1) {
+                //     timeStr = "-";
+                // } else if (value < 1000) {
+                //     // microsecond block
+                //     timeStr = value + " μs";
+                // } else if (value < 1000000) {
+                //     // millisecond block
+                //     timeStr = Math.round(value / 1000) + " ms";
+                // } else if (value < 60000000) {
+                //     // second block
+                //     timeStr = Math.round(value / 60000) + " secs";
+                // } else {
+                //     // minute block
+                //     timeStr = Math.round(value / 60000000) + " mins";
+                // }
+
+                return parseInt(value) + " μs";
+            },
+            'milli-second': function(value, options) {
+                return parseInt(value) + " ms";
+            },
             'query-time-range': function (value, options) {
                 return cowu.formatTimeRange(value);
             },

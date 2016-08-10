@@ -420,6 +420,11 @@ define([
             "agg-packets": "number",
 
             // cpu_info
+            "COUNT(cpu_info)": "number",
+
+            // "cpu_info.inst_id": "",
+            // "cpu_info.module_id": "",
+
             "cpu_info.mem_virt": "kilo-byte",
             "AVG(cpu_info.mem_virt)": "kilo-byte",
             "SUM(cpu_info.mem_virt)": "kilo-byte",
@@ -438,7 +443,6 @@ define([
             "MAX(cpu_info.used_sys_mem)": "kilo-byte",
             "MIN(cpu_info.used_sys_mem)": "kilo-byte",
 
-
             "cpu_info.cpu_share": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
             "AVG(cpu_info.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
             "SUM(cpu_info.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
@@ -453,6 +457,14 @@ define([
             "MIN(cpu_info.one_min_cpuload)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
 
             // cpu_stats
+            "COUNT(cpu_stats)": "number",
+
+            "cpu_stats.rss": "byte",
+            "SUM(cpu_stats.rss)": "byte",
+            "MAX(cpu_stats.rss)": "byte",
+            "MIN(cpu_stats.rss)": "byte",
+            "AVG(cpu_stats.rss)": "byte",
+
             "cpu_stats.cpu_one_min_avg": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
             "AVG(cpu_stats.cpu_one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
             "SUM(cpu_stats.cpu_one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
@@ -489,7 +501,89 @@ define([
             "MAX(cpu_stats.disk_used_bytes)": "byte",
             "MIN(cpu_stats.disk_used_bytes)": "byte",
 
+            // system mem/cpu
+            "COUNT(system_mem_cpu_usage)": "number",
+
+            "system_mem_cpu_usage.mem_info.total": "byte",
+            "SUM(system_mem_cpu_usage.mem_info.total)": "byte",
+            "MAX(system_mem_cpu_usage.mem_info.total)": "byte",
+            "MIN(system_mem_cpu_usage.mem_info.total)": "byte",
+            "AVG(system_mem_cpu_usage.mem_info.total)": "byte",
+
+            "system_mem_cpu_usage.mem_info.used": "byte",
+            "SUM(system_mem_cpu_usage.mem_info.used)": "byte",
+            "MAX(system_mem_cpu_usage.mem_info.used)": "byte",
+            "MIN(system_mem_cpu_usage.mem_info.used)": "byte",
+            "AVG(system_mem_cpu_usage.mem_info.used)": "byte",
+
+            "system_mem_cpu_usage.mem_info.free": "byte",
+            "SUM(system_mem_cpu_usage.mem_info.free)": "byte",
+            "MAX(system_mem_cpu_usage.mem_info.free)": "byte",
+            "MIN(system_mem_cpu_usage.mem_info.free)": "byte",
+            "AVG(system_mem_cpu_usage.mem_info.free)": "byte",
+
+            "system_mem_cpu_usage.mem_info.buffers": "byte",
+            "SUM(system_mem_cpu_usage.mem_info.buffers)": "byte",
+            "MAX(system_mem_cpu_usage.mem_info.buffers)": "byte",
+            "MIN(system_mem_cpu_usage.mem_info.buffers)": "byte",
+            "AVG(system_mem_cpu_usage.mem_info.buffers)": "byte",
+
+            "system_mem_cpu_usage.mem_info.cached": "byte",
+            "SUM(system_mem_cpu_usage.mem_info.cached)": "byte",
+            "MAX(system_mem_cpu_usage.mem_info.cached)": "byte",
+            "MIN(system_mem_cpu_usage.mem_info.cached)": "byte",
+            "AVG(system_mem_cpu_usage.mem_info.cached)": "byte",
+
+            "system_mem_cpu_usage.cpu_load.one_min_avg": "byte",
+            "SUM(system_mem_cpu_usage.cpu_load.one_min_avg)": "byte",
+            "MAX(system_mem_cpu_usage.cpu_load.one_min_avg)": "byte",
+            "MIN(system_mem_cpu_usage.cpu_load.one_min_avg)": "byte",
+            "AVG(system_mem_cpu_usage.cpu_load.one_min_avg)": "byte",
+
+            "system_mem_cpu_usage.cpu_load.five_min_avg": "byte",
+            "SUM(system_mem_cpu_usage.cpu_load.five_min_avg)": "byte",
+            "MAX(system_mem_cpu_usage.cpu_load.five_min_avg)": "byte",
+            "MIN(system_mem_cpu_usage.cpu_load.five_min_avg)": "byte",
+            "AVG(system_mem_cpu_usage.cpu_load.five_min_avg)": "byte",
+
+            "system_mem_cpu_usage.cpu_load.fifteen_min_avg": "byte",
+            "SUM(system_mem_cpu_usage.cpu_load.fifteen_min_avg)": "byte",
+            "MAX(system_mem_cpu_usage.cpu_load.fifteen_min_avg)": "byte",
+            "MIN(system_mem_cpu_usage.cpu_load.fifteen_min_avg)": "byte",
+            "AVG(system_mem_cpu_usage.cpu_load.fifteen_min_avg)": "byte",
+
+            "system_mem_cpu_usage.cpu_share": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(system_mem_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(system_mem_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(system_mem_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "AVG(system_mem_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+
+            // process mem/cpu
+            "COUNT(process_mem_cpu_usage)": "number",
+
+            "process_mem_cpu_usage.__key": "number",
+
+            "process_mem_cpu_usage.mem_virt": "byte",
+            "SUM(process_mem_cpu_usage.mem_virt)": "byte",
+            "MAX(process_mem_cpu_usage.mem_virt)": "byte",
+            "MIN(process_mem_cpu_usage.mem_virt)": "byte",
+            "AVG(process_mem_cpu_usage.mem_virt)": "byte",
+
+            "process_mem_cpu_usage.cpu_share": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(process_mem_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(process_mem_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(process_mem_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "AVG(process_mem_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+
+            "process_mem_cpu_usage.mem_res": "byte",
+            "SUM(process_mem_cpu_usage.mem_res)": "byte",
+            "MAX(process_mem_cpu_usage.mem_res)": "byte",
+            "MIN(process_mem_cpu_usage.mem_res)": "byte",
+            "AVG(process_mem_cpu_usage.mem_res)": "byte",
+
             // msg_info
+            "COUNT(msg_info)": "number",
+
             "msg_info.bytes": "byte",
             "AVG(msg_info.bytes)": "byte",
             "SUM(msg_info.bytes)": "byte",
@@ -503,23 +597,34 @@ define([
             "MIN(msg_info.messages)": "number",
 
             // vn_stats
+            "COUNT(vn_stats)": "number",
+
+            // "vn_stats.other_vn": "",
+            // "vn_stats.vrouter": "",
+
             "vn_stats.in_bytes": "byte",
             "SUM(vn_stats.in_bytes)": "byte",
             "MAX(vn_stats.in_bytes)": "byte",
             "MIN(vn_stats.in_bytes)": "byte",
+            "AVG(vn_stats.in_bytes)": "byte",
 
             "vn_stats.out_bytes": "byte",
             "SUM(vn_stats.out_bytes)": "byte",
             "MAX(vn_stats.out_bytes)": "byte",
             "MIN(vn_stats.out_bytes)": "byte",
+            "AVG(vn_stats.out_bytes)": "byte",
 
+            "vn_stats.in_tpkts": "number",
             "SUM(vn_stats.in_tpkts)": "number",
             "MAX(vn_stats.in_tpkts)": "number",
             "MIN(vn_stats.in_tpkts)": "number",
+            "AVG(vn_stats.in_tpkts)": "number",
 
+            "vn_stats.out_tpkts": "number",
             "SUM(vn_stats.out_tpkts)": "number",
             "MAX(vn_stats.out_tpkts)": "number",
             "MIN(vn_stats.out_tpkts)": "number",
+            "AVG(vn_stats.out_tpkts)": "number",
 
             // tx_socket_stats
             "tx_socket_stats.bytes": "byte",
@@ -547,121 +652,211 @@ define([
             "counters": "number",
             "COUNT(counters)": "number",
 
+            "counters.keys": "number",
             "SUM(counters.keys)": "number",
             "MAX(counters.keys)": "number",
             "MIN(counters.keys)": "number",
+            "AVG(counters.keys)": "number",
 
             "updates": "number",
+            "counters.updates": "number",
             "SUM(counters.updates)": "number",
             "MAX(counters.updates)": "number",
             "MIN(counters.updates)": "number",
+            "AVG(counters.updates)": "number",
 
             "partitions": "number",
+            "counters.partitions": "number",
             "SUM(counters.partitions)": "number",
             "MAX(counters.partitions)": "number",
             "MIN(counters.partitions)": "number",
+            "AVG(counters.partitions)": "number",
+
+            "counters.instance": "number",
+
+            // cql
+            "COUNT(cql_stats)": "number",
+
+            "cql_stats.requests_one_minute_rate": "number",
+            "SUM(cql_stats.requests_one_minute_rate)": "number",
+            "MAX(cql_stats.requests_one_minute_rate)": "number",
+            "MIN(cql_stats.requests_one_minute_rate)": "number",
+            "AVG(cql_stats.requests_one_minute_rate)": "number",
+
+            // cql errors
+            "COUNT(cql_stats.errors)": "number",
+
+            "cql_stats.errors.connection_timeouts": "number",
+            "SUM(cql_stats.errors.connection_timeouts)": "number",
+            "MAX(cql_stats.errors.connection_timeouts)": "number",
+            "MIN(cql_stats.errors.connection_timeouts)": "number",
+            "AVG(cql_stats.errors.connection_timeouts)": "number",
+
+            "cql_stats.errors.pending_request_timeouts": "number",
+            "SUM(cql_stats.errors.pending_request_timeouts)": "number",
+            "MAX(cql_stats.errors.pending_request_timeouts)": "number",
+            "MIN(cql_stats.errors.pending_request_timeouts)": "number",
+            "AVG(cql_stats.errors.pending_request_timeouts)": "number",
+
+            "cql_stats.errors.request_timeouts": "number",
+            "SUM(cql_stats.errors.request_timeouts)": "number",
+            "MAX(cql_stats.errors.request_timeouts)": "number",
+            "MIN(cql_stats.errors.request_timeouts)": "number",
+            "AVG(cql_stats.errors.request_timeouts)": "number",
 
             //cql stats
             "cql_stats.stats": "number",
+            "COUNT(cql_stats.stats)": "number",
 
             "cql_stats.stats.total_connections": "number",
             "SUM(cql_stats.stats.total_connections)": "number",
             "MAX(cql_stats.stats.total_connections)": "number",
             "MIN(cql_stats.stats.total_connections)": "number",
+            "AVG(cql_stats.stats.total_connections)": "number",
 
             "cql_stats.stats.available_connections": "number",
             "SUM(cql_stats.stats.available_connections)": "number",
             "MAX(cql_stats.stats.available_connections)": "number",
             "MIN(cql_stats.stats.available_connections)": "number",
+            "AVG(cql_stats.stats.available_connections)": "number",
 
             "cql_stats.stats.exceeded_pending_requests_water_mark": "number",
             "SUM(cql_stats.stats.exceeded_pending_requests_water_mark)": "number",
             "MAX(cql_stats.stats.exceeded_pending_requests_water_mark)": "number",
             "MIN(cql_stats.stats.exceeded_pending_requests_water_mark)": "number",
+            "AVG(cql_stats.stats.exceeded_pending_requests_water_mark)": "number",
 
             "cql_stats.stats.exceeded_write_bytes_water_mark": "number",
             "SUM(cql_stats.stats.exceeded_write_bytes_water_mark)": "number",
             "MAX(cql_stats.stats.exceeded_write_bytes_water_mark)": "number",
             "MIN(cql_stats.stats.exceeded_write_bytes_water_mark)": "number",
+            "AVG(cql_stats.stats.exceeded_write_bytes_water_mark)": "number",
 
             // CollectorDbStats table_info
+            "COUNT(table_info)": "number",
+
+            // "table_info.table_name": "",
+
             "table_info.reads": "number",
             "SUM(table_info.reads)": "number",
             "MAX(table_info.reads)": "number",
             "MIN(table_info.reads)": "number",
+            "AVG(table_info.reads)": "number",
 
             "table_info.read_fails": "number",
             "SUM(table_info.read_fails)": "number",
             "MAX(table_info.read_fails)": "number",
             "MIN(table_info.read_fails)": "number",
+            "AVG(table_info.read_fails)": "number",
 
             "table_info.writes": "number",
             "SUM(table_info.writes)": "number",
             "MAX(table_info.writes)": "number",
             "MIN(table_info.writes)": "number",
+            "AVG(table_info.writes)": "number",
 
             "table_info.write_fails": "number",
             "SUM(table_info.write_fails)": "number",
             "MAX(table_info.write_fails)": "number",
             "MIN(table_info.write_fails)": "number",
+            "AVG(table_info.write_fails)": "number",
 
+            "table_info.write_back_pressure_fails": "number",
+            "SUM(table_info.write_back_pressure_fails)": "number",
+            "MAX(table_info.write_back_pressure_fails)": "number",
+            "MIN(table_info.write_back_pressure_fails)": "number",
+            "AVG(table_info.write_back_pressure_fails)": "number",
+
+            // flow rate
+            "COUNT(flow_rate)": "number",
             "flow_rate": "number",
+
+            "flow_rate.added_flows": "number",
             "SUM(flow_rate.added_flows)": "number",
             "MAX(flow_rate.added_flows)": "number",
             "MIN(flow_rate.added_flows)": "number",
+            "AVG(flow_rate.added_flows)": "number",
 
+            "flow_rate.max_flow_adds_per_second": "number",
             "SUM(flow_rate.max_flow_adds_per_second)": "number",
             "MAX(flow_rate.max_flow_adds_per_second)": "number",
             "MIN(flow_rate.max_flow_adds_per_second)": "number",
+            "AVG(flow_rate.max_flow_adds_per_second)": "number",
 
+            "flow_rate.min_flow_adds_per_second": "number",
             "SUM(flow_rate.min_flow_adds_per_second)": "number",
             "MAX(flow_rate.min_flow_adds_per_second)": "number",
             "MIN(flow_rate.min_flow_adds_per_second)": "number",
+            "AVG(flow_rate.min_flow_adds_per_second)": "number",
 
+            "flow_rate.deleted_flows": "number",
             "SUM(flow_rate.deleted_flows)": "number",
             "MAX(flow_rate.deleted_flows)": "number",
             "MIN(flow_rate.deleted_flows)": "number",
+            "AVG(flow_rate.deleted_flows)": "number",
 
+            "flow_rate.max_flow_deletes_per_second": "number",
             "SUM(flow_rate.max_flow_deletes_per_second)": "number",
             "MAX(flow_rate.max_flow_deletes_per_second)": "number",
             "MIN(flow_rate.max_flow_deletes_per_second)": "number",
+            "AVG(flow_rate.max_flow_deletes_per_second)": "number",
 
+            "flow_rate.min_flow_deletes_per_second": "number",
             "SUM(flow_rate.min_flow_deletes_per_second)": "number",
             "MAX(flow_rate.min_flow_deletes_per_second)": "number",
             "MIN(flow_rate.min_flow_deletes_per_second)": "number",
+            "AVG(flow_rate.min_flow_deletes_per_second)": "number",
 
+            "flow_rate.active_flows": "number",
             "SUM(flow_rate.active_flows)": "number",
             "MAX(flow_rate.active_flows)": "number",
             "MIN(flow_rate.active_flows)": "number",
+            "AVG(flow_rate.active_flows)": "number",
 
             // errors
+            "COUNT(errors)": "number",
+
+            "errors.write_tablespace_fails": "number",
             "SUM(errors.write_tablespace_fails)": "number",
             "MAX(errors.write_tablespace_fails)": "number",
             "MIN(errors.write_tablespace_fails)": "number",
+            "AVG(errors.write_tablespace_fails)": "number",
 
+            "errors.read_tablespace_fails": "number",
             "SUM(errors.read_tablespace_fails)": "number",
             "MAX(errors.read_tablespace_fails)": "number",
             "MIN(errors.read_tablespace_fails)": "number",
+            "AVG(errors.read_tablespace_fails)": "number",
 
+            "errors.write_table_fails": "number",
             "SUM(errors.write_table_fails)": "number",
             "MAX(errors.write_table_fails)": "number",
             "MIN(errors.write_table_fails)": "number",
+            "AVG(errors.write_table_fails)": "number",
 
+            "errors.read_table_fails": "number",
             "SUM(errors.read_table_fails)": "number",
             "MAX(errors.read_table_fails)": "number",
             "MIN(errors.read_table_fails)": "number",
+            "AVG(errors.read_table_fails)": "number",
 
+            "errors.write_column_fails": "number",
             "SUM(errors.write_column_fails)": "number",
             "MAX(errors.write_column_fails)": "number",
             "MIN(errors.write_column_fails)": "number",
+            "AVG(errors.write_column_fails)": "number",
 
+            "errors.write_batch_column_fails": "number",
             "SUM(errors.write_batch_column_fails)": "number",
             "MAX(errors.write_batch_column_fails)": "number",
             "MIN(errors.write_batch_column_fails)": "number",
+            "AVG(errors.write_batch_column_fails)": "number",
 
+            "errors.read_column_fails": "number",
             "SUM(errors.read_column_fails)": "number",
             "MAX(errors.read_column_fails)": "number",
             "MIN(errors.read_column_fails)": "number",
+            "AVG(errors.read_column_fails)": "number",
 
             // rx_message_stats
             "rx_message_stats.bytes": "byte",
@@ -714,46 +909,82 @@ define([
             "MIN(fip_diff_stats.out_bytes)": "byte",
 
             // if_stats
+            "COUNT(if_stats)": "number",
+
             "if_stats.in_bytes": "byte",
             "SUM(if_stats.in_bytes)": "byte",
             "MAX(if_stats.in_bytes)": "byte",
             "MIN(if_stats.in_bytes)": "byte",
+            "AVG(if_stats.in_bytes)": "byte",
 
             "if_stats.out_bytes": "byte",
             "SUM(if_stats.out_bytes)": "byte",
             "MAX(if_stats.out_bytes)": "byte",
             "MIN(if_stats.out_bytes)": "byte",
+            "AVG(if_stats.out_bytes)": "byte",
 
             "if_stats.in_pkts": "number",
             "SUM(if_stats.in_pkts)": "number",
             "MAX(if_stats.in_pkts)": "number",
             "MIN(if_stats.in_pkts)": "number",
+            "AVG(if_stats.in_pkts)": "number",
 
             "if_stats.out_pkts": "number",
             "SUM(if_stats.out_pkts)": "number",
             "MAX(if_stats.out_pkts)": "number",
             "MIN(if_stats.out_pkts)": "number",
+            "AVG(if_stats.out_pkts)": "number",
 
             // statistics_table_info
+            "COUNT(statistics_table_info)": "number",
+
             "statistics_table_info.reads": "number",
             "SUM(statistics_table_info.reads)": "number",
             "MAX(statistics_table_info.reads)": "number",
             "MIN(statistics_table_info.reads)": "number",
+            "AVG(statistics_table_info.reads)": "number",
 
             "statistics_table_info.read_fails": "number",
             "SUM(statistics_table_info.read_fails)": "number",
             "MAX(statistics_table_info.read_fails)": "number",
             "MIN(statistics_table_info.read_fails)": "number",
+            "AVG(statistics_table_info.read_fails)": "number",
 
             "statistics_table_info.writes": "number",
             "SUM(statistics_table_info.writes)": "number",
             "MAX(statistics_table_info.writes)": "number",
             "MIN(statistics_table_info.writes)": "number",
+            "AVG(statistics_table_info.writes)": "number",
 
             "statistics_table_info.write_fails": "number",
             "SUM(statistics_table_info.write_fails)": "number",
             "MAX(statistics_table_info.write_fails)": "number",
             "MIN(statistics_table_info.write_fails)": "number",
+            "AVG(statistics_table_info.write_fails)": "number",
+
+            "statistics_table_info.write_back_pressure_fails": "number",
+            "SUM(statistics_table_info.write_back_pressure_fails)": "number",
+            "MAX(statistics_table_info.write_back_pressure_fails)": "number",
+            "MIN(statistics_table_info.write_back_pressure_fails)": "number",
+            "AVG(statistics_table_info.write_back_pressure_fails)": "number",
+
+            // phy_band_in_bps
+            "COUNT(phy_band_in_bps)": "number",
+
+            "phy_band_in_bps.__value": "throughput",
+            "SUM(phy_band_in_bps.__value)": "throughput",
+            "MAX(phy_band_in_bps.__value)": "throughput",
+            "MIN(phy_band_in_bps.__value)": "throughput",
+            "AVG(phy_band_in_bps.__value)": "throughput",
+
+            // phy_band_out_bps
+            "COUNT(phy_band_out_bps)": "number",
+
+            "phy_band_out_bps.__value": "throughput",
+            "SUM(phy_band_out_bps.__value)": "throughput",
+            "MAX(phy_band_out_bps.__value)": "throughput",
+            "MIN(phy_band_out_bps.__value)": "throughput",
+            "AVG(phy_band_out_bps.__value)": "throughput",
 
             //phy_if_band
             "phy_if_band.in_bandwidth_usage": "byte",
@@ -935,6 +1166,9 @@ define([
             "MAX(file_system_view_stats.physical_disks.disk_available_kb)": "kilo-byte",
             "MIN(file_system_view_stats.physical_disks.disk_available_kb)": "kilo-byte",
 
+            // database usage
+            "COUNT(database_usage)": "number",
+
             "database_usage.disk_space_used_1k": "kilo-byte",
             "AVG(database_usage.disk_space_used_1k)": "kilo-byte",
             "SUM(database_usage.disk_space_used_1k)": "kilo-byte",
@@ -953,6 +1187,12 @@ define([
             "MAX(database_usage.analytics_db_size_1k)": "kilo-byte",
             "MIN(database_usage.analytics_db_size_1k)": "kilo-byte",
 
+            // disk usage
+            "COUNT(disk_usage_info)": "number",
+
+            // "disk_usage_info.partition_type": "",
+            // "disk_usage_info.__key": "",
+
             "disk_usage_info.partition_space_used_1k": "kilo-byte",
             "AVG(disk_usage_info.partition_space_used_1k)": "kilo-byte",
             "SUM(disk_usage_info.partition_space_used_1k)": "kilo-byte",
@@ -963,7 +1203,159 @@ define([
             "AVG(disk_usage_info.partition_space_available_1k)": "kilo-byte",
             "SUM(disk_usage_info.partition_space_available_1k)": "kilo-byte",
             "MAX(disk_usage_info.partition_space_available_1k)": "kilo-byte",
-            "MIN(disk_usage_info.partition_space_available_1k)": "kilo-byte"
+            "MIN(disk_usage_info.partition_space_available_1k)": "kilo-byte",
+
+            // API
+            "COUNT(api_stats)": "number",
+
+            // "api_stats.operation_type": "",
+            // "api_stats.user": "",
+            // "api_stats.useragent": "",
+            // "api_stats.remote_ip": "",
+            // "api_stats.domain_name": "",
+            // "api_stats.project_name": "",
+            // "api_stats.object_type": "",
+            // "api_stats.resp_code": "",
+            // "api_stats.node": "",
+
+            "api_stats.response_time_in_usec": "micro-second",
+            "SUM(api_stats.response_time_in_usec)": "micro-second",
+            "MAX(api_stats.response_time_in_usec)": "micro-second",
+            "MIN(api_stats.response_time_in_usec)": "micro-second",
+            "AVG(api_stats.response_time_in_usec)": "micro-second",
+
+            "api_stats.response_size": "byte",
+            "SUM(api_stats.response_size)": "byte",
+            "MAX(api_stats.response_size)": "byte",
+            "MIN(api_stats.response_size)": "byte",
+            "AVG(api_stats.response_size)": "byte",
+
+            "api_stats.response_size_objects": "number",
+            "SUM(api_stats.response_size_objects)": "number",
+            "MAX(api_stats.response_size_objects)": "number",
+            "MIN(api_stats.response_size_objects)": "number",
+            "AVG(api_stats.response_size_objects)": "number",
+
+            "api_stats.response_size_bytes": "byte",
+            "SUM(api_stats.response_size_bytes)": "byte",
+            "MAX(api_stats.response_size_bytes)": "byte",
+            "MIN(api_stats.response_size_bytes)": "byte",
+            "AVG(api_stats.response_size_bytes)": "byte",
+
+            // alarmgenUpdate.o and alarmgenUpdate.i
+            "COUNT(o)": "number",
+
+            // "table": "",
+
+            "partition": "number",
+            "SUM(partition)": "number",
+            "MAX(partition)": "number",
+            "MIN(partition)": "number",
+            "AVG(partition)": "number",
+
+            "o.keys": "number",
+            "SUM(o.keys)": "number",
+            "MAX(o.keys)": "number",
+            "MIN(o.keys)": "number",
+            "AVG(o.keys)": "number",
+
+            "o.count": "number",
+            "SUM(o.count)": "number",
+            "MAX(o.count)": "number",
+            "MIN(o.count)": "number",
+            "AVG(o.count)": "number",
+
+            "COUNT(i)": "number",
+
+            // "i.collector": "",
+            // "i.generator": "",
+            // "i.type": "",
+
+            "i.count": "number",
+            "SUM(i.count)": "number",
+            "MAX(i.count)": "number",
+            "MIN(i.count)": "number",
+            "AVG(i.count)": "number",
+
+            // Cassandra thread pool
+            "COUNT(thread_pool_stats)": "number",
+
+            "thread_pool_stats.pool_name": "number",
+            "SUM(thread_pool_stats.pool_name)": "number",
+            "MAX(thread_pool_stats.pool_name)": "number",
+            "MIN(thread_pool_stats.pool_name)": "number",
+            "AVG(thread_pool_stats.pool_name)": "number",
+
+            "thread_pool_stats.active": "number",
+            "SUM(thread_pool_stats.active)": "number",
+            "MAX(thread_pool_stats.active)": "number",
+            "MIN(thread_pool_stats.active)": "number",
+            "AVG(thread_pool_stats.active)": "number",
+
+            "thread_pool_stats.pending": "number",
+            "SUM(thread_pool_stats.pending)": "number",
+            "MAX(thread_pool_stats.pending)": "number",
+            "MIN(thread_pool_stats.pending)": "number",
+            "AVG(thread_pool_stats.pending)": "number",
+
+            "thread_pool_stats.all_time_blocked": "number",
+            "SUM(thread_pool_stats.all_time_blocked)": "number",
+            "MAX(thread_pool_stats.all_time_blocked)": "number",
+            "MIN(thread_pool_stats.all_time_blocked)": "number",
+            "AVG(thread_pool_stats.all_time_blocked)": "number",
+
+            // Cassandra compaction task
+            "COUNT(cassandra_compaction_task)": "number",
+
+            "cassandra_compaction_task.pending_compaction_tasks": "number",
+            "SUM(cassandra_compaction_task.pending_compaction_tasks)": "number",
+            "MAX(cassandra_compaction_task.pending_compaction_tasks)": "number",
+            "MIN(cassandra_compaction_task.pending_compaction_tasks)": "number",
+            "AVG(cassandra_compaction_task.pending_compaction_tasks)": "number",
+
+            // query stats
+            "COUNT(query_stats)": "number",
+
+            "query_stats.time": "milli-second",
+            "SUM(query_stats.time)": "milli-second",
+            "MAX(query_stats.time)": "milli-second",
+            "MIN(query_stats.time)": "milli-second",
+            "AVG(query_stats.time)": "milli-second",
+
+            "query_stats.rows": "number",
+            "SUM(query_stats.rows)": "number",
+            "MAX(query_stats.rows)": "number",
+            "MIN(query_stats.rows)": "number",
+            "AVG(query_stats.rows)": "number",
+
+            "query_stats.time_span": "milli-second",
+            "SUM(query_stats.time_span)": "milli-second",
+            "MAX(query_stats.time_span)": "milli-second",
+            "MIN(query_stats.time_span)": "milli-second",
+            "AVG(query_stats.time_span)": "milli-second",
+
+            "query_stats.chunks": "number",
+            "SUM(query_stats.chunks)": "number",
+            "MAX(query_stats.chunks)": "number",
+            "MIN(query_stats.chunks)": "number",
+            "AVG(query_stats.chunks)": "number",
+
+            // "query_stats.chunk_where_time": "",
+            // "query_stats.chunk_select_time": "",
+            // "query_stats.chunk_merge_time": "",
+            // "query_stats.chunk_postproc_time": "number",
+
+            "query_stats.final_merge_time": "milli-second",
+            "SUM(query_stats.final_merge_time)": "milli-second",
+            "MAX(query_stats.final_merge_time)": "milli-second",
+            "MIN(query_stats.final_merge_time)": "milli-second",
+            "AVG(query_stats.final_merge_time)": "milli-second",
+
+            "query_stats.enq_delay": "milli-second",
+            "SUM(query_stats.enq_delay)": "milli-second",
+            "MAX(query_stats.enq_delay)": "milli-second",
+            "MIN(query_stats.enq_delay)": "milli-second",
+            "AVG(query_stats.enq_delay)": "milli-second"
         };
 
         this.D3_COLOR_CATEGORY2 = [ "#1f77b4", "#2ca02c"];
