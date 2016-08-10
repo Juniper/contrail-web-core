@@ -16,8 +16,8 @@ define([
         },
         events: {
             'click .contrail-tab-link-list .tab-add .link': 'onClickAdd',
+            'click .contrail-tab-link-list .contrail-tab-link-icon-remove': 'onClickRemove',
             'click .contrail-tab-link-list .tab-menu .title-save': 'onEdit',
-            //'click .contrail-tab-link-list .icon-remove': 'onEdit',
             'blur .contrail-tab-link-list .tab-add .title-edit > input': 'onAdd',
         },
 
@@ -239,7 +239,7 @@ define([
 
         onEdit: function (event) {
             var self = this
-            var li = $(event.currentTarget).closest( 'li' )
+            var li = $(event.target).closest( 'li' )
             var tabPanelId = li.attr( 'aria-controls')
             var tabKey = self.tabsIdMap[tabPanelId]
             var proceed = true
@@ -259,6 +259,19 @@ define([
                 }
                 if (!newTitle && proceed) self.removeTab(tabKey)
             }
+        },
+
+        onClickRemove: function () {
+            var self = this
+            var tabPanelId = $(event.target).closest('li').attr('aria-controls')
+            var tabKey = self.tabsIdMap[tabPanelId]
+            var proceed = true
+            if (contrail.checkIfExist(self.tabs[tabKey].tabConfig) && self.tabs[tabKey].tabConfig.removable === true) {
+                if (self.tabs[tabKey].tabConfig.onRemove) {
+                    proceed = self.tabs[tabKey].tabConfig.onRemove.bind(self.tabs[tabKey])()
+                }
+            }
+            if (proceed) self.removeTab(tabKey)
         },
 
         onClickAdd: function (event) {
