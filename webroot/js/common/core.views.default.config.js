@@ -90,12 +90,16 @@ define([
             margin: {top: 10, right: 30, bottom: 50, left: 65},
             margin2: {top: 0, right: 30, bottom: 40, left: 65},
             axisLabelDistance: 5,
-                height: 300,
+            height: 300,
+            xAxisLabel: 'Time',
             yAxisLabel: 'Traffic',
             y2AxisLabel: '',
             forceY: [0, 60],
+            showXAxisMaxMin:false,
             defaultDataStatusMessage: true,
             statusMessageHandler: cowm.getRequestMessage,
+            xFormatter: function(d) { return d3.time.format('%H:%M:%S')(new Date(d)); },
+            x2Formatter: function(d) { return d3.time.format('%H:%M:%S')(new Date(d)); },
             yFormatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); },
             y2Formatter: function(d) { return cowu.addUnits2Bytes(d, false, false, 1, 60); }
         };
