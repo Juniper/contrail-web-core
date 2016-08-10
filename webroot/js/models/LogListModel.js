@@ -27,11 +27,10 @@ define(['contrail-list-model'], function(ContrailListModel) {
                     obj['moduleId'] = contrail.format('{0} ({1})',obj['ModuleId'],obj['Source']);
                 if($.inArray(obj['ModuleId'],[UVEModuleIds['DISCOVERY_SERVICE'],
                     UVEModuleIds['SERVICE_MONITOR'],UVEModuleIds['SCHEMA'],
-                    UVEModuleIds['CONFIG_NODE']]) != -1) {
+                    UVEModuleIds['APISERVER']]) != -1) {
                     obj['link'] = {
                         p: 'mon_infra_config',
                         q: {
-                            type: "configNode",
                             view: "details",
                             focusedElement: {
                                 node: obj['Source'],
@@ -45,7 +44,6 @@ define(['contrail-list-model'], function(ContrailListModel) {
                     obj['link'] = {
                         p: 'mon_infra_analytics',
                         q: {
-                            type: 'controlNode',
                             view: 'details',
                             focusedElement: {
                                 node: obj['Source'],
@@ -57,7 +55,6 @@ define(['contrail-list-model'], function(ContrailListModel) {
                     obj['link'] = {
                         p: 'mon_infra_vrouter',
                         q: {
-                            type: "vRouter",
                             view: "details",
                             focusedElement: {
                                 node: obj['Source'],
@@ -69,7 +66,17 @@ define(['contrail-list-model'], function(ContrailListModel) {
                     obj['link'] = {
                         p: 'mon_infra_control',
                         q: {
-                            type: 'controlNode',
+                            view: 'details',
+                            focusedElement: {
+                                node: obj['Source'],
+                                tab:'details'
+                            }
+                        },
+                    };
+                } else if($.inArray(obj['ModuleId'],[UVEModuleIds['DATABASE']]) != -1) {
+                    obj['link'] = {
+                        p: 'mon_infra_database',
+                        q: {
                             view: 'details',
                             focusedElement: {
                                 node: obj['Source'],
