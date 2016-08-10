@@ -43,17 +43,34 @@ define([
                 }
             }
         },
-
+        
         renderChart: function (selector, viewConfig, chartViewModel) {
             var self = this,
                 modelData = chartViewModel.getItems(),
                 data = modelData.slice(0),
                 chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
-                chartViewConfig, chartOptions, chartModel;
+                chartViewConfig, chartOptions, chartModel,
+                showLegend = getValueByJsonPath(viewConfig,'chartOptions;showLegend',false),
+                legendFn = getValueByJsonPath(viewConfig,'chartOptions;legendFn',null);
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
+            }
+
+            //plot default line
+            if(data.length === 0){
+                var defData = {key:'', color:cowc.DEFAULT_NODE_COLOR, values:[]},
+                    start = Date.now() - (2 * 60 * 60 * 1000),
+                    end = Date.now();
+
+                defData.values.push({x:start, y:0.01, tooltip:false});
+                defData.values.push({x:start, y:0.01, tooltip:false});
+                defData.values.push({x:end, y:0.01, tooltip:false});
+                viewConfig.chartOptions.forceY = [0, 1];
+                viewConfig.chartOptions.defaultDataStatusMessage = false;
+                legendFn = null;
+                data.push(defData);
             }
 
             chartViewConfig = getChartViewConfig(data, viewConfig);
@@ -92,6 +109,10 @@ define([
                 this.renderView4Config(selector.find('.chart-container'), chartViewModel, widgetConfig, null, null, null, function(){
                     chUtils.updateChartOnResize(selector, chartModel);
                 });
+            }
+
+            if (showLegend && legendFn != null && typeof legendFn == 'function') {
+                legendFn(data, selector);
             }
         },
 
@@ -164,16 +185,23 @@ define([
             spliceBorderPoints(chartData);
             var values = chartData[0].values,
                 brushExtent = null,
+                hideFocusEnable = getValueByJsonPath(chartOptions,'hideFocusEnable', false),
                 start, end;
             end = values[values.length - 1];
             if (values.length >= 20) {
                 start = values[values.length - 20];
-                chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), chUtils.getViewFinderPoint(end.x)];
+                if(!hideFocusEnable){
+                    chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), 
+                        chUtils.getViewFinderPoint(end.x)];
+                }
             } else if (chartOptions['defaultSelRange'] != null && 
                   values.length >= parseInt(chartOptions['defaultSelRange'])) {
                 var selectionRange = parseInt(chartOptions['defaultSelRange']);
                 start = values[values.length - selectionRange];
-                chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), chUtils.getViewFinderPoint(end.x)];
+                if(!hideFocusEnable){
+                    chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), 
+                        chUtils.getViewFinderPoint(end.x)];
+                } 
             }
         }
 
