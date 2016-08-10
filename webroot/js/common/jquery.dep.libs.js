@@ -3,13 +3,11 @@
  */
 define([
     'jquery.xml2json',
-    'jquery.ba-bbq',
     'jquery.json',
     'bootstrap',
     'select2',
     'slick.core',
     'slick.dataview',
-    'jquery-ui',
     'contrail-elements',
     //From jquery-libs
     'jquery.timer',
@@ -20,10 +18,8 @@ define([
     'jquery.multiselect.filter',
     'jquery.steps.min',
     'jquery.panzoom',
-    'jquery-contextmenu',
     'jquery.event.drag',
-    'jquery.droppick',
-    'jquery.datetimepicker',
+    'jquery.datetimepicker'
 ], function() {
     // console.info("loaded jquery.dep.libs");
 });

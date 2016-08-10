@@ -7,7 +7,7 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
         var self = this;
 
         //Don't escape ":[]" characters while pushing state via bbq
-        $.param.fragment.noEscape(":[]");
+        //noEscape(":[]");
 
         this.load = function (menuObj) {
             var webServerInfo = globalObj['webServerInfo'];
@@ -18,7 +18,7 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
 
             menuHandler.loadMenu(menuObj);
             menuHandler.handleSideMenu();
-            self.onHashChange({}, $.bbq.getState());
+            self.onHashChange({}, cowhu.getState());
         };
 
         /** Get view height excluding header & footer **/
@@ -33,7 +33,7 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
 
         /** Returns the entire hash object */
         this.getURLHashObj = function () {
-            return $.bbq.getState();
+            return cowhu.getState();
         };
 
         /** Override the entire hash object with the given one */
@@ -43,13 +43,13 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
             var currHashObj = self.getURLHashObj();
             //Update Hash only if it differs from current hash
             if (JSON.stringify(sort(currHashObj)) != JSON.stringify(sort(obj))) {
-                $.bbq.pushState(obj, 2);
+                cowhu.pushState(obj, 2);
             }
         };
 
         /** Returns the value of 'q' in urlHash which is used to maintain the state within a page */
         this.getURLHashParams = function () {
-            var urlHash = $.bbq.getState('q');
+            var urlHash = cowhu.getState('q');
             return ifNull(urlHash, {});
         };
 
@@ -62,6 +62,9 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
                 merge = ifNull(obj['merge'], true);
                 triggerHashChange = ifNull(obj['triggerHashChange'], true);
             }
+            //Adding triggerHashChange as part of the URL itself.
+            hashParams['reload'] = triggerHashChange; 
+                
             //Update Hash only if it differs from current hash
             var currHashParams = self.getURLHashParams();
             //If merge is true, merge the parameters before comparing current hash with the new hash going to be pushed
@@ -72,9 +75,9 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
                 if (triggerHashChange == false)
                     globalObj.hashUpdated = 1;
                 if ((obj != null) && (obj['p'] != null))
-                    $.bbq.pushState({p: obj['p'], q: hashParams});
+                    cowhu.pushState({p: obj['p'], q: hashParams});
                 else
-                    $.bbq.pushState({q: hashParams});
+                    cowhu.pushState({q: hashParams});
             }
         };
 

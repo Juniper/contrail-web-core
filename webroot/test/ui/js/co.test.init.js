@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var cowc, cowu, cowf, cowl, cowch, cowm, cotu, cotc, covdc;
+var cowc, cowu, cowhu, cowf, cowl, cowch, cowm, cotu, cotc, covdc;
 
 var allTestFiles = [], windowKarma = window.__karma__;
 
@@ -317,12 +317,13 @@ function testAppInit(testAppConfig) {
                         window.kbValidation = validation;
                         // window.ko = ko;
                     });
-                    require(['core-utils'], function (CoreUtils) {
+                    require(['core-utils', 'core-hash-utils'], function (CoreUtils, CoreHashUtils) {
                         cowu = new CoreUtils();
+                        cowhu = new CoreHashUtils();
                         require(['underscore'], function (_) {
                             _.noConflict();
                         });
-                        require(['layout-handler', 'content-handler', 'contrail-load', 'lodash'], function (LayoutHandler, ContentHandler, ChartUtils, _) {
+                        require(['layout-handler', 'content-handler', 'help-handler', 'contrail-load', 'lodash'], function (LayoutHandler, ContentHandler, HelpHandler, ChartUtils, _) {
                             window._ = _;
                             contentHandler = new ContentHandler();
                             initBackboneValidation();
@@ -338,6 +339,7 @@ function testAppInit(testAppConfig) {
                             layoutHandlerLoadDefObj.resolve();
                             layoutHandler.load(menuXML);
 
+                            helpHandler = new HelpHandler();
 
                             var cssList = cotu.getCSSList();
 

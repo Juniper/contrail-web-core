@@ -29,7 +29,7 @@ define([
             tmplParameters = {
                 id: elId + '_datetimepicker', name: elId,
                 label: labelValue, dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE],
-                lockAttr: lockEditingByDefault, class: "span12",
+                lockAttr: lockEditingByDefault, class: "col-xs-12",
                 viewConfig: viewConfig, elementConfig: elementConfig, validation: validation
             };
 

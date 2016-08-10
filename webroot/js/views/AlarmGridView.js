@@ -119,7 +119,8 @@ define([
                               {
                                   field: 'severity',
                                   name: '',
-                                  width: 1,
+                                  minWidth: 20,
+                                  maxWidth: 20,
                                   searchFn: function (d) {
                                       return d['severity'];
                                   },
@@ -132,7 +133,7 @@ define([
                               {
                                   field: 'timestamp',
                                   name: 'Time',
-                                  minWidth: 50,
+                                  minWidth: 130,
                                   formatter : function (r,c,v,cd,dc) {
                                       return getFormattedDate(v/1000);
                                   }
@@ -140,7 +141,7 @@ define([
                               {
                                   field: 'alarm_msg',
                                   name: 'Alarm',
-                                  minWidth: 200,
+                                  minWidth: 200
                               },
                               {
                                   field: 'display_name',
@@ -153,14 +154,15 @@ define([
                                   formatter : function (r,c,v,cd,dc) {
                                       var formattedDiv = '';
                                       if(!dc['ack'] && dc['type'] != cowc.USER_GENERATED_ALARM) {
-                                          formattedDiv = '<span title="Acknowledge" style="float:right"><i class="icon-ok-circle"></i></span>';
+                                          formattedDiv = '<span title="Acknowledge"><i class="fa fa-check-circle-o"></i></span>';
                                       }
                                       return formattedDiv;
                                   },
                                   events: {
                                       onClick: onAcknowledgeActionClicked
                                   },
-                                  width:1
+                                  minWidth: 20,
+                                  maxWidth: 20
                               }
                           ];
         var gridElementConfig = {
@@ -235,7 +237,7 @@ define([
                 "type": "link",
                 "title": 'Acknowledge',
                 "linkElementId": "btnAcknowledge",
-                "iconClass": "icon-ok-circle",
+                "iconClass": "fa fa-check-circle-o",
                 "onClick": function () {
                     var gridElId = '#' + cowl.ALARMS_GRID_ID;
                     var checkedRows = $(gridElId).data("contrailGrid").getCheckedRows();
@@ -247,7 +249,7 @@ define([
             },
             {
                 type: 'checked-multiselect',
-                iconClass: 'icon-filter',
+                iconClass: 'fa fa-filter',
                 placeholder: 'Filter Alarms',
                 elementConfig: {
                     elementId: 'alarmsFilterMultiselect',
@@ -268,7 +270,7 @@ define([
                                     {
                                         id:"4",
                                         text:'Minor',
-                                        iconClass:'icon-download-alt'
+                                        iconClass:'fa-download'
                                     },
                                     {
                                         id:"3",
@@ -304,7 +306,7 @@ define([
     function getAcknowledgeAction (onClickFunction, divider) {
         return {
             title: cowl.TITLE_ACKNOWLEDGE,
-            iconClass: 'icon-ok-circle',
+            iconClass: 'fa fa-check-circle-o',
             width: 80,
             disabled:true,
             divider: contrail.checkIfExist(divider) ? divider : false,
@@ -315,7 +317,7 @@ define([
     function getAlertHistoryAction (onClickFunction, divider) {
         return {
             title: cowl.TITLE_ALARM_HISTORY,
-            iconClass: 'icon-th',
+            iconClass: 'fa fa-th',
             width: 80,
             divider: contrail.checkIfExist(divider) ? divider : false,
             onClick: onClickFunction

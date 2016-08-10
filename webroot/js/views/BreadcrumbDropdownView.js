@@ -128,7 +128,6 @@ define([
         destroyBreadcrumbDropdownDOM(breadcrumbDropdownId);
 
         breadcrumbElement.children('li').removeClass('active');
-        breadcrumbElement.children('li:last').append('<span class="divider breadcrumb-divider"><i class="icon-angle-right"></i></span>');
         breadcrumbElement.append('<li class="active breadcrumb-item"><div id="' + breadcrumbDropdownId + '" class="breadcrumb-dropdown"></div></li>');
 
         return $('#' + breadcrumbDropdownId).contrailDropdown({

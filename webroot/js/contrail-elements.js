@@ -44,7 +44,7 @@
             .data('contrailTabs', {
                 _tabsUIObj: self.tabs(),
                 startLoading: function(selectedTabLinkId){
-                    $(selectedTabLinkId).prepend('<i class="icon-spinner icon-spin contrail-tabs-loading"></i>');
+                    $(selectedTabLinkId).prepend('<i class="fa fa-spinner fa-spin contrail-tabs-loading"></i>');
                 },
                 endLoading: function(selectedTabLinkId){
                     $(selectedTabLinkId).find('.contrail-tabs-loading').remove();
@@ -400,7 +400,7 @@
                 .insertAfter( dis );
 
             input = $( "<input>" )
-                .addClass('custom-combobox-input span12')
+                .addClass('custom-combobox-input col-xs-12')
                 .appendTo( wrapper )
                 .autocomplete(config)
                 .attr('placeholder', config.placeholder)
@@ -439,7 +439,7 @@
             };
 
             $("<span>")
-                .addClass('add-on')
+                .addClass('input-group-addon')
                 .appendTo( wrapper )
                 .mousedown(function() {
                     wasOpen = input.autocomplete( "widget" ).is( ":visible" );
@@ -454,7 +454,7 @@
 
                     input.autocomplete( "search", "" );
                 })
-                .append('<i class="icon-caret-down"></i>');
+                .append('<i class="fa fa-caret-down"></i>');
             dis.option.sourceMap = constructSourceMap(formattedData, 'value');
         };
     };
@@ -631,17 +631,17 @@
         });
         function constructContrail2WayMultiselect(self, options){
         	self.html('<div class="contrail2WayMultiselect row-fluid">\
-                <div class="span5">\
+                <div class="col-xs-5">\
                     <label>'+options.leftTitle+'</label>\
                     <ol class="row-fluid multiselect-left multiselect-list" style="height:'+(options.sizeLeft * 30).toString()+'px;"></ol>\
                 </div>\
-                <div class="span2 multiselect-controls">\
-                    ' + ((options.controls.single) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-selected icon-angle-right"></i></div>\
-                    <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-selected icon-angle-left"></i></div>' : '') + '\
-                    ' + ((options.controls.all) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-all icon-double-angle-right"></i></div>\
-                    <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-all icon-double-angle-left"></i></div>' : '') + '\
+                <div class="col-xs-2 multiselect-controls">\
+                    ' + ((options.controls.single) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-selected fa fa-angle-right"></i></div>\
+                    <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-selected fa fa-angle-left"></i></div>' : '') + '\
+                    ' + ((options.controls.all) ? '<div class="row-fluid multiselect-control"><i title="Move to Left" class="multiselect-control-left-all fa fa-angle-double-right"></i></div>\
+                    <div class="row-fluid multiselect-control"><i title="Move to Right" class="multiselect-control-right-all fa fa-angle-double-left"></i></div>' : '') + '\
                 </div>\
-                <div class="span5">\
+                <div class="col-xs-5">\
                      <label>'+options.rightTitle+'</label>\
                      <ol class="row-fluid multiselect-right multiselect-list" style="height:'+(options.sizeRight * 30).toString()+'px;"></ol>\
                 </div>\
@@ -1031,14 +1031,16 @@
             options.id = options.id != undefined ? options.id : '';
             var className = (options.className == null) ? '' : options.className;
 
-            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal contrail-modal hide" tabindex="-1" role="dialog" aria-hidden="true"> \
+            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal fade contrail-modal" tabindex="-1" role="dialog" aria-hidden="true"> \
+                <div class="modal-content">\
         		<div class="modal-header"> \
-        	    	<button id="modal-header-close" type="button" class="close"><i class="icon-remove"></i></button> \
+        	    	<button id="modal-header-close" type="button" class="close"><i class="fa fa-remove"></i></button> \
         			<h6 class="modal-header-title"></h6> \
         		</div> \
 	        	<div class="modal-body"></div> \
 	        	<div class="modal-footer"></div> \
-        	</div>';
+        	</div> \
+        	</div> ';
 
             $('#' + options.id).remove();
             $('body').prepend(modalHTML);
@@ -1103,22 +1105,23 @@
                     cursor: 'move'
                 });
 
-
             if (contrail.checkIfFunction(keyupAction.onKeyupEnter) || contrail.checkIfFunction(keyupAction.onKeyupEsc)) {
-                modalId.keyup(function(event) {
-                    var code = event.which; // recommended to use e.which, it's normalized across browsers
-                    if (code == 13) {
-                        event.preventDefault();
-                    }
-
-                    if (modalId.prop('id') === $(event.target).prop('id')) {
-                        if (contrail.checkIfFunction(keyupAction.onKeyupEnter) && code == 13) {
-                            keyupAction.onKeyupEnter();
-                        } else if (contrail.checkIfFunction(keyupAction.onKeyupEsc) && code == 27) {
-                            keyupAction.onKeyupEsc();
+                modalId
+                    .off('keyup')
+                    .on('keyup', function(event) {
+                        var code = event.which; // recommended to use e.which, it's normalized across browsers
+                        if (code == 13) {
+                            event.preventDefault();
                         }
-                    }
-                });
+
+                        if (modalId.prop('id') === $(event.target).prop('id')) {
+                            if (contrail.checkIfFunction(keyupAction.onKeyupEnter) && code == 13) {
+                                keyupAction.onKeyupEnter();
+                            } else if (contrail.checkIfFunction(keyupAction.onKeyupEsc) && code == 27) {
+                                keyupAction.onKeyupEsc();
+                            }
+                        }
+                    });
             }
         }
     });

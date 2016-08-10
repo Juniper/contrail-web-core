@@ -19,79 +19,8 @@
 }
 
 /*
- * Breadcrumb
- */
-.breadcrumb .breadcrumb-dropdown,
-.breadcrumb .breadcrumb-text {
-    max-width: 180px;
-}
-.breadcrumb .breadcrumb-text {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    margin: -6px 0;
-}
-
-/*
- * Details styles
- */
-.group-detail-action-item {
-    margin: 0 8px;
-    color: #777;
-}
-.group-detail-action-item:hover {
-    color: #333;
-}
-.group-detail-action-item.selected, .group-detail-action-item.selected:hover {
-    color: #3182bd;
-}
-.group-detail-action-item-dropdown-menu {
-    top: 24px;
-    right: -3px !important;
-}
-.detail-block-array-list {
-    margin: 0 10px 10px;
-    width: 97%;
-}
-.detail-block-array-list-item {
-    padding: 5px 0;
-}
-.detail-block-array-list-item ul.item-list li {
-    padding: 0 !important;
-}
-.detail-block-array-list-item .title {
-    border-bottom: 1px solid #CCCCCC;
-    font-weight: bold;
-    color: #777;
-    margin-bottom: 5px;
-}
-.detail-block-grid {
-    display: table;
-    margin: 0 5px 5px;
-    width: 98%;
-}
-.detail-block-grid-header {
-    display: table-header-group;
-    color: #777;
-    font-weight: bold;
-}
-.detail-block-grid-header .detail-block-grid-cell {
-    border-bottom: 1px solid #CCCCCC;
-}
-.detail-block-grid-body {
-    display: table-row-group;
-}
-.detail-block-grid-row {
-    display: table-row;
-    padding: 2px 0;
-}
-.detail-block-grid-cell {
-    display: table-cell;
-    padding: 0 10px 0 0;
-}
-/*
  * Styles moved from vcon-web.css
- * TODO Cleanup requireed to remove unused styles
+ * TODO Cleanup required to remove unused styles
  */
 .folder {
   background-position: 0 -16px;
@@ -113,9 +42,6 @@
 }
 .sub-title.main {
   padding-bottom: 16px;
-}
-.margin-auto {
-  margin: auto;
 }
 .example-subtitle {
   margin-bottom: 0;
@@ -358,6 +284,7 @@ div.t-grid td {
 }
 .infobox > .infobox-content{
 	margin: 0 0 0 5px;
+    margin-top: 5px;
 }
 .infobox-details > .infobox-content {
     margin: 0px;
@@ -416,7 +343,13 @@ rect.bordered {
 .sparklines-box{
 	border: 1px solid #dedede;
 	padding: 5px;
+    width: 31.8%;
 }
+
+#vrouterAgent-sparklines {
+    margin-left: 0px;
+}
+
 .sparklines-box p.sparkline-title{
 	padding: 0 5px 2px;
 	color: #3182bd;
@@ -799,7 +732,7 @@ p.error, p.error-text {
 .form-element .help-block{
     margin-bottom: 0;
 }
-.textarea-input-append.input-append.inset .add-on {
+.textarea-input-append.input-append.inset .input-group-addon {
    padding-right: 0;
 }
 .chart-settings-label {
@@ -1119,7 +1052,7 @@ button.btn.btn-mini.json-editor-btn-movedown.movedown,
 button.btn.btn-mini.json-editor-btn-moveup.moveup,
 button.btn.btn-mini.json-editor-btn-trash,
 button.btn.btn-mini.json-editor-btn-plus{
-    
+
     background-color: white !important;
     padding: 0px;
     border: none;
@@ -1188,7 +1121,7 @@ button.btn.btn-mini.json-editor-btn-create:focus{
    border: 0px;
    padding-left: 20px !important;
    margin-bottom: 0px !important;
-   
+
 }
 #editorContainer .container-fluid{
   padding-left:10px !important;
@@ -1324,7 +1257,6 @@ span.hyperlink.value.string:hover{
 .adjustConfigContent{
    padding-right: 0px !important;
    padding-bottom: 0px !important;
-   padding-top: 41px !important;
 }
 .object-json-view::-webkit-scrollbar-thumb,
 .config-scroll-color::-webkit-scrollbar-thumb {
