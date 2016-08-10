@@ -189,36 +189,50 @@
 }
 .modal.contrail-modal {
     margin-left: 0 !important;
-    position: absolute;
-    left: 0;
+    position: fixed;
+    left: 50%;
     top: 0;
 }
 .modal-280{
     width:280px;
+    /*
+        Should use transform instead, it gives better performance.
+        Blocker for using this: some inline-style added to the modal. Guess: caused by some JS plugin.
+        Need to identify the JS plugin and resolve the issue.
+
+        NOTE: this comment applies to the next 6 rules as well.
+     */
+    /*transform: translateX(-140px);*/
     margin-left: -140px;
 }
 .modal-420{
     width:420px;
+    /*transform: translateX(-210px);*/
     margin-left: -210px;
 }
 .modal-560{
     width:560px;
+    /*transform: translateX(-280px);*/
     margin-left: -280px;
 }
 .modal-700{
     width:700px;
+    /*transform: translateX(-350px);*/
     margin-left: -350px;
 }
 .modal-840{
     width:840px;
+    /*transform: translateX(-420px);*/
     margin-left: -420px;
 }
 .modal-980{
     width:980px;
+    /*transform: translateX(-490px);*/
     margin-left: -490px;
 }
 .modal-1120{
     width:1120px;
+    /*transform: translateX(-560px);*/
     margin-left: -560px;
 }
 .modal--500 .modal-body{
