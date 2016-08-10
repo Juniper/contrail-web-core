@@ -64,7 +64,7 @@ function getDefaultGridConfig() {
             	},
             	error: {
             		type: 'error',
-            		iconClasses: 'icon-warning',
+            		iconClasses: 'fa fa-warning',
             		text: 'Error - Please try again later.'
             	}
             }
@@ -175,7 +175,7 @@ function getDefaultGridConfig() {
                             performSort(gridSortColumns);
                             if(gridConfig.header.defaultControls.refreshable){
                             	setTimeout(function(){
-                            		gridContainer.find('.link-refreshable i').removeClass('icon-spin icon-spinner').addClass('icon-repeat');
+                            		gridContainer.find('.link-refreshable i').removeClass('fa-spin fa-spinner').addClass('fa fa-repeat');
                             	},1000);
                             }
                         },
@@ -315,14 +315,14 @@ function getDefaultGridConfig() {
                                 e.stopPropagation();
                                 break;
                             case 'refresh':
-                                gridContainer.find('.link-refreshable i').removeClass('icon-repeat').addClass('icon-spin icon-spinner');
+                                gridContainer.find('.link-refreshable i').removeClass('fa-repeat').addClass('fa fa-spin fa-spinner');
                                 gridContainer.data('contrailGrid').refreshData();
                                 break;
                             case 'export':
                                 var gridDSConfig = gridDataSource,
                                     gridData = [], dv;
 
-                                gridContainer.find('a[data-action="export"] i').removeClass('icon-download-alt').addClass('icon-spin icon-spinner');
+                                gridContainer.find('a[data-action="export"] i').removeClass('fa-download').addClass('fa fa-spin fa-spinner');
                                 gridContainer.find('a[data-action="export"]').prop('title', 'Exporting...').data('action', 'exporting').addClass('blue');
                                 if (contrail.checkIfExist(gridDSConfig.remote) && gridDSConfig.remote.serverSidePagination) {
                                     var exportCB = gridDSConfig.remote.exportFunction;
@@ -334,17 +334,17 @@ function getDefaultGridConfig() {
                                     gridData = dv.getItems();
                                     exportGridData2CSV(gridConfig, gridData);
                                     setTimeout(function () {
-                                        gridContainer.find('a[data-action="export"] i').addClass('icon-download-alt').removeClass('icon-spin icon-spinner');
+                                        gridContainer.find('a[data-action="export"] i').addClass('fa-download').removeClass('fa-spin fa-spinner');
                                         gridContainer.find('a[data-action="export"]').prop('title', 'Export as CSV').data('action', 'export').removeClass('blue');
                                     }, 500);
                                 }
                                 break;
                             case 'collapse':
-                                gridHeader.find('i.collapse-icon').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+                                gridHeader.find('i.collapse-icon').toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
 
-                                if (gridHeader.find('i.collapse-icon').hasClass('icon-chevron-up')) {
+                                if (gridHeader.find('i.collapse-icon').hasClass('fa-chevron-up')) {
                                     gridContainer.children().removeClass('collapsed');
-                                } else if (gridHeader.find('i.collapse-icon').hasClass('icon-chevron-down')) {
+                                } else if (gridHeader.find('i.collapse-icon').hasClass('fa-chevron-down')) {
                                     gridContainer.children().addClass('collapsed');
                                     gridHeader.show();
                                 }
@@ -424,7 +424,7 @@ function getDefaultGridConfig() {
 	                columns.push({
 	                    focusable: true,
 	                    formatter: function(r, c, v, cd, dc) {
-	                        return '<i class="icon-caret-right toggleDetailIcon slick-row-detail-icon"></i>';
+	                        return '<i class="fa fa-caret-right toggleDetailIcon slick-row-detail-icon"></i>';
 	                    },
 	                    id: "_detail_row_icon",
 	                    rerenderOnResize: false,
@@ -439,7 +439,7 @@ function getDefaultGridConfig() {
 	                    events: {
 	            			onClick: function(e,dc){
 	            				var target = e.target;
-                                if($(target).hasClass('icon-caret-right')){
+                                if($(target).hasClass('fa-caret-right')){
 
                                 	if(!$(target).parents('.slick-row-master').next().hasClass('slick-row-detail')){
 	                                	var cellSpaceColumn = 0,
@@ -474,7 +474,7 @@ function getDefaultGridConfig() {
                                     if(contrail.checkIfFunction(gridOptions.detail.onExpand)){
                                     	gridOptions.detail.onExpand(e,dc);
                                     }
-                                    $(target).removeClass('icon-caret-right').addClass('icon-caret-down');
+                                    $(target).removeClass('fa-caret-right').addClass('fa fa-caret-down');
 
                                     var slickRowDetail = $(target).parents('.slick-row-master').next('.slick-row-detail'),
                                         slickRowDetailHeight = slickRowDetail.height(),
@@ -484,13 +484,13 @@ function getDefaultGridConfig() {
                                         gridContainer.data('contrailGrid').adjustDetailRowHeight(slickRowDetail.data('cgrid'))
                                     }
                                 }
-                                else if($(target).hasClass('icon-caret-down')){
+                                else if($(target).hasClass('fa-caret-down')){
                                     $(target).parents('.slick-row-master').next('.slick-row-detail').hide();
 
                                     if(contrail.checkIfFunction(gridOptions.detail.onCollapse)){
                                     	gridOptions.detail.onCollapse(e,dc);
                                     }
-                                    $(target).removeClass('icon-caret-down').addClass('icon-caret-right');
+                                    $(target).removeClass('fa-caret-down').addClass('fa fa-caret-right');
                                 }
 	            			}
 	            		}
@@ -534,7 +534,7 @@ function getDefaultGridConfig() {
                                     actionCellArray = gridOptions.actionCell.optionList;
                                 }
 
-                                return (actionCellArray.length > 0) ? '<i class="icon-cog icon-only bigger-110 grid-action-dropdown"></i>' : '';
+                                return (actionCellArray.length > 0) ? '<i class="fa fa-cog icon-only bigger-110 grid-action-dropdown"></i>' : '';
                             },
                             searchable: false,
                             sortable: false,
@@ -919,11 +919,11 @@ function getDefaultGridConfig() {
 
                 gridContainer.find('.grid-footer').append('<div class="slick-pager"> \
                 		<span class="slick-pager-nav"> \
-                			<span class="pager-control"><i class="icon-step-backward icon-disabled pager-control-first"></i></span>\
-                			<span class="pager-control"> <i class="icon-backward icon-disabled pager-control-prev"></i></span> \
+                			<span class="pager-control"><i class="fa fa-step-backward icon-disabled pager-control-first"></i></span>\
+                			<span class="pager-control"> <i class="fa fa-backward icon-disabled pager-control-prev"></i></span> \
                 			<span class="pager-page-info"><div class="csg-current-page"></div> of <span class="csg-total-page-count"></span></span> \
-                			<span class="pager-control"> <i class="icon-forward icon-disabled pager-control-next"></i></span> \
-                			<span class="pager-control"> <i class="icon-step-forward icon-disabled pager-control-last"></i></span> \
+                			<span class="pager-control"> <i class="fa fa-forward icon-disabled pager-control-next"></i></span> \
+                			<span class="pager-control"> <i class="fa fa-step-forward icon-disabled pager-control-last"></i></span> \
                 		</span> \
                 		<span class="slick-pager-info"></span>\
                 		<span class="slick-pager-sizes"><div class="csg-pager-sizes"></div></span>\
@@ -964,11 +964,11 @@ function getDefaultGridConfig() {
                     currentPageDataChecked: false
                 },
                 expand: function(){
-                	gridContainer.find('i.collapse-icon').addClass('icon-chevron-up').removeClass('icon-chevron-down');
+                	gridContainer.find('i.collapse-icon').addClass('fa fa-chevron-up').removeClass('fa-chevron-down');
             		gridContainer.children().removeClass('collapsed');
                 },
                 collapse: function(){
-                	gridContainer.find('i.collapse-icon').removeClass('icon-chevron-up').addClass('icon-chevron-down');
+                	gridContainer.find('i.collapse-icon').removeClass('fa-chevron-up').addClass('fa fa-chevron-down');
                     gridContainer.children().addClass('collapsed');
                     gridContainer.find('.grid-header').show();
                 },
@@ -1173,7 +1173,7 @@ function getDefaultGridConfig() {
                 		if(gridContainer.find('.slick_row_' + $(this).data('cgrid')).is(':visible')){
                 			gridContainer.find('.slick_row_' + $(this).data('cgrid')).after($(this));
                             if($(this).is(':visible')) {
-                                gridContainer.find('.slick_row_' + $(this).data('cgrid')).find('.toggleDetailIcon').addClass('icon-caret-down').removeClass('icon-caret-right');
+                                gridContainer.find('.slick_row_' + $(this).data('cgrid')).find('.toggleDetailIcon').addClass('fa fa-caret-down').removeClass('fa-caret-right');
                             }
                             if(refreshDetailTemplateFlag){
                         		refreshDetailTemplateById($(this).data('cgrid'));
@@ -1202,7 +1202,7 @@ function getDefaultGridConfig() {
         function generateGridHeaderTemplate(headerConfig){
             var template = ' \
                 <h4 class="grid-header-text smaller {{this.cssClass}}"> \
-            		<i class="grid-header-icon-loading icon-spinner icon-spin"></i> \
+            		<i class="grid-header-icon-loading fa fa-spinner fa-spin"></i> \
                     <i class="grid-header-icon {{this.icon}} {{this.iconCssClass}} hide"></i> {{this.text}} \
                 </h4>',
                 headerTemplate;
@@ -1211,7 +1211,7 @@ function getDefaultGridConfig() {
                 template += '\
                 <div class="widget-toolbar pull-right"> \
                     <a class="widget-toolbar-icon" data-action="collapse"> \
-                        <i class="collapse-icon icon-chevron-up"></i> \
+                        <i class="collapse-icon fa fa-chevron-up"></i> \
                     </a> \
                 </div>';
             }
@@ -1220,7 +1220,7 @@ function getDefaultGridConfig() {
                 template += '\
                 <div class="widget-toolbar pull-right"> \
                     <a class="widget-toolbar-icon link-refreshable" title="Refresh" data-action="refresh"> \
-                        <i class="icon-repeat"></i> \
+                        <i class="fa fa-repeat"></i> \
                     </a> \
                 </div>';
             }
@@ -1229,12 +1229,12 @@ function getDefaultGridConfig() {
                 template += '\
                 <div class="widget-toolbar pull-right"> \
                     <a class="widget-toolbar-icon link-searchbox" data-action="search"> \
-                        <i class="icon-search"></i> \
+                        <i class="fa fa-search"></i> \
                     </a> \
                     <span class="input-searchbox hide"> \
                         <span class="input-icon"> \
                             <input type="text" placeholder="Search {{this.text}}" class="input-medium input-grid-search"> \
-                            <i class="widget-toolbar-icon icon-search"></i> \
+                            <i class="widget-toolbar-icon fa fa-search"></i> \
                         </span> \
                     </span> \
                 </div>';
@@ -1244,7 +1244,7 @@ function getDefaultGridConfig() {
                 template += '\
                     <div class="widget-toolbar pull-right"> \
                         <a class="widget-toolbar-icon" title="Export as CSV" data-action="export"> \
-                            <i class="icon-download-alt"></i> \
+                            <i class="fa fa-download"></i> \
                         </a> \
                     </div>';
             }
@@ -1501,16 +1501,16 @@ var SlickGridPager = function (dataView, gridContainer, pagingInfo) {
         var state = getNavState();
         footerContainer.find(".slick-pager-nav i").addClass("icon-disabled");
         if (state.canGotoFirst) {
-            footerContainer.find(".icon-step-backward").removeClass("icon-disabled");
+            footerContainer.find(".fa-step-backward").removeClass("icon-disabled");
         }
         if (state.canGotoLast) {
-            footerContainer.find(".icon-step-forward").removeClass("icon-disabled");
+            footerContainer.find(".fa-step-forward").removeClass("icon-disabled");
         }
         if (state.canGotoNext) {
-            footerContainer.find(".icon-forward").removeClass("icon-disabled");
+            footerContainer.find(".fa-forward").removeClass("icon-disabled");
         }
         if (state.canGotoPrev) {
-            footerContainer.find(".icon-backward").removeClass("icon-disabled");
+            footerContainer.find(".fa-backward").removeClass("icon-disabled");
         }
 
         footerContainer.find(".slick-pager-info").text("Total: " + pagingInfo.totalRows + " records");

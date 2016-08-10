@@ -33,7 +33,7 @@ define([
                                         label: "Owner",
                                         path: 'perms2.owner',
                                         dataBindValue: 'perms2().owner',
-                                        class: 'span6'
+                                        class: 'col-xs-6'
                                     }
                                 }
                             ]
@@ -47,7 +47,7 @@ define([
                                         label: "Owner Permissions",
                                         path: 'perms2.owner_access',
                                         dataBindValue: 'perms2().owner_access',
-                                        class: 'span6',
+                                        class: 'col-xs-6',
                                         elementConfig: {
                                             dataTextField: "text",
                                             dataValueField: "value",
@@ -68,7 +68,7 @@ define([
                                         label: "Global Share Permissions",
                                         path: 'perms2.global_access',
                                         dataBindValue: 'perms2().global_access',
-                                        class: 'span6',
+                                        class: 'col-xs-6',
                                         elementConfig: {
                                             dataTextField: "text",
                                             dataValueField: "value",
@@ -113,6 +113,7 @@ define([
                 view: "FormEditableGridView",
                 viewConfig: {
                     path : 'share_list',
+                    class: 'col-xs-12',
                     validation:
                    'rbacPermsShareValidations',
                    templateId: cowc.TMP_EDITABLE_GRID_ACTION_VIEW,

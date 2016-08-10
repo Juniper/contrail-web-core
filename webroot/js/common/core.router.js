@@ -15,7 +15,7 @@ define([
             if(!contrail.checkIfExist(menuHandler)) {
                 layoutHandler.load();
             } else {
-                currHash = $.bbq.getState();
+                currHash = cowhu.getState();
 
                 //Don't trigger hashChange if URL hash is updated from code
                 //As the corresponding view has already been loaded from the place where hash is updated

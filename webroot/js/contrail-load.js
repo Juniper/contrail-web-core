@@ -5,64 +5,68 @@
 $(document).ready(function () {
 
     //Listener to expand/collapse widget based on toggleButton in widget header
-    $("#content-container").find('div.widget-box div.widget-header div.widget-toolbar a[data-action="collapse"]').live('click', function () {
-        $(this).find('i').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+    $("#content-container").on('click', 'div.widget-box div.widget-header div.widget-toolbar a[data-action="collapse"]', function () {
+        $(this).find('i').toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
         var widgetBodyElem = $(this).parents('div.widget-box').find('div.widget-body');
         var widgetBoxElem = $(this).parents('div.widget-box');
         $(widgetBoxElem).toggleClass('collapsed');
     });
 
     // expand/collapse widget on click of widget header
-    $("#content-container").find('div.widget-box div.widget-header h4').live('click', function () {
-        $(this).parents('div.widget-header').find('a[data-action="collapse"] i').toggleClass('icon-chevron-up').toggleClass('icon-chevron-down');
+    $("#content-container").on('click', 'div.widget-box div.widget-header h4', function () {
+        $(this).parents('div.widget-header').find('a[data-action="collapse"] i').toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
         var widgetBodyElem = $(this).parents('div.widget-box').find('div.widget-body');
         var widgetBoxElem = $(this).parents('div.widget-box');
         $(widgetBoxElem).toggleClass('collapsed');
     });
 
-    $('.preBlock i').live('click', function () {
-        $(this).toggleClass('icon-minus').toggleClass('icon-plus');
-        if ($(this).hasClass('icon-minus')) {
+    //$('.preBlock i').on('click', function () {
+    $(document).on('click', '.preBlock i', function () {
+        $(this).toggleClass('fa-minus').toggleClass('fa-plus');
+        if ($(this).hasClass('fa-minus')) {
             $(this).parent('.preBlock').find('.collapsed').hide();
             $(this).parent('.preBlock').find('.expanded').show();
             $(this).parent('.preBlock').find('.preBlock').show();
             if ($(this).parent('.preBlock').find('.preBlock').find('.expanded').is(':visible')) {
                 $(this).parent('.preBlock').find('.preBlock').find('.collapsed').hide();
-                $(this).parent('.preBlock').find('.preBlock').find('i').removeClass('icon-plus').addClass('icon-minus');
+                $(this).parent('.preBlock').find('.preBlock').find('i').removeClass('fa-plus').addClass('fa fa-minus');
             }
             else {
                 $(this).parent('.preBlock').find('.preBlock').find('.collapsed').show();
-                $(this).parent('.preBlock').find('.preBlock').find('i').removeClass('icon-minus').addClass('icon-plus');
+                $(this).parent('.preBlock').find('.preBlock').find('i').removeClass('fa-minus').addClass('fa fa-plus');
             }
         }
-        else if ($(this).hasClass('icon-plus')) {
+        else if ($(this).hasClass('fa-plus')) {
             $(this).parent('.preBlock').find('.collapsed').show();
             $(this).parent('.preBlock').find('.expanded').hide();
         }
     });
 
     $(window).on('scroll', function () {
-        scrollHeight = $(document).height() - $(window).height();
-        var current_scroll = $(this).scrollTop();
+        var scrollHeight = $(document).height() - $(window).height(),
+            previousScroll = 0,
+            currentScroll = $(this).scrollTop();
 
-        if (current_scroll < 50 || previous_scroll - current_scroll > 40) {
+        if (currentScroll < 45 || previousScroll - currentScroll > 40) {
             $("#pageHeader").show();
+            $('#page-content').removeClass('scrolled');
             $('#sidebar').removeClass('scrolled');
             $('#breadcrumbs').removeClass('scrolled');
             $('#back-to-top').fadeOut();
         }
         else {
             $("#pageHeader").hide();
+            $('#page-content').addClass('scrolled');
             $('#sidebar').addClass('scrolled');
             $('#breadcrumbs').addClass('scrolled');
             $('#back-to-top').fadeIn();
         }
-        if (current_scroll < scrollHeight) {
-            previous_scroll = $(window).scrollTop();
+        if (currentScroll < scrollHeight) {
+            previousScroll = $(window).scrollTop();
         }
     });
 
-    $('#back-to-top').live('click',function (event) {
+    $(document).on('click', '#back-to-top', function (event) {
         event.preventDefault();
         $('html, body').animate({scrollTop: 0}, 500);
         return false;
@@ -77,11 +81,12 @@ $(document).ready(function () {
     // globalObj['_csrf'] = getCookie('_csrf');
     // delete_cookie('_csrf');
 
-    //$(window).resize(onWindowResize);
-    lastHash = $.bbq.getState();
+    $(window).on('hashchange', function () {
+        if (helpHandler != null) {
+            helpHandler.update_sections();
+        }
 
-    $(window).hashchange(function () {
-        currHash = $.bbq.getState();
+        currHash = cowhu.getState();
         //Don't trigger hashChange if URL hash is updated from code
         //As the corresponding view has already been loaded from the place where hash is updated
         //Ideally,whenever to load a view,just update the hash let it trigger the handler,instead calling it manually
@@ -92,6 +97,7 @@ $(document).ready(function () {
         }
         logMessage('hashChange', JSON.stringify(lastHash), ' -> ', currHash);
         logMessage('hashChange', JSON.stringify(currHash));
+
         layoutHandler.onHashChange(lastHash, currHash);
         lastHash = currHash;
     });
@@ -100,6 +106,46 @@ $(document).ready(function () {
 
     //bootstrap v 2.3.1 prevents this event which firefox's middle mouse button "new tab link" action, so we off it!
     $(document).off('click.dropdown-menu');
+
+    function startHelp() {
+        var help_container = $('#onpage-help-container');
+        //add a custom button to enable/disable help
+        help_container.append('<div class="ace-settings-container onpage-help-toggle-container">\
+                <div id="onpage-help-toggle-btn" class="btn btn-app btn-xs btn-info ace-settings-btn onpage-help-toggle-btn">\
+                    <i class="onpage-help-toggle-text ace-icon fa fa-question bigger-150"></i>\
+                </div>\
+            </div>');
+
+        $('#onpage-help-toggle-btn').on('click', function (event) {
+            event.preventDefault();
+            toggleHelp();
+        });
+
+        //add .container class to help container div when our content is put inside a ".container"
+        $(document).on('settings.ace.help', function (ev, event_name, fixed) {
+            if (event_name == 'main_container_fixed') {
+                if (fixed) help_container.addClass('container');
+                else help_container.removeClass('container');
+            }
+        }).triggerHandler('settings.ace.help', ['main_container_fixed', $('.main-container').hasClass('container')])
+
+        //in ajax mode when a content is loaded via ajax, we may want to update help sections
+        $(document).on('ajaxloadcomplete.ace.help', function () {
+            startHelp();
+            helpHandler.update_sections();
+        });
+    }
+
+    function toggleHelp() {
+        helpHandler.toggle();
+
+        var toggle_btn = $('#onpage-help-toggle-btn');
+        toggle_btn.find('.onpage-help-toggle-text').removeClass('onpage-help-toggle-text');
+        toggle_btn.toggleClass('btn-grey btn-info').parent().toggleClass('active');
+    }
+
+    startHelp();
+
 });
 
 // $.fn.modal.Constructor.prototype.enforceFocus = function () {
@@ -168,6 +214,7 @@ function getWebServerInfo(project, callback,fromCache) {
         }
     }
 };
+
 (function ($) {
     $.extend($.fn, {
         initWidgetHeader:function (data) {
@@ -256,22 +303,12 @@ $.allajax = (function ($) {
     return this;
 })($);
 
-$('.pre-format-JSON2HTML .expander').live('click', function(){
-    var selfParent = $(this).parent(),
-        jsonObj = {};
-    selfParent.children('i').removeClass('icon-plus').removeClass('expander').addClass('icon-minus').addClass('collapser');
-    if(selfParent.children('.node').hasClass('raw')){
-        jsonObj = JSON.parse(selfParent.children('ul.node').text());
-        selfParent.empty().append(contrail.formatJsonObject(jsonObj, 2, parseInt(selfParent.children('.node').data('depth')) + 1));
-    }
-    selfParent.children('.node').show();
-    selfParent.children('.collapsed').hide();
+$(document).on('click', '.pre-format-JSON2HTML .expander', function(){
+    cowu.expandJsonHtml($(this))
 });
-$('.pre-format-JSON2HTML .collapser').live('click', function(){
-    var selfParent = $(this).parent();
-    selfParent.children('i').removeClass('icon-minus').removeClass('collapser').addClass('icon-plus').addClass('expander');
-    selfParent.children('.collapsed').show();
-    selfParent.children('.node').hide();
+
+$(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
+    cowu.collapseJsonHtml($(this));
 });
 
 (function($) {
@@ -291,7 +328,34 @@ $('.pre-format-JSON2HTML .collapser').live('click', function(){
 	   });
 	   return o;
 	};
-	
+
+    /*
+     * .hideElement()
+     * Hide the matched elements. 
+     */
+    $.fn.hideElement = function(){
+        $(this).addClass('hidden');
+        return this;
+    };
+
+    /*
+     * .showElement()
+     * Show the matched elements.
+     */
+    $.fn.showElement = function(){
+        $(this).removeClass('hidden');
+        return this;
+    };
+
+    /*
+     * .toggleElement()
+     * Toggle the matched elements.
+     */
+    $.fn.toggleElement = function(){
+        $(this).toggleClass('hidden');
+        return this;
+    };
+
 	/*
 	 * .addClassSVG(className)
 	 * Adds the specified class(es) to each of the set of matched SVG elements.

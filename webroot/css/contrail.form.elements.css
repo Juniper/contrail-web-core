@@ -3,6 +3,58 @@
  * All rights reserved.
  */
 
+/*
+ * Contrail Textarea
+ */
+textarea.form-control {
+    resize: none;
+    width: 100%;
+    border: none;
+    padding: 3px 5px;
+}
+.textarea-input-group.input-group {
+    border: 1px solid #D5D5D5;
+}
+.textarea-input-group .input-group-addon,
+.textarea-input-group .form-control {
+    border: none;
+}
+/*
+ * Button
+ */
+.btn {
+    display: inline-block;
+    color: #FFF !important;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-image: none !important;
+    border: 5px solid #FFF;
+    border-radius: 0;
+    box-shadow: none !important;
+    -webkit-transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+    -o-transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+    transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 0;
+    position: relative;
+}
+
+.btn-mini {
+    padding: 0 5px;
+    line-height: 22px;
+    border-width: 2px;
+    font-size: 12px;
+}
+
+.btn, .btn-default {
+    background-color: #898989;
+    border-color: #898989;
+}
+
+.btn-primary, .btn-primary:hover {
+    background-color: #599AC9;
+    border-color: #599AC9;
+}
 /* Contrail Combobox
  * Extends Jquery UI Autocomplete.
  */
@@ -20,14 +72,14 @@
     color: #787878;
     font-size: 13px;
 }
-.custom-combobox .add-on{
-    padding: 3px;
+.custom-combobox .input-group-addon{
+    padding-left: 7px;
+    padding-right: 15px;
     background-color: #fff;
     position: absolute;
     right: 0;
     z-index: 1049;
     border: 1px solid #dadada;
-    border-bottom: none;
 }
 
 /* Contrail Dropdown & Multiselect
@@ -35,10 +87,9 @@
  */
 .select2-container {
     background-color:#fff;
-}
-.select2-container[class*="span"] {
-    min-height: 26px;
+    min-height: 28px;
     border: 1px solid #dadada;
+    width: 100%;
 }
 .select2-container .select2-choice {
     padding: 0 0 0 5px;
@@ -278,41 +329,34 @@ input.datetimepicker{
 /*
  * Contrail Checked Multiselect
  */
-.ui-multiselect { padding:3px 0 3px 4px; text-align:left; border: 1px solid #dadada; color: #777; }
-.ui-multiselect span.ui-icon { float:right }
+.ui-multiselect { padding:2px 0 2px 4px; text-align:left }
+.ui-multiselect span.ui-icon { float:right; margin-top: 8px;}
 .ui-multiselect-single .ui-multiselect-checkboxes input { position:absolute !important; top: auto !important; left:-9999px; }
 .ui-multiselect-single .ui-multiselect-checkboxes label { padding:5px !important }
-.ui-multiselect-header { margin-bottom:3px; padding:0; border: none; background-color: #eee; border-bottom: 2px solid #eee;}
-.ui-multiselect-header ul { display: none;}
+.ui-multiselect-header { margin-bottom:3px; padding:3px 0 3px 4px }
+.ui-multiselect-header ul { display: none; font-size:0.9em }
 .ui-multiselect-header ul li { float:left; padding:0 10px 0 0 }
 .ui-multiselect-header a { text-decoration:none }
 .ui-multiselect-header a:hover { text-decoration:underline }
 .ui-multiselect-header span.ui-icon { float:left }
 .ui-multiselect-header li.ui-multiselect-close { float:right; text-align:right; padding-right:0 }
-.ui-multiselect-controls {background-color: #eee;}
-.ui-multiselect-controls button{
-    line-height: 18px;
-    margin: 4px 2px;
-    font-size: 11px;
-}
-.ui-multiselect-menu { display:none; position:absolute; z-index: 1051; text-align: left }
-.ui-multiselect-checkboxes { position:relative /* fixes bug in IE6/7 */; overflow-y:scroll }
-.ui-multiselect-checkboxes  input.ace-input[type=checkbox] {  width: 0;  }
-.ui-multiselect-checkboxes label { cursor:default; display:block; border:1px solid transparent; padding:3px 3px 3px 10px }
-.ui-multiselect-checkboxes label input.ace-input[type=checkbox] + .ace-lbl {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    width: 100%;
-}
-.ui-multiselect-checkboxes label input { position:relative !important; top:1px }
-.ui-multiselect-checkboxes input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] + .ace-lbl::before,
-.ui-multiselect-checkboxes input.ace-input-tristate[type=checkbox] + .ace-lbl::before { margin-right: 8px; }
+
+.ui-multiselect-menu { display:none; padding:3px; position:absolute; z-index:10000; text-align: left }
+.ui-multiselect-checkboxes { position:relative /* fixes bug in IE6/7 */; overflow-y:auto }
+.ui-multiselect-checkboxes label { cursor:default; display:block; border:1px solid transparent; padding:3px 1px }
+.ui-multiselect-checkboxes label input { position:relative; top:1px }
 .ui-multiselect-checkboxes li { clear:both; font-size:0.9em; padding-right:3px }
-.ui-multiselect-checkboxes li .ace-lbl { color: #555;}
-.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label { font-weight:bold; border-bottom:1px solid #eee; margin-left: 3px;}
+.ui-multiselect-checkboxes li.ui-multiselect-optgroup-label { text-align:center; font-weight:bold; border-bottom:1px solid #DADADA;}
 .ui-multiselect-checkboxes li.ui-multiselect-optgroup-label a { display:block; padding:3px; margin:1px 0; text-decoration:none }
-* html .ui-multiselect-checkboxes label { border:none /* remove label borders in IE6 because IE6 does not support transparency */}
-.ui-multiselect-hasfilter ul { position:relative; top:2px }
-.ui-multiselect-filter { float:left; font-size:11px; margin: 2px; width: 94%;}
-.ui-multiselect-filter input { width:100%; font-size:10px; height:15px; padding:2px; border:1px solid #dadada; -webkit-appearance:textfield; -webkit-box-sizing:content-box; }
+
+.ui-multiselect-filter input {
+    width: 98%;
+}
+
+/* remove label borders in IE6 because IE6 does not support transparency */
+* html .ui-multiselect-checkboxes label { border:none }
+
+@media print{
+    .ui-multiselect-menu {display: none;}
+
+}

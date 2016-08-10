@@ -9,7 +9,7 @@ define([
     'contrail-model',
     'query-and-model',
     'core-basedir/js/common/qe.utils'
-], function (_, Backbone, Knockout, ContrailModel, QueryAndModel,qewu) {
+], function (_, Backbone, Knockout, ContrailModel, QueryAndModel, qewu) {
     var QueryOrModel = ContrailModel.extend({
 
         defaultConfig: {
