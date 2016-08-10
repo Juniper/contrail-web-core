@@ -96,6 +96,15 @@ function sendProxyRequest (request, response, appData, options, userData)
         options.headers = configServerApi.configAppHeaders(options.headers,
                                                            appData);
     }
+    var reqParamStr = reqParams[proxyURLStr];
+    if (-1 != reqParamStr.indexOf('/documentation/')) {
+        var lastSlashIdx = reqParamStr.lastIndexOf('/');
+        reqParamStr = reqParamStr.substr(0, lastSlashIdx);
+        var lastHtmlIdx = reqParams[proxyURLStr].lastIndexOf('.html');
+        if (-1 != lastHtmlIdx) {
+            var htmlFile = reqParams[proxyURLStr].substr(lastSlashIdx + 1, lastHtmlIdx);
+        }
+    }
     var rqst = protocol.request(options, function(res) {
         var body = '';
         res.on('end', function() {
@@ -104,6 +113,35 @@ function sendProxyRequest (request, response, appData, options, userData)
                 body =
                     body.replace(/a href="/g, 'a href="proxy?proxyURL=' +
                                  reqParams[proxyURLStr] + '/');
+            } else if (-1 != request.url.indexOf('/documentation/messages')) {
+                body = body.replace(/(a href=")|(a href=)/g, function($0) {
+                                    console.log("geting $0 as:", $0);
+                    var index = {
+                        'a href="': 'a href="proxy?proxyURL=' +
+                                        reqParamStr + '/',
+                        'a href=': 'a href=proxy?proxyURL=' +
+                                        reqParamStr + '/'
+                    }
+                    return index[$0] != undefined ? index[$0] : $0;
+                });
+            } else if (-1 != request.url.indexOf('/documentation')) {
+                /* Remove the last / and then replace it */
+                body =
+                    body.replace(/href="/g, 'href="proxy?proxyURL=' +
+                                 reqParamStr + '/');
+                body =
+                    body.replace(/documentation\/#/g, 'documentation/' +
+                                 htmlFile + '#');
+                var importDir = "";
+                var lastSlashIdx = reqParams[proxyURLStr].lastIndexOf('/');
+                importDir = reqParams[proxyURLStr].substr(0, lastSlashIdx);
+                body =
+                    body.replace(/import url\("/g, 'import url\("' +
+                                              'proxy?proxyURL=' + importDir +
+                                              '/')
+                body =
+                    body.replace(/src="/g, 'src="proxy?proxyURL=' +
+                                 reqParamStr + '/');
             } else if (true == addAuthInfo) {
                 /* Api/OpServerPort needs to be handled differently */
                 body = body.replace(/"href": "/g, '"href":"' + request.protocol
