@@ -36,7 +36,7 @@ define([
         destroyBreadcrumbText(breadcrumbTextId);
 
         breadcrumbElement.children('li').removeClass('active');
-        breadcrumbElement.children('li:last').append('<span class="divider breadcrumb-divider"><i class="icon-angle-right"></i></span>');
+        breadcrumbElement.children('li:last').append('<span class="divider breadcrumb-divider"><i class="fa fa-angle-right"></i></span>');
         breadcrumbElement.append('<li class="active breadcrumb-item"><a id="' + breadcrumbTextId + '" class="breadcrumb-text" title="' + urlValue + '">' + urlValue + '</a></li>');
 
         return $('#' + breadcrumbTextId);

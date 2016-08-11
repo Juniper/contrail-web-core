@@ -71,7 +71,7 @@ define([
                     },
                     error: {
                         type: 'error',
-                        iconClasses: 'icon-warning-sign',
+                        iconClasses: 'fa fa-exclamation-triangle',
                         text: 'Error in getting data.'
                     }
                 }

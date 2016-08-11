@@ -26,7 +26,7 @@ define(['underscore'], function (_) {
                     //Info: If the page doesn't load in 2 secs,showing loading content message 
                     setTimeout(function () {
                         if ($(contentContainer).html() == '') {
-                            $(contentContainer).html('<p id="content-container-loading"><i class="icon-spinner icon-spin"></i> &nbsp;Loading content ..</p>');
+                            $(contentContainer).html('<p id="content-container-loading"><i class="fa fa-spinner fa-spin"></i> &nbsp;Loading content ..</p>');
                         }
                     }, 2000);
 

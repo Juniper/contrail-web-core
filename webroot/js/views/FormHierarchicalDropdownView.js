@@ -37,7 +37,7 @@ define([
                 label: labelValue, id: elId + '_dropdown', name: elId,
                 viewConfig: viewConfig,
                 lockAttr: lockEditingByDefault,
-                class: "span12",
+                class: "col-xs-12",
                 validation: validation
             };
 

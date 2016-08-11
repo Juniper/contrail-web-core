@@ -142,8 +142,8 @@ define(['underscore'], function (_) {
         };
 
         this.enableModalLoading = function (modalId) {
-            $('#' + modalId).find('.modal-header h6').prepend('<i class="icon-spinner icon-spin margin-right-10 modal-loading-icon">');
-            $('#' + modalId).find('.modal-header .icon-remove').addClass('icon-muted');
+            $('#' + modalId).find('.modal-header h6').prepend('<i class="fa fa-spinner fa-spin margin-right-10 modal-loading-icon">');
+            $('#' + modalId).find('.modal-header .fa-remove').addClass('icon-muted');
 
             $('#' + modalId).find('.modal-footer .btn').attr('disabled', true);
             $('#' + modalId).find('.modal-header button').attr('disabled', true);
@@ -155,7 +155,7 @@ define(['underscore'], function (_) {
                 $('#' + modalId).find('.modal-body').animate({scrollTop: 0});
 
                 $('#' + modalId).find('.modal-header h6 .modal-loading-icon').remove();
-                $('#' + modalId).find('.modal-header .icon-remove').removeClass('icon-muted');
+                $('#' + modalId).find('.modal-header .fa-remove').removeClass('icon-muted');
 
                 $('#' + modalId).find('.modal-footer .btn').attr('disabled', false);
                 $('#' + modalId).find('.modal-header button').attr('disabled', false);
@@ -469,11 +469,11 @@ define(['underscore'], function (_) {
             }
 
             if(formatDepth == 0){
-                htmlValue += '<i class="node-' + currentDepth + ' icon-plus expander"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node hide raw">' +
+                htmlValue += '<i class="node-' + currentDepth + ' fa fa-plus expander"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node hide raw">' +
                     JSON.stringify(jsonValue) + '</ul><span class="node-' + currentDepth + ' collapsed expander"> ... </span>' + objType.endTag;
             }
             else {
-                htmlValue += '<i class="node-' + currentDepth + ' icon-minus collapser"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node">';
+                htmlValue += '<i class="node-' + currentDepth + ' fa fa-minus collapser"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node">';
                 $.each(jsonValue, function(key, val){
                     if (!contrail.checkIfExist(ignoreKeys) || (contrail.checkIfExist(ignoreKeys) && ignoreKeys.indexOf(key) === -1)) {
                         if (objType['type'] == 'object') {
@@ -495,6 +495,25 @@ define(['underscore'], function (_) {
                 htmlValue += '</ul><span class="node-' + currentDepth + ' collapsed hide expander"> ... </span>' + objType.endTag;
             }
             return htmlValue;
+        };
+
+        this.expandJsonHtml = function(element) {
+            var selfParent = element.parent(),
+                jsonObj = {};
+            selfParent.children('i').removeClass('fa-plus').removeClass('expander').addClass('fa fa-minus').addClass('collapser');
+            if(selfParent.children('.node').hasClass('raw')){
+                jsonObj = JSON.parse(selfParent.children('ul.node').text());
+                selfParent.empty().append(contrail.formatJsonObject(jsonObj, 2, parseInt(selfParent.children('.node').data('depth')) + 1));
+            }
+            selfParent.children('.node').showElement();
+            selfParent.children('.collapsed').hideElement();
+        };
+
+        this.collapseJsonHtml = function(element) {
+            var selfParent = element.parent();
+            selfParent.children('i').removeClass('fa-minus').removeClass('collapser').addClass('fa fa-plus').addClass('expander');
+            selfParent.children('.collapsed').showElement();
+            selfParent.children('.node').hideElement();
         };
 
         // Deprecated: We should use renderView4Config of ContrailView instead of following function.
@@ -621,13 +640,13 @@ define(['underscore'], function (_) {
             $.each(config, function (configKey, configValue) {
                 var keyValueTemplate = '' +
                     '<li>' +
-                        '<label class="inline row-fluid">' +
-                            '<span class="key span5 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
+                        '<div class="row">' +
+                            '<div class="key col-xs-4 ' + (parentConfig.keyClass != null ? parentConfig.keyClass : '') +
                             ' ' + (configValue.keyClass != null ? configValue.keyClass : '')+'"> {{getLabel "' +
-                            configValue.label + '" "' + configValue.key + '" "' + app + '"}} </span>' +
-                            '<span class="value span7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
-                            ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">' + self.getValueByConfig(configValue, app, objectAccessor) + '</span>'+
-                        '</label>' +
+                            configValue.label + '" "' + configValue.key + '" "' + app + '"}} </div>' +
+                            '<div class="value col-xs-7 ' + (parentConfig.valueClass != null ? parentConfig.valueClass : '') +
+                            ' ' + (configValue.valueClass != null ? configValue.valueClass : '')+'">' + self.getValueByConfig(configValue, app, objectAccessor) + '</div>'+
+                        '</div>' +
                     '</li>';
 
                 if (!showAllFields) {
@@ -738,23 +757,23 @@ define(['underscore'], function (_) {
                             '<div class="detail-block-list-content widget-box transparent">' +
                                 '<div class="widget-header">' +
                                     '<h4 class="smaller">' +
-                                        '{{#IfCompare requestState "fetching" operator="==" }}' + '<i class="icon-spin icon-spinner"></i>' + '{{/IfCompare}}' +
+                                        '{{#IfCompare requestState "fetching" operator="==" }}' + '<i class="fa fa-spin fa-spinner"></i>' + '{{/IfCompare}}' +
                                         config.title +
                                     '</h4>' +
                                     '<div class="widget-toolbar pull-right">' +
-                                        '<a data-action="collapse"><i class="icon-chevron-up"></i></a>' +
+                                        '<a data-action="collapse"><i class="fa fa-chevron-up"></i></a>' +
                                     '</div>' +
                                     ((config.advancedViewOptions !== false) ? '' +
                                         '<div class="widget-toolbar pull-right">' +
-                                            '<a data-action="settings" data-toggle="dropdown" style="display: inline-block;"><i class="icon-cog"></i></a>' +
+                                            '<a data-action="settings" data-toggle="dropdown" style="display: inline-block;"><i class="fa fa-cog"></i></a>' +
                                             '<ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">' +
-                                                '<li><a data-action="list-view"><i class="icon-list"></i> &nbsp; Basic view </a></li>' +
-                                                '<li><a data-action="advanced-view"><i class="icon-code"></i> &nbsp; Advanced view </a></li>' +
+                                                '<li><a data-action="list-view"><i class="fa fa-list"></i> &nbsp; Basic view </a></li>' +
+                                                '<li><a data-action="advanced-view"><i class="fa fa-code"></i> &nbsp; Advanced view </a></li>' +
                                             '</ul>' +
                                         '</div>' : '') +
                                 '</div>' +
                                 '<div class="widget-body">' +
-                                    '<div class="widget-main row-fluid">' +
+                                    '<div class="widget-main">' +
                                         '<div class="list-view">' +
                                             self.generateBlockListTemplate(config.templateGeneratorConfig, app, config) +
                                         '</div>' +
@@ -793,7 +812,7 @@ define(['underscore'], function (_) {
                         '<div class="row-fluid">' +
                         '{{/IfCompare}}' +
                         '{{/IfCompare}}' +
-                        '<div class="span6">' +
+                        '<div class="col-xs-6">' +
                         '<div class="row-fluid detail-block-array-list-item"> ' +
                         '<div class="row-fluid title">' + cowl.get(config.templateGeneratorConfig.titleColumn.key, app) + ': {{{getValueByConfig this config=\'' + encodeURIComponent(JSON.stringify(config.templateGeneratorConfig.titleColumn)) + '\'}}}</div>' +
                         '<div class="row-fluid data">' + self.generateBlockListKeyValueTemplate(config.templateGeneratorConfig.dataColumn, app, config, 'this') + '</div>' +

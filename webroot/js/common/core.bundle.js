@@ -3,6 +3,7 @@
  */
 define([
         'core-utils',
+        'core-hash-utils',
         'core-constants',
         'core-formatters',
         'core-cache',
@@ -28,6 +29,7 @@ define([
         'moment',
         'layout-handler',
         'menu-handler',
+        'help-handler',
         'content-handler',
         'validation',
         'core-basedir/js/views/BarChartInfoView',
