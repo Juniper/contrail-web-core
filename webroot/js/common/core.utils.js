@@ -76,6 +76,16 @@ define(['underscore'], function (_) {
             var modalId = options['modalId'],
                 footer = [];
             if(options['footer'] == null || options['footer'] == undefined) {
+                if ((contrail.checkIfExist(options['onBack'])) && (contrail.checkIfFunction(options['onBack']))) {
+                    footer.push({
+                        id        : 'backBtn',
+                        className : 'btn-primary',
+                        title     : 'Back',
+                        onclick   : function () {
+                            options['onBack']();
+                        }
+                    });
+                }
             if ((contrail.checkIfExist(options['onClose'])) && (contrail.checkIfFunction(options['onClose']))) {
                 footer.push({
                     id        : 'closeBtn',
