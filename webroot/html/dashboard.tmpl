@@ -42,9 +42,15 @@
         var hostname = window.location.hostname;
         document.getElementById('tabTitle').innerHTML = hostname.substring(0,15)+'... | Contrail';
     </script>
+    <!-- Start dev_env
+    <script data-env="dev" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
+    End dev_env -->
+    <!-- Start prod_env -->
+    <script data-env="prod" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
+    <!-- End prod_env -->
 
+    <!-- Start dev_env
     <link rel="stylesheet" href="/css/contrail.thirdparty.unified.css"/>
-    <!--<link rel="stylesheet" href="/css/contrail.unified.css"/>-->
     <link rel="stylesheet" href="/css/contrail.init.css"/>
     <link rel="stylesheet" href="/css/contrail.theme.css"/>
     <link rel="stylesheet" href="/css/contrail.theme.layout.css"/>
@@ -58,6 +64,12 @@
     <link rel="stylesheet" href="/css/contrail.custom.css"/>
     <link rel="stylesheet" href="/css/contrail.font.css"/>
     <link rel="stylesheet" href="/css/login.css"/>
+    End dev_env -->
+
+    <!-- Start prod_env -->
+    <link rel="stylesheet" href="/css/contrail.thirdparty.unified.css"/>
+    <link rel="stylesheet" href="/css/contrail.unified.css"/>
+    <!-- End prod_env -->
 
     <!--[if lte IE 8]>
     <link rel="stylesheet" href="/css/contrail-ie.min.css?built_at="/>
@@ -130,47 +142,47 @@
                 <i class="fa fa-bars"></i>
             </button>
 
-    <!--<div id="pageHeader" class="navbar navbar-inverse navbar-fixed-top">
-        <div id="error-container" class="alert-error">
-           <div id="msg-container"><span class="error-font-weight">Error : </span><span id="error-msg-container"></span></div>
-           <div id="error-close-icon"><button id="close-error-popup" class="btn btn-mini"><i class="fa-remove"></i></button></div>
-        </div>
-        <div id="success-msg-container"><div id="success-text-container"></div></div>
-        <div class="navbar-inner"> -->
+            <!--<div id="pageHeader" class="navbar navbar-inverse navbar-fixed-top">
+                <div id="error-container" class="alert-error">
+                   <div id="msg-container"><span class="error-font-weight">Error : </span><span id="error-msg-container"></span></div>
+                   <div id="error-close-icon"><button id="close-error-popup" class="btn btn-mini"><i class="fa-remove"></i></button></div>
+                </div>
+                <div id="success-msg-container"><div id="success-text-container"></div></div>
+                <div class="navbar-inner"> -->
             <!-- <div class="main-container ace-save-state container-fluid"> -->
-                <a href="#" class="navbar-brand">
-                    <img class="logo" src="/img/sdn-logo.png"/>
-                </a>
-                <ul style="width:330px" class="nav ace-nav pull-right">
-                    <li id="user-profile" class="customHide pull-right">
-                        <a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle">
-                            <i class="fa fa-user icon-only fa-2"></i>
-                            <span id="user_info"></span>
-                            <i class="fa fa-caret-down"></i>
-                        </a>
-                        <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer" id="user_menu">
-                            <li>
-                                <a id="logout">
-                                    <i class="fa fa-power-off"></i>
-                                    Logout
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li id="region-profile">
-                        <div id="regionDD" style="padding-bottom:6px"></div>
-                    </li>
-                    <li id="alarms-popup-link" onclick="cowu.loadAlertsPopup();" class="pull-right">
-                        <a href="javascript:void(0);">
-                            <i class="fa fa-bell icon-only fa-2"></i>
-                            <span id="alert_info">Alarms</span>
-                            <!-- <i class="fa fa-caret-down"></i> -->
-                        </a>
+            <a href="#" class="navbar-brand">
+                <img class="logo" src="/img/sdn-logo.png"/>
+            </a>
+            <ul style="width:330px" class="nav ace-nav pull-right">
+                <li id="user-profile" class="customHide pull-right">
+                    <a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle">
+                        <i class="fa fa-user icon-only fa-2"></i>
+                        <span id="user_info"></span>
+                        <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer" id="user_menu">
+                        <li>
+                            <a id="logout">
+                                <i class="fa fa-power-off"></i>
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li id="region-profile">
+                    <div id="regionDD" style="padding-bottom:6px"></div>
+                </li>
+                <li onclick="cowu.loadAlertsPopup();" class="pull-right">
+                    <a href="javascript:void(0);">
+                        <i class="fa fa-bell icon-only fa-2"></i>
+                        <span id="alert_info">Alarms</span>
+                        <!-- <i class="fa fa-caret-down"></i> -->
+                    </a>
 
-                    </li>
-                </ul>
-            </div>
-            <!--/.container-fluid-->
+                </li>
+            </ul>
+        </div>
+        <!--/.container-fluid-->
         <!--</div> third div -->
         <!--/.navbar-inner-->
     </div>
@@ -186,45 +198,37 @@
         </div> <!-- #sidebar -->
 
         <div id="main-content" class="main-content">
-        <div class="main-content-inner">
-            <div id="breadcrumbs" class="breadcrumbs ace-save-state fixed">
-                <ul id="breadcrumb" class="breadcrumb">
-                </ul> <!--.breadcrumb-->
-                <!-- <div class="hardrefresh breadcrumb" style="display:none">
-                    <span> <i class="fa fa-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span>
-                    <span class="loading"><i class="fa fa-spinner fa-spin"></i></span>
-                    <span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span>
-                </div> -->
-                <div id="nav-search" class="nav-search">
-                    <form id="search-form" onsubmit="searchSiteMap();">
+            <div class="main-content-inner">
+                <div id="breadcrumbs" class="breadcrumbs ace-save-state fixed">
+                    <ul id="breadcrumb" class="breadcrumb">
+                    </ul> <!--.breadcrumb-->
+                    <!-- <div class="hardrefresh breadcrumb" style="display:none">
+                        <span> <i class="fa fa-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span>
+                        <span class="loading"><i class="fa fa-spinner fa-spin"></i></span>
+                        <span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span>
+                    </div> -->
+                    <div id="nav-search" class="nav-search">
+                        <form id="search-form" onsubmit="searchSiteMap();">
                         <span class="input-icon">
                             <input type="text" placeholder="Search Sitemap" class="input-medium search-query" id="nav-search-input" autocomplete="off">
                             <i class="fa fa-search" id="nav-search-icon"></i>
                         </span>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
-            <div id="page-content" class="page-content">
-                <div id='content-container'></div>
-            </div>
+                <div id="page-content" class="page-content">
+                    <div id='content-container'></div>
+                </div>
             </div> <!-- main-content-inner -->
         </div> <!-- /.main-content -->
     </div> <!-- /.container-fluid #main-container -->
     <a href="#" id="back-to-top"><i class="fa fa-angle-double-up icon-only bigger-110"></i>​&nbsp; Back to Top</a>
-    <div class="onpage-help-container" id="onpage-help-container" tabindex="-1">
 </script>
-    <div id="signin-container">
-    </div>
+<div id="signin-container">
+</div>
 
-    <div id="app-container">
-    </div>
-
-<!-- Start dev_env
-<script data-env="dev" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
-End dev_env -->
-<!-- Start prod_env -->
-<script data-env="prod" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
-<!-- End prod_env -->
+<div id="app-container">
+</div>
 
 <!--[if lte IE 8]>
 <script src="/js/"></script>

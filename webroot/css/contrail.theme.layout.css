@@ -87,6 +87,40 @@
     position: relative;
 }
 
+.btn {
+    display: inline-block;
+    color: #FFF !important;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-image: none !important;
+    border: 5px solid #FFF;
+    border-radius: 0;
+    box-shadow: none !important;
+    -webkit-transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+    -o-transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+    transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 0;
+    position: relative;
+}
+
+.btn-mini {
+    padding: 0 5px;
+    line-height: 22px;
+    border-width: 2px;
+    font-size: 12px;
+}
+
+.btn, .btn-default, .btn:hover, .btn-default:hover {
+    background-color: #898989 !important;
+    border-color: #898989;
+}
+
+.btn-primary {
+    background-color: #599AC9 !important;
+    border-color: #599AC9 !important;
+}
+
 .btn-monitor, .btn-monitor:hover {
     background-color: #599AC9 !important;
     border-color: #599AC9;

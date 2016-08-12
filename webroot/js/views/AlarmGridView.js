@@ -23,30 +23,30 @@ define([
             var contrailListModel;
             if(self.model == null) {
                 var remoteAjaxConfig = {
-                        remote: {
-                            ajaxConfig: {
-                                url: cowc.get(cowc.URL_ALARM_DETAILS),
-                                type: "GET",
+                    remote: {
+                        ajaxConfig: {
+                            url: cowc.get(cowc.URL_ALARM_DETAILS),
+                            type: "GET",
+                        },
+                        dataParser: coreAlarmParsers.alarmDataParser
+                    },
+                    vlRemoteConfig : {
+                        vlRemoteList : [{
+                            getAjaxConfig : function() {
+                                return {
+                                    url:ctwl.ANALYTICSNODE_SUMMARY_URL
+                                };
                             },
-                            dataParser: coreAlarmParsers.alarmDataParser
-                        },
-                        vlRemoteConfig : {
-                            vlRemoteList : [{
-                                getAjaxConfig : function() {
-                                    return {
-                                        url:ctwl.ANALYTICSNODE_SUMMARY_URL
-                                    };
-                                },
-                                successCallback : function(response, contrailListModel) {
-                                    coreAlarmUtils
-                                        .parseAndAddDerivedAnalyticsAlarms(
-                                            response, contrailListModel);
-                                }
+                            successCallback : function(response, contrailListModel) {
+                                coreAlarmUtils
+                                .parseAndAddDerivedAnalyticsAlarms(
+                                  response, contrailListModel);
                             }
-                            ]
-                        },
-                        cacheConfig: {
                         }
+                        ]
+                    },
+                    cacheConfig: {
+                    }
                 }
                 contrailListModel = new ContrailListModel(remoteAjaxConfig);
             } else {
@@ -113,58 +113,56 @@ define([
         var gridTitle = cowl.TITLE_ALARMS_SUMMARY;
         if (viewConfig != null && viewConfig['isUnderlayPage'] == true ) {
             gridTitle = contrail.format('{0} ({1})',
-                cowl.TITLE_ALARMS_SUMMARY, ifNull(viewConfig['hostname'],'-'));
+              cowl.TITLE_ALARMS_SUMMARY, ifNull(viewConfig['hostname'],'-'));
         }
         var alarmColumns = [
-                              {
-                                  field: 'severity',
-                                  name: '',
-                                  minWidth: 20,
-                                  maxWidth: 20,
-                                  searchFn: function (d) {
-                                      return d['severity'];
-                                  },
-                                  searchable: true,
-                                  sortField: 'severity',
-                                  formatter : function (r, c, v, cd, dc) {
-                                      return alarmSeverityFormatter(v,dc,false);
-                                  }
-                              },
-                              {
-                                  field: 'timestamp',
-                                  name: 'Time',
-                                  minWidth: 130,
-                                  formatter : function (r,c,v,cd,dc) {
-                                      return getFormattedDate(v/1000);
-                                  }
-                              },
-                              {
-                                  field: 'alarm_msg',
-                                  name: 'Alarm',
-                                  minWidth: 200
-                              },
-                              {
-                                  field: 'display_name',
-                                  name: 'Source',
-                                  minWidth: 100
-                              },
-                              {
-                                  field: 'acknowledge',
-                                  name:'',
-                                  formatter : function (r,c,v,cd,dc) {
-                                      var formattedDiv = '';
-                                      if(!dc['ack'] && dc['type'] != cowc.USER_GENERATED_ALARM) {
-                                          formattedDiv = '<span title="Acknowledge"><i class="fa fa-check-circle-o"></i></span>';
-                                      }
-                                      return formattedDiv;
-                                  },
-                                  events: {
-                                      onClick: onAcknowledgeActionClicked
-                                  },
-                                  minWidth: 20,
-                                  maxWidth: 20
-                              }
-                          ];
+            {
+                field: 'severity',
+                name: '',
+                width: 1,
+                searchFn: function (d) {
+                    return d['severity'];
+                },
+                searchable: true,
+                sortField: 'severity',
+                formatter : function (r, c, v, cd, dc) {
+                    return alarmSeverityFormatter(v,dc,false);
+                }
+            },
+            {
+                field: 'timestamp',
+                name: 'Time',
+                minWidth: 50,
+                formatter : function (r,c,v,cd,dc) {
+                    return getFormattedDate(v/1000);
+                }
+            },
+            {
+                field: 'alarm_msg',
+                name: 'Alarm',
+                minWidth: 200,
+            },
+            {
+                field: 'display_name',
+                name: 'Source',
+                minWidth: 100
+            },
+            {
+                field: 'acknowledge',
+                name:'',
+                formatter : function (r,c,v,cd,dc) {
+                    var formattedDiv = '';
+                    if(!dc['ack'] && dc['type'] != cowc.USER_GENERATED_ALARM) {
+                        formattedDiv = '<span title="Acknowledge" style="float:right"><i class="fa fa-check-circle-o"></i></span>';
+                    }
+                    return formattedDiv;
+                },
+                events: {
+                    onClick: onAcknowledgeActionClicked
+                },
+                width:1
+            }
+        ];
         var gridElementConfig = {
             header: {
                 title: {
@@ -196,12 +194,12 @@ define([
                 dataSource : {data: []},
                 statusMessages: {
                     loading: {
-                       text: 'Loading Alarms..',
+                        text: 'Loading Alarms..',
                     },
                     empty: {
-                       text: 'No Alarms Found.'
+                        text: 'No Alarms Found.'
                     }
-                 }
+                }
             },
             columnHeader: {
                 columns: alarmColumns
@@ -214,17 +212,17 @@ define([
         alarmsEditView.model = new AlarmsModel();
         var alarmGrid = $('#' + cowl.ALARMS_GRID_ID).data("contrailGrid");
         alarmsEditView.renderAckAlarms  ({
-                              "title": 'Acknowledge Alarms',
-                              checkedRows:checkedRows,
-                              callback: function () {
-                                  if(parentModel != null){
-                                      parentModel.refreshData();
-                                  } else if(alarmGrid != null) {
-                                      alarmGrid._dataView.refreshData();
-                                      alarmGrid.setCheckedRows([]);//Clear the selected items
-                                  }
-                              }
-            });
+            "title": 'Acknowledge Alarms',
+            checkedRows:checkedRows,
+            callback: function () {
+                if(parentModel != null){
+                    parentModel.refreshData();
+                } else if(alarmGrid != null) {
+                    alarmGrid._dataView.refreshData();
+                    alarmGrid.setCheckedRows([]);//Clear the selected items
+                }
+            }
+        });
     }
 
     function onAcknowledgeActionClicked (e,rowData) {
@@ -262,43 +260,38 @@ define([
                     },
                     minWidth: 150,
                     height: 205,
-                     data : [
-                            {
-                                id:"severity",
-                                text:"Severity",
-                                children: [
-                                    {
-                                        id:"0",
-                                        text:"Critical",
-                                        icon:'fa-download'
-                                    },
-                                    {
-                                        id:"1",
-                                        text:'Major',
-                                        iconClass:'fa-download'
-                                    },
-                                    {
-                                        id:"2",
-                                        text:'Minor',
-                                        iconClass:'fa-download'
-                                    }
-                                ]
-                            },
-                            {
-                                id:"status",
-                                text:"Status",
-                                children: [
-                                    {
-                                        id: 'Acknowledged',
-                                        text:"Acknowledged"
-                                    },
-                                    {
-                                        id: 'Unacknowledged',
-                                        text: "Unacknowledged"
-                                    }
-                                ]
-                            }
-                       ],
+                    data : [
+                        {
+                            id:"severity",
+                            text:"Severity",
+                            children: [
+                                {
+                                    id:"4",
+                                    text:'Minor',
+                                    iconClass:'fa-download'
+                                },
+                                {
+                                    id:"3",
+                                    text:"Major",
+                                    icon:'<div data-color="orange" class="circle orange filled" style="opacity:1"></div>'
+                                }
+                            ]
+                        },
+                        {
+                            id:"status",
+                            text:"Status",
+                            children: [
+                                {
+                                    id: 'Acknowledged',
+                                    text:"Acknowledged"
+                                },
+                                {
+                                    id: 'Unacknowledged',
+                                    text: "Unacknowledged"
+                                }
+                            ]
+                        }
+                    ],
                     click: applyAlarmsFilter,
                     optgrouptoggle: applyAlarmsFilter,
                     control: false
@@ -334,7 +327,7 @@ define([
             return true;
         } else {
             var returnObj = {},
-                returnFlag = true;
+              returnFlag = true;
             $.each(args.checkedRows, function (checkedRowKey, checkedRowValue) {
                 var checkedRowValueObj = $.parseJSON(unescape($(checkedRowValue).val()));
                 if(!contrail.checkIfExist(returnObj[checkedRowValueObj.parent])){
@@ -427,12 +420,12 @@ define([
 
     this.alarmSeverityFormatter = function (v, dc, showTextFlag) {
         var showText = (showTextFlag != null && showTextFlag == false)? false: true;
-        var color = (v <= 1) ? 'red' : 'orange';
+        var color = (v == 3) ? 'red' : 'orange';
         var template = contrail.getTemplate4Id(cowc.TMPL_ALARM_SEVERITY);
         return template({
             showText : showText,
             color : color,
-            text : coreAlarmUtils.getAlarmSeverityText(v),
+            text : (v == 3) ? 'Major' : 'Minor',
             ack : (dc['ack'] == null)? false : dc['ack']
         });
     }

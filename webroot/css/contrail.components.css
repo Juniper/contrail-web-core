@@ -189,36 +189,50 @@
 }
 .modal.contrail-modal {
     margin-left: 0 !important;
-    position: absolute;
-    left: 0;
+    position: fixed;
+    left: 50%;
     top: 0;
 }
 .modal-280{
     width:280px;
+    /*
+        Should use transform instead, it gives better performance.
+        Blocker for using this: some inline-style added to the modal. Guess: caused by some JS plugin.
+        Need to identify the JS plugin and resolve the issue.
+
+        NOTE: this comment applies to the next 6 rules as well.
+     */
+    /*transform: translateX(-140px);*/
     margin-left: -140px;
 }
 .modal-420{
     width:420px;
+    /*transform: translateX(-210px);*/
     margin-left: -210px;
 }
 .modal-560{
     width:560px;
+    /*transform: translateX(-280px);*/
     margin-left: -280px;
 }
 .modal-700{
     width:700px;
+    /*transform: translateX(-350px);*/
     margin-left: -350px;
 }
 .modal-840{
     width:840px;
+    /*transform: translateX(-420px);*/
     margin-left: -420px;
 }
 .modal-980{
     width:980px;
+    /*transform: translateX(-490px);*/
     margin-left: -490px;
 }
 .modal-1120{
     width:1120px;
+    /*transform: translateX(-560px);*/
     margin-left: -560px;
 }
 .modal--500 .modal-body{
@@ -272,15 +286,33 @@
     font-size: 110%;
     display: inline-block;
 }
-.contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon-remove {
-    margin-left: 10px;
-    font-weight: normal;
-    font-size: 90%;
+.contrail-tabs.ui-tabs .ui-state-default i.fa-ellipsis-v {
+    display: none;
+    font-size: 1.5em;
+    padding: 9px 4px 5px 4px;
+}
+.contrail-tabs.ui-tabs li.ui-tabs-active i.fa-ellipsis-v {
     display: inline-block;
 }
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .link {
+    position: absolute;
+    padding: 8px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .title-edit {
+    display: none;
+    padding-top: 4px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .title-edit > input {
+}
 .contrail-tabs.ui-tabs .ui-tabs-nav li.pull-right {
-    float:right;
+    float: right;
     margin-top: 5px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-menu {
+    padding: 8px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-menu .title-save {
+    margin-left: 16px;
 }
 .contrail-tabs.ui-tabs .ui-tabs-nav li a.contrail-tab-extra-link {
     font-weight: normal;
@@ -461,7 +493,7 @@
  * Extends Jquery UI Accordion
  */
 .ui-state-default.ui-accordion-header {
-    border-bottom: 1px solid #eee !important;
+    border-bottom: 1px solid #eee;
     outline: none;
 }
 .ui-accordion-content.ui-widget-content {
@@ -1039,7 +1071,6 @@ div.jsoneditor-value.jsoneditor-string { color: #2ca02c; }
 div.jsoneditor-value.jsoneditor-number { color: #ff7f0e; }
 div.jsoneditor-value.jsoneditor-boolean { color: #3182bd; }
 div.jsoneditor-value.jsoneditor-null { color: #9467bd; }
-
 /*
  * jQuery Validation
  */
@@ -1048,23 +1079,6 @@ label.jqInvalid {
     color: #e6550d;
     font-family: 'Open Sans';
     font-size: 13px;
-}
-
-/*
- * Help
- */
-
-#helpModal {
-    z-index: 100001;
-}
-.help-title {
-    padding-bottom: 10px;
-    font-weight: bold;
-    color: grey;
-}
-
-.help-img {
-    padding-bottom: 20px;
 }
 
 li {

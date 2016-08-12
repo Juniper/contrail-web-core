@@ -7,7 +7,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    padding-left: 4px;
 }
 .slick-header-column.ui-state-default {
     height: 100%;
@@ -212,6 +211,8 @@
     margin-left: 0px;
     display: block;
 }
+
+
 .slick-cell {
     border: none;
     color: #393939;
@@ -222,7 +223,7 @@
     overflow-y: hidden;
     word-break:break-all;
     white-space: normal;
-    padding-left: 4px;
+    padding-left: 0;
     padding-right: 0;
 }
 .slick-cell.cell-hyperlink-blue, .slick-cell .cell-hyperlink-blue{

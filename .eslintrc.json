@@ -1,0 +1,82 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "script",
+    "ecamFeature": {
+      "globalReturn": false,
+      "impliedStrict": true,
+      "jsx": false,
+      "experimentalObjectRestSpread": false
+    }
+  },
+  "plugins": [],
+  "extends": "eslint:recommended",
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "amd": true,
+    "mocha": true,
+    "qunit": true,
+    "jquery": true
+  },
+  // TODO: globals should likely go away once all these globals are removed and modularized.
+  "globals": {
+    "cdbqueryapi_listKeys4Table": true,
+    "cdbqueryapi_listValues4Key": true,
+    "cdbqueryapi_deleteValue4Key": true,
+    "chUtils": true,
+    "contrail": true,
+    "contentContainer": true,
+    "contentHandler": true,
+    "coreAlarmUtils": true,
+    "coreAlarmParsers": true,
+    "covdc": true,
+    "cowc": true,
+    "cowu": true,
+    "cowf": true,
+    "cowl": true,
+    "cowm": true,
+    "cowch": true,
+    "ctwDir": true,
+    "ctwc": true,
+    "ctwgc": true,
+    "ctwm": true,
+    "ctwl": true,
+    "globalObj": true,
+    "grUtils": true,
+    "initBackboneValidation": true,
+    "initCustomKOBindings": true,
+    "initDomEvents": true,
+    "introspectPageLoader": true,
+    "layoutHandler": true,
+    "loadFeature": true,
+    "pkgBaseDir": true,
+    "qeapi_runGETQuery": true,
+    "qeapi_runPOSTQuery": true,
+    "qeapi_exportQueryResult": true,
+    "qeapi_getQueryQueue": true,
+    "qeapi_getFlowClasses": true,
+    "qeapi_getChartData": true,
+    "qeapi_deleteQueryCache4Ids": true,
+    "qeapi_deleteQueryCache4Queue": true,
+    "qeapi_getTables": true,
+    "qeapi_getColumnValues": true,
+    "qeapi_getTableSchema": true,
+    "qeapi_getObjectIds": true,
+    "qewu": true,
+    "qewmc": true,
+    "qewgc": true,
+    "qewp": true,
+    "uddapi_createWidget": true,
+    "uddapi_getWidgets": true,
+    "uddapi_removeWidget": true,
+    "urlRoutes": true,
+    "_": true, // TODO: some modules use this as through dependency inject
+    "ko": false,
+    "kbValidation": false
+  },
+  "rules": {
+    "no-console": "off"
+  }
+}

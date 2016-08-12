@@ -40,63 +40,64 @@ define([
 
     this.getPageHeaderHTML = function () {
         return '<div id="pageHeader" class="navbar navbar-inverse navbar-fixed-top"> ' +
-            '<div class="navbar-inner"> ' +
-            '<div class="container-fluid"> ' +
-            '<a href="#" class="brand"> <img class="logo" src="base/contrail-web-core/webroot/img/sdn-logo.png"/> </a> ' +
-            '<ul style="width:270px" class="nav ace-nav pull-right"> ' +
-            '<li id="user-profile" class="hide"> ' +
-            '<a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle"> ' +
-            '<i class="fa fa-user icon-only fa-2"></i> ' +
-            '<span id="user_info"></span> ' +
-            '<i class="fa fa-caret-down"></i> ' +
-            '</a> ' +
-            '<ul class="pull-right dropdown-menu dropdown-caret dropdown-closer" id="user_menu"> ' +
-            '<li> ' +
-            '<a href="logout"> ' +
-            '<i class="fa fa-power-off"></i>' +
-            'Logout </a>' +
-            ' </li> ' +
-            '</ul> ' +
-            '</li> <li onclick="showMoreAlerts();"> ' +
-            '<a href="javascript:void(0);"> ' +
-            '<i class="fa fa-bell icon-only fa-2"></i> <span id="alert_info">Alerts</span> <!-- <i class="fa-caret-down"></i> --> ' +
-            '</a> </li> </ul> <div id="nav-search"> ' +
-            '<form id="search-form" onsubmit="searchSiteMap();"> <span class="input-icon"> ' +
-            '<input type="text" placeholder="Search Sitemap" class="input-small search-query" id="nav-search-input" autocomplete="off"> ' +
-            '<i class="fa fa-search" id="nav-search-icon"></i> </span> ' +
-            '</form> </div> </div> <!--/.container-fluid-->' +
-            '</div> <!--/.navbar-inner--> </div>';
+          '<div class="navbar-inner"> ' +
+          '<div class="container-fluid"> ' +
+          '<a href="#" class="brand"> <img class="logo" src="base/contrail-web-core/webroot/img/sdn-logo.png"/> </a> ' +
+          '<ul style="width:270px" class="nav ace-nav pull-right"> ' +
+          '<li id="user-profile" class="hide"> ' +
+          '<a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle"> ' +
+          '<i class="fa fa-user icon-only fa-2"></i> ' +
+          '<span id="user_info"></span> ' +
+          '<i class="fa fa-caret-down"></i> ' +
+          '</a> ' +
+          '<ul class="pull-right dropdown-menu dropdown-caret dropdown-closer" id="user_menu"> ' +
+          '<li> ' +
+          '<a href="logout"> ' +
+          '<i class="fa fa-power-off"></i>' +
+          'Logout </a>' +
+          ' </li> ' +
+          '</ul> ' +
+          '</li> <li onclick="showMoreAlerts();"> ' +
+          '<a href="javascript:void(0);"> ' +
+          '<i class="fa fa-bell icon-only fa-2"></i> <span id="alert_info">Alerts</span> <!-- <i class="fa-caret-down"></i> --> ' +
+          '</a> </li> </ul> <div id="nav-search"> ' +
+          '<form id="search-form" onsubmit="searchSiteMap();"> <span class="input-icon"> ' +
+          '<input type="text" placeholder="Search Sitemap" class="input-small search-query" id="nav-search-input" autocomplete="off"> ' +
+          '<i class="fa fa-search" id="nav-search-icon"></i> </span> ' +
+          '</form> </div> </div> <!--/.container-fluid-->' +
+          '</div> <!--/.navbar-inner--> </div>';
     };
 
     this.getSidebarHTML = function () {
         return '<div class="container-fluid" id="main-container"> ' +
-            '<a id="menu-toggler" href="#"> ' +
-            '<span></span> ' +
-            '</a> ' +
-            '<div id="sidebar"> ' +
-            '<div id="sidebar-shortcuts"> ' +
-            '</div> ' +
-            '<ul id="menu" class="nav nav-list"></ul> ' +
-            '</div> ' +
-            '<div id="main-content" class="clearfix"> ' +
-            '<div id="breadcrumbs" class="fixed"> ' +
-            '<ul id="breadcrumb" class="breadcrumb"> ' +
-            '</ul> ' +
-            '<div class="hardrefresh breadcrumb" style="display:none"> ' +
-            '<span> <i class="fa fa-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span> ' +
-            '<span class="loading"><i class="fa fa-spinner fa-spin"></i></span> ' +
-            '<span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span> ' +
-            '</div> ' +
-            '</div> ' +
-            '<div id="page-content" class="clearfix"> ' +
-            '<div id="content-container"></div> ' +
-            '</div> ' +
-            '</div> </div>'
+          '<a id="menu-toggler" href="#"> ' +
+          '<span></span> ' +
+          '</a> ' +
+          '<div id="sidebar"> ' +
+          '<div id="sidebar-shortcuts"> ' +
+          '</div> ' +
+          '<ul id="menu" class="nav nav-list"></ul> ' +
+          '</div> ' +
+          '<div id="main-content" class="clearfix"> ' +
+          '<div id="breadcrumbs" class="fixed"> ' +
+          '<ul id="breadcrumb" class="breadcrumb"> ' +
+          '</ul> ' +
+          '<div class="hardrefresh breadcrumb" style="display:none"> ' +
+          '<span> <i class="fa fa-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span> ' +
+          '<span class="loading"><i class="fa fa-spinner fa-spin"></i></span> ' +
+          '<span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span> ' +
+          '</div> ' +
+          '</div> ' +
+          '<div id="page-content" class="clearfix"> ' +
+          '<div id="content-container"></div> ' +
+          '</div> ' +
+          '</div> </div>'
     };
 
     this.getCSSList = function () {
         var cssList = [];
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap.min.css"/>');
+        //cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap-responsive.min.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/jquery-ui.test.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.jquery.ui.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/font-awesome.test.css"/>');
@@ -139,8 +140,8 @@ define([
 
     this.getViewConfigObj = function (viewObj) {
         if ((viewObj != null) &&
-            contrail.checkIfExist(viewObj.attributes) &&
-            contrail.checkIfExist(viewObj.attributes.viewConfig)) {
+          contrail.checkIfExist(viewObj.attributes) &&
+          contrail.checkIfExist(viewObj.attributes.viewConfig)) {
             return viewObj.attributes.viewConfig;
         }
     };
@@ -158,9 +159,9 @@ define([
 
         _.each(testConfig.tests, function(modelTestConfig) {
             var modelName = modelTestConfig.model,
-                modelPathPrefix = contrail.checkIfExist(modelTestConfig['modelPathPrefix']) ? modelTestConfig['modelPathPrefix'] : 'core-basedir/js/models/',
-                modelObj,
-                deferredObj = $.Deferred();
+              modelPathPrefix = contrail.checkIfExist(modelTestConfig['modelPathPrefix']) ? modelTestConfig['modelPathPrefix'] : 'core-basedir/js/models/',
+              modelObj,
+              deferredObj = $.Deferred();
 
             deferredList.push(deferredObj);
 
@@ -185,8 +186,8 @@ define([
 
         _.each(testConfig.tests, function (unitTestConfig) {
             var deferredObj = $.Deferred(),
-                loadModule = false,
-                module, moduleObj;
+              loadModule = false,
+              module, moduleObj;
 
             unitTestConfig.moduleObj = null;
 
@@ -195,7 +196,7 @@ define([
                 loadModule = true;
             } else {
                 var moduleName = contrail.checkIfExist(unitTestConfig.moduleName) ? unitTestConfig.moduleName : '',
-                    modulePathPrefix = contrail.checkIfExist(unitTestConfig.modulePathPrefix) ? unitTestConfig.modulePathPrefix : 'core-basedir/js/common/';
+                  modulePathPrefix = contrail.checkIfExist(unitTestConfig.modulePathPrefix) ? unitTestConfig.modulePathPrefix : 'core-basedir/js/common/';
                 module = modulePathPrefix + moduleName;
                 loadModule = true;
             }
@@ -274,7 +275,7 @@ define([
         var deferredList = [];
         _.each(testConfigObj, function (testConfig) {
             var defMockDataConfig = {dataGenerator: function(){return;},dataParsers:{}},
-                primaryMockDataConfig;
+              primaryMockDataConfig;
 
             if (contrail.checkIfExist(testConfig.modelConfig)) {
                 primaryMockDataConfig = $.extend(true, defMockDataConfig, testConfig.modelConfig);

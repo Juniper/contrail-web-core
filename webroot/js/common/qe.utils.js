@@ -6,8 +6,8 @@ define([
     'underscore'
 ], function (_) {
     var serializer = new XMLSerializer(),
-        qewu,
-        domParser = new DOMParser();
+      qewu,
+      domParser = new DOMParser();
 
     var QEUtils = function () {
         var self = this;
@@ -90,7 +90,7 @@ define([
 
         self.formatEngQuery = function(enqQueryObjStr) {
             var engQueryObj = JSON.parse(enqQueryObjStr),
-                engQueryStr = '';
+              engQueryStr = '';
 
             $.each(engQueryObj, function(key, val){
                 if(key == 'select' && (!contrail.checkIfExist(val) || val == "")){
@@ -110,12 +110,12 @@ define([
 
         self.adjustHeight4FormTextarea = function(queryPrefix) {
             var elId = '#qe-' + queryPrefix + '-form',
-                texareaNames = ['select', 'where', 'filters'];
+              texareaNames = ['select', 'where', 'filters'];
 
             $.each(texareaNames, function(nameKey, nameValue) {
                 var scrollHeight = $(elId).find('[name="' + nameValue + '"]').get(0).scrollHeight;
                 $(elId).find('[name="' + nameValue + '"]')
-                    .outerHeight(((scrollHeight < 26) ? 26 : (scrollHeight)));
+                .outerHeight(((scrollHeight < 36) ? 26 : (scrollHeight- 10)));
             });
         };
 
@@ -169,10 +169,10 @@ define([
         //TODO- remove this
         self.addFlowMissingPoints = function(tsData, options, plotFields, color, counter) {
             var fromTime = options.fromTime,
-                toTime = options.toTime,
-                interval = options.interval * 1000,
-                plotData = [], addPoint, flowClassId = null,
-                sumBytes = [], sumPackets = [];
+              toTime = options.toTime,
+              interval = options.interval * 1000,
+              plotData = [], addPoint, flowClassId = null,
+              sumBytes = [], sumPackets = [];
 
             for (var key in tsData) {
                 if (tsData[key]['flow_class_id'] != null) {
@@ -214,13 +214,13 @@ define([
 
         self.addChartMissingPoints = function(chartDataRow, queryFormAttributes, plotFields) {
             var chartDataValues = chartDataRow.values,
-                newChartDataValues = {},
-                emptyChartDataValue  = {},
-                timeGranularity = queryFormAttributes.time_granularity,
-                timeGranularityUnit = queryFormAttributes.time_granularity_unit,
-                timeInterval = timeGranularity * cowc.TIME_GRANULARITY_INTERVAL_VALUES[timeGranularityUnit],
-                toTime = queryFormAttributes.to_time_utc,
-                fromTime = queryFormAttributes.from_time_utc;
+              newChartDataValues = {},
+              emptyChartDataValue  = {},
+              timeGranularity = queryFormAttributes.time_granularity,
+              timeGranularityUnit = queryFormAttributes.time_granularity_unit,
+              timeInterval = timeGranularity * cowc.TIME_GRANULARITY_INTERVAL_VALUES[timeGranularityUnit],
+              toTime = queryFormAttributes.to_time_utc,
+              fromTime = queryFormAttributes.from_time_utc;
 
             $.each(plotFields, function(plotFieldKey, plotFieldValue) {
                 emptyChartDataValue[plotFieldValue] = 0;
@@ -241,7 +241,7 @@ define([
 
         self.parseWhereCollection2String = function(queryFormModel) {
             var whereOrClauses = queryFormModel.model().get('where_or_clauses'),
-                whereOrClauseStrArr = [];
+              whereOrClauseStrArr = [];
 
             $.each(whereOrClauses.models, function(whereOrClauseKey, whereOrClauseValue) {
                 if (whereOrClauseValue.attributes.orClauseText !== '') {
@@ -254,10 +254,10 @@ define([
 
         self.parseFilterCollection2String = function (queryFormModel) {
             var filterAndClauses = queryFormModel.model().attributes['filter_and_clauses'],
-                sort_by = queryFormModel.model().attributes['sort_by'],
-                sort_order = queryFormModel.model().attributes['sort_order'],
-                limit = queryFormModel.model().attributes['limit'],
-                filterAndClausestrArr = [], filterAndClausestr = '';
+              sort_by = queryFormModel.model().attributes['sort_by'],
+              sort_order = queryFormModel.model().attributes['sort_order'],
+              limit = queryFormModel.model().attributes['limit'],
+              filterAndClausestrArr = [], filterAndClausestr = '';
 
             $.each(filterAndClauses.models, function (filterAndClauseKey, filterAndClauseValue) {
                 var name, value, operator;
@@ -300,7 +300,7 @@ define([
 
         self.parseWhereCollection2JSON = function(queryFormModel) {
             var whereOrClauses = queryFormModel.model().get('where_or_clauses'),
-                whereOrJSONArr = [];
+              whereOrJSONArr = [];
 
             $.each(whereOrClauses.models, function(whereOrClauseKey, whereOrClauseValue) {
                 if (whereOrClauseValue.attributes.orClauseText !== '') {
@@ -313,7 +313,7 @@ define([
 
         self.parseSelectString2Array = function(queryFormModel) {
             var selectString = queryFormModel.select(),
-                selectArray = (selectString == null || selectString.trim() == '') ? [] : selectString.split(', ');
+              selectArray = (selectString == null || selectString.trim() == '') ? [] : selectString.split(', ');
 
             queryFormModel.select_data_object().checked_fields(selectArray)
         };
@@ -330,9 +330,9 @@ define([
 
         self.parseWhereJSON2Collection = function(queryFormModel) {
             var whereStr = queryFormModel.model().get('where'),
-                whereOrClauseStrArr = (whereStr == null) ? [] : whereStr.split(' OR '),
-                whereOrJSON = queryFormModel.model().get('where_json'),
-                wherOrClauseObjects = [];
+              whereOrClauseStrArr = (whereStr == null) ? [] : whereStr.split(' OR '),
+              whereOrJSON = queryFormModel.model().get('where_json'),
+              wherOrClauseObjects = [];
 
             queryFormModel.model().get('where_or_clauses').reset();
 
@@ -345,7 +345,7 @@ define([
 
         self.parseFilterJSON2Collection = function(queryFormModel) {
             var filterStr = queryFormModel.model().attributes.filters,
-                filterOrJSON = queryFormModel.model().attributes.filter_json;
+              filterOrJSON = queryFormModel.model().attributes.filter_json;
 
             queryFormModel.model().get('filter_and_clauses').reset();
             queryFormModel.addNewFilterAndClause(filterOrJSON);
@@ -353,8 +353,8 @@ define([
 
         self.parseWhereString2JSON = function(queryFormModel) {
             var whereStr = queryFormModel.model().get('where'),
-                whereOrClauseStrArr = (whereStr == null) ? [] : whereStr.split(' OR '),
-                whereOrJSONArr = [];
+              whereOrClauseStrArr = (whereStr == null) ? [] : whereStr.split(' OR '),
+              whereOrJSONArr = [];
 
             $.each(whereOrClauseStrArr, function(whereOrClauseStrKey, whereOrClauseStrValue) {
                 if (whereOrClauseStrValue != '') {
@@ -370,7 +370,7 @@ define([
             return parseFilterANDClause(filtersStr);
         };
 
-         self.getAggregateSelectFields = function(selectArray) {
+        self.getAggregateSelectFields = function(selectArray) {
             var aggregateSelectArray = [];
 
             $.each(selectArray, function(selectKey, selectValue) {
@@ -398,9 +398,9 @@ define([
         //format aggregate field names for grids
         self.formatNameForGrid = function(columnName) {
             var firstIndex = columnName.indexOf('('),
-                lastIndex = columnName.indexOf(')'),
-                aggregateType = columnName.substr(0,firstIndex),
-                aggregateColumnName = columnName.substr(firstIndex + 1,lastIndex - firstIndex - 1);
+              lastIndex = columnName.indexOf(')'),
+              aggregateType = columnName.substr(0,firstIndex),
+              aggregateColumnName = columnName.substr(firstIndex + 1,lastIndex - firstIndex - 1);
 
             if(qewu.isAggregateField(columnName) || aggregateType == "AVG" || aggregateType == "PERCENTILES") {
                 return aggregateType.toUpperCase() + " (" + cowl.get(aggregateColumnName) + ")";
@@ -411,7 +411,7 @@ define([
 
         self.isAggregateField = function(fieldName) {
             var fieldNameLower = fieldName.toLowerCase(),
-                isAggregate = false;
+              isAggregate = false;
 
             var AGGREGATE_PREFIX_ARRAY = ['min(', 'max(', 'count(', 'sum('];
 
@@ -455,7 +455,7 @@ define([
          */
         self.enableSessionAnalyzer = function(selectedFlowRecord, formModelAttr) {
             var enable = true, disable = !enable,
-                keys = ['vrouter', 'sourcevn', 'sourceip', 'destvn', 'destip', 'sport', 'dport'];
+              keys = ['vrouter', 'sourcevn', 'sourceip', 'destvn', 'destip', 'sport', 'dport'];
             if (contrail.checkIfExist(selectedFlowRecord)) {
                 for (var i = 0; i < keys.length; i++) {
                     if (!(selectedFlowRecord.hasOwnProperty(keys[i]) && (selectedFlowRecord[keys[i]] != null))) {
@@ -548,8 +548,8 @@ define([
 
     function getTimeRangeObj(formModelAttrs, serverCurrentTime) {
         var timeRange = formModelAttrs['time_range'],
-            fromDate, toDate, fromTimeUTC, toTimeUTC, serverDateObj,
-            fromTime, toTime, now
+          fromDate, toDate, fromTimeUTC, toTimeUTC, serverDateObj,
+          fromTime, toTime, now
 
 
         if (timeRange > 0) {
@@ -605,8 +605,8 @@ define([
 
     function getFromTimeShowOptions(toTimeId, cdt) {
         var d = new Date($('#' + toTimeId + '_datetimepicker').val()),
-            dateString = moment(d).format('MMM DD, YYYY'),
-            timeString = moment(d).format('hh:mm:ss A');
+          dateString = moment(d).format('MMM DD, YYYY'),
+          timeString = moment(d).format('hh:mm:ss A');
 
         return {
             maxDate: dateString ? dateString : false,
@@ -616,9 +616,9 @@ define([
 
     function getFromTimeSelectOptions(toTimeId, cdt) {
         var d = new Date($('#' + toTimeId + '_datetimepicker').val()),
-            toDateString = moment(d).format('MMM DD, YYYY'),
-            timeString = moment(d).format('hh:mm:ss A'),
-            fromDateString = moment(cdt).format('MMM DD, YYYY');
+          toDateString = moment(d).format('MMM DD, YYYY'),
+          timeString = moment(d).format('hh:mm:ss A'),
+          fromDateString = moment(cdt).format('MMM DD, YYYY');
 
         return {
             maxDate: toDateString ? toDateString : false,
@@ -628,8 +628,8 @@ define([
 
     function getToTimeShowOptions(fromTimeId, cdt) {
         var d = new Date($('#' + fromTimeId + '_datetimepicker').val()),
-            dateString = moment(d).format('MMM DD, YYYY'),
-            timeString = moment(d).format('hh:mm:ss A');
+          dateString = moment(d).format('MMM DD, YYYY'),
+          timeString = moment(d).format('hh:mm:ss A');
 
         return {
             minDate: dateString ? dateString : false,
@@ -639,9 +639,9 @@ define([
 
     function getToTimeSelectOptions(fromTimeId, cdt) {
         var d = new Date($('#' + fromTimeId + '_datetimepicker').val()),
-            fromDateString = moment(d).format('MMM dd, yyyy'),
-            timeString = moment(d).format('hh:mm:ss A'),
-            toDateString = moment(cdt).format('MMM DD, YYYY');
+          fromDateString = moment(d).format('MMM dd, yyyy'),
+          timeString = moment(d).format('hh:mm:ss A'),
+          toDateString = moment(cdt).format('MMM DD, YYYY');
 
         return {
             minDate: fromDateString ? fromDateString : false,
@@ -655,8 +655,8 @@ define([
             filters = "";
         }
         var filtersArray = cowu.splitString2Array(filters, "&"),
-            filter, filterBy, limitBy, sortFields, sortOrder,
-            filter_json_obj = {};
+          filter, filterBy, limitBy, sortFields, sortOrder,
+          filter_json_obj = {};
 
         for (var i = 0; i < filtersArray.length; i++) {
             filter = filtersArray[i];
@@ -742,7 +742,7 @@ define([
 
     function parseWhereANDClause(whereANDClause) {
         var whereANDArray = whereANDClause.replace('(', '').replace(')', '').split(' AND '),
-            whereANDLength = whereANDArray.length, i, whereANDClause, whereANDClauseArray, operator = '';
+          whereANDLength = whereANDArray.length, i, whereANDClause, whereANDClauseArray, operator = '';
         for (i = 0; i < whereANDLength; i += 1) {
             whereANDArray[i] = whereANDArray[i].trim();
             whereANDClause = whereANDArray[i];
@@ -759,7 +759,7 @@ define([
                 whereANDArray[i] = whereANDClause;
             } else {
                 var whereANDClauseWithSuffixArrray = whereANDClause.split('&'),
-                    whereANDTerm = '';
+                  whereANDTerm = '';
                 // Treat whereANDClauseWithSuffixArrray[0] as a normal AND term and
                 // whereANDClauseWithSuffixArrray[1] as a special suffix term
                 if (whereANDClauseWithSuffixArrray != null && whereANDClauseWithSuffixArrray.length != 0) {
@@ -789,8 +789,8 @@ define([
 
     function populateWhereANDClause(whereANDClause, fieldName, fieldValue, operator) {
         var validLikeOPRFields = ['sourcevn', 'destvn'],
-            validRangeOPRFields = ['protocol', 'sourceip', 'destip', 'sport', 'dport'],
-            splitFieldValues;
+          validRangeOPRFields = ['protocol', 'sourceip', 'destip', 'sport', 'dport'],
+          splitFieldValues;
         whereANDClause.name = fieldName;
         if (validLikeOPRFields.indexOf(fieldName) != -1 && fieldValue.indexOf('*') != -1) {
             whereANDClause.value = fieldValue.replace('*', '');
