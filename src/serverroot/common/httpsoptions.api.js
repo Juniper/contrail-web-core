@@ -143,6 +143,22 @@ function updateHttpsSecureOptions (apiType, options)
                 logutils.logger.error('readFileSync error for ca file' + e);
             }
         }
+        var keyFile = getHttpsOptionsByAPIType(apiType, 'key');
+        if ((null != keyFile) && ('' != keyFile) && ("" != keyFile)) {
+            try {
+                options['key'] = fs.readFileSync(keyFile);
+            } catch(e) {
+                logutils.logger.error('readFileSync error for key file' + e);
+            }
+        }
+        var certFile = getHttpsOptionsByAPIType(apiType, 'cert');
+        if ((null != certFile) && ('' != certFile) && ("" != certFile)) {
+            try {
+                options['cert'] = fs.readFileSync(certFile);
+            } catch(e) {
+                logutils.logger.error('readFileSync error for cert file' + e);
+            }
+        }
         /* https://github.com/mscdex/node-imap/issues/181 */
         options['rejectUnauthorized'] = false;
         var strictSSL = getHttpsOptionsByAPIType(apiType, 'strictSSL');
