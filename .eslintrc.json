@@ -1,36 +1,30 @@
 {
   "parserOptions": {
-    "ecmaVersion": 6,
-    "sourceType": "script",
+    "ecmaVersion": 6, // make ES6/ES2015 available
+    "sourceType": "script", // disable ES6/ES2015 module syntax, since it's not used currently. (Recommend to use it)
     "ecamFeature": {
-      "globalReturn": false,
-      "impliedStrict": true,
-      "jsx": false,
-      "experimentalObjectRestSpread": false
+      "globalReturn": false, // disallow global definition
+      "impliedStrict": true, // use strict mode
+      "jsx": false, // disallow jsx syntax, since ReactJS is not used
+      "experimentalObjectRestSpread": false // disallow rest operator from ES6/ES2015, since it's subject to change with ES7/8
     }
   },
   "plugins": [],
-  "extends": "eslint:recommended",
+  "extends": "eslint:recommended", // using essential rule set from ESLint package
   "env": {
-    "browser": true,
-    "node": true,
-    "es6": true,
-    "amd": true,
-    "mocha": true,
-    "qunit": true,
-    "jquery": true
+    "browser": true, // allow existense of native globals for browser
+    "node": true, // allow existense of native globals for nodeJS
+    "es6": true, // allow existense of native globals/reserved words from ES6/ES2015
+    "amd": true, // allow existense of native globals from AMD-like environment
+    "jquery": true, // allow existense of native gloabls from jQuery
+    // TODO: should make exception only to the unit test files. Move these configuration into the test folders.
+    "mocha": true, // allow existense of native globals from Mocha
+    "qunit": true // allow existense of native globals from qunit
   },
-  // TODO: globals should likely go away once all these globals are removed and modularized.
+  // TODO: globals should likely disappear once all these globals are removed and modularized.
   "globals": {
-    "cdbqueryapi_listKeys4Table": true,
-    "cdbqueryapi_listValues4Key": true,
-    "cdbqueryapi_deleteValue4Key": true,
     "chUtils": true,
     "contrail": true,
-    "contentContainer": true,
-    "contentHandler": true,
-    "coreAlarmUtils": true,
-    "coreAlarmParsers": true,
     "covdc": true,
     "cowc": true,
     "cowu": true,
@@ -44,39 +38,62 @@
     "ctwm": true,
     "ctwl": true,
     "globalObj": true,
-    "grUtils": true,
-    "initBackboneValidation": true,
-    "initCustomKOBindings": true,
-    "initDomEvents": true,
-    "introspectPageLoader": true,
-    "layoutHandler": true,
-    "loadFeature": true,
-    "pkgBaseDir": true,
-    "qeapi_runGETQuery": true,
-    "qeapi_runPOSTQuery": true,
-    "qeapi_exportQueryResult": true,
-    "qeapi_getQueryQueue": true,
-    "qeapi_getFlowClasses": true,
-    "qeapi_getChartData": true,
-    "qeapi_deleteQueryCache4Ids": true,
-    "qeapi_deleteQueryCache4Queue": true,
-    "qeapi_getTables": true,
-    "qeapi_getColumnValues": true,
-    "qeapi_getTableSchema": true,
-    "qeapi_getObjectIds": true,
-    "qewu": true,
-    "qewmc": true,
-    "qewgc": true,
-    "qewp": true,
-    "uddapi_createWidget": true,
-    "uddapi_getWidgets": true,
-    "uddapi_removeWidget": true,
-    "urlRoutes": true,
-    "_": true, // TODO: some modules use this as through dependency inject
-    "ko": false,
-    "kbValidation": false
+    "grUtils": true
   },
   "rules": {
-    "no-console": "off"
+    // relax/customize the essential rule set for R3.2
+    // TODO: need to update/evovlve based on the readiness of codebase.
+    "block-scoped-var": "off",
+    "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+    "camelcase": "warn",
+    "comma-dangle": ["error", "only-multiline"],
+    "consistent-return": "error",
+    // TODO Should be turn on as "error" once starting to use ES6/ES2015 syntax
+    "constructor-super": "off",
+    "curly": "warn",
+    "dot-location": ["error", "property"],
+    "dot-notation": "warn",
+    "eol-last": "error",
+    // To avoid potential debugging difficulty
+    "eqeqeq": "error",
+    "new-cap": "error",
+    "no-caller": "error",
+    "no-case-declarations": "warn",
+    "no-console": "off",
+    "no-eval": "error",
+    "no-extend-native": "warn",
+    "no-implicit-globals": "warn",
+    "no-irregular-whitespace": ["error", {
+      "skipStrings": true,
+      "skipComments": true,
+      "skipTemplates": true
+    }],
+    "no-lone-blocks": "error",
+    "no-loop-func": "warn",
+    // To encourage constant variables for better maintainability and readability
+    "no-magic-numbers": ["warn", {
+      "ignoreArrayIndexes": true,
+      // TODO: turn on when starting to use ES6/ES2015 syntax
+      "enforceConst": false
+    }],
+    "no-multi-spaces": ["error", {
+      "exceptions": {
+        "Property": true,
+        "VariableDeclarator": true,
+        "ImportDeclaration": true
+      }
+    }],
+    "no-multi-str": "error",
+    "no-new-func": "error",
+    "no-return-assign": "error",
+    "no-script-url": "error",
+    "no-self-compare": "error",
+    "no-unmodified-loop-condition": "error",
+    "no-unused-expressions": "error",
+    "no-useless-concat": "warn",
+    "no-useless-escape": "warn",
+    "vars-on-top": "warn",
+    "semi": "error",
+    "yoda": "warn"
   }
 }
