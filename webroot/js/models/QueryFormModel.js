@@ -199,28 +199,8 @@ define([
                         }
                     });
 
-                    var allAggregateTypes = [];
-
-                    for(i = 0; i < selectFields.length; i++) {
-
-                        var key = selectFields[i].name,
-                            aggregateType =  key.substring(0, key.indexOf('('));
-
-                        if(aggregateType == ''){
-                            aggregateType = cowl.getFirstCharUpperCase("DEFAULT");
-                        }
-                        allAggregateTypes.push(cowl.getFirstCharUpperCase(aggregateType));
-
-                        var aggregateObject = {
-                            aggType: cowl.getFirstCharUpperCase(aggregateType)
-                        };
-
-                        $.extend(selectFields[i],aggregateObject);
-                    }
-
                     setEnable4SelectFields(selectFields, self.select_data_object().enable_map());
                     self.select_data_object().select_fields(selectFields);
-                    self.select_data_object().aggTypes(self.prepareUniqueAggregateArray(allAggregateTypes));
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
 
@@ -235,16 +215,6 @@ define([
             }
         },
         
-        prepareUniqueAggregateArray: function(allAggregateTypes){
-            var uniqueAggregateTypes = [];
-            $.each(allAggregateTypes, function(i, el) {
-                if($.inArray(el, uniqueAggregateTypes) === -1) {
-                    uniqueAggregateTypes.push(el);
-                }
-            });
-            return uniqueAggregateTypes;
-        },
-
         formatModelConfig: function(modelConfig) {
             var whereOrClausesCollectionModel, filterAndClausesCollectionModel;
 

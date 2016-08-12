@@ -49,7 +49,7 @@ define([
         'mon-infra-log-list-view',     
         'mon-infra-sysinfo-view',      
         'mon-infra-dashboard-view',
-        ],function(CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig,ChartUtils,CoreCommonTmpls, GraphUtils) {
+        ],function(CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, ChartUtils, CoreCommonTmpls, GraphUtils) {
             cowc = CoreConstants;
             cowf = new CoreFormatters();
             cowl = new CoreLabels();
