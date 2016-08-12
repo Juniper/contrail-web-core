@@ -52,7 +52,7 @@
     "constructor-super": "off",
     "curly": "warn",
     "dot-location": ["error", "property"],
-    "dot-notation": "warn",
+    "dot-notation": "error",
     "eol-last": "error",
     // To avoid potential debugging difficulty
     "eqeqeq": "error",
@@ -92,6 +92,10 @@
     "no-unused-expressions": "error",
     "no-useless-concat": "warn",
     "no-useless-escape": "warn",
+    "quotes": ["error", "double", {
+      "avoidEscape": true,
+      "allowTemplateLiterals": true
+    }],
     "vars-on-top": "warn",
     "semi": "error",
     "yoda": "warn"
