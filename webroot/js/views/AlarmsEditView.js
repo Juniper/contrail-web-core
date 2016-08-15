@@ -8,8 +8,8 @@ define([
     'knockback'
 ], function (_, ContrailView, Knockback) {
     var gridElId = '#' + cowl.ALARMS_GRID_ID;
-    var prefixId = cowl.ALARMS_PREFIX_ID;
-    var modalId = 'monitor-' + prefixId;
+    var prefixId = cowl.ALARM_PREFIX_ID;
+    var modalId = 'modal-ack-' + prefixId ;
 
     var alarmsEditView = ContrailView.extend({
 
@@ -20,6 +20,9 @@ define([
             var self = this;
 
             var ackLayout = ackTemplate({prefixId: prefixId});
+            /* the below line is required to solve Maximum
+            call stack size exceeded issue  */
+            $.fn.modal.Constructor.prototype.enforceFocus = function() {};
             cowu.createModal({'modalId': modalId, 'className': 'modal-480 max-z-index',
                              'title': options['title'], 'btnName': 'Confirm',
                              'body': ackLayout,

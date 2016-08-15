@@ -13,10 +13,9 @@ define(['underscore'], function (_) {
         if(this.getAlarmsFromAnalytics) {
             // sevLevels = cowc.SEV_LEVELS;
             sevLevels = {
-                ERROR   : 3, //Red
-                WARNING : 4, //Orange
-                // NOTICE  : 2, //Blue
-                // INFO    : 3, //Green
+                CRITICAL : 0, //Red
+                ERROR    : 1, //Red
+                WARNING  : 2 //Orange
             };
         }
         this.renderGrid = function (elementId, gridConfig) {
