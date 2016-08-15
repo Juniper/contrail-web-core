@@ -72,7 +72,7 @@ define([
                                                     custom: {
                                                         filterY: {
                                                             enable: true,
-                                                            iconClass: 'icon-filter',
+                                                            iconClass: 'fa fa-filter',
                                                             title: 'Filter',
                                                             events: cowu.getFilterEvent(),
                                                             viewConfig: getFilterConfig(queryId, aggregateSelectFields, queryResultLineChartId)

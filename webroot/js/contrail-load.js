@@ -108,26 +108,19 @@ $(document).ready(function () {
     $(document).off('click.dropdown-menu');
 
     function startHelp() {
-        var help_container = $('#onpage-help-container');
-        //add a custom button to enable/disable help
-        help_container.append('<div class="ace-settings-container onpage-help-toggle-container">\
-                <div id="onpage-help-toggle-btn" class="btn btn-app btn-xs btn-info ace-settings-btn onpage-help-toggle-btn">\
-                    <i class="onpage-help-toggle-text ace-icon fa fa-question bigger-150"></i>\
-                </div>\
-            </div>');
-
         $('#onpage-help-toggle-btn').on('click', function (event) {
             event.preventDefault();
             toggleHelp();
         });
 
-        //add .container class to help container div when our content is put inside a ".container"
-        $(document).on('settings.ace.help', function (ev, event_name, fixed) {
-            if (event_name == 'main_container_fixed') {
-                if (fixed) help_container.addClass('container');
-                else help_container.removeClass('container');
+        $(document).on('click', '.onpage-help-backdrop', function(e) {
+            if (this.hidden == false) {
+                helpHandler.disable();
+                var toggle_btn = $('#onpage-help-toggle-btn');
+                toggle_btn.find('.onpage-help-toggle-text').removeClass('onpage-help-toggle-text');
+                toggle_btn.parent().toggleClass('active');
             }
-        }).triggerHandler('settings.ace.help', ['main_container_fixed', $('.main-container').hasClass('container')])
+        });
 
         //in ajax mode when a content is loaded via ajax, we may want to update help sections
         $(document).on('ajaxloadcomplete.ace.help', function () {
@@ -141,7 +134,7 @@ $(document).ready(function () {
 
         var toggle_btn = $('#onpage-help-toggle-btn');
         toggle_btn.find('.onpage-help-toggle-text').removeClass('onpage-help-toggle-text');
-        toggle_btn.toggleClass('btn-grey btn-info').parent().toggleClass('active');
+        toggle_btn.parent().toggleClass('active');
     }
 
     startHelp();

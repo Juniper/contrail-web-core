@@ -131,6 +131,16 @@
     margin: -6px 0;
 }
 
+.breadcrumbs .page-help {
+    float: right;
+    display: inline-block;
+    padding: 2px 0;
+    margin-left: 10px;
+    color: #777777;
+}
+.breadcrumbs .page-help.active {
+    color: #3182BD;
+}
 /* Main Content */
 
 .main-content {

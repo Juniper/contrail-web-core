@@ -116,7 +116,7 @@ define(['underscore'], function (_) {
             if( created ) return;
 
             help_container =
-                $('<div class="onpage-help-container" id="onpage-help-container" tabindex="-1" />')
+                $('<div id="onpage-help-container" class="onpage-help-container" tabindex="-1" />')
                     .appendTo('body');
 
             help_container.append('<div class="onpage-help-backdrop hidden" />')
@@ -130,7 +130,7 @@ define(['underscore'], function (_) {
                     setBodyHeight();
                     disableBodyScroll();
                 }
-            })
+            });
 
             created = true;
         };
@@ -180,8 +180,8 @@ define(['underscore'], function (_) {
             //find all relevant elements
             var domElements = $('*').contents().filter(function(){ return this.nodeType == 1 /*1=element node*/ });
             var divEle = domElements.filter(function(){ return (this.nodeName == "DIV" || this.nodeName == "LI")});
+            var flag = 0;
             $(divEle).each(function() {
-
                 //there is a help
                 if (this.dataset) {
                     if (this.dataset.help) {
@@ -189,12 +189,19 @@ define(['underscore'], function (_) {
                         var trimmedUrl = helpUrl.trim();
                         //the help url is not blank
                         if (trimmedUrl != "") {
-                            console.log(this.dataset.help);
+                            flag = 1; //meaning atleast one helpSection is found
                             section_start[trimmedUrl] = this;
                         }
                     }
                 }
             });
+
+            if (flag == 0) {
+                $(".onpage-help-toggle-container").hide();
+            }
+            if (flag == 1) {
+                $(".onpage-help-toggle-container").show();
+            }
         }
 
         function save_section_offset(name) {

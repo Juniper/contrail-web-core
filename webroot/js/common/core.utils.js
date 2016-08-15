@@ -404,7 +404,7 @@ define(['underscore'], function (_) {
                     $(self).toggleClass('active');
                     $(self).toggleClass('refreshing');
 
-                    chartControlPanelExpandedSelector.toggle();
+                    chartControlPanelExpandedSelector.toggleElement();
 
                     if (chartControlPanelExpandedSelector.is(':visible')) {
                         chartControlPanelExpandedSelector.find('.control-panel-filter-body').height(chartControlPanelExpandedSelector.height() - 30);
@@ -425,7 +425,6 @@ define(['underscore'], function (_) {
                                 });
                             });
                         } else {
-                            console.log(controlPanelExpandedTemplateConfig.viewConfig.groups)
                             $.each(controlPanelExpandedTemplateConfig.viewConfig.groups, function (groupKey, groupValue) {
                                 $.each(groupValue.items, function (itemKey, itemValue) {
                                     var controlPanelFilterGroupElement = $('#control-panel-filter-group-items-' + groupValue.id).find('input')[itemKey];
@@ -608,6 +607,23 @@ define(['underscore'], function (_) {
             } else {
                 if (contrail.checkIfExist($(elements).data('contrailGrid'))) {
                     $(elements).data('contrailGrid').refreshView();
+                }
+            }
+        };
+
+        this.handleEmptyGrid4LazyLoading = function(gridId, data, count) {
+            if (contrail.checkIfExist($('#' + gridId).data('contrailGrid'))) {
+                $('#' + gridId).data('contrailGrid').removeGridLoading();
+
+                if (data.length === 0) {
+                    $('#' + gridId).data('contrailGrid').showGridMessage('empty');
+                }
+            } else {
+                count = contrail.checkIfExist(count) ? count : 1;
+                if (count < 5) {
+                    setTimeout(function () {
+                        self.handleEmptyGrid4LazyLoading(gridId, data, count);
+                    }, count * 1000);
                 }
             }
         };

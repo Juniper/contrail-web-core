@@ -4477,7 +4477,7 @@ div.jsoneditor td, div.jsoneditor td.jsoneditor-tree {
 
 .onpage-help-toggle-container {
   position: fixed;
-  top: 135px;
+  top: 50px;
 }
 
 .onpage-help-toggle-container.active {
