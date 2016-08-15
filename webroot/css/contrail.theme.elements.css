@@ -4466,20 +4466,3 @@ div.jsoneditor td, div.jsoneditor td.jsoneditor-tree {
 .detail-foundation-action {
   margin-right: 15px;
 }
-
-/*on page help styles*/
-.ace-settings-container {
-  position: absolute;
-  right: 0;
-  top: auto;
-  z-index: 12;
-}
-
-.onpage-help-toggle-container {
-  position: fixed;
-  top: 135px;
-}
-
-.onpage-help-toggle-container.active {
-  z-index: 100001;
-}
