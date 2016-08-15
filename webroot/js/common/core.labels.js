@@ -96,11 +96,8 @@ define([
 
 
             /*Flow Record Column Label map */
-            'vrouter': 'Virtual Router',
             'vrouter_ip': 'Virtual Router IP',
             'other_vrouter_ip': 'Other Virtual Router IP',
-            'sourcevn': 'Source VN',
-            'destvn': 'Destination VN',
             'underlay_proto': 'Underlay Protocol',
             'UuidKey': 'UUID',
             'sg_rule_uuid': 'Rule UUID',
@@ -139,7 +136,6 @@ define([
             'ifOutDiscards': 'Intf Out Discards',
             'ifOutErrors': 'Intf Out Errors',
             'ifIndex': 'Intf Index',
-            'used_sys_mem': 'CPU Sys Mem Used',
             'one_min_cpuload': 'CPU 1 Min Load',
             'virt_memory': 'Virtual Mem',
             'peak_virt_memory': 'Peak Virtual Mem',
@@ -268,6 +264,9 @@ define([
         this.TITLE_CHART = "Chart";
         this.TITLE_QE_WHERE = "Where";
         this.TITLE_QE_FILTER = "Filter";
+        this.TITLE_QE_ACTIVE_TABLE = 'Active Table';
+        this.TITLE_QE_KEYWORDS_PLACEHOLDER = 'Comma separated keywords';
+        this.TITLE_QE_TIME_GRANULARITY = 'Time Granularity';
 
         this.TITLE_QUERY = "Query";
         this.TITLE_QUERY_STATUS = "Query Status";
@@ -289,6 +288,7 @@ define([
         this.TITLE_OBJECT_LOGS = "Object Logs";
         this.TITLE_SYSTEM_LOGS = "System Logs";
         this.TITLE_CONSOLE_LOGS = "Console Logs";
+        this.LOGS_NUMBER_OF_RECORDS = 'Number of records';
 
         this.TITLE_INGRESS = "Ingress";
         this.TITLE_EGRESS = "Egress";
@@ -321,6 +321,18 @@ define([
 
         this.DASHBOARD_LOGS_URL = '/api/admin/reports/query?where=&filters=&level=4' + '&fromTimeUTC=now-10m&toTimeUTC=now&table=MessageTable&limit=10';
         this.CACHE_DASHBORAD_LOGS = 'cache-dashboard-logs';
+
+        this.CHART_BAR_COLOR = 'Bar Color';
+        this.CHART_LINE_COLOR = 'Line Color';
+        this.CHART_BAR_LABEL = 'Bar Label';
+        this.CHART_LINE_LABEL = 'Line Label';
+        this.CHART_BAR_VALUE = 'Bar Value';
+        this.CHART_LINE_VALUE = 'Line Value';
+        this.CHART_BAR_VALUE_PLACEHOLDER = 'Select Bar Value'
+        this.CHART_LINE_VALUE_PLACEHOLDER = 'Select Line Value';
+        this.CHART_Y_AXIS_VALUE = 'y Axis Value';
+        this.CHART_Y_AXIS_VALUE_PLACEHOLDER = 'Select Y Axis Value'
+        this.CHART_Y_AXIS_LABEL = 'y Axis Label';
     };
 
     function capitalizeSentence(sentence) {
@@ -329,7 +341,7 @@ define([
             word[i] = word[i].charAt(0).toUpperCase() + word[i].slice(1);
         }
         return word.join(" ");
-    };
+    }
 
     return CoreLabels;
 });
