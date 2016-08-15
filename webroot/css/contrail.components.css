@@ -181,17 +181,19 @@
  * Contrail Modal
  * Extends Bootstrap Modal
  */
+.modal.contrail-modal {
+    margin-left: 0 !important;
+    /*position: absolute;*/
+    /*left: 0;*/
+    top: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+}
 .modal-body {
     position: relative;
     max-height: 400px;
     padding: 15px;
     overflow-y: auto;
-}
-.modal.contrail-modal {
-    margin-left: 0 !important;
-    position: fixed;
-    left: 50%;
-    top: 0;
 }
 .modal-280{
     width:280px;
