@@ -23,11 +23,11 @@ define([
 
         render: function () {
             var self = this,
-                viewConfig = self.attributes.viewConfig,
-                elId = self.attributes.elementId,
-                tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
-                tabHashUrlObj = layoutHandler.getURLHashParams().tab,
-                tabsUIObj, activeTab = contrail.handleIfNull(viewConfig.active, 0);
+              viewConfig = self.attributes.viewConfig,
+              elId = self.attributes.elementId,
+              tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
+              tabHashUrlObj = layoutHandler.getURLHashParams().tab,
+              tabsUIObj, activeTab = contrail.handleIfNull(viewConfig.active, 0);
 
             self.tabs = viewConfig.tabs
             self.tabsIdMap = {}
@@ -47,8 +47,8 @@ define([
                  * Setting activeTab if set in the URL params
                  */
                 if (contrail.checkIfExist(tabHashUrlObj) &&
-                    contrail.checkIfExist(tabHashUrlObj[elId]) &&
-                    tabHashUrlObj[elId] === tabValue[cowc.KEY_ELEMENT_ID]) {
+                  contrail.checkIfExist(tabHashUrlObj[elId]) &&
+                  tabHashUrlObj[elId] === tabValue[cowc.KEY_ELEMENT_ID]) {
                     activeTab = tabKey
                 }
 
@@ -101,7 +101,7 @@ define([
 
                 beforeActivate: function ( event, ui ) {
                     var tabId = ($(ui.newPanel[0]).attr('id')),
-                        tabKey = self.tabsIdMap[tabId];
+                      tabKey = self.tabsIdMap[tabId];
 
                     if (self.tabRendered[tabKey] === false) {
                         self.renderTab(self.tabs[tabKey]);
@@ -146,9 +146,9 @@ define([
 
         removeTab: function (tabIndex) {
             var self = this,
-                elId = self.attributes.elementId,
-                tabPanelId,
-                tabConfig = (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) ? self.tabs[tabIndex].tabConfig : null);
+              elId = self.attributes.elementId,
+              tabPanelId,
+              tabConfig = (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) ? self.tabs[tabIndex].tabConfig : null);
             if ($.isArray(tabIndex)) {
                 for (var i = 0; i < tabIndex.length; i++) {
                     self.removeTab(tabIndex[i]);
@@ -184,11 +184,11 @@ define([
 
         renderTab: function (tabObj, onAllViewsRenderComplete) {
             var self = this,
-                elId = self.attributes.elementId,
-                validation = self.attributes.validation,
-                lockEditingByDefault = self.attributes.lockEditingByDefault,
-                modelMap = self.modelMap,
-                childElId = tabObj[cowc.KEY_ELEMENT_ID];
+              elId = self.attributes.elementId,
+              validation = self.attributes.validation,
+              lockEditingByDefault = self.attributes.lockEditingByDefault,
+              modelMap = self.modelMap,
+              childElId = tabObj[cowc.KEY_ELEMENT_ID];
 
             self.$('#' + elId).show();
 
@@ -197,10 +197,10 @@ define([
 
         renderNewTab: function (elId, tabViewConfigs, activateTab, modelMap, onAllViewsRenderComplete) {
             var self = this,
-                tabLinkTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_LINK_VIEW),
-                tabContentTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_CONTENT_VIEW),
-                tabLength = self.tabs.length,
-                activateTabIndex;
+              tabLinkTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_LINK_VIEW),
+              tabContentTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_CONTENT_VIEW),
+              tabLength = self.tabs.length,
+              activateTabIndex;
 
             self.modelMap = modelMap;
 
@@ -246,7 +246,7 @@ define([
             var tab = self.tabs[tabKey]
 
             if (contrail.checkIfExist(self.tabs[tabKey].tabConfig) &&
-                tab.tabConfig.editable === true) {
+              tab.tabConfig.editable === true) {
                 self.$('.tab-edit').popover('hide')
                 var newTitle = self.$('.title-updated').val()
                 if (newTitle !== tab.title && newTitle) {

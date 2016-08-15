@@ -3,45 +3,45 @@
  */
 
 define([
-    'underscore',
-    'backbone'
+  'underscore',
+  'backbone'
 ], function (_, Backbone) {
-    var CoreRouter = Backbone.Router.extend({
-        initialize: function(options) {
-            this.route(/.*/, "defaultPageHandler");
-        },
+  var CoreRouter = Backbone.Router.extend({
+    initialize: function(options) {
+      this.route(/.*/, "defaultPageHandler");
+    },
 
-        defaultPageHandler: function() {
-            if(!contrail.checkIfExist(menuHandler)) {
-                layoutHandler.load();
-            } else {
-                //currHash = $.bbq.getState();
-                currHash = cowhu.getState();
+    defaultPageHandler: function() {
+      if(!contrail.checkIfExist(menuHandler)) {
+        layoutHandler.load();
+      } else {
+        //currHash = $.bbq.getState();
+        currHash = cowhu.getState();
 
-                //Don't trigger hashChange if URL hash is updated from code
-                //As the corresponding view has already been loaded from the place where hash is updated
-                //Ideally,whenever to load a view,just update the hash let it trigger the handler,instead calling it manually
+        //Don't trigger hashChange if URL hash is updated from code
+        //As the corresponding view has already been loaded from the place where hash is updated
+        //Ideally,whenever to load a view,just update the hash let it trigger the handler,instead calling it manually
 
-                if (globalObj.hashUpdated == 1) {
-                    globalObj.hashUpdated = 0;
-                    lastHash = currHash;
-                    return;
-                }
-
-                logMessage('hashChange', JSON.stringify(lastHash), ' -> ', currHash);
-                logMessage('hashChange', JSON.stringify(currHash));
-
-                layoutHandler.onHashChange(lastHash, currHash);
-                lastHash = currHash;
-            }
+        if (globalObj.hashUpdated == 1) {
+          globalObj.hashUpdated = 0;
+          lastHash = currHash;
+          return;
         }
-    });
-    
-    //TODO: move all bbq code to a common location
 
-    function is_string( arg ) {
-        return typeof arg === 'string';
-    };
+        logMessage('hashChange', JSON.stringify(lastHash), ' -> ', currHash);
+        logMessage('hashChange', JSON.stringify(currHash));
 
-    return CoreRouter;
+        layoutHandler.onHashChange(lastHash, currHash);
+        lastHash = currHash;
+      }
+    }
+  });
+
+  //TODO: move all bbq code to a common location
+
+  function is_string( arg ) {
+    return typeof arg === 'string';
+  };
+
+  return CoreRouter;
 });

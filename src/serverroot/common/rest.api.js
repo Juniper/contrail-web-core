@@ -3,6 +3,7 @@
  */
 
 var http = require('http'),
+    https = require('https'),
 	config = process.mainModule.exports.config,
 	logutils = require('../utils/log.utils'),
 	messages = require('./messages'),
@@ -143,9 +144,31 @@ APIServer.prototype.updateDiscoveryServiceParams = function (params)
 
 APIServer.prototype.makeHttpsRestCall = function (options, callback)
 {
-    request(options, function(err, response, data) {
-        callback(err, data, response);
+    var method = options['method'];
+    var req = https.request(options, function (res) {
+        var result = '';
+        res.on('data', function (chunk) {
+            result += chunk;
+        });
+        res.on('end', function () {
+            callback(null, result, res);
+        });
+        res.on('error', function (err) {
+            callback(err);
+        })
     });
+
+    // req error
+    req.on('error', function (err) {
+        logutils.logger.error(err.stack);
+        callback(err);
+    });
+
+    //send request with the postData form
+    if (('POST' == method) || ('PUT' == method)) {
+        req.write(options['data']);
+    }
+    req.end();
 }
 
 /** Retry the REST API Call, once it fails
@@ -234,6 +257,7 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
     var options = {};
     var method = params['method'];
     var xml2jsSettings = params['xml2jsSettings'];     
+    var data = commonUtils.getApiPostData(params['path'], params['data']);
     options['headers'] = params['headers'] || {};
     options['method'] = method;
     options['headers']['Content-Length'] = (data) ? data.toString().length : 0;
@@ -247,24 +271,25 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
            an empty data object is passed for GET queries, so make sure
            we are don't pass it.
          */
-        var data = commonUtils.getApiPostData(params['path'], params['data']);
         options['data'] = data || {};
         options['headers']['Content-Type'] = 'application/json';
     }
     params = self.updateDiscoveryServiceParams(params);
-    options['parser'] = restler.parsers.auto;
     options = httpsOp.updateHttpsSecureOptions(self.name, options);
     if ((null != options['headers']) &&
         (null != options['headers']['protocol']) &&
         (global.PROTOCOL_HTTPS == options['headers']['protocol'])) {
         delete options['headers']['protocol'];
         reqUrl = global.HTTPS_URL + params.url + ':' + params.port + params.path;
-        options['uri'] = reqUrl;
         options['body'] = options['data'];
         if (('POST' != method) && ('PUT' != method)) {
             delete options['data'];
             delete options['body'];
         }
+        options['hostname'] = params.url;
+        options['port'] = params.port;
+        options['path'] = params.path;
+
         self.makeHttpsRestCall(options, function(err, data, response) {
             var localIp =
                 commonUtils.getValueByJsonPath(response,

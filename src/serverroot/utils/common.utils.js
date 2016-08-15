@@ -1244,8 +1244,9 @@ function redirectToURL(req, res, redURL)
            return;
        }
        if ((-1 != userAgent.indexOf('MSIE')) ||
-           (-1 != userAgent.indexOf('Trident'))) {
-           /* In IE Browser, response code 307, does not lead the browser to
+           (-1 != userAgent.indexOf('Trident')) ||
+           (-1 != userAgent.indexOf('Edge'))) {
+           /* In IE/Edge Browser, response code 307, does not lead the browser to
             * redirect to certain URL, so sending 200 responseCode
             */
            res.send(200, '');
@@ -1253,11 +1254,11 @@ function redirectToURL(req, res, redURL)
            res.send(307, '');
        }
     } else {
-       if(redURL = "/") {
+       if ("/" == redURL) {
             res.sendfile('webroot/html/dashboard.html');
             return;
        } 
-       res.redirect(redURL);
+       res.redirect(302, redURL);
     }
 }
 
@@ -1398,9 +1399,26 @@ function getWebServerInfo (req, res, appData)
     serverObj['serviceEndPointFromConfig'] =
         (null != config.serviceEndPointFromConfig) ?
         config.serviceEndPointFromConfig : true;
-    serverObj['regionList'] = req.session.regionList;
+    serverObj['regionList'] = getValueByJsonPath(req.session,'regionList');
     serverObj['isRegionListFromConfig'] = config.regionsFromConfig;
+    var cgcData =
+        commonUtils.getValueByJsonPath(req,
+                                       'session;serviceCatalog;' +
+                                       global.REGION_ALL + ';' +
+                                       global.SERVICE_ENDPT_TYPE_CGC + ';maps;'
+                                       + 0, null, false);
+    var cgcIP =
+        commonUtils.getValueByJsonPath(cgcData, 'ip', null);
+    var cgcPort =
+        commonUtils.getValueByJsonPath(cgcData, 'port', null);
+    if ((null != cgcIP) && (null != cgcPort)) {
+        serverObj['cgcEnabled'] = true;
+    } else {
+        serverObj['cgcEnabled'] = false;
+    }
     serverObj['configRegionList'] = config.regions;
+    if(serverObj['cgcEnabled'] == true)
+        serverObj['regionList'].unshift("All Regions");
 
     var authApi = require('../common/auth.api');
     serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
@@ -2248,6 +2266,13 @@ function doDeepSort (object)
         } else {
             sortedObj[key] = object[key];
         }
+    }
+    if (object instanceof Array) {
+        var resultArr = [];
+        for (var key in sortedObj) {
+            resultArr.push(sortedObj[key]);
+        }
+        return resultArr;
     }
     return sortedObj;
 }

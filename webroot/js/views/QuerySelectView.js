@@ -13,13 +13,34 @@ define([
             var self = this,
                 viewConfig = self.attributes.viewConfig,
                 selectTemplate = contrail.getTemplate4Id(ctwc.TMPL_QUERY_SELECT),
+                selectDataObject = self.model.select_data_object(),
+                selectFields = $.makeArray(selectDataObject.select_fields()),
+                queryPrefix = self.model.query_prefix(),
+                aggregateTypes = [], selectTmplData, selectTmplHtml,
                 queryPrefix = self.model.query_prefix(),
                 modalId = queryPrefix + cowl.QE_SELECT_MODAL_SUFFIX,
                 className = viewConfig['className'];
 
-            var selectDataObject = self.model.select_data_object(),
-                selectTmplData = {queryPrefix: self.model.query_prefix(), fields: $.makeArray(selectDataObject.select_fields)},
-                selectTmplHtml = selectTemplate(selectTmplData);
+            _.each(selectFields, function(selectFieldValue, selectFieldKey) {
+                var key = selectFieldValue.name,
+                    aggregateType =  key.substring(0, key.indexOf('('));
+
+                if(aggregateType == ''){
+                    aggregateType = cowl.getFirstCharUpperCase("DEFAULT");
+                }
+                aggregateTypes.push(cowl.getFirstCharUpperCase(aggregateType));
+
+                selectFieldValue['aggregate_type'] = cowl.getFirstCharUpperCase(aggregateType);
+
+            });
+
+            selectTmplData = {
+                queryPrefix: queryPrefix,
+                fields: selectFields,
+                aggregateTypes: _.uniq(aggregateTypes)
+            };
+
+            selectTmplHtml = selectTemplate(selectTmplData);
 
             cowu.createModal({
                 'modalId': modalId, 'className': className, 'title': cowl.TITLE_QE_SELECT, 'body': selectTmplHtml, 'onSave': function () {

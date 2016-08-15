@@ -99,9 +99,12 @@ exports.isAuthenticated = function(req,res) {
     }
 }
 
-function login (req, res)
+function login (req, res, appData, redirectURL)
 {
-    res.redirect("/");
+    if (null == redirectURL) {
+        redirectURL = "/";
+    }
+    res.redirect(302, redirectURL);
 }
 
 function vcenter_login (req, res, appData)
@@ -113,21 +116,46 @@ function vcenter_login (req, res, appData)
     if (-1 == models.indexOf('vcenter')) {
         commonUtils.redirectToURL(req, res, '/login');
     } else {
-       return login(req, res);
+        if (-1 != req.url.indexOf('/vcenter/login')) {
+            return login(req, res, appData, '/vcenter');
+        }
+        exports.dashboard(req, res);
+    }
+}
+
+function logoutCB (req, res, appData, redURL)
+{
+    var ajaxCall = req.headers['x-requested-with'];
+    if ('XMLHttpRequest' == ajaxCall) {
+        var retData = {
+            isRegionListFromConfig: config.regionsFromConfig,
+            configRegionList: config.regions
+        };
+        commonUtils.handleJSONResponse(null, res, retData);
+    } else {
+        login(req, res, appData, redURL);
     }
 }
 
 function vcenter_logout (req, res, appData)
 {
+    req.session.isAuthenticated = false;
+    res.clearCookie('_csrf');
+    res.clearCookie('connect.sid');
     var orch = config.orchestration.Manager;
     var models = orch.split(',');
     if (req.session.loggedInOrchestrationMode != 'vcenter') {
         commonUtils.redirectToURL(req, res, '/logout');
     } else {
         //Issue logout on vCenter only if vmware session exists
-        if(req.session.vmware_soap_session != null)
-            vCenterApi.logout(appData);
-        return logout(req, res);
+        if (req.session.vmware_soap_session != null) {
+            var logoutSess = vCenterApi.logout(appData);
+            logoutSess.done(function(response) {
+                logoutCB(req, res, appData, '/vcenter');
+            });
+        } else {
+            logoutCB(req, res, appData, '/vcenter');
+        }
     }
 }
 
@@ -310,21 +338,34 @@ exports.vcenter_authenticate = function (req, res, appData) {
     });
 }
 
-function logout (req, res)
+function logout (req, res, appData)
 {
+    req.session.isAuthenticated = false;
+    res.clearCookie('_csrf');
+    res.clearCookie('connect.sid');
+    var referer = req.headers['referer'];
+    if (((null != referer) && (-1 != referer.indexOf('/vcenter'))) ||
+        (-1 != req.url.indexOf('/vcenter'))) {
+        vcenter_logout(req, res, appData);
+        return;
+    }
     authApi.deleteAllTokens(req, function(err) {
         res.header('Cache-Control', 
                'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
         /* Need to destroy the session after redirectToLogin as login page depends
            on orchestrationModel
          */
-        req.session.isAuthenticated = false;
         req.session.destroy();
         var retData = {
             isRegionListFromConfig: config.regionsFromConfig,
             configRegionList: config.regions
         };
-        commonUtils.handleJSONResponse(null, res, retData);
+        var ajaxCall = req.headers['x-requested-with'];
+        if ('XMLHttpRequest' == ajaxCall) {
+            commonUtils.handleJSONResponse(null, res, retData);
+        } else {
+            login(req, res);
+        }
     });
 };
 

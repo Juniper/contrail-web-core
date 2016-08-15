@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
-
+ 
 define([
     'underscore',
     'contrail-view',
@@ -1356,7 +1356,8 @@ define([
             doBucketize : chartOptions['doBucketize'],
             bubbleSizeFn: chartOptions['bubbleSizeFn'],
             defaultDataStatusMessage: true,
-            statusMessageHandler: cowm.getRequestMessage
+            statusMessageHandler: cowm.getRequestMessage,
+            bubbleDefMaxValue: getValueByJsonPath(chartOptions,'bubbleCfg;defaultMaxValue', 0) 
         };
 
         return chartViewConfig;

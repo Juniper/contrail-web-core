@@ -1422,6 +1422,7 @@ function getNodeStatusForSummaryPages(data,page) {
 var dashboardUtils = {
     sortNodesByColor: function(a,b) {
         // var colorPriorities = [d3Colors['green'],d3Colors['blue'],d3Colors['orange'],d3Colors['red']];
+        var d3Colors = cowc.COLOR_SEVERITY_MAP;
         var colorPriorities = [d3Colors['blue'],d3Colors['green'],d3Colors['orange'],d3Colors['red']];
         var aColor = $.inArray(a['color'],colorPriorities);
         var bColor = $.inArray(b['color'],colorPriorities);

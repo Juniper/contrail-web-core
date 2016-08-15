@@ -11,41 +11,15 @@ define(
 
                 self.mapSeverityToColor = function (severity) {
                     if (severity != -1) {
-                        if (severity == 4) {
+                        if (severity >= 2) {
                             return cowc.COLOR_SEVERITY_MAP['orange'];
-                        } else if (severity ==3) {
+                        } else {
                             return cowc.COLOR_SEVERITY_MAP['red'];
                         }
                     } else {
                         return false;
                     }
                 }
-                var infraAlertMsgs = {
-                        'UVE_MISSING'           : "System Information unavailable",
-                        'PARTIAL_UVE_MISSING'   : "Partial System Information",
-                        'CONFIG_MISSING'        : "Configuration unavailable",
-                        'CONFIG_IP_MISMATCH'    : "Configured IP mismatch",
-                        'IFMAP_DOWN'            : "Ifmap connection down",
-                        'BGP_CONFIG_MISMATCH'   : "BGP peer configuration mismatch",
-                        'PROCESS_STATES_MISSING': "Process States unavailable",
-                        'DOWN_CNT'              : "{0} Down",        //Used for displaying "XMPP Peers" & "BGP Peers" in node tooltip
-                        'BGP_PEER_DOWN'         : "{0:BGP Peer;BGP Peers} down",
-                        'XMPP_PEER_DOWN'        : "{0:XMPP Peer;XMPP Peers} down",
-                        'INTERFACE_DOWN'        : "{0:Interface;Interfaces} down",
-                        'TIMESTAMP_MISMATCH_BEHIND'   : "Browser is {0} behind system time",
-                        'TIMESTAMP_MISMATCH_AHEAD'    : "Browser is {0} ahead of system time",
-                        'IFMAP_DOWN'            : "Ifmap Connection down",
-                        'PROCESS_DOWN'          : "{0:Process;Processes} down",
-                        'PROCESS_STARTING'      : "{0:Process;Processes} starting",
-                        'PROCESS_STOPPED'       : "{0} stopped",
-                        'PROCESS_DOWN_MSG'      : "{0} down",
-                        'PROCESS_STARTING_MSG'  : "{0} starting",
-                        'PROCESS_COREDUMP'      : "{0:core dump;core dumps}",
-                        'PROCESS_RESTART'       : "{0:restart;restarts}",
-                        'SPACE_THRESHOLD_EXCEEDED'  : '{0} space usage exceeds threshold',
-                        'SPACE_USAGE_WARNING'   : '{0} space usage warning',
-                        'NTP_UNSYNCED_ERROR'    : 'NTP state unsynchronized'
-                    };
 
                 //Given an alarmType and other params fetch the correct message to be displayed.
                 self.getFormattedAlarmMessage = function (options) {
@@ -237,6 +211,11 @@ define(
                     alarm['value']['UVEAlarms'] = UVEAlarms;
                     obj[nodeType].push(alarm);
                     return obj;
+                };
+
+                self.getAlarmSeverityText = function (sev) {
+                    var sevText = cowc.SEVERITY_TO_TEXT_MAP[sev];
+                    return (sevText == null)? sev : sevText;
                 }
 
             }

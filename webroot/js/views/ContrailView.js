@@ -66,7 +66,10 @@ define([
             }
         },
 
-        renderView4Config: function (parentElement, model, viewObj, validation, lockEditingByDefault, modelMap, onAllViewsRenderComplete, onAllRenderComplete) {
+        renderView4Config: function (parentElement, model, viewObj, validation,
+                lockEditingByDefault, modelMap, onAllViewsRenderComplete,
+                onAllRenderComplete, isTabView) {
+
             var viewName = viewObj['view'],
                 viewPathPrefix = viewObj['viewPathPrefix'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
@@ -74,7 +77,47 @@ define([
                 viewConfig = viewObj[cowc.KEY_VIEW_CONFIG],
                 viewAttributes = {viewConfig: viewConfig, elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
                 app = viewObj['app'], self = this;
-
+            if(isTabView) {
+                var getConfigTabs = {
+                        theme: 'default',
+                        active: 0,
+                        type: cowc.TAB_FORM_TYPE,
+                        tabs: [{
+                           elementId: elementId,
+                           title: viewObj.title,
+                           view: viewName,
+                           viewPathPrefix: viewPathPrefix,
+                           viewConfig: viewConfig,
+                           tabConfig: {
+                               activate: function(event, ui) {
+                               }
+                           }
+                       },{
+                           elementId: cowc.PERMISSIONS_TAB_ID,
+                           title: cowc.PERMISSIONS_TITLE,
+                           view: "RBACPermissionsView",
+                           viewConfig: {},
+                           tabConfig: {
+                               activate: function(event, ui) {
+                               }
+                           }
+                       }]
+                };
+                var tabViewConfig  = {
+                    rows: [{
+                        columns: [{
+                            elementId: cowc.PERMISSIONS_SECTION_ID,
+                            view: 'TabsView',
+                            viewConfig: getConfigTabs
+                        }]
+                    }]
+                };
+                viewAttributes = {
+                        viewConfig: tabViewConfig,
+                        elementId: cowc.RBAC_PERMISSIONS_ID,
+                        validation: validation,
+                        lockEditingByDefault: lockEditingByDefault};
+            }
             self.childViewMap[elementId] = null;
 
             var rootView = contrail.checkIfExist(this.rootView) ? this.rootView : this,

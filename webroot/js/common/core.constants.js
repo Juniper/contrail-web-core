@@ -19,12 +19,17 @@ define([
 //          NOTICE  : 2, //Blue
 //          INFO    : 3, //Green
         };
-        this.COLOR_SEVERITY_MAP = {
-            red : 'error',
-            orange : 'warning',
-            blue : 'default',
-            green : 'okay'
-        };
+       this.SEVERITY_TO_TEXT_MAP = {
+               0 : "Critical",
+               1 : "Major",
+               2 : "Minor"
+       };
+       this.COLOR_SEVERITY_MAP = {
+                red : 'error',
+                orange : 'warning',
+                blue : 'default',
+                green : 'okay'
+           };
         this.PATTERN_IP_ADDRESS  = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
         this.PATTERN_SUBNET_MASK = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(\d|[1-2]\d|3[0-2]))?$/;
         this.PATTERN_MAC_ADDRESS = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
@@ -67,6 +72,9 @@ define([
 
         this.TMPL_2ROW_CONTENT_VIEW = "core-2-row-content-template";
         this.TMPL_2COLUMN_1ROW_2ROW_CONTENT_VIEW = "core-2-column-1-row-2row-content-template";
+        //anlytics node template
+        //core-2-row-4-column-template
+        this.TMPL_4COLUMN__2ROW_CONTENT_VIEW = "core-2-row-4-column-template";
 
         this.TMPL_ACCORDIAN_VIEW = "core-accordian-view-template";
         this.TMPL_JSON_EDITOR_VIEW = "core-json-editor-view-template";
@@ -1403,10 +1411,22 @@ define([
         this.ANALYTICS_API_DOWN_ALARM_TEXT = 'Analytics API Down. Alarms may not be reported correctly.';
         this.ANALYTICS_PROCESSES_DOWN_ALARM_TEXT = 'Analytics Processes Down. Alarms may not be reported correctly.';
         this.UI_GENERATED_ALARM = 'UIGeneratedAlarm';
+
+        //RBAC constants
+        this.RBAC_ACCESS_TYPE_LIST = [{text: "Read", value: "4"},
+                                      {text: "Write", value: "2"},
+                                      {text: "Refer", value: "1"}];
+        this.PERMISSIONS_TITLE = 'Permissions';
+        this.PERMISSIONS_TAB_ID = 'permission_tab';
+        this.PERMISSIONS_SECTION_ID = 'permissions_config_tab';
+        this.RBAC_PERMISSIONS_ID = 'rbac_permissions';
+        this.TAB_FORM_TYPE = 'form';
+
         this.get = function () {
             var args = arguments;
             return cowu.getValueFromTemplate(args);
         };
+        this.DEFAULT_COLOR = '#adcfdc';
     };
     //Export to global scope
     cowc = new CoreConstants();

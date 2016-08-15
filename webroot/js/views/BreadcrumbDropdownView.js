@@ -10,9 +10,9 @@ define([
     var BreadcrumbDropdownView = ContrailView.extend({
         render: function () {
             var self = this,
-                viewConfig = self.attributes.viewConfig,
-                ajaxConfig = viewConfig['ajaxConfig'],
-                deferredObj = $.Deferred();
+              viewConfig = self.attributes.viewConfig,
+              ajaxConfig = viewConfig['ajaxConfig'],
+              deferredObj = $.Deferred();
 
             if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
@@ -39,12 +39,12 @@ define([
 
         renderBreadcrumbDropdown: function() {
             var self = this,
-                viewConfig = self.attributes.viewConfig,
-                dropdownOptions = viewConfig.dropdownOptions,
-                parentSelectedValueData = contrail.checkIfExist(dropdownOptions.parentSelectedValueData) ? dropdownOptions.parentSelectedValueData : null,
-                dropdownData = (self.model === null) ? [] : self.model.getItems(),
-                dropdownElementId = self.attributes.elementId,
-                defaultValueIndex = ((contrail.checkIfExist(dropdownOptions.defaultValueIndex) && dropdownData.length > 0) ? dropdownOptions.defaultValueIndex : 0);
+              viewConfig = self.attributes.viewConfig,
+              dropdownOptions = viewConfig.dropdownOptions,
+              parentSelectedValueData = contrail.checkIfExist(dropdownOptions.parentSelectedValueData) ? dropdownOptions.parentSelectedValueData : null,
+              dropdownData = (self.model === null) ? [] : self.model.getItems(),
+              dropdownElementId = self.attributes.elementId,
+              defaultValueIndex = ((contrail.checkIfExist(dropdownOptions.defaultValueIndex) && dropdownData.length > 0) ? dropdownOptions.defaultValueIndex : 0);
 
             if (contrail.checkIfExist(dropdownOptions.allDropdownOption)) {
                 dropdownData = dropdownOptions.allDropdownOption.concat(dropdownData);
@@ -52,10 +52,10 @@ define([
 
             if (dropdownData.length > 0) {
                 var selectedValueData = null,
-                    urlValue = contrail.checkIfExist(dropdownOptions.urlValue) ? dropdownOptions.urlValue : null,
-                    cookieKey = contrail.checkIfExist(dropdownOptions.cookieKey) ? dropdownOptions.cookieKey : null,
-                    cookieValue = contrail.getCookie(cookieKey),
-                    urlDataKey = null, cookieDataKey = null;
+                  urlValue = contrail.checkIfExist(dropdownOptions.urlValue) ? dropdownOptions.urlValue : null,
+                  cookieKey = contrail.checkIfExist(dropdownOptions.cookieKey) ? dropdownOptions.cookieKey : null,
+                  cookieValue = contrail.getCookie(cookieKey),
+                  urlDataKey = null, cookieDataKey = null;
 
                 $.each(dropdownData, function (key, value) {
                     if (urlValue == value.name) {
@@ -69,34 +69,34 @@ define([
 
                 if(urlValue != null && urlDataKey == null) {
                     var notFoundTemplate = contrail.getTemplate4Id(cowc.TMPL_NOT_FOUND_MESSAGE),
-                        notFoundConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_NOT_FOUND_PAGE, {errorMessage: urlValue + ' was not found.'});
+                      notFoundConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_NOT_FOUND_PAGE, {errorMessage: urlValue + ' was not found.'});
 
                     $(contentContainer).html(notFoundTemplate(notFoundConfig));
                 } else {
                     var onBreadcrumbDropdownChange = function(selectedValueData, dropdownOptions, type) {
-                            var cookieKey = contrail.checkIfExist(dropdownOptions.cookieKey) ? dropdownOptions.cookieKey : null,
-                                childViewConfig = null;
+                          var cookieKey = contrail.checkIfExist(dropdownOptions.cookieKey) ? dropdownOptions.cookieKey : null,
+                            childViewConfig = null;
 
-                            selectedValueData.parentSelectedValueData = parentSelectedValueData;
+                          selectedValueData.parentSelectedValueData = parentSelectedValueData;
 
-                            if (contrail.checkIfExist(dropdownOptions.childView)) {
-                                type = (contrail.checkIfExist(dropdownOptions.childView[type]) ? type : 'init');
-                                if (contrail.checkIfFunction(dropdownOptions.childView[type])) {
-                                    childViewConfig = dropdownOptions.childView[type](selectedValueData);
-                                } else if (!$.isEmptyObject(dropdownOptions.childView[type])) {
-                                    childViewConfig = dropdownOptions.childView[type];
-                                }
-                            }
+                          if (contrail.checkIfExist(dropdownOptions.childView)) {
+                              type = (contrail.checkIfExist(dropdownOptions.childView[type]) ? type : 'init');
+                              if (contrail.checkIfFunction(dropdownOptions.childView[type])) {
+                                  childViewConfig = dropdownOptions.childView[type](selectedValueData);
+                              } else if (!$.isEmptyObject(dropdownOptions.childView[type])) {
+                                  childViewConfig = dropdownOptions.childView[type];
+                              }
+                          }
 
-                            if (cookieKey !== null) {
-                                contrail.setCookie(cookieKey, selectedValueData.name);
-                            }
+                          if (cookieKey !== null) {
+                              contrail.setCookie(cookieKey, selectedValueData.name);
+                          }
 
-                            if (childViewConfig !== null) {
-                                self.renderView4Config(self.$el, null, childViewConfig);
-                            }
-                        },
-                        dropdownElement = constructBreadcrumbDropdownDOM(dropdownElementId, dropdownData, dropdownOptions, onBreadcrumbDropdownChange);
+                          if (childViewConfig !== null) {
+                              self.renderView4Config(self.$el, null, childViewConfig);
+                          }
+                      },
+                      dropdownElement = constructBreadcrumbDropdownDOM(dropdownElementId, dropdownData, dropdownOptions, onBreadcrumbDropdownChange);
 
                     selectedValueData = (selectedValueData == null && urlDataKey != null) ? dropdownData[urlDataKey] : selectedValueData;
                     selectedValueData = (selectedValueData == null && cookieDataKey != null) ? dropdownData[cookieDataKey] : selectedValueData;
@@ -108,14 +108,14 @@ define([
                             onBreadcrumbDropdownChange(selectedValueData, dropdownOptions, 'init')
                         });
                     } else {
-                            onBreadcrumbDropdownChange(selectedValueData, dropdownOptions, 'init')
+                        onBreadcrumbDropdownChange(selectedValueData, dropdownOptions, 'init')
                     }
                 }
 
 
             } else {
                 var notFoundTemplate = contrail.getTemplate4Id(cowc.TMPL_NOT_FOUND_MESSAGE),
-                    notFoundConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_NOT_FOUND_PAGE, {title: cowm.DATA_SUCCESS_EMPTY});
+                  notFoundConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_NOT_FOUND_PAGE, {title: cowm.DATA_SUCCESS_EMPTY});
 
                 $(contentContainer).html(notFoundTemplate(notFoundConfig));
             }
@@ -170,7 +170,7 @@ define([
         if (contrail.checkIfExist($('#' + breadcrumbDropdownId).data('contrailDropdown'))) {
 
             var breadcrumbLiElement = $('#' + breadcrumbDropdownId).parent(),
-                breadcrumbDivider = breadcrumbLiElement.prev().find('.divider');
+              breadcrumbDivider = breadcrumbLiElement.prev().find('.divider');
 
             breadcrumbLiElement.find('.breadcrumb-divider').remove();
             breadcrumbLiElement.nextAll('.breadcrumb-item').remove();
