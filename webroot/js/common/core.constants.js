@@ -180,6 +180,11 @@ define([
         this.GRAPH_MARGIN_TOP = 4000;
         this.GRAPH_MARGIN_BOTTOM = 4000;
 
+        this.VIEW_FORM_DROPDOWN_VIEW = "FormDropdownView";
+        this.VIEW_SECTION_VIEW = "SectionView";
+        this.VIEW_FORM_EDITABLE_GRID_VIEW = "FormEditableGridView";
+        this.VIEW_FORM_INPUT_VIEW = "FormInputView";
+
         this.TOOLTIP_DELAY = 1000;
 
         this.DEFAULT_CONFIG_ELEMENT_TOOLTIP = {

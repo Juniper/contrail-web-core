@@ -81,6 +81,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'cluster-schema'              : coreWebDir + '/schemas/cluster.schema',
         'json-model'                  : coreWebDir + "/js/models/JsonModel",
         'json-edit-view'              : coreWebDir + '/js/views/JsonEditView',
+        'schema-model'               : coreWebDir + '/js/models/SchemaModel',
+        'view-config-generator'      : coreWebDir + '/js/common/view.config.generator',
         'jquery-ui'                 : coreWebDir + '/assets/jquery-ui/js/jquery-ui',
     };
 

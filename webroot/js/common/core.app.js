@@ -79,11 +79,11 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
 
         'json-editor'                 : coreWebDir + '/assets/jsoneditor/js/jsoneditor.min',
         'ajv'                         : coreWebDir + '/assets/ajv/ajv.min',
-        'server-schema'               : coreWebDir + '/schemas/server.schema',
-        'cluster-schema'              : coreWebDir + '/schemas/cluster.schema',
         'json-model'                  : coreWebDir + "/js/models/JsonModel",
         'json-edit-view'              : coreWebDir + '/js/views/JsonEditView',
         'jquery-ui'                   : coreWebDir + '/assets/jquery-ui/js/jquery-ui.min',
+        'schema-model'               : coreWebDir + '/js/models/SchemaModel',
+        'view-config-generator'      : coreWebDir + '/js/common/view.config.generator',
         'iframe-view'                 : coreWebDir + '/js/views/IframeView'
     };
 
