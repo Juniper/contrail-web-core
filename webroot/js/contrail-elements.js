@@ -1032,14 +1032,16 @@
             var className = (options.className == null) ? '' : options.className;
 
             var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal fade contrail-modal" tabindex="-1" role="dialog" aria-hidden="true"> \
-                <div class="modal-content">\
-        		<div class="modal-header"> \
-        	    	<button id="modal-header-close" type="button" class="close"><i class="fa fa-remove"></i></button> \
-        			<h6 class="modal-header-title"></h6> \
-        		</div> \
-	        	<div class="modal-body"></div> \
-	        	<div class="modal-footer"></div> \
-        	</div> \
+                <div class="modal-dialog" role="document">\
+                    <div class="modal-content">\
+                        <div class="modal-header"> \
+                            <button id="modal-header-close" type="button" class="close"><i class="fa fa-remove"></i></button> \
+                            <h6 class="modal-header-title"></h6> \
+                        </div> \
+                        <div class="modal-body"></div> \
+                        <div class="modal-footer"></div> \
+                    </div> \
+                </div>\
         	</div> ';
 
             $('#' + options.id).remove();
@@ -1094,14 +1096,14 @@
             else {
                 modalId.find('.modal-footer').remove();
             }
-            modalId.modal({backdrop:'static', keyboard:false});
+            modalId.modal({backdrop:'static', keyboard: false});
 
             modalId.offset({left: ($(document).width() - modalId.width()) / 2, top: $(document).scrollTop() + 50});
 
-            modalId
+            modalId.find('.modal-content')
                 .draggable({
                     handle: ".modal-header",
-                    containment: 'body',
+                    containment: modalId,
                     cursor: 'move'
                 });
 
