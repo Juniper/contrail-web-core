@@ -85,7 +85,7 @@ define(['underscore'], function (_) {
             if(active) return;
             if(typeof _.settings.before_enable === 'function' && _.settings.before_enable.call(self) === false) return;
             active = true;
-            $('.onpage-help-backdrop, .onpage-help-section').removeClass('hidden');
+            $('.page-help-backdrop, .page-help-section').removeClass('hidden');
             ovfx = document.body.style.overflowX;
             document.body.style.overflowX = 'hidden';//hide body:overflow-x
             display_help_sections();
@@ -97,7 +97,7 @@ define(['underscore'], function (_) {
             if(!active) return;
             if(typeof _.settings.before_disable === 'function' && _.settings.before_disable.call(self)) return;
             active = false;
-            $('.onpage-help-backdrop, .onpage-help-section').addClass('hidden');
+            $('.page-help-backdrop, .page-help-section').addClass('hidden');
 
             document.body.style.overflowX = ovfx;//restore body:overflow-x
             releaseFocus();
@@ -116,10 +116,10 @@ define(['underscore'], function (_) {
             if( created ) return;
 
             help_container =
-                $('<div id="onpage-help-container" class="onpage-help-container" tabindex="-1" />')
+                $('<div id="page-help-container" class="page-help-container" tabindex="-1" />')
                     .appendTo('body');
 
-            help_container.append('<div class="onpage-help-backdrop hidden" />')
+            help_container.append('<div class="page-help-backdrop hidden" />')
 
             //update to correct position and size
             $(window).on('resize.onpage_help', function() {
@@ -169,7 +169,7 @@ define(['underscore'], function (_) {
         //finds comments and relevant help sections
         function save_sections(reset) {
             if( !(reset === true || section_count == 0) ) return;//no need to re-calculate sections, then return
-            if(reset === true) help_container.find('.onpage-help-section').remove();
+            if(reset === true) help_container.find('.page-help-section').remove();
 
             section_start = {};
             section_end = {};
@@ -197,10 +197,10 @@ define(['underscore'], function (_) {
             });
 
             if (flag == 0) {
-                $(".onpage-help-toggle-container").hide();
+                $(".page-help-toggle-container").hide();
             }
             if (flag == 1) {
-                $(".onpage-help-toggle-container").show();
+                $(".page-help-toggle-container").show();
             }
         }
 
@@ -229,9 +229,9 @@ define(['underscore'], function (_) {
             if( !(name in section_rect) || !help_container ) return;
 
             //div is the highlighted box above each section
-            var div = help_container.find('.onpage-help-section[data-section="'+name+'"]').eq(0);
+            var div = help_container.find('.page-help-section[data-section="'+name+'"]').eq(0);
             if(div.length == 0)	{
-                div = $('<a class="onpage-help-section" href="#" />').appendTo(help_container);
+                div = $('<a class="page-help-section" href="#" />').appendTo(help_container);
                 if(ie_fix) div.append('<span class="ie-hover-fix" />');
 
                 if(_.settings.icon_1) div.append('<i class="help-icon-1 '+_.settings.icon_1+'"></i>');

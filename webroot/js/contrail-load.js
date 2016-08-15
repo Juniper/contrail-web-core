@@ -108,16 +108,16 @@ $(document).ready(function () {
     $(document).off('click.dropdown-menu');
 
     function startHelp() {
-        $('#onpage-help-toggle-btn').on('click', function (event) {
+        $(document).on('click', '#page-help-toggle-btn', function (event) {
             event.preventDefault();
             toggleHelp();
         });
 
-        $(document).on('click', '.onpage-help-backdrop', function(e) {
+        $(document).on('click', '.page-help-backdrop', function(e) {
             if (this.hidden == false) {
                 helpHandler.disable();
-                var toggle_btn = $('#onpage-help-toggle-btn');
-                toggle_btn.find('.onpage-help-toggle-text').removeClass('onpage-help-toggle-text');
+                var toggle_btn = $('#page-help-toggle-btn');
+                toggle_btn.find('.page-help-toggle-text').removeClass('page-help-toggle-text');
                 toggle_btn.parent().toggleClass('active');
             }
         });
@@ -132,8 +132,8 @@ $(document).ready(function () {
     function toggleHelp() {
         helpHandler.toggle();
 
-        var toggle_btn = $('#onpage-help-toggle-btn');
-        toggle_btn.find('.onpage-help-toggle-text').removeClass('onpage-help-toggle-text');
+        var toggle_btn = $('#page-help-toggle-btn');
+        toggle_btn.find('.page-help-toggle-text').removeClass('page-help-toggle-text');
         toggle_btn.parent().toggleClass('active');
     }
 
