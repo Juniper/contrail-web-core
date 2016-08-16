@@ -110,7 +110,7 @@ clear-cache-prod:
 	make make-ln
 
 css-lint:
-	./node_modules/grunt-cli/bin/grunt csslint
+	./linting.sh $(REPO)
 
 test-node:
 	./unit-test.sh node
