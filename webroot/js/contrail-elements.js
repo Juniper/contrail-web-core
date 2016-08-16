@@ -1031,7 +1031,7 @@
             options.id = options.id != undefined ? options.id : '';
             var className = (options.className == null) ? '' : options.className;
 
-            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal fade contrail-modal" tabindex="-1" role="dialog" aria-hidden="true"> \
+            var modalHTML = '<div id="' + options.id + '" class="modal fade contrail-modal ' + className + '" tabindex="-1" role="dialog" aria-hidden="true"> \
                 <div class="modal-dialog" role="document">\
                     <div class="modal-content">\
                         <div class="modal-header"> \
