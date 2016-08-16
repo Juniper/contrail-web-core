@@ -109,6 +109,9 @@ clear-cache-prod:
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env false
 	make make-ln
 
+css-lint:
+	./node_modules/grunt-cli/bin/grunt csslint
+
 test-node:
 	./unit-test.sh node
 	

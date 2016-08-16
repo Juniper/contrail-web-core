@@ -86,7 +86,7 @@ module.exports = function( grunt ) {
         ]
       },
       dev: {
-        src: "./webroot/**/*.css"
+        src: grunt.option("src") || "./webroot/**/*.css"
       }
     }
   });
