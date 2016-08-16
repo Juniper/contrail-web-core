@@ -63,7 +63,7 @@ cp -af ./$THIRD_PARTY/jquery-validation-v1.11.1/jquery.validate.js webroot/asset
 cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/build/jquery.steps.min.js webroot/assets/jquery/js/
 cp -af ./$THIRD_PARTY/jquery-steps-1.1.0/demo/css/jquery.steps.css webroot/assets/jquery/css/
 cp -af ./$THIRD_PARTY/jquery-validation-v1.11.1/jquery.validate.js webroot/assets/jquery/js/jquery.validate.js
-cp -af ./$THIRD_PARTY/jquery.panzoom-v2.0.5/dist/jquery.panzoom.min.js webroot/assets/jquery/js/jquery.panzoom.min.js
+cp -af ./$THIRD_PARTY/jquery.panzoom-v3.2.1/dist/jquery.panzoom.min.js webroot/assets/jquery/js/jquery.panzoom.min.js
 cp -af ./$THIRD_PARTY/tristate/jquery.tristate.js webroot/assets/jquery/js/jquery.tristate.js
 #End - Copy JQuery files from web-third-party
 

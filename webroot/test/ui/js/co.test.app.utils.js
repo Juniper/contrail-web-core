@@ -126,7 +126,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             //End - core-bundle aliases
             //Start - jquery.dep.libs aliases
             'jquery.xml2json'           : coreWebDir + '/assets/jquery/js/jquery.xml2json',
-            // 'jquery.ba-bbq'             : coreWebDir + '/assets/jquery/js/jquery.ba-bbq.min',
             'jquery.json'               : coreWebDir + "/assets/slickgrid/js/jquery.json-2.3.min",
             'bootstrap'                 : coreWebDir + '/assets/bootstrap/js/bootstrap',
             'select2'                   : coreWebDir + "/assets/select2/js/select2.min",
@@ -141,10 +140,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'jquery.multiselect.filter' : coreWebDir + "/assets/jquery-ui/js/jquery.multiselect.filter",
             'jquery.steps.min'          : coreWebDir + "/assets/jquery/js/jquery.steps.min",
             'jquery.panzoom'            : coreWebDir + "/assets/jquery/js/jquery.panzoom.min",
-            // 'jquery.ui.position'        : coreWebDir + "/assets/jquery-contextMenu/js/jquery.ui.position",
-            // 'jquery-contextmenu'        : coreWebDir + "/assets/jquery-contextMenu/js/jquery.contextMenu",
             'jquery.event.drag'         : coreWebDir + "/assets/slickgrid/js/jquery.event.drag-2.2",
-            // 'jquery.droppick'           : coreWebDir + "/assets/slickgrid/js/jquery.dropkick-1.0.0",
             'jquery.datetimepicker'     : coreWebDir + "/assets/datetimepicker/js/jquery.datetimepicker",
             //End - jquery.dep.libs aliases
             //Start - thirdparty-libs aliases
@@ -258,9 +254,6 @@ var coreAppShim =  {
     'xml2json' : {
         deps: ["jquery"]
     },
-    "jquery.ba-bbq" : {
-        deps: ['jquery']
-    },
     "jquery.timer" : {
         deps: ['jquery']
     },
@@ -298,9 +291,6 @@ var coreAppShim =  {
     'contrail-common': {
         deps: ['jquery']
     },
-    // 'contrail-layout': {
-    //     deps:['jquery.ba-bbq']
-    // },
     'slick.enhancementpager': {
         deps: ['jquery']
     },
@@ -412,7 +402,6 @@ var coreBundles = {
         ],
         'jquery-dep-libs': [
             'jquery.xml2json',
-            // 'jquery.ba-bbq',
             'jquery.json',
             'bootstrap',
             'select2',
