@@ -1465,7 +1465,7 @@
     </table>
     {{#each gridActions}}
     <div class="row margin-10-0-0">
-        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="fa fa-plus"></i>{{this.buttonTitle}}</a>
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="fa fa-plus"></i> {{this.buttonTitle}}</a>
     </div>
     {{/each}}
 </script>
@@ -1529,7 +1529,7 @@
     {{#IfCompare viewConfig.label null operator='!='}}
         <label style="margin:0px">{{viewConfig.label}}</label>
     {{/IfCompare}}
-    <div class="row">
+    <div>
         <table class="collection-table">
             <tbody data-bind="foreach: {{viewConfig.collection}}">
             {{#each viewConfig.rows}}

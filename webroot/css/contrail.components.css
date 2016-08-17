@@ -183,8 +183,6 @@
  */
 .modal.contrail-modal {
     margin-left: 0 !important;
-    /*position: absolute;*/
-    /*left: 0;*/
     top: 0 !important;
     height: 100% !important;
     width: 100% !important;
@@ -196,35 +194,28 @@
     overflow-y: auto;
 }
 
-.modal-280{
+.modal-280 .modal-dialog{
     width:280px;
-    margin-left: -140px;
 }
-.modal-420{
+.modal-420 .modal-dialog{
     width:420px;
-    margin-left: -210px;
 }
-.modal-560{
+.modal-560 .modal-dialog {
     width:560px;
-    margin-left: -280px;
 }
-.modal-700{
+.modal-700 .modal-dialog {
     width:700px;
-    margin-left: -350px;
 }
-.modal-840{
+.modal-840 .modal-dialog {
     width:840px;
-    margin-left: -420px;
 }
-.modal-980{
+.modal-980 .modal-dialog {
     width:980px;
-    margin-left: -490px;
 }
-.modal-1120{
+.modal-1120 .modal-dialog {
     width:1120px;
-    margin-left: -560px;
 }
-.modal--500 .modal-body{
+.modal--500 .modal-body {
     max-height: 500px;
     min-height: 500px;
 }
