@@ -1620,17 +1620,6 @@ function authenticate (req, res, appData, callback)
             callback(errStr);
             return;
         }
-        var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
-        if ((true == multiTenancyEnabled) &&
-            (false == isAdminRoleInProjects(req.session.userRoles))) {
-            /* Logged in user is not admin in multi_tenancy mode,
-               so redirect to login page
-             */
-            req.session.isAuthenticated = false;
-            errStr = "User with admin only role is allowed";
-            callback(errStr);
-            return;
-        }
 
         /* appData.req does not have the session object which we just injected,
          * so update req & defTokenObj in appData
@@ -2634,7 +2623,6 @@ function getCookieObjs (req, appData, callback)
 {
     var cookieObjs = {};
     var domCookie = req.cookies.domain;
-    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
     getAdminProjectList(req, appData, function(adminProjectObjs, domainObjs,
                                                tenantList, domList) {
         /*
