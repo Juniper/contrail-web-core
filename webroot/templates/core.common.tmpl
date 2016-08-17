@@ -654,12 +654,12 @@
 </script>
 
 <script type = "text/x-handlebars-template" id = "statusTemplate">
-    {{#IfCompare sevLevel sevLevels.ERROR }}
-    <span class="status-badge-rounded-small status-inactive"></span>
+    {{#IfCompare color colorSevMap.red }}
+        <span class="status-badge-rounded-small status-inactive"></span>
     {{else}}
-    {{#IfCompare sevLevel sevLevels.WARNING}}
-    <span class="status-badge-rounded-small status-partially-active"></span>
-    {{/IfCompare}}
+        {{#IfCompare color colorSevMap.orange}}
+            <span class="status-badge-rounded-small status-partially-active"></span>
+        {{/IfCompare}}
     {{/IfCompare}}
 </script>
 
