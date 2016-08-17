@@ -37,6 +37,7 @@ var svcAuthAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
 
 var mandatoryEndpointList = ['compute', 'image'];
 var adminRoles = config.roleMaps['cloudAdmin'];
+var memberRoles = config.roleMaps['member'];
 var authAPIVers = ['v2.0'];
 if ((null != config) && (null != config.identityManager) &&
     (null != config.identityManager.apiVersion)) {
@@ -64,7 +65,32 @@ function getUIRolesByExtRoles (resRoleList)
                               'assigning to member role');
         return [global.STR_ROLE_USER];
     }
+
+    var memberRolesInUpper = memberRoles.map(function(x) {
+        return x.toUpperCase();
+    });
+    var adminRolesInUpper = adminRoles.map(function(x) {
+        return x.toUpperCase();
+    });
+
     var rolesCount = resRoleList.length;
+    if (-1 != adminRoles.indexOf(global.STR_ROLE_WILDCARD)) {
+        /* Then check if any role in the role list does not match with Member
+         * role, if yes, then return true, else do the rest processing
+         */
+
+        for (var i = 0; i < rolesCount; i++) {
+            var userRole =
+                commonUtils.getValueByJsonPath(resRoleList[i], 'name', null);
+            if (null != userRole) {
+                userRole = userRole.toUpperCase();
+            }
+            if (-1 == memberRolesInUpper.indexOf(userRole)) {
+                return [global.STR_ROLE_ADMIN];
+            }
+        }
+    }
+
     var extRoleStr = null;
     var tmpUIRoleMapList = {};
     var uiRoleMaps = {};
@@ -1523,19 +1549,38 @@ function makeAuth (req, startIndex, lastErrStr, callback)
 
 function isAdminRoleInProjects (userRolesPerProject)
 {
-    var adminRolesCnt = adminRoles.length;
-    for (key in userRolesPerProject) {
-        var roles = userRolesPerProject[key];
-        for (var i = 0; i < adminRolesCnt; i++) {
+    var memberRolesInUpper = memberRoles.map(function(x) {
+        return x.toUpperCase();
+    });
+    var adminRolesInUpper = adminRoles.map(function(x) {
+        return x.toUpperCase();
+    });
+
+    if (-1 != adminRoles.indexOf(global.STR_ROLE_WILDCARD)) {
+        /* Then check if any role in the role list does not match with Member
+         * role, if yes, then return true, else do the rest processing
+         */
+        for (var key in userRolesPerProject) {
             var userRoles = userRolesPerProject[key];
-            var adminRole = adminRoles[i];
-            adminRole = adminRole.toUpperCase();
-            var userRolesCnt = userRoles.length;
-            for (var j = 0; j < userRolesCnt; j++) {
-                var userRole = userRoles[j].toUpperCase();
-                if (userRole == adminRole) {
+            var userRolesLen = userRoles.length;
+            for (var i = 0; i < userRolesLen; i++) {
+                var userRole = userRoles[i].toUpperCase();
+                if (-1 == memberRolesInUpper.indexOf(userRole)) {
                     return true;
                 }
+                if (-1 != adminRolesInUpper.indexOf(userRole)) {
+                    return true;
+                }
+            }
+        }
+    }
+    for (var key in userRolesPerProject) {
+        var userRoles = userRolesPerProject[key];
+        var userRolesLen = userRoles.length;
+        for (var i = 0; i < userRolesLen; i++) {
+            var userRole = userRoles[i].toUpperCase();
+            if (-1 != adminRolesInUpper.indexOf(userRole)) {
+                return true;
             }
         }
     }
@@ -1560,6 +1605,7 @@ function authenticate (req, res, appData, callback)
     var urlHash = '',urlPath = '';
     var post = req.body,
         username = post.username,
+        domain = post.domain,
         regionname = post.regionname;
     if (post.urlHash != null) {
         urlHash = post.urlHash;
@@ -1580,6 +1626,9 @@ function authenticate (req, res, appData, callback)
         if (null != cookieRegion) {
             //req.session.regionname = cookieRegion;
         }
+    }
+    if ((domain != null) && (domain.length > 0)) {
+        req.cookies.domain = domain;
     }
     if (true == authApi.isRegionListFromConfig()) {
         if ((null == regionname) || (!regionname.length)) {
@@ -1617,17 +1666,6 @@ function authenticate (req, res, appData, callback)
     makeAuth(req, startIndex, null, function(errStr) {
         if (null != errStr) {
             req.session.isAuthenticated = false;
-            callback(errStr);
-            return;
-        }
-        var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
-        if ((true == multiTenancyEnabled) &&
-            (false == isAdminRoleInProjects(req.session.userRoles))) {
-            /* Logged in user is not admin in multi_tenancy mode,
-               so redirect to login page
-             */
-            req.session.isAuthenticated = false;
-            errStr = "User with admin only role is allowed";
             callback(errStr);
             return;
         }
@@ -2457,7 +2495,7 @@ function getDomainNameByUUID (request, domUUID, domList)
             return domList[i]['fq_name'][0];
         }
     }
-    return getDefaultDomain(request);
+    return null;
 }
 
 function isDefaultDomain (req, domain)
@@ -2514,11 +2552,19 @@ function formatIdentityMgrProjects (error, request, projectLists, domList,
         var tenantLen = projectLists['tenants'].length;
         for(var i=0; i<tenantLen; i++) {
             var tenant = projectLists['tenants'][i];
-            domain = getDefaultDomain(request);
+            var defDomain = getDefaultDomain(request);
+            var domain = defDomain;
             if ((null != tenant['domain_id']) &&
                 (null != domList) && (null != domList['domains'])) {
                 uuid = commonUtils.convertUUIDToString(tenant["domain_id"]);
                 domain = getDomainNameByUUID(request, uuid, domList['domains']);
+                if (null == domain) {
+                    if (null != request.cookies.domain) {
+                        domain = request.cookies.domain;
+                    } else {
+                        domain = defDomain;
+                    }
+                }
             }
             projects["projects"].push({
                 "uuid"    : commonUtils.convertUUIDToString(tenant["id"]),
@@ -2634,7 +2680,6 @@ function getCookieObjs (req, appData, callback)
 {
     var cookieObjs = {};
     var domCookie = req.cookies.domain;
-    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
     getAdminProjectList(req, appData, function(adminProjectObjs, domainObjs,
                                                tenantList, domList) {
         /*

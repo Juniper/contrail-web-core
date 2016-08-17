@@ -190,7 +190,6 @@ function formatDomainList (req, tenantList, domainListObjs)
 function setAllCookies (req, res, appData, cookieObj, callback)
 {
     var loginErrFile = 'webroot/html/login-error.html';
-    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
     var adminProjectList = authApi.getAdminProjectList(req);
     if (null == appData['authObj']['defTokenObj']) {
         /* We have not got defTokenObj filled yet while sending to Auth
@@ -201,19 +200,6 @@ function setAllCookies (req, res, appData, cookieObj, callback)
             appData['authObj']['defTokenObj'] =
                 req.session.tokenObjs[adminProjectList[0]]['token'];
         } else {
-            /* Check if multi_tenancy enabled */
-            if (true == multiTenancyEnabled) {
-                /* We should not come here, multi_tenancy enabled, why we came
-                 * here still
-                 */
-                logutils.logger.error("User with admin only role is allowed!!!");
-                errStr = "User with admin only role is allowed";
-                commonUtils.changeFileContentAndSend(res, loginErrFile,
-                                                     global.CONTRAIL_LOGIN_ERROR,
-                                                     errStr, function() {
-                });
-                return;
-            }
             var tokenObjs = req.session.tokenObjs;
             for (key in tokenObjs) {
                 appData['authObj']['defTokenObj'] =

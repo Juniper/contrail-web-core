@@ -307,13 +307,17 @@ config.staticAuth[0].roles = ['cloudAdmin'];
  * the user is treated as cloudAdmin, else if any of the external member role
  * matches with the UI member role, user is treated as member.
  *
+ * '*' in config.roleMaps.cloudAdmin signifies that if a user role does not
+ * match with any role in config.roleMaps.member, then it is treated as
+ * non-member role
+ *
  * Please note that for orchestration model, no-orch, vcenter and cloudstack, we
  * assume UI role as cloudAdmin
  *
  *****************************************************************************/
 config.roleMaps = {};
 config.roleMaps.cloudAdmin = ['admin', 'KeystoneAdmin',
-    'KeystoneServiceAdmin', 'netadmin', 'sysadmin'];
+    'KeystoneServiceAdmin', 'netadmin', 'sysadmin', '*'];
 config.roleMaps.member = ['Member', '_member_'];
 
 /*****************************************************************************

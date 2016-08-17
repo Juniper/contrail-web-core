@@ -126,6 +126,13 @@ function getTenantListAndSyncDomain (request, appData, callback)
                             commonUtils.convertUUIDToString(tenantList['tenants'][i]['domain_id']);
                         var domFqn = authApi.getDomainNameByUUID(request, domId,
                                                         domList['domains']);
+                        if (null == domFqn) {
+                            if (null != request.cookies.domain) {
+                                domFqn = request.cookies.domain;
+                            } else {
+                                domFqn = authApi.getDefaultDomain(request);
+                            }
+                        }
                         if ((null == tmpDomainObjs[domId]) && (null != domFqn)) {
                             domainObjs['domains'].push({'fq_name': [domFqn], 'uuid': domId});
                             tmpDomainObjs[domId] = domId;
