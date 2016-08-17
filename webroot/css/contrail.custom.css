@@ -1059,9 +1059,8 @@ button.btn.btn-mini.json-editor-btn-plus{
     color: #585858 !important;
     font-size: 13px;
 }
-button.btn.btn-mini.json-editor-btn-collapse,
-button.btn.btn-mini.json-editor-btn-expand{
-  font-size:20px;
+button.btn.btn-mini.json-editor-btn-collapse{
+  font-size:12px !important;
 }
 button.btn.btn-mini.json-editor-btn-trash,
 button.btn.btn-mini.json-editor-btn-copy,
@@ -1070,7 +1069,7 @@ button.btn.btn-mini.json-editor-btn-create{
     padding: 0px;
     border: none;
     color: #585858 !important;
-    font-size: 13px;
+    font-size: 14px;
 }
 button.btn.btn-mini.json-editor-btn-trash:hover,
 button.btn.btn-mini.json-editor-btn-trash:focus{
@@ -1098,48 +1097,41 @@ button.btn.btn-mini.json-editor-btn-copy:hover,
 button.btn.btn-mini.json-editor-btn-copy:active,
 button.btn.btn-mini.json-editor-btn-create:hover,
 button.btn.btn-mini.json-editor-btn-create:active,
-button.btn.btn-mini.json-editor-btn-create:focus{
+button.btn.btn-mini.json-editor-btn-create:focus,
+button.btn.btn-mini.json-editor-update-json:focus,
+button.btn.btn-mini.json-editor-update-json:hover,
+button.btn.btn-mini.json-editor-update-json:active{
     border: none !important;
     outline: none !important;
 }
 
-#editorContainer h3 span{
-    color: #585858 !important;
-    text-shadow: none !important;
-    font-size: 14px;
-    font-weight: normal;
-}
-#editorContainer label{
-    font-weight: normal !important;
-    font-size:14px !important;
-}
 #editorContainer .well,
 #editorContainer .well-small{
    padding: 0px !important;
    background-color: white;
    box-shadow: none;
    border: 0px;
-   padding-left: 20px !important;
-   margin-bottom: 0px !important;
-
 }
 #editorContainer .container-fluid{
   padding-left:10px !important;
-  margin-left: -12px;
+  margin-left: 8px;
   border-left: 1px dotted #e4e4e4;
 }
 #editorContainer .container-fluid .row-fluid{
   padding-left:5px !important;
-  padding-bottom:3px;
-
 }
 #editorContainer .container-fluid .row-fluid div h3 {
-  margin-top: -11px;
+  margin-top: -6px;
   margin-bottom: -1px;
+  font-size: 14px;
+  margin-left: 5px;
 }
 #editorContainer .container-fluid .row-fluid div[data-schematype="boolean"] div{
-  margin-bottom: 0px !important;
+  margin-bottom: 2px !important;
   margin-top:-5px;
+}
+#editorContainer .container-fluid .row-fluid div h3 > span{
+  margin-left: 6px;
 }
 #editorContainer .container-fluid .row-fluid div[data-schematype="string"] .btn-group{
    display:none;
@@ -1147,19 +1139,26 @@ button.btn.btn-mini.json-editor-btn-create:focus{
 #editorContainer .container-fluid .row-fluid div[data-schematype="array"] .well-small{
        margin-top: -5px;
 }
+#editorContainer .container-fluid .row-fluid div[data-schematype="array"] > div > div{
+      padding-left:13px;
+      border-left: 1px dotted #e4e4e4;
+}
+#editorContainer .container-fluid .row-fluid div[data-schematype="array"] > div{
+      margin-left:8px;
+}
 #editorContainer .container-fluid .row-fluid div[data-schematype="array"]{
     margin-bottom:-5px;
 }
-#editorContainer .container-fluid .row-fluid div[data-schematype="boolean"] div div label input{
-  margin: 0px;
-  margin-left: -20px;
+#editorContainer .container-fluid .row-fluid div[data-schematype="array"] .well-small > div[class="btn-group"]{
+  display:none;
 }
-#editorContainer h3 span{
-  margin-left:5px;
-  margin-right:5px;
+#editorContainer .container-fluid .row-fluid div[data-schematype="boolean"] div div label input{
+  margin-top: -4px;
+  margin-left: 8px;
 }
 #editorContainer .control-group{
   margin-left:4px;
+  margin-bottom:7px;
 }
 button.btn.btn-mini.json-editor-btn-Add,
 button.btn.btn-mini.json-editor-btn-save{
@@ -1198,33 +1197,63 @@ span.hyperlink.value.string:hover{
 .create-config-object span:hover,
 .reset-object span:hover,
 .save-config-object span:hover,
+.save-form-object span:hover,
+.reset-config-form span:hover,
 .cancel-config-edit span:hover,
-.config-object-edit span:hover{
+.object-basic-view span:hover,
+.cancel-config-form span:hover,
+.config-object-edit span:hover,
+.config-jSon-form-edit span:hover{
    text-decoration: underline;
    cursor: pointer;
 }
 .cancel-config-edit span,
 .save-config-object span,
-.update-config-object{
+.object-basic-view span,
+.save-form-object span,
+.cancel-config-form span,
+.reset-config-form span{
   color:#3182bd !important;text-shadow: 0 0 0 white !important;font-family: 'Open Sans';font-size: 13px;margin-left: 5px;
+}
+#editorContainer label{
+    font-weight: normal !important;
+    font-size:13px !important;
+    padding-right: 20px;
+}
+.cancel-config-edit span,
+.save-config-object span,
+.object-basic-view span{
+  color:#3182bd !important;text-shadow: 0 0 0 white !important;font-family: 'Open Sans';font-size: 13px;margin-left: 5px;
+}
+.reset-config-form{
+   float:right;margin-right: 10px;
+}
+.config-icon-position .update-config-object{
+   color:#3182bd !important;text-shadow: 0 0 0 white !important;font-family: 'Open Sans';font-size: 13px;
+}
+button.btn.btn-mini.json-editor-update-json{
+    background-color: white !important;
+    padding: 0px;
+    border: none;
+    font-size: 13px;
 }
 #jsonTextArea{
    width:100%;font-family: monospace;resize:none;
 }
-.config-icon-postion{
+.config-icon-position{
   float:left;padding-left: 8px;border-left: 1px dotted #cccccc;padding-right: 8px;
+}
+.cancel-form-icon-postion{
+  float:left;padding-right: 8px;
+}
+button.update-config-object.button.btn.btn-mini.json-editor-update-json.hide-header-icon:hover{
+  text-decoration: underline;
 }
 .config-editor-header{
   margin-top:6px;height:25px;margin-bottom:5px;
 }
 .copy-config-object{
    float:left;padding-right:8px;
-}
-.save-form-object{
-    float:right;margin-left: 10px;
-}
-.reset-config-form{
-   float:right;margin-right: 10px;
 }
 .cancel-config-form{
    float:right;
@@ -1270,6 +1299,7 @@ span.hyperlink.value.string:hover{
   overflow-y: scroll;
   overflow-x: hidden;
   width:100%;float:right;
+  padding-left:8px;
 }
 #editorContainer .addPropertyHolder button.btn.btn-mini.json-editor-btn-{
     background: #599ac9 !important;
@@ -1288,6 +1318,10 @@ span.hyperlink.value.string:hover{
         color:white !important;
         background: white !important;
         padding: 1px !important;
+        margin-top: -3px;
+}
+.hideCopyContent{
+  display: none !important;
 }
 #hiddenTextArea:link,
 #hiddenTextArea:visited,
@@ -1321,7 +1355,7 @@ button#close-error-popup{
   z-index:9999;
   left: 20%;
   width: 60%;
-  top: 0.8%;
+  top: 0.3%;
 }
 #success-msg-container{
   display:none;
@@ -1334,7 +1368,7 @@ button#close-error-popup{
   color: white;
   background-color: #7dc48a;
   border: 1px solid #7dc48a;
-  top: 0.8%;
+  top: 0.3%;
   font-size: 14px;
   text-align: center;
 }
