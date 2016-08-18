@@ -299,6 +299,11 @@ define(['underscore'], function (_) {
             delete testobj.errors;
             delete testobj.locks;
 
+            // need to delete these as they are collections
+            delete testobj.disks;
+            delete testobj.switches;
+            delete testobj.interfaces;
+
             $.each(testobj, function (attribute, value) {
                 if (_.isArray(value)) {
                     if (contrail.checkIfExist(locks[attribute + cowc.LOCKED_SUFFIX_ID])) {
