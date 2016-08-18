@@ -169,6 +169,96 @@ define([
             }
         };
 
+        selectDataObject.on_select_aggregate = function (root, aggregateType, event) {
+            var tableType = root.table_type(),
+                dataObject = root.select_data_object(),
+                isEnableMap = dataObject.enable_map(),
+                checkedFields = dataObject.checked_fields,
+                selectFields = dataObject.select_fields,
+                key;
+
+
+            if(!selectDataObject.getSelectAggregateStatus(root, aggregateType)) {
+                for (key in isEnableMap) {
+                    if(aggregateType == "Default") {
+                        selectFields().forEach(function(value,index) {
+                            if(value.name == key && value.aggregate_type == aggregateType){
+                                checkedFields.push(key);
+                            }
+                        });
+                    }
+                        else {
+                        if (key.indexOf(aggregateType.toUpperCase()) > -1) {
+                            checkedFields.push(key);
+                        }
+                        else if(tableType == cowc.QE_FLOW_TABLE_TYPE) {
+                            if(key.indexOf(aggregateType.toLowerCase()) > -1 && aggregateType == "Sum") {
+                                checkedFields.push(key);
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                for (key in isEnableMap) {
+
+                    if(aggregateType == "Default"){
+                        selectFields().forEach(function(selectValue,i) {
+                            if(selectValue.name == key && selectValue.aggregate_type == aggregateType){
+                                checkedFields.remove(key);
+                            }
+                        });
+                    }
+
+                    if (key.indexOf(aggregateType.toUpperCase()) > -1) {
+                        checkedFields.remove(key);
+                    }
+                    // Handle Flow series
+                    else if(tableType == cowc.QE_FLOW_TABLE_TYPE) {
+                        if(key.indexOf(aggregateType.toLowerCase()) > -1 && aggregateType == "Sum") {
+                            checkedFields.remove(key);
+                        }
+                    }
+                }
+            }
+        };
+
+        selectDataObject.getSelectAggregateStatus = function (root, aggregateType) {
+            var tableType = root.table_type(),
+                dataObject = root.select_data_object(),
+                selectFields = dataObject.select_fields,
+                checkedFields = dataObject.checked_fields,
+                result = false;
+
+            if (checkedFields().length == 0) {
+                result = false;
+            }
+            else {
+                checkedFields().forEach(function(checkedValue,i) {
+                    //Handle defaults
+                    if(aggregateType == 'Default'){
+                        selectFields().forEach(function(value,index) {
+                            if(value.name == checkedValue && value.aggregate_type == aggregateType) {
+                                result = true;
+                            }
+                        });
+                    }
+                    //Handle Sum fields for Flow Series
+                    if(aggregateType == "Sum" && tableType == cowc.QE_FLOW_TABLE_TYPE) {
+                        if (checkedValue.indexOf(aggregateType.toLowerCase()) > -1) {
+                            result = true;
+                        }
+                    }
+                    //Handle aggregate fields
+                    if (checkedValue.indexOf(aggregateType.toUpperCase()) > -1) {
+                        result = true;
+                    }
+                });
+            }
+            return result;
+        };
+
+
         selectDataObject.reset = function(data, event) {
             var tableType = data.table_type(),
                 dataObject = data.select_data_object(),
