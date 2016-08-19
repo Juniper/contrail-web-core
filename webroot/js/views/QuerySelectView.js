@@ -13,13 +13,49 @@ define([
             var self = this,
                 viewConfig = self.attributes.viewConfig,
                 selectTemplate = contrail.getTemplate4Id(ctwc.TMPL_QUERY_SELECT),
+                selectDataObject = self.model.select_data_object(),
+                selectFields = $.makeArray(selectDataObject.select_fields()),
+                queryPrefix = self.model.query_prefix(),
+                aggregateTypes = [], selectTmplData, selectTmplHtml,
                 queryPrefix = self.model.query_prefix(),
                 modalId = queryPrefix + cowl.QE_SELECT_MODAL_SUFFIX,
-                className = viewConfig['className'];
+                className = viewConfig['className'],
+                specialQueryPrefix = false;
 
-            var selectDataObject = self.model.select_data_object(),
-                selectTmplData = {queryPrefix: self.model.query_prefix(), fields: $.makeArray(selectDataObject.select_fields)},
-                selectTmplHtml = selectTemplate(selectTmplData);
+            aggregateTypes.push(cowl.getFirstCharUpperCase("Time Range"));
+
+            _.each(selectFields, function(selectFieldValue, selectFieldKey) {
+                var key = selectFieldValue.name,
+                    aggregateType =  key.substring(0, key.indexOf('('));
+
+                if(key == 'T' || key == 'T=' ){
+                    aggregateType = cowl.getFirstCharUpperCase("Time Range");
+                }
+
+                if(aggregateType == ''){
+                    aggregateType = cowl.getFirstCharUpperCase("DEFAULT");
+                }
+
+                if(aggregateType != "Time Range") {
+                    aggregateTypes.push(cowl.getFirstCharUpperCase(aggregateType));
+                }
+
+
+                selectFieldValue['aggregate_type'] = cowl.getFirstCharUpperCase(aggregateType);
+
+            });
+            if(queryPrefix == cowc.FS_QUERY_PREFIX || queryPrefix == cowc.STAT_QUERY_PREFIX){
+                specialQueryPrefix = true;
+            }
+
+            selectTmplData = {
+                queryPrefix: queryPrefix,
+                fields: selectFields,
+                aggregateTypes: _.uniq(aggregateTypes),
+                specialQueryPrefix:specialQueryPrefix
+            };
+
+            selectTmplHtml = selectTemplate(selectTmplData);
 
             cowu.createModal({
                 'modalId': modalId, 'className': className, 'title': cowl.TITLE_QE_SELECT, 'body': selectTmplHtml, 'onSave': function () {
