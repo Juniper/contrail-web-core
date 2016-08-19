@@ -39,12 +39,21 @@ define([
 
 
     this.getPageHeaderHTML = function () {
-        return '<div id="pageHeader" class="navbar navbar-inverse navbar-fixed-top"> ' +
-            '<div class="navbar-inner"> ' +
-            '<div class="container-fluid"> ' +
-            '<a href="#" class="brand"> <img class="logo" src="base/contrail-web-core/webroot/img/sdn-logo.png"/> </a> ' +
-            '<ul style="width:270px" class="nav ace-nav pull-right"> ' +
-            '<li id="user-profile" class="hide"> ' +
+        return '<div id="pageHeader" class="navbar navbar-default ace-save-state"> ' +
+            '<div id="navbar-container" class="navbar-container ace-save-state"> ' +
+            '<button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar"> ' +
+            '<i class="fa fa-bars"></i> ' +
+            '</button> ' +
+            '<div id="error-container" class="alert-error"> ' +
+            '<div id="msg-container"><span class="error-font-weight">Error : </span><span id="error-msg-container"></span></div> ' +
+            '<div id="error-close-icon"><button id="close-error-popup" class="btn btn-mini"><i class="fa fa-remove"></i></button></div> ' +
+            '</div> ' +
+            '<div id="success-msg-container"><div id="success-text-container"></div></div> ' +
+            '<a href="#" class="navbar-brand"> ' +
+            '<img class="logo" src="base/contrail-web-core/webroot/img/sdn-logo.png"/> ' +
+            '</a> ' +
+            '<ul style="width:330px" class="nav ace-nav pull-right"> ' +
+            '<li id="user-profile" class="customHide pull-right"> ' +
             '<a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle"> ' +
             '<i class="fa fa-user icon-only fa-2"></i> ' +
             '<span id="user_info"></span> ' +
@@ -52,46 +61,57 @@ define([
             '</a> ' +
             '<ul class="pull-right dropdown-menu dropdown-caret dropdown-closer" id="user_menu"> ' +
             '<li> ' +
-            '<a href="logout"> ' +
-            '<i class="fa fa-power-off"></i>' +
-            'Logout </a>' +
-            ' </li> ' +
+            '<a id="logout"> ' +
+            '<i class="fa fa-power-off"></i> Logout </a> ' +
+            '</li> ' +
             '</ul> ' +
-            '</li> <li onclick="showMoreAlerts();"> ' +
+            '</li> ' +
+            '<li id="region-profile"> ' +
+            '<div id="regionDD" style="padding-bottom:6px"></div> ' +
+            '</li> ' +
+            '<li id="alarms-popup-link" onclick="cowu.loadAlertsPopup();" class="pull-right"> ' +
             '<a href="javascript:void(0);"> ' +
-            '<i class="fa fa-bell icon-only fa-2"></i> <span id="alert_info">Alerts</span> <!-- <i class="fa-caret-down"></i> --> ' +
-            '</a> </li> </ul> <div id="nav-search"> ' +
-            '<form id="search-form" onsubmit="searchSiteMap();"> <span class="input-icon"> ' +
-            '<input type="text" placeholder="Search Sitemap" class="input-small search-query" id="nav-search-input" autocomplete="off"> ' +
-            '<i class="fa fa-search" id="nav-search-icon"></i> </span> ' +
-            '</form> </div> </div> <!--/.container-fluid-->' +
-            '</div> <!--/.navbar-inner--> </div>';
+            '<i class="fa fa-bell icon-only fa-2"></i> ' +
+            '<span id="alert_info">Alarms</span> ' +
+            '</a> ' +
+            '</li> ' +
+            '</ul> ' +
+            '</div> ' +
+            '</div>';
     };
 
     this.getSidebarHTML = function () {
-        return '<div class="container-fluid" id="main-container"> ' +
-            '<a id="menu-toggler" href="#"> ' +
-            '<span></span> ' +
-            '</a> ' +
-            '<div id="sidebar"> ' +
-            '<div id="sidebar-shortcuts"> ' +
-            '</div> ' +
+        return '<div class="main-container ace-save-state" id="main-container"> ' +
+            '<div id="sidebar" class="sidebar responsive ace-save-state" data-sidebar=true" data-sidebar-scroll="true" data-sidebar-hover="true"> ' +
+            '<div class="sidebar-shortcuts" id="sidebar-shortcuts"> </div> ' +
             '<ul id="menu" class="nav nav-list"></ul> ' +
             '</div> ' +
-            '<div id="main-content" class="clearfix"> ' +
-            '<div id="breadcrumbs" class="fixed"> ' +
-            '<ul id="breadcrumb" class="breadcrumb"> ' +
-            '</ul> ' +
-            '<div class="hardrefresh breadcrumb" style="display:none"> ' +
-            '<span> <i class="fa fa-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span> ' +
-            '<span class="loading"><i class="fa fa-spinner fa-spin"></i></span> ' +
-            '<span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span> ' +
+            '<div id="main-content" class="main-content"> ' +
+            '<div class="main-content-inner"> ' +
+            '<div id="breadcrumbs" class="breadcrumbs ace-save-state fixed"> ' +
+            '<ul id="breadcrumb" class="breadcrumb"> </ul> ' +
+            '<div id="page-help" class="page-help"> ' +
+            '<div id="page-help-toggle-btn" class="page-help-toggle-btn"> ' +
+            '<i class="page-help-toggle-text ace-icon fa fa-question bigger-150"></i> ' +
             '</div> ' +
             '</div> ' +
-            '<div id="page-content" class="clearfix"> ' +
+            '<div id="nav-search" class="nav-search"> ' +
+            '<form id="search-form" onsubmit="searchSiteMap();"> ' +
+            '<span class="input-icon"> ' +
+            '<input id="nav-search-input" type="text" placeholder="Search Sitemap" class="input-medium search-query nav-search-input" autocomplete="off"> ' +
+            '<i class="fa fa-search" id="nav-search-icon"></i> ' +
+            '</span> ' +
+            '</form> ' +
+            '</div> ' +
+            '</div> ' +
+            '<div id="page-content" class="page-content"> ' +
             '<div id="content-container"></div> ' +
-            '</div> ' +
-            '</div> </div>'
+        '</div> ' +
+        '</div> ' +
+        '</div> ' +
+        '</div> ' +
+        '<a href="#" id="back-to-top"><i class="fa fa-angle-double-up icon-only bigger-110"></i>​&nbsp; Back to Top</a> ' +
+        '<div class="page-help-container" id="page-help-container" tabindex="-1">';
     };
 
     this.getCSSList = function () {
@@ -105,7 +125,6 @@ define([
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/datetimepicker/styles/jquery.datetimepicker.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/slickgrid/styles/slick.grid.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/jquery/css/jquery.steps.css"/>');
-        cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/jquery-contextMenu/css/jquery.contextMenu.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/contrail.init.test.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.theme.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/css/contrail.theme.layout.css"/>');
