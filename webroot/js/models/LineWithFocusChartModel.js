@@ -76,9 +76,10 @@ define([
         var margin = chartOptions.margin
             , margin2 = chartOptions.margin2
             , color = nv.utils.defaultColor()
+            , hideFocusChart = getValueByJsonPath(chartOptions,'hideFocusChart', false)
             , width = null
             , height = null
-            , height2 = 90
+            , height2 = (!hideFocusChart ? 90 : 0)
             , useInteractiveGuideline = false
             , xScale
             , yScale
@@ -136,6 +137,8 @@ define([
                     that = this,
                     data = chartDataObj.data,
                     requestState = chartDataObj.requestState,
+                    tickPadding = getValueByJsonPath(chartOptions, 'tickPadding', 0),
+                    yTickFormat = getValueByJsonPath(chartOptions, 'yTickFormat', null),
                     yDataKey = contrail.checkIfExist(chartOptions.chartAxesOptionKey) ? chartOptions.chartAxesOptionKey : 'y';
 
                 nv.utils.initSVG(container);
@@ -269,11 +272,14 @@ define([
                     }));
 
                 d3.transition(contextLinesWrap).call(lines2);
+                if(tickPadding === 0){
+                    tickPadding  = nv.utils.calcTicksX(availableWidth / 100, data);
+                }
 
                 // Setup Main (Focus) Axes
                 xAxis
                     .scale(xScale)
-                    ._ticks(nv.utils.calcTicksX(availableWidth / 100, data))
+                    ._ticks(tickPadding)
                     .tickSize(-availableHeight1, 0);
 
                 yAxis
@@ -296,27 +302,28 @@ define([
                 var brushBG = g.select('.nv-brushBackground').selectAll('g')
                     .data([brushExtent || brush.extent()])
 
-                var brushBGenter = brushBG.enter()
-                    .append('g');
+                if(!hideFocusChart){
+                    var brushBGenter = brushBG.enter()
+                        .append('g');
 
-                brushBGenter.append('rect')
-                    .attr('class', 'left')
-                    .attr('x', 0)
-                    .attr('y', 0)
-                    .attr('height', availableHeight2);
+                    brushBGenter.append('rect')
+                        .attr('class', 'left')
+                        .attr('x', 0)
+                        .attr('y', 0)
+                        .attr('height', availableHeight2);
 
-                brushBGenter.append('rect')
-                    .attr('class', 'right')
-                    .attr('x', 0)
-                    .attr('y', 0)
-                    .attr('height', availableHeight2);
+                    brushBGenter.append('rect')
+                        .attr('class', 'right')
+                        .attr('x', 0)
+                        .attr('y', 0)
+                        .attr('height', availableHeight2);
 
-                var gBrush = g.select('.nv-x.nv-brush')
-                    .call(brush);
-                gBrush.selectAll('rect')
-                    .attr('height', availableHeight2);
-                gBrush.selectAll('.resize').append('path').attr('d', resizePath);
-
+                    var gBrush = g.select('.nv-x.nv-brush')
+                        .call(brush);
+                    gBrush.selectAll('rect')
+                        .attr('height', availableHeight2);
+                    gBrush.selectAll('.resize').append('path').attr('d', resizePath);
+                }
                 onBrush();
 
                 // Setup Secondary (Context) Axes
@@ -343,7 +350,8 @@ define([
                 g.select('.nv-context .nv-x.nv-axis')
                     .attr('transform', 'translate(0,' + y2.range()[0] + ')');
 
-                g.select('.nv-context').style('display', (requestState === cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY) ? 'initial' : 'none');
+                g.select('.nv-context').style('display', (!hideFocusChart
+                    && requestState === cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY) ? 'initial' : 'none');
 
                 //============================================================
                 // Event Handling/Dispatching (in chart's scope)
@@ -403,7 +411,7 @@ define([
                             .position({left: e.mouseX + margin.left, top: e.mouseY + margin.top})
                             .chartContainer(that.parentNode)
                             .valueFormatter(function (d, i) {
-                                return d == null ? "N/A" : yAxis.tickFormat()(d);
+                                return d == null ? "N/A" : yAxis.tickFormat()(yTickFormat === null ? d : yTickFormat(d));
                             })
                             .data({
                                 value: xValue,
@@ -695,6 +703,13 @@ define([
                         lines.useVoronoi(false);
                     }
                 }
+            },
+            hideFocusChart: {
+                get: function(){
+                    return hideFocusChart;
+                }, set: function(_){
+                    hideFocusChart=_;
+                }
             }
         });
 
@@ -711,13 +726,11 @@ define([
 
         chartModel.interpolate(chUtils.interpolateSankey);
 
-        chartModel.xAxis.tickFormat(function (d) {
-            return d3.time.format('%H:%M:%S')(new Date(d));
-        });
+        chartModel.xAxis.axisLabel(chartOptions.xAxisLabel)
+                    .tickFormat(chartOptions['xFormatter'])
+                    .showMaxMin(chartOptions['showXAxisMaxMin']);
 
-        chartModel.x2Axis.axisLabel("Time").tickFormat(function (d) {
-            return d3.time.format('%H:%M:%S')(new Date(d));
-        });
+        chartModel.x2Axis.axisLabel(chartOptions.xAxisLabel).tickFormat(chartOptions['x2Formatter']);
 
         chartModel.yAxis.axisLabel(chartOptions.yAxisLabel)
                         .axisLabelDistance(chartOptions.axisLabelDistance)
