@@ -1420,7 +1420,14 @@ var dashboardUtils = {
         var colorPriorities = [d3Colors['blue'],d3Colors['green'],d3Colors['orange'],d3Colors['red']];
         var aColor = $.inArray(a['color'],colorPriorities);
         var bColor = $.inArray(b['color'],colorPriorities);
-        return aColor-bColor;
+        if(aColor != bColor){
+            return aColor-bColor;
+            }
+        else{
+            if(a['name'] < b['name']) return -1;
+            if(a['name'] > b['name'])  return 1;
+            return 0;
+        }
     },
     getDownNodeCnt : function(data) {
         var downNodes = $.grep(data,function(obj,idx) {
