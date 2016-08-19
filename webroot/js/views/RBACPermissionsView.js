@@ -147,13 +147,16 @@ define([
                                             _.each(projects, function(project){
                                                 var projName =
                                                     getValueByJsonPath(project,
-                                                    "fq_name;1", "", false);
-                                                if(projName &&
+                                                    "fq_name;1", "", false),
+                                                    projId =
+                                                    getValueByJsonPath(project,
+                                                    "uuid", "", false  );
+                                                if(projId && projName &&
                                                     projName !==
                                                         "default-project") {
                                                     dataSource.push({
                                                         text: projName,
-                                                        value: projName
+                                                        value: projId
                                                     });
                                                 }
                                             });
