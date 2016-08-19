@@ -694,8 +694,9 @@ define([
             clickCB = chartOptions.clickCB,
             overlapMap = getOverlapMap(chartData),
             timer = null, maxCircleRadius = chartConfig.maxCircleRadius;
-
-
+            if(chartOptions.sortFn){
+                chartData = chartOptions.sortFn(chartData);
+            }
         //Bind data to chart
         d3.select($(chartView.$el).find('svg rect.zs-rect')[0]).data([chartModel.data]);
 
