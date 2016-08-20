@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
 var rest = require('../../common/rest.api'),
@@ -7,18 +7,16 @@ var rest = require('../../common/rest.api'),
     authApi = require('../../common/auth.api'),
     commonUtils = require('../../utils/common.utils'),
     async = require('async'),
-    configServer,
     configServerApi = require('../../common/configServer.api'),
-    logutils = require('../../utils/log.utils'),
+    opServer,
     appErrors = require('../../errors/app.errors');
+var opServerIP = ((config.analytics) && (config.analytics.server_ip)) ?
+    config.analytics.server_ip : global.DFLT_SERVER_IP;
+var opServerPort = ((config.analytics) && (config.analytics.server_port)) ?
+    config.analytics.server_port : '8081';
 
-var configServerIP = ((config.cnfg) && (config.cnfg.server_ip)) ?
-    config.cnfg.server_ip : global.DFLT_SERVER_IP;
-var configServerPort = ((config.cnfg) && (config.cnfg.server_port)) ?
-    config.cnfg.server_port : '8082';
-configServer = rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,
-                                 server: configServerIP,
-                                 port: configServerPort});
+opServer = rest.getAPIServer({apiName: global.label.OPS_API_SERVER,
+                              server: opServerIP, port: opServerPort});
 
 function getHeaders(dataObj, callback)
 {
@@ -31,7 +29,7 @@ function getHeaders(dataObj, callback)
         headers[key] = appHeaders[key];
     }
     dataObj['headers'] = headers;
-    dataObj['apiRestApi'] = configServer;
+    dataObj['apiRestApi'] = opServer;
     callback(null, dataObj);
     return;
 }
@@ -64,7 +62,7 @@ function doSendApiServerRespToApp (error, data, obj, appData, callback)
                 try {
                     commonUtils.redirectToLogoutByAppData(appData);
                 } catch(e) {
-                    console.log("APIServer: redirectToLogout failed:" + e);
+                    console.log("OpServer: redirectToLogout failed:" + e);
                 }
                 return;
             }
@@ -72,7 +70,7 @@ function doSendApiServerRespToApp (error, data, obj, appData, callback)
         callback(error, data);
         return;
     }
-    callback(null, data);
+    callback(error, data);
 }
 
 function serveAPIRequestCB (obj, callback)
@@ -103,40 +101,6 @@ function serveAPIRequestCB (obj, callback)
                                                   ' not allowed.');
         callback(error, null);
     }
-}
-
-function getDefProjectByAppData (appData)
-{
-    var defProject = null;
-
-    try {
-        defProject = appData['authObj']['req']['cookies']['project'];
-        if (null == defProject) {
-            defProject = appData['authObj']['defTokenObj']['tenant']['name'];
-        }
-    } catch(e) {
-        if ((null != appData) && (null != appData['authObj']) &&
-            (null != appData['authObj']['defTokenObj']) &&
-            (null != appData['authObj']['defTokenObj']['tenant'])) {
-            defProject = appData['authObj']['defTokenObj']['tenant']['name'];
-        }
-    }
-    return defProject;
-}
-
-function getAuthTokenByProject (req, defTokenObj, project)
-{
-    if ((null != req.session.tokenObjs[project]) &&
-        (null != req.session.tokenObjs[project]['token']) &&
-        (null != req.session.tokenObjs[project]['token']['id'])) {
-        return {'project': project,
-            'token': req.session.tokenObjs[project]['token']['id']};
-    }
-    var defProject =
-        commonUtils.getValueByJsonPath(defTokenObj,
-                                       'tenant;name',
-                                       null);
-    return {'project': defProject, 'token': defTokenObj['id']};
 }
 
 function serveAPIRequest (reqUrl, reqData, appData, appHeaders, reqType,
