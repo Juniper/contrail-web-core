@@ -197,6 +197,14 @@ function getDomainNameByUUID (request, uuid, domList)
                                                                              domList);
 }
 
+function getServiceAPIVersionByReqObj (request, svcType, callback, reqBy)
+{
+    var orchMode = request.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].getServiceAPIVersionByReqObj(request,
+                                                                svcType,
+                                                                callback, reqBy);
+}
+
 var adminRoleProjects = ['admin'];
 function getAdminProjectList (req)
 {
@@ -246,4 +254,4 @@ exports.getDomainNameByUUID = getDomainNameByUUID;
 exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getAdminProjectList = getAdminProjectList;
-
+exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;

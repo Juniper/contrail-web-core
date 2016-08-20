@@ -686,7 +686,7 @@ function formatV3AuthDataToV2AuthData (v3AuthData, authObj, callback)
         tokenObj['access']['token'] = v3TokenObj;
         tokenObj['access']['token']['id'] =
             removeSpecialChars(v3TokenObj['id']);
-        //tokenObj['access']['serviceCatalog'] =  v3AuthData['token']['catalog'];
+        tokenObj['access']['serviceCatalog'] =  v3AuthData['token']['catalog'];
         tokenObj['access']['user'] = {};
         tokenObj['access']['user']['username'] =
             v3AuthData['token']['user']['name'];
@@ -917,6 +917,7 @@ function getUserAuthData (req, tenantName, callback)
         tenantName = req.cookies.project;
     }
     authObj['tenant'] = tenantName;
+    authObj['req'] = req;
     getUserAuthDataByAuthObj (authObj, function(err, data) {
         if ((null != err) || (null == data) || (null == data.access) ||
             (null == data.access.token)) {
@@ -1001,20 +1002,78 @@ function getUserAuthDataByConfigAuthObj (authObj, callback)
     getUserAuthDataByAuthObj(authObj, callback);
 }
 
+var formatAuthServiceCatalogCB = {
+    'v2.0': formatV2ServiceCatalog,
+    'v3': formatV3ServiceCatalog
+};
+
+function formatV2ServiceCatalog (serviceCatalog)
+{
+    return serviceCatalog;
+}
+
+function formatV3ServiceCatalog (serviceCatalog)
+{
+    var endPointList = [];
+    var list = [];
+    var tmpObjs = {};
+    if (null == serviceCatalog) {
+        return;
+    }
+    var cnt = serviceCatalog.length;
+    for (var i = 0; i < cnt; i++) {
+        var endPts = serviceCatalog[i]['endpoints'];
+        var endPtsCnt = endPts.length;
+        tmpObjs = {};
+        for (var j = 0; j < endPtsCnt; j++) {
+            var region = endPts[j]['region'];
+            var intf = endPts[j]['interface'];
+            if (null == tmpObjs[region]) {
+                tmpObjs[region] = {};
+            }
+            var urlKey = intf + 'URL';
+            tmpObjs[region][urlKey] = endPts[j]['url'];
+        }
+        list = [];
+        for (region in tmpObjs) {
+            list.push({'region': region});
+            for (var urlKey in tmpObjs[region]) {
+                list[list.length - 1][urlKey] = tmpObjs[region][urlKey];
+            }
+        }
+        endPointList.push({'endpoints': list, name: serviceCatalog[i]['name'],
+                           type: serviceCatalog[i]['type']});
+    }
+    return endPointList;
+}
+
+function getCurrentTenant (req)
+{
+    var defTenant =
+        commonUtils.getValueByJsonPath(req, 'session;def_token_used;tenant;name',
+                                       null, false);
+    var tenant =
+        commonUtils.getValueByJsonPath(req, 'cookies;project', defTenant,
+                                       false);
+    return tenant;
+}
+
 function getServiceCatalog (req, callback)
 {
-    try {
-        var tenant = req.session.def_token_used.tenant.name;
-    } catch(e) {
-        logutils.logger.error("Tenant not found in Default Token.");
-        tenant = null;
-    }
+    var tenant = getCurrentTenant(req);
     getUserAuthData(req, tenant, function(err, data) {
         if ((null != err) || (null == data) || (null == data.access)) {
             callback(null);
             return;
         }
-        callback(data.access.serviceCatalog);
+        var svcCatCB = formatAuthServiceCatalogCB[req.session.authApiVersion];
+        var svcCat = data.access.serviceCatalog;
+        if (null != svcCatCB) {
+            svcCat = svcCatCB(data.access.serviceCatalog);
+        }
+        var accessData = commonUtils.cloneObj(data.access);
+        accessData.serviceCatalog = svcCat;
+        callback(accessData);
     });
 }
 
@@ -1590,7 +1649,7 @@ function doV2Auth (req, callback)
 
 function getV3DomainIfNotAvailable (domain)
 {
-    if (null == domain) {
+    if ((null == domain) || (!domain.length)) {
         domain = config.identityManager.defaultDomain;
         if (null == domain) {
             domain = global.KEYSTONE_V3_DEFAULT_DOMAIN;
@@ -2327,6 +2386,11 @@ function getSessionExpiryTime (req, appData, callback)
     return null;
 }
 
+function getServiceAPIVersionByReqObj (req, svcType, callback, reqBy)
+{
+    oStack.getServiceAPIVersionByReqObj(req, svcType, callback, reqBy);
+}
+
 exports.authenticate = authenticate;
 exports.getToken = getToken;
 exports.getTenantList = getTenantList;
@@ -2347,4 +2411,5 @@ exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
 exports.getDomainNameByUUID = getDomainNameByUUID;
 exports.getUIUserRoleByTenant = getUIUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
+exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 

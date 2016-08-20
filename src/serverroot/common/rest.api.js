@@ -179,7 +179,7 @@ APIServer.prototype.retryMakeCall = function(err, restApi, params,
      * may be down, so discovery server should send the Up Servers now
      */
     if ((true == process.mainModule.exports['discServEnable']) &&
-        (('ECONNREFUSED' == err.code) || ('ETIMEOUT' == err.code))) {
+        (('ECONNREFUSED' == err.code) || ('ETIMEDOUT' == err.code))) {
         if (false == isRetry) {
             /* Only one time send a retry */
             discClient.sendDiscSubMessageOnDemand(self.name);
