@@ -186,8 +186,7 @@ define([
                                 checkedFields.push(key);
                             }
                         });
-                    }
-                        else {
+                    } else {
                         if (key.indexOf(aggregateType.toUpperCase()) > -1) {
                             checkedFields.push(key);
                         }
