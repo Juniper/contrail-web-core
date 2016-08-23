@@ -182,7 +182,7 @@ cp -af ./$THIRD_PARTY/knockout-3.4.0/dist/knockout.js webroot/assets/knockout/kn
 #Start - Copy Moment Date-Formatter from $THIRD_PARTY
 rm -rf webroot/assets/moment
 mkdir webroot/assets/moment
-cp -af ./$THIRD_PARTY/moment-v2.6.0/moment.js webroot/assets/moment/moment.js
+cp -af ./$THIRD_PARTY/moment-v2.14.1/moment.js webroot/assets/moment/moment.js
 #End - Copy Moment Date-Formatter from $THIRD_PARTY
 
 #Start - Copy Joint from web-third-party

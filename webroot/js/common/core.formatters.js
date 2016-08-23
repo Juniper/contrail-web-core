@@ -3,8 +3,9 @@
  */
 
 define([
-    'underscore'
-], function (_) {
+    'underscore',
+    'moment'
+], function (_, moment) {
     var CoreFormatters = function () {
         var self = this;
 

@@ -4,8 +4,9 @@
 
 define([
     'underscore',
+    'moment',
     'handlebars'
-], function (_, Handlebars) {
+], function (_, moment, Handlebars) {
     var serializer = new XMLSerializer(),
         domParser = new DOMParser();
 

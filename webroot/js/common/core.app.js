@@ -126,13 +126,13 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
             //End - core-bundle aliases
             //Start - jquery.dep.libs aliases
-            'jquery.xml2json'           : coreWebDir + '/assets/jquery/js/jquery.xml2json',
-            'jquery.json'               : coreWebDir + "/assets/slickgrid/js/jquery.json-2.3.min",
-            'bootstrap'                 : coreWebDir + '/assets/bootstrap/js/bootstrap',
-            'select2'                   : coreWebDir + "/assets/select2/js/select2.min",
-            'slick.core'                : coreWebDir + "/assets/slickgrid/js/slick.core",
-            'slick.dataview'            : coreWebDir + "/assets/slickgrid/js/slick.dataview",
-            'contrail-elements'         : coreWebDir + "/js/contrail-elements",
+            'jquery.xml2json'            : coreWebDir + '/assets/jquery/js/jquery.xml2json',
+            'jquery.json'                : coreWebDir + "/assets/slickgrid/js/jquery.json-2.3.min",
+            'bootstrap'                  : coreWebDir + '/assets/bootstrap/js/bootstrap',
+            'select2'                    : coreWebDir + "/assets/select2/js/select2.min",
+            'slick.core'                 : coreWebDir + "/assets/slickgrid/js/slick.core",
+            'slick.dataview'             : coreWebDir + "/assets/slickgrid/js/slick.dataview",
+            'core-contrail-form-elements': coreWebDir + "/js/common/core.contrail.form.elements",
             'jquery.timer'              : coreWebDir + '/assets/jquery/js/jquery.timer',
             'jquery.ui.touch-punch'     : coreWebDir + '/assets/jquery/js/jquery.ui.touch-punch.min',
             'jquery.validate'           : coreWebDir + "/assets/jquery/js/jquery.validate.min",
@@ -212,7 +212,7 @@ var coreAppMap = {
 
 var coreAppShim =  {
     'core-bundle': {
-        dpes:['nonamd-libs', 'jquery']
+        dpes:['nonamd-libs', 'jquery-ui']
     },
     'jquery' : {
         exports: 'jQuery'
@@ -305,7 +305,7 @@ var coreAppShim =  {
     'slickgrid-utils': {
         deps: ['jquery','slick.grid','slick.dataview']
     },
-    'contrail-elements': {
+    'core-contrail-form-elements': {
         deps: ['jquery-ui']
     },
     'chart-utils': {
@@ -400,7 +400,6 @@ var coreBundles = {
             'select2',
             'slick.core',
             'slick.dataview',
-            'contrail-elements',
             'jquery.timer',
             'jquery.ui.touch-punch',
             'jquery.validate',
@@ -415,6 +414,7 @@ var coreBundles = {
         ],
         'core-bundle'       : [
             'underscore',
+            'moment',
             'handlebars',
             'core-handlebars-utils',
             'core-utils',
@@ -426,6 +426,7 @@ var coreBundles = {
             'core-messages',
             'core-views-default-config',
             'contrail-common',
+            'core-contrail-form-elements',
             'chart-utils',
             'text!core-basedir/templates/core.common.tmpl',
             'contrail-remote-data-handler',
@@ -437,7 +438,6 @@ var coreBundles = {
             'lodash',
             'crossfilter',
             'text',
-            'moment',
             'layout-handler',
             'menu-handler',
             'help-handler',
