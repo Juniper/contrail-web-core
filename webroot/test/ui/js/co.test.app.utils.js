@@ -144,8 +144,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'jquery.datetimepicker'     : coreWebDir + "/assets/datetimepicker/js/jquery.datetimepicker",
             //End - jquery.dep.libs aliases
             //Start - thirdparty-libs aliases
-            'handlebars'                : coreWebDir + "/assets/handlebars/handlebars-v1.3.0",
-            'handlebars-utils'          : coreWebDir + "/js/handlebars-utils",
+            'handlebars'                : coreWebDir + "/assets/handlebars/handlebars",
+            'core-handlebars-utils'          : coreWebDir + "/js/common/core.handlebars.utils",
 
             'slick.grid'                : coreWebDir + "/assets/slickgrid/js/slick.grid",
             'slick.checkboxselectcolumn': coreWebDir + '/assets/slickgrid/js/slick.checkboxselectcolumn',
@@ -321,8 +321,8 @@ var coreAppShim =  {
     'web-utils': {
         deps: ['jquery','knockout']
     },
-    'handlebars-utils': {
-        deps: ['jquery','handlebars']
+    'core-handlebars-utils': {
+        deps: ['jquery', 'handlebars']
     },
     'nvd3-plugin': {
         deps: ['nv.d3']
@@ -423,6 +423,8 @@ var coreBundles = {
         ],
         'core-bundle'       : [
             'underscore',
+            'handlebars',
+            'core-handlebars-utils',
             'core-utils',
             'core-hash-utils',
             'core-constants',
@@ -431,6 +433,7 @@ var coreBundles = {
             'core-labels',
             'core-messages',
             'core-views-default-config',
+            'contrail-common',
             'chart-utils',
             'text!core-basedir/templates/core.common.tmpl',
             'contrail-remote-data-handler',
@@ -512,13 +515,10 @@ var coreBundles = {
             'analyzer-utils',
             'config_global',
             'contrail-layout',
-            'handlebars-utils',
-            'contrail-common',
             'uuid',
             'protocol',
             'xdate',
             'ipv6',
-            'handlebars',
             'jsonpath'
         ]
     };

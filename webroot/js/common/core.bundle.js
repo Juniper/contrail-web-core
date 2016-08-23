@@ -2,6 +2,7 @@
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 define([
+        'core-handlebars-utils',
         'core-utils',
         'core-hash-utils',
         'core-constants',
@@ -10,6 +11,7 @@ define([
         'core-labels',
         'core-messages',
         'core-views-default-config',
+        'contrail-common',
         'chart-utils',
         'text!core-basedir/templates/core.common.tmpl',
         'core-basedir/js/common/graph.utils',
@@ -49,15 +51,16 @@ define([
         'mon-infra-log-list-view',     
         'mon-infra-sysinfo-view',      
         'mon-infra-dashboard-view',
-        ],function(CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, ChartUtils, CoreCommonTmpls, GraphUtils) {
+        ],function(CoreHandlebarsUtils, CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, Contrail, ChartUtils, CoreCommonTmpls, GraphUtils) {
             cowc = CoreConstants;
             cowf = new CoreFormatters();
             cowl = new CoreLabels();
             cowm = new CoreMessages();
             covdc = new CoreViewsDefaultConfig();
+            contrail = new Contrail();
             cowch = new Cache();
             chUtils = new ChartUtils();
-            grUtils = new GraphUtils()
+            grUtils = new GraphUtils();
             webServerInfoDefObj.done(function() {
                 require(['nonamd-libs'],function() {
                     cowc.DROPDOWN_VALUE_SEPARATOR = getValueByJsonPath(globalObj,

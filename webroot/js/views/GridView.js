@@ -4,6 +4,7 @@
 
 define([
     'underscore',
+    'handlebars',
     'contrail-view',
     'contrail-list-model',
     'core-basedir/js/views/GridFooterView',
@@ -12,7 +13,7 @@ define([
     'jquery-ui',
     'jquery.multiselect',
     'jquery.multiselect.filter'
-], function (_, ContrailView, ContrailListModel, GridFooterView) {
+], function (_, Handlebars, ContrailView, ContrailListModel, GridFooterView) {
     var GridView = ContrailView.extend({
         render: function () {
             var self = this,

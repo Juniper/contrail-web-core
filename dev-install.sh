@@ -128,7 +128,7 @@ cp -af ./$THIRD_PARTY/PRmiXeptR36kaC0GEAetxsBo4hlZyBvkZICS3KpNonM.woff webroot/a
 #Start - Copy Handlebars from $THIRD_PARTY
 rm -rf webroot/assets/handlebars
 mkdir -p webroot/assets/handlebars
-cp -af ./$THIRD_PARTY/handlebars-v1.3.0.js webroot/assets/handlebars/handlebars-v1.3.0.js
+cp -af ./$THIRD_PARTY/handlebars-v4.0.5.js webroot/assets/handlebars/handlebars.js
 #End - Copy Handlebars from $THIRD_PARTY
 
 #Start - Copy Select2 from $THIRD_PARTY
