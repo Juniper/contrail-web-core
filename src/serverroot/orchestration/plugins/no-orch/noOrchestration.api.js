@@ -12,7 +12,6 @@ var config = process.mainModule.exports['config'];
 var commonUtils = require('../../../utils/common.utils');
 var messages = require('../../../common/messages');
 var configUtils = require('../../../common/configServer.utils');
-var roleMap = require('../../../web/core/rolemap.api');
 
 function authenticate (req, res, appData, callback)
 {
