@@ -13,7 +13,6 @@ var xml2js      = require('xml2js');
 var config      = require('../../config/config.global');
 var assert      = require('assert');
 var featurePr   = require('./parseFeature');
-var parseRole   = require('./parseRoleMap');
 var fileListObj = {};
 
 var parser = new xml2js.Parser();
@@ -26,10 +25,8 @@ function getAutoGenFileByFileMatch (filePath, match)
         return filePath + '/jobsCb.api.js';
     } else if ('/featureList.xml/' == match) {
         return filePath + '/feature.list.js';
-    } else if ('/roleList.xml/' == match) {
-        return filePath + '/rolemap.api.js';
     }
-    assert(0);
+    console.log('We do not parse this type:' + match);
 }
 
 function getAutoGenFileByXMLFilePath (xmlFilePath, match)
@@ -50,8 +47,6 @@ function parseXMLAndWriteFile (content, filePath, match, callback)
             jobPr.parseJobListFile(content, filename, callback);
         } else if ('/featureList.xml/' == match) {
             featurePr.parseFeatureFile(content, filename, callback);
-        } else if ('/roleList.xml/' == match) {
-            parseRole.parseRoleMapFile(content, filename, callback);
         }
     });
 }
@@ -62,7 +57,6 @@ function readAndProcessPkgXMLFiles (pkgDir, pkgName, callback)
     fileListArr.push({'pkgDir': pkgDir, 'match': /parseURL.xml/});
     fileListArr.push({'pkgDir': pkgDir, 'match': /jobProcess.xml/});
     fileListArr.push({'pkgDir': pkgDir, 'match': /featureList.xml/});
-    fileListArr.push({'pkgDir': pkgDir, 'match': /roleList.xml/});
     var str = "var pkgList = {};\n";
     str += "exports.pkgList = pkgList;\n";
     if (null == pkgName) {
@@ -107,7 +101,7 @@ function processXMLFiles (fileObj, callback)
 {
     var pkgDir = fileObj['pkgDir'];
     var match = fileObj['match'];
-    var pkgName = fileObj['pkgName'];
+    var isExact = fileObj['isExact'];
 
     var arrStr = match.toString().split('/');
     var str = "";
@@ -128,7 +122,11 @@ function processXMLFiles (fileObj, callback)
                 str = "pkgList['" + arrStr[1] + "'].push('" + autoGenFile + "');\n";
                 writeToPkgFile(pkgDir, true, str, function() {
                     parseXMLAndWriteFile(content, filename, match, function() {
-                        next();
+                        if (true == isExact) {
+                            callback();
+                        } else {
+                            next();
+                        }
                     });
                 });
             }

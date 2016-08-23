@@ -141,7 +141,7 @@ define(['underscore'], function (_) {
                     var rolesArr = value.access.roles.role;
                     var allowedRolesList = [];
 
-                    //If logged-in user has superAdmin role,then allow all features
+                    //If logged-in user has cloudAdmin role,then allow all features
                     if ($.inArray(roles['ADMIN'], loggedInUserRoles) > -1) {
                         roleExists = true;
                     } else {
