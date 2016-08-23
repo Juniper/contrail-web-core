@@ -104,10 +104,6 @@ define([
         },
 
         shareViewConfig: function() {
-            var projectPostData = JSON.stringify({data: [{type: "projects",
-                parent_type: "domain",
-                parent_fq_name_str:
-                    contrail.getCookie(cowc.COOKIE_DOMAIN)}]})
             return  [{
                 elementId: 'share_list',
                 view: "FormEditableGridView",
@@ -136,14 +132,14 @@ define([
                                     dataSource: {
                                         type: "remote",
                                         url:
-                                         "/api/tenants/config/get-config-list",
-                                        requestType: "POST",
-                                        postData: projectPostData,
+                                         "/api/tenants/config/projects/" +
+                                         contrail.getCookie(cowc.COOKIE_DOMAIN),
+                                        requestType: "GET",
                                         parse: function(result){
                                             var dataSource = [],
                                                projects =
                                                getValueByJsonPath(result,
-                                                   "0;projects", []);
+                                                   "projects", []);
                                             _.each(projects, function(project){
                                                 var projName =
                                                     getValueByJsonPath(project,
