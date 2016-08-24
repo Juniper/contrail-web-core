@@ -79,6 +79,23 @@ function doSendApiServerRespToApp (error, data, obj, appData, callback)
             return;
         }
     }
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
+    if (null != error) {
+        if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
+            error.responseCode) {
+            var req =
+                commonUtils.getValueByJsonPath(appData, 'authObj;req', null,
+                                               false);
+            var res =
+                commonUtils.getValueByJsonPath(appData, 'authObj;req;res', null,
+                                               false);
+            if (true == multiTenancyEnabled) {
+                commonUtils.invalidateReqSession(req, res);
+            }
+        }
+        callback(error, data);
+        return;
+    }
 
     callback(error, data);
 }

@@ -94,9 +94,15 @@ function doSendApiServerRespToApp (error, data, obj, appData, callback)
     if (null != error) {
         if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
             error.responseCode) {
-            if (true == multiTenancyEnabled) {
-                commonUtils.redirectToLogoutByAppData(appData);
-                return;
+            var req =
+                commonUtils.getValueByJsonPath(appData, 'authObj;req', null,
+                                               false);
+            var res =
+                commonUtils.getValueByJsonPath(appData, 'authObj;req;res', null,
+                                               false);
+            if ((true == multiTenancyEnabled) && (null != req) &&
+                (null != res)) {
+                commonUtils.invalidateReqSession(req, res);
             }
         }
         callback(error, data);
