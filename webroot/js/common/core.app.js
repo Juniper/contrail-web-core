@@ -272,9 +272,6 @@ var coreAppShim =  {
     'jquery.json': {
         deps: ['jquery']
     },
-    'jquery.droppick': {
-        deps: ['jquery']
-    },
     'jquery.datetimepicker': {
         deps: ['jquery']
     },
@@ -409,7 +406,6 @@ var coreBundles = {
             'jquery.steps.min',
             'jquery.panzoom',
             'jquery.event.drag',
-            'jquery.droppick',
             'jquery.datetimepicker'
         ],
         'core-bundle'       : [
