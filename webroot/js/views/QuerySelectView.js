@@ -22,28 +22,12 @@ define([
                 className = viewConfig['className'],
                 specialQueryPrefix = false;
 
-            aggregateTypes.push(cowl.getFirstCharUpperCase("Time Range"));
+            aggregateTypes.push("Time Range");
 
             _.each(selectFields, function(selectFieldValue, selectFieldKey) {
-                var key = selectFieldValue.name,
-                    aggregateType =  key.substring(0, key.indexOf('('));
-
-                if(key == 'T' || key == 'T=' ){
-                    aggregateType = cowl.getFirstCharUpperCase("Time Range");
-                }
-
-                if(aggregateType == ''){
-                    aggregateType = cowl.getFirstCharUpperCase("DEFAULT");
-                }
-
-                if(aggregateType != "Time Range") {
-                    aggregateTypes.push(cowl.getFirstCharUpperCase(aggregateType));
-                }
-
-
-                selectFieldValue['aggregate_type'] = cowl.getFirstCharUpperCase(aggregateType);
-
+                aggregateTypes.push(selectFieldValue['aggregate_type']);
             });
+
             if(queryPrefix == cowc.FS_QUERY_PREFIX || queryPrefix == cowc.STAT_QUERY_PREFIX){
                 specialQueryPrefix = true;
             }

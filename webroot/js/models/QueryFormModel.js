@@ -200,6 +200,7 @@ define([
                     });
 
                     setEnable4SelectFields(selectFields, self.select_data_object().enable_map());
+                    setChecked4SelectFields(selectFields, self.select_data_object().checked_map());
                     self.select_data_object().select_fields(selectFields);
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
@@ -229,10 +230,11 @@ define([
 
         saveSelect: function (callbackObj) {
             try {
+                var checkedFields = qewu.getCheckedFields(this.select_data_object().checked_map());
                 if (contrail.checkIfFunction(callbackObj.init)) {
                     callbackObj.init();
                 }
-                this.select(this.select_data_object().checked_fields().join(", "));
+                this.select(checkedFields.join(", "));
                 if (contrail.checkIfFunction(callbackObj.success)) {
                     callbackObj.success();
                 }
@@ -303,7 +305,7 @@ define([
         },
 
         getSortByOptionList: function(viewModel) {
-            var validSortFields = this.select_data_object().checked_fields(),
+            var validSortFields = qewu.getCheckedFields(this.select_data_object().checked_map()),
                 invalidSortFieldsArr = ["T=" , "UUID"],
                 resultSortFieldsDataArr = [];
 
@@ -511,6 +513,8 @@ define([
                             }
                         });
                         setEnable4SelectFields(selectFields, model.select_data_object().enable_map());
+                        setChecked4SelectFields(selectFields, model.select_data_object().checked_map());
+
                         model.select_data_object().select_fields(selectFields);
 
                         contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
@@ -607,6 +611,48 @@ define([
         for (var i = 0; i < selectFields.length; i++) {
             isEnableMap[selectFields[i]['name']] = ko.observable(true);
         }
+    }
+
+    function setChecked4SelectFields(selectFields, checkedMap) {
+
+        var selectFieldsByAggregateTypes = {
+            "Time Range": [],
+            "Default": [],
+            "Sum": [],
+            "Avg": [],
+            "Count": [],
+            "Min": [],
+            "Max": [],
+            "Percentiles": []
+        };
+
+        for (var key in checkedMap) {
+            delete checkedMap[key];
+        }
+
+        _.each(selectFields, function(selectFieldValue, selectFieldKey) {
+            var key = selectFieldValue.name,
+                aggregateType =  cowl.getFirstCharUpperCase(key.substring(0, key.indexOf('(')));
+
+            if(key == 'T' || key == 'T=' ){
+                selectFieldsByAggregateTypes["Time Range"].push(key);
+                aggregateType = "Time Range";
+            } else  if(aggregateType == ''){
+                selectFieldsByAggregateTypes["Default"].push(key);
+                aggregateType = "Default";
+            } else {
+                selectFieldsByAggregateTypes[aggregateType].push(key);
+            }
+
+            selectFieldValue['aggregate_type'] = cowl.getFirstCharUpperCase(aggregateType);
+
+        });
+
+        _.each(selectFieldsByAggregateTypes, function(aggregateFields, aggregateKey) {
+            _.each(aggregateFields, function(fieldValue, fieldKey) {
+                checkedMap[fieldValue] = ko.observable(false);
+            });
+        });
     }
 
     return QueryFormModel;

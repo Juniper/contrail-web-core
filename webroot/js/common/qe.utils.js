@@ -314,9 +314,13 @@ define([
 
         self.parseSelectString2Array = function(queryFormModel) {
             var selectString = queryFormModel.select(),
-                selectArray = (selectString == null || selectString.trim() == '') ? [] : selectString.split(', ');
+                selectFields = queryFormModel.select_data_object().select_fields(),
+                checkedFields = (selectString == null || selectString.trim() == '') ? [] : selectString.split(', ');
 
-            queryFormModel.select_data_object().checked_fields(selectArray)
+            _.each(selectFields, function(selectFieldValue, selectFieldKey) {
+                queryFormModel.select_data_object().checked_map()[selectFieldValue.name](checkedFields.indexOf(selectFieldValue.name) != -1);
+            });
+
         };
 
         self.parseWhereString2Collection = function(queryFormModel) {
@@ -425,6 +429,17 @@ define([
 
             return isAggregate;
         };
+
+        self.getCheckedFields = function(checkedMap) {
+            var checkedFields = [];
+            _.each(checkedMap, function(checkedMapValue, checkedMapKey){
+                if (checkedMapValue()) {
+                    checkedFields.push(checkedMapKey);
+                }
+            });
+
+            return checkedFields;
+        }
 
         //TODO - Delete this
         self.formatXML2JSON = function(xmlString, is4SystemLogs) {
