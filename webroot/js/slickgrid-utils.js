@@ -83,6 +83,7 @@ function getDefaultGridConfig() {
 
 (function ($) {
     $.fn.contrailGrid = function (customGridConfig) {
+        console.warn('Contrail WebUI Warning: File slickgrid-utis is deprecated. Please use GridView instead.');
     	if(contrail.checkIfExist(this.data('contrailGrid'))){
     		this.data('contrailGrid').destroy();
     	}

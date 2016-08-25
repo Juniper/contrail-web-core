@@ -2,7 +2,11 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-define(['underscore'], function (_) {
+define([
+    'underscore',
+    'moment',
+    'handlebars'
+], function (_, moment, Handlebars) {
     var serializer = new XMLSerializer(),
         domParser = new DOMParser();
 
@@ -75,6 +79,16 @@ define(['underscore'], function (_) {
             var modalId = options['modalId'],
                 footer = [];
             if(options['footer'] == null || options['footer'] == undefined) {
+                if ((contrail.checkIfExist(options['onBack'])) && (contrail.checkIfFunction(options['onBack']))) {
+                    footer.push({
+                        id        : 'backBtn',
+                        className : 'btn-primary',
+                        title     : 'Back',
+                        onclick   : function () {
+                            options['onBack']();
+                        }
+                    });
+                }
             if ((contrail.checkIfExist(options['onClose'])) && (contrail.checkIfFunction(options['onClose']))) {
                 footer.push({
                     id        : 'closeBtn',
@@ -607,6 +621,23 @@ define(['underscore'], function (_) {
             } else {
                 if (contrail.checkIfExist($(elements).data('contrailGrid'))) {
                     $(elements).data('contrailGrid').refreshView();
+                }
+            }
+        };
+
+        this.handleEmptyGrid4LazyLoading = function(gridId, data, count) {
+            if (contrail.checkIfExist($('#' + gridId).data('contrailGrid'))) {
+                $('#' + gridId).data('contrailGrid').removeGridLoading();
+
+                if (data.length === 0) {
+                    $('#' + gridId).data('contrailGrid').showGridMessage('empty');
+                }
+            } else {
+                count = contrail.checkIfExist(count) ? count : 1;
+                if (count < 5) {
+                    setTimeout(function () {
+                        self.handleEmptyGrid4LazyLoading(gridId, data, count);
+                    }, count * 1000);
                 }
             }
         };

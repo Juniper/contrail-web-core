@@ -78,12 +78,13 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
 
         'json-editor'                 : coreWebDir + '/assets/jsoneditor/js/jsoneditor.min',
         'ajv'                         : coreWebDir + '/assets/ajv/ajv.min',
-        'server-schema'               : coreWebDir + '/schemas/server.schema',
-        'cluster-schema'              : coreWebDir + '/schemas/cluster.schema',
         'json-model'                  : coreWebDir + "/js/models/JsonModel",
         'json-edit-view'              : coreWebDir + '/js/views/JsonEditView',
-        'jquery-ui'                   : coreWebDir + '/assets/jquery-ui/js/jquery-ui.min'
-
+        'jquery-ui'                   : coreWebDir + '/assets/jquery-ui/js/jquery-ui.min',
+        'schema-model'               : coreWebDir + '/js/models/SchemaModel',
+        'view-config-generator'      : coreWebDir + '/js/common/view.config.generator',
+        'iframe-view'                 : coreWebDir + '/js/views/IframeView',
+        'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -109,7 +110,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'crossfilter'                 : coreWebDir + '/assets/crossfilter/js/crossfilter',
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
             'text'                        : coreWebDir + '/assets/requirejs/text',
-            'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
+            'knockout'                    : coreWebDir + '/assets/knockout/knockout',
             'moment'                      : coreWebDir + "/assets/moment/moment",
             'layout-handler'              : coreWebDir + '/js/handlers/LayoutHandler',
             'menu-handler'                : coreWebDir + '/js/handlers/MenuHandler',
@@ -124,16 +125,16 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
             //End - core-bundle aliases
             //Start - jquery.dep.libs aliases
-            'jquery.xml2json'           : coreWebDir + '/assets/jquery/js/jquery.xml2json',
-            'jquery.json'               : coreWebDir + "/assets/slickgrid/js/jquery.json-2.3.min",
-            'bootstrap'                 : coreWebDir + '/assets/bootstrap/js/bootstrap',
-            'select2'                   : coreWebDir + "/assets/select2/js/select2.min",
-            'slick.core'                : coreWebDir + "/assets/slickgrid/js/slick.core",
-            'slick.dataview'            : coreWebDir + "/assets/slickgrid/js/slick.dataview",
-            'contrail-elements'         : coreWebDir + "/js/contrail-elements",
+            'jquery.xml2json'            : coreWebDir + '/assets/jquery/js/jquery.xml2json',
+            'jquery.json'                : coreWebDir + "/assets/slickgrid/js/jquery.json-2.3.min",
+            'bootstrap'                  : coreWebDir + '/assets/bootstrap/js/bootstrap',
+            'select2'                    : coreWebDir + "/assets/select2/js/select2.min",
+            'slick.core'                 : coreWebDir + "/assets/slickgrid/js/slick.core",
+            'slick.dataview'             : coreWebDir + "/assets/slickgrid/js/slick.dataview",
+            'core-contrail-form-elements': coreWebDir + "/js/common/core.contrail.form.elements",
             'jquery.timer'              : coreWebDir + '/assets/jquery/js/jquery.timer',
             'jquery.ui.touch-punch'     : coreWebDir + '/assets/jquery/js/jquery.ui.touch-punch.min',
-            'jquery.validate'           : coreWebDir + "/assets/jquery/js/jquery.validate",
+            'jquery.validate'           : coreWebDir + "/assets/jquery/js/jquery.validate.min",
             'jquery.tristate'           : coreWebDir + "/assets/jquery/js/jquery.tristate",
             'jquery.multiselect'        : coreWebDir + "/assets/jquery-ui/js/jquery.multiselect",
             'jquery.multiselect.filter' : coreWebDir + "/assets/jquery-ui/js/jquery.multiselect.filter",
@@ -146,8 +147,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'jquery.datetimepicker'     : coreWebDir + "/assets/datetimepicker/js/jquery.datetimepicker",
             //End - jquery.dep.libs aliases
             //Start - thirdparty-libs aliases
-            'handlebars'                : coreWebDir + "/assets/handlebars/handlebars-v1.3.0",
-            'handlebars-utils'          : coreWebDir + "/js/handlebars-utils",
+            'handlebars'                : coreWebDir + "/assets/handlebars/handlebars",
+            'core-handlebars-utils'     : coreWebDir + "/js/common/core.handlebars.utils",
 
             'slick.grid'                : coreWebDir + "/assets/slickgrid/js/slick.grid",
             'slick.checkboxselectcolumn': coreWebDir + '/assets/slickgrid/js/slick.checkboxselectcolumn',
@@ -192,7 +193,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         var prodAliasMap = {
             'controller-basedir'          : coreBaseDir,
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
-            'knockout'                    : coreWebDir + '/assets/knockout/knockout-3.0.0',
+            'knockout'                    : coreWebDir + '/assets/knockout/knockout',
             'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
             'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
             'joint.contrail': coreWebDir + '/js/common/joint.contrail',
@@ -213,7 +214,7 @@ var coreAppMap = {
 
 var coreAppShim =  {
     'core-bundle': {
-        dpes:['nonamd-libs','jquery']
+        dpes:['nonamd-libs', 'jquery-ui']
     },
     'jquery' : {
         exports: 'jQuery'
@@ -279,9 +280,6 @@ var coreAppShim =  {
     'jquery.json': {
         deps: ['jquery']
     },
-    'jquery.droppick': {
-        deps: ['jquery']
-    },
     'jquery.datetimepicker': {
         deps: ['jquery']
     },
@@ -312,7 +310,7 @@ var coreAppShim =  {
     'slickgrid-utils': {
         deps: ['jquery','slick.grid','slick.dataview']
     },
-    'contrail-elements': {
+    'core-contrail-form-elements': {
         deps: ['jquery-ui']
     },
     'chart-utils': {
@@ -321,7 +319,7 @@ var coreAppShim =  {
     'web-utils': {
         deps: ['jquery','knockout']
     },
-    'handlebars-utils': {
+    'core-handlebars-utils': {
         deps: ['jquery','handlebars']
     },
     'nvd3-plugin': {
@@ -384,130 +382,142 @@ var coreAppShim =  {
 };
 
 var coreBundles = {
-    //chart-libs,thirdparty-libs,contrail-core-views are loaded lazily
-    'chart-libs'        : [
-        'd3',
-        'nv.d3'
-    ],
-    'thirdparty-libs'   : [
-        'slick.grid',
-        'slick.checkboxselectcolumn',
-        'slick.groupmetadata',
-        'slick.rowselectionmodel',
-        'slick.enhancementpager',
-        'jsbn-combined',
-        'sprintf',
-        'ipv6',
-        'xdate',
-    ],
-    'jquery-dep-libs': [
-        'jquery.xml2json',
-        'jquery.json',
-        'bootstrap',
-        'select2',
-        'slick.core',
-        'slick.dataview',
-        'contrail-elements',
-        'jquery.timer',
-        'jquery.ui.touch-punch',
-        'jquery.validate',
-        'jquery.tristate',
-        'jquery.multiselect',
-        'jquery.multiselect.filter',
-        'jquery.steps.min',
-        'jquery.panzoom',
-        // 'jquery-contextmenu',
-        'jquery.event.drag',
-        'jquery.droppick',
-        'jquery.datetimepicker'
-    ],
-    'core-bundle'       : [
-        'underscore',
-        'core-utils',
-        'core-hash-utils',
-        'core-constants',
-        'core-formatters',
-        'core-cache',
-        'core-labels',
-        'core-messages',
-        'core-views-default-config',
-        'chart-utils',
-        'text!core-basedir/templates/core.common.tmpl',
-        'contrail-remote-data-handler',
-        'cf-datasource',
-        'contrail-view',
-        'contrail-model',
-        'contrail-view-model',
-        'contrail-list-model',
-        'lodash',
-        'crossfilter',
-        'text',
-        'moment',
-        'layout-handler',
-        'menu-handler',
-        'content-handler',
-        'validation',
-        'core-basedir/js/views/BarChartInfoView',
-        'core-basedir/js/views/BreadcrumbDropdownView',
-        'core-basedir/js/views/BreadcrumbTextView',
-        'core-basedir/js/views/ChartView',
-        'core-basedir/js/views/ControlPanelView',
-        'core-basedir/js/views/InfoboxesView',
-        'core-basedir/js/views/SectionView',
-        'core-basedir/js/views/WidgetView',
-        'core-basedir/js/views/ZoomScatterChartView',
-        //Dashboard
-        'mon-infra-node-list-model',
-        'mon-infra-log-list-model',
-        'mon-infra-alert-list-view',
-        'mon-infra-alert-grid-view',
-        'mon-infra-log-list-view',
-        'mon-infra-sysinfo-view',
-        'mon-infra-dashboard-view'
-    ],
-    'contrail-core-views': [
-        'core-basedir/js/views/GridView',
-        'core-basedir/js/views/AccordianView',
-        'core-basedir/js/views/DetailsView',
-        'core-basedir/js/views/DonutChartView',
-        'core-basedir/js/views/FormAutoCompleteTextBoxView',
-        'core-basedir/js/views/FormButtonView',
-        'core-basedir/js/views/FormCheckboxView',
-        'core-basedir/js/views/FormCollectionView',
-        'core-basedir/js/views/FormComboboxView',
-        'core-basedir/js/views/FormCompositeView',
-        'core-basedir/js/views/FormDateTimePickerView',
-        'core-basedir/js/views/FormDropdownView',
-        'core-basedir/js/views/FormEditableGridView',
-        'core-basedir/js/views/FormGridView',
-        'core-basedir/js/views/FormHierarchicalDropdownView',
-        'core-basedir/js/views/FormInputView',
-        'core-basedir/js/views/FormMultiselectView',
-        'core-basedir/js/views/FormNumericTextboxView',
-        'core-basedir/js/views/FormRadioButtonView',
-        'core-basedir/js/views/FormTextAreaView',
-        'core-basedir/js/views/FormTextView',
-        'core-basedir/js/views/GridFooterView',
-        'core-basedir/js/views/HeatChartView',
-        'core-basedir/js/views/HorizontalBarChartView',
-        'core-basedir/js/views/LineBarWithFocusChartView',
-        'core-basedir/js/views/LineWithFocusChartView',
-        'core-basedir/js/views/LoginWindowView',
-        'core-basedir/js/views/MultiBarChartView',
-        'core-basedir/js/views/BarChartView',
-        'core-basedir/js/views/MultiDonutChartView',
-        'core-basedir/js/views/NodeConsoleLogsView',
-        'core-basedir/js/views/QueryFilterView',
-        'core-basedir/js/views/QueryResultGridView',
-        'core-basedir/js/views/QueryResultLineChartView',
-        'core-basedir/js/views/QuerySelectView',
-        'core-basedir/js/views/QueryWhereView',
-        'core-basedir/js/views/SparklineView',
-        'core-basedir/js/views/TabsView',
-        'core-basedir/js/views/WizardView'
-    ]
+        //chart-libs,thirdparty-libs,contrail-core-views are loaded lazily
+        'chart-libs'        : [
+            'd3',
+            'nv.d3'
+        ],
+        'thirdparty-libs'   : [
+            'slick.grid',
+            'slick.checkboxselectcolumn',
+            'slick.groupmetadata',
+            'slick.rowselectionmodel',
+            'slick.enhancementpager',
+            'jsbn-combined',
+            'sprintf',
+            'ipv6',
+            'xdate',
+        ],
+        'jquery-dep-libs': [
+            'jquery.xml2json',
+            'jquery.json',
+            'bootstrap',
+            'select2',
+            'slick.core',
+            'slick.dataview',
+            'jquery.timer',
+            'jquery.ui.touch-punch',
+            'jquery.validate',
+            'jquery.tristate',
+            'jquery.multiselect',
+            'jquery.multiselect.filter',
+            'jquery.steps.min',
+            'jquery.panzoom',
+            'jquery.event.drag',
+            'jquery.datetimepicker'
+        ],
+        'core-bundle'       : [
+            'underscore',
+            'moment',
+            'handlebars',
+            'core-handlebars-utils',
+            'core-utils',
+            'core-hash-utils',
+            'core-constants',
+            'core-formatters',
+            'core-cache',
+            'core-labels',
+            'core-messages',
+            'core-views-default-config',
+            'contrail-common',
+            'core-contrail-form-elements',
+            'chart-utils',
+            'text!core-basedir/templates/core.common.tmpl',
+            'contrail-remote-data-handler',
+            'cf-datasource',
+            'contrail-view',
+            'contrail-model',
+            'contrail-view-model',
+            'contrail-list-model',
+            'lodash',
+            'crossfilter',
+            'text',
+            'layout-handler',
+            'menu-handler',
+            'help-handler',
+            'content-handler',
+            'validation',
+            'core-basedir/js/views/BarChartInfoView',
+            'core-basedir/js/views/BreadcrumbDropdownView',
+            'core-basedir/js/views/BreadcrumbTextView',
+            'core-basedir/js/views/ChartView',
+            'core-basedir/js/views/ControlPanelView',
+            'core-basedir/js/views/InfoboxesView',
+            'core-basedir/js/views/SectionView',
+            'core-basedir/js/views/WidgetView',
+            'core-basedir/js/views/ZoomScatterChartView',
+            //Dashboard
+            'mon-infra-node-list-model',
+            'mon-infra-log-list-model',
+            'mon-infra-alert-list-view',
+            'mon-infra-alert-grid-view',
+            'mon-infra-log-list-view',
+            'mon-infra-sysinfo-view',
+            'mon-infra-dashboard-view'
+        ],
+        'contrail-core-views': [
+            'core-basedir/js/views/GridView',
+            'core-basedir/js/views/AccordianView',
+            'core-basedir/js/views/DetailsView',
+            'core-basedir/js/views/DonutChartView',
+            'core-basedir/js/views/FormAutoCompleteTextBoxView',
+            'core-basedir/js/views/FormButtonView',
+            'core-basedir/js/views/FormCheckboxView',
+            'core-basedir/js/views/FormCollectionView',
+            'core-basedir/js/views/FormComboboxView',
+            'core-basedir/js/views/FormCompositeView',
+            'core-basedir/js/views/FormDateTimePickerView',
+            'core-basedir/js/views/FormDropdownView',
+            'core-basedir/js/views/FormEditableGridView',
+            'core-basedir/js/views/FormGridView',
+            'core-basedir/js/views/FormHierarchicalDropdownView',
+            'core-basedir/js/views/FormInputView',
+            'core-basedir/js/views/FormMultiselectView',
+            'core-basedir/js/views/FormNumericTextboxView',
+            'core-basedir/js/views/FormRadioButtonView',
+            'core-basedir/js/views/FormTextAreaView',
+            'core-basedir/js/views/FormTextView',
+            'core-basedir/js/views/GridFooterView',
+            'core-basedir/js/views/HeatChartView',
+            'core-basedir/js/views/HorizontalBarChartView',
+            'core-basedir/js/views/LineBarWithFocusChartView',
+            'core-basedir/js/views/LineWithFocusChartView',
+            'core-basedir/js/views/LoginWindowView',
+            'core-basedir/js/views/MultiBarChartView',
+            'core-basedir/js/views/BarChartView',
+            'core-basedir/js/views/MultiDonutChartView',
+            'core-basedir/js/views/NodeConsoleLogsView',
+            'core-basedir/js/views/QueryFilterView',
+            'core-basedir/js/views/QueryResultGridView',
+            'core-basedir/js/views/QueryResultLineChartView',
+            'core-basedir/js/views/QuerySelectView',
+            'core-basedir/js/views/QueryWhereView',
+            'core-basedir/js/views/SparklineView',
+            'core-basedir/js/views/TabsView',
+            'core-basedir/js/views/WizardView'
+        ],
+        'nonamd-libs': [
+            'web-utils',
+            'analyzer-utils',
+            'config_global',
+            'contrail-layout',
+            'uuid',
+            'protocol',
+            'xdate',
+            'ipv6',
+            'jsonpath'
+        ]
 };
-
 
 function initBackboneValidation() {
     require(['validation'],function(kbValidation) {

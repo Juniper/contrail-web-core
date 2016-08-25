@@ -4,6 +4,7 @@
 
 define([
     'underscore',
+    'handlebars',
     'contrail-view',
     'contrail-list-model',
     'core-basedir/js/views/GridFooterView',
@@ -12,7 +13,7 @@ define([
     'jquery-ui',
     'jquery.multiselect',
     'jquery.multiselect.filter'
-], function (_, ContrailView, ContrailListModel, GridFooterView) {
+], function (_, Handlebars, ContrailView, ContrailListModel, GridFooterView) {
     var GridView = ContrailView.extend({
         render: function () {
             var self = this,
@@ -93,7 +94,6 @@ define([
 
             if (contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
-                    gridContainer.data('contrailGrid').removeGridLoading();
                     handleGridMessage();
                     performSort(gridSortColumns);
                 }
@@ -101,7 +101,6 @@ define([
 
             contrailListModel.onAllRequestsComplete.subscribe(function () {
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
-                    gridContainer.data('contrailGrid').removeGridLoading();
                     handleGridMessage();
 
                     performSort(gridSortColumns);
@@ -116,13 +115,18 @@ define([
 
             function handleGridMessage() {
                 if(contrailListModel.error) {
+                    gridContainer.data('contrailGrid').removeGridLoading();
                     if(contrailListModel.errorList.length > 0) {
                         gridContainer.data('contrailGrid').showGridMessage('error', 'Error: ' + contrailListModel.errorList[0].responseText);
                     } else {
                         gridContainer.data('contrailGrid').showGridMessage('error');
                     }
-                } else if (gridOptions.defaultDataStatusMessage && contrailListModel.getItems().length == 0) {
-                    gridContainer.data('contrailGrid').showGridMessage('empty')
+                } else {
+                    if (contrailListModel.getItems().length == 0) {
+                        emptyGridHandler();
+                    } else {
+                        gridContainer.data('contrailGrid').removeGridLoading();
+                    }
                 }
             };
 
@@ -230,6 +234,7 @@ define([
                                     }
                                     e.stopPropagation();
                                     break;
+
                                 case 'multiselect':
                                     var linkMultiselectBox = $(this).parent().find('.link-multiselectbox'),
                                         inputMultiselectBox = $(this).parent().find('.input-multiselectbox');
@@ -241,12 +246,14 @@ define([
                                     }
                                     e.stopPropagation();
                                     break;
+
                                 case 'refresh':
                                     if (!contrailListModel.isRequestInProgress()) {
                                         gridContainer.find('.link-refreshable i').removeClass('fa-repeat').addClass('fa fa-spin fa-spinner');
                                         gridContainer.data('contrailGrid').refreshData();
                                     }
                                     break;
+
                                 case 'export':
                                     if (!contrailListModel.isRequestInProgress()) {
                                         var gridDSConfig = gridDataSource,
@@ -270,6 +277,61 @@ define([
                                         }
                                     }
                                     break;
+
+                                case 'group-delete':
+                                    if (!contrailListModel.isRequestInProgress()) {
+
+                                        var groupDeleteModalId = gridContainer.prop('id') + '-group-delete-modal',
+                                            gridCheckedRows = $(gridContainer).data('contrailGrid').getCheckedRows(),
+                                            groupDeleteModalBodyTemplate = contrail.getTemplate4Id(cowc.TMPL_GRID_GROUP_DELETE_MODAL_BODY),
+                                            rowDataFields = gridConfig.header.defaultControls.groupDeleteable.modalConfig.rowDataFields,
+                                            onSaveModal = gridConfig.header.defaultControls.groupDeleteable.modalConfig.onSave;
+
+                                        function getCheckedRowData(gridColumns, rowDataFields, gridCheckedRows) {
+                                            var columns = [], rows = [], columnIds = [];
+
+                                            _.each(gridColumns, function(columnValue, columnKey) {
+                                                var currentColumn = columnValue['id'];
+                                                if (rowDataFields.indexOf(currentColumn) !== -1) {
+                                                    columns.push(columnValue['name']);
+                                                    columnIds.push(currentColumn);
+
+                                                    _.each(gridCheckedRows, function(rowValue, rowKey) {
+                                                        if (!contrail.checkIfExist(rows[rowKey])) {
+                                                            rows[rowKey] = {};
+                                                        }
+
+                                                        if (contrail.checkIfFunction(columnValue.formatter)) {
+                                                            rows[rowKey][currentColumn] = columnValue.formatter(null, null, null, null, rowValue);
+                                                        } else {
+                                                            rows[rowKey][currentColumn] = rowValue[currentColumn];
+                                                        }
+                                                    });
+                                                }
+                                            });
+
+                                            return {columns: columns, rows: rows, columnIds: columnIds}
+                                        }
+
+                                        cowu.createModal({
+                                            modalId: groupDeleteModalId,
+                                            className: 'modal-700',
+                                            title: cowl.TITLE_DELETE_QUERY,
+                                            btnName: 'Confirm',
+                                            body: groupDeleteModalBodyTemplate(getCheckedRowData(gridColumns, rowDataFields, gridCheckedRows)),
+                                            onSave: function () {
+
+                                                if (contrail.checkIfFunction(onSaveModal)) {
+                                                    onSaveModal(gridCheckedRows);
+                                                }
+                                                $("#" + groupDeleteModalId).modal('hide');
+                                            }, onCancel: function () {
+                                                $("#" + groupDeleteModalId).modal('hide');
+                                            }
+                                        });
+                                    }
+                                    break;
+
                                 case 'collapse':
                                     gridHeader.find('i.collapse-icon').toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
 
@@ -367,7 +429,7 @@ define([
                                 }
                                 else {
                                     return '<input type="checkbox" class="ace-input rowCheckbox" value="' + r + '" disabled=true/> <span class="ace-lbl"></span>';
-                                  }
+                                }
                             },
                             name: '<input type="checkbox" class="ace-input headerRowCheckbox" disabled=true/> <span class="ace-lbl"></span>'
                         }));
@@ -586,9 +648,15 @@ define([
                     var selectedRowLength = args.rows.length;
 
                     if (selectedRowLength == 0) {
+                        if (gridConfig.header.defaultControls.groupDeleteable !== false) {
+                            gridContainer.find('.widget-toolbar-icon-group-delete').addClass('disabled-link')
+                        }
                         (contrail.checkIfExist(onNothingChecked) ? onNothingChecked(e) : '');
                     }
                     else {
+                        if (gridConfig.header.defaultControls.groupDeleteable !== false) {
+                            gridContainer.find('.widget-toolbar-icon-group-delete').removeClass('disabled-link')
+                        }
                         (contrail.checkIfExist(onSomethingChecked) ? onSomethingChecked(e) : '');
 
                         if (selectedRowLength == grid.getDataLength()) {
@@ -1232,6 +1300,15 @@ define([
                     </div>';
                 }
 
+                if (headerConfig.defaultControls.groupDeleteable !== false) {
+                    template += '\
+                    <div class="widget-toolbar pull-right"> \
+                        <a class="widget-toolbar-icon disabled-link widget-toolbar-icon-group-delete" title="Delete" data-action="group-delete"> \
+                            <i class="fa fa-trash"></i> \
+                        </a> \
+                    </div>';
+                }
+
                 if (headerConfig.defaultControls.columnPickable) {
                     var columnPickerConfig = {
                         type: 'checked-multiselect',
@@ -1340,7 +1417,7 @@ define([
                         selectedFlag = true;
                     // For columns set hide/hidden to true; should display as unchecked.
                     if (contrail.checkIfExist(children.hide) && (children.hide)) {
-                          selectedFlag = false;
+                        selectedFlag = false;
                     }
                     if (contrail.checkIfExist(children.hidden) && (children.hidden)) {
                         selectedFlag = false;
@@ -1461,6 +1538,7 @@ define([
 
             function emptyGridHandler() {
                 if (!gridOptions.lazyLoading && gridOptions.defaultDataStatusMessage && gridContainer.data('contrailGrid')) {
+                    gridContainer.data('contrailGrid').removeGridLoading();
                     gridContainer.data('contrailGrid').showGridMessage('empty');
                     if (gridOptions.checkboxSelectable != false) {
                         gridContainer.find('.headerRowCheckbox').attr('disabled', true);

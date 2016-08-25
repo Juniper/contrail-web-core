@@ -9,7 +9,6 @@ define([
     'select2',
     'slick.core',
     'slick.dataview',
-    'contrail-elements',
     //From jquery-libs
     'jquery.timer',
     'jquery.ui.touch-punch',

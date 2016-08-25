@@ -85,7 +85,7 @@ define([
             var colorMap = getValueByJsonPath(viewConfig,'chartOptions;colorMap',{});
             var yAxisFormatter = getValueByJsonPath(viewConfig,'chartOptions;yAxisFormatter',cowu.numberFormatter);
             var sliceTooltipFn = null;
-
+            var onClickBar = getValueByJsonPath(viewConfig,'chartOptions;onClickBar',false);
             //sliceTooltipFn is for portion of bar in stacked bar.
             if (contrail.checkIfFunction(viewConfig['chartOptions']['sliceTooltipFn'])) {
                 sliceTooltipFn = viewConfig['chartOptions']['sliceTooltipFn'];
@@ -324,7 +324,10 @@ define([
                 .enter().append("g")
                     .attr("class", "bar stack")
                     .attr("transform", function(d) { return "translate(" + x(d.date) + ",0)"; })
-                    .on('click',onclickBar)
+                    .on("click", function(d) {
+                        if(onClickBar === true)
+                            onclickBar(d);
+                    })
                     .on("mouseover", function(d) {
                         if (sliceTooltipFn == null) {
                             tooltipDiv.transition()
@@ -382,7 +385,9 @@ define([
                 }
                 return tooltipPositionLeft;
             }
+
             function onclickBar(data) {
+
                 var xExtent = data.timestampExtent;
                 clearToolTip(false);
                 xExtent = xExtent.map(function(date){
@@ -398,7 +403,6 @@ define([
                     cfDataSource.fireCallBacks({source:'crossfilter'});
                 }
             }
-
             function clearToolTip(fade) {
                 if(fade) {
                     tooltipDiv.transition()

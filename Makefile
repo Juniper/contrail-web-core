@@ -81,6 +81,9 @@ dev-env:
 test-env:
 	./unit-test.sh init $(REPO)
 
+ui-schemas:
+	node webroot/js/common/transformer.js
+
 prod-env:
 	mkdir -p webroot/html
 	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
