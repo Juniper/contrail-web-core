@@ -259,6 +259,12 @@ mkdir -p webroot/css/img
 cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/src/css/img/jsoneditor-icons.svg webroot/css/img/jsoneditor-icons.svg
 #End - Copy jsoneditor.js from $THIRD_PARTY
 
+#Start - Copy jdorn-jsoneditor.js from $THIRD_PARTY
+rm -rf webroot/assets/jdorn-jsoneditor
+mkdir -p webroot/assets/jdorn-jsoneditor/js
+cp -af ./$THIRD_PARTY/jdorn-jsoneditor.js webroot/assets/jdorn-jsoneditor/js/jdorn-jsoneditor.js
+#End - Copy jdorn-jsoneditor.js from $THIRD_PARTY
+
 #Start - Merging All CSS files
 rm -f webroot/css/contrail.unified.css
 
