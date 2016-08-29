@@ -300,7 +300,12 @@ function testAppInit(testAppConfig) {
             globalObj['webServerInfo'] = JSON.parse(testAppConfig.webServerInfo);
             webServerInfoDefObj.resolve();
 
-            loadFeatureApps(globalObj['webServerInfo']['featurePkg']);
+            /*
+                Adding timeout to simulate the loading core.common.tmpl before loading the feature
+             */
+            setTimeout(function(){
+                loadFeatureApps(globalObj['webServerInfo']['featurePkg']);
+            }, 1000);
 
             require(['chart-libs'],function() {});
             require(['jquery-dep-libs'],function() {});

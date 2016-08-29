@@ -19,25 +19,24 @@ define([
                 aggregateTypes = [], selectTmplData, selectTmplHtml,
                 queryPrefix = self.model.query_prefix(),
                 modalId = queryPrefix + cowl.QE_SELECT_MODAL_SUFFIX,
-                className = viewConfig['className'];
+                className = viewConfig['className'],
+                specialQueryPrefix = false;
+
+            aggregateTypes.push("Time Range");
 
             _.each(selectFields, function(selectFieldValue, selectFieldKey) {
-                var key = selectFieldValue.name,
-                    aggregateType =  key.substring(0, key.indexOf('('));
-
-                if(aggregateType == ''){
-                    aggregateType = cowl.getFirstCharUpperCase("DEFAULT");
-                }
-                aggregateTypes.push(cowl.getFirstCharUpperCase(aggregateType));
-
-                selectFieldValue['aggregate_type'] = cowl.getFirstCharUpperCase(aggregateType);
-
+                aggregateTypes.push(selectFieldValue['aggregate_type']);
             });
+
+            if(queryPrefix == cowc.FS_QUERY_PREFIX || queryPrefix == cowc.STAT_QUERY_PREFIX){
+                specialQueryPrefix = true;
+            }
 
             selectTmplData = {
                 queryPrefix: queryPrefix,
                 fields: selectFields,
-                aggregateTypes: _.uniq(aggregateTypes)
+                aggregateTypes: _.uniq(aggregateTypes),
+                specialQueryPrefix:specialQueryPrefix
             };
 
             selectTmplHtml = selectTemplate(selectTmplData);

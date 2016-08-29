@@ -885,10 +885,10 @@
 <script type="text/x-handlebars-template" id="core-accordian-view-template">
     <div id="{{elementId}}" class="{{class}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
         {{#each viewConfig}}
-        {{#if this.title}}
-        <h3>{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="fa fa-exclamation-triangle red"></i></span></h3>
-        {{/if}}
-        <div id="{{this.elementId}}"> </div>
+            {{#if this.title}}
+                <h3 data-rootViewPath="{{dataRootViewPath}}" data-path="{{dataPath}}">{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="fa fa-exclamation-triangle red"></i></span></h3>
+            {{/if}}
+            <div data-rootViewPath="{{dataRootViewPath}}" data-path="{{dataPath}}" id="{{this.elementId}}"> </div>
         {{/each}}
     </div>
 </script>
@@ -1391,6 +1391,29 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-grid-group-delete-modal-body-template"> 
+    <div class="row-fluid"> 
+        <p>Are you sure you want to delete the following rows?</p> 
+        <table class="table table-bordered table-condensed"> 
+            <thead> 
+                <tr> 
+                    {{#each columns}} 
+                        <th>{{this}}</th> 
+                    {{/each}} 
+                </tr> 
+            </thead> 
+            <tbody> 
+                {{#each rows}} 
+                    <tr> 
+                        {{#each ../columnIds}} 
+                            <td>{{#getValueFromObject this ../this}}{{/getValueFromObject}}</td> 
+                        {{/each}} 
+                    </tr> 
+                {{/each}} 
+            </tbody> 
+        </table> 
+    </div> 
+  </script> 
 
 <script type="text/x-handlebars-template" id="core-editable-grid-view-template">
     {{#IfCompare label null operator='!='}}
@@ -1437,7 +1460,7 @@
     </table>
     {{#each gridActions}}
     <div class="row margin-10-0-0">
-        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="fa fa-plus"></i> &nbsp;{{this.buttonTitle}}</a>
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="fa fa-plus"></i> {{this.buttonTitle}}</a>
     </div>
     {{/each}}
 </script>
@@ -1501,7 +1524,7 @@
     {{#IfCompare viewConfig.label null operator='!='}}
     <label style="margin:0px">{{viewConfig.label}}</label>
     {{/IfCompare}}
-    <div class="row">
+    <div>
         <table class="collection-table">
             <tbody data-bind="foreach: {{viewConfig.collection}}">
             {{#each viewConfig.rows}}
@@ -2015,37 +2038,54 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-control-panel-filter-2-col-template">
-    <div class="control-panel-filter-container">
-        <div class="row">
-            <p class="control-panel-filter-title">
-                <span class="pull-left control-panel-filter-title-icon"><i class="fa fa-filter"></i></span>
-                <span class="pull-left control-panel-filter-title-text">Filter</span>
-                <span class="pull-right control-panel-filter-close"><i class="fa fa-remove"></i></span>
-            </p>
-        </div>
-        <div class="row control-panel-filter-body">
-            {{#each viewConfig.groups}}
+<div class="control-panel-filter-container">
+    <div class="row">
+        <p class="control-panel-filter-title">
+            <span class="pull-left control-panel-filter-title-icon"><i class="fa fa-filter"></i></span>
+            <span class="pull-left control-panel-filter-title-text">Filter</span>
+            <span class="pull-right control-panel-filter-close"><i class="fa fa-remove"></i></span>
+        </p>
+    </div>
+    <div class="row control-panel-filter-body">
+        {{#each viewConfig.groups}}
             <div class="col-xs-6">
-                {{#each this}}
-                <div class="control-panel-filter-group row">
-                    {{#IfCompare title false operator='!='}}
-                    <h6 class="control-panel-group-filter-title">{{title}}</h6>
-                    {{/IfCompare}}
-                    <div id="control-panel-filter-group-items-{{id}}" class="row control-panel-filter-group-items padding-5-0;">
-                        {{#IfCompare type 'checkbox-circle' operator='=='}}
-                        {{#each items}}
-                        <div class="control-panel-filter-group-item">
-                            <input type="checkbox" name="control-panel-filter-{{../id}}" class="ace-input checkbox-circle" checked/>
-                            <span class="ace-lbl checkbox-circle {{labelCssClass}}"> {{text}}</span>
-                        </div>
-                        {{/each}}
+            {{#each this}}
+                    <div class="control-panel-filter-group row">
+                        {{#IfCompare title false operator='!='}}
+                        <h6 class="control-panel-group-filter-title">{{title}}</h6>
                         {{/IfCompare}}
+                        <div id="control-panel-filter-group-items-{{id}}" class="row control-panel-filter-group-items padding-5-0;">
+                            {{#IfCompare type 'checkbox-circle' operator='=='}}
+                            {{#each items}}
+                                <div class="control-panel-filter-group-item">
+                                    <input type="checkbox" name="control-panel-filter-{{../id}}" class="ace-input checkbox-circle" checked/>
+                                    <span class="ace-lbl checkbox-circle {{labelCssClass}}"> {{text}}</span>
+                                </div>
+                            {{/each}}
+                            {{/IfCompare}}
 
-                        {{#IfCompare type 'radio' operator='=='}}
-                        {{#each items}}
-                        <div class="control-panel-filter-group-item row">
-                            <div class="col-xs-1">
-                                <input type="radio" name="control-panel-filter-{{../id}}" value="{{text}}" {{#IfCompare disabled true operator='=='}} disabled {{/IfCompare}} {{#IfCompare selected true operator='=='}} checked {{else}} {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}} {{/IfCompare}} class="margin-0"/>
+                            {{#IfCompare type 'radio' operator='=='}}
+                            {{#each items}}
+                                <div class="control-panel-filter-group-item row">
+                                    <div class="col-xs-1">
+                                        <input type="radio" name="control-panel-filter-{{../id}}" value="{{text}}" {{#IfCompare disabled true operator='=='}} disabled {{/IfCompare}} {{#IfCompare selected true operator='=='}} checked {{else}} {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}} {{/IfCompare}} class="margin-0"/>
+                                    </div>
+                                    <div class="col-xs-11 control-panel-filter-text">
+                                        <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
+                                    </div>
+                                </div>
+                            {{/each}}
+                            {{/IfCompare}}
+
+                            {{#IfCompare type 'checkbox' operator='=='}}
+                            {{#each items}}
+                            <div class="control-panel-filter-group-item row">
+                                <div class="col-xs-1">
+                                    <input type="checkbox" name="control-panel-filter-{{../id}}-{{id}}" value="{{text}}" {{#IfCompare checked true operator='=='}} checked {{/IfCompare}} class="margin-0"/>
+                                </div>
+                                <div class="col-xs-11 control-panel-filter-text">
+                                    <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
+                                </div>
                             </div>
                             <div class="col-xs-11 control-panel-filter-text">
                                 <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
@@ -2468,29 +2508,32 @@
                     <h6>Destination</h6>
                     <ul class="item-list network-policy-dst-address">
                         {{#each data.dst_addresses}}
-                        <li><label class="inline row">
-                            {{#if this.network_policy}}
-                            <span> class="key col-xs-4"> Network Policy </span><span class="value col-xs-7"> {{this.network_policy}}</span>
-                            {{/if}}
-                            {{#if this.security_group}}
-                            <span class="key col-xs-4"> Security Group </span><span class="value col-xs-7"> {{this.security_group}}</span>
-                            {{/if}}
-                            {{#if this.subnet}}
-                            <span class="key col-xs-4"> Subnet </span><span class="value col-xs-7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
-                            {{/if}}
-                            {{#if this.virtual_network}}
-                            <span class="key col-xs-4"> Virtual Network </span><span class="value col-xs-7"> {{{this.virtual_network_tmpl}}}</span>
-                            {{/if}}
-                        </label></li>
+                        <li>
+                            <label class="inline row">
+                                {{#if this.network_policy}}
+                                <span> class="key col-xs-4"> Network Policy </span><span class="value col-xs-7"> {{this.network_policy}}</span>
+                                {{/if}}
+                                {{#if this.security_group}}
+                                <span class="key col-xs-4"> Security Group </span><span class="value col-xs-7"> {{this.security_group}}</span>
+                                {{/if}}
+                                {{#if this.subnet}}
+                                <span class="key col-xs-4"> Subnet </span><span class="value col-xs-7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
+                                {{/if}}
+                                {{#if this.virtual_network}}
+                                <span class="key col-xs-4"> Virtual Network </span><span class="value col-xs-7"> {{{this.virtual_network_tmpl}}}</span>
+                                {{/if}}
+                            </label>
+                        </li>
                         {{/each}}
                         <li><label class="inline row">
                             <span class="key col-xs-4"> Port Range </span>
                             <span class="value col-xs-7">
-                            {{#each data.dst_ports}}
-                                <span class="row"> {{this.start_port}} to {{this.end_port}}</span>
-                            {{/each}}
-                        </span>
-                        </label></li>
+                                {{#each data.dst_ports}}
+                                    <span class="row"> {{this.start_port}} to {{this.end_port}}</span>
+                                {{/each}}
+                            </span>
+                            </label>
+                        </li>
                     </ul>
                 </div>
             </div>

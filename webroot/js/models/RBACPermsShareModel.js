@@ -10,9 +10,8 @@ define([
 
         defaultConfig: {
             "tenant": null,
-            "tenant_access": null
+            "tenant_access": "4,2,1"
         },
-
 
         validateAttr: function (attributePath, validation, data) {
             var model = data.model().attributes.model(),

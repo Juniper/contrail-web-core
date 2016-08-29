@@ -9,6 +9,7 @@ define([
     //TODO: Make it generic for any kind of form edit.
     var FormGridView = ContrailView.extend({
         render: function () {
+            console.warn('Contrail WebUI Warning: FormGridView is deprecated. Please use GridView instead.');
             var viewConfig = this.attributes.viewConfig,
                 model = this.model,
                 elId = this.attributes.elementId;
