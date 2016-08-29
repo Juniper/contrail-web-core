@@ -253,6 +253,8 @@ define([
         this.QE_DEFAULT_LIMIT_150K = "150000";
         this.QE_DEFAULT_LIMIT_50K = "50000";
 
+        this.SELECT_FIELDS_GROUPS = ["Time Range", "Non Aggregate", "Sum", "Avg", "Count", "Min", "Max", "Percentiles"];
+
         this.DEFAULT_FR_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, setup_time, agg-packets, agg-bytes, action";
         this.DEFAULT_FS_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, T=, sum(packets), sum(bytes)";
         this.DEFAULT_SL_SELECT_FIELDS = "MessageTS, Source, ModuleId, Category, Level, NodeType, Messagetype, Xmlmessage";
