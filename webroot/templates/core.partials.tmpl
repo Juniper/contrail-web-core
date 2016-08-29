@@ -5,20 +5,20 @@
 
 <script type="text/x-handlebars-template" id="core-form-label-template">
     {{#IfCompare label false operator='!=' }}
-    <label for="{{id}}">
-            <span class="label-text">
-                {{label}}
-            </span>
-        {{#if viewConfig.help}}
-        {{#IfCompare viewConfig.help.target 'tooltip' operator='==='}}
-        <span class="label-help" title="{{viewConfig.help.content}}">
+        <label for="{{id}}">
+            <span class="label-text">{{label}}</span>
+            {{#if viewConfig.help}}
+                {{#IfCompare viewConfig.help.target 'tooltip' operator='==='}}
+                    <span class="label-help" title="{{viewConfig.help.content}}">
                         <i class="fa fa-question-circle"></i>
                     </span>
-        {{/IfCompare}}
-        {{/if}}
-        <span class="label-group-edit" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
+                {{/IfCompare}}
+            {{/if}}
+            {{#if lockAttr}}
+                <span class="label-group-edit" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                </span>
+            {{/if}}
     </label>
     {{/IfCompare}}
 </script>

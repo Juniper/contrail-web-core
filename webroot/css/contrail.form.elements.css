@@ -11,15 +11,15 @@
     width: 100%;
 }
 .form-group label .label-text {
-    font-size: 14px;
+    font-size: 13px;
 }
 .form-group label .label-help {
     margin: 0 5px;
     font-size: 1.2em;
-    opacity: 0.6;
+    color: #AEAEAE;
 }
 .form-group label .label-help:hover {
-    opacity: 1;
+    color: #3182BD;
 }
 .form-group label .tooltip {
     margin-top: 5px;
@@ -28,7 +28,9 @@
     float: right;
     display: none;
 }
-
+.form-group .form-group {
+    margin-bottom: 0;
+}
 /*
  * Contrail Textarea
  */

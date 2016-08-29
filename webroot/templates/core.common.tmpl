@@ -902,16 +902,14 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-composite-view-template">
-     <div class="row form-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="col-xs-10">
-            <label>{{label}}</label>
+     <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        {{> coreFormLabel}}
+        <div class="row" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+            {{#each this.childView}}
+                <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}"></div>
+            {{/each}}
         </div>
-    </div>
-    <div class="row"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        {{#each this.childView}}
-            <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}"></div>
-        {{/each}}
-    </div>
+     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-input-view-template">
@@ -961,27 +959,17 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-checkbox-view-template">
-    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="row form-label">
-            <div class="col-xs-10">
-                <label>{{label}}</label>
-            </div>
-            <div class="col-xs-2">
-                <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-                </span>
-            </div>
-        </div>
+    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        {{> coreFormLabel}}
         <div class="row col-xs-12 form-element">
-            <input type="{{type}}" name="{{id}}" class="{{class}} ace-input"
-                data-bind="
-                    {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
-                    checked: {{viewConfig.dataBindValue}},
-                    event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
-            />
-            <span class="ace-lbl"></span>
-            <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
-        </div>
+        <input type="{{type}}" name="{{id}}" class="{{class}} ace-input"
+            data-bind="
+                {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                checked: {{viewConfig.dataBindValue}},
+                event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
+        />
+        <span class="ace-lbl"></span>
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
 <script type="text/x-handlebars-template" id="core-checkbox-label-right-view-template">
@@ -1006,21 +994,16 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-radio-button-view-template">
-    <div class="row form-radio-button-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="col-xs-10">
-            <label>{{label}}</label>
+    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        {{> coreFormLabel}}
+        <div class="row">
+            {{#each elementConfig.dataObj}}
+                <div class="col-xs-4">
+                    <input type="radio" name="{{../id}}" value="{{value}}" class="{{../class}}"  data-bind="{{#if ../lockAttr}}disable: locks().{{name}}_locked, {{/if}} checked: {{../dataBindValue}},event: { focusout: function() { validateAttr('{{../path}}', '{{../validation}}') } }" />
+                    <span class="margin-0-0-0-5">{{label}}</span>
+                </div>
+            {{/each}}
         </div>
-        <div class="col-xs-2">
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </div>
-    </div>
-    <div class="row col-xs-12 form-element" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        {{#each elementConfig.dataObj}}
-        <input type="radio" name="{{../id}}" value="{{value}}" class="{{../class}} ace-input"  data-bind="{{#if ../lockAttr}}disable: locks().{{name}}_locked, {{/if}} checked: {{../dataBindValue}},event: { focusout: function() { validateAttr('{{../path}}', '{{../validation}}') } }" />
-        <span class="ace-lbl">{{label}}</span>
-        {{/each}}
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
@@ -1103,12 +1086,7 @@
 
 <script type="text/x-handlebars-template" id="core-multiselect-view-template">
    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-       <label for="{{id}}">
-           {{label}}
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </label>
+       {{> coreFormLabel}}
         <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1172,12 +1150,7 @@
 
 <script type="text/x-handlebars-template" id="core-combobox-view-template">
     <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <label for="{{id}}">
-            {{label}}
-            <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </label>
+        {{> coreFormLabel}}
         <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1204,13 +1177,15 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-textarea-view-template">
-    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}" data-help="{{#if viewConfig.help}} {{viewConfig.help}} {{/if}}">
-        <label for="{{id}}">
-            {{label}}
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </label>
+    <div class="form-group"
+         data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}"
+         {{#if viewConfig.help}}
+             {{#IfCompare viewConfig.help.target 'tooltip' operator='!=='}}
+                data-help="{{viewConfig.help.content}}"
+            {{/IfCompare}}
+        {{/if}}
+    >
+        {{> coreFormLabel}}
         <div class="textarea-input-group input-group inset theme-addon">
             <textarea
                 name="{{id}}" value="" placeholder="{{placeHolder}}" rows="1" class="form-control"
@@ -1240,14 +1215,7 @@
 
 <script type="text/x-handlebars-template" id="core-datetimepicker-view-template">
     <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        {{#IfCompare label false operator='!=' }}
-            <label for="{{id}}">
-                {{label}}
-                <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-                </span>
-            </label>
-        {{/IfCompare}}
+        {{> coreFormLabel}}
         <input id="{{id}}" name="{{name}}" class="{{class}}" type="text" data-bind="
         {{#if disabled}}disable: {{disabled}},
         {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}},
@@ -1259,14 +1227,7 @@
 
 <script type="text/x-handlebars-template" id="core-numerictextbox-view-template">
     <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        {{#IfCompare label false operator='!=' }}
-            <label for="{{id}}">
-                {{label}}
-                <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-                </span>
-            </label>
-        {{/IfCompare}}
+        {{> coreFormLabel}}
         <input id="{{id}}" name="{{name}}" class="{{class}}" type="text"
             data-bind="
                 {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
