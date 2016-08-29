@@ -2,8 +2,22 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 define([
-    'handlebars'
-], function (Handlebars) {
+    'underscore',
+    'handlebars',
+    'text!core-basedir/templates/core.partials.tmpl'
+], function (_, Handlebars, CorePartialsTmpls) {
+
+    /*
+     * Handlebars Partials
+     */
+    $("body").append(CorePartialsTmpls);
+    Handlebars.registerPartial('coreFormLabel', $('#core-form-label-template').html());
+    Handlebars.registerPartial('scatterTooltip', $('#title-lblval-tooltip-template').html());
+    Handlebars.registerPartial('scatterTooltipNew', $('#title-lblval-tooltip-template-new').html());
+
+    /*
+     * Handlebars Helpers
+     */
     Handlebars.registerHelper('IfCompare', function (lvalue, rvalue, options) {
         if (arguments.length < 3) {
             throw new Error("IfCompare helper function requires 2 parameters.");
@@ -116,13 +130,6 @@ define([
     Handlebars.registerHelper('makeItValidDOMId', function (id, options) {
         return id.replace(/:/g, '-');
     });
-
-    //core.common.tmpl is loaded via core-bundle
-    require(['core-bundle'], function () {
-        Handlebars.registerPartial('scatterTooltip', $('#title-lblval-tooltip-template').html());
-        Handlebars.registerPartial('scatterTooltipNew', $('#title-lblval-tooltip-template-new').html());
-    });
-
 
     //Handlebar register helper for formatting json in details template
     Handlebars.registerHelper('displayJson', function (rawjson) {

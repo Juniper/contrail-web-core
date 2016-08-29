@@ -145,52 +145,6 @@
     <div class='no-data-text'>No Statistics available for this duration</div>
 </script>
 
-<script type="text/x-handlebars-template" id="title-lblval-tooltip-template">
-    <div class="row chart-tooltip" style="width:250px;">
-        {{#each this}}
-            {{#IfCompare @index 0}}
-                <div class="row chart-tooltip-title">
-                    <p>{{value}}</p>
-                </div>
-            <div class="row chart-tooltip-body ">
-            {{else}}
-                {{#IfCompare true options.noLabelColon}}
-                    <div class="row chart-tooltip-row" >
-                        <span class="key col-xs-4" style="min-height:20px;">{{label}}</span>
-                        <span class="value col-xs-8" style="min-height:20px;">{{value}}</span>
-                    </div>
-                {{else}}
-                    <div class="row chart-tooltip-row" >
-                        <span class="key col-xs-4" style="min-height:20px;">{{label}}:</span>
-                        <span class="value col-xs-8" style="min-height:20px;">{{value}}</span>
-                    </div>
-                {{/IfCompare}}
-            {{/IfCompare}}
-        {{/each}}
-    </div>
-    </div>
-</script>
-
-<!-- To be removed later-->
-<script type="text/x-handlebars-template" id="title-lblval-tooltip-template-new">
-    <div class="row chart-tooltip" style="width:250px;">
-        {{#each this}}
-            {{#IfCompare @index 0}}
-                <div class="row chart-tooltip-title">
-                    <p>{{value}}</p>
-                </div>
-            <div class="row chart-tooltip-body ">
-            {{else}}
-                <div class="row chart-tooltip-row" >
-                    <span class="key {{keyClass}}" style="min-height:20px;">{{label}}:</span>
-                    <span class="value {{valueClass}}" style="min-height:20px;">{{value}}</span>
-                </div>
-            {{/IfCompare}}
-        {{/each}}
-    </div>
-    </div>
-</script>
-
 <script type="text/x-handlebars-template" id="overlapped-bubble-tooltip">
 <div id="overlapped-bubble-wrapper" class="enabledPointer">
      <div class="row" >
@@ -679,16 +633,6 @@
     </div>
 </script>
 
-<script type = "text/x-handlebars-template" id = "statusTemplate">
-    {{#IfCompare color colorSevMap.red }}
-        <span class="status-badge-rounded-small status-inactive"></span>
-    {{else}}
-        {{#IfCompare color colorSevMap.orange}}
-            <span class="status-badge-rounded-small status-partially-active"></span>
-        {{/IfCompare}}
-    {{/IfCompare}}
-</script>
-
 <script type="text/x-handlebars-template" id="dashboard-body-template">
     <div class="widget-main row">
             {{#IfCompare showSettings true options='=='}}
@@ -972,12 +916,7 @@
 
 <script type="text/x-handlebars-template" id="core-input-view-template">
     <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <label for="{{id}}">
-            {{label}}
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </label>
+        {{> coreFormLabel}}
         {{#IfCompare type 'password' operator='==='}}
             <div class="input-group inset col-xs-12">
                 <input type="{{type}}" name="{{id}}" class="col-xs-12 {{class}}"
@@ -1087,15 +1026,15 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-dropdown-view-template">
-   <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}" data-help="{{#if viewConfig.help}} {{viewConfig.help}} {{/if}}">
-        {{#IfCompare label false operator='!=' }}
-            <label for="{{id}}">
-                {{label}}
-                <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-                </span>
-            </label>
-        {{/IfCompare}}
+   <div class="form-group"
+        data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}"
+        {{#if viewConfig.help}}
+            {{#IfCompare viewConfig.help.target 'tooltip' operator='!=='}}
+                data-help="{{viewConfig.help.content}}"
+            {{/IfCompare}}
+        {{/if}}
+   >
+        {{> coreFormLabel}}
         <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}

@@ -4,6 +4,32 @@
  */
 
 /*
+ * General
+ */
+
+.form-group label {
+    width: 100%;
+}
+.form-group label .label-text {
+    font-size: 14px;
+}
+.form-group label .label-help {
+    margin: 0 5px;
+    font-size: 1.2em;
+    opacity: 0.6;
+}
+.form-group label .label-help:hover {
+    opacity: 1;
+}
+.form-group label .tooltip {
+    margin-top: 5px;
+}
+.form-group label .label-group-edit {
+    float: right;
+    display: none;
+}
+
+/*
  * Contrail Textarea
  */
 textarea.form-control {
