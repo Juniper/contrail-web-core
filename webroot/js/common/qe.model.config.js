@@ -180,7 +180,7 @@ define([
             if(!selectDataObject.isSelectAggregateChecked(root, aggregateType)) {
                 _.each(isEnableMap, function(enableMapValue, enableMapKey){
                     if (enableMapValue()) {
-                        if (aggregateType == "Default") {
+                        if (aggregateType == "Non Aggregate") {
                             selectFields.forEach(function (value, index) {
                                 if (value.name == enableMapKey && value.aggregate_type == aggregateType) {
                                     isCheckedMap[enableMapKey](true);
@@ -199,7 +199,7 @@ define([
                 });
             } else {
                 _.each(isEnableMap, function(enableMapValue, enableMapKey){
-                    if(aggregateType == "Default"){
+                    if(aggregateType == "Non Aggregate"){
                         selectFields.forEach(function(selectValue,i) {
                             if(selectValue.name == enableMapKey && selectValue.aggregate_type == aggregateType){
                                 isCheckedMap[enableMapKey](false);
@@ -238,7 +238,7 @@ define([
             } else {
                 checkedFields.forEach(function (checkedValue, i) {
                     //Handle defaults
-                    if (aggregateType == 'Default') {
+                    if (aggregateType == 'Non Aggregate') {
                         selectFields().forEach(function (value, index) {
                             if (value.name == checkedValue && value.aggregate_type == aggregateType) {
                                 selectAggregateChecked = true;
