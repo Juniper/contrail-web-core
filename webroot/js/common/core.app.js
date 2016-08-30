@@ -421,7 +421,7 @@ var coreBundles = {
             'core-messages',
             'core-views-default-config',
             'chart-utils',
-            'text!core-basedir/templates/core.common.tmpl',
+            'text!core-basedir/common/ui/templates/core.common.tmpl',
             'contrail-remote-data-handler',
             'cf-datasource',
             'contrail-view',
