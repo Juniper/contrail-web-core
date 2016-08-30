@@ -128,7 +128,20 @@ define([
                                   sortField: 'severity',
                                   formatter : function (r, c, v, cd, dc) {
                                       return alarmSeverityFormatter(v,dc,false);
+                                  },
+                                  exportConfig: {
+                                    allow: false
                                   }
+                              },
+                              {
+                                  field: 'severity',
+                                  name: 'Severity',
+                                  hide:true
+                              },
+                              {
+                                  field: 'ack',
+                                  name: 'Acknowledged',
+                                  hide:true
                               },
                               {
                                   field: 'timestamp',
@@ -157,6 +170,9 @@ define([
                                           formattedDiv = '<span title="Acknowledge"><i class="fa fa-check-circle-o"></i></span>';
                                       }
                                       return formattedDiv;
+                                  },
+                                  exportConfig: {
+                                      allow: false
                                   },
                                   events: {
                                       onClick: onAcknowledgeActionClicked
