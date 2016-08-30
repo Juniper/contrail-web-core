@@ -4,7 +4,7 @@
 define([
     'underscore',
     'handlebars',
-    'text!core-basedir/templates/core.partials.tmpl'
+    'text!core-basedir/common/ui/templates/core.partials.tmpl'
 ], function (_, Handlebars, CorePartialsTmpls) {
 
     /*

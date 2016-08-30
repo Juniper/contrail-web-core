@@ -11,10 +11,9 @@ define([
     'core-labels',
     'core-messages',
     'core-views-default-config',
-    'contrail-common',
     'core-contrail-form-elements',
     'chart-utils',
-    'text!core-basedir/templates/core.common.tmpl',
+    'text!core-basedir/common/ui/templates/core.common.tmpl',
     'core-basedir/js/common/graph.utils',
     // 'core-alarm-utils',
     // 'core.app.utils',
@@ -51,13 +50,12 @@ define([
     'mon-infra-log-list-view',
     'mon-infra-sysinfo-view',
     'mon-infra-dashboard-view',
-], function (CoreHandlebarsUtils, CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, Contrail, CoreContrailFormElements, ChartUtils, CoreCommonTmpls, GraphUtils) {
+], function (CoreHandlebarsUtils, CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, CoreContrailFormElements, ChartUtils, CoreCommonTmpls, GraphUtils) {
     cowc = CoreConstants;
     cowf = new CoreFormatters();
     cowl = new CoreLabels();
     cowm = new CoreMessages();
     covdc = new CoreViewsDefaultConfig();
-    contrail = new Contrail();
     cowch = new Cache();
     chUtils = new ChartUtils();
     grUtils = new GraphUtils();
