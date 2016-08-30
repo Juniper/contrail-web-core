@@ -212,27 +212,52 @@ function getServiceAPIVersionByReqObj (request, svcType, callback, reqBy)
                                                                 callback, reqBy);
 }
 
-var adminRoleProjects = ['admin'];
 function getAdminProjectList (req)
 {
     var adminProjectList = [];
+    var adminRoleProjects = config.roleMaps['cloudAdmin'];
+    var adminRoleProjectsInUpper = adminRoleProjects.map(function(x) {
+        return x.toUpperCase();
+    });
+    var memberRoleProjects = config.roleMaps['member'];
+    var memberRoleProjectsInUpper = memberRoleProjects.map(function(x) {
+        return x.toUpperCase();
+    });
     var adminRoleProjectsCnt = adminRoleProjects.length;
     var userRoles = req.session.userRoles;
-    for (key in userRoles) {
-        for (var i = 0; i < adminRoleProjectsCnt; i++) {
-            var roles = req.session.userRoles[key];
-            if (null == roles) {
-                logutils.logger.error('req.session.userRoles null for project:' +
-                                      ' ' + key);
-                continue;
-            }
-            var roleCnt = roles.length;
-            var adminRole = adminRoleProjects[i].toUpperCase();
-            for (var j = 0; j < roleCnt; j++) {
-                var userRole = roles[j].toUpperCase();
-                if (userRole == adminRole) {
+    if (-1 != adminRoleProjectsInUpper.indexOf(global.STR_ROLE_WILDCARD)) {
+        /* If any role not matching with member role, treat it as admin role
+         * project
+         */
+        for (var key in userRoles) {
+            var roles = userRoles[key];
+            var rolesCnt = roles.length;
+            for (var i = 0; i < rolesCnt; i++) {
+                var userRole = roles[i].toUpperCase();
+                if (-1 != adminRoleProjectsInUpper.indexOf(userRole)) {
                     adminProjectList.push(key);
+                    continue;
                 }
+                if (-1 == memberRoleProjectsInUpper.indexOf(userRole)) {
+                    adminProjectList.push(key);
+                    continue;
+                }
+            }
+        }
+        return adminProjectList;
+    }
+    for (var key in userRoles) {
+        var roles = userRoles[key];
+        if (null == roles) {
+            logutils.logger.error('req.session.userRoles null for project:' +
+                                  ' ' + key);
+            continue;
+        }
+        var rolesCnt = roles.length;
+        for (var i = 0; i < rolesCnt; i++) {
+            var userRole = roles[i].toUpperCase();
+            if (-1 != adminRoleProjectsInUpper.indexOf(userRole)) {
+                adminProjectList.push(key);
             }
         }
     }
