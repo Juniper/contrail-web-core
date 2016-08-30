@@ -10,6 +10,7 @@ var authApi = require('../../../common/auth.api');
 var config = process.mainModule.exports['config'];
 var httpsOp = require('../../../common/httpsoptions.api');
 var logutils = require('../../../utils/log.utils');
+var commonUtils = require('../../../utils/common.utils');
 
 /* Function: getIpProtoByServCatPubUrl
     This function is used to parse the publicURL/internalURL got from keystone catalog,
@@ -49,6 +50,79 @@ function getIpProtoByServCatPubUrl (pubUrl)
         }
     }
     return {'ipAddr': ipAddr, 'port': port, 'protocol': reqProto};
+}
+
+function getServiceApiVersionObjByPubUrl (pubUrl, type)
+{
+    if (null == pubUrl) {
+        return null;
+    }
+    var ipProtoObj = getIpProtoByServCatPubUrl(pubUrl);
+    var reqProto = ipProtoObj['protocol'];
+    var ipAddr = ipProtoObj['ipAddr'];
+    var port = ipProtoObj['port'];
+    var version = null;
+
+    switch (type) {
+    case 'compute':
+    case 'volume':
+        try {
+            var idx = pubUrl.lastIndexOf('/');
+            if (-1 == idx) {
+                return null;
+            }
+            var str = pubUrl.substr(0, idx);
+            idx = str.lastIndexOf('/');
+            if (-1 == idx) {
+                return null;
+            }
+            version = str.slice(idx + 1);
+        } catch(e) {
+            logutils.logger.error('volume|compute pubUrl parse error' + e);
+        }
+        break;
+    case 'image':
+    case 'identity':
+        try {
+            var defVer = getDfltEndPointValueByType(type, 'version');
+            var protoIdx = pubUrl.indexOf('://');
+            if (protoIdx >= 0) {
+                pubUrl = pubUrl.slice(protoIdx + '://'.length);
+            }
+            var idx = pubUrl.indexOf('/');
+            if (idx >= 0) {
+                pubUrl = pubUrl.slice(idx + 1);
+                idx = pubUrl.indexOf('/');
+                if (idx >= 0) {
+                    /* Format: http://localhost:9292/v1/ or
+                     * localhost:9292/v1/
+                     */
+                    version = pubUrl.substr(0, idx);
+                } else {
+                    if (!pubUrl.length) {
+                        /* Format: http://localhost:9292/ or
+                         * localhost:9292/
+                         */
+                        version = defVer;
+                    } else {
+                        /* Format: http://localhost:9292/v1 or
+                         * localhost:9292/v1
+                         */
+                        version = pubUrl;
+                    }
+                }
+            } else {
+                /* Format: http://localhost:9292 or localhost:9292 */
+                version = defVer;
+            }
+        } catch(e) {
+            logutils.logger.error(type +' pubUrl parse error' + e);
+        }
+        break;
+    default:
+        break;
+    }
+    return {version: version, ip: ipAddr, protocol: reqProto, port: port};
 }
 
 /* Function: getApiTypeByServiceType
@@ -108,6 +182,11 @@ function getDfltEndPointValueByType (module, type)
             return 'v1.1';
         }
         break;
+    case 'identity':
+        if ('version' == type) {
+            return 'v2.0';
+        }
+        break;
     default:
         break;
     }
@@ -118,8 +197,9 @@ function getDfltEndPointValueByType (module, type)
     Get openStack Module API Version, IP, Port, Protocol from
     publicURL/internalURL in keystone catalog response
  */
-function getServiceAPIVersionByReqObj (req, type, callback)
+function getServiceAPIVersionByReqObj (req, type, callback, reqBy)
 {
+    var redirectToLogout = true;
     var dataObjArr = [];
     var endPtList = [];
 
@@ -149,39 +229,46 @@ function getServiceAPIVersionByReqObj (req, type, callback)
             logutils.logger.error('apiVersion for ' + type + ' is NULL');
             callback(null);
         } else {
-            dataObjArr.sort(function(a, b) {return (b['version'] - a['version'])});
+            dataObjArr.sort(function(a, b) {
+                if (b['version'] > a['version']) {
+                    return 1;
+                } else if (b['version'] < a['version']) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
             callback(dataObjArr);
         }
         return;
     }
-    authApi.getServiceCatalog(req, function(servCat) {
-        if (null == servCat) {
+
+    authApi.getServiceCatalog(req, function(accessData) {
+        if ((null == accessData) || (null == accessData.serviceCatalog) ||
+            (!accessData.serviceCatalog.length)) {
             callback(null);
             return;
         }
-        try {
-            var servCatCnt = servCat.length;
-        } catch(e) {
-            callback(null);
-            return;
-        }
+        var servCat = accessData.serviceCatalog;
+        var servCatCnt = servCat.length;
+
         for (var i = 0; i < servCatCnt; i++) {
-            try {
-                if (type == servCat[i]['type']) {
-                    try {
-                        var endPt = servCat[i]['endpoints'];
-                        var endPtCnt = endPt.length;
-                    } catch(e) {
-                        continue;
-                    }
-                    for (var j = 0; j < endPtCnt; j++) {
-                        var endPtLen = endPtList.length;
-                        endPtList[endPtLen] = {};
-                        endPtList[endPtLen] = servCat[i]['endpoints'][j];
+            var endPtType =
+                commonUtils.getValueByJsonPath(servCat[i], 'type', null);
+            if (type == endPtType) {
+                var endPt =
+                    commonUtils.getValueByJsonPath(servCat[i], 'endpoints', []);
+                var endPtCnt = endPt.length;
+                for (var j = 0; j < endPtCnt; j++) {
+                    var endPtLen = endPtList.length;
+                    endPtList[endPtLen] = {};
+                    var endPt =
+                        commonUtils.getValueByJsonPath(servCat[i],
+                                                       'endpoints;' + j, null);
+                    if (null != endPt) {
+                        endPtList[endPtLen] = endPt;
                     }
                 }
-            } catch(e) {
-                continue;
             }
         }
 
@@ -189,12 +276,7 @@ function getServiceAPIVersionByReqObj (req, type, callback)
             callback(null);
             return;
         }
-        try {
-            var endPtCnt = endPtList.length;
-        } catch(e) {
-            callback(null);
-            return;
-        }
+        var endPtCnt = endPtList.length;
 
         var takePubURL = true;
         var pubUrl = null;
@@ -202,82 +284,34 @@ function getServiceAPIVersionByReqObj (req, type, callback)
             takePubURL = config.serviceEndPointTakePublicURL;
         }
         for (i = 0; i < endPtCnt; i++) {
-            try {
-                if (true == takePubURL) {
-                    pubUrl = endPtList[i]['publicURL'];
-                } else {
-                    pubUrl = endPtList[i]['internalURL'];
-                }
-                var ipProtoObj = getIpProtoByServCatPubUrl(pubUrl);
-                var reqProto = ipProtoObj['protocol'];
-                var ipAddr = ipProtoObj['ipAddr'];
-                var port = ipProtoObj['port'];
-
-                switch (type) {
-                case 'compute':
-                case 'volume':
-                    var idx = pubUrl.lastIndexOf('/');
-                    if (-1 == idx) {
-                        continue;
-                    }
-                    var str = pubUrl.substr(0, idx);
-                    idx = str.lastIndexOf('/');
-                    if (-1 == idx) {
-                        continue;
-                    }
-                    dataObjArr.push({'version': str.slice(idx + 1),
-                                    'protocol': reqProto, 'ip': ipAddr,
-                                    'port': port});
-                    break;
-                case 'image':
-                    var defVer = getDfltEndPointValueByType('image', 'version');
-                    var version = null;
-                    var protoIdx = pubUrl.indexOf('://');
-                    if (protoIdx >= 0) {
-                        pubUrl = pubUrl.slice(protoIdx + '://'.length);
-                    }
-                    var idx = pubUrl.indexOf('/');
-                    if (idx >= 0) {
-                        pubUrl = pubUrl.slice(idx + 1);
-                        idx = pubUrl.indexOf('/');
-                        if (idx >= 0) {
-                            /* Format: http://localhost:9292/v1/ or
-                             * localhost:9292/v1/
-                             */
-                            version = pubUrl.substr(0, idx);
-                        } else {
-                            if (!pubUrl.length) {
-                                /* Format: http://localhost:9292/ or
-                                 * localhost:9292/
-                                 */
-                                version = defVer;
-                            } else {
-                                /* Format: http://localhost:9292/v1 or
-                                 * localhost:9292/v1
-                                 */
-                                version = pubUrl;
-                            }
-                        }
-                    } else {
-                        /* Format: http://localhost:9292 or localhost:9292 */
-                        version = defVer;
-                    }
-                    dataObjArr.push({'version': version,
-                                    'protocol': reqProto, 'ip': ipAddr,
-                                    'port': port});
-                    break;
-                default:
-                    break;
-                }
-            } catch(e) {
+            if (true == takePubURL) {
+                pubUrl =
+                    commonUtils.getValueByJsonPath(endPtList[i], 'publicURL',
+                    null);
+            } else {
+                pubUrl =
+                    commonUtils.getValueByJsonPath(endPtList[i], 'internalURL',
+                                                   null);
+            }
+            var mappedObj = getServiceApiVersionObjByPubUrl(pubUrl, type);
+            if (null == mappedObj) {
                 continue;
             }
+            dataObjArr.push(mappedObj);
         }
         if (!dataObjArr.length) {
             logutils.logger.error('apiVersion for ' + type + ' is NULL');
             callback(null);
         } else {
-            dataObjArr.sort(function(a, b) {return (b['version'] - a['version'])});
+            dataObjArr.sort(function(a, b) {
+                if (b['version'] > a['version']) {
+                    return 1;
+                } else if (b['version'] < a['version']) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
             callback(dataObjArr);
         }
     });
@@ -338,3 +372,4 @@ function getApiVersion (suppVerList, verList, index, fallbackIndex, apiType)
 exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 exports.getApiVersion = getApiVersion;
 exports.getIpProtoByServCatPubUrl = getIpProtoByServCatPubUrl;
+exports.getServiceApiVersionObjByPubUrl = getServiceApiVersionObjByPubUrl;

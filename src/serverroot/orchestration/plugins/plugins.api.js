@@ -8,7 +8,9 @@
 
 var config = process.mainModule.exports['config'];
 var configMainServer = require('../../web/api/configServer.main.api');
+var opMainServer = require('../../web/api/opServer.main.api');
 var configJobServer = require('../../jobs/api/configServer.jobs.api');
+var opJobServer = require('../../jobs/api/opServer.jobs.api');
 var vCenterMainServer = require('../../web/api/vCenterServer.main.api');
 //var vCenterJobServer = require('../../web/api/vCenterServer.jobs.api');
 var assert = require('assert');
@@ -24,7 +26,6 @@ var orchModels = orch.getOrchestrationModels();
 function getApiServerRequestedByData (appData,reqBy)
 {
     assert(appData);
-    var defproject = null;
     //Set loggedInOrchestrionMode
     var loggedInOrchestrationMode = 'openstack';
     if ((null != appData) && (null != appData['authObj']) &&
@@ -47,8 +48,9 @@ function getApiServerRequestedByApp (loggedInOrchestrationMode, appData, reqBy)
 {
     switch (reqBy) {
     case global.label.API_SERVER:
-        return getApiServerRequestedByApiServer(loggedInOrchestrationMode,
-                                                appData);
+    case global.label.OPSERVER:
+        return getApiServerRequestedByReqType(loggedInOrchestrationMode,
+                                              reqBy, appData);
     case global.label.VCENTER_SERVER:
         return getApiServerRequestedByvCenter(loggedInOrchestrationMode,
                                               appData);
@@ -57,34 +59,51 @@ function getApiServerRequestedByApp (loggedInOrchestrationMode, appData, reqBy)
     }
 }
 
-function getApiServerRequestedByApiServer (loggedInOrchestrationMode, appData)
+function getServerType (genBy, reqBy)
 {
-    switch (orchModel) {
-        case 'openstack':
-        case 'cloudstack':
-        case 'vcenter':
-        case 'none':
-            var genBy = appData['genBy'];
-        if (null == genBy) {
-            genBy = appData['taskData']['genBy'];
-        }   
-        if (global.service.MAINSEREVR == genBy) {
-            return configMainServer;
-        } else if (global.service.MIDDLEWARE == genBy) {
+    if (global.label.API_SERVER == reqBy) {
+        switch (genBy) {
+        case global.service.MIDDLEWARE:
             return configJobServer;
-        } else {
-            logutils.logger.error("We did not get info of generator");
+        case global.service.MAINSEREVR:
+        default:
             return configMainServer;
         }
-        break
+    } else if (global.label.OPSERVER = reqBy) {
+        switch (genBy) {
+        case global.service.MIDDLEWARE:
+            return opJobServer;
+        case global.service.MAINSEREVR:
         default:
+            return opMainServer;
+        }
+    }
+    logutils.logger.error('We did not find correct genBy/reqBy: ' + genBy + ':'
+                          + reqBy);
+    return null;
+}
+
+function getApiServerRequestedByReqType (loggedInOrchestrationMode, reqBy,
+                                         appData)
+{
+    switch (orchModel) {
+    case 'openstack':
+    case 'cloudstack':
+    case 'vcenter':
+    case 'none':
+        var genBy = appData['genBy'];
+        if (null == genBy) {
+            genBy = appData['taskData']['genBy'];
+        }
+        return getServerType(genBy, reqBy);
+    default:
         if (null != appData['taskData']) {
             if ((global.REQ_AT_SYS_INIT == appData['taskData']['reqBy']) ||
                 (null != appData['taskData']['authObj'])) {
                 return configJobServer;
             }
         }
-        return configMainServer;
+        return getServerType(global.service.MIDDLEWARE, reqBy);
     }
 }
 

@@ -2,53 +2,52 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var rest = require('./rest.api');
+/**
+ * This file contains the wrapper functions for Analytics Server
+ */
+
 var global = require('./global');
 var assert = require('assert');
-var config = process.mainModule.exports['config'];
+var config = process.mainModule.exports.config;
+var plugins = require('../orchestration/plugins/plugins.api');
+var commonUtils = require('../utils/common.utils');
 
-var serverIp = global.DFLT_SERVER_IP;
-var serverPort = '8081';
-
-if (config.analytics) {
-    if (config.analytics.server_ip) {
-        serverIp = config.analytics.server_ip;
-    }
-    if (config.analytics.server_port) {
-        serverPort = config.analytics.server_port;
-    }
+function getApiServerRequestedByData (appData, reqBy)
+{
+    return plugins.getApiServerRequestedByData(appData, reqBy);
 }
 
-opServer = rest.getAPIServer({apiName:global.label.OPS_API_SERVER,
-                             server: serverIp, port: serverPort
-                             });
-
-function apiGet (url, appData, callback)
+function apiGet (url, appData, callback, appHeaders)
 {
-    opServer.api.get(url, function(err, data) {
+    var service = getApiServerRequestedByData(appData, global.label.OPSERVER);
+    service.apiGet(url, appData, function(err, data) {
         callback(err, data);
-    });
+    }, appHeaders);
 }
 
-function apiPut (url, putData, appData, callback)
+function apiPut (url, putData, appData, callback, appHeaders)
 {
-    opServer.api.get(url, putData, function(err, data) {
+    var service = getApiServerRequestedByData(appData, global.label.OPSERVER);
+    service.apiPut(url, putData, appData, function(err, data) {
         callback(err, data);
-    });
+    }, appHeaders);
 }
 
-function apiPost (url, postData, appData, callback)
+
+function apiPost (url, postData, appData, callback, appHeaders)
 {
-    opServer.api.post(url, postData, function(err, data) {
+    var service = getApiServerRequestedByData(appData, global.label.OPSERVER);
+    service.apiPost(url, postData, appData, function(err, data) {
         callback(err, data);
-    });
+    }, appHeaders);
 }
 
-function apiDelete (url, appData, allback)
+function apiDelete (url, appData, callback, appHeaders)
 {
-    opServer.api.delete(url, function(err, data) {
+    var service = getApiServerRequestedByData(appData, global.label.OPSERVER);
+    service.apiDelete(url, appData, function(err, data) {
         callback(err, data);
-    });
+    }, appHeaders);
 }
 
 exports.apiGet = apiGet;
