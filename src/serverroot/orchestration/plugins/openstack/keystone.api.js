@@ -31,6 +31,8 @@ var authServerPort =
 
 authAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
                                    server:authServerIP, port:authServerPort});
+var svcAuthAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
+    server:authServerIP, port:"35357"});
 
 var adminRoles = ['admin'];
 var authAPIVers = ['v2.0'];
@@ -132,20 +134,29 @@ var authGetCB = {
     'v3': sendV3CurlGetReq
 };
 
-function getV2AuthResponse (dataObj, callback)
+function getV2AuthResponse (dataObj, callback, isSvcPortReq)
 {
     var reqUrl = dataObj['reqUrl'];
     var headers = dataObj['headers'];
 
-    authAPIServer.api.get(reqUrl, function(error, data) {
-        if (null != error) {
-            logutils.logger.error('getAuthResponse() error:' + error);
-        }
-        callback(error, data);
-    }, headers);
+    if(isSvcPortReq) {
+        svcAuthAPIServer.api.get(reqUrl, function(error, data) {
+            if (null != error) {
+                logutils.logger.error('getAuthResponse() error:' + error);
+            }
+            callback(error, data);
+        }, headers);
+    } else {
+        authAPIServer.api.get(reqUrl, function(error, data) {
+            if (null != error) {
+                logutils.logger.error('getAuthResponse() error:' + error);
+            }
+            callback(error, data);
+        }, headers);
+    }
 }
 
-function makeAuthGetReq (dataObj, callback)
+function makeAuthGetReq (dataObj, callback, isSvcPortReq)
 {
     var req = dataObj['req'];
     var authApiVer = req.session.authApiVersion;
@@ -153,7 +164,7 @@ function makeAuthGetReq (dataObj, callback)
 
     authCB(dataObj, function(err, data) {
         callback(err, data);
-    });
+    }, isSvcPortReq);
 }
 
 /** Function: getTenantListByToken
@@ -166,7 +177,7 @@ function getTenantListByToken (req, token, callback)
     getAuthDataByReqUrl(req, token, reqUrl, callback);
 }
 
-function getAuthDataByReqUrl (req, token, authUrl, callback)
+function getAuthDataByReqUrl (req, token, authUrl, callback, isSvcPortReq)
 {
   var headers = {};
   var dataObjArr = [];
@@ -191,7 +202,7 @@ function getAuthDataByReqUrl (req, token, authUrl, callback)
     } else {
         callback(err, null);
     }
-  });
+  }, isSvcPortReq);
 }
 
 /* Function: getEnabledProjects
@@ -253,7 +264,22 @@ function getDomainList (req, callback)
     });
 }
 
-function getAuthRetryData (token, req, reqUrl, callback)
+function getRoleList (req, callback)
+{
+    var lastAuthVerUsed = req.session.authApiVersion;
+    var reqUrl;
+    if ('v2.0' == lastAuthVerUsed) {
+        reqUrl = "/OS-KSADM/roles"
+    } else {
+        reqUrl = "/roles"
+    }
+    var token = req.session.last_token_used;;
+    getAuthRetryData(token, req, reqUrl, function(err, data) {
+        callback(err, data);
+    }, true);
+}
+
+function getAuthRetryData (token, req, reqUrl, callback, isSvcPortReq)
 {
     getAuthDataByReqUrl(req, token, reqUrl, function(err, data) {
         if ((err) &&
@@ -274,12 +300,12 @@ function getAuthRetryData (token, req, reqUrl, callback)
                 }
                 getAuthDataByReqUrl(req, token, reqUrl, function(err, newData) {
                     callback(err, newData);
-                });
+                }, isSvcPortReq);
             });
         } else {
             callback(null, data);
         }
-    });
+    }, isSvcPortReq);
 }
 
 function formatTenantList (req, keyStoneProjects, apiProjects, callback) 
@@ -324,7 +350,7 @@ function getKeystoneAPIVersions ()
     return authAPIVers;
 }
 
-function getAuthData (error, reqArr, index, authCB, callback)
+function getAuthData (error, reqArr, index, authCB, callback, isSvcPortReq)
 {
     var authApiVerList = getKeystoneAPIVersions();
     var len = reqArr.length;
@@ -346,7 +372,7 @@ function getAuthData (error, reqArr, index, authCB, callback)
         } else {
             getAuthData(err, reqArr, index + 1, authCB, callback);
         }
-    });
+    }, isSvcPortReq);
 }
 
 function formatV2AuthTokenData (authObj)
@@ -2400,6 +2426,7 @@ exports.formatTenantList = formatTenantList;
 exports.getServiceCatalog = getServiceCatalog;
 exports.getDomainList = getDomainList;
 exports.getProjectList = getProjectList;
+exports.getRoleList = getRoleList;
 exports.isDefaultDomain = isDefaultDomain;
 exports.getDefaultDomain = getDefaultDomain;
 exports.getUserAuthDataByAuthObj = getUserAuthDataByAuthObj;
