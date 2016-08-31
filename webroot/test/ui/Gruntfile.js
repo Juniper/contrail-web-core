@@ -13,23 +13,23 @@ module.exports = function (grunt) {
     var commonFiles = [
         {pattern: 'contrail-web-core/webroot/assets/**/!(tests)/*.js', included: false},
         {pattern: 'contrail-web-core/webroot/assets/**/*.css', included: false},
-        {pattern: 'contrail-web-core/webroot/css/**/*.css', included: false},
+        {pattern: 'contrail-web-core/webroot/common/ui/css/**/*.css', included: false},
         {pattern: 'contrail-web-core/webroot/test/ui/**/*.css', included: false},
 
-        {pattern: 'contrail-web-core/webroot/font/**/*.woff', included: false},
+        {pattern: 'contrail-web-core/webroot/common/ui/fonts/**/*.woff', included: false},
         {pattern: 'contrail-web-core/webroot/assets/**/*.woff', included: false},
         {pattern: 'contrail-web-core/webroot/assets/**/*.ttf', included: false},
 
         {pattern: 'contrail-web-core/webroot/img/**/*.png', included: false},
-        {pattern: 'contrail-web-core/webroot/css/**/*.png', included: false},
+        {pattern: 'contrail-web-core/webroot/common/ui/css/**/*.png', included: false},
         {pattern: 'contrail-web-core/webroot/assets/select2/styles/**/*.png', included: false},
-        {pattern: 'contrail-web-core/webroot/css/**/*.gif', included: false},
+        {pattern: 'contrail-web-core/webroot/common/ui/css/**/*.gif', included: false},
 
         {pattern: 'contrail-web-core/webroot/test/ui/js/co.test.app.js'},
         {pattern: 'contrail-web-core/webroot/test/ui/js/**/*.js', included: false},
 
         {pattern: 'contrail-web-core/webroot/js/**/*.js', included: false},
-        {pattern: 'contrail-web-core/webroot/templates/*.tmpl', included: false}
+        {pattern: 'contrail-web-core/webroot/common/ui/templates/*.tmpl', included: false}
     ];
 
     var karmaConfig = {

@@ -38,7 +38,7 @@ constants.coreModules  = [
       'core-basedir/js/common/qe.grid.config',
       'core-basedir/js/common/qe.parsers',
       'core-basedir/js/common/chart.utils',
-      'text!templates/core.common.tmpl',
+      'text!common/ui/templates/core.common.tmpl',
 
       'contrail-remote-data-handler',
       'layout-handler',

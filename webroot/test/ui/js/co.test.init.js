@@ -16,7 +16,7 @@ var depArray = [
     'jquery', 'underscore', 'validation', 'core-constants', 'core-utils',
     'core-formatters', 'core-messages', 'core-views-default-config', 'core-labels', 'knockout', 'core-cache',
 
-    'text!/base/contrail-web-core/webroot/templates/core.common.tmpl',
+    'text!/base/contrail-web-core/webroot/common/ui/templates/core.common.tmpl',
 
     'core-basedir/js/common/qe.utils',
     'core-basedir/js/common/qe.model.config',
@@ -258,7 +258,7 @@ function testAppInit(testAppConfig) {
             }
         }
         requirejs(['text!menu.xml',
-            'text!/base/contrail-web-core/webroot/templates/core.common.tmpl',
+            'text!/base/contrail-web-core/webroot/common/ui/templates/core.common.tmpl',
             'co-test-utils',
             'co-test-constants',
             'co-test-messages',
